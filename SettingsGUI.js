@@ -631,7 +631,7 @@ function initializeAllSettings() {
 	//Alchemy
 	document.getElementById('RPandemoniumGM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAlchOn', 'Alchemy', 'Turn on Alchemy settings. This also controls the entireity of Alchemy. If you turn this off it will not do any specific farming during the challenge.', 'boolean', false, null, 'Challenges');
-	createSetting('Ralchfarmstack', 'AF: Potions', 'How many levels of a potion to farm at zone specified in AF. You must pair a potion with a level here. Example: h15,g20,s15:h17,g22,v15,s17. This will farm Herby potion up to level 15 on the first AF zone, Gaseous potion to level 20 and so on.', 'textValue', 'undefined', null, 'Challenges');
+	createSetting('Ralchfarmstack', 'AF: Potions', 'How many levels of a potion to farm at zone specified in AF. You must pair a potion with a level here. Example: h15,g20,s15,h17,g22,v15,s17. This will farm Herby potion up to level 15 on the first AF: Zone, Gaseous potion to level 20 and so on.', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('RAlchZone', 'AF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Challenges');
 	createSetting('RAlchMapLevel', 'AF: Map Level', 'What map level to use. Needs to be a level or +map which can be specified by 0,1,2,3 etc. Will not function if you try to use minus maps', 'multiValue', [0], null, 'Challenges');
 	createSetting('RAlchCell', 'AF: Cell', 'Alch Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Challenges');
@@ -1520,7 +1520,6 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Requipon') ? turnOn('Requipzone'): turnOff('Requipzone');
 	radonon && getPageSetting('Requipon') ? turnOn('Requippercent'): turnOff('Requippercent');
 	radonon && getPageSetting('Requipon') ? turnOn('Requip2'): turnOff('Requip2');
-	radonon && getPageSetting('Requipon') ? turnOn('RequipPandemonium'): turnOff('RequipPandemonium');
 	radonon && getPageSetting('Requipon') ? turnOn('Rdmgcuntoff'): turnOff('Rdmgcuntoff');
 	
 	radonon ? turnOn('Requipfarmon'): turnOff('Requipfarmon');
@@ -1726,6 +1725,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumZone') : turnOff('RPandemoniumZone');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumHits') : turnOff('RPandemoniumHits');
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
+	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RequipPandemonium'): turnOff('RequipPandemonium');
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumGM_ST') : turnOff('RPandemoniumGM_ST');
 	
 	//Alchemy
