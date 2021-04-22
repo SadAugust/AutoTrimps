@@ -11,7 +11,7 @@ https://www.tampermonkey.net/
 
 Step 2: 
 
-Click this link: https://github.com/SadAugust/AutoTrimps/raw/gh-pages/.user.js
+Click this link: https://github.com/SadAugust/AutoTrimps/raw/main/.user.js
 
 Step 3: 
 
