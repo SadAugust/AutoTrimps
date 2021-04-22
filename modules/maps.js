@@ -2112,7 +2112,7 @@ function RautoMap() {
 				document.getElementById("advExtraLevelSelect").value = pandemoniumextra;
 				updateMapCost();
 				if (updateMapCost(true) > game.resources.fragments.owned) {
-					console.log("You can't afford to run a +" + pandemoniumextra+" map");
+					console.log("You can't afford to run a perfect +" + pandemoniumextra+" map");
 				}
 			}
 			
