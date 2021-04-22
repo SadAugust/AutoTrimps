@@ -1,0 +1,100 @@
+#logBtnGroup div {
+    width: 19%!important;
+}
+div#logConfigHolder.btn-group {
+    width: 5%!important;
+}
+#logConfigBtn {
+    padding: 6px 0!important;
+}
+
+ul.tab {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+ul.tab li {float: left;}
+
+ul.tab li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 0.5vh 1vw;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 2vh;
+}
+
+ul.tab li .active {background-color: #ccc;}
+
+ul.tab li a:hover {background-color: #ddd;}
+
+.tabcontent {
+    display: none;
+    border: 1px solid #ccc;
+    border-top: none;
+    -webkit-animation: fadeEffect 1s;
+    animation: fadeEffect 1s; /* Fading effect takes 1 second */
+    transform: translateZ(0);
+}
+
+@-webkit-keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+#tipText .AutoEggs,
+#AutoEggs.settingBtntrue {
+  -webkit-animation: eggGradient 3s infinite;
+  animation: eggGradient 3s infinite;
+  color: black;
+}
+
+@keyframes eggGradient {
+  0% { background-color: #83ddd6; }
+  25% { background-color: #f4c7c7; }
+  50% { background-color: #8beab7; }
+  75% { background-color: #f6f297; }
+  100% { background-color: #83ddd6; }
+}
+
+#trapArea {
+    border: 1px solid white;
+    display: inline-block;
+    margin-bottom: 2%;
+    margin-top: 0;
+    padding: 0;
+}
+
+#animationDiv {
+   z-index: -1!important;
+}
+.queueItemName, #queueTimeRemaining {
+   z-index: 0!important;
+}
+
+.heirloomRare8 {
+text-shadow: none;
+}
+
+.litScroll {
+    overflow:scroll;
+    height:500px;
+}
+
+#wrapper {
+background: none;
+}
+
+#wrapper {
+background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,#727275 53%,#4c4d56 70.5%,#323341 88%); 
+}
