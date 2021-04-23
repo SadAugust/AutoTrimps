@@ -582,8 +582,10 @@ function RbuyJobs() {
 	}
 	
 	if (game.global.challengeActive == "Pandemonium" && getPageSetting('RequipPandemonium') && getPageSetting('RPandemoniumEqStaff') != "undefined" && getPageSetting('RPandemoniumEqLvl') > 0 && game.global.lastClearedCell > 59) {
-		var desiredRatios = [0,0,0,0];
-		allIn = "Miner";
+		if (game.global.world >= getPageSetting('RPandemoniumEqLvl')) {
+			var desiredRatios = [0,0,0,0];
+			allIn = "Miner";
+		}
 	}
 
 	if (allIn != "") {
