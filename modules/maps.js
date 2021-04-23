@@ -768,6 +768,7 @@ var RAMPfragmappybought = false;
 var RAMPfragfarming = false;
 var Rshouldmayhem = 0;
 var Rshouldpandemonium = 0;
+var Rshouldpandemoniumfarm = 0;
 var Rinsanityfarm = !1;
 var Rshouldinsanityfarm = !1;
 var Rinsanityfragfarming  = false;
@@ -807,6 +808,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (Rshouldmayhem == 1) status = 'Mayhem Attack';
 	else if (Rshouldmayhem == 2) status = 'Mayhem Health';
 	else if (Rshouldpandemonium) status = 'Pandemonium Destacking';
+	else if (Rshouldpandemoniumfarm) status = 'Pandemonium Farming';
 	else if (Rshoulddopraid) status = 'Prestige Raiding';
 	else if (Rshoulddoquest) status = 'Questing';
 	else if (Rshouldtimefarm) status = 'Time Farming';
@@ -1254,6 +1256,7 @@ function RautoMap() {
 	if (game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumOn')) {
 		var Rdopandemonium = false;
 		Rshouldpandemonium = 0;
+		Rshouldpandemoniumfarm = 0;
 		Rdopandemonium = (game.global.world >= getPageSetting('RPandemoniumZone') && game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumOn'));
 		if (Rdopandemonium) {
 			if (game.challenges.Pandemonium.pandemonium > 0 && getPageSetting('RPandemoniumMaps')) {
@@ -1289,6 +1292,20 @@ function RautoMap() {
 					pandemoniumextra = mlevels;
 					go = true;
 				}
+			}
+		}
+		
+		if (!Rshouldpandemonium && getPageSetting('RequipPandemonium') && game.global.lastClearedCell > 60 && game.global.StaffEquipped.name == getPageSetting('RPandemoniumEqStaff') && game.global.world >= getPageSetting('RPandemoniumEqLvl')) {
+			var amt = simpleSecondsLocal('metal', 20);
+			amt = scaleToCurrentMapLocal(amt, null, !game.global.canScryCache);
+			addResCheckMax('metal', amt, null, null, true);
+			var artBoost = Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.radLevel);
+			artBoost *= autoBattle.oneTimers.Artisan.getMult();
+			artBoost *= game.challenges.Pandemonium.getEnemyMult(); 
+			for (var i in RequipmentList) {
+				var nextLevelCost = game.equipment[i].cost[RequipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[RequipmentList[i].Resource][1], game.equipment[i].level) * artBoost;
+				if (game.challenges.Pandemonium.isEquipBlocked(i)) continue;
+					if (nextLevelCost < amt) Rshouldpandemoniumfarm = true;
 			}
 		}
 	}
@@ -1550,7 +1567,7 @@ function RautoMap() {
 	}
 
 	//Everything else
-	if (!Rshoulddopraid && (RshouldDoMaps || RdoVoids || Rshouldtimefarm || Rshouldtributefarm || Rshoulddoquest > 0 || Rshouldmayhem > 0 || Rshouldinsanityfarm || Rshouldstormfarm || Rshouldequipfarm || Rshouldshipfarm || Rshouldpandemonium || Rshouldalchfarm)) {
+	if (!Rshoulddopraid && (RshouldDoMaps || RdoVoids || Rshouldtimefarm || Rshouldtributefarm || Rshoulddoquest > 0 || Rshouldmayhem > 0 || Rshouldinsanityfarm || Rshouldstormfarm || Rshouldequipfarm || Rshouldshipfarm || Rshouldpandemonium || Rshouldpandemoniumfarm || Rshouldalchfarm)) {
 		if (selectedMap == "world") {
 			if (Rshouldmayhem > 0 && !Rshouldpandemonium && !Rshouldtributefarm && !Rshouldtimefarm && !Rshouldinsanityfarm && !Rshouldequipfarm && !Rshouldshipfarm && !Rshouldalchfarm) {
 				if (getPageSetting('Rmayhemmap') == 2) {
@@ -1583,8 +1600,19 @@ function RautoMap() {
 						}
 					}
 				}
-			//Priority system for challenges. If Alchemy isn't at the top it'll break the recycling function
-			} else if ((Rshouldinsanityfarm || Rshouldtimefarm || Rshouldtributefarm || Rshouldalchfarm || Rshouldshipfarm) && !Rshouldequipfarm && !Rshoulddopraid) {
+			} else if (Rshouldpandemoniumfarm && !Rshouldpandemonium && !Rshouldalchfarm && !Rshouldtimefarm && !Rshouldtributefarm && !Rshouldinsanityfarm && !Rshouldequipfarm && !Rshouldshipfarm && !Rshoulddopraid) {
+				if (game.global.challengeActive == "Pandemonium") {
+					for (var map in game.global.mapsOwnedArray) {
+						if (!game.global.mapsOwnedArray[map].noRecycle && ((game.global.world - 1) == game.global.mapsOwnedArray[map].level) && game.global.mapsOwnedArray[map].bonus == "lmc") {
+							selectedMap = game.global.mapsOwnedArray[map].id;
+							break;
+						} else {
+							selectedMap = "create";
+						}
+					}
+				}
+			//Priority system for challenges. If Alchemy isn't at the top it'll break the recycling function I think
+			} else if ((Rshouldalchfarm || Rshouldinsanityfarm || Rshouldtimefarm || Rshouldtributefarm || Rshouldshipfarm) && !Rshouldequipfarm && !Rshoulddopraid) {
 				hyp2pct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0
 				if (Rshouldalchfarm) {
 					maplevel = getPageSetting('RAlchMapLevel');
@@ -1613,6 +1641,7 @@ function RautoMap() {
 					maplevel = getPageSetting('Rshipfarmlevel');
 					levelzones = maplevel[shipamountfarmindex];
 					rspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
+					farmzone = shipfarmzone;
 				} else if (Rshouldtimefarm) {
 				    maplevel = game.global.challengeActive == "Daily" ? getPageSetting('Rdtimemaplevel') : getPageSetting('Rtimemaplevel');
 					levelzones = maplevel[timefarmindex];
@@ -2114,6 +2143,13 @@ function RautoMap() {
 				if (updateMapCost(true) > game.resources.fragments.owned) {
 					console.log("You can't afford to run a perfect +" + pandemoniumextra+" map");
 				}
+			}
+			//Pandemonium Equip farm
+			if (game.global.challengeActive == "Pandemonium" && Rshouldpandemoniumfarm) {
+				mapLevelInput.value = (game.global.world - 1);
+				biomeAdvMapsSelect.value = game.global.farmlandsUnlocked ? "Farmlands" : "Plentiful";
+				document.getElementById("advSpecialSelect").value = "lmc";
+				updateMapCost();
 			}
 			
 			//Equip farming
