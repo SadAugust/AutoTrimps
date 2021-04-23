@@ -178,6 +178,9 @@ function RmanualLabor2() {
         }
 	return;
     }
+	if (game.global.challengeActive == "Pandemonium" && !Rshouldpandemonium && getPageSetting('RequipPandemonium') && getPageSetting('RPandemoniumEqStaff') != "undefined" && getPageSetting('RPandemoniumEqLvl') > 0 && game.global.lastClearedCell > 59) {
+		setGather('metal');
+	}
 	var rspecial = '?';
 	if ((Rshouldtimefarm || Rshouldalchfarm) && game.global.mapsActive) {
 		if (Rshouldalchfarm) {
