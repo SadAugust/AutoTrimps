@@ -696,6 +696,8 @@ function RcalcOurDmg(minMaxAvg, equality) {
 	number *= 1 + calcHeirloomBonus('Shield','trimpAttack',1,true) / 100;
 	// Frenzy perk
 	if (getPageSetting('Rcalcfrenzy')) number *= 1 + (0.5 * game.portal.Frenzy.radLevel);
+	//Championism
+	number *= game.portal.Championism.getMult();
 	// Golden Upgrade
 	number *= 1 + game.goldenUpgrades.Battle.currentBonus;
 	// Herbalist Mastery
@@ -814,9 +816,11 @@ function RcalcOurHealth() {
 	health *= autoBattle.bonuses.Stats.getMult();
 	//Shield (Heirloom)
 	health = calcHeirloomBonus("Shield", "trimpHealth", health);
+	//Championism
+	health *= game.portal.Championism.getMult();
 	//Golden Battle
 	if (game.goldenUpgrades.Battle.currentBonus > 0) health *= game.goldenUpgrades.Battle.currentBonus + 1;
-	//Safe Mapping
+	//Safe Mapping - Unsure if needed
 	if (game.talents.mapHealth.purchased && game.global.mapsActive) health *= 2
 	//Cinf score
 	if (game.global.totalSquaredReward > 0) health *= (1 + (game.global.totalSquaredReward / 100));
@@ -1058,6 +1062,8 @@ function getTotalHealthMod() {
 	healthMulti *= autoBattle.bonuses.Stats.getMult();
     // Heirloom Health bonus
     healthMulti *= 1 + calcHeirloomBonus('Shield', 'trimpHealth',1, true) / 100;
+	// Championism
+	healthMulti *= game.portal.Championism.getMult();	
     // Golden Upgrades
     healthMulti *= 1 + game.goldenUpgrades.Battle.currentBonus;
     // Cinf
