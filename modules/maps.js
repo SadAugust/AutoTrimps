@@ -1618,12 +1618,12 @@ function RautoMap() {
 					levelzones = maplevel[timefarmindex];
 					rspecial = game.global.challengeActive == "Daily" ? autoTrimpSettings.Rdtimespecialselection.selected : autoTrimpSettings.Rtimespecialselection.selected;
 					farmzone = timefarmzone;
+					timefarmmap = "timefarming";
 				} else if (Rshouldtributefarm) {
 					maplevel = game.global.challengeActive == "Daily" ? getPageSetting('Rdtributemaplevel') : getPageSetting('Rtributemaplevel');
 					levelzones = maplevel[tributefarmindex];
 					rspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
 					farmzone = tributefarmzone;
-					timefarmmap = "timefarming";
 				}
 				selectedMap = Rshouldfarmmapcreation();
 				
