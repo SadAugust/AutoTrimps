@@ -580,6 +580,11 @@ function RbuyJobs() {
 		allIn = "Farmer";
 		var desiredRatios = [0,1,1,0];
 	}
+	
+	if (game.global.challengeActive == "Pandemonium" && getPageSetting('RequipPandemonium') && getPageSetting('RPandemoniumEqStaff') != "undefined" && getPageSetting('RPandemoniumEqLvl') > 0 && game.global.lastClearedCell > 59) {
+		var desiredRatios = [0,0,0,0];
+		allIn = "Miner";
+	}
 
 	if (allIn != "") {
 		desiredRatios[ratioWorkers.indexOf(allIn)] = 100;
