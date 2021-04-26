@@ -818,6 +818,8 @@ function RcalcOurHealth() {
 	health = calcHeirloomBonus("Shield", "trimpHealth", health);
 	//Championism
 	health *= game.portal.Championism.getMult();
+	//Alchemy
+	health *= alchObj.getPotionEffect("Potion of Strength");
 	//Golden Battle
 	if (game.goldenUpgrades.Battle.currentBonus > 0) health *= game.goldenUpgrades.Battle.currentBonus + 1;
 	//Safe Mapping - Unsure if needed
@@ -839,10 +841,8 @@ function RcalcOurHealth() {
 	if (game.global.challengeActive == "Nurture") health *= game.challenges.Nurture.getStatBoost();
 	//Pressure (Dailies)
 	if (typeof game.global.dailyChallenge.pressure !== 'undefined') health *= (dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks));
-	//Prismatic Shield
-	health *= getEnergyShieldMult();
-	//Shield layer
-	if (Fluffy.isRewardActive('shieldlayer')) health *= 2;
+	//Prismatic Shield && Shield Layer
+	health *= Fluffy.isRewardActive('shieldlayer') ? 1+(getEnergyShieldMult()*2) : 1+getEnergyShieldMult();
     return health;
 }
 
