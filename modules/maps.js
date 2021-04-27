@@ -1271,7 +1271,7 @@ function RautoMap() {
 				if (!go) {
 				mlevels = i;
 					if ((((RcalcEnemyHealth(game.global.world + mlevels)/game.challenges.Pandemonium.getBossMult()) * game.challenges.Pandemonium.getPandMult()*.7) <= ((RcalcOurDmg("avg", false, true) / mapbonusmult / gammaburstmult) * 1.5 * hitsmap))	
-					&& (((((((RcalcBadGuyDmg(null, RgetEnemyMaxAttack((game.global.world + 1), 20, 'Snimp', 1)) * 1.3) / game.challenges.Pandemonium.getBossMult()) * game.challenges.Pandemonium.getPandMult())) * (hitssurv)) <= (RcalcOurHealth() * 2)))) {
+					&& (((((((RcalcBadGuyDmg(null, RgetEnemyMaxAttack((game.global.world + mlevels), 20, 'Snimp', 1)) * 1.3) / game.challenges.Pandemonium.getBossMult()) * game.challenges.Pandemonium.getPandMult())) * (hitssurv)) <= (RcalcOurHealth() * 2)))) {
 						if (i > game.challenges.Pandemonium.pandemonium) {
 							pandemoniumextra = game.challenges.Pandemonium.pandemonium;
 						} else {
