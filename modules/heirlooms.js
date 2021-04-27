@@ -240,6 +240,7 @@ function Rhsnovmdc(){for(loom of game.global.heirloomsCarried)if(loom.name==getP
 function Rhsworldstaff(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('Rhsworldstaff'))return loom;}
 function Rhsmapstaff(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('Rhsmapstaff'))return loom;}
 function Rhstributestaff(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('Rhstributestaff'))return loom;}
+function RPandemoniumstaff(){for(loom of game.global.heirloomsCarried)if(loom.name==getPageSetting('RPandemoniumEqStaff'))return loom;}
 
 function Rhshmayhemequip() {
 	if (Rhshmayhem() != "undefined" && game.global.ShieldEquipped.name != getPageSetting('Rhsmayhem')) {
@@ -279,6 +280,13 @@ function Rhstributestaffequip() {
 	}
 }
 
+function RPandemoniumStaffEquip() {
+	if (RPandemoniumstaff() != "undefined" && game.global.StaffEquipped.name != getPageSetting('RPandemoniumEqStaff')) {
+		selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
+		equipHeirloom();
+	}
+}
+
 function Rheirloomswap() {
 	
     //Swapping Shields
@@ -296,7 +304,10 @@ function Rheirloomswap() {
 	}
     
     //Swapping Staffs
-	if (getPageSetting('Rhsstaff')) {
+	if (game.global.challengeActive == "Pandemonium" && getPageSetting('RequipPandemonium') && getPageSetting('RPandemoniumEqStaff') != "undefined" && getPageSetting('RPandemoniumEqLvl') > 0 && game.global.world >= getPageSetting('RPandemoniumEqLvl') && game.global.lastClearedCell > 59) {
+		RPandemoniumStaffEquip();
+	}
+	else if (getPageSetting('Rhsstaff')) {
 		if (getPageSetting('Rhsworldstaff') != "undefined" && !game.global.mapsActive) {
 			Rhsworldstaffequip();
 		} else if (getPageSetting('Rhsmapstaff') != "undefined" && game.global.mapsActive) {
