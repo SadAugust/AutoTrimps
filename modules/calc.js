@@ -675,9 +675,7 @@ function RcalcOurDmg(minMaxAvg, equality) {
 	// Power
 	number += (number * game.portal.Power.radLevel * game.portal.Power.modifier);
 	// Map Bonus
-	var mapBonus = game.global.mapBonus;
-	if (game.talents.mapBattery.purchased && mapBonus == 10) mapBonus *= 2;
-	number *= 1 + (mapBonus * .2);
+	number *= game.talents.mapBattery.purchased && game.global.mapBonus == 10 ? 5 : 1 + (game.global.mapBonus * .2);
 	// Tenacity
 	number *= game.portal.Tenacity.getMult();
 	// Hunger
@@ -695,7 +693,7 @@ function RcalcOurDmg(minMaxAvg, equality) {
 	// Heirloom (Shield)
 	number *= 1 + calcHeirloomBonus('Shield','trimpAttack',1,true) / 100;
 	// Frenzy perk
-	if (getPageSetting('Rcalcfrenzy')) number *= 1 + (0.5 * game.portal.Frenzy.radLevel);
+	number *= getPageSetting('Rcalcfrenzy') ? 1 + (0.5 * game.portal.Frenzy.radLevel) : 1;
 	//Championism
 	number *= game.portal.Championism.getMult();
 	// Golden Upgrade
@@ -754,7 +752,6 @@ function RcalcOurDmg(minMaxAvg, equality) {
 			number *= dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks);
 		}
 	}
-
 	
     // Equality
 	if (getPageSetting('Rcalcmaxequality') == 1 && !equality) {
@@ -766,7 +763,7 @@ function RcalcOurDmg(minMaxAvg, equality) {
 	}
 
     // Gamma Burst
-	if (getHeirloomBonus("Shield", "gammaBurst") > 0) number *= ((getHeirloomBonus("Shield", "gammaBurst")  /100) / 5);
+	number *= getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0))) >= 5 ? (getHeirloomBonus("Shield", "gammaBurst") / 500) : 1;
 	// Average out crit damage
 	number *= RgetCritMulti();
 
@@ -822,8 +819,8 @@ function RcalcOurHealth() {
 	health *= alchObj.getPotionEffect("Potion of Strength");
 	//Golden Battle
 	if (game.goldenUpgrades.Battle.currentBonus > 0) health *= game.goldenUpgrades.Battle.currentBonus + 1;
-	//Safe Mapping - Unsure if needed
-	if (game.talents.mapHealth.purchased && game.global.mapsActive) health *= 2
+	//Safe Mapping - Don't think it's useful to implement
+	//if (game.talents.mapHealth.purchased && game.global.mapsActive) health *= 2
 	//Cinf score
 	if (game.global.totalSquaredReward > 0) health *= (1 + (game.global.totalSquaredReward / 100));
 	//Revenge Challenge mult
@@ -842,7 +839,7 @@ function RcalcOurHealth() {
 	//Pressure (Dailies)
 	if (typeof game.global.dailyChallenge.pressure !== 'undefined') health *= (dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks));
 	//Prismatic Shield && Shield Layer
-	health *= Fluffy.isRewardActive('shieldlayer') ? 1+(getEnergyShieldMult()*2) : 1+getEnergyShieldMult();
+	health *= Fluffy.isRewardActive('shieldlayer') ? 1 + (getEnergyShieldMult() * 2) : 1 + getEnergyShieldMult();
     return health;
 }
 
