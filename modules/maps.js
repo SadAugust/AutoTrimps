@@ -1245,14 +1245,7 @@ function RautoMap() {
 		var Rdopandemonium = false;
 		Rshouldpandemonium = 0;
 		Rshouldpandemoniumfarm = 0;
-		
-		mapbonusmult = game.talents.mapBattery.purchased && game.global.mapBonus == 10 ? 5 : 1 + (game.global.mapBonus * .2);
-		gammaburstmult = getPageSetting('RPandemoniumHits') < 5 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 20, 'Snimp', 1))) >= 5 ? (1+(getHeirloomBonus("Shield", "gammaBurst")) / 500) : 1;
-		hitsmap = getPageSetting('RPandemoniumHits') > 0 ? getPageSetting('RPandemoniumHits') : 10;
-		hitssurv = getPageSetting('RPandemoniumHits') < 5 ? getPageSetting('RPandemoniumHits') : 5;
-		cankillimprob = ((((RcalcEnemyHealth(game.global.world))*10.83) <= ((RcalcOurDmg("avg", false, true) / gammaburstmult) * hitsmap)) && (((RcalcBadGuyDmg(null, RgetEnemyMaxAttack((game.global.world), 100, 'Improbability', 1)))*1.2) <= (RcalcOurHealth())));
-		
-		Rdopandemonium = (game.global.world >= getPageSetting('RPandemoniumZone') && game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumOn') && game.global.mapsUnlocked && !cankillimprob);
+		Rdopandemonium = (game.global.world >= getPageSetting('RPandemoniumZone') && game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumOn') && game.global.mapsUnlocked);
 		if (Rdopandemonium) {
 			if (game.challenges.Pandemonium.pandemonium > 0 && getPageSetting('RPandemoniumMaps')) {
 				Rshouldpandemonium = true;
@@ -1264,14 +1257,17 @@ function RautoMap() {
 
 		if (Rshouldpandemonium && getPageSetting('RPandemoniumMaps')) {
 			pandemoniumextra = 1;
-			var mlevels = 10;
-			var go = false;
+			mapbonusmult = game.talents.mapBattery.purchased && game.global.mapBonus == 10 ? 5 : 1 + (game.global.mapBonus * .2);
+			gammaburstmult = getPageSetting('RPandemoniumHits') < 5 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 20, 'Snimp', 1))) >= 5 ? (1+(getHeirloomBonus("Shield", "gammaBurst")) / 5) : 1;
+			hitsmap = getPageSetting('RPandemoniumHits') > 0 ? getPageSetting('RPandemoniumHits') : 10;
+			hitssurv = getPageSetting('RPandemoniumHits') < 5 ? getPageSetting('RPandemoniumHits') : 5;
+			go = false;
 			
 			for (var i = 10; 0 < i; i--) {
 				if (!go) {
 				mlevels = i;
-					if ((((RcalcEnemyHealth(game.global.world + mlevels)/game.challenges.Pandemonium.getBossMult()) * game.challenges.Pandemonium.getPandMult()*.7) <= ((RcalcOurDmg("avg", false, true) / mapbonusmult / gammaburstmult) * 1.5 * hitsmap))	
-					&& (((((((RcalcBadGuyDmg(null, RgetEnemyMaxAttack((game.global.world + mlevels), 20, 'Snimp', 1)) * 1.3) / game.challenges.Pandemonium.getBossMult()) * game.challenges.Pandemonium.getPandMult())) * (hitssurv)) <= (RcalcOurHealth() * 2)))) {
+					if ((((RcalcEnemyHealth(game.global.world + mlevels)/game.challenges.Pandemonium.getBossMult()) * game.challenges.Pandemonium.getPandMult() * .7) <= ((RcalcOurDmg("avg", false, true) / mapbonusmult / gammaburstmult) * 1.5 * hitsmap)) 
+					&& (((((((RcalcBadGuyDmg(null, RgetEnemyMaxAttack((game.global.world + mlevels), 20, 'Snimp', 1)) * 1.2) / game.challenges.Pandemonium.getBossMult()) * game.challenges.Pandemonium.getPandMult())) * (hitssurv)) <= (RcalcOurHealth() * 2)))) {
 						if (i > game.challenges.Pandemonium.pandemonium) {
 							pandemoniumextra = game.challenges.Pandemonium.pandemonium;
 						} else {
@@ -1290,16 +1286,15 @@ function RautoMap() {
 		
 		if (!Rshouldpandemonium && getPageSetting('RequipPandemonium') && game.global.lastClearedCell > 60 && game.global.StaffEquipped.name == getPageSetting('RPandemoniumEqStaff') && getPageSetting('RPandemoniumEqLvl') > 5) {
 			if (game.global.world >= getPageSetting('RPandemoniumEqLvl')) {
-				var amt = simpleSecondsLocal('metal', 20);
-				amt = scaleToCurrentMapLocal(amt, null, !game.global.canScryCache);
-				addResCheckMax('metal', amt, null, null, true);
+				var amt_local = simpleSecondsLocal("metal", 20);
+				amt_local = scaleToCurrentMapLocal(amt_local, null, !game.global.canScryCache);
 				var artBoost = Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.radLevel);
 				artBoost *= autoBattle.oneTimers.Artisan.getMult();
-				artBoost *= game.challenges.Pandemonium.getEnemyMult(); 
+				artBoost *= game.challenges.Pandemonium.getEnemyMult();
 				for (var i in RequipmentList) {
 					var nextLevelCost = game.equipment[i].cost[RequipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[RequipmentList[i].Resource][1], game.equipment[i].level) * artBoost;
 					if (game.challenges.Pandemonium.isEquipBlocked(i) || RequipmentList[i].Resource == 'wood') continue;
-					if (nextLevelCost < amt) Rshouldpandemoniumfarm = true;
+					if (nextLevelCost < amt_local) Rshouldpandemoniumfarm = true;
 				}
 			}
 		}
@@ -1597,7 +1592,7 @@ function RautoMap() {
 				}
 			} else if (Rshouldpandemoniumfarm && !Rshouldpandemonium && !Rshouldalchfarm && !Rshouldtimefarm && !Rshouldtributefarm && !Rshouldinsanityfarm && !Rshouldequipfarm && !Rshouldshipfarm && !Rshoulddopraid) {
 				if (game.global.challengeActive == "Pandemonium") {
-					loot = game.global.farmlandsUnlocked ? 2.6 : 1.85
+					loot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.farmlandsUnlocked ? 2.6 : game.singleRunBonuses.goldMaps.owned ? 2.85 : 1.85;
 					for (var map in game.global.mapsOwnedArray) {
 						if (!game.global.mapsOwnedArray[map].noRecycle && ((game.global.world - 1) == game.global.mapsOwnedArray[map].level) && game.global.mapsOwnedArray[map].bonus == "lmc" && game.global.mapsOwnedArray[map].size == 20 && game.global.mapsOwnedArray[map].loot == loot && game.global.mapsOwnedArray[map].difficulty == 0.75) {
 							selectedMap = game.global.mapsOwnedArray[map].id;
