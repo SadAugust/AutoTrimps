@@ -91,6 +91,7 @@ function initializeAllTabs() {
 	createTabs("Raiding", "Raiding - Settings for Raiding");
 	createTabs("Daily", "Dailies - Settings for Dailies");
 	createTabs("C2", "C2 - Settings for C2s");
+	createTabs("C3", "C3 - Settings for C3s and special challenges (Mayhem, Pandemonium)");
 	createTabs("Challenges", "Challenges - Settings for Specific Challenges");
 	createTabs("Combat", "Combat & Stance Settings");
 	createTabs("Windstacking", "Windstacking Settings");
@@ -168,7 +169,7 @@ function initializeAllSettings() {
 	createSetting('AutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Helium Per Hour only <b>portals at cell 1</b> of the first level where your He/Hr went down even slightly compared to the current runs Best He/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting He/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Helium Per Hour', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Custom'], 'Core');
 	createSetting('HeliumHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination'], 'Core');
 	document.getElementById("HeliumHourChallengeLabel").innerHTML = "Portal Challenge:";
-	createSetting('CustomAutoPortal', 'Custom Portal', 'Automatically portal AFTER clearing this level.(ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, 'Core');
+	createSetting('CustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('HeHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Helium per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in helium/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Helium per Hour set)', 'value', '999', null, 'Core');
 	createSetting('HeliumHrBuffer', 'He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
 
@@ -176,7 +177,7 @@ function initializeAllSettings() {
 	document.getElementById('Rdumpgreed').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Radon Per Hour only <b>portals at cell 1</b> of the first level where your Rn/Hr went down even slightly compared to the current runs Best Rn/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting Rn/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Radon Per Hour','Bublé','Melt','Quagmire','Archaeology','Mayhem','Insanity','Nurture','Alchemy','Pandemonium','Custom'], 'Core');
 	createSetting('RadonHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None','Bublé','Melt','Quagmire','Archaeology','Insanity','Nurture','Alchemy'], 'Core');
-	createSetting('RCustomAutoPortal', 'Custom Portal', 'Automatically portal AFTER clearing this level.(ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, 'Core');
+	createSetting('RCustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('RnHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in radon/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set)', 'value', '999', null, 'Core');
 	createSetting('RadonHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
 
@@ -196,7 +197,7 @@ function initializeAllSettings() {
 	$radonsettings.parentNode.style.setProperty('float', 'right');
 	$radonsettings.parentNode.style.setProperty('margin-right', '1vw');
 	$radonsettings.parentNode.style.setProperty('margin-left', '0');
-	
+
 	//Daily
 	//Helium Daily
 	createSetting('buyheliumy', 'Buy Heliumy %', 'Buys the Heliumy bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
@@ -287,7 +288,7 @@ function initializeAllSettings() {
 	createSetting('u2daily', 'Daily in U2', 'If this is on, you will do your daily in U2. ', 'boolean', false, null, 'Daily');
 	createSetting('AutoPortalDaily', ['Daily Portal Off', 'DP: He/Hr', 'DP: Custom'], '<b>DP: He/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
 	createSetting('dHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination'], 'Daily');
-	createSetting('dCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal AFTER clearing this level in dailies. (ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, 'Daily');
+	createSetting('dCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone during dailies. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Daily');
 	createSetting('dHeHrDontPortalBefore', 'D: Don\'t Portal Before', 'Do NOT allow Helium per Hour Daily AutoPortal setting to portal BEFORE this level is reached in dailies. It is an additional check that prevents drops in helium/hr from triggering autoportal in dailies. Set to 0 or -1 to completely disable this check. (only shows up with Helium per Hour set in dailies)', 'value', '999', null, 'Daily');
 	createSetting('dHeliumHrBuffer', 'D: He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
 	createSetting('DailyVoidMod', 'Daily Void Zone', 'What zone to do void maps in dailies. Disable with -1', 'value', -1, null, 'Daily');
@@ -301,7 +302,7 @@ function initializeAllSettings() {
 	createSetting('u1daily', 'Daily in U1', 'If this is on, you will do your daily in U1. ', 'boolean', false, null, 'Daily');
 	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
 	createSetting('RdHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None','Bublé','Melt','Quagmire','Archaeology','Insanity','Nurture'], 'Daily');
-	createSetting('RdCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal AFTER clearing this level in dailies. (ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, 'Daily');
+	createSetting('RdCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone during dailies. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Daily');
 	createSetting('RdHeHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour Daily AutoPortal setting to portal BEFORE this level is reached in dailies. It is an additional check that prevents drops in radon/hr from triggering autoportal in dailies. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set in dailies)', 'value', '999', null, 'Daily');
 	createSetting('RdHeliumHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
 
@@ -312,7 +313,7 @@ function initializeAllSettings() {
 	createSetting('carmormagic', ['C2 Armor Magic Off', 'CAM: Above 80%', 'CAM: H:D', 'CAM: Always'], 'Will buy Armor to try and prevent death on Nom/Tox Challenges under the 3 conditions. <br><b>Above 80%:</b> Will activate at and above 80% of your HZE and when your health is sufficiently low. <br><b>H:D:</b> Will activate at and above the H:D you have defined in maps. <br><b>Always</b> Will activate always. <br>All options will activate at or <b>below 25% of your health.</b> ', 'multitoggle', 0, null, 'C2');
 	createSetting('mapc2hd', 'Mapology H:D', 'Set your H:D ratio for Mapology. Will not go into maps unless your H:D ratio is above this. -1 to use normal behaviour. ', 'value', '-1', null, 'C2');
 	createSetting('novmsc2', 'No VMs', 'Turn off VM running for C2s. Handy for the C2 Runner. ', 'boolean', false, null, 'C2');
-
+	
 	//C2 Runner
 	document.getElementById('novmsc2').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('c2runnerstart', 'C2 Runner', 'Runs the normal C2s in sequence according to difficulty. See C2Table for list. Once zone you have defined has been reached, will portal into next. I will advise you not to touch the challenges (abandoning, doing a different one, etc) if you are running this, it could break it. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
@@ -353,6 +354,7 @@ function initializeAllSettings() {
 	createSetting('RMaxGateway', 'Max Gateways', 'Gateways', 'value', '25', null, 'Buildings');
 	createSetting('RMaxCollector', 'Max Collectors', 'recommend: -1', 'value', '-1', null, 'Buildings');
 	createSetting('RMaxTribute', 'Max Tributes', 'Advanced. recommend: -1 ', 'value', '-1', null, 'Buildings');
+	createSetting('RTributeSpendingPct', 'Tribute Spending pct', 'The percentage of total food you\'d like you spend on Tributes.', 'value', '-1', null, 'Buildings');
 	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Buildings');
 
 	//Smithy Savings
@@ -381,11 +383,9 @@ function initializeAllSettings() {
 	createSetting('RLumberjackRatio', 'Lumberjack Ratio', '', 'value', '1', null, "Jobs");
 	createSetting('RMinerRatio', 'Miner Ratio', '', 'value', '1', null, "Jobs");
 	createSetting('RMaxExplorers', 'Max Explorers', 'Advanced. Cap your explorers (This is an absolute number not a ratio). recommend: -1', 'value', '-1', null, "Jobs");
-	createSetting('Rshipspending', 'Ship percentage', 'What percentage of owned food to spend on Worshippers. -1 for 100% or value between 1-100 for lower.', 'value', '-1', null, "Jobs");
 	//Maintaining ships
-	document.getElementById('RMaxExplorers').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('NoFarmersAbove', 'No Farmers From', 'Stops buying farmers from this zone and above.', 'boolean', false, null, 'Jobs');
-	createSetting('NoFarmerZone', 'NFF: Zone', 'Which zone to stop buying farmers. I.e if this value is 75 it will swap your farmer ratio to 0 at zone 75 and above.','value', '-1', null, 'Jobs');
+	createSetting('NoFarmerZone', 'NFF Zone', 'Which zone to stop buying farmers. I.e if this value is 75 it will swap your farmer ratio to 0 at zone 75 and above.','value', '-1', null, 'Jobs');
 	
 	//Ships
 	document.getElementById('NoFarmerZone').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -394,6 +394,7 @@ function initializeAllSettings() {
 	createSetting('Rshipfarmcell', 'SF: Cell', 'Ship Farm at this Cell. -1 to run them at the default value, which is 1. ', 'value', '-1', null, 'Jobs');
 	createSetting('Rshipfarmamount', 'SF: Amount', 'How many Worshippers to farm up to at zone specified in SF. Can use 50,45,40. These values should match up to your SF zones. If using SF and SF: Amount examples (59 and 50 respectively) it will farm at z59 up to 50 Worshippers. ', 'multiValue', [-1], null, 'Jobs');
 	createSetting('Rshipfarmlevel', 'SF: Map Level', 'What map level to use for SF. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'Jobs');
+	createSetting('Rshipspending', 'SF: Spending Pct', 'What percentage of owned food to spend on Worshippers. -1 for 100% or value between 1-100 for lower.', 'value', '-1', null, "Jobs");
 	createSetting('Rshipfarmfrag', 'SF: Frags', 'Turn this on to farm fragments if you cannot afford the map you have selected for SF. ', 'boolean', false, null, 'Jobs');
 
 	//Gear
@@ -414,19 +415,20 @@ function initializeAllSettings() {
 	createSetting('always2', 'Always Level 2', 'Always buys level 2 of weapons and armor regardless of efficiency', 'boolean', false, null, "Gear");
 
 	//Radon
-	createSetting('Requipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency. ', 'boolean', false, null, "Gear");
-	createSetting('Rdmgcuntoff', 'AE: Cut-off', 'Decides when to buy gear. 1 is default. This means it will take 1 hit to kill an enemy. If zone is below the zone you have defined in AE: Zone then it will only buy equips when needed. ', 'value', '1', null, 'Gear');
-	createSetting('Requipamount', 'AE: Amount', 'How much equipment to level per time. ', 'value', 1, null, "Gear");
-	createSetting('Requipcapattack', 'AE: Weapon Cap', 'What level to stop buying Weapons at. ', 'value', 50, null, "Gear");
-	createSetting('Requipcaphealth', 'AE: Armour Cap', 'What level to stop buying Armour at. ', 'value', 50, null, "Gear");
-	createSetting('Requipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. ', 'value', -1, null, "Gear");
-	createSetting('Requippercent', 'AE: Percent', 'What percent of resources to spend on equipment before the zone you have set in AE: Zone', 'value', 1, null, "Gear");
-	createSetting('Requip2', 'AE: 2', 'Always buys level 2 of weapons and armor regardless of efficiency', 'boolean', true, null, "Gear");
-	createSetting('Requipfarmon', 'AE: Farm', 'AutoEquip Farm. Calculates metal needed to reach the target you have defined in the AEF settings. Will try to buy the best map you can make. Will never make a plus map as this is intended for us on deep push runs. ', 'boolean', false, null, "Gear");
-	createSetting('Requipfarmzone', 'AEF: Zone', 'What zone to start AEF: H:D and AEF: Multiplier. ', 'value', '-1', null, 'Gear');
-	createSetting('RequipfarmHD', 'AEF: H:D', 'What H:D to use for AEF target. ', 'value', '-1', null, 'Gear');
-	createSetting('Requipfarmmult', 'AEF: Multiplier', 'Starting from the zone above AEF: Zone, this setting will multiply the H:D you have set in AEF: H:D. So if AEF: Zone was 100, AEF: H:D was 10, AEF: Multiplier was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low H:D. ', 'value', '-1', null, 'Gear');
-	createSetting('Requipfarmhits', 'AEF: Hits', 'How many hits do you want to kill an enemy in a AEF map. ', 'value', '-1', null, 'Gear');
+	createSetting('Requipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency.', 'boolean', false, null, "Gear");
+	createSetting('Rdmgcuntoff', 'AE: Cut-off', 'Decides when to buy gear. 1 is default. This means it will take 1 hit to kill an enemy. If zone is below the zone you have defined in AE: Zone then it will only buy equips when needed.', 'value', '1', null, 'Gear');
+	createSetting('Requipamount', 'AE: Amount', 'How much equipment to level per time.', 'value', 1, null, "Gear");
+	createSetting('Requipcapattack', 'AE: Weapon Cap', 'What level to stop buying Weapons at.', 'value', 50, null, "Gear");
+	createSetting('Requipcaphealth', 'AE: Armour Cap', 'What level to stop buying Armour at.', 'value', 50, null, "Gear");
+	createSetting('Requipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible.', 'value', -1, null, "Gear");
+	createSetting('Requippercent', 'AE: Percent', 'What percent of resources to spend on equipment before the zone you have set in AE: Zone.', 'value', 1, null, "Gear");
+	createSetting('Requip2', 'AE: 2', 'Always buys level 2 of weapons and armor regardless of efficiency.', 'boolean', true, null, "Gear");
+	createSetting('Requipprestige', 'AE: Prestige', 'Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.', 'boolean', true, null, "Gear");
+	createSetting('Requipfarmon', 'AE: Farm', 'AutoEquip Farm. Calculates metal needed to reach the target you have defined in the AEF settings. Will try to buy the best map you can make. Will never make a plus map as this is intended for us on deep push runs.', 'boolean', false, null, "Gear");
+	createSetting('Requipfarmzone', 'AEF: Zone', 'What zone to start AEF: H:D and AEF: Multiplier.', 'value', '-1', null, 'Gear');
+	createSetting('RequipfarmHD', 'AEF: H:D', 'What H:D to use for AEF target.', 'value', '-1', null, 'Gear');
+	createSetting('Requipfarmmult', 'AEF: Multiplier', 'Starting from the zone above AEF: Zone, this setting will multiply the H:D you have set in AEF: H:D. So if AEF: Zone was 100, AEF: H:D was 10, AEF: Multiplier was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low H:D.', 'value', '-1', null, 'Gear');
+	createSetting('Requipfarmhits', 'AEF: Hits', 'How many hits do you want to kill an enemy in a AEF map.', 'value', '-1', null, 'Gear');
 
 	//Maps
 	//Helium
@@ -454,42 +456,34 @@ function initializeAllSettings() {
 
 	//Radon
 	//General
-	createSetting('RAutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use MaZ, it will not work. ', 'multitoggle', 1, null, "Μaps");
-	createSetting('Rautomapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice. ', 'boolean', true, null, 'Μaps');
-	createSetting('Rmapselection', 'Map Selection', 'Select which you prefer to use. Recommend Plentiful (Gardens) if you have unlocked it. ', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Plentiful", "Farmlands"], 'Μaps');
+	createSetting('RAutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use MaZ, it will not work.', 'multitoggle', 1, null, "Μaps");
+	createSetting('Rautomapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', true, null, 'Μaps');
+	createSetting('Rmapselection', 'Map Selection', 'Select which you prefer to use. Recommend Farmlands if you have unlocked it else Plentiful (Gardens).', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Plentiful", "Farmlands"], 'Μaps');
 	createSetting('RMaxMapBonusAfterZone', 'Max MapBonus From', 'Always gets Max Map Bonus from this zone on. (inclusive and after).<br><b>NOTE:</b> Set -1 to disable entirely (default). Set 0 to use it always. ', 'value', '-1', null, 'Μaps');
-	createSetting('RMaxMapBonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10. ', 'value', '10', null, 'Μaps');
-	createSetting('RMaxMapBonushealth', 'Max MapBonus Health', 'Limit the amount of map bonuses you get when AutoMaps requires more health. Default is 10. ', 'value', '10', null, 'Μaps');
+	createSetting('RMaxMapBonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10.', 'value', '10', null, 'Μaps');
+	createSetting('RMaxMapBonushealth', 'Max MapBonus Health', 'Limit the amount of map bonuses you get when AutoMaps requires more health. Default is 10.', 'value', '10', null, 'Μaps');
 	createSetting('Rhitssurvived', 'Hits Survived', 'Set this value to tell the script how many enemy attacks you wish to survive for. The default is 10. The lower this is the less health the script will get. If you set this too high it will farm too much so please be careful. ', 'value', '10', null, 'Μaps');
-	createSetting('Rmapcuntoff', 'Map Cut Off', 'Decides when to get max map bonus. 4 is default. This means it will take 1 hit to kill an enemy if in D stance. ', 'value', '4', null, 'Μaps');
+	createSetting('Rmapcuntoff', 'Map Cut Off', 'Decides when to get max map bonus. 4 is default. This means it will take 1 hit to kill an enemy if in D stance.', 'value', '4', null, 'Μaps');
 	createSetting('RDisableFarm', 'Farming H:D', 'If H:D goes above this value, it will farm for Damage & Health. The lower this setting, the more it will want to farm. Default is <b>16<b/>. <b>-1 to disable farming!</b>', 'value', -1, null, 'Μaps');
 
 	//Void Maps
 	createSetting('RVoidMaps', 'Void Maps', '<b>0 to disable</b> The zone at which you want all your void maps to be cleared inclusive of the zone you type. Runs them at Cell 70. Use odd zones on Lead.<br>', 'value', '0', null, 'Μaps');
 	createSetting('Rvoidscell', 'Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Μaps');
 	createSetting('RRunNewVoidsUntilNew', 'New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Μaps');
+	//Prismatic Palace
 	createSetting('Rprispalace', 'Prismatic Palace', 'Run Prismatic Palace when its unlocked. ', 'boolean', true, null, 'Μaps');
-
 	//Atlantrimp
-	document.getElementById('Rprispalace').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Atlantrimp', 'Atlantrimp', 'Toggle to use Atlantrimp settings', 'boolean', false, null, 'Μaps');
-	createSetting('ATZone', 'Atlantrimp: Zone', 'Which zone to run atlantrimp', 'value', -1, null, 'Μaps');
-	createSetting('ATCell', 'Atlantrimp: Cell', 'Which cell to run atlantrimp', 'value', '-1', null, 'Μaps');
-
+    createSetting('RAtlantrimp', 'Atlantrimp', '-1 to disable. When to run Atlantrimp. Use it like this: 50,91. The first number is what zone Atlantrimp should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Atlantrimp at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
 	//Melting Point
-	createSetting('MeltingPoint', 'Melting Point', 'Toggle to use Atlantrimp settings', 'boolean', false, null, 'Μaps');
-	createSetting('MPZone', 'MP Zone', 'Which zone to run Melting Point', 'value', '-1', null, 'Μaps');
-	createSetting('MPCell', 'MP: Cell', 'Which cell to run Melting Point', 'value', '-1', null, 'Μaps');
-
+    createSetting('RMeltingPoint', 'Melting Point', '-1 to disable. When to run Melting Point. Use it like this: 50,91. The first number is what zone Melting Point should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Melting Point at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
 	//Tribute Farming
-	document.getElementById('MPCell').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('RMeltingPoint').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rtributefarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Μaps');
 	createSetting('Rtributefarmzone', 'TF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
 	createSetting('Rtributefarmvalue', 'TF: Tributes', 'How many tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [-1], null, 'Μaps');
 	createSetting('Rtributefarmmets', 'TF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [-1], null, 'Μaps');
 	createSetting('Rtributemaplevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'Μaps');
 	createSetting('Rtributefarmcell', 'TF: Cell', 'Tribute Farm at this Cell. -1 to run them at the default value, which is 81. ', 'value', '-1', null, 'Μaps');
-
 	//Time Farming
 	document.getElementById('Rtributefarmcell').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rtimefarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'Μaps');
@@ -567,12 +561,48 @@ function initializeAllSettings() {
 	createSetting('dATGA2timer', 'ATGA: T: Dailies', '<b>ATGA Timer: Normal Dailies</b><br>ATGA will use this value for normal Dailies such as ones without plague etc, overwriting your default timer. Useful for pushing your dailies that extra bit at the end. Overwrites Default, Before Z and After Z. ', 'value', '-1', null, 'ATGA');
 	createSetting('dhATGA2timer', 'ATGA: T: D: Hard', '<b>ATGA Timer: Hard Dailies</b><br>ATGA will use this value in Dailies that are considered Hard. Such Dailies include plaged, bloodthirst and Dailies with a lot of negative mods. Overwrites Default, Before Z and After Z and normal Daily ATGA Timer. ', 'value', '-1', null, 'ATGA');
 
-	//C2/C3
 	//C2 Timers
 	document.getElementById('dhATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('cATGA2timer', 'ATGA: T: C2', '<b>ATGA Timer: C2s</b><br>ATGA will use this value in C2s. Overwrites Default, Before Z and After Z. ', 'value', '-1', null, 'ATGA');
 	createSetting('chATGA2timer', 'ATGA: T: C: Hard', '<b>ATGA Timer: Hard C2s</b><br>ATGA will use this value in C2s that are considered Hard. Electricity, Nom, Toxicity. Overwrites Default, Before Z and After Z and C2 ATGA', 'value', '-1', null, 'ATGA');
 
+	//C3
+	createSetting('c3mapbonuszone', 'Max MapBonus From', 'Always gets Max Map Bonus from this zone on. (inclusive and after).<br><b>NOTE:</b> Set -1 to disable entirely (default). Set 0 to use it always. ', 'value', -1, null, 'C3');
+	createSetting('c3mapbonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10.', 'value', -1, null, 'C3');
+	createSetting('c3finishrun', 'Finish C3', 'Finish / Abandon Challenge3 (any) when this zone is reached, if you are running one. Does not affect Non-C3 runs.', 'value', -1, null, 'C3');
+	createSetting('c3meltingpoint', 'Melt Smithy', 'Run the Melting Point map to gain an extra Smithies when at or above this value on C3 runs.', 'value', -1, null, 'C3');
+	createSetting('c3buildings', 'Building max purchase', 'When in a C3 or special challenge  (Mayhem, Panda) run will spend 99% of resources on buildings regardless of your other designated caps until the zone you specify in the Buy Buildings Till setting.','boolean',false,null,'C3');
+	createSetting('c3buildingzone', 'Buy buildings till', 'When in a C3 or special challenge  (Mayhem, Panda) will spend 99% of resource on buildings until this zone.','value',-1,null,'C3');
+	createSetting('c3GM_ST', ['c3: GM/ST', 'c3: Golden Maps', 'c3: Sharp Trimps', 'c3: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during C3 or special challenge (Mayhem, Pandemonium) runs.', 'multitoggle', 0, null, 'C3');
+	
+	document.getElementById('c3GM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('Rc3timefarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'C3');
+	createSetting('Rc3timefarmzone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
+	createSetting('Rc3timefarmtime', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [-1], null, 'C3');
+	createSetting('Rc3timemaplevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'C3');
+	createSetting('Rc3timefarmcell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'C3');
+	createSetting('Rc3timespecialselection', 'TF: Special', 'Select which Special to use. May bug out if you cannot afford selected. Also overrides your autojobs to buy workers relating to the resource you want to farm. I.e if LSC is chosen all workers will be hired as farmers and rest fired for the duration of farm. <br> 0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'C3');
+	//Mayhem
+	document.getElementById('Rc3timespecialselection').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('Rmayhemon', 'Mayhem', 'Turn on Mayhem settings. ', 'boolean', false, null, 'C3');
+	createSetting('Rmayhemattack', 'M: Attack', 'Turn this on to ignore your farm settings so It will do maps if you cannot survive the hits you have defined in Maps. ', 'boolean', false, null, 'C3');
+	createSetting('Rmayhemabcut', 'M: Attack Boss', 'What cut-off to use when farming for the boss using M: Attack. If this setting is 100, the script will farm till you can kill the boss in 100 average hits. ', 'value', '-1', null, 'C3');
+	createSetting('Rmayhemamcut', 'M: Attack Map', 'What cut-off to use when farming maps using M: Attack and M: Smart Map. If this setting is 10, the script will do maps you can kill cells in 10 average hits. ', 'value', '-1', null, 'C3');
+	createSetting('Rmayhemhealth', 'M: Health', 'Turn this on to ignore your farm settings so It will do maps if your HD is above the target you have defined in Maps. ', 'boolean', false, null, 'C3');
+	createSetting('Rmayhemhcut', 'M: Health Cut-off', 'What cut-off to use when using M: Health. ', 'value', '-1', null, 'C3');
+	createSetting('Rmayhemmap', ['M: Maps Off', 'M: Highest Map', 'M: Smart Map'], 'Control what maps you do to farm M: Attack and/or M: Health. M: Highest map always selects the highest map you have whether it be from Praiding, Time Farming or any you have manually created. M: Smart Map attempts to create a map best suited to the situation. Will calculate if you can survive and kill the map, and will try to buy all the necessary map attributes such as FA. ', 'multitoggle', 0, null, 'C3');
+	//Pandemonium
+	document.getElementById('Rmayhemmap').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('RPandemoniumOn', 'Pandemonium', 'Turn on Pandemonium settings.', 'boolean', false, null, 'C3');
+	createSetting('RPandemoniumMaps', 'P: Mapping', 'Turn this on to automate mapping Pandemonium. Use the P: Attacks to define the maximum amount of hits an enemy in a map should take to kill. Will only purchase perfect maps.', 'boolean', false, null, 'C3');
+	createSetting('RPandemoniumZone', 'P: Zone', 'What zone to start Pandemonium mapping at. Will ignore Pandemonium stacks below this zone.', 'value', '-1', null, 'C3');
+	createSetting('RPandemoniumHits', 'P: Hits', 'How many hits an enemy in a plus map should take to kill. Will select up to +10 level maps. If you cannot kill an enemy in the maximum number of hits in any plus map, will try to run a +1 map anyway.', 'value', '-1', null, 'C3');
+	createSetting('RPandemoniumAutoEquip', ['P: AutoEquip Off', 'P: AutoEquip', 'P AE: Cache', 'P AE: Jestimp'], '<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency, requires AutoEquip setting in Gear tab turned on to work.<br><b>P AE: Cache</b><br>Will provide settings to run maps if the cost of equipment levels is less than a single large metal cache or a prestige costs less than a Jestimp proc.<br/>Additionally will also override worker settings to ensure that you farm as much metal as possible.<br/><b>P AE: Jestimp</b><br/>Provides a setting for Jestimp farming from a set zone which will change the equipment buying condition from if they cost less than a large metal cache to if they cost less than the metal you\'d gain from a Jestimp kill. Recommended to only use during late Pandemonium runs.', 'multitoggle', 0, null, 'C3');
+	createSetting('RPandemoniumAEZone', 'P: AE Zone', 'Which zone you would like to start farming as much gear as possible from.', 'value', '-1', null, 'C3');
+	createSetting('RPandemoniumAEJestimpZone', 'P: AE Jestimp Zone', 'Which zone you would like to start farming Jestimps for equipment instead of just caches as much gear as possible from.', 'value', '140', null, 'C3');
+	createSetting('RPandemoniumAEStaff', 'P: AE staff', 'The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.', 'textValue', 'undefined', null, 'C3');
+	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'C3');
+	
 	//Challenges
 	//Quagmire
 	createSetting('Rblackbog', 'Quagmire', 'Enable Bog Running for Quagmire. ', 'boolean', false, null, 'Challenges');
@@ -586,18 +616,8 @@ function initializeAllSettings() {
 	createSetting('Rarchstring2', 'Second String', 'Second string to use in Archaeology. Put the zone you want to stop using this string and start using the third string (Make sure the third string has a value) at the start. I.e: 94,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('Rarchstring3', 'Third String', 'Third string to use in Archaeology. Make sure this is just your Archaeology string and nothing else. I.e: 10a,10e ', 'textValue', 'undefined', null, 'Challenges');
 
-	//Mayhem
-	document.getElementById('Rarchstring3').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rmayhemon', 'Mayhem', 'Turn on Mayhem settings. ', 'boolean', false, null, 'Challenges');
-	createSetting('Rmayhemattack', 'M: Attack', 'Turn this on to ignore your farm settings so It will do maps if you cannot survive the hits you have defined in Maps. ', 'boolean', false, null, 'Challenges');
-	createSetting('Rmayhemabcut', 'M: Attack Boss', 'What cut-off to use when farming for the boss using M: Attack. If this setting is 100, the script will farm till you can kill the boss in 100 average hits. ', 'value', '-1', null, 'Challenges');
-	createSetting('Rmayhemamcut', 'M: Attack Map', 'What cut-off to use when farming maps using M: Attack and M: Smart Map. If this setting is 10, the script will do maps you can kill cells in 10 average hits. ', 'value', '-1', null, 'Challenges');
-	createSetting('Rmayhemhealth', 'M: Health', 'Turn this on to ignore your farm settings so It will do maps if your HD is above the target you have defined in Maps. ', 'boolean', false, null, 'Challenges');
-	createSetting('Rmayhemhcut', 'M: Health Cut-off', 'What cut-off to use when using M: Health. ', 'value', '-1', null, 'Challenges');
-	createSetting('Rmayhemmap', ['M: Maps Off', 'M: Highest Map', 'M: Smart Map'], 'Control what maps you do to farm M: Attack and/or M: Health. M: Highest map always selects the highest map you have whether it be from Praiding, Time Farming or any you have manually created. M: Smart Map attempts to create a map best suited to the situation. Will calculate if you can survive and kill the map, and will try to buy all the necessary map attributes such as FA. ', 'multitoggle', 0, null, 'Challenges');
-
 	//Storm
-	document.getElementById('Rmayhemmap').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('Rarchstring3').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rstormon', 'Storm', 'Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ', 'boolean', false, null, 'Challenges');
 	createSetting('Rstormzone', 'S: Zone', 'What zone to start S: H:D and S: Multiplier. ', 'value', '-1', null, 'Challenges');
 	createSetting('RstormHD', 'S: H:D', 'What H:D to use inside Storm. ', 'value', '-1', null, 'Challenges');
@@ -617,19 +637,9 @@ function initializeAllSettings() {
 	createSetting('Rexterminateon', 'Exterminate', 'Turn on Exterminate settings. This also controls the entireity of Exterminate. If you turn this off it will not calculate Exterminate.', 'boolean', false, null, 'Challenges');
 	createSetting('Rexterminatecalc', 'E: Calc', 'Calculate Exterminate enemies instead of the usual ones. May improve your challenge experience. ', 'boolean', false, null, 'Challenges');
 	createSetting('Rexterminateeq', 'E: Equality', 'Will manage your equality \'better\' inside the challenge. When you have the experienced buff it will turn it off, when you dont it will turn it on and let it build up.', 'boolean', false, null, 'Challenges');
-	
-	//Pandemonium
-	document.getElementById('Rexterminateeq').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('RPandemoniumOn', 'Pandemonium', 'Turn on Pandemonium settings.', 'boolean', false, null, 'Challenges');
-	createSetting('RPandemoniumMaps', 'P: Mapping', 'Turn this on to automate mapping Pandemonium. Use the P: Attacks to define the maximum amount of hits an enemy in a map should take to kill.', 'boolean', false, null, 'Challenges');
-	createSetting('RPandemoniumZone', 'P: Zone', 'What zone to start Pandemonium mapping at. Will ignore Pandemonium stacks below this zone.', 'value', '-1', null, 'Challenges');
-	createSetting('RPandemoniumHits', 'P: Hits', 'How many hits an enemy in a plus map should take to kill. Will select up to +10 level maps. If you cannot kill an enemy in the maximum number of hits in any plus map, will try to run a +1 map anyway.', 'value', '-1', null, 'Challenges');
-	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'Challenges');
-	createSetting('RequipPandemonium', 'P: AutoEquip', 'Always buys equipment during Pandemonium regardless of efficiency, requires AutoEquip setting in Gear tab turned on to work.', 'boolean', true, null, "Challenges");
-	createSetting('RPandemoniumGM_ST', ['P: GM/ST', 'P: Golden Maps', 'P: Sharp Trimps', 'P: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during Pandemonium.', 'multitoggle', 0, null, 'Challenges');
-	
+		
 	//Alchemy
-	document.getElementById('RPandemoniumGM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('Rexterminateeq').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAlchOn', 'Alchemy', 'Turn on Alchemy settings. This also controls the entireity of Alchemy. If you turn this off it will not do any specific farming during the challenge.', 'boolean', false, null, 'Challenges');
 	createSetting('Ralchfarmstack', 'AF: Potions', 'How many levels of a potion to farm at zone specified in AF. You must pair a potion with a level here. Example: h15,g20,s15,h17,g22,v15,s17. This will farm Herby potion up to level 15 on the first AF: Zone, Gaseous potion to level 20 and so on.', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('RAlchZone', 'AF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Challenges');
@@ -1274,6 +1284,9 @@ function updateCustomButtons() {
 	if (document.getElementById("tabNature") != null) {
 		document.getElementById("tabNature").style.display = radonon ? "none" : "";
 	}
+	if (document.getElementById("tabC3") != null) {
+		document.getElementById("tabC3").style.display = !radonon ? "none" : "";
+	}
 	if (document.getElementById("tabChallenges") != null) {
 		document.getElementById("tabChallenges").style.display = !radonon ? "none" : "";
 	}
@@ -1415,17 +1428,35 @@ function updateCustomButtons() {
 	(radonon && rdtimeon) ? turnOn('Rdtimefarmcell'): turnOff('Rdtimefarmcell');
 	(radonon && rdtimeon) ? turnOn('Rdtimespecialselection'): turnOff('Rdtimespecialselection');
 	(radonon && rdtimeon) ? turnOn('Rdtimegatherselection'): turnOff('Rdtimegatherselection');
-
+	
 	//C2
 	!radonon ? turnOn('FinishC2'): turnOff('FinishC2');
 	!radonon ? turnOn('buynojobsc'): turnOff('buynojobsc');
-	!radonon ? turnOn('carmormagic'): turnOff('carmormagic');
+	!radonon ? turnOn('cfightforever'): turnOff('cfightforever');
 	!radonon ? turnOn('carmormagic'): turnOff('carmormagic');
 	!radonon ? turnOn('mapc2hd'): turnOff('mapc2hd');
 	!radonon ? turnOn('novmsc2'): turnOff('novmsc2');
 	!radonon ? turnOn('c2runnerstart'): turnOff('c2runnerstart');
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerportal'): turnOff('c2runnerportal');
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerpercent'): turnOff('c2runnerpercent');
+	
+	//C3
+	radonon ? turnOn('c3mapbonuszone'): turnOff('c3mapbonuszone');
+	radonon ? turnOn('c3mapbonuslimit'): turnOff('c3mapbonuslimit');
+	radonon ? turnOn('c3finishrun'): turnOff('c3finishrun');
+	radonon ? turnOn('c3meltingpoint'): turnOff('c3meltingpoint');
+	radonon ? turnOn('c3buildings'): turnOff('c3buildings');
+	radonon && getPageSetting('c3buildings') ? turnOn('c3buildingzone'): turnOff('c3buildingzone');
+	radonon ? turnOn('c3GM_ST'): turnOff('c3GM_ST');
+
+	//C3 Time Farm
+	radonon ? turnOn('Rc3timefarm'): turnOff('Rc3timefarm');
+	var rtimeon = getPageSetting('Rc3timefarm');
+	(radonon && rtimeon) ? turnOn('Rc3timefarmzone'): turnOff('Rc3timefarmzone');
+	(radonon && rtimeon) ? turnOn('Rc3timefarmtime'): turnOff('Rc3timefarmtime');
+	(radonon && rtimeon) ? turnOn('Rc3timemaplevel'): turnOff('Rc3timemaplevel');
+	(radonon && rtimeon) ? turnOn('Rc3timefarmcell'): turnOff('Rc3timefarmcell');
+	(radonon && rtimeon) ? turnOn('Rc3timespecialselection'): turnOff('Rc3timespecialselection');
 
 	//Buildings
 	!radonon ? turnOn('BuyBuildingsNew'): turnOff('BuyBuildingsNew');
@@ -1452,16 +1483,18 @@ function updateCustomButtons() {
 
 	//RBuildings
 	radonon ? turnOn('RBuyBuildingsNew'): turnOff('RBuyBuildingsNew');
-	radonon ? turnOn('RMaxHut') : turnOff('RMaxHut');
-	radonon ? turnOn('RMaxHouse') : turnOff('RMaxHouse');
-	radonon ? turnOn('RMaxMansion') : turnOff('RMaxMansion');
-	radonon ? turnOn('RMaxHotel') : turnOff('RMaxHotel');
-	radonon ? turnOn('RMaxResort') : turnOff('RMaxResort');
-	radonon ? turnOn('RMaxGateway') : turnOff('RMaxGateway');
-	radonon ? turnOn('RMaxCollector') : turnOff('RMaxCollector');
-	radonon ? turnOn('RMaxTribute') : turnOff('RMaxTribute');
-	radonon ? turnOn('RSpendTribute') : turnOff('RSpendTribute');
-	radonon ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
+	var buildingstoggle = getPageSetting('RBuyBuildingsNew');
+	radonon && buildingstoggle ? turnOn('RMaxHut') : turnOff('RMaxHut');
+	radonon && buildingstoggle ? turnOn('RMaxHouse') : turnOff('RMaxHouse');
+	radonon && buildingstoggle ? turnOn('RMaxMansion') : turnOff('RMaxMansion');
+	radonon && buildingstoggle ? turnOn('RMaxHotel') : turnOff('RMaxHotel');
+	radonon && buildingstoggle ? turnOn('RMaxResort') : turnOff('RMaxResort');
+	radonon && buildingstoggle ? turnOn('RMaxGateway') : turnOff('RMaxGateway');
+	radonon && buildingstoggle ? turnOn('RMaxCollector') : turnOff('RMaxCollector');
+	radonon && buildingstoggle ? turnOn('RMaxTribute') : turnOff('RMaxTribute');
+	radonon && buildingstoggle ? turnOn('RTributeSpendingPct') : turnOff('RTributeSpendingPct');
+	radonon && buildingstoggle ? turnOn('RSpendTribute') : turnOff('RSpendTribute');
+	radonon && buildingstoggle ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
 	radonon ? turnOn('Rsmithylogic') : turnOff('Rsmithylogic');
 	radonon && getPageSetting('Rsmithylogic') ? turnOn('Rsmithynumber') : turnOff('Rsmithynumber');
 	radonon && getPageSetting('Rsmithylogic') ? turnOn('Rsmithypercent') : turnOff('Rsmithypercent');
@@ -1520,6 +1553,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Requipon') ? turnOn('Requipzone'): turnOff('Requipzone');
 	radonon && getPageSetting('Requipon') ? turnOn('Requippercent'): turnOff('Requippercent');
 	radonon && getPageSetting('Requipon') ? turnOn('Requip2'): turnOff('Requip2');
+	radonon && getPageSetting('Requipon') ? turnOn('Requipprestige'): turnOff('Requipprestige');
 	radonon && getPageSetting('Requipon') ? turnOn('Rdmgcuntoff'): turnOff('Rdmgcuntoff');
 	
 	radonon ? turnOn('Requipfarmon'): turnOff('Requipfarmon');
@@ -1562,18 +1596,15 @@ function updateCustomButtons() {
 	radonon ? turnOn('Rmapcuntoff'): turnOff('Rmapcuntoff');
 	radonon ? turnOn('RDisableFarm'): turnOff('RDisableFarm');
 
-	//Melting Points
-	radonon ? turnOn('MeltingPoint') : turnOff('MeltingPoint');
-	var mpon = getPageSetting('MeltingPoint');
-	radonon && mpon ? turnOn('MPZone') : turnOff('MPZone');
-	radonon && mpon ? turnOn('MPCell') : turnOff('MPCell');
+	radonon ? turnOn('RVoidMaps'): turnOff('RVoidMaps');
+	radonon ? turnOn('Rvoidscell'): turnOff('Rvoidscell');
+	radonon ? turnOn('RRunNewVoidsUntilNew'): turnOff('RRunNewVoidsUntilNew');
+	radonon && game.portal.Prismal.radLevel < 50 ? turnOn('Rprispalace'): turnOff('Rprispalace');
 
+	//Melting Point
+	radonon ? turnOn('RMeltingPoint') : turnOff('RMeltingPoint');
 	//Atlantrimp
-	radonon ? turnOn('Atlantrimp') : turnOff('Atlantrimp');
-	var aton = getPageSetting('Atlantrimp');
-	radonon && aton ? turnOn('ATZone') : turnOff('ATZone');
-	radonon && aton ? turnOn('ATCell') : turnOff('ATCell');
-
+	radonon ? turnOn('RAtlantrimp') : turnOff('RAtlantrimp');
 	//Tribute Farming
 	radonon ? turnOn('Rtributefarm'): turnOff('Rtributefarm');
 	var rtributeon = getPageSetting('Rtributefarm');
@@ -1582,7 +1613,6 @@ function updateCustomButtons() {
 	(radonon && rtributeon) ? turnOn('Rtributefarmmets'): turnOff('Rtributefarmmets');
 	(radonon && rtributeon) ? turnOn('Rtributemaplevel'): turnOff('Rtributemaplevel');
 	(radonon && rtributeon) ? turnOn('Rtributefarmcell'): turnOff('Rtributefarmcell');
-
 	//Time Farming
 	radonon ? turnOn('Rtimefarm'): turnOff('Rtimefarm');
 	var rtimeon = getPageSetting('Rtimefarm');
@@ -1591,11 +1621,6 @@ function updateCustomButtons() {
 	(radonon && rtimeon) ? turnOn('Rtimemaplevel'): turnOff('Rtimemaplevel');
 	(radonon && rtimeon) ? turnOn('Rtimefarmcell'): turnOff('Rtimefarmcell');
 	(radonon && rtimeon) ? turnOn('Rtimespecialselection'): turnOff('Rtimespecialselection');
-
-	radonon ? turnOn('RVoidMaps'): turnOff('RVoidMaps');
-	radonon ? turnOn('Rvoidscell'): turnOff('Rvoidscell');
-	radonon ? turnOn('RRunNewVoidsUntilNew'): turnOff('RRunNewVoidsUntilNew');
-	radonon ? turnOn('Rprispalace'): turnOff('Rprispalace');
 
 	//Spire
 	!radonon ? turnOn('MaxStacksForSpire'): turnOff('MaxStacksForSpire');
@@ -1724,9 +1749,11 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMaps') : turnOff('RPandemoniumMaps');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumZone') : turnOff('RPandemoniumZone');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumHits') : turnOff('RPandemoniumHits');
+	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip'): turnOff('RPandemoniumAutoEquip');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 0 ? turnOn('RPandemoniumAEZone'): turnOff('RPandemoniumAEZone');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 2 ? turnOn('RPandemoniumAEJestimpZone'): turnOff('RPandemoniumAEJestimpZone');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 0 ? turnOn('RPandemoniumAEStaff'): turnOff('RPandemoniumAEStaff');
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
-	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RequipPandemonium'): turnOff('RequipPandemonium');
-	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumGM_ST') : turnOff('RPandemoniumGM_ST');
 	
 	//Alchemy
 	radonon ? turnOn('RAlchOn') : turnOff('RAlchOn');
@@ -1881,7 +1908,7 @@ function updateCustomButtons() {
 	(keepcoreenable) ? turnOn('slot2modcr') : turnOff('slot2modcr');
 	(keepcoreenable) ? turnOn('slot3modcr') : turnOff('slot3modcr');
 	(keepcoreenable) ? turnOn('slot4modcr') : turnOff('slot4modcr');
-
+	
 	//Dropdowns
 	document.getElementById('AutoPortal').value = autoTrimpSettings.AutoPortal.selected;
 	document.getElementById('HeliumHourChallenge').value = autoTrimpSettings.HeliumHourChallenge.selected;
@@ -1893,6 +1920,7 @@ function updateCustomButtons() {
 	document.getElementById('Rmapselection').value = autoTrimpSettings.Rmapselection.selected;
 	document.getElementById('Rtimespecialselection').value = autoTrimpSettings.Rtimespecialselection.selected;
 	document.getElementById('Rdtimespecialselection').value = autoTrimpSettings.Rdtimespecialselection.selected;
+	document.getElementById('Rc3timespecialselection').value = autoTrimpSettings.Rc3timespecialselection.selected;
 	document.getElementById('RAlchSpecial').value = autoTrimpSettings.RAlchSpecial.selected;
 	document.getElementById('Prestige').value = autoTrimpSettings.Prestige.selected;
 	//document.getElementById('RPrestige').value = autoTrimpSettings.RPrestige.selected;
