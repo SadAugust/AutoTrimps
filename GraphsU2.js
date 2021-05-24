@@ -1,4 +1,4 @@
-var basepath = 'https://zorn192.github.io/AutoTrimps/';
+var basepath = 'https://SadAugust.github.io/AutoTrimps_Local/';
 var allSaveData2 = [];
 var graph2Data2 = [];
 var tmpGraphData2 = JSON.parse(localStorage.getItem('allSaveData2'));
