@@ -1,5 +1,5 @@
 //Initialize the saved data objects, and load data/grab from browser if found.
-var basepath = 'https://zorn192.github.io/AutoTrimps/';
+var basepath = 'https://192.168.0.101:8887/AutoTrimps_Local/';
 function safeSetItems(name,data) {
     try {
         localStorage.setItem(name, data);
@@ -21,11 +21,11 @@ function debug2(message, type, lootIcon) {
 var MODULES = {};
 
 //yes
-var allSaveData=[],graphData=[],tmpGraphData=JSON.parse(localStorage.getItem('allSaveData'));null!==tmpGraphData&&(console.log('Graphs: Found allSaveData (portal runs data). Yay!'),allSaveData=tmpGraphData),MODULES.graphs={},MODULES.graphs.useDarkAlways=!1;var head=document.getElementsByTagName('head')[0],chartscript=document.createElement('script');chartscript.type='text/javascript',chartscript.src='https://code.highcharts.com/highcharts.js',head.appendChild(chartscript);var newItem=document.createElement('TD');newItem.appendChild(document.createTextNode('Graphs')),newItem.setAttribute('class','btn btn-default'),newItem.setAttribute('onclick','autoToggleGraph(); drawGraph();');var settingbarRow=document.getElementById('settingsTable').firstElementChild.firstElementChild;settingbarRow.insertBefore(newItem,settingbarRow.childNodes[10]),document.getElementById('settingsRow').innerHTML+='<div id="graphParent" style="display: none; height: 600px; overflow: auto;"><div id="graph" style="margin-bottom: 10px;margin-top: 5px; height: 530px;"></div>',document.getElementById('graphParent').innerHTML+='<div id="graphFooter" style="height: 50px;font-size: 1em;"><div id="graphFooterLine1" style="display: -webkit-flex;flex: 0.75;flex-direction: row; height:30px;"></div><div id="graphFooterLine2"></div></div>';var $graphFooter=document.getElementById('graphFooterLine1'),graphList=['Helium - He/Hr','Helium - Total','HeHr % / LifetimeHe','He % / LifetimeHe','Radon - Rn/Hr','Radon - Total','RnHr % / LifetimeRn','Rn % / LifetimeRn','Radon - Rn/Hr Instant','Clear Time','Cumulative Clear Time','Run Time','Map Bonus','Void Maps','Void Map History','Loot Sources','Coordinations','Nullifium Gained','Dark Essence PerHour','OverkillCells','Magmite','Magmamancers','Fluffy XP','Fluffy XP PerHour','Scruffy XP','Scruffy XP PerHour','Nurseries','Amalgamators'],$graphSel=document.createElement('select');for(var item in $graphSel.id='graphSelection',$graphSel.setAttribute('style',''),$graphSel.setAttribute('onchange','drawGraph()'),graphList){var $opt=document.createElement('option');$opt.value=graphList[item],$opt.text=graphList[item],$graphSel.appendChild($opt)}$graphFooter.appendChild($graphSel),$graphFooter.innerHTML+='<div><button onclick="drawGraph(true,false)" style="margin-left:0.5em; width:2em;">\u2191</button></div><div><button onclick="drawGraph(false,true)" style="margin-left:0.5em; width:2em;">\u2193</button></div><div><button onclick="drawGraph()" style="margin-left:0.5em;">Refresh</button></div><div style="flex:0 100 5%;"></div><div><input type="checkbox" id="clrChkbox" onclick="toggleClearButton();"></div><div style="margin-left: 0.5vw;"><button id="clrAllDataBtn" onclick="clearData(null,true); drawGraph();" class="btn" disabled="" style="flex:auto; padding: 2px 6px;border: 1px solid white;">Clear All Previous Data</button></div><div style="flex:0 100 5%;"></div><div style="flex:0 2 3.5vw;"><input style="width:100%;min-width: 40px;" id="deleteSpecificTextBox"></div><div style="flex:auto; margin-left: 0.5vw;"><button onclick="deleteSpecific(); drawGraph();">Delete Specific Portal</button></div><div style="flex:0 100 5%;"></div><div style="flex:auto;"><button  onclick="GraphsImportExportTooltip(\'ExportGraphs\', null, \'update\')" onmouseover=\'tooltip("Tips", "customText", event, "Export Graph Database will make a backup of all the graph data to a text string.<b>DISCLAIMER:</b> Takes quite a long time to generate.")\' onmouseout=\'tooltip("hide")\'>Export your Graph Database</button></div><div style="float:right; margin-right: 0.5vw;"><button onclick="addGraphNoteLabel()">Add Note/Label</button></div><div style="float:right; margin-right: 0.5vw;"><button onclick="toggleSpecificGraphs()">Invert Selection</button></div><div style="float:right; margin-right: 1vw;"><button onclick="toggleAllGraphs()">All Off/On</button></div>',document.getElementById('graphFooterLine2').innerHTML+='<span style="float: left;" onmouseover=\'tooltip("Tips", "customText", event, "You can zoom by dragging a box around an area. You can turn portals off by clicking them on the legend. Quickly view the last portal by clicking it off, then Invert Selection. Or by clicking All Off, then clicking the portal on. To delete a portal, Type its portal number in the box and press Delete Specific. Using negative numbers in the Delete Specific box will KEEP that many portals (starting counting backwards from the current one), ie: if you have Portals 1000-1015, typing -10 will keep 1005-1015. There is a browser data storage limitation of 10MB, so do not exceed 20 portals-worth of data.")\' onmouseout=\'tooltip("hide")\'>Tips: Hover for usage tips.</span><input style="height: 20px; float: right; margin-right: 0.5vw;" type="checkbox" id="rememberCB"><span style="float: right; margin-right: 0.5vw;">Try to Remember Which Portals are Selected when switching between Graphs:</span><input onclick="toggleDarkGraphs()" style="height: 20px; float: right; margin-right: 0.5vw;" type="checkbox" id="blackCB"><span style="float: right; margin-right: 0.5vw;">Black Graphs:</span>';
+var allSaveData=[],graphData=[],tmpGraphData=JSON.parse(localStorage.getItem('allSaveData'));null!==tmpGraphData&&(console.log('Graphs: Found allSaveData (portal runs data). Yay!'),allSaveData=tmpGraphData),MODULES.graphs={},MODULES.graphs.useDarkAlways=!1;var head=document.getElementsByTagName('head')[0],chartscript=document.createElement('script');chartscript.type='text/javascript',chartscript.src='https://192.168.0.101:8887/AutoTrimps_Local/highcharts.js',head.appendChild(chartscript);var newItem=document.createElement('TD');newItem.appendChild(document.createTextNode('Graphs')),newItem.setAttribute('class','btn btn-default'),newItem.setAttribute('onclick','autoToggleGraph(); drawGraph();');var settingbarRow=document.getElementById('settingsTable').firstElementChild.firstElementChild;settingbarRow.insertBefore(newItem,settingbarRow.childNodes[10]),document.getElementById('settingsRow').innerHTML+='<div id="graphParent" style="display: none; height: 600px; overflow: auto;"><div id="graph" style="margin-bottom: 10px;margin-top: 5px; height: 530px;"></div>',document.getElementById('graphParent').innerHTML+='<div id="graphFooter" style="height: 50px;font-size: 1em;"><div id="graphFooterLine1" style="display: -webkit-flex;flex: 0.75;flex-direction: row; height:30px;"></div><div id="graphFooterLine2"></div></div>';var $graphFooter=document.getElementById('graphFooterLine1'),graphList=['Helium - He/Hr','Helium - Total','HeHr % / LifetimeHe','He % / LifetimeHe','Radon - Rn/Hr','Radon - Total','RnHr % / LifetimeRn','Rn % / LifetimeRn','Clear Time','Cumulative Clear Time','Map Bonus','Void Maps','Void Map History','Loot Sources','Coordinations','Nullifium Gained','OverkillCells','Fluffy XP','Fluffy XP PerHour','Scruffy XP','Scruffy XP PerHour','Amalgamators'],$graphSel=document.createElement('select');for(var item in $graphSel.id='graphSelection',$graphSel.setAttribute('style',''),$graphSel.setAttribute('onchange','drawGraph()'),graphList){var $opt=document.createElement('option');$opt.value=graphList[item],$opt.text=graphList[item],$graphSel.appendChild($opt)}$graphFooter.appendChild($graphSel),$graphFooter.innerHTML+='<div><button onclick="drawGraph(true,false)" style="margin-left:0.5em; width:2em;">\u2191</button></div><div><button onclick="drawGraph(false,true)" style="margin-left:0.5em; width:2em;">\u2193</button></div><div><button onclick="drawGraph()" style="margin-left:0.5em;">Refresh</button></div><div style="flex:0 100 5%;"></div><div><input type="checkbox" id="clrChkbox" onclick="toggleClearButton();"></div><div style="margin-left: 0.5vw;"><button id="clrAllDataBtn" onclick="clearData(null,true); drawGraph();" class="btn" disabled="" style="flex:auto; padding: 2px 6px;border: 1px solid white;">Clear All Previous Data</button></div><div style="flex:0 100 5%;"></div><div style="flex:0 2 3.5vw;"><input style="width:100%;min-width: 40px;" id="deleteSpecificTextBox"></div><div style="flex:auto; margin-left: 0.5vw;"><button onclick="deleteSpecific(); drawGraph();">Delete Specific Portal</button></div><div style="flex:0 100 5%;"></div><div style="flex:auto;"><button  onclick="GraphsImportExportTooltip(\'ExportGraphs\', null, \'update\')" onmouseover=\'tooltip("Tips", "customText", event, "Export Graph Database will make a backup of all the graph data to a text string.<b>DISCLAIMER:</b> Takes quite a long time to generate.")\' onmouseout=\'tooltip("hide")\'>Export your Graph Database</button></div><div style="float:right; margin-right: 0.5vw;"><button onclick="addGraphNoteLabel()">Add Note/Label</button></div><div style="float:right; margin-right: 0.5vw;"><button onclick="toggleSpecificGraphs()">Invert Selection</button></div><div style="float:right; margin-right: 1vw;"><button onclick="toggleAllGraphs()">All Off/On</button></div>',document.getElementById('graphFooterLine2').innerHTML+='<span style="float: left;" onmouseover=\'tooltip("Tips", "customText", event, "You can zoom by dragging a box around an area. You can turn portals off by clicking them on the legend. Quickly view the last portal by clicking it off, then Invert Selection. Or by clicking All Off, then clicking the portal on. To delete a portal, Type its portal number in the box and press Delete Specific. Using negative numbers in the Delete Specific box will KEEP that many portals (starting counting backwards from the current one), ie: if you have Portals 1000-1015, typing -10 will keep 1005-1015. There is a browser data storage limitation of 10MB, so do not exceed 20 portals-worth of data.")\' onmouseout=\'tooltip("hide")\'>Tips: Hover for usage tips.</span><input style="height: 20px; float: right; margin-right: 0.5vw;" type="checkbox" id="rememberCB"><span style="float: right; margin-right: 0.5vw;">Try to Remember Which Portals are Selected when switching between Graphs:</span><input onclick="toggleDarkGraphs()" style="height: 20px; float: right; margin-right: 0.5vw;" type="checkbox" id="blackCB"><span style="float: right; margin-right: 0.5vw;">Black Graphs:</span>';
 function toggleClearButton(){document.getElementById('clrAllDataBtn').disabled=!document.getElementById('clrChkbox').checked}
 function addDarkGraphs(){var a=document.getElementById("dark-graph.css");if(!a){var b=document.createElement("link");b.rel="stylesheet",b.type="text/css",b.id="dark-graph.css",b.href=basepath+"dark-graph.css",document.head.appendChild(b),debug2("Adding dark-graph.css file","graphs")}}
 function removeDarkGraphs(){var a=document.getElementById("dark-graph.css");a&&(document.head.removeChild(a),debug2("Removing dark-graph.css file","graphs"))}
-function toggleDarkGraphs(){if(game){var c=document.getElementById("dark-graph.css"),d=document.getElementById("blackCB").checked;!c&&(0==game.options.menu.darkTheme.enabled||2==game.options.menu.darkTheme.enabled)||MODULES.graphs.useDarkAlways||d?addDarkGraphs():c&&(1==game.options.menu.darkTheme.enabled||3==game.options.menu.darkTheme.enabled||!d)&&removeDarkGraphs()}}var lastTheme=-1;MODULES.graphs.themeChanged=function(){if(game&&game.options.menu.darkTheme.enabled!=lastTheme){function f(h){h.style.color=2==game.options.menu.darkTheme.enabled?"":"black"}function g(h){if("graphSelection"==h.id)return void(2!=game.options.menu.darkTheme.enabled&&(h.style.color="black"))}toggleDarkGraphs(),debug2("Theme change - AutoTrimps styles updating...");var c=document.getElementsByTagName("input"),d=document.getElementsByTagName("select"),e=document.getElementById("graphFooterLine1").children;for(let h of c)f(h);for(let h of d)f(h);for(let h of e)f(h);for(let h of e)g(h)}game&&(lastTheme=game.options.menu.darkTheme.enabled)},MODULES.graphs.themeChanged();
+function toggleDarkGraphs(){if(game){var c=document.getElementById("dark-graph.css"),d=document.getElementById("blackCB").checked;!c&&(0==game.options.menu.darkTheme.enabled||2==game.options.menu.darkTheme.enabled)||MODULES.graphs.useDarkAlways||d?addDarkGraphs():c&&(1==game.options.menu.darkTheme.enabled||3==game.options.menu.darkTheme.enabled||!d)&&removeDarkGraphs()}}var lastTheme=-1;MODULES.graphs.themeChanged=function(){if(game&&game.options.menu.darkTheme.enabled!=lastTheme){function f(h){h.style.color=2==game.options.menu.darkTheme.enabled?"":"black"}function g(h){if("graphSelection"==h.id)return void(2!=game.options.menu.darkTheme.enabled&&(h.style.color="black"))}toggleDarkGraphs();var c=document.getElementsByTagName("input"),d=document.getElementsByTagName("select"),e=document.getElementById("graphFooterLine1").children;for(let h of c)f(h);for(let h of d)f(h);for(let h of e)f(h);for(let h of e)g(h)}game&&(lastTheme=game.options.menu.darkTheme.enabled)},MODULES.graphs.themeChanged();
 function GraphsImportExportTooltip(a){if(!game.global.lockTooltip){var d=document.getElementById("tooltipDiv");swapClass("tooltipExtra","tooltipExtraNone",d);var f,e=null,g="";"ExportGraphs"==a&&(f="This is your GRAPH DATABASE save string. There are many like it but this one is yours. Save this save somewhere safe so you can save time next time. <br/><br/><textarea id='exportArea' style='width: 100%' rows='5'>"+JSON.stringify(allSaveData)+"</textarea>",g="<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip()'>Got it</div>",document.queryCommandSupported("copy")?(g+="<div id='clipBoardBtn' class='btn btn-success'>Copy to Clipboard</div>",e=function(){document.getElementById("exportArea").select(),document.getElementById("clipBoardBtn").addEventListener("click",function(){document.getElementById("exportArea").select();try{document.execCommand("copy")}catch(i){document.getElementById("clipBoardBtn").innerHTML="Error, not copied"}})}):e=function(){document.getElementById("exportArea").select()},g+="</div>"),"ImportGraphs"==a&&(f="Replaces your GRAPH DATABASE with this save string! It'll be fine, I promise.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>",g="<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); loadGraphs();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>",e=function(){document.getElementById("importBox").focus()}),"AppendGraphs"==a&&(f="Appends to your GRAPH DATABASE with this save string (combines them)! It'll be fine, I hope.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>",g="<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); appendGraphs();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>",e=function(){document.getElementById("importBox").focus()}),game.global.lockTooltip=!0,d.style.left="33.75%",d.style.top="25%",document.getElementById("tipTitle").innerHTML=a,document.getElementById("tipText").innerHTML=f,document.getElementById("tipCost").innerHTML=g,d.style.display="block",null!=e&&e()}}
 function loadGraphs(){var a=document.getElementById("importBox").value.replace(/(\r\n|\n|\r|\s)/gm,""),b=JSON.parse(a);null==b||(allSaveData=b,drawGraph())}
 function appendGraphs(){drawGraph()}
@@ -342,41 +342,6 @@ function setGraphData(graph) {
             yminFloor = 0;
             break;
 
-        case 'Run Time':
-            var currentPortal = -1;
-            var theChallenge = '';
-            graphData = [];
-            for (var i in allSaveData) {
-                if (allSaveData[i].totalPortals != currentPortal) {
-                    if (currentPortal == -1) {
-                        theChallenge = allSaveData[i].challenge;
-                        currentPortal = allSaveData[i].totalPortals;
-                        graphData.push({
-                            name: 'Run Time',
-                            data: [],
-                            type: 'column'
-                        });
-                        continue;
-                    }
-                    var theOne = allSaveData[i - 1];
-                    var runTime = theOne.currentTime - theOne.portalTime;
-                    graphData[0].data.push([theOne.totalPortals, runTime]);
-                    theChallenge = allSaveData[i].challenge;
-                    currentPortal = allSaveData[i].totalPortals;
-                }
-            }
-            title = 'Total Run Time';
-            xTitle = 'Portal';
-            yTitle = 'Time';
-            yType = 'datetime';
-            formatter = function() {
-                var ser = this.series;
-                return '<span style="color:' + ser.color + '" >●</span> ' +
-                    ser.name + ': <b>' +
-                    Highcharts.dateFormat('%H:%M:%S', this.y) + '</b><br>';
-             };
-            break;
-
         case 'Helium - He/Hr':
             graphData = allPurposeGraph('heliumhr', true, null,
                 function specialCalc(e1, e2) {
@@ -453,43 +418,6 @@ function setGraphData(graph) {
             yType = 'Linear';
             precision = 4;
             break;
-        case 'Radon - Rn/Hr Instant':
-            var currentPortal = -1;
-            var currentZone = -1;
-            graphData = [];
-            var nowhehr=0;var lasthehr=0;
-            var dailyMultGraph = (countDailyWeight() === 0 ? 1 : 1 + getDailyHeliumValue(countDailyWeight()) / 100)
-            for (var i in allSaveData) {
-                if (allSaveData[i].totalPortals != currentPortal) {
-                    graphData.push({
-                        name: 'Portal ' + allSaveData[i].totalPortals + ': ' + allSaveData[i].challenge,
-                        data: []
-                    });
-                    currentPortal = allSaveData[i].totalPortals;
-                    if(allSaveData[i].world == 1 && currentZone != -1 )
-                        graphData[graphData.length -1].data.push(0);
-
-                    if(currentZone == -1 || allSaveData[i].world != 1) {
-                        var loop = allSaveData[i].world;
-                        while (loop > 0) {
-                            graphData[graphData.length -1].data.push(0);
-                            loop--;
-                        }
-                    }
-                    nowhehr = 0; lasthehr = 0;
-                }
-                if(currentZone < allSaveData[i].world && currentZone != -1) {
-                    nowhehr = Math.floor((allSaveData[i].radonOwned - allSaveData[i-1].radonOwned)*dailyMultGraph / ((allSaveData[i].currentTime - allSaveData[i-1].currentTime) / 3600000));
-                    graphData[graphData.length - 1].data.push(nowhehr);
-                }
-                currentZone = allSaveData[i].world;
-            }
-            title = 'Radon/Hour Instantaneous - between current and last zone.';
-            xTitle = 'Zone';
-            yTitle = 'Radon/Hour per each zone';
-            yType = 'Linear';
-            yminFloor=null;
-            break;
         case 'Void Map History':
             graphData = allPurposeGraph('voids', true, "number");
             title = 'Void Map History (voids finished during the same level acquired (with RunNewVoids) are not counted/tracked)';
@@ -509,62 +437,6 @@ function setGraphData(graph) {
             title = 'Coordination History';
             xTitle = 'Zone';
             yTitle = 'Coordination';
-            yType = 'Linear';
-            break;
-        case 'Magmite':
-            graphData = allPurposeGraph('magmite', true, "number");
-            title = 'Total Magmite Owned';
-            xTitle = 'Zone (starting at 230)';
-            yTitle = 'Magmite';
-            yType = 'Linear';
-            xminFloor = 230;
-            break;
-        case 'Magmamancers':
-            graphData = allPurposeGraph('magmamancers', true, "number");
-            title = 'Total Magmamancers Owned';
-            xTitle = 'Zone (starting at 230)';
-            yTitle = 'Magmamancers';
-            yType = 'Linear';
-            xminFloor = 230;
-            break;
-        case 'Dark Essence PerHour':
-            var currentPortal = -1;
-            var currentZone = -1;
-            var startEssence = 0;
-            graphData = [];
-            for (var i in allSaveData) {
-                if (allSaveData[i].totalPortals != currentPortal) {
-                    graphData.push({
-                        name: 'Portal ' + allSaveData[i].totalPortals + ': ' + allSaveData[i].challenge,
-                        data: []
-                    });
-                    currentPortal = allSaveData[i].totalPortals;
-                    currentZone = 0;
-                    startEssence = allSaveData[i].essence;
-                }
-                if (currentZone != allSaveData[i].world - 1) {
-                    var loop = allSaveData[i].world - 1 - currentZone;
-                    while (loop > 0) {
-                        graphData[graphData.length - 1].data.push(0);
-                        loop--;
-                    }
-                }
-                if (currentZone != 0) {
-                    graphData[graphData.length - 1].data.push(Math.floor((allSaveData[i].essence - startEssence) / ((allSaveData[i].currentTime - allSaveData[i].portalTime) / 3600000)));
-                }
-                currentZone = allSaveData[i].world;
-            }
-            title = 'Dark Essence/Hour (Cumulative)';
-            xTitle = 'Zone';
-            yTitle = 'Dark Essence/Hour';
-            yType = 'Linear';
-            xminFloor = 181;
-            break;
-        case 'Nurseries':
-            graphData = allPurposeGraph('nursery', true, "number");
-            title = 'Nurseries Bought (Total)';
-            xTitle = 'Zone';
-            yTitle = 'Nursery';
             yType = 'Linear';
             break;
         case 'Amalgamators':
@@ -929,4 +801,3 @@ setInterval(getLootData, 15000);
 function lookUpZoneData(a,b){null==b&&(b=getTotalPortals(true));for(var c=allSaveData.length-1;0<=c;c--)if(allSaveData[c].totalPortals==b&&allSaveData[c].world==a)return allSaveData[c]}
 
 setInterval(gatherInfo, 100);
-

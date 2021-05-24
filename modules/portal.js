@@ -45,7 +45,7 @@ function autoPortal() {
             break;
         case "Custom":
             var portalzone = getPageSetting('CustomAutoPortal');
-            if (game.global.world > portalzone) {
+            if (game.global.world >= portalzone) {
                 if (autoTrimpSettings.HeliumHourChallenge.selected != 'None')
                     doPortal(autoTrimpSettings.HeliumHourChallenge.selected);
                 else
@@ -121,7 +121,7 @@ function dailyAutoPortal() {
     }
     if (getPageSetting('AutoPortalDaily') == 2) {
         var portalzone = getPageSetting('dCustomAutoPortal');
-        if (game.global.world > portalzone) {
+        if (game.global.world >= portalzone) {
             abandonDaily();
             document.getElementById('finishDailyBtnContainer').style.display = 'none';
             if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u1daily') == false)
@@ -337,7 +337,7 @@ function RautoPortal() {
             break;
         case "Custom":
             var portalzone = getPageSetting('RCustomAutoPortal');
-            if (game.global.world > portalzone) {
+            if (game.global.world >= portalzone) {
                 if (autoTrimpSettings.RadonHourChallenge.selected != 'None')
                     RdoPortal(autoTrimpSettings.RadonHourChallenge.selected);
                 else
@@ -409,7 +409,7 @@ function RdailyAutoPortal() {
     }
     if (getPageSetting('RAutoPortalDaily') == 2) {
         var portalzone = getPageSetting('RdCustomAutoPortal');
-        if (game.global.world > portalzone) {
+        if (game.global.world >= portalzone) {
             abandonDaily();
             document.getElementById('finishDailyBtnContainer').style.display = 'none';
             if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') == false)

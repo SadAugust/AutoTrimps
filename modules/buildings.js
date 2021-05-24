@@ -357,7 +357,8 @@ function mostEfficientHousing() {
     // Which houses we actually want to check
     var housingTargets = [];
     for (var house of HousingTypes) {
-        var maxHousing = (getPageSetting('RMax' + house) === -1 ? Infinity : getPageSetting('RMax' + house));
+        var maxHousing = (((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world) ? Infinity : 
+        getPageSetting('RMax' + house) === -1 ? Infinity : getPageSetting('RMax' + house));
         if (!game.buildings[house].locked && game.buildings[house].owned < maxHousing) {
             housingTargets.push(house);
         }
@@ -378,7 +379,7 @@ function mostEfficientHousing() {
             var baseCost = game.buildings[housing].cost[resource][0];
             var costScaling = game.buildings[housing].cost[resource][1];
             var avgProduction = getPsString(resource, true);
-	    if (avgProduction <= 0) avgProduction = 1;
+	        if (avgProduction <= 0) avgProduction = 1;
             var housingBonus = game.buildings.Hut.increase.by;
             if (!game.buildings.Hub.locked) { housingBonus += 500;}
 
@@ -401,13 +402,24 @@ function RbuyBuildings() {
     // Storage, shouldn't be needed anymore that autostorage is lossless
     if (!game.global.autoStorage) {toggleAutoStorage(false);}
  
-    //Smithy
+    //Smithy purchasing
     if (!game.buildings.Smithy.locked && canAffordBuilding('Smithy')) {
-        // On quest challenge
+        //Checking to see how many smithies we can buy
+        var smithy_pet = Fluffy.isRewardActive('smithy') ? 40 : 50;
+        var smithycost =    [getMaxAffordable(Math.pow((500,40), game.buildings.Smithy.owned) * 10000, (game.resources.metal.owned),(500,smithy_pet),true), 
+                            getMaxAffordable(Math.pow((500,40), game.buildings.Smithy.owned) * 5000, (game.resources.wood.owned),(500,smithy_pet),true), 
+                            getMaxAffordable(Math.pow((500,40), game.buildings.Smithy.owned) * 500, (game.resources.gems.owned),(500,smithy_pet),true)]
+        var smithy_canbuy = Math.min(smithycost[0], smithycost[1], smithycost[2]);
+        var smithy_zones = ((getPageSetting('c3finishrun') - game.global.world) / 2);
+        // Purchasing a smithy whilst on Quest
         if (game.global.challengeActive == 'Quest') {
-            if (smithybought > game.global.world) {smithybought = 0;}
- 
-            if (smithybought < game.global.world && (questcheck() == 7 || (RcalcHDratio() * 10 >= getPageSetting('Rmapcuntoff')))) {
+            if (smithybought > game.global.world) smithybought = 0;
+            //Buying as many smithies as we don't need before our specified end zone
+            if (smithybought < game.global.world && smithy_canbuy > ((getPageSetting('c3finishrun') - game.global.world) / 2)) {
+                buyBuilding("Smithy", true, true, smithy_canbuy - smithy_zones);
+                smithybought = game.global.world;
+            }
+            if (smithybought < game.global.world && (questcheck() == 10 || (RcalcHDratio() * 10 >= getPageSetting('Rmapcuntoff')))) {
                 buyBuilding("Smithy", true, true, 1);
                 smithybought = game.global.world;
             }
@@ -427,7 +439,8 @@ function RbuyBuildings() {
     // Which houses we actually want to check
     var housingTargets = [];
     for (var house in HousingTypes) {
-        var maxHousing = (getPageSetting('RMax' + house) === -1 ? Infinity : getPageSetting('RMax' + house));
+        var maxHousing = (((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world) ? Infinity :
+        getPageSetting('RMax' + house) === -1 ? Infinity : getPageSetting('RMax' + house));
         if (!game.buildings[HousingTypes[house]].locked && game.buildings[HousingTypes[house]].owned < maxHousing) {
             housingTargets.push(house);
         }
@@ -436,25 +449,25 @@ function RbuyBuildings() {
     var boughtHousing = false;
  
     do {
- 
         boughtHousing = false;
         var housing = mostEfficientHousing();
- 
-        if (housing != null && canAffordBuilding(housing) && game.buildings[housing].purchased < (getPageSetting('RMax' + housing) === -1 ? Infinity : getPageSetting('RMax' + housing))) {
-            buyBuilding(housing, true, true, 1);
+        if ((housing != null && canAffordBuilding(housing)) && ((game.buildings[housing].purchased < (getPageSetting('RMax' + housing) === -1 ? Infinity : getPageSetting('RMax' + housing)) || 
+        ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)))) {
+            if ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world) buyBuilding(housing, true, true, 999);
+            else if (housing == "Collector") buyBuilding("Collector", true, true, 999);
+            else buyBuilding(housing, true, true, 1);
             boughtHousing = true;
         }
-    } while (boughtHousing)
+    } while (boughtHousing)   
  
     //Tributes
     if (!game.buildings.Tribute.locked) {
-        var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.owned) * 10000, game.resources.food.owned,1.05,true);
+        var tributespending = getPageSetting('RTributeSpendingPct') > 0 ? getPageSetting('RTributeSpendingPct') / 100 : 1;
+        var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.owned) * 10000, (game.resources.food.owned*tributespending),1.05,true);
         
-        if (getPageSetting('RMaxTribute') > game.buildings.Tribute.owned) {
+        if (getPageSetting('RMaxTribute') > game.buildings.Tribute.owned) 
             buyTributeCount = Math.min(buyTributeCount, getPageSetting('RMaxTribute') - game.buildings.Tribute.owned);
-        }
- 	if (getPageSetting('RMaxTribute') < 0 || (getPageSetting('RMaxTribute') > game.buildings.Tribute.owned)) {
+        if (buyTributeCount > 0 && (getPageSetting('RMaxTribute') < 0 || (getPageSetting('RMaxTribute') > game.buildings.Tribute.owned))) 
             buyBuilding('Tribute', true, true, buyTributeCount);
-	}
     }
 }

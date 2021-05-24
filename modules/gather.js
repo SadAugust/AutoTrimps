@@ -178,30 +178,31 @@ function RmanualLabor2() {
         }
 	return;
     }
-	if (game.global.challengeActive == "Pandemonium" && !Rshouldpandemonium && getPageSetting('RequipPandemonium') && getPageSetting('RPandemoniumEqStaff') != "undefined" && getPageSetting('RPandemoniumEqLvl') > 0 && game.global.lastClearedCell > 59) {
-		if (game.global.world >= getPageSetting('RPandemoniumEqLvl')) setGather('metal');
+	if (game.global.challengeActive == "Pandemonium" && !Rshouldpandemonium && getPageSetting('RPandemoniumAutoEquip') > 0 && getPageSetting('RPandemoniumAEStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 1 && game.global.lastClearedCell > 59) {
+		if (game.global.world >= getPageSetting('RPandemoniumAEZone')) setGather('metal');
 	}
 	var rspecial = '?';
 	if ((Rshouldtimefarm || Rshouldalchfarm) && game.global.mapsActive) {
-		if (Rshouldalchfarm) {
-			rspecial = autoTrimpSettings.RAlchSpecial.selected;
-		} else if (game.global.challengeActive == "Daily" && Rshouldtimefarm && getPageSetting(Rdtimefarm)) {
-			rspecial = autoTrimpSettings.Rdtimespecialselection.selected;
-		} else if (Rshouldtimefarm) {
+		if (Rshouldalchfarm) 
+            rspecial = autoTrimpSettings.RAlchSpecial.selected;
+        else if (Rshouldtimefarm && getPageSetting('Rc3timefarm') && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium'))
+            rspecial = autoTrimpSettings.Rc3timespecialselection.selected
+		else if (game.global.challengeAcive = "Daily" && Rshouldtimefarm && getPageSetting('Rdtimefarm')) 
+            rspecial = autoTrimpSettings.Rdtimespecialselection.selected;
+		else if (Rshouldtimefarm)
 			rspecial = autoTrimpSettings.Rtimespecialselection.selected;
-		}
 	}
 	
-	if ((game.global.challengeActive == "Quest" && questcheck() == 10) || Rshouldshipfarm || Rshouldtributefarm || ((Rshouldtimefarm || Rshouldalchfarm) && (rspecial.includes('sc') || rspecial.includes('hc')))) {
+	if ((game.global.challengeActive == "Quest" && questcheck() == 1) || Rshouldshipfarm || Rshouldtributefarm || ((Rshouldtimefarm || Rshouldalchfarm) && (rspecial.includes('sc') || rspecial.includes('hc')))) {
 		setGather('food');
     }
-    else if ((game.global.challengeActive == "Quest" && questcheck() == 11) || ((Rshouldtimefarm || Rshouldalchfarm) && rspecial.includes('wc'))) {
+    else if ((game.global.challengeActive == "Quest" && questcheck() == 2) || ((Rshouldtimefarm || Rshouldalchfarm) && rspecial.includes('wc'))) {
 		setGather('wood');
     }
-    else if ((game.global.challengeActive == "Quest" && questcheck() == 12) || ((Rshouldtimefarm || Rshouldalchfarm) && rspecial.includes('mc')))  {
+    else if ((game.global.challengeActive == "Quest" && (questcheck() == 3 || questcheck() == 7)) || ((Rshouldtimefarm || Rshouldalchfarm) && rspecial.includes('mc')))  {
 		setGather('metal');
     }
-    else if ((game.global.challengeActive == "Quest" && questcheck() == 14) || ((Rshouldtimefarm || Rshouldalchfarm) && rspecial.includes('rc')))  {
+    else if ((game.global.challengeActive == "Quest" && questcheck() == 5) || ((Rshouldtimefarm || Rshouldalchfarm) && rspecial.includes('rc')))  {
 		setGather('science');
 	} else {
 		if (getPageSetting('RManualGather2') != 2 && game.resources.science.owned < MODULES["gather"].RminScienceAmount && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {

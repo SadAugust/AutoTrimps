@@ -1822,7 +1822,7 @@ function armormagic() {
 
 trapIndexs = ["","Fire","Frost","Poison","Lightning","Strength","Condenser","Knowledge"];
 
-function tdStringCode2(){
+function tdStringCode2() {
 	var thestring=document.getElementById('importBox').value.replace(/\s/g, '');
 	var s = new String(thestring);
 	var index = s.indexOf("+",0);
@@ -1843,52 +1843,60 @@ function tdStringCode2(){
 	}
 }
 
-playerSpire.drawInfo = function() {
-		if (!this.popupOpen) return;
-		if (this.smallMode){
-			this.drawSmallInfo();
-			return;
-		}
-		var elem = document.getElementById('playerSpireInfoPanel');
-		var infoHtml = "";
-		infoHtml += "<div id='playerSpireInfoTop'>";
-		infoHtml += "<span onmouseover='playerSpire.infoTooltip(\"Runestones\", event)' onmouseout='tooltip(\"hide\")'>Runestones: <span id='playerSpireRunestones'>" + prettify(this.runestones) + "</span><br/>Runestones per Second: <span id='RsPs'>" + prettify(this.getRsPs()) + "</span></span>";
-		infoHtml += "<br/><span onmouseover='playerSpire.infoTooltip(\"Enemies\", event)' onmouseout='tooltip(\"hide\")'>Enemies: <span id='playerSpireCurrentEnemies'>" + this.currentEnemies + "</span> / <span id='playerSpireMaxEnemies'>" + this.maxEnemies + "</span></span>";
-		infoHtml += "<br/><span onmouseover='playerSpire.infoTooltip(\"Spirestones\", event)' onmouseout='tooltip(\"hide\")' id='spirestoneBox'>" + this.getSpirestoneHtml() + "</span><br/><span onmouseover='playerSpire.infoTooltip(\"Threat\", event)' onmouseout='tooltip(\"hide\")' id='playerSpireDifficulty'>" + this.getDifficultyHtml() + "</span></div>";
-		infoHtml += "<div id='spireTrapsWindow'>";
-		infoHtml += "<div onclick='playerSpire.shrink()' id='shrinkSpireBox' class='spireControlBox'>Shrink Window</div>";
-		infoHtml += "<div onclick='playerSpire.settingsTooltip()' id='spireSettingsBox' class='spireControlBox'>Settings</div>"
-		infoHtml += "<div onclick='tooltip(\"confirm\", null, \"update\", \"Are you sure you want to sell all Traps and Towers? You will get back 100% of Runestones spent on them.<br/><br/>" + ((this.paused) ? "" : "<b>Protip:</b> Pause your Spire before selling your defenses if you want to avoid leaking!") + "\", \"playerSpire.resetTraps()\", \"Sell All?\")' class='spireControlBox'>Sell All</div>";
-		infoHtml += "<div onclick='playerSpire.togglePause()' id='pauseSpireBtn' class='spireControlBox spirePaused" + ((this.paused) ? "Yes'>Unpause" : "'>Pause Spire") + "</div>";	  
-		infoHtml += "<div class='spireControlBoxDbl'><div onclick='playerSpire.presetTooltip(1)'>Layout 1</div><div onclick='playerSpire.presetTooltip(2)'>Layout 2</div></div>"
-		infoHtml += "<div onclick='playerSpire.selectTrap(\"shiftUp\")' onmouseout='tooltip(\"hide\")' onmouseover='playerSpire.trapTooltip(\"shiftUp\", event)' id='sellTrapBox' class='spireControlBox" + ((this.selectedTrap == "shiftUp") ? " selected" : "") + "'>Shift Up</div>";
-		infoHtml += "<div onclick='playerSpire.selectTrap(\"shiftDown\")' onmouseout='tooltip(\"hide\")' onmouseover='playerSpire.trapTooltip(\"shiftDown\", event)' id='sellTrapBox' class='spireControlBox" + ((this.selectedTrap == "shiftDown") ? " selected" : "") + "'>Shift Down</div>";
-	  	infoHtml += "<div onclick='ImportExportTooltip(\"spireImport\")' class='spireControlBox'>Import</div>";
-
-
-		infoHtml += "<br/><hr/>"
-		infoHtml += "<div onclick='playerSpire.selectTrap(\"sell\")' onmouseout='tooltip(\"hide\")' onmouseover='playerSpire.trapTooltip(\"sell\", event)' style='padding-top: 1.35vw' id='sellTrapBox' class='spireTrapBox" + ((this.selectedTrap == "sell") ? " selected" : "") + "'>Sell a Trap/Tower</div>";
-		var cheapestTrap = -1;
-		for (var item in playerSpireTraps){
-			var trap = playerSpireTraps[item];
-			if (trap.locked) continue;
-			var trapText = trap.isTower ? "Tower" : "Trap";
-			trapText += " " + romanNumeral(trap.level);
-			var trapIcon = "";
-			if (this.settings.trapIcons) trapIcon = "<span class='icomoon icon-" + trap.icon + "'></span> ";
-			var cost = this.getTrapCost(item);
-			var color = (this.runestones >= cost) ? trap.color : "grey";
-			infoHtml += "<div style='background-color: " + color + "' onmouseout='tooltip(\"hide\")' onmouseover='playerSpire.trapTooltip(\"" + item + "\", event)' onclick='playerSpire.selectTrap(\"" + item + "\")' id='" + item + "TrapBox' class='spireTrapBox" + ((item == this.selectedTrap) ? " selected" : "") + "'>" + trapIcon + item + " " + trapText + "<br/>" + prettify(this.getTrapCost(item)) + " Rs</div>"
-			if (this.runestones < cost && (cheapestTrap == -1 || cost < cheapestTrap)) cheapestTrap = cost;
-		}
-		this.nextTrap = cheapestTrap;
-		infoHtml += "</div><hr/>"; //spireTrapsWindow
-		infoHtml += "<span id='playerSpireCloseBtn' class='icomoon icon-close' onclick='playerSpire.closePopup()'></span>";
-		infoHtml += "<div id='playerSpireUpgradesArea'>";
-		infoHtml += this.getUpgradesHtml();
-		infoHtml += "</div>"; //playerSpireUpgradesArea
-		elem.innerHTML = infoHtml;
+/*playerSpire.drawInfo = function() {
+	if (!this.popupOpen) return;
+	if (this.smallMode){
+		this.drawSmallInfo();
+		return;
 	}
+	var elem = document.getElementById('playerSpireInfoPanel');
+	var infoHtml = "";
+	infoHtml += "<div id='playerSpireInfoTop'>";
+	infoHtml += "<span onmouseover='playerSpire.infoTooltip(\"Runestones\", event)' onmouseout='tooltip(\"hide\")'>Runestones: <span id='playerSpireRunestones'>" + prettify(this.runestones) + "</span><br/>Runestones per Second: <span id='RsPs'>" + prettify(this.getRsPs()) + "</span></span>";
+	infoHtml += "<br/><span onmouseover='playerSpire.infoTooltip(\"Enemies\", event)' onmouseout='tooltip(\"hide\")'>Enemies: <span id='playerSpireCurrentEnemies'>" + this.currentEnemies + "</span> / <span id='playerSpireMaxEnemies'>" + this.maxEnemies + "</span></span>";
+	infoHtml += "<br/><span onmouseover='playerSpire.infoTooltip(\"Spirestones\", event)' onmouseout='tooltip(\"hide\")' id='spirestoneBox'>" + this.getSpirestoneHtml() + "</span><br/><span onmouseover='playerSpire.infoTooltip(\"Threat\", event)' onmouseout='tooltip(\"hide\")' id='playerSpireDifficulty'>" + this.getDifficultyHtml() + "</span></div>";
+	infoHtml += "<div id='spireTrapsWindow'>";
+	infoHtml += "<div onclick='playerSpire.shrink()' id='shrinkSpireBox' class='spireControlBox'>Shrink Window</div>";
+	infoHtml += "<div onclick='playerSpire.settingsTooltip()' id='spireSettingsBox' class='spireControlBox'>Settings</div>"
+	infoHtml += "<div onclick='tooltip(\"confirm\", null, \"update\", \"Are you sure you want to sell all Traps and Towers? You will get back 100% of Runestones spent on them.<br/><br/>" + ((this.paused) ? "" : "<b>Protip:</b> Pause your Spire before selling your defenses if you want to avoid leaking!") + "\", \"playerSpire.resetTraps()\", \"Sell All?\")' class='spireControlBox'>Sell All</div>";
+	infoHtml += "<div onclick='playerSpire.togglePause()' id='pauseSpireBtn' class='spireControlBox spirePaused" + ((this.paused) ? "Yes'>Unpause" : "'>Pause Spire") + "</div>";      
+	infoHtml += "<div class='spireControlBoxDbl'><div onclick='playerSpire.presetTooltip(1)'>Layout 1</div><div onclick='playerSpire.presetTooltip(2)'>Layout 2</div></div>"
+	infoHtml += "<div onclick='playerSpire.selectTrap(\"shiftUp\")' onmouseout='tooltip(\"hide\")' onmouseover='playerSpire.trapTooltip(\"shiftUp\", event)' id='sellTrapBox' class='spireControlBox" + ((this.selectedTrap == "shiftUp") ? " selected" : "") + "'>Shift Up</div>";
+	infoHtml += "<div onclick='playerSpire.selectTrap(\"shiftDown\")' onmouseout='tooltip(\"hide\")' onmouseover='playerSpire.trapTooltip(\"shiftDown\", event)' id='sellTrapBox' class='spireControlBox" + ((this.selectedTrap == "shiftDown") ? " selected" : "") + "'>Shift Down</div>";
+	infoHtml += "<div onclick='ImportExportTooltip(\"spireImport\")' class='spireControlBox'>Import</div>";
+	infoHtml += "<br/><hr/>"
+	infoHtml += "<div onclick='playerSpire.selectTrap(\"sell\")' onmouseout='tooltip(\"hide\")' onmouseover='playerSpire.trapTooltip(\"sell\", event)' style='padding-top: 1.35vw' id='sellTrapBox' class='spireTrapBox" + ((this.selectedTrap == "sell") ? " selected" : "") + "'>Sell a Trap/Tower</div>";
+	var cheapestTrap = -1;
+	for (var item in playerSpireTraps) {
+		var trap = playerSpireTraps[item];
+		if (trap.locked) continue;
+		var trapText = trap.isTower ? "Tower" : "Trap";
+		trapText += " " + romanNumeral(trap.level);
+		var trapIcon = "";
+		if (this.settings.trapIcons) trapIcon = "<span class='icomoon icon-" + trap.icon + "'></span> ";
+		var cost = this.getTrapCost(item);
+		var color = (this.runestones >= cost) ? trap.color : "grey";
+		infoHtml += "<div style='background-color: " + color + "' onmouseout='tooltip(\"hide\")' onmouseover='playerSpire.trapTooltip(\"" + item + "\", event)' onclick='playerSpire.selectTrap(\"" + item + "\")' id='" + item + "TrapBox' class='spireTrapBox" + ((item == this.selectedTrap) ? " selected" : "") + "'>" + trapIcon + item + " " + trapText + "<br/>" + prettify(this.getTrapCost(item)) + " Rs</div>"
+		if (this.runestones < cost && (cheapestTrap == -1 || cost < cheapestTrap)) cheapestTrap = cost;
+	}
+	this.nextTrap = cheapestTrap;
+	infoHtml += "</div><hr/>"; //spireTrapsWindow
+	infoHtml += "<span id='playerSpireCloseBtn' class='icomoon icon-close' onclick='playerSpire.closePopup()'></span>";
+	infoHtml += "<div id='playerSpireUpgradesArea'>";
+	infoHtml += this.getUpgradesHtml();
+	infoHtml += "</div>"; //playerSpireUpgradesArea
+	elem.innerHTML = infoHtml;
+}*/
+
+var oldPlayerSpireDrawInfo = playerSpire.drawInfo;
+playerSpire.drawInfo = function(arguments) {
+	var ret = oldPlayerSpireDrawInfo.apply(this, arguments);
+	var elem = document.getElementById('spireTrapsWindow');
+	if (!elem) return arguments;
+	var importBtn = "<div onclick='ImportExportTooltip(\"spireImport\")' class='spireControlBox'>Import</div>";
+	elem.innerHTML = importBtn + elem.innerHTML;
+	return arguments;
+}
 
 //Radon
 function RbuyWeps(){if(!((getPageSetting('RBuyWeaponsNew')==1)||(getPageSetting('RBuyWeaponsNew')==3)))return;preBuy(),game.global.buyAmt=getPageSetting('Rgearamounttobuy'),game.equipment.Dagger.level<getPageSetting('RCapEquip2')&&canAffordBuilding('Dagger',null,null,!0)&&buyEquipment('Dagger',!0,!0),game.equipment.Mace.level<getPageSetting('RCapEquip2')&&canAffordBuilding('Mace',null,null,!0)&&buyEquipment('Mace',!0,!0),game.equipment.Polearm.level<getPageSetting('RCapEquip2')&&canAffordBuilding('Polearm',null,null,!0)&&buyEquipment('Polearm',!0,!0),game.equipment.Battleaxe.level<getPageSetting('RCapEquip2')&&canAffordBuilding('Battleaxe',null,null,!0)&&buyEquipment('Battleaxe',!0,!0),game.equipment.Greatsword.level<getPageSetting('RCapEquip2')&&canAffordBuilding('Greatsword',null,null,!0)&&buyEquipment('Greatsword',!0,!0),!game.equipment.Arbalest.locked&&game.equipment.Arbalest.level<getPageSetting('RCapEquip2')&&canAffordBuilding('Arbalest',null,null,!0)&&buyEquipment('Arbalest',!0,!0),postBuy()}
@@ -1916,19 +1924,18 @@ function questcheck() {
 	}
 	
 	if (game.challenges.Quest.getQuestProgress() == "Quest Complete!" || game.challenges.Quest.getQuestProgress() == "Failed!") return 0;
-	
-	//x5 resource
-	else if (game.challenges.Quest.getQuestDescription().includes("food")) return 10;
-	else if (game.challenges.Quest.getQuestDescription().includes("wood")) return 11;
-	else if (game.challenges.Quest.getQuestDescription().includes("metal")) return 12;
-	else if (game.challenges.Quest.getQuestDescription().includes("gems")) return 13;
-	else if (game.challenges.Quest.getQuestDescription().includes("science")) return 14;
+	//Resource multipliers
+	else if (game.challenges.Quest.getQuestDescription().includes("food")) return 1;
+	else if (game.challenges.Quest.getQuestDescription().includes("wood")) return 2;
+	else if (game.challenges.Quest.getQuestDescription().includes("metal")) return 3;
+	else if (game.challenges.Quest.getQuestDescription().includes("gems")) return 4;
+	else if (game.challenges.Quest.getQuestDescription().includes("science")) return 5;
 	//Everything else
-	else if (game.challenges.Quest.getQuestDescription() == "Complete 5 Maps at Zone level") return 3;
-	else if (game.challenges.Quest.getQuestDescription() == "One-shot 5 world enemies") return 4;
-	else if (game.challenges.Quest.getQuestDescription() == "Don't let your shield break before Cell 100") return 5;
-	else if (game.challenges.Quest.getQuestDescription() == "Don't run a map before Cell 100") return 6;
-	else if (game.challenges.Quest.getQuestDescription() == "Buy a Smithy") return 7;
+	else if (game.challenges.Quest.getQuestDescription() == "Complete 5 Maps at Zone level") return 6;
+	else if (game.challenges.Quest.getQuestDescription() == "One-shot 5 world enemies") return 7;
+	else if (game.challenges.Quest.getQuestDescription() == "Don't let your shield break before Cell 100") return 8;
+	else if (game.challenges.Quest.getQuestDescription() == "Don't run a map before Cell 100") return 9;
+	else if (game.challenges.Quest.getQuestDescription() == "Buy a Smithy") return 10;
 	else return 0;
 }
 
@@ -2076,9 +2083,7 @@ function RAMPshouldrunmap(number) {
 		var raidzones = raidzone[praidindex];
 		var actualraidzone = (raidzones - number);
 		
-		if (Rgetequips(actualraidzone, false) > 0) {
-		go = true;
-		}
+		if (Rgetequips(actualraidzone, false) > 0) go = true;
 	}
 	return go;
 }
@@ -2198,8 +2203,8 @@ function RAMPplusPres(number) {
 }
 
 function RAMPplusPresfragmax(number) {
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : "Plentiful";
-	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number);
+	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
+	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number); 
 	document.getElementById("advSpecialSelect").value = "p";
 	document.getElementById("lootAdvMapsRange").value = 9;
 	document.getElementById("difficultyAdvMapsRange").value = 9;
@@ -2211,7 +2216,7 @@ function RAMPplusPresfragmax(number) {
 }
 
 function RAMPplusPresfragmin(number) {
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : "Plentiful";
+	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
 	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number);
 	document.getElementById("advSpecialSelect").value = "p";
 	document.getElementById("lootAdvMapsRange").value = 0;
@@ -2375,14 +2380,8 @@ function RAMPplusPresfragmin(number) {
 function RAMPfrag() {
 	var cost = 0;
 	if (Rshoulddopraid) {
-		if (game.global.challengeActive == "Daily") {
-			var praidzone = getPageSetting('RAMPdraidzone');
-			var raidzone = getPageSetting('RAMPdraidraid');
-		} else {
-			var praidzone = getPageSetting('RAMPraidzone');
-			var raidzone = getPageSetting('RAMPraidraid');
-		}
-
+		var praidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidzone') : getPageSetting('RAMPraidzone');
+		var raidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidraid') : getPageSetting('RAMPraidraid');
 		var praidindex = praidzone.indexOf(game.global.world);
 		var raidzones = raidzone[praidindex];
 
@@ -2413,7 +2412,7 @@ function RAMPfrag() {
 }
 
 function fragmap() {
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : "Plentiful";
+	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
 	document.getElementById("advExtraLevelSelect").value = 0;
 	document.getElementById("advSpecialSelect").value = "fa";
 	document.getElementById("lootAdvMapsRange").value = 9;
@@ -2510,7 +2509,7 @@ function fragmap() {
 }
 
 function fragmin(number) {
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : "Plentiful";
+	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
 	document.getElementById("advExtraLevelSelect").value = number;
 	document.getElementById("advSpecialSelect").value = "fa";
 	document.getElementById("lootAdvMapsRange").value = 9;
@@ -2701,67 +2700,96 @@ function fragmapcost() {
 	else return false;
 }
 
-function Rshouldfarmmapsettings() {
-	var $mapLevelInput = document.getElementById("mapLevelInput");
-	if (maplevel != 0) {
-		if (farmzone.includes(game.global.world)) {
-			if (levelzones > 0) {
-				$mapLevelInput.value = game.global.world;
-				document.getElementById("advExtraLevelSelect").value = levelzones;
-			} else if (levelzones < 0) {
-				$mapLevelInput.value = (game.global.world - 1);
+function PerfectMapLevel(special) {
+
+	var mult = 1;
+	mult *= game.global.challengeActive == 'Unbalance' ? 1.5 : 1;
+	mult *= game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
+	mult *= game.global.challengeActive == 'Archaeology' ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
+	mult *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult(): 1;
+	mult *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getBossMult() : 1;
+	mult *= game.global.challengeActive == 'Storm' ? game.challenges.Storm.getAttackMult() : 1;
+	mult *= game.global.challengeActive == 'Berserk' ? 1.5 : 1;
+	mult *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
+	mult *= game.global.challengeActive == 'Nurture' ? 2 : 1;
+	mult *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
+	mult *= game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getPandMult() : 1;
+	mult *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
+
+	multpanda = game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
+
+	gammaburstmult = getPageSetting('RPandemoniumHits') < 5 && (RcalcOurHealth() / (RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 20, 'Snimp', 1)) * 1.125)) >= 5 ? (1 + (getHeirloomBonus("Shield", "gammaBurst")) / 500) : 1;
+	hitsmap = getPageSetting('RPandemoniumHits') > 0 ? getPageSetting('RPandemoniumHits') : 10;
+	hitssurv = getPageSetting('RPandemoniumHits') < 5 ? getPageSetting('RPandemoniumHits') : 5;
+	go = false;
+	for (var i = 10; 0 < i; i--) {
+		if (!go) {
+			pluslevels = i;	
+			var bm2 = pluslevels > 0 ? 1.5 : 1;
+			if ((game.resources.fragments.owned >= PerfectMapCost(pluslevels,special)) && ((RcalcEnemyBaseHealth("map",game.global.world + pluslevels,20,'Turtlimp') * mult * 0.75) <= ((RcalcOurDmg("avg", false, true) / gammaburstmult) * bm2 * hitsmap))
+			&& ((((((RcalcBadGuyDmg(null, RgetEnemyMaxAttack((game.global.world + pluslevels), 20, 'Snimp', 1)) * 1.125) / multpanda) * mult) * (hitssurv)) <= (RcalcOurHealth() * 2)))) {
+				go = true;
+				return i;
 			}
 		}
-	}
-	if (Rshouldalchfarm && alchbiome != undefined) {
-		biomeAdvMapsSelect.value = alchbiome;
-	} else {
-		biomeAdvMapsSelect.value = (game.global.farmlandsUnlocked) ? "Farmlands" : "Plentiful";
+		if (!go && i == 0) {
+			pluslevels = -1;
+			if (game.global.challengeActive == 'Pandemonium') pluslevels = 1;
+			go = true;
+			return i;
+		}
 	}
 
-	document.getElementById("advSpecialSelect").value = rspecial;
-	updateMapCost();
 }
 
-function Rshouldfarmmapcreation() {
+function PerfectMapCost(pluslevel,special) {
+	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
+	if (!pluslevel || pluslevel < 0) pluslevel = 0;
+	if (!special) special = "fa";
+	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
+	document.getElementById("advExtraLevelSelect").value = pluslevel;
+	document.getElementById("advSpecialSelect").value = special;
+	document.getElementById("lootAdvMapsRange").value = 9;
+	document.getElementById("difficultyAdvMapsRange").value = 9;
+	document.getElementById("sizeAdvMapsRange").value = 9;
+	document.getElementById("advPerfectCheckbox").checked = true;
+	document.getElementById("mapLevelInput").value = maplevel;
+	updateMapCost();
+	return updateMapCost(true);
+}
+
+function RShouldFarmMapCost(pluslevel, special, farmzone, biome) {
+	//Pre-init
+	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
+	if (!pluslevel || pluslevel < 0) pluslevel = 0;
+    if (!special) special = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
+    if (!farmzone) farmzone = [game.global.world];
+    if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
+
+	//Working out appropriate map settings
+	if (farmzone.includes(game.global.world)) {
+			document.getElementById("mapLevelInput").value = maplevel;
+			document.getElementById("advExtraLevelSelect").value = pluslevel;
+			document.getElementById("biomeAdvMapsSelect").value = biome;
+			document.getElementById("advSpecialSelect").value = special;
+	}
+	updateMapCost();
+	return updateMapCost(true);
+}
+
+function RShouldFarmMapCreation(pluslevel,special,biome) {
+    //Pre-Init
+    if (!pluslevel) pluslevel = 0;
+    if (!special) special = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
+    if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
 	var create=false;
-	if (maplevel == 0) {
-		for (var mapping in game.global.mapsOwnedArray) {
-			if (!game.global.mapsOwnedArray[mapping].noRecycle && game.global.world == game.global.mapsOwnedArray[mapping].level && game.global.mapsOwnedArray[mapping].bonus == rspecial) {
-				return(game.global.mapsOwnedArray[mapping].id);
-				break;
-			} else {
-					create=true;
-			}
-		}
-	} else if (maplevel != 0) {
-		if (levelzones > 0) {
-			for (var mapping in game.global.mapsOwnedArray) {
-				if (!game.global.mapsOwnedArray[mapping].noRecycle && ((game.global.world + levelzones) == game.global.mapsOwnedArray[mapping].level) && (game.global.mapsOwnedArray[mapping].bonus == rspecial)) {
-					return(game.global.mapsOwnedArray[mapping].id);
-					break;
-				} else {
-					create=true;
-				}
-			}
-		} else if (levelzones == 0) {
-			for (var mapping in game.global.mapsOwnedArray) {
-				if (!game.global.mapsOwnedArray[mapping].noRecycle && game.global.world == game.global.mapsOwnedArray[mapping].level && game.global.mapsOwnedArray[mapping].bonus == rspecial) {
-				    return(game.global.mapsOwnedArray[mapping].id);
-					break;
-				} else {
-					create=true;
-				}
-			}
-		} else if (levelzones < 0) {
-			for (var mapping in game.global.mapsOwnedArray) {
-				if (!game.global.mapsOwnedArray[mapping].noRecycle && ((game.global.world - 1) == game.global.mapsOwnedArray[mapping].level) && (game.global.mapsOwnedArray[mapping].bonus == rspecial)) {
-					return(game.global.mapsOwnedArray[mapping].id);
-					break;
-				} else {
-					create=true;
-				}
-			}
+
+	for (var mapping in game.global.mapsOwnedArray) {
+		if (!game.global.mapsOwnedArray[mapping].noRecycle && ((game.global.world + pluslevel) == game.global.mapsOwnedArray[mapping].level) && game.global.mapsOwnedArray[mapping].bonus == special && game.global.mapsOwnedArray[mapping].location == biome) {
+			return(game.global.mapsOwnedArray[mapping].id);
+			break;
+		} else {
+				create=true;
 		}
 	}
 	if (create) {
@@ -2821,7 +2849,7 @@ function Rmanageequality() {
 				manageEqualityStacks();
 				updateEqualityScaling();
 			}
-		} 
+		}
 	}
 
 	else if (game.global.challengeActive == "Exterminate" && getPageSetting('Rexterminateon') == true && getPageSetting('Rexterminateeq') == true && !game.global.mapsActive) {
@@ -2867,7 +2895,7 @@ function simpleSecondsLocal(what, seconds) {
 				break;
 		}
 		var job = game.jobs.Miner;
-		var amt_local = (game.resources.trimps.owned/2) * job.modifier * seconds;
+		var amt_local = job.owned * job.modifier * seconds;
 		amt_local += (amt_local * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
 		if (getPerkLevel("Motivation_II") > 0) amt_local *= (1 + (getPerkLevel("Motivation_II") * game.portal.Motivation_II.modifier));
 		if (what != "science" && what != "fragments"){
@@ -2938,7 +2966,7 @@ function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry) {
 			amt_local *= Math.pow(0.8, (compare - world));
 		}
 
-	var maploot = game.global.farmlandsUnlocked ? 3.6 : 2.85;
+	var maploot = game.global.farmlandsUnlocked ? 3.6 : game.global.decayDone ? 2.85 : 2.6;
 	//Add map loot bonus
 	amt_local = Math.round(amt_local * maploot);
 	if (ignoreBonuses) return amt_local;

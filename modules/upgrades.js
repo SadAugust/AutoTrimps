@@ -79,9 +79,9 @@ function RautoGoldenUpgradesAT(setting) {
 	setting2 = "Helium";
     if (setting == "Void" || setting == "Void + Battle")
         setting2 = "Void";
-    if (game.global.challengeActive == "Mayhem" || game.global.challengeActive == "Pandemonium" ) {
-	setting2 = "Battle";
-    }
+    if (game.global.challengeActive == "Mayhem" || game.global.challengeActive == "Pandemonium" ) 
+        setting2 = "Battle";
+    
     var success = buyGoldenUpgrade(setting2);
     if (!success && setting2 == "Void") {
         num = getAvailableGoldenUpgrades();
