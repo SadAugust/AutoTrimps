@@ -164,6 +164,7 @@ function initializeAllSettings() {
 	createSetting('RBuyUpgradesNew', ['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords'], 'Autobuys non-equipment upgrades (equipment is controlled in the Gear tab). The second option does NOT buy coordination (use this <b>ONLY</b> if you know what you\'re doing).', 'multitoggle', 1, null, 'Core');
 	createSetting('RAutoAllocatePerks', ['Auto Allocate Off', 'Auto Allocate On', 'Dump into Looting'], 'Uses the AutoPerks ratio based preset system to automatically allocate your perks to spend whatever helium you have when you AutoPortal. Does not change Fixed Perks: siphonology, anticipation, meditation, relentlessness, range, agility, bait, trumps, packrat, capable. NEW: Dump into Looting, dumps all loot gained from previous portal at specified zone', 'multitoggle', 0, null, 'Core');
 	createSetting('Rdumpgreed', 'Greed Dump', 'Dump Radon into Greed instead. ', 'boolean', false, null, "Core");
+	createSetting('RPerkSwapping', 'Preset Swapping', 'Will automatically load Preset 1 if portaling into a normal run or Preset 2 if portaling into a daily run.<br>Be aware that you need to save your presets when making adjustments or it\'ll revert to the previous one you saved.', 'boolean', false, null, 'Core');
 
 	//Helium Portal
 	createSetting('AutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Helium Per Hour only <b>portals at cell 1</b> of the first level where your He/Hr went down even slightly compared to the current runs Best He/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting He/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Helium Per Hour', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Custom'], 'Core');
@@ -174,7 +175,7 @@ function initializeAllSettings() {
 	createSetting('HeliumHrBuffer', 'He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
 
 	//Radon Portal
-	document.getElementById('Rdumpgreed').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('RPerkSwapping').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Radon Per Hour only <b>portals at cell 1</b> of the first level where your Rn/Hr went down even slightly compared to the current runs Best Rn/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting Rn/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Radon Per Hour','Bublé','Melt','Quagmire','Archaeology','Mayhem','Insanity','Nurture','Alchemy','Pandemonium','Custom'], 'Core');
 	createSetting('RadonHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None','Bublé','Melt','Quagmire','Archaeology','Insanity','Nurture','Alchemy'], 'Core');
 	createSetting('RCustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
@@ -299,6 +300,7 @@ function initializeAllSettings() {
 	//Radon Daily Portal
 	document.getElementById('Rdtimespecialselection').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
+	createSetting('RFillerRun', 'Filler run', 'Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.', 'boolean', false, null, 'Daily');
 	createSetting('u1daily', 'Daily in U1', 'If this is on, you will do your daily in U1. ', 'boolean', false, null, 'Daily');
 	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
 	createSetting('RdHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None','Bublé','Melt','Quagmire','Archaeology','Insanity','Nurture','Alchemy'], 'Daily');
@@ -648,16 +650,17 @@ function initializeAllSettings() {
 	createSetting('Rexterminateon', 'Exterminate', 'Turn on Exterminate settings. This also controls the entireity of Exterminate. If you turn this off it will not calculate Exterminate.', 'boolean', false, null, 'Challenges');
 	createSetting('Rexterminatecalc', 'E: Calc', 'Calculate Exterminate enemies instead of the usual ones. May improve your challenge experience. ', 'boolean', false, null, 'Challenges');
 	createSetting('Rexterminateeq', 'E: Equality', 'Will manage your equality \'better\' inside the challenge. When you have the experienced buff it will turn it off, when you dont it will turn it on and let it build up.', 'boolean', false, null, 'Challenges');
-		
+    
 	//Alchemy
 	document.getElementById('Rexterminateeq').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('RAlchOn', 'Alchemy', 'Turn on Alchemy settings. This also controls the entireity of Alchemy. If you turn this off it will not do any specific farming during the challenge.', 'boolean', false, null, 'Challenges');
+	createSetting('RAlchOn', 'Alchemy', 'Turn on Alchemy settings. This also controls the entireity of Alchemy. If you turn this off it will not do any specific farming during the challenge. Whilst enabled will purchase as many Void and Strength potions as you can afford whilst inside void maps.', 'boolean', false, null, 'Challenges');
 	createSetting('Ralchfarmstack', 'AF: Potions', 'How many levels of a potion to farm at zone specified in AF. You must pair a potion with a level here. Example: h15,g20,s15,h17,g22,v15,s17. This will farm Herby potion up to level 15 on the first AF: Zone, Gaseous potion to level 20 and so on.', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('RAlchZone', 'AF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Challenges');
 	createSetting('RAlchMapLevel', 'AF: Map Level', 'What map level to use. Needs to be a level or +map which can be specified by 0,1,2,3 etc. Will not function if you try to use minus maps', 'multiValue', [0], null, 'Challenges');
 	createSetting('RAlchCell', 'AF: Cell', 'Alch Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Challenges');
 	createSetting('RAlchSpecial', 'Alch: Special', 'Select which Special to use. Will automatically use Fast Attack maps if you do not have Hyperspeed 2 for you current zone. Also overrides your autojobs to buy workers relating to the resource you want to farm. I.e if LSC is chosen all workers will be hired as farmers and rest fired for the duration of farm. <br> 0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'Challenges');
-	createSetting('RAlchVoids', 'Void potions', 'This will craft as many Void and Strength potions as you are able to whilst inside Void Maps.', 'boolean', false, null, 'Challenges');
+	createSetting('RAlchFAMaps', 'FA Maps', 'Will run Fast Attack maps instead of the setting you\'ve selected in Alch: Special if you don\'t have Hyperspeed 2 for your current zone.', 'boolean', false, null, 'Challenges');
+	//createSetting('RAlchVoids', 'Void potions', 'This will craft as many Void and Strength potions as you are able to whilst inside Void Maps.', 'boolean', false, null, 'Challenges');
 
 	//Combat
 	//Helium
@@ -729,7 +732,7 @@ function initializeAllSettings() {
 	createSetting('Rhsshield', 'Shields', 'Toggle to swap Shields', 'boolean', false, null, 'Heirlooms');
 	createSetting('Rhslowvmdc', 'HS: First', '<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('Rhsnovmdc', 'HS: Second', '<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
-	createSetting('Rhsmayhem', 'HS: Special', '<b>Second Heirloom to use</b><br><br>Enter the name of the heirloom you would like to use during special challenges (Mayhem, Pandemonium).', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('Rhsmayhem', 'HS: C3/Special', '<b>Second Heirloom to use</b><br><br>Enter the name of the heirloom you would like to use during C3\s and special challenges (Mayhem, Pandemonium).', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('Rhshzone', 'HS: Zone', 'Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>', 'value', '-1', null, 'Heirlooms');
 
 	//Staff swapping
@@ -1328,6 +1331,7 @@ function updateCustomButtons() {
 	radonon ? turnOn('RBuyUpgradesNew') : turnOff('RBuyUpgradesNew');
 	radonon ? turnOn('RAutoAllocatePerks'): turnOff('RAutoAllocatePerks');
 	radonon && getPageSetting('RAutoAllocatePerks')==2 ? turnOn('Rdumpgreed'): turnOff('Rdumpgreed');
+	radonon ? turnOn('RPerkSwapping'): turnOff('RPerkSwapping');
 
 	//RPortal
 	radonon ? turnOn('RAutoPortal'): turnOff('RAutoPortal');
@@ -1411,9 +1415,10 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidcell'): turnOff('RAMPdraidcell');
 	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidfrag'): turnOff('RAMPdraidfrag');
 	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidrecycle'): turnOff('RAMPdraidrecycle');
-
+	
 	//RDPortal
 	radonon ? turnOn('RAutoStartDaily'): turnOff('RAutoStartDaily');
+	radonon && getPageSetting('RAutoStartDaily') ? turnOn('RFillerRun'): turnOff('RFillerRun');
 	radonon ? turnOn('u1daily'): turnOff('u1daily');
 	radonon ? turnOn('RAutoPortalDaily'): turnOff('RAutoPortalDaily');
 	radonon && getPageSetting('RAutoPortalDaily')==2 ? turnOn('RdCustomAutoPortal') : turnOff('RdCustomAutoPortal');
@@ -1783,8 +1788,9 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchMapLevel') : turnOff('RAlchMapLevel');
 	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchCell') : turnOff('RAlchCell');
 	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchSpecial') : turnOff('RAlchSpecial');
-	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchVoids') : turnOff('RAlchVoids');
-
+	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchFAMaps') : turnOff('RAlchFAMaps');
+	//radonon && getPageSetting('RAlchOn') ? turnOn('RAlchVoids') : turnOff('RAlchVoids');
+    
 	//Scryer
 	!radonon ? turnOn('UseScryerStance'): turnOff('UseScryerStance');
 	!radonon ? turnOn('ScryerUseWhenOverkill'): turnOff('ScryerUseWhenOverkill');
