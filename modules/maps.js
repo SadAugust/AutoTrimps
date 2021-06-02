@@ -810,7 +810,7 @@ function RupdateAutoMapsStatus(get) {
 	//Setting up status
 	else if (!game.global.mapsUnlocked) status = '&nbsp;';
 	//Time, Tribute, Equip, Ship Farming, Prestige Raiding, Map bonus, void maps
-	else if (Rshouldtimefarm) status = 'Time Farming: ' + game.global.mapRunCounter + "/" + timezones + " maps run";
+	else if (Rshouldtimefarm) status = 'Time Farming: ' + game.global.mapRunCounter + "/" + timezones;
 	else if (Rshouldtributefarm && tributezones > game.buildings.Tribute.owned) status = 'Tribute Farming: ' + game.buildings.Tribute.owned + "/" + tributezones;
 	else if (Rshouldtributefarm && metzones > game.jobs.Meteorologist.owned) status = 'Meteorologist Farming: ' + game.jobs.Meteorologist.owned + "/" + metzones;
 	else if (Rshouldshipfarm) status = 'Ship Farming: ' + game.jobs.Worshipper.owned + "/" + shipamountzones;
@@ -824,7 +824,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (Rshouldmayhem == 1 || Rshouldmayhem == 2) status = 'Mayhem Destacking: ' + game.challenges.Mayhem.stacks + " remaining";
 	else if (Rshouldstormfarm) status = 'Storm Farming to ' + stormdynamicHD().toFixed(2);
 	else if (Rshouldinsanityfarm) status = 'Insanity Farming: '+ game.challenges.Insanity.insanity + "/" + insanitystackszones;
-	else if (Rshouldpandemonium) status = 'Pandemonium Destacking: ' + game.challenges.Pandemonium.pandemonium + " stacks remaining";
+	else if (Rshouldpandemonium) status = 'Pandemonium Destacking: ' + game.challenges.Pandemonium.pandemonium + " remaining";
 	else if (Rshouldpandemoniumfarm) status = 'Pandemonium Farming';
 	else if (Rshouldalchfarm) status = 'Alchemy Farming ' + alchObj.potionNames[potion] + " (" + alchObj.potionsOwned[potion] + "/" + alchstackszones.toString().replace(/[^\d:-]/g, '') + ")";
 	//Farming or Wants stats
@@ -884,7 +884,7 @@ function RautoMap() {
 	if ((game.options.menu.repeatUntil.enabled == 1 || game.options.menu.repeatUntil.enabled == 2 || game.options.menu.repeatUntil.enabled == 3) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
 	if (game.options.menu.exitTo.enabled != 0) toggleSetting('exitTo');
 	if (game.options.menu.repeatVoids.enabled != 0) toggleSetting('repeatVoids');
-	var hitsSurvived = getPageSetting("Rhitssurvived") > 0 ? getPageSetting("Rhitssurvived") : 10;
+	var hitsSurvived = getPageSetting("Rhitssurvived") > 0 ? getPageSetting("Rhitssurvived") : 5;
 
 	//Void Vars -- Checks whether you're ina  daily and uses those settings if you are
 	voidMapLevelSettingCell = 	game.global.challengeActive == 'Daily' && getPageSetting('Rdvoidscell') > 0 ? getPageSetting('Rdvoidscell') : 
@@ -907,8 +907,7 @@ function RautoMap() {
 
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, false);
-	var enemyDamage = RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0));
-	var enemyHealth = RcalcEnemyHealth(game.global.world);
+	var enemyDamage = RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 100, 'Improbability', 1.0));
 
 	if (getPageSetting('RDisableFarm') > 0) {
 		RshouldFarm = (RcalcHDratio() >= getPageSetting('RDisableFarm'));
@@ -1095,7 +1094,7 @@ function RautoMap() {
 			var shipmaplevel = getPageSetting('Rshipfarmlevel');
 			var shipfarmamount = getPageSetting('Rshipfarmamount');
 			var shipamountfarmindex = shipfarmzone.indexOf(game.global.world);
-			shipamountzones = getPageSetting('Rshipfarmamount')[1] == 'undefined' && getPageSetting('Rshipfarmamount')[0] > 0 ? getPageSetting('Rshipfarmamount') : shipfarmamount[shipamountfarmindex];
+			shipamountzones = getPageSetting('Rshipfarmamount').length == 1 && getPageSetting('Rshipfarmamount')[0] > 0 ? getPageSetting('Rshipfarmamount')[0] : shipfarmamount[shipamountfarmindex];
 			var shippluslevel = shipmaplevel[shipamountfarmindex];
 			var shipspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
 			
@@ -1261,7 +1260,7 @@ function RautoMap() {
 				if (!game.equipment[equipName].locked) {
 					//Checking cost of next equipment level. Blocks unavailable ones.
 					if (game.challenges.Pandemonium.isEquipBlocked(equipName) || RequipmentList[equipName].Resource == 'wood') continue;
-					var nextLevelCostEquipment = game.equipment[equipName].cost[RequipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[RequipmentList[equipName].Resource][1], game.equipment[equipName].level) * artBoost;
+					nextLevelCostEquipment = game.equipment[equipName].cost[RequipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[RequipmentList[equipName].Resource][1], game.equipment[equipName].level) * artBoost;
 					//Checking cost of prestiges if any are available to purchase
 					for (var upgrade of allUpgradeNames) {
 						if (game.upgrades[upgrade].prestiges === equipName) {
@@ -1276,12 +1275,12 @@ function RautoMap() {
 			}
 
 			//Working out how much metal a large metal cache or jestimp proc provides.
-			var amt_cache = getPageSetting('RPandemoniumAutoEquip') > 3 && game.global.world >= getPageSetting('RPandemoniumAEJestimpZone') ? simpleSecondsLocal("metal", 45) : 
+			amt_cache = getPageSetting('RPandemoniumAutoEquip') > 3 && game.global.world >= getPageSetting('RPandemoniumAEJestimpZone') ? simpleSecondsLocal("metal", 45) : 
 							getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') ? simpleSecondsLocal("metal", 40) : 
 							simpleSecondsLocal("metal", 20);
 			var amt_jestimp = simpleSecondsLocal("metal", 45);
 			//Switching to Huge Cache maps if LMC maps don't give enough metal for equip levels. Should only proc during Jestimp farming.
-			var pandfarmspecial = nextLevelCostEquipment > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20)) ? "hc" : "lmc";
+			pandfarmspecial = nextLevelCostEquipment > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20)) ? "hc" : "lmc";
 			//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
 			if (nextLevelCostEquipment < scaleToCurrentMapLocal(amt_cache) || (nextLevelCostPrestige != null && nextLevelCostPrestige < scaleToCurrentMapLocal(amt_jestimp))) Rshouldpandemoniumfarm = true;
 		}
@@ -1309,11 +1308,11 @@ function RautoMap() {
 
 				//Alchemy biome selection, will select Farmlands if it's unlocked and appropriate otherwise it'll use the default map type for that herb.
 				alchbiome = alchObj.potionNames[potion] == alchObj.potionNames[0] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Metal" ? "Farmlands" : "Mountain" : 
-								alchObj.potionNames[potion] == alchObj.potionNames[1] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Wood" ? "Farmlands" : "Forest" : 
-								alchObj.potionNames[potion] == alchObj.potionNames[2] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Food" ? "Farmlands" : "Sea" : 
-								alchObj.potionNames[potion] == alchObj.potionNames[3] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Gems" ? "Farmlands" : "Depths" : 
-								alchObj.potionNames[potion] == alchObj.potionNames[4] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Any" ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random" : 
-								game.global.farmlandsUnlocked && getFarmlandsResType() == "Any" ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
+							alchObj.potionNames[potion] == alchObj.potionNames[1] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Wood" ? "Farmlands" : "Forest" : 
+							alchObj.potionNames[potion] == alchObj.potionNames[2] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Food" ? "Farmlands" : "Sea" : 
+							alchObj.potionNames[potion] == alchObj.potionNames[3] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Gems" ? "Farmlands" : "Depths" : 
+							alchObj.potionNames[potion] == alchObj.potionNames[4] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Any" ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random" : 
+							game.global.farmlandsUnlocked && getFarmlandsResType() == "Any" ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
 
 				//Doing calcs to identify the total cost of all the Brews/Potions that are being farmed
 				//Initialising vars
@@ -1330,7 +1329,7 @@ function RautoMap() {
 					if (!alchObj.potions[potion].enemyMult) {
 						var potionsowned = 0;
 						//Calculating total level of potions that aren't being farmed
-						for (var y = 0; y < alchObj.potionsOwned.length; y++){
+						for (var y = 0; y < alchObj.potionsOwned.length; y++) {
 							if (alchObj.potions[y].challenge != (game.global.challengeActive == "Alchemy")) continue;
 							if (y != alchObj.potionNames.indexOf(alchObj.potionNames[potion]) && !alchObj.potions[y].enemyMult) potionsowned += alchObj.potionsOwned[y];
 						}
@@ -1339,7 +1338,6 @@ function RautoMap() {
 					//Summing cost of potion levels
 					potioncosttotal += potioncost;
 				}
-
 				if (potion == undefined) debug('You have an incorrect value in AF: Potions, each input needs to start with h, g, f, v, or s.');
 				else {
 					if (alchstackszones.toString().replace(/[^\d:-]/g, '') > potionscurrent) {
@@ -1354,7 +1352,7 @@ function RautoMap() {
 				}
 			}
 		}
-		if (RdoVoids && game.global.mapsActive && getPageSetting('RAlchVoids')) {
+		if (RdoVoids && game.global.mapsActive) {
 			if (getCurrentMapObject().location == "Void" && (alchObj.canAffordPotion('Potion of the Void') || alchObj.canAffordPotion('Potion of Strength'))) {
 				alchObj.craftPotion('Potion of the Void');
 				alchObj.craftPotion('Potion of Strength');
@@ -1574,17 +1572,16 @@ function RautoMap() {
 			} else if ((Rshouldalchfarm || Rshouldinsanityfarm || Rshouldtimefarm || Rshouldtributefarm || Rshouldshipfarm) && !Rshouldequipfarm && !Rshoulddopraid) {
 				//Checking hyperspeed 2 percentage
 				var hyp2pct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0
-				var alchspecial = (Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world) ? autoTrimpSettings.RAlchSpecial.selected : "fa";
+				var alchspecial =   (Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world) ? autoTrimpSettings.RAlchSpecial.selected : 
+                                    getPageSetting('RAlchFAMaps') ? "fa" :
+                                    autoTrimpSettings.RAlchSpecial.selected;
 				if (Rshouldalchfarm) {
 					selectedMap = RShouldFarmMapCreation(alchpluslevel, alchspecial, alchbiome);
-				} 
-				else if (Rshouldinsanityfarm) {
+				} else if (Rshouldinsanityfarm) {
 					selectedMap = RShouldFarmMapCreation(insanitypluslevel, "fa");  
-				} 
-				else if (Rshouldshipfarm) {
+				} else if (Rshouldshipfarm) {
 					selectedMap = RShouldFarmMapCreation(shippluslevel, shipspecial); 
-				} 
-				else if (Rshouldtimefarm) {
+				} else if (Rshouldtimefarm) {
 					selectedMap = RShouldFarmMapCreation(timefarmpluslevel, timefarmspecial);
 					timefarmmap = "timefarming";
 				} else if (Rshouldtributefarm) { 
@@ -1615,11 +1612,10 @@ function RautoMap() {
 	//Getting to Map Creation and Repeat
 	if (!game.global.preMapsActive && game.global.mapsActive) {
 		var doDefaultMapBonus = game.global.mapBonus < maxMapBonusLimit - 1;
-		if ((Rshoulddopraid || (Rshoulddopraid && RAMPfragfarming)) || (Rshouldinsanityfarm || (Rshouldinsanityfarm && Rinsanityfragfarming)) || (selectedMap == game.global.currentMapId && (Rshoulddobogs || (!getCurrentMapObject().noRecycle && (doDefaultMapBonus || RvanillaMapatZone || RdoMaxMapBonus || RshouldFarm || Rshouldtimefarm || Rshouldtributefarm || Rshoulddoquest > 0 || Rshouldmayhem > 0 || Rshouldstormfarm || Rshouldequipfarm || (Rshouldshipfarm || (Rshouldshipfarm && Rshipfragfarming)) || Rshouldpandemonium || Rshouldalchfarm))))) {
+		if ((Rshoulddopraid || (Rshoulddopraid && RAMPfragfarming)) || (Rshouldinsanityfarm || (Rshouldinsanityfarm && Rinsanityfragfarming)) || (selectedMap == game.global.currentMapId && (Rshoulddobogs || (!getCurrentMapObject().noRecycle && (doDefaultMapBonus || RvanillaMapatZone || RdoMaxMapBonus || RshouldFarm || Rshouldtimefarm || Rshouldtributefarm || Rshoulddoquest > 0 || Rshouldmayhem > 0 || Rshouldstormfarm || Rshouldequipfarm || (Rshouldshipfarm || (Rshouldshipfarm && Rshipfragfarming)) || Rshouldpandemonium || Rshouldpandemoniumfarm || Rshouldalchfarm))))) {
 			//Starting with repeat on
-			if (!game.global.repeatMap) {
+			if (!game.global.repeatMap) 
 				repeatClicked();
-			}
 			if (Rshoulddopraid && !RAMPfragfarming) {
 				if (game.options.menu.repeatUntil.enabled != 2) {
 					game.options.menu.repeatUntil.enabled = 2;
@@ -1627,40 +1623,32 @@ function RautoMap() {
 			} else if ((Rshoulddopraid && RAMPfragfarming) || (Rshouldinsanityfarm && Rinsanityfragfarming) || (Rshouldshipfarm && Rshipfragfarming)) {
 				if (game.options.menu.repeatUntil.enabled != 0) game.options.menu.repeatUntil.enabled = 0;
 			}
-			if (!Rshoulddopraid && !RAMPfragfarming && !Rshouldinsanityfarm && !Rinsanityfragfarming && !Rshoulddobogs && !RshouldDoMaps && !Rshouldtributefarm && !Rshouldtimefarm && Rshoulddoquest <= 0 && Rshouldmayhem <= 0 && !Rshouldstormfarm && !Rshouldequipfarm && !Rshouldshipfarm && !Rshipfragfarming && !Rshouldpandemonium && !Rshouldalchfarm) {
+			if (!Rshoulddopraid && !RAMPfragfarming && !Rshouldinsanityfarm && !Rinsanityfragfarming && !Rshoulddobogs && !RshouldDoMaps && !Rshouldtributefarm && !Rshouldtimefarm && Rshoulddoquest <= 0 && Rshouldmayhem <= 0 && !Rshouldstormfarm && !Rshouldequipfarm && !Rshouldshipfarm && !Rshipfragfarming && !Rshouldpandemonium && !Rshouldalchfarm) 
 				repeatClicked();
-			}
 			if (shouldDoHealthMaps && game.global.mapBonus >= getPageSetting('RMaxMapBonushealth')) {
 				repeatClicked();
 				shouldDoHealthMaps = false;
 			}
-			if (RdoMaxMapBonus && game.global.mapBonus >= (maxMapBonusLimit - 1)) {
+			if (RdoMaxMapBonus && game.global.mapBonus >= (maxMapBonusLimit - 1))
 				repeatClicked();
-			}
-			if (game.global.repeatMap && Rshoulddoquest == 6 && game.global.mapBonus >= 4) {
+			if (game.global.repeatMap && Rshoulddoquest == 6 && game.global.mapBonus >= 4)
 				repeatClicked();
-			}
-			if (game.global.repeatMap && Rshoulddopraid && RAMPfragfarming && RAMPfrag() == true) {
+			if (game.global.repeatMap && Rshoulddopraid && RAMPfragfarming && RAMPfrag() == true)
 				repeatClicked();
-			}
-			if (game.global.repeatMap && Rshouldinsanityfarm && Rinsanityfragfarming && fragmapcost()) {
+			if (game.global.repeatMap && Rshouldinsanityfarm && Rinsanityfragfarming && fragmapcost())
 				repeatClicked();
-			}
-			if (game.global.repeatMap && Rshouldshipfarm && Rshipfragfarming && fragmapcost()) {
+			if (game.global.repeatMap && Rshouldshipfarm && Rshipfragfarming && fragmapcost())
 				repeatClicked();
-			}
-			if (game.global.repeatMap && Rshouldtimefarm && game.global.mapRunCounter + 1 == timezones) {
+			if (game.global.repeatMap && Rshouldtimefarm && game.global.mapRunCounter + 1 == timezones)
 				repeatClicked();
-			}
-			if (game.global.repeatMap && Rshoulddobogs && game.global.mapRunCounter + 1 == stacksum) {
+			if (game.global.repeatMap && Rshoulddobogs && game.global.mapRunCounter + 1 == stacksum)
 				repeatClicked();
-			}
-			if (game.global.repeatMap && Rshouldpandemonium && ((getCurrentMapObject().level - game.global.world) >= game.challenges.Pandemonium.pandemonium || (pandemoniumextra - game.challenges.Pandemonium.pandemonium) < pandemoniumextra)) {
+			if (game.global.repeatMap && Rshouldpandemonium && (((getCurrentMapObject().level - game.global.world) != pandemoniumextra) || ((game.challenges.Pandemonium.pandemonium - pandemoniumextra) < pandemoniumextra))) 
 				repeatClicked();
-			}
-			if (game.global.repeatMap && Rshouldalchfarm && herbtotal >= potioncosttotal) {
+            if (game.global.repeatMap && Rshouldpandemoniumfarm && ((getCurrentMapObject().bonus != pandfarmspecial) || (nextLevelCostEquipment >= scaleToCurrentMapLocal(amt_cache))))
+                repeatClicked();
+			if (game.global.repeatMap && Rshouldalchfarm && herbtotal >= potioncosttotal)
 				repeatClicked();
-			}
 
 		} else {
 			if (game.global.repeatMap) {
@@ -1694,6 +1682,7 @@ function RautoMap() {
 		if (selectedMap == "world") {
 			mapsClicked();
 		} else if (selectedMap == "createp") {
+            //Prestige Farming
 			var RAMPfragcheck = true;
 			if (praidfrag > 0) {
 				if (RAMPfrag() == true) {
@@ -1759,8 +1748,9 @@ function RautoMap() {
 							RAMPmapbought[x] = true;
 							if (RAMPmapbought[x]) {
 								RAMPpMap[x] = (game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
-								debug("Map "+[(x+1)]+" bought");
-							}
+								RAMPMapsRun = x;
+								debug("Map "+[(x + 1)]+" bought");
+							}  
 						}
 					}
 				}
@@ -1776,9 +1766,9 @@ function RautoMap() {
 					autoTrimpSettings["RAutoMaps"].value = 0;
 				}
 				
-				for (var x = 4; x > -1; x--) {
+				for (var x = RAMPMapsRun; x > -1; x--) {
 					if (RAMPfragcheck && game.global.preMapsActive && !game.global.mapsActive && RAMPmapbought[x] && RAMPpMap[x] != undefined && Rshoulddopraid) {
-						debug("Running map "+[(5-x)]);
+						debug("Running map "+[(RAMPMapsRun - x + 1)]);
 						selectedMap = RAMPpMap[x];
 						selectMap(RAMPpMap[x]);
 						runMap();

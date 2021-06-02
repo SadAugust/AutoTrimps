@@ -257,7 +257,7 @@ function mainLoop() {
 		if (getPageSetting('Rmanageequality') && game.global.fighting) Rmanageequality();
 		
 		//RHeirlooms
-		if (getPageSetting('Rhs')) Rheirloomswap();
+		if (getPageSetting('Rhs')) HeirloomSwapping();
 		
 		//RGolden
 		var Ragu = 	game.global.runningChallengeSquared ? getPageSetting('RcAutoGoldenUpgrades') : 

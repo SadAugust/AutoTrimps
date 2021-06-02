@@ -2973,3 +2973,23 @@ function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry) {
 	amt_local = scaleLootBonuses(amt_local, ignoreScry);
 	return amt_local;
 }
+
+function ABItemSwap(items) {
+	var changeitems = false;
+	if (changeitems = true) {
+		for (var item in autoBattle.items) {
+			if (autoBattle.items[item].equipped) {
+				autoBattle.items[item].equipped = false;
+				changeitems = false;
+			}
+		}
+	}
+	for (var item of items) {
+		if (autoBattle.items[item].equipped == false) { 
+			changeitems = true;
+			if (autoBattle.items[item].hidden) 
+				autoBattle.items[item].hidden = false;
+			autoBattle.items[item].equipped = true;
+		}
+	}
+}
