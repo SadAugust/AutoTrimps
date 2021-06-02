@@ -73,6 +73,7 @@ function maximizeAllTabs(){for(var a=document.getElementsByClassName("tabcontent
 
 var addTabsDiv;
 var addtabsUL;
+
 function initializeAllTabs() {
 	addTabsDiv = document.createElement('div');
 	addtabsUL = document.createElement('ul');
