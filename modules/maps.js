@@ -1206,7 +1206,7 @@ function RautoMap() {
 	//Pandemonium
 	if (game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumOn')) {
 		Rshouldpandemonium = false;
-		Rshouldpandemoniumfarm = 0;
+		Rshouldpandemoniumfarm = false;
 		Rdopandemonium = (game.global.world >= getPageSetting('RPandemoniumZone') && game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumOn'));
 		if (Rdopandemonium) {
 			if (game.challenges.Pandemonium.pandemonium > 0 && getPageSetting('RPandemoniumMaps')) {
@@ -1623,7 +1623,7 @@ function RautoMap() {
 			} else if ((Rshoulddopraid && RAMPfragfarming) || (Rshouldinsanityfarm && Rinsanityfragfarming) || (Rshouldshipfarm && Rshipfragfarming)) {
 				if (game.options.menu.repeatUntil.enabled != 0) game.options.menu.repeatUntil.enabled = 0;
 			}
-			if (!Rshoulddopraid && !RAMPfragfarming && !Rshouldinsanityfarm && !Rinsanityfragfarming && !Rshoulddobogs && !RshouldDoMaps && !Rshouldtributefarm && !Rshouldtimefarm && Rshoulddoquest <= 0 && Rshouldmayhem <= 0 && !Rshouldstormfarm && !Rshouldequipfarm && !Rshouldshipfarm && !Rshipfragfarming && !Rshouldpandemonium && !Rshouldalchfarm) 
+			if (!Rshoulddopraid && !RAMPfragfarming && !Rshouldinsanityfarm && !Rinsanityfragfarming && !Rshoulddobogs && !RshouldDoMaps && !Rshouldtributefarm && !Rshouldtimefarm && Rshoulddoquest <= 0 && Rshouldmayhem <= 0 && !Rshouldstormfarm && !Rshouldequipfarm && !Rshouldshipfarm && !Rshipfragfarming && !Rshouldpandemonium && !Rshouldpandemoniumfarm && !Rshouldalchfarm) 
 				repeatClicked();
 			if (shouldDoHealthMaps && game.global.mapBonus >= getPageSetting('RMaxMapBonushealth')) {
 				repeatClicked();
