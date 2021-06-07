@@ -738,26 +738,26 @@ MODULES.maps.RSkipNumUnboughtPrestiges = 2;
 MODULES.maps.RUnearnedPrestigesRequired = 2;
 
 //General
-var RshouldDoMaps = !1;
+var RshouldDoMaps = false;
 var RlastMapWeWereIn = null;
-var RdoMaxMapBonus = !1;
-var RvanillaMapatZone = !1;
+var RdoMaxMapBonus = false;
+var RvanillaMapatZone = false;
 //Void Maps
-var RdoVoids = !1;
-var RneedToVoid = !1;
+var RdoVoids = false;
+var RneedToVoid = false;
 var Rdovoids = false;
 //Time Farm
-var Rshouldtimefarm = !1;
-var Rtimefarm = !1;
+var Rshouldtimefarm = false;
+var Rtimefarm = false;
 var timefarmmap = undefined;
 var Rzonecleared = 0;
 //Tribute Farm
-var Rshouldtributefarm = !1;
-var Rtributefarm = !1;
+var Rshouldtributefarm = false;
+var Rtributefarm = false;
 var Tributefarmmap = undefined;
 //Worshipper
-var Rshipfarm = !1;
-var Rshouldshipfarm = !1;
+var Rshipfarm = false;
+var Rshouldshipfarm = false;
 var Rshipfragfarming = false;
 var shipfragmappy = undefined;
 var shipprefragmappy = undefined;
@@ -771,11 +771,11 @@ var Rquestshieldzone = 0;
 //Mayhem
 var Rshouldmayhem = 0;
 //Storm
-var Rstormfarm = !1;
-var Rshouldstormfarm = !1;
+var Rstormfarm = false;
+var Rshouldstormfarm = false;
 //Insanity
-var Rinsanityfarm = !1;
-var Rshouldinsanityfarm = !1;
+var Rinsanityfarm = false;
+var Rshouldinsanityfarm = false;
 var Rinsanityfragfarming  = false;
 var insanityfragmappy = undefined;
 var insanityprefragmappy = undefined;
@@ -788,8 +788,8 @@ var Requipminusglobal = -1;
 var Rshouldpandemonium = false;
 var Rshouldpandemoniumfarm = false;
 //Alchemy
-var Rshouldalchfarm = !1;
-var RAlchFarm = !1;
+var Rshouldalchfarm = false;
+var RAlchFarm = false;
 //Prestige
 var Rshoulddopraid = false;
 var RAMPfragmappy = undefined;
@@ -816,7 +816,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (Rshouldshipfarm) status = 'Ship Farming: ' + game.jobs.Worshipper.owned + "/" + shipamountzones;
 	else if (Rshouldequipfarm) status = 'Equip Farming to ' + equipfarmdynamicHD().toFixed(2) + " and " + estimateEquipsForZone()[2] + " Equality";
 	else if (Rshoulddopraid) status = 'Prestige Raiding: ' + Rgetequips(raidzones, false) + ' items remaining';
-	else if (RdoMaxMapBonus) status = 'Map Bonus: ' + game.global.mapBonus + "/" + maxMapBonusLimit;
+	else if (RdoMaxMapBonus && RshouldDoMaps) status = 'Map Bonus: ' + game.global.mapBonus + "/" + maxMapBonusLimit;
 	else if (RdoVoids) status = 'Void Maps: ' + game.global.totalVoidMaps + ' remaining';
 	//Challenges
 	else if (Rshoulddobogs) status = 'Black Bogs: ' + (stacksum - game.global.mapRunCounter) + " remaining";
@@ -870,9 +870,11 @@ function RautoMap() {
 
 	//Failsafes
 	if (!game.global.mapsUnlocked || RcalcOurDmg("avg", false, false) <= 0 || Rshoulddoquest == 9) {
+        RvanillaMapatZone = false;
 		RenoughDamage = true;
 		RenoughHealth = true;
 		RshouldFarm = false;
+		RshouldDoMaps = false;
 		RupdateAutoMapsStatus();
 		return;
 	}
@@ -964,15 +966,25 @@ function RautoMap() {
 	}
 	var restartVoidMap = false;
 	RdoMaxMapBonus = (maxMapBonusZ >= 0 && game.global.mapBonus < maxMapBonusLimit && game.global.world >= maxMapBonusZ);
-	if (RdoMaxMapBonus) RshouldDoMaps = true;
-	else RdoMaxMapBonus = false;
+	if (RdoMaxMapBonus) {
+        if (game.global.challengeActive == "Quest") {
+            if (questcheck() != 9)
+                RshouldDoMaps = true;
+        }
+        else
+            RshouldDoMaps = true;
+    } else 
+        RdoMaxMapBonus = false;
 
     //Map at Zone (MAZ) -- Kicks you out after one map? Might need to check if fixable. Looks like the repeat toggle isn't functioning properly
     RvanillaMapatZone = false;
     if (game.options.menu.mapAtZone.enabled && game.global.canMapAtZone) {
         for (var x = 0; x < game.options.menu.mapAtZone.setZone.length; x++) {
             var option = game.options.menu.mapAtZone.setZone[x];
-            if (option.world == game.global.world && option.cell == game.global.lastClearedCell+2) RvanillaMapatZone = true;
+            var world = game.global.world;
+            var validRange = world >= option.world && world <= option.through;
+            var mazZone = validRange && (world == option.world && option.times == -1 || (world - option.world) % option.times == 0);
+            if (mazZone && option.cell == game.global.lastClearedCell+2) RvanillaMapatZone = true;
         }
         if (RvanillaMapatZone) {
             updateAutoMapsStatus();
@@ -998,6 +1010,8 @@ function RautoMap() {
 			var timefarmindex = timefarmzone.indexOf(game.global.world);
 			timezones = timefarmtime[timefarmindex];
 			timefarmpluslevel = timefarmmaplevel[timefarmindex];
+            if (game.global.challengeActive == "Wither" && timefarmpluslevel >= 0)
+                timefarmpluslevel = -1;
 			if (game.global.mapRunCounter == timezones && timefarmmap != undefined) {
 				Rzonecleared = game.stats.zonesCleared.value;
 				timefarmmap == undefined;
@@ -1027,7 +1041,8 @@ function RautoMap() {
 			metzones = metsfarmvalue[tributefarmindex];
 			var tributefarmpluslevel = tributefarmmaplevel[tributefarmindex];
 			var tributefarmspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
-
+            if (game.global.challengeActive == "Wither" && tributefarmpluslevel >= 0)
+                tributefarmpluslevel = -1;
 			if (tributefarmzone.includes(game.global.world) && (tributezones > game.buildings.Tribute.owned || metzones > game.jobs.Meteorologist.owned)) {
 				Rshouldtributefarm = true;
 				Tributefarmmap = getCurrentMapObject();
@@ -1255,13 +1270,20 @@ function RautoMap() {
 			artBoost *= autoBattle.oneTimers.Artisan.owned ? autoBattle.oneTimers.Artisan.getMult() : 1;
 			artBoost *= game.challenges.Pandemonium.getEnemyMult();
 			
+			//Working out how much metal a large metal cache or jestimp proc provides.
+			amt_cache = getPageSetting('RPandemoniumAutoEquip') > 3 && game.global.world >= getPageSetting('RPandemoniumAEJestimpZone') ? simpleSecondsLocal("metal", 45) : 
+							getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') ? simpleSecondsLocal("metal", 40) : 
+							simpleSecondsLocal("metal", 20);
+            var amt_jestimp = simpleSecondsLocal("metal", 45);
+
 			//Looping through each piece of equipment
 			for (var equipName in game.equipment) {
 				if (!game.equipment[equipName].locked) {
 					//Checking cost of next equipment level. Blocks unavailable ones.
 					if (game.challenges.Pandemonium.isEquipBlocked(equipName) || RequipmentList[equipName].Resource == 'wood') continue;
+					if (scaleToCurrentMapLocal(amt_cache) > nextLevelCostEquipment && nextLevelCostEquipment != null) continue;
 					nextLevelCostEquipment = game.equipment[equipName].cost[RequipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[RequipmentList[equipName].Resource][1], game.equipment[equipName].level) * artBoost;
-					//Checking cost of prestiges if any are available to purchase
+                    //Checking cost of prestiges if any are available to purchase
 					for (var upgrade of allUpgradeNames) {
 						if (game.upgrades[upgrade].prestiges === equipName) {
 							prestigeUpgradeName = upgrade;
@@ -1274,11 +1296,6 @@ function RautoMap() {
 				}
 			}
 
-			//Working out how much metal a large metal cache or jestimp proc provides.
-			amt_cache = getPageSetting('RPandemoniumAutoEquip') > 3 && game.global.world >= getPageSetting('RPandemoniumAEJestimpZone') ? simpleSecondsLocal("metal", 45) : 
-							getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') ? simpleSecondsLocal("metal", 40) : 
-							simpleSecondsLocal("metal", 20);
-			var amt_jestimp = simpleSecondsLocal("metal", 45);
 			//Switching to Huge Cache maps if LMC maps don't give enough metal for equip levels. Should only proc during Jestimp farming.
 			pandfarmspecial = nextLevelCostEquipment > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20)) ? "hc" : "lmc";
 			//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
