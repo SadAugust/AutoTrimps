@@ -825,7 +825,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (Rshouldstormfarm) status = 'Storm Farming to ' + stormdynamicHD().toFixed(2);
 	else if (Rshouldinsanityfarm) status = 'Insanity Farming: '+ game.challenges.Insanity.insanity + "/" + insanitystackszones;
 	else if (Rshouldpandemonium) status = 'Pandemonium Destacking: ' + game.challenges.Pandemonium.pandemonium + " remaining";
-	else if (Rshouldpandemoniumfarm) status = 'Pandemonium Farming';
+	else if (Rshouldpandemoniumfarm) status = 'Pandemonium Farming Equips below ' + prettify(scaleToCurrentMapLocal(amt_cache));
 	else if (Rshouldalchfarm) status = 'Alchemy Farming ' + alchObj.potionNames[potion] + " (" + alchObj.potionsOwned[potion] + "/" + alchstackszones.toString().replace(/[^\d:-]/g, '') + ")";
 	//Farming or Wants stats
 	else if (RshouldFarm && !RdoVoids) status = 'Farming: ' + RcalcHDratio().toFixed(4) + 'x';
