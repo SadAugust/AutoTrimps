@@ -1,7 +1,7 @@
 MODULES["other"] = {};
 MODULES["other"].enableRoboTrimpSpam = true;
 var prestraid=!1,dprestraid=!1,failpraid=!1,dfailpraid=!1,bwraided=!1,dbwraided=!1,failbwraid=!1,dfailbwraid=!1,perked=!1,prestraidon=!1,dprestraidon=!1,mapbought=!1,dmapbought=!1,bwraidon=!1,dbwraidon=!1,presteps=null,minMaxMapCost,fMap,pMap,shouldFarmFrags=!1,praidDone=!1;
-function armydeath(){if(game.global.mapsActive)return!1;var e=game.global.lastClearedCell+1,l=game.global.gridArray[e].attack*dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength,game.global.dailyChallenge.empower.stacks),a=game.global.soldierHealth+game.global.soldierEnergyShield;"Ice"==getEmpowerment()&&(l*=game.empowerments.Ice.getCombatModifier());var g=game.global.soldierCurrentBlock;return 3==game.global.formation?g/=4:"0"!=game.global.formation&&(g*=2),g>game.global.gridArray[e].attack?l*=getPierceAmt():l-=g*(1-getPierceAmt()),"Daily"==game.global.challengeActive&&void 0!==game.global.dailyChallenge.crits&&(l*=dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),void 0!==game.global.dailyChallenge.bogged&&(a-=game.global.soldierHealthMax*dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),void 0!==game.global.dailyChallenge.plague&&(a-=game.global.soldierHealthMax*dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength,game.global.dailyChallenge.plague.stacks)),"Electricity"==game.global.challengeActive&&(a-=game.global.soldierHealth-=game.global.soldierHealthMax*(.1*game.challenges.Electricity.stacks)),"corruptCrit"==game.global.gridArray[e].corrupted?l*=5:"healthyCrit"==game.global.gridArray[e].corrupted?l*=7:"corruptBleed"==game.global.gridArray[e].corrupted?a*=.8:"healthyBleed"==game.global.gridArray[e].corrupted&&(a*=.7),(a-=l)<=1e3}
+function armydeath(){if(game.global.mapsActive)return!1;var e=game.global.lastClearedCell+1,l=game.global.gridArray[e].attack*dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength,game.global.dailyChallenge.empower.stacks)*game.portal.Equality.getMult(),a=game.global.soldierHealth+game.global.soldierEnergyShield*(Fluffy.isRewardActive('shieldlayer') ? ((1 + Fluffy.isRewardActive('shieldlayer'))) : 1);"Ice"==getEmpowerment()&&(l*=game.empowerments.Ice.getCombatModifier());var g=game.global.soldierCurrentBlock;return 3==game.global.formation?g/=4:"0"!=game.global.formation&&(g*=2),g>game.global.gridArray[e].attack?l*=getPierceAmt():l-=g*(1-getPierceAmt()),"Daily"==game.global.challengeActive&&void 0!==game.global.dailyChallenge.crits&&(l*=dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),void 0!==game.global.dailyChallenge.bogged&&(a-=game.global.soldierHealthMax*dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),void 0!==game.global.dailyChallenge.plague&&(a-=game.global.soldierHealthMax*dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength,game.global.dailyChallenge.plague.stacks)),"Electricity"==game.global.challengeActive&&(a-=game.global.soldierHealth-=game.global.soldierHealthMax*(.1*game.challenges.Electricity.stacks)),"corruptCrit"==game.global.gridArray[e].corrupted?l*=5:"healthyCrit"==game.global.gridArray[e].corrupted?l*=7:"corruptBleed"==game.global.gridArray[e].corrupted?a*=.8:"healthyBleed"==game.global.gridArray[e].corrupted&&(a*=.7),(a-=l)<=1e3}
 function autoRoboTrimp(){if(!(0<game.global.roboTrimpCooldown)&&game.global.roboTrimpLevel){var a=parseInt(getPageSetting("AutoRoboTrimp"));0==a||game.global.world>=a&&!game.global.useShriek&&(magnetoShriek(),MODULES.other.enableRoboTrimpSpam&&debug("Activated Robotrimp MagnetoShriek Ability @ z"+game.global.world,"graphs","*podcast"))}}
 function isBelowThreshold(a){return a!=game.global.world}
 function buyWeps(){if(!((getPageSetting('BuyWeaponsNew')==1)||(getPageSetting('BuyWeaponsNew')==3)))return;preBuy(),game.global.buyAmt=getPageSetting('gearamounttobuy'),game.equipment.Dagger.level<getPageSetting('CapEquip2')&&canAffordBuilding('Dagger',null,null,!0)&&buyEquipment('Dagger',!0,!0),game.equipment.Mace.level<getPageSetting('CapEquip2')&&canAffordBuilding('Mace',null,null,!0)&&buyEquipment('Mace',!0,!0),game.equipment.Polearm.level<getPageSetting('CapEquip2')&&canAffordBuilding('Polearm',null,null,!0)&&buyEquipment('Polearm',!0,!0),game.equipment.Battleaxe.level<getPageSetting('CapEquip2')&&canAffordBuilding('Battleaxe',null,null,!0)&&buyEquipment('Battleaxe',!0,!0),game.equipment.Greatsword.level<getPageSetting('CapEquip2')&&canAffordBuilding('Greatsword',null,null,!0)&&buyEquipment('Greatsword',!0,!0),!game.equipment.Arbalest.locked&&game.equipment.Arbalest.level<getPageSetting('CapEquip2')&&canAffordBuilding('Arbalest',null,null,!0)&&buyEquipment('Arbalest',!0,!0),postBuy()}
@@ -1777,13 +1777,36 @@ function trimpcide() {
 	}
 }
 
+//Implement Frenzy not being active functionality if Frenzy Uptime option is toggled, will forever farm Empower stacks trying to get Frenzy atm
+function rkillarmy() {
+    if (game.global.mapsActive) return !1;
+    var equality = game.portal.Equality.scalingActive,
+        eh = (RcalcEnemyBaseHealth("world",game.global.world,game.global.lastClearedCell + 2,game.global.gridArray[game.global.lastClearedCell + 1].name)),
+        ea = ((RcalcBadGuyDmg(null, RgetEnemyMaxAttack((game.global.world), game.global.lastClearedCell + 2, game.global.gridArray[game.global.lastClearedCell + 1].name, 1), equality) * 1.5)),
+        sa = RcalcOurDmg("avg", equality, true),
+        sh = game.global.soldierHealth + game.global.soldierEnergyShield * (Fluffy.isRewardActive("shieldlayer") ? 1 + Fluffy.isRewardActive("shieldlayer") : 1);
+    return (
+        "Daily" == game.global.challengeActive && void 0 !== game.global.dailyChallenge.crits && (ea *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),
+        void 0 !== game.global.dailyChallenge.bogged && (sh -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),
+        void 0 !== game.global.dailyChallenge.plague && (sh -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks)),
+        ((!equality && (sh -= ea) <= 1e3) || (equality && (sa -= eh) <= 1e3))
+    );
+}
+
 function avoidempower() {
-	if(armydeath()) {
+	if (game.global.universe == 1 && armydeath()) {
 		if (typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined') {
 			mapsClicked(true);
 			return;
 		}
 	}
+    
+	if (game.global.universe == 2 && rkillarmy()) {
+		if (typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined') {
+			mapsClicked(true);
+			return;
+		}
+    }
 }
 
 var spirebreeding = false;
@@ -1922,20 +1945,20 @@ function questcheck() {
 	if (game.global.world < game.challenges.Quest.getQuestStartZone()) {
 	    return 0;
 	}
-	
-	if (game.challenges.Quest.getQuestProgress() == "Quest Complete!" || game.challenges.Quest.getQuestProgress() == "Failed!") return 0;
+	var questnotcomplete = game.challenges.Quest.getQuestProgress() != "Quest Complete!";
+	if (game.challenges.Quest.getQuestProgress() == "Failed!") return 0;
 	//Resource multipliers
-	else if (game.challenges.Quest.getQuestDescription().includes("food")) return 1;
-	else if (game.challenges.Quest.getQuestDescription().includes("wood")) return 2;
-	else if (game.challenges.Quest.getQuestDescription().includes("metal")) return 3;
-	else if (game.challenges.Quest.getQuestDescription().includes("gems")) return 4;
-	else if (game.challenges.Quest.getQuestDescription().includes("science")) return 5;
+	else if (game.challenges.Quest.getQuestDescription().includes("food") && questnotcomplete) return 1;
+	else if (game.challenges.Quest.getQuestDescription().includes("wood") && questnotcomplete) return 2;
+	else if (game.challenges.Quest.getQuestDescription().includes("metal") && questnotcomplete) return 3;
+	else if (game.challenges.Quest.getQuestDescription().includes("gems") && questnotcomplete) return 4;
+	else if (game.challenges.Quest.getQuestDescription().includes("science") && questnotcomplete) return 5;
 	//Everything else
-	else if (game.challenges.Quest.getQuestDescription() == "Complete 5 Maps at Zone level") return 6;
-	else if (game.challenges.Quest.getQuestDescription() == "One-shot 5 world enemies") return 7;
-	else if (game.challenges.Quest.getQuestDescription() == "Don't let your shield break before Cell 100") return 8;
+	else if (game.challenges.Quest.getQuestDescription() == "Complete 5 Maps at Zone level" && questnotcomplete) return 6;
+	else if (game.challenges.Quest.getQuestDescription() == "One-shot 5 world enemies" && questnotcomplete) return 7;
+	else if (game.challenges.Quest.getQuestDescription() == "Don't let your shield break before Cell 100" && questnotcomplete) return 8;
 	else if (game.challenges.Quest.getQuestDescription() == "Don't run a map before Cell 100") return 9;
-	else if (game.challenges.Quest.getQuestDescription() == "Buy a Smithy") return 10;
+	else if (game.challenges.Quest.getQuestDescription() == "Buy a Smithy" && questnotcomplete) return 10;
 	else return 0;
 }
 
@@ -2835,8 +2858,10 @@ var fastimps =
 
 function Rmanageequality() {
 
+    var enemy = game.global.preMapsActive ? fastimps.includes(game.global.gridArray[game.global.lastClearedCell + 1].name) : fastimps.includes(getCurrentEnemy().name);
+
 	if (!(game.global.challengeActive == "Exterminate" && getPageSetting('Rexterminateon') == true && getPageSetting('Rexterminateeq') == true && !game.global.mapsActive)) {
-		if (fastimps.includes(getCurrentEnemy().name) || (game.global.mapsActive && getCurrentMapObject().location == "Void") || (game.portal.Frenzy.frenzyStarted == "-1")) {
+		if (enemy || (game.global.mapsActive && getCurrentMapObject().location == "Void") || (game.portal.Frenzy.frenzyStarted == "-1")) {
 			if (!game.portal.Equality.scalingActive) {
 				game.portal.Equality.scalingActive = true;
 				manageEqualityStacks();

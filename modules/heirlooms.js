@@ -273,13 +273,25 @@ function HeirloomSwapping() {
     } else if (getPageSetting('Rhsstaff')) {
         if (getPageSetting('Rhsworldstaff') != "undefined" && !game.global.mapsActive) {
             HeirloomEquipStaff('Rhsworldstaff');
-        } else if (getPageSetting('Rhsmapstaff') != "undefined" && game.global.mapsActive) {
-            if (getCurrentMapObject().bonus == undefined && getPageSetting('Rhsmapstaff') != "undefined") {
+        } else if (game.global.mapsActive) {
+/*             if (getCurrentMapObject().bonus == undefined && getPageSetting('Rhsmapstaff') != "undefined") {
                 HeirloomEquipStaff('Rhsmapstaff');
             } else if (getCurrentMapObject().bonus.includes("sc") && Rshouldtributefarm && getPageSetting('Rhstributestaff') != "undefined") {
                 HeirloomEquipStaff('Rhstributestaff');
             } else if (getPageSetting('Rhsmapstaff') != "undefined") {
                 HeirloomEquipStaff('Rhsmapstaff');
+            } */
+            if (getPageSetting('RhsMapStaff') != "undefined" && getCurrentMapObject().bonus == undefined)
+                HeirloomEquipStaff('RhsMapStaff');
+            else if (getCurrentMapObject().bonus != undefined) {
+                if (getPageSetting('RhsSCStaff') != "undefined" && getCurrentMapObject().bonus.includes("sc"))
+                    HeirloomEquipStaff('RhsSCStaff');
+                else if (getPageSetting('RhsWCStaff') != "undefined" && getCurrentMapObject().bonus.includes("wc"))
+                    HeirloomEquipStaff('RhsWCStaff');
+                else if (getPageSetting('RhsMCStaff') != "undefined" && getCurrentMapObject().bonus.includes("mc"))
+                    HeirloomEquipStaff('RhsMCStaff');
+                else if (getPageSetting('RhsMapStaff') != "undefined") 
+                    HeirloomEquipStaff('RhsMapStaff');
             }
         }
     }

@@ -461,6 +461,9 @@ function RquestbuyJobs() {
 	RsafeBuyJob('Lumberjack', totalDistributableWorkers * 0.35);
 	RsafeBuyJob('Miner', totalDistributableWorkers * 0.45);
     }
+
+    if (questcheck() == 0)
+        RbuyJobs();
 }
 
 var reservedJobs = 100;
@@ -512,7 +515,7 @@ function RbuyJobs() {
 
 	//Ships
 	shipspending = ((getPageSetting('Rshipspending') > 0) ? getPageSetting('Rshipspending') : 100);
-	var affordableShips = Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost())/100*shipspending);
+	var affordableShips = Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) / 100 * shipspending);
 	if (affordableShips > 0 && !game.jobs.Worshipper.locked) {
 		var buyAmountStore = game.global.buyAmt;
 		game.global.buyAmt = affordableShips;

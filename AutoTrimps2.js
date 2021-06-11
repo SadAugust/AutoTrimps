@@ -205,20 +205,25 @@ function mainLoop() {
 		}
 
 		if (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([5].indexOf(questcheck()) >= 0))) {
-				if (getPageSetting('RBuyUpgradesNew') != 0) RbuyUpgrades();
+				if (getPageSetting('RBuyUpgradesNew') != 0) 
+                    RbuyUpgrades();
 		}
 
 		//RCore
-        if (getPageSetting('RAutoMaps') > 0 && game.global.mapsUnlocked) RautoMap();
-		if (getPageSetting('Rshowautomapstatus')) RupdateAutoMapsStatus();
-		if (getPageSetting('RManualGather2') == 1) RmanualLabor2();
+        if (getPageSetting('RAutoMaps') > 0 && game.global.mapsUnlocked) 
+            RautoMap();
+		if (getPageSetting('Rshowautomapstatus')) 
+            RupdateAutoMapsStatus();
+		if (getPageSetting('RManualGather2') == 1) 
+            RmanualLabor2();
 		if (getPageSetting('RTrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
 		if (game.global.challengeActive == "Daily" && getPageSetting('buyradony') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyradony') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');	
 		
 		//RBuildings
 		if (game.global.challengeActive == "Quest" && questcheck() == 10 && game.challenges.Quest.getQuestProgress != 'Quest Complete!') RbuyBuildings();
 		if (!(game.global.challengeActive == "Quest" && game.global.world >= game.challenges.Quest.getQuestStartZone() && game.global.lastClearedCell < 90 && ([1, 2, 3, 4, 10].indexOf(questcheck()) >= 0))) {
-			if (getPageSetting('RBuyBuildingsNew')) RbuyBuildings();
+			if (getPageSetting('RBuyBuildingsNew')) 
+                RbuyBuildings();
 		}
 
 		//RJobs
@@ -226,7 +231,8 @@ function mainLoop() {
 			//Check to see if we're on quest and at a quest zone or if we're trying to do some farming that needs other jobs.
 			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (Rshouldtributefarm || Rshouldshipfarm || Rshouldtimefarm || Rshouldequipfarm))) {
 				if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (Rshouldtributefarm || Rshouldshipfarm || Rshouldtimefarm || Rshouldequipfarm))) {
-					if (getPageSetting('RBuyJobsNew') == 1) RworkerRatios();
+					if (getPageSetting('RBuyJobsNew') == 1) 
+                        RworkerRatios();
 					RbuyJobs();
 				}
 			} else {
@@ -235,8 +241,10 @@ function mainLoop() {
 		}
 
 		//RPortal
-		if (autoTrimpSettings.RAutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) RautoPortal();
-		if (getPageSetting('RAutoPortalDaily') > 0 && game.global.challengeActive == "Daily") RdailyAutoPortal();
+		if (autoTrimpSettings.RAutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) 
+            RautoPortal();
+		if (getPageSetting('RAutoPortalDaily') > 0 && game.global.challengeActive == "Daily") 
+            RdailyAutoPortal();
 
 		//Archeology
 		if (getPageSetting('Rarchon') && game.global.challengeActive == "Archaeology") {
@@ -254,21 +262,26 @@ function mainLoop() {
 			else if (getPageSetting('Rdfightforever') == 1 && game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.empower == 'undefined' && typeof game.global.dailyChallenge.bloodthirst == 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) Rfightalways();
 			else if (getPageSetting('Rdfightforever') == 2 && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) Rfightalways();
 		}
-		if (getPageSetting('Rmanageequality') && game.global.fighting) Rmanageequality();
+		if (getPageSetting('Rmanageequality') && (game.global.fighting || game.global.preMapsActive)) 
+            Rmanageequality();
 		
 		//RHeirlooms
-		if (getPageSetting('Rhs')) HeirloomSwapping();
+		if (getPageSetting('Rhs')) 
+            HeirloomSwapping();
 		
 		//RGolden
 		var Ragu = 	game.global.runningChallengeSquared ? getPageSetting('RcAutoGoldenUpgrades') : 
 					game.global.challengeActive == "Daily" ? getPageSetting('RdAutoGoldenUpgrades') :
 					getPageSetting('RAutoGoldenUpgrades');
-		if (Ragu && Ragu != 'Off') RautoGoldenUpgradesAT(Ragu);
+		if (Ragu && Ragu != 'Off') 
+            RautoGoldenUpgradesAT(Ragu);
 
 		//Bone Upgrades
 		if (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') {
-			if ((getPageSetting('c3GM_ST') == 1 || getPageSetting('c3GM_ST') == 3) && !game.singleRunBonuses.goldMaps.owned && game.global.b >=20) purchaseSingleRunBonus('goldMaps');
-			if ((getPageSetting('c3GM_ST') == 2 || getPageSetting('c3GM_ST') == 3)  && !game.singleRunBonuses.sharpTrimps.owned && game.global.b >=25) purchaseSingleRunBonus('sharpTrimps');
+			if ((getPageSetting('c3GM_ST') == 1 || getPageSetting('c3GM_ST') == 3) && !game.singleRunBonuses.goldMaps.owned && game.global.b >=20) 
+                purchaseSingleRunBonus('goldMaps');
+			if ((getPageSetting('c3GM_ST') == 2 || getPageSetting('c3GM_ST') == 3)  && !game.singleRunBonuses.sharpTrimps.owned && game.global.b >=25) 
+                purchaseSingleRunBonus('sharpTrimps');
 		}
 	}
 }

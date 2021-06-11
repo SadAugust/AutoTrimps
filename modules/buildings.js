@@ -405,17 +405,18 @@ function RbuyBuildings() {
     //Smithy purchasing
     if (!game.buildings.Smithy.locked && canAffordBuilding('Smithy')) {
         //Checking to see how many smithies we can buy
-        var smithy_pet = Fluffy.isRewardActive('smithy') ? 40 : 50;
-        var smithycost =    [getMaxAffordable(Math.pow((500,40), game.buildings.Smithy.owned) * 10000, (game.resources.metal.owned),(500,smithy_pet),true), 
-                            getMaxAffordable(Math.pow((500,40), game.buildings.Smithy.owned) * 5000, (game.resources.wood.owned),(500,smithy_pet),true), 
-                            getMaxAffordable(Math.pow((500,40), game.buildings.Smithy.owned) * 500, (game.resources.gems.owned),(500,smithy_pet),true)]
+        var smithy_pet = game.buildings.Smithy.cost.gems[1];
+        //Array is Gems, Metal, Wood. Tracks how many smithies each resource would be able to purchase.
+        var smithycost =    [getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.gems[0], (game.resources.gems.owned),(smithy_pet),true),
+                            getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.metal[0], (game.resources.metal.owned),(smithy_pet),true), 
+                            getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (game.resources.wood.owned),(smithy_pet),true)]
         var smithy_canbuy = Math.min(smithycost[0], smithycost[1], smithycost[2]);
-        var smithy_zones = ((getPageSetting('c3finishrun') - game.global.world) / 2);
+        var smithy_zones = Math.round(((getPageSetting('c3finishrun') - game.global.world) / 2) - 1);
         // Purchasing a smithy whilst on Quest
         if (game.global.challengeActive == 'Quest') {
             if (smithybought > game.global.world) smithybought = 0;
             //Buying as many smithies as we don't need before our specified end zone
-            if (smithybought < game.global.world && smithy_canbuy > ((getPageSetting('c3finishrun') - game.global.world) / 2)) {
+            if (smithybought < game.global.world && smithy_canbuy > smithy_zones) {
                 buyBuilding("Smithy", true, true, smithy_canbuy - smithy_zones);
                 smithybought = game.global.world;
             }

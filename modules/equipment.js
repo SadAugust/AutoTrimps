@@ -987,7 +987,7 @@ function RautoEquip() {
             if (game.equipment[equip].level < 2) {
                 buyEquipment(equip, null, true, 1);
             }
-        } 
+        }
     }
 	
     // Always buys equipment during Pandemonium

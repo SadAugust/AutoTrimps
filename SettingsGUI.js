@@ -73,7 +73,6 @@ function maximizeAllTabs(){for(var a=document.getElementsByClassName("tabcontent
 
 var addTabsDiv;
 var addtabsUL;
-
 function initializeAllTabs() {
 	addTabsDiv = document.createElement('div');
 	addtabsUL = document.createElement('ul');
@@ -215,6 +214,7 @@ function initializeAllSettings() {
 	createSetting('Rdmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Daily');
 	createSetting('Rdequipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency. ', 'boolean', false, null, "Daily");
 	createSetting('Rdequipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. ', 'value', -1, null, "Daily");
+	createSetting('Ravoidempower', 'Avoid Empower', 'Tries to avoid Empower stacks during Empower Dailies. Will farm -1 lmc maps if avoiding empower isn\'t possible. No harm in this being on, so default is On. ', 'boolean', true, null, 'Daily');
 	
 	//Helium Spire
 	document.getElementById('dscryvoidmaps').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -595,6 +595,10 @@ function initializeAllSettings() {
 	createSetting('Rc3tributemaplevel', 'TrF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'C3');
 	createSetting('Rc3tributefarmcell', 'TrF: Cell', 'Tribute Farm at this Cell. -1 to run them at the default value, which is 81. ', 'value', '-1', null, 'C3');
 	
+    //Unbalance
+	document.getElementById('Rc3tributefarmcell').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('Rc3Unbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
+
 	//Mayhem
 	document.getElementById('Rc3tributefarmcell').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rmayhemon', 'Mayhem', 'Turn on Mayhem settings. ', 'boolean', false, null, 'C3');
@@ -740,11 +744,15 @@ function initializeAllSettings() {
 	document.getElementById('Rhshzone').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rhsstaff', 'Staffs', 'Toggle to swap Staffs', 'boolean', false, null, 'Heirlooms');
 	createSetting('Rhsworldstaff', 'World', '<b>World Staff</b><br><br>Enter the name of your world staff.', 'textValue', 'undefined', null, 'Heirlooms');
-	createSetting('Rhsmapstaff', 'Map', '<b>Mapping staff</b><br><br>Enter the name of your mapping staff.', 'textValue', 'undefined', null, 'Heirlooms');
-	createSetting('Rhstributestaff', 'Tribute', '<b>Tribute farming staff</b><br><br>Enter the name of the staff you would like to equip during tribute farming.', 'textValue', 'undefined', null, 'Heirlooms');
-
+	//createSetting('Rhsmapstaff', 'Map', '<b>Mapping staff</b><br><br>Enter the name of your mapping staff.', 'textValue', 'undefined', null, 'Heirlooms');
+	//createSetting('Rhstributestaff', 'Tribute', '<b>Tribute farming staff</b><br><br>Enter the name of the staff you would like to equip during tribute farming.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('RhsMapStaff', 'Map', '<b>General Map Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside maps, will be overwritten by the proceeding 3 heirloom settings if they\'re being used otherwise will work in every maptype.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('RhsSCStaff', 'Savory Cache', '<b>Savory Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Savory Cache maps. Will use this staff for Tribute farming if it\'s enabled.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('RhsWCStaff', 'Wooden Cache', '<b>Wooden Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Wooden Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('RhsMCStaff', 'Metal Cache', '<b>Metal Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Metal Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
+    
 	//Heirloom Line
-	document.getElementById('Rhstributestaff').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('RhsMCStaff').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('autoheirlooms', 'Auto Heirlooms', 'Auto Heirlooms master button. Turn this on to enable all Auto Heirloom settings. <br><br><b>The Modifier points will be explained here.</b> The more points an heirloom has, the better chance it has of being kept. If empty is selected, it will muliplty the score by 4. If any is selected, it will multiply the score of the heirloom by 2. <br><br>E.g Mod 1 = CC (+6 if dropped, 1st modifier) <br>Mod 2 = CD (+5 if dropped, 2nd modifier) <br>Mod 3 = PB (+4 if dropped, 3rd modifier) <br>Mod 4 = Empty (x4 if dropped, +0 if not) <br>Mod 5 = Empty (x4 if dropped, +0 if not) <br><br>If an heirloom dropped with these exact modifiers, it would get a score of 192 (6+5+4*4*4=240). The highest point heirlooms will be kept. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('typetokeep', ['None', 'Shields', 'Staffs', 'Cores', 'All'], '<b>Shields: </b>Keeps Shields and nothing else.<br><b>Staffs: </b>Keeps Staffs and nothing else.<br><b>Cores: </b>Keeps Cores and nothing else.<br><b>All: </b>Keeps 4 Shields and 3 Staffs and 3 Cores. If you have protected heirlooms in your inventory it will overrite one slot. E.g if one heirloom is protected, you will keep 4 Shields and 3 Staffs and 2 Cores. ', 'multitoggle', 0, null, 'Heirlooms');
 	createSetting('raretokeep', 'Rarity to Keep', 'Auto Heirlooms. Keeps the selected rarity of heirloom, recycles all others. ', 'dropdown', 'Any', ["Any", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Magnificent", "Ethereal", "Magmatic", "Plagued", "Radiating", "Hazardous"], 'Heirlooms');
@@ -1299,6 +1307,9 @@ function updateCustomButtons() {
 	if (document.getElementById("tabNature") != null) {
 		document.getElementById("tabNature").style.display = radonon ? "none" : "";
 	}
+	if (document.getElementById("tabC2") != null) {
+		document.getElementById("tabC2").style.display = radonon ? "none" : "";
+	}
 	if (document.getElementById("tabC3") != null) {
 		document.getElementById("tabC3").style.display = !radonon ? "none" : "";
 	}
@@ -1410,6 +1421,7 @@ function updateCustomButtons() {
 	//Radon Daily Gear & Raid
 	radonon ? turnOn('Rdequipon'): turnOff('Rdequipon');
 	radonon && getPageSetting('Rdequipon') ? turnOn('Rdequipzone'): turnOff('Rdequipzone');
+	radonon ? turnOn('Ravoidempower'): turnOff('Ravoidempower');
 	radonon ? turnOn('RAMPdraid'): turnOff('RAMPdraid');
 	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidzone'): turnOff('RAMPdraidzone');
 	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidraid'): turnOff('RAMPdraidraid');
@@ -1907,6 +1919,10 @@ function updateCustomButtons() {
 	radonon && hson && hsstaffon ? turnOn('Rhsworldstaff') : turnOff('Rhsworldstaff');
 	radonon && hson && hsstaffon ? turnOn('Rhsmapstaff') : turnOff('Rhsmapstaff');
 	radonon && hson && hsstaffon ? turnOn('Rhstributestaff') : turnOff('Rhstributestaff');
+	radonon && hson && hsstaffon ? turnOn('RhsGeneralStaff') : turnOff('RhsGeneralStaff');
+	radonon && hson && hsstaffon ? turnOn('RhsSCStaff') : turnOff('RhsSCStaff');
+	radonon && hson && hsstaffon ? turnOn('RhsWCStaff') : turnOff('RhsWCStaff');
+	radonon && hson && hsstaffon ? turnOn('RhsMCStaff') : turnOff('RhsMCStaff');
 
 	var autoheirloomenable = getPageSetting('autoheirlooms');
 	var keepshieldenable = autoheirloomenable && getPageSetting('keepshields');

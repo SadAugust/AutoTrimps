@@ -836,7 +836,20 @@ function RcalcBadGuyDmg(enemy, attack, equality) {
 	number = game.global.challengeActive == 'Exterminate' && getPageSetting('Rexterminateon') && getPageSetting('Rexterminatecalc') ? RgetEnemyMaxAttack(game.global.world, 90, 'Mantimp', 1.0) : number;
 	number *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
 	number *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') >= 1 && game.portal.Equality.scalingCount > 0 && !equality ? Math.pow(game.portal.Equality.modifier, game.portal.Equality.scalingCount) : 1;
-	number *= game.global.challengeActive == 'Daily' ? RcalcDailyAttackMod(number) : 1;
+    if (game.global.challengeActive == "Daily") {
+        if (typeof game.global.dailyChallenge.badStrength !== 'undefined')
+            number *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
+        
+        if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && game.global.mapsActive)
+            number *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
+        
+        if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
+            number *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks)
+        
+        if (typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive)
+            number *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
+        
+    }
 	number *= game.global.challengeActive == 'Unbalance' ? 1.5 : 1;
 	number *= game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
 	number *= game.global.challengeActive == 'Archaeology' ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
