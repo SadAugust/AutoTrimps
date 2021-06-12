@@ -836,6 +836,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (!RenoughDamage) status = 'Want ' + RcalcHDratio().toFixed(4) + 'x &nbspmore damage';
 	else if (!RenoughHealth) status = 'Want more health';
 	//Advancing
+    else if (RvanillaMapatZone) status = 'Vanilla MAZ';
 	else if (RenoughHealth && RenoughDamage) status = 'Advancing';
 
 	var getPercent = (game.stats.heliumHour.value() / (game.global.totalRadonEarned - (game.global.radonLeftover + game.resources.radon.owned))) * 100;
@@ -951,6 +952,7 @@ function RautoMap() {
 	Rshouldpandemoniumfarm = false;
 	Rshouldalchfarm = false;
     RshouldEmpowerFarm = false;
+    RvanillaMapatZone = false;
 
 	if (ourBaseDamage > 0) {
 		RshouldDoMaps = (!RenoughDamage || RshouldFarm);
@@ -982,18 +984,17 @@ function RautoMap() {
     } else 
         RdoMaxMapBonus = false;
 
-    //Map at Zone (MAZ) -- Kicks you out after one map? Might need to check if fixable. Looks like the repeat toggle isn't functioning properly
-    RvanillaMapatZone = false;
+    //U2 (Radon) Map at Zone (MAZ)
     if (game.options.menu.mapAtZone.enabled && game.global.canMapAtZone) {
-        for (var x = 0; x < game.options.menu.mapAtZone.setZone.length; x++) {
-            var option = game.options.menu.mapAtZone.setZone[x];
+        for (var x = 0; x < game.options.menu.mapAtZone.setZoneU2.length; x++) {
+            var option = game.options.menu.mapAtZone.setZoneU2[x];
             var world = game.global.world;
             var validRange = world >= option.world && world <= option.through;
             var mazZone = validRange && (world == option.world && option.times == -1 || (world - option.world) % option.times == 0);
-            if (mazZone && option.cell == game.global.lastClearedCell+2) RvanillaMapatZone = true;
+            if (!game.global.preMapsActive && mazZone && option.cell == game.global.lastClearedCell+2) RvanillaMapatZone = true;
         }
         if (RvanillaMapatZone) {
-            updateAutoMapsStatus();
+            RupdateAutoMapsStatus();
             return;
         }
     }
@@ -1660,7 +1661,7 @@ function RautoMap() {
 			} else if ((Rshoulddopraid && RAMPfragfarming) || (Rshouldinsanityfarm && Rinsanityfragfarming) || (Rshouldshipfarm && Rshipfragfarming)) {
 				if (game.options.menu.repeatUntil.enabled != 0) game.options.menu.repeatUntil.enabled = 0;
 			}
-			if (!Rshoulddopraid && !RAMPfragfarming && !Rshouldinsanityfarm && !Rinsanityfragfarming && !Rshoulddobogs && !RshouldDoMaps && !Rshouldtributefarm && !Rshouldtimefarm && Rshoulddoquest <= 0 && Rshouldmayhem <= 0 && !Rshouldstormfarm && !Rshouldequipfarm && !Rshouldshipfarm && !Rshipfragfarming && !Rshouldpandemonium && !Rshouldpandemoniumfarm && !Rshouldalchfarm && !RshouldEmpowerFarm) 
+			if (!Rshoulddopraid && !RAMPfragfarming && !Rshouldinsanityfarm && !Rinsanityfragfarming && !Rshoulddobogs && !RshouldDoMaps && !Rshouldtributefarm && !Rshouldtimefarm && Rshoulddoquest <= 0 && Rshouldmayhem <= 0 && !Rshouldstormfarm && !Rshouldequipfarm && !Rshouldshipfarm && !Rshipfragfarming && !Rshouldpandemonium && !Rshouldpandemoniumfarm && !Rshouldalchfarm && !RshouldEmpowerFarm && !RvanillaMapatZone) 
 				repeatClicked();
 			if (shouldDoHealthMaps && game.global.mapBonus >= getPageSetting('RMaxMapBonushealth')) {
 				repeatClicked();
