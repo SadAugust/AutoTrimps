@@ -999,6 +999,15 @@ function RautoMap() {
         }
     }
 
+    //Reset to defaults when on world grid
+    if (!game.global.mapsActive && !game.global.preMapsActive) {
+		game.global.mapRunCounter=0
+        if (game.global.repeatMap == true) repeatClicked();
+        if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
+        if (document.getElementById('advExtraLevelSelect').value > 0)
+            document.getElementById('advExtraLevelSelect').value = "0";
+    }
+
 	//Time Farm
 	if (getPageSetting('Rtimefarm') && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && (game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) || (getPageSetting('Rdtimefarmzone') && game.global.challengeActive == "Daily") || (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('Rc3timefarm')) {
 		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
@@ -1023,7 +1032,8 @@ function RautoMap() {
 				Rzonecleared = game.stats.zonesCleared.value;
 				timefarmmap == undefined;
 			}
-			if (timefarmzone.includes(game.global.world) && (timezones > game.global.mapRunCounter)) Rshouldtimefarm = true;
+			if (timefarmzone.includes(game.global.world) && (timezones > game.global.mapRunCounter)) 
+                Rshouldtimefarm = true;
 		}
 	}
 	
@@ -1081,9 +1091,8 @@ function RautoMap() {
 		if (Rdopraid) {
 			var praidindex = praidzone.indexOf(game.global.world);
 			raidzones = raidzone[praidindex];
-			if (praidzone.includes(game.global.world) && ((cell <= 1) || (cell > 1 && (game.global.lastClearedCell + 1) >= cell)) && Rgetequips(raidzones, false) > 0) {
+			if (praidzone.includes(game.global.world) && ((cell <= 1) || (cell > 1 && (game.global.lastClearedCell + 1) >= cell)) && Rgetequips(raidzones, false) > 0)
 				Rshoulddopraid = true;
-			}
 		}
 		//Resetting variables and recycling the maps used
 		if (!Rshoulddopraid && (RAMPrepMap[0] != undefined || RAMPrepMap[1] != undefined || RAMPrepMap[2] != undefined || RAMPrepMap[3] != undefined || RAMPrepMap[4] != undefined)) {
@@ -1699,7 +1708,6 @@ function RautoMap() {
 			}
 		}
 	} else if (!game.global.preMapsActive && !game.global.mapsActive) {
-		game.global.mapRunCounter=0
 		if (selectedMap != "world") {
 			if (!game.global.switchToMaps) {
 				mapsClicked();
