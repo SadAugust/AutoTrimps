@@ -276,13 +276,6 @@ function HeirloomSwapping() {
         if (getPageSetting('Rhsworldstaff') != "undefined" && !game.global.mapsActive) {
             HeirloomEquipStaff('Rhsworldstaff');
         } else if (game.global.mapsActive) {
-/*             if (getCurrentMapObject().bonus == undefined && getPageSetting('Rhsmapstaff') != "undefined") {
-                HeirloomEquipStaff('Rhsmapstaff');
-            } else if (getCurrentMapObject().bonus.includes("sc") && Rshouldtributefarm && getPageSetting('Rhstributestaff') != "undefined") {
-                HeirloomEquipStaff('Rhstributestaff');
-            } else if (getPageSetting('Rhsmapstaff') != "undefined") {
-                HeirloomEquipStaff('Rhsmapstaff');
-            } */
             if (getPageSetting('RhsMapStaff') != "undefined" && getCurrentMapObject().bonus == undefined)
                 HeirloomEquipStaff('RhsMapStaff');
             else if (getCurrentMapObject().bonus != undefined) {
