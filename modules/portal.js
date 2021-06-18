@@ -468,7 +468,7 @@ function RdoPortal(challenge) {
             }
             selectChallenge(challenge || 0);
             if (portalUniverse == 2 && getPageSetting('RPerkSwapping')) {
-                presetTab(2);
+                presetTab(1);
                 loadPerkPreset();
             }
         } else {
