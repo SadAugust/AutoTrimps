@@ -1001,7 +1001,7 @@ function RautoMap() {
 
     //Reset to defaults when on world grid
     if (!game.global.mapsActive && !game.global.preMapsActive) {
-	game.global.mapRunCounter=0;
+		game.global.mapRunCounter=0
         if (game.global.repeatMap == true) repeatClicked();
         if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
         if (document.getElementById('advExtraLevelSelect').value > 0)
@@ -1485,7 +1485,7 @@ function RautoMap() {
 					break;
 				}
 				//Atlantrimp
-				if (theMap.name == 'Atlantrimp' && game.mapUnlocks.AncientTreasure.canRunOnce) {
+				if (theMap.name == 'Atlantrimp' && game.mapUnlocks.AncientTreasure.canRunOnce && !game.global.runningChallengeSquared) {
 					var atlantrimp = getPageSetting('RAtlantrimp')[0] > 0 && getPageSetting('RAtlantrimp')[1] >= 0 ? getPageSetting('RAtlantrimp') : [1000,1000];
 					if ((game.global.world >= atlantrimp[0] && ((game.global.lastClearedCell + 1) >= atlantrimp[1]))) {
 							selectedMap = theMap.id;
@@ -1500,7 +1500,7 @@ function RautoMap() {
 										game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') : 
 										game.global.challengeActive == "Daily" && getPageSetting('Rdmeltsmithy') > 0 ? getPageSetting('Rdmeltsmithy') : 
 										getPageSetting('Rmeltsmithy');
-					if ((game.global.world >= meltingpoint[0] && ((game.global.lastClearedCell + 1) >= meltingpoint[1])) || (meltsmithy > 0 && meltsmithy <= game.buildings.Smithy.owned)) {
+					if ((game.global.world >= meltingpoint[0] && ((game.global.lastClearedCell + 1) >= meltingpoint[1]) && !game.global.runningChallengeSquared) || (meltsmithy > 0 && meltsmithy <= game.buildings.Smithy.owned)) {
 						selectedMap = theMap.id;
 						break;
 					}
