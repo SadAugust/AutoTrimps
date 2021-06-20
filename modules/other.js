@@ -1802,11 +1802,13 @@ function avoidempower() {
 	}
     
 	if (game.global.universe == 2 && rkillarmy()) {
-		if (typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined') {
-			mapsClicked(true);
-			return;
-		}
-    }
+        if (game.global.dailyChallenge.empower != undefined) {
+            if (typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined') {
+                mapsClicked(true);
+                return;
+            }
+        }
+	}
 }
 
 var spirebreeding = false;
