@@ -1430,7 +1430,7 @@ function RautoMap() {
 	}
 
     //Daily -- Avoid empower -- Untested
-    if (game.global.challengeActive == "Daily" && getPageSetting('Ravoidempower')) {
+    if (game.global.challengeActive == "Daily" && getPageSetting('Ravoidempower') && game.global.dailyChallenge.empower != undefined) {
         RavoidEmpower = false;
         RavoidEmpower = ((game.global.preMapsActive || game.global.mapsActive) && 
                         game.resources.fragments.owned >= PerfectMapCost(-1,"lmc") && 
