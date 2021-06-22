@@ -1784,7 +1784,8 @@ function rkillarmy() {
         eh = (RcalcEnemyBaseHealth("world",game.global.world,game.global.lastClearedCell + 2,game.global.gridArray[game.global.lastClearedCell + 1].name)),
         ea = ((RcalcBadGuyDmg(null, RgetEnemyMaxAttack((game.global.world), game.global.lastClearedCell + 2, game.global.gridArray[game.global.lastClearedCell + 1].name, 1), equality) * 1.5)),
         sa = RcalcOurDmg("avg", equality, true),
-        sh = game.global.soldierHealth + game.global.soldierEnergyShield * (Fluffy.isRewardActive("shieldlayer") ? 1 + Fluffy.isRewardActive("shieldlayer") : 1);
+        sh = game.global.soldierHealth + game.global.soldierEnergyShield * (Fluffy.isRewardActive("shieldlayer") ? 1 + Fluffy.isRewardActive("shieldlayer") : 1),
+        frenzy = getPageSetting('Rcalcfrenzy') && game.portal.Frenzy.radLevel > 0 ? game.portal.Frenzy.frenzyStarted == '-1' : false;
     return (
         "Daily" == game.global.challengeActive && void 0 !== game.global.dailyChallenge.crits && (ea *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),
         void 0 !== game.global.dailyChallenge.bogged && (sh -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),
@@ -1802,11 +1803,13 @@ function avoidempower() {
 	}
     
 	if (game.global.universe == 2 && rkillarmy()) {
-		if (typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined') {
-			mapsClicked(true);
-			return;
-		}
-    }
+        if (game.global.dailyChallenge.empower != undefined) {
+            if (typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined') {
+                mapsClicked(true);
+                return;
+            }
+        }
+	}
 }
 
 var spirebreeding = false;
@@ -2897,99 +2900,115 @@ function Rmanageequality() {
 
 function simpleSecondsLocal(what, seconds) {
 	//Come home to the impossible flavour of balanced resource gain. Come home, to simple seconds.
-		var compatible = ["Farmer", "Lumberjack", "Miner", "Dragimp", "Explorer"];
-		var jobName;
-		switch (what) {
-			case "food":
-				jobName = "Farmer";
-				break;
-			case "wood":
-				jobName = "Lumberjack";
-				break;
-			case "metal":
-				jobName = "Miner";
-				break;
-			case "gems":
-				jobName = "Dragimp";
-				break;
-			case "fragments":
-				jobName = "Explorer";
-				break;
-			case "science":
-				jobName = "Scientist";
-				break;
-		}
-		var job = game.jobs.Miner;
-		var amt_local = job.owned * job.modifier * seconds;
-		amt_local += (amt_local * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
-		if (getPerkLevel("Motivation_II") > 0) amt_local *= (1 + (getPerkLevel("Motivation_II") * game.portal.Motivation_II.modifier));
-		if (what != "science" && what != "fragments"){
-			if (game.global.challengeActive == "Alchemy") amt_local *= alchObj.getPotionEffect("Potion of Finding");
-			amt_local *= alchObj.getPotionEffect("Elixir of Finding");
-		}
-		if (game.global.pandCompletions && game.global.universe == 2 && what != "fragments") amt_local *= game.challenges.Pandemonium.getTrimpMult();
-		if (getPerkLevel("Observation") > 0 && game.portal.Observation.trinkets > 0) amt_local *= game.portal.Observation.getMult();
-		if (getPerkLevel("Meditation") > 0) amt_local *= (1 + (game.portal.Meditation.getBonusPercent() * 0.01));
-		if (what == "food" || what == "wood" || what == "metal"){
-			amt_local *= getParityBonus(game.global.StaffEquipped);
-			if (autoBattle.oneTimers.Gathermate.owned) amt_local *= autoBattle.oneTimers.Gathermate.getMult();
-		}
-		if ((what == "food" && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15)) amt_local *= game.jobs.Meteorologist.getExtraMult();
-		if (Fluffy.isRewardActive('gatherer')) amt_local *= 2;
-		if (game.jobs.Magmamancer.owned > 0 && what == "metal") amt_local *= game.jobs.Magmamancer.getBonusPercent();
-		if (game.global.challengeActive == "Meditate") amt_local *= 1.25;
-		else if (game.global.challengeActive == "Size") amt_local *= 1.5;
-		if (game.global.challengeActive == "Toxicity"){
-			var toxMult = (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
-			amt_local *= (1 + toxMult);
-		}
-		if (game.global.challengeActive == "Watch") amt_local /= 2;
-		if (game.global.challengeActive == "Lead" && ((game.global.world % 2) == 1)) amt_local *= 2;
-		if (game.global.challengeActive == "Balance"){
-			amt_local *= game.challenges.Balance.getGatherMult();
-		}
-		if (game.global.challengeActive == "Unbalance"){
-			amt_local *= game.challenges.Unbalance.getGatherMult();
-		}
-		if (game.global.challengeActive == "Daily"){
-			if (typeof game.global.dailyChallenge.famine !== 'undefined' && what != "fragments" && what != "science"){
-				amt_local *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
-			}
-			if (typeof game.global.dailyChallenge.dedication !== 'undefined'){
-				amt_local *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
-			}
-		}
-		if (game.global.challengeActive == "Decay" || game.global.challengeActive == "Melt"){
-			var challenge = game.challenges[game.global.challengeActive];
-			amt_local *= 10;
-			amt_local *= Math.pow(challenge.decayValue, challenge.stacks);
-		}
-		if (game.challenges.Nurture.boostsActive()) amt_local *= game.challenges.Nurture.getResourceBoost();
-		if (getEmpowerment() == "Wind"){
-			amt_local *= (1 + (game.empowerments.Wind.getCombatModifier()));
-		}
-		amt_local = calcHeirloomBonus("Staff", jobName + "Speed", amt_local);
-		if (game.global.playerGathering == what){
-			if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == "food" || what == "metal" || what == "wood")){
-				var tBonus = 1.5;
-				if (game.talents.turkimp2.purchased) tBonus = 2;
-				else if (game.talents.turkimp2.purchased) tBonus = 1.75;
-				amt_local *= tBonus;
-			}
-			amt_local += getPlayerModifier() * seconds;
-		}
-		return amt_local;
+    var compatible = ["Farmer", "Lumberjack", "Miner", "Dragimp", "Explorer"];
+    var jobName;
+    switch (what) {
+        case "food":
+            jobName = "Farmer";
+            break;
+        case "wood":
+            jobName = "Lumberjack";
+            break;
+        case "metal":
+            jobName = "Miner";
+            break;
+        case "gems":
+            jobName = "Dragimp";
+            break;
+        case "fragments":
+            jobName = "Explorer";
+            break;
+        case "science":
+            jobName = "Scientist";
+            break;
+    }
+    var job = game.jobs[jobName];
+    var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
+    var workers =   game.global.challengeActive == "Pandemonium" && jobName == "Miner" ? (trimpworkers / 1000) * 997.90440075 :
+                    Rshouldshipfarm ? trimpworkers :
+                    trimpworkers;
+    var amt_local = workers * job.modifier * seconds;
+    amt_local += (amt_local * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
+    if (getPerkLevel("Motivation_II") > 0) amt_local *= (1 + (getPerkLevel("Motivation_II") * game.portal.Motivation_II.modifier));
+    if (what != "science" && what != "fragments"){
+        if (game.global.challengeActive == "Alchemy") amt_local *= alchObj.getPotionEffect("Potion of Finding");
+        amt_local *= alchObj.getPotionEffect("Elixir of Finding");
+    }
+    if (game.global.pandCompletions && game.global.universe == 2 && what != "fragments") amt_local *= game.challenges.Pandemonium.getTrimpMult();
+    if (getPerkLevel("Observation") > 0 && game.portal.Observation.trinkets > 0) amt_local *= game.portal.Observation.getMult();
+    if (getPerkLevel("Meditation") > 0) amt_local *= (1 + (game.portal.Meditation.getBonusPercent() * 0.01));
+    if (what == "food" || what == "wood" || what == "metal"){
+        amt_local *= getParityBonus(game.global.StaffEquipped);
+        if (autoBattle.oneTimers.Gathermate.owned) amt_local *= autoBattle.oneTimers.Gathermate.getMult();
+    }
+    if ((what == "food" && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15)) amt_local *= game.jobs.Meteorologist.getExtraMult();
+    if (Fluffy.isRewardActive('gatherer')) amt_local *= 2;
+    if (game.jobs.Magmamancer.owned > 0 && what == "metal") amt_local *= game.jobs.Magmamancer.getBonusPercent();
+    if (game.global.challengeActive == "Meditate") amt_local *= 1.25;
+    else if (game.global.challengeActive == "Size") amt_local *= 1.5;
+    if (game.global.challengeActive == "Toxicity"){
+        var toxMult = (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
+        amt_local *= (1 + toxMult);
+    }
+    if (game.global.challengeActive == "Watch") amt_local /= 2;
+    if (game.global.challengeActive == "Lead" && ((game.global.world % 2) == 1)) amt_local *= 2;
+    if (game.global.challengeActive == "Balance"){
+        amt_local *= game.challenges.Balance.getGatherMult();
+    }
+    if (game.global.challengeActive == "Unbalance"){
+        amt_local *= game.challenges.Unbalance.getGatherMult();
+    }
+    if (game.global.challengeActive == "Daily"){
+        if (typeof game.global.dailyChallenge.famine !== 'undefined' && what != "fragments" && what != "science"){
+            amt_local *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
+        }
+        if (typeof game.global.dailyChallenge.dedication !== 'undefined'){
+            amt_local *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
+        }
+    }
+    if (game.global.challengeActive == "Decay" || game.global.challengeActive == "Melt"){
+        var challenge = game.challenges[game.global.challengeActive];
+        amt_local *= 10;
+        amt_local *= Math.pow(challenge.decayValue, challenge.stacks);
+    }
+    if (game.challenges.Nurture.boostsActive()) amt_local *= game.challenges.Nurture.getResourceBoost();
+    if (getEmpowerment() == "Wind"){
+        amt_local *= (1 + (game.empowerments.Wind.getCombatModifier()));
+    }
+    amt_local = calcHeirloomBonus("Staff", jobName + "Speed", amt_local);
+    if (game.global.playerGathering == what){
+        if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == "food" || what == "metal" || what == "wood")){
+            var tBonus = 1.5;
+            if (game.talents.turkimp2.purchased) tBonus = 2;
+            else if (game.talents.turkimp2.purchased) tBonus = 1.75;
+            amt_local *= tBonus;
+        }
+        amt_local += getPlayerModifier() * seconds;
+    }
+    if (game.global.playerGathering != what) {
+/*         if (game.jobs.Worshipper.owned <= 40 && game.playerGathering != 'food' && shipfarmzone.includes(game.global.world) && !Rshouldshipfarm)
+            amt_local *= 2 */
+        if (game.global.challengeActive == "Pandemonium" && game.global.world >= getPageSetting('RPandemoniumAEZone') && game.playerGathering != 'metal')
+            amt_local *= 2
+    }
+    return amt_local;
 }
 
-function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry) {
-    var map = game.global.challengeActive == "Pandemonium" ? game.global.world-1 : game.global.world;
+function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
+    var map =   !map && game.global.challengeActive == "Pandemonium" ? game.global.world - 1 :
+                !map ? game.global.world :
+                map;
 	var compare = game.global.world;
+	if (map > compare && map.location != "Bionic") {
+		amt_local *= Math.pow(1.1, (map - compare));
+	} else {
 		if (game.talents.mapLoot.purchased)
 			compare--;
 		if (map < compare){
 			//-20% loot compounding for each level below world
-			amt_local *= Math.pow(0.8, (compare - world));
+			amt_local *= Math.pow(0.8, (compare - map));
 		}
+    }
 
 	var maploot = game.global.farmlandsUnlocked ? 3.6 : game.global.decayDone ? 2.85 : 2.6;
 	//Add map loot bonus

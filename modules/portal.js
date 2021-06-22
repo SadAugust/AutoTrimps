@@ -595,6 +595,7 @@ function Rresetmapvars() {
 	var Tributefarmmap = undefined;
 	var Rtimefarm = !1;
 	var Rzonecleared = 0;
+    var worshipperdebug = 0;
 	var RadditionalCritMulti = 2 < getPlayerCritChance() ? 25 : 5;
 	var Rshouldtributefarm = !1;
 	var Rshouldtimefarm = !1;

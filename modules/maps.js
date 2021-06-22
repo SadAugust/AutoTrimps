@@ -764,6 +764,7 @@ var Rshipfragfarming = false;
 var shipfragmappy = undefined;
 var shipprefragmappy = undefined;
 var shipfragmappybought = false;
+var worshipperdebug = 0;
 //Quagmire
 var Rshoulddobogs = false;
 //Quest
@@ -1008,6 +1009,11 @@ function RautoMap() {
             document.getElementById('advExtraLevelSelect').value = "0";
     }
 
+    //Setting up variables for Time & Tribute Farming - Need to implement them, remove getPageSetting and 
+    var DailyCheck =  getPageSetting('Rdtributefarm') && game.global.challengeActive == "Daily";
+    var C3Check = getPageSetting('Rc3tributefarm') && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium');
+    var FillerCheck = getPageSetting('Rtributefarm') && game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
+
 	//Time Farm
 	if (getPageSetting('Rtimefarm') && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && (game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) || (getPageSetting('Rdtimefarmzone') && game.global.challengeActive == "Daily") || (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('Rc3timefarm')) {
 		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
@@ -1036,9 +1042,9 @@ function RautoMap() {
                 Rshouldtimefarm = true;
 		}
 	}
-	
+    
 	//Tribute Farm
-	if (getPageSetting('Rtributefarm') && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && (game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) || (getPageSetting('Rdtributefarm') && game.global.challengeActive == "Daily") || (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('Rc3tributefarm')) {
+	if (getPageSetting('Rtributefarm') && game.global.challengeActive != "Downsize" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && (game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) || (getPageSetting('Rdtributefarm') && game.global.challengeActive == "Daily") || (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('Rc3tributefarm')) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
 		var runningc3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
 		var tributefarmcell = 	runningc3 && getPageSetting('Rc3tributefarmcell') > 0 ? getPageSetting('Rc3tributefarmcell') : 
@@ -1046,8 +1052,8 @@ function RautoMap() {
 								game.global.challengeActive != "Daily" && getPageSetting('Rtributefarmcell') > 0 ? getPageSetting('Rtributefarmcell') : 
 								81;
 		var tributefarmzone = runningc3 ? getPageSetting('Rc3tributefarmzone') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtributefarmzone') : getPageSetting('Rtributefarmzone');
-		var tributefarmvalue = runningc3 ? 0 : game.global.challengeActive == "Daily" ? getPageSetting('Rdtributefarmvalue') : getPageSetting('Rtributefarmvalue');
-		var metsfarmvalue = runningc3 ? getPageSetting('Rc3tributefarmmets') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtributefarmmets') : getPageSetting('Rtributefarmmets');
+		var tributefarmvalue = game.buildings.Tribute.locked == 1 ? 0 : runningc3 ? 0 : game.global.challengeActive == "Daily" ? getPageSetting('Rdtributefarmvalue') : getPageSetting('Rtributefarmvalue');
+		var metsfarmvalue = game.jobs.Meteorologist.locked == 1 ? 0 : runningc3 ? getPageSetting('Rc3tributefarmmets') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtributefarmmets') : getPageSetting('Rtributefarmmets');
 		var tributefarmmaplevel =  runningc3 ? getPageSetting('Rc3tributemaplevel') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtributemaplevel') : getPageSetting('Rtributemaplevel');
 		
 		Rtributefarm = (((tributefarmcell <= 1) || (tributefarmcell > 1 && (game.global.lastClearedCell + 1) >= tributefarmcell)) && (tributefarmzone[0] > 0 && (tributefarmvalue[0] > 0 || metsfarmvalue [0] > 0)));
@@ -1058,9 +1064,16 @@ function RautoMap() {
 			metzones = metsfarmvalue[tributefarmindex];
 			var tributefarmpluslevel = tributefarmmaplevel[tributefarmindex];
 			var tributefarmspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
+            var tributefarmspecialtime = game.global.highestRadonLevelCleared > 83 ? 20 : 10;
+
+            //Sorting out repeat settings to factor in food gained from current map
+            var tributespending = getPageSetting('RTributeSpendingPct') > 0 ? getPageSetting('RTributeSpendingPct') / 100 : 1;
+            var tributecost = ((game.buildings.Tribute.purchased + getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned + (scaleToCurrentMapLocal(simpleSecondsLocal("food", tributefarmspecialtime),false,true,(game.global.world + tributefarmpluslevel))) * tributespending),1.05,true)) >= tributezones);
+            var metcost = ((game.jobs.Meteorologist.owned + getMaxAffordable(Math.pow(5, game.jobs.Meteorologist.owned) * 1000000, (game.resources.food.owned + (scaleToCurrentMapLocal(simpleSecondsLocal("food", tributefarmspecialtime),false,true,(game.global.world + tributefarmpluslevel)))),5,true)) >= metzones);
+           
             if (game.global.challengeActive == "Wither" && tributefarmpluslevel >= 0)
                 tributefarmpluslevel = -1;
-			if (tributefarmzone.includes(game.global.world) && (tributezones > game.buildings.Tribute.owned || metzones > game.jobs.Meteorologist.owned)) {
+			if (tributefarmzone.includes(game.global.world) && (tributezones > game.buildings.Tribute.purchased || metzones > game.jobs.Meteorologist.owned)) {
 				Rshouldtributefarm = true;
 				Tributefarmmap = getCurrentMapObject();
 			}
@@ -1121,17 +1134,19 @@ function RautoMap() {
 		Rshipfarm = (((shipfarmcell <= 1) || (shipfarmcell > 1 && (game.global.lastClearedCell + 1) >= shipfarmcell)) && (getPageSetting('Rshipfarmzone')[0] > 0 && getPageSetting('Rshipfarmamount')[0] > 0));
 		if (Rshipfarm) {
 			var ships = game.jobs.Worshipper.owned
-			var shipfarmzone = getPageSetting('Rshipfarmzone');
+			shipfarmzone = getPageSetting('Rshipfarmzone');
 			var shipmaplevel = getPageSetting('Rshipfarmlevel');
 			var shipfarmamount = getPageSetting('Rshipfarmamount');
 			var shipamountfarmindex = shipfarmzone.indexOf(game.global.world);
 			shipamountzones = getPageSetting('Rshipfarmamount').length == 1 && getPageSetting('Rshipfarmamount')[0] > 0 ? getPageSetting('Rshipfarmamount')[0] : shipfarmamount[shipamountfarmindex];
 			var shippluslevel = shipmaplevel[shipamountfarmindex];
 			var shipspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
-			
-			if (shipfarmzone.includes(game.global.world) && shipamountzones > ships) {
+			if (shipfarmzone.includes(game.global.world) && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,shippluslevel) <= (game.jobs.Worshipper.getCost() * 10)))
+                debug("Skipping Worshipper farming on zone " + game.global.world + " as it costs more than a " + shipspecial + " map, evaluate your map settings to correct this")
+                worshipperdebug = game.stats.zonesCleared.value;
+			if (shipfarmzone.includes(game.global.world) && shipamountzones > ships && ((scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,shippluslevel) >= (game.jobs.Worshipper.getCost() * 10)))) 
 				Rshouldshipfarm = true;
-			}
+			
 		}
 
 		if (!Rshouldshipfarm) {
@@ -1430,7 +1445,7 @@ function RautoMap() {
 	}
 
     //Daily -- Avoid empower -- Untested
-    if (game.global.challengeActive == "Daily" && getPageSetting('Ravoidempower')) {
+    if (game.global.challengeActive == "Daily" && getPageSetting('Ravoidempower') && game.global.dailyChallenge.empower != undefined) {
         RavoidEmpower = false;
         RavoidEmpower = ((game.global.preMapsActive || game.global.mapsActive) && 
                         game.resources.fragments.owned >= PerfectMapCost(-1,"lmc") && 

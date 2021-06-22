@@ -51,9 +51,9 @@
 		font-size: 24pt;
 	}
 
-	.at-afk-zone, .at-afk-helium, .at-afk-status
+	.at-afk-zone, .at-afk-helium, .at-afk-status, .at-afk-heliumperhour
 	{
-		font-size: 20pt;
+		font-size: 18pt;
 	}
 
 	.at-afk-overlay-disable-btn
@@ -95,6 +95,11 @@
 	M["performance"].AFKOverlayHelium.innerText = 'Current helium: -';
 	M["performance"].AFKOverlayHelium.className = 'at-afk-helium'
 
+	// Helium per hour
+	M["performance"].AFKOverlayHeliumPerHour = document.createElement('p');
+	M["performance"].AFKOverlayHeliumPerHour.innerText = 'He/hr: -';
+	M["performance"].AFKOverlayHeliumPerHour.className = 'at-afk-heliumperhour'
+
 	// Status
 	M["performance"].AFKOverlayStatus = document.createElement('p');
 	M["performance"].AFKOverlayStatus.innerText = 'Status: -';
@@ -114,6 +119,7 @@
 	M["performance"].AFKOverlay.appendChild(AFKOverlayTitle);
 	M["performance"].AFKOverlay.appendChild(M["performance"].AFKOverlayZone);
 	M["performance"].AFKOverlay.appendChild(M["performance"].AFKOverlayHelium);
+	M["performance"].AFKOverlay.appendChild(M["performance"].AFKOverlayHeliumPerHour);
 	M["performance"].AFKOverlay.appendChild(M["performance"].AFKOverlayStatus);
 	M["performance"].AFKOverlay.appendChild(M["performance"].AFKOverlayDisable);
 
@@ -141,14 +147,16 @@
 
 	M["performance"].UpdateAFKOverlay = function UpdateAFKOverlay()
 	{
-		M["performance"].AFKOverlayZone.innerText = 'Current Zone: ' + game.global.world;
+		M["performance"].AFKOverlayZone.innerText = 'Zone: ' + game.global.world;
 		if (game.global.universe == 1) {
-		    M["performance"].AFKOverlayHelium.innerText = 'Current Helium: ' + prettify(Math.floor(game.resources.helium.owned));
-		    M["performance"].AFKOverlayStatus.innerHTML = 'Current Status: ' + updateAutoMapsStatus(true)[0];
+		    M["performance"].AFKOverlayHelium.innerText = 'Helium: ' + prettify(Math.floor(game.resources.helium.owned));
+		    M["performance"].AFKOverlayHeliumPerHour.innerText = 'He/hr: ' + prettify(game.stats.heliumHour.value());
+		    M["performance"].AFKOverlayStatus.innerHTML = 'Status: ' + updateAutoMapsStatus(true)[0];
 		}
 		if (game.global.universe == 2) {
-		    M["performance"].AFKOverlayHelium.innerText = 'Current Radon: ' + prettify(Math.floor(game.resources.radon.owned));
-		    M["performance"].AFKOverlayStatus.innerHTML = 'Current Status: ' + RupdateAutoMapsStatus(true)[0];
+		    M["performance"].AFKOverlayHelium.innerText = 'Radon: ' + prettify(Math.floor(game.resources.radon.owned));
+		    M["performance"].AFKOverlayHeliumPerHour.innerText = 'Rn/hr: ' + prettify(game.stats.heliumHour.value());
+		    M["performance"].AFKOverlayStatus.innerHTML = 'Status: ' + RupdateAutoMapsStatus(true)[0];
 		}
 	}
 

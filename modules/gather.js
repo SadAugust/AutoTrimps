@@ -137,6 +137,11 @@ function RmanualLabor2() {
     var hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
     var needToTrap = (game.resources.trimps.max - game.resources.trimps.owned >= game.resources.trimps.max * 0.05) || (game.resources.trimps.getCurrentSend() > game.resources.trimps.owned - game.resources.trimps.employed);
     var fresh = false;
+    var mapping =   !game.global.mapsActive ? null : 
+                    getCurrentMapObject().bonus == undefined ? null :
+                    getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('hc') || getCurrentMapObject().bonus.includes('wc') || getCurrentMapObject().bonus.includes('mc') || getCurrentMapObject().bonus.includes('rc') ? true :
+                    null;
+
     //ULTRA FRESH
     if (!game.upgrades.Battle.done) {
 	fresh = true;
@@ -179,32 +184,32 @@ function RmanualLabor2() {
 	return;
     }
 	if (game.global.challengeActive == "Pandemonium" && !Rshouldpandemonium && getPageSetting('RPandemoniumAutoEquip') > 0 && getPageSetting('RPandemoniumAEStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 1 && game.global.lastClearedCell > 59) {
-		if (game.global.world >= getPageSetting('RPandemoniumAEZone')) setGather('metal');
+		if (game.global.world >= getPageSetting('RPandemoniumAEZone')) 
+            setGather('metal');
 	}
-	var rspecial = '?';
-	if ((Rshouldtimefarm || Rshouldalchfarm) && game.global.mapsActive) {
-		if (Rshouldalchfarm) 
-            rspecial = autoTrimpSettings.RAlchSpecial.selected;
-        else if (Rshouldtimefarm && getPageSetting('Rc3timefarm') && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium'))
-            rspecial = autoTrimpSettings.Rc3timespecialselection.selected
-		else if (game.global.challengeAcive = "Daily" && Rshouldtimefarm && getPageSetting('Rdtimefarm')) 
-            rspecial = autoTrimpSettings.Rdtimespecialselection.selected;
-		else if (Rshouldtimefarm)
-			rspecial = autoTrimpSettings.Rtimespecialselection.selected;
-	}
-	
-	if ((game.global.challengeActive == "Quest" && questcheck() == 1) || Rshouldshipfarm || Rshouldtributefarm || ((Rshouldtimefarm || Rshouldalchfarm) && (rspecial.includes('sc') || rspecial.includes('hc')))) {
+	else if (game.global.challengeActive == "Quest" && questcheck() == 1) {
 		setGather('food');
     }
-    else if ((game.global.challengeActive == "Quest" && questcheck() == 2) || ((Rshouldtimefarm || Rshouldalchfarm) && rspecial.includes('wc'))) {
+    else if (game.global.challengeActive == "Quest" && questcheck() == 2) {
 		setGather('wood');
     }
-    else if ((game.global.challengeActive == "Quest" && (questcheck() == 3 || questcheck() == 7)) || ((Rshouldtimefarm || Rshouldalchfarm) && rspecial.includes('mc')))  {
+    else if (game.global.challengeActive == "Quest" && (questcheck() == 3 || questcheck() == 7))  {
 		setGather('metal');
     }
-    else if ((game.global.challengeActive == "Quest" && questcheck() == 5) || ((Rshouldtimefarm || Rshouldalchfarm) && rspecial.includes('rc')))  {
+    else if (game.global.challengeActive == "Quest" && questcheck() == 5)  {
 		setGather('science');
-	} else {
+	} 
+    else if (game.global.mapsActive && mapping != null) {
+        if (getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('hc'))
+            setGather('food');
+        else if (getCurrentMapObject().bonus.includes('wc'))
+            setGather('wood');
+        else if (getCurrentMapObject().bonus.includes('mc'))
+            setGather('metal');
+        else if (getCurrentMapObject().bonus.includes('rc'))
+                setGather('science');
+    } 
+    else {
 		if (getPageSetting('RManualGather2') != 2 && game.resources.science.owned < MODULES["gather"].RminScienceAmount && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
 				 setGather('science');
 		}

@@ -235,7 +235,8 @@ function generateHeirloomIcon(heirloom, location, number) {
 //Radon
 function HeirloomSearch(heirloom) {
     for (loom of game.global.heirloomsCarried) 
-        if (loom.name == getPageSetting(heirloom)) return loom;
+        if (loom.name == getPageSetting(heirloom)) 
+            return loom;
 }
 
 function HeirloomEquipShield(heirloom) {

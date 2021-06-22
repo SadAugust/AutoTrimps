@@ -464,11 +464,11 @@ function RbuyBuildings() {
     //Tributes
     if (!game.buildings.Tribute.locked) {
         var tributespending = getPageSetting('RTributeSpendingPct') > 0 ? getPageSetting('RTributeSpendingPct') / 100 : 1;
-        var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.owned) * 10000, (game.resources.food.owned*tributespending),1.05,true);
+        var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned * tributespending),1.05,true);
         
-        if (getPageSetting('RMaxTribute') > game.buildings.Tribute.owned) 
-            buyTributeCount = Math.min(buyTributeCount, getPageSetting('RMaxTribute') - game.buildings.Tribute.owned);
-        if (buyTributeCount > 0 && (getPageSetting('RMaxTribute') < 0 || (getPageSetting('RMaxTribute') > game.buildings.Tribute.owned))) 
+        if (getPageSetting('RMaxTribute') > game.buildings.Tribute.purchased) 
+            buyTributeCount = Math.min(buyTributeCount, getPageSetting('RMaxTribute') - game.buildings.Tribute.purchased);
+        if (buyTributeCount > 0 && (getPageSetting('RMaxTribute') < 0 || (getPageSetting('RMaxTribute') > game.buildings.Tribute.purchased))) 
             buyBuilding('Tribute', true, true, buyTributeCount);
     }
 }
