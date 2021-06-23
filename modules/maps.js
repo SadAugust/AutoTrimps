@@ -1144,7 +1144,7 @@ function RautoMap() {
 			if (shipfarmzone.includes(game.global.world) && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,game.global.world + shippluslevel) <= (game.jobs.Worshipper.getCost() * 10)))
                 debug("Skipping Worshipper farming on zone " + game.global.world + " as it costs more than a " + shipspecial + " map, evaluate your map settings to correct this")
                 worshipperdebug = game.stats.zonesCleared.value;
-			if (shipfarmzone.includes(game.global.world) && shipamountzones > ships && ((scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,shippluslevel) >= (game.jobs.Worshipper.getCost() * 10)))) 
+			if (shipfarmzone.includes(game.global.world) && shipamountzones > ships && ((scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,game.global.world + shippluslevel) >= (game.jobs.Worshipper.getCost() * 10)))) 
 				Rshouldshipfarm = true;
 			
 		}
