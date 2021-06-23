@@ -2997,7 +2997,7 @@ function simpleSecondsLocal(what, seconds) {
 function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
     var map =   !map && game.global.challengeActive == "Pandemonium" ? game.global.world - 1 :
                 !map ? game.global.world :
-                map;
+                game.global.world + map;
 	var compare = game.global.world;
 	if (map > compare && map.location != "Bionic") {
 		amt_local *= Math.pow(1.1, (map - compare));
