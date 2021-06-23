@@ -1141,7 +1141,7 @@ function RautoMap() {
 			shipamountzones = getPageSetting('Rshipfarmamount').length == 1 && getPageSetting('Rshipfarmamount')[0] > 0 ? getPageSetting('Rshipfarmamount')[0] : shipfarmamount[shipamountfarmindex];
 			var shippluslevel = shipmaplevel[shipamountfarmindex];
 			var shipspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
-			if (shipfarmzone.includes(game.global.world) && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,shippluslevel) <= (game.jobs.Worshipper.getCost() * 10)))
+			if (shipfarmzone.includes(game.global.world) && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,game.global.world + shippluslevel) <= (game.jobs.Worshipper.getCost() * 10)))
                 debug("Skipping Worshipper farming on zone " + game.global.world + " as it costs more than a " + shipspecial + " map, evaluate your map settings to correct this")
                 worshipperdebug = game.stats.zonesCleared.value;
 			if (shipfarmzone.includes(game.global.world) && shipamountzones > ships && ((scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,shippluslevel) >= (game.jobs.Worshipper.getCost() * 10)))) 
