@@ -2898,7 +2898,9 @@ function Rmanageequality() {
 	}
 }
 
-function simpleSecondsLocal(what, seconds) {
+function simpleSecondsLocal(what, seconds, event) {
+    var event = !event ? null :
+                event;
 	//Come home to the impossible flavour of balanced resource gain. Come home, to simple seconds.
     var compatible = ["Farmer", "Lumberjack", "Miner", "Dragimp", "Explorer"];
     var jobName;
@@ -2922,6 +2924,13 @@ function simpleSecondsLocal(what, seconds) {
             jobName = "Scientist";
             break;
     }
+    var heirloom =  !jobName ? null : 
+                    jobName == "Miner" && game.challengeActive == "Pandemonium" && getPageSetting("RhsPandStaff") ? "RhsPandStaff" : 
+                    jobName == "Farmer" && getPageSetting("RhsSCStaff") != undefined ? "RhsSCStaff" : 
+                    jobName == "Lumberjack" && getPageSetting("RhsWCStaff") != undefined ? "RhsWCStaff" : 
+                    jobName == "Miner" && getPageSetting("RhsMCStaff") != undefined ? "RhsMCStaff" : 
+                    getPageSetting("RhsWorldStaff") != undefined ? "RhsWorldStaff" : 
+                    null;
     var job = game.jobs[jobName];
     var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
     var workers =   game.global.challengeActive == "Pandemonium" && jobName == "Miner" ? (trimpworkers / 1000) * 997.90440075 :
@@ -2975,7 +2984,24 @@ function simpleSecondsLocal(what, seconds) {
     if (getEmpowerment() == "Wind"){
         amt_local *= (1 + (game.empowerments.Wind.getCombatModifier()));
     }
-    amt_local = calcHeirloomBonus("Staff", jobName + "Speed", amt_local);
+    if (event == null || game.global.StaffEquipped == autoTrimpSettings[heirloom].name) {
+        if (event == null)
+            amt_local = calcHeirloomBonus("Staff", jobName + "Speed", amt_local);
+        else
+            amt_local = calcHeirloomBonus("Staff", jobName + "Speed", amt_local);
+    }
+    //Calculating proper value for the staff we should be using instead of equipped
+    else if (event != null && game.global.StaffEquipped != getPageSetting(event)) {
+        if (event == getPageSetting('RhsC3')) {
+            if (getPageSetting('RhsC3') != "undefined")
+                amt_local = 1 + (HeirloomModSearch('RhsC3', jobName + "Speed") / 100);
+        }
+        if (event == getPageSetting('RhsSCStaff')) {
+            if (getPageSetting('RhsSCStaff') != "undefined")
+                amt_local = 1 + (HeirloomModSearch('RhsSCStaff', jobName + "Speed") / 100);
+        }
+    }
+
     if (game.global.playerGathering == what){
         if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == "food" || what == "metal" || what == "wood")){
             var tBonus = 1.5;
@@ -2988,7 +3014,7 @@ function simpleSecondsLocal(what, seconds) {
     if (game.global.playerGathering != what) {
 /*         if (game.jobs.Worshipper.owned <= 40 && game.playerGathering != 'food' && shipfarmzone.includes(game.global.world) && !Rshouldshipfarm)
             amt_local *= 2 */
-        if (game.global.challengeActive == "Pandemonium" && game.global.world >= getPageSetting('RPandemoniumAEZone') && game.playerGathering != 'metal')
+        if (game.global.challengeActive == "Pandemonium" && game.global.world >= getPageSetting('RPandemoniumAEZone') && what == 'metal')
             amt_local *= 2
     }
     return amt_local;
@@ -2997,7 +3023,7 @@ function simpleSecondsLocal(what, seconds) {
 function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
     var map =   !map && game.global.challengeActive == "Pandemonium" ? game.global.world - 1 :
                 !map ? game.global.world :
-                map;
+                game.global.world + map;
 	var compare = game.global.world;
 	if (map > compare && map.location != "Bionic") {
 		amt_local *= Math.pow(1.1, (map - compare));

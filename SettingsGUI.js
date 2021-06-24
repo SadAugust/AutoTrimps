@@ -618,7 +618,7 @@ function initializeAllSettings() {
 	createSetting('RPandemoniumAutoEquip', ['P: AutoEquip Off', 'P: AutoEquip', 'P AE: LMC', 'P AE: Huge Cache', 'P AE: Jestimp'], '<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.<br><br/><b>P AE: LMC Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache<br/>Will also purchase prestiges when they cost less than a Jestimp proc. Additionally will override worker settings to ensure that you farm as much metal as possible.<br/><br><b>P AE: Huge Cache</b><br>Uses the same settings as \'P: AE LMC\' but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure fast farming speed.<br/><br/><b>P AE: Jestimp</b><br/>Provides a setting for Jestimp farming from a set zone which will change the equipment buying condition from if they cost less than a huge cache to if they cost less than the metal you\'d gain from a Jestimp kill. <br/>Recommended to only use the later part of Pandemonium runs as it will increase farming time by a drastic amount.', 'multitoggle', 0, null, 'C3');
 	createSetting('RPandemoniumAEZone', 'P: AE Zone', 'Which zone you would like to start farming as much gear as possible from.', 'value', '-1', null, 'C3');
 	createSetting('RPandemoniumAEJestimpZone', 'P: AE Jestimp Zone', 'Which zone you would like to start farming Jestimps for equipment instead of just caches as much gear as possible from.', 'value', '140', null, 'C3');
-	createSetting('RPandemoniumAEStaff', 'P: AE staff', 'The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.', 'textValue', 'undefined', null, 'C3');
+	createSetting('RhsPandStaff', 'P: AE staff', 'The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.', 'textValue', 'undefined', null, 'C3');
 	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'C3');
 	
 	//Challenges
@@ -734,18 +734,16 @@ function initializeAllSettings() {
 
 	//Shield swapping
 	document.getElementById('Rhs').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rhsshield', 'Shields', 'Toggle to swap Shields', 'boolean', false, null, 'Heirlooms');
-	createSetting('Rhslowvmdc', 'HS: First', '<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
-	createSetting('Rhsnovmdc', 'HS: Second', '<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
-	createSetting('Rhsmayhem', 'HS: C3/Special', '<b>Second Heirloom to use</b><br><br>Enter the name of the heirloom you would like to use during C3\s and special challenges (Mayhem, Pandemonium).', 'textValue', 'undefined', null, 'Heirlooms');
-	createSetting('Rhshzone', 'HS: Zone', 'Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>', 'value', '-1', null, 'Heirlooms');
+	createSetting('RhsShield', 'Shields', 'Toggle to swap Shields', 'boolean', false, null, 'Heirlooms');
+	createSetting('RhsInitial', 'Initial', '<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('RhsAfterpush', 'Afterpush', '<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('RhsSwapZone', 'Swap Zone', 'Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>', 'value', '-1', null, 'Heirlooms');
+	createSetting('RhsC3', 'C3', '<b>C3 heirloom to use</b><br><br>Enter the name of the heirloom you would like to use during C3\s and special challenges (Mayhem, Pandemonium).', 'textValue', 'undefined', null, 'Heirlooms');
 
 	//Staff swapping
-	document.getElementById('Rhshzone').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rhsstaff', 'Staffs', 'Toggle to swap Staffs', 'boolean', false, null, 'Heirlooms');
-	createSetting('Rhsworldstaff', 'World', '<b>World Staff</b><br><br>Enter the name of your world staff.', 'textValue', 'undefined', null, 'Heirlooms');
-	//createSetting('Rhsmapstaff', 'Map', '<b>Mapping staff</b><br><br>Enter the name of your mapping staff.', 'textValue', 'undefined', null, 'Heirlooms');
-	//createSetting('Rhstributestaff', 'Tribute', '<b>Tribute farming staff</b><br><br>Enter the name of the staff you would like to equip during tribute farming.', 'textValue', 'undefined', null, 'Heirlooms');
+	document.getElementById('RhsC3').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('RhsStaff', 'Staffs', 'Toggle to swap Staffs', 'boolean', false, null, 'Heirlooms');
+	createSetting('RhsWorldStaff', 'World', '<b>World Staff</b><br><br>Enter the name of your world staff.', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsMapStaff', 'Map', '<b>General Map Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside maps, will be overwritten by the proceeding 3 heirloom settings if they\'re being used otherwise will work in every maptype.', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsSCStaff', 'Savory Cache', '<b>Savory Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Savory Cache maps. Will use this staff for Tribute farming if it\'s enabled.', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsWCStaff', 'Wooden Cache', '<b>Wooden Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Wooden Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
@@ -1791,7 +1789,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip'): turnOff('RPandemoniumAutoEquip');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 0 ? turnOn('RPandemoniumAEZone'): turnOff('RPandemoniumAEZone');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumAEJestimpZone'): turnOff('RPandemoniumAEJestimpZone');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 0 ? turnOn('RPandemoniumAEStaff'): turnOff('RPandemoniumAEStaff');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 0 ? turnOn('RhsPandStaff'): turnOff('RhsPandStaff');
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
 	
 	//Alchemy
@@ -1905,21 +1903,18 @@ function updateCustomButtons() {
 	var hson = getPageSetting('Rhs')
 	
 	//Shields
-	radonon && hson ? turnOn('Rhsshield') : turnOff('Rhsshield');
-	var hsshieldon = getPageSetting('Rhsshield');
-	var highvmdcon = getPageSetting('Rhshighvmdctoggle');
-	radonon && hson && hsshieldon ? turnOn('Rhslowvmdc') : turnOff('Rhslowvmdc');
-	radonon && hson && hsshieldon ? turnOn('Rhsnovmdc') : turnOff('Rhsnovmdc');
-	radonon && hson && hsshieldon ? turnOn('Rhsmayhem') : turnOff('Rhsmayhem');
-	radonon && hson && hsshieldon ? turnOn('Rhshzone') : turnOff('Rhshzone');
+	radonon && hson ? turnOn('RhsShield') : turnOff('RhsShield');
+	var hsshieldon = getPageSetting('RhsShield');
+	radonon && hson && hsshieldon ? turnOn('RhsInitial') : turnOff('RhsInitial');
+	radonon && hson && hsshieldon ? turnOn('RhsAfterpush') : turnOff('RhsAfterpush');
+	radonon && hson && hsshieldon ? turnOn('RhsSwapZone') : turnOff('RhsSwapZone');
+	radonon && hson && hsshieldon ? turnOn('RhsC3') : turnOff('RhsC3');
 
 	//Staffs
-	radonon && hson ? turnOn('Rhsstaff') : turnOff('Rhsstaff');
-	var hsstaffon = getPageSetting('Rhsstaff');
-	radonon && hson && hsstaffon ? turnOn('Rhsworldstaff') : turnOff('Rhsworldstaff');
-	radonon && hson && hsstaffon ? turnOn('Rhsmapstaff') : turnOff('Rhsmapstaff');
-	radonon && hson && hsstaffon ? turnOn('Rhstributestaff') : turnOff('Rhstributestaff');
-	radonon && hson && hsstaffon ? turnOn('RhsGeneralStaff') : turnOff('RhsGeneralStaff');
+	radonon && hson ? turnOn('RhsStaff') : turnOff('RhsStaff');
+	var hsstaffon = getPageSetting('RhsStaff');
+	radonon && hson && hsstaffon ? turnOn('RhsWorldStaff') : turnOff('RhsWorldStaff');
+	radonon && hson && hsstaffon ? turnOn('RhsMapStaff') : turnOff('RhsMapStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsSCStaff') : turnOff('RhsSCStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsWCStaff') : turnOff('RhsWCStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsMCStaff') : turnOff('RhsMCStaff');
@@ -1933,6 +1928,7 @@ function updateCustomButtons() {
 	(autoheirloomenable) ? turnOn('raretokeep') : turnOff('raretokeep');
 	(autoheirloomenable) ? turnOn('keepshields') : turnOff('keepshields');
 	(autoheirloomenable) ? turnOn('keepstaffs') : turnOff('keepstaffs');
+	!radonon && (autoheirloomenable) ? turnOn('keepcores') : turnOff('keepcores');
 
 	(keepshieldenable) ? turnOn('slot1modsh') : turnOff('slot1modsh');
 	(keepshieldenable) ? turnOn('slot2modsh') : turnOff('slot2modsh');
@@ -1948,10 +1944,10 @@ function updateCustomButtons() {
 	(keepstaffenable) ? turnOn('slot5modst') : turnOff('slot5modst');
 	(keepstaffenable) ? turnOn('slot6modst') : turnOff('slot6modst');
 
-	(keepcoreenable) ? turnOn('slot1modcr') : turnOff('slot1modcr');
-	(keepcoreenable) ? turnOn('slot2modcr') : turnOff('slot2modcr');
-	(keepcoreenable) ? turnOn('slot3modcr') : turnOff('slot3modcr');
-	(keepcoreenable) ? turnOn('slot4modcr') : turnOff('slot4modcr');
+	!radonon && (keepcoreenable) ? turnOn('slot1modcr') : turnOff('slot1modcr');
+	!radonon && (keepcoreenable) ? turnOn('slot2modcr') : turnOff('slot2modcr');
+	!radonon && (keepcoreenable) ? turnOn('slot3modcr') : turnOff('slot3modcr');
+	!radonon && (keepcoreenable) ? turnOn('slot4modcr') : turnOff('slot4modcr');
 	
 	//Dropdowns
 	document.getElementById('AutoPortal').value = autoTrimpSettings.AutoPortal.selected;

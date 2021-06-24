@@ -1068,8 +1068,8 @@ function RautoMap() {
 
             //Sorting out repeat settings to factor in food gained from current map
             var tributespending = getPageSetting('RTributeSpendingPct') > 0 ? getPageSetting('RTributeSpendingPct') / 100 : 1;
-            var tributecost = ((game.buildings.Tribute.purchased + getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned + (scaleToCurrentMapLocal(simpleSecondsLocal("food", tributefarmspecialtime),false,true,(game.global.world + tributefarmpluslevel))) * tributespending),1.05,true)) >= tributezones);
-            var metcost = ((game.jobs.Meteorologist.owned + getMaxAffordable(Math.pow(5, game.jobs.Meteorologist.owned) * 1000000, (game.resources.food.owned + (scaleToCurrentMapLocal(simpleSecondsLocal("food", tributefarmspecialtime),false,true,(game.global.world + tributefarmpluslevel)))),5,true)) >= metzones);
+            var tributecost = ((game.buildings.Tribute.purchased + getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned + (scaleToCurrentMapLocal(simpleSecondsLocal("food", tributefarmspecialtime),false,true,tributefarmpluslevel)) * tributespending),1.05,true)) >= tributezones);
+            var metcost = ((game.jobs.Meteorologist.owned + getMaxAffordable(Math.pow(5, game.jobs.Meteorologist.owned) * 1000000, (game.resources.food.owned + (scaleToCurrentMapLocal(simpleSecondsLocal("food", tributefarmspecialtime),false,true,tributefarmpluslevel))),5,true)) >= metzones);
            
             if (game.global.challengeActive == "Wither" && tributefarmpluslevel >= 0)
                 tributefarmpluslevel = -1;
@@ -1141,7 +1141,7 @@ function RautoMap() {
 			shipamountzones = getPageSetting('Rshipfarmamount').length == 1 && getPageSetting('Rshipfarmamount')[0] > 0 ? getPageSetting('Rshipfarmamount')[0] : shipfarmamount[shipamountfarmindex];
 			var shippluslevel = shipmaplevel[shipamountfarmindex];
 			var shipspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
-			if (shipfarmzone.includes(game.global.world) && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,shippluslevel) <= (game.jobs.Worshipper.getCost() * 10)))
+			if (game.jobs.Worshipper.owned != 50 && shipfarmzone.includes(game.global.world) && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,shippluslevel) <= (game.jobs.Worshipper.getCost() * 10)))
                 debug("Skipping Worshipper farming on zone " + game.global.world + " as it costs more than a " + shipspecial + " map, evaluate your map settings to correct this")
                 worshipperdebug = game.stats.zonesCleared.value;
 			if (shipfarmzone.includes(game.global.world) && shipamountzones > ships && ((scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,shippluslevel) >= (game.jobs.Worshipper.getCost() * 10)))) 
@@ -1290,7 +1290,7 @@ function RautoMap() {
 		}
 		
 		//AutoEquip settings for Pandemonium.
-		if (!Rshouldpandemonium && getPageSetting('RPandemoniumAutoEquip') > 0 && game.global.lastClearedCell > 60 && game.global.StaffEquipped.name == getPageSetting('RPandemoniumAEStaff') && getPageSetting('RPandemoniumAEZone') > 5 && game.global.world >= getPageSetting('RPandemoniumAEZone')) {
+		if (!Rshouldpandemonium && getPageSetting('RPandemoniumAutoEquip') > 0 && game.global.lastClearedCell > 60 && game.global.StaffEquipped.name == getPageSetting('RhsPandStaff') && getPageSetting('RPandemoniumAEZone') > 5 && game.global.world >= getPageSetting('RPandemoniumAEZone')) {
 			//Initialising Variables
 			nextLevelCostEquipment = null;
 			nextLevelCostPrestige = null;
@@ -1303,8 +1303,8 @@ function RautoMap() {
 			
 			//Working out how much metal a large metal cache or jestimp proc provides.
 			amt_cache = getPageSetting('RPandemoniumAutoEquip') > 3 && game.global.world >= getPageSetting('RPandemoniumAEJestimpZone') ? simpleSecondsLocal("metal", 45) : 
-							getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') ? simpleSecondsLocal("metal", 40) : 
-							simpleSecondsLocal("metal", 20);
+						getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') ? simpleSecondsLocal("metal", 40) : 
+						simpleSecondsLocal("metal", 20);
             var amt_jestimp = simpleSecondsLocal("metal", 45);
 
 			//Looping through each piece of equipment
@@ -1330,7 +1330,8 @@ function RautoMap() {
 			//Switching to Huge Cache maps if LMC maps don't give enough metal for equip levels. Should only proc during Jestimp farming.
 			pandfarmspecial = nextLevelCostEquipment > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20)) ? "hc" : "lmc";
 			//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
-			if (nextLevelCostEquipment < scaleToCurrentMapLocal(amt_cache) || (nextLevelCostPrestige != null && nextLevelCostPrestige < scaleToCurrentMapLocal(amt_jestimp))) Rshouldpandemoniumfarm = true;
+			if (nextLevelCostEquipment < scaleToCurrentMapLocal(amt_cache) || (nextLevelCostPrestige != null && nextLevelCostPrestige < scaleToCurrentMapLocal(amt_jestimp))) 
+                Rshouldpandemoniumfarm = true;
 		}
 	}
 	

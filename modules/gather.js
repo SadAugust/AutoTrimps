@@ -183,7 +183,7 @@ function RmanualLabor2() {
         }
 	return;
     }
-	if (game.global.challengeActive == "Pandemonium" && !Rshouldpandemonium && getPageSetting('RPandemoniumAutoEquip') > 0 && getPageSetting('RPandemoniumAEStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 1 && game.global.lastClearedCell > 59) {
+	if (game.global.challengeActive == "Pandemonium" && !Rshouldpandemonium && getPageSetting('RPandemoniumAutoEquip') > 0 && getPageSetting('RhsPandStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 1 && game.global.lastClearedCell > 59) {
 		if (game.global.world >= getPageSetting('RPandemoniumAEZone')) 
             setGather('metal');
 	}
