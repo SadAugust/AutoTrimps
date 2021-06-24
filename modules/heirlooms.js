@@ -286,8 +286,9 @@ function HeirloomSwapping() {
         }
 
         //Swapping Staffs
-        if (Rshouldpandemoniumfarm && getPageSetting('RhsPandStaff') != "undefined") {
-        //if (game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('RhsPandStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 0 && game.global.world >= getPageSetting('RPandemoniumAEZone') && game.global.lastClearedCell > 59) {
+      //Will get used after implementing SimpleSeconds heirloom swapper  
+      //if (Rshouldpandemoniumfarm && getPageSetting('RhsPandStaff') != "undefined") {
+        if (game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('RhsPandStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 0 && game.global.world >= getPageSetting('RPandemoniumAEZone') && game.global.lastClearedCell > 59) {
             HeirloomEquipStaff('RhsPandStaff');
         } else if (getPageSetting('RhsStaff')) {
             if (getPageSetting('RhsWorldStaff') != "undefined" && !game.global.mapsActive) {
