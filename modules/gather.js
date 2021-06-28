@@ -230,10 +230,11 @@ function RmanualLabor2() {
 				 setGather('buildings');
 		}
 		else if (game.resources.science.owned >= RscienceNeeded && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
-			if (game.global.challengeActive != "Transmute" && (getPlayerModifier() < getPerSecBeforeManual('Scientist') && hasTurkimp)||getPageSetting('RManualGather2') == 2){
+			if (game.global.challengeActive != "Transmute" && (getPlayerModifier() < getPerSecBeforeManual('Scientist') && hasTurkimp)||getPageSetting('RManualGather2') == 2)
 				setGather('metal');
-			}
-			else if (getPageSetting('RManualGather2') != 2){
+			else if ((game.global.challengeActive == "Transmute" && (getPlayerModifier() < getPerSecBeforeManual('Scientist') && hasTurkimp)||getPageSetting('RManualGather2') == 2))
+					 setGather('food');
+            else if (getPageSetting('RManualGather2') != 2){
 					 setGather('science');
 			}
 		}
