@@ -1024,9 +1024,12 @@ function RautoEquip() {
                             Rgetequipcost(equipName, resourceUsed, 1) <= resourceMaxPercent * game.resources[resourceUsed].owned 
                         ) {
                             if (!game.equipment[equipName].locked) {
-                                if (buyPrestigeMaybe(equipName)) continue; 
-                                if (buyEquipment(equipName, null, true, 1)) keepBuying = true;
-                                if (zoneGo) buyEquipment('Shield',null,true,1);
+                                if (buyPrestigeMaybe(equipName)) 
+                                    continue; 
+                                if (buyEquipment(equipName, null, true, 1)) 
+                                    keepBuying = true;
+                                if (zoneGo && !buyPrestigeMaybe('Shield')) 
+                                    buyEquipment('Shield',null,true,1);
                             }
                         } 
                     } 
