@@ -890,7 +890,8 @@ function RautoMap() {
 	if (game.global.repeatMap == true && !game.global.mapsActive && !game.global.preMapsActive) repeatClicked();
 	if ((game.options.menu.repeatUntil.enabled == 1 || game.options.menu.repeatUntil.enabled == 2 || game.options.menu.repeatUntil.enabled == 3) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
 	if (game.options.menu.exitTo.enabled != 0) toggleSetting('exitTo');
-	if (game.options.menu.repeatVoids.enabled != 0) toggleSetting('repeatVoids');
+	if (RvanillaMapatZone && game.options.menu.repeatVoids.enabled != 1) toggleSetting('repeatVoids');
+	if (!RvanillaMapatZone && game.options.menu.repeatVoids.enabled != 0) toggleSetting('repeatVoids');
 	var hitsSurvived = getPageSetting("Rhitssurvived") > 0 ? getPageSetting("Rhitssurvived") : 5;
 
 	//Void Vars -- Checks whether you're ina  daily and uses those settings if you are
