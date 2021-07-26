@@ -1029,8 +1029,8 @@ function RautoEquip() {
                                     continue; 
                                 if (buyEquipment(equipName, null, true, 1)) 
                                     keepBuying = true;
-                                if (zoneGo && !buyPrestigeMaybe('Shield')) 
-                                    buyEquipment('Shield',null,true,1);
+                                //if (zoneGo && !buyPrestigeMaybe('Shield')) 
+                                //    buyEquipment('Shield',null,true,1);
                             }
                         } 
                     } 
