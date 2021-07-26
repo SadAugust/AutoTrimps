@@ -736,6 +736,7 @@ MODULES.maps.RMapTier3Sliders = [9, 9, 9, "Random"];
 MODULES.maps.RshouldFarmCell = 59;
 MODULES.maps.RSkipNumUnboughtPrestiges = 2;
 MODULES.maps.RUnearnedPrestigesRequired = 2;
+MODULES.maps.PandemoniumFarmLevel = -1;
 
 //General
 var RshouldDoMaps = false;
@@ -828,7 +829,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (Rshouldstormfarm) status = 'Storm Farming to ' + stormdynamicHD().toFixed(2);
 	else if (Rshouldinsanityfarm) status = 'Insanity Farming: '+ game.challenges.Insanity.insanity + "/" + insanitystackszones;
 	else if (Rshouldpandemonium) status = 'Pandemonium Destacking: ' + game.challenges.Pandemonium.pandemonium + " remaining";
-	else if (Rshouldpandemoniumfarm) status = 'Pandemonium Farming Equips below ' + prettify(scaleToCurrentMapLocal(amt_cache));
+	else if (Rshouldpandemoniumfarm) status = 'Pandemonium Farming Equips below ' + prettify(scaleToCurrentMapLocal(amt_cache,false,true,pandfarmlevel));
 	else if (Rshouldalchfarm) status = 'Alchemy Farming ' + alchObj.potionNames[potion] + " (" + alchObj.potionsOwned[potion] + "/" + alchstackszones.toString().replace(/[^\d:-]/g, '') + ")";
     else if (RshouldEmpowerFarm) status = 'Empower Farming';
 	//Farming or Wants stats
@@ -1141,8 +1142,8 @@ function RautoMap() {
 			var shipamountfarmindex = shipfarmzone.indexOf(game.global.world);
 			shipamountzones = getPageSetting('Rshipfarmamount').length == 1 && getPageSetting('Rshipfarmamount')[0] > 0 ? getPageSetting('Rshipfarmamount')[0] : shipfarmamount[shipamountfarmindex];
 			var shippluslevel = shipmaplevel[shipamountfarmindex];
-           		if (game.global.challengeActive == "Wither" && shippluslevel >= 0)
-               			shippluslevel = -1;
+            if (game.global.challengeActive == "Wither" && shippluslevel >= 0)
+                shippluslevel = -1;
 			var shipspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
 			if (game.jobs.Worshipper.owned != 50 && shipfarmzone.includes(game.global.world) && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,shippluslevel) <= (game.jobs.Worshipper.getCost() * 10)))
                 debug("Skipping Worshipper farming on zone " + game.global.world + " as it costs more than a " + shipspecial + " map, evaluate your map settings to correct this")
@@ -1309,13 +1310,13 @@ function RautoMap() {
 						getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') ? simpleSecondsLocal("metal", 40) : 
 						simpleSecondsLocal("metal", 20);
             var amt_jestimp = simpleSecondsLocal("metal", 45);
-
+            pandfarmlevel = customVars.PandemoniumFarmLevel;
 			//Looping through each piece of equipment
 			for (var equipName in game.equipment) {
 				if (!game.equipment[equipName].locked) {
 					//Checking cost of next equipment level. Blocks unavailable ones.
 					if (game.challenges.Pandemonium.isEquipBlocked(equipName) || RequipmentList[equipName].Resource == 'wood') continue;
-					if (scaleToCurrentMapLocal(amt_cache) > nextLevelCostEquipment && nextLevelCostEquipment != null) continue;
+					if (scaleToCurrentMapLocal(amt_cache,false,true,pandfarmlevel) > nextLevelCostEquipment && nextLevelCostEquipment != null) continue;
 					nextLevelCostEquipment = game.equipment[equipName].cost[RequipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[RequipmentList[equipName].Resource][1], game.equipment[equipName].level) * artBoost;
                     //Checking cost of prestiges if any are available to purchase
 					for (var upgrade of allUpgradeNames) {
@@ -1331,9 +1332,9 @@ function RautoMap() {
 			}
 
 			//Switching to Huge Cache maps if LMC maps don't give enough metal for equip levels. Should only proc during Jestimp farming.
-			pandfarmspecial = nextLevelCostEquipment > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20)) ? "hc" : "lmc";
+			pandfarmspecial = nextLevelCostEquipment > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20),false,true,pandfarmlevel) ? "hc" : "lmc";
 			//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
-			if (nextLevelCostEquipment < scaleToCurrentMapLocal(amt_cache) || (nextLevelCostPrestige != null && nextLevelCostPrestige < scaleToCurrentMapLocal(amt_jestimp))) 
+			if (nextLevelCostEquipment < scaleToCurrentMapLocal(amt_cache,false,true,pandfarmlevel) || (nextLevelCostPrestige != null && nextLevelCostPrestige < scaleToCurrentMapLocal(amt_jestimp,false,true,pandfarmlevel))) 
                 Rshouldpandemoniumfarm = true;
 		}
 	}
@@ -1624,7 +1625,7 @@ function RautoMap() {
 				if (game.global.challengeActive == "Pandemonium") {
 					loot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.farmlandsUnlocked ? 2.6 : game.singleRunBonuses.goldMaps.owned ? 2.85 : 1.85;
 					for (var map in game.global.mapsOwnedArray) {
-						if (!game.global.mapsOwnedArray[map].noRecycle && ((game.global.world - 1) == game.global.mapsOwnedArray[map].level) && game.global.mapsOwnedArray[map].bonus == pandfarmspecial && game.global.mapsOwnedArray[map].size == 20 && game.global.mapsOwnedArray[map].loot == loot && game.global.mapsOwnedArray[map].difficulty == 0.75) {
+						if (!game.global.mapsOwnedArray[map].noRecycle && ((game.global.world + pandfarmlevel) == game.global.mapsOwnedArray[map].level) && game.global.mapsOwnedArray[map].bonus == pandfarmspecial && game.global.mapsOwnedArray[map].size == 20 && game.global.mapsOwnedArray[map].loot == loot && game.global.mapsOwnedArray[map].difficulty == 0.75) {
 							selectedMap = game.global.mapsOwnedArray[map].id;
 							break;
 						} else {
@@ -1713,7 +1714,7 @@ function RautoMap() {
 				repeatClicked();
 			if (game.global.repeatMap && Rshouldpandemonium && (((getCurrentMapObject().level - game.global.world) != pandemoniumextra) || ((game.challenges.Pandemonium.pandemonium - pandemoniumextra) < pandemoniumextra))) 
 				repeatClicked();
-            if (game.global.repeatMap && Rshouldpandemoniumfarm && ((getCurrentMapObject().bonus != pandfarmspecial) || (nextLevelCostEquipment >= scaleToCurrentMapLocal(amt_cache))))
+            if (game.global.repeatMap && Rshouldpandemoniumfarm && ((getCurrentMapObject().bonus != pandfarmspecial) || (nextLevelCostEquipment >= scaleToCurrentMapLocal(amt_cache,false,true,pandfarmlevel))))
                 repeatClicked();
 			if (game.global.repeatMap && Rshouldalchfarm && herbtotal >= potioncosttotal)
 				repeatClicked();
@@ -2078,7 +2079,7 @@ function RautoMap() {
 			}
 			//Pandemonium Equip farm
 			if (Rshouldpandemoniumfarm) {
-				PerfectMapCost(-1,pandfarmspecial);
+				PerfectMapCost(pandfarmlevel,pandfarmspecial);
 			}
 			//Equip farming -- Testing if perfectmapcost works properly with equipminus, should be fine
 			if (Rshouldequipfarm) {
