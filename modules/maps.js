@@ -832,13 +832,13 @@ function RupdateAutoMapsStatus(get) {
 	else if (Rshouldpandemoniumfarm) status = 'Pandemonium Farming Equips below ' + prettify(scaleToCurrentMapLocal(amt_cache,false,true,pandfarmlevel));
 	else if (Rshouldalchfarm) status = 'Alchemy Farming ' + alchObj.potionNames[potion] + " (" + alchObj.potionsOwned[potion] + "/" + alchstackszones.toString().replace(/[^\d:-]/g, '') + ")";
     else if (RshouldEmpowerFarm) status = 'Empower Farming';
+    else if (RvanillaMapatZone) status = 'Vanilla MAZ';
 	//Farming or Wants stats
 	else if (RshouldFarm && !RdoVoids) status = 'Farming: ' + RcalcHDratio().toFixed(4) + 'x';
 	else if (!RenoughHealth && !RenoughDamage) status = 'Want Health & Damage';
 	else if (!RenoughDamage) status = 'Want ' + RcalcHDratio().toFixed(4) + 'x &nbspmore damage';
 	else if (!RenoughHealth) status = 'Want more health';
 	//Advancing
-    else if (RvanillaMapatZone) status = 'Vanilla MAZ';
 	else if (RenoughHealth && RenoughDamage) status = 'Advancing';
 
 	var getPercent = (game.stats.heliumHour.value() / (game.global.totalRadonEarned - (game.global.radonLeftover + game.resources.radon.owned))) * 100;
