@@ -538,9 +538,9 @@ function RbuyJobs() {
 
 	// Calculate how much of each worker we should have
 	if (game.global.StaffEquipped.rarity >= 10 && getPageSetting("NoFarmersAbove") == true && (game.global.world >= getPageSetting("NoFarmerZone"))) {
-		var desiredRatios = [0,30,30,1];
+		var desiredRatios = [0,10,10,1];
 	} else if (game.global.StaffEquipped.rarity >= 10) {
-		var desiredRatios = [30,30,30,1];
+		var desiredRatios = [10,10,10,1];
 	} else {
 		var desiredRatios = [0,0,0,0];
 	}
