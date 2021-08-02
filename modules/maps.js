@@ -1641,6 +1641,8 @@ function RautoMap() {
                                     getPageSetting('RAlchFAMaps') ? "fa" :
                                     autoTrimpSettings.RAlchSpecial.selected;
 				if (Rshouldalchfarm) {
+                    if (PerfectMapCost(alchpluslevel,alchspecial) >= game.resources.fragments.owned) 
+                        alchspecial = "ssc"
 					selectedMap = RShouldFarmMapCreation(alchpluslevel, alchspecial, alchbiome);
 				} else if (Rshouldinsanityfarm) {
 					selectedMap = RShouldFarmMapCreation(insanitypluslevel, "fa");  
