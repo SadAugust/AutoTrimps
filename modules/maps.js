@@ -1637,12 +1637,13 @@ function RautoMap() {
 			} else if ((Rshouldalchfarm || Rshouldinsanityfarm || Rshouldtimefarm || Rshouldtributefarm || Rshouldshipfarm || RshouldEmpowerFarm) && !Rshouldequipfarm && !Rshoulddopraid) {
 				//Checking hyperspeed 2 percentage
 				var hyp2pct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0
-				var alchspecial =   (Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world) ? autoTrimpSettings.RAlchSpecial.selected : 
+				var alchspecial =   ((Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world) && (PerfectMapCost(alchpluslevel,autoTrimpSettings.RAlchSpecial.selected) >= game.resources.fragments.owned)) ? "ssc" :
+				                    (Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world) ? autoTrimpSettings.RAlchSpecial.selected : 
                                     getPageSetting('RAlchFAMaps') ? "fa" :
                                     autoTrimpSettings.RAlchSpecial.selected;
 				if (Rshouldalchfarm) {
-                    if ((PerfectMapCost(alchpluslevel,alchspecial) >= game.resources.fragments.owned) && (game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus != alchspecial && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].level != game.global.world + alchpluslevel))
-                        alchspecial = "ssc";
+                    if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == autoTrimpSettings.RAlchSpecial.selected) && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].level == game.global.world + alchpluslevel)
+                        alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus;
 					selectedMap = RShouldFarmMapCreation(alchpluslevel, alchspecial, alchbiome);
 				} else if (Rshouldinsanityfarm) {
 					selectedMap = RShouldFarmMapCreation(insanitypluslevel, "fa");  
@@ -2020,7 +2021,11 @@ function RautoMap() {
 			if ((Rshouldalchfarm || Rshouldtimefarm || Rshouldtributefarm || RshouldEmpowerFarm) && !Rshoulddoquest) {
 				biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 
-				if (Rshouldalchfarm) RShouldFarmMapCost(alchpluslevel, alchspecial, alchfarmzone, alchbiome);
+				if (Rshouldalchfarm) {
+                    if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == autoTrimpSettings.RAlchSpecial.selected) && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].level == game.global.world + alchpluslevel)
+                        alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus;
+				    RShouldFarmMapCost(alchpluslevel, alchspecial, alchfarmzone, alchbiome);
+				}
 				else if (Rshouldtimefarm) RShouldFarmMapCost(timefarmpluslevel, timefarmspecial, timefarmzone, biome);
 				else if (Rshouldtributefarm) RShouldFarmMapCost(tributefarmpluslevel, tributefarmspecial, tributefarmzone, biome);
 				else if (RshouldEmpowerFarm) RShouldFarmMapCost(-1, "lmc");
