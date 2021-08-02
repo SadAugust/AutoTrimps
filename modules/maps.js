@@ -1028,7 +1028,7 @@ function RautoMap() {
 		var timefarmtime = runningc3 ? getPageSetting('Rc3timefarmtime') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtimefarmtime') : getPageSetting('Rtimefarmtime');
 		var timefarmspecial = runningc3 ? autoTrimpSettings.Rc3timespecialselection.selected : game.global.challengeActive == "Daily" ? autoTrimpSettings.Rdtimespecialselection.selected : autoTrimpSettings.Rtimespecialselection.selected;
 		var timefarmmaplevel = runningc3 ? getPageSetting('Rc3timemaplevel') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtimemaplevel') : getPageSetting('Rtimemaplevel');
-		Rtimefarm = (((timefarmcell <= 1) || (timefarmcell > 1 && (game.global.lastClearedCell + 1) >= timefarmcell)) && (timefarmzone[0] > 0 && timefarmtime[0] > 0));
+		Rtimefarm = (((timefarmcell <= 1) || (timefarmcell > 1 && (game.global.lastClearedCell + 2) >= timefarmcell)) && (timefarmzone[0] > 0 && timefarmtime[0] > 0));
 		if (Rtimefarm && (game.stats.zonesCleared.value != Rzonecleared)) {
 			//Figuring out how many maps to run at your current zone
 			var timefarmindex = timefarmzone.indexOf(game.global.world);
@@ -1058,7 +1058,7 @@ function RautoMap() {
 		var metsfarmvalue = game.jobs.Meteorologist.locked == 1 ? 0 : runningc3 ? getPageSetting('Rc3tributefarmmets') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtributefarmmets') : getPageSetting('Rtributefarmmets');
 		var tributefarmmaplevel =  runningc3 ? getPageSetting('Rc3tributemaplevel') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtributemaplevel') : getPageSetting('Rtributemaplevel');
 		
-		Rtributefarm = (((tributefarmcell <= 1) || (tributefarmcell > 1 && (game.global.lastClearedCell + 1) >= tributefarmcell)) && (tributefarmzone[0] > 0 && (tributefarmvalue[0] > 0 || metsfarmvalue [0] > 0)));
+		Rtributefarm = (((tributefarmcell <= 1) || (tributefarmcell > 1 && (game.global.lastClearedCell + 2) >= tributefarmcell)) && (tributefarmzone[0] > 0 && (tributefarmvalue[0] > 0 || metsfarmvalue [0] > 0)));
 		if (Rtributefarm) {
 			//Figuring out how many Tributes or Meteorologists to farm at your current zone
 			var tributefarmindex = tributefarmzone.indexOf(game.global.world);
@@ -1106,7 +1106,7 @@ function RautoMap() {
 		if (Rdopraid) {
 			var praidindex = praidzone.indexOf(game.global.world);
 			raidzones = raidzone[praidindex];
-			if (praidzone.includes(game.global.world) && ((cell <= 1) || (cell > 1 && (game.global.lastClearedCell + 1) >= cell)) && Rgetequips(raidzones, false) > 0)
+			if (praidzone.includes(game.global.world) && ((cell <= 1) || (cell > 1 && (game.global.lastClearedCell + 2) >= cell)) && Rgetequips(raidzones, false) > 0)
 				Rshoulddopraid = true;
 		}
 		//Resetting variables and recycling the maps used
@@ -1133,7 +1133,7 @@ function RautoMap() {
 	//Worshipper Farm -- Think there's an issue with variable setup here
 	if (game.jobs.Worshipper.locked == 0 && getPageSetting('Rshipfarmon')) {
 		var shipfarmcell = ((getPageSetting('Rshipfarmcell') > 0) ? getPageSetting('Rshipfarmcell') : 1);
-		Rshipfarm = (((shipfarmcell <= 1) || (shipfarmcell > 1 && (game.global.lastClearedCell + 1) >= shipfarmcell)) && (getPageSetting('Rshipfarmzone')[0] > 0 && getPageSetting('Rshipfarmamount')[0] > 0));
+		Rshipfarm = (((shipfarmcell <= 1) || (shipfarmcell > 1 && (game.global.lastClearedCell + 2) >= shipfarmcell)) && (getPageSetting('Rshipfarmzone')[0] > 0 && getPageSetting('Rshipfarmamount')[0] > 0));
 		if (Rshipfarm) {
 			var ships = game.jobs.Worshipper.owned
 			shipfarmzone = getPageSetting('Rshipfarmzone');
@@ -1342,7 +1342,7 @@ function RautoMap() {
     //Alchemy Farm
 	if (game.global.challengeActive == "Alchemy" && getPageSetting('RAlchOn')) {
 		alchfarmcell = ((getPageSetting('RAlchCell') > 0) ? getPageSetting('RAlchCell') : 81);
-		Ralchfarm = (((game.global.lastClearedCell + 1) >= alchfarmcell) && getPageSetting('RAlchZone')[0] > 0 && getPageSetting('Ralchfarmstack').length > 0);
+		Ralchfarm = (((game.global.lastClearedCell + 2) >= alchfarmcell) && getPageSetting('RAlchZone')[0] > 0 && getPageSetting('Ralchfarmstack').length > 0);
 		if (Ralchfarm) {
 			alchfarmzone = getPageSetting('RAlchZone');
 			alchmaplevel = getPageSetting('RAlchMapLevel');
