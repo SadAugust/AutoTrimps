@@ -1321,6 +1321,7 @@ function RautoMap() {
 					//Checking cost of next equipment level. Blocks unavailable ones.
 					if (game.challenges.Pandemonium.isEquipBlocked(equipName) || RequipmentList[equipName].Resource == 'wood') continue;
 					nextLevelEquipmentCost = game.equipment[equipName].cost[RequipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[RequipmentList[equipName].Resource][1], game.equipment[equipName].level) * artBoost;
+                    //Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
                     if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost == null)
                     	nextEquipmentCost = nextLevelEquipmentCost;
 				}
@@ -1332,6 +1333,7 @@ function RautoMap() {
                 var shred = 1 - (0.75 - (jestMapLevel * 0.05));
                 var kills = getPageSetting('PandemoniumJestFarmKills');
                 jestMetalTotal = jestDrop;
+                //For loop for adding the metal from subsequent jestimp kills to the base total
                 for (i = 1; i < kills; i++) {
                     jestMetalTotal += (jestDrop*(Math.pow(shred,i)));
                 }
@@ -1350,10 +1352,12 @@ function RautoMap() {
     }
 	
     if (Rshouldpandemoniumjestfarm) {
+        //Saves your savefile to a variable when that variable is null and frenzy is active
         if (game.global.mapsActive && game.global.mapGridArray[0].name == "Jestimp" && savefile == null && game.portal.Frenzy.frenzyStarted != -1) {
             savefile = save(true);
         }
 
+        //If the last item in the message log doesn't include the word metal it loads your save to reroll for a metal jestimp drop.
         if (game.global.mapsActive && game.global.lastClearedMapCell != -1) {
             if (document.getElementById("log").lastChild != null) {
                 if (!document.getElementById("log").lastChild.innerHTML.includes("metal") && savefile != null) {
@@ -1366,18 +1370,21 @@ function RautoMap() {
         }
 
         if (!game.global.mapsActive || (game.global.mapsActive && (game.global.mapGridArray[0].name != "Jestimp" || game.global.lastClearedMapCell != -1))) {
+            //Recycles your map if you are past the first cell
             if (game.global.mapsActive) {
                 if (game.global.lastClearedMapCell != -1) {
                     mapsClicked();
                     recycleMap();
                 }
             }
+            //Purchases a perfect map with your Jestimp farming level setting, resets savefile variable to null and runs the map
             if (game.global.preMapsActive) {
-		PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'),0)
+		        PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'),0)
                 buyMap();
                 savefile = null;
                 runMap();
             }
+            //Repeats the process of exiting and re-entering maps until the first cell is a Jestimp
             for (i=0; i < 10000; i++) {
                 if (game.global.mapsActive) {
                     if (game.global.mapGridArray[game.global.lastClearedMapCell + 1].name != "Jestimp") {
@@ -1388,6 +1395,7 @@ function RautoMap() {
                 }
             }
         }
+        //Used to abandon current map once the Jestimp farming on your current zone has finished.
         if (jestMetalTotal != null && jestMetalTotal < nextEquipmentCost && jestFarmMap == true) {
             mapsClicked();
             recycleMap();
@@ -1705,10 +1713,12 @@ function RautoMap() {
 			} else if ((Rshouldalchfarm || Rshouldinsanityfarm || Rshouldtimefarm || Rshouldtributefarm || Rshouldshipfarm || RshouldEmpowerFarm) && !Rshouldequipfarm && !Rshoulddopraid) {
 				//Checking hyperspeed 2 percentage
 				var hyp2pct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0
-				var alchspecial =   ((Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world) && (PerfectMapCost(alchpluslevel,autoTrimpSettings.RAlchSpecial.selected) >= game.resources.fragments.owned)) ? "ssc" :
-				                    (Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world) ? autoTrimpSettings.RAlchSpecial.selected : 
-                                    getPageSetting('RAlchFAMaps') ? "fa" :
-                                    autoTrimpSettings.RAlchSpecial.selected;
+				if (game.global.challengeActive == "Alchemy") {
+                    var alchspecial =   ((Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world) && (PerfectMapCost(alchpluslevel,autoTrimpSettings.RAlchSpecial.selected) >= game.resources.fragments.owned)) ? "ssc" :
+                                        (Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world) ? autoTrimpSettings.RAlchSpecial.selected : 
+                                        getPageSetting('RAlchFAMaps') ? "fa" :
+                                        autoTrimpSettings.RAlchSpecial.selected;
+                }
 				if (Rshouldalchfarm) {
                     			if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == autoTrimpSettings.RAlchSpecial.selected || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].level == game.global.world + alchpluslevel)
                        				alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus;
