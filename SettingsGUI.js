@@ -617,10 +617,13 @@ function initializeAllSettings() {
 	createSetting('RPandemoniumHits', 'P: Hits', 'How many hits an enemy in a plus map should take to kill. Will select up to +10 level maps. If you cannot kill an enemy in the maximum number of hits in any plus map, will try to run a +1 map anyway.', 'value', '-1', null, 'C3');
 	createSetting('RPandemoniumAutoEquip', ['P: AutoEquip Off', 'P: AutoEquip', 'P AE: LMC', 'P AE: Huge Cache', 'P AE: Jestimp'], '<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.<br><br/><b>P AE: LMC Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache<br/>Will also purchase prestiges when they cost less than a Jestimp proc. Additionally will override worker settings to ensure that you farm as much metal as possible.<br/><br><b>P AE: Huge Cache</b><br>Uses the same settings as \'P: AE LMC\' but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure fast farming speed.<br/><br/><b>P AE: Jestimp</b><br/>Provides a setting for Jestimp farming from a set zone which will change the equipment buying condition from if they cost less than a huge cache to if they cost less than the metal you\'d gain from a Jestimp kill. <br/>Recommended to only use the later part of Pandemonium runs as it will increase farming time by a drastic amount.', 'multitoggle', 0, null, 'C3');
 	createSetting('RPandemoniumAEZone', 'P: AE Zone', 'Which zone you would like to start farming as much gear as possible from.', 'value', '-1', null, 'C3');
-	createSetting('RPandemoniumAEJestimpZone', 'P: AE Jestimp Zone', 'Which zone you would like to start farming Jestimps for equipment instead of just caches as much gear as possible from.', 'value', '140', null, 'C3');
+	createSetting('PandemoniumFarmLevel', 'P: AE: Map Level', 'Which zone you would like to start farming Jestimps for equipment instead of just caches as much gear as possible from.', 'value', '1', null, 'C3');
+	createSetting('RPandemoniumJestZone', 'P: AE Jestimp Zone', 'Which zone you would like to start farming Jestimps for equipment instead of just caches as much gear as possible from.', 'value', '140', null, 'C3');
+	createSetting('PandemoniumJestFarmLevel', 'P: AE: Map Level', 'Which zone you would like to start farming Jestimps for equipment instead of just caches as much gear as possible from.', 'value', '1', null, 'C3');
+	createSetting('PandemoniumJestFarmKills', 'P: AE: Jestimp Kills', 'Which zone you would like to start farming Jestimps for equipment instead of just caches as much gear as possible from.', 'value', '3', null, 'C3');
 	createSetting('RhsPandStaff', 'P: AE staff', 'The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.', 'textValue', 'undefined', null, 'C3');
 	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'C3');
-	
+
 	//Challenges
 	//Quagmire
 	createSetting('Rblackbog', 'Quagmire', 'Enable Bog Running for Quagmire. ', 'boolean', false, null, 'Challenges');
@@ -1785,10 +1788,13 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMaps') : turnOff('RPandemoniumMaps');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumZone') : turnOff('RPandemoniumZone');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumHits') : turnOff('RPandemoniumHits');
-	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip'): turnOff('RPandemoniumAutoEquip');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 0 ? turnOn('RPandemoniumAEZone'): turnOff('RPandemoniumAEZone');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumAEJestimpZone'): turnOff('RPandemoniumAEJestimpZone');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 0 ? turnOn('RhsPandStaff'): turnOff('RhsPandStaff');
+	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip') : turnOff('RPandemoniumAutoEquip');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RPandemoniumAEZone') : turnOff('RPandemoniumAEZone');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('PandemoniumFarmLevel') : turnOff('PandemoniumFarmLevel');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumJestZone') : turnOff('RPandemoniumJestZone');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
 	
 	//Alchemy
