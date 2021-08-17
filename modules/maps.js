@@ -994,8 +994,10 @@ function RautoMap() {
 
     //U2 (Radon) Map at Zone (MAZ)
     if (game.options.menu.mapAtZone.enabled && game.global.canMapAtZone) {
-        for (var x = 0; x < game.options.menu.mapAtZone.setZoneU2.length; x++) {
-            var option = game.options.menu.mapAtZone.setZoneU2[x];
+        var MaZPreset = game.options.menu.mapAtZone.U2Mode == "b" ? game.options.menu.mapAtZone.setZoneU2B :
+                        game.options.menu.mapAtZone.setZoneU2;
+        for (var x = 0; x < MaZPreset.length; x++) {
+            var option = MaZPreset[x];
             var world = game.global.world;
             var validRange = world >= option.world && world <= option.through;
             var mazZone = validRange && (world == option.world && option.times == -1 || (world - option.world) % option.times == 0);
@@ -1304,6 +1306,7 @@ function RautoMap() {
 			//Initialising Variables
 			nextLevelEquipmentCost = null;
 			nextEquipmentCost = null;
+            nextLevelPrestigeCost = null;
 			nextPrestigeCost = null;
             jestMetalTotal = null;
 			var prestigeUpgradeName = "";
@@ -1324,6 +1327,18 @@ function RautoMap() {
                     //Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
                     if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost == null)
                     	nextEquipmentCost = nextLevelEquipmentCost;
+                    //Checking cost of prestiges if any are available to purchase
+					for (var upgrade of allUpgradeNames) {
+						if (game.upgrades[upgrade].prestiges === equipName) {
+							prestigeUpgradeName = upgrade;
+							//Checking if prestiges are purchasable
+							if (game.challenges.Pandemonium.isEquipBlocked(game.upgrades[upgrade].prestiges) || game.upgrades[prestigeUpgradeName].locked) continue;
+							nextLevelPrestigeCost = getNextPrestigeCost(prestigeUpgradeName) * artBoost;
+                            //Sets nextPrestigeCost to the price of an equip if it costs less than the current value of nextEquipCost
+                            if (nextLevelPrestigeCost < nextPrestigeCost || nextPrestigeCost == null)
+                                nextPrestigeCost = nextLevelPrestigeCost;
+						}
+					}
 				}
 			}
 
@@ -1356,6 +1371,10 @@ function RautoMap() {
         if (game.global.mapsActive && game.global.mapGridArray[0].name == "Jestimp" && savefile == null && game.portal.Frenzy.frenzyStarted != -1) {
             savefile = save(true);
         }
+        //Makes it take another copy of the save if you lose frenzy before killing the Jestimp.
+        if (game.global.mapsActive && game.global.lastClearedMapCell == -1 && game.global.mapGridArray[0].name == "Jestimp" && savefile != null && game.portal.Frenzy.frenzyStarted == -1) {
+            savefile = null;
+        }
 
         //If the last item in the message log doesn't include the word metal it loads your save to reroll for a metal jestimp drop.
         if (game.global.mapsActive && game.global.lastClearedMapCell != -1) {
@@ -1379,7 +1398,7 @@ function RautoMap() {
             }
             //Purchases a perfect map with your Jestimp farming level setting, resets savefile variable to null and runs the map
             if (game.global.preMapsActive) {
-		        PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'),0)
+		        PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'),0);
                 buyMap();
                 savefile = null;
                 runMap();
