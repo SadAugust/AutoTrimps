@@ -996,8 +996,7 @@ function RautoEquip() {
 		for (var equip in game.equipment) {
             if (!game.equipment[equipName].locked) {
                 if (game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
-		        buyUpgrade(RequipmentList[equip].Upgrade, true, true);
-			    buyEquipment(equip, null, true, 1);
+			buyEquipment(equip, null, true, 1);
             }
 		}
 	}
