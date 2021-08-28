@@ -2184,7 +2184,7 @@ function RautoMap() {
 			if (Rshouldpandemonium && getPageSetting('RPandemoniumMaps') && !Rshouldtimefarm) {
 				PerfectMapCost(pandemoniumextra, pandspecial);
 			}
-			//Pandemonium Equip farm
+			//Pandemonium Equip farm 
 			if (Rshouldpandemoniumfarm) {
 				PerfectMapCost(getPageSetting('PandemoniumFarmLevel'), pandfarmspecial);
 			}
