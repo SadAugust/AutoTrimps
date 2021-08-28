@@ -283,6 +283,11 @@ function mainLoop() {
 			if ((getPageSetting('c3GM_ST') == 2 || getPageSetting('c3GM_ST') == 3)  && !game.singleRunBonuses.sharpTrimps.owned && game.global.b >=25) 
                 purchaseSingleRunBonus('sharpTrimps');
 		}
+
+        //Respecing between presets based on Destacking or Farming when running Pandemonium. Uses preset 2 for destacking and preset 3 while farming.
+        if (game.global.challengeActive == "Pandemonium" && getPageSetting('rPandRespec')) {
+            PandemoniumPerkRespec();
+        }
 	}
 }
 

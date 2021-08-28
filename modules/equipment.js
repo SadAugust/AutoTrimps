@@ -7,7 +7,6 @@ MODULES["equipment"].capDivisor = 10;
 MODULES["equipment"].alwaysLvl2 = getPageSetting('always2');
 MODULES["equipment"].waitTill60 = true;
 MODULES["equipment"].equipHealthDebugMessage = false;
-
 var equipmentList = {
     'Dagger': {
         Upgrade: 'Dagadder',
@@ -996,7 +995,6 @@ function RautoEquip() {
 		for (var equip in game.equipment) {
             if (!game.equipment[equipName].locked) {
                 if (game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
-		        buyUpgrade(RequipmentList[equip].Upgrade, true, true);
 			    buyEquipment(equip, null, true, 1);
             }
 		}
@@ -1029,8 +1027,8 @@ function RautoEquip() {
                                     continue; 
                                 if (buyEquipment(equipName, null, true, 1)) 
                                     keepBuying = true;
-                                //if (zoneGo && !buyPrestigeMaybe('Shield')) 
-                                //    buyEquipment('Shield',null,true,1);
+                                /* if (zoneGo && !buyPrestigeMaybe('Shield')) 
+                                    buyEquipment('Shield',null,true,1); */
                             }
                         } 
                     } 

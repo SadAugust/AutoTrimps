@@ -2771,7 +2771,7 @@ function PerfectMapLevel(special) {
 function PerfectMapCost(pluslevel,special) {
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
-	if (!special) special = "fa";
+	if (!special) special = 0;
 	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
 	document.getElementById("advExtraLevelSelect").value = pluslevel;
 	document.getElementById("advSpecialSelect").value = special;
@@ -3051,4 +3051,76 @@ function ABItemSwap(items) {
 			autoBattle.items[item].equipped = true;
 		}
 	}
+}
+
+function PerkRespec(preset) {
+    //Swaps between presets depending on the input provided. Will only function if the input is between 1 and 3.
+    var preset = !preset ? null :
+        (preset != 1 && preset != 2 && preset != 3) ? null :
+        preset;
+        
+    if (preset == null) {
+        debug("Invalid input. Needs to be a value between 1 and 3.");
+        return;
+    }
+
+    //Respecs to a different preset and fires all workers to ensure that decreases in carp levels won't impact its ability to respec
+    if (game.global.canRespecPerks) {
+        viewPortalUpgrades();
+        respecPerks();
+        presetTab(preset);
+        loadPerkPreset();
+        game.jobs.Miner.owned = 0;
+        game.jobs.Farmer.owned = 0;
+        game.jobs.Lumberjack.owned = 0;
+        activateClicked();
+        debug("Respecced to preset " + preset);
+    } else 
+        debug("No respec available");
+}
+
+function PurchasePerkRespec() {
+    //Obtains a respec if one isn't available by buying a bone portal. Be warned will use 100 bones to do so
+    if (!game.global.canRespecPerks && game.global.b >= 100) {
+        showBones();
+        tooltip('Confirm Purchase', null, 'update', 'You are about to purchase one Instant Portal for 100 bones. Your new helium will appear in the View Perks menu at the bottom of the screen. Is this what you wanted to do?', 'purchaseMisc(\'helium\')', 100);
+        hideBones();
+        debug("Bone portal respec purchased");
+    }
+}
+
+function PandemoniumPerkRespec() {
+    //Setting up pandGoal variable.
+    pandGoal =  typeof(pandGoal) == 'undefined' && getPageSetting('rPandRespecZone') == -1 ? "NEG" : 
+                typeof(pandGoal) == 'undefined' && game.global.world < getPageSetting('rPandRespecZone') ? 0 : 
+                typeof(pandGoal) == 'undefined' && game.challenges.Pandemonium.pandemonium > 0 ? "destacking" : 
+                typeof(pandGoal) == 'undefined' && game.challenges.Pandemonium.pandemonium == 0 && game.upgrades.Speedminer.done == game.global.world ? "jestFarm" : 
+                typeof(pandGoal) == 'undefined' ? 0 :
+                pandGoal;
+
+    if (getPageSetting('rPandRespecZone') != -1 && getPageSetting('rPandRespecZone') <= game.global.world && getPageSetting('RPandemoniumAutoEquip') > 1 && 
+    getPageSetting('RhsPandStaff') != "undefined" && (game.global.StaffEquipped.name == getPageSetting('RhsPandStaff') || HeirloomSearch('RhsPandStaff') != undefined) && 
+    (getPageSetting('RPandemoniumAEZone') > 5 && game.global.world >= getPageSetting('RPandemoniumAEZone')) && 
+    (getPageSetting('RPandemoniumZone') > 5 && game.global.world >= getPageSetting('RPandemoniumZone'))) {
+        //Purchases a respec if one isn't currently available.
+        if (!game.global.canRespecPerks && game.global.world < 150) {
+            PurchasePerkRespec();
+        }
+        
+        //Respecs to preset 2 if you're currently destacking.
+        if (Rshouldpandemonium) {
+            if (pandGoal != "destacking") {
+                PerkRespec(2)
+                pandGoal = "destacking";
+            }
+        }
+        
+        //Respecs to preset 3 if you should equip farm.
+        if (game.challenges.Pandemonium.pandemonium == 0 && game.upgrades.Speedminer.done == game.global.world) {
+            if (pandGoal != "jestFarm") {
+                PerkRespec(3)
+                pandGoal = "jestFarm";
+            }
+        }
+    }
 }

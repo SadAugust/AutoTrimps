@@ -622,6 +622,8 @@ function initializeAllSettings() {
 	createSetting('PandemoniumJestFarmLevel', 'P: Jest Map Level', 'The map level to farm Jestimps at.', 'value', '1', null, 'C3');
 	createSetting('PandemoniumJestFarmKills', 'P: Jest Kills', 'The amount of consecutive Jestimp kills for a single equip level.', 'value', '3', null, 'C3');
 	createSetting('RhsPandStaff', 'P: Staff', 'The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.', 'textValue', 'undefined', null, 'C3');
+	createSetting('rPandRespec', 'P: Respec', 'Turn this on to automate respeccing during Pandemonium. Will only function properly if the Pandemonium AutoEquip and destacking settings are all setup appropriately.<br><br>The respeccing will use the games preset system and will use Preset 2 for your destacking perk spec and Preset 3 for your farming perk spec.', 'boolean', false, null, 'C3');
+	createSetting('rPandRespecZone', 'P: Respec Zone', 'The zone you\'d like to start respeccing from .', 'value', '-1', null, 'C3');
 	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'C3');
 
 	//Challenges
@@ -1151,7 +1153,8 @@ function onKeyPressSetting(event, id,negative, multi) {
 		autoSetValue(id,negative, multi);
 	}
 }
- function parseNum(num) {
+
+function parseNum(num) {
 	if (num.split('e')[1]) {
 		num = num.split('e');
 		num = Math.floor(parseFloat(num[0]) * (Math.pow(10, parseInt(num[1]))));
@@ -1795,6 +1798,8 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('rPandRespec') : turnOff('rPandRespec');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('rPandRespec') ? turnOn('rPandRespecZone') : turnOff('rPandRespecZone');
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
 	
 	//Alchemy
