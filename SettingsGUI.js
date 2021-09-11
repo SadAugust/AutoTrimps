@@ -389,9 +389,10 @@ function initializeAllSettings() {
 	//Maintaining ships
 	createSetting('NoFarmersAbove', 'No Farmers From', 'Stops buying farmers from this zone and above.', 'boolean', false, null, 'Jobs');
 	createSetting('NoFarmerZone', 'NFF Zone', 'Which zone to stop buying farmers. I.e if this value is 75 it will swap your farmer ratio to 0 at zone 75 and above.','value', '-1', null, 'Jobs');
+	createSetting('NoLumberjackMP', 'No Lumberjacks post MP', 'Stops purchasing lumberjacks after you\'ve run Melting Point.', 'boolean', false, null, 'Jobs');
 	
 	//Ships
-	document.getElementById('NoFarmerZone').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('NoLumberjackMP').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rshipfarmon', 'Ship Farming', 'Turn Ship Farming off or on.', 'boolean', false, null, 'Jobs');
 	createSetting('Rshipfarmzone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Jobs');
 	createSetting('Rshipfarmcell', 'SF: Cell', 'Ship Farm at this Cell. -1 to run them at the default value, which is 1. ', 'value', '-1', null, 'Jobs');
@@ -1561,6 +1562,8 @@ function updateCustomButtons() {
 	radonon && nojobs ? turnOn('RMaxExplorers') : turnOff('RMaxExplorers');
 	radonon && nojobs ? turnOn('NoFarmersAbove') : turnOff('NoFarmersAbove');
 	radonon && nojobs && getPageSetting('NoFarmersAbove') ? turnOn('NoFarmerZone'): turnOff('NoFarmerZone');
+	radonon && nojobs ? turnOn('NoLumberjackMP') : turnOff('NoLumberjackMP');
+    
 	//Ships
 	radonon ? turnOn('Rshipfarmon') : turnOff('Rshipfarmon');
 	radonon && getPageSetting('Rshipfarmon') ? turnOn('Rshipfarmzone'): turnOff('Rshipfarmzone');
