@@ -537,13 +537,30 @@ function RbuyJobs() {
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs : 0;
 
 	// Calculate how much of each worker we should have
-	if (game.global.StaffEquipped.rarity >= 10 && getPageSetting("NoFarmersAbove") == true && (game.global.world >= getPageSetting("NoFarmerZone"))) {
+/* 	if (game.global.StaffEquipped.rarity >= 10 && getPageSetting("NoFarmersAbove") == true && (game.global.world >= getPageSetting("NoFarmerZone"))) {
 		var desiredRatios = [0,10,10,1];
+    } else if (game.global.StaffEquipped.rarity >= 10 && getPageSetting("NoFarmersAbove") == true && (game.global.world >= getPageSetting("NoFarmerZone")) && (getPageSetting('NoLumberjackMP') == true && !game.mapUnlocks.SmithFree.canRunOnce)) {
+        var desiredRatios = [0,0,10,1];
+    } else if (game.global.StaffEquipped.rarity >= 10 && (getPageSetting('NoLumberjackMP') == true && !game.mapUnlocks.SmithFree.canRunOnce)) {
+        var desiredRatios = [0,0,10,1];
 	} else if (game.global.StaffEquipped.rarity >= 10) {
 		var desiredRatios = [10,10,10,1];
 	} else {
 		var desiredRatios = [0,0,0,0];
+	} */
+    
+	if (game.global.StaffEquipped.rarity >= 10) {
+		var desiredRatios = [10,10,10,1];
+	} else {
+		var desiredRatios = [0,0,0,0];
 	}
+
+    if (getPageSetting("NoFarmersAbove") == true && (game.global.world >= getPageSetting("NoFarmerZone"))) {
+        desiredRatios[0] = 0;
+    }
+    if (getPageSetting('NoLumberjackMP') == true && !game.mapUnlocks.SmithFree.canRunOnce) {
+        desiredRatios[1] = 0;
+    }
 
 	// If focused farming go all in for caches
 	var allIn = "";
@@ -612,6 +629,9 @@ function RbuyJobs() {
 				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(getPageSetting('R' + worker + 'Ratio'));
 				if (getPageSetting('NoFarmersAbove') == true && game.global.world >= getPageSetting('NoFarmerZone')) {
 					desiredRatios[ratioWorkers.indexOf("Farmer")] = 0;
+				}
+				if (getPageSetting('NoLumberjackMP') == true && !game.mapUnlocks.SmithFree.canRunOnce) {
+					desiredRatios[ratioWorkers.indexOf("Lumberjack")] = 0;
 				}
 			}
 		}
