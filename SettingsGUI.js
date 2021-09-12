@@ -671,6 +671,7 @@ function initializeAllSettings() {
 	createSetting('RAlchCell', 'AF: Cell', 'Alch Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Challenges');
 	createSetting('RAlchSpecial', 'Alch: Special', 'Select which Special to use. Will automatically use Fast Attack maps if you do not have Hyperspeed 2 for you current zone. Also overrides your autojobs to buy workers relating to the resource you want to farm. I.e if LSC is chosen all workers will be hired as farmers and rest fired for the duration of farm. <br> 0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "hc", "lsc", "lwc", "lmc"], 'Challenges');
 	createSetting('RAlchFAMaps', 'FA Maps', 'Will run Fast Attack maps instead of the setting you\'ve selected in Alch: Special if you don\'t have Hyperspeed 2 for your current zone.', 'boolean', false, null, 'Challenges');
+	createSetting('RAlchDontBuyMets', 'No mets on 152', 'Will stop purchasing meteorologists on zone 152 to try and obtain an extra one through Atlantrimp, only run if you\'re certain you\'ll achieve this and have atlantrimp setup properly.', 'boolean', false, null, 'Challenges');
 
 	//Combat
 	//Helium
@@ -1563,6 +1564,7 @@ function updateCustomButtons() {
 	radonon && nojobs ? turnOn('NoFarmersAbove') : turnOff('NoFarmersAbove');
 	radonon && nojobs && getPageSetting('NoFarmersAbove') ? turnOn('NoFarmerZone'): turnOff('NoFarmerZone');
 	radonon && nojobs ? turnOn('NoLumberjackMP') : turnOff('NoLumberjackMP');
+
     
 	//Ships
 	radonon ? turnOn('Rshipfarmon') : turnOff('Rshipfarmon');
@@ -1813,7 +1815,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchCell') : turnOff('RAlchCell');
 	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchSpecial') : turnOff('RAlchSpecial');
 	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchFAMaps') : turnOff('RAlchFAMaps');
-	//radonon && getPageSetting('RAlchOn') ? turnOn('RAlchVoids') : turnOff('RAlchVoids');
+	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchDontBuyMets') : turnOff('RAlchDontBuyMets');
     
 	//Scryer
 	!radonon ? turnOn('UseScryerStance'): turnOff('UseScryerStance');
