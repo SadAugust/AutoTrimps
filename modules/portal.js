@@ -295,7 +295,6 @@ function finishChallengeSquared(){var a=getPageSetting("FinishC2");game.global.w
 function findOutCurrentPortalLevel(){var a=-1,b=!1,d=getPageSetting("AutoPortal");switch(d){case"Off":break;case"Custom":"Daily"!=game.global.challengeActive&&(a=getPageSetting("CustomAutoPortal")+1),"Daily"==game.global.challengeActive&&(a=getPageSetting("Dailyportal")+1),b=!("Lead"!=getPageSetting("HeliumHourChallenge"));break;default:var e={Balance:41,Decay:56,Electricity:82,Crushed:126,Nom:146,Toxicity:166,Lead:181,Watch:181,Corrupted:191}[d];e&&(a=e);}return{level:a,lead:b}}
 
 //Radon
-
 MODULES["portal"].Rtimeout = 5000;
 MODULES["portal"].RbufferExceedFactor = 5;
 var Rportalzone = getPageSetting('RCustomAutoPortal');
@@ -303,10 +302,6 @@ var RzonePostpone = 0;
 
 function RautoPortal() {
     if (!game.global.portalActive) return;
-    if (getPageSetting('downloadSaves')) {
-        tooltip('Export', null, 'update');
-        document.getElementById("downloadLink").click();
-    }
     switch (autoTrimpSettings.RAutoPortal.selected) {
         case "Radon Per Hour":
             var OKtoPortal = false;
@@ -373,10 +368,6 @@ function RautoPortal() {
 
 function RdailyAutoPortal() {
     if (!game.global.portalActive) return;
-    if (getPageSetting('RDownloadSaves')) {
-        tooltip('Export', null, 'update');
-        document.getElementById("downloadLink").click();
-    }
     if (getPageSetting('RAutoPortalDaily') == 1) {
         var OKtoPortal = false;
         if (!game.global.runningChallengeSquared) {
@@ -437,7 +428,7 @@ function RdailyAutoPortal() {
 
 function RdoPortal(challenge) {
     if (!game.global.portalActive) return;
-    if (getPageSetting('RDownloadSaves')) {
+    if (getPageSetting('RdownloadSaves')) {
         tooltip('Export', null, 'update');
         document.getElementById("downloadLink").click();
     }
