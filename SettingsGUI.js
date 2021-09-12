@@ -173,6 +173,7 @@ function initializeAllSettings() {
 	createSetting('CustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('HeHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Helium per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in helium/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Helium per Hour set)', 'value', '999', null, 'Core');
 	createSetting('HeliumHrBuffer', 'He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
+    createSetting('downloadSaves', 'Download Saves', 'Will automatically download saves whenever AutoTrimps portals.', 'boolean', false, null, 'Core');
 
 	//Radon Portal
 	document.getElementById('RPerkSwapping').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -181,6 +182,7 @@ function initializeAllSettings() {
 	createSetting('RCustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('RnHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in radon/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set)', 'value', '999', null, 'Core');
 	createSetting('RadonHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
+    createSetting('RdownloadSaves', 'Download Saves', 'Will automatically download saves whenever AutoTrimps portals.', 'boolean', false, null, 'Core');
 
 	//Pause + Switch
 	createSetting('PauseScript', 'Pause AutoTrimps', 'Pause AutoTrimps Script (not including the graphs module)', 'boolean', null, null, 'Core');
@@ -1341,6 +1343,7 @@ function updateCustomButtons() {
 	!radonon && (heHr || autoTrimpSettings.AutoPortal.selected == 'Custom') ? turnOn('HeliumHourChallenge') : turnOff('HeliumHourChallenge');
 	!radonon && (heHr) ? turnOn('HeHrDontPortalBefore') : turnOff('HeHrDontPortalBefore');
 	!radonon && (heHr) ? turnOn('HeliumHrBuffer') : turnOff('HeliumHrBuffer');
+	!radonon ? turnOn('downloadSaves'): turnOff('downloadSaves');
 
 	//RCore
 	radonon ? turnOn('RManualGather2') : turnOff('RManualGather2');
@@ -1357,7 +1360,8 @@ function updateCustomButtons() {
 	radonon && (rnHr || autoTrimpSettings.RAutoPortal.selected == 'Custom') ? turnOn('RadonHourChallenge') : turnOff('RadonHourChallenge');
 	radonon && (rnHr) ? turnOn('RnHrDontPortalBefore') : turnOff('RnHrDontPortalBefore');
 	radonon && (rnHr) ? turnOn('RadonHrBuffer') : turnOff('RadonHrBuffer');
-
+	radonon ? turnOn('RdownloadSaves'): turnOff('RdownloadSaves');
+    
 	//Daily
 	!radonon ? turnOn('buyheliumy'): turnOff('buyheliumy');
 	!radonon ? turnOn('dfightforever'): turnOff('dfightforever');
