@@ -504,14 +504,15 @@ function RbuyJobs() {
 		game.jobs.Meteorologist.cost.food[1],
 		true
 	);
-
-	if (affordableMets > 0 && !game.jobs.Meteorologist.locked) {
-		var buyAmountStore = game.global.buyAmt;
-		game.global.buyAmt = affordableMets;
-		buyJob('Meteorologist',true, true);
-		freeWorkers -= affordableMets;
-		game.global.buyAmt = buyAmountStore;
-	}
+    if (!(game.global.challengeActive == "Alchemy" && game.global.world == 152 && getPageSetting('RAlchDontBuyMets'))) {
+        if (affordableMets > 0 && !game.jobs.Meteorologist.locked) {
+            var buyAmountStore = game.global.buyAmt;
+            game.global.buyAmt = affordableMets;
+            buyJob('Meteorologist',true, true);
+            freeWorkers -= affordableMets;
+            game.global.buyAmt = buyAmountStore;
+        }
+}
 
 	//Ships
 	shipspending = ((getPageSetting('Rshipspending') > 0) ? getPageSetting('Rshipspending') : 100);
