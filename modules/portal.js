@@ -210,6 +210,10 @@ function c2runner() {
 function doPortal(challenge) {
     var c2done = true;
     if (!game.global.portalActive) return;
+    if (getPageSetting('downloadSaves')) {
+        tooltip('Export', null, 'update');
+        document.getElementById("downloadLink").click();
+    }
     if (getPageSetting('spendmagmite') == 1) {
 	    autoMagmiteSpender();
     }
@@ -299,6 +303,10 @@ var RzonePostpone = 0;
 
 function RautoPortal() {
     if (!game.global.portalActive) return;
+    if (getPageSetting('downloadSaves')) {
+        tooltip('Export', null, 'update');
+        document.getElementById("downloadLink").click();
+    }
     switch (autoTrimpSettings.RAutoPortal.selected) {
         case "Radon Per Hour":
             var OKtoPortal = false;
@@ -365,6 +373,10 @@ function RautoPortal() {
 
 function RdailyAutoPortal() {
     if (!game.global.portalActive) return;
+    if (getPageSetting('RDownloadSaves')) {
+        tooltip('Export', null, 'update');
+        document.getElementById("downloadLink").click();
+    }
     if (getPageSetting('RAutoPortalDaily') == 1) {
         var OKtoPortal = false;
         if (!game.global.runningChallengeSquared) {
@@ -425,6 +437,10 @@ function RdailyAutoPortal() {
 
 function RdoPortal(challenge) {
     if (!game.global.portalActive) return;
+    if (getPageSetting('RDownloadSaves')) {
+        tooltip('Export', null, 'update');
+        document.getElementById("downloadLink").click();
+    }
     if (getPageSetting('autoheirlooms') && getPageSetting('typetokeep') != 'None' && getPageSetting('raretokeep') != 'None') {
 	    autoheirlooms3();
     }
@@ -511,6 +527,7 @@ function RdoPortal(challenge) {
         }
     }
     pushData();
+
     activatePortal();
     lastRadonZone = 0; RzonePostpone = 0;
     Rresetmapvars();
@@ -595,7 +612,7 @@ function Rresetmapvars() {
 	var Tributefarmmap = undefined;
 	var Rtimefarm = !1;
 	var Rzonecleared = 0;
-    	var worshipperdebug = 0;
+    var worshipperdebug = 0;
 	var RadditionalCritMulti = 2 < getPlayerCritChance() ? 25 : 5;
 	var Rshouldtributefarm = !1;
 	var Rshouldtimefarm = !1;
@@ -635,5 +652,5 @@ function Rresetmapvars() {
 	var RAlchFarm = !1;
 	var alchfarmmap = undefined;
 	var alchbiome = "Plentiful";
-    	var RAlchZone = 0;
+    var RAlchZone = 0;
 }
