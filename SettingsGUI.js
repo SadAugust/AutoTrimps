@@ -1338,12 +1338,13 @@ function updateCustomButtons() {
 
 	//Portal
 	!radonon ? turnOn('AutoPortal'): turnOff('AutoPortal');
+    var downloadSaves = autoTrimpSettings.AutoPortal.selected != 'Off';
 	(!radonon && autoTrimpSettings.AutoPortal.selected == 'Custom') ? turnOn('CustomAutoPortal') : turnOff('CustomAutoPortal');
 	var heHr = (autoTrimpSettings.AutoPortal.selected == 'Helium Per Hour');
 	!radonon && (heHr || autoTrimpSettings.AutoPortal.selected == 'Custom') ? turnOn('HeliumHourChallenge') : turnOff('HeliumHourChallenge');
 	!radonon && (heHr) ? turnOn('HeHrDontPortalBefore') : turnOff('HeHrDontPortalBefore');
 	!radonon && (heHr) ? turnOn('HeliumHrBuffer') : turnOff('HeliumHrBuffer');
-	!radonon ? turnOn('downloadSaves'): turnOff('downloadSaves');
+	!radonon && downloadSaves ? turnOn('downloadSaves'): turnOff('downloadSaves');
 
 	//RCore
 	radonon ? turnOn('RManualGather2') : turnOff('RManualGather2');
@@ -1355,12 +1356,13 @@ function updateCustomButtons() {
 
 	//RPortal
 	radonon ? turnOn('RAutoPortal'): turnOff('RAutoPortal');
+    var RdownloadSaves = autoTrimpSettings.RAutoPortal.selected != 'Off';
 	(radonon && autoTrimpSettings.RAutoPortal.selected == 'Custom') ? turnOn('RCustomAutoPortal') : turnOff('RCustomAutoPortal');
 	var rnHr = (autoTrimpSettings.RAutoPortal.selected == 'Radon Per Hour');
 	radonon && (rnHr || autoTrimpSettings.RAutoPortal.selected == 'Custom') ? turnOn('RadonHourChallenge') : turnOff('RadonHourChallenge');
 	radonon && (rnHr) ? turnOn('RnHrDontPortalBefore') : turnOff('RnHrDontPortalBefore');
 	radonon && (rnHr) ? turnOn('RadonHrBuffer') : turnOff('RadonHrBuffer');
-	radonon ? turnOn('RdownloadSaves'): turnOff('RdownloadSaves');
+	radonon && RdownloadSaves ? turnOn('RdownloadSaves'): turnOff('RdownloadSaves');
     
 	//Daily
 	!radonon ? turnOn('buyheliumy'): turnOff('buyheliumy');
