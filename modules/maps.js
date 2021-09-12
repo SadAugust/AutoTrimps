@@ -1744,7 +1744,7 @@ function RautoMap() {
                     if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == autoTrimpSettings.RAlchSpecial.selected || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].level == game.global.world + alchpluslevel)
                         alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus;
                         if (alchspecial == "ssc" && (game.stats.zonesCleared.value != RAlchZone)) {
-                            debug("The cost of a perfect LSC map for zone " + game.global.world + " is " + prettify(RShouldFarmMapCost(alchpluslevel, "lsc", alchfarmzone, alchbiome)) + " fragments, you were short by " + prettify((RShouldFarmMapCost(alchpluslevel, "lsc", alchfarmzone, alchbiome) - game.resources.fragments.owned)));
+                            debug("The cost of a perfect LSC map for zone " + game.global.world + " is " + prettify(RShouldFarmMapCost(alchpluslevel, "lsc", alchfarmzone, alchbiome)) + " fragments, you were short by " + prettify((RShouldFarmMapCost(alchpluslevel, "lsc", alchfarmzone, alchbiome) - game.resources.fragments.owned) + " fragments."));
                             RAlchZone = game.stats.zonesCleared.value;
                         }
 					selectedMap = RShouldFarmMapCreation(alchpluslevel, alchspecial, alchbiome);
