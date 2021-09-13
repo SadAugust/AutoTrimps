@@ -1596,6 +1596,27 @@ function RautoMap() {
 							selectedMap = theMap.id;
 							break;
 					}
+                    if (getPageSetting('RAlchDontBuyMets') && game.global.challengeActive == "Alchemy" && game.global.lastClearedCell >= 96 && game.global.world == 152) {
+                        //Calculating how many meteorologists can be purchased.
+                        var affordableMets = getMaxAffordable(
+                            game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
+                            game.resources.food.owned,
+                            game.jobs.Meteorologist.cost.food[1],
+                            true
+                        );
+                            
+                        //Figuring out the cost of the currently affordable meteorologists and the cost of the one after that.
+                        var metCost = (Math.pow(5, (game.jobs.Meteorologist.owned)) * 1000000);
+                        for (i = 1; i < affordableMets + 1; i++) {
+                            metCost += (Math.pow(5, (game.jobs.Meteorologist.owned+i)) * 1000000);
+                        }
+
+                        //Runs Atlantrimp if you have enough food to purchase an extra Meteorologist due to it.
+                        if (game.resources.food.owned > (metCost / 2)) {
+							selectedMap = theMap.id;
+							break;
+                        }
+                    }
 				}
 				//Melting Point
 				if (theMap.name == 'Melting Point' && game.mapUnlocks.SmithFree.canRunOnce) {
