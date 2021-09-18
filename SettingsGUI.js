@@ -173,6 +173,7 @@ function initializeAllSettings() {
 	createSetting('CustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('HeHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Helium per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in helium/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Helium per Hour set)', 'value', '999', null, 'Core');
 	createSetting('HeliumHrBuffer', 'He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
+    createSetting('downloadSaves', 'Download Saves', 'Will automatically download saves whenever AutoTrimps portals.', 'boolean', false, null, 'Core');
 
 	//Radon Portal
 	document.getElementById('RPerkSwapping').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -181,6 +182,7 @@ function initializeAllSettings() {
 	createSetting('RCustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('RnHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in radon/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set)', 'value', '999', null, 'Core');
 	createSetting('RadonHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
+    createSetting('RdownloadSaves', 'Download Saves', 'Will automatically download saves whenever AutoTrimps portals.', 'boolean', false, null, 'Core');
 
 	//Pause + Switch
 	createSetting('PauseScript', 'Pause AutoTrimps', 'Pause AutoTrimps Script (not including the graphs module)', 'boolean', null, null, 'Core');
@@ -389,9 +391,10 @@ function initializeAllSettings() {
 	//Maintaining ships
 	createSetting('NoFarmersAbove', 'No Farmers From', 'Stops buying farmers from this zone and above.', 'boolean', false, null, 'Jobs');
 	createSetting('NoFarmerZone', 'NFF Zone', 'Which zone to stop buying farmers. I.e if this value is 75 it will swap your farmer ratio to 0 at zone 75 and above.','value', '-1', null, 'Jobs');
+	createSetting('NoLumberjackMP', 'No Lumberjacks post MP', 'Stops purchasing lumberjacks after you\'ve run Melting Point.', 'boolean', false, null, 'Jobs');
 	
 	//Ships
-	document.getElementById('NoFarmerZone').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('NoLumberjackMP').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rshipfarmon', 'Ship Farming', 'Turn Ship Farming off or on.', 'boolean', false, null, 'Jobs');
 	createSetting('Rshipfarmzone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Jobs');
 	createSetting('Rshipfarmcell', 'SF: Cell', 'Ship Farm at this Cell. -1 to run them at the default value, which is 1. ', 'value', '-1', null, 'Jobs');
@@ -670,7 +673,8 @@ function initializeAllSettings() {
 	createSetting('RAlchCell', 'AF: Cell', 'Alch Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Challenges');
 	createSetting('RAlchSpecial', 'Alch: Special', 'Select which Special to use. Will automatically use Fast Attack maps if you do not have Hyperspeed 2 for you current zone. Also overrides your autojobs to buy workers relating to the resource you want to farm. I.e if LSC is chosen all workers will be hired as farmers and rest fired for the duration of farm. <br> 0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "hc", "lsc", "lwc", "lmc"], 'Challenges');
 	createSetting('RAlchFAMaps', 'FA Maps', 'Will run Fast Attack maps instead of the setting you\'ve selected in Alch: Special if you don\'t have Hyperspeed 2 for your current zone.', 'boolean', false, null, 'Challenges');
-
+	createSetting('RAlchDontBuyMets', 'No mets on 152', 'Will stop purchasing meteorologists on zone 152 to try and obtain an extra one through Atlantrimp which it\'ll run if you have enough food to afford an extra meteorologist from it. <br><br/>If you\'re not confident you\'ll achieve this it\'s best to leave this off as it\'ll have a negative impact on your radon per hour.', 'boolean', false, null, 'Challenges');
+    
 	//Combat
 	//Helium
 	createSetting('BetterAutoFight', ['Better AutoFight OFF', 'Better Auto Fight', 'Vanilla'], '3-Way Button, Recommended. Will automatically handle fighting.<br>BAF = Old Algo (Fights if dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds<br>BAF3 = Uses vanilla autofight and makes sure you fight on portal. <br> WARNING: If you autoportal with BetterAutoFight disabled, the game may sit there doing nothing until you click FIGHT. (not good for afk) ', 'multitoggle', 1, null, "Combat");
@@ -1334,11 +1338,13 @@ function updateCustomButtons() {
 
 	//Portal
 	!radonon ? turnOn('AutoPortal'): turnOff('AutoPortal');
+    var downloadSaves = autoTrimpSettings.AutoPortal.selected != 'Off';
 	(!radonon && autoTrimpSettings.AutoPortal.selected == 'Custom') ? turnOn('CustomAutoPortal') : turnOff('CustomAutoPortal');
 	var heHr = (autoTrimpSettings.AutoPortal.selected == 'Helium Per Hour');
 	!radonon && (heHr || autoTrimpSettings.AutoPortal.selected == 'Custom') ? turnOn('HeliumHourChallenge') : turnOff('HeliumHourChallenge');
 	!radonon && (heHr) ? turnOn('HeHrDontPortalBefore') : turnOff('HeHrDontPortalBefore');
 	!radonon && (heHr) ? turnOn('HeliumHrBuffer') : turnOff('HeliumHrBuffer');
+	!radonon && downloadSaves ? turnOn('downloadSaves'): turnOff('downloadSaves');
 
 	//RCore
 	radonon ? turnOn('RManualGather2') : turnOff('RManualGather2');
@@ -1350,12 +1356,14 @@ function updateCustomButtons() {
 
 	//RPortal
 	radonon ? turnOn('RAutoPortal'): turnOff('RAutoPortal');
+    var RdownloadSaves = autoTrimpSettings.RAutoPortal.selected != 'Off';
 	(radonon && autoTrimpSettings.RAutoPortal.selected == 'Custom') ? turnOn('RCustomAutoPortal') : turnOff('RCustomAutoPortal');
 	var rnHr = (autoTrimpSettings.RAutoPortal.selected == 'Radon Per Hour');
 	radonon && (rnHr || autoTrimpSettings.RAutoPortal.selected == 'Custom') ? turnOn('RadonHourChallenge') : turnOff('RadonHourChallenge');
 	radonon && (rnHr) ? turnOn('RnHrDontPortalBefore') : turnOff('RnHrDontPortalBefore');
 	radonon && (rnHr) ? turnOn('RadonHrBuffer') : turnOff('RadonHrBuffer');
-
+	radonon && RdownloadSaves ? turnOn('RdownloadSaves'): turnOff('RdownloadSaves');
+    
 	//Daily
 	!radonon ? turnOn('buyheliumy'): turnOff('buyheliumy');
 	!radonon ? turnOn('dfightforever'): turnOff('dfightforever');
@@ -1561,6 +1569,9 @@ function updateCustomButtons() {
 	radonon && nojobs ? turnOn('RMaxExplorers') : turnOff('RMaxExplorers');
 	radonon && nojobs ? turnOn('NoFarmersAbove') : turnOff('NoFarmersAbove');
 	radonon && nojobs && getPageSetting('NoFarmersAbove') ? turnOn('NoFarmerZone'): turnOff('NoFarmerZone');
+	radonon && nojobs ? turnOn('NoLumberjackMP') : turnOff('NoLumberjackMP');
+
+    
 	//Ships
 	radonon ? turnOn('Rshipfarmon') : turnOff('Rshipfarmon');
 	radonon && getPageSetting('Rshipfarmon') ? turnOn('Rshipfarmzone'): turnOff('Rshipfarmzone');
@@ -1810,7 +1821,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchCell') : turnOff('RAlchCell');
 	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchSpecial') : turnOff('RAlchSpecial');
 	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchFAMaps') : turnOff('RAlchFAMaps');
-	//radonon && getPageSetting('RAlchOn') ? turnOn('RAlchVoids') : turnOff('RAlchVoids');
+	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchDontBuyMets') : turnOff('RAlchDontBuyMets');
     
 	//Scryer
 	!radonon ? turnOn('UseScryerStance'): turnOff('UseScryerStance');

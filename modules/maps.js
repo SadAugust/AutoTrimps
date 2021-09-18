@@ -797,6 +797,7 @@ var jestFarmMap = false;
 //Alchemy
 var Rshouldalchfarm = false;
 var RAlchFarm = false;
+var RAlchZone = 0;
 //Prestige
 var Rshoulddopraid = false;
 var RAMPfragmappy = undefined;
@@ -1595,6 +1596,27 @@ function RautoMap() {
 							selectedMap = theMap.id;
 							break;
 					}
+                    if (getPageSetting('RAlchDontBuyMets') && game.global.challengeActive == "Alchemy" && game.global.lastClearedCell >= 96 && game.global.world == 152) {
+                        //Calculating how many meteorologists can be purchased.
+                        var affordableMets = getMaxAffordable(
+                            game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
+                            game.resources.food.owned,
+                            game.jobs.Meteorologist.cost.food[1],
+                            true
+                        );
+                            
+                        //Figuring out the cost of the currently affordable meteorologists and the cost of the one after that.
+                        var metCost = (Math.pow(5, (game.jobs.Meteorologist.owned)) * 1000000);
+                        for (i = 1; i < affordableMets + 1; i++) {
+                            metCost += (Math.pow(5, (game.jobs.Meteorologist.owned+i)) * 1000000);
+                        }
+
+                        //Runs Atlantrimp if you have enough food to purchase an extra Meteorologist due to it.
+                        if (game.resources.food.owned > (metCost / 2)) {
+							selectedMap = theMap.id;
+							break;
+                        }
+                    }
 				}
 				//Melting Point
 				if (theMap.name == 'Melting Point' && game.mapUnlocks.SmithFree.canRunOnce) {
@@ -1742,6 +1764,10 @@ function RautoMap() {
 				if (Rshouldalchfarm) {
                     if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == autoTrimpSettings.RAlchSpecial.selected || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].level == game.global.world + alchpluslevel)
                         alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus;
+                        if (alchspecial == "ssc" && (game.stats.zonesCleared.value != RAlchZone)) {
+                            debug("The cost of a perfect LSC map for zone " + game.global.world + " is " + prettify(RShouldFarmMapCost(alchpluslevel, "lsc", alchfarmzone, alchbiome)) + " fragments, you were short by " + (prettify((RShouldFarmMapCost(alchpluslevel, "lsc", alchfarmzone, alchbiome) - game.resources.fragments.owned)) + " fragments."));
+                            RAlchZone = game.stats.zonesCleared.value;
+                        }
 					selectedMap = RShouldFarmMapCreation(alchpluslevel, alchspecial, alchbiome);
 				} else if (Rshouldinsanityfarm) {
 					selectedMap = RShouldFarmMapCreation(insanitypluslevel, "fa");  
@@ -2184,7 +2210,7 @@ function RautoMap() {
 			if (Rshouldpandemonium && getPageSetting('RPandemoniumMaps') && !Rshouldtimefarm) {
 				PerfectMapCost(pandemoniumextra, pandspecial);
 			}
-			//Pandemonium Equip farm 
+			//Pandemonium Equip farm
 			if (Rshouldpandemoniumfarm) {
 				PerfectMapCost(getPageSetting('PandemoniumFarmLevel'), pandfarmspecial);
 			}
