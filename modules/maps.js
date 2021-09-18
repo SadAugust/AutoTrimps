@@ -904,20 +904,21 @@ function RautoMap() {
 	voidMapLevelSettingCell = 	game.global.challengeActive == 'Daily' && getPageSetting('Rdvoidscell') > 0 ? getPageSetting('Rdvoidscell') : 
 								getPageSetting('Rvoidscell') > 0 ? getPageSetting('Rvoidscell') :
 								70;
-	voidMapLevelSetting = 		game.global.challengeActive == 'Daily' && getPageSetting('RDailyVoidMod') >= 1 ? getPageSetting('RDailyVoidMod') : 
-								getPageSetting('RVoidMaps') >= 1 ? getPageSetting('RVoidMaps') : 
+	voidMapLevelSetting = 		game.global.challengeActive == 'Daily' && getPageSetting('RDailyVoidMod')[0] >= 1 ? getPageSetting('RDailyVoidMod') : 
+								getPageSetting('RVoidMaps')[0] >= 1 ? getPageSetting('RVoidMaps') : 
 								0;
 	voidMapLevelPlus = 			game.global.challengeActive == 'Daily' && getPageSetting('RdRunNewVoidsUntilNew') != 0 ? getPageSetting('RdRunNewVoidsUntilNew') : 
 								getPageSetting('RRunNewVoidsUntilNew') != 0 ? getPageSetting('RRunNewVoidsUntilNew') : 
 								0;
 
-	RneedToVoid = (voidMapLevelSetting > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell &&
-		((game.global.world == voidMapLevelSetting) ||
-		(voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting) ||
-		(voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting && game.global.world <= (voidMapLevelSetting + voidMapLevelPlus)))
+	RneedToVoid = (voidMapLevelSetting[0] > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 1 >= voidMapLevelSettingCell &&
+		((voidMapLevelSetting.includes(game.global.world)) ||
+		(voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length-1]) ||
+		(voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length-1] && game.global.world <= (voidMapLevelSetting[voidMapLevelSetting.length-1] + voidMapLevelPlus)))
 	);
 
-	if (game.global.totalVoidMaps <= 0 || !RneedToVoid) RdoVoids = false;
+	if (game.global.totalVoidMaps <= 0 || !RneedToVoid) 
+        RdoVoids = false;
 
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, false);
