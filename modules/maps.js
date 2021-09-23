@@ -797,7 +797,7 @@ var jestFarmMap = false;
 //Alchemy
 var Rshouldalchfarm = false;
 var RAlchFarm = false;
-var RAlchZone = 0;
+var rAlchSpecialError = 0;
 //Prestige
 var Rshoulddopraid = false;
 var RAMPfragmappy = undefined;
@@ -1765,9 +1765,9 @@ function RautoMap() {
 				if (Rshouldalchfarm) {
                     if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == autoTrimpSettings.RAlchSpecial.selected || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].level == game.global.world + alchpluslevel)
                         alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus;
-                        if (alchspecial == "ssc" && (game.stats.zonesCleared.value != RAlchZone)) {
+                        if (alchspecial == "ssc" && (game.stats.zonesCleared.value != rAlchSpecialError)) {
                             debug("The cost of a perfect LSC map for zone " + game.global.world + " is " + prettify(RShouldFarmMapCost(alchpluslevel, "lsc", alchfarmzone, alchbiome)) + " fragments, you were short by " + (prettify((RShouldFarmMapCost(alchpluslevel, "lsc", alchfarmzone, alchbiome) - game.resources.fragments.owned)) + " fragments."));
-                            RAlchZone = game.stats.zonesCleared.value;
+                            rAlchSpecialError = game.stats.zonesCleared.value;
                         }
 					selectedMap = RShouldFarmMapCreation(alchpluslevel, alchspecial, alchbiome);
 				} else if (Rshouldinsanityfarm) {
@@ -2001,6 +2001,8 @@ function RautoMap() {
 			lootAdvMapsRange.value = tier[2];
 			adjustMap('loot', tier[2]);
 			biomeAdvMapsSelect.value = autoTrimpSettings.Rmapselection.selected == "Gardens" ? "Plentiful" : autoTrimpSettings.Rmapselection.selected;
+			advSpecialSelect.value = autoTrimpSettings.rMapSpecial.selected;
+            document.getElementById("advSpecialSelect").value
 			updateMapCost();
 			if (RshouldFarm || game.global.challengeActive == 'Transmute') {
 				biomeAdvMapsSelect.value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Sea";
