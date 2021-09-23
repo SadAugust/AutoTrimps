@@ -464,7 +464,8 @@ function initializeAllSettings() {
 	//General
 	createSetting('RAutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use MaZ, it will not work.', 'multitoggle', 1, null, "Μaps");
 	createSetting('Rautomapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', true, null, 'Μaps');
-	createSetting('Rmapselection', 'Map Selection', 'Select which you prefer to use. Recommend Farmlands if you have unlocked it else Plentiful (Gardens).', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Plentiful", "Farmlands"], 'Μaps');
+	createSetting('Rmapselection', 'Biome Selection', 'Select which you prefer to use. Recommend Farmlands if you have unlocked it else Plentiful (Gardens).', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Plentiful", "Farmlands"], 'Μaps');
+	createSetting('rMapSpecial', 'Map Special', 'Select which Special to use. May bug out if you cannot afford selected. <br>0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'Μaps');
 	createSetting('RMaxMapBonusAfterZone', 'Max MapBonus From', 'Always gets Max Map Bonus from this zone on. (inclusive and after).<br><b>NOTE:</b> Set -1 to disable entirely (default). Set 0 to use it always. ', 'value', '-1', null, 'Μaps');
 	createSetting('RMaxMapBonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10.', 'value', '10', null, 'Μaps');
 	createSetting('RMaxMapBonushealth', 'Max MapBonus Health', 'Limit the amount of map bonuses you get when AutoMaps requires more health. Default is 10.', 'value', '10', null, 'Μaps');
@@ -1642,6 +1643,7 @@ function updateCustomButtons() {
 	radonon ? turnOn('RAutoMaps'): turnOff('RAutoMaps');
 	radonon ? turnOn('Rautomapsportal'): turnOff('Rautomapsportal');
 	radonon ? turnOn('Rmapselection'): turnOff('Rmapselection');
+	radonon ? turnOn('rMapSpecial'): turnOff('rMapSpecial');
 	radonon ? turnOn('RMaxMapBonusAfterZone'): turnOff('RMaxMapBonusAfterZone');
 	radonon ? turnOn('RMaxMapBonuslimit'): turnOff('RMaxMapBonuslimit');
 	radonon ? turnOn('RMaxMapBonushealth'): turnOff('RMaxMapBonushealth');
@@ -1979,6 +1981,7 @@ function updateCustomButtons() {
 	document.getElementById('RdHeliumHourChallenge').value = autoTrimpSettings.RdHeliumHourChallenge.selected;
 	document.getElementById('mapselection').value = autoTrimpSettings.mapselection.selected;
 	document.getElementById('Rmapselection').value = autoTrimpSettings.Rmapselection.selected;
+	document.getElementById('rMapSpecial').value = autoTrimpSettings.rMapSpecial.selected;
 	document.getElementById('Rtimespecialselection').value = autoTrimpSettings.Rtimespecialselection.selected;
 	document.getElementById('Rdtimespecialselection').value = autoTrimpSettings.Rdtimespecialselection.selected;
 	document.getElementById('Rc3timespecialselection').value = autoTrimpSettings.Rc3timespecialselection.selected;
