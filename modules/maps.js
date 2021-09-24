@@ -1849,8 +1849,8 @@ function RautoMap() {
 			}
 			if (RdoMaxMapBonus && game.global.mapBonus >= (maxMapBonusLimit - 1))
 				repeatClicked();
-                if (game.global.repeatMap && RshouldUnbalance && ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Unbalance.balanceStacks))
-                repeatClicked();
+                	if (game.global.repeatMap && RshouldUnbalance && ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Unbalance.balanceStacks))
+                		repeatClicked();
 			if (game.global.repeatMap && Rshoulddoquest == 6 && game.global.mapBonus >= 4)
 				repeatClicked();
 			if (game.global.repeatMap && Rshoulddopraid && RAMPfragfarming && RAMPfrag() == true)
