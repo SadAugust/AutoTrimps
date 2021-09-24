@@ -599,12 +599,14 @@ function initializeAllSettings() {
 	createSetting('Rc3tributemaplevel', 'TrF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'C3');
 	createSetting('Rc3tributefarmcell', 'TrF: Cell', 'Tribute Farm at this Cell. -1 to run them at the default value, which is 81. ', 'value', '-1', null, 'C3');
 	
-    //Unbalance
+    	//Unbalance
 	document.getElementById('Rc3tributefarmcell').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rc3Unbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
+	createSetting('rUnbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
+	createSetting('rUnbalanceZone', 'Unbalance: Zone', 'Which zone you would like to start destacking from.', 'value', -1, null, 'C3');
+	createSetting('rUnbalanceStacks', 'Unbalance: Stacks', 'The amount of stack you have before clearing them.','value' ,-1, null, 'C3');
 
 	//Mayhem
-	document.getElementById('Rc3Unbalance').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rUnbalanceStacks').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rmayhemon', 'Mayhem', 'Turn on Mayhem settings. ', 'boolean', false, null, 'C3');
 	createSetting('Rmayhemattack', 'M: Attack', 'Turn this on to ignore your farm settings so It will do maps if you cannot survive the hits you have defined in Maps. ', 'boolean', false, null, 'C3');
 	createSetting('Rmayhemabcut', 'M: Attack Boss', 'What cut-off to use when farming for the boss using M: Attack. If this setting is 100, the script will farm till you can kill the boss in 100 average hits. ', 'value', '-1', null, 'C3');
@@ -1759,6 +1761,11 @@ function updateCustomButtons() {
 	radonon ? turnOn('Rcalcfrenzy'): turnOff('Rcalcfrenzy');
 
 	//Challenges
+
+    //Unbalance
+	radonon ? turnOn('rUnbalance') : turnOff('rUnbalance');
+	radonon && getPageSetting('rUnbalance') ? turnOn('rUnbalanceZone') : turnOff('rUnbalanceZone');
+	radonon && getPageSetting('rUnbalance') ? turnOn('rUnbalanceStacks') : turnOff('rUnbalanceStacks');
 
 	//Quagmire
 	radonon ? turnOn('Rblackbog') : turnOff('Rblackbog');
