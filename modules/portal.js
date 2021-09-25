@@ -501,11 +501,11 @@ function RdoPortal(challenge) {
 	    if (getPageSetting('u2daily') == true && portalUniverse == 2 && challenge == autoTrimpSettings.dHeliumHourChallenge.selected) {
 	        swapPortalUniverse();
 	    }
-            selectChallenge(challenge);
-            if (game.global.challengeActive != 'Daily' && !game.global.runningChallengeSquared && portalUniverse == 2 && getPageSetting('RPerkSwapping')) {
-                presetTab(1);
-                loadPerkPreset();
-            }
+        selectChallenge(challenge);
+        if (portalUniverse == 2 && getPageSetting('RPerkSwapping')) {
+            presetTab(1);
+            loadPerkPreset();
+        }
     }
     if (portalWindowOpen && getPageSetting('RAutoAllocatePerks') == 2) {
         numTab(6, true)
@@ -643,5 +643,5 @@ function Rresetmapvars() {
 	RAlchFarm = !1;
 	alchfarmmap = undefined;
 	alchbiome = "Plentiful";
-    	rAlchSpecialError = 0;
+    rAlchSpecialError = 0;
 }
