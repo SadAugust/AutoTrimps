@@ -602,9 +602,9 @@ function initializeAllSettings() {
     //Unbalance
 	document.getElementById('Rc3tributefarmcell').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rUnbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
-	createSetting('rUnbalanceZone', 'Unbalance: Zone', 'Which zone you would like to start destacking from.', 'value', [-1], null, 'C3');
-	createSetting('rUnbalanceStacks', 'Unbalance: Stacks', 'The amount of stack you have before clearing them.','value' ,-1, null, 'C3');
-	createSetting('rUnbalanceImprobDestack', 'Unbalance: Improb Destack', 'Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone', 'boolean', false, null, 'C3');
+	createSetting('rUnbalanceZone', 'U: Zone', 'Which zone you would like to start destacking from.', 'value', [-1], null, 'C3');
+	createSetting('rUnbalanceStacks', 'U: Stacks', 'The amount of stack you have to reach before clearing them.','value' ,-1, null, 'C3');
+	createSetting('rUnbalanceImprobDestack', 'U: Improbability Destack', 'Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone', 'boolean', false, null, 'C3');
     
 	//Mayhem
 	document.getElementById('rUnbalanceImprobDestack').parentNode.insertAdjacentHTML('afterend', '<br>');
