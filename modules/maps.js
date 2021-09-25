@@ -1108,7 +1108,7 @@ function RautoMap() {
         var rUnbalanceZone = getPageSetting('rUnbalanceZone');
         var rUnbalanceStacks = getPageSetting('rUnbalanceStacks');
 		
-		RshouldUnbalance = (game.global.world >= rUnbalanceZone && game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks);
+		RshouldUnbalance = (game.global.world >= rUnbalanceZone && (game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks || (getPageSetting('rUnbalanceImprobDestack') && game.global.lastClearedCell+2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
 		if (RshouldUnbalance) {
 			//Recycles map if you're at 0 stacks and the map level is 6 as that's the only level of map it'll make for destacking so won't interfere with the rest of the run.
 			if (!RshouldUnbalance && getCurrentMapObject().level == 6 && game.challenges.Unbalance.balanceStacks == 0) {
@@ -1849,8 +1849,8 @@ function RautoMap() {
 			}
 			if (RdoMaxMapBonus && game.global.mapBonus >= (maxMapBonusLimit - 1))
 				repeatClicked();
-                	if (game.global.repeatMap && RshouldUnbalance && ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Unbalance.balanceStacks))
-                		repeatClicked();
+            if (game.global.repeatMap && RshouldUnbalance && ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Unbalance.balanceStacks))
+                repeatClicked();
 			if (game.global.repeatMap && Rshoulddoquest == 6 && game.global.mapBonus >= 4)
 				repeatClicked();
 			if (game.global.repeatMap && Rshoulddopraid && RAMPfragfarming && RAMPfrag() == true)
