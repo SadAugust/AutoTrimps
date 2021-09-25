@@ -1105,18 +1105,15 @@ function RautoMap() {
 	//Unbalance Destacking
 	if (getPageSetting('rUnbalance') && game.global.challengeActive == "Unbalance") {
 		//Setting up variables
-        var rUnbalanceZone = getPageSetting('rUnbalanceZone');
-        var rUnbalanceStacks = getPageSetting('rUnbalanceStacks');
-		
+		var rUnbalanceZone = getPageSetting('rUnbalanceZone') > 0 ? getPageSetting('rUnbalanceZone') : 999;
+		var rUnbalanceStacks = getPageSetting('rUnbalanceStacks') > 0 ? getPageSetting('rUnbalanceStacks') : 0;
 		RshouldUnbalance = (game.global.world >= rUnbalanceZone && (game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks || (getPageSetting('rUnbalanceImprobDestack') && game.global.lastClearedCell+2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
-		if (RshouldUnbalance) {
-			//Recycles map if you're at 0 stacks and the map level is 6 as that's the only level of map it'll make for destacking so won't interfere with the rest of the run.
-			if (!RshouldUnbalance && getCurrentMapObject().level == 6 && game.challenges.Unbalance.balanceStacks == 0) {
-				mapsClicked();
-				recycleMap();
-			}
-		}
-	}
+        //Recycles the map we're running if you have 0 stacks of balance and the map is level 6 as that's the only time we should be running a map at this level.
+        if (!RshouldUnbalance && game.global.mapsActive && getCurrentMapObject().level == 6 && game.challenges.Unbalance.balanceStacks == 0) {
+            mapsClicked();
+            recycleMap();
+        }
+    }
 
 	//Prestige Raiding
 	if (getPageSetting('RAMPraid') && (game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) || (getPageSetting('RAMPdraid') && game.global.challengeActive == "Daily")) {
