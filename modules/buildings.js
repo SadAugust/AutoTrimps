@@ -460,15 +460,19 @@ function RbuyBuildings() {
             boughtHousing = true;
         }
     } while (boughtHousing)   
- 
+
     //Tributes
-    if (!game.buildings.Tribute.locked) {
+    //Won't buy Tributes if they're locked or if a meteorologist can be purchased as that should always be the more efficient purchase
+    if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(canAffordJob('Meteorologist') && !game.jobs.Meteorologist.locked))) {
         var tributespending = getPageSetting('RTributeSpendingPct') > 0 ? getPageSetting('RTributeSpendingPct') / 100 : 1;
         var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned * tributespending),1.05,true);
         
-        if (getPageSetting('RMaxTribute') > game.buildings.Tribute.purchased) 
-            buyTributeCount = Math.min(buyTributeCount, getPageSetting('RMaxTribute') - game.buildings.Tribute.purchased);
-        if (buyTributeCount > 0 && (getPageSetting('RMaxTribute') < 0 || (getPageSetting('RMaxTribute') > game.buildings.Tribute.purchased))) 
-            buyBuilding('Tribute', true, true, buyTributeCount);
+        //Won't buy them if the RAlchDontBuyMets toggle is enabled and on zone 152
+        if (!(game.global.challengeActive == "Alchemy" && game.global.world == 152 && getPageSetting('RAlchDontBuyMets') && game.global.lastClearedCell < 98)) {
+            if (getPageSetting('RMaxTribute') > game.buildings.Tribute.purchased) 
+                buyTributeCount = Math.min(buyTributeCount, getPageSetting('RMaxTribute') - game.buildings.Tribute.purchased);
+            if (buyTributeCount > 0 && (getPageSetting('RMaxTribute') < 0 || (getPageSetting('RMaxTribute') > game.buildings.Tribute.purchased))) 
+                buyBuilding('Tribute', true, true, buyTributeCount);
+        }
     }
 }
