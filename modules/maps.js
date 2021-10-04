@@ -733,7 +733,7 @@ MODULES.maps.RMapTier0Sliders = [9, 9, 9, "Mountain"];
 MODULES.maps.RMapTier1Sliders = [9, 9, 9, "Depths"];
 MODULES.maps.RMapTier2Sliders = [9, 9, 9, "Random"];
 MODULES.maps.RMapTier3Sliders = [9, 9, 9, "Random"];
-MODULES.maps.RshouldFarmCell = 59;
+MODULES.maps.RshouldFarmCell = 69;
 MODULES.maps.RSkipNumUnboughtPrestiges = 2;
 MODULES.maps.RUnearnedPrestigesRequired = 2;
 MODULES.maps.PandemoniumFarmLevel = -1;
@@ -1028,7 +1028,7 @@ function RautoMap() {
     var DailyCheck =  getPageSetting('Rdtributefarm') && game.global.challengeActive == "Daily";
     var C3Check = getPageSetting('Rc3tributefarm') && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium');
     var FillerCheck = getPageSetting('Rtributefarm') && game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
-
+	
 	//Time Farm
 	if (getPageSetting('Rtimefarm') && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && (game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) || (getPageSetting('Rdtimefarmzone') && game.global.challengeActive == "Daily") || (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('Rc3timefarm')) {
 		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
@@ -1040,6 +1040,14 @@ function RautoMap() {
 		var timefarmzone = runningc3 ? getPageSetting('Rc3timefarmzone') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtimefarmzone') : getPageSetting('Rtimefarmzone');
 		var timefarmtime = runningc3 ? getPageSetting('Rc3timefarmtime') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtimefarmtime') : getPageSetting('Rtimefarmtime');
 		var timefarmspecial = runningc3 ? autoTrimpSettings.Rc3timespecialselection.selected : game.global.challengeActive == "Daily" ? autoTrimpSettings.Rdtimespecialselection.selected : autoTrimpSettings.Rtimespecialselection.selected;
+		//If you're running Transmute and the timefarmspecial variable is either LMC or SMC it changes it to LSC/SSC.
+		if (game.global.challengeActive == "Transmute" && (timefarmspecial == "lmc" || timefarmspecial == "smc")) {
+			if (timefarmspecial == "lmc")
+				timefarmspecial == "lsc";
+			if (timefarmspecial == "smc")
+				timefarmspecial == "ssc";
+		}
+
 		var timefarmmaplevel = runningc3 ? getPageSetting('Rc3timemaplevel') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtimemaplevel') : getPageSetting('Rtimemaplevel');
 		Rtimefarm = (((timefarmcell <= 1) || (timefarmcell > 1 && (game.global.lastClearedCell + 2) >= timefarmcell)) && (timefarmzone[0] > 0 && timefarmtime[0] > 0));
 		if (Rtimefarm && (game.stats.zonesCleared.value != Rzonecleared)) {
@@ -1108,12 +1116,12 @@ function RautoMap() {
 		var rUnbalanceZone = getPageSetting('rUnbalanceZone') > 0 ? getPageSetting('rUnbalanceZone') : 999;
 		var rUnbalanceStacks = getPageSetting('rUnbalanceStacks') > 0 ? getPageSetting('rUnbalanceStacks') : 0;
 		RshouldUnbalance = (game.global.world >= rUnbalanceZone && (game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks || (getPageSetting('rUnbalanceImprobDestack') && game.global.lastClearedCell+2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
-        //Recycles the map we're running if you have 0 stacks of balance and the map is level 6 as that's the only time we should be running a map at this level.
-        if (!RshouldUnbalance && game.global.mapsActive && getCurrentMapObject().level == 6 && game.challenges.Unbalance.balanceStacks == 0) {
-            mapsClicked();
-            recycleMap();
-        }
-    }
+	    //Recycles the map we're running if you have 0 stacks of balance and the map is level 6 as that's the only time we should be running a map at this level.
+	    if (!RshouldUnbalance && game.global.mapsActive && getCurrentMapObject().level == 6 && game.challenges.Unbalance.balanceStacks == 0) {
+	        mapsClicked();
+	        recycleMap();
+	    }
+	}
 
 	//Prestige Raiding
 	if (getPageSetting('RAMPraid') && (game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) || (getPageSetting('RAMPdraid') && game.global.challengeActive == "Daily")) {
@@ -1284,7 +1292,7 @@ function RautoMap() {
 	if (game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumOn')) {
 		Rshouldpandemonium = false;
 		Rshouldpandemoniumfarm = false;
-        Rshouldpandemoniumjestfarm = false;
+	    Rshouldpandemoniumjestfarm = false;
 		Rdopandemonium = (game.global.world >= getPageSetting('RPandemoniumZone') && game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumOn'));
 		if (Rdopandemonium) {
 			if (game.challenges.Pandemonium.pandemonium > 0 && getPageSetting('RPandemoniumMaps')) {
@@ -1326,9 +1334,9 @@ function RautoMap() {
 			//Initialising Variables
 			nextLevelEquipmentCost = null;
 			nextEquipmentCost = null;
-            nextLevelPrestigeCost = null;
+	        nextLevelPrestigeCost = null;
 			nextPrestigeCost = null;
-            jestMetalTotal = null;
+	        jestMetalTotal = null;
 			var prestigeUpgradeName = "";
 			var allUpgradeNames = Object.getOwnPropertyNames(game.upgrades);
 			//Setting up artisanitry modifier
@@ -1344,104 +1352,104 @@ function RautoMap() {
 					//Checking cost of next equipment level. Blocks unavailable ones.
 					if (game.challenges.Pandemonium.isEquipBlocked(equipName) || RequipmentList[equipName].Resource == 'wood') continue;
 					nextLevelEquipmentCost = game.equipment[equipName].cost[RequipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[RequipmentList[equipName].Resource][1], game.equipment[equipName].level) * artBoost;
-                    //Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
-                    if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost == null)
-                    	nextEquipmentCost = nextLevelEquipmentCost;
-                    //Checking cost of prestiges if any are available to purchase
+	                //Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
+	                if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost == null)
+	                	nextEquipmentCost = nextLevelEquipmentCost;
+	                //Checking cost of prestiges if any are available to purchase
 					for (var upgrade of allUpgradeNames) {
 						if (game.upgrades[upgrade].prestiges === equipName) {
 							prestigeUpgradeName = upgrade;
 							//Checking if prestiges are purchasable
 							if (game.challenges.Pandemonium.isEquipBlocked(game.upgrades[upgrade].prestiges) || game.upgrades[prestigeUpgradeName].locked) continue;
 							nextLevelPrestigeCost = getNextPrestigeCost(prestigeUpgradeName) * artBoost;
-                            //Sets nextPrestigeCost to the price of an equip if it costs less than the current value of nextEquipCost
-                            if (nextLevelPrestigeCost < nextPrestigeCost || nextPrestigeCost == null)
-                                nextPrestigeCost = nextLevelPrestigeCost;
+	                        //Sets nextPrestigeCost to the price of an equip if it costs less than the current value of nextEquipCost
+	                        if (nextLevelPrestigeCost < nextPrestigeCost || nextPrestigeCost == null)
+	                            nextPrestigeCost = nextLevelPrestigeCost;
 						}
 					}
 				}
 			}
 
-            //Identifying how much metal you'd get from the amount of jestimps you want to farm on the map level you've selected for them
-            if (getPageSetting('RPandemoniumAutoEquip') > 3 && !Rshouldpandemoniumfarm && game.global.world >= getPageSetting('RPandemoniumJestZone')) {
-                var jestMapLevel = getPageSetting('PandemoniumJestFarmLevel');
-                var jestDrop = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 45),false,true,jestMapLevel);
-                var shred = 1 - (0.75 - (jestMapLevel * 0.05));
-                var kills = getPageSetting('PandemoniumJestFarmKills');
-                jestMetalTotal = jestDrop;
-                //For loop for adding the metal from subsequent jestimp kills to the base total
-                for (i = 1; i < kills; i++) {
-                    jestMetalTotal += (jestDrop*(Math.pow(shred,i)));
-                }
-                if ((jestMetalTotal != null && (jestMetalTotal > nextEquipmentCost)) || jestFarmMap == true) {
-                    Rshouldpandemoniumjestfarm = true;
-                    jestFarmMap = true;
-                }
-            }
+	        //Identifying how much metal you'd get from the amount of jestimps you want to farm on the map level you've selected for them
+	        if (getPageSetting('RPandemoniumAutoEquip') > 3 && !Rshouldpandemoniumfarm && game.global.world >= getPageSetting('RPandemoniumJestZone')) {
+	            var jestMapLevel = getPageSetting('PandemoniumJestFarmLevel');
+	            var jestDrop = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 45),false,true,jestMapLevel);
+	            var shred = 1 - (0.75 - (jestMapLevel * 0.05));
+	            var kills = getPageSetting('PandemoniumJestFarmKills');
+	            jestMetalTotal = jestDrop;
+	            //For loop for adding the metal from subsequent jestimp kills to the base total
+	            for (i = 1; i < kills; i++) {
+	                jestMetalTotal += (jestDrop*(Math.pow(shred,i)));
+	            }
+	            if ((jestMetalTotal != null && (jestMetalTotal > nextEquipmentCost)) || jestFarmMap == true) {
+	                Rshouldpandemoniumjestfarm = true;
+	                jestFarmMap = true;
+	            }
+	        }
 
-            //Switching to Huge Cache maps if LMC maps don't give enough metal for equip levels.
+	        //Switching to Huge Cache maps if LMC maps don't give enough metal for equip levels.
 			pandfarmspecial = nextEquipmentCost > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20),false,true,getPageSetting('PandemoniumFarmLevel')) ? "hc" : "lmc";
 			//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
 			if (!Rshouldpandemoniumjestfarm && nextEquipmentCost < scaleToCurrentMapLocal(amt_cache,false,true,getPageSetting('PandemoniumFarmLevel')))
-                Rshouldpandemoniumfarm = true;
+	            Rshouldpandemoniumfarm = true;
 	    }
-    }
-	
-    if (Rshouldpandemoniumjestfarm) {
-        //Saves your savefile to a variable when that variable is null and frenzy is active
-        if (game.global.mapsActive && game.global.mapGridArray[0].name == "Jestimp" && savefile == null && game.portal.Frenzy.frenzyStarted != -1) {
-            savefile = save(true);
-        }
-        //Makes it take another copy of the save if you lose frenzy before killing the Jestimp.
-        if (game.global.mapsActive && game.global.lastClearedMapCell == -1 && game.global.mapGridArray[0].name == "Jestimp" && savefile != null && game.portal.Frenzy.frenzyStarted == -1) {
-            savefile = null;
-        }
+	}
 
-        //If the last item in the message log doesn't include the word metal it loads your save to reroll for a metal jestimp drop.
-        if (game.global.mapsActive && game.global.lastClearedMapCell != -1) {
-            if (document.getElementById("log").lastChild != null) {
-                if (!document.getElementById("log").lastChild.innerHTML.includes("metal") && savefile != null) {
-                    tooltip('Import', null, 'update');
-                    document.getElementById('importBox').value = savefile;
-                    cancelTooltip();
-                    load(true);
-                }
-            }
-        }
+	if (Rshouldpandemoniumjestfarm) {
+		//Saves your savefile to a variable when that variable is null and frenzy is active
+		if (game.global.mapsActive && game.global.mapGridArray[0].name == "Jestimp" && savefile == null && game.portal.Frenzy.frenzyStarted != -1) {
+			savefile = save(true);
+		}
+		//Makes it take another copy of the save if you lose frenzy before killing the Jestimp.
+		if (game.global.mapsActive && game.global.lastClearedMapCell == -1 && game.global.mapGridArray[0].name == "Jestimp" && savefile != null && game.portal.Frenzy.frenzyStarted == -1) {
+			savefile = null;
+		}
 
-        if (!game.global.mapsActive || (game.global.mapsActive && (game.global.mapGridArray[0].name != "Jestimp" || game.global.lastClearedMapCell != -1))) {
-            //Recycles your map if you are past the first cell
-            if (game.global.mapsActive) {
-                if (game.global.lastClearedMapCell != -1) {
-                    mapsClicked();
-                    recycleMap();
-                }
-            }
-            //Purchases a perfect map with your Jestimp farming level setting, resets savefile variable to null and runs the map
-            if (game.global.preMapsActive) {
-		        PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'),0);
-                buyMap();
-                savefile = null;
-                runMap();
-            }
-            //Repeats the process of exiting and re-entering maps until the first cell is a Jestimp
-            for (i=0; i < 10000; i++) {
-                if (game.global.mapsActive) {
-                    if (game.global.mapGridArray[game.global.lastClearedMapCell + 1].name != "Jestimp") {
-                        mapsClicked();
-                        runMap();
-                    } else if (game.global.mapGridArray[game.global.lastClearedMapCell + 1].name == "Jestimp") 
-                        break
-                }
-            }
-        }
-        //Used to abandon current map once the Jestimp farming on your current zone has finished.
-        if (jestMetalTotal != null && jestMetalTotal < nextEquipmentCost && jestFarmMap == true) {
-            mapsClicked();
-            recycleMap();
-            jestFarmMap = false;
-        }
-    }
+		//If the last item in the message log doesn't include the word metal it loads your save to reroll for a metal jestimp drop.
+		if (game.global.mapsActive && game.global.lastClearedMapCell != -1) {
+			if (document.getElementById("log").lastChild != null) {
+				if (!document.getElementById("log").lastChild.innerHTML.includes("metal") && savefile != null) {
+					tooltip('Import', null, 'update');
+					document.getElementById('importBox').value = savefile;
+					cancelTooltip();
+					load(true);
+				}
+			}
+		}
+
+		if (!game.global.mapsActive || (game.global.mapsActive && (game.global.mapGridArray[0].name != "Jestimp" || game.global.lastClearedMapCell != -1))) {
+			//Recycles your map if you are past the first cell
+			if (game.global.mapsActive) {
+				if (game.global.lastClearedMapCell != -1) {
+					mapsClicked();
+					recycleMap();
+				}
+			}
+			//Purchases a perfect map with your Jestimp farming level setting, resets savefile variable to null and runs the map
+			if (game.global.preMapsActive) {
+				PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'),0);
+				buyMap();
+				savefile = null;
+				runMap();
+			}
+			//Repeats the process of exiting and re-entering maps until the first cell is a Jestimp
+			for (i=0; i < 10000; i++) {
+				if (game.global.mapsActive) {
+					if (game.global.mapGridArray[game.global.lastClearedMapCell + 1].name != "Jestimp") {
+						mapsClicked();
+					    runMap();
+					} else if (game.global.mapGridArray[game.global.lastClearedMapCell + 1].name == "Jestimp") 
+					    break
+				}
+			}
+		}
+		//Used to abandon current map once the Jestimp farming on your current zone has finished.
+		if (jestMetalTotal != null && jestMetalTotal < nextEquipmentCost && jestFarmMap == true) {
+			mapsClicked();
+			recycleMap();
+			jestFarmMap = false;
+		}
+	}
 
     //Alchemy Farm
 	if (game.global.challengeActive == "Alchemy" && getPageSetting('RAlchOn')) {
@@ -1615,27 +1623,27 @@ function RautoMap() {
 							selectedMap = theMap.id;
 							break;
 					}
-                    if (getPageSetting('RAlchDontBuyMets') && game.global.challengeActive == "Alchemy" && game.global.lastClearedCell >= 96 && game.global.world == 152) {
-                        //Calculating how many meteorologists can be purchased.
-                        var affordableMets = getMaxAffordable(
-                            game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
-                            game.resources.food.owned,
-                            game.jobs.Meteorologist.cost.food[1],
-                            true
-                        );
-                            
-                        //Figuring out the cost of the currently affordable meteorologists and the cost of the one after that.
-                        var metCost = (Math.pow(5, (game.jobs.Meteorologist.owned)) * 1000000);
-                        for (i = 1; i < affordableMets + 1; i++) {
-                            metCost += (Math.pow(5, (game.jobs.Meteorologist.owned+i)) * 1000000);
-                        }
+					if (getPageSetting('RAlchDontBuyMets') && game.global.challengeActive == "Alchemy" && game.global.lastClearedCell >= 96 && game.global.world == 152) {
+						//Calculating how many meteorologists can be purchased.
+						var affordableMets = getMaxAffordable(
+							game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
+							game.resources.food.owned,
+							game.jobs.Meteorologist.cost.food[1],
+							true
+						);
 
-                        //Runs Atlantrimp if you have enough food to purchase an extra Meteorologist due to it.
-                        if (game.resources.food.owned > (metCost / 2)) {
+						//Figuring out the cost of the currently affordable meteorologists and the cost of the one after that.
+						var metCost = (Math.pow(5, (game.jobs.Meteorologist.owned)) * 1000000);
+						for (i = 1; i < affordableMets + 1; i++) {
+						    metCost += (Math.pow(5, (game.jobs.Meteorologist.owned+i)) * 1000000);
+						}
+
+						//Runs Atlantrimp if you have enough food to purchase an extra Meteorologist due to it.
+						if (game.resources.food.owned > (metCost / 2)) {
 							selectedMap = theMap.id;
 							break;
-                        }
-                    }
+						}
+					}
 				}
 				//Melting Point
 				if (theMap.name == 'Melting Point' && game.mapUnlocks.SmithFree.canRunOnce) {
