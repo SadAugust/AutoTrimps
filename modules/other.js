@@ -2768,11 +2768,12 @@ function PerfectMapLevel(special) {
 
 }
 
-function PerfectMapCost(pluslevel,special) {
+function PerfectMapCost(pluslevel,special,biome) {
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (!special) special = 0;
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
+	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
+	document.getElementById("biomeAdvMapsSelect").value = biome;
 	document.getElementById("advExtraLevelSelect").value = pluslevel;
 	document.getElementById("advSpecialSelect").value = special;
 	document.getElementById("lootAdvMapsRange").value = 9;
@@ -3120,7 +3121,32 @@ function PandemoniumPerkRespec() {
             if (pandGoal != "jestFarm") {
                 PerkRespec(3)
                 pandGoal = "jestFarm";
+				savefile = null;
             }
         }
     }
+}
+
+function AbandonChallengeRuns(zone) {
+    //Abandons challenge runs when a certain zone has been reached.
+    var zone = !zone ? getPageSetting('c3finishrun') :
+    zone;
+    var hasPaused = false;
+
+    if (zone == null) return
+	if (game.global.world == zone && game.global.runningChallengeSquared && !hasPaused) {
+		toggleSetting('pauseGame');
+        hasPaused = true;
+	}
+	if (game.options.menu.pauseGame.enabled && game.global.world == zone && hasPaused) {
+		tooltip('Export', null, 'update');
+		document.execCommand('copy');
+		cancelTooltip();
+		if (game.global.runningChallengeSquared) {
+			confirmAbandonChallenge();
+			abandonChallenge(); 
+			cancelTooltip();
+		}
+		toggleSetting('pauseGame');
+	}
 }
