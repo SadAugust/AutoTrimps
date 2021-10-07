@@ -538,19 +538,13 @@ function RbuyJobs() {
 
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs : 0;
 
+    //Figuring out what value we should use for when to run Melting Point
+    var MPSmithy = 	game.global.runningChallengeSquared && getPageSetting('c3meltingpoint') > 0 ? getPageSetting('c3meltingpoint') : 
+                    game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') : 
+                    game.global.challengeActive == "Daily" && getPageSetting('Rdmeltsmithy') > 0 ? getPageSetting('Rdmeltsmithy') : 
+                    getPageSetting('Rmeltsmithy');
+
 	// Calculate how much of each worker we should have
-/* 	if (game.global.StaffEquipped.rarity >= 10 && getPageSetting("NoFarmersAbove") == true && (game.global.world >= getPageSetting("NoFarmerZone"))) {
-		var desiredRatios = [0,10,10,1];
-    } else if (game.global.StaffEquipped.rarity >= 10 && getPageSetting("NoFarmersAbove") == true && (game.global.world >= getPageSetting("NoFarmerZone")) && (getPageSetting('NoLumberjackMP') == true && !game.mapUnlocks.SmithFree.canRunOnce)) {
-        var desiredRatios = [0,0,10,1];
-    } else if (game.global.StaffEquipped.rarity >= 10 && (getPageSetting('NoLumberjackMP') == true && !game.mapUnlocks.SmithFree.canRunOnce)) {
-        var desiredRatios = [0,0,10,1];
-	} else if (game.global.StaffEquipped.rarity >= 10) {
-		var desiredRatios = [10,10,10,1];
-	} else {
-		var desiredRatios = [0,0,0,0];
-	} */
-    
 	if (game.global.StaffEquipped.rarity >= 10) {
 		var desiredRatios = [10,10,10,1];
 	} else {
@@ -560,7 +554,7 @@ function RbuyJobs() {
     if (getPageSetting("NoFarmersAbove") == true && (game.global.world >= getPageSetting("NoFarmerZone"))) {
         desiredRatios[0] = 0;
     }
-    if (getPageSetting('NoLumberjackMP') == true && !game.mapUnlocks.SmithFree.canRunOnce) {
+    if (getPageSetting('NoLumberjackMP') == true && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
         desiredRatios[1] = 0;
     }
 
@@ -632,7 +626,7 @@ function RbuyJobs() {
 				if (getPageSetting('NoFarmersAbove') == true && game.global.world >= getPageSetting('NoFarmerZone')) {
 					desiredRatios[ratioWorkers.indexOf("Farmer")] = 0;
 				}
-				if (getPageSetting('NoLumberjackMP') == true && !game.mapUnlocks.SmithFree.canRunOnce) {
+				if (getPageSetting('NoLumberjackMP') == true && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
 					desiredRatios[ratioWorkers.indexOf("Lumberjack")] = 0;
 				}
 			}

@@ -391,7 +391,7 @@ function initializeAllSettings() {
 	//Maintaining ships
 	createSetting('NoFarmersAbove', 'No Farmers From', 'Stops buying farmers from this zone and above.', 'boolean', false, null, 'Jobs');
 	createSetting('NoFarmerZone', 'NFF Zone', 'Which zone to stop buying farmers. I.e if this value is 75 it will swap your farmer ratio to 0 at zone 75 and above.','value', '-1', null, 'Jobs');
-	createSetting('NoLumberjackMP', 'No Lumberjacks post MP', 'Stops purchasing lumberjacks after you\'ve run Melting Point.', 'boolean', false, null, 'Jobs');
+	createSetting('NoLumberjackMP', 'No Lumberjacks post MP', 'Stops purchasing lumberjacks after you\'ve already run or got enough Smithies to trigger running Melting Point', 'boolean', false, null, 'Jobs');
 	
 	//Ships
 	document.getElementById('NoLumberjackMP').parentNode.insertAdjacentHTML('afterend', '<br>');
