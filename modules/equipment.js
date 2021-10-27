@@ -856,7 +856,7 @@ function mostEfficientEquipment(fakeLevels = {}) {
 		//Skips looping through equips if they're blocked during Pandemonium
         if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
         //Skips through equips if they don't cost metal and you don't have enough resources for them.
-        if (RequipmentList[i].Resource != 'metal' && !canAffordBuilding(RequipmentList[i], null, null, true, false, 1)) continue;
+        if (RequipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1)) continue;
         var nextLevelValue = game.equipment[i][RequipmentList[i].Stat + "Calculated"];
 
         var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
