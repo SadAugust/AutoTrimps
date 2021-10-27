@@ -7,7 +7,6 @@ MODULES["equipment"].capDivisor = 10;
 MODULES["equipment"].alwaysLvl2 = getPageSetting('always2');
 MODULES["equipment"].waitTill60 = true;
 MODULES["equipment"].equipHealthDebugMessage = false;
-
 var equipmentList = {
     'Dagger': {
         Upgrade: 'Dagadder',
@@ -839,10 +838,12 @@ function mostEfficientEquipment(fakeLevels = {}) {
     {
         name: "",
         statPerResource: -Infinity,
+        cost: -Infinity,
     },
     {
         name: "",
         statPerResource: -Infinity,
+        cost: -Infinity,
     }
     ];
 
@@ -852,7 +853,10 @@ function mostEfficientEquipment(fakeLevels = {}) {
 	
     for (var i in RequipmentList) {
         var nextLevelCost = game.equipment[i].cost[RequipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[RequipmentList[i].Resource][1], game.equipment[i].level + fakeLevels[i]) * artBoost;
-		if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
+		//Skips looping through equips if they're blocked during Pandemonium
+        if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
+        //Skips through equips if they don't cost metal and you don't have enough resources for them.
+        if (RequipmentList[i].Resource != 'metal' && !canAffordBuilding(RequipmentList[i], null, null, true, false, 1)) continue;
         var nextLevelValue = game.equipment[i][RequipmentList[i].Stat + "Calculated"];
 
         var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
@@ -861,11 +865,12 @@ function mostEfficientEquipment(fakeLevels = {}) {
         if (safeRatio > mostEfficient[isAttack].statPerResource) {
             mostEfficient[isAttack].name = i;
             mostEfficient[isAttack].statPerResource = safeRatio;
+            mostEfficient[isAttack].cost = nextLevelCost;
         }
 
     }
 
-    return [mostEfficient[0].name, mostEfficient[1].name];
+    return [mostEfficient[0].name, mostEfficient[1].name, mostEfficient[0].statPerResource, mostEfficient[1].statPerResource, mostEfficient[0].cost, mostEfficient[1].cost];
 
 }
 
@@ -996,7 +1001,7 @@ function RautoEquip() {
 		for (var equip in game.equipment) {
             if (!game.equipment[equipName].locked) {
                 if (game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
-			buyEquipment(equip, null, true, 1);
+			    buyEquipment(equip, null, true, 1);
             }
 		}
 	}
@@ -1007,13 +1012,21 @@ function RautoEquip() {
         keepBuying = false;
         var bestBuys = mostEfficientEquipment();
 
-        // Set up for attack
+        // Set up for both Attack and Health depending on which is more efficient to purchase
+        var equipType = (bestBuys[4] < bestBuys[5]) ? 'attack' : 'health';
+        var equipName = (equipType == 'attack') ? bestBuys[0] : bestBuys[1];    
+        var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
+        var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
+        var underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 100, 'Improbability', 1.0));
+        
+/*         // Set up for attack
+        var equipType = 'attack';
         var equipName = bestBuys[0];
         var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
         var equipCap = attackEquipCap;
-        var underStats = RcalcHDratio() >= getPageSetting('Rdmgcuntoff');
+        var underStats = RcalcHDratio() >= getPageSetting('Rdmgcuntoff'); */
 
-        for (var i = 0; i < 2; i++){
+        for (var i = 0; i < 2; i++) {
             if (canAffordBuilding(equipName, null, null, true, false, 1)) {
                 if (smithylogic(equipName,resourceUsed,true)) {
                     if (game.equipment[equipName].level < equipCap) {
@@ -1028,19 +1041,25 @@ function RautoEquip() {
                                     continue; 
                                 if (buyEquipment(equipName, null, true, 1)) 
                                     keepBuying = true;
-                                //if (zoneGo && !buyPrestigeMaybe('Shield')) 
-                                //    buyEquipment('Shield',null,true,1);
                             }
-                        } 
-                    } 
-                } 
+                        }
+                    }
+                }
             }
 
-            // Set up for Health
+            //Iterating to second set of equips. Will go through the opposite equipType from the first loop.
+            equipType = equipType != 'attack' ? 'attack' : 'health';
+            equipName = (equipType == 'attack') ? bestBuys[0] : bestBuys[1];
+            resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
+            equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
+            underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0));
+
+/*             // Set up for Health
+            equipType = 'health';
             equipName = bestBuys[1];
             resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
             equipCap = healthEquipCap;
-            underStats = RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0));
+            underStats = RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 100, 'Improbability', 1.0)); */
             
         }
 
