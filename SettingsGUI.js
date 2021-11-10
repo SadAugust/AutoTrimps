@@ -1,4 +1,4 @@
-function automationMenuInit() {
+function automationMenuInit() { 
 	var settingBtnSrch = document.getElementsByClassName("btn btn-default");
 	for (var i = 0; i < settingBtnSrch.length; i++) {
 		if (settingBtnSrch[i].getAttribute("onclick") === "toggleSettingsMenu()")
