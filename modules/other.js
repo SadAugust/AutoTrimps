@@ -2088,7 +2088,7 @@ function archstring() {
 //RAMP - Prestige Raiding
 function RAMPplusMapToRun(number) {
 	var map;
-	if (Rshoulddopraid) {
+	if (rShouldPrestigeRaid) {
 		var praidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidzone') : getPageSetting('RAMPraidzone');
 		var raidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidraid') : getPageSetting('RAMPraidraid');
 		var praidindex = praidzone.indexOf(game.global.world);
@@ -2102,7 +2102,7 @@ function RAMPplusMapToRun(number) {
 
 function RAMPshouldrunmap(number) {
 	var go = false;
-	if (Rshoulddopraid) {
+	if (rShouldPrestigeRaid) {
 		var praidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidzone') : getPageSetting('RAMPraidzone');
 		var raidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidraid') : getPageSetting('RAMPraidraid');
 		var praidindex = praidzone.indexOf(game.global.world);
@@ -2115,7 +2115,7 @@ function RAMPshouldrunmap(number) {
 }
 
 function RAMPpcheckmap(number) {
-	if (Rshoulddopraid) {
+	if (rShouldPrestigeRaid) {
 		if (game.global.challengeActive == "Daily") {
 			var praidzone = getPageSetting('RAMPdraidzone');
 			var raidzone = getPageSetting('RAMPdraidraid');
@@ -2405,7 +2405,7 @@ function RAMPplusPresfragmin(number) {
 	
 function RAMPfrag() {
 	var cost = 0;
-	if (Rshoulddopraid) {
+	if (rShouldPrestigeRaid) {
 		var praidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidzone') : getPageSetting('RAMPraidzone');
 		var raidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidraid') : getPageSetting('RAMPraidraid');
 		var praidindex = praidzone.indexOf(game.global.world);
