@@ -177,8 +177,8 @@ function initializeAllSettings() {
 
 	//Radon Portal
 	document.getElementById('RPerkSwapping').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('RAutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Radon Per Hour only <b>portals at cell 1</b> of the first level where your Rn/Hr went down even slightly compared to the current runs Best Rn/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting Rn/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Radon Per Hour','Bublé','Melt','Quagmire','Archaeology','Mayhem','Insanity','Nurture','Alchemy','Pandemonium','Custom'], 'Core');
-	createSetting('RadonHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None','Bublé','Melt','Quagmire','Archaeology','Insanity','Nurture','Alchemy'], 'Core');
+	createSetting('RAutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Radon Per Hour only <b>portals at cell 1</b> of the first level where your Rn/Hr went down even slightly compared to the current runs Best Rn/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting Rn/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Radon Per Hour','Bublé','Melt','Quagmire','Archaeology','Mayhem','Insanity','Nurture','Pandemonium','Alchemy','Hypothermia','Custom'], 'Core');
+	createSetting('RadonHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None','Bublé','Melt','Quagmire','Archaeology','Insanity','Nurture','Alchemy','Hypothermia'], 'Core');
 	createSetting('RCustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('RnHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in radon/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set)', 'value', '999', null, 'Core');
 	createSetting('RadonHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
@@ -306,7 +306,7 @@ function initializeAllSettings() {
 	createSetting('RFillerRun', 'Filler run', 'Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.', 'boolean', false, null, 'Daily');
 	createSetting('u1daily', 'Daily in U1', 'If this is on, you will do your daily in U1. ', 'boolean', false, null, 'Daily');
 	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
-	createSetting('RdHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None','Bublé','Melt','Quagmire','Archaeology','Insanity','Nurture','Alchemy'], 'Daily');
+	createSetting('RdHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None','Bublé','Melt','Quagmire','Archaeology','Insanity','Nurture','Alchemy','Hypothermia'], 'Daily');
 	createSetting('RdCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone during dailies. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Daily');
 	createSetting('RdHeHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour Daily AutoPortal setting to portal BEFORE this level is reached in dailies. It is an additional check that prevents drops in radon/hr from triggering autoportal in dailies. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set in dailies)', 'value', '999', null, 'Daily');
 	createSetting('RdHeliumHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
@@ -477,14 +477,17 @@ function initializeAllSettings() {
 	createSetting('RVoidMaps', 'Void Maps', '<b>0 to disable</b> The zone at which you want all your void maps to be cleared inclusive of the zone you type. Runs them at Cell 70.<br>', 'multiValue', '0', null, 'Μaps');
 	createSetting('Rvoidscell', 'Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Μaps');
 	createSetting('RRunNewVoidsUntilNew', 'New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197) If you have 2 void map zones it\'ll use this setting after the last one has been cleared.<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Μaps');
+	document.getElementById('RRunNewVoidsUntilNew').parentNode.insertAdjacentHTML('afterend', '<br>');
 	//Prismatic Palace
 	createSetting('Rprispalace', 'Prismatic Palace', 'Run Prismatic Palace when its unlocked. ', 'boolean', true, null, 'Μaps');
 	//Atlantrimp
     createSetting('RAtlantrimp', 'Atlantrimp', '-1 to disable. When to run Atlantrimp. Use it like this: 50,91. The first number is what zone Atlantrimp should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Atlantrimp at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
 	//Melting Point
     createSetting('RMeltingPoint', 'Melting Point', '-1 to disable. When to run Melting Point. Use it like this: 50,91. The first number is what zone Melting Point should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Melting Point at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
+	//Frozen Castle
+    createSetting('rFrozenCastle', 'Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
 	//Tribute Farming
-	document.getElementById('RMeltingPoint').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rFrozenCastle').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rtributefarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Μaps');
 	createSetting('Rtributefarmzone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
 	createSetting('Rtributefarmvalue', 'TrF: Tributes', 'How many tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [-1], null, 'Μaps');
@@ -615,9 +618,16 @@ function initializeAllSettings() {
 	createSetting('Rmayhemhealth', 'M: Health', 'Turn this on to ignore your farm settings so It will do maps if your HD is above the target you have defined in Maps. ', 'boolean', false, null, 'C3');
 	createSetting('Rmayhemhcut', 'M: Health Cut-off', 'What cut-off to use when using M: Health. ', 'value', '-1', null, 'C3');
 	createSetting('Rmayhemmap', ['M: Maps Off', 'M: Highest Map', 'M: Smart Map'], 'Control what maps you do to farm M: Attack and/or M: Health. M: Highest map always selects the highest map you have whether it be from Praiding, Time Farming or any you have manually created. M: Smart Map attempts to create a map best suited to the situation. Will calculate if you can survive and kill the map, and will try to buy all the necessary map attributes such as FA. ', 'multitoggle', 0, null, 'C3');
+
+	//Storm
+	document.getElementById('Rmayhemmap').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('Rstormon', 'Storm', 'Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ', 'boolean', false, null, 'C3');
+	createSetting('Rstormzone', 'S: Zone', 'What zone to start S: H:D and S: Multiplier. ', 'value', '-1', null, 'C3');
+	createSetting('RstormHD', 'S: H:D', 'What H:D to use inside Storm. ', 'value', '-1', null, 'C3');
+	createSetting('Rstormmult', 'S: Multiplier', 'Starting from the zone above S: Zone, this setting will multiply the H:D you have set in S: H:D. So if S: Zone was 100, S: H:D was 10, S: Multiplier was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low H:D. ', 'value', '-1', null, 'C3');
 	
 	//Pandemonium
-	document.getElementById('Rmayhemmap').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('Rstormmult').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RPandemoniumOn', 'Pandemonium', 'Turn on Pandemonium settings.', 'boolean', false, null, 'C3');
 	createSetting('RPandemoniumMaps', 'P: Mapping', 'Turn this on to automate mapping Pandemonium. Use the P: Attacks to define the maximum amount of hits an enemy in a map should take to kill. Will only purchase perfect maps.', 'boolean', false, null, 'C3');
 	createSetting('RPandemoniumZone', 'P: Zone', 'What zone to start Pandemonium mapping at. Will ignore Pandemonium stacks below this zone.', 'value', '-1', null, 'C3');
@@ -634,7 +644,18 @@ function initializeAllSettings() {
 	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'C3');
 
 	//Challenges
+
+	//Hide Challenges
+	createSetting('rHideChallenge', 'Hide Challenges', 'Enable seeing the hide challenges buttons. Feel free to turn this off once you are done. ', 'boolean', false, null, 'Challenges');
+	createSetting('rHideQuagmire', 'Quag', 'Enable to hide Quagmire challenge settings. ', 'boolean', false, null, 'Challenges');
+	createSetting('rHideArchaeology', 'Arch', 'Enable to hide Archaeology challenge settings. ', 'boolean', false, null, 'Challenges');
+	createSetting('rHideInsanity', 'Insanity', 'Enable to hide Insanity challenge settings. ', 'boolean', false, null, 'Challenges');
+	createSetting('rHideExterminate', 'Exterminate', 'Enable to hide Exterminate challenge settings. ', 'boolean', false, null, 'Challenges');
+	createSetting('rHideAlchemy', 'Alchemy', 'Enable to hide Alchemy challenge settings. ', 'boolean', false, null, 'Challenges');
+	createSetting('rHideHypothermia', 'Hypothermia', 'Enable to hide Hypothermia challenge settings. ', 'boolean', false, null, 'Challenges');
+
 	//Quagmire
+	document.getElementById('rHideHypothermia').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rblackbog', 'Quagmire', 'Enable Bog Running for Quagmire. ', 'boolean', false, null, 'Challenges');
 	createSetting('Rblackbogzone', 'BB: Zone', 'What zones to run Black Bogs at. Can use 40,50,60. ', 'multiValue', [-1], null, 'Challenges');
 	createSetting('Rblackbogamount', 'BB: Amount', 'How many Black Bogs to at specified zones. Can use 8,9,10. I.e if BB: Zone had 40,50 and this setting had 8,10, It would run 8 Black Bogs at z40 and 10 Black Bogs at z50. ', 'multiValue', [-1], null, 'Challenges');
@@ -646,15 +667,8 @@ function initializeAllSettings() {
 	createSetting('Rarchstring2', 'Second String', 'Second string to use in Archaeology. Put the zone you want to stop using this string and start using the third string (Make sure the third string has a value) at the start. I.e: 94,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('Rarchstring3', 'Third String', 'Third string to use in Archaeology. Make sure this is just your Archaeology string and nothing else. I.e: 10a,10e ', 'textValue', 'undefined', null, 'Challenges');
 
-	//Storm
-	document.getElementById('Rarchstring3').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rstormon', 'Storm', 'Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ', 'boolean', false, null, 'Challenges');
-	createSetting('Rstormzone', 'S: Zone', 'What zone to start S: H:D and S: Multiplier. ', 'value', '-1', null, 'Challenges');
-	createSetting('RstormHD', 'S: H:D', 'What H:D to use inside Storm. ', 'value', '-1', null, 'Challenges');
-	createSetting('Rstormmult', 'S: Multiplier', 'Starting from the zone above S: Zone, this setting will multiply the H:D you have set in S: H:D. So if S: Zone was 100, S: H:D was 10, S: Multiplier was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low H:D. ', 'value', '-1', null, 'Challenges');
-
 	//Insanity
-	document.getElementById('Rstormmult').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('Rarchstring3').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rinsanityon', 'Insanity', 'Turn on Insanity settings. This also controls the entireity of IF. If you turn this off it will not Insanity Farm.', 'boolean', false, null, 'Challenges');
 	createSetting('Rinsanityfarmzone', 'Insanity Farming', 'Farms for specified stacks in IF: Stacks at zone according to this settings value. Can use 108,109,110. ', 'multiValue', [-1], null, 'Challenges');
 	createSetting('Rinsanityfarmcell', 'IF: Cell', 'Insanity Farm at this Cell. -1 to run them at the default value, which is 1. ', 'value', '-1', null, 'Challenges');
@@ -679,6 +693,16 @@ function initializeAllSettings() {
 	createSetting('RAlchFAMaps', 'FA Maps', 'Will run Fast Attack maps instead of the setting you\'ve selected in Alch: Special if you don\'t have Hyperspeed 2 for your current zone.', 'boolean', false, null, 'Challenges');
 	createSetting('RAlchDontBuyMets', 'No mets on 152', 'Will stop purchasing meteorologists on zone 152 to try and obtain an extra one through Atlantrimp which it\'ll run if you have enough food to afford an extra meteorologist from it. <br><br/>If you\'re not confident you\'ll achieve this it\'s best to leave this off as it\'ll have a negative impact on your radon per hour.', 'boolean', false, null, 'Challenges');
     
+	//Hypothermia
+	document.getElementById('RAlchDontBuyMets').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('rHypoOn', 'Hypothermia', 'Turn on Hypothermia settings. This also controls the entireity of Hypothermia. If you turn this off it will not do any specific farming during the challenge. Will automatically select LWC maps if you have enough fragments else it\'ll use SWC maps.', 'boolean', false, null, 'Challenges');
+	createSetting('rHypoBonfire', 'HF: Bonfire', 'How many total bonfires you\'d like to have farmed by the end of the zone selected in HF: Zone. ', 'multiValue', [-1], null, 'Challenges');
+	createSetting('rHypoZone', 'HF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Challenges');
+	createSetting('rHypoMapLevel', 'HF: Map Level', 'What map level to use. Needs to be a level or +map which can be specified by 0,1,2,3 etc.', 'multiValue', [0], null, 'Challenges');
+	createSetting('rHypoCell', 'HF: Cell', 'Hypo Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Challenges');
+	createSetting('rHypoFrozenCastle', 'HF: Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Challenges');
+	createSetting('rHypoStorage', 'HF: Storage', 'Turn on Hypothermia settings. This also controls the entireity of Hypothermia. If you turn this off it will not do any specific farming during the challenge. Will automatically select LWC maps if you have enough fragments else it\'ll use SWC maps.', 'boolean', false, null, 'Challenges');
+	
 	//Combat
 	//Helium
 	createSetting('BetterAutoFight', ['Better AutoFight OFF', 'Better Auto Fight', 'Vanilla'], '3-Way Button, Recommended. Will automatically handle fighting.<br>BAF = Old Algo (Fights if dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds<br>BAF3 = Uses vanilla autofight and makes sure you fight on portal. <br> WARNING: If you autoportal with BetterAutoFight disabled, the game may sit there doing nothing until you click FIGHT. (not good for afk) ', 'multitoggle', 1, null, "Combat");
@@ -1659,10 +1683,12 @@ function updateCustomButtons() {
 	radonon ? turnOn('RRunNewVoidsUntilNew'): turnOff('RRunNewVoidsUntilNew');
 	radonon && game.portal.Prismal.radLevel < 50 ? turnOn('Rprispalace'): turnOff('Rprispalace');
 
-	//Melting Point
-	radonon ? turnOn('RMeltingPoint') : turnOff('RMeltingPoint');
 	//Atlantrimp
-	radonon ? turnOn('RAtlantrimp') : turnOff('RAtlantrimp');
+	radonon && game.global.highestRadonLevelCleared >= 32 ? turnOn('RAtlantrimp') : turnOff('RAtlantrimp');
+	//Melting Point
+	radonon && game.global.highestRadonLevelCleared >= 49 ? turnOn('RMeltingPoint') : turnOff('RMeltingPoint');
+	//Frozen Castle
+	radonon && game.global.stringVersion != '5.5.1' && game.global.highestRadonLevelCleared >= 174 ? turnOn('rFrozenCastle') : turnOff('rFrozenCastle');
 	//Tribute Farming
 	radonon ? turnOn('Rtributefarm'): turnOff('Rtributefarm');
 	var rtributeon = getPageSetting('Rtributefarm');
@@ -1763,6 +1789,15 @@ function updateCustomButtons() {
 
 	//Challenges
 
+	//Hide Challenges
+	radonon ? turnOn("rHideChallenge"): turnOff("rHideChallenge");
+	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideQuagmire") : turnOff("rHideQuagmire");
+	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideArchaeology") : turnOff("rHideArchaeology");
+	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideInsanity") : turnOff("rHideInsanity"); 
+	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideExterminate") : turnOff("rHideExterminate"); 
+	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideAlchemy") : turnOff("rHideAlchemy"); 
+	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideHypothermia") : turnOff("rHideHypothermia"); 
+
     //Unbalance
 	radonon ? turnOn('rUnbalance') : turnOff('rUnbalance');
 	radonon && getPageSetting('rUnbalance') ? turnOn('rUnbalanceZone') : turnOff('rUnbalanceZone');
@@ -1770,15 +1805,15 @@ function updateCustomButtons() {
 	radonon && getPageSetting('rUnbalance') ? turnOn('rUnbalanceImprobDestack') : turnOff('rUnbalanceImprobDestack');
     
 	//Quagmire
-	radonon ? turnOn('Rblackbog') : turnOff('Rblackbog');
-	radonon && getPageSetting('Rblackbog') ? turnOn('Rblackbogzone') : turnOff('Rblackbogzone');
-	radonon && getPageSetting('Rblackbog') ? turnOn('Rblackbogamount') : turnOff('Rblackbogamount');
+	radonon && !getPageSetting('rHideQuagmire') ? turnOn('Rblackbog') : turnOff('Rblackbog');
+	radonon && getPageSetting('Rblackbog') && !getPageSetting('rHideQuagmire') ? turnOn('Rblackbogzone') : turnOff('Rblackbogzone');
+	radonon && getPageSetting('Rblackbog') && !getPageSetting('rHideQuagmire') ? turnOn('Rblackbogamount') : turnOff('Rblackbogamount');
 
 	//Archaeology
-	radonon ? turnOn('Rarchon') : turnOff('Rarchon');
-	radonon && getPageSetting('Rarchon') ? turnOn('Rarchstring1') : turnOff('Rarchstring1');
-	radonon && getPageSetting('Rarchon') ? turnOn('Rarchstring2') : turnOff('Rarchstring2');
-	radonon && getPageSetting('Rarchon') ? turnOn('Rarchstring3') : turnOff('Rarchstring3');
+	radonon && !getPageSetting('rHideArchaeology') ? turnOn('Rarchon') : turnOff('Rarchon');
+	radonon && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring1') : turnOff('Rarchstring1');
+	radonon && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring2') : turnOff('Rarchstring2');
+	radonon && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring3') : turnOff('Rarchstring3');
 
 	//Mayhem
 	radonon ? turnOn('Rmayhemon') : turnOff('Rmayhemon');
@@ -1796,17 +1831,17 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Rstormon') ? turnOn('Rstormmult') : turnOff('Rstormmult');
 
 	//Insanity
-	radonon ? turnOn('Rinsanityon') : turnOff('Rinsanityon');
-	radonon && getPageSetting('Rinsanityon') ? turnOn('Rinsanityfarmzone') : turnOff('Rinsanityfarmzone');
-	radonon && getPageSetting('Rinsanityon') ? turnOn('Rinsanityfarmcell') : turnOff('Rinsanityfarmcell');
-	radonon && getPageSetting('Rinsanityon') ? turnOn('Rinsanityfarmstack') : turnOff('Rinsanityfarmstack');
-	radonon && getPageSetting('Rinsanityon') ? turnOn('Rinsanityfarmlevel') : turnOff('Rinsanityfarmlevel');
-	radonon && getPageSetting('Rinsanityon') ? turnOn('Rinsanityfarmfrag') : turnOff('Rinsanityfarmfrag');
+	radonon && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityon') : turnOff('Rinsanityon');
+	radonon && getPageSetting('Rinsanityon') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmzone') : turnOff('Rinsanityfarmzone');
+	radonon && getPageSetting('Rinsanityon') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmcell') : turnOff('Rinsanityfarmcell');
+	radonon && getPageSetting('Rinsanityon') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmstack') : turnOff('Rinsanityfarmstack');
+	radonon && getPageSetting('Rinsanityon') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmlevel') : turnOff('Rinsanityfarmlevel');
+	radonon && getPageSetting('Rinsanityon') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmfrag') : turnOff('Rinsanityfarmfrag');
 
 	//Exterminate
-	radonon ? turnOn('Rexterminateon') : turnOff('Rexterminateon');
-	radonon && getPageSetting('Rexterminateon') ? turnOn('Rexterminatecalc') : turnOff('Rexterminatecalc');
-	radonon && getPageSetting('Rexterminateon') ? turnOn('Rexterminateeq') : turnOff('Rexterminateeq');
+	radonon && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateon') : turnOff('Rexterminateon');
+	radonon && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminatecalc') : turnOff('Rexterminatecalc');
+	radonon && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateeq') : turnOff('Rexterminateeq');
 
 	//Pandemonium
 	radonon ? turnOn('RPandemoniumOn') : turnOff('RPandemoniumOn');
@@ -1825,15 +1860,24 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
 	
 	//Alchemy
-	radonon ? turnOn('RAlchOn') : turnOff('RAlchOn');
-	radonon && getPageSetting('RAlchOn') ? turnOn('Ralchfarmstack') : turnOff('Ralchfarmstack');
-	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchZone') : turnOff('RAlchZone');
-	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchMapLevel') : turnOff('RAlchMapLevel');
-	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchCell') : turnOff('RAlchCell');
-	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchSpecial') : turnOff('RAlchSpecial');
-	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchFAMaps') : turnOff('RAlchFAMaps');
-	radonon && getPageSetting('RAlchOn') ? turnOn('RAlchDontBuyMets') : turnOff('RAlchDontBuyMets');
+	radonon && !getPageSetting('rHideAlchemy') ? turnOn('RAlchOn') : turnOff('RAlchOn');
+	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('Ralchfarmstack') : turnOff('Ralchfarmstack');
+	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchZone') : turnOff('RAlchZone');
+	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchMapLevel') : turnOff('RAlchMapLevel');
+	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchCell') : turnOff('RAlchCell');
+	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchSpecial') : turnOff('RAlchSpecial');
+	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchFAMaps') : turnOff('RAlchFAMaps');
+	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchDontBuyMets') : turnOff('RAlchDontBuyMets');
     
+	//Hypothermia
+	radonon && !getPageSetting('rHideHypothermia') && game.global.stringVersion != '5.5.1' ? turnOn('rHypoOn') : turnOff('rHypoOn');
+	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoBonfire') : turnOff('rHypoBonfire');
+	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoZone') : turnOff('rHypoZone');
+	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoMapLevel') : turnOff('rHypoMapLevel');
+	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoCell') : turnOff('rHypoCell');
+	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoFrozenCastle') : turnOff('rHypoFrozenCastle');
+	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoStorage') : turnOff('rHypoStorage');
+	
 	//Scryer
 	!radonon ? turnOn('UseScryerStance'): turnOff('UseScryerStance');
 	!radonon ? turnOn('ScryerUseWhenOverkill'): turnOff('ScryerUseWhenOverkill');

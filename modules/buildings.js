@@ -209,7 +209,7 @@ function buyBuildings() {
     postBuy2(oldBuy);
 }
 
-function buyStorage() {
+/* function buyStorage() {
     var customVars = MODULES["buildings"];
     var packMod = 1 + game.portal.Packrat.level * game.portal.Packrat.modifier;
     var Bs = {
@@ -234,7 +234,7 @@ function buyStorage() {
             }
         }
     }
-}
+} */
 
 //Radon
 
@@ -399,9 +399,46 @@ function mostEfficientHousing() {
 
 function RbuyBuildings() {
  
-    // Storage, shouldn't be needed anymore that autostorage is lossless
-    if (!game.global.autoStorage) {toggleAutoStorage(false);}
- 
+
+    //Turn on autostorage if you're past your last farmzone and you don't need to save wood anymore. Else will have to force it to purchase enough storage up to the cost of whatever bonfires
+
+    // Storage, shouldn't be needed anymore that autostorage is lossless. Hypo fucked this statement :(
+        if (!game.global.autoStorage && (game.global.challengeActive != 'Hypothermia' || (game.global.challengeActive == 'Hypothermia' && getPageSetting('rHypoOn') && getPageSetting('rHypoStorage') && getPageSetting('rHypoZone')[getPageSetting('rHypoZone').length-1] >= game.global.world)))
+        toggleAutoStorage(false);
+        
+    var rPurchaseStorage = false;
+    if (game.global.challengeActive == 'Hypothermia' && getPageSetting('rHypoOn') && getPageSetting('rHypoStorage') && game.global.world < getPageSetting('rHypoZone')[getPageSetting('rHypoZone').length-1]) {
+        rPurchaseStorage = true;
+    	if (game.global.autoStorage) {
+            toggleAutoStorage(false);
+    	}
+    }
+    if (rPurchaseStorage) {
+        var packMod = 1 + game.portal.Packrat.radLevel * game.portal.Packrat.modifier;
+        var rBuildings = {
+            'Barn': 'food',
+            'Shed': 'wood',
+            'Forge': 'metal'
+        };
+        for (var resources in rBuildings) {
+            var jest = 0;
+            var owned = game.resources[rBuildings[resources]].owned;
+            var max = game.resources[rBuildings[resources]].max * packMod;
+            max = calcHeirloomBonus("Shield", "storageSize", max);
+            if (game.global.mapsActive && game.unlocks.imps.Jestimp) {
+                jest = simpleSeconds(rBuildings[resources], 45);
+                jest = scaleToCurrentMap(jest);
+            }
+            if (resources == 'Shed' && rHFBonfireCostTotal == 0) continue;
+            owned = resources == 'Shed' && rHFBonfireCostTotal != 0 ? rHFBonfireCostTotal * 10 : owned * 100;
+            if ((resources != 'Shed' && owned + jest > max) || owned >= max) {
+                if (canAffordBuilding(resources,null,null,null,null,null,5) && game.triggers[resources].done) {
+                    RsafeBuyBuilding(resources);
+                }
+            }
+        }
+    }
+
     //Smithy purchasing
     if (!game.buildings.Smithy.locked && canAffordBuilding('Smithy')) {
         //Checking to see how many smithies we can buy

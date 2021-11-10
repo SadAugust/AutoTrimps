@@ -356,7 +356,8 @@ function RautoPortal() {
 		case "Insanity":
 		case "Nurture":
 		case "Pandemonium":
-		case "Alchemy":
+        case "Alchemy":
+        case "Hypothermia":
             if (!game.global.challengeActive) {
                 RdoPortal(autoTrimpSettings.RAutoPortal.selected);
             }
@@ -601,18 +602,19 @@ function Rresetmapvars() {
 	RvanillaMapatZone = !1;
 	Rtributefarm = !1;
 	Tributefarmmap = undefined;
-	Rtimefarm = !1;
-	Rzonecleared = 0;
+	rTimeFarm = !1;
+	rTFZoneCleared = 0;
     worshipperdebug = 0;
 	RadditionalCritMulti = 2 < getPlayerCritChance() ? 25 : 5;
 	Rshouldtributefarm = !1;
 	Rshouldtimefarm = !1;
 	Rshouldalchfarm = !1;
 	Rshoulddobogs = false;
-	Rshoulddopraid = false;
+	rShouldPrestigeRaid = false;
 	Rshoulddoquest = false;
 	Rquestequalityscale = false;
 	Rquestshieldzone = 0;
+    RquestSmithyWarning = 0;
 	RAMPfragmappy = undefined;
 	RAMPprefragmappy = undefined;
 	RAMPpMap = new Array(5);
@@ -644,4 +646,5 @@ function Rresetmapvars() {
 	alchfarmmap = undefined;
 	alchbiome = "Plentiful";
     rAlchSpecialError = 0;
+	rHFBonfireCostTotal = 0;
 }

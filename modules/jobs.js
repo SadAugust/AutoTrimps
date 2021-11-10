@@ -560,14 +560,16 @@ function RbuyJobs() {
 
 	// If focused farming go all in for caches
 	var allIn = "";
-	if ((Rshouldtimefarm || Rshouldalchfarm) && game.global.mapsActive) {
+	if ((rShouldTimeFarm || Rshouldalchfarm || rShouldHypoFarm) && game.global.mapsActive) {
 		if (Rshouldalchfarm) 
             rspecial = autoTrimpSettings.RAlchSpecial.selected;
-        else if (Rshouldtimefarm && getPageSetting('Rc3timefarm') && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium'))
+        else if (rShouldHypoFarm)
+            rspecial = 'lwc';
+        else if (rShouldTimeFarm && getPageSetting('Rc3timefarm') && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium'))
             rspecial = autoTrimpSettings.Rc3timespecialselection.selected
-		else if (game.global.challengeAcive = "Daily" && Rshouldtimefarm && getPageSetting('Rdtimefarm')) 
+		else if (game.global.challengeAcive = "Daily" && rShouldTimeFarm && getPageSetting('Rdtimefarm')) 
             rspecial = autoTrimpSettings.Rdtimespecialselection.selected;
-		else if (Rshouldtimefarm)
+		else if (rShouldTimeFarm)
 			rspecial = autoTrimpSettings.Rtimespecialselection.selected;
 		
 		if (rspecial.includes('mc')) 
@@ -584,7 +586,7 @@ function RbuyJobs() {
 		}
 	} 
 	
-	if ((Rshouldshipfarm || Rshouldtributefarm) && (!Rshouldtimefarm && !Rshouldalchfarm)) {
+	if ((Rshouldshipfarm || rShouldTributeFarm) && (!rShouldTimeFarm && !Rshouldalchfarm)) {
 		allIn = "Farmer";
 		var desiredRatios = [0,1,1,0];
 	}

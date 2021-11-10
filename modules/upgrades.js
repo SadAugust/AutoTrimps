@@ -55,14 +55,14 @@ function RbuyUpgrades() {
         var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
 			
         //Coord
-	if (upgrade == 'Coordination' && (getPageSetting('RBuyUpgradesNew') == 2 || !canAffordCoordinationTrimps())) continue;
+        if (upgrade == 'Coordination' && (getPageSetting('RBuyUpgradesNew') == 2 || !canAffordCoordinationTrimps())) continue;
 
         //Other
         if (!available) continue;
         if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade != 'Scientists') continue;
-            buyUpgrade(upgrade, true, true);
-            debug('Upgraded ' + upgrade, "upgrades", "*upload2");
-        }
+        buyUpgrade(upgrade, true, true);
+        debug('Upgraded ' + upgrade, "upgrades", "*upload2");
+    }
 }
 
 function RautoGoldenUpgradesAT(setting) {

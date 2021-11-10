@@ -855,6 +855,9 @@ function mostEfficientEquipment(fakeLevels = {}) {
         var nextLevelCost = game.equipment[i].cost[RequipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[RequipmentList[i].Resource][1], game.equipment[i].level + fakeLevels[i]) * artBoost;
 		//Skips looping through equips if they're blocked during Pandemonium
         if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
+        if (game.global.stringVersion != '5.5.1') {
+            if (game.global.challengeActive == 'Hypothermia' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i == 'Shield') continue;
+        }
         //Skips through equips if they don't cost metal and you don't have enough resources for them.
         if (RequipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1)) continue;
         var nextLevelValue = game.equipment[i][RequipmentList[i].Stat + "Calculated"];
@@ -867,7 +870,6 @@ function mostEfficientEquipment(fakeLevels = {}) {
             mostEfficient[isAttack].statPerResource = safeRatio;
             mostEfficient[isAttack].cost = nextLevelCost;
         }
-
     }
 
     return [mostEfficient[0].name, mostEfficient[1].name, mostEfficient[0].statPerResource, mostEfficient[1].statPerResource, mostEfficient[0].cost, mostEfficient[1].cost];

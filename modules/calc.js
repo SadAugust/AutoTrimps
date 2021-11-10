@@ -798,7 +798,7 @@ function RcalcOurHealth() {
 	health *= game.portal.Championism.getMult();
 	//Golden Battle
 	health *= game.goldenUpgrades.Battle.currentBonus > 0 ? 1 + game.goldenUpgrades.Battle.currentBonus : 1;
-	//Safe Mapping - Don't think it's worthwhile implementing, would mess up a lot of calcs
+	//Safe Mapping - Don't think it's worthwhile implementing, would mess up a lot of calcs. Just multiply health by 2 when meant to be mapping
 	//health *= game.talents.mapHealth.purchased && game.global.mapsActive ? 2 : 1;
 	//Cinf
 	health *= game.global.totalSquaredReward > 0 ? 1 + (game.global.totalSquaredReward / 100) : 1;
@@ -862,6 +862,10 @@ function RcalcBadGuyDmg(enemy, attack, equality) {
 	number *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	number *= game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
 	number *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
+	if (game.global.stringVersion != '5.5.1') {
+		number *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
+		number *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
+	}
 	number *= !enemy && game.global.usingShriek ? game.mapUnlocks.roboTrimp.getShriekValue() : 1;
 	return number;
 }
@@ -928,6 +932,11 @@ function RcalcEnemyHealth(world) {
 	health *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
 	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
+	if (game.global.stringVersion != '5.5.1') {
+		health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
+		health *= game.global.challengeActive == 'Glass' ? 0.01 : 1;
+		health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
+	}
     return health;
 }
 
@@ -946,6 +955,11 @@ function RcalcEnemyHealthMod(world, cell, name) {
 	health *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
 	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
+	if (game.global.stringVersion != '5.5.1') {
+		health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
+		health *= game.global.challengeActive == 'Glass' ? 0.01 : 1;
+		health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
+	}
     return health;
 }
 
