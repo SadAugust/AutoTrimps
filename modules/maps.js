@@ -748,15 +748,14 @@ var RshouldEmpowerFarm = false;
 //Void Maps
 var RdoVoids = false;
 var RneedToVoid = false;
-var Rdovoids = false;
 //Time Farm
-var rShouldTimeFarm = false;
 var rTimeFarm = false;
+var rShouldTimeFarm = false;
 var rTFCurrentMap = undefined;
 var rTFZoneCleared = 0;
 //Tribute Farm
-var rShouldTributeFarm = false;
 var rTributeFarm = false;
+var rShouldTributeFarm = false;
 var rTrFCurrentMap = undefined;
 //Unbalance
 var RshouldUnbalance = false;

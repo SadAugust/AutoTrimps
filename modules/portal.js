@@ -136,74 +136,74 @@ function dailyAutoPortal() {
 }
 
 function c2runnerportal() {
-            if (game.global.world > getPageSetting('c2runnerportal')) {
-                if (game.global.runningChallengeSquared)
-                    abandonChallenge();
-                if (autoTrimpSettings.HeliumHourChallenge.selected != 'None')
-                    doPortal(autoTrimpSettings.HeliumHourChallenge.selected);
-                else
-                    doPortal();
-            }
+    if (game.global.world > getPageSetting('c2runnerportal')) {
+        if (game.global.runningChallengeSquared)
+            abandonChallenge();
+        if (autoTrimpSettings.HeliumHourChallenge.selected != 'None')
+            doPortal(autoTrimpSettings.HeliumHourChallenge.selected);
+        else
+            doPortal();
+    }
 }
 
 function c2runner() {
     if (!game.global.portalActive) return;
     if (getPageSetting('c2runnerstart') == true && getPageSetting('c2runnerportal') > 0 && getPageSetting('c2runnerpercent') > 0) {
-            if (game.global.highestLevelCleared > 34 && (100*(game.c2.Size/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
-                challengeSquaredMode = true;
-                selectChallenge("Size");
-                debug("C2 Runner: Running C2 Challenge Size");
-            }
-            else if (game.global.highestLevelCleared > 129 && (100*(game.c2.Slow/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
-                challengeSquaredMode = true;
-                selectChallenge("Slow");
-                debug("C2 Runner: Running C2 Challenge Slow");
-            }
-            else if (game.global.highestLevelCleared > 179 && (100*(game.c2.Watch/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
-                challengeSquaredMode = true;
-                selectChallenge("Watch");
-                debug("C2 Runner: Running C2 Challenge Watch");
-            }
-            else if ((100*(game.c2.Discipline/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
-                challengeSquaredMode = true;
-                selectChallenge("Discipline");
-                debug("C2 Runner: Running C2 Challenge Discipline");
-            }
-            else if (game.global.highestLevelCleared > 39 && (100*(game.c2.Balance/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
-                challengeSquaredMode = true;
-                selectChallenge("Balance");
-                debug("C2 Runner: Running C2 Challenge Balance");
-            }
-            else if (game.global.highestLevelCleared > 44 && (100*(game.c2.Meditate/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
-                challengeSquaredMode = true;
-                selectChallenge("Meditate");
-                debug("C2 Runner: Running C2 Challenge Meditate");
-            }
-            else if (game.global.highestLevelCleared > 24 && (100*(game.c2.Metal/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
-                challengeSquaredMode = true;
-                selectChallenge("Metal");
-                debug("C2 Runner: Running C2 Challenge Metal");
-            }
-            else if (game.global.highestLevelCleared > 179 && (100*(game.c2.Lead/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
-                challengeSquaredMode = true;
-                selectChallenge("Lead");
-                debug("C2 Runner: Running C2 Challenge Lead");
-            }
-            else if (game.global.highestLevelCleared > 144 && (100*(game.c2.Nom/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
-                challengeSquaredMode = true;
-                selectChallenge("Nom");
-                debug("C2 Runner: Running C2 Challenge Nom");
-            }
-            else if ((100*(game.c2.Electricity/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
-                challengeSquaredMode = true;
-                selectChallenge("Electricity");
-                debug("C2 Runner: Running C2 Challenge Electricity");
-            }
-            else if (game.global.highestLevelCleared > 164 && (100*(game.c2.Toxicity/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
-                challengeSquaredMode = true;
-                selectChallenge("Toxicity");
-                debug("C2 Runner: Running C2 Challenge Toxicity");
-            }
+        if (game.global.highestLevelCleared > 34 && (100*(game.c2.Size/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
+            challengeSquaredMode = true;
+            selectChallenge("Size");
+            debug("C2 Runner: Running C2 Challenge Size");
+        }
+        else if (game.global.highestLevelCleared > 129 && (100*(game.c2.Slow/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
+            challengeSquaredMode = true;
+            selectChallenge("Slow");
+            debug("C2 Runner: Running C2 Challenge Slow");
+        }
+        else if (game.global.highestLevelCleared > 179 && (100*(game.c2.Watch/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
+            challengeSquaredMode = true;
+            selectChallenge("Watch");
+            debug("C2 Runner: Running C2 Challenge Watch");
+        }
+        else if ((100*(game.c2.Discipline/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
+            challengeSquaredMode = true;
+            selectChallenge("Discipline");
+            debug("C2 Runner: Running C2 Challenge Discipline");
+        }
+        else if (game.global.highestLevelCleared > 39 && (100*(game.c2.Balance/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
+            challengeSquaredMode = true;
+            selectChallenge("Balance");
+            debug("C2 Runner: Running C2 Challenge Balance");
+        }
+        else if (game.global.highestLevelCleared > 44 && (100*(game.c2.Meditate/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
+            challengeSquaredMode = true;
+            selectChallenge("Meditate");
+            debug("C2 Runner: Running C2 Challenge Meditate");
+        }
+        else if (game.global.highestLevelCleared > 24 && (100*(game.c2.Metal/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
+            challengeSquaredMode = true;
+            selectChallenge("Metal");
+            debug("C2 Runner: Running C2 Challenge Metal");
+        }
+        else if (game.global.highestLevelCleared > 179 && (100*(game.c2.Lead/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
+            challengeSquaredMode = true;
+            selectChallenge("Lead");
+            debug("C2 Runner: Running C2 Challenge Lead");
+        }
+        else if (game.global.highestLevelCleared > 144 && (100*(game.c2.Nom/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
+            challengeSquaredMode = true;
+            selectChallenge("Nom");
+            debug("C2 Runner: Running C2 Challenge Nom");
+        }
+        else if ((100*(game.c2.Electricity/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
+            challengeSquaredMode = true;
+            selectChallenge("Electricity");
+            debug("C2 Runner: Running C2 Challenge Electricity");
+        }
+        else if (game.global.highestLevelCleared > 164 && (100*(game.c2.Toxicity/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
+            challengeSquaredMode = true;
+            selectChallenge("Toxicity");
+            debug("C2 Runner: Running C2 Challenge Toxicity");
+        }
     }
 }
 
@@ -589,62 +589,82 @@ function isNextU1DailyWind() {
 }
 
 function Rresetmapvars() {
-	RdoVoids = !1;
-	RneedToVoid = !1;
-	RneedPrestige = !1;
-	RskippedPrestige = !1;
-	RscryerStuck = !1;
-	RshouldDoMaps = !1;
-	RmapTimeEstimate = 0;
-	RlastMapWeWereIn = null;
-	RdoMaxMapBonus = !1;
-	RdodMaxMapBonus = !1;
-	RvanillaMapatZone = !1;
-	Rtributefarm = !1;
-	Tributefarmmap = undefined;
-	rTimeFarm = !1;
-	rTFZoneCleared = 0;
+    //General
+    RshouldDoMaps = false;
+    RlastMapWeWereIn = null;
+    RdoMaxMapBonus = false;
+    RvanillaMapatZone = false;
+    RavoidEmpower = false;
+    RshouldEmpowerFarm = false;
+    //Void Maps
+    RdoVoids = false;
+    RneedToVoid = false;
+    //Time Farm
+    rTimeFarm = false;
+    rShouldTimeFarm = false;
+    rTFCurrentMap = undefined;
+    rTFZoneCleared = 0;
+    //Tribute Farm
+    rTributeFarm = false;
+    rShouldTributeFarm = false;
+    rTrFCurrentMap = undefined;
+    //Unbalance
+    RshouldUnbalance = false;
+    //Worshipper
+    Rshipfarm = false;
+    Rshouldshipfarm = false;
+    Rshipfragfarming = false;
+    shipfragmappy = undefined;
+    shipprefragmappy = undefined;
+    shipfragmappybought = false;
     worshipperdebug = 0;
-	RadditionalCritMulti = 2 < getPlayerCritChance() ? 25 : 5;
-	Rshouldtributefarm = !1;
-	Rshouldtimefarm = !1;
-	Rshouldalchfarm = !1;
-	Rshoulddobogs = false;
-	rShouldPrestigeRaid = false;
-	Rshoulddoquest = false;
-	Rquestequalityscale = false;
-	Rquestshieldzone = 0;
-    RquestSmithyWarning = 0;
-	RAMPfragmappy = undefined;
-	RAMPprefragmappy = undefined;
-	RAMPpMap = new Array(5);
-	RAMPrepMap = new Array(5);
-	RAMPmapbought = [[false],[false],[false],[false],[false]];
-	RAMPmapbought.fill(false);
-	RAMPfragmappybought = false;
-	RAMPfragfarming = false;
-	Rshouldmayhem = 0;
-	Rshouldpandemonium = 0;
-	Rinsanityfarm = !1;
-	Rshouldinsanityfarm = !1;
-	Rinsanityfragfarming  = false;
-	insanityfragmappy = undefined;
-	insanityprefragmappy = undefined;
-	insanityfragmappybought = false;
-	Rstormfarm = !1;
-	Rshouldstormfarm = !1;
-	Requipfarm = !1;
-	Rshouldequipfarm = !1;
-	Requipminusglobal = -1;
-	Rshipfarm = !1;
-	Rshouldshipfarm = !1;
-	Rshipfragfarming = false;
-	shipfragmappy = undefined;
-	shipprefragmappy = undefined;
-	shipfragmappybought = false;
-	RAlchFarm = !1;
-	alchfarmmap = undefined;
-	alchbiome = "Plentiful";
+    //Quagmire
+    Rshoulddobogs = false;
+    //Quest
+    Rshoulddoquest = false;
+    Rquestequalityscale = false;
+    Rquestshieldzone = 0;
+    RquestSmithyWarning = -1;
+    //Mayhem
+    Rshouldmayhem = 0;
+    //Storm
+    Rstormfarm = false;
+    Rshouldstormfarm = false;
+    //Insanity
+    Rinsanityfarm = false;
+    Rshouldinsanityfarm = false;
+    Rinsanityfragfarming  = false;
+    insanityfragmappy = undefined;
+    insanityprefragmappy = undefined;
+    insanityfragmappybought = false;
+    //Equip Farm
+    Requipfarm = !1;
+    Rshouldequipfarm = !1;
+    Requipminusglobal = -1;
+    //Pandemonium
+    Rshouldpandemonium = false;
+    Rshouldpandemoniumfarm = false;
+    Rshouldpandemoniumjestfarm = false;
+    savefile = null;
+    jestFarmMap = false;
+    //Alchemy
+    Rshouldalchfarm = false;
+    RAlchFarm = false;
     rAlchSpecialError = 0;
-	rHFBonfireCostTotal = 0;
+    //Hypothermia
+    rHypoFarm = false;
+    rHFSaveWood = false;
+    rShouldHypoFarm = false;
+    rHFCurrentMap = undefined;
+    rHFBonfireCostTotal = 0;
+    //Prestige
+    rShouldPrestigeRaid = false;
+    RAMPfragmappy = undefined;
+    RAMPprefragmappy = undefined;
+    RAMPpMap = new Array(5);
+    RAMPrepMap = new Array(5);
+    RAMPmapbought = [[false],[false],[false],[false],[false]];
+    RAMPmapbought.fill(false); //Unsure if necessary - Need to test
+    RAMPfragmappybought = false;
+    RAMPfragfarming = false;
 }

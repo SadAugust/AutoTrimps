@@ -199,6 +199,8 @@ function RmanualLabor2() {
     else if (game.global.challengeActive == "Quest" && questcheck() == 5)  {
 		setGather('science');
 	} 
+    else if (game.global.challengeActive == 'Hypothermia' && getPageSetting('rHypoOn') && getPageSetting('rHypoStorage') && game.global.buildingsQueue.length > 2)
+        setGather('buildings');
     else if (game.global.mapsActive && mapping != null) {
         if (getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('hc'))
             setGather('food');
@@ -207,44 +209,38 @@ function RmanualLabor2() {
         else if (getCurrentMapObject().bonus.includes('mc'))
             setGather('metal');
         else if (getCurrentMapObject().bonus.includes('rc'))
-                setGather('science');
+            setGather('science');
     } 
     else {
-		if (getPageSetting('RManualGather2') != 2 && game.resources.science.owned < MODULES["gather"].RminScienceAmount && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
+		if (getPageSetting('RManualGather2') != 2 && game.resources.science.owned < MODULES["gather"].RminScienceAmount && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden')
 				 setGather('science');
-		}
-		else if (game.resources.science.owned < (RscienceNeeded*0.8) && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
+		else if (game.resources.science.owned < (RscienceNeeded*0.8) && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') 
 			 setGather('science');
-		}
 		else if (trapTrimpsOK && needToTrap && game.buildings.Trap.owned == 0 && canAffordBuilding('Trap')) {
 			 if (!safeBuyBuilding('Trap'))
 				 setGather('buildings');
 		}
-		else if (trapTrimpsOK && needToTrap && game.buildings.Trap.owned > 0) {
+		else if (trapTrimpsOK && needToTrap && game.buildings.Trap.owned > 0)
 				 setGather('trimps');
-		}
-		else if (!bwRewardUnlocked("Foremany") && (game.global.buildingsQueue.length ? (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier == 0 || (getPlayerModifier() > 100 && game.global.buildingsQueue[0] != 'Trap.1')) : false)) {
+		else if (!bwRewardUnlocked("Foremany") && (game.global.buildingsQueue.length ? (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier == 0 || (getPlayerModifier() > 100 && game.global.buildingsQueue[0] != 'Trap.1')) : false))
+            setGather('buildings');
+		else if (!game.global.trapBuildToggled && (game.global.buildingsQueue[0] == 'Barn.1' || game.global.buildingsQueue[0] == 'Shed.1' || game.global.buildingsQueue[0] == 'Forge.1'))
 				 setGather('buildings');
-		}
-		else if (!game.global.trapBuildToggled && (game.global.buildingsQueue[0] == 'Barn.1' || game.global.buildingsQueue[0] == 'Shed.1' || game.global.buildingsQueue[0] == 'Forge.1')){
-				 setGather('buildings');
-		}
 		else if (game.resources.science.owned >= RscienceNeeded && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
 			if (game.global.challengeActive != "Transmute" && (getPlayerModifier() < getPerSecBeforeManual('Scientist') && hasTurkimp)||getPageSetting('RManualGather2') == 2)
 				setGather('metal');
 			else if ((game.global.challengeActive == "Transmute" && (getPlayerModifier() < getPerSecBeforeManual('Scientist') && hasTurkimp)||getPageSetting('RManualGather2') == 2))
 					 setGather('food');
-            else if (getPageSetting('RManualGather2') != 2){
+            else if (getPageSetting('RManualGather2') != 2)
 					 setGather('science');
-			}
 		}
 		else if (trapTrimpsOK){
 			if (game.buildings.Trap.owned < 5 && canAffordBuilding('Trap')) {
 				safeBuyBuilding('Trap');
 				setGather('buildings');
 			}
-		else if (game.buildings.Trap.owned > 0)
-				 setGather('trimps');
+    		else if (game.buildings.Trap.owned > 0)
+    				 setGather('trimps');
 		}
 		else {
 			var manualResourceList = {
