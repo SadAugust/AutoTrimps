@@ -834,7 +834,10 @@ function RupdateAutoMapsStatus(get) {
 	else if (Rshouldequipfarm) status = 'Equip Farming to ' + equipfarmdynamicHD().toFixed(2) + " and " + estimateEquipsForZone()[2] + " Equality";
 	else if (rShouldPrestigeRaid) status = 'Prestige Raiding: ' + Rgetequips(raidzones, false) + ' items remaining';
 	else if (RdoMaxMapBonus && RshouldDoMaps) status = 'Map Bonus: ' + game.global.mapBonus + "/" + maxMapBonusLimit;
-	else if (RdoVoids) status = 'Void Maps: ' + game.global.totalVoidMaps + ' remaining';
+	else if (RdoVoids) { 
+		var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
+		status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
+	}
 	//Challenges
 	else if (Rshoulddobogs) status = 'Black Bogs: ' + (stacksum - game.global.mapRunCounter) + " remaining";
 	else if (Rshoulddoquest) status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
@@ -1332,7 +1335,7 @@ function RautoMap() {
 		}
 		
 		//AutoEquip settings for Pandemonium.
-		if (!Rshouldpandemonium && getPageSetting('RPandemoniumAutoEquip') > 1 && game.global.lastClearedCell > 60 && game.global.StaffEquipped.name == getPageSetting('RhsPandStaff') && getPageSetting('RPandemoniumAEZone') > 5 && game.global.world >= getPageSetting('RPandemoniumAEZone') && game.global.world != 150) {
+		if (!Rshouldpandemonium && getPageSetting('RPandemoniumAutoEquip') > 1 && game.global.lastClearedCell + 2 >= 91 && game.global.StaffEquipped.name == getPageSetting('RhsPandStaff') && getPageSetting('RPandemoniumAEZone') > 5 && game.global.world >= getPageSetting('RPandemoniumAEZone') && game.global.world != 150) {
 			//Initialising Variables
 			nextLevelEquipmentCost = null;
 			nextEquipmentCost = null;
@@ -1383,6 +1386,7 @@ function RautoMap() {
 	            for (i = 1; i < kills; i++) {
 	                jestMetalTotal += (jestDrop*(Math.pow(shred,i)));
 	            }
+	            jestMetalTotal = (jestMetalTotal / 100) * 99
 	            if ((jestMetalTotal != null && (jestMetalTotal > nextEquipmentCost)) || jestFarmMap == true) {
 	                Rshouldpandemoniumjestfarm = true;
 	                jestFarmMap = true;
@@ -1398,6 +1402,7 @@ function RautoMap() {
 	}
 
 	if (Rshouldpandemoniumjestfarm) {
+		reloadDelay = false;
 		//Saves your savefile to a variable when that variable is null and frenzy is active
 		if (game.global.mapsActive && game.global.mapGridArray[0].name == "Jestimp" && savefile == null && game.portal.Frenzy.frenzyStarted != -1) {
 			savefile = save(true);
@@ -1415,6 +1420,7 @@ function RautoMap() {
 					document.getElementById('importBox').value = savefile;
 					cancelTooltip();
 					load(true);
+					reloadDelay = true;
 				}
 			}
 		}

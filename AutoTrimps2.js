@@ -15,7 +15,7 @@ function initializeAutoTrimps() {
 }
 
 var runInterval = 100;
-var startupDelay = 1000;
+var startupDelay = 2000;
 
 setTimeout(delayStart, startupDelay);
 
@@ -35,6 +35,7 @@ function delayStartAgain(){
 var ATrunning = true;
 var ATmessageLogTabVisible = true;
 var enableDebug = true;
+var reloadDelay = false;
 
 var autoTrimpSettings = {};
 var MODULES = {};
@@ -76,6 +77,15 @@ var lastRadonZone = 0;
 
 function mainLoop() {
 	if (ATrunning == false) return;
+	if (reloadDelay) {
+		if (!game.options.menu.pauseGame.enabled) {
+			toggleSetting('pauseGame');
+			setTimeout(function(){ 
+				toggleSetting('pauseGame');
+			}, 1000);
+		reloadDelay = false;
+		}
+	}
 	if (getPageSetting('PauseScript') || game.options.menu.pauseGame.enabled || game.global.viewingUpgrades) return;
 	ATrunning = true;
 	if (getPageSetting('showbreedtimer') == true) {
@@ -218,13 +228,6 @@ function mainLoop() {
             RmanualLabor2();
 		if (getPageSetting('RTrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
 		if (game.global.challengeActive == "Daily" && getPageSetting('buyradony') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyradony') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');	
-		
-		//RBuildings
-		if (game.global.challengeActive == "Quest" && questcheck() == 10 && game.challenges.Quest.getQuestProgress != 'Quest Complete!') RbuyBuildings();
-		if (!(game.global.challengeActive == "Quest" && game.global.world >= game.challenges.Quest.getQuestStartZone() && game.global.lastClearedCell < 90 && ([1, 2, 3, 4, 10].indexOf(questcheck()) >= 0))) {
-			if (getPageSetting('RBuyBuildingsNew')) 
-                RbuyBuildings();
-		}
 
 		//RJobs
 		if (getPageSetting('RBuyJobsNew') > 0) {
@@ -239,6 +242,13 @@ function mainLoop() {
 				RquestbuyJobs();
 			}
 		}
+		
+		//RBuildings
+		if (game.global.challengeActive == "Quest" && questcheck() == 10 && game.challenges.Quest.getQuestProgress != 'Quest Complete!') RbuyBuildings();
+		if (!(game.global.challengeActive == "Quest" && game.global.world >= game.challenges.Quest.getQuestStartZone() && game.global.lastClearedCell < 90 && ([1, 2, 3, 4, 10].indexOf(questcheck()) >= 0))) {
+			if (getPageSetting('RBuyBuildingsNew')) 
+                RbuyBuildings();
+		}
 
 		//RPortal
 		if (autoTrimpSettings.RAutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) 
@@ -251,6 +261,12 @@ function mainLoop() {
 			archstring();
 		}
 	
+		//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
+		if (game.global.challengeActive == "Quest" && game.global.autoStructureSettingU2.Smithy.enabled && getPageSetting('RBuyBuildingsNew') && RquestSmithyWarning != game.stats.zonesCleared.value) {
+			debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.")
+			RquestSmithyWarning = game.stats.zonesCleared.value;
+		}
+
 		//RCombat
 		if (getPageSetting('Requipon') && (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([2, 3].indexOf(questcheck()) >= 0)))) RautoEquip();
 		if (getPageSetting('BetterAutoFight') == 1) betterAutoFight();
@@ -263,7 +279,7 @@ function mainLoop() {
 			else if (getPageSetting('Rdfightforever') == 2 && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) Rfightalways();
 		}
 		if (getPageSetting('Rmanageequality') && (game.global.fighting || game.global.preMapsActive)) 
-            Rmanageequality();
+			rManageEquality();
 		
 		//RHeirlooms
 		if (getPageSetting('Rhs')) 

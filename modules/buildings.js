@@ -417,7 +417,6 @@ function RbuyBuildings() {
         };
         for (var resources in rBuildings) {
             //Initialising variables
-            var jestValue = 0;
             var curRes = game.resources[rBuildings[resources]].owned;
             var maxRes = game.resources[rBuildings[resources]].max;
             //Identifying our max for the resource that's being checked
@@ -426,10 +425,9 @@ function RbuyBuildings() {
             maxRes = calcHeirloomBonus("Shield", "storageSize", maxRes);
 
             //Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
-            if (game.global.mapsActive && game.unlocks.imps.Jestimp)
-                jestValue = scaleToCurrentMap(simpleSeconds(rBuildings[resources], 45));
-            else 
-                jestValue = curRes * 1.1;
+            var jestValue = game.global.mapsActive && (getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Trimple of Doom') ? curRes * 2 :
+                            game.global.mapsActive && game.unlocks.imps.Jestimp ? scaleToCurrentMap(simpleSeconds(rBuildings[resources], 45)) :
+                            curRes * 1.1;
             //Skips buying sheds if you're not on one of your specified bonfire zones
             if (resources == 'Shed' && rHFBonfireCostTotal == 0) continue;
             if ((resources != 'Shed' && curRes + jestValue > maxRes) || (resources == 'Shed' && rHFBonfireCostTotal > maxRes)) {

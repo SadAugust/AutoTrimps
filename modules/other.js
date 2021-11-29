@@ -2857,44 +2857,37 @@ var fastimps =
 	"Arachnimp",
 	"Beetlimp",
 	"Mantimp",
-	"Butterflimp"
+	"Butterflimp",
+	"Frosnimp"
 	];
 
-function Rmanageequality() {
+function rManageEquality() {
 
-    var enemy = game.global.preMapsActive ? fastimps.includes(game.global.gridArray[game.global.lastClearedCell + 1].name) : fastimps.includes(getCurrentEnemy().name);
-
-	if (!(game.global.challengeActive == "Exterminate" && getPageSetting('Rexterminateon') == true && getPageSetting('Rexterminateeq') == true && !game.global.mapsActive)) {
-		if (enemy || (game.global.mapsActive && getCurrentMapObject().location == "Void") || (game.portal.Frenzy.frenzyStarted == "-1")) {
-			if (!game.portal.Equality.scalingActive) {
-				game.portal.Equality.scalingActive = true;
-				manageEqualityStacks();
-				updateEqualityScaling();
-			}
-		} else {
-			if ((game.portal.Equality.scalingActive) && (game.portal.Frenzy.frenzyStarted != "-1")) {
-				game.portal.Equality.scalingActive = false;
-				game.portal.Equality.disabledStackCount = "0";
-				manageEqualityStacks();
-				updateEqualityScaling();
-			}
+	//Looking to see if the enemy that's currently being fought is fast.
+	var fastEnemy = game.global.preMapsActive ? fastimps.includes(game.global.gridArray[game.global.lastClearedCell + 1].name) : fastimps.includes(getCurrentEnemy().name);
+	//Checking if the map that's active is a Deadly voice map which always has first attack.
+	var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location == "Void" && getCurrentMapObject().voidBuff == 'doubleAttack';
+	//Checking if the Frenzy buff is active.
+	var noFrenzy = game.portal.Frenzy.frenzyStarted == "-1" && !autoBattle.oneTimers.Mass_Hysteria && game.portal.Frenzy.radLevel > 0;
+	//Checking if the experience buff is active during Exterminate.
+	var experienced = game.global.challengeActive == 'Exterminate' && game.challenges.Exterminate.experienced;
+	//Checking to see if the Glass challenge is being run where all enemies are fast.
+	var glass = game.global.challengeActive == 'Glass';
+	
+	//Toggles equality scaling on
+	if ((fastEnemy && !experienced) || voidDoubleAttack || noFrenzy || glass) {
+		if (!game.portal.Equality.scalingActive) {
+			game.portal.Equality.scalingActive = true;
+			manageEqualityStacks();
+			updateEqualityScaling();
 		}
-	}
-
-	else if (game.global.challengeActive == "Exterminate" && getPageSetting('Rexterminateon') == true && getPageSetting('Rexterminateeq') == true && !game.global.mapsActive) {
-		if ((getCurrentEnemy().name == "Arachnimp" || getCurrentEnemy().name == "Beetlimp" || getCurrentEnemy().name == "Mantimp" || getCurrentEnemy().name == "Butterflimp") && !game.challenges.Exterminate.experienced) {
-			if (!game.portal.Equality.scalingActive) {
-					game.portal.Equality.scalingActive = true;
-					manageEqualityStacks();
-					updateEqualityScaling();
-				}
-		} else if ((getCurrentEnemy().name == "Arachnimp" || getCurrentEnemy().name == "Beetlimp" || getCurrentEnemy().name == "Mantimp" || getCurrentEnemy().name == "Butterflimp") && game.challenges.Exterminate.experienced) {
-			if (game.portal.Equality.scalingActive) {
-				game.portal.Equality.scalingActive = false;
-				game.portal.Equality.disabledStackCount = "0";
-				manageEqualityStacks();
-				updateEqualityScaling();
-			}
+	//Toggles equality scaling off and sets equality stacks to 0
+	} else {
+		if (game.portal.Equality.scalingActive) {
+			game.portal.Equality.scalingActive = false;
+			game.portal.Equality.disabledStackCount = "0";
+			manageEqualityStacks();
+			updateEqualityScaling();
 		}
 	}
 }

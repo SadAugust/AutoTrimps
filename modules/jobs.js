@@ -595,7 +595,7 @@ function RbuyJobs() {
 			var desiredRatios = [0.1,0.1,0.1,0.01];
 			allIn = "Miner";
     } */
- 	if (game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('RhsPandStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 0 && game.global.lastClearedCell > 59) {
+ 	if (game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('RhsPandStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 0 && game.global.lastClearedCell + 2 >= 91) {
 		if (game.global.world >= getPageSetting('RPandemoniumAEZone')) {
 			var desiredRatios = [0.1,0.1,0.1,0.01];
 			allIn = "Miner";
