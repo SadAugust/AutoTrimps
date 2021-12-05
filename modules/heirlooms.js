@@ -282,11 +282,10 @@ function HeirloomSwapping() {
             else if ((game.global.runningChallengeSquared || game.global.challengeActive == "Mayhem" || game.global.challengeActive == "Pandemonium") && getPageSetting('RhsC3') != "undefined") {
                 HeirloomEquipShield('RhsC3');
             } else if (getPageSetting('RhsSwapZone') > 0) {
-                if (getPageSetting('RhsInitial') !== "undefined" && game.global.world < getPageSetting('RhsSwapZone')) {
+                if (getPageSetting('RhsInitial') !== "undefined" && game.global.world < getPageSetting('RhsSwapZone') && !(getPageSetting('RhsAfterpush') !== "undefined" && game.global.mapsActive && getPageSetting('RhsMapSwap')))
                     HeirloomEquipShield('RhsInitial');
-                } else if (getPageSetting('RhsAfterpush') !== "undefined" && game.global.world >= getPageSetting('RhsSwapZone')) {
+                else if (getPageSetting('RhsAfterpush') !== "undefined")
                     HeirloomEquipShield('RhsAfterpush');
-                }
             }
         }
 

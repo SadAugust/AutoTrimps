@@ -2868,7 +2868,7 @@ function rManageEquality() {
 	//Checking if the map that's active is a Deadly voice map which always has first attack.
 	var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location == "Void" && getCurrentMapObject().voidBuff == 'doubleAttack';
 	//Checking if the Frenzy buff is active.
-	var noFrenzy = game.portal.Frenzy.frenzyStarted == "-1" && !autoBattle.oneTimers.Mass_Hysteria && game.portal.Frenzy.radLevel > 0;
+	var noFrenzy = game.portal.Frenzy.frenzyStarted == "-1" && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.radLevel > 0;
 	//Checking if the experience buff is active during Exterminate.
 	var experienced = game.global.challengeActive == 'Exterminate' && game.challenges.Exterminate.experienced;
 	//Checking to see if the Glass challenge is being run where all enemies are fast.

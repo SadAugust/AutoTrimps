@@ -42,7 +42,7 @@ function updateAutoMapsStatus(get) {
 
 	//Raiding
 	else if (game.global.mapsActive && getCurrentMapObject().level > game.global.world && getCurrentMapObject().location != "Void" && getCurrentMapObject().location != "Bionic") status = 'Prestige Raiding';
-	else if (game.global.mapsActive && getCurrentMapObject().level > game.global.world && getCurrentMapObject().location == "Bionic") status = 'BW Raiding';
+	else if (game.global.mapsActive && getCurrentMapObject().level > game.global.world && getCurrentMapObject().location == "Bionic") status = 'BW' + getCurrentMapObject().level + " Cell " + getCurrentMapCell().level + ". " + offlineProgress.countMapItems(getCurrentMapObject().level) + " items remaining.";
 
 	//Spire
 	else if (preSpireFarming) {
@@ -1715,7 +1715,7 @@ function RautoMap() {
 				}
 				//Frozen Castle
 				if (theMap.name == 'Frozen Castle') {
-					var frozencastle = !game.global.challengeActive == 'Hypothermia' && game.global.world >= getPageSetting('rFrozenCastle')[0] && game.global.lastClearedCell + 2 >= getPageSetting('rFrozenCastle')[1];
+					var frozencastle = !game.global.challengeActive != 'Hypothermia' && game.global.world >= getPageSetting('rFrozenCastle')[0] && game.global.lastClearedCell + 2 >= getPageSetting('rFrozenCastle')[1];
 					var hypothermia = game.global.challengeActive == 'Hypothermia' && game.global.world >= getPageSetting('rHypoFrozenCastle')[0] && game.global.lastClearedCell + 2 >= getPageSetting('rHypoFrozenCastle')[1];
 
 					if (frozencastle || hypothermia) {

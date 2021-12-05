@@ -286,7 +286,7 @@ function mainLoop() {
             HeirloomSwapping();
 		
 		//RGolden
-		var Ragu = 	game.global.runningChallengeSquared ? getPageSetting('RcAutoGoldenUpgrades') : 
+		var Ragu = 	game.global.runningChallengeSquared || (typeof game.challenges[game.global.challengeActive].getRadonMult === 'undefined' && getPageSetting('rNonRadonUpgrade')) ? getPageSetting('RcAutoGoldenUpgrades') : 
 					game.global.challengeActive == "Daily" ? getPageSetting('RdAutoGoldenUpgrades') :
 					getPageSetting('RAutoGoldenUpgrades');
 		if (Ragu && Ragu != 'Off') 

@@ -774,13 +774,14 @@ function initializeAllSettings() {
 	//Heirloom
 	//Heirloom Swapping
 	createSetting('Rhs', 'Heirloom Swapping', 'Heirloom swapping master button. Turn this on to allow heirloom swapping and its associated settings. ', 'boolean', false, null, 'Heirlooms');
-
+	
 	//Shield swapping
 	document.getElementById('Rhs').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RhsShield', 'Shields', 'Toggle to swap Shields', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsInitial', 'Initial', '<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsAfterpush', 'Afterpush', '<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsSwapZone', 'Swap Zone', 'Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>', 'value', '-1', null, 'Heirlooms');
+	createSetting('RhsMapSwap', 'Map Swap', 'Toggle to swap to your afterpush shield when inside maps', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsC3', 'C3', '<b>C3 heirloom to use</b><br><br>Enter the name of the heirloom you would like to use during C3\s and special challenges (Mayhem, Pandemonium).', 'textValue', 'undefined', null, 'Heirlooms');
 
 	//Staff swapping
@@ -852,7 +853,8 @@ function initializeAllSettings() {
 	createSetting('Rdradonbattle', 'Daily Radon Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Radon after this many Radon goldens have been purchased and onwards in Dailies. This option only appears when selecting radon. ', 'value', -1, null, 'Golden');
 	createSetting('Rbattleradon', 'Battle Radon', '<b>-1 to disable.</b><br> Buys Radon goldens instead of Battle after this many Battle goldens have been purchased and onwards. This option only appears when selecting battle. ', 'value', -1, null, 'Golden');
 	createSetting('Rdbattleradon', 'Daily Battle Radon', '<b>-1 to disable.</b><br> Buys Radon goldens instead of Battle after this many battle goldens have been purchased and onwards in Dailies. This option only appears when selecting battle. ', 'value', -1, null, 'Golden');
-
+	createSetting('rNonRadonUpgrade', 'Non radon challenges', 'Use C3 golden upgrade setting for regular challenges that aren\'t helium runs.', 'boolean', false, null, 'Golden');
+	
 	//Nature
 	//Tokens
 	createSetting('AutoNatureTokens', 'Spend Nature Tokens', '<b>MASTER BUTTON</b> Automatically spend or convert nature tokens.', 'boolean', false, null, 'Nature');
@@ -1953,7 +1955,8 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RdAutoGoldenUpgrades') == 'Radon' ? turnOn('Rdradonbattle') : turnOff('Rdradonbattle');
 	radonon && getPageSetting('RAutoGoldenUpgrades') == 'Battle' ? turnOn('Rbattleradon') : turnOff('Rbattleradon');
 	radonon && getPageSetting('RdAutoGoldenUpgrades') == 'Battle' ? turnOn('Rdbattleradon') : turnOff('Rdbattleradon');
-
+	radonon ? turnOn('rNonRadonUpgrade'): turnOff('rNonRadonUpgrade');
+	
 	//Nature
 	!radonon ? turnOn('AutoNatureTokens'): turnOff('AutoNatureTokens');
 	!radonon && getPageSetting('AutoNatureTokens') ? turnOn('tokenthresh'): turnOff('tokenthresh');
@@ -1999,8 +2002,9 @@ function updateCustomButtons() {
 	radonon && hson && hsshieldon ? turnOn('RhsInitial') : turnOff('RhsInitial');
 	radonon && hson && hsshieldon ? turnOn('RhsAfterpush') : turnOff('RhsAfterpush');
 	radonon && hson && hsshieldon ? turnOn('RhsSwapZone') : turnOff('RhsSwapZone');
+	radonon && hson && hsshieldon ? turnOn('RhsMapSwap') : turnOff('RhsMapSwap');
 	radonon && hson && hsshieldon ? turnOn('RhsC3') : turnOff('RhsC3');
-
+	
 	//Staffs
 	radonon && hson ? turnOn('RhsStaff') : turnOff('RhsStaff');
 	var hsstaffon = getPageSetting('RhsStaff');
