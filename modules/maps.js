@@ -1566,7 +1566,7 @@ function RautoMap() {
 				rHFBonefireTargetWood = rHFBonfireTarget != 'undefined' && rHFBonfireTarget > game.challenges.Hypothermia.totalBonfires ? 1e8*Math.pow(100,rHFBonfireTarget) : 0;
 				rHFSaveWood = rHFBonefireTargetWood > 0 ? true : false;
 
-				if ((game.global.lastClearedCell + 2) >= rHFCell && (rHFBonfireCostTotal > game.resources.wood.owned)) {
+				if ((game.global.lastClearedCell + 2) >= rHFCell && rHFBonfireCostTotal > game.resources.wood.owned && rHFBonfireTarget > game.challenges.Hypothermia.totalBonfires) {
 					rShouldHypoFarm = true;
 					rHFCurrentMap = getCurrentMapObject();
 				}
