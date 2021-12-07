@@ -1568,13 +1568,6 @@ function RautoMap() {
 
 				if ((game.global.lastClearedCell + 2) >= rHFCell && rHFBonfireCostTotal > game.resources.wood.owned && rHFBonfireTarget > game.challenges.Hypothermia.totalBonfires) {
 					rShouldHypoFarm = true;
-					rHFCurrentMap = getCurrentMapObject();
-				}
-				//Recycles map if we don't need to finish it for meeting the wood requirements
-				if (!rShouldHypoFarm && rHFCurrentMap != undefined) {
-					mapsClicked();
-					recycleMap(getMapIndex(rHFCurrentMap));
-					rHFCurrentMap = undefined;
 				}
 			}
 		}
