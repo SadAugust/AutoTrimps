@@ -586,7 +586,7 @@ function RbuyJobs() {
 		}
 	} 
 	
-	if ((Rshouldshipfarm || rShouldTributeFarm) && (!rShouldTimeFarm && !Rshouldalchfarm)) {
+	if ((Rshouldshipfarm || rShouldTributeFarm) && (!rShouldTimeFarm && !Rshouldalchfarm && !rShouldHypoFarm)) {
 		allIn = "Farmer";
 		var desiredRatios = [0,1,1,0];
 	}

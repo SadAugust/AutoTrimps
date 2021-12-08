@@ -826,7 +826,9 @@ function RupdateAutoMapsStatus(get) {
 	//Setting up status
 	else if (!game.global.mapsUnlocked) status = '&nbsp;';
 	//Time, Tribute, Equip, Ship Farming, Prestige Raiding, Map bonus, void maps
-	else if (rShouldTimeFarm) status = 'Time Farming: ' + game.global.mapRunCounter + "/" + rTFMapCount;
+	else if (Rshouldalchfarm) status = 'Alchemy Farming ' + alchObj.potionNames[potion] + " (" + alchObj.potionsOwned[potion] + "/" + alchstackszones.toString().replace(/[^\d:-]/g, '') + ")";
+	else if (rShouldHypoFarm) status = 'Hypo Farming to ' + prettify(rHFBonfireCostTotal) + ' wood';
+    else if (rShouldTimeFarm) status = 'Time Farming: ' + game.global.mapRunCounter + "/" + rTFMapCount;
 	else if (rShouldTributeFarm && rTrFTributeCount > game.buildings.Tribute.owned) status = 'Tribute Farming: ' + game.buildings.Tribute.owned + "/" + rTrFTributeCount;
 	else if (rShouldTributeFarm && rTrFMetCount > game.jobs.Meteorologist.owned) status = 'Meteorologist Farming: ' + game.jobs.Meteorologist.owned + "/" + rTrFMetCount;
     else if (RshouldUnbalance || (game.global.mapsActive && getCurrentMapObject().level == 6 && game.challenges.Unbalance.balanceStacks > 0)) status = 'Destacking: ' + game.challenges.Unbalance.balanceStacks + " remaining";
@@ -847,9 +849,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (Rshouldpandemonium) status = 'Pandemonium Destacking: ' + game.challenges.Pandemonium.pandemonium + " remaining";
 	else if (Rshouldpandemoniumfarm) status = 'Pandemonium Farming Equips below ' + prettify(scaleToCurrentMapLocal(amt_cache,false,true,getPageSetting('PandemoniumFarmLevel')));
     else if (Rshouldpandemoniumjestfarm) status = 'Pandemonium Farming Equips below ' + prettify(jestMetalTotal);
-	else if (Rshouldalchfarm) status = 'Alchemy Farming ' + alchObj.potionNames[potion] + " (" + alchObj.potionsOwned[potion] + "/" + alchstackszones.toString().replace(/[^\d:-]/g, '') + ")";
-	else if (rShouldHypoFarm) status = 'Hypo Farming to ' + prettify(rHFBonfireCostTotal) + ' wood';
-    else if (RshouldEmpowerFarm) status = 'Empower Farming';
+	else if (RshouldEmpowerFarm) status = 'Empower Farming';
     else if (RvanillaMapatZone) status = 'Vanilla MAZ';
 	//Farming or Wants stats
 	else if (RshouldFarm && !RdoVoids) status = 'Farming: ' + RcalcHDratio().toFixed(4) + 'x';
