@@ -1407,8 +1407,11 @@ function RautoMap() {
 		if (game.global.mapsActive && game.global.mapGridArray[0].name == "Jestimp" && savefile == null && game.portal.Frenzy.frenzyStarted != -1) {
 			savefile = save(true);
 		}
+		if (game.global.mapsActive && game.global.mapGridArray[0].name == "Jestimp" && autoBattle.oneTimers.Mass_Hysteria.owned && game.global.soldierHealth == game.global.soldierHealthMax && game.global.mapGridArray[0].health > 0) {
+			savefile = save(true);
+		}
 		//Makes it take another copy of the save if you lose frenzy before killing the Jestimp.
-		if (game.global.mapsActive && game.global.lastClearedMapCell == -1 && game.global.mapGridArray[0].name == "Jestimp" && savefile != null && game.portal.Frenzy.frenzyStarted == -1) {
+		if (autoBattle.oneTimers.Mass_Hysteria.owned == false && game.global.mapsActive && game.global.lastClearedMapCell == -1 && game.global.mapGridArray[0].name == "Jestimp" && savefile != null && game.portal.Frenzy.frenzyStarted == -1) {
 			savefile = null;
 		}
 
