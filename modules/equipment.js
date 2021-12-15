@@ -967,7 +967,8 @@ function buyPrestigeMaybe(equipName) {
 function RautoEquip() {
 
     if (!getPageSetting('Requipon')) return;
-    if (game.global.challengeActive == 'Pandemonium') return;
+    //Turns off AutoEquip during Pandemonium
+    //if (game.global.challengeActive == 'Pandemonium') return;
 
     var prestigeLeft = false;
     do {
@@ -999,7 +1000,7 @@ function RautoEquip() {
         }
     }
 	
-/*     // Always buys equipment during Pandemonium
+    // Always buys equipment during Pandemonium
 	if (alwaysPandemonium && game.global.challengeActive == 'Pandemonium') {
 		for (var equip in game.equipment) {
             if (!game.equipment[equipName].locked) {
@@ -1007,7 +1008,7 @@ function RautoEquip() {
 			    buyEquipment(equip, null, true, 1);
             }
 		}
-	} */
+	}
 
     // Loop through actually getting equips
     var keepBuying = false;
