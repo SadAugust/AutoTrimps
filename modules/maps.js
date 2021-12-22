@@ -1396,8 +1396,11 @@ function RautoMap() {
 	        //Switching to Huge Cache maps if LMC maps don't give enough metal for equip levels.
 			pandfarmspecial = nextEquipmentCost > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20),false,true,getPageSetting('PandemoniumFarmLevel')) ? "hc" : "lmc";
 			//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
-			if (!Rshouldpandemoniumjestfarm && nextEquipmentCost < scaleToCurrentMapLocal(amt_cache,false,true,getPageSetting('PandemoniumFarmLevel')))
+			if (!Rshouldpandemoniumjestfarm && nextEquipmentCost < scaleToCurrentMapLocal(amt_cache,false,true,getPageSetting('PandemoniumFarmLevel'))) {
 	            Rshouldpandemoniumfarm = true;
+				if (!game.global.messages.Loot.exotic)
+					game.global.messages.Loot.exotic = true;
+			}
 	    }
 	}
 
