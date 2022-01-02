@@ -359,6 +359,7 @@ function initializeAllSettings() {
 	createSetting('RMaxGateway', 'Max Gateways', 'Gateways', 'value', '25', null, 'Buildings');
 	createSetting('RMaxCollector', 'Max Collectors', 'recommend: -1', 'value', '-1', null, 'Buildings');
 	createSetting('RMaxTribute', 'Max Tributes', 'Advanced. recommend: -1 ', 'value', '-1', null, 'Buildings');
+	createSetting('rBuildingSpendingPct', 'Building Spending pct', 'The percentage of total food you\'d like you spend on Buildings excluding Collectors which will always build at 100%.', 'value', '-1', null, 'Buildings');
 	createSetting('RTributeSpendingPct', 'Tribute Spending pct', 'The percentage of total food you\'d like you spend on Tributes.', 'value', '-1', null, 'Buildings');
 	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Buildings');
 
@@ -1579,6 +1580,7 @@ function updateCustomButtons() {
 	radonon && buildingstoggle ? turnOn('RMaxGateway') : turnOff('RMaxGateway');
 	radonon && buildingstoggle ? turnOn('RMaxCollector') : turnOff('RMaxCollector');
 	radonon && buildingstoggle ? turnOn('RMaxTribute') : turnOff('RMaxTribute');
+	//radonon && buildingstoggle ? turnOn('rBuildingSpendingPct') : turnOff('rBuildingSpendingPct');
 	radonon && buildingstoggle ? turnOn('RTributeSpendingPct') : turnOff('RTributeSpendingPct');
 	radonon && buildingstoggle ? turnOn('RSpendTribute') : turnOff('RSpendTribute');
 	radonon && buildingstoggle ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
@@ -1586,7 +1588,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Rsmithylogic') ? turnOn('Rsmithynumber') : turnOff('Rsmithynumber');
 	radonon && getPageSetting('Rsmithylogic') ? turnOn('Rsmithypercent') : turnOff('Rsmithypercent');
 	radonon && getPageSetting('Rsmithylogic') ? turnOn('Rsmithyseconds') : turnOff('Rsmithyseconds');
-
+	
 	//Jobs
 	!radonon ? turnOn('BuyJobsNew'): turnOff('BuyJobsNew');
 	!radonon ? turnOn('AutoMagmamancers'): turnOff('AutoMagmamancers');
