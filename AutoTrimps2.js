@@ -232,8 +232,8 @@ function mainLoop() {
 		//RJobs
 		if (getPageSetting('RBuyJobsNew') > 0) {
 			//Check to see if we're on quest and at a quest zone or if we're trying to do some farming that needs other jobs.
-			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (Rshouldtributefarm || Rshouldshipfarm || Rshouldtimefarm || Rshouldequipfarm))) {
-				if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (Rshouldtributefarm || Rshouldshipfarm || Rshouldtimefarm || Rshouldequipfarm))) {
+			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || Rshouldshipfarm || rShouldTimeFarm || Rshouldequipfarm))) {
+				if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || Rshouldshipfarm || rShouldTimeFarm || Rshouldequipfarm))) {
 					if (getPageSetting('RBuyJobsNew') == 1) 
                         RworkerRatios();
 					RbuyJobs();
