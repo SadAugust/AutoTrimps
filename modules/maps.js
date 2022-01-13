@@ -828,7 +828,10 @@ function RupdateAutoMapsStatus(get) {
 	//Time, Tribute, Equip, Ship Farming, Prestige Raiding, Map bonus, void maps
 	else if (Rshouldalchfarm) status = 'Alchemy Farming ' + alchObj.potionNames[potion] + " (" + alchObj.potionsOwned[potion] + "/" + alchstackszones.toString().replace(/[^\d:-]/g, '') + ")";
 	else if (rShouldHypoFarm) status = 'Hypo Farming to ' + prettify(rHFBonfireCostTotal) + ' wood';
-    else if (rShouldTimeFarm) status = 'Time Farming: ' + game.global.mapRunCounter + "/" + rTFMapCount;
+    else if (game.global.mapsActive && getCurrentMapObject().name == 'Melting Point') status = 'Melting Point';
+    else if (game.global.mapsActive && getCurrentMapObject().name == 'Atlantrimp') status = 'Atlantrimp';
+    else if (game.global.mapsActive && getCurrentMapObject().name == 'Frozen Castle') status = 'Frozen Castle';
+	else if (rShouldTimeFarm) status = 'Time Farming: ' + game.global.mapRunCounter + "/" + rTFMapCount;
 	else if (rShouldTributeFarm && rTrFTributeCount > game.buildings.Tribute.owned) status = 'Tribute Farming: ' + game.buildings.Tribute.owned + "/" + rTrFTributeCount;
 	else if (rShouldTributeFarm && rTrFMetCount > game.jobs.Meteorologist.owned) status = 'Meteorologist Farming: ' + game.jobs.Meteorologist.owned + "/" + rTrFMetCount;
     else if (RshouldUnbalance || (game.global.mapsActive && getCurrentMapObject().level == 6 && game.challenges.Unbalance.balanceStacks > 0)) status = 'Destacking: ' + game.challenges.Unbalance.balanceStacks + " remaining";
@@ -1052,10 +1055,8 @@ function RautoMap() {
 		var rTFMapCount_Base = rRunningC3 ? getPageSetting('Rc3timefarmtime') : game.global.challengeActive == "Daily" ? getPageSetting('Rdtimefarmtime') : getPageSetting('Rtimefarmtime');
 		var rTFSpecial = rRunningC3 ? autoTrimpSettings.Rc3timespecialselection.selected : game.global.challengeActive == "Daily" ? autoTrimpSettings.Rdtimespecialselection.selected : autoTrimpSettings.Rtimespecialselection.selected;
 		//If you're running Transmute and the rTFSpecial variable is either LMC or SMC it changes it to LSC/SSC.
-		if (game.global.challengeActive == "Transmute" && (rTFSpecial == "lmc" || rTFSpecial == "smc")) {
-			//Might need to change the second rTFSpecial to one equals sign.
-			rTFSpecial = rTFSpecial == "lmc" ? "lsc" : "ssc";
-		}
+		if (game.global.challengeActive == 'Transmute' && rTFSpecial.includes('mc'))
+			advSpecialSelect.value = rTFSpecial.charAt(0)+"sc";
 
 		rTimeFarm = (((rTFCell <= 1) || (rTFCell > 1 && (game.global.lastClearedCell + 2) >= rTFCell)) && (rTFZone[0] > 0 && rTFMapCount_Base[0] > 0));
 		if (rTimeFarm && (game.stats.zonesCleared.value != rTFZoneCleared)) {
@@ -1390,17 +1391,16 @@ function RautoMap() {
 	            if ((jestMetalTotal != null && (jestMetalTotal > nextEquipmentCost)) || jestFarmMap == true) {
 	                Rshouldpandemoniumjestfarm = true;
 	                jestFarmMap = true;
+					if (!game.global.messages.Loot.exotic)
+						game.global.messages.Loot.exotic = true;
 	            }
 	        }
 
 	        //Switching to Huge Cache maps if LMC maps don't give enough metal for equip levels.
 			pandfarmspecial = nextEquipmentCost > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20),false,true,getPageSetting('PandemoniumFarmLevel')) ? "hc" : "lmc";
 			//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
-			if (!Rshouldpandemoniumjestfarm && nextEquipmentCost < scaleToCurrentMapLocal(amt_cache,false,true,getPageSetting('PandemoniumFarmLevel'))) {
+			if (!Rshouldpandemoniumjestfarm && nextEquipmentCost < scaleToCurrentMapLocal(amt_cache,false,true,getPageSetting('PandemoniumFarmLevel')))
 	            Rshouldpandemoniumfarm = true;
-				if (!game.global.messages.Loot.exotic)
-					game.global.messages.Loot.exotic = true;
-			}
 	    }
 	}
 
@@ -2113,6 +2113,8 @@ function RautoMap() {
 			adjustMap('loot', tier[2]);
 			biomeAdvMapsSelect.value = autoTrimpSettings.Rmapselection.selected == "Gardens" ? "Plentiful" : autoTrimpSettings.Rmapselection.selected;
 			advSpecialSelect.value = autoTrimpSettings.rMapSpecial.selected;
+			if (game.global.challengeActive == 'Transmute' && autoTrimpSettings.rMapSpecial.selected.includes('mc'))
+				advSpecialSelect.value = autoTrimpSettings.rMapSpecial.selected.charAt(0)+"sc";
             document.getElementById("advSpecialSelect").value
 			updateMapCost();
 			if (RshouldFarm || game.global.challengeActive == 'Transmute') {
