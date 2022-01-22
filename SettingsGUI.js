@@ -916,7 +916,6 @@ function initializeAllSettings() {
 	settingsProfileMakeGUI();
 
 	if (typeof autoTrimpSettings['rHypoStorage'].value === 'boolean') {
-		debug('Debugging Complete');
 		autoTrimpSettings['rHypoStorage'].value = autoTrimpSettings['rHypoStorage'].value == true ? 1 : 0;
 	}
 }
