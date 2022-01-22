@@ -915,9 +915,8 @@ function initializeAllSettings() {
 	createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export');
 	settingsProfileMakeGUI();
 
-	if (typeof autoTrimpSettings['rHypoStorage'].value === 'boolean') {
+	if (typeof autoTrimpSettings['rHypoStorage'].value === 'boolean') 
 		autoTrimpSettings['rHypoStorage'].value = autoTrimpSettings['rHypoStorage'].value == true ? 1 : 0;
-	}
 }
 
 initializeAllSettings();
