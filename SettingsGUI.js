@@ -636,11 +636,11 @@ function initializeAllSettings() {
 	createSetting('RPandemoniumAutoEquip', ['P: AutoEquip Off', 'P: AutoEquip', 'P AE: LMC', 'P AE: Huge Cache', 'P AE: Jestimp'], '<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.<br><br/><b>P AE: LMC Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache<br/>Will also purchase prestiges when they cost less than a Jestimp proc. Additionally will override worker settings to ensure that you farm as much metal as possible.<br/><br><b>P AE: Huge Cache</b><br>Uses the same settings as \'P: AE LMC\' but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure fast farming speed.<br/><br/><b>P AE: Jestimp</b><br/>Provides a setting for Jestimp farming from a set zone which will change the equipment buying condition from if they cost less than a huge cache to if they cost less than the metal you\'d gain from a Jestimp kill. <br/>Recommended to only use the later part of Pandemonium runs as it will increase farming time by a drastic amount.', 'multitoggle', 0, null, 'C3');
 	createSetting('RPandemoniumAEZone', 'P: Zone', 'Which zone you would like to start farming as much gear as possible from.', 'value', '-1', null, 'C3');
 	createSetting('PandemoniumFarmLevel', 'P: Map Level', 'The map level for farming Large Metal & Huge Caches.', 'value', '1', null, 'C3');
-	createSetting('RPandemoniumJestZone', 'P: Jest Zone', 'Which zone you would like to start farming Jestimps for equipment instead of huge caches.', 'value', '140', null, 'C3');
+	createSetting('RPandemoniumJestZone', 'P: Jest Zone', 'Which zone you would like to start farming Jestimps for equipment instead of caches.', 'value', '140', null, 'C3');
 	createSetting('PandemoniumJestFarmLevel', 'P: Jest Map Level', 'The map level to farm Jestimps at.', 'value', '1', null, 'C3');
 	createSetting('PandemoniumJestFarmKills', 'P: Jest Kills', 'The amount of consecutive Jestimp kills for a single equip level.', 'value', '3', null, 'C3');
 	createSetting('RhsPandStaff', 'P: Staff', 'The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.', 'textValue', 'undefined', null, 'C3');
-	createSetting('RhsPandJestFarmShield', 'P: Shield', 'The name of the shield you would like to equip while equip farming, should ideally be a full metal efficiency staff.', 'textValue', 'undefined', null, 'C3');
+	createSetting('RhsPandJestFarmShield', 'P: Shield', 'The name of the shield you would like to equip while Jestimp farming. Should ideally be a shield that has no nu spent on health as it won\'t be required with Mass Hysteria purchased.', 'textValue', 'undefined', null, 'C3');
 	createSetting('rPandRespec', 'P: Respec', 'Turn this on to automate respeccing during Pandemonium. Be warned that this will spend bones to purchase bone portals if one is not available. <br><br>Will only function properly if the Pandemonium AutoEquip and destacking settings are all setup appropriately.<br><br>The respeccing will use the games preset system and will use Preset 2 for your destacking perk spec and Preset 3 for your farming perk spec.', 'boolean', false, null, 'C3');
 	createSetting('rPandRespecZone', 'P: Respec Zone', 'The zone you\'d like to start respeccing from.', 'value', '-1', null, 'C3');
 	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'C3');
@@ -709,7 +709,7 @@ function initializeAllSettings() {
 	createSetting('rHypoMapLevel', 'HF: Map Level', 'What map level to use. Needs to be a level or +map which can be specified by 0,1,2,3 etc.', 'multiValue', [0], null, 'Challenges');
 	createSetting('rHypoCell', 'HF: Cell', 'Hypo Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Challenges');
 	createSetting('rHypoFrozenCastle', 'HF: Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Challenges');
-	createSetting('rHypoStorage', 'HF: Storage', 'Turn on Hypothermia settings. This also controls the entireity of Hypothermia. If you turn this off it will not do any specific farming during the challenge. Will automatically select LWC maps if you have enough fragments else it\'ll use SWC maps.', 'boolean', false, null, 'Challenges');
+	createSetting('rHypoStorage', ['HF: Storage', 'HF: Storage', 'HF: Storage First'], 'Enable this setting to disable AutoStorage inside of Hypothermia when not at one of your designated Bonfire farming zones. Needs to be used in conjunction with the other Hypothermia settings otherwise it will break.<br><br>HF: Storage First<br>Will enable AutoStorage again after your first Bonfire farm. Make sure to only use this setting if you\'re confident your Bonfire farming settings won\'t allow for an accidental bonfire.', 'multitoggle', 0, null, 'Challenges');
 	
 	//Combat
 	//Helium
@@ -914,6 +914,11 @@ function initializeAllSettings() {
 	createSetting('DefaultAutoTrimps', 'Reset to Default', 'Reset everything to the way it was when you first installed the script. ', 'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export');
 	createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export');
 	settingsProfileMakeGUI();
+
+	if (typeof autoTrimpSettings['rHypoStorage'].value === 'boolean') {
+		debug('Debugging Complete');
+		autoTrimpSettings['rHypoStorage'].value = autoTrimpSettings['rHypoStorage'].value == true ? 1 : 0;
+	}
 }
 
 initializeAllSettings();
@@ -1868,7 +1873,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
+	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
 	
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('rPandRespec') : turnOff('rPandRespec');
 	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('rPandRespec') ? turnOn('rPandRespecZone') : turnOff('rPandRespecZone');

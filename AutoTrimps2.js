@@ -15,7 +15,7 @@ function initializeAutoTrimps() {
 }
 
 var runInterval = 100;
-var startupDelay = 2000;
+var startupDelay = 1000;
 
 setTimeout(delayStart, startupDelay);
 
@@ -286,7 +286,7 @@ function mainLoop() {
             HeirloomSwapping();
 		
 		//RGolden
-		var Ragu = 	game.global.runningChallengeSquared || ((game.global.challengeActive == '' || typeof game.challenges[game.global.challengeActive].getRadonMult === 'undefined') && getPageSetting('rNonRadonUpgrade')) ? getPageSetting('RcAutoGoldenUpgrades') : 
+		var Ragu = 	game.global.runningChallengeSquared || ((game.global.challengeActive != '' || typeof game.challenges[game.global.challengeActive].getRadonMult === 'undefined') && getPageSetting('rNonRadonUpgrade')) ? getPageSetting('RcAutoGoldenUpgrades') : 
 					game.global.challengeActive == "Daily" ? getPageSetting('RdAutoGoldenUpgrades') :
 					getPageSetting('RAutoGoldenUpgrades');
 		if (Ragu && Ragu != 'Off') 

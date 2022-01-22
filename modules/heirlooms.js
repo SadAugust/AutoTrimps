@@ -277,7 +277,7 @@ function HeirloomSwapping() {
     if (game.global.universe == 2) {
         //Swapping Shields
         if (getPageSetting('RhsShield')) {
-            if (game.global.challengeActive == 'Pandemonium' && Rshouldpandemoniumjestfarm && getPageSetting('RhsPandJestFarmShield') != 'undefined')
+            if (game.global.challengeActive == 'Pandemonium' && Rshouldpandemoniumjestfarm && getPageSetting('RhsPandJestFarmShield') != 'undefined' && autoBattle.oneTimers.Mass_Hysteria.owned)
               HeirloomEquipShield('RhsPandJestFarmShield');
             else if ((game.global.runningChallengeSquared || game.global.challengeActive == "Mayhem" || game.global.challengeActive == "Pandemonium") && getPageSetting('RhsC3') != "undefined") {
                 HeirloomEquipShield('RhsC3');

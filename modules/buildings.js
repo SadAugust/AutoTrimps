@@ -402,10 +402,11 @@ function RbuyBuildings() {
 
     // Storage, shouldn't be needed anymore that autostorage is lossless. Hypo fucked this statement :(
     //Turn on autostorage if you're past your last farmzone and you don't need to save wood anymore. Else will have to force it to purchase enough storage up to the cost of whatever bonfires
-    if (!game.global.autoStorage && (game.global.challengeActive != 'Hypothermia' || (game.global.challengeActive == 'Hypothermia' && getPageSetting('rHypoOn') && getPageSetting('rHypoStorage') && getPageSetting('rHypoZone')[getPageSetting('rHypoZone').length-1] >= game.global.world)))
+    if (!game.global.autoStorage && (game.global.challengeActive != 'Hypothermia' || (game.global.challengeActive == 'Hypothermia' && getPageSetting('rHypoOn') && ((getPageSetting('rHypoStorage') == 1 && game.global.world >= getPageSetting('rHypoZone')[getPageSetting('rHypoZone').length-1]) || (getPageSetting('rHypoStorage') == 2 && game.global.world >= getPageSetting('rHypoZone')[0])))))
         toggleAutoStorage(false);
-        
-    if (game.global.challengeActive == 'Hypothermia' && getPageSetting('rHypoOn') && getPageSetting('rHypoStorage') && game.global.world < getPageSetting('rHypoZone')[getPageSetting('rHypoZone').length-1]) {
+
+    //Disables AutoStorage 
+    if (game.global.challengeActive == 'Hypothermia' && getPageSetting('rHypoOn') && ((getPageSetting('rHypoStorage') == 1 && game.global.world < getPageSetting('rHypoZone')[getPageSetting('rHypoZone').length-1]) || (getPageSetting('rHypoStorage') == 2 && game.global.world < getPageSetting('rHypoZone')[0]))) {
     	if (game.global.autoStorage)
             toggleAutoStorage(false);
     }
