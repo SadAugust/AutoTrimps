@@ -536,7 +536,8 @@ function RbuyJobs() {
 
 	freeWorkers += currentworkers.reduce((a,b) => {return a + b;});
 
-	freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs : 0;
+    var reserveMod = 1 + (game.resources.trimps.owned / 1e10);
+    freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs * reserveMod: 0;
 
     //Figuring out what value we should use for when to run Melting Point
     var MPSmithy = 	game.global.runningChallengeSquared && getPageSetting('c3meltingpoint') > 0 ? getPageSetting('c3meltingpoint') : 
@@ -657,9 +658,28 @@ function RbuyJobs() {
         game.global.buyAmt = buyAmountStore;
     } else {
         //buy everything
+
+        // Fire anything that we need to fire to free up workers
         for (var i = 0; i < desiredWorkers.length; i++) {
 
-            if (desiredWorkers[i] == 0) continue;
+            if (desiredWorkers[i] > 0) continue;
+
+            var buyAmountStore = game.global.buyAmt;
+            var fireState = game.global.firing;
+
+            game.global.firing = (desiredWorkers[i] < 0);
+            game.global.buyAmt = Math.abs(desiredWorkers[i]);
+
+            buyJob(ratioWorkers[i], true, true);
+
+            game.global.firing = fireState;
+            game.global.buyAmt = buyAmountStore;
+        }
+
+        // Buy up workers that we need to
+        for (var i = 0; i < desiredWorkers.length; i++) {
+
+            if (desiredWorkers[i] <= 0) continue;
 
             var buyAmountStore = game.global.buyAmt;
             var fireState = game.global.firing;
