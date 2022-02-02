@@ -938,7 +938,7 @@ function buyPrestigeMaybe(equipName) {
         }
     }
 
-    if (game.upgrades[prestigeUpgradeName].locked) return false;
+    if (game.upgrades[prestigeUpgradeName].locked || (prestigeUpgradeName == 'Supershield' && getNextPrestigeCost(prestigeUpgradeName) * artBoost > game.resources.wood.owned)) return false;
 
     if (game.upgrades[prestigeUpgradeName].cost.resources.science[0] *
         Math.pow(game.upgrades[prestigeUpgradeName].cost.resources.science[1], game.equipment[equipName].prestige - 1)
