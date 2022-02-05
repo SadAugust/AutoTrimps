@@ -610,8 +610,12 @@ function initializeAllSettings() {
 	createSetting('rUnbalanceStacks', 'U: Stacks', 'The amount of stack you have to reach before clearing them.','value' ,-1, null, 'C3');
 	createSetting('rUnbalanceImprobDestack', 'U: Improbability Destack', 'Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone', 'boolean', false, null, 'C3');
     
-	//Mayhem
+	//Trappapalooza
 	document.getElementById('rUnbalanceImprobDestack').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('rTrappa', 'Trappa', 'Turn this on if you want to enable Trappa feautres.', 'boolean', false, null, 'C3');
+	createSetting('rTrappaCoords', 'T: Coords', 'The zone you would like to stop buying additional coordinations at.','value' ,-1, null, 'C3');
+	//Mayhem
+	document.getElementById('rTrappaCoords').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rmayhemon', 'Mayhem', 'Turn on Mayhem settings. ', 'boolean', false, null, 'C3');
 	createSetting('Rmayhemattack', 'M: Attack', 'Turn this on to ignore your farm settings so It will do maps if you cannot survive the hits you have defined in Maps. ', 'boolean', false, null, 'C3');
 	createSetting('Rmayhemabcut', 'M: Attack Boss', 'What cut-off to use when farming for the boss using M: Attack. If this setting is 100, the script will farm till you can kill the boss in 100 average hits. ', 'value', '-1', null, 'C3');
@@ -710,6 +714,10 @@ function initializeAllSettings() {
 	createSetting('rHypoCell', 'HF: Cell', 'Hypo Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Challenges');
 	createSetting('rHypoFrozenCastle', 'HF: Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Challenges');
 	createSetting('rHypoStorage', ['HF: Storage', 'HF: Storage', 'HF: Storage First'], 'Enable this setting to disable AutoStorage inside of Hypothermia when not at one of your designated Bonfire farming zones. Needs to be used in conjunction with the other Hypothermia settings otherwise it will break.<br><br>HF: Storage First<br>Will enable AutoStorage again after your first Bonfire farm. Make sure to only use this setting if you\'re confident your Bonfire farming settings won\'t allow for an accidental bonfire.', 'multitoggle', 0, null, 'Challenges');
+	createSetting('rHypoBuyPackrat', 'HF: Buy Packrat', 'Turn on to purchase packrat after the Hypothermia challenge is completed. Useful setting for when running 3 or less packrat for an extra bonfire.', 'boolean', false, null, 'Challenges');/* 
+	createSetting('rHypoRespec', 'HF: Respec', 'Turn on to enable respeccing during Hypothermia. Will only be beneficial for low packrat runs.', 'boolean', false, null, 'Challenges');
+	createSetting('rHypoRespecZone', 'HF: Respec Zone', 'Which zones you would like to respec at', 'value', '-1', null, 'Challenges');
+	createSetting('rHypoRespecString', 'HF: Respec String', 'The respec string you would like to use while Hypo farming.', 'textValue', 'undefined', null, 'Challenges'); */
 	
 	//Combat
 	//Helium
@@ -915,8 +923,10 @@ function initializeAllSettings() {
 	createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export');
 	settingsProfileMakeGUI();
 
-	if (typeof autoTrimpSettings['rHypoStorage'].value === 'boolean') 
+	if (typeof autoTrimpSettings['rHypoStorage'].value === 'boolean') {
+		debug('Debugging Complete');
 		autoTrimpSettings['rHypoStorage'].value = autoTrimpSettings['rHypoStorage'].value == true ? 1 : 0;
+	}
 }
 
 initializeAllSettings();
@@ -1820,6 +1830,9 @@ function updateCustomButtons() {
 	radonon && getPageSetting('rUnbalance') ? turnOn('rUnbalanceStacks') : turnOff('rUnbalanceStacks');
 	radonon && getPageSetting('rUnbalance') ? turnOn('rUnbalanceImprobDestack') : turnOff('rUnbalanceImprobDestack');
     
+	//Trappapalooza
+	radonon ? turnOn('rTrappa') : turnOff('rTrappa');
+	radonon && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
 	//Quagmire
 	radonon && !getPageSetting('rHideQuagmire') ? turnOn('Rblackbog') : turnOff('Rblackbog');
 	radonon && getPageSetting('Rblackbog') && !getPageSetting('rHideQuagmire') ? turnOn('Rblackbogzone') : turnOff('Rblackbogzone');
@@ -1895,6 +1908,10 @@ function updateCustomButtons() {
 	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoCell') : turnOff('rHypoCell');
 	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoFrozenCastle') : turnOff('rHypoFrozenCastle');
 	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoStorage') : turnOff('rHypoStorage');
+	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoBuyPackrat') : turnOff('rHypoBuyPackrat');
+/* 	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoRespec') : turnOff('rHypoRespec');
+	radonon && getPageSetting('rHypoOn') && getPageSetting('rHypoRespec') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoRespecZone') : turnOff('rHypoRespecZone');
+	radonon && getPageSetting('rHypoOn') && getPageSetting('rHypoRespec') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoRespecString') : turnOff('rHypoRespecString'); */
 
     //Glass
 	radonon ? turnOn('rGlass') : turnOff('rGlass');

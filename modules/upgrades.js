@@ -55,7 +55,7 @@ function RbuyUpgrades() {
         var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
 			
         //Coord
-        if (upgrade == 'Coordination' && (getPageSetting('RBuyUpgradesNew') == 2 || !canAffordCoordinationTrimps())) continue;
+        if (upgrade == 'Coordination' && (getPageSetting('RBuyUpgradesNew') == 2 || !canAffordCoordinationTrimps() || (game.global.challengeActive == 'Trappapalooza' && getPageSetting('rTrappa') && getPageSetting('rTrappaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('rTrappaCoords')))) continue;
 
         //Other
         if (!available) continue;

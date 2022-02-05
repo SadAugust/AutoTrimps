@@ -806,6 +806,8 @@ var rHFSaveWood = false;
 var rShouldHypoFarm = false;
 var rHFCurrentMap = undefined;
 var rHFBonfireCostTotal = 0;
+var rHypoRespecced = null;
+var rHypoBuyPackrat = true;
 //Prestige
 var rShouldPrestigeRaid = false;
 var RAMPfragmappy = undefined;
@@ -1540,9 +1542,22 @@ function RautoMap() {
 	}
 
 	//Hypothermia
-	if (game.global.challengeActive == 'Hypothermia' && getPageSetting('rHypoOn')) {
+	if ((game.global.challengeActive == 'Hypothermia' || (getPageSetting('rHypoBuyPackrat') && rHypoBuyPackrat)) && getPageSetting('rHypoOn')) {
 		rHFCell = ((getPageSetting('rHypoCell') > 0) ? getPageSetting('rHypoCell') : 96);
 		rHypoFarm = getPageSetting('rHypoZone')[0] > 0;
+
+		if (getPageSetting('rHypoBuyPackrat')) {
+			if (!rHypoBuyPackrat && game.global.challengeActive == 'Hypothermia')
+				rHypoBuyPackrat = true;
+			if (rHypoBuyPackrat && game.global.challengeActive == '') {
+				viewPortalUpgrades();
+				numTab(6,true);
+				buyPortalUpgrade('Packrat');
+				rHypoBuyPackrat = null;
+				activateClicked();
+			}
+		}
+		
 		if (rHypoFarm) { 
 			rHFZone = getPageSetting('rHypoZone');
 			rHFMapLevel = getPageSetting('rHypoMapLevel');
@@ -1559,8 +1574,6 @@ function RautoMap() {
 				rHFBonfiresBuilt = game.challenges.Hypothermia.totalBonfires;
 				rHFBonfireTarget = rHFBonfire[rHFIndex];
 				rHFCurrentCost = 1e8*(Math.pow(100,game.challenges.Hypothermia.totalBonfires));
-
-				//rHFNoBonfireFarm = game.challenges.Hypothermia.bonfires > 0 && getPageSetting('rHypoNoBonfireFarm') ? false : true;
 				
 				//Looping through each bonfire level and working out their cost to calc total cost
 				for (x = rHFBonfiresBuilt; x < rHFBonfireTarget; x++) {
@@ -1568,6 +1581,20 @@ function RautoMap() {
 					//Summing cost of bonfire levels
 					rHFBonfireCostTotal += rHFBonfireCost;
 				}
+
+/* 				if (getPageSetting('rHypoRespec') && getPageSetting('rHypoRespecZone') == game.global.world && rHypoRespecced == null) {
+					viewPortalUpgrades();
+					tooltip('Import Perks', null, 'update');
+					rHypoRespecString = getPageSetting('rHypoRespecString')
+					document.getElementById('perkImportBox').value = rHypoRespecString;
+					document.getElementById("confirmTooltipBtn").click();
+					game.jobs.Miner.owned = 0;
+					game.jobs.Farmer.owned = 0;
+					game.jobs.Lumberjack.owned = 0;
+					activateClicked();
+					rHypoRespecced = true;
+					debug('Respecced');
+				} */
 
 				rHFBonefireTargetWood = rHFBonfireTarget != 'undefined' && rHFBonfireTarget > game.challenges.Hypothermia.totalBonfires ? 1e8*Math.pow(100,rHFBonfireTarget) : 0;
 				rHFSaveWood = rHFBonefireTargetWood > 0 ? true : false;
