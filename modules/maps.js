@@ -807,7 +807,7 @@ var rShouldHypoFarm = false;
 var rHFCurrentMap = undefined;
 var rHFBonfireCostTotal = 0;
 var rHypoRespecced = null;
-var rHypoBuyPackrat = true;
+var rHypoBuyPackrat = null;
 //Prestige
 var rShouldPrestigeRaid = false;
 var RAMPfragmappy = undefined;
@@ -1542,7 +1542,7 @@ function RautoMap() {
 	}
 
 	//Hypothermia
-	if ((game.global.challengeActive == 'Hypothermia' || (getPageSetting('rHypoBuyPackrat') && rHypoBuyPackrat)) && getPageSetting('rHypoOn')) {
+	if ((game.global.challengeActive == 'Hypothermia' || (getPageSetting('rHypoBuyPackrat') && !rHypoBuyPackrat)) && getPageSetting('rHypoOn')) {
 		rHFCell = ((getPageSetting('rHypoCell') > 0) ? getPageSetting('rHypoCell') : 96);
 		rHypoFarm = getPageSetting('rHypoZone')[0] > 0;
 
