@@ -658,7 +658,7 @@ function Rresetmapvars() {
     rHFCurrentMap = undefined;
     rHFBonfireCostTotal = 0;
     rHypoRespecced = null;
-    rHypoBuyPackrat = true;
+    rHypoBuyPackrat = null;
     //Prestige
     rShouldPrestigeRaid = false;
     RAMPfragmappy = undefined;
