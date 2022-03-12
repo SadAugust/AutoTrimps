@@ -286,7 +286,7 @@ function mainLoop() {
             HeirloomSwapping();
 		
 		//RGolden
-		var Ragu = 	game.global.runningChallengeSquared || ((game.global.challengeActive != '' && typeof game.challenges[game.global.challengeActive].getRadonMult === 'undefined') && getPageSetting('rNonRadonUpgrade')) ? getPageSetting('RcAutoGoldenUpgrades') : 
+		var Ragu = 	game.global.runningChallengeSquared || (game.global.challengeActive != '' && game.global.challengeActive != 'Daily' && typeof game.challenges[game.global.challengeActive].heliumThrough === 'undefined' && getPageSetting('rNonRadonUpgrade')) ? getPageSetting('RcAutoGoldenUpgrades') : 
 					game.global.challengeActive == "Daily" ? getPageSetting('RdAutoGoldenUpgrades') :
 					getPageSetting('RAutoGoldenUpgrades');
 		if (Ragu && Ragu != 'Off') 
