@@ -197,8 +197,9 @@ function RmanualLabor2() {
 		setGather('science');
 /*     else if (game.global.challengeActive == 'Hypothermia' && !game.global.autoStorage && game.global.buildingsQueue != false && buildingQueue.split('.')[1] > 10)
         setGather('buildings'); */
-    else if ((game.global.mapsActive && mapping != null) || Rshouldshipfarm) {
-        if (Rshouldshipfarm)
+    else if (Rshouldshipfarm)
+            setGather('food');
+    else if ((game.global.mapsActive && mapping != null)) {
             setGather('food');
         if (getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('hc'))
             setGather('food');
