@@ -807,7 +807,7 @@ var rShouldHypoFarm = false;
 var rHFCurrentMap = undefined;
 var rHFBonfireCostTotal = 0;
 var rHypoRespecced = null;
-var rHypoBuyPackrat = null;
+var rHypoBuyPackrat = false;
 //Prestige
 var rShouldPrestigeRaid = false;
 var RAMPfragmappy = undefined;
@@ -2215,7 +2215,7 @@ function RautoMap() {
 				}
 				updateMapCost();
             }
-			
+			/* 
 			//Worshipper farming
 			if (Rshouldshipfarm && !rShouldTributeFarm && !rShouldTimeFarm && !RshouldUnbalance && !Rshoulddoquest && !Rshouldequipfarm && !Rshouldalchfarm && !rShouldHypoFarm && !RshouldEmpowerFarm) {
 			var shipfragcheck = true;
@@ -2284,10 +2284,10 @@ function RautoMap() {
 					}
 				}
 				updateMapCost();
-			}
+			} */
 			
 			//Map settings for Alchemy Farming, Time Farming and Tribute Farming.
-			if ((Rshouldalchfarm || rShouldHypoFarm || rShouldTimeFarm || rShouldTributeFarm || RshouldUnbalance || RshouldEmpowerFarm) && !Rshoulddoquest) {
+			if ((Rshouldalchfarm || rShouldHypoFarm || rShouldTimeFarm || rShouldTributeFarm || RshouldUnbalance || RshouldEmpowerFarm || Rshouldshipfarm) && !Rshoulddoquest) {
 				biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 
 				if (Rshouldalchfarm) {
@@ -2300,6 +2300,7 @@ function RautoMap() {
 				else if (rShouldTributeFarm) RShouldFarmMapCost(rTrFPlusLevel, rTrFSpecial, rTrFZone, biome);
 				else if (RshouldUnbalance) RShouldFarmMapCost(-(game.global.world-6), "fa");
 				else if (RshouldEmpowerFarm) RShouldFarmMapCost(-1, "lmc");
+				else if (Rshouldshipfarm) RShouldFarmMapCost(shippluslevel, shipspecial);
 			}
 			
 			//Map settings for Quest Farming -- Need to test and debug if this works properly but it should be fine. Might be an issue with Rshoulddoquest (6) in the map creation settings if statement
