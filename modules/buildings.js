@@ -486,6 +486,14 @@ function RbuyBuildings() {
  
     var boughtHousing = false;
  
+/*     var buyHutCount = getMaxAffordable(Math.pow(1.05, game.buildings.Hut.purchased) * 125, (game.resources.food.owned * tributespending),1.05,true);
+    var buyHouseCount = getMaxAffordable(Math.pow(1.05, game.buildings.House.purchased) * 10000, (game.resources.food.owned * tributespending),1.05,true);
+    var buyMansionCount = getMaxAffordable(Math.pow(1.05, game.buildings.Mansion.purchased) * 10000, (game.resources.food.owned * tributespending),1.05,true);
+    var buyHotelCount = getMaxAffordable(Math.pow(1.05, game.buildings.Hotel.purchased) * 10000, (game.resources.food.owned * tributespending),1.05,true);
+    var buyResortCount = getMaxAffordable(Math.pow(1.05, game.buildings.Resort.purchased) * 10000, (game.resources.food.owned * tributespending),1.05,true);
+    var buyGatewayCount = getMaxAffordable(Math.pow(1.05, game.buildings.Gateway.purchased) * 10000, (game.resources.food.owned * tributespending),1.05,true);
+    var buyCollectorCount = getMaxAffordable(Math.pow(1.05, game.buildings.Collector.purchased) * 10000, (game.resources.food.owned * tributespending),1.05,true); */
+
     do {
         boughtHousing = false;
         var housing = mostEfficientHousing();
@@ -493,6 +501,9 @@ function RbuyBuildings() {
         ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)))) {
             if ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world) buyBuilding(housing, true, true, 999);
             else if (housing == "Collector") buyBuilding("Collector", true, true, 999);
+            else if (calculateMaxAfford(game.buildings[housing],true) > 130) buyBuilding(housing, true, true, 100);
+            else if (calculateMaxAfford(game.buildings[housing],true) > 30) buyBuilding(housing, true, true, 10);
+            else if (calculateMaxAfford(game.buildings[housing],true) > 15) buyBuilding(housing, true, true, 5);
             else buyBuilding(housing, true, true, 1);
             boughtHousing = true;
         }
