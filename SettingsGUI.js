@@ -10,7 +10,7 @@ function automationMenuInit() {
 	newItem.setAttribute("onclick", "autoToggle()");
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
 	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
-
+	
 	var newContainer = document.createElement("DIV");
 	newContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
 	newContainer.setAttribute("id", "autoMapBtn");
@@ -19,7 +19,6 @@ function automationMenuInit() {
 	newContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Automapping\", \"customText\", event, \"Toggle automapping on and off.\")');
 	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
 	var abutton = document.createElement("SPAN");
-	//DHeirlooms
 	abutton.appendChild(document.createTextNode("Auto Maps"));	
 	abutton.setAttribute("id", "autoMapLabel");
 	var fightButtonCol = document.getElementById("battleBtnsColumn");
@@ -359,7 +358,7 @@ function initializeAllSettings() {
 	createSetting('RMaxGateway', 'Max Gateways', 'Gateways', 'value', '25', null, 'Buildings');
 	createSetting('RMaxCollector', 'Max Collectors', 'recommend: -1', 'value', '-1', null, 'Buildings');
 	createSetting('RMaxTribute', 'Max Tributes', 'Advanced. recommend: -1 ', 'value', '-1', null, 'Buildings');
-	createSetting('rBuildingSpendingPct', 'Building Spending pct', 'The percentage of total food you\'d like you spend on Buildings excluding Collectors which will always build at 100%.', 'value', '-1', null, 'Buildings');
+	createSetting('rBuildingSpendPct', 'Building Spending pct', 'The percentage of total food you\'d like you spend on Buildings excluding Collectors which will always build at 100%.', 'value', '-1', null, 'Buildings');
 	createSetting('RTributeSpendingPct', 'Tribute Spending pct', 'The percentage of total food you\'d like you spend on Tributes.', 'value', '-1', null, 'Buildings');
 	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Buildings');
 
@@ -1593,7 +1592,7 @@ function updateCustomButtons() {
 	radonon && buildingstoggle ? turnOn('RMaxGateway') : turnOff('RMaxGateway');
 	radonon && buildingstoggle ? turnOn('RMaxCollector') : turnOff('RMaxCollector');
 	radonon && buildingstoggle ? turnOn('RMaxTribute') : turnOff('RMaxTribute');
-	//radonon && buildingstoggle ? turnOn('rBuildingSpendingPct') : turnOff('rBuildingSpendingPct');
+	radonon && buildingstoggle ? turnOn('rBuildingSpendPct') : turnOff('rBuildingSpendPct');
 	radonon && buildingstoggle ? turnOn('RTributeSpendingPct') : turnOff('RTributeSpendingPct');
 	radonon && buildingstoggle ? turnOn('RSpendTribute') : turnOff('RSpendTribute');
 	radonon && buildingstoggle ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
@@ -2201,4 +2200,11 @@ function toggleAutoMaps() {
 		}
 		document.getElementById('autoMapBtn').setAttribute('class','noselect settingsBtn settingBtn'+autoTrimpSettings.RAutoMaps.value);
 	}
+
 }
+
+/* function toggleATAutoEquip() {
+	rAutoEquip = !getPageSetting('Requipon') ? 1 : 0;
+	setPageSetting('Requipon',rAutoEquip);
+	document.getElementById('autoEquipBtnAT').setAttribute('class','noselect settingsBtn settingBtn'+autoTrimpSettings.Requipon.enabled);
+} */
