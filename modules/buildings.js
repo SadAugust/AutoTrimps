@@ -485,7 +485,7 @@ function RbuyBuildings() {
     }
  
     var boughtHousing = false;
-
+    var buildingspending = getPageSetting('rBuildingSpendPct') > 0 ? getPageSetting('rBuildingSpendPct') / 100 : 1;
     do {
         boughtHousing = false;
         var housing = mostEfficientHousing();
@@ -494,10 +494,10 @@ function RbuyBuildings() {
             if ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world) buyBuilding(housing, true, true, 999);
             else if (housing == "Collector") 
                 buyBuilding("Collector", true, true, 999);
-            else if ((calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), getPageSetting('rBuildingSpendPct')/100) > getPageSetting('RMax' + housing)) && getPageSetting('RMax' + housing) != -1 && game.global.buildingsQueue.length <= 3)
+            else if ((calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), buildingspending) > getPageSetting('RMax' + housing)) && getPageSetting('RMax' + housing) != -1 && game.global.buildingsQueue.length <= 3)
                 buyBuilding(housing, true, true, getPageSetting('RMax' + housing) - game.buildings[housing].purchased);
-            else if (calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), getPageSetting('rBuildingSpendPct')/100) && game.global.buildingsQueue.length <= 3) 
-                buyBuilding(housing, true, true, calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), getPageSetting('rBuildingSpendPct')/100));
+            else if (calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), buildingspending) && game.global.buildingsQueue.length <= 3) 
+                buyBuilding(housing, true, true, calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), buildingspending));
             else 
                 return;
             boughtHousing = true;
