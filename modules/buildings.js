@@ -397,6 +397,7 @@ function mostEfficientHousing() {
         }
     }
     if (mostEfficient.name == "") mostEfficient.name = null;
+    
     return mostEfficient.name;
 }
 
