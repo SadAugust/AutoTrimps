@@ -373,27 +373,30 @@ function mostEfficientHousing() {
 
         var worstTime = -Infinity;
         var currentOwned = game.buildings[housing].owned;
+        const dontbuy = [];
         for (var resource in game.buildings[housing].cost) {
 
             // Get production time for that resource
             var baseCost = game.buildings[housing].cost[resource][0];
             var costScaling = game.buildings[housing].cost[resource][1];
+            var buildingspending = getPageSetting('rBuildingSpendPct') > 0 ? getPageSetting('rBuildingSpendPct') / 100 : 1;
             var avgProduction = getPsString(resource, true);
 	        if (avgProduction <= 0) avgProduction = 1;
             var housingBonus = game.buildings.Hut.increase.by;
-            if (!game.buildings.Hub.locked) { housingBonus += 500;}
+            if (!game.buildings.Hub.locked) housingBonus += 500;
+
+            if (Math.max(baseCost * Math.pow(costScaling, currentOwned)) > game.resources[resource].owned * buildingspending) dontbuy.push(housing);
 
             // Only keep the slowest producer, aka the one that would take the longest to generate resources for
             worstTime = Math.max(baseCost * Math.pow(costScaling, currentOwned - 1) / (avgProduction * housingBonus), worstTime);
         }
 
-        if (mostEfficient.time > worstTime) {
+        if (mostEfficient.time > worstTime && !dontbuy.includes(housing)) {
             mostEfficient.name = housing;
             mostEfficient.time = worstTime;
         }
     }
     if (mostEfficient.name == "") mostEfficient.name = null;
-
     return mostEfficient.name;
 }
 
