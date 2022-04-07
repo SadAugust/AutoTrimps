@@ -426,7 +426,7 @@ function initializeAllSettings() {
 	createSetting('Requipamount', 'AE: Amount', 'How much equipment to level per time.', 'value', 1, null, "Gear");
 	createSetting('Requipcapattack', 'AE: Weapon Cap', 'What level to stop buying Weapons at.', 'value', 50, null, "Gear");
 	createSetting('Requipcaphealth', 'AE: Armour Cap', 'What level to stop buying Armour at.', 'value', 50, null, "Gear");
-	createSetting('Requipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible.', 'value', -1, null, "Gear");
+	createSetting('Requipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible.', 'multiValue', -1, null, "Gear");
 	createSetting('Requippercent', 'AE: Percent', 'What percent of resources to spend on equipment before the zone you have set in AE: Zone.', 'value', 1, null, "Gear");
 	createSetting('Requip2', 'AE: 2', 'Always buys level 2 of weapons and armor regardless of efficiency.', 'boolean', true, null, "Gear");
 	createSetting('Requipprestige', 'AE: Prestige', 'Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.', 'boolean', true, null, "Gear");
@@ -713,10 +713,7 @@ function initializeAllSettings() {
 	createSetting('rHypoCell', 'HF: Cell', 'Hypo Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Challenges');
 	createSetting('rHypoFrozenCastle', 'HF: Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Challenges');
 	createSetting('rHypoStorage', ['HF: Storage', 'HF: Storage', 'HF: Storage First'], 'Enable this setting to disable AutoStorage inside of Hypothermia when not at one of your designated Bonfire farming zones. Needs to be used in conjunction with the other Hypothermia settings otherwise it will break.<br><br>HF: Storage First<br>Will enable AutoStorage again after your first Bonfire farm. Make sure to only use this setting if you\'re confident your Bonfire farming settings won\'t allow for an accidental bonfire.', 'multitoggle', 0, null, 'Challenges');
-	createSetting('rHypoBuyPackrat', 'HF: Buy Packrat', 'Turn on to purchase packrat after the Hypothermia challenge is completed. Useful setting for when running 3 or less packrat for an extra bonfire.', 'boolean', false, null, 'Challenges');/* 
-	createSetting('rHypoRespec', 'HF: Respec', 'Turn on to enable respeccing during Hypothermia. Will only be beneficial for low packrat runs.', 'boolean', false, null, 'Challenges');
-	createSetting('rHypoRespecZone', 'HF: Respec Zone', 'Which zones you would like to respec at', 'value', '-1', null, 'Challenges');
-	createSetting('rHypoRespecString', 'HF: Respec String', 'The respec string you would like to use while Hypo farming.', 'textValue', 'undefined', null, 'Challenges'); */
+	createSetting('rHypoBuyPackrat', 'HF: Buy Packrat', 'Turn on to purchase packrat after the Hypothermia challenge is completed. Useful setting for when running 3 or less packrat for an extra bonfire.', 'boolean', false, null, 'Challenges');
 	
 	//Combat
 	//Helium
@@ -923,7 +920,6 @@ function initializeAllSettings() {
 	settingsProfileMakeGUI();
 
 	if (typeof autoTrimpSettings['rHypoStorage'].value === 'boolean') {
-		debug('Debugging Complete');
 		autoTrimpSettings['rHypoStorage'].value = autoTrimpSettings['rHypoStorage'].value == true ? 1 : 0;
 	}
 }

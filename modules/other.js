@@ -1966,7 +1966,10 @@ function questcheck() {
 }
 
 function Rgetequipcost(equip, resource, amt) {
-	var cost = Math.ceil(getBuildingItemPrice(game.equipment[equip], resource, true, amt) * (Math.pow(amt - game.portal.Artisanistry.modifier, game.portal.Artisanistry.radLevel)));
+    var artBoost = Math.pow(amt - game.portal.Artisanistry.modifier, game.portal.Artisanistry.radLevel);
+	artBoost *= autoBattle.oneTimers.Artisan.owned ? autoBattle.oneTimers.Artisan.getMult() : 1;
+	if (game.global.challengeActive == "Pandemonium") artBoost *= game.challenges.Pandemonium.getEnemyMult();
+	var cost = Math.ceil(getBuildingItemPrice(game.equipment[equip], resource, true, amt) * artBoost);
 	return cost;
 }
 
@@ -2792,27 +2795,39 @@ function RShouldFarmMapCost(pluslevel, special, farmzone, biome) {
     if (!special) special = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
     if (!farmzone) farmzone = [game.global.world];
     if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
-
+	go = false;
+	
 	//Working out appropriate map settings
 	if (farmzone.includes(game.global.world)) {
-			document.getElementById("mapLevelInput").value = maplevel;
-			document.getElementById("advExtraLevelSelect").value = pluslevel;
-			document.getElementById("biomeAdvMapsSelect").value = biome;
-			document.getElementById("advSpecialSelect").value = special;
+		document.getElementById("mapLevelInput").value = maplevel;
+		document.getElementById("advExtraLevelSelect").value = pluslevel;
+		document.getElementById("biomeAdvMapsSelect").value = biome;
+		document.getElementById("advSpecialSelect").value = special;
 	}
 	updateMapCost();
 	return updateMapCost(true);
 }
 
-function RShouldFarmMapCreation(pluslevel,special,biome) {
+function RShouldFarmMapCreation(pluslevel,special,biome,difficulty,loot,size) {
     //Pre-Init
     if (!pluslevel) pluslevel = 0;
     if (!special) special = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
     if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
+    if (!difficulty) difficulty = 0.75;
+    if (!loot) loot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.farmlandsUnlocked ? 2.6 : game.singleRunBonuses.goldMaps.owned ? 2.85 : 1.85;
+    if (!size) size = 20;
 	var create=false;
-
+	go = false;
+	
 	for (var mapping in game.global.mapsOwnedArray) {
-		if (!game.global.mapsOwnedArray[mapping].noRecycle && ((game.global.world + pluslevel) == game.global.mapsOwnedArray[mapping].level) && game.global.mapsOwnedArray[mapping].bonus == special && game.global.mapsOwnedArray[mapping].location == biome) {
+		if (!game.global.mapsOwnedArray[mapping].noRecycle && (
+			(game.global.world + pluslevel) == game.global.mapsOwnedArray[mapping].level) && 
+			game.global.mapsOwnedArray[mapping].bonus == special && 
+			game.global.mapsOwnedArray[mapping].location == biome/*  &&
+			game.global.mapsOwnedArray[mapping].difficulty == difficulty &&
+			game.global.mapsOwnedArray[mapping].loot == loot &&
+			game.global.mapsOwnedArray[mapping].size == size */) {
+
 			return(game.global.mapsOwnedArray[mapping].id);
 			break;
 		} else {

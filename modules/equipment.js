@@ -987,8 +987,9 @@ function RautoEquip() {
 	var alwaysPandemonium = getPageSetting('RPandemoniumAutoEquip') > 0;
 	var attackEquipCap = ((getPageSetting('Requipcapattack') <= 0) ? Infinity : getPageSetting('Requipcapattack'));
 	var healthEquipCap = ((getPageSetting('Requipcaphealth') <= 0) ? Infinity : getPageSetting('Requipcaphealth'));
-    
-	var zoneGo = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? game.global.world >= getPageSetting('Rdequipzone') : game.global.world >= getPageSetting('Requipzone');
+
+    var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
+	var zoneGo = (rEquipZone[0] > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length-1])));
     var resourceMaxPercent = getPageSetting('Requippercent') / 100;
 
     // Always 2
@@ -1022,14 +1023,6 @@ function RautoEquip() {
         var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
         var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
         var underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 100, 'Improbability', 1.0));
-        
-/*         // Set up for attack
-        var equipType = 'attack';
-        var equipName = bestBuys[0];
-        var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
-        var equipCap = attackEquipCap;
-        var underStats = RcalcHDratio() >= getPageSetting('Rdmgcuntoff'); */
-
         for (var i = 0; i < 2; i++) {
             if (canAffordBuilding(equipName, null, null, true, false, 1)) {
                 if (smithylogic(equipName,resourceUsed,true)) {
@@ -1057,14 +1050,6 @@ function RautoEquip() {
             resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
             equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
             underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0));
-
-/*             // Set up for Health
-            equipType = 'health';
-            equipName = bestBuys[1];
-            resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
-            equipCap = healthEquipCap;
-            underStats = RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 100, 'Improbability', 1.0)); */
-            
         }
 
     } while (keepBuying)
