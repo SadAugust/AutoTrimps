@@ -1,4 +1,4 @@
-//Helium 
+//Helium
 
 MODULES["equipment"] = {};
 MODULES["equipment"].numHitsSurvived = 10;
@@ -851,13 +851,27 @@ function mostEfficientEquipment(fakeLevels = {}) {
 	artBoost *= autoBattle.oneTimers.Artisan.owned ? autoBattle.oneTimers.Artisan.getMult() : 1;
 	if (game.global.challengeActive == "Pandemonium") artBoost *= game.challenges.Pandemonium.getEnemyMult();
 	
+	var highestPrestige = 0;
+
     for (var i in RequipmentList) {
         var nextLevelCost = game.equipment[i].cost[RequipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[RequipmentList[i].Resource][1], game.equipment[i].level + fakeLevels[i]) * artBoost;
+        var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
+    	var zoneGo = (rEquipZone[0] > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length-1])));
+        var resourceMaxPercent = getPageSetting('Requippercent') < 0 ? 100 : getPageSetting('Requippercent');
 		//Skips looping through equips if they're blocked during Pandemonium
-        if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
-        if (game.global.stringVersion != '5.5.1') {
-            if (game.global.challengeActive == 'Hypothermia' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i == 'Shield') continue;
+
+		if (getPageSetting('rEquipHighestPrestige')) {
+            for (var item in game.equipment) { 
+    			var equip = game.equipment[item];
+    			if (equip.prestige > highestPrestige) highestPrestige = equip.prestige;
+		    }
+        if (game.equipment[i].prestige < highestPrestige) continue;
         }
+
+        if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
+        if (game.global.challengeActive == 'Hypothermia' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i == 'Shield') continue;
+        if (!zoneGo && !canAffordBuilding(i,null,null,true,false,1,resourceMaxPercent)) continue;
+        
         //Skips through equips if they don't cost metal and you don't have enough resources for them.
         if (RequipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1)) continue;
         var nextLevelValue = game.equipment[i][RequipmentList[i].Stat + "Calculated"];

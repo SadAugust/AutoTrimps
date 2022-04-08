@@ -426,16 +426,17 @@ function initializeAllSettings() {
 	createSetting('Requipamount', 'AE: Amount', 'How much equipment to level per time.', 'value', 1, null, "Gear");
 	createSetting('Requipcapattack', 'AE: Weapon Cap', 'What level to stop buying Weapons at.', 'value', 50, null, "Gear");
 	createSetting('Requipcaphealth', 'AE: Armour Cap', 'What level to stop buying Armour at.', 'value', 50, null, "Gear");
-	createSetting('Requipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible.', 'multiValue', -1, null, "Gear");
+	createSetting('Requipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input. ', 'multiValue', -1, null, "Gear");
 	createSetting('Requippercent', 'AE: Percent', 'What percent of resources to spend on equipment before the zone you have set in AE: Zone.', 'value', 1, null, "Gear");
 	createSetting('Requip2', 'AE: 2', 'Always buys level 2 of weapons and armor regardless of efficiency.', 'boolean', true, null, "Gear");
 	createSetting('Requipprestige', 'AE: Prestige', 'Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.', 'boolean', true, null, "Gear");
+	createSetting('rEquipHighestPrestige', 'AE: Highest Prestige', 'Will only buy equips for the highest prestige currently owned.', 'boolean', true, null, "Gear");
 	createSetting('Requipfarmon', 'AE: Farm', 'AutoEquip Farm. Calculates metal needed to reach the target you have defined in the AEF settings. Will try to buy the best map you can make. Will never make a plus map as this is intended for us on deep push runs.', 'boolean', false, null, "Gear");
 	createSetting('Requipfarmzone', 'AEF: Zone', 'What zone to start AEF: H:D and AEF: Multiplier.', 'value', '-1', null, 'Gear');
 	createSetting('RequipfarmHD', 'AEF: H:D', 'What H:D to use for AEF target.', 'value', '-1', null, 'Gear');
 	createSetting('Requipfarmmult', 'AEF: Multiplier', 'Starting from the zone above AEF: Zone, this setting will multiply the H:D you have set in AEF: H:D. So if AEF: Zone was 100, AEF: H:D was 10, AEF: Multiplier was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low H:D.', 'value', '-1', null, 'Gear');
 	createSetting('Requipfarmhits', 'AEF: Hits', 'How many hits do you want to kill an enemy in a AEF map.', 'value', '-1', null, 'Gear');
-
+	
 	//Maps
 	//Helium
 	createSetting('AutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use MaZ, it will not work. ', 'multitoggle', 1, null, "Maps");
@@ -474,7 +475,7 @@ function initializeAllSettings() {
 	createSetting('RDisableFarm', 'Farming H:D', 'If H:D goes above this value, it will farm for Damage & Health. The lower this setting, the more it will want to farm. Default is <b>16<b/>. <b>-1 to disable farming!</b>', 'value', -1, null, 'Μaps');
 
 	//Void Maps
-	createSetting('RVoidMaps', 'Void Maps', '<b>0 to disable</b> The zone at which you want all your void maps to be cleared inclusive of the zone you type. Runs them at Cell 70.<br>', 'multiValue', '0', null, 'Μaps');
+	createSetting('RVoidMaps', 'Void Maps', '<b>0 to disable</b> The zone at which you want all your void maps to be cleared inclusive of the zone you type. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will cause \'New Voids Mod\' to start applying after the last input. <br><br>Runs them at Cell 70 by default.', 'multiValue', '0', null, 'Μaps');
 	createSetting('Rvoidscell', 'Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Μaps');
 	createSetting('RRunNewVoidsUntilNew', 'New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197) If you have 2 void map zones it\'ll use this setting after the last one has been cleared.<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Μaps');
 	document.getElementById('RRunNewVoidsUntilNew').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -1655,6 +1656,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Requipon') ? turnOn('Requippercent'): turnOff('Requippercent');
 	radonon && getPageSetting('Requipon') ? turnOn('Requip2'): turnOff('Requip2');
 	radonon && getPageSetting('Requipon') ? turnOn('Requipprestige'): turnOff('Requipprestige');
+	radonon && getPageSetting('Requipon') ? turnOn('rEquipHighestPrestige'): turnOff('rEquipHighestPrestige');
 	radonon && getPageSetting('Requipon') ? turnOn('Rdmgcuntoff'): turnOff('Rdmgcuntoff');
 	
 	//RGear AutoEquip Farm
