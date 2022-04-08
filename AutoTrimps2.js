@@ -328,5 +328,7 @@ function mainCleanup() {
 		}
 		return true;
 	}
+	if (getPageSetting('AutoEggs'))
+		easterEggClicked();
 }
 function throwErrorfromMain(){throw new Error("We have successfully read the thrown error message out of the main file")}
