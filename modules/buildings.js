@@ -13,16 +13,17 @@ function safeBuyBuilding(building) {
     if (game.buildings[building].locked)
         return false;
     var oldBuy = preBuy2();
-
-  if (game.talents.deciBuild.purchased) {
+    var decaChange = game.global.stringVersion < '5.7.0' ? game.talents.deciBuild.purchased : bwRewardUnlocked('DecaBuild');
+    
+    if (decaChange) {
         game.global.buyAmt = 10;
-    if (!canAffordBuilding(building)) {
-        game.global.buyAmt = 2;
-	if (!canAffordBuilding(building))
-            game.global.buyAmt = 1;
-     }
-  }
-  else if (bwRewardUnlocked("DoubleBuild")) {
+        if (!canAffordBuilding(building)) {
+            game.global.buyAmt = 2;
+        	if (!canAffordBuilding(building))
+                    game.global.buyAmt = 1;
+        }
+    }
+    else if (bwRewardUnlocked("DoubleBuild")) {
         game.global.buyAmt = 2;
   	if (!canAffordBuilding(building)) 
         game.global.buyAmt = 1;
@@ -246,8 +247,9 @@ function RsafeBuyBuilding(building) {
     if (game.buildings[building].locked)
         return false;
     var oldBuy = preBuy2();
+    var decaChange = game.global.stringVersion < '5.7.0' ? game.talents.deciBuild.purchased : bwRewardUnlocked('DecaBuild');
 
-  if (game.talents.deciBuild.purchased) {
+  if (decaChange) {
         game.global.buyAmt = 10;
     if (!canAffordBuilding(building)) {
         game.global.buyAmt = 2;
@@ -443,6 +445,13 @@ function RbuyBuildings() {
         }
     }
 
+    //Still allows you to buy tributes during gem quests
+    if (game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone() && ([4].indexOf(questcheck()) >= 0))
+        rBuyTributes();
+    //Return when shouldn't run during quest
+	if ((game.global.challengeActive == "Quest" && game.global.world >= game.challenges.Quest.getQuestStartZone() && game.global.lastClearedCell < 90 && ([1, 2, 3, 4].indexOf(questcheck()) >= 0)))
+        return
+
     //Smithy purchasing
     if (!game.buildings.Smithy.locked && canAffordBuilding('Smithy')) {
         //Checking to see how many smithies we can buy
@@ -507,9 +516,12 @@ function RbuyBuildings() {
             boughtHousing = true;
 
         }
-    } while (boughtHousing)   
+    } while (boughtHousing)
 
-    //Tributes
+    rBuyTributes();
+}
+
+function rBuyTributes() {
     //Won't buy Tributes if they're locked or if a meteorologist can be purchased as that should always be the more efficient purchase
     if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(canAffordJob('Meteorologist') && !game.jobs.Meteorologist.locked))) {
         var tributespending = getPageSetting('RTributeSpendingPct') > 0 ? getPageSetting('RTributeSpendingPct') / 100 : 1;

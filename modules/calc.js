@@ -651,7 +651,14 @@ function RgetCritMulti() {
     var highTierMulti = getMegaCritDamageMult(Math.ceil(critChance));
     var highTierChance = critChance - Math.floor(critChance)
 
-    return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * CritD
+	if (game.global.challengeActive == 'Duel') {
+		if (highTierChance == 0)
+			return 1;
+	    else 
+			return  1 + (highTierChance * CritD)
+	}
+	else
+		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * CritD
 }
 
 function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus) {
@@ -712,6 +719,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus) {
 	number *= game.global.sugarRush ? sugarRush.getAttackStrength() : 1;
 	// Challenges
 	number *= game.global.challengeActive == 'Unbalance' ? game.challenges.Unbalance.getAttackMult() : 1;
+	number *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks > 50 ? 3 : 1;
 	number *= game.global.challengeActive == 'Melt' ? 5 * Math.pow(0.99, game.challenges.Melt.stacks) : 1;
 	number *= game.global.challengeActive == 'Quagmire' ? game.challenges.Quagmire.getExhaustMult() : 1;
 	number *= game.global.challengeActive == 'Revenge' ? game.challenges.Revenge.getMult() : 1;
@@ -744,7 +752,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus) {
 	number *= getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
 
 	// Gamma Burst
-	number *= getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0))) >= 5 ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / 500) : 1;
+	number *= getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= 5 ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / 500) : 1;
 	// Average out crit damage
 	number *= RgetCritMulti();
 
@@ -802,6 +810,8 @@ function RcalcOurHealth() {
 	//health *= game.talents.mapHealth.purchased && game.global.mapsActive ? 2 : 1;
 	//Cinf
 	health *= game.global.totalSquaredReward > 0 ? 1 + (game.global.totalSquaredReward / 100) : 1;
+	//Duel Mult
+	health *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 20 ? game.challenges.Duel.healthMult : 1;
 	//Revenge Mult
 	health *= game.global.challengeActive == 'Revenge' && game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1;
 	//Wither Mult
@@ -831,9 +841,10 @@ function RcalcDailyAttackMod(number) {
     return number;
 }
 
-function RcalcBadGuyDmg(enemy, attack, equality) {
+function RcalcBadGuyDmg(enemy, attack, equality) { //Works out avg dmg. For max dmg * 1.5.
 	var number = enemy ? enemy.attack : attack;
-	number = game.global.challengeActive == 'Exterminate' && getPageSetting('Rexterminateon') && getPageSetting('Rexterminatecalc') ? RgetEnemyMaxAttack(game.global.world, 90, 'Mantimp', 1.0) : number;
+	number = game.global.challengeActive == 'Exterminate' && getPageSetting('Rexterminateon') && getPageSetting('Rexterminatecalc') ? RgetEnemyAvgAttack(game.global.world, 90, 'Mantimp') : number;
+	number *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
 	number *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
 	number *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') >= 1 && game.portal.Equality.scalingCount > 0 && !equality ? Math.pow(game.portal.Equality.modifier, game.portal.Equality.scalingCount) : 1;
     if (game.global.challengeActive == "Daily") {
@@ -851,6 +862,7 @@ function RcalcBadGuyDmg(enemy, attack, equality) {
         
     }
 	number *= game.global.challengeActive == 'Unbalance' ? 1.5 : 1;
+	number *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
 	number *= game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
 	number *= game.global.challengeActive == 'Archaeology' ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
 	number *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult(): 1;
@@ -862,10 +874,8 @@ function RcalcBadGuyDmg(enemy, attack, equality) {
 	number *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	number *= game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
 	number *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
-	if (game.global.stringVersion != '5.5.1') {
-		number *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
-		number *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
-	}
+	number *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
+	number *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
 	number *= !enemy && game.global.usingShriek ? game.mapUnlocks.roboTrimp.getShriekValue() : 1;
 	return number;
 }
@@ -932,11 +942,8 @@ function RcalcEnemyHealth(world) {
 	health *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
 	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
-	if (game.global.stringVersion != '5.5.1') {
-		health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
-		health *= game.global.challengeActive == 'Glass' ? 0.01 : 1;
-		health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
-	}
+	health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
+	health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
     return health;
 }
 
@@ -955,11 +962,8 @@ function RcalcEnemyHealthMod(world, cell, name) {
 	health *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
 	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
-	if (game.global.stringVersion != '5.5.1') {
-		health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
-		health *= game.global.challengeActive == 'Glass' ? 0.01 : 1;
-		health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
-	}
+	health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
+	health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
     return health;
 }
 

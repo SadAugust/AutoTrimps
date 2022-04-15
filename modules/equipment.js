@@ -625,7 +625,7 @@ function RautoLevelEquipment() {
             Cost: 0
         };
     }
-    var enemyDamage = RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0));
+    var enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp', 1.0));
     var enoughDamageCutoff = getPageSetting("Rdmgcuntoff");
     var numHits = getPageSetting('Rhitssurvived');
     var enoughHealthE = (RcalcOurHealth(true) > numHits * enemyDamage);
@@ -1036,7 +1036,7 @@ function RautoEquip() {
         var equipName = (equipType == 'attack') ? bestBuys[0] : bestBuys[1];    
         var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
         var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
-        var underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 100, 'Improbability', 1.0));
+        var underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability', 1.0));
         for (var i = 0; i < 2; i++) {
             if (canAffordBuilding(equipName, null, null, true, false, 1)) {
                 if (smithylogic(equipName,resourceUsed,true)) {
@@ -1063,7 +1063,7 @@ function RautoEquip() {
             equipName = (equipType == 'attack') ? bestBuys[0] : bestBuys[1];
             resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
             equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
-            underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0));
+            underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp', 1.0));
         }
 
     } while (keepBuying)
@@ -1100,7 +1100,7 @@ function estimateEquipsForZone() {
     var MAX_EQUIP_DELTA = 700;
 
     // calculate stats needed pass zone
-    var enemyDamageBeforeEquality = RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 100, 'Improbability'), true); //game.global.getEnemyAttack(100, 'Snimp', true);
+    var enemyDamageBeforeEquality = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'), true); //game.global.getEnemyAttack(100, 'Snimp', true);
     var ourHealth = RcalcOurHealth();
     var hits = (getPageSetting("Rhitssurvived") > 0) ? getPageSetting("Rhitssurvived") : 1;
 

@@ -7,7 +7,7 @@ function initializeAutoTrimps() {
 	loadPageVariables();
 	ATscriptLoad('','SettingsGUI');
 	ATscriptLoad('','Graphs');
-	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'dynprestige', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perks', 'fight-info', 'performance'];
+	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'dynprestige', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perks', 'fight-info', 'performance', 'bones'];
 	for (var m in ATmoduleList) {
 		ATscriptLoad(modulepath, ATmoduleList[m]);
 	}
@@ -214,9 +214,14 @@ function mainLoop() {
 			RsetScienceNeeded();
 		}
 
+		//RBuildings
+		if (getPageSetting('RBuyBuildingsNew')) 
+            RbuyBuildings();
+
+		//RUpgrades
 		if (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([5].indexOf(questcheck()) >= 0))) {
-				if (getPageSetting('RBuyUpgradesNew') != 0) 
-                    RbuyUpgrades();
+			if (getPageSetting('RBuyUpgradesNew') != 0) 
+                RbuyUpgrades();
 		}
 
 		//RCore
@@ -232,8 +237,8 @@ function mainLoop() {
 		//RJobs
 		if (getPageSetting('RBuyJobsNew') > 0) {
 			//Check to see if we're on quest and at a quest zone or if we're trying to do some farming that needs other jobs.
-			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || Rshouldshipfarm || rShouldTimeFarm || Rshouldequipfarm))) {
-				if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || Rshouldshipfarm || rShouldTimeFarm || Rshouldequipfarm))) {
+			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || rShouldWorshipperFarm || rShouldTimeFarm || rShouldEquipFarm))) {
+				if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || rShouldWorshipperFarm || rShouldTimeFarm || rShouldEquipFarm))) {
 					if (getPageSetting('RBuyJobsNew') == 1) 
                         RworkerRatios();
 					RbuyJobs();
@@ -241,13 +246,6 @@ function mainLoop() {
 			} else {
 				RquestbuyJobs();
 			}
-		}
-		
-		//RBuildings
-		if (game.global.challengeActive == "Quest" && questcheck() == 10 && game.challenges.Quest.getQuestProgress != 'Quest Complete!') RbuyBuildings();
-		if (!(game.global.challengeActive == "Quest" && game.global.world >= game.challenges.Quest.getQuestStartZone() && game.global.lastClearedCell < 90 && ([1, 2, 3, 4, 10].indexOf(questcheck()) >= 0))) {
-			if (getPageSetting('RBuyBuildingsNew')) 
-                RbuyBuildings();
 		}
 
 		//RPortal
@@ -293,12 +291,12 @@ function mainLoop() {
             RautoGoldenUpgradesAT(Ragu);
 
 		//Bone Upgrades
-		if (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') {
-			if ((getPageSetting('c3GM_ST') == 1 || getPageSetting('c3GM_ST') == 3) && !game.singleRunBonuses.goldMaps.owned && game.global.b >=20) 
-                purchaseSingleRunBonus('goldMaps');
-			if ((getPageSetting('c3GM_ST') == 2 || getPageSetting('c3GM_ST') == 3)  && !game.singleRunBonuses.sharpTrimps.owned && game.global.b >=25) 
-                purchaseSingleRunBonus('sharpTrimps');
+		
+		if (game.global.stringVersion >= '5.7.0') {
+			if (getPageSetting('rBoneShrine'))
+				BoneShrine();
 		}
+		BuySingleRunBonuses()
 
         //Respecing between presets based on Destacking or Farming when running Pandemonium. Uses preset 2 for destacking and preset 3 while farming.
         if (game.global.challengeActive == "Pandemonium" && getPageSetting('rPandRespec')) {

@@ -8,7 +8,8 @@ function buyUpgrades() {
         upgrade = upgradeList[upgrade];
         var gameUpgrade = game.upgrades[upgrade];
         var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
-	var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") == true && game.talents.deciBuild.purchased && getPageSetting('hidebuildings')==true && getPageSetting('BuyBuildingsNew')==0);
+        var decaChange = game.global.stringVersion < '5.7.0' ? game.talents.deciBuild.purchased : bwRewardUnlocked('DecaBuild');
+	    var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") == true && decaChange && getPageSetting('hidebuildings')==true && getPageSetting('BuyBuildingsNew')==0);
 		
 	//Coord & Amals
 	if (upgrade == 'Coordination' && (getPageSetting('BuyUpgradesNew') == 2 || !canAffordCoordinationTrimps())) continue;

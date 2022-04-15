@@ -403,6 +403,16 @@ function initializeAllSettings() {
 	createSetting('Rshipspending', 'SF: Spending Pct', 'What percentage of owned food to spend on Worshippers. -1 for 100% or value between 1-100 for lower.', 'value', '-1', null, "Jobs");
 	createSetting('Rshipfarmfrag', 'SF: Frags', 'Turn this on to farm fragments if you cannot afford the map you have selected for SF. ', 'boolean', false, null, 'Jobs');
 
+	//Bone Shrine (bone)
+	if (game.global.stringVersion >= '5.7.0') {
+		document.getElementById('Rshipfarmfrag').parentNode.insertAdjacentHTML('afterend', '<br>');
+		createSetting('rBoneShrine', 'Bone Shrine', 'Turn Bone Shrine settings on or off.', 'boolean', false, null, 'Jobs');
+		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Jobs');
+		createSetting('rBoneShrineCell', 'BS: Cell', 'Use bone shrine charges at this Cell. -1 to run them at the default value, which is 81. ', 'value', '-1', null, 'Jobs');
+		createSetting('rBoneShrineAmount', 'BS: Amount', 'How many bone shrine charges to use at zone specified in BS: Zone. Can use 1,3,5. These values should match up to your BS zones.', 'multiValue', [0], null, 'Jobs');
+		createSetting('rBoneShrineGather', 'BS: Gather', 'Select which resource you would like to gather when using Bone Shrine charges.', 'dropdown', 'metal', ["food", "wood", "metal", "science"], 'Jobs');
+		createSetting('rBoneShrineRunType', ['Never use', 'Use in Fillers', 'Use in Dailies', 'Use in C3\'s', 'Use for all runs'], 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'multitoggle', 1, null, "Jobs");
+	}
 	//Gear
 	//Helium
 	createSetting('BuyArmorNew', ['Armor: Buy Neither', 'Armor: Buy Both', 'Armor: Prestiges', 'Armor: Levels'], 'AutoBuys Prestiges and Levels up the most cost efficient Armor available. Gymystic buying is controlled under this setting\'s prestige option', 'multitoggle', 1, null, "Gear"); //This should replace the two below
@@ -1559,8 +1569,9 @@ function updateCustomButtons() {
 	!radonon ? turnOn('BuyBuildingsNew'): turnOff('BuyBuildingsNew');
 	!radonon ? turnOn('MaxGym'): turnOff('MaxGym');
 	!radonon ? turnOn('GymWall'): turnOff('GymWall');
-	var fuckbuilding = (bwRewardUnlocked('AutoStructure') && game.talents.deciBuild.purchased && getPageSetting('hidebuildings') && getPageSetting('BuyBuildingsNew')==0);
-	(!radonon && bwRewardUnlocked('AutoStructure') && game.talents.deciBuild.purchased) ? turnOn('hidebuildings') : turnOff('hidebuildings');
+	var decaChange = game.global.stringVersion < '5.7.0' ? game.talents.deciBuild.purchased : bwRewardUnlocked('DecaBuild');
+	var fuckbuilding = (bwRewardUnlocked('AutoStructure') && decaChange && getPageSetting('hidebuildings') && getPageSetting('BuyBuildingsNew')==0);
+	(!radonon && bwRewardUnlocked('AutoStructure') && decaChange) ? turnOn('hidebuildings') : turnOff('hidebuildings');
 	(!radonon && !fuckbuilding) ? turnOn('MaxHut') : turnOff('MaxHut');
 	(!radonon && !fuckbuilding) ? turnOn('MaxHouse') : turnOff('MaxHouse');
 	(!radonon && !fuckbuilding) ? turnOn('MaxMansion') : turnOff('MaxMansion');
@@ -1630,6 +1641,16 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Rshipfarmon') ? turnOn('Rshipfarmlevel'): turnOff('Rshipfarmlevel');
 	radonon ? turnOn('Rshipspending') : turnOff('Rshipspending');
 	radonon && getPageSetting('Rshipfarmon') ? turnOn('Rshipfarmfrag'): turnOff('Rshipfarmfrag');
+
+	//Bone Shrine (bones)
+	if (game.global.stringVersion >= '5.7.0') {
+		radonon ? turnOn('rBoneShrine') : turnOff('rBoneShrine');
+		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrineZone'): turnOff('rBoneShrineZone');
+		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrineCell'): turnOff('rBoneShrineCell');
+		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrineAmount'): turnOff('rBoneShrineAmount');
+		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrineGather'): turnOff('rBoneShrineGather');
+		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrineRunType'): turnOff('rBoneShrineRunType');
+	}
 
 	//Gear
 	!radonon ? turnOn('BuyArmorNew'): turnOff('BuyArmorNew');
@@ -2072,6 +2093,9 @@ function updateCustomButtons() {
 	document.getElementById('RadonHourChallenge').value = autoTrimpSettings.RadonHourChallenge.selected;
 	document.getElementById('dHeliumHourChallenge').value = autoTrimpSettings.dHeliumHourChallenge.selected;
 	document.getElementById('RdHeliumHourChallenge').value = autoTrimpSettings.RdHeliumHourChallenge.selected;
+	
+	if (game.global.stringVersion >= '5.7.0')
+		document.getElementById('rBoneShrineGather').value = autoTrimpSettings.rBoneShrineGather.selected;
 	document.getElementById('mapselection').value = autoTrimpSettings.mapselection.selected;
 	document.getElementById('Rmapselection').value = autoTrimpSettings.Rmapselection.selected;
 	document.getElementById('rMapSpecial').value = autoTrimpSettings.rMapSpecial.selected;

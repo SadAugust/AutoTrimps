@@ -466,7 +466,7 @@ function RquestbuyJobs() {
         RbuyJobs();
 }
 
-var reservedJobs = 100;
+var reservedJobs = 1000000;
 
 function RbuyJobs() {
 
@@ -489,11 +489,11 @@ function RbuyJobs() {
 		);
 
 		if (affordableExplorers > 0) {
-			var buyAmountStore = game.global.buyAmt;
+			var buyAmountStoreExp = game.global.buyAmt;
 			game.global.buyAmt = affordableExplorers;
 			buyJob('Explorer',true, true);
 			freeWorkers -= affordableExplorers;
-			game.global.buyAmt = buyAmountStore;
+			game.global.buyAmt = buyAmountStoreExp;
 		}
 	}
 
@@ -507,11 +507,11 @@ function RbuyJobs() {
 
     if (!(game.global.challengeActive == "Alchemy" && game.global.world == 152 && getPageSetting('RAlchDontBuyMets') && game.global.lastClearedCell < 98)) {
         if (affordableMets > 0 && !game.jobs.Meteorologist.locked) {
-            var buyAmountStore = game.global.buyAmt;
+            var buyAmountStoreMet = game.global.buyAmt;
             game.global.buyAmt = affordableMets;
             buyJob('Meteorologist',true, true);
             freeWorkers -= affordableMets;
-            game.global.buyAmt = buyAmountStore;
+            game.global.buyAmt = buyAmountStoreMet;
         }
     }
 
@@ -519,11 +519,11 @@ function RbuyJobs() {
 	shipspending = ((getPageSetting('Rshipspending') > 0) ? getPageSetting('Rshipspending') : 100);
 	var affordableShips = Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) / 100 * shipspending);
 	if (affordableShips > 0 && !game.jobs.Worshipper.locked) {
-		var buyAmountStore = game.global.buyAmt;
+		var buyAmountStoreShip = game.global.buyAmt;
 		game.global.buyAmt = affordableShips;
 		buyJob('Worshipper',true, true);
 		freeWorkers -= affordableShips;
-		game.global.buyAmt = buyAmountStore;
+		game.global.buyAmt = buyAmountStoreShip;
 	}
 
 	//Gather up the total number of workers available to be distributed across ratio workers
@@ -536,7 +536,10 @@ function RbuyJobs() {
 
 	freeWorkers += currentworkers.reduce((a,b) => {return a + b;});
 
-    var reserveMod = 1 + (game.resources.trimps.owned / 1e10);
+    // Explicit firefox handling because Ff specifically reduces free workers to 0.
+    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    var reserveMod = 1 + (game.resources.trimps.owned / 1e14);
+
     freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs * reserveMod: 0;
 
     //Figuring out what value we should use for when to run Melting Point
@@ -587,18 +590,18 @@ function RbuyJobs() {
 		}
 	} 
 	
-	if ((Rshouldshipfarm || rShouldTributeFarm) && (!rShouldTimeFarm && !Rshouldalchfarm && !rShouldHypoFarm)) {
+	if ((rShouldWorshipperFarm || rShouldTributeFarm) && (!rShouldTimeFarm && !Rshouldalchfarm && !rShouldHypoFarm)) {
 		allIn = "Farmer";
-		var desiredRatios = [0,1,1,0];
+		var desiredRatios = [0,1,1,0.001];
 	}
 	//Parity mult causes this to break
-/*     if (Rshouldpandemoniumfarm) {
+/*     if (rShouldPandemoniumFarm) {
 			var desiredRatios = [0.1,0.1,0.1,0.01];
 			allIn = "Miner";
     } */
  	if (game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('RhsPandStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 0 && game.global.lastClearedCell + 2 >= 91) {
 		if (game.global.world >= getPageSetting('RPandemoniumAEZone')) {
-			var desiredRatios = [0.1,0.1,0.1,0.01];
+			var desiredRatios = [0.1,0.1,0.1,0.001];
 			allIn = "Miner";
 		}
 	}

@@ -595,7 +595,7 @@ function Rresetmapvars() {
     RdoMaxMapBonus = false;
     RvanillaMapatZone = false;
     RavoidEmpower = false;
-    RshouldEmpowerFarm = false;
+    rShouldEmpowerFarm = false;
     //Void Maps
     RdoVoids = false;
     RneedToVoid = false;
@@ -609,10 +609,10 @@ function Rresetmapvars() {
     rShouldTributeFarm = false;
     rTrFCurrentMap = undefined;
     //Unbalance
-    RshouldUnbalance = false;
+    rShouldUnbalance = false;
     //Worshipper
     Rshipfarm = false;
-    Rshouldshipfarm = false;
+    rShouldWorshipperFarm = false;
     Rshipfragfarming = false;
     shipfragmappy = undefined;
     shipprefragmappy = undefined;
@@ -621,7 +621,7 @@ function Rresetmapvars() {
     //Quagmire
     Rshoulddobogs = false;
     //Quest
-    Rshoulddoquest = false;
+    rShouldQuest = false;
     Rquestequalityscale = false;
     Rquestshieldzone = 0;
     RquestSmithyWarning = -1;
@@ -632,7 +632,7 @@ function Rresetmapvars() {
     Rshouldstormfarm = false;
     //Insanity
     Rinsanityfarm = false;
-    Rshouldinsanityfarm = false;
+    rShouldInsanityFarm = false;
     Rinsanityfragfarming  = false;
     insanityfragmappy = undefined;
     insanityprefragmappy = undefined;
@@ -642,9 +642,9 @@ function Rresetmapvars() {
     Rshouldequipfarm = !1;
     Requipminusglobal = -1;
     //Pandemonium
-    Rshouldpandemonium = false;
-    Rshouldpandemoniumfarm = false;
-    Rshouldpandemoniumjestfarm = false;
+    rShouldPandemoniumDestack = false;
+    rShouldPandemoniumFarm = false;
+    rShouldPandemoniumJestimpFarm = false;
     savefile = null;
     jestFarmMap = false;
     //Alchemy
@@ -669,4 +669,7 @@ function Rresetmapvars() {
     RAMPmapbought.fill(false); //Unsure if necessary - Need to test
     RAMPfragmappybought = false;
     RAMPfragfarming = false;
+    //Bone Shrine
+    rShouldBoneShrine = false;
+    rBoneShrineUsedZone = 0;
 }

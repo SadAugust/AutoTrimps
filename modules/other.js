@@ -1782,7 +1782,7 @@ function rkillarmy() {
     if (game.global.mapsActive) return !1;
     var equality = game.portal.Equality.scalingActive,
         eh = (RcalcEnemyBaseHealth("world",game.global.world,game.global.lastClearedCell + 2,game.global.gridArray[game.global.lastClearedCell + 1].name)),
-        ea = ((RcalcBadGuyDmg(null, RgetEnemyMaxAttack((game.global.world), game.global.lastClearedCell + 2, game.global.gridArray[game.global.lastClearedCell + 1].name, 1), equality) * 1.5)),
+        ea = ((RcalcBadGuyDmg(null, RgetEnemyAvgAttack((game.global.world), game.global.lastClearedCell + 2, game.global.gridArray[game.global.lastClearedCell + 1].name), equality) * 1.5)),
         sa = RcalcOurDmg("avg", equality, true),
         sh = game.global.soldierHealth + game.global.soldierEnergyShield * (Fluffy.isRewardActive("shieldlayer") ? 1 + Fluffy.isRewardActive("shieldlayer") : 1),
         frenzy = getPageSetting('Rcalcfrenzy') && game.portal.Frenzy.radLevel > 0 ? game.portal.Frenzy.frenzyStarted == '-1' : false;
@@ -2705,28 +2705,97 @@ function fragmin(number) {
 
 function fragmapcost() {
 	var cost = 0;
-	if (Rshouldshipfarm) {
-		var shipfarmzone = getPageSetting('Rshipfarmzone');
-		var shipfarmlevel = getPageSetting('Rshipfarmlevel');
-		var shipfarmlevelindex = shipfarmzone.indexOf(game.global.world);
-		var shiplevelzones = shipfarmlevel[shipfarmlevelindex];
-		
-		if (getPageSetting('Rshipfarmfrag')) {
-			cost = fragmin(shiplevelzones);
-		}
-	}
-	
-	if (Rshouldinsanityfarm) {
+
+	if (rShouldInsanityFarm) {
 		var insanityfarmzone = getPageSetting('Rinsanityfarmzone');
 		var insanityfarmlevel = getPageSetting('Rinsanityfarmlevel');
 		var insanityfarmlevelindex = insanityfarmzone.indexOf(game.global.world);
 		var insanitylevelzones = insanityfarmlevel[insanityfarmlevelindex];
 		
-		if (getPageSetting('Rinsanityfarmfrag')) cost = fragmin(insanitylevelzones);
-	}
+		if (getPageSetting('Rinsanityfarmfrag')) cost = PerfectMapCost(insanitylevelzones,'fa');
+	}	
+	else if (rShouldWorshipperFarm) {
+		var shipfarmzone = getPageSetting('Rshipfarmzone');
+		var shipfarmlevel = getPageSetting('Rshipfarmlevel');
+		var shipfarmlevelindex = shipfarmzone.indexOf(game.global.world);
+		var shiplevelzones = shipfarmlevel[shipfarmlevelindex];
+		
+		if (getPageSetting('Rshipfarmfrag'))
+			cost = fragmin(shiplevelzones);
+	}	
+	else
+		cost = 0;
 	
-	if (game.resources.fragments.owned >= cost) return true;
-	else return false;
+	if (game.resources.fragments.owned >= cost) 
+		return true;
+	else 
+		return false;
+}
+
+function rFragmentFarm(type, level, special, perfect) {
+
+    var perfect = !perfect ? null : perfect;
+
+	//Worshipper farming
+	var rFragCheck = true;
+	if (getPageSetting('R'+type+'farmfrag')) {
+		if (fragmapcost() == true) {
+			rFragCheck = true;
+			rFragmentFarming = false;
+		} else if (fragmapcost() == false) {
+			rFragmentFarming = true;
+			rFragCheck = false;
+			if (!rFragCheck && rInitialFragmentMapID == undefined && !rFragMapBought && game.global.preMapsActive) {
+				debug("Check complete for fragment farming map");
+				fragmap();
+				if ((updateMapCost(true) <= game.resources.fragments.owned)) {
+					buyMap();
+					rFragMapBought = true;
+					if (rFragMapBought) {
+						rInitialFragmentMapID = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
+						debug("Fragment farming map purchased");
+					}
+				}
+			}
+			if (!rFragCheck && game.global.preMapsActive && !game.global.mapsActive && rFragMapBought && rInitialFragmentMapID != undefined) {
+				debug("Running fragment farming map");
+				selectedMap = rInitialFragmentMapID;
+				selectMap(rInitialFragmentMapID);
+				runMap();
+				RlastMapWeWereIn = getCurrentMapObject();
+				rFragmentMapID = rInitialFragmentMapID;
+				rInitialFragmentMapID = undefined;
+			}
+			if (!rFragCheck && game.resources.fragments.owned >= PerfectMapCost(level, special) && game.global.mapsActive && rFragMapBought && rFragmentMapID != undefined) {
+				if (fragmapcost() == false) {
+					if (!game.global.repeatMap) {
+						repeatClicked();
+					}
+				} else if (fragmapcost() == true) {
+					if (game.global.repeatMap) {
+						repeatClicked();
+						//mapsClicked();
+					}
+					if (game.global.preMapsActive && rFragMapBought && rFragmentMapID != undefined) {
+						rFragMapBought = false;
+					}
+					rFragCheck = true;
+					rFragmentFarming = false;
+				}
+			}
+		} else {
+			rFragCheck = true;
+			rFragmentFarming = false;
+		}
+	}
+
+	if (rFragCheck) {
+		if (type == 'insanity')
+			PerfectMapCost(level,special);
+		if (type == 'ship') 
+			RShouldFarmMapCost(level,special);
+	}
+	updateMapCost();
 }
 
 function PerfectMapLevel(special) {
@@ -2747,7 +2816,7 @@ function PerfectMapLevel(special) {
 
 	multpanda = game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
 
-	gammaburstmult = getPageSetting('RPandemoniumHits') < 5 && (RcalcOurHealth() / (RcalcBadGuyDmg(null, RgetEnemyMaxAttack(game.global.world, 20, 'Snimp', 1)) * 1.125)) >= 5 ? (1 + (getHeirloomBonus("Shield", "gammaBurst")) / 500) : 1;
+	gammaburstmult = getPageSetting('RPandemoniumHits') < 5 && (RcalcOurHealth() / (RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 20, 'Snimp')) * 1.125)) >= 5 ? (1 + (getHeirloomBonus("Shield", "gammaBurst")) / 500) : 1;
 	hitsmap = getPageSetting('RPandemoniumHits') > 0 ? getPageSetting('RPandemoniumHits') : 10;
 	hitssurv = getPageSetting('RPandemoniumHits') < 5 ? getPageSetting('RPandemoniumHits') : 5;
 	go = false;
@@ -2756,7 +2825,7 @@ function PerfectMapLevel(special) {
 			pluslevels = i;	
 			var bm2 = pluslevels > 0 ? 1.5 : 1;
 			if ((game.resources.fragments.owned >= PerfectMapCost(pluslevels,special)) && ((RcalcEnemyBaseHealth("map",game.global.world + pluslevels,20,'Turtlimp') * mult * 0.75) <= ((RcalcOurDmg("avg", false, true) / gammaburstmult) * bm2 * hitsmap))
-			&& ((((((RcalcBadGuyDmg(null, RgetEnemyMaxAttack((game.global.world + pluslevels), 20, 'Snimp', 1)) * 1.125) / multpanda) * mult) * (hitssurv)) <= (RcalcOurHealth() * 2)))) {
+			&& ((((((RcalcBadGuyDmg(null, RgetEnemyAvgAttack((game.global.world + pluslevels), 20, 'Snimp')) * 1.125) / multpanda) * mult) * (hitssurv)) <= (RcalcOurHealth() * 2)))) {
 				go = true;
 				return i;
 			}
@@ -2940,54 +3009,52 @@ function simpleSecondsLocal(what, seconds, event) {
                     jobName == "Miner" && getPageSetting("RhsMCStaff") != undefined ? "RhsMCStaff" : 
                     getPageSetting("RhsWorldStaff") != undefined ? "RhsWorldStaff" : 
                     null;
+					
     var job = game.jobs[jobName];
     var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
     var workers =   game.global.challengeActive == "Pandemonium" && jobName == "Miner" ? (trimpworkers / 1000) * 997.90440075 :
-                    Rshouldshipfarm ? trimpworkers :
-                    trimpworkers;
+                    rShouldWorshipperFarm ? trimpworkers :
+                    job.owned;
     var amt_local = workers * job.modifier * seconds;
     amt_local += (amt_local * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
-    if (getPerkLevel("Motivation_II") > 0) amt_local *= (1 + (getPerkLevel("Motivation_II") * game.portal.Motivation_II.modifier));
+	if (game.global.stringVersion >= '5.7.0') {
+		if (what != "gems" && game.permaBoneBonuses.multitasking.owned > 0 && (game.resources.trimps.owned >= game.resources.trimps.realMax())) amt_local *= (1 + game.permaBoneBonuses.multitasking.mult());
+	}
     if (what != "science" && what != "fragments"){
         if (game.global.challengeActive == "Alchemy") amt_local *= alchObj.getPotionEffect("Potion of Finding");
-        amt_local *= alchObj.getPotionEffect("Elixir of Finding");
     }
-    if (game.global.pandCompletions && game.global.universe == 2 && what != "fragments") amt_local *= game.challenges.Pandemonium.getTrimpMult();
-    if (getPerkLevel("Observation") > 0 && game.portal.Observation.trinkets > 0) amt_local *= game.portal.Observation.getMult();
-    if (getPerkLevel("Meditation") > 0) amt_local *= (1 + (game.portal.Meditation.getBonusPercent() * 0.01));
+    if (game.global.pandCompletions && game.global.universe == 2 && what != "fragments") 
+		amt_local *= game.challenges.Pandemonium.getTrimpMult();
+    if (getPerkLevel("Observation") > 0 && game.portal.Observation.trinkets > 0) 
+		amt_local *= game.portal.Observation.getMult();
+	
     if (what == "food" || what == "wood" || what == "metal"){
         amt_local *= getParityBonus(game.global.StaffEquipped);
-        if (autoBattle.oneTimers.Gathermate.owned) amt_local *= autoBattle.oneTimers.Gathermate.getMult();
+        if (autoBattle.oneTimers.Gathermate.owned) 
+			amt_local *= autoBattle.oneTimers.Gathermate.getMult();
     }
-    if ((what == "food" && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15)) amt_local *= game.jobs.Meteorologist.getExtraMult();
-    if (Fluffy.isRewardActive('gatherer')) amt_local *= 2;
+    if ((what == "food" && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15)) 
+		amt_local *= game.jobs.Meteorologist.getExtraMult();
+    if (Fluffy.isRewardActive('gatherer')) 
+		amt_local *= 2;
     
-    if (game.global.challengeActive == "Unbalance"){
+    if (game.global.challengeActive == "Unbalance")
         amt_local *= game.challenges.Unbalance.getGatherMult();
-    }
-    if (game.global.challengeActive == "Daily"){
-        if (typeof game.global.dailyChallenge.famine !== 'undefined' && what != "fragments" && what != "science"){
+
+    if (game.global.challengeActive == "Daily") {
+        if (typeof game.global.dailyChallenge.famine !== 'undefined' && what != "fragments" && what != "science")
             amt_local *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
-        }
-        if (typeof game.global.dailyChallenge.dedication !== 'undefined'){
+        if (typeof game.global.dailyChallenge.dedication !== 'undefined')
             amt_local *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
-        }
     }
-    if (game.global.challengeActive == "Melt"){
-        var challenge = game.challenges[game.global.challengeActive];
+    if (game.global.challengeActive == "Melt") {
         amt_local *= 10;
-        amt_local *= Math.pow(challenge.decayValue, challenge.stacks);
+        amt_local *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
     }
     if (game.challenges.Nurture.boostsActive()) amt_local *= game.challenges.Nurture.getResourceBoost();
-    if (getEmpowerment() == "Wind"){
-        amt_local *= (1 + (game.empowerments.Wind.getCombatModifier()));
-    }
-    if (event == null || game.global.StaffEquipped == autoTrimpSettings[heirloom].name) {
-        if (event == null)
+	
+    if (event == null || game.global.StaffEquipped == autoTrimpSettings[heirloom].name)
             amt_local = calcHeirloomBonus("Staff", jobName + "Speed", amt_local);
-        else
-            amt_local = calcHeirloomBonus("Staff", jobName + "Speed", amt_local);
-    }
     //Calculating proper value for the staff we should be using instead of equipped
     else if (event != null && game.global.StaffEquipped != getPageSetting(event)) {
         if (event == getPageSetting('RhsC3')) {
@@ -3002,18 +3069,16 @@ function simpleSecondsLocal(what, seconds, event) {
 
     if (game.global.playerGathering == what){
         if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == "food" || what == "metal" || what == "wood")){
-            var tBonus = 1.5;
-            if (game.talents.turkimp2.purchased) tBonus = 2;
-            else if (game.talents.turkimp2.purchased) tBonus = 1.75;
+            var tBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
             amt_local *= tBonus;
         }
         amt_local += getPlayerModifier() * seconds;
     }
     if (game.global.playerGathering != what) {
-/*         if (game.jobs.Worshipper.owned <= 40 && game.playerGathering != 'food' && shipfarmzone.includes(game.global.world) && !Rshouldshipfarm)
-            amt_local *= 2 */
-        if (game.global.challengeActive == "Pandemonium" && game.global.world >= getPageSetting('RPandemoniumAEZone') && what == 'metal')
-            amt_local *= 2
+		amt_local *=2;
+        //if (game.global.challengeActive == "Pandemonium" && game.global.world >= getPageSetting('RPandemoniumAEZone') && what == 'metal')
+        //    amt_local *= 2
+        amt_local += getPlayerModifier() * seconds;
     }
     return amt_local;
 }
@@ -3033,8 +3098,7 @@ function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
 			amt_local *= Math.pow(0.8, (compare - map));
 		}
     }
-
-	var maploot = game.global.farmlandsUnlocked ? 3.6 : game.global.decayDone ? 2.85 : 2.6;
+	var maploot = game.global.mapsActive ? getCurrentMapObject().loot : game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
 	//Add map loot bonus
 	amt_local = Math.round(amt_local * maploot);
 	if (ignoreBonuses) return amt_local;
@@ -3086,53 +3150,6 @@ function PerkRespec(preset) {
         debug("Respecced to preset " + preset);
     } else 
         debug("No respec available");
-}
-
-function PurchasePerkRespec() {
-    //Obtains a respec if one isn't available by buying a bone portal. Be warned will use 100 bones to do so
-    if (!game.global.canRespecPerks && game.global.b >= 100) {
-        showBones();
-        tooltip('Confirm Purchase', null, 'update', 'You are about to purchase one Instant Portal for 100 bones. Your new helium will appear in the View Perks menu at the bottom of the screen. Is this what you wanted to do?', 'purchaseMisc(\'helium\')', 100);
-        hideBones();
-        debug("Bone portal respec purchased");
-    }
-}
-
-function PandemoniumPerkRespec() {
-    //Setting up pandGoal variable.
-    pandGoal =  typeof(pandGoal) == 'undefined' && getPageSetting('rPandRespecZone') == -1 ? "NEG" : 
-                typeof(pandGoal) == 'undefined' && game.global.world < getPageSetting('rPandRespecZone') ? 0 : 
-                typeof(pandGoal) == 'undefined' && game.challenges.Pandemonium.pandemonium > 0 ? "destacking" : 
-                typeof(pandGoal) == 'undefined' && game.challenges.Pandemonium.pandemonium == 0 && game.upgrades.Speedminer.done == game.global.world ? "jestFarm" : 
-                typeof(pandGoal) == 'undefined' ? 0 :
-                pandGoal;
-
-    if (getPageSetting('rPandRespecZone') != -1 && getPageSetting('rPandRespecZone') <= game.global.world && getPageSetting('RPandemoniumAutoEquip') > 1 && 
-    getPageSetting('RhsPandStaff') != "undefined" && (game.global.StaffEquipped.name == getPageSetting('RhsPandStaff') || HeirloomSearch('RhsPandStaff') != undefined) && 
-    (getPageSetting('RPandemoniumAEZone') > 5 && game.global.world >= getPageSetting('RPandemoniumAEZone')) && 
-    (getPageSetting('RPandemoniumZone') > 5 && game.global.world >= getPageSetting('RPandemoniumZone'))) {
-        //Purchases a respec if one isn't currently available.
-        if (!game.global.canRespecPerks && game.global.world < 150) {
-            PurchasePerkRespec();
-        }
-        
-        //Respecs to preset 2 if you're currently destacking.
-        if (Rshouldpandemonium) {
-            if (pandGoal != "destacking") {
-                PerkRespec(2)
-                pandGoal = "destacking";
-            }
-        }
-        
-        //Respecs to preset 3 if you should equip farm.
-        if (game.challenges.Pandemonium.pandemonium == 0 && game.upgrades.Speedminer.done == game.global.world) {
-            if (pandGoal != "jestFarm") {
-                PerkRespec(3)
-                pandGoal = "jestFarm";
-				savefile = null;
-            }
-        }
-    }
 }
 
 function AbandonChallengeRuns(zone) {

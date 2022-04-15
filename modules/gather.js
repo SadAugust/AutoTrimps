@@ -183,7 +183,7 @@ function RmanualLabor2() {
         }
     	return;
     }
-	if (game.global.challengeActive == "Pandemonium" && !Rshouldpandemonium && getPageSetting('RPandemoniumAutoEquip') > 0 && getPageSetting('RhsPandStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 1 && game.global.lastClearedCell > 59) {
+	if (game.global.challengeActive == "Pandemonium" && !rShouldPandemoniumDestack && getPageSetting('RPandemoniumAutoEquip') > 0 && getPageSetting('RhsPandStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 1 && game.global.lastClearedCell > 59) {
 		if (game.global.world >= getPageSetting('RPandemoniumAEZone')) 
             setGather('metal');
 	}
@@ -197,11 +197,10 @@ function RmanualLabor2() {
 		setGather('science');
 /*     else if (game.global.challengeActive == 'Hypothermia' && !game.global.autoStorage && game.global.buildingsQueue != false && buildingQueue.split('.')[1] > 10)
         setGather('buildings'); */
-    else if (Rshouldshipfarm)
+    else if ((game.global.mapsActive && mapping != null) || rShouldWorshipperFarm) {
+        if (rShouldWorshipperFarm) 
             setGather('food');
-    else if ((game.global.mapsActive && mapping != null)) {
-            setGather('food');
-        if (getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('hc'))
+        else if (getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('hc'))
             setGather('food');
         else if (getCurrentMapObject().bonus.includes('wc'))
             setGather('wood');
