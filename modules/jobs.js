@@ -518,7 +518,9 @@ function RbuyJobs() {
 	//Ships
 	shipspending = ((getPageSetting('Rshipspending') > 0) ? getPageSetting('Rshipspending') : 100);
 	var affordableShips = Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) / 100 * shipspending);
-	if (affordableShips > 0 && !game.jobs.Worshipper.locked) {
+    if (affordableShips > 50-game.jobs.Worshipper.owned)
+        affordableShips = 50-game.jobs.Worshipper.owned;
+	if (affordableShips > 0 && !game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50) {
 		var buyAmountStoreShip = game.global.buyAmt;
 		game.global.buyAmt = affordableShips;
 		buyJob('Worshipper',true, true);
