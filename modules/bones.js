@@ -21,9 +21,15 @@ function BoneShrine() {
 		//Recycles the map we're running if you have 0 stacks of balance and the map is level 6 as that's the only time we should be running a map at this level.
 		if (rShouldBoneShrine) {
 			setGather(getPageSetting('rBoneShrineGather'));
+			if (getPageSetting('Rhs' + getPageSetting('rBoneShrineGather')[0].toUpperCase() + getPageSetting('rBoneShrineGather').slice(1) + 'Staff') !== 'undefined')
+				HeirloomEquipStaff('Rhs' + getPageSetting('rBoneShrineGather')[0].toUpperCase() + getPageSetting('rBoneShrineGather').slice(1) + 'Staff');
+			else if (getPageSetting('RhsGeneralStaff') !== 'undefined')
+				HeirloomEquipStaff('RhsGeneralStaff');
+
 	        for (var x = 0; x < rBoneShrineCharges[rBSIndex]; x++) {
 				game.permaBoneBonuses.boosts.consume()
 			}
+			debug(game.global.StaffEquipped.name);
 			debug('Consumed ' + rBoneShrineCharges[rBSIndex] + " bone shrine " + (rBoneShrineCharges[rBSIndex] == 1 ? "charge on zone " : "charges on zone ") + game.global.world);
 			rBoneShrineUsedZone = game.global.world;
 		}

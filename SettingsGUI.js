@@ -102,6 +102,7 @@ function initializeAllTabs() {
 	createTabs("Nature", "Nature Settings");
 	createTabs("Display", "Display & Spam Settings");
 	createTabs("Import Export", "Import & Export Settings");
+	createTabs("Legacy", "Legacy Settings. Will be removed every major patch cycle.");
 	var li_0 = document.createElement('li');
 	var a_0 = document.createElement('a');
 	a_0.className = "tablinks minimize";
@@ -214,7 +215,7 @@ function initializeAllSettings() {
 	createSetting('RdMaxMapBonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10. ', 'value', '10', null, 'Daily');
 	createSetting('Rdmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Daily');
 	createSetting('Rdequipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency. ', 'boolean', false, null, "Daily");
-	createSetting('Rdequipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. ', 'value', -1, null, "Daily");
+	createSetting('Rdequipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input. ', 'multiValue', -1, null, "Daily");
 	createSetting('Ravoidempower', 'Avoid Empower', 'Tries to avoid Empower stacks during Empower Dailies. Will farm -1 lmc maps if avoiding empower isn\'t possible. No harm in this being on, so default is On. ', 'boolean', true, null, 'Daily');
 	
 	//Helium Spire
@@ -410,7 +411,7 @@ function initializeAllSettings() {
 		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Jobs');
 		createSetting('rBoneShrineCell', 'BS: Cell', 'Use bone shrine charges at this Cell. -1 to run them at the default value, which is 81. ', 'value', '-1', null, 'Jobs');
 		createSetting('rBoneShrineAmount', 'BS: Amount', 'How many bone shrine charges to use at zone specified in BS: Zone. Can use 1,3,5. These values should match up to your BS zones.', 'multiValue', [0], null, 'Jobs');
-		createSetting('rBoneShrineGather', 'BS: Gather', 'Select which resource you would like to gather when using Bone Shrine charges.', 'dropdown', 'metal', ["food", "wood", "metal", "science"], 'Jobs');
+		createSetting('rBoneShrineGather', 'BS: Gather', 'Select which resource you would like to gather when using Bone Shrine charges.', 'dropdown', 'metal', ["food", "wood", "metal"], 'Jobs');
 		createSetting('rBoneShrineRunType', ['Never use', 'Use in Fillers', 'Use in Dailies', 'Use in C3\'s', 'Use for all runs'], 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'multitoggle', 1, null, "Jobs");
 	}
 	//Gear
@@ -805,12 +806,12 @@ function initializeAllSettings() {
 	createSetting('RhsStaff', 'Staffs', 'Toggle to swap Staffs', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsWorldStaff', 'World', '<b>World Staff</b><br><br>Enter the name of your world staff.', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsMapStaff', 'Map', '<b>General Map Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside maps, will be overwritten by the proceeding 3 heirloom settings if they\'re being used otherwise will work in every maptype.', 'textValue', 'undefined', null, 'Heirlooms');
-	createSetting('RhsSCStaff', 'Savory Cache', '<b>Savory Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Savory Cache maps. Will use this staff for Tribute farming if it\'s enabled.', 'textValue', 'undefined', null, 'Heirlooms');
-	createSetting('RhsWCStaff', 'Wooden Cache', '<b>Wooden Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Wooden Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
-	createSetting('RhsMCStaff', 'Metal Cache', '<b>Metal Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Metal Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('RhsFoodStaff', 'Savory Cache', '<b>Savory Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Savory Cache maps. Will use this staff for Tribute farming if it\'s enabled.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('RhsWoodStaff', 'Wooden Cache', '<b>Wooden Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Wooden Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('RhsMetalStaff', 'Metal Cache', '<b>Metal Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Metal Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
     
 	//Heirloom Line
-	document.getElementById('RhsMCStaff').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('RhsMetalStaff').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('autoheirlooms', 'Auto Heirlooms', 'Auto Heirlooms master button. Turn this on to enable all Auto Heirloom settings. <br><br><b>The Modifier points will be explained here.</b> The more points an heirloom has, the better chance it has of being kept. If empty is selected, it will muliplty the score by 4. If any is selected, it will multiply the score of the heirloom by 2. <br><br>E.g Mod 1 = CC (+6 if dropped, 1st modifier) <br>Mod 2 = CD (+5 if dropped, 2nd modifier) <br>Mod 3 = PB (+4 if dropped, 3rd modifier) <br>Mod 4 = Empty (x4 if dropped, +0 if not) <br>Mod 5 = Empty (x4 if dropped, +0 if not) <br><br>If an heirloom dropped with these exact modifiers, it would get a score of 192 (6+5+4*4*4=240). The highest point heirlooms will be kept. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('typetokeep', ['None', 'Shields', 'Staffs', 'Cores', 'All'], '<b>Shields: </b>Keeps Shields and nothing else.<br><b>Staffs: </b>Keeps Staffs and nothing else.<br><b>Cores: </b>Keeps Cores and nothing else.<br><b>All: </b>Keeps 4 Shields and 3 Staffs and 3 Cores. If you have protected heirlooms in your inventory it will overrite one slot. E.g if one heirloom is protected, you will keep 4 Shields and 3 Staffs and 2 Cores. ', 'multitoggle', 0, null, 'Heirlooms');
 	createSetting('raretokeep', 'Rarity to Keep', 'Auto Heirlooms. Keeps the selected rarity of heirloom, recycles all others. ', 'dropdown', 'Any', ["Any", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Magnificent", "Ethereal", "Magmatic", "Plagued", "Radiating", "Hazardous", "Enigmatic"], 'Heirlooms');
@@ -930,8 +931,27 @@ function initializeAllSettings() {
 	createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export');
 	settingsProfileMakeGUI();
 
-	if (typeof autoTrimpSettings['rHypoStorage'].value === 'boolean') {
+	//Old legacy Settings -- Remove on next patch
+	createSetting('RhsSCStaff', 'Old_SCStaff', 'Old savory cache heirloom option', 'textValue', 'undefined', null, 'Legacy'); 
+	createSetting('RhsWCStaff', 'Old_WCStaff', 'Old wooden cache heirloom option', 'textValue', 'undefined', null, 'Legacy'); 
+	createSetting('RhsMCStaff', 'Old_MCStaff', 'Old metal cache heirloom option', 'textValue', 'undefined', null, 'Legacy'); 
+
+
+
+	if (typeof autoTrimpSettings['rHypoStorage'].value === 'boolean')
 		autoTrimpSettings['rHypoStorage'].value = autoTrimpSettings['rHypoStorage'].value == true ? 1 : 0;
+
+	if (autoTrimpSettings['RhsSCStaff'].value !== 'undefined') {
+		autoTrimpSettings['RhsFoodStaff'].value = autoTrimpSettings['RhsSCStaff'].value;
+		autoTrimpSettings['RhsSCStaff'].value = 'undefined';
+	}
+	if (autoTrimpSettings['RhsWCStaff'].value !== 'undefined') {
+		autoTrimpSettings['RhsWoodStaff'].value = autoTrimpSettings['RhsWCStaff'].value;
+		autoTrimpSettings['RhsWCStaff'].value = 'undefined';
+	}
+	if (autoTrimpSettings['RhsMCStaff'].value !== 'undefined') {
+		autoTrimpSettings['RhsMetalStaff'].value = autoTrimpSettings['RhsMCStaff'].value;
+		autoTrimpSettings['RhsMCStaff'].value = 'undefined';
 	}
 }
 
@@ -1347,6 +1367,7 @@ function updateCustomButtons() {
 
 	//Radon
 	var radonon = getPageSetting('radonsettings') == 1;
+	var legacysettings = getPageSetting('radonsettings') == 2;
 	
 	//Tabs
 	if (document.getElementById("tabMaps") != null) {
@@ -1381,6 +1402,9 @@ function updateCustomButtons() {
 	}
 	if (document.getElementById("tabChallenges") != null) {
 		document.getElementById("tabChallenges").style.display = !radonon ? "none" : "";
+	}
+	if (document.getElementById("tabLegacy") != null) {
+		document.getElementById("tabLegacy").style.display = !legacysettings ? "none" : "";
 	}
 
 	//Core
@@ -2050,7 +2074,9 @@ function updateCustomButtons() {
 	var hsstaffon = getPageSetting('RhsStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsWorldStaff') : turnOff('RhsWorldStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsMapStaff') : turnOff('RhsMapStaff');
-	radonon && hson && hsstaffon ? turnOn('RhsSCStaff') : turnOff('RhsSCStaff');
+	radonon && hson && hsstaffon ? turnOn('RhsFoodStaff') : turnOff('RhsFoodStaff');
+	radonon && hson && hsstaffon ? turnOn('RhsWoodStaff') : turnOff('RhsWoodStaff');
+	radonon && hson && hsstaffon ? turnOn('RhsMetalStaff') : turnOff('RhsMetalStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsWCStaff') : turnOff('RhsWCStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsMCStaff') : turnOff('RhsMCStaff');
 
@@ -2085,6 +2111,11 @@ function updateCustomButtons() {
 	!radonon && (keepcoreenable) ? turnOn('slot2modcr') : turnOff('slot2modcr');
 	!radonon && (keepcoreenable) ? turnOn('slot3modcr') : turnOff('slot3modcr');
 	!radonon && (keepcoreenable) ? turnOn('slot4modcr') : turnOff('slot4modcr');
+
+	//Legacy Settings
+	!legacysettings ? turnOn('RhsSCStaff') : turnOff('RhsSCStaff');
+	!legacysettings ? turnOn('RhsWCStaff') : turnOff('RhsWCStaff');
+	!legacysettings ? turnOn('RhsMCStaff') : turnOff('RhsMCStaff');
 	
 	//Dropdowns
 	document.getElementById('AutoPortal').value = autoTrimpSettings.AutoPortal.selected;
@@ -2137,9 +2168,9 @@ function updateCustomButtons() {
 	document.getElementById('slot4modcr').value = autoTrimpSettings.slot4modcr.selected;
 
 	if (game.global.universe == 1)
-	document.getElementById('autoMapBtn').setAttribute('class','noselect settingsBtn settingBtn'+autoTrimpSettings.AutoMaps.value);
+		document.getElementById('autoMapBtn').setAttribute('class','noselect settingsBtn settingBtn'+autoTrimpSettings.AutoMaps.value);
 	if (game.global.universe == 2)
-	document.getElementById('autoMapBtn').setAttribute('class','noselect settingsBtn settingBtn'+autoTrimpSettings.RAutoMaps.value);
+		document.getElementById('autoMapBtn').setAttribute('class','noselect settingsBtn settingBtn'+autoTrimpSettings.RAutoMaps.value);
 
 	if (game.global.universe == 1 && getPageSetting('DisableFarm') <= 0)
 		shouldFarm = false;

@@ -619,7 +619,7 @@ function calcCurrentStance() {
 	
 	//High
         } else if (usehigh) {
-	    if (
+		    if (
                 (getEmpowerment() != "Wind") ||
                 (game.empowerments.Wind.currentDebuffPower >= stacks) ||
                 ((hitshigh * 4) > stacksleft) ||
@@ -628,13 +628,13 @@ function calcCurrentStance() {
                 (game.global.challengeActive == "Daily" && game.global.world < getPageSetting('dWindStackingMin'))
             ) {
                 return 12;
-	    }
+	    	}
             else if ((hitshigh) > stacksleft) {
                 return 10;
-	    }
+	    	}
             else {
                 return 11;
-	    }
+	    	}
         }
     }
     }

@@ -299,12 +299,12 @@ function HeirloomSwapping() {
                 if (getPageSetting('RhsMapStaff') != "undefined" && getCurrentMapObject().bonus == undefined)
                     HeirloomEquipStaff('RhsMapStaff');
                 else if (getCurrentMapObject().bonus != undefined) {
-                    if (getPageSetting('RhsSCStaff') != "undefined" && getCurrentMapObject().bonus.includes("sc"))
-                        HeirloomEquipStaff('RhsSCStaff');
-                    else if (getPageSetting('RhsWCStaff') != "undefined" && getCurrentMapObject().bonus.includes("wc"))
-                        HeirloomEquipStaff('RhsWCStaff');
-                    else if (getPageSetting('RhsMCStaff') != "undefined" && getCurrentMapObject().bonus.includes("mc"))
-                        HeirloomEquipStaff('RhsMCStaff');
+                    if (getPageSetting('RhsFoodStaff') != "undefined" && getCurrentMapObject().bonus.includes("sc"))
+                        HeirloomEquipStaff('RhsFoodStaff');
+                    else if (getPageSetting('RhsWoodStaff') != "undefined" && getCurrentMapObject().bonus.includes("wc"))
+                        HeirloomEquipStaff('RhsWoodStaff');
+                    else if (getPageSetting('RhsMetalStaff') != "undefined" && getCurrentMapObject().bonus.includes("mc"))
+                        HeirloomEquipStaff('RhsMetalStaff');
                     else if (getPageSetting('RhsMapStaff') != "undefined") 
                         HeirloomEquipStaff('RhsMapStaff');
                 }

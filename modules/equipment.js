@@ -838,12 +838,10 @@ function mostEfficientEquipment(fakeLevels = {}) {
     {
         name: "",
         statPerResource: -Infinity,
-        cost: -Infinity,
     },
     {
         name: "",
         statPerResource: -Infinity,
-        cost: -Infinity,
     }
     ];
 
@@ -858,17 +856,18 @@ function mostEfficientEquipment(fakeLevels = {}) {
         var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
     	var zoneGo = (rEquipZone[0] > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length-1])));
         var resourceMaxPercent = getPageSetting('Requippercent') < 0 ? 100 : getPageSetting('Requippercent');
-		//Skips looping through equips if they're blocked during Pandemonium
 
 		if (getPageSetting('rEquipHighestPrestige')) {
             for (var item in game.equipment) { 
     			var equip = game.equipment[item];
     			if (equip.prestige > highestPrestige) highestPrestige = equip.prestige;
 		    }
-        if (game.equipment[i].prestige < highestPrestige) continue;
+            if (game.equipment[i].prestige < highestPrestige) continue;
         }
 
+		//Skips looping through equips if they're blocked during Pandemonium
         if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
+        //Skips buying shields when you can afford bonfires on Hypothermia
         if (game.global.challengeActive == 'Hypothermia' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i == 'Shield') continue;
         if (!zoneGo && !canAffordBuilding(i,null,null,true,false,1,resourceMaxPercent)) continue;
         
@@ -878,15 +877,14 @@ function mostEfficientEquipment(fakeLevels = {}) {
 
         var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
 
-        var safeRatio = Math.log(nextLevelValue + 1) / Math.log(nextLevelCost + 1);
+        var safeRatio = nextLevelValue / nextLevelCost;
         if (safeRatio > mostEfficient[isAttack].statPerResource) {
             mostEfficient[isAttack].name = i;
             mostEfficient[isAttack].statPerResource = safeRatio;
-            mostEfficient[isAttack].cost = nextLevelCost;
         }
     }
 
-    return [mostEfficient[0].name, mostEfficient[1].name, mostEfficient[0].statPerResource, mostEfficient[1].statPerResource, mostEfficient[0].cost, mostEfficient[1].cost];
+    return [mostEfficient[0].name, mostEfficient[1].name];
 
 }
 
@@ -980,9 +978,8 @@ function buyPrestigeMaybe(equipName) {
 
 function RautoEquip() {
 
-    if (!getPageSetting('Requipon')) return;
-    //Turns off AutoEquip during Pandemonium
-    //if (game.global.challengeActive == 'Pandemonium') return;
+    if (!getPageSetting('Requipon')) 
+        return;
 
     var prestigeLeft = false;
     do {
@@ -995,35 +992,34 @@ function RautoEquip() {
             }
         }
     } while (prestigeLeft)
-    
+
     // Gather settings
 	var alwaysLvl2 = getPageSetting('Requip2');
 	var alwaysPandemonium = getPageSetting('RPandemoniumAutoEquip') > 0;
+    var alwaysPrestige = getPageSetting('Requipprestige')
 	var attackEquipCap = ((getPageSetting('Requipcapattack') <= 0) ? Infinity : getPageSetting('Requipcapattack'));
 	var healthEquipCap = ((getPageSetting('Requipcaphealth') <= 0) ? Infinity : getPageSetting('Requipcaphealth'));
 
     var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
 	var zoneGo = (rEquipZone[0] > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length-1])));
     var resourceMaxPercent = getPageSetting('Requippercent') / 100;
+    var canBuyPrestige = false;
 
-    // Always 2
-    if (alwaysLvl2 && game.global.challengeActive != 'Pandemonium') {
+    // always2 / alwaysPrestige / alwaysPandemonium
+    if (alwaysLvl2 || alwaysPrestige || (alwaysPandemonium && game.global.challengeActive == 'Pandemonium')) {
         for (var equip in game.equipment) {
-            if (game.equipment[equip].level < 2) {
-                buyEquipment(equip, null, true, 1);
+            if (!game.equipment[equipName].locked) {
+                if (alwaysLvl2 && game.equipment[equip].level < 2)
+                    buyEquipment(equip, null, true, 1);
+                if (alwaysPrestige && buyPrestigeMaybe(equip) && equip != 'Shield')
+                    canBuyPrestige = true;
+                if (game.challenges.Pandemonium.isEquipBlocked(equip)) 
+                    continue;
+			    if (alwaysPandemonium && game.global.challengeActive == 'Pandemonium')
+                    buyEquipment(equip, null, true, 1);
             }
         }
     }
-	
-    // Always buys equipment during Pandemonium
-	if (alwaysPandemonium && game.global.challengeActive == 'Pandemonium') {
-		for (var equip in game.equipment) {
-            if (!game.equipment[equipName].locked) {
-                if (game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
-			    buyEquipment(equip, null, true, 1);
-            }
-		}
-	}
 
     // Loop through actually getting equips
     var keepBuying = false;
@@ -1048,7 +1044,7 @@ function RautoEquip() {
                             Rgetequipcost(equipName, resourceUsed, 1) <= resourceMaxPercent * game.resources[resourceUsed].owned 
                         ) {
                             if (!game.equipment[equipName].locked) {
-                                if (buyPrestigeMaybe(equipName)) 
+                                if (canBuyPrestige != false) 
                                     continue; 
                                 if (buyEquipment(equipName, null, true, 1)) 
                                     keepBuying = true;

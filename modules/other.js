@@ -2136,13 +2136,13 @@ function RAMPpcheckmap(number) {
 
 function RAMPplusPres(number) {
 	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : "Plentiful";
+	document.getElementById("mapLevelInput").value = game.global.world;
 	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number);
 	document.getElementById("advSpecialSelect").value = "p";
 	document.getElementById("lootAdvMapsRange").value = 0;
 	document.getElementById("difficultyAdvMapsRange").value = 9;
 	document.getElementById("sizeAdvMapsRange").value = 9;
 	document.getElementById("advPerfectCheckbox").dataset.checked = false;
-	document.getElementById("mapLevelInput").value = game.global.world;
 	updateMapCost();
 
 	if (updateMapCost(true) > game.resources.fragments.owned) {
@@ -2233,26 +2233,26 @@ function RAMPplusPres(number) {
 
 function RAMPplusPresfragmax(number) {
 	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
+	document.getElementById("mapLevelInput").value = game.global.world;
 	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number); 
 	document.getElementById("advSpecialSelect").value = "p";
 	document.getElementById("lootAdvMapsRange").value = 9;
 	document.getElementById("difficultyAdvMapsRange").value = 9;
 	document.getElementById("sizeAdvMapsRange").value = 9;
 	document.getElementById("advPerfectCheckbox").dataset.checked = true;
-	document.getElementById("mapLevelInput").value = game.global.world;
 	updateMapCost();
 	return updateMapCost(true);
 }
 
 function RAMPplusPresfragmin(number) {
 	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
+	document.getElementById("mapLevelInput").value = game.global.world;
 	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number);
 	document.getElementById("advSpecialSelect").value = "p";
 	document.getElementById("lootAdvMapsRange").value = 0;
 	document.getElementById("difficultyAdvMapsRange").value = 9;
 	document.getElementById("sizeAdvMapsRange").value = 9;
 	document.getElementById("advPerfectCheckbox").dataset.checked = false;
-	document.getElementById("mapLevelInput").value = game.global.world;
 	updateMapCost();
 	if (updateMapCost(true) <= game.resources.fragments.owned) {
 		return updateMapCost(true);
@@ -3004,9 +3004,9 @@ function simpleSecondsLocal(what, seconds, event) {
     }
     var heirloom =  !jobName ? null : 
                     jobName == "Miner" && game.challengeActive == "Pandemonium" && getPageSetting("RhsPandStaff") ? "RhsPandStaff" : 
-                    jobName == "Farmer" && getPageSetting("RhsSCStaff") != undefined ? "RhsSCStaff" : 
-                    jobName == "Lumberjack" && getPageSetting("RhsWCStaff") != undefined ? "RhsWCStaff" : 
-                    jobName == "Miner" && getPageSetting("RhsMCStaff") != undefined ? "RhsMCStaff" : 
+                    jobName == "Farmer" && getPageSetting("RhsFoodStaff") != undefined ? "RhsFoodStaff" : 
+                    jobName == "Lumberjack" && getPageSetting("RhsWoodStaff") != undefined ? "RhsWoodStaff" : 
+                    jobName == "Miner" && getPageSetting("RhsMetalStaff") != undefined ? "RhsMetalStaff" : 
                     getPageSetting("RhsWorldStaff") != undefined ? "RhsWorldStaff" : 
                     null;
 					
@@ -3061,9 +3061,9 @@ function simpleSecondsLocal(what, seconds, event) {
             if (getPageSetting('RhsC3') != "undefined")
                 amt_local = 1 + (HeirloomModSearch('RhsC3', jobName + "Speed") / 100);
         }
-        if (event == getPageSetting('RhsSCStaff')) {
-            if (getPageSetting('RhsSCStaff') != "undefined")
-                amt_local = 1 + (HeirloomModSearch('RhsSCStaff', jobName + "Speed") / 100);
+        if (event == getPageSetting('RhsFoodStaff')) {
+            if (getPageSetting('RhsFoodStaff') != "undefined")
+                amt_local = 1 + (HeirloomModSearch('RhsFoodStaff', jobName + "Speed") / 100);
         }
     }
 
