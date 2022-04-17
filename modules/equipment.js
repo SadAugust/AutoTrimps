@@ -981,6 +981,8 @@ function RautoEquip() {
     if (!getPageSetting('Requipon')) 
         return;
 
+    if (game.global.stringVersion < '5.7.0')
+        displayMostEfficientEquipment_Local();
     var prestigeLeft = false;
     do {
         prestigeLeft = false;

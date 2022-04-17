@@ -3175,3 +3175,62 @@ function AbandonChallengeRuns(zone) {
 		toggleSetting('pauseGame');
 	}
 }
+
+function getEquipResPerStat_Local(what, buyAmt){
+    var artBoost = Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.radLevel);
+	artBoost *= autoBattle.oneTimers.Artisan.owned ? autoBattle.oneTimers.Artisan.getMult() : 1;
+	if (game.global.challengeActive == "Pandemonium") artBoost *= game.challenges.Pandemonium.getEnemyMult();
+
+	var equip = game.equipment[what];
+	var pricePerStat = 0;
+
+	if (what == "Shield"){
+		var shieldCost = getBuildingItemPrice(equip, "wood", true, buyAmt) * artBoost;
+		if (equip.blockNow){
+			pricePerStat = (shieldCost / (equip.blockCalculated * buyAmt));
+		}
+		else pricePerStat = (shieldCost / (equip.healthCalculated * buyAmt));
+	}
+	else if (equip.attack) pricePerStat = (getBuildingItemPrice(equip, "metal", true, buyAmt) * artBoost) / (equip.attackCalculated * buyAmt);
+	else if (equip.health) pricePerStat = (getBuildingItemPrice(equip, "metal", true, buyAmt) * artBoost) / (equip.healthCalculated * buyAmt);
+	return pricePerStat;
+}
+
+function displayMostEfficientEquipment_Local() {
+	var attack;
+	var attackCost;
+	var attackTier;
+	var health;
+	var healthCost;
+	var healthTier;
+	for (var item in game.equipment){
+		if (item == "Shield") continue;
+		var equip = game.equipment[item];
+		if (equip.locked) continue;
+		var costPer = getEquipResPerStat_Local(item, 1);
+		if (equip.attack && (!attackCost || costPer < attackCost )){
+			if (equip.prestige >= attackTier || !attackTier){
+				attack = item;
+				attackCost = costPer;
+				attackTier = equip.prestige;
+			}
+		}
+		else if (equip.health && (!healthCost || costPer < healthCost)){
+			if (equip.prestige >= healthTier || !healthTier){
+				health = item;
+				healthCost = costPer;
+				healthTier = equip.prestige;
+			}
+		}
+	}
+
+	for (var item in game.equipment){
+		if (game.equipment[item].locked) continue;
+		if (item == "Shield") continue;
+		var $eqName = document.getElementById(item);
+		if (!$eqName) continue; 
+		if ((item == attack || item == health) && canAffordBuilding(item,null,null,true,false,1)) $eqName.style.backgroundColor = 'rgb(' + [15,19,92].join(',') + ')';
+		else if ((item == attack || item == health) && !canAffordBuilding(item,null,null,true,false,1)) $eqName.style.backgroundColor = 'rgb(' + [101, 105, 146].join(',') + ')';
+		else $eqName.style.backgroundColor = 'black';
+	}
+}
