@@ -661,7 +661,7 @@ function RgetCritMulti() {
 		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * CritD
 }
 
-function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus) {
+function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst) {
 
 	// Base + equipment
 	var number = 6;
@@ -703,6 +703,10 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus) {
 	number *= getPageSetting('Rcalcfrenzy') ? 1 + (0.5 * game.portal.Frenzy.radLevel) : 1;
 	//Championism
 	number *= game.portal.Championism.getMult();
+	//Scruffy Dailies
+	if (game.global.stringVersion >= '5.7.0') {
+		number *= Fluffy.isRewardActive('SADailies') && game.global.challengeActive == "Daily" ? Fluffy.rewardConfig.SADailies.attackMod() : 1;
+	}
 	// Golden Upgrade
 	number *= 1 + game.goldenUpgrades.Battle.currentBonus;
 	// Herbalist Mastery
@@ -736,15 +740,15 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus) {
 		// Legs for Days mastery
 		number *= game.talents.daily.purchased ? 1.5 : 1;
 		// Min damage reduced (additive)
-		minDailyMod -= typeof game.global.dailyChallenge.minDamage !== 'undefined' ? dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength) : 1;
+		minDailyMod -= typeof game.global.dailyChallenge.minDamage !== 'undefined' ? dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength) : 0;
 		// Max damage increased (additive)
-		maxDailyMod += typeof game.global.dailyChallenge.maxDamage !== 'undefined' ? dailyModifiers.maxDamage.getMult(game.global.dailyChallenge.maxDamage.strength) : 1;
+		maxDailyMod += typeof game.global.dailyChallenge.maxDamage !== 'undefined' ? dailyModifiers.maxDamage.getMult(game.global.dailyChallenge.maxDamage.strength) : 0;
 		// Minus attack on odd zones
-		number += typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined' && ((game.global.world % 2) == 1) ? dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength) : 1;
+		number += typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined' && ((game.global.world % 2) == 1) ? dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength) : 0;
 		// Bonus attack on even zones
-		number -= typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined' && ((game.global.world % 2) == 0) ? dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength) : 1;
+		number -= typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined' && ((game.global.world % 2) == 0) ? dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength) : 0;
 		// Rampage Daily mod
-		number -= typeof game.global.dailyChallenge.rampage !== 'undefined' ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 1;
+		number -= typeof game.global.dailyChallenge.rampage !== 'undefined' ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 0;
 	}
 	
 	// Equality
@@ -752,7 +756,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus) {
 	number *= getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
 
 	// Gamma Burst
-	number *= getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= 5 ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / 500) : 1;
+	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= 5 ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / 500) : 1;
 	// Average out crit damage
 	number *= RgetCritMulti();
 
@@ -764,7 +768,6 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus) {
 		case 'avg':
 			return number;
 	}
-
 	return number;
 }
 
