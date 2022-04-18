@@ -859,6 +859,7 @@ function mostEfficientEquipment(fakeLevels = {}) {
 
 		if (getPageSetting('rEquipHighestPrestige')) {
             for (var item in game.equipment) { 
+                if (item == "Shield") continue;
     			var equip = game.equipment[item];
     			if (equip.prestige > highestPrestige) highestPrestige = equip.prestige;
 		    }
