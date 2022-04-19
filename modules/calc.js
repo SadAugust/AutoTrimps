@@ -761,11 +761,11 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 		number *= game.portal.Equality.getMult(1);
 	else 
 		number *= game.portal.Equality.getMult(1);
-/* 
+
 	// Gamma Burst
 	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= 5 ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / 500) : 1;
 	// Average out crit damage
-	number *= RgetCritMulti(); */
+	number *= RgetCritMulti();
 
 	switch (minMaxAvg) {
 		case 'min':
