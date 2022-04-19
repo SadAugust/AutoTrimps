@@ -661,8 +661,9 @@ function RgetCritMulti() {
 		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * CritD
 }
 
-function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst) {
+function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useTitimp) {
 
+	useTitimp = useTitimp ? true : false;
 	// Base + equipment
 	var number = 6;
 	var equipmentList = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword", "Arbalest"];
@@ -689,6 +690,8 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst) {
 	number *= game.portal.Hunger.getMult();
 	// Observation
 	number *= game.portal.Observation.getMult();
+	//Titimp
+	number *= useTitimp && game.global.titimpLeft > 0 ? 2 : 1;
 	// Robotrimp
 	number *= 1 + (0.2 * game.global.roboTrimpLevel);
 	// Mayhem Completions
@@ -752,13 +755,17 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst) {
 	}
 	
 	// Equality
-	number *= getPageSetting('Rcalcmaxequality') == 1 && !equality ? Math.pow(game.portal.Equality.modifier, game.portal.Equality.scalingCount) : 1;
-	number *= getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
-
+	if (getPageSetting('Rcalcmaxequality') == 1 && getPageSetting('Rmanageequality') && !equality)
+		number *= Math.pow(game.portal.Equality.getModifier(1), game.portal.Equality.scalingCount);
+	else if (getPageSetting('Rcalcmaxequality') == 0 && !equality)
+		number *= game.portal.Equality.getMult(1);
+	else 
+		number *= game.portal.Equality.getMult(1);
+/* 
 	// Gamma Burst
 	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= 5 ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / 500) : 1;
 	// Average out crit damage
-	number *= RgetCritMulti();
+	number *= RgetCritMulti(); */
 
 	switch (minMaxAvg) {
 		case 'min':
