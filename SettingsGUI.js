@@ -411,6 +411,7 @@ function initializeAllSettings() {
 		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Jobs');
 		createSetting('rBoneShrineCell', 'BS: Cell', 'Use bone shrine charges at this Cell. -1 to run them at the default value, which is 81. ', 'value', '-1', null, 'Jobs');
 		createSetting('rBoneShrineAmount', 'BS: Amount', 'How many bone shrine charges to use at zone specified in BS: Zone. Can use 1,3,5. These values should match up to your BS zones.', 'multiValue', [0], null, 'Jobs');
+		createSetting('rBoneShrineSpendBelow', 'BS: Spend Below', 'Use bone shrine charges when below this amount. ', 'value', '-1', null, 'Jobs');
 		createSetting('rBoneShrineGather', 'BS: Gather', 'Select which resource you would like to gather when using Bone Shrine charges.', 'dropdown', 'metal', ["food", "wood", "metal"], 'Jobs');
 		createSetting('rBoneShrineRunType', ['Never use', 'Use in Fillers', 'Use in Dailies', 'Use in C3\'s', 'Use for all runs'], 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'multitoggle', 1, null, "Jobs");
 	}
@@ -1673,6 +1674,7 @@ function updateCustomButtons() {
 		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrineZone'): turnOff('rBoneShrineZone');
 		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrineCell'): turnOff('rBoneShrineCell');
 		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrineAmount'): turnOff('rBoneShrineAmount');
+		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrineSpendBelow'): turnOff('rBoneShrineSpendBelow');
 		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrineGather'): turnOff('rBoneShrineGather');
 		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrineRunType'): turnOff('rBoneShrineRunType');
 	}

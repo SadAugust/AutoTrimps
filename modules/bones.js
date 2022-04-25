@@ -15,9 +15,11 @@ function BoneShrine() {
 		var rBoneShrineZone = getPageSetting('rBoneShrineZone');
 		var rBoneShrineCell = getPageSetting('rBoneShrineCell') > 0 ? getPageSetting('rBoneShrineCell') : 81;
 		var rBoneShrineCharges = getPageSetting('rBoneShrineAmount');
+		var rBoneShrineSpendBelow = getPageSetting('rBoneShrineSpendBelow');
+        var count = 0;
 
 		var rBSIndex = rBoneShrineZone.indexOf(game.global.world);
-		rShouldBoneShrine = (rBoneShrineZone[rBSIndex] == game.global.world  && game.global.lastClearedCell + 2 == rBoneShrineCell && game.permaBoneBonuses.boosts.charges > 0);
+		rShouldBoneShrine = (rBoneShrineZone[rBSIndex] == game.global.world  && game.global.lastClearedCell + 2 == rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
 		//Recycles the map we're running if you have 0 stacks of balance and the map is level 6 as that's the only time we should be running a map at this level.
 		if (rShouldBoneShrine) {
 			setGather(getPageSetting('rBoneShrineGather'));
@@ -27,10 +29,11 @@ function BoneShrine() {
 				HeirloomEquipStaff('RhsGeneralStaff');
 
 	        for (var x = 0; x < rBoneShrineCharges[rBSIndex]; x++) {
+                if (getPageSetting('rBoneShrineAmount') >= game.permaBoneBonuses.boosts.charges) continue;
+                count = x+1;
 				game.permaBoneBonuses.boosts.consume()
 			}
-			debug(game.global.StaffEquipped.name);
-			debug('Consumed ' + rBoneShrineCharges[rBSIndex] + " bone shrine " + (rBoneShrineCharges[rBSIndex] == 1 ? "charge on zone " : "charges on zone ") + game.global.world);
+			debug('Consumed ' + count + " bone shrine " + (count == 1 ? "charge on zone " : "charges on zone ") + game.global.world);
 			rBoneShrineUsedZone = game.global.world;
 		}
 	}
