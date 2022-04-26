@@ -991,13 +991,6 @@ function RautoEquip() {
 
     if (!getPageSetting('Requipon')) 
         return;
-        displayMostEfficientEquipment();
-    if (getPageSetting('rEquipEfficientEquipDisplay')) {
-        displayMostEfficientEquipment();
-        if (game.options.menu.equipHighlight.enabled > 0) {
-            toggleSetting("equipHighlight")
-        }
-    }
     
     var prestigeLeft = false;
     do {

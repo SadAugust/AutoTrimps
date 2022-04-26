@@ -302,6 +302,13 @@ function mainLoop() {
         if (game.global.challengeActive == "Pandemonium" && getPageSetting('rPandRespec')) {
             PandemoniumPerkRespec();
         }
+		
+		if (getPageSetting('rEquipEfficientEquipDisplay')) {
+			displayMostEfficientEquipment();
+			if (game.options.menu.equipHighlight.enabled > 0) {
+				toggleSetting("equipHighlight")
+			}
+		}
 	}
 }
 

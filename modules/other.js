@@ -3177,6 +3177,31 @@ function AbandonChallengeRuns(zone) {
 }
 
 function displayMostEfficientEquipment() {
+
+	var $eqNamePrestige = null;
+
+	var highlightSetting = getPageSetting('rEquipEfficientEquipDisplay');
+	if (!highlightSetting) {
+		for (var item in game.equipment) {
+			if (game.upgrades[RequipmentList[item].Upgrade].locked == 0) {
+				$eqNamePrestige = document.getElementById(RequipmentList[item].Upgrade);
+				if (document.getElementsByClassName(item).length == 0) {
+					document.getElementById(RequipmentList[item].Upgrade).classList.add("efficient");
+					document.getElementById(RequipmentList[item].Upgrade).classList.add(item);
+				}
+			}
+		
+			var $eqName = document.getElementById(item);
+			if (!$eqName) 
+				continue;
+			
+			swapClass('efficient', 'efficientNo', $eqName)
+			if ($eqNamePrestige != null)
+				swapClass('efficient', 'efficientNo', $eqNamePrestige)
+		}
+
+	}
+	if (!highlightSetting) return;
 	
 	for (var item in game.equipment) {
 		if (game.equipment[item].locked) continue;

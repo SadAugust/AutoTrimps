@@ -1161,6 +1161,9 @@ function settingChanged(id) {
 	if (btn.type == 'boolean') {
 		btn.enabled = !btn.enabled;
 		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + btn.enabled);
+		if (id == 'rEquipEfficientEquipDisplay') {
+			displayMostEfficientEquipment()
+		}
 	}
 	if (btn.type == 'multitoggle') {
 		if (id == 'AutoMagmiteSpender2' && btn.value == 1) {
@@ -1705,7 +1708,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Requipon') ? turnOn('Requip2'): turnOff('Requip2');
 	radonon && getPageSetting('Requipon') ? turnOn('Requipprestige'): turnOff('Requipprestige');
 	radonon && getPageSetting('Requipon') ? turnOn('rEquipHighestPrestige'): turnOff('rEquipHighestPrestige');
-	radonon && getPageSetting('Requipon') ? turnOn('rEquipEfficientEquipDisplay'): turnOff('rEquipEfficientEquipDisplay');
+	radonon ? turnOn('rEquipEfficientEquipDisplay'): turnOff('rEquipEfficientEquipDisplay');
 	radonon && getPageSetting('Requipon') ? turnOn('Rdmgcuntoff'): turnOff('Rdmgcuntoff');
 	
 	//RGear AutoEquip Farm
