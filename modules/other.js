@@ -3206,7 +3206,7 @@ function displayMostEfficientEquipment() {
 	for (var item in game.equipment) {
 		if (game.equipment[item].locked) continue;
 		if (item == "Shield") continue;
-		var bestBuys = mostEfficientEquipment();
+		var bestBuys = mostEfficientEquipment(100 ,true, true, false);
         var isAttack = (RequipmentList[item].Stat === 'attack' ? 0 : 1);
 		var $eqNamePrestige = null;
 		if (game.upgrades[RequipmentList[item].Upgrade].locked == 0) {
@@ -3216,19 +3216,14 @@ function displayMostEfficientEquipment() {
 				document.getElementById(RequipmentList[item].Upgrade).classList.add(item);
 			}
 		}
-		
-		//Identifying if we can afford the item
-		var canAfford = canAffordBuilding(item,null,null,true,false,1)
 		if (item == bestBuys[isAttack] && bestBuys[isAttack+4] === true) {
 			bestBuys[isAttack] = RequipmentList[item].Upgrade;
 			item = RequipmentList[item].Upgrade;
-			canAfford = canAffordTwoLevel(game.upgrades[item]);
 		}
 		
 		var $eqName = document.getElementById(item);
 		if (!$eqName) 
 			continue;
-		
 		if (item == bestBuys[isAttack]) 
 			swapClass('efficient', 'efficientYes', $eqName)
 		else {

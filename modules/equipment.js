@@ -826,14 +826,21 @@ const prestigeZones = [["Supershield","Dagadder","Bootboost"], ["Megamace", "Hel
 
 //Shol Territory
 
-function mostEfficientEquipment(fakeLevels = {}) {
+function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, fakeLevels = {}) {
 
     for (var i in RequipmentList) {
         if (typeof fakeLevels[i] === 'undefined') {
             fakeLevels[i] = 0;
         }
     }
+    var resourceMaxPercent =    !resourceMaxPercent && getPageSetting('Requippercent') < 0 ? 100 : 
+                                !resourceMaxPercent ? getPageSetting('Requippercent') :
+                                resourceMaxPercent
 
+    var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
+    var zoneGo =    !zoneGo && (rEquipZone[0] > 0 && (rEquipZone.includes(game.global.world)) || game.global.world >= rEquipZone[rEquipZone.length-1]) ? true :
+                    zoneGo;
+    var ignoreShield = !ignoreShield ? false : true;
     var mostEfficient = [
     {
         name: "",
@@ -852,14 +859,19 @@ function mostEfficientEquipment(fakeLevels = {}) {
 	if (game.global.challengeActive == "Pandemonium") artBoost *= game.challenges.Pandemonium.getEnemyMult();
 	
 	var highestPrestige = 0;
-    var resourceMaxPercent = getPageSetting('Requippercent') < 0 ? 100 : getPageSetting('Requippercent');
-    var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
-    var zoneGo = (rEquipZone[0] > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length-1])));
 
     for (var i in RequipmentList) {
+        var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
+        var skipForLevels = !skipForLevels && isAttack == 0 ? getPageSetting('Requipcapattack') :
+                            !skipForLevels && isAttack == 1 ? getPageSetting('Requipcaphealth') :
+                            skipForLevels
         var nextLevelCost = game.equipment[i].cost[RequipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[RequipmentList[i].Resource][1], game.equipment[i].level + fakeLevels[i]) * artBoost;
         var prestige = false;
 
+        //Skips if we have the required number of that item and below zoneGo
+        if (!zoneGo && !buyPrestigeMaybe(i) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
+        //Skips if ignoreShield variable is true.
+        if (ignoreShield && i == 'Shield') continue;
 		//Skips looping through equips if they're blocked during Pandemonium.
         if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
         //Skips buying shields when you can afford bonfires on Hypothermia.
