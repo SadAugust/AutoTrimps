@@ -435,23 +435,20 @@ function checkWorldSequentiality() {
 }
 function drawGraph(a, b, refresh) {
     var universe = document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value;
-    var c = universe == 'Universe 1' ? document.getElementById("u1graphSelection") : universe == 'Universe 2' ? document.getElementById("u2graphSelection") : "Universe 1";
     if (universe == 'Universe 1') {
         document.getElementById('u1graphSelection').style.display = ''
         document.getElementById('u2graphSelection').style.display = 'none'
-        a ? (c.selectedIndex--, 0 > c.selectedIndex && (c.selectedIndex = 0)) : b && c.selectedIndex != c.options.length - 1 && c.selectedIndex++, setGraphData(c.value);
     }
     if (universe == 'Universe 2') {
         document.getElementById('u1graphSelection').style.display = 'none'
         document.getElementById('u2graphSelection').style.display = ''
-        a ? (c.selectedIndex--, 0 > c.selectedIndex && (c.selectedIndex = 0)) : b && c.selectedIndex != c.options.length - 1 && c.selectedIndex++, setGraphData(c.value);
     }
     var c = universe == 'Universe 1' ? document.getElementById("u1graphSelection") : universe == 'Universe 2' ? document.getElementById("u2graphSelection") : "Universe 1";
-/*     if (a === undefined && b === undefined && c.value !== undefined && refresh !== undefined) {
+    if (a === undefined && b === undefined && c.value !== undefined && refresh !== undefined) {
         setGraphData('Refresh');
         setGraphData(c.value);
-    } */
-    //a ? (c.selectedIndex--, 0 > c.selectedIndex && (c.selectedIndex = 0)) : b && c.selectedIndex != c.options.length - 1 && c.selectedIndex++, setGraphData(c.value);
+    }
+    a ? (c.selectedIndex--, 0 > c.selectedIndex && (c.selectedIndex = 0)) : b && c.selectedIndex != c.options.length - 1 && c.selectedIndex++, setGraphData(c.value);
 }
 
 function setGraphData(graph) {
