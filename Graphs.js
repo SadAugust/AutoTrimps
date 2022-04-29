@@ -7,7 +7,7 @@ var head = document.getElementsByTagName("head")[0],
     chartscript = document.createElement("script");
 (chartscript.type = "text/javascript"), (chartscript.src = "https://SadAugust.github.io/AutoTrimps_Local/highcharts.js"), head.appendChild(chartscript);
 var newItem = document.createElement("TD");
-newItem.appendChild(document.createTextNode("Graphs")), newItem.setAttribute("class", "btn btn-default"), newItem.setAttribute("onclick", "autoToggleGraph(); drawGraph();");
+newItem.appendChild(document.createTextNode("Graphs")), newItem.setAttribute("class", "btn btn-default"), newItem.setAttribute("onclick", "autoToggleGraph(); drawGraph(undefined, undefined, true);");
 var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
 settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]),
     (document.getElementById("settingsRow").innerHTML += '<div id="graphParent" style="display: none; height: 600px; overflow: auto;"><div id="graph" style="margin-bottom: 10px;margin-top: 5px; height: 530px;"></div>'),
@@ -19,7 +19,7 @@ var $universeFooter = document.getElementById("graphFooterLine1"),
         "Universe 2",
     ],
     $universeSel = document.createElement("select");
-for (var item in (($universeSel.id = "universeSelection"), $universeSel.setAttribute("style", ""), $universeSel.setAttribute("onchange", "2"), universeList)) {
+for (var item in (($universeSel.id = "universeSelection"), $universeSel.setAttribute("style", ""), $universeSel.setAttribute("onchange", "drawGraph()"), universeList)) {
     var $opt = document.createElement("option");
     ($opt.value = universeList[item]), ($opt.text = universeList[item]), $universeSel.appendChild($opt);
 }
@@ -335,13 +335,13 @@ function InitGraphsVars() {
     (GraphsVars.aWholeNewPortal = 0),
     (GraphsVars.currentPortal = 0)
     if (allSaveData.length > 0) {
-        if (allSaveData[allSaveData.length-1].universeSelection !== undefined)
-            document.getElementById('universeSelection').value = allSaveData[allSaveData.length-1].universeSelection
-        if (allSaveData[allSaveData.length-1].u1graphSelection !== undefined)
-            document.getElementById('u1graphSelection').value = allSaveData[allSaveData.length-1].u1graphSelection
-        if (allSaveData[allSaveData.length-1].u2graphSelection !== undefined)
-            document.getElementById('u2graphSelection').value = allSaveData[allSaveData.length-1].u2graphSelection
-    }
+    if (allSaveData[allSaveData.length-1].universeSelection !== undefined)
+        document.getElementById('universeSelection').value = allSaveData[allSaveData.length-1].universeSelection
+    if (allSaveData[allSaveData.length-1].u1graphSelection !== undefined)
+        document.getElementById('u1graphSelection').value = allSaveData[allSaveData.length-1].u1graphSelection
+    if (allSaveData[allSaveData.length-1].u2graphSelection !== undefined)
+        document.getElementById('u2graphSelection').value = allSaveData[allSaveData.length-1].u2graphSelection
+    }      
 };
 InitGraphsVars();
 
@@ -433,22 +433,25 @@ function checkWorldSequentiality() {
         }
     }
 }
-function drawGraph(a, b) {
+function drawGraph(a, b, refresh) {
     var universe = document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value;
+    var c = universe == 'Universe 1' ? document.getElementById("u1graphSelection") : universe == 'Universe 2' ? document.getElementById("u2graphSelection") : "Universe 1";
     if (universe == 'Universe 1') {
         document.getElementById('u1graphSelection').style.display = ''
         document.getElementById('u2graphSelection').style.display = 'none'
+        a ? (c.selectedIndex--, 0 > c.selectedIndex && (c.selectedIndex = 0)) : b && c.selectedIndex != c.options.length - 1 && c.selectedIndex++, setGraphData(c.value);
     }
     if (universe == 'Universe 2') {
         document.getElementById('u1graphSelection').style.display = 'none'
         document.getElementById('u2graphSelection').style.display = ''
+        a ? (c.selectedIndex--, 0 > c.selectedIndex && (c.selectedIndex = 0)) : b && c.selectedIndex != c.options.length - 1 && c.selectedIndex++, setGraphData(c.value);
     }
     var c = universe == 'Universe 1' ? document.getElementById("u1graphSelection") : universe == 'Universe 2' ? document.getElementById("u2graphSelection") : "Universe 1";
-    if (a === undefined && b === undefined && c.value !== undefined) {
+/*     if (a === undefined && b === undefined && c.value !== undefined && refresh !== undefined) {
         setGraphData('Refresh');
         setGraphData(c.value);
-    }
-    a ? (c.selectedIndex--, 0 > c.selectedIndex && (c.selectedIndex = 0)) : b && c.selectedIndex != c.options.length - 1 && c.selectedIndex++, setGraphData(c.value);
+    } */
+    //a ? (c.selectedIndex--, 0 > c.selectedIndex && (c.selectedIndex = 0)) : b && c.selectedIndex != c.options.length - 1 && c.selectedIndex++, setGraphData(c.value);
 }
 
 function setGraphData(graph) {
