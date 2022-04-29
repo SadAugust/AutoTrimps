@@ -5,7 +5,7 @@ var allSaveData = [],
 null !== tmpGraphData && (console.log("Graphs: Found allSaveData (portal runs data). Yay!"), (allSaveData = tmpGraphData)), (MODULES.graphs = {}), (MODULES.graphs.useDarkAlways = !1);
 var head = document.getElementsByTagName("head")[0],
     chartscript = document.createElement("script");
-(chartscript.type = "text/javascript"), (chartscript.src = "https://192.168.0.102:8887/AutoTrimps_Local/highcharts.js"), head.appendChild(chartscript);
+(chartscript.type = "text/javascript"), (chartscript.src = "https://SadAugust.github.io/AutoTrimps_Local/highcharts.js"), head.appendChild(chartscript);
 var newItem = document.createElement("TD");
 newItem.appendChild(document.createTextNode("Graphs")), newItem.setAttribute("class", "btn btn-default"), newItem.setAttribute("onclick", "autoToggleGraph(); drawGraph();");
 var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
@@ -334,12 +334,14 @@ function InitGraphsVars() {
     (GraphsVars.MapBonus = 0),
     (GraphsVars.aWholeNewPortal = 0),
     (GraphsVars.currentPortal = 0)
-    if (allSaveData[allSaveData.length-1].universeSelection !== undefined)
-        document.getElementById('universeSelection').value = allSaveData[allSaveData.length-1].universeSelection
-    if (allSaveData[allSaveData.length-1].u1graphSelection !== undefined)
-        document.getElementById('u1graphSelection').value = allSaveData[allSaveData.length-1].u1graphSelection
-    if (allSaveData[allSaveData.length-1].u2graphSelection !== undefined)
-        document.getElementById('u2graphSelection').value = allSaveData[allSaveData.length-1].u2graphSelection
+    if (allSaveData.length > 0) {
+        if (allSaveData[allSaveData.length-1].universeSelection !== undefined)
+            document.getElementById('universeSelection').value = allSaveData[allSaveData.length-1].universeSelection
+        if (allSaveData[allSaveData.length-1].u1graphSelection !== undefined)
+            document.getElementById('u1graphSelection').value = allSaveData[allSaveData.length-1].u1graphSelection
+        if (allSaveData[allSaveData.length-1].u2graphSelection !== undefined)
+            document.getElementById('u2graphSelection').value = allSaveData[allSaveData.length-1].u2graphSelection
+    }
 };
 InitGraphsVars();
 
