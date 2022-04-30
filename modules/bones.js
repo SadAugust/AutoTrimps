@@ -18,7 +18,6 @@ function BoneShrine() {
 		var rBoneShrineCharges = getPageSetting('rBoneShrineAmount');
 		var rBoneShrineSpendBelow = getPageSetting('rBoneShrineSpendBelow') === -1 ? 0 : getPageSetting('rBoneShrineSpendBelow');
         var count = 0;
-        debug(rBoneShrineSpendBelow);
 		var rBSIndex = rBoneShrineZone.indexOf(game.global.world);
 		rShouldBoneShrine = (rBoneShrineZone[rBSIndex] == game.global.world  && game.global.lastClearedCell + 2 == rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
         
