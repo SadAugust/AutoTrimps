@@ -6,21 +6,22 @@ function BoneShrine() {
 	
 	//Setting up variables
 	var rBoneShrineRunType = getPageSetting('rBoneShrineRunType');
-	var runType = rBoneShrineRunType = 1 ? game.global.challengeActive != 'Daily' && !game.global.runningChallengeSquared :
-					rBoneShrineRunType = 2 ? game.global.challengeActive == 'Daily' : 
-					rBoneShrineRunType = 3 ? game.global.runningChallengeSquared :
-					true;
+	var runType = rBoneShrineRunType = 1 && game.global.challengeActive != 'Daily' && !game.global.runningChallengeSquared ? true :
+					rBoneShrineRunType = 2 && game.global.challengeActive == 'Daily' ? true : 
+					rBoneShrineRunType = 3 && game.global.runningChallengeSquared ? true :
+					rBoneShrineRunType = 4 ? true :
+					false;
 
 	if (runType && getPageSetting('rBoneShrine') && rBoneShrineUsedZone != game.global.world) {
 		var rBoneShrineZone = getPageSetting('rBoneShrineZone');
 		var rBoneShrineCell = getPageSetting('rBoneShrineCell') > 0 ? getPageSetting('rBoneShrineCell') : 81;
 		var rBoneShrineCharges = getPageSetting('rBoneShrineAmount');
-		var rBoneShrineSpendBelow = getPageSetting('rBoneShrineSpendBelow');
+		var rBoneShrineSpendBelow = getPageSetting('rBoneShrineSpendBelow') === -1 ? 0 : getPageSetting('rBoneShrineSpendBelow');
         var count = 0;
-
+        debug(rBoneShrineSpendBelow);
 		var rBSIndex = rBoneShrineZone.indexOf(game.global.world);
 		rShouldBoneShrine = (rBoneShrineZone[rBSIndex] == game.global.world  && game.global.lastClearedCell + 2 == rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
-		//Recycles the map we're running if you have 0 stacks of balance and the map is level 6 as that's the only time we should be running a map at this level.
+        
 		if (rShouldBoneShrine) {
 			setGather(getPageSetting('rBoneShrineGather'));
 			if (getPageSetting('Rhs' + getPageSetting('rBoneShrineGather')[0].toUpperCase() + getPageSetting('rBoneShrineGather').slice(1) + 'Staff') !== 'undefined')
