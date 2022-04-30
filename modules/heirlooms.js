@@ -274,6 +274,7 @@ function HeirloomEquipStaff(heirloom) {
 }
 
 function HeirloomSwapping() {
+    var rSwapZone = game.global.challengeActive == "Daily" && getPageSetting('RhsDailySwapZone') > 0 ? getPageSetting('RhsDailySwapZone') : getPageSetting('RhsSwapZone');
     if (game.global.universe == 2) {
         //Swapping Shields
         if (getPageSetting('RhsShield')) {
@@ -281,8 +282,8 @@ function HeirloomSwapping() {
               HeirloomEquipShield('RhsPandJestFarmShield');
             else if ((game.global.runningChallengeSquared || game.global.challengeActive == "Mayhem" || game.global.challengeActive == "Pandemonium") && getPageSetting('RhsC3') != "undefined") {
                 HeirloomEquipShield('RhsC3');
-            } else if (getPageSetting('RhsSwapZone') > 0) {
-                if (getPageSetting('RhsInitial') !== "undefined" && game.global.world < getPageSetting('RhsSwapZone') && !(getPageSetting('RhsAfterpush') !== "undefined" && game.global.mapsActive && getPageSetting('RhsMapSwap')))
+            } else if (rSwapZone > 0) {
+                if (getPageSetting('RhsInitial') !== "undefined" && game.global.world < rSwapZone && !(getPageSetting('RhsAfterpush') !== "undefined" && game.global.mapsActive && getPageSetting('RhsMapSwap')))
                     HeirloomEquipShield('RhsInitial');
                 else if (getPageSetting('RhsAfterpush') !== "undefined")
                     HeirloomEquipShield('RhsAfterpush');

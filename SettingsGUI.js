@@ -800,9 +800,10 @@ function initializeAllSettings() {
 	createSetting('RhsInitial', 'Initial', '<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsAfterpush', 'Afterpush', '<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsSwapZone', 'Swap Zone', 'Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>', 'value', '-1', null, 'Heirlooms');
+	createSetting('RhsDailySwapZone', 'Daily Swap Zone', 'Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>', 'value', '-1', null, 'Heirlooms');
 	createSetting('RhsMapSwap', 'Map Swap', 'Toggle to swap to your afterpush shield when inside maps', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsC3', 'C3', '<b>C3 heirloom to use</b><br><br>Enter the name of the heirloom you would like to use during C3\s and special challenges (Mayhem, Pandemonium).', 'textValue', 'undefined', null, 'Heirlooms');
-
+	
 	//Staff swapping
 	document.getElementById('RhsC3').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RhsStaff', 'Staffs', 'Toggle to swap Staffs', 'boolean', false, null, 'Heirlooms');
@@ -2073,6 +2074,7 @@ function updateCustomButtons() {
 	radonon && hson && hsshieldon ? turnOn('RhsInitial') : turnOff('RhsInitial');
 	radonon && hson && hsshieldon ? turnOn('RhsAfterpush') : turnOff('RhsAfterpush');
 	radonon && hson && hsshieldon ? turnOn('RhsSwapZone') : turnOff('RhsSwapZone');
+	radonon && hson && hsshieldon ? turnOn('RhsDailySwapZone') : turnOff('RhsDailySwapZone');
 	radonon && hson && hsshieldon ? turnOn('RhsMapSwap') : turnOff('RhsMapSwap');
 	radonon && hson && hsshieldon ? turnOn('RhsC3') : turnOff('RhsC3');
 	
