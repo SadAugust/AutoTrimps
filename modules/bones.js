@@ -19,7 +19,7 @@ function BoneShrine() {
 		var rBoneShrineSpendBelow = getPageSetting('rBoneShrineSpendBelow') === -1 ? 0 : getPageSetting('rBoneShrineSpendBelow');
         var count = 0;
 		var rBSIndex = rBoneShrineZone.indexOf(game.global.world);
-		rShouldBoneShrine = (rBoneShrineZone[rBSIndex] == game.global.world  && game.global.lastClearedCell + 2 == rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
+		rShouldBoneShrine = (rBoneShrineZone[rBSIndex] == game.global.world  && game.global.lastClearedCell + 2 >= rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
         
 		if (rShouldBoneShrine) {
 			setGather(getPageSetting('rBoneShrineGather'));
