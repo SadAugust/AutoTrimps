@@ -3,7 +3,8 @@ rShouldBoneShrine = false;
 rBoneShrineUsedZone = 0;
 
 function BoneShrine() {
-	
+    if (rBoneShrineUsedZone != 0 && rBoneShrineUsedZone != game.global.world)
+	    rBoneShrineUsedZone = 0;
 	//Setting up variables
 	var rBoneShrineRunType = getPageSetting('rBoneShrineRunType');
 	var runType = rBoneShrineRunType = 1 && game.global.challengeActive != 'Daily' && !game.global.runningChallengeSquared ? true :

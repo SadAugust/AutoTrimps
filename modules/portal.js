@@ -596,6 +596,7 @@ function Rresetmapvars() {
     RvanillaMapatZone = false;
     RavoidEmpower = false;
     rShouldEmpowerFarm = false;
+    rShouldMaxMapBonus = false
     //Void Maps
     RdoVoids = false;
     RneedToVoid = false;
