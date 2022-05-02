@@ -1197,7 +1197,7 @@ function autoSetValueToolTip(id, text,negative, multi) {
 		tooltipText += ' Accepts negative numbers as validated inputs.';
 	else
 		tooltipText += ' Put -1 for Infinite.';
-	tooltipText += `<br/><br/><input id="customNumberBox" style="width: 50%" onkeypress="onKeyPressSetting(event, '${id}', ${negative}, ${multi})" value="${autoTrimpSettings[id].value}"></input>`;
+	tooltipText += `<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${negative}, ${multi})" value="${autoTrimpSettings[id].value}"></input>`;
 	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetValue(\'' + id + '\','+negative+','+multi+')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
 	game.global.lockTooltip = true;
 	elem.style.left = '32.5%';
@@ -1219,7 +1219,7 @@ function autoSetTextToolTip(id,text) {
 	ranstring = text;
 	var elem = document.getElementById("tooltipDiv");
 	var tooltipText = 'Type your input below';
-	tooltipText += `<br/><br/><input id="customTextBox" style="width: 50%" onkeypress="onKeyPressSetting(event, '${id}')" value="${autoTrimpSettings[id].value}"></input>`;
+	tooltipText += `<br/><br/><input id="customTextBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}')" value="${autoTrimpSettings[id].value}"></input>`;
 	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetText(\'' + id + '\')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
 	game.global.lockTooltip = true;
 	elem.style.left = '32.5%';
@@ -1239,7 +1239,10 @@ function autoSetTextToolTip(id,text) {
 
 function onKeyPressSetting(event, id,negative, multi) {
 	if (event.which == 13 || event.keyCode == 13) {
-		autoSetValue(id,negative, multi);
+		if (negative !== undefined && multi !== undefined)
+			autoSetValue(id,negative, multi);
+		else 
+			autoSetText(id);
 	}
 }
 
