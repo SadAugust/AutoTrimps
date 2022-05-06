@@ -95,11 +95,13 @@ if (useoverkill && game.portal.Overkill.level > 0 && getPageSetting('UseScryerSt
     var ovkldmg = minDamage * Sstance * (game.portal.Overkill.level*0.005);
     var ovklHDratio = getCurrentEnemy(1).maxHealth / ovkldmg;
     if (ovklHDratio < 2) {
-        if (oktoswitch)
-            setFormation(4);
+        if (oktoswitch) {
+            if (game.global.universe == 1)
+                setFormation(4);
             return;
         }
     }
+}
 
 //Default
 var min_zone = getPageSetting('ScryerMinZone');

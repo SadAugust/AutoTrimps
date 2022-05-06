@@ -753,6 +753,18 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 		// Rampage Daily mod
 		number -= typeof game.global.dailyChallenge.rampage !== 'undefined' ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 0;
 	}
+
+	// Average out crit damage
+	number *= RgetCritMulti();
+
+	//Unlucky Dmg
+	if (game.global.challengeActive == 'Unlucky') {
+		var unluckyDamage = calculateDamage(game.global.soldierCurrentAttack, true, true).split("-");
+		number = unluckyDamage[0].toString()[0] % 2 == 0 ? unluckyDamage[1] : unluckyDamage[0];
+		number /= game.portal.Equality.getMult(1);
+	}
+	// Gamma Burst
+	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= 5 ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / 500) : 1;
 	
 	// Equality
 	if (getPageSetting('Rcalcmaxequality') == 1 && getPageSetting('Rmanageequality') && !equality)
@@ -761,17 +773,12 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 		number *= game.portal.Equality.getMult(1);
 	else 
 		number *= game.portal.Equality.getMult(1);
-
-	// Gamma Burst
-	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= 5 ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / 500) : 1;
-	// Average out crit damage
-	number *= RgetCritMulti();
-
+		
 	switch (minMaxAvg) {
 		case 'min':
-			return number * (game.portal.Range.radLevel * 0.02 + 0.8) * minDailyMod;
+			return game.global.challengeActive == 'Unlucky' ? number : number * (game.portal.Range.radLevel * 0.02 + 0.8) * minDailyMod;
 		case 'max':
-			return number * 1.2 * maxDailyMod;
+			return game.global.challengeActive == 'Unlucky' ? number : number * 1.2 * maxDailyMod;
 		case 'avg':
 			return number;
 	}

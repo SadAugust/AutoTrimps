@@ -110,6 +110,9 @@ function mainLoop() {
 		setTitle();
 	}
 
+	if (document.getElementById('tooltipDiv').classList.contains('tooltipExtraLg') === false)
+		document.getElementById('tooltipDiv').style.overflowY = '';
+
 	//Logic for Universe 1
 	if (game.global.universe == 1) {
 

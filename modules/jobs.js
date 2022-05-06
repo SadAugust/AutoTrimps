@@ -568,15 +568,11 @@ function RbuyJobs() {
 	var allIn = "";
 	if ((rShouldTimeFarm || Rshouldalchfarm || rShouldHypoFarm) && game.global.mapsActive) {
 		if (Rshouldalchfarm) 
-            rspecial = autoTrimpSettings.RAlchSpecial.selected;
+            rspecial = getPageSetting('rAlchSpecial')[getPageSetting('rAlchZone').indexOf(game.global.world)];
         else if (rShouldHypoFarm)
             rspecial = 'lwc';
-        else if (rShouldTimeFarm && getPageSetting('Rc3timefarm') && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium'))
-            rspecial = autoTrimpSettings.Rc3timespecialselection.selected
-		else if (game.global.challengeAcive = "Daily" && rShouldTimeFarm && getPageSetting('Rdtimefarm')) 
-            rspecial = autoTrimpSettings.Rdtimespecialselection.selected;
-		else if (rShouldTimeFarm)
-			rspecial = autoTrimpSettings.Rtimespecialselection.selected;
+        else if (rShouldTimeFarm)
+            rspecial = rTFSpecial
 		
 		if (rspecial.includes('mc')) 
             allIn = "Miner";

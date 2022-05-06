@@ -265,27 +265,28 @@ function initializeAllSettings() {
 	createSetting('dBWraidingz', 'Daily Z to BW Raid', 'Raids BWs at zone specified in dailys. Example: 495, will raid all BWs for all gear starting from 495. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Accepts comma separated lists, and raids up to the value in the corrsponding position in the Max BW to raid setting. So if this is set to 480,495 and Daily Max BW to Raid is set to 500,515 AT will BW raid up to 500 from 480, and 515 from 495. Make sure these lists are the same length or BW raiding may fail.', 'multiValue', [-1], null, 'Daily');
 	createSetting('dBWraidingmax', 'Daily Max BW to raid', 'Raids BWs until zone specified in dailys. Example: 515, will raid all BWs for all gear until 515. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Now accepts comma separated lists - see description of Daily Z to BW raid setting for details.', 'multiValue', [-1], null, 'Daily');
 
+	//Radon Daily Time Farming
+	createSetting('rdTimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'Daily');
+	createSetting('rdTimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Daily');
+	createSetting('rdTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
+	createSetting('rdTimeFarmRepeat', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [6], null, 'Daily');
+	createSetting('rdTimeFarmMapLevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'Daily');
+	createSetting('rdTimeFarmCell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Daily');
+	createSetting('rdTimeFarmSpecial', 'TF: Special', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'Daily');
+
 	//Radon Daily Tribute Farming
-	createSetting('Rdtributefarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Daily');
-	createSetting('Rdtributefarmzone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
-	createSetting('Rdtributefarmvalue', 'TrF: Tributes', 'How many tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [-1], null, 'Daily');
-	createSetting('Rdtributefarmmets', 'TrF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [-1], null, 'Daily');
-	createSetting('Rdtributemaplevel', 'TrF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'Daily');
-	createSetting('Rdtributefarmcell', 'TrF: Cell', 'Tribute Farm at this Cell. -1 to run them at the default value, which is 81. ', 'value', '-1', null, 'Daily');
+	createSetting('rdTributeFarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Daily');
+	createSetting('rdTributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Daily');
+	createSetting('rdTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Daily');
+	createSetting('rdTributeFarmTributes', 'TrF: Tributes', 'How many tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Daily');
+	createSetting('rdTributeFarmMets', 'TrF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Daily');
+	createSetting('rdTributeFarmMapLevel', 'TrF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'Daily');
+	createSetting('rdTributeFarmCell', 'TrF: Cell', 'Tribute Farm at this Cell. -1 to run them at the default value, which is 81. ', 'multiValue', [1], null, 'Daily');
 
 	//Helium Heirloom
 	document.getElementById('dBWraidingmax').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('dhighdmg', 'DHS: High Damage', '<b>HIGH DAMAGE HEIRLOOM</b><br><br>Enter the name of your high damage heirloom. This is your heirloom that you will use normally in dailies. ', 'textValue', 'undefined', null, 'Daily');
 	createSetting('dlowdmg', 'DHS: Low Damage', '<b>LOW DAMAGE HEIRLOOM</b><br><br>Enter the name of your low damage heirloom. This is the heirloom that you will use for windstacking in dailies. ', 'textValue', 'undefined', null, 'Daily');
-
-	//Radon Daily Time Farming
-	createSetting('Rdtimefarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'Daily');
-	createSetting('Rdtimefarmzone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
-	createSetting('Rdtimefarmtime', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [-1], null, 'Daily');
-	createSetting('Rdtimemaplevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'Daily');
-	createSetting('Rdtimefarmcell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Daily');
-	createSetting('Rdtimespecialselection', 'TF: Special', 'Select which Special to use. May bug out if you cannot afford selected. Also overrides your autojobs to buy workers relating to the resource you want to farm. I.e if LSC is chosen all workers will be hired as farmers and rest fired for the duration of farm. <br> 0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'Daily');
-
 	//Helium Daily Portal
 	document.getElementById('dlowdmg').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('AutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
@@ -301,7 +302,7 @@ function initializeAllSettings() {
 	createSetting('drunnewvoidspoison', 'New Voids Poison', 'Only run new voids in poison zones.', 'boolean', false, null, 'Daily');
 	
 	//Radon Daily Portal
-	document.getElementById('Rdtimespecialselection').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rdTributeFarmCell').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('RFillerRun', 'Filler run', 'Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.', 'boolean', false, null, 'Daily');
 	createSetting('u1daily', 'Daily in U1', 'If this is on, you will do your daily in U1. ', 'boolean', false, null, 'Daily');
@@ -452,7 +453,7 @@ function initializeAllSettings() {
 	
 	//Maps
 	//Helium
-	createSetting('AutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use MaZ, it will not work. ', 'multitoggle', 1, null, "Maps");
+	createSetting('AutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use window, it will not work. ', 'multitoggle', 1, null, "Maps");
 	createSetting('automapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice. ', 'boolean', true, null, 'Maps');
 	createSetting('DynamicSiphonology', 'Dynamic Siphonology', 'Recommended Always ON. Use the right level of siphonology based on your damage output. IE: Only uses  siphonology if you are weak. With this OFF it means it ALWAYS uses the lowest siphonology map you can create. Siphonology is a perk you get at level 115-125ish, and means you receive map bonus stacks for running maps below your current zone - Up to 3 zones below (1 per perk level).', 'boolean', true, null, 'Maps');
 	createSetting('PreferMetal', 'Prefer Metal Maps', 'Always prefer metal maps, intended for manual use, such as pre-spire farming. Remember to turn it back off after you\'re done farming!', 'boolean', false, null, 'Maps');
@@ -476,7 +477,7 @@ function initializeAllSettings() {
 
 	//Radon
 	//General
-	createSetting('RAutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use MaZ, it will not work.', 'multitoggle', 1, null, "Μaps");
+	createSetting('RAutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use window, it will not work.', 'multitoggle', 1, null, "Μaps");
 	createSetting('Rautomapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', true, null, 'Μaps');
 	createSetting('Rmapselection', 'Biome Selection', 'Select which you prefer to use. Recommend Farmlands if you have unlocked it else Plentiful (Gardens).', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Plentiful", "Farmlands"], 'Μaps');
 	createSetting('rMapSpecial', 'Map Special', 'Select which Special to use. May bug out if you cannot afford selected. <br>0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'Μaps');
@@ -500,23 +501,26 @@ function initializeAllSettings() {
     createSetting('RMeltingPoint', 'Melting Point', '-1 to disable. When to run Melting Point. Use it like this: 50,91. The first number is what zone Melting Point should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Melting Point at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
 	//Frozen Castle
     createSetting('rFrozenCastle', 'Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
-	//Tribute Farming
-	document.getElementById('rFrozenCastle').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rtributefarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Μaps');
-	createSetting('Rtributefarmzone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
-	createSetting('Rtributefarmvalue', 'TrF: Tributes', 'How many tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [-1], null, 'Μaps');
-	createSetting('Rtributefarmmets', 'TrF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [-1], null, 'Μaps');
-	createSetting('Rtributemaplevel', 'TrF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'Μaps');
-	createSetting('Rtributefarmcell', 'TrF: Cell', 'Tribute Farm at this Cell. -1 to run them at the default value, which is 81. ', 'value', '-1', null, 'Μaps');
-	//Time Farming
-	document.getElementById('Rtributefarmcell').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rtimefarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'Μaps');
-	createSetting('Rtimefarmzone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
-	createSetting('Rtimefarmtime', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [-1], null, 'Μaps');
-	createSetting('Rtimemaplevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'Μaps');
-	createSetting('Rtimefarmcell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Μaps');
-	createSetting('Rtimespecialselection', 'TF: Special', 'Select which Special to use. May bug out if you cannot afford selected. Also overrides your autojobs to buy workers relating to the resource you want to farm. I.e if LSC is chosen all workers will be hired as farmers and rest fired for the duration of farm. <br> 0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'Μaps');
 
+	//Time Farming
+	document.getElementById('rFrozenCastle').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('rTimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'Μaps');
+	createSetting('rTimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Μaps');
+	createSetting('rTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+	createSetting('rTimeFarmRepeat', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [6], null, 'Μaps');
+	createSetting('rTimeFarmMapLevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'Μaps');
+	createSetting('rTimeFarmCell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'multiValue', [-1], null, 'Μaps');
+	createSetting('rTimeFarmSpecial', 'TF: Special', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'Μaps');
+	
+	//Tribute Farming
+	createSetting('rTributeFarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Μaps');
+	createSetting('rTributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Μaps');
+	createSetting('rTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
+	createSetting('rTributeFarmTributes', 'TrF: Tributes', 'How many tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Μaps');
+	createSetting('rTributeFarmMets', 'TrF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Μaps');
+	createSetting('rTributeFarmMapLevel', 'TrF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'Μaps');
+	createSetting('rTributeFarmCell', 'TrF: Cell', 'Tribute Farm at this Cell. -1 to run them at the default value, which is 81. ', 'multiValue', [1], null, 'Μaps');
+	
 	//Spire
 	//Helium
 	createSetting('MaxStacksForSpire', 'Max Map Bonus for Spire', 'Get max map bonus before running the Spire.', 'boolean', false, null, 'Spire');
@@ -601,25 +605,28 @@ function initializeAllSettings() {
 	
 	//C3 Time Farm
 	document.getElementById('c3GM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rc3timefarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'C3');
-	createSetting('Rc3timefarmzone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
-	createSetting('Rc3timefarmtime', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [-1], null, 'C3');
-	createSetting('Rc3timemaplevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'C3');
-	createSetting('Rc3timefarmcell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'C3');
-	createSetting('Rc3timespecialselection', 'TF: Special', 'Select which Special to use. May bug out if you cannot afford selected. Also overrides your autojobs to buy workers relating to the resource you want to farm. I.e if LSC is chosen all workers will be hired as farmers and rest fired for the duration of farm. <br> 0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'C3');
-	
+	createSetting('rc3TimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'C3');
+	createSetting('rc3TimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'C3');
+	createSetting('rc3TimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
+	createSetting('rc3TimeFarmRepeat', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [6], null, 'C3');
+	createSetting('rc3TimeFarmMapLevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'C3');
+	createSetting('rc3TimeFarmCell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'C3');
+	createSetting('rc3TimeFarmSpecial', 'TF: Special', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'C3');
+
 	//C3 Tribute (Met) Farm
-	document.getElementById('Rc3timespecialselection').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rc3tributefarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. Doesn\'t run during the Downsize challenge. ', 'boolean', false, null, 'C3');
-	createSetting('Rc3tributefarmzone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
-	createSetting('Rc3tributefarmmets', 'TrF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [-1], null, 'C3');
-	createSetting('Rc3tributemaplevel', 'TrF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'C3');
-	createSetting('Rc3tributefarmcell', 'TrF: Cell', 'Tribute Farm at this Cell. -1 to run them at the default value, which is 81. ', 'value', '-1', null, 'C3');
+	//document.getElementById('rc3TimeFarmSpecial').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('rc3TributeFarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. Doesn\'t run during the Downsize challenge. ', 'boolean', false, null, 'C3');
+	createSetting('rc3TributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'C3');
+	createSetting('rc3TributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
+	createSetting('rc3TributeFarmTributes', 'TrF: Tributes', 'How many Tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [6], null, 'C3');
+	createSetting('rc3TributeFarmMets', 'TrF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'C3');
+	createSetting('rc3TributeFarmMapLevel', 'TrF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'C3');
+	createSetting('rc3TributeFarmCell', 'TrF: Cell', 'Tribute Farm at this Cell. -1 to run them at the default value, which is 81. ', 'multiValue', [1], null, 'C3');
 	
     //Unbalance
-	document.getElementById('Rc3tributefarmcell').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rc3TributeFarmCell').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rUnbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
-	createSetting('rUnbalanceZone', 'U: Zone', 'Which zone you would like to start destacking from.', 'value', [-1], null, 'C3');
+	createSetting('rUnbalanceZone', 'U: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C3');
 	createSetting('rUnbalanceStacks', 'U: Stacks', 'The amount of stack you have to reach before clearing them.','value' ,-1, null, 'C3');
 	createSetting('rUnbalanceImprobDestack', 'U: Improbability Destack', 'Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone', 'boolean', false, null, 'C3');
     
@@ -681,24 +688,27 @@ function initializeAllSettings() {
 
 	//Quagmire
 	document.getElementById('rHideHypothermia').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rblackbog', 'Quagmire', 'Enable Bog Running for Quagmire. ', 'boolean', false, null, 'Challenges');
-	createSetting('Rblackbogzone', 'BB: Zone', 'What zones to run Black Bogs at. Can use 40,50,60. ', 'multiValue', [-1], null, 'Challenges');
-	createSetting('Rblackbogamount', 'BB: Amount', 'How many Black Bogs to at specified zones. Can use 8,9,10. I.e if BB: Zone had 40,50 and this setting had 8,10, It would run 8 Black Bogs at z40 and 10 Black Bogs at z50. ', 'multiValue', [-1], null, 'Challenges');
+	createSetting('rQuagOn', 'Quagmire', 'Enable Bog Running for Quagmire. ', 'boolean', false, null, 'Challenges');
+	createSetting('rQuagSettings', 'Quag Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Challenges');
+	createSetting('rQuagZone', 'BB: Zone', 'What zones to run Black Bogs at. Can use 40,50,60. ', 'multiValue', [6], null, 'Challenges');
+	createSetting('rQuagCell', 'BB: Cell', 'What cell to run Black Bogs at. Can use 40,50,60. ', 'multiValue', [-1], null, 'Challenges');
+	createSetting('rQuagBog', 'BB: Amount', 'How many Black Bogs to at specified zones. Can use 8,9,10. I.e if BB: Zone had 40,50 and this setting had 8,10, It would run 8 Black Bogs at z40 and 10 Black Bogs at z50. ', 'multiValue', [-1], null, 'Challenges');
 
 	//Arch
-	document.getElementById('Rblackbogamount').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rQuagBog').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rarchon', 'Archaeology', 'Turn on Archaeology settings. ', 'boolean', false, null, 'Challenges');
 	createSetting('Rarchstring1', 'First String', 'First string to use in Archaeology. Put the zone you want to stop using this string and start using the second string (Make sure the second string has a value) at the start. I.e: 70,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('Rarchstring2', 'Second String', 'Second string to use in Archaeology. Put the zone you want to stop using this string and start using the third string (Make sure the third string has a value) at the start. I.e: 94,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('Rarchstring3', 'Third String', 'Third string to use in Archaeology. Make sure this is just your Archaeology string and nothing else. I.e: 10a,10e ', 'textValue', 'undefined', null, 'Challenges');
-
+	
 	//Insanity
 	document.getElementById('Rarchstring3').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rinsanityon', 'Insanity', 'Turn on Insanity settings. This also controls the entireity of IF. If you turn this off it will not Insanity Farm.', 'boolean', false, null, 'Challenges');
-	createSetting('Rinsanityfarmzone', 'Insanity Farming', 'Farms for specified stacks in IF: Stacks at zone according to this settings value. Can use 108,109,110. ', 'multiValue', [-1], null, 'Challenges');
-	createSetting('Rinsanityfarmcell', 'IF: Cell', 'Insanity Farm at this Cell. -1 to run them at the default value, which is 1. ', 'value', '-1', null, 'Challenges');
-	createSetting('Rinsanityfarmstack', 'IF: Stacks', 'How many stacks to farm at zone specified in IF. Can use 300,400,500. These values should match up to your IF zones. If using IF and IF: Stacks examples (110 and 500) it will farm at z110 for 500 stacks of insanity. If stacks specified are above maximum Insanity Stacks, it will farm for maximum. ', 'multiValue', [-1], null, 'Challenges');
-	createSetting('Rinsanityfarmlevel', 'IF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (This is how to remove insanity stacks), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'Challenges');
+	createSetting('rInsanityOn', 'Insanity', 'Turn on Insanity settings. This also controls the entireity of IF. If you turn this off it will not Insanity Farm.', 'boolean', false, null, 'Challenges');
+	createSetting('rInsanitySettings', 'Insanity Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Challenges');
+	createSetting('rInsanityZone', 'Insanity Farming', 'Farms for specified stacks in IF: Stacks at zone according to this settings value. Can use 108,109,110. ', 'multiValue', [6], null, 'Challenges');
+	createSetting('rInsanityCell', 'IF: Cell', 'Insanity Farm at this Cell. -1 to run them at the default value, which is 1. ', 'multiValue', [81], null, 'Challenges');
+	createSetting('rInsanityInsanity', 'IF: Stacks', 'How many stacks to farm at zone specified in IF. Can use 300,400,500. These values should match up to your IF zones. If using IF and IF: Stacks examples (110 and 500) it will farm at z110 for 500 stacks of insanity. If stacks specified are above maximum Insanity Stacks, it will farm for maximum. ', 'multiValue', [-1], null, 'Challenges');
+	createSetting('rInsanityMapLevel', 'IF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (This is how to remove insanity stacks), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'Challenges');
 	createSetting('Rinsanityfarmfrag', 'IF: Frags', 'Turn this on to farm fragments if you cannot afford the map you have selected for IF. ', 'boolean', false, null, 'Challenges');
 
 	//Exterminate
@@ -709,22 +719,24 @@ function initializeAllSettings() {
     
 	//Alchemy
 	document.getElementById('Rexterminateeq').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('RAlchOn', 'Alchemy', 'Turn on Alchemy settings. This also controls the entireity of Alchemy. If you turn this off it will not do any specific farming during the challenge. Whilst enabled will purchase as many Void and Strength potions as you can afford whilst inside void maps.', 'boolean', false, null, 'Challenges');
-	createSetting('Ralchfarmstack', 'AF: Potions', 'How many levels of a potion to farm at zone specified in AF. You must pair a potion with a level here. Example: h15,g20,s15,h17,g22,v15,s17. This will farm Herby potion up to level 15 on the first AF: Zone, Gaseous potion to level 20 and so on.', 'textValue', 'undefined', null, 'Challenges');
-	createSetting('RAlchZone', 'AF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Challenges');
-	createSetting('RAlchMapLevel', 'AF: Map Level', 'What map level to use. Needs to be a level or +map which can be specified by 0,1,2,3 etc. Will not function if you try to use minus maps', 'multiValue', [0], null, 'Challenges');
-	createSetting('RAlchCell', 'AF: Cell', 'Alch Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Challenges');
-	createSetting('RAlchSpecial', 'Alch: Special', 'Select which Special to use. Will automatically use Fast Attack maps if you do not have Hyperspeed 2 for you current zone. Also overrides your autojobs to buy workers relating to the resource you want to farm. I.e if LSC is chosen all workers will be hired as farmers and rest fired for the duration of farm. <br> 0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "hc", "lsc", "lwc", "lmc"], 'Challenges');
-	createSetting('RAlchFAMaps', 'FA Maps', 'Will run Fast Attack maps instead of the setting you\'ve selected in Alch: Special if you don\'t have Hyperspeed 2 for your current zone.', 'boolean', false, null, 'Challenges');
-	createSetting('RAlchDontBuyMets', 'No mets on 152', 'Will stop purchasing meteorologists on zone 152 to try and obtain an extra one through Atlantrimp which it\'ll run if you have enough food to afford an extra meteorologist from it. <br><br/>If you\'re not confident you\'ll achieve this it\'s best to leave this off as it\'ll have a negative impact on your radon per hour.', 'boolean', false, null, 'Challenges');
+	createSetting('rAlchOn', 'Alchemy', 'Turn on Alchemy settings. This also controls the entireity of Alchemy. If you turn this off it will not do any specific farming during the challenge. Whilst enabled will purchase as many Void and Strength potions as you can afford whilst inside void maps.', 'boolean', false, null, 'Challenges');
+	createSetting('rAlchSettings', 'Alchemy Farm Settings', 'Click to adjust settings.', 'boolean', 1, null, 'Challenges');
+	createSetting('rAlchPotion', 'Banana', 'How many levels of a potion to farm at zone specified in AF. You must pair a potion with a level here. Example: h15,g20,s15,h17,g22,v15,s17. This will farm Herby potion up to level 15 on the first AF: Zone, Gaseous potion to level 20 and so on.', 'textValue', 'undefined', null, 'Challenges');
+	createSetting('rAlchZone', 'AF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [6], null, 'Challenges');
+	createSetting('rAlchMapLevel', 'AF: Map Level', 'What map level to use. Needs to be a level or +map which can be specified by 0,1,2,3 etc. Will not function if you try to use minus maps', 'multiValue', [1], null, 'Challenges');
+	createSetting('rAlchCell', 'AF: Cell', 'Alch Farm at this Cell. -1 to run them at the default value, which is 71. ', 'multiValue', [81], null, 'Challenges');
+	createSetting('rAlchSpecial', 'AF: Special', 'Alch Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'g1', null, 'Challenges');
+	createSetting('rAlchFAMaps', 'FA Maps', 'Will run Fast Attack maps instead of the setting you\'ve selected in Alch: Special if you don\'t have Hyperspeed 2 for your current zone.', 'boolean', false, null, 'Challenges');
+	createSetting('rAlchDontBuyMets', 'No mets on 152', 'Will stop purchasing meteorologists on zone 152 to try and obtain an extra one through Atlantrimp which it\'ll run if you have enough food to afford an extra meteorologist from it. <br><br/>If you\'re not confident you\'ll achieve this it\'s best to leave this off as it\'ll have a negative impact on your radon per hour.', 'boolean', false, null, 'Challenges');
     
 	//Hypothermia
-	document.getElementById('RAlchDontBuyMets').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rAlchDontBuyMets').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rHypoOn', 'Hypothermia', 'Turn on Hypothermia settings. This also controls the entireity of Hypothermia. If you turn this off it will not do any specific farming during the challenge. Will automatically select LWC maps if you have enough fragments else it\'ll use SWC maps.', 'boolean', false, null, 'Challenges');
-	createSetting('rHypoBonfire', 'HF: Bonfire', 'How many total bonfires you\'d like to have farmed by the end of the zone selected in HF: Zone. ', 'multiValue', [-1], null, 'Challenges');
+	createSetting('rHypoSettings', 'Hypo Farm Settings', 'Click to adjust settings.', 'boolean', 1, null, 'Challenges');
+	createSetting('rHypoBonfire', 'HF: Bonfire', 'How many total bonfires you\'d like to have farmed by the end of the zone selected in HF: Zone. ', 'multiValue', [6], null, 'Challenges');
 	createSetting('rHypoZone', 'HF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Challenges');
-	createSetting('rHypoMapLevel', 'HF: Map Level', 'What map level to use. Needs to be a level or +map which can be specified by 0,1,2,3 etc.', 'multiValue', [0], null, 'Challenges');
-	createSetting('rHypoCell', 'HF: Cell', 'Hypo Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Challenges');
+	createSetting('rHypoMapLevel', 'HF: Map Level', 'What map level to use. Needs to be a level or +map which can be specified by 0,1,2,3 etc.', 'multiValue', [-1], null, 'Challenges');
+	createSetting('rHypoCell', 'HF: Cell', 'Hypo Farm at this Cell. -1 to run them at the default value, which is 71. ', 'multiValue', [1], null, 'Challenges');
 	createSetting('rHypoFrozenCastle', 'HF: Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Challenges');
 	createSetting('rHypoStorage', ['HF: Storage', 'HF: Storage', 'HF: Storage First'], 'Enable this setting to disable AutoStorage inside of Hypothermia when not at one of your designated Bonfire farming zones. Needs to be used in conjunction with the other Hypothermia settings otherwise it will break.<br><br>HF: Storage First<br>Will enable AutoStorage again after your first Bonfire farm. Make sure to only use this setting if you\'re confident your Bonfire farming settings won\'t allow for an accidental bonfire.', 'multitoggle', 0, null, 'Challenges');
 	createSetting('rHypoBuyPackrat', 'HF: Buy Packrat', 'Turn on to purchase packrat after the Hypothermia challenge is completed. Useful setting for when running 3 or less packrat for an extra bonfire.', 'boolean', false, null, 'Challenges');
@@ -910,6 +922,19 @@ function initializeAllSettings() {
 	
 	createSetting('EnableAFK', 'Go AFK Mode', '(Action Button). Go AFK uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU and RAM saving mode. Everything will resume when you come back and press the Back button. Console debug output is also disabled. The blue color means this is not a settable setting, just a button. You can now also click the Zone # (World Info) area to go AFK now.', 'action', 'MODULES["performance"].EnableAFKMode()', null, 'Display');
 	document.getElementById('battleSideTitle').setAttribute('onclick', 'MODULES["performance"].EnableAFKMode()');
+	//Time Farming
+	document.getElementById('rTimeFarmSettings').setAttribute('onclick', 'MAZLookalike("Time Farm", "rTimeFarm")');
+	document.getElementById('rdTimeFarmSettings').setAttribute('onclick', 'MAZLookalike("Daily Time Farm", "rdTimeFarm")');
+	document.getElementById('rc3TimeFarmSettings').setAttribute('onclick', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm")');
+	//Tribute Farming 
+	document.getElementById('rTributeFarmSettings').setAttribute('onclick', 'MAZLookalike("Tribute Farm", "rTributeFarm")');
+	document.getElementById('rdTributeFarmSettings').setAttribute('onclick', 'MAZLookalike("Daily Tribute Farm", "rdTributeFarm")');
+	document.getElementById('rc3TributeFarmSettings').setAttribute('onclick', 'MAZLookalike("C3 Tribute Farm", "rc3TributeFarm")');
+	//Challenge Settings
+	document.getElementById('rQuagSettings').setAttribute('onclick', 'MAZLookalike("Quagmire Farm", "rQuag")');
+	document.getElementById('rInsanitySettings').setAttribute('onclick', 'MAZLookalike("Insanity Farm", "rInsanity")');
+	document.getElementById('rAlchSettings').setAttribute('onclick', 'MAZLookalike("Alchemy Farm", "rAlch")');
+	document.getElementById('rHypoSettings').setAttribute('onclick', 'MAZLookalike("Hypothermia Farm", "rHypo")');
 	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
 	createSetting('ChangeLog', 'Show Changelog', '(Action Button). Shows the changelog popup message that AT loads on startup again, in case you missed it. The blue color means this is not a settable setting, just a button.', 'action', 'printChangelog()', null, 'Display');
 	document.getElementById('Display').lastChild.insertAdjacentHTML('afterend', '<br>');
@@ -933,32 +958,113 @@ function initializeAllSettings() {
 	createSetting('DefaultAutoTrimps', 'Reset to Default', 'Reset everything to the way it was when you first installed the script. ', 'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export');
 	createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export');
 	settingsProfileMakeGUI();
+	
+	//Resource Heirloom Legacy
+	convertSettings('RhsSCStaff','RhsFoodStaff','textValue')
+	convertSettings('RhsWCStaff','RhsWoodStaff','textValue')
+	convertSettings('RhsMCStaff','RhsMetalStaff','textValue')
 
-	//Old legacy Settings -- Remove on next patch
-	createSetting('RhsSCStaff', 'Old_SCStaff', 'Old savory cache heirloom option', 'textValue', 'undefined', null, 'Legacy'); 
-	createSetting('RhsWCStaff', 'Old_WCStaff', 'Old wooden cache heirloom option', 'textValue', 'undefined', null, 'Legacy'); 
-	createSetting('RhsMCStaff', 'Old_MCStaff', 'Old metal cache heirloom option', 'textValue', 'undefined', null, 'Legacy'); 
+	//Time Farm Legacy
+	convertSettings('Rtimefarm','rTimeFarm', 'boolean')
+	convertSettings('Rtimefarmzone','rTimeFarmZone','multiValue')
+	convertSettings('Rtimefarmtime','rTimeFarmRepeat','multiValue')
+	convertSettings('Rtimemaplevel','rTimeFarmMapLevel','multiValue')
+	convertSettings('Rtimefarmcell','rTimeFarmCell','value')
+	convertSettings('Rtimespecialselection','rTimeFarmSpecial','dropdown', 'TF: Special')
+	
+	//Daily Time Farm Legacy
+	convertSettings('Rdtimefarm','rdTimeFarm','boolean')
+	convertSettings('Rdtimefarmzone','rdTimeFarmZone','multiValue')
+	convertSettings('Rdtimefarmtime','rdTimeFarmRepeat','multiValue')
+	convertSettings('Rdtimemaplevel','rdTimeFarmMapLevel','multiValue')
+	convertSettings('Rdtimefarmcell','rdTimeFarmCell','value')
+	convertSettings('Rdtimespecialselection','rdTimeFarmSpecial','dropdown', 'Daily TF: Special')
 
+	//C3 Time Farm Legacy
+	convertSettings('Rc3timefarm','rc3TimeFarm','boolean')
+	convertSettings('Rc3timefarmzone','rc3TimeFarmZone','multiValue')
+	convertSettings('Rc3timefarmtime','rc3TimeFarmRepeat','multiValue')
+	convertSettings('Rc3timemaplevel','rc3TimeFarmMapLevel','multiValue')
+	convertSettings('Rc3timefarmcell','rc3TimeFarmCell','value')
+	convertSettings('Rc3timespecialselection','rc3TimeFarmSpecial','dropdown', 'C3 TF: Special')
 
+	//Tribute Farm Legacy
+	convertSettings('Rtributefarm','rTributeFarm','boolean')
+	convertSettings('Rtributefarmzone','rTributeFarmZone','multiValue')
+	convertSettings('Rtributefarmvalue','rTributeFarmTributes','multiValue')
+	convertSettings('Rtributefarmmets','rTributeFarmMets','multiValue')
+	convertSettings('Rtributemaplevel','rTributeFarmMapLevel','multiValue')
+	convertSettings('Rtributefarmcell','rTributeFarmCell','value')
 
-	if (typeof autoTrimpSettings['rHypoStorage'].value === 'boolean')
-		autoTrimpSettings['rHypoStorage'].value = autoTrimpSettings['rHypoStorage'].value == true ? 1 : 0;
+	//Tribute Daily Farm Legacy
+	convertSettings('Rdtributefarm','rdTributeFarm','boolean')
+	convertSettings('Rdtributefarmzone','rdTributeFarmZone','multiValue')
+	convertSettings('Rdtributefarmvalue','rdTributeFarmTributes','multiValue')
+	convertSettings('Rdtributefarmmets','rdTributeFarmMets','multiValue')
+	convertSettings('Rdtributemaplevel','rdTributeFarmMapLevel','multiValue')
+	convertSettings('Rdtributefarmcell','rdTributeFarmCell','value')
 
-	if (autoTrimpSettings['RhsSCStaff'].value !== 'undefined') {
-		autoTrimpSettings['RhsFoodStaff'].value = autoTrimpSettings['RhsSCStaff'].value;
-		autoTrimpSettings['RhsSCStaff'].value = 'undefined';
-	}
-	if (autoTrimpSettings['RhsWCStaff'].value !== 'undefined') {
-		autoTrimpSettings['RhsWoodStaff'].value = autoTrimpSettings['RhsWCStaff'].value;
-		autoTrimpSettings['RhsWCStaff'].value = 'undefined';
-	}
-	if (autoTrimpSettings['RhsMCStaff'].value !== 'undefined') {
-		autoTrimpSettings['RhsMetalStaff'].value = autoTrimpSettings['RhsMCStaff'].value;
-		autoTrimpSettings['RhsMCStaff'].value = 'undefined';
-	}
+	//Tribute C3 Farm Legacy
+	convertSettings('Rc3tributefarm','rc3TributeFarm','boolean')
+	convertSettings('Rc3tributefarmzone','rc3TributeFarmZone','multiValue')
+	convertSettings('Rc3tributefarmvalue','rc3TributeFarmTributes','multiValue')
+	convertSettings('Rc3tributefarmmets','rc3TributeFarmMets','multiValue')
+	convertSettings('Rc3tributemaplevel','rc3TributeFarmMapLevel','multiValue')
+	convertSettings('Rc3tributefarmcell','rc3TributeFarmCell','value')
+
+	//Quag Farm Legacy
+	convertSettings('Rblackbog', 'rQuagOn','boolean')
+	convertSettings('Rblackbogzone', 'rQuagZone','multiValue')
+	convertSettings('Rblackbogamount', 'rQuagBog','multiValue')
+
+	//Insanity Farm Legacy
+	convertSettings('Rinsanityon', 'rInsanityOn','boolean')
+	convertSettings('Rinsanityfarmzone', 'rInsanityZone','multiValue')
+	convertSettings('Rinsanityfarmcell', 'rInsanityCell','value')
+	convertSettings('Rinsanityfarmstack', 'rInsanityInsanity','multiValue')
+	convertSettings('Rinsanityfarmlevel', 'rInsanityMapLevel','multiValue')
+
+	//Alchemy Farm Legacy
+	convertSettings('RAlchOn', 'rAlchOn','boolean')
+	convertSettings('Ralchfarmstack', 'rAlchPotion','textValue')
+	convertSettings('RAlchZone', 'rAlchZone','multiValue')
+	convertSettings('RAlchMapLevel', 'rAlchMapLevel','multiValue')
+	convertSettings('RAlchCell', 'rAlchCell','value')
+	convertSettings('RAlchSpecial', 'rAlchSpecial','dropdown', 'AF: Special')
+	convertSettings('RAlchFAMaps', 'rAlchFAMaps','boolean')
+	convertSettings('RAlchDontBuyMets', 'rAlchDontBuyMets','boolean')
 }
 
 initializeAllSettings();
+
+function convertSettings (oldSetting, newSetting, type, newName) {
+	var newName = !newName ? null : newName
+	
+	if (type !== 'dropdown' && autoTrimpSettings[oldSetting] !== 'undefined' && newName != null) {
+	    var type = !type ? undefined : type;
+		var defaultValue = type == 'boolean' ? false : type == 'value' ? '-1' : type == 'multiValue' ? [-1] : 'undefined'
+		createSetting(oldSetting, oldSetting, oldSetting, type, defaultValue, null, 'Legacy'); 
+		
+		if (typeof autoTrimpSettings[oldSetting].value === 'boolean' && typeof autoTrimpSettings[newSetting].value === 'boolean') {
+			autoTrimpSettings[newSetting].enabled = autoTrimpSettings[oldSetting].enabled;
+			autoTrimpSettings[oldSetting].enabled = 'undefined';
+		}
+		else if (typeof autoTrimpSettings[oldSetting].value === 'boolean') {
+			autoTrimpSettings[newSetting].value = autoTrimpSettings[oldSetting].enabled == true ? 1 : 0;
+			autoTrimpSettings[oldSetting].enabled = 'undefined';
+		}
+		else if (autoTrimpSettings[oldSetting].value !== 'undefined') {
+			autoTrimpSettings[newSetting].value = autoTrimpSettings[oldSetting].value;
+			autoTrimpSettings[oldSetting].value = 'undefined';
+		}
+		else 
+			autoTrimpSettings[oldSetting].value = 'undefined';
+	}
+	else if (newName != null) {
+		debug('Change your setting for ' + newName + ' it has been updated and will no longer work the same way it did before.')
+		autoTrimpSettings[oldSetting].value = 'undefined';
+	}
+}
 
 function createSetting(id, name, description, type, defaultValue, list, container) {
 	var btnParent = document.createElement("DIV");
@@ -1543,23 +1649,22 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAutoPortalDaily')>0 ? turnOn('RdHeliumHourChallenge') : turnOff('RdHeliumHourChallenge');
 
 	//Radon Daily Tribute Farming
-	radonon ? turnOn('Rdtributefarm'): turnOff('Rdtributefarm');
-	var rdtributeon = getPageSetting('Rdtributefarm');
-	(radonon && rdtributeon) ? turnOn('Rdtributefarmzone'): turnOff('Rdtributefarmzone');
-	(radonon && rdtributeon) ? turnOn('Rdtributefarmvalue'): turnOff('Rdtributefarmvalue');
-	(radonon && rdtributeon) ? turnOn('Rdtributefarmmets'): turnOff('Rdtributefarmmets');
-	(radonon && rdtributeon) ? turnOn('Rdtributemaplevel'): turnOff('Rdtributemaplevel');
-	(radonon && rdtributeon) ? turnOn('Rdtributefarmcell'): turnOff('Rdtributefarmcell');
+	radonon ? turnOn('rdTributeFarm'): turnOff('rdTributeFarm');
+	(radonon && getPageSetting('rdTributeFarm')) ? turnOn('rdTributeFarmSettings'): turnOff('rdTributeFarmSettings');
+	turnOff('rdTributeFarmZone');
+	turnOff('rdTributeFarmTributes');
+	turnOff('rdTributeFarmMets');
+	turnOff('rdTributeFarmMapLevel');
+	turnOff('rdTributeFarmCell');
 
 	//Radon Daily Time Farming
-	radonon ? turnOn('Rdtimefarm'): turnOff('Rdtimefarm');
-	var rdtimeon = getPageSetting('Rdtimefarm');
-	(radonon && rdtimeon) ? turnOn('Rdtimefarmzone'): turnOff('Rdtimefarmzone');
-	(radonon && rdtimeon) ? turnOn('Rdtimefarmtime'): turnOff('Rdtimefarmtime');
-	(radonon && rdtimeon) ? turnOn('Rdtimemaplevel'): turnOff('Rdtimemaplevel');
-	(radonon && rdtimeon) ? turnOn('Rdtimefarmcell'): turnOff('Rdtimefarmcell');
-	(radonon && rdtimeon) ? turnOn('Rdtimespecialselection'): turnOff('Rdtimespecialselection');
-	(radonon && rdtimeon) ? turnOn('Rdtimegatherselection'): turnOff('Rdtimegatherselection');
+	radonon ? turnOn('rdTimeFarm'): turnOff('rdTimeFarm');
+	(radonon && getPageSetting('rdTimeFarm')) ? turnOn('rdTimeFarmSettings'): turnOff('rdTimeFarmSettings');
+	turnOff('rdTimeFarmZone');
+	turnOff('rdTimeFarmRepeat');
+	turnOff('rdTimeFarmMapLevel');
+	turnOff('rdTimeFarmCell');
+	turnOff('rdTimeFarmSpecial');
 	
 	//C2
 	!radonon ? turnOn('FinishC2'): turnOff('FinishC2');
@@ -1582,22 +1687,22 @@ function updateCustomButtons() {
 	radonon ? turnOn('c3GM_ST'): turnOff('c3GM_ST');
 
 	//C3 Time Farm
-	radonon ? turnOn('Rc3timefarm'): turnOff('Rc3timefarm');
-	var rtimeon = getPageSetting('Rc3timefarm');
-	(radonon && rtimeon) ? turnOn('Rc3timefarmzone'): turnOff('Rc3timefarmzone');
-	(radonon && rtimeon) ? turnOn('Rc3timefarmtime'): turnOff('Rc3timefarmtime');
-	(radonon && rtimeon) ? turnOn('Rc3timemaplevel'): turnOff('Rc3timemaplevel');
-	(radonon && rtimeon) ? turnOn('Rc3timefarmcell'): turnOff('Rc3timefarmcell');
-	(radonon && rtimeon) ? turnOn('Rc3timespecialselection'): turnOff('Rc3timespecialselection');
+	radonon ? turnOn('rc3TimeFarm'): turnOff('rc3TimeFarm');
+	(radonon && getPageSetting('rc3TimeFarm')) ? turnOn('rc3TimeFarmSettings'): turnOff('rc3TimeFarmSettings');
+	turnOff('rc3TimeFarmZone');
+	turnOff('rc3TimeFarmRepeat');
+	turnOff('rc3TimeFarmMapLevel');
+	turnOff('rc3TimeFarmCell');
+	turnOff('rc3TimeFarmSpecial');
 
 	//C3 Tribute Farming
-	radonon ? turnOn('Rc3tributefarm'): turnOff('Rc3tributefarm');
-	var rdtributeon = getPageSetting('Rc3tributefarm');
-	(radonon && rdtributeon) ? turnOn('Rc3tributefarmzone'): turnOff('Rc3tributefarmzone');
-	(radonon && rdtributeon) ? turnOn('Rc3tributefarmmets'): turnOff('Rc3tributefarmmets');
-	(radonon && rdtributeon) ? turnOn('Rc3tributemaplevel'): turnOff('Rc3tributemaplevel');
-	(radonon && rdtributeon) ? turnOn('Rc3tributefarmcell'): turnOff('Rc3tributefarmcell');
-
+	radonon ? turnOn('rc3TributeFarm'): turnOff('rc3TributeFarm');
+	(radonon && getPageSetting('rc3TributeFarm')) ? turnOn('rc3TributeFarmSettings'): turnOff('rc3TributeFarmSettings');
+	turnOff('rc3TributeFarmZone');
+	turnOff('rc3TributeFarmTributes');
+	turnOff('rc3TributeFarmMets');
+	turnOff('rc3TributeFarmMapLevel');
+	turnOff('rc3TributeFarmCell');
 	//Buildings
 	!radonon ? turnOn('BuyBuildingsNew'): turnOff('BuyBuildingsNew');
 	!radonon ? turnOn('MaxGym'): turnOff('MaxGym');
@@ -1769,21 +1874,22 @@ function updateCustomButtons() {
 	//Frozen Castle
 	radonon && game.global.stringVersion != '5.5.1' && game.global.highestRadonLevelCleared >= 174 ? turnOn('rFrozenCastle') : turnOff('rFrozenCastle');
 	//Tribute Farming
-	radonon ? turnOn('Rtributefarm'): turnOff('Rtributefarm');
-	var rtributeon = getPageSetting('Rtributefarm');
-	(radonon && rtributeon) ? turnOn('Rtributefarmzone'): turnOff('Rtributefarmzone');
-	(radonon && rtributeon) ? turnOn('Rtributefarmvalue'): turnOff('Rtributefarmvalue');
-	(radonon && rtributeon) ? turnOn('Rtributefarmmets'): turnOff('Rtributefarmmets');
-	(radonon && rtributeon) ? turnOn('Rtributemaplevel'): turnOff('Rtributemaplevel');
-	(radonon && rtributeon) ? turnOn('Rtributefarmcell'): turnOff('Rtributefarmcell');
-	//Time Farming
-	radonon ? turnOn('Rtimefarm'): turnOff('Rtimefarm');
-	var rtimeon = getPageSetting('Rtimefarm');
-	(radonon && rtimeon) ? turnOn('Rtimefarmzone'): turnOff('Rtimefarmzone');
-	(radonon && rtimeon) ? turnOn('Rtimefarmtime'): turnOff('Rtimefarmtime');
-	(radonon && rtimeon) ? turnOn('Rtimemaplevel'): turnOff('Rtimemaplevel');
-	(radonon && rtimeon) ? turnOn('Rtimefarmcell'): turnOff('Rtimefarmcell');
-	(radonon && rtimeon) ? turnOn('Rtimespecialselection'): turnOff('Rtimespecialselection');
+
+	radonon ? turnOn('rTributeFarm'): turnOff('rTributeFarm');
+	(radonon && getPageSetting('rTributeFarm')) ? turnOn('rTributeFarmSettings'): turnOff('rTributeFarmSettings');
+	turnOff('rTributeFarmZone');
+	turnOff('rTributeFarmTributes');
+	turnOff('rTributeFarmMets');
+	turnOff('rTributeFarmMapLevel');
+	turnOff('rTributeFarmCell');
+	//Time Farming 
+	radonon ? turnOn('rTimeFarm'): turnOff('rTimeFarm');
+	(radonon && getPageSetting('rTimeFarm')) ? turnOn('rTimeFarmSettings'): turnOff('rTimeFarmSettings');
+	turnOff('rTimeFarmZone');
+	turnOff('rTimeFarmRepeat');
+	turnOff('rTimeFarmMapLevel');
+	turnOff('rTimeFarmCell');
+	turnOff('rTimeFarmSpecial');
 
 	//Spire
 	!radonon ? turnOn('MaxStacksForSpire'): turnOff('MaxStacksForSpire');
@@ -1887,9 +1993,11 @@ function updateCustomButtons() {
 	radonon ? turnOn('rTrappa') : turnOff('rTrappa');
 	radonon && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
 	//Quagmire
-	radonon && !getPageSetting('rHideQuagmire') ? turnOn('Rblackbog') : turnOff('Rblackbog');
-	radonon && getPageSetting('Rblackbog') && !getPageSetting('rHideQuagmire') ? turnOn('Rblackbogzone') : turnOff('Rblackbogzone');
-	radonon && getPageSetting('Rblackbog') && !getPageSetting('rHideQuagmire') ? turnOn('Rblackbogamount') : turnOff('Rblackbogamount');
+	radonon && !getPageSetting('rHideQuagmire') ? turnOn('rQuagOn') : turnOff('rQuagOn');
+	radonon && getPageSetting('rQuagOn') && !getPageSetting('rHideQuagmire') ? turnOn('rQuagZone') : turnOff('rQuagZone');
+	radonon && getPageSetting('rQuagOn') && !getPageSetting('rHideQuagmire') ? turnOn('rQuagCell') : turnOff('rQuagCell');
+	radonon && getPageSetting('rQuagOn') && !getPageSetting('rHideQuagmire') ? turnOn('rQuagSettings') : turnOff('rQuagSettings');
+	radonon && getPageSetting('rQuagOn') && !getPageSetting('rHideQuagmire') ? turnOn('rQuagBog') : turnOff('rQuagBog');
 
 	//Archaeology
 	radonon && !getPageSetting('rHideArchaeology') ? turnOn('Rarchon') : turnOff('Rarchon');
@@ -1913,12 +2021,13 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Rstormon') ? turnOn('Rstormmult') : turnOff('Rstormmult');
 
 	//Insanity
-	radonon && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityon') : turnOff('Rinsanityon');
-	radonon && getPageSetting('Rinsanityon') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmzone') : turnOff('Rinsanityfarmzone');
-	radonon && getPageSetting('Rinsanityon') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmcell') : turnOff('Rinsanityfarmcell');
-	radonon && getPageSetting('Rinsanityon') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmstack') : turnOff('Rinsanityfarmstack');
-	radonon && getPageSetting('Rinsanityon') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmlevel') : turnOff('Rinsanityfarmlevel');
-	radonon && getPageSetting('Rinsanityon') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmfrag') : turnOff('Rinsanityfarmfrag');
+	radonon && !getPageSetting('rHideInsanity') ? turnOn('rInsanityOn') : turnOff('rInsanityOn');
+	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanityZone') : turnOff('rInsanityZone');
+	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanitySettings') : turnOff('rInsanitySettings');
+	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanityCell') : turnOff('rInsanityCell');
+	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanityInsanity') : turnOff('rInsanityInsanity');
+	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanityMapLevel') : turnOff('rInsanityMapLevel');
+	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmfrag') : turnOff('Rinsanityfarmfrag');
 
 	//Exterminate
 	radonon && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateon') : turnOff('Rexterminateon');
@@ -1944,21 +2053,25 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
 	
 	//Alchemy
-	radonon && !getPageSetting('rHideAlchemy') ? turnOn('RAlchOn') : turnOff('RAlchOn');
-	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('Ralchfarmstack') : turnOff('Ralchfarmstack');
-	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchZone') : turnOff('RAlchZone');
-	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchMapLevel') : turnOff('RAlchMapLevel');
-	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchCell') : turnOff('RAlchCell');
-	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchSpecial') : turnOff('RAlchSpecial');
-	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchFAMaps') : turnOff('RAlchFAMaps');
-	radonon && getPageSetting('RAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('RAlchDontBuyMets') : turnOff('RAlchDontBuyMets');
+	radonon && !getPageSetting('rHideAlchemy') ? turnOn('rAlchOn') : turnOff('rAlchOn');
+	radonon && getPageSetting('rAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('rAlchSettings') : turnOff('rAlchSettings');
+	turnOff('rAlchPotion');
+	turnOff('rAlchPotionNumber')
+	turnOff('rAlchPotionType')
+	turnOff('rAlchZone');
+	turnOff('rAlchMapLevel');
+	turnOff('rAlchCell');
+	turnOff('rAlchSpecial');
+	radonon && getPageSetting('rAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('rAlchFAMaps') : turnOff('rAlchFAMaps');
+	radonon && getPageSetting('rAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('rAlchDontBuyMets') : turnOff('rAlchDontBuyMets');
     
-	//Hypothermia
+	//Hypothermia 
 	radonon && !getPageSetting('rHideHypothermia') && game.global.stringVersion != '5.5.1' ? turnOn('rHypoOn') : turnOff('rHypoOn');
-	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoBonfire') : turnOff('rHypoBonfire');
-	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoZone') : turnOff('rHypoZone');
-	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoMapLevel') : turnOff('rHypoMapLevel');
-	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoCell') : turnOff('rHypoCell');
+	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoSettings') : turnOff('rHypoSettings');
+	turnOff('rHypoBonfire');
+	turnOff('rHypoZone');
+	turnOff('rHypoMapLevel');
+	turnOff('rHypoCell');
 	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoFrozenCastle') : turnOff('rHypoFrozenCastle');
 	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoStorage') : turnOff('rHypoStorage');
 	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoBuyPackrat') : turnOff('rHypoBuyPackrat');
@@ -2123,11 +2236,6 @@ function updateCustomButtons() {
 	!radonon && (keepcoreenable) ? turnOn('slot2modcr') : turnOff('slot2modcr');
 	!radonon && (keepcoreenable) ? turnOn('slot3modcr') : turnOff('slot3modcr');
 	!radonon && (keepcoreenable) ? turnOn('slot4modcr') : turnOff('slot4modcr');
-
-	//Legacy Settings
-	!legacysettings ? turnOn('RhsSCStaff') : turnOff('RhsSCStaff');
-	!legacysettings ? turnOn('RhsWCStaff') : turnOff('RhsWCStaff');
-	!legacysettings ? turnOn('RhsMCStaff') : turnOff('RhsMCStaff');
 	
 	//Dropdowns
 	document.getElementById('AutoPortal').value = autoTrimpSettings.AutoPortal.selected;
@@ -2142,12 +2250,7 @@ function updateCustomButtons() {
 	document.getElementById('mapselection').value = autoTrimpSettings.mapselection.selected;
 	document.getElementById('Rmapselection').value = autoTrimpSettings.Rmapselection.selected;
 	document.getElementById('rMapSpecial').value = autoTrimpSettings.rMapSpecial.selected;
-	document.getElementById('Rtimespecialselection').value = autoTrimpSettings.Rtimespecialselection.selected;
-	document.getElementById('Rdtimespecialselection').value = autoTrimpSettings.Rdtimespecialselection.selected;
-	document.getElementById('Rc3timespecialselection').value = autoTrimpSettings.Rc3timespecialselection.selected;
-	document.getElementById('RAlchSpecial').value = autoTrimpSettings.RAlchSpecial.selected;
 	document.getElementById('Prestige').value = autoTrimpSettings.Prestige.selected;
-	//document.getElementById('RPrestige').value = autoTrimpSettings.RPrestige.selected;
 	document.getElementById('AutoGoldenUpgrades').value = autoTrimpSettings.AutoGoldenUpgrades.selected;
 	document.getElementById('dAutoGoldenUpgrades').value = autoTrimpSettings.dAutoGoldenUpgrades.selected;
 	document.getElementById('cAutoGoldenUpgrades').value = autoTrimpSettings.cAutoGoldenUpgrades.selected;
@@ -2210,7 +2313,7 @@ function updateCustomButtons() {
 					else
 						elem.textContent = item.name + ': ' + item.value.toString();
 				}
-				else if (item.type == 'textValue') {
+				else if (item.type == 'textValue' && item.value.substring !== undefined) {
 					if (item.value.length > 18)
 						elem.textContent = item.name + ': ' + item.value.substring(0,21) + '...';
 					else 
