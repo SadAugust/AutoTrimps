@@ -98,3 +98,139 @@ background: none;
 #wrapper {
 background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,#727275 53%,#4c4d56 70.5%,#323341 88%); 
 }
+
+
+.windowRow div input{
+	width: 100%;
+}
+
+.windowRow div select{
+	width: 100%;
+}
+
+.windowRow{
+	padding: 0 2%;
+	margin: 0 1%;
+	font-weight: bold;
+}
+
+.windowRow.titles div{
+	text-align: center;
+	font-weight: bold;
+}
+
+.windowRow.titles{
+	border: 1px solid black;
+	margin: 0 1%;
+	padding: 0.2% 2%;
+}
+
+#windowAddRowBtn, #windowSwapPresetBtn{
+	margin-top: 0.5vw;
+}
+
+.windowDelete, .windowWorld, .windowCheckbox, .windowPreset, .windowRepeat, .windowRepeatUntil, .windowExit, .windowBwWorld, .windowCell, .windowTimes, .windowThrough, .windowRx, .windowPrio, .windowTx, .windowLevel, .windowRepeat, .windowGather, .windowSpecial, .windowTributes, .windowMets, .windowBogs, .windowInsanity, .windowPotionType, .windowPotionNumber, .windowBonfire {
+	display: inline-block;
+}
+
+.windowDelete .icomoon{
+	position: relative;
+	top: 0.6vw;
+	left: -0.55vw;
+	color: red;
+	font-weight: bold;
+	font-size: 2vw;
+}
+
+#windowError{
+	font-weight: bold;
+	color: red;
+}
+
+.windowDelete{
+	width: 4%;
+	cursor: pointer;
+}
+
+.windowWorld, .windowCell, .windowThrough, .windowLevel, .windowRepeat, .windowPotionNumber{
+	width: 10%;
+}
+
+.windowTributes, .windowMets, .windowBogs, .windowInsanity, .windowBonfire{
+	width: 16%;
+}
+
+.windowCheckbox{
+	width: 4%;
+}
+
+.windowPotionType {
+    width: 21%;
+}
+.windowPreset, .windowGather, .windowSpecial{
+	width: 26%;
+}
+
+.windowRepeat{
+	width: 8.5%;
+}
+
+.windowRepeatUntil{
+	width: 15%;
+}
+
+.windowExit{
+	width: 8%;
+}
+
+.windowTimes{
+	width: 17%;
+}
+
+.windowBwZoneOn .windowRepeatUntil, .windowRxOn .windowRepeatUntil{
+	width: 10%;
+}
+
+.windowBwZoneOff .windowBwWorld, .windowRxOff .windowRx{
+	display: none;
+}
+
+.windowBwZoneOn .windowBwWorld, .windowRxOn .windowRx{
+	width: 10%;
+}
+
+.windowTxOn .windowTimes{
+	width: 11.5% !important;
+}
+
+.windowTxOff .windowTx{
+	display: none;
+}
+
+.windowTx{
+	width: 5.5%;
+}
+
+.windowBwMainOff .windowRepeatUntil select .windowBwClimbOption{
+	display: none;
+}
+
+#tooltipDiv.tooltipWindowLg{
+	width: 60%;
+    overflow-y: scroll;
+}
+#tooltipDiv.tooltipExtraLg{
+	width: 50%;
+}
+
+#tooltipDiv.tooltipExtraSuperLg{
+	width: 65%;
+}
+
+#tooltipDiv.tooltipExtraGigantic{
+	width: 80%;
+}
+
+#tooltipDiv.tooltipExtraBiggest{
+	width: 90%;
+}
