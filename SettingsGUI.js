@@ -143,6 +143,82 @@ function initializeAllTabs() {
 initializeAllTabs();
 
 function initializeAllSettings() {
+
+	//Resource Heirloom Legacy
+	createSetting('RhsSCStaff', '', '', 'textValue', 'undefined', null, 'Legacy'); 
+	createSetting('RhsWCStaff', '', '', 'textValue', 'undefined', null, 'Legacy'); 
+	createSetting('RhsMCStaff', '', '', 'textValue', 'undefined', null, 'Legacy'); 
+
+	//Time Farm Legacy
+	createSetting('Rtimefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rtimefarmzone', '', '', 'multiValue', [-1], null, 'Legacy'); 
+	createSetting('Rtimefarmtime', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtimemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtimefarmcell', '', '', 'value', '-1', null,  'Legacy'); 
+	createSetting('Rtimespecialselection', '', '', 'dropdown', 'undefined', null,  'Legacy'); 
+	
+	//Daily Time Farm Legacy
+	createSetting('Rdtimefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rdtimefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtimefarmtime', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtimemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtimefarmcell', '', '', 'value', '-1', null,  'Legacy'); 
+	createSetting('Rdtimespecialselection', '', '', 'dropdown', 'undefined', null,  'Legacy'); 
+
+	//C3 Time Farm Legacy
+	createSetting('Rc3timefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rc3timefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rc3timefarmtime', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rc3timemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rc3timefarmcell', '', '', 'value', '-1', null,  'Legacy'); 
+	createSetting('Rc3timespecialselection', '', '', 'dropdown', 'undefined', null, 'Legacy'); 
+
+	//Tribute Farm Legacy
+	createSetting('Rtributefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rtributefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtributefarmvalue', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtributefarmmets', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtributemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtributefarmcell', '', '', 'value', '-1', null, 'Legacy'); 
+
+	//Tribute Daily Farm Legacy
+	createSetting('Rdtributefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rdtributefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtributefarmvalue', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtributefarmmets', '', '', 'multiValue', [-1],  null, 'Legacy'); 
+	createSetting('Rdtributemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtributefarmcell', '', '', 'value', '-1', null, 'Legacy'); 
+
+	//Tribute C3 Farm Legacy
+	createSetting('Rc3tributefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rc3tributefarmzone', '', '', 'multiValue', [-1],  null, 'Legacy'); 
+	createSetting('Rc3tributefarmvalue', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rc3tributefarmmets', '', '', 'multiValue', [-1],  null, 'Legacy'); 
+	createSetting('Rc3tributemaplevel', '', '', 'multiValue', [-1],  null, 'Legacy'); 
+	createSetting('Rc3tributefarmcell', '', '', 'value', '-1',  null, 'Legacy'); 
+
+	//Quag Farm Legacy
+	createSetting('Rblackbog', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rblackbogzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rblackbogamount', '', '', 'multiValue', [-1],  null, 'Legacy'); 
+
+	//Insanity Farm Legacy
+	createSetting('Rinsanityon', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rinsanityfarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rinsanityfarmstack', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rinsanityfarmlevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rinsanityfarmcell', '', '', 'value', '-1',  null, 'Legacy'); 
+
+	//Alchemy Farm Legacy
+
+	createSetting('RAlchOn', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Ralchfarmstack', '', 'Everything in related to Nature', 'textValue', true, null, 'Legacy');
+	createSetting('RAlchZone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('RAlchMapLevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('RAlchSpecial', '', '', 'dropdown', 'undefined', null,  'Legacy'); 
+	createSetting('RAlchCell', '', '', 'value', '-1',  null, 'Legacy'); 
+	createSetting('RAlchFAMaps', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('RAlchDontBuyMets', '', '', 'boolean', '0', null, 'Legacy'); 
 	//Core
 	//Helium General
 	createSetting('ManualGather2', ['Manual Gather/Build', 'Auto Gather/Build', 'Mining/Building Only', 'Science Research OFF'], 'Controls what you gather/build do. Manual does nothing<br>Auto Gathering of Food,Wood,Metal(w/turkimp) & Science. Auto speed-Builds your build queue. <br>Mining/Building only does exactly what it says. Only use if you are passed the early stages of the game and have the mastery foremany unlocked (No longer need to trap, food and wood are useless). <br>You can disable science researching for the achievement: Reach Z120 without using manual research.', 'multitoggle', 1, null, 'Core');
@@ -959,100 +1035,21 @@ function initializeAllSettings() {
 	createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export');
 	settingsProfileMakeGUI();
 
-	//Resource Heirloom Legacy
-	createSetting('RhsSCStaff', '', '', 'textValue', 'undefined', null, 'Legacy'); 
-	createSetting('RhsWCStaff', '', '', 'textValue', 'undefined', null, 'Legacy'); 
-	createSetting('RhsMCStaff', '', '', 'textValue', 'undefined', null, 'Legacy'); 
-
-	//Time Farm Legacy
-	createSetting('Rtimefarm', '', '', 'boolean', '0', null, 'Legacy'); 
-	createSetting('Rtimefarmzone', '', '', 'multiValue', [-1], null, 'Legacy'); 
-	createSetting('Rtimefarmtime', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rtimemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rtimefarmcell', '', '', 'value', '-1', null,  'Legacy'); 
-	createSetting('Rtimespecialselection', '', '', 'dropdown', 'undefined', null,  'Legacy'); 
-	
-	//Daily Time Farm Legacy
-	createSetting('Rdtimefarm', '', '', 'boolean', '0', null, 'Legacy'); 
-	createSetting('Rdtimefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rdtimefarmtime', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rdtimemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rdtimefarmcell', '', '', 'value', '-1', null,  'Legacy'); 
-	createSetting('Rdtimespecialselection', '', '', 'dropdown', 'undefined', null,  'Legacy'); 
-
-	//C3 Time Farm Legacy
-	createSetting('Rc3timefarm', '', '', 'boolean', '0', null, 'Legacy'); 
-	createSetting('Rc3timefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rc3timefarmtime', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rc3timemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rc3timefarmcell', '', '', 'value', '-1', null,  'Legacy'); 
-	createSetting('Rc3timespecialselection', '', '', 'dropdown', 'undefined', null, 'Legacy'); 
-
-	//Tribute Farm Legacy
-	createSetting('Rtributefarm', '', '', 'boolean', '0', null, 'Legacy'); 
-	createSetting('Rtributefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rtributefarmvalue', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rtributefarmmets', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rtributemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rtributefarmcell', '', '', 'value', '-1', null, 'Legacy'); 
-
-	//Tribute Daily Farm Legacy
-	createSetting('Rdtributefarm', '', '', 'boolean', '0', null, 'Legacy'); 
-	createSetting('Rdtributefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rdtributefarmvalue', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rdtributefarmmets', '', '', 'multiValue', [-1],  null, 'Legacy'); 
-	createSetting('Rdtributemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rdtributefarmcell', '', '', 'value', '-1', null, 'Legacy'); 
-
-	//Tribute C3 Farm Legacy
-	createSetting('Rc3tributefarm', '', '', 'boolean', '0', null, 'Legacy'); 
-	createSetting('Rc3tributefarmzone', '', '', 'multiValue', [-1],  null, 'Legacy'); 
-	createSetting('Rc3tributefarmvalue', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rc3tributefarmmets', '', '', 'multiValue', [-1],  null, 'Legacy'); 
-	createSetting('Rc3tributemaplevel', '', '', 'multiValue', [-1],  null, 'Legacy'); 
-	createSetting('Rc3tributefarmcell', '', '', 'value', '-1',  null, 'Legacy'); 
-
-	//Quag Farm Legacy
-	createSetting('Rblackbog', '', '', 'boolean', '0', null, 'Legacy'); 
-	createSetting('Rblackbogzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rblackbogamount', '', '', 'multiValue', [-1],  null, 'Legacy'); 
-
-	//Insanity Farm Legacy
-	createSetting('Rinsanityon', '', '', 'boolean', '0', null, 'Legacy'); 
-	createSetting('Rinsanityfarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rinsanityfarmstack', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rinsanityfarmlevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('Rinsanityfarmcell', '', '', 'value', '-1',  null, 'Legacy'); 
-
-	//Alchemy Farm Legacy
-
-	createSetting('RAlchOn', '', '', 'boolean', '0', null, 'Legacy'); 
-	createSetting('Ralchfarmstack', '', 'Everything in related to Nature', 'textValue', true, null, 'Legacy');
-	createSetting('RAlchZone', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('RAlchMapLevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
-	createSetting('RAlchSpecial', '', '', 'dropdown', 'undefined', null,  'Legacy'); 
-	createSetting('RAlchCell', '', '', 'value', '-1',  null, 'Legacy'); 
-	createSetting('RAlchFAMaps', '', '', 'boolean', '0', null, 'Legacy'); 
-	createSetting('RAlchDontBuyMets', '', '', 'boolean', '0', null, 'Legacy'); 
-
 }
 
 initializeAllSettings();
 
 function convertSettings (oldSetting, newSetting, type, newName) {
-	var newName = !newName ? null : newName
-	    var type = !type ? undefined : type;
+
+	if ((autoTrimpSettings[oldSetting].type === 'boolean' && autoTrimpSettings[oldSetting].enabled === false) || ((autoTrimpSettings[oldSetting].type === 'multiValue' || autoTrimpSettings[oldSetting].type === 'value' || autoTrimpSettings[oldSetting].type === 'textValue') && autoTrimpSettings[oldSetting].value === 'undefined') || autoTrimpSettings[oldSetting].type === 'dropdown')
+		return
+		
 		//var defaultValue = type == 'boolean' ? false : type == 'value' ? '-1' : type == 'multiValue' ? [-1] : '0'
-		if (autoTrimpSettings[oldSetting].type === 'boolean' && autoTrimpSettings[newSetting].type === 'boolean') {
-			autoTrimpSettings[newSetting].enabled = autoTrimpSettings[oldSetting].enabled;
-			autoTrimpSettings[oldSetting].enabled = 'undefined';
+		if (autoTrimpSettings[oldSetting].type === 'boolean' && autoTrimpSettings[newSetting].type === 'boolean' && autoTrimpSettings[oldSetting].enabled === true && autoTrimpSettings[newSetting].enabled !== true) {
+			settingChanged(newSetting);
+			autoTrimpSettings[oldSetting].enabled = false;
 		}
-		else if (autoTrimpSettings[oldSetting].type === 'boolean') {
-			autoTrimpSettings[newSetting].enabled = autoTrimpSettings[oldSetting].enabled == true ? 1 : 0;
-			autoTrimpSettings[oldSetting].enabled = 'undefined';
-		}
-		else if (autoTrimpSettings[oldSetting].value !== 'undefined' && type != 'dropdown') {
-			debug(oldSetting);
+		else if (autoTrimpSettings[oldSetting].value !== 'undefined' && type != 'dropdown' && autoTrimpSettings[newSetting].type !== 'boolean') {
 			autoTrimpSettings[newSetting].value = autoTrimpSettings[oldSetting].value;
 			autoTrimpSettings[oldSetting].value = 'undefined';
 		}
