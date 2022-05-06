@@ -1026,13 +1026,14 @@ function initializeAllSettings() {
 
 	//Alchemy Farm Legacy
 	convertSettings('RAlchOn', 'rAlchOn','boolean')
-	convertSettings('Ralchfarmstack', 'rAlchPotion','textValue')
+	//convertSettings('Ralchfarmstack', 'rAlchPotion','textValue')
 	convertSettings('RAlchZone', 'rAlchZone','multiValue')
 	convertSettings('RAlchMapLevel', 'rAlchMapLevel','multiValue')
 	convertSettings('RAlchCell', 'rAlchCell','value')
 	convertSettings('RAlchSpecial', 'rAlchSpecial','dropdown', 'AF: Special')
 	convertSettings('RAlchFAMaps', 'rAlchFAMaps','boolean')
 	convertSettings('RAlchDontBuyMets', 'rAlchDontBuyMets','boolean')
+	createSetting('Ralchfarmstack', '', 'Everything in related to Nature', 'textValue', true, null, 'Legacy');
 }
 
 initializeAllSettings();
@@ -1476,6 +1477,11 @@ function updateCustomButtons() {
 	}
 	function turnOn(elem) {
 		toggleElem(elem, true);
+	}
+
+	if (autoTrimpSettings.Ralchfarmstack.value  !== 'undefined') {
+		autoTrimpSettings.rAlchPotion.value = autoTrimpSettings.Ralchfarmstack.value.split(',');
+		autoTrimpSettings.Ralchfarmstack.value = 'undefined';
 	}
 
 	//Hide settings
