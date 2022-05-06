@@ -958,111 +958,107 @@ function initializeAllSettings() {
 	createSetting('DefaultAutoTrimps', 'Reset to Default', 'Reset everything to the way it was when you first installed the script. ', 'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export');
 	createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export');
 	settingsProfileMakeGUI();
-	
+
 	//Resource Heirloom Legacy
-	convertSettings('RhsSCStaff','RhsFoodStaff','textValue')
-	convertSettings('RhsWCStaff','RhsWoodStaff','textValue')
-	convertSettings('RhsMCStaff','RhsMetalStaff','textValue')
+	createSetting('RhsSCStaff', '', '', 'textValue', 'undefined', null, 'Legacy'); 
+	createSetting('RhsWCStaff', '', '', 'textValue', 'undefined', null, 'Legacy'); 
+	createSetting('RhsMCStaff', '', '', 'textValue', 'undefined', null, 'Legacy'); 
 
 	//Time Farm Legacy
-	convertSettings('Rtimefarm','rTimeFarm', 'boolean')
-	convertSettings('Rtimefarmzone','rTimeFarmZone','multiValue')
-	convertSettings('Rtimefarmtime','rTimeFarmRepeat','multiValue')
-	convertSettings('Rtimemaplevel','rTimeFarmMapLevel','multiValue')
-	convertSettings('Rtimefarmcell','rTimeFarmCell','value')
-	convertSettings('Rtimespecialselection','rTimeFarmSpecial','dropdown', 'TF: Special')
+	createSetting('Rtimefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rtimefarmzone', '', '', 'multiValue', [-1], null, 'Legacy'); 
+	createSetting('Rtimefarmtime', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtimemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtimefarmcell', '', '', 'value', '-1', null,  'Legacy'); 
+	createSetting('Rtimespecialselection', '', '', 'dropdown', 'undefined', null,  'Legacy'); 
 	
 	//Daily Time Farm Legacy
-	convertSettings('Rdtimefarm','rdTimeFarm','boolean')
-	convertSettings('Rdtimefarmzone','rdTimeFarmZone','multiValue')
-	convertSettings('Rdtimefarmtime','rdTimeFarmRepeat','multiValue')
-	convertSettings('Rdtimemaplevel','rdTimeFarmMapLevel','multiValue')
-	convertSettings('Rdtimefarmcell','rdTimeFarmCell','value')
-	convertSettings('Rdtimespecialselection','rdTimeFarmSpecial','dropdown', 'Daily TF: Special')
+	createSetting('Rdtimefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rdtimefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtimefarmtime', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtimemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtimefarmcell', '', '', 'value', '-1', null,  'Legacy'); 
+	createSetting('Rdtimespecialselection', '', '', 'dropdown', 'undefined', null,  'Legacy'); 
 
 	//C3 Time Farm Legacy
-	convertSettings('Rc3timefarm','rc3TimeFarm','boolean')
-	convertSettings('Rc3timefarmzone','rc3TimeFarmZone','multiValue')
-	convertSettings('Rc3timefarmtime','rc3TimeFarmRepeat','multiValue')
-	convertSettings('Rc3timemaplevel','rc3TimeFarmMapLevel','multiValue')
-	convertSettings('Rc3timefarmcell','rc3TimeFarmCell','value')
-	convertSettings('Rc3timespecialselection','rc3TimeFarmSpecial','dropdown', 'C3 TF: Special')
+	createSetting('Rc3timefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rc3timefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rc3timefarmtime', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rc3timemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rc3timefarmcell', '', '', 'value', '-1', null,  'Legacy'); 
+	createSetting('Rc3timespecialselection', '', '', 'dropdown', 'undefined', null, 'Legacy'); 
 
 	//Tribute Farm Legacy
-	convertSettings('Rtributefarm','rTributeFarm','boolean')
-	convertSettings('Rtributefarmzone','rTributeFarmZone','multiValue')
-	convertSettings('Rtributefarmvalue','rTributeFarmTributes','multiValue')
-	convertSettings('Rtributefarmmets','rTributeFarmMets','multiValue')
-	convertSettings('Rtributemaplevel','rTributeFarmMapLevel','multiValue')
-	convertSettings('Rtributefarmcell','rTributeFarmCell','value')
+	createSetting('Rtributefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rtributefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtributefarmvalue', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtributefarmmets', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtributemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rtributefarmcell', '', '', 'value', '-1', null, 'Legacy'); 
 
 	//Tribute Daily Farm Legacy
-	convertSettings('Rdtributefarm','rdTributeFarm','boolean')
-	convertSettings('Rdtributefarmzone','rdTributeFarmZone','multiValue')
-	convertSettings('Rdtributefarmvalue','rdTributeFarmTributes','multiValue')
-	convertSettings('Rdtributefarmmets','rdTributeFarmMets','multiValue')
-	convertSettings('Rdtributemaplevel','rdTributeFarmMapLevel','multiValue')
-	convertSettings('Rdtributefarmcell','rdTributeFarmCell','value')
+	createSetting('Rdtributefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rdtributefarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtributefarmvalue', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtributefarmmets', '', '', 'multiValue', [-1],  null, 'Legacy'); 
+	createSetting('Rdtributemaplevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rdtributefarmcell', '', '', 'value', '-1', null, 'Legacy'); 
 
 	//Tribute C3 Farm Legacy
-	convertSettings('Rc3tributefarm','rc3TributeFarm','boolean')
-	convertSettings('Rc3tributefarmzone','rc3TributeFarmZone','multiValue')
-	convertSettings('Rc3tributefarmvalue','rc3TributeFarmTributes','multiValue')
-	convertSettings('Rc3tributefarmmets','rc3TributeFarmMets','multiValue')
-	convertSettings('Rc3tributemaplevel','rc3TributeFarmMapLevel','multiValue')
-	convertSettings('Rc3tributefarmcell','rc3TributeFarmCell','value')
+	createSetting('Rc3tributefarm', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rc3tributefarmzone', '', '', 'multiValue', [-1],  null, 'Legacy'); 
+	createSetting('Rc3tributefarmvalue', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rc3tributefarmmets', '', '', 'multiValue', [-1],  null, 'Legacy'); 
+	createSetting('Rc3tributemaplevel', '', '', 'multiValue', [-1],  null, 'Legacy'); 
+	createSetting('Rc3tributefarmcell', '', '', 'value', '-1',  null, 'Legacy'); 
 
 	//Quag Farm Legacy
-	convertSettings('Rblackbog', 'rQuagOn','boolean')
-	convertSettings('Rblackbogzone', 'rQuagZone','multiValue')
-	convertSettings('Rblackbogamount', 'rQuagBog','multiValue')
+	createSetting('Rblackbog', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rblackbogzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rblackbogamount', '', '', 'multiValue', [-1],  null, 'Legacy'); 
 
 	//Insanity Farm Legacy
-	convertSettings('Rinsanityon', 'rInsanityOn','boolean')
-	convertSettings('Rinsanityfarmzone', 'rInsanityZone','multiValue')
-	convertSettings('Rinsanityfarmcell', 'rInsanityCell','value')
-	convertSettings('Rinsanityfarmstack', 'rInsanityInsanity','multiValue')
-	convertSettings('Rinsanityfarmlevel', 'rInsanityMapLevel','multiValue')
+	createSetting('Rinsanityon', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rinsanityfarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rinsanityfarmstack', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rinsanityfarmlevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rinsanityfarmcell', '', '', 'value', '-1',  null, 'Legacy'); 
 
 	//Alchemy Farm Legacy
-	convertSettings('RAlchOn', 'rAlchOn','boolean')
-	//convertSettings('Ralchfarmstack', 'rAlchPotion','textValue')
-	convertSettings('RAlchZone', 'rAlchZone','multiValue')
-	convertSettings('RAlchMapLevel', 'rAlchMapLevel','multiValue')
-	convertSettings('RAlchCell', 'rAlchCell','value')
-	convertSettings('RAlchSpecial', 'rAlchSpecial','dropdown', 'AF: Special')
-	convertSettings('RAlchFAMaps', 'rAlchFAMaps','boolean')
-	convertSettings('RAlchDontBuyMets', 'rAlchDontBuyMets','boolean')
+
+	createSetting('RAlchOn', '', '', 'boolean', '0', null, 'Legacy'); 
 	createSetting('Ralchfarmstack', '', 'Everything in related to Nature', 'textValue', true, null, 'Legacy');
+	createSetting('RAlchZone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('RAlchMapLevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('RAlchSpecial', '', '', 'dropdown', 'undefined', null,  'Legacy'); 
+	createSetting('RAlchCell', '', '', 'value', '-1',  null, 'Legacy'); 
+	createSetting('RAlchFAMaps', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('RAlchDontBuyMets', '', '', 'boolean', '0', null, 'Legacy'); 
+
 }
 
 initializeAllSettings();
 
 function convertSettings (oldSetting, newSetting, type, newName) {
 	var newName = !newName ? null : newName
-	
-	if (type !== 'dropdown' && autoTrimpSettings[oldSetting] !== 'undefined' && newName != null) {
 	    var type = !type ? undefined : type;
-		var defaultValue = type == 'boolean' ? false : type == 'value' ? '-1' : type == 'multiValue' ? [-1] : 'undefined'
-		createSetting(oldSetting, oldSetting, oldSetting, type, defaultValue, null, 'Legacy'); 
-		
-		if (typeof autoTrimpSettings[oldSetting].value === 'boolean' && typeof autoTrimpSettings[newSetting].value === 'boolean') {
+		//var defaultValue = type == 'boolean' ? false : type == 'value' ? '-1' : type == 'multiValue' ? [-1] : '0'
+		if (autoTrimpSettings[oldSetting].type === 'boolean' && autoTrimpSettings[newSetting].type === 'boolean') {
 			autoTrimpSettings[newSetting].enabled = autoTrimpSettings[oldSetting].enabled;
 			autoTrimpSettings[oldSetting].enabled = 'undefined';
 		}
-		else if (typeof autoTrimpSettings[oldSetting].value === 'boolean') {
-			autoTrimpSettings[newSetting].value = autoTrimpSettings[oldSetting].enabled == true ? 1 : 0;
+		else if (autoTrimpSettings[oldSetting].type === 'boolean') {
+			autoTrimpSettings[newSetting].enabled = autoTrimpSettings[oldSetting].enabled == true ? 1 : 0;
 			autoTrimpSettings[oldSetting].enabled = 'undefined';
 		}
-		else if (autoTrimpSettings[oldSetting].value !== 'undefined') {
+		else if (autoTrimpSettings[oldSetting].value !== 'undefined' && type != 'dropdown') {
+			debug(oldSetting);
 			autoTrimpSettings[newSetting].value = autoTrimpSettings[oldSetting].value;
 			autoTrimpSettings[oldSetting].value = 'undefined';
 		}
 		else 
 			autoTrimpSettings[oldSetting].value = 'undefined';
-	}
-	else if (newName != null) 
-		autoTrimpSettings[oldSetting].value = 'undefined';
+	
 }
 
 function createSetting(id, name, description, type, defaultValue, list, container) {
@@ -1481,6 +1477,71 @@ function updateCustomButtons() {
 		autoTrimpSettings.rAlchPotion.value = autoTrimpSettings.Ralchfarmstack.value.split(',');
 		autoTrimpSettings.Ralchfarmstack.value = 'undefined';
 	}
+	convertSettings('RhsSCStaff','RhsFoodStaff','textValue')
+	convertSettings('RhsWCStaff','RhsWoodStaff','textValue')
+	convertSettings('RhsMCStaff','RhsMetalStaff','textValue')
+	convertSettings('Rtimefarm','rTimeFarm', 'boolean')
+
+	convertSettings('Rtimefarmzone','rTimeFarmZone','multiValue')
+	convertSettings('Rtimefarmtime','rTimeFarmRepeat','multiValue')
+	convertSettings('Rtimemaplevel','rTimeFarmMapLevel','multiValue')
+	convertSettings('Rtimefarmcell','rTimeFarmCell','value')
+	convertSettings('Rtimespecialselection','rTimeFarmSpecial','dropdown', 'TF: Special')
+
+	convertSettings('Rdtimefarm','rdTimeFarm','boolean')
+	convertSettings('Rdtimefarmzone','rdTimeFarmZone','multiValue')
+	convertSettings('Rdtimefarmtime','rdTimeFarmRepeat','multiValue')
+	convertSettings('Rdtimemaplevel','rdTimeFarmMapLevel','multiValue')
+	convertSettings('Rdtimefarmcell','rdTimeFarmCell','value')
+	convertSettings('Rdtimespecialselection','rdTimeFarmSpecial','dropdown', 'Daily TF: Special')
+
+	convertSettings('Rc3timefarm','rc3TimeFarm','boolean')
+	convertSettings('Rc3timefarmzone','rc3TimeFarmZone','multiValue')
+	convertSettings('Rc3timefarmtime','rc3TimeFarmRepeat','multiValue')
+	convertSettings('Rc3timemaplevel','rc3TimeFarmMapLevel','multiValue')
+	convertSettings('Rc3timefarmcell','rc3TimeFarmCell','value')
+	convertSettings('Rc3timespecialselection','rc3TimeFarmSpecial','dropdown', 'C3 TF: Special')
+
+	convertSettings('Rtributefarm','rTributeFarm','boolean')
+	convertSettings('Rtributefarmzone','rTributeFarmZone','multiValue')
+	convertSettings('Rtributefarmvalue','rTributeFarmTributes','multiValue')
+	convertSettings('Rtributefarmmets','rTributeFarmMets','multiValue')
+	convertSettings('Rtributemaplevel','rTributeFarmMapLevel','multiValue')
+	convertSettings('Rtributefarmcell','rTributeFarmCell','value')
+
+	convertSettings('Rdtributefarm','rdTributeFarm','boolean')
+	convertSettings('Rdtributefarmzone','rdTributeFarmZone','multiValue')
+	convertSettings('Rdtributefarmvalue','rdTributeFarmTributes','multiValue')
+	convertSettings('Rdtributefarmmets','rdTributeFarmMets','multiValue')
+	convertSettings('Rdtributemaplevel','rdTributeFarmMapLevel','multiValue')
+	convertSettings('Rdtributefarmcell','rdTributeFarmCell','value')
+	
+	convertSettings('Rc3tributefarm','rc3TributeFarm','boolean')
+	convertSettings('Rc3tributefarmzone','rc3TributeFarmZone','multiValue')
+	convertSettings('Rc3tributefarmvalue','rc3TributeFarmTributes','multiValue')
+	convertSettings('Rc3tributefarmmets','rc3TributeFarmMets','multiValue')
+	convertSettings('Rc3tributemaplevel','rc3TributeFarmMapLevel','multiValue')
+	convertSettings('Rc3tributefarmcell','rc3TributeFarmCell','value')
+
+	convertSettings('Rblackbog', 'rQuagOn','boolean')
+	convertSettings('Rblackbogzone', 'rQuagZone','multiValue')
+	convertSettings('Rblackbogamount', 'rQuagBog','multiValue')
+	
+	convertSettings('Rinsanityon', 'rInsanityOn','boolean')
+	convertSettings('Rinsanityfarmzone', 'rInsanityZone','multiValue')
+	convertSettings('Rinsanityfarmcell', 'rInsanityCell','value')
+	convertSettings('Rinsanityfarmstack', 'rInsanityInsanity','multiValue')
+	convertSettings('Rinsanityfarmlevel', 'rInsanityMapLevel','multiValue')
+	
+	convertSettings('RAlchOn', 'rAlchOn','boolean')
+	//convertSettings('Ralchfarmstack', 'rAlchPotion','textValue')
+	convertSettings('RAlchZone', 'rAlchZone','multiValue')
+	convertSettings('RAlchMapLevel', 'rAlchMapLevel','multiValue')
+	convertSettings('RAlchSpecial', 'rAlchSpecial','dropdown', 'AF: Special')
+	convertSettings('RAlchCell', 'rAlchCell','value')
+	convertSettings('RAlchFAMaps', 'rAlchFAMaps','boolean')
+	convertSettings('RAlchDontBuyMets', 'rAlchDontBuyMets','boolean')
+
 
 	//Hide settings
 
