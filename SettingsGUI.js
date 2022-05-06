@@ -1061,10 +1061,8 @@ function convertSettings (oldSetting, newSetting, type, newName) {
 		else 
 			autoTrimpSettings[oldSetting].value = 'undefined';
 	}
-	else if (newName != null) {
-		debug('Change your setting for ' + newName + ' it has been updated and will no longer work the same way it did before.')
+	else if (newName != null) 
 		autoTrimpSettings[oldSetting].value = 'undefined';
-	}
 }
 
 function createSetting(id, name, description, type, defaultValue, list, container) {
