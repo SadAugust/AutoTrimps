@@ -1201,8 +1201,7 @@ function RautoMap() {
 			}
 
 			var totalstacks = 100 - stacksum;
-			debug(bogcell);
-			debug((bogcell[bogindex] + 2 >= game.global.lastClearedCell) && (game.challenges.Quagmire.motivatedStacks > totalstacks))
+			
 			if ((game.global.lastClearedCell + 2 >= bogcell[bogindex]) && (game.challenges.Quagmire.motivatedStacks > totalstacks))
 				Rshoulddobogs = true;
 		}
