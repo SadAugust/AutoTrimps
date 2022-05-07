@@ -343,7 +343,8 @@ function initializeAllSettings() {
 
 	//Radon Daily Time Farming
 	createSetting('rdTimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'Daily');
-	createSetting('rdTimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Daily');
+	createSetting('rdTimeFarmSettings', 'Time Farm Settings', 'Click to adjust infoclick. ', 'boolean', false, null, 'Daily');
+	createSetting('rdTimeFarmDefaultCell', 'TF: Default Cell', 'Adding rows to Time Farm settings will default the cell to this value.', 'value', '81', null, 'Daily');
 	createSetting('rdTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
 	createSetting('rdTimeFarmRepeat', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [6], null, 'Daily');
 	createSetting('rdTimeFarmMapLevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'Daily');
@@ -352,7 +353,8 @@ function initializeAllSettings() {
 
 	//Radon Daily Tribute Farming
 	createSetting('rdTributeFarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Daily');
-	createSetting('rdTributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Daily');
+	createSetting('rdTributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Daily');
+	createSetting('rdTributeFarmDefaultCell', 'TrF: Default Cell', 'Adding rows to Tribute Farm settings will default the cell to this value.', 'value', '86', null, 'Daily');
 	createSetting('rdTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Daily');
 	createSetting('rdTributeFarmTributes', 'TrF: Tributes', 'How many tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Daily');
 	createSetting('rdTributeFarmMets', 'TrF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Daily');
@@ -581,7 +583,8 @@ function initializeAllSettings() {
 	//Time Farming
 	document.getElementById('rFrozenCastle').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rTimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'Μaps');
-	createSetting('rTimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Μaps');
+	createSetting('rTimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Μaps');
+	createSetting('rTimeFarmDefaultCell', 'TF: Default Cell', 'Adding rows to Time Farm settings will default the cell to this value.', 'value', '81', null, 'Μaps');
 	createSetting('rTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
 	createSetting('rTimeFarmRepeat', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [6], null, 'Μaps');
 	createSetting('rTimeFarmMapLevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'Μaps');
@@ -590,7 +593,8 @@ function initializeAllSettings() {
 	
 	//Tribute Farming
 	createSetting('rTributeFarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Μaps');
-	createSetting('rTributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Μaps');
+	createSetting('rTributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Μaps');
+	createSetting('rTributeFarmDefaultCell', 'TrF: Default Cell', 'Adding rows to Tribute Farm settings will default the cell to this value.', 'value', '86', null, 'Μaps');
 	createSetting('rTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
 	createSetting('rTributeFarmTributes', 'TrF: Tributes', 'How many tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Μaps');
 	createSetting('rTributeFarmMets', 'TrF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Μaps');
@@ -682,7 +686,8 @@ function initializeAllSettings() {
 	//C3 Time Farm
 	document.getElementById('c3GM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rc3TimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'C3');
-	createSetting('rc3TimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'C3');
+	createSetting('rc3TimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'C3');
+	createSetting('rc3TimeFarmDefaultCell', 'TF: Default Cell', 'Adding rows to Time Farm settings will default the cell to this value.', 'value', '81', null, 'C3');
 	createSetting('rc3TimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 	createSetting('rc3TimeFarmRepeat', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [6], null, 'C3');
 	createSetting('rc3TimeFarmMapLevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'C3');
@@ -692,7 +697,8 @@ function initializeAllSettings() {
 	//C3 Tribute (Met) Farm
 	//document.getElementById('rc3TimeFarmSpecial').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rc3TributeFarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. Doesn\'t run during the Downsize challenge. ', 'boolean', false, null, 'C3');
-	createSetting('rc3TributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'C3');
+	createSetting('rc3TributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'C3');
+	createSetting('rc3TributeFarmDefaultCell', 'TrF: Default Cell', 'Adding rows to Tribute Farm settings will default the cell to this value.', 'value', '86', null, 'C3');
 	createSetting('rc3TributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 	createSetting('rc3TributeFarmTributes', 'TrF: Tributes', 'How many Tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [6], null, 'C3');
 	createSetting('rc3TributeFarmMets', 'TrF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'C3');
@@ -765,7 +771,8 @@ function initializeAllSettings() {
 	//Quagmire
 	document.getElementById('rHideHypothermia').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rQuagOn', 'Quagmire', 'Enable Bog Running for Quagmire. ', 'boolean', false, null, 'Challenges');
-	createSetting('rQuagSettings', 'Quag Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Challenges');
+	createSetting('rQuagSettings', 'Quag Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Challenges');
+	createSetting('rQuagDefaultCell', 'BB: Default Cell', 'Adding rows to Quag settings will default the cell to this value.', 'value', '71', null, 'Challenges');
 	createSetting('rQuagZone', 'BB: Zone', 'What zones to run Black Bogs at. Can use 40,50,60. ', 'multiValue', [6], null, 'Challenges');
 	createSetting('rQuagCell', 'BB: Cell', 'What cell to run Black Bogs at. Can use 40,50,60. ', 'multiValue', [-1], null, 'Challenges');
 	createSetting('rQuagBog', 'BB: Amount', 'How many Black Bogs to at specified zones. Can use 8,9,10. I.e if BB: Zone had 40,50 and this setting had 8,10, It would run 8 Black Bogs at z40 and 10 Black Bogs at z50. ', 'multiValue', [-1], null, 'Challenges');
@@ -780,7 +787,8 @@ function initializeAllSettings() {
 	//Insanity
 	document.getElementById('Rarchstring3').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rInsanityOn', 'Insanity', 'Turn on Insanity settings. This also controls the entireity of IF. If you turn this off it will not Insanity Farm.', 'boolean', false, null, 'Challenges');
-	createSetting('rInsanitySettings', 'Insanity Farm Settings', 'Click to adjust settings. ', 'boolean', 1, null, 'Challenges');
+	createSetting('rInsanitySettings', 'Insanity Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Challenges');
+	createSetting('rInsanityDefaultCell', 'IF: Default Cell', 'Adding rows to Insanity settings will default the cell to this value.', 'value', '71', null, 'Challenges');
 	createSetting('rInsanityZone', 'Insanity Farming', 'Farms for specified stacks in IF: Stacks at zone according to this settings value. Can use 108,109,110. ', 'multiValue', [6], null, 'Challenges');
 	createSetting('rInsanityCell', 'IF: Cell', 'Insanity Farm at this Cell. -1 to run them at the default value, which is 1. ', 'multiValue', [81], null, 'Challenges');
 	createSetting('rInsanityInsanity', 'IF: Stacks', 'How many stacks to farm at zone specified in IF. Can use 300,400,500. These values should match up to your IF zones. If using IF and IF: Stacks examples (110 and 500) it will farm at z110 for 500 stacks of insanity. If stacks specified are above maximum Insanity Stacks, it will farm for maximum. ', 'multiValue', [-1], null, 'Challenges');
@@ -796,7 +804,8 @@ function initializeAllSettings() {
 	//Alchemy
 	document.getElementById('Rexterminateeq').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rAlchOn', 'Alchemy', 'Turn on Alchemy settings. This also controls the entireity of Alchemy. If you turn this off it will not do any specific farming during the challenge. Whilst enabled will purchase as many Void and Strength potions as you can afford whilst inside void maps.', 'boolean', false, null, 'Challenges');
-	createSetting('rAlchSettings', 'Alchemy Farm Settings', 'Click to adjust settings.', 'boolean', 1, null, 'Challenges');
+	createSetting('rAlchSettings', 'Alchemy Farm Settings', 'Click to adjust settings.', 'infoclick', false, null, 'Challenges');
+	createSetting('rAlchDefaultCell', 'AF: Default Cell', 'Adding rows to Alch settings will default the cell to this value.', 'value', '71', null, 'Challenges');
 	createSetting('rAlchPotion', 'Banana', 'How many levels of a potion to farm at zone specified in AF. You must pair a potion with a level here. Example: h15,g20,s15,h17,g22,v15,s17. This will farm Herby potion up to level 15 on the first AF: Zone, Gaseous potion to level 20 and so on.', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('rAlchZone', 'AF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [6], null, 'Challenges');
 	createSetting('rAlchMapLevel', 'AF: Map Level', 'What map level to use. Needs to be a level or +map which can be specified by 0,1,2,3 etc. Will not function if you try to use minus maps', 'multiValue', [1], null, 'Challenges');
@@ -808,7 +817,8 @@ function initializeAllSettings() {
 	//Hypothermia
 	document.getElementById('rAlchDontBuyMets').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rHypoOn', 'Hypothermia', 'Turn on Hypothermia settings. This also controls the entireity of Hypothermia. If you turn this off it will not do any specific farming during the challenge. Will automatically select LWC maps if you have enough fragments else it\'ll use SWC maps.', 'boolean', false, null, 'Challenges');
-	createSetting('rHypoSettings', 'Hypo Farm Settings', 'Click to adjust settings.', 'boolean', 1, null, 'Challenges');
+	createSetting('rHypoSettings', 'Hypo Farm Settings', 'Click to adjust infoclick.', 'boolean', false, null, 'Challenges');
+	createSetting('rHypoDefaultCell', 'HF: Default Cell', 'Adding rows to Hypo settings will default the cell to this value.', 'value', '71', null, 'Challenges');
 	createSetting('rHypoBonfire', 'HF: Bonfire', 'How many total bonfires you\'d like to have farmed by the end of the zone selected in HF: Zone. ', 'multiValue', [6], null, 'Challenges');
 	createSetting('rHypoZone', 'HF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Challenges');
 	createSetting('rHypoMapLevel', 'HF: Map Level', 'What map level to use. Needs to be a level or +map which can be specified by 0,1,2,3 etc.', 'multiValue', [-1], null, 'Challenges');
@@ -1474,30 +1484,64 @@ function updateCustomButtons() {
 		autoTrimpSettings.rAlchPotion.value = autoTrimpSettings.Ralchfarmstack.value.split(',');
 		autoTrimpSettings.Ralchfarmstack.value = 'undefined';
 	}
+
+	if (autoTrimpSettings.Rtimespecialselection.selected  !== 'undefined') {
+		autoTrimpSettings.rTimeFarmSpecial.value = [];
+		for (var i = 0; getPageSetting('Rtimefarmzone').length > i; i++) {
+			autoTrimpSettings.rTimeFarmSpecial.value[i] = autoTrimpSettings.Rtimespecialselection.selected
+		}
+		autoTrimpSettings.Rtimespecialselection.selected = 'undefined';
+	}
+
+	if (autoTrimpSettings.Rdtimespecialselection.selected  !== 'undefined') {
+		autoTrimpSettings.rdTimeFarmSpecial.value = [];
+		for (var i = 0; getPageSetting('Rdtimefarmzone').length > i; i++) {
+			autoTrimpSettings.rdTimeFarmSpecial.value[i] = autoTrimpSettings.Rdtimespecialselection.selected
+		}
+		autoTrimpSettings.Rdtimespecialselection.selected = 'undefined';
+	}
+
+	if (autoTrimpSettings.Rc3timespecialselection.selected  !== 'undefined') {
+		autoTrimpSettings.rc3TimeFarmSpecial.value = [];
+		for (var i = 0; getPageSetting('Rc3timefarmzone').length > i; i++) {
+			autoTrimpSettings.rc3TimeFarmSpecial.value[i] = autoTrimpSettings.Rc3timespecialselection.selected
+		}
+		autoTrimpSettings.Rc3timespecialselection.selected = 'undefined';
+	}
+
+	if (autoTrimpSettings.RAlchSpecial.selected  !== 'undefined') {
+		autoTrimpSettings.rAlchSpecial.value = [];
+		for (var i = 0; getPageSetting('RAlchZone').length > i; i++) {
+			debug(autoTrimpSettings.RAlchSpecial.selected);
+			autoTrimpSettings.rAlchSpecial.value[i] = autoTrimpSettings.RAlchSpecial.selected
+		}
+		autoTrimpSettings.RAlchSpecial.selected = 'undefined';
+	}
+	
 	convertSettings('RhsSCStaff','RhsFoodStaff','textValue')
 	convertSettings('RhsWCStaff','RhsWoodStaff','textValue')
 	convertSettings('RhsMCStaff','RhsMetalStaff','textValue')
-	convertSettings('Rtimefarm','rTimeFarm', 'boolean')
+	convertSettings('Rtimefarm','rTimeFarm', 'boolean')	
 
 	convertSettings('Rtimefarmzone','rTimeFarmZone','multiValue')
 	convertSettings('Rtimefarmtime','rTimeFarmRepeat','multiValue')
 	convertSettings('Rtimemaplevel','rTimeFarmMapLevel','multiValue')
-	convertSettings('Rtimefarmcell','rTimeFarmCell','value')
-	convertSettings('Rtimespecialselection','rTimeFarmSpecial','dropdown', 'TF: Special')
+	convertSettings('Rtimefarmcell','rTimeFarmCell','value')/* 
+	convertSettings('Rtimespecialselection','rTimeFarmSpecial','dropdown', 'TF: Special') */
 
 	convertSettings('Rdtimefarm','rdTimeFarm','boolean')
 	convertSettings('Rdtimefarmzone','rdTimeFarmZone','multiValue')
 	convertSettings('Rdtimefarmtime','rdTimeFarmRepeat','multiValue')
 	convertSettings('Rdtimemaplevel','rdTimeFarmMapLevel','multiValue')
 	convertSettings('Rdtimefarmcell','rdTimeFarmCell','value')
-	convertSettings('Rdtimespecialselection','rdTimeFarmSpecial','dropdown', 'Daily TF: Special')
+	//convertSettings('Rdtimespecialselection','rdTimeFarmSpecial','dropdown', 'Daily TF: Special')
 
 	convertSettings('Rc3timefarm','rc3TimeFarm','boolean')
 	convertSettings('Rc3timefarmzone','rc3TimeFarmZone','multiValue')
 	convertSettings('Rc3timefarmtime','rc3TimeFarmRepeat','multiValue')
 	convertSettings('Rc3timemaplevel','rc3TimeFarmMapLevel','multiValue')
-	convertSettings('Rc3timefarmcell','rc3TimeFarmCell','value')
-	convertSettings('Rc3timespecialselection','rc3TimeFarmSpecial','dropdown', 'C3 TF: Special')
+	convertSettings('Rc3timefarmcell','rc3TimeFarmCell','value')/* 
+	convertSettings('Rc3timespecialselection','rc3TimeFarmSpecial','dropdown', 'C3 TF: Special') */
 
 	convertSettings('Rtributefarm','rTributeFarm','boolean')
 	convertSettings('Rtributefarmzone','rTributeFarmZone','multiValue')
@@ -1534,7 +1578,7 @@ function updateCustomButtons() {
 	//convertSettings('Ralchfarmstack', 'rAlchPotion','textValue')
 	convertSettings('RAlchZone', 'rAlchZone','multiValue')
 	convertSettings('RAlchMapLevel', 'rAlchMapLevel','multiValue')
-	convertSettings('RAlchSpecial', 'rAlchSpecial','dropdown', 'AF: Special')
+	//convertSettings('RAlchSpecial', 'rAlchSpecial','dropdown', 'AF: Special')
 	convertSettings('RAlchCell', 'rAlchCell','value')
 	convertSettings('RAlchFAMaps', 'rAlchFAMaps','boolean')
 	convertSettings('RAlchDontBuyMets', 'rAlchDontBuyMets','boolean')
@@ -1713,6 +1757,7 @@ function updateCustomButtons() {
 	//Radon Daily Tribute Farming
 	radonon ? turnOn('rdTributeFarm'): turnOff('rdTributeFarm');
 	(radonon && getPageSetting('rdTributeFarm')) ? turnOn('rdTributeFarmSettings'): turnOff('rdTributeFarmSettings');
+	(radonon && getPageSetting('rdTributeFarm')) ? turnOn('rdTributeFarmDefaultCell'): turnOff('rdTributeFarmDefaultCell');
 	turnOff('rdTributeFarmZone');
 	turnOff('rdTributeFarmTributes');
 	turnOff('rdTributeFarmMets');
@@ -1722,6 +1767,7 @@ function updateCustomButtons() {
 	//Radon Daily Time Farming
 	radonon ? turnOn('rdTimeFarm'): turnOff('rdTimeFarm');
 	(radonon && getPageSetting('rdTimeFarm')) ? turnOn('rdTimeFarmSettings'): turnOff('rdTimeFarmSettings');
+	(radonon && getPageSetting('rdTimeFarm')) ? turnOn('rdTimeFarmDefaultCell'): turnOff('rdTimeFarmDefaultCell');
 	turnOff('rdTimeFarmZone');
 	turnOff('rdTimeFarmRepeat');
 	turnOff('rdTimeFarmMapLevel');
@@ -1751,6 +1797,7 @@ function updateCustomButtons() {
 	//C3 Time Farm
 	radonon ? turnOn('rc3TimeFarm'): turnOff('rc3TimeFarm');
 	(radonon && getPageSetting('rc3TimeFarm')) ? turnOn('rc3TimeFarmSettings'): turnOff('rc3TimeFarmSettings');
+	(radonon && getPageSetting('rc3TimeFarm')) ? turnOn('rc3TimeFarmDefaultCell'): turnOff('rc3TimeFarmDefaultCell');
 	turnOff('rc3TimeFarmZone');
 	turnOff('rc3TimeFarmRepeat');
 	turnOff('rc3TimeFarmMapLevel');
@@ -1760,6 +1807,7 @@ function updateCustomButtons() {
 	//C3 Tribute Farming
 	radonon ? turnOn('rc3TributeFarm'): turnOff('rc3TributeFarm');
 	(radonon && getPageSetting('rc3TributeFarm')) ? turnOn('rc3TributeFarmSettings'): turnOff('rc3TributeFarmSettings');
+	(radonon && getPageSetting('rc3TributeFarm')) ? turnOn('rc3TributeFarmDefaultCell'): turnOff('rc3TributeFarmDefaultCell');
 	turnOff('rc3TributeFarmZone');
 	turnOff('rc3TributeFarmTributes');
 	turnOff('rc3TributeFarmMets');
@@ -1939,6 +1987,7 @@ function updateCustomButtons() {
 
 	radonon ? turnOn('rTributeFarm'): turnOff('rTributeFarm');
 	(radonon && getPageSetting('rTributeFarm')) ? turnOn('rTributeFarmSettings'): turnOff('rTributeFarmSettings');
+	(radonon && getPageSetting('rTributeFarm')) ? turnOn('rTributeFarmDefaultCell'): turnOff('rTributeFarmDefaultCell');
 	turnOff('rTributeFarmZone');
 	turnOff('rTributeFarmTributes');
 	turnOff('rTributeFarmMets');
@@ -1947,6 +1996,7 @@ function updateCustomButtons() {
 	//Time Farming 
 	radonon ? turnOn('rTimeFarm'): turnOff('rTimeFarm');
 	(radonon && getPageSetting('rTimeFarm')) ? turnOn('rTimeFarmSettings'): turnOff('rTimeFarmSettings');
+	(radonon && getPageSetting('rTimeFarm')) ? turnOn('rTimeFarmDefaultCell'): turnOff('rTimeFarmDefaultCell');
 	turnOff('rTimeFarmZone');
 	turnOff('rTimeFarmRepeat');
 	turnOff('rTimeFarmMapLevel');
@@ -2056,10 +2106,11 @@ function updateCustomButtons() {
 	radonon && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
 	//Quagmire
 	radonon && !getPageSetting('rHideQuagmire') ? turnOn('rQuagOn') : turnOff('rQuagOn');
-	radonon && getPageSetting('rQuagOn') && !getPageSetting('rHideQuagmire') ? turnOn('rQuagZone') : turnOff('rQuagZone');
-	radonon && getPageSetting('rQuagOn') && !getPageSetting('rHideQuagmire') ? turnOn('rQuagCell') : turnOff('rQuagCell');
 	radonon && getPageSetting('rQuagOn') && !getPageSetting('rHideQuagmire') ? turnOn('rQuagSettings') : turnOff('rQuagSettings');
-	radonon && getPageSetting('rQuagOn') && !getPageSetting('rHideQuagmire') ? turnOn('rQuagBog') : turnOff('rQuagBog');
+	radonon && getPageSetting('rQuagOn') && !getPageSetting('rHideQuagmire') ? turnOn('rQuagDefaultCell') : turnOff('rQuagDefaultCell');
+	turnOff('rQuagZone');
+	turnOff('rQuagCell');
+	turnOff('rQuagBog');
 
 	//Archaeology
 	radonon && !getPageSetting('rHideArchaeology') ? turnOn('Rarchon') : turnOff('Rarchon');
@@ -2084,12 +2135,13 @@ function updateCustomButtons() {
 
 	//Insanity
 	radonon && !getPageSetting('rHideInsanity') ? turnOn('rInsanityOn') : turnOff('rInsanityOn');
-	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanityZone') : turnOff('rInsanityZone');
 	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanitySettings') : turnOff('rInsanitySettings');
-	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanityCell') : turnOff('rInsanityCell');
-	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanityInsanity') : turnOff('rInsanityInsanity');
-	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanityMapLevel') : turnOff('rInsanityMapLevel');
-	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('Rinsanityfarmfrag') : turnOff('Rinsanityfarmfrag');
+	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanityDefaultCell') : turnOff('rInsanityDefaultCell');
+	turnOff('rInsanityZone');
+	turnOff('rInsanityCell');
+	turnOff('rInsanityInsanity');
+	turnOff('rInsanityMapLevel');
+	turnOff('Rinsanityfarmfrag');
 
 	//Exterminate
 	radonon && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateon') : turnOff('Rexterminateon');
@@ -2117,6 +2169,7 @@ function updateCustomButtons() {
 	//Alchemy
 	radonon && !getPageSetting('rHideAlchemy') ? turnOn('rAlchOn') : turnOff('rAlchOn');
 	radonon && getPageSetting('rAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('rAlchSettings') : turnOff('rAlchSettings');
+	radonon && getPageSetting('rAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('rAlchDefaultCell') : turnOff('rAlchDefaultCell');
 	turnOff('rAlchPotion');
 	turnOff('rAlchPotionNumber')
 	turnOff('rAlchPotionType')
@@ -2130,6 +2183,7 @@ function updateCustomButtons() {
 	//Hypothermia 
 	radonon && !getPageSetting('rHideHypothermia') && game.global.stringVersion != '5.5.1' ? turnOn('rHypoOn') : turnOff('rHypoOn');
 	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoSettings') : turnOff('rHypoSettings');
+	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoDefaultCell') : turnOff('rHypoDefaultCell');
 	turnOff('rHypoBonfire');
 	turnOff('rHypoZone');
 	turnOff('rHypoMapLevel');

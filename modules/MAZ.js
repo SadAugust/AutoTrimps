@@ -1,4 +1,5 @@
 function MAZLookalike(titleText, varPrefix, isItIn, event){
+
 	
 	cancelTooltip();
 	var titleText = !titleText ? 'undefined' : titleText;
@@ -49,9 +50,9 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 		var vals = {
 			check: true,
 			world: -1,
-			cell: 81,
+			cell: -1,
 			level: -1,
-			special: 0,
+			special: -1,
 			repeat: 1,
 			gather: 0,
 			tributes: 0,
@@ -75,14 +76,17 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 			if (titleText.includes('Alchemy Farm')) vals.potionstype = autoTrimpSettings[varPrefix+"Potion"].value[x][0] ? autoTrimpSettings[varPrefix+"Potion"].value[x][0] : 0;
 			if (titleText.includes('Alchemy Farm')) vals.potionsnumber = autoTrimpSettings[varPrefix+"Potion"].value[x].toString().replace(/[^\d,:-]/g, '') ? autoTrimpSettings[varPrefix+"Potion"].value[x].toString().replace(/[^\d,:-]/g, '') : 0;
 			if (titleText.includes('Hypothermia Farm')) vals.bonfires = autoTrimpSettings[varPrefix+"Bonfire"].value[x] ? autoTrimpSettings[varPrefix+"Bonfire"].value[x] : 0;
-			if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) vals.special = autoTrimpSettings[varPrefix+"Special"].value[x] ? autoTrimpSettings[varPrefix+"Special"].value[x] : 0;
+			if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) vals.special = autoTrimpSettings[varPrefix+"Special"].value[x] ? autoTrimpSettings[varPrefix+"Special"].value[x] : -1;
 		}
 
 		else style = " style='display: none' ";
-		var gatherDropdown = "<option value='0'" + ((vals.gather == '0') ? " selected='selected'" : "") + ">food</option><option value='food'" + ((vals.gather == 'food') ? " selected='selected'" : "") + ">wood</option><option value='wood'" + ((vals.gather == 'wood') ? " selected='selected'" : "") + ">metal</option><option value='metal'" + ((vals.gather == 'metal') ? " selected='selected'" : "")+ ">science</option>"
+		var gatherDropdown = "<option value='0'" + ((vals.gather == 'food') ? " selected='selected'" : "") + ">food</option>\
+		<option value='food'" + ((vals.gather == 'food') ? " selected='selected'" : "") + ">wood</option>\
+		<option value='wood'" + ((vals.gather == 'wood') ? " selected='selected'" : "") + ">metal</option>\
+		<option value='metal'" + ((vals.gather == 'metal') ? " selected='selected'" : "")+ ">science</option>"
 		var className = (vals.preset == 3) ? "windowBwMainOn" : "windowBwMainOff";
-		var specialsDropdown = "<option value='fa'" + ((vals.special == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>\<option value='ssc'" + ((vals.special == 'ssc') ? " selected='selected'" : "") + ">Small Savory Cache</option>\<option value='swc'" + ((vals.special == 'swc') ? " selected='selected'" : "") + ">Small Wooden Cache</option>\<option value='smc'" + ((vals.special == 'smc') ? " selected='selected'" : "") + ">Small Metal Cache</option>\<option value='src'" + ((vals.special == 'src') ? " selected='selected'" : "") + ">Small Resource Cache</option>\<option value='p'" + ((vals.special == 'p') ? " selected='selected'" : "") + ">Prestigious</option>\<option value='hc'" + ((vals.special == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>\<option value='lsc'" + ((vals.special == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\<option value='lwc'" + ((vals.special == 'lwc') ? " selected='selected'" : "")+ ">Large Wooden Cache</option>\<option value='lmc'" + ((vals.special == 'lmc') ? " selected='selected'" : "")+ ">Large Metal Cache</option>"
-		var potionDropdown = "<option value='h'" + ((vals.special == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
+		var specialsDropdown = "<option value='0'" + ((vals.special == '0') ? " selected='selected'" : "") + ">None</option>\<option value='fa'" + ((vals.special == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>\<option value='ssc'" + ((vals.special == 'ssc') ? " selected='selected'" : "") + ">Small Savory Cache</option>\<option value='swc'" + ((vals.special == 'swc') ? " selected='selected'" : "") + ">Small Wooden Cache</option>\<option value='smc'" + ((vals.special == 'smc') ? " selected='selected'" : "") + ">Small Metal Cache</option>\<option value='src'" + ((vals.special == 'src') ? " selected='selected'" : "") + ">Small Resource Cache</option>\<option value='p'" + ((vals.special == 'p') ? " selected='selected'" : "") + ">Prestigious</option>\<option value='hc'" + ((vals.special == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>\<option value='lsc'" + ((vals.special == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\<option value='lwc'" + ((vals.special == 'lwc') ? " selected='selected'" : "")+ ">Large Wooden Cache</option>\<option value='lmc'" + ((vals.special == 'lmc') ? " selected='selected'" : "")+ ">Large Metal Cache</option>"
+		var potionDropdown = "<option value='h'" + ((vals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
 		tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
 		tooltipText += "<div class='windowDelete' onclick='removeRow(" + x + ")'><span class='icomoon icon-cross'></span></div>";
 		tooltipText += "<div class='windowWorld'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
@@ -99,7 +103,7 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 		if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowSpecial' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>"
 		tooltipText += "</div>"
 	}
-	tooltipText += "<div id='windowAddRowBtn' style='display: " + ((current.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow()'>+ Add Row</div>"
+	tooltipText += "<div id='windowAddRowBtn' style='display: " + ((current.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\")'>+ Add Row</div>"
 	tooltipText += "</div><div style='display: none' id='windowHelpContainer'>" + windowHelp + "</div>";
 	costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\", true)'>Save</span></div>"
 	
@@ -128,7 +132,7 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 	var setting = [];
 	var error = "";
 	var maxSettings = 30;
-	loop1: 
+	
 	for (var x = 0; x < maxSettings; x++){
 		var world = document.getElementById('windowWorld' + x);
 		if (!world || world.value == "-1") {
@@ -223,7 +227,7 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 	document.getElementById('tooltipDiv').style.overflowY = '';
 }
 
-function addRow(){
+function addRow(varPrefix){
 	for (var x = 0; x < 30; x++){
 		var elem = document.getElementById('windowWorld' + x);
 		if (!elem) continue;
@@ -232,8 +236,23 @@ function addRow(){
 			if (parent){
 				parent.style.display = 'block';
 				elem.value = game.global.world + 1 < 6 ? 6 : game.global.world + 1;
+
+				if (document.getElementById('windowSpecial' + x) !== null) {
+					document.getElementById('windowSpecial' + x).value = autoTrimpSettings.rMapSpecial.selected
+				}
 				updateWindowPreset(x);
-				break;
+			}
+		}
+
+		var elemCell = document.getElementById('windowCell' + x);
+		if (!elemCell) continue;
+		if (elemCell.value == -1) {
+			var parent2 = document.getElementById('windowRow' + x);
+			if (parent2){
+				parent2.style.display = 'block';
+				elemCell.value = getPageSetting(varPrefix + 'DefaultCell')
+				updateWindowPreset(x);
+					break;
 			}
 		}
 	}
@@ -244,6 +263,11 @@ function addRow(){
 			btnElem.style.display = 'inline-block';
 			return;
 		}
+		var elemCell = document.getElementById('windowCell' + y);
+		if (elemCell && elem.value == "-1"){			
+			btnElem.style.display = 'inline-block';
+			return;
+		}
 	}
 	btnElem.style.display = 'none'; 
 }
@@ -251,8 +275,8 @@ function addRow(){
 function removeRow(index){
 	var elem = document.getElementById('windowRow' + index);
 	if (!elem) return;
-	//document.getElementById('windowWorld' + index).value = -1;
-	//document.getElementById('windowPreset' + index).value = 0;
+	document.getElementById('windowWorld' + index).value = -1;
+	document.getElementById('windowCell' + index).value = -1;
 	//document.getElementById('windowRepeat' + index).value = 0;
 	//document.getElementById('windowRepeatUntil' + index).value = 0;
 	elem.style.display = 'none';
@@ -264,3 +288,4 @@ function updateWindowPreset(index){
 	var special = document.getElementById('windowSpecial' + index);
 	var potiontype = document.getElementById('windowPotionType' + index);
 }
+
