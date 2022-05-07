@@ -195,10 +195,8 @@ function RmanualLabor2() {
 		setGather('metal');
     else if (game.global.challengeActive == "Quest" && questcheck() == 5)
 		setGather('science');
-/*     else if (game.global.challengeActive == 'Hypothermia' && !game.global.autoStorage && game.global.buildingsQueue != false && buildingQueue.split('.')[1] > 10)
-        setGather('buildings'); */
     else if ((game.global.mapsActive && mapping != null) || rShouldWorshipperFarm) {
-        if (rShouldWorshipperFarm) 
+        if (rShouldWorshipperFarm && mapping == null) 
             setGather('food');
         else if (getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('hc'))
             setGather('food');

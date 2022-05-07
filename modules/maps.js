@@ -799,7 +799,6 @@ var savefile = null;
 var jestFarmMap = false;
 //Alchemy
 var Rshouldalchfarm = false;
-var RAlchFarm = false;
 var rAlchSpecialError = 0;
 //Hypothermia
 var rHypoFarm = false;
@@ -1843,7 +1842,7 @@ function RautoMap() {
                         }
                     }
 			//Priority system for challenges. If Alchemy isn't at the top it'll break the recycling function I think
-			} else if ((Rshouldalchfarm || rShouldHypoFarm || rShouldInsanityFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldWorshipperFarm || rShouldEmpowerFarm || rShouldUnbalance || rShouldMaxMapBonus) && !rShouldEquipFarm && !rShouldPrestigeRaid) {
+			} else if ((Rshouldalchfarm || rShouldHypoFarm || rShouldInsanityFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldWorshipperFarm || rShouldEmpowerFarm || rShouldUnbalance || rShouldEquipFarm || rShouldMaxMapBonus) && !rShouldPrestigeRaid) {
 				//Checking hyperspeed 2 percentage
 				var hyp2pct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0
 				if (game.global.challengeActive == "Alchemy" && typeof(alchmaplevel) != 'undefined') {
@@ -1852,7 +1851,18 @@ function RautoMap() {
                                         getPageSetting('RAlchFAMaps') ? "fa" :
                                         autoTrimpSettings.RAlchSpecial.selected;
                 }
-				if (Rshouldalchfarm) {
+				if (rShouldTimeFarm) {
+				selectedMap = RShouldFarmMapCreation(rTFMapLevel, rTFSpecial);
+				rTFCurrentMap = "rTimeFarm";
+				} else if (rShouldInsanityFarm) 
+					selectedMap = RShouldFarmMapCreation(insanitymaplevel, "fa");  
+				else if (rShouldTributeFarm) 
+					selectedMap = RShouldFarmMapCreation(rTrFMapLevel, rTrFSpecial); 
+				else if (rShouldWorshipperFarm)
+					selectedMap = RShouldFarmMapCreation(shippluslevel, shipspecial);
+				else if (rShouldUnbalance)
+					selectedMap = RShouldFarmMapCreation(-(game.global.world-6), "fa");
+				else if (Rshouldalchfarm) {
                     if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == autoTrimpSettings.RAlchSpecial.selected || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].level == game.global.world + alchmaplevel)
                         alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus;
                         if (alchspecial == "ssc" && (game.stats.zonesCleared.value != rAlchSpecialError)) {
@@ -1863,31 +1873,19 @@ function RautoMap() {
 				} else if (rShouldHypoFarm) {
 					selectedMap = RShouldFarmMapCreation(rHFPlusLevel, rHFSpecial);
 					rHFCurrentMap = "rHypoFarm";
-				} else if (rFragmentFarming) {
-					selectedMap = RShouldFarmMapCreation(-1, "fa");  
-				} else if (rShouldInsanityFarm) {
-					selectedMap = RShouldFarmMapCreation(insanitymaplevel, "fa");  
-				} else if (rShouldWorshipperFarm) {
-					selectedMap = RShouldFarmMapCreation(shippluslevel, shipspecial); 
-				} else if (rShouldTimeFarm) {
-					selectedMap = RShouldFarmMapCreation(rTFMapLevel, rTFSpecial);
-					rTFCurrentMap = "rTimeFarm";
-				} else if (rShouldTributeFarm) { 
-					selectedMap = RShouldFarmMapCreation(rTrFMapLevel, rTrFSpecial); 
-				} else if (rShouldEmpowerFarm) { 
+				} else if (rFragmentFarming)
+					selectedMap = RShouldFarmMapCreation(-1, "fa");   
+				else if (rShouldEmpowerFarm)
 					selectedMap = RShouldFarmMapCreation(-1, "lmc");
-				} else if (rShouldUnbalance) { 
-					selectedMap = RShouldFarmMapCreation(-(game.global.world-6), "fa");
-				} else if (rShouldMaxMapBonus) { 
+				else if (rShouldMaxMapBonus)
 					selectedMap = RShouldFarmMapCreation(0, getPageSetting('rMapSpecial'));
-				}
-			} else if (rShouldEquipFarm) {
-				for (var map in game.global.mapsOwnedArray) {
-					if (!game.global.mapsOwnedArray[map].noRecycle && equipminus <= 0 && ((game.global.world + equipminus) == game.global.mapsOwnedArray[map].level)) {
-						selectedMap = game.global.mapsOwnedArray[map].id;
-						break;
-					} else {
-						selectedMap = "create";
+				else if (rShouldEquipFarm) {
+					for (var map in game.global.mapsOwnedArray) {
+						if (!game.global.mapsOwnedArray[map].noRecycle && equipminus <= 0 && ((game.global.world + equipminus) == game.global.mapsOwnedArray[map].level)) {
+							selectedMap = game.global.mapsOwnedArray[map].id;
+							break;
+						} else 
+							selectedMap = "create";
 					}
 				}
 			} else {
@@ -2144,22 +2142,22 @@ function RautoMap() {
 			//Map settings for challenges and farming.
 			if ((Rshouldalchfarm || rShouldHypoFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldUnbalance || rShouldEmpowerFarm || rShouldInsanityFarm || rShouldWorshipperFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || rShouldEquipFarm || rShouldMaxMapBonus) && !rShouldQuest) {
 				biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
-				if (Rshouldalchfarm) {
+				//Any maps
+				if (rShouldTimeFarm) RShouldFarmMapCost(rTFMapLevel, rTFSpecial, rTFZone, biome);
+				else if (rShouldTributeFarm) RShouldFarmMapCost(rTrFMapLevel, rTrFSpecial, rTrFZone, biome);
+				else if (rShouldWorshipperFarm && game.resources.fragments.owned >= RShouldFarmMapCost(shippluslevel, shipspecial)) RShouldFarmMapCost(shippluslevel, shipspecial);
+				else if (rShouldUnbalance) RShouldFarmMapCost(-(game.global.world-6), "fa");
+				else if (rShouldInsanityFarm) PerfectMapCost(insanitymaplevel, "fa");
+				else if (rShouldPandemoniumDestack && getPageSetting('RPandemoniumMaps')) PerfectMapCost(pandemoniumextra, pandspecial, "Mountain");
+				else if (rShouldPandemoniumFarm) PerfectMapCost(getPageSetting('PandemoniumFarmLevel'), pandfarmspecial);
+				else if (rShouldPandemoniumJestimpFarm) PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'), 0)
+				else if (Rshouldalchfarm) {
 					if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == autoTrimpSettings.RAlchSpecial.selected || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].level == game.global.world + alchmaplevel)
                         alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus;
 				    	RShouldFarmMapCost(alchmaplevel, alchspecial, alchfarmzone, alchbiome);
 				}
-				//Any maps
-				else if (rShouldInsanityFarm) PerfectMapCost(insanitymaplevel, "fa");
 				else if (rShouldHypoFarm) RShouldFarmMapCost(rHFPlusLevel, rHFSpecial, rHFZone, biome);
-				else if (rShouldTimeFarm) RShouldFarmMapCost(rTFMapLevel, rTFSpecial, rTFZone, biome);
-				else if (rShouldTributeFarm) RShouldFarmMapCost(rTrFMapLevel, rTrFSpecial, rTrFZone, biome);
-				else if (rShouldUnbalance) RShouldFarmMapCost(-(game.global.world-6), "fa");
 				else if (rShouldEmpowerFarm) RShouldFarmMapCost(-1, "lmc");
-				else if (rShouldWorshipperFarm && game.resources.fragments.owned >= RShouldFarmMapCost(shippluslevel, shipspecial)) RShouldFarmMapCost(shippluslevel, shipspecial);
-				else if (rShouldPandemoniumDestack && getPageSetting('RPandemoniumMaps')) PerfectMapCost(pandemoniumextra, pandspecial, "Mountain");
-				else if (rShouldPandemoniumFarm) PerfectMapCost(getPageSetting('PandemoniumFarmLevel'), pandfarmspecial);
-				else if (rShouldPandemoniumJestimpFarm) PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'), 0)
 				else if (rShouldEquipFarm) PerfectMapCost(equipminus,"lmc");
 				else if (rShouldMaxMapBonus) PerfectMapCost(0, getPageSetting('rMapSpecial'));
 			}
