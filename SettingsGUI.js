@@ -343,7 +343,7 @@ function initializeAllSettings() {
 
 	//Radon Daily Time Farming
 	createSetting('rdTimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'Daily');
-	createSetting('rdTimeFarmSettings', 'Time Farm Settings', 'Click to adjust infoclick. ', 'boolean', false, null, 'Daily');
+	createSetting('rdTimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Daily');
 	createSetting('rdTimeFarmDefaultCell', 'TF: Default Cell', 'Adding rows to Time Farm settings will default the cell to this value.', 'value', '81', null, 'Daily');
 	createSetting('rdTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
 	createSetting('rdTimeFarmRepeat', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [6], null, 'Daily');
@@ -817,7 +817,7 @@ function initializeAllSettings() {
 	//Hypothermia
 	document.getElementById('rAlchDontBuyMets').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rHypoOn', 'Hypothermia', 'Turn on Hypothermia settings. This also controls the entireity of Hypothermia. If you turn this off it will not do any specific farming during the challenge. Will automatically select LWC maps if you have enough fragments else it\'ll use SWC maps.', 'boolean', false, null, 'Challenges');
-	createSetting('rHypoSettings', 'Hypo Farm Settings', 'Click to adjust infoclick.', 'boolean', false, null, 'Challenges');
+	createSetting('rHypoSettings', 'Hypo Farm Settings', 'Click to adjust settings.', 'infoclick', false, null, 'Challenges');
 	createSetting('rHypoDefaultCell', 'HF: Default Cell', 'Adding rows to Hypo settings will default the cell to this value.', 'value', '71', null, 'Challenges');
 	createSetting('rHypoBonfire', 'HF: Bonfire', 'How many total bonfires you\'d like to have farmed by the end of the zone selected in HF: Zone. ', 'multiValue', [6], null, 'Challenges');
 	createSetting('rHypoZone', 'HF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Challenges');
@@ -1198,13 +1198,13 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
 	} else if (type == 'infoclick') {
-		btn.setAttribute('class', 'btn btn-info');
+		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute("onclick", 'ImportExportTooltip(\'' + defaultValue + '\', \'update\')');
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.setAttribute("style", "display: block; font-size: 0.8vw;");
+		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
 		btn.textContent = name;
-		btnParent.style.width = '';
+		//btnParent.style.width = '';
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
