@@ -348,7 +348,7 @@ function initializeAllSettings() {
 	createSetting('rdTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
 	createSetting('rdTimeFarmRepeat', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [6], null, 'Daily');
 	createSetting('rdTimeFarmMapLevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'Daily');
-	createSetting('rdTimeFarmCell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'Daily');
+	createSetting('rdTimeFarmCell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'multiValue', [-1], null, 'Daily');
 	createSetting('rdTimeFarmSpecial', 'TF: Special', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'Daily');
 
 	//Radon Daily Tribute Farming
@@ -691,7 +691,7 @@ function initializeAllSettings() {
 	createSetting('rc3TimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 	createSetting('rc3TimeFarmRepeat', 'TF: Maps', 'How many maps you would like to farm at the zone specified in TF: Zone. Can use 2,3,4. These values should match up to your TF zones. If using TF: Zone and TF: Maps examples (59 and 2) it will farm at z59 for 2 maps. ', 'multiValue', [6], null, 'C3');
 	createSetting('rc3TimeFarmMapLevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'C3');
-	createSetting('rc3TimeFarmCell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'value', '-1', null, 'C3');
+	createSetting('rc3TimeFarmCell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'multiValue', [-1], null, 'C3');
 	createSetting('rc3TimeFarmSpecial', 'TF: Special', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'C3');
 
 	//C3 Tribute (Met) Farm
@@ -778,14 +778,14 @@ function initializeAllSettings() {
 	createSetting('rQuagBog', 'BB: Amount', 'How many Black Bogs to at specified zones. Can use 8,9,10. I.e if BB: Zone had 40,50 and this setting had 8,10, It would run 8 Black Bogs at z40 and 10 Black Bogs at z50. ', 'multiValue', [-1], null, 'Challenges');
 
 	//Arch
-	document.getElementById('rQuagBog').parentNode.insertAdjacentHTML('afterend', '<br>');
+	//document.getElementById('rQuagBog').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rarchon', 'Archaeology', 'Turn on Archaeology settings. ', 'boolean', false, null, 'Challenges');
 	createSetting('Rarchstring1', 'First String', 'First string to use in Archaeology. Put the zone you want to stop using this string and start using the second string (Make sure the second string has a value) at the start. I.e: 70,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('Rarchstring2', 'Second String', 'Second string to use in Archaeology. Put the zone you want to stop using this string and start using the third string (Make sure the third string has a value) at the start. I.e: 94,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('Rarchstring3', 'Third String', 'Third string to use in Archaeology. Make sure this is just your Archaeology string and nothing else. I.e: 10a,10e ', 'textValue', 'undefined', null, 'Challenges');
 	
 	//Insanity
-	document.getElementById('Rarchstring3').parentNode.insertAdjacentHTML('afterend', '<br>');
+	//document.getElementById('Rarchstring3').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rInsanityOn', 'Insanity', 'Turn on Insanity settings. This also controls the entireity of IF. If you turn this off it will not Insanity Farm.', 'boolean', false, null, 'Challenges');
 	createSetting('rInsanitySettings', 'Insanity Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Challenges');
 	createSetting('rInsanityDefaultCell', 'IF: Default Cell', 'Adding rows to Insanity settings will default the cell to this value.', 'value', '71', null, 'Challenges');
@@ -796,13 +796,13 @@ function initializeAllSettings() {
 	createSetting('Rinsanityfarmfrag', 'IF: Frags', 'Turn this on to farm fragments if you cannot afford the map you have selected for IF. ', 'boolean', false, null, 'Challenges');
 
 	//Exterminate
-	document.getElementById('Rinsanityfarmfrag').parentNode.insertAdjacentHTML('afterend', '<br>');
+	//document.getElementById('Rinsanityfarmfrag').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rexterminateon', 'Exterminate', 'Turn on Exterminate settings. This also controls the entireity of Exterminate. If you turn this off it will not calculate Exterminate.', 'boolean', false, null, 'Challenges');
 	createSetting('Rexterminatecalc', 'E: Calc', 'Calculate Exterminate enemies instead of the usual ones. May improve your challenge experience. ', 'boolean', false, null, 'Challenges');
 	createSetting('Rexterminateeq', 'E: Equality', 'Will manage your equality \'better\' inside the challenge. When you have the experienced buff it will turn it off, when you dont it will turn it on and let it build up.', 'boolean', false, null, 'Challenges');
     
 	//Alchemy
-	document.getElementById('Rexterminateeq').parentNode.insertAdjacentHTML('afterend', '<br>');
+	//document.getElementById('Rexterminateeq').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rAlchOn', 'Alchemy', 'Turn on Alchemy settings. This also controls the entireity of Alchemy. If you turn this off it will not do any specific farming during the challenge. Whilst enabled will purchase as many Void and Strength potions as you can afford whilst inside void maps.', 'boolean', false, null, 'Challenges');
 	createSetting('rAlchSettings', 'Alchemy Farm Settings', 'Click to adjust settings.', 'infoclick', false, null, 'Challenges');
 	createSetting('rAlchDefaultCell', 'AF: Default Cell', 'Adding rows to Alch settings will default the cell to this value.', 'value', '71', null, 'Challenges');
@@ -815,7 +815,7 @@ function initializeAllSettings() {
 	createSetting('rAlchDontBuyMets', 'No mets on 152', 'Will stop purchasing meteorologists on zone 152 to try and obtain an extra one through Atlantrimp which it\'ll run if you have enough food to afford an extra meteorologist from it. <br><br/>If you\'re not confident you\'ll achieve this it\'s best to leave this off as it\'ll have a negative impact on your radon per hour.', 'boolean', false, null, 'Challenges');
     
 	//Hypothermia
-	document.getElementById('rAlchDontBuyMets').parentNode.insertAdjacentHTML('afterend', '<br>');
+	//document.getElementById('rAlchDontBuyMets').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rHypoOn', 'Hypothermia', 'Turn on Hypothermia settings. This also controls the entireity of Hypothermia. If you turn this off it will not do any specific farming during the challenge. Will automatically select LWC maps if you have enough fragments else it\'ll use SWC maps.', 'boolean', false, null, 'Challenges');
 	createSetting('rHypoSettings', 'Hypo Farm Settings', 'Click to adjust settings.', 'infoclick', false, null, 'Challenges');
 	createSetting('rHypoDefaultCell', 'HF: Default Cell', 'Adding rows to Hypo settings will default the cell to this value.', 'value', '71', null, 'Challenges');
@@ -918,7 +918,7 @@ function initializeAllSettings() {
 	createSetting('raretokeep', 'Rarity to Keep', 'Auto Heirlooms. Keeps the selected rarity of heirloom, recycles all others. ', 'dropdown', 'Any', ["Any", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Magnificent", "Ethereal", "Magmatic", "Plagued", "Radiating", "Hazardous", "Enigmatic"], 'Heirlooms');
 
 	//Shield Line
-	document.getElementById('raretokeep').parentNode.insertAdjacentHTML('afterend', '<br>');
+	//document.getElementById('raretokeep').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('keepshields', 'Shields', 'Auto Heirlooms. Enables in-depth shield settings. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('slot1modsh', 'Shield: Modifier 1', 'Auto Heirlooms. Keeps Shields with selected Mod. Modifier 1 is worth 6 points. ', 'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms');
 	createSetting('slot2modsh', 'Shield: Modifier 2', 'Auto Heirlooms. Keeps Shields with selected Mod. Modifier 2 is worth 5 points. ', 'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms');
@@ -929,7 +929,7 @@ function initializeAllSettings() {
 	createSetting('slot7modsh', 'Shield: Modifier 7', 'Auto Heirlooms. Keeps Shields with selected Mod. Modifier 7 is worth 1 points. ', 'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms');
 
 	//Staff Line
-	document.getElementById('slot7modsh').parentNode.insertAdjacentHTML('afterend', '<br>');
+	//document.getElementById('slot7modsh').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('keepstaffs', 'Staffs', 'Auto Heirlooms. Enables in-depth staff settings. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('slot1modst', 'Staff: Modifier 1', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 1 is worth 6 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
 	createSetting('slot2modst', 'Staff: Modifier 2', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 2 is worth 5 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
@@ -940,7 +940,7 @@ function initializeAllSettings() {
 	createSetting('slot7modst', 'Staff: Modifier 7', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 7 is worth 1 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
 
 	//Core Line
-	document.getElementById('slot7modst').parentNode.insertAdjacentHTML('afterend', '<br>');
+	//document.getElementById('slot7modst').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('keepcores', 'Cores', 'Auto Heirlooms. Enables in-depth core settings. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('slot1modcr', 'Cores: Modifier 1', 'Auto Heirlooms. Keeps Cores with selected Mod. Modifier 1 is worth 5 points. ', 'dropdown', 'empty', ["empty", "fireTrap", "poisonTrap", "lightningTrap", "runestones", "strengthEffect", "condenserEffect"], 'Heirlooms');
 	createSetting('slot2modcr', 'Cores: Modifier 2', 'Auto Heirlooms. Keeps Cores with selected Mod. Modifier 2 is worth 4 points. ', 'dropdown', 'empty', ["empty", "fireTrap", "poisonTrap", "lightningTrap", "runestones", "strengthEffect", "condenserEffect"], 'Heirlooms');
@@ -1021,6 +1021,26 @@ function initializeAllSettings() {
 	document.getElementById('rInsanitySettings').setAttribute('onclick', 'MAZLookalike("Insanity Farm", "rInsanity")');
 	document.getElementById('rAlchSettings').setAttribute('onclick', 'MAZLookalike("Alchemy Farm", "rAlch")');
 	document.getElementById('rHypoSettings').setAttribute('onclick', 'MAZLookalike("Hypothermia Farm", "rHypo")');
+
+	document.getElementById('rHideQuagmire').setAttribute('onclick', 'settingChanged("rHideQuagmire"), modifyParentNode("rHideQuagmire", "rQuagBog", "hide")');
+	modifyParentNode("rHideQuagmire", "rQuagBog", "hide");
+
+	document.getElementById('rHideArchaeology').setAttribute('onclick', 'settingChanged("rHideArchaeology"), modifyParentNode("rHideArchaeology", "Rarchstring3", "hide")');
+	modifyParentNode("rHideArchaeology", "Rarchstring3", "hide");
+
+	document.getElementById('rHideInsanity').setAttribute('onclick', 'settingChanged("rHideInsanity"), modifyParentNode("rHideInsanity", "Rinsanityfarmfrag", "hide")');
+	modifyParentNode("rHideInsanity", "Rinsanityfarmfrag", "hide");
+
+	document.getElementById('rHideExterminate').setAttribute('onclick', 'settingChanged("rHideExterminate"), modifyParentNode("rHideExterminate", "Rexterminateeq", "hide")');
+	modifyParentNode("rHideExterminate", "Rexterminateeq", "hide");
+
+	document.getElementById('rHideAlchemy').setAttribute('onclick', 'settingChanged("rHideAlchemy"), modifyParentNode("rHideAlchemy", "rAlchDontBuyMets", "hide")');
+	modifyParentNode("rHideAlchemy", "rAlchDontBuyMets", "hide");
+
+	document.getElementById('autoheirlooms').setAttribute('onclick', 'settingChanged("autoheirlooms"), modifyParentNode("autoheirlooms", "raretokeep"), modifyParentNode("autoheirlooms", "slot7modsh")');
+		modifyParentNode("autoheirlooms", "raretokeep");
+		modifyParentNode("autoheirlooms", "slot7modsh");
+	
 	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
 	createSetting('ChangeLog', 'Show Changelog', '(Action Button). Shows the changelog popup message that AT loads on startup again, in case you missed it. The blue color means this is not a settable setting, just a button.', 'action', 'printChangelog()', null, 'Display');
 	document.getElementById('Display').lastChild.insertAdjacentHTML('afterend', '<br>');
@@ -1292,9 +1312,34 @@ function settingChanged(id) {
 		if (id == "Prestige")
 			autoTrimpSettings["PrestigeBackup"].selected = document.getElementById(id).value;
 	}
+
 	updateCustomButtons();
 	saveSettings();
 	checkPortalSettings();
+}
+
+function modifyParentNode(setting, id, style) {
+	var style = !style ? 'show' : style;
+	var toggled = style == 'show' ? false : true; 
+	var elem = document.getElementById(id).parentNode.parentNode.children;
+	for (i=0; i<elem.length; i++){
+		if (document.getElementById(id).parentNode.parentNode.children[i].children[0] === undefined) {
+			continue
+		}
+		else {
+			if (document.getElementById(id).parentNode.parentNode.children[i].children[0].id === id || document.getElementById(id).parentNode.parentNode.children[i].children[0].id === (id + 'Label')) {
+				if (autoTrimpSettings[setting].enabled == toggled) {
+					if (document.getElementById(id).parentNode.parentNode.children[(i+1)].style.length == 0) {
+						document.getElementById(id).parentNode.parentNode.children[(i+1)].remove()
+						break;
+					}
+				}
+				else {
+					document.getElementById(id).parentNode.parentNode.children[i].insertAdjacentHTML('afterend', '<br>');
+				}
+			}
+		}
+	}
 }
 
 function autoSetValueToolTip(id, text,negative, multi) {
@@ -1444,7 +1489,7 @@ function autoToggle(what) {
 		else $item.style.display = 'block';
 	}
 }
-
+ 
 function autoPlusSettingsMenu() {
 	var $item = document.getElementById('autoSettings');
 	if ($item.style.display === 'block')
