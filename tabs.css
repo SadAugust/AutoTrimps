@@ -167,9 +167,12 @@ background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,
 .windowPotionType {
     width: 21%;
 }
-.windowPreset, .windowGather, .windowSpecial{
-	width: 25%;
+.windowPreset, .windowSpecial{
+	width: 26%;
 }
+/* .windowGather{
+	width: 10%;
+} */
 
 .windowRepeat{
 	width: 8.5%;
@@ -187,15 +190,15 @@ background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,
 	width: 17%;
 }
 
-.windowBwZoneOn .windowRepeatUntil, .windowRxOn .windowRepeatUntil{
-	width: 10%;
+.windowBwZoneOn .windowRepeatUntil, .windowGatherOn .windowSpecial{
+	width: 16%;
 }
 
-.windowBwZoneOff .windowBwWorld, .windowRxOff .windowRx{
+.windowBwZoneOff .windowBwWorld, .windowGatherOff .windowGather{
 	display: none;
 }
 
-.windowBwZoneOn .windowBwWorld, .windowRxOn .windowRx{
+.windowBwZoneOn .windowBwWorld, .windowGatherOn .windowGather{
 	width: 10%;
 }
 

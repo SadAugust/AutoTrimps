@@ -350,6 +350,7 @@ function initializeAllSettings() {
 	createSetting('rdTimeFarmMapLevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'Daily');
 	createSetting('rdTimeFarmCell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'multiValue', [-1], null, 'Daily');
 	createSetting('rdTimeFarmSpecial', 'TF: Special', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'Daily');
+	createSetting('rdTimeFarmGather', 'TF: Gather', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'Daily');
 
 	//Radon Daily Tribute Farming
 	createSetting('rdTributeFarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Daily');
@@ -590,6 +591,7 @@ function initializeAllSettings() {
 	createSetting('rTimeFarmMapLevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'Μaps');
 	createSetting('rTimeFarmCell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'multiValue', [-1], null, 'Μaps');
 	createSetting('rTimeFarmSpecial', 'TF: Special', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'Μaps');
+	createSetting('rTimeFarmGather', 'TF: Gather', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'Μaps');
 	
 	//Tribute Farming
 	createSetting('rTributeFarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Μaps');
@@ -693,6 +695,7 @@ function initializeAllSettings() {
 	createSetting('rc3TimeFarmMapLevel', 'TF: Map Level', 'What map level to use. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [-1], null, 'C3');
 	createSetting('rc3TimeFarmCell', 'TF: Cell', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'multiValue', [-1], null, 'C3');
 	createSetting('rc3TimeFarmSpecial', 'TF: Special', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'C3');
+	createSetting('rc3TimeFarmGather', 'TF: Gather', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'C3');
 
 	//C3 Tribute (Met) Farm
 	//document.getElementById('rc3TimeFarmSpecial').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -1329,9 +1332,11 @@ function modifyParentNode(setting, id, style) {
 		else {
 			if (document.getElementById(id).parentNode.parentNode.children[i].children[0].id === id || document.getElementById(id).parentNode.parentNode.children[i].children[0].id === (id + 'Label')) {
 				if (autoTrimpSettings[setting].enabled == toggled) {
-					if (document.getElementById(id).parentNode.parentNode.children[(i+1)].style.length == 0) {
-						document.getElementById(id).parentNode.parentNode.children[(i+1)].remove()
-						break;
+					if (elem.length >= (i+1)) {
+						if (document.getElementById(id).parentNode.parentNode.children[(i+1)].style.length == 0) {
+							document.getElementById(id).parentNode.parentNode.children[(i+1)].remove()
+							break;
+						}
 					}
 				}
 				else {
@@ -1818,6 +1823,7 @@ function updateCustomButtons() {
 	turnOff('rdTimeFarmMapLevel');
 	turnOff('rdTimeFarmCell');
 	turnOff('rdTimeFarmSpecial');
+	turnOff('rdTimeFarmGather');
 	
 	//C2
 	!radonon ? turnOn('FinishC2'): turnOff('FinishC2');
@@ -1848,6 +1854,7 @@ function updateCustomButtons() {
 	turnOff('rc3TimeFarmMapLevel');
 	turnOff('rc3TimeFarmCell');
 	turnOff('rc3TimeFarmSpecial');
+	turnOff('rc3TimeFarmGather');
 
 	//C3 Tribute Farming
 	radonon ? turnOn('rc3TributeFarm'): turnOff('rc3TributeFarm');
@@ -2047,6 +2054,7 @@ function updateCustomButtons() {
 	turnOff('rTimeFarmMapLevel');
 	turnOff('rTimeFarmCell');
 	turnOff('rTimeFarmSpecial');
+	turnOff('rTimeFarmGather');
 
 	//Spire
 	!radonon ? turnOn('MaxStacksForSpire'): turnOff('MaxStacksForSpire');
@@ -2529,11 +2537,4 @@ function toggleAutoMaps() {
 		}
 		document.getElementById('autoMapBtn').setAttribute('class','noselect settingsBtn settingBtn'+autoTrimpSettings.RAutoMaps.value);
 	}
-
 }
-
-/* function toggleATAutoEquip() {
-	rAutoEquip = !getPageSetting('Requipon') ? 1 : 0;
-	setPageSetting('Requipon',rAutoEquip);
-	document.getElementById('autoEquipBtnAT').setAttribute('class','noselect settingsBtn settingBtn'+autoTrimpSettings.Requipon.enabled);
-} */
