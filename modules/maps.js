@@ -1088,7 +1088,7 @@ function RautoMap() {
 		var rTrFZone = rRunningC3 ? getPageSetting('rc3TributeFarmZone') : rRunningDaily ? getPageSetting('rdTributeFarmZone') : getPageSetting('rTributeFarmZone');
 		if (rTrFZone.includes(game.global.world)) {
 			var rTrFIndex = rTrFZone.indexOf(game.global.world);
-			var rTrFCell = 	rRunningC3 ? getPageSetting('rc3TributeFarmCell')[rTrFIndex] : rRunningDaily ? getPageSetting('rc3TributeFarmCell')[rTrFIndex] : getPageSetting('rTributeFarmCell')[rTrFIndex];
+			var rTrFCell = 	rRunningC3 ? getPageSetting('rc3TributeFarmCell')[rTrFIndex] : rRunningDaily ? getPageSetting('rdTributeFarmCell')[rTrFIndex] : getPageSetting('rTributeFarmCell')[rTrFIndex];
 			var rTrFMapLevel =  rRunningC3 ? getPageSetting('rc3TributeFarmMapLevel')[rTrFIndex] : rRunningDaily ? getPageSetting('rdTributeFarmMapLevel')[rTrFIndex] : getPageSetting('rTributeFarmMapLevel')[rTrFIndex];
 			rTrFTributes = game.buildings.Tribute.locked == 1 ? 0 : rRunningC3 ? getPageSetting('rc3TributeFarmTributes')[rTrFIndex] : rRunningDaily ? getPageSetting('rdTributeFarmTributes')[rTrFIndex] : getPageSetting('rTributeFarmTributes')[rTrFIndex];
 			rTrFMeteorologists = game.jobs.Meteorologist.locked == 1 ? 0 : rRunningC3 ? getPageSetting('rc3TributeFarmMets')[rTrFIndex] : rRunningDaily ? getPageSetting('rdTributeFarmMets')[rTrFIndex] : getPageSetting('rTributeFarmMets')[rTrFIndex];
