@@ -7,20 +7,20 @@ function BoneShrine() {
 	    rBoneShrineUsedZone = 0;
 	//Setting up variables
 	var rBoneShrineRunType = getPageSetting('rBoneShrineRunType');
-	var runType = rBoneShrineRunType = 1 && game.global.challengeActive != 'Daily' && !game.global.runningChallengeSquared ? true :
-					rBoneShrineRunType = 2 && game.global.challengeActive == 'Daily' ? true : 
-					rBoneShrineRunType = 3 && game.global.runningChallengeSquared ? true :
-					rBoneShrineRunType = 4 ? true :
+    var rBoneShrineZone = getPageSetting('rBoneShrineZone');
+	var runType = rBoneShrineRunType == 1 && game.global.challengeActive != 'Daily' && !game.global.runningChallengeSquared ? true :
+					rBoneShrineRunType == 2 && game.global.challengeActive == 'Daily' ? true : 
+					rBoneShrineRunType == 3 && game.global.runningChallengeSquared ? true :
+					rBoneShrineRunType == 4 ? true :
 					false;
 
-	if (runType && getPageSetting('rBoneShrine') && rBoneShrineUsedZone != game.global.world) {
-		var rBoneShrineZone = getPageSetting('rBoneShrineZone');
+	if (runType && getPageSetting('rBoneShrine') && rBoneShrineUsedZone != game.global.world && rBoneShrineZone.includes(game.global.world)) {
 		var rBoneShrineCell = getPageSetting('rBoneShrineCell') > 0 ? getPageSetting('rBoneShrineCell') : 81;
 		var rBoneShrineCharges = getPageSetting('rBoneShrineAmount');
 		var rBoneShrineSpendBelow = getPageSetting('rBoneShrineSpendBelow') === -1 ? 0 : getPageSetting('rBoneShrineSpendBelow');
         var count = 0;
 		var rBSIndex = rBoneShrineZone.indexOf(game.global.world);
-		rShouldBoneShrine = (rBoneShrineZone[rBSIndex] == game.global.world && game.global.lastClearedCell + 2 >= rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
+		rShouldBoneShrine = (game.global.lastClearedCell + 2 >= rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
         
 		if (rShouldBoneShrine) {
 			setGather(getPageSetting('rBoneShrineGather'));
