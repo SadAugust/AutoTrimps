@@ -299,6 +299,7 @@ function removeRow(index, titleText){
 }
 
 function updateWindowPreset(index, varPrefix){
+	var varPrefix = !varPrefix ? '' : varPrefix
 	if (varPrefix.includes('TimeFarm') || varPrefix.includes('Alch')) {
 		var special = document.getElementById('windowSpecial' + index).value;
 
