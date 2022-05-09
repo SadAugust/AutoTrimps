@@ -20,7 +20,6 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 	var tooltipText;
 	var costText = "";
 	var titleText;
-	var tip2 = false;
 		
 	var ondisplay = null; // if non-null, called after the tooltip is displayed
 	var maxSettings = 30;
@@ -32,10 +31,10 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 	<div class='windowCheckbox' style='width: 0%'></div>\
 	<div class='windowWorld'>Zone</div>\
 	<div class='windowCell'>Cell</div>"
-	if (!titleText.includes('Quagmire Farm')) tooltipText += "<div class='windowLevel'>Map Level</div>"
+	if (!titleText.includes('Quagmire Farm')) tooltipText += "<div class='windowLevel'>Map<br/>Level</div>"
 	if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributes'>Tributes</div>"
 	if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowMets'>Mets</div>"
-	if (titleText.includes('Time Farm')) tooltipText += "<div class='windowRepeat'>Repeat Count</div>"
+	if (titleText.includes('Time Farm')) tooltipText += "<div class='windowRepeat'>Repeat<br/>Count</div>"
 	if (titleText.includes('Quagmire Farm')) tooltipText += "<div class='windowBogs'>Bogs</div>"
 	if (titleText.includes('Insanity Farm')) tooltipText += "<div class='windowInsanity'>Insanity</div>"
 	if (titleText.includes('Alchemy Farm')) tooltipText += "<div class='windowPotionType'>Potion Type</div>"
@@ -77,18 +76,17 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 			if (titleText.includes('Alchemy Farm')) vals.potionsnumber = autoTrimpSettings[varPrefix+"Potion"].value[x].toString().replace(/[^\d,:-]/g, '') ? autoTrimpSettings[varPrefix+"Potion"].value[x].toString().replace(/[^\d,:-]/g, '') : 0;
 			if (titleText.includes('Hypothermia Farm')) vals.bonfires = autoTrimpSettings[varPrefix+"Bonfire"].value[x] ? autoTrimpSettings[varPrefix+"Bonfire"].value[x] : 0;
 			if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) vals.special = autoTrimpSettings[varPrefix+"Special"].value[x] ? autoTrimpSettings[varPrefix+"Special"].value[x] : -1;
+			if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) vals.gather = autoTrimpSettings[varPrefix+"Gather"].value[x] ? autoTrimpSettings[varPrefix+"Gather"].value[x] : '0';
 		}
 
 		else style = " style='display: none' ";
-		var gatherDropdown = "<option value='0'" + ((vals.gather == 'food') ? " selected='selected'" : "") + ">food</option>\
-		<option value='food'" + ((vals.gather == 'food') ? " selected='selected'" : "") + ">wood</option>\
-		<option value='wood'" + ((vals.gather == 'wood') ? " selected='selected'" : "") + ">metal</option>\
-		<option value='metal'" + ((vals.gather == 'metal') ? " selected='selected'" : "")+ ">science</option>"
-		var className = (vals.preset == 3) ? "windowBwMainOn" : "windowBwMainOff";
+		var gatherDropdown = "<option value='food'" + ((vals.gather == 'food') ? " selected='selected'" : "") + ">Food</option>\<option value='wood'" + ((vals.gather == 'wood') ? " selected='selected'" : "") + ">Wood</option>\<option value='metal'" + ((vals.gather == 'metal') ? " selected='selected'" : "") + ">Metal</option>\<option value='science'" + ((vals.gather == 'science') ? " selected='selected'" : "")+ ">Science</option>"
 		var specialsDropdown = "<option value='0'" + ((vals.special == '0') ? " selected='selected'" : "") + ">None</option>\<option value='fa'" + ((vals.special == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>\<option value='ssc'" + ((vals.special == 'ssc') ? " selected='selected'" : "") + ">Small Savory Cache</option>\<option value='swc'" + ((vals.special == 'swc') ? " selected='selected'" : "") + ">Small Wooden Cache</option>\<option value='smc'" + ((vals.special == 'smc') ? " selected='selected'" : "") + ">Small Metal Cache</option>\<option value='src'" + ((vals.special == 'src') ? " selected='selected'" : "") + ">Small Resource Cache</option>\<option value='p'" + ((vals.special == 'p') ? " selected='selected'" : "") + ">Prestigious</option>\<option value='hc'" + ((vals.special == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>\<option value='lsc'" + ((vals.special == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\<option value='lwc'" + ((vals.special == 'lwc') ? " selected='selected'" : "")+ ">Large Wooden Cache</option>\<option value='lmc'" + ((vals.special == 'lmc') ? " selected='selected'" : "")+ ">Large Metal Cache</option>\<option value='lrc'" + ((vals.special == 'lrc') ? " selected='selected'" : "")+ ">Large Research Cache</option>"
 		var potionDropdown = "<option value='h'" + ((vals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
+		var className = (vals.special === 'hc' || vals.special === 'lc') ? " windowBwMainOn" : " windowBwMainOff";
+		className += (vals.special == 'hc' || vals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
 		tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
-		tooltipText += "<div class='windowDelete' onclick='removeRow(" + x + ")'><span class='icomoon icon-cross'></span></div>";
+		tooltipText += "<div class='windowDelete' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
 		tooltipText += "<div class='windowWorld'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
 		tooltipText += "<div class='windowCell'><input value='" + vals.cell + "' type='number' id='windowCell" + x + "'/></div>";
 		if (!titleText.includes('Quagmire Farm')) tooltipText += "<div class='windowLevel'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
@@ -100,11 +98,11 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 		if (titleText.includes('Alchemy')) tooltipText += "<div class='windowPotionType' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.potionstype + "' id='windowPotionType" + x + "'>" + potionDropdown + "</select></div>"
 		if (titleText.includes('Alchemy Farm')) tooltipText += "<div class='windowPotionNumber'><input value='" + vals.potionsnumber + "' type='text' id='windowPotionNumber" + x + "'/></div>";
 		if (titleText.includes('Hypothermia Farm')) tooltipText += "<div class='windowBonfire'><input value='" + vals.bonfires + "' type='number' id='windowBonfire" + x + "'/></div>";
-		if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowSpecial' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>"
+		if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowSpecial' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>"
+		if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowGather'>\<div style='text-align: center;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select>\</div>"
 		tooltipText += "</div>"
 	}
 	tooltipText += "<div id='windowAddRowBtn' style='display: " + ((current.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\")'>+ Add Row</div>"
-	tooltipText += "</div><div style='display: none' id='windowHelpContainer'>" + windowHelp + "</div>";
 	costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\", true)'>Save</span></div>"
 	
 	game.global.lockTooltip = true;
@@ -117,7 +115,6 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 	swapClass('tooltipExtra', 'tooltipExtraLg', elem);
 
 	titleText = (titleText) ? titleText : titleText;
-	lastTooltipTitle = titleText;
 	
 	document.getElementById("tipTitle").innerHTML = titleText;
 	document.getElementById("tipText").innerHTML = tooltipText;
@@ -144,6 +141,12 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 		if (!titleText.includes('Quag')) var level = parseInt(document.getElementById('windowLevel' + x).value, 10);
 		if (titleText.includes('Time Farm')) var repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
 		if (titleText.includes('Time Farm') || titleText.includes('Alch')) var special = document.getElementById('windowSpecial' + x).value;
+		if (titleText.includes('Time Farm') || titleText.includes('Alch')) {
+			if (special == 'hc' || special == 'lc')
+				var gather = document.getElementById('windowGather' + x).value;
+			else 
+				var gather = null;
+		}
 		if (titleText.includes('Tribute')) var tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
 		if (titleText.includes('Tribute')) var mets = parseInt(document.getElementById('windowMets' + x).value, 10);
 		if (titleText.includes('Quag')) var bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
@@ -176,6 +179,7 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 			level: level,
 			repeat: repeat,
 			special: special,
+			gather: gather,
 			tributes: tributes,
 			mets: mets,
 			bogs: bogs,
@@ -193,13 +197,13 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 		if (elem) elem.innerHTML = error;
 		return;
 	}
-	
 	//Reset variables that are about to get used.
 	autoTrimpSettings[varPrefix+"Zone"].value = [];
 	autoTrimpSettings[varPrefix+"Cell"].value  = [];
 	if (!titleText.includes('Quag')) autoTrimpSettings[varPrefix+"MapLevel"].value = [];
 	if (titleText.includes('Time Farm')) autoTrimpSettings[varPrefix+"Repeat"].value  = [];
 	if (titleText.includes('Time Farm') || varPrefix.includes('Alch')) autoTrimpSettings[varPrefix+"Special"].value = [];
+	if (titleText.includes('Time Farm') || varPrefix.includes('Alch')) autoTrimpSettings[varPrefix+"Gather"].value = [];
 	if (titleText.includes('Tribute Farm')) autoTrimpSettings[varPrefix+"Tributes"].value = [];
 	if (titleText.includes('Tribute Farm')) autoTrimpSettings[varPrefix+"Mets"].value = [];
 	if (titleText.includes('Quag')) autoTrimpSettings[varPrefix+"Bog"].value = [];
@@ -213,6 +217,7 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 			if (!titleText.includes('Quag')) autoTrimpSettings[varPrefix+"MapLevel"].value[x] = setting[x].level
 			if (titleText.includes('Time Farm')) autoTrimpSettings[varPrefix+"Repeat"].value[x] = setting[x].repeat
 			if (titleText.includes('Time Farm') || titleText.includes('Alch')) autoTrimpSettings[varPrefix+"Special"].value[x] = setting[x].special
+			if (titleText.includes('Time Farm') || titleText.includes('Alch')) autoTrimpSettings[varPrefix+"Gather"].value[x] = setting[x].gather
 			if (titleText.includes('Tribute')) autoTrimpSettings[varPrefix+"Tributes"].value[x] = setting[x].tributes
 			if (titleText.includes('Tribute')) autoTrimpSettings[varPrefix+"Mets"].value[x] = setting[x].mets
 			if (titleText.includes('Quag')) autoTrimpSettings[varPrefix+"Bog"].value[x] = setting[x].bogs
@@ -241,7 +246,7 @@ function addRow(varPrefix){
 				if (document.getElementById('windowSpecial' + x) !== null) {
 					document.getElementById('windowSpecial' + x).value = autoTrimpSettings.rMapSpecial.selected
 				}
-				updateWindowPreset(x);
+				updateWindowPreset(x, varPrefix);
 			}
 		}
 
@@ -252,7 +257,7 @@ function addRow(varPrefix){
 			if (parent2){
 				parent2.style.display = 'block';
 				elemCell.value = getPageSetting(varPrefix + 'DefaultCell')
-				updateWindowPreset(x);
+				updateWindowPreset(x, varPrefix);
 					break;
 			}
 		}
@@ -273,20 +278,36 @@ function addRow(varPrefix){
 	btnElem.style.display = 'none'; 
 }
 
-function removeRow(index){
+function removeRow(index, titleText){
 	var elem = document.getElementById('windowRow' + index);
 	if (!elem) return;
 	document.getElementById('windowWorld' + index).value = -1;
 	document.getElementById('windowCell' + index).value = -1;
-	//document.getElementById('windowRepeat' + index).value = 0;
-	//document.getElementById('windowRepeatUntil' + index).value = 0;
+	if (!titleText.includes('Quag')) document.getElementById('windowLevel' + index).value = 0;
+	if (titleText.includes('Time Farm') || titleText.includes('Alch')) document.getElementById('windowSpecial' + index).value = 0;
+	if (titleText.includes('Time Farm') || titleText.includes('Alch')) document.getElementById('windowGather' + index).value = 0;
+	if (titleText.includes('Time Farm')) document.getElementById('windowRepeat' + index).value = 0;
+	if (titleText.includes('Tribute Farm')) document.getElementById('windowTributes' + index).value = 0;
+	if (titleText.includes('Tribute Farm')) document.getElementById('windowMets' + index).value = 0;
+	if (titleText.includes('Quag')) document.getElementById('windowBogs' + index).value = 0;
+	if (titleText.includes('Insanity')) document.getElementById('windowInsanity' + index).value = 0;
+	if (titleText.includes('Hypo')) document.getElementById('windowBonfire' + index).value = 0;
+
 	elem.style.display = 'none';
 	var btnElem = document.getElementById('windowAddRowBtn');
 	btnElem.style.display = 'inline-block';
 }
 
-function updateWindowPreset(index){
-	var special = document.getElementById('windowSpecial' + index);
-	var potiontype = document.getElementById('windowPotionType' + index);
+function updateWindowPreset(index, varPrefix){
+	if (varPrefix.includes('TimeFarm') || varPrefix.includes('Alch')) {
+		var special = document.getElementById('windowSpecial' + index).value;
+
+		var newClass = (special === 'hc' || special === 'lc') ? "windowBwMainOn" : "windowBwMainOff";
+		var row = document.getElementById('windowRow' + index);
+		swapClass('windowBwMain', newClass, row);
+		
+		newClass = (special === 'hc' || special === 'lc') ? 'windowGatherOn' : 'windowGatherOff';
+		swapClass('windowGather', newClass, row);
+	}
 }
 

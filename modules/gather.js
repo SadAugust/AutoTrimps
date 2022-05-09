@@ -139,8 +139,15 @@ function RmanualLabor2() {
     var fresh = false;
     var mapping =   !game.global.mapsActive ? null : 
                     getCurrentMapObject().bonus == undefined ? null :
-                    getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('hc') || getCurrentMapObject().bonus.includes('wc') || getCurrentMapObject().bonus.includes('mc') || getCurrentMapObject().bonus.includes('rc') ? true :
-                    null;
+                    getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('lc')  || getCurrentMapObject().bonus.includes('hc') || getCurrentMapObject().bonus.includes('wc') || getCurrentMapObject().bonus.includes('mc') || getCurrentMapObject().bonus.includes('rc') ? true :
+                    null;        
+    var gather = null;
+    if (rShouldTimeFarm || Rshouldalchfarm) {
+        var timeFarm = 	game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium' ? 'rc3TimeFarm' :
+                        game.global.challengeActive == "Daily" ? 'rdTimeFarm' :
+                        'rTimeFarm'
+        gather =  rShouldTimeFarm ? getPageSetting(timeFarm + 'Gather')[rTFZone.indexOf(game.global.world)] : getPageSetting('rAlchFarmGather')[getPageSetting('rAlchZone').indexOf(game.global.world)];
+    }
     var questFood = game.global.challengeActive == "Quest" && questcheck() == 1;
     var questWood = game.global.challengeActive == "Quest" && questcheck() == 2;
     var questMetal = game.global.challengeActive == "Quest" && (questcheck() == 3 || questcheck() == 7);
@@ -198,7 +205,10 @@ function RmanualLabor2() {
     else if ((game.global.mapsActive && mapping != null) || rShouldWorshipperFarm) {
         if (rShouldWorshipperFarm && mapping == null) 
             setGather('food');
-        else if (getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('hc'))
+        else if (gather !== null && gather !== undefined) {
+            setGather(gather)
+        }
+        else if (getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('hc') || getCurrentMapObject().bonus.includes('lc'))
             setGather('food');
         else if (getCurrentMapObject().bonus.includes('wc'))
             setGather('wood');

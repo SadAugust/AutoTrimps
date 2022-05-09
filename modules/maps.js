@@ -1058,8 +1058,8 @@ function RautoMap() {
 	//Time Farm
 	if ((rRunningRegular && getPageSetting('rTimeFarm')) || (rRunningDaily && getPageSetting('rdTimeFarm')) || (rRunningC3 && getPageSetting('rc3TimeFarm'))) {
 		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
-		var rTFZone = rRunningC3 ? getPageSetting('rc3TimeFarmZone') : rRunningDaily ? getPageSetting('rdTimeFarmZone') : getPageSetting('rTimeFarmZone');
-			
+		rTFZone = rRunningC3 ? getPageSetting('rc3TimeFarmZone') : rRunningDaily ? getPageSetting('rdTimeFarmZone') : getPageSetting('rTimeFarmZone');
+
 		if (rTFZone.includes(game.global.world) && game.stats.zonesCleared.value != rTFZoneCleared) {
 			var rTFIndex = rTFZone.indexOf(game.global.world);
 			//Figuring out how many maps to run at your current zone

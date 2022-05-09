@@ -813,7 +813,8 @@ function initializeAllSettings() {
 	createSetting('rAlchZone', 'AF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [6], null, 'Challenges');
 	createSetting('rAlchMapLevel', 'AF: Map Level', 'What map level to use. Needs to be a level or +map which can be specified by 0,1,2,3 etc. Will not function if you try to use minus maps', 'multiValue', [1], null, 'Challenges');
 	createSetting('rAlchCell', 'AF: Cell', 'Alch Farm at this Cell. -1 to run them at the default value, which is 71. ', 'multiValue', [81], null, 'Challenges');
-	createSetting('rAlchSpecial', 'AF: Special', 'Alch Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'g1', null, 'Challenges');
+	createSetting('rAlchSpecial', 'AF: Special', 'Alch Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'Challenges');
+	createSetting('rAlchGather', 'AF: Gather', 'Time Farm at this Cell. -1 to run them at the default value, which is 71. ', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('rAlchFAMaps', 'FA Maps', 'Will run Fast Attack maps instead of the setting you\'ve selected in Alch: Special if you don\'t have Hyperspeed 2 for your current zone.', 'boolean', false, null, 'Challenges');
 	createSetting('rAlchDontBuyMets', 'No mets on 152', 'Will stop purchasing meteorologists on zone 152 to try and obtain an extra one through Atlantrimp which it\'ll run if you have enough food to afford an extra meteorologist from it. <br><br/>If you\'re not confident you\'ll achieve this it\'s best to leave this off as it\'ll have a negative impact on your radon per hour.', 'boolean', false, null, 'Challenges');
     
@@ -2230,6 +2231,7 @@ function updateCustomButtons() {
 	turnOff('rAlchMapLevel');
 	turnOff('rAlchCell');
 	turnOff('rAlchSpecial');
+	turnOff('rAlchGather');
 	radonon && getPageSetting('rAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('rAlchFAMaps') : turnOff('rAlchFAMaps');
 	radonon && getPageSetting('rAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('rAlchDontBuyMets') : turnOff('rAlchDontBuyMets');
     
