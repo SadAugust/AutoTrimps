@@ -144,6 +144,9 @@ initializeAllTabs();
 
 function initializeAllSettings() {
 
+	//Combat Legacy
+	createSetting('Rmanageequality', ' ', '', 'boolean', false, null, 'Legacy');
+	
 	//Resource Heirloom Legacy
 	createSetting('RhsSCStaff', '', '', 'textValue', 'undefined', null, 'Legacy'); 
 	createSetting('RhsWCStaff', '', '', 'textValue', 'undefined', null, 'Legacy'); 
@@ -212,7 +215,7 @@ function initializeAllSettings() {
 	//Alchemy Farm Legacy
 
 	createSetting('RAlchOn', '', '', 'boolean', '0', null, 'Legacy'); 
-	createSetting('Ralchfarmstack', '', 'Everything in related to Nature', 'textValue', true, null, 'Legacy');
+	createSetting('Ralchfarmstack', '', 'Everything in related to Nature', 'textValue', 'undefined', null, 'Legacy');
 	createSetting('RAlchZone', '', '', 'multiValue', [-1], null,  'Legacy'); 
 	createSetting('RAlchMapLevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
 	createSetting('RAlchSpecial', '', '', 'dropdown', 'undefined', null,  'Legacy'); 
@@ -848,7 +851,7 @@ function initializeAllSettings() {
 	//Radon
 	createSetting('Rfightforever', 'Fight Always', 'U2: -1 to disable. Sends trimps to fight if they\'re not fighting, regardless of BAF. Has 2 uses. Set to 0 to always send out trimps. Or set a number higher than 0 to enable the H:D function. If the H:D ratio is below this number it will send them out. I.e, this is set to 1, it will send out trimps regardless with the H:D ratio is below 1. ', 'value', '-1', null, 'Combat');
 	createSetting('Rcalcmaxequality', ['Equality Calc Off', 'EC: On', 'EC: Health'], '<b>Experimental. </b><br>Adds Equality Scaling levels to the battlecalc. Will always calculate equality based on actual scaling levels when its turned off by other settings. Assumes you use Equality Scaling. Turning this on allows in-game Equality Scaling to adjust your Health accordingly. EC: Health only decreases enemies attack in the calculation which may improve speed. ', 'multitoggle', 0, null, 'Combat');
-	createSetting('Rmanageequality', 'Manage Equality', 'Manages Equality for you. Sets Equality to 0 on Slow enemies, and Autoscaling on for Fast enemies. ', 'boolean', false, null, 'Combat');
+	createSetting('rManageEquality', ['Auto Equality Off', 'Auto Equality: Basic', 'Auto Equality: Advanced'], 'Automated Equality management. Sets Equality to 0 on Slow enemies, and Autoscaling on for Fast enemies. ', 'multitoggle', 0, null, 'Combat');
 	createSetting('Rcalcfrenzy', 'Frenzy Calc', '<b>Experimental.</b><br>Adds frenzy to the calc. Be warned, it will not farm as much with this on as it expects 100% frenzy uptime.', 'boolean', false, null, 'Combat');
 
 	//Scryer
@@ -1536,6 +1539,14 @@ function updateCustomButtons() {
 		autoTrimpSettings.Ralchfarmstack.value = 'undefined';
 	}
 
+	if (autoTrimpSettings.Rmanageequality.enabled  !== false) {
+		//settingChanged("rManageEquality");
+		autoTrimpSettings.rManageEquality.value = 1;
+		//updateCustomButtons();
+		autoTrimpSettings.Rmanageequality.enabled = false;
+		saveSettings()
+	}
+
 	if (autoTrimpSettings.Rtimespecialselection.selected  !== 'undefined') {
 		autoTrimpSettings.rTimeFarmSpecial.value = [];
 		for (var i = 0; getPageSetting('Rtimefarmzone').length > i; i++) {
@@ -1563,7 +1574,6 @@ function updateCustomButtons() {
 	if (autoTrimpSettings.RAlchSpecial.selected  !== 'undefined') {
 		autoTrimpSettings.rAlchSpecial.value = [];
 		for (var i = 0; getPageSetting('RAlchZone').length > i; i++) {
-			debug(autoTrimpSettings.RAlchSpecial.selected);
 			autoTrimpSettings.rAlchSpecial.value[i] = autoTrimpSettings.RAlchSpecial.selected
 		}
 		autoTrimpSettings.RAlchSpecial.selected = 'undefined';
@@ -2136,8 +2146,9 @@ function updateCustomButtons() {
 	radonon ? turnOn('Rfightforever'): turnOff('Rfightforever');
 	radonon ? turnOn('Rcalcmaxequality'): turnOff('Rcalcmaxequality');
 	radonon ? turnOn('Rmanageequality'): turnOff('Rmanageequality');
+	radonon ? turnOn('rManageEquality'): turnOff('rManageEquality');
 	radonon ? turnOn('Rcalcfrenzy'): turnOff('Rcalcfrenzy');
-
+	
 	//Challenges
 
 	//Hide Challenges

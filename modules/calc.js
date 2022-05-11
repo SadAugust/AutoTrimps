@@ -642,11 +642,13 @@ function calcCurrentStance() {
 
 //Radon
 
-function RgetCritMulti() {
+function RgetCritMulti(floorCrit) {
 
     var critChance = getPlayerCritChance();
     var CritD = getPlayerCritDamageMult();
 
+	if (floorCrit) 
+		critChance = Math.floor(getPlayerCritChance());
     var lowTierMulti = getMegaCritDamageMult(Math.floor(critChance));
     var highTierMulti = getMegaCritDamageMult(Math.ceil(critChance));
     var highTierChance = critChance - Math.floor(critChance)
@@ -767,12 +769,18 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= 5 ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / 500) : 1;
 	
 	// Equality
-	if (getPageSetting('Rcalcmaxequality') == 1 && getPageSetting('Rmanageequality') && !equality)
-		number *= Math.pow(game.portal.Equality.getModifier(1), game.portal.Equality.scalingCount);
-	else if (getPageSetting('Rcalcmaxequality') == 0 && !equality)
-		number *= game.portal.Equality.getMult(1);
-	else 
-		number *= game.portal.Equality.getMult(1);
+	if (!isNaN(parseInt((equality)))) {
+		if (equality > game.portal.Equality.radLevel)
+			debug('You don\'t have this many levels in Equality.')
+		number *= Math.pow(game.portal.Equality.getModifier(1), equality)
+	} else if (isNaN(parseInt((equality)))) {
+		if (getPageSetting('Rcalcmaxequality') == 1 && getPageSetting('Rmanageequality') && !equality)
+			number *= Math.pow(game.portal.Equality.getModifier(1), game.portal.Equality.scalingCount);
+		else if (getPageSetting('Rcalcmaxequality') == 0 && !equality)
+			number *= game.portal.Equality.getMult(1);
+		else 
+			number *= game.portal.Equality.getMult(1);
+	}
 		
 	switch (minMaxAvg) {
 		case 'min':
@@ -861,9 +869,15 @@ function RcalcDailyAttackMod(number) {
 function RcalcBadGuyDmg(enemy, attack, equality) { //Works out avg dmg. For max dmg * 1.5.
 	var number = enemy ? enemy.attack : attack;
 	number = game.global.challengeActive == 'Exterminate' && getPageSetting('Rexterminateon') && getPageSetting('Rexterminatecalc') ? RgetEnemyAvgAttack(game.global.world, 90, 'Mantimp') : number;
-	number *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
-	number *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
-	number *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') >= 1 && game.portal.Equality.scalingCount > 0 && !equality ? Math.pow(game.portal.Equality.modifier, game.portal.Equality.scalingCount) : 1;
+	if (!isNaN(parseInt((equality)))) {
+		if (equality > game.portal.Equality.radLevel)
+			debug('You don\'t have this many levels in Equality.')
+		number *= Math.pow(game.portal.Equality.getModifier(), equality)
+	} else if (isNaN(parseInt((equality)))) {
+		number *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
+		number *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
+		number *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') >= 1 && game.portal.Equality.scalingCount > 0 && !equality ? Math.pow(game.portal.Equality.modifier, game.portal.Equality.scalingCount) : 1;
+	}
     if (game.global.challengeActive == "Daily") {
         if (typeof game.global.dailyChallenge.badStrength !== 'undefined')
             number *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
@@ -876,7 +890,6 @@ function RcalcBadGuyDmg(enemy, attack, equality) { //Works out avg dmg. For max 
         
         if (typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive)
             number *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
-        
     }
 	number *= game.global.challengeActive == 'Unbalance' ? 1.5 : 1;
 	number *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
@@ -961,12 +974,22 @@ function RcalcEnemyHealth(world) {
 	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
+
+	//Dailies
+	if (game.global.challengeActive == 'Daily') {
+		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
+		health *= typeof game.global.dailyChallenge.badMapHealthHealth !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapHealthHealth.getMult(game.global.dailyChallenge.badMapHealthHealth.strength, game.global.dailyChallenge.badMapHealthHealth.stacks) : 1;
+	}
     return health;
 }
 
-function RcalcEnemyHealthMod(world, cell, name) {
-	world = !world ? game.global.world : world;
-    var health = RcalcEnemyBaseHealth("world", world, cell, name);
+function RcalcEnemyHealthMod(world, cell, name, type) {
+	//Initialising variables
+	var type = !type ? 'world' : type;
+	var world = !world ? game.global.world : world;
+    var health = RcalcEnemyBaseHealth(type, world, cell, name);
+
+	//Challenges
 	health *= game.global.challengeActive == 'Unbalance' ? 2 : 1;
 	health *= game.global.challengeActive == 'Quest' ? game.challenges.Quest.getHealthMult() : 1;
 	health *= game.global.challengeActive == 'Revenge' && game.global.world % 2 == 0 ? 10 : 1;
@@ -981,6 +1004,12 @@ function RcalcEnemyHealthMod(world, cell, name) {
 	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
+
+	//Dailies
+	if (game.global.challengeActive == 'Daily') {
+		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
+		health *= typeof game.global.dailyChallenge.badMapHealthHealth !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapHealthHealth.getMult(game.global.dailyChallenge.badMapHealthHealth.strength, game.global.dailyChallenge.badMapHealthHealth.stacks) : 1;
+	}
     return health;
 }
 

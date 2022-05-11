@@ -2976,6 +2976,175 @@ function rManageEquality() {
 	}
 }
 
+function remainingHealth() {
+		var soldierHealth = game.global.soldierHealth
+		if (game.global.universe == 2){
+			var maxLayers = Fluffy.isRewardActive('shieldlayer');
+			var layers = maxLayers - game.global.shieldLayersUsed;
+			var shieldHealth = 0;
+			for (var i = 0; i <= maxLayers; i++) {
+				if (layers != maxLayers && i > layers)
+					continue;
+				if (i == maxLayers-layers) {
+					shieldHealth += game.global.soldierEnergyShieldMax;
+				}
+				else
+					shieldHealth += game.global.soldierEnergyShield;
+			}
+			shieldHealth = shieldHealth < 0 ? 0 : shieldHealth;
+		}
+		var remainingHealth = shieldHealth + soldierHealth;
+		if (shieldHealth + soldierHealth == 0)
+			remainingHealth = game.global.soldierHealthMax + (game.global.soldierEnergyShieldMax*(maxLayers+1))
+			
+		return (remainingHealth)
+}
+
+function equalityManagement() {
+	if (!game.global.preMapsActive && game.global.gridArray.length > 0) {
+		//Turning off equality scaling
+		game.portal.Equality.scalingActive = false;
+
+		//Misc vars
+		var mapType = game.global.mapsActive ? 'map' : 'world';
+		var mapGrid = game.global.mapsActive ? 'mapGridArray' : 'gridArray';
+		var mapStacks = game.global.mapsActive ? false : true;
+		var currentCell = game.global.mapsActive ? game.global.lastClearedMapCell : game.global.lastClearedCell;
+		var level = game.global.mapsActive ? getCurrentMapObject().level : game.global.world;
+		var difficulty = game.global.mapsActive ? getCurrentMapObject().difficulty : 1;
+
+		//Initialising name/health/dmg variables
+		var enemyName = game.global[mapGrid][currentCell+1].name;
+		var enemyHealth = game.global[mapGrid][currentCell+1].health;
+		var ourHealth = remainingHealth();
+		var ourHealthMax = RcalcOurHealth()
+
+		//Figuring out gamma burst stacks to proc and dmg bonus
+		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
+		var gammaDmg = 1 + getHeirloomBonus("Shield", "gammaBurst");
+		var glass = game.global.challengeActive == 'Glass';
+
+		var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
+		var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location == "Void" && getCurrentMapObject().voidBuff == 'doubleAttack';
+		var voidCritAttack = game.global.mapsActive && getCurrentMapObject().location == "Void" && getCurrentMapObject().voidBuff == 'getCrit';
+		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
+		if (enemyHealth !== 0 && enemyHealth !== -1) {
+			for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
+				var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(level, currentCell+2, enemyName),i)*1.5*difficulty;
+				enemyDmg *= voidDoubleAttack ? 2 : 1;
+				enemyDmg *= voidCritAttack ? 4 : 1;
+				var ourDmg = RcalcOurDmg('min',i,mapStacks,true,true);
+
+				//debug(fastEnemy);
+				if (!fastEnemy && !glass && !voidDoubleAttack) {
+					game.portal.Equality.disabledStackCount = "0";
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourHealth < (ourHealthMax*0.99) && gammaToTrigger == 4) {
+					game.portal.Equality.disabledStackCount = 0;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if ((ourDmg*gammaDmg) > enemyHealth && ourHealth >= enemyDmg && gammaToTrigger <= 1) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourDmg > enemyHealth && ourHealth >= enemyDmg) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourDmg*gammaDmg > enemyHealth && ourHealth >= enemyDmg*2 && gammaToTrigger == 2) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourDmg*2 > enemyHealth && ourHealth >= enemyDmg*2) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourDmg*gammaDmg > enemyHealth && ourHealth >= enemyDmg*3 && gammaToTrigger == 3) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourDmg*3 > enemyHealth && ourHealth >= enemyDmg*3) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourDmg*gammaDmg > enemyHealth && ourHealth >= enemyDmg*4 && gammaToTrigger == 4) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourHealth >= enemyDmg*4 && gammaToTrigger == 4) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourHealth >= enemyDmg*3 && gammaToTrigger == 3) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourHealth >= enemyDmg*2 && gammaToTrigger == 2) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourHealth >= enemyDmg && gammaToTrigger <= 1) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if (ourHealth >= enemyDmg && gammaToTrigger == 0) {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else {
+					game.portal.Equality.disabledStackCount = i;
+					manageEqualityStacks();
+					updateEqualityScaling();
+				}
+			}
+	}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function simpleSecondsLocal(what, seconds, event) {
     var event = !event ? null :
                 event;

@@ -1925,15 +1925,15 @@ function RautoMap() {
 				repeatClicked();
 				shouldDoHealthMaps = false;
 			}
+			//Time Farm
+			if (game.global.repeatMap && rShouldTimeFarm && game.global.mapRunCounter + 1 == rTFRepeatCounter)
+				repeatClicked();
 			//Map Bonus
-			if (rShouldMaxMapBonus && game.global.mapBonus >= (maxMapBonusLimit - 1))
+			else if (rShouldMaxMapBonus && game.global.mapBonus >= (maxMapBonusLimit - 1))
 				repeatClicked();
 			//Unbalance Destacking
             if (game.global.repeatMap && rShouldUnbalance && ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Unbalance.balanceStacks))
                 repeatClicked();
-			//Time Farm
-			if (game.global.repeatMap && rShouldTimeFarm && game.global.mapRunCounter + 1 == rTFRepeatCounter)
-				repeatClicked();
 			//Worshipper Farm
 			if (game.global.repeatMap && rShouldWorshipperFarm && rFragmentFarming && fragmapcost())
 				repeatClicked();

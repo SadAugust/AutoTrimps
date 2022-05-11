@@ -75,7 +75,11 @@ var magmiteSpenderChanged = false;
 var lastHeliumZone = 0;
 var lastRadonZone = 0;
 
-function mainLoop() {
+function mainLoop() {	
+	if (document.getElementById('tooltipDiv').classList.contains('tooltipExtraLg') === false)
+		document.getElementById('tooltipDiv').style.overflowY = '';
+	else
+		document.getElementById('tooltipDiv').style.overflowY = 'scroll';
 	if (ATrunning == false) return;
 	if (reloadDelay) {
 		if (!game.options.menu.pauseGame.enabled) {
@@ -110,8 +114,7 @@ function mainLoop() {
 		setTitle();
 	}
 
-	if (document.getElementById('tooltipDiv').classList.contains('tooltipExtraLg') === false)
-		document.getElementById('tooltipDiv').style.overflowY = '';
+
 
 	//Logic for Universe 1
 	if (game.global.universe == 1) {
@@ -234,8 +237,10 @@ function mainLoop() {
             RupdateAutoMapsStatus();
 		if (getPageSetting('RManualGather2') == 1) 
             RmanualLabor2();
-		if (getPageSetting('RTrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
-		if (game.global.challengeActive == "Daily" && getPageSetting('buyradony') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyradony') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');	
+		if (getPageSetting('RTrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) 
+			toggleAutoTrap();
+		if (game.global.challengeActive == "Daily" && getPageSetting('buyradony') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyradony') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) 
+			purchaseSingleRunBonus('heliumy');	
 
 		//RJobs
 		if (getPageSetting('RBuyJobsNew') > 0) {
@@ -269,7 +274,8 @@ function mainLoop() {
 		}
 
 		//RCombat
-		if (getPageSetting('Requipon') && (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([2, 3].indexOf(questcheck()) >= 0)))) RautoEquip();
+		if (getPageSetting('Requipon') && (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([2, 3].indexOf(questcheck()) >= 0)))) 
+			RautoEquip();
 		if (getPageSetting('BetterAutoFight') == 1) betterAutoFight();
 		if (getPageSetting('BetterAutoFight') == 2) betterAutoFight3();
 		if (game.global.world > 5 && game.global.challengeActive == "Daily" && getPageSetting('Ravoidempower') && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidempower();
@@ -279,8 +285,11 @@ function mainLoop() {
 			else if (getPageSetting('Rdfightforever') == 1 && game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.empower == 'undefined' && typeof game.global.dailyChallenge.bloodthirst == 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) Rfightalways();
 			else if (getPageSetting('Rdfightforever') == 2 && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) Rfightalways();
 		}
-		if (getPageSetting('Rmanageequality') && (game.global.fighting || game.global.preMapsActive)) 
+		
+		if (getPageSetting('rManageEquality') == 1)
 			rManageEquality();
+		else if (getPageSetting('rManageEquality') == 2)
+			equalityManagement();
 		
 		//RHeirlooms
 		if (getPageSetting('Rhs')) 
