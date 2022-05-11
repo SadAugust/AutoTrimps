@@ -1929,7 +1929,7 @@ function RautoMap() {
 			if (game.global.repeatMap && rShouldTimeFarm && game.global.mapRunCounter + 1 == rTFRepeatCounter)
 				repeatClicked();
 			//Map Bonus
-			else if (rShouldMaxMapBonus && game.global.mapBonus >= (maxMapBonusLimit - 1))
+			if (rShouldMaxMapBonus && game.global.mapBonus >= (maxMapBonusLimit - 1) && !rShouldTimeFarm)
 				repeatClicked();
 			//Unbalance Destacking
             if (game.global.repeatMap && rShouldUnbalance && ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Unbalance.balanceStacks))
