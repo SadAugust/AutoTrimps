@@ -757,15 +757,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	}
 	
 	number *= game.global.challengeActive == 'Unlucky' ? RgetCritMulti(true) : RgetCritMulti();
-	if (game.global.challengeActive == 'Unlucky')
-		number *= 0.005
-	if (game.global.challengeActive == 'Unlucky' && Number(number.toString()[0] % 2 == 0))
-		number *= 399
-		
-	// Gamma Burst
-	var gammaTriggerStacks = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
-	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= gammaTriggerStacks ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / (gammaTriggerStacks*100)) : 1;
-	
+
 	// Equality
 	if (!isNaN(parseInt((equality)))) {
 		if (equality > game.portal.Equality.radLevel)
@@ -779,6 +771,17 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 		else 
 			number *= game.portal.Equality.getMult(1);
 	}
+
+	if (game.global.challengeActive == 'Unlucky')
+		number *= 0.005
+	if (game.global.challengeActive == 'Unlucky' && Number(number.toString()[0] % 2 == 0))
+		number *= 399
+		
+	// Gamma Burst
+	var gammaTriggerStacks = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
+	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= gammaTriggerStacks ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / (gammaTriggerStacks*100)) : 1;
+	
+
 
 	switch (minMaxAvg) {
 		case 'min':
