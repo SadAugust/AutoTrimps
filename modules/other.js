@@ -3018,7 +3018,7 @@ function equalityManagement() {
 		var enemyHealth = game.global[mapGrid][currentCell+1].health;
 		var ourHealth = remainingHealth();
 		var ourHealthMax = RcalcOurHealth()
-		var runningUnlucky = game.global.challengeActive = 'Unlucky';
+		var runningUnlucky = game.global.challengeActive == 'Unlucky';
 
 		//Figuring out gamma burst stacks to proc and dmg bonus
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
