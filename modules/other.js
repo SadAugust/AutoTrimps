@@ -3008,7 +3008,7 @@ function equalityManagement() {
 		//Misc vars
 		var mapType = game.global.mapsActive ? 'map' : 'world';
 		var mapGrid = game.global.mapsActive ? 'mapGridArray' : 'gridArray';
-		var mapStacks = game.global.mapsActive ? false : true;
+		var mapStacks = game.global.mapsActive ? true : false;
 		var currentCell = game.global.mapsActive ? game.global.lastClearedMapCell : game.global.lastClearedCell;
 		var level = game.global.mapsActive ? getCurrentMapObject().level : game.global.world;
 		var difficulty = game.global.mapsActive ? getCurrentMapObject().difficulty : 1;
@@ -3022,7 +3022,7 @@ function equalityManagement() {
 
 		//Figuring out gamma burst stacks to proc and dmg bonus
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
-		var gammaDmg = 1 + getHeirloomBonus("Shield", "gammaBurst");
+		var gammaDmg = getHeirloomBonus("Shield", "gammaBurst")/100;
 		var glass = game.global.challengeActive == 'Glass';
 
 		var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
@@ -3034,12 +3034,12 @@ function equalityManagement() {
 				var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(level, currentCell+2, enemyName),i)*1.5*difficulty;
 				enemyDmg *= voidDoubleAttack ? 2 : 1;
 				enemyDmg *= voidCritAttack ? 4 : 1;
-				var ourDmg = RcalcOurDmg('min',i,mapStacks,true,true);
+				var ourDmg = RcalcOurDmg('min',i,mapStacks,true,true,runningUnlucky);
 
 				if (runningUnlucky && Number(RcalcOurDmg('min',i,mapStacks,true,true,true).toString()[0] % 2 == 1))
 					continue;
 					
-				if (!fastEnemy && !glass && !voidDoubleAttack) {
+				if (!fastEnemy && !glass && !voidDoubleAttack && ourDmg*4 > enemyHealth) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
@@ -3047,6 +3047,12 @@ function equalityManagement() {
 				}
 				else if (ourHealth < (ourHealthMax*0.99) && gammaToTrigger == 4) {
 					game.portal.Equality.disabledStackCount = 0;
+					manageEqualityStacks();
+					updateEqualityScaling();
+					break;
+				}
+				else if ((ourDmg*gammaDmg) < enemyHealth && gammaToTrigger > 1) {
+					game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;
