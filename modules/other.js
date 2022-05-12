@@ -3018,6 +3018,7 @@ function equalityManagement() {
 		var enemyHealth = game.global[mapGrid][currentCell+1].health;
 		var ourHealth = remainingHealth();
 		var ourHealthMax = RcalcOurHealth()
+		var runningUnlucky = game.global.challengeActive = 'Unlucky';
 
 		//Figuring out gamma burst stacks to proc and dmg bonus
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
@@ -3035,9 +3036,11 @@ function equalityManagement() {
 				enemyDmg *= voidCritAttack ? 4 : 1;
 				var ourDmg = RcalcOurDmg('min',i,mapStacks,true,true);
 
-				//debug(fastEnemy);
+				if (runningUnlucky && Number(RcalcOurDmg('min',i,mapStacks,true,true,true).toString()[0] % 2 == 1))
+					continue;
+					
 				if (!fastEnemy && !glass && !voidDoubleAttack) {
-					game.portal.Equality.disabledStackCount = "0";
+					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;

@@ -663,9 +663,10 @@ function RgetCritMulti(floorCrit) {
 		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * CritD
 }
 
-function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useTitimp) {
+function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useTitimp, runningUnlucky) {
 
 	useTitimp = useTitimp ? true : false;
+	runningUnlucky = runningUnlucky ? true : false;
 	// Base + equipment
 	var number = 6;
 	var equipmentList = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword", "Arbalest"];
@@ -774,6 +775,9 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 
 	if (game.global.challengeActive == 'Unlucky')
 		number *= 0.005
+
+	if (runningUnlucky)
+		return number;
 	if (game.global.challengeActive == 'Unlucky' && Number(number.toString()[0] % 2 == 0))
 		number *= 399
 		
