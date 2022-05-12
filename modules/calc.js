@@ -670,7 +670,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	var number = 6;
 	var equipmentList = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword", "Arbalest"];
 	for(var i = 0; i < equipmentList.length; i++){
-		if(game.equipment[equipmentList[i]].locked !== 0) continue;
+		if (game.equipment[equipmentList[i]].locked !== 0) continue;
 		var attackBonus = game.equipment[equipmentList[i]].attackCalculated;
 		var level       = game.equipment[equipmentList[i]].level;
 		number += attackBonus*level;
@@ -708,7 +708,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	number *= getPageSetting('Rcalcfrenzy') ? 1 + (0.5 * game.portal.Frenzy.radLevel) : 1;
 	//Championism
 	number *= game.portal.Championism.getMult();
-	//Scruffy Dailies
+	//Scruffy Level 20 - Dailies
 	if (game.global.stringVersion >= '5.7.0') {
 		number *= Fluffy.isRewardActive('SADailies') && game.global.challengeActive == "Daily" ? Fluffy.rewardConfig.SADailies.attackMod() : 1;
 	}
@@ -755,18 +755,16 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 		// Rampage Daily mod
 		number -= typeof game.global.dailyChallenge.rampage !== 'undefined' ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 0;
 	}
-
-	// Average out crit damage
-	number *= RgetCritMulti();
-
-	//Unlucky Dmg
-	if (game.global.challengeActive == 'Unlucky') {
-		var unluckyDamage = calculateDamage(game.global.soldierCurrentAttack, true, true).split("-");
-		number = unluckyDamage[0].toString()[0] % 2 == 0 ? unluckyDamage[1] : unluckyDamage[0];
-		number /= game.portal.Equality.getMult(1);
-	}
+	
+	number *= game.global.challengeActive == 'Unlucky' ? RgetCritMulti(true) : RgetCritMulti();
+	if (game.global.challengeActive == 'Unlucky')
+		number *= 0.005
+	if (game.global.challengeActive == 'Unlucky' && Number(number.toString()[0] % 2 == 0))
+		number *= 399
+		
 	// Gamma Burst
-	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= 5 ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / 500) : 1;
+	var gammaTriggerStacks = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
+	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= gammaTriggerStacks ? 1 + (getHeirloomBonus("Shield", "gammaBurst") / (gammaTriggerStacks*100)) : 1;
 	
 	// Equality
 	if (!isNaN(parseInt((equality)))) {
@@ -781,7 +779,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 		else 
 			number *= game.portal.Equality.getMult(1);
 	}
-		
+
 	switch (minMaxAvg) {
 		case 'min':
 			return game.global.challengeActive == 'Unlucky' ? number : number * (game.portal.Range.radLevel * 0.02 + 0.8) * minDailyMod;
