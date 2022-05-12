@@ -1059,11 +1059,11 @@ function RautoMap() {
 	if ((rRunningRegular && getPageSetting('rTimeFarm')) || (rRunningDaily && getPageSetting('rdTimeFarm')) || (rRunningC3 && getPageSetting('rc3TimeFarm'))) {
 		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
 		rTFZone = rRunningC3 ? getPageSetting('rc3TimeFarmZone') : rRunningDaily ? getPageSetting('rdTimeFarmZone') : getPageSetting('rTimeFarmZone');
+		var rTFIndex = rTFZone.indexOf(game.global.world);
+		var rTFCell = 	rRunningC3 ? getPageSetting('rc3TimeFarmCell')[rTFIndex] : rRunningDaily ? getPageSetting('rdTimeFarmCell')[rTFIndex] : getPageSetting('rTimeFarmCell')[rTFIndex];
 
-		if (rTFZone.includes(game.global.world) && game.stats.zonesCleared.value != rTFZoneCleared) {
-			var rTFIndex = rTFZone.indexOf(game.global.world);
+		if (rTFZone.includes(game.global.world) && game.stats.zonesCleared.value != rTFZoneCleared && game.global.lastClearedCell + 2 >= rTFCell) {
 			//Figuring out how many maps to run at your current zone
-			var rTFCell = 	rRunningC3 ? getPageSetting('rc3TimeFarmCell')[rTFIndex] : rRunningDaily ? getPageSetting('rdTimeFarmCell')[rTFIndex] : getPageSetting('rTimeFarmCell')[rTFIndex];
 			var rTFMapLevel = rRunningC3 ? getPageSetting('rc3TimeFarmMapLevel')[rTFIndex] : rRunningDaily ? getPageSetting('rdTimeFarmMapLevel')[rTFIndex] : getPageSetting('rTimeFarmMapLevel')[rTFIndex];
 			rTFRepeatCounter = rRunningC3 ? getPageSetting('rc3TimeFarmRepeat')[rTFIndex] : rRunningDaily ? getPageSetting('rdTimeFarmRepeat')[rTFIndex] : getPageSetting('rTimeFarmRepeat')[rTFIndex];
 			rTFSpecial = rRunningC3 ? getPageSetting('rc3TimeFarmSpecial')[rTFIndex] : rRunningDaily ? getPageSetting('rdTimeFarmSpecial')[rTFIndex] : getPageSetting('rTimeFarmSpecial')[rTFIndex];
