@@ -779,6 +779,8 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 			return number;
 		if (Number(number.toString()[0] % 2 == 0))
 			number *= 399
+			number /= RgetCritMulti(true);
+			number *= RgetCritMulti();
 	}
 		
 	// Gamma Burst
