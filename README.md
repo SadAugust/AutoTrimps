@@ -188,4 +188,8 @@ Auto equality, multitoggle option but the part I just coded is option 3, AE: Adv
 
 Added a map swap option where it equips your afterpush shield during maps so you can get plaguebringer
 
+<<<<<<< Updated upstream
 Added options for each cache staves that will equip when you're in a map with that cache
+=======
+Added options for each cache staves that will equip when you're in a map with that cache
+>>>>>>> Stashed changes

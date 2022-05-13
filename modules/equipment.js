@@ -1048,6 +1048,7 @@ function RautoEquip() {
         }
     }
 
+
     // Loop through actually getting equips
     var keepBuying = false;
     do {
@@ -1061,6 +1062,9 @@ function RautoEquip() {
         var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
         var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
         var underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
+        //Buy as many shields as possible when running Melting Point
+        if (getPageSetting("NoLumberjackMP") && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')
+            buyEquipment('Shield', null, true, 1)
         for (var i = 0; i < 2; i++) {
             if (canAffordBuilding(equipName, null, null, true, false, 1)) {
                 if (smithylogic(equipName,resourceUsed,true)) {
