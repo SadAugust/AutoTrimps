@@ -257,8 +257,9 @@ function initializeAllSettings() {
 	//Radon Portal
 	document.getElementById('RPerkSwapping').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Radon Per Hour only <b>portals at cell 1</b> of the first level where your Rn/Hr went down even slightly compared to the current runs Best Rn/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting Rn/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Radon Per Hour','Bublé','Melt','Quagmire','Archaeology','Mayhem','Insanity','Nurture','Pandemonium','Alchemy','Hypothermia','Custom'], 'Core');
-	createSetting('RadonHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None','Bublé','Melt','Quagmire','Archaeology','Insanity','Nurture','Alchemy','Hypothermia'], 'Core');
+	createSetting('RadonHourChallenge', 'Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None','Bublé','Melt','Quagmire','Archaeology','Insanity','Nurture','Alchemy','Hypothermia'], 'Core');
 	createSetting('RCustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
+	createSetting('rCustomDailyAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone when a daily is available. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('RnHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in radon/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set)', 'value', '999', null, 'Core');
 	createSetting('RadonHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
     createSetting('RdownloadSaves', 'Download Saves', 'Will automatically download saves whenever AutoTrimps portals.', 'boolean', false, null, 'Core');
@@ -1718,11 +1719,12 @@ function updateCustomButtons() {
 	radonon ? turnOn('RAutoAllocatePerks'): turnOff('RAutoAllocatePerks');
 	radonon && getPageSetting('RAutoAllocatePerks')==2 ? turnOn('Rdumpgreed'): turnOff('Rdumpgreed');
 	radonon ? turnOn('RPerkSwapping'): turnOff('RPerkSwapping');
-
+	
 	//RPortal
 	radonon ? turnOn('RAutoPortal'): turnOff('RAutoPortal');
     var RdownloadSaves = autoTrimpSettings.RAutoPortal.selected != 'Off';
 	(radonon && autoTrimpSettings.RAutoPortal.selected == 'Custom') ? turnOn('RCustomAutoPortal') : turnOff('RCustomAutoPortal');
+	radonon && getPageSetting('RAutoStartDaily') && autoTrimpSettings.RAutoPortal.selected == 'Custom' ? turnOn('rCustomDailyAutoPortal') : turnOff('rCustomDailyAutoPortal');
 	var rnHr = (autoTrimpSettings.RAutoPortal.selected == 'Radon Per Hour');
 	radonon && (rnHr || autoTrimpSettings.RAutoPortal.selected == 'Custom') ? turnOn('RadonHourChallenge') : turnOff('RadonHourChallenge');
 	radonon && (rnHr) ? turnOn('RnHrDontPortalBefore') : turnOff('RnHrDontPortalBefore');

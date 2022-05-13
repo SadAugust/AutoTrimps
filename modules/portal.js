@@ -341,11 +341,18 @@ function RautoPortal() {
             break;
         case "Custom":
             var portalzone = getPageSetting('RCustomAutoPortal');
+            var dailyportalzone = getPageSetting('rCustomDailyAutoPortal');
             if (game.global.world >= portalzone) {
                 if (autoTrimpSettings.RadonHourChallenge.selected != 'None')
                     RdoPortal(autoTrimpSettings.RadonHourChallenge.selected);
                 else
                     RdoPortal();
+            }
+            if (game.global.world >= dailyportalzone) {
+                if (autoTrimpSettings.RadonHourChallenge.selected != 'None')
+                    RdoPortal(autoTrimpSettings.RadonHourChallenge.selected, true);
+                else
+                    RdoPortal(null, true);
             }
             break;
 		case "Melt":
@@ -427,12 +434,14 @@ function RdailyAutoPortal() {
     }
 }
 
-function RdoPortal(challenge) {
-    if (!game.global.portalActive) return;
-    if (getPageSetting('RdownloadSaves')) {
-        tooltip('Export', null, 'update');
-        document.getElementById("downloadLink").click();
+function RdoPortal(challenge, daily) {
+    var daily = !daily ? false : true;
+    if (daily) {
+            checkCompleteDailies();
+        if (game.global.recentDailies.length == 7) 
+            return;
     }
+    if (!game.global.portalActive) return;
     if (getPageSetting('autoheirlooms') && getPageSetting('typetokeep') != 'None' && getPageSetting('raretokeep') != 'None') {
 	    autoheirlooms3();
     }
@@ -517,6 +526,10 @@ function RdoPortal(challenge) {
             buyPortalUpgrade('Looting');
             debug('Second Stage: Bought Max Looting');
         }
+    }
+    if (getPageSetting('RdownloadSaves')) {
+        tooltip('Export', null, 'update');
+        document.getElementById("downloadLink").click();
     }
     pushData();
 
