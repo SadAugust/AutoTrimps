@@ -109,7 +109,7 @@ Red - Will buy next
 
 **Combat won't start** - Make sure you have enabled the Better Auto Fight/Vanilla setting in Combat & Stance Settings. If you're not on dark theme, you may see a tiny thin black bar in combat, click it to show this setting.
 
-Changes made from Zek's fork
+## Changes made from Zek's fork
 
 Core
 Preset swapping - Will swap between preset 1 when running fillers and preset 2 when doing dailies
