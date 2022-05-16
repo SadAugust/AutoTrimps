@@ -24,7 +24,7 @@ function RgetEnemyAvgAttack(world, level, name) {
 	else if (world == 2){
 		amt *= 0.5;
 		amt = (amt * 0.32) + ((amt * 0.68) * (level / 100));
-	}
+	}	
 	else if (world < 60)
 		amt = (amt * 0.375) + ((amt * 0.7) * (level / 100));
 	else{
@@ -47,7 +47,8 @@ function RgetEnemyAvgAttack(world, level, name) {
 	return Math.floor(amt);
 }
 
-function RgetEnemyMaxHealth(world, level) {
+function RgetEnemyMaxHealth(world, level, name) {
+	var name = !name ? 'Grimp' : name;
 	if (!level)
 		level = 30;
 	var amt = 0;
@@ -66,7 +67,7 @@ function RgetEnemyMaxHealth(world, level) {
 	}
 	if (world < 60) amt *= 0.75;
 	if (world > 5 && game.global.mapsActive) amt *= 1.1;
-	amt *= game.badGuys["Grimp"].health;
+	amt *= game.badGuys[name].health;
 	if (game.global.universe == 2){
 		var part1 = (world > 60) ? 60 : world;
 		var part2 = (world - 60);

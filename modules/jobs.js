@@ -284,6 +284,9 @@ MODULES["jobs"].RscientistRatio = 8;
 MODULES["jobs"].RscientistRatio2 = 4;
 MODULES["jobs"].RscientistRatio3 = 16;
 MODULES["jobs"].RscientistRatio4 = 64;
+MODULES["jobs"].RscientistRatio5 = 256;
+MODULES["jobs"].RscientistRatio6 = 1024;
+MODULES["jobs"].RscientistRatio7 = 4098;
 //Worker Ratios = [Farmer,Lumber,Miner]
 MODULES["jobs"].RautoRatio7 = [1, 1, 98];
 MODULES["jobs"].RautoRatio6 = [1, 7, 12];
@@ -470,6 +473,7 @@ var reservedJobs = 1000000;
 
 function RbuyJobs() {
 
+
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
 
 	var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - game.resources.trimps.employed;
@@ -535,7 +539,7 @@ function RbuyJobs() {
 	for (var worker of ratioWorkers) {
 		currentworkers.push(game.jobs[worker].owned);
 	}
-
+    var desiredRatios = null;
 	freeWorkers += currentworkers.reduce((a,b) => {return a + b;});
 
     // Explicit firefox handling because Ff specifically reduces free workers to 0.
@@ -557,67 +561,36 @@ function RbuyJobs() {
 		var desiredRatios = [0,0,0,0];
 	}
 
-    if (getPageSetting("NoFarmersAbove") == true && (game.global.world >= getPageSetting("NoFarmerZone"))) {
+    var allIn = "";
+    if (workerRatio !== null) {
+        var desiredRatios = Array.from(workerRatio.split(','))
+        desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
+    }
+    
+    if (getPageSetting("NoFarmersAbove") && game.global.world >= getPageSetting("NoFarmerZone") && !rShouldTributeFarm && !rShouldWorshipperFarm)
         desiredRatios[0] = 0;
-    }
-    if (getPageSetting('NoLumberjackMP') == true && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
+    if (getPageSetting('NoLumberjackMP') && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
         desiredRatios[1] = 0;
-    }
-
-	// If focused farming go all in for caches
-	var allIn = "";
-	if ((rShouldTimeFarm || Rshouldalchfarm || rShouldHypoFarm) && game.global.mapsActive) {
-		if (Rshouldalchfarm) 
-            rspecial = getPageSetting('rAlchSpecial')[getPageSetting('rAlchZone').indexOf(game.global.world)];
-        else if (rShouldHypoFarm)
-            rspecial = 'lwc';
-        else if (rShouldTimeFarm)
-            rspecial = rTFSpecial
-		
-		if (rspecial.includes('mc')) 
-            allIn = "Miner";
-		else if (rspecial.includes('sc')) 
-            allIn = "Farmer";
-		else if (rspecial.includes('wc')) 
-            allIn = "Lumberjack";
-		else if (rspecial.includes('rc')) 
-            allIn = "Scientist";
-        else if (rspecial.includes('hc')) {
-			allIn = "Farmer"
-			var desiredRatios = [100,80,50,0.01];
-		}
-	} 
-	
-	if ((rShouldWorshipperFarm || rShouldTributeFarm) && (!rShouldTimeFarm && !Rshouldalchfarm && !rShouldHypoFarm)) {
-		allIn = "Farmer";
-		var desiredRatios = [0,1,1,0.001];
-	}
-	//Parity mult causes this to break
-/*     if (rShouldPandemoniumFarm) {
-			var desiredRatios = [0.1,0.1,0.1,0.01];
-			allIn = "Miner";
-    } */
- 	if (game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('RhsPandStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 0 && game.global.lastClearedCell + 2 >= 91) {
-		if (game.global.world >= getPageSetting('RPandemoniumAEZone')) {
-			var desiredRatios = [0.1,0.1,0.1,0.001];
-			allIn = "Miner";
-		}
-	}
-
-	if (allIn != "") {
+    
+	if (workerRatio !== null) {
+        desiredRatios = desiredRatios;
+	} else if (allIn != "") {
 		desiredRatios[ratioWorkers.indexOf(allIn)] = 100;
 	} else {
 		// Weird scientist ratio hack. Based on previous AJ, I don't know why it's like this.
 		var scientistMod = MODULES["jobs"].RscientistRatio;
-		if (game.jobs.Farmer.owned < 100) {
+		if (game.jobs.Farmer.owned < 100) 
 			scientistMod = MODULES["jobs"].RscientistRatio2;
-		}
-		if (game.global.world >= 50) {
+		if (game.global.world >= 50) 
 			scientistMod = MODULES["jobs"].RscientistRatio3;
-		}
-		if (game.global.world >= 65) {
+		if (game.global.world >= 65) 
 			scientistMod = MODULES["jobs"].RscientistRatio4;
-		}
+        if (game.global.world >= 90) 
+            scientistMod = MODULES["jobs"].RscientistRatio5;
+        if (game.global.world >= 120) 
+            scientistMod = MODULES["jobs"].RscientistRatio6;
+        if (game.global.world >= 150) 
+            scientistMod = MODULES["jobs"].RscientistRatio7;
 
 		for (var worker of ratioWorkers) {
 			if (!game.jobs[worker].locked) {
@@ -638,7 +611,6 @@ function RbuyJobs() {
 	}
 
     var totalFraction = desiredRatios.reduce((a,b) => {return a + b;});
-
     var desiredWorkers = [0,0,0,0];
     var totalWorkerCost = 0;
     for (var i = 0; i < ratioWorkers.length; i++) {

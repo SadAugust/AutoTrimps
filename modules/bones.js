@@ -3,41 +3,73 @@ rShouldBoneShrine = false;
 rBoneShrineUsedZone = 0;
 
 function BoneShrine() {
+
+    var rRunningC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
+	var rRunningDaily =  game.global.challengeActive == "Daily";
+    var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
+    
     if (rBoneShrineUsedZone != 0 && rBoneShrineUsedZone != game.global.world)
 	    rBoneShrineUsedZone = 0;
 	//Setting up variables
-	var rBoneShrineRunType = getPageSetting('rBoneShrineRunType');
     var rBoneShrineZone = getPageSetting('rBoneShrineZone');
-	var runType = rBoneShrineRunType == 1 && game.global.challengeActive != 'Daily' && !game.global.runningChallengeSquared ? true :
-					rBoneShrineRunType == 2 && game.global.challengeActive == 'Daily' ? true : 
-					rBoneShrineRunType == 3 && game.global.runningChallengeSquared ? true :
-					rBoneShrineRunType == 4 ? true :
-					false;
 
-	if (runType && getPageSetting('rBoneShrine') && rBoneShrineUsedZone != game.global.world && rBoneShrineZone.includes(game.global.world)) {
-		var rBoneShrineCell = getPageSetting('rBoneShrineCell') > 0 ? getPageSetting('rBoneShrineCell') : 81;
-		var rBoneShrineCharges = getPageSetting('rBoneShrineAmount');
-		var rBoneShrineSpendBelow = getPageSetting('rBoneShrineSpendBelow') === -1 ? 0 : getPageSetting('rBoneShrineSpendBelow');
-        var count = 0;
-		var rBSIndex = rBoneShrineZone.indexOf(game.global.world);
-		rShouldBoneShrine = (game.global.lastClearedCell + 2 >= rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
-        
-		if (rShouldBoneShrine) {
-			setGather(getPageSetting('rBoneShrineGather'));
-			if (getPageSetting('Rhs' + getPageSetting('rBoneShrineGather')[0].toUpperCase() + getPageSetting('rBoneShrineGather').slice(1) + 'Staff') !== 'undefined')
-				HeirloomEquipStaff('Rhs' + getPageSetting('rBoneShrineGather')[0].toUpperCase() + getPageSetting('rBoneShrineGather').slice(1) + 'Staff');
-			else if (getPageSetting('RhsGeneralStaff') !== 'undefined')
-				HeirloomEquipStaff('RhsGeneralStaff');
+    if (rBoneShrineZone.includes(game.global.world)) {
+    	var rBoneShrineRunType = getPageSetting('rBoneShrineRunType')
+        let indexes = [...finder(getPageSetting('rBoneShrineZone'), game.global.world)];
+        var rBSIndex;
+        for (var y = 0; y < indexes.length; y++) {
+            if (rBoneShrineRunType[indexes[y]] == 'All') {
+                rBSIndex = indexes[y];
+                break;
+            }
+            if (rBoneShrineRunType[indexes[y]] == 'Fillers' && rRunningRegular) {
+                rBSIndex = indexes[y];
+                break;
+            }
+            else if (rBoneShrineRunType[indexes[y]] == 'Daily' && rRunningDaily) {
+                rBSIndex = indexes[y];
+                break;
+            }
+            else if (rBoneShrineRunType[indexes[y]] == 'C3' && rRunningC3) {
+                rBSIndex = indexes[y];
+                break;
+            }
+        }
+    	//var rBoneShrineRunType = rBoneShrineSettings.boneruntype;
+        var rBoneShrineRunType = getPageSetting('rBoneShrineRunType')[rBSIndex];
+    	var runType = rBoneShrineRunType == 'Fillers' && rRunningRegular ? true :
+    					rBoneShrineRunType == 'Daily' && rRunningDaily ? true : 
+    					rBoneShrineRunType == 'C3' && rRunningC3 ? true :
+    					rBoneShrineRunType == 'All' ? true :
+    					false;
 
-	        for (var x = 0; x < rBoneShrineCharges[rBSIndex]; x++) {
-                if (getPageSetting('rBoneShrineAmount') >= game.permaBoneBonuses.boosts.charges) continue;
-                count = x+1;
-				game.permaBoneBonuses.boosts.consume()
-			}
-			debug('Consumed ' + count + " bone shrine " + (count == 1 ? "charge on zone " : "charges on zone ") + game.global.world);
-			rBoneShrineUsedZone = game.global.world;
-		}
-	}
+    	if (runType && getPageSetting('rBoneShrine') && rBoneShrineUsedZone != game.global.world) {
+            var rBoneShrineSettings = autoTrimpSettings.rBoneShrineSettings.value[rBSIndex]
+            var rBoneShrineCell = rBoneShrineSettings.cell
+    		var rBoneShrineCharges = rBoneShrineSettings.boneamount
+    		var rBoneShrineGather = rBoneShrineSettings.gather
+    		var rBoneShrineSpendBelow = rBoneShrineSettings.bonebelow === -1 ? 0 : rBoneShrineSettings.bonebelow;
+            var count = 0;
+    		rShouldBoneShrine = (game.global.lastClearedCell + 2 >= rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
+            
+    		if (rShouldBoneShrine) {
+    			setGather(rBoneShrineGather);
+    			if (getPageSetting('Rhs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff') !== 'undefined')
+    				HeirloomEquipStaff('Rhs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff');
+    			else if (getPageSetting('RhsGeneralStaff') !== 'undefined')
+    				HeirloomEquipStaff('RhsGeneralStaff');
+    	        for (var x = 0; x < rBoneShrineCharges; x++) {
+                    if (rBoneShrineCharges >= game.permaBoneBonuses.boosts.charges) continue;
+                    workerRatio = rBoneShrineSettings.jobratio;
+                    RbuyJobs()
+                    count = x+1;
+    				game.permaBoneBonuses.boosts.consume()
+    			}
+    			debug('Consumed ' + count + " bone shrine " + (count == 1 ? "charge on zone " : "charges on zone ") + game.global.world);
+    			rBoneShrineUsedZone = game.global.world;
+    		}
+	    }
+    }
 }
 
 function BuySingleRunBonuses() {

@@ -129,7 +129,7 @@ background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,
 	margin-top: 0.5vw;
 }
 
-.windowDelete, .windowWorld, .windowCheckbox, .windowPreset, .windowRepeat, .windowRepeatUntil, .windowExit, .windowBwWorld, .windowCell, .windowTimes, .windowThrough, .windowRx, .windowPrio, .windowTx, .windowLevel, .windowRepeat, .windowGather, .windowSpecial, .windowTributes, .windowMets, .windowBogs, .windowInsanity, .windowPotionType, .windowPotionNumber, .windowBonfire {
+.windowDelete, .windowWorld, .windowCheckbox, .windowPreset, .windowRepeat, .windowRepeatUntil, .windowExit, .windowBwWorld, .windowCell, .windowTimes, .windowThrough, .windowRx, .windowPrio, .windowTx, .windowLevel, .windowRepeat, .windowGather, .windowSpecial, .windowTributes, .windowMets, .windowBogs, .windowInsanity, .windowPotionType, .windowPotionNumber, .windowBonfire, .windowBoneDropdown, .windowBoneBelow, .windowBoneAmount, .windowBoneGather, .windowJobRatio {
 	display: inline-block;
 }
 
@@ -152,8 +152,13 @@ background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,
 	cursor: pointer;
 }
 
+.windowJobRatio{
+	width: 15%;
+	cursor: pointer;
+}
+
 .windowWorld, .windowCell, .windowThrough, .windowLevel, .windowRepeat, .windowPotionNumber{
-	width: 10%;
+	width: 9%;
 }
 
 .windowTributes, .windowMets, .windowBogs, .windowInsanity, .windowBonfire{
@@ -165,7 +170,7 @@ background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,
 }
 
 .windowPotionType {
-    width: 21%;
+    width: 18%;
 }
 .windowPreset, .windowSpecial{
 	width: 26%;
@@ -188,6 +193,14 @@ background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,
 
 .windowTimes{
 	width: 17%;
+}
+
+.windowBoneGather {
+    width: 10%;
+}
+
+.windowBoneDropdown, .windowBoneBelow, .windowBoneAmount {
+    width: 10%;
 }
 
 .windowBwZoneOn .windowRepeatUntil, .windowGatherOn .windowSpecial{

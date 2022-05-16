@@ -2975,7 +2975,14 @@ function rManageEquality() {
 		}
 	}
 }
-
+function* finder(array, item) {
+	let index = -1;
+	while ((index = array.indexOf(item, index + 1)) > -1) {
+		yield index;
+	}
+	return -1;
+}
+  
 function remainingHealth() {
 		var soldierHealth = game.global.soldierHealth
 		if (game.global.universe == 2){
@@ -3004,7 +3011,6 @@ function equalityManagement() {
 	if (!game.global.preMapsActive && game.global.gridArray.length > 0) {
 		//Turning off equality scaling
 		game.portal.Equality.scalingActive = false;
-
 		//Misc vars
 		var mapType = game.global.mapsActive ? 'map' : 'world';
 		var mapGrid = game.global.mapsActive ? 'mapGridArray' : 'gridArray';
@@ -3022,7 +3028,7 @@ function equalityManagement() {
 
 		//Figuring out gamma burst stacks to proc and dmg bonus
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
-		var gammaDmg = getHeirloomBonus("Shield", "gammaBurst")/100;
+		var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
 		var glass = game.global.challengeActive == 'Glass';
 
 		var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
@@ -3034,7 +3040,7 @@ function equalityManagement() {
 				var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(level, currentCell+2, enemyName),i)*1.5*difficulty;
 				enemyDmg *= voidDoubleAttack ? 2 : 1;
 				enemyDmg *= voidCritAttack ? 4 : 1;
-				var ourDmg = RcalcOurDmg('min',i,mapStacks,true,true,runningUnlucky);
+				var ourDmg = RcalcOurDmg('min',i,mapStacks,true,true);
 
 				if (runningUnlucky && Number(RcalcOurDmg('min',i,mapStacks,true,true,true).toString()[0] % 2 == 1))
 					continue;
@@ -3138,21 +3144,6 @@ function equalityManagement() {
 	}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function simpleSecondsLocal(what, seconds, event) {
     var event = !event ? null :

@@ -3,10 +3,13 @@ MODULES["breedtimer"].voidCheckPercent = 95;
 
 var DecimalBreed = Decimal.clone({precision: 30, rounding: 4});
 var missingTrimps = new DecimalBreed(0);
+
 function ATGA2() {
 	if (game.jobs.Geneticist.locked == false && getPageSetting('ATGA2') == true && getPageSetting('ATGA2timer') > 0 && game.global.challengeActive != "Trapper"){
 		var trimps = game.resources.trimps;
 		var trimpsMax = trimps.realMax();
+		var employedTrimps = trimps.employed;
+		if (game.permaBoneBonuses.multitasking.owned) employedTrimps *= (1 - game.permaBoneBonuses.multitasking.mult());
 		var maxBreedable = new DecimalBreed(trimpsMax).minus(trimps.employed);
 		var potencyMod = new DecimalBreed(trimps.potency);
 		if (game.upgrades.Potency.done > 0) potencyMod = potencyMod.mul(Math.pow(1.1, game.upgrades.Potency.done));
@@ -150,8 +153,8 @@ function forceAbandonTrimps() {
     if (getPageSetting('AutoMaps')) {
         mapsClicked();
         if (game.global.switchToMaps || game.global.switchToWorld)
-            mapsClicked();
-    	}
+			mapsClicked();
+    }
 	else if (game.global.mapsActive) {
         mapsClicked();
         if (game.global.switchToMaps)

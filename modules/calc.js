@@ -962,12 +962,14 @@ function RcalcEnemyBaseHealth(type, zone, cell, name) {
 }
 
 function RcalcEnemyHealth(world) {
+	//Initialising variables
 	world = !world ? game.global.world : world;
     var health = RcalcEnemyBaseHealth("world", world, 50, 'Snimp');
-	health = game.global.challengeActive == 'Exterminate' && getPageSetting('Rexterminateon') && getPageSetting('Rexterminatecalc') ? RcalcEnemyBaseHealth("world", world, 99, "Beetlimp") : health;
+
+	//Challenges
 	health *= game.global.challengeActive == 'Unbalance' ? 2 : 1;
-	health *= game.global.challengeActive == 'Revenge' && game.global.world % 2 == 0 ? 10 : 1;
 	health *= game.global.challengeActive == 'Quest' ? game.challenges.Quest.getHealthMult() : 1;
+	health *= game.global.challengeActive == 'Revenge' && game.global.world % 2 == 0 ? 10 : 1;
 	health *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getBossMult() : 1;
 	health *= game.global.challengeActive == 'Storm' ? game.challenges.Storm.getHealthMult() : 1;

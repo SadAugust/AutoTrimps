@@ -985,6 +985,7 @@ function RautoMap() {
 	rShouldEmpowerFarm = false;
 	rShouldMaxMapBonus = false;
 	RvanillaMapatZone = false;
+	workerRatio = null;
 
 	if (ourBaseDamage > 0) {
 		RshouldDoMaps = (!RenoughDamage || RshouldFarm);
@@ -1060,25 +1061,29 @@ function RautoMap() {
 		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
 		rTFZone = rRunningC3 ? getPageSetting('rc3TimeFarmZone') : rRunningDaily ? getPageSetting('rdTimeFarmZone') : getPageSetting('rTimeFarmZone');
 		var rTFIndex = rTFZone.indexOf(game.global.world);
-		var rTFCell = 	rRunningC3 ? getPageSetting('rc3TimeFarmCell')[rTFIndex] : rRunningDaily ? getPageSetting('rdTimeFarmCell')[rTFIndex] : getPageSetting('rTimeFarmCell')[rTFIndex];
 
-		if (rTFZone.includes(game.global.world) && game.stats.zonesCleared.value != rTFZoneCleared && game.global.lastClearedCell + 2 >= rTFCell) {
+		if (rTFZone.includes(game.global.world) && game.stats.zonesCleared.value != rTFZoneCleared) {
 			//Figuring out how many maps to run at your current zone
-			var rTFMapLevel = rRunningC3 ? getPageSetting('rc3TimeFarmMapLevel')[rTFIndex] : rRunningDaily ? getPageSetting('rdTimeFarmMapLevel')[rTFIndex] : getPageSetting('rTimeFarmMapLevel')[rTFIndex];
-			rTFRepeatCounter = rRunningC3 ? getPageSetting('rc3TimeFarmRepeat')[rTFIndex] : rRunningDaily ? getPageSetting('rdTimeFarmRepeat')[rTFIndex] : getPageSetting('rTimeFarmRepeat')[rTFIndex];
-			rTFSpecial = rRunningC3 ? getPageSetting('rc3TimeFarmSpecial')[rTFIndex] : rRunningDaily ? getPageSetting('rdTimeFarmSpecial')[rTFIndex] : getPageSetting('rTimeFarmSpecial')[rTFIndex];
-			
-			if (game.global.challengeActive == "Wither" && rTFMapLevel >= 0)
-				rTFMapLevel = -1;
-			//If you're running Transmute and the rTFSpecial variable is either LMC or SMC it changes it to LSC/SSC.
-			if (game.global.challengeActive == 'Transmute' && rTFSpecial[rTFIndex].includes('mc'))
-				rTFSpecial[rTFIndex].value = rTFSpecial[rTFIndex].charAt(0)+"sc";
-			if (game.global.mapRunCounter >= rTFRepeatCounter && rTFCurrentMap != undefined) {
-				rTFZoneCleared = game.stats.zonesCleared.value;
-				rTFCurrentMap == undefined;
+			var rTFSettings = rRunningC3 ? autoTrimpSettings.rc3TimeFarmSettings.value[rTFIndex] : rRunningDaily ? autoTrimpSettings.rdTimeFarmSettings.value[rTFIndex] : autoTrimpSettings.rTimeFarmSettings.value[rTFIndex];
+			var rTFCell = rTFSettings.cell;
+			if (game.global.lastClearedCell + 2 >= rTFCell) {
+				var rTFMapLevel = rTFSettings.level
+				var rTFSpecial = rTFSettings.special
+				rTFRepeatCounter = rTFSettings.repeat
+				var rTFJobRatio = rTFSettings.jobratio
+				//When running Wither make sure map level is lower than 0 so that we don't accumulate extra stacks.
+				if (game.global.challengeActive == "Wither" && rTFMapLevel >= 0)
+					rTFMapLevel = -1;
+				//If you're running Transmute and the rTFSpecial variable is either LMC or SMC it changes it to LSC/SSC.
+				if (game.global.challengeActive == 'Transmute' && rTFSpecial[rTFIndex].includes('mc'))
+					rTFSpecial = rTFSpecial.charAt(0)+"sc";
+				if (game.global.mapRunCounter >= rTFRepeatCounter && rTFCurrentMap != undefined) {
+					rTFZoneCleared = game.stats.zonesCleared.value;
+					rTFCurrentMap == undefined;
+				}
+				if (rTFRepeatCounter > game.global.mapRunCounter) 
+					rShouldTimeFarm = true;
 			}
-			if (game.global.lastClearedCell + 2 >= rTFCell && (rTFRepeatCounter > game.global.mapRunCounter)) 
-				rShouldTimeFarm = true;
 		}
 	}
 
@@ -1088,24 +1093,28 @@ function RautoMap() {
 		var rTrFZone = rRunningC3 ? getPageSetting('rc3TributeFarmZone') : rRunningDaily ? getPageSetting('rdTributeFarmZone') : getPageSetting('rTributeFarmZone');
 		if (rTrFZone.includes(game.global.world)) {
 			var rTrFIndex = rTrFZone.indexOf(game.global.world);
-			var rTrFCell = 	rRunningC3 ? getPageSetting('rc3TributeFarmCell')[rTrFIndex] : rRunningDaily ? getPageSetting('rdTributeFarmCell')[rTrFIndex] : getPageSetting('rTributeFarmCell')[rTrFIndex];
-			var rTrFMapLevel =  rRunningC3 ? getPageSetting('rc3TributeFarmMapLevel')[rTrFIndex] : rRunningDaily ? getPageSetting('rdTributeFarmMapLevel')[rTrFIndex] : getPageSetting('rTributeFarmMapLevel')[rTrFIndex];
-			rTrFTributes = game.buildings.Tribute.locked == 1 ? 0 : rRunningC3 ? getPageSetting('rc3TributeFarmTributes')[rTrFIndex] : rRunningDaily ? getPageSetting('rdTributeFarmTributes')[rTrFIndex] : getPageSetting('rTributeFarmTributes')[rTrFIndex];
-			rTrFMeteorologists = game.jobs.Meteorologist.locked == 1 ? 0 : rRunningC3 ? getPageSetting('rc3TributeFarmMets')[rTrFIndex] : rRunningDaily ? getPageSetting('rdTributeFarmMets')[rTrFIndex] : getPageSetting('rTributeFarmMets')[rTrFIndex];
-			//Figuring out how many Tributes or Meteorologists to farm at your current zone
-			var rTrFSpecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
-			
-			if (game.global.challengeActive == "Wither" && rTrFMapLevel >= 0)
-				rTrFMapLevel = -1;
-			if ((game.global.lastClearedCell + 2) >= rTrFCell && (rTrFTributes > game.buildings.Tribute.purchased || rTrFMeteorologists > game.jobs.Meteorologist.owned)) {
-				rShouldTributeFarm = true;
-				rTrFCurrentMap = getCurrentMapObject();
-			}
-			//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
-			if (!rShouldTributeFarm && rTrFCurrentMap != undefined) {
-				mapsClicked();
-				recycleMap(getMapIndex(rTrFCurrentMap));
-				rTrFCurrentMap = undefined;
+			var rTrFSettings = rRunningC3 ? autoTrimpSettings.rc3TributeFarmSettings.value[rTrFIndex] : rRunningDaily ? autoTrimpSettings.rdTributeFarmSettings.value[rTrFIndex] : autoTrimpSettings.rTributeFarmSettings.value[rTrFIndex];
+			var rTrFCell = 	rTrFSettings.cell
+			if (game.global.lastClearedCell + 2 >= rTrFCell) {
+				var rTrFMapLevel =  rTrFSettings.level
+				rTrFTributes = game.buildings.Tribute.locked == 1 ? 0 : rTrFSettings.tributes;
+				rTrFMeteorologists = game.jobs.Meteorologist.locked == 1 ? 0 : rTrFSettings.mets;
+				//Figuring out how many Tributes or Meteorologists to farm at your current zone
+				var rTrFSpecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
+				var rTrFJobRatio = rTrFSettings.jobratio;
+				
+				if (game.global.challengeActive == "Wither" && rTrFMapLevel >= 0)
+					rTrFMapLevel = -1;
+				if (game.global.lastClearedCell + 2 >= rTrFCell && (rTrFTributes > game.buildings.Tribute.purchased || rTrFMeteorologists > game.jobs.Meteorologist.owned)) {
+					rShouldTributeFarm = true;
+					rTrFCurrentMap = getCurrentMapObject();
+				}
+				//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
+				if (!rShouldTributeFarm && rTrFCurrentMap != undefined) {
+					mapsClicked();
+					recycleMap(getMapIndex(rTrFCurrentMap));
+					rTrFCurrentMap = undefined;
+				}
 			}
 		}
 	}
@@ -1190,9 +1199,10 @@ function RautoMap() {
 		Rshoulddobogs = false;
 		var bogzone = getPageSetting('rQuagZone');
 		if (bogzone.includes(game.global.world)) {
-			var bogamount = getPageSetting('rQuagBog');
 			var bogindex = bogzone.indexOf(game.global.world);
-			var bogcell = getPageSetting('rQuagCell');
+			var rQuagSettings = autoTrimpSettings.rQuagSettings.value[bogindex];
+			var bogcell = rQuagSettings.cell;
+			var bogamount = rQuagSettings.bogs;
 			stacksum = 0;
 
 			for (var i = 0; i < (bogindex + 1); i++) {
@@ -1201,7 +1211,7 @@ function RautoMap() {
 
 			var totalstacks = 100 - stacksum;
 			
-			if ((game.global.lastClearedCell + 2 >= bogcell[bogindex]) && (game.challenges.Quagmire.motivatedStacks > totalstacks))
+			if ((game.global.lastClearedCell + 2 >= bogcell) && (game.challenges.Quagmire.motivatedStacks > totalstacks))
 				Rshoulddobogs = true;
 		}
 	}
@@ -1262,9 +1272,11 @@ function RautoMap() {
 		
 		if (insanityfarmzone.includes(game.global.world)) {
 			var insanitystacksfarmindex = insanityfarmzone.indexOf(game.global.world);
-			var insanitymaplevel = getPageSetting('rInsanityMapLevel')[insanitystacksfarmindex];
-			rInsanityStacks = getPageSetting('rInsanityInsanity')[insanitystacksfarmindex];
-			var insanityfarmcell = getPageSetting('rInsanityCell')[insanitystacksfarmindex];
+			var rInsanitySettings = autoTrimpSettings.rInsanitySettings.value[insanitystacksfarmindex];
+			var insanitymaplevel = rInsanitySettings.level;
+			var insanityfarmcell = rInsanitySettings.cell;
+			rInsanityStacks = rInsanitySettings.insanity;
+			var rInsanityJobRatio = rInsanitySettings.jobratio;
 
 			if (rInsanityStacks > game.challenges.Insanity.maxInsanity) 
 				rInsanityStacks = game.challenges.Insanity.maxInsanity;
@@ -1443,10 +1455,12 @@ function RautoMap() {
 		alchfarmzone = getPageSetting('rAlchZone');
 		if (alchfarmzone.includes(game.global.world)) {
 			var alchfarmindex = alchfarmzone.indexOf(game.global.world);
-			var alchfarmcell = getPageSetting('rAlchCell')[alchfarmindex];
-			var alchmaplevel = getPageSetting('rAlchMapLevel')[alchfarmindex];
-			var alchspecial = getPageSetting('rAlchSpecial')[alchfarmindex];
-			alchpotions = getPageSetting('rAlchPotion')[alchfarmindex];
+			var rAlchSettings = autoTrimpSettings.rAlchSettings.value[alchfarmindex];
+			var alchfarmcell = rAlchSettings.cell;
+			var alchmaplevel = rAlchSettings.level;
+			var alchspecial = rAlchSettings.special;
+			var rAlchJobRatio = rAlchSettings.jobratio;
+			alchpotion = rAlchSettings.potiontype;
 						
 			if (alchpotions != undefined) {
 				//Working out which potion the input corresponds to.
@@ -1513,11 +1527,8 @@ function RautoMap() {
 		}
 	}
 
-
+	//Hypothermia Farm
 	if ((game.global.challengeActive == 'Hypothermia' || (getPageSetting('rHypoBuyPackrat') && rHypoBuyPackrat)) && getPageSetting('rHypoOn')) {
-		rHFCell = getPageSetting('rHypoCell');
-		rHypoFarm = getPageSetting('rHypoZone').length > 0;
-
 		if (getPageSetting('rHypoBuyPackrat')) {
 			if (!rHypoBuyPackrat && game.global.challengeActive == 'Hypothermia')
 				rHypoBuyPackrat = true;
@@ -1530,25 +1541,24 @@ function RautoMap() {
 			}
 		}
 		
-		if (rHypoFarm) { 
-			rHFZone = getPageSetting('rHypoZone');
-			rHFMapLevel = getPageSetting('rHypoMapLevel');
+		rHFZone = getPageSetting('rHypoZone');
+		if (rHFZone.includes(game.global.world)) {
 			rHFIndex = rHFZone.indexOf(game.global.world);
+			var rHypoSettings = autoTrimpSettings.rHypoSettings.value[rHFIndex];
+			rHFMapLevel = rHypoSettings.level;
+			var rHFCell = rHypoSettings.cell;
 			rHFBonfireCostTotal = 0;
-
-			if (rHFZone.includes(game.global.world)) {
-				rHFBonfire = getPageSetting('rHypoBonfire');
-				rHFPlusLevel = rHFMapLevel[rHFIndex];
+			var rHypoJobRatio = rHypoSettings.jobratio;
+			
+			if (game.global.lastClearedCell + 2 >= rHFCell) {
+				rHFBonfire = rHypoSettings.bonfire;
 				rHFSpecial = "lwc";
 				
 				rHFSaveWood = false;
-
 				rHFBonfiresBuilt = game.challenges.Hypothermia.totalBonfires;
-				rHFBonfireTarget = rHFBonfire[rHFIndex];
 				rHFCurrentCost = 1e8*(Math.pow(100,game.challenges.Hypothermia.totalBonfires));
-				
 				//Looping through each bonfire level and working out their cost to calc total cost
-				for (x = rHFBonfiresBuilt; x < rHFBonfireTarget; x++) {
+				for (x = rHFBonfiresBuilt; x < rHFBonfire; x++) {
 					rHFBonfireCost = 1e10*Math.pow(100,x);
 					//Summing cost of bonfire levels
 					rHFBonfireCostTotal += rHFBonfireCost;
@@ -1568,10 +1578,7 @@ function RautoMap() {
 					debug('Respecced');
 				} */
 
-				rHFBonefireTargetWood = rHFBonfireTarget != 'undefined' && rHFBonfireTarget > game.challenges.Hypothermia.totalBonfires ? 1e8*Math.pow(100,rHFBonfireTarget) : 0;
-				rHFSaveWood = rHFBonefireTargetWood > 0 ? true : false;
-
-				if ((game.global.lastClearedCell + 2) >= rHFCell[rHFIndex] && rHFBonfireCostTotal > game.resources.wood.owned && rHFBonfireTarget > game.challenges.Hypothermia.totalBonfires) {
+				if (rHFBonfireCostTotal > game.resources.wood.owned && rHFBonfire > game.challenges.Hypothermia.totalBonfires) {
 					rShouldHypoFarm = true;
 				}
 			}
@@ -1852,14 +1859,20 @@ function RautoMap() {
                                         autoTrimpSettings.RAlchSpecial.selected;
                 }
 				if (rShouldTimeFarm) {
-				selectedMap = RShouldFarmMapCreation(rTFMapLevel, rTFSpecial);
-				rTFCurrentMap = "rTimeFarm";
-				} else if (rShouldInsanityFarm) 
-					selectedMap = RShouldFarmMapCreation(insanitymaplevel, "fa");  
-				else if (rShouldTributeFarm) 
+					selectedMap = RShouldFarmMapCreation(rTFMapLevel, rTFSpecial);
+					rTFCurrentMap = "rTimeFarm";
+					workerRatio = rTFJobRatio;
+				} else if (rShouldInsanityFarm) {
+					selectedMap = RShouldFarmMapCreation(insanitymaplevel, "fa");
+					workerRatio = rInsanityJobRatio;
+				} else if (rShouldTributeFarm) {
 					selectedMap = RShouldFarmMapCreation(rTrFMapLevel, rTrFSpecial); 
-				else if (rShouldWorshipperFarm)
+					workerRatio = rTrFJobRatio;
+				}
+				else if (rShouldWorshipperFarm) {
 					selectedMap = RShouldFarmMapCreation(shippluslevel, shipspecial);
+					//workerRatio = rShipJobRatio;
+				}
 				else if (rShouldUnbalance)
 					selectedMap = RShouldFarmMapCreation(-(game.global.world-6), "fa");
 				else if (Rshouldalchfarm) {
@@ -1870,9 +1883,11 @@ function RautoMap() {
                             rAlchSpecialError = game.stats.zonesCleared.value;
                         }
 					selectedMap = RShouldFarmMapCreation(alchmaplevel, alchspecial, alchbiome);
+					workerRatio = rAlchJobRatio;
 				} else if (rShouldHypoFarm) {
-					selectedMap = RShouldFarmMapCreation(rHFPlusLevel, rHFSpecial);
+					selectedMap = RShouldFarmMapCreation(rHFMapLevel, rHFSpecial);
 					rHFCurrentMap = "rHypoFarm";
+					workerRatio = rHypoJobRatio;
 				} else if (rFragmentFarming)
 					selectedMap = RShouldFarmMapCreation(-1, "fa");   
 				else if (rShouldEmpowerFarm)
@@ -1965,7 +1980,7 @@ function RautoMap() {
 			if (game.global.repeatMap && Rshouldalchfarm && herbtotal >= potioncosttotal)
 				repeatClicked();
 			//Hypo
-			if (game.global.repeatMap && rShouldHypoFarm && (game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20),false,true,rHFPlusLevel)+game.resources.wood.owned > rHFBonfireCostTotal))
+			if (game.global.repeatMap && rShouldHypoFarm && (game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20),false,true,rHFMapLevel)+game.resources.wood.owned > rHFBonfireCostTotal))
 				repeatClicked();
 		} else {
 			if (game.global.repeatMap) {
@@ -2156,7 +2171,7 @@ function RautoMap() {
                         alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length-1].bonus;
 				    	RShouldFarmMapCost(alchmaplevel, alchspecial, alchfarmzone, alchbiome);
 				}
-				else if (rShouldHypoFarm) RShouldFarmMapCost(rHFPlusLevel, rHFSpecial, rHFZone, biome);
+				else if (rShouldHypoFarm) RShouldFarmMapCost(rHFMapLevel, rHFSpecial, rHFZone, biome);
 				else if (rShouldEmpowerFarm) RShouldFarmMapCost(-1, "lmc");
 				else if (rShouldEquipFarm) PerfectMapCost(equipminus,"lmc");
 				else if (rShouldMaxMapBonus) PerfectMapCost(0, getPageSetting('rMapSpecial'));

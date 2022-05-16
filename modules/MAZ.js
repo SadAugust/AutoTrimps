@@ -23,15 +23,57 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 		
 	var ondisplay = null; // if non-null, called after the tooltip is displayed
 	var maxSettings = 30;
-	var windowHelp = "Welcome to Map at Zone (also referred to as window)! This is a powerful automation tool that allows you to set when maps should be automatically run, and allows for a high amount of customization. Here's a quick overview of titleText everything does:<ul><li><span style='padding-left: 0.3%' class='windowDelete'><span class='icomoon icon-cross'></span></span> - Remove this window line completely</li><li><b>Active</b> - A toggle to temporarily disable/enable the entire window line.</li><li><b>Start Zone</b> - The first Zone that this window line should run. Must be between 10 and 1000.</li><li><b>End Zone</b> - Only matters if you're planning on having this window line repeat. If so, the line will stop repeating at this Zone. Must be between 10 and 1000.</li><li><b>Exit At Cell</b> - The cell number between 1 and 100 where this window line should trigger. 1 is the first cell of the Zone, 100 is the final cell. This line will trigger before starting combat against that cell.</li><li><b>Priority</b> - If there are two or more window lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li><li><b>Run Map</b> - Uncheck this box if you want Map at Zone to just put you into the Map Chamber without running a map. This will stall your run at a specified point until manual intervention.</li><li><b>Use Preset</b> - Select one of your Advanced Maps presets here, to determine titleText type of map should be created by this window line. You can also choose to run Void Maps or some specific Unique Maps from this dropdown depending on game progress.</li><li><b>Map Repeat</b> - This will toggle your Map Repeat setting On, Off, or leave it as is every time this window line triggers. Set to Repeat On if you want the map to run more than once.</li>";
-	windowHelp += "<li><b>Set Repeat Until</b> - This changes your 'Repeat to' setting to the selected choice, allowing you to customize how many times the map should be repeated. If 'Run Bionic' is selected as your Preset, you can select the option 'Climb BW to Level' in this dropdown which will automatically climb Bionic Wonderlands until the set level of map has been cleared of items, then will exit the map.</li><li><b>Exit To</b> - Ensure you're Exiting to World if you want the game to continue progressing after the maps have been completed, or set Exit to Maps if you want the game to wait for manual intervention after completing its map.</li><li><b>Zone Repeat</b> - Set how often this preset should repeat between the Start Zone and End Zone. Preset can be repeated every Zone, or set to a custom number depending on need. Note that when using Zone Repeat with 'Climb BW to Level' that your 'Climb To' setting will be increased by the amount of Zones in between Start Zone and the Zone where this line actually triggers. For example, starting a window line at Z140 to climb BW to Z165 with repeat every 30 Zones will run through BW 165 on Z140, then at Z170 will run through BW 195.</li></ul>"
+	
+	//Setting up default values section
 	tooltipText = "\
+	<div id='windowContainer' style='display: block'><div id='windowError'></div>\
+	<div class='row windowRow titles'>Default Values</div>\
+	<div class='row windowRow titles'>\
+	<div class='windowCell'>Cell</div>"
+	if (titleText.includes('Time Farm')) tooltipText += "<div class='windowRepeat'>Repeat<br/>Count</div>"
+	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneBelow'>Use below</div>"
+	if (!titleText.includes('Prestige Raiding')) tooltipText += "<div class='windowJobRatio'>Job Ratio</div>"
+	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'>Gather</div>"
+	if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowSpecial'>Special</div>"
+	tooltipText += "</div>";
+
+	var defaultVals = {
+		cell: -1,
+		special: -1,
+		repeat: 1,
+		gather: 0,
+		bonebelow: 0,
+		jobratio: '1,1,1,1'
+	}
+	var style = "";
+	
+	defaultVals.cell = autoTrimpSettings[varPrefix+"DefaultSettings"].value.cell ? autoTrimpSettings[varPrefix+"DefaultSettings"].value.cell : 81;
+	if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) defaultVals.special = autoTrimpSettings[varPrefix+"DefaultSettings"].value.special ? autoTrimpSettings[varPrefix+"DefaultSettings"].value.special : '0';
+	if (titleText.includes('Bone Shrine')) defaultVals.bonebelow = autoTrimpSettings[varPrefix+"DefaultSettings"].value.bonebelow ? autoTrimpSettings[varPrefix+"DefaultSettings"].value.bonebelow : 1;
+	if (!titleText.includes('Prestige Raiding')) defaultVals.jobratio = autoTrimpSettings[varPrefix+"DefaultSettings"].value.jobratio ? autoTrimpSettings[varPrefix+"DefaultSettings"].value.jobratio : '1,1,1,1';
+	if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Bone Shrine')) defaultVals.gather = autoTrimpSettings[varPrefix+"DefaultSettings"].value.gather ? autoTrimpSettings[varPrefix+"DefaultSettings"].value.gather : '0';
+
+	else style = " style='display: none' ";
+	var defaultGatherDropdown = "<option value='food'" + ((defaultVals.gather == 'food') ? " selected='selected'" : "") + ">Food</option>\<option value='wood'" + ((defaultVals.gather == 'wood') ? " selected='selected'" : "") + ">Wood</option>\<option value='metal'" + ((defaultVals.gather == 'metal') ? " selected='selected'" : "") + ">Metal</option>\<option value='science'" + ((defaultVals.gather == 'science') ? " selected='selected'" : "")+ ">Science</option>"
+	var defaultSpecialsDropdown = "<option value='0'" + ((defaultVals.special == '0') ? " selected='selected'" : "") + ">None</option>\<option value='fa'" + ((defaultVals.special == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((defaultVals.special == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>\<option value='ssc'" + ((defaultVals.special == 'ssc') ? " selected='selected'" : "") + ">Small Savory Cache</option>\<option value='swc'" + ((defaultVals.special == 'swc') ? " selected='selected'" : "") + ">Small Wooden Cache</option>\<option value='smc'" + ((defaultVals.special == 'smc') ? " selected='selected'" : "") + ">Small Metal Cache</option>\<option value='src'" + ((defaultVals.special == 'src') ? " selected='selected'" : "") + ">Small Resource Cache</option>\<option value='p'" + ((defaultVals.special == 'p') ? " selected='selected'" : "") + ">Prestigious</option>\<option value='hc'" + ((defaultVals.special == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>\<option value='lsc'" + ((defaultVals.special == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\<option value='lwc'" + ((defaultVals.special == 'lwc') ? " selected='selected'" : "")+ ">Large Wooden Cache</option>\<option value='lmc'" + ((defaultVals.special == 'lmc') ? " selected='selected'" : "")+ ">Large Metal Cache</option>\<option value='lrc'" + ((defaultVals.special == 'lrc') ? " selected='selected'" : "")+ ">Large Research Cache</option>"
+	var potionDropdown = "<option value='h'" + ((defaultVals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((defaultVals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((defaultVals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((defaultVals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((defaultVals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
+	tooltipText += "<div id='windowRow' class='row windowRow'>";
+	tooltipText += "<div class='windowCell'><input value='" + defaultVals.cell + "' type='number' id='windowCellDefault'/></div>";
+	if (titleText.includes('Time Farm')) tooltipText += "<div class='windowRepeat'><input value='" + defaultVals.repeat + "' type='number' id='windowRepeatDefault'/></div>";
+	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneBelow'><input value='" + defaultVals.bonebelow + "' type='number' id='windowBoneBelowDefault'/></div>";
+	if (!titleText.includes('Prestige Raiding')) tooltipText += "<div class='windowJobRatio'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
+	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'><select value='" + defaultVals.gather + "' id='windowBoneGatherDefault'>" + defaultGatherDropdown + "</select></div>"
+	if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowSpecial'><select value='" + defaultVals.special + "' id='windowSpecialDefault'>" + defaultSpecialsDropdown + "</select></div>"
+	tooltipText += "</div>"
+
+	//Setting up rows for each setting
+	tooltipText += "\
 	<div id='windowContainer' style='display: block'><div id='windowError'></div>\
 	<div class='row windowRow titles'>\
 	<div class='windowCheckbox' style='width: 0%'></div>\
 	<div class='windowWorld'>Zone</div>\
 	<div class='windowCell'>Cell</div>"
-	if (!titleText.includes('Quagmire Farm')) tooltipText += "<div class='windowLevel'>Map<br/>Level</div>"
+	if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine')) tooltipText += "<div class='windowLevel'>Map<br/>Level</div>"
 	if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributes'>Tributes</div>"
 	if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowMets'>Mets</div>"
 	if (titleText.includes('Time Farm')) tooltipText += "<div class='windowRepeat'>Repeat<br/>Count</div>"
@@ -40,10 +82,15 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 	if (titleText.includes('Alchemy Farm')) tooltipText += "<div class='windowPotionType'>Potion Type</div>"
 	if (titleText.includes('Alchemy Farm')) tooltipText += "<div class='windowPotionNumber'>Potion Number</div>"
 	if (titleText.includes('Hypothermia Farm')) tooltipText += "<div class='windowBonfire'>Bonfires</div>"
+	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneAmount'>To use</div>"
+	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneBelow'>Use below</div>"
+	if (!titleText.includes('Prestige Raiding')) tooltipText += "<div class='windowJobRatio'>Job Ratio</div>"
+	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'>Gather</div>"
 	if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowSpecial'>Special</div>"
+	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneDropdown'>Use in</div>"
 	tooltipText += "</div>";
 
-	var current = autoTrimpSettings[varPrefix+"Zone"].value;
+	var current = autoTrimpSettings[varPrefix+"Settings"].value;
 	
 	for (var x = 0; x < maxSettings; x++){
 		var vals = {
@@ -58,38 +105,46 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 			mets: 0,
 			bogs: 0,
 			insanity: 0,
-			potionstype: 0,
-			potionsnumber: 0,
-			bonfires: 5
+			potions: 0,
+			bonfires: 5,
+			boneamount: 1,
+			bonebelow: 0,
+			bonedropdown: 10,
+			jobratio: '1,1,1,1'
 		}
 		var style = "";
 		if (current.length - 1 >= x){
-			vals.world = autoTrimpSettings[varPrefix+"Zone"].value[x]
-			vals.cell = autoTrimpSettings[varPrefix+"Cell"].value[x] ? autoTrimpSettings[varPrefix+"Cell"].value[x] : 81;
-			if (!titleText.includes('Quagmire Farm')) vals.level = autoTrimpSettings[varPrefix+"MapLevel"].value[x]
-			if (titleText.includes('Time Farm')) vals.repeat = autoTrimpSettings[varPrefix+"Repeat"].value[x] ? autoTrimpSettings[varPrefix+"Repeat"].value[x] : 1;
-			if (titleText.includes('Tribute Farm')) vals.tributes = autoTrimpSettings[varPrefix+"Tributes"].value[x] ? autoTrimpSettings[varPrefix+"Tributes"].value[x] : 0;
-			if (titleText.includes('Tribute Farm')) vals.mets = autoTrimpSettings[varPrefix+"Mets"].value[x] ? autoTrimpSettings[varPrefix+"Mets"].value[x] : 0;
-			if (titleText.includes('Quagmire Farm')) vals.bogs = autoTrimpSettings[varPrefix+"Bog"].value[x] ? autoTrimpSettings[varPrefix+"Bog"].value[x] : 0;
-			if (titleText.includes('Insanity Farm')) vals.insanity = autoTrimpSettings[varPrefix+"Insanity"].value[x] ? autoTrimpSettings[varPrefix+"Insanity"].value[x] : 0;
-			if (titleText.includes('Alchemy Farm')) vals.potionstype = autoTrimpSettings[varPrefix+"Potion"].value[x][0] ? autoTrimpSettings[varPrefix+"Potion"].value[x][0] : 0;
-			if (titleText.includes('Alchemy Farm')) vals.potionsnumber = autoTrimpSettings[varPrefix+"Potion"].value[x].toString().replace(/[^\d,:-]/g, '') ? autoTrimpSettings[varPrefix+"Potion"].value[x].toString().replace(/[^\d,:-]/g, '') : 0;
-			if (titleText.includes('Hypothermia Farm')) vals.bonfires = autoTrimpSettings[varPrefix+"Bonfire"].value[x] ? autoTrimpSettings[varPrefix+"Bonfire"].value[x] : 0;
-			if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) vals.special = autoTrimpSettings[varPrefix+"Special"].value[x] ? autoTrimpSettings[varPrefix+"Special"].value[x] : -1;
-			if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) vals.gather = autoTrimpSettings[varPrefix+"Gather"].value[x] ? autoTrimpSettings[varPrefix+"Gather"].value[x] : '0';
+			vals.world = autoTrimpSettings[varPrefix+"Settings"].value[x].world
+			vals.cell = autoTrimpSettings[varPrefix+"Settings"].value[x].cell ? autoTrimpSettings[varPrefix+"Settings"].value[x].cell : 81;
+			if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine')) vals.level = autoTrimpSettings[varPrefix+"Settings"].value[x].level
+			if (titleText.includes('Time Farm')) vals.repeat = autoTrimpSettings[varPrefix+"Settings"].value[x].repeat ? autoTrimpSettings[varPrefix+"Settings"].value[x].repeat : 1;
+			if (titleText.includes('Tribute Farm')) vals.tributes = autoTrimpSettings[varPrefix+"Settings"].value[x].tributes ? autoTrimpSettings[varPrefix+"Settings"].value[x].tributes : 0;
+			if (titleText.includes('Tribute Farm')) vals.mets = autoTrimpSettings[varPrefix+"Settings"].value[x].mets ? autoTrimpSettings[varPrefix+"Settings"].value[x].mets : 0;
+			if (titleText.includes('Quagmire Farm')) vals.bogs = autoTrimpSettings[varPrefix+"Settings"].value[x].bogs ? autoTrimpSettings[varPrefix+"Settings"].value[x].bogs : 0;
+			if (titleText.includes('Insanity Farm')) vals.insanity = autoTrimpSettings[varPrefix+"Settings"].value[x].insanity ? autoTrimpSettings[varPrefix+"Settings"].value[x].insanity : 0;
+			if (titleText.includes('Alchemy Farm')) vals.potionstype = autoTrimpSettings[varPrefix+"Settings"].value[x].potion[0] ? autoTrimpSettings[varPrefix+"Settings"].value[x].potion[0] : 0;
+			if (titleText.includes('Alchemy Farm')) vals.potionsnumber = autoTrimpSettings[varPrefix+"Settings"].value[x].potion.toString().replace(/[^\d,:-]/g, '') ? autoTrimpSettings[varPrefix+"Settings"].value[x].potion.toString().replace(/[^\d,:-]/g, '') : 0;
+			if (titleText.includes('Hypothermia Farm')) vals.bonfires = autoTrimpSettings[varPrefix+"Settings"].value[x].bonfire ? autoTrimpSettings[varPrefix+"Settings"].value[x].bonfire : 0;
+			if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) vals.special = autoTrimpSettings[varPrefix+"Settings"].value[x].special ? autoTrimpSettings[varPrefix+"Settings"].value[x].special : -1;
+			if (titleText.includes('Bone Shrine')) vals.boneamount = autoTrimpSettings[varPrefix+"Settings"].value[x].boneamount ? autoTrimpSettings[varPrefix+"Settings"].value[x].boneamount : 0;
+			if (titleText.includes('Bone Shrine')) vals.bonebelow = autoTrimpSettings[varPrefix+"Settings"].value[x].bonebelow ? autoTrimpSettings[varPrefix+"Settings"].value[x].bonebelow : 0;
+			if (!titleText.includes('Prestige Raiding')) vals.jobratio = autoTrimpSettings[varPrefix+"Settings"].value[x].jobratio ? autoTrimpSettings[varPrefix+"Settings"].value[x].jobratio : '1,1,1,1';
+			if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Bone Shrine')) vals.gather = autoTrimpSettings[varPrefix+"Settings"].value[x].gather ? autoTrimpSettings[varPrefix+"Settings"].value[x].gather : '0';
+			if (titleText.includes('Bone Shrine')) vals.bonedropdown = autoTrimpSettings[varPrefix+"Settings"].value[x].boneruntype ? autoTrimpSettings[varPrefix+"Settings"].value[x].boneruntype : 1;
 		}
 
 		else style = " style='display: none' ";
 		var gatherDropdown = "<option value='food'" + ((vals.gather == 'food') ? " selected='selected'" : "") + ">Food</option>\<option value='wood'" + ((vals.gather == 'wood') ? " selected='selected'" : "") + ">Wood</option>\<option value='metal'" + ((vals.gather == 'metal') ? " selected='selected'" : "") + ">Metal</option>\<option value='science'" + ((vals.gather == 'science') ? " selected='selected'" : "")+ ">Science</option>"
 		var specialsDropdown = "<option value='0'" + ((vals.special == '0') ? " selected='selected'" : "") + ">None</option>\<option value='fa'" + ((vals.special == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>\<option value='ssc'" + ((vals.special == 'ssc') ? " selected='selected'" : "") + ">Small Savory Cache</option>\<option value='swc'" + ((vals.special == 'swc') ? " selected='selected'" : "") + ">Small Wooden Cache</option>\<option value='smc'" + ((vals.special == 'smc') ? " selected='selected'" : "") + ">Small Metal Cache</option>\<option value='src'" + ((vals.special == 'src') ? " selected='selected'" : "") + ">Small Resource Cache</option>\<option value='p'" + ((vals.special == 'p') ? " selected='selected'" : "") + ">Prestigious</option>\<option value='hc'" + ((vals.special == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>\<option value='lsc'" + ((vals.special == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\<option value='lwc'" + ((vals.special == 'lwc') ? " selected='selected'" : "")+ ">Large Wooden Cache</option>\<option value='lmc'" + ((vals.special == 'lmc') ? " selected='selected'" : "")+ ">Large Metal Cache</option>\<option value='lrc'" + ((vals.special == 'lrc') ? " selected='selected'" : "")+ ">Large Research Cache</option>"
 		var potionDropdown = "<option value='h'" + ((vals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
+		var boneDropdown = "<option value='none'" + ((vals.bonedropdown == 'none') ? " selected='selected'" : "") + ">None</option>\<option value='Fillers'" + ((vals.bonedropdown == 'Fillers') ? " selected='selected'" : "") + ">Fillers</option>\<option value='Daily'" + ((vals.bonedropdown == 'Daily') ? " selected='selected'" : "") + ">Daily</option>\<option value='C3'" + ((vals.bonedropdown == 'C3') ? " selected='selected'" : "") + ">C3</option>\<option value='All'" + ((vals.bonedropdown == 'All') ? " selected='selected'" : "") + ">All</option>"
 		var className = (vals.special === 'hc' || vals.special === 'lc') ? " windowBwMainOn" : " windowBwMainOff";
 		className += (vals.special == 'hc' || vals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
 		tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
 		tooltipText += "<div class='windowDelete' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
 		tooltipText += "<div class='windowWorld'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
 		tooltipText += "<div class='windowCell'><input value='" + vals.cell + "' type='number' id='windowCell" + x + "'/></div>";
-		if (!titleText.includes('Quagmire Farm')) tooltipText += "<div class='windowLevel'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
+		if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine')) tooltipText += "<div class='windowLevel'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
 		if (titleText.includes('Time Farm')) tooltipText += "<div class='windowRepeat'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
 		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributes'><input value='" + vals.tributes + "' type='number' id='windowTributes" + x + "'/></div>";
 		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowMets'><input value='" + vals.mets + "' type='number' id='windowMets" + x + "'/></div>";
@@ -98,6 +153,11 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 		if (titleText.includes('Alchemy')) tooltipText += "<div class='windowPotionType' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.potionstype + "' id='windowPotionType" + x + "'>" + potionDropdown + "</select></div>"
 		if (titleText.includes('Alchemy Farm')) tooltipText += "<div class='windowPotionNumber'><input value='" + vals.potionsnumber + "' type='text' id='windowPotionNumber" + x + "'/></div>";
 		if (titleText.includes('Hypothermia Farm')) tooltipText += "<div class='windowBonfire'><input value='" + vals.bonfires + "' type='number' id='windowBonfire" + x + "'/></div>";
+		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneAmount'><input value='" + vals.boneamount + "' type='number' id='windowBoneAmount" + x + "'/></div>";
+		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneBelow'><input value='" + vals.bonebelow + "' type='number' id='windowBoneBelow" + x + "'/></div>";
+		if (!titleText.includes('Prestige Raiding')) tooltipText += "<div class='windowJobRatio'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
+		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.gather + "' id='windowBoneGather" + x + "'>" + gatherDropdown + "</select></div>"
+		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.bonedropdown + "' id='windowBoneDropdown" + x + "'>" + boneDropdown + "</select></div>"
 		if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowSpecial' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>"
 		if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowGather'>\<div style='text-align: center;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select>\</div>"
 		tooltipText += "</div>"
@@ -130,6 +190,29 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 	var error = "";
 	var maxSettings = 30;
 	
+	var defaultCell = parseInt(document.getElementById('windowCellDefault').value, 10);
+	if (titleText.includes('Time Farm')) var defaultRepeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
+	if (titleText.includes('Time Farm') || titleText.includes('Alch')) var defaultSpecial = document.getElementById('windowSpecialDefault').value;
+	if (titleText.includes('Bone')) var defaultBonebelow = parseInt(document.getElementById('windowBoneBelowDefault').value, 10);
+	if (!titleText.includes('Prestige Raiding')) var defaultJobratio = document.getElementById('windowJobRatioDefault').value;
+	if (titleText.includes('Bone')) var defaultBonegather = document.getElementById('windowBoneGatherDefault').value;
+
+	if (defaultCell < 1) defaultCell = 1;
+	if (defaultCell > 100) defaultCell = 100;
+
+	if (defaultRepeat < 0) defaultRepeat = 0;
+	
+	var thisDefaultSetting = {
+		cell: defaultCell,
+		repeat: defaultRepeat,
+		special: defaultSpecial,
+		bonebelow: defaultBonebelow,
+		gather: defaultBonegather,
+		jobratio: defaultJobratio
+	};
+	autoTrimpSettings[varPrefix+"DefaultSettings"].value = thisDefaultSetting;
+	
+
 	for (var x = 0; x < maxSettings; x++){
 		var world = document.getElementById('windowWorld' + x);
 		if (!world || world.value == "-1") {
@@ -138,7 +221,7 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 		
 		world = parseInt(document.getElementById('windowWorld' + x).value, 10);
 		var cell = parseInt(document.getElementById('windowCell' + x).value, 10);
-		if (!titleText.includes('Quag')) var level = parseInt(document.getElementById('windowLevel' + x).value, 10);
+		if (!titleText.includes('Quag') && !titleText.includes('Bone')) var level = parseInt(document.getElementById('windowLevel' + x).value, 10);
 		if (titleText.includes('Time Farm')) var repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
 		if (titleText.includes('Time Farm') || titleText.includes('Alch')) var special = document.getElementById('windowSpecial' + x).value;
 		if (titleText.includes('Time Farm') || titleText.includes('Alch')) {
@@ -151,9 +234,14 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 		if (titleText.includes('Tribute')) var mets = parseInt(document.getElementById('windowMets' + x).value, 10);
 		if (titleText.includes('Quag')) var bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
 		if (titleText.includes('Insanity')) var insanity = parseInt(document.getElementById('windowInsanity' + x).value, 10);
-		if (titleText.includes('Alch')) var potiontype = document.getElementById('windowPotionType' + x).value;
-		if (titleText.includes('Alch')) var potionnumber = parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
+		if (titleText.includes('Alch')) var potion = document.getElementById('windowPotionType' + x).value;
+		if (titleText.includes('Alch')) potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
 		if (titleText.includes('Hypo')) var bonfire = parseInt(document.getElementById('windowBonfire' + x).value, 10);
+		if (titleText.includes('Bone')) var boneamount = parseInt(document.getElementById('windowBoneAmount' + x).value, 10);
+		if (titleText.includes('Bone')) var bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);
+		if (!titleText.includes('Prestige Raiding')) var jobratio = document.getElementById('windowJobRatio' + x).value;
+		if (titleText.includes('Bone')) var gather = document.getElementById('windowBoneGather' + x).value;
+		if (titleText.includes('Bone')) var boneruntype = document.getElementById('windowBoneDropdown' + x).value;
 
 		if (isNaN(world) || world < 6) {
 			error += " Preset " + (x + 1) + " needs a value for Start Zone that's greater than 5.";
@@ -184,9 +272,12 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 			mets: mets,
 			bogs: bogs,
 			insanity: insanity,
-			potiontype: potiontype,
-			potionnumber: potionnumber,
-			bonfire: bonfire
+			potion: potion,
+			bonfire: bonfire,
+			boneamount: boneamount,
+			bonebelow: bonebelow,
+			boneruntype: boneruntype,
+			jobratio: jobratio
 		};
 		setting.push(thisSetting);
 	}
@@ -198,32 +289,14 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 		return;
 	}
 	//Reset variables that are about to get used.
+	autoTrimpSettings[varPrefix+"Settings"].value = [];
 	autoTrimpSettings[varPrefix+"Zone"].value = [];
-	autoTrimpSettings[varPrefix+"Cell"].value  = [];
-	if (!titleText.includes('Quag')) autoTrimpSettings[varPrefix+"MapLevel"].value = [];
-	if (titleText.includes('Time Farm')) autoTrimpSettings[varPrefix+"Repeat"].value  = [];
-	if (titleText.includes('Time Farm') || varPrefix.includes('Alch')) autoTrimpSettings[varPrefix+"Special"].value = [];
-	if (titleText.includes('Time Farm') || varPrefix.includes('Alch')) autoTrimpSettings[varPrefix+"Gather"].value = [];
-	if (titleText.includes('Tribute Farm')) autoTrimpSettings[varPrefix+"Tributes"].value = [];
-	if (titleText.includes('Tribute Farm')) autoTrimpSettings[varPrefix+"Mets"].value = [];
-	if (titleText.includes('Quag')) autoTrimpSettings[varPrefix+"Bog"].value = [];
-	if (titleText.includes('Insanity')) autoTrimpSettings[varPrefix+"Insanity"].value = [];
-	if (titleText.includes('Alch')) autoTrimpSettings[varPrefix+"Potion"].value = [];
-	if (titleText.includes('Hypo')) autoTrimpSettings[varPrefix+"Bonfire"].value = [];
-
+	if (titleText.includes('Bone')) autoTrimpSettings[varPrefix+"RunType"].value = [];
+	
 	for (var x = 0; x < setting.length; x++) {
-			autoTrimpSettings[varPrefix+"Zone"].value[x] = setting[x].world
-			autoTrimpSettings[varPrefix+"Cell"].value[x] = setting[x].cell
-			if (!titleText.includes('Quag')) autoTrimpSettings[varPrefix+"MapLevel"].value[x] = setting[x].level
-			if (titleText.includes('Time Farm')) autoTrimpSettings[varPrefix+"Repeat"].value[x] = setting[x].repeat
-			if (titleText.includes('Time Farm') || titleText.includes('Alch')) autoTrimpSettings[varPrefix+"Special"].value[x] = setting[x].special
-			if (titleText.includes('Time Farm') || titleText.includes('Alch')) autoTrimpSettings[varPrefix+"Gather"].value[x] = setting[x].gather
-			if (titleText.includes('Tribute')) autoTrimpSettings[varPrefix+"Tributes"].value[x] = setting[x].tributes
-			if (titleText.includes('Tribute')) autoTrimpSettings[varPrefix+"Mets"].value[x] = setting[x].mets
-			if (titleText.includes('Quag')) autoTrimpSettings[varPrefix+"Bog"].value[x] = setting[x].bogs
-			if (titleText.includes('Insanity')) autoTrimpSettings[varPrefix+"Insanity"].value[x] = setting[x].insanity
-			if (titleText.includes('Alch')) autoTrimpSettings[varPrefix+"Potion"].value[x] = [setting[x].potiontype + setting[x].potionnumber].join()
-			if (titleText.includes('Hypo')) autoTrimpSettings[varPrefix+"Bonfire"].value[x] = setting[x].bonfire
+		autoTrimpSettings[varPrefix+"Settings"].value[x] = setting[x];
+		autoTrimpSettings[varPrefix+"Zone"].value[x] = setting[x].world
+		if (titleText.includes('Bone')) autoTrimpSettings[varPrefix+"RunType"].value[x] = setting[x].boneruntype;
 	}
 	
 	cancelTooltip(true);
@@ -243,9 +316,16 @@ function addRow(varPrefix){
 				parent.style.display = 'block';
 				elem.value = game.global.world + 1 < 6 ? 6 : game.global.world + 1;
 
-				if (document.getElementById('windowSpecial' + x) !== null) {
-					document.getElementById('windowSpecial' + x).value = autoTrimpSettings.rMapSpecial.selected
-				}
+				if (document.getElementById('windowSpecial' + x) !== null)
+					document.getElementById('windowSpecial' + x).value = autoTrimpSettings[varPrefix+'DefaultSettings'].value.special
+				if (document.getElementById('windowRepeat' + x) !== null)
+					document.getElementById('windowRepeat' + x).value = autoTrimpSettings[varPrefix+'DefaultSettings'].value.repeat
+				if (document.getElementById('windowBoneBelow' + x) !== null)
+					document.getElementById('windowBoneBelow' + x).value = autoTrimpSettings[varPrefix+'DefaultSettings'].value.bonebelow
+				if (document.getElementById('windowBoneGather' + x) !== null)
+					document.getElementById('windowBoneGather' + x).value = autoTrimpSettings[varPrefix+'DefaultSettings'].value.gather
+				if (document.getElementById('windowJobRatio' + x) !== null)
+					document.getElementById('windowJobRatio' + x).value = autoTrimpSettings[varPrefix+'DefaultSettings'].value.jobratio
 				updateWindowPreset(x, varPrefix);
 			}
 		}
@@ -256,7 +336,7 @@ function addRow(varPrefix){
 			var parent2 = document.getElementById('windowRow' + x);
 			if (parent2){
 				parent2.style.display = 'block';
-				elemCell.value = getPageSetting(varPrefix + 'DefaultCell')
+				elemCell.value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.cell
 				updateWindowPreset(x, varPrefix);
 					break;
 			}
@@ -283,7 +363,7 @@ function removeRow(index, titleText){
 	if (!elem) return;
 	document.getElementById('windowWorld' + index).value = -1;
 	document.getElementById('windowCell' + index).value = -1;
-	if (!titleText.includes('Quag')) document.getElementById('windowLevel' + index).value = 0;
+	if (!titleText.includes('Quag') && !titleText.includes('Bone')) document.getElementById('windowLevel' + index).value = 0;
 	if (titleText.includes('Time Farm') || titleText.includes('Alch')) document.getElementById('windowSpecial' + index).value = 0;
 	if (titleText.includes('Time Farm') || titleText.includes('Alch')) document.getElementById('windowGather' + index).value = 0;
 	if (titleText.includes('Time Farm')) document.getElementById('windowRepeat' + index).value = 0;
@@ -292,6 +372,11 @@ function removeRow(index, titleText){
 	if (titleText.includes('Quag')) document.getElementById('windowBogs' + index).value = 0;
 	if (titleText.includes('Insanity')) document.getElementById('windowInsanity' + index).value = 0;
 	if (titleText.includes('Hypo')) document.getElementById('windowBonfire' + index).value = 0;
+	if (titleText.includes('Bone')) document.getElementById('windowBoneAmount' + index).value = 0;
+	if (titleText.includes('Bone')) document.getElementById('windowBoneBelow' + index).value = 0;
+	if (!titleText.includes('Prestige Raiding')) document.getElementById('windowJobRatio' + index).value = 0;
+	if (titleText.includes('Bone')) document.getElementById('windowBoneDropdown' + index).value = 0;
+	if (titleText.includes('Bone')) document.getElementById('windowBoneGather' + index).value = 0;
 
 	elem.style.display = 'none';
 	var btnElem = document.getElementById('windowAddRowBtn');
