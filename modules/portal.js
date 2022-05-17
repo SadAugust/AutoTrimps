@@ -488,6 +488,7 @@ function RdoPortal(challenge, daily) {
                 presetTab(1);
                 loadPerkPreset();
             }
+            hypoPackratReset(challenge);
         } else {
             if (game.global.challengeActive == 'Daily' && portalUniverse == 2 && getPageSetting('RFillerRun')) {
                 if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None') {
@@ -496,6 +497,7 @@ function RdoPortal(challenge, daily) {
                         presetTab(1);
                         loadPerkPreset();
                     }
+                    hypoPackratReset(challenge);
                 }
             } else {
                 getDailyChallenge(lastUndone);
@@ -512,6 +514,7 @@ function RdoPortal(challenge, daily) {
 	        swapPortalUniverse();
 	    }
         selectChallenge(challenge);
+        hypoPackratReset(challenge);
         if (portalUniverse == 2 && getPageSetting('RPerkSwapping')) {
             presetTab(1);
             loadPerkPreset();
@@ -686,4 +689,5 @@ function Rresetmapvars() {
     //Bone Shrine
     rShouldBoneShrine = false;
     rBoneShrineUsedZone = 0;
+	workerRatio = null;
 }

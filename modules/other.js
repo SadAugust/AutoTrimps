@@ -3007,6 +3007,20 @@ function remainingHealth() {
 		return (remainingHealth)
 }
 
+function hypoPackratReset(challenge) {
+	
+	if (challenge == 'Hypothermia' && getPageSetting('rHypoBuyPackrat')) {
+		toggleRemovePerks();
+		numTab(6, true);
+		buyPortalUpgrade('Packrat');
+		toggleRemovePerks();
+		tooltip('Custom', null, 'update', true);
+		document.getElementById('customNumberBox').value = 3;
+		numTab(5, true)
+		buyPortalUpgrade('Packrat');
+	}
+}
+
 function equalityManagement() {
 	if (!game.global.preMapsActive && game.global.gridArray.length > 0) {
 		//Turning off equality scaling

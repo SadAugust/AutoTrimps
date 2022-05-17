@@ -846,7 +846,7 @@ function initializeAllSettings() {
 	createSetting('rHypoCell', 'HF: Cell', 'Hypo Farm at this Cell. -1 to run them at the default value, which is 71. ', 'multiValue', [1], null, 'Challenges');
 	createSetting('rHypoFrozenCastle', 'HF: Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Challenges');
 	createSetting('rHypoStorage', ['HF: Storage', 'HF: Storage', 'HF: Storage First'], 'Enable this setting to disable AutoStorage inside of Hypothermia when not at one of your designated Bonfire farming zones. Needs to be used in conjunction with the other Hypothermia settings otherwise it will break.<br><br>HF: Storage First<br>Will enable AutoStorage again after your first Bonfire farm. Make sure to only use this setting if you\'re confident your Bonfire farming settings won\'t allow for an accidental bonfire.', 'multitoggle', 0, null, 'Challenges');
-	createSetting('rHypoBuyPackrat', 'HF: Buy Packrat', 'Turn on to purchase packrat after the Hypothermia challenge is completed. Useful setting for when running 3 or less packrat for an extra bonfire.', 'boolean', false, null, 'Challenges');
+	createSetting('rHypoBuyPackrat', 'HF: Buy Packrat', 'Turn on to reset your packrat level to 3 when autoportaling into packrat and also purchase packrat after the Hypothermia challenge is completed. Useful setting for when running 3 or less packrat for an extra bonfire.', 'boolean', false, null, 'Challenges');
 	
 	//Combat
 	//Helium
@@ -1800,7 +1800,6 @@ function updateCustomButtons() {
 			autoTrimpSettings.rInsanitySettings.value[x].jobratio = autoTrimpSettings.rInsanityDefaultSettings.value.jobratio;
 		}
 	}
-	
 
 	//Convert Alchemy Settings
 	convertSettings('RAlchOn', 'rAlchOn','boolean')
