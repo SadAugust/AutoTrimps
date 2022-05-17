@@ -838,7 +838,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (rShouldTributeFarm && rTrFTributes > game.buildings.Tribute.owned) status = 'Tribute Farming: ' + game.buildings.Tribute.owned + "/" + rTrFTributes;
 	else if (rShouldTributeFarm && rTrFMeteorologists > game.jobs.Meteorologist.owned) status = 'Meteorologist Farming: ' + game.jobs.Meteorologist.owned + "/" + rTrFMeteorologists;
     else if (rShouldUnbalance || (game.global.mapsActive && getCurrentMapObject().level == 6 && game.challenges.Unbalance.balanceStacks > 0)) status = 'Destacking: ' + game.challenges.Unbalance.balanceStacks + " remaining";
-	else if (rShouldWorshipperFarm) status = 'Ship Farming: ' + game.jobs.Worshipper.owned + "/" + shipamountzones;
+	else if (rShouldWorshipperFarm) status = 'Ship Farming: ' + game.jobs.Worshipper.owned + "/" + shipfarmamount;
 	else if (rShouldEquipFarm) status = 'Equip Farming to ' + equipfarmdynamicHD().toFixed(2) + " and " + estimateEquipsForZone()[2] + " Equality";
 	else if (rShouldPrestigeRaid) status = 'Prestige Raiding: ' + Rgetequips(raidzones, false) + ' items remaining';
 	else if (rShouldMaxMapBonus) status = 'Map Bonus: ' + game.global.mapBonus + "/" + maxMapBonusLimit;
@@ -1173,25 +1173,28 @@ function RautoMap() {
 	}
 
 	//Worshipper Farm -- Think there's an issue with variable setup here
-	if (game.jobs.Worshipper.locked == 0 && getPageSetting('Rshipfarmon')) {
-		var shipfarmcell = ((getPageSetting('Rshipfarmcell') > 0) ? getPageSetting('Rshipfarmcell') : 1);
-		Rshipfarm = (((shipfarmcell <= 1) || (shipfarmcell > 1 && (game.global.lastClearedCell + 2) >= shipfarmcell)) && (getPageSetting('Rshipfarmzone')[0] > 0 && getPageSetting('Rshipfarmamount')[0] > 0));
-		if (Rshipfarm) {
-			var ships = game.jobs.Worshipper.owned
-			shipfarmzone = getPageSetting('Rshipfarmzone');
-			var shipmaplevel = getPageSetting('Rshipfarmlevel');
-			var shipfarmamount = getPageSetting('Rshipfarmamount');
+	if (game.jobs.Worshipper.locked == 0 && getPageSetting('rShipFarm')) {
+		var shipfarmzone = getPageSetting('rShipFarmZone');
+		if (shipfarmzone.includes(game.global.world) && game.jobs.Worshipper.owned != 50) {
+		//if (Rshipfarm) {
 			var shipamountfarmindex = shipfarmzone.indexOf(game.global.world);
-			shipamountzones = getPageSetting('Rshipfarmamount').length == 1 && getPageSetting('Rshipfarmamount')[0] > 0 ? getPageSetting('Rshipfarmamount')[0] : shipfarmamount[shipamountfarmindex];
-			var shippluslevel = shipmaplevel[shipamountfarmindex];
-            if (game.global.challengeActive == "Wither" && shippluslevel >= 0)
-                shippluslevel = -1;
-			var shipspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
-			if (game.jobs.Worshipper.owned != 50 && shipfarmzone.includes(game.global.world) && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,shippluslevel) <= (game.jobs.Worshipper.getCost() * 10)))
-                debug("Skipping Worshipper farming on zone " + game.global.world + " as it costs more than a " + shipspecial + " map, evaluate your map settings to correct this")
-                worshipperdebug = game.stats.zonesCleared.value;
-			if (shipfarmzone.includes(game.global.world) && shipamountzones > ships && ((scaleToCurrentMapLocal(simpleSecondsLocal("food", 20),false,true,shippluslevel) >= (game.jobs.Worshipper.getCost() * 10)))) 
-				rShouldWorshipperFarm = true;
+			var rShipFarmSettings = autoTrimpSettings.rShipFarmSettings.value[shipamountfarmindex];
+			var shipfarmcell = rShipFarmSettings.cell
+			if (game.global.lastClearedCell + 2 >= shipfarmcell) {
+				var ships = game.jobs.Worshipper.owned
+				shipfarmamount = rShipFarmSettings.worshipper
+				var shippluslevel = rShipFarmSettings.level;
+				var rShipJobRatio = rShipFarmSettings.jobratio;
+	            if (game.global.challengeActive == "Wither" && shippluslevel >= 0)
+	                shippluslevel = -1;
+				var shipspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
+				if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rShipJobRatio),false,true,shippluslevel) <= (game.jobs.Worshipper.getCost() * 10))) {
+	                debug("Skipping Worshipper farming on zone " + game.global.world + " as it costs more than a " + shipspecial + " map, evaluate your map settings to correct this")
+	                worshipperdebug = game.stats.zonesCleared.value;
+				}
+				if (shipfarmamount > ships && ((scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, ),false,true,shippluslevel) >= (game.jobs.Worshipper.getCost() * 10)))) 
+					rShouldWorshipperFarm = true;
+			}
 		}
 	}
 	//Quagmire - Black Bogs
@@ -1560,23 +1563,8 @@ function RautoMap() {
 				//Looping through each bonfire level and working out their cost to calc total cost
 				for (x = rHFBonfiresBuilt; x < rHFBonfire; x++) {
 					rHFBonfireCost = 1e10*Math.pow(100,x);
-					//Summing cost of bonfire levels
 					rHFBonfireCostTotal += rHFBonfireCost;
 				}
-
-/* 				if (getPageSetting('rHypoRespec') && getPageSetting('rHypoRespecZone') == game.global.world && rHypoRespecced == null) {
-					viewPortalUpgrades();
-					tooltip('Import Perks', null, 'update');
-					rHypoRespecString = getPageSetting('rHypoRespecString')
-					document.getElementById('perkImportBox').value = rHypoRespecString;
-					document.getElementById("confirmTooltipBtn").click();
-					game.jobs.Miner.owned = 0;
-					game.jobs.Farmer.owned = 0;
-					game.jobs.Lumberjack.owned = 0;
-					activateClicked();
-					rHypoRespecced = true;
-					debug('Respecced');
-				} */
 
 				if (rHFBonfireCostTotal > game.resources.wood.owned && rHFBonfire > game.challenges.Hypothermia.totalBonfires) {
 					rShouldHypoFarm = true;
@@ -1871,7 +1859,7 @@ function RautoMap() {
 				}
 				else if (rShouldWorshipperFarm) {
 					selectedMap = RShouldFarmMapCreation(shippluslevel, shipspecial);
-					//workerRatio = rShipJobRatio;
+					workerRatio = rShipJobRatio;
 				}
 				else if (rShouldUnbalance)
 					selectedMap = RShouldFarmMapCreation(-(game.global.world-6), "fa");
@@ -1903,6 +1891,7 @@ function RautoMap() {
 							selectedMap = "create";
 					}
 				}
+				RbuyJobs()
 			} else {
 				for (var map in game.global.mapsOwnedArray) {
 					if (!game.global.mapsOwnedArray[map].noRecycle && game.global.world == game.global.mapsOwnedArray[map].level) {

@@ -222,6 +222,16 @@ function initializeAllSettings() {
 	createSetting('RAlchCell', '', '', 'value', '-1',  null, 'Legacy'); 
 	createSetting('RAlchFAMaps', '', '', 'boolean', '0', null, 'Legacy'); 
 	createSetting('RAlchDontBuyMets', '', '', 'boolean', '0', null, 'Legacy'); 
+
+	//Ship Farm Legacy
+
+	createSetting('Rshipfarmon', '', '', 'boolean', '0', null, 'Legacy'); 
+	createSetting('Rshipfarmzone', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rshipfarmamount', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rshipfarmlevel', '', '', 'multiValue', [-1], null,  'Legacy'); 
+	createSetting('Rshipfarmcell', '', '', 'value', '-1',  null, 'Legacy'); 
+
+
 	//Core
 	//Helium General
 	createSetting('ManualGather2', ['Manual Gather/Build', 'Auto Gather/Build', 'Mining/Building Only', 'Science Research OFF'], 'Controls what you gather/build do. Manual does nothing<br>Auto Gathering of Food,Wood,Metal(w/turkimp) & Science. Auto speed-Builds your build queue. <br>Mining/Building only does exactly what it says. Only use if you are passed the early stages of the game and have the mastery foremany unlocked (No longer need to trap, food and wood are useless). <br>You can disable science researching for the achievement: Reach Z120 without using manual research.', 'multitoggle', 1, null, 'Core');
@@ -480,13 +490,16 @@ function initializeAllSettings() {
 	createSetting('NoFarmerZone', 'NFF Zone', 'Which zone to stop buying farmers. I.e if this value is 75 it will swap your farmer ratio to 0 at zone 75 and above.<br><br>Only Tribute Farming and Worshipper farming will override this setting as they wouldn\'t function without being able to do so.','value', '-1', null, 'Jobs');
 	createSetting('NoLumberjackMP', 'No Lumberjacks post MP', 'Stops purchasing lumberjacks after you\'ve already run or got enough Smithies to trigger running Melting Point', 'boolean', false, null, 'Jobs');
 	
-	//Ships
+	//Ships 
 	document.getElementById('NoLumberjackMP').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rshipfarmon', 'Ship Farming', 'Turn Ship Farming off or on.', 'boolean', false, null, 'Jobs');
-	createSetting('Rshipfarmzone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Jobs');
-	createSetting('Rshipfarmcell', 'SF: Cell', 'Ship Farm at this Cell. -1 to run them at the default value, which is 1. ', 'value', '-1', null, 'Jobs');
-	createSetting('Rshipfarmamount', 'SF: Amount', 'How many Worshippers to farm up to at zone specified in SF. Can use 50,45,40. These values should match up to your SF zones. If using SF and SF: Amount examples (59 and 50 respectively) it will farm at z59 up to 50 Worshippers. ', 'multiValue', [-1], null, 'Jobs');
-	createSetting('Rshipfarmlevel', 'SF: Map Level', 'What map level to use for SF. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'Jobs');
+	createSetting('rShipFarm', 'Ship Farming', 'Turn Ship Farming off or on.', 'boolean', false, null, 'Jobs');
+	createSetting('rShipFarmPopup', 'SF: Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Jobs');
+	createSetting('rShipFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Jobs');
+	createSetting('rShipFarmDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', {cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food'}, null, 'Jobs');
+	createSetting('rShipFarmZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Jobs');
+	createSetting('rShipFarmCell', 'SF: Cell', 'Ship Farm at this Cell. -1 to run them at the default value, which is 1. ', 'multiValue', [6], null, 'Jobs');
+	createSetting('rShipFarmAmount', 'SF: Amount', 'How many Worshippers to farm up to at zone specified in SF. Can use 50,45,40. These values should match up to your SF zones. If using SF and SF: Amount examples (59 and 50 respectively) it will farm at z59 up to 50 Worshippers. ', 'multiValue', [-1], null, 'Jobs');
+	createSetting('rShipFarmMapLevel', 'SF: Map Level', 'What map level to use for SF. Can use -1,1,2. -1 to use a level down from world (Map Reducer mastery gives loot equal to world one level down), 0 to use world, 1 etc to use +maps. Using 0 by itself will use global level for all maps. ', 'multiValue', [0], null, 'Jobs');
 	createSetting('Rshipspending', 'SF: Spending Pct', 'What percentage of owned food to spend on Worshippers. -1 for 100% or value between 1-100 for lower.', 'value', '-1', null, "Jobs");
 	createSetting('Rshipfarmfrag', 'SF: Frags', 'Turn this on to farm fragments if you cannot afford the map you have selected for SF. ', 'boolean', false, null, 'Jobs');
 
@@ -1038,6 +1051,8 @@ function initializeAllSettings() {
 	document.getElementById('rTributeFarmPopup').setAttribute('onclick', 'MAZLookalike("Tribute Farm", "rTributeFarm")');
 	document.getElementById('rdTributeFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Tribute Farm", "rdTributeFarm")');
 	document.getElementById('rc3TributeFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Tribute Farm", "rc3TributeFarm")');
+	//Ship Farming
+	document.getElementById('rShipFarmPopup').setAttribute('onclick', 'MAZLookalike("Ship Farm", "rShipFarm")');
 	//Challenge Settings
 	document.getElementById('rQuagPopup').setAttribute('onclick', 'MAZLookalike("Quagmire Farm", "rQuag")');
 	document.getElementById('rInsanityPopup').setAttribute('onclick', 'MAZLookalike("Insanity Farm", "rInsanity")');
@@ -1258,7 +1273,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				name: name,
 				description: description,
 				type: type,
-				value: loaded === undefined ? [{world: 0,cell: 0,level: 0,repeat: 0,special: 0,gather: 'food',tributes: 0,mets: 0,bogs: 0,insanity: 0,potion: 0,bonfire: 0,boneamount: 0,bonebelow: 0,boneruntype: 0,bonegather: 0,jobratio: '1,1,1,1'}] : loaded
+				value: loaded === undefined ? [{world: 0,cell: 0,level: 0,repeat: 0,special: 0,gather: 'food',tributes: 0,mets: 0,bogs: 0,insanity: 0,potion: 0,bonfire: 0,boneamount: 0,bonebelow: 0, worshipper: 50, boneruntype: 0,bonegather: 0,jobratio: '1,1,1,1'}] : loaded
 			};
 		var btn = document.createElement("select");
 		btn.id = id;
@@ -1593,49 +1608,7 @@ function updateCustomButtons() {
 	function turnOn(elem) {
 		toggleElem(elem, true);
 	}
-
-	if (autoTrimpSettings.Ralchfarmstack.value  !== 'undefined') {
-		autoTrimpSettings.rAlchPotion.value = autoTrimpSettings.Ralchfarmstack.value.split(',');
-		autoTrimpSettings.Ralchfarmstack.value = 'undefined';
-	}
-
-	if (autoTrimpSettings.Rmanageequality.enabled  !== false) {
-		autoTrimpSettings.rManageEquality.value = 1;
-		autoTrimpSettings.Rmanageequality.enabled = false;
-		saveSettings()
-	}
-
-	if (autoTrimpSettings.Rtimespecialselection.selected  !== 'undefined') {
-		autoTrimpSettings.rTimeFarmSpecial.value = [];
-		for (var i = 0; getPageSetting('Rtimefarmzone').length > i; i++) {
-			autoTrimpSettings.rTimeFarmSpecial.value[i] = autoTrimpSettings.Rtimespecialselection.selected
-		}
-		autoTrimpSettings.Rtimespecialselection.selected = 'undefined';
-	}
-
-	if (autoTrimpSettings.Rdtimespecialselection.selected  !== 'undefined') {
-		autoTrimpSettings.rdTimeFarmSpecial.value = [];
-		for (var i = 0; getPageSetting('Rdtimefarmzone').length > i; i++) {
-			autoTrimpSettings.rdTimeFarmSpecial.value[i] = autoTrimpSettings.Rdtimespecialselection.selected
-		}
-		autoTrimpSettings.Rdtimespecialselection.selected = 'undefined';
-	}
-
-	if (autoTrimpSettings.Rc3timespecialselection.selected  !== 'undefined') {
-		autoTrimpSettings.rc3TimeFarmSpecial.value = [];
-		for (var i = 0; getPageSetting('Rc3timefarmzone').length > i; i++) {
-			autoTrimpSettings.rc3TimeFarmSpecial.value[i] = autoTrimpSettings.Rc3timespecialselection.selected
-		}
-		autoTrimpSettings.Rc3timespecialselection.selected = 'undefined';
-	}
-
-	if (autoTrimpSettings.RAlchSpecial.selected  !== 'undefined') {
-		autoTrimpSettings.rAlchSpecial.value = [];
-		for (var i = 0; getPageSetting('RAlchZone').length > i; i++) {
-			autoTrimpSettings.rAlchSpecial.value[i] = autoTrimpSettings.RAlchSpecial.selected
-		}
-		autoTrimpSettings.RAlchSpecial.selected = 'undefined';
-	}
+	
 
 	convertSettings('Rtimefarmzone','rTimeFarmZone','multiValue')
 	convertSettings('Rtimefarmtime','rTimeFarmRepeat','multiValue')
@@ -1854,11 +1827,30 @@ function updateCustomButtons() {
 		autoTrimpSettings.rBoneShrineCell.value = 'undefined';
 	}
 
+	if (autoTrimpSettings.Rshipfarmzone.value !== 'undefined') {
+		var length = autoTrimpSettings.Rshipfarmzone.value.length
+		autoTrimpSettings.rShipFarm.enabled = autoTrimpSettings.Rshipfarmon.enabled
+		autoTrimpSettings.rShipFarmSettings.value = [];
+		for (x = 0; x < length; x++) {
+			autoTrimpSettings.rShipFarmSettings.value[x] = {world: 0, cell: 0, level: 0, worshipper: 50, jobratio: '1,0,0,0'};
+			autoTrimpSettings.rShipFarmSettings.value[x].world = autoTrimpSettings.Rshipfarmzone.value[x];
+			autoTrimpSettings.rShipFarmSettings.value[x].cell = autoTrimpSettings.Rshipfarmcell.value;
+			autoTrimpSettings.rShipFarmSettings.value[x].level = autoTrimpSettings.Rshipfarmlevel.value[x];
+			autoTrimpSettings.rShipFarmSettings.value[x].worshipper = autoTrimpSettings.Rshipfarmamount.value;
+			autoTrimpSettings.rShipFarmSettings.value[x].jobratio = autoTrimpSettings.rShipFarmDefaultSettings.value.jobratio;
+		}
+		autoTrimpSettings.Rshipfarmzone.value = 'undefined';
+		autoTrimpSettings.Rshipfarmcell.value = 'undefined';
+		autoTrimpSettings.Rshipfarmlevel.value = 'undefined';
+		autoTrimpSettings.Rshipfarmamount.value = 'undefined';
+	}
+
 	convertSettings('RhsSCStaff','RhsFoodStaff','textValue')
 	convertSettings('RhsWCStaff','RhsWoodStaff','textValue')
 	convertSettings('RhsMCStaff','RhsMetalStaff','textValue')
 	convertSettings('Rtimefarm','rTimeFarm', 'boolean')	
 
+	
 
 	//Hide settings
 
@@ -2164,14 +2156,17 @@ function updateCustomButtons() {
 	radonon && nojobs ? turnOn('NoLumberjackMP') : turnOff('NoLumberjackMP');
 
     
-	//Ships
-	radonon ? turnOn('Rshipfarmon') : turnOff('Rshipfarmon');
-	radonon && getPageSetting('Rshipfarmon') ? turnOn('Rshipfarmzone'): turnOff('Rshipfarmzone');
-	radonon && getPageSetting('Rshipfarmon') ? turnOn('Rshipfarmcell'): turnOff('Rshipfarmcell');
-	radonon && getPageSetting('Rshipfarmon') ? turnOn('Rshipfarmamount'): turnOff('Rshipfarmamount');
-	radonon && getPageSetting('Rshipfarmon') ? turnOn('Rshipfarmlevel'): turnOff('Rshipfarmlevel');
-	radonon ? turnOn('Rshipspending') : turnOff('Rshipspending');
-	radonon && getPageSetting('Rshipfarmon') ? turnOn('Rshipfarmfrag'): turnOff('Rshipfarmfrag');
+	//Ships 
+	radonon ? turnOn('rShipFarm') : turnOff('rShipFarm');
+	radonon && getPageSetting('rShipFarm') ? turnOn('rShipFarmPopup'): turnOff('rShipFarmPopup');
+	turnOff('rShipFarmSettings');
+	turnOff('rShipFarmDefaultSettings');
+	turnOff('rShipFarmZone');
+	turnOff('rShipFarmCell');
+	turnOff('rShipFarmAmount');
+	turnOff('rShipFarmMapLevel');
+	turnOff('Rshipspending');
+	turnOff('Rshipfarmfrag');
 
 	//Bone Shrine (bones) 
 	if (game.global.stringVersion >= '5.7.0') {

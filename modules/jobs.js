@@ -562,7 +562,7 @@ function RbuyJobs() {
 	}
 
     var allIn = "";
-    if (workerRatio !== null) {
+    if (typeof workerRatio !== 'undefined' && workerRatio !== null) {
         var desiredRatios = Array.from(workerRatio.split(','))
         desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
     }
@@ -572,7 +572,7 @@ function RbuyJobs() {
     if (getPageSetting('NoLumberjackMP') && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
         desiredRatios[1] = 0;
     
-	if (workerRatio !== null) {
+	if (typeof workerRatio !== 'undefined' && workerRatio !== null) {
         desiredRatios = desiredRatios;
 	} else if (allIn != "") {
 		desiredRatios[ratioWorkers.indexOf(allIn)] = 100;

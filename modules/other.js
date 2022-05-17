@@ -3159,21 +3159,34 @@ function equalityManagement() {
 	}
 }
 
-function simpleSecondsLocal(what, seconds, event) {
-    var event = !event ? null :
-                event;
+function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
+    var event = !event ? null : event;
+	var ssWorkerRatio = !ssWorkerRatio ? null : ssWorkerRatio;
+
+	if (typeof ssWorkerRatio !== 'undefined' && ssWorkerRatio !== null) {
+		var desiredRatios = Array.from(ssWorkerRatio.split(','))
+		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, 
+		desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, 
+		desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, 
+		desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
+		var totalFraction = desiredRatios.reduce((a,b) => {return a + b;});
+	}
 	//Come home to the impossible flavour of balanced resource gain. Come home, to simple seconds.
     var compatible = ["Farmer", "Lumberjack", "Miner", "Dragimp", "Explorer"];
     var jobName;
+	var pos;
     switch (what) {
         case "food":
             jobName = "Farmer";
+			pos = 0
             break;
         case "wood":
             jobName = "Lumberjack";
+			pos = 1
             break;
         case "metal":
             jobName = "Miner";
+			pos = 2
             break;
         case "gems":
             jobName = "Dragimp";
@@ -3183,21 +3196,24 @@ function simpleSecondsLocal(what, seconds, event) {
             break;
         case "science":
             jobName = "Scientist";
+			pos = 3
             break;
     }
     var heirloom =  !jobName ? null : 
-                    jobName == "Miner" && game.challengeActive == "Pandemonium" && getPageSetting("RhsPandStaff") ? "RhsPandStaff" : 
-                    jobName == "Farmer" && getPageSetting("RhsFoodStaff") != undefined ? "RhsFoodStaff" : 
-                    jobName == "Lumberjack" && getPageSetting("RhsWoodStaff") != undefined ? "RhsWoodStaff" : 
-                    jobName == "Miner" && getPageSetting("RhsMetalStaff") != undefined ? "RhsMetalStaff" : 
-                    getPageSetting("RhsWorldStaff") != undefined ? "RhsWorldStaff" : 
+                    jobName == "Miner" && game.challengeActive == "Pandemonium" && getPageSetting("RhsPandStaff") !== 'undefined' ? "RhsPandStaff" : 
+                    jobName == "Farmer" && getPageSetting("RhsFoodStaff") != 'undefined' ? "RhsFoodStaff" : 
+                    jobName == "Lumberjack" && getPageSetting("RhsWoodStaff") != 'undefined' ? "RhsWoodStaff" : 
+                    jobName == "Miner" && getPageSetting("RhsMetalStaff") != 'undefined' ? "RhsMetalStaff" : 
+                    getPageSetting("RhsMapStaff") != 'undefined' ? "RhsMapStaff" : 
+                    getPageSetting("RhsWorldStaff") != 'undefined' ? "RhsWorldStaff" : 
                     null;
-					
     var job = game.jobs[jobName];
     var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
     var workers =   game.global.challengeActive == "Pandemonium" && jobName == "Miner" ? (trimpworkers / 1000) * 997.90440075 :
+					ssWorkerRatio !== null ? Math.floor(trimpworkers * desiredRatios[pos] / totalFraction) :
                     rShouldWorshipperFarm ? trimpworkers :
                     job.owned;
+				
     var amt_local = workers * job.modifier * seconds;
     amt_local += (amt_local * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
 	if (game.global.stringVersion >= '5.7.0') {
@@ -3212,7 +3228,7 @@ function simpleSecondsLocal(what, seconds, event) {
 		amt_local *= game.portal.Observation.getMult();
 	
     if (what == "food" || what == "wood" || what == "metal"){
-        amt_local *= getParityBonus(game.global.StaffEquipped);
+        amt_local *= getParityBonus();
         if (autoBattle.oneTimers.Gathermate.owned) 
 			amt_local *= autoBattle.oneTimers.Gathermate.getMult();
     }
@@ -3235,19 +3251,16 @@ function simpleSecondsLocal(what, seconds, event) {
         amt_local *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
     }
     if (game.challenges.Nurture.boostsActive()) amt_local *= game.challenges.Nurture.getResourceBoost();
-	
-    if (event == null || game.global.StaffEquipped == autoTrimpSettings[heirloom].name)
+    if (event == null || heirloom == null || game.global.StaffEquipped.name == autoTrimpSettings[heirloom].value) {
             amt_local = calcHeirloomBonus("Staff", jobName + "Speed", amt_local);
+	}
     //Calculating proper value for the staff we should be using instead of equipped
-    else if (event != null && game.global.StaffEquipped != getPageSetting(event)) {
-        if (event == getPageSetting('RhsC3')) {
-            if (getPageSetting('RhsC3') != "undefined")
-                amt_local = 1 + (HeirloomModSearch('RhsC3', jobName + "Speed") / 100);
-        }
-        if (event == getPageSetting('RhsFoodStaff')) {
-            if (getPageSetting('RhsFoodStaff') != "undefined")
-                amt_local = 1 + (HeirloomModSearch('RhsFoodStaff', jobName + "Speed") / 100);
-        }
+    else if (event != null && game.global.StaffEquipped != getPageSetting(heirloom)) {
+		if (what == "food" || what == "wood" || what == "metal") {
+        	amt_local /= getParityBonus();	
+			amt_local *= getHazardParityMult(HeirloomSearch(heirloom))
+		}
+		amt_local = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"),amt_local);
     }
 
     if (game.global.playerGathering == what){
@@ -3259,11 +3272,16 @@ function simpleSecondsLocal(what, seconds, event) {
     }
     if (game.global.playerGathering != what) {
 		amt_local *=2;
-        //if (game.global.challengeActive == "Pandemonium" && game.global.world >= getPageSetting('RPandemoniumAEZone') && what == 'metal')
-        //    amt_local *= 2
         amt_local += getPlayerModifier() * seconds;
     }
     return amt_local;
+}
+
+function calcHeirloomBonusLocal(mod, number){
+	var mod = mod;
+	if (!mod) return;
+	
+	return (number * ((mod / 100) + 1));
 }
 
 function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
