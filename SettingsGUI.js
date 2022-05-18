@@ -2151,9 +2151,9 @@ function updateCustomButtons() {
 	radonon && nojobs ? turnOn('RLumberjackRatio') : turnOff('RLumberjackRatio');
 	radonon && nojobs ? turnOn('RMinerRatio') : turnOff('RMinerRatio');
 	radonon && nojobs ? turnOn('RMaxExplorers') : turnOff('RMaxExplorers');
-	radonon && nojobs ? turnOn('NoFarmersAbove') : turnOff('NoFarmersAbove');
-	radonon && nojobs && getPageSetting('NoFarmersAbove') ? turnOn('NoFarmerZone'): turnOff('NoFarmerZone');
-	radonon && nojobs ? turnOn('NoLumberjackMP') : turnOff('NoLumberjackMP');
+	radonon && getPageSetting('RBuyJobsNew') != 0 ? turnOn('NoFarmersAbove') : turnOff('NoFarmersAbove');
+	radonon && getPageSetting('RBuyJobsNew') != 0 && getPageSetting('NoFarmersAbove') ? turnOn('NoFarmerZone'): turnOff('NoFarmerZone');
+	radonon && getPageSetting('RBuyJobsNew') != 0 ? turnOn('NoLumberjackMP') : turnOff('NoLumberjackMP');
 
     
 	//Ships 

@@ -247,8 +247,6 @@ function mainLoop() {
 			//Check to see if we're on quest and at a quest zone or if we're trying to do some farming that needs other jobs.
 			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || rShouldWorshipperFarm || rShouldTimeFarm || rShouldEquipFarm))) {
 				if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || rShouldWorshipperFarm || rShouldTimeFarm || rShouldEquipFarm))) {
-					if (getPageSetting('RBuyJobsNew') == 1) 
-                        RworkerRatios();
 					RbuyJobs();
 				}
 			} else {

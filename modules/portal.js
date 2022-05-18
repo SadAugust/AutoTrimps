@@ -624,6 +624,7 @@ function Rresetmapvars() {
     //Tribute Farm
     rTributeFarm = false;
     rShouldTributeFarm = false;
+    rShouldMetFarm = false;
     rTrFCurrentMap = undefined;
     //Unbalance
     rShouldUnbalance = false;

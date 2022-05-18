@@ -146,13 +146,13 @@ function RmanualLabor2() {
         var timeFarm = 	game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium' ? 'rc3TimeFarm' :
                         game.global.challengeActive == "Daily" ? 'rdTimeFarm' :
                         'rTimeFarm'
-        gather =  rShouldTimeFarm ? getPageSetting(timeFarm + 'Gather')[rTFZone.indexOf(game.global.world)] : getPageSetting('rAlchFarmGather')[getPageSetting('rAlchZone').indexOf(game.global.world)];
+        gather =  rShouldTimeFarm ? autoTrimpSettings[timeFarm + 'Settings'].value[rTFZone.indexOf(game.global.world)].gather : autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather;
     }
-    var questFood = game.global.challengeActive == "Quest" && questcheck() == 1;
-    var questWood = game.global.challengeActive == "Quest" && questcheck() == 2;
-    var questMetal = game.global.challengeActive == "Quest" && (questcheck() == 3 || questcheck() == 7);
-    var questScience = game.global.challengeActive == "Quest" && questcheck() == 5;
-    //var buildingQueue = game.global.buildingsQueue[0];
+    var questGather =   game.global.challengeActive == "Quest" && questcheck() == 1 ? 'food' :
+                        game.global.challengeActive == "Quest" && questcheck() == 2 ? 'wood' :
+                        game.global.challengeActive == "Quest" && (questcheck() == 3 || questcheck() == 7) ? 'metal' :
+                        game.global.challengeActive == "Quest" && questcheck() == 5 ? 'science' : 
+                        null;
         
     //ULTRA FRESH
     if (!game.upgrades.Battle.done) {
@@ -194,14 +194,8 @@ function RmanualLabor2() {
 		if (game.global.world >= getPageSetting('RPandemoniumAEZone')) 
             setGather('metal');
 	}
-	else if (game.global.challengeActive == "Quest" && questcheck() == 1)
-		setGather('food');
-    else if (game.global.challengeActive == "Quest" && questcheck() == 2)
-		setGather('wood');
-    else if (game.global.challengeActive == "Quest" && (questcheck() == 3 || questcheck() == 7))
-		setGather('metal');
-    else if (game.global.challengeActive == "Quest" && questcheck() == 5)
-		setGather('science');
+    else if (questGather !== null)
+		setGather(questGather);
     else if ((game.global.mapsActive && mapping != null) || rShouldWorshipperFarm) {
         if (rShouldWorshipperFarm && mapping == null) 
             setGather('food');
@@ -233,12 +227,12 @@ function RmanualLabor2() {
 		else if (!game.global.trapBuildToggled && (game.global.buildingsQueue[0] == 'Barn.1' || game.global.buildingsQueue[0] == 'Shed.1' || game.global.buildingsQueue[0] == 'Forge.1'))
 			setGather('buildings');
 		else if (game.resources.science.owned >= RscienceNeeded && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
-			if (game.global.challengeActive != "Transmute" && (getPlayerModifier() < getPerSecBeforeManual('Scientist') && hasTurkimp)||getPageSetting('RManualGather2') == 2)
+			if (game.global.challengeActive != "Transmute" && (getPlayerModifier() < getPerSecBeforeManual('Scientist') && hasTurkimp) || getPageSetting('RManualGather2') == 2)
 				setGather('metal');
-			else if ((game.global.challengeActive == "Transmute" && (getPlayerModifier() < getPerSecBeforeManual('Scientist') && hasTurkimp)||getPageSetting('RManualGather2') == 2))
+			else if ((game.global.challengeActive == "Transmute" && (getPlayerModifier() < getPerSecBeforeManual('Scientist') && hasTurkimp) || getPageSetting('RManualGather2') == 2))
 				setGather('food');
             else if (getPageSetting('RManualGather2') != 2)
-				setGather('science');
+				setGather('metal');
 		}
 		else if (trapTrimpsOK) {
 			if (game.buildings.Trap.owned < 5 && canAffordBuilding('Trap')) {

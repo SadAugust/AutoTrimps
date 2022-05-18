@@ -288,6 +288,7 @@ MODULES["jobs"].RscientistRatio5 = 256;
 MODULES["jobs"].RscientistRatio6 = 1024;
 MODULES["jobs"].RscientistRatio7 = 4098;
 //Worker Ratios = [Farmer,Lumber,Miner]
+MODULES["jobs"].RautoRatioHaz = [1, 1, 1];
 MODULES["jobs"].RautoRatio7 = [1, 1, 98];
 MODULES["jobs"].RautoRatio6 = [1, 7, 12];
 MODULES["jobs"].RautoRatio5 = [1, 2, 22];
@@ -353,14 +354,22 @@ function RsafeFireJob(job, amount) {
     return x / 2;
 }
 
-function RworkerRatios() {
+function RworkerRatios(workerRatio) {
+    var workerRatio = !workerRatio ? null : workerRatio
+    if (workerRatio == null) return;
+    if (getPageSetting('RBuyJobsNew') == 2) {
+        if (workerRatio.includes('Farmer')) return getPageSetting('RFarmerRatio');
+        else if (workerRatio.includes('Lumber')) return getPageSetting('RLumberjackRatio');
+        else if (workerRatio.includes('Miner')) return getPageSetting('RMinerRatio');
+    }
+
     var ratioSet;
     if (MODULES["jobs"].RcustomRatio) {
         ratioSet = MODULES["jobs"].RcustomRatio;
+    } else if (game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10) {
+        ratioSet = MODULES["jobs"].RautoRatioHaz;
     } else if (game.global.world >= 300) {
         ratioSet = MODULES["jobs"].RautoRatio7;
-    } else if (game.buildings.Tribute.owned > 3000 && mutations.Magma.active()) {
-        ratioSet = MODULES["jobs"].RautoRatio6;
     } else if (game.buildings.Tribute.owned > 1500) {
         ratioSet = MODULES["jobs"].RautoRatio5;
     } else if (game.buildings.Tribute.owned > 1000) {
@@ -374,9 +383,10 @@ function RworkerRatios() {
     } else {
         ratioSet = MODULES["jobs"].RautoRatio1;
     }
-    setPageSetting('RFarmerRatio', ratioSet[0]);
-    setPageSetting('RLumberjackRatio', ratioSet[1]);
-    setPageSetting('RMinerRatio', ratioSet[2]);
+        if (workerRatio.includes('Farmer')) return ratioSet[0]
+        else if (workerRatio.includes('Lumber')) return ratioSet[1]
+        else if (workerRatio.includes('Miner')) return ratioSet[2]
+
 }
 
 function RquestbuyJobs() {
@@ -472,7 +482,6 @@ function RquestbuyJobs() {
 var reservedJobs = 1000000;
 
 function RbuyJobs() {
-
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
 
@@ -599,11 +608,11 @@ function RbuyJobs() {
 					continue;
 				}
 				//Get ratio from AT
-				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(getPageSetting('R' + worker + 'Ratio'));
-				if (getPageSetting('NoFarmersAbove') == true && game.global.world >= getPageSetting('NoFarmerZone')) {
+				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(RworkerRatios('R' + worker + 'Ratio'));
+				if (getPageSetting('NoFarmersAbove') && game.global.world >= getPageSetting('NoFarmerZone')) {
 					desiredRatios[ratioWorkers.indexOf("Farmer")] = 0;
 				}
-				if (getPageSetting('NoLumberjackMP') == true && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
+				if (getPageSetting('NoLumberjackMP') && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
 					desiredRatios[ratioWorkers.indexOf("Lumberjack")] = 0;
 				}
 			}

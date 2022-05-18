@@ -524,6 +524,7 @@ function RbuyBuildings() {
 function rBuyTributes() {
     //Won't buy Tributes if they're locked or if a meteorologist can be purchased as that should always be the more efficient purchase
     if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(canAffordJob('Meteorologist') && !game.jobs.Meteorologist.locked))) {
+        if (rShouldMetFarm && !rShouldTributeFarm) return;
         var tributespending = getPageSetting('RTributeSpendingPct') > 0 ? getPageSetting('RTributeSpendingPct') / 100 : 1;
         var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned * tributespending),1.05,true);
         
