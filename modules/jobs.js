@@ -552,7 +552,6 @@ function RbuyJobs() {
 	freeWorkers += currentworkers.reduce((a,b) => {return a + b;});
 
     // Explicit firefox handling because Ff specifically reduces free workers to 0.
-    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     var reserveMod = 1 + (game.resources.trimps.owned / 1e14);
 
     freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs * reserveMod: 0;
@@ -576,7 +575,7 @@ function RbuyJobs() {
         desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
     }
     
-    if (getPageSetting("NoFarmersAbove") && game.global.world >= getPageSetting("NoFarmerZone") && !rShouldTributeFarm && !rShouldWorshipperFarm)
+    if (getPageSetting("NoFarmersAbove") && game.global.world >= getPageSetting("NoFarmerZone") && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm)
         desiredRatios[0] = 0;
     if (getPageSetting('NoLumberjackMP') && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
         desiredRatios[1] = 0;
@@ -620,6 +619,7 @@ function RbuyJobs() {
 	}
 
     var totalFraction = desiredRatios.reduce((a,b) => {return a + b;});
+    totalFraction = totalFraction == 0 ? 1 : totalFraction
     var desiredWorkers = [0,0,0,0];
     var totalWorkerCost = 0;
     for (var i = 0; i < ratioWorkers.length; i++) {
