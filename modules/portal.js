@@ -622,7 +622,7 @@ function Rresetmapvars() {
     rTFCurrentMap = undefined;
     rTFZoneCleared = 0;
     //Tribute Farm
-    rTributeFarm = false;
+    rTributeFarming = false;
     rShouldTributeFarm = false;
     rShouldMetFarm = false;
     rTrFCurrentMap = undefined;

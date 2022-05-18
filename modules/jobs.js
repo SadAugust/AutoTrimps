@@ -519,7 +519,7 @@ function RbuyJobs() {
 	);
 
     if (!(game.global.challengeActive == "Alchemy" && game.global.world == 152 && getPageSetting('RAlchDontBuyMets') && game.global.lastClearedCell < 98)) {
-        if (affordableMets > 0 && !game.jobs.Meteorologist.locked) {
+        if (affordableMets > 0 && !game.jobs.Meteorologist.locked && !rShouldTributeFarm) {
             var buyAmountStoreMet = game.global.buyAmt;
             game.global.buyAmt = affordableMets;
             buyJob('Meteorologist',true, true);

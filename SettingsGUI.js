@@ -621,6 +621,7 @@ function initializeAllSettings() {
 	createSetting('rTributeFarmPopup', 'Tribute Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Μaps');
 	createSetting('rTributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rTributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', {cell: 83, jobratio: '100,1,1,1'}, null, 'Μaps');
+	createSetting('rTributeFarmNoHousing', 'TF: Don\'t buy housing', 'Stops AutoTrimps from buying all housing apart from Collectors when Tribute Farming', 'boolean', false, null, 'Μaps');
 	createSetting('rTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
 	createSetting('rTributeFarmTributes', 'TrF: Tributes', 'How many tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Μaps');
 	createSetting('rTributeFarmMets', 'TrF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Μaps');
@@ -2268,6 +2269,7 @@ function updateCustomButtons() {
 
 	radonon ? turnOn('rTributeFarm'): turnOff('rTributeFarm');
 	(radonon && getPageSetting('rTributeFarm')) ? turnOn('rTributeFarmPopup'): turnOff('rTributeFarmPopup');
+	(radonon && getPageSetting('rTributeFarm')) ? turnOn('rTributeFarmNoHousing'): turnOff('rTributeFarmNoHousing');
 	turnOff('rTributeFarmSettings');
 	turnOff('rTributeFarmDefaultSettings');
 	turnOff('rTributeFarmZone');
@@ -2275,7 +2277,7 @@ function updateCustomButtons() {
 	turnOff('rTributeFarmMets');
 	turnOff('rTributeFarmMapLevel');
 	turnOff('rTributeFarmCell');
-	//Time Farming 
+	//Time Farming  
 	radonon ? turnOn('rTimeFarm'): turnOff('rTimeFarm');
 	(radonon && getPageSetting('rTimeFarm')) ? turnOn('rTimeFarmPopup'): turnOff('rTimeFarmPopup');
 	turnOff('rTimeFarmSettings');

@@ -755,7 +755,7 @@ var rShouldTimeFarm = false;
 var rTFCurrentMap = undefined;
 var rTFZoneCleared = 0;
 //Tribute Farm
-var rTributeFarm = false;
+rTributeFarming = false;
 rShouldTributeFarm = false;
 rShouldMetFarm = false;
 var rTrFCurrentMap = undefined;
@@ -988,6 +988,7 @@ function RautoMap() {
 	rShouldMaxMapBonus = false;
 	RvanillaMapatZone = false;
 	workerRatio = null;
+	rTributeFarming = false;
 
 	if (ourBaseDamage > 0) {
 		RshouldDoMaps = (!RenoughDamage || RshouldFarm);
@@ -1861,6 +1862,7 @@ function RautoMap() {
 				} else if (rShouldTributeFarm || rShouldMetFarm) {
 					selectedMap = RShouldFarmMapCreation(rTrFMapLevel, rTrFSpecial); 
 					workerRatio = rTrFJobRatio;
+					rTributeFarming = true;
 				}
 				else if (rShouldWorshipperFarm) {
 					selectedMap = RShouldFarmMapCreation(shippluslevel, shipspecial);

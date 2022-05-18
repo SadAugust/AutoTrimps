@@ -355,7 +355,6 @@ function mostEfficientHousing() {
 
     //Housing
     var HousingTypes = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
-
     // Which houses we actually want to check
     var housingTargets = [];
     for (var house of HousingTypes) {
@@ -376,18 +375,18 @@ function mostEfficientHousing() {
         var worstTime = -Infinity;
         var currentOwned = game.buildings[housing].owned;
         const dontbuy = [];
+        var buildingspending = getPageSetting('rBuildingSpendPct') > 0 ? getPageSetting('rBuildingSpendPct') / 100 : 1;
+        if (housing == 'Collector') buildingspending = 1;
         for (var resource in game.buildings[housing].cost) {
 
             // Get production time for that resource
             var baseCost = game.buildings[housing].cost[resource][0];
             var costScaling = game.buildings[housing].cost[resource][1];
-            var buildingspending = getPageSetting('rBuildingSpendPct') > 0 ? getPageSetting('rBuildingSpendPct') / 100 : 1;
             var avgProduction = getPsString(resource, true);
 	        if (avgProduction <= 0) avgProduction = 1;
-            var housingBonus = game.buildings.Hut.increase.by;
+            var housingBonus = game.buildings[housing].increase.by;
             if (!game.buildings.Hub.locked) housingBonus += 500;
-
-            if (Math.max(baseCost * Math.pow(costScaling, currentOwned)) > game.resources[resource].owned * buildingspending) dontbuy.push(housing);
+            if (Math.max(baseCost * Math.pow(costScaling, currentOwned)) > game.resources[resource].owned * buildingspending || (rTributeFarming && getPageSetting('rTributeFarmNoHousing') && housing !== 'Collector')) dontbuy.push(housing);
 
             // Only keep the slowest producer, aka the one that would take the longest to generate resources for
             worstTime = Math.max(baseCost * Math.pow(costScaling, currentOwned - 1) / (avgProduction * housingBonus), worstTime);
@@ -484,37 +483,28 @@ function RbuyBuildings() {
         buyBuilding('Microchip', true, true, 1);
     }
  
-    //Housing
-    var HousingTypes = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
- 
-    // Which houses we actually want to check
-    var housingTargets = [];
-    for (var house in HousingTypes) {
-        var maxHousing = (((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world) ? Infinity :
-        getPageSetting('RMax' + house) === -1 ? Infinity : getPageSetting('RMax' + house));
-        if (!game.buildings[HousingTypes[house]].locked && game.buildings[HousingTypes[house]].owned < maxHousing) {
-            housingTargets.push(house);
-        }
-    }
- 
+    //Housing 
     var boughtHousing = false;
     var buildingspending = getPageSetting('rBuildingSpendPct') > 0 ? getPageSetting('rBuildingSpendPct') / 100 : 1;
     do {
         boughtHousing = false;
         var housing = mostEfficientHousing();
-        if ((housing != null && canAffordBuilding(housing)) && ((game.buildings[housing].purchased < (getPageSetting('RMax' + housing) === -1 ? Infinity : getPageSetting('RMax' + housing)) || 
-        ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)))) {
-            if ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world) buyBuilding(housing, true, true, 999);
+        var runningC3 = ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)
+        if (((housing != null && canAffordBuilding(housing)) && (game.buildings[housing].purchased < (getPageSetting('RMax' + housing) === -1 ? Infinity : getPageSetting('RMax' + housing)))) || runningC3) {
+            if (runningC3) 
+                buyBuilding(housing, true, true, 999);
             else if (housing == "Collector") 
                 buyBuilding("Collector", true, true, 999);
+            else if (rTributeFarming && getPageSetting('rTributeFarmNoHousing') === true) {
+                return;
+            }
             else if ((calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), buildingspending) > getPageSetting('RMax' + housing)) && getPageSetting('RMax' + housing) != -1 && game.global.buildingsQueue.length <= 3)
-                buyBuilding(housing, true, true, getPageSetting('RMax' + housing) - game.buildings[housing].purchased);
+                buyBuilding(housing, true, true, getPageSetting('RMax' + housing) - game.buildings[housing].purchased, buildingspending);
             else if (calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), buildingspending) && game.global.buildingsQueue.length <= 3) 
                 buyBuilding(housing, true, true, calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), buildingspending));
             else 
                 return;
             boughtHousing = true;
-
         }
     } while (boughtHousing)
 
