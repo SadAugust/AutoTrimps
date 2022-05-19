@@ -820,7 +820,7 @@ RAMPmapbought.fill(false); //Unsure if necessary - Need to test
 var RAMPfragmappybought = false;
 var RAMPfragfarming = false;
 
-if (autoTrimpSettings.rAutoStructureSetting.value === true)
+if (typeof(autoTrimpSettings.rAutoStructureSetting.value) !== 'undefined' && autoTrimpSettings.rAutoStructureSetting.value === true)
 	document.getElementById('autoStructureBtn').classList.add("enabled")
 
 function RupdateAutoMapsStatus(get) {
