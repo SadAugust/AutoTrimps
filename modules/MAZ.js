@@ -127,7 +127,7 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 			if (titleText.includes('Time Farm')) vals.repeat = autoTrimpSettings[varPrefix+"Settings"].value[x].repeat ? autoTrimpSettings[varPrefix+"Settings"].value[x].repeat : 1;
 			if (titleText.includes('Tribute Farm')) vals.tributes = autoTrimpSettings[varPrefix+"Settings"].value[x].tributes ? autoTrimpSettings[varPrefix+"Settings"].value[x].tributes : 0;
 			if (titleText.includes('Tribute Farm')) vals.mets = autoTrimpSettings[varPrefix+"Settings"].value[x].mets ? autoTrimpSettings[varPrefix+"Settings"].value[x].mets : 0;
-			if (titleText.includes('Tribute Farm')) vals.buildings = autoTrimpSettings[varPrefix+"Settings"].value[x].buildings ? autoTrimpSettings[varPrefix+"Settings"].value[x].buildings : true;
+			if (titleText.includes('Tribute Farm')) vals.buildings = typeof(autoTrimpSettings[varPrefix+"Settings"].value[x].buildings) !== 'undefined' ? autoTrimpSettings[varPrefix+"Settings"].value[x].buildings : true;
 			if (titleText.includes('Quagmire Farm')) vals.bogs = autoTrimpSettings[varPrefix+"Settings"].value[x].bogs ? autoTrimpSettings[varPrefix+"Settings"].value[x].bogs : 0;
 			if (titleText.includes('Insanity Farm')) vals.insanity = autoTrimpSettings[varPrefix+"Settings"].value[x].insanity ? autoTrimpSettings[varPrefix+"Settings"].value[x].insanity : 0;
 			if (titleText.includes('Alchemy Farm')) vals.potionstype = autoTrimpSettings[varPrefix+"Settings"].value[x].potion[0] ? autoTrimpSettings[varPrefix+"Settings"].value[x].potion[0] : 0;
