@@ -74,7 +74,6 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 	tooltipText += "\
 	<div id='windowContainer' style='display: block'><div id='windowError'></div>\
 	<div class='row windowRow titles'>\
-	<div class='windowCheckbox' style='width: 0%'></div>\
 	<div class='windowWorld'>Zone</div>\
 	<div class='windowCell'>Cell</div>"
 	if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine')) tooltipText += "<div class='windowLevel'>Map<br/>Level</div>"
@@ -89,6 +88,7 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneAmount'>To use</div>"
 	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneBelow'>Use below</div>"
 	if (titleText.includes('Ship Farm')) tooltipText += "<div class='windowWorshipper'>Ships</div>"
+	if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowBuildings'>Buy Buildings</div>"
 	if (!titleText.includes('Prestige Raiding')) tooltipText += "<div class='windowJobRatio'>Job Ratio</div>"
 	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'>Gather</div>"
 	if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowSpecial'>Special</div>"
@@ -116,7 +116,8 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 			bonebelow: 0,
 			bonedropdown: 10,
 			jobratio: '1,1,1,1',
-			worshipper: 50
+			worshipper: 50,
+			buildings: true
 		}
 		var style = "";
 		if (current.length - 1 >= x){
@@ -126,6 +127,7 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 			if (titleText.includes('Time Farm')) vals.repeat = autoTrimpSettings[varPrefix+"Settings"].value[x].repeat ? autoTrimpSettings[varPrefix+"Settings"].value[x].repeat : 1;
 			if (titleText.includes('Tribute Farm')) vals.tributes = autoTrimpSettings[varPrefix+"Settings"].value[x].tributes ? autoTrimpSettings[varPrefix+"Settings"].value[x].tributes : 0;
 			if (titleText.includes('Tribute Farm')) vals.mets = autoTrimpSettings[varPrefix+"Settings"].value[x].mets ? autoTrimpSettings[varPrefix+"Settings"].value[x].mets : 0;
+			if (titleText.includes('Tribute Farm')) vals.buildings = autoTrimpSettings[varPrefix+"Settings"].value[x].buildings ? autoTrimpSettings[varPrefix+"Settings"].value[x].buildings : 0;
 			if (titleText.includes('Quagmire Farm')) vals.bogs = autoTrimpSettings[varPrefix+"Settings"].value[x].bogs ? autoTrimpSettings[varPrefix+"Settings"].value[x].bogs : 0;
 			if (titleText.includes('Insanity Farm')) vals.insanity = autoTrimpSettings[varPrefix+"Settings"].value[x].insanity ? autoTrimpSettings[varPrefix+"Settings"].value[x].insanity : 0;
 			if (titleText.includes('Alchemy Farm')) vals.potionstype = autoTrimpSettings[varPrefix+"Settings"].value[x].potion[0] ? autoTrimpSettings[varPrefix+"Settings"].value[x].potion[0] : 0;
@@ -163,6 +165,7 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneAmount'><input value='" + vals.boneamount + "' type='number' id='windowBoneAmount" + x + "'/></div>";
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneBelow'><input value='" + vals.bonebelow + "' type='number' id='windowBoneBelow" + x + "'/></div>";
 		if (titleText.includes('Ship Farm')) tooltipText += "<div class='windowWorshipper'><input value='" + vals.worshipper + "' type='number' id='windowWorshipper" + x + "'/></div>";
+		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.buildings) + "</div>";
 		if (!titleText.includes('Prestige Raiding')) tooltipText += "<div class='windowJobRatio'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.gather + "' id='windowBoneGather" + x + "'>" + gatherDropdown + "</select></div>"
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.bonedropdown + "' id='windowBoneDropdown" + x + "'>" + boneDropdown + "</select></div>"
@@ -250,6 +253,7 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 		if (titleText.includes('Bone')) var boneamount = parseInt(document.getElementById('windowBoneAmount' + x).value, 10);
 		if (titleText.includes('Bone')) var bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);
 		if (titleText.includes('Ship Farm')) var worshipper = parseInt(document.getElementById('windowWorshipper' + x).value, 10);
+		if (titleText.includes('Tribute')) var buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 		if (!titleText.includes('Prestige Raiding')) var jobratio = document.getElementById('windowJobRatio' + x).value;
 		if (titleText.includes('Bone')) var gather = document.getElementById('windowBoneGather' + x).value;
 		if (titleText.includes('Bone')) var boneruntype = document.getElementById('windowBoneDropdown' + x).value;
@@ -289,6 +293,7 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 			bonebelow: bonebelow,
 			worshipper: worshipper,
 			boneruntype: boneruntype,
+			buildings: buildings,
 			jobratio: jobratio
 		};
 		setting.push(thisSetting);
@@ -338,6 +343,8 @@ function addRow(varPrefix){
 					document.getElementById('windowWorshipper' + x).value = autoTrimpSettings[varPrefix+'DefaultSettings'].value.worshipper
 				if (document.getElementById('windowBoneGather' + x) !== null)
 					document.getElementById('windowBoneGather' + x).value = autoTrimpSettings[varPrefix+'DefaultSettings'].value.gather
+				if (document.getElementById('windowBuildings' + x) !== null)
+					document.getElementById('windowBuildings' + x).value = true;
 				if (document.getElementById('windowJobRatio' + x) !== null)
 					document.getElementById('windowJobRatio' + x).value = autoTrimpSettings[varPrefix+'DefaultSettings'].value.jobratio
 				updateWindowPreset(x, varPrefix);
@@ -389,6 +396,10 @@ function removeRow(index, titleText){
 	if (titleText.includes('Bone')) document.getElementById('windowBoneAmount' + index).value = 0;
 	if (titleText.includes('Bone')) document.getElementById('windowBoneBelow' + index).value = 0;
 	if (titleText.includes('Ship Farm')) document.getElementById('windowWorshipper' + index).value = 0;
+	//if (titleText.includes('Tribute Farm')) document.getElementById('windowBuildings' + index).data-checked = false;
+	var checkBox = document.getElementById('windowBuildings' + index);
+	swapClass("icon-", "icon-checkbox-checked", checkBox);
+	checkBox.setAttribute('data-checked', true);
 	if (!titleText.includes('Prestige Raiding')) document.getElementById('windowJobRatio' + index).value = 0;
 	if (titleText.includes('Bone')) document.getElementById('windowBoneDropdown' + index).value = 0;
 	if (titleText.includes('Bone')) document.getElementById('windowBoneGather' + index).value = 0;

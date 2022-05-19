@@ -22,7 +22,7 @@ function BoneShrine() {
                 rBSIndex = indexes[y];
                 break;
             }
-            if (rBoneShrineRunType[indexes[y]] == 'Fillers' && rRunningRegular) {
+            else if (rBoneShrineRunType[indexes[y]] == 'Fillers' && rRunningRegular) {
                 rBSIndex = indexes[y];
                 break;
             }

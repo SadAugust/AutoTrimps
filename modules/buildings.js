@@ -357,6 +357,12 @@ function mostEfficientHousing() {
     var HousingTypes = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
     // Which houses we actually want to check
     var housingTargets = [];
+
+    if (rTributeFarming && typeof(rTrFbuyBuildings) !== 'undefined') {
+        if (!rTrFbuyBuildings && getAutoStructureSetting().enabled && document.getElementById('autoStructureBtn').classList.contains("enabled"))
+            toggleAutoStructure();
+    }
+
     for (var house of HousingTypes) {
         var maxHousing = (((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world) ? Infinity : 
         getPageSetting('RMax' + house) === -1 ? Infinity : getPageSetting('RMax' + house));
@@ -386,7 +392,8 @@ function mostEfficientHousing() {
 	        if (avgProduction <= 0) avgProduction = 1;
             var housingBonus = game.buildings[housing].increase.by;
             if (!game.buildings.Hub.locked) housingBonus += 500;
-            if (Math.max(baseCost * Math.pow(costScaling, currentOwned)) > game.resources[resource].owned * buildingspending || (rTributeFarming && getPageSetting('rTributeFarmNoHousing') && housing !== 'Collector')) dontbuy.push(housing);
+            if (Math.max(baseCost * Math.pow(costScaling, currentOwned)) > game.resources[resource].owned * buildingspending) dontbuy.push(housing);
+            if (rTributeFarming && typeof(rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings  && housing !== 'Collector') dontbuy.push(housing);
 
             // Only keep the slowest producer, aka the one that would take the longest to generate resources for
             worstTime = Math.max(baseCost * Math.pow(costScaling, currentOwned - 1) / (avgProduction * housingBonus), worstTime);
@@ -404,7 +411,6 @@ function mostEfficientHousing() {
 
 function RbuyBuildings() {
  
-
     // Storage, shouldn't be needed anymore that autostorage is lossless. Hypo fucked this statement :(
     //Turn on autostorage if you're past your last farmzone and you don't need to save wood anymore. Else will have to force it to purchase enough storage up to the cost of whatever bonfires
     if (!game.global.autoStorage && (game.global.challengeActive != 'Hypothermia' || (game.global.challengeActive == 'Hypothermia' && getPageSetting('rHypoOn') && ((getPageSetting('rHypoStorage') == 1 && game.global.world >= getPageSetting('rHypoZone')[getPageSetting('rHypoZone').length-1]) || (getPageSetting('rHypoStorage') == 2 && game.global.world >= getPageSetting('rHypoZone')[0])))))
@@ -483,6 +489,17 @@ function RbuyBuildings() {
         buyBuilding('Microchip', true, true, 1);
     }
  
+    if (!rTributeFarming) {
+        if (getAutoStructureSetting().enabled && !document.getElementById('autoStructureBtn').classList.contains("enabled")) {
+            document.getElementById('autoStructureBtn').classList.add("enabled")
+            autoTrimpSettings.rAutoStructureSetting.value = true;
+        }
+        else if (!getAutoStructureSetting().enabled && document.getElementById('autoStructureBtn').classList.contains("enabled")) {
+            document.getElementById('autoStructureBtn').classList.remove("enabled")
+            autoTrimpSettings.rAutoStructureSetting.value = false;
+        }
+    }
+
     //Housing 
     var boughtHousing = false;
     var buildingspending = getPageSetting('rBuildingSpendPct') > 0 ? getPageSetting('rBuildingSpendPct') / 100 : 1;
@@ -495,7 +512,9 @@ function RbuyBuildings() {
                 buyBuilding(housing, true, true, 999);
             else if (housing == "Collector") 
                 buyBuilding("Collector", true, true, 999);
-            else if (rTributeFarming && getPageSetting('rTributeFarmNoHousing') === true) {
+            else if (rTributeFarming && typeof(rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings) {
+                if (document.getElementById('autoStructureBtn').classList.contains("enabled") && getAutoStructureSetting().enabled)
+                    toggleAutoStructure();
                 return;
             }
             else if ((calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), buildingspending) > getPageSetting('RMax' + housing)) && getPageSetting('RMax' + housing) != -1 && game.global.buildingsQueue.length <= 3)

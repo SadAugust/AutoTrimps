@@ -621,7 +621,6 @@ function initializeAllSettings() {
 	createSetting('rTributeFarmPopup', 'Tribute Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Μaps');
 	createSetting('rTributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rTributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', {cell: 83, jobratio: '100,1,1,1'}, null, 'Μaps');
-	createSetting('rTributeFarmNoHousing', 'TF: Don\'t buy housing', 'Stops AutoTrimps from buying all housing apart from Collectors when Tribute Farming', 'boolean', false, null, 'Μaps');
 	createSetting('rTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
 	createSetting('rTributeFarmTributes', 'TrF: Tributes', 'How many tributes to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Μaps');
 	createSetting('rTributeFarmMets', 'TrF: Meteorologist', 'How many meteorologists to farm at zone specified in TF. Can use 2,3,4. These values should match up to your TF zones. ', 'multiValue', [0], null, 'Μaps');
@@ -1096,6 +1095,8 @@ function initializeAllSettings() {
 	createSetting('SpamPerks', 'AutoPerks Spam', 'Everything in related to AutoPerks', 'boolean', true, null, 'Display');
 	createSetting('SpamNature', 'Nature Spam', 'Everything in related to Nature', 'boolean', true, null, 'Display');
 
+	createSetting('rAutoStructureSetting','','','textValue',getAutoStructureSetting().enabled,'Legacy')
+
 	//Export/Import/Default
 	createSetting('ImportAutoTrimps', 'Import AutoTrimps', 'Import your AutoTrimps Settings. Asks you to name it as a profile afterwards.', 'infoclick', 'ImportAutoTrimps', null, 'Import Export');
 	createSetting('ExportAutoTrimps', 'Export AutoTrimps', 'Export your AutoTrimps Settings as a output string text formatted in JSON.', 'infoclick', 'ExportAutoTrimps', null, 'Import Export');
@@ -1274,7 +1275,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				name: name,
 				description: description,
 				type: type,
-				value: loaded === undefined ? [{world: 0,cell: 0,level: 0,repeat: 0,special: 0,gather: 'food',tributes: 0,mets: 0,bogs: 0,insanity: 0,potion: 0,bonfire: 0,boneamount: 0,bonebelow: 0, worshipper: 50, boneruntype: 0,bonegather: 0,jobratio: '1,1,1,1'}] : loaded
+				value: loaded === undefined ? [{world: 0,cell: 0,level: 0,repeat: 0,special: 0,gather: 'food',tributes: 0,mets: 0,bogs: 0,insanity: 0,potion: 0,bonfire: 0,boneamount: 0,bonebelow: 0, worshipper: 50, boneruntype: 0,bonegather: 0,buildings: true, jobratio: '1,1,1,1'}] : loaded
 			};
 		var btn = document.createElement("select");
 		btn.id = id;
@@ -1896,6 +1897,7 @@ function updateCustomButtons() {
 	if (document.getElementById("tabLegacy") != null) {
 		document.getElementById("tabLegacy").style.display = !legacysettings ? "none" : "";
 	}
+	turnOff('rAutoStructureSetting');
 
 	//Core
 	!radonon ? turnOn('ManualGather2') : turnOff('ManualGather2');
@@ -2269,7 +2271,6 @@ function updateCustomButtons() {
 
 	radonon ? turnOn('rTributeFarm'): turnOff('rTributeFarm');
 	(radonon && getPageSetting('rTributeFarm')) ? turnOn('rTributeFarmPopup'): turnOff('rTributeFarmPopup');
-	(radonon && getPageSetting('rTributeFarm')) ? turnOn('rTributeFarmNoHousing'): turnOff('rTributeFarmNoHousing');
 	turnOff('rTributeFarmSettings');
 	turnOff('rTributeFarmDefaultSettings');
 	turnOff('rTributeFarmZone');
