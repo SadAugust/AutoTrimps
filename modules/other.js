@@ -3307,6 +3307,77 @@ function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
 	return amt_local;
 }
 
+function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio){ //don't use forceMax for jobs until you fix that second return. forceMax and forceRatio indicate that they're from an auto, and ignore firing
+	if (!itemObj.cost){
+		//console.log("no cost", itemObj);
+		return 1;
+	}
+	var mostAfford = -1;
+	var currentOwned = (itemObj.purchased) ? itemObj.purchased : ((itemObj.level) ? itemObj.level : itemObj.owned);
+	if (!currentOwned) currentOwned = 0;
+	if (isJob && game.global.firing && !forceRatio) return Math.floor(currentOwned * game.global.maxSplit);
+	//if (itemObj == game.equipment.Shield) console.log(currentOwned);
+	for (var item in itemObj.cost){
+		var price = itemObj.cost[item];
+		var toBuy;
+		var resource = game.resources[item];
+		var resourcesAvailable = item === 'fragments' ? resource.owned - (PerfectMapCost_Actual(10, 'lmc') *3) : resource.owned;
+		if (resourcesAvailable < 0) resourcesAvailable = 0;
+		if (game.global.maxSplit != 1 && !forceMax && !forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * game.global.maxSplit);
+		else if (forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * forceRatio);
+		if (!resource || typeof resourcesAvailable === 'undefined'){
+			console.log("resource " + item + " not found");
+			return 1;
+		}
+		if (typeof price[1] !== 'undefined'){
+			var start = price[0];
+			if (isEquipment){
+				var artMult = getEquipPriceMult();
+				start = Math.ceil(start * artMult);
+			}
+			if (isBuilding && getPerkLevel("Resourceful")) start = start * (Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel("Resourceful")));
+			toBuy = Math.floor(log10(((resourcesAvailable / (start * Math.pow(price[1], currentOwned))) * (price[1] - 1)) + 1) / log10(price[1]));
+			//if (itemObj == game.equipment.Shield) console.log(toBuy);
+		}
+		else if (typeof price === 'function') {
+			return 1;
+		}
+		else {
+			if (isBuilding && getPerkLevel("Resourceful")) price = Math.ceil(price * (Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel("Resourceful"))));
+			toBuy = Math.floor(resourcesAvailable / price);
+		}
+		if (mostAfford == -1 || mostAfford > toBuy) mostAfford = toBuy;
+	}
+	if (forceRatio && (mostAfford <= 0 || isNaN(mostAfford))) return 0;
+	if (isBuilding && mostAfford > 1000000000) return 1000000000;
+	if (mostAfford <= 0) return 1;
+	if (isJob && itemObj.max && itemObj.owned + mostAfford > itemObj.max) return (itemObj.max - itemObj.owned);
+	return mostAfford;
+}
+
+function PerfectMapCost_Actual(plusLevel, specialModifier) {
+	if (!specialModifier) return Infinity
+	if (!plusLevel)	return Infinity
+	var specialModifier = specialModifier;
+	var plusLevel = plusLevel;
+	var baseCost = 27;
+	var mapLevel = game.global.world;
+	if (plusLevel < 0)
+		mapLevel = mapLevel - plusLevel;
+	if (mapLevel < 6)
+		mapLevel = 6;
+	baseCost *= (game.global.world >= 60) ? 0.74 : 1;
+	baseCost += 6
+	if (plusLevel > 0)
+		baseCost += (plusLevel * 10)
+	if (specialModifier != "0")
+		baseCost += 18
+	baseCost += mapLevel;
+	baseCost = Math.floor((((baseCost / 150) * (Math.pow(1.14, baseCost - 1))) * mapLevel * 2) * Math.pow((1.03 + (mapLevel / 50000)), mapLevel));
+	baseCost *= 2;
+	return baseCost;
+}
+
 function ABItemSwap(items) {
 	var changeitems = false;
 	if (changeitems = true) {

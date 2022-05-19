@@ -357,6 +357,7 @@ function mostEfficientHousing() {
     var HousingTypes = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
     // Which houses we actually want to check
     var housingTargets = [];
+    var buildingspending = getPageSetting('rBuildingSpendPct') > 0 ? getPageSetting('rBuildingSpendPct') / 100 : 1;
 
     if (rTributeFarming && typeof(rTrFbuyBuildings) !== 'undefined') {
         if (!rTrFbuyBuildings && getAutoStructureSetting().enabled && document.getElementById('autoStructureBtn').classList.contains("enabled"))
@@ -381,8 +382,8 @@ function mostEfficientHousing() {
         var worstTime = -Infinity;
         var currentOwned = game.buildings[housing].owned;
         const dontbuy = [];
-        var buildingspending = getPageSetting('rBuildingSpendPct') > 0 ? getPageSetting('rBuildingSpendPct') / 100 : 1;
-        if (housing == 'Collector') buildingspending = 1;
+        if (housing == 'Collector' || housing == 'Gateway') buildingspending = 1;
+        if (rTributeFarming && typeof(rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings  && housing !== 'Collector') dontbuy.push(housing);
         for (var resource in game.buildings[housing].cost) {
 
             // Get production time for that resource
@@ -393,8 +394,9 @@ function mostEfficientHousing() {
             var housingBonus = game.buildings[housing].increase.by;
             if (!game.buildings.Hub.locked) housingBonus += 500;
             if (Math.max(baseCost * Math.pow(costScaling, currentOwned)) > game.resources[resource].owned * buildingspending) dontbuy.push(housing);
-            if (rTributeFarming && typeof(rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings  && housing !== 'Collector') dontbuy.push(housing);
-
+            if (housing == 'Gateway' && resource == 'fragments') {
+                if (game.resources[resource].owned < ((PerfectMapCost_Actual(10, 'lmc')*3) + Math.max(baseCost * Math.pow(costScaling, currentOwned)))) dontbuy.push(housing);
+            }
             // Only keep the slowest producer, aka the one that would take the longest to generate resources for
             worstTime = Math.max(baseCost * Math.pow(costScaling, currentOwned - 1) / (avgProduction * housingBonus), worstTime);
         }
@@ -506,8 +508,10 @@ function RbuyBuildings() {
     do {
         boughtHousing = false;
         var housing = mostEfficientHousing();
+        var housingAmt = getPageSetting('RMax' + housing) === -1 ? Infinity : getPageSetting('RMax' + housing);
+        var maxCanAfford = housing !== null ? calculateMaxAffordLocal(game.buildings[housing], true, false, false, housingAmt, buildingspending) : false;
         var runningC3 = ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)
-        if (((housing != null && canAffordBuilding(housing)) && (game.buildings[housing].purchased < (getPageSetting('RMax' + housing) === -1 ? Infinity : getPageSetting('RMax' + housing)))) || runningC3) {
+        if (((housing != null && canAffordBuilding(housing)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt))) || runningC3) {
             if (runningC3) 
                 buyBuilding(housing, true, true, 999);
             else if (housing == "Collector") 
@@ -517,10 +521,10 @@ function RbuyBuildings() {
                     toggleAutoStructure();
                 return;
             }
-            else if ((calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), buildingspending) > getPageSetting('RMax' + housing)) && getPageSetting('RMax' + housing) != -1 && game.global.buildingsQueue.length <= 3)
-                buyBuilding(housing, true, true, getPageSetting('RMax' + housing) - game.buildings[housing].purchased, buildingspending);
-            else if (calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), buildingspending) && game.global.buildingsQueue.length <= 3) 
-                buyBuilding(housing, true, true, calculateMaxAfford(game.buildings[housing], true, false, false, getPageSetting('RMax' + housing), buildingspending));
+            else if ((maxCanAfford > housingAmt) && game.global.buildingsQueue.length <= 3)
+                buyBuilding(housing, true, true, housingAmt - game.buildings[housing].purchased, buildingspending);
+            else if (maxCanAfford > 0 && game.global.buildingsQueue.length <= 3) 
+                buyBuilding(housing, true, true, maxCanAfford);
             else 
                 return;
             boughtHousing = true;
