@@ -396,10 +396,11 @@ function removeRow(index, titleText){
 	if (titleText.includes('Bone')) document.getElementById('windowBoneAmount' + index).value = 0;
 	if (titleText.includes('Bone')) document.getElementById('windowBoneBelow' + index).value = 0;
 	if (titleText.includes('Ship Farm')) document.getElementById('windowWorshipper' + index).value = 0;
-	//if (titleText.includes('Tribute Farm')) document.getElementById('windowBuildings' + index).data-checked = false;
-	var checkBox = document.getElementById('windowBuildings' + index);
-	swapClass("icon-", "icon-checkbox-checked", checkBox);
-	checkBox.setAttribute('data-checked', true);
+	if (titleText.includes('Tribute Farm')) {
+		var checkBox = document.getElementById('windowBuildings' + index);
+		swapClass("icon-", "icon-checkbox-checked", checkBox);
+		checkBox.setAttribute('data-checked', true);
+	}
 	if (!titleText.includes('Prestige Raiding')) document.getElementById('windowJobRatio' + index).value = 0;
 	if (titleText.includes('Bone')) document.getElementById('windowBoneDropdown' + index).value = 0;
 	if (titleText.includes('Bone')) document.getElementById('windowBoneGather' + index).value = 0;
