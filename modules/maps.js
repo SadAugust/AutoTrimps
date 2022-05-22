@@ -1555,6 +1555,7 @@ function RautoMap() {
 				activateClicked();
 			}
 		}
+		rHFBonfireCostTotal = 0;
 		
 		rHFZone = getPageSetting('rHypoZone');
 		if (rHFZone.includes(game.global.world)) {
@@ -1562,7 +1563,6 @@ function RautoMap() {
 			var rHypoSettings = autoTrimpSettings.rHypoSettings.value[rHFIndex];
 			rHFMapLevel = rHypoSettings.level;
 			var rHFCell = rHypoSettings.cell;
-			rHFBonfireCostTotal = 0;
 			var rHypoJobRatio = rHypoSettings.jobratio;
 			
 			if (game.global.lastClearedCell + 2 >= rHFCell) {
