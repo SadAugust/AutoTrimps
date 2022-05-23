@@ -511,7 +511,7 @@ function RbuyBuildings() {
         var housingAmt = getPageSetting('RMax' + housing) === -1 ? Infinity : getPageSetting('RMax' + housing);
         var maxCanAfford = housing !== null ? calculateMaxAffordLocal(game.buildings[housing], true, false, false, housingAmt, buildingspending) : false;
         var runningC3 = ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)
-        if (((housing != null && canAffordBuilding(housing)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt))) || runningC3) {
+        if (((housing != null && canAffordBuilding(housing)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt) || runningC3))) {
             if (runningC3) 
                 buyBuilding(housing, true, true, 999);
             else if (housing == "Collector") 
