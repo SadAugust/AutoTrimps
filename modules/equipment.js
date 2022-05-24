@@ -614,7 +614,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
         var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
         var safeRatio = nextLevelCost / nextLevelValue;
 
-        if (buyPrestigeMaybe(i)[0] && mostEfficient[isAttack].statPerResource > buyPrestigeMaybe(i)[1]) {
+        if (buyPrestigeMaybe(i)[0] && (buyPrestigeMaybe(i)[1] > mostEfficient[isAttack].statPerResource || buyPrestigeMaybe(i)[3])) {
             safeRatio = buyPrestigeMaybe(i)[1];
             nextLevelCost = buyPrestigeMaybe(i)[2]
             prestige = true;
@@ -627,7 +627,6 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		    }
             if (game.equipment[i].prestige < highestPrestige && prestige == false) continue;
         }
-
         if (mostEfficient[isAttack].statPerResource > safeRatio && mostEfficient[isAttack].statPerResource != '') {
             mostEfficient[isAttack].name = i;
             mostEfficient[isAttack].statPerResource = safeRatio;
@@ -656,10 +655,12 @@ function buyPrestigeMaybe(equipName) {
     var equipStat = (typeof equipment.attack !== 'undefined') ? 'attack' : 'health';
 	
     var prestigeUpgradeName = "";
+    var prestigeDone = false;
     var allUpgradeNames = Object.getOwnPropertyNames(game.upgrades);
     for (var upgrade of allUpgradeNames) {
         if (game.upgrades[upgrade].prestiges === equipName) {
             prestigeUpgradeName = upgrade;
+            if (getPageSetting('Requipprestige') == 2 && game.upgrades[upgrade].allowed != game.upgrades[upgrade].done) prestigeDone = true;
             break;
         }
     }
@@ -685,7 +686,7 @@ function buyPrestigeMaybe(equipName) {
 
     var statPerResource = levelOnePrestige / newStatValue;
     
-    return [newStatValue > currentStatValue, statPerResource, levelOnePrestige];
+    return [newStatValue > currentStatValue, statPerResource, levelOnePrestige, prestigeDone];
 }
 
 function RautoEquip() {
@@ -693,7 +694,7 @@ function RautoEquip() {
     if (!getPageSetting('Requipon')) 
         return;
     
-    if (getPageSetting('Requipprestige')) {
+    if (getPageSetting('Requipprestige') == 1) {
         var prestigeLeft = false;
         do {
             prestigeLeft = false;
@@ -704,7 +705,7 @@ function RautoEquip() {
                         if (mostEfficientEquipment()[isAttack+4] && buyUpgrade(RequipmentList[equipName].Upgrade, true, true)) {
                             prestigeLeft = true;
                         }
-                        if (getPageSetting('Requipprestige') && buyUpgrade(RequipmentList[equipName].Upgrade, true, true)) prestigeLeft = true;
+                        if (getPageSetting('Requipprestige') == 1 && buyUpgrade(RequipmentList[equipName].Upgrade, true, true)) prestigeLeft = true;
                     }
                 }
             }
