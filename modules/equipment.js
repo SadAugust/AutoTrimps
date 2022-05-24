@@ -695,7 +695,7 @@ function RautoEquip() {
     if (!getPageSetting('Requipon')) 
         return;
     
-/*     var prestigeLeft = false;
+    var prestigeLeft = false;
     do {
         prestigeLeft = false;
         for (var equipName in game.equipment) {
@@ -709,7 +709,7 @@ function RautoEquip() {
                 }
             }
         }
-    } while (prestigeLeft) */
+    } while (prestigeLeft)
 
     //Initialise settings for later user
 	var alwaysLvl2 = getPageSetting('Requip2');
@@ -738,6 +738,7 @@ function RautoEquip() {
     var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
 	var zoneGo = (rEquipZone[0] > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length-1])));
     var resourceSpendingPct = zoneGo ? 1 : getPageSetting('Requippercent') < 0 ? 1 : getPageSetting('Requippercent') / 100;
+  
 
     //Buy as many shields as possible when running Melting Point
     if (getPageSetting("NoLumberjackMP") && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')
