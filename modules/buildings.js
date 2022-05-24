@@ -349,7 +349,7 @@ function RbuyGemEfficientHousing() {
     }
 }
 
-var smithybought = 0;
+var smithiesBoughtThisZone = 0;
 
 function mostEfficientHousing() {
 
@@ -461,25 +461,16 @@ function RbuyBuildings() {
 
     //Smithy purchasing
     if (!game.buildings.Smithy.locked && canAffordBuilding('Smithy')) {
-        //Checking to see how many smithies we can buy
-        var smithy_pet = game.buildings.Smithy.cost.gems[1];
-        //Array is Gems, Metal, Wood. Tracks how many smithies each resource would be able to purchase.
-        var smithycost =    [getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.gems[0], (game.resources.gems.owned),(smithy_pet),true),
-                            getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.metal[0], (game.resources.metal.owned),(smithy_pet),true), 
-                            getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (game.resources.wood.owned),(smithy_pet),true)]
-        var smithy_canbuy = Math.min(smithycost[0], smithycost[1], smithycost[2]);
-        var smithy_zones = Math.round(((getPageSetting('c3finishrun') - game.global.world) / 2) - 1);
         // Purchasing a smithy whilst on Quest
-        if (game.global.challengeActive == 'Quest') {
-            if (smithybought > game.global.world) smithybought = 0;
-            //Buying as many smithies as we don't need before our specified end zone
-            if (smithybought < game.global.world && smithy_canbuy > smithy_zones) {
-                buyBuilding("Smithy", true, true, smithy_canbuy - smithy_zones);
-                smithybought = game.global.world;
-            }
-            if (smithybought < game.global.world && (questcheck() == 10 || (RcalcHDratio() * 10 >= getPageSetting('Rmapcuntoff')))) {
-                buyBuilding("Smithy", true, true, 1);
-                smithybought = game.global.world;
+        if (game.global.challengeActive == 'Quest' && smithiesBoughtThisZone < game.global.world) {
+            var smithycanBuy = calculateMaxAfford(game.buildings.Smithy,true,false,false,true,1)
+            var questZones = Math.floor(((getPageSetting('c3finishrun') - game.global.world) / 2) - 1);
+            var smithiesToBuy = smithycanBuy > questZones ? smithycanBuy - questZones : questcheck() == 10 || (RcalcHDratio() * 10 >= getPageSetting('Rmapcuntoff')) ? 1 : 0;
+            if (smithiesBoughtThisZone > game.global.world) smithiesBoughtThisZone = 0;
+            //Buying smithies that won't be needed for quests before user entered end goal
+            if (smithiesToBuy > 0) {
+                buyBuilding("Smithy", true, true, smithiesToBuy);
+                smithiesBoughtThisZone = game.global.world;
             }
         } else {
             buyBuilding("Smithy", true, true, 1);
