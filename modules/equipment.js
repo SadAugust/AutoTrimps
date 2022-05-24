@@ -653,7 +653,6 @@ function buyPrestigeMaybe(equipName) {
 	
 	if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(equipName)) return false;
     var equipment = game.equipment[equipName];
-    var resource = (equipName == "Shield") ? 'wood' : 'metal'
     var equipStat = (typeof equipment.attack !== 'undefined') ? 'attack' : 'health';
 	
     var prestigeUpgradeName = "";
@@ -680,9 +679,8 @@ function buyPrestigeMaybe(equipName) {
     }
 
     var levelOnePrestige = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
-    var newLevel = Math.floor(getMaxAffordable(levelOnePrestige * 1.2,game.resources[resource].owned,1.2,true)) + 1;
 
-    var newStatValue = (newLevel) * Math.round(equipment[equipStat] * Math.pow(1.19, ((equipment.prestige) * game.global.prestige[equipStat]) + 1));
+    var newStatValue = Math.round(equipment[equipStat] * Math.pow(1.19, ((equipment.prestige) * game.global.prestige[equipStat]) + 1));
     var currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
 
     var statPerResource = levelOnePrestige / newStatValue;
@@ -695,36 +693,34 @@ function RautoEquip() {
     if (!getPageSetting('Requipon')) 
         return;
     
-    var prestigeLeft = false;
-    do {
-        prestigeLeft = false;
-        for (var equipName in game.equipment) {
-            if (buyPrestigeMaybe(equipName)[0]) {
-                if(!game.equipment[equipName].locked) {
-                    var isAttack = (RequipmentList[equipName].Stat === 'attack' ? 0 : 1);
-                    if (mostEfficientEquipment()[isAttack+4] && buyUpgrade(RequipmentList[equipName].Upgrade, true, true)) {
-                        prestigeLeft = true;
+    if (getPageSetting('Requipprestige')) {
+        var prestigeLeft = false;
+        do {
+            prestigeLeft = false;
+            for (var equipName in game.equipment) {
+                if (buyPrestigeMaybe(equipName)[0]) {
+                    if(!game.equipment[equipName].locked) {
+                        var isAttack = (RequipmentList[equipName].Stat === 'attack' ? 0 : 1);
+                        if (mostEfficientEquipment()[isAttack+4] && buyUpgrade(RequipmentList[equipName].Upgrade, true, true)) {
+                            prestigeLeft = true;
+                        }
+                        if (getPageSetting('Requipprestige') && buyUpgrade(RequipmentList[equipName].Upgrade, true, true)) prestigeLeft = true;
                     }
-                    if (getPageSetting('Requipprestige') && buyUpgrade(RequipmentList[equipName].Upgrade, true, true)) prestigeLeft = true;
                 }
             }
-        }
-    } while (prestigeLeft)
+        } while (prestigeLeft)
+    }
 
     //Initialise settings for later user
 	var alwaysLvl2 = getPageSetting('Requip2');
 	var alwaysPandemonium = getPageSetting('RPandemoniumAutoEquip') > 0;
-    var alwaysPrestige = getPageSetting('Requipprestige')
-    var canBuyPrestige = false;
 
     // always2 / alwaysPrestige / alwaysPandemonium
-    if (alwaysLvl2 || alwaysPrestige || (alwaysPandemonium && game.global.challengeActive == 'Pandemonium')) {
+    if (alwaysLvl2 || (alwaysPandemonium && game.global.challengeActive == 'Pandemonium')) {
         for (var equip in game.equipment) {
             if (!game.equipment[equip].locked) {
                 if (alwaysLvl2 && game.equipment[equip].level < 2)
                     buyEquipment(equip, null, true, 1);
-                if (alwaysPrestige && buyPrestigeMaybe(equip)[0] && equip != 'Shield')
-                    canBuyPrestige = true;
                 if (game.challenges.Pandemonium.isEquipBlocked(equip)) 
                     continue;
 			    if (alwaysPandemonium && game.global.challengeActive == 'Pandemonium')
@@ -738,7 +734,6 @@ function RautoEquip() {
     var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
 	var zoneGo = (rEquipZone[0] > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length-1])));
     var resourceSpendingPct = zoneGo ? 1 : getPageSetting('Requippercent') < 0 ? 1 : getPageSetting('Requippercent') / 100;
-  
 
     //Buy as many shields as possible when running Melting Point
     if (getPageSetting("NoLumberjackMP") && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')
@@ -754,9 +749,9 @@ function RautoEquip() {
         var equipType = (bestBuys[6] < bestBuys[7]) ? 'attack' : 'health';
         var equipName = (equipType == 'attack') ? bestBuys[0] : bestBuys[1];  
         var equipCost = (equipType == 'attack') ? bestBuys[6] : bestBuys[7];    
-        var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
         var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
         var underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
+        var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
         for (var i = 0; i < 2; i++) {
             if (canAffordBuilding(equipName, null, null, true, false, 1)) {
                 if (smithylogic(equipName,resourceUsed,true)) {
@@ -764,14 +759,12 @@ function RautoEquip() {
                         // Check any of the overrides
                         if (
                             underStats ||
-                            Rgetequipcost(equipName, resourceUsed, 1) <= resourceSpendingPct * game.resources[resourceUsed].owned 
+                            equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned 
                         ) {
                             if (!game.equipment[equipName].locked) {
-                                var eTypeNo = (equipType == 'attack') ? 4 : 5;
-                                if (bestBuys[eTypeNo]) 
-                                    continue; 
-                                if (buyEquipment(equipName, null, true, 1))
-                                    keepBuying = true;
+                                var equipPrestige = (equipType == 'attack') ? 4 : 5;
+                                if (bestBuys[equipPrestige]) buyUpgrade(RequipmentList[equipName].Upgrade, true, true)
+                                else if (buyEquipment(equipName, null, true, 1)) keepBuying = true;
                             }
                         }
                     }
