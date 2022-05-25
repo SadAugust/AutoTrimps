@@ -567,9 +567,9 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
     var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
     var zoneGo =    !zoneGo && (rEquipZone[0] > 0 && (rEquipZone.includes(game.global.world)) || game.global.world >= rEquipZone[rEquipZone.length-1]) ? true :
                     zoneGo;
-    var resourceMaxPercent =    !resourceMaxPercent && zoneGo ? 100 :
-                                !resourceMaxPercent && getPageSetting('Requippercent') < 0 ? 100 : 
-                                !resourceMaxPercent ? getPageSetting('Requippercent') :
+    var resourceMaxPercent =    !resourceMaxPercent && zoneGo ? 1 :
+                                !resourceMaxPercent && getPageSetting('Requippercent') < 0 ? 1 : 
+                                !resourceMaxPercent ? getPageSetting('Requippercent') / 100 :
                                 resourceMaxPercent
     var ignoreShield = !ignoreShield ? false : true;
     var mostEfficient = [
@@ -598,7 +598,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
         var prestige = false;
 
         //Skips if we have the required number of that item and below zoneGo
-        if (!zoneGo && !buyPrestigeMaybe(i) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
+        if (!zoneGo && !buyPrestigeMaybe(i, resourceMaxPercent) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
         //Skips if ignoreShield variable is true.
         if (ignoreShield && i == 'Shield') continue;
 		//Skips looping through equips if they're blocked during Pandemonium.
@@ -606,22 +606,22 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
         //Skips buying shields when you can afford bonfires on Hypothermia.
         if (game.global.challengeActive == 'Hypothermia' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i == 'Shield') continue;
         //Skips through equips if they cost more than your Requippercent setting value.
-        if (!zoneGo && !canAffordBuilding(i,null,null,true,false,1,resourceMaxPercent)) continue;
+        if (RequipmentList[i].Resource == 'metal' && !zoneGo && !canAffordBuilding(i,null,null,true,false,1,resourceMaxPercent*100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
         //Skips through equips if they don't cost metal and you don't have enough resources for them.
-        if (RequipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1,resourceMaxPercent)) continue;
+        if (RequipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1,resourceMaxPercent*100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
 
         var nextLevelValue = game.equipment[i][RequipmentList[i].Stat + "Calculated"];
         var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
         var safeRatio = nextLevelCost / nextLevelValue;
 
-        if (buyPrestigeMaybe(i)[0] && (buyPrestigeMaybe(i)[1] > mostEfficient[isAttack].statPerResource || buyPrestigeMaybe(i)[3])) {
-            safeRatio = buyPrestigeMaybe(i)[1];
-            nextLevelCost = buyPrestigeMaybe(i)[2]
+        if (buyPrestigeMaybe(i, resourceMaxPercent)[0] && (buyPrestigeMaybe(i, resourceMaxPercent)[1] > mostEfficient[isAttack].statPerResource || buyPrestigeMaybe(i, resourceMaxPercent)[3])) {
+            safeRatio = buyPrestigeMaybe(i, resourceMaxPercent)[1];
+            nextLevelCost = buyPrestigeMaybe(i, resourceMaxPercent)[2]
             prestige = true;
         }
 		if (getPageSetting('rEquipHighestPrestige')) {
             for (var item in game.equipment) { 
-                if (item == "Shield") continue;
+                //if (item == "Shield") continue;
     			var equip = game.equipment[item];
     			if (equip.prestige > highestPrestige) highestPrestige = equip.prestige;
 		    }
@@ -648,9 +648,10 @@ function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
     }
 }
 
-function buyPrestigeMaybe(equipName) {
+function buyPrestigeMaybe(equipName, resourceSpecingPct) {
 	
 	if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(equipName)) return false;
+    var resourceSpecingPct = !resourceSpecingPct ? 1 : resourceSpecingPct;
     var equipment = game.equipment[equipName];
     var resource = (equipName == "Shield") ? 'wood' : 'metal'
     var equipStat = (typeof equipment.attack !== 'undefined') ? 'attack' : 'health';
@@ -661,7 +662,7 @@ function buyPrestigeMaybe(equipName) {
     for (var upgrade of allUpgradeNames) {
         if (game.upgrades[upgrade].prestiges === equipName) {
             prestigeUpgradeName = upgrade;
-            if (getPageSetting('Requipprestige') == 2 && game.upgrades[upgrade].allowed != game.upgrades[upgrade].done) prestigeDone = true;
+            if (getPageSetting('Requipprestige') > 0 && game.upgrades[upgrade].allowed != game.upgrades[upgrade].done) prestigeDone = true;
             break;
         }
     }
@@ -681,11 +682,11 @@ function buyPrestigeMaybe(equipName) {
     }
 
     var levelOnePrestige = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
-    var newLevel = Math.floor(getMaxAffordable(levelOnePrestige * 1.2,game.resources[resource].owned,1.2,true)) + 1;
+    var newLevel = Math.floor(getMaxAffordable(levelOnePrestige * 1.2,(game.resources[resource].owned*resourceSpecingPct),1.2,true)) + 1;
     var newStatValue = (newLevel) * Math.round(equipment[equipStat] * Math.pow(1.19, ((equipment.prestige) * game.global.prestige[equipStat]) + 1));
     var currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
     var statPerResource = levelOnePrestige / newStatValue;
-    
+
     return [newStatValue > currentStatValue, statPerResource, levelOnePrestige, prestigeDone];
 }
 
@@ -694,7 +695,7 @@ function RautoEquip() {
     if (!getPageSetting('Requipon')) 
         return;
     
-    if (getPageSetting('Requipprestige') == 1) {
+    if (getPageSetting('Requipprestige') == 2) {
         var prestigeLeft = false;
         do {
             prestigeLeft = false;
@@ -705,7 +706,7 @@ function RautoEquip() {
                         if (mostEfficientEquipment()[isAttack+4] && buyUpgrade(RequipmentList[equipName].Upgrade, true, true)) {
                             prestigeLeft = true;
                         }
-                        if (getPageSetting('Requipprestige') == 1 && buyUpgrade(RequipmentList[equipName].Upgrade, true, true)) prestigeLeft = true;
+                        if (getPageSetting('Requipprestige') == 2 && buyUpgrade(RequipmentList[equipName].Upgrade, true, true)) prestigeLeft = true;
                     }
                 }
             }
@@ -744,7 +745,7 @@ function RautoEquip() {
     var keepBuying = false;
     do {
         keepBuying = false;
-        var bestBuys = mostEfficientEquipment();
+        var bestBuys = mostEfficientEquipment(resourceSpendingPct);
 
         // Set up for both Attack and Health depending on which is more efficient to purchase
         var equipType = (bestBuys[6] < bestBuys[7]) ? 'attack' : 'health';
@@ -755,7 +756,7 @@ function RautoEquip() {
         var underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
         var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
         for (var i = 0; i < 2; i++) {
-            if (canAffordBuilding(equipName, null, null, true, false, 1)) {
+            if (canAffordBuilding(equipName, null, null, true, false, 1) || (equipPrestige && game.resources[resourceUsed].owned > equipCost)) {
                 if (smithylogic(equipName,resourceUsed,true)) {
                     if (game.equipment[equipName].level < equipCap || equipPrestige) {
                         // Check any of the overrides
