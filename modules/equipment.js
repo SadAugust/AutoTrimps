@@ -588,7 +588,6 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
     ];
 	
 	var highestPrestige = 0;
-
     for (var i in RequipmentList) {
         var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
         var skipForLevels = !skipForLevels && isAttack == 0 ? getPageSetting('Requipcapattack') :
@@ -619,6 +618,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
             nextLevelCost = buyPrestigeMaybe(i, resourceMaxPercent)[2]
             prestige = true;
         }
+        
 		if (getPageSetting('rEquipHighestPrestige')) {
             for (var item in game.equipment) { 
                 //if (item == "Shield") continue;
@@ -667,7 +667,7 @@ function buyPrestigeMaybe(equipName, resourceSpecingPct) {
         }
     }
 
-    if (game.upgrades[prestigeUpgradeName].locked || (prestigeUpgradeName == 'Supershield' && getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult() > game.resources.wood.owned)) return false;
+    if (game.upgrades[prestigeUpgradeName].locked || (prestigeUpgradeName == 'Supershield' && getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult() > game.resources.wood.owned * resourceSpecingPct)) return false;
 
     if (game.upgrades[prestigeUpgradeName].cost.resources.science[0] *
         Math.pow(game.upgrades[prestigeUpgradeName].cost.resources.science[1], game.equipment[equipName].prestige - 1)
