@@ -652,6 +652,7 @@ function buyPrestigeMaybe(equipName) {
 	
 	if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(equipName)) return false;
     var equipment = game.equipment[equipName];
+    var resource = (equipName == "Shield") ? 'wood' : 'metal'
     var equipStat = (typeof equipment.attack !== 'undefined') ? 'attack' : 'health';
 	
     var prestigeUpgradeName = "";
@@ -680,10 +681,9 @@ function buyPrestigeMaybe(equipName) {
     }
 
     var levelOnePrestige = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
-
-    var newStatValue = Math.round(equipment[equipStat] * Math.pow(1.19, ((equipment.prestige) * game.global.prestige[equipStat]) + 1));
+    var newLevel = Math.floor(getMaxAffordable(levelOnePrestige * 1.2,game.resources[resource].owned,1.2,true)) + 1;
+    var newStatValue = (newLevel) * Math.round(equipment[equipStat] * Math.pow(1.19, ((equipment.prestige) * game.global.prestige[equipStat]) + 1));
     var currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
-
     var statPerResource = levelOnePrestige / newStatValue;
     
     return [newStatValue > currentStatValue, statPerResource, levelOnePrestige, prestigeDone];
@@ -749,22 +749,22 @@ function RautoEquip() {
         // Set up for both Attack and Health depending on which is more efficient to purchase
         var equipType = (bestBuys[6] < bestBuys[7]) ? 'attack' : 'health';
         var equipName = (equipType == 'attack') ? bestBuys[0] : bestBuys[1];  
-        var equipCost = (equipType == 'attack') ? bestBuys[6] : bestBuys[7];    
+        var equipCost = (equipType == 'attack') ? bestBuys[6] : bestBuys[7];   
+        var equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5]; 
         var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
         var underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
         var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
         for (var i = 0; i < 2; i++) {
             if (canAffordBuilding(equipName, null, null, true, false, 1)) {
                 if (smithylogic(equipName,resourceUsed,true)) {
-                    if (game.equipment[equipName].level < equipCap) {
+                    if (game.equipment[equipName].level < equipCap || equipPrestige) {
                         // Check any of the overrides
                         if (
                             underStats ||
                             equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned 
                         ) {
                             if (!game.equipment[equipName].locked) {
-                                var equipPrestige = (equipType == 'attack') ? 4 : 5;
-                                if (bestBuys[equipPrestige]) buyUpgrade(RequipmentList[equipName].Upgrade, true, true)
+                                if (equipPrestige) buyUpgrade(RequipmentList[equipName].Upgrade, true, true)
                                 else if (buyEquipment(equipName, null, true, 1)) keepBuying = true;
                             }
                         }
@@ -775,7 +775,8 @@ function RautoEquip() {
             //Iterating to second set of equips. Will go through the opposite equipType from the first loop.
             equipType = equipType != 'attack' ? 'attack' : 'health';
             equipName = (equipType == 'attack') ? bestBuys[0] : bestBuys[1];
-            equipCost = (equipType == 'attack') ? bestBuys[6] : bestBuys[7];    
+            equipCost = (equipType == 'attack') ? bestBuys[6] : bestBuys[7];
+            equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5]; 
             resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
             equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
             underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
