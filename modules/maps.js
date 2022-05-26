@@ -772,7 +772,7 @@ var worshipperdebug = 0;
 //Quagmire
 var Rshoulddobogs = false;
 //Quest
-var rShouldQuest = false;
+var rShouldQuest = 0;
 var Rquestequalityscale = false;
 var Rquestshieldzone = 0;
 var RquestSmithyWarning = -1;
@@ -885,7 +885,7 @@ function RautoMap() {
 
 	//Quest
 	var Rquestfarming = false;
-	rShouldQuest = false;
+	rShouldQuest = 0;
 	Rquestfarming = (game.global.world > 5 && game.global.challengeActive == "Quest" && questcheck() > 0 && game.challenges.Quest.getQuestProgress != 'Quest Complete!');
 
 	if (Rquestfarming) {
@@ -955,22 +955,7 @@ function RautoMap() {
 	RenoughHealth = (RcalcOurHealth() > (hitsSurvived * enemyDamage));
 	RenoughDamage = (RcalcHDratio() <= mapenoughdamagecutoff);
 	RupdateAutoMapsStatus();
-
-	//Quest Shield
-	if (game.global.world < 6 && (Rquestshieldzone != 0 || Rquestequalityscale != false)) {
-		Rquestshieldzone = 0;
-		Rquestequalityscale = false;
-	}
-	if (Rquestfarming && questcheck() == 8 && ((game.global.soldierEnergyShieldMax / enemyDamage) < RcalcHDratio()) && game.portal.Equality.scalingActive && !game.global.mapsActive) {
-		toggleEqualityScale();
-		Rquestshieldzone = game.global.world;
-		Rquestequalityscale = true;
-	}
-	if (game.global.world > 5 && game.global.challengeActive == "Quest" && Rquestshieldzone > 0 && !game.portal.Equality.scalingActive && game.global.world > Rquestshieldzone && Rquestequalityscale) {
-		toggleEqualityScale();
-		Rquestequalityscale = false;
-	}
-
+	
 	//Farming & resetting variables. Is this necessary?
 	var selectedMap = "world";
 	RshouldDoMaps = false;
@@ -992,6 +977,8 @@ function RautoMap() {
 	RvanillaMapatZone = false;
 	workerRatio = null;
 	rTributeFarming = false;
+	rTrFTributes = 0;
+	rTrFMeteorologists = 0;
 
 	if (ourBaseDamage > 0) {
 		RshouldDoMaps = (!RenoughDamage || RshouldFarm);
@@ -1145,7 +1132,7 @@ function RautoMap() {
 	}
 
 	//Prestige Raiding
-	if (getPageSetting('RAMPraid') && (game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) || (getPageSetting('RAMPdraid') && game.global.challengeActive == "Daily")) {
+	if (getPageSetting('RAMPraid') && (game.global.challengeActive != "Daily") || (getPageSetting('RAMPdraid') && game.global.challengeActive == "Daily")) {
 		var rPrestigeRaid = false;
 		rShouldPrestigeRaid = false;
 		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
@@ -1849,7 +1836,7 @@ function RautoMap() {
                         }
                     }
 			//Priority system for challenges. If Alchemy isn't at the top it'll break the recycling function I think
-			} else if ((Rshouldalchfarm || rShouldHypoFarm || rShouldInsanityFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldWorshipperFarm || rShouldEmpowerFarm || rShouldUnbalance || rShouldEquipFarm || rShouldMaxMapBonus) && !rShouldPrestigeRaid) {
+			} else if ((Rshouldalchfarm || rShouldHypoFarm || rShouldInsanityFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldWorshipperFarm || rShouldEmpowerFarm || rShouldUnbalance || rShouldEquipFarm || rShouldMaxMapBonus) && !rShouldPrestigeRaid && rShouldQuest == 0) {
 				//Checking hyperspeed 2 percentage
 				var hyp2pct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0
 				if (game.global.challengeActive == "Alchemy" && typeof(alchmaplevel) != 'undefined') {
@@ -1946,8 +1933,11 @@ function RautoMap() {
 				//Time Farm
 				if (rShouldTimeFarm && game.global.mapRunCounter + 1 == rTFRepeatCounter)
 					repeatClicked();
+				//Quest Farming
+				if (rShouldQuest == 6 && game.global.mapBonus >= 4)
+					repeatClicked();
 				//Map Bonus
-				if (rShouldMaxMapBonus && game.global.mapBonus >= (maxMapBonusLimit - 1) && !rShouldTimeFarm)
+				if (rShouldMaxMapBonus && (game.global.mapBonus >= (maxMapBonusLimit - 1) || getCurrentMapObject().bonus != getPageSetting('rMapSpecial')) && !rShouldTimeFarm)
 					repeatClicked();
 				//Unbalance Destacking
 	            if (rShouldUnbalance && ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Unbalance.balanceStacks))
@@ -1960,9 +1950,6 @@ function RautoMap() {
 					repeatClicked();
 				//Quagmire
 				if (Rshoulddobogs && game.global.mapRunCounter + 1 == stacksum)
-					repeatClicked();
-				//Quest Farming
-				if (rShouldQuest == 6 && game.global.mapBonus >= 4)
 					repeatClicked();
 				//Insanity Frag Farm
 				if (rShouldInsanityFarm && rFragmentFarming && game.resources.fragments.owned >= PerfectMapCost(10, 'fa'))
@@ -2092,11 +2079,7 @@ function RautoMap() {
 				}
 				
 				if (RAMPfragcheck && !RAMPmapbought[0] && !RAMPmapbought[1] && !RAMPmapbought[2] && !RAMPmapbought[3] && !RAMPmapbought[4]) {
-					RAMPpMap[0] = undefined;
-					RAMPpMap[1] = undefined;
-					RAMPpMap[2] = undefined;
-					RAMPpMap[3] = undefined;
-					RAMPpMap[4] = undefined;
+					RAMPpMap.fill(undefined);
 					debug("Failed to Prestige Raid. Looks like you can't afford to or have no equips to get!");
 					rShouldPrestigeRaid = false;
 					autoTrimpSettings["RAutoMaps"].value = 0;
@@ -2159,7 +2142,7 @@ function RautoMap() {
 				rFragmentFarm('ship', shippluslevel, shipspecial);
 			
 			//Map settings for challenges and farming.
-			if ((Rshouldalchfarm || rShouldHypoFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldUnbalance || rShouldEmpowerFarm || rShouldInsanityFarm || rShouldWorshipperFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || rShouldEquipFarm || rShouldMaxMapBonus) && !rShouldQuest) {
+			if ((Rshouldalchfarm || rShouldHypoFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldUnbalance || rShouldEmpowerFarm || rShouldInsanityFarm || rShouldWorshipperFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || rShouldEquipFarm || rShouldMaxMapBonus) && rShouldQuest == 0) {
 				biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 				//Any maps
 				if (rShouldTimeFarm) RShouldFarmMapCost(rTFMapLevel, rTFSpecial, rTFZone, biome);
@@ -2182,7 +2165,7 @@ function RautoMap() {
 			}
 			
 			//Map settings for Quest Farming -- Need to test and debug if this works properly but it should be fine. Might be an issue with rShouldQuest (6) in the map creation settings if statement
-			if (rShouldQuest) {
+			if (rShouldQuest > 0) {
 				hyp2pct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0
 				questfastattack = ((Math.floor(game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100) >= game.global.world) ? "0" : "fa");
 				biomeAdvMapsSelect.value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
