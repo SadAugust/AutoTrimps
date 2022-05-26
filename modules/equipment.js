@@ -766,7 +766,6 @@ function RautoEquip() {
                             maxCanAfford = equipPrestige ? 1 : getMaxAffordable(equipCost,(game.resources[resourceUsed].owned*resourceSpendingPct)/5,1.2,true);
                             if (maxCanAfford == 0) maxCanAfford = 1;
                             if (maxCanAfford >= (equipCap - game.equipment[equipName].level)) maxCanAfford = equipCap - game.equipment[equipName].level;
-                            console.log(equipName + " " + maxCanAfford)
                         }
 
                         // Check any of the overrides
