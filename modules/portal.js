@@ -348,7 +348,7 @@ function RautoPortal() {
                 else
                     RdoPortal();
             }
-            if (game.global.world >= dailyportalzone) {
+            if (game.global.world >= dailyportalzone && getPageSetting('RAutoStartDaily')) {
                 if (autoTrimpSettings.RadonHourChallenge.selected != 'None')
                     RdoPortal(autoTrimpSettings.RadonHourChallenge.selected, true);
                 else
@@ -445,17 +445,12 @@ function RdoPortal(challenge, daily) {
     if (getPageSetting('autoheirlooms') && getPageSetting('typetokeep') != 'None' && getPageSetting('raretokeep') != 'None') {
 	    autoheirlooms3();
     }
-    if (getPageSetting('RAutoAllocatePerks') == 2) {
+    if (getPageSetting('RAutoAllocatePerks') > 0) {
+        var allocatePerk = getPageSetting('RAutoAllocatePerks') == 1 ? 'Looting' : getPageSetting('RAutoAllocatePerks') == 2 ? 'Greed' : null;
         viewPortalUpgrades();
 	    numTab(6, true)
-        if (getPageSetting('Rdumpgreed') == true) {
-            buyPortalUpgrade('Greed');
-            debug('First Stage: Bought Max Greed');
-        }
-        else {
-            buyPortalUpgrade('Looting');
-            debug('First Stage: Bought Max Looting');
-        }
+        buyPortalUpgrade(allocatePerk);
+        debug('First Stage: Bought Max ' + allocatePerk);
         activateClicked();
         cancelPortal();
     }
@@ -463,10 +458,7 @@ function RdoPortal(challenge, daily) {
     if (!portalWindowOpen) {
 	    portalClicked();
     }
-    if (portalWindowOpen && getPageSetting('RAutoAllocatePerks') == 1 && (typeof MODULES["perks"] !== 'undefined' || typeof AutoPerks !== 'undefined')) {
-        RAutoPerks.clickAllocate();
-    }
-    if (portalWindowOpen && getPageSetting('RAutoStartDaily') == true) {
+    if (portalWindowOpen && getPageSetting('RAutoStartDaily')) {
         if (getPageSetting('u1daily') == true && portalUniverse == 2) {
 	        swapPortalUniverse();
 	    }
@@ -480,7 +472,7 @@ function RdoPortal(challenge, daily) {
         }
         if (lastUndone == 1) {
             debug("All available Dailies already completed.", "portal");
-            if ((getPageSetting('u2daily') == true && portalUniverse == 2 && challenge == autoTrimpSettings.dHeliumHourChallenge.selected) || (getPageSetting('u1daily') == true && portalUniverse == 1)) {
+            if ((getPageSetting('u2daily') && portalUniverse == 2 && challenge == autoTrimpSettings.dHeliumHourChallenge.selected) || (getPageSetting('u1daily') == true && portalUniverse == 1)) {
                 swapPortalUniverse();
             }
             selectChallenge(challenge || 0);
@@ -520,15 +512,12 @@ function RdoPortal(challenge, daily) {
             loadPerkPreset();
         }
     }
-    if (portalWindowOpen && getPageSetting('RAutoAllocatePerks') == 2) {
-        numTab(6, true)
-        if (getPageSetting('Rdumpgreed') == true) {
-            buyPortalUpgrade('Greed');
-            debug('Second Stage: Bought Max Greed');
-        } else {
-            buyPortalUpgrade('Looting');
-            debug('Second Stage: Bought Max Looting');
-        }
+    if (portalWindowOpen && getPageSetting('RAutoAllocatePerks') > 0) {
+        var allocatePerk = getPageSetting('RAutoAllocatePerks') == 1 ? 'Looting' : getPageSetting('RAutoAllocatePerks') == 2 ? 'Greed' : null;
+        viewPortalUpgrades();
+	    numTab(6, true)
+        buyPortalUpgrade(allocatePerk);
+        debug('First Stage: Bought Max ' + allocatePerk);
     }
     if (getPageSetting('RdownloadSaves')) {
         tooltip('Export', null, 'update');

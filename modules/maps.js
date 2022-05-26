@@ -1702,6 +1702,7 @@ function RautoMap() {
 										getPageSetting('Rmeltsmithy');
 					if ((game.global.world >= meltingpoint[0] && ((game.global.lastClearedCell + 2) >= meltingpoint[1]) && !game.global.runningChallengeSquared) || (meltsmithy > 0 && meltsmithy <= game.buildings.Smithy.owned)) {
 						selectedMap = theMap.id;
+						if (rShouldPrestigeRaid && game.global.preMapsActive) debug('Running Melting Point')
 						break;
 					}
 				}
