@@ -472,7 +472,7 @@ function RbuyBuildings() {
                 buyBuilding("Smithy", true, true, smithiesToBuy);
                 smithiesBoughtThisZone = game.global.world;
             }
-        } else {
+        } else if (game.global.challengeActive != 'Quest') {
             buyBuilding("Smithy", true, true, 1);
         }
     }
@@ -492,6 +492,8 @@ function RbuyBuildings() {
             autoTrimpSettings.rAutoStructureSetting.value = false;
         }
     }
+
+    rBuyTributes();
 
     //Housing 
     var boughtHousing = false;
@@ -521,22 +523,22 @@ function RbuyBuildings() {
             boughtHousing = true;
         }
     } while (boughtHousing)
-
-    rBuyTributes();
 }
 
 function rBuyTributes() {
     //Won't buy Tributes if they're locked or if a meteorologist can be purchased as that should always be the more efficient purchase
     if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(canAffordJob('Meteorologist') && !game.jobs.Meteorologist.locked))) {
         if (rShouldMetFarm && !rShouldTributeFarm) return;
-        var tributespending = getPageSetting('RTributeSpendingPct') > 0 ? getPageSetting('RTributeSpendingPct') / 100 : 1;
-        var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned * tributespending),1.05,true);
+        //Spend 100% of food on Tributes if Tribute Farming otherwise uses the value in RTributeSpendingPct.
+        var rTributeSpendPct = typeof(rTrFTributes) !== 'undefined' && rTrFTributes > 0 ? 1 : getPageSetting('RTributeSpendingPct') > 0 ? getPageSetting('RTributeSpendingPct') / 100 : 1;
+        var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned * rTributeSpendPct),1.05,true);
+        maxTributes = typeof(rTrFTributes) !== 'undefined' && rTrFTributes > getPageSetting('RMaxTribute') ? rTrFTributes : getPageSetting('RMaxTribute');
         
         //Won't buy them if the RAlchDontBuyMets toggle is enabled and on zone 152
         if (!(game.global.challengeActive == "Alchemy" && game.global.world == 152 && getPageSetting('RAlchDontBuyMets') && game.global.lastClearedCell < 98)) {
-            if (getPageSetting('RMaxTribute') > game.buildings.Tribute.purchased) 
-                buyTributeCount = Math.min(buyTributeCount, getPageSetting('RMaxTribute') - game.buildings.Tribute.purchased);
-            if (buyTributeCount > 0 && (getPageSetting('RMaxTribute') < 0 || (getPageSetting('RMaxTribute') > game.buildings.Tribute.purchased))) 
+            if (maxTributes > game.buildings.Tribute.purchased) 
+                buyTributeCount = Math.min(buyTributeCount, maxTributes - game.buildings.Tribute.purchased);
+            if (buyTributeCount > 0 && (maxTributes < 0 || (maxTributes > game.buildings.Tribute.purchased))) 
                 buyBuilding('Tribute', true, true, buyTributeCount);
         }
     }
