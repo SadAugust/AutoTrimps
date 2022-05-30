@@ -472,7 +472,7 @@ function initializeAllSettings() {
 	//General
 	createSetting('RAutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use window, it will not work.', 'multitoggle', 1, null, "Μaps");
 	createSetting('Rautomapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', true, null, 'Μaps');
-	createSetting('Rmapselection', 'Biome Selection', 'Select which you prefer to use. Recommend Farmlands if you have unlocked it else Plentiful (Gardens).', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Plentiful", "Farmlands"], 'Μaps');
+	createSetting('Rmapselection', 'Biome', 'Select which biome you\'d prefer to use. Recommend Farmlands if you have unlocked it else Plentiful (Gardens).', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Plentiful", "Farmlands"], 'Μaps');
 	createSetting('rMapSpecial', 'Map Special', 'Select which Special to use. May bug out if you cannot afford selected. <br>0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'Μaps');
 	createSetting('RMaxMapBonusAfterZone', 'Max MapBonus From', 'Always gets Max Map Bonus from this zone on. (inclusive and after).<br><b>NOTE:</b> Set -1 to disable entirely (default). Set 0 to use it always. ', 'value', '-1', null, 'Μaps');
 	createSetting('RMaxMapBonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10.', 'value', '10', null, 'Μaps');
@@ -480,12 +480,13 @@ function initializeAllSettings() {
 	createSetting('Rhitssurvived', 'Hits Survived', 'Set this value to tell the script how many enemy attacks you wish to survive for. The default is 10. The lower this is the less health the script will get. If you set this too high it will farm too much so please be careful. ', 'value', '10', null, 'Μaps');
 	createSetting('Rmapcuntoff', 'Map Cut Off', 'Decides when to get max map bonus. 4 is default. This means it will take 1 hit to kill an enemy if in D stance.', 'value', '4', null, 'Μaps');
 	createSetting('RDisableFarm', 'Farming H:D', 'If H:D goes above this value, it will farm for Damage & Health. The lower this setting, the more it will want to farm. Default is <b>16<b/>. <b>-1 to disable farming!</b>', 'value', -1, null, 'Μaps');
-
+	
 	//Void Maps
 	createSetting('RVoidMaps', 'Void Maps', '<b>0 to disable</b> The zone at which you want all your void maps to be cleared inclusive of the zone you type. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will cause \'New Voids Mod\' to start applying after the last input. <br><br>Runs them at Cell 70 by default.', 'multiValue', '0', null, 'Μaps');
 	createSetting('Rvoidscell', 'Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Μaps');
 	createSetting('RRunNewVoidsUntilNew', 'New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197) If you have 2 void map zones it\'ll use this setting after the last one has been cleared.<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Μaps');
-	document.getElementById('RRunNewVoidsUntilNew').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('rMapRepeatCount', 'Map Count Output', 'When you finish doing farming for any types of special farming this setting will display a message stating the amount of maps it took to complete.', 'boolean', false, null, 'Μaps');
+	document.getElementById('rMapRepeatCount').parentNode.insertAdjacentHTML('afterend', '<br>');
 	//Prismatic Palace
 	createSetting('Rprispalace', 'Prismatic Palace', 'Run Prismatic Palace when its unlocked. ', 'boolean', true, null, 'Μaps');
 	//Atlantrimp
@@ -1834,6 +1835,7 @@ function updateCustomButtons() {
 	radonon ? turnOn('Rhitssurvived'): turnOff('Rhitssurvived');
 	radonon ? turnOn('Rmapcuntoff'): turnOff('Rmapcuntoff');
 	radonon ? turnOn('RDisableFarm'): turnOff('RDisableFarm');
+	radonon ? turnOn('rMapRepeatCount'): turnOff('rMapRepeatCount');
 
 	radonon ? turnOn('RVoidMaps'): turnOff('RVoidMaps');
 	radonon ? turnOn('Rvoidscell'): turnOff('Rvoidscell');

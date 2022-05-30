@@ -1095,6 +1095,7 @@ function RautoMap() {
 				//Figuring out how many Tributes or Meteorologists to farm at your current zone
 				var rTrFSpecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
 				var rTrFJobRatio = rTrFSettings.jobratio;
+				//var rTrFMaxMaps = getPageSetting('rMapRepeatCount');
 				rTrFbuyBuildings = typeof(rTrFSettings.buildings) === 'undefined' ? true : rTrFSettings.buildings;
 				
 				if (game.global.challengeActive == "Wither" && rTrFMapLevel >= 0)
@@ -1103,11 +1104,13 @@ function RautoMap() {
 					if (rTrFTributes > game.buildings.Tribute.purchased) 
 						rShouldTributeFarm = true;
 					if (rTrFMeteorologists > game.jobs.Meteorologist.owned)
+						//scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true),false,true,shippluslevel) >= Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned)*game.jobs.Meteorologist.cost.food[0] 
 						rShouldMetFarm = true;
 					rTrFCurrentMap = getCurrentMapObject();
 				}
 				//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
 				if (!rShouldTributeFarm && !rShouldMetFarm && rTrFCurrentMap != undefined) {
+					if (getPageSetting('rMapRepeatCount')) debug("Tribute Farm took " + (game.global.mapRunCounter + 1 ) + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete.")
 					mapsClicked();
 					recycleMap(getMapIndex(rTrFCurrentMap));
 					rTrFCurrentMap = undefined;        
@@ -1191,7 +1194,7 @@ function RautoMap() {
 	                debug("Skipping Worshipper farming on zone " + game.global.world + " as it costs more than a " + shipspecial + " map, evaluate your map settings to correct this")
 	                worshipperdebug = game.stats.zonesCleared.value;
 				}
-				if (shipfarmamount > ships && ((scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, ),false,true,shippluslevel) >= (game.jobs.Worshipper.getCost() * 10)))) 
+				if (shipfarmamount > ships && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, ),false,true,shippluslevel) >= (game.jobs.Worshipper.getCost() * 10))) 
 					rShouldWorshipperFarm = true;
 			}
 		}
@@ -1932,8 +1935,10 @@ function RautoMap() {
 			}
 			if (game.global.repeatMap) {
 				//Time Farm
-				if (rShouldTimeFarm && game.global.mapRunCounter + 1 == rTFRepeatCounter)
+				if (rShouldTimeFarm && game.global.mapRunCounter + 1 == rTFRepeatCounter) {
 					repeatClicked();
+					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter + 1 ) + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete.")
+				}
 				//Quest Farming
 				if (rShouldQuest == 6 && game.global.mapBonus >= 4)
 					repeatClicked();
@@ -1944,35 +1949,47 @@ function RautoMap() {
 	            if (rShouldUnbalance && ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Unbalance.balanceStacks))
 	                repeatClicked();
 				//Worshipper Farm
-				if (rShouldWorshipperFarm && rFragmentFarming && fragmapcost())
+				if (rShouldWorshipperFarm && rFragmentFarming && fragmapcost()) {
 					repeatClicked();
+					if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter + 1 ) + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete.")
+				}
 				//Prestige Raiding
 				if (rShouldPrestigeRaid && RAMPfragfarming && RAMPfrag() == true)
 					repeatClicked();
 				//Quagmire
-				if (Rshoulddobogs && game.global.mapRunCounter + 1 == stacksum)
+				if (Rshoulddobogs && game.global.mapRunCounter + 1 == stacksum) {
 					repeatClicked();
+					if (getPageSetting('rMapRepeatCount')) debug("Black Bog Farm took " + (game.global.mapRunCounter + 1 ) + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete.")
+				}
 				//Insanity Frag Farm
 				if (rShouldInsanityFarm && rFragmentFarming && game.resources.fragments.owned >= PerfectMapCost(10, 'fa'))
 					repeatClicked();
 				//Insanity Farm
-				if (rShouldInsanityFarm && !rFragmentFarming && rInsanityStacks <= game.challenges.Insanity.insanity)			
+				if (rShouldInsanityFarm && !rFragmentFarming && rInsanityStacks <= game.challenges.Insanity.insanity) {
 					repeatClicked();
+					if (getPageSetting('rMapRepeatCount')) debug("Insanity Farm took " + (game.global.mapRunCounter + 1 ) + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete.")
+				}
 				//Pandemonium Destacking
 				if (rShouldPandemoniumDestack && (((getCurrentMapObject().level - game.global.world) != pandemoniumextra) || ((game.challenges.Pandemonium.pandemonium - pandemoniumextra) < pandemoniumextra))) 
 					repeatClicked();
 	            //Pandemonium Farming
-				if (rShouldPandemoniumFarm && ((getCurrentMapObject().bonus != pandfarmspecial) || (nextEquipmentCost >= scaleToCurrentMapLocal(amt_cache,false,true,getPageSetting('PandemoniumFarmLevel')))))
+				if (rShouldPandemoniumFarm && ((getCurrentMapObject().bonus != pandfarmspecial) || (nextEquipmentCost >= scaleToCurrentMapLocal(amt_cache,false,true,getPageSetting('PandemoniumFarmLevel'))))) {
 	                repeatClicked();
+					if (getPageSetting('rMapRepeatCount')) debug("Pandemonium Farm took " + (game.global.mapRunCounter + 1 ) + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete.")
+				}
 	            //Pandemonium Jestimp Farming
 				if (rShouldPandemoniumJestimpFarm && nextEquipmentCost >= jestMetalTotal)
 	                repeatClicked();
 				//Alch
-				if (Rshouldalchfarm && herbtotal >= potioncosttotal)
+				if (Rshouldalchfarm && herbtotal >= potioncosttotal) {
 					repeatClicked();
+					if (getPageSetting('rMapRepeatCount')) debug("Alchemy Farm took " + (game.global.mapRunCounter + 1 ) + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete.")
+				}
 				//Hypo
-				if (rShouldHypoFarm && (game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20),false,true,rHFMapLevel)+game.resources.wood.owned > rHFBonfireCostTotal))
+				if (rShouldHypoFarm && (game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20),false,true,rHFMapLevel)+game.resources.wood.owned > rHFBonfireCostTotal)) {
 					repeatClicked();
+					if (getPageSetting('rMapRepeatCount')) debug("Hypothermia Farm took " + (game.global.mapRunCounter + 1 ) + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete.")
+				}
 			}
 		} else {
 			if (game.global.repeatMap) {
