@@ -1631,7 +1631,8 @@ function updateCustomButtons() {
 	//Radon Daily Gear & Raid
 	radonon ? turnOn('Rdequipon'): turnOff('Rdequipon');
 	radonon && getPageSetting('Rdequipon') ? turnOn('Rdequipzone'): turnOff('Rdequipzone');
-	radonon ? turnOn('Ravoidempower'): turnOff('Ravoidempower');
+	//radonon ? turnOn('Ravoidempower'): turnOff('Ravoidempower');
+	turnOff('Ravoidempower');
 	radonon ? turnOn('RAMPdraid'): turnOff('RAMPdraid');
 	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidzone'): turnOff('RAMPdraidzone');
 	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidraid'): turnOff('RAMPdraidraid');

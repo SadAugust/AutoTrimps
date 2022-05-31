@@ -625,8 +625,10 @@ function Rresetmapvars() {
     shipprefragmappy = undefined;
     shipfragmappybought = false;
     worshipperdebug = 0;
+    rWorshipperCurrentMap = undefined;
     //Quagmire
     Rshoulddobogs = false;
+    rBlackBogCurrentMap = undefined;
     //Quest
     rShouldQuest = false;
     Rquestequalityscale = false;
@@ -644,6 +646,7 @@ function Rresetmapvars() {
     insanityfragmappy = undefined;
     insanityprefragmappy = undefined;
     insanityfragmappybought = false;
+    rInsanityCurrentMap = undefined;
     //Equip Farm
     Requipfarm = !1;
     Rshouldequipfarm = !1;
@@ -654,10 +657,12 @@ function Rresetmapvars() {
     rShouldPandemoniumJestimpFarm = false;
     savefile = null;
     jestFarmMap = false;
+    rPandemoniumCurrentMap = undefined;
     //Alchemy
     Rshouldalchfarm = false;
     RAlchFarm = false;
     rAlchSpecialError = 0;
+    rAlchemyCurrentMap = undefined;
     //Hypothermia
     rHypoFarm = false;
     rHFSaveWood = false;

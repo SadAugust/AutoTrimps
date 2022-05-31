@@ -757,6 +757,12 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 		number -= typeof game.global.dailyChallenge.rampage !== 'undefined' ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 0;
 	}
 	
+	if (game.talents.voidPower.purchased && game.global.voidBuff !== '') {
+        number *= (game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? 1.65 : 1.35) : 1.15;
+		number *= (game.talents.voidMastery.purchased) ? 5 : 1;
+	}
+	
+
 	number *= game.global.challengeActive == 'Unlucky' ? RgetCritMulti(true) : RgetCritMulti();
 
 	// Equality
@@ -798,9 +804,11 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	return number;
 }
 
-function RcalcOurHealth() {
+function RcalcOurHealth(onlyShield) {
 	//Initiatising health
+	var onlyShield = !onlyShield ? false : onlyShield;
 	var health = 50;
+	var shield = 0;
 	if (game.resources.trimps.maxSoldiers > 0) {
 		var equipmentList = ["Shield", "Boots", "Helmet", "Pants", "Shoulderguards", "Breastplate", "Gambeson"];
 		for(var i = 0; i < equipmentList.length; i++){
@@ -857,8 +865,18 @@ function RcalcOurHealth() {
 	health *= alchObj.getPotionEffect('Potion of Strength');
 	//Pressure (Dailies)
 	health *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
+
+	if (game.talents.voidPower.purchased && game.global.voidBuff !== '')
+        health *= (game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? 1.65 : 1.35) : 1.15;
 	//Prismatic Shield and Shield Layer, scales with multiple Scruffy shield layers
-	health *= Fluffy.isRewardActive('shieldlayer') ? 1 + (getEnergyShieldMult() * (1 + Fluffy.isRewardActive('shieldlayer'))) : 1 + getEnergyShieldMult();
+	shield = (health * (Fluffy.isRewardActive('shieldlayer') ? 1 + (getEnergyShieldMult() * (1 + Fluffy.isRewardActive('shieldlayer'))) : 1 + getEnergyShieldMult())) - health;
+
+
+	if (!onlyShield)
+		health += shield;
+	else
+		health = shield;
+
     return health;
 }
 
@@ -900,18 +918,29 @@ function RcalcBadGuyDmg(enemy, attack, equality) { //Works out avg dmg. For max 
 	number *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
 	number *= game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
 	number *= game.global.challengeActive == 'Archaeology' ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
-	number *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult(): 1;
-	number *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getBossMult() : 1;
-	number *= game.global.challengeActive == 'Storm' ? game.challenges.Storm.getAttackMult() : 1;
+	number *= game.global.challengeActive == 'Mayhem' && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Mayhem.getBossMult() : 1;
+	//Purposefully don't put Storm in here.
 	number *= game.global.challengeActive == 'Berserk' ? 1.5 : 1;
 	number *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
 	number *= game.global.challengeActive == 'Nurture' ? 2 : 1;
 	number *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-	number *= game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
+	number *= game.global.challengeActive == 'Pandemonium' && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Pandemonium.getBossMult() : 1;
+	number *= game.global.challengeActive == 'Pandemonium' && !(!game.global.mapsActive && game.global.lastClearedCell + 2 == 100) ? game.challenges.Pandemonium.getPandMult() : 1;
 	number *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	number *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	number *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
-	number *= !enemy && game.global.usingShriek ? game.mapUnlocks.roboTrimp.getShriekValue() : 1;
+	return number;
+}
+
+function RcalcBadGuyDmgMod() {
+	number = 1;
+	number *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
+	number *= game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
+	number *= game.global.challengeActive == 'Archaeology' ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
+	number *= game.global.challengeActive == 'Mayhem' && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Mayhem.getBossMult() : 1;
+	number *= game.global.challengeActive == 'Pandemonium' && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Pandemonium.getBossMult() : 1;
+	number *= game.global.challengeActive == 'Pandemonium' && !(!game.global.mapsActive && game.global.lastClearedCell + 2 == 100) ? game.challenges.Pandemonium.getPandMult() : 1;
+	number *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
 	return number;
 }
 
