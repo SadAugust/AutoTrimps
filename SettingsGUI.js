@@ -42,9 +42,9 @@ function automationMenuInit() {
 	newContainer = document.createElement("DIV");
 	newContainer.setAttribute("style", "display: block; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
 	if (game.global.universe == 1) 
-	newContainer.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
+		newContainer.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
 	else if (game.global.universe == 2) 
-	newContainer.setAttribute("onmouseover", 'tooltip(\"Radon/Hr Info\", \"customText\", event, \"1st is Current Rn/hr % out of Lifetime Rn(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total Rn earned / Lifetime Rn(not including current)<br>\" + getDailyRnHrStats())');
+		newContainer.setAttribute("onmouseover", 'tooltip(\"Radon/Hr Info\", \"customText\", event, \"1st is Current Rn/hr % out of Lifetime Rn(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total Rn earned / Lifetime Rn(not including current)<br>\" + getDailyRnHrStats())');
 	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
 	abutton = document.createElement("SPAN");
 	abutton.id = 'hiderStatus';
@@ -1439,6 +1439,23 @@ function autoPlusSettingsMenu() {
 	toggleSettingsMenu();
 }
 
+function toggleElem(elem, showHide) {
+	var $item = document.getElementById(elem);
+	if ($item == null) return;
+	var state = showHide ? '' : 'none';
+	var stateParent = showHide ? 'inline-block' : 'none';
+	$item.style.display = state;
+	$item.parentNode.style.display = stateParent;
+}
+
+function turnOff(elem) {
+	toggleElem(elem, false);
+}
+
+function turnOn(elem) {
+	toggleElem(elem, true);
+}	
+
 function updateCustomButtons() {
 	if (lastTheme && game.options.menu.darkTheme.enabled != lastTheme) {
 	if (typeof MODULES["graphs"] !== 'undefined')
@@ -2129,15 +2146,19 @@ function updateCustomButtons() {
 	(!game.worldUnlocks.easterEgg.locked) ? turnOn('AutoEggs') : turnOff('AutoEggs');
 
 	//Memory
-	if (!getPageSetting('showbreedtimer')) turnOff("hiddenBreedTimer");
+	game.global.universe == 1 && !getPageSetting('showbreedtimer') ? turnOn("hiddenBreedTimer") : turnOff("hiddenBreedTimer");
 	!radonon ? turnOn("showautomapstatus") : turnOff("showautomapstatus");
-	if (game.global.universe == 1 && !getPageSetting('showautomapstatus')) turnOff("autoMapStatus");
+	game.global.universe == 1 && getPageSetting('showautomapstatus') ? turnOn("autoMapStatus") : turnOff("autoMapStatus");
+	if (game.global.universe == 1 && getPageSetting('showautomapstatus')) document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 	!radonon ? turnOn("Rshowhehr") : turnOff("Rshowhehr");
-	if (game.global.universe == 1 && !getPageSetting('Rshowhehr')) turnOff("hiderStatus");
+	game.global.universe == 1 && getPageSetting('Rshowhehr') ? turnOn("hiderStatus") : turnOff("hiderStatus");
+	if (game.global.universe == 1 && getPageSetting('Rshowhehr')) document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 	radonon ? turnOn("Rshowautomapstatus") : turnOff("Rshowautomapstatus");
-	if (game.global.universe == 2 && !getPageSetting('Rshowautomapstatus')) turnOff("autoMapStatus");
+	game.global.universe == 2 && getPageSetting('Rshowautomapstatus') ? turnOn("autoMapStatus") : turnOff("autoMapStatus");
+	if (game.global.universe == 2 && getPageSetting('Rshowautomapstatus')) document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 	radonon ? turnOn("Rshowrnhr") : turnOff("Rshowrnhr");
-	if (game.global.universe == 2 && !getPageSetting('Rshowrnhr')) turnOff("hiderStatus");
+	game.global.universe == 2 && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared ? turnOn("hiderStatus") : turnOff("hiderStatus");
+	if (game.global.universe == 2 && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 
 	//Heirlooms
 

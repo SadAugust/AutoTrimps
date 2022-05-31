@@ -680,4 +680,10 @@ function Rresetmapvars() {
     rShouldBoneShrine = false;
     rBoneShrineUsedZone = 0;
 	workerRatio = null;
+
+    if (document.getElementById('hiderStatus').style.display == 'None' && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) {
+        turnOn("hiderStatus")
+        document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+    }
+    
 }
