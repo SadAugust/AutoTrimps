@@ -2266,7 +2266,7 @@ function equalityManagement() {
 		var enemyAttack = game.global[mapGrid][currentCell+1].attack*RcalcBadGuyDmgMod();
 		//var enemyDmg = 0;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(level, currentCell+2, enemyName),0)*difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(level, currentCell+2, enemyName),0)*1.5*difficulty : enemyAttack * 1.5;
-		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'critAttack' ? 4 : 1;
+		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 		var enemyDmgEquality = 0;
 		var ourHealth = remainingHealth();
 		var ourHealthMax = RcalcOurHealth(questShieldBreak)
