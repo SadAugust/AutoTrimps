@@ -2288,8 +2288,7 @@ function equalityManagement() {
 
 				if (runningUnlucky && Number(RcalcOurDmg('min',i,mapping,true,true,true).toString()[0] % 2 == 1))
 					continue;
-
-				if (!fastEnemy && !runningGlass && !runningTrappa && !game.global.voidBuff == 'doubleAttack' && !questShieldBreak && ourDmgEquality*4 > enemyHealth) {
+				if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak && ourDmgEquality*4 > enemyHealth) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
