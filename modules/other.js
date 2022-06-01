@@ -2259,6 +2259,7 @@ function equalityManagement() {
 		var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
 		//Challenge conditions
 		var runningUnlucky = game.global.challengeActive == 'Unlucky';
+		var runningTrappa = game.global.challengeActive == 'Trappapalooza'
 		var questShieldBreak = game.global.challengeActive == 'Quest' && questcheck() == 8;
 		var runningGlass = game.global.challengeActive == 'Glass';
 
@@ -2282,19 +2283,19 @@ function equalityManagement() {
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
 		if (enemyHealth !== 0 && enemyHealth !== -1) {
 			for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
-				enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i);
+				enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i) * (runningTrappa ? 1.1 : 1);
 				ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 
 				if (runningUnlucky && Number(RcalcOurDmg('min',i,mapping,true,true,true).toString()[0] % 2 == 1))
 					continue;
 
-				if (!fastEnemy && !runningGlass && !game.global.voidBuff == 'doubleAttack' && !questShieldBreak && ourDmgEquality*4 > enemyHealth) {
+				if (!fastEnemy && !runningGlass && !runningTrappa && !game.global.voidBuff == 'doubleAttack' && !questShieldBreak && ourDmgEquality*4 > enemyHealth) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourHealth < (ourHealthMax*0.99) && gammaToTrigger == 4 && game.global.soldierHealth > 0) {
+				else if (ourHealth < (ourHealthMax*0.99) && gammaToTrigger == 4 && game.global.soldierHealth > 0 && !runningTrappa) {
 					if (((questShieldBreak) && !(mapping && currentCell == 1) && game.global.fighting) || !mapping){
 						mapsClicked();
 						mapsClicked();
