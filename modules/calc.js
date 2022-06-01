@@ -853,13 +853,13 @@ function RcalcOurHealth(onlyShield) {
 		}
 	}
 	//Soldier Mult
-	health *= game.resources.trimps.maxSoldiers;
+	health *= game.resources.trimps.maxSoldiers
 	//Smithies
-	health *= game.buildings.Smithy.owned > 0 ? Math.pow(1.25, game.buildings.Smithy.owned) : 1;
+	health *= game.buildings.Smithy.owned > 0 ? game.buildings.Smithy.getMult() : 1;
 	//Antenna Array
 	health *= game.buildings.Antenna.owned >= 10 ? game.jobs.Meteorologist.getExtraMult() : 1;
-	//Toughness
-	health *= game.portal.Toughness.radLevel > 0 ? (game.portal.Toughness.radLevel * game.portal.Toughness.modifier) + 1 : 1;
+	//Toughness add
+	health *= game.portal.Toughness.radLevel > 0 ? 1 + (game.portal.Toughness.radLevel * game.portal.Toughness.modifier) : 1;
 	//Resilience
 	health *= game.portal.Resilience.radLevel > 0 ? Math.pow(game.portal.Resilience.modifier + 1, game.portal.Resilience.radLevel) : 1;
 	//Scruffy is Life
@@ -899,9 +899,8 @@ function RcalcOurHealth(onlyShield) {
 	health *= alchObj.getPotionEffect('Potion of Strength');
 	//Pressure (Dailies)
 	health *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
-
-	if (game.talents.voidPower.purchased && game.global.voidBuff !== '')
-        health *= (game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? 1.65 : 1.35) : 1.15;
+	//Void Map Talents
+	health *= (game.talents.voidPower.purchased && game.global.voidBuff) ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
 	
 	//Prismatic Shield and Shield Layer, scales with multiple Scruffy shield layers
 	shield = (health * (Fluffy.isRewardActive('shieldlayer') ? 1 + (getEnergyShieldMult() * (1 + Fluffy.isRewardActive('shieldlayer'))) : 1 + getEnergyShieldMult())) - health;

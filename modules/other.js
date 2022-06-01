@@ -2286,11 +2286,12 @@ function equalityManagement() {
 		//Misc vars
 		var mapping = game.global.mapsActive ? true : false;
 		var currentCell = mapping ? game.global.lastClearedMapCell : game.global.lastClearedCell;
+		var mapGrid = game.global.mapsActive ? 'mapGridArray' : 'gridArray';
 		var type = (!mapping) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 		var zone = (type == "world" || !mapping) ? game.global.world : getCurrentMapObject().level;
-		var currentCell = (type == "world" || !mapping) ? getCurrentWorldCell().level : (getCurrentMapCell() ? getCurrentMapCell().level : 1);
+		//var currentCell = (type == "world" || !mapping) ? getCurrentWorldCell().level-1 : (getCurrentMapCell() ? getCurrentMapCell().level-1 : 1);
 		//var level = game.global.mapsActive ? getCurrentMapObject().level : game.global.world;
-		var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
+		var difficulty = !mapping ? 1 : getCurrentMapObject().difficulty;
 		//Challenge conditions
 		var runningUnlucky = game.global.challengeActive == 'Unlucky';
 		var runningTrappa = game.global.challengeActive == 'Trappapalooza'
@@ -2298,11 +2299,10 @@ function equalityManagement() {
 		var runningGlass = game.global.challengeActive == 'Glass';
 
 		//Initialising name/health/dmg variables
-		//var enemyName = game.global[mapGrid][currentCell].name;
-		var enemyName = getCurrentEnemy() ? getCurrentEnemy().name : "Chimp";
-		var enemyHealth = getCurrentEnemy() ? getCurrentEnemy().health : RcalcEnemyHealthMod(zone, currentCell, enemyName, type);
+		var enemyName = game.global[mapGrid][currentCell+1].name;
+		var enemyHealth = game.global[mapGrid][currentCell+1].health;
 		var enemyAttack = getCurrentEnemy() ? getCurrentEnemy().attack*RcalcBadGuyDmgMod() : RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName),0);
-		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName),0)*difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName),0)*1.5*difficulty : enemyAttack * 1.5;
+		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell+2, enemyName),0)*difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell+2, enemyName),0)*1.5*difficulty : enemyAttack * 1.5;
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 		var enemyDmgEquality = 0;
 		var ourHealth = remainingHealth();
@@ -2328,12 +2328,12 @@ function equalityManagement() {
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourHealth < (ourHealthMax*0.99) && gammaToTrigger == 4 && game.global.soldierHealth > 0 && !runningTrappa) {
-					if (((questShieldBreak) && !(mapping && currentCell == 1) && game.global.fighting) || !mapping){
+				else if (ourHealth < (ourHealthMax*0.99) && gammaToTrigger == 4 && !runningTrappa) {
+					if (((questShieldBreak) && !(mapping && currentCell == 1)) || !mapping){
 						mapsClicked();
 						mapsClicked();
 					}
-					else if (game.global.fighting && mapping && currentCell != 1 && getCurrentMapObject().location !== 'Void') {
+					else if (mapping && currentCell != 1 && type !== 'void' && game.global.titimpLeft == 0) {
 						mapsClicked();
 						rRunMap();
 					}
