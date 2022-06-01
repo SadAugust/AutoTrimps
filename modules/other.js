@@ -2299,7 +2299,7 @@ function equalityManagement() {
 						mapsClicked();
 						mapsClicked();
 					}
-					else if (mapping && currentCell != -1) {
+					else if (mapping && currentCell != -1 && getCurrentMapObject().location !== 'Void') {
 						mapsClicked();
 						runMap();
 					}
