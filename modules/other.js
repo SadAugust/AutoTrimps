@@ -2250,30 +2250,30 @@ function equalityManagement() {
 		//Turning off equality scaling
 		game.portal.Equality.scalingActive = false;
 		//Misc vars
-		var mapGrid = game.global.mapsActive ? 'mapGridArray' : 'gridArray';
 		var mapping = game.global.mapsActive ? true : false;
-		var currentCell = game.global.mapsActive ? game.global.lastClearedMapCell : game.global.lastClearedCell;
-		var level = game.global.mapsActive ? getCurrentMapObject().level : game.global.world;
-		var difficulty = game.global.mapsActive ? getCurrentMapObject().difficulty : 1;
+		var currentCell = mapping ? game.global.lastClearedMapCell : game.global.lastClearedCell;
+		var type = (!mapping) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
+		var zone = (type == "world" || !mapping) ? game.global.world : getCurrentMapObject().level;
+		var currentCell = (type == "world" || !mapping) ? getCurrentWorldCell().level : (getCurrentMapCell() ? getCurrentMapCell().level : 1);
+		//var level = game.global.mapsActive ? getCurrentMapObject().level : game.global.world;
+		var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
 		//Challenge conditions
 		var runningUnlucky = game.global.challengeActive == 'Unlucky';
 		var questShieldBreak = game.global.challengeActive == 'Quest' && questcheck() == 8;
 		var runningGlass = game.global.challengeActive == 'Glass';
 
 		//Initialising name/health/dmg variables
-		var enemyName = game.global[mapGrid][currentCell+1].name;
-		var enemyHealth = game.global[mapGrid][currentCell+1].health;
-		var enemyAttack = game.global[mapGrid][currentCell+1].attack*RcalcBadGuyDmgMod();
-		//var enemyDmg = 0;
-		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(level, currentCell+2, enemyName),0)*difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(level, currentCell+2, enemyName),0)*1.5*difficulty : enemyAttack * 1.5;
+		//var enemyName = game.global[mapGrid][currentCell].name;
+		var enemyName = getCurrentEnemy() ? getCurrentEnemy().name : "Chimp";
+		var enemyHealth = getCurrentEnemy() ? getCurrentEnemy().health : RcalcEnemyHealthMod(zone, currentCell, enemyName, type);
+		var enemyAttack = getCurrentEnemy() ? getCurrentEnemy().attack*RcalcBadGuyDmgMod() : RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName),0);
+		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName),0)*difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName),0)*1.5*difficulty : enemyAttack * 1.5;
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 		var enemyDmgEquality = 0;
 		var ourHealth = remainingHealth();
 		var ourHealthMax = RcalcOurHealth(questShieldBreak)
-		//var ourDmg = 0;
 		var ourDmg = RcalcOurDmg('min',0,mapping,true,true);
 		var ourDmgEquality = 0;
-
 		//Figuring out gamma burst stacks to proc and dmg bonus
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
 		var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
@@ -2287,19 +2287,19 @@ function equalityManagement() {
 
 				if (runningUnlucky && Number(RcalcOurDmg('min',i,mapping,true,true,true).toString()[0] % 2 == 1))
 					continue;
-					
+
 				if (!fastEnemy && !runningGlass && !game.global.voidBuff == 'doubleAttack' && !questShieldBreak && ourDmgEquality*4 > enemyHealth) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourHealth < (ourHealthMax*0.99) && gammaToTrigger == 4) {
-					if (((questShieldBreak) && !(mapping && currentCell == -1) && game.global.fighting) || !mapping){
+				else if (ourHealth < (ourHealthMax*0.99) && gammaToTrigger == 4 && game.global.soldierHealth > 0) {
+					if (((questShieldBreak) && !(mapping && currentCell == 1) && game.global.fighting) || !mapping){
 						mapsClicked();
 						mapsClicked();
 					}
-					else if (mapping && currentCell != -1 && getCurrentMapObject().location !== 'Void') {
+					else if (game.global.fighting && mapping && currentCell != 1 && getCurrentMapObject().location !== 'Void') {
 						mapsClicked();
 						runMap();
 					}

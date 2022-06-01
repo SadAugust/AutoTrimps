@@ -640,33 +640,68 @@ function calcCurrentStance() {
     }
 }
 
+
+
+
+
 //Radon
 
-function RgetCritMulti(floorCrit) {
+function debugCalc() {
+    //Pre-Init
+	var mapping = game.global.mapsActive ? true : false;
+    var type = (!mapping) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
+    var zone = (type == "world" || !mapping) ? game.global.world : getCurrentMapObject().level;
+    var cell = (type == "world" || !mapping) ? getCurrentWorldCell().level : (getCurrentMapCell() ? getCurrentMapCell().level : 1);
+	var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
+    var name = getCurrentEnemy() ? getCurrentEnemy().name : "Chimp";
+	var equality = Math.pow(game.portal.Equality.getModifier(), game.portal.Equality.disabledStackCount)
+	var attack = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, cell, name),0)*difficulty
+	var safeMapping = mapping && game.talents.mapHealth.purchased ? 2 : 1;
+	
+    //Init
+    var displayedMin = RcalcOurDmg("min", game.portal.Equality.disabledStackCount, mapping, true, true, false, true);
+    var displayedMax = RcalcOurDmg("max", game.portal.Equality.disabledStackCount, mapping, true, true, false, true);
+
+    //Trimp Stats
+    debug("Our Stats");
+    debug("Our attack: " + displayedMin.toExponential(2) + "-" + displayedMax.toExponential(2));
+    debug("Our crit: " + 100 * getPlayerCritChance() + "% for " + getPlayerCritDamageMult().toFixed(1) + "x Damage. Average of " + RgetCritMulti(true, true).toFixed(2) + "x");
+    debug("Our Health: " + (RcalcOurHealth()*safeMapping).toExponential(2));
+
+    //Enemy stats
+    debug("Enemy Stats");
+    debug("Enemy Attack: " + (attack*0.5*equality).toExponential(2) + "-" + (attack*1.5*equality).toExponential(2));
+    debug("Enemy Health: " + RcalcEnemyHealthMod(zone, cell, name, type).toExponential(2));
+}
+
+
+function RgetCritMulti(floorCrit, mult) {
+    var mult = (!mult) ? false : true;
 
     var critChance = getPlayerCritChance();
-    var CritD = getPlayerCritDamageMult();
+    var critD = getPlayerCritDamageMult();
 
-	if (floorCrit) 
-		critChance = Math.floor(getPlayerCritChance());
+	if (floorCrit) critChance = Math.floor(getPlayerCritChance());
     var lowTierMulti = getMegaCritDamageMult(Math.floor(critChance));
     var highTierMulti = getMegaCritDamageMult(Math.ceil(critChance));
     var highTierChance = critChance - Math.floor(critChance)
 
+	if (mult) return ((critChance-2) * Math.pow(getMegaCritDamageMult(2),2) * critD + (3-critChance) * getMegaCritDamageMult(2) * critD);
 	if (game.global.challengeActive == 'Duel') {
 		if (highTierChance == 0)
 			return 1;
 	    else 
-			return  1 + (highTierChance * CritD)
+			return  1 + (highTierChance * critD)
 	}
 	else
-		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * CritD
+		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * critD
 }
 
-function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useTitimp, runningUnlucky) {
+function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useTitimp, runningUnlucky, floorCrit) {
 
 	useTitimp = useTitimp ? true : false;
 	runningUnlucky = !runningUnlucky ? false : true;
+	floorCrit = !floorCrit ? false : true;
 	// Base + equipment
 	var number = 6;
 	var equipmentList = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword", "Arbalest"];
@@ -761,9 +796,8 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
         number *= (game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? 1.65 : 1.35) : 1.15;
 		number *= (game.talents.voidMastery.purchased) ? 5 : 1;
 	}
-	
 
-	number *= game.global.challengeActive == 'Unlucky' ? RgetCritMulti(true) : RgetCritMulti();
+	number *= game.global.challengeActive == 'Unlucky' || floorCrit ? RgetCritMulti(true) : RgetCritMulti();
 
 	// Equality
 	if (!isNaN(parseInt((equality)))) {
@@ -868,9 +902,9 @@ function RcalcOurHealth(onlyShield) {
 
 	if (game.talents.voidPower.purchased && game.global.voidBuff !== '')
         health *= (game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? 1.65 : 1.35) : 1.15;
+	
 	//Prismatic Shield and Shield Layer, scales with multiple Scruffy shield layers
 	shield = (health * (Fluffy.isRewardActive('shieldlayer') ? 1 + (getEnergyShieldMult() * (1 + Fluffy.isRewardActive('shieldlayer'))) : 1 + getEnergyShieldMult())) - health;
-
 
 	if (!onlyShield)
 		health += shield;
@@ -941,6 +975,12 @@ function RcalcBadGuyDmgMod() {
 	number *= game.global.challengeActive == 'Pandemonium' && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Pandemonium.getBossMult() : 1;
 	number *= game.global.challengeActive == 'Pandemonium' && !(!game.global.mapsActive && game.global.lastClearedCell + 2 == 100) ? game.challenges.Pandemonium.getPandMult() : 1;
 	number *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
+    if (game.global.challengeActive == "Daily") {
+        number *= typeof game.global.dailyChallenge.badStrength !== 'undefined' ? dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength) : 1;
+        number *= typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength) : 1;
+        number *= typeof game.global.dailyChallenge.bloodthirst !== 'undefined' ? dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks) : 1;
+        number *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
+    }
 	return number;
 }
 
@@ -1015,6 +1055,7 @@ function RcalcEnemyHealth(world) {
 	if (game.global.challengeActive == 'Daily') {
 		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
 		health *= typeof game.global.dailyChallenge.badMapHealthHealth !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapHealthHealth.getMult(game.global.dailyChallenge.badMapHealthHealth.strength, game.global.dailyChallenge.badMapHealthHealth.stacks) : 1;
+		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
     return health;
 }
@@ -1045,7 +1086,10 @@ function RcalcEnemyHealthMod(world, cell, name, type) {
 	if (game.global.challengeActive == 'Daily') {
 		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
 		health *= typeof game.global.dailyChallenge.badMapHealthHealth !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapHealthHealth.getMult(game.global.dailyChallenge.badMapHealthHealth.strength, game.global.dailyChallenge.badMapHealthHealth.stacks) : 1;
+		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
+
+	if (type !== 'world' && game.global.mapsActive) health *= getCurrentMapObject().difficulty;
     return health;
 }
 
