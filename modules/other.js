@@ -2329,11 +2329,11 @@ function equalityManagement() {
 					break;
 				}
 				else if (ourHealth < (ourHealthMax*0.99) && gammaToTrigger == 4 && !runningTrappa) {
-					if (((questShieldBreak) && !(mapping && currentCell == 1)) || !mapping){
+					if ((questShieldBreak) || !mapping){
 						mapsClicked();
 						mapsClicked();
 					}
-					else if (mapping && currentCell != 1 && type !== 'void' && game.global.titimpLeft == 0) {
+					else if (mapping && currentCell != -1 && type !== 'void' && game.global.titimpLeft == 0) {
 						mapsClicked();
 						rRunMap();
 					}
