@@ -2289,9 +2289,8 @@ function equalityManagement() {
 		var mapGrid = game.global.mapsActive ? 'mapGridArray' : 'gridArray';
 		var type = (!mapping) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 		var zone = (type == "world" || !mapping) ? game.global.world : getCurrentMapObject().level;
-		//var currentCell = (type == "world" || !mapping) ? getCurrentWorldCell().level-1 : (getCurrentMapCell() ? getCurrentMapCell().level-1 : 1);
-		//var level = game.global.mapsActive ? getCurrentMapObject().level : game.global.world;
 		var difficulty = !mapping ? 1 : getCurrentMapObject().difficulty;
+		var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
 		//Challenge conditions
 		var runningUnlucky = game.global.challengeActive == 'Unlucky';
 		var runningTrappa = game.global.challengeActive == 'Trappapalooza'
@@ -2299,12 +2298,14 @@ function equalityManagement() {
 		var runningGlass = game.global.challengeActive == 'Glass';
 
 		//Initialising name/health/dmg variables
+		//Enemy stats
 		var enemyName = game.global[mapGrid][currentCell+1].name;
 		var enemyHealth = game.global[mapGrid][currentCell+1].health;
-		var enemyAttack = getCurrentEnemy() ? getCurrentEnemy().attack*RcalcBadGuyDmgMod() : RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName),0);
+		var enemyAttack = getCurrentEnemy() ? getCurrentEnemy().attack*RcalcBadGuyDmgMod() : RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell+2, enemyName),0)*difficulty;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell+2, enemyName),0)*difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell+2, enemyName),0)*1.5*difficulty : enemyAttack * 1.5;
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 		var enemyDmgEquality = 0;
+		//Our stats
 		var ourHealth = remainingHealth();
 		var ourHealthMax = RcalcOurHealth(questShieldBreak)
 		var ourDmg = RcalcOurDmg('min',0,mapping,true,true);
@@ -2313,13 +2314,12 @@ function equalityManagement() {
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
 		var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
 
-		var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
+
 		if (enemyHealth !== 0 && enemyHealth !== -1) {
 			for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
 				enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i) * (runningTrappa ? 1.1 : 1);
 				ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
-
 				if (runningUnlucky && Number(RcalcOurDmg('min',i,mapping,true,true,true).toString()[0] % 2 == 1))
 					continue;
 				if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak && ourDmgEquality*4 > enemyHealth) {
