@@ -1081,7 +1081,7 @@ function RautoMap() {
 				if (game.global.mapRunCounter >= rTFRepeatCounter && rTFCurrentMap != undefined) {
 					rTFZoneCleared = game.stats.zonesCleared.value;
 					rTFCurrentMap == undefined;
-					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete.")
+					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 				}
 				if (rTFRepeatCounter > game.global.mapRunCounter) 
 					rShouldTimeFarm = true;
@@ -1119,7 +1119,7 @@ function RautoMap() {
 				}
 				//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
 				if (!rShouldTributeFarm && !rShouldMetFarm && rTrFCurrentMap != undefined) {
-					if (getPageSetting('rMapRepeatCount')) debug("Tribute Farm took " + (game.global.mapRunCounter + 1) + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete.")
+					if (getPageSetting('rMapRepeatCount')) debug("Tribute Farm took " + ((game.global.mapRunCounter + 1)+((getCurrentMapCell().level-1)/getCurrentMapObject().size))  + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 					mapsClicked();
 					recycleMap(getMapIndex(rTrFCurrentMap));
 					rTrFCurrentMap = undefined;        
@@ -1208,7 +1208,7 @@ function RautoMap() {
 				
 				if (rWorshipperCurrentMap != undefined && !rShouldWorshipperFarm) {
 					rWorshipperCurrentMap = undefined;
-					if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete.")
+					if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 				}
 			}
 		}
@@ -1236,7 +1236,7 @@ function RautoMap() {
 
 				if (rBlackBogCurrentMap != undefined && !Rshoulddobogs) {
 					rBlackBogCurrentMap = undefined;
-					if (getPageSetting('rMapRepeatCount')) debug("Black Bog Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete.")
+					if (getPageSetting('rMapRepeatCount')) debug("Black Bog Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 				}
 			}
 		}
@@ -1312,7 +1312,7 @@ function RautoMap() {
 
 				if (rInsanityCurrentMap != undefined && !rShouldInsanityFarm) {
 					rInsanityCurrentMap = undefined;
-					if (getPageSetting('rMapRepeatCount')) debug("Insanity Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete.")
+					if (getPageSetting('rMapRepeatCount')) debug("Insanity Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 				}
 			}
 		}
@@ -1428,7 +1428,7 @@ function RautoMap() {
 
 			if (rPandemoniumCurrentMap != undefined && !rShouldPandemoniumFarm) {
 				rPandemoniumCurrentMap = undefined;
-				if (getPageSetting('rMapRepeatCount')) debug("Pandemonium Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete.")
+				if (getPageSetting('rMapRepeatCount')) debug("Pandemonium Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 			}
 	    }
 	}
@@ -1558,7 +1558,7 @@ function RautoMap() {
 					}
 					if (rAlchemyCurrentMap != undefined && !Rshouldalchfarm) {
 						rAlchemyCurrentMap = undefined;
-						if (getPageSetting('rMapRepeatCount')) debug("Alchemy Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete.")
+						if (getPageSetting('rMapRepeatCount')) debug("Alchemy Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 					}
 				}
 			}
@@ -1612,7 +1612,7 @@ function RautoMap() {
 				}
 				if (rHFCurrentMap != undefined && !rShouldHypoFarm) {
 					rHFCurrentMap = undefined;
-					if (getPageSetting('rMapRepeatCount')) debug("Hypothermia took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete.")
+					if (getPageSetting('rMapRepeatCount')) debug("Hypothermia took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 				}
 			}
 		}
