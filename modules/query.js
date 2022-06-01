@@ -89,7 +89,7 @@ function RgetEnemyAvgAttack(zone, cell, name, type) {
     }
 
     //Maps
-    if (zone > 5 && type != "world") attack *= 1.1;
+    if (zone > 6 && type != "world") attack *= 1.1;
 
     //Specific Imp
     if (name) attack *= game.badGuys[name].attack;
