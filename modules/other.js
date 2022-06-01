@@ -2149,6 +2149,40 @@ function RShouldFarmMapCreation(pluslevel,special,biome,difficulty,loot,size) {
 	}		
 }
 
+function rRunMap() {
+	if (game.options.menu.pauseGame.enabled) return;
+    if (game.global.lookingAtMap === "") return;
+	if (game.achievements.mapless.earnable){
+		game.achievements.mapless.earnable = false;
+		game.achievements.mapless.lastZone = game.global.world;
+	}
+	if (game.global.challengeActive == "Quest" && game.challenges.Quest.questId == 5 && !game.challenges.Quest.questComplete){
+		game.challenges.Quest.questProgress++;
+		if (game.challenges.Quest.questProgress == 1) game.challenges.Quest.failQuest();
+	}
+    var mapId = game.global.lookingAtMap;
+    game.global.preMapsActive = false;
+    game.global.mapsActive = true;
+	game.global.currentMapId = mapId;
+	mapsSwitch(true);
+	var mapObj = getCurrentMapObject();
+	if (mapObj.bonus){
+		game.global.mapExtraBonus = mapObj.bonus;
+	}
+    if (game.global.lastClearedMapCell == -1) {
+        buildMapGrid(mapId);
+        drawGrid(true);
+		
+		if (mapObj.location == "Void"){
+			game.global.voidDeaths = 0;
+			game.global.voidBuff = mapObj.voidBuff;
+			setVoidBuffTooltip();
+		}
+	}
+	if (game.global.challengeActive == "Insanity") game.challenges.Insanity.drawStacks();
+	if (game.global.challengeActive == "Pandemonium") game.challenges.Pandemonium.drawStacks();
+}
+
 var fastimps =
 	[
 	"Snimp",
@@ -2301,7 +2335,7 @@ function equalityManagement() {
 					}
 					else if (game.global.fighting && mapping && currentCell != 1 && getCurrentMapObject().location !== 'Void') {
 						mapsClicked();
-						runMap();
+						rRunMap();
 					}
 					else
 						game.portal.Equality.disabledStackCount = 0;
