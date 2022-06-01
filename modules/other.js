@@ -2290,7 +2290,6 @@ function equalityManagement() {
 		var type = (!mapping) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 		var zone = (type == "world" || !mapping) ? game.global.world : getCurrentMapObject().level;
 		var difficulty = !mapping ? 1 : getCurrentMapObject().difficulty;
-		var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
 		//Challenge conditions
 		var runningUnlucky = game.global.challengeActive == 'Unlucky';
 		var runningTrappa = game.global.challengeActive == 'Trappapalooza'
@@ -2314,6 +2313,7 @@ function equalityManagement() {
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
 		var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
 
+		var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
 
 		if (enemyHealth !== 0 && enemyHealth !== -1) {
@@ -2333,7 +2333,7 @@ function equalityManagement() {
 						mapsClicked();
 						mapsClicked();
 					}
-					else if (mapping && currentCell != -1 && type !== 'void' && game.global.titimpLeft == 0) {
+					else if (mapping && currentCell !== -1 && type !== 'void' && game.global.titimpLeft == 0) {
 						mapsClicked();
 						rRunMap();
 					}
