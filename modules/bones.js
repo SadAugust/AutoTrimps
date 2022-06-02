@@ -56,8 +56,8 @@ function BoneShrine() {
     			setGather(rBoneShrineGather);
     			if (getPageSetting('Rhs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff') !== 'undefined')
     				HeirloomEquipStaff('Rhs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff');
-    			else if (getPageSetting('RhsGeneralStaff') !== 'undefined')
-    				HeirloomEquipStaff('RhsGeneralStaff');
+    			else if (getPageSetting('RhsMapStaff') !== 'undefined')
+    				HeirloomEquipStaff('RhsMapStaff');
     	        for (var x = 0; x < rBoneShrineCharges; x++) {
                     if (rBoneShrineCharges >= game.permaBoneBonuses.boosts.charges) continue;
                     workerRatio = rBoneShrineSettings.jobratio;
@@ -65,7 +65,7 @@ function BoneShrine() {
                     count = x+1;
     				game.permaBoneBonuses.boosts.consume()
     			}
-    			debug('Consumed ' + count + " bone shrine " + (count == 1 ? "charge on zone " : "charges on zone ") + game.global.world);
+    			debug('Consumed ' + count + " bone shrine " + (count == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + game.permaBoneBonuses.boosts.consume(true).split('after')[0].slice(0,-1) + ".");
     			rBoneShrineUsedZone = game.global.world;
     		}
 	    }
@@ -73,12 +73,10 @@ function BoneShrine() {
 }
 
 function BuySingleRunBonuses() {
-	if (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') {
-		if ((getPageSetting('c3GM_ST') == 1 || getPageSetting('c3GM_ST') == 3) && !game.singleRunBonuses.goldMaps.owned && game.global.b >=20) 
-			purchaseSingleRunBonus('goldMaps');
-		if ((getPageSetting('c3GM_ST') == 2 || getPageSetting('c3GM_ST') == 3)  && !game.singleRunBonuses.sharpTrimps.owned && game.global.b >=25) 
-			purchaseSingleRunBonus('sharpTrimps');
-	}
+	if (!game.singleRunBonuses.goldMaps.owned && game.global.b >=20 && (getPageSetting('c3GM_ST') == 1 || getPageSetting('c3GM_ST') == 3)) 
+		purchaseSingleRunBonus('goldMaps');
+	if (!game.singleRunBonuses.sharpTrimps.owned && game.global.b >=25 && (getPageSetting('c3GM_ST') == 2 || getPageSetting('c3GM_ST') == 3)) 
+		purchaseSingleRunBonus('sharpTrimps');
 }
 
 function PurchasePerkRespec() {
