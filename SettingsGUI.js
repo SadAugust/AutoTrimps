@@ -704,8 +704,7 @@ function initializeAllSettings() {
 	createSetting('rAlchDefaultSettings', 'AF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', {cell: 88, jobratio: '10,1,1,1', special: 'lsc'}, null, 'Challenges');
 	createSetting('rAlchZone', 'AF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [6], null, 'Challenges');
 	createSetting('rAlchFAMaps', 'FA Maps', 'Will run Fast Attack maps instead of the setting you\'ve selected in Alch: Special if you don\'t have Hyperspeed 2 for your current zone.', 'boolean', false, null, 'Challenges');
-	createSetting('rAlchDontBuyMets', 'No mets on 152', 'Will stop purchasing meteorologists on zone 152 to try and obtain an extra one through Atlantrimp which it\'ll run if you have enough food to afford an extra meteorologist from it. <br><br/>If you\'re not confident you\'ll achieve this it\'s best to leave this off as it\'ll have a negative impact on your radon per hour.', 'boolean', false, null, 'Challenges');
-    
+	
 	//Hypothermia
 	createSetting('rHypoOn', 'Hypothermia', 'Turn on Hypothermia settings. This also controls the entireity of Hypothermia. If you turn this off it will not do any specific farming during the challenge. Will automatically select LWC maps if you have enough fragments else it\'ll use SWC maps.', 'boolean', false, null, 'Challenges');
 	createSetting('rHypoPopup', 'Hypo Farm Settings', 'Click to adjust settings.', 'infoclick', false, null, 'Challenges');
@@ -925,8 +924,8 @@ function initializeAllSettings() {
 	document.getElementById('rHideExterminate').setAttribute('onclick', 'settingChanged("rHideExterminate"), modifyParentNode("rHideExterminate", "Rexterminateeq", "hide")');
 	modifyParentNode("rHideExterminate", "Rexterminateeq", "hide");
 
-	document.getElementById('rHideAlchemy').setAttribute('onclick', 'settingChanged("rHideAlchemy"), modifyParentNode("rHideAlchemy", "rAlchDontBuyMets", "hide")');
-	modifyParentNode("rHideAlchemy", "rAlchDontBuyMets", "hide");
+	document.getElementById('rHideAlchemy').setAttribute('onclick', 'settingChanged("rHideAlchemy"), modifyParentNode("rHideAlchemy", "rAlchFAMaps", "hide")');
+	modifyParentNode("rHideAlchemy", "rAlchFAMaps", "hide");
 
 	document.getElementById('autoheirlooms').setAttribute('onclick', 'settingChanged("autoheirlooms"), modifyParentNode("autoheirlooms", "raretokeep"), modifyParentNode("autoheirlooms", "slot7modsh")');
 		modifyParentNode("autoheirlooms", "raretokeep");
@@ -2046,8 +2045,7 @@ function updateCustomButtons() {
 	turnOff('rAlchDefaultSettings');
 	turnOff('rAlchZone');
 	radonon && getPageSetting('rAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('rAlchFAMaps') : turnOff('rAlchFAMaps');
-	radonon && getPageSetting('rAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('rAlchDontBuyMets') : turnOff('rAlchDontBuyMets');
-    
+	
 	//Hypothermia 
 	radonon && !getPageSetting('rHideHypothermia') && game.global.stringVersion != '5.5.1' ? turnOn('rHypoOn') : turnOff('rHypoOn');
 	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoPopup') : turnOff('rHypoPopup');

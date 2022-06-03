@@ -89,6 +89,7 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneBelow'>Use below</div>"
 	if (titleText.includes('Ship Farm')) tooltipText += "<div class='windowWorshipper'>Ships</div>"
 	if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowBuildings'>Buy Buildings</div>"
+	if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowAtlantrimp'>Run Atlantrimp</div>"
 	if (!titleText.includes('Prestige Raiding')) tooltipText += "<div class='windowJobRatio'>Job Ratio</div>"
 	if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'>Gather</div>"
 	if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowSpecial'>Special</div>"
@@ -117,7 +118,8 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 			bonedropdown: 10,
 			jobratio: '1,1,1,1',
 			worshipper: 50,
-			buildings: true
+			buildings: true,
+			atlantrimp: false
 		}
 		var style = "";
 		if (current.length - 1 >= x){
@@ -128,6 +130,7 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 			if (titleText.includes('Tribute Farm')) vals.tributes = autoTrimpSettings[varPrefix+"Settings"].value[x].tributes ? autoTrimpSettings[varPrefix+"Settings"].value[x].tributes : 0;
 			if (titleText.includes('Tribute Farm')) vals.mets = autoTrimpSettings[varPrefix+"Settings"].value[x].mets ? autoTrimpSettings[varPrefix+"Settings"].value[x].mets : 0;
 			if (titleText.includes('Tribute Farm')) vals.buildings = typeof(autoTrimpSettings[varPrefix+"Settings"].value[x].buildings) !== 'undefined' ? autoTrimpSettings[varPrefix+"Settings"].value[x].buildings : true;
+			if (titleText.includes('Tribute Farm')) vals.atlantrimp = typeof(autoTrimpSettings[varPrefix+"Settings"].value[x].atlantrimp) !== 'undefined' ? autoTrimpSettings[varPrefix+"Settings"].value[x].atlantrimp : false;
 			if (titleText.includes('Quagmire Farm')) vals.bogs = autoTrimpSettings[varPrefix+"Settings"].value[x].bogs ? autoTrimpSettings[varPrefix+"Settings"].value[x].bogs : 0;
 			if (titleText.includes('Insanity Farm')) vals.insanity = autoTrimpSettings[varPrefix+"Settings"].value[x].insanity ? autoTrimpSettings[varPrefix+"Settings"].value[x].insanity : 0;
 			if (titleText.includes('Alchemy Farm')) vals.potionstype = autoTrimpSettings[varPrefix+"Settings"].value[x].potion[0] ? autoTrimpSettings[varPrefix+"Settings"].value[x].potion[0] : 0;
@@ -166,6 +169,7 @@ function MAZLookalike(titleText, varPrefix, isItIn, event){
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneBelow'><input value='" + vals.bonebelow + "' type='number' id='windowBoneBelow" + x + "'/></div>";
 		if (titleText.includes('Ship Farm')) tooltipText += "<div class='windowWorshipper'><input value='" + vals.worshipper + "' type='number' id='windowWorshipper" + x + "'/></div>";
 		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.buildings) + "</div>";
+		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowAtlantrimp' style='text-align: center;'>" + buildNiceCheckbox("windowAtlantrimp" + x, null, vals.atlantrimp) + "</div>";
 		if (!titleText.includes('Prestige Raiding')) tooltipText += "<div class='windowJobRatio'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.gather + "' id='windowBoneGather" + x + "'>" + gatherDropdown + "</select></div>"
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.bonedropdown + "' id='windowBoneDropdown" + x + "'>" + boneDropdown + "</select></div>"
@@ -254,6 +258,7 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 		if (titleText.includes('Bone')) var bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);
 		if (titleText.includes('Ship Farm')) var worshipper = parseInt(document.getElementById('windowWorshipper' + x).value, 10);
 		if (titleText.includes('Tribute')) var buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
+		if (titleText.includes('Tribute')) var atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
 		if (!titleText.includes('Prestige Raiding')) var jobratio = document.getElementById('windowJobRatio' + x).value;
 		if (titleText.includes('Bone')) var gather = document.getElementById('windowBoneGather' + x).value;
 		if (titleText.includes('Bone')) var boneruntype = document.getElementById('windowBoneDropdown' + x).value;
@@ -294,7 +299,8 @@ function settingsWindowSave(titleText, varPrefix, reopen){
 			worshipper: worshipper,
 			boneruntype: boneruntype,
 			buildings: buildings,
-			jobratio: jobratio
+			jobratio: jobratio,
+			atlantrimp : atlantrimp
 		};
 		setting.push(thisSetting);
 	}
@@ -345,6 +351,8 @@ function addRow(varPrefix){
 					document.getElementById('windowBoneGather' + x).value = autoTrimpSettings[varPrefix+'DefaultSettings'].value.gather
 				if (document.getElementById('windowBuildings' + x) !== null)
 					document.getElementById('windowBuildings' + x).value = true;
+				if (document.getElementById('windowAtlantrimp' + x) !== null)
+					document.getElementById('windowAtlantrimp' + x).value = true;
 				if (document.getElementById('windowJobRatio' + x) !== null)
 					document.getElementById('windowJobRatio' + x).value = autoTrimpSettings[varPrefix+'DefaultSettings'].value.jobratio
 				updateWindowPreset(x, varPrefix);
@@ -396,8 +404,9 @@ function removeRow(index, titleText){
 	if (titleText.includes('Bone')) document.getElementById('windowBoneAmount' + index).value = 0;
 	if (titleText.includes('Bone')) document.getElementById('windowBoneBelow' + index).value = 0;
 	if (titleText.includes('Ship Farm')) document.getElementById('windowWorshipper' + index).value = 0;
-	if (titleText.includes('Tribute Farm')) {
+	if (titleText.includes('Tribute Farm')) { 
 		var checkBox = document.getElementById('windowBuildings' + index);
+		var checkBox = document.getElementById('windowAtlantrimp' + index);
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', true);
 	}

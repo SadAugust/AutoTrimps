@@ -129,7 +129,7 @@ background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,
 	margin-top: 0.5vw;
 }
 
-.windowDelete, .windowWorld, .windowCheckbox, .windowPreset, .windowRepeat, .windowRepeatUntil, .windowExit, .windowBwWorld, .windowCell, .windowTimes, .windowThrough, .windowRx, .windowPrio, .windowTx, .windowLevel, .windowRepeat, .windowGather, .windowSpecial, .windowTributes, .windowMets, .windowBogs, .windowInsanity, .windowPotionType, .windowPotionNumber, .windowBonfire, .windowBoneDropdown, .windowBoneBelow, .windowBoneAmount, .windowBoneGather, .windowJobRatio, .windowWorshipper, .windowBuildings {
+.windowDelete, .windowWorld, .windowCheckbox, .windowPreset, .windowRepeat, .windowRepeatUntil, .windowExit, .windowBwWorld, .windowCell, .windowTimes, .windowThrough, .windowRx, .windowPrio, .windowTx, .windowLevel, .windowRepeat, .windowGather, .windowSpecial, .windowTributes, .windowMets, .windowBogs, .windowInsanity, .windowPotionType, .windowPotionNumber, .windowBonfire, .windowBoneDropdown, .windowBoneBelow, .windowBoneAmount, .windowBoneGather, .windowJobRatio, .windowWorshipper, .windowBuildings, .windowAtlantrimp {
 	display: inline-block;
 }
 
@@ -169,8 +169,12 @@ background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,
 	width: 4%;
 }
 
-.windowBuildings{
-	width: 8%;
+.windowBuildings, .windowAtlantrimp{
+	width: 10%;
+}
+
+.windowAtlantrimp{
+	width: 10%;
 }
 
 .windowPotionType {

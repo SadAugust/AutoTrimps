@@ -1106,22 +1106,62 @@ function RautoMap() {
 				var rTrFJobRatio = rTrFSettings.jobratio;
 				//var rTrFMaxMaps = getPageSetting('rMapRepeatCount');
 				rTrFbuyBuildings = typeof(rTrFSettings.buildings) === 'undefined' ? true : rTrFSettings.buildings;
+				rTrFAtlantrimp = typeof(rTrFSettings.atlantrimp) === 'undefined' ? false : rTrFSettings.atlantrimp;
 				
+				var tributeCost = 0;
+				var metCost = 0;
+				if (rTrFTributes > game.buildings.Tribute.purchased) {
+					for (x = 0; x < rTrFTributes-game.buildings.Tribute.purchased; x++) {
+						tributeCost += Math.pow(1.05, game.buildings.Tribute.purchased) * 10000
+					}
+				}
+				if (rTrFMeteorologists > game.jobs.Meteorologist.owned) {
+					for (x = 0; x < rTrFMeteorologists-game.jobs.Meteorologist.owned; x++) {
+						metCost += Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned+x)*game.jobs.Meteorologist.cost.food[0]
+					}
+				}
+				var totalTrFCost = tributeCost + metCost;
+
 				if (game.global.challengeActive == "Wither" && rTrFMapLevel >= 0)
 					rTrFMapLevel = -1;
-				if (game.global.lastClearedCell + 2 >= rTrFCell && (rTrFTributes > game.buildings.Tribute.purchased || rTrFMeteorologists > game.jobs.Meteorologist.owned)) {
+				if (rTrFTributes > game.buildings.Tribute.purchased || rTrFMeteorologists > game.jobs.Meteorologist.owned) {
 					if (rTrFTributes > game.buildings.Tribute.purchased) 
 						rShouldTributeFarm = true;
 					if (rTrFMeteorologists > game.jobs.Meteorologist.owned)
-						//scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true),false,true,shippluslevel) >= Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned)*game.jobs.Meteorologist.cost.food[0] 
 						rShouldMetFarm = true;
-					rTrFCurrentMap = getCurrentMapObject();
+				}
+				if (!rShouldTimeFarm && game.global.world > 34 && game.mapUnlocks.AncientTreasure.canRunOnce && rTrFAtlantrimp && (rShouldTributeFarm || rShouldMetFarm)) {
+					var barnCost = 0;
+					//Seconds is 165 due to avg of 5x caches (20s per), 4x chronoimps (5s per), 1x jestimp (45s)
+					var resourceFarmed = scaleToCurrentMapLocal(simpleSecondsLocal("food", 165, true, rTrFJobRatio),false,true,rTrFMapLevel);
+					if (totalTrFCost > (game.resources.food.max*(1+(game.portal.Packrat.modifier*game.portal.Packrat.radLevel))))
+						barnCost += game.buildings.Barn.cost.food()
+					resourceFarmed -= barnCost;
+
+					if ((game.resources.food.owned + barnCost) * 2 > resourceFarmed && game.resources.food.owned + barnCost > totalTrFCost / 2) {
+						if (game.global.mapsActive && getCurrentMapObject().name !== 'Atlantrimp') {
+							mapsClicked();
+							recycleMap();
+						}
+						if (game.global.preMapsActive) {
+							for (var map in game.global.mapsOwnedArray) {
+								if (game.global.mapsOwnedArray[map].name == 'Atlantrimp') {
+									selectMap(game.global.mapsOwnedArray[map].id)
+									rRunMap();
+								}
+							}
+							game.global.mapRunCounter += 1;
+							debug('Running Atlamtrimp');
+						}
+					}
 				}
 				//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
 				if (!rShouldTributeFarm && !rShouldMetFarm && rTrFCurrentMap != undefined) {
-					if (getPageSetting('rMapRepeatCount')) debug("Tribute Farm took " + ((game.global.mapRunCounter + 1)+((getCurrentMapCell().level-1)/getCurrentMapObject().size))  + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
-					mapsClicked();
-					recycleMap(getMapIndex(rTrFCurrentMap));
+					if (getPageSetting('rMapRepeatCount')) debug("Tribute Farm took " + (game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level  -1) / getCurrentMapObject().size : 0))  + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+					if (game.global.mapsActive) {
+						mapsClicked();
+						recycleMap(getMapIndex(rTrFCurrentMap));
+					}
 					rTrFCurrentMap = undefined;        
 					if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
 						toggleAutoStructure();
@@ -1711,32 +1751,11 @@ function RautoMap() {
 					break;
 				}
 				//Atlantrimp
-				if (theMap.name == 'Atlantrimp' && game.mapUnlocks.AncientTreasure.canRunOnce && !game.global.runningChallengeSquared) {
+				if (theMap.name == 'Atlantrimp' && game.mapUnlocks.AncientTreasure.canRunOnce) {
 					var atlantrimp = getPageSetting('RAtlantrimp')[0] > 0 && getPageSetting('RAtlantrimp')[1] >= 0 ? getPageSetting('RAtlantrimp') : [1000,1000];
 					if ((game.global.world >= atlantrimp[0] && ((game.global.lastClearedCell + 2) >= atlantrimp[1]))) {
 							selectedMap = theMap.id;
 							break;
-					}
-					if (getPageSetting('RAlchDontBuyMets') && game.global.challengeActive == "Alchemy" && game.global.lastClearedCell >= 96 && game.global.world == 152) {
-						//Calculating how many meteorologists can be purchased.
-						var affordableMets = getMaxAffordable(
-							game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
-							game.resources.food.owned,
-							game.jobs.Meteorologist.cost.food[1],
-							true
-						);
-
-						//Figuring out the cost of the currently affordable meteorologists and the cost of the one after that.
-						var metCost = (Math.pow(5, (game.jobs.Meteorologist.owned)) * 1000000);
-						for (i = 1; i < affordableMets + 1; i++) {
-						    metCost += (Math.pow(5, (game.jobs.Meteorologist.owned+i)) * 1000000);
-						}
-
-						//Runs Atlantrimp if you have enough food to purchase an extra Meteorologist due to it.
-						if (game.resources.food.owned > (metCost / 2)) {
-							selectedMap = theMap.id;
-							break;
-						}
 					}
 				}
 				//Melting Point
@@ -1906,6 +1925,7 @@ function RautoMap() {
 					selectedMap = RShouldFarmMapCreation(rTrFMapLevel, rTrFSpecial); 
 					workerRatio = rTrFJobRatio;
 					rTributeFarming = true;
+					rTrFCurrentMap = 'rTributeFarm'
 				}
 				else if (rShouldWorshipperFarm) {
 					selectedMap = RShouldFarmMapCreation(shippluslevel, shipspecial);
@@ -1988,6 +2008,9 @@ function RautoMap() {
 				}
 				//Quest Farming
 				if (rShouldQuest == 6 && game.global.mapBonus >= 4)
+					repeatClicked();
+				//Tribute Farm
+				if ((rShouldTributeFarm || rShouldMetFarm) && (game.resources.food.owned + scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true),false,true,rTrFMapLevel)) >= totalTrFCost) 
 					repeatClicked();
 				//Map Bonus
 				if (rShouldMaxMapBonus && (game.global.mapBonus >= (maxMapBonusLimit - 1) || getCurrentMapObject().bonus != getPageSetting('rMapSpecial')) && !rShouldTimeFarm)

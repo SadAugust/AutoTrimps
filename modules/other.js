@@ -2466,7 +2466,6 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		var totalFraction = desiredRatios.reduce((a,b) => {return a + b;});
 	}
 	//Come home to the impossible flavour of balanced resource gain. Come home, to simple seconds.
-    var compatible = ["Farmer", "Lumberjack", "Miner", "Dragimp", "Explorer"];
     var jobName;
 	var pos;
     switch (what) {
@@ -2510,12 +2509,10 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 				
     var amt_local = workers * job.modifier * seconds;
     amt_local += (amt_local * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
-	if (game.global.stringVersion >= '5.7.0') {
-		if (what != "gems" && game.permaBoneBonuses.multitasking.owned > 0 && (game.resources.trimps.owned >= game.resources.trimps.realMax())) amt_local *= (1 + game.permaBoneBonuses.multitasking.mult());
-	}
-    if (what != "science" && what != "fragments"){
-        if (game.global.challengeActive == "Alchemy") amt_local *= alchObj.getPotionEffect("Potion of Finding");
-    }
+	if (what != "gems" && game.permaBoneBonuses.multitasking.owned > 0 && (game.resources.trimps.owned >= game.resources.trimps.realMax())) 
+		amt_local *= (1 + game.permaBoneBonuses.multitasking.mult());
+    if (what != "science" && what != "fragments" && game.global.challengeActive == "Alchemy") 
+		amt_local *= alchObj.getPotionEffect("Potion of Finding");
     if (game.global.pandCompletions && game.global.universe == 2 && what != "fragments") 
 		amt_local *= game.challenges.Pandemonium.getTrimpMult();
     if (getPerkLevel("Observation") > 0 && game.portal.Observation.trinkets > 0) 
@@ -2530,7 +2527,8 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt_local *= game.jobs.Meteorologist.getExtraMult();
     if (Fluffy.isRewardActive('gatherer')) 
 		amt_local *= 2;
-    
+	if (what == "wood" && game.global.challengeActive == "Hypothermia") 
+		amt *= game.challenges.Hypothermia.getWoodMult();
     if (game.global.challengeActive == "Unbalance")
         amt_local *= game.challenges.Unbalance.getGatherMult();
 
@@ -2544,7 +2542,8 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
         amt_local *= 10;
         amt_local *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
     }
-    if (game.challenges.Nurture.boostsActive()) amt_local *= game.challenges.Nurture.getResourceBoost();
+    if (game.challenges.Nurture.boostsActive()) 
+		amt_local *= game.challenges.Nurture.getResourceBoost();
     if (event == null || heirloom == null || game.global.StaffEquipped.name == autoTrimpSettings[heirloom].value) {
             amt_local = calcHeirloomBonus("Staff", jobName + "Speed", amt_local);
 	}
@@ -2556,16 +2555,10 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		}
 		amt_local = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"),amt_local);
     }
+	var turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
 
-    if (game.global.playerGathering == what){
-        if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == "food" || what == "metal" || what == "wood")){
-            var tBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
-            amt_local *= tBonus;
-        }
-        amt_local += getPlayerModifier() * seconds;
-    }
-    if (game.global.playerGathering != what) {
-		amt_local *=2;
+    if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == "food" || what == "metal" || what == "wood")) {
+        amt_local *= turkimpBonus;
         amt_local += getPlayerModifier() * seconds;
     }
     return amt_local;
