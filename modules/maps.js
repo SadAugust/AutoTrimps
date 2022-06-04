@@ -751,7 +751,7 @@ var RdoVoids = false;
 var RneedToVoid = false;
 //Time Farm
 var rTimeFarm = false;
-var rShouldTimeFarm = false;
+rShouldTimeFarm = false;
 var rTFCurrentMap = undefined;
 var rTFZoneCleared = 0;
 //Tribute Farm
@@ -825,7 +825,7 @@ RAMPmapbought.fill(false); //Unsure if necessary - Need to test
 var RAMPfragmappybought = false;
 var RAMPfragfarming = false;
 //Smithy Farming
-var rShouldSmithyFarm = false;
+rShouldSmithyFarm = false;
 var rShouldSmithyGemFarm = false;
 var rShouldSmithyWoodFarm = false;
 var rShouldSmithyMetalFarm = false;
