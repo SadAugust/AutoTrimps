@@ -1228,7 +1228,7 @@ function RautoMap() {
 					rShouldSmithyFarm = true;
 				}
 
-				if (!rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && game.global.mapsActive) {
+				if (rShouldSmithyFarm && !rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && game.global.mapsActive) {
 					if ((!rShouldSmithyGemFarm && getCurrentMapObject().bonus.includes('sc')) || (!rShouldSmithyWoodFarm && getCurrentMapObject().bonus.includes('wc')) || (!rShouldSmithyMetalFarm && getCurrentMapObject().bonus.includes('mc'))) {
 						mapsClicked();
 						recycleMap();
