@@ -575,9 +575,9 @@ function RbuyJobs() {
         desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
     }
     
-    if (getPageSetting("NoFarmersAbove") && game.global.world >= getPageSetting("NoFarmerZone") && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm)
+    if (getPageSetting("NoFarmersAbove") && game.global.world >= getPageSetting("NoFarmerZone") && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm)
         desiredRatios[0] = 0;
-    if (getPageSetting('NoLumberjackMP') && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
+    if (getPageSetting('NoLumberjackMP') && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
         desiredRatios[1] = 0;
     
 	if (typeof workerRatio !== 'undefined' && workerRatio !== null) {
@@ -608,10 +608,10 @@ function RbuyJobs() {
 				}
 				//Get ratio from AT
 				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(RworkerRatios('R' + worker + 'Ratio'));
-				if (getPageSetting('NoFarmersAbove') && game.global.world >= getPageSetting('NoFarmerZone')) {
+				if (getPageSetting('NoFarmersAbove') && !rShouldSmithyFarm && game.global.world >= getPageSetting('NoFarmerZone')) {
 					desiredRatios[ratioWorkers.indexOf("Farmer")] = 0;
 				}
-				if (getPageSetting('NoLumberjackMP') && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
+				if (getPageSetting('NoLumberjackMP') && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
 					desiredRatios[ratioWorkers.indexOf("Lumberjack")] = 0;
 				}
 			}

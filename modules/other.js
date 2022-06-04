@@ -2528,7 +2528,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
     if (Fluffy.isRewardActive('gatherer')) 
 		amt_local *= 2;
 	if (what == "wood" && game.global.challengeActive == "Hypothermia") 
-		amt *= game.challenges.Hypothermia.getWoodMult();
+		amt_local *= game.challenges.Hypothermia.getWoodMult();
     if (game.global.challengeActive == "Unbalance")
         amt_local *= game.challenges.Unbalance.getGatherMult();
 

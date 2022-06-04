@@ -279,6 +279,13 @@ function initializeAllSettings() {
 	createSetting('rdTributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'mazArray', [], null, 'Daily');
 	createSetting('rdTributeFarmDefaultSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'mazDefaultArray', {cell: 83, jobratio: '100,1,1,1'}, null, 'Daily');
 	createSetting('rdTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Daily');
+	
+	//Daily Smithy Farming
+	createSetting('rdSmithyFarm', 'Smithy Farm', 'Turn this on if you want to use Smithy Farming. ', 'boolean', false, null, 'Daily');
+	createSetting('rdSmithyFarmPopup', 'Smithy Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Daily');
+	createSetting('rdSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
+	createSetting('rdSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', {cell: 83}, null, 'Daily');
+	createSetting('rdSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Daily');
 
 	//Helium Heirloom
 	document.getElementById('dBWraidingmax').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -299,7 +306,7 @@ function initializeAllSettings() {
 	createSetting('drunnewvoidspoison', 'New Voids Poison', 'Only run new voids in poison zones.', 'boolean', false, null, 'Daily');
 	
 	//Radon Daily Portal
-	document.getElementById('rdTributeFarmZone').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rdSmithyFarmPopup').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('RFillerRun', 'Filler run', 'Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.', 'boolean', false, null, 'Daily');
 	createSetting('u1daily', 'Daily in U1', 'If this is on, you will do your daily in U1. ', 'boolean', false, null, 'Daily');
@@ -511,6 +518,13 @@ function initializeAllSettings() {
 	createSetting('rTributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', {cell: 83, jobratio: '100,1,1,1'}, null, 'Μaps');
 	createSetting('rTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
 	
+	//Smithy Farming
+	createSetting('rSmithyFarm', 'Smithy Farm', 'Turn this on if you want to use Smithy Farming. ', 'boolean', false, null, 'Μaps');
+	createSetting('rSmithyFarmPopup', 'Smithy Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Μaps');
+	createSetting('rSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', {cell: 83}, null, 'Μaps');
+	createSetting('rSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
+	
 	//Spire
 	//Helium
 	createSetting('MaxStacksForSpire', 'Max Map Bonus for Spire', 'Get max map bonus before running the Spire.', 'boolean', false, null, 'Spire');
@@ -608,8 +622,15 @@ function initializeAllSettings() {
 	createSetting('rc3TributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', {cell: 83, jobratio: '100,1,1,1'}, null, 'C3');
 	createSetting('rc3TributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 	
+	//Smithy Farming
+	createSetting('rc3SmithyFarm', 'Smithy Farm', 'Turn this on if you want to use Smithy Farming. ', 'boolean', false, null, 'C3');
+	createSetting('rc3SmithyFarmPopup', 'Smithy Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'C3');
+	createSetting('rc3SmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
+	createSetting('rc3SmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', {cell: 83}, null, 'C3');
+	createSetting('rc3SmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'C3');
+	
     //Unbalance
-	document.getElementById('rc3TributeFarmZone').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rc3SmithyFarmPopup').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rUnbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
 	createSetting('rUnbalanceZone', 'U: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C3');
 	createSetting('rUnbalanceStacks', 'U: Stacks', 'The amount of stack you have to reach before clearing them.','value' ,-1, null, 'C3');
@@ -895,13 +916,17 @@ function initializeAllSettings() {
 	
 	createSetting('EnableAFK', 'Go AFK Mode', '(Action Button). Go AFK uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU and RAM saving mode. Everything will resume when you come back and press the Back button. Console debug output is also disabled. The blue color means this is not a settable setting, just a button. You can now also click the Zone # (World Info) area to go AFK now.', 'action', 'MODULES["performance"].EnableAFKMode()', null, 'Display');
 	document.getElementById('battleSideTitle').setAttribute('onclick', 'MODULES["performance"].EnableAFKMode()');
+	//Smithy Farming
+	document.getElementById('rSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Smithy Farm", "rSmithyFarm")');
+	document.getElementById('rdSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Smithy Farm", "rdSmithyFarm")');
+	document.getElementById('rc3SmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Smithy Farm", "rc3SmithyFarm")');
 	//Time Farming 
 	document.getElementById('rBoneShrinePopup').setAttribute('onclick', 'MAZLookalike("Bone Shrine", "rBoneShrine")');
 	document.getElementById('rTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Time Farm", "rTimeFarm")');
 	document.getElementById('rdTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Time Farm", "rdTimeFarm")');
 	document.getElementById('rc3TimeFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm")');
 	//Tribute Farming 
-	document.getElementById('rTributeFarmPopup').setAttribute('onclick', 'MAZLookalike("Tribute Farm", "rTributeFarm")');
+	document.getElementById('rTributeFarmPopup').setAttribute('onclick', 'MAZLookalike("Tribute Farm", "rTributeFarm")'); 
 	document.getElementById('rdTributeFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Tribute Farm", "rdTributeFarm")');
 	document.getElementById('rc3TributeFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Tribute Farm", "rc3TributeFarm")');
 	//Ship Farming
@@ -1649,6 +1674,13 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAutoPortalDaily')==1 ? turnOn('RdHeliumHrBuffer') : turnOff('RdHeliumHrBuffer');
 	radonon && getPageSetting('RAutoPortalDaily')>0 ? turnOn('RdHeliumHourChallenge') : turnOff('RdHeliumHourChallenge');
 
+	//Radon Daily Time Farming
+	radonon ? turnOn('rdTimeFarm'): turnOff('rdTimeFarm');
+	(radonon && getPageSetting('rdTimeFarm')) ? turnOn('rdTimeFarmPopup'): turnOff('rdTimeFarmPopup');
+	turnOff('rdTimeFarmSettings');
+	turnOff('rdTimeFarmDefaultSettings');
+	turnOff('rdTimeFarmZone');
+
 	//Radon Daily Tribute Farming
 	radonon ? turnOn('rdTributeFarm'): turnOff('rdTributeFarm');
 	(radonon && getPageSetting('rdTributeFarm')) ? turnOn('rdTributeFarmPopup'): turnOff('rdTributeFarmPopup');
@@ -1656,12 +1688,12 @@ function updateCustomButtons() {
 	turnOff('rdTributeFarmDefaultSettings');
 	turnOff('rdTributeFarmZone');
 
-	//Radon Daily Time Farming
-	radonon ? turnOn('rdTimeFarm'): turnOff('rdTimeFarm');
-	(radonon && getPageSetting('rdTimeFarm')) ? turnOn('rdTimeFarmPopup'): turnOff('rdTimeFarmPopup');
-	turnOff('rdTimeFarmSettings');
-	turnOff('rdTimeFarmDefaultSettings');
-	turnOff('rdTimeFarmZone');
+	//Daily Smithy Farming  
+	radonon ? turnOn('rdSmithyFarm'): turnOff('rdSmithyFarm');
+	(radonon && getPageSetting('rdSmithyFarm')) ? turnOn('rdSmithyFarmPopup'): turnOff('rdSmithyFarmPopup');
+	turnOff('rdSmithyFarmSettings');
+	turnOff('rdSmithyFarmDefaultSettings');
+	turnOff('rdSmithyFarmZone');
 	
 	//C2
 	!radonon ? turnOn('FinishC2'): turnOff('FinishC2');
@@ -1696,6 +1728,14 @@ function updateCustomButtons() {
 	turnOff('rc3TributeFarmSettings');
 	turnOff('rc3TributeFarmDefaultSettings');
 	turnOff('rc3TributeFarmZone');
+
+	//C3 Smithy Farming  
+	radonon ? turnOn('rc3SmithyFarm'): turnOff('rc3SmithyFarm');
+	(radonon && getPageSetting('rc3SmithyFarm')) ? turnOn('rc3SmithyFarmPopup'): turnOff('rc3SmithyFarmPopup');
+	turnOff('rc3SmithyFarmSettings');
+	turnOff('rc3SmithyFarmDefaultSettings');
+	turnOff('rc3SmithyFarmZone');
+
 	//Buildings
 	!radonon ? turnOn('BuyBuildingsNew'): turnOff('BuyBuildingsNew');
 	!radonon ? turnOn('MaxGym'): turnOff('MaxGym');
@@ -1865,19 +1905,27 @@ function updateCustomButtons() {
 	radonon && game.global.highestRadonLevelCleared >= 49 ? turnOn('RMeltingPoint') : turnOff('RMeltingPoint');
 	//Frozen Castle
 	radonon && game.global.stringVersion != '5.5.1' && game.global.highestRadonLevelCleared >= 174 ? turnOn('rFrozenCastle') : turnOff('rFrozenCastle');
+	
 	//Tribute Farming
-
 	radonon ? turnOn('rTributeFarm'): turnOff('rTributeFarm');
 	(radonon && getPageSetting('rTributeFarm')) ? turnOn('rTributeFarmPopup'): turnOff('rTributeFarmPopup');
 	turnOff('rTributeFarmSettings');
 	turnOff('rTributeFarmDefaultSettings');
 	turnOff('rTributeFarmZone');
+
 	//Time Farming  
 	radonon ? turnOn('rTimeFarm'): turnOff('rTimeFarm');
 	(radonon && getPageSetting('rTimeFarm')) ? turnOn('rTimeFarmPopup'): turnOff('rTimeFarmPopup');
 	turnOff('rTimeFarmSettings');
 	turnOff('rTimeFarmDefaultSettings');
 	turnOff('rTimeFarmZone');
+
+	//Smithy Farming  
+	radonon ? turnOn('rSmithyFarm'): turnOff('rSmithyFarm');
+	(radonon && getPageSetting('rSmithyFarm')) ? turnOn('rSmithyFarmPopup'): turnOff('rSmithyFarmPopup');
+	turnOff('rSmithyFarmSettings');
+	turnOff('rSmithyFarmDefaultSettings');
+	turnOff('rSmithyFarmZone');
 
 	//Spire
 	!radonon ? turnOn('MaxStacksForSpire'): turnOff('MaxStacksForSpire');
