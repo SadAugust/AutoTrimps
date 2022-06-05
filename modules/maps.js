@@ -1159,15 +1159,15 @@ function RautoMap() {
 									rRunMap();
 								}
 							}
-							game.global.mapRunCounter += 1;
 							debug('Running Atlamtrimp');
 						}
 					}
 				}
 				//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
 				if (!rShouldTributeFarm && !rShouldMetFarm && rTrFCurrentMap != undefined) {
+					var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
 					if (getPageSetting('rMapRepeatCount')) {
-						debug("Tribute Farm took " + (game.global.mapRunCounter + ((getCurrentMapCell().level - 1) / getCurrentMapObject().size)) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+						debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 					}
 					if (game.global.mapsActive) {
 						mapsClicked();
