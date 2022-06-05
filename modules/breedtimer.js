@@ -9,7 +9,7 @@ function ATGA2() {
 		var trimps = game.resources.trimps;
 		var trimpsMax = trimps.realMax();
 		var employedTrimps = trimps.employed;
-		if (game.permaBoneBonuses.multitasking.owned) employedTrimps *= (1 - game.permaBoneBonuses.multitasking.mult());
+		if (game.permaBoneBonuses.multitasking.owned) employedTrimps *= (1 + game.permaBoneBonuses.multitasking.mult());
 		var maxBreedable = new DecimalBreed(trimpsMax).minus(trimps.employed);
 		var potencyMod = new DecimalBreed(trimps.potency);
 		if (game.upgrades.Potency.done > 0) potencyMod = potencyMod.mul(Math.pow(1.1, game.upgrades.Potency.done));

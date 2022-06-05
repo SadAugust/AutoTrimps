@@ -45,7 +45,7 @@ var $u1Graph = document.getElementById("graphFooterLine1"),
 for (var item in (($u1graphSel.id = "u1graphSelection"), $u1graphSel.setAttribute("style", ""), $u1graphSel.setAttribute("onchange", "drawGraph()"), u1graphList)) {
     var $opt = document.createElement("option");
     ($opt.value = u1graphList[item]), ($opt.text = u1graphList[item]), $u1graphSel.appendChild($opt);
-} 
+}
 var $u2Graph = document.getElementById("graphFooterLine1"),
     u2graphList = [
         "Radon - Rn/Hr",
@@ -68,12 +68,12 @@ for (var item in (($u2graphSel.id = "u2graphSelection"), $u2graphSel.setAttribut
     ($opt.value = u2graphList[item]), ($opt.text = u2graphList[item]), $u2graphSel.appendChild($opt);
 }
 $universeFooter.appendChild($universeSel),
-$universeFooter.appendChild($u1graphSel),
-$universeFooter.appendChild($u2graphSel),
-($universeFooter.innerHTML +=
-    '<div><button onclick="drawGraph(true,false)" style="margin-left:0.5em; width:2em;">\u2191</button></div><div><button onclick="drawGraph(false,true)" style="margin-left:0.5em; width:2em;">\u2193</button></div><div><button onclick="drawGraph()" style="margin-left:0.5em;">Refresh</button></div><div style="flex:0 100 5%;"></div><div><input type="checkbox" id="clrChkbox" onclick="toggleClearButton();"></div><div style="margin-left: 0.5vw;"><button id="clrAllDataBtn" onclick="clearData(null,true); drawGraph();" class="btn" disabled="" style="flex:auto; padding: 2px 6px;border: 1px solid white;">Clear All Previous Data</button></div><div style="flex:0 100 5%;"></div><div style="flex:0 2 3.5vw;"><input style="width:100%;min-width: 40px;" id="deleteSpecificTextBox"></div><div style="flex:auto; margin-left: 0.5vw;"><button onclick="deleteSpecific(); drawGraph();">Delete Specific Portal</button></div><div style="flex:0 100 5%;"></div><div style="flex:auto;"><button  onclick="GraphsImportExportTooltip(\'ExportGraphs\', null, \'update\')" onmouseover=\'tooltip("Tips", "customText", event, "Export Graph Database will make a backup of all the graph data to a text string.<b>DISCLAIMER:</b> Takes quite a long time to generate.")\' onmouseout=\'tooltip("hide")\'>Export your Graph Database</button></div><div style="float:right; margin-right: 0.5vw;"><button onclick="addGraphNoteLabel()">Add Note/Label</button></div><div style="float:right; margin-right: 0.5vw;"><button onclick="toggleSpecificGraphs()">Invert Selection</button></div><div style="float:right; margin-right: 1vw;"><button onclick="toggleAllGraphs()">All Off/On</button></div>'),
-(document.getElementById("graphFooterLine2").innerHTML +=
-    '<span style="float: left;" onmouseover=\'tooltip("Tips", "customText", event, "You can zoom by dragging a box around an area. You can turn portals off by clicking them on the legend. Quickly view the last portal by clicking it off, then Invert Selection. Or by clicking All Off, then clicking the portal on. To delete a portal, Type its portal number in the box and press Delete Specific. Using negative numbers in the Delete Specific box will KEEP that many portals (starting counting backwards from the current one), ie: if you have Portals 1000-1015, typing -10 will keep 1005-1015. There is a browser data storage limitation of 10MB, so do not exceed 20 portals-worth of data.")\' onmouseout=\'tooltip("hide")\'>Tips: Hover for usage tips.</span><input style="height: 20px; float: right; margin-right: 0.5vw;" type="checkbox" id="rememberCB"><span style="float: right; margin-right: 0.5vw;">Try to Remember Which Portals are Selected when switching between Graphs:</span><input onclick="toggleDarkGraphs()" style="height: 20px; float: right; margin-right: 0.5vw;" type="checkbox" id="blackCB"><span style="float: right; margin-right: 0.5vw;">Black Graphs:</span>');
+    $universeFooter.appendChild($u1graphSel),
+    $universeFooter.appendChild($u2graphSel),
+    ($universeFooter.innerHTML +=
+        '<div><button onclick="drawGraph(true,false)" style="margin-left:0.5em; width:2em;">\u2191</button></div><div><button onclick="drawGraph(false,true)" style="margin-left:0.5em; width:2em;">\u2193</button></div><div><button onclick="drawGraph()" style="margin-left:0.5em;">Refresh</button></div><div style="flex:0 100 5%;"></div><div><input type="checkbox" id="clrChkbox" onclick="toggleClearButton();"></div><div style="margin-left: 0.5vw;"><button id="clrAllDataBtn" onclick="clearData(null,true); drawGraph();" class="btn" disabled="" style="flex:auto; padding: 2px 6px;border: 1px solid white;">Clear All Previous Data</button></div><div style="flex:0 100 5%;"></div><div style="flex:0 2 3.5vw;"><input style="width:100%;min-width: 40px;" id="deleteSpecificTextBox"></div><div style="flex:auto; margin-left: 0.5vw;"><button onclick="deleteSpecific(); drawGraph();">Delete Specific Portal</button></div><div style="flex:0 100 5%;"></div><div style="flex:auto;"><button  onclick="GraphsImportExportTooltip(\'ExportGraphs\', null, \'update\')" onmouseover=\'tooltip("Tips", "customText", event, "Export Graph Database will make a backup of all the graph data to a text string.<b>DISCLAIMER:</b> Takes quite a long time to generate.")\' onmouseout=\'tooltip("hide")\'>Export your Graph Database</button></div><div style="float:right; margin-right: 0.5vw;"><button onclick="addGraphNoteLabel()">Add Note/Label</button></div><div style="float:right; margin-right: 0.5vw;"><button onclick="toggleSpecificGraphs()">Invert Selection</button></div><div style="float:right; margin-right: 1vw;"><button onclick="toggleAllGraphs()">All Off/On</button></div>'),
+    (document.getElementById("graphFooterLine2").innerHTML +=
+        '<span style="float: left;" onmouseover=\'tooltip("Tips", "customText", event, "You can zoom by dragging a box around an area. You can turn portals off by clicking them on the legend. Quickly view the last portal by clicking it off, then Invert Selection. Or by clicking All Off, then clicking the portal on. To delete a portal, Type its portal number in the box and press Delete Specific. Using negative numbers in the Delete Specific box will KEEP that many portals (starting counting backwards from the current one), ie: if you have Portals 1000-1015, typing -10 will keep 1005-1015. There is a browser data storage limitation of 10MB, so do not exceed 20 portals-worth of data.")\' onmouseout=\'tooltip("hide")\'>Tips: Hover for usage tips.</span><input style="height: 20px; float: right; margin-right: 0.5vw;" type="checkbox" id="rememberCB"><span style="float: right; margin-right: 0.5vw;">Try to Remember Which Portals are Selected when switching between Graphs:</span><input onclick="toggleDarkGraphs()" style="height: 20px; float: right; margin-right: 0.5vw;" type="checkbox" id="blackCB"><span style="float: right; margin-right: 0.5vw;">Black Graphs:</span>');
 function toggleClearButton() {
     document.getElementById("clrAllDataBtn").disabled = !document.getElementById("clrChkbox").checked;
 }
@@ -130,32 +130,32 @@ function GraphsImportExportTooltip(a) {
                 "This is your GRAPH DATABASE save string. There are many like it but this one is yours. Save this save somewhere safe so you can save time next time. <br/><br/><textarea id='exportArea' style='width: 100%' rows='5'>" +
                 JSON.stringify(allSaveData) +
                 "</textarea>"),
-            (g = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip()'>Got it</div>"),
-            document.queryCommandSupported("copy")
-                ? ((g += "<div id='clipBoardBtn' class='btn btn-success'>Copy to Clipboard</div>"),
-                  (e = function () {
-                      document.getElementById("exportArea").select(),
-                          document.getElementById("clipBoardBtn").addEventListener("click", function () {
-                              document.getElementById("exportArea").select();
-                              try {
-                                  document.execCommand("copy");
-                              } catch (i) {
-                                  document.getElementById("clipBoardBtn").innerHTML = "Error, not copied";
-                              }
-                          });
-                  }))
-                : (e = function () {
-                      document.getElementById("exportArea").select();
-                  }),
-            (g += "</div>")),
+                (g = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip()'>Got it</div>"),
+                document.queryCommandSupported("copy")
+                    ? ((g += "<div id='clipBoardBtn' class='btn btn-success'>Copy to Clipboard</div>"),
+                        (e = function () {
+                            document.getElementById("exportArea").select(),
+                                document.getElementById("clipBoardBtn").addEventListener("click", function () {
+                                    document.getElementById("exportArea").select();
+                                    try {
+                                        document.execCommand("copy");
+                                    } catch (i) {
+                                        document.getElementById("clipBoardBtn").innerHTML = "Error, not copied";
+                                    }
+                                });
+                        }))
+                    : (e = function () {
+                        document.getElementById("exportArea").select();
+                    }),
+                (g += "</div>")),
             "ImportGraphs" == a &&
-                ((f = "Replaces your GRAPH DATABASE with this save string! It'll be fine, I promise.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>"),
+            ((f = "Replaces your GRAPH DATABASE with this save string! It'll be fine, I promise.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>"),
                 (g = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); loadGraphs();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>"),
                 (e = function () {
                     document.getElementById("importBox").focus();
                 })),
             "AppendGraphs" == a &&
-                ((f = "Appends to your GRAPH DATABASE with this save string (combines them)! It'll be fine, I hope.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>"),
+            ((f = "Appends to your GRAPH DATABASE with this save string (combines them)! It'll be fine, I hope.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>"),
                 (g = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); appendGraphs();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>"),
                 (e = function () {
                     document.getElementById("importBox").focus();
@@ -324,24 +324,24 @@ function initializeData() {
 var GraphsVars = {};
 function InitGraphsVars() {
     (GraphsVars.currentPortal = 0),
-    (GraphsVars.OVKcellsInWorld = 0),
-    (GraphsVars.lastOVKcellsInWorld = 0),
-    (GraphsVars.currentworld = 0),
-    (GraphsVars.lastrunworld = 0),
-    (GraphsVars.aWholeNewWorld = !1),
-    (GraphsVars.lastZoneStartTime = 0),
-    (GraphsVars.ZoneStartTime = 0),
-    (GraphsVars.MapBonus = 0),
-    (GraphsVars.aWholeNewPortal = 0),
-    (GraphsVars.currentPortal = 0)
+        (GraphsVars.OVKcellsInWorld = 0),
+        (GraphsVars.lastOVKcellsInWorld = 0),
+        (GraphsVars.currentworld = 0),
+        (GraphsVars.lastrunworld = 0),
+        (GraphsVars.aWholeNewWorld = !1),
+        (GraphsVars.lastZoneStartTime = 0),
+        (GraphsVars.ZoneStartTime = 0),
+        (GraphsVars.MapBonus = 0),
+        (GraphsVars.aWholeNewPortal = 0),
+        (GraphsVars.currentPortal = 0)
     if (allSaveData.length > 0) {
-        if (allSaveData[allSaveData.length-1].universeSelection !== undefined)
-            document.getElementById('universeSelection').value = allSaveData[allSaveData.length-1].universeSelection
-        if (allSaveData[allSaveData.length-1].u1graphSelection !== undefined)
-            document.getElementById('u1graphSelection').value = allSaveData[allSaveData.length-1].u1graphSelection
-        if (allSaveData[allSaveData.length-1].u2graphSelection !== undefined)
-            document.getElementById('u2graphSelection').value = allSaveData[allSaveData.length-1].u2graphSelection
-    }      
+        if (allSaveData[allSaveData.length - 1].universeSelection !== undefined)
+            document.getElementById('universeSelection').value = allSaveData[allSaveData.length - 1].universeSelection
+        if (allSaveData[allSaveData.length - 1].u1graphSelection !== undefined)
+            document.getElementById('u1graphSelection').value = allSaveData[allSaveData.length - 1].u1graphSelection
+        if (allSaveData[allSaveData.length - 1].u2graphSelection !== undefined)
+            document.getElementById('u2graphSelection').value = allSaveData[allSaveData.length - 1].u2graphSelection
+    }
 };
 InitGraphsVars();
 
@@ -468,7 +468,7 @@ function setGraphData(graph) {
     switch (graph) {
         case "Refresh":
             graphData = [];
-            
+
             title = "Refresh";
             xTitle = "Refresh";
             yTitle = "Refresh";
@@ -864,14 +864,14 @@ function setGraphData(graph) {
         graphData = [];
         for (var i in allSaveData) {
             if (typeCheck && typeof allSaveData[i][item] != typeCheck) continue;
-            if (allSaveData[i].universe !== undefined) { 
+            if (allSaveData[i].universe !== undefined) {
                 if (allSaveData[i].universe != document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value.charAt(9)) {
                     for (var k in graphData) {
                         if (graphData[k].universe !== undefined && graphData[k].universe != document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value.charAt(9)) {
                             graphData[k].pop({
-                            name: "Portal " + allSaveData[i].totalPortals + ": " + allSaveData[i].challenge,
-                            data: [],
-                        });
+                                name: "Portal " + allSaveData[i].totalPortals + ": " + allSaveData[i].challenge,
+                                data: [],
+                            });
                         }
                     }
                     continue;

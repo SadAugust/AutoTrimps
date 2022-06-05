@@ -11,7 +11,7 @@ function settingsProfileMakeGUI() {
     $settingsProfiles.setAttribute('class', 'noselect');
     $settingsProfiles.setAttribute('onchange', 'settingsProfileDropdownHandler()');
     var oldstyle = 'text-align: center; width: 160px; font-size: 1.0vw;';
-    if(game.options.menu.darkTheme.enabled != 2) $settingsProfiles.setAttribute("style", oldstyle + " color: black;");
+    if (game.options.menu.darkTheme.enabled != 2) $settingsProfiles.setAttribute("style", oldstyle + " color: black;");
     else $settingsProfiles.setAttribute('style', oldstyle);
     //Create settings profile selection dropdown
     var $settingsProfilesButton = document.createElement("Button");
@@ -19,7 +19,7 @@ function settingsProfileMakeGUI() {
     $settingsProfilesButton.setAttribute('class', 'btn btn-info');
     $settingsProfilesButton.innerHTML = "&lt;Delete Profile";
     $settingsProfilesButton.setAttribute('style', 'margin-left: 0.5vw; margin-right: 0.5vw; font-size: 0.8vw;');
-    $settingsProfilesButton.setAttribute('onclick','onDeleteProfileHandler()');
+    $settingsProfilesButton.setAttribute('onclick', 'onDeleteProfileHandler()');
     //populate with a Default (read default settings):
     var innerhtml = "<option id='customProfileCurrent'>Current</option>";
     //populate with a Default (read default settings):
@@ -27,7 +27,7 @@ function settingsProfileMakeGUI() {
     //Append a 2nd default item named "Save New..." and have it tied to a write function();
     innerhtml += "<option id='customProfileNew'>Save New...</option>";
     //dont forget to populate the rest of it with stored items:
-    $settingsProfiles.innerHTML = innerhtml;    
+    $settingsProfiles.innerHTML = innerhtml;
     //Add the $settingsProfiles dropdown to UI
     var $ietab = document.getElementById('Import Export');
     if ($ietab == null) return;
@@ -43,7 +43,7 @@ function initializeSettingsProfiles() {
     //load the old data in:
     var loadLastProfiles = localStorage.getItem('ATSelectedSettingsProfile');
     var oldpresets = loadLastProfiles ? JSON.parse(loadLastProfiles) : new Array(); //load the import.
-    oldpresets.forEach(function(elem){
+    oldpresets.forEach(function (elem) {
         //Populate dropdown menu to reflect new name:
         let optionElementReference = new Option(elem.name);
         optionElementReference.id = 'customProfileRead';
@@ -63,15 +63,15 @@ function settingsProfileDropdownHandler() {
     if (id == 'customProfileCurrent')
         return;
     cancelTooltip();
-//Default: simply calls Reset To Default:
+    //Default: simply calls Reset To Default:
     if (id == 'customProfileDefault')
         //calls a tooltip then resetAutoTrimps() below
         ImportExportTooltip('ResetDefaultSettingsProfiles');
-//Save new...: asks a name and saves new profile
+    //Save new...: asks a name and saves new profile
     else if (id == 'customProfileNew')
         //calls a tooltip then nameAndSaveNewProfile() below
         ImportExportTooltip('NameSettingsProfiles');
-//Reads the existing profile name and switches into it.
+    //Reads the existing profile name and switches into it.
     else if (id == 'customProfileRead')
         //calls a tooltip then confirmedSwitchNow() below
         ImportExportTooltip('ReadSettingsProfiles');
@@ -87,11 +87,11 @@ function confirmedSwitchNow() {
     //load the stored profiles from browser
     var loadLastProfiles = JSON.parse(localStorage.getItem('ATSelectedSettingsProfile'));
     if (loadLastProfiles != null) {
-        var results = loadLastProfiles.filter(function(elem,i){
+        var results = loadLastProfiles.filter(function (elem, i) {
             return elem.name == profname;
         });
         if (results.length > 0) {
-            resetAutoTrimps(results[0].data,profname);
+            resetAutoTrimps(results[0].data, profname);
             debug("Successfully loaded existing profile: " + profname, "profile");
         }
     }
@@ -128,7 +128,7 @@ function nameAndSaveNewProfile() {
     optionElementReference.id = 'customProfileRead';
     if ($settingsProfiles == null) return;
     $settingsProfiles.add(optionElementReference);
-    $settingsProfiles.selectedIndex = $settingsProfiles.length-1;
+    $settingsProfiles.selectedIndex = $settingsProfiles.length - 1;
 }
 
 //event handler for profile delete button - confirmation check tooltip
@@ -142,12 +142,12 @@ function onDeleteProfile() {
     //Remove the option
     $settingsProfiles.options.remove(index);
     //Stay on the same index (becomes next item) - so we dont have to Toggle into a new profile again and can keep chain deleting.
-    $settingsProfiles.selectedIndex = (index > ($settingsProfiles.length-1)) ? $settingsProfiles.length-1 : index;
+    $settingsProfiles.selectedIndex = (index > ($settingsProfiles.length - 1)) ? $settingsProfiles.length - 1 : index;
     //load the old data in:
     var loadLastProfiles = localStorage.getItem('ATSelectedSettingsProfile');
     var oldpresets = loadLastProfiles ? JSON.parse(loadLastProfiles) : new Array(); //load the import.
     //rewrite the updated array in. string them, and store them.
-    var target = (index-3); //subtract the 3 default choices out
+    var target = (index - 3); //subtract the 3 default choices out
     oldpresets.splice(target, 1);
     safeSetItems('ATSelectedSettingsProfile', JSON.stringify(oldpresets));
     debug("Successfully deleted profile #: " + target, "profile");
@@ -167,9 +167,9 @@ function ImportExportTooltip(what, event) {
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip()'>Got it</div>";
         if (document.queryCommandSupported('copy')) {
             costText += "<div id='clipBoardBtn' class='btn btn-success'>Copy to Clipboard</div>";
-            ondisplay = function() {
+            ondisplay = function () {
                 document.getElementById('exportArea').select();
-                document.getElementById('clipBoardBtn').addEventListener('click', function(event) {
+                document.getElementById('clipBoardBtn').addEventListener('click', function (event) {
                     document.getElementById('exportArea').select();
                     try {
                         document.execCommand('copy');
@@ -179,22 +179,22 @@ function ImportExportTooltip(what, event) {
                 });
             };
         } else {
-            ondisplay = function() {
+            ondisplay = function () {
                 document.getElementById('exportArea').select();
             };
         }
         costText += "</div>";
-	
+
     } else if (what == "ImportAutoTrimps") {
         tooltipText = "Import your AUTOTRIMPS save string! It'll be fine, I promise.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); loadAutoTrimps();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
-        ondisplay = function() {
+        ondisplay = function () {
             document.getElementById('importBox').focus();
         };
     } else if (what == "spireImport") {
         tooltipText = "Import your SPIRE string! <br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); tdStringCode2();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
-        ondisplay = function() {
+        ondisplay = function () {
             document.getElementById('importBox').focus();
         };
     } else if (what == "CleanupAutoTrimps") {
@@ -206,9 +206,9 @@ function ImportExportTooltip(what, event) {
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip()'>Got it</div>";
         if (document.queryCommandSupported('copy')) {
             costText += "<div id='clipBoardBtn' class='btn btn-success'>Copy to Clipboard</div>";
-            ondisplay = function() {
+            ondisplay = function () {
                 document.getElementById('exportArea').select();
-                document.getElementById('clipBoardBtn').addEventListener('click', function(event) {
+                document.getElementById('clipBoardBtn').addEventListener('click', function (event) {
                     document.getElementById('exportArea').select();
                     try {
                         document.execCommand('copy');
@@ -218,7 +218,7 @@ function ImportExportTooltip(what, event) {
                 });
             };
         } else {
-            ondisplay = function() {
+            ondisplay = function () {
                 document.getElementById('exportArea').select();
             };
         }
@@ -226,7 +226,7 @@ function ImportExportTooltip(what, event) {
     } else if (what == "ImportModuleVars") {
         tooltipText = "Enter your Autotrimps MODULE variable settings to load, and save locally for future use between refreshes:<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); importModuleVars();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
-        ondisplay = function() {
+        ondisplay = function () {
             document.getElementById('importBox').focus();
         };
     } else if (what == "ATModuleLoad") {
@@ -249,7 +249,7 @@ function ImportExportTooltip(what, event) {
             if ($item.value != null) {
                 ATscriptUnload($item.value);
                 modnames += $item.value + " ";
-            }            
+            }
         }
         tooltipText = "Autotrimps - UnLoaded the MODULE .JS File(s): " + modnames;
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>OK</div></div>";
@@ -262,247 +262,247 @@ function ImportExportTooltip(what, event) {
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Thats all the help you get.</div></div>";
     } else if (what == 'c2table') {
         var c2list = {
-    Size: {
-        number: 1,
-        percent: getIndividualSquaredReward('Size') + '%',
-        zone: game.c2.Size,
-        percentzone: (100 * (game.c2.Size / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Slow: {
-        number: 2,
-        percent: getIndividualSquaredReward('Slow') + '%',
-        zone: game.c2.Slow,
-        percentzone: (100 * (game.c2.Slow / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Watch: {
-        number: 3,
-        percent: getIndividualSquaredReward('Watch') + '%',
-        zone: game.c2.Watch,
-        percentzone: (100 * (game.c2.Watch / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Discipline: {
-        number: 4,
-        percent: getIndividualSquaredReward('Discipline') + '%',
-        zone: game.c2.Discipline,
-        percentzone: (100 * (game.c2.Discipline / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Balance: {
-        number: 5,
-        percent: getIndividualSquaredReward('Balance') + '%',
-        zone: game.c2.Balance,
-        percentzone: (100 * (game.c2.Balance / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Meditate: {
-        number: 6,
-        percent: getIndividualSquaredReward('Meditate') + '%',
-        zone: game.c2.Meditate,
-        percentzone: (100 * (game.c2.Meditate / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Metal: {
-        number: 7,
-        percent: getIndividualSquaredReward('Metal') + '%',
-        zone: game.c2.Metal,
-        percentzone: (100 * (game.c2.Metal / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Lead: {
-        number: 8,
-        percent: getIndividualSquaredReward('Lead') + '%',
-        zone: game.c2.Lead,
-        percentzone: (100 * (game.c2.Lead / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Nom: {
-        number: 9,
-        percent: getIndividualSquaredReward('Nom') + '%',
-        zone: game.c2.Nom,
-        percentzone: (100 * (game.c2.Nom / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },Toxicity: {
-        number: 10,
-        percent: getIndividualSquaredReward('Toxicity') + '%',
-        zone: game.c2.Toxicity,
-        percentzone: (100 * (game.c2.Toxicity / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Electricity: {
-        number: 11,
-        percent: getIndividualSquaredReward('Electricity') + '%',
-        zone: game.c2.Electricity,
-        percentzone: (100 * (game.c2.Electricity / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    
-    Coordinate: {
-        number: 12,
-        percent: getIndividualSquaredReward('Coordinate') + '%',
-        zone: game.c2.Coordinate,
-        percentzone: (100 * (game.c2.Coordinate / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Trimp: {
-        number: 13,
-        percent: getIndividualSquaredReward('Trimp') + '%',
-        zone: game.c2.Trimp,
-        percentzone: (100 * (game.c2.Trimp / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Obliterated: {
-        number: 14,
-        percent: getIndividualSquaredReward('Obliterated') + '%',
-        zone: game.c2.Obliterated,
-        percentzone: (100 * (game.c2.Obliterated / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Eradicated: {
-        number: 15,
-        percent: getIndividualSquaredReward('Eradicated') + '%',
-        zone: game.c2.Eradicated,
-        percentzone: (100 * (game.c2.Eradicated / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Mapology: {
-        number: 16,
-        percent: getIndividualSquaredReward('Mapology') + '%',
-        zone: game.c2.Mapology,
-        percentzone: (100 * (game.c2.Mapology / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Trapper: {
-        number: 17,
-        percent: getIndividualSquaredReward('Trapper') + '%',
-        zone: game.c2.Trapper,
-        percentzone: (100 * (game.c2.Trapper / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    C3s: {
-        number: 'Difficulty',
-        percent: '%C3',
-        zone: 'Zone',
-        percentzone: '%HZE',
-        color: 0
-    },
-    Unbalance: {
-        number: 18,
-        percent: getIndividualSquaredReward('Unbalance') + '%',
-        zone: game.c2.Unbalance,
-        percentzone: (100 * (game.c2.Unbalance / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Unlucky: {
-        number: 19,
-        percent: getIndividualSquaredReward('Unlucky') + '%',
-        zone: game.c2.Unlucky,
-        percentzone: (100 * (game.c2.Unlucky / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Duel: {
-        number: 20,
-        percent: getIndividualSquaredReward('Duel') + '%',
-        zone: game.c2.Duel,
-        percentzone: (100 * (game.c2.Duel / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Storm: {
-        number: 21,
-        percent: getIndividualSquaredReward('Storm') + '%',
-        zone: game.c2.Storm,
-        percentzone: (100 * (game.c2.Storm / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Transmute: {
-        number: 22,
-        percent: getIndividualSquaredReward('Transmute') + '%',
-        zone: game.c2.Transmute,
-        percentzone: (100 * (game.c2.Transmute / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Quest: {
-        number: 23,
-        percent: getIndividualSquaredReward('Quest') + '%',
-        zone: game.c2.Quest,
-        percentzone: (100 * (game.c2.Quest / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Downsize: {
-        number: 24,
-        percent: getIndividualSquaredReward('Downsize') + '%',
-        zone: game.c2.Downsize,
-        percentzone: (100 * (game.c2.Downsize / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Trappapalooza: {
-        number: 25,
-        percent: getIndividualSquaredReward('Trappapalooza') + '%',
-        zone: game.c2.Trappapalooza,
-        percentzone: (100 * (game.c2.Trappapalooza / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Berserk: {
-        number: 26,
-        percent: getIndividualSquaredReward('Berserk') + '%',
-        zone: game.c2.Berserk,
-        percentzone: (100 * (game.c2.Berserk / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    },
-    Wither: {
-        number: 27,
-        percent: getIndividualSquaredReward('Wither') + '%',
-        zone: game.c2.Wither,
-        percentzone: (100 * (game.c2.Wither / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-        color: 0
-    }
-    
-};
-        function c2listcolor(){
-			function a(b,c,d){ 
-				var e=100*(game.c2[b]/(game.global.highestLevelCleared+1));
-				c2list[b].color=e>=c?"LIMEGREEN":e<c&&e>=d?"GOLD":e<d&&1<=e?"#de0000":"DEEPSKYBLUE"
-			}
-				Object.keys(c2list).forEach(function(b){
-						null!=game.c2[b]&&("Coordinate"===b?a(b,45,38):"Trimp"===b?a(b,45,35):"Obliterated"===b?a(b,25,20):"Eradicated"===b?a(b,14,10):"Mapology"===b?a(b,90,80):"Trapper"===b?a(b,85,75):a(b,95,85))
-				})
-		}
-       function Rc2listcolor(){
-			function a(b,c,d){ 
-				var e=100*(game.c2[b]/(game.global.highestRadonLevelCleared+1));
-				c2list[b].color=e>=c?"LIMEGREEN":e<c&&e>=d?"GOLD":e<d&&1<=e?"#de0000":"DEEPSKYBLUE";
-			}
-				Object.keys(c2list).forEach(function(b){
-						if (game.c2[b] != null) {
-							if (b == "Unbalance")
-								a(b,90,80);
-							else if (b == "Unlucky")
-								a(b,97,92);
-							else if (b == "Duel")
-								a(b,90,80);
-							else if (b == "Transmute")
-								a(b,90,80);
-							else if (b == "Quest")
-								a(b,90,80);
-							else if (b == "Downsize")
-								a(b,85,75);
-							else if (b == "Trappapalooza")
-								a(b,85,75);
-							else if (b == "Wither")
-								a(b,85,75);
-							else if (b == "Wither")
-								a(b,75,65);
-							else if (b == "Storm")
-								a(b,90,80);
-							else if (b == "Berserk")
-								a(b,85,75);
-						}
-				});
-		} 
-		c2listcolor();
-	        Rc2listcolor();
+            Size: {
+                number: 1,
+                percent: getIndividualSquaredReward('Size') + '%',
+                zone: game.c2.Size,
+                percentzone: (100 * (game.c2.Size / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Slow: {
+                number: 2,
+                percent: getIndividualSquaredReward('Slow') + '%',
+                zone: game.c2.Slow,
+                percentzone: (100 * (game.c2.Slow / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Watch: {
+                number: 3,
+                percent: getIndividualSquaredReward('Watch') + '%',
+                zone: game.c2.Watch,
+                percentzone: (100 * (game.c2.Watch / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Discipline: {
+                number: 4,
+                percent: getIndividualSquaredReward('Discipline') + '%',
+                zone: game.c2.Discipline,
+                percentzone: (100 * (game.c2.Discipline / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Balance: {
+                number: 5,
+                percent: getIndividualSquaredReward('Balance') + '%',
+                zone: game.c2.Balance,
+                percentzone: (100 * (game.c2.Balance / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Meditate: {
+                number: 6,
+                percent: getIndividualSquaredReward('Meditate') + '%',
+                zone: game.c2.Meditate,
+                percentzone: (100 * (game.c2.Meditate / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Metal: {
+                number: 7,
+                percent: getIndividualSquaredReward('Metal') + '%',
+                zone: game.c2.Metal,
+                percentzone: (100 * (game.c2.Metal / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Lead: {
+                number: 8,
+                percent: getIndividualSquaredReward('Lead') + '%',
+                zone: game.c2.Lead,
+                percentzone: (100 * (game.c2.Lead / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Nom: {
+                number: 9,
+                percent: getIndividualSquaredReward('Nom') + '%',
+                zone: game.c2.Nom,
+                percentzone: (100 * (game.c2.Nom / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            }, Toxicity: {
+                number: 10,
+                percent: getIndividualSquaredReward('Toxicity') + '%',
+                zone: game.c2.Toxicity,
+                percentzone: (100 * (game.c2.Toxicity / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Electricity: {
+                number: 11,
+                percent: getIndividualSquaredReward('Electricity') + '%',
+                zone: game.c2.Electricity,
+                percentzone: (100 * (game.c2.Electricity / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+
+            Coordinate: {
+                number: 12,
+                percent: getIndividualSquaredReward('Coordinate') + '%',
+                zone: game.c2.Coordinate,
+                percentzone: (100 * (game.c2.Coordinate / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Trimp: {
+                number: 13,
+                percent: getIndividualSquaredReward('Trimp') + '%',
+                zone: game.c2.Trimp,
+                percentzone: (100 * (game.c2.Trimp / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Obliterated: {
+                number: 14,
+                percent: getIndividualSquaredReward('Obliterated') + '%',
+                zone: game.c2.Obliterated,
+                percentzone: (100 * (game.c2.Obliterated / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Eradicated: {
+                number: 15,
+                percent: getIndividualSquaredReward('Eradicated') + '%',
+                zone: game.c2.Eradicated,
+                percentzone: (100 * (game.c2.Eradicated / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Mapology: {
+                number: 16,
+                percent: getIndividualSquaredReward('Mapology') + '%',
+                zone: game.c2.Mapology,
+                percentzone: (100 * (game.c2.Mapology / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Trapper: {
+                number: 17,
+                percent: getIndividualSquaredReward('Trapper') + '%',
+                zone: game.c2.Trapper,
+                percentzone: (100 * (game.c2.Trapper / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            C3s: {
+                number: 'Difficulty',
+                percent: '%C3',
+                zone: 'Zone',
+                percentzone: '%HZE',
+                color: 0
+            },
+            Unbalance: {
+                number: 18,
+                percent: getIndividualSquaredReward('Unbalance') + '%',
+                zone: game.c2.Unbalance,
+                percentzone: (100 * (game.c2.Unbalance / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Unlucky: {
+                number: 19,
+                percent: getIndividualSquaredReward('Unlucky') + '%',
+                zone: game.c2.Unlucky,
+                percentzone: (100 * (game.c2.Unlucky / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Duel: {
+                number: 20,
+                percent: getIndividualSquaredReward('Duel') + '%',
+                zone: game.c2.Duel,
+                percentzone: (100 * (game.c2.Duel / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Storm: {
+                number: 21,
+                percent: getIndividualSquaredReward('Storm') + '%',
+                zone: game.c2.Storm,
+                percentzone: (100 * (game.c2.Storm / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Transmute: {
+                number: 22,
+                percent: getIndividualSquaredReward('Transmute') + '%',
+                zone: game.c2.Transmute,
+                percentzone: (100 * (game.c2.Transmute / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Quest: {
+                number: 23,
+                percent: getIndividualSquaredReward('Quest') + '%',
+                zone: game.c2.Quest,
+                percentzone: (100 * (game.c2.Quest / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Downsize: {
+                number: 24,
+                percent: getIndividualSquaredReward('Downsize') + '%',
+                zone: game.c2.Downsize,
+                percentzone: (100 * (game.c2.Downsize / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Trappapalooza: {
+                number: 25,
+                percent: getIndividualSquaredReward('Trappapalooza') + '%',
+                zone: game.c2.Trappapalooza,
+                percentzone: (100 * (game.c2.Trappapalooza / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Berserk: {
+                number: 26,
+                percent: getIndividualSquaredReward('Berserk') + '%',
+                zone: game.c2.Berserk,
+                percentzone: (100 * (game.c2.Berserk / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            },
+            Wither: {
+                number: 27,
+                percent: getIndividualSquaredReward('Wither') + '%',
+                zone: game.c2.Wither,
+                percentzone: (100 * (game.c2.Wither / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+                color: 0
+            }
+
+        };
+        function c2listcolor() {
+            function a(b, c, d) {
+                var e = 100 * (game.c2[b] / (game.global.highestLevelCleared + 1));
+                c2list[b].color = e >= c ? "LIMEGREEN" : e < c && e >= d ? "GOLD" : e < d && 1 <= e ? "#de0000" : "DEEPSKYBLUE"
+            }
+            Object.keys(c2list).forEach(function (b) {
+                null != game.c2[b] && ("Coordinate" === b ? a(b, 45, 38) : "Trimp" === b ? a(b, 45, 35) : "Obliterated" === b ? a(b, 25, 20) : "Eradicated" === b ? a(b, 14, 10) : "Mapology" === b ? a(b, 90, 80) : "Trapper" === b ? a(b, 85, 75) : a(b, 95, 85))
+            })
+        }
+        function Rc2listcolor() {
+            function a(b, c, d) {
+                var e = 100 * (game.c2[b] / (game.global.highestRadonLevelCleared + 1));
+                c2list[b].color = e >= c ? "LIMEGREEN" : e < c && e >= d ? "GOLD" : e < d && 1 <= e ? "#de0000" : "DEEPSKYBLUE";
+            }
+            Object.keys(c2list).forEach(function (b) {
+                if (game.c2[b] != null) {
+                    if (b == "Unbalance")
+                        a(b, 90, 80);
+                    else if (b == "Unlucky")
+                        a(b, 97, 92);
+                    else if (b == "Duel")
+                        a(b, 90, 80);
+                    else if (b == "Transmute")
+                        a(b, 90, 80);
+                    else if (b == "Quest")
+                        a(b, 90, 80);
+                    else if (b == "Downsize")
+                        a(b, 85, 75);
+                    else if (b == "Trappapalooza")
+                        a(b, 85, 75);
+                    else if (b == "Wither")
+                        a(b, 85, 75);
+                    else if (b == "Wither")
+                        a(b, 75, 65);
+                    else if (b == "Storm")
+                        a(b, 90, 80);
+                    else if (b == "Berserk")
+                        a(b, 85, 75);
+                }
+            });
+        }
+        c2listcolor();
+        Rc2listcolor();
         tooltipText = `<div class='litScroll'>
     <table class='bdTableSm table table-striped'>
         <tbody>
@@ -787,12 +787,12 @@ function ImportExportTooltip(what, event) {
         titleText = "Enter New Settings Profile Name";
         tooltipText = "What would you like the name of the Settings Profile to be?<br/><br/><textarea id='setSettingsNameTooltip' style='width: 100%' rows='1'></textarea>";
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); nameAndSaveNewProfile();'>Import</div><div class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();document.getElementById(\"settingsProfiles\").selectedIndex=0;'>Cancel</div></div>";
-        ondisplay = function() {
+        ondisplay = function () {
             document.getElementById('setSettingsNameTooltip').focus();
         };
     } else if (what == 'DeleteSettingsProfiles') {
         titleText = "<b>WARNING:</b> Delete Profile???"
-        tooltipText = "You are about to delete the <B><U>"+`${settingsProfiles.value}`+"</B></U> settings profile.<br>This will not switch your current settings though. Continue ?<br/>";
+        tooltipText = "You are about to delete the <B><U>" + `${settingsProfiles.value}` + "</B></U> settings profile.<br>This will not switch your current settings though. Continue ?<br/>";
         costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); onDeleteProfile();'>Delete Profile</div><div style='margin-left: 15%' class='btn btn-info' onclick='cancelTooltip();'>Cancel</div></div>";
     } else if (what == 'message') {
         titleText = "Generic message";
@@ -810,10 +810,10 @@ function ImportExportTooltip(what, event) {
         ondisplay();
 }
 
-function resetAutoTrimps(a,b){ATrunning=!1,setTimeout(function(d){localStorage.removeItem("autoTrimpSettings"),autoTrimpSettings=d?d:{};var e=document.getElementById("settingsRow");e.removeChild(document.getElementById("autoSettings")),e.removeChild(document.getElementById("autoTrimpsTabBarMenu")),automationMenuSettingsInit(),initializeAllTabs(),initializeAllSettings(),initializeSettingsProfiles(),updateCustomButtons(),saveSettings(),checkPortalSettings(),ATrunning=!0}(a),101),a?(debug("Successfully imported new AT settings...","profile"),b?ImportExportTooltip("message","Successfully Imported Autotrimps Settings File!: "+b):ImportExportTooltip("NameSettingsProfiles")):(debug("Successfully reset AT settings to Defaults...","profile"),ImportExportTooltip("message","Autotrimps has been successfully reset to its defaults!"))}
-function loadAutoTrimps(){try{var a=document.getElementById("importBox").value.replace(/[\n\r]/gm,""),b=JSON.parse(a);if(null==b)return void debug("Error importing AT settings, the string is empty.","profile")}catch(c){return void debug("Error importing AT settings, the string is bad."+c.message,"profile")}debug("Importing new AT settings file...","profile"),resetAutoTrimps(b)}
-function cleanupAutoTrimps(){for(var a in autoTrimpSettings){var b=document.getElementById(autoTrimpSettings[a].id);null==b&&delete autoTrimpSettings[a]}}
-function exportModuleVars(){return JSON.stringify(compareModuleVars())}
+function resetAutoTrimps(a, b) { ATrunning = !1, setTimeout(function (d) { localStorage.removeItem("autoTrimpSettings"), autoTrimpSettings = d ? d : {}; var e = document.getElementById("settingsRow"); e.removeChild(document.getElementById("autoSettings")), e.removeChild(document.getElementById("autoTrimpsTabBarMenu")), automationMenuSettingsInit(), initializeAllTabs(), initializeAllSettings(), initializeSettingsProfiles(), updateCustomButtons(), saveSettings(), checkPortalSettings(), ATrunning = !0 }(a), 101), a ? (debug("Successfully imported new AT settings...", "profile"), b ? ImportExportTooltip("message", "Successfully Imported Autotrimps Settings File!: " + b) : ImportExportTooltip("NameSettingsProfiles")) : (debug("Successfully reset AT settings to Defaults...", "profile"), ImportExportTooltip("message", "Autotrimps has been successfully reset to its defaults!")) }
+function loadAutoTrimps() { try { var a = document.getElementById("importBox").value.replace(/[\n\r]/gm, ""), b = JSON.parse(a); if (null == b) return void debug("Error importing AT settings, the string is empty.", "profile") } catch (c) { return void debug("Error importing AT settings, the string is bad." + c.message, "profile") } debug("Importing new AT settings file...", "profile"), resetAutoTrimps(b) }
+function cleanupAutoTrimps() { for (var a in autoTrimpSettings) { var b = document.getElementById(autoTrimpSettings[a].id); null == b && delete autoTrimpSettings[a] } }
+function exportModuleVars() { return JSON.stringify(compareModuleVars()) }
 
 function compareModuleVars() {
     var diffs = {};
@@ -825,7 +825,7 @@ function compareModuleVars() {
             var vj = vars[j];
             var a = MODULES[mod][vj];
             var b = MODULESdefault[mod][vj];
-            if (JSON.stringify(a)!=JSON.stringify(b)) {
+            if (JSON.stringify(a) != JSON.stringify(b)) {
                 if (typeof diffs[mod] === 'undefined')
                     diffs[mod] = {};
                 diffs[mod][vj] = a;
@@ -835,7 +835,7 @@ function compareModuleVars() {
     return diffs;
 }
 
-function importModuleVars(){try{var thestring=document.getElementById('importBox').value,strarr=thestring.split(/\n/);for(var line in strarr){var s=strarr[line];s=s.substring(0,s.indexOf(';')+1),s=s.replace(/\s/g,''),eval(s),strarr[line]=s}var tmpset=compareModuleVars()}catch(a){return void debug('Error importing MODULE vars, the string is bad.'+a.message,'profile')}localStorage.removeItem('storedMODULES'),safeSetItems('storedMODULES',JSON.stringify(tmpset))}
-function resetModuleVars(a){ATrunning=!1,setTimeout(function(){localStorage.removeItem('storedMODULES'),MODULES=JSON.parse(JSON.stringify(MODULESdefault)),safeSetItems('storedMODULES',JSON.stringify(storedMODULES)),ATrunning=!0}(a),101)}
+function importModuleVars() { try { var thestring = document.getElementById('importBox').value, strarr = thestring.split(/\n/); for (var line in strarr) { var s = strarr[line]; s = s.substring(0, s.indexOf(';') + 1), s = s.replace(/\s/g, ''), eval(s), strarr[line] = s } var tmpset = compareModuleVars() } catch (a) { return void debug('Error importing MODULE vars, the string is bad.' + a.message, 'profile') } localStorage.removeItem('storedMODULES'), safeSetItems('storedMODULES', JSON.stringify(tmpset)) }
+function resetModuleVars(a) { ATrunning = !1, setTimeout(function () { localStorage.removeItem('storedMODULES'), MODULES = JSON.parse(JSON.stringify(MODULESdefault)), safeSetItems('storedMODULES', JSON.stringify(storedMODULES)), ATrunning = !0 }(a), 101) }
 settingsProfileMakeGUI();
 initializeSettingsProfiles();
