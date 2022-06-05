@@ -1995,7 +1995,7 @@ function RautoMap() {
 					selectedMap = RShouldFarmMapCreation(rSFMapLevel, rSFSpecial);
 					workerRatio = rSFJobRatio;
 					rSmithyFarming = true;
-					rTrFCurrentMap = 'rSmithyFarm'
+					rSFCurrentMap = 'rSmithyFarm'
 				}
 				else if (rShouldWorshipperFarm) {
 					selectedMap = RShouldFarmMapCreation(shippluslevel, shipspecial);
