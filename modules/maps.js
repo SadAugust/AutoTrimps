@@ -1139,7 +1139,7 @@ function RautoMap() {
                     if (rTrFMeteorologists > game.jobs.Meteorologist.owned)
                         rShouldMetFarm = true;
                 }
-                if (!rShouldTimeFarm && game.global.world > 34 && game.mapUnlocks.AncientTreasure.canRunOnce && rTrFAtlantrimp && (rShouldTributeFarm || rShouldMetFarm)) {
+                if (!rShouldTimeFarm && totalTrFCost > game.resources.food.owned && game.global.world > 34 && game.mapUnlocks.AncientTreasure.canRunOnce && rTrFAtlantrimp && (rShouldTributeFarm || rShouldMetFarm)) {
                     var barnCost = 0;
                     //Seconds is 165 due to avg of 5x caches (20s per), 4x chronoimps (5s per), 1x jestimp (45s)
                     var resourceFarmed = scaleToCurrentMapLocal(simpleSecondsLocal("food", 165, true, rTrFJobRatio), false, true, rTrFMapLevel);
@@ -1166,10 +1166,13 @@ function RautoMap() {
                 }
                 //Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
                 if (!rShouldTributeFarm && !rShouldMetFarm && rTrFCurrentMap != undefined) {
-                    if (getPageSetting('rMapRepeatCount')) debug("Tribute Farm took " + (game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0)) + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+                    if (getPageSetting('rMapRepeatCount')) {
+                        debug(game.global.mapRunCounter)
+                        debug("Tribute Farm took " + (game.global.mapRunCounter + ((getCurrentMapCell().level - 1) / getCurrentMapObject().size)) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+                    }
                     if (game.global.mapsActive) {
                         mapsClicked();
-                        recycleMap(getMapIndex(rTrFCurrentMap));
+                        recycleMap();
                     }
                     rTrFCurrentMap = undefined;
                     if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
@@ -2075,9 +2078,9 @@ function RautoMap() {
                 //Quest Farming
                 if (rShouldQuest == 6 && game.global.mapBonus >= 4)
                     repeatClicked();
-                //Tribute Farm
-                if ((rShouldTributeFarm || rShouldMetFarm) && (game.resources.food.owned + scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true), false, true, rTrFMapLevel)) >= totalTrFCost)
-                    repeatClicked();
+                //Tribute Farm -- Was breaking Map Run Counter check.
+                /* if ((rShouldTributeFarm || rShouldMetFarm) && (game.resources.food.owned + scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true), false, true, rTrFMapLevel)) >= 1e999)
+                    repeatClicked(); */
                 //Map Bonus
                 if (rShouldMaxMapBonus && (game.global.mapBonus >= (maxMapBonusLimit - 1) || getCurrentMapObject().bonus != getPageSetting('rMapSpecial')) && !rShouldTimeFarm)
                     repeatClicked();

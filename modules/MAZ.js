@@ -178,7 +178,7 @@ function MAZLookalike(titleText, varPrefix, isItIn, event) {
         if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowGather'>\<div style='text-align: center;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select>\</div>"
         tooltipText += "</div>"
     }
-    tooltipText += "<div id='windowAddRowBtn' style='display: " + ((current.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\")'>+ Add Row</div>"
+    tooltipText += "<div id='windowAddRowBtn' style='display: " + ((current.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\",\"" + titleText + "\")'>+ Add Row</div>"
     costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\", true)'>Save</span></div>"
 
     game.global.lockTooltip = true;
@@ -330,7 +330,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
     document.getElementById('tooltipDiv').style.overflowY = '';
 }
 
-function addRow(varPrefix) {
+function addRow(varPrefix, titleText) {
     for (var x = 0; x < 30; x++) {
         var elem = document.getElementById('windowWorld' + x);
         if (!elem) continue;
