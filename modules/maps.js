@@ -1167,7 +1167,6 @@ function RautoMap() {
                 //Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
                 if (!rShouldTributeFarm && !rShouldMetFarm && rTrFCurrentMap != undefined) {
                     if (getPageSetting('rMapRepeatCount')) {
-                        debug(game.global.mapRunCounter)
                         debug("Tribute Farm took " + (game.global.mapRunCounter + ((getCurrentMapCell().level - 1) / getCurrentMapObject().size)) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
                     }
                     if (game.global.mapsActive) {
