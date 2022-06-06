@@ -1147,7 +1147,7 @@ function RautoMap() {
 						barnCost += game.buildings.Barn.cost.food()
 					resourceFarmed -= barnCost;
 
-					if ((game.resources.food.owned + barnCost) * 2 > resourceFarmed && game.resources.food.owned + barnCost > totalTrFCost / 2) {
+					if ((game.resources.food.owned * 2) - barnCost > resourceFarmed && game.resources.food.owned > ((totalTrFCost + barnCost) / 2)) {
 						if (game.global.mapsActive && getCurrentMapObject().name !== 'Atlantrimp') {
 							mapsClicked();
 							recycleMap();
