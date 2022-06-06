@@ -3,26 +3,26 @@ var allSaveData2 = [];
 var graph2Data2 = [];
 var tmpGraphData2 = JSON.parse(localStorage.getItem('allSaveData2'));
 if (tmpGraphData2 !== null) {
-    console.log('Graphs: Found allSaveData2 (portal runs data). Yay!');
-    allSaveData2 = tmpGraphData2;
+	console.log('Graphs: Found allSaveData2 (portal runs data). Yay!');
+	allSaveData2 = tmpGraphData2;
 }
 function safeSetItems2(name, data) {
-    try {
-        localStorage.setItem(name, data);
-    } catch (e) {
-        if (e.code == 22) {
-            // Storage full, maybe notify user or do some clean-up
-            debug22("Error: LocalStorage is full, or error. Attempt to delete some portals from your graph2 or restart browser.");
-        }
-    }
+	try {
+		localStorage.setItem(name, data);
+	} catch (e) {
+		if (e.code == 22) {
+			// Storage full, maybe notify user or do some clean-up
+			debug22("Error: LocalStorage is full, or error. Attempt to delete some portals from your graph2 or restart browser.");
+		}
+	}
 }
 var enableDebug22 = false;
 function debug22(message, type, lootIcon) {
-    var output = true;
-    if (output) {
-        if (enableDebug22)
-            console.log(0 + ' ' + message);
-    }
+	var output = true;
+	if (output) {
+		if (enableDebug22)
+			console.log(0 + ' ' + message);
+	}
 }
 var MODULES2 = {};
 MODULES2["graph2s2"] = {};
@@ -56,10 +56,10 @@ $graph2Sel.setAttribute("style", "");
 //$graph2Sel.setAttribute("onmouseout", 'tooltip("hide")');
 $graph2Sel.setAttribute("onchange", "drawGraph2()");
 for (var item in graph2List) {
-    var $opt = document.createElement("option");
-    $opt.value = graph2List[item];
-    $opt.text = graph2List[item];
-    $graph2Sel.appendChild($opt);
+	var $opt = document.createElement("option");
+	$opt.value = graph2List[item];
+	$opt.text = graph2List[item];
+	$graph2Sel.appendChild($opt);
 }
 $graph2Footer2.appendChild($graph2Sel);
 //just write it in HTML instead of a million lines of DOM javascript.
@@ -104,30 +104,30 @@ function autoToggleGraph2() { game.options.displayed && toggleSettingsMenu(); va
 function escapeATWindows2() { var a = document.getElementById('tooltipDiv'); if ('none' != a.style.display) return void cancelTooltip(); game.options.displayed && toggleSettingsMenu(); var b = document.getElementById('autoSettings'); 'block' === b.style.display && (b.style.display = 'none'); var b = document.getElementById('autoTrimpsTabBarMenu'); 'block' === b.style.display && (b.style.display = 'none'); var c = document.getElementById('graph2Parent2'); 'block' === c.style.display && (c.style.display = 'none') } document.addEventListener('keydown', function (a) { 1 != game.options.menu.hotkeys.enabled || game.global.preMapsActive || game.global.lockTooltip || ctrlPressed || heirloomsShown || 27 != a.keyCode || escapeATWindows2() }, !0);
 
 function pushData2() {
-    debug22('Starting Zone ' + game.global.world, "graph2s");
-    var RgetPercent = (game.stats.heliumHour.value() / (game.global.totalRadonEarned - (game.global.radonLeftover + game.resources.radon.owned))) * 100;
-    var Rlifetime = (game.resources.radon.owned / (game.global.totalRadonEarned - game.resources.radon.owned)) * 100;
+	debug22('Starting Zone ' + game.global.world, "graph2s");
+	var RgetPercent = (game.stats.heliumHour.value() / (game.global.totalRadonEarned - (game.global.radonLeftover + game.resources.radon.owned))) * 100;
+	var Rlifetime = (game.resources.radon.owned / (game.global.totalRadonEarned - game.resources.radon.owned)) * 100;
 
-    allSaveData2.push({
-        totalPortals: game.global.totalRadPortals,
-        currentTime: new Date().getTime(),
-        portalTime: game.global.portalTime,
-        world: game.global.world,
-        challenge: game.global.challengeActive,
-        voids: game.global.totalVoidMaps,
-        heirlooms: { "value": game.stats.totalHeirlooms.value, "valueTotal": game.stats.totalHeirlooms.valueTotal },
-        nullifium: recycleAllExtraHeirlooms(true),
-        coord: game.upgrades.Coordination.done,
-        overkill: GraphsVars2.OVKcellsInWorld,
-        zonetime: GraphsVars2.ZoneStartTime,
-        mapbonus: GraphsVars2.MapBonus,
-        scruffy: game.global.fluffyExp2,
-        radonOwned: game.resources.radon.owned,
-        rnhr: RgetPercent.toFixed(4),
-        rnlife: Rlifetime.toFixed(4)
-    });
-    clearData2(10);
-    safeSetItems2('allSaveData2', JSON.stringify(allSaveData2));
+	allSaveData2.push({
+		totalPortals: game.global.totalRadPortals,
+		currentTime: new Date().getTime(),
+		portalTime: game.global.portalTime,
+		world: game.global.world,
+		challenge: game.global.challengeActive,
+		voids: game.global.totalVoidMaps,
+		heirlooms: { "value": game.stats.totalHeirlooms.value, "valueTotal": game.stats.totalHeirlooms.valueTotal },
+		nullifium: recycleAllExtraHeirlooms(true),
+		coord: game.upgrades.Coordination.done,
+		overkill: GraphsVars2.OVKcellsInWorld,
+		zonetime: GraphsVars2.ZoneStartTime,
+		mapbonus: GraphsVars2.MapBonus,
+		scruffy: game.global.fluffyExp2,
+		radonOwned: game.resources.radon.owned,
+		rnhr: RgetPercent.toFixed(4),
+		rnlife: Rlifetime.toFixed(4)
+	});
+	clearData2(10);
+	safeSetItems2('allSaveData2', JSON.stringify(allSaveData2));
 }
 
 var graph2Anal2 = [];
@@ -140,58 +140,58 @@ function InitGraphsVars2() { GraphsVars2.currentPortal = 0, GraphsVars2.OVKcells
 InitGraphsVars2();
 
 function gatherInfo2() {
-    if (game.options.menu.pauseGame.enabled) return;
-    initializeData2();
-    GraphsVars2.aWholeNewPortal = GraphsVars2.currentPortal != game.global.totalRadPortals;
-    if (GraphsVars2.aWholeNewPortal) {
-        GraphsVars2.currentPortal = game.global.totalRadPortals;
-        filteredLoot2 = {
-            'produced': {
-                metal: 0,
-                wood: 0,
-                food: 0,
-                gems: 0,
-                fragments: 0
-            },
-            'looted': {
-                metal: 0,
-                wood: 0,
-                food: 0,
-                gems: 0,
-                fragments: 0
-            }
-        };
-    }
-    GraphsVars2.aWholeNewWorld = GraphsVars2.currentworld != game.global.world;
-    if (GraphsVars2.aWholeNewWorld) {
-        GraphsVars2.currentworld = game.global.world;
-        if (allSaveData2.length > 0 && allSaveData2[allSaveData2.length - 1].world != game.global.world) {
-            pushData2();
-        }
-        GraphsVars2.OVKcellsInWorld = 0;
-        GraphsVars2.ZoneStartTime = 0;
-        GraphsVars2.MapBonus = 0;
-    }
-    if (game.options.menu.overkillColor.enabled == 0) toggleSetting('overkillColor');
-    if (game.options.menu.liquification.enabled && game.talents.liquification.purchased && !game.global.mapsActive && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name == "Liquimp")
-        GraphsVars2.OVKcellsInWorld = 100;
-    else
-        GraphsVars2.OVKcellsInWorld = document.getElementById("grid").getElementsByClassName("cellColorOverkill").length;
-    GraphsVars2.ZoneStartTime = new Date().getTime() - game.global.zoneStarted;
-    GraphsVars2.MapBonus = game.global.mapBonus;
+	if (game.options.menu.pauseGame.enabled) return;
+	initializeData2();
+	GraphsVars2.aWholeNewPortal = GraphsVars2.currentPortal != game.global.totalRadPortals;
+	if (GraphsVars2.aWholeNewPortal) {
+		GraphsVars2.currentPortal = game.global.totalRadPortals;
+		filteredLoot2 = {
+			'produced': {
+				metal: 0,
+				wood: 0,
+				food: 0,
+				gems: 0,
+				fragments: 0
+			},
+			'looted': {
+				metal: 0,
+				wood: 0,
+				food: 0,
+				gems: 0,
+				fragments: 0
+			}
+		};
+	}
+	GraphsVars2.aWholeNewWorld = GraphsVars2.currentworld != game.global.world;
+	if (GraphsVars2.aWholeNewWorld) {
+		GraphsVars2.currentworld = game.global.world;
+		if (allSaveData2.length > 0 && allSaveData2[allSaveData2.length - 1].world != game.global.world) {
+			pushData2();
+		}
+		GraphsVars2.OVKcellsInWorld = 0;
+		GraphsVars2.ZoneStartTime = 0;
+		GraphsVars2.MapBonus = 0;
+	}
+	if (game.options.menu.overkillColor.enabled == 0) toggleSetting('overkillColor');
+	if (game.options.menu.liquification.enabled && game.talents.liquification.purchased && !game.global.mapsActive && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name == "Liquimp")
+		GraphsVars2.OVKcellsInWorld = 100;
+	else
+		GraphsVars2.OVKcellsInWorld = document.getElementById("grid").getElementsByClassName("cellColorOverkill").length;
+	GraphsVars2.ZoneStartTime = new Date().getTime() - game.global.zoneStarted;
+	GraphsVars2.MapBonus = game.global.mapBonus;
 }
 
 var dataBase2 = {};
 var databaseIndexEntry2 = {
-    Index: 0,
-    Portal: 0,
-    Challenge: 0,
-    World: 0
+	Index: 0,
+	Portal: 0,
+	Challenge: 0,
+	World: 0
 };
 var databaseDirtyEntry2 = {
-    State: false,
-    Reason: "",
-    Index: -1
+	State: false,
+	Reason: "",
+	Index: -1
 };
 var portalExistsArray2 = [];
 var portalRunArray2 = [];
@@ -204,618 +204,618 @@ function checkWorldSequentiality2() { for (var a, b, c, d = 1; d < dataBase2.len
 function drawGraph2(a, b) { var c = document.getElementById('graph2Selection'); a ? (c.select2edIndex--, 0 > c.select2edIndex && (c.select2edIndex = 0)) : b && c.select2edIndex != c.options.length - 1 && c.select2edIndex++, setgraph2Data2(c.value) }
 
 function setgraph2Data2(graph2) {
-    var title, xTitle, yTitle, yType, valueSuffix, series, formatter, xminFloor = 1,
-        yminFloor = null;
-    var precision = 0;
-    var oldData = JSON.stringify(graph2Data2);
-    valueSuffix = '';
+	var title, xTitle, yTitle, yType, valueSuffix, series, formatter, xminFloor = 1,
+		yminFloor = null;
+	var precision = 0;
+	var oldData = JSON.stringify(graph2Data2);
+	valueSuffix = '';
 
-    switch (graph2) {
+	switch (graph2) {
 
-        case 'Void Maps':
-            var currentPortal = -1;
-            var totalVoids = 0;
-            var theChallenge = '';
-            graph2Data2 = [];
-            for (var i in allSaveData2) {
-                if (allSaveData2[i].totalPortals != currentPortal) {
-                    if (currentPortal == -1) {
-                        theChallenge = allSaveData2[i].challenge;
-                        currentPortal = allSaveData2[i].totalPortals;
-                        graph2Data2.push({
-                            name: 'Void Maps',
-                            data: [],
-                            type: 'column'
-                        });
-                        continue;
-                    }
-                    graph2Data2[0].data.push([allSaveData2[i - 1].totalPortals, totalVoids]);
-                    theChallenge = allSaveData2[i].challenge;
-                    totalVoids = 0;
-                    currentPortal = allSaveData2[i].totalPortals;
-                }
-                if (allSaveData2[i].voids > totalVoids) {
-                    totalVoids = allSaveData2[i].voids;
-                }
-            }
-            title = 'Void Maps (completed)';
-            xTitle = 'Portal';
-            yTitle = 'Number of Void Maps';
-            yType = 'Linear';
-            break;
+		case 'Void Maps':
+			var currentPortal = -1;
+			var totalVoids = 0;
+			var theChallenge = '';
+			graph2Data2 = [];
+			for (var i in allSaveData2) {
+				if (allSaveData2[i].totalPortals != currentPortal) {
+					if (currentPortal == -1) {
+						theChallenge = allSaveData2[i].challenge;
+						currentPortal = allSaveData2[i].totalPortals;
+						graph2Data2.push({
+							name: 'Void Maps',
+							data: [],
+							type: 'column'
+						});
+						continue;
+					}
+					graph2Data2[0].data.push([allSaveData2[i - 1].totalPortals, totalVoids]);
+					theChallenge = allSaveData2[i].challenge;
+					totalVoids = 0;
+					currentPortal = allSaveData2[i].totalPortals;
+				}
+				if (allSaveData2[i].voids > totalVoids) {
+					totalVoids = allSaveData2[i].voids;
+				}
+			}
+			title = 'Void Maps (completed)';
+			xTitle = 'Portal';
+			yTitle = 'Number of Void Maps';
+			yType = 'Linear';
+			break;
 
-        case 'Nullifium Gained':
-            var currentPortal = -1;
-            var totalNull = 0;
-            var theChallenge = '';
-            graph2Data2 = [];
-            var averagenulli = 0;
-            var sumnulli = 0;
-            var count = 0;
-            for (var i in allSaveData2) {
-                if (allSaveData2[i].totalPortals != currentPortal) {
-                    if (currentPortal == -1) {
-                        theChallenge = allSaveData2[i].challenge;
-                        currentPortal = allSaveData2[i].totalPortals;
-                        graph2Data2.push({
-                            name: 'Nullifium Gained',
-                            data: [],
-                            type: 'column'
-                        });
-                        continue;
-                    }
-                    graph2Data2[0].data.push([allSaveData2[i - 1].totalPortals, totalNull]);
-                    count++;
-                    sumnulli += totalNull;
-                    theChallenge = allSaveData2[i].challenge;
-                    totalNull = 0;
-                    currentPortal = allSaveData2[i].totalPortals;
+		case 'Nullifium Gained':
+			var currentPortal = -1;
+			var totalNull = 0;
+			var theChallenge = '';
+			graph2Data2 = [];
+			var averagenulli = 0;
+			var sumnulli = 0;
+			var count = 0;
+			for (var i in allSaveData2) {
+				if (allSaveData2[i].totalPortals != currentPortal) {
+					if (currentPortal == -1) {
+						theChallenge = allSaveData2[i].challenge;
+						currentPortal = allSaveData2[i].totalPortals;
+						graph2Data2.push({
+							name: 'Nullifium Gained',
+							data: [],
+							type: 'column'
+						});
+						continue;
+					}
+					graph2Data2[0].data.push([allSaveData2[i - 1].totalPortals, totalNull]);
+					count++;
+					sumnulli += totalNull;
+					theChallenge = allSaveData2[i].challenge;
+					totalNull = 0;
+					currentPortal = allSaveData2[i].totalPortals;
 
-                }
-                if (allSaveData2[i].nullifium > totalNull) {
-                    totalNull = allSaveData2[i].nullifium;
-                }
-            }
-            averagenulli = sumnulli / count;
-            title = 'Nullifium Gained Per Portal';
-            if (averagenulli)
-                title = "Average " + title + " = " + averagenulli;
-            xTitle = 'Portal';
-            yTitle = 'Nullifium Gained';
-            yType = 'Linear';
-            break;
+				}
+				if (allSaveData2[i].nullifium > totalNull) {
+					totalNull = allSaveData2[i].nullifium;
+				}
+			}
+			averagenulli = sumnulli / count;
+			title = 'Nullifium Gained Per Portal';
+			if (averagenulli)
+				title = "Average " + title + " = " + averagenulli;
+			xTitle = 'Portal';
+			yTitle = 'Nullifium Gained';
+			yType = 'Linear';
+			break;
 
-        case 'Loot Sources':
-            graph2Data2 = [];
-            graph2Data2[0] = {
-                name: 'Metal',
-                data: lootData2.metal
-            };
-            graph2Data2[1] = {
-                name: 'Wood',
-                data: lootData2.wood
-            };
-            graph2Data2[2] = {
-                name: 'Food',
-                data: lootData2.food
-            };
-            graph2Data2[3] = {
-                name: 'Gems',
-                data: lootData2.gems
-            };
-            graph2Data2[4] = {
-                name: 'Fragments',
-                data: lootData2.fragments
-            };
-            title = 'Current Loot Sources (of all resources gained) - for the last 15 minutes';
-            xTitle = 'Time (every 15 seconds)';
-            yTitle = 'Ratio of looted to gathered';
-            valueSuffix = '%';
-            formatter = function () {
-                return Highcharts.numberFormat(this.y, 3);
-            };
-            break;
+		case 'Loot Sources':
+			graph2Data2 = [];
+			graph2Data2[0] = {
+				name: 'Metal',
+				data: lootData2.metal
+			};
+			graph2Data2[1] = {
+				name: 'Wood',
+				data: lootData2.wood
+			};
+			graph2Data2[2] = {
+				name: 'Food',
+				data: lootData2.food
+			};
+			graph2Data2[3] = {
+				name: 'Gems',
+				data: lootData2.gems
+			};
+			graph2Data2[4] = {
+				name: 'Fragments',
+				data: lootData2.fragments
+			};
+			title = 'Current Loot Sources (of all resources gained) - for the last 15 minutes';
+			xTitle = 'Time (every 15 seconds)';
+			yTitle = 'Ratio of looted to gathered';
+			valueSuffix = '%';
+			formatter = function () {
+				return Highcharts.numberFormat(this.y, 3);
+			};
+			break;
 
-        case 'Clear Time #2':
-            graph2Data2 = allPurposeGraph2('cleartime2', true, null,
-                function specialCalc(e1, e2) {
-                    return Math.round(e1.zonetime / 1000);
-                });
-            title = '(#2) Time to Clear Zone';
-            xTitle = 'Zone';
-            yTitle = 'Clear Time';
-            yType = 'Linear';
-            valueSuffix = ' Seconds';
-            break;
-        case 'Clear Time':
-            graph2Data2 = allPurposeGraph2('cleartime1', true, null,
-                function specialCalc(e1, e2) {
-                    return Math.round(((e1.currentTime - e2.currentTime) - (e1.portalTime - e2.portalTime)) / 1000);
-                });
-            title = 'Time to clear zone';
-            xTitle = 'Zone';
-            yTitle = 'Clear Time';
-            yType = 'Linear';
-            valueSuffix = ' Seconds';
-            yminFloor = 0;
-            break;
-        case 'Cumulative Clear Time #2':
-            graph2Data2 = allPurposeGraph2('cumucleartime2', true, null,
-                function specialCalc(e1, e2) {
-                    return Math.round(e1.zonetime);
-                }, true);
-            title = '(#2) Cumulative Time (at END of zone#)';
-            xTitle = 'Zone';
-            yTitle = 'Cumulative Clear Time';
-            yType = 'datetime';
-            formatter = function () {
-                var ser = this.series;
-                return '<span style="color:' + ser.color + '" >●</span> ' +
-                    ser.name + ': <b>' +
-                    Highcharts.dateFormat('%H:%M:%S', this.y) + '</b><br>';
+		case 'Clear Time #2':
+			graph2Data2 = allPurposeGraph2('cleartime2', true, null,
+				function specialCalc(e1, e2) {
+					return Math.round(e1.zonetime / 1000);
+				});
+			title = '(#2) Time to Clear Zone';
+			xTitle = 'Zone';
+			yTitle = 'Clear Time';
+			yType = 'Linear';
+			valueSuffix = ' Seconds';
+			break;
+		case 'Clear Time':
+			graph2Data2 = allPurposeGraph2('cleartime1', true, null,
+				function specialCalc(e1, e2) {
+					return Math.round(((e1.currentTime - e2.currentTime) - (e1.portalTime - e2.portalTime)) / 1000);
+				});
+			title = 'Time to clear zone';
+			xTitle = 'Zone';
+			yTitle = 'Clear Time';
+			yType = 'Linear';
+			valueSuffix = ' Seconds';
+			yminFloor = 0;
+			break;
+		case 'Cumulative Clear Time #2':
+			graph2Data2 = allPurposeGraph2('cumucleartime2', true, null,
+				function specialCalc(e1, e2) {
+					return Math.round(e1.zonetime);
+				}, true);
+			title = '(#2) Cumulative Time (at END of zone#)';
+			xTitle = 'Zone';
+			yTitle = 'Cumulative Clear Time';
+			yType = 'datetime';
+			formatter = function () {
+				var ser = this.series;
+				return '<span style="color:' + ser.color + '" >●</span> ' +
+					ser.name + ': <b>' +
+					Highcharts.dateFormat('%H:%M:%S', this.y) + '</b><br>';
 
-            };
-            yminFloor = 0;
-            break;
-        case 'Cumulative Clear Time':
-            graph2Data2 = allPurposeGraph2('cumucleartime1', true, null,
-                function specialCalc(e1, e2) {
-                    return Math.round((e1.currentTime - e2.currentTime) - (e1.portalTime - e2.portalTime));
-                }, true);
-            title = 'Cumulative Time (at END of zone#)';
-            xTitle = 'Zone';
-            yTitle = 'Cumulative Clear Time';
-            yType = 'datetime';
-            formatter = function () {
-                var ser = this.series;
-                return '<span style="color:' + ser.color + '" >●</span> ' +
-                    ser.name + ': <b>' +
-                    Highcharts.dateFormat('%H:%M:%S', this.y) + '</b><br>';
+			};
+			yminFloor = 0;
+			break;
+		case 'Cumulative Clear Time':
+			graph2Data2 = allPurposeGraph2('cumucleartime1', true, null,
+				function specialCalc(e1, e2) {
+					return Math.round((e1.currentTime - e2.currentTime) - (e1.portalTime - e2.portalTime));
+				}, true);
+			title = 'Cumulative Time (at END of zone#)';
+			xTitle = 'Zone';
+			yTitle = 'Cumulative Clear Time';
+			yType = 'datetime';
+			formatter = function () {
+				var ser = this.series;
+				return '<span style="color:' + ser.color + '" >●</span> ' +
+					ser.name + ': <b>' +
+					Highcharts.dateFormat('%H:%M:%S', this.y) + '</b><br>';
 
-            };
-            yminFloor = 0;
-            break;
+			};
+			yminFloor = 0;
+			break;
 
-        case 'Run Time':
-            var currentPortal = -1;
-            var theChallenge = '';
-            graph2Data2 = [];
-            for (var i in allSaveData2) {
-                if (allSaveData2[i].totalPortals != currentPortal) {
-                    if (currentPortal == -1) {
-                        theChallenge = allSaveData2[i].challenge;
-                        currentPortal = allSaveData2[i].totalPortals;
-                        graph2Data2.push({
-                            name: 'Run Time',
-                            data: [],
-                            type: 'column'
-                        });
-                        continue;
-                    }
-                    var theOne = allSaveData2[i - 1];
-                    var runTime = theOne.currentTime - theOne.portalTime;
-                    graph2Data2[0].data.push([theOne.totalPortals, runTime]);
-                    theChallenge = allSaveData2[i].challenge;
-                    currentPortal = allSaveData2[i].totalPortals;
-                }
-            }
-            title = 'Total Run Time';
-            xTitle = 'Portal';
-            yTitle = 'Time';
-            yType = 'datetime';
-            formatter = function () {
-                var ser = this.series;
-                return '<span style="color:' + ser.color + '" >●</span> ' +
-                    ser.name + ': <b>' +
-                    Highcharts.dateFormat('%H:%M:%S', this.y) + '</b><br>';
-            };
-            break;
+		case 'Run Time':
+			var currentPortal = -1;
+			var theChallenge = '';
+			graph2Data2 = [];
+			for (var i in allSaveData2) {
+				if (allSaveData2[i].totalPortals != currentPortal) {
+					if (currentPortal == -1) {
+						theChallenge = allSaveData2[i].challenge;
+						currentPortal = allSaveData2[i].totalPortals;
+						graph2Data2.push({
+							name: 'Run Time',
+							data: [],
+							type: 'column'
+						});
+						continue;
+					}
+					var theOne = allSaveData2[i - 1];
+					var runTime = theOne.currentTime - theOne.portalTime;
+					graph2Data2[0].data.push([theOne.totalPortals, runTime]);
+					theChallenge = allSaveData2[i].challenge;
+					currentPortal = allSaveData2[i].totalPortals;
+				}
+			}
+			title = 'Total Run Time';
+			xTitle = 'Portal';
+			yTitle = 'Time';
+			yType = 'datetime';
+			formatter = function () {
+				var ser = this.series;
+				return '<span style="color:' + ser.color + '" >●</span> ' +
+					ser.name + ': <b>' +
+					Highcharts.dateFormat('%H:%M:%S', this.y) + '</b><br>';
+			};
+			break;
 
-        case 'Radon - Rn/Hr':
-            graph2Data2 = allPurposeGraph2('radonhr', true, null,
-                function specialCalc(e1, e2) {
-                    return Math.floor(e1.radonOwned / ((e1.currentTime - e1.portalTime) / 3600000));
-                });
-            title = 'Radon/Hour (Cumulative)';
-            xTitle = 'Zone';
-            yTitle = 'Radon/Hour';
-            yType = 'Linear';
-            yminFloor = 0;
-            precision = 2;
-            break;
-        case 'Radon - Total':
-            graph2Data2 = allPurposeGraph2('radonOwned', true, null,
-                function specialCalc(e1, e2) {
-                    return Math.floor(e1.radonOwned);
-                });
-            title = 'Radon (Lifetime Total)';
-            xTitle = 'Zone';
-            yTitle = 'Radon';
-            yType = 'Linear';
-            break;
-        case 'RnHr % / LifetimeHe':
-            graph2Data2 = allPurposeGraph2('rnhr', true, "string");
-            title = 'Rn/Hr % of LifetimeHe';
-            xTitle = 'Zone';
-            yTitle = 'Rn/Hr % of LifetimeHe';
-            yType = 'Linear';
-            precision = 4;
-            break;
-        case 'Rn % / LifetimeHe':
-            graph2Data2 = allPurposeGraph2('rnlife', true, "string");
-            title = 'Rn % of LifetimeRn';
-            xTitle = 'Zone';
-            yTitle = 'Rn % of LifetimeRn';
-            yType = 'Linear';
-            precision = 4;
-            break;
-        case 'Radon - Rn/Hr Instant':
-            var currentPortal = -1;
-            var currentZone = -1;
-            graph2Data2 = [];
-            var nowhehr = 0; var lasthehr = 0;
-            var dailyMultGraph = (countDailyWeight() === 0 ? 1 : 1 + getDailyHeliumValue(countDailyWeight()) / 100)
-            for (var i in allSaveData2) {
-                if (allSaveData2[i].totalPortals != currentPortal) {
-                    graph2Data2.push({
-                        name: 'Portal ' + allSaveData2[i].totalPortals + ': ' + allSaveData2[i].challenge,
-                        data: []
-                    });
-                    currentPortal = allSaveData2[i].totalPortals;
-                    if (allSaveData2[i].world == 1 && currentZone != -1)
-                        graph2Data2[graph2Data2.length - 1].data.push(0);
+		case 'Radon - Rn/Hr':
+			graph2Data2 = allPurposeGraph2('radonhr', true, null,
+				function specialCalc(e1, e2) {
+					return Math.floor(e1.radonOwned / ((e1.currentTime - e1.portalTime) / 3600000));
+				});
+			title = 'Radon/Hour (Cumulative)';
+			xTitle = 'Zone';
+			yTitle = 'Radon/Hour';
+			yType = 'Linear';
+			yminFloor = 0;
+			precision = 2;
+			break;
+		case 'Radon - Total':
+			graph2Data2 = allPurposeGraph2('radonOwned', true, null,
+				function specialCalc(e1, e2) {
+					return Math.floor(e1.radonOwned);
+				});
+			title = 'Radon (Lifetime Total)';
+			xTitle = 'Zone';
+			yTitle = 'Radon';
+			yType = 'Linear';
+			break;
+		case 'RnHr % / LifetimeHe':
+			graph2Data2 = allPurposeGraph2('rnhr', true, "string");
+			title = 'Rn/Hr % of LifetimeHe';
+			xTitle = 'Zone';
+			yTitle = 'Rn/Hr % of LifetimeHe';
+			yType = 'Linear';
+			precision = 4;
+			break;
+		case 'Rn % / LifetimeHe':
+			graph2Data2 = allPurposeGraph2('rnlife', true, "string");
+			title = 'Rn % of LifetimeRn';
+			xTitle = 'Zone';
+			yTitle = 'Rn % of LifetimeRn';
+			yType = 'Linear';
+			precision = 4;
+			break;
+		case 'Radon - Rn/Hr Instant':
+			var currentPortal = -1;
+			var currentZone = -1;
+			graph2Data2 = [];
+			var nowhehr = 0; var lasthehr = 0;
+			var dailyMultGraph = (countDailyWeight() === 0 ? 1 : 1 + getDailyHeliumValue(countDailyWeight()) / 100)
+			for (var i in allSaveData2) {
+				if (allSaveData2[i].totalPortals != currentPortal) {
+					graph2Data2.push({
+						name: 'Portal ' + allSaveData2[i].totalPortals + ': ' + allSaveData2[i].challenge,
+						data: []
+					});
+					currentPortal = allSaveData2[i].totalPortals;
+					if (allSaveData2[i].world == 1 && currentZone != -1)
+						graph2Data2[graph2Data2.length - 1].data.push(0);
 
-                    if (currentZone == -1 || allSaveData2[i].world != 1) {
-                        var loop = allSaveData2[i].world;
-                        while (loop > 0) {
-                            graph2Data2[graph2Data2.length - 1].data.push(0);
-                            loop--;
-                        }
-                    }
-                    nowhehr = 0; lasthehr = 0;
-                }
-                if (currentZone < allSaveData2[i].world && currentZone != -1) {
-                    nowhehr = Math.floor((allSaveData2[i].radonOwned - allSaveData2[i - 1].radonOwned) * dailyMultGraph / ((allSaveData2[i].currentTime - allSaveData2[i - 1].currentTime) / 3600000));
-                    graph2Data2[graph2Data2.length - 1].data.push(nowhehr);
-                }
-                currentZone = allSaveData2[i].world;
-            }
-            title = 'Radon/Hour Instantaneous - between current and last zone.';
-            xTitle = 'Zone';
-            yTitle = 'Radon/Hour per each zone';
-            yType = 'Linear';
-            yminFloor = null;
-            break;
-        case 'Void Map History':
-            graph2Data2 = allPurposeGraph2('voids', true, "number");
-            title = 'Void Map History (voids finished during the same level acquired (with RunNewVoids) are not counted/tracked)';
-            xTitle = 'Zone';
-            yTitle = 'Number of Void Maps';
-            yType = 'Linear';
-            break;
-        case 'Map Bonus':
-            graph2Data2 = allPurposeGraph2('mapbonus', true, "number");
-            title = 'Map Bonus History';
-            xTitle = 'Zone';
-            yTitle = 'Map Bonus Stacks';
-            yType = 'Linear';
-            break;
-        case 'Coordinations':
-            graph2Data2 = allPurposeGraph2('coord', true, "number");
-            title = 'Coordination History';
-            xTitle = 'Zone';
-            yTitle = 'Coordination';
-            yType = 'Linear';
-            break;
-        case 'Scruffy XP':
-            graph2Data2 = allPurposeGraph2('scruffy', true, "number");
-            title = 'Scruffy XP (Lifetime Total)';
-            xTitle = 'Zone';
-            yTitle = 'Scruffy XP';
-            yType = 'Linear';
-            xminFloor = 0;
-            break;
-        case 'Scruffy XP PerHour':
-            var currentPortal = -1;
-            var currentZone = -1;
-            var startScruffy = 0;
-            graph2Data2 = [];
-            for (var i in allSaveData2) {
-                if (allSaveData2[i].totalPortals != currentPortal) {
-                    graph2Data2.push({
-                        name: 'Portal ' + allSaveData2[i].totalPortals + ': ' + allSaveData2[i].challenge,
-                        data: []
-                    });
-                    currentPortal = allSaveData2[i].totalPortals;
-                    currentZone = 0;
-                    startScruffy = allSaveData2[i].scruffy;
-                }
-                if (currentZone != allSaveData2[i].world - 1 && i > 0) {
-                    var loop = allSaveData2[i].world - 1 - currentZone;
-                    while (loop > 0) {
-                        graph2Data2[graph2Data2.length - 1].data.push(allSaveData2[i - 1][item] * 1);
-                        loop--;
-                    }
-                }
-                if (currentZone != 0) {
-                    graph2Data2[graph2Data2.length - 1].data.push(Math.floor((allSaveData2[i].scruffy - startScruffy) / ((allSaveData2[i].currentTime - allSaveData2[i].portalTime) / 3600000)));
-                }
-                currentZone = allSaveData2[i].world;
-            }
-            title = 'Scruffy XP/Hour (Cumulative)';
-            xTitle = 'Zone';
-            yTitle = 'Scruffy XP/Hour';
-            yType = 'Linear';
-            xminFloor = 1;
-            break;
-        case 'OverkillCells':
-            var currentPortal = -1;
-            graph2Data2 = [];
-            for (var i in allSaveData2) {
-                if (allSaveData2[i].totalPortals != currentPortal) {
-                    graph2Data2.push({
-                        name: 'Portal ' + allSaveData2[i].totalPortals + ': ' + allSaveData2[i].challenge,
-                        data: []
-                    });
-                    currentPortal = allSaveData2[i].totalPortals;
-                    if (allSaveData2[i].world == 1 && currentZone != -1)
-                        graph2Data2[graph2Data2.length - 1].data.push(0);
+					if (currentZone == -1 || allSaveData2[i].world != 1) {
+						var loop = allSaveData2[i].world;
+						while (loop > 0) {
+							graph2Data2[graph2Data2.length - 1].data.push(0);
+							loop--;
+						}
+					}
+					nowhehr = 0; lasthehr = 0;
+				}
+				if (currentZone < allSaveData2[i].world && currentZone != -1) {
+					nowhehr = Math.floor((allSaveData2[i].radonOwned - allSaveData2[i - 1].radonOwned) * dailyMultGraph / ((allSaveData2[i].currentTime - allSaveData2[i - 1].currentTime) / 3600000));
+					graph2Data2[graph2Data2.length - 1].data.push(nowhehr);
+				}
+				currentZone = allSaveData2[i].world;
+			}
+			title = 'Radon/Hour Instantaneous - between current and last zone.';
+			xTitle = 'Zone';
+			yTitle = 'Radon/Hour per each zone';
+			yType = 'Linear';
+			yminFloor = null;
+			break;
+		case 'Void Map History':
+			graph2Data2 = allPurposeGraph2('voids', true, "number");
+			title = 'Void Map History (voids finished during the same level acquired (with RunNewVoids) are not counted/tracked)';
+			xTitle = 'Zone';
+			yTitle = 'Number of Void Maps';
+			yType = 'Linear';
+			break;
+		case 'Map Bonus':
+			graph2Data2 = allPurposeGraph2('mapbonus', true, "number");
+			title = 'Map Bonus History';
+			xTitle = 'Zone';
+			yTitle = 'Map Bonus Stacks';
+			yType = 'Linear';
+			break;
+		case 'Coordinations':
+			graph2Data2 = allPurposeGraph2('coord', true, "number");
+			title = 'Coordination History';
+			xTitle = 'Zone';
+			yTitle = 'Coordination';
+			yType = 'Linear';
+			break;
+		case 'Scruffy XP':
+			graph2Data2 = allPurposeGraph2('scruffy', true, "number");
+			title = 'Scruffy XP (Lifetime Total)';
+			xTitle = 'Zone';
+			yTitle = 'Scruffy XP';
+			yType = 'Linear';
+			xminFloor = 0;
+			break;
+		case 'Scruffy XP PerHour':
+			var currentPortal = -1;
+			var currentZone = -1;
+			var startScruffy = 0;
+			graph2Data2 = [];
+			for (var i in allSaveData2) {
+				if (allSaveData2[i].totalPortals != currentPortal) {
+					graph2Data2.push({
+						name: 'Portal ' + allSaveData2[i].totalPortals + ': ' + allSaveData2[i].challenge,
+						data: []
+					});
+					currentPortal = allSaveData2[i].totalPortals;
+					currentZone = 0;
+					startScruffy = allSaveData2[i].scruffy;
+				}
+				if (currentZone != allSaveData2[i].world - 1 && i > 0) {
+					var loop = allSaveData2[i].world - 1 - currentZone;
+					while (loop > 0) {
+						graph2Data2[graph2Data2.length - 1].data.push(allSaveData2[i - 1][item] * 1);
+						loop--;
+					}
+				}
+				if (currentZone != 0) {
+					graph2Data2[graph2Data2.length - 1].data.push(Math.floor((allSaveData2[i].scruffy - startScruffy) / ((allSaveData2[i].currentTime - allSaveData2[i].portalTime) / 3600000)));
+				}
+				currentZone = allSaveData2[i].world;
+			}
+			title = 'Scruffy XP/Hour (Cumulative)';
+			xTitle = 'Zone';
+			yTitle = 'Scruffy XP/Hour';
+			yType = 'Linear';
+			xminFloor = 1;
+			break;
+		case 'OverkillCells':
+			var currentPortal = -1;
+			graph2Data2 = [];
+			for (var i in allSaveData2) {
+				if (allSaveData2[i].totalPortals != currentPortal) {
+					graph2Data2.push({
+						name: 'Portal ' + allSaveData2[i].totalPortals + ': ' + allSaveData2[i].challenge,
+						data: []
+					});
+					currentPortal = allSaveData2[i].totalPortals;
+					if (allSaveData2[i].world == 1 && currentZone != -1)
+						graph2Data2[graph2Data2.length - 1].data.push(0);
 
-                    if (currentZone == -1 || allSaveData2[i].world != 1) {
-                        var loop = allSaveData2[i].world;
-                        while (loop > 0) {
-                            graph2Data2[graph2Data2.length - 1].data.push(0);
-                            loop--;
-                        }
-                    }
-                }
-                if (currentZone < allSaveData2[i].world && currentZone != -1) {
-                    var num = allSaveData2[i].overkill;
-                    if (num)
-                        graph2Data2[graph2Data2.length - 1].data.push(num);
-                }
-                currentZone = allSaveData2[i].world;
-            }
-            title = 'Overkilled Cells';
-            xTitle = 'Zone';
-            yTitle = 'Overkilled Cells';
-            yType = 'Linear';
-            break;
-    }
+					if (currentZone == -1 || allSaveData2[i].world != 1) {
+						var loop = allSaveData2[i].world;
+						while (loop > 0) {
+							graph2Data2[graph2Data2.length - 1].data.push(0);
+							loop--;
+						}
+					}
+				}
+				if (currentZone < allSaveData2[i].world && currentZone != -1) {
+					var num = allSaveData2[i].overkill;
+					if (num)
+						graph2Data2[graph2Data2.length - 1].data.push(num);
+				}
+				currentZone = allSaveData2[i].world;
+			}
+			title = 'Overkilled Cells';
+			xTitle = 'Zone';
+			yTitle = 'Overkilled Cells';
+			yType = 'Linear';
+			break;
+	}
 
-    function allPurposeGraph2(item, extraChecks, typeCheck, funcToRun, useAccumulator) {
-        var currentPortal = -1;
-        var currentZone = 0;
-        var accumulator = 0;
-        graph2Data2 = [];
-        for (var i in allSaveData2) {
-            if (typeCheck && typeof allSaveData2[i][item] != typeCheck)
-                continue;
-            if (allSaveData2[i].totalPortals != currentPortal) {
-                graph2Data2.push({
-                    name: 'Portal ' + allSaveData2[i].totalPortals + ': ' + allSaveData2[i].challenge,
-                    data: []
-                });
-                currentPortal = allSaveData2[i].totalPortals;
-                currentZone = 0;
-                if (funcToRun) {
-                    accumulator = 0;
-                    graph2Data2[graph2Data2.length - 1].data.push(0);
-                }
-                continue;
-            }
-            if (extraChecks) {
-                if (currentZone != allSaveData2[i].world - 1) {
-                    var loop = allSaveData2[i].world - 1 - currentZone;
-                    while (loop > 0) {
-                        graph2Data2[graph2Data2.length - 1].data.push(allSaveData2[i - 1][item] * 1);
-                        loop--;
-                    }
-                }
-            }
-            if (funcToRun && !useAccumulator && currentZone != 0) {
-                var num = funcToRun(allSaveData2[i], allSaveData2[i - 1]);
-                if (num < 0) num = 1;
-                graph2Data2[graph2Data2.length - 1].data.push(num);
-            } else if (funcToRun && useAccumulator && currentZone != 0) {
-                accumulator += funcToRun(allSaveData2[i], allSaveData2[i - 1]);
-                if (accumulator < 0) accumulator = 1;
-                graph2Data2[graph2Data2.length - 1].data.push(accumulator);
-            } else {
-                if (allSaveData2[i][item] >= 0)
-                    graph2Data2[graph2Data2.length - 1].data.push(allSaveData2[i][item] * 1);
-                else if (extraChecks)
-                    graph2Data2[graph2Data2.length - 1].data.push(-1);
-            }
-            currentZone = allSaveData2[i].world;
-        }
-        return graph2Data2;
-    }
-    formatter = formatter || function () {
-        var ser = this.series;
-        return '<span style="color:' + ser.color + '" >●</span> ' +
-            ser.name + ': <b>' +
-            prettify(this.y) + valueSuffix + '</b><br>';
-    };
-    var additionalParams = {};
-    if (oldData != JSON.stringify(graph2Data2)) {
-        saveSelectedGraphs2();
-        setGraph2(title, xTitle, yTitle, valueSuffix, formatter, graph2Data2, yType, xminFloor, yminFloor, additionalParams);
-    }
-    if (graph2 == 'Loot Sources') {
-        chart12.xAxis[0].tickInterval = 1;
-        chart12.xAxis[0].minorTickInterval = 1;
-    }
-    if (document.getElementById('rememberCB').checked) {
-        applyRememberedSelections2();
-    }
+	function allPurposeGraph2(item, extraChecks, typeCheck, funcToRun, useAccumulator) {
+		var currentPortal = -1;
+		var currentZone = 0;
+		var accumulator = 0;
+		graph2Data2 = [];
+		for (var i in allSaveData2) {
+			if (typeCheck && typeof allSaveData2[i][item] != typeCheck)
+				continue;
+			if (allSaveData2[i].totalPortals != currentPortal) {
+				graph2Data2.push({
+					name: 'Portal ' + allSaveData2[i].totalPortals + ': ' + allSaveData2[i].challenge,
+					data: []
+				});
+				currentPortal = allSaveData2[i].totalPortals;
+				currentZone = 0;
+				if (funcToRun) {
+					accumulator = 0;
+					graph2Data2[graph2Data2.length - 1].data.push(0);
+				}
+				continue;
+			}
+			if (extraChecks) {
+				if (currentZone != allSaveData2[i].world - 1) {
+					var loop = allSaveData2[i].world - 1 - currentZone;
+					while (loop > 0) {
+						graph2Data2[graph2Data2.length - 1].data.push(allSaveData2[i - 1][item] * 1);
+						loop--;
+					}
+				}
+			}
+			if (funcToRun && !useAccumulator && currentZone != 0) {
+				var num = funcToRun(allSaveData2[i], allSaveData2[i - 1]);
+				if (num < 0) num = 1;
+				graph2Data2[graph2Data2.length - 1].data.push(num);
+			} else if (funcToRun && useAccumulator && currentZone != 0) {
+				accumulator += funcToRun(allSaveData2[i], allSaveData2[i - 1]);
+				if (accumulator < 0) accumulator = 1;
+				graph2Data2[graph2Data2.length - 1].data.push(accumulator);
+			} else {
+				if (allSaveData2[i][item] >= 0)
+					graph2Data2[graph2Data2.length - 1].data.push(allSaveData2[i][item] * 1);
+				else if (extraChecks)
+					graph2Data2[graph2Data2.length - 1].data.push(-1);
+			}
+			currentZone = allSaveData2[i].world;
+		}
+		return graph2Data2;
+	}
+	formatter = formatter || function () {
+		var ser = this.series;
+		return '<span style="color:' + ser.color + '" >●</span> ' +
+			ser.name + ': <b>' +
+			prettify(this.y) + valueSuffix + '</b><br>';
+	};
+	var additionalParams = {};
+	if (oldData != JSON.stringify(graph2Data2)) {
+		saveSelectedGraphs2();
+		setGraph2(title, xTitle, yTitle, valueSuffix, formatter, graph2Data2, yType, xminFloor, yminFloor, additionalParams);
+	}
+	if (graph2 == 'Loot Sources') {
+		chart12.xAxis[0].tickInterval = 1;
+		chart12.xAxis[0].minorTickInterval = 1;
+	}
+	if (document.getElementById('rememberCB').checked) {
+		applyRememberedSelections2();
+	}
 }
 
 var chart12;
 
 function setGraph2(title, xTitle, yTitle, valueSuffix, formatter, series, yType, xminFloor, yminFloor, additionalParams) {
-    chart12 = new Highcharts.Chart({
-        chart: {
-            renderTo: 'graph2',
-            zoomType: 'xy',
-            resetZoomButton: {
-                position: {
-                    align: 'right',
-                    verticalAlign: 'top',
-                    x: -20,
-                    y: 15
-                },
-                relativeTo: 'chart'
-            }
-        },
-        title: {
-            text: title,
-            x: -20
-        },
-        plotOptions: {
-            series: {
-                lineWidth: 1,
-                animation: false,
-                marker: {
-                    enabled: false
-                }
-            }
-        },
-        xAxis: {
-            floor: xminFloor,
-            title: {
-                text: xTitle
-            },
-        },
-        yAxis: {
-            floor: yminFloor,
-            title: {
-                text: yTitle
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }],
-            type: yType,
-            dateTimeLabelFormats: {
-                second: '%H:%M:%S',
-                minute: '%H:%M:%S',
-                hour: '%H:%M:%S',
-                day: '%H:%M:%S',
-                week: '%H:%M:%S',
-                month: '%H:%M:%S',
-                year: '%H:%M:%S'
-            }
-        },
-        tooltip: {
-            pointFormatter: formatter,
-            valueSuffix: valueSuffix
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle',
-            borderWidth: 0
-        },
-        series: series,
-        additionalParams
-    });
+	chart12 = new Highcharts.Chart({
+		chart: {
+			renderTo: 'graph2',
+			zoomType: 'xy',
+			resetZoomButton: {
+				position: {
+					align: 'right',
+					verticalAlign: 'top',
+					x: -20,
+					y: 15
+				},
+				relativeTo: 'chart'
+			}
+		},
+		title: {
+			text: title,
+			x: -20
+		},
+		plotOptions: {
+			series: {
+				lineWidth: 1,
+				animation: false,
+				marker: {
+					enabled: false
+				}
+			}
+		},
+		xAxis: {
+			floor: xminFloor,
+			title: {
+				text: xTitle
+			},
+		},
+		yAxis: {
+			floor: yminFloor,
+			title: {
+				text: yTitle
+			},
+			plotLines: [{
+				value: 0,
+				width: 1,
+				color: '#808080'
+			}],
+			type: yType,
+			dateTimeLabelFormats: {
+				second: '%H:%M:%S',
+				minute: '%H:%M:%S',
+				hour: '%H:%M:%S',
+				day: '%H:%M:%S',
+				week: '%H:%M:%S',
+				month: '%H:%M:%S',
+				year: '%H:%M:%S'
+			}
+		},
+		tooltip: {
+			pointFormatter: formatter,
+			valueSuffix: valueSuffix
+		},
+		legend: {
+			layout: 'vertical',
+			align: 'right',
+			verticalAlign: 'middle',
+			borderWidth: 0
+		},
+		series: series,
+		additionalParams
+	});
 }
 
 function setColor2(tmp) {
-    for (var i in tmp) {
-        tmp[i].color = (i == tmp.length - 1) ? '#FF0000' :
-            '#90C3D4';
-    }
-    return tmp;
+	for (var i in tmp) {
+		tmp[i].color = (i == tmp.length - 1) ? '#FF0000' :
+			'#90C3D4';
+	}
+	return tmp;
 }
 
 var filteredLoot2 = {
-    'produced': {
-        metal: 0,
-        wood: 0,
-        food: 0,
-        gems: 0,
-        fragments: 0
-    },
-    'looted': {
-        metal: 0,
-        wood: 0,
-        food: 0,
-        gems: 0,
-        fragments: 0
-    }
+	'produced': {
+		metal: 0,
+		wood: 0,
+		food: 0,
+		gems: 0,
+		fragments: 0
+	},
+	'looted': {
+		metal: 0,
+		wood: 0,
+		food: 0,
+		gems: 0,
+		fragments: 0
+	}
 };
 var lootData2 = {
-    metal: [],
-    wood: [],
-    food: [],
-    gems: [],
-    fragments: []
+	metal: [],
+	wood: [],
+	food: [],
+	gems: [],
+	fragments: []
 };
 
 function filterLoot2(loot, amount, jest, fromGather) {
-    if (loot != 'wood' && loot != 'metal' && loot != 'food' && loot != 'gems' && loot != 'fragments') return;
-    if (jest) {
-        filteredLoot2.produced[loot] += amount;
-        filteredLoot2.looted[loot] -= amount;
-    } else if (fromGather) filteredLoot2.produced[loot] += amount;
-    else filteredLoot2.looted[loot] += amount;
+	if (loot != 'wood' && loot != 'metal' && loot != 'food' && loot != 'gems' && loot != 'fragments') return;
+	if (jest) {
+		filteredLoot2.produced[loot] += amount;
+		filteredLoot2.looted[loot] -= amount;
+	} else if (fromGather) filteredLoot2.produced[loot] += amount;
+	else filteredLoot2.looted[loot] += amount;
 }
 
 function getLootData2() {
-    var loots = ['metal', 'wood', 'food', 'gems', 'fragments'];
-    for (var r in loots) {
-        var name = loots[r];
-        if (filteredLoot2.produced[name])
-            lootData2[name].push(filteredLoot2.looted[name] / filteredLoot2.produced[name]);
-        if (lootData2[name].length > 60) lootData2[name].shift();
-    }
+	var loots = ['metal', 'wood', 'food', 'gems', 'fragments'];
+	for (var r in loots) {
+		var name = loots[r];
+		if (filteredLoot2.produced[name])
+			lootData2[name].push(filteredLoot2.looted[name] / filteredLoot2.produced[name]);
+		if (lootData2[name].length > 60) lootData2[name].shift();
+	}
 }
 
 setInterval(getLootData2, 15000);
 
 (function () {
-    var resAmts;
+	var resAmts;
 
-    function storeResAmts2() {
-        resAmts = {};
-        for (let item in lootData2) {
-            resAmts[item] = game.resources[item].owned;
-        }
-    }
+	function storeResAmts2() {
+		resAmts = {};
+		for (let item in lootData2) {
+			resAmts[item] = game.resources[item].owned;
+		}
+	}
 
-    const oldJestimpLoot = game.badGuys.Jestimp.loot;
-    game.badGuys.Jestimp.loot =
-        function () {
-            storeResAmts2();
-            var toReturn = oldJestimpLoot.apply(this, arguments);
-            for (let item in resAmts) {
-                var gained = game.resources[item].owned - resAmts[item];
-                if (gained > 0) {
-                    filterLoot2(item, gained, true);
-                }
-            }
-            return toReturn;
-        };
+	const oldJestimpLoot = game.badGuys.Jestimp.loot;
+	game.badGuys.Jestimp.loot =
+		function () {
+			storeResAmts2();
+			var toReturn = oldJestimpLoot.apply(this, arguments);
+			for (let item in resAmts) {
+				var gained = game.resources[item].owned - resAmts[item];
+				if (gained > 0) {
+					filterLoot2(item, gained, true);
+				}
+			}
+			return toReturn;
+		};
 
-    const oldChronoimpLoot = game.badGuys.Chronoimp.loot;
-    game.badGuys.Chronoimp.loot =
-        function () {
-            storeResAmts2();
-            var toReturn = oldChronoimpLoot.apply(this, arguments);
-            for (let item in resAmts) {
-                var gained = game.resources[item].owned - resAmts[item];
-                if (gained > 0) {
-                    filterLoot2(item, gained, true);
-                }
-            }
-            return toReturn;
-        };
+	const oldChronoimpLoot = game.badGuys.Chronoimp.loot;
+	game.badGuys.Chronoimp.loot =
+		function () {
+			storeResAmts2();
+			var toReturn = oldChronoimpLoot.apply(this, arguments);
+			for (let item in resAmts) {
+				var gained = game.resources[item].owned - resAmts[item];
+				if (gained > 0) {
+					filterLoot2(item, gained, true);
+				}
+			}
+			return toReturn;
+		};
 
-    const oldFunction = window.addResCheckMax;
-    window.addResCheckMax = (a, b, c, d, e, f) => filterLoot(a, b, null, d, f) || oldFunction(a, b, c, d, e, f);
+	const oldFunction = window.addResCheckMax;
+	window.addResCheckMax = (a, b, c, d, e, f) => filterLoot(a, b, null, d, f) || oldFunction(a, b, c, d, e, f);
 })();
 
 function lookUpZoneData2(a, b) { null == b && (b = game.global.totalRadPortals); for (var c = allSaveData2.length - 1; 0 <= c; c--)if (allSaveData2[c].totalPortals == b && allSaveData2[c].world == a) return allSaveData2[c] }
