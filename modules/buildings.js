@@ -383,9 +383,9 @@ function mostEfficientHousing() {
 		var currentOwned = game.buildings[housing].owned;
 		const dontbuy = [];
 		if (housing == 'Collector' || housing == 'Gateway') buildingspending = 1;
+		if (game.global.challengeActive == 'Hypothermia' && (housing !== 'Collector' || housing !== 'Gateway') && game.challenges.Hypothermia.bonfires > 0 && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
 		if (rTributeFarming && typeof (rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings && housing !== 'Collector') dontbuy.push(housing);
 		for (var resource in game.buildings[housing].cost) {
-
 			// Get production time for that resource
 			var baseCost = game.buildings[housing].cost[resource][0];
 			var costScaling = game.buildings[housing].cost[resource][1];

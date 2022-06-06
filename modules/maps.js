@@ -1157,9 +1157,9 @@ function RautoMap() {
 								if (game.global.mapsOwnedArray[map].name == 'Atlantrimp') {
 									selectMap(game.global.mapsOwnedArray[map].id)
 									rRunMap();
+									debug('Running Atlamtrimp');
 								}
 							}
-							debug('Running Atlamtrimp');
 						}
 					}
 				}
