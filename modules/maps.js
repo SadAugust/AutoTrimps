@@ -1115,7 +1115,7 @@ function RautoMap() {
 				var rTrFJobRatio = rTrFSettings.jobratio;
 				//var rTrFMaxMaps = getPageSetting('rMapRepeatCount');
 				rTrFbuyBuildings = typeof (rTrFSettings.buildings) === 'undefined' ? true : rTrFSettings.buildings;
-				rTrFAtlantrimp = typeof (rTrFSettings.atlantrimp) === 'undefined' ? false : rTrFSettings.atlantrimp;
+				rTrFAtlantrimp = typeof (rTrFSettings.atlantrimp) === 'undefined' || !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rTrFSettings.atlantrimp;
 
 				var tributeCost = 0;
 				var metCost = 0;
