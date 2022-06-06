@@ -800,9 +800,10 @@ function initializeAllSettings() {
 	//Heirloom Swapping
 	createSetting('Rhs', 'Heirloom Swapping', 'Heirloom swapping master button. Turn this on to allow heirloom swapping and its associated settings. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsMapSwap', 'Map Swap', 'Toggle to swap to your afterpush shield when inside maps', 'boolean', false, null, 'Heirlooms');
+	createSetting('RhsPlagueBringerSwap', 'Plaguebringer Swap', 'Toggle to swap to your initial shield when the enemy 2 cells from now is Fast to maximise plaguebringer damage.', 'boolean', false, null, 'Heirlooms');
 
 	//Shield swapping
-	document.getElementById('RhsMapSwap').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('RhsPlagueBringerSwap').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RhsShield', 'Shields', 'Toggle to swap Shields', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsInitial', 'Initial', '<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsAfterpush', 'Afterpush', '<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
@@ -976,7 +977,9 @@ function initializeAllSettings() {
 	createSetting('ImportAutoTrimps', 'Import AutoTrimps', 'Import your AutoTrimps Settings. Asks you to name it as a profile afterwards.', 'infoclick', 'ImportAutoTrimps', null, 'Import Export');
 	createSetting('ExportAutoTrimps', 'Export AutoTrimps', 'Export your AutoTrimps Settings as a output string text formatted in JSON.', 'infoclick', 'ExportAutoTrimps', null, 'Import Export');
 	createSetting('DefaultAutoTrimps', 'Reset to Default', 'Reset everything to the way it was when you first installed the script. ', 'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export');
-	createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export');
+	createSetting('DownloadDebug', 'Download for debug', 'Will download both your save and AT settings so that they can be debugged easier.', 'infoclick', 'ExportAutoTrimps, ', null, 'Import Export');
+	createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps, update, true', null, 'Import Export');
+	document.getElementById('DownloadDebug').setAttribute('onclick', 'ImportExportTooltip("ExportAutoTrimps","update",true)');
 	settingsProfileMakeGUI();
 
 }
@@ -2214,6 +2217,8 @@ function updateCustomButtons() {
 	var hson = getPageSetting('Rhs')
 	var hsshieldon = getPageSetting('RhsShield');
 	radonon && hson && hsshieldon ? turnOn('RhsMapSwap') : turnOff('RhsMapSwap');
+	//radonon && hson && hsshieldon ? turnOn('RhsPlagueBringerSwap') : turnOff('RhsPlagueBringerSwap');
+	turnOff('RhsPlagueBringerSwap');
 
 	//Shields
 	radonon && hson ? turnOn('RhsShield') : turnOff('RhsShield');

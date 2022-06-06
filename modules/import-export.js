@@ -153,7 +153,7 @@ function onDeleteProfile() {
 	debug("Successfully deleted profile #: " + target, "profile");
 }
 
-function ImportExportTooltip(what, event) {
+function ImportExportTooltip(what, event, download) {
 	if (game.global.lockTooltip)
 		return;
 	var $elem = document.getElementById("tooltipDiv");
@@ -163,6 +163,10 @@ function ImportExportTooltip(what, event) {
 	var costText = "";
 	var titleText = what;
 	if (what == "ExportAutoTrimps") {
+		var saveName = 'AT Settings P' + game.global.totalPortals;
+		if (game.global.universe == 2 || game.global.totalRadPortals > 0) {
+			saveName += " " + game.global.totalRadPortals + " U" + game.global.universe;
+		}
 		tooltipText = "This is your AUTOTRIMPS save string. There are many like it but this one is yours. Save this save somewhere safe so you can save time next time. <br/><br/><textarea id='exportArea' style='width: 100%' rows='5'>" + serializeSettings() + "</textarea>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip()'>Got it</div>";
 		if (document.queryCommandSupported('copy')) {
@@ -183,6 +187,9 @@ function ImportExportTooltip(what, event) {
 				document.getElementById('exportArea').select();
 			};
 		}
+		costText += "<a id='downloadLink' target='_blank' download='" + saveName + ".txt', href=";
+		costText += 'data:text/plain,' + encodeURIComponent(serializeSettings());
+		costText += "<div id='downloadBtn' class='btn btn-danger'>Download as File</div>";
 		costText += "</div>";
 
 	} else if (what == "ImportAutoTrimps") {
@@ -808,6 +815,26 @@ function ImportExportTooltip(what, event) {
 	$elem.style.display = "block";
 	if (ondisplay !== null)
 		ondisplay();
+
+	if (download == true && what == "ExportAutoTrimps") {
+		var pauseGame = 1;
+		var paused = false;
+		document.getElementById("downloadLink").click();
+		document.getElementById("confirmTooltipBtn").click();
+		if (game.options.menu.disablePause.enabled == 0) {
+			pauseGame = 0;
+			game.options.menu.disablePause.enabled = 1;
+		}
+		if (game.options.menu.pauseGame.enabled == 1) paused = true;
+		setTimeout(function () {
+			if (!paused && game.options.menu.pauseGame.enabled == 1) toggleSetting('pauseGame');
+		}, 500);
+		if (!paused) toggleSetting('pauseGame');
+		tooltip('Export', null, 'update');
+		document.getElementById("downloadLink").click();
+		document.getElementById("confirmTooltipBtn").click();
+		game.options.menu.disablePause.enabled = pauseGame;
+	}
 }
 
 function resetAutoTrimps(a, b) { ATrunning = !1, setTimeout(function (d) { localStorage.removeItem("autoTrimpSettings"), autoTrimpSettings = d ? d : {}; var e = document.getElementById("settingsRow"); e.removeChild(document.getElementById("autoSettings")), e.removeChild(document.getElementById("autoTrimpsTabBarMenu")), automationMenuSettingsInit(), initializeAllTabs(), initializeAllSettings(), initializeSettingsProfiles(), updateCustomButtons(), saveSettings(), checkPortalSettings(), ATrunning = !0 }(a), 101), a ? (debug("Successfully imported new AT settings...", "profile"), b ? ImportExportTooltip("message", "Successfully Imported Autotrimps Settings File!: " + b) : ImportExportTooltip("NameSettingsProfiles")) : (debug("Successfully reset AT settings to Defaults...", "profile"), ImportExportTooltip("message", "Autotrimps has been successfully reset to its defaults!")) }
