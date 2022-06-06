@@ -535,11 +535,9 @@ function rBuyTributes() {
         maxTributes = typeof (rTrFTributes) !== 'undefined' && rTrFTributes > getPageSetting('RMaxTribute') ? rTrFTributes : getPageSetting('RMaxTribute');
 
         //Won't buy them if the RAlchDontBuyMets toggle is enabled and on zone 152
-        if (!(game.global.challengeActive == "Alchemy" && game.global.world == 152 && getPageSetting('RAlchDontBuyMets') && game.global.lastClearedCell < 98)) {
             if (maxTributes > game.buildings.Tribute.purchased)
                 buyTributeCount = Math.min(buyTributeCount, maxTributes - game.buildings.Tribute.purchased);
             if (buyTributeCount > 0 && (maxTributes < 0 || (maxTributes > game.buildings.Tribute.purchased)))
                 buyBuilding('Tribute', true, true, buyTributeCount);
-        }
     }
 }
