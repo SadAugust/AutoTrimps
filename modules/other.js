@@ -2288,10 +2288,10 @@ function equalityManagement() {
 		var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
 
 		var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
-		var fastEnemy2 = currentCell + 3 > game.global[mapGrid].length ? false :
+		/* var fastEnemy2 = currentCell + 3 > game.global[mapGrid].length ? false :
 			getPageSetting('RhsPlagueBringerSwap') && !game.global.preMapsActive && fastimps.includes(game.global[mapGrid][currentCell + 2].name) ? true :
 				false;
-		var plaguebringer = currentCell + 3 > game.global[mapGrid].length ? 1e300 : typeof (game.global[mapGrid][currentCell + 2].plaguebringer) === 'undefined' ? 0 : game.global[mapGrid][currentCell + 1].plaguebringer
+		var plaguebringer = currentCell + 3 > game.global[mapGrid].length ? 1e300 : typeof (game.global[mapGrid][currentCell + 2].plaguebringer) === 'undefined' ? 0 : game.global[mapGrid][currentCell + 1].plaguebringer */
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
 
 		if (enemyHealth !== 0 && enemyHealth !== -1) {
@@ -2300,10 +2300,10 @@ function equalityManagement() {
 				ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 				if (runningUnlucky && Number(RcalcOurDmg('min', i, mapping, true, true, true).toString()[0] % 2 == 1))
 					continue;
-				if (fastEnemy2 && !fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak && ourDmgEquality * 1.25 > enemyHealth && plaguebringer === 0) { //Insert some code to check Plaguebringer damage here
+				/* if (fastEnemy2 && !fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak && ourDmgEquality * 1.25 > enemyHealth && plaguebringer === 0) { //Insert some code to check Plaguebringer damage here
 					continue;
-				}
-				else if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
+				} */
+				if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
