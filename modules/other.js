@@ -2288,6 +2288,10 @@ function equalityManagement() {
 		var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
 
 		var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
+		var fastEnemy2 = currentCell + 3 > game.global[mapGrid].length ? false :
+			getPageSetting('RhsPlagueBringerSwap') && !game.global.preMapsActive && fastimps.includes(game.global[mapGrid][currentCell + 2].name) ? true :
+				false;
+		var plaguebringer = currentCell + 3 > game.global[mapGrid].length ? 1e300 : typeof (game.global[mapGrid][currentCell + 2].plaguebringer) === 'undefined' ? 0 : game.global[mapGrid][currentCell + 1].plaguebringer
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
 
 		if (enemyHealth !== 0 && enemyHealth !== -1) {
@@ -2296,7 +2300,10 @@ function equalityManagement() {
 				ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 				if (runningUnlucky && Number(RcalcOurDmg('min', i, mapping, true, true, true).toString()[0] % 2 == 1))
 					continue;
-				if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
+				if (fastEnemy2 && !fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak && ourDmgEquality * 1.25 > enemyHealth && plaguebringer === 0) { //Insert some code to check Plaguebringer damage here
+					continue;
+				}
+				else if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
@@ -2411,20 +2418,6 @@ function* finder(array, item) {
 		yield index;
 	}
 	return -1;
-}
-
-function hypoPackratReset(challenge) {
-
-	if (challenge == 'Hypothermia' && getPageSetting('rHypoBuyPackrat')) {
-		toggleRemovePerks();
-		numTab(6, true);
-		buyPortalUpgrade('Packrat');
-		toggleRemovePerks();
-		tooltip('Custom', null, 'update', true);
-		document.getElementById('customNumberBox').value = 3;
-		numTab(5, true)
-		buyPortalUpgrade('Packrat');
-	}
 }
 
 function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
@@ -2654,6 +2647,53 @@ function ABItemSwap(items) {
 				autoBattle.items[item].hidden = false;
 			autoBattle.items[item].equipped = true;
 		}
+	}
+}
+
+function PresetSwapping(preset) {
+	if (!getPageSetting('RPerkSwapping')) return
+
+	var preset = !preset ? null :
+		(preset != 1 && preset != 2 && preset != 3) ? null :
+			preset;
+
+	if (preset == null) {
+		debug("Invalid input. Needs to be a value between 1 and 3.");
+		return;
+	}
+
+	presetTab(preset);
+	loadPerkPreset();
+}
+
+function hypoPackratReset(challenge) {
+
+	if (challenge == 'Hypothermia' && getPageSetting('rHypoBuyPackrat')) {
+		toggleRemovePerks();
+		numTab(6, true);
+		buyPortalUpgrade('Packrat');
+		toggleRemovePerks();
+		tooltip('Custom', null, 'update', true);
+		document.getElementById('customNumberBox').value = 3;
+		numTab(5, true)
+		buyPortalUpgrade('Packrat');
+	}
+}
+
+function AllocatePerks(duringRun) {
+	if (!game.global.portalActive) return;
+	if (getPageSetting('RAutoAllocatePerks') === 0) return;
+	var duringRun = !duringRun ? false : true;
+
+	var allocatePerk = getPageSetting('RAutoAllocatePerks') == 1 ? 'Looting' : getPageSetting('RAutoAllocatePerks') == 2 ? 'Greed' : null;
+	if (duringRun)
+		viewPortalUpgrades();
+	numTab(6, true)
+	buyPortalUpgrade(allocatePerk);
+	debug('Bought Max ' + allocatePerk);
+	if (duringRun) {
+		activateClicked();
+		cancelPortal();
 	}
 }
 

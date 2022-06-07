@@ -1477,7 +1477,7 @@ function RautoMap() {
 		}
 
 		//AutoEquip settings for Pandemonium.
-		if (!rShouldPandemoniumDestack && getPageSetting('RPandemoniumAutoEquip') > 1 && game.global.lastClearedCell + 2 >= 91 && game.global.StaffEquipped.name == getPageSetting('RhsPandStaff') && getPageSetting('RPandemoniumAEZone') > 5 && game.global.world >= getPageSetting('RPandemoniumAEZone') && game.global.world != 150) {
+		if (!rShouldPandemoniumDestack && getPageSetting('RPandemoniumAutoEquip') > 1 && game.global.lastClearedCell + 2 >= 91 && getPageSetting('RPandemoniumAEZone') > 5 && game.global.world >= getPageSetting('RPandemoniumAEZone') && game.global.world != 150) {
 			//Initialising Variables
 			nextLevelEquipmentCost = null;
 			nextEquipmentCost = null;
@@ -1491,8 +1491,8 @@ function RautoMap() {
 			artBoost *= autoBattle.oneTimers.Artisan.owned ? autoBattle.oneTimers.Artisan.getMult() : 1;
 			artBoost *= game.challenges.Pandemonium.getEnemyMult();
 			//Working out how much metal a large metal cache or jestimp proc provides.
-			amt_cache = getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') ? simpleSecondsLocal("metal", 40) :
-				simpleSecondsLocal("metal", 20);
+			amt_cache = getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') ? simpleSecondsLocal("metal", 40, true, '0.1,0.1,0.1,0.001') :
+				simpleSecondsLocal("metal", 20, true, '0.1,0.1,0.1,0.001');  //scaleToCurrentMapLocal(simpleSecondsLocal("metal", 165, true, 0.1,0.1,0.1,0.001), false, true, rTrFMapLevel);
 			//Looping through each piece of equipment
 			for (var equipName in game.equipment) {
 				if (!game.equipment[equipName].locked) {
@@ -1520,7 +1520,7 @@ function RautoMap() {
 			//Identifying how much metal you'd get from the amount of jestimps you want to farm on the map level you've selected for them
 			if (getPageSetting('RPandemoniumAutoEquip') > 3 && !rShouldPandemoniumFarm && game.global.world >= getPageSetting('RPandemoniumJestZone')) {
 				var jestMapLevel = getPageSetting('PandemoniumJestFarmLevel');
-				var jestDrop = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 45), false, true, jestMapLevel);
+				var jestDrop = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 45, true, '10,10,100,1'), false, true, jestMapLevel);
 				var shred = 1 - (0.75 - (jestMapLevel * 0.05));
 				var kills = getPageSetting('PandemoniumJestFarmKills');
 				jestMetalTotal = jestDrop;
@@ -1529,6 +1529,7 @@ function RautoMap() {
 					jestMetalTotal += (jestDrop * (Math.pow(shred, i)));
 				}
 				jestMetalTotal = (jestMetalTotal / 100) * 99
+				debug(jestMetalTotal);
 				if ((jestMetalTotal != null && (jestMetalTotal > nextEquipmentCost)) || jestFarmMap == true) {
 					rShouldPandemoniumJestimpFarm = true;
 					jestFarmMap = true;
@@ -1538,7 +1539,7 @@ function RautoMap() {
 			}
 
 			//Switching to Huge Cache maps if LMC maps don't give enough metal for equip levels.
-			pandfarmspecial = nextEquipmentCost > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20), false, true, getPageSetting('PandemoniumFarmLevel')) ? "hc" : "lmc";
+			pandfarmspecial = nextEquipmentCost > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20, true, '0.1,0.1,0.1,0.001'), false, true, getPageSetting('PandemoniumFarmLevel')) ? "hc" : "lmc";
 			//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
 			if (!rShouldPandemoniumJestimpFarm && nextEquipmentCost < scaleToCurrentMapLocal(amt_cache, false, true, getPageSetting('PandemoniumFarmLevel')))
 				rShouldPandemoniumFarm = true;
@@ -1548,60 +1549,61 @@ function RautoMap() {
 				if (getPageSetting('rMapRepeatCount')) debug("Pandemonium Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 			}
 		}
-	}
 
-	if (rShouldPandemoniumJestimpFarm) {
-		reloadDelay = false;
-		//Saves your savefile to a variable when that variable is null and frenzy is active
-		if (game.global.mapsActive && game.global.mapGridArray[0].name == "Jestimp" && ((savefile == null && game.portal.Frenzy.frenzyStarted != -1) || (autoBattle.oneTimers.Mass_Hysteria.owned && game.global.soldierHealth == game.global.soldierHealthMax && game.global.mapGridArray[0].health > 0)))
-			savefile = save(true);
-		//Makes it take another copy of the save if you lose frenzy before killing the Jestimp.
-		if (autoBattle.oneTimers.Mass_Hysteria.owned == false && game.global.mapsActive && game.global.lastClearedMapCell == -1 && game.global.mapGridArray[0].name == "Jestimp" && savefile != null && game.portal.Frenzy.frenzyStarted == -1)
-			savefile = null;
+		//Pandemonium Jestimp Farm
+		if (rShouldPandemoniumJestimpFarm) {
+			reloadDelay = false;
+			//Saves your savefile to a variable when that variable is null and frenzy is active
+			if (game.global.mapsActive && game.global.mapGridArray[0].name == "Jestimp" && ((savefile == null && game.portal.Frenzy.frenzyStarted != -1) || (autoBattle.oneTimers.Mass_Hysteria.owned && game.global.soldierHealth == game.global.soldierHealthMax && game.global.mapGridArray[0].health > 0)))
+				savefile = save(true);
+			//Makes it take another copy of the save if you lose frenzy before killing the Jestimp.
+			if (autoBattle.oneTimers.Mass_Hysteria.owned == false && game.global.mapsActive && game.global.lastClearedMapCell == -1 && game.global.mapGridArray[0].name == "Jestimp" && savefile != null && game.portal.Frenzy.frenzyStarted == -1)
+				savefile = null;
 
-		//If the last item in the message log doesn't include the word metal it loads your save to reroll for a metal jestimp drop.
-		if (game.global.mapsActive && game.global.lastClearedMapCell != -1) {
-			if (document.getElementById("log").lastChild != null) {
-				if (!document.getElementById("log").lastChild.innerHTML.includes("metal") && savefile != null) {
-					tooltip('Import', null, 'update');
-					document.getElementById('importBox').value = savefile;
-					cancelTooltip();
-					load(true);
-					reloadDelay = true;
+			//If the last item in the message log doesn't include the word metal it loads your save to reroll for a metal jestimp drop.
+			if (game.global.mapsActive && game.global.lastClearedMapCell != -1) {
+				if (document.getElementById("log").lastChild != null) {
+					if (!document.getElementById("log").lastChild.innerHTML.includes("metal") && savefile != null) {
+						tooltip('Import', null, 'update');
+						document.getElementById('importBox').value = savefile;
+						cancelTooltip();
+						load(true);
+						reloadDelay = true;
+					}
 				}
 			}
-		}
 
-		if (!game.global.mapsActive || (game.global.mapsActive && (game.global.mapGridArray[0].name != "Jestimp" || game.global.lastClearedMapCell != -1))) {
-			//Recycles your map if you are past the first cell
-			if (game.global.mapsActive && game.global.lastClearedMapCell != -1) {
+			if (!game.global.mapsActive || (game.global.mapsActive && (game.global.mapGridArray[0].name != "Jestimp" || game.global.lastClearedMapCell != -1))) {
+				//Recycles your map if you are past the first cell
+				if (game.global.mapsActive && game.global.lastClearedMapCell != -1) {
+					mapsClicked();
+					recycleMap();
+				}
+			}
+			//Purchases a perfect map with your Jestimp farming level setting, resets savefile variable to null and runs the map
+			if (game.global.preMapsActive) {
+				PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'), 0);
+				buyMap();
+				savefile = null;
+				runMap();
+			}
+			//Repeats the process of exiting and re-entering maps until the first cell is a Jestimp
+			for (i = 0; i < 10000; i++) {
+				if (game.global.mapsActive) {
+					if (game.global.mapGridArray[game.global.lastClearedMapCell + 1].name != "Jestimp") {
+						mapsClicked();
+						runMap();
+					} else if (game.global.mapGridArray[game.global.lastClearedMapCell + 1].name == "Jestimp")
+						break
+				}
+			}
+
+			//Used to abandon current map once the Jestimp farming on your current zone has finished.
+			if (jestMetalTotal != null && jestMetalTotal < nextEquipmentCost && jestFarmMap == true) {
 				mapsClicked();
 				recycleMap();
+				jestFarmMap = false;
 			}
-		}
-		//Purchases a perfect map with your Jestimp farming level setting, resets savefile variable to null and runs the map
-		if (game.global.preMapsActive) {
-			PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'), 0);
-			buyMap();
-			savefile = null;
-			runMap();
-		}
-		//Repeats the process of exiting and re-entering maps until the first cell is a Jestimp
-		for (i = 0; i < 10000; i++) {
-			if (game.global.mapsActive) {
-				if (game.global.mapGridArray[game.global.lastClearedMapCell + 1].name != "Jestimp") {
-					mapsClicked();
-					runMap();
-				} else if (game.global.mapGridArray[game.global.lastClearedMapCell + 1].name == "Jestimp")
-					break
-			}
-		}
-
-		//Used to abandon current map once the Jestimp farming on your current zone has finished.
-		if (jestMetalTotal != null && jestMetalTotal < nextEquipmentCost && jestFarmMap == true) {
-			mapsClicked();
-			recycleMap();
-			jestFarmMap = false;
 		}
 	}
 
@@ -2065,11 +2067,11 @@ function RautoMap() {
 			}
 			if (!rShouldPrestigeRaid && !RAMPfragfarming && !rShouldInsanityFarm && !rFragmentFarming && !Rshoulddobogs && !RshouldDoMaps && !rShouldUnbalance && !rShouldTributeFarm && !rShouldMetFarm && !rShouldSmithyFarm && !rShouldTimeFarm && rShouldQuest <= 0 && Rshouldmayhem <= 0 && !Rshouldstormfarm && !rShouldEquipFarm && !rShouldWorshipperFarm && !rFragmentFarming && !rShouldPandemoniumDestack && !rShouldPandemoniumFarm && !rShouldPandemoniumJestimpFarm && !Rshouldalchfarm && !rShouldHypoFarm && !rShouldMaxMapBonus && !RvanillaMapatZone)
 				repeatClicked();
-			if (shouldDoHealthMaps && game.global.mapBonus >= getPageSetting('RMaxMapBonushealth')) {
+			if (shouldDoHealthMaps && game.global.mapBonus >= getPageSetting('RMaxMapBonushealth') && !rShouldPrestigeRaid) {
 				repeatClicked();
 				shouldDoHealthMaps = false;
 			}
-			if (game.global.repeatMap) {
+			if (game.global.repeatMap && !rShouldPrestigeRaid) {
 				//Time Farm
 				if (rShouldTimeFarm && game.global.mapRunCounter + 1 == rTFRepeatCounter) {
 					repeatClicked();
