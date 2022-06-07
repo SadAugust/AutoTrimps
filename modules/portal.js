@@ -649,6 +649,7 @@ function Rresetmapvars() {
 	RAMPmapbought.fill(false); //Unsure if necessary - Need to test
 	RAMPfragmappybought = false;
 	RAMPfragfarming = false;
+	runningPrestigeMaps = false;
 	//Bone Shrine
 	rShouldBoneShrine = false;
 	rBoneShrineUsedZone = 0;

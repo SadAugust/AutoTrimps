@@ -822,6 +822,7 @@ var RAMPmapbought = [[false], [false], [false], [false], [false]];
 RAMPmapbought.fill(false); //Unsure if necessary - Need to test
 var RAMPfragmappybought = false;
 var RAMPfragfarming = false;
+var runningPrestigeMaps = false;
 //Smithy Farming
 rShouldSmithyFarm = false;
 var rShouldSmithyGemFarm = false;
@@ -1053,6 +1054,7 @@ function RautoMap() {
 		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
 		if (document.getElementById('advExtraLevelSelect').value > 0)
 			document.getElementById('advExtraLevelSelect').value = "0";
+		runningPrestigeMaps = false;
 	}
 
 	if (!rFragmentFarming) {
@@ -2246,9 +2248,11 @@ function RautoMap() {
 						RlastMapWeWereIn = getCurrentMapObject();
 						RAMPrepMap[x] = RAMPpMap[x];
 						RAMPpMap[x] = undefined;
+						runningPrestigeMaps = true;
 					}
 				}
 			}
+			if (game.global.preMapsActive && runningPrestigeMaps) runMap()
 		} else if (selectedMap == "create") {
 			var $mapLevelInput = document.getElementById("mapLevelInput");
 			$mapLevelInput.value = game.global.world;
