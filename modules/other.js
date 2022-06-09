@@ -2680,20 +2680,14 @@ function hypoPackratReset(challenge) {
 	}
 }
 
-function AllocatePerks(duringRun) {
+function AllocatePerks() {
 	if (!game.global.portalActive) return;
 	if (getPageSetting('RAutoAllocatePerks') === 0) return;
-	var duringRun = !duringRun ? false : true;
-
 	var allocatePerk = getPageSetting('RAutoAllocatePerks') == 1 ? 'Looting' : getPageSetting('RAutoAllocatePerks') == 2 ? 'Greed' : null;
-	if (duringRun)
-		viewPortalUpgrades();
-	numTab(6, true)
-	buyPortalUpgrade(allocatePerk);
-	debug('Bought Max ' + allocatePerk);
-	if (duringRun) {
-		activateClicked();
-		cancelPortal();
+	if (allocatePerk !== null) {
+		numTab(6, true)
+		buyPortalUpgrade(allocatePerk);
+		debug('Bought Max ' + allocatePerk);
 	}
 }
 

@@ -444,7 +444,6 @@ function RdoPortal(challenge, daily) {
 	}
 	if (!game.global.portalActive) return;
 	if (getPageSetting('autoheirlooms') && getPageSetting('typetokeep') != 'None' && getPageSetting('raretokeep') != 'None') autoheirlooms3();
-	if (getPageSetting('RAutoAllocatePerks') > 0) AllocatePerks(true);
 	portalClicked();
 	if (!portalWindowOpen) {
 		portalClicked();
@@ -488,7 +487,7 @@ function RdoPortal(challenge, daily) {
 
 	if (portalWindowOpen && portalUniverse == 2) PresetSwapping(preset);
 	if (portalWindowOpen && portalUniverse == 2) hypoPackratReset(challenge);
-	if (portalWindowOpen && portalUniverse == 2) AllocatePerks();
+	if (portalWindowOpen && portalUniverse == 2 && getPageSetting('RAutoAllocatePerks') > 0) AllocatePerks();
 	if (getPageSetting('RdownloadSaves')) {
 		tooltip('Export', null, 'update');
 		document.getElementById("downloadLink").click();
