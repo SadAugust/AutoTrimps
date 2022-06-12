@@ -76,10 +76,10 @@ var lastHeliumZone = 0;
 var lastRadonZone = 0;
 
 function mainLoop() {
-	if (document.getElementById('tooltipDiv').classList.contains('tooltipExtraLg') === false)
-		document.getElementById('tooltipDiv').style.overflowY = '';
-	else
+	if (document.getElementById('tooltipDiv').classList.contains('tooltipExtraLg') === true && (document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Prestegious Raiding')))
 		document.getElementById('tooltipDiv').style.overflowY = 'scroll';
+	else
+		document.getElementById('tooltipDiv').style.overflowY = '';
 
 	if (ATrunning == false) return;
 	if (reloadDelay) {
