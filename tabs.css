@@ -1,139 +1,211 @@
 #logBtnGroup div {
-    width: 19%!important;
+	width: 19% !important;
 }
+
 div#logConfigHolder.btn-group {
-    width: 5%!important;
+	width: 5% !important;
 }
+
 #logConfigBtn {
-    padding: 6px 0!important;
+	padding: 6px 0 !important;
 }
 
 ul.tab {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f1f1f1;
 }
 
-ul.tab li {float: left;}
+ul.tab li {
+	float: left;
+}
 
 ul.tab li a {
-    display: inline-block;
-    color: black;
-    text-align: center;
-    padding: 0.5vh 1vw;
-    text-decoration: none;
-    transition: 0.3s;
-    font-size: 2vh;
+	display: inline-block;
+	color: black;
+	text-align: center;
+	padding: 0.5vh 1vw;
+	text-decoration: none;
+	transition: 0.3s;
+	font-size: 2vh;
 }
 
-ul.tab li .active {background-color: #ccc;}
+ul.tab li .active {
+	background-color: #ccc;
+}
 
-ul.tab li a:hover {background-color: #ddd;}
+ul.tab li a:hover {
+	background-color: #ddd;
+}
 
 .tabcontent {
-    display: none;
-    border: 1px solid #ccc;
-    border-top: none;
-    -webkit-animation: fadeEffect 1s;
-    animation: fadeEffect 1s; /* Fading effect takes 1 second */
-    transform: translateZ(0);
+	display: none;
+	border: 1px solid #ccc;
+	border-top: none;
+	-webkit-animation: fadeEffect 1s;
+	animation: fadeEffect 1s;
+	/* Fading effect takes 1 second */
+	transform: translateZ(0);
 }
 
 @-webkit-keyframes fadeEffect {
-    from {opacity: 0;}
-    to {opacity: 1;}
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes fadeEffect {
-    from {opacity: 0;}
-    to {opacity: 1;}
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
 }
 
 #tipText .AutoEggs,
 #AutoEggs.settingBtntrue {
-  -webkit-animation: eggGradient 3s infinite;
-  animation: eggGradient 3s infinite;
-  color: black;
+	-webkit-animation: eggGradient 3s infinite;
+	animation: eggGradient 3s infinite;
+	color: black;
 }
 
 @keyframes eggGradient {
-  0% { background-color: #83ddd6; }
-  25% { background-color: #f4c7c7; }
-  50% { background-color: #8beab7; }
-  75% { background-color: #f6f297; }
-  100% { background-color: #83ddd6; }
+	0% {
+		background-color: #83ddd6;
+	}
+
+	25% {
+		background-color: #f4c7c7;
+	}
+
+	50% {
+		background-color: #8beab7;
+	}
+
+	75% {
+		background-color: #f6f297;
+	}
+
+	100% {
+		background-color: #83ddd6;
+	}
 }
 
 #trapArea {
-    border: 1px solid white;
-    display: inline-block;
-    margin-bottom: 2%;
-    margin-top: 0;
-    padding: 0;
+	border: 1px solid white;
+	display: inline-block;
+	margin-bottom: 2%;
+	margin-top: 0;
+	padding: 0;
 }
 
 #animationDiv {
-   z-index: -1!important;
+	z-index: -1 !important;
 }
-.queueItemName, #queueTimeRemaining {
-   z-index: 0!important;
+
+.queueItemName,
+#queueTimeRemaining {
+	z-index: 0 !important;
 }
 
 .heirloomRare8 {
-text-shadow: none;
+	text-shadow: none;
 }
 
 .litScroll {
-    overflow:scroll;
-    height:500px;
+	overflow: scroll;
+	height: 500px;
 }
 
 #wrapper {
-background: none;
+	background: none;
 }
 
 #wrapper {
-background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,#727275 53%,#4c4d56 70.5%,#323341 88%); 
+	background: -webkit-linear-gradient(left, #323341 12%, #626368 29.5%, #727275 47%, #727275 53%, #4c4d56 70.5%, #323341 88%);
 }
 
 
-.windowRow div input{
+.windowRow div input {
 	width: 100%;
 }
 
-.windowRow div select{
+.windowRow div select {
 	width: 100%;
 }
 
-.windowRow{
+.windowRow {
 	padding: 0 2%;
 	margin: 0 1%;
 	font-weight: bold;
 }
 
-.windowRow.titles div{
+.windowRow.titles div {
 	text-align: center;
 	font-weight: bold;
 }
 
-.windowRow.titles{
+.windowRow.titles {
 	border: 1px solid black;
 	margin: 0 1%;
 	padding: 0.2% 2%;
 }
 
-#windowAddRowBtn, #windowSwapPresetBtn{
+#windowAddRowBtn,
+#windowSwapPresetBtn {
 	margin-top: 0.5vw;
 }
 
-.windowDelete, .windowWorld, .windowCheckbox, .windowPreset, .windowRepeat, .windowRepeatUntil, .windowExit, .windowBwWorld, .windowCell, .windowTimes, .windowThrough, .windowRx, .windowPrio, .windowTx, .windowLevel, .windowRepeat, .windowGather, .windowSpecial, .windowTributes, .windowMets, .windowBogs, .windowInsanity, .windowPotionType, .windowPotionNumber, .windowBonfire, .windowBoneDropdown, .windowBoneBelow, .windowBoneAmount, .windowBoneGather, .windowJobRatio, .windowWorshipper, .windowBuildings, .windowAtlantrimp {
+.windowDelete,
+.windowWorld,
+.windowCheckbox,
+.windowPreset,
+.windowRepeat,
+.windowRepeatUntil,
+.windowExit,
+.windowBwWorld,
+.windowCell,
+.windowTimes,
+.windowThrough,
+.windowRx,
+.windowPrio,
+.windowTx,
+.windowLevel,
+.windowRepeat,
+.windowGather,
+.windowSpecial,
+.windowTributes,
+.windowMets,
+.windowBogs,
+.windowInsanity,
+.windowPotionType,
+.windowPotionNumber,
+.windowBonfire,
+.windowBoneDropdown,
+.windowBoneBelow,
+.windowBoneAmount,
+.windowBoneGather,
+.windowJobRatio,
+.windowWorshipper,
+.windowBuildings,
+.windowAtlantrimp,
+.windowActive,
+.windowStorage,
+.windowPackrat,
+.windowFrozenCastle {
 	display: inline-block;
 }
 
-.windowDelete .icomoon{
+.windowDelete .icomoon {
 	position: relative;
 	top: 0.6vw;
 	left: -0.55vw;
@@ -142,119 +214,143 @@ background: -webkit-linear-gradient(left, #323341 12%,#626368 29.5%,#727275 47%,
 	font-size: 2vw;
 }
 
-#windowError{
+#windowError {
 	font-weight: bold;
 	color: red;
 }
 
-.windowDelete{
+.windowDelete {
 	width: 4%;
 	cursor: pointer;
 }
 
-.windowJobRatio{
+.windowJobRatio {
 	width: 15%;
 	cursor: pointer;
 }
 
-.windowWorld, .windowCell, .windowThrough, .windowLevel, .windowRepeat, .windowPotionNumber, .windowWorshipper{
+.windowWorld,
+.windowCell,
+.windowThrough,
+.windowLevel,
+.windowRepeat,
+.windowPotionNumber,
+.windowWorshipper {
 	width: 9%;
 }
 
-.windowTributes, .windowMets, .windowBogs, .windowInsanity, .windowBonfire{
-	width: 16%;
+.windowTributes,
+.windowMets,
+.windowBogs,
+.windowInsanity,
+.windowBonfire {
+	width: 13%;
 }
 
-.windowCheckbox{
+.windowCheckbox {
 	width: 4%;
 }
 
-.windowBuildings, .windowAtlantrimp{
-	width: 10%;
+.windowBuildings,
+.windowAtlantrimp,
+.windowActive,
+.windowStorage,
+.windowPackrat,
+.windowFrozenCastle {
+	width: 15%;
 }
 
-.windowAtlantrimp{
+.windowAtlantrimp {
 	width: 10%;
 }
 
 .windowPotionType {
-    width: 18%;
+	width: 18%;
 }
-.windowPreset, .windowSpecial{
+
+.windowPreset,
+.windowSpecial {
 	width: 26%;
 }
+
 /* .windowGather{
 	width: 10%;
 } */
 
-.windowRepeat{
+.windowRepeat {
 	width: 8.5%;
 }
 
-.windowRepeatUntil{
+.windowRepeatUntil {
 	width: 15%;
 }
 
-.windowExit{
+.windowExit {
 	width: 8%;
 }
 
-.windowTimes{
+.windowTimes {
 	width: 17%;
 }
 
 .windowBoneGather {
-    width: 10%;
-}
-
-.windowBoneDropdown, .windowBoneBelow, .windowBoneAmount {
-    width: 10%;
-}
-
-.windowBwZoneOn .windowRepeatUntil, .windowGatherOn .windowSpecial{
-	width: 16%;
-}
-
-.windowBwZoneOff .windowBwWorld, .windowGatherOff .windowGather{
-	display: none;
-}
-
-.windowBwZoneOn .windowBwWorld, .windowGatherOn .windowGather{
 	width: 10%;
 }
 
-.windowTxOn .windowTimes{
+.windowBoneDropdown,
+.windowBoneBelow,
+.windowBoneAmount {
+	width: 10%;
+}
+
+.windowBwZoneOn .windowRepeatUntil,
+.windowGatherOn .windowSpecial {
+	width: 16%;
+}
+
+.windowBwZoneOff .windowBwWorld,
+.windowGatherOff .windowGather {
+	display: none;
+}
+
+.windowBwZoneOn .windowBwWorld,
+.windowGatherOn .windowGather {
+	width: 10%;
+}
+
+.windowTxOn .windowTimes {
 	width: 11.5% !important;
 }
 
-.windowTxOff .windowTx{
+.windowTxOff .windowTx {
 	display: none;
 }
 
-.windowTx{
+.windowTx {
 	width: 5.5%;
 }
 
-.windowBwMainOff .windowRepeatUntil select .windowBwClimbOption{
+.windowBwMainOff .windowRepeatUntil select .windowBwClimbOption {
 	display: none;
 }
 
-#tooltipDiv.tooltipWindowLg{
+#tooltipDiv.tooltipWindowLg {
 	width: 60%;
-    overflow-y: scroll;
+	overflow-y: scroll;
 }
-#tooltipDiv.tooltipExtraLg{
+
+#tooltipDiv.tooltipExtraLg {
 	width: 50%;
 }
 
-#tooltipDiv.tooltipExtraSuperLg{
+#tooltipDiv.tooltipExtraSuperLg {
 	width: 65%;
 }
 
-#tooltipDiv.tooltipExtraGigantic{
+#tooltipDiv.tooltipExtraGigantic {
 	width: 80%;
 }
 
-#tooltipDiv.tooltipExtraBiggest{
+#tooltipDiv.tooltipExtraBiggest {
 	width: 90%;
 }

@@ -2668,7 +2668,7 @@ function PresetSwapping(preset) {
 
 function hypoPackratReset(challenge) {
 
-	if (challenge == 'Hypothermia' && getPageSetting('rHypoBuyPackrat')) {
+	if (challenge == 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.packrat) {
 		toggleRemovePerks();
 		numTab(6, true);
 		buyPortalUpgrade('Packrat');

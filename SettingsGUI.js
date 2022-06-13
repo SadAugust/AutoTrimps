@@ -11,6 +11,7 @@ function automationMenuInit() {
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
 	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
 
+	//AutoMaps
 	var newContainer = document.createElement("DIV");
 	newContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
 	newContainer.setAttribute("id", "autoMapBtn");
@@ -389,7 +390,8 @@ function initializeAllSettings() {
 
 	//Radon
 	//General
-	createSetting('RBuyJobsNew', ['Don\'t Buy Jobs', 'Auto Worker Ratios', 'Manual Worker Ratios'], 'Manual Worker Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, "Jobs");
+	createSetting('rJobSettingsArray', 'Time Farm Settings', 'Click to adjust settings. ', 'mazDefaultArray', { FarmersUntil: { enabled: false, zone: 999 }, NoLumberjacks: { enabled: false }, Worshipper: { enabled: true, percent: '5' }, Miner: { enabled: true, ratio: 1 }, Lumberjack: { enabled: true, ratio: 1 }, Farmer: { enabled: true, ratio: 1 }, Explorer: { enabled: true, percent: '5' }, Meteorologist: { enabled: true, percent: '100' } }, null, 'Jobs');
+	createSetting('RBuyJobsNew', ['AT AutoJobs Off', 'Auto Ratios', 'Manual Ratios'], 'Manual Worker Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, "Jobs");
 	createSetting('RFarmerRatio', 'Farmer Ratio', '', 'value', '1', null, "Jobs");
 	createSetting('RLumberjackRatio', 'Lumberjack Ratio', '', 'value', '1', null, "Jobs");
 	createSetting('RMinerRatio', 'Miner Ratio', '', 'value', '1', null, "Jobs");
@@ -685,26 +687,27 @@ function initializeAllSettings() {
 
 	//Hide Challenges
 	createSetting('rHideChallenge', 'Hide Challenges', 'Enable seeing the hide challenges buttons. Feel free to turn this off once you are done. ', 'boolean', false, null, 'Challenges');
-	createSetting('rHideQuagmire', 'Quag', 'Enable to hide Quagmire challenge settings. ', 'boolean', false, null, 'Challenges');
 	createSetting('rHideArchaeology', 'Arch', 'Enable to hide Archaeology challenge settings. ', 'boolean', false, null, 'Challenges');
-	createSetting('rHideInsanity', 'Insanity', 'Enable to hide Insanity challenge settings. ', 'boolean', false, null, 'Challenges');
 	createSetting('rHideExterminate', 'Exterminate', 'Enable to hide Exterminate challenge settings. ', 'boolean', false, null, 'Challenges');
-	createSetting('rHideAlchemy', 'Alchemy', 'Enable to hide Alchemy challenge settings. ', 'boolean', false, null, 'Challenges');
-	createSetting('rHideHypothermia', 'Hypothermia', 'Enable to hide Hypothermia challenge settings. ', 'boolean', false, null, 'Challenges');
+
+	//Arch
+	document.getElementById('rHideExterminate').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('Rarchon', 'Archaeology', 'Turn on Archaeology settings. ', 'boolean', false, null, 'Challenges');
+	createSetting('Rarchstring1', 'First String', 'First string to use in Archaeology. Put the zone you want to stop using this string and start using the second string (Make sure the second string has a value) at the start. I.e: 70,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
+	createSetting('Rarchstring2', 'Second String', 'Second string to use in Archaeology. Put the zone you want to stop using this string and start using the third string (Make sure the third string has a value) at the start. I.e: 94,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
+	createSetting('Rarchstring3', 'Third String', 'Third string to use in Archaeology. Make sure this is just your Archaeology string and nothing else. I.e: 10a,10e ', 'textValue', 'undefined', null, 'Challenges');
+
+	//Exterminate
+	createSetting('Rexterminateon', 'Exterminate', 'Turn on Exterminate settings. This also controls the entireity of Exterminate. If you turn this off it will not calculate Exterminate.', 'boolean', false, null, 'Challenges');
+	createSetting('Rexterminatecalc', 'E: Calc', 'Calculate Exterminate enemies instead of the usual ones. May improve your challenge experience. ', 'boolean', false, null, 'Challenges');
+	createSetting('Rexterminateeq', 'E: Equality', 'Will manage your equality \'better\' inside the challenge. When you have the experienced buff it will turn it off, when you dont it will turn it on and let it build up.', 'boolean', false, null, 'Challenges');
 
 	//Quagmire
-	document.getElementById('rHideHypothermia').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rQuagOn', 'Quagmire', 'Enable Bog Running for Quagmire. ', 'boolean', false, null, 'Challenges');
 	createSetting('rQuagPopup', 'Quag Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Challenges');
 	createSetting('rQuagSettings', 'Quag: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges');
 	createSetting('rQuagDefaultSettings', 'Quag: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '1,1,10,1' }, null, 'Challenges');
 	createSetting('rQuagZone', 'BB: Zone', 'What zones to run Black Bogs at. Can use 40,50,60. ', 'multiValue', [6], null, 'Challenges');
-
-	//Arch
-	createSetting('Rarchon', 'Archaeology', 'Turn on Archaeology settings. ', 'boolean', false, null, 'Challenges');
-	createSetting('Rarchstring1', 'First String', 'First string to use in Archaeology. Put the zone you want to stop using this string and start using the second string (Make sure the second string has a value) at the start. I.e: 70,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
-	createSetting('Rarchstring2', 'Second String', 'Second string to use in Archaeology. Put the zone you want to stop using this string and start using the third string (Make sure the third string has a value) at the start. I.e: 94,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
-	createSetting('Rarchstring3', 'Third String', 'Third string to use in Archaeology. Make sure this is just your Archaeology string and nothing else. I.e: 10a,10e ', 'textValue', 'undefined', null, 'Challenges');
 
 	//Insanity
 	createSetting('rInsanityOn', 'Insanity', 'Turn on Insanity settings. This also controls the entireity of IF. If you turn this off it will not Insanity Farm.', 'boolean', false, null, 'Challenges');
@@ -713,24 +716,18 @@ function initializeAllSettings() {
 	createSetting('rInsanityDefaultSettings', 'Insanity: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '1,1,10,1' }, null, 'Challenges');
 	createSetting('rInsanityZone', 'Insanity Farming', 'Farms for specified stacks in IF: Stacks at zone according to this settings value. Can use 108,109,110. ', 'multiValue', [6], null, 'Challenges');
 
-	//Exterminate
-	createSetting('Rexterminateon', 'Exterminate', 'Turn on Exterminate settings. This also controls the entireity of Exterminate. If you turn this off it will not calculate Exterminate.', 'boolean', false, null, 'Challenges');
-	createSetting('Rexterminatecalc', 'E: Calc', 'Calculate Exterminate enemies instead of the usual ones. May improve your challenge experience. ', 'boolean', false, null, 'Challenges');
-	createSetting('Rexterminateeq', 'E: Equality', 'Will manage your equality \'better\' inside the challenge. When you have the experienced buff it will turn it off, when you dont it will turn it on and let it build up.', 'boolean', false, null, 'Challenges');
-
 	//Alchemy
 	createSetting('rAlchOn', 'Alchemy', 'Turn on Alchemy settings. This also controls the entireity of Alchemy. If you turn this off it will not do any specific farming during the challenge. Whilst enabled will purchase as many Void and Strength potions as you can afford whilst inside void maps.', 'boolean', false, null, 'Challenges');
 	createSetting('rAlchPopup', 'Alchemy Farm Settings', 'Click to adjust settings.', 'infoclick', false, null, 'Challenges');
 	createSetting('rAlchSettings', 'AF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges');
 	createSetting('rAlchDefaultSettings', 'AF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '10,1,1,1', special: 'lsc' }, null, 'Challenges');
 	createSetting('rAlchZone', 'AF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [6], null, 'Challenges');
-	createSetting('rAlchFAMaps', 'FA Maps', 'Will run Fast Attack maps instead of the setting you\'ve selected in Alch: Special if you don\'t have Hyperspeed 2 for your current zone.', 'boolean', false, null, 'Challenges');
 
 	//Hypothermia
 	createSetting('rHypoOn', 'Hypothermia', 'Turn on Hypothermia settings. This also controls the entireity of Hypothermia. If you turn this off it will not do any specific farming during the challenge. Will automatically select LWC maps if you have enough fragments else it\'ll use SWC maps.', 'boolean', false, null, 'Challenges');
 	createSetting('rHypoPopup', 'Hypo Farm Settings', 'Click to adjust settings.', 'infoclick', false, null, 'Challenges');
 	createSetting('rHypoSettings', 'HF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges');
-	createSetting('rHypoDefaultSettings', 'HF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '1,100,1,1' }, null, 'Challenges');
+	createSetting('rHypoDefaultSettings', 'HF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '1,100,1,1', packrat: true, autostorage: true, active: true }, null, 'Challenges');
 	createSetting('rHypoZone', 'HF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Challenges');
 	createSetting('rHypoFrozenCastle', 'HF: Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Challenges');
 	createSetting('rHypoStorage', ['HF: Storage', 'HF: Storage', 'HF: Storage First'], 'Enable this setting to disable AutoStorage inside of Hypothermia when not at one of your designated Bonfire farming zones. Needs to be used in conjunction with the other Hypothermia settings otherwise it will break.<br><br>HF: Storage First<br>Will enable AutoStorage again after your first Bonfire farm. Make sure to only use this setting if you\'re confident your Bonfire farming settings won\'t allow for an accidental bonfire.', 'multitoggle', 0, null, 'Challenges');
@@ -919,40 +916,31 @@ function initializeAllSettings() {
 	createSetting('EnableAFK', 'Go AFK Mode', '(Action Button). Go AFK uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU and RAM saving mode. Everything will resume when you come back and press the Back button. Console debug output is also disabled. The blue color means this is not a settable setting, just a button. You can now also click the Zone # (World Info) area to go AFK now.', 'action', 'MODULES["performance"].EnableAFKMode()', null, 'Display');
 	document.getElementById('battleSideTitle').setAttribute('onclick', 'MODULES["performance"].EnableAFKMode()');
 	//Smithy Farming
-	document.getElementById('rSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Smithy Farm", "rSmithyFarm")');
-	document.getElementById('rdSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Smithy Farm", "rdSmithyFarm")');
-	document.getElementById('rc3SmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Smithy Farm", "rc3SmithyFarm")');
+	document.getElementById('rSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Smithy Farm", "rSmithyFarm", "MAZ")');
+	document.getElementById('rdSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Smithy Farm", "rdSmithyFarm", "MAZ")');
+	document.getElementById('rc3SmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Smithy Farm", "rc3SmithyFarm", "MAZ")');
 	//Time Farming 
-	document.getElementById('rBoneShrinePopup').setAttribute('onclick', 'MAZLookalike("Bone Shrine", "rBoneShrine")');
-	document.getElementById('rTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Time Farm", "rTimeFarm")');
-	document.getElementById('rdTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Time Farm", "rdTimeFarm")');
-	document.getElementById('rc3TimeFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm")');
+	document.getElementById('rBoneShrinePopup').setAttribute('onclick', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")');
+	document.getElementById('rTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")');
+	document.getElementById('rdTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Time Farm", "rdTimeFarm", "MAZ")');
+	document.getElementById('rc3TimeFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm", "MAZ")');
 	//Tribute Farming 
-	document.getElementById('rTributeFarmPopup').setAttribute('onclick', 'MAZLookalike("Tribute Farm", "rTributeFarm")');
-	document.getElementById('rdTributeFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Tribute Farm", "rdTributeFarm")');
-	document.getElementById('rc3TributeFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Tribute Farm", "rc3TributeFarm")');
+	document.getElementById('rTributeFarmPopup').setAttribute('onclick', 'MAZLookalike("Tribute Farm", "rTributeFarm", "MAZ")');
+	document.getElementById('rdTributeFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Tribute Farm", "rdTributeFarm", "MAZ")');
+	document.getElementById('rc3TributeFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Tribute Farm", "rc3TributeFarm", "MAZ")');
 	//Ship Farming
-	document.getElementById('rShipFarmPopup').setAttribute('onclick', 'MAZLookalike("Ship Farm", "rShipFarm")');
+	document.getElementById('rShipFarmPopup').setAttribute('onclick', 'MAZLookalike("Ship Farm", "rShipFarm", "MAZ")');
 	//Challenge Settings
-	document.getElementById('rQuagPopup').setAttribute('onclick', 'MAZLookalike("Quagmire Farm", "rQuag")');
-	document.getElementById('rInsanityPopup').setAttribute('onclick', 'MAZLookalike("Insanity Farm", "rInsanity")');
-	document.getElementById('rAlchPopup').setAttribute('onclick', 'MAZLookalike("Alchemy Farm", "rAlch")');
-	document.getElementById('rHypoPopup').setAttribute('onclick', 'MAZLookalike("Hypothermia Farm", "rHypo")');
-
-	document.getElementById('rHideQuagmire').setAttribute('onclick', 'settingChanged("rHideQuagmire"), modifyParentNode("rHideQuagmire", "rQuagZone", "hide")');
-	modifyParentNode("rHideQuagmire", "rQuagZone", "hide");
+	document.getElementById('rQuagPopup').setAttribute('onclick', 'MAZLookalike("Quagmire Farm", "rQuag", "MAZ")');
+	document.getElementById('rInsanityPopup').setAttribute('onclick', 'MAZLookalike("Insanity Farm", "rInsanity", "MAZ")');
+	document.getElementById('rAlchPopup').setAttribute('onclick', 'MAZLookalike("Alchemy Farm", "rAlch", "MAZ")');
+	document.getElementById('rHypoPopup').setAttribute('onclick', 'MAZLookalike("Hypothermia Farm", "rHypo", "MAZ")');
 
 	document.getElementById('rHideArchaeology').setAttribute('onclick', 'settingChanged("rHideArchaeology"), modifyParentNode("rHideArchaeology", "Rarchstring3", "hide")');
 	modifyParentNode("rHideArchaeology", "Rarchstring3", "hide");
 
-	document.getElementById('rHideInsanity').setAttribute('onclick', 'settingChanged("rHideInsanity"), modifyParentNode("rHideInsanity", "rInsanityZone", "hide")');
-	modifyParentNode("rHideInsanity", "rInsanityZone", "hide");
-
 	document.getElementById('rHideExterminate').setAttribute('onclick', 'settingChanged("rHideExterminate"), modifyParentNode("rHideExterminate", "Rexterminateeq", "hide")');
 	modifyParentNode("rHideExterminate", "Rexterminateeq", "hide");
-
-	document.getElementById('rHideAlchemy').setAttribute('onclick', 'settingChanged("rHideAlchemy"), modifyParentNode("rHideAlchemy", "rAlchFAMaps", "hide")');
-	modifyParentNode("rHideAlchemy", "rAlchFAMaps", "hide");
 
 	document.getElementById('autoheirlooms').setAttribute('onclick', 'settingChanged("autoheirlooms"), modifyParentNode("autoheirlooms", "raretokeep"), modifyParentNode("autoheirlooms", "slot7modsh")');
 	modifyParentNode("autoheirlooms", "raretokeep");
@@ -1254,6 +1242,9 @@ function settingChanged(id) {
 		if (id == 'rEquipEfficientEquipDisplay') {
 			displayMostEfficientEquipment()
 		}
+		if (btn = autoTrimpSettings.Requipon) {
+			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn.enabled);
+		}
 	}
 	if (btn.type == 'multitoggle') {
 		if (id == 'AutoMagmiteSpender2' && btn.value == 1) {
@@ -1267,6 +1258,10 @@ function settingChanged(id) {
 			btn.value = 0;
 		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + btn.value);
 		document.getElementById(id).textContent = btn.name[btn.value];
+		if (btn = autoTrimpSettings.RBuyJobsNew) {
+			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn.value);
+			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
+		}
 	}
 	if (btn.type == 'dropdown') {
 		btn.selected = document.getElementById(id).value;
@@ -1549,6 +1544,48 @@ function updateCustomButtons() {
 	}
 	turnOff('rAutoStructureSetting');
 
+
+	if (autoTrimpSettings.rQuagOn.enabled) {
+		autoTrimpSettings.rQuagDefaultSettings.value.active = true;
+		autoTrimpSettings.rQuagOn.enabled = false;
+		saveSettings();
+	}
+
+	if (autoTrimpSettings.rInsanityOn.enabled) {
+		autoTrimpSettings.rInsanityDefaultSettings.value.active = true;
+		autoTrimpSettings.rInsanityOn.enabled = false;
+		saveSettings();
+	}
+
+	if (autoTrimpSettings.rAlchOn.enabled) {
+		autoTrimpSettings.rAlchDefaultSettings.value.active = true;
+		autoTrimpSettings.rAlchOn.enabled = false;
+		saveSettings();
+	}
+
+	if (autoTrimpSettings.rHypoOn.enabled) {
+		autoTrimpSettings.rHypoDefaultSettings.value.active = true;
+		autoTrimpSettings.rHypoOn.enabled = false;
+		saveSettings();
+	}
+
+	if (autoTrimpSettings.rHypoBuyPackrat.value > 0) {
+		autoTrimpSettings.rHypoDefaultSettings.value.packrat = true;
+		autoTrimpSettings.rHypoBuyPackrat.value = 0;
+		saveSettings();
+	}
+
+	if (Array.isArray(autoTrimpSettings.rHypoFrozenCastle.value)) {
+		autoTrimpSettings.rHypoDefaultSettings.value.frozencastle = [autoTrimpSettings.rHypoFrozenCastle.value[0], autoTrimpSettings.rHypoFrozenCastle.value[1]];
+		autoTrimpSettings.rHypoFrozenCastle.value = 'undefined';
+		saveSettings();
+	}
+
+	if (autoTrimpSettings.rHypoOn.enabled) {
+		autoTrimpSettings.rHypoDefaultSettings.value.active = true;
+		autoTrimpSettings.rHypoOn.enabled = false;
+		saveSettings();
+	}
 	//Core
 	!radonon ? turnOn('ManualGather2') : turnOff('ManualGather2');
 	!radonon ? turnOn('TrapTrimps') : turnOff('TrapTrimps');
@@ -1811,6 +1848,7 @@ function updateCustomButtons() {
 	radonon ? turnOn('rShipFarm') : turnOff('rShipFarm');
 	radonon && getPageSetting('rShipFarm') ? turnOn('rShipFarmPopup') : turnOff('rShipFarmPopup');
 	turnOff('rShipFarmSettings');
+	turnOff('rJobSettingsArray');
 	turnOff('rShipFarmDefaultSettings');
 	turnOff('rShipFarmZone');
 	radonon && getPageSetting('rShipFarm') ? turnOn('Rshipspending') : turnOff('Rshipspending');
@@ -2032,8 +2070,8 @@ function updateCustomButtons() {
 	radonon ? turnOn('rTrappa') : turnOff('rTrappa');
 	radonon && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
 	//Quagmire
-	radonon && !getPageSetting('rHideQuagmire') ? turnOn('rQuagOn') : turnOff('rQuagOn');
-	radonon && getPageSetting('rQuagOn') && !getPageSetting('rHideQuagmire') ? turnOn('rQuagPopup') : turnOff('rQuagPopup');
+	turnOff('rQuagOn');
+	turnOn('rQuagPopup');
 	turnOff('rQuagSettings');
 	turnOff('rQuagDefaultSettings');
 	turnOff('rQuagZone');
@@ -2060,8 +2098,8 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Rstormon') ? turnOn('Rstormmult') : turnOff('Rstormmult');
 
 	//Insanity
-	radonon && !getPageSetting('rHideInsanity') ? turnOn('rInsanityOn') : turnOff('rInsanityOn');
-	radonon && getPageSetting('rInsanityOn') && !getPageSetting('rHideInsanity') ? turnOn('rInsanityPopup') : turnOff('rInsanityPopup');
+	turnOn('rInsanityPopup');
+	turnOff('rInsanityOn');
 	turnOff('rInsanitySettings');
 	turnOff('rInsanityDefaultSettings');
 	turnOff('rInsanityZone');
@@ -2090,22 +2128,21 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
 
 	//Alchemy
-	radonon && !getPageSetting('rHideAlchemy') ? turnOn('rAlchOn') : turnOff('rAlchOn');
-	radonon && getPageSetting('rAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('rAlchPopup') : turnOff('rAlchPopup');
+	turnOff('rAlchOn');
+	turnOn('rAlchPopup');
 	turnOff('rAlchSettings');
 	turnOff('rAlchDefaultSettings');
 	turnOff('rAlchZone');
-	radonon && getPageSetting('rAlchOn') && !getPageSetting('rHideAlchemy') ? turnOn('rAlchFAMaps') : turnOff('rAlchFAMaps');
 
 	//Hypothermia 
-	radonon && !getPageSetting('rHideHypothermia') && game.global.stringVersion != '5.5.1' ? turnOn('rHypoOn') : turnOff('rHypoOn');
-	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoPopup') : turnOff('rHypoPopup');
+	turnOff('rHypoOn');
+	turnOn('rHypoPopup');
 	turnOff('rHypoSettings');
 	turnOff('rHypoDefaultSettings');
 	turnOff('rHypoZone');
-	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoFrozenCastle') : turnOff('rHypoFrozenCastle');
-	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoStorage') : turnOff('rHypoStorage');
-	radonon && getPageSetting('rHypoOn') && !getPageSetting('rHideHypothermia') ? turnOn('rHypoBuyPackrat') : turnOff('rHypoBuyPackrat');
+	turnOff('rHypoFrozenCastle');
+	turnOff('rHypoStorage');
+	turnOff('rHypoBuyPackrat');
 
 	//Glass
 	radonon ? turnOn('rGlass') : turnOff('rGlass');
@@ -2386,6 +2423,53 @@ function checkPortalSettings() {
 		tooltip('confirm', null, 'update', 'WARNING: Your void maps are set to complete after your autoPortal, and therefore will not be done at all! Please Change Your Settings Now. This Box Will Not Go away Until You do. Remember you can choose \'Custom\' autoPortal along with challenges for complete control over when you portal. <br><br> Estimated autoPortal level: ' + portalLevel, 'cancelTooltip()', 'Void Maps Conflict');
 	return portalLevel;
 }
+
+//AutoJobs
+
+//Changing Default Widths
+document.getElementById('fireBtn').parentElement.style.width = '14.2%'
+document.getElementById('fireBtn').parentElement.style.paddingRight = '2px'
+document.getElementById('jobsTitleSpan').parentElement.style.width = '10%'
+
+var autoJobContainer = document.createElement("DIV");
+autoJobContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
+autoJobContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.RBuyJobsNew.value);
+autoJobContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, \"Toggle between the AutoJob settings.\")');
+autoJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
+
+var autoJobText = document.createElement("DIV");
+autoJobText.innerHTML = autoTrimpSettings.RBuyJobsNew.name[autoTrimpSettings.RBuyJobsNew.value];
+autoJobText.setAttribute("id", "autoJobLabel");
+autoJobText.setAttribute("onClick", "settingChanged('RBuyJobsNew')");
+
+var autoJobSettings = document.createElement("DIV");
+autoJobSettings.setAttribute('onclick', 'MAZLookalike("AT AutoJobs", "a", "AutoJobs")');
+var autoJobSettingsButton = document.createElement("SPAN");
+autoJobSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+
+var autoJobColumn = document.getElementById("jobsTitleDiv").children[0];
+autoJobContainer.appendChild(autoJobText);
+autoJobContainer.appendChild(autoJobSettings);
+autoJobSettings.appendChild(autoJobSettingsButton);
+autoJobColumn.insertBefore(autoJobContainer, document.getElementById('jobsTitleDiv').children[0].children[2]);
+
+
+
+//AutoEquip Button
+var autoEquipContainer = document.createElement("DIV");
+autoEquipContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
+autoEquipContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.Requipon.enabled);
+autoEquipContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, \"Toggle between the AutoJob settings.\")');
+autoEquipContainer.setAttribute("onmouseout", 'tooltip("hide")');
+
+var autoEquipText = document.createElement("DIV");
+autoEquipText.innerHTML = 'AT AutoEquip';
+autoEquipText.setAttribute("id", "autoEquipLabel");
+autoEquipText.setAttribute("onClick", "settingChanged('Requipon')");
+
+var autoEquipColumn = document.getElementById("equipmentTitleDiv").children[0];
+autoEquipColumn.replaceChild(autoEquipContainer, document.getElementById('equipmentTitleDiv').children[0].children[2]);
+autoEquipContainer.appendChild(autoEquipText);
 
 function getDailyHeHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalHeliumEarned - (game.global.heliumLeftover + game.resources.helium.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily He/Hr: " + b.toFixed(3) + "%" } return a }
 function getDailyRnHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalRadonEarned - (game.global.radonLeftover + game.resources.radon.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily Rn/Hr: " + b.toFixed(3) + "%" } return a }

@@ -1069,7 +1069,7 @@ function RautoMap() {
 	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
 
 	//Time Farm
-	if ((rRunningRegular && getPageSetting('rTimeFarm')) || (rRunningDaily && getPageSetting('rdTimeFarm')) || (rRunningC3 && getPageSetting('rc3TimeFarm'))) {
+	if ((rRunningRegular && autoTrimpSettings.rTimeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTimeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TimeFarmDefaultSettings.value.active)) {
 		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
 		rTFZone = rRunningC3 ? getPageSetting('rc3TimeFarmZone') : rRunningDaily ? getPageSetting('rdTimeFarmZone') : getPageSetting('rTimeFarmZone');
 		var rTFIndex = rTFZone.indexOf(game.global.world);
@@ -1101,7 +1101,7 @@ function RautoMap() {
 	}
 
 	//Tribute Farm
-	if ((rRunningRegular && getPageSetting('rTributeFarm')) || (rRunningDaily && getPageSetting('rdTributeFarm')) || (rRunningC3 && getPageSetting('rc3TributeFarm'))) {
+	if ((rRunningRegular && autoTrimpSettings.rTributeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTributeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TributeFarmDefaultSettings.value.active)) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
 		var rTrFZone = rRunningC3 ? getPageSetting('rc3TributeFarmZone') : rRunningDaily ? getPageSetting('rdTributeFarmZone') : getPageSetting('rTributeFarmZone');
 		if (rTrFZone.includes(game.global.world)) {
@@ -1119,6 +1119,7 @@ function RautoMap() {
 				rTrFbuyBuildings = typeof (rTrFSettings.buildings) === 'undefined' ? true : rTrFSettings.buildings;
 				rTrFAtlantrimp = typeof (rTrFSettings.atlantrimp) === 'undefined' || !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rTrFSettings.atlantrimp;
 
+				var totalTrFCost = 0;
 				var tributeCost = 0;
 				var metCost = 0;
 				if (rTrFTributes > game.buildings.Tribute.purchased) {
@@ -1131,7 +1132,7 @@ function RautoMap() {
 						metCost += Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned + x) * game.jobs.Meteorologist.cost.food[0]
 					}
 				}
-				var totalTrFCost = tributeCost + metCost;
+				totalTrFCost = tributeCost + metCost;
 
 				if (game.global.challengeActive == "Wither" && rTrFMapLevel >= 0)
 					rTrFMapLevel = -1;
@@ -1184,7 +1185,7 @@ function RautoMap() {
 	}
 
 	//Smithy Farming
-	if ((rRunningRegular && getPageSetting('rSmithyFarm')) || (rRunningDaily && getPageSetting('rdSmithyFarm') && (typeof game.global.dailyChallenge.hemmorrhage === 'undefined' || !(typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')))) || (rRunningC3 && getPageSetting('rc3SmithyFarm'))) {
+	if ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active && (typeof game.global.dailyChallenge.hemmorrhage === 'undefined' || !(typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')))) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active)) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
 		var rSFZone = rRunningC3 ? getPageSetting('rc3SmithyFarmZone') : rRunningDaily ? getPageSetting('rdSmithyFarmZone') : getPageSetting('rSmithyFarmZone');
 		if (rSFZone.includes(game.global.world)) {
@@ -1334,7 +1335,7 @@ function RautoMap() {
 		}
 	}
 	//Quagmire - Black Bogs
-	if (game.global.challengeActive == "Quagmire" && getPageSetting('rQuagOn')) {
+	if (game.global.challengeActive == "Quagmire" && autoTrimpSettings.rQuagDefaultSettings.value.active) {
 		Rshoulddobogs = false;
 		var bogzone = getPageSetting('rQuagZone');
 		if (bogzone.includes(game.global.world)) {
@@ -1412,7 +1413,7 @@ function RautoMap() {
 	}
 
 	//Insanity Farm
-	if (game.global.challengeActive == "Insanity" && getPageSetting('Rinsanityon')) {
+	if (game.global.challengeActive == "Insanity" && autoTrimpSettings.rInsanityDefaultSettings.value.active) {
 		var insanityfarmzone = getPageSetting('rInsanityZone');
 
 		if (insanityfarmzone.includes(game.global.world)) {
@@ -1610,7 +1611,7 @@ function RautoMap() {
 	}
 
 	//Alchemy Farm
-	if (game.global.challengeActive == "Alchemy" && getPageSetting('rAlchOn')) {
+	if (game.global.challengeActive == "Alchemy" && autoTrimpSettings.rAlchDefaultSettings.value.active) {
 		alchfarmzone = getPageSetting('rAlchZone');
 		if (alchfarmzone.includes(game.global.world)) {
 			var alchfarmindex = alchfarmzone.indexOf(game.global.world);
@@ -1693,8 +1694,8 @@ function RautoMap() {
 	}
 
 	//Hypothermia Farm
-	if ((game.global.challengeActive == 'Hypothermia' || (getPageSetting('rHypoBuyPackrat') && rHypoBuyPackrat)) && getPageSetting('rHypoOn')) {
-		if (getPageSetting('rHypoBuyPackrat')) {
+	if ((game.global.challengeActive == 'Hypothermia' || (getPageSetting('rHypoBuyPackrat') && rHypoBuyPackrat)) && autoTrimpSettings.rHypoDefaultSettings.value.active) {
+		if (autoTrimpSettings.rHypoDefaultSettings.value.packrat) {
 			if (!rHypoBuyPackrat && game.global.challengeActive == 'Hypothermia')
 				rHypoBuyPackrat = true;
 			if (rHypoBuyPackrat && game.global.challengeActive == '') {
@@ -1740,37 +1741,39 @@ function RautoMap() {
 	}
 
 	//Equip Farming
-	Requipfarm = (getPageSetting('Requipfarmon') == true && (getPageSetting('Requipfarmzone') > 0 && getPageSetting('RequipfarmHD') > 0 && getPageSetting('Requipfarmmult') > 0));
-	if (Requipfarm) {
-		var equipfarmzone = getPageSetting('Requipfarmzone');
-		var metal = game.resources.metal.owned
-		var metalneeded = estimateEquipsForZone()[0];
-		if (game.global.world >= equipfarmzone && metal < metalneeded) rShouldEquipFarm = true;
-	}
+	if (getPageSetting('Requipfarmon')) {
+		Requipfarm = (getPageSetting('Requipfarmon') == true && (getPageSetting('Requipfarmzone') > 0 && getPageSetting('RequipfarmHD') > 0 && getPageSetting('Requipfarmmult') > 0));
+		if (Requipfarm) {
+			var equipfarmzone = getPageSetting('Requipfarmzone');
+			var metal = game.resources.metal.owned
+			var metalneeded = estimateEquipsForZone()[0];
+			if (game.global.world >= equipfarmzone && metal < metalneeded) rShouldEquipFarm = true;
+		}
 
-	var equipminus = 0;
-	if (rShouldEquipFarm) {
-		equipminus = 0;
-		var hits = (getPageSetting('Requipfarmhits') > 0) ? getPageSetting('Requipfarmhits') : 10;
-		var hitssurv = (getPageSetting('Rhitssurvived') > 0) ? getPageSetting('Rhitssurvived') : 1;
-		var mlevels = 0;
-		var go = false;
+		var equipminus = 0;
+		if (rShouldEquipFarm) {
+			equipminus = 0;
+			var hits = (getPageSetting('Requipfarmhits') > 0) ? getPageSetting('Requipfarmhits') : 10;
+			var hitssurv = (getPageSetting('Rhitssurvived') > 0) ? getPageSetting('Rhitssurvived') : 1;
+			var mlevels = 0;
+			var go = false;
 
-		for (var i = -1; -7 < i; i--) {
-			if (!go) {
-				mlevels = i;
-				if (
-					((RcalcEnemyHealth(game.global.world + mlevels)) <= (RcalcOurDmg("avg", false, false) * hits)) &&
-					((((RcalcBadGuyDmg(null, RgetEnemyAvgAttack((game.global.world + mlevels), 20, 'Snimp'))) * 0.8) * (hitssurv)) <= (RcalcOurHealth() * 2))
-				) {
+			for (var i = -1; -7 < i; i--) {
+				if (!go) {
+					mlevels = i;
+					if (
+						((RcalcEnemyHealth(game.global.world + mlevels)) <= (RcalcOurDmg("avg", false, false) * hits)) &&
+						((((RcalcBadGuyDmg(null, RgetEnemyAvgAttack((game.global.world + mlevels), 20, 'Snimp'))) * 0.8) * (hitssurv)) <= (RcalcOurHealth() * 2))
+					) {
+						equipminus = mlevels;
+						go = true;
+					}
+				}
+				if (!go && i == -6) {
+					mlevels = i;
 					equipminus = mlevels;
 					go = true;
 				}
-			}
-			if (!go && i == -6) {
-				mlevels = i;
-				equipminus = mlevels;
-				go = true;
 			}
 		}
 	}
@@ -1844,7 +1847,9 @@ function RautoMap() {
 				//Frozen Castle
 				if (theMap.name == 'Frozen Castle') {
 					var frozencastle = !game.global.challengeActive != 'Hypothermia' && game.global.world >= getPageSetting('rFrozenCastle')[0] && game.global.lastClearedCell + 2 >= getPageSetting('rFrozenCastle')[1];
-					var hypothermia = game.global.challengeActive == 'Hypothermia' && game.global.world >= getPageSetting('rHypoFrozenCastle')[0] && game.global.lastClearedCell + 2 >= getPageSetting('rHypoFrozenCastle')[1];
+					var hypothermia = game.global.challengeActive === 'Hypothermia' &&
+						game.global.world >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0]) : 200) &&
+						game.global.lastClearedCell + 2 >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1]) : 99);
 
 					if (frozencastle || hypothermia) {
 						selectedMap = theMap.id;
@@ -2035,7 +2040,8 @@ function RautoMap() {
 							selectedMap = "create";
 					}
 				}
-				RbuyJobs()
+				if (getPageSetting('RBuyJobsNew') > 0)
+					RbuyJobs()
 			} else {
 				for (var map in game.global.mapsOwnedArray) {
 					if (!game.global.mapsOwnedArray[map].noRecycle && game.global.world == game.global.mapsOwnedArray[map].level) {

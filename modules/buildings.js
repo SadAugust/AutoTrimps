@@ -415,11 +415,11 @@ function RbuyBuildings() {
 
 	// Storage, shouldn't be needed anymore that autostorage is lossless. Hypo fucked this statement :(
 	//Turn on autostorage if you're past your last farmzone and you don't need to save wood anymore. Else will have to force it to purchase enough storage up to the cost of whatever bonfires
-	if (!game.global.autoStorage && (game.global.challengeActive != 'Hypothermia' || (game.global.challengeActive == 'Hypothermia' && getPageSetting('rHypoOn') && ((getPageSetting('rHypoStorage') == 1 && game.global.world >= getPageSetting('rHypoZone')[getPageSetting('rHypoZone').length - 1]) || (getPageSetting('rHypoStorage') == 2 && game.global.world >= getPageSetting('rHypoZone')[0])))))
+	if (!game.global.autoStorage && (game.global.challengeActive != 'Hypothermia' || (game.global.challengeActive == 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && (autoTrimpSettings.rHypoDefaultSettings.value.autostorage && game.global.world >= getPageSetting('rHypoZone')[0]))))
 		toggleAutoStorage(false);
 
 	//Disables AutoStorage 
-	if (game.global.challengeActive == 'Hypothermia' && getPageSetting('rHypoOn') && ((getPageSetting('rHypoStorage') == 1 && game.global.world < getPageSetting('rHypoZone')[getPageSetting('rHypoZone').length - 1]) || (getPageSetting('rHypoStorage') == 2 && game.global.world < getPageSetting('rHypoZone')[0]))) {
+	if (game.global.challengeActive == 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && (autoTrimpSettings.rHypoDefaultSettings.value.autostorage && game.global.world < getPageSetting('rHypoZone')[0])) {
 		if (game.global.autoStorage)
 			toggleAutoStorage(false);
 	}
@@ -526,8 +526,17 @@ function RbuyBuildings() {
 }
 
 function rBuyTributes() {
+	var affordableMets = 0;
+	if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled) {
+		affordableMets = getMaxAffordable(
+			game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
+			game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100),
+			game.jobs.Meteorologist.cost.food[1],
+			true
+		);
+	}
 	//Won't buy Tributes if they're locked or if a meteorologist can be purchased as that should always be the more efficient purchase
-	if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(canAffordJob('Meteorologist') && !game.jobs.Meteorologist.locked))) {
+	if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(affordableMets > 0 && !game.jobs.Meteorologist.locked))) {
 		if (rShouldMetFarm && !rShouldTributeFarm) return;
 		//Spend 100% of food on Tributes if Tribute Farming otherwise uses the value in RTributeSpendingPct.
 		var rTributeSpendPct = typeof (rTrFTributes) !== 'undefined' && rTrFTributes > 0 ? 1 : getPageSetting('RTributeSpendingPct') > 0 ? getPageSetting('RTributeSpendingPct') / 100 : 1;

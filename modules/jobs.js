@@ -358,9 +358,20 @@ function RworkerRatios(workerRatio) {
 	var workerRatio = !workerRatio ? null : workerRatio
 	if (workerRatio == null) return;
 	if (getPageSetting('RBuyJobsNew') == 2) {
-		if (workerRatio.includes('Farmer')) return getPageSetting('RFarmerRatio');
-		else if (workerRatio.includes('Lumber')) return getPageSetting('RLumberjackRatio');
-		else if (workerRatio.includes('Miner')) return getPageSetting('RMinerRatio');
+		if (workerRatio.includes('Farmer')) {
+			if (autoTrimpSettings.rJobSettingsArray.value.Farmer.enabled) return autoTrimpSettings.rJobSettingsArray.value.Farmer.ratio;
+			else return 0;
+		}
+		else if (workerRatio.includes('Lumber')) {
+			if (autoTrimpSettings.rJobSettingsArray.value.Lumberjack.enabled)
+				return autoTrimpSettings.rJobSettingsArray.value.Lumberjack.ratio;
+			else
+				return 0;
+		}
+		else if (workerRatio.includes('Miner')) {
+			if (autoTrimpSettings.rJobSettingsArray.value.Miner.enabled) return autoTrimpSettings.rJobSettingsArray.value.Miner.ratio;
+			else return 0;
+		}
 	}
 
 	var ratioSet;
@@ -490,54 +501,59 @@ function RbuyJobs() {
 
 	//Do non-ratio/limited jobs first
 	//Explorers
-	var maxExplorers = (getPageSetting('RMaxExplorers') == -1) ? Infinity : getPageSetting('RMaxExplorers');
-	if (maxExplorers > game.jobs.Explorer.owned && !game.jobs.Explorer.locked) {
-		var affordableExplorers = Math.min(maxExplorers - game.jobs.Explorer.owned,
-			getMaxAffordable(
-				game.jobs.Explorer.cost.food[0] * Math.pow(game.jobs.Explorer.cost.food[1], game.jobs.Explorer.owned),
-				game.resources.food.owned,
-				game.jobs.Explorer.cost.food[1],
-				true
-			)
-		);
+	if (autoTrimpSettings.rJobSettingsArray.value.Explorer.enabled) {
+		var maxExplorers = 90000//(getPageSetting('RMaxExplorers') == -1) ? Infinity : getPageSetting('RMaxExplorers');
+		if (!game.jobs.Explorer.locked) {
+			var affordableExplorers = Math.min(maxExplorers - game.jobs.Explorer.owned,
+				getMaxAffordable(
+					game.jobs.Explorer.cost.food[0] * Math.pow(game.jobs.Explorer.cost.food[1], game.jobs.Explorer.owned),
+					game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Explorer.percent / 100),
+					game.jobs.Explorer.cost.food[1],
+					true
+				)
+			);
 
-		if (affordableExplorers > 0) {
-			var buyAmountStoreExp = game.global.buyAmt;
-			game.global.buyAmt = affordableExplorers;
-			buyJob('Explorer', true, true);
-			freeWorkers -= affordableExplorers;
-			game.global.buyAmt = buyAmountStoreExp;
+			if (affordableExplorers > 0) {
+				var buyAmountStoreExp = game.global.buyAmt;
+				game.global.buyAmt = affordableExplorers;
+				buyJob('Explorer', true, true);
+				freeWorkers -= affordableExplorers;
+				game.global.buyAmt = buyAmountStoreExp;
+			}
 		}
 	}
 
 	//Meteorologists
-	var affordableMets = getMaxAffordable(
-		game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
-		game.resources.food.owned,
-		game.jobs.Meteorologist.cost.food[1],
-		true
-	);
-	affordableMets = typeof (rTrFAtlantrimp) !== 'undefined' && rTrFAtlantrimp === true && game.mapUnlocks.AncientTreasure.canRunOnce ? 0 : affordableMets;
+	if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled) {
+		var affordableMets = getMaxAffordable(
+			game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
+			game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100),
+			game.jobs.Meteorologist.cost.food[1],
+			true
+		);
+		affordableMets = typeof (rTrFAtlantrimp) !== 'undefined' && rTrFAtlantrimp === true && game.mapUnlocks.AncientTreasure.canRunOnce && !(game.global.food.owned > (typeof (totalTrFCost) === 'undefined' ? 0 : totalTrFCost)) ? 0 : affordableMets;
 
-	if (affordableMets > 0 && !game.jobs.Meteorologist.locked && !rShouldTributeFarm) {
-		var buyAmountStoreMet = game.global.buyAmt;
-		game.global.buyAmt = affordableMets;
-		buyJob('Meteorologist', true, true);
-		freeWorkers -= affordableMets;
-		game.global.buyAmt = buyAmountStoreMet;
+		if (affordableMets > 0 && !game.jobs.Meteorologist.locked && !rShouldTributeFarm) {
+			var buyAmountStoreMet = game.global.buyAmt;
+			game.global.buyAmt = affordableMets;
+			buyJob('Meteorologist', true, true);
+			freeWorkers -= affordableMets;
+			game.global.buyAmt = buyAmountStoreMet;
+		}
 	}
 
 	//Ships
-	shipspending = ((getPageSetting('Rshipspending') > 0) ? getPageSetting('Rshipspending') : 100);
-	var affordableShips = Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) / 100 * shipspending);
-	if (affordableShips > 50 - game.jobs.Worshipper.owned)
-		affordableShips = 50 - game.jobs.Worshipper.owned;
-	if (affordableShips > 0 && !game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50) {
-		var buyAmountStoreShip = game.global.buyAmt;
-		game.global.buyAmt = affordableShips;
-		buyJob('Worshipper', true, true);
-		freeWorkers -= affordableShips;
-		game.global.buyAmt = buyAmountStoreShip;
+	if (autoTrimpSettings.rJobSettingsArray.value.Worshipper.enabled) {
+		var affordableShips = Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (autoTrimpSettings.rJobSettingsArray.value.Worshipper.percent / 100));
+		if (affordableShips > 50 - game.jobs.Worshipper.owned)
+			affordableShips = 50 - game.jobs.Worshipper.owned;
+		if (affordableShips > 0 && !game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50) {
+			var buyAmountStoreShip = game.global.buyAmt;
+			game.global.buyAmt = affordableShips;
+			buyJob('Worshipper', true, true);
+			freeWorkers -= affordableShips;
+			game.global.buyAmt = buyAmountStoreShip;
+		}
 	}
 
 	//Gather up the total number of workers available to be distributed across ratio workers
@@ -574,9 +590,9 @@ function RbuyJobs() {
 		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
 	}
 
-	if (getPageSetting("NoFarmersAbove") && game.global.world >= getPageSetting("NoFarmerZone") && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm)
+	if (autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm)
 		desiredRatios[0] = 0;
-	if (getPageSetting('NoLumberjackMP') && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
+	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
 		desiredRatios[1] = 0;
 
 	if (typeof workerRatio !== 'undefined' && workerRatio !== null) {
@@ -607,10 +623,10 @@ function RbuyJobs() {
 				}
 				//Get ratio from AT
 				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(RworkerRatios('R' + worker + 'Ratio'));
-				if (getPageSetting('NoFarmersAbove') && !rShouldSmithyFarm && game.global.world >= getPageSetting('NoFarmerZone')) {
+				if (autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm) {
 					desiredRatios[ratioWorkers.indexOf("Farmer")] = 0;
 				}
-				if (getPageSetting('NoLumberjackMP') && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
+				if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
 					desiredRatios[ratioWorkers.indexOf("Lumberjack")] = 0;
 				}
 			}
