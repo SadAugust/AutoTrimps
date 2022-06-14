@@ -501,7 +501,7 @@ function initializeAllSettings() {
 
 	//Ships 
 	createSetting('rShipFarm', 'Ship Farming', 'Turn Ship Farming off or on.', 'boolean', false, null, 'Μaps');
-	createSetting('rShipFarmPopup', 'SF: Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Μaps');
+	createSetting('rShipFarmPopup', 'Ship Farm: Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Μaps');
 	createSetting('rShipFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rShipFarmDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food' }, null, 'Μaps');
 	createSetting('rShipFarmZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
