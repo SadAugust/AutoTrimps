@@ -758,20 +758,18 @@ function RautoEquip() {
 		var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 		for (var i = 0; i < 2; i++) {
 			if (canAffordBuilding(equipName, null, null, true, false, 1) || (equipPrestige && game.resources[resourceUsed].owned > equipCost)) {
-				if (smithylogic(equipName, resourceUsed, true)) {
-					if (game.equipment[equipName].level < equipCap || equipPrestige) {
-						if (!equipPrestige) {
-							maxCanAfford = equipPrestige ? 1 : getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * resourceSpendingPct) / 5, 1.2, true);
-							if (maxCanAfford == 0) maxCanAfford = 1;
-							if (maxCanAfford >= (equipCap - game.equipment[equipName].level)) maxCanAfford = equipCap - game.equipment[equipName].level;
-						}
+				if (game.equipment[equipName].level < equipCap || equipPrestige) {
+					if (!equipPrestige) {
+						maxCanAfford = equipPrestige ? 1 : getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * resourceSpendingPct) / 5, 1.2, true);
+						if (maxCanAfford == 0) maxCanAfford = 1;
+						if (maxCanAfford >= (equipCap - game.equipment[equipName].level)) maxCanAfford = equipCap - game.equipment[equipName].level;
+					}
 
-						// Check any of the overrides
-						if (underStats || equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned) {
-							if (!game.equipment[equipName].locked) {
-								if (equipPrestige) buyUpgrade(RequipmentList[equipName].Upgrade, true, true)
-								else if (buyEquipment(equipName, null, true, maxCanAfford)) keepBuying = true;
-							}
+					// Check any of the overrides
+					if (underStats || equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned) {
+						if (!game.equipment[equipName].locked) {
+							if (equipPrestige) buyUpgrade(RequipmentList[equipName].Upgrade, true, true)
+							else if (buyEquipment(equipName, null, true, maxCanAfford)) keepBuying = true;
 						}
 					}
 				}
