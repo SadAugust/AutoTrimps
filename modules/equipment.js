@@ -739,7 +739,7 @@ function RautoEquip() {
 	var maxCanAfford = 0;
 
 	//Buy as many shields as possible when running Melting Point
-	if (getPageSetting("NoLumberjackMP") && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')
+	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')
 		buyEquipment('Shield', null, true, 999)
 
 	// Loop through actually getting equips

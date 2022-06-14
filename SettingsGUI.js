@@ -369,13 +369,6 @@ function initializeAllSettings() {
 	createSetting('RTributeSpendingPct', 'Tribute Spending pct', 'The percentage of total food you\'d like you spend on Tributes.', 'value', '-1', null, 'Buildings');
 	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Buildings');
 
-	//Smithy Savings
-	document.getElementById('Rmeltsmithy').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rsmithylogic', 'Smithy Savings', '<b>ABSOLUTELY WILL NOT WORK IN TESTING!</b><br>Uses Smithy Saving logic when this is turned on. Make sure every SS setting is set above 0 or it wont work. This feature will stop using resources on items needed for Smithy when you have reached the targets you have selected.', 'boolean', false, null, "Buildings");
-	createSetting('Rsmithynumber', 'SS: Number', 'Start SS at this number of Smithys. I.e 9, will buy anything regardless of Smithy before having 9 Smithys. After 9 has been reached will start to save up for them. ', 'value', '-1', null, "Buildings");
-	createSetting('Rsmithypercent', 'SS: Percent', 'If you have SS enabled this value will allow items below this value to be purchased. I.e if this is set to 1, it will only buy items if that item is 1% of Smithys cost or lower. ', 'value', '-1', null, "Buildings");
-	createSetting('Rsmithyseconds', 'SS: Seconds', 'How many seconds SS starts activating at. I.e 120, if your Smithy is 120 seconds away from being purchased SS will kick in. ', 'value', '-1', null, "Buildings");
-
 	//Jobs
 	//Helium
 	createSetting('fuckjobs', 'Hide Jobs', 'Hides obsolete settings when you have obtained the AutoJobs Mastery. It should be far better to use than AT, Especially on c2 Challenges like Watch. ', 'boolean', false, null, 'Jobs');
@@ -396,28 +389,7 @@ function initializeAllSettings() {
 	createSetting('RLumberjackRatio', 'Lumberjack Ratio', '', 'value', '1', null, "Jobs");
 	createSetting('RMinerRatio', 'Miner Ratio', '', 'value', '1', null, "Jobs");
 	createSetting('RMaxExplorers', 'Max Explorers', 'Advanced. Cap your explorers (This is an absolute number not a ratio). recommend: -1', 'value', '-1', null, "Jobs");
-	//Maintaining ships
-	createSetting('NoFarmersAbove', 'No Farmers From', 'Stops buying farmers from this zone and above.<br><br>Only Tribute Farming and Worshipper farming will override this setting as they wouldn\'t function without being able to do so.', 'boolean', false, null, 'Jobs');
-	createSetting('NoFarmerZone', 'NFF Zone', 'Which zone to stop buying farmers. I.e if this value is 75 it will swap your farmer ratio to 0 at zone 75 and above.<br><br>Only Tribute Farming and Worshipper farming will override this setting as they wouldn\'t function without being able to do so.', 'value', '-1', null, 'Jobs');
-	createSetting('NoLumberjackMP', 'No Lumberjacks post MP', 'Stops purchasing lumberjacks after you\'ve already run or got enough Smithies to trigger running Melting Point', 'boolean', false, null, 'Jobs');
 
-	//Ships 
-	createSetting('rShipFarm', 'Ship Farming', 'Turn Ship Farming off or on.', 'boolean', false, null, 'Jobs');
-	createSetting('rShipFarmPopup', 'SF: Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Jobs');
-	createSetting('rShipFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Jobs');
-	createSetting('rShipFarmDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food' }, null, 'Jobs');
-	createSetting('rShipFarmZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Jobs');
-	createSetting('Rshipspending', 'SF: Spending Pct', 'What percentage of owned food to spend on Worshippers. -1 for 100% or value between 1-100 for lower.', 'value', '-1', null, "Jobs");
-
-	//Bone Shrine (bone) 
-	if (game.global.stringVersion >= '5.7.0') {
-		createSetting('rBoneShrine', 'Bone Shrine', 'Turn Bone Shrine settings on or off.', 'boolean', false, null, 'Jobs');
-		createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Click to adjust settings.', 'infoclick', false, null, 'Jobs');
-		createSetting('rBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Jobs');
-		createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, bonebelow: 1, jobratio: '1,1,10,1', gather: 'metal' }, null, 'Jobs');
-		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Jobs');
-		createSetting('rBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Jobs");
-	}
 	//Gear
 	//Helium
 	createSetting('BuyArmorNew', ['Armor: Buy Neither', 'Armor: Buy Both', 'Armor: Prestiges', 'Armor: Levels'], 'AutoBuys Prestiges and Levels up the most cost efficient Armor available. Gymystic buying is controlled under this setting\'s prestige option', 'multitoggle', 1, null, "Gear"); //This should replace the two below
@@ -526,6 +498,24 @@ function initializeAllSettings() {
 	createSetting('rSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'Μaps');
 	createSetting('rSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
+
+	//Ships 
+	createSetting('rShipFarm', 'Ship Farming', 'Turn Ship Farming off or on.', 'boolean', false, null, 'Μaps');
+	createSetting('rShipFarmPopup', 'SF: Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Μaps');
+	createSetting('rShipFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rShipFarmDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food' }, null, 'Μaps');
+	createSetting('rShipFarmZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+	createSetting('Rshipspending', 'SF: Spending Pct', 'What percentage of owned food to spend on Worshippers. -1 for 100% or value between 1-100 for lower.', 'value', '-1', null, "Μaps");
+
+	//Bone Shrine (bone) 
+	if (game.global.stringVersion >= '5.7.0') {
+		createSetting('rBoneShrine', 'Bone Shrine', 'Turn Bone Shrine settings on or off.', 'boolean', false, null, 'Μaps');
+		createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Click to adjust settings.', 'infoclick', false, null, 'Μaps');
+		createSetting('rBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+		createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, bonebelow: 1, jobratio: '1,1,10,1', gather: 'metal' }, null, 'Μaps');
+		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+		createSetting('rBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Μaps");
+	}
 
 	//Spire
 	//Helium
@@ -1715,22 +1705,22 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAutoPortalDaily') > 0 ? turnOn('RdHeliumHourChallenge') : turnOff('RdHeliumHourChallenge');
 
 	//Radon Daily Time Farming
-	radonon ? turnOn('rdTimeFarm') : turnOff('rdTimeFarm');
-	(radonon && getPageSetting('rdTimeFarm')) ? turnOn('rdTimeFarmPopup') : turnOff('rdTimeFarmPopup');
+	turnOff('rdTimeFarm');
+	radonon ? turnOn('rdTimeFarmPopup') : turnOff('rdTimeFarmPopup');
 	turnOff('rdTimeFarmSettings');
 	turnOff('rdTimeFarmDefaultSettings');
 	turnOff('rdTimeFarmZone');
 
 	//Radon Daily Tribute Farming
-	radonon ? turnOn('rdTributeFarm') : turnOff('rdTributeFarm');
-	(radonon && getPageSetting('rdTributeFarm')) ? turnOn('rdTributeFarmPopup') : turnOff('rdTributeFarmPopup');
+	turnOff('rdTributeFarm');
+	radonon ? turnOn('rdTributeFarmPopup') : turnOff('rdTributeFarmPopup');
 	turnOff('rdTributeFarmSettings');
 	turnOff('rdTributeFarmDefaultSettings');
 	turnOff('rdTributeFarmZone');
 
 	//Daily Smithy Farming  
-	radonon ? turnOn('rdSmithyFarm') : turnOff('rdSmithyFarm');
-	(radonon && getPageSetting('rdSmithyFarm')) ? turnOn('rdSmithyFarmPopup') : turnOff('rdSmithyFarmPopup');
+	turnOff('rdSmithyFarm');
+	radonon ? turnOn('rdSmithyFarmPopup') : turnOff('rdSmithyFarmPopup');
 	turnOff('rdSmithyFarmSettings');
 	turnOff('rdSmithyFarmDefaultSettings');
 	turnOff('rdSmithyFarmZone');
@@ -1756,22 +1746,22 @@ function updateCustomButtons() {
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
 
 	//C3 Time Farm
-	radonon ? turnOn('rc3TimeFarm') : turnOff('rc3TimeFarm');
-	(radonon && getPageSetting('rc3TimeFarm')) ? turnOn('rc3TimeFarmPopup') : turnOff('rc3TimeFarmPopup');
+	turnOff('rc3TimeFarm');
+	radonon ? turnOn('rc3TimeFarmPopup') : turnOff('rc3TimeFarmPopup');
 	turnOff('rc3TimeFarmSettings');
 	turnOff('rc3TimeFarmDefaultSettings');
 	turnOff('rc3TimeFarmZone');
 
 	//C3 Tribute Farming
-	radonon ? turnOn('rc3TributeFarm') : turnOff('rc3TributeFarm');
-	(radonon && getPageSetting('rc3TributeFarm')) ? turnOn('rc3TributeFarmPopup') : turnOff('rc3TributeFarmPopup');
+	turnOff('rc3TributeFarm');
+	radonon ? turnOn('rc3TributeFarmPopup') : turnOff('rc3TributeFarmPopup');
 	turnOff('rc3TributeFarmSettings');
 	turnOff('rc3TributeFarmDefaultSettings');
 	turnOff('rc3TributeFarmZone');
 
 	//C3 Smithy Farming  
-	radonon ? turnOn('rc3SmithyFarm') : turnOff('rc3SmithyFarm');
-	(radonon && getPageSetting('rc3SmithyFarm')) ? turnOn('rc3SmithyFarmPopup') : turnOff('rc3SmithyFarmPopup');
+	turnOff('rc3SmithyFarm');
+	radonon ? turnOn('rc3SmithyFarmPopup') : turnOff('rc3SmithyFarmPopup');
 	turnOff('rc3SmithyFarmSettings');
 	turnOff('rc3SmithyFarmDefaultSettings');
 	turnOff('rc3SmithyFarmZone');
@@ -1815,10 +1805,6 @@ function updateCustomButtons() {
 	radonon && buildingstoggle ? turnOn('RTributeSpendingPct') : turnOff('RTributeSpendingPct');
 	radonon && buildingstoggle ? turnOn('RSpendTribute') : turnOff('RSpendTribute');
 	radonon && buildingstoggle ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
-	radonon ? turnOn('Rsmithylogic') : turnOff('Rsmithylogic');
-	radonon && getPageSetting('Rsmithylogic') ? turnOn('Rsmithynumber') : turnOff('Rsmithynumber');
-	radonon && getPageSetting('Rsmithylogic') ? turnOn('Rsmithypercent') : turnOff('Rsmithypercent');
-	radonon && getPageSetting('Rsmithylogic') ? turnOn('Rsmithyseconds') : turnOff('Rsmithyseconds');
 
 	//Jobs
 	!radonon ? turnOn('BuyJobsNew') : turnOff('BuyJobsNew');
@@ -1838,25 +1824,21 @@ function updateCustomButtons() {
 	radonon && nojobs ? turnOn('RFarmerRatio') : turnOff('RFarmerRatio');
 	radonon && nojobs ? turnOn('RLumberjackRatio') : turnOff('RLumberjackRatio');
 	radonon && nojobs ? turnOn('RMinerRatio') : turnOff('RMinerRatio');
-	radonon && nojobs ? turnOn('RMaxExplorers') : turnOff('RMaxExplorers');
-	radonon && getPageSetting('RBuyJobsNew') != 0 ? turnOn('NoFarmersAbove') : turnOff('NoFarmersAbove');
-	radonon && getPageSetting('RBuyJobsNew') != 0 && getPageSetting('NoFarmersAbove') ? turnOn('NoFarmerZone') : turnOff('NoFarmerZone');
-	radonon && getPageSetting('RBuyJobsNew') != 0 ? turnOn('NoLumberjackMP') : turnOff('NoLumberjackMP');
-
+	turnOff('RMaxExplorers');
 
 	//Ships 
-	radonon ? turnOn('rShipFarm') : turnOff('rShipFarm');
-	radonon && getPageSetting('rShipFarm') ? turnOn('rShipFarmPopup') : turnOff('rShipFarmPopup');
+	turnOff('rShipFarm');
+	radonon ? turnOn('rShipFarmPopup') : turnOff('rShipFarmPopup');
 	turnOff('rShipFarmSettings');
 	turnOff('rJobSettingsArray');
 	turnOff('rShipFarmDefaultSettings');
 	turnOff('rShipFarmZone');
-	radonon && getPageSetting('rShipFarm') ? turnOn('Rshipspending') : turnOff('Rshipspending');
+	turnOff('Rshipspending');
 
 	//Bone Shrine (bones) 
 	if (game.global.stringVersion >= '5.7.0') {
-		radonon ? turnOn('rBoneShrine') : turnOff('rBoneShrine');
-		radonon && getPageSetting('rBoneShrine') ? turnOn('rBoneShrinePopup') : turnOff('rBoneShrinePopup');
+		turnOff('rBoneShrine');
+		radonon ? turnOn('rBoneShrinePopup') : turnOff('rBoneShrinePopup');
 		turnOff('rBoneShrineSettings');
 		turnOff('rBoneShrineDefaultSettings');
 		turnOff('rBoneShrineZone');
@@ -1948,22 +1930,22 @@ function updateCustomButtons() {
 	radonon && game.global.stringVersion != '5.5.1' && game.global.highestRadonLevelCleared >= 174 ? turnOn('rFrozenCastle') : turnOff('rFrozenCastle');
 
 	//Tribute Farming
-	radonon ? turnOn('rTributeFarm') : turnOff('rTributeFarm');
-	(radonon && getPageSetting('rTributeFarm')) ? turnOn('rTributeFarmPopup') : turnOff('rTributeFarmPopup');
+	turnOff('rTributeFarm');
+	radonon ? turnOn('rTributeFarmPopup') : turnOff('rTributeFarmPopup');
 	turnOff('rTributeFarmSettings');
 	turnOff('rTributeFarmDefaultSettings');
 	turnOff('rTributeFarmZone');
 
 	//Time Farming  
-	radonon ? turnOn('rTimeFarm') : turnOff('rTimeFarm');
-	(radonon && getPageSetting('rTimeFarm')) ? turnOn('rTimeFarmPopup') : turnOff('rTimeFarmPopup');
+	turnOff('rTimeFarm');
+	radonon ? turnOn('rTimeFarmPopup') : turnOff('rTimeFarmPopup');
 	turnOff('rTimeFarmSettings');
 	turnOff('rTimeFarmDefaultSettings');
 	turnOff('rTimeFarmZone');
 
 	//Smithy Farming  
-	radonon ? turnOn('rSmithyFarm') : turnOff('rSmithyFarm');
-	(radonon && getPageSetting('rSmithyFarm')) ? turnOn('rSmithyFarmPopup') : turnOff('rSmithyFarmPopup');
+	turnOff('rSmithyFarm');
+	radonon ? turnOn('rSmithyFarmPopup') : ('rSmithyFarmPopup');
 	turnOff('rSmithyFarmSettings');
 	turnOff('rSmithyFarmDefaultSettings');
 	turnOff('rSmithyFarmZone');
@@ -2071,7 +2053,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
 	//Quagmire
 	turnOff('rQuagOn');
-	turnOn('rQuagPopup');
+	radonon ? turnOn('rQuagPopup') : turnOff('rQuagPopup');
 	turnOff('rQuagSettings');
 	turnOff('rQuagDefaultSettings');
 	turnOff('rQuagZone');
@@ -2098,7 +2080,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Rstormon') ? turnOn('Rstormmult') : turnOff('Rstormmult');
 
 	//Insanity
-	turnOn('rInsanityPopup');
+	radonon ? turnOn('rInsanityPopup') : turnOff('rInsanityPopup');
 	turnOff('rInsanityOn');
 	turnOff('rInsanitySettings');
 	turnOff('rInsanityDefaultSettings');
@@ -2129,14 +2111,14 @@ function updateCustomButtons() {
 
 	//Alchemy
 	turnOff('rAlchOn');
-	turnOn('rAlchPopup');
+	radonon ? turnOn('rAlchPopup') : turnOff('rAlchPopup');
 	turnOff('rAlchSettings');
 	turnOff('rAlchDefaultSettings');
 	turnOff('rAlchZone');
 
 	//Hypothermia 
 	turnOff('rHypoOn');
-	turnOn('rHypoPopup');
+	radonon ? turnOn('rHypoPopup') : turnOff('rHypoPopup');
 	turnOff('rHypoSettings');
 	turnOff('rHypoDefaultSettings');
 	turnOff('rHypoZone');

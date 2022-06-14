@@ -1087,7 +1087,7 @@ function RautoMap() {
 				if (game.global.challengeActive == "Wither" && rTFMapLevel >= 0)
 					rTFMapLevel = -1;
 				//If you're running Transmute and the rTFSpecial variable is either LMC or SMC it changes it to LSC/SSC.
-				if (game.global.challengeActive == 'Transmute' && rTFSpecial[rTFIndex].includes('mc'))
+				if (game.global.challengeActive == 'Transmute' && rTFSpecial.includes('mc'))
 					rTFSpecial = rTFSpecial.charAt(0) + "sc";
 				if (game.global.mapRunCounter >= rTFRepeatCounter && rTFCurrentMap != undefined) {
 					rTFZoneCleared = game.stats.zonesCleared.value;
@@ -1115,7 +1115,6 @@ function RautoMap() {
 				//Figuring out how many Tributes or Meteorologists to farm at your current zone
 				var rTrFSpecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
 				var rTrFJobRatio = rTrFSettings.jobratio;
-				//var rTrFMaxMaps = getPageSetting('rMapRepeatCount');
 				rTrFbuyBuildings = typeof (rTrFSettings.buildings) === 'undefined' ? true : rTrFSettings.buildings;
 				rTrFAtlantrimp = typeof (rTrFSettings.atlantrimp) === 'undefined' || !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rTrFSettings.atlantrimp;
 
@@ -1694,7 +1693,7 @@ function RautoMap() {
 	}
 
 	//Hypothermia Farm
-	if ((game.global.challengeActive == 'Hypothermia' || (getPageSetting('rHypoBuyPackrat') && rHypoBuyPackrat)) && autoTrimpSettings.rHypoDefaultSettings.value.active) {
+	if ((game.global.challengeActive == 'Hypothermia' || (autoTrimpSettings.rHypoDefaultSettings.value.packrat && rHypoBuyPackrat)) && autoTrimpSettings.rHypoDefaultSettings.value.active) {
 		if (autoTrimpSettings.rHypoDefaultSettings.value.packrat) {
 			if (!rHypoBuyPackrat && game.global.challengeActive == 'Hypothermia')
 				rHypoBuyPackrat = true;
