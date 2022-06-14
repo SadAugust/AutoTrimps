@@ -1185,7 +1185,7 @@ function RautoMap() {
 	}
 
 	//Smithy Farming
-	if ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active && (typeof game.global.dailyChallenge.hemmorrhage === 'undefined' || !(typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')))) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active)) {
+	if (game.buildings.Smithy.locked == 0 && ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active && (typeof game.global.dailyChallenge.hemmorrhage === 'undefined' || !(typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')))) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active))) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
 		var rSFZone = rRunningC3 ? getPageSetting('rc3SmithyFarmZone') : rRunningDaily ? getPageSetting('rdSmithyFarmZone') : getPageSetting('rSmithyFarmZone');
 		if (rSFZone.includes(game.global.world)) {
