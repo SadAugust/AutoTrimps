@@ -531,8 +531,7 @@ function RbuyJobs() {
 			game.jobs.Meteorologist.cost.food[1],
 			true
 		);
-		affordableMets = typeof (rTrFAtlantrimp) !== 'undefined' && rTrFAtlantrimp === true && game.mapUnlocks.AncientTreasure.canRunOnce && !(game.global.food.owned > (typeof (totalTrFCost) === 'undefined' ? 0 : totalTrFCost)) ? 0 : affordableMets;
-
+		affordableMets = rShouldMetFarm && typeof (rTrFAtlantrimp) !== 'undefined' && rTrFAtlantrimp === true && game.mapUnlocks.AncientTreasure.canRunOnce && !(game.resources.food.owned > (typeof (totalTrFCost) === 'undefined' ? 0 : totalTrFCost)) ? 0 : affordableMets;
 		if (affordableMets > 0 && !game.jobs.Meteorologist.locked && !rShouldTributeFarm) {
 			var buyAmountStoreMet = game.global.buyAmt;
 			game.global.buyAmt = affordableMets;

@@ -1118,7 +1118,7 @@ function RautoMap() {
 				rTrFbuyBuildings = typeof (rTrFSettings.buildings) === 'undefined' ? true : rTrFSettings.buildings;
 				rTrFAtlantrimp = typeof (rTrFSettings.atlantrimp) === 'undefined' || !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rTrFSettings.atlantrimp;
 
-				var totalTrFCost = 0;
+				totalTrFCost = 0;
 				var tributeCost = 0;
 				var metCost = 0;
 				if (rTrFTributes > game.buildings.Tribute.purchased) {
@@ -1147,9 +1147,10 @@ function RautoMap() {
 					var resourceFarmed = scaleToCurrentMapLocal(simpleSecondsLocal("food", 165, true, rTrFJobRatio), false, true, rTrFMapLevel);
 					if (totalTrFCost > (game.resources.food.max * (1 + (game.portal.Packrat.modifier * game.portal.Packrat.radLevel))))
 						barnCost += game.buildings.Barn.cost.food()
-					resourceFarmed -= barnCost;
+					totalTrFCost += barnCost;
 
-					if ((game.resources.food.owned * 2) - barnCost > resourceFarmed && game.resources.food.owned > ((totalTrFCost + barnCost) / 2)) {
+					if ((totalTrFCost > game.resources.food.owned - barnCost + resourceFarmed) && game.resources.food.owned > totalTrFCost / 2) {
+						//if ((game.resources.food.owned * 2) - barnCost > resourceFarmed && game.resources.food.owned > ((totalTrFCost + barnCost) / 2)) {
 						if (game.global.mapsActive && getCurrentMapObject().name !== 'Atlantrimp') {
 							mapsClicked();
 							recycleMap();
