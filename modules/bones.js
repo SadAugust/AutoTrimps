@@ -55,8 +55,10 @@ function BoneShrine() {
 			var rBoneShrineGather = rBoneShrineSettings.gather
 			var rBoneShrineSpendBelow = rBoneShrineSettings.bonebelow === -1 ? 0 : rBoneShrineSettings.bonebelow;
 			var rBoneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rBoneShrineSettings.atlantrimp
-			var count = 0;
 			rShouldBoneShrine = (game.global.lastClearedCell + 2 >= rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
+
+			if (rBoneShrineCharges > game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow)
+				rBoneShrineCharges = game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow;
 
 			if (rShouldBoneShrine) {
 				setGather(rBoneShrineGather);
@@ -76,21 +78,20 @@ function BoneShrine() {
 							if (game.global.mapsOwnedArray[map].name == 'Atlantrimp') {
 								selectMap(game.global.mapsOwnedArray[map].id)
 								rRunMap();
-								debug('Running Atlamtrimp');
+								debug('Running Atlantrimp');
 								rBSRunningAtlantrimp = true;
 							}
 						}
 					}
 				}
 				for (var x = 0; x < rBoneShrineCharges; x++) {
-					if (rBoneShrineCharges >= game.permaBoneBonuses.boosts.charges) continue;
-					workerRatio = rBoneShrineSettings.jobratio;
-					if (getPageSetting('RBuyJobsNew') > 0)
+					if (getPageSetting('RBuyJobsNew') > 0) {
+						workerRatio = rBoneShrineSettings.jobratio;
 						RbuyJobs()
-					count = x + 1;
+					}
 					game.permaBoneBonuses.boosts.consume()
 				}
-				debug('Consumed ' + count + " bone shrine " + (count == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + game.permaBoneBonuses.boosts.consume(true).split('after')[0].slice(0, -1) + ".");
+				debug('Consumed ' + rBoneShrineCharges + " bone shrine " + (rBoneShrineCharges == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(rBoneShrineCharges));
 				rBoneShrineUsedZone = game.global.world;
 			}
 		}
