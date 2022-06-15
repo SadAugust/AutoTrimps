@@ -288,6 +288,12 @@ function initializeAllSettings() {
 	createSetting('rdSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'Daily');
 	createSetting('rdSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Daily');
 
+	//Prestige Raiding
+	createSetting('rdRaidingPopup', 'Raiding Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Daily');
+	createSetting('rdRaidingSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
+	createSetting('rdRaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Daily');
+	createSetting('rdRaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
+
 	//Helium Heirloom
 	document.getElementById('dBWraidingmax').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('dhighdmg', 'DHS: High Damage', '<b>HIGH DAMAGE HEIRLOOM</b><br><br>Enter the name of your high damage heirloom. This is your heirloom that you will use normally in dailies. ', 'textValue', 'undefined', null, 'Daily');
@@ -307,7 +313,7 @@ function initializeAllSettings() {
 	createSetting('drunnewvoidspoison', 'New Voids Poison', 'Only run new voids in poison zones.', 'boolean', false, null, 'Daily');
 
 	//Radon Daily Portal
-	document.getElementById('rdSmithyFarmPopup').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rdRaidingPopup').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('RFillerRun', 'Filler run', 'Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.', 'boolean', false, null, 'Daily');
 	createSetting('u1daily', 'Daily in U1', 'If this is on, you will do your daily in U1. ', 'boolean', false, null, 'Daily');
@@ -517,6 +523,13 @@ function initializeAllSettings() {
 		createSetting('rBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Μaps");
 	}
 
+	//Prestige Raiding
+	createSetting('rRaidingPopup', 'Raiding Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Μaps');
+	createSetting('rRaidingSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rRaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Μaps');
+	createSetting('rRaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+
+
 	//Spire
 	//Helium
 	createSetting('MaxStacksForSpire', 'Max Map Bonus for Spire', 'Get max map bonus before running the Spire.', 'boolean', false, null, 'Spire');
@@ -621,8 +634,14 @@ function initializeAllSettings() {
 	createSetting('rc3SmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'C3');
 	createSetting('rc3SmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'C3');
 
+	//Prestige Raiding
+	createSetting('rc3RaidingPopup', 'Raiding Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'C3');
+	createSetting('rc3RaidingSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
+	createSetting('rc3RaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'C3');
+	createSetting('rc3RaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
+
 	//Unbalance
-	document.getElementById('rc3SmithyFarmPopup').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rc3RaidingPopup').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rUnbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
 	createSetting('rUnbalanceZone', 'U: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C3');
 	createSetting('rUnbalanceStacks', 'U: Stacks', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C3');
@@ -911,6 +930,7 @@ function initializeAllSettings() {
 	document.getElementById('rc3SmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Smithy Farm", "rc3SmithyFarm", "MAZ")');
 	//Time Farming 
 	document.getElementById('rBoneShrinePopup').setAttribute('onclick', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")');
+	document.getElementById('rRaidingPopup').setAttribute('onclick', 'MAZLookalike("Raiding", "rRaiding", "MAZ")');
 	document.getElementById('rTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")');
 	document.getElementById('rdTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Time Farm", "rdTimeFarm", "MAZ")');
 	document.getElementById('rc3TimeFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm", "MAZ")');
@@ -1725,6 +1745,12 @@ function updateCustomButtons() {
 	turnOff('rdSmithyFarmDefaultSettings');
 	turnOff('rdSmithyFarmZone');
 
+	//C3 Raiding  
+	radonon ? turnOn('rdRaidingPopup') : turnOff('rdRaidingPopup');
+	turnOff('rdRaidingSettings');
+	turnOff('rdRaidingDefaultSettings');
+	turnOff('rdRaidingZone');
+
 	//C2
 	!radonon ? turnOn('FinishC2') : turnOff('FinishC2');
 	!radonon ? turnOn('buynojobsc') : turnOff('buynojobsc');
@@ -1765,6 +1791,12 @@ function updateCustomButtons() {
 	turnOff('rc3SmithyFarmSettings');
 	turnOff('rc3SmithyFarmDefaultSettings');
 	turnOff('rc3SmithyFarmZone');
+
+	//C3 Raiding  
+	radonon ? turnOn('rc3RaidingPopup') : turnOff('rc3RaidingPopup');
+	turnOff('rc3RaidingSettings');
+	turnOff('rc3RaidingDefaultSettings');
+	turnOff('rc3RaidingZone');
 
 	//Buildings
 	!radonon ? turnOn('BuyBuildingsNew') : turnOff('BuyBuildingsNew');
@@ -1826,24 +1858,7 @@ function updateCustomButtons() {
 	radonon && nojobs ? turnOn('RMinerRatio') : turnOff('RMinerRatio');
 	turnOff('RMaxExplorers');
 
-	//Ships 
-	turnOff('rShipFarm');
-	radonon ? turnOn('rShipFarmPopup') : turnOff('rShipFarmPopup');
-	turnOff('rShipFarmSettings');
 	turnOff('rJobSettingsArray');
-	turnOff('rShipFarmDefaultSettings');
-	turnOff('rShipFarmZone');
-	turnOff('Rshipspending');
-
-	//Bone Shrine (bones) 
-	if (game.global.stringVersion >= '5.7.0') {
-		turnOff('rBoneShrine');
-		radonon ? turnOn('rBoneShrinePopup') : turnOff('rBoneShrinePopup');
-		turnOff('rBoneShrineSettings');
-		turnOff('rBoneShrineDefaultSettings');
-		turnOff('rBoneShrineZone');
-		turnOff('rBoneShrineRunType');
-	}
 
 	//Gear
 	!radonon ? turnOn('BuyArmorNew') : turnOff('BuyArmorNew');
@@ -1949,6 +1964,30 @@ function updateCustomButtons() {
 	turnOff('rSmithyFarmSettings');
 	turnOff('rSmithyFarmDefaultSettings');
 	turnOff('rSmithyFarmZone');
+
+	//Worshippers 
+	turnOff('rShipFarm');
+	radonon ? turnOn('rShipFarmPopup') : turnOff('rShipFarmPopup');
+	turnOff('rShipFarmSettings');
+	turnOff('rShipFarmDefaultSettings');
+	turnOff('rShipFarmZone');
+	turnOff('Rshipspending');
+
+	//Bone Shrine (bones) 
+	if (game.global.stringVersion >= '5.7.0') {
+		turnOff('rBoneShrine');
+		radonon ? turnOn('rBoneShrinePopup') : turnOff('rBoneShrinePopup');
+		turnOff('rBoneShrineSettings');
+		turnOff('rBoneShrineDefaultSettings');
+		turnOff('rBoneShrineZone');
+		turnOff('rBoneShrineRunType');
+	}
+
+	//Raiding 
+	radonon ? turnOn('rRaidingPopup') : turnOff('rRaidingPopup');
+	turnOff('rRaidingSettings');
+	turnOff('rRaidingDefaultSettings');
+	turnOff('rRaidingZone');
 
 	//Spire
 	!radonon ? turnOn('MaxStacksForSpire') : turnOff('MaxStacksForSpire');

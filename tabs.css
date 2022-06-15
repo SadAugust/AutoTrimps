@@ -169,7 +169,6 @@ ul.tab li a:hover {
 .windowWorld,
 .windowCheckbox,
 .windowPreset,
-.windowRepeat,
 .windowRepeatUntil,
 .windowExit,
 .windowBwWorld,
@@ -181,6 +180,7 @@ ul.tab li a:hover {
 .windowTx,
 .windowLevel,
 .windowRepeat,
+.windowRaidingZone,
 .windowGather,
 .windowSpecial,
 .windowTributes,
@@ -191,6 +191,7 @@ ul.tab li a:hover {
 .windowPotionNumber,
 .windowBonfire,
 .windowBoneDropdown,
+.windowRaidingDropdown,
 .windowBoneBelow,
 .windowBoneAmount,
 .windowBoneGather,
@@ -201,6 +202,7 @@ ul.tab li a:hover {
 .windowActive,
 .windowStorage,
 .windowPackrat,
+.windowRecycle,
 .windowFrozenCastle {
 	display: inline-block;
 }
@@ -234,6 +236,7 @@ ul.tab li a:hover {
 .windowThrough,
 .windowLevel,
 .windowRepeat,
+.windowRaidingZone,
 .windowPotionNumber,
 .windowWorshipper {
 	width: 9%;
@@ -256,6 +259,7 @@ ul.tab li a:hover {
 .windowActive,
 .windowStorage,
 .windowPackrat,
+.windowRecycle,
 .windowFrozenCastle {
 	width: 15%;
 }
@@ -277,7 +281,7 @@ ul.tab li a:hover {
 	width: 10%;
 } */
 
-.windowRepeat {
+.windowRepeat .windowRaidingZone {
 	width: 8.5%;
 }
 
@@ -301,6 +305,10 @@ ul.tab li a:hover {
 .windowBoneBelow,
 .windowBoneAmount {
 	width: 10%;
+}
+
+.windowRaidingDropdown {
+	width: 15%;
 }
 
 .windowBwZoneOn .windowRepeatUntil,

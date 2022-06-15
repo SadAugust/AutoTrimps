@@ -1265,40 +1265,39 @@ function RautoMap() {
 	}
 
 	//Prestige Raiding
-	if (getPageSetting('RAMPraid') && (game.global.challengeActive != "Daily") || (getPageSetting('RAMPdraid') && game.global.challengeActive == "Daily")) {
-		var rPrestigeRaid = false;
-		rShouldPrestigeRaid = false;
-		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
-		var rPRCell = game.global.challengeActive == "Daily" && getPageSetting('RAMPdraidcell') > 0 ? getPageSetting('RAMPdraidcell') :
-			game.global.challengeActive != "Daily" && getPageSetting('RAMPraidcell') > 0 ? getPageSetting('RAMPraidcell') :
-				50;
-		var praid = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraid') : getPageSetting('RAMPraid');
-		var praidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidzone') : getPageSetting('RAMPraidzone');
-		var raidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidraid') : getPageSetting('RAMPraidraid');
-		var rPRRecycle = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidrecycle') : getPageSetting('RAMPraidrecycle');
-		var rPRFragFarm = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidfrag') : getPageSetting('RAMPraidfrag');
+	if ((rRunningRegular && autoTrimpSettings.rRaidingDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdRaidingDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3RaidingDefaultSettings.value.active)) {
 
-		rPrestigeRaid = (game.global.world > 5 && (praid == true && praidzone[0] > 0 && praidzone[0] > 0));
-		if (rPrestigeRaid) {
-			var rPRIndex = praidzone.indexOf(game.global.world);
-			raidzones = raidzone[rPRIndex];
-			if (praidzone.includes(game.global.world) && ((rPRCell <= 1) || (rPRCell > 1 && (game.global.lastClearedCell + 2) >= rPRCell)) && Rgetequips(raidzones, false) > 0)
+		//if (getPageSetting('RAMPraid') && (game.global.challengeActive != "Daily") || (getPageSetting('RAMPdraid') && game.global.challengeActive == "Daily")) {
+		var rRaidingZone = rRunningC3 ? getPageSetting('rc3RaidingZone') : rRunningDaily ? getPageSetting('rdRaidingZone') : getPageSetting('rRaidingZone');
+		if (rRaidingZone.includes(game.global.world)) {
+			rShouldPrestigeRaid = false;
+			//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
+			var rRaidingIndex = rRaidingZone.indexOf(game.global.world);
+			var rRaidingSettings = rRunningC3 ? autoTrimpSettings.rc3RaidingSettings.value[rRaidingIndex] : rRunningDaily ? autoTrimpSettings.rdRaidingSettings.value[rRaidingIndex] : autoTrimpSettings.rRaidingSettings.value[rRaidingIndex];
+			var rRaidingDefaultSettings = rRunningC3 ? autoTrimpSettings.rc3RaidingDefaultSettings.value : rRunningDaily ? autoTrimpSettings.rdRaidingDefaultSettings.value : autoTrimpSettings.rRaidingDefaultSettings.value;
+			var rPRCell = rRaidingSettings.cell;
+			raidzones = rRaidingSettings.raidingzone;
+			var rPRRecycle = rRaidingDefaultSettings.recycle;
+			var rPRFragFarm = rRaidingSettings.raidingDropdown;
+
+			if (game.global.lastClearedCell + 2 >= rPRCell && Rgetequips(raidzones, false) > 0) {
 				rShouldPrestigeRaid = true;
-		}
-		//Resetting variables and recycling the maps used
-		if (!rShouldPrestigeRaid && (RAMPrepMap[0] != undefined || RAMPrepMap[1] != undefined || RAMPrepMap[2] != undefined || RAMPrepMap[3] != undefined || RAMPrepMap[4] != undefined)) {
-			RAMPfragmappy = undefined;
-			RAMPprefragmappy = undefined;
-			RAMPfragmappybought = false;
-			for (var x = 0; x < 5; x++) {
-				RAMPpMap[x] = undefined;
-				RAMPmapbought[x] = undefined;
+			}
+			//Resetting variables and recycling the maps used
+			if (!rShouldPrestigeRaid && (RAMPrepMap[0] != undefined || RAMPrepMap[1] != undefined || RAMPrepMap[2] != undefined || RAMPrepMap[3] != undefined || RAMPrepMap[4] != undefined)) {
+				RAMPfragmappy = undefined;
+				RAMPprefragmappy = undefined;
+				RAMPfragmappybought = false;
+				for (var x = 0; x < 5; x++) {
+					RAMPpMap[x] = undefined;
+					RAMPmapbought[x] = undefined;
 
-				if (RAMPrepMap[x] != undefined) {
-					if (rPRRecycle == true) {
-						recycleMap(getMapIndex(RAMPrepMap[x]));
+					if (RAMPrepMap[x] != undefined) {
+						if (rPRRecycle) {
+							recycleMap(getMapIndex(RAMPrepMap[x]));
+						}
+						RAMPrepMap[x] = undefined;
 					}
-					RAMPrepMap[x] = undefined;
 				}
 			}
 		}
@@ -2101,7 +2100,7 @@ function RautoMap() {
 					repeatClicked();
 				}
 				//Prestige Raiding
-				if (rShouldPrestigeRaid && RAMPfragfarming && RAMPfrag() == true)
+				if (rShouldPrestigeRaid && RAMPfragfarming && RAMPfrag(raidzones, rPRFragFarm) == true)
 					repeatClicked();
 				//Quagmire
 				if (Rshoulddobogs && game.global.mapRunCounter + 1 == stacksum) {
@@ -2168,10 +2167,10 @@ function RautoMap() {
 			//Prestige Farming
 			var RAMPfragcheck = true;
 			if (rPRFragFarm > 0) {
-				if (RAMPfrag() == true) {
+				if (RAMPfrag(raidzones, rPRFragFarm) == true) {
 					RAMPfragcheck = true;
 					RAMPfragfarming = false;
-				} else if (RAMPfrag() == false && !RAMPmapbought[0] && !RAMPmapbought[1] && !RAMPmapbought[2] && !RAMPmapbought[3] && !RAMPmapbought[4] && rShouldPrestigeRaid) {
+				} else if (RAMPfrag(raidzones, rPRFragFarm) == false && !RAMPmapbought[0] && !RAMPmapbought[1] && !RAMPmapbought[2] && !RAMPmapbought[3] && !RAMPmapbought[4] && rShouldPrestigeRaid) {
 					RAMPfragfarming = true;
 					RAMPfragcheck = false;
 					if (!RAMPfragcheck && RAMPfragmappy == undefined && !RAMPfragmappybought && game.global.preMapsActive && rShouldPrestigeRaid) {
@@ -2196,11 +2195,11 @@ function RautoMap() {
 						RAMPfragmappy = undefined;
 					}
 					if (!RAMPfragcheck && game.global.mapsActive && RAMPfragmappybought && RAMPprefragmappy != undefined && rShouldPrestigeRaid) {
-						if (RAMPfrag() == false) {
+						if (RAMPfrag(raidzones, rPRFragFarm) == false) {
 							if (!game.global.repeatMap) {
 								repeatClicked();
 							}
-						} else if (RAMPfrag() == true) {
+						} else if (RAMPfrag(raidzones, rPRFragFarm) == true) {
 							if (game.global.repeatMap) {
 								repeatClicked();
 								mapsClicked();
@@ -2224,8 +2223,8 @@ function RautoMap() {
 			if (RAMPfragcheck) {
 				raiding = rPRFragFarm == 2 ? RAMPplusPresfragmax : rPRFragFarm == 1 ? RAMPplusPresfragmin : RAMPplusPres
 				for (var x = 0; x < 5; x++) {
-					if (RAMPfragcheck && RAMPpMap[x] == undefined && !RAMPmapbought[x] && game.global.preMapsActive && rShouldPrestigeRaid && RAMPshouldrunmap(x)) {
-						raiding(x);
+					if (RAMPfragcheck && RAMPpMap[x] == undefined && !RAMPmapbought[x] && game.global.preMapsActive && rShouldPrestigeRaid && RAMPshouldrunmap(x, raidzones)) {
+						raiding(x, raidzones);
 						if ((updateMapCost(true) <= game.resources.fragments.owned)) {
 							buyMap();
 							RAMPmapbought[x] = true;

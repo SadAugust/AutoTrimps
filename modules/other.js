@@ -1575,27 +1575,24 @@ function archstring() {
 }
 
 //RAMP - Prestige Raiding
-function RAMPplusMapToRun(number) {
+function RAMPplusMapToRun(number, raidzones) {
 	var map;
 	if (rShouldPrestigeRaid) {
-		var praidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidzone') : getPageSetting('RAMPraidzone');
-		var raidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidraid') : getPageSetting('RAMPraidraid');
-		var praidindex = praidzone.indexOf(game.global.world);
-		var raidzones = raidzone[praidindex];
 
 		map = (raidzones - game.global.world - number);
 
+		if ((raidzones - number).toString().slice(-1) == 0) map = map - 5
+		if ((raidzones - number).toString().slice(-1) == 9) map = map - 5
+		if ((raidzones - number).toString().slice(-1) == 8) map = map - 5
+		if ((raidzones - number).toString().slice(-1) == 7) map = map - 5
+		if ((raidzones - number).toString().slice(-1) == 6) map = map - 5
 		return map;
 	}
 }
 
-function RAMPshouldrunmap(number) {
+function RAMPshouldrunmap(number, raidzones) {
 	var go = false;
 	if (rShouldPrestigeRaid) {
-		var praidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidzone') : getPageSetting('RAMPraidzone');
-		var raidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidraid') : getPageSetting('RAMPraidraid');
-		var praidindex = praidzone.indexOf(game.global.world);
-		var raidzones = raidzone[praidindex];
 		var actualraidzone = (raidzones - number);
 
 		if (Rgetequips(actualraidzone, false) > 0) go = true;
@@ -1603,27 +1600,10 @@ function RAMPshouldrunmap(number) {
 	return go;
 }
 
-function RAMPpcheckmap(number) {
-	if (rShouldPrestigeRaid) {
-		if (game.global.challengeActive == "Daily") {
-			var praidzone = getPageSetting('RAMPdraidzone');
-			var raidzone = getPageSetting('RAMPdraidraid');
-		} else {
-			var praidzone = getPageSetting('RAMPraidzone');
-			var raidzone = getPageSetting('RAMPraidraid');
-		}
-
-		var praidindex = praidzone.indexOf(game.global.world);
-		var raidzones = raidzone[praidindex];
-
-		var map = (raidzones - game.global.world);
-	}
-}
-
-function RAMPplusPres(number) {
+function RAMPplusPres(number, raidzones) {
 	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : "Plentiful";
 	document.getElementById("mapLevelInput").value = game.global.world;
-	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number);
+	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number, raidzones);
 	document.getElementById("advSpecialSelect").value = "p";
 	document.getElementById("lootAdvMapsRange").value = 9;
 	document.getElementById("difficultyAdvMapsRange").value = 9;
@@ -1652,10 +1632,10 @@ function RAMPplusPres(number) {
 	if (document.getElementById("advSpecialSelect").value == "0") return updateMapCost(true);
 }
 
-function RAMPplusPresfragmax(number) {
+function RAMPplusPresfragmax(number, raidzones) {
 	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
 	document.getElementById("mapLevelInput").value = game.global.world;
-	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number);
+	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number, raidzones);
 	document.getElementById("advSpecialSelect").value = "p";
 	document.getElementById("lootAdvMapsRange").value = 9;
 	document.getElementById("difficultyAdvMapsRange").value = 9;
@@ -1665,10 +1645,10 @@ function RAMPplusPresfragmax(number) {
 	return updateMapCost(true);
 }
 
-function RAMPplusPresfragmin(number) {
+function RAMPplusPresfragmin(number, raidzones) {
 	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
 	document.getElementById("mapLevelInput").value = game.global.world;
-	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number);
+	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number, raidzones);
 	document.getElementById("advSpecialSelect").value = "p";
 	document.getElementById("lootAdvMapsRange").value = 0;
 	document.getElementById("difficultyAdvMapsRange").value = 9;
@@ -1701,33 +1681,29 @@ function RAMPplusPresfragmin(number) {
 	return updateMapCost(true);
 }
 
-function RAMPfrag() {
+function RAMPfrag(raidzones, fragtype) {
 	var cost = 0;
 	if (rShouldPrestigeRaid) {
-		var praidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidzone') : getPageSetting('RAMPraidzone');
-		var raidzone = game.global.challengeActive == "Daily" ? getPageSetting('RAMPdraidraid') : getPageSetting('RAMPraidraid');
-		var praidindex = praidzone.indexOf(game.global.world);
-		var raidzones = raidzone[praidindex];
 
 		if (Rgetequips(raidzones, false)) {
-			if (getPageSetting('RAMPraidfrag') == 1) cost += RAMPplusPresfragmin(0);
-			else if (getPageSetting('RAMPraidfrag') == 2) cost += RAMPplusPresfragmax(0);
+			if (fragtype == 1) cost += RAMPplusPresfragmin(0);
+			else if (fragtype == 2) cost += RAMPplusPresfragmax(0);
 		}
 		if (Rgetequips((raidzones - 1), false)) {
-			if (getPageSetting('RAMPraidfrag') == 1) cost += RAMPplusPresfragmin(1);
-			else if (getPageSetting('RAMPraidfrag') == 2) cost += RAMPplusPresfragmax(1);
+			if (fragtype == 1) cost += RAMPplusPresfragmin(1);
+			else if (fragtype == 2) cost += RAMPplusPresfragmax(1);
 		}
 		if (Rgetequips((raidzones - 2), false)) {
-			if (getPageSetting('RAMPraidfrag') == 1) cost += RAMPplusPresfragmin(2);
-			else if (getPageSetting('RAMPraidfrag') == 2) cost += RAMPplusPresfragmax(2);
+			if (fragtype == 1) cost += RAMPplusPresfragmin(2);
+			else if (fragtype == 2) cost += RAMPplusPresfragmax(2);
 		}
 		if (Rgetequips((raidzones - 3), false)) {
-			if (getPageSetting('RAMPraidfrag') == 1) cost += RAMPplusPresfragmin(3);
-			else if (getPageSetting('RAMPraidfrag') == 2) cost += RAMPplusPresfragmax(3);
+			if (fragtype == 1) cost += RAMPplusPresfragmin(3);
+			else if (fragtype == 2) cost += RAMPplusPresfragmax(3);
 		}
 		if (Rgetequips((raidzones - 4), false)) {
-			if (getPageSetting('RAMPraidfrag') == 1) cost += RAMPplusPresfragmin(4);
-			else if (getPageSetting('RAMPraidfrag') == 2) cost += RAMPplusPresfragmax(4);
+			if (fragtype == 1) cost += RAMPplusPresfragmin(4);
+			else if (fragtype == 2) cost += RAMPplusPresfragmax(4);
 		}
 
 		if (game.resources.fragments.owned >= cost) return true;
