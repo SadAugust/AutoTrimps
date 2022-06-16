@@ -1272,10 +1272,10 @@ function settingChanged(id) {
 		btn.value++;
 		if (btn.value > btn.name.length - 1)
 			btn.value = 0;
-		document.getElementById(id).setAttribute('class', 'noselect pointer settingsBtn settingBtn' + (btn.value));
+		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + (btn.value));
 		document.getElementById(id).textContent = btn.name[btn.value];
 		if (btn = autoTrimpSettings.RBuyJobsNew) {
-			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
+			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
 			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
 		}
 	}
