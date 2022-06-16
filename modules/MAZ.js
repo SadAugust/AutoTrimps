@@ -18,7 +18,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 
 	if (event == 'AutoJobs') {
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's AutoJobs! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>The left side of this window is dedicated to jobs that are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. You can use any number larger than 0.</p><p><b>Farmers Until:</b> Stops buying Farmers from this zone. The Tribute & Worshipper farm settings override this setting and hire farmers during them.</p><p><b>No Lumberjacks Post MP:</b> Stops buying Lumberjacks after Melting Point has been run. The Smithy Farm setting will override this setting.</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Job Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>The left side of this window is dedicated to jobs that are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. You can use any number larger than 0.</p><p><b>Farmers Until:</b> Stops buying Farmers from this zone. The Tribute & Worshipper farm settings override this setting and hire farmers during them.</p><p><b>No Lumberjacks Post MP:</b> Stops buying Lumberjacks after Melting Point has been run. The Smithy Farm setting will override this setting.</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 		var percentJobs = ["Explorer"];
 		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 29) percentJobs.push("Meteorologist");
 		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) percentJobs.push("Worshipper");
@@ -29,7 +29,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<tr>";
 			var item = ratioJobs[x];
 			var setting = settingGroup[item];
-			var selectedPerc = (setting) ? setting.percent : 0.1;
 			var max;
 			var checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
 			tooltipText += "<td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Ratio: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number'  value='" + ((setting && setting.ratio) ? setting.ratio : 1) + "'/></div></div>"
@@ -37,7 +36,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (percentJobs.length > x) {
 				item = percentJobs[x];
 				setting = settingGroup[item];
-				selectedPerc = (setting) ? setting.value : 0.1;
 				max = ((setting && setting.buyMax) ? setting.buyMax : 0);
 				if (max > 1e4) max = max.toExponential().replace('+', '');
 				checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
@@ -61,20 +59,20 @@ function MAZLookalike(titleText, varPrefix, event) {
 	}
 
 	if (event == "AutoStructure") {
-		tooltipText = "<p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, set the dropdown to specify the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the dropdown to 10% and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses. \'W\' for Gigastation is the required minimum amount of Warpstations before a Gigastation is purchased.</p><table id='autoPurchaseConfigTable'><tbody><tr>";
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, the 'Perc:' box specifies the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the 'Perc:' box to 10 and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses.</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+
 		var count = 0;
-		var setting, selectedPerc, checkbox, options;
-		var settingGroup = getAutoStructureSetting();
+		var setting, checkbox;
+		var settingGroup = autoTrimpSettings.rBuildingSettingsArray.value;
 		for (var item in game.buildings) {
 			var building = game.buildings[item];
 			if (building.blockU2 && game.global.universe == 2) continue;
 			if (building.blockU1 && game.global.universe == 1) continue;
+			if (item == "Laboratory") continue;
 			if (!building.AP) continue;
 			if (count != 0 && count % 2 == 0) tooltipText += "</tr><tr>";
 			setting = settingGroup[item];
-			selectedPerc = (setting) ? setting.value : 0.1;
 			checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', (setting && setting.enabled));
-			options = "<option value='0.1'" + ((selectedPerc == 0.1) ? " selected" : "") + ">0.1%</option><option value='1'" + ((selectedPerc == 1) ? " selected" : "") + ">1%</option><option value='5'" + ((selectedPerc == 5) ? " selected" : "") + ">5%</option><option value='10'" + ((selectedPerc == 10) ? " selected" : "") + ">10%</option><option value='25'" + ((selectedPerc == 25) ? " selected" : "") + ">25%</option><option value='50'" + ((selectedPerc == 50) ? " selected" : "") + ">50%</option><option value='99'" + ((selectedPerc == 99) ? " selected" : "") + ">99%</option>";
 			var id = "structSelect" + item;
 
 			//Start
@@ -82,9 +80,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 			//Checkbox & name
 			tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div>"
 			//Percent options
-			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Perc: <input class='structConfigQuantity' id='structPercent" + item + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div>"
+			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Perc: <input class='structConfigPercent' id='structPercent" + item + "' type='number'  value='" + ((setting && setting.percent) ? setting.percent : 100) + "'/></div>"
 			//Max options
-			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Up to: <input class='structConfigQuantity' id='structPercent" + item + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div>"
+			tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Up to: <input class='structConfigQuantity' id='structMax" + item + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div>"
 			//Finish
 			tooltipText += "</div></td>";
 			count++;
@@ -92,7 +90,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		tooltipText += "</tr><tr>";
 
 		tooltipText += "</tr></tbody></table>";
-		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='saveAutoStructureConfig()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='saveATAutoStructureConfig()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 		game.global.lockTooltip = true;
 		ondisplay = function () {
 			//swapClass('tooltipExtra', 'tooltipExtraGigantic', elem);
@@ -479,6 +477,34 @@ function saveATAutoJobsConfig() {
 	}
 
 	autoTrimpSettings.rJobSettingsArray.value = setting;
+	cancelTooltip();
+	saveSettings();
+}
+
+function saveATAutoStructureConfig() {
+	var setting = autoTrimpSettings.rBuildingSettingsArray.value;
+	var checkboxes = document.getElementsByClassName('autoCheckbox');
+	var percentboxes = document.getElementsByClassName('structConfigPercent');
+	var quantboxes = document.getElementsByClassName('structConfigQuantity');
+	for (var x = 0; x < checkboxes.length; x++) {
+		var name = checkboxes[x].id.split('structConfig')[1];
+		var checked = (checkboxes[x].dataset.checked == 'true');
+		//if (!checked && !setting[name]) continue;
+		if (!setting[name]) setting[name] = {};
+		setting[name].enabled = checked;
+
+		var perc = parseInt(percentboxes[x].value, 10);
+		if (perc > 100) perc = 100;
+		perc = (isNumberBad(perc)) ? 0 : perc;
+		setting[name].percent = perc;
+
+		var max = parseInt(quantboxes[x].value, 10);
+		if (max > 10000) max = 10000;
+		max = (isNumberBad(max)) ? 0 : max;
+		setting[name].buyMax = max;
+	}
+
+	autoTrimpSettings.rBuildingSettingsArray.value = setting;
 	cancelTooltip();
 	saveSettings();
 }

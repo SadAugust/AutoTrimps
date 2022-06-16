@@ -362,6 +362,7 @@ function initializeAllSettings() {
 	createSetting('NoNurseriesUntil', 'No Nurseries Until z', 'Builds Nurseries starting from this zone. -1 to build from when they are unlocked. ', 'value', '-1', null, 'Buildings');
 
 	//Radon
+	createSetting('rBuildingSettingsArray', 'Building Settings', 'Click to adjust settings. ', 'mazDefaultArray', { Collector: { enabled: true, percent: 100, buyMax: 0 }, Gateway: { enabled: true, percent: 100, buyMax: 0 }, Hotel: { enabled: true, percent: 100, buyMax: 0 }, House: { enabled: true, percent: 100, buyMax: 0 }, Hut: { enabled: true, percent: 100, buyMax: 0 }, Mansion: { enabled: true, percent: 100, buyMax: 0 }, Resort: { enabled: true, percent: 100, buyMax: 0 }, Smithy: { enabled: true, percent: 100, buyMax: 0 }, Tribute: { enabled: true, percent: 100, buyMax: 0 } }, null, 'Jobs');
 	createSetting('RBuyBuildingsNew', 'AutoBuildings', 'Buys buildings in an efficient way. Also enables Vanilla AutoStorage if its off. ', 'boolean', 'true', null, 'Buildings');
 	createSetting('RMaxHut', 'Max Huts', 'Huts', 'value', '100', null, 'Buildings');
 	createSetting('RMaxHouse', 'Max Houses', 'Houses', 'value', '100', null, 'Buildings');
@@ -389,7 +390,7 @@ function initializeAllSettings() {
 
 	//Radon
 	//General
-	createSetting('rJobSettingsArray', 'Time Farm Settings', 'Click to adjust settings. ', 'mazDefaultArray', { FarmersUntil: { enabled: false, zone: 999 }, NoLumberjacks: { enabled: false }, Worshipper: { enabled: true, percent: '5' }, Miner: { enabled: true, ratio: 1 }, Lumberjack: { enabled: true, ratio: 1 }, Farmer: { enabled: true, ratio: 1 }, Explorer: { enabled: true, percent: '5' }, Meteorologist: { enabled: true, percent: '100' } }, null, 'Jobs');
+	createSetting('rJobSettingsArray', 'Job Settings', 'Click to adjust settings. ', 'mazDefaultArray', { FarmersUntil: { enabled: false, zone: 999 }, NoLumberjacks: { enabled: false }, Worshipper: { enabled: true, percent: '5' }, Miner: { enabled: true, ratio: 1 }, Lumberjack: { enabled: true, ratio: 1 }, Farmer: { enabled: true, ratio: 1 }, Explorer: { enabled: true, percent: '5' }, Meteorologist: { enabled: true, percent: '100' } }, null, 'Jobs');
 	createSetting('RBuyJobsNew', ['AT AutoJobs Off', 'Auto Ratios', 'Manual Ratios'], 'Manual Worker Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, "Jobs");
 	createSetting('RFarmerRatio', 'Farmer Ratio', '', 'value', '1', null, "Jobs");
 	createSetting('RLumberjackRatio', 'Lumberjack Ratio', '', 'value', '1', null, "Jobs");
@@ -1271,10 +1272,10 @@ function settingChanged(id) {
 		btn.value++;
 		if (btn.value > btn.name.length - 1)
 			btn.value = 0;
-		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + btn.value);
+		document.getElementById(id).setAttribute('class', 'noselect pointer settingsBtn settingBtn' + (btn.value));
 		document.getElementById(id).textContent = btn.name[btn.value];
 		if (btn = autoTrimpSettings.RBuyJobsNew) {
-			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn.value);
+			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
 			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
 		}
 	}
@@ -1864,6 +1865,7 @@ function updateCustomButtons() {
 	turnOff('RMaxExplorers');
 
 	turnOff('rJobSettingsArray');
+	turnOff('rBuildingSettingsArray');
 
 	//Gear
 	!radonon ? turnOn('BuyArmorNew') : turnOff('BuyArmorNew');
@@ -2462,7 +2464,7 @@ document.getElementById('jobsTitleSpan').parentElement.style.width = '10%'
 //Creating button
 var autoJobContainer = document.createElement("DIV");
 autoJobContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
-autoJobContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.RBuyJobsNew.value);
+autoJobContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
 autoJobContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, \"Toggle between the AutoJob settings.\")');
 autoJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
@@ -2538,10 +2540,6 @@ autoEquipContainer.appendChild(autoEquipText);
 autoEquipContainer.appendChild(autoEquipSettings);
 autoEquipSettings.appendChild(autoEquipSettingsButton);
 autoEquipColumn.replaceChild(autoEquipContainer, document.getElementById('equipmentTitleDiv').children[0].children[2]);
-
-
-
-
 
 
 
