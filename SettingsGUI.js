@@ -931,6 +931,8 @@ function initializeAllSettings() {
 	//Time Farming 
 	document.getElementById('rBoneShrinePopup').setAttribute('onclick', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")');
 	document.getElementById('rRaidingPopup').setAttribute('onclick', 'MAZLookalike("Raiding", "rRaiding", "MAZ")');
+	document.getElementById('rdRaidingPopup').setAttribute('onclick', 'MAZLookalike("Raiding", "rdRaiding", "MAZ")');
+	document.getElementById('rc3RaidingPopup').setAttribute('onclick', 'MAZLookalike("Raiding", "rc3Raiding", "MAZ")');
 	document.getElementById('rTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")');
 	document.getElementById('rdTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Time Farm", "rdTimeFarm", "MAZ")');
 	document.getElementById('rc3TimeFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm", "MAZ")');
@@ -1254,6 +1256,9 @@ function settingChanged(id) {
 		}
 		if (btn = autoTrimpSettings.Requipon) {
 			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn.enabled);
+		}
+		if (btn = autoTrimpSettings.RBuyBuildingsNew) {
+			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn.enabled);
 		}
 	}
 	if (btn.type == 'multitoggle') {
@@ -2447,22 +2452,27 @@ function checkPortalSettings() {
 
 //AutoJobs
 
-//Changing Default Widths
+//Changing Default Widths for Job buttons
 document.getElementById('fireBtn').parentElement.style.width = '14.2%'
 document.getElementById('fireBtn').parentElement.style.paddingRight = '2px'
 document.getElementById('jobsTitleSpan').parentElement.style.width = '10%'
 
+
+//AutoJobs button.
+//Creating button
 var autoJobContainer = document.createElement("DIV");
 autoJobContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
 autoJobContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.RBuyJobsNew.value);
 autoJobContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, \"Toggle between the AutoJob settings.\")');
 autoJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
+//Text
 var autoJobText = document.createElement("DIV");
 autoJobText.innerHTML = autoTrimpSettings.RBuyJobsNew.name[autoTrimpSettings.RBuyJobsNew.value];
 autoJobText.setAttribute("id", "autoJobLabel");
 autoJobText.setAttribute("onClick", "settingChanged('RBuyJobsNew')");
 
+//Creating cogwheel & linking onclick
 var autoJobSettings = document.createElement("DIV");
 autoJobSettings.setAttribute('onclick', 'MAZLookalike("AT AutoJobs", "a", "AutoJobs")');
 var autoJobSettingsButton = document.createElement("SPAN");
@@ -2474,23 +2484,67 @@ autoJobContainer.appendChild(autoJobSettings);
 autoJobSettings.appendChild(autoJobSettingsButton);
 autoJobColumn.insertBefore(autoJobContainer, document.getElementById('jobsTitleDiv').children[0].children[2]);
 
+//AutoStructure Button.
+//Creating button
+var autoStructureContainer = document.createElement("DIV");
+autoStructureContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
+autoStructureContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.RBuyBuildingsNew.enabled);
+autoStructureContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoStructure\", \"customText\", event, \"Toggle between the AutoStructure settings.\")');
+autoStructureContainer.setAttribute("onmouseout", 'tooltip("hide")');
+
+//Text
+var autoStructureText = document.createElement("DIV");
+autoStructureText.innerHTML = 'AT AutoStructure';
+autoStructureText.setAttribute("id", "autoStructureLabel");
+autoStructureText.setAttribute("onClick", "settingChanged('RBuyBuildingsNew')");
+
+//Creating cogwheel & linking onclick
+var autoStructureSettings = document.createElement("DIV");
+autoStructureSettings.setAttribute('onclick', 'MAZLookalike("AT AutoStructure", "a", "AutoStructure")');
+var autoStructureSettingsButton = document.createElement("SPAN");
+autoStructureSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+
+//Setting up positioning
+var autoStructureColumn = document.getElementById("buildingsTitleDiv").children[0];
+autoStructureContainer.appendChild(autoStructureText);
+autoStructureContainer.appendChild(autoStructureSettings);
+autoStructureSettings.appendChild(autoStructureSettingsButton);
+autoStructureColumn.replaceChild(autoStructureContainer, document.getElementById('buildingsTitleDiv').children[0].children[1]);
 
 
 //AutoEquip Button
+//Creating button
 var autoEquipContainer = document.createElement("DIV");
 autoEquipContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
 autoEquipContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.Requipon.enabled);
-autoEquipContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, \"Toggle between the AutoJob settings.\")');
+autoEquipContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoEquip\", \"customText\", event, \"Toggle between the AutoEquip settings.\")');
 autoEquipContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
+//Text
 var autoEquipText = document.createElement("DIV");
 autoEquipText.innerHTML = 'AT AutoEquip';
 autoEquipText.setAttribute("id", "autoEquipLabel");
 autoEquipText.setAttribute("onClick", "settingChanged('Requipon')");
 
+//Creating cogwheel & linking onclick
+var autoEquipSettings = document.createElement("DIV");
+//autoEquipSettings.setAttribute('onclick', 'MAZLookalike("AT AutoJobs", "a", "AutoEquip")');
+var autoEquipSettingsButton = document.createElement("SPAN");
+autoEquipSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+
+//Setting up positioning
 var autoEquipColumn = document.getElementById("equipmentTitleDiv").children[0];
-autoEquipColumn.replaceChild(autoEquipContainer, document.getElementById('equipmentTitleDiv').children[0].children[2]);
 autoEquipContainer.appendChild(autoEquipText);
+autoEquipContainer.appendChild(autoEquipSettings);
+autoEquipSettings.appendChild(autoEquipSettingsButton);
+autoEquipColumn.replaceChild(autoEquipContainer, document.getElementById('equipmentTitleDiv').children[0].children[2]);
+
+
+
+
+
+
+
 
 function getDailyHeHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalHeliumEarned - (game.global.heliumLeftover + game.resources.helium.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily He/Hr: " + b.toFixed(3) + "%" } return a }
 function getDailyRnHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalRadonEarned - (game.global.radonLeftover + game.resources.radon.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily Rn/Hr: " + b.toFixed(3) + "%" } return a }
