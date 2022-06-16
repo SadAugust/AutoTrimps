@@ -76,20 +76,26 @@ function MAZLookalike(titleText, varPrefix, event) {
 			checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', (setting && setting.enabled));
 			options = "<option value='0.1'" + ((selectedPerc == 0.1) ? " selected" : "") + ">0.1%</option><option value='1'" + ((selectedPerc == 1) ? " selected" : "") + ">1%</option><option value='5'" + ((selectedPerc == 5) ? " selected" : "") + ">5%</option><option value='10'" + ((selectedPerc == 10) ? " selected" : "") + ">10%</option><option value='25'" + ((selectedPerc == 25) ? " selected" : "") + ">25%</option><option value='50'" + ((selectedPerc == 50) ? " selected" : "") + ">50%</option><option value='99'" + ((selectedPerc == 99) ? " selected" : "") + ">99%</option>";
 			var id = "structSelect" + item;
-			tooltipText += "<td><div class='row'><div class='col-xs-5' style='padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div><div style='text-align: center; padding-left: 0px;' class='col-xs-2'><select class='structSelect' id='" + id + "'> Percent:" + options + "</select></div><div class='col-xs-5 lowPad' style='text-align: right'>Up To: <input class='structConfigQuantity' id='structQuant" + item + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div></div></td>";
+
+			//Start
+			tooltipText += "<td><div class='row'>"
+			//Checkbox & name
+			tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div>"
+			//Percent options
+			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Perc: <input class='structConfigQuantity' id='structPercent" + item + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div>"
+			//Max options
+			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Up to: <input class='structConfigQuantity' id='structPercent" + item + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div>"
+			//Finish
+			tooltipText += "</div></td>";
 			count++;
 		}
 		tooltipText += "</tr><tr>";
-
-		options = "<option value='0'>Apply Percent to All</option><option value='0.1'>0.1%</option><option value='1'>1%</option><option value='5'>5%</option><option value='10'>10%</option><option value='25'>25%</option><option value='50'>50%</option><option value='99'>99%</option>";
-		tooltipText += "<tr style='text-align: center'>";
-		tooltipText += "<td><span data-nexton='true' onclick='toggleAllAutoStructures(this)' class='btn colorPrimary btn-md toggleAllBtn'>Toggle All Structures On</span></td>";
-		tooltipText += "<td><select class='toggleAllBtn' id='autoStructureAllPctSelect' onchange='setAllAutoStructurePercent(this)'>" + options + "</select></td>";
 
 		tooltipText += "</tr></tbody></table>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='saveAutoStructureConfig()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 		game.global.lockTooltip = true;
 		ondisplay = function () {
+			//swapClass('tooltipExtra', 'tooltipExtraGigantic', elem);
 			verticalCenterTooltip(false, true);
 		};
 	}
@@ -283,16 +289,16 @@ function MAZLookalike(titleText, varPrefix, event) {
 		tooltipText += "<div id='windowAddRowBtn' style='display: " + ((current.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\",\"" + titleText + "\")'>+ Add Row</div>"
 		costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\", true)'>Save</span></div>"
 
+		game.global.lockTooltip = true;
+		elem.style.display = 'block'
+		elem.style.top = "10%";
+		elem.style.left = "10%";
+		elem.style.height = 'auto';
+		elem.style.maxHeight = window.innerHeight * .85 + 'px';
+		if (event == 'MAZ') elem.style.overflowY = 'scroll';
+		swapClass('tooltipExtra', 'tooltipExtraLg', elem);
 	}
 
-	game.global.lockTooltip = true;
-	elem.style.display = 'block'
-	elem.style.top = "10%";
-	elem.style.left = "10%";
-	elem.style.height = 'auto';
-	elem.style.maxHeight = window.innerHeight * .85 + 'px';
-	if (event == 'MAZ') elem.style.overflowY = 'scroll';
-	swapClass('tooltipExtra', 'tooltipExtraLg', elem);
 
 	titleText = (titleText) ? titleText : titleText;
 
