@@ -135,6 +135,15 @@ ul.tab li a:hover {
 }
 
 
+.structConfigPercent {
+	display: inline-block;
+	width: 50%;
+	padding: 1%;
+	line-height: normal;
+	border-width: 1px;
+	margin-right: 10%;
+}
+
 .windowRow div input {
 	width: 100%;
 }
