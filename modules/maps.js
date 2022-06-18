@@ -2065,12 +2065,10 @@ function RautoMap() {
 			//Starting with repeat on
 			if (!game.global.repeatMap)
 				repeatClicked();
-			if (rShouldPrestigeRaid && !RAMPfragfarming) {
-				if (game.options.menu.repeatUntil.enabled != 2)
-					game.options.menu.repeatUntil.enabled = 2;
-			} else if ((rShouldPrestigeRaid && RAMPfragfarming) || (rFragmentFarming && (rShouldWorshipperFarm || rShouldInsanityFarm))) {
-				if (game.options.menu.repeatUntil.enabled != 0)
-					game.options.menu.repeatUntil.enabled = 0;
+			if (rShouldPrestigeRaid && !RAMPfragfarming && game.options.menu.repeatUntil.enabled != 2) {
+				game.options.menu.repeatUntil.enabled = 2;
+			} else if (game.options.menu.repeatUntil.enabled != 0) {
+				game.options.menu.repeatUntil.enabled = 0;
 			}
 			if (!rShouldPrestigeRaid && !RAMPfragfarming && !rShouldInsanityFarm && !rFragmentFarming && !Rshoulddobogs && !RshouldDoMaps && !rShouldUnbalance && !rShouldTributeFarm && !rShouldMetFarm && !rShouldSmithyFarm && !rShouldTimeFarm && rShouldQuest <= 0 && Rshouldmayhem <= 0 && !Rshouldstormfarm && !rShouldEquipFarm && !rShouldWorshipperFarm && !rFragmentFarming && !rShouldPandemoniumDestack && !rShouldPandemoniumFarm && !rShouldPandemoniumJestimpFarm && !Rshouldalchfarm && !rShouldHypoFarm && !rShouldMaxMapBonus && !RvanillaMapatZone)
 				repeatClicked();
