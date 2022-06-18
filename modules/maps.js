@@ -2065,8 +2065,9 @@ function RautoMap() {
 			//Starting with repeat on
 			if (!game.global.repeatMap)
 				repeatClicked();
-			if (rShouldPrestigeRaid && !RAMPfragfarming && game.options.menu.repeatUntil.enabled != 2) {
-				game.options.menu.repeatUntil.enabled = 2;
+			if (rShouldPrestigeRaid && !RAMPfragfarming) {
+				if (game.options.menu.repeatUntil.enabled != 2)
+					game.options.menu.repeatUntil.enabled = 2;
 			} else if (game.options.menu.repeatUntil.enabled != 0) {
 				game.options.menu.repeatUntil.enabled = 0;
 			}
