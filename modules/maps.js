@@ -843,6 +843,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (!game.global.mapsUnlocked) status = '&nbsp;';
 	//Time, Tribute, Equip, Ship Farming, Prestige Raiding, Map bonus, void maps
 	else if (rFragmentFarming) status = 'Fragment Farming to: an amount (TBI)';
+	else if (rShouldPrestigeRaid) status = 'Prestige Raiding: ' + Rgetequips(raidzones, false) + ' items remaining';
 	else if (Rshouldalchfarm) status = 'Alchemy Farming ' + alchObj.potionNames[potion] + " (" + alchObj.potionsOwned[potion] + "/" + alchpotions.toString().replace(/[^\d:-]/g, '') + ")";
 	else if (rShouldHypoFarm) status = 'Hypo Farming to ' + prettify(rHFBonfireCostTotal) + ' wood';
 	else if (game.global.mapsActive && getCurrentMapObject().name == 'Melting Point') status = 'Melting Point';
@@ -855,7 +856,6 @@ function RupdateAutoMapsStatus(get) {
 	else if (rShouldUnbalance || (game.global.mapsActive && getCurrentMapObject().level == 6 && game.challenges.Unbalance.balanceStacks > 0)) status = 'Destacking: ' + game.challenges.Unbalance.balanceStacks + " remaining";
 	else if (rShouldWorshipperFarm) status = 'Ship Farming: ' + game.jobs.Worshipper.owned + "/" + shipfarmamount;
 	else if (rShouldEquipFarm) status = 'Equip Farming to ' + equipfarmdynamicHD().toFixed(2) + " and " + estimateEquipsForZone()[2] + " Equality";
-	else if (rShouldPrestigeRaid) status = 'Prestige Raiding: ' + Rgetequips(raidzones, false) + ' items remaining';
 	else if (rShouldMaxMapBonus) status = 'Map Bonus: ' + game.global.mapBonus + "/" + maxMapBonusLimit;
 	else if (RdoVoids) {
 		var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
