@@ -524,7 +524,7 @@ function RbuyJobs() {
 	}
 
 	//Meteorologists
-	if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled) {
+	if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rShouldMetFarm) {
 		var affordableMets = getMaxAffordable(
 			game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
 			game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100),
@@ -542,7 +542,7 @@ function RbuyJobs() {
 	}
 
 	//Ships
-	if (autoTrimpSettings.rJobSettingsArray.value.Worshipper.enabled) {
+	if (autoTrimpSettings.rJobSettingsArray.value.Worshipper.enabled || rShouldWorshipperFarm) {
 		var affordableShips = Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (autoTrimpSettings.rJobSettingsArray.value.Worshipper.percent / 100));
 		if (affordableShips > 50 - game.jobs.Worshipper.owned)
 			affordableShips = 50 - game.jobs.Worshipper.owned;

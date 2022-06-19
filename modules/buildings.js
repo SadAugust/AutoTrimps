@@ -279,69 +279,6 @@ function RsafeBuyBuilding(building) {
 	return true;
 }
 
-function RbuyFoodEfficientHousing() {
-	var foodHousing = ["Hut", "House", "Mansion", "Hotel", "Resort"];
-	var unlockedHousing = [];
-	for (var house in foodHousing) {
-		if (game.buildings[foodHousing[house]].locked === 0) {
-			unlockedHousing.push(foodHousing[house]);
-		}
-	}
-	var buildorder = [];
-	if (unlockedHousing.length > 0) {
-		for (var house in unlockedHousing) {
-			var building = game.buildings[unlockedHousing[house]];
-			var cost = getBuildingItemPrice(building, "food", false, 1);
-			var ratio = cost / building.increase.by;
-			buildorder.push({
-				'name': unlockedHousing[house],
-				'ratio': ratio
-			});
-			document.getElementById(unlockedHousing[house]).style.border = "1px solid #FFFFFF";
-		}
-		buildorder.sort(function (a, b) {
-			return a.ratio - b.ratio;
-		});
-		var bestfoodBuilding = null;
-		var bb = buildorder[0];
-		var max = getPageSetting('RMax' + bb.name);
-		if (game.buildings[bb.name].owned < max || max == -1) {
-			bestfoodBuilding = bb.name;
-		}
-	}
-}
-
-function RbuyGemEfficientHousing() {
-	var gemHousing = ["Mansion", "Hotel", "Resort", "Gateway", "Collector"];
-	var unlockedHousing = [];
-	for (var house in gemHousing) {
-		if (game.buildings[gemHousing[house]].locked === 0) {
-			unlockedHousing.push(gemHousing[house]);
-		}
-	}
-	var obj = {};
-	for (var house in unlockedHousing) {
-		var building = game.buildings[unlockedHousing[house]];
-		var cost = getBuildingItemPrice(building, "gems", false, 1);
-		var ratio = cost / building.increase.by;
-		obj[unlockedHousing[house]] = ratio;
-		document.getElementById(unlockedHousing[house]).style.border = "1px solid #FFFFFF";
-	}
-	var keysSorted = Object.keys(obj).sort(function (a, b) {
-		return obj[a] - obj[b];
-	});
-	bestBuilding = null;
-	for (var best in keysSorted) {
-		var max = getPageSetting('RMax' + keysSorted[best]);
-		if (max === false) max = -1;
-		if (game.buildings[keysSorted[best]].owned < max || max == -1) {
-			bestBuilding = keysSorted[best];
-			document.getElementById(bestBuilding).style.border = "1px solid #00CC00";
-			break;
-		}
-	}
-}
-
 var smithiesBoughtThisZone = 0;
 
 function mostEfficientHousing() {
@@ -350,7 +287,6 @@ function mostEfficientHousing() {
 	var HousingTypes = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
 	// Which houses we actually want to check
 	var housingTargets = [];
-	var buildingspending = getPageSetting('rBuildingSpendPct') > 0 ? getPageSetting('rBuildingSpendPct') / 100 : 1;
 
 	if (rTributeFarming && typeof (rTrFbuyBuildings) !== 'undefined') {
 		if (!rTrFbuyBuildings && getAutoStructureSetting().enabled && document.getElementById('autoStructureBtn').classList.contains("enabled"))
@@ -359,11 +295,12 @@ function mostEfficientHousing() {
 
 	for (var house of HousingTypes) {
 		var maxHousing = (((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world) ? Infinity :
-			getPageSetting('RMax' + house) === -1 ? Infinity : getPageSetting('RMax' + house));
+			autoTrimpSettings.rBuildingSettingsArray.value[house].buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value[house].buyMax);
 		if (!game.buildings[house].locked && game.buildings[house].owned < maxHousing) {
 			housingTargets.push(house);
 		}
 	}
+	var runningC3 = ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)
 
 	var mostEfficient = {
 		name: "",
@@ -374,8 +311,10 @@ function mostEfficientHousing() {
 
 		var worstTime = -Infinity;
 		var currentOwned = game.buildings[housing].owned;
+		var buildingspending = autoTrimpSettings.rBuildingSettingsArray.value[housing].percent / 100
+		if (runningC3) buildingspending = 1;
 		const dontbuy = [];
-		if (housing == 'Collector' || housing == 'Gateway') buildingspending = 1;
+		if (!autoTrimpSettings.rBuildingSettingsArray.value[housing].enabled) dontbuy.push(housing);
 		if (game.global.challengeActive == 'Hypothermia' && (housing !== 'Collector' || housing !== 'Gateway') && game.challenges.Hypothermia.bonfires > 0 && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
 		if (rTributeFarming && typeof (rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings && housing !== 'Collector') dontbuy.push(housing);
 		for (var resource in game.buildings[housing].cost) {
@@ -453,9 +392,10 @@ function RbuyBuildings() {
 		return
 
 	//Smithy purchasing
-	if (!game.buildings.Smithy.locked && canAffordBuilding('Smithy')) {
+
+	if (!game.buildings.Smithy.locked) {
 		// Purchasing a smithy whilst on Quest
-		if (game.global.challengeActive == 'Quest' && smithiesBoughtThisZone < game.global.world) {
+		if (game.global.challengeActive == 'Quest' && smithiesBoughtThisZone < game.global.world && canAffordBuilding('Smithy')) {
 			var smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1)
 			var questZones = Math.floor(((getPageSetting('c3finishrun') - game.global.world) / 2) - 1);
 			var smithiesToBuy = smithycanBuy > questZones ? smithycanBuy - questZones : questcheck() == 10 || (RcalcHDratio() * 10 >= getPageSetting('Rmapcuntoff')) ? 1 : 0;
@@ -465,7 +405,8 @@ function RbuyBuildings() {
 				buyBuilding("Smithy", true, true, smithiesToBuy);
 				smithiesBoughtThisZone = game.global.world;
 			}
-		} else if (game.global.challengeActive != 'Quest') {
+		}
+		else if (game.global.challengeActive !== 'Quest' && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax) > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, false, autoTrimpSettings.rBuildingSettingsArray.value.Smithy.percent) || rShouldSmithyFarm)) {
 			buyBuilding("Smithy", true, true, 1);
 		}
 	}
@@ -490,18 +431,20 @@ function RbuyBuildings() {
 
 	//Housing 
 	var boughtHousing = false;
-	var buildingspending = getPageSetting('rBuildingSpendPct') > 0 ? getPageSetting('rBuildingSpendPct') / 100 : 1;
+	var runningC3 = ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)
 	do {
 		boughtHousing = false;
 		var housing = mostEfficientHousing();
-		var housingAmt = getPageSetting('RMax' + housing) === -1 ? Infinity : getPageSetting('RMax' + housing);
+		if (housing === null) continue;
+
+		var housingAmt = autoTrimpSettings.rBuildingSettingsArray.value[housing].buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value[housing].buyMax;
+		var buildingspending = autoTrimpSettings.rBuildingSettingsArray.value[housing].percent / 100
 		var maxCanAfford = housing !== null ? calculateMaxAffordLocal(game.buildings[housing], true, false, false, housingAmt, buildingspending) : false;
-		var runningC3 = ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)
 		if (((housing != null && canAffordBuilding(housing)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt) || runningC3))) {
 			if (runningC3)
-				buyBuilding(housing, true, true, 999);
+				buyBuilding(housing, true, true, 999);/* 
 			else if (housing == "Collector")
-				buyBuilding("Collector", true, true, 999);
+				buyBuilding("Collector", true, true, 999); */
 			else if (rTributeFarming && typeof (rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings) {
 				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && getAutoStructureSetting().enabled)
 					toggleAutoStructure();
@@ -520,7 +463,7 @@ function RbuyBuildings() {
 
 function rBuyTributes() {
 	var affordableMets = 0;
-	if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled) {
+	if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rShouldTributeFarm || rShouldSmithyGemFarm) {
 		affordableMets = getMaxAffordable(
 			game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
 			game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100),
@@ -532,9 +475,9 @@ function rBuyTributes() {
 	if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(affordableMets > 0 && !game.jobs.Meteorologist.locked))) {
 		if (rShouldMetFarm && !rShouldTributeFarm) return;
 		//Spend 100% of food on Tributes if Tribute Farming otherwise uses the value in RTributeSpendingPct.
-		var rTributeSpendPct = typeof (rTrFTributes) !== 'undefined' && rTrFTributes > 0 ? 1 : getPageSetting('RTributeSpendingPct') > 0 ? getPageSetting('RTributeSpendingPct') / 100 : 1;
+		var rTributeSpendPct = typeof (rTrFTributes) !== 'undefined' && rTrFTributes > 0 ? 1 : autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent > 0 ? autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent / 100 : 1;
 		var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned * rTributeSpendPct), 1.05, true);
-		maxTributes = getPageSetting('RMaxTribute') === -1 ? Infinity : typeof (rTrFTributes) !== 'undefined' && rTrFTributes > getPageSetting('RMaxTribute') ? rTrFTributes : getPageSetting('RMaxTribute');
+		maxTributes = autoTrimpSettings.rBuildingSettingsArray.value.Tribute.buyMax === 0 ? Infinity : typeof (rTrFTributes) !== 'undefined' && rTrFTributes > autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax ? rTrFTributes : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax;
 		if (rShouldSmithyGemFarm) {
 			maxTributes = Infinity;
 			rTributeSpendPct = 1;
