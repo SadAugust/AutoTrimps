@@ -1942,6 +1942,7 @@ function PerfectMapCost(pluslevel, special, biome) {
 	document.getElementById("advPerfectCheckbox").dataset.checked = true;
 	document.getElementById("mapLevelInput").value = maplevel;
 	updateMapCost();
+
 	return updateMapCost(true);
 }
 

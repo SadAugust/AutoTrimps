@@ -964,6 +964,7 @@ function initializeAllSettings() {
 
 	//SPAM
 	createSetting('SpamGeneral', 'General Spam', 'General Spam = Notification Messages, Auto He/Hr', 'boolean', false, null, 'Display');
+	createSetting('SpamFragments', 'Fragment Spam', 'Notification Messages about how many fragments your maps cost', 'boolean', false, null, 'Display');
 	createSetting('SpamUpgrades', 'Upgrades Spam', 'Upgrades Spam', 'boolean', false, null, 'Display');
 	createSetting('SpamEquipment', 'Equipment Spam', 'Equipment Spam', 'boolean', false, null, 'Display');
 	createSetting('SpamMaps', 'Maps Spam', 'Maps Spam = Buy,Pick,Run Maps,Recycle,CantAfford', 'boolean', false, null, 'Display');
@@ -2259,6 +2260,7 @@ function updateCustomButtons() {
 
 	//Display
 	(!game.worldUnlocks.easterEgg.locked) ? turnOn('AutoEggs') : turnOff('AutoEggs');
+	radonon ? turnOn('SpamFragments') : turnOff('SpamFragments');
 
 	//Memory
 	game.global.universe == 1 && !getPageSetting('showbreedtimer') ? turnOn("hiddenBreedTimer") : turnOff("hiddenBreedTimer");
