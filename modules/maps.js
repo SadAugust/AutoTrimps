@@ -2389,7 +2389,7 @@ function RautoMap() {
 			while (!rFragmentFarming && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 				sizeAdvMapsRange.value -= 1;
 			}
-			if (advPerfectCheckbox.dataset.checked === 'true' && (sizeAdvMapsRange.value !== 9 || difficultyAdvMapsRange.value !== 9 || lootAdvMapsRange.value !== 9))
+			if (advPerfectCheckbox.dataset.checked === 'true' && (sizeAdvMapsRange.value !== '9' || difficultyAdvMapsRange.value !== '9' || lootAdvMapsRange.value !== '9'))
 				document.getElementById("advPerfectCheckbox").dataset.checked = false
 			var maplvlpicked = parseInt(document.getElementById("mapLevelInput").value);
 
