@@ -55,7 +55,7 @@ function BoneShrine() {
 			var rBoneShrineGather = rBoneShrineSettings.gather
 			var rBoneShrineSpendBelow = rBoneShrineSettings.bonebelow === -1 ? 0 : rBoneShrineSettings.bonebelow;
 			var rBoneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rBoneShrineSettings.atlantrimp
-			rShouldBoneShrine = (game.global.lastClearedCell + 2 >= rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
+			rShouldBoneShrine = (game.global.lastClearedCell + 2 >= rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow && rBoneShrineUsedZone !== game.global.world);
 
 			if (rBoneShrineCharges > game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow)
 				rBoneShrineCharges = game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow;
