@@ -105,6 +105,48 @@ function MAZLookalike(titleText, varPrefix, event) {
 	if (event == 'MAZ') {
 		var maxSettings = 30;
 
+		//Setting up the Help onclick setting.
+		var mazHelp = "Welcome to '" + titleText + "' settings! This is a powerful automation tool that allows you to set when maps should be automatically run, and allows for a high amount of customization. Here's a quick overview of what everything does:"
+
+		//Default Value settings
+		mazHelp += "<br><br>The default values section are values which will automatically be input when a new row has been added. There's a few exception to this such as:<br></br><ul>"
+		mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable the entire setting.</li>"
+		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>"
+		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>"
+		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>"
+		if (titleText.includes('Raiding')) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after raiding has finished.</li>"
+
+		//Row Settings
+		mazHelp += "</ul></br> The settings for each row that is added:<ul>"
+		mazHelp += "<li><span style='padding-left: 0.3%' class='mazDelete'><span class='icomoon icon-cross'></span></span> - Remove this MaZ line completely</li>"
+		mazHelp += "<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>"
+		if (titleText.includes('Raiding')) mazHelp += "<li><b>Raiding Zone</b> - The zone you'd like to raid when this line is run. If your 'Zone' input is 231 then the highest zone you can input is 241.</li>"
+		mazHelp += "<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell. This line will trigger before starting combat against that cell.</li>"
+		if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine') && !titleText.includes('Raiding')) mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can input a positive or negative number for this so input could be '-5', '0', or '3'. Will override inputs above -1 during the Wither challenge.</li>"
+		if (titleText.includes('Tribute Farm')) mazHelp += "<li><b>Tributes</b> - The amount of Tributes that should be farmed up to on this zone. If the value is greater than your Tribute Cap setting then it'll adjust it to the Tribute input whilst doing this farm.</li>"
+		if (titleText.includes('Tribute Farm')) mazHelp += "<li><b>Meteorologist</b> - The amount of Meteorologist that should be farmed up to on this zone.</li>"
+		if (titleText.includes('Time Farm')) mazHelp += "<li><b>Map Repeat</b> - How many maps you'd like to run during this line.</li>";
+		if (titleText.includes('Quagmire Farm')) mazHelp += "<li><b>Bogs</b> - How many Black Bog maps you'd like to run during this line.</li>";
+		if (titleText.includes('Insanity Farm')) mazHelp += "<li><b>Insanity</b> - How many Insanity stack you'd like to farm up to during this line.</li>";
+		if (titleText.includes('Alchemy Farm')) mazHelp += "<li><b>Potion Type</b> - The type of potion you want to farm during this line.</li>";
+		if (titleText.includes('Alchemy Farm')) mazHelp += "<li><b>Potion Number</b> - How many of the potion specified in 'Potion Type' you'd like to farm for.</li>";
+		if (titleText.includes('Hypothermia Farm')) mazHelp += "<li><b>Bonfires</b> - How many Bonfires should be farmed on this zone. Uses max bonfires built rather than a specific amount to farm for so if you have already built 14 so far during your run and want another 8 then you'd input 22.</li>";
+		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>To use</b> - How many bone charges to use on this line.</li>";
+		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>Use below</b> - This value will stop bone charges being spent when you're at or below this value.</li>";
+		if (titleText.includes('Ship Farm')) mazHelp += "<li><b>Ship</b> - How many worshippers you'd like to farm up to during this line. Max input is 50 and it'll default to that value if you input anything higher.</li>";
+		if (titleText.includes('Tribute Farm')) mazHelp += "<li><b>Buy Buildings</b> - If you'd like to buy buildings during this farming line to reduce the amount of maps it takes to farm your specified Tribute or Meteorologist inputs. When unselected it will automatically disable vanilla AutoStructure if it's enabled to remove the possibility of resources being spent there too.</li>";
+		if (titleText.includes('Tribute Farm')) mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. Autoamtically calculates when it would be more efficient to run Atlantrimp or continue farming Savory Cache maps to reach your target in the fastest time possible.</li>";
+		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. After using the bone shrine charges specified for this line it will stop AT purchasing equips until Atlantrimp has been run so that there is no wasted resources.</li>";
+		if (titleText.includes('Smithy Farm')) mazHelp += "<li><b>Smithies</b> - How many Smithies you'd like to farm up to during this line.</li>";
+		if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. Input will look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>"
+		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>Gather</b> - Which resource you'd like to gather when popping a Bone Shrine charge to make use of Turkimp resource bonus.</li>";
+		if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) mazHelp += "<li><b>Special</b> - The type of cache you'd like to run during this map. Will override metal cache inputs with savory caches during the Transmute challenge.</li>";
+		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>Use in</b> - What type of run you'd like this line to be run.</li>";
+		if (titleText.includes('Raiding')) mazHelp += "<li><b>Frag Type</b> - Frag: Farm for fragments to afford the maps you want to create. <br>\
+		Frag Min: Used for absolute minimum frag costs (which includes no Prestige special, perfect sliders, random map and the difficulty and size options, however it will try to afford those options first!) and prioritises buying the most maps for a smoother sequential raid. \
+		<br>Frag Max: This option will make sure that the map has perfect sliders and uses the pretegious special.</li>";
+
+
 		//Setting up default values section
 		tooltipText = "\
 		<div id='windowContainer' style='display: block'><div id='windowError'></div>\
@@ -118,7 +160,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) tooltipText += "<div class='windowJobRatio'>Job Ratio</div>"
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'>Gather</div>"
 		if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowSpecial'>Special</div>"
-		if (titleText.includes('Hypothermia')) tooltipText += "<div class='windowFrozenCastle'>Frozen Castle (zone,cell)</div>"
+		if (titleText.includes('Hypothermia')) tooltipText += "<div class='windowFrozenCastle'>Frozen Castle</div>"
 		if (titleText.includes('Hypothermia')) tooltipText += "<div class='windowStorage'>AutoStorage</div>"
 		if (titleText.includes('Hypothermia')) tooltipText += "<div class='windowPackrat'>Packrat</div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRecycle'>Recycle</div>"
@@ -260,6 +302,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var raidingDropdown = "<option value='0'" + ((vals.raidingDropdown == '0') ? " selected='selected'" : "") + ">Frag</option>\<option value='1'" + ((vals.raidingDropdown == '1') ? " selected='selected'" : "") + ">Frag Min</option>\<option value='2'" + ((vals.raidingDropdown == '2') ? " selected='selected'" : "") + ">Frag Max</option>"
 			var className = (vals.special === 'hc' || vals.special === 'lc') ? " windowBwMainOn" : " windowBwMainOff";
 			className += (vals.special == 'hc' || vals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
+			className += (x <= current.length - 1) ? " active" : "  disabled";
 			tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
 			tooltipText += "<div class='windowDelete' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
 			tooltipText += "<div class='windowWorld'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
@@ -287,17 +330,18 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (titleText.includes('Time Farm') || titleText.includes('Alchemy')) tooltipText += "<div class='windowGather'>\<div style='text-align: center;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select>\</div>"
 			tooltipText += "</div>"
 		}
-		tooltipText += "<div id='windowAddRowBtn' style='display: " + ((current.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\",\"" + titleText + "\")'>+ Add Row</div>"
-		costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\", true)'>Save</span></div>"
 
+		tooltipText += "<div id='windowAddRowBtn' style='display: " + ((current.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\",\"" + titleText + "\")'>+ Add Row</div>"
+		tooltipText += "</div></div><div style='display: none' id='mazHelpContainer'>" + mazHelp + "</div>";
+		costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\", true)'>Save</span><span class='btn btn-info btn-md' onclick='windowToggleHelp()'>Help</span></div>"
+
+		swapClass('tooltipExtra', 'tooltipExtraLg', elem);
 		game.global.lockTooltip = true;
-		elem.style.display = 'block'
 		elem.style.top = "10%";
-		elem.style.left = "10%";
+		elem.style.left = "1%";
 		elem.style.height = 'auto';
 		elem.style.maxHeight = window.innerHeight * .85 + 'px';
-		if (event == 'MAZ') elem.style.overflowY = 'scroll';
-		swapClass('tooltipExtra', 'tooltipExtraLg', elem);
+		if (event == 'MAZ' && document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 12) elem.style.overflowY = 'scroll';
 	}
 
 
@@ -402,8 +446,10 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (level > 10) level = 10;
 		if (cell < 1) cell = 1;
 		if (cell > 100) cell = 100;
+		if (worshipper > game.jobs.Worshipper.max) worshipper = game.jobs.Worshipper.max;
 
 		if (repeat < 0) repeat = 0;
+		if (raidingzone - world > 10) raidingzone = world + 10;
 
 		var thisSetting = {
 			world: world,
@@ -484,6 +530,28 @@ function saveATAutoJobsConfig() {
 	saveSettings();
 }
 
+function windowToggleHelp() {
+	var mazContainer = document.getElementById('windowContainer');
+	var helpContainer = document.getElementById('mazHelpContainer');
+	var parentWindow = document.getElementById("tooltipDiv");
+	if (!mazContainer || !helpContainer) return;
+	if (mazContainer.style.display == 'block') {
+		mazContainer.style.display = 'none';
+		helpContainer.style.display = 'block';
+		helpContainer.style.top = "10%";
+		helpContainer.style.left = "10%";
+		helpContainer.style.height = 'auto';
+		helpContainer.style.maxHeight = window.innerHeight * .85 + 'px';
+		parentWindow.style.overflowY = '';
+	}
+	else {
+		mazContainer.style.display = 'block';
+		helpContainer.style.display = 'none';
+		parentWindowstyle.overflowY = '';
+	}
+	verticalCenterTooltip();
+}
+
 function saveATAutoStructureConfig() {
 	var setting = autoTrimpSettings.rBuildingSettingsArray.value;
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
@@ -550,6 +618,7 @@ function addRow(varPrefix, titleText) {
 				if (document.getElementById('windowJobRatio' + x) !== null)
 					document.getElementById('windowJobRatio' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.jobratio
 				updateWindowPreset(x, varPrefix);
+				swapClass('disabled', 'active', parent);
 			}
 		}
 
@@ -616,6 +685,7 @@ function removeRow(index, titleText) {
 	elem.style.display = 'none';
 	var btnElem = document.getElementById('windowAddRowBtn');
 	btnElem.style.display = 'inline-block';
+	swapClass('active', 'disabled', elem);
 }
 
 function updateWindowPreset(index, varPrefix) {
