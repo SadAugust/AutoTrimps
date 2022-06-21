@@ -326,7 +326,7 @@ function mostEfficientHousing() {
 			var housingBonus = game.buildings[housing].increase.by;
 			if (!game.buildings.Hub.locked) housingBonus += 500;
 			if (Math.max(baseCost * Math.pow(costScaling, currentOwned)) > game.resources[resource].owned * buildingspending) dontbuy.push(housing);
-			if (housing == 'Gateway' && resource == 'fragments') {
+			if (housing == 'Gateway' && resource == 'fragments' && (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway) === 'undefined' ? false : autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.enabled)) {
 				if (game.resources[resource].owned < ((PerfectMapCost_Actual(10, 'lmc') * 3) + Math.max(baseCost * Math.pow(costScaling, currentOwned)))) dontbuy.push(housing);
 			}
 			// Only keep the slowest producer, aka the one that would take the longest to generate resources for
@@ -442,9 +442,7 @@ function RbuyBuildings() {
 		var maxCanAfford = housing !== null ? calculateMaxAffordLocal(game.buildings[housing], true, false, false, housingAmt, buildingspending) : false;
 		if (((housing != null && canAffordBuilding(housing)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt) || runningC3))) {
 			if (runningC3)
-				buyBuilding(housing, true, true, 999);/* 
-			else if (housing == "Collector")
-				buyBuilding("Collector", true, true, 999); */
+				buyBuilding(housing, true, true, 999);
 			else if (rTributeFarming && typeof (rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings) {
 				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && getAutoStructureSetting().enabled)
 					toggleAutoStructure();
