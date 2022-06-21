@@ -2447,7 +2447,7 @@ function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceM
 		var price = itemObj.cost[item];
 		var toBuy;
 		var resource = game.resources[item];
-		var resourcesAvailable = item === 'fragments' && (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway) === 'undefined' ? false : autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.enabled) ? resource.owned - (PerfectMapCost_Actual(10, 'lmc') * 3) : resource.owned;
+		var resourcesAvailable = item === 'fragments' && (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway) === 'undefined' ? resource.owned : autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.enabled) ? resource.owned - (PerfectMapCost_Actual(10, 'lmc') * 3) : resource.owned;
 		if (resourcesAvailable < 0) resourcesAvailable = 0;
 		if (game.global.maxSplit != 1 && !forceMax && !forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * game.global.maxSplit);
 		else if (forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * forceRatio);
