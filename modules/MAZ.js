@@ -538,18 +538,18 @@ function windowToggleHelp() {
 	if (mazContainer.style.display == 'block') {
 		mazContainer.style.display = 'none';
 		helpContainer.style.display = 'block';
-		helpContainer.style.top = "10%";
-		helpContainer.style.left = "10%";
-		helpContainer.style.height = 'auto';
-		helpContainer.style.maxHeight = window.innerHeight * .85 + 'px';
 		parentWindow.style.overflowY = '';
 	}
 	else {
 		mazContainer.style.display = 'block';
 		helpContainer.style.display = 'none';
-		parentWindowstyle.overflowY = '';
+		parentWindow.style.overflowY = '';
 	}
 	verticalCenterTooltip();
+	parentWindow.style.top = "10%";
+	parentWindow.style.left = "1%";
+	parentWindow.style.height = 'auto';
+	parentWindow.style.maxHeight = window.innerHeight * .85 + 'px';
 }
 
 function saveATAutoStructureConfig() {
