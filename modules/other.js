@@ -2447,10 +2447,14 @@ function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceM
 		var price = itemObj.cost[item];
 		var toBuy;
 		var resource = game.resources[item];
-		var resourcesAvailable = item === 'fragments' && (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway) === 'undefined' ? resource.owned : autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.enabled) ? resource.owned - (PerfectMapCost_Actual(10, 'lmc') * autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount) : resource.owned;
+		var resourcesAvailable = resource.owned;
 		if (resourcesAvailable < 0) resourcesAvailable = 0;
 		if (game.global.maxSplit != 1 && !forceMax && !forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * game.global.maxSplit);
 		else if (forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * forceRatio);
+
+		if (item === 'fragments') resourcesAvailable = item === 'fragments' && (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway) === 'undefined' ? resourcesAvailable :
+			autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.enabled && resourcesAvailable > resource.owned - (PerfectMapCost_Actual(10, 'lmc') * autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount)) ? resource.owned - (PerfectMapCost_Actual(10, 'lmc') * autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount) :
+			resourcesAvailable;
 		if (!resource || typeof resourcesAvailable === 'undefined') {
 			console.log("resource " + item + " not found");
 			return 1;
@@ -2463,7 +2467,7 @@ function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceM
 			}
 			if (isBuilding && getPerkLevel("Resourceful")) start = start * (Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel("Resourceful")));
 			toBuy = Math.floor(log10(((resourcesAvailable / (start * Math.pow(price[1], currentOwned))) * (price[1] - 1)) + 1) / log10(price[1]));
-			//if (itemObj == game.equipment.Shield) console.log(toBuy);
+
 		}
 		else if (typeof price === 'function') {
 			return 1;
