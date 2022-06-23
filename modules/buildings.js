@@ -384,6 +384,9 @@ function RbuyBuildings() {
 		}
 	}
 
+	if (rBSRunningAtlantrimp)
+		return;
+
 	//Still allows you to buy tributes during gem quests
 	if (game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone() && ([4].indexOf(questcheck()) >= 0))
 		rBuyTributes();
