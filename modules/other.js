@@ -2594,7 +2594,7 @@ function hypoPackratReset(challenge) {
 function AllocatePerks() {
 	if (!game.global.portalActive) return;
 	if (getPageSetting('RAutoAllocatePerks') === 0) return;
-	var allocatePerk = getPageSetting('RAutoAllocatePerks') == 1 ? 'Looting' : getPageSetting('RAutoAllocatePerks') == 2 ? 'Greed' : null;
+	var allocatePerk = getPageSetting('RAutoAllocatePerks') == 1 ? 'Looting' : getPageSetting('RAutoAllocatePerks') == 2 ? 'Greed' : getPageSetting('RAutoAllocatePerks') == 3 ? 'Motivation' : null;
 	if (allocatePerk !== null) {
 		numTab(6, true)
 		buyPortalUpgrade(allocatePerk);

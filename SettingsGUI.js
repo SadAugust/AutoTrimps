@@ -164,7 +164,7 @@ function initializeAllSettings() {
 	createSetting('RManualGather2', ['Manual Gather/Build', 'Auto Gather/Build', 'Mining/Building Only'], 'Controls what you gather/build do. Manual does nothing<br>Auto Gathering of Food,Wood,Metal(w/turkimp) & Science. Auto speed-Builds your build queue. <br>Mining/Building only does exactly what it says. Only use if you are passed the early stages of the game and have the mastery foremany unlocked (No longer need to trap, food and wood are useless). ', 'multitoggle', 1, null, 'Core');
 	createSetting('RTrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core');
 	createSetting('RBuyUpgradesNew', ['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords'], 'Autobuys non-equipment upgrades (equipment is controlled in the Gear tab). The second option does NOT buy coordination (use this <b>ONLY</b> if you know what you\'re doing).', 'multitoggle', 1, null, 'Core');
-	createSetting('RAutoAllocatePerks', ['Auto Allocate Off', 'Dump into Looting', 'Dump into Greed'], 'Uses the AutoPerks ratio based preset system to automatically allocate your perks to spend whatever helium you have when you AutoPortal. Does not change Fixed Perks: siphonology, anticipation, meditation, relentlessness, range, agility, bait, trumps, packrat, capable. NEW: Dump into Looting, dumps all loot gained from previous portal at specified zone', 'multitoggle', 0, null, 'Core');
+	createSetting('RAutoAllocatePerks', ['Auto Allocate Off', 'Dump into Looting', 'Dump into Greed', 'Dump into Moti'], 'Dumps all excess radon into the selected perk when AutoPortaling.', 'multitoggle', 0, null, 'Core');
 	createSetting('RPerkSwapping', 'Preset Swapping', 'Will automatically load Preset 1 if portaling into a normal run or Preset 2 if portaling into a daily run.<br>Be aware that you need to save your presets when making adjustments or it\'ll revert to the previous one you saved.', 'boolean', false, null, 'Core');
 
 	//Helium Portal
@@ -1007,6 +1007,20 @@ function convertSettings(oldSetting, newSetting, type, newName) {
 
 }
 
+//Adding onto settings
+if (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount) === 'undefined')
+	autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount = 3;
+
+
+
+
+
+
+
+
+
+
+
 function createSetting(id, name, description, type, defaultValue, list, container) {
 	var btnParent = document.createElement("DIV");
 	btnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;');
@@ -1630,7 +1644,6 @@ function updateCustomButtons() {
 	radonon ? turnOn('RTrapTrimps') : turnOff('RTrapTrimps');
 	radonon ? turnOn('RBuyUpgradesNew') : turnOff('RBuyUpgradesNew');
 	radonon ? turnOn('RAutoAllocatePerks') : turnOff('RAutoAllocatePerks');
-	radonon && getPageSetting('RAutoAllocatePerks') == 2 ? turnOn('Rdumpgreed') : turnOff('Rdumpgreed');
 	radonon ? turnOn('RPerkSwapping') : turnOff('RPerkSwapping');
 
 	//RPortal
