@@ -246,9 +246,16 @@ function mainLoop() {
 		//Archeology
 		if (getPageSetting('Rarchon') && game.global.challengeActive == "Archaeology") archstring();
 		//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
-		if (game.global.challengeActive == "Quest" && game.global.autoStructureSettingU2.Smithy.enabled && getPageSetting('RBuyBuildingsNew') && RquestSmithyWarning != game.stats.zonesCleared.value) {
-			debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.")
-			RquestSmithyWarning = game.stats.zonesCleared.value;
+		if (game.global.challengeActive == "Quest" && getPageSetting('RBuyBuildingsNew')) {
+			if (game.global.autoStructureSettingU2.Smithy.enabled && RquestSmithyWarning != game.stats.zonesCleared.value) {
+				debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.")
+				RquestSmithyWarning = game.stats.zonesCleared.value;
+			}
+			//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
+			if ((getPageSetting('c3finishrun') === -1 ? Infinity : getPageSetting('c3finishrun')) <= game.c2.Quest && RquestSmithyWarning_Setting != game.stats.zonesCleared.value) {
+				debug("The setting 'Finish C3' is lower or equal to your current Quest HZE. Increase this or smithies will be bought earlier than they should be.")
+				RquestSmithyWarning_Setting = game.stats.zonesCleared.value;
+			}
 		}
 		//AutoEquip
 		if (getPageSetting('Requipon') && (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([2, 3].indexOf(questcheck()) >= 0)))) RautoEquip();
