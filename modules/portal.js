@@ -601,6 +601,7 @@ function Rresetmapvars() {
 	Rquestequalityscale = false;
 	Rquestshieldzone = 0;
 	RquestSmithyWarning = -1;
+	RquestSmithyWarning_Setting = -1;
 	//Mayhem
 	Rshouldmayhem = 0;
 	//Storm

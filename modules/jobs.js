@@ -524,7 +524,7 @@ function RbuyJobs() {
 	}
 
 	//Meteorologists
-	if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rShouldMetFarm) {
+	if ((autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rShouldMetFarm) && !rBSRunningAtlantrimp) {
 		var affordableMets = getMaxAffordable(
 			game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
 			game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100),
@@ -542,7 +542,7 @@ function RbuyJobs() {
 	}
 
 	//Ships
-	if (autoTrimpSettings.rJobSettingsArray.value.Worshipper.enabled || rShouldWorshipperFarm) {
+	if ((autoTrimpSettings.rJobSettingsArray.value.Worshipper.enabled || rShouldWorshipperFarm) && !rBSRunningAtlantrimp) {
 		var affordableShips = Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (autoTrimpSettings.rJobSettingsArray.value.Worshipper.percent / 100));
 		if (affordableShips > 50 - game.jobs.Worshipper.owned)
 			affordableShips = 50 - game.jobs.Worshipper.owned;
@@ -589,9 +589,9 @@ function RbuyJobs() {
 		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
 	}
 
-	if (autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && !rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm)
+	if (autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && !rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm && !rShouldBoneShrine)
 		desiredRatios[0] = 0;
-	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
+	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && !rShouldBoneShrine && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
 		desiredRatios[1] = 0;
 
 	if (typeof workerRatio !== 'undefined' && workerRatio !== null) {

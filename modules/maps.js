@@ -776,6 +776,7 @@ var rShouldQuest = 0;
 var Rquestequalityscale = false;
 var Rquestshieldzone = 0;
 var RquestSmithyWarning = -1;
+var RquestSmithyWarning_Setting = -1;
 //Mayhem
 var Rshouldmayhem = 0;
 //Storm
@@ -1069,7 +1070,7 @@ function RautoMap() {
 	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
 
 	//Time Farm
-	if ((rRunningRegular && autoTrimpSettings.rTimeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTimeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TimeFarmDefaultSettings.value.active)) {
+	if ((rRunningRegular && autoTrimpSettings.rTimeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTimeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TimeFarmDefaultSettings.value.active) && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
 		rTFZone = rRunningC3 ? getPageSetting('rc3TimeFarmZone') : rRunningDaily ? getPageSetting('rdTimeFarmZone') : getPageSetting('rTimeFarmZone');
 		var rTFIndex = rTFZone.indexOf(game.global.world);
@@ -1101,7 +1102,7 @@ function RautoMap() {
 	}
 
 	//Tribute Farm
-	if ((rRunningRegular && autoTrimpSettings.rTributeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTributeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TributeFarmDefaultSettings.value.active)) {
+	if ((rRunningRegular && autoTrimpSettings.rTributeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTributeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TributeFarmDefaultSettings.value.active) && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
 		var rTrFZone = rRunningC3 ? getPageSetting('rc3TributeFarmZone') : rRunningDaily ? getPageSetting('rdTributeFarmZone') : getPageSetting('rTributeFarmZone');
 		if (rTrFZone.includes(game.global.world)) {
@@ -1185,16 +1186,16 @@ function RautoMap() {
 	}
 
 	//Smithy Farming
-	if (game.buildings.Smithy.locked == 0 && ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active && (typeof game.global.dailyChallenge.hemmorrhage === 'undefined' || !(typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')))) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active))) {
+	if (game.buildings.Smithy.locked == 0 && ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active && (typeof game.global.dailyChallenge.hemmorrhage === 'undefined' || !(typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')))) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && rShouldQuest === 10))) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
-		var rSFZone = rRunningC3 ? getPageSetting('rc3SmithyFarmZone') : rRunningDaily ? getPageSetting('rdSmithyFarmZone') : getPageSetting('rSmithyFarmZone');
+		var rSFZone = game.global.challengeActive == 'Quest' ? [game.global.world] : rRunningC3 ? getPageSetting('rc3SmithyFarmZone') : rRunningDaily ? getPageSetting('rdSmithyFarmZone') : getPageSetting('rSmithyFarmZone');
 		if (rSFZone.includes(game.global.world)) {
 			var rSFIndex = rSFZone.indexOf(game.global.world);
 			var rSFSettings = rRunningC3 ? autoTrimpSettings.rc3SmithyFarmSettings.value[rSFIndex] : rRunningDaily ? autoTrimpSettings.rdSmithyFarmSettings.value[rSFIndex] : autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
-			var rSFCell = rSFSettings.cell
+			var rSFCell = game.global.challengeActive == 'Quest' ? 81 : rSFSettings.cell
 			if (game.global.lastClearedCell + 2 >= rSFCell) {
-				var rSFMapLevel = rSFSettings.level
-				rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : rSFSettings.repeat;
+				var rSFMapLevel = game.global.challengeActive == 'Quest' ? -1 : rSFSettings.level
+				rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : game.global.challengeActive == 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
 				var rSFSpecial = game.global.highestRadonLevelCleared > 63 ? "hc" : "lc";
 				var rSFJobRatio = '1,1,1,0';
@@ -1265,7 +1266,7 @@ function RautoMap() {
 	}
 
 	//Prestige Raiding
-	if ((rRunningRegular && autoTrimpSettings.rRaidingDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdRaidingDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3RaidingDefaultSettings.value.active)) {
+	if ((rRunningRegular && autoTrimpSettings.rRaidingDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdRaidingDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3RaidingDefaultSettings.value.active) && rShouldQuest === 0) {
 
 		//if (getPageSetting('RAMPraid') && (game.global.challengeActive != "Daily") || (getPageSetting('RAMPdraid') && game.global.challengeActive == "Daily")) {
 		var rRaidingZone = rRunningC3 ? getPageSetting('rc3RaidingZone') : rRunningDaily ? getPageSetting('rdRaidingZone') : getPageSetting('rRaidingZone');
@@ -1304,7 +1305,7 @@ function RautoMap() {
 	}
 
 	//Worshipper Farm -- Think there's an issue with variable setup here
-	if (game.jobs.Worshipper.locked == 0 && getPageSetting('rShipFarm')) {
+	if (game.jobs.Worshipper.locked == 0 && getPageSetting('rShipFarm') && rShouldQuest === 0) {
 		var shipfarmzone = getPageSetting('rShipFarmZone');
 		if (shipfarmzone.includes(game.global.world) && game.jobs.Worshipper.owned != 50) {
 			//if (Rshipfarm) {
@@ -1740,7 +1741,7 @@ function RautoMap() {
 	}
 
 	//Equip Farming
-	if (getPageSetting('Requipfarmon')) {
+	if (getPageSetting('Requipfarmon') && rShouldQuest === 0) {
 		Requipfarm = (getPageSetting('Requipfarmon') == true && (getPageSetting('Requipfarmzone') > 0 && getPageSetting('RequipfarmHD') > 0 && getPageSetting('Requipfarmmult') > 0));
 		if (Requipfarm) {
 			var equipfarmzone = getPageSetting('Requipfarmzone');
@@ -1918,7 +1919,7 @@ function RautoMap() {
 	}
 
 	//Everything else
-	if (!rShouldPrestigeRaid && (RshouldDoMaps || RdoVoids || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldQuest > 0 || Rshouldmayhem > 0 || rShouldInsanityFarm || Rshouldstormfarm || rShouldUnbalance || rShouldEquipFarm || rShouldWorshipperFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || Rshouldalchfarm || rShouldHypoFarm || rShouldMaxMapBonus)) {
+	if (!rShouldPrestigeRaid && (RshouldDoMaps || RdoVoids || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || (rShouldQuest > 0 && rShouldQuest !== 10) || Rshouldmayhem > 0 || rShouldInsanityFarm || Rshouldstormfarm || rShouldUnbalance || rShouldEquipFarm || rShouldWorshipperFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || Rshouldalchfarm || rShouldHypoFarm || rShouldMaxMapBonus)) {
 		if (selectedMap == "world") {
 			if (Rshouldmayhem > 0 && !rShouldPandemoniumDestack && !rShouldTributeFarm && !rShouldMetFarm && !rShouldTimeFarm && !rShouldInsanityFarm && !rShouldUnbalance && !rShouldEquipFarm && !rShouldWorshipperFarm && !Rshouldalchfarm && !rShouldHypoFarm && !rShouldMaxMapBonus) {
 				if (getPageSetting('Rmayhemmap') == 2) {
@@ -1977,7 +1978,7 @@ function RautoMap() {
 					}
 				}
 				//Priority system for challenges. If Alchemy isn't at the top it'll break the recycling function I think
-			} else if ((Rshouldalchfarm || rShouldHypoFarm || rShouldInsanityFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldWorshipperFarm || rShouldUnbalance || rShouldEquipFarm || rShouldMaxMapBonus) && !rShouldPrestigeRaid && rShouldQuest == 0) {
+			} else if ((Rshouldalchfarm || rShouldHypoFarm || rShouldInsanityFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldWorshipperFarm || rShouldUnbalance || rShouldEquipFarm || rShouldMaxMapBonus) && !rShouldPrestigeRaid && (rShouldQuest === 0 || (rShouldQuest === 10 && rShouldSmithyFarm))) {
 				//Checking hyperspeed 2 percentage
 				var hyp2pct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0
 				if (game.global.challengeActive == "Alchemy" && typeof (alchmaplevel) != 'undefined') {
@@ -2302,7 +2303,7 @@ function RautoMap() {
 				rFragmentFarm('ship', shippluslevel, shipspecial);
 
 			//Map settings for challenges and farming.
-			if ((Rshouldalchfarm || rShouldHypoFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldUnbalance || rShouldInsanityFarm || rShouldWorshipperFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || rShouldEquipFarm || rShouldMaxMapBonus) && rShouldQuest == 0) {
+			if ((Rshouldalchfarm || rShouldHypoFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldUnbalance || rShouldInsanityFarm || rShouldWorshipperFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || rShouldEquipFarm || rShouldMaxMapBonus) && (rShouldQuest == 0 || (rShouldQuest === 10 && rShouldSmithyFarm))) {
 				biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 				//Any maps
 				if (rShouldTimeFarm) RShouldFarmMapCost(rTFMapLevel, rTFSpecial, rTFZone, biome);
@@ -2325,17 +2326,16 @@ function RautoMap() {
 			}
 
 			//Map settings for Quest Farming -- Need to test and debug if this works properly but it should be fine. Might be an issue with rShouldQuest (6) in the map creation settings if statement
-			if (rShouldQuest > 0) {
+			if (rShouldQuest > 0 && rShouldQuest !== 10) {
 				hyp2pct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0
 				questfastattack = ((Math.floor(game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100) >= game.global.world) ? "0" : "fa");
 				biomeAdvMapsSelect.value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 				questspecial = rShouldQuest == 1 ? ['lsc', 'ssc', questfastattack] :
 					rShouldQuest == 2 ? ['lwc', 'swc', questfastattack] :
 						rShouldQuest == 3 || rShouldQuest == 7 ? ['lmc', 'smc', questfastattack] :
-							rShouldQuest == 10 ? ['hc', 'hc', questfastattack] :
-								[questfastattack, questfastattack, questfastattack];
+							[questfastattack, questfastattack, questfastattack];
 
-				if (rShouldQuest == 1 || rShouldQuest == 2 || rShouldQuest == 3 || rShouldQuest == 4 || rShouldQuest == 5 || rShouldQuest == 6 || rShouldQuest == 7 || rShouldQuest == 10) {
+				if (rShouldQuest == 1 || rShouldQuest == 2 || rShouldQuest == 3 || rShouldQuest == 4 || rShouldQuest == 5 || rShouldQuest == 6 || rShouldQuest == 7) {
 					document.getElementById("advSpecialSelect").value = questspecial[0];
 					updateMapCost();
 					if (updateMapCost(true) > game.resources.fragments.owned) {
