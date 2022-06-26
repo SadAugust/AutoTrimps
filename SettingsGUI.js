@@ -11,19 +11,46 @@ function automationMenuInit() {
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
 	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
 
+
+	/* 	//AutoMaps Button
+		//Creating button
+		var autoMapsContainer = document.createElement("DIV");
+		autoMapsContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
+		autoMapsContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (autoTrimpSettings.RAutoMaps.value == 2 ? 3 : autoTrimpSettings.RAutoMaps.value));
+		autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Auto Maps\", \"customText\", event, \"Toggle between the Auto Map settings.\")');
+		autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
+	
+		//Text
+		var autoMapsText = document.createElement("DIV");
+		autoMapsText.innerHTML = 'Auto Maps';
+		autoMapsText.setAttribute("style", "font-size: 1.1vw; height: 1.5em; text-align: center");
+		autoMapsText.setAttribute("id", "autoMapsLabel");
+		autoMapsText.setAttribute("onClick", "toggleAutoMaps()");
+	
+		//Creating cogwheel & linking onclick
+		var autoMapsSettings = document.createElement("DIV");
+		autoMapsSettings.setAttribute('onclick', 'MAZLookalike("AT AutoMaps", "a", "AutoMaps")');
+		var autoMapsSettingsButton = document.createElement("SPAN");
+		autoMapsSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+	
+		//Setting up positioning
+		var autoMapsColumn = document.getElementById("battleBtnsColumn");
+		autoMapsContainer.appendChild(autoMapsText);
+		autoMapsContainer.appendChild(autoMapsSettings);
+		autoMapsSettings.appendChild(autoMapsSettingsButton);
+		autoMapsColumn.appendChild(autoMapsContainer);
+		//autoMapsColumn.replaceChild(autoMapsContainer, document.getElementById('battleBtnsColumn').children[0].children[2]); */
+
 	//AutoMaps
 	var newContainer = document.createElement("DIV");
 	newContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
 	newContainer.setAttribute("id", "autoMapBtn");
-	newContainer.setAttribute("class", "noselect settingsBtn");
+	newContainer.setAttribute("class", "toggleConfigBtn noselect settingsBtn");
 	newContainer.setAttribute("onClick", "toggleAutoMaps()");
 	newContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Automapping\", \"customText\", event, \"Toggle automapping on and off.\")');
 	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	var abutton = document.createElement("SPAN");
-	abutton.appendChild(document.createTextNode("Auto Maps"));
-	abutton.setAttribute("id", "autoMapLabel");
+	newContainer.innerHTML = 'Auto Maps';
 	var fightButtonCol = document.getElementById("battleBtnsColumn");
-	newContainer.appendChild(abutton);
 	fightButtonCol.appendChild(newContainer);
 
 	newContainer = document.createElement("DIV");
@@ -61,7 +88,6 @@ function automationMenuInit() {
 		btns[x].style.padding = "0.01vw 0.01vw";
 	}
 }
-automationMenuInit();
 
 function automationMenuSettingsInit() { var a = document.getElementById("settingsRow"), b = document.createElement("DIV"); b.id = "autoSettings", b.setAttribute("style", "display: none; max-height: 92.5vh;overflow: auto;"), b.setAttribute("class", "niceScroll"), a.appendChild(b) }
 automationMenuSettingsInit();
@@ -374,7 +400,6 @@ function initializeAllSettings() {
 	createSetting('RMaxTribute', 'Max Tributes', 'Advanced. recommend: -1 ', 'value', '-1', null, 'Buildings');
 	createSetting('rBuildingSpendPct', 'Building Spend pct', 'The percentage of total food you\'d like you spend on Buildings excluding Collectors which will always build at 100%.', 'value', '-1', null, 'Buildings');
 	createSetting('RTributeSpendingPct', 'Tribute Spending pct', 'The percentage of total food you\'d like you spend on Tributes.', 'value', '-1', null, 'Buildings');
-	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Buildings');
 
 	//Jobs
 	//Helium
@@ -458,7 +483,7 @@ function initializeAllSettings() {
 
 	//Radon
 	//General
-	createSetting('RAutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use window, it will not work.', 'multitoggle', 1, null, "Μaps");
+	createSetting('RAutoMaps', ["Auto Maps", "Auto Maps", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use window, it will not work.', 'multitoggle', 1, null, "Μaps");
 	createSetting('Rautomapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', true, null, 'Μaps');
 	createSetting('Rmapselection', 'Biome', 'Select which biome you\'d prefer to use. Recommend Farmlands if you have unlocked it else Plentiful (Gardens).', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Plentiful", "Farmlands"], 'Μaps');
 	createSetting('rMapSpecial', 'Map Special', 'Select which Special to use. May bug out if you cannot afford selected. <br>0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'Μaps');
@@ -473,8 +498,8 @@ function initializeAllSettings() {
 	createSetting('RVoidMaps', 'Void Maps', '<b>0 to disable</b> The zone at which you want all your void maps to be cleared inclusive of the zone you type. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will cause \'New Voids Mod\' to start applying after the last input. <br><br>Runs them at Cell 70 by default.', 'multiValue', '0', null, 'Μaps');
 	createSetting('Rvoidscell', 'Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Μaps');
 	createSetting('RRunNewVoidsUntilNew', 'New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197) If you have 2 void map zones it\'ll use this setting after the last one has been cleared.<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Μaps');
-	createSetting('rMapRepeatCount', 'Map Count Output', 'When you finish doing farming for any types of special farming this setting will display a message stating the amount of maps it took to complete.', 'boolean', false, null, 'Μaps');
-	document.getElementById('rMapRepeatCount').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value.', 'value', '-1', null, 'Μaps');
+	document.getElementById('Rmeltsmithy').parentNode.insertAdjacentHTML('afterend', '<br>');
 	//Prismatic Palace
 	createSetting('Rprispalace', 'Prismatic Palace', 'Run Prismatic Palace when its unlocked. ', 'boolean', true, null, 'Μaps');
 	//Atlantrimp
@@ -482,7 +507,7 @@ function initializeAllSettings() {
 	//Melting Point
 	createSetting('RMeltingPoint', 'Melting Point', '-1 to disable. When to run Melting Point. Use it like this: 50,91. The first number is what zone Melting Point should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Melting Point at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
 	//Frozen Castle
-	createSetting('rFrozenCastle', 'Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
+	createSetting('rFrozenCastle', 'Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');#
 
 	//Time Farming
 	document.getElementById('rFrozenCastle').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -921,6 +946,7 @@ function initializeAllSettings() {
 	createSetting('Rshowhehr', 'Enable He/hr status', 'Enables the display of your helium per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('Rshowautomapstatus', 'Enable AutoMap Status', 'Enables the display of the map status. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('Rshowrnhr', 'Enable Rn/hr status', 'Enables the display of your radon per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
+	createSetting('rMapRepeatCount', 'Map Count Output', 'When you finish doing farming for any types of special farming this setting will display a message stating the amount of maps it took to complete.', 'boolean', false, null, 'Display');
 
 
 	createSetting('EnableAFK', 'Go AFK Mode', '(Action Button). Go AFK uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU and RAM saving mode. Everything will resume when you come back and press the Back button. Console debug output is also disabled. The blue color means this is not a settable setting, just a button. You can now also click the Zone # (World Info) area to go AFK now.', 'action', 'MODULES["performance"].EnableAFKMode()', null, 'Display');
@@ -987,6 +1013,7 @@ function initializeAllSettings() {
 }
 
 initializeAllSettings();
+automationMenuInit();
 
 function convertSettings(oldSetting, newSetting, type, newName) {
 
@@ -1293,6 +1320,10 @@ function settingChanged(id) {
 			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
 			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
 		}
+		/* if (btn = autoTrimpSettings.RAutoMaps) {
+			document.getElementById('autoMapsLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
+			document.getElementById('autoMapsLabel').parentNode.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
+		} */
 	}
 	if (btn.type == 'dropdown') {
 		btn.selected = document.getElementById(id).value;
@@ -1537,6 +1568,15 @@ function updateCustomButtons() {
 	var legacysettings = getPageSetting('radonsettings') == 2;
 
 	//Tabs
+	if (document.getElementById("tabBuildings") != null) {
+		document.getElementById("tabBuildings").style.display = radonon ? "none" : "";
+	}
+	if (document.getElementById("tabJobs") != null) {
+		document.getElementById("tabJobs").style.display = radonon ? "none" : "";
+	}
+	if (document.getElementById("tabRaiding") != null) {
+		document.getElementById("tabRaiding").style.display = radonon ? "none" : "";
+	}
 	if (document.getElementById("tabMaps") != null) {
 		document.getElementById("tabMaps").style.display = radonon ? "none" : "";
 	}
@@ -2557,7 +2597,65 @@ autoEquipSettings.appendChild(autoEquipSettingsButton);
 autoEquipColumn.replaceChild(autoEquipContainer, document.getElementById('equipmentTitleDiv').children[0].children[2]);
 
 
+/* //AutoMaps Button
+//Creating button
+var autoMapsContainer = document.createElement("DIV");
+autoMapsContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
+autoMapsContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (autoTrimpSettings.AutoMaps.value == 2 ? 3 : autoTrimpSettings.AutoMaps.value));
+autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoEquip\", \"customText\", event, \"Toggle between the AutoEquip settings.\")');
+autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
+//Text
+var autoMapsText = document.createElement("DIV");
+autoMapsText.innerHTML = 'AutoMaps';
+autoMapsText.setAttribute("id", "autoMapsLabel");
+autoMapsText.setAttribute("onClick", "settingChanged('AutoMaps')");
+
+//Creating cogwheel & linking onclick
+var autoMapsSettings = document.createElement("DIV");
+//autoEquipSettings.setAttribute('onclick', 'MAZLookalike("AT AutoJobs", "a", "AutoEquip")');
+var autoMapsSettingsButton = document.createElement("SPAN");
+autoMapsSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+
+//Setting up positioning
+var autoMapsColumn = document.getElementById("battleBtnsColumn").children[document.getElementById("battleBtnsColumn").children.length - 1];
+autoMapsContainer.appendChild(autoMapsText);
+autoMapsContainer.appendChild(autoMapsSettings);
+autoMapsSettings.appendChild(autoMapsSettingsButton);
+autoMapsColumn.appendChild(autoMapsContainer); */
+//autoMapsColumn.replaceChild(autoMapsContainer, document.getElementById('battleBtnsColumn').children[0].children[2]);
+
+
+/* newContainer.setAttribute("id", "autoMapBtn");
+newContainer.setAttribute("class", "noselect settingsBtn");
+newContainer.setAttribute("onClick", "toggleAutoMaps()"); */
+
+
+/* //Adding cogwheel to AutoMaps button.
+//Creating cogwheel & linking onclick
+var autoMapsContainer = document.getElementById("autoMapBtn");
+var autoMapsSettings = document.createElement("DIV");
+//autoEquipSettings.setAttribute('onclick', 'MAZLookalike("AT AutoJobs", "a", "AutoEquip")');
+var autoMapsSettingsButton = document.createElement("SPAN");
+autoMapsSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+//Setting up positioning
+autoMapsContainer.appendChild(autoMapsSettings);
+autoMapsSettings.appendChild(autoMapsSettingsButton); */
+
+/* 	//AutoMaps
+	var newContainer = document.createElement("DIV");
+	newContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
+	newContainer.setAttribute("id", "autoMapBtn");
+	newContainer.setAttribute("class", "noselect settingsBtn");
+	newContainer.setAttribute("onClick", "toggleAutoMaps()");
+	newContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Automapping\", \"customText\", event, \"Toggle automapping on and off.\")');
+	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
+	var abutton = document.createElement("SPAN");
+	abutton.appendChild(document.createTextNode("Auto Maps"));
+	abutton.setAttribute("id", "autoMapLabel");
+	var fightButtonCol = document.getElementById("battleBtnsColumn");
+	newContainer.appendChild(abutton);
+	fightButtonCol.appendChild(newContainer); */
 
 function getDailyHeHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalHeliumEarned - (game.global.heliumLeftover + game.resources.helium.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily He/Hr: " + b.toFixed(3) + "%" } return a }
 function getDailyRnHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalRadonEarned - (game.global.radonLeftover + game.resources.radon.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily Rn/Hr: " + b.toFixed(3) + "%" } return a }
