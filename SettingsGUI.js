@@ -1033,7 +1033,7 @@ function convertSettings(oldSetting, newSetting, type, newName) {
 		autoTrimpSettings[oldSetting].value = 'undefined';
 
 }
-
+/* 
 //Adding onto settings
 if (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount) === 'undefined')
 	autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount = 3;
@@ -1043,7 +1043,7 @@ if (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount)
 
 
 
-
+ */
 
 
 
