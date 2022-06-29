@@ -315,8 +315,10 @@ function mostEfficientHousing() {
 		if (runningC3) buildingspending = 1;
 		const dontbuy = [];
 		if (!autoTrimpSettings.rBuildingSettingsArray.value[housing].enabled) dontbuy.push(housing);
+		if (game.global.challengeActive === 'Quest' && housing === 'Collector') dontbuy.push(housing);
 		if (game.global.challengeActive == 'Hypothermia' && (housing !== 'Collector' || housing !== 'Gateway') && game.challenges.Hypothermia.bonfires > 0 && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
 		if (rTributeFarming && typeof (rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings && housing !== 'Collector') dontbuy.push(housing);
+		if (dontbuy.includes(housing)) continue;
 		for (var resource in game.buildings[housing].cost) {
 			// Get production time for that resource
 			var baseCost = game.buildings[housing].cost[resource][0];
@@ -472,7 +474,7 @@ function rBuyTributes() {
 		);
 	}
 	//Won't buy Tributes if they're locked or if a meteorologist can be purchased as that should always be the more efficient purchase
-	if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(affordableMets > 0 && !game.jobs.Meteorologist.locked))) {
+	if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(affordableMets > 0 && !game.jobs.Meteorologist.locked && !rShouldTributeFarm))) {
 		if (rShouldMetFarm && !rShouldTributeFarm) return;
 		//Spend 100% of food on Tributes if Tribute Farming otherwise uses the value in RTributeSpendingPct.
 		var rTributeSpendPct = typeof (rTrFTributes) !== 'undefined' && rTrFTributes > 0 ? 1 : autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent > 0 ? autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent / 100 : 1;
