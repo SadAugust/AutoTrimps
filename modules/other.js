@@ -2096,6 +2096,7 @@ function remainingHealth() {
 
 	return (remainingHealth)
 }
+
 function rManageEquality() {
 
 	//Looking to see if the enemy that's currently being fought is fast.

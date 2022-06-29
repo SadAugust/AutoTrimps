@@ -900,6 +900,7 @@ function RautoMap() {
 	Rquestfarming = (game.global.world > 5 && game.global.challengeActive == "Quest" && questcheck() > 0 && game.challenges.Quest.getQuestProgress != 'Quest Complete!');
 
 	if (Rquestfarming) {
+		var time = ((new Date().getTime() - game.global.zoneStarted) / 1000 / 60)
 		//Setting fallback to 0 might cause a repeat issue later on, need to test and debug
 		rShouldQuest = questcheck() == 1 ? 1 :
 			questcheck() == 2 ? 2 :
@@ -907,7 +908,8 @@ function RautoMap() {
 					questcheck() == 4 ? 4 :
 						questcheck() == 5 ? 5 :
 							questcheck() == 6 ? 6 :
-								questcheck() == 7 && (RcalcHDratio() > 0.95 && (((new Date().getTime() - game.global.zoneStarted) / 1000 / 60) < 121) || !(RcalcOurDmg("min", true, false) > RcalcEnemyBaseHealth("world", game.global.world, 99, 'Turtlimp') * game.challenges.Quest.getHealthMult())) ? 7 :
+								questcheck() == 7 && (RcalcOurDmg('min', 0, false, true) < game.global.gridArray[50].maxHealth) && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))) ? 7 :
+									//(RcalcHDratio() > 0.95 && (((new Date().getTime() - game.global.zoneStarted) / 1000 / 60) < 121) || !(RcalcOurDmg("min", true, false) > RcalcEnemyBaseHealth("world", game.global.world, 99, 'Turtlimp') * game.challenges.Quest.getHealthMult())) ? 7 :
 									questcheck() == 8 ? 8 :
 										questcheck() == 9 ? 9 :
 											questcheck() == 10 && !canAffordBuilding('Smithy') ? 10 :
