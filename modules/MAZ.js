@@ -59,7 +59,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 	}
 
 	if (event == "AutoStructure") {
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, the 'Perc:' box specifies the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the 'Perc:' box to 10 and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses.</p><p><b>Safe Gateway cap:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a Perfect +10 LMC map would cost.</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, the 'Perc:' box specifies the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the 'Perc:' box to 10 and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses.</p><p><b>Safe Gateway:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a Perfect +10 LMC map would cost up to the zone specified in 'Up to:', if that values is 0 it'll assume you want them capped forever.</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
 		var setting, checkbox;
@@ -87,8 +87,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "</div></td>";
 			count++;
 		}
-		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 67%; style='padding-right: 5px'>" + buildNiceCheckbox('structConfigSafeGateway', 'autoCheckbox', (typeof (settingGroup.SafeGateway) === 'undefined' ? false : settingGroup.SafeGateway.enabled)) + "&nbsp;&nbsp;<span>" + "Safe Gateway cap" + "</span></div>";
-		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Maps: <input class='structConfigQuantity' id='structMapCountSafeGateway" + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.mapCount) ? settingGroup.SafeGateway.mapCount : 0) + "'/></div>";
+		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style='padding-right: 5px'>" + buildNiceCheckbox('structConfigSafeGateway', 'autoCheckbox', (typeof (settingGroup.SafeGateway) === 'undefined' ? false : settingGroup.SafeGateway.enabled)) + "&nbsp;&nbsp;<span>" + "Safe Gateway" + "</span></div>";
+		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Maps: <input class='structConfigQuantity' id='structMapCountSafeGateway" + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.mapCount) ? settingGroup.SafeGateway.mapCount : 0) + "'/></div>";
+		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Up to: <input class='structConfigPercent' id='structMax" + item + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.zone) ? settingGroup.SafeGateway.zone : 0) + "'/></div>";
 		tooltipText += "</div></td>";
 		tooltipText += "</tr><tr>";
 
@@ -100,6 +101,124 @@ function MAZLookalike(titleText, varPrefix, event) {
 			verticalCenterTooltip(false, true);
 		};
 	}
+
+
+
+
+
+
+	/* if (event == "AutoMaps") {
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, the 'Perc:' box specifies the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the 'Perc:' box to 10 and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses.</p><p><b>Safe Gateway cap:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a Perfect +10 LMC map would cost.</p></div>";
+
+		var count = 0;
+		var setting, checkbox;
+		var settingGroup = autoTrimpSettings.rBuildingSettingsArray.value;
+		setting = settingGroup.House;
+		checkbox = buildNiceCheckbox('structConfig' + 'House', 'autoCheckbox', (setting && setting.enabled));
+
+
+		//Void Maps Line
+		tooltipText += "<table id='autoStructureConfigTable' style='font-size: 1.1vw; width: 100%'><tbody>";
+		//Biome
+		tooltipText += "<td><td style='width: 25%'><div class='row'>"
+		tooltipText += "<div class='col-xs-3'>Biome:</span></div>"
+		tooltipText += "<div class='col-xs-9  style='text-align: right; padding-left: 5px; '><select style='width: 80%' id='autoJobSelfGather'><option value='0'>Random</option>";
+		var values = ['Mountain', 'Forest', 'Sea', 'Depths', 'Plentiful', 'Farmlands'];
+		for (var x = 0; x < values.length; x++) {
+			tooltipText += "<option" + ((getAutoJobsSetting().portalGather && getAutoJobsSetting().portalGather == values[x].toLowerCase()) ? " selected='selected'" : "") + " value='" + values[x].toLowerCase() + "'>" + values[x] + "</option>";
+		}
+		tooltipText += "</select></div></td>"
+
+		//MapSpecial
+		tooltipText += "<td><td style='width: 25%; padding-left: -15px;'><div class='row'>"
+		tooltipText += "<div class='col-xs-3' style='padding-right: 5px; padding-left: -15px;'>Special:</span></div>"
+		tooltipText += "<div class='col-xs-9  style='padding-right: 5px; padding-left: -15px;; text-align: right'><select style='width: 80%' id='autoJobSelfGather'><option value='0'>None</option>";
+		var values = ['fa', 'lc', 'ssc', 'swc', 'smc', 'src', 'p', 'hc', 'lsc', 'lwc', 'lmc', 'lrc'];
+		for (var x = 0; x < values.length; x++) {
+			tooltipText += "<option" + ((getAutoJobsSetting().portalGather && getAutoJobsSetting().portalGather == values[x].toLowerCase()) ? " selected='selected'" : "") + " value='" + values[x].toLowerCase() + "'>" + values[x] + "</option>";
+		}
+		tooltipText += "</select></div></td>"
+
+		//Map Bonus
+		tooltipText += "<td><div class='row'>"
+		//Checkbox & name
+		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-left: 15px;; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + 'Map Stacks' + "</span></div>"
+		//Percent options
+		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Zone: <input class='structConfigPercent' id='structPercent" + 'House' + "' type='number'  value='" + ((setting && setting.percent) ? setting.percent : 100) + "'/></div>";
+		//Max options
+		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Limit: <input class='structConfigQuantity' id='structMax" + 'House' + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div>";
+		//Finish
+		tooltipText += "</div></td>";
+
+
+		tooltipText += "</tr><tr></tbody></ta
+
+
+		tooltipText += "<table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+		tooltipText += "<td><div class='row'>"
+		//Checkbox & name
+		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + 'Frozen Castle' + "</span></div>"
+		//Percent options
+		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Zone: <input class='structConfigPercent' id='structPercent" + 'House' + "' type='number'  value='" + ((setting && setting.percent) ? setting.percent : 100) + "'/></div>";
+		//Max options
+		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Cell: <input class='structConfigQuantity' id='structMax" + 'House' + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div>";
+		//Finish
+		tooltipText += "</div></td>";
+		tooltipText += "<td><div class='row'>"
+		//Checkbox & name
+		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + 'Frozen Castle' + "</span></div>"
+		//Percent options
+		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Zone: <input class='structConfigPercent' id='structPercent" + 'House' + "' type='number'  value='" + ((setting && setting.percent) ? setting.percent : 100) + "'/></div>";
+		//Max options
+		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Cell: <input class='structConfigQuantity' id='structMax" + 'House' + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div>";
+		//Finish
+		tooltipText += "</div></td>";
+		tooltipText += "</tr><tr>";
+
+
+
+		tooltipText += "</tr><tr></tbody></table>";
+		tooltipText += "<table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+		//Atlantrimp
+		tooltipText += "<td><div class='row'>"
+		//Checkbox & name
+		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + 'Atlantrimp' + "</span></div>"
+		//Percent options
+		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Zone: <input class='structConfigPercent' id='structPercent" + 'House' + "' type='number'  value='" + ((setting && setting.percent) ? setting.percent : 100) + "'/></div>";
+		//Max options
+		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Cell: <input class='structConfigQuantity' id='structMax" + 'House' + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div>";
+		//Finish
+		tooltipText += "</div></td>";
+
+
+		//Melting Point
+		tooltipText += "<td><div class='row'>"
+		//Checkbox & name
+		tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + 'Melting Point' + "</span></div>"
+		//Percent options
+		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Zone: <input class='structConfigPercent' id='structPercent" + 'House' + "' type='number'  value='" + ((setting && setting.percent) ? setting.percent : 100) + "'/></div>";
+		//Max options
+		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Cell: <input class='structConfigQuantity' id='structMax" + 'House' + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div>";
+		//Finish
+		tooltipText += "</div></td>";
+
+		tooltipText += "</tr><tr>";
+
+		tooltipText += "</tr></tbody></table>";
+		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='saveATAutoStructureConfig()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+		game.global.lockTooltip = true;
+		ondisplay = function () {
+			//swapClass('tooltipExtra', 'tooltipExtraGigantic', elem);
+			verticalCenterTooltip(false, true);
+		};
+	} */
+
+
+
+
+
+
+
 
 
 	if (event == 'MAZ') {
@@ -570,6 +689,11 @@ function saveATAutoStructureConfig() {
 			if (count > 10000) count = 10000;
 			count = (isNumberBad(count)) ? 3 : count;
 			setting[name].mapCount = count;
+
+			var zone = parseInt(percentboxes[x].value, 10);
+			if (zone > 999) zone = 999;
+			zone = (isNumberBad(zone)) ? 3 : zone;
+			setting[name].zone = zone;
 
 			continue;
 		}

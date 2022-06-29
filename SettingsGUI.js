@@ -388,7 +388,7 @@ function initializeAllSettings() {
 	createSetting('NoNurseriesUntil', 'No Nurseries Until z', 'Builds Nurseries starting from this zone. -1 to build from when they are unlocked. ', 'value', '-1', null, 'Buildings');
 
 	//Radon
-	createSetting('rBuildingSettingsArray', 'Building Settings', 'Click to adjust settings. ', 'mazDefaultArray', { Collector: { enabled: true, percent: 100, buyMax: 0 }, Gateway: { enabled: true, percent: 100, buyMax: 0 }, Hotel: { enabled: true, percent: 100, buyMax: 0 }, House: { enabled: true, percent: 100, buyMax: 0 }, Hut: { enabled: true, percent: 100, buyMax: 0 }, Mansion: { enabled: true, percent: 100, buyMax: 0 }, Resort: { enabled: true, percent: 100, buyMax: 0 }, Smithy: { enabled: true, percent: 100, buyMax: 0 }, Tribute: { enabled: true, percent: 100, buyMax: 0 }, SafeGateway: { enabled: true, mapCount: 3 } }, null, 'Jobs');
+	createSetting('rBuildingSettingsArray', 'Building Settings', 'Click to adjust settings. ', 'mazDefaultArray', { Collector: { enabled: true, percent: 100, buyMax: 0 }, Gateway: { enabled: true, percent: 100, buyMax: 0 }, Hotel: { enabled: true, percent: 100, buyMax: 0 }, House: { enabled: true, percent: 100, buyMax: 0 }, Hut: { enabled: true, percent: 100, buyMax: 0 }, Mansion: { enabled: true, percent: 100, buyMax: 0 }, Resort: { enabled: true, percent: 100, buyMax: 0 }, Smithy: { enabled: true, percent: 100, buyMax: 0 }, Tribute: { enabled: true, percent: 100, buyMax: 0 }, SafeGateway: { enabled: true, mapCount: 3, zone: 0 } }, null, 'Jobs');
 	createSetting('RBuyBuildingsNew', 'AutoBuildings', 'Buys buildings in an efficient way. Also enables Vanilla AutoStorage if its off. ', 'boolean', 'true', null, 'Buildings');
 	createSetting('RMaxHut', 'Max Huts', 'Huts', 'value', '100', null, 'Buildings');
 	createSetting('RMaxHouse', 'Max Houses', 'Houses', 'value', '100', null, 'Buildings');
@@ -1037,15 +1037,11 @@ function convertSettings(oldSetting, newSetting, type, newName) {
 //Adding onto settings
 if (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount) === 'undefined')
 	autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount = 3;
-
-
-
-
-
-
  */
 
 
+if (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone) === 'undefined')
+	autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone = 0;
 
 
 function createSetting(id, name, description, type, defaultValue, list, container) {
