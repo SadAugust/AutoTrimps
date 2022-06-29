@@ -419,7 +419,7 @@ function RquestbuyJobs() {
 			lumberjackRatio = 10;
 			minerRatio = 10;
 		}
-		if (questcheck() == 1) farmerRatio = 10;
+		if (questcheck() == 1 || questcheck() == 4) farmerRatio = 10;
 		if (questcheck() == 2) lumberjackRatio = 10;
 		if (questcheck() == 3 || questcheck() == 7) minerRatio = 10;
 		if (questcheck() == 5) scientistNumber = (totalDistributableWorkers * 0.5);

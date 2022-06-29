@@ -318,7 +318,6 @@ function mostEfficientHousing() {
 		if (game.global.challengeActive === 'Quest' && housing === 'Collector') dontbuy.push(housing);
 		if (game.global.challengeActive == 'Hypothermia' && (housing !== 'Collector' || housing !== 'Gateway') && game.challenges.Hypothermia.bonfires > 0 && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
 		if (rTributeFarming && typeof (rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings && housing !== 'Collector') dontbuy.push(housing);
-		if (dontbuy.includes(housing)) continue;
 		for (var resource in game.buildings[housing].cost) {
 			// Get production time for that resource
 			var baseCost = game.buildings[housing].cost[resource][0];
@@ -480,7 +479,7 @@ function rBuyTributes() {
 		var rTributeSpendPct = typeof (rTrFTributes) !== 'undefined' && rTrFTributes > 0 ? 1 : autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent > 0 ? autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent / 100 : 1;
 		var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned * rTributeSpendPct), 1.05, true);
 		maxTributes = autoTrimpSettings.rBuildingSettingsArray.value.Tribute.buyMax === 0 ? Infinity : typeof (rTrFTributes) !== 'undefined' && rTrFTributes > autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax ? rTrFTributes : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax;
-		if (rShouldSmithyGemFarm) {
+		if (rShouldSmithyGemFarm || rShouldQuest === 4) {
 			maxTributes = Infinity;
 			rTributeSpendPct = 1;
 		}
