@@ -690,6 +690,8 @@ function initializeAllSettings() {
 	//Storm
 	document.getElementById('Rmayhemmap').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rstormon', 'Storm', 'Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ', 'boolean', false, null, 'C3');
+	createSetting('rStormZone', 'S: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C3');
+	createSetting('rStormStacks', 'S: Stacks', 'The amount of stack you have to reach before clearing all of them.', 'value', -1, null, 'C3');
 	createSetting('Rstormzone', 'S: Zone', 'What zone to start S: H:D and S: Multiplier. ', 'value', '-1', null, 'C3');
 	createSetting('RstormHD', 'S: H:D', 'What H:D to use inside Storm. ', 'value', '-1', null, 'C3');
 	createSetting('Rstormmult', 'S: Multiplier', 'Starting from the zone above S: Zone, this setting will multiply the H:D you have set in S: H:D. So if S: Zone was 100, S: H:D was 10, S: Multiplier was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low H:D. ', 'value', '-1', null, 'C3');
@@ -2169,8 +2171,11 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Rmayhemon') && getPageSetting('Rmayhemhealth') ? turnOn('Rmayhemhcut') : turnOff('Rmayhemhcut');
 	radonon && getPageSetting('Rmayhemon') && (getPageSetting('Rmayhemattack') || getPageSetting('Rmayhemhealth')) ? turnOn('Rmayhemmap') : turnOff('Rmayhemmap');
 
+
 	//Storm
 	radonon ? turnOn('Rstormon') : turnOff('Rstormon');
+	radonon && getPageSetting('Rstormon') ? turnOn('rStormZone') : turnOff('rStormZone');
+	radonon && getPageSetting('Rstormon') ? turnOn('rStormStacks') : turnOff('rStormStacks');
 	radonon && getPageSetting('Rstormon') ? turnOn('Rstormzone') : turnOff('Rstormzone');
 	radonon && getPageSetting('Rstormon') ? turnOn('RstormHD') : turnOff('RstormHD');
 	radonon && getPageSetting('Rstormon') ? turnOn('Rstormmult') : turnOff('Rstormmult');
