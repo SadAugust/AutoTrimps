@@ -312,7 +312,7 @@ function mostEfficientHousing() {
 		var worstTime = -Infinity;
 		var currentOwned = game.buildings[housing].owned;
 		var buildingspending = autoTrimpSettings.rBuildingSettingsArray.value[housing].percent / 100
-		if (runningC3) buildingspending = 1;
+		if (runningC3 || (!game.global.autoStorage && game.global.challengeActive === 'Hypothermia' && (housing !== 'Collector' && housing !== 'Gateway'))) buildingspending = 1;
 		const dontbuy = [];
 		if (!autoTrimpSettings.rBuildingSettingsArray.value[housing].enabled) dontbuy.push(housing);
 		if (game.global.challengeActive === 'Quest' && housing === 'Collector') dontbuy.push(housing);
@@ -442,6 +442,7 @@ function RbuyBuildings() {
 
 		var housingAmt = autoTrimpSettings.rBuildingSettingsArray.value[housing].buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value[housing].buyMax;
 		var buildingspending = autoTrimpSettings.rBuildingSettingsArray.value[housing].percent / 100
+		if (runningC3 || (!game.global.autoStorage && game.global.challengeActive === 'Hypothermia' && (housing !== 'Collector' && housing !== 'Gateway'))) buildingspending = 1;
 		var maxCanAfford = housing !== null ? calculateMaxAffordLocal(game.buildings[housing], true, false, false, housingAmt, buildingspending) : false;
 		if (((housing != null && canAffordBuilding(housing)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt) || runningC3))) {
 			if (runningC3)
