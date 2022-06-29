@@ -5,7 +5,7 @@ var allSaveData = [],
 null !== tmpGraphData && (console.log("Graphs: Found allSaveData (portal runs data). Yay!"), (allSaveData = tmpGraphData)), (MODULES.graphs = {}), (MODULES.graphs.useDarkAlways = !1);
 var head = document.getElementsByTagName("head")[0],
 	chartscript = document.createElement("script");
-(chartscript.type = "text/javascript"), (chartscript.src = "https://SadAugust.github.io/AutoTrimps_Local/highcharts.js"), head.appendChild(chartscript);
+(chartscript.type = "text/javascript"), (chartscript.src = "https://localhost:8887/AutoTrimps_Local/highcharts.js"), head.appendChild(chartscript);
 var newItem = document.createElement("TD");
 newItem.appendChild(document.createTextNode("Graphs")), newItem.setAttribute("class", "btn btn-default"), newItem.setAttribute("onclick", "autoToggleGraph(); drawGraph(undefined, undefined, true);");
 var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
@@ -272,7 +272,7 @@ function pushData() {
 		totalPortals: getTotalPortals(true),
 		currentTime: new Date().getTime(),
 		portalTime: game.global.portalTime,
-		world: game.global.world,
+		world: game.global.world - 1,
 		challenge: game.global.challengeActive,
 		voids: game.global.totalVoidMaps,
 		heirlooms: { value: game.stats.totalHeirlooms.value, valueTotal: game.stats.totalHeirlooms.valueTotal },
@@ -368,9 +368,9 @@ function gatherInfo() {
 			},
 		};
 	}
-	GraphsVars.aWholeNewWorld = GraphsVars.currentworld != game.global.world;
+	GraphsVars.aWholeNewWorld = GraphsVars.currentworld != game.global.world - 1;
 	if (GraphsVars.aWholeNewWorld) {
-		GraphsVars.currentworld = game.global.world;
+		GraphsVars.currentworld = game.global.world - 1;
 		if (allSaveData.length > 0 && allSaveData[allSaveData.length - 1].world != game.global.world) {
 			pushData();
 		}
