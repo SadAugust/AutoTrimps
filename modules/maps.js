@@ -1245,7 +1245,7 @@ function RautoMap() {
 
 				//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
 				if (!rShouldTributeFarm && !rShouldMetFarm && !rShouldSmithyFarm && rSFCurrentMap != undefined) {
-					if (getPageSetting('rMapRepeatCount')) debug("Smithy Farm took " + (game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0)) + (game.global.mapRunCounter == 0 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+					if (getPageSetting('rMapRepeatCount')) debug("Smithy Farm took " + (game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0)) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 					if (game.global.mapsActive) {
 						mapsClicked();
 						recycleMap();
