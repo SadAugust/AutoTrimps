@@ -1258,7 +1258,7 @@ function RautoMap() {
 		}
 	}
 
-	//Unbalance Destacking
+	//Unbalance & Storm Destacking
 	if ((getPageSetting('rUnbalance') && game.global.challengeActive == "Unbalance") || (getPageSetting('Rstormon') && game.global.challengeActive == "Storm")) {
 		//Setting up variables
 		var rUnbalanceZone = getPageSetting('rUnbalanceZone') > 0 ? getPageSetting('rUnbalanceZone') : 999;
@@ -1737,6 +1737,10 @@ function RautoMap() {
 					rHFBonfireCost = 1e10 * Math.pow(100, x);
 					rHFBonfireCostTotal += rHFBonfireCost;
 				}
+				if (totalTrFCost > (game.resources.food.max * (1 + (game.portal.Packrat.modifier * game.portal.Packrat.radLevel))))
+					barnCost += game.buildings.Barn.cost.food()
+				totalTrFCost += barnCost;
+
 
 				if (rHFBonfireCostTotal > game.resources.wood.owned && rHFBonfire > game.challenges.Hypothermia.totalBonfires) {
 					rShouldHypoFarm = true;
