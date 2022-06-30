@@ -1728,10 +1728,10 @@ function RautoMap() {
 			if (game.global.lastClearedCell + 2 >= rHFCell) {
 				rHFBonfire = rHypoSettings.bonfire;
 				rHFSpecial = "lwc";
-
 				rHFSaveWood = false;
 				rHFBonfiresBuilt = game.challenges.Hypothermia.totalBonfires;
 				rHFCurrentCost = 1e8 * (Math.pow(100, game.challenges.Hypothermia.totalBonfires));
+				var shedCost = 0;
 				//Looping through each bonfire level and working out their cost to calc total cost
 				for (x = rHFBonfiresBuilt; x < rHFBonfire; x++) {
 					rHFBonfireCost = 1e10 * Math.pow(100, x);
