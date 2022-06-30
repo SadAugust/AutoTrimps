@@ -189,7 +189,7 @@ function ImportExportTooltip(what, event, download) {
 		}
 		costText += "<a id='downloadLink' target='_blank' download='" + saveName + ".txt', href=";
 		costText += 'data:text/plain,' + encodeURIComponent(serializeSettings());
-		costText += "<div id='downloadBtn' class='btn btn-danger'>Download as File</div>";
+		costText += " ><div class='btn btn-danger' id='downloadBtn'>Download as File</div></a>";
 		costText += "</div>";
 
 	} else if (what == "ImportAutoTrimps") {
