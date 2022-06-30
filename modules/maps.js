@@ -2071,6 +2071,17 @@ function RautoMap() {
 
 	//Setting up map repeat
 	if (!game.global.preMapsActive && game.global.mapsActive) {
+
+
+		if (runningPrestigeMaps && game.global.challengeActive !== 'Trappapalooza' && game.global.challengeActive !== 'Berserk' && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && Rgetequips(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > PerfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
+			var maplevel = getCurrentMapObject().level
+			mapsClicked();
+			recycleMap();
+			PerfectMapCost(maplevel - game.global.world, "lmc");
+			buyMap();
+			rRunMap();
+			debug("Running LMC map due to only having 1 equip remaining on this map.")
+		}
 		if ((rShouldPrestigeRaid || (rShouldPrestigeRaid && RAMPfragfarming)) || (rFragmentFarming && (rShouldWorshipperFarm || rShouldInsanityFarm)) ||
 			(selectedMap == game.global.currentMapId || (Rshoulddobogs || (!getCurrentMapObject().noRecycle && (RvanillaMapatZone || RdoMaxMapBonus ||
 				RshouldFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldPrestigeRaid || rShouldWorshipperFarm || rShouldEquipFarm || rShouldMaxMapBonus ||
@@ -2259,7 +2270,6 @@ function RautoMap() {
 					rShouldPrestigeRaid = false;
 					autoTrimpSettings["RAutoMaps"].value = 0;
 				}
-
 				for (var x = RAMPMapsRun; x > -1; x--) {
 					if (RAMPfragcheck && game.global.preMapsActive && !game.global.mapsActive && RAMPmapbought[x] && RAMPpMap[x] != undefined && rShouldPrestigeRaid) {
 						debug("Running map " + [(RAMPMapsRun - x + 1)]);
@@ -2273,6 +2283,7 @@ function RautoMap() {
 					}
 				}
 			}
+
 			if (game.global.preMapsActive && runningPrestigeMaps) runMap()
 		} else if (selectedMap == "create") {
 			var $mapLevelInput = document.getElementById("mapLevelInput");
