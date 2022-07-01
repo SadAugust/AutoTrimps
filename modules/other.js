@@ -1534,6 +1534,8 @@ function Rarmormagic() {
 }
 
 function questcheck() {
+	if (game.global.challengeActive !== 'Quest')
+		return 0;
 	if (game.global.world < game.challenges.Quest.getQuestStartZone()) {
 		return 0;
 	}
@@ -2631,18 +2633,18 @@ function PerkRespec(preset) {
 
 function AbandonChallengeRuns(zone) {
 	//Abandons challenge runs when a certain zone has been reached.
-	var zone = !zone ? getPageSetting('c3finishrun') :
+	var zone = !zone ? (getPageSetting('c3finishrun') === -1 ? Infinity : getPageSetting('c3finishrun')) :
 		zone;
 	var hasPaused = false;
 
-	if (zone == null) return
+	if (zone === null) return
 	if (game.global.world == zone && game.global.runningChallengeSquared && !hasPaused) {
 		toggleSetting('pauseGame');
 		hasPaused = true;
 	}
 	if (game.options.menu.pauseGame.enabled && game.global.world == zone && hasPaused) {
 		tooltip('Export', null, 'update');
-		document.execCommand('copy');
+		document.getElementById("downloadLink").click();
 		cancelTooltip();
 		if (game.global.runningChallengeSquared) {
 			confirmAbandonChallenge();

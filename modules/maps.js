@@ -743,7 +743,8 @@ var RshouldDoMaps = false;
 var RlastMapWeWereIn = null;
 var RdoMaxMapBonus = false;
 var RvanillaMapatZone = false;
-var rShouldMaxMapBonus = false
+var rShouldMaxMapBonus = false;
+var rC3EndZoneSetting = -1;
 //Void Maps
 var RdoVoids = false;
 var RneedToVoid = false;
