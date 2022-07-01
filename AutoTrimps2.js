@@ -243,6 +243,17 @@ function mainLoop() {
 		//Portal - Daily + Regular
 		if (autoTrimpSettings.RAutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) RautoPortal();
 		if (getPageSetting('RAutoPortalDaily') > 0 && game.global.challengeActive == "Daily" && game.global.world >= getPageSetting('RAutoPortalDaily')) RdailyAutoPortal();
+		//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
+		if (game.global.runningChallengeSquared && getPageSetting('c3finishrun') !== -1) {
+			if (getPageSetting('c3finishrun') <= game.global.world) {
+				debug("Pausing, downloading save and abandoning challenge as your run has reached yout specified end point.")
+				AbandonChallengeRuns()
+			}
+			if (getPageSetting('c3finishrun') <= game.c2[game.global.challengeActive] && rC3EndZoneSetting != game.stats.zonesCleared.value) {
+				debug("The zone input in the 'C3 Finish' setting is below or equal to your HZE for this challenge, increase it or it'll end earlier than you\'d probably like it to.");
+				rC3EndZoneSetting = game.stats.zonesCleared.value;
+			}
+		}
 		//Archeology
 		if (getPageSetting('Rarchon') && game.global.challengeActive == "Archaeology") archstring();
 		//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
@@ -252,7 +263,7 @@ function mainLoop() {
 				RquestSmithyWarning = game.stats.zonesCleared.value;
 			}
 			//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
-			if ((getPageSetting('c3finishrun') === -1 ? Infinity : getPageSetting('c3finishrun')) <= game.c2.Quest && RquestSmithyWarning_Setting != game.stats.zonesCleared.value) {
+			if (game.global.runningChallengeSquared && (getPageSetting('c3finishrun') === -1 ? Infinity : getPageSetting('c3finishrun')) <= game.c2.Quest && RquestSmithyWarning_Setting != game.stats.zonesCleared.value) {
 				debug("The setting 'Finish C3' is lower or equal to your current Quest HZE. Increase this or smithies will be bought earlier than they should be.")
 				RquestSmithyWarning_Setting = game.stats.zonesCleared.value;
 			}
