@@ -244,7 +244,6 @@ function initializeAllSettings() {
 	createSetting('Rdmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Daily');
 	createSetting('Rdequipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency. ', 'boolean', false, null, "Daily");
 	createSetting('Rdequipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input. ', 'multiValue', -1, null, "Daily");
-	createSetting('Ravoidempower', 'Avoid Empower', 'Tries to avoid Empower stacks during Empower Dailies. Will farm -1 lmc maps if avoiding empower isn\'t possible. No harm in this being on, so default is On. ', 'boolean', true, null, 'Daily');
 
 	//Helium Spire
 	document.getElementById('dscryvoidmaps').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -268,14 +267,6 @@ function initializeAllSettings() {
 	createSetting('liqstack', 'Stack Liquification', 'Stack Wind zones during Wind Enlight during Liquification. ', 'boolean', false, null, 'Daily');
 	createSetting('dwsmax', 'Daily WS MAX', 'For maximising Windstacking an entire Daily. Withholds damage to try and get your max windstacks every wind zone. Not recommended for terrible Dailies. ', 'value', '-1', null, 'Daily');
 	createSetting('dwsmaxhd', 'Daily WSM H:D', 'Fiddle with this to maximise your DWSM settings. Default is 0.00025. ', 'value', '-1', null, 'Daily');
-
-	//Radon Daily Raiding
-	createSetting('RAMPdraid', 'Praiding', '<b>MASTER BUTTON</b><br>Toggle Prestige Raiding. Use PR: Zone, PR: Raid and PR: Cell to Raid Prestiges in higher Maps.<br> I.e: World is 95, PR: Zone is [95,105], PR: Raid is [105,115], PR: Cell is 1. Will go into map creation at cell 1, create maps 101, 102, 103, 104, 105 with Prestige option. If you can\'t afford P maps, it will try without. If still unable to afford will buy the highest maps first without buying 101 and 102 for example. Raiding will take longer if you can\'t afford it. Once all maps are created it will run the lowest created then move onto the next till all created maps are finished. If you have enabled PR: Recycle it will then recycle those maps. There may be more options in the future depending on content added.', 'boolean', false, null, 'Daily');
-	createSetting('RAMPdraidzone', 'PR: Zone', 'Zones to Prestige Raid. Can use 95,105,115!', 'multiValue', [-1], null, 'Daily');
-	createSetting('RAMPdraidraid', 'PR: Raid', 'What Maps to Raid. Corrosponds to PR: Zone, so first value will corrospond to first value in PR: Zone. Can use 105,115,125!', 'multiValue', [-1], null, 'Daily');
-	createSetting('RAMPdraidcell', 'PR: Cell', 'What Cell to start Prestige Raiding at. -1 to run at the default value, which is 50.', 'value', -1, null, 'Daily');
-	createSetting('RAMPdraidfrag', ['PR: Frag', 'PR: Frag Min', 'PR: Frag Max'], 'Farm for fragments to afford the maps you want to create. PR: Frag Min is used for absolute minimum frag costs (which includes no Prestige special, perfect sliders, random map and the difficulty and size options, however it will try to afford those options first!) and prioritises buying the most maps for a smoother sequential raid. PR: Frag Max is used for the ultimate Raiding experience. This option will probably take the most time to farm but may save you time in the actual raid. I would recommend using Min Mode if you don\'t have frag drop or explorer effic on your heirloom and Max if you are confident in your Fragment gains. ', 'multitoggle', 0, null, 'Daily');
-	createSetting('RAMPdraidrecycle', 'PR: Recycle', 'Recycle maps created in Prestige Raiding. ', 'boolean', false, null, 'Daily');
 
 	//Helium Raiding
 	document.getElementById('dwsmaxhd').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -582,14 +573,6 @@ function initializeAllSettings() {
 	createSetting('bwraidcell', 'BW Raiding Cell', 'What Cell to start BW Raiding at. Recommend above your P Raiding cell if used together. -1 to Raid at cell 1. ', 'value', -1, null, 'Raiding');
 	createSetting('BWraidingz', 'Z to BW Raid', 'Raids BWs at zone specified. Example: 495, will raid all BWs for all gear starting from 495. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Accepts comma separated lists, and raids up to the value in the corrsponding position in the Max BW to raid setting. So if this is set to 480,495 and Max BW to Raid is set to 500,515 AT will BW raid up to 500 from 480, and 515 from 495. Make sure these lists are the same length or BW raiding may fail.', 'multiValue', [-1], null, 'Raiding');
 	createSetting('BWraidingmax', 'Max BW to raid', 'Raids BWs until zone specified. Example: 515, will raid all BWs for all gear until 515. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Now accepts comma separated lists - see description of Z to BW raid setting for details.', 'multiValue', [-1], null, 'Raiding');
-
-	//Radon
-	createSetting('RAMPraid', 'Praiding', '<b>MASTER BUTTON</b><br>Toggle Prestige Raiding. Use PR: Zone, PR: Raid and PR: Cell to Raid Prestiges in higher Maps.<br> I.e: World is 95, PR: Zone is [95,105], PR: Raid is [105,115], PR: Cell is 1. Will go into map creation at cell 1, create maps 101, 102, 103, 104, 105 with Prestige option. If you can\'t afford P maps, it will try without. If still unable to afford will buy the highest maps first without buying 101 and 102 for example. Raiding will take longer if you can\'t afford it. Once all maps are created it will run the lowest created then move onto the next till all created maps are finished. If you have enabled PR: Recycle it will then recycle those maps. There may be more options in the future depending on content added. ', 'boolean', false, null, 'Raiding');
-	createSetting('RAMPraidzone', 'PR: Zone', 'Zones to Prestige Raid. Can use 95,105,115! ', 'multiValue', [-1], null, 'Raiding');
-	createSetting('RAMPraidraid', 'PR: Raid', 'What Maps to Raid. Corrosponds to PR: Zone, so first value will corrospond to first value in PR: Zone. Can use 105,115,125! ', 'multiValue', [-1], null, 'Raiding');
-	createSetting('RAMPraidcell', 'PR: Cell', 'What Cell to start Prestige Raiding at. -1 to run at the default value, which is 50.', 'value', -1, null, 'Raiding');
-	createSetting('RAMPraidfrag', ['PR: Frag', 'PR: Frag Min', 'PR: Frag Max'], 'Farm for fragments to afford the maps you want to create. PR: Frag Min is used for absolute minimum frag costs (which includes no Prestige special, perfect sliders, random map and the difficulty and size options, however it will try to afford those options first!) and prioritises buying the most maps for a smoother sequential raid. PR: Frag Max is used for the ultimate Raiding experience. This option will probably take the most time to farm but may save you time in the actual raid. I would recommend using Min Mode if you don\'t have frag drop or explorer effic on your heirloom and Max if you are confident in your Fragment gains. ', 'multitoggle', 0, null, 'Raiding');
-	createSetting('RAMPraidrecycle', 'PR: Recycle', 'Recycle maps created in Prestige Raiding. ', 'boolean', false, null, 'Raiding');
 
 	//Windstacking
 	createSetting('turnwson', 'Turn WS On!', 'Turn on Windstacking Stance in Combat to see the settings! ', 'boolean', false, null, 'Windstacking');
@@ -1763,14 +1746,6 @@ function updateCustomButtons() {
 	//Radon Daily Gear & Raid
 	radonon ? turnOn('Rdequipon') : turnOff('Rdequipon');
 	radonon && getPageSetting('Rdequipon') ? turnOn('Rdequipzone') : turnOff('Rdequipzone');
-	//radonon ? turnOn('Ravoidempower'): turnOff('Ravoidempower');
-	turnOff('Ravoidempower');
-	radonon ? turnOn('RAMPdraid') : turnOff('RAMPdraid');
-	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidzone') : turnOff('RAMPdraidzone');
-	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidraid') : turnOff('RAMPdraidraid');
-	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidcell') : turnOff('RAMPdraidcell');
-	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidfrag') : turnOff('RAMPdraidfrag');
-	radonon && getPageSetting('RAMPdraid') ? turnOn('RAMPdraidrecycle') : turnOff('RAMPdraidrecycle');
 
 	//RDPortal
 	radonon ? turnOn('RAutoStartDaily') : turnOff('RAutoStartDaily');
@@ -2072,14 +2047,6 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('BWraid') ? turnOn('bwraidcell') : turnOff('bwraidcell');
 	!radonon && getPageSetting('BWraid') ? turnOn('BWraidingz') : turnOff('BWraidingz');
 	!radonon && getPageSetting('BWraid') ? turnOn('BWraidingmax') : turnOff('BWraidingmax');
-
-	//Radon Raiding
-	radonon ? turnOn('RAMPraid') : turnOff('RAMPraid');
-	radonon && getPageSetting('RAMPraid') ? turnOn('RAMPraidzone') : turnOff('RAMPraidzone');
-	radonon && getPageSetting('RAMPraid') ? turnOn('RAMPraidraid') : turnOff('RAMPraidraid');
-	radonon && getPageSetting('RAMPraid') ? turnOn('RAMPraidcell') : turnOff('RAMPraidcell');
-	radonon && getPageSetting('RAMPraid') ? turnOn('RAMPraidfrag') : turnOff('RAMPraidfrag');
-	radonon && getPageSetting('RAMPraid') ? turnOn('RAMPraidrecycle') : turnOff('RAMPraidrecycle');
 
 	//Windstacking
 	var wson = (getPageSetting('AutoStance') == 3);
