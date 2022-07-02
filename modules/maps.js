@@ -916,7 +916,7 @@ function RautoMap() {
 									//(RcalcHDratio() > 0.95 && (((new Date().getTime() - game.global.zoneStarted) / 1000 / 60) < 121) || !(RcalcOurDmg("min", true, false) > RcalcEnemyBaseHealth("world", game.global.world, 99, 'Turtlimp') * game.challenges.Quest.getHealthMult())) ? 7 :
 									questcheck() == 8 ? 8 :
 										questcheck() == 9 ? 9 :
-											questcheck() == 10 && !canAffordBuilding('Smithy') ? 10 :
+											questcheck() == 10 && game.mapUnlocks.SmithFree.canRunOnce && !canAffordBuilding('Smithy') ? 10 :
 												0
 	}
 
