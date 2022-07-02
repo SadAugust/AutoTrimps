@@ -244,15 +244,17 @@ function mainLoop() {
 		if (autoTrimpSettings.RAutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) RautoPortal();
 		if (getPageSetting('RAutoPortalDaily') > 0 && game.global.challengeActive == "Daily" && game.global.world >= getPageSetting('RAutoPortalDaily')) RdailyAutoPortal();
 		//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
-		if (game.global.runningChallengeSquared && getPageSetting('c3finishrun') !== -1) {
+		if (game.global.runningChallengeSquared && getPageSetting('c3finishrun') !== -1 && rC3EndZoneSetting != game.stats.zonesCleared.value) {
+			if ((getPageSetting('c3finishrun') - 1) === game.global.world)
+				debug("Warning: AT will download your save and abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish C3' or set it to -1")
 			if (getPageSetting('c3finishrun') <= game.global.world) {
 				debug("Pausing, downloading save and abandoning challenge as your run has reached yout specified end point.")
 				AbandonChallengeRuns()
 			}
-			if (getPageSetting('c3finishrun') <= game.c2[game.global.challengeActive] && rC3EndZoneSetting != game.stats.zonesCleared.value) {
+			if (getPageSetting('c3finishrun') <= game.c2[game.global.challengeActive]) {
 				debug("The zone input in the 'C3 Finish' setting is below or equal to your HZE for this challenge, increase it or it'll end earlier than you\'d probably like it to.");
-				rC3EndZoneSetting = game.stats.zonesCleared.value;
 			}
+			rC3EndZoneSetting = game.stats.zonesCleared.value;
 		}
 		//Archeology
 		if (getPageSetting('Rarchon') && game.global.challengeActive == "Archaeology") archstring();
