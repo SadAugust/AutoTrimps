@@ -21,7 +21,7 @@ function RgetEnemyAvgAttack(zone, cell, name, type) {
 	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : "Snimp";
 	var mapGrid = type === 'world' ? 'gridArray' : 'mapGridArray';
 
-	if (game.global.stringVersion >= '5.8.0' && cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {
+	if (game.global.stringVersion >= '5.8.0' && zone >= 200 && cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {
 		if (cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {
 			attack = u2Mutations.getAttack(game.global[mapGrid][cell - 1])
 			return attack;
