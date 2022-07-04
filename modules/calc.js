@@ -926,7 +926,7 @@ function RcalcDailyAttackMod(number) {
 	return number;
 }
 
-function RcalcBadGuyDmg(enemy, attack, equality, mapping) { //Works out avg dmg. For max dmg * 1.5.
+function RcalcBadGuyDmg(enemy, attack, equality) { //Works out avg dmg. For max dmg * 1.5.
 	var number = enemy ? enemy.attack : attack;
 	number = game.global.challengeActive == 'Exterminate' && getPageSetting('Rexterminateon') && getPageSetting('Rexterminatecalc') ? RgetEnemyAvgAttack(game.global.world, 90, 'Mantimp') : number;
 	if (!isNaN(parseInt((equality)))) {
@@ -971,10 +971,10 @@ function RcalcBadGuyDmg(enemy, attack, equality, mapping) { //Works out avg dmg.
 		if (game.global.world >= 200 && game.global.universe === 2 && !game.global.mapsActive && !game.global.preMapsActive) {
 			if (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.length > 0) {
 				var cell = game.global.gridArray[game.global.lastClearedCell + 1]
-				if (cell.u2Mutation.indexOf('CMP') == -1) {
+				/* if (cell.u2Mutation.indexOf('CMP') == -1) {
 					if (cell.u2Mutation.indexOf('NVA') != -1) number *= 0.01;
 					else if (cell.u2Mutation.indexOf('NVX') != -1) number *= 10;
-				}
+				} */
 				if (cell.u2Mutation.indexOf('RGE') != -1 || (cell.cc && cell.cc[3] > 0)) number *= u2Mutations.types.Rage.enemyAttackMult();
 			}
 		}
@@ -1003,10 +1003,10 @@ function RcalcBadGuyDmgMod() {
 		if (game.global.world >= 200 && game.global.universe === 2 && !game.global.mapsActive && !game.global.preMapsActive) {
 			if (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.length > 0) {
 				var cell = game.global.gridArray[game.global.lastClearedCell + 1]
-				if (cell.u2Mutation.indexOf('CMP') == -1) {
+				/* if (cell.u2Mutation.indexOf('CMP') == -1) {
 					if (cell.u2Mutation.indexOf('NVA') != -1) number *= 0.01;
 					else if (cell.u2Mutation.indexOf('NVX') != -1) number *= 10;
-				}
+				} */
 				if (cell.u2Mutation.indexOf('RGE') != -1 || (cell.cc && cell.cc[3] > 0)) number *= u2Mutations.types.Rage.enemyAttackMult();
 			}
 		}
