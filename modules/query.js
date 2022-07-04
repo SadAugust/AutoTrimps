@@ -12,47 +12,6 @@ function isBuildingInQueue(a) { for (var c in game.global.buildingsQueue) if (ga
 //function getArmyTime(){var a=game.resources.trimps.owned-game.resources.trimps.employed,b=game.resources.trimps.realMax()<=game.resources.trimps.owned+1,c=game.portal.Coordinated.level?game.portal.Coordinated.currentSend:game.resources.trimps.maxSoldiers,d=getPotencyMod();return c/(a*d)}
 function setScienceNeeded() { for (var a in scienceNeeded = 0, upgradeList) if (a = upgradeList[a], game.upgrades[a].allowed > game.upgrades[a].done) { if (1 == game.global.world && 1e3 >= game.global.totalHeliumEarned && a.startsWith("Speed")) continue; scienceNeeded += getScienceCostToUpgrade(a) } needGymystic && (scienceNeeded += getScienceCostToUpgrade("Gymystic")) }
 function RsetScienceNeeded() { for (var a in RscienceNeeded = 0, RupgradeList) if (a = RupgradeList[a], game.upgrades[a].allowed > game.upgrades[a].done) { if (1 == game.global.world && 1e3 >= game.global.totalRadonEarned && a.startsWith("Speed")) continue; RscienceNeeded += getScienceCostToUpgrade(a) } }
-/* function RgetEnemyAvgAttack(world, level, name, type) {
-	//Pre-Init
-	if (!type) type = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
-	if (!world) world = (type == "world" || !game.global.mapsActive) ? game.global.world : getCurrentMapObject().level;
-	if (!level) level = (type == "world" || !game.global.mapsActive) ? getCurrentWorldCell().level : (getCurrentMapCell() ? getCurrentMapCell().level : 1);
-	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : "Snimp";
-
-	var amt = 0;
-	var attackBase = (game.global.universe == 2) ? 750 : 50;
-	//var amt = (game.global.universe == 2) ? 750 : 50 * Math.sqrt(zone) * Math.pow(3.27, zone/2) - 10;
-	amt += attackBase * Math.sqrt(world) * Math.pow(3.27, world / 2);
-	amt -= 10;
-	if (world == 1){
-		amt *= 0.35;
-		amt = (amt * 0.20) + ((amt * 0.75) * (level / 100));
-	}
-	else if (world == 2){
-		amt *= 0.5;
-		amt = (amt * 0.32) + ((amt * 0.68) * (level / 100));
-	}	
-	else if (world < 60)
-		amt = (amt * 0.375) + ((amt * 0.7) * (level / 100));
-	else{
-		amt = (amt * 0.4) + ((amt * 0.9) * (level / 100));
-		amt *= Math.pow(1.15, world - 59);
-	}
-	if (world < 60) amt *= 0.85;
-	if (world > 6 && type != 'world') amt *= 1.1;
-	if (name) amt *= game.badGuys[name].attack;
-	if (game.global.universe == 2){
-		var part1 = (world > 40) ? 40 : world;
-		var part2 = (world > 60) ? 20 : world - 40;
-		var part3 = (world - 60);
-		if (part2 < 0) part2 = 0;
-		if (part3 < 0) part3 = 0;
-		amt *= Math.pow(1.5, part1);
-		amt *= Math.pow(1.4, part2);
-		amt *= Math.pow(1.32, part3);
-	}
-	return Math.floor(amt);
-} */
 
 function RgetEnemyAvgAttack(zone, cell, name, type) {
 	//Pre-Init
@@ -60,54 +19,63 @@ function RgetEnemyAvgAttack(zone, cell, name, type) {
 	if (!zone) zone = (type == "world" || !game.global.mapsActive) ? game.global.world : getCurrentMapObject().level;
 	if (!cell) cell = (type == "world" || !game.global.mapsActive) ? getCurrentWorldCell().level : (getCurrentMapCell() ? getCurrentMapCell().level : 1);
 	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : "Snimp";
-	//Init
-	var attackBase = (game.global.universe == 2) ? 750 : 50;
-	var attack = attackBase * Math.sqrt(zone) * Math.pow(3.27, zone / 2) - 10;
+	var mapGrid = type === 'world' ? 'gridArray' : 'mapGridArray';
 
-	//Zone 1
-	if (zone == 1) {
-		attack *= 0.35;
-		attack = (0.2 * attack) + (0.75 * attack * (cell / 100));
+	if (game.global.stringVersion >= '5.8.0' && cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {
+		if (cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {
+			attack = u2Mutations.getAttack(game.global[mapGrid][cell - 1])
+			return attack;
+		}
+	} else {
+
+		//Init
+		var attackBase = (game.global.universe == 2) ? 750 : 50;
+		var attack = attackBase * Math.sqrt(zone) * Math.pow(3.27, zone / 2) - 10;
+
+		//Zone 1
+		if (zone == 1) {
+			attack *= 0.35;
+			attack = (0.2 * attack) + (0.75 * attack * (cell / 100));
+		}
+
+		//Zone 2
+		else if (zone == 2) {
+			attack *= 0.5;
+			attack = (0.32 * attack) + (0.68 * attack * (cell / 100));
+		}
+
+		//Before Breaking the Planet
+		else if (zone < 60) {
+			attack = (0.375 * attack) + (0.7 * attack * (cell / 100));
+			attack *= 0.85;
+		}
+
+		//After Breaking the Planet
+		else {
+			attack = (0.4 * attack) + (0.9 * attack * (cell / 100));
+			attack *= Math.pow(1.15, zone - 59);
+		}
+
+		//Maps
+		if (zone > 6 && type != "world") attack *= 1.1;
+
+		//Specific Imp
+		if (name) attack *= game.badGuys[name].attack;
+		if (name == 'Hulting_Mutimp') debug(name);
+
+		//U2
+		if (game.global.universe == 2) {
+			var part1 = (zone > 40) ? 40 : zone;
+			var part2 = (zone > 60) ? 20 : zone - 40;
+			var part3 = (zone - 60);
+			if (part2 < 0) part2 = 0;
+			if (part3 < 0) part3 = 0;
+			attack *= Math.pow(1.5, part1);
+			attack *= Math.pow(1.4, part2);
+			attack *= Math.pow(1.32, part3);
+		}
+		return Math.floor(attack);
 	}
-
-	//Zone 2
-	else if (zone == 2) {
-		attack *= 0.5;
-		attack = (0.32 * attack) + (0.68 * attack * (cell / 100));
-	}
-
-	//Before Breaking the Planet
-	else if (zone < 60) {
-		attack = (0.375 * attack) + (0.7 * attack * (cell / 100));
-		attack *= 0.85;
-	}
-
-	//After Breaking the Planet
-	else {
-		attack = (0.4 * attack) + (0.9 * attack * (cell / 100));
-		attack *= Math.pow(1.15, zone - 59);
-	}
-
-	//Maps
-	if (zone > 6 && type != "world") attack *= 1.1;
-
-	//Specific Imp
-	if (name) attack *= game.badGuys[name].attack;
-	if (name == 'Hulting_Mutimp') debug(name);
-
-	//U2
-	if (game.global.universe == 2) {
-		var part1 = (zone > 40) ? 40 : zone;
-		var part2 = (zone > 60) ? 20 : zone - 40;
-		var part3 = (zone - 60);
-		if (part2 < 0) part2 = 0;
-		if (part3 < 0) part3 = 0;
-		attack *= Math.pow(1.5, part1);
-		attack *= Math.pow(1.4, part2);
-		attack *= Math.pow(1.32, part3);
-	}
-
-	return Math.floor(attack);
 }
 
 function RgetEnemyMaxHealth(world, level, name) {

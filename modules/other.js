@@ -2386,6 +2386,11 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt_local *= 10;
 		amt_local *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
 	}
+	if (game.global.stringVersion >= '5.8.0') {
+		if (game.global.universe == 2 && u2Mutations.tree.Loot.purchased) {
+			amt *= 1.5;
+		}
+	}
 	if (game.challenges.Nurture.boostsActive())
 		amt_local *= game.challenges.Nurture.getResourceBoost();
 	if (event == null || heirloom == null || game.global.StaffEquipped.name == autoTrimpSettings[heirloom].value) {

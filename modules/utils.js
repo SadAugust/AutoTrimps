@@ -115,5 +115,5 @@ function formatMinutesForDescriptions(number) {
 	return text;
 }
 
-window.onerror = function (b, c, d, e, f) { var g = ['Message: ' + b, 'URL: ' + c, 'Line: ' + d, 'Column: ' + e, 'Error object: ' + JSON.stringify(f)].join(' - '); 0 != d && console.log('AT logged error: ' + g) };
+//window.onerror = function (b, c, d, e, f) { var g = ['Message: ' + b, 'URL: ' + c, 'Line: ' + d, 'Column: ' + e, 'Error object: ' + JSON.stringify(f)].join(' - '); 0 != d && console.log('AT logged error: ' + g) };
 function throwErrorfromModule() { throw new Error("We have successfully read the thrown error message out of a module") }

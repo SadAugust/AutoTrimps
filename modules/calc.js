@@ -737,7 +737,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	// Heirloom (Shield)
 	number *= 1 + calcHeirloomBonus('Shield', 'trimpAttack', 1, true) / 100;
 	// Frenzy perk
-	number *= game.global.challengeActive !== 'Berserk' && getPageSetting('Rcalcfrenzy') ? 1 + (0.5 * game.portal.Frenzy.radLevel) : 1;
+	number *= game.global.challengeActive !== 'Berserk' && (getPageSetting('Rcalcfrenzy') || autoBattle.oneTimers.Mass_Hysteria.owned) ? 1 + (0.5 * game.portal.Frenzy.radLevel) : 1;
 	//Championism
 	number *= game.portal.Championism.getMult();
 	// Golden Upgrade
@@ -752,6 +752,8 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	number *= 1 + (playerSpireTraps.Strength.getWorldBonus() / 100);
 	// Sharp Trimps
 	number *= game.singleRunBonuses.sharpTrimps.owned ? 1.5 : 1;
+	//Mutator
+	number *= game.global.stringVersion >= '5.8.0' && u2Mutations.tree.Attack.purchased ? 1.5 : 1;
 	// Sugar rush event bonus
 	number *= game.global.sugarRush ? sugarRush.getAttackStrength() : 1;
 	// Challenges
@@ -766,6 +768,10 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	number *= game.global.challengeActive == 'Berserk' ? game.challenges.Berserk.getAttackMult() : 1;
 	number *= game.global.challengeActive == 'Nurture' && game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
 	number *= game.global.challengeActive == 'Alchemy' ? alchObj.getPotionEffect('Potion of Strength') : 1;
+	if (game.global.stringVersion >= '5.8.0') {
+		number *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
+		number *= u2Mutations.tree.Loot.purchased ? 1.5 : 1;
+	}
 
 	// Dailies
 	var minDailyMod = 1;
@@ -877,6 +883,8 @@ function RcalcOurHealth(onlyShield) {
 	//health *= game.talents.mapHealth.purchased && game.global.mapsActive ? 2 : 1;
 	//Cinf
 	health *= game.global.totalSquaredReward > 0 ? 1 + (game.global.totalSquaredReward / 100) : 1;
+	//Mutator
+	health *= game.global.stringVersion >= '5.8.0' && u2Mutations.tree.Health.purchased ? 1.5 : 1;
 	//Duel Mult
 	health *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 20 ? game.challenges.Duel.healthMult : 1;
 	//Revenge Mult
@@ -918,7 +926,7 @@ function RcalcDailyAttackMod(number) {
 	return number;
 }
 
-function RcalcBadGuyDmg(enemy, attack, equality) { //Works out avg dmg. For max dmg * 1.5.
+function RcalcBadGuyDmg(enemy, attack, equality, mapping) { //Works out avg dmg. For max dmg * 1.5.
 	var number = enemy ? enemy.attack : attack;
 	number = game.global.challengeActive == 'Exterminate' && getPageSetting('Rexterminateon') && getPageSetting('Rexterminatecalc') ? RgetEnemyAvgAttack(game.global.world, 90, 'Mantimp') : number;
 	if (!isNaN(parseInt((equality)))) {
@@ -959,6 +967,19 @@ function RcalcBadGuyDmg(enemy, attack, equality) { //Works out avg dmg. For max 
 	number *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	number *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	number *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
+	if (game.global.stringVersion >= '5.8.0') {
+		if (game.global.world >= 200 && game.global.universe === 2 && !game.global.mapsActive && !game.global.preMapsActive) {
+			if (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.length > 0) {
+				var cell = game.global.gridArray[game.global.lastClearedCell + 1]
+				if (cell.u2Mutation.indexOf('CMP') == -1) {
+					if (cell.u2Mutation.indexOf('NVA') != -1) number *= 0.01;
+					else if (cell.u2Mutation.indexOf('NVX') != -1) number *= 10;
+				}
+				if (cell.u2Mutation.indexOf('RGE') != -1 || (cell.cc && cell.cc[3] > 0)) number *= u2Mutations.types.Rage.enemyAttackMult();
+			}
+		}
+		number *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
+	}
 	return number;
 }
 
@@ -978,6 +999,19 @@ function RcalcBadGuyDmgMod() {
 		number *= typeof game.global.dailyChallenge.bloodthirst !== 'undefined' ? dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks) : 1;
 		number *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
+	if (game.global.stringVersion >= '5.8.0') {
+		if (game.global.world >= 200 && game.global.universe === 2 && !game.global.mapsActive && !game.global.preMapsActive) {
+			if (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.length > 0) {
+				var cell = game.global.gridArray[game.global.lastClearedCell + 1]
+				if (cell.u2Mutation.indexOf('CMP') == -1) {
+					if (cell.u2Mutation.indexOf('NVA') != -1) number *= 0.01;
+					else if (cell.u2Mutation.indexOf('NVX') != -1) number *= 10;
+				}
+				if (cell.u2Mutation.indexOf('RGE') != -1 || (cell.cc && cell.cc[3] > 0)) number *= u2Mutations.types.Rage.enemyAttackMult();
+			}
+		}
+		number *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
+	}
 	return number;
 }
 
@@ -992,6 +1026,35 @@ function RcalcEnemyBaseHealth(type, zone, cell, name) {
 	var base = (game.global.universe == 2) ? 10e7 : 130;
 	var health = base * Math.sqrt(zone) * Math.pow(3.265, zone / 2) - 110;
 
+	if (game.global.stringVersion >= '5.8.0') {
+		if (game.global.world >= 200 && game.global.universe === 2 && type === 'world') {
+			if (game.global.gridArray[cell - 1].u2Mutation.length > 0 && (game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1 || game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1)) {
+				cell = cell - 1
+				var grid = game.global.gridArray
+				var go = false;
+				var row = 0;
+				var currRow = Number(String(cell)[0]) * 10;
+				if (!go && game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1) {
+					for (i = 5; 9 >= i; i++) {
+						if (grid[i * 10].u2Mutation.indexOf('CSP') != -1) {
+							row = (i * 10);
+							go = true;
+						}
+					}
+					cell += (row - currRow);
+				}
+				if (!go && game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1) {
+					for (i = 0; 5 >= i; i++) {
+						if (grid[i * 10].u2Mutation.indexOf('CSX') != -1) {
+							row = (i * 10);
+							go = true;
+						}
+					}
+					cell -= (currRow - row);
+				}
+			}
+		}
+	}
 	//First Two Zones
 	if (zone == 1 || zone == 2 && cell < 10) {
 		health *= 0.6;
@@ -1063,6 +1126,12 @@ function RcalcEnemyHealthMod(world, cell, name, type) {
 	var world = !world ? game.global.world : world;
 	var health = RcalcEnemyBaseHealth(type, world, cell, name);
 
+	var mapGrid = type === 'world' ? 'gridArray' : 'mapGridArray';
+	if (game.global.stringVersion >= '5.8.0') {
+		if (type === 'world' && game.global[mapGrid][cell].u2Mutation) {
+			health = u2Mutations.getHealth(game.global[mapGrid][cell - 1])
+		}
+	}
 	//Challenges
 	//This is bugged! Value for Unbalance bonus should be swapped, for some reason it's 
 	health *= game.global.challengeActive == 'Unbalance' && game.global.mapsActive ? 2 : game.global.challengeActive == 'Unbalance' ? 3 : 1;
