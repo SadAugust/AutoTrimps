@@ -943,16 +943,23 @@ function RautoMap() {
 	if (!RvanillaMapatZone && game.options.menu.repeatVoids.enabled != 0) toggleSetting('repeatVoids');
 	var hitsSurvived = getPageSetting("Rhitssurvived") > 0 ? getPageSetting("Rhitssurvived") : 5;
 
+	var rRunningC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
+	var rRunningDaily = game.global.challengeActive == "Daily";
+	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
+
 	//Void Vars -- Checks whether you're ina  daily and uses those settings if you are
-	voidMapLevelSettingCell = game.global.challengeActive == 'Daily' && getPageSetting('Rdvoidscell') > 0 ? getPageSetting('Rdvoidscell') :
-		getPageSetting('Rvoidscell') > 0 ? getPageSetting('Rvoidscell') :
-			70;
-	voidMapLevelSetting = game.global.challengeActive == 'Daily' && getPageSetting('RDailyVoidMod')[0] >= 1 ? getPageSetting('RDailyVoidMod') :
-		getPageSetting('RVoidMaps')[0] >= 1 ? getPageSetting('RVoidMaps') :
-			0;
-	voidMapLevelPlus = game.global.challengeActive == 'Daily' && getPageSetting('RdRunNewVoidsUntilNew') != 0 ? getPageSetting('RdRunNewVoidsUntilNew') :
-		getPageSetting('RRunNewVoidsUntilNew') != 0 ? getPageSetting('RRunNewVoidsUntilNew') :
-			0;
+	voidMapLevelSettingCell = rRunningDaily && getPageSetting('Rc3voidscell') > 0 ? getPageSetting('Rc3voidscell') :
+		rRunningDaily && getPageSetting('Rdvoidscell') > 0 ? getPageSetting('Rdvoidscell') :
+			rRunningRegular && getPageSetting('Rvoidscell') > 0 ? getPageSetting('Rvoidscell') :
+				70;
+	voidMapLevelSetting = rRunningDaily && getPageSetting('Rc3VoidMod')[0] >= 1 ? getPageSetting('Rc3VoidMod') :
+		rRunningDaily && getPageSetting('RDailyVoidMod')[0] >= 1 ? getPageSetting('RDailyVoidMod') :
+			rRunningRegular && getPageSetting('RVoidMaps')[0] >= 1 ? getPageSetting('RVoidMaps') :
+				0;
+	voidMapLevelPlus = rRunningDaily && getPageSetting('Rc3RunNewVoidsUntilNew') != 0 ? getPageSetting('Rc3RunNewVoidsUntilNew') :
+		rRunningDaily && getPageSetting('RdRunNewVoidsUntilNew') != 0 ? getPageSetting('RdRunNewVoidsUntilNew') :
+			rRunningRegular && getPageSetting('RRunNewVoidsUntilNew') != 0 ? getPageSetting('RRunNewVoidsUntilNew') :
+				0;
 
 	RneedToVoid = (voidMapLevelSetting[0] > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 2 >= voidMapLevelSettingCell &&
 		((voidMapLevelSetting.includes(game.global.world)) ||
@@ -965,7 +972,7 @@ function RautoMap() {
 
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, false);
-	var enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
+	var enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability'));
 
 	if (getPageSetting('RDisableFarm') > 0) {
 		RshouldFarm = (RcalcHDratio() >= getPageSetting('RDisableFarm'));
@@ -1070,11 +1077,6 @@ function RautoMap() {
 		rInitialFragmentMapID = undefined;
 		rFragMapBought = false;
 	}
-
-	//Setting up variables for Time & Tribute Farming - Need to implement them, remove getPageSetting and 
-	var rRunningC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
-	var rRunningDaily = game.global.challengeActive == "Daily";
-	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
 
 	//Time Farm
 	if ((rRunningRegular && autoTrimpSettings.rTimeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTimeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TimeFarmDefaultSettings.value.active) && rShouldQuest === 0) {

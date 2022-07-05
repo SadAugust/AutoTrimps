@@ -621,8 +621,14 @@ function initializeAllSettings() {
 	createSetting('c3buildingzone', 'Buy buildings till', 'When in a C3 or special challenge  (Mayhem, Panda) will spend 99% of resource on buildings until this zone.', 'value', -1, null, 'C3');
 	createSetting('c3GM_ST', ['c3: GM/ST', 'c3: Golden Maps', 'c3: Sharp Trimps', 'c3: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during C3 or special challenge (Mayhem, Pandemonium) runs.', 'multitoggle', 0, null, 'C3');
 
+	//C3 Voids
+	createSetting('Rc3VoidMod', 'Daily Void Zone', 'What zone to do void maps in dailies. Disable with -1.<br><br>Can input multiple values and it\'ll run voids on each of those zones.', 'multiValue', -1, null, 'C3');
+	createSetting('Rc3voidscell', 'Daily Void Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70.', 'value', -1, null, 'C3');
+	createSetting('Rc3RunNewVoidsUntilNew', 'Daily New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'C3');
+
+
 	//C3 Time Farm
-	document.getElementById('c3GM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('Rc3RunNewVoidsUntilNew').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rc3TimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'C3');
 	createSetting('rc3TimeFarmPopup', 'Time Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'C3');
 	createSetting('rc3TimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
@@ -1802,6 +1808,9 @@ function updateCustomButtons() {
 	radonon ? turnOn('c3meltingpoint') : turnOff('c3meltingpoint');
 	radonon ? turnOn('c3buildings') : turnOff('c3buildings');
 	radonon && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
+	radonon ? turnOn('Rc3VoidMod') : turnOff('Rc3VoidMod');
+	radonon ? turnOn('Rc3voidscell') : turnOff('Rc3voidscell');
+	radonon ? turnOn('Rc3RunNewVoidsUntilNew') : turnOff('Rc3RunNewVoidsUntilNew');
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
 
 	//C3 Time Farm
