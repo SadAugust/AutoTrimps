@@ -1632,7 +1632,7 @@ function RautoMap() {
 			var alchmaplevel = rAlchSettings.level;
 			var alchspecial = rAlchSettings.special;
 			var rAlchJobRatio = rAlchSettings.jobratio;
-			alchpotion = rAlchSettings.potiontype;
+			alchpotions = rAlchSettings.potion;
 
 			if (game.global.lastClearedCell + 2 >= alchfarmcell) {
 				if (alchpotions != undefined) {
