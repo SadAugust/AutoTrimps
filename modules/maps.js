@@ -2052,7 +2052,7 @@ function RautoMap() {
 				else if (rShouldUnbalance || rShouldStorm)
 					selectedMap = RShouldFarmMapCreation(-(game.global.world - 6), "fa");
 				else if (Rshouldalchfarm) {
-					if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == autoTrimpSettings.RAlchSpecial.selected || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].level == game.global.world + alchmaplevel)
+					if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].level == game.global.world + alchmaplevel)
 						alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus;
 					if (alchspecial == "ssc" && (game.stats.zonesCleared.value != rAlchSpecialError)) {
 						debug("The cost of a perfect LSC map for zone " + game.global.world + " is " + prettify(RShouldFarmMapCost(alchmaplevel, "lsc", alchfarmzone, alchbiome)) + " fragments, you were short by " + (prettify((RShouldFarmMapCost(alchmaplevel, "lsc", alchfarmzone, alchbiome) - game.resources.fragments.owned)) + " fragments."));
