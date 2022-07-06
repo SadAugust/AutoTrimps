@@ -2020,10 +2020,8 @@ function RautoMap() {
 				//Checking hyperspeed 2 percentage
 				var hyp2pct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0
 				if (game.global.challengeActive == "Alchemy" && typeof (alchmaplevel) != 'undefined') {
-					var alchspecial = (Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world && alchspecial.includes('l') && alchspecial.length === 3 && PerfectMapCost(alchmaplevel, getPageSetting('rAlchSpecial')) >= game.resources.fragments.owned) ? "ssc" :
-						(Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world) ? alchspecial :
-							getPageSetting('RAlchFAMaps') ? "fa" :
-								autoTrimpSettings.RAlchSpecial.selected;
+					var alchspecial_alt = (Math.floor((game.global.highestRadonLevelCleared + 1) * (hyp2pct / 100)) >= game.global.world && alchspecial.includes('l') && alchspecial.length === 3 && PerfectMapCost(alchmaplevel, alchspecial) >= game.resources.fragments.owned) ? "ssc" :
+						alchspecial;
 				}
 				if (rShouldTimeFarm) {
 					selectedMap = RShouldFarmMapCreation(rTFMapLevel, rTFSpecial);
@@ -2052,13 +2050,13 @@ function RautoMap() {
 				else if (rShouldUnbalance || rShouldStorm)
 					selectedMap = RShouldFarmMapCreation(-(game.global.world - 6), "fa");
 				else if (Rshouldalchfarm) {
-					if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].level == game.global.world + alchmaplevel)
-						alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus;
-					if (alchspecial == "ssc" && (game.stats.zonesCleared.value != rAlchSpecialError)) {
+					if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == alchspecial_alt || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].level == game.global.world + alchmaplevel)
+						alchspecial_alt = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus;
+					if (alchspecial_alt == "ssc" && (game.stats.zonesCleared.value != rAlchSpecialError)) {
 						debug("The cost of a perfect LSC map for zone " + game.global.world + " is " + prettify(RShouldFarmMapCost(alchmaplevel, "lsc", alchfarmzone, alchbiome)) + " fragments, you were short by " + (prettify((RShouldFarmMapCost(alchmaplevel, "lsc", alchfarmzone, alchbiome) - game.resources.fragments.owned)) + " fragments."));
 						rAlchSpecialError = game.stats.zonesCleared.value;
 					}
-					selectedMap = RShouldFarmMapCreation(alchmaplevel, alchspecial, alchbiome);
+					selectedMap = RShouldFarmMapCreation(alchmaplevel, alchspecial_alt, alchbiome);
 					rAlchemyCurrentMap = "rAlchemy";
 					workerRatio = rAlchJobRatio;
 				} else if (rShouldHypoFarm) {
@@ -2376,9 +2374,9 @@ function RautoMap() {
 				else if (rShouldPandemoniumFarm) PerfectMapCost(getPageSetting('PandemoniumFarmLevel'), pandfarmspecial);
 				else if (rShouldPandemoniumJestimpFarm) PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'), 0)
 				else if (Rshouldalchfarm) {
-					if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == alchspecial || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == autoTrimpSettings.RAlchSpecial.selected || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].level == game.global.world + alchmaplevel)
-						alchspecial = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus;
-					RShouldFarmMapCost(alchmaplevel, alchspecial, alchfarmzone, alchbiome);
+					if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == alchspecial_alt || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].level == game.global.world + alchmaplevel)
+						alchspecial_alt = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus;
+					RShouldFarmMapCost(alchmaplevel, alchspecial_alt, alchfarmzone, alchbiome);
 				}
 				else if (rShouldHypoFarm) RShouldFarmMapCost(rHFMapLevel, rHFSpecial, rHFZone, biome);
 				else if (rShouldEquipFarm) PerfectMapCost(equipminus, "lmc");
