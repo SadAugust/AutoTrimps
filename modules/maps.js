@@ -744,6 +744,7 @@ var RlastMapWeWereIn = null;
 var RdoMaxMapBonus = false;
 var RvanillaMapatZone = false;
 var rShouldMaxMapBonus = false;
+var rMBCurrentMap = undefined;
 var rC3EndZoneSetting = -1;
 //Void Maps
 var RdoVoids = false;
@@ -861,7 +862,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (rShouldStorm || (game.global.mapsActive && getCurrentMapObject().level == 6 && game.challenges.Storm.beta > 0)) status = 'Destacking: ' + game.challenges.Storm.beta + " remaining";
 	else if (rShouldWorshipperFarm) status = 'Ship Farming: ' + game.jobs.Worshipper.owned + "/" + shipfarmamount;
 	else if (rShouldEquipFarm) status = 'Equip Farming to ' + equipfarmdynamicHD().toFixed(2) + " and " + estimateEquipsForZone()[2] + " Equality";
-	else if (rShouldMaxMapBonus) status = 'Map Bonus: ' + game.global.mapBonus + "/" + maxMapBonusLimit;
+	else if (rShouldMaxMapBonus) status = 'Map Bonus: ' + game.global.mapBonus + "/" + rMBRepeatCounter;
 	else if (RdoVoids) {
 		var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
 		status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
@@ -1025,26 +1026,47 @@ function RautoMap() {
 		game.global.challengeActive == 'Daily' ? getPageSetting('RdMaxMapBonuslimit') :
 			getPageSetting("RMaxMapBonuslimit");
 
-	if (game.global.mapBonus >= maxMapBonusLimit && !RshouldFarm)
-		RshouldDoMaps = false;
-	else if (game.global.mapBonus < getPageSetting('RMaxMapBonushealth') && !RenoughHealth && !RshouldDoMaps) {
-		RshouldDoMaps = true;
-		shouldDoHealthMaps = true;
-	}
-	var restartVoidMap = false;
-	RdoMaxMapBonus = (maxMapBonusZ >= 0 && game.global.mapBonus < maxMapBonusLimit && game.global.world >= maxMapBonusZ);
-	if (RdoMaxMapBonus) {
-		if (game.global.challengeActive == "Quest") {
-			if (questcheck() != 9)
-				rShouldMaxMapBonus = true;
-			//RshouldDoMaps = true;
-		}
-		else
-			rShouldMaxMapBonus = true;
-		//RshouldDoMaps = true;
-	} else
-		RdoMaxMapBonus = false;
 
+	//Map Bonus
+	if ((rRunningRegular && autoTrimpSettings.rMapBonusDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdMapBonusDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3MapBonusDefaultSettings.value.active) && rShouldQuest === 0) {
+		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
+		rMBZone = rRunningC3 ? getPageSetting('rc3MapBonusZone') : rRunningDaily ? getPageSetting('rdMapBonusZone') : getPageSetting('rMapBonusZone');
+		var rMBIndex;
+		for (var y = 0; y < rMBZone.length; y++) {
+			if (game.global.world - rMBZone[y] >= 0)
+				rMBIndex = rMBZone.indexOf(rMBZone[y]);
+			else
+				continue;
+		}
+
+		if (rMBIndex >= 0) {
+			var rMBSettings = rRunningC3 ? autoTrimpSettings.rc3MapBonusSettings.value[rMBIndex] : rRunningDaily ? autoTrimpSettings.rdMapBonusSettings.value[rMBIndex] : autoTrimpSettings.rMapBonusSettings.value[rMBIndex];
+			rMBRepeatCounter = rMBSettings.repeat;
+			if (game.global.mapBonus <= rMBRepeatCounter) {
+				var rMBCell = rMBSettings.cell;
+				if (game.global.lastClearedCell + 2 >= rMBCell) {
+					var rMBMapLevel = rMBSettings.level
+					var rMBSpecial = rMBSettings.special
+					var rMBJobRatio = rMBSettings.jobratio
+					//If you're running Transmute and the rMBSpecial variable is either LMC or SMC it changes it to LSC/SSC.
+					if (game.global.challengeActive == 'Transmute' && rMBSpecial.includes('mc'))
+						rMBSpecial = rMBSpecial.charAt(0) + "sc";
+					if (game.global.mapBonus >= rMBRepeatCounter && rMBCurrentMap != undefined) {
+						rMBCurrentMap = undefined;
+						if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+					}
+					if (rMBRepeatCounter > game.global.mapBonus)
+						rShouldMaxMapBonus = true;
+					else if (game.global.mapBonus < getPageSetting('RMaxMapBonushealth') && !RenoughHealth) {
+						RshouldDoMaps = true;
+						shouldDoHealthMaps = true;
+					}
+				}
+			}
+		}
+	}
+
+	var restartVoidMap = false;
 	//U2 (Radon) Map at Zone (MAZ)
 	if (game.options.menu.mapAtZone.enabled && game.global.canMapAtZone) {
 		var MaZPreset = game.options.menu.mapAtZone.U2Mode == "b" ? game.options.menu.mapAtZone.setZoneU2B :
@@ -1101,7 +1123,7 @@ function RautoMap() {
 					rTFSpecial = rTFSpecial.charAt(0) + "sc";
 				if (game.global.mapRunCounter >= rTFRepeatCounter && rTFCurrentMap != undefined) {
 					rTFZoneCleared = game.stats.zonesCleared.value;
-					rTFCurrentMap == undefined;
+					rTFCurrentMap = undefined;
 					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 				}
 				if (rTFRepeatCounter > game.global.mapRunCounter)
@@ -2045,8 +2067,11 @@ function RautoMap() {
 					workerRatio = rHypoJobRatio;
 				} else if (rFragmentFarming)
 					selectedMap = RShouldFarmMapCreation(-1, "fa");
-				else if (rShouldMaxMapBonus)
-					selectedMap = RShouldFarmMapCreation(0, getPageSetting('rMapSpecial'));
+				else if (rShouldMaxMapBonus) {
+					selectedMap = RShouldFarmMapCreation(rMBMapLevel, rMBSpecial);
+					rMBCurrentMap = "rMapBonus";
+					workerRatio = rMBJobRatio;
+				}
 				else if (rShouldEquipFarm) {
 					for (var map in game.global.mapsOwnedArray) {
 						if (!game.global.mapsOwnedArray[map].noRecycle && equipminus <= 0 && ((game.global.world + equipminus) == game.global.mapsOwnedArray[map].level)) {
@@ -2122,7 +2147,7 @@ function RautoMap() {
 				/* if ((rShouldTributeFarm || rShouldMetFarm) && (game.resources.food.owned + scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true), false, true, rTrFMapLevel)) >= 1e999)
 					repeatClicked(); */
 				//Map Bonus
-				if (rShouldMaxMapBonus && (game.global.mapBonus >= (maxMapBonusLimit - 1) || getCurrentMapObject().bonus != getPageSetting('rMapSpecial')) && !rShouldTimeFarm)
+				if (rShouldMaxMapBonus && (game.global.mapBonus >= (rMBRepeatCounter - 1)) && !rShouldTimeFarm)
 					repeatClicked();
 				//Unbalance Destacking
 				if (rShouldUnbalance && ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Unbalance.balanceStacks))
@@ -2357,7 +2382,7 @@ function RautoMap() {
 				}
 				else if (rShouldHypoFarm) RShouldFarmMapCost(rHFMapLevel, rHFSpecial, rHFZone, biome);
 				else if (rShouldEquipFarm) PerfectMapCost(equipminus, "lmc");
-				else if (rShouldMaxMapBonus) PerfectMapCost(0, getPageSetting('rMapSpecial'));
+				else if (rShouldMaxMapBonus) PerfectMapCost(rMBMapLevel, rMBSpecial);
 			}
 
 			if (rShouldQuest > 0 && rShouldQuest !== 10) {

@@ -569,6 +569,7 @@ function Rresetmapvars() {
 	RdoMaxMapBonus = false;
 	RvanillaMapatZone = false;
 	rShouldMaxMapBonus = false;
+	rMBCurrentMap = undefined;
 	rC3EndZoneSetting = -1;
 	//Void Maps
 	RdoVoids = false;

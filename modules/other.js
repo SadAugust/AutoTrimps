@@ -1933,7 +1933,7 @@ function PerfectMapLevel(special) {
 function PerfectMapCost(pluslevel, special, biome) {
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
-	if (!special) special = 0;
+	if (!special) special = '0';
 	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
 	document.getElementById("biomeAdvMapsSelect").value = biome;
 	document.getElementById("advExtraLevelSelect").value = pluslevel;
@@ -1982,7 +1982,7 @@ function RShouldFarmMapCreation(pluslevel, special, biome, difficulty, loot, siz
 	for (var mapping in game.global.mapsOwnedArray) {
 		if (!game.global.mapsOwnedArray[mapping].noRecycle && (
 			(game.global.world + pluslevel) == game.global.mapsOwnedArray[mapping].level) &&
-			game.global.mapsOwnedArray[mapping].bonus == special &&
+			(game.global.mapsOwnedArray[mapping].bonus == special || game.global.mapsOwnedArray[mapping].bonus === undefined && special === '0') &&
 			game.global.mapsOwnedArray[mapping].location == biome/*  &&
 			game.global.mapsOwnedArray[mapping].difficulty == difficulty &&
 			game.global.mapsOwnedArray[mapping].loot == loot &&

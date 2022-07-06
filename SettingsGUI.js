@@ -239,11 +239,13 @@ function initializeAllSettings() {
 
 	//Radon Daily
 	createSetting('buyradony', 'Buy Radonculous %', 'Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
-	createSetting('RdMaxMapBonusAfterZone', 'Max MapBonus From', 'Always gets Max Map Bonus from this zone on. (inclusive and after).<br><b>NOTE:</b> Set -1 to disable entirely (default). Set 0 to use it always. ', 'value', '-1', null, 'Daily');
-	createSetting('RdMaxMapBonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10. ', 'value', '10', null, 'Daily');
 	createSetting('Rdmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Daily');
 	createSetting('Rdequipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency. ', 'boolean', false, null, "Daily");
 	createSetting('Rdequipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input. ', 'multiValue', -1, null, "Daily");
+	//Radon Daily Voids
+	createSetting('RDailyVoidMod', 'Daily Void Zone', 'What zone to do void maps in dailies. Disable with -1.<br><br>Can input multiple values and it\'ll run voids on each of those zones.', 'multiValue', -1, null, 'Daily');
+	createSetting('Rdvoidscell', 'Daily Void Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70.', 'value', -1, null, 'Daily');
+	createSetting('RdRunNewVoidsUntilNew', 'Daily New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Daily');
 
 	//Helium Spire
 	document.getElementById('dscryvoidmaps').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -251,10 +253,6 @@ function initializeAllSettings() {
 	createSetting('dExitSpireCell', 'Daily Exit Spire Cell', 'What cell to exit spire in dailys. ', 'value', -1, null, 'Daily');
 	createSetting('dPreSpireNurseries', 'Daily Nurseries pre-Spire', 'Set the maximum number of Nurseries to build for Spires in Dailies. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Disable with -1.', 'value', -1, null, 'Daily');
 
-	//Radon Daily Voids
-	createSetting('RDailyVoidMod', 'Daily Void Zone', 'What zone to do void maps in dailies. Disable with -1.<br><br>Can input multiple values and it\'ll run voids on each of those zones.', 'multiValue', -1, null, 'Daily');
-	createSetting('Rdvoidscell', 'Daily Void Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70.', 'value', -1, null, 'Daily');
-	createSetting('RdRunNewVoidsUntilNew', 'Daily New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Daily');
 
 	//Helium Windstacking
 	document.getElementById('dPreSpireNurseries').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -283,6 +281,13 @@ function initializeAllSettings() {
 	createSetting('dbwraidcell', 'Daily BW Raiding Cell', 'What Cell to start BW Raiding at. Recommend above your P Raiding cell if used together. -1 to Raid at cell 1. ', 'value', -1, null, 'Daily');
 	createSetting('dBWraidingz', 'Daily Z to BW Raid', 'Raids BWs at zone specified in dailys. Example: 495, will raid all BWs for all gear starting from 495. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Accepts comma separated lists, and raids up to the value in the corrsponding position in the Max BW to raid setting. So if this is set to 480,495 and Daily Max BW to Raid is set to 500,515 AT will BW raid up to 500 from 480, and 515 from 495. Make sure these lists are the same length or BW raiding may fail.', 'multiValue', [-1], null, 'Daily');
 	createSetting('dBWraidingmax', 'Daily Max BW to raid', 'Raids BWs until zone specified in dailys. Example: 515, will raid all BWs for all gear until 515. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Now accepts comma separated lists - see description of Daily Z to BW raid setting for details.', 'multiValue', [-1], null, 'Daily');
+
+	//Map Bonus
+	createSetting('rdMapBonus', 'Map Bonus', 'Turn this on if you want to use Map Bonus. ', 'boolean', false, null, 'Daily');
+	createSetting('rdMapBonusPopup', 'Map Bonus Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Daily');
+	createSetting('rdMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
+	createSetting('rdMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Daily');
+	createSetting('rdMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Daily');
 
 	//Radon Daily Time Farming 
 	createSetting('rdTimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'Daily');
@@ -478,8 +483,8 @@ function initializeAllSettings() {
 	createSetting('Rautomapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', true, null, 'Μaps');
 	createSetting('Rmapselection', 'Biome', 'Select which biome you\'d prefer to use. Recommend Farmlands if you have unlocked it else Plentiful (Gardens).', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Plentiful", "Farmlands"], 'Μaps');
 	createSetting('rMapSpecial', 'Map Special', 'Select which Special to use. May bug out if you cannot afford selected. <br>0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'Μaps');
-	createSetting('RMaxMapBonusAfterZone', 'Max MapBonus From', 'Always gets Max Map Bonus from this zone on. (inclusive and after).<br><b>NOTE:</b> Set -1 to disable entirely (default). Set 0 to use it always. ', 'value', '-1', null, 'Μaps');
-	createSetting('RMaxMapBonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10.', 'value', '10', null, 'Μaps');
+
+
 	createSetting('RMaxMapBonushealth', 'Max MapBonus Health', 'Limit the amount of map bonuses you get when AutoMaps requires more health. Default is 10.', 'value', '10', null, 'Μaps');
 	createSetting('Rhitssurvived', 'Hits Survived', 'Set this value to tell the script how many enemy attacks you wish to survive for. The default is 10. The lower this is the less health the script will get. If you set this too high it will farm too much so please be careful. ', 'value', '10', null, 'Μaps');
 	createSetting('Rmapcuntoff', 'Map Cut Off', 'Decides when to get max map bonus. 4 is default. This means it will take 1 hit to kill an enemy if in D stance.', 'value', '4', null, 'Μaps');
@@ -499,6 +504,13 @@ function initializeAllSettings() {
 	createSetting('RMeltingPoint', 'Melting Point', '-1 to disable. When to run Melting Point. Use it like this: 50,91. The first number is what zone Melting Point should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Melting Point at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
 	//Frozen Castle
 	createSetting('rFrozenCastle', 'Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
+
+	//Map Bonus
+	createSetting('rMapBonus', 'Map Bonus', 'Turn this on if you want to use Map Bonus. ', 'boolean', false, null, 'Μaps');
+	createSetting('rMapBonusPopup', 'Map Bonus Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Μaps');
+	createSetting('rMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Μaps');
+	createSetting('rMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
 
 	//Time Farming
 	document.getElementById('rFrozenCastle').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -613,8 +625,6 @@ function initializeAllSettings() {
 	createSetting('chATGA2timer', 'ATGA: T: C: Hard', '<b>ATGA Timer: Hard C2s</b><br>ATGA will use this value in C2s that are considered Hard. Electricity, Nom, Toxicity. Overwrites Default, Before Z and After Z and C2 ATGA', 'value', '-1', null, 'ATGA');
 
 	//C3
-	createSetting('c3mapbonuszone', 'Max MapBonus From', 'Always gets Max Map Bonus from this zone on. (inclusive and after).<br><b>NOTE:</b> Set -1 to disable entirely (default). Set 0 to use it always. ', 'value', -1, null, 'C3');
-	createSetting('c3mapbonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10.', 'value', -1, null, 'C3');
 	createSetting('c3finishrun', 'Finish C3', 'Finish / Abandon Challenge3 (any) when this zone is reached, if you are running one. Does not affect Non-C3 runs.', 'value', -1, null, 'C3');
 	createSetting('c3meltingpoint', 'Melt Smithy', 'Run the Melting Point map to gain an extra Smithies when at or above this value on C3 runs.', 'value', -1, null, 'C3');
 	createSetting('c3buildings', 'Building max purchase', 'When in a C3 or special challenge  (Mayhem, Panda) run will spend 99% of resources on buildings regardless of your other designated caps until the zone you specify in the Buy Buildings Till setting.', 'boolean', false, null, 'C3');
@@ -622,10 +632,17 @@ function initializeAllSettings() {
 	createSetting('c3GM_ST', ['c3: GM/ST', 'c3: Golden Maps', 'c3: Sharp Trimps', 'c3: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during C3 or special challenge (Mayhem, Pandemonium) runs.', 'multitoggle', 0, null, 'C3');
 
 	//C3 Voids
+	document.getElementById('c3GM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rc3VoidMod', 'Daily Void Zone', 'What zone to do void maps in dailies. Disable with -1.<br><br>Can input multiple values and it\'ll run voids on each of those zones.', 'multiValue', -1, null, 'C3');
 	createSetting('Rc3voidscell', 'Daily Void Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70.', 'value', -1, null, 'C3');
 	createSetting('Rc3RunNewVoidsUntilNew', 'Daily New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'C3');
 
+	//Map Bonus
+	createSetting('rc3MapBonus', 'Map Bonus', 'Turn this on if you want to use Map Bonus. ', 'boolean', false, null, 'C3');
+	createSetting('rc3MapBonusPopup', 'Map Bonus Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'C3');
+	createSetting('rc3MapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
+	createSetting('rc3MapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'C3');
+	createSetting('rc3MapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'C3');
 
 	//C3 Time Farm
 	document.getElementById('Rc3RunNewVoidsUntilNew').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -942,15 +959,21 @@ function initializeAllSettings() {
 
 	createSetting('EnableAFK', 'Go AFK Mode', '(Action Button). Go AFK uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU and RAM saving mode. Everything will resume when you come back and press the Back button. Console debug output is also disabled. The blue color means this is not a settable setting, just a button. You can now also click the Zone # (World Info) area to go AFK now.', 'action', 'MODULES["performance"].EnableAFKMode()', null, 'Display');
 	document.getElementById('battleSideTitle').setAttribute('onclick', 'MODULES["performance"].EnableAFKMode()');
+	//Map Bonus
+	document.getElementById('rMapBonusPopup').setAttribute('onclick', 'MAZLookalike("Map Bonus", "rMapBonus", "MAZ")');
+	document.getElementById('rdMapBonusPopup').setAttribute('onclick', 'MAZLookalike("Daily Map Bonus", "rdMapBonus", "MAZ")');
+	document.getElementById('rc3MapBonusPopup').setAttribute('onclick', 'MAZLookalike("C3 Map Bonus", "rc3MapBonus", "MAZ")');
 	//Smithy Farming
 	document.getElementById('rSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Smithy Farm", "rSmithyFarm", "MAZ")');
 	document.getElementById('rdSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Smithy Farm", "rdSmithyFarm", "MAZ")');
 	document.getElementById('rc3SmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Smithy Farm", "rc3SmithyFarm", "MAZ")');
-	//Time Farming 
+	//Bone Shrine
 	document.getElementById('rBoneShrinePopup').setAttribute('onclick', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")');
+	//Prestige Raiding
 	document.getElementById('rRaidingPopup').setAttribute('onclick', 'MAZLookalike("Raiding", "rRaiding", "MAZ")');
 	document.getElementById('rdRaidingPopup').setAttribute('onclick', 'MAZLookalike("Raiding", "rdRaiding", "MAZ")');
 	document.getElementById('rc3RaidingPopup').setAttribute('onclick', 'MAZLookalike("Raiding", "rc3Raiding", "MAZ")');
+	//Time Farming 
 	document.getElementById('rTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")');
 	document.getElementById('rdTimeFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Time Farm", "rdTimeFarm", "MAZ")');
 	document.getElementById('rc3TimeFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm", "MAZ")');
@@ -1183,7 +1206,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				name: name,
 				description: description,
 				type: type,
-				value: loaded === undefined ? [{ world: 0, cell: 0, level: 0, repeat: 0, special: 0, gather: 'food', tributes: 0, mets: 0, bogs: 0, insanity: 0, potion: 0, bonfire: 0, boneamount: 0, bonebelow: 0, worshipper: 50, boneruntype: 0, bonegather: 0, buildings: true, jobratio: '1,1,1,1' }] : loaded
+				value: loaded === undefined ? [{ world: 999, cell: 0, level: 0, repeat: 0, special: 0, gather: 'food', tributes: 0, mets: 0, bogs: 0, insanity: 0, potion: 0, bonfire: 0, boneamount: 0, bonebelow: 0, worshipper: 50, boneruntype: 0, bonegather: 0, buildings: true, jobratio: '1,1,1,1' }] : loaded
 			};
 		var btn = document.createElement("select");
 		btn.id = id;
@@ -1742,8 +1765,15 @@ function updateCustomButtons() {
 
 	//RDaily
 	radonon ? turnOn('buyradony') : turnOff('buyradony');
-	radonon ? turnOn('RdMaxMapBonusAfterZone') : turnOff('RdMaxMapBonusAfterZone');
-	radonon ? turnOn('RdMaxMapBonuslimit') : turnOff('RdMaxMapBonuslimit');
+
+	//Map Bonus  
+	turnOff('rdMapBonus');
+	radonon ? turnOn('rdMapBonusPopup') : turnOff('rdMapBonusPopup');
+	turnOff('rdMapBonusSettings');
+	turnOff('rdMapBonusDefaultSettings');
+	turnOff('rdMapBonusZone');
+
+
 	radonon ? turnOn('Rdmeltsmithy') : turnOff('Rdmeltsmithy');
 	radonon ? turnOn('RDailyVoidMod') : turnOff('RDailyVoidMod');
 	radonon ? turnOn('Rdvoidscell') : turnOff('Rdvoidscell');
@@ -1802,8 +1832,14 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerpercent') : turnOff('c2runnerpercent');
 
 	//C3
-	radonon ? turnOn('c3mapbonuszone') : turnOff('c3mapbonuszone');
-	radonon ? turnOn('c3mapbonuslimit') : turnOff('c3mapbonuslimit');
+
+	//Map Bonus  
+	turnOff('rc3MapBonus');
+	radonon ? turnOn('rc3MapBonusPopup') : turnOff('rc3MapBonusPopup');
+	turnOff('rc3MapBonusSettings');
+	turnOff('rc3MapBonusDefaultSettings');
+	turnOff('rc3MapBonusZone');
+
 	radonon ? turnOn('c3finishrun') : turnOff('c3finishrun');
 	radonon ? turnOn('c3meltingpoint') : turnOff('c3meltingpoint');
 	radonon ? turnOn('c3buildings') : turnOff('c3buildings');
@@ -1967,6 +2003,17 @@ function updateCustomButtons() {
 	radonon ? turnOn('Rautomapsportal') : turnOff('Rautomapsportal');
 	radonon ? turnOn('Rmapselection') : turnOff('Rmapselection');
 	radonon ? turnOn('rMapSpecial') : turnOff('rMapSpecial');
+
+	//Map Bonus  
+	turnOff('rMapBonus');
+	radonon ? turnOn('rMapBonusPopup') : turnOff('rMapBonusPopup');
+	turnOff('rMapBonusSettings');
+	turnOff('rMapBonusDefaultSettings');
+	turnOff('rMapBonusZone');
+
+
+
+
 	radonon ? turnOn('RMaxMapBonusAfterZone') : turnOff('RMaxMapBonusAfterZone');
 	radonon ? turnOn('RMaxMapBonuslimit') : turnOff('RMaxMapBonuslimit');
 	radonon ? turnOn('RMaxMapBonushealth') : turnOff('RMaxMapBonushealth');
