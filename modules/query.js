@@ -13,15 +13,16 @@ function isBuildingInQueue(a) { for (var c in game.global.buildingsQueue) if (ga
 function setScienceNeeded() { for (var a in scienceNeeded = 0, upgradeList) if (a = upgradeList[a], game.upgrades[a].allowed > game.upgrades[a].done) { if (1 == game.global.world && 1e3 >= game.global.totalHeliumEarned && a.startsWith("Speed")) continue; scienceNeeded += getScienceCostToUpgrade(a) } needGymystic && (scienceNeeded += getScienceCostToUpgrade("Gymystic")) }
 function RsetScienceNeeded() { for (var a in RscienceNeeded = 0, RupgradeList) if (a = RupgradeList[a], game.upgrades[a].allowed > game.upgrades[a].done) { if (1 == game.global.world && 1e3 >= game.global.totalRadonEarned && a.startsWith("Speed")) continue; RscienceNeeded += getScienceCostToUpgrade(a) } }
 
-function RgetEnemyAvgAttack(zone, cell, name, type) {
+function RgetEnemyAvgAttack(zone, cell, name, type, query) {
 	//Pre-Init
 	if (!type) type = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	if (!zone) zone = (type == "world" || !game.global.mapsActive) ? game.global.world : getCurrentMapObject().level;
 	if (!cell) cell = (type == "world" || !game.global.mapsActive) ? getCurrentWorldCell().level : (getCurrentMapCell() ? getCurrentMapCell().level : 1);
 	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : "Snimp";
+	if (!query) query = !query ? false : query;
 	var mapGrid = type === 'world' ? 'gridArray' : 'mapGridArray';
 
-	if (game.global.stringVersion >= '5.8.0' && zone >= 200 && cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {
+	if (!query && game.global.stringVersion >= '5.8.0' && zone >= 200 && cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {
 		if (cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {
 			attack = u2Mutations.getAttack(game.global[mapGrid][cell - 1])
 			return attack;

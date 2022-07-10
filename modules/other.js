@@ -2132,6 +2132,120 @@ function rManageEquality() {
 	}
 }
 
+function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty) {
+	if (!game.global.preMapsActive && game.global.gridArray.length > 0) {
+		//Turning off equality scaling
+		game.portal.Equality.scalingActive = false;
+		//Misc vars
+
+		var currentCell = !cell && mapping ? game.global.lastClearedMapCell : !cell ? game.global.lastClearedCell : cell - 2;
+		var enemyName = !name ? game.global[mapGrid][currentCell + 1].name : name;
+
+		var mapping = game.global.mapsActive ? true : false;
+		var mapType = !mapType && !mapping ? "world" : !mapType ? (getCurrentMapObject().location == "Void" ? "void" : "map") : mapType;
+		var zone = !zone && (mapType == "world" || !mapping) ? game.global.world : !zone ? getCurrentMapObject().level : zone;
+
+
+
+		//var mapping = game.global.mapsActive ? true : false;
+		//var currentCell = !cell && mapping ? game.global.lastClearedMapCell : !cell ? game.global.lastClearedCell : cell;
+		var mapGrid = game.global.mapsActive ? 'mapGridArray' : 'gridArray';
+		//var type = (!mapping) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
+		var forceGamma = !forceGamma ? false : forceGamma;
+		var query = !query ? false : query;
+		//var zone = (type == "world" || !mapping) ? game.global.world : getCurrentMapObject().level;
+		var difficulty = !query && !difficulty && !mapping ? 1 : !query && !difficulty ? getCurrentMapObject().difficulty : difficulty ? difficulty : 1;
+		//Challenge conditions
+		var runningUnlucky = game.global.challengeActive == 'Unlucky';
+		var runningTrappa = game.global.challengeActive == 'Trappapalooza'
+		var questShieldBreak = game.global.challengeActive == 'Quest' && questcheck() == 8;
+		var runningGlass = game.global.challengeActive == 'Glass';
+
+		//Initialising name/health/dmg variables
+		//Enemy stats
+		var enemyName = !name ? game.global[mapGrid][currentCell + 1].name : name;
+		var enemyHealth = !query ? game.global[mapGrid][currentCell + 1].health : RcalcEnemyHealthMod(zone, currentCell + 2, enemyName, mapType, true) * difficulty;
+		var enemyAttack = !query && getCurrentEnemy() ? getCurrentEnemy().attack * RcalcBadGuyDmgMod() :
+			RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, query), 0) * 1.5 * difficulty;
+		debug(RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, query), 0) * 1.5 * difficulty);
+		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, query), 0) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, query), 0) * 1.5 * difficulty : enemyAttack * 1.5;
+		if (!query) enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
+		var enemyDmgEquality = 0;
+		//Our stats
+		var ourHealth = query ? RcalcOurHealth(questShieldBreak) : remainingHealth();
+		var ourHealthMax = RcalcOurHealth(questShieldBreak)
+		var ourDmg = RcalcOurDmg('min', 0, mapping, true, true);
+		var ourDmgEquality = 0;
+		//Figuring out gamma burst stacks to proc and dmg bonus
+		var gammaToTrigger = forceGamma ? 0 : (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
+		var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
+		var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
+		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
+		if (query && game.global.mapsActive && game.talents.mapHealth.purchased) ourHealth *= 2;
+
+		/* if (query) {
+			debug("Enemy name = " + enemyName)
+			debug("Cell = " + (currentCell + 2))
+			debug("Enemy health = " + enemyHealth)
+			debug("Enemy atk = " + enemyAttack)
+			debug("Our health = " + ourHealth)
+			debug("Our atk = " + ourDmg)
+		} */
+		if (enemyHealth !== 0 && enemyHealth !== -1) {
+			for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
+				enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i) * (runningTrappa ? 1.1 : 1);
+				ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
+				if (runningUnlucky && Number(RcalcOurDmg('min', i, mapping, true, true, true).toString()[0] % 2 == 1))
+					continue;
+				if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
+					return i;
+				}
+				else if (ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
+					if (query) return i + 1;
+					return i;
+				}
+				else if (ourDmgEquality > enemyHealth && ourHealth >= enemyDmgEquality) {
+					return i;
+				}
+				else if (ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
+					return i;
+				}
+				else if (ourDmgEquality * 2 > enemyHealth && ourHealth >= enemyDmgEquality * 2) {
+					return i;
+				}
+				else if (ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
+					return i;
+				}
+				else if (ourDmgEquality * 3 > enemyHealth && ourHealth >= enemyDmgEquality * 3) {
+					return i;
+				}
+				else if (ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
+					return i;
+				}
+				else if (ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
+					return i;
+				}
+				else if (ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
+					return i;
+				}
+				else if (ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
+					return i;
+				}
+				else if (ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
+					return i;
+				}
+				else if (ourHealth >= enemyDmgEquality && gammaToTrigger == 0) {
+					return i;
+				}
+				else if (i === game.portal.Equality.radLevel) {
+					return i;
+				}
+			}
+		}
+	}
+
+}
+
 function equalityManagement() {
 	if (!game.global.preMapsActive && game.global.gridArray.length > 0) {
 		//Turning off equality scaling
@@ -2390,7 +2504,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 	}
 	if (game.global.stringVersion >= '5.8.0') {
 		if (game.global.universe == 2 && u2Mutations.tree.Loot.purchased) {
-			amt *= 1.5;
+			amt_local *= 1.5;
 		}
 	}
 	if (game.challenges.Nurture.boostsActive())
