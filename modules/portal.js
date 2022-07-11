@@ -351,7 +351,7 @@ function RautoPortal() {
 			}
 			if (game.global.world >= dailyportalzone && getPageSetting('RAutoStartDaily')) {
 				checkCompleteDailies();
-				if (game.global.recentDailies.length !== 7)
+				if (game.global.recentDailies.length !== 7 && !(getPageSetting('dontCapDailies') && game.global.recentDailies.length != 0))
 					RdoPortal(null, true);
 			}
 			break;
@@ -439,7 +439,7 @@ function RdoPortal(challenge, daily) {
 	var preset = 0;
 	if (daily) {
 		checkCompleteDailies();
-		if (game.global.recentDailies.length == 7)
+		if (game.global.recentDailies.length == 7 && !(getPageSetting('dontCapDailies') && game.global.recentDailies.length != 0))
 			return;
 	}
 	if (!game.global.portalActive) return;
@@ -459,6 +459,8 @@ function RdoPortal(challenge, daily) {
 			if (!done)
 				break;
 		}
+		if (getPageSetting('dontCapDailies') && game.global.recentDailies.length !== 0)
+			lastUndone = 1;
 		if (lastUndone == 1) {
 			debug("All available Dailies already completed.", "portal");
 			if ((getPageSetting('u2daily') && portalUniverse == 2 && challenge == autoTrimpSettings.dHeliumHourChallenge.selected) || (getPageSetting('u1daily') == true && portalUniverse == 1))

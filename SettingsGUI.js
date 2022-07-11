@@ -339,6 +339,7 @@ function initializeAllSettings() {
 	createSetting('RAutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('RFillerRun', 'Filler run', 'Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.', 'boolean', false, null, 'Daily');
 	createSetting('u1daily', 'Daily in U1', 'If this is on, you will do your daily in U1. ', 'boolean', false, null, 'Daily');
+	createSetting('dontCapDailies', 'Use when capped', 'If this is on, you will only do the oldest daily when you have 7 dailies available. ', 'boolean', false, null, 'Daily');
 	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
 	createSetting('RdHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Bublé', 'Melt', 'Quagmire', 'Archaeology', 'Insanity', 'Nurture', 'Alchemy', 'Hypothermia'], 'Daily');
 	createSetting('RdCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone during dailies. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Daily');
@@ -1783,10 +1784,11 @@ function updateCustomButtons() {
 	radonon ? turnOn('Rdequipon') : turnOff('Rdequipon');
 	radonon && getPageSetting('Rdequipon') ? turnOn('Rdequipzone') : turnOff('Rdequipzone');
 
-	//RDPortal
+	//RDPortal 
 	radonon ? turnOn('RAutoStartDaily') : turnOff('RAutoStartDaily');
 	radonon && getPageSetting('RAutoStartDaily') ? turnOn('RFillerRun') : turnOff('RFillerRun');
 	radonon ? turnOn('u1daily') : turnOff('u1daily');
+	radonon ? turnOn('dontCapDailies') : turnOff('dontCapDailies');
 	radonon ? turnOn('RAutoPortalDaily') : turnOff('RAutoPortalDaily');
 	radonon && getPageSetting('RAutoPortalDaily') == 2 ? turnOn('RdCustomAutoPortal') : turnOff('RdCustomAutoPortal');
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeHrDontPortalBefore') : turnOff('RdHeHrDontPortalBefore');
