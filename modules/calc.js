@@ -826,8 +826,8 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 
 	// Gamma Burst
 	var gammaTriggerStacks = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
-	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= gammaTriggerStacks ? getHeirloomBonus('Shield', 'gammaBurst') / (gammaTriggerStacks * 100) : 1;
-
+	//number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= gammaTriggerStacks ? getHeirloomBonus('Shield', 'gammaBurst') / (gammaTriggerStacks * 100) : 1;
+	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") / 100;
 	switch (minMaxAvg) {
 		case 'min':
 			return game.global.challengeActive == 'Unlucky' ? number : number * (game.portal.Range.radLevel * 0.02 + 0.8) * minDailyMod;
@@ -926,8 +926,9 @@ function RcalcDailyAttackMod(number) {
 	return number;
 }
 
-function RcalcBadGuyDmg(enemy, attack, equality) { //Works out avg dmg. For max dmg * 1.5.
+function RcalcBadGuyDmg(enemy, attack, equality, query) { //Works out avg dmg. For max dmg * 1.5.
 	var number = enemy ? enemy.attack : attack;
+	var query = !query ? false : query;
 	number = game.global.challengeActive == 'Exterminate' && getPageSetting('Rexterminateon') && getPageSetting('Rexterminatecalc') ? RgetEnemyAvgAttack(game.global.world, 90, 'Mantimp') : number;
 	if (!isNaN(parseInt((equality)))) {
 		if (equality > game.portal.Equality.radLevel)
@@ -968,7 +969,7 @@ function RcalcBadGuyDmg(enemy, attack, equality) { //Works out avg dmg. For max 
 	number *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	number *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
 	if (game.global.stringVersion >= '5.8.0' && game.global.world >= 200 && game.global.universe === 2 && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined') {
-		if (game.global.world >= 200 && game.global.universe === 2 && !game.global.mapsActive && !game.global.preMapsActive) {
+		if (!query && game.global.world >= 200 && game.global.universe === 2 && !game.global.mapsActive && !game.global.preMapsActive) {
 			if (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.length > 0) {
 				var cell = game.global.gridArray[game.global.lastClearedCell + 1]
 				/* if (cell.u2Mutation.indexOf('CMP') == -1) {
@@ -1015,7 +1016,7 @@ function RcalcBadGuyDmgMod() {
 	return number;
 }
 
-function RcalcEnemyBaseHealth(type, zone, cell, name) {
+function RcalcEnemyBaseHealth(type, zone, cell, name, query) {
 	//Pre-Init
 	if (!type) type = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	if (!zone) zone = (type == "world" || !game.global.mapsActive) ? game.global.world : getCurrentMapObject().level;
@@ -1026,7 +1027,7 @@ function RcalcEnemyBaseHealth(type, zone, cell, name) {
 	var base = (game.global.universe == 2) ? 10e7 : 130;
 	var health = base * Math.sqrt(zone) * Math.pow(3.265, zone / 2) - 110;
 
-	if (game.global.stringVersion >= '5.8.0' && game.global.world >= 200 && game.global.universe === 2 && type === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
+	if (!query && game.global.stringVersion >= '5.8.0' && game.global.world >= 200 && game.global.universe === 2 && type === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
 		if (game.global.world >= 200 && game.global.universe === 2 && type === 'world') {
 			if (game.global.gridArray[cell - 1].u2Mutation.length > 0 && (game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1 || game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1)) {
 				cell = cell - 1
@@ -1093,7 +1094,7 @@ function RcalcEnemyBaseHealth(type, zone, cell, name) {
 function RcalcEnemyHealth(world) {
 	//Initialising variables
 	world = !world ? game.global.world : world;
-	var health = RcalcEnemyBaseHealth("world", world, 50, 'Snimp');
+	var health = RcalcEnemyBaseHealth("world", world, 67, 'Gorillimp');
 
 	//Challenges
 	health *= game.global.challengeActive == 'Unbalance' ? 2 : 1;
@@ -1119,12 +1120,11 @@ function RcalcEnemyHealth(world) {
 	}
 	return health;
 }
-
 function RcalcEnemyHealthMod(world, cell, name, type, query) {
 	//Initialising variables
 	var type = !type ? 'world' : type;
 	var world = !world ? game.global.world : world;
-	var health = RcalcEnemyBaseHealth(type, world, cell, name);
+	var health = RcalcEnemyBaseHealth(type, world, cell, name, query);
 
 	var mapGrid = type === 'world' ? 'gridArray' : 'mapGridArray';
 	if (!query && game.global.stringVersion >= '5.8.0' && game.global.world >= 200 && game.global.universe === 2 && type === 'world' && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined') {
@@ -1161,16 +1161,22 @@ function RcalcEnemyHealthMod(world, cell, name, type, query) {
 }
 
 function RcalcHDratio() {
+	var ratio = 0;
 	if (game.global.gridArray.length > 0) {
-		var ratio = 0;
-		var ourBaseDamage = RcalcOurDmg("avg", false, false);
-
-		ratio = RcalcEnemyHealth(game.global.world) / ourBaseDamage;
-		return ratio;
+		var runningUnlucky = game.global.challengeActive == 'Unlucky';
+		if (getPageSetting('rManageEquality') == 2) {
+			var zone = game.global.world;
+			var enemyName = zone >= 59 ? 'Improbability' : 'Blimp'
+			var ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), false, true, false, runningUnlucky);
+			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', true);
+			ratio = enemyHealth / ourDamage;
+		}
+		else {
+			var ourBaseDamage = RcalcOurDmg("avg", false, false, true, false, runningUnlucky);
+			ratio = RcalcEnemyHealth(game.global.world) / ourBaseDamage;
+		}
 	}
-	else {
-		return 0;
-	}
+	return ratio;
 }
 
 function getTotalHealthMod() {

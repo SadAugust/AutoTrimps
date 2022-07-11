@@ -1048,16 +1048,30 @@ function convertSettings(oldSetting, newSetting, type, newName) {
 		autoTrimpSettings[oldSetting].value = 'undefined';
 
 }
-/* 
+
 //Adding onto settings
-if (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount) === 'undefined')
-	autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount = 3;
- */
-
-
-if (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone) === 'undefined')
+if (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone) === 'undefined') {
 	autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone = 0;
-
+	saveSettings();
+}
+if (autoTrimpSettings.rTimeFarmSettings.value[0].done === undefined) {
+	for (var y = 0; y < autoTrimpSettings.rTimeFarmSettings.value.length; y++) {
+		autoTrimpSettings.rTimeFarmSettings.value[y].done = 1;
+	}
+	saveSettings();
+}
+if (autoTrimpSettings.rdTimeFarmSettings.value[0].done === undefined) {
+	for (var y = 0; y < autoTrimpSettings.rdTimeFarmSettings.value.length; y++) {
+		autoTrimpSettings.rdTimeFarmSettings.value[y].done = 1;
+	}
+	saveSettings();
+}
+if (autoTrimpSettings.rc3TimeFarmSettings.value[0].done === undefined) {
+	for (var y = 0; y < autoTrimpSettings.rc3TimeFarmSettings.value.length; y++) {
+		autoTrimpSettings.rc3TimeFarmSettings.value[y].done = 1;
+	}
+	saveSettings();
+}
 
 function createSetting(id, name, description, type, defaultValue, list, container) {
 	var btnParent = document.createElement("DIV");
@@ -1207,7 +1221,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				name: name,
 				description: description,
 				type: type,
-				value: loaded === undefined ? [{ world: 999, cell: 0, level: 0, repeat: 0, special: 0, gather: 'food', tributes: 0, mets: 0, bogs: 0, insanity: 0, potion: 0, bonfire: 0, boneamount: 0, bonebelow: 0, worshipper: 50, boneruntype: 0, bonegather: 0, buildings: true, jobratio: '1,1,1,1' }] : loaded
+				value: loaded === undefined ? [{ world: 999, cell: 0, level: 0, repeat: 0, special: 0, gather: 'food', tributes: 0, mets: 0, bogs: 0, insanity: 0, potion: 0, bonfire: 0, boneamount: 0, bonebelow: 0, worshipper: 50, boneruntype: 0, bonegather: 0, buildings: true, done: false, jobratio: '1,1,1,1' }] : loaded
 			};
 		var btn = document.createElement("select");
 		btn.id = id;
@@ -2532,6 +2546,12 @@ function checkPortalSettings() {
 		tooltip('confirm', null, 'update', 'WARNING: Your void maps are set to complete after your autoPortal, and therefore will not be done at all! Please Change Your Settings Now. This Box Will Not Go away Until You do. Remember you can choose \'Custom\' autoPortal along with challenges for complete control over when you portal. <br><br> Estimated autoPortal level: ' + portalLevel, 'cancelTooltip()', 'Void Maps Conflict');
 	return portalLevel;
 }
+
+
+
+
+
+
 
 //AutoJobs
 

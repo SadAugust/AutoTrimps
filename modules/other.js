@@ -2164,11 +2164,11 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty)
 		//Initialising name/health/dmg variables
 		//Enemy stats
 		var enemyName = !name ? game.global[mapGrid][currentCell + 1].name : name;
+		if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
 		var enemyHealth = !query ? game.global[mapGrid][currentCell + 1].health : RcalcEnemyHealthMod(zone, currentCell + 2, enemyName, mapType, true) * difficulty;
 		var enemyAttack = !query && getCurrentEnemy() ? getCurrentEnemy().attack * RcalcBadGuyDmgMod() :
-			RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, query), 0) * 1.5 * difficulty;
-		debug(RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, query), 0) * 1.5 * difficulty);
-		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, query), 0) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, query), 0) * 1.5 * difficulty : enemyAttack * 1.5;
+			RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query);
+		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query) * 1.5 * difficulty : enemyAttack * 1.5;
 		if (!query) enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 		var enemyDmgEquality = 0;
 		//Our stats
@@ -2183,17 +2183,9 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty)
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
 		if (query && game.global.mapsActive && game.talents.mapHealth.purchased) ourHealth *= 2;
 
-		/* if (query) {
-			debug("Enemy name = " + enemyName)
-			debug("Cell = " + (currentCell + 2))
-			debug("Enemy health = " + enemyHealth)
-			debug("Enemy atk = " + enemyAttack)
-			debug("Our health = " + ourHealth)
-			debug("Our atk = " + ourDmg)
-		} */
 		if (enemyHealth !== 0 && enemyHealth !== -1) {
 			for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
-				enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i) * (runningTrappa ? 1.1 : 1);
+				enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i) * (runningTrappa ? 1.25 : 1);
 				ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 				if (runningUnlucky && Number(RcalcOurDmg('min', i, mapping, true, true, true).toString()[0] % 2 == 1))
 					continue;
@@ -2201,7 +2193,17 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty)
 					return i;
 				}
 				else if (ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
-					if (query) return i + 1;
+					/* if (query) {
+						debug("Enemy name = " + enemyName)
+						debug("Cell = " + (currentCell + 2))
+						debug("Enemy health = " + enemyHealth.toExponential(2))
+						debug("Enemy atk = " + enemyDmgEquality.toExponential(2))
+						debug("Our health = " + ourHealth.toExponential(2))
+						debug("Our atk = " + ourDmgEquality.toExponential(2))
+					} */
+					if (query) {
+						return i;
+					}
 					return i;
 				}
 				else if (ourDmgEquality > enemyHealth && ourHealth >= enemyDmgEquality) {

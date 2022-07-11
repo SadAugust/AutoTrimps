@@ -749,8 +749,11 @@ var rC3EndZoneSetting = -1;
 //Void Maps
 var RdoVoids = false;
 var RneedToVoid = false;
+//Equip Farm
+var Requipfarm = !1;
+var rShouldEquipFarm = !1;
+var Requipminusglobal = -1;
 //Time Farm
-var rTimeFarm = false;
 rShouldTimeFarm = false;
 var rTFCurrentMap = undefined;
 var rTFZoneCleared = 0;
@@ -764,7 +767,6 @@ var rShouldUnbalance = false;
 //Storm
 var rShouldStorm = false;
 //Worshipper
-var Rshipfarm = false;
 var rShouldWorshipperFarm = false;
 var rFragmentFarming = false;
 var rFragmentMapID = undefined;
@@ -787,17 +789,12 @@ var Rshouldmayhem = 0;
 var Rstormfarm = false;
 var Rshouldstormfarm = false;
 //Insanity
-var Rinsanityfarm = false;
 var rShouldInsanityFarm = false;
 var rFragmentFarming = false;
 var rFragmentMapID = undefined;
 var rInitialFragmentMapID = undefined;
 var rFragMapBought = false;
 var rInsanityCurrentMap = undefined;
-//Equip Farm
-var Requipfarm = !1;
-var rShouldEquipFarm = !1;
-var Requipminusglobal = -1;
 //Pandemonium
 var rShouldPandemoniumDestack = false;
 var rShouldPandemoniumFarm = false;
@@ -872,7 +869,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (rShouldQuest) status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
 	else if (Rshouldmayhem == 1 || Rshouldmayhem == 2) status = 'Mayhem Destacking: ' + game.challenges.Mayhem.stacks + " remaining";
 	else if (Rshouldstormfarm) status = 'Storm Farming to ' + stormdynamicHD().toFixed(2);
-	else if (rShouldInsanityFarm) status = 'Insanity Farming: ' + game.challenges.Insanity.insanity + "/" + rInsanityStacks;
+	else if (rShouldInsanityFarm) status = 'Insanity Farming: ' + game.challenges.Insanity.insanity + "/" + rIFStacks;
 	else if (rShouldPandemoniumDestack) status = 'Pandemonium Destacking: ' + game.challenges.Pandemonium.pandemonium + " remaining";
 	else if (rShouldPandemoniumFarm) status = 'Pandemonium Farming Equips below ' + prettify(scaleToCurrentMapLocal(amt_cache, false, true, getPageSetting('PandemoniumFarmLevel')));
 	else if (rShouldPandemoniumJestimpFarm) status = 'Pandemonium Farming Equips below ' + prettify(jestMetalTotal);
@@ -973,7 +970,13 @@ function RautoMap() {
 
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, false);
-	var enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability'));
+	/* 	if (getPageSetting('rManageEquality') == 2) {
+			var enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability', 'world', true), equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), true)
+			1;
+		}
+		else { */
+	var enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true));
+	/* } */
 
 	if (getPageSetting('RDisableFarm') > 0) {
 		RshouldFarm = (RcalcHDratio() >= getPageSetting('RDisableFarm'));
@@ -1103,12 +1106,24 @@ function RautoMap() {
 	//Time Farm
 	if ((rRunningRegular && autoTrimpSettings.rTimeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTimeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TimeFarmDefaultSettings.value.active) && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
-		rTFZone = rRunningC3 ? getPageSetting('rc3TimeFarmZone') : rRunningDaily ? getPageSetting('rdTimeFarmZone') : getPageSetting('rTimeFarmZone');
-		var rTFIndex = rTFZone.indexOf(game.global.world);
+		var rTFBaseSetting = rRunningC3 ? autoTrimpSettings.rc3TimeFarmSettings.value : rRunningDaily ? autoTrimpSettings.rdTimeFarmSettings.value : autoTrimpSettings.rTimeFarmSettings.value;
 
-		if (rTFZone.includes(game.global.world) && game.stats.zonesCleared.value != rTFZoneCleared) {
+		rTFZone = rRunningC3 ? getPageSetting('rc3TimeFarmZone') : rRunningDaily ? getPageSetting('rdTimeFarmZone') : getPageSetting('rTimeFarmZone');
+		var rTFIndex;
+		var totalPortals = getTotalPortals();
+		for (var y = 0; y < rTFZone.length; y++) {
+			if (rTFBaseSetting[y].done === totalPortals + "_" + game.global.world) {
+				continue;
+			}
+			if (game.global.world === rTFZone[y]) {
+				rTFIndex = y;
+				break;
+			}
+		}
+
+		if (rTFIndex >= 0) {
 			//Figuring out how many maps to run at your current zone
-			var rTFSettings = rRunningC3 ? autoTrimpSettings.rc3TimeFarmSettings.value[rTFIndex] : rRunningDaily ? autoTrimpSettings.rdTimeFarmSettings.value[rTFIndex] : autoTrimpSettings.rTimeFarmSettings.value[rTFIndex];
+			var rTFSettings = rTFBaseSetting[rTFIndex];
 			var rTFCell = rTFSettings.cell;
 			if (game.global.lastClearedCell + 2 >= rTFCell) {
 				var rTFMapLevel = rTFSettings.level
@@ -1122,9 +1137,11 @@ function RautoMap() {
 				if (game.global.challengeActive == 'Transmute' && rTFSpecial.includes('mc'))
 					rTFSpecial = rTFSpecial.charAt(0) + "sc";
 				if (game.global.mapRunCounter >= rTFRepeatCounter && rTFCurrentMap != undefined) {
+					rTFSettings.done = totalPortals + "_" + game.global.world;
 					rTFZoneCleared = game.stats.zonesCleared.value;
 					rTFCurrentMap = undefined;
 					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+					saveSettings();
 				}
 				if (rTFRepeatCounter > game.global.mapRunCounter)
 					rShouldTimeFarm = true;
@@ -1342,7 +1359,6 @@ function RautoMap() {
 	if (game.jobs.Worshipper.locked == 0 && getPageSetting('rShipFarm') && rShouldQuest === 0) {
 		var shipfarmzone = getPageSetting('rShipFarmZone');
 		if (shipfarmzone.includes(game.global.world) && game.jobs.Worshipper.owned != 50) {
-			//if (Rshipfarm) {
 			var shipamountfarmindex = shipfarmzone.indexOf(game.global.world);
 			var rShipFarmSettings = autoTrimpSettings.rShipFarmSettings.value[shipamountfarmindex];
 			var shipfarmcell = rShipFarmSettings.cell
@@ -1448,20 +1464,21 @@ function RautoMap() {
 
 	//Insanity Farm
 	if (game.global.challengeActive == "Insanity" && autoTrimpSettings.rInsanityDefaultSettings.value.active) {
-		var insanityfarmzone = getPageSetting('rInsanityZone');
+		var rIFZone = getPageSetting('rInsanityZone');
 
-		if (insanityfarmzone.includes(game.global.world)) {
-			var insanitystacksfarmindex = insanityfarmzone.indexOf(game.global.world);
-			var rInsanitySettings = autoTrimpSettings.rInsanitySettings.value[insanitystacksfarmindex];
-			var insanitymaplevel = rInsanitySettings.level;
-			var insanityfarmcell = rInsanitySettings.cell;
-			rInsanityStacks = rInsanitySettings.insanity;
-			var rInsanityJobRatio = rInsanitySettings.jobratio;
+		if (rIFZone.includes(game.global.world)) {
+			var rIFIndex = rIFZone.indexOf(game.global.world);
+			var rIFSettings = autoTrimpSettings.rInsanitySettings.value[rIFIndex];
+			var rIFMapLevel = rIFSettings.level;
+			var rIFSpecial = rIFSettings.special;
+			var rIFCell = rIFSettings.cell;
+			rIFStacks = rIFSettings.insanity;
+			var rIFJobRatio = rIFSettings.jobratio;
 
-			if (rInsanityStacks > game.challenges.Insanity.maxInsanity)
-				rInsanityStacks = game.challenges.Insanity.maxInsanity;
-			if (game.global.lastClearedCell + 2 >= insanityfarmcell) {
-				if (rInsanityStacks >= game.challenges.Insanity.insanity)
+			if (rIFStacks > game.challenges.Insanity.maxInsanity)
+				rIFStacks = game.challenges.Insanity.maxInsanity;
+			if (game.global.lastClearedCell + 2 >= rIFCell) {
+				if (rIFStacks >= game.challenges.Insanity.insanity)
 					rShouldInsanityFarm = true;
 
 				if (rInsanityCurrentMap != undefined && !rShouldInsanityFarm) {
@@ -2028,9 +2045,9 @@ function RautoMap() {
 					rTFCurrentMap = "rTimeFarm";
 					workerRatio = rTFJobRatio;
 				} else if (rShouldInsanityFarm) {
-					selectedMap = RShouldFarmMapCreation(insanitymaplevel, "fa");
+					selectedMap = RShouldFarmMapCreation(rIFMapLevel, rIFSpecial);
 					rInsanityCurrentMap = "rInsanity";
-					workerRatio = rInsanityJobRatio;
+					workerRatio = rIFJobRatio;
 				} else if (rShouldTributeFarm || rShouldMetFarm) {
 					selectedMap = RShouldFarmMapCreation(rTrFMapLevel, rTrFSpecial);
 					workerRatio = rTrFJobRatio;
@@ -2168,7 +2185,7 @@ function RautoMap() {
 				if (rShouldInsanityFarm && rFragmentFarming && game.resources.fragments.owned >= PerfectMapCost(10, 'fa'))
 					repeatClicked();
 				//Insanity Farm
-				if (rShouldInsanityFarm && !rFragmentFarming && rInsanityStacks <= game.challenges.Insanity.insanity) {
+				if (rShouldInsanityFarm && !rFragmentFarming && rIFStacks <= game.challenges.Insanity.insanity) {
 					repeatClicked();
 				}
 				//Pandemonium Destacking
@@ -2355,7 +2372,7 @@ function RautoMap() {
 			//Fragment Farming
 			//Insanity
 			if (rShouldInsanityFarm && getPageSetting('Rinsanityfarmfrag'))
-				rFragmentFarm('insanity', insanitymaplevel, "fa");
+				rFragmentFarm('insanity', rIFMapLevel, "fa");
 			//Worshipper
 			if (rShouldWorshipperFarm && getPageSetting('Rshipfarmfrag') && game.resources.fragments.owned <= PerfectMapCost(shippluslevel, shipspecial))
 				rFragmentFarm('ship', shippluslevel, shipspecial);
@@ -2369,7 +2386,7 @@ function RautoMap() {
 				else if (rShouldSmithyFarm) RShouldFarmMapCost(rSFMapLevel, rSFSpecial, rSFZone, biome);
 				else if (rShouldWorshipperFarm && game.resources.fragments.owned >= RShouldFarmMapCost(shippluslevel, shipspecial)) RShouldFarmMapCost(shippluslevel, shipspecial);
 				else if (rShouldUnbalance || rShouldStorm) RShouldFarmMapCost(-(game.global.world - 6), "fa");
-				else if (rShouldInsanityFarm) PerfectMapCost(insanitymaplevel, "fa");
+				else if (rShouldInsanityFarm) PerfectMapCost(rIFMapLevel, rIFSpecial);
 				else if (rShouldPandemoniumDestack && getPageSetting('RPandemoniumMaps')) PerfectMapCost(pandemoniumextra, pandspecial, "Mountain");
 				else if (rShouldPandemoniumFarm) PerfectMapCost(getPageSetting('PandemoniumFarmLevel'), pandfarmspecial);
 				else if (rShouldPandemoniumJestimpFarm) PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'), 0)
