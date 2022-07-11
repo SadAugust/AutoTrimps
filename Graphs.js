@@ -61,6 +61,7 @@ var $u2Graph = document.getElementById("graphFooterLine1"),
 		"OverkillCells",
 		"Scruffy XP",
 		"Scruffy XP PerHour",
+		"Population",
 	],
 	$u2graphSel = document.createElement("select");
 for (var item in (($u2graphSel.id = "u2graphSelection"), $u2graphSel.setAttribute("style", ""), $u2graphSel.setAttribute("onchange", "drawGraph()"), u2graphList)) {
@@ -272,7 +273,7 @@ function pushData() {
 		totalPortals: getTotalPortals(true),
 		currentTime: new Date().getTime(),
 		portalTime: game.global.portalTime,
-		world: game.global.world,
+		world: game.global.world - 1,
 		challenge: game.global.challengeActive,
 		voids: game.global.totalVoidMaps,
 		heirlooms: { value: game.stats.totalHeirlooms.value, valueTotal: game.stats.totalHeirlooms.valueTotal },
@@ -296,15 +297,10 @@ function pushData() {
 		rnhr: RgetPercent.toFixed(4),
 		rnlife: Rlifetime.toFixed(4),
 		universe: game.global.universe,
-		universeSelection: typeof (document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value) === 'undefined'
-			? (game.global.universe === 1 ? document.getElementById('universeSelection').options[0].value : document.getElementById('universeSelection').options[1].value) :
-			document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value,
-		u1graphSelection: typeof (document.getElementById('u1graphSelection').options[document.getElementById('u1graphSelection').options.selectedIndex].value) === 'undefined'
-			? document.getElementById('u1graphSelection').options[0].value :
-			document.getElementById('u1graphSelection').options[document.getElementById('u1graphSelection').options.selectedIndex].value,
-		u2graphSelection: typeof (document.getElementById('u2graphSelection').options[document.getElementById('u2graphSelection').options.selectedIndex].value) === 'undefined'
-			? document.getElementById('u2graphSelection').options[0].value :
-			document.getElementById('u2graphSelection').options[document.getElementById('u2graphSelection').options.selectedIndex].value,
+		population: game.resources.trimps.owned,
+		universeSelection: document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value,
+		u1graphSelection: document.getElementById('u1graphSelection').options[document.getElementById('u1graphSelection').options.selectedIndex].value,
+		u2graphSelection: document.getElementById('u2graphSelection').options[document.getElementById('u2graphSelection').options.selectedIndex].value,
 	});
 	clearData(10);
 	safeSetItems("allSaveData", JSON.stringify(allSaveData));
@@ -374,9 +370,9 @@ function gatherInfo() {
 			},
 		};
 	}
-	GraphsVars.aWholeNewWorld = GraphsVars.currentworld != game.global.world;
+	GraphsVars.aWholeNewWorld = GraphsVars.currentworld != game.global.world - 1;
 	if (GraphsVars.aWholeNewWorld) {
-		GraphsVars.currentworld = game.global.world;
+		GraphsVars.currentworld = game.global.world - 1;
 		if (allSaveData.length > 0 && allSaveData[allSaveData.length - 1].world != game.global.world) {
 			pushData();
 		}
@@ -859,6 +855,13 @@ function setGraphData(graph) {
 			title = "Overkilled Cells";
 			xTitle = "Zone";
 			yTitle = "Overkilled Cells";
+			yType = "Linear";
+			break;
+		case "Population":
+			graphData = allPurposeGraph("population", true, "number");
+			title = "Population";
+			xTitle = "Zone";
+			yTitle = "Total Population";
 			yType = "Linear";
 			break;
 	}
