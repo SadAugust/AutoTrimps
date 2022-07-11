@@ -273,7 +273,7 @@ function pushData() {
 		totalPortals: getTotalPortals(true),
 		currentTime: new Date().getTime(),
 		portalTime: game.global.portalTime,
-		world: game.global.world - 1,
+		world: game.global.world,
 		challenge: game.global.challengeActive,
 		voids: game.global.totalVoidMaps,
 		heirlooms: { value: game.stats.totalHeirlooms.value, valueTotal: game.stats.totalHeirlooms.valueTotal },
@@ -298,9 +298,15 @@ function pushData() {
 		rnlife: Rlifetime.toFixed(4),
 		universe: game.global.universe,
 		population: game.resources.trimps.owned,
-		universeSelection: document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value,
-		u1graphSelection: document.getElementById('u1graphSelection').options[document.getElementById('u1graphSelection').options.selectedIndex].value,
-		u2graphSelection: document.getElementById('u2graphSelection').options[document.getElementById('u2graphSelection').options.selectedIndex].value,
+		universeSelection: typeof (document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value) === 'undefined'
+			? (game.global.universe === 1 ? document.getElementById('universeSelection').options[0].value : document.getElementById('universeSelection').options[1].value) :
+			document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value,
+		u1graphSelection: typeof (document.getElementById('u1graphSelection').options[document.getElementById('u1graphSelection').options.selectedIndex].value) === 'undefined'
+			? document.getElementById('u1graphSelection').options[0].value :
+			document.getElementById('u1graphSelection').options[document.getElementById('u1graphSelection').options.selectedIndex].value,
+		u2graphSelection: typeof (document.getElementById('u2graphSelection').options[document.getElementById('u2graphSelection').options.selectedIndex].value) === 'undefined'
+			? document.getElementById('u2graphSelection').options[0].value :
+			document.getElementById('u2graphSelection').options[document.getElementById('u2graphSelection').options.selectedIndex].value,
 	});
 	clearData(10);
 	safeSetItems("allSaveData", JSON.stringify(allSaveData));
@@ -370,9 +376,9 @@ function gatherInfo() {
 			},
 		};
 	}
-	GraphsVars.aWholeNewWorld = GraphsVars.currentworld != game.global.world - 1;
+	GraphsVars.aWholeNewWorld = GraphsVars.currentworld != game.global.world;
 	if (GraphsVars.aWholeNewWorld) {
-		GraphsVars.currentworld = game.global.world - 1;
+		GraphsVars.currentworld = game.global.world;
 		if (allSaveData.length > 0 && allSaveData[allSaveData.length - 1].world != game.global.world) {
 			pushData();
 		}
