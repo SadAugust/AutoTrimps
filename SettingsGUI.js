@@ -1050,25 +1050,6 @@ function convertSettings(oldSetting, newSetting, type, newName) {
 
 }
 
-//Adding onto settings
-if (autoTrimpSettings.rTimeFarmSettings.value[0].done === undefined) {
-	for (var y = 0; y < autoTrimpSettings.rTimeFarmSettings.value.length; y++) {
-		autoTrimpSettings.rTimeFarmSettings.value[y].done = 1;
-	}
-	saveSettings();
-}
-if (autoTrimpSettings.rdTimeFarmSettings.value[0].done === undefined) {
-	for (var y = 0; y < autoTrimpSettings.rdTimeFarmSettings.value.length; y++) {
-		autoTrimpSettings.rdTimeFarmSettings.value[y].done = 1;
-	}
-	saveSettings();
-}
-if (autoTrimpSettings.rc3TimeFarmSettings.value[0].done === undefined) {
-	for (var y = 0; y < autoTrimpSettings.rc3TimeFarmSettings.value.length; y++) {
-		autoTrimpSettings.rc3TimeFarmSettings.value[y].done = 1;
-	}
-	saveSettings();
-}
 
 function createSetting(id, name, description, type, defaultValue, list, container) {
 	var btnParent = document.createElement("DIV");
@@ -1311,6 +1292,31 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		autoTrimpSettings[id].name = name;
 	if (autoTrimpSettings[id].description != description)
 		autoTrimpSettings[id].description = description;
+
+
+	//Adding onto settings
+	if (autoTrimpSettings["ATversion"] !== ATversion) {
+		if (typeof (autoTrimpSettings.rTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rTimeFarmSettings.value[0].done === undefined) {
+			for (var y = 0; y < autoTrimpSettings.rTimeFarmSettings.value.length; y++) {
+				autoTrimpSettings.rTimeFarmSettings.value[y].done = 1;
+			}
+			saveSettings();
+		}
+		if (typeof (autoTrimpSettings.rdTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rdTimeFarmSettings.value[0].done === undefined) {
+			for (var y = 0; y < autoTrimpSettings.rdTimeFarmSettings.value.length; y++) {
+				autoTrimpSettings.rdTimeFarmSettings.value[y].done = 1;
+			}
+			saveSettings();
+		}
+		if (typeof (autoTrimpSettings.rc3TimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rc3TimeFarmSettings.value[0].done === undefined) {
+			for (var y = 0; y < autoTrimpSettings.rc3TimeFarmSettings.value.length; y++) {
+				autoTrimpSettings.rc3TimeFarmSettings.value[y].done = 1;
+			}
+			saveSettings();
+		}
+		autoTrimpSettings["ATversion"] = ATversion;
+		saveSettings();
+	}
 	autoTrimpSettings["ATversion"] = ATversion;
 }
 
