@@ -388,7 +388,7 @@ function RdailyAutoPortal() {
 			if (!aWholeNewWorld) {
 				heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
 				var bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
-				if (bufferExceeded && game.global.world >= minZone) {
+				if (minZone > 0 && bufferExceeded && game.global.world >= minZone) {
 					OKtoPortal = true;
 					if (aWholeNewWorld)
 						zonePostpone = 0;
@@ -421,7 +421,7 @@ function RdailyAutoPortal() {
 	}
 	if (getPageSetting('RAutoPortalDaily') == 2) {
 		var portalzone = autoTrimpSettings.rDailyPortalSettingsArray.value.portalZone + dailyModiferReduction();
-		if (game.global.world >= portalzone) {
+		if (portalzone > 0 && game.global.world >= portalzone) {
 			if (autoTrimpSettings.rDailyPortalSettingsArray.value.portalChallenge != 'None' && getPageSetting('u2daily') == false)
 				RdoPortal(autoTrimpSettings.rDailyPortalSettingsArray.value.portalChallenge);
 			else if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') === true)
