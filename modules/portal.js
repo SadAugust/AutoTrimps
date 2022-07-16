@@ -379,7 +379,7 @@ function RdailyAutoPortal() {
 	if (getPageSetting('RAutoPortalDaily') == 1) {
 		var OKtoPortal = false;
 		if (!game.global.runningChallengeSquared) {
-			var minZone = getPageSetting('RdHeHrDontPortalBefore');
+			var minZone = autoTrimpSettings.rDailyPortalSettingsArray.value.portalZone + dailyModiferReduction();
 			game.stats.bestHeliumHourThisRun.evaluate();
 			var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
 			var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
@@ -420,16 +420,17 @@ function RdailyAutoPortal() {
 		}
 	}
 	if (getPageSetting('RAutoPortalDaily') == 2) {
-		var portalzone = getPageSetting('RdCustomAutoPortal');
+		var portalzone = autoTrimpSettings.rDailyPortalSettingsArray.value.portalZone + dailyModiferReduction();
 		if (game.global.world >= portalzone) {
-			abandonDaily();
-			document.getElementById('finishDailyBtnContainer').style.display = 'none';
-			if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') == false)
-				RdoPortal(autoTrimpSettings.RdHeliumHourChallenge.selected);
-			else if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') == true)
+			if (autoTrimpSettings.rDailyPortalSettingsArray.value.portalChallenge != 'None' && getPageSetting('u2daily') == false)
+				RdoPortal(autoTrimpSettings.rDailyPortalSettingsArray.value.portalChallenge);
+			else if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') === true)
 				RdoPortal(autoTrimpSettings.dHeliumHourChallenge.selected);
-			else
+			else {
+				abandonDaily();
+				document.getElementById('finishDailyBtnContainer').style.display = 'none';
 				RdoPortal();
+			}
 		}
 	}
 }
