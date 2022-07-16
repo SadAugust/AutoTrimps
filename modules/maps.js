@@ -961,7 +961,7 @@ function RautoMap() {
 
 	RneedToVoid = (voidMapLevelSetting[0] > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 2 >= voidMapLevelSettingCell &&
 		((voidMapLevelSetting.includes(game.global.world)) ||
-			(voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1] + dailyModiferReduction()) ||
+			(voidMapLevelPlus <= 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1] + dailyModiferReduction()) ||
 			(voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1] + dailyModiferReduction() && game.global.world <= (voidMapLevelSetting[voidMapLevelSetting.length - 1] + dailyModiferReduction() + voidMapLevelPlus)))
 	);
 
@@ -984,7 +984,7 @@ function RautoMap() {
 			toggleSetting('repeatUntil');
 	}
 	RenoughHealth = (RcalcOurHealth() > (hitsSurvived * enemyDamage));
-	RenoughDamage = (RcalcHDratio() <= mapenoughdamagecutoff && !game.global.mapBonus === 10);
+	RenoughDamage = (RcalcHDratio() <= mapenoughdamagecutoff || game.global.mapBonus === 10);
 	RupdateAutoMapsStatus();
 
 	//Farming & resetting variables. Is this necessary?
