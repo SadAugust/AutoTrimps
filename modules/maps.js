@@ -970,13 +970,14 @@ function RautoMap() {
 
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, false);
-	/* 	if (getPageSetting('rManageEquality') == 2) {
-			var enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability', 'world', true), equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), true)
-			1;
-		}
-		else { */
-	var enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true));
-	/* } */
+	var enemyDamage = 1;
+	if (getPageSetting('rManageEquality') === 2) {
+		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability', 'world', true), equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), true)
+		1;
+	}
+	else {
+		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true));
+	}
 
 	if (getPageSetting('RDisableFarm') > 0) {
 		RshouldFarm = (RcalcHDratio() >= getPageSetting('RDisableFarm'));
