@@ -961,8 +961,8 @@ function RautoMap() {
 
 	RneedToVoid = (voidMapLevelSetting[0] > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 2 >= voidMapLevelSettingCell &&
 		((voidMapLevelSetting.includes(game.global.world)) ||
-			(voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1]) ||
-			(voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1] && game.global.world <= (voidMapLevelSetting[voidMapLevelSetting.length - 1] + voidMapLevelPlus)))
+			(voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1] + dailyModiferReduction()) ||
+			(voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1] + dailyModiferReduction() && game.global.world <= (voidMapLevelSetting[voidMapLevelSetting.length - 1] + dailyModiferReduction() + voidMapLevelPlus)))
 	);
 
 	if (game.global.totalVoidMaps <= 0 || !RneedToVoid)
@@ -984,7 +984,7 @@ function RautoMap() {
 			toggleSetting('repeatUntil');
 	}
 	RenoughHealth = (RcalcOurHealth() > (hitsSurvived * enemyDamage));
-	RenoughDamage = (RcalcHDratio() <= mapenoughdamagecutoff);
+	RenoughDamage = (RcalcHDratio() <= mapenoughdamagecutoff && !game.global.mapBonus === 10);
 	RupdateAutoMapsStatus();
 
 	//Farming & resetting variables. Is this necessary?
@@ -1021,14 +1021,6 @@ function RautoMap() {
 		RshouldDoMaps = (!RenoughDamage || RshouldFarm);
 	}
 	var shouldDoHealthMaps = false;
-	//Map Bonus zone and amount -- Checks if in a daily or c3 and uses those settings if you are
-	var maxMapBonusZ = game.global.runningChallengeSquared ? getPageSetting('c3mapbonuszone') :
-		game.global.challengeActive == 'Daily' ? getPageSetting('RdMaxMapBonusAfterZone') :
-			getPageSetting('RMaxMapBonusAfterZone');
-	maxMapBonusLimit = game.global.runningChallengeSquared ? getPageSetting('c3mapbonuslimit') :
-		game.global.challengeActive == 'Daily' ? getPageSetting('RdMaxMapBonuslimit') :
-			getPageSetting("RMaxMapBonuslimit");
-
 
 	//Map Bonus
 	if ((rRunningRegular && autoTrimpSettings.rMapBonusDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdMapBonusDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3MapBonusDefaultSettings.value.active) && rShouldQuest === 0) {
