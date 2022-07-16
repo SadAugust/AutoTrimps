@@ -1051,10 +1051,6 @@ function convertSettings(oldSetting, newSetting, type, newName) {
 }
 
 //Adding onto settings
-if (typeof (autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone) === 'undefined') {
-	autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone = 0;
-	saveSettings();
-}
 if (autoTrimpSettings.rTimeFarmSettings.value[0].done === undefined) {
 	for (var y = 0; y < autoTrimpSettings.rTimeFarmSettings.value.length; y++) {
 		autoTrimpSettings.rTimeFarmSettings.value[y].done = 1;
