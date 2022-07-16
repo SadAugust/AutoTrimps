@@ -577,7 +577,6 @@ function Rresetmapvars() {
 	RdoVoids = false;
 	RneedToVoid = false;
 	//Time Farm
-	rTimeFarm = false;
 	rShouldTimeFarm = false;
 	rTFCurrentMap = undefined;
 	rTFZoneCleared = 0;
@@ -589,7 +588,6 @@ function Rresetmapvars() {
 	//Unbalance
 	rShouldUnbalance = false;
 	//Worshipper
-	Rshipfarm = false;
 	rShouldWorshipperFarm = false;
 	Rshipfragfarming = false;
 	shipfragmappy = undefined;
@@ -612,7 +610,6 @@ function Rresetmapvars() {
 	Rstormfarm = false;
 	Rshouldstormfarm = false;
 	//Insanity
-	Rinsanityfarm = false;
 	rShouldInsanityFarm = false;
 	Rinsanityfragfarming = false;
 	insanityfragmappy = undefined;

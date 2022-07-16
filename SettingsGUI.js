@@ -336,7 +336,7 @@ function initializeAllSettings() {
 
 	//Radon Daily Portal
 	document.getElementById('rdRaidingPopup').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('RAutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
+	createSetting('RAutoStartDaily', 'Auto Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('RFillerRun', 'Filler run', 'Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.', 'boolean', false, null, 'Daily');
 	createSetting('u1daily', 'Daily in U1', 'If this is on, you will do your daily in U1. ', 'boolean', false, null, 'Daily');
 	createSetting('dontCapDailies', 'Use when capped', 'If this is on, you will only do the oldest daily when you have 7 dailies available. ', 'boolean', false, null, 'Daily');
@@ -345,6 +345,7 @@ function initializeAllSettings() {
 	createSetting('RdCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone during dailies. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Daily');
 	createSetting('RdHeHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour Daily AutoPortal setting to portal BEFORE this level is reached in dailies. It is an additional check that prevents drops in radon/hr from triggering autoportal in dailies. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set in dailies)', 'value', '999', null, 'Daily');
 	createSetting('RdHeliumHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
+	createSetting('rDailyPortalSettingsArray', 'Daily Portal Settings', 'Click to adjust settings. ', 'mazDefaultArray', { Reflect: { enabled: true, zone: 0 }, ShredFood: { enabled: true, zone: 0 }, ShredWood: { enabled: true, zone: 0 }, ShredMetal: { enabled: true, zone: 0 }, Empower: { enabled: true, zone: 0 }, Mutimp: { enabled: true, zone: 0 }, Bloodthirst: { enabled: true, zone: 0 }, Famine: { enabled: true, zone: 0 }, Large: { enabled: true, zone: 0 }, Weakness: { enabled: true, zone: 0 } }, null, 'Jobs');
 
 	//C2
 	createSetting('FinishC2', 'Finish Challenge2', '<b>DONT USE THIS WITH C2 RUNNER</b><br>Finish / Abandon Challenge2 (any) when this zone is reached, if you are running one. For manual use. Recommended: Zones ending with 0 for most Challenge2. Disable with -1. Does not affect Non-Challenge2 runs.', 'value', -1, null, 'C2');
@@ -1076,6 +1077,7 @@ if (autoTrimpSettings.rc3TimeFarmSettings.value[0].done === undefined) {
 function createSetting(id, name, description, type, defaultValue, list, container) {
 	var btnParent = document.createElement("DIV");
 	btnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;');
+	btnParent.setAttribute("id", id + 'Parent');
 	var btn = document.createElement("DIV");
 	btn.id = id;
 	var loaded = autoTrimpSettings[id];
@@ -1089,14 +1091,33 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				enabled: loaded === undefined ? (defaultValue || false) : loaded
 			};
 		btn.setAttribute("style", "font-size: 1.1vw;");
-		btn.setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[id].enabled);
+		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
+		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].enabled);
 		btn.setAttribute("onclick", 'settingChanged("' + id + '")');
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.textContent = name;
+		btn.innerHTML = name;
 		btnParent.appendChild(btn);
+		if (id === 'RAutoStartDaily') {
+			btnParent.setAttribute('class', 'toggleConfigBtnLocal settingsBtnLocal settingsBtnfalse')
+			btnParent.setAttribute('style', 'max-height: 3.1vh; display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;border-bottom: 1px solid black !important;')
+			btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;")
+		}
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
+		if (id === 'RAutoStartDaily') {
+
+			var autoPortalContainer = document.getElementById("RAutoStartDailyParent");
+			var autoPortalSettings = document.createElement("DIV");
+			autoPortalSettings.setAttribute('onclick', 'MAZLookalike("AT Daily Auto Portal", "a", "DailyAutoPortal")');
+			autoPortalSettings.setAttribute('class', 'settingsBtnLocalCogwheel');
+			autoPortalSettings.setAttribute('style', 'margin-left:-1px;');
+			var autoPortalSettingsButton = document.createElement("SPAN");
+			autoPortalSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+
+			autoPortalContainer.appendChild(autoPortalSettings);
+			autoPortalSettings.appendChild(autoPortalSettingsButton);
+		}
 	} else if (type == 'value' || type == 'valueNegative') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
@@ -1111,7 +1132,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name}", ${type == 'valueNegative'}, ${type == 'multiValue'})`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.textContent = name;
+		btn.innerHTML = name;
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
@@ -1129,7 +1150,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name}", ${type == 'valueNegative'}, ${type == 'multiValue'})`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.textContent = name;
+		btn.innerHTML = name;
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
@@ -1147,7 +1168,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name}", ${type == 'textValue'})`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.textContent = name;
+		btn.innerHTML = name;
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
@@ -1165,7 +1186,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name}", ${type == 'textarea'})`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.textContent = name;
+		btn.innerHTML = name;
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
@@ -1208,7 +1229,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
-		btn.textContent = name;
+		btn.innerHTML = name;
 		//btnParent.style.width = '';
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
@@ -1230,7 +1251,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
-		btn.textContent = name;
+		btn.innerHTML = name;
 		//btnParent.style.width = '';
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
@@ -1253,7 +1274,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw; display: none;");
-		btn.textContent = name;
+		btn.innerHTML = name;
 		//btnParent.style.width = '';
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
@@ -1273,7 +1294,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onclick", 'settingChanged("' + id + '")');
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name.join(' / ') + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.textContent = autoTrimpSettings[id]["name"][autoTrimpSettings[id]["value"]];
+		btn.innerHTML = autoTrimpSettings[id]["name"][autoTrimpSettings[id]["value"]];
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
@@ -1284,7 +1305,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute('onclick', defaultValue);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.textContent = name;
+		btn.innerHTML = name;
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
@@ -1318,15 +1339,18 @@ function settingChanged(id) {
 	var btn = autoTrimpSettings[id];
 	if (btn.type == 'boolean') {
 		btn.enabled = !btn.enabled;
-		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + btn.enabled);
+		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn.enabled);
 		if (id == 'rEquipEfficientEquipDisplay') {
 			displayMostEfficientEquipment()
 		}
+		if (btn = autoTrimpSettings.RAutoStartDaily) {
+			document.getElementById('RAutoStartDaily').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
+		}
 		if (btn = autoTrimpSettings.Requipon) {
-			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn.enabled);
+			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
 		}
 		if (btn = autoTrimpSettings.RBuyBuildingsNew) {
-			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn.enabled);
+			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
 		}
 	}
 	if (btn.type == 'multitoggle') {
@@ -1340,7 +1364,7 @@ function settingChanged(id) {
 		if (btn.value > btn.name.length - 1)
 			btn.value = 0;
 		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + (btn.value));
-		document.getElementById(id).textContent = btn.name[btn.value];
+		document.getElementById(id).innerHTML = btn.name[btn.value];
 		if (btn = autoTrimpSettings.RBuyJobsNew) {
 			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
 			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
@@ -1400,7 +1424,7 @@ function autoSetValueToolTip(id, text, negative, multi) {
 	game.global.lockTooltip = true;
 	elem.style.left = '32.5%';
 	elem.style.top = '25%';
-	document.getElementById('tipTitle').textContent = ranstring + ':  Value Input';
+	document.getElementById('tipTitle').innerHTML = ranstring + ':  Value Input';
 	document.getElementById('tipText').innerHTML = tooltipText;
 	document.getElementById('tipCost').innerHTML = costText;
 	elem.style.display = 'block';
@@ -1422,7 +1446,7 @@ function autoSetTextToolTip(id, text) {
 	game.global.lockTooltip = true;
 	elem.style.left = '32.5%';
 	elem.style.top = '25%';
-	document.getElementById('tipTitle').textContent = ranstring + ':  Value Input';
+	document.getElementById('tipTitle').innerHTML = ranstring + ':  Value Input';
 	document.getElementById('tipText').innerHTML = tooltipText;
 	document.getElementById('tipCost').innerHTML = costText;
 	elem.style.display = 'block';
@@ -1482,10 +1506,10 @@ function autoSetValue(id, negative, multi) {
 	autoTrimpSettings[id].value = num;
 	if (Array.isArray(num)) {
 		// In here
-		document.getElementById(id).textContent = ranstring + ': ' + num[0] + '+';
+		document.getElementById(id).innerHTML = ranstring + ': ' + num[0] + '+';
 	}
 	else if (num > -1 || negative)
-		document.getElementById(id).textContent = ranstring + ': ' + prettify(num);
+		document.getElementById(id).innerHTML = ranstring + ': ' + prettify(num);
 	else
 		document.getElementById(id).innerHTML = ranstring + ': ' + "<span class='icomoon icon-infinity'></span>";
 	saveSettings();
@@ -1502,7 +1526,7 @@ function autoSetText(id) {
 	} else return;
 	autoTrimpSettings[id].value = textVal;
 	if (textVal != undefined) {
-		document.getElementById(id).textContent = ranstring + ': ' + textVal;
+		document.getElementById(id).innerHTML = ranstring + ': ' + textVal;
 	}
 	saveSettings();
 	checkPortalSettings();
@@ -1954,6 +1978,7 @@ function updateCustomButtons() {
 
 	turnOff('rJobSettingsArray');
 	turnOff('rBuildingSettingsArray');
+	turnOff('rDailyPortalSettingsArray');
 
 	//Gear
 	!radonon ? turnOn('BuyArmorNew') : turnOff('BuyArmorNew');
@@ -2505,23 +2530,23 @@ function updateCustomButtons() {
 			var elem = document.getElementById(item.id);
 			if (elem != null) {
 				if (item.type == 'multitoggle')
-					elem.textContent = item.name[item.value];
+					elem.innerHTML = item.name[item.value];
 				else if (item.type == 'multiValue') {
 					if (Array.isArray(item.value) && item.value.length == 1 && item.value[0] == -1)
 						elem.innerHTML = item.name + ': ' + "<span class='icomoon icon-infinity'></span>";
 					else if (Array.isArray(item.value))
 						elem.innerHTML = item.name + ': ' + item.value[0] + '+';
 					else
-						elem.textContent = item.name + ': ' + item.value.toString();
+						elem.innerHTML = item.name + ': ' + item.value.toString();
 				}
 				else if (item.type == 'textValue' && item.value.substring !== undefined) {
 					if (item.value.length > 18)
-						elem.textContent = item.name + ': ' + item.value.substring(0, 21) + '...';
+						elem.innerHTML = item.name + ': ' + item.value.substring(0, 21) + '...';
 					else
-						elem.textContent = item.name + ': ' + item.value.substring(0, 21);
+						elem.innerHTML = item.name + ': ' + item.value.substring(0, 21);
 				}
 				else if (item.value > -1 || item.type == 'valueNegative')
-					elem.textContent = item.name + ': ' + prettify(item.value);
+					elem.innerHTML = item.name + ': ' + prettify(item.value);
 				else
 					elem.innerHTML = item.name + ': ' + "<span class='icomoon icon-infinity'></span>";
 			}
@@ -2565,7 +2590,7 @@ document.getElementById('jobsTitleSpan').parentElement.style.width = '10%'
 //Creating button
 var autoJobContainer = document.createElement("DIV");
 autoJobContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
-autoJobContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
+autoJobContainer.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
 autoJobContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, \"Toggle between the AutoJob settings.\")');
 autoJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
@@ -2591,7 +2616,7 @@ autoJobColumn.insertBefore(autoJobContainer, document.getElementById('jobsTitleD
 //Creating button
 var autoStructureContainer = document.createElement("DIV");
 autoStructureContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
-autoStructureContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.RBuyBuildingsNew.enabled);
+autoStructureContainer.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings.RBuyBuildingsNew.enabled);
 autoStructureContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoStructure\", \"customText\", event, \"Toggle between the AutoStructure settings.\")');
 autoStructureContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
@@ -2641,7 +2666,6 @@ autoEquipContainer.appendChild(autoEquipText);
 autoEquipContainer.appendChild(autoEquipSettings);
 autoEquipSettings.appendChild(autoEquipSettingsButton);
 autoEquipColumn.replaceChild(autoEquipContainer, document.getElementById('equipmentTitleDiv').children[0].children[2]);
-
 
 /* //AutoMaps Button
 //Creating button

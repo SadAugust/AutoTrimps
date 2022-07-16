@@ -135,7 +135,9 @@ ul.tab li a:hover {
 }
 
 
-.structConfigPercent {
+.structConfigPercent,
+.dailyAutoPortalZone,
+.dailyAutoPortalChallenge {
 	display: inline-block;
 	width: 50%;
 	padding: 1%;
@@ -370,4 +372,52 @@ ul.tab li a:hover {
 
 #tooltipDiv.tooltipExtraBiggest {
 	width: 90%;
+}
+
+
+
+
+
+.settingsBtnLocal {
+	font-size: 1.3vw;
+	cursor: pointer;
+	text-align: center;
+}
+
+.settingsBtnLocalCogwheel {
+	font-size: 1.3vw;
+	border-right: 1px solid black !important;
+	border-top: 1px solid black !important;
+	border-bottom: 1px solid black !important;
+	cursor: pointer;
+	text-align: center;
+}
+
+
+.toggleConfigBtnLocal {
+	overflow: hidden;
+}
+
+.toggleConfigBtnLocal div {
+	display: inline-block;
+	text-align: center;
+}
+
+.toggleConfigBtnLocal div:first-child {
+	width: 80%;
+}
+
+.toggleConfigBtnLocal div:nth-child(2) {
+	width: 20%;
+	background-color: grey;
+	float: right;
+}
+
+.toggleConfigBtnLocal div:nth-child(2):hover {
+	background-color: #666666;
+}
+
+.toggleConfigBtnLocal div span {
+	line-height: 1.2em;
+	font-size: 1.1em;
 }

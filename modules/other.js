@@ -2778,6 +2778,48 @@ function AbandonChallengeRuns(zone) {
 	}
 }
 
+function dailyModifiersOutput() {
+	var daily = game.global.dailyChallenge;
+	if (!daily) return "";
+	//var returnText = ''
+	var returnText = "";
+	for (var item in daily) {
+		if (item == 'seed') continue;
+		returnText += dailyModifiers[item].description(daily[item].strength) + "<br>";
+	}
+	return returnText
+}
+
+function dailyModiferReduction() {
+	if (game.global.challengeActive !== 'Daily') return 0;
+	var dailyMods = dailyModifiersOutput().split('<br>')
+	dailyMods.length = dailyMods.length - 1;
+	var dailyReduction = 0;
+
+	for (var item in autoTrimpSettings.rDailyPortalSettingsArray.value) {
+		if (item === 'portalZone' || item === 'portalChallenge') continue;
+		if (!autoTrimpSettings.rDailyPortalSettingsArray.value[item].enabled) continue;
+		var dailyReductionTemp = 0;
+		var modifier = item;
+		if (modifier.includes('Shred')) modifier = 'Every 15';
+		if (modifier.includes('Weakness')) modifier = 'Enemies stack a debuff with each attack, reducing Trimp attack by';
+		if (modifier.includes('Famine')) modifier = 'less Metal, Food, Wood, and Gems from all sources';
+		if (modifier.includes('Large')) modifier = 'All housing can store';
+
+		for (var x = 0; x < dailyMods.length; x++) {
+			if (dailyMods[x].includes(modifier)) {
+				debug(modifier);
+				if (modifier.includes('Every 15') && dailyMods[x].includes(item.split('Shred')[1]))
+					dailyReductionTemp = autoTrimpSettings.rDailyPortalSettingsArray.value[item].zone
+				else
+					dailyReductionTemp = autoTrimpSettings.rDailyPortalSettingsArray.value[item].zone
+			}
+			if (dailyReduction > dailyReductionTemp) dailyReduction = dailyReductionTemp;
+		}
+	}
+	return dailyReduction
+}
+
 function displayMostEfficientEquipment() {
 
 	var $eqNamePrestige = null;

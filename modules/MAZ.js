@@ -46,6 +46,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (x == ratioJobs.length - 1) tooltipText += "<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 1px'>" + buildNiceCheckbox('autoJobCheckboxNoLumberjacks', 'autoCheckbox', (settingGroup.NoLumberjacks.enabled)) + "&nbsp;&nbsp;<span>" + "No Lumberjacks Post MP</span></div></td></tr>";
 
 		}
+
 		tooltipText += "</div></td></tr>";
 		tooltipText += "</tbody></table>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='saveATAutoJobsConfig()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
@@ -74,7 +75,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (count != 0 && count % 2 == 0) tooltipText += "</tr><tr>";
 			setting = settingGroup[item];
 			checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', (setting && setting.enabled));
-			var id = "structSelect" + item;
 
 			//Start
 			tooltipText += "<td><div class='row'>"
@@ -98,8 +98,80 @@ function MAZLookalike(titleText, varPrefix, event) {
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='saveATAutoStructureConfig()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 		game.global.lockTooltip = true;
 		ondisplay = function () {
-			//swapClass('tooltipExtra', 'tooltipExtraGigantic', elem);
 			verticalCenterTooltip(false, true);
+		};
+	}
+
+	//Daily Auto Portal
+	if (event == "DailyAutoPortal") {
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose different portal zones depending on specific modifiers that the daily you're running has. For example if your Daily has a resource shred modifier and you have '-3' input in that box then it will set your portal zone to 3 zones lower than your normal daily portal. Will only ever use the lowest value that is listed so you can't do a combination of -6 for dailies that have both Shred and Reflect by doing a -3 in each box.\
+		</p><p><b>Reflect:</b> % damage reflect damage modifier\
+		</p><p><b>Shred:</b> % resource loss every 15s modifier\
+		</p><p><b>Empower:</b> Empower modifier.\
+		</p><p><b>Mutimp:</b> % chance to turn enemies into Mutimps.\
+		</p><p><b>Bloodthirst:</b> Enemies gaining the bloodthirst buff on kills.\
+		</p><p><b>Famine:</b> Gives % less resources.\
+		</p><p><b>Large:</b> Gives % less housing.\
+		</p><p><b>Weakness:</b> Gives % less attack when .\
+		</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+
+		var count = 0;
+		var setting, checkbox;
+		var settingGroup = autoTrimpSettings.rDailyPortalSettingsArray.value;
+
+		//Always Needed Settings
+
+		tooltipText += "<td><div class='row'>"
+		tooltipText += "<div class='col-xs-6' style='width: 50%; padding-right: 5px'>" + "" + "&nbsp;&nbsp;<span>" + "Portal Zone:" + "</span></div>"
+		tooltipText += "<div class='col-xs-6' style='width: 50%; text-align: right;'> <input class='dailyAutoPortalZone' 'id='portalZone ' type='number'  value='" + ((settingGroup && settingGroup.portalZone) ? settingGroup.portalZone : 0) + "'/></div></div></td>";
+
+		tooltipText += "<td><div class='row'>"
+		tooltipText += "<div class='col-xs-3' style='width: 40%; padding-right: 5px'>" + "" + "&nbsp;&nbsp;<span>" + "Portal Challenge:</span></div>"
+		tooltipText += "<div class='col-xs-5' style='width: 60%; text-align: right'><select class ='dailyAutoPortalChallenge' id='autoDailyPortalChallenge'><option value='None'>None</option>";
+		var values = ['Bublé', 'Melt', 'Quagmire', 'Archaeology', 'Insanity', 'Nurture', 'Alchemy', 'Hypothermia'];
+		for (var x = 0; x < values.length; x++) {
+			tooltipText += "<option" + ((settingGroup.portalChallenge && settingGroup.portalChallenge == values[x]) ? " selected='selected'" : "") + " value='" + values[x] + "'>" + values[x] + "</option>";
+		}
+		tooltipText += "</select></div></div></td></tr>";
+		tooltipText += "</div></div>"
+
+		//Skip Lines to seperate
+		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 100%; padding-right: 5px'>" + "" + "&nbsp;&nbsp;<span>" + "<u>Modifier ± Zones</u>" + "</span></div></div>"
+		tooltipText += "</td></tr><tr>";
+
+
+		//Plus&Minus Portal&Void zone settings.
+		for (var item in autoTrimpSettings.rDailyPortalSettingsArray.value) {
+			var building = game.buildings[item];
+			if (item === 'portalChallenge') continue;
+			if (item === 'portalZone') continue;
+			if (count != 0 && count % 2 == 0) tooltipText += "</tr><tr>";
+			setting = settingGroup[item];
+			checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', (setting && setting.enabled));
+			var itemName = item;
+			if (itemName.includes('Shred')) {
+				itemName = item.replace("Shred", "Shred (");
+				itemName += (")");
+			}
+			//Start
+			tooltipText += "<td><div class='row'>"
+			//Checkbox & name
+			tooltipText += "<div class='col-xs-6' style='width: 52%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + itemName + "</span></div>"
+			//Zone options
+			tooltipText += "<div class='col-xs-6' style='width: 48%; text-align: right'>± Zone: <input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 0) + "'/></div>";
+			//Finish
+			tooltipText += "</div></td>";
+			count++;
+		}
+		tooltipText += "</tr>";
+		tooltipText += "</div></td></tr>";
+		tooltipText += "</tbody></table>";
+		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='saveATDailyAutoPortalConfig()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+		game.global.lockTooltip = true;
+		elem.style.left = "33.75%";
+		elem.style.top = "25%";
+		ondisplay = function () {
+			verticalCenterTooltip(true);
 		};
 	}
 
@@ -746,6 +818,44 @@ function saveATAutoStructureConfig() {
 	}
 
 	autoTrimpSettings.rBuildingSettingsArray.value = setting;
+	cancelTooltip();
+	saveSettings();
+}
+
+function saveATDailyAutoPortalConfig() {
+	var setting = autoTrimpSettings.rDailyPortalSettingsArray.value;
+	var checkboxes = document.getElementsByClassName('autoCheckbox');
+	var percentboxes = document.getElementsByClassName('structConfigPercent');
+	var portalZoneBox = document.getElementsByClassName('dailyAutoPortalZone')[0];
+
+	var portalZone = parseInt(portalZoneBox.value, 10);
+	if (portalZone > 999) portalZone = 999;
+	if (portalZone < 0) portalZone = 0;
+	portalZone = (Number.isInteger(portalZone)) ? portalZone : 0;
+	portalZone = (isNumberBad(portalZone)) ? 0 : portalZone;
+	if (!setting.portalZone) setting.portalZone = {};
+	setting.portalZone = portalZone;
+
+	var challengeElem = document.getElementById('autoDailyPortalChallenge');
+	if (challengeElem) {
+		if (challengeElem.value) setting.portalChallenge = challengeElem.value;
+		else delete setting.portalChallenge;
+	}
+
+	for (var x = 0; x < checkboxes.length; x++) {
+		var name = checkboxes[x].id.split('structConfig')[1];
+		var checked = (checkboxes[x].dataset.checked == 'true');
+		//if (!checked && !setting[name]) continue;
+		if (!setting[name]) setting[name] = {};
+		setting[name].enabled = checked;
+
+		var zone = parseInt(percentboxes[x].value, 10);
+		if (zone > 100) zone = 100;
+		zone = (Number.isInteger(zone)) ? zone : 0;
+		setting[name].zone = zone;
+	}
+
+	autoTrimpSettings.rDailyPortalSettingsArray.value = setting;
 	cancelTooltip();
 	saveSettings();
 }
