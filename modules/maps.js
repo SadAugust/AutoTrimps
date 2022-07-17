@@ -946,15 +946,15 @@ function RautoMap() {
 	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
 
 	//Void Vars -- Checks whether you're ina  daily and uses those settings if you are
-	voidMapLevelSettingCell = rRunningDaily && getPageSetting('Rc3voidscell') > 0 ? getPageSetting('Rc3voidscell') :
+	voidMapLevelSettingCell = rRunningC3 && getPageSetting('Rc3voidscell') > 0 ? getPageSetting('Rc3voidscell') :
 		rRunningDaily && getPageSetting('Rdvoidscell') > 0 ? getPageSetting('Rdvoidscell') :
 			rRunningRegular && getPageSetting('Rvoidscell') > 0 ? getPageSetting('Rvoidscell') :
 				70;
-	voidMapLevelSetting = rRunningDaily && getPageSetting('Rc3VoidMod')[0] >= 1 ? getPageSetting('Rc3VoidMod') :
+	voidMapLevelSetting = rRunningC3 && getPageSetting('Rc3VoidMod')[0] >= 1 ? getPageSetting('Rc3VoidMod') :
 		rRunningDaily && getPageSetting('RDailyVoidMod')[0] >= 1 ? getPageSetting('RDailyVoidMod') :
 			rRunningRegular && getPageSetting('RVoidMaps')[0] >= 1 ? getPageSetting('RVoidMaps') :
 				0;
-	voidMapLevelPlus = rRunningDaily && getPageSetting('Rc3RunNewVoidsUntilNew') != 0 ? getPageSetting('Rc3RunNewVoidsUntilNew') :
+	voidMapLevelPlus = rRunningC3 && getPageSetting('Rc3RunNewVoidsUntilNew') != 0 ? getPageSetting('Rc3RunNewVoidsUntilNew') :
 		rRunningDaily && getPageSetting('RdRunNewVoidsUntilNew') != 0 ? getPageSetting('RdRunNewVoidsUntilNew') :
 			rRunningRegular && getPageSetting('RRunNewVoidsUntilNew') != 0 ? getPageSetting('RRunNewVoidsUntilNew') :
 				0;
@@ -972,8 +972,7 @@ function RautoMap() {
 	var ourBaseDamage = RcalcOurDmg("avg", false, false);
 	var enemyDamage = 1;
 	if (getPageSetting('rManageEquality') === 2) {
-		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability', 'world', true), equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), true)
-		1;
+		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability', 'world', true), equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), true);
 	}
 	else {
 		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true));

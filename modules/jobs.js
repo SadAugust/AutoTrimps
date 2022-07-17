@@ -584,17 +584,17 @@ function RbuyJobs() {
 	}
 
 	var allIn = "";
-	if (typeof workerRatio !== 'undefined' && workerRatio !== null) {
+	if (typeof (workerRatio) !== 'undefined' && workerRatio !== null) {
 		var desiredRatios = Array.from(workerRatio.split(','))
 		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
 	}
 
-	if (autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && !rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm && !rShouldBoneShrine)
+	if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && !rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm && !rShouldBoneShrine)
 		desiredRatios[0] = 0;
 	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && !rShouldBoneShrine && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
 		desiredRatios[1] = 0;
 
-	if (typeof workerRatio !== 'undefined' && workerRatio !== null) {
+	if (typeof (workerRatio) !== 'undefined' && workerRatio !== null) {
 		desiredRatios = desiredRatios;
 	} else if (allIn != "") {
 		desiredRatios[ratioWorkers.indexOf(allIn)] = 100;
@@ -615,14 +615,18 @@ function RbuyJobs() {
 			scientistMod = MODULES["jobs"].RscientistRatio7;
 
 		for (var worker of ratioWorkers) {
+			//Get ratio from AT
+			if (game.global.challengeActive == 'Transmute' && worker === 'Miner') {
+				desiredRatios[ratioWorkers.indexOf('Farmer')] += scientistMod * parseFloat(RworkerRatios('R' + worker + 'Ratio'));
+			}
 			if (!game.jobs[worker].locked) {
 				if (worker == "Scientist") {
 					desiredRatios[ratioWorkers.indexOf(worker)] = 1;
 					continue;
 				}
-				//Get ratio from AT
-				desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(RworkerRatios('R' + worker + 'Ratio'));
-				if (autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm) {
+				else
+					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(RworkerRatios('R' + worker + 'Ratio'));
+				if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm) {
 					desiredRatios[ratioWorkers.indexOf("Farmer")] = 0;
 				}
 				if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
@@ -631,6 +635,12 @@ function RbuyJobs() {
 			}
 		}
 	}
+
+	if (game.global.challengeActive == 'Transmute') {
+		desiredRatios[0] += desiredRatios[2];
+		desiredRatios[2] = 0;
+	}
+
 
 	var totalFraction = desiredRatios.reduce((a, b) => { return a + b; });
 	totalFraction = totalFraction == 0 ? 1 : totalFraction
