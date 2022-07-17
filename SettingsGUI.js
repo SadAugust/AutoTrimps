@@ -957,6 +957,7 @@ function initializeAllSettings() {
 	createSetting('Rshowautomapstatus', 'Enable AutoMap Status', 'Enables the display of the map status. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('Rshowrnhr', 'Enable Rn/hr status', 'Enables the display of your radon per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('rMapRepeatCount', 'Map Count Output', 'When you finish doing farming for any types of special farming this setting will display a message stating the amount of maps it took to complete.', 'boolean', false, null, 'Display');
+	createSetting('automateSpireAssault', 'Automate Spire Assault', 'Automates Spire Assault from level 92 up to level 99.', 'boolean', false, null, 'Display');
 
 
 	createSetting('EnableAFK', 'Go AFK Mode', '(Action Button). Go AFK uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU and RAM saving mode. Everything will resume when you come back and press the Back button. Console debug output is also disabled. The blue color means this is not a settable setting, just a button. You can now also click the Zone # (World Info) area to go AFK now.', 'action', 'MODULES["performance"].EnableAFKMode()', null, 'Display');
@@ -2064,6 +2065,7 @@ function updateCustomButtons() {
 	radonon ? turnOn('Rmapcuntoff') : turnOff('Rmapcuntoff');
 	radonon ? turnOn('RDisableFarm') : turnOff('RDisableFarm');
 	radonon ? turnOn('rMapRepeatCount') : turnOff('rMapRepeatCount');
+	radonon ? turnOn('automateSpireAssault') : turnOff('automateSpireAssault');
 
 	radonon ? turnOn('RVoidMaps') : turnOff('RVoidMaps');
 	radonon ? turnOn('Rvoidscell') : turnOff('Rvoidscell');
