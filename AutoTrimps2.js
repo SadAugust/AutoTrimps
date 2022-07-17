@@ -299,6 +299,8 @@ function mainLoop() {
 			if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
 		}
 	}
+	if (game.global.stringVersion >= '5.8.0' && autoBattle.maxEnemyLevel < 100)
+		automateSpireAssault();
 }
 
 function guiLoop() { updateCustomButtons(), safeSetItems('storedMODULES', JSON.stringify(compareModuleVars())), getPageSetting('EnhanceGrids') && MODULES.fightinfo.Update(), 'undefined' != typeof MODULES && 'undefined' != typeof MODULES.performance && MODULES.performance.isAFK && MODULES.performance.UpdateAFKOverlay() }

@@ -2667,25 +2667,111 @@ function PerfectMapCost_Actual(plusLevel, specialModifier) {
 	return baseCost;
 }
 
-function ABItemSwap(items) {
+function ABItemSwap(items, ring) {
+	items = !items ? false : items;
+	ring = !ring ? false : ring;
 	var changeitems = false;
-	if (changeitems = true) {
-		for (var item in autoBattle.items) {
-			if (autoBattle.items[item].equipped) {
-				autoBattle.items[item].equipped = false;
-				changeitems = false;
+	if (items) {
+		if (changeitems = true) {
+			for (var item in autoBattle.items) {
+				if (autoBattle.items[item].equipped) {
+					autoBattle.items[item].equipped = false;
+					changeitems = false;
+				}
+			}
+		}
+		for (var item of items) {
+			if (autoBattle.items[item].equipped == false) {
+				changeitems = true;
+				if (autoBattle.items[item].hidden)
+					autoBattle.items[item].hidden = false;
+				autoBattle.items[item].equipped = true;
 			}
 		}
 	}
-	for (var item of items) {
-		if (autoBattle.items[item].equipped == false) {
-			changeitems = true;
-			if (autoBattle.items[item].hidden)
-				autoBattle.items[item].hidden = false;
-			autoBattle.items[item].equipped = true;
+
+	if (ring) {
+		autoBattle.rings.mods = ring;
+	}
+}
+
+function automateSpireAssault() {
+
+	if (autoBattle.activeContract === '') {
+		if (!autoBattle.items.Stormbringer.owned)
+			autoBattle.acceptContract('Stormbringer')
+		if (!autoBattle.items.Nullifium_Armor.owned)
+			autoBattle.acceptContract('Nullifium_Armor')
+		if (!autoBattle.items.Haunted_Harpoon.owned)
+			autoBattle.acceptContract('Haunted_Harpoon')
+		if (!autoBattle.items.Handful_of_Mold.owned)
+			autoBattle.acceptContract('Handful_of_Mold')
+		if (!autoBattle.items.Box_of_Spores.owned)
+			autoBattle.acceptContract('Box_of_Spores')
+	}
+
+	if (autoBattle.items.Stormbringer.owned && autoBattle.items.Stormbringer.level != 5)
+		autoBattle.upgrade('Stormbringer')
+
+	if (autoBattle.items.Stormbringer.owned && autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Haunted_Harpoon.owned) {
+		if (autoBattle.items.Stormbringer.owned && autoBattle.items.Stormbringer.level != 5)
+			autoBattle.upgrade('Stormbringer')
+		if (autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Nullifium_Armor.level != 4)
+			autoBattle.upgrade('Nullifium_Armor')
+		if (autoBattle.items.Haunted_Harpoon.owned && autoBattle.items.Haunted_Harpoon.level != 3)
+			autoBattle.upgrade('Haunted_Harpoon')
+		if (autoBattle.items.Handful_of_Mold.owned && autoBattle.items.Handful_of_Mold.level != 3)
+			autoBattle.upgrade('Handful_of_Mold')
+
+		if (!autoBattle.autoLevel && autoBattle.maxEnemyLevel < 99)
+			autoBattle.toggleAutoLevel();
+
+		if (autoBattle.enemyLevel == 92) {
+			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+			var ring = [['attack'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 93) {
+			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+			var ring = [['lifesteal'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 94) {
+			var items = [['Rusty_Dagger'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Aegis'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+			var ring = [['attack'], ['lifesteal']]
+		}
+		if (autoBattle.enemyLevel == 95) {
+			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+			var ring = [['attack'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 96) {
+			var items = [['Rusty_Dagger'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Aegis'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+			var ring = [['attack'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 97) {
+			var items = [['Rusty_Dagger'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Aegis'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+			var ring = [['attack'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 98) {
+			var items = [['Hungering_Mold'], ['Shock_and_Awl'], ['Sacrificial_Shank'], ['Plague_Bringer'], ['Very_Large_Slime'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Goo_Golem'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Handful_of_Mold']];
+			var ring = [['attack'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 99) {
+			var items = [['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+			var ring = [['lifesteal'], ['dustMult']]
+		}
+
+		if (autoBattle.maxEnemyLevel === 100 && autoBattle.autoLevel) {
+			autoBattle.toggleAutoLevel();
+			autoBattle.enemyLevel = 99;
+			autoBattle.resetCombat();
+		}
+
+		if (autoBattle.sessionEnemiesKilled == 0 && autoBattle.enemy.baseHealth == autoBattle.enemy.health) {
+			ABItemSwap(items, ring);
+			autoBattle.popup(true, false, true);
 		}
 	}
 }
+
 
 function PresetSwapping(preset) {
 	if (!getPageSetting('RPerkSwapping')) return
@@ -2808,7 +2894,6 @@ function dailyModiferReduction() {
 
 		for (var x = 0; x < dailyMods.length; x++) {
 			if (dailyMods[x].includes(modifier)) {
-				debug(modifier);
 				if (modifier.includes('Every 15') && dailyMods[x].includes(item.split('Shred')[1]))
 					dailyReductionTemp = autoTrimpSettings.rDailyPortalSettingsArray.value[item].zone
 				else
