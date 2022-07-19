@@ -288,7 +288,7 @@ function mainLoop() {
 		if (rAutoGoldenUpgrade && rAutoGoldenUpgrade != 'Off') RautoGoldenUpgradesAT(rAutoGoldenUpgrade);
 
 		//Bone Upgrades / Settings
-		if (getPageSetting('rBoneShrine')) BoneShrine();
+		if (autoTrimpSettings.rBoneShrineDefaultSettings.value.active) BoneShrine();
 		if (game.global.challengeActive == "Daily" && getPageSetting('buyradony') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyradony') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
 		if (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') BuySingleRunBonuses()
 		//Respecing between presets based on Destacking or Farming when running Pandemonium. Uses preset 2 for destacking and preset 3 while farming.
