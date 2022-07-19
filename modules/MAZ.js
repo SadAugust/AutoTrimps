@@ -304,6 +304,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		//Row Settings
 		mazHelp += "</ul></br> The settings for each row that is added:<ul>"
 		mazHelp += "<li><span style='padding-left: 0.3%' class='mazDelete'><span class='icomoon icon-cross'></span></span> - Remove this MaZ line completely</li>"
+		mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable this line.</li>"
 		mazHelp += "<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>"
 		if (titleText.includes('Raiding')) mazHelp += "<li><b>Raiding Zone</b> - The zone you'd like to raid when this line is run. If your 'Zone' input is 231 then the highest zone you can input is 241.</li>"
 		mazHelp += "<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell. This line will trigger before starting combat against that cell.</li>"
@@ -326,8 +327,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>Use below</b> - This value will stop bone charges being spent when you're at or below this value.</li>";
 		if (titleText.includes('Ship Farm')) mazHelp += "<li><b>Ship</b> - How many worshippers you'd like to farm up to during this line. Max input is 50 and it'll default to that value if you input anything higher.</li>";
 		if (titleText.includes('Tribute Farm')) mazHelp += "<li><b>Buy Buildings</b> - If you'd like to buy buildings during this farming line to reduce the amount of maps it takes to farm your specified Tribute or Meteorologist inputs. When unselected it will automatically disable vanilla AutoStructure if it's enabled to remove the possibility of resources being spent there too.</li>";
-		if (titleText.includes('Tribute Farm')) mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. Autoamtically calculates when it would be more efficient to run Atlantrimp or continue farming Savory Cache maps to reach your target in the fastest time possible.</li>";
-		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. After using the bone shrine charges specified for this line it will stop AT purchasing equips until Atlantrimp has been run so that there is no wasted resources.</li>";
+		if (titleText.includes('Tribute Farm')) mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. Autoamtically calculates when it would be more efficient to run Atlantrimp or continue farming Savory Cache maps to reach your target in the fastest time possible. <b>Won't run on food shred dailies.</b></li>";
+		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. After using the bone shrine charges specified for this line it will stop AT purchasing equips until Atlantrimp has been run so that there is no wasted resources. <b>Won't run on shred dailies that would be impacted by your farming choices.</b></li>";
+		if (titleText.includes('Time Farm')) mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until Atlantrimp has been run so that there is no wasted resources. <b>Won't run on shred dailies that would be impacted by your farming choices.</b></li>";
 		if (titleText.includes('Smithy Farm')) mazHelp += "<li><b>Smithies</b> - How many Smithies you'd like to farm up to during this line.</li>";
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. Input will look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>"
 		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>Gather</b> - Which resource you'd like to gather when popping a Bone Shrine charge to make use of Turkimp resource bonus.</li>";
@@ -408,6 +410,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		tooltipText += "\
 		<div id='windowContainer' style='display: block'><div id='windowError'></div>\
 		<div class='row windowRow titles'>\
+		<div class='windowActive'>Active?</div>\
 		<div class='windowWorld'>Zone</div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingZone'>Raiding<br/>Zone</div>"
 		tooltipText += "<div class='windowCell'>Cell</div>"
@@ -425,19 +428,20 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneBelow'>Use below</div>"
 		if (titleText.includes('Ship Farm')) tooltipText += "<div class='windowWorshipper'>Ships</div>"
 		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowBuildings'>Buy<br/>Buildings</div>"
-		if (titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) tooltipText += "<div class='windowAtlantrimp'>Run<br/>Atlantrimp</div>"
 		if (titleText.includes('Smithy Farm')) tooltipText += "<div class='windowRepeat'>Smithies</div>"
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) tooltipText += "<div class='windowJobRatio'>Job Ratio</div>"
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'>Gather</div>"
 		if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial'>Special</div>"
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneDropdown'>Use in</div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>"
+		if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) tooltipText += "<div class='windowAtlantrimp'>Run<br/>Atlantrimp</div>"
 		tooltipText += "</div>";
 
 		var current = autoTrimpSettings[varPrefix + "Settings"].value;
 
 		for (var x = 0; x < maxSettings; x++) {
 			var vals = {
+				active: true,
 				check: true,
 				world: -1,
 				cell: -1,
@@ -464,7 +468,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			}
 			var style = "";
 			if (current.length - 1 >= x) {
-				vals.world = autoTrimpSettings[varPrefix + "Settings"].value[x].world
+				vals.active = autoTrimpSettings[varPrefix + "Settings"].value[x].active;
+				vals.world = autoTrimpSettings[varPrefix + "Settings"].value[x].world;
 				if (titleText.includes('Raiding')) vals.raidingzone = autoTrimpSettings[varPrefix + "Settings"].value[x].raidingzone ? autoTrimpSettings[varPrefix + "Settings"].value[x].raidingzone : 1;
 				vals.cell = autoTrimpSettings[varPrefix + "Settings"].value[x].cell ? autoTrimpSettings[varPrefix + "Settings"].value[x].cell : 81;
 				if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine') && !titleText.includes('Raiding')) vals.level = autoTrimpSettings[varPrefix + "Settings"].value[x].level
@@ -472,7 +477,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (titleText.includes('Tribute Farm')) vals.tributes = autoTrimpSettings[varPrefix + "Settings"].value[x].tributes ? autoTrimpSettings[varPrefix + "Settings"].value[x].tributes : 0;
 				if (titleText.includes('Tribute Farm')) vals.mets = autoTrimpSettings[varPrefix + "Settings"].value[x].mets ? autoTrimpSettings[varPrefix + "Settings"].value[x].mets : 0;
 				if (titleText.includes('Tribute Farm')) vals.buildings = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].buildings) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].buildings : true;
-				if (titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) vals.atlantrimp = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].atlantrimp) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].atlantrimp : false;
+				if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) vals.atlantrimp = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].atlantrimp) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].atlantrimp : false;
 				if (titleText.includes('Quagmire Farm')) vals.bogs = autoTrimpSettings[varPrefix + "Settings"].value[x].bogs ? autoTrimpSettings[varPrefix + "Settings"].value[x].bogs : 0;
 				if (titleText.includes('Insanity Farm')) vals.insanity = autoTrimpSettings[varPrefix + "Settings"].value[x].insanity ? autoTrimpSettings[varPrefix + "Settings"].value[x].insanity : 0;
 				if (titleText.includes('Alchemy Farm')) vals.potionstype = autoTrimpSettings[varPrefix + "Settings"].value[x].potion[0] ? autoTrimpSettings[varPrefix + "Settings"].value[x].potion[0] : 0;
@@ -499,6 +504,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			className += (x <= current.length - 1) ? " active" : "  disabled";
 			tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
 			tooltipText += "<div class='windowDelete' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
+			tooltipText += "<div class='windowActive' style='text-align: center;'>" + buildNiceCheckbox("windowActive" + x, null, vals.active) + "</div>";
 			tooltipText += "<div class='windowWorld'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
 			if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingZone'><input value='" + vals.raidingzone + "' type='number' id='windowRaidingZone" + x + "'/></div>";
 			tooltipText += "<div class='windowCell'><input value='" + vals.cell + "' type='number' id='windowCell" + x + "'/></div>";
@@ -515,13 +521,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneBelow'><input value='" + vals.bonebelow + "' type='number' id='windowBoneBelow" + x + "'/></div>";
 			if (titleText.includes('Ship Farm')) tooltipText += "<div class='windowWorshipper'><input value='" + vals.worshipper + "' type='number' id='windowWorshipper" + x + "'/></div>";
 			if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.buildings) + "</div>";
-			if (titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) tooltipText += "<div class='windowAtlantrimp' style='text-align: center;'>" + buildNiceCheckbox("windowAtlantrimp" + x, null, vals.atlantrimp) + "</div>";
 			if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) tooltipText += "<div class='windowJobRatio'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
 			if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.gather + "' id='windowBoneGather" + x + "'>" + gatherDropdown + "</select></div>"
 			if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.bonedropdown + "' id='windowBoneDropdown" + x + "'>" + boneDropdown + "</select></div>"
 			if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.raidingDropdown + "' id='windowRaidingDropdown" + x + "'>" + raidingDropdown + "</select></div>"
 			if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>"
 			if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowGather'>\<div style='text-align: center;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select>\</div>"
+			if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) tooltipText += "<div class='windowAtlantrimp' style='text-align: center;'>" + buildNiceCheckbox("windowAtlantrimp" + x, null, vals.atlantrimp) + "</div>";
 			tooltipText += "</div>"
 		}
 
@@ -596,6 +602,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			continue;
 		};
 
+		active = readNiceCheckbox(document.getElementById('windowActive' + x));
 		world = parseInt(document.getElementById('windowWorld' + x).value, 10);
 		var cell = parseInt(document.getElementById('windowCell' + x).value, 10);
 		if (!titleText.includes('Quag') && !titleText.includes('Bone') && !titleText.includes('Raiding')) var level = parseInt(document.getElementById('windowLevel' + x).value, 10);
@@ -619,7 +626,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Bone')) var bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);
 		if (titleText.includes('Ship Farm')) var worshipper = parseInt(document.getElementById('windowWorshipper' + x).value, 10);
 		if (titleText.includes('Tribute')) var buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
-		if (titleText.includes('Tribute') || titleText.includes('Bone Shrine')) var atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
+		if (titleText.includes('Time Farm') || titleText.includes('Tribute') || titleText.includes('Bone Shrine')) var atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) var jobratio = document.getElementById('windowJobRatio' + x).value;
 		if (titleText.includes('Bone')) var gather = document.getElementById('windowBoneGather' + x).value;
 		if (titleText.includes('Bone')) var boneruntype = document.getElementById('windowBoneDropdown' + x).value;
@@ -679,6 +686,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (currSetting) currSetting = currSetting[x];
 
 		var thisSetting = {
+			active: active,
 			world: world,
 			cell: cell,
 			level: level,
@@ -940,7 +948,7 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Bone')) document.getElementById('windowBoneAmount' + index).value = 0;
 	if (titleText.includes('Bone')) document.getElementById('windowBoneBelow' + index).value = 0;
 	if (titleText.includes('Ship Farm')) document.getElementById('windowWorshipper' + index).value = 0;
-	if (titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) {
+	if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) {
 		var checkBox = document.getElementById('windowAtlantrimp' + index);
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', true);

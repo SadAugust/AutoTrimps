@@ -1024,20 +1024,21 @@ function RautoMap() {
 
 	//Map Bonus
 	if ((rRunningRegular && autoTrimpSettings.rMapBonusDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdMapBonusDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3MapBonusDefaultSettings.value.active) && rShouldQuest === 0) {
-		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
+		//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
 		rMBZone = rRunningC3 ? getPageSetting('rc3MapBonusZone') : rRunningDaily ? getPageSetting('rdMapBonusZone') : getPageSetting('rMapBonusZone');
+		var rMBBaseSettings = rRunningC3 ? autoTrimpSettings.rc3MapBonusSettings.value : rRunningDaily ? autoTrimpSettings.rdMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
 		var rMBIndex;
 		for (var y = 0; y < rMBZone.length; y++) {
-			if (game.global.world - rMBZone[y] >= 0)
+			if (game.global.world - rMBZone[y] >= 0 && rMBBaseSettings[y].active)
 				rMBIndex = rMBZone.indexOf(rMBZone[y]);
 			else
 				continue;
 		}
 
 		if (rMBIndex >= 0) {
-			var rMBSettings = rRunningC3 ? autoTrimpSettings.rc3MapBonusSettings.value[rMBIndex] : rRunningDaily ? autoTrimpSettings.rdMapBonusSettings.value[rMBIndex] : autoTrimpSettings.rMapBonusSettings.value[rMBIndex];
+			var rMBSettings = rMBBaseSettings[rMBIndex];
 			rMBRepeatCounter = rMBSettings.repeat;
-			if (game.global.mapBonus <= rMBRepeatCounter) {
+			if (rMBSettings.active && game.global.mapBonus <= rMBRepeatCounter) {
 				var rMBCell = rMBSettings.cell;
 				if (game.global.lastClearedCell + 2 >= rMBCell) {
 					var rMBMapLevel = rMBSettings.level
@@ -1100,11 +1101,13 @@ function RautoMap() {
 		//Setting up variables and checking if we should use daily settings instead of regular Time Farm settings
 		var rTFBaseSetting = rRunningC3 ? autoTrimpSettings.rc3TimeFarmSettings.value : rRunningDaily ? autoTrimpSettings.rdTimeFarmSettings.value : autoTrimpSettings.rTimeFarmSettings.value;
 
+		if (rBSRunningAtlantrimp && !(game.global.mapsActive && getCurrentMapObject().name === 'Atlantrimp'))
+			rTFAtlantrimp = false;
 		rTFZone = rRunningC3 ? getPageSetting('rc3TimeFarmZone') : rRunningDaily ? getPageSetting('rdTimeFarmZone') : getPageSetting('rTimeFarmZone');
 		var rTFIndex;
 		var totalPortals = getTotalPortals();
 		for (var y = 0; y < rTFZone.length; y++) {
-			if (rTFBaseSetting[y].done === totalPortals + "_" + game.global.world) {
+			if (rTFBaseSetting[y].done === totalPortals + "_" + game.global.world || !rTFBaseSetting[y].active) {
 				continue;
 			}
 			if (game.global.world === rTFZone[y]) {
@@ -1117,11 +1120,17 @@ function RautoMap() {
 			//Figuring out how many maps to run at your current zone
 			var rTFSettings = rTFBaseSetting[rTFIndex];
 			var rTFCell = rTFSettings.cell;
-			if (game.global.lastClearedCell + 2 >= rTFCell) {
+			if (rTFSettings.active && game.global.lastClearedCell + 2 >= rTFCell) {
 				var rTFMapLevel = rTFSettings.level
 				var rTFSpecial = rTFSettings.special
 				rTFRepeatCounter = rTFSettings.repeat
 				var rTFJobRatio = rTFSettings.jobratio
+				rTFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rTFSettings.atlantrimp
+				if (rTFAtlantrimp && rRunningDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
+					if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food') && mapSpecialModifierConfig[rTFSpecial].name.includes('Savory')) rTFAtlantrimp = false;
+					if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') && mapSpecialModifierConfig[rTFSpecial].name.includes('Wooden')) rTFAtlantrimp = false;
+					if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal') && mapSpecialModifierConfig[rTFSpecial].name.includes('Metal')) rTFAtlantrimp = false;
+				}
 				//When running Wither make sure map level is lower than 0 so that we don't accumulate extra stacks.
 				if (game.global.challengeActive == "Wither" && rTFMapLevel >= 0)
 					rTFMapLevel = -1;
@@ -1133,6 +1142,7 @@ function RautoMap() {
 					rTFZoneCleared = game.stats.zonesCleared.value;
 					rTFCurrentMap = undefined;
 					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+					if (rTFAtlantrimp) runAtlantrimp()
 					saveSettings();
 				}
 				if (rTFRepeatCounter > game.global.mapRunCounter)
@@ -1148,8 +1158,7 @@ function RautoMap() {
 		if (rTrFZone.includes(game.global.world)) {
 			var rTrFIndex = rTrFZone.indexOf(game.global.world);
 			var rTrFSettings = rRunningC3 ? autoTrimpSettings.rc3TributeFarmSettings.value[rTrFIndex] : rRunningDaily ? autoTrimpSettings.rdTributeFarmSettings.value[rTrFIndex] : autoTrimpSettings.rTributeFarmSettings.value[rTrFIndex];
-			var rTrFCell = rTrFSettings.cell
-			if (game.global.lastClearedCell + 2 >= rTrFCell) {
+			if (rTrFSettings.active && game.global.lastClearedCell + 2 >= rTrFSettings.cell) {
 				var rTrFMapLevel = rTrFSettings.level
 				rTrFTributes = game.buildings.Tribute.locked == 1 ? 0 : rTrFSettings.tributes;
 				rTrFMeteorologists = game.jobs.Meteorologist.locked == 1 ? 0 : rTrFSettings.mets;
@@ -1158,6 +1167,8 @@ function RautoMap() {
 				var rTrFJobRatio = rTrFSettings.jobratio;
 				rTrFbuyBuildings = typeof (rTrFSettings.buildings) === 'undefined' ? true : rTrFSettings.buildings;
 				rTrFAtlantrimp = typeof (rTrFSettings.atlantrimp) === 'undefined' || !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rTrFSettings.atlantrimp;
+
+				if (rRunningDaily && !(typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food'))) rTrFAtlantrimp = false;
 
 				totalTrFCost = 0;
 				var tributeCost = 0;
@@ -1233,7 +1244,7 @@ function RautoMap() {
 			var rSFIndex = rSFZone.indexOf(game.global.world);
 			var rSFSettings = rRunningC3 ? autoTrimpSettings.rc3SmithyFarmSettings.value[rSFIndex] : rRunningDaily ? autoTrimpSettings.rdSmithyFarmSettings.value[rSFIndex] : autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
 			var rSFCell = game.global.challengeActive == 'Quest' ? 81 : rSFSettings.cell
-			if (game.global.lastClearedCell + 2 >= rSFCell) {
+			if (rSFSettings.active && game.global.lastClearedCell + 2 >= rSFCell) {
 				var rSFMapLevel = game.global.challengeActive == 'Quest' ? -1 : rSFSettings.level
 				rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : game.global.challengeActive == 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
@@ -1318,14 +1329,16 @@ function RautoMap() {
 			//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
 			var rRaidingIndex = rRaidingZone.indexOf(game.global.world);
 			var rRaidingSettings = rRunningC3 ? autoTrimpSettings.rc3RaidingSettings.value[rRaidingIndex] : rRunningDaily ? autoTrimpSettings.rdRaidingSettings.value[rRaidingIndex] : autoTrimpSettings.rRaidingSettings.value[rRaidingIndex];
-			var rRaidingDefaultSettings = rRunningC3 ? autoTrimpSettings.rc3RaidingDefaultSettings.value : rRunningDaily ? autoTrimpSettings.rdRaidingDefaultSettings.value : autoTrimpSettings.rRaidingDefaultSettings.value;
-			var rPRCell = rRaidingSettings.cell;
-			raidzones = rRaidingSettings.raidingzone;
-			var rPRRecycle = rRaidingDefaultSettings.recycle;
-			var rPRFragFarm = rRaidingSettings.raidingDropdown;
+			if (rRaidingSettings.active) {
+				var rRaidingDefaultSettings = rRunningC3 ? autoTrimpSettings.rc3RaidingDefaultSettings.value : rRunningDaily ? autoTrimpSettings.rdRaidingDefaultSettings.value : autoTrimpSettings.rRaidingDefaultSettings.value;
+				var rPRCell = rRaidingSettings.cell;
+				raidzones = rRaidingSettings.raidingzone;
+				var rPRRecycle = rRaidingDefaultSettings.recycle;
+				var rPRFragFarm = rRaidingSettings.raidingDropdown;
 
-			if (game.global.lastClearedCell + 2 >= rPRCell && Rgetequips(raidzones, false) > 0) {
-				rShouldPrestigeRaid = true;
+				if (game.global.lastClearedCell + 2 >= rPRCell && Rgetequips(raidzones, false) > 0) {
+					rShouldPrestigeRaid = true;
+				}
 			}
 			//Resetting variables and recycling the maps used
 			if (!rShouldPrestigeRaid && (RAMPrepMap[0] != undefined || RAMPrepMap[1] != undefined || RAMPrepMap[2] != undefined || RAMPrepMap[3] != undefined || RAMPrepMap[4] != undefined)) {
@@ -1348,15 +1361,15 @@ function RautoMap() {
 	}
 
 	//Worshipper Farm -- Think there's an issue with variable setup here
-	if (game.jobs.Worshipper.locked == 0 && getPageSetting('rShipFarm') && rShouldQuest === 0) {
+	if (game.jobs.Worshipper.locked == 0 && autoTrimpSettings.rShipFarmDefaultSettings.value.active && rShouldQuest === 0) {
 		var shipfarmzone = getPageSetting('rShipFarmZone');
 		if (shipfarmzone.includes(game.global.world) && game.jobs.Worshipper.owned != 50) {
 			var shipamountfarmindex = shipfarmzone.indexOf(game.global.world);
 			var rShipFarmSettings = autoTrimpSettings.rShipFarmSettings.value[shipamountfarmindex];
 			var shipfarmcell = rShipFarmSettings.cell
-			if (game.global.lastClearedCell + 2 >= shipfarmcell) {
-				var ships = game.jobs.Worshipper.owned
-				shipfarmamount = rShipFarmSettings.worshipper
+			if (rShipFarmSettings.active && game.global.lastClearedCell + 2 >= shipfarmcell) {
+				var ships = game.jobs.Worshipper.owned;
+				shipfarmamount = rShipFarmSettings.worshipper;
 				var shippluslevel = rShipFarmSettings.level;
 				var rShipJobRatio = rShipFarmSettings.jobratio;
 				if (game.global.challengeActive == "Wither" && shippluslevel >= 0)
@@ -1393,7 +1406,7 @@ function RautoMap() {
 
 			var totalstacks = 100 - stacksum;
 
-			if (game.global.lastClearedCell + 2 >= bogcell) {
+			if (rQuagSettings.active && game.global.lastClearedCell + 2 >= bogcell) {
 				if ((game.challenges.Quagmire.motivatedStacks > totalstacks))
 					Rshoulddobogs = true;
 
@@ -1461,15 +1474,16 @@ function RautoMap() {
 		if (rIFZone.includes(game.global.world)) {
 			var rIFIndex = rIFZone.indexOf(game.global.world);
 			var rIFSettings = autoTrimpSettings.rInsanitySettings.value[rIFIndex];
-			var rIFMapLevel = rIFSettings.level;
-			var rIFSpecial = rIFSettings.special;
 			var rIFCell = rIFSettings.cell;
-			rIFStacks = rIFSettings.insanity;
-			var rIFJobRatio = rIFSettings.jobratio;
 
-			if (rIFStacks > game.challenges.Insanity.maxInsanity)
-				rIFStacks = game.challenges.Insanity.maxInsanity;
-			if (game.global.lastClearedCell + 2 >= rIFCell) {
+			if (rIFSettings.active && game.global.lastClearedCell + 2 >= rIFCell) {
+				var rIFMapLevel = rIFSettings.level;
+				var rIFSpecial = rIFSettings.special;
+				rIFStacks = rIFSettings.insanity;
+				var rIFJobRatio = rIFSettings.jobratio;
+
+				if (rIFStacks > game.challenges.Insanity.maxInsanity)
+					rIFStacks = game.challenges.Insanity.maxInsanity;
 				if (rIFStacks >= game.challenges.Insanity.insanity)
 					rShouldInsanityFarm = true;
 
@@ -1660,12 +1674,13 @@ function RautoMap() {
 			var alchfarmindex = alchfarmzone.indexOf(game.global.world);
 			var rAlchSettings = autoTrimpSettings.rAlchSettings.value[alchfarmindex];
 			var alchfarmcell = rAlchSettings.cell;
-			var alchmaplevel = rAlchSettings.level;
-			var alchspecial = rAlchSettings.special;
-			var rAlchJobRatio = rAlchSettings.jobratio;
-			alchpotions = rAlchSettings.potion;
 
-			if (game.global.lastClearedCell + 2 >= alchfarmcell) {
+			if (rAlchSettings.active && game.global.lastClearedCell + 2 >= alchfarmcell) {
+				var alchmaplevel = rAlchSettings.level;
+				var alchspecial = rAlchSettings.special;
+				var rAlchJobRatio = rAlchSettings.jobratio;
+				alchpotions = rAlchSettings.potion;
+
 				if (alchpotions != undefined) {
 					//Working out which potion the input corresponds to.
 					potion = alchpotions.charAt('0') == 'h' ? 0 :
@@ -1755,14 +1770,13 @@ function RautoMap() {
 		if (rHFZone.includes(game.global.world)) {
 			rHFIndex = rHFZone.indexOf(game.global.world);
 			var rHypoSettings = autoTrimpSettings.rHypoSettings.value[rHFIndex];
-			rHFMapLevel = rHypoSettings.level;
 			var rHFCell = rHypoSettings.cell;
-			var rHypoJobRatio = rHypoSettings.jobratio;
 
-			if (game.global.lastClearedCell + 2 >= rHFCell) {
+			if (rHypoSettings.active && game.global.lastClearedCell + 2 >= rHFCell) {
 				rHFBonfire = rHypoSettings.bonfire;
 				rHFSpecial = "lwc";
-				rHFSaveWood = false;
+				var rHFMapLevel = rHypoSettings.level;
+				var rHypoJobRatio = rHypoSettings.jobratio;
 				rHFBonfiresBuilt = game.challenges.Hypothermia.totalBonfires;
 				rHFCurrentCost = 1e8 * (Math.pow(100, game.challenges.Hypothermia.totalBonfires));
 				var shedCost = 0;

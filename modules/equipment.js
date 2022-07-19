@@ -690,7 +690,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 
 function RautoEquip() {
 
-	if (!getPageSetting('Requipon') || (!rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && rShouldSmithyFarm) || rBSRunningAtlantrimp)
+	if (!getPageSetting('Requipon') || (!rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && rShouldSmithyFarm) || rBSRunningAtlantrimp || typeof (rTFAtlantrimp) !== 'undefined' && rTFAtlantrimp)
 		return;
 
 	var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');

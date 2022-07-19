@@ -233,12 +233,12 @@ ul.tab li a:hover {
 }
 
 .windowDelete {
-	width: 4%;
+	width: 2%;
 	cursor: pointer;
 }
 
 .windowJobRatio {
-	width: 15%;
+	width: 10%;
 	cursor: pointer;
 }
 
@@ -272,7 +272,7 @@ ul.tab li a:hover {
 .windowPackrat,
 .windowRecycle,
 .windowFrozenCastle {
-	width: 15%;
+	width: 10%;
 }
 
 .windowAtlantrimp {
@@ -285,12 +285,8 @@ ul.tab li a:hover {
 
 .windowPreset,
 .windowSpecial {
-	width: 26%;
+	width: 24%;
 }
-
-/* .windowGather{
-	width: 10%;
-} */
 
 .windowRepeat .windowRaidingZone {
 	width: 8.5%;

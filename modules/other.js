@@ -2667,6 +2667,25 @@ function PerfectMapCost_Actual(plusLevel, specialModifier) {
 	return baseCost;
 }
 
+function runAtlantrimp() {
+	if (!game.global.preMapsActive && !game.global.mapsActive)
+		mapsClicked();
+	if (game.global.mapsActive && getCurrentMapObject().name !== 'Atlantrimp') {
+		mapsClicked();
+		recycleMap();
+	}
+	if (game.global.preMapsActive) {
+		for (var map in game.global.mapsOwnedArray) {
+			if (game.global.mapsOwnedArray[map].name == 'Atlantrimp') {
+				selectMap(game.global.mapsOwnedArray[map].id)
+				rRunMap();
+				debug('Running Atlantrimp');
+				rBSRunningAtlantrimp = true;
+			}
+		}
+	}
+}
+
 function ABItemSwap(items, ring) {
 	items = !items ? false : items;
 	ring = !ring ? false : ring;

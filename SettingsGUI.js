@@ -1220,7 +1220,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				name: name,
 				description: description,
 				type: type,
-				value: loaded === undefined ? [{ world: 999, cell: 0, level: 0, repeat: 0, special: 0, gather: 'food', tributes: 0, mets: 0, bogs: 0, insanity: 0, potion: 0, bonfire: 0, boneamount: 0, bonebelow: 0, worshipper: 50, boneruntype: 0, bonegather: 0, buildings: true, done: false, jobratio: '1,1,1,1' }] : loaded
+				value: loaded === undefined ? [{ active: false, world: 999, cell: 0, level: 0, repeat: 0, special: 0, gather: 'food', tributes: 0, mets: 0, bogs: 0, insanity: 0, potion: 0, bonfire: 0, boneamount: 0, bonebelow: 0, worshipper: 50, boneruntype: 0, bonegather: 0, buildings: true, done: false, jobratio: '1,1,1,1' }] : loaded
 			};
 		var btn = document.createElement("select");
 		btn.id = id;
@@ -1294,26 +1294,52 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 	if (autoTrimpSettings[id].description != description)
 		autoTrimpSettings[id].description = description;
 
-
 	//Adding onto settings
-	if (autoTrimpSettings["ATversion"] !== ATversion) {
-		if (typeof (autoTrimpSettings.rTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rTimeFarmSettings.value[0].done === undefined) {
-			for (var y = 0; y < autoTrimpSettings.rTimeFarmSettings.value.length; y++) {
-				autoTrimpSettings.rTimeFarmSettings.value[y].done = 1;
+	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"] !== ATversion) {
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '4.5.0') {
+			if (typeof (autoTrimpSettings.rTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rTimeFarmSettings.value[0].done === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rTimeFarmSettings.value.length; y++) {
+					autoTrimpSettings.rTimeFarmSettings.value[y].done = 1;
+				}
+				saveSettings();
 			}
-			saveSettings();
+			if (typeof (autoTrimpSettings.rdTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rdTimeFarmSettings.value[0].done === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rdTimeFarmSettings.value.length; y++) {
+					autoTrimpSettings.rdTimeFarmSettings.value[y].done = 1;
+				}
+				saveSettings();
+			}
+			if (typeof (autoTrimpSettings.rc3TimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rc3TimeFarmSettings.value[0].done === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rc3TimeFarmSettings.value.length; y++) {
+					autoTrimpSettings.rc3TimeFarmSettings.value[y].done = 1;
+				}
+				saveSettings();
+			}
 		}
-		if (typeof (autoTrimpSettings.rdTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rdTimeFarmSettings.value[0].done === undefined) {
-			for (var y = 0; y < autoTrimpSettings.rdTimeFarmSettings.value.length; y++) {
-				autoTrimpSettings.rdTimeFarmSettings.value[y].done = 1;
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '4.6.0') {
+
+			var settings_Atlantrimp = ['rTimeFarmSettings', 'rdTimeFarmSettings', 'rc3TimeFarmSettings']
+			for (var x = 0; x < settings_Atlantrimp.length; x++) {
+				if (typeof (autoTrimpSettings[settings_Atlantrimp[x]].value[0]) !== 'undefined' && autoTrimpSettings[settings_Atlantrimp[x]].value[0].atlantrimp === undefined) {
+					for (var y = 0; y < autoTrimpSettings[settings_Atlantrimp[x]].value.length; y++) {
+						autoTrimpSettings[settings_Atlantrimp[x]].value[y].atlantrimp = false;
+					}
+					saveSettings();
+				}
 			}
-			saveSettings();
-		}
-		if (typeof (autoTrimpSettings.rc3TimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rc3TimeFarmSettings.value[0].done === undefined) {
-			for (var y = 0; y < autoTrimpSettings.rc3TimeFarmSettings.value.length; y++) {
-				autoTrimpSettings.rc3TimeFarmSettings.value[y].done = 1;
+
+			var settings_Active = ['rTimeFarmSettings', 'rdTimeFarmSettings', 'rc3TimeFarmSettings', 'rTributeFarmSettings', 'rdTributeFarmSettings', 'rc3TributeFarmSettings',
+				'rMapBonusSettings', 'rdMapBonusSettings', 'rc3MapBonusSettings', 'rSmithyFarmSettings', 'rdSmithyFarmSettings', 'rc3SmithyFarmSettings', 'rRaidingSettings', 'rdRaidingSettings', 'rc3RaidingSettings',
+				'rBoneShrineSettings', 'rShipFarmSettings', 'rQuagSettings', 'rInsanitySettings', 'rAlchSettings', 'rHypoSettings']
+
+			for (var x = 0; x < settings_Active.length; x++) {
+				if (typeof (autoTrimpSettings[settings_Active[x]].value[0]) !== 'undefined' && autoTrimpSettings[settings_Active[x]].value[0].active === undefined) {
+					for (var y = 0; y < autoTrimpSettings[settings_Active[x]].value.length; y++) {
+						autoTrimpSettings[settings_Active[x]].value[y].active = true;
+					}
+					saveSettings();
+				}
 			}
-			saveSettings();
 		}
 		autoTrimpSettings["ATversion"] = ATversion;
 		saveSettings();

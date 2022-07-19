@@ -4,10 +4,11 @@ rBoneShrineUsedZone = 0;
 rBSRunningAtlantrimp = false;
 
 function BoneShrine() {
-	if (!autoTrimpSettings.rBoneShrineDefaultSettings.value.active) return;
-
 	if (rBSRunningAtlantrimp && !(game.global.mapsActive && getCurrentMapObject().name === 'Atlantrimp'))
 		rBSRunningAtlantrimp = false;
+
+	if (!autoTrimpSettings.rBoneShrineDefaultSettings.value.active) return;
+
 
 	var rRunningC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
 	var rRunningDaily = game.global.challengeActive == "Daily";
@@ -19,23 +20,24 @@ function BoneShrine() {
 	var rBoneShrineZone = getPageSetting('rBoneShrineZone');
 
 	if (rBoneShrineZone.includes(game.global.world)) {
+		var rBoneShrineBaseSettings = autoTrimpSettings.rBoneShrineSettings.value
 		var rBoneShrineRunType = getPageSetting('rBoneShrineRunType')
 		let indexes = [...finder(getPageSetting('rBoneShrineZone'), game.global.world)];
 		var rBSIndex;
 		for (var y = 0; y < indexes.length; y++) {
-			if (rBoneShrineRunType[indexes[y]] == 'All') {
+			if (rBoneShrineRunType[indexes[y]] == 'All' && rBoneShrineBaseSettings[indexes[y]].active) {
 				rBSIndex = indexes[y];
 				break;
 			}
-			else if (rBoneShrineRunType[indexes[y]] == 'Fillers' && rRunningRegular) {
+			else if (rBoneShrineRunType[indexes[y]] == 'Fillers' && rRunningRegular && rBoneShrineBaseSettings[indexes[y]].active) {
 				rBSIndex = indexes[y];
 				break;
 			}
-			else if (rBoneShrineRunType[indexes[y]] == 'Daily' && rRunningDaily) {
+			else if (rBoneShrineRunType[indexes[y]] == 'Daily' && rRunningDaily && rBoneShrineBaseSettings[indexes[y]].active) {
 				rBSIndex = indexes[y];
 				break;
 			}
-			else if (rBoneShrineRunType[indexes[y]] == 'C3' && rRunningC3) {
+			else if (rBoneShrineRunType[indexes[y]] == 'C3' && rRunningC3 && rBoneShrineBaseSettings[indexes[y]].active) {
 				rBSIndex = indexes[y];
 				break;
 			}
@@ -47,7 +49,6 @@ function BoneShrine() {
 				rBoneShrineRunType == 'C3' && rRunningC3 ? true :
 					rBoneShrineRunType == 'All' ? true :
 						false;
-
 		if (runType && autoTrimpSettings.rBoneShrineDefaultSettings.value.active && rBoneShrineUsedZone != game.global.world) {
 			var rBoneShrineSettings = autoTrimpSettings.rBoneShrineSettings.value[rBSIndex]
 			var rBoneShrineCell = rBoneShrineSettings.cell
@@ -55,6 +56,11 @@ function BoneShrine() {
 			var rBoneShrineGather = rBoneShrineSettings.gather
 			var rBoneShrineSpendBelow = rBoneShrineSettings.bonebelow === -1 ? 0 : rBoneShrineSettings.bonebelow;
 			var rBoneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rBoneShrineSettings.atlantrimp
+			if (rBoneShrineAtlantrimp && rRunningDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
+				if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food') && rBoneShrineGather === 'food') rBoneShrineAtlantrimp = false;
+				if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') && rBoneShrineGather === 'wood') rBoneShrineAtlantrimp = false;
+				if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal') && rBoneShrineGather === 'metal') rBoneShrineAtlantrimp = false;
+			}
 			rShouldBoneShrine = (game.global.lastClearedCell + 2 >= rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow && rBoneShrineUsedZone !== game.global.world);
 
 			if (rBoneShrineCharges > game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow)
@@ -67,22 +73,7 @@ function BoneShrine() {
 				else if (getPageSetting('RhsMapStaff') !== 'undefined')
 					HeirloomEquipStaff('RhsMapStaff');
 				if (rBoneShrineAtlantrimp) {
-					if (!game.global.preMapsActive && !game.global.mapsActive)
-						mapsClicked();
-					if (game.global.mapsActive && getCurrentMapObject().name !== 'Atlantrimp') {
-						mapsClicked();
-						recycleMap();
-					}
-					if (game.global.preMapsActive) {
-						for (var map in game.global.mapsOwnedArray) {
-							if (game.global.mapsOwnedArray[map].name == 'Atlantrimp') {
-								selectMap(game.global.mapsOwnedArray[map].id)
-								rRunMap();
-								debug('Running Atlantrimp');
-								rBSRunningAtlantrimp = true;
-							}
-						}
-					}
+					runAtlantrimp()
 				}
 				for (var x = 0; x < rBoneShrineCharges; x++) {
 					if (getPageSetting('RBuyJobsNew') > 0) {
