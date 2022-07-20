@@ -661,6 +661,7 @@ function Rresetmapvars() {
 	rShouldSmithyGemFarm = false;
 	rShouldSmithyWoodFarm = false;
 	rShouldSmithyMetalFarm = false;
+	smithyMapCount = [0, 0, 0];
 
 	if (document.getElementById('hiderStatus').style.display == 'None' && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) {
 		turnOn("hiderStatus")
