@@ -2729,9 +2729,6 @@ function automateSpireAssault() {
 			autoBattle.acceptContract('Box_of_Spores')
 	}
 
-	if (autoBattle.items.Stormbringer.owned && autoBattle.items.Stormbringer.level != 5)
-		autoBattle.upgrade('Stormbringer')
-
 	if (autoBattle.items.Stormbringer.owned && autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Haunted_Harpoon.owned) {
 		if (autoBattle.items.Stormbringer.owned && autoBattle.items.Stormbringer.level != 5)
 			autoBattle.upgrade('Stormbringer')
@@ -2778,10 +2775,8 @@ function automateSpireAssault() {
 			var ring = [['lifesteal'], ['dustMult']]
 		}
 
-		if (autoBattle.maxEnemyLevel === 100 && autoBattle.autoLevel) {
+		if (autoBattle.maxEnemyLevel === 99 && autoBattle.autoLevel) {
 			autoBattle.toggleAutoLevel();
-			autoBattle.enemyLevel = 99;
-			autoBattle.resetCombat();
 		}
 
 		if (autoBattle.sessionEnemiesKilled == 0 && autoBattle.enemy.baseHealth == autoBattle.enemy.health) {

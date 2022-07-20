@@ -591,7 +591,7 @@ function RbuyJobs() {
 
 	if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && !rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm && !rShouldBoneShrine)
 		desiredRatios[0] = 0;
-	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && !rShouldBoneShrine && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
+	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && !rShouldTimeFarm && !rShouldBoneShrine && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
 		desiredRatios[1] = 0;
 
 	if (typeof (workerRatio) !== 'undefined' && workerRatio !== null) {

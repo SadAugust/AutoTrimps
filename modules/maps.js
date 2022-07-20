@@ -959,10 +959,16 @@ function RautoMap() {
 			rRunningRegular && getPageSetting('RRunNewVoidsUntilNew') != 0 ? getPageSetting('RRunNewVoidsUntilNew') :
 				0;
 
+	if (rRunningDaily) {
+		for (var x = 0; x < voidMapLevelSetting.length; x++) {
+			voidMapLevelSetting[x] = voidMapLevelSetting[x] + dailyModiferReduction();
+		}
+	}
+
 	RneedToVoid = (voidMapLevelSetting[0] > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 2 >= voidMapLevelSettingCell &&
 		((voidMapLevelSetting.includes(game.global.world)) ||
-			(voidMapLevelPlus <= 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1] + dailyModiferReduction()) ||
-			(voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1] + dailyModiferReduction() && game.global.world <= (voidMapLevelSetting[voidMapLevelSetting.length - 1] + dailyModiferReduction() + voidMapLevelPlus)))
+			(voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1]) ||
+			(voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1] && game.global.world <= (voidMapLevelSetting[voidMapLevelSetting.length - 1] + voidMapLevelPlus)))
 	);
 
 	if (game.global.totalVoidMaps <= 0 || !RneedToVoid)
