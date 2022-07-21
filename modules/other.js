@@ -2504,11 +2504,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt_local *= 10;
 		amt_local *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
 	}
-	if (game.global.stringVersion >= '5.8.0') {
-		if (game.global.universe == 2 && u2Mutations.tree.Loot.purchased) {
-			amt_local *= 1.5;
-		}
-	}
+
 	if (game.challenges.Nurture.boostsActive())
 		amt_local *= game.challenges.Nurture.getResourceBoost();
 	if (event == null || heirloom == null || game.global.StaffEquipped.name == autoTrimpSettings[heirloom].value) {
@@ -2561,7 +2557,7 @@ function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
 	return amt_local;
 }
 
-function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio) { //don't use forceMax for jobs until you fix that second return. forceMax and forceRatio indicate that they're from an auto, and ignore firing
+function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) { //don't use forceMax for jobs until you fix that second return. forceMax and forceRatio indicate that they're from an auto, and ignore firing
 	if (!itemObj.cost) return 1;
 
 	var mostAfford = -1;
@@ -2573,7 +2569,7 @@ function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceM
 		var price = itemObj.cost[item];
 		var toBuy;
 		var resource = game.resources[item];
-		var resourcesAvailable = resource.owned;
+		var resourcesAvailable = !resources ? resource.owned : resources;
 		if (resourcesAvailable < 0) resourcesAvailable = 0;
 		if (game.global.maxSplit != 1 && !forceMax && !forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * game.global.maxSplit);
 		else if (forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * forceRatio);

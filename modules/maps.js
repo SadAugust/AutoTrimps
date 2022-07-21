@@ -1180,6 +1180,26 @@ function RautoMap() {
 				totalTrFCost = 0;
 				var tributeCost = 0;
 				var metCost = 0;
+
+
+				//Identifying how much food you'd get from the amount of jestimps you want to farm on the map level you've selected for them
+				if (rRunningDaily && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food')) {
+					var foodTotal = null;
+					var jestDrop = scaleToCurrentMapLocal(simpleSecondsLocal("food", 45, true, '1'), false, true, rTrFMapLevel);
+					var shred = 1 - (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength)[0] / 100);
+					var maps = 10;
+					foodTotal = jestDrop;
+					//For loop for adding the food from subsequent jestimp kills to the base total
+					for (i = 1; i < maps; i++) {
+						foodTotal += (jestDrop * (Math.pow(shred, i)));
+					}
+					tributeShredAmt = game.buildings.Tribute.purchased + calculateMaxAffordLocal(game.buildings.Tribute, true, false, false, false, 1, foodTotal);
+					metShredAmt = game.jobs.Meteorologist.owned + calculateMaxAffordLocal(game.jobs.Meteorologist, false, false, true, false, 1, foodTotal);
+					if ((foodTotal != null && (rTrFMeteorologists > metShredAmt || rTrFTributes > tributeShredAmt))) {
+						if (rTrFMeteorologists > metShredAmt) rTrFMeteorologists = metShredAmt
+						if (rTrFTributes > tributeShredAmt) rTrFTributes = tributeShredAmt
+					}
+				}
 				if (rTrFTributes > game.buildings.Tribute.purchased) {
 					for (x = 0; x < rTrFTributes - game.buildings.Tribute.purchased; x++) {
 						tributeCost += Math.pow(1.05, game.buildings.Tribute.purchased) * 10000
@@ -1190,6 +1210,7 @@ function RautoMap() {
 						metCost += Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned + x) * game.jobs.Meteorologist.cost.food[0]
 					}
 				}
+
 				totalTrFCost = tributeCost + metCost;
 
 				if (game.global.challengeActive == "Wither" && rTrFMapLevel >= 0)
@@ -1209,7 +1230,6 @@ function RautoMap() {
 					totalTrFCost += barnCost;
 
 					if ((totalTrFCost > game.resources.food.owned - barnCost + resourceFarmed) && game.resources.food.owned > totalTrFCost / 2) {
-						//if ((game.resources.food.owned * 2) - barnCost > resourceFarmed && game.resources.food.owned > ((totalTrFCost + barnCost) / 2)) {
 						if (game.global.mapsActive && getCurrentMapObject().name !== 'Atlantrimp') {
 							mapsClicked();
 							recycleMap();
@@ -1244,7 +1264,7 @@ function RautoMap() {
 	}
 
 	//Smithy Farming
-	if (game.buildings.Smithy.locked == 0 && ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active && (typeof game.global.dailyChallenge.hemmorrhage === 'undefined' || !(typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')))) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && rShouldQuest === 10))) {
+	if (game.buildings.Smithy.locked == 0 && ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && rShouldQuest === 10))) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
 		var rSFZone = game.global.challengeActive == 'Quest' ? [game.global.world] : rRunningC3 ? getPageSetting('rc3SmithyFarmZone') : rRunningDaily ? getPageSetting('rdSmithyFarmZone') : getPageSetting('rSmithyFarmZone');
 		if (rSFZone.includes(game.global.world)) {
@@ -1254,6 +1274,30 @@ function RautoMap() {
 			if (rSFSettings.active && game.global.lastClearedCell + 2 >= rSFCell) {
 				var rSFMapLevel = game.global.challengeActive == 'Quest' ? -1 : rSFSettings.level
 				rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : game.global.challengeActive == 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
+
+				//Checking for daily resource shred
+				if (typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal'))) {
+					var rSFSpecialTime = game.global.highestRadonLevelCleared > 83 ? 20 : 10;
+
+					if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')) {
+						var woodGain = Infinity
+						var metalGain = scaleToCurrentMapLocal(simpleSecondsLocal("metal", rSFSpecialTime, true, '0,0,1,0'), false, true, rSFMapLevel)
+					}
+					else if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood')) {
+						var woodGain = scaleToCurrentMapLocal(simpleSecondsLocal("wood", (rSFSpecialTime * 2) + 45, true, '0,1,0,0'), false, true, rSFMapLevel)
+						var metalGain = Infinity;
+					}
+					else if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')) {
+						var woodGain = Infinity;
+						var metalGain = scaleToCurrentMapLocal(simpleSecondsLocal("metal", (rSFSpecialTime * 2) + 45, true, '0,0,1,0'), false, true, rSFMapLevel)
+					}
+					var smithy_pet = game.buildings.Smithy.cost.gems[1];
+					var smithycost = [getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.gems[0], (Infinity), (smithy_pet), true),
+					getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.metal[0], (woodGain), (smithy_pet), true),
+					getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (metalGain), (smithy_pet), true)]
+					var smithyAmt = game.buildings.Smithy.purchased + Math.min(smithycost[0], smithycost[1], smithycost[2])
+					rSFSmithies = smithyAmt > 0 && rSFSmithies > smithyAmt ? smithyAmt : rSFSmithies;
+				}
 
 				var rSFSpecial = game.global.highestRadonLevelCleared > 63 ? "hc" : "lc";
 				var rSFJobRatio = '1,1,1,0';
@@ -1606,7 +1650,6 @@ function RautoMap() {
 					jestMetalTotal += (jestDrop * (Math.pow(shred, i)));
 				}
 				jestMetalTotal = (jestMetalTotal / 100) * 99
-				debug(jestMetalTotal);
 				if ((jestMetalTotal != null && (jestMetalTotal > nextEquipmentCost)) || jestFarmMap == true) {
 					rShouldPandemoniumJestimpFarm = true;
 					jestFarmMap = true;
