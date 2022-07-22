@@ -274,7 +274,7 @@ function pushData() {
 		currentTime: new Date().getTime(),
 		portalTime: game.global.portalTime,
 		world: game.global.world,
-		challenge: game.global.challengeActive,
+		challenge: game.global.challengeActive === 'Daily' ? game.global.challengeActive + " " + getDailyTimeString().toString().replace(/(\d{4})(\d{2})(\d+)/, '$1-$2-$3') : game.global.challengeActive,
 		voids: game.global.totalVoidMaps,
 		heirlooms: { value: game.stats.totalHeirlooms.value, valueTotal: game.stats.totalHeirlooms.valueTotal },
 		nullifium: recycleAllExtraHeirlooms(true),
