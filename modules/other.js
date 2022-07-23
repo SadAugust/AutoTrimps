@@ -2132,7 +2132,6 @@ function rManageEquality() {
 	}
 }
 
-
 function autoMapLevel(maxLevel, special, biome) {
 	maxLevel = !maxLevel ? 10 : maxLevel;
 	special = !special ? 'lmc' : special;
@@ -2153,7 +2152,7 @@ function autoMapLevel(maxLevel, special, biome) {
 		var equalityAmt = equalityQuery(true, false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
 		var ourDmg = RcalcOurDmg('avg', equalityAmt, true, true, false, runningUnlucky) * 2;
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Snimp', 'map', true) * difficulty;
-		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, true) * 1.5 * difficulty;
+		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, true, 'map') * 1.5 * difficulty;
 
 		if (!go) {
 			if ((game.resources.fragments.owned >= PerfectMapCost(mapLevel, special, biome) && enemyHealth <= ourDmg) && ((enemyDmg <= ourHealth))) {
@@ -2203,8 +2202,8 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 		if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
 		var enemyHealth = !query ? game.global[mapGrid][currentCell + 1].health : RcalcEnemyHealthMod(zone, currentCell + 2, enemyName, mapType, true) * difficulty;
 		var enemyAttack = !query && getCurrentEnemy() ? getCurrentEnemy().attack * RcalcBadGuyDmgMod() :
-			RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query);
-		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query) * 1.5 * difficulty : enemyAttack * 1.5 * difficulty;
+			RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query.mapType);
+		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * 1.5 * difficulty : enemyAttack * 1.5 * difficulty;
 		if (!query) enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 		var enemyDmgEquality = 0;
 		//Our stats

@@ -1129,6 +1129,7 @@ function RautoMap() {
 			var rTFCell = rTFSettings.cell;
 			if (rTFSettings.active && game.global.lastClearedCell + 2 >= rTFCell) {
 				var rTFMapLevel = rTFSettings.level
+				if (game.global.stringVersion === '5.8.0' && rTFCurrentMap === undefined) rTFMapLevel = autoMapLevel();
 				var rTFSpecial = rTFSettings.special
 				rTFRepeatCounter = rTFSettings.repeat
 				var rTFJobRatio = rTFSettings.jobratio
@@ -1167,6 +1168,7 @@ function RautoMap() {
 			var rTrFSettings = rRunningC3 ? autoTrimpSettings.rc3TributeFarmSettings.value[rTrFIndex] : rRunningDaily ? autoTrimpSettings.rdTributeFarmSettings.value[rTrFIndex] : autoTrimpSettings.rTributeFarmSettings.value[rTrFIndex];
 			if (rTrFSettings.active && game.global.lastClearedCell + 2 >= rTrFSettings.cell) {
 				var rTrFMapLevel = rTrFSettings.level
+				if (game.global.stringVersion === '5.8.0' && rTrFCurrentMap === undefined) rTfMapLevel = autoMapLevel();
 				rTrFTributes = game.buildings.Tribute.locked == 1 ? 0 : rTrFSettings.tributes;
 				rTrFMeteorologists = game.jobs.Meteorologist.locked == 1 ? 0 : rTrFSettings.mets;
 				//Figuring out how many Tributes or Meteorologists to farm at your current zone
@@ -1181,6 +1183,14 @@ function RautoMap() {
 				var tributeCost = 0;
 				var metCost = 0;
 
+				if (1 === 5 && (tributeGain !== 0 || metGain !== 0)) {
+					var mapsToRun = rTFSettings.mapsToRun;
+					var time = mapsToRun * 25
+					if (mapsToRun > 4) time += (Math.floor(mapsToRun / 5) * 45)
+					var foodEarned = scaleToCurrentMapLocal(simpleSecondsLocal("food", mapsToRun, true, '1'), false, true, rTrFMapLevel);
+					tributeGain = game.buildings.Tribute.purchased + calculateMaxAffordLocal(game.buildings.Tribute, true, false, false, false, 1, foodEarned);
+					metGain = game.jobs.Meteorologist.owned + calculateMaxAffordLocal(game.jobs.Meteorologist, false, false, true, false, 1, foodEarned);
+				}
 
 				//Identifying how much food you'd get from the amount of jestimps you want to farm on the map level you've selected for them
 				if (rRunningDaily && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food')) {
@@ -1273,6 +1283,7 @@ function RautoMap() {
 			var rSFCell = game.global.challengeActive == 'Quest' ? 81 : rSFSettings.cell
 			if (rSFSettings.active && game.global.lastClearedCell + 2 >= rSFCell) {
 				var rSFMapLevel = game.global.challengeActive == 'Quest' ? -1 : rSFSettings.level
+				if (game.global.stringVersion === '5.8.0' && rSFCurrentMap === undefined) rSFMapLevel = autoMapLevel();
 				rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : game.global.challengeActive == 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
 				//Checking for daily resource shred
