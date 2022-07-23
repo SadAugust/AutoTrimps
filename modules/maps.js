@@ -1259,7 +1259,7 @@ function RautoMap() {
 				if (!rShouldTributeFarm && !rShouldMetFarm && rTrFCurrentMap != undefined) {
 					var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
 					if (getPageSetting('rMapRepeatCount')) {
-						debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+						debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.")
 					}
 					if (game.global.mapsActive) {
 						mapsClicked();
