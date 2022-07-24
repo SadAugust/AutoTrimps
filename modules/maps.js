@@ -1367,8 +1367,7 @@ function RautoMap() {
 						recycleMap();
 					}
 					if (getPageSetting('rMapRepeatCount'))
-						debug("Smithy Farm took " + smithyMapCount[0] + " food map" + (smithyMapCount[0] === 1 ? ", " : "s, ") + smithyMapCount[1] + " wood map" + (smithyMapCount[1] === 1 ? ", " : "s, ") + smithyMapCount[2] + " metal map" + (smithyMapCount[2] === 1 ? " " : "s ") + " to complete on zone " + game.global.world + ".")
-					//debug("Smithy Farm took " + (game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0)) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+						debug("Smithy Farm took " + smithyMapCount[0] + " food map" + (smithyMapCount[0] === 1 ? ", " : "s, ") + smithyMapCount[1] + " wood map" + (smithyMapCount[1] === 1 ? ", " : "s, ") + smithyMapCount[2] + " metal map" + (smithyMapCount[2] === 1 ? " " : "s ") + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
 					rSFCurrentMap = undefined;
 					if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
 						toggleAutoStructure();
