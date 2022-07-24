@@ -635,9 +635,9 @@ function initializeAllSettings() {
 
 	//C3 Voids
 	document.getElementById('c3GM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rc3VoidMod', 'Daily Void Zone', 'What zone to do void maps in dailies. Disable with -1.<br><br>Can input multiple values and it\'ll run voids on each of those zones.', 'multiValue', -1, null, 'C3');
-	createSetting('Rc3voidscell', 'Daily Void Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70.', 'value', -1, null, 'C3');
-	createSetting('Rc3RunNewVoidsUntilNew', 'Daily New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'C3');
+	createSetting('Rc3VoidMod', 'C3 Void Zone', 'What zone to do void maps in dailies. Disable with -1.<br><br>Can input multiple values and it\'ll run voids on each of those zones.', 'multiValue', -1, null, 'C3');
+	createSetting('Rc3voidscell', 'C3 Void Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70.', 'value', -1, null, 'C3');
+	createSetting('Rc3RunNewVoidsUntilNew', 'C3 New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'C3');
 
 	//Map Bonus
 	createSetting('rc3MapBonus', 'Map Bonus', 'Turn this on if you want to use Map Bonus. ', 'boolean', false, null, 'C3');
