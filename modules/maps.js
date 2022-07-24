@@ -1183,13 +1183,15 @@ function RautoMap() {
 				var metCost = 0;
 
 				if (game.global.stringVersion === '5.8.0' && rTrFCurrentMap === undefined) {
-					rTrFMapLevel = autoMapLevel();/* 
-					var mapsToRun = rTFSettings.mapsToRun;
-					var time = mapsToRun * 25
-					if (mapsToRun > 4) time += (Math.floor(mapsToRun / 5) * 45)
-					var foodEarned = scaleToCurrentMapLocal(simpleSecondsLocal("food", mapsToRun, true, '1'), false, true, rTrFMapLevel);
-					rTrFTributes = game.buildings.Tribute.purchased + calculateMaxAffordLocal(game.buildings.Tribute, true, false, false, false, 1, foodEarned);
-					rTrFMeteorologists = game.jobs.Meteorologist.owned + calculateMaxAffordLocal(game.jobs.Meteorologist, false, false, true, false, 1, foodEarned); */
+					if (rTrFSettings.autoLevel) rTrFMapLevel = autoMapLevel();
+					if (rTrFSettings.tributeFarmDropdown === 'Map Count') {
+						var mapsToRun = rTFSettings.mapsToRun;
+						var time = mapsToRun * 25
+						if (mapsToRun > 4) time += (Math.floor(mapsToRun / 5) * 45)
+						var foodEarned = scaleToCurrentMapLocal(simpleSecondsLocal("food", mapsToRun, true, '1'), false, true, rTrFMapLevel);
+						rTrFTributes = game.buildings.Tribute.purchased + calculateMaxAffordLocal(game.buildings.Tribute, true, false, false, false, 1, foodEarned);
+						rTrFMeteorologists = game.jobs.Meteorologist.owned + calculateMaxAffordLocal(game.jobs.Meteorologist, false, false, true, false, 1, foodEarned);
+					}
 				}
 
 				//Identifying how much food you'd get from the amount of jestimps you want to farm on the map level you've selected for them
