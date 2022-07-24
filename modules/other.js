@@ -2140,6 +2140,7 @@ function autoMapLevel(maxLevel, special, biome) {
 	var go = false;
 	if (maxLevel > 10) maxLevel = 10;
 	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
+	if (game.global.challengeActive === 'Wither' && maxLevel >= 0) maxLevel = -1;
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
 	var questShieldBreak = game.global.challengeActive == 'Quest' && questcheck() == 8;
 	var minZone = 0 - game.global.world + 6

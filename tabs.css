@@ -214,7 +214,10 @@ ul.tab li a:hover {
 .windowStorage,
 .windowPackrat,
 .windowRecycle,
-.windowFrozenCastle {
+.windowFrozenCastle,
+.windowTributeFarmDropdown,
+.windowTributeFarmDropdownDefault,
+.windowAutoLevel {
 	display: inline-block;
 }
 
@@ -250,33 +253,39 @@ ul.tab li a:hover {
 .windowRaidingZone,
 .windowPotionNumber,
 .windowWorshipper {
-	width: 9%;
+	width: 8%;
 }
 
 .windowTributes,
-.windowMets,
+.windowMets {
+	width: 10%;
+}
+
 .windowBogs,
 .windowInsanity,
 .windowBonfire {
-	width: 9%;
+	width: 10%;
 }
 
 .windowCheckbox {
 	width: 4%;
 }
 
-.windowBuildings,
-.windowAtlantrimp,
 .windowActive,
 .windowStorage,
 .windowPackrat,
 .windowRecycle,
 .windowFrozenCastle {
-	width: 10%;
+	width: 8%;
 }
 
+.windowBuildings,
 .windowAtlantrimp {
-	width: 10%;
+	width: 9%
+}
+
+.windowAutoLevel {
+	width: 4%;
 }
 
 .windowPotionType {
@@ -316,6 +325,14 @@ ul.tab li a:hover {
 
 .windowRaidingDropdown {
 	width: 15%;
+}
+
+.windowTributeFarmDropdown {
+	width: 13%;
+}
+
+.windowTributeFarmDropdownDefault {
+	width: 13%;
 }
 
 .windowBwZoneOn .windowRepeatUntil,
