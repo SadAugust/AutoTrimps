@@ -1139,6 +1139,7 @@ function RautoMap() {
 					if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') && mapSpecialModifierConfig[rTFSpecial].name.includes('Wooden')) rTFAtlantrimp = false;
 					if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal') && mapSpecialModifierConfig[rTFSpecial].name.includes('Metal')) rTFAtlantrimp = false;
 				}
+				if (game.global.stringVersion === '5.8.0' && rTFSettings.rTFautoLevel && rTFCurrentMap === undefined) rTFMapLevel = autoMapLevel();
 				//When running Wither make sure map level is lower than 0 so that we don't accumulate extra stacks.
 				if (game.global.challengeActive == "Wither" && rTFMapLevel >= 0)
 					rTFMapLevel = -1;
@@ -1285,7 +1286,7 @@ function RautoMap() {
 			var rSFCell = game.global.challengeActive == 'Quest' ? 81 : rSFSettings.cell
 			if (rSFSettings.active && game.global.lastClearedCell + 2 >= rSFCell) {
 				var rSFMapLevel = game.global.challengeActive == 'Quest' ? -1 : rSFSettings.level
-				if (game.global.stringVersion === '5.8.0' && rSFCurrentMap === undefined) rSFMapLevel = autoMapLevel();
+				if (game.global.stringVersion === '5.8.0' && rSFSettings.autoLevel && rSFCurrentMap === undefined) rSFMapLevel = autoMapLevel();
 				rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : game.global.challengeActive == 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
 				//Checking for daily resource shred
