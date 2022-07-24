@@ -1185,7 +1185,7 @@ function RautoMap() {
 
 				if (game.global.stringVersion === '5.8.0' && rTrFCurrentMap === undefined) {
 					if (rTrFSettings.autoLevel) rTrFMapLevel = autoMapLevel();
-					if (rTrFSettings.tributeFarmDropdown === 'Map Count') {
+					if (rTrFSettings.mapType === 'Map Count') {
 						var mapsToRun = rTFSettings.mapsToRun;
 						var time = mapsToRun * 25
 						if (mapsToRun > 4) time += (Math.floor(mapsToRun / 5) * 45)

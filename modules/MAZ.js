@@ -377,7 +377,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			autostorage: false,
 			packrat: false,
 			frozencastle: [200, 99],
-			tributeDropdown: 'Absolute'
+			mapType: 'Absolute'
 		}
 		var style = "";
 
@@ -392,12 +392,12 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Hypo')) defaultVals.frozencastle = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.frozencastle) === 'undefined' ? [200, 99] : autoTrimpSettings[varPrefix + "DefaultSettings"].value.frozencastle ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.frozencastle : [200, 99];
 		if (titleText.includes('Hypo')) defaultVals.autostorage = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.autostorage) === 'undefined' ? false : autoTrimpSettings[varPrefix + "DefaultSettings"].value.autostorage ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.autostorage : false;
 		if (titleText.includes('Hypo')) defaultVals.packrat = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.packrat) === 'undefined' ? false : autoTrimpSettings[varPrefix + "DefaultSettings"].value.packrat ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.packrat : false;
-		if (titleText.includes('Tribute Farm')) defaultVals.tributeDropdown = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.tributeDropdown) === 'undefined' ? 'Absolute' : autoTrimpSettings[varPrefix + "DefaultSettings"].value.tributeDropdown ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.tributeDropdown : 'Absolute';
+		if (titleText.includes('Tribute Farm')) defaultVals.mapType = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.mapType) === 'undefined' ? 'Absolute' : autoTrimpSettings[varPrefix + "DefaultSettings"].value.mapType ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.mapType : 'Absolute';
 		if (titleText.includes('Raiding')) defaultVals.recycle = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.recycle) === 'undefined' ? false : autoTrimpSettings[varPrefix + "DefaultSettings"].value.recycle ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.recycle : false;
 		else style = " style='display: none' ";
 		var defaultGatherDropdown = "<option value='food'" + ((defaultVals.gather == 'food') ? " selected='selected'" : "") + ">Food</option>\<option value='wood'" + ((defaultVals.gather == 'wood') ? " selected='selected'" : "") + ">Wood</option>\<option value='metal'" + ((defaultVals.gather == 'metal') ? " selected='selected'" : "") + ">Metal</option>\<option value='science'" + ((defaultVals.gather == 'science') ? " selected='selected'" : "") + ">Science</option>"
 		var defaultSpecialsDropdown = "<option value='0'" + ((defaultVals.special == '0') ? " selected='selected'" : "") + ">No Modifier</option>\<option value='fa'" + ((defaultVals.special == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((defaultVals.special == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>\<option value='ssc'" + ((defaultVals.special == 'ssc') ? " selected='selected'" : "") + ">Small Savory Cache</option>\<option value='swc'" + ((defaultVals.special == 'swc') ? " selected='selected'" : "") + ">Small Wooden Cache</option>\<option value='smc'" + ((defaultVals.special == 'smc') ? " selected='selected'" : "") + ">Small Metal Cache</option>\<option value='src'" + ((defaultVals.special == 'src') ? " selected='selected'" : "") + ">Small Resource Cache</option>\<option value='p'" + ((defaultVals.special == 'p') ? " selected='selected'" : "") + ">Prestigious</option>\<option value='hc'" + ((defaultVals.special == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>\<option value='lsc'" + ((defaultVals.special == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\<option value='lwc'" + ((defaultVals.special == 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\<option value='lmc'" + ((defaultVals.special == 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>\<option value='lrc'" + ((defaultVals.special == 'lrc') ? " selected='selected'" : "") + ">Large Research Cache</option>"
-		var defaultTributeFarmDropdown = "<option value='Absolute'" + ((defaultVals.tributeDropdown == 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>\				<option value='Map Count'" + ((defaultVals.tributeDropdown === 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>"
+		var defaultTributeFarmDropdown = "<option value='Absolute'" + ((defaultVals.mapType == 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>\<option value='Map Count'" + ((defaultVals.mapType === 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>"
 		tooltipText += "<div id='windowRow' class='row windowRow'>";
 		tooltipText += "<div class='windowActive' style='text-align: center;'>" + buildNiceCheckbox("windowActiveDefault", null, defaultVals.active) + "</div>";
 		tooltipText += "<div class='windowCell'><input value='" + defaultVals.cell + "' type='number' id='windowCellDefault'/></div>";
@@ -410,7 +410,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Hypo')) tooltipText += "<div class='windowFrozenCastle'><input value='" + defaultVals.frozencastle + "' type='text' id='windowFrozenCastleDefault'/></div>";
 		if (titleText.includes('Hypo')) tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowStorageDefault", null, defaultVals.autostorage) + "</div>";
 		if (titleText.includes('Hypo')) tooltipText += "<div class='windowPackrat' style='text-align: center;'>" + buildNiceCheckbox("windowPackratDefault", null, defaultVals.packrat) + "</div>";
-		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributeFarmDropdown'><select value='" + defaultVals.tributeFarmDropdown + "' id='windowTributeFarmDropdownDefault'>" + defaultTributeFarmDropdown + "</select></div>"
+		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributeFarmDropdown'><select value='" + defaultVals.mapType + "' id='windowTributeFarmDropdownDefault'>" + defaultTributeFarmDropdown + "</select></div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRecycle' style='text-align: center;'>" + buildNiceCheckbox("windowRecycleDefault", null, defaultVals.recycle) + "</div>";
 		tooltipText += "</div>"
 
@@ -480,7 +480,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				buildings: true,
 				atlantrimp: false,
 				raidingzone: 6,
-				tributeFarmDropdown: 'Absolute',
+				mapType: 'Absolute',
 				autoLevel: false
 			}
 			var style = "";
@@ -491,7 +491,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				vals.cell = autoTrimpSettings[varPrefix + "Settings"].value[x].cell ? autoTrimpSettings[varPrefix + "Settings"].value[x].cell : 81;
 				if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine') && !titleText.includes('Raiding')) vals.level = autoTrimpSettings[varPrefix + "Settings"].value[x].level
 				if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm')) vals.autoLevel = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel : false;
-				if (titleText.includes('Tribute Farm')) vals.tributeFarmDropdown = autoTrimpSettings[varPrefix + "Settings"].value[x].tributeFarmDropdown ? autoTrimpSettings[varPrefix + "Settings"].value[x].tributeFarmDropdown : 'Absolute';
+				if (titleText.includes('Tribute Farm')) vals.mapType = autoTrimpSettings[varPrefix + "Settings"].value[x].mapType ? autoTrimpSettings[varPrefix + "Settings"].value[x].mapType : 'Absolute';
 				if (titleText.includes('Time Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus')) vals.repeat = autoTrimpSettings[varPrefix + "Settings"].value[x].repeat ? autoTrimpSettings[varPrefix + "Settings"].value[x].repeat : 1;
 				if (titleText.includes('Tribute Farm')) vals.tributes = autoTrimpSettings[varPrefix + "Settings"].value[x].tributes ? autoTrimpSettings[varPrefix + "Settings"].value[x].tributes : 0;
 				if (titleText.includes('Tribute Farm')) vals.mets = autoTrimpSettings[varPrefix + "Settings"].value[x].mets ? autoTrimpSettings[varPrefix + "Settings"].value[x].mets : 0;
@@ -518,7 +518,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var potionDropdown = "<option value='h'" + ((vals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
 			var boneDropdown = "<option value='none'" + ((vals.bonedropdown == 'none') ? " selected='selected'" : "") + ">None</option>\<option value='Fillers'" + ((vals.bonedropdown == 'Fillers') ? " selected='selected'" : "") + ">Fillers</option>\<option value='Daily'" + ((vals.bonedropdown == 'Daily') ? " selected='selected'" : "") + ">Daily</option>\<option value='C3'" + ((vals.bonedropdown == 'C3') ? " selected='selected'" : "") + ">C3</option>\<option value='All'" + ((vals.bonedropdown == 'All') ? " selected='selected'" : "") + ">All</option>"
 			var raidingDropdown = "<option value='0'" + ((vals.raidingDropdown == '0') ? " selected='selected'" : "") + ">Frag</option>\<option value='1'" + ((vals.raidingDropdown == '1') ? " selected='selected'" : "") + ">Frag Min</option>\<option value='2'" + ((vals.raidingDropdown == '2') ? " selected='selected'" : "") + ">Frag Max</option>"
-			var tributeFarmDropdown = "<option value='Absolute'" + ((vals.tributeFarmDropdown == 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>\<option value='Map Count'" + ((vals.tributeFarmDropdown == 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>\</option>"
+			var tributeFarmDropdown = "<option value='Absolute'" + ((vals.mapType == 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>\<option value='Map Count'" + ((vals.mapType == 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>\</option>"
 			var className = (vals.special === 'hc' || vals.special === 'lc') ? " windowBwMainOn" : " windowBwMainOff";
 			className += (vals.special == 'hc' || vals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
 			className += (x <= current.length - 1) ? " active" : "  disabled";
@@ -531,7 +531,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm')) tooltipText += "<div class='windowAutoLevel' style='text-align: center;'>" + buildNiceCheckbox("windowAutoLevel" + x, null, vals.autoLevel) + "</div>";
 			if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine') && !titleText.includes('Raiding')) tooltipText += "<div class='windowLevel'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
 			if (titleText.includes('Time Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus')) tooltipText += "<div class='windowRepeat'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
-			if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributeFarmDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.tributeFarmDropdown + "' id='windowTributeFarmDropdown" + x + "'>" + tributeFarmDropdown + "</select></div>"
+			if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributeFarmDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.mapType + "' id='windowTributeFarmDropdown" + x + "'>" + tributeFarmDropdown + "</select></div>"
 			if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributes'><input value='" + vals.tributes + "' type='number' id='windowTributes" + x + "'/></div>";
 			if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowMets'><input value='" + vals.mets + "' type='number' id='windowMets" + x + "'/></div>";
 			if (titleText.includes('Quagmire Farm')) tooltipText += "<div class='windowBogs'><input value='" + vals.bogs + "' type='number' id='windowBogs" + x + "'/></div>";
@@ -594,7 +594,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	if (titleText.includes('Hypo')) var defaultAutoStorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
 	if (titleText.includes('Hypo')) var defaultPackrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
 	if (titleText.includes('Raiding')) var defaultRecycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
-	if (titleText.includes('Tribute Farm')) var defaultTributeDropdown = document.getElementById('windowTributeFarmDropdownDefault').value;
+	if (titleText.includes('Tribute Farm')) var mapType = document.getElementById('windowTributeFarmDropdownDefault').value;
 
 	if (defaultCell < 1) defaultCell = 1;
 	if (defaultCell > 100) defaultCell = 100;
@@ -613,7 +613,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		autostorage: defaultAutoStorage,
 		packrat: defaultPackrat,
 		recycle: defaultRecycle,
-		tributeDropdown: defaultTributeDropdown,
+		mapType: mapType,
 		frozencastle: defaultFrozenCastle
 	};
 	autoTrimpSettings[varPrefix + "DefaultSettings"].value = thisDefaultSetting;
@@ -641,7 +641,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		}
 
 		if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm')) var autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
-		if (titleText.includes('Tribute')) var tributeFarmDropdown = document.getElementById('windowTributeFarmDropdown' + x).value;
+		if (titleText.includes('Tribute')) var mapType = document.getElementById('windowTributeFarmDropdown' + x).value;
 		if (titleText.includes('Tribute')) var tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
 		if (titleText.includes('Tribute')) var mets = parseInt(document.getElementById('windowMets' + x).value, 10);
 		if (titleText.includes('Quag')) var bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
@@ -735,7 +735,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			jobratio: jobratio,
 			atlantrimp: atlantrimp,
 			raidingzone: raidingzone,
-			tributeFarmDropdown: tributeFarmDropdown,
+			mapType: mapType,
 			autoLevel: autoLevel,
 			done: (currSetting && currSetting.done) ? currSetting.done : false
 		};
@@ -914,7 +914,7 @@ function addRow(varPrefix, titleText) {
 				if (document.getElementById('windowRaidingZone' + x) !== null)
 					document.getElementById('windowRaidingZone' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.raidingzone
 				if (document.getElementById('windowTributeFarmDropdown' + x) !== null)
-					document.getElementById('windowTributeFarmDropdown' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.tributeDropdown
+					document.getElementById('windowTributeFarmDropdown' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.mapType
 				if (document.getElementById('windowBoneBelow' + x) !== null)
 					document.getElementById('windowBoneBelow' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.bonebelow
 				if (document.getElementById('windowWorshipper' + x) !== null)
