@@ -1,6 +1,5 @@
 //Resetting variables
 rShouldBoneShrine = false;
-rBoneShrineUsedZone = 0;
 rBSRunningAtlantrimp = false;
 
 function BoneShrine() {
@@ -14,8 +13,6 @@ function BoneShrine() {
 	var rRunningDaily = game.global.challengeActive == "Daily";
 	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
 
-	if (rBoneShrineUsedZone != 0 && rBoneShrineUsedZone != game.global.world)
-		rBoneShrineUsedZone = 0;
 	//Setting up variables
 	var rBoneShrineZone = getPageSetting('rBoneShrineZone');
 
@@ -24,20 +21,24 @@ function BoneShrine() {
 		var rBoneShrineRunType = getPageSetting('rBoneShrineRunType')
 		let indexes = [...finder(getPageSetting('rBoneShrineZone'), game.global.world)];
 		var rBSIndex;
+		var totalPortals = getTotalPortals();
 		for (var y = 0; y < indexes.length; y++) {
-			if (rBoneShrineRunType[indexes[y]] == 'All' && rBoneShrineBaseSettings[indexes[y]].active) {
+			if (rBoneShrineBaseSettings[indexes[y]].done === totalPortals + "_" + game.global.world || !rBoneShrineBaseSettings[y].active) {
+				continue;
+			}
+			if (rBoneShrineRunType[indexes[y]] == 'All') {
 				rBSIndex = indexes[y];
 				break;
 			}
-			else if (rBoneShrineRunType[indexes[y]] == 'Fillers' && rRunningRegular && rBoneShrineBaseSettings[indexes[y]].active) {
+			else if (rBoneShrineRunType[indexes[y]] == 'Fillers' && rRunningRegular) {
 				rBSIndex = indexes[y];
 				break;
 			}
-			else if (rBoneShrineRunType[indexes[y]] == 'Daily' && rRunningDaily && rBoneShrineBaseSettings[indexes[y]].active) {
+			else if (rBoneShrineRunType[indexes[y]] == 'Daily' && rRunningDaily) {
 				rBSIndex = indexes[y];
 				break;
 			}
-			else if (rBoneShrineRunType[indexes[y]] == 'C3' && rRunningC3 && rBoneShrineBaseSettings[indexes[y]].active) {
+			else if (rBoneShrineRunType[indexes[y]] == 'C3' && rRunningC3) {
 				rBSIndex = indexes[y];
 				break;
 			}
@@ -49,7 +50,7 @@ function BoneShrine() {
 				rBoneShrineRunType == 'C3' && rRunningC3 ? true :
 					rBoneShrineRunType == 'All' ? true :
 						false;
-		if (runType && autoTrimpSettings.rBoneShrineDefaultSettings.value.active && rBoneShrineUsedZone != game.global.world) {
+		if (runType && autoTrimpSettings.rBoneShrineDefaultSettings.value.active) {
 			var rBoneShrineSettings = autoTrimpSettings.rBoneShrineSettings.value[rBSIndex]
 			var rBoneShrineCell = rBoneShrineSettings.cell
 			var rBoneShrineCharges = rBoneShrineSettings.boneamount
@@ -61,7 +62,7 @@ function BoneShrine() {
 				if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') && rBoneShrineGather === 'wood') rBoneShrineAtlantrimp = false;
 				if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal') && rBoneShrineGather === 'metal') rBoneShrineAtlantrimp = false;
 			}
-			rShouldBoneShrine = (game.global.lastClearedCell + 2 >= rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow && rBoneShrineUsedZone !== game.global.world);
+			rShouldBoneShrine = (game.global.lastClearedCell + 2 >= rBoneShrineCell && game.permaBoneBonuses.boosts.charges > rBoneShrineSpendBelow);
 
 			if (rBoneShrineCharges > game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow)
 				rBoneShrineCharges = game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow;
@@ -83,7 +84,8 @@ function BoneShrine() {
 					game.permaBoneBonuses.boosts.consume()
 				}
 				debug('Consumed ' + rBoneShrineCharges + " bone shrine " + (rBoneShrineCharges == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(rBoneShrineCharges));
-				rBoneShrineUsedZone = game.global.world;
+				rBoneShrineSettings.done = totalPortals + "_" + game.global.world;
+				saveSettings();
 			}
 		}
 	}
