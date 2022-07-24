@@ -2144,6 +2144,7 @@ function autoMapLevel(maxLevel, special, biome) {
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
 	var questShieldBreak = game.global.challengeActive == 'Quest' && questcheck() == 8;
 	var minZone = 0 - game.global.world + 6
+	var dmg = game.global.challengeActive === 'Glass' ? 'min' : 'avg'
 
 	var difficulty = 0.75;
 	var ourHealth = RcalcOurHealth(questShieldBreak) * 2;
@@ -2151,7 +2152,7 @@ function autoMapLevel(maxLevel, special, biome) {
 	for (y = maxLevel; y > minZone; y--) {
 		mapLevel = y;
 		var equalityAmt = equalityQuery(true, false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
-		var ourDmg = RcalcOurDmg('avg', equalityAmt, true, true, false, runningUnlucky) * 2;
+		var ourDmg = RcalcOurDmg(dmg, equalityAmt, true, true, false, runningUnlucky) * 2;
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Snimp', 'map', true) * difficulty;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, true, 'map') * 1.5 * difficulty;
 
