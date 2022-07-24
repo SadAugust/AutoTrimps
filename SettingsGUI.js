@@ -1341,6 +1341,43 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				}
 			}
 		}
+
+		//Adding done settings to Bone Shrine && autoMap to Time, Smtihy && Tribute Farm
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '4.7.0') {
+
+			var settings_AtlantrimpDone = ['rBoneShrineSettings']
+			for (var x = 0; x < settings_AtlantrimpDone.length; x++) {
+				if (typeof (autoTrimpSettings[settings_AtlantrimpDone[x]].value[0]) !== 'undefined' && autoTrimpSettings[settings_AtlantrimpDone[x]].value[0].done === undefined) {
+					for (var y = 0; y < autoTrimpSettings[settings_AtlantrimpDone[x]].value.length; y++) {
+						autoTrimpSettings[settings_AtlantrimpDone[x]].value[y].done = false;
+					}
+					saveSettings();
+				}
+			}
+			var TributeMapType = ['rTributeFarmSettings', 'rdTributeFarmSettings', 'rc3TributeFarmSettings']
+			for (var x = 0; x < TributeMapType.length; x++) {
+				if (typeof (autoTrimpSettings[TributeMapType[x]].value[0]) !== 'undefined' && autoTrimpSettings[TributeMapType[x]].value[0].mapType === undefined) {
+					for (var y = 0; y < autoTrimpSettings[TributeMapType[x]].value.length; y++) {
+						autoTrimpSettings[TributeMapType[x]].value[y].mapType = 'Absolute';
+					}
+					saveSettings();
+				}
+			}
+
+			var settings_autoLevel = ['rTimeFarmSettings', 'rdTimeFarmSettings', 'rc3TimeFarmSettings', 'rTributeFarmSettings', 'rdTributeFarmSettings', 'rc3TributeFarmSettings',
+				'rSmithyFarmSettings', 'rdSmithyFarmSettings', 'rc3SmithyFarmSettings']
+
+			for (var x = 0; x < settings_autoLevel.length; x++) {
+				if (typeof (autoTrimpSettings[settings_autoLevel[x]].value[0]) !== 'undefined' && autoTrimpSettings[settings_autoLevel[x]].value[0].autoLevel === undefined) {
+					for (var y = 0; y < autoTrimpSettings[settings_autoLevel[x]].value.length; y++) {
+						autoTrimpSettings[settings_autoLevel[x]].value[y].autoLevel = true;
+					}
+					saveSettings();
+				}
+			}
+		}
+
+
 		autoTrimpSettings["ATversion"] = ATversion;
 		saveSettings();
 	}
