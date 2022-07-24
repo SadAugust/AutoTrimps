@@ -2422,7 +2422,8 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RdAutoGoldenUpgrades') == 'Radon' ? turnOn('Rdradonbattle') : turnOff('Rdradonbattle');
 	radonon && getPageSetting('RAutoGoldenUpgrades') == 'Battle' ? turnOn('Rbattleradon') : turnOff('Rbattleradon');
 	radonon && getPageSetting('RdAutoGoldenUpgrades') == 'Battle' ? turnOn('Rdbattleradon') : turnOff('Rdbattleradon');
-	radonon ? turnOn('rNonRadonUpgrade') : turnOff('rNonRadonUpgrade');
+	//radonon ? turnOn('rNonRadonUpgrade') : turnOff('rNonRadonUpgrade');
+	turnOff('rNonRadonUpgrade');
 
 	//Nature
 	!radonon ? turnOn('AutoNatureTokens') : turnOff('AutoNatureTokens');
