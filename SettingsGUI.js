@@ -247,6 +247,13 @@ function initializeAllSettings() {
 	createSetting('Rdvoidscell', 'Daily Void Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70.', 'value', -1, null, 'Daily');
 	createSetting('RdRunNewVoidsUntilNew', 'Daily New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Daily');
 
+	//Daily Void Maps
+	createSetting('rdVoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'Daily');
+	createSetting('rdVoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Daily');
+	createSetting('rdVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
+	createSetting('rdVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Daily');
+	createSetting('rdVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Daily');
+
 	//Helium Spire
 	document.getElementById('dscryvoidmaps').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('dIgnoreSpiresUntil', 'Daily Ignore Spires Until', 'Spire specific settings like end-at-cell are ignored until at least this zone is reached in Dailies (0 to disable). ', 'value', '200', null, 'Daily');
@@ -316,6 +323,9 @@ function initializeAllSettings() {
 	createSetting('rdRaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Daily');
 	createSetting('rdRaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
 
+	//Bone Shrine Popup
+	createSetting('rdBoneShrinePopup', 'Bone Shrine Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Daily');
+
 	//Helium Heirloom
 	document.getElementById('dBWraidingmax').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('dhighdmg', 'DHS: High Damage', '<b>HIGH DAMAGE HEIRLOOM</b><br><br>Enter the name of your high damage heirloom. This is your heirloom that you will use normally in dailies. ', 'textValue', 'undefined', null, 'Daily');
@@ -335,16 +345,13 @@ function initializeAllSettings() {
 	createSetting('drunnewvoidspoison', 'New Voids Poison', 'Only run new voids in poison zones.', 'boolean', false, null, 'Daily');
 
 	//Radon Daily Portal
-	document.getElementById('rdRaidingPopup').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rdBoneShrinePopup').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAutoStartDaily', 'Auto Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
+	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
+	createSetting('RdHeliumHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
 	createSetting('RFillerRun', 'Filler run', 'Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.', 'boolean', false, null, 'Daily');
 	createSetting('u1daily', 'Daily in U1', 'If this is on, you will do your daily in U1. ', 'boolean', false, null, 'Daily');
 	createSetting('dontCapDailies', 'Use when capped', 'If this is on, you will only do the oldest daily when you have 7 dailies available. ', 'boolean', false, null, 'Daily');
-	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
-	createSetting('RdHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Bublé', 'Melt', 'Quagmire', 'Archaeology', 'Insanity', 'Nurture', 'Alchemy', 'Hypothermia'], 'Daily');
-	createSetting('RdCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone during dailies. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Daily');
-	createSetting('RdHeHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour Daily AutoPortal setting to portal BEFORE this level is reached in dailies. It is an additional check that prevents drops in radon/hr from triggering autoportal in dailies. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set in dailies)', 'value', '999', null, 'Daily');
-	createSetting('RdHeliumHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
 	createSetting('rDailyPortalSettingsArray', 'Daily Portal Settings', 'Click to adjust settings. ', 'mazDefaultArray', { portalZone: 0, portalChallenge: "None", Reflect: { enabled: true, zone: 0 }, ShredFood: { enabled: true, zone: 0 }, ShredWood: { enabled: true, zone: 0 }, ShredMetal: { enabled: true, zone: 0 }, Empower: { enabled: true, zone: 0 }, Mutimp: { enabled: true, zone: 0 }, Bloodthirst: { enabled: true, zone: 0 }, Famine: { enabled: true, zone: 0 }, Large: { enabled: true, zone: 0 }, Weakness: { enabled: true, zone: 0 } }, null, 'Jobs');
 
 	//C2
@@ -496,6 +503,15 @@ function initializeAllSettings() {
 	createSetting('RVoidMaps', 'Void Maps', '<b>0 to disable</b> The zone at which you want all your void maps to be cleared inclusive of the zone you type. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will cause \'New Voids Mod\' to start applying after the last input. <br><br>Runs them at Cell 70 by default.', 'multiValue', '0', null, 'Μaps');
 	createSetting('Rvoidscell', 'Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Μaps');
 	createSetting('RRunNewVoidsUntilNew', 'New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197) If you have 2 void map zones it\'ll use this setting after the last one has been cleared.<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Μaps');
+
+
+	//Void Maps
+	createSetting('rVoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'Μaps');
+	createSetting('rVoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Μaps');
+	createSetting('rVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Μaps');
+	createSetting('rVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
+
 	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value.', 'value', '-1', null, 'Μaps');
 	document.getElementById('Rmeltsmithy').parentNode.insertAdjacentHTML('afterend', '<br>');
 	//Prismatic Palace
@@ -639,7 +655,14 @@ function initializeAllSettings() {
 	createSetting('Rc3voidscell', 'C3 Void Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70.', 'value', -1, null, 'C3');
 	createSetting('Rc3RunNewVoidsUntilNew', 'C3 New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'C3');
 
-	//Map Bonus
+	//C3 Void Maps
+	createSetting('rc3VoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'C3');
+	createSetting('rc3VoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'C3');
+	createSetting('rc3VoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
+	createSetting('rc3VoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'C3');
+	createSetting('rc3VoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'C3');
+
+	//C3 Map Bonus
 	createSetting('rc3MapBonus', 'Map Bonus', 'Turn this on if you want to use Map Bonus. ', 'boolean', false, null, 'C3');
 	createSetting('rc3MapBonusPopup', 'Map Bonus Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'C3');
 	createSetting('rc3MapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
@@ -674,8 +697,11 @@ function initializeAllSettings() {
 	createSetting('rc3RaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'C3');
 	createSetting('rc3RaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 
+	//Bone Shrine popup
+	createSetting('rc3BoneShrinePopup', 'Bone Shrine Settings', 'Click to adjust settings.', 'infoclick', false, null, 'C3');
+
 	//Unbalance
-	document.getElementById('rc3RaidingPopup').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rc3BoneShrinePopup').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rUnbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
 	createSetting('rUnbalanceZone', 'U: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C3');
 	createSetting('rUnbalanceStacks', 'U: Stacks', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C3');
@@ -966,12 +992,18 @@ function initializeAllSettings() {
 	document.getElementById('rMapBonusPopup').setAttribute('onclick', 'MAZLookalike("Map Bonus", "rMapBonus", "MAZ")');
 	document.getElementById('rdMapBonusPopup').setAttribute('onclick', 'MAZLookalike("Daily Map Bonus", "rdMapBonus", "MAZ")');
 	document.getElementById('rc3MapBonusPopup').setAttribute('onclick', 'MAZLookalike("C3 Map Bonus", "rc3MapBonus", "MAZ")');
+	//Void Map
+	document.getElementById('rVoidMapPopup').setAttribute('onclick', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")');
+	document.getElementById('rdVoidMapPopup').setAttribute('onclick', 'MAZLookalike("Daily Void Map", "rdVoidMap", "MAZ")');
+	document.getElementById('rc3VoidMapPopup').setAttribute('onclick', 'MAZLookalike("C3 Void Map", "rc3VoidMap", "MAZ")');
 	//Smithy Farming
 	document.getElementById('rSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Smithy Farm", "rSmithyFarm", "MAZ")');
 	document.getElementById('rdSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Smithy Farm", "rdSmithyFarm", "MAZ")');
 	document.getElementById('rc3SmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Smithy Farm", "rc3SmithyFarm", "MAZ")');
 	//Bone Shrine
 	document.getElementById('rBoneShrinePopup').setAttribute('onclick', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")');
+	document.getElementById('rdBoneShrinePopup').setAttribute('onclick', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")');
+	document.getElementById('rc3BoneShrinePopup').setAttribute('onclick', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")');
 	//Prestige Raiding
 	document.getElementById('rRaidingPopup').setAttribute('onclick', 'MAZLookalike("Raiding", "rRaiding", "MAZ")');
 	document.getElementById('rdRaidingPopup').setAttribute('onclick', 'MAZLookalike("Raiding", "rdRaiding", "MAZ")');
@@ -1076,26 +1108,9 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.innerHTML = name;
 		btnParent.appendChild(btn);
-		if (id === 'RAutoStartDaily') {
-			btnParent.setAttribute('class', 'toggleConfigBtnLocal settingsBtnLocal settingsBtnfalse')
-			btnParent.setAttribute('style', 'max-height: 3.1vh; display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;border-bottom: 1px solid black !important;')
-			btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;")
-		}
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
-		if (id === 'RAutoStartDaily') {
 
-			var autoPortalContainer = document.getElementById("RAutoStartDailyParent");
-			var autoPortalSettings = document.createElement("DIV");
-			autoPortalSettings.setAttribute('onclick', 'MAZLookalike("AT Daily Auto Portal", "a", "DailyAutoPortal")');
-			autoPortalSettings.setAttribute('class', 'settingsBtnLocalCogwheel');
-			autoPortalSettings.setAttribute('style', 'margin-left:-1px;');
-			var autoPortalSettingsButton = document.createElement("SPAN");
-			autoPortalSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-
-			autoPortalContainer.appendChild(autoPortalSettings);
-			autoPortalSettings.appendChild(autoPortalSettingsButton);
-		}
 	} else if (type == 'value' || type == 'valueNegative') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
@@ -1114,6 +1129,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
+
 	} else if (type == 'multiValue' || type == 'valueNegative') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
@@ -1124,6 +1140,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				value: loaded === undefined ? defaultValue : loaded
 			};
 		btn.setAttribute("style", "font-size: 1.1vw;");
+		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
 		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name}", ${type == 'valueNegative'}, ${type == 'multiValue'})`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
@@ -1132,6 +1149,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
+
 	} else if (type == 'textValue') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
@@ -1150,6 +1168,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
+
 	} else if (type == 'textArea') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
@@ -1168,6 +1187,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
+
 	} else if (type == 'dropdown') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
@@ -1201,6 +1221,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
+
 	} else if (type == 'infoclick') {
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute("onclick", 'ImportExportTooltip(\'' + defaultValue + '\', \'update\')');
@@ -1213,6 +1234,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
 		return;
+
 	} else if (type == 'mazArray') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
@@ -1258,6 +1280,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
 		return;
+
 	} else if (type == 'multitoggle') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
@@ -1268,15 +1291,36 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				value: loaded === undefined ? defaultValue || 0 : loaded
 			};
 		btn.setAttribute("style", "font-size: 1.1vw;");
-		btn.setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[id].value);
+		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
+		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].value);
 		btn.setAttribute("onclick", 'settingChanged("' + id + '")');
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name.join(' / ') + '\", \"customText\", event, \"' + description + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.innerHTML = autoTrimpSettings[id]["name"][autoTrimpSettings[id]["value"]];
 		btnParent.appendChild(btn);
+		if (id === 'RAutoPortalDaily') {
+			btnParent.setAttribute('class', 'toggleConfigBtnLocal settingsBtnLocal settingsBtnfalse')
+			btnParent.setAttribute('style', 'max-height: 3.1vh; display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;border-bottom: 1px solid black !important;')
+			btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;")
+		}
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
+
+		if (id === 'RAutoPortalDaily') {
+
+			var autoPortalContainer = document.getElementById("RAutoPortalDailyParent");
+			var autoPortalSettings = document.createElement("DIV");
+			autoPortalSettings.setAttribute('onclick', 'MAZLookalike("AT Daily Auto Portal", "a", "DailyAutoPortal")');
+			autoPortalSettings.setAttribute('class', 'settingsBtnLocalCogwheel');
+			autoPortalSettings.setAttribute('style', 'margin-left:-1px;');
+			var autoPortalSettingsButton = document.createElement("SPAN");
+			autoPortalSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+
+			autoPortalContainer.appendChild(autoPortalSettings);
+			autoPortalSettings.appendChild(autoPortalSettingsButton);
+		}
 	}
+
 	else if (type === 'action') {
 		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
@@ -1435,10 +1479,9 @@ function settingChanged(id) {
 			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
 			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
 		}
-		/* if (btn = autoTrimpSettings.RAutoMaps) {
-			document.getElementById('autoMapsLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
-			document.getElementById('autoMapsLabel').parentNode.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
-		} */
+		if (btn = autoTrimpSettings.RAutoPortalDaily) {
+			document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
+		}
 	}
 	if (btn.type == 'dropdown') {
 		btn.selected = document.getElementById(id).value;
@@ -1878,6 +1921,13 @@ function updateCustomButtons() {
 	turnOff('rdMapBonusDefaultSettings');
 	turnOff('rdMapBonusZone');
 
+	//Void Map 
+	turnOff('rdVoidMap');
+	radonon ? turnOn('rdVoidMapPopup') : turnOff('rdVoidMapPopup');
+	turnOff('rdVoidMapSettings');
+	turnOff('rdVoidMapDefaultSettings');
+	turnOff('rdVoidMapZone');
+
 
 	radonon ? turnOn('Rdmeltsmithy') : turnOff('Rdmeltsmithy');
 	radonon ? turnOn('RDailyVoidMod') : turnOff('RDailyVoidMod');
@@ -1897,7 +1947,6 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAutoPortalDaily') == 2 ? turnOn('RdCustomAutoPortal') : turnOff('RdCustomAutoPortal');
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeHrDontPortalBefore') : turnOff('RdHeHrDontPortalBefore');
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeliumHrBuffer') : turnOff('RdHeliumHrBuffer');
-	radonon && getPageSetting('RAutoPortalDaily') > 0 ? turnOn('RdHeliumHourChallenge') : turnOff('RdHeliumHourChallenge');
 
 	//Radon Daily Time Farming
 	turnOff('rdTimeFarm');
@@ -1926,6 +1975,8 @@ function updateCustomButtons() {
 	turnOff('rdRaidingDefaultSettings');
 	turnOff('rdRaidingZone');
 
+	radonon ? turnOn('rdBoneShrinePopup') : turnOff('rdBoneShrinePopup');
+
 	//C2
 	!radonon ? turnOn('FinishC2') : turnOff('FinishC2');
 	!radonon ? turnOn('buynojobsc') : turnOff('buynojobsc');
@@ -1945,6 +1996,13 @@ function updateCustomButtons() {
 	turnOff('rc3MapBonusSettings');
 	turnOff('rc3MapBonusDefaultSettings');
 	turnOff('rc3MapBonusZone');
+
+	//Void Map 
+	turnOff('rc3VoidMap');
+	radonon ? turnOn('rc3VoidMapPopup') : turnOff('rc3VoidMapPopup');
+	turnOff('rc3VoidMapSettings');
+	turnOff('rc3VoidMapDefaultSettings');
+	turnOff('rc3VoidMapZone');
 
 	radonon ? turnOn('c3finishrun') : turnOff('c3finishrun');
 	radonon ? turnOn('c3meltingpoint') : turnOff('c3meltingpoint');
@@ -1981,6 +2039,8 @@ function updateCustomButtons() {
 	turnOff('rc3RaidingSettings');
 	turnOff('rc3RaidingDefaultSettings');
 	turnOff('rc3RaidingZone');
+
+	radonon ? turnOn('rc3BoneShrinePopup') : turnOff('rc3BoneShrinePopup');
 
 	//Buildings
 	!radonon ? turnOn('BuyBuildingsNew') : turnOff('BuyBuildingsNew');
@@ -2118,6 +2178,13 @@ function updateCustomButtons() {
 	turnOff('rMapBonusDefaultSettings');
 	turnOff('rMapBonusZone');
 
+
+	//Void Map 
+	turnOff('rVoidMap');
+	radonon ? turnOn('rVoidMapPopup') : turnOff('rVoidMapPopup');
+	turnOff('rVoidMapSettings');
+	turnOff('rVoidMapDefaultSettings');
+	turnOff('rVoidMapZone');
 
 
 
@@ -2539,7 +2606,6 @@ function updateCustomButtons() {
 	document.getElementById('RAutoPortal').value = autoTrimpSettings.RAutoPortal.selected;
 	document.getElementById('RadonHourChallenge').value = autoTrimpSettings.RadonHourChallenge.selected;
 	document.getElementById('dHeliumHourChallenge').value = autoTrimpSettings.dHeliumHourChallenge.selected;
-	document.getElementById('RdHeliumHourChallenge').value = autoTrimpSettings.RdHeliumHourChallenge.selected;
 
 	document.getElementById('mapselection').value = autoTrimpSettings.mapselection.selected;
 	document.getElementById('Rmapselection').value = autoTrimpSettings.Rmapselection.selected;

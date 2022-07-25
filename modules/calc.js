@@ -926,9 +926,10 @@ function RcalcDailyAttackMod(number) {
 	return number;
 }
 
-function RcalcBadGuyDmg(enemy, attack, equality, query) { //Works out avg dmg. For max dmg * 1.5.
+function RcalcBadGuyDmg(enemy, attack, equality, query, mapType) { //Works out avg dmg. For max dmg * 1.5.
 	var number = enemy ? enemy.attack : attack;
 	var query = !query ? false : query;
+	var mapType = !mapType ? false : mapType;
 	number = game.global.challengeActive == 'Exterminate' && getPageSetting('Rexterminateon') && getPageSetting('Rexterminatecalc') ? RgetEnemyAvgAttack(game.global.world, 90, 'Mantimp') : number;
 	if (!isNaN(parseInt((equality)))) {
 		if (equality > game.portal.Equality.radLevel)
@@ -943,13 +944,13 @@ function RcalcBadGuyDmg(enemy, attack, equality, query) { //Works out avg dmg. F
 		if (typeof game.global.dailyChallenge.badStrength !== 'undefined')
 			number *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
 
-		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && game.global.mapsActive)
+		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && (game.global.mapsActive || (mapType !== false && mapType === 'map')))
 			number *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
 
-		if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
+		if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined' && (!game.global.mapsActive || (mapType !== false && mapType === 'world')))
 			number *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks)
 
-		if (typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive)
+		if (typeof game.global.dailyChallenge.empower !== 'undefined' && (!game.global.mapsActive || (mapType !== false && mapType === 'world')))
 			number *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
 	}
 	number *= game.global.challengeActive == 'Unbalance' ? 1.5 : 1;
