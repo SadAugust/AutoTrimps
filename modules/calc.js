@@ -947,7 +947,7 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType) { //Works out a
 		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && (game.global.mapsActive || (mapType !== false && mapType === 'map')))
 			number *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
 
-		if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined' && (!game.global.mapsActive || (mapType !== false && mapType === 'world')))
+		if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
 			number *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks)
 
 		if (typeof game.global.dailyChallenge.empower !== 'undefined' && (!game.global.mapsActive || (mapType !== false && mapType === 'world')))
