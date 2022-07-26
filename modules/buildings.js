@@ -415,7 +415,7 @@ function RbuyBuildings() {
 	}
 
 	//Laboratory Purchasing (Nurture)
-	if (game.global.challengeActive === 'Nurture' && !game.buildings.Laboratory.locked) {
+	if (game.global.challengeActive === 'Nurture' && !game.buildings.Laboratory.locked && autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.enabled) {
 		var labAmt = autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.buyMax;
 		var labPct = autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.percent / 100
 		if (labAmt > game.buildings.Laboratory.purchased && canAffordBuilding('Laboratory')) {
