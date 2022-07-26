@@ -142,12 +142,13 @@ function RmanualLabor2() {
 			getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('lc') || getCurrentMapObject().bonus.includes('hc') || getCurrentMapObject().bonus.includes('wc') || getCurrentMapObject().bonus.includes('mc') || getCurrentMapObject().bonus.includes('rc') ? true :
 				null;
 	var gather = null;
-	if (rShouldTimeFarm || Rshouldalchfarm) {
-		var timeFarm = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium' ? 'rc3TimeFarm' :
-			game.global.challengeActive == "Daily" ? 'rdTimeFarm' :
-				'rTimeFarm'
-		gather = rShouldTimeFarm && typeof (autoTrimpSettings[timeFarm + 'Settings'].value[rTFZone.indexOf(game.global.world)].gather) === 'string' ? autoTrimpSettings[timeFarm + 'Settings'].value[rTFZone.indexOf(game.global.world)].gather : gather;
-		gather = !rShouldTimeFarm && Rshouldalchfarm && typeof (autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather) === 'string' ? autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather : gather;;
+	if (rShouldTimeFarm || Rshouldalchfarm || rShouldMaxMapBonus) {
+		var preFix = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium' ? 'rc3' :
+			game.global.challengeActive == "Daily" ? 'rd' :
+				'r'
+		gather = rShouldTimeFarm && typeof (autoTrimpSettings[preFix + 'TimeFarmSettings'].value[rTFZone.indexOf(game.global.world)].gather) === 'string' ? autoTrimpSettings[preFix + 'TimeFarmSettings'].value[rTFZone.indexOf(game.global.world)].gather : gather;
+		gather = !rShouldTimeFarm && Rshouldalchfarm && typeof (autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather) === 'string' ? autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather : gather;
+		gather = rShouldMaxMapBonus && !rShouldTimeFarm && !Rshouldalchfarm && typeof (autoTrimpSettings[preFix + 'MapBonusSettings'].value[rMBIndex].gather) === 'string' ? autoTrimpSettings[preFix + 'MapBonusSettings'].value[rMBIndex].gather : gather;
 	}
 	var questGather = game.global.challengeActive == "Quest" && questcheck() == 1 ? 'food' :
 		game.global.challengeActive == "Quest" && questcheck() == 2 ? 'wood' :

@@ -1034,7 +1034,7 @@ function RautoMap() {
 		//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
 		rMBZone = rRunningC3 ? getPageSetting('rc3MapBonusZone') : rRunningDaily ? getPageSetting('rdMapBonusZone') : getPageSetting('rMapBonusZone');
 		var rMBBaseSettings = rRunningC3 ? autoTrimpSettings.rc3MapBonusSettings.value : rRunningDaily ? autoTrimpSettings.rdMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
-		var rMBIndex;
+		rMBIndex = null;
 		for (var y = 0; y < rMBZone.length; y++) {
 			if (game.global.world - rMBZone[y] >= 0 && rMBBaseSettings[y].active)
 				rMBIndex = rMBZone.indexOf(rMBZone[y]);
@@ -1042,7 +1042,7 @@ function RautoMap() {
 				continue;
 		}
 
-		if (rMBIndex >= 0) {
+		if (rMBIndex !== null && rMBIndex >= 0) {
 			var rMBSettings = rMBBaseSettings[rMBIndex];
 			rMBRepeatCounter = rMBSettings.repeat;
 			if (rMBSettings.active && game.global.mapBonus <= rMBRepeatCounter) {

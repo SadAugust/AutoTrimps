@@ -510,7 +510,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (titleText.includes('Ship Farm')) vals.worshipper = autoTrimpSettings[varPrefix + "Settings"].value[x].worshipper ? autoTrimpSettings[varPrefix + "Settings"].value[x].worshipper : 50;
 				if (titleText.includes('Void')) vals.voidMod = autoTrimpSettings[varPrefix + "Settings"].value[x].voidMod ? autoTrimpSettings[varPrefix + "Settings"].value[x].voidMod : 0;
 				if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) vals.jobratio = autoTrimpSettings[varPrefix + "Settings"].value[x].jobratio ? autoTrimpSettings[varPrefix + "Settings"].value[x].jobratio : '1,1,1,1';
-				if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Bone Shrine')) vals.gather = autoTrimpSettings[varPrefix + "Settings"].value[x].gather ? autoTrimpSettings[varPrefix + "Settings"].value[x].gather : '0';
+				if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Bone Shrine') || titleText.includes('Map Bonus')) vals.gather = autoTrimpSettings[varPrefix + "Settings"].value[x].gather ? autoTrimpSettings[varPrefix + "Settings"].value[x].gather : '0';
 				if (titleText.includes('Bone Shrine')) vals.bonedropdown = autoTrimpSettings[varPrefix + "Settings"].value[x].boneruntype ? autoTrimpSettings[varPrefix + "Settings"].value[x].boneruntype : 1;
 				if (titleText.includes('Raiding')) vals.raidingDropdown = autoTrimpSettings[varPrefix + "Settings"].value[x].raidingDropdown ? autoTrimpSettings[varPrefix + "Settings"].value[x].raidingDropdown : 1;
 			}
