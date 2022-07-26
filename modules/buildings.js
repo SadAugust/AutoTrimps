@@ -414,6 +414,16 @@ function RbuyBuildings() {
 		}
 	}
 
+	//Laboratory Purchasing (Nurture)
+	if (game.global.challengeActive === 'Nurture' && !game.buildings.Laboratory.locked) {
+		var labAmt = autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.buyMax;
+		var labPct = autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.percent / 100
+		var labPurchase = calculateMaxAffordLocal(game.buildings.Laboratory, true, false, false, labAmt, labPct);
+		if (labAmt > game.buildings.Laboratory.purchased && canAffordBuilding('Laboratory')) {
+			buyBuilding('Laboratory', true, true, calculateMaxAffordLocal(game.buildings.Laboratory, true, false, false, labAmt, labPct));
+		}
+	}
+
 	//Microchip
 	if (!game.buildings.Microchip.locked && canAffordBuilding('Microchip')) {
 		buyBuilding('Microchip', true, true, 1);

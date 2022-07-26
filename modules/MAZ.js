@@ -70,7 +70,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var building = game.buildings[item];
 			if (building.blockU2 && game.global.universe == 2) continue;
 			if (building.blockU1 && game.global.universe == 1) continue;
-			if (item == "Laboratory") continue;
+			if (item == "Laboratory" && game.global.highestRadonLevelCleared < 129) continue;
 			if (!building.AP) continue;
 			if (count != 0 && count % 2 == 0) tooltipText += "</tr><tr>";
 			setting = settingGroup[item];
@@ -88,6 +88,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "</div></td>";
 			count++;
 		}
+		tooltipText += "</tr><tr>";
 		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style='padding-right: 5px'>" + buildNiceCheckbox('structConfigSafeGateway', 'autoCheckbox', (typeof (settingGroup.SafeGateway) === 'undefined' ? false : settingGroup.SafeGateway.enabled)) + "&nbsp;&nbsp;<span>" + "Safe Gateway" + "</span></div>";
 		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Maps: <input class='structConfigQuantity' id='structMapCountSafeGateway" + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.mapCount) ? settingGroup.SafeGateway.mapCount : 0) + "'/></div>";
 		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Up to Z: <input class='structConfigPercent' id='structMax" + item + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.zone) ? settingGroup.SafeGateway.zone : 0) + "'/></div>";
