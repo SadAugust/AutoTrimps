@@ -240,6 +240,7 @@ function initializeAllSettings() {
 	//Radon Daily
 	createSetting('buyradony', 'Buy Radonculous %', 'Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
 	createSetting('Rdmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Daily');
+	createSetting('rdMeltSmithyShred', 'Melt Smithy (shred)', 'Run the Melting Point Map to gain one extra Smithy when at or above this value and have either the metal or wood shred modifier active. ', 'value', '-1', null, 'Daily');
 	createSetting('Rdequipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency. ', 'boolean', false, null, "Daily");
 	createSetting('Rdequipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input. ', 'multiValue', -1, null, "Daily");
 	//Radon Daily Voids
@@ -1930,6 +1931,7 @@ function updateCustomButtons() {
 
 
 	radonon ? turnOn('Rdmeltsmithy') : turnOff('Rdmeltsmithy');
+	radonon ? turnOn('rdMeltSmithyShred') : turnOff('rdMeltSmithyShred');
 	radonon ? turnOn('RDailyVoidMod') : turnOff('RDailyVoidMod');
 	radonon ? turnOn('Rdvoidscell') : turnOff('Rdvoidscell');
 	radonon ? turnOn('RdRunNewVoidsUntilNew') : turnOff('RdRunNewVoidsUntilNew');

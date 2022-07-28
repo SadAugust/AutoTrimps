@@ -1995,6 +1995,9 @@ function RautoMap() {
 						game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') :
 							game.global.challengeActive == "Daily" && getPageSetting('Rdmeltsmithy') > 0 ? getPageSetting('Rdmeltsmithy') :
 								getPageSetting('Rmeltsmithy');
+
+
+					if (game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')) && getPageSetting('rdMeltSmithyShred') > 0) meltsmithy = getPageSetting('rdMeltSmithyShred');
 					if ((game.global.world >= meltingpoint[0] && ((game.global.lastClearedCell + 2) >= meltingpoint[1]) && !game.global.runningChallengeSquared) || (meltsmithy > 0 && meltsmithy <= game.buildings.Smithy.owned)) {
 						selectedMap = theMap.id;
 						if (rShouldPrestigeRaid && game.global.preMapsActive) debug('Running Melting Point')
