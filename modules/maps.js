@@ -832,6 +832,8 @@ var rShouldSmithyWoodFarm = false;
 var rShouldSmithyMetalFarm = false;
 var rSFCurrentMap = undefined;
 var smithyMapCount = [0, 0, 0];
+//Daily Shred Variables
+var shredActive = false;
 
 if (typeof (autoTrimpSettings.rAutoStructureSetting.value) !== 'undefined' && autoTrimpSettings.rAutoStructureSetting.value === true)
 	document.getElementById('autoStructureBtn').classList.add("enabled")
@@ -1017,6 +1019,8 @@ function RautoMap() {
 	rTributeFarming = false;
 	rTrFTributes = 0;
 	rTrFMeteorologists = 0;
+	//Daily Shred
+	shredActive = false;
 
 	//Smithy Farming
 	rShouldSmithyFarm = false;
@@ -1029,6 +1033,14 @@ function RautoMap() {
 	}
 	var shouldDoHealthMaps = false;
 
+
+	//Daily Shred variables
+	if (game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
+		var shredActive = true;
+		var foodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
+		var woodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
+		var metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+	}
 	//Map Bonus
 	if ((rRunningRegular && autoTrimpSettings.rMapBonusDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdMapBonusDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3MapBonusDefaultSettings.value.active) && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
@@ -1134,10 +1146,21 @@ function RautoMap() {
 				rTFRepeatCounter = rTFSettings.repeat
 				var rTFJobRatio = rTFSettings.jobratio
 				rTFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rTFSettings.atlantrimp
-				if (rTFAtlantrimp && rRunningDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
-					if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food') && mapSpecialModifierConfig[rTFSpecial].name.includes('Savory')) rTFAtlantrimp = false;
-					if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') && mapSpecialModifierConfig[rTFSpecial].name.includes('Wooden')) rTFAtlantrimp = false;
-					if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal') && mapSpecialModifierConfig[rTFSpecial].name.includes('Metal')) rTFAtlantrimp = false;
+
+				if (shredActive) {
+					if (foodShred && mapSpecialModifierConfig[rTFSpecial].name.includes('Savory')) {
+						if (rTFRepeatCounter > 20) rTFRepeatCounter = 20;
+						rTFAtlantrimp = false;
+					}
+					if (woodShred && mapSpecialModifierConfig[rTFSpecial].name.includes('Wooden')) {
+						if (rTFRepeatCounter > 20) rTFRepeatCounter = 20;
+						rTFAtlantrimp = false;
+					}
+					if (metalShred && mapSpecialModifierConfig[rTFSpecial].name.includes('Metal')) {
+						if (rTFRepeatCounter > 20) rTFRepeatCounter = 20;
+						rTFAtlantrimp = false;
+					}
+
 				}
 				if (game.global.stringVersion === '5.8.0' && rTFSettings.rTFautoLevel && rTFCurrentMap === undefined) rTFMapLevel = autoMapLevel();
 				//When running Wither make sure map level is lower than 0 so that we don't accumulate extra stacks.
