@@ -746,6 +746,7 @@ var RvanillaMapatZone = false;
 var rShouldMaxMapBonus = false;
 var rMBCurrentMap = undefined;
 var rC3EndZoneSetting = -1;
+currTime = 0;
 //Void Maps
 var RdoVoids = false;
 var RneedToVoid = false;
@@ -1068,7 +1069,8 @@ function RautoMap() {
 						rMBSpecial = rMBSpecial.charAt(0) + "sc";
 					if (game.global.mapBonus >= rMBRepeatCounter && rMBCurrentMap != undefined) {
 						rMBCurrentMap = undefined;
-						if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+						if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+						currTime = 0
 					}
 					if (rMBRepeatCounter > game.global.mapBonus)
 						rShouldMaxMapBonus = true;
@@ -1173,7 +1175,8 @@ function RautoMap() {
 					rTFSettings.done = totalPortals + "_" + game.global.world;
 					rTFZoneCleared = game.stats.zonesCleared.value;
 					rTFCurrentMap = undefined;
-					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+					currTime = 0
 					if (rTFAtlantrimp) runAtlantrimp()
 					saveSettings();
 				}
@@ -1285,8 +1288,9 @@ function RautoMap() {
 				if (!rShouldTributeFarm && !rShouldMetFarm && rTrFCurrentMap != undefined) {
 					var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
 					if (getPageSetting('rMapRepeatCount')) {
-						debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.")
+						debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.")
 					}
+					currTime = 0
 					if (game.global.mapsActive) {
 						mapsClicked();
 						recycleMap();
@@ -1390,7 +1394,8 @@ function RautoMap() {
 						recycleMap();
 					}
 					if (getPageSetting('rMapRepeatCount'))
-						debug("Smithy Farm took " + smithyMapCount[0] + " food map" + (smithyMapCount[0] === 1 ? ", " : "s, ") + smithyMapCount[1] + " wood map" + (smithyMapCount[1] === 1 ? ", " : "s, ") + smithyMapCount[2] + " metal map" + (smithyMapCount[2] === 1 ? " " : "s ") + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
+						debug("Smithy Farm took " + smithyMapCount[0] + " food map" + (smithyMapCount[0] === 1 ? ", " : "s, ") + smithyMapCount[1] + " wood map" + (smithyMapCount[1] === 1 ? ", " : "s, ") + smithyMapCount[2] + " metal map" + (smithyMapCount[2] === 1 ? " " : "s ") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
+					currTime = 0
 					rSFCurrentMap = undefined;
 					if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
 						toggleAutoStructure();
@@ -1481,7 +1486,8 @@ function RautoMap() {
 
 				if (rWorshipperCurrentMap != undefined && !rShouldWorshipperFarm) {
 					rWorshipperCurrentMap = undefined;
-					if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+					if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+					currTime = 0
 				}
 			}
 		}
@@ -1586,7 +1592,8 @@ function RautoMap() {
 
 				if (rInsanityCurrentMap != undefined && !rShouldInsanityFarm) {
 					rInsanityCurrentMap = undefined;
-					if (getPageSetting('rMapRepeatCount')) debug("Insanity Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+					if (getPageSetting('rMapRepeatCount')) debug("Insanity Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+					currTime = 0
 				}
 			}
 		}
@@ -1834,7 +1841,8 @@ function RautoMap() {
 					}
 					if (rAlchemyCurrentMap != undefined && !Rshouldalchfarm) {
 						rAlchemyCurrentMap = undefined;
-						if (getPageSetting('rMapRepeatCount')) debug("Alchemy Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+						if (getPageSetting('rMapRepeatCount')) debug("Alchemy Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+						currTime = 0
 					}
 				}
 			}
@@ -1891,7 +1899,8 @@ function RautoMap() {
 				}
 				if (rHFCurrentMap != undefined && !rShouldHypoFarm) {
 					rHFCurrentMap = undefined;
-					if (getPageSetting('rMapRepeatCount')) debug("Hypothermia took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
+					if (getPageSetting('rMapRepeatCount')) debug("Hypothermia took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+					currTime = 0
 				}
 			}
 		}
@@ -1991,13 +2000,16 @@ function RautoMap() {
 				if (theMap.name == 'Melting Point' && game.mapUnlocks.SmithFree.canRunOnce) {
 					var meltingpoint = getPageSetting('RMeltingPoint')[0] > 0 && getPageSetting('RMeltingPoint')[1] >= 0 ? getPageSetting('RMeltingPoint') : [1000, 1000];
 					//Checking if we should run melting point for smithies at any point
-					var meltsmithy = game.global.runningChallengeSquared && getPageSetting('c3meltingpoint') > 0 ? getPageSetting('c3meltingpoint') :
+					var meltsmithy =
 						game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') :
-							game.global.challengeActive == "Daily" && getPageSetting('Rdmeltsmithy') > 0 ? getPageSetting('Rdmeltsmithy') :
-								getPageSetting('Rmeltsmithy');
+							rRunningC3 && getPageSetting('c3meltingpoint') > 0 ? getPageSetting('c3meltingpoint') :
+								rRunningDaily && getPageSetting('Rdmeltsmithy') > 0 ? getPageSetting('Rdmeltsmithy') :
+									rRunningRegular && getPageSetting('Rmeltsmithy') > 0 ? getPageSetting('Rmeltsmithy') :
+										0
 
 
-					if (game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')) && getPageSetting('rdMeltSmithyShred') > 0) meltsmithy = getPageSetting('rdMeltSmithyShred');
+					if (shredActive && (woodShred || metalShred) && getPageSetting('rdMeltSmithyShred') > 0) getPageSetting('rdMeltSmithyShred');
+
 					if ((game.global.world >= meltingpoint[0] && ((game.global.lastClearedCell + 2) >= meltingpoint[1]) && !game.global.runningChallengeSquared) || (meltsmithy > 0 && meltsmithy <= game.buildings.Smithy.owned)) {
 						selectedMap = theMap.id;
 						if (rShouldPrestigeRaid && game.global.preMapsActive) debug('Running Melting Point')
@@ -2149,28 +2161,34 @@ function RautoMap() {
 					selectedMap = RShouldFarmMapCreation(rTFMapLevel, rTFSpecial);
 					rTFCurrentMap = "rTimeFarm";
 					workerRatio = rTFJobRatio;
+					if (currTime === 0) currTime = getGameTime();
 				} else if (rShouldInsanityFarm) {
 					selectedMap = RShouldFarmMapCreation(rIFMapLevel, rIFSpecial);
 					rInsanityCurrentMap = "rInsanity";
 					workerRatio = rIFJobRatio;
+					if (currTime === 0) currTime = getGameTime();
 				} else if (rShouldTributeFarm || rShouldMetFarm) {
 					selectedMap = RShouldFarmMapCreation(rTrFMapLevel, rTrFSpecial);
 					workerRatio = rTrFJobRatio;
 					rTributeFarming = true;
 					rTrFCurrentMap = 'rTributeFarm'
+					if (currTime === 0) currTime = getGameTime();
 				} else if (rShouldSmithyFarm) {
 					selectedMap = RShouldFarmMapCreation(rSFMapLevel, rSFSpecial);
 					workerRatio = rSFJobRatio;
 					rSmithyFarming = true;
 					rSFCurrentMap = 'rSmithyFarm'
+					if (currTime === 0) currTime = getGameTime();
 				}
 				else if (rShouldWorshipperFarm) {
 					selectedMap = RShouldFarmMapCreation(shippluslevel, shipspecial);
 					rWorshipperCurrentMap = "rWorshipperMap";
 					workerRatio = rShipJobRatio;
+					if (currTime === 0) currTime = getGameTime();
 				}
-				else if (rShouldUnbalance || rShouldStorm)
+				else if (rShouldUnbalance || rShouldStorm) {
 					selectedMap = RShouldFarmMapCreation(-(game.global.world - 6), "fa");
+				}
 				else if (Rshouldalchfarm) {
 					if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == alchspecial_alt || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].level == game.global.world + alchmaplevel)
 						alchspecial_alt = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus;
@@ -2181,16 +2199,20 @@ function RautoMap() {
 					selectedMap = RShouldFarmMapCreation(alchmaplevel, alchspecial_alt, alchbiome);
 					rAlchemyCurrentMap = "rAlchemy";
 					workerRatio = rAlchJobRatio;
+					if (currTime === 0) currTime = getGameTime();
 				} else if (rShouldHypoFarm) {
 					selectedMap = RShouldFarmMapCreation(rHFMapLevel, rHFSpecial);
 					rHFCurrentMap = "rHypoFarm";
 					workerRatio = rHypoJobRatio;
-				} else if (rFragmentFarming)
+					if (currTime === 0) currTime = getGameTime();
+				} else if (rFragmentFarming) {
 					selectedMap = RShouldFarmMapCreation(-1, "fa");
+				}
 				else if (rShouldMaxMapBonus) {
 					selectedMap = RShouldFarmMapCreation(rMBMapLevel, rMBSpecial);
 					rMBCurrentMap = "rMapBonus";
 					workerRatio = rMBJobRatio;
+					if (currTime === 0) currTime = getGameTime();
 				}
 				else if (rShouldEquipFarm) {
 					for (var map in game.global.mapsOwnedArray) {
@@ -2200,6 +2222,7 @@ function RautoMap() {
 						} else
 							selectedMap = "create";
 					}
+					if (currTime === 0) currTime = getGameTime();
 				}
 				if (getPageSetting('RBuyJobsNew') > 0)
 					RbuyJobs()

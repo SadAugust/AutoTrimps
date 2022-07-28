@@ -2587,6 +2587,24 @@ function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
 	return amt_local;
 }
 
+function formatTimeForDescriptions(number) {
+	var text;
+	var seconds = Math.floor((number) % 60);
+	var minutes = Math.floor((number / 60) % 60);
+	var hours = Math.floor((number / 60 / 60));
+	if (minutes <= 0 && hours <= 0) text = seconds + " second" + ((seconds == 1) ? "." : "s.");
+	else if (hours == 0) text = minutes + " minute" + ((minutes == 1) ? " " : "s ") + seconds + " second" + ((seconds == 1) ? "." : "s.");
+	else {
+		text = hours + " hour" + ((hours == 1) ? " " : "s ") + minutes + " minute" + ((minutes == 1) ? " " : "s ") + seconds + " second" + ((seconds == 1) ? "" : "s");
+	}
+	return text;
+}
+
+function timeForFormatting(number) {
+	return Math.floor((getGameTime() - number) / 1000);
+}
+//formatTimeForDescriptions(Math.floor((getGameTime() - game.global.portalTime) / 1000))
+
 function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) { //don't use forceMax for jobs until you fix that second return. forceMax and forceRatio indicate that they're from an auto, and ignore firing
 	if (!itemObj.cost) return 1;
 	var forcedMax = 0;
