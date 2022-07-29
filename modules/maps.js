@@ -1143,7 +1143,6 @@ function RautoMap() {
 			var rTFCell = rTFSettings.cell;
 			if (rTFSettings.active && game.global.lastClearedCell + 2 >= rTFCell) {
 				var rTFMapLevel = rTFSettings.level
-				if (game.global.stringVersion === '5.8.0' && rTFCurrentMap === undefined) rTFMapLevel = autoMapLevel();
 				var rTFSpecial = rTFSettings.special
 				rTFRepeatCounter = rTFSettings.repeat
 				var rTFJobRatio = rTFSettings.jobratio
@@ -1164,7 +1163,14 @@ function RautoMap() {
 					}
 
 				}
-				if (game.global.stringVersion === '5.8.0' && rTFSettings.rTFautoLevel && rTFCurrentMap === undefined) rTFMapLevel = autoMapLevel();
+				if (game.global.stringVersion === '5.8.0' && rTFSettings.autoLevel && rTFCurrentMap === undefined) {
+					rTFautoLevel = autoMapLevel();
+					rTFMapLevel = rTFautoLevel;
+				}
+				if (game.global.stringVersion === '5.8.0' && rTFSettings.autoLevel && rTFautoLevel !== Infinity) {
+					rTFMapLevel = rTFautoLevel;
+				}
+
 				//When running Wither make sure map level is lower than 0 so that we don't accumulate extra stacks.
 				if (game.global.challengeActive == "Wither" && rTFMapLevel >= 0)
 					rTFMapLevel = -1;
@@ -1175,6 +1181,7 @@ function RautoMap() {
 					rTFSettings.done = totalPortals + "_" + game.global.world;
 					rTFZoneCleared = game.stats.zonesCleared.value;
 					rTFCurrentMap = undefined;
+					if (typeof (rTFautoLevel) !== 'undefined' && rTFautoLevel !== Infinity) rTFautoLevel = Infinity;
 					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 					currTime = 0
 					if (rTFAtlantrimp) runAtlantrimp()
@@ -1340,6 +1347,13 @@ function RautoMap() {
 				if (game.global.stringVersion === '5.8.0' && rSFSettings.autoLevel && rSFCurrentMap === undefined) rSFMapLevel = autoMapLevel();
 				rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : game.global.challengeActive == 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
+				if (game.global.stringVersion === '5.8.0' && rSFSettings.autoLevel && rSFCurrentMap === undefined) {
+					rSFautoLevel = autoMapLevel();
+					rSFMapLevel = rSFautoLevel;
+				}
+				if (game.global.stringVersion === '5.8.0' && rSFSettings.autoLevel && rSFautoLevel !== Infinity) {
+					rSFMapLevel = rSFautoLevel;
+				}
 				//Checking for daily resource shred
 				if (typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal'))) {
 					var rSFSpecialTime = game.global.highestRadonLevelCleared > 83 ? 20 : 10;
@@ -1421,6 +1435,7 @@ function RautoMap() {
 						debug("Smithy Farm took " + smithyMapCount[0] + " food map" + (smithyMapCount[0] === 1 ? ", " : "s, ") + smithyMapCount[1] + " wood map" + (smithyMapCount[1] === 1 ? ", " : "s, ") + smithyMapCount[2] + " metal map" + (smithyMapCount[2] === 1 ? " " : "s ") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
 					currTime = 0
 					rSFCurrentMap = undefined;
+					if (typeof (rSFautoLevel) !== 'undefined' && rSFautoLevel !== Infinity) rSFautoLevel = Infinity;
 					if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
 						toggleAutoStructure();
 					smithyMapCount = [0, 0, 0]
