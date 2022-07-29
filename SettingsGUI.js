@@ -983,7 +983,7 @@ function initializeAllSettings() {
 	createSetting('Rshowhehr', 'Enable He/hr status', 'Enables the display of your helium per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('Rshowautomapstatus', 'Enable AutoMap Status', 'Enables the display of the map status. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('Rshowrnhr', 'Enable Rn/hr status', 'Enables the display of your radon per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
-	createSetting('rMapRepeatCount', 'Map Count Output', 'When you finish doing farming for any types of special farming this setting will display a message stating the amount of maps it took to complete.', 'boolean', false, null, 'Display');
+	createSetting('rMapRepeatCount', 'Map Count Output', 'When you finish doing farming for any types of special farming this setting will display a message stating the amount of maps it took to complete and the time it took (format is h:m:s).', 'boolean', false, null, 'Display');
 	createSetting('automateSpireAssault', 'Automate Spire Assault', 'Automates Spire Assault from level 92 up to level 99.', 'boolean', false, null, 'Display');
 
 
@@ -1419,6 +1419,27 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 					}
 					saveSettings();
 				}
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.5.0') {
+			if (typeof (autoTrimpSettings.rTributeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rTributeFarmSettings.value[0].done === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rTributeFarmSettings.value.length; y++) {
+					autoTrimpSettings.rTributeFarmSettings.value[y].done = 1;
+				}
+				saveSettings();
+			}
+			if (typeof (autoTrimpSettings.rdTributeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rdTributeFarmSettings.value[0].done === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rdTributeFarmSettings.value.length; y++) {
+					autoTrimpSettings.rdTributeFarmSettings.value[y].done = 1;
+				}
+				saveSettings();
+			}
+			if (typeof (autoTrimpSettings.rc3TributeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rc3TributeFarmSettings.value[0].done === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rc3TributeFarmSettings.value.length; y++) {
+					autoTrimpSettings.rc3TributeFarmSettings.value[y].done = 1;
+				}
+				saveSettings();
 			}
 		}
 

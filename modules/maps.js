@@ -1034,6 +1034,7 @@ function RautoMap() {
 	}
 	var shouldDoHealthMaps = false;
 
+	var totalPortals = getTotalPortals();
 
 	//Daily Shred variables
 	if (game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
@@ -1126,7 +1127,6 @@ function RautoMap() {
 			rTFAtlantrimp = false;
 		rTFZone = rRunningC3 ? getPageSetting('rc3TimeFarmZone') : rRunningDaily ? getPageSetting('rdTimeFarmZone') : getPageSetting('rTimeFarmZone');
 		var rTFIndex;
-		var totalPortals = getTotalPortals();
 		for (var y = 0; y < rTFZone.length; y++) {
 			if (rTFBaseSetting[y].done === totalPortals + "_" + game.global.world || !rTFBaseSetting[y].active) {
 				continue;
@@ -1193,7 +1193,8 @@ function RautoMap() {
 		if (rTrFZone.includes(game.global.world)) {
 			var rTrFIndex = rTrFZone.indexOf(game.global.world);
 			var rTrFSettings = rRunningC3 ? autoTrimpSettings.rc3TributeFarmSettings.value[rTrFIndex] : rRunningDaily ? autoTrimpSettings.rdTributeFarmSettings.value[rTrFIndex] : autoTrimpSettings.rTributeFarmSettings.value[rTrFIndex];
-			if (rTrFSettings.active && game.global.lastClearedCell + 2 >= rTrFSettings.cell) {
+			if (rTrFSettings.active && rTrFSettings.done !== totalPortals + "_" + game.global.world && game.global.lastClearedCell + 2 >= rTrFSettings.cell) {
+
 				var rTrFMapLevel = rTrFSettings.level
 				rTrFTributes = game.buildings.Tribute.locked == 1 ? 0 : rTrFSettings.tributes;
 				rTrFMeteorologists = game.jobs.Meteorologist.locked == 1 ? 0 : rTrFSettings.mets;
@@ -1210,15 +1211,34 @@ function RautoMap() {
 				var metCost = 0;
 
 				if (game.global.stringVersion === '5.8.0' && rTrFCurrentMap === undefined) {
-					if (rTrFSettings.autoLevel) rTrFMapLevel = autoMapLevel();
-					if (rTrFSettings.mapType === 'Map Count') {
-						var mapsToRun = rTFSettings.mapsToRun;
-						var time = mapsToRun * 25
-						if (mapsToRun > 4) time += (Math.floor(mapsToRun / 5) * 45)
-						var foodEarned = scaleToCurrentMapLocal(simpleSecondsLocal("food", mapsToRun, true, '1'), false, true, rTrFMapLevel);
-						rTrFTributes = game.buildings.Tribute.purchased + calculateMaxAffordLocal(game.buildings.Tribute, true, false, false, false, 1, foodEarned);
-						rTrFMeteorologists = game.jobs.Meteorologist.owned + calculateMaxAffordLocal(game.jobs.Meteorologist, false, false, true, false, 1, foodEarned);
+					if (rTrFSettings.autoLevel) {
+						rTrFautoLevel = autoMapLevel();
+						rTrFMapLevel = rTrFautoLevel;
 					}
+					if (rTrFSettings.mapType === 'Map Count') {
+						var tributeMaps = rTrFTributes;
+						var meteorologistMaps = rTrFMeteorologists;
+						var tributeTime = tributeMaps * 25
+						if (tributeMaps > 4) tributeTime += (Math.floor(tributeMaps / 5) * 45)
+						var foodEarneTributes = scaleToCurrentMapLocal(simpleSecondsLocal("food", tributeTime, true, '1'), false, true, rTrFMapLevel);
+						rTrFTributesMapCount = game.buildings.Tribute.purchased + calculateMaxAffordLocal(game.buildings.Tribute, true, false, false, false, 1, foodEarneTributes);
+
+						var meteorologistMaps = rTrFMeteorologists;
+						var meteorologistTime = meteorologistMaps * 25
+						if (meteorologistMaps > 4) meteorologistTime += (Math.floor(meteorologistMaps / 5) * 45)
+						var foodEarnedMets = scaleToCurrentMapLocal(simpleSecondsLocal("food", meteorologistTime, true, '1'), false, true, rTrFMapLevel);
+						rTrFMeteorologistsMapCount = game.jobs.Meteorologist.owned + calculateMaxAffordLocal(game.jobs.Meteorologist, false, false, true, false, 1, foodEarnedMets);
+					}
+				}
+
+				if (typeof (rTrFTributesMapCount) !== 'undefined' && rTrFTributesMapCount !== 0) {
+					rTrFTributes = rTrFTributesMapCount
+				}
+				if (typeof (rTrFMeteorologistsMapCount) !== 'undefined' && rTrFMeteorologistsMapCount !== 0) {
+					rTrFMeteorologists = rTrFMeteorologistsMapCount
+				}
+				if (typeof (rTrFMeteorologistsMapCount) !== 'undefined' && rTrFautoLevel !== Infinity) {
+					rTrFMapLevel = rTrFautoLevel
 				}
 
 				//Identifying how much food you'd get from the amount of jestimps you want to farm on the map level you've selected for them
@@ -1291,6 +1311,10 @@ function RautoMap() {
 						debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.")
 					}
 					currTime = 0
+					if (typeof (rTrFTributesMapCount) !== 'undefined' && rTrFTributesMapCount !== 0) rTrFTributesMapCount = 0;
+					if (typeof (rTrFMeteorologistsMapCount) !== 'undefined' && rTrFMeteorologistsMapCount !== 0) rTrFMeteorologistsMapCount = 0;
+					if (typeof (rTrFautoLevel) !== 'undefined' && rTrFautoLevel !== Infinity) rTrFautoLevel = Infinity;
+					rTrFSettings.done = totalPortals + "_" + game.global.world;
 					if (game.global.mapsActive) {
 						mapsClicked();
 						recycleMap();
@@ -1656,7 +1680,7 @@ function RautoMap() {
 			artBoost *= game.challenges.Pandemonium.getEnemyMult();
 			//Working out how much metal a large metal cache or jestimp proc provides.
 			amt_cache = getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') ? simpleSecondsLocal("metal", 40, true, '0.1,0.1,0.1,0.001') :
-				simpleSecondsLocal("metal", 20, true, '0.1,0.1,0.1,0.001');  //scaleToCurrentMapLocal(simpleSecondsLocal("metal", 165, true, 0.1,0.1,0.1,0.001), false, true, rTrFMapLevel);
+				simpleSecondsLocal("metal", 20, true, '0.1,0.1,0.1,0.001');
 			//Looping through each piece of equipment
 			for (var equipName in game.equipment) {
 				if (!game.equipment[equipName].locked) {
