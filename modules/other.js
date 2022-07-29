@@ -2592,8 +2592,8 @@ function formatTimeForDescriptions(number) {
 	var seconds = Math.floor((number) % 60);
 	var minutes = Math.floor((number / 60) % 60);
 	var hours = Math.floor((number / 60 / 60));
-	if (minutes <= 0 && hours <= 0) text = seconds + " second" + ((seconds == 1) ? "." : "s.");
-	else if (hours == 0) text = minutes + " minute" + ((minutes == 1) ? " " : "s ") + seconds + " second" + ((seconds == 1) ? "." : "s.");
+	if (minutes <= 0 && hours <= 0) text = seconds + " second" + ((seconds == 1) ? "" : "s");
+	else if (hours == 0) text = minutes + " minute" + ((minutes == 1) ? " " : "s ") + seconds + " second" + ((seconds == 1) ? "" : "s");
 	else {
 		text = hours + " hour" + ((hours == 1) ? " " : "s ") + minutes + " minute" + ((minutes == 1) ? " " : "s ") + seconds + " second" + ((seconds == 1) ? "" : "s");
 	}
