@@ -2137,7 +2137,6 @@ function autoMapLevel(maxLevel, special, biome) {
 	special = !special ? 'lmc' : special;
 	biome = !biome ? 'Farmlands' : biome;
 
-	var go = false;
 	if (maxLevel > 10) maxLevel = 10;
 	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
 	if (game.global.challengeActive === 'Wither' && maxLevel >= 0) maxLevel = -1;
@@ -2156,12 +2155,10 @@ function autoMapLevel(maxLevel, special, biome) {
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Snimp', 'map', true) * difficulty;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, true, 'map') * 1.5 * difficulty;
 
-		if (!go) {
-			if ((game.resources.fragments.owned >= PerfectMapCost(mapLevel, special, biome) && enemyHealth <= ourDmg) && ((enemyDmg <= ourHealth))) {
-				return mapLevel;
-			}
+		if ((game.resources.fragments.owned >= PerfectMapCost(mapLevel, special, biome) && enemyHealth <= ourDmg) && ((enemyDmg <= ourHealth))) {
+			return mapLevel;
 		}
-		if (!go && y === minZone) {
+		if (y === minZone) {
 			return minZone;
 		}
 
@@ -2176,8 +2173,8 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var currentCell = !cell && mapping ? game.global.lastClearedMapCell : !cell ? game.global.lastClearedCell : cell - 2;
 	var enemyName = !name ? game.global[mapGrid][currentCell + 1].name : name;
 
-	var mapping = game.global.mapsActive ? true : false;
-	var mapType = !mapType && !mapping ? "world" : !mapType ? (getCurrentMapObject().location == "Void" ? "void" : "map") : mapType;
+	var mapType = !mapType ? "world" : !mapType ? (getCurrentMapObject().location == "Void" ? "void" : "map") : mapType;
+	var mapping = mapType === 'world' ? false : true;
 	var zone = !zone && (mapType == "world" || !mapping) ? game.global.world : !zone ? getCurrentMapObject().level : zone;
 
 
@@ -2211,6 +2208,9 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var ourHealth = query ? RcalcOurHealth(questShieldBreak) : remainingHealth();
 	var ourHealthMax = RcalcOurHealth(questShieldBreak)
 	var ourDmg = RcalcOurDmg('min', 0, mapping, true, false);
+	if (mapType !== 'world' && game.talents.bionic2.purchased && zone > game.global.world) {
+		ourDmg *= 1.5;
+	}
 	if (forceOneShot) ourDmg *= 2;
 	var ourDmgEquality = 0;
 	//Figuring out gamma burst stacks to proc and dmg bonus
@@ -2229,43 +2229,43 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 			if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
 				return i;
 			}
-			else if (ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
+			else if (ourHealthMax >= enemyDmgEquality && gammaToTrigger <= 1) {
 				if (query) {
 					return i;
 				}
 				return i;
 			}
-			else if (ourDmgEquality > enemyHealth && ourHealth >= enemyDmgEquality) {
+			else if (ourDmgEquality > enemyHealth && ourHealthMax >= enemyDmgEquality) {
 				return i;
 			}
-			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
+			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealthMax >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
 				return i;
 			}
-			else if (!forceOneShot && ourDmgEquality * 2 > enemyHealth && ourHealth >= enemyDmgEquality * 2) {
+			else if (!forceOneShot && ourDmgEquality * 2 > enemyHealth && ourHealthMax >= enemyDmgEquality * 2) {
 				return i;
 			}
-			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
+			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealthMax >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
 				return i;
 			}
-			else if (!forceOneShot && ourDmgEquality * 3 > enemyHealth && ourHealth >= enemyDmgEquality * 3) {
+			else if (!forceOneShot && ourDmgEquality * 3 > enemyHealth && ourHealthMax >= enemyDmgEquality * 3) {
 				return i;
 			}
-			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
+			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealthMax >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
 				return i;
 			}
-			else if (!forceOneShot && ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
+			else if (!forceOneShot && ourHealthMax >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
 				return i;
 			}
-			else if (!forceOneShot && ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
+			else if (!forceOneShot && ourHealthMax >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
 				return i;
 			}
-			else if (!forceOneShot && ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
+			else if (!forceOneShot && ourHealthMax >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
 				return i;
 			}
-			else if (!forceOneShot && ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
+			else if (!forceOneShot && ourHealthMax >= enemyDmgEquality && gammaToTrigger <= 1) {
 				return i;
 			}
-			else if (!forceOneShot && ourHealth >= enemyDmgEquality && gammaToTrigger == 0) {
+			else if (!forceOneShot && ourHealthMax >= enemyDmgEquality && gammaToTrigger == 0) {
 				return i;
 			}
 			else if (i === game.portal.Equality.radLevel) {
@@ -2304,6 +2304,7 @@ function equalityManagement() {
 		var ourHealth = remainingHealth();
 		var ourHealthMax = RcalcOurHealth(questShieldBreak)
 		var ourDmg = RcalcOurDmg('min', 0, mapping, true, true);
+		if (type !== 'world' && game.talents.bionic2.purchased && zone > game.global.world) ourDmg *= 1.5;
 		var ourDmgEquality = 0;
 		//Figuring out gamma burst stacks to proc and dmg bonus
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;

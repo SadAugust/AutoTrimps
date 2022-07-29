@@ -711,7 +711,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	// Soldiers
 	number *= game.resources.trimps.maxSoldiers;
 	// Smithies
-	number *= Math.pow(1.25, game.buildings.Smithy.owned);
+	number *= Math.pow((game.global.stringVersion >= '5.8.0' ? game.buildings.Smithy.getBaseMult() : 1.25), game.buildings.Smithy.owned);
 	// Achievement bonus
 	number *= 1 + (game.global.achievementBonus / 100);
 	// Power
@@ -825,9 +825,8 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	}
 
 	// Gamma Burst
-	var gammaTriggerStacks = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
-	//number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") > 0 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 50, 'Snimp'))) >= gammaTriggerStacks ? getHeirloomBonus('Shield', 'gammaBurst') / (gammaTriggerStacks * 100) : 1;
 	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") / 100;
+
 	switch (minMaxAvg) {
 		case 'min':
 			return game.global.challengeActive == 'Unlucky' ? number : number * (game.portal.Range.radLevel * 0.02 + 0.8) * minDailyMod;
