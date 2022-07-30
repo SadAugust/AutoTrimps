@@ -478,6 +478,7 @@ function RdoPortal(challenge, daily) {
 				getDailyChallenge(lastUndone);
 				debug("Portaling into Daily for: " + getDailyTimeString(lastUndone, true) + " now!", "portal");
 				preset = 2; //Loads preset 2 for dailies
+				challenge = getDailyTimeString(lastUndone, true)
 			}
 		}
 
@@ -574,6 +575,7 @@ function Rresetmapvars() {
 	rShouldMaxMapBonus = false;
 	rMBCurrentMap = undefined;
 	rC3EndZoneSetting = -1;
+	currTime = 0;
 	//Void Maps
 	RdoVoids = false;
 	RneedToVoid = false;
