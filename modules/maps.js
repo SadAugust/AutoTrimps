@@ -1038,7 +1038,7 @@ function RautoMap() {
 
 	//Daily Shred variables
 	if (game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
-		var shredActive = true;
+		shredActive = true;
 		var foodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
 		var woodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
 		var metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
@@ -1344,14 +1344,14 @@ function RautoMap() {
 			var rSFCell = game.global.challengeActive == 'Quest' ? 81 : rSFSettings.cell
 			if (rSFSettings.active && game.global.lastClearedCell + 2 >= rSFCell) {
 				var rSFMapLevel = game.global.challengeActive == 'Quest' ? -1 : rSFSettings.level
-				if (game.global.stringVersion === '5.8.0' && rSFSettings.autoLevel && rSFCurrentMap === undefined) rSFMapLevel = autoMapLevel();
+				if (rSFSettings.autoLevel && rSFCurrentMap === undefined) rSFMapLevel = autoMapLevel();
 				rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : game.global.challengeActive == 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
-				if (game.global.stringVersion === '5.8.0' && rSFSettings.autoLevel && rSFCurrentMap === undefined) {
+				if (rSFSettings.autoLevel && rSFCurrentMap === undefined) {
 					rSFautoLevel = autoMapLevel();
 					rSFMapLevel = rSFautoLevel;
 				}
-				if (game.global.stringVersion === '5.8.0' && rSFSettings.autoLevel && rSFautoLevel !== Infinity) {
+				if (rSFSettings.autoLevel && rSFautoLevel !== Infinity) {
 					rSFMapLevel = rSFautoLevel;
 				}
 				//Checking for daily resource shred
@@ -1531,6 +1531,7 @@ function RautoMap() {
 			}
 		}
 	}
+
 	//Quagmire - Black Bogs
 	if (game.global.challengeActive == "Quagmire" && autoTrimpSettings.rQuagDefaultSettings.value.active) {
 		Rshoulddobogs = false;
