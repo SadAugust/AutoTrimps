@@ -711,9 +711,9 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	// Soldiers
 	number *= game.resources.trimps.maxSoldiers;
 	// Smithies
-	number *= Math.pow((game.global.stringVersion >= '5.8.0' ? game.buildings.Smithy.getBaseMult() : 1.25), game.buildings.Smithy.owned);
+	number *= game.buildings.Smithy.owned > 0 ? Math.pow((game.global.stringVersion >= '5.8.0' ? game.buildings.Smithy.getBaseMult() : 1.25), game.buildings.Smithy.owned) : 1;
 	// Achievement bonus
-	number *= 1 + (game.global.achievementBonus / 100);
+	number *= game.global.achievementBonus > 0 ? 1 + (game.global.achievementBonus / 100) : 1;
 	// Power
 	number += (number * game.portal.Power.radLevel * game.portal.Power.modifier);
 	// Map Bonus
@@ -771,6 +771,8 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	if (game.global.stringVersion >= '5.8.0') {
 		number *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
 		number *= u2Mutations.tree.Loot.purchased ? 1.5 : 1;
+		//Smithies (smithless challenge)
+		number *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 	}
 
 	// Dailies
@@ -899,6 +901,8 @@ function RcalcOurHealth(onlyShield) {
 	health *= game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
 	//Alchemy Mult
 	health *= alchObj.getPotionEffect('Potion of Strength');
+	//Smithies (smithless challenge)
+	health *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 	//Pressure (Dailies)
 	health *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
 	//Void Map Talents
