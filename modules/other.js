@@ -2178,8 +2178,6 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var mapping = mapType === 'world' ? false : true;
 	var zone = !zone && (mapType == "world" || !mapping) ? game.global.world : !zone ? getCurrentMapObject().level : zone;
 
-
-
 	//var mapping = game.global.mapsActive ? true : false;
 	//var currentCell = !cell && mapping ? game.global.lastClearedMapCell : !cell ? game.global.lastClearedCell : cell;
 	var mapGrid = game.global.mapsActive ? 'mapGridArray' : 'gridArray';
@@ -2765,10 +2763,10 @@ function automateSpireAssault() {
 			autoBattle.acceptContract('Nullifium_Armor')
 		if (!autoBattle.items.Haunted_Harpoon.owned)
 			autoBattle.acceptContract('Haunted_Harpoon')
-		if (!autoBattle.items.Handful_of_Mold.owned)
-			autoBattle.acceptContract('Handful_of_Mold')
 		if (!autoBattle.items.Box_of_Spores.owned)
 			autoBattle.acceptContract('Box_of_Spores')
+		if (!autoBattle.items.Box_of_Spores.owned)
+			autoBattle.acceptContract('Myco_Mitts')
 	}
 
 	if (autoBattle.items.Stormbringer.owned && autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Haunted_Harpoon.owned) {
@@ -2778,11 +2776,6 @@ function automateSpireAssault() {
 			autoBattle.upgrade('Nullifium_Armor')
 		if (autoBattle.items.Haunted_Harpoon.owned && autoBattle.items.Haunted_Harpoon.level != 3)
 			autoBattle.upgrade('Haunted_Harpoon')
-		if (autoBattle.items.Handful_of_Mold.owned && autoBattle.items.Handful_of_Mold.level != 3)
-			autoBattle.upgrade('Handful_of_Mold')
-
-		if (autoBattle.items.Handful_of_Mold.owned && autoBattle.items.Handful_of_Mold.level != 3)
-			autoBattle.upgrade('Handful_of_Mold')
 
 		if (!autoBattle.autoLevel && autoBattle.maxEnemyLevel < 99)
 			autoBattle.toggleAutoLevel();
