@@ -2048,6 +2048,8 @@ var fastimps =
 		"Entimp",
 		"Fusimp",
 		"Carbimp",
+		"Ubersmith",
+		"Ubersmithy",
 		"Shadimp",
 		"Voidsnimp",
 		"Prismimp",
