@@ -770,7 +770,6 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	number *= game.global.challengeActive == 'Alchemy' ? alchObj.getPotionEffect('Potion of Strength') : 1;
 	if (game.global.stringVersion >= '5.8.0') {
 		number *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
-		number *= u2Mutations.tree.Loot.purchased ? 1.5 : 1;
 		//Smithies (smithless challenge)
 		number *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 	}
