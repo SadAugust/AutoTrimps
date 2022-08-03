@@ -2771,7 +2771,12 @@ function automateSpireAssault() {
 			autoBattle.acceptContract('Myco_Mitts')
 	}
 
-	if (autoBattle.maxEnemyLevel === 102 && autoBattle.rings.level < 30) {
+	if (autoBattle.maxEnemyLevel >= 102 && autoBattle.rings.level < 30) {
+		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+		return;
+	}
+
+	if (autoBattle.maxEnemyLevel >= 109 && autoBattle.rings.level < 40) {
 		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
 		return;
 	}
@@ -2860,6 +2865,10 @@ function automateSpireAssault() {
 		}
 		if (autoBattle.enemyLevel == 108) { //13.88s killtime - 5.9h cleartime
 			var items = [['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+			var ring = [['attack'], ['lifesteal']]
+		}
+		if (autoBattle.enemyLevel == 109) { //13.88s killtime - 5.9h cleartime
+			var items = [['Rusty_Dagger'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Fearsome_Piercer'], ['The_Doomspring'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['attack'], ['lifesteal']]
 		}
 
