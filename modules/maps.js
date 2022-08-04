@@ -1105,6 +1105,7 @@ function RautoMap() {
 	//Reset to defaults when on world grid
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0
+		rTFAtlantrimp = false;
 		if (game.global.repeatMap == true) repeatClicked();
 		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
 		if (document.getElementById('advExtraLevelSelect').value > 0)
