@@ -2301,6 +2301,7 @@ function equalityManagement() {
 		var enemyAttack = getCurrentEnemy() ? getCurrentEnemy().attack * RcalcBadGuyDmgMod() : RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * difficulty;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * 1.5 * difficulty : enemyAttack * 1.5;
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
+		enemyDmg *= !mapping && typeof game.global.dailyChallenge.crits !== 'undefined' && typeof game.global.dailyChallenge.empower !== 'undefined' ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 		var enemyDmgEquality = 0;
 		//Our stats
 		var ourHealth = remainingHealth();
@@ -2771,21 +2772,6 @@ function automateSpireAssault() {
 			autoBattle.acceptContract('Myco_Mitts')
 	}
 
-	if (autoBattle.maxEnemyLevel >= 99 && autoBattle.rings.level < 27 && autoBattle.items.Fearsome_Piercer.level !== 11) {
-		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
-		return;
-	}
-
-	if (autoBattle.maxEnemyLevel >= 102 && autoBattle.rings.level < 30) {
-		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
-		return;
-	}
-
-	if (autoBattle.maxEnemyLevel >= 109 && autoBattle.rings.level < 40) {
-		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
-		return;
-	}
-
 
 	if (autoBattle.items.Stormbringer.owned && autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Haunted_Harpoon.owned) {
 		if (autoBattle.items.Stormbringer.owned && autoBattle.items.Stormbringer.level != 5)
@@ -2794,9 +2780,6 @@ function automateSpireAssault() {
 			autoBattle.upgrade('Nullifium_Armor')
 		if (autoBattle.items.Haunted_Harpoon.owned && autoBattle.items.Haunted_Harpoon.level != 3)
 			autoBattle.upgrade('Haunted_Harpoon')
-
-		if (!autoBattle.autoLevel)
-			autoBattle.toggleAutoLevel();
 
 		if (autoBattle.enemyLevel == 92) { //6s kills - 2.14h cleartime
 			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
@@ -2873,10 +2856,30 @@ function automateSpireAssault() {
 			var ring = [['attack'], ['lifesteal']]
 		}
 
-		if (autoBattle.sessionEnemiesKilled == 0 && autoBattle.enemy.baseHealth == autoBattle.enemy.health) {
+		if (autoBattle.sessionEnemiesKilled == 0 && autoBattle.enemy.baseHealth == autoBattle.enemy.health && autoBattle.maxEnemyLevel === autoBattle.enemyLevel) {
 			ABItemSwap(items, ring);
 			autoBattle.popup(true, false, true);
 		}
+
+
+		if (autoBattle.maxEnemyLevel >= 99 && autoBattle.rings.level < 27 && autoBattle.items.Fearsome_Piercer.level !== 11) {
+			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+			return;
+		}
+
+		if (autoBattle.maxEnemyLevel >= 102 && autoBattle.rings.level < 30) {
+			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+			return;
+		}
+
+		if (autoBattle.maxEnemyLevel >= 109 && autoBattle.rings.level < 40) {
+			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+			return;
+		}
+
+		if (!autoBattle.autoLevel)
+			autoBattle.toggleAutoLevel();
+
 	}
 }
 
