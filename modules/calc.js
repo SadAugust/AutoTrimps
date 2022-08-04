@@ -1123,10 +1123,6 @@ function RcalcEnemyHealth(world) {
 		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
 
-	if (game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && type === 'world' && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined') {
-		health *= 2
-		health *= Math.pow(1.02, game.global.world - 201);
-	}
 	return health;
 }
 
