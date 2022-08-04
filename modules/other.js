@@ -2315,6 +2315,7 @@ function equalityManagement() {
 
 		//var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
 		var fastEnemy = game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && type === 'world' ? fastimps.includes(enemyName) || game.global.gridArray[currentCell + 1].u2Mutation.length > 0 : !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
+		fastEnemy = !mapping && typeof game.global.dailyChallenge.empower !== 'undefined' ? true : fastEnemy
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
 
 		if (enemyHealth !== 0 && enemyHealth !== -1) {
