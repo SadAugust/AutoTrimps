@@ -2154,7 +2154,7 @@ function autoMapLevel(maxLevel, special, biome) {
 	for (y = maxLevel; y > minZone; y--) {
 		var mapLevel = y;
 		var equalityAmt = equalityQuery(true, false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
-		var ourDmg = RcalcOurDmg(dmg, equalityAmt, true, true, (runningUnlucky ? true : false)) * (runningUnlucky ? 1 : 2);
+		var ourDmg = RcalcOurDmg(dmg, equalityAmt, true, true, false) * 2;
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Snimp', 'map', true) * difficulty;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, true, 'map') * 1.5 * difficulty;
 
@@ -2168,6 +2168,7 @@ function autoMapLevel(maxLevel, special, biome) {
 	}
 }
 
+var equalityAmt = equalityQuery(true, false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
 function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty, forceOneShot) {
 	//Turning off equality scaling
 	game.portal.Equality.scalingActive = false;
@@ -2192,7 +2193,7 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	//Challenge conditions
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
 	var runningTrappa = game.global.challengeActive == 'Trappapalooza'
-	var questShieldBreak = game.global.challengeActive == 'Quest' && questcheck() == 8;
+	var questShieldBreak = ((game.global.challengeActive == 'Quest' && questcheck() == 8) || game.global.challengeActive == 'Berserk');
 	var runningGlass = game.global.challengeActive == 'Glass';
 
 	//Initialising name/health/dmg variables
@@ -2203,7 +2204,8 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var enemyAttack = !query && getCurrentEnemy() ? getCurrentEnemy().attack * RcalcBadGuyDmgMod() :
 		RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType);
 	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * 1.5 * difficulty : enemyAttack * 1.5 * difficulty;
-	if (!query) enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
+	var enemyDmg = query ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * difficulty * 1.5 : enemyDmg;
+	if (!query || mapType === 'void') enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 	var enemyDmgEquality = 0;
 	//Our stats
 	var ourHealth = query ? RcalcOurHealth(questShieldBreak) : remainingHealth();
@@ -2219,7 +2221,7 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
 	var fastEnemy = fastimps.includes(enemyName);
 	if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
-	if (query && (game.global.mapsActive || forceOneShot) && game.talents.mapHealth.purchased) ourHealth *= 2;
+	if (query && mapType === 'map' && game.talents.mapHealth.purchased) ourHealth *= 2;
 
 	if (enemyHealth !== 0 && enemyHealth !== -1) {
 		for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
@@ -2231,43 +2233,43 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 			if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
 				return i;
 			}
-			else if (ourHealthMax >= enemyDmgEquality && gammaToTrigger <= 1) {
+			else if (ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
 				if (query) {
 					return i;
 				}
 				return i;
 			}
-			else if (ourDmgEquality > enemyHealth && ourHealthMax > enemyDmgEquality) {
+			else if (ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
 				return i;
 			}
-			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealthMax >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
+			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
 				return i;
 			}
-			else if (!forceOneShot && ourDmgEquality * 2 > enemyHealth && ourHealthMax >= enemyDmgEquality * 2) {
+			else if (!forceOneShot && ourDmgEquality * 2 > enemyHealth && ourHealth >= enemyDmgEquality * 2) {
 				return i;
 			}
-			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealthMax >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
+			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
 				return i;
 			}
-			else if (!forceOneShot && ourDmgEquality * 3 > enemyHealth && ourHealthMax >= enemyDmgEquality * 3) {
+			else if (!forceOneShot && ourDmgEquality * 3 > enemyHealth && ourHealth >= enemyDmgEquality * 3) {
 				return i;
 			}
-			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealthMax >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
+			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
 				return i;
 			}
-			else if (!forceOneShot && ourHealthMax >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
+			else if (!forceOneShot && ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
 				return i;
 			}
-			else if (!forceOneShot && ourHealthMax >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
+			else if (!forceOneShot && ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
 				return i;
 			}
-			else if (!forceOneShot && ourHealthMax >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
+			else if (!forceOneShot && ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
 				return i;
 			}
-			else if (!forceOneShot && ourHealthMax >= enemyDmgEquality && gammaToTrigger <= 1) {
+			else if (!forceOneShot && ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
 				return i;
 			}
-			else if (!forceOneShot && ourHealthMax >= enemyDmgEquality && gammaToTrigger == 0) {
+			else if (!forceOneShot && ourHealth >= enemyDmgEquality && gammaToTrigger == 0) {
 				return i;
 			}
 			else if (i === game.portal.Equality.radLevel) {
@@ -2828,27 +2830,31 @@ function automateSpireAssault() {
 			var items = [['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Blessed_Protector'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['health'], ['lifesteal']]
 		}
-		if (autoBattle.enemyLevel == 103) { //8.6s killtime - 3.5h cleartime
+		/* if (autoBattle.enemyLevel == 103) { //8.6s killtime - 3.5h cleartime
+			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+			var ring = [['attack'], ['health']]
+		} */
+		if (autoBattle.enemyLevel == 103) { //7.74s killtime - 3.5h cleartime
+			var items = [['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['The_Doomspring'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+			var ring = [['attack'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 104) { //7.2s killtime - 2.8h cleartime
 			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['attack'], ['health']]
 		}
-		if (autoBattle.enemyLevel == 104) { //7.6s killtime - 3.1h cleartime
+		if (autoBattle.enemyLevel == 105) { //8.28s killtime - 3.4h cleartime
 			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['attack'], ['health']]
 		}
-		if (autoBattle.enemyLevel == 105) { //8.8s killtime - 3.6h cleartime
+		if (autoBattle.enemyLevel == 106) { //9.04s killtime - 3.8h cleartime
 			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['attack'], ['health']]
 		}
-		if (autoBattle.enemyLevel == 106) { //9.65s killtime - 4h cleartime
+		if (autoBattle.enemyLevel == 107) { //8.51s killtime - 3.6h cleartime
 			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['attack'], ['health']]
 		}
-		if (autoBattle.enemyLevel == 107) { //8.84s killtime - 3.7h cleartime
-			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
-			var ring = [['attack'], ['health']]
-		}
-		if (autoBattle.enemyLevel == 108) { //13.88s killtime - 5.9h cleartime
+		if (autoBattle.enemyLevel == 108) { //12.56s killtime - 5.3h cleartime
 			var items = [['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['attack'], ['lifesteal']]
 		}
@@ -2883,7 +2889,6 @@ function automateSpireAssault() {
 
 	}
 }
-
 
 function PresetSwapping(preset) {
 	if (!getPageSetting('RPerkSwapping')) return
