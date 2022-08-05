@@ -2168,7 +2168,6 @@ function autoMapLevel(maxLevel, special, biome) {
 	}
 }
 
-var equalityAmt = equalityQuery(true, false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
 function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty, forceOneShot) {
 	//Turning off equality scaling
 	game.portal.Equality.scalingActive = false;
