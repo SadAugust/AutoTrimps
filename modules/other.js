@@ -2857,8 +2857,8 @@ function automateSpireAssault() {
 			var items = [['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['attack'], ['lifesteal']]
 		}
-		if (autoBattle.enemyLevel == 109) { //13.88s killtime - 5.9h cleartime
-			var items = [['Rusty_Dagger'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Fearsome_Piercer'], ['The_Doomspring'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+		if (autoBattle.enemyLevel == 109) { //9.9s killtime - 4.2h cleartime
+			var items = [['Rusty_Dagger'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Fearsome_Piercer'], ['Blessed_Protector'], ['The_Doomspring'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['attack'], ['lifesteal']]
 		}
 
