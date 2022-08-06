@@ -652,11 +652,12 @@ function debugCalc() {
 	var equality = Math.pow(game.portal.Equality.getModifier(), game.portal.Equality.disabledStackCount)
 	var attack = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, cell, name), 0) * difficulty
 	var safeMapping = mapping && game.talents.mapHealth.purchased ? 2 : 1;
+	var bionic = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 	var runningUnlucky = game.global.challengeActive == 'Unlucky'
 
 	//Init
-	var displayedMin = RcalcOurDmg("min", game.portal.Equality.disabledStackCount, mapping, true, true, runningUnlucky, true);
-	var displayedMax = RcalcOurDmg("max", game.portal.Equality.disabledStackCount, mapping, true, true, runningUnlucky, true) * (runningUnlucky ? 399 : 1);
+	var displayedMin = RcalcOurDmg("min", game.portal.Equality.disabledStackCount, mapping, true, true, runningUnlucky, true) * bionic;
+	var displayedMax = RcalcOurDmg("max", game.portal.Equality.disabledStackCount, mapping, true, true, runningUnlucky, true) * bionic * (runningUnlucky ? 399 : 1);
 
 	//Trimp Stats
 	debug("Our Stats");

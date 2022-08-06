@@ -2206,13 +2206,12 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var enemyDmg = query ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * difficulty * 1.5 : enemyDmg;
 	if (!query || mapType === 'void') enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 	var enemyDmgEquality = 0;
+	var bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 	//Our stats
 	var ourHealth = query ? RcalcOurHealth(questShieldBreak) : remainingHealth();
 	var ourHealthMax = RcalcOurHealth(questShieldBreak)
-	var ourDmg = RcalcOurDmg('min', 0, mapping, true, (mapType === 'map' ? true : false));
-	if (mapType !== 'world' && game.talents.bionic2.purchased && zone > game.global.world) {
-		ourDmg *= 1.5;
-	}
+	var ourDmg = RcalcOurDmg('min', 0, mapping, true, (mapType === 'map' ? true : false)) * bionicTalent;
+
 	if (forceOneShot) ourDmg *= 2;
 	var ourDmgEquality = 0;
 	//Figuring out gamma burst stacks to proc and dmg bonus
@@ -2226,7 +2225,7 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 		for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
 			enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i) * (runningTrappa ? 1.25 : 1);
 			ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
-			if (runningUnlucky && Number(RcalcOurDmg('min', i, mapping, true, (mapType === 'map' ? true : false), true).toString()[0] % 2 == 1)) {
+			if (runningUnlucky && (Number(RcalcOurDmg('min', i, mapping, true, (mapType === 'map' ? true : false), true) * bionicTalent).toString()[0] % 2 == 1)) {
 				continue;
 			}
 			if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
@@ -2304,11 +2303,11 @@ function equalityManagement() {
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 		enemyDmg *= !mapping && typeof game.global.dailyChallenge.crits !== 'undefined' && typeof game.global.dailyChallenge.empower !== 'undefined' ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 		var enemyDmgEquality = 0;
+		var bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 		//Our stats
 		var ourHealth = remainingHealth();
 		var ourHealthMax = RcalcOurHealth(questShieldBreak)
-		var ourDmg = RcalcOurDmg('min', 0, mapping, true, true);
-		if (type !== 'world' && game.talents.bionic2.purchased && zone > game.global.world) ourDmg *= 1.5;
+		var ourDmg = RcalcOurDmg('min', 0, mapping, true, true) * bionicTalent;
 		var ourDmgEquality = 0;
 		//Figuring out gamma burst stacks to proc and dmg bonus
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
@@ -2323,7 +2322,7 @@ function equalityManagement() {
 			for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
 				enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i) * (runningTrappa ? 1.1 : 1);
 				ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
-				if (runningUnlucky && Number(RcalcOurDmg('min', i, mapping, true, true, true).toString()[0] % 2 == 1))
+				if (runningUnlucky && (Number(RcalcOurDmg('min', i, mapping, true, true, true, true) * bionicTalent).toString()[0] % 2 == 1))
 					continue;
 				if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
 					game.portal.Equality.disabledStackCount = i;
@@ -2600,9 +2599,8 @@ function formatTimeForDescriptions(number) {
 function timeForFormatting(number) {
 	return Math.floor((getGameTime() - number) / 1000);
 }
-//formatTimeForDescriptions(Math.floor((getGameTime() - game.global.portalTime) / 1000))
 
-function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) { //don't use forceMax for jobs until you fix that second return. forceMax and forceRatio indicate that they're from an auto, and ignore firing
+function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) {
 	if (!itemObj.cost) return 1;
 	var forcedMax = 0;
 	var mostAfford = -1;
@@ -2887,6 +2885,74 @@ function automateSpireAssault() {
 			autoBattle.toggleAutoLevel();
 
 	}
+}
+
+function totalSAResources() {
+	//total Dust!
+	var dust = 0;
+	var shards = 0;
+	//Contracts
+	var dustContracts = 0;
+	var shardContracts = 0;
+	for (var item in autoBattle.items) {
+		if (item === 'Sword' || item === 'Menacing_Mask' || item === 'Armor' || item === 'Rusty_Dagger' || item === 'Fists_of_Goo' || item === 'Battery_Stick' || item === 'Pants') continue;
+		if (typeof (autoBattle.items[item].dustType) === 'undefined') dustContracts += autoBattle.contractPrice(item);
+		else shardContracts += autoBattle.contractPrice(item);
+	}
+	dust += dustContracts;
+	shards += shardContracts;
+
+	//Items
+	var dustItems = 0;
+	var shardItems = 0;
+	for (var item in autoBattle.items) {
+		//if (typeof (autoBattle.items[item].dustType) !== 'undefined' && autoBattle.items[item].dustType === 'shards') continue;
+		var itemPrice = autoBattle.items[item].startPrice;
+		var itemPriceMod = autoBattle.items[item].priceMod;
+		if (typeof (autoBattle.items[item].startPrice) === 'undefined') itemPrice = 5;
+		if (typeof (autoBattle.items[item].priceMod) === 'undefined') itemPriceMod = 3;
+		for (var x = 0; x < autoBattle.items[item].level; x++) {
+			if (typeof (autoBattle.items[item].dustType) === 'undefined') dustItems += (itemPrice * ((Math.pow(itemPriceMod, x)) / (itemPriceMod)))
+			else shardItems += (itemPrice * ((Math.pow(itemPriceMod, x)) / (itemPriceMod)))
+		}
+	}
+	dust += dustItems;
+	shards += shardItems;
+
+	//Bonuses
+	var dustBonuses = 0;
+	var shardBonuses = 0;
+	for (var bonus in autoBattle.bonuses) {
+		if (bonus === 'Scaffolding') continue;
+		var bonusPrice = autoBattle.bonuses[bonus].price
+		var bonusPriceMod = autoBattle.bonuses[bonus].priceMod;
+		for (var x = 0; x < autoBattle.bonuses[bonus].level; x++) {
+			if (bonus !== 'Scaffolding') dustBonuses += Math.ceil(bonusPrice * Math.pow(bonusPriceMod, x));
+			else shardBonuses += Math.ceil(bonusPrice * Math.pow(bonusPriceMod, x));
+		}
+	}
+
+	dust += dustBonuses
+	shards += shardBonuses
+
+	//One Timers
+	var dustOneTimers = 0;
+	var shardOneTimers = 0;
+	for (var item in autoBattle.oneTimers) {
+		if (typeof (autoBattle.oneTimers[item].useShards) === 'undefined') dustOneTimers += autoBattle.oneTimerPrice(item);
+		else shardOneTimers += autoBattle.oneTimerPrice(item)
+	}
+	dust += dustOneTimers;
+	shards += shardOneTimers;
+
+	//Ring
+	var ringCost = 0;
+	if (autoBattle.oneTimers["The_Ring"].owned && autoBattle.rings.level > 1) {
+		ringCost += Math.ceil(15 * Math.pow(2, autoBattle.rings.level) - 30); // Subtracting 30 for the first level or something.
+	}
+	shards += ringCost;
+
+	return [dust, shards];
 }
 
 function PresetSwapping(preset) {
