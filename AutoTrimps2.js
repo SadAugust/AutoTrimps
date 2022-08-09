@@ -299,8 +299,8 @@ function mainLoop() {
 			if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
 		}
 	}
-	
-	if (game.global.stringVersion >= '5.8.0' && getPageSetting('automateSpireAssault') && autoBattle.maxEnemyLevel !== 110)
+
+	if (game.global.stringVersion >= '5.8.0' && getPageSetting('automateSpireAssault') && autoBattle.maxEnemyLevel !== 118)
 		automateSpireAssault();
 }
 
