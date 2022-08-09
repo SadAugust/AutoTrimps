@@ -763,8 +763,6 @@ rTributeFarming = false;
 rShouldTributeFarm = false;
 rShouldMetFarm = false;
 var rTrFCurrentMap = undefined;
-//Downsize
-var rDownsizeWarning = -1;
 //Unbalance
 var rShouldUnbalance = false;
 //Storm
