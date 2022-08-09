@@ -2150,11 +2150,14 @@ function autoMapLevel(maxLevel, special, biome) {
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
 	var difficulty = 0.75;
 	var ourHealth = RcalcOurHealth(questShieldBreak) * 2;
+	//var nova = game.global.novaMutStacks > 0 ? game.global.novaMutStacks / 100 : 1;
+	//if (game.global.novaMutStacks > 0) enemyDmg /= u2Mutations.types.Nova.enemyAttackMult();
+	//if ((mapType === 'map' || mapType === 'void') && !game.global.mapsActive && game.global.novaMutStacks > 0) ourDmg /= u2Mutations.types.Nova.trimpAttackMult();
 
 	for (y = maxLevel; y > minZone; y--) {
 		var mapLevel = y;
 		var equalityAmt = equalityQuery(true, false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
-		var ourDmg = RcalcOurDmg(dmg, equalityAmt, true, true, false) * 2;
+		var ourDmg = (RcalcOurDmg(dmg, equalityAmt, true, true, false)) * 2;
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Snimp', 'map', true) * difficulty;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, true, 'map') * 1.5 * difficulty;
 
@@ -2205,12 +2208,14 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * 1.5 * difficulty : enemyAttack * 1.5 * difficulty;
 	var enemyDmg = query ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * difficulty * 1.5 : enemyDmg;
 	if (!query || mapType === 'void') enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
+	//if (!game.global.mapsActive && mapType !== 'world' && game.global.novaMutStacks > 0) enemyDmg /= u2Mutations.types.Nova.enemyAttackMult();
 	var enemyDmgEquality = 0;
 	var bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 	//Our stats
 	var ourHealth = query ? RcalcOurHealth(questShieldBreak) : remainingHealth();
 	var ourHealthMax = RcalcOurHealth(questShieldBreak)
-	var ourDmg = RcalcOurDmg('min', 0, mapping, true, (mapType === 'map' ? true : false)) * bionicTalent;
+	var ourDmg = RcalcOurDmg('min', 0, mapping, true, false) * bionicTalent;
+	//if ((mapType === 'map' || mapType === 'void') && !game.global.mapsActive && game.global.novaMutStacks > 0) ourDmg /= u2Mutations.types.Nova.trimpAttackMult();
 
 	if (forceOneShot) ourDmg *= 2;
 	var ourDmgEquality = 0;
@@ -2225,8 +2230,11 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 		for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
 			enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i) * (runningTrappa ? 1.25 : 1);
 			ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
-			if (runningUnlucky && (Number(RcalcOurDmg('min', i, mapping, true, (mapType === 'map' ? true : false), true) * bionicTalent).toString()[0] % 2 == 1)) {
-				continue;
+			if (runningUnlucky) {
+				var unluckyDmg = Number(RcalcOurDmg('min', i, mapping, true, (mapType === 'map' ? true : false), true) * bionicTalent)
+				//if ((mapType === 'map' || mapType === 'void') && !game.global.mapsActive && game.global.novaMutStacks > 0) unluckyDmg /= u2Mutations.types.Nova.trimpAttackMult();
+				if (unluckyDmg.toString()[0] % 2 == 1)
+					continue;
 			}
 			if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
 				return i;
@@ -2302,12 +2310,14 @@ function equalityManagement() {
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * 1.5 * difficulty : enemyAttack * 1.5;
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 		enemyDmg *= !mapping && typeof game.global.dailyChallenge.crits !== 'undefined' && typeof game.global.dailyChallenge.empower !== 'undefined' ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
+		if (!game.global.mapsActive && type !== 'world' && game.global.novaMutStacks > 0) enemyDmg /= u2Mutations.types.Nova.enemyAttackMult();
 		var enemyDmgEquality = 0;
 		var bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 		//Our stats
 		var ourHealth = remainingHealth();
 		var ourHealthMax = RcalcOurHealth(questShieldBreak)
 		var ourDmg = RcalcOurDmg('min', 0, mapping, true, true) * bionicTalent;
+		if (!game.global.mapsActive && type !== 'world' && game.global.novaMutStacks > 0) ourDmg /= u2Mutations.types.Nova.trimpAttackMult();
 		var ourDmgEquality = 0;
 		//Figuring out gamma burst stacks to proc and dmg bonus
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
@@ -2774,11 +2784,11 @@ function automateSpireAssault() {
 
 
 	if (autoBattle.items.Stormbringer.owned && autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Haunted_Harpoon.owned) {
-		if (autoBattle.items.Stormbringer.owned && autoBattle.items.Stormbringer.level != 5)
+		if (autoBattle.items.Stormbringer.owned && autoBattle.items.Stormbringer.level < 5)
 			autoBattle.upgrade('Stormbringer')
-		if (autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Nullifium_Armor.level != 4)
+		if (autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Nullifium_Armor.level < 4)
 			autoBattle.upgrade('Nullifium_Armor')
-		if (autoBattle.items.Haunted_Harpoon.owned && autoBattle.items.Haunted_Harpoon.level != 3)
+		if (autoBattle.items.Haunted_Harpoon.owned && autoBattle.items.Haunted_Harpoon.level < 3)
 			autoBattle.upgrade('Haunted_Harpoon')
 
 		if (autoBattle.enemyLevel == 92) { //6s kills - 2.14h cleartime
@@ -2860,13 +2870,49 @@ function automateSpireAssault() {
 			var ring = [['attack'], ['lifesteal']]
 		}
 
+		if (autoBattle.enemyLevel == 110) {
+			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+
+		if (autoBattle.enemyLevel == 111) {
+			var items = [['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Blessed_Protector'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+
+		if (autoBattle.enemyLevel == 112) {
+			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+
+		if (autoBattle.enemyLevel == 113) {
+			var items = [['Rusty_Dagger'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+
+		if (autoBattle.enemyLevel == 114) {
+			var items = [['Menacing_Mask'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+
+		if (autoBattle.enemyLevel == 115) {
+			var items = [['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+
+		if (autoBattle.enemyLevel == 116) {
+			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+
+
 		if (autoBattle.sessionEnemiesKilled == 0 && autoBattle.enemy.baseHealth == autoBattle.enemy.health && autoBattle.maxEnemyLevel === autoBattle.enemyLevel) {
 			ABItemSwap(items, ring);
 			autoBattle.popup(true, false, true);
 		}
 
 
-		if (autoBattle.maxEnemyLevel >= 99 && autoBattle.rings.level < 27 && autoBattle.items.Fearsome_Piercer.level !== 11) {
+		if (autoBattle.maxEnemyLevel >= 99 && autoBattle.rings.level < 27 && autoBattle.items.Fearsome_Piercer.level < 11) {
 			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
 			return;
 		}
@@ -2876,7 +2922,12 @@ function automateSpireAssault() {
 			return;
 		}
 
-		if (autoBattle.maxEnemyLevel >= 109 && autoBattle.rings.level < 40) {
+		if (autoBattle.maxEnemyLevel >= 109 && (autoBattle.rings.level < 36 || autoBattle.items.Haunted_Harpoon.level < 6 || autoBattle.items.Nullifium_Armor.level < 6 || autoBattle.items.Stormbringer.level < 8 || autoBattle.items.Omni_Enhancer.level < 8 || autoBattle.items.Basket_of_Souls.level < 9)) {
+			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+			return;
+		}
+
+		if (autoBattle.maxEnemyLevel >= 117 && autoBattle.rings.level < 50) {
 			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
 			return;
 		}
