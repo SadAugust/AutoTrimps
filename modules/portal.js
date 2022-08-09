@@ -589,6 +589,8 @@ function Rresetmapvars() {
 	rShouldTributeFarm = false;
 	rShouldMetFarm = false;
 	rTrFCurrentMap = undefined;
+	//Downsize
+	rDownsizeWarning = -1;
 	//Unbalance
 	rShouldUnbalance = false;
 	//Worshipper

@@ -763,6 +763,8 @@ rTributeFarming = false;
 rShouldTributeFarm = false;
 rShouldMetFarm = false;
 var rTrFCurrentMap = undefined;
+//Downsize
+var rDownsizeWarning = -1;
 //Unbalance
 var rShouldUnbalance = false;
 //Storm
@@ -2278,7 +2280,6 @@ function RautoMap() {
 			else if (rShouldQuest > 0 && rShouldQuest !== 10) {
 				questSpecial = rShouldQuest == 1 || rShouldQuest == 4 ? 'lsc' : rShouldQuest == 2 ? 'lwc' : rShouldQuest == 3 || rShouldQuest == 7 ? 'lmc' : 'fa';
 				selectedMap = RShouldFarmMapCreation((rShouldQuest !== 6 ? autoMapLevel() : (autoMapLevel() >= 0 ? autoMapLevel() : 0)), questSpecial);
-				//selectedMap = RShouldFarmMapCreation((rShouldQuest !== 6 ? -1 : 0), questSpecial);
 				rHasQuested = true;
 
 			} else {
@@ -2580,8 +2581,6 @@ function RautoMap() {
 
 			if (rShouldQuest > 0 && rShouldQuest !== 10) {
 				questSpecial = rShouldQuest == 1 || rShouldQuest == 4 ? 'lsc' : rShouldQuest == 2 ? 'lwc' : rShouldQuest == 3 || rShouldQuest == 7 ? 'lmc' : 'fa';
-
-				//selectedMap = RShouldFarmMapCreation((rShouldQuest !== 6 ? autoMapLevel() : (autoMapLevel() >= 0 ? autoMapLevel() : 0)), questSpecial);
 				PerfectMapCost((rShouldQuest !== 6 ? autoMapLevel() : (autoMapLevel() >= 0 ? autoMapLevel() : 0)), questSpecial);
 			}
 			//Mayhem farming

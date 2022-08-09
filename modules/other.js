@@ -2791,7 +2791,7 @@ function automateSpireAssault() {
 		if (autoBattle.items.Haunted_Harpoon.owned && autoBattle.items.Haunted_Harpoon.level < 3)
 			autoBattle.upgrade('Haunted_Harpoon')
 
-		if (autoBattle.enemyLevel === 109 && autoBattle.items.Haunted_Harpoon.level === 5 && autoBattle.rings.level == 36 && autoBattle.shards >= autoBattle.upgradeCost('Haunted_Harpoon'))
+		if (autoBattle.enemyLevel === 109 && autoBattle.items.Haunted_Harpoon.level === 5 && autoBattle.rings.level === 36 && autoBattle.shards >= autoBattle.upgradeCost('Haunted_Harpoon'))
 			autoBattle.upgrade('Haunted_Harpoon')
 
 		if (autoBattle.enemyLevel == 92) { //6s kills - 2.14h cleartime
@@ -3074,20 +3074,24 @@ function AbandonChallengeRuns(zone) {
 	var hasPaused = false;
 
 	if (zone === null) return
-	if (game.global.world == zone && game.global.runningChallengeSquared && !hasPaused) {
-		toggleSetting('pauseGame');
-		hasPaused = true;
-	}
-	if (game.options.menu.pauseGame.enabled && game.global.world == zone && hasPaused) {
+	if (game.global.world == zone && game.global.runningChallengeSquared) {
+		if (game.options.menu.pauseGame.enabled && !hasPaused) {
+			toggleSetting('pauseGame');
+			hasPaused = true;
+		}
+		//Download save
 		tooltip('Export', null, 'update');
 		document.getElementById("downloadLink").click();
 		cancelTooltip();
-		if (game.global.runningChallengeSquared) {
-			confirmAbandonChallenge();
-			abandonChallenge();
-			cancelTooltip();
+
+		//Cancel out of c3
+		confirmAbandonChallenge();
+		abandonChallenge();
+		cancelTooltip();
+		if (hasPaused) {
+			toggleSetting('pauseGame');
+			hasPaused = false;
 		}
-		toggleSetting('pauseGame');
 	}
 }
 
