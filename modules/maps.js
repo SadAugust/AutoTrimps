@@ -1336,7 +1336,7 @@ function RautoMap() {
 	}
 
 	//Smithy Farming
-	if (game.buildings.Smithy.locked == 0 && ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && rShouldQuest === 10))) {
+	if (game.buildings.Smithy.locked == 0 && game.global.challengeActive !== 'Transmute' && ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && rShouldQuest === 10))) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
 		var rSFZone = game.global.challengeActive == 'Quest' ? [game.global.world] : rRunningC3 ? getPageSetting('rc3SmithyFarmZone') : rRunningDaily ? getPageSetting('rdSmithyFarmZone') : getPageSetting('rSmithyFarmZone');
 		if (rSFZone.includes(game.global.world)) {
@@ -2271,6 +2271,7 @@ function RautoMap() {
 			else if (rShouldQuest > 0 && rShouldQuest !== 10) {
 				questSpecial = rShouldQuest == 1 || rShouldQuest == 4 ? 'lsc' : rShouldQuest == 2 ? 'lwc' : rShouldQuest == 3 || rShouldQuest == 7 ? 'lmc' : 'fa';
 				selectedMap = RShouldFarmMapCreation((rShouldQuest !== 6 ? -1 : 0), questSpecial);
+				rHasQuested = true;
 
 			} else {
 				for (var map in game.global.mapsOwnedArray) {
