@@ -1443,6 +1443,27 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			}
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.6.0') {
+			if (typeof (autoTrimpSettings.rMapBonusSettings.value[0]) !== 'undefined' && autoTrimpSettings.rMapBonusSettings.value[0].done === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rMapBonusSettings.value.length; y++) {
+					autoTrimpSettings.rMapBonusSettings.value[y].done = 1;
+				}
+				saveSettings();
+			}
+			if (typeof (autoTrimpSettings.rdMapBonusSettings.value[0]) !== 'undefined' && autoTrimpSettings.rdMapBonusSettings.value[0].done === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rdMapBonusSettings.value.length; y++) {
+					autoTrimpSettings.rdMapBonusSettings.value[y].done = 1;
+				}
+				saveSettings();
+			}
+			if (typeof (autoTrimpSettings.rc3MapBonusSettings.value[0]) !== 'undefined' && autoTrimpSettings.rc3MapBonusSettings.value[0].done === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rc3MapBonusSettings.value.length; y++) {
+					autoTrimpSettings.rc3MapBonusSettings.value[y].done = 1;
+				}
+				saveSettings();
+			}
+		}
+
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		saveSettings();
