@@ -1077,7 +1077,7 @@ function RautoMap() {
 						rMBSpecial = rMBSpecial.charAt(0) + "sc";
 					if (game.global.mapBonus >= rMBRepeatCounter && rMBCurrentMap != undefined) {
 						rMBCurrentMap = undefined;
-						if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+						if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rMBMapLevel >= 0 ? "+" : "") + rMBMapLevel + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 						currTime = 0
 					}
 					if (rMBRepeatCounter > game.global.mapBonus)
@@ -1323,7 +1323,7 @@ function RautoMap() {
 				if (!rShouldTributeFarm && !rShouldMetFarm && rTrFCurrentMap != undefined) {
 					var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
 					if (getPageSetting('rMapRepeatCount')) {
-						debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rTrFMapLevel >= 0 ? "+" : "") + rTFMapLevel + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.")
+						debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rTrFMapLevel >= 0 ? "+" : "") + rTrFMapLevel + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.")
 					}
 					currTime = 0
 					if (typeof (rTrFTributesMapCount) !== 'undefined' && rTrFTributesMapCount !== 0) rTrFTributesMapCount = 0;
@@ -1440,7 +1440,7 @@ function RautoMap() {
 						recycleMap();
 					}
 					if (getPageSetting('rMapRepeatCount'))
-						debug("Smithy Farm took " + smithyMapCount[0] + " food map" + (smithyMapCount[0] === 1 ? ", " : "s, ") + smithyMapCount[1] + " wood map" + (smithyMapCount[1] === 1 ? ", " : "s, ") + smithyMapCount[2] + " metal map" + (smithyMapCount[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rTFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
+						debug("Smithy Farm took " + smithyMapCount[0] + " food map" + (smithyMapCount[0] === 1 ? ", " : "s, ") + smithyMapCount[1] + " wood map" + (smithyMapCount[1] === 1 ? ", " : "s, ") + smithyMapCount[2] + " metal map" + (smithyMapCount[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
 					currTime = 0
 					rSFCurrentMap = undefined;
 					if (typeof (rSFautoLevel) !== 'undefined' && rSFautoLevel !== Infinity) rSFautoLevel = Infinity;
