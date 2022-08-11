@@ -23,7 +23,7 @@ function BoneShrine() {
 		var rBSIndex;
 		var totalPortals = getTotalPortals();
 		for (var y = 0; y < indexes.length; y++) {
-			if (rBoneShrineBaseSettings[indexes[y]].done === totalPortals + "_" + game.global.world || !rBoneShrineBaseSettings[y].active) {
+			if (rBoneShrineBaseSettings[indexes[y]].done === totalPortals + "_" + game.global.world || !rBoneShrineBaseSettings[indexes[y]].active) {
 				continue;
 			}
 			if (rBoneShrineRunType[indexes[y]] == 'All') {
