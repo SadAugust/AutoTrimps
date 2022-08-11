@@ -55,6 +55,7 @@ function BoneShrine() {
 			var rBoneShrineCell = rBoneShrineSettings.cell
 			var rBoneShrineCharges = rBoneShrineSettings.boneamount
 			var rBoneShrineGather = rBoneShrineSettings.gather
+			if (game.global.challengeActive === 'Transmute' && rBoneShrineGather === 'metal') rBoneShrineGather = 'food'
 			var rBoneShrineSpendBelow = rBoneShrineSettings.bonebelow === -1 ? 0 : rBoneShrineSettings.bonebelow;
 			var rBoneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rBoneShrineSettings.atlantrimp
 			if (rBoneShrineAtlantrimp && rRunningDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
