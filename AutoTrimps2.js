@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v4.6.0', atscript = document.getElementById('AutoTrimps-script'), basepath = 'https://SadAugust.github.io/AutoTrimps_Local/', modulepath = 'modules/'; null !== atscript && (basepath = atscript.src.replace(/AutoTrimps2\.js$/, ''));
+var ATversion = 'SadAugust v5.6.0', atscript = document.getElementById('AutoTrimps-script'), basepath = 'https://SadAugust.github.io/AutoTrimps_Local/', modulepath = 'modules/'; null !== atscript && (basepath = atscript.src.replace(/AutoTrimps2\.js$/, ''));
 function ATscriptLoad(a, b) { null == b && debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(modulepath, \'example.js\'); '); var c = document.createElement('script'); null == a && (a = ''), c.src = basepath + a + b + '.js', c.id = b + '_MODULE', document.head.appendChild(c) }
 function ATscriptUnload(a) { var b = document.getElementById(a + "_MODULE"); b && (document.head.removeChild(b), debug("Removing " + a + "_MODULE", "other")) }
 ATscriptLoad(modulepath, 'utils');
@@ -243,39 +243,46 @@ function mainLoop() {
 		//Portal - Daily + Regular
 		if (autoTrimpSettings.RAutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) RautoPortal();
 		if (getPageSetting('RAutoPortalDaily') > 0 && game.global.challengeActive == "Daily" && game.global.world >= getPageSetting('RAutoPortalDaily')) RdailyAutoPortal();
-		//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
-		if (game.global.runningChallengeSquared && getPageSetting('c3finishrun') !== -1 && rC3EndZoneSetting != game.stats.zonesCleared.value) {
-			if ((getPageSetting('c3finishrun') - 1) === game.global.world)
-				debug("Warning: AT will download your save and abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish C3' or set it to -1")
-			if (getPageSetting('c3finishrun') <= game.global.world) {
-				debug("Pausing, downloading save and abandoning challenge as your run has reached yout specified end point.")
-				AbandonChallengeRuns()
+
+
+		if (game.global.runningChallengeSquared && rC3EndZoneSetting != game.stats.zonesCleared.value) {
+			if (getPageSetting('c3finishrun') !== -1) {
+				if ((getPageSetting('c3finishrun') - 1) === game.global.world)
+					debug("Warning: AT will download your save and abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish C3' or set it to -1")
+				if (getPageSetting('c3finishrun') <= game.global.world) {
+					debug("Pausing, downloading save and abandoning challenge as your run has reached yout specified end point.")
+					AbandonChallengeRuns()
+				}
+				if (getPageSetting('c3finishrun') <= game.c2[game.global.challengeActive]) {
+					debug("The zone input in the 'C3 Finish' setting is below or equal to your HZE for this challenge, increase it or it'll end earlier than you\'d probably like it to.");
+				}
 			}
-			if (getPageSetting('c3finishrun') <= game.c2[game.global.challengeActive]) {
-				debug("The zone input in the 'C3 Finish' setting is below or equal to your HZE for this challenge, increase it or it'll end earlier than you\'d probably like it to.");
+			//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
+			if (game.global.challengeActive == "Quest" && getPageSetting('RBuyBuildingsNew')) {
+				if (game.global.autoStructureSettingU2.Smithy.enabled) {
+					debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.")
+				}
+				//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
+				if (game.global.runningChallengeSquared && (getPageSetting('c3finishrun') === -1 ? Infinity : getPageSetting('c3finishrun')) <= game.c2.Quest) {
+					debug("The setting 'Finish C3' is lower or equal to your current Quest HZE. Increase this or smithies will be bought earlier than they should be.")
+				}
+			}
+			//Downsize -- Warning message when about map settings causing issues later.
+			if (game.global.challengeActive == "Downsize") {
+				if (game.global.world < 10) {
+					debug("Be aware that your usual C3 farming settings will not work properly for this Downsize run and likely cause it to stall out so high chance you will want to amend or disable them.")
+				}
 			}
 			rC3EndZoneSetting = game.stats.zonesCleared.value;
 		}
 		//Archeology
 		if (getPageSetting('Rarchon') && game.global.challengeActive == "Archaeology") archstring();
-		//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
-		if (game.global.challengeActive == "Quest" && getPageSetting('RBuyBuildingsNew')) {
-			if (game.global.autoStructureSettingU2.Smithy.enabled && RquestSmithyWarning != game.stats.zonesCleared.value) {
-				debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.")
-				RquestSmithyWarning = game.stats.zonesCleared.value;
-			}
-			//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
-			if (game.global.runningChallengeSquared && (getPageSetting('c3finishrun') === -1 ? Infinity : getPageSetting('c3finishrun')) <= game.c2.Quest && RquestSmithyWarning_Setting != game.stats.zonesCleared.value) {
-				debug("The setting 'Finish C3' is lower or equal to your current Quest HZE. Increase this or smithies will be bought earlier than they should be.")
-				RquestSmithyWarning_Setting = game.stats.zonesCleared.value;
-			}
-		}
+		
 		//AutoEquip
 		if (getPageSetting('Requipon') && (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([2, 3].indexOf(questcheck()) >= 0)))) RautoEquip();
 		//Combat
 		if (getPageSetting('BetterAutoFight') == 1) betterAutoFight();
 		if (getPageSetting('BetterAutoFight') == 2) betterAutoFight3();
-		//Avoid Empower on Dailies - Currently broken.
 		//Auto Equality Management
 		if (getPageSetting('rManageEquality') == 1) rManageEquality();
 		if (getPageSetting('rManageEquality') == 2) equalityManagement();

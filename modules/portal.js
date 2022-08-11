@@ -576,6 +576,7 @@ function Rresetmapvars() {
 	rMBCurrentMap = undefined;
 	rC3EndZoneSetting = -1;
 	currTime = 0;
+	shredActive = false;
 	//Void Maps
 	RdoVoids = false;
 	RneedToVoid = false;
@@ -603,8 +604,7 @@ function Rresetmapvars() {
 	rBlackBogCurrentMap = undefined;
 	//Quest
 	rShouldQuest = false;
-	Rquestequalityscale = false;
-	Rquestshieldzone = 0;
+	rHasQuested = false;
 	RquestSmithyWarning = -1;
 	RquestSmithyWarning_Setting = -1;
 	//Mayhem

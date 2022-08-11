@@ -780,8 +780,7 @@ var Rshoulddobogs = false;
 var rBlackBogCurrentMap = undefined;
 //Quest
 var rShouldQuest = 0;
-var Rquestequalityscale = false;
-var Rquestshieldzone = 0;
+var rHasQuested = false;
 var RquestSmithyWarning = -1;
 var RquestSmithyWarning_Setting = -1;
 //Mayhem
@@ -935,6 +934,14 @@ function RautoMap() {
 		return;
 	}
 
+	if (rShouldQuest == 0 && rHasQuested) {
+		if (game.global.mapsActive)
+			mapsClicked();
+		if (game.global.preMapsActive)
+			recycleMap();
+		rHasQuested = false;
+	}
+
 	//Vars
 	var mapenoughdamagecutoff = getPageSetting("Rmapcuntoff");
 	var customVars = MODULES["maps"];
@@ -1070,7 +1077,7 @@ function RautoMap() {
 						rMBSpecial = rMBSpecial.charAt(0) + "sc";
 					if (game.global.mapBonus >= rMBRepeatCounter && rMBCurrentMap != undefined) {
 						rMBCurrentMap = undefined;
-						if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+						if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rMBMapLevel >= 0 ? "+" : "") + rMBMapLevel + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 						currTime = 0
 					}
 					if (rMBRepeatCounter > game.global.mapBonus)
@@ -1182,8 +1189,8 @@ function RautoMap() {
 					rTFSettings.done = totalPortals + "_" + game.global.world;
 					rTFZoneCleared = game.stats.zonesCleared.value;
 					rTFCurrentMap = undefined;
+					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + " (" + (rTFMapLevel >= 0 ? "+" : "") + rTFMapLevel + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 					if (typeof (rTFautoLevel) !== 'undefined' && rTFautoLevel !== Infinity) rTFautoLevel = Infinity;
-					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 					currTime = 0
 					if (rTFAtlantrimp) runAtlantrimp()
 					saveSettings();
@@ -1316,7 +1323,7 @@ function RautoMap() {
 				if (!rShouldTributeFarm && !rShouldMetFarm && rTrFCurrentMap != undefined) {
 					var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
 					if (getPageSetting('rMapRepeatCount')) {
-						debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.")
+						debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rTrFMapLevel >= 0 ? "+" : "") + rTrFMapLevel + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.")
 					}
 					currTime = 0
 					if (typeof (rTrFTributesMapCount) !== 'undefined' && rTrFTributesMapCount !== 0) rTrFTributesMapCount = 0;
@@ -1336,7 +1343,7 @@ function RautoMap() {
 	}
 
 	//Smithy Farming
-	if (game.buildings.Smithy.locked == 0 && ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && rShouldQuest === 10))) {
+	if (game.buildings.Smithy.locked == 0 && game.global.challengeActive !== 'Transmute' && ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && rShouldQuest === 10))) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
 		var rSFZone = game.global.challengeActive == 'Quest' ? [game.global.world] : rRunningC3 ? getPageSetting('rc3SmithyFarmZone') : rRunningDaily ? getPageSetting('rdSmithyFarmZone') : getPageSetting('rSmithyFarmZone');
 		if (rSFZone.includes(game.global.world)) {
@@ -1433,7 +1440,7 @@ function RautoMap() {
 						recycleMap();
 					}
 					if (getPageSetting('rMapRepeatCount'))
-						debug("Smithy Farm took " + smithyMapCount[0] + " food map" + (smithyMapCount[0] === 1 ? ", " : "s, ") + smithyMapCount[1] + " wood map" + (smithyMapCount[1] === 1 ? ", " : "s, ") + smithyMapCount[2] + " metal map" + (smithyMapCount[2] === 1 ? " " : "s ") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
+						debug("Smithy Farm took " + smithyMapCount[0] + " food map" + (smithyMapCount[0] === 1 ? ", " : "s, ") + smithyMapCount[1] + " wood map" + (smithyMapCount[1] === 1 ? ", " : "s, ") + smithyMapCount[2] + " metal map" + (smithyMapCount[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
 					currTime = 0
 					rSFCurrentMap = undefined;
 					if (typeof (rSFautoLevel) !== 'undefined' && rSFautoLevel !== Infinity) rSFautoLevel = Infinity;
@@ -2270,7 +2277,8 @@ function RautoMap() {
 			}
 			else if (rShouldQuest > 0 && rShouldQuest !== 10) {
 				questSpecial = rShouldQuest == 1 || rShouldQuest == 4 ? 'lsc' : rShouldQuest == 2 ? 'lwc' : rShouldQuest == 3 || rShouldQuest == 7 ? 'lmc' : 'fa';
-				selectedMap = RShouldFarmMapCreation((rShouldQuest !== 6 ? -1 : 0), questSpecial);
+				selectedMap = RShouldFarmMapCreation((rShouldQuest !== 6 ? autoMapLevel() : (autoMapLevel() >= 0 ? autoMapLevel() : 0)), questSpecial);
+				rHasQuested = true;
 
 			} else {
 				for (var map in game.global.mapsOwnedArray) {
@@ -2571,7 +2579,7 @@ function RautoMap() {
 
 			if (rShouldQuest > 0 && rShouldQuest !== 10) {
 				questSpecial = rShouldQuest == 1 || rShouldQuest == 4 ? 'lsc' : rShouldQuest == 2 ? 'lwc' : rShouldQuest == 3 || rShouldQuest == 7 ? 'lmc' : 'fa';
-				PerfectMapCost((rShouldQuest !== 6 ? -1 : 0), questSpecial);
+				PerfectMapCost((rShouldQuest !== 6 ? autoMapLevel() : (autoMapLevel() >= 0 ? autoMapLevel() : 0)), questSpecial);
 			}
 			//Mayhem farming
 			if (Rshouldmayhem > 0 && getPageSetting('Rmayhemmap') == 2) {
