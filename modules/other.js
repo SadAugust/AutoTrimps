@@ -2227,7 +2227,7 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	//Remove Nova stack mults from damage calcs if we're trying to do maps
 	if ((mapType === 'map' || mapType === 'void') && !game.global.mapsActive && game.global.novaMutStacks > 0) {
 		ourDmg /= u2Mutations.types.Nova.trimpAttackMult();
-		enemyDmg /= u2Mutation.types.Nova.enemyAttackMult();
+		enemyDmg /= u2Mutations.types.Nova.enemyAttackMult();
 	}
 
 	if (forceOneShot) ourDmg *= 2;
