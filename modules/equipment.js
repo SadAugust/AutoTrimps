@@ -569,6 +569,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		!resourceMaxPercent && getPageSetting('Requippercent') < 0 ? 1 :
 			!resourceMaxPercent ? getPageSetting('Requippercent') / 100 :
 				resourceMaxPercent
+	var metalShred = false;
 	var ignoreShield = !ignoreShield ? false : true;
 	var mostEfficient = [
 		{
@@ -584,6 +585,11 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			cost: 0,
 		}
 	];
+
+	//Daily Shred variables
+	if (game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
+		metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+	}
 
 	var highestPrestige = 0;
 	for (var i in RequipmentList) {
@@ -606,12 +612,18 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		if (RequipmentList[i].Resource == 'metal' && !zoneGo && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
 		//Skips through equips if they don't cost metal and you don't have enough resources for them.
 		if (RequipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
+		//Skips through equips if you're on a metal shred daily and you don't have enough resources for them.
+		if (RequipmentList[i].Resource === 'metal' && metalShred && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) {
+			continue;
+		}
 
+		var metalTotal = 0
+		if (metalShred) metalTotal = metalShred && (rShouldTimeFarm || rShouldMaxMapBonus) ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 45, true, workerRatio), false, true, rShouldTimeFarm ? rTFMapLevel : rShouldMaxMapBonus ? rMBMapLevel : 0) : game.resources.metal.owned;
 		var nextLevelValue = game.equipment[i][RequipmentList[i].Stat + "Calculated"];
 		var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
 		var safeRatio = nextLevelCost / nextLevelValue;
 
-		if (buyPrestigeMaybe(i, resourceMaxPercent)[0] && (buyPrestigeMaybe(i, resourceMaxPercent)[1] > mostEfficient[isAttack].statPerResource || buyPrestigeMaybe(i, resourceMaxPercent)[3])) {
+		if ((buyPrestigeMaybe(i, resourceMaxPercent)[0] && (buyPrestigeMaybe(i, resourceMaxPercent)[1] > mostEfficient[isAttack].statPerResource || buyPrestigeMaybe(i, resourceMaxPercent)[3])) && !(metalShred && metalTotal < buyPrestigeMaybe(i, resourceMaxPercent)[2])) {
 			safeRatio = buyPrestigeMaybe(i, resourceMaxPercent)[1];
 			nextLevelCost = buyPrestigeMaybe(i, resourceMaxPercent)[2]
 			prestige = true;
@@ -690,7 +702,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 
 function RautoEquip() {
 
-	if (!getPageSetting('Requipon') || (!rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && rShouldSmithyFarm) || rBSRunningAtlantrimp || typeof (rTFAtlantrimp) !== 'undefined' && rTFAtlantrimp)
+	if (!getPageSetting('Requipon') || (!rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && rShouldSmithyFarm) || (game.mapUnlocks.AncientTreasure.canRunOnce && (rBSRunningAtlantrimp || (typeof (rTFAtlantrimp) !== 'undefined' && rTFAtlantrimp))))
 		return;
 
 	var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');

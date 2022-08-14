@@ -694,11 +694,12 @@ function RgetCritMulti(floorCrit, mult) {
 		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * critD
 }
 
-function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useTitimp, runningUnlucky, floorCrit) {
+function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useTitimp, runningUnlucky, floorCrit, mapType) {
 
 	useTitimp = useTitimp ? true : false;
 	runningUnlucky = !runningUnlucky ? false : true;
 	floorCrit = !floorCrit ? false : true;
+	mapType = !mapType ? 'world' : mapType;
 	// Base + equipment
 	var number = 6;
 	var equipmentList = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword", "Arbalest"];
@@ -770,7 +771,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	number *= game.global.challengeActive == 'Nurture' && game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
 	number *= game.global.challengeActive == 'Alchemy' ? alchObj.getPotionEffect('Potion of Strength') : 1;
 	if (game.global.stringVersion >= '5.8.0') {
-		number *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
+		number *= !game.global.mapsActive && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
 		//Smithies (smithless challenge)
 		number *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 	}
@@ -972,9 +973,9 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType) { //Works out a
 	number *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	number *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	number *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
-	if (game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined') {
-		if (!query && game.global.world > 200 && game.global.universe === 2 && !game.global.mapsActive && !game.global.preMapsActive) {
-			if (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.length > 0) {
+	if (game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2) {
+		if (game.global.world > 200 && game.global.universe === 2 && !game.global.mapsActive) {
+			if (!query && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined' && game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.length > 0) {
 				var cell = game.global.gridArray[game.global.lastClearedCell + 1]
 				/* if (cell.u2Mutation.indexOf('CMP') == -1) {
 					if (cell.u2Mutation.indexOf('NVA') != -1) number *= 0.01;
@@ -983,13 +984,14 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType) { //Works out a
 				number *= (1.01, game.global.world - 201)
 				if (cell.u2Mutation.indexOf('RGE') != -1 || (cell.cc && cell.cc[3] > 0)) number *= u2Mutations.types.Rage.enemyAttackMult();
 			}
+			number *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
 		}
-		number *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
 	}
 	return number;
 }
 
-function RcalcBadGuyDmgMod() {
+function RcalcBadGuyDmgMod(forceMaps) {
+	forceMaps = !forceMaps ? false : forceMaps;
 	number = 1;
 	number *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
 	number *= game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
@@ -1001,12 +1003,12 @@ function RcalcBadGuyDmgMod() {
 	number *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
 	if (game.global.challengeActive == "Daily") {
 		number *= typeof game.global.dailyChallenge.badStrength !== 'undefined' ? dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength) : 1;
-		number *= typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength) : 1;
+		number *= typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && (game.global.mapsActive || forceMaps) ? dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength) : 1;
 		number *= typeof game.global.dailyChallenge.bloodthirst !== 'undefined' ? dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks) : 1;
-		number *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
+		number *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive && !forceMaps ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
 	if (game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined') {
-		if (game.global.world > 200 && game.global.universe === 2 && !game.global.mapsActive && !game.global.preMapsActive) {
+		if (game.global.world > 200 && game.global.universe === 2 && !game.global.mapsActive) {
 			if (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.length > 0) {
 				var cell = game.global.gridArray[game.global.lastClearedCell + 1]
 				/* if (cell.u2Mutation.indexOf('CMP') == -1) {
@@ -1015,8 +1017,8 @@ function RcalcBadGuyDmgMod() {
 				} */
 				if (cell.u2Mutation.indexOf('RGE') != -1 || (cell.cc && cell.cc[3] > 0)) number *= u2Mutations.types.Rage.enemyAttackMult();
 			}
+			number *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
 		}
-		number *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
 	}
 	return number;
 }
@@ -1120,7 +1122,7 @@ function RcalcEnemyHealth(world) {
 	//Dailies
 	if (game.global.challengeActive == 'Daily') {
 		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
-		health *= typeof game.global.dailyChallenge.badMapHealthHealth !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapHealthHealth.getMult(game.global.dailyChallenge.badMapHealthHealth.strength, game.global.dailyChallenge.badMapHealthHealth.stacks) : 1;
+		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
 		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
 
@@ -1166,7 +1168,7 @@ function RcalcEnemyHealthMod(world, cell, name, type, query) {
 	//Dailies
 	if (game.global.challengeActive == 'Daily') {
 		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
-		health *= typeof game.global.dailyChallenge.badMapHealthHealth !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapHealthHealth.getMult(game.global.dailyChallenge.badMapHealthHealth.strength, game.global.dailyChallenge.badMapHealthHealth.stacks) : 1;
+		health *= typeof game.global.dailyChallenge.badMapHealthHealth !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
 		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
 

@@ -2134,10 +2134,13 @@ function rManageEquality() {
 	}
 }
 
-function autoMapLevel(maxLevel, special, biome) {
-	maxLevel = !maxLevel ? 10 : maxLevel;
-	special = !special ? 'lmc' : special;
-	biome = !biome ? 'Farmlands' : biome;
+function autoMapLevel(maxLevel, minLevel, floorCrit) {
+	var maxLevel = typeof (maxLevel) === 'undefined' ? 10 : maxLevel;
+	var minLevel = typeof (minLevel) === 'undefined' ? 0 - game.global.world + 6 : minLevel;
+	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
+	var biome = !biome ? 'Farmlands' : biome;
+	var farmingType = !farmingType ? false : farmingType;
+	var floorCrit = !floorCrit ? false : floorCrit;
 
 	if (maxLevel > 10) maxLevel = 10;
 	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
@@ -2147,31 +2150,36 @@ function autoMapLevel(maxLevel, special, biome) {
 	var minZone = 0 - game.global.world + 6
 	var dmg = game.global.challengeActive === 'Glass' ? 'min' : 'avg'
 
-	var runningUnlucky = game.global.challengeActive == 'Unlucky';
+
 	var difficulty = 0.75;
 	var ourHealth = RcalcOurHealth(questShieldBreak) * 2;
 	//var nova = game.global.novaMutStacks > 0 ? game.global.novaMutStacks / 100 : 1;
 	//if (game.global.novaMutStacks > 0) enemyDmg /= u2Mutations.types.Nova.enemyAttackMult();
 	//if ((mapType === 'map' || mapType === 'void') && !game.global.mapsActive && game.global.novaMutStacks > 0) ourDmg /= u2Mutations.types.Nova.trimpAttackMult();
 
-	for (y = maxLevel; y > minZone; y--) {
+	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
 		var equalityAmt = equalityQuery(true, false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
-		var ourDmg = (RcalcOurDmg(dmg, equalityAmt, true, true, false)) * 2;
+		var ourDmg = (RcalcOurDmg(dmg, equalityAmt, true, true, false, false, floorCrit)) * 2;
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Snimp', 'map', true) * difficulty;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, true, 'map') * 1.5 * difficulty;
+
+
+		if (!game.global.mapsActive && game.global.novaMutStacks > 0) {
+			ourDmg /= u2Mutations.types.Nova.trimpAttackMult();
+			enemyDmg /= u2Mutation.types.Nova.enemyAttackMult();
+		}
 
 		if ((game.resources.fragments.owned >= PerfectMapCost(mapLevel, special, biome) && enemyHealth <= ourDmg) && ((enemyDmg <= ourHealth))) {
 			return mapLevel;
 		}
-		if (y === minZone) {
-			return minZone;
+		if (y === minLevel) {
+			return minLevel;
 		}
-
 	}
 }
 
-function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty, forceOneShot) {
+function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty, forceOneShot, floorCrit) {
 	//Turning off equality scaling
 	game.portal.Equality.scalingActive = false;
 	//Misc vars
@@ -2197,6 +2205,7 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var runningTrappa = game.global.challengeActive == 'Trappapalooza'
 	var questShieldBreak = ((game.global.challengeActive == 'Quest' && questcheck() == 8) || game.global.challengeActive == 'Berserk');
 	var runningGlass = game.global.challengeActive == 'Glass';
+	var floorCrit = !floorCrit ? false : floorCrit;
 
 	//Initialising name/health/dmg variables
 	//Enemy stats
@@ -2208,14 +2217,18 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * 1.5 * difficulty : enemyAttack * 1.5 * difficulty;
 	var enemyDmg = query ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType) * difficulty * 1.5 : enemyDmg;
 	if (!query || mapType === 'void') enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
-	//if (!game.global.mapsActive && mapType !== 'world' && game.global.novaMutStacks > 0) enemyDmg /= u2Mutations.types.Nova.enemyAttackMult();
 	var enemyDmgEquality = 0;
 	var bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 	//Our stats
 	var ourHealth = query ? RcalcOurHealth(questShieldBreak) : remainingHealth();
 	var ourHealthMax = RcalcOurHealth(questShieldBreak)
-	var ourDmg = RcalcOurDmg('min', 0, mapping, true, false) * bionicTalent;
-	//if ((mapType === 'map' || mapType === 'void') && !game.global.mapsActive && game.global.novaMutStacks > 0) ourDmg /= u2Mutations.types.Nova.trimpAttackMult();
+	var ourDmg = RcalcOurDmg('min', 0, mapping, true, false, false, floorCrit) * bionicTalent;
+
+	//Remove Nova stack mults from damage calcs if we're trying to do maps
+	if ((mapType === 'map' || mapType === 'void') && !game.global.mapsActive && game.global.novaMutStacks > 0) {
+		ourDmg /= u2Mutations.types.Nova.trimpAttackMult();
+		enemyDmg /= u2Mutation.types.Nova.enemyAttackMult();
+	}
 
 	if (forceOneShot) ourDmg *= 2;
 	var ourDmgEquality = 0;
@@ -2232,7 +2245,7 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 			ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 			if (runningUnlucky) {
 				var unluckyDmg = Number(RcalcOurDmg('min', i, mapping, true, (mapType === 'map' ? true : false), true) * bionicTalent)
-				//if ((mapType === 'map' || mapType === 'void') && !game.global.mapsActive && game.global.novaMutStacks > 0) unluckyDmg /= u2Mutations.types.Nova.trimpAttackMult();
+				if ((mapType === 'map' || mapType === 'void') && !game.global.mapsActive && game.global.novaMutStacks > 0) unluckyDmg /= u2Mutations.types.Nova.trimpAttackMult();
 				if (unluckyDmg.toString()[0] % 2 == 1)
 					continue;
 			}
@@ -2246,6 +2259,9 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 				return i;
 			}
 			else if (ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
+				/* console.log("dmg =" + enemyAttack)
+				console.log("health =" + enemyHealth)
+				console.log(i); */
 				return i;
 			}
 			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
@@ -2299,7 +2315,8 @@ function equalityManagement() {
 		//Challenge conditions
 		var runningUnlucky = game.global.challengeActive == 'Unlucky';
 		var runningTrappa = game.global.challengeActive == 'Trappapalooza'
-		var questShieldBreak = game.global.challengeActive == 'Quest' && questcheck() == 8;
+		var runningBerserk = game.global.challengeActive == 'Berserk'
+		var questShieldBreak = ((game.global.challengeActive == 'Quest' && questcheck() == 8) || runningBerserk);
 		var runningGlass = game.global.challengeActive == 'Glass';
 
 		//Initialising name/health/dmg variables
@@ -2325,6 +2342,7 @@ function equalityManagement() {
 
 		//var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
 		var fastEnemy = game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && type === 'world' ? fastimps.includes(enemyName) || game.global.gridArray[currentCell + 1].u2Mutation.length > 0 : !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
+		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100)
 		fastEnemy = !mapping && typeof game.global.dailyChallenge.empower !== 'undefined' ? true : fastEnemy
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
 
@@ -2340,7 +2358,7 @@ function equalityManagement() {
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourHealth < (ourHealthMax * 0.99) && gammaToTrigger == 4 && !runningTrappa) {
+				else if (ourHealth < (ourHealthMax * 0.99) && gammaToTrigger == 4 && !runningTrappa && !runningBerserk) {
 					if ((questShieldBreak) || !mapping) {
 						mapsClicked();
 						mapsClicked();
@@ -2793,6 +2811,9 @@ function automateSpireAssault() {
 
 		if (autoBattle.enemyLevel === 109 && autoBattle.items.Haunted_Harpoon.level === 5 && autoBattle.rings.level === 36 && autoBattle.shards >= autoBattle.upgradeCost('Haunted_Harpoon'))
 			autoBattle.upgrade('Haunted_Harpoon')
+
+		if (autoBattle.enemyLevel === 117 && autoBattle.rings.level < 40 && autoBattle.shards >= autoBattle.getRingLevelCost())
+			autoBattle.levelRing();
 
 		if (autoBattle.enemyLevel == 92) { //6s kills - 2.14h cleartime
 			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
