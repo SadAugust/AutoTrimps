@@ -694,12 +694,11 @@ function RgetCritMulti(floorCrit, mult) {
 		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * critD
 }
 
-function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useTitimp, runningUnlucky, floorCrit, mapType) {
+function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useTitimp, runningUnlucky, floorCrit) {
 
 	useTitimp = useTitimp ? true : false;
 	runningUnlucky = !runningUnlucky ? false : true;
 	floorCrit = !floorCrit ? false : true;
-	mapType = !mapType ? 'world' : mapType;
 	// Base + equipment
 	var number = 6;
 	var equipmentList = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword", "Arbalest"];
