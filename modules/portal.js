@@ -575,6 +575,7 @@ function Rresetmapvars() {
 	rShouldMaxMapBonus = false;
 	rShouldSmithless = false;
 	rMBCurrentMap = undefined;
+	rVMCurrentMap = undefined;
 	rC3EndZoneSetting = -1;
 	currTime = 0;
 	shredActive = false;

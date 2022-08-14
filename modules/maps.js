@@ -745,6 +745,7 @@ var RdoMaxMapBonus = false;
 var RvanillaMapatZone = false;
 var rShouldMaxMapBonus = false;
 var rMBCurrentMap = undefined;
+var rVMCurrentMap = undefined;
 var rC3EndZoneSetting = -1;
 currTime = 0;
 //Void Maps
@@ -847,6 +848,10 @@ function RupdateAutoMapsStatus(get) {
 	//Setting up status
 	else if (!game.global.mapsUnlocked) status = '&nbsp;';
 	//Time, Tribute, Equip, Ship Farming, Prestige Raiding, Map bonus, void maps
+	else if (RdoVoids) {
+		var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
+		status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
+	}
 	else if (rFragmentFarming) status = 'Fragment Farming to: an amount (TBI)';
 	else if (rShouldPrestigeRaid) status = 'Prestige Raiding: ' + Rgetequips(raidzones, false) + ' items remaining';
 	else if (Rshouldalchfarm) status = 'Alchemy Farming ' + alchObj.potionNames[potion] + " (" + alchObj.potionsOwned[potion] + "/" + alchpotions.toString().replace(/[^\d:-]/g, '') + ")";
@@ -864,10 +869,6 @@ function RupdateAutoMapsStatus(get) {
 	else if (rShouldEquipFarm) status = 'Equip Farming to ' + equipfarmdynamicHD().toFixed(2) + " and " + estimateEquipsForZone()[2] + " Equality";
 	else if (rShouldMaxMapBonus) status = 'Map Bonus: ' + game.global.mapBonus + "/" + rMBRepeatCounter;
 	else if (rShouldSmithless) status = 'Smithless Map Bonus: ' + game.global.mapBonus + "/10";
-	else if (RdoVoids) {
-		var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
-		status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
-	}
 	//Challenges
 	else if (Rshoulddobogs) status = 'Black Bogs: ' + (stacksum - game.global.mapRunCounter) + " remaining";
 	else if (rShouldQuest) status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
@@ -957,7 +958,11 @@ function RautoMap() {
 	var rRunningDaily = game.global.challengeActive == "Daily";
 	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
 
-	//Void Vars -- Checks whether you're ina  daily and uses those settings if you are
+
+
+
+
+	/* //Void Vars -- Checks whether you're ina  daily and uses those settings if you are
 	voidMapLevelSettingCell = rRunningC3 && getPageSetting('Rc3voidscell') > 0 ? getPageSetting('Rc3voidscell') :
 		rRunningDaily && getPageSetting('Rdvoidscell') > 0 ? getPageSetting('Rdvoidscell') :
 			rRunningRegular && getPageSetting('Rvoidscell') > 0 ? getPageSetting('Rvoidscell') :
@@ -981,10 +986,8 @@ function RautoMap() {
 		((voidMapLevelSetting.includes(game.global.world)) ||
 			(voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1]) ||
 			(voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1] && game.global.world <= (voidMapLevelSetting[voidMapLevelSetting.length - 1] + voidMapLevelPlus)))
-	);
+	); */
 
-	if (game.global.totalVoidMaps <= 0 || !RneedToVoid)
-		RdoVoids = false;
 
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, false);
@@ -1029,6 +1032,7 @@ function RautoMap() {
 	rTributeFarming = false;
 	rTrFTributes = 0;
 	rTrFMeteorologists = 0;
+	RneedToVoid = false;
 	//Daily Shred
 	shredActive = false;
 
@@ -1045,6 +1049,44 @@ function RautoMap() {
 
 	var totalPortals = getTotalPortals();
 
+
+	//Void Maps
+	if ((rRunningRegular && autoTrimpSettings.rVoidMapDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdVoidMapDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3VoidMapDefaultSettings.value.active) && rShouldQuest === 0) {
+		//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
+		rVMZone = rRunningC3 ? getPageSetting('rc3VoidMapZone') : rRunningDaily ? getPageSetting('rdVoidMapZone') : getPageSetting('rVoidMapZone');
+		var rVMBaseSettings = rRunningC3 ? autoTrimpSettings.rc3VoidMapSettings.value : rRunningDaily ? autoTrimpSettings.rdVoidMapSettings.value : autoTrimpSettings.rVoidMapSettings.value;
+		rVMIndex = null;
+		for (var y = 0; y < rVMZone.length; y++) {
+			//debug((rVMZone[y] + (rRunningDaily ? dailyModiferReduction() : 0)) + rVMBaseSettings[y].voidMod)
+			if (((rVMZone[y] + (rRunningDaily ? dailyModiferReduction() : 0)) + rVMBaseSettings[y].voidMod) - game.global.world >= 0 && game.global.world >= (rVMZone[y] + (rRunningDaily ? dailyModiferReduction() : 0)) && rVMBaseSettings[y].active)
+				//if ((game.global.world + (rRunningDaily ? dailyModiferReduction() : 0)) - rVMZone[y] >= 0 && rVMBaseSettings[y].active)
+				rVMIndex = rVMZone.indexOf(rVMZone[y]);
+			else
+				continue;
+		}
+		if (rVMIndex !== null && rVMIndex >= 0) {
+			var rVMSettings = rVMBaseSettings[rVMIndex];
+			rVMRepeatCounter = rVMSettings.repeat;
+			if (rVMSettings.active) {
+				var rVMCell = rVMSettings.cell;
+				if (game.global.lastClearedCell + 2 >= rVMCell) {
+					var rVMJobRatio = rVMSettings.jobratio
+
+					if (rVMCurrentMap != undefined && game.global.totalVoidMaps === 0) {
+						if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+						currTime = 0
+						rVMCurrentMap = undefined;
+						RdoVoids = false;
+					}
+					if (game.global.totalVoidMaps > 0)
+						RneedToVoid = true;
+				}
+			}
+		}
+		if (game.global.totalVoidMaps <= 0 || !RneedToVoid)
+			RdoVoids = false;
+	}
+
 	//Daily Shred variables
 	if (game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
 		shredActive = true;
@@ -1052,6 +1094,7 @@ function RautoMap() {
 		var woodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
 		var metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	}
+
 	//Map Bonus
 	if ((rRunningRegular && autoTrimpSettings.rMapBonusDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdMapBonusDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3MapBonusDefaultSettings.value.active) && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
