@@ -243,17 +243,6 @@ function initializeAllSettings() {
 	createSetting('rdMeltSmithyShred', 'Melt Smithy (shred)', 'Run the Melting Point Map to gain one extra Smithy when at or above this value and have either the metal or wood shred modifier active. ', 'value', '-1', null, 'Daily');
 	createSetting('Rdequipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency. ', 'boolean', false, null, "Daily");
 	createSetting('Rdequipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input. ', 'multiValue', -1, null, "Daily");
-	//Radon Daily Voids
-	createSetting('RDailyVoidMod', 'Daily Void Zone', 'What zone to do void maps in dailies. Disable with -1.<br><br>Can input multiple values and it\'ll run voids on each of those zones.', 'multiValue', -1, null, 'Daily');
-	createSetting('Rdvoidscell', 'Daily Void Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70.', 'value', -1, null, 'Daily');
-	createSetting('RdRunNewVoidsUntilNew', 'Daily New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Daily');
-
-	//Daily Void Maps
-	createSetting('rdVoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'Daily');
-	createSetting('rdVoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Daily');
-	createSetting('rdVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
-	createSetting('rdVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Daily');
-	createSetting('rdVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Daily');
 
 	//Helium Spire
 	document.getElementById('dscryvoidmaps').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -323,6 +312,13 @@ function initializeAllSettings() {
 	createSetting('rdRaidingSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
 	createSetting('rdRaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Daily');
 	createSetting('rdRaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
+
+	//Daily Void Maps
+	createSetting('rdVoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'Daily');
+	createSetting('rdVoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Daily');
+	createSetting('rdVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
+	createSetting('rdVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Daily');
+	createSetting('rdVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Daily');
 
 	//Bone Shrine Popup
 	createSetting('rdBoneShrinePopup', 'Bone Shrine Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Daily');
@@ -500,21 +496,16 @@ function initializeAllSettings() {
 	createSetting('Rmapcuntoff', 'Map Cut Off', 'Decides when to get max map bonus. 4 is default. This means it will take 1 hit to kill an enemy if in D stance.', 'value', '4', null, 'Μaps');
 	createSetting('RDisableFarm', 'Farming H:D', 'If H:D goes above this value, it will farm for Damage & Health. The lower this setting, the more it will want to farm. Default is <b>16<b/>. <b>-1 to disable farming!</b>', 'value', -1, null, 'Μaps');
 
-	//Void Maps
-	createSetting('RVoidMaps', 'Void Maps', '<b>0 to disable</b> The zone at which you want all your void maps to be cleared inclusive of the zone you type. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will cause \'New Voids Mod\' to start applying after the last input. <br><br>Runs them at Cell 70 by default.', 'multiValue', '0', null, 'Μaps');
-	createSetting('Rvoidscell', 'Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Μaps');
-	createSetting('RRunNewVoidsUntilNew', 'New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197) If you have 2 void map zones it\'ll use this setting after the last one has been cleared.<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Μaps');
-
-
-	//Void Maps
-	createSetting('rVoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'Μaps');
-	createSetting('rVoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Μaps');
-	createSetting('rVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Μaps');
-	createSetting('rVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
-
 	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value.', 'value', '-1', null, 'Μaps');
-	document.getElementById('Rmeltsmithy').parentNode.insertAdjacentHTML('afterend', '<br>');
+
+	//Ships 
+	createSetting('rShipFarm', 'Ship Farming', 'Turn Ship Farming off or on.', 'boolean', false, null, 'Μaps');
+	createSetting('rShipFarmPopup', 'Worshipper Farm Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Μaps');
+	createSetting('rShipFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rShipFarmDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food' }, null, 'Μaps');
+	createSetting('rShipFarmZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+	createSetting('Rshipspending', 'SF: Spending Pct', 'What percentage of owned food to spend on Worshippers. -1 for 100% or value between 1-100 for lower.', 'value', '-1', null, "Μaps");
+	document.getElementById('rShipFarmPopup').parentNode.insertAdjacentHTML('afterend', '<br>');
 	//Prismatic Palace
 	createSetting('Rprispalace', 'Prismatic Palace', 'Run Prismatic Palace when its unlocked. ', 'boolean', true, null, 'Μaps');
 	//Atlantrimp
@@ -553,13 +544,18 @@ function initializeAllSettings() {
 	createSetting('rSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'Μaps');
 	createSetting('rSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
 
-	//Ships 
-	createSetting('rShipFarm', 'Ship Farming', 'Turn Ship Farming off or on.', 'boolean', false, null, 'Μaps');
-	createSetting('rShipFarmPopup', 'Worshipper Farm Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Μaps');
-	createSetting('rShipFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rShipFarmDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food' }, null, 'Μaps');
-	createSetting('rShipFarmZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
-	createSetting('Rshipspending', 'SF: Spending Pct', 'What percentage of owned food to spend on Worshippers. -1 for 100% or value between 1-100 for lower.', 'value', '-1', null, "Μaps");
+	//Prestige Raiding
+	createSetting('rRaidingPopup', 'Raiding Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Μaps');
+	createSetting('rRaidingSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rRaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Μaps');
+	createSetting('rRaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+
+	//Void Maps
+	createSetting('rVoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'Μaps');
+	createSetting('rVoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Μaps');
+	createSetting('rVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Μaps');
+	createSetting('rVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
 
 	//Bone Shrine (bone) 
 	if (game.global.stringVersion >= '5.7.0') {
@@ -570,13 +566,6 @@ function initializeAllSettings() {
 		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
 		createSetting('rBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Μaps");
 	}
-
-	//Prestige Raiding
-	createSetting('rRaidingPopup', 'Raiding Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Μaps');
-	createSetting('rRaidingSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rRaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Μaps');
-	createSetting('rRaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
-
 
 	//Spire
 	//Helium
@@ -652,16 +641,6 @@ function initializeAllSettings() {
 
 	//C3 Voids
 	document.getElementById('c3GM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('Rc3VoidMod', 'C3 Void Zone', 'What zone to do void maps in dailies. Disable with -1.<br><br>Can input multiple values and it\'ll run voids on each of those zones.', 'multiValue', -1, null, 'C3');
-	createSetting('Rc3voidscell', 'C3 Void Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70.', 'value', -1, null, 'C3');
-	createSetting('Rc3RunNewVoidsUntilNew', 'C3 New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'C3');
-
-	//C3 Void Maps
-	createSetting('rc3VoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'C3');
-	createSetting('rc3VoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'C3');
-	createSetting('rc3VoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
-	createSetting('rc3VoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'C3');
-	createSetting('rc3VoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'C3');
 
 	//C3 Map Bonus
 	createSetting('rc3MapBonus', 'Map Bonus', 'Turn this on if you want to use Map Bonus. ', 'boolean', false, null, 'C3');
@@ -671,7 +650,6 @@ function initializeAllSettings() {
 	createSetting('rc3MapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'C3');
 
 	//C3 Time Farm
-	document.getElementById('Rc3RunNewVoidsUntilNew').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rc3TimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'C3');
 	createSetting('rc3TimeFarmPopup', 'Time Farm Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'C3');
 	createSetting('rc3TimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
@@ -697,6 +675,13 @@ function initializeAllSettings() {
 	createSetting('rc3RaidingSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3RaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'C3');
 	createSetting('rc3RaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
+
+	//C3 Void Maps
+	createSetting('rc3VoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'C3');
+	createSetting('rc3VoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'C3');
+	createSetting('rc3VoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
+	createSetting('rc3VoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'C3');
+	createSetting('rc3VoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'C3');
 
 	//Bone Shrine popup
 	createSetting('rc3BoneShrinePopup', 'Bone Shrine Settings', 'Click to adjust settings.', 'infoclick', false, null, 'C3');
@@ -1974,9 +1959,7 @@ function updateCustomButtons() {
 
 	radonon ? turnOn('Rdmeltsmithy') : turnOff('Rdmeltsmithy');
 	radonon ? turnOn('rdMeltSmithyShred') : turnOff('rdMeltSmithyShred');
-	radonon ? turnOn('RDailyVoidMod') : turnOff('RDailyVoidMod');
-	radonon ? turnOn('Rdvoidscell') : turnOff('Rdvoidscell');
-	radonon ? turnOn('RdRunNewVoidsUntilNew') : turnOff('RdRunNewVoidsUntilNew');
+
 
 	//Radon Daily Gear & Raid
 	radonon ? turnOn('Rdequipon') : turnOff('Rdequipon');
@@ -2052,9 +2035,6 @@ function updateCustomButtons() {
 	radonon ? turnOn('c3meltingpoint') : turnOff('c3meltingpoint');
 	radonon ? turnOn('c3buildings') : turnOff('c3buildings');
 	radonon && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
-	radonon ? turnOn('Rc3VoidMod') : turnOff('Rc3VoidMod');
-	radonon ? turnOn('Rc3voidscell') : turnOff('Rc3voidscell');
-	radonon ? turnOn('Rc3RunNewVoidsUntilNew') : turnOff('Rc3RunNewVoidsUntilNew');
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
 
 	//C3 Time Farm
@@ -2241,9 +2221,6 @@ function updateCustomButtons() {
 	radonon ? turnOn('rMapRepeatCount') : turnOff('rMapRepeatCount');
 	radonon ? turnOn('automateSpireAssault') : turnOff('automateSpireAssault');
 
-	radonon ? turnOn('RVoidMaps') : turnOff('RVoidMaps');
-	radonon ? turnOn('Rvoidscell') : turnOff('Rvoidscell');
-	radonon ? turnOn('RRunNewVoidsUntilNew') : turnOff('RRunNewVoidsUntilNew');
 	radonon && game.portal.Prismal.radLevel < 50 ? turnOn('Rprispalace') : turnOff('Rprispalace');
 
 	//Atlantrimp
@@ -2405,13 +2382,13 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring3') : turnOff('Rarchstring3');
 
 	//Mayhem
-	radonon ? turnOn('Rmayhemon') : turnOff('Rmayhemon');
-	radonon && getPageSetting('Rmayhemon') ? turnOn('Rmayhemattack') : turnOff('Rmayhemattack');
-	radonon && getPageSetting('Rmayhemon') && getPageSetting('Rmayhemattack') ? turnOn('Rmayhemabcut') : turnOff('Rmayhemabcut');
-	radonon && getPageSetting('Rmayhemon') && getPageSetting('Rmayhemattack') ? turnOn('Rmayhemamcut') : turnOff('Rmayhemamcut');
-	radonon && getPageSetting('Rmayhemon') ? turnOn('Rmayhemhealth') : turnOff('Rmayhemhealth');
-	radonon && getPageSetting('Rmayhemon') && getPageSetting('Rmayhemhealth') ? turnOn('Rmayhemhcut') : turnOff('Rmayhemhcut');
-	radonon && getPageSetting('Rmayhemon') && (getPageSetting('Rmayhemattack') || getPageSetting('Rmayhemhealth')) ? turnOn('Rmayhemmap') : turnOff('Rmayhemmap');
+	radonon && game.global.mayhemCompletions < 25 ? turnOn('Rmayhemon') : turnOff('Rmayhemon');
+	radonon && game.global.mayhemCompletions < 25 && getPageSetting('Rmayhemon') ? turnOn('Rmayhemattack') : turnOff('Rmayhemattack');
+	radonon && game.global.mayhemCompletions < 25 && getPageSetting('Rmayhemon') && getPageSetting('Rmayhemattack') ? turnOn('Rmayhemabcut') : turnOff('Rmayhemabcut');
+	radonon && game.global.mayhemCompletions < 25 && getPageSetting('Rmayhemon') && getPageSetting('Rmayhemattack') ? turnOn('Rmayhemamcut') : turnOff('Rmayhemamcut');
+	radonon && game.global.mayhemCompletions < 25 && getPageSetting('Rmayhemon') ? turnOn('Rmayhemhealth') : turnOff('Rmayhemhealth');
+	radonon && game.global.mayhemCompletions < 25 && getPageSetting('Rmayhemon') && getPageSetting('Rmayhemhealth') ? turnOn('Rmayhemhcut') : turnOff('Rmayhemhcut');
+	radonon && game.global.mayhemCompletions < 25 && getPageSetting('Rmayhemon') && (getPageSetting('Rmayhemattack') || getPageSetting('Rmayhemhealth')) ? turnOn('Rmayhemmap') : turnOff('Rmayhemmap');
 
 
 	//Storm
@@ -2435,22 +2412,22 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateeq') : turnOff('Rexterminateeq');
 
 	//Pandemonium
-	radonon ? turnOn('RPandemoniumOn') : turnOff('RPandemoniumOn');
-	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMaps') : turnOff('RPandemoniumMaps');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumZone') : turnOff('RPandemoniumZone');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumHits') : turnOff('RPandemoniumHits');
-	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip') : turnOff('RPandemoniumAutoEquip');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RPandemoniumAEZone') : turnOff('RPandemoniumAEZone');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('PandemoniumFarmLevel') : turnOff('PandemoniumFarmLevel');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumJestZone') : turnOff('RPandemoniumJestZone');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
+	radonon && game.global.pandCompletions < 25 ? turnOn('RPandemoniumOn') : turnOff('RPandemoniumOn');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMaps') : turnOff('RPandemoniumMaps');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumZone') : turnOff('RPandemoniumZone');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumHits') : turnOff('RPandemoniumHits');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip') : turnOff('RPandemoniumAutoEquip');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RPandemoniumAEZone') : turnOff('RPandemoniumAEZone');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('PandemoniumFarmLevel') : turnOff('PandemoniumFarmLevel');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumJestZone') : turnOff('RPandemoniumJestZone');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
 
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('rPandRespec') : turnOff('rPandRespec');
-	radonon && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('rPandRespec') ? turnOn('rPandRespecZone') : turnOff('rPandRespecZone');
-	radonon && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('rPandRespec') : turnOff('rPandRespec');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('rPandRespec') ? turnOn('rPandRespecZone') : turnOff('rPandRespecZone');
+	radonon && game.global.pandCompletions < 25 && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
 
 	//Alchemy
 	turnOff('rAlchOn');
