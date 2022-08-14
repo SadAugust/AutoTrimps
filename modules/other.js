@@ -2167,7 +2167,7 @@ function autoMapLevel(maxLevel, minLevel, floorCrit) {
 
 		if (!game.global.mapsActive && game.global.novaMutStacks > 0) {
 			ourDmg /= u2Mutations.types.Nova.trimpAttackMult();
-			enemyDmg /= u2Mutation.types.Nova.enemyAttackMult();
+			enemyDmg /= u2Mutations.types.Nova.enemyAttackMult();
 		}
 
 		if ((game.resources.fragments.owned >= PerfectMapCost(mapLevel, special, biome) && enemyHealth <= ourDmg) && ((enemyDmg <= ourHealth))) {
