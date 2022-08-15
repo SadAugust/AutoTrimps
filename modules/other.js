@@ -2161,6 +2161,7 @@ function autoMapLevel(maxLevel, minLevel, floorCrit) {
 		var mapLevel = y;
 		var equalityAmt = equalityQuery(true, false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
 		var ourDmg = (RcalcOurDmg(dmg, equalityAmt, true, true, false, false, floorCrit)) * 2;
+		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Snimp', 'map', true) * difficulty;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, true, 'map') * 1.5 * difficulty;
 
@@ -2190,16 +2191,12 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var mapType = !mapType ? "world" : !mapType ? (getCurrentMapObject().location == "Void" ? "void" : "map") : mapType;
 	var mapping = mapType === 'world' ? false : true;
 	var zone = !zone && (mapType == "world" || !mapping) ? game.global.world : !zone ? getCurrentMapObject().level : zone;
-
-	//var mapping = game.global.mapsActive ? true : false;
-	//var currentCell = !cell && mapping ? game.global.lastClearedMapCell : !cell ? game.global.lastClearedCell : cell;
 	var mapGrid = game.global.mapsActive ? 'mapGridArray' : 'gridArray';
-	//var type = (!mapping) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	var forceGamma = !forceGamma ? false : forceGamma;
 	var forceOneShot = !forceOneShot ? false : forceOneShot;
 	var query = !query ? false : query;
-	//var zone = (type == "world" || !mapping) ? game.global.world : getCurrentMapObject().level;
 	var difficulty = !query && !difficulty && !mapping ? 1 : !query && !difficulty ? getCurrentMapObject().difficulty : difficulty ? difficulty : 1;
+
 	//Challenge conditions
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
 	var runningTrappa = game.global.challengeActive == 'Trappapalooza'
@@ -2229,6 +2226,9 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 		ourDmg /= u2Mutations.types.Nova.trimpAttackMult();
 		enemyDmg /= u2Mutations.types.Nova.enemyAttackMult();
 	}
+
+	if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
+
 
 	if (forceOneShot) ourDmg *= 2;
 	var ourDmgEquality = 0;
