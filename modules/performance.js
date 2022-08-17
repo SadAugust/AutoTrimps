@@ -142,7 +142,7 @@
 	}
 
 	M["performance"].UpdateAFKOverlay = function UpdateAFKOverlay() {
-		M["performance"].AFKOverlayZone.innerText = 'Zone: ' + game.global.world;
+		M["performance"].AFKOverlayZone.innerText = 'Zone: ' + game.global.world + (game.global.mapsActive ? " (Map: " + ((getCurrentMapObject().level - game.global.world) >= 0 ? "+" : "") + (getCurrentMapObject().level - game.global.world) + " " + (getCurrentMapObject().bonus !== undefined ? getCurrentMapObject().bonus : "") + ")" : "")
 		if (game.global.universe == 1) {
 			M["performance"].AFKOverlayHelium.innerText = 'Helium: ' + prettify(Math.floor(game.resources.helium.owned));
 			M["performance"].AFKOverlayHeliumPerHour.innerText = 'He/hr: ' + prettify(game.stats.heliumHour.value());
