@@ -2327,7 +2327,7 @@ function equalityManagement() {
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * 1.5 * difficulty : enemyAttack * 1.5;
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 		enemyDmg *= !mapping && typeof game.global.dailyChallenge.crits !== 'undefined' && typeof game.global.dailyChallenge.empower !== 'undefined' ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
-		var fuckGamma = typeof game.global.dailyChallenge.mirrored !== 'undefined' ? dailyModifiers.mirrored.getReflectChance(game.global.dailyChallenge.mirrored.strength) : false;
+		var fuckGamma = typeof game.global.dailyChallenge.mirrored !== 'undefined' ? dailyModifiers.mirrored.getReflectChance(game.global.dailyChallenge.mirrored.strength) > 60 : false;
 		var enemyDmgEquality = 0;
 		var bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 		//Our stats
