@@ -2812,9 +2812,22 @@ function automateSpireAssault() {
 		if (autoBattle.enemyLevel === 109 && autoBattle.items.Haunted_Harpoon.level === 5 && autoBattle.rings.level === 36 && autoBattle.shards >= autoBattle.upgradeCost('Haunted_Harpoon'))
 			autoBattle.upgrade('Haunted_Harpoon')
 
-		if (autoBattle.enemyLevel === 117 && autoBattle.rings.level < 40 && autoBattle.shards >= autoBattle.getRingLevelCost())
-			autoBattle.levelRing();
-
+		if (autoBattle.enemyLevel === 117) {
+			if (autoBattle.rings.level < 40 && autoBattle.shards >= autoBattle.getRingLevelCost()) {
+				autoBattle.levelRing();
+				if (autoBattle.rings.level === 40 && autoBattle.bonuses.Extra_Limbs.level === 11) {
+					var items = [['Menacing_Mask'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Blessed_Protector'], ['Doppelganger_Signet'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+					var ring = [['attack'], ['lifesteal']]
+					ABItemSwap(items, ring);
+					autoBattle.popup(true, false, true);
+					autoBattle.resetCombat();
+				}
+			}
+			if (autoBattle.rings.level === 40 && (autoBattle.items.Haunted_Harpoon.level < 7 || autoBattle.items.Omni_Enhancer.level < 9)) {
+				if (autoBattle.shards >= autoBattle.upgradeCost('Omni_Enhancer')) autoBattle.upgrade('Omni_Enhancer');
+				if (autoBattle.shards >= autoBattle.upgradeCost('Haunted_Harpoon')) autoBattle.upgrade('Haunted_Harpoon');
+			}
+		}
 		if (autoBattle.enemyLevel == 92) { //6s kills - 2.14h cleartime
 			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['attack'], ['health']]
