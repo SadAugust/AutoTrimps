@@ -2938,16 +2938,16 @@ function automateSpireAssault() {
 			var ring = [['attack'], ['lifesteal']]
 		}
 
-		if (autoBattle.enemyLevel == 118) {
-			var items = [['Rusty_Dagger'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+		if (autoBattle.enemyLevel == 118) { //9s killtimes - 4h11m clear
+			var items = [['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
 			var ring = [['attack'], ['health']]
 		}
-		if (autoBattle.enemyLevel == 119) {
-			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+		if (autoBattle.enemyLevel == 119) { //11.1s killtimes - 5h12m clear
+			var items = [['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
 			var ring = [['attack'], ['health']]
 		}
-		if (autoBattle.enemyLevel == 120) {
-			var items = [['Raincoat'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+		if (autoBattle.enemyLevel == 120) { //25.5s killtimes - 12h4m clear
+			var items = [['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
 			var ring = [['attack'], ['health']]
 		}
 		if (autoBattle.enemyLevel == 121) {
@@ -3196,6 +3196,7 @@ function dailyModiferReduction() {
 
 function displayMostEfficientEquipment() {
 
+	if (usingRealTimeOffline) return;
 	var $eqNamePrestige = null;
 
 	var highlightSetting = getPageSetting('rEquipEfficientEquipDisplay');
