@@ -2787,20 +2787,6 @@ function ABItemSwap(items, ring) {
 
 function automateSpireAssault() {
 
-	if (autoBattle.activeContract === '') {
-		if (!autoBattle.items.Stormbringer.owned)
-			autoBattle.acceptContract('Stormbringer')
-		if (!autoBattle.items.Nullifium_Armor.owned)
-			autoBattle.acceptContract('Nullifium_Armor')
-		if (!autoBattle.items.Haunted_Harpoon.owned)
-			autoBattle.acceptContract('Haunted_Harpoon')
-		if (!autoBattle.items.Box_of_Spores.owned)
-			autoBattle.acceptContract('Box_of_Spores')
-		if (!autoBattle.items.Handful_of_Mold.owned)
-			autoBattle.acceptContract('Handful_of_Mold')
-	}
-
-
 	if (autoBattle.items.Stormbringer.owned && autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Haunted_Harpoon.owned) {
 		if (autoBattle.items.Stormbringer.owned && autoBattle.items.Stormbringer.level < 5)
 			autoBattle.upgrade('Stormbringer')
