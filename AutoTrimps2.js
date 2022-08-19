@@ -307,7 +307,7 @@ function mainLoop() {
 		}
 	}
 
-	if (game.global.stringVersion >= '5.8.0' && getPageSetting('automateSpireAssault') && autoBattle.maxEnemyLevel !== 118)
+	if (game.global.stringVersion >= '5.8.0' && getPageSetting('automateSpireAssault') && autoBattle.maxEnemyLevel !== 122)
 		automateSpireAssault();
 }
 
