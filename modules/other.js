@@ -2796,8 +2796,8 @@ function automateSpireAssault() {
 			autoBattle.acceptContract('Haunted_Harpoon')
 		if (!autoBattle.items.Box_of_Spores.owned)
 			autoBattle.acceptContract('Box_of_Spores')
-		if (!autoBattle.items.Myco_Mitts.owned)
-			autoBattle.acceptContract('Myco_Mitts')
+		if (!autoBattle.items.Handful_of_Mold.owned)
+			autoBattle.acceptContract('Handful_of_Mold')
 	}
 
 
