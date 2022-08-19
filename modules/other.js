@@ -2823,11 +2823,10 @@ function automateSpireAssault() {
 					autoBattle.resetCombat();
 				}
 			}
-			if (autoBattle.rings.level === 40 && (autoBattle.items.Stormbringer.level < 9 || autoBattle.items.Nullifium_Armor.level < 8 || autoBattle.items.Haunted_Harpoon.level < 7 || autoBattle.items.Omni_Enhancer.level < 9)) {
+			if (autoBattle.rings.level === 40 && (autoBattle.items.Stormbringer.level < 9 || autoBattle.items.Haunted_Harpoon.level < 7 || autoBattle.items.Omni_Enhancer.level < 9)) {
 				if (autoBattle.shards >= autoBattle.upgradeCost('Omni_Enhancer')) autoBattle.upgrade('Omni_Enhancer');
 				if (autoBattle.items.Omni_Enhancer.level === 9 && autoBattle.shards >= autoBattle.upgradeCost('Haunted_Harpoon')) autoBattle.upgrade('Haunted_Harpoon');
 				if (autoBattle.items.Haunted_Harpoon.level === 7 && autoBattle.shards >= autoBattle.upgradeCost('Stormbringer')) autoBattle.upgrade('Stormbringer');
-				if (autoBattle.items.Stormbringer.level === 9 && autoBattle.shards >= autoBattle.upgradeCost('Nullifium_Armor')) autoBattle.upgrade('Nullifium_Armor');
 				if (autoBattle.items.Nullifium_Armor.level === 8 && autoBattle.shards >= autoBattle.upgradeCost('Basket_of_Souls')) autoBattle.upgrade('Basket_of_Souls');
 			}
 		}
@@ -2975,7 +2974,7 @@ function automateSpireAssault() {
 			return;
 		}
 
-		if (autoBattle.maxEnemyLevel >= 117 && (autoBattle.rings.level < 40 || autoBattle.items.Haunted_Harpoon.level < 7 || autoBattle.items.Omni_Enhancer.level < 9 || autoBattle.items.Nullifium_Armor.level < 8 || autoBattle.items.Stormbringer.level < 9 || autoBattle.items.Basket_of_Souls.level < 10)) {
+		if (autoBattle.maxEnemyLevel >= 117 && (autoBattle.rings.level < 40 || autoBattle.items.Haunted_Harpoon.level < 7 || autoBattle.items.Omni_Enhancer.level < 9 || autoBattle.items.Stormbringer.level < 9 || autoBattle.items.Basket_of_Souls.level < 10)) {
 			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
 			return;
 		}
