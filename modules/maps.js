@@ -835,6 +835,7 @@ var rSFCurrentMap = undefined;
 var smithyMapCount = [0, 0, 0];
 //Daily Shred Variables
 var shredActive = false;
+var rShouldSmithless = false;
 
 if (typeof (autoTrimpSettings.rAutoStructureSetting.value) !== 'undefined' && autoTrimpSettings.rAutoStructureSetting.value === true)
 	document.getElementById('autoStructureBtn').classList.add("enabled")
@@ -1057,9 +1058,7 @@ function RautoMap() {
 		var rVMBaseSettings = rRunningC3 ? autoTrimpSettings.rc3VoidMapSettings.value : rRunningDaily ? autoTrimpSettings.rdVoidMapSettings.value : autoTrimpSettings.rVoidMapSettings.value;
 		rVMIndex = null;
 		for (var y = 0; y < rVMZone.length; y++) {
-			//debug((rVMZone[y] + (rRunningDaily ? dailyModiferReduction() : 0)) + rVMBaseSettings[y].voidMod)
 			if (((rVMZone[y] + (rRunningDaily ? dailyModiferReduction() : 0)) + rVMBaseSettings[y].voidMod) - game.global.world >= 0 && game.global.world >= (rVMZone[y] + (rRunningDaily ? dailyModiferReduction() : 0)) && rVMBaseSettings[y].active)
-				//if ((game.global.world + (rRunningDaily ? dailyModiferReduction() : 0)) - rVMZone[y] >= 0 && rVMBaseSettings[y].active)
 				rVMIndex = rVMZone.indexOf(rVMZone[y]);
 			else
 				continue;
@@ -1114,7 +1113,7 @@ function RautoMap() {
 			if (rMBSettings.active && game.global.mapBonus <= rMBRepeatCounter) {
 				var rMBCell = rMBSettings.cell;
 				if (game.global.lastClearedCell + 2 >= rMBCell) {
-					var rMBMapLevel = rMBSettings.level
+					rMBMapLevel = rMBSettings.level
 					var rMBSpecial = rMBSettings.special
 					var rMBJobRatio = rMBSettings.jobratio
 					if (rMBSettings.autoLevel && rMBCurrentMap === undefined) {
@@ -1166,7 +1165,7 @@ function RautoMap() {
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0
 		rTFAtlantrimp = false;
-		if (game.global.repeatMap == true) repeatClicked();
+		if (game.global.repeatMap) repeatClicked();
 		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
 		if (document.getElementById('advExtraLevelSelect').value > 0)
 			document.getElementById('advExtraLevelSelect').value = "0";
@@ -1203,7 +1202,7 @@ function RautoMap() {
 			var rTFSettings = rTFBaseSetting[rTFIndex];
 			var rTFCell = rTFSettings.cell;
 			if (rTFSettings.active && game.global.lastClearedCell + 2 >= rTFCell) {
-				var rTFMapLevel = rTFSettings.level
+				rTFMapLevel = rTFSettings.level
 				var rTFSpecial = rTFSettings.special
 				rTFRepeatCounter = rTFSettings.repeat
 				var rTFJobRatio = rTFSettings.jobratio
@@ -2372,8 +2371,7 @@ function RautoMap() {
 		}
 		if ((rShouldPrestigeRaid || (rShouldPrestigeRaid && RAMPfragfarming)) || (rFragmentFarming && (rShouldWorshipperFarm || rShouldInsanityFarm)) ||
 			(selectedMap == game.global.currentMapId || (Rshoulddobogs || (!getCurrentMapObject().noRecycle && (RvanillaMapatZone || RdoMaxMapBonus ||
-				RshouldFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldPrestigeRaid || rShouldWorshipperFarm || rShouldEquipFarm || rShouldMaxMapBonus || rShouldSmithless || rShouldUnbalance || rShouldStorm || rShouldQuest > 0 || Rshouldmayhem > 0 || Rshouldstormfarm || rShouldInsanityFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm ||
-				rShouldPandemoniumJestimpFarm || Rshouldalchfarm || rShouldHypoFarm || rShouldSmithless))))) {
+				RshouldFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldPrestigeRaid || rShouldWorshipperFarm || rShouldEquipFarm || rShouldMaxMapBonus || rShouldSmithless || rShouldUnbalance || rShouldStorm || rShouldQuest > 0 || Rshouldmayhem > 0 || Rshouldstormfarm || rShouldInsanityFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || Rshouldalchfarm || rShouldHypoFarm || rShouldSmithless))))) {
 			//Starting with repeat on
 			if (!game.global.repeatMap)
 				repeatClicked();
