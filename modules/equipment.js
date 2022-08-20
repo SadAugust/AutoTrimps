@@ -618,7 +618,10 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		}
 
 		var metalTotal = 0
-		if (metalShred) metalTotal = metalShred && (rShouldTimeFarm || rShouldMaxMapBonus) ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 45, true, workerRatio), false, true, rShouldTimeFarm ? rTFMapLevel : rShouldMaxMapBonus ? rMBMapLevel : 0) : game.resources.metal.owned;
+		if (metalShred) {
+			metalTotal = metalShred && (rShouldTimeFarm || rShouldMaxMapBonus) ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 45, true, workerRatio), false, true, rShouldTimeFarm ? rTFMapLevel : rShouldMaxMapBonus ? rMBMapLevel : 0) : game.resources.metal.owned;
+			if (game.resources.metal.owned > metalTotal) metalTotal = game.resources.metal.owned;
+		}
 		var nextLevelValue = game.equipment[i][RequipmentList[i].Stat + "Calculated"];
 		var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
 		var safeRatio = nextLevelCost / nextLevelValue;
