@@ -579,13 +579,14 @@ function Rresetmapvars() {
 	rC3EndZoneSetting = -1;
 	currTime = 0;
 	shredActive = false;
+	rCurrentMap = undefined;
 	//Void Maps
 	RdoVoids = false;
 	RneedToVoid = false;
 	//Time Farm
 	rShouldTimeFarm = false;
 	rTFCurrentMap = undefined;
-	rTFZoneCleared = 0;
+	rTFMapRepeats = 0;
 	//Tribute Farm
 	rTributeFarming = false;
 	rShouldTributeFarm = false;
