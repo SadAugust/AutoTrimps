@@ -610,7 +610,7 @@ function Rresetmapvars() {
 	RquestSmithyWarning = -1;
 	RquestSmithyWarning_Setting = -1;
 	//Mayhem
-	Rshouldmayhem = 0;
+	rShouldMayhem = false;
 	//Storm
 	Rstormfarm = false;
 	Rshouldstormfarm = false;

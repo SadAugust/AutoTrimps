@@ -2134,7 +2134,7 @@ function rManageEquality() {
 	}
 }
 
-function autoMapLevel(maxLevel, minLevel, floorCrit) {
+function autoMapLevel(maxLevel, minLevel, floorCrit, special) {
 	var maxLevel = typeof (maxLevel) === 'undefined' ? 10 : maxLevel;
 	var minLevel = typeof (minLevel) === 'undefined' ? 0 - game.global.world + 6 : minLevel;
 	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
@@ -2259,7 +2259,7 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 				return i;
 			}
 			else if (ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
-				/* console.log("dmg =" + enemyAttack)
+				/* console.log("dmg =" + enemyDmgEquality)
 				console.log("health =" + enemyHealth)
 				console.log(i); */
 				return i;
@@ -3011,7 +3011,6 @@ function totalSAResources() {
 	var dustBonuses = 0;
 	var shardBonuses = 0;
 	for (var bonus in autoBattle.bonuses) {
-		if (bonus === 'Scaffolding') continue;
 		var bonusPrice = autoBattle.bonuses[bonus].price
 		var bonusPriceMod = autoBattle.bonuses[bonus].priceMod;
 		for (var x = 0; x < autoBattle.bonuses[bonus].level; x++) {
