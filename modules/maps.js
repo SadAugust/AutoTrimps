@@ -1173,7 +1173,8 @@ function RautoMap() {
 
 	//Reset to defaults when on world grid
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
-		game.global.mapRunCounter = 0
+		game.global.mapRunCounter = 0;
+		rTFMapRepeats = 0;
 		rTFAtlantrimp = false;
 		if (game.global.repeatMap) repeatClicked();
 		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
@@ -1233,16 +1234,20 @@ function RautoMap() {
 					}
 
 				}
+				if (game.global.mapRunCounter === 0 && rTFMapRepeats !== 0) {
+					game.global.mapRunCounter = rTFMapRepeats
+					rTFMapRepeats = 0;
+				}
 				if (rTFSettings.autoLevel) {
 					if (rTFCurrentMap === undefined) {
 						rTFautoLevel = autoMapLevel();
 						rTFMapLevel = rTFautoLevel;
 					}
 					//This bit needs a proper map repeat implementation, not sure how to do it!
-					/* if (autoMapLevel() > rTFautoLevel) {
+					if (autoMapLevel() > rTFautoLevel) {
 						rTFautoLevel = autoMapLevel();
 						rTFMapRepeats = rTFMapRepeats + game.global.mapRunCounter + 1;
-					} */
+					}
 					if (rTFautoLevel !== Infinity) {
 						rTFMapLevel = rTFautoLevel;
 					}
@@ -1261,6 +1266,7 @@ function RautoMap() {
 					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + " (" + (rTFMapLevel >= 0 ? "+" : "") + rTFMapLevel + " " + rTFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 					if (typeof (rTFautoLevel) !== 'undefined' && rTFautoLevel !== Infinity) rTFautoLevel = Infinity;
 					currTime = 0
+					rTFMapRepeats = 0;
 					if (rTFAtlantrimp) runAtlantrimp()
 					saveSettings();
 				}
@@ -2333,8 +2339,10 @@ function RautoMap() {
 				else if (rShouldQuest == 6 && game.global.mapBonus >= 4)
 					repeatClicked();
 				//Time Farm
-				else if (rShouldTimeFarm && (game.global.mapRunCounter + 1 == rTFRepeatCounter || currentLevel !== rTFMapLevel || getCurrentMapObject().bonus !== rTFSpecial))
+				else if (rShouldTimeFarm && (game.global.mapRunCounter + 1 == rTFRepeatCounter || currentLevel !== rTFMapLevel || getCurrentMapObject().bonus !== rTFSpecial)) {
+					if (game.global.mapRunCounter + 1 !== rTFRepeatCounter) rTFMapRepeats = game.global.mapRunCounter + 1;
 					repeatClicked();
+				}
 				//Tribute Farm
 				else if ((rShouldTributeFarm || rShouldMetFarm) && (currentLevel !== rTrFMapLevel || getCurrentMapObject().bonus !== rTrFSpecial))
 					repeatClicked();
