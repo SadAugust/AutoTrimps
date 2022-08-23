@@ -1300,7 +1300,7 @@ function RautoMap() {
 				var tributeCost = 0;
 				var metCost = 0;
 
-				if (rTFSettings.autoLevel) {
+				if (rTrFSettings.autoLevel) {
 					if (rTrFCurrentMap === undefined) {
 						rTrFautoLevel = autoMapLevel();
 						rTrFMapLevel = rTrFautoLevel;
