@@ -849,7 +849,7 @@ function RupdateAutoMapsStatus(get) {
 	//Fail Safes
 	if (getPageSetting('RAutoMaps') == 0) status = 'Off';
 	//Setting up status
-	else if (!game.global.mapsUnlocked) status = '&nbsp;';
+	else if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
 	//Time, Tribute, Equip, Ship Farming, Prestige Raiding, Map bonus, void maps
 	else if (RdoVoids) {
 		var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
@@ -957,42 +957,6 @@ function RautoMap() {
 	if (!RvanillaMapatZone && game.options.menu.repeatVoids.enabled != 0) toggleSetting('repeatVoids');
 	var hitsSurvived = getPageSetting("Rhitssurvived") > 0 ? getPageSetting("Rhitssurvived") : 5;
 
-	var rRunningC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
-	var rRunningDaily = game.global.challengeActive == "Daily";
-	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
-	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0
-
-
-
-
-
-	/* //Void Vars -- Checks whether you're ina  daily and uses those settings if you are
-	voidMapLevelSettingCell = rRunningC3 && getPageSetting('Rc3voidscell') > 0 ? getPageSetting('Rc3voidscell') :
-		rRunningDaily && getPageSetting('Rdvoidscell') > 0 ? getPageSetting('Rdvoidscell') :
-			rRunningRegular && getPageSetting('Rvoidscell') > 0 ? getPageSetting('Rvoidscell') :
-				70;
-	voidMapLevelSetting = rRunningC3 && getPageSetting('Rc3VoidMod')[0] >= 1 ? getPageSetting('Rc3VoidMod') :
-		rRunningDaily && getPageSetting('RDailyVoidMod')[0] >= 1 ? getPageSetting('RDailyVoidMod') :
-			rRunningRegular && getPageSetting('RVoidMaps')[0] >= 1 ? getPageSetting('RVoidMaps') :
-				0;
-	voidMapLevelPlus = rRunningC3 && getPageSetting('Rc3RunNewVoidsUntilNew') != 0 ? getPageSetting('Rc3RunNewVoidsUntilNew') :
-		rRunningDaily && getPageSetting('RdRunNewVoidsUntilNew') != 0 ? getPageSetting('RdRunNewVoidsUntilNew') :
-			rRunningRegular && getPageSetting('RRunNewVoidsUntilNew') != 0 ? getPageSetting('RRunNewVoidsUntilNew') :
-				0;
-
-	if (rRunningDaily) {
-		for (var x = 0; x < voidMapLevelSetting.length; x++) {
-			voidMapLevelSetting[x] = voidMapLevelSetting[x] + dailyModiferReduction();
-		}
-	}
-
-	RneedToVoid = (voidMapLevelSetting[0] > 0 && game.global.totalVoidMaps > 0 && game.global.lastClearedCell + 2 >= voidMapLevelSettingCell &&
-		((voidMapLevelSetting.includes(game.global.world)) ||
-			(voidMapLevelPlus < 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1]) ||
-			(voidMapLevelPlus > 0 && game.global.world >= voidMapLevelSetting[voidMapLevelSetting.length - 1] && game.global.world <= (voidMapLevelSetting[voidMapLevelSetting.length - 1] + voidMapLevelPlus)))
-	); */
-
-
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, false);
 	var enemyDamage = 1;
@@ -1012,7 +976,7 @@ function RautoMap() {
 	RenoughDamage = (RcalcHDratio() <= mapenoughdamagecutoff || game.global.mapBonus === 10);
 	RupdateAutoMapsStatus();
 
-	//Farming & resetting variables. Is this necessary?
+	//Farming & resetting variables.
 	var selectedMap = "world";
 	RshouldDoMaps = false;
 	rShouldTimeFarm = false;
@@ -1047,14 +1011,36 @@ function RautoMap() {
 	rShouldSmithyWoodFarm = false;
 	rShouldSmithyMetalFarm = false;
 
+	var rRunningC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
+	var rRunningDaily = game.global.challengeActive == "Daily";
+	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
+	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
+	var totalPortals = getTotalPortals();
+
 	if (ourBaseDamage > 0) {
 		RshouldDoMaps = (!RenoughDamage || RshouldFarm);
 	}
 	var shouldDoHealthMaps = false;
 
-	var totalPortals = getTotalPortals();
 
+	//Reset to defaults when on world grid
+	if (!game.global.mapsActive && !game.global.preMapsActive) {
+		game.global.mapRunCounter = 0;
+		rTFMapRepeats = 0;
+		currTime = 0;
+		rTFAtlantrimp = false;
+		if (game.global.repeatMap) repeatClicked();
+		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
+		if (document.getElementById('advExtraLevelSelect').value > 0)
+			document.getElementById('advExtraLevelSelect').value = "0";
+		runningPrestigeMaps = false;
+	}
 
+	if (!rFragmentFarming) {
+		rFragmentMapID = undefined;
+		rInitialFragmentMapID = undefined;
+		rFragMapBought = false;
+	}
 	//Void Maps
 	if ((rRunningRegular && autoTrimpSettings.rVoidMapDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdVoidMapDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3VoidMapDefaultSettings.value.active) && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
@@ -1169,24 +1155,6 @@ function RautoMap() {
 			RupdateAutoMapsStatus();
 			return;
 		}
-	}
-
-	//Reset to defaults when on world grid
-	if (!game.global.mapsActive && !game.global.preMapsActive) {
-		game.global.mapRunCounter = 0;
-		rTFMapRepeats = 0;
-		rTFAtlantrimp = false;
-		if (game.global.repeatMap) repeatClicked();
-		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
-		if (document.getElementById('advExtraLevelSelect').value > 0)
-			document.getElementById('advExtraLevelSelect').value = "0";
-		runningPrestigeMaps = false;
-	}
-
-	if (!rFragmentFarming) {
-		rFragmentMapID = undefined;
-		rInitialFragmentMapID = undefined;
-		rFragMapBought = false;
 	}
 
 	//Time Farm
