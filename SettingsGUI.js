@@ -11,36 +11,6 @@ function automationMenuInit() {
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
 	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
 
-
-	/* 	//AutoMaps Button
-		//Creating button
-		var autoMapsContainer = document.createElement("DIV");
-		autoMapsContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
-		autoMapsContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (autoTrimpSettings.RAutoMaps.value == 2 ? 3 : autoTrimpSettings.RAutoMaps.value));
-		autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Auto Maps\", \"customText\", event, \"Toggle between the Auto Map settings.\")');
-		autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	
-		//Text
-		var autoMapsText = document.createElement("DIV");
-		autoMapsText.innerHTML = 'Auto Maps';
-		autoMapsText.setAttribute("style", "font-size: 1.1vw; height: 1.5em; text-align: center");
-		autoMapsText.setAttribute("id", "autoMapsLabel");
-		autoMapsText.setAttribute("onClick", "toggleAutoMaps()");
-	
-		//Creating cogwheel & linking onclick
-		var autoMapsSettings = document.createElement("DIV");
-		autoMapsSettings.setAttribute('onclick', 'MAZLookalike("AT AutoMaps", "a", "AutoMaps")');
-		var autoMapsSettingsButton = document.createElement("SPAN");
-		autoMapsSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-	
-		//Setting up positioning
-		var autoMapsColumn = document.getElementById("battleBtnsColumn");
-		autoMapsContainer.appendChild(autoMapsText);
-		autoMapsContainer.appendChild(autoMapsSettings);
-		autoMapsSettings.appendChild(autoMapsSettingsButton);
-		autoMapsColumn.appendChild(autoMapsContainer);
-		//autoMapsColumn.replaceChild(autoMapsContainer, document.getElementById('battleBtnsColumn').children[0].children[2]); */
-
 	//AutoMaps
 	var newContainer = document.createElement("DIV");
 	newContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
@@ -2812,66 +2782,6 @@ autoEquipContainer.appendChild(autoEquipText);
 autoEquipContainer.appendChild(autoEquipSettings);
 autoEquipSettings.appendChild(autoEquipSettingsButton);
 autoEquipColumn.replaceChild(autoEquipContainer, document.getElementById('equipmentTitleDiv').children[0].children[2]);
-
-/* //AutoMaps Button
-//Creating button
-var autoMapsContainer = document.createElement("DIV");
-autoMapsContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
-autoMapsContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (autoTrimpSettings.AutoMaps.value == 2 ? 3 : autoTrimpSettings.AutoMaps.value));
-autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoEquip\", \"customText\", event, \"Toggle between the AutoEquip settings.\")');
-autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
-
-//Text
-var autoMapsText = document.createElement("DIV");
-autoMapsText.innerHTML = 'AutoMaps';
-autoMapsText.setAttribute("id", "autoMapsLabel");
-autoMapsText.setAttribute("onClick", "settingChanged('AutoMaps')");
-
-//Creating cogwheel & linking onclick
-var autoMapsSettings = document.createElement("DIV");
-//autoEquipSettings.setAttribute('onclick', 'MAZLookalike("AT AutoJobs", "a", "AutoEquip")');
-var autoMapsSettingsButton = document.createElement("SPAN");
-autoMapsSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-
-//Setting up positioning
-var autoMapsColumn = document.getElementById("battleBtnsColumn").children[document.getElementById("battleBtnsColumn").children.length - 1];
-autoMapsContainer.appendChild(autoMapsText);
-autoMapsContainer.appendChild(autoMapsSettings);
-autoMapsSettings.appendChild(autoMapsSettingsButton);
-autoMapsColumn.appendChild(autoMapsContainer); */
-//autoMapsColumn.replaceChild(autoMapsContainer, document.getElementById('battleBtnsColumn').children[0].children[2]);
-
-
-/* newContainer.setAttribute("id", "autoMapBtn");
-newContainer.setAttribute("class", "noselect settingsBtn");
-newContainer.setAttribute("onClick", "toggleAutoMaps()"); */
-
-
-/* //Adding cogwheel to AutoMaps button.
-//Creating cogwheel & linking onclick
-var autoMapsContainer = document.getElementById("autoMapBtn");
-var autoMapsSettings = document.createElement("DIV");
-//autoEquipSettings.setAttribute('onclick', 'MAZLookalike("AT AutoJobs", "a", "AutoEquip")');
-var autoMapsSettingsButton = document.createElement("SPAN");
-autoMapsSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-//Setting up positioning
-autoMapsContainer.appendChild(autoMapsSettings);
-autoMapsSettings.appendChild(autoMapsSettingsButton); */
-
-/* 	//AutoMaps
-	var newContainer = document.createElement("DIV");
-	newContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
-	newContainer.setAttribute("id", "autoMapBtn");
-	newContainer.setAttribute("class", "noselect settingsBtn");
-	newContainer.setAttribute("onClick", "toggleAutoMaps()");
-	newContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Automapping\", \"customText\", event, \"Toggle automapping on and off.\")');
-	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	var abutton = document.createElement("SPAN");
-	abutton.appendChild(document.createTextNode("Auto Maps"));
-	abutton.setAttribute("id", "autoMapLabel");
-	var fightButtonCol = document.getElementById("battleBtnsColumn");
-	newContainer.appendChild(abutton);
-	fightButtonCol.appendChild(newContainer); */
 
 function getDailyHeHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalHeliumEarned - (game.global.heliumLeftover + game.resources.helium.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily He/Hr: " + b.toFixed(3) + "%" } return a }
 function getDailyRnHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalRadonEarned - (game.global.radonLeftover + game.resources.radon.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily Rn/Hr: " + b.toFixed(3) + "%" } return a }
