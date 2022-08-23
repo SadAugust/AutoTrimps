@@ -465,7 +465,6 @@ function initializeAllSettings() {
 	createSetting('Rhitssurvived', 'Hits Survived', 'Set this value to tell the script how many enemy attacks you wish to survive for. The default is 10. The lower this is the less health the script will get. If you set this too high it will farm too much so please be careful. ', 'value', '10', null, 'Μaps');
 	createSetting('Rmapcuntoff', 'Map Cut Off', 'Decides when to get max map bonus. 4 is default. This means it will take 1 hit to kill an enemy if in D stance.', 'value', '4', null, 'Μaps');
 	createSetting('RDisableFarm', 'Farming H:D', 'If H:D goes above this value, it will farm for Damage & Health. The lower this setting, the more it will want to farm. Default is <b>16<b/>. <b>-1 to disable farming!</b>', 'value', -1, null, 'Μaps');
-
 	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value.', 'value', '-1', null, 'Μaps');
 
 	//Ships 
@@ -2069,7 +2068,6 @@ function updateCustomButtons() {
 	radonon && buildingstoggle ? turnOn('rBuildingSpendPct') : turnOff('rBuildingSpendPct');
 	radonon && buildingstoggle ? turnOn('RTributeSpendingPct') : turnOff('RTributeSpendingPct');
 	radonon && buildingstoggle ? turnOn('RSpendTribute') : turnOff('RSpendTribute');
-	radonon && buildingstoggle ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
 
 	//Jobs
 	!radonon ? turnOn('BuyJobsNew') : turnOff('BuyJobsNew');
@@ -2183,6 +2181,7 @@ function updateCustomButtons() {
 	radonon ? turnOn('Rhitssurvived') : turnOff('Rhitssurvived');
 	radonon ? turnOn('Rmapcuntoff') : turnOff('Rmapcuntoff');
 	radonon ? turnOn('RDisableFarm') : turnOff('RDisableFarm');
+	radonon ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
 	radonon ? turnOn('rMapRepeatCount') : turnOff('rMapRepeatCount');
 	radonon ? turnOn('automateSpireAssault') : turnOff('automateSpireAssault');
 
