@@ -2049,7 +2049,6 @@ var fastimps =
 		"Fusimp",
 		"Carbimp",
 		"Ubersmith",
-		"Ubersmithy",
 		"Shadimp",
 		"Voidsnimp",
 		"Prismimp",
@@ -2318,6 +2317,7 @@ function equalityManagement() {
 		var runningBerserk = game.global.challengeActive == 'Berserk'
 		var questShieldBreak = ((game.global.challengeActive == 'Quest' && questcheck() == 8) || runningBerserk);
 		var runningGlass = game.global.challengeActive == 'Glass';
+		var runningSmithless = game.global.challengeActive == "Smithless" && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith;
 
 		//Initialising name/health/dmg variables
 		//Enemy stats
@@ -2338,12 +2338,11 @@ function equalityManagement() {
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
 		var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
 
-		var fuckGamma = typeof game.global.dailyChallenge.mirrored !== 'undefined' && dailyModifiers.mirrored.getReflectChance(game.global.dailyChallenge.mirrored.strength) > 10 ? true : false;
+		var fuckGamma = (typeof game.global.dailyChallenge.mirrored !== 'undefined' && dailyModifiers.mirrored.getReflectChance(game.global.dailyChallenge.mirrored.strength) || (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger)) > 10 ? true : false;
 
-		//var fastEnemy = !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
 		var fastEnemy = game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && type === 'world' ? fastimps.includes(enemyName) || game.global.gridArray[currentCell + 1].u2Mutation.length > 0 : !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
 		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100)
-		fastEnemy = !mapping && typeof game.global.dailyChallenge.empower !== 'undefined' ? true : fastEnemy
+		fastEnemy = !mapping && (typeof game.global.dailyChallenge.empower !== 'undefined' || runningSmithless) ? true : fastEnemy
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
 
 		if (enemyHealth !== 0 && enemyHealth !== -1) {
