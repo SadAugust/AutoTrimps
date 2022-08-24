@@ -2452,41 +2452,11 @@ function equalityManagement() {
 				}
 				else {
 					game.portal.Equality.disabledStackCount = i;
-					manageEqualityStacks();
-					updateEqualityScaling();
+					//manageEqualityStacksLocal();
+					//updateEqualityScaling();
 				}
 			}
 		}
-	}
-}
-
-function manageEqualityStacksLocal() {
-	if (game.global.universe != 2) return;
-	if (game.portal.Equality.radLocked) return;
-	if (game.portal.Equality.scalingCount < 0) game.portal.Equality.scalingCount = 0;
-	if (game.portal.Equality.scalingCount > game.portal.Equality.radLevel) game.portal.Equality.scalingCount = game.portal.Equality.radLevel;
-	var tabElem = document.getElementById('equalityTab');
-	var activeStacks = game.portal.Equality.getActiveLevels();
-	var text = activeStacks + " stack" + needAnS(activeStacks) + " of Equality are active, multiplying the Attack of Trimps ";
-	var enemyMult = game.portal.Equality.getMult(false);
-	if (game.heirlooms.Shield.inequality.currentBonus > 0) {
-		var trimpMult = game.portal.Equality.getMult(true);
-
-		text += " by " + prettifyTiny(trimpMult) + " and Enemies by " + prettifyTiny(enemyMult);
-	}
-	else {
-		text += " and Enemies by " + prettifyTiny(enemyMult);
-	}
-
-	if (game.global.universe == 2 && !game.portal.Equality.radLocked && game.portal.Equality.scalingActive) {
-		swapClass('equalityTabScaling', 'equalityTabScalingOn', tabElem);
-		text += ". Scaling is on.";
-		manageStacks('Equality Scaling', activeStacks, true, 'equalityStacks', 'icomoon icon-arrow-bold-down', text, false);
-	}
-	else {
-		text += ". Scaling is off.";
-		swapClass('equalityTabScaling', 'equalityTabScalingOff', tabElem);
-		manageStacks('Equality Scaling', activeStacks, true, 'equalityStacks', 'icomoon icon-arrow-bold-down', text, false);
 	}
 }
 
