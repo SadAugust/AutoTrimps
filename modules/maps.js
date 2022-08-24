@@ -1016,6 +1016,8 @@ function RautoMap() {
 	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 	var totalPortals = getTotalPortals();
+	var date = new Date();
+	var sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
 
 	if (ourBaseDamage > 0) {
 		RshouldDoMaps = (!RenoughDamage || RshouldFarm);
@@ -1100,7 +1102,7 @@ function RautoMap() {
 		if (rMBIndex !== null && rMBIndex >= 0) {
 			var rMBSettings = rMBBaseSettings[rMBIndex];
 			rMBRepeatCounter = rMBSettings.repeat;
-			if (rMBSettings.active && game.global.mapBonus <= rMBRepeatCounter) {
+			if (rMBSettings.active && game.global.mapBonus < rMBRepeatCounter) {
 				var rMBCell = rMBSettings.cell;
 				if (game.global.lastClearedCell + 2 >= rMBCell) {
 					rMBMapLevel = rMBSettings.level;
@@ -1112,7 +1114,7 @@ function RautoMap() {
 							rMBautoLevel = autoMapLevel(10, 0, true);
 							rMBMapLevel = rMBautoLevel;
 						}
-						if (autoMapLevel(10, 0, true) > rMBautoLevel) {
+						if (sixSecondInterval && autoMapLevel(10, 0, true) > rMBautoLevel) {
 							rMBautoLevel = autoMapLevel(10, 0, true);
 						}
 						if (rMBautoLevel !== Infinity) {
@@ -1211,8 +1213,9 @@ function RautoMap() {
 						rTFautoLevel = autoMapLevel();
 						rTFMapLevel = rTFautoLevel;
 					}
+
 					//This bit needs a proper map repeat implementation, not sure how to do it!
-					if (autoMapLevel() > rTFautoLevel) {
+					if (sixSecondInterval && autoMapLevel() > rTFautoLevel) {
 						rTFautoLevel = autoMapLevel();
 						rTFMapRepeats = rTFMapRepeats + game.global.mapRunCounter + 1;
 					}
@@ -1273,7 +1276,7 @@ function RautoMap() {
 						rTrFautoLevel = autoMapLevel();
 						rTrFMapLevel = rTrFautoLevel;
 					}
-					if (autoMapLevel() > rTrFautoLevel) {
+					if (sixSecondInterval && autoMapLevel() > rTrFautoLevel) {
 						rTrFautoLevel = autoMapLevel();
 					}
 					if (rTrFautoLevel !== Infinity) {
@@ -1410,7 +1413,7 @@ function RautoMap() {
 						rSFautoLevel = autoMapLevel();
 						rSFMapLevel = rSFautoLevel;
 					}
-					if (autoMapLevel() > rSFautoLevel) {
+					if (sixSecondInterval && autoMapLevel() > rSFautoLevel) {
 						rSFautoLevel = autoMapLevel();
 					}
 					if (rSFautoLevel !== Infinity) {
@@ -1525,9 +1528,28 @@ function RautoMap() {
 
 	//Smithless
 	if ((game.global.challengeActive == "Smithless")) {
+
 		//Setting up variables
-		if (!rShouldMaxMapBonus)
-			rShouldSmithless = (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.mapBonus != 10);
+		if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
+			var name = game.global.gridArray[0].name
+			var equalityAmt = equalityQuery(true, true, name, game.global.world, 1, 'world', 1, false, true)
+			var ourDmg = (RcalcOurDmg('min', equalityAmt, false, true, false, false, true));
+			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world', true);
+			enemyHealth *= 3e15;
+			var stacksRemaining = 10 - game.challenges.Smithless.uberAttacks;
+			var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
+
+			if ((ourDmg * 2 + (ourDmg * gammaDmg * 2)) < enemyHealth) {
+				if (game.global.mapBonus != 10) {
+					rShouldSmithless = true;
+					rSmithlessMapLevel = autoMapLevel(10, 0, true);
+				}
+				else if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
+					rShouldSmithless = true;
+					rSmithlessMapLevel = autoMapLevel();
+				}
+			}
+		}
 	}
 
 	//Prestige Raiding
@@ -2248,7 +2270,7 @@ function RautoMap() {
 					workerRatio = rMBJobRatio;
 					if (currTime === 0) currTime = getGameTime();
 				} else if (rShouldSmithless) {
-					selectedMap = RShouldFarmMapCreation(autoMapLevel(10, 0, true), 'lmc');
+					selectedMap = RShouldFarmMapCreation(rSmithlessMapLevel, 'lmc');
 				} else if (rShouldEquipFarm) {
 					selectedMap = RShouldFarmMapCreation(equipminus, 'lmc');
 					if (currTime === 0) currTime = getGameTime();
@@ -2360,7 +2382,7 @@ function RautoMap() {
 				else if (rShouldMaxMapBonus && (game.global.mapBonus >= (rMBRepeatCounter - 1) || currentLevel !== rMBMapLevel || getCurrentMapObject().bonus !== rMBSpecial))
 					repeatClicked();
 				//Smithless Map Bonus
-				else if (rShouldSmithless && (game.global.mapBonus >= 9 || currentLevel !== autoMapLevel(10, 0, true) || getCurrentMapObject().bonus !== 'lmc'))
+				else if (rShouldSmithless && (currentLevel !== rSmithlessMapLevel || getCurrentMapObject().bonus !== 'lmc'))
 					repeatClicked();
 				//Equip Farm Bonus
 				else if (rShouldEquipFarm && (currentLevel !== equipminus || getCurrentMapObject().bonus !== 'lmc'))
@@ -2561,7 +2583,7 @@ function RautoMap() {
 				}
 				else if (rShouldHypoFarm) RShouldFarmMapCost(rHFMapLevel, rHFSpecial, rHFZone, biome);
 				else if (rShouldMaxMapBonus) PerfectMapCost(rMBMapLevel, rMBSpecial);
-				else if (rShouldSmithless) PerfectMapCost(autoMapLevel(10, 0, true), 'lmc');
+				else if (rShouldSmithless) PerfectMapCost(rSmithlessMapLevel, 'lmc');
 				else if (rShouldEquipFarm) PerfectMapCost(equipminus, "lmc");
 			}
 			if (updateMapCost(true) > game.resources.fragments.owned) {
