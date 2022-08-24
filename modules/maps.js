@@ -845,6 +845,7 @@ var rTrFautoLevel = Infinity;
 var rTFautoLevel = Infinity;
 var rMBautoLevel = Infinity;
 var enemyDamage = 1;
+var HDRatio = 0;
 
 if (typeof (autoTrimpSettings.rAutoStructureSetting.value) !== 'undefined' && autoTrimpSettings.rAutoStructureSetting.value === true)
 	document.getElementById('autoStructureBtn').classList.add("enabled")
@@ -968,6 +969,7 @@ function RautoMap() {
 	if (RvanillaMapatZone && game.options.menu.repeatVoids.enabled != 1) toggleSetting('repeatVoids');
 	if (!RvanillaMapatZone && game.options.menu.repeatVoids.enabled != 0) toggleSetting('repeatVoids');
 	var hitsSurvived = getPageSetting("Rhitssurvived") > 0 ? getPageSetting("Rhitssurvived") : 5;
+	if (oneSecondInterval) HDRatio = RcalcHDratio();
 
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, false, true);
@@ -979,12 +981,12 @@ function RautoMap() {
 	}
 
 	if (getPageSetting('RDisableFarm') > 0) {
-		RshouldFarm = (RcalcHDratio() >= getPageSetting('RDisableFarm'));
+		RshouldFarm = (HDRatio >= getPageSetting('RDisableFarm'));
 		if (game.options.menu.repeatUntil.enabled == 1 && RshouldFarm)
 			toggleSetting('repeatUntil');
 	}
 	RenoughHealth = (RcalcOurHealth() > (hitsSurvived * enemyDamage));
-	RenoughDamage = (RcalcHDratio() <= mapenoughdamagecutoff || game.global.mapBonus === 10);
+	RenoughDamage = (HDRatio <= mapenoughdamagecutoff || game.global.mapBonus === 10);
 	RupdateAutoMapsStatus();
 
 	//Farming & resetting variables.
@@ -1666,7 +1668,7 @@ function RautoMap() {
 	if (game.global.challengeActive == "Mayhem" && getPageSetting('rMayhem')) {
 		var destackHits = getPageSetting('rMayhemDestack') > 0 ? getPageSetting('rMayhemDestack') : Infinity;
 		var destackZone = getPageSetting('rMayhemZone') > 0 ? getPageSetting('rMayhemZone') : Infinity;
-		if (game.challenges.Mayhem.stacks > 0 && (RcalcHDratio() * 4 > destackHits || game.global.world >= destackZone))
+		if (game.challenges.Mayhem.stacks > 0 && (HDRatio * 4 > destackHits || game.global.world >= destackZone))
 			rShouldMayhem = true;
 
 		if (rShouldMayhem) {
@@ -1685,7 +1687,7 @@ function RautoMap() {
 			var stormHDzone = (game.global.world - stormzone);
 			var stormHDmult = (stormHDzone == 0) ? stormHD : Math.pow(stormmult, stormHDzone) * stormHD;
 
-			if (game.global.world >= stormzone && RcalcHDratio() > stormHDmult) Rshouldstormfarm = true;
+			if (game.global.world >= stormzone && HDRatio > stormHDmult) Rshouldstormfarm = true;
 		}
 	}
 
@@ -2088,18 +2090,18 @@ function RautoMap() {
 				break;
 			} else if (runUniques && theMap.noRecycle && game.global.challengeActive != "Insanity" && !rShouldTimeFarm && !Rshouldalchfarm && !rShouldHypoFarm) {
 				if (theMap.name == 'Big Wall' && !game.upgrades.Bounty.allowed && !game.upgrades.Bounty.done && game.global.highestRadonLevelCleared < 40) {
-					if (game.global.world < 8 && (RcalcHDratio() > 4 || game.achievements.bigWallTimed.finished == 4)) continue;
+					if (game.global.world < 8 && (HDRatio > 4 || game.achievements.bigWallTimed.finished == 4)) continue;
 					selectedMap = theMap.id;
 					break;
 				}
 				if (theMap.name == 'Dimension of Rage' && document.getElementById("portalBtn").style.display == "none" && game.upgrades.Rage.done == 1) {
-					if (game.global.challenge != "Unlucky" && (game.global.world < 16 || RcalcHDratio() < 2)) continue;
+					if (game.global.challenge != "Unlucky" && (game.global.world < 16 || HDRatio < 2)) continue;
 					selectedMap = theMap.id;
 					break;
 				}
 				//Prismatic Palace
 				if (getPageSetting('Rprispalace') && theMap.name == 'Prismatic Palace' && game.mapUnlocks.Prismalicious.canRunOnce) {
-					if (game.global.world < 21 || RcalcHDratio() > 25) continue;
+					if (game.global.world < 21 || HDRatio > 25) continue;
 					selectedMap = theMap.id;
 					break;
 				}
