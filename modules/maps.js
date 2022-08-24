@@ -839,6 +839,13 @@ var smithyMapCount = [0, 0, 0];
 var shredActive = false;
 var rShouldSmithless = false;
 
+//Auto Level variables
+var rSFautoLevel = Infinity;
+var rTrFautoLevel = Infinity;
+var rTFautoLevel = Infinity;
+var rMBautoLevel = Infinity;
+var enemyDamage = 1;
+
 if (typeof (autoTrimpSettings.rAutoStructureSetting.value) !== 'undefined' && autoTrimpSettings.rAutoStructureSetting.value === true)
 	document.getElementById('autoStructureBtn').classList.add("enabled")
 
@@ -904,6 +911,12 @@ function RupdateAutoMapsStatus(get) {
 
 function RautoMap() {
 
+	//Interval code
+	var date = new Date();
+	var sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
+	var twoSecondInterval = ((date.getSeconds() % 2) === 0 && (date.getMilliseconds() < 100));
+	var oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
+
 	//Quest
 	var Rquestfarming = false;
 	rShouldQuest = 0;
@@ -959,11 +972,10 @@ function RautoMap() {
 
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, false);
-	var enemyDamage = 1;
-	if (getPageSetting('rManageEquality') === 2) {
+	if (getPageSetting('rManageEquality') === 2 && oneSecondInterval) {
 		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability', 'world', true), equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), true);
 	}
-	else {
+	else if (getPageSetting('rManageEquality') !== 2) {
 		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true));
 	}
 
@@ -1016,8 +1028,6 @@ function RautoMap() {
 	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 	var totalPortals = getTotalPortals();
-	var date = new Date();
-	var sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
 
 	if (ourBaseDamage > 0) {
 		RshouldDoMaps = (!RenoughDamage || RshouldFarm);
@@ -1111,8 +1121,8 @@ function RautoMap() {
 
 					if (rMBSettings.autoLevel) {
 						if (rMBCurrentMap === undefined) {
-							rMBautoLevel = autoMapLevel(10, 0, true);
-							rMBMapLevel = rMBautoLevel;
+							if (rMBautoLevel === Infinity) rMBautoLevel = autoMapLevel(10, 0, true);
+							if (rMBautoLevel !== Infinity && twoSecondInterval) rMBautoLevel = autoMapLevel(10, 0, true);
 						}
 						if (sixSecondInterval && autoMapLevel(10, 0, true) > rMBautoLevel) {
 							rMBautoLevel = autoMapLevel(10, 0, true);
@@ -1127,7 +1137,7 @@ function RautoMap() {
 					if (game.global.mapBonus >= rMBRepeatCounter && rMBCurrentMap != undefined) {
 						rMBCurrentMap = undefined;
 						if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rMBMapLevel >= 0 ? "+" : "") + rMBMapLevel + " " + rMBSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
-						if (typeof (rMBautoLevel) !== 'undefined' && rMBautoLevel !== Infinity) rMBautoLevel = Infinity;
+						if (rMBautoLevel !== Infinity) rMBautoLevel = Infinity;
 						currTime = 0
 					}
 					if (rMBRepeatCounter > game.global.mapBonus)
@@ -1210,8 +1220,8 @@ function RautoMap() {
 				}
 				if (rTFSettings.autoLevel) {
 					if (rTFCurrentMap === undefined) {
-						rTFautoLevel = autoMapLevel();
-						rTFMapLevel = rTFautoLevel;
+						if (rTFautoLevel === Infinity) rTFautoLevel = autoMapLevel();
+						if (rTFautoLevel !== Infinity && twoSecondInterval) rTFautoLevel = autoMapLevel();
 					}
 
 					//This bit needs a proper map repeat implementation, not sure how to do it!
@@ -1235,7 +1245,7 @@ function RautoMap() {
 					rTFCurrentMap = undefined;
 					rTFMapRepeats = 0;
 					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + " (" + (rTFMapLevel >= 0 ? "+" : "") + rTFMapLevel + " " + rTFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
-					if (typeof (rTFautoLevel) !== 'undefined' && rTFautoLevel !== Infinity) rTFautoLevel = Infinity;
+					if (rTFautoLevel !== Infinity) rTFautoLevel = Infinity;
 					currTime = 0
 					rTFMapRepeats = 0;
 					if (rTFAtlantrimp) runAtlantrimp()
@@ -1273,8 +1283,8 @@ function RautoMap() {
 
 				if (rTrFSettings.autoLevel) {
 					if (rTrFCurrentMap === undefined) {
-						rTrFautoLevel = autoMapLevel();
-						rTrFMapLevel = rTrFautoLevel;
+						if (rTrFautoLevel === Infinity) rTrFautoLevel = autoMapLevel();
+						if (rTrFautoLevel !== Infinity && twoSecondInterval) rTrFautoLevel = autoMapLevel();
 					}
 					if (sixSecondInterval && autoMapLevel() > rTrFautoLevel) {
 						rTrFautoLevel = autoMapLevel();
@@ -1410,8 +1420,8 @@ function RautoMap() {
 
 				if (rSFSettings.autoLevel) {
 					if (rSFCurrentMap === undefined) {
-						rSFautoLevel = autoMapLevel();
-						rSFMapLevel = rSFautoLevel;
+						if (rSFautoLevel === Infinity) rSFautoLevel = autoMapLevel();
+						if (rSFautoLevel !== Infinity && twoSecondInterval) rSFautoLevel = autoMapLevel();
 					}
 					if (sixSecondInterval && autoMapLevel() > rSFautoLevel) {
 						rSFautoLevel = autoMapLevel();
@@ -2275,7 +2285,7 @@ function RautoMap() {
 					selectedMap = RShouldFarmMapCreation(equipminus, 'lmc');
 					if (currTime === 0) currTime = getGameTime();
 				}
-				if (getPageSetting('RBuyJobsNew') > 0)
+				if (getPageSetting('RBuyJobsNew') > 0 && oneSecondInterval)
 					RbuyJobs()
 			}
 			else {

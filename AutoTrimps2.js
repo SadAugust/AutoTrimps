@@ -275,9 +275,9 @@ function mainLoop() {
 			}
 			rC3EndZoneSetting = game.stats.zonesCleared.value;
 		}
+
 		//Archeology
 		if (getPageSetting('Rarchon') && game.global.challengeActive == "Archaeology") archstring();
-		
 		//AutoEquip
 		if (getPageSetting('Requipon') && (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([2, 3].indexOf(questcheck()) >= 0)))) RautoEquip();
 		//Combat
@@ -302,8 +302,12 @@ function mainLoop() {
 		if (game.global.challengeActive == "Pandemonium" && getPageSetting('rPandRespec')) PandemoniumPerkRespec();
 
 		if (getPageSetting('rEquipEfficientEquipDisplay')) {
-			displayMostEfficientEquipment();
-			if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
+			var date = new Date();
+			var oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
+			if (oneSecondInterval) {
+				displayMostEfficientEquipment();
+				if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
+			}
 		}
 	}
 

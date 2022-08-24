@@ -668,6 +668,12 @@ function Rresetmapvars() {
 	rShouldSmithyMetalFarm = false;
 	smithyMapCount = [0, 0, 0];
 
+	//Auto Level variables
+	rSFautoLevel = Infinity;
+	rTrFautoLevel = Infinity;
+	rTFautoLevel = Infinity;
+	rMBautoLevel = Infinity;
+
 	if (document.getElementById('hiderStatus').style.display == 'None' && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) {
 		turnOn("hiderStatus")
 		document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
