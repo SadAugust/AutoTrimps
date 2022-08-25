@@ -216,7 +216,7 @@ function RmanualLabor2() {
 	else {
 		if (getPageSetting('RManualGather2') != 2 && game.resources.science.owned < MODULES["gather"].RminScienceAmount && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden')
 			setGather('science');
-		else if (game.resources.science.owned < (RscienceNeeded * 0.8) && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden')
+		else if (game.resources.science.owned < RscienceNeeded && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden')
 			setGather('science');
 		else if (trapTrimpsOK && needToTrap && game.buildings.Trap.owned == 0 && canAffordBuilding('Trap')) {
 			if (!safeBuyBuilding('Trap'))
