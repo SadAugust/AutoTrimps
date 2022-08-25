@@ -2170,7 +2170,6 @@ function autoMapLevel(maxLevel, minLevel, floorCrit, special) {
 		}
 
 		if ((game.resources.fragments.owned >= PerfectMapCost(mapLevel, special, biome) && enemyHealth <= ourDmg) && ((enemyDmg <= ourHealth))) {
-			debug(equalityAmt)
 			return mapLevel;
 		}
 		if (y === minLevel) {
