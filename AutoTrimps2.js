@@ -86,6 +86,7 @@ var lastRadonZone = 0;
 
 //Get Gamma burst % value
 gammaBurstPct = getHeirloomBonus("Shield", "gammaBurst") / 100;
+shieldEquipped = game.global.ShieldEquipped.id;
 
 function mainLoop() {
 	if (document.getElementById('tooltipDiv').classList.contains('tooltipExtraLg') === true && (document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Prestegious Raiding')) && document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 12)
@@ -231,6 +232,8 @@ function mainLoop() {
 		//Offline Progress
 		if (!usingRealTimeOffline) RsetScienceNeeded();
 
+		//Heirloom Shield Swap Check
+		if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
 		//RBuildings
 		if (getPageSetting('RBuyBuildingsNew')) RbuyBuildings();
 		//RUpgrades
