@@ -840,10 +840,11 @@ var shredActive = false;
 var rShouldSmithless = false;
 
 //Auto Level variables
-var rSFautoLevel = Infinity;
-var rTrFautoLevel = Infinity;
 var rTFautoLevel = Infinity;
+var rTrFautoLevel = Infinity;
+var rSFautoLevel = Infinity;
 var rMBautoLevel = Infinity;
+var rSmithlessautoLevel = Infinity;
 var enemyDamage = 1;
 var HDRatio = 0;
 
@@ -1124,7 +1125,7 @@ function RautoMap() {
 							if (rMBautoLevel === Infinity) rMBautoLevel = autoMapLevel(10, 0, true);
 							if (rMBautoLevel !== Infinity && twoSecondInterval) rMBautoLevel = autoMapLevel(10, 0, true);
 						}
-						if (sixSecondInterval && autoMapLevel(10, 0, true) > rMBautoLevel) {
+						if (sixSecondInterval && (autoMapLevel(10, 0, true) > rMBautoLevel)) {
 							rMBautoLevel = autoMapLevel(10, 0, true);
 						}
 						if (rMBautoLevel !== Infinity) {
@@ -1225,7 +1226,7 @@ function RautoMap() {
 					}
 
 					//This bit needs a proper map repeat implementation, not sure how to do it!
-					if (sixSecondInterval && autoMapLevel() > rTFautoLevel) {
+					if (sixSecondInterval && (autoMapLevel() > rTFautoLevel)) {
 						rTFautoLevel = autoMapLevel();
 						rTFMapRepeats = rTFMapRepeats + game.global.mapRunCounter + 1;
 					}
@@ -1286,7 +1287,7 @@ function RautoMap() {
 						if (rTrFautoLevel === Infinity) rTrFautoLevel = autoMapLevel();
 						if (rTrFautoLevel !== Infinity && twoSecondInterval) rTrFautoLevel = autoMapLevel();
 					}
-					if (sixSecondInterval && autoMapLevel() > rTrFautoLevel) {
+					if (sixSecondInterval && (autoMapLevel() > rTrFautoLevel)) {
 						rTrFautoLevel = autoMapLevel();
 					}
 					if (rTrFautoLevel !== Infinity) {
@@ -1423,7 +1424,7 @@ function RautoMap() {
 						if (rSFautoLevel === Infinity) rSFautoLevel = autoMapLevel();
 						if (rSFautoLevel !== Infinity && twoSecondInterval) rSFautoLevel = autoMapLevel();
 					}
-					if (sixSecondInterval && autoMapLevel() > rSFautoLevel) {
+					if (sixSecondInterval && (autoMapLevel() > rSFautoLevel)) {
 						rSFautoLevel = autoMapLevel();
 					}
 					if (rSFautoLevel !== Infinity) {
@@ -1550,14 +1551,20 @@ function RautoMap() {
 			var gammaDmg = gammaBurstPct;
 
 			if ((ourDmg * 2 + (ourDmg * gammaDmg * 2)) < enemyHealth) {
-				if (game.global.mapBonus != 10) {
+				if (game.global.mapBonus != 10)
 					rShouldSmithless = true;
-					rSmithlessMapLevel = autoMapLevel(10, 0, true);
-				}
-				else if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
+				else if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))))
 					rShouldSmithless = true;
-					rSmithlessMapLevel = autoMapLevel();
-				}
+			}
+
+			if (rShouldSmithless) {
+				if (rSmithlessautoLevel === Infinity) rSmithlessautoLevel = game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel();
+			}
+			if (sixSecondInterval && (game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel() > rSmithlessautoLevel)) {
+				rSmithlessautoLevel = game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel();
+			}
+			if (rSmithlessautoLevel !== Infinity) {
+				rSmithlessMapLevel = rSmithlessautoLevel;
 			}
 		}
 	}
