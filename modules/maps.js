@@ -964,7 +964,6 @@ function RautoMap() {
 	//Vars
 	var mapenoughdamagecutoff = getPageSetting("Rmapcuntoff");
 	var customVars = MODULES["maps"];
-	if (game.global.repeatMap == true && !game.global.mapsActive && !game.global.preMapsActive) repeatClicked();
 	if ((game.options.menu.repeatUntil.enabled == 1 || game.options.menu.repeatUntil.enabled == 2 || game.options.menu.repeatUntil.enabled == 3) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
 	if (game.options.menu.exitTo.enabled != 0) toggleSetting('exitTo');
 	if (RvanillaMapatZone && game.options.menu.repeatVoids.enabled != 1) toggleSetting('repeatVoids');
@@ -1055,6 +1054,32 @@ function RautoMap() {
 		rInitialFragmentMapID = undefined;
 		rFragMapBought = false;
 	}
+
+	//Daily Shred variables
+	if (game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
+		shredActive = true;
+		var foodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
+		var woodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
+		var metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+	}
+
+	//U2 (Radon) Map at Zone (MAZ)
+	if (game.options.menu.mapAtZone.enabled && game.global.canMapAtZone) {
+		var MaZPreset = game.options.menu.mapAtZone.U2Mode == "b" ? game.options.menu.mapAtZone.setZoneU2B :
+			game.options.menu.mapAtZone.setZoneU2;
+		for (var x = 0; x < MaZPreset.length; x++) {
+			var option = MaZPreset[x];
+			var world = game.global.world;
+			var validRange = world >= option.world && world <= option.through;
+			var mazZone = validRange && (world == option.world && option.times == -1 || (world - option.world) % option.times == 0);
+			if (!game.global.preMapsActive && mazZone && option.cell == game.global.lastClearedCell + 2) RvanillaMapatZone = true;
+		}
+		if (RvanillaMapatZone) {
+			RupdateAutoMapsStatus();
+			return;
+		}
+	}
+
 	//Void Maps
 	if ((rRunningRegular && autoTrimpSettings.rVoidMapDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdVoidMapDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3VoidMapDefaultSettings.value.active) && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
@@ -1087,14 +1112,6 @@ function RautoMap() {
 		}
 		if (game.global.totalVoidMaps <= 0 || !RneedToVoid)
 			RdoVoids = false;
-	}
-
-	//Daily Shred variables
-	if (game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
-		shredActive = true;
-		var foodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
-		var woodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
-		var metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	}
 
 	//Map Bonus
@@ -1149,24 +1166,6 @@ function RautoMap() {
 					}
 				}
 			}
-		}
-	}
-
-	var restartVoidMap = false;
-	//U2 (Radon) Map at Zone (MAZ)
-	if (game.options.menu.mapAtZone.enabled && game.global.canMapAtZone) {
-		var MaZPreset = game.options.menu.mapAtZone.U2Mode == "b" ? game.options.menu.mapAtZone.setZoneU2B :
-			game.options.menu.mapAtZone.setZoneU2;
-		for (var x = 0; x < MaZPreset.length; x++) {
-			var option = MaZPreset[x];
-			var world = game.global.world;
-			var validRange = world >= option.world && world <= option.through;
-			var mazZone = validRange && (world == option.world && option.times == -1 || (world - option.world) % option.times == 0);
-			if (!game.global.preMapsActive && mazZone && option.cell == game.global.lastClearedCell + 2) RvanillaMapatZone = true;
-		}
-		if (RvanillaMapatZone) {
-			RupdateAutoMapsStatus();
-			return;
 		}
 	}
 
@@ -1294,6 +1293,7 @@ function RautoMap() {
 						rTrFMapLevel = rTrFautoLevel;
 					}
 				}
+
 				if (rTrFSettings.mapType === 'Map Count' && rTrFCurrentMap === undefined) {
 					var tributeMaps = rTrFTributes;
 					var meteorologistMaps = rTrFMeteorologists;
@@ -1318,7 +1318,6 @@ function RautoMap() {
 				if (typeof (rTrFMeteorologistsMapCount) !== 'undefined' && rTrFautoLevel !== Infinity) {
 					rTrFMapLevel = rTrFautoLevel
 				}
-
 
 				//Identifying how much food you'd get from the amount of jestimps you want to farm on the map level you've selected for them
 				if (rRunningDaily && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food')) {
@@ -1498,7 +1497,6 @@ function RautoMap() {
 					}
 				}
 
-
 				//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
 				if (!rShouldTributeFarm && !rShouldMetFarm && !rShouldSmithyFarm && rSFCurrentMap != undefined) {
 					if (game.global.mapsActive) {
@@ -1539,7 +1537,6 @@ function RautoMap() {
 
 	//Smithless
 	if ((game.global.challengeActive == "Smithless")) {
-
 		//Setting up variables
 		if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
 			var name = game.global.gridArray[0].name
@@ -2198,11 +2195,12 @@ function RautoMap() {
 			RdoVoids = true;
 			if (getPageSetting('RDisableFarm') <= 0)
 				RshouldFarm = RshouldFarm || false;
-			if (!restartVoidMap)
-				selectedMap = theMap.id;
+			selectedMap = theMap.id;
 			break;
 		}
 		if (RdoVoids && game.global.mapsActive && getCurrentMapObject().location === 'Void') workerRatio = rVMJobRatio;
+		rVMCurrentMap = 'Void Map'
+		if (currTime === 0) currTime = getGameTime();
 	}
 
 	//Automaps
@@ -2229,7 +2227,7 @@ function RautoMap() {
 					rHasQuested = true;
 				} else if (rShouldTimeFarm) {
 					selectedMap = RShouldFarmMapCreation(rTFMapLevel, rTFSpecial);
-					rTFCurrentMap = "rTimeFarm";
+					rTFCurrentMap = 'rTimeFarm';
 					workerRatio = rTFJobRatio;
 					if (currTime === 0) currTime = getGameTime();
 				} else if (rShouldTributeFarm || rShouldMetFarm) {
@@ -2322,7 +2320,7 @@ function RautoMap() {
 		}
 		if ((rShouldPrestigeRaid || (rShouldPrestigeRaid && RAMPfragfarming)) || (rFragmentFarming && (rShouldWorshipperFarm || rShouldInsanityFarm)) ||
 			(selectedMap == game.global.currentMapId || (Rshoulddobogs || (!getCurrentMapObject().noRecycle && (RvanillaMapatZone || RdoMaxMapBonus ||
-				RshouldFarm || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldPrestigeRaid || rShouldWorshipperFarm || rShouldEquipFarm || rShouldMaxMapBonus || rShouldSmithless || rShouldUnbalance || rShouldStorm || rShouldQuest > 0 || rShouldMayhem > 0 || Rshouldstormfarm || rShouldInsanityFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || Rshouldalchfarm || rShouldHypoFarm || rShouldSmithless))))) {
+				RshouldFarm || RneedToVoid || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldPrestigeRaid || rShouldWorshipperFarm || rShouldEquipFarm || rShouldMaxMapBonus || rShouldSmithless || rShouldUnbalance || rShouldStorm || rShouldQuest > 0 || rShouldMayhem > 0 || Rshouldstormfarm || rShouldInsanityFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || Rshouldalchfarm || rShouldHypoFarm || rShouldSmithless))))) {
 			//Starting with repeat on
 			if (!game.global.repeatMap)
 				repeatClicked();
@@ -2340,8 +2338,11 @@ function RautoMap() {
 			}
 			if (game.global.repeatMap && !rShouldPrestigeRaid) {
 				var currentLevel = getCurrentMapObject().level - game.global.world;
+				//Void Maps
+				if (RneedToVoid && getCurrentMapObject().location !== 'Void')
+					repeatClicked();
 				//Prestige Raiding
-				if (rShouldPrestigeRaid && RAMPfragfarming && RAMPfrag(raidzones, rPRFragFarm) == true)
+				else if (rShouldPrestigeRaid && RAMPfragfarming && RAMPfrag(raidzones, rPRFragFarm) == true)
 					repeatClicked();
 				//Quest Farming
 				else if (rShouldQuest == 6 && game.global.mapBonus >= 4)
@@ -2409,9 +2410,6 @@ function RautoMap() {
 		} else {
 			if (game.global.repeatMap) {
 				repeatClicked();
-			}
-			if (restartVoidMap) {
-				mapsClicked(true);
 			}
 		}
 	} else if (!game.global.preMapsActive && !game.global.mapsActive) {
