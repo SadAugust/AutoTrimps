@@ -260,7 +260,8 @@ function HeirloomModSearch(heirloom, modifier) {
 function HeirloomEquipShield(heirloom) {
 	if (HeirloomSearch(heirloom) != undefined && game.global.ShieldEquipped.name != getPageSetting(heirloom)) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
-		equipHeirloom();
+		equipHeirloom(true);
+		gammaBurstPct = getHeirloomBonus("Shield", "gammaBurst") / 100;
 	} else if (HeirloomSearch(heirloom) == undefined && game.global.ShieldEquipped.name != getPageSetting(heirloom))
 		debug("The heirloom named " + autoTrimpSettings[heirloom].value + " in the Shield setting: " + autoTrimpSettings[heirloom].name + " doesn\'t exist. Rename an heirloom or adjust the settings input.");
 }
@@ -268,7 +269,7 @@ function HeirloomEquipShield(heirloom) {
 function HeirloomEquipStaff(heirloom) {
 	if (HeirloomSearch(heirloom) != undefined && game.global.StaffEquipped.name != getPageSetting(heirloom)) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
-		equipHeirloom();
+		equipHeirloom(true);
 	} else if (HeirloomSearch(heirloom) == undefined && game.global.StaffEquipped.name != getPageSetting(heirloom))
 		debug("The heirloom named " + autoTrimpSettings[heirloom].value + " in the Staff setting: " + autoTrimpSettings[heirloom].name + " doesn\'t exist. Rename an heirloom or adjust the settings input.");
 }

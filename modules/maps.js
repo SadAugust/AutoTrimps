@@ -1548,7 +1548,7 @@ function RautoMap() {
 			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world', true);
 			enemyHealth *= 3e15;
 			var stacksRemaining = 10 - game.challenges.Smithless.uberAttacks;
-			var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
+			var gammaDmg = gammaBurstPct;
 
 			if ((ourDmg * 2 + (ourDmg * gammaDmg * 2)) < enemyHealth) {
 				if (game.global.mapBonus != 10) {
@@ -1731,7 +1731,7 @@ function RautoMap() {
 		//Pandemonium destacking settings
 		if (rShouldPandemoniumDestack && getPageSetting('RPandemoniumMaps')) {
 			pandspecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc");
-			gammaburstmult = getPageSetting('RPandemoniumHits') < 5 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 20, 'Snimp'))) >= 5 ? (1 + (getHeirloomBonus("Shield", "gammaBurst")) / 500) : 1;
+			gammaburstmult = getPageSetting('RPandemoniumHits') < 5 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 20, 'Snimp'))) >= 5 ? (1 + (gammaBurstPct)) : 1;
 			hitsmap = getPageSetting('RPandemoniumHits') > 0 ? getPageSetting('RPandemoniumHits') : 10;
 			hitssurv = getPageSetting('RPandemoniumHits') < 5 ? getPageSetting('RPandemoniumHits') : 5;
 			go = false;

@@ -21,8 +21,17 @@ setTimeout(delayStart, startupDelay);
 
 function delayStart() {
 	initializeAutoTrimps();
+	//setTimeout(delayStartGUI, runInterval * 5);
 	setTimeout(delayStartAgain, startupDelay);
 }
+
+/* function delayStartGUI() {
+	game.global.addonUser = true;
+	game.global.autotrimps = true;
+	MODULESdefault = JSON.parse(JSON.stringify(MODULES));
+	mainLoop()
+	guiLoop()
+} */
 
 function delayStartAgain() {
 	game.global.addonUser = true;
@@ -74,6 +83,9 @@ var heirloomCache = game.global.heirloomsExtra.length;
 var magmiteSpenderChanged = false;
 var lastHeliumZone = 0;
 var lastRadonZone = 0;
+
+//Get Gamma burst % value
+gammaBurstPct = getHeirloomBonus("Shield", "gammaBurst") / 100;
 
 function mainLoop() {
 	if (document.getElementById('tooltipDiv').classList.contains('tooltipExtraLg') === true && (document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Prestegious Raiding')) && document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 12)
@@ -218,6 +230,7 @@ function mainLoop() {
 
 		//Offline Progress
 		if (!usingRealTimeOffline) RsetScienceNeeded();
+
 		//RBuildings
 		if (getPageSetting('RBuyBuildingsNew')) RbuyBuildings();
 		//RUpgrades
