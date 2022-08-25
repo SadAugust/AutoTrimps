@@ -1073,7 +1073,6 @@ function RautoMap() {
 				var rVMCell = rVMSettings.cell;
 				if (game.global.lastClearedCell + 2 >= rVMCell) {
 					var rVMJobRatio = rVMSettings.jobratio
-
 					if (rVMCurrentMap != undefined && game.global.totalVoidMaps === 0) {
 						if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 						currTime = 0
@@ -2196,6 +2195,7 @@ function RautoMap() {
 				selectedMap = theMap.id;
 			break;
 		}
+		if (RdoVoids && game.global.mapsActive && getCurrentMapObject().location === 'Void') workerRatio = rVMJobRatio;
 	}
 
 	//Automaps
