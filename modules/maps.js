@@ -2113,6 +2113,7 @@ function RautoMap() {
 					var atlantrimp = getPageSetting('RAtlantrimp')[0] > 0 && getPageSetting('RAtlantrimp')[1] >= 0 ? getPageSetting('RAtlantrimp') : [1000, 1000];
 					if ((game.global.world >= atlantrimp[0] && ((game.global.lastClearedCell + 2) >= atlantrimp[1]))) {
 						selectedMap = theMap.id;
+						if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running Atlantrimp on zone ' + game.global.world + '.')
 						break;
 					}
 				}
@@ -2128,11 +2129,11 @@ function RautoMap() {
 										0
 
 
-					if (shredActive && (woodShred || metalShred) && getPageSetting('rdMeltSmithyShred') > 0) getPageSetting('rdMeltSmithyShred');
+					if (shredActive && (woodShred || metalShred) && getPageSetting('rdMeltSmithyShred') > 0) meltsmithy = getPageSetting('rdMeltSmithyShred');
 
 					if ((game.global.world >= meltingpoint[0] && ((game.global.lastClearedCell + 2) >= meltingpoint[1]) && !game.global.runningChallengeSquared) || (meltsmithy > 0 && meltsmithy <= game.buildings.Smithy.owned)) {
 						selectedMap = theMap.id;
-						if (rShouldPrestigeRaid && game.global.preMapsActive) debug('Running Melting Point')
+						if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running Melting Point at ' + game.buildings.Smithy.owned + ' smithies on zone ' + game.global.world + '.')
 						break;
 					}
 				}
@@ -2145,6 +2146,7 @@ function RautoMap() {
 
 					if (frozencastle || hypothermia) {
 						selectedMap = theMap.id;
+						if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running Frozen Castle on zone ' + game.global.world + '.')
 						break;
 					}
 				}
