@@ -57,7 +57,7 @@ function updateAutoMapsStatus(get) {
 	else if (spireMapBonusFarming) status = 'Getting Spire Map Bonus';
 	else if (getPageSetting('SkipSpires') == 1 && ((game.global.challengeActive != 'Daily' && isActiveSpireAT()) || (game.global.challengeActive == 'Daily' && disActiveSpireAT()))) status = 'Skipping Spire';
 	else if (doMaxMapBonus) status = 'Max Map Bonus After Zone';
-	else if (!game.global.mapsUnlocked) status = '&nbsp;';
+	else if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
 	else if (needPrestige && !doVoids) status = 'Prestige';
 	else if (doVoids) {
 		var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
@@ -1082,7 +1082,7 @@ function RautoMap() {
 
 	//Void Maps
 	if ((rRunningRegular && autoTrimpSettings.rVoidMapDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdVoidMapDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3VoidMapDefaultSettings.value.active) && rShouldQuest === 0) {
-		//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
+		//Setting up variables and checking if we should use daily settings instead of regular Void Map settings
 		rVMZone = rRunningC3 ? getPageSetting('rc3VoidMapZone') : rRunningDaily ? getPageSetting('rdVoidMapZone') : getPageSetting('rVoidMapZone');
 		var rVMBaseSettings = rRunningC3 ? autoTrimpSettings.rc3VoidMapSettings.value : rRunningDaily ? autoTrimpSettings.rdVoidMapSettings.value : autoTrimpSettings.rVoidMapSettings.value;
 		rVMIndex = null;
@@ -1152,18 +1152,18 @@ function RautoMap() {
 					//If you're running Transmute and the rMBSpecial variable is either LMC or SMC it changes it to LSC/SSC.
 					if (game.global.challengeActive == 'Transmute' && rMBSpecial.includes('mc'))
 						rMBSpecial = rMBSpecial.charAt(0) + "sc";
-					if (game.global.mapBonus >= rMBRepeatCounter && rMBCurrentMap != undefined) {
-						rMBCurrentMap = undefined;
-						if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rMBMapLevel >= 0 ? "+" : "") + rMBMapLevel + " " + rMBSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
-						if (rMBautoLevel !== Infinity) rMBautoLevel = Infinity;
-						currTime = 0
-					}
 					if (rMBRepeatCounter > game.global.mapBonus)
 						rShouldMaxMapBonus = true;
 					else if (game.global.mapBonus < getPageSetting('RMaxMapBonushealth') && !RenoughHealth) {
 						RshouldDoMaps = true;
 						shouldDoHealthMaps = true;
 					}
+				}
+				if (rMBCurrentMap !== undefined && game.global.mapBonus >= rMBRepeatCounter) {
+					if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rMBMapLevel >= 0 ? "+" : "") + rMBMapLevel + " " + rMBSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+					if (rMBautoLevel !== Infinity) rMBautoLevel = Infinity;
+					currTime = 0;
+					rMBCurrentMap = undefined;
 				}
 			}
 		}
@@ -1546,6 +1546,7 @@ function RautoMap() {
 			enemyHealth *= 3e15;
 			var stacksRemaining = 10 - game.challenges.Smithless.uberAttacks;
 			var gammaDmg = gammaBurstPct;
+			var rSmithlessJobRatio = '0,0,1,0';
 
 			if ((ourDmg * 2 + (ourDmg * gammaDmg * 2)) < enemyHealth) {
 				if (game.global.mapBonus != 10)
@@ -2289,6 +2290,7 @@ function RautoMap() {
 					if (currTime === 0) currTime = getGameTime();
 				} else if (rShouldSmithless) {
 					selectedMap = RShouldFarmMapCreation(rSmithlessMapLevel, 'lmc');
+					workerRatio = rSmithlessJobRatio;
 				} else if (rShouldEquipFarm) {
 					selectedMap = RShouldFarmMapCreation(equipminus, 'lmc');
 					if (currTime === 0) currTime = getGameTime();
