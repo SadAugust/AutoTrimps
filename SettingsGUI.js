@@ -2501,20 +2501,11 @@ function updateCustomButtons() {
 	radonon ? turnOn('SpamFragments') : turnOff('SpamFragments');
 
 	//Memory
-	//game.global.universe == 1 && !getPageSetting('showbreedtimer') ? turnOn("hiddenBreedTimer") : turnOff("hiddenBreedTimer");
+	game.global.universe == 1 && !getPageSetting('showbreedtimer') ? turnOn("hiddenBreedTimer") : turnOff("hiddenBreedTimer");
 	!radonon ? turnOn("showautomapstatus") : turnOff("showautomapstatus");
-	//game.global.universe == 1 && getPageSetting('showautomapstatus') ? turnOn("autoMapStatus") : turnOff("autoMapStatus");
-	//if (game.global.universe == 1 && getPageSetting('showautomapstatus')) document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 	!radonon ? turnOn("showhehr") : turnOff("showhehr");
-	//game.global.universe == 1 && getPageSetting('showhehr') ? turnOn("hiderStatus") : turnOff("hiderStatus");
-	//if (game.global.universe == 1 && getPageSetting('showhehr')) document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-
 	radonon ? turnOn("Rshowautomapstatus") : turnOff("Rshowautomapstatus");
-	//game.global.universe == 2 && getPageSetting('Rshowautomapstatus') ? turnOn("autoMapStatus") : turnOff("autoMapStatus");
-	//if (game.global.universe == 2 && getPageSetting('Rshowautomapstatus')) document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 	radonon ? turnOn("Rshowrnhr") : turnOff("Rshowrnhr");
-	//game.global.universe == 2 && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared ? turnOn("hiderStatus") : turnOff("hiderStatus");
-	//if (game.global.universe == 2 && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 
 	//Heirlooms
 
@@ -2813,61 +2804,64 @@ function toggleAutoMaps() {
 
 function toggleStatus(update) {
 	if (update) {
-		if (getPageSetting('showautomapstatus'))
-			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		else
+		if (getPageSetting('showautomapstatus')) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+		} else
+			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
 	}
 	if (getPageSetting('showautomapstatus')) {
 		setPageSetting('showautomapstatus', 0);
 		if (game.global.universe == 2) {
-			turnOn('autoMapStatus')
+			turnOff('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		}
 	}
 	else {
 		setPageSetting('showautomapstatus', 1);
 		if (game.global.universe == 2) {
-			turnOff('autoMapStatus')
+			turnOn('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 		}
 	}
 }
 
 function toggleRadonStatus(update) {
-
 	if (update) {
-		if (getPageSetting('Rshowautomapstatus'))
-			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		else
+		if (getPageSetting('Rshowautomapstatus')) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + RcalcHDratio()  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+		} else
+			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
 	}
 
 	if (getPageSetting('Rshowautomapstatus')) {
 		setPageSetting('Rshowautomapstatus', 0);
 		if (game.global.universe == 2) {
-			turnOn('autoMapStatus')
+			turnOff('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + RcalcHDratio()  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 		}
 	}
 	else {
 		setPageSetting('Rshowautomapstatus', 1);
 		if (game.global.universe == 2) {
-			turnOff('autoMapStatus')
+			turnOn('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		}
 	}
 }
 
 function toggleHeHr(update) {
-
 	if (update) {
-		if (getPageSetting('showhehr'))
-			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		else
+		if (getPageSetting('showhehr')) {
 			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+			document.getElementById('hiderStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
+		} else
+			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
 	}
 	if (getPageSetting('showhehr')) {
@@ -2882,31 +2876,33 @@ function toggleHeHr(update) {
 		if (game.global.universe == 1) {
 			turnOn('hiderStatus');
 			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+			document.getElementById('hiderStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
 		}
 	}
 }
 
 function toggleRnHr(update) {
-
 	if (update) {
-		if (getPageSetting('Rshowrnhr'))
-			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		else
+		if (getPageSetting('Rshowrnhr')) {
 			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+			document.getElementById('hiderStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Radon/Hr Info\", \"customText\", event, \"1st is Current Rn/hr % out of Lifetime Rn(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total Rn earned / Lifetime Rn(not including current)<br>\" + getDailyRnHrStats())');
+		} else
+			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
 	}
 	if (getPageSetting('Rshowrnhr')) {
 		setPageSetting('Rshowrnhr', 0);
 		if (game.global.universe == 2) {
-			turnOn('hiderStatus')
+			turnOff('hiderStatus')
 			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		}
 	}
 	else {
 		setPageSetting('Rshowrnhr', 1);
 		if (game.global.universe == 2) {
-			turnOff('hiderStatus')
+			turnOn('hiderStatus')
 			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+			document.getElementById('hiderStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Radon/Hr Info\", \"customText\", event, \"1st is Current Rn/hr % out of Lifetime Rn(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total Rn earned / Lifetime Rn(not including current)<br>\" + getDailyRnHrStats())');
 		}
 	}
 }

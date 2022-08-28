@@ -341,6 +341,7 @@ function mainCleanup() {
 		zonePostpone = 0;
 		if (getPageSetting('automapsportal') && getPageSetting('AutoMaps') == 0 && !game.upgrades.Battle.done)
 			autoTrimpSettings["AutoMaps"].value = 1;
+		if (getPageSetting('showautomapstatus')) updateAutoMapsStatus();
 		return true;
 	}
 	if (game.global.universe == 2 && currentworld == 1 && aWholeNewWorld) {
@@ -349,10 +350,21 @@ function mainCleanup() {
 		if (getPageSetting('Rautomapsportal') && getPageSetting('RAutoMaps') == 0 && !game.upgrades.Battle.done) {
 			autoTrimpSettings["RAutoMaps"].value = 1;
 			if (getPageSetting('Rshowautomapstatus')) RupdateAutoMapsStatus();
+			toggleRadonStatus(true);
+			toggleRnHr(true);
 		}
 		return true;
 	}
+	if (game.global.universe === 1 && (aWholeNewWorld || currentworld === 1)) {
+		toggleStatus(true);
+		toggleHeHr(true);
+	}
+	if (game.global.universe === 2 && (aWholeNewWorld || currentworld === 1)) {
+		toggleRadonStatus(true);
+		toggleRnHr(true);
+	}
 	if (getPageSetting('AutoEggs'))
 		easterEggClicked();
+
 }
 function throwErrorfromMain() { throw new Error("We have successfully read the thrown error message out of the main file") }
