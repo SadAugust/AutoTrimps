@@ -26,7 +26,7 @@ function automationMenuInit() {
 	newContainer = document.createElement("DIV");
 	newContainer.setAttribute("style", "display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
 	if (game.global.universe == 1) {
-		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio() + \"<br>\")');
+		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 	}
 	if (game.global.universe == 2) {
 		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + RcalcHDratio()  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
@@ -929,7 +929,7 @@ function initializeAllSettings() {
 	createSetting('EnhanceGrids', 'Enhance Grids', 'Apply slight visual enhancements to world and map grids that highlights with drop shadow all the exotic, powerful, skeletimps and other special imps.', 'boolean', false, null, 'Display');
 	createSetting('showbreedtimer', 'Enable Breed Timer', 'Enables the display of the hidden breedtimer. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('showautomapstatus', 'Enable AutoMap Status', 'Enables the display of the map status. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
-	createSetting('Rshowhehr', 'Enable He/hr status', 'Enables the display of your helium per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
+	createSetting('showhehr', 'Enable He/hr status', 'Enables the display of your helium per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('Rshowautomapstatus', 'Enable AutoMap Status', 'Enables the display of the map status. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('Rshowrnhr', 'Enable Rn/hr status', 'Enables the display of your radon per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('rMapRepeatCount', 'Map Count Output', 'When you finish doing farming for any types of special farming this setting will display a message stating the amount of maps it took to complete and the time it took (format is h:m:s).', 'boolean', false, null, 'Display');
@@ -973,6 +973,12 @@ function initializeAllSettings() {
 	document.getElementById('rInsanityPopup').setAttribute('onclick', 'MAZLookalike("Insanity Farm", "rInsanity", "MAZ")');
 	document.getElementById('rAlchPopup').setAttribute('onclick', 'MAZLookalike("Alchemy Farm", "rAlch", "MAZ")');
 	document.getElementById('rHypoPopup').setAttribute('onclick', 'MAZLookalike("Hypothermia Farm", "rHypo", "MAZ")');
+
+
+	document.getElementById('showautomapstatus').setAttribute('onclick', 'toggleStatus()');
+	document.getElementById('Rshowautomapstatus').setAttribute('onclick', 'toggleStatus()');
+	document.getElementById('showhehr').setAttribute('onclick', 'toggleHeHr()');
+	document.getElementById('Rshowrnhr').setAttribute('onclick', 'toggleHeHr()');
 
 	document.getElementById('rHideArchaeology').setAttribute('onclick', 'settingChanged("rHideArchaeology"), modifyParentNode("rHideArchaeology", "Rarchstring3", "hide")');
 	modifyParentNode("rHideArchaeology", "Rarchstring3", "hide");
@@ -2470,8 +2476,6 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RdAutoGoldenUpgrades') == 'Radon' ? turnOn('Rdradonbattle') : turnOff('Rdradonbattle');
 	radonon && getPageSetting('RAutoGoldenUpgrades') == 'Battle' ? turnOn('Rbattleradon') : turnOff('Rbattleradon');
 	radonon && getPageSetting('RdAutoGoldenUpgrades') == 'Battle' ? turnOn('Rdbattleradon') : turnOff('Rdbattleradon');
-	//radonon ? turnOn('rNonRadonUpgrade') : turnOff('rNonRadonUpgrade');
-	turnOff('rNonRadonUpgrade');
 
 	//Nature
 	!radonon ? turnOn('AutoNatureTokens') : turnOff('AutoNatureTokens');
@@ -2497,19 +2501,20 @@ function updateCustomButtons() {
 	radonon ? turnOn('SpamFragments') : turnOff('SpamFragments');
 
 	//Memory
-	game.global.universe == 1 && !getPageSetting('showbreedtimer') ? turnOn("hiddenBreedTimer") : turnOff("hiddenBreedTimer");
+	//game.global.universe == 1 && !getPageSetting('showbreedtimer') ? turnOn("hiddenBreedTimer") : turnOff("hiddenBreedTimer");
 	!radonon ? turnOn("showautomapstatus") : turnOff("showautomapstatus");
-	game.global.universe == 1 && getPageSetting('showautomapstatus') ? turnOn("autoMapStatus") : turnOff("autoMapStatus");
-	if (game.global.universe == 1 && getPageSetting('showautomapstatus')) document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-	!radonon ? turnOn("Rshowhehr") : turnOff("Rshowhehr");
-	game.global.universe == 1 && getPageSetting('Rshowhehr') ? turnOn("hiderStatus") : turnOff("hiderStatus");
-	if (game.global.universe == 1 && getPageSetting('Rshowhehr')) document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+	//game.global.universe == 1 && getPageSetting('showautomapstatus') ? turnOn("autoMapStatus") : turnOff("autoMapStatus");
+	//if (game.global.universe == 1 && getPageSetting('showautomapstatus')) document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+	!radonon ? turnOn("showhehr") : turnOff("showhehr");
+	//game.global.universe == 1 && getPageSetting('showhehr') ? turnOn("hiderStatus") : turnOff("hiderStatus");
+	//if (game.global.universe == 1 && getPageSetting('showhehr')) document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+
 	radonon ? turnOn("Rshowautomapstatus") : turnOff("Rshowautomapstatus");
-	game.global.universe == 2 && getPageSetting('Rshowautomapstatus') ? turnOn("autoMapStatus") : turnOff("autoMapStatus");
-	if (game.global.universe == 2 && getPageSetting('Rshowautomapstatus')) document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+	//game.global.universe == 2 && getPageSetting('Rshowautomapstatus') ? turnOn("autoMapStatus") : turnOff("autoMapStatus");
+	//if (game.global.universe == 2 && getPageSetting('Rshowautomapstatus')) document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 	radonon ? turnOn("Rshowrnhr") : turnOff("Rshowrnhr");
-	game.global.universe == 2 && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared ? turnOn("hiderStatus") : turnOff("hiderStatus");
-	if (game.global.universe == 2 && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+	//game.global.universe == 2 && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared ? turnOn("hiderStatus") : turnOff("hiderStatus");
+	//if (game.global.universe == 2 && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 
 	//Heirlooms
 
@@ -2803,5 +2808,59 @@ function toggleAutoMaps() {
 			setPageSetting('RAutoMaps', 1);
 		}
 		document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings.RAutoMaps.value);
+	}
+}
+
+function toggleStatus() {
+	if (game.global.universe == 1) {
+		if (getPageSetting('showautomapstatus')) {
+			setPageSetting('showautomapstatus', 0);
+			turnOff('autoMapStatus')
+			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		}
+		else {
+			turnOn('autoMapStatus')
+			setPageSetting('showautomapstatus', 1);
+			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		}
+	}
+	if (game.global.universe == 2) {
+		if (getPageSetting('Rshowautomapstatus')) {
+			turnOn('autoMapStatus')
+			setPageSetting('Rshowautomapstatus', 0);
+			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		}
+		else {
+			turnOff('autoMapStatus')
+			setPageSetting('Rshowautomapstatus', 1);
+			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		}
+	}
+}
+
+function toggleHeHr() {
+	if (game.global.universe == 1) {
+		if (getPageSetting('showhehr')) {
+			setPageSetting('showhehr', 0);
+			turnOff('hiderStatus')
+			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		}
+		else {
+			setPageSetting('showhehr', 1);
+			turnOn('hiderStatus')
+			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		}
+	}
+	if (game.global.universe == 2) {
+		if (getPageSetting('Rshowrnhr')) {
+			setPageSetting('Rshowrnhr', 0);
+			turnOn('hiderStatus')
+			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		}
+		else {
+			setPageSetting('Rshowrnhr', 1);
+			turnOff('hiderStatus')
+			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		}
 	}
 }
