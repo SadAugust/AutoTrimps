@@ -24,7 +24,7 @@ function automationMenuInit() {
 	fightButtonCol.appendChild(newContainer);
 
 	newContainer = document.createElement("DIV");
-	newContainer.setAttribute("style", "display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
+	newContainer.setAttribute("style", "display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
 	if (game.global.universe == 1) {
 		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 	}
@@ -38,7 +38,7 @@ function automationMenuInit() {
 	fightButtonCol.appendChild(newContainer);
 
 	newContainer = document.createElement("DIV");
-	newContainer.setAttribute("style", "display: block; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
+	newContainer.setAttribute("style", "display: none; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
 	if (game.global.universe == 1)
 		newContainer.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
 	else if (game.global.universe == 2)
@@ -2800,6 +2800,7 @@ function toggleAutoMaps() {
 		}
 		document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings.RAutoMaps.value);
 	}
+	saveSettings();
 }
 
 function toggleStatus(update) {
@@ -2826,6 +2827,7 @@ function toggleStatus(update) {
 			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 		}
 	}
+	saveSettings();
 }
 
 function toggleRadonStatus(update) {
@@ -2853,6 +2855,7 @@ function toggleRadonStatus(update) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		}
 	}
+	saveSettings();
 }
 
 function toggleHeHr(update) {
@@ -2879,6 +2882,7 @@ function toggleHeHr(update) {
 			document.getElementById('hiderStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
 		}
 	}
+	saveSettings();
 }
 
 function toggleRnHr(update) {
@@ -2905,4 +2909,5 @@ function toggleRnHr(update) {
 			document.getElementById('hiderStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Radon/Hr Info\", \"customText\", event, \"1st is Current Rn/hr % out of Lifetime Rn(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total Rn earned / Lifetime Rn(not including current)<br>\" + getDailyRnHrStats())');
 		}
 	}
+	saveSettings();
 }
