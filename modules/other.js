@@ -2092,29 +2092,26 @@ function rManageEquality() {
 }
 
 function autoMapLevel(maxLevel, minLevel, floorCrit, special) {
+	if (game.global.universe === 1) return 0;
+	if (maxLevel > 10) maxLevel = 10;
+	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
+	if (game.global.challengeActive === 'Wither' && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
+
 	var maxLevel = typeof (maxLevel) === 'undefined' ? 10 : maxLevel;
 	var minLevel = typeof (minLevel) === 'undefined' ? 0 - game.global.world + 6 : minLevel;
 	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
 	var biome = !biome ? 'Farmlands' : biome;
-	var farmingType = !farmingType ? false : farmingType;
 	var floorCrit = !floorCrit ? false : floorCrit;
-
-	if (maxLevel > 10) maxLevel = 10;
-	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
-	if (game.global.challengeActive === 'Wither' && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
-	var questShieldBreak = game.global.challengeActive == 'Quest' && questcheck() == 8;
-	var dmg = game.global.challengeActive === 'Glass' ? 'min' : 'avg'
-
-
 	var difficulty = 0.75;
+	var questShieldBreak = game.global.challengeActive == 'Quest' && questcheck() == 8;
 	var ourHealth = RcalcOurHealth(questShieldBreak) * 2;
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
 		var equalityAmt = equalityQuery(true, false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
-		var ourDmg = (RcalcOurDmg(dmg, equalityAmt, true, true, false, false, floorCrit)) * 2;
+		var ourDmg = (RcalcOurDmg('min', equalityAmt, true, true, false, false, floorCrit)) * 2;
 		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
-		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Gorillimp', 'map', true) * difficulty;
+		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Turtlimp', 'map', true) * difficulty;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, true, 'map') * 1.5 * difficulty;
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 
@@ -2329,7 +2326,7 @@ function equalityManagement() {
 					updateEqualityScaling();
 					break;
 				}
-				else if ((ourDmgEquality * gammaDmg) < enemyHealth && gammaToTrigger > 1) {
+				else if ((ourDmgEquality * gammaDmg) < enemyHealth && (gammaToTrigger > 1 || (gammaToTrigger > 1 && fuckGamma))) {
 					game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
 					manageEqualityStacks();
 					updateEqualityScaling();
@@ -2347,61 +2344,55 @@ function equalityManagement() {
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
+				else if (ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2 && !fuckGamma) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourDmgEquality * 2 > enemyHealth && ourHealth >= enemyDmgEquality * 2) {
+				else if (ourDmgEquality * 2 > enemyHealth && ourHealth >= enemyDmgEquality * 2 && !fuckGamma) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
+				else if (ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3 && !fuckGamma) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourDmgEquality * 3 > enemyHealth && ourHealth >= enemyDmgEquality * 3) {
+				else if (ourDmgEquality * 3 > enemyHealth && ourHealth >= enemyDmgEquality * 3 && !fuckGamma) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
+				else if (ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4 && !fuckGamma) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
+				else if (ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4 && !fuckGamma) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
+				else if (ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3 && !fuckGamma) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
+				else if (ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2 && !fuckGamma) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				}
 				else if (ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
-					game.portal.Equality.disabledStackCount = i;
-					manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				}
-				else if (ourHealth >= enemyDmgEquality && (gammaToTrigger == 0 || fuckGamma)) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
@@ -3168,7 +3159,7 @@ function displayMostEfficientEquipment() {
 		var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
 		var zoneGo = !zoneGo && (rEquipZone[0] > 0 && (rEquipZone.includes(game.global.world)) || game.global.world >= rEquipZone[rEquipZone.length - 1]) ? true :
 			zoneGo;
-		var bestBuys = mostEfficientEquipment(1, true, true, false);
+		var bestBuys = mostEfficientEquipment(1, true, true, false, 0, true);
 		var isAttack = (RequipmentList[item].Stat === 'attack' ? 0 : 1);
 		var $eqNamePrestige = null;
 		if (game.upgrades[RequipmentList[item].Upgrade].locked == 0) {

@@ -554,7 +554,7 @@ function Rgetequips(map, special) { //(level, p b or false)
 
 //Shol Territory
 
-function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, fakeLevels = {}) {
+function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, fakeLevels = {}, showAllEquips) {
 
 	for (var i in RequipmentList) {
 		if (typeof fakeLevels[i] === 'undefined') {
@@ -570,7 +570,9 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			!resourceMaxPercent ? getPageSetting('Requippercent') / 100 :
 				resourceMaxPercent
 	var metalShred = false;
-	var ignoreShield = !ignoreShield ? false : true;
+	var skipDamage = false;
+	var ignoreShield = !ignoreShield ? false : ignoreShield;
+	var showAllEquips = !showAllEquips ? false : showAllEquips;
 	var mostEfficient = [
 		{
 			name: "",
@@ -587,8 +589,21 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	];
 
 	//Daily Shred variables
-	if (game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
-		metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+	if (game.global.challengeActive === 'Daily') {
+		if (typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+		if (typeof (game.global.dailyChallenge.mirrored) !== 'undefined') {
+			var ourHealth = RcalcOurHealth();
+			var ourDamage = RcalcOurDmg('max', game.portal.Equality.radLevel, false, true, false, false, true)
+			var gammaToTrigger = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
+			var reflectPct = dailyModifiers.mirrored.getReflectChance(game.global.dailyChallenge.mirrored.strength);
+			if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
+				ourDamage /= game.portal.Tenacity.getMult();
+				ourDamage *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
+			}
+			if (ourDamage * ((100 + (reflectPct * gammaToTrigger)) / 100) > ourHealth) {
+				skipDamage = true;
+			}
+		}
 	}
 
 	var highestPrestige = 0;
@@ -604,6 +619,10 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		if (!zoneGo && !buyPrestigeMaybe(i, resourceMaxPercent) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
 		//Skips if ignoreShield variable is true.
 		if (ignoreShield && i == 'Shield') continue;
+		//Skipping if on reflect daily and our dmg is too high
+		if (skipDamage && isAttack === 0 && !showAllEquips) {
+			continue;
+		}
 		//Skips looping through equips if they're blocked during Pandemonium.
 		if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
 		//Skips buying shields when you can afford bonfires on Hypothermia.
