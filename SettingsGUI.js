@@ -976,9 +976,9 @@ function initializeAllSettings() {
 
 
 	document.getElementById('showautomapstatus').setAttribute('onclick', 'toggleStatus()');
-	document.getElementById('Rshowautomapstatus').setAttribute('onclick', 'toggleStatus()');
+	document.getElementById('Rshowautomapstatus').setAttribute('onclick', 'toggleRadonStatus()');
 	document.getElementById('showhehr').setAttribute('onclick', 'toggleHeHr()');
-	document.getElementById('Rshowrnhr').setAttribute('onclick', 'toggleHeHr()');
+	document.getElementById('Rshowrnhr').setAttribute('onclick', 'toggleRnHr()');
 
 	document.getElementById('rHideArchaeology').setAttribute('onclick', 'settingChanged("rHideArchaeology"), modifyParentNode("rHideArchaeology", "Rarchstring3", "hide")');
 	modifyParentNode("rHideArchaeology", "Rarchstring3", "hide");
@@ -2811,54 +2811,100 @@ function toggleAutoMaps() {
 	}
 }
 
-function toggleStatus() {
-	if (game.global.universe == 1) {
-		if (getPageSetting('showautomapstatus')) {
-			setPageSetting('showautomapstatus', 0);
-			turnOff('autoMapStatus')
+function toggleStatus(update) {
+	if (update) {
+		if (getPageSetting('showautomapstatus'))
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		}
-		else {
-			turnOn('autoMapStatus')
-			setPageSetting('showautomapstatus', 1);
+		else
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		return
+	}
+	if (getPageSetting('showautomapstatus')) {
+		setPageSetting('showautomapstatus', 0);
+		if (game.global.universe == 2) {
+			turnOn('autoMapStatus')
+			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		}
 	}
-	if (game.global.universe == 2) {
-		if (getPageSetting('Rshowautomapstatus')) {
-			turnOn('autoMapStatus')
-			setPageSetting('Rshowautomapstatus', 0);
-			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		}
-		else {
+	else {
+		setPageSetting('showautomapstatus', 1);
+		if (game.global.universe == 2) {
 			turnOff('autoMapStatus')
-			setPageSetting('Rshowautomapstatus', 1);
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		}
 	}
 }
 
-function toggleHeHr() {
-	if (game.global.universe == 1) {
-		if (getPageSetting('showhehr')) {
-			setPageSetting('showhehr', 0);
-			turnOff('hiderStatus')
-			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+function toggleRadonStatus(update) {
+
+	if (update) {
+		if (getPageSetting('Rshowautomapstatus'))
+			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		else
+			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		return
+	}
+
+	if (getPageSetting('Rshowautomapstatus')) {
+		setPageSetting('Rshowautomapstatus', 0);
+		if (game.global.universe == 2) {
+			turnOn('autoMapStatus')
+			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		}
-		else {
-			setPageSetting('showhehr', 1);
-			turnOn('hiderStatus')
+	}
+	else {
+		setPageSetting('Rshowautomapstatus', 1);
+		if (game.global.universe == 2) {
+			turnOff('autoMapStatus')
+			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		}
+	}
+}
+
+function toggleHeHr(update) {
+
+	if (update) {
+		if (getPageSetting('showhehr'))
+			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		else
+			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		return
+	}
+	if (getPageSetting('showhehr')) {
+		setPageSetting('showhehr', 0);
+		if (game.global.universe == 1) {
+			turnOff('hiderStatus')
+			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		}
+	}
+	else {
+		setPageSetting('showhehr', 1);
+		if (game.global.universe == 1) {
+			turnOn('hiderStatus');
 			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		}
 	}
-	if (game.global.universe == 2) {
-		if (getPageSetting('Rshowrnhr')) {
-			setPageSetting('Rshowrnhr', 0);
-			turnOn('hiderStatus')
+}
+
+function toggleRnHr(update) {
+
+	if (update) {
+		if (getPageSetting('Rshowrnhr'))
+			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		else
 			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+		return
+	}
+	if (getPageSetting('Rshowrnhr')) {
+		setPageSetting('Rshowrnhr', 0);
+		if (game.global.universe == 2) {
+			turnOn('hiderStatus')
+			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		}
-		else {
-			setPageSetting('Rshowrnhr', 1);
+	}
+	else {
+		setPageSetting('Rshowrnhr', 1);
+		if (game.global.universe == 2) {
 			turnOff('hiderStatus')
 			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		}
