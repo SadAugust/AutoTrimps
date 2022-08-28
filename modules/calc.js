@@ -1167,7 +1167,7 @@ function RcalcEnemyHealthMod(world, cell, name, type, query) {
 	//Dailies
 	if (game.global.challengeActive == 'Daily') {
 		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
-		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
+		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && (game.global.mapsActive || (type === 'map' || type === 'void')) ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
 		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
 
