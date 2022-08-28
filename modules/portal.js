@@ -669,10 +669,11 @@ function Rresetmapvars() {
 	smithyMapCount = [0, 0, 0];
 
 	//Auto Level variables
-	rSFautoLevel = Infinity;
-	rTrFautoLevel = Infinity;
 	rTFautoLevel = Infinity;
+	rTrFautoLevel = Infinity;
+	rSFautoLevel = Infinity;
 	rMBautoLevel = Infinity;
+	rSmithlessautoLevel = Infinity;
 
 	if (document.getElementById('hiderStatus').style.display == 'None' && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) {
 		turnOn("hiderStatus")

@@ -1888,48 +1888,6 @@ function rFragmentFarm(type, level, special, perfect) {
 	updateMapCost();
 }
 
-function PerfectMapLevel(special) {
-
-	var mult = 1;
-	mult *= game.global.challengeActive == 'Unbalance' ? 1.5 : 1;
-	mult *= game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
-	mult *= game.global.challengeActive == 'Archaeology' ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
-	mult *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult() : 1;
-	mult *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getBossMult() : 1;
-	mult *= game.global.challengeActive == 'Storm' ? game.challenges.Storm.getAttackMult() : 1;
-	mult *= game.global.challengeActive == 'Berserk' ? 1.5 : 1;
-	mult *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
-	mult *= game.global.challengeActive == 'Nurture' ? 2 : 1;
-	mult *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-	mult *= game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getPandMult() : 1;
-	mult *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
-
-	multpanda = game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
-
-	gammaburstmult = getPageSetting('RPandemoniumHits') < 5 && (RcalcOurHealth() / (RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 20, 'Snimp')) * 1.125)) >= 5 ? (1 + (getHeirloomBonus("Shield", "gammaBurst")) / 500) : 1;
-	hitsmap = getPageSetting('RPandemoniumHits') > 0 ? getPageSetting('RPandemoniumHits') : 10;
-	hitssurv = getPageSetting('RPandemoniumHits') < 5 ? getPageSetting('RPandemoniumHits') : 5;
-	go = false;
-	for (var i = 10; 0 < i; i--) {
-		if (!go) {
-			pluslevels = i;
-			var bm2 = pluslevels > 0 ? 1.5 : 1;
-			if ((game.resources.fragments.owned >= PerfectMapCost(pluslevels, special)) && ((RcalcEnemyBaseHealth("map", game.global.world + pluslevels, 20, 'Turtlimp') * mult * 0.75) <= ((RcalcOurDmg("avg", false, true) / gammaburstmult) * bm2 * hitsmap))
-				&& ((((((RcalcBadGuyDmg(null, RgetEnemyAvgAttack((game.global.world + pluslevels), 20, 'Snimp')) * 1.125) / multpanda) * mult) * (hitssurv)) <= (RcalcOurHealth() * 2)))) {
-				go = true;
-				return i;
-			}
-		}
-		if (!go && i == 0) {
-			pluslevels = -1;
-			if (game.global.challengeActive == 'Pandemonium') pluslevels = 1;
-			go = true;
-			return i;
-		}
-	}
-
-}
-
 function PerfectMapCost(pluslevel, special, biome) {
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
@@ -2150,9 +2108,6 @@ function autoMapLevel(maxLevel, minLevel, floorCrit, special) {
 
 	var difficulty = 0.75;
 	var ourHealth = RcalcOurHealth(questShieldBreak) * 2;
-	//var nova = game.global.novaMutStacks > 0 ? game.global.novaMutStacks / 100 : 1;
-	//if (game.global.novaMutStacks > 0) enemyDmg /= u2Mutations.types.Nova.enemyAttackMult();
-	//if ((mapType === 'map' || mapType === 'void') && !game.global.mapsActive && game.global.novaMutStacks > 0) ourDmg /= u2Mutations.types.Nova.trimpAttackMult();
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
@@ -2228,12 +2183,11 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 
 	if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 
-
 	if (forceOneShot) ourDmg *= 2;
 	var ourDmgEquality = 0;
 	//Figuring out gamma burst stacks to proc and dmg bonus
 	var gammaToTrigger = forceGamma ? 0 : forceOneShot ? 999 : (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
-	var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
+	var gammaDmg = gammaBurstPct;
 	var fastEnemy = fastimps.includes(enemyName);
 	if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
 	if (query && mapType === 'map' && game.talents.mapHealth.purchased) ourHealth *= 2;
@@ -2320,15 +2274,6 @@ function equalityManagement() {
 		var runningSmithless = game.global.challengeActive == "Smithless" && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith;
 
 		//Initialising name/health/dmg variables
-		//Enemy stats
-		var enemyName = game.global[mapGrid][currentCell + 1].name;
-		var enemyHealth = game.global[mapGrid][currentCell + 1].health;
-		var enemyAttack = getCurrentEnemy() ? getCurrentEnemy().attack * RcalcBadGuyDmgMod() : RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * difficulty;
-		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * 1.5 * difficulty : enemyAttack * 1.5;
-		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
-		enemyDmg *= !mapping && typeof game.global.dailyChallenge.crits !== 'undefined' && typeof game.global.dailyChallenge.empower !== 'undefined' ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
-		enemyDmg *= type === 'map' && mapping && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
-		var enemyDmgEquality = 0;
 		var bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 		//Our stats
 		var ourHealth = remainingHealth();
@@ -2338,8 +2283,18 @@ function equalityManagement() {
 		var ourDmgEquality = 0;
 		//Figuring out gamma burst stacks to proc and dmg bonus
 		var gammaToTrigger = (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
-		var gammaDmg = getHeirloomBonus("Shield", "gammaBurst") / 100;
+		var gammaDmg = gammaBurstPct;
 		var fuckGamma = (typeof game.global.dailyChallenge.mirrored !== 'undefined' && dailyModifiers.mirrored.getReflectChance(game.global.dailyChallenge.mirrored.strength) > 40 || (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger)) ? true : false;
+
+		//Enemy stats
+		var enemyName = game.global[mapGrid][currentCell + 1].name;
+		var enemyHealth = game.global[mapGrid][currentCell + 1].health;
+		var enemyAttack = getCurrentEnemy() ? getCurrentEnemy().attack * RcalcBadGuyDmgMod() : RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * difficulty;
+		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName), 0) * 1.5 * difficulty : enemyAttack * 1.5;
+		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || questShieldBreak)) ? 4 : 1;
+		enemyDmg *= !mapping && typeof game.global.dailyChallenge.crits !== 'undefined' && typeof game.global.dailyChallenge.empower !== 'undefined' ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
+		enemyDmg *= type === 'map' && mapping && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
+		var enemyDmgEquality = 0;
 
 		//Fast Enemies
 		var fastEnemy = game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && type === 'world' ? fastimps.includes(enemyName) || game.global.gridArray[currentCell + 1].u2Mutation.length > 0 : !game.global.preMapsActive ? fastimps.includes(enemyName) : false;
@@ -2353,7 +2308,7 @@ function equalityManagement() {
 				ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 				if (runningUnlucky && (Number(RcalcOurDmg('min', i, mapping, true, true, true, true) * bionicTalent).toString()[0] % 2 == 1))
 					continue;
-				if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
+				if (!fastEnemy && !runningGlass && !runningBerserk && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !questShieldBreak) {
 					game.portal.Equality.disabledStackCount = i;
 					manageEqualityStacks();
 					updateEqualityScaling();
@@ -2454,8 +2409,8 @@ function equalityManagement() {
 				}
 				else {
 					game.portal.Equality.disabledStackCount = i;
-					//manageEqualityStacksLocal();
-					//updateEqualityScaling();
+					/* manageEqualityStacksLocal();
+					updateEqualityScaling(); */
 				}
 			}
 		}

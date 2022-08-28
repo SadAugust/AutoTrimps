@@ -289,8 +289,8 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
 	if (Fluffy.isActive()) {
 		number *= Fluffy.getDamageModifier();
 	}
-	if (getHeirloomBonus("Shield", "gammaBurst") > 0 && (calcOurHealth() / (calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0))) >= 5)) {
-		number *= ((getHeirloomBonus("Shield", "gammaBurst") / 100) + 1) / 5;
+	if (gammaBurstPct > 0 && (calcOurHealth() / (calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0))) >= 5)) {
+		number *= (gammaBurstPct + 1) / 5;
 	}
 
 
@@ -827,7 +827,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	}
 
 	// Gamma Burst
-	number *= ignoreGammaBurst ? 1 : getHeirloomBonus("Shield", "gammaBurst") / 100;
+	number *= ignoreGammaBurst ? 1 : gammaBurstPct;
 
 	switch (minMaxAvg) {
 		case 'min':
@@ -1181,7 +1181,7 @@ function RcalcHDratio() {
 		if (getPageSetting('rManageEquality') == 2) {
 			var zone = game.global.world;
 			var enemyName = zone >= 59 ? 'Improbability' : 'Blimp'
-			var ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), false, true, false) * getHeirloomBonus("Shield", "gammaBurst") / 100;
+			var ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), false, true, false) * gammaBurstPct;
 			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', true);
 			ratio = enemyHealth / ourDamage;
 		}

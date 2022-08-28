@@ -641,7 +641,6 @@ function RbuyJobs() {
 		desiredRatios[2] = 0;
 	}
 
-
 	var totalFraction = desiredRatios.reduce((a, b) => { return a + b; });
 	totalFraction = totalFraction == 0 ? 1 : totalFraction
 	var desiredWorkers = [0, 0, 0, 0];
@@ -669,13 +668,13 @@ function RbuyJobs() {
 		for (var i = 0; i < desiredWorkers.length; i++) {
 
 			if (desiredWorkers[i] > 0) continue;
+			if (Math.abs(desiredWorkers[i]) <= 0) continue;
 
 			var buyAmountStore = game.global.buyAmt;
 			var fireState = game.global.firing;
 
 			game.global.firing = (desiredWorkers[i] < 0);
 			game.global.buyAmt = Math.abs(desiredWorkers[i]);
-
 			buyJob(ratioWorkers[i], true, true);
 
 			game.global.firing = fireState;
