@@ -602,7 +602,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skips if ignoreShield variable is true.
 		if (ignoreShield && i == 'Shield') continue;
 		//Skipping if on reflect daily and our dmg is too high
-		if (dailyShredEquip() && isAttack === 0 && !showAllEquips) {
+		if (reflectShouldBuyEquips() && isAttack === 0 && !showAllEquips) {
 			continue;
 		}
 		//Skips looping through equips if they're blocked during Pandemonium.
@@ -721,7 +721,7 @@ function RautoEquip() {
 					if (!game.equipment[equipName].locked) {
 						var isAttack = (RequipmentList[equipName].Stat === 'attack' ? 0 : 1);
 						//Skipping if on reflect daily and our dmg is too high
-						if (dailyShredEquip() && isAttack === 0) {
+						if (reflectShouldBuyEquips() && isAttack === 0) {
 							continue;
 						}
 						if (mostEfficientEquipment()[isAttack + 4] && buyUpgrade(RequipmentList[equipName].Upgrade, true, true))
