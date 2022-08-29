@@ -588,24 +588,6 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		}
 	];
 
-	//Daily Shred variables
-	if (game.global.challengeActive === 'Daily') {
-		if (typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
-		if (typeof (game.global.dailyChallenge.mirrored) !== 'undefined') {
-			var ourHealth = RcalcOurHealth();
-			var ourDamage = RcalcOurDmg('max', game.portal.Equality.radLevel, false, true, false, false, true)
-			var gammaToTrigger = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
-			var reflectPct = dailyModifiers.mirrored.getReflectChance(game.global.dailyChallenge.mirrored.strength);
-			if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
-				ourDamage /= game.portal.Tenacity.getMult();
-				ourDamage *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
-			}
-			if (ourDamage * ((100 + (reflectPct * gammaToTrigger)) / 100) > ourHealth) {
-				skipDamage = true;
-			}
-		}
-	}
-
 	var highestPrestige = 0;
 	for (var i in RequipmentList) {
 		var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
@@ -620,7 +602,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skips if ignoreShield variable is true.
 		if (ignoreShield && i == 'Shield') continue;
 		//Skipping if on reflect daily and our dmg is too high
-		if (skipDamage && isAttack === 0 && !showAllEquips) {
+		if (dailyShredEquip() && isAttack === 0 && !showAllEquips) {
 			continue;
 		}
 		//Skips looping through equips if they're blocked during Pandemonium.
@@ -738,6 +720,10 @@ function RautoEquip() {
 				if (buyPrestigeMaybe(equipName)[0]) {
 					if (!game.equipment[equipName].locked) {
 						var isAttack = (RequipmentList[equipName].Stat === 'attack' ? 0 : 1);
+						//Skipping if on reflect daily and our dmg is too high
+						if (dailyShredEquip() && isAttack === 0) {
+							continue;
+						}
 						if (mostEfficientEquipment()[isAttack + 4] && buyUpgrade(RequipmentList[equipName].Upgrade, true, true))
 							prestigeLeft = true;
 						if (getPageSetting('Requipprestige') == 2 && buyUpgrade(RequipmentList[equipName].Upgrade, true, true))

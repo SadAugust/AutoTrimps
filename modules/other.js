@@ -2408,6 +2408,29 @@ function equalityManagement() {
 	}
 }
 
+function dailyShredEquip() {
+	//Daily Shred variables
+	if (game.global.challengeActive === 'Daily') {
+		if (typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+		if (typeof (game.global.dailyChallenge.mirrored) !== 'undefined') {
+			var ourHealth = RcalcOurHealth();
+			var ourDamage = RcalcOurDmg('max', game.portal.Equality.radLevel, false, true, false, false, true)
+			var gammaToTrigger = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
+			var reflectPct = dailyModifiers.mirrored.getReflectChance(game.global.dailyChallenge.mirrored.strength);
+			if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
+				ourDamage /= game.portal.Tenacity.getMult();
+				ourDamage *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
+			}
+			if (ourDamage * ((100 + (reflectPct * gammaToTrigger)) / 100) > ourHealth) {
+				return true
+			}
+			else {
+				return false;
+			}
+		}
+	}
+}
+
 function* finder(array, item) {
 	let index = -1;
 	while ((index = array.indexOf(item, index + 1)) > -1) {
