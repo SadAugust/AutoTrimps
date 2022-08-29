@@ -2408,7 +2408,7 @@ function equalityManagement() {
 	}
 }
 
-function dailyShredEquip() {
+function reflectShouldBuyEquips() {
 	//Daily Shred variables
 	if (game.global.challengeActive === 'Daily') {
 		if (typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
