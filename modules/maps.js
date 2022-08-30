@@ -1130,9 +1130,9 @@ function RautoMap() {
 		if (rMBIndex !== null && rMBIndex >= 0) {
 			var rMBSettings = rMBBaseSettings[rMBIndex];
 			rMBRepeatCounter = rMBSettings.repeat;
+			var rMBSpecial = rMBSettings.special;
 			if (rMBSettings.active && game.global.mapBonus < rMBRepeatCounter) {
 				var rMBCell = rMBSettings.cell;
-				var rMBSpecial = rMBSettings.special;
 				if (game.global.lastClearedCell + 2 >= rMBCell) {
 					rMBMapLevel = rMBSettings.level;
 					var rMBJobRatio = rMBSettings.jobratio;
