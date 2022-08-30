@@ -1159,12 +1159,12 @@ function RautoMap() {
 						shouldDoHealthMaps = true;
 					}
 				}
-				if (rMBCurrentMap !== undefined && game.global.mapBonus >= rMBRepeatCounter) {
-					if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rMBMapLevel >= 0 ? "+" : "") + rMBMapLevel + " " + rMBSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
-					if (rMBautoLevel !== Infinity) rMBautoLevel = Infinity;
-					currTime = 0;
-					rMBCurrentMap = undefined;
-				}
+			}
+			if (rMBCurrentMap !== undefined && game.global.mapBonus >= rMBRepeatCounter) {
+				if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rMBMapLevel >= 0 ? "+" : "") + rMBMapLevel + " " + rMBSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+				if (rMBautoLevel !== Infinity) rMBautoLevel = Infinity;
+				currTime = 0;
+				rMBCurrentMap = undefined;
 			}
 		}
 	}
