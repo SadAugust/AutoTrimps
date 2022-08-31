@@ -2963,8 +2963,6 @@ function automateSpireAssault() {
 		}
 	}
 
-
-
 	//Swapping Items
 	if (autoBattle.sessionEnemiesKilled == 0 && autoBattle.enemy.baseHealth == autoBattle.enemy.health && autoBattle.maxEnemyLevel === autoBattle.enemyLevel) {
 		ABItemSwap(items, ring);

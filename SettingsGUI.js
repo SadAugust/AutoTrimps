@@ -419,6 +419,7 @@ function initializeAllSettings() {
 	createSetting('Requipcaphealth', 'AE: Armour Cap', 'What level to stop buying Armour at.', 'value', 50, null, "Gear");
 	createSetting('Requipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input. ', 'multiValue', -1, null, "Gear");
 	createSetting('Requippercent', 'AE: Percent', 'What percent of resources to spend on equipment before the zone you have set in AE: Zone.', 'value', 1, null, "Gear");
+	createSetting('Rautoequipportal', 'AE Portal', 'Makes sure Auto Equip is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', false, null, 'Gear');
 	createSetting('Requip2', 'AE: 2', 'Always buys level 2 of weapons and armor regardless of efficiency.', 'boolean', true, null, "Gear");
 	createSetting('Requipprestige', ['AE: Prestige Off', 'AE: Prestige', 'AE: Always Prestige'], '<b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased.<br><br><b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.', 'multitoggle', 0, null, "Gear");
 	createSetting('rEquipHighestPrestige', 'AE: Highest Prestige', 'Will only buy equips for the highest prestige currently owned.', 'boolean', true, null, "Gear");
@@ -1271,7 +1272,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			autoPortalSettings.setAttribute('style', 'margin-left:-1px;');
 			var autoPortalSettingsButton = document.createElement("SPAN");
 			autoPortalSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-
 			autoPortalContainer.appendChild(autoPortalSettings);
 			autoPortalSettings.appendChild(autoPortalSettingsButton);
 		}
@@ -1472,13 +1472,13 @@ function settingChanged(id) {
 		if (btn.value > btn.name.length - 1)
 			btn.value = 0;
 		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + (btn.value));
-		document.getElementById(id).innerHTML = btn.name[btn.value];
-		if (btn = autoTrimpSettings.RBuyJobsNew) {
+		document.getElementById(id).innerHTML = btn.name[btn.value]
+		if (btn.id === 'RBuyJobsNew') {
 			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
 			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
 		}
-		if (btn = autoTrimpSettings.RAutoPortalDaily) {
-			document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
+		if (btn.id === 'RAutoPortalDaily') {
+			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
 		}
 	}
 	if (btn.type == 'dropdown') {
@@ -1986,7 +1986,6 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerpercent') : turnOff('c2runnerpercent');
 
 	//C3
-
 	//Map Bonus  
 	turnOff('rc3MapBonus');
 	radonon ? turnOn('rc3MapBonusPopup') : turnOff('rc3MapBonusPopup');
@@ -2122,6 +2121,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Requipon') ? turnOn('Requipcaphealth') : turnOff('Requipcaphealth');
 	radonon && getPageSetting('Requipon') ? turnOn('Requipzone') : turnOff('Requipzone');
 	radonon && getPageSetting('Requipon') ? turnOn('Requippercent') : turnOff('Requippercent');
+	radonon && getPageSetting('Requipon') ? turnOn('Rautoequipportal') : turnOff('Rautoequipportal');
 	radonon && getPageSetting('Requipon') ? turnOn('Requip2') : turnOff('Requip2');
 	radonon && getPageSetting('Requipon') ? turnOn('Requipprestige') : turnOff('Requipprestige');
 	radonon && getPageSetting('Requipon') ? turnOn('rEquipHighestPrestige') : turnOff('rEquipHighestPrestige');

@@ -44,7 +44,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			if (x == ratioJobs.length - 1) tooltipText += "<tr><td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + buildNiceCheckbox('autoJobCheckboxFarmersUntil', 'autoCheckbox', (settingGroup.FarmersUntil.enabled)) + "&nbsp;&nbsp;<span>" + "Farmers Until</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Zone: <input class='jobConfigQuantity' id='FarmersUntilZone' type='number'  value='" + ((settingGroup.FarmersUntil.zone) ? settingGroup.FarmersUntil.zone : 999) + "'/></div></div></td>";
 			if (x == ratioJobs.length - 1) tooltipText += "<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 1px'>" + buildNiceCheckbox('autoJobCheckboxNoLumberjacks', 'autoCheckbox', (settingGroup.NoLumberjacks.enabled)) + "&nbsp;&nbsp;<span>" + "No Lumberjacks Post MP</span></div></td></tr>";
-
+		}
+		var values = ['AutoJobs Off', 'Auto Ratios', 'Manual Ratios'];
+		tooltipText += "<tr><td style='width: 40%'><div class='col-xs-6' style='padding-right: 5px'>Setting on Portal:</div><div class='col-xs-6 lowPad' style='text-align: right'><select style='width: 100%' id='autoJobSelfGather'><option value='0'>No change</option>";
+		for (var x = 0; x < values.length; x++) {
+			tooltipText += "<option" + ((settingGroup.portalOption && settingGroup.portalOption == values[x].toLowerCase()) ? " selected='selected'" : "") + " value='" + values[x].toLowerCase() + "'>" + values[x] + "</option>";
 		}
 
 		tooltipText += "</div></td></tr>";
@@ -93,8 +97,15 @@ function MAZLookalike(titleText, varPrefix, event) {
 		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Maps: <input class='structConfigQuantity' id='structMapCountSafeGateway" + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.mapCount) ? settingGroup.SafeGateway.mapCount : 0) + "'/></div>";
 		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Till Z: <input class='structConfigPercent' id='structMax" + item + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.zone) ? settingGroup.SafeGateway.zone : 0) + "'/></div>";
 		tooltipText += "</div></td>";
-		tooltipText += "</tr><tr>";
+		//On Portal Settings
+		var values = ['Off', 'On'];
+		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style='padding-right: 5px'> Setting on Portal:" + "</span></div>";
+		tooltipText += "<div class='col-xs-5 style='width: 33%; padding-left: 5px; text-align: right'><select style='width: 70%' id='autoJobSelfGather'><option value='0'>No change</option>";
+		for (var x = 0; x < values.length; x++) {
+			tooltipText += "<option" + ((settingGroup.portalOption && settingGroup.portalOption == values[x].toLowerCase()) ? " selected='selected'" : "") + " value='" + values[x].toLowerCase() + "'>" + values[x] + "</option>";
+		}
 
+		tooltipText += "</tr><tr>";
 		tooltipText += "</tr></tbody></table>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='saveATAutoStructureConfig()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 		game.global.lockTooltip = true;
@@ -414,11 +425,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributeFarmDropdown'><select value='" + defaultVals.mapType + "' id='windowTributeFarmDropdownDefault'>" + defaultTributeFarmDropdown + "</select></div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRecycle' style='text-align: center;'>" + buildNiceCheckbox("windowRecycleDefault", null, defaultVals.recycle) + "</div>";
 		tooltipText += "</div>"
-
-
-
-
-
 
 
 		//Setting up rows for each setting
@@ -797,6 +803,10 @@ function saveATAutoJobsConfig() {
 		}
 		setting[name].percent = (document.getElementById('autoJobQuant' + name).value);
 	}
+	var gatherElem = document.getElementById('autoJobSelfGather');
+	if (gatherElem) {
+		if (gatherElem.value) setting.portalOption = gatherElem.value;
+	}
 
 	autoTrimpSettings.rJobSettingsArray.value = setting;
 	cancelTooltip();
@@ -860,6 +870,11 @@ function saveATAutoStructureConfig() {
 		if (max > 10000) max = 10000;
 		max = (isNumberBad(max)) ? 0 : max;
 		setting[name].buyMax = max;
+	}
+
+	var gatherElem = document.getElementById('autoJobSelfGather');
+	if (gatherElem) {
+		if (gatherElem.value) setting.portalOption = gatherElem.value;
 	}
 
 	autoTrimpSettings.rBuildingSettingsArray.value = setting;
