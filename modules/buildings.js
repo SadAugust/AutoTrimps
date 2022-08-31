@@ -294,13 +294,13 @@ function mostEfficientHousing() {
 	}
 
 	for (var house of HousingTypes) {
-		var maxHousing = (((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world) ? Infinity :
+		var maxHousing = ((!autoBattle.oneTimers.Expanding_Tauntimp.owned && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildings') && getPageSetting('c3buildingzone') >= game.global.world) ? Infinity :
 			autoTrimpSettings.rBuildingSettingsArray.value[house].buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value[house].buyMax);
 		if (!game.buildings[house].locked && game.buildings[house].owned < maxHousing) {
 			housingTargets.push(house);
 		}
 	}
-	var runningC3 = ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)
+	var runningC3 = (!autoBattle.oneTimers.Expanding_Tauntimp.owned && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildings') && getPageSetting('c3buildingzone') >= game.global.world)
 
 	var mostEfficient = {
 		name: "",
@@ -443,7 +443,7 @@ function RbuyBuildings() {
 
 	//Housing 
 	var boughtHousing = false;
-	var runningC3 = ((game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)
+	var runningC3 = (!autoBattle.oneTimers.Expanding_Tauntimp.owned && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildings') && getPageSetting('c3buildingzone') >= game.global.world)
 	do {
 		boughtHousing = false;
 		var housing = mostEfficientHousing();

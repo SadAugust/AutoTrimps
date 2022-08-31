@@ -2757,35 +2757,36 @@ function ABItemSwap(items, ring) {
 
 function automateSpireAssault() {
 
-	if (autoBattle.items.Stormbringer.owned && autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Haunted_Harpoon.owned) {
+	if (autoBattle.maxEnemyLevel < 100 && autoBattle.items.Stormbringer.owned && autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Haunted_Harpoon.owned) {
 		if (autoBattle.items.Stormbringer.owned && autoBattle.items.Stormbringer.level < 5)
 			autoBattle.upgrade('Stormbringer')
 		if (autoBattle.items.Nullifium_Armor.owned && autoBattle.items.Nullifium_Armor.level < 4)
 			autoBattle.upgrade('Nullifium_Armor')
 		if (autoBattle.items.Haunted_Harpoon.owned && autoBattle.items.Haunted_Harpoon.level < 3)
 			autoBattle.upgrade('Haunted_Harpoon')
+	}
+	if (autoBattle.enemyLevel === 109 && autoBattle.items.Haunted_Harpoon.level === 5 && autoBattle.rings.level === 36 && autoBattle.shards >= autoBattle.upgradeCost('Haunted_Harpoon'))
+		autoBattle.upgrade('Haunted_Harpoon')
 
-		if (autoBattle.enemyLevel === 109 && autoBattle.items.Haunted_Harpoon.level === 5 && autoBattle.rings.level === 36 && autoBattle.shards >= autoBattle.upgradeCost('Haunted_Harpoon'))
-			autoBattle.upgrade('Haunted_Harpoon')
-
-		if (autoBattle.enemyLevel === 117) {
-			if (autoBattle.rings.level < 40 && autoBattle.shards >= autoBattle.getRingLevelCost()) {
-				autoBattle.levelRing();
-				if (autoBattle.rings.level === 40 && autoBattle.bonuses.Extra_Limbs.level === 11) {
-					var items = [['Menacing_Mask'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Blessed_Protector'], ['Doppelganger_Signet'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
-					var ring = [['attack'], ['lifesteal']]
-					ABItemSwap(items, ring);
-					autoBattle.popup(true, false, true);
-					autoBattle.resetCombat();
-				}
-			}
-			if (autoBattle.rings.level === 40 && (autoBattle.items.Stormbringer.level < 9 || autoBattle.items.Haunted_Harpoon.level < 7 || autoBattle.items.Omni_Enhancer.level < 9)) {
-				if (autoBattle.shards >= autoBattle.upgradeCost('Omni_Enhancer')) autoBattle.upgrade('Omni_Enhancer');
-				if (autoBattle.items.Omni_Enhancer.level === 9 && autoBattle.shards >= autoBattle.upgradeCost('Haunted_Harpoon')) autoBattle.upgrade('Haunted_Harpoon');
-				if (autoBattle.items.Haunted_Harpoon.level === 7 && autoBattle.shards >= autoBattle.upgradeCost('Stormbringer')) autoBattle.upgrade('Stormbringer');
-				if (autoBattle.items.Nullifium_Armor.level === 8 && autoBattle.shards >= autoBattle.upgradeCost('Basket_of_Souls')) autoBattle.upgrade('Basket_of_Souls');
+	if (autoBattle.enemyLevel === 117) {
+		if (autoBattle.rings.level < 40 && autoBattle.shards >= autoBattle.getRingLevelCost()) {
+			autoBattle.levelRing();
+			if (autoBattle.rings.level === 40 && autoBattle.bonuses.Extra_Limbs.level === 11) {
+				var items = [['Menacing_Mask'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Blessed_Protector'], ['Doppelganger_Signet'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
+				var ring = [['attack'], ['lifesteal']]
+				ABItemSwap(items, ring);
+				autoBattle.popup(true, false, true);
+				autoBattle.resetCombat();
 			}
 		}
+		if (autoBattle.rings.level === 40 && (autoBattle.items.Stormbringer.level < 9 || autoBattle.items.Haunted_Harpoon.level < 7 || autoBattle.items.Omni_Enhancer.level < 9)) {
+			if (autoBattle.shards >= autoBattle.upgradeCost('Omni_Enhancer')) autoBattle.upgrade('Omni_Enhancer');
+			if (autoBattle.items.Omni_Enhancer.level === 9 && autoBattle.shards >= autoBattle.upgradeCost('Haunted_Harpoon')) autoBattle.upgrade('Haunted_Harpoon');
+			if (autoBattle.items.Haunted_Harpoon.level === 7 && autoBattle.shards >= autoBattle.upgradeCost('Stormbringer')) autoBattle.upgrade('Stormbringer');
+			if (autoBattle.items.Nullifium_Armor.level === 8 && autoBattle.shards >= autoBattle.upgradeCost('Basket_of_Souls')) autoBattle.upgrade('Basket_of_Souls');
+		}
+	}
+	if (autoBattle.rings.level < 40) {
 		if (autoBattle.enemyLevel == 92) { //6s kills - 2.14h cleartime
 			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['attack'], ['health']]
@@ -2859,7 +2860,9 @@ function automateSpireAssault() {
 			var items = [['Rusty_Dagger'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Fearsome_Piercer'], ['Blessed_Protector'], ['The_Doomspring'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
 			var ring = [['attack'], ['lifesteal']]
 		}
+	}
 
+	if (autoBattle.rings.level >= 35 && autoBattle.rings.level < 50) {
 		if (autoBattle.enemyLevel == 110) {
 			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
 			var ring = [['attack'], ['health']]
@@ -2909,40 +2912,108 @@ function automateSpireAssault() {
 			var items = [['Bad_Medkit'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
 			var ring = [['attack'], ['lifesteal']]
 		}
+	}
 
-		if (autoBattle.sessionEnemiesKilled == 0 && autoBattle.enemy.baseHealth == autoBattle.enemy.health && autoBattle.maxEnemyLevel === autoBattle.enemyLevel) {
+	if (autoBattle.rings.level < 50) {
+		if (autoBattle.enemyLevel == 122) {
+			var items = [['Menacing_Mask'], ['Bad_Medkit'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['lifesteal']]
+		}
+		if (autoBattle.enemyLevel == 123) {
+			var items = [['Menacing_Mask'], ['Bad_Medkit'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['lifesteal']]
+		}
+		if (autoBattle.enemyLevel == 124) {
+			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Lifegiving_Gem'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Eelimp_in_a_Bottle'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['lifesteal']]
+		}
+		if (autoBattle.enemyLevel == 125) {
+			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Bloodstained_Gloves'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 126) {
+			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 127) {
+			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+
+		if (autoBattle.enemyLevel == 128) {
+			autoBattle.enemyLevel = 121;
+			var items = [['Menacing_Mask'], ['Bad_Medkit'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Blessed_Protector'], ['Doppelganger_Signet'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['lifesteal']]
 			ABItemSwap(items, ring);
 			autoBattle.popup(true, false, true);
+			autoBattle.resetCombat();
 		}
-
-		if (autoBattle.maxEnemyLevel >= 99 && autoBattle.rings.level < 27 && autoBattle.items.Fearsome_Piercer.level < 11) {
-			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
-			return;
-		}
-
-		if (autoBattle.maxEnemyLevel >= 102 && autoBattle.rings.level < 30) {
-			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
-			return;
-		}
-
-		if (autoBattle.maxEnemyLevel >= 109 && (autoBattle.rings.level < 36 || autoBattle.items.Haunted_Harpoon.level < 6 || autoBattle.items.Nullifium_Armor.level < 6 || autoBattle.items.Stormbringer.level < 7 || autoBattle.items.Omni_Enhancer.level < 8 || autoBattle.items.Basket_of_Souls.level < 9)) {
-			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
-			return;
-		}
-
-		if (autoBattle.maxEnemyLevel >= 117 && (autoBattle.rings.level < 40 || autoBattle.items.Haunted_Harpoon.level < 7 || autoBattle.items.Omni_Enhancer.level < 9 || autoBattle.items.Stormbringer.level < 9 || autoBattle.items.Basket_of_Souls.level < 10)) {
-			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
-			return;
-		}
-		if (autoBattle.maxEnemyLevel >= 121 && autoBattle.rings.level < 50) {
-			if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
-			return;
-		}
-
-		if (!autoBattle.autoLevel)
-			autoBattle.toggleAutoLevel();
-
 	}
+
+	if (autoBattle.rings.level >= 50) {
+		if (autoBattle.enemyLevel == 128) {
+			var items = [['Menacing_Mask'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 129) {
+			var items = [['Menacing_Mask'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 130) {
+			var items = [['Menacing_Mask'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['health']]
+		}
+		if (autoBattle.enemyLevel == 131) {
+			var items = [['Menacing_Mask'], ['Bad_Medkit'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = [['attack'], ['lifesteal']]
+		}
+	}
+
+
+
+	//Swapping Items
+	if (autoBattle.sessionEnemiesKilled == 0 && autoBattle.enemy.baseHealth == autoBattle.enemy.health && autoBattle.maxEnemyLevel === autoBattle.enemyLevel) {
+		ABItemSwap(items, ring);
+		autoBattle.popup(true, false, true);
+	}
+
+	//Turning off autoLevel
+	if (autoBattle.maxEnemyLevel >= 99 && autoBattle.rings.level < 27 && autoBattle.items.Fearsome_Piercer.level < 11) {
+		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+		return;
+	}
+
+	if (autoBattle.maxEnemyLevel >= 102 && autoBattle.rings.level < 30) {
+		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+		return;
+	}
+
+	if (autoBattle.maxEnemyLevel >= 109 && (autoBattle.rings.level < 36 || autoBattle.items.Haunted_Harpoon.level < 6 || autoBattle.items.Nullifium_Armor.level < 6 || autoBattle.items.Stormbringer.level < 7 || autoBattle.items.Omni_Enhancer.level < 8 || autoBattle.items.Basket_of_Souls.level < 9)) {
+		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+		return;
+	}
+
+	if (autoBattle.maxEnemyLevel >= 117 && (autoBattle.rings.level < 40 || autoBattle.items.Haunted_Harpoon.level < 7 || autoBattle.items.Omni_Enhancer.level < 9 || autoBattle.items.Stormbringer.level < 9 || autoBattle.items.Basket_of_Souls.level < 10)) {
+		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+		return;
+	}
+	if (autoBattle.maxEnemyLevel >= 121 && autoBattle.rings.level < 46) {
+		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+		return;
+	}
+	if (autoBattle.maxEnemyLevel >= 128 && autoBattle.rings.level < 60) {
+		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+		return;
+	}
+
+	if (autoBattle.maxEnemyLevel >= 131) {
+		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
+		return;
+	}
+
+	if (!autoBattle.autoLevel)
+		autoBattle.toggleAutoLevel();
+
 }
 
 function totalSAResources() {

@@ -2232,24 +2232,24 @@ function RautoMap() {
 					selectedMap = RShouldFarmMapCreation(rTFMapLevel, rTFSpecial);
 					rTFCurrentMap = 'rTimeFarm';
 					workerRatio = rTFJobRatio;
-					if (currTime === 0) currTime = getGameTime();
+					if (rTFCurrentMap !== 'rTimeFarm' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldTributeFarm || rShouldMetFarm) {
 					selectedMap = RShouldFarmMapCreation(rTrFMapLevel, rTrFSpecial);
 					workerRatio = rTrFJobRatio;
 					rTributeFarming = true;
 					rTrFCurrentMap = 'rTributeFarm'
-					if (currTime === 0) currTime = getGameTime();
+					if (rTrFCurrentMap !== 'rTributeFarm' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldSmithyFarm || rShouldQuest === 10) {
 					selectedMap = RShouldFarmMapCreation(rSFMapLevel, rSFSpecial);
 					workerRatio = rSFJobRatio;
 					rSmithyFarming = true;
 					rSFCurrentMap = 'rSmithyFarm'
-					if (currTime === 0) currTime = getGameTime();
+					if (rSFCurrentMap !== 'rSmithyFarm' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldWorshipperFarm) {
 					selectedMap = RShouldFarmMapCreation(shippluslevel, shipspecial);
 					rWorshipperCurrentMap = "rWorshipperMap";
 					workerRatio = rShipJobRatio;
-					if (currTime === 0) currTime = getGameTime();
+					if (rWorshipperCurrentMap !== 'rWorshipperMap' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldUnbalance || rShouldStorm) {
 					selectedMap = RShouldFarmMapCreation(-(game.global.world - 6), "fa");
 				} else if (rShouldMayhem) {
@@ -2258,7 +2258,7 @@ function RautoMap() {
 					selectedMap = RShouldFarmMapCreation(rIFMapLevel, rIFSpecial);
 					rInsanityCurrentMap = "rInsanity";
 					workerRatio = rIFJobRatio;
-					if (currTime === 0) currTime = getGameTime();
+					if (rInsanityCurrentMap !== 'rInsanity' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldPandemoniumDestack) {
 					selectedMap = RShouldFarmMapCreation(rPandemoniumMapLevel, pandspecial);
 				} else if (rShouldPandemoniumFarm) {
@@ -2275,7 +2275,7 @@ function RautoMap() {
 					selectedMap = RShouldFarmMapCreation(alchmaplevel, alchspecial_alt, alchbiome);
 					rAlchemyCurrentMap = "rAlchemy";
 					workerRatio = rAlchJobRatio;
-					if (currTime === 0) currTime = getGameTime();
+					if (rAlchemyCurrentMap !== 'rAlchemy' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldHypoFarm) {
 					selectedMap = RShouldFarmMapCreation(rHFMapLevel, rHFSpecial);
 					rHFCurrentMap = "rHypoFarm";
@@ -2287,10 +2287,11 @@ function RautoMap() {
 					selectedMap = RShouldFarmMapCreation(rMBMapLevel, rMBSpecial);
 					rMBCurrentMap = "rMapBonus";
 					workerRatio = rMBJobRatio;
-					if (currTime === 0) currTime = getGameTime();
+					if (rMBCurrentMap !== 'rMapBonus' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldSmithless) {
 					selectedMap = RShouldFarmMapCreation(rSmithlessMapLevel, 'lmc');
 					workerRatio = rSmithlessJobRatio;
+					if (currTime === 0) currTime = getGameTime();
 				} else if (rShouldEquipFarm) {
 					selectedMap = RShouldFarmMapCreation(equipminus, 'lmc');
 					if (currTime === 0) currTime = getGameTime();

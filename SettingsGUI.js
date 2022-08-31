@@ -2003,8 +2003,8 @@ function updateCustomButtons() {
 
 	radonon ? turnOn('c3finishrun') : turnOff('c3finishrun');
 	radonon ? turnOn('c3meltingpoint') : turnOff('c3meltingpoint');
-	radonon ? turnOn('c3buildings') : turnOff('c3buildings');
-	radonon && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
+	radonon && !autoBattle.oneTimers.Expanding_Tauntimp.owned ? turnOn('c3buildings') : turnOff('c3buildings');
+	radonon && !autoBattle.oneTimers.Expanding_Tauntimp.owned && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
 
 	//C3 Time Farm
@@ -2316,7 +2316,7 @@ function updateCustomButtons() {
 	radonon ? turnOn('Rcalcmaxequality') : turnOff('Rcalcmaxequality');
 	radonon ? turnOn('Rmanageequality') : turnOff('Rmanageequality');
 	radonon ? turnOn('rManageEquality') : turnOff('rManageEquality');
-	radonon ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
+	radonon && !autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
 
 	//Challenges
 
@@ -2476,6 +2476,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RdAutoGoldenUpgrades') == 'Radon' ? turnOn('Rdradonbattle') : turnOff('Rdradonbattle');
 	radonon && getPageSetting('RAutoGoldenUpgrades') == 'Battle' ? turnOn('Rbattleradon') : turnOff('Rbattleradon');
 	radonon && getPageSetting('RdAutoGoldenUpgrades') == 'Battle' ? turnOn('Rdbattleradon') : turnOff('Rdbattleradon');
+	turnOff('rNonRadonUpgrade');
 
 	//Nature
 	!radonon ? turnOn('AutoNatureTokens') : turnOff('AutoNatureTokens');
