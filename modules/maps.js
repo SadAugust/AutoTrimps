@@ -1526,7 +1526,7 @@ function RautoMap() {
 		var rUnbalanceStacks = getPageSetting('rUnbalanceStacks') > 0 ? getPageSetting('rUnbalanceStacks') : Infinity;
 		var rStormZone = getPageSetting('rStormZone') > 0 ? getPageSetting('rStormZone') : Infinity;
 		var rStormStacks = getPageSetting('rStormStacks') > 0 ? getPageSetting('rStormStacks') : Infinity;
-		if (game.global.challengeActive == "Unbalance") rShouldUnbalance = (game.global.world >= rUnbalanceZone && (game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks || (getPageSetting('rUnbalanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
+		if (game.global.challengeActive == "Unbalance") rShouldUnbalance = (((game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= rUnbalanceZone && (game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks || (getPageSetting('rUnbalanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
 		if (game.global.challengeActive == "Storm") rShouldStorm = (game.global.world >= rStormZone && (game.challenges.Storm.beta >= rStormStacks && game.challenges.Storm.beta != 0));
 		//Recycles the map we're running if you have 0 stacks of balance and the map is level 6 as that's the only time we should be running a map at this level.
 		if (((game.global.challengeActive == "Unbalance" && !rShouldUnbalance && game.challenges.Unbalance.balanceStacks == 0) || (game.global.challengeActive == "Storm" && !rShouldStorm && game.challenges.Storm.beta == 0)) && game.global.mapsActive && getCurrentMapObject().level == 6) {
