@@ -490,7 +490,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				atlantrimp: false,
 				raidingzone: 6,
 				mapType: 'Absolute',
-				autoLevel: false
+				autoLevel: true
 			}
 			var style = "";
 			if (current.length - 1 >= x) {
@@ -499,7 +499,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (titleText.includes('Raiding')) vals.raidingzone = autoTrimpSettings[varPrefix + "Settings"].value[x].raidingzone ? autoTrimpSettings[varPrefix + "Settings"].value[x].raidingzone : 1;
 				vals.cell = autoTrimpSettings[varPrefix + "Settings"].value[x].cell ? autoTrimpSettings[varPrefix + "Settings"].value[x].cell : 81;
 				if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine') && !titleText.includes('Raiding') && !titleText.includes('Void')) vals.level = autoTrimpSettings[varPrefix + "Settings"].value[x].level
-				if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus')) vals.autoLevel = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel : false;
+				if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus')) vals.autoLevel = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel : true;
 				if (titleText.includes('Tribute Farm')) vals.mapType = autoTrimpSettings[varPrefix + "Settings"].value[x].mapType ? autoTrimpSettings[varPrefix + "Settings"].value[x].mapType : 'Absolute';
 				if (titleText.includes('Time Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus')) vals.repeat = autoTrimpSettings[varPrefix + "Settings"].value[x].repeat ? autoTrimpSettings[varPrefix + "Settings"].value[x].repeat : 1;
 				if (titleText.includes('Tribute Farm')) vals.tributes = autoTrimpSettings[varPrefix + "Settings"].value[x].tributes ? autoTrimpSettings[varPrefix + "Settings"].value[x].tributes : 0;
@@ -951,7 +951,7 @@ function addRow(varPrefix, titleText) {
 				if (document.getElementById('windowAtlantrimp' + x) !== null)
 					document.getElementById('windowAtlantrimp' + x).value = false;
 				if (document.getElementById('windowAutoLevel' + x) !== null)
-					document.getElementById('windowAutoLevel' + x).value = false;
+					document.getElementById('windowAutoLevel' + x).value = true;
 				if (document.getElementById('windowJobRatio' + x) !== null)
 					document.getElementById('windowJobRatio' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.jobratio
 				if (titleText.includes('Map Bonus') && document.getElementById('windowLevel' + x) !== null)
@@ -1019,7 +1019,7 @@ function removeRow(index, titleText) {
 	}
 	if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus')) {
 		var checkBox = document.getElementById('windowAutoLevel' + index);
-		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
+		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
 	if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) document.getElementById('windowJobRatio' + index).value = 0;
