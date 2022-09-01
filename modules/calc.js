@@ -656,8 +656,8 @@ function debugCalc() {
 	var runningUnlucky = game.global.challengeActive == 'Unlucky'
 
 	//Init
-	var displayedMin = RcalcOurDmg("min", game.portal.Equality.disabledStackCount, mapping, true, true, runningUnlucky, true) * bionic;
-	var displayedMax = RcalcOurDmg("max", game.portal.Equality.disabledStackCount, mapping, true, true, runningUnlucky, true) * bionic * (runningUnlucky ? 399 : 1);
+	var displayedMin = RcalcOurDmg("min", game.portal.Equality.disabledStackCount, mapping, true, runningUnlucky, true) * bionic;
+	var displayedMax = RcalcOurDmg("max", game.portal.Equality.disabledStackCount, mapping, true, runningUnlucky, true) * bionic * (runningUnlucky ? 399 : 1);
 
 	//Trimp Stats
 	debug("Our Stats");
@@ -694,7 +694,7 @@ function RgetCritMulti(floorCrit, mult) {
 		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * critD
 }
 
-function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useTitimp, runningUnlucky, floorCrit) {
+function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, useTitimp, runningUnlucky, floorCrit, ignoreMutation) {
 
 	useTitimp = useTitimp ? true : false;
 	runningUnlucky = !runningUnlucky ? false : true;
@@ -770,7 +770,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 	number *= game.global.challengeActive == 'Nurture' && game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
 	number *= game.global.challengeActive == 'Alchemy' ? alchObj.getPotionEffect('Potion of Strength') : 1;
 	if (game.global.stringVersion >= '5.8.0') {
-		number *= !game.global.mapsActive && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
+		number *= !ignoreMutation && !game.global.mapsActive && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
 		//Smithies (smithless challenge)
 		number *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 	}
@@ -825,9 +825,6 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, ignoreGammaBurst, useT
 		number /= RgetCritMulti(true);
 		number *= RgetCritMulti(floorCrit);
 	}
-
-	// Gamma Burst
-	number *= ignoreGammaBurst ? 1 : gammaBurstPct;
 
 	switch (minMaxAvg) {
 		case 'min':
@@ -929,7 +926,7 @@ function RcalcDailyAttackMod(number) {
 	return number;
 }
 
-function RcalcBadGuyDmg(enemy, attack, equality, query, mapType) { //Works out avg dmg. For max dmg * 1.5.
+function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, ignoreMutation) { //Works out avg dmg. For max dmg * 1.5.
 	var number = enemy ? enemy.attack : attack;
 	var query = !query ? false : query;
 	var mapType = !mapType ? false : mapType;
@@ -983,7 +980,7 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType) { //Works out a
 				number *= (1.01, game.global.world - 201)
 				if (cell.u2Mutation.indexOf('RGE') != -1 || (cell.cc && cell.cc[3] > 0)) number *= u2Mutations.types.Rage.enemyAttackMult();
 			}
-			number *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
+			number *= !ignoreMutation && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
 		}
 	}
 	return number;
@@ -1181,12 +1178,12 @@ function RcalcHDratio() {
 		if (getPageSetting('rManageEquality') == 2) {
 			var zone = game.global.world;
 			var enemyName = zone >= 59 ? 'Improbability' : 'Blimp'
-			var ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), false, true, false) * gammaBurstPct;
+			var ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), false, false) * gammaBurstPct;
 			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', true);
 			ratio = enemyHealth / ourDamage;
 		}
 		else {
-			var ourBaseDamage = RcalcOurDmg("avg", false, false, true, false);
+			var ourBaseDamage = RcalcOurDmg("avg", false, false, false);
 			ratio = RcalcEnemyHealth(game.global.world) / ourBaseDamage;
 		}
 	}

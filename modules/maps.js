@@ -933,7 +933,7 @@ function RautoMap() {
 					questcheck() == 4 ? 4 :
 						questcheck() == 5 ? 5 :
 							questcheck() == 6 ? 6 :
-								questcheck() == 7 && (RcalcOurDmg('min', 0, false, true) < game.global.gridArray[50].maxHealth) && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))) ? 7 :
+								questcheck() == 7 && (RcalcOurDmg('min', 0, false) < game.global.gridArray[50].maxHealth) && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))) ? 7 :
 									questcheck() == 8 ? 8 :
 										questcheck() == 9 ? 9 :
 											questcheck() == 10 && game.mapUnlocks.SmithFree.canRunOnce && !canAffordBuilding('Smithy') ? 10 :
@@ -941,7 +941,7 @@ function RautoMap() {
 	}
 
 	//Failsafes
-	if (!game.global.mapsUnlocked || RcalcOurDmg("avg", false, false, true) <= 0 || rShouldQuest == 9 || rShouldQuest == 8) {
+	if (!game.global.mapsUnlocked || RcalcOurDmg("avg", false, false) <= 0 || rShouldQuest == 9 || rShouldQuest == 8) {
 		RvanillaMapatZone = false;
 		RenoughDamage = true;
 		RenoughHealth = true;
@@ -972,7 +972,7 @@ function RautoMap() {
 	if (oneSecondInterval) HDRatio = RcalcHDratio();
 
 	//Calc
-	var ourBaseDamage = RcalcOurDmg("avg", false, false, true);
+	var ourBaseDamage = RcalcOurDmg("avg", false, false);
 	if (getPageSetting('rManageEquality') === 2 && oneSecondInterval) {
 		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability', 'world', true), equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1), true);
 	}
@@ -1541,7 +1541,7 @@ function RautoMap() {
 		if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
 			var name = game.global.gridArray[0].name
 			var equalityAmt = equalityQuery(true, true, name, game.global.world, 1, 'world', 1, false, true)
-			var ourDmg = (RcalcOurDmg('min', equalityAmt, false, true, false, false, true));
+			var ourDmg = (RcalcOurDmg('min', equalityAmt, false, false, false, true));
 			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world', true);
 			enemyHealth *= 3e15;
 			var stacksRemaining = 10 - game.challenges.Smithless.uberAttacks;
@@ -1743,7 +1743,7 @@ function RautoMap() {
 			for (var i = 10; 0 < i; i--) {
 				if (!go) {
 					mlevels = i;
-					if ((game.resources.fragments.owned >= PerfectMapCost(mlevels, pandspecial)) && ((RcalcEnemyBaseHealth("map", game.global.world + mlevels, 20, 'Turtlimp') * game.challenges.Pandemonium.getPandMult() * 0.75) <= ((RcalcOurDmg("avg", false, true, true) / gammaburstmult) * 1.5 * hitsmap))
+					if ((game.resources.fragments.owned >= PerfectMapCost(mlevels, pandspecial)) && ((RcalcEnemyBaseHealth("map", game.global.world + mlevels, 20, 'Turtlimp') * game.challenges.Pandemonium.getPandMult() * 0.75) <= ((RcalcOurDmg("avg", false, true) / gammaburstmult) * 1.5 * hitsmap))
 						&& (((((RcalcBadGuyDmg(null, RgetEnemyAvgAttack((game.global.world + mlevels), 20, 'Snimp')) * 1.5)) * (hitssurv)) <= (RcalcOurHealth() * 2)))) {
 						if (i > game.challenges.Pandemonium.pandemonium) {
 							rPandemoniumMapLevel = game.challenges.Pandemonium.pandemonium;
@@ -2049,7 +2049,7 @@ function RautoMap() {
 				if (!go) {
 					mlevels = i;
 					if (
-						((RcalcEnemyHealth(game.global.world + mlevels)) <= (RcalcOurDmg("avg", false, false, true) * hits)) &&
+						((RcalcEnemyHealth(game.global.world + mlevels)) <= (RcalcOurDmg("avg", false, false) * hits)) &&
 						((((RcalcBadGuyDmg(null, RgetEnemyAvgAttack((game.global.world + mlevels), 20, 'Snimp'))) * 0.8) * (hitssurv)) <= (RcalcOurHealth() * 2))
 					) {
 						equipminus = mlevels;
