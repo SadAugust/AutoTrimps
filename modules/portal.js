@@ -355,6 +355,21 @@ function RautoPortal() {
 					RdoPortal(null, true);
 			}
 			break;
+		case "Challenge 3":
+			var portalzone = getPageSetting('RCustomAutoPortal');
+			var dailyportalzone = getPageSetting('rCustomDailyAutoPortal');
+			if (game.global.world >= portalzone) {
+				if (autoTrimpSettings.RadonC3Challenge.selected != 'None')
+					RdoPortal(autoTrimpSettings.RadonC3Challenge.selected, false, true);
+				else
+					RdoPortal();
+			}
+			if (game.global.world >= dailyportalzone && getPageSetting('RAutoStartDaily')) {
+				checkCompleteDailies();
+				if (game.global.recentDailies.length !== 7 && !(getPageSetting('dontCapDailies') && game.global.recentDailies.length != 0))
+					RdoPortal(null, true);
+			}
+			break;
 		case "Melt":
 		case "Bublé":
 		case "Quagmire":
@@ -435,21 +450,31 @@ function RdailyAutoPortal() {
 	}
 }
 
-function RdoPortal(challenge, daily) {
+function RdoPortal(challenge, daily, c3) {
 	var daily = !daily ? false : true;
 	var preset = 0;
+
+
+	if (!game.global.portalActive) return;
+	//Will stop it from autoPortaling into dailies when you have dontCapDailies enabled and don't have 7 dailies stored.
 	if (daily) {
 		checkCompleteDailies();
 		if (game.global.recentDailies.length == 7 && !(getPageSetting('dontCapDailies') && game.global.recentDailies.length != 0))
 			return;
 	}
-	if (!game.global.portalActive) return;
+
+	//Identifying if we need to keep any heirlooms before portaling.
 	if (getPageSetting('autoheirlooms') && getPageSetting('typetokeep') != 'None' && getPageSetting('raretokeep') != 'None') autoheirlooms3();
+
+	//Idk why this exists?
 	portalClicked();
 	if (!portalWindowOpen) {
 		portalClicked();
 	}
+
+	//Daily Code
 	if (portalWindowOpen && getPageSetting('RAutoStartDaily')) {
+		//Swapping to u1 if necessary
 		if (getPageSetting('u1daily') == true && portalUniverse == 2)
 			swapPortalUniverse();
 		selectChallenge('Daily');
@@ -460,14 +485,18 @@ function RdoPortal(challenge, daily) {
 			if (!done)
 				break;
 		}
+		//Will stop it from autoPortaling into dailies when you have dontCapDailies enabled and don't have 7 dailies stored. ---- NOT SURE IF NECESSARY SINCE IT IS BEING DONE EARLIER TOO 
 		if (getPageSetting('dontCapDailies') && game.global.recentDailies.length !== 0)
 			lastUndone = 1;
+
+		//Portaling into Filler / C3 if all the dailies we want to run have already been run.
 		if (lastUndone == 1) {
 			debug("All available Dailies already completed.", "portal");
 			if ((getPageSetting('u2daily') && portalUniverse == 2 && challenge == autoTrimpSettings.dHeliumHourChallenge.selected) || (getPageSetting('u1daily') == true && portalUniverse == 1))
 				swapPortalUniverse();
+			if (c3) toggleChallengeSquared();
 			selectChallenge(challenge || 0);
-			preset = 1; //Loads preset 1 for fillers
+			preset = (c3 ? 3 : 1); //Loads preset 1 for fillers or 3 for c3s
 		} else {
 			if (game.global.challengeActive == 'Daily' && portalUniverse == 2 && getPageSetting('RFillerRun')) {
 				if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None') {
@@ -486,7 +515,9 @@ function RdoPortal(challenge, daily) {
 		if (getPageSetting('u2daily') == true && portalUniverse == 2 && challenge == autoTrimpSettings.dHeliumHourChallenge.selected) {
 			swapPortalUniverse();
 		}
+		if (c3) toggleChallengeSquared();
 		selectChallenge(challenge);
+		preset = (c3 ? 3 : 1); //Loads preset 1 for fillers or 3 for c3s
 	}
 
 	if (portalWindowOpen && portalUniverse == 2) PresetSwapping(preset);

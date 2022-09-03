@@ -2344,73 +2344,96 @@ function RautoMap() {
 			if (game.global.repeatMap && !rShouldPrestigeRaid) {
 				var currentLevel = getCurrentMapObject().level - game.global.world;
 				//Void Maps
-				if (RneedToVoid && getCurrentMapObject().location !== 'Void')
-					repeatClicked();
+				if (RneedToVoid) {
+					if (getCurrentMapObject().location !== 'Void') repeatClicked();
+				}
 				//Prestige Raiding
-				else if (rShouldPrestigeRaid && RAMPfragfarming && RAMPfrag(raidzones, rPRFragFarm) == true)
-					repeatClicked();
+				else if (rShouldPrestigeRaid) {
+					if (RAMPfragfarming && RAMPfrag(raidzones, rPRFragFarm) == true) repeatClicked();
+				}
 				//Quest Farming
-				else if (rShouldQuest == 6 && game.global.mapBonus >= 4)
-					repeatClicked();
+				else if (rShouldQuest == 6) {
+					if (game.global.mapBonus >= 4 || currentLevel < 0) repeatClicked();
+				}
 				//Time Farm
-				else if (rShouldTimeFarm && (game.global.mapRunCounter + 1 == rTFRepeatCounter || currentLevel !== rTFMapLevel || getCurrentMapObject().bonus !== rTFSpecial)) {
-					if (game.global.mapRunCounter + 1 !== rTFRepeatCounter) rTFMapRepeats = game.global.mapRunCounter + 1;
-					repeatClicked();
+				else if (rShouldTimeFarm) {
+					if (game.global.mapRunCounter + 1 == rTFRepeatCounter || currentLevel !== rTFMapLevel || getCurrentMapObject().bonus !== rTFSpecial) {
+						if (game.global.mapRunCounter + 1 !== rTFRepeatCounter) rTFMapRepeats = game.global.mapRunCounter + 1;
+						repeatClicked();
+					}
 				}
 				//Tribute Farm
-				else if ((rShouldTributeFarm || rShouldMetFarm) && (currentLevel !== rTrFMapLevel || getCurrentMapObject().bonus !== rTrFSpecial))
-					repeatClicked();
+				else if ((rShouldTributeFarm || rShouldMetFarm)) {
+					if (currentLevel !== rTrFMapLevel || getCurrentMapObject().bonus !== rTrFSpecial) repeatClicked();
+				}
 				//Smithy Farm
-				else if (rShouldSmithyFarm && (currentLevel !== rSFMapLevel || getCurrentMapObject().bonus !== rSFSpecial))
-					repeatClicked();
+				else if (rShouldSmithyFarm) {
+					if (currentLevel !== rSFMapLevel || getCurrentMapObject().bonus !== rSFSpecial) repeatClicked();
+				}
 				//Worshipper Farm
-				else if (rShouldWorshipperFarm && rFragmentFarming && fragmapcost())
-					repeatClicked();
+				else if (rShouldWorshipperFarm && rFragmentFarming) {
+					if (fragmapcost()) repeatClicked();
+				}
 				//Worshipper Farm
-				else if (rShouldWorshipperFarm && !rFragmentFarming && (currentLevel !== shippluslevel || getCurrentMapObject().bonus !== shipspecial))
-					repeatClicked();
+				else if (rShouldWorshipperFarm) {
+					if (currentLevel !== shippluslevel || getCurrentMapObject().bonus !== shipspecial) repeatClicked();
+				}
 				//Unbalance Destacking
-				else if (rShouldUnbalance && ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Unbalance.balanceStacks || currentLevel !== -(game.global.world - 6) || getCurrentMapObject().bonus !== "fa"))
-					repeatClicked();
+				else if (rShouldUnbalance) {
+					if ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Unbalance.balanceStacks || currentLevel !== -(game.global.world - 6) || getCurrentMapObject().bonus !== "fa") repeatClicked();
+				}
 				//Quagmire
-				else if (Rshoulddobogs && (game.global.mapRunCounter + 1 == stacksum || getCurrentMapObject().name !== 'The Black Bog'))
-					repeatClicked();
+				else if (Rshoulddobogs) {
+					if (game.global.mapRunCounter + 1 == stacksum || getCurrentMapObject().name !== 'The Black Bog') repeatClicked();
+				}
 				//Storm Destacking
-				else if (rShouldStorm && ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Storm.beta || currentLevel !== -(game.global.world - 6) || getCurrentMapObject().bonus !== "fa"))
-					repeatClicked();
+				else if (rShouldStorm) {
+					if ((getCurrentMapObject().size - getCurrentMapCell().level) > game.challenges.Storm.beta || currentLevel !== -(game.global.world - 6) || getCurrentMapObject().bonus !== "fa") repeatClicked();
+				}
 				//Mayhem Destacking
-				else if (rShouldMayhem && (currentLevel != rMayhemMapLevel || getCurrentMapObject().bonus !== rMayhemSpecial || (game.challenges.Mayhem.stacks <= rMayhemMapLevel + 1)))
-					repeatClicked();
+				else if (rShouldMayhem) {
+					if (currentLevel != rMayhemMapLevel || getCurrentMapObject().bonus !== rMayhemSpecial || (game.challenges.Mayhem.stacks <= rMayhemMapLevel + 1)) repeatClicked();
+				}
 				//Insanity Frag Farm
-				else if (rShouldInsanityFarm && rFragmentFarming && game.resources.fragments.owned >= PerfectMapCost(rIFMapLevel, rIFSpecial))
-					repeatClicked();
+				else if (rShouldInsanityFarm) {
+					if (rFragmentFarming && game.resources.fragments.owned >= PerfectMapCost(rIFMapLevel, rIFSpecial)) repeatClicked();
+				}
 				//Insanity Farm
-				else if (rShouldInsanityFarm && (rIFStacks <= game.challenges.Insanity.insanity || currentLevel !== rIFMapLevel || getCurrentMapObject().bonus !== rIFSpecial))
-					repeatClicked();
+				else if (rShouldInsanityFarm) {
+					if (rIFStacks <= game.challenges.Insanity.insanity || currentLevel !== rIFMapLevel || getCurrentMapObject().bonus !== rIFSpecial) repeatClicked();
+				}
 				//Pandemonium Destacking
-				else if (rShouldPandemoniumDestack && (currentLevel != rPandemoniumMapLevel || ((game.challenges.Pandemonium.pandemonium - rPandemoniumMapLevel) < rPandemoniumMapLevel)))
-					repeatClicked();
+				else if (rShouldPandemoniumDestack) {
+					if (currentLevel != rPandemoniumMapLevel || ((game.challenges.Pandemonium.pandemonium - rPandemoniumMapLevel) < rPandemoniumMapLevel)) repeatClicked();
+				}
 				//Pandemonium Farming
-				else if (rShouldPandemoniumFarm && ((nextEquipmentCost >= scaleToCurrentMapLocal(amt_cache, false, true, getPageSetting('PandemoniumFarmLevel'))) || currentLevel !== getPageSetting('PandemoniumFarmLevel') || getCurrentMapObject().bonus != pandfarmspecial))
-					repeatClicked();
+				else if (rShouldPandemoniumFarm) {
+					if ((nextEquipmentCost >= scaleToCurrentMapLocal(amt_cache, false, true, getPageSetting('PandemoniumFarmLevel'))) || currentLevel !== getPageSetting('PandemoniumFarmLevel') || getCurrentMapObject().bonus != pandfarmspecial) repeatClicked();
+				}
 				//Pandemonium Jestimp Farming
-				else if (rShouldPandemoniumJestimpFarm && nextEquipmentCost >= jestMetalTotal)
-					repeatClicked();
+				else if (rShouldPandemoniumJestimpFarm) {
+					if (nextEquipmentCost >= jestMetalTotal) repeatClicked();
+				}
 				//Alch
-				else if (Rshouldalchfarm && (herbtotal >= potioncosttotal || currentLevel !== alchmaplevel || getCurrentMapObject().bonus !== alchspecial))
-					repeatClicked();
+				else if (Rshouldalchfarm) {
+					if (herbtotal >= potioncosttotal || currentLevel !== alchmaplevel || getCurrentMapObject().bonus !== alchspecial) repeatClicked();
+				}
 				//Hypo
-				else if (rShouldHypoFarm && (game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20), false, true, rHFMapLevel) + game.resources.wood.owned > rHFBonfireCostTotal || currentLevel !== rHFMapLevel || getCurrentMapObject().bonus !== rHFSpecial))
-					repeatClicked();
+				else if (rShouldHypoFarm) {
+					if (game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20), false, true, rHFMapLevel) + game.resources.wood.owned > rHFBonfireCostTotal || currentLevel !== rHFMapLevel || getCurrentMapObject().bonus !== rHFSpecial) repeatClicked();
+				}
 				//Map Bonus
-				else if (rShouldMaxMapBonus && (game.global.mapBonus >= (rMBRepeatCounter - 1) || currentLevel !== rMBMapLevel || getCurrentMapObject().bonus !== rMBSpecial))
-					repeatClicked();
+				else if (rShouldMaxMapBonus) {
+					if (game.global.mapBonus >= (rMBRepeatCounter - 1) || currentLevel !== rMBMapLevel || getCurrentMapObject().bonus !== rMBSpecial) repeatClicked();
+				}
 				//Smithless Map Bonus
-				else if (rShouldSmithless && (currentLevel !== rSmithlessMapLevel || getCurrentMapObject().bonus !== 'lmc'))
-					repeatClicked();
+				else if (rShouldSmithless) {
+					if (currentLevel !== rSmithlessMapLevel || getCurrentMapObject().bonus !== 'lmc') repeatClicked();
+				}
 				//Equip Farm Bonus
-				else if (rShouldEquipFarm && (currentLevel !== equipminus || getCurrentMapObject().bonus !== 'lmc'))
-					repeatClicked();
+				else if (rShouldEquipFarm) {
+					if (currentLevel !== equipminus || getCurrentMapObject().bonus !== 'lmc') repeatClicked();
+				}
 			}
 		} else {
 			if (game.global.repeatMap) {

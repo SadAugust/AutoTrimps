@@ -256,21 +256,17 @@ function mainLoop() {
 			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || rShouldWorshipperFarm || rShouldTimeFarm || rShouldEquipFarm))) RbuyJobs();
 			else RquestbuyJobs();
 		}
-		//Portal - Daily + Regular
-		if (autoTrimpSettings.RAutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) RautoPortal();
-		if (getPageSetting('RAutoPortalDaily') > 0 && game.global.challengeActive == "Daily" && game.global.world >= getPageSetting('RAutoPortalDaily')) RdailyAutoPortal();
-
-
+		
 		if (game.global.runningChallengeSquared && rC3EndZoneSetting != game.stats.zonesCleared.value) {
 			if (getPageSetting('c3finishrun') !== -1) {
 				if ((getPageSetting('c3finishrun') - 1) === game.global.world)
-					debug("Warning: AT will download your save and abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish C3' or set it to -1")
+					debug("Warning: AT will " + (getPageSetting('RdownloadSaves') ? 'download your save and ' : '') + "abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish C3' or set it to -1")
 				if (getPageSetting('c3finishrun') <= game.global.world) {
-					debug("Pausing, downloading save and abandoning challenge as your run has reached yout specified end point.")
+					debug("Pausing" + (getPageSetting('RdownloadSaves') ? ', downloading save' : '') + " and abandoning challenge as your run has reached your specified end point on " + game.global.world + ".")
 					AbandonChallengeRuns()
 				}
 				if (getPageSetting('c3finishrun') <= game.c2[game.global.challengeActive]) {
-					debug("The zone input in the 'C3 Finish' setting is below or equal to your HZE for this challenge, increase it or it'll end earlier than you\'d probably like it to.");
+					debug("The zone input in the 'C3 Finish' setting (" + getPageSetting('c3finishrun') + ") is below or equal to your HZE for this challenge " + game.c2[game.global.challengeActive] + ". Increase it or it'll end earlier than you\'d probably like it to.");
 				}
 			}
 			//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
@@ -291,6 +287,10 @@ function mainLoop() {
 			}
 			rC3EndZoneSetting = game.stats.zonesCleared.value;
 		}
+
+		//Portal - Daily + Regular
+		if (autoTrimpSettings.RAutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && (!game.global.runningChallengeSquared || autoTrimpSettings.RAutoPortal.selected === 'Challenge 3')) RautoPortal();
+		if (getPageSetting('RAutoPortalDaily') > 0 && game.global.challengeActive == "Daily" && game.global.world >= getPageSetting('RAutoPortalDaily')) RdailyAutoPortal();
 
 		//Archeology
 		if (getPageSetting('Rarchon') && game.global.challengeActive == "Archaeology") archstring();
