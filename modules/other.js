@@ -2413,12 +2413,12 @@ function reflectShouldBuyEquips() {
 			var ourHealth = RcalcOurHealth();
 			var ourDamage = RcalcOurDmg('max', game.portal.Equality.radLevel, false, false, false, true)
 			var gammaToTrigger = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
-			var reflectPct = dailyModifiers.mirrored.getReflectChance(game.global.dailyChallenge.mirrored.strength);
+			var reflectPct = dailyModifiers.mirrored.getMult(game.global.dailyChallenge.mirrored.strength);
 			if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
 				ourDamage /= game.portal.Tenacity.getMult();
 				ourDamage *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
 			}
-			if (ourDamage * ((100 + (reflectPct * gammaToTrigger)) / 100) > ourHealth) {
+			if (ourDamage * ((1 + (reflectPct * gammaToTrigger))) > ourHealth) {
 				return true
 			}
 			else {
