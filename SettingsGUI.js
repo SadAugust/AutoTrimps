@@ -175,8 +175,8 @@ function initializeAllSettings() {
 	//Radon Portal
 	document.getElementById('RPerkSwapping').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Radon Per Hour only <b>portals at cell 1</b> of the first level where your Rn/Hr went down even slightly compared to the current runs Best Rn/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting Rn/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Radon Per Hour', 'Bublé', 'Melt', 'Quagmire', 'Archaeology', 'Mayhem', 'Insanity', 'Nurture', 'Pandemonium', 'Alchemy', 'Hypothermia', 'Custom', 'Challenge 3'], 'Core');
-	createSetting('RadonHourChallenge', 'Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Bublé', 'Melt', 'Quagmire', 'Archaeology', 'Insanity', 'Nurture', 'Alchemy', 'Hypothermia'], 'Core');
-	createSetting('RadonC3Challenge', 'C3 Chall', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Unlucky', 'Downsize', 'Transmute', 'Unbalance', 'Duel', 'Trappapalooza', 'Wither', 'Quest', 'Storm', 'Berserk', 'Glass', 'Smithless'], 'Core');
+	createSetting('RadonHourChallenge', 'Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals on the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Bublé', 'Melt', 'Quagmire', 'Archaeology', 'Insanity', 'Nurture', 'Alchemy', 'Hypothermia'], 'Core');
+	createSetting('RadonC3Challenge', 'Challenge', 'Automatically portal into this challenge when using \'Challenge 3\' portal option on autoportal. Custom portals on the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Unlucky', 'Downsize', 'Transmute', 'Unbalance', 'Duel', 'Trappapalooza', 'Wither', 'Quest', 'Storm', 'Berserk', 'Glass', 'Smithless'], 'Core');
 	createSetting('RCustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('rCustomDailyAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone when a daily is available. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('RnHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in radon/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set)', 'value', '999', null, 'Core');
@@ -774,6 +774,7 @@ function initializeAllSettings() {
 	createSetting('Rcalcmaxequality', ['Equality Calc Off', 'EC: On', 'EC: Health'], '<b>Experimental. </b><br>Adds Equality Scaling levels to the battlecalc. Will always calculate equality based on actual scaling levels when its turned off by other settings. Assumes you use Equality Scaling. Turning this on allows in-game Equality Scaling to adjust your Health accordingly. EC: Health only decreases enemies attack in the calculation which may improve speed. ', 'multitoggle', 0, null, 'Combat');
 	createSetting('rManageEquality', ['Auto Equality Off', 'Auto Equality: Basic', 'Auto Equality: Advanced'], 'Manages Equality settings for you. <br><br><b>Auto Equality: Basic</b><br>Sets Equality to 0 on Slow enemies, and Autoscaling on for Fast enemies.<br><br><b>Auto Equality: Advanced</b><br>Will automatically identify the best equality levels to kill the current enemy and change it when necessary.', 'multitoggle', 0, null, 'Combat');
 	createSetting('Rcalcfrenzy', 'Frenzy Calc', '<b>Experimental.</b><br>Adds frenzy to the calc. Be warned, it will not farm as much with this on as it expects 100% frenzy uptime.', 'boolean', false, null, 'Combat');
+	createSetting('rMutationCalc', 'Mutation Calc', 'Whether you\'d like to factor Mutations into HD calc.', 'boolean', false, null, 'Combat');
 
 	//Scryer
 	createSetting('UseScryerStance', 'Enable Scryer Stance', '<b>MASTER BUTTON</b> Activates all other scrying settings, and overrides AutoStance when scryer conditions are met. Leave regular Autostance on while this is active. Scryer gives 2x Resources (Non-Helium/Nullifium) and a chance for Dark Essence. Once this is on, priority for Scryer decisions goes as such:<br>NEVER USE, FORCE USE, OVERKILL, MIN/MAX ZONE<br><br><b>NO OTHER BUTTONS WILL DO ANYTHING IF THIS IS OFF.</b>', 'boolean', true, null, 'Scryer');
@@ -2317,9 +2318,9 @@ function updateCustomButtons() {
 
 	//RCombat
 	radonon ? turnOn('Rcalcmaxequality') : turnOff('Rcalcmaxequality');
-	radonon ? turnOn('Rmanageequality') : turnOff('Rmanageequality');
 	radonon ? turnOn('rManageEquality') : turnOff('rManageEquality');
 	radonon && !autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
+	radonon ? turnOn('rMutationCalc') : turnOff('rMutationCalc');
 
 	//Challenges
 

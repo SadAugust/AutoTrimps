@@ -62,7 +62,6 @@ function RgetEnemyAvgAttack(zone, cell, name, type, query) {
 
 		//Specific Imp
 		if (name) attack *= game.badGuys[name].attack;
-		if (name == 'Hulting_Mutimp') debug(name);
 
 		//U2
 		if (game.global.universe == 2) {

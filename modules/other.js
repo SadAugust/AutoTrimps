@@ -2125,7 +2125,7 @@ function autoMapLevel(maxLevel, minLevel, floorCrit, special) {
 	}
 }
 
-function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty, forceOneShot, floorCrit) {
+function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty, forceOneShot, floorCrit, checkMutations) {
 	//Turning off equality scaling
 	game.portal.Equality.scalingActive = false;
 	//Misc vars
@@ -2175,8 +2175,16 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var gammaToTrigger = forceGamma ? 0 : forceOneShot ? 999 : (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
 	var gammaDmg = gammaBurstPct;
 	var fastEnemy = fastimps.includes(enemyName);
-	if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
+	if (!checkMutations && game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
 	if (query && mapType === 'map' && game.talents.mapHealth.purchased) ourHealth *= 2;
+
+
+	if (checkMutations) {
+		ourDmg = RcalcOurDmg('min', 0, false, false, false, false, false, true);
+		enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, currentCell + 2, enemyName, 'world', false), 0, true, 'world', false, true);
+		enemyHealth = RcalcEnemyHealthMod(game.global.world, currentCell + 2, enemyName, null, false, true);
+		fastEnemey = true;
+	}
 
 	if (enemyHealth !== 0 && enemyHealth !== -1) {
 		for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
@@ -2408,7 +2416,6 @@ function equalityManagement() {
 function reflectShouldBuyEquips() {
 	//Daily Shred variables
 	if (game.global.challengeActive === 'Daily') {
-		if (typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 		if (typeof (game.global.dailyChallenge.mirrored) !== 'undefined') {
 			var ourHealth = RcalcOurHealth();
 			var ourDamage = RcalcOurDmg('max', game.portal.Equality.radLevel, false, false, false, true)
