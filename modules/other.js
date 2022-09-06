@@ -2784,6 +2784,11 @@ function automateSpireAssault() {
 			}
 		}
 	}
+	if (autoBattle.enemyLevel === 121) {
+		if (autoBattle.rings.level === 45 && autoBattle.shards >= autoBattle.getRingLevelCost()) {
+			autoBattle.levelRing();
+		}
+	}
 	if (autoBattle.rings.level < 40) {
 		if (autoBattle.enemyLevel == 92) { //6s kills - 2.14h cleartime
 			var items = [['Rusty_Dagger'], ['Bad_Medkit'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Bloodstained_Gloves'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Nullifium_Armor'], ['Haunted_Harpoon']];
@@ -2914,11 +2919,11 @@ function automateSpireAssault() {
 
 	if (autoBattle.rings.level < 50) {
 		if (autoBattle.enemyLevel == 122) {
-			var items = [['Menacing_Mask'], ['Bad_Medkit'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Lifegiving_Gem'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Bloodstained_Gloves'], ['Eelimp_in_a_Bottle'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
 			var ring = [['attack'], ['lifesteal']]
 		}
 		if (autoBattle.enemyLevel == 123) {
-			var items = [['Menacing_Mask'], ['Bad_Medkit'], ['Lifegiving_Gem'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Lifegiving_Gem'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Bloodstained_Gloves'], ['Eelimp_in_a_Bottle'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
 			var ring = [['attack'], ['lifesteal']]
 		}
 		if (autoBattle.enemyLevel == 124) {
