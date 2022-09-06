@@ -600,7 +600,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skips if we have the required number of that item and below zoneGo
 		if (!zoneGo && !buyPrestigeMaybe(i, resourceMaxPercent) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
 		//Skips if ignoreShield variable is true.
-		if (ignoreShield && i == 'Shield') continue;
+		if ((ignoreShield || getPageSetting('rEquipNoShields')) && i == 'Shield') continue;
 		//Skipping if on reflect daily and our dmg is too high
 		if (reflectShouldBuyEquips() && isAttack === 0 && !showAllEquips) {
 			continue;

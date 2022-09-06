@@ -425,6 +425,7 @@ function initializeAllSettings() {
 	createSetting('Requipprestige', ['AE: Prestige Off', 'AE: Prestige', 'AE: Always Prestige'], '<b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased.<br><br><b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.', 'multitoggle', 0, null, "Gear");
 	createSetting('rEquipHighestPrestige', 'AE: Highest Prestige', 'Will only buy equips for the highest prestige currently owned.', 'boolean', true, null, "Gear");
 	createSetting('rEquipEfficientEquipDisplay', 'AE: Highlight Equips', 'Will highlight the most efficient equipment or prestige to buy. <b>This setting will disable the default game setting.', 'boolean', true, null, "Gear");
+	createSetting('rEquipNoShields', 'AE: No Shields', 'Will stop AT from buying Shield prestiges or upgrades when they\'re available.', 'boolean', false, null, "Gear");
 	createSetting('Requipfarmon', 'AE: Farm', 'AutoEquip Farm. Calculates metal needed to reach the target you have defined in the AEF settings. Will try to buy the best map you can make. Will never make a plus map as this is intended for us on deep push runs.', 'boolean', false, null, "Gear");
 	createSetting('Requipfarmzone', 'AEF: Zone', 'What zone to start AEF: H:D and AEF: Multiplier.', 'value', '-1', null, 'Gear');
 	createSetting('RequipfarmHD', 'AEF: H:D', 'What H:D to use for AEF target.', 'value', '-1', null, 'Gear');
@@ -2130,6 +2131,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Requipon') ? turnOn('Requipprestige') : turnOff('Requipprestige');
 	radonon && getPageSetting('Requipon') ? turnOn('rEquipHighestPrestige') : turnOff('rEquipHighestPrestige');
 	radonon ? turnOn('rEquipEfficientEquipDisplay') : turnOff('rEquipEfficientEquipDisplay');
+	radonon ? turnOn('rEquipNoShields') : turnOff('rEquipNoShields');
 	radonon && getPageSetting('Requipon') ? turnOn('Rdmgcuntoff') : turnOff('Rdmgcuntoff');
 
 	//RGear AutoEquip Farm
