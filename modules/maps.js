@@ -985,7 +985,7 @@ function RautoMap() {
 		if (game.options.menu.repeatUntil.enabled == 1 && RshouldFarm)
 			toggleSetting('repeatUntil');
 	}
-	RenoughHealth = (RcalcOurHealth() > (hitsSurvived * enemyDamage));
+	RenoughHealth = (RcalcOurHealth() > ((getPageSetting('rManageEquality') === 2 ? 1 : hitsSurvived) * enemyDamage));
 	RenoughDamage = (HDRatio <= mapenoughdamagecutoff || game.global.mapBonus === 10);
 	RupdateAutoMapsStatus();
 
@@ -1651,7 +1651,7 @@ function RautoMap() {
 			stacksum = 0;
 
 			for (var i = 0; i < (bogindex + 1); i++) {
-				stacksum += parseInt(bogamount[i]);
+				stacksum += parseInt(bogamount);
 			}
 
 			var totalstacks = 100 - stacksum;
