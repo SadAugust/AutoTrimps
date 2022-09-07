@@ -2785,11 +2785,11 @@ function automateSpireAssault() {
 		}
 	}
 	if (autoBattle.enemyLevel === 121) {
+		if (autoBattle.rings.level === 45 && autoBattle.items.Omni_Enhancer.level === 10 && autoBattle.shards >= autoBattle.upgradeCost('Omni_Enhancer')) {
+			autoBattle.upgrade('Omni_Enhancer');
+		}
 		if (autoBattle.rings.level === 45 && autoBattle.shards >= autoBattle.getRingLevelCost()) {
 			autoBattle.levelRing();
-		}
-		if (autoBattle.rings.level === 46 && autoBattle.items.Omni_Enhancer.level === 10 && autoBattle.shards >= autoBattle.upgradeCost('Omni_Enhancer')) {
-			autoBattle.upgrade('Omni_Enhancer');
 		}
 	}
 	if (autoBattle.rings.level < 40) {
@@ -3001,7 +3001,7 @@ function automateSpireAssault() {
 		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
 		return;
 	}
-	if (autoBattle.maxEnemyLevel >= 121 && autoBattle.rings.level < 46 && autoBattle.items.Omni_Enhancer.level < 11) {
+	if (autoBattle.maxEnemyLevel >= 121 && (autoBattle.rings.level < 46 || autoBattle.items.Omni_Enhancer.level < 11)) {
 		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
 		return;
 	}
