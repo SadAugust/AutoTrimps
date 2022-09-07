@@ -1654,7 +1654,7 @@ function RautoMap() {
 				stacksum += parseInt(bogamount);
 			}
 
-			var totalstacks = 100 - stacksum;
+			totalstacks = 100 - stacksum;
 
 			if (rQuagSettings.active && game.global.lastClearedCell + 2 >= bogcell) {
 				if ((game.challenges.Quagmire.motivatedStacks > totalstacks))
