@@ -260,7 +260,7 @@ function HeirloomEquipShield(heirloom) {
 	if (HeirloomSearch(heirloom) != undefined && game.global.ShieldEquipped.name != getPageSetting(heirloom)) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
 		equipHeirloom(true);
-		gammaBurstPct = getHeirloomBonus("Shield", "gammaBurst") / 100;
+		gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 	} else if (HeirloomSearch(heirloom) == undefined && game.global.ShieldEquipped.name != getPageSetting(heirloom))
 		debug("The heirloom named " + autoTrimpSettings[heirloom].value + " in the Shield setting: " + autoTrimpSettings[heirloom].name + " doesn\'t exist. Rename an heirloom or adjust the settings input.");
 }
@@ -275,7 +275,7 @@ function HeirloomEquipStaff(heirloom) {
 
 function HeirloomShieldSwapped() {
 	if (!game.global.ShieldEquipped.rarity >= 10) return;
-	gammaBurstPct = getHeirloomBonus("Shield", "gammaBurst") / 100;
+	gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 	shieldEquipped = game.global.ShieldEquipped.id;
 }
 
