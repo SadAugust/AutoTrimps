@@ -2384,7 +2384,7 @@ function RautoMap() {
 				}
 				//Quagmire
 				else if (Rshoulddobogs) {
-					if (game.global.mapRunCounter + 1 == stacksum || getCurrentMapObject().name !== 'The Black Bog') repeatClicked();
+					if (game.challenges.Quagmire.motivatedStacks - totalstacks === 1 || getCurrentMapObject().name !== 'The Black Bog') repeatClicked();
 				}
 				//Storm Destacking
 				else if (rShouldStorm) {
