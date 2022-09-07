@@ -85,7 +85,7 @@ var lastHeliumZone = 0;
 var lastRadonZone = 0;
 
 //Get Gamma burst % value
-gammaBurstPct = getHeirloomBonus("Shield", "gammaBurst") / 100;
+gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 shieldEquipped = game.global.ShieldEquipped.id;
 
 function mainLoop() {
@@ -256,7 +256,7 @@ function mainLoop() {
 			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || rShouldWorshipperFarm || rShouldTimeFarm || rShouldEquipFarm))) RbuyJobs();
 			else RquestbuyJobs();
 		}
-		
+
 		if (game.global.runningChallengeSquared && rC3EndZoneSetting != game.stats.zonesCleared.value) {
 			if (getPageSetting('c3finishrun') !== -1) {
 				if ((getPageSetting('c3finishrun') - 1) === game.global.world)
