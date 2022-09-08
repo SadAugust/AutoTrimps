@@ -1414,11 +1414,11 @@ function RautoMap() {
 			var rSFSettings = rRunningC3 ? autoTrimpSettings.rc3SmithyFarmSettings.value[rSFIndex] : rRunningDaily ? autoTrimpSettings.rdSmithyFarmSettings.value[rSFIndex] : autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
 			var rSFCell = game.global.challengeActive == 'Quest' ? 1 : rSFSettings.cell
 			if ((rSFSettings.active || game.global.challengeActive === 'Quest') && game.global.lastClearedCell + 2 >= rSFCell) {
-				var rSFMapLevel = game.global.challengeActive == 'Quest' ? -1 : rSFSettings.level
+				var rSFMapLevel = game.global.challengeActive == 'Quest' ? -1 : rSFSettings.level;
 				if (rSFSettings.autoLevel && rSFCurrentMap === undefined) rSFMapLevel = autoMapLevel();
 				rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : game.global.challengeActive == 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
-				if (rSFSettings.autoLevel) {
+				if ((rSFSettings.autoLevel || (rShouldQuest === 10 && getPageSetting('rManageEquality') == 2))) {
 					if (rSFCurrentMap === undefined) {
 						if (rSFautoLevel === Infinity) rSFautoLevel = autoMapLevel();
 						if (rSFautoLevel !== Infinity && twoSecondInterval) rSFautoLevel = autoMapLevel();
