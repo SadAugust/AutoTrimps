@@ -2281,7 +2281,8 @@ function equalityManagement() {
 		var ourDmg = RcalcOurDmg('min', 0, mapping, true) * bionicTalent;
 		var ourDmgEquality = 0;
 		//Figuring out gamma burst stacks to proc and dmg bonus
-		var gammaToTrigger = gammaBurstPct === 1 ? 0 : (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
+		var gammaMaxStacks = gammaBurstPct === 1 ? 0 : autoBattle.oneTimers.Burstier.owned ? 4 : 5
+		var gammaToTrigger = gammaMaxStacks - game.heirlooms.Shield.gammaBurst.stacks;
 		var gammaDmg = gammaBurstPct;
 		var fuckGamma = (typeof game.global.dailyChallenge.mirrored !== 'undefined' && dailyModifiers.mirrored.getReflectChance(game.global.dailyChallenge.mirrored.strength) > 40 || (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger)) ? true : false;
 
@@ -2316,7 +2317,7 @@ function equalityManagement() {
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourHealth < (ourHealthMax * 0.99) && gammaToTrigger == 4 && !runningTrappa && !runningBerserk) {
+				else if (ourHealth < (ourHealthMax * 0.99) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningBerserk) {
 					if ((questShieldBreak) || !mapping) {
 						mapsClicked();
 						mapsClicked();
