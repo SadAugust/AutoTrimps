@@ -1237,7 +1237,8 @@ function RcalcEnemyHealthMod(world, cell, name, type, query, checkMutations) {
 	health *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
 	health *= game.global.challengeActive == 'Nurture' ? 2 : 1;
 	health *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-	health *= game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
+	health *= game.global.challengeActive == 'Pandemonium' && type === 'world' && (game.global.lastClearedCell === 99 || query) ? game.challenges.Pandemonium.getBossMult() : 1;
+	health *= game.global.challengeActive == 'Pandemonium' && ((type === 'world' && game.global.lastClearedCell !== 99) || (type !== 'world' || game.global.mapsActive)) ? game.challenges.Pandemonium.getPandMult() : 1;
 	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;

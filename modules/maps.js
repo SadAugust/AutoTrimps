@@ -883,7 +883,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (rShouldSmithless) status = 'Smithless Map Bonus: ' + game.global.mapBonus + "/10";
 	//Challenges
 	else if (Rshoulddobogs) status = 'Black Bogs: ' + (game.challenges.Quagmire.motivatedStacks - totalstacks) + " remaining";
-	else if (rShouldQuest) status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
+	else if (rShouldQuest) status = 'Questing: ' + game.challenges.Quest.getQuestProgress() + (questcheck() === 10 ? 'Smithy' : '');
 	else if (rShouldMayhem) status = 'Mayhem Destacking: ' + game.challenges.Mayhem.stacks + " remaining";
 	else if (Rshouldstormfarm) status = 'Storm Farming to ' + stormdynamicHD().toFixed(2);
 	else if (rShouldInsanityFarm) status = 'Insanity Farming: ' + game.challenges.Insanity.insanity + "/" + rIFStacks;
@@ -1724,7 +1724,7 @@ function RautoMap() {
 		}
 	}
 
-	//Pandemonium
+	//Pandemonium -- Needs to be tested after changing to use autoMapLevel. Also autoMapLevel needs to not be refresh every .1s, this will need to be changed.
 	if (game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumOn')) {
 		rShouldPandemoniumDestack = false;
 		rShouldPandemoniumFarm = false;
@@ -1740,24 +1740,9 @@ function RautoMap() {
 			hitssurv = getPageSetting('RPandemoniumHits') < 5 ? getPageSetting('RPandemoniumHits') : 5;
 			go = false;
 
-			for (var i = 10; 0 < i; i--) {
-				if (!go) {
-					mlevels = i;
-					if ((game.resources.fragments.owned >= PerfectMapCost(mlevels, pandspecial)) && ((RcalcEnemyBaseHealth("map", game.global.world + mlevels, 20, 'Turtlimp') * game.challenges.Pandemonium.getPandMult() * 0.75) <= ((RcalcOurDmg("avg", false, true) / gammaburstmult) * 1.5 * hitsmap))
-						&& (((((RcalcBadGuyDmg(null, RgetEnemyAvgAttack((game.global.world + mlevels), 20, 'Snimp')) * 1.5)) * (hitssurv)) <= (RcalcOurHealth() * 2)))) {
-						if (i > game.challenges.Pandemonium.pandemonium) {
-							rPandemoniumMapLevel = game.challenges.Pandemonium.pandemonium;
-						} else {
-							rPandemoniumMapLevel = mlevels;
-						}
-						go = true;
-					}
-				}
-				if (!go && i == 1) {
-					mlevels = 1;
-					rPandemoniumMapLevel = mlevels;
-					go = true;
-				}
+			if (rShouldPandemoniumDestack) {
+				pandspecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
+				rPandemoniumMapLevel = autoMapLevel(10, 0, true, pandspecial);
 			}
 		}
 
@@ -2617,7 +2602,7 @@ function RautoMap() {
 				else if (rShouldUnbalance || rShouldStorm) RShouldFarmMapCost(-(game.global.world - 6), "fa");
 				else if (rShouldMayhem) PerfectMapCost(rMayhemMapLevel, rMayhemSpecial, biome);
 				else if (rShouldInsanityFarm) PerfectMapCost(rIFMapLevel, rIFSpecial);
-				else if (rShouldPandemoniumDestack && getPageSetting('RPandemoniumMaps')) PerfectMapCost(rPandemoniumMapLevel, pandspecial, "Mountain");
+				else if (rShouldPandemoniumDestack && getPageSetting('RPandemoniumMaps')) PerfectMapCost(rPandemoniumMapLevel, pandspecial);
 				else if (rShouldPandemoniumFarm) PerfectMapCost(getPageSetting('PandemoniumFarmLevel'), pandfarmspecial);
 				else if (rShouldPandemoniumJestimpFarm) PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'), 0)
 				else if (Rshouldalchfarm) {

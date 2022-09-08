@@ -2116,6 +2116,10 @@ function autoMapLevel(maxLevel, minLevel, floorCrit, special) {
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 		//debug("Maplevel = " + y + " Equality = " + equalityAmt + " Our Damage = " + ourDmg);
 
+		/* if (y === -2) {
+			debug("Maplevel = " + y + " Equality = " + equalityAmt + " Our Damage = " + ourDmg);
+			debug("Enemy dmg = " + enemyDmg + " + " + "Enemy health = " + enemyHealth)
+		} */
 		if ((game.resources.fragments.owned >= PerfectMapCost(mapLevel, special, biome) && enemyHealth <= ourDmg) && ((enemyDmg <= ourHealth))) {
 			return mapLevel;
 		}
