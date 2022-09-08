@@ -2321,8 +2321,8 @@ function updateCustomButtons() {
 	//RCombat
 	radonon ? turnOn('Rcalcmaxequality') : turnOff('Rcalcmaxequality');
 	radonon ? turnOn('rManageEquality') : turnOff('rManageEquality');
-	radonon && !autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
-	radonon ? turnOn('rMutationCalc') : turnOff('rMutationCalc');
+	radonon && !game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
+	radonon && game.global.highestRadonLevelCleared > 200 ? turnOn('rMutationCalc') : turnOff('rMutationCalc');
 
 	//Challenges
 
