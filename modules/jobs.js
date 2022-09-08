@@ -98,7 +98,7 @@ function buyJobs() {
 			}
 			freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 			if (game.resources.food.owned > 20 && freeWorkers > 0) {
-				if (game.jobs.Farmer.owned == game.jobs.Lumberjack.owned && !game.jobs.Miner.locked)
+				if (game.jobs.Farmer.owned == game.jobs.Lumberjack.owned && !game.jobs.Miner.locked && game.global.challengeActive != "Metal")
 					safeBuyJob('Miner', 1);
 			}
 		}
@@ -128,7 +128,9 @@ function buyJobs() {
 			if (breeding > game.resources.trimps.realMax() * 0.33) {
 				freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 				if (freeWorkers > 0 && game.resources.trimps.realMax() <= 3e5) {
-					safeBuyJob('Miner', 1);
+					if (game.global.challengeActive != "Metal") {
+						safeBuyJob('Miner', 1);
+					}
 					safeBuyJob('Farmer', 1);
 					safeBuyJob('Lumberjack', 1);
 				}
@@ -193,7 +195,7 @@ function buyJobs() {
 			return false;
 	}
 	ratiobuy('Farmer', farmerRatio);
-	if (!ratiobuy('Miner', minerRatio) && breedFire && game.global.turkimpTimer === 0)
+	if (!ratiobuy('Miner', minerRatio) && breedFire && game.global.turkimpTimer === 0 && game.global.challengeActive != "Metal")
 		safeBuyJob('Miner', game.jobs.Miner.owned * -1);
 	if (!ratiobuy('Lumberjack', lumberjackRatio) && breedFire)
 		safeBuyJob('Lumberjack', game.jobs.Lumberjack.owned * -1);
@@ -490,7 +492,7 @@ function RquestbuyJobs() {
 		RbuyJobs();
 }
 
-var reservedJobs = 1000000;
+var reservedJobs = 100;
 
 function RbuyJobs() {
 
