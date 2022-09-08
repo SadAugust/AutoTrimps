@@ -724,6 +724,7 @@ function RautoEquip() {
 						if (reflectShouldBuyEquips() && isAttack === 0) {
 							continue;
 						}
+						if ((getPageSetting('rEquipNoShields')) && equipName == 'Shield') return false;
 						if (mostEfficientEquipment()[isAttack + 4] && buyUpgrade(RequipmentList[equipName].Upgrade, true, true))
 							prestigeLeft = true;
 						if (getPageSetting('Requipprestige') == 2 && buyUpgrade(RequipmentList[equipName].Upgrade, true, true))
