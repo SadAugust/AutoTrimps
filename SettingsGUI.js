@@ -2126,12 +2126,12 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Requipon') ? turnOn('Requipcaphealth') : turnOff('Requipcaphealth');
 	radonon && getPageSetting('Requipon') ? turnOn('Requipzone') : turnOff('Requipzone');
 	radonon && getPageSetting('Requipon') ? turnOn('Requippercent') : turnOff('Requippercent');
-	radonon && getPageSetting('Requipon') ? turnOn('Rautoequipportal') : turnOff('Rautoequipportal');
+	radonon ? turnOn('Rautoequipportal') : turnOff('Rautoequipportal');
 	radonon && getPageSetting('Requipon') ? turnOn('Requip2') : turnOff('Requip2');
 	radonon && getPageSetting('Requipon') ? turnOn('Requipprestige') : turnOff('Requipprestige');
 	radonon && getPageSetting('Requipon') ? turnOn('rEquipHighestPrestige') : turnOff('rEquipHighestPrestige');
 	radonon ? turnOn('rEquipEfficientEquipDisplay') : turnOff('rEquipEfficientEquipDisplay');
-	radonon ? turnOn('rEquipNoShields') : turnOff('rEquipNoShields');
+	radonon && getPageSetting('Requipon') ? turnOn('rEquipNoShields') : turnOff('rEquipNoShields');
 	radonon && getPageSetting('Requipon') ? turnOn('Rdmgcuntoff') : turnOff('Rdmgcuntoff');
 
 	//RGear AutoEquip Farm

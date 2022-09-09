@@ -500,6 +500,7 @@ function RbuyJobs() {
 
 	var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
 	if (freeWorkers <= 0) return;
+	var firing = game.global.firing;
 
 	//Do non-ratio/limited jobs first
 	//Explorers
@@ -518,7 +519,10 @@ function RbuyJobs() {
 			if (affordableExplorers > 0) {
 				var buyAmountStoreExp = game.global.buyAmt;
 				game.global.buyAmt = affordableExplorers;
+				if (firing) fireMode();
 				buyJob('Explorer', true, true);
+				if (firing) fireMode();
+				cancelTooltip()
 				freeWorkers -= affordableExplorers;
 				game.global.buyAmt = buyAmountStoreExp;
 			}
@@ -537,7 +541,10 @@ function RbuyJobs() {
 		if (affordableMets > 0 && !game.jobs.Meteorologist.locked && !rShouldTributeFarm) {
 			var buyAmountStoreMet = game.global.buyAmt;
 			game.global.buyAmt = affordableMets;
+			if (firing) fireMode();
 			buyJob('Meteorologist', true, true);
+			if (firing) fireMode();
+			cancelTooltip()
 			freeWorkers -= affordableMets;
 			game.global.buyAmt = buyAmountStoreMet;
 		}
@@ -551,7 +558,10 @@ function RbuyJobs() {
 		if (affordableShips > 0 && !game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50) {
 			var buyAmountStoreShip = game.global.buyAmt;
 			game.global.buyAmt = affordableShips;
+			if (firing) fireMode();
 			buyJob('Worshipper', true, true);
+			if (firing) fireMode();
+			cancelTooltip()
 			freeWorkers -= affordableShips;
 			game.global.buyAmt = buyAmountStoreShip;
 		}
