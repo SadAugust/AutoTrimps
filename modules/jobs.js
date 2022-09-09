@@ -499,7 +499,7 @@ function RbuyJobs() {
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
 
 	var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
-	if (freeWorkers <= 0) return;
+	//if (freeWorkers <= 0) return;
 	var firing = game.global.firing;
 
 	//Do non-ratio/limited jobs first
