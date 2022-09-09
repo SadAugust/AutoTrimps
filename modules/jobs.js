@@ -494,6 +494,18 @@ function RquestbuyJobs() {
 
 var reservedJobs = 100;
 
+function fireModeLocal() {
+	game.global.firing = !game.global.firing;
+	var elem = document.getElementById("fireBtn");
+	if (game.global.firing) {
+		elem.className = elem.className.replace("fireBtnNotFiring", "fireBtnFiring");
+		elem.innerHTML = "Firing";
+	} else {
+		elem.className = elem.className.replace("fireBtnFiring", "fireBtnNotFiring");
+		elem.innerHTML = "Fire";
+	}
+}
+
 function RbuyJobs() {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
@@ -519,10 +531,9 @@ function RbuyJobs() {
 			if (affordableExplorers > 0) {
 				var buyAmountStoreExp = game.global.buyAmt;
 				game.global.buyAmt = affordableExplorers;
-				if (firing) fireMode();
+				if (firing) fireModeLocal();
 				buyJob('Explorer', true, true);
-				if (firing) fireMode();
-				cancelTooltip()
+				if (firing) fireModeLocal();
 				freeWorkers -= affordableExplorers;
 				game.global.buyAmt = buyAmountStoreExp;
 			}
@@ -541,10 +552,9 @@ function RbuyJobs() {
 		if (affordableMets > 0 && !game.jobs.Meteorologist.locked && !rShouldTributeFarm) {
 			var buyAmountStoreMet = game.global.buyAmt;
 			game.global.buyAmt = affordableMets;
-			if (firing) fireMode();
+			if (firing) fireModeLocal();
 			buyJob('Meteorologist', true, true);
-			if (firing) fireMode();
-			cancelTooltip()
+			if (firing) fireModeLocal();
 			freeWorkers -= affordableMets;
 			game.global.buyAmt = buyAmountStoreMet;
 		}
@@ -558,10 +568,9 @@ function RbuyJobs() {
 		if (affordableShips > 0 && !game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50) {
 			var buyAmountStoreShip = game.global.buyAmt;
 			game.global.buyAmt = affordableShips;
-			if (firing) fireMode();
+			if (firing) fireModeLocal();
 			buyJob('Worshipper', true, true);
-			if (firing) fireMode();
-			cancelTooltip()
+			if (firing) fireModeLocal();
 			freeWorkers -= affordableShips;
 			game.global.buyAmt = buyAmountStoreShip;
 		}
