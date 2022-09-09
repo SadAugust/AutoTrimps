@@ -721,10 +721,8 @@ function RautoEquip() {
 					if (!game.equipment[equipName].locked) {
 						var isAttack = (RequipmentList[equipName].Stat === 'attack' ? 0 : 1);
 						//Skipping if on reflect daily and our dmg is too high
-						if (reflectShouldBuyEquips() && isAttack === 0) {
-							continue;
-						}
-						if ((getPageSetting('rEquipNoShields')) && equipName == 'Shield') return false;
+						if (reflectShouldBuyEquips() && isAttack === 0) continue;
+						if ((getPageSetting('rEquipNoShields')) && equipName == 'Shield') continue;
 						if (mostEfficientEquipment()[isAttack + 4] && buyUpgrade(RequipmentList[equipName].Upgrade, true, true))
 							prestigeLeft = true;
 						if (getPageSetting('Requipprestige') == 2 && buyUpgrade(RequipmentList[equipName].Upgrade, true, true))
