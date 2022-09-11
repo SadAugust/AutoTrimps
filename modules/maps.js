@@ -1651,6 +1651,7 @@ function RautoMap() {
 			stacksum = 0;
 
 			for (var i = 0; i < (bogindex + 1); i++) {
+				if (!autoTrimpSettings.rQuagSettings.value[i].active) continue;
 				stacksum += parseInt(autoTrimpSettings.rQuagSettings.value[i].bogs);
 			}
 
