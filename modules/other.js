@@ -2540,14 +2540,15 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 
 	if (game.challenges.Nurture.boostsActive())
 		amt_local *= game.challenges.Nurture.getResourceBoost();
-	if (event == null || heirloom == null || game.global.StaffEquipped.name == autoTrimpSettings[heirloom].value) {
+
+	if (!getPageSetting('Rhs') || event == null || heirloom == null || game.global.StaffEquipped.name == autoTrimpSettings[heirloom].value) {
 		amt_local = calcHeirloomBonus("Staff", jobName + "Speed", amt_local);
 	}
 	//Calculating proper value for the staff we should be using instead of equipped
 	else if (event != null && game.global.StaffEquipped != getPageSetting(heirloom)) {
 		if (what == "food" || what == "wood" || what == "metal") {
 			amt_local /= getParityBonus();
-			amt_local *= getHazardParityMult(HeirloomSearch(heirloom))
+			amt_local *= getHazardParityMult(HeirloomSearch(heirloom)) > 0 ? getHazardParityMult(HeirloomSearch(heirloom)) : 1
 		}
 		amt_local = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"), amt_local);
 	}
