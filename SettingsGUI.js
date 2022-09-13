@@ -420,11 +420,12 @@ function initializeAllSettings() {
 	createSetting('Requipcaphealth', 'AE: Armour Cap', 'What level to stop buying Armour at.', 'value', 50, null, "Gear");
 	createSetting('Requipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input. ', 'multiValue', -1, null, "Gear");
 	createSetting('Requippercent', 'AE: Percent', 'What percent of resources to spend on equipment before the zone you have set in AE: Zone.', 'value', 1, null, "Gear");
-	createSetting('Rautoequipportal', 'AE Portal', 'Makes sure Auto Equip is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', false, null, 'Gear');
+	createSetting('Rautoequipportal', 'AE: Portal', 'Makes sure Auto Equip is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', false, null, 'Gear');
 	createSetting('Requip2', 'AE: 2', 'Always buys level 2 of weapons and armor regardless of efficiency.', 'boolean', true, null, "Gear");
 	createSetting('Requipprestige', ['AE: Prestige Off', 'AE: Prestige', 'AE: Always Prestige'], '<b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased.<br><br><b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.', 'multitoggle', 0, null, "Gear");
 	createSetting('rEquipHighestPrestige', 'AE: Highest Prestige', 'Will only buy equips for the highest prestige currently owned.', 'boolean', true, null, "Gear");
 	createSetting('rEquipEfficientEquipDisplay', 'AE: Highlight Equips', 'Will highlight the most efficient equipment or prestige to buy. <b>This setting will disable the default game setting.', 'boolean', true, null, "Gear");
+	createSetting('rEquipNoShields', 'AE: No Shields', 'Will stop AT from buying Shield prestiges or upgrades when they\'re available.', 'boolean', false, null, "Gear");
 	createSetting('Requipfarmon', 'AE: Farm', 'AutoEquip Farm. Calculates metal needed to reach the target you have defined in the AEF settings. Will try to buy the best map you can make. Will never make a plus map as this is intended for us on deep push runs.', 'boolean', false, null, "Gear");
 	createSetting('Requipfarmzone', 'AEF: Zone', 'What zone to start AEF: H:D and AEF: Multiplier.', 'value', '-1', null, 'Gear');
 	createSetting('RequipfarmHD', 'AEF: H:D', 'What H:D to use for AEF target.', 'value', '-1', null, 'Gear');
@@ -2133,11 +2134,12 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Requipon') ? turnOn('Requipcaphealth') : turnOff('Requipcaphealth');
 	radonon && getPageSetting('Requipon') ? turnOn('Requipzone') : turnOff('Requipzone');
 	radonon && getPageSetting('Requipon') ? turnOn('Requippercent') : turnOff('Requippercent');
-	radonon && getPageSetting('Requipon') ? turnOn('Rautoequipportal') : turnOff('Rautoequipportal');
+	radonon ? turnOn('Rautoequipportal') : turnOff('Rautoequipportal');
 	radonon && getPageSetting('Requipon') ? turnOn('Requip2') : turnOff('Requip2');
 	radonon && getPageSetting('Requipon') ? turnOn('Requipprestige') : turnOff('Requipprestige');
 	radonon && getPageSetting('Requipon') ? turnOn('rEquipHighestPrestige') : turnOff('rEquipHighestPrestige');
 	radonon ? turnOn('rEquipEfficientEquipDisplay') : turnOff('rEquipEfficientEquipDisplay');
+	radonon && getPageSetting('Requipon') ? turnOn('rEquipNoShields') : turnOff('rEquipNoShields');
 	radonon && getPageSetting('Requipon') ? turnOn('Rdmgcuntoff') : turnOff('Rdmgcuntoff');
 
 	//RGear AutoEquip Farm
@@ -2327,8 +2329,8 @@ function updateCustomButtons() {
 	//RCombat
 	radonon ? turnOn('Rcalcmaxequality') : turnOff('Rcalcmaxequality');
 	radonon ? turnOn('rManageEquality') : turnOff('rManageEquality');
-	radonon && !autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
-	radonon ? turnOn('rMutationCalc') : turnOff('rMutationCalc');
+	radonon && !game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
+	radonon && game.global.highestRadonLevelCleared > 200 ? turnOn('rMutationCalc') : turnOff('rMutationCalc');
 
 	//Challenges
 
@@ -2780,16 +2782,16 @@ autoEquipText.setAttribute("id", "autoEquipLabel");
 autoEquipText.setAttribute("onClick", "settingChanged('Requipon')");
 
 //Creating cogwheel & linking onclick
-var autoEquipSettings = document.createElement("DIV");
+//var autoEquipSettings = document.createElement("DIV");
 //autoEquipSettings.setAttribute('onclick', 'MAZLookalike("AT AutoJobs", "a", "AutoEquip")');
-var autoEquipSettingsButton = document.createElement("SPAN");
-autoEquipSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+//var autoEquipSettingsButton = document.createElement("SPAN");
+//autoEquipSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
 
 //Setting up positioning
 var autoEquipColumn = document.getElementById("equipmentTitleDiv").children[0];
 autoEquipContainer.appendChild(autoEquipText);
-autoEquipContainer.appendChild(autoEquipSettings);
-autoEquipSettings.appendChild(autoEquipSettingsButton);
+//autoEquipContainer.appendChild(autoEquipSettings);
+//autoEquipSettings.appendChild(autoEquipSettingsButton);
 autoEquipColumn.replaceChild(autoEquipContainer, document.getElementById('equipmentTitleDiv').children[0].children[2]);
 
 function getDailyHeHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalHeliumEarned - (game.global.heliumLeftover + game.resources.helium.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily He/Hr: " + b.toFixed(3) + "%" } return a }
