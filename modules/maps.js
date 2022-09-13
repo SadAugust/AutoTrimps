@@ -843,6 +843,7 @@ var rShouldSmithless = false;
 var rTFautoLevel = Infinity;
 var rTrFautoLevel = Infinity;
 var rSFautoLevel = Infinity;
+var rWFautoLevel = Infinity;
 var rMBautoLevel = Infinity;
 var rSmithlessautoLevel = Infinity;
 var enemyDamage = 1;
@@ -1392,6 +1393,7 @@ function RautoMap() {
 					if (typeof (rTrFTributesMapCount) !== 'undefined' && rTrFTributesMapCount !== 0) rTrFTributesMapCount = 0;
 					if (typeof (rTrFMeteorologistsMapCount) !== 'undefined' && rTrFMeteorologistsMapCount !== 0) rTrFMeteorologistsMapCount = 0;
 					if (typeof (rTrFautoLevel) !== 'undefined' && rTrFautoLevel !== Infinity) rTrFautoLevel = Infinity;
+					if (typeof (rTrFbuyBuildings) !== 'undefined') rTrFbuyBuildings = false;
 					rTrFSettings.done = totalPortals + "_" + game.global.world;
 					if (game.global.mapsActive) {
 						mapsClicked();
@@ -1614,20 +1616,34 @@ function RautoMap() {
 		if (shipfarmzone.includes(game.global.world) && game.jobs.Worshipper.owned != 50) {
 			var shipamountfarmindex = shipfarmzone.indexOf(game.global.world);
 			var rShipFarmSettings = autoTrimpSettings.rShipFarmSettings.value[shipamountfarmindex];
-			var shipfarmcell = rShipFarmSettings.cell
+			var shipfarmcell = rShipFarmSettings.cell;
 			if (rShipFarmSettings.active && game.global.lastClearedCell + 2 >= shipfarmcell) {
 				var ships = game.jobs.Worshipper.owned;
 				shipfarmamount = rShipFarmSettings.worshipper;
 				var shippluslevel = rShipFarmSettings.level;
+
+				if (rShipFarmSettings.autoLevel) {
+					if (rWorshipperCurrentMap === undefined) {
+						if (rWFautoLevel === Infinity) rWFautoLevel = autoMapLevel();
+						if (rWFautoLevel !== Infinity && twoSecondInterval) rWFautoLevel = autoMapLevel();
+					}
+					if (sixSecondInterval && (autoMapLevel() > rWFautoLevel)) {
+						rWFautoLevel = autoMapLevel();
+					}
+					if (rWFautoLevel !== Infinity) {
+						shippluslevel = rWFautoLevel;
+					}
+				}
+
 				var rShipJobRatio = rShipFarmSettings.jobratio;
 				if (game.global.challengeActive == "Wither" && shippluslevel >= 0)
 					shippluslevel = -1;
 				var shipspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
-				if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rShipJobRatio), false, true, shippluslevel) <= (game.jobs.Worshipper.getCost() * 10))) {
-					debug("Skipping Worshipper farming on zone " + game.global.world + " as it costs more than a " + shipspecial + " map, evaluate your map settings to correct this")
+				if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, '1,0,0,0'), false, true, shippluslevel) < (game.jobs.Worshipper.getCost() * 5))) {
+					debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + shipspecial + " map doesn't provide 5 or more Worshippers. Evaluate your map settings to correct this")
 					worshipperdebug = game.stats.zonesCleared.value;
 				}
-				if (shipfarmamount > ships && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true,), false, true, shippluslevel) >= (game.jobs.Worshipper.getCost() * 10)))
+				if (shipfarmamount > ships && scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, '1,0,0,0'), false, true, shippluslevel) >= (game.jobs.Worshipper.getCost() * 5))
 					rShouldWorshipperFarm = true;
 
 				if (rWorshipperCurrentMap != undefined && !rShouldWorshipperFarm) {
@@ -1647,7 +1663,6 @@ function RautoMap() {
 			var bogindex = bogzone.indexOf(game.global.world);
 			var rQuagSettings = autoTrimpSettings.rQuagSettings.value[bogindex];
 			var bogcell = rQuagSettings.cell;
-			var bogamount = rQuagSettings.bogs;
 			stacksum = 0;
 
 			for (var i = 0; i < (bogindex + 1); i++) {
