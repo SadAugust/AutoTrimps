@@ -454,7 +454,8 @@ function RbuyBuildings() {
 		if (runningC3 || (!game.global.autoStorage && game.global.challengeActive === 'Hypothermia' && (housing !== 'Collector' && housing !== 'Gateway'))) buildingspending = 1;
 		var maxCanAfford = housing !== null ? calculateMaxAffordLocal(game.buildings[housing], true, false, false, housingAmt, buildingspending) : false;
 		if (((housing != null && canAffordBuilding(housing)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt) || runningC3))) {
-			if (runningC3)
+			if (rShouldSmithyFarm) return;
+			else if (runningC3)
 				buyBuilding(housing, true, true, 999);
 			else if (rTributeFarming && typeof (rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings) {
 				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && getAutoStructureSetting().enabled)
