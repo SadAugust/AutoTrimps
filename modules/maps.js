@@ -2427,9 +2427,6 @@ function RautoMap() {
 				else if (rShouldMaxMapBonus) {
 					if (game.global.mapBonus >= (rMBRepeatCounter - 1) || currentLevel !== rMBMapLevel || getCurrentMapObject().bonus !== rMBSpecial) repeatClicked();
 				}
-				else if (RenoughDamage) {
-					if (game.global.mapBonus >= 9) repeatClicked();
-				}
 				//Smithless Map Bonus
 				else if (rShouldSmithless) {
 					if (currentLevel !== rSmithlessMapLevel || getCurrentMapObject().bonus !== 'lmc') repeatClicked();
@@ -2437,6 +2434,9 @@ function RautoMap() {
 				//Equip Farm Bonus
 				else if (rShouldEquipFarm) {
 					if (currentLevel !== equipminus || getCurrentMapObject().bonus !== 'lmc') repeatClicked();
+				}
+				else if (!RenoughDamage) {
+					if (game.global.mapBonus >= 9) repeatClicked();
 				}
 			}
 		} else {
