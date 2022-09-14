@@ -2951,10 +2951,13 @@ function automateSpireAssault() {
 			var items = ['Menacing_Mask', 'Battery_Stick', 'Spiked_Gloves', 'Tame_Snimp', 'Wired_Wristguards', 'Big_Cleaver', 'Sacrificial_Shank', 'Fearsome_Piercer', 'Bag_of_Nails', 'Snimp__Fanged_Blade', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon']
 			var ring = ['attack', 'health']
 		}
-
 		if (autoBattle.enemyLevel == 128) {
+			var items = ['Menacing_Mask', 'Battery_Stick', 'Spiked_Gloves', 'Tame_Snimp', 'Wired_Wristguards', 'Big_Cleaver', 'Sacrificial_Shank', 'Fearsome_Piercer', 'Bag_of_Nails', 'Snimp__Fanged_Blade', 'Doppelganger_Signet', 'Basket_of_Souls', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon']
+			var ring = ['attack', 'health']
+		}
+		if (autoBattle.enemyLevel == 129) {
 			autoBattle.enemyLevel = 121;
-			var items = ['Menacing_Mask', 'Bad_Medkit', 'Lifegiving_Gem', 'Shock_and_Awl', 'Spiked_Gloves', 'Wired_Wristguards', 'Big_Cleaver', 'Sacrificial_Shank', 'Grounded_Crown', 'Fearsome_Piercer', 'Blessed_Protector', 'Doppelganger_Signet', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon']
+			var items = ['Menacing_Mask', 'Raincoat', 'Lifegiving_Gem', 'Shock_and_Awl', 'Spiked_Gloves', 'Wired_Wristguards', 'Big_Cleaver', 'Sacrificial_Shank', 'Grounded_Crown', 'Fearsome_Piercer', 'Bag_of_Nails', 'Doppelganger_Signet', 'Omni_Enhancer', 'Stormbringer', 'Nullifium_Armor', 'Haunted_Harpoon']
 			var ring = ['attack', 'lifesteal']
 			ABItemSwap(items, ring);
 			autoBattle.popup(true, false, true);
@@ -2963,10 +2966,6 @@ function automateSpireAssault() {
 	}
 
 	if (autoBattle.rings.level >= 50) {
-		if (autoBattle.enemyLevel == 128) {
-			var items = [['Menacing_Mask'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
-			var ring = ['attack', 'health']
-		}
 		if (autoBattle.enemyLevel == 129) {
 			var items = [['Menacing_Mask'], ['Shock_and_Awl'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
 			var ring = ['attack', 'health']
@@ -3011,7 +3010,7 @@ function automateSpireAssault() {
 		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
 		return;
 	}
-	if (autoBattle.maxEnemyLevel >= 128 && autoBattle.rings.level < 60) {
+	if (autoBattle.maxEnemyLevel >= 129 && autoBattle.rings.level < 50) {
 		if (autoBattle.autoLevel) autoBattle.toggleAutoLevel();
 		return;
 	}
