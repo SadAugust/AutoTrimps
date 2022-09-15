@@ -760,7 +760,6 @@ var Requipminusglobal = -1;
 //Time Farm
 rShouldTimeFarm = false;
 var rTFCurrentMap = undefined;
-var rTFMapRepeats = 0;
 //Tribute Farm
 rTributeFarming = false;
 rShouldTributeFarm = false;
@@ -834,18 +833,32 @@ var rShouldSmithyGemFarm = false;
 var rShouldSmithyWoodFarm = false;
 var rShouldSmithyMetalFarm = false;
 var rSFCurrentMap = undefined;
-var smithyMapCount = [0, 0, 0];
+
 //Daily Shred Variables
 var shredActive = false;
 var rShouldSmithless = false;
 
 //Auto Level variables
 var rTFautoLevel = Infinity;
+var rTFMapRepeats = 0;
 var rTrFautoLevel = Infinity;
+var rTrFMapRepeats = 0;
 var rSFautoLevel = Infinity;
+var rSFMapRepeats = [0, 0, 0];
+var smithyMapCount = [0, 0, 0];
 var rWFautoLevel = Infinity;
+var rWFMapRepeats = 0;
 var rMBautoLevel = Infinity;
+var rMBMapRepeats = 0;
+var rIFautoLevel = Infinity;
+var rIFMapRepeats = 0;
+var rAFautoLevel = Infinity;
+var rAFMapRepeats = 0;
+var rHFautoLevel = Infinity;
+var rHFMapRepeats = 0;
 var rSmithlessautoLevel = Infinity;
+var rSmithlessMapRepeats = 0;
+
 var enemyDamage = 1;
 var HDRatio = 0;
 
@@ -878,7 +891,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (rShouldSmithyFarm) status = 'Smithy Farming for ' + rSFGoal;
 	else if (rShouldUnbalance || (game.global.mapsActive && getCurrentMapObject().level == 6 && game.challenges.Unbalance.balanceStacks > 0)) status = 'Destacking: ' + game.challenges.Unbalance.balanceStacks + " remaining";
 	else if (rShouldStorm || (game.global.mapsActive && getCurrentMapObject().level == 6 && game.challenges.Storm.beta > 0)) status = 'Destacking: ' + game.challenges.Storm.beta + " remaining";
-	else if (rShouldWorshipperFarm) status = 'Ship Farming: ' + game.jobs.Worshipper.owned + "/" + shipfarmamount;
+	else if (rShouldWorshipperFarm) status = 'Ship Farming: ' + game.jobs.Worshipper.owned + "/" + rWFGoal;
 	else if (rShouldEquipFarm) status = 'Equip Farming to ' + equipfarmdynamicHD().toFixed(2) + " and " + estimateEquipsForZone()[2] + " Equality";
 	else if (rShouldMaxMapBonus) status = 'Map Bonus: ' + game.global.mapBonus + "/" + rMBRepeatCounter;
 	else if (rShouldSmithless) status = 'Smithless Map Bonus: ' + game.global.mapBonus + "/10";
@@ -1041,6 +1054,15 @@ function RautoMap() {
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0;
 		rTFMapRepeats = 0;
+		rTrFMapRepeats = 0;
+		rSFMapRepeats = 0;
+		smithyMapCount = [0, 0, 0];
+		rWFMapRepeats = 0;
+		rMBMapRepeats = 0;
+		rIFMapRepeats = 0;
+		rAlchemyMapRepeats = 0;
+		rHFMapRepeats = 0;
+		rSmithlessMapRepeats = 0;
 		currTime = 0;
 		rTFAtlantrimp = false;
 		if (game.global.repeatMap) repeatClicked();
@@ -1132,27 +1154,32 @@ function RautoMap() {
 			var rMBSettings = rMBBaseSettings[rMBIndex];
 			rMBRepeatCounter = rMBSettings.repeat;
 			var rMBSpecial = rMBSettings.special;
+			if (game.global.challengeActive == 'Transmute' && rMBSpecial.includes('mc'))
+				rMBSpecial = rMBSpecial.charAt(0) + "sc";
 			if (rMBSettings.active && game.global.mapBonus < rMBRepeatCounter) {
 				var rMBCell = rMBSettings.cell;
 				if (game.global.lastClearedCell + 2 >= rMBCell) {
 					rMBMapLevel = rMBSettings.level;
 					var rMBJobRatio = rMBSettings.jobratio;
 
+					if (game.global.mapRunCounter === 0 && game.global.mapsActive && rMBMapRepeats !== 0) {
+						game.global.mapRunCounter = rMBMapRepeats;
+						rMBMapRepeats = 0;
+					}
 					if (rMBSettings.autoLevel) {
 						if (rMBCurrentMap === undefined) {
 							if (rMBautoLevel === Infinity) rMBautoLevel = autoMapLevel(10, 0, true);
 							if (rMBautoLevel !== Infinity && twoSecondInterval) rMBautoLevel = autoMapLevel(10, 0, true);
 						}
-						if (sixSecondInterval && (autoMapLevel(10, 0, true) > rMBautoLevel)) {
+						if (sixSecondInterval && rMBCurrentMap !== undefined && autoMapLevel(10, 0, true) > rMBautoLevel) {
 							rMBautoLevel = autoMapLevel(10, 0, true);
+							rMBMapRepeats = game.global.mapRunCounter + 1;
 						}
 						if (rMBautoLevel !== Infinity) {
 							rMBMapLevel = rMBautoLevel;
 						}
 					}
 					//If you're running Transmute and the rMBSpecial variable is either LMC or SMC it changes it to LSC/SSC.
-					if (game.global.challengeActive == 'Transmute' && rMBSpecial.includes('mc'))
-						rMBSpecial = rMBSpecial.charAt(0) + "sc";
 					if (rMBRepeatCounter > game.global.mapBonus)
 						rShouldMaxMapBonus = true;
 					else if (game.global.mapBonus < getPageSetting('RMaxMapBonushealth') && !RenoughHealth) {
@@ -1165,6 +1192,7 @@ function RautoMap() {
 				if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rMBMapLevel >= 0 ? "+" : "") + rMBMapLevel + " " + rMBSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 				if (rMBautoLevel !== Infinity) rMBautoLevel = Infinity;
 				currTime = 0;
+				rMBMapRepeats = 0;
 				rMBCurrentMap = undefined;
 			}
 		}
@@ -1215,7 +1243,7 @@ function RautoMap() {
 					}
 
 				}
-				if (game.global.mapRunCounter === 0 && rTFMapRepeats !== 0) {
+				if (game.global.mapRunCounter === 0 && game.global.mapsActive && rTFMapRepeats !== 0) {
 					game.global.mapRunCounter = rTFMapRepeats
 					rTFMapRepeats = 0;
 				}
@@ -1226,9 +1254,9 @@ function RautoMap() {
 					}
 
 					//This bit needs a proper map repeat implementation, not sure how to do it!
-					if (sixSecondInterval && (autoMapLevel() > rTFautoLevel)) {
+					if (sixSecondInterval && rTFCurrentMap !== undefined && (autoMapLevel() > rTFautoLevel)) {
 						rTFautoLevel = autoMapLevel();
-						rTFMapRepeats = rTFMapRepeats + game.global.mapRunCounter + 1;
+						rTFMapRepeats = game.global.mapRunCounter + 1;
 					}
 					if (rTFautoLevel !== Infinity) {
 						rTFMapLevel = rTFautoLevel;
@@ -1248,7 +1276,6 @@ function RautoMap() {
 					if (getPageSetting('rMapRepeatCount')) debug("Time Farm took " + (game.global.mapRunCounter) + " (" + (rTFMapLevel >= 0 ? "+" : "") + rTFMapLevel + " " + rTFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 					if (rTFautoLevel !== Infinity) rTFautoLevel = Infinity;
 					currTime = 0
-					rTFMapRepeats = 0;
 					if (rTFAtlantrimp) runAtlantrimp()
 					saveSettings();
 				}
@@ -1282,13 +1309,18 @@ function RautoMap() {
 				var tributeCost = 0;
 				var metCost = 0;
 
+				if (game.global.mapRunCounter === 0 && game.global.mapsActive && rTrFMapRepeats !== 0) {
+					game.global.mapRunCounter = rTrFMapRepeats
+					rTrFMapRepeats = 0;
+				}
 				if (rTrFSettings.autoLevel) {
 					if (rTrFCurrentMap === undefined) {
 						if (rTrFautoLevel === Infinity) rTrFautoLevel = autoMapLevel();
 						if (rTrFautoLevel !== Infinity && twoSecondInterval) rTrFautoLevel = autoMapLevel();
 					}
-					if (sixSecondInterval && (autoMapLevel() > rTrFautoLevel)) {
+					if (sixSecondInterval && rTrFCurrentMap !== undefined && autoMapLevel() > rTrFautoLevel) {
 						rTrFautoLevel = autoMapLevel();
+						rTrFMapRepeats = game.global.mapRunCounter + 1;
 					}
 					if (rTrFautoLevel !== Infinity) {
 						rTrFMapLevel = rTrFautoLevel;
@@ -1389,7 +1421,8 @@ function RautoMap() {
 					if (getPageSetting('rMapRepeatCount')) {
 						debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rTrFMapLevel >= 0 ? "+" : "") + rTrFMapLevel + " " + rTrFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.")
 					}
-					currTime = 0
+					currTime = 0;
+					rTrFMapRepeats = 0;
 					if (typeof (rTrFTributesMapCount) !== 'undefined' && rTrFTributesMapCount !== 0) rTrFTributesMapCount = 0;
 					if (typeof (rTrFMeteorologistsMapCount) !== 'undefined' && rTrFMeteorologistsMapCount !== 0) rTrFMeteorologistsMapCount = 0;
 					if (typeof (rTrFautoLevel) !== 'undefined' && rTrFautoLevel !== Infinity) rTrFautoLevel = Infinity;
@@ -1420,13 +1453,22 @@ function RautoMap() {
 				if (rSFSettings.autoLevel && rSFCurrentMap === undefined) rSFMapLevel = autoMapLevel();
 				rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : game.global.challengeActive == 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
+				if (game.global.mapRunCounter === 0 && game.global.mapsActive && smithyMapCount !== [0, 0, 0]) {
+					if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') game.global.mapRunCounter = smithyMapCount[0];
+					else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') game.global.mapRunCounter = smithyMapCount[1];
+					else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') game.global.mapRunCounter = smithyMapCount[2];
+					smithyMapCount = [0, 0, 0];
+				}
 				if ((rSFSettings.autoLevel || (rShouldQuest === 10 && getPageSetting('rManageEquality') == 2))) {
 					if (rSFCurrentMap === undefined) {
 						if (rSFautoLevel === Infinity) rSFautoLevel = autoMapLevel();
 						if (rSFautoLevel !== Infinity && twoSecondInterval) rSFautoLevel = autoMapLevel();
 					}
-					if (sixSecondInterval && (autoMapLevel() > rSFautoLevel)) {
+					if (sixSecondInterval && rSFCurrentMap !== undefined && autoMapLevel() > rSFautoLevel) {
 						rSFautoLevel = autoMapLevel();
+						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') smithyMapCount[0] = game.global.mapRunCounter + 1;
+						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') smithyMapCount[1] = game.global.mapRunCounter + 1;
+						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') smithyMapCount[2] = game.global.mapRunCounter + 1;
 					}
 					if (rSFautoLevel !== Infinity) {
 						rSFMapLevel = rSFautoLevel;
@@ -1491,9 +1533,9 @@ function RautoMap() {
 
 				if (rShouldSmithyFarm && !rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && game.global.mapsActive && getCurrentMapObject().bonus !== undefined) {
 					if ((!rShouldSmithyGemFarm && getCurrentMapObject().bonus.includes('sc')) || (!rShouldSmithyWoodFarm && getCurrentMapObject().bonus.includes('wc')) || (!rShouldSmithyMetalFarm && getCurrentMapObject().bonus.includes('mc'))) {
-						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') smithyMapCount[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') smithyMapCount[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') smithyMapCount[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') rSFMapRepeats[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 						mapsClicked();
 						recycleMap();
 					}
@@ -1502,19 +1544,20 @@ function RautoMap() {
 				//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
 				if (!rShouldTributeFarm && !rShouldMetFarm && !rShouldSmithyFarm && rSFCurrentMap != undefined) {
 					if (game.global.mapsActive) {
-						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') smithyMapCount[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') smithyMapCount[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') smithyMapCount[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') rSFMapRepeats[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 						mapsClicked();
 						recycleMap();
 					}
 					if (getPageSetting('rMapRepeatCount'))
-						debug("Smithy Farm took " + smithyMapCount[0] + " food map" + (smithyMapCount[0] === 1 ? ", " : "s, ") + smithyMapCount[1] + " wood map" + (smithyMapCount[1] === 1 ? ", " : "s, ") + smithyMapCount[2] + " metal map" + (smithyMapCount[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
+						debug("Smithy Farm took " + rSFMapRepeats[0] + " food map" + (rSFMapRepeats[0] === 1 ? ", " : "s, ") + rSFMapRepeats[1] + " wood map" + (rSFMapRepeats[1] === 1 ? ", " : "s, ") + rSFMapRepeats[2] + " metal map" + (rSFMapRepeats[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
 					currTime = 0
 					rSFCurrentMap = undefined;
 					if (typeof (rSFautoLevel) !== 'undefined' && rSFautoLevel !== Infinity) rSFautoLevel = Infinity;
 					if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
 						toggleAutoStructure();
+					rSFMapRepeats = [0, 0, 0]
 					smithyMapCount = [0, 0, 0]
 				}
 			}
@@ -1557,10 +1600,15 @@ function RautoMap() {
 					rShouldSmithless = true;
 			}
 
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && rSmithlessMapRepeats !== 0) {
+				game.global.mapRunCounter = rSmithlessMapRepeats
+				rSmithlessMapRepeats = 0;
+			}
 			if (rShouldSmithless) {
 				if (rSmithlessautoLevel === Infinity) rSmithlessautoLevel = game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel();
 			}
-			if (sixSecondInterval && (game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel() > rSmithlessautoLevel)) {
+			if (sixSecondInterval && rSmithlessCurrentMap !== undefined && (game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel() > rSmithlessautoLevel)) {
+				rSmithlessMapRepeats = game.global.mapRunCounter + 1;
 				rSmithlessautoLevel = game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel();
 			}
 			if (rSmithlessautoLevel !== Infinity) {
@@ -1611,47 +1659,64 @@ function RautoMap() {
 	}
 
 	//Worshipper Farm -- Think there's an issue with variable setup here
-	if (game.jobs.Worshipper.locked == 0 && autoTrimpSettings.rShipFarmDefaultSettings.value.active && rShouldQuest === 0) {
-		var shipfarmzone = getPageSetting('rShipFarmZone');
-		if (shipfarmzone.includes(game.global.world) && game.jobs.Worshipper.owned != 50) {
-			var shipamountfarmindex = shipfarmzone.indexOf(game.global.world);
-			var rShipFarmSettings = autoTrimpSettings.rShipFarmSettings.value[shipamountfarmindex];
-			var shipfarmcell = rShipFarmSettings.cell;
-			if (rShipFarmSettings.active && game.global.lastClearedCell + 2 >= shipfarmcell) {
-				var ships = game.jobs.Worshipper.owned;
-				shipfarmamount = rShipFarmSettings.worshipper;
-				var shippluslevel = rShipFarmSettings.level;
+	if (game.jobs.Worshipper.locked == 0 && autoTrimpSettings.rWorshipperFarmDefaultSettings.value.active && rShouldQuest === 0) {
+		var rWFZone = getPageSetting('rWorshipperFarmZone');
+		var rWFBaseSetting = autoTrimpSettings.rWorshipperFarmSettings.value
+		var rWFIndex = null;
+		for (var y = 0; y < rWFZone.length; y++) {
+			if (!rWFBaseSetting[y].active || game.global.world > rWFBaseSetting[y].endzone || (game.global.world > rWFBaseSetting[y].zone && rWFBaseSetting[y].repeat === 0)) {
+				continue;
+			}
+			if (game.global.world === rWFZone[y]) {
+				rWFIndex = y;
+				break;
+			}
+			if ((game.global.world - rWFZone[y]) % rWFBaseSetting[y].repeat === 0) {
+				rWFIndex = y;
+				break;
+			}
+		}
+		if (rWFIndex !== null && rWFIndex >= 0 && game.jobs.Worshipper.owned != 50) {
+			var rWFSettings = autoTrimpSettings.rWorshipperFarmSettings.value[rWFIndex];
+			var rWFCell = rWFSettings.cell;
+			if (rWFSettings.active && game.global.lastClearedCell + 2 >= rWFCell) {
+				rWFGoal = rWFSettings.worshipper;
+				var rWFMapLevel = rWFSettings.level;
+				var rWFJobRatio = rWFSettings.jobratio;
+				var rWFSpecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
 
-				if (rShipFarmSettings.autoLevel) {
+				if (game.global.mapRunCounter === 0 && game.global.mapsActive && rWFMapRepeats !== 0) {
+					game.global.mapRunCounter = rWFMapRepeats
+					rWFMapRepeats = 0;
+				}
+				if (rWFSettings.autoLevel) {
 					if (rWorshipperCurrentMap === undefined) {
 						if (rWFautoLevel === Infinity) rWFautoLevel = autoMapLevel();
 						if (rWFautoLevel !== Infinity && twoSecondInterval) rWFautoLevel = autoMapLevel();
 					}
-					if (sixSecondInterval && (autoMapLevel() > rWFautoLevel)) {
+					if (sixSecondInterval && rWFCurrentMap !== undefined && autoMapLevel() > rWFautoLevel) {
+						rWFMapRepeats = game.global.mapRunCounter + 1;
 						rWFautoLevel = autoMapLevel();
 					}
 					if (rWFautoLevel !== Infinity) {
-						shippluslevel = rWFautoLevel;
+						rWFMapLevel = rWFautoLevel;
 					}
 				}
-
-				var rShipJobRatio = rShipFarmSettings.jobratio;
-				if (game.global.challengeActive == "Wither" && shippluslevel >= 0)
-					shippluslevel = -1;
-				var shipspecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
-				if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, '1,0,0,0'), false, true, shippluslevel) < (game.jobs.Worshipper.getCost() * 5))) {
-					debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + shipspecial + " map doesn't provide 5 or more Worshippers. Evaluate your map settings to correct this")
+				if (game.global.challengeActive == "Wither" && rWFMapLevel >= 0) rWFMapLevel = -1;
+				if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperDefaultSettings.value.shipskip))) {
+					debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + autoTrimpSettings.rWorshipperDefaultSettings.value.shipskip + " or more Worshippers. Evaluate your map settings to correct this")
 					worshipperdebug = game.stats.zonesCleared.value;
 				}
-				if (shipfarmamount > ships && scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, '1,0,0,0'), false, true, shippluslevel) >= (game.jobs.Worshipper.getCost() * 5))
+				if (rWFGoal > game.jobs.Worshipper.owned && scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) >= (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperDefaultSettings.value.shipskip))
 					rShouldWorshipperFarm = true;
-
-				if (rWorshipperCurrentMap != undefined && !rShouldWorshipperFarm) {
-					rWorshipperCurrentMap = undefined;
-					if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
-					currTime = 0
-				}
 			}
+		}
+
+		if (rWorshipperCurrentMap != undefined && !rShouldWorshipperFarm) {
+			rWorshipperCurrentMap = undefined;
+			if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter) + " (" + (rWFMapLevel >= 0 ? "+" : "") + rWFMapLevel + " " + rWFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+			currTime = 0
+			rWFMapRepeats = 0;
 		}
 	}
 
@@ -2130,7 +2195,6 @@ function RautoMap() {
 									rRunningRegular && getPageSetting('Rmeltsmithy') > 0 ? getPageSetting('Rmeltsmithy') :
 										0
 
-
 					if (shredActive && (woodShred || metalShred) && getPageSetting('rdMeltSmithyShred') > 0) meltsmithy = getPageSetting('rdMeltSmithyShred');
 
 					if ((game.global.world >= meltingpoint[0] && ((game.global.lastClearedCell + 2) >= meltingpoint[1]) && !game.global.runningChallengeSquared) || (meltsmithy > 0 && meltsmithy <= game.buildings.Smithy.owned)) {
@@ -2247,9 +2311,9 @@ function RautoMap() {
 					rSFCurrentMap = 'rSmithyFarm'
 					if (rSFCurrentMap !== 'rSmithyFarm' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldWorshipperFarm) {
-					selectedMap = RShouldFarmMapCreation(shippluslevel, shipspecial);
+					selectedMap = RShouldFarmMapCreation(rWFMapLevel, rWFSpecial);
 					rWorshipperCurrentMap = "rWorshipperMap";
-					workerRatio = rShipJobRatio;
+					workerRatio = rWFJobRatio;
 					if (rWorshipperCurrentMap !== 'rWorshipperMap' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldUnbalance || rShouldStorm) {
 					selectedMap = RShouldFarmMapCreation(-(game.global.world - 6), "fa");
@@ -2359,17 +2423,20 @@ function RautoMap() {
 				//Time Farm
 				else if (rShouldTimeFarm) {
 					if (game.global.mapRunCounter + 1 == rTFRepeatCounter || currentLevel !== rTFMapLevel || getCurrentMapObject().bonus !== rTFSpecial) {
-						if (game.global.mapRunCounter + 1 !== rTFRepeatCounter) rTFMapRepeats = game.global.mapRunCounter + 1;
 						repeatClicked();
 					}
 				}
 				//Tribute Farm
 				else if ((rShouldTributeFarm || rShouldMetFarm)) {
-					if (currentLevel !== rTrFMapLevel || getCurrentMapObject().bonus !== rTrFSpecial) repeatClicked();
+					if (currentLevel !== rTrFMapLevel || getCurrentMapObject().bonus !== rTrFSpecial) {
+						repeatClicked();
+					}
 				}
 				//Smithy Farm
 				else if (rShouldSmithyFarm) {
-					if (currentLevel !== rSFMapLevel || getCurrentMapObject().bonus !== rSFSpecial) repeatClicked();
+					if (currentLevel !== rSFMapLevel || getCurrentMapObject().bonus !== rSFSpecial) {
+						repeatClicked();
+					}
 				}
 				//Worshipper Farm
 				else if (rShouldWorshipperFarm && rFragmentFarming) {
@@ -2377,7 +2444,9 @@ function RautoMap() {
 				}
 				//Worshipper Farm
 				else if (rShouldWorshipperFarm) {
-					if (currentLevel !== shippluslevel || getCurrentMapObject().bonus !== shipspecial) repeatClicked();
+					if (currentLevel !== rWFMapLevel || getCurrentMapObject().bonus !== rWFSpecial) {
+						repeatClicked();
+					}
 				}
 				//Unbalance Destacking
 				else if (rShouldUnbalance) {
@@ -2401,7 +2470,9 @@ function RautoMap() {
 				}
 				//Insanity Farm
 				else if (rShouldInsanityFarm) {
-					if (rIFStacks <= game.challenges.Insanity.insanity || currentLevel !== rIFMapLevel || getCurrentMapObject().bonus !== rIFSpecial) repeatClicked();
+					if (rIFStacks <= game.challenges.Insanity.insanity || currentLevel !== rIFMapLevel || getCurrentMapObject().bonus !== rIFSpecial) {
+						repeatClicked();
+					}
 				}
 				//Pandemonium Destacking
 				else if (rShouldPandemoniumDestack) {
@@ -2417,7 +2488,9 @@ function RautoMap() {
 				}
 				//Alch
 				else if (Rshouldalchfarm) {
-					if (herbtotal >= potioncosttotal || currentLevel !== alchmaplevel || getCurrentMapObject().bonus !== alchspecial) repeatClicked();
+					if (herbtotal >= potioncosttotal || currentLevel !== alchmaplevel || getCurrentMapObject().bonus !== alchspecial) {
+						repeatClicked();
+					}
 				}
 				//Hypo
 				else if (rShouldHypoFarm) {
@@ -2425,11 +2498,15 @@ function RautoMap() {
 				}
 				//Map Bonus
 				else if (rShouldMaxMapBonus) {
-					if (game.global.mapBonus >= (rMBRepeatCounter - 1) || currentLevel !== rMBMapLevel || getCurrentMapObject().bonus !== rMBSpecial) repeatClicked();
+					if (game.global.mapBonus >= (rMBRepeatCounter - 1) || currentLevel !== rMBMapLevel || getCurrentMapObject().bonus !== rMBSpecial) {
+						repeatClicked();
+					}
 				}
 				//Smithless Map Bonus
 				else if (rShouldSmithless) {
-					if (currentLevel !== rSmithlessMapLevel || getCurrentMapObject().bonus !== 'lmc') repeatClicked();
+					if (currentLevel !== rSmithlessMapLevel || getCurrentMapObject().bonus !== 'lmc') {
+						repeatClicked();
+					}
 				}
 				//Equip Farm Bonus
 				else if (rShouldEquipFarm) {
@@ -2603,8 +2680,8 @@ function RautoMap() {
 			if (rShouldInsanityFarm && getPageSetting('Rinsanityfarmfrag'))
 				rFragmentFarm('insanity', rIFMapLevel, "fa");
 			//Worshipper
-			if (rShouldWorshipperFarm && getPageSetting('Rshipfarmfrag') && game.resources.fragments.owned <= PerfectMapCost(shippluslevel, shipspecial))
-				rFragmentFarm('ship', shippluslevel, shipspecial);
+			if (rShouldWorshipperFarm && getPageSetting('Rshipfarmfrag') && game.resources.fragments.owned <= PerfectMapCost(rWFMapLevel, rWFSpecial))
+				rFragmentFarm('ship', rWFMapLevel, rWFSpecial);
 
 			//Map settings for challenges and farming.
 			if ((rShouldQuest || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldWorshipperFarm || rShouldUnbalance || rShouldStorm || rShouldMayhem || rShouldInsanityFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || Rshouldalchfarm || rShouldHypoFarm || rShouldMaxMapBonus || rShouldSmithless || rShouldEquipFarm)) {
@@ -2617,7 +2694,7 @@ function RautoMap() {
 				else if (rShouldTimeFarm) RShouldFarmMapCost(rTFMapLevel, rTFSpecial, rTFZone, biome);
 				else if (rShouldTributeFarm || rShouldMetFarm) RShouldFarmMapCost(rTrFMapLevel, rTrFSpecial, rTrFZone, biome);
 				else if (rShouldSmithyFarm) RShouldFarmMapCost(rSFMapLevel, rSFSpecial, rSFZone, biome);
-				else if (rShouldWorshipperFarm && game.resources.fragments.owned >= RShouldFarmMapCost(shippluslevel, shipspecial)) RShouldFarmMapCost(shippluslevel, shipspecial);
+				else if (rShouldWorshipperFarm && game.resources.fragments.owned >= RShouldFarmMapCost(rWFMapLevel, rWFSpecial)) RShouldFarmMapCost(rWFMapLevel, rWFSpecial);
 				else if (rShouldUnbalance || rShouldStorm) RShouldFarmMapCost(-(game.global.world - 6), "fa");
 				else if (rShouldMayhem) PerfectMapCost(rMayhemMapLevel, rMayhemSpecial, biome);
 				else if (rShouldInsanityFarm) PerfectMapCost(rIFMapLevel, rIFSpecial);

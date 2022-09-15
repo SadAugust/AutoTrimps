@@ -280,9 +280,9 @@ function initializeAllSettings() {
 
 	//Prestige Raiding
 	createSetting('rdRaidingPopup', 'Raiding Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Daily');
-	createSetting('rdRaidingSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
-	createSetting('rdRaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Daily');
-	createSetting('rdRaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
+	createSetting('rdRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
+	createSetting('rdRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Daily');
+	createSetting('rdRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
 
 	//Daily Void Maps
 	createSetting('rdVoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'Daily');
@@ -471,12 +471,10 @@ function initializeAllSettings() {
 	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value.', 'value', '-1', null, 'Μaps');
 
 	//Ships 
-	createSetting('rShipFarm', 'Ship Farming', 'Turn Ship Farming off or on.', 'boolean', false, null, 'Μaps');
-	createSetting('rShipFarmPopup', 'Worshipper Farm Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Μaps');
-	createSetting('rShipFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rShipFarmDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food' }, null, 'Μaps');
-	createSetting('rShipFarmZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
-	createSetting('Rshipspending', 'SF: Spending Pct', 'What percentage of owned food to spend on Worshippers. -1 for 100% or value between 1-100 for lower.', 'value', '-1', null, "Μaps");
+	createSetting('rWorshipperFarmPopup', 'Worshipper Farm Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Μaps');
+	createSetting('rWorshipperFarmSettings', 'WF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rWorshipperFarmDefaultSettings', 'WF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food' }, null, 'Μaps');
+	createSetting('rWorshipperFarmZone', 'WF: Zone', 'Farms for specified worshippers in WF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
 	//Prismatic Palace
 	createSetting('Rprispalace', 'Prismatic Palace', 'Run Prismatic Palace when its unlocked. ', 'boolean', true, null, 'Μaps');
 	//Atlantrimp
@@ -517,9 +515,9 @@ function initializeAllSettings() {
 
 	//Prestige Raiding
 	createSetting('rRaidingPopup', 'Raiding Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Μaps');
-	createSetting('rRaidingSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rRaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Μaps');
-	createSetting('rRaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+	createSetting('rRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Μaps');
+	createSetting('rRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
 
 	//Void Maps
 	createSetting('rVoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'Μaps');
@@ -643,9 +641,9 @@ function initializeAllSettings() {
 
 	//Prestige Raiding
 	createSetting('rc3RaidingPopup', 'Raiding Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'C3');
-	createSetting('rc3RaidingSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
-	createSetting('rc3RaidingDefaultSettings', 'SF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'C3');
-	createSetting('rc3RaidingZone', 'SF: Zone', 'Farms for specified worshippers in SF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
+	createSetting('rc3RaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
+	createSetting('rc3RaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'C3');
+	createSetting('rc3RaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 
 	//C3 Void Maps
 	createSetting('rc3VoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'C3');
@@ -970,8 +968,8 @@ function initializeAllSettings() {
 	document.getElementById('rTributeFarmPopup').setAttribute('onclick', 'MAZLookalike("Tribute Farm", "rTributeFarm", "MAZ")');
 	document.getElementById('rdTributeFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Tribute Farm", "rdTributeFarm", "MAZ")');
 	document.getElementById('rc3TributeFarmPopup').setAttribute('onclick', 'MAZLookalike("C3 Tribute Farm", "rc3TributeFarm", "MAZ")');
-	//Ship Farming
-	document.getElementById('rShipFarmPopup').setAttribute('onclick', 'MAZLookalike("Ship Farm", "rShipFarm", "MAZ")');
+	//Worshipper Farming
+	document.getElementById('rWorshipperFarmPopup').setAttribute('onclick', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")');
 	//Challenge Settings
 	document.getElementById('rQuagPopup').setAttribute('onclick', 'MAZLookalike("Quagmire Farm", "rQuag", "MAZ")');
 	document.getElementById('rInsanityPopup').setAttribute('onclick', 'MAZLookalike("Insanity Farm", "rInsanity", "MAZ")');
@@ -2236,12 +2234,11 @@ function updateCustomButtons() {
 	turnOff('rSmithyFarmZone');
 
 	//Worshippers 
-	turnOff('rShipFarm');
-	radonon ? turnOn('rShipFarmPopup') : turnOff('rShipFarmPopup');
-	turnOff('rShipFarmSettings');
-	turnOff('rShipFarmDefaultSettings');
-	turnOff('rShipFarmZone');
-	turnOff('Rshipspending');
+	turnOff('rWorshipperFarm');
+	radonon ? turnOn('rWorshipperFarmPopup') : turnOff('rWorshipperFarmPopup');
+	turnOff('rWorshipperFarmSettings');
+	turnOff('rWorshipperFarmDefaultSettings');
+	turnOff('rWorshipperFarmZone');
 
 	//Bone Shrine (bones) 
 	if (game.global.stringVersion >= '5.7.0') {
