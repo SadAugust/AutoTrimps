@@ -1564,100 +1564,6 @@ function RautoMap() {
 		}
 	}
 
-	//Unbalance & Storm Destacking
-	if ((getPageSetting('rUnbalance') && game.global.challengeActive == "Unbalance") || (getPageSetting('Rstormon') && game.global.challengeActive == "Storm")) {
-		//Setting up variables
-		var rUnbalanceZone = getPageSetting('rUnbalanceZone') > 0 ? getPageSetting('rUnbalanceZone') : Infinity;
-		var rUnbalanceStacks = getPageSetting('rUnbalanceStacks') > 0 ? getPageSetting('rUnbalanceStacks') : Infinity;
-		var rStormZone = getPageSetting('rStormZone') > 0 ? getPageSetting('rStormZone') : Infinity;
-		var rStormStacks = getPageSetting('rStormStacks') > 0 ? getPageSetting('rStormStacks') : Infinity;
-		if (game.global.challengeActive == "Unbalance") rShouldUnbalance = (((game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= rUnbalanceZone && (game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks || (getPageSetting('rUnbalanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
-		if (game.global.challengeActive == "Storm") rShouldStorm = (game.global.world >= rStormZone && (game.challenges.Storm.beta >= rStormStacks && game.challenges.Storm.beta != 0));
-		//Recycles the map we're running if you have 0 stacks of balance and the map is level 6 as that's the only time we should be running a map at this level.
-		if (((game.global.challengeActive == "Unbalance" && !rShouldUnbalance && game.challenges.Unbalance.balanceStacks == 0) || (game.global.challengeActive == "Storm" && !rShouldStorm && game.challenges.Storm.beta == 0)) && game.global.mapsActive && getCurrentMapObject().level == 6) {
-			mapsClicked();
-			recycleMap();
-		}
-	}
-
-	//Smithless
-	if ((game.global.challengeActive == "Smithless")) {
-		//Setting up variables
-		if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
-			var name = game.global.gridArray[0].name
-			var equalityAmt = equalityQuery(true, true, name, game.global.world, 1, 'world', 1, false, true)
-			var ourDmg = (RcalcOurDmg('min', equalityAmt, false, false, false, true));
-			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world', true);
-			enemyHealth *= 3e15;
-			var stacksRemaining = 10 - game.challenges.Smithless.uberAttacks;
-			var gammaDmg = gammaBurstPct;
-			var rSmithlessJobRatio = '0,0,1,0';
-
-			if ((ourDmg * 2 + (ourDmg * gammaDmg * 2)) < enemyHealth) {
-				if (game.global.mapBonus != 10)
-					rShouldSmithless = true;
-				else if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))))
-					rShouldSmithless = true;
-			}
-
-			if (game.global.mapRunCounter === 0 && game.global.mapsActive && rSmithlessMapRepeats !== 0) {
-				game.global.mapRunCounter = rSmithlessMapRepeats
-				rSmithlessMapRepeats = 0;
-			}
-			if (rShouldSmithless) {
-				if (rSmithlessautoLevel === Infinity) rSmithlessautoLevel = game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel();
-			}
-			if (sixSecondInterval && rSmithlessCurrentMap !== undefined && (game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel() > rSmithlessautoLevel)) {
-				rSmithlessMapRepeats = game.global.mapRunCounter + 1;
-				rSmithlessautoLevel = game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel();
-			}
-			if (rSmithlessautoLevel !== Infinity) {
-				rSmithlessMapLevel = rSmithlessautoLevel;
-			}
-		}
-	}
-
-	//Prestige Raiding
-	if ((rRunningRegular && autoTrimpSettings.rRaidingDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdRaidingDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3RaidingDefaultSettings.value.active) && rShouldQuest === 0) {
-
-		//if (getPageSetting('RAMPraid') && (game.global.challengeActive != "Daily") || (getPageSetting('RAMPdraid') && game.global.challengeActive == "Daily")) {
-		var rRaidingZone = rRunningC3 ? getPageSetting('rc3RaidingZone') : rRunningDaily ? getPageSetting('rdRaidingZone') : getPageSetting('rRaidingZone');
-		if (rRaidingZone.includes(game.global.world)) {
-			rShouldPrestigeRaid = false;
-			//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
-			var rRaidingIndex = rRaidingZone.indexOf(game.global.world);
-			var rRaidingSettings = rRunningC3 ? autoTrimpSettings.rc3RaidingSettings.value[rRaidingIndex] : rRunningDaily ? autoTrimpSettings.rdRaidingSettings.value[rRaidingIndex] : autoTrimpSettings.rRaidingSettings.value[rRaidingIndex];
-			if (rRaidingSettings.active) {
-				var rRaidingDefaultSettings = rRunningC3 ? autoTrimpSettings.rc3RaidingDefaultSettings.value : rRunningDaily ? autoTrimpSettings.rdRaidingDefaultSettings.value : autoTrimpSettings.rRaidingDefaultSettings.value;
-				var rPRCell = rRaidingSettings.cell;
-				raidzones = rRaidingSettings.raidingzone;
-				var rPRRecycle = rRaidingDefaultSettings.recycle;
-				var rPRFragFarm = rRaidingSettings.raidingDropdown;
-
-				if (game.global.lastClearedCell + 2 >= rPRCell && Rgetequips(raidzones, false) > 0) {
-					rShouldPrestigeRaid = true;
-				}
-			}
-			//Resetting variables and recycling the maps used
-			if (!rShouldPrestigeRaid && (RAMPrepMap[0] != undefined || RAMPrepMap[1] != undefined || RAMPrepMap[2] != undefined || RAMPrepMap[3] != undefined || RAMPrepMap[4] != undefined)) {
-				RAMPfragmappy = undefined;
-				RAMPprefragmappy = undefined;
-				RAMPfragmappybought = false;
-				for (var x = 0; x < 5; x++) {
-					RAMPpMap[x] = undefined;
-					RAMPmapbought[x] = undefined;
-
-					if (RAMPrepMap[x] != undefined) {
-						if (rPRRecycle) {
-							recycleMap(getMapIndex(RAMPrepMap[x]));
-						}
-						RAMPrepMap[x] = undefined;
-					}
-				}
-			}
-		}
-	}
-
 	//Worshipper Farm -- Think there's an issue with variable setup here
 	if (game.jobs.Worshipper.locked == 0 && autoTrimpSettings.rWorshipperFarmDefaultSettings.value.active && rShouldQuest === 0) {
 		var rWFZone = getPageSetting('rWorshipperFarmZone');
@@ -1717,6 +1623,63 @@ function RautoMap() {
 			if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter) + " (" + (rWFMapLevel >= 0 ? "+" : "") + rWFMapLevel + " " + rWFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 			currTime = 0
 			rWFMapRepeats = 0;
+		}
+	}
+
+	//Unbalance & Storm Destacking
+	if ((getPageSetting('rUnbalance') && game.global.challengeActive == "Unbalance") || (getPageSetting('Rstormon') && game.global.challengeActive == "Storm")) {
+		//Setting up variables
+		var rUnbalanceZone = getPageSetting('rUnbalanceZone') > 0 ? getPageSetting('rUnbalanceZone') : Infinity;
+		var rUnbalanceStacks = getPageSetting('rUnbalanceStacks') > 0 ? getPageSetting('rUnbalanceStacks') : Infinity;
+		var rStormZone = getPageSetting('rStormZone') > 0 ? getPageSetting('rStormZone') : Infinity;
+		var rStormStacks = getPageSetting('rStormStacks') > 0 ? getPageSetting('rStormStacks') : Infinity;
+		if (game.global.challengeActive == "Unbalance") rShouldUnbalance = (((game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= rUnbalanceZone && (game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks || (getPageSetting('rUnbalanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
+		if (game.global.challengeActive == "Storm") rShouldStorm = (game.global.world >= rStormZone && (game.challenges.Storm.beta >= rStormStacks && game.challenges.Storm.beta != 0));
+		//Recycles the map we're running if you have 0 stacks of balance and the map is level 6 as that's the only time we should be running a map at this level.
+		if (((game.global.challengeActive == "Unbalance" && !rShouldUnbalance && game.challenges.Unbalance.balanceStacks == 0) || (game.global.challengeActive == "Storm" && !rShouldStorm && game.challenges.Storm.beta == 0)) && game.global.mapsActive && getCurrentMapObject().level == 6) {
+			mapsClicked();
+			recycleMap();
+		}
+	}
+
+	//Prestige Raiding
+	if ((rRunningRegular && autoTrimpSettings.rRaidingDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdRaidingDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3RaidingDefaultSettings.value.active) && rShouldQuest === 0) {
+
+		//if (getPageSetting('RAMPraid') && (game.global.challengeActive != "Daily") || (getPageSetting('RAMPdraid') && game.global.challengeActive == "Daily")) {
+		var rRaidingZone = rRunningC3 ? getPageSetting('rc3RaidingZone') : rRunningDaily ? getPageSetting('rdRaidingZone') : getPageSetting('rRaidingZone');
+		if (rRaidingZone.includes(game.global.world)) {
+			rShouldPrestigeRaid = false;
+			//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
+			var rRaidingIndex = rRaidingZone.indexOf(game.global.world);
+			var rRaidingSettings = rRunningC3 ? autoTrimpSettings.rc3RaidingSettings.value[rRaidingIndex] : rRunningDaily ? autoTrimpSettings.rdRaidingSettings.value[rRaidingIndex] : autoTrimpSettings.rRaidingSettings.value[rRaidingIndex];
+			if (rRaidingSettings.active) {
+				var rRaidingDefaultSettings = rRunningC3 ? autoTrimpSettings.rc3RaidingDefaultSettings.value : rRunningDaily ? autoTrimpSettings.rdRaidingDefaultSettings.value : autoTrimpSettings.rRaidingDefaultSettings.value;
+				var rPRCell = rRaidingSettings.cell;
+				raidzones = rRaidingSettings.raidingzone;
+				var rPRRecycle = rRaidingDefaultSettings.recycle;
+				var rPRFragFarm = rRaidingSettings.raidingDropdown;
+
+				if (game.global.lastClearedCell + 2 >= rPRCell && Rgetequips(raidzones, false) > 0) {
+					rShouldPrestigeRaid = true;
+				}
+			}
+			//Resetting variables and recycling the maps used
+			if (!rShouldPrestigeRaid && (RAMPrepMap[0] != undefined || RAMPrepMap[1] != undefined || RAMPrepMap[2] != undefined || RAMPrepMap[3] != undefined || RAMPrepMap[4] != undefined)) {
+				RAMPfragmappy = undefined;
+				RAMPprefragmappy = undefined;
+				RAMPfragmappybought = false;
+				for (var x = 0; x < 5; x++) {
+					RAMPpMap[x] = undefined;
+					RAMPmapbought[x] = undefined;
+
+					if (RAMPrepMap[x] != undefined) {
+						if (rPRRecycle) {
+							recycleMap(getMapIndex(RAMPrepMap[x]));
+						}
+						RAMPrepMap[x] = undefined;
+					}
+				}
+			}
 		}
 	}
 
@@ -2089,6 +2052,43 @@ function RautoMap() {
 					if (getPageSetting('rMapRepeatCount')) debug("Hypothermia took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 					currTime = 0
 				}
+			}
+		}
+	}
+
+	//Smithless
+	if ((game.global.challengeActive == "Smithless")) {
+		//Setting up variables
+		if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
+			var name = game.global.gridArray[0].name
+			var equalityAmt = equalityQuery(true, true, name, game.global.world, 1, 'world', 1, false, true)
+			var ourDmg = (RcalcOurDmg('min', equalityAmt, false, false, false, true));
+			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world', true);
+			enemyHealth *= 3e15;
+			var stacksRemaining = 10 - game.challenges.Smithless.uberAttacks;
+			var gammaDmg = gammaBurstPct;
+			var rSmithlessJobRatio = '0,0,1,0';
+
+			if ((ourDmg * 2 + (ourDmg * gammaDmg * 2)) < enemyHealth) {
+				if (game.global.mapBonus != 10)
+					rShouldSmithless = true;
+				else if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))))
+					rShouldSmithless = true;
+			}
+
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && rSmithlessMapRepeats !== 0) {
+				game.global.mapRunCounter = rSmithlessMapRepeats
+				rSmithlessMapRepeats = 0;
+			}
+			if (rShouldSmithless) {
+				if (rSmithlessautoLevel === Infinity) rSmithlessautoLevel = game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel();
+			}
+			if (sixSecondInterval && rSmithlessCurrentMap !== undefined && (game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel() > rSmithlessautoLevel)) {
+				rSmithlessMapRepeats = game.global.mapRunCounter + 1;
+				rSmithlessautoLevel = game.global.mapBonus != 10 ? autoMapLevel(10, 0, true) : autoMapLevel();
+			}
+			if (rSmithlessautoLevel !== Infinity) {
+				rSmithlessMapLevel = rSmithlessautoLevel;
 			}
 		}
 	}
