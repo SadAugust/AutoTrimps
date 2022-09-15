@@ -2361,7 +2361,7 @@ function RautoMap() {
 					selectedMap = RShouldFarmMapCreation(equipminus, 'lmc');
 					if (currTime === 0) currTime = getGameTime();
 				}
-				if (getPageSetting('RBuyJobsNew') > 0 && oneSecondInterval)
+				if (getPageSetting('RBuyJobsNew') > 0 && oneSecondInterval && (rShouldQuest === 0 || rShouldQuest === 10))
 					RbuyJobs()
 			}
 			else {
