@@ -627,12 +627,8 @@ function Rresetmapvars() {
 	rShouldUnbalance = false;
 	//Worshipper
 	rShouldWorshipperFarm = false;
-	Rshipfragfarming = false;
-	shipfragmappy = undefined;
-	shipprefragmappy = undefined;
-	shipfragmappybought = false;
-	worshipperdebug = 0;
-	rWorshipperCurrentMap = undefined;
+	rWFDebug = 0;
+	rWFCurrentMap = undefined;
 	//Quagmire
 	Rshoulddobogs = false;
 	rBlackBogCurrentMap = undefined;
