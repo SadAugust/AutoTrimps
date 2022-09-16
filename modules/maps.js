@@ -775,8 +775,8 @@ var rFragmentFarming = false;
 var rFragmentMapID = undefined;
 var rInitialFragmentMapID = undefined;
 var rFragMapBought = false;
-var worshipperdebug = 0;
-var rWorshipperCurrentMap = undefined;
+var rWFDebug = 0;
+var rWFCurrentMap = undefined;
 //Quagmire
 var Rshoulddobogs = false;
 var rBlackBogCurrentMap = undefined;
@@ -1596,7 +1596,7 @@ function RautoMap() {
 					rWFMapRepeats = 0;
 				}
 				if (rWFSettings.autoLevel) {
-					if (rWorshipperCurrentMap === undefined) {
+					if (rWFCurrentMap === undefined) {
 						if (rWFautoLevel === Infinity) rWFautoLevel = autoMapLevel();
 						if (rWFautoLevel !== Infinity && twoSecondInterval) rWFautoLevel = autoMapLevel();
 					}
@@ -1609,17 +1609,17 @@ function RautoMap() {
 					}
 				}
 				if (game.global.challengeActive == "Wither" && rWFMapLevel >= 0) rWFMapLevel = -1;
-				if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != worshipperdebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperDefaultSettings.value.shipskip))) {
-					debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + autoTrimpSettings.rWorshipperDefaultSettings.value.shipskip + " or more Worshippers. Evaluate your map settings to correct this")
-					worshipperdebug = game.stats.zonesCleared.value;
+				if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != rWFDebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip))) {
+					debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip + " or more Worshippers. Evaluate your map settings to correct this")
+					rWFDebug = game.stats.zonesCleared.value;
 				}
-				if (rWFGoal > game.jobs.Worshipper.owned && scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) >= (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperDefaultSettings.value.shipskip))
+				if (rWFGoal > game.jobs.Worshipper.owned && scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) >= (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip))
 					rShouldWorshipperFarm = true;
 			}
 		}
 
-		if (rWorshipperCurrentMap != undefined && !rShouldWorshipperFarm) {
-			rWorshipperCurrentMap = undefined;
+		if (rWFCurrentMap != undefined && !rShouldWorshipperFarm) {
+			rWFCurrentMap = undefined;
 			if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter) + " (" + (rWFMapLevel >= 0 ? "+" : "") + rWFMapLevel + " " + rWFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 			currTime = 0
 			rWFMapRepeats = 0;
@@ -2312,9 +2312,9 @@ function RautoMap() {
 					if (rSFCurrentMap !== 'rSmithyFarm' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldWorshipperFarm) {
 					selectedMap = RShouldFarmMapCreation(rWFMapLevel, rWFSpecial);
-					rWorshipperCurrentMap = "rWorshipperMap";
+					rWFCurrentMap = "rWorshipperMap";
 					workerRatio = rWFJobRatio;
-					if (rWorshipperCurrentMap !== 'rWorshipperMap' || currTime === 0) currTime = getGameTime();
+					if (rWFCurrentMap !== 'rWorshipperMap' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldUnbalance || rShouldStorm) {
 					selectedMap = RShouldFarmMapCreation(-(game.global.world - 6), "fa");
 				} else if (rShouldMayhem) {
