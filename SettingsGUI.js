@@ -770,8 +770,8 @@ function initializeAllSettings() {
 	createSetting('45stacks', 'Antistack Calc', '<b>Experimental. </b><br>Always calcs your damage as having full antistacks. Useful for windstacking. ', 'boolean', false, null, 'Combat');
 
 	//Radon
-	createSetting('Rcalcmaxequality', ['Equality Calc Off', 'EC: On', 'EC: Health'], '<b>Experimental. </b><br>Adds Equality Scaling levels to the battlecalc. Will always calculate equality based on actual scaling levels when its turned off by other settings. Assumes you use Equality Scaling. Turning this on allows in-game Equality Scaling to adjust your Health accordingly. EC: Health only decreases enemies attack in the calculation which may improve speed. ', 'multitoggle', 0, null, 'Combat');
 	createSetting('rManageEquality', ['Auto Equality Off', 'Auto Equality: Basic', 'Auto Equality: Advanced'], 'Manages Equality settings for you. <br><br><b>Auto Equality: Basic</b><br>Sets Equality to 0 on Slow enemies, and Autoscaling on for Fast enemies.<br><br><b>Auto Equality: Advanced</b><br>Will automatically identify the best equality levels to kill the current enemy and change it when necessary.', 'multitoggle', 0, null, 'Combat');
+	createSetting('Rcalcmaxequality', ['Equality Calc Off', 'EC: On', 'EC: Health'], '<b>Experimental. </b><br>Adds Equality Scaling levels to the battlecalc. Will always calculate equality based on actual scaling levels when its turned off by other settings. Assumes you use Equality Scaling. Turning this on allows in-game Equality Scaling to adjust your Health accordingly. EC: Health only decreases enemies attack in the calculation which may improve speed. ', 'multitoggle', 0, null, 'Combat');
 	createSetting('Rcalcfrenzy', 'Frenzy Calc', '<b>Experimental.</b><br>Adds frenzy to the calc. Be warned, it will not farm as much with this on as it expects 100% frenzy uptime.', 'boolean', false, null, 'Combat');
 	createSetting('rMutationCalc', 'Mutation Calc', 'Whether you\'d like to factor Mutations into HD calc.', 'boolean', false, null, 'Combat');
 
@@ -2324,8 +2324,8 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('AutoStance') != 3 ? turnOn('IgnoreCrits') : turnOff('IgnoreCrits');
 
 	//RCombat
-	radonon ? turnOn('Rcalcmaxequality') : turnOff('Rcalcmaxequality');
 	radonon ? turnOn('rManageEquality') : turnOff('rManageEquality');
+	radonon && getPageSetting('rManageEquality') < 2 ? turnOn('Rcalcmaxequality') : turnOff('Rcalcmaxequality');
 	radonon && !game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
 	radonon && game.global.highestRadonLevelCleared > 200 ? turnOn('rMutationCalc') : turnOff('rMutationCalc');
 
