@@ -217,7 +217,8 @@ ul.tab li a:hover {
 .windowFrozenCastle,
 .windowTributeFarmDropdown,
 .windowTributeFarmDropdownDefault,
-.windowAutoLevel {
+.windowAutoLevel,
+.windowEndZone {
 	display: inline-block;
 }
 
@@ -252,7 +253,8 @@ ul.tab li a:hover {
 .windowRepeat,
 .windowRaidingZone,
 .windowPotionNumber,
-.windowWorshipper {
+.windowWorshipper,
+.windowEndZone {
 	width: 8%;
 }
 
