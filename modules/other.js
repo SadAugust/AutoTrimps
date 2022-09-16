@@ -2330,7 +2330,7 @@ function equalityManagement() {
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourHealth < (ourHealthMax * 0.99) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
+				else if (ourHealth < (ourHealthMax * 0.95) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
 					if ((questShieldBreak) || !mapping) {
 						mapsClicked();
 						mapsClicked();
