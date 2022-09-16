@@ -1582,7 +1582,7 @@ function RautoMap() {
 				break;
 			}
 		}
-		if (rWFIndex !== null && rWFIndex >= 0 && game.jobs.Worshipper.owned != 50) {
+		if (rWFIndex !== null && rWFIndex >= 0) {
 			var rWFSettings = autoTrimpSettings.rWorshipperFarmSettings.value[rWFIndex];
 			var rWFCell = rWFSettings.cell;
 			if (rWFSettings.active && game.global.lastClearedCell + 2 >= rWFCell) {
@@ -1606,23 +1606,24 @@ function RautoMap() {
 					}
 					if (rWFautoLevel !== Infinity) {
 						rWFMapLevel = rWFautoLevel;
-					}
+					} w
 				}
 				if (game.global.challengeActive == "Wither" && rWFMapLevel >= 0) rWFMapLevel = -1;
 				if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != rWFDebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip))) {
 					debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip + " or more Worshippers. Evaluate your map settings to correct this")
 					rWFDebug = game.stats.zonesCleared.value;
 				}
-				if (rWFGoal > game.jobs.Worshipper.owned && scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) >= (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip))
+				if (game.jobs.Worshipper.owned != 50 && rWFGoal > game.jobs.Worshipper.owned && scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) >= (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip))
 					rShouldWorshipperFarm = true;
-			}
-		}
 
-		if (rWFCurrentMap != undefined && !rShouldWorshipperFarm) {
-			rWFCurrentMap = undefined;
-			if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter) + " (" + (rWFMapLevel >= 0 ? "+" : "") + rWFMapLevel + " " + rWFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
-			currTime = 0
-			rWFMapRepeats = 0;
+
+				if (rWFCurrentMap != undefined && !rShouldWorshipperFarm) {
+					rWFCurrentMap = undefined;
+					if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter) + " (" + (rWFMapLevel >= 0 ? "+" : "") + rWFMapLevel + " " + rWFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+					currTime = 0
+					rWFMapRepeats = 0;
+				}
+			}
 		}
 	}
 
