@@ -1606,7 +1606,7 @@ function RautoMap() {
 					}
 					if (rWFautoLevel !== Infinity) {
 						rWFMapLevel = rWFautoLevel;
-					} w
+					}
 				}
 				if (game.global.challengeActive == "Wither" && rWFMapLevel >= 0) rWFMapLevel = -1;
 				if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != rWFDebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip))) {
