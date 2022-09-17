@@ -1041,6 +1041,7 @@ function RautoMap() {
 	var rRunningC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
 	var rRunningDaily = game.global.challengeActive == "Daily";
 	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
+	var dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk';
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 	var totalPortals = getTotalPortals();
 
@@ -1407,7 +1408,7 @@ function RautoMap() {
 					totalTrFCost += barnCost;
 
 					if ((totalTrFCost > game.resources.food.owned - barnCost + resourceFarmed) && game.resources.food.owned > totalTrFCost / 2) {
-						if (game.global.mapsActive && getCurrentMapObject().name !== 'Atlantrimp') {
+						if (!dontRecycleMaps && game.global.mapsActive && getCurrentMapObject().name !== 'Atlantrimp') {
 							mapsClicked();
 							recycleMap();
 						}
@@ -1435,7 +1436,7 @@ function RautoMap() {
 					if (typeof (rTrFautoLevel) !== 'undefined' && rTrFautoLevel !== Infinity) rTrFautoLevel = Infinity;
 					if (typeof (rTrFbuyBuildings) !== 'undefined') rTrFbuyBuildings = false;
 					rTrFSettings.done = totalPortals + "_" + game.global.world;
-					if (game.global.mapsActive) {
+					if (!dontRecycleMaps && game.global.mapsActive) {
 						mapsClicked();
 						recycleMap();
 					}
@@ -1543,8 +1544,10 @@ function RautoMap() {
 						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') rSFMapRepeats[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-						mapsClicked();
-						recycleMap();
+						if (!dontRecycleMaps) {
+							mapsClicked();
+							recycleMap();
+						}
 					}
 				}
 
@@ -1554,8 +1557,10 @@ function RautoMap() {
 						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') rSFMapRepeats[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-						mapsClicked();
-						recycleMap();
+						if (!dontRecycleMaps) {
+							mapsClicked();
+							recycleMap();
+						}
 					}
 					if (getPageSetting('rMapRepeatCount'))
 						debug("Smithy Farm took " + rSFMapRepeats[0] + " food map" + (rSFMapRepeats[0] === 1 ? ", " : "s, ") + rSFMapRepeats[1] + " wood map" + (rSFMapRepeats[1] === 1 ? ", " : "s, ") + rSFMapRepeats[2] + " metal map" + (rSFMapRepeats[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
@@ -2387,7 +2392,7 @@ function RautoMap() {
 
 	//Setting up map repeat
 	if (!game.global.preMapsActive && game.global.mapsActive) {
-		if (runningPrestigeMaps && game.global.challengeActive !== 'Trappapalooza' && game.global.challengeActive !== 'Berserk' && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && Rgetequips(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > PerfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
+		if (runningPrestigeMaps && game.global.challengeActive !== 'Trappapalooza' && game.global.challengeActive !== 'Berserk' && game.global.challengeActive !== 'Archaeology' && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && Rgetequips(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > PerfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
 			var maplevel = getCurrentMapObject().level
 			mapsClicked();
 			recycleMap();
@@ -2699,11 +2704,11 @@ function RautoMap() {
 					questSpecial = rShouldQuest == 1 || rShouldQuest == 4 ? 'lsc' : rShouldQuest == 2 ? 'lwc' : rShouldQuest == 3 || rShouldQuest == 7 ? 'lmc' : 'fa';
 					PerfectMapCost((rShouldQuest !== 6 ? autoMapLevel(questSpecial) : (autoMapLevel(questSpecial) >= 0 ? autoMapLevel(questSpecial) : 0)), questSpecial);
 				}
-				else if (rShouldTimeFarm) RShouldFarmMapCost(rTFMapLevel, rTFSpecial, rTFZone, biome);
-				else if (rShouldTributeFarm || rShouldMetFarm) RShouldFarmMapCost(rTrFMapLevel, rTrFSpecial, rTrFZone, biome);
-				else if (rShouldSmithyFarm) RShouldFarmMapCost(rSFMapLevel, rSFSpecial, rSFZone, biome);
-				else if (rShouldWorshipperFarm && game.resources.fragments.owned >= RShouldFarmMapCost(rWFMapLevel, rWFSpecial)) RShouldFarmMapCost(rWFMapLevel, rWFSpecial);
-				else if (rShouldUnbalance || rShouldStorm) RShouldFarmMapCost(-(game.global.world - 6), "fa");
+				else if (rShouldTimeFarm) PerfectMapCost(rTFMapLevel, rTFSpecial, biome);
+				else if (rShouldTributeFarm || rShouldMetFarm) PerfectMapCost(rTrFMapLevel, rTrFSpecial, biome);
+				else if (rShouldSmithyFarm) PerfectMapCost(rSFMapLevel, rSFSpecial, biome);
+				else if (rShouldWorshipperFarm && game.resources.fragments.owned >= PerfectMapCost(rWFMapLevel, rWFSpecial)) PerfectMapCost(rWFMapLevel, rWFSpecial);
+				else if (rShouldUnbalance || rShouldStorm) PerfectMapCost(-(game.global.world - 6), "fa");
 				else if (rShouldMayhem) PerfectMapCost(rMayhemMapLevel, rMayhemSpecial, biome);
 				else if (rShouldInsanityFarm) PerfectMapCost(rIFMapLevel, rIFSpecial);
 				else if (rShouldPandemoniumDestack && getPageSetting('RPandemoniumMaps')) PerfectMapCost(rPandemoniumMapLevel, pandspecial);
@@ -2712,9 +2717,9 @@ function RautoMap() {
 				else if (Rshouldalchfarm) {
 					if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == alchspecial_alt || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].level == game.global.world + alchmaplevel)
 						alchspecial_alt = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus;
-					RShouldFarmMapCost(alchmaplevel, alchspecial_alt, alchfarmzone, alchbiome);
+					PerfectMapCost(alchmaplevel, alchspecial_alt, alchbiome);
 				}
-				else if (rShouldHypoFarm) RShouldFarmMapCost(rHFMapLevel, rHFSpecial, rHFZone, biome);
+				else if (rShouldHypoFarm) PerfectMapCost(rHFMapLevel, rHFSpecial, biome);
 				else if (rShouldMaxMapBonus) PerfectMapCost(rMBMapLevel, rMBSpecial);
 				else if (rShouldSmithless) PerfectMapCost(rSmithlessMapLevel, 'lmc');
 				else if (rShouldEquipFarm) PerfectMapCost(equipminus, "lmc");
