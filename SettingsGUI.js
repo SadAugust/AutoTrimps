@@ -285,11 +285,7 @@ function initializeAllSettings() {
 	createSetting('rdRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
 
 	//Daily Void Maps
-	createSetting('rdVoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'Daily');
 	createSetting('rdVoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'Daily');
-	createSetting('rdVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
-	createSetting('rdVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Daily');
-	createSetting('rdVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Daily');
 
 	//Bone Shrine Popup
 	createSetting('rdBoneShrinePopup', 'Bone Shrine Settings', 'Contains arrays for this setting', 'infoclick', [], null, 'Daily');
@@ -646,11 +642,7 @@ function initializeAllSettings() {
 	createSetting('rc3RaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 
 	//C3 Void Maps
-	createSetting('rc3VoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'C3');
 	createSetting('rc3VoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'infoclick', false, null, 'C3');
-	createSetting('rc3VoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
-	createSetting('rc3VoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'C3');
-	createSetting('rc3VoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'C3');
 
 	//Bone Shrine popup
 	createSetting('rc3BoneShrinePopup', 'Bone Shrine Settings', 'Click to adjust settings.', 'infoclick', false, null, 'C3');
@@ -946,8 +938,8 @@ function initializeAllSettings() {
 	document.getElementById('rc3MapBonusPopup').setAttribute('onclick', 'MAZLookalike("C3 Map Bonus", "rc3MapBonus", "MAZ")');
 	//Void Map
 	document.getElementById('rVoidMapPopup').setAttribute('onclick', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")');
-	document.getElementById('rdVoidMapPopup').setAttribute('onclick', 'MAZLookalike("Daily Void Map", "rdVoidMap", "MAZ")');
-	document.getElementById('rc3VoidMapPopup').setAttribute('onclick', 'MAZLookalike("C3 Void Map", "rc3VoidMap", "MAZ")');
+	document.getElementById('rdVoidMapPopup').setAttribute('onclick', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")');
+	document.getElementById('rc3VoidMapPopup').setAttribute('onclick', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")');
 	//Smithy Farming
 	document.getElementById('rSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Smithy Farm", "rSmithyFarm", "MAZ")');
 	document.getElementById('rdSmithyFarmPopup').setAttribute('onclick', 'MAZLookalike("Daily Smithy Farm", "rdSmithyFarm", "MAZ")');
@@ -1415,14 +1407,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (typeof (autoTrimpSettings.rc3MapBonusSettings.value[0]) !== 'undefined' && autoTrimpSettings.rc3MapBonusSettings.value[0].done === undefined) {
 				for (var y = 0; y < autoTrimpSettings.rc3MapBonusSettings.value.length; y++) {
 					autoTrimpSettings.rc3MapBonusSettings.value[y].done = 1;
-				}
-				saveSettings();
-			}
-		}
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.0') {
-			if (typeof (autoTrimpSettings.rShipFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.autoTrimpSettings.rShipFarmSettings.value[0].autoLevel === undefined) {
-				for (var y = 0; y < autoTrimpSettings.rShipFarmSettings.value.length; y++) {
-					autoTrimpSettings.rShipFarmSettings.value[y].autoLevel = false;
 				}
 				saveSettings();
 			}
@@ -1939,12 +1923,7 @@ function updateCustomButtons() {
 	turnOff('rdMapBonusZone');
 
 	//Void Map 
-	turnOff('rdVoidMap');
 	radonon ? turnOn('rdVoidMapPopup') : turnOff('rdVoidMapPopup');
-	turnOff('rdVoidMapSettings');
-	turnOff('rdVoidMapDefaultSettings');
-	turnOff('rdVoidMapZone');
-
 
 	radonon ? turnOn('Rdmeltsmithy') : turnOff('Rdmeltsmithy');
 	radonon ? turnOn('rdMeltSmithyShred') : turnOff('rdMeltSmithyShred');
@@ -2013,11 +1992,7 @@ function updateCustomButtons() {
 	turnOff('rc3MapBonusZone');
 
 	//Void Map 
-	turnOff('rc3VoidMap');
 	radonon ? turnOn('rc3VoidMapPopup') : turnOff('rc3VoidMapPopup');
-	turnOff('rc3VoidMapSettings');
-	turnOff('rc3VoidMapDefaultSettings');
-	turnOff('rc3VoidMapZone');
 
 	radonon ? turnOn('c3finishrun') : turnOff('c3finishrun');
 	radonon ? turnOn('c3meltingpoint') : turnOff('c3meltingpoint');
