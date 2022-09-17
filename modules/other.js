@@ -1906,22 +1906,19 @@ function PerfectMapCost(pluslevel, special, biome) {
 	return updateMapCost(true);
 }
 
-function RShouldFarmMapCost(pluslevel, special, farmzone, biome) {
+function RShouldFarmMapCost(pluslevel, special, biome) {
 	//Pre-init
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (!special) special = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
-	if (!farmzone) farmzone = [game.global.world];
 	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
 	go = false;
 
 	//Working out appropriate map settings
-	if (farmzone.includes(game.global.world)) {
-		document.getElementById("mapLevelInput").value = maplevel;
-		document.getElementById("advExtraLevelSelect").value = pluslevel;
-		document.getElementById("biomeAdvMapsSelect").value = biome;
-		document.getElementById("advSpecialSelect").value = special;
-	}
+	document.getElementById("mapLevelInput").value = maplevel;
+	document.getElementById("advExtraLevelSelect").value = pluslevel;
+	document.getElementById("biomeAdvMapsSelect").value = biome;
+	document.getElementById("advSpecialSelect").value = special;
 	updateMapCost();
 	return updateMapCost(true);
 }
@@ -2330,7 +2327,7 @@ function equalityManagement() {
 					updateEqualityScaling();
 					break;
 				}
-				else if (ourHealth < (ourHealthMax * 0.95) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
+				else if (ourHealth < (ourHealthMax * 0.75) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
 					if ((questShieldBreak) || !mapping) {
 						mapsClicked();
 						mapsClicked();

@@ -2704,23 +2704,45 @@ function RautoMap() {
 					questSpecial = rShouldQuest == 1 || rShouldQuest == 4 ? 'lsc' : rShouldQuest == 2 ? 'lwc' : rShouldQuest == 3 || rShouldQuest == 7 ? 'lmc' : 'fa';
 					PerfectMapCost((rShouldQuest !== 6 ? autoMapLevel(questSpecial) : (autoMapLevel(questSpecial) >= 0 ? autoMapLevel(questSpecial) : 0)), questSpecial);
 				}
-				else if (rShouldTimeFarm) PerfectMapCost(rTFMapLevel, rTFSpecial, biome);
-				else if (rShouldTributeFarm || rShouldMetFarm) PerfectMapCost(rTrFMapLevel, rTrFSpecial, biome);
-				else if (rShouldSmithyFarm) PerfectMapCost(rSFMapLevel, rSFSpecial, biome);
-				else if (rShouldWorshipperFarm && game.resources.fragments.owned >= PerfectMapCost(rWFMapLevel, rWFSpecial)) PerfectMapCost(rWFMapLevel, rWFSpecial);
-				else if (rShouldUnbalance || rShouldStorm) PerfectMapCost(-(game.global.world - 6), "fa");
+				else if (rShouldTimeFarm) {
+					if (rTFautoLevel !== Infinity) PerfectMapCost(rTFMapLevel, rTFSpecial, biome);
+					else RShouldFarmMapCost(rTFMapLevel, rTFSpecial, biome);
+				}
+				else if (rShouldTributeFarm || rShouldMetFarm) {
+					if (rTrFautoLevel !== Infinity) PerfectMapCost(rTrFMapLevel, rTrFSpecial, biome);
+					else RShouldFarmMapCost(rTrFMapLevel, rTrFSpecial, biome);
+				}
+				else if (rShouldSmithyFarm) {
+					if (rSFautoLevel !== Infinity) PerfectMapCost(rSFMapLevel, rSFSpecial, biome);
+					else RShouldFarmMapCost(rSFMapLevel, rSFSpecial, biome);
+				}
+				else if (rShouldWorshipperFarm) {
+					if (rWFautoLevel !== Infinity) PerfectMapCost(rWFMapLevel, rWFSpecial, biome);
+					else RShouldFarmMapCost(rWFMapLevel, rWFSpecial, biome);
+				}
+				else if (rShouldUnbalance || rShouldStorm) RShouldFarmMapCost(-(game.global.world - 6), "fa");
 				else if (rShouldMayhem) PerfectMapCost(rMayhemMapLevel, rMayhemSpecial, biome);
-				else if (rShouldInsanityFarm) PerfectMapCost(rIFMapLevel, rIFSpecial);
+				else if (rShouldInsanityFarm) {
+					if (rIFautoLevel !== Infinity) PerfectMapCost(rIFMapLevel, rIFSpecial, biome);
+					else RShouldFarmMapCost(rIFMapLevel, rIFSpecial, biome);
+				}
 				else if (rShouldPandemoniumDestack && getPageSetting('RPandemoniumMaps')) PerfectMapCost(rPandemoniumMapLevel, pandspecial);
 				else if (rShouldPandemoniumFarm) PerfectMapCost(getPageSetting('PandemoniumFarmLevel'), pandfarmspecial);
 				else if (rShouldPandemoniumJestimpFarm) PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'), 0)
 				else if (Rshouldalchfarm) {
 					if ((game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == alchspecial_alt || game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus == "ssc") && game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].level == game.global.world + alchmaplevel)
 						alchspecial_alt = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].bonus;
-					PerfectMapCost(alchmaplevel, alchspecial_alt, alchbiome);
+					if (rAFautoLevel !== Infinity) PerfectMapCost(alchmaplevel, alchspecial_alt, alchbiome);
+					else RShouldFarmMapCost(alchmaplevel, alchspecial_alt, alchbiome);
 				}
-				else if (rShouldHypoFarm) PerfectMapCost(rHFMapLevel, rHFSpecial, biome);
-				else if (rShouldMaxMapBonus) PerfectMapCost(rMBMapLevel, rMBSpecial);
+				else if (rShouldHypoFarm) {
+					if (rHFautoLevel !== Infinity) PerfectMapCost(rHFMapLevel, rHFSpecial, biome);
+					else RShouldFarmMapCost(rHFMapLevel, rHFSpecial, biome);
+				}
+				else if (rShouldMaxMapBonus) {
+					if (rHFautoLevel !== Infinity) PerfectMapCost(rMBMapLevel, rMBSpecial, biome);
+					else RShouldFarmMapCost(rMBMapLevel, rMBSpecial, biome);
+				}
 				else if (rShouldSmithless) PerfectMapCost(rSmithlessMapLevel, 'lmc');
 				else if (rShouldEquipFarm) PerfectMapCost(equipminus, "lmc");
 			}
