@@ -201,7 +201,7 @@ ul.tab li a:hover {
 .windowPotionType,
 .windowPotionNumber,
 .windowBonfire,
-.windowBoneDropdown,
+.windowRunType,
 .windowRaidingDropdown,
 .windowBoneBelow,
 .windowBoneAmount,
@@ -319,9 +319,12 @@ ul.tab li a:hover {
 	width: 10%;
 }
 
-.windowBoneDropdown,
 .windowBoneBelow,
 .windowBoneAmount {
+	width: 10%;
+}
+
+.windowRunType {
 	width: 10%;
 }
 

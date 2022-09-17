@@ -1034,7 +1034,7 @@ function RcalcBadGuyDmgMod(forceMaps) {
 	dmg *= game.global.challengeActive == 'Storm' && !game.global.mapsActive ? game.challenges.Storm.getAttackMult() : 1;
 	dmg *= game.global.challengeActive == 'Pandemonium' && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Pandemonium.getBossMult() : 1;
 	dmg *= game.global.challengeActive == 'Pandemonium' && !(!game.global.mapsActive && game.global.lastClearedCell + 2 == 100) ? game.challenges.Pandemonium.getPandMult() : 1;
-	dmg *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.dmgMult() : 1;
+	dmg *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
 	if (game.global.challengeActive == "Daily") {
 		dmg *= typeof game.global.dailyChallenge.badStrength !== 'undefined' ? dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength) : 1;
 		dmg *= typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && (game.global.mapsActive || forceMaps) ? dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength) : 1;

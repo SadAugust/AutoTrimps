@@ -2096,7 +2096,7 @@ function rManageEquality() {
 	}
 }
 
-function autoMapLevel(maxLevel, minLevel, floorCrit, special) {
+function autoMapLevel(special, maxLevel, minLevel, floorCrit) {
 	if (game.global.universe === 1) return 0;
 	if (maxLevel > 10) maxLevel = 10;
 	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);

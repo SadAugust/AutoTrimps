@@ -43,7 +43,6 @@ function BoneShrine() {
 				break;
 			}
 		}
-		//var rBoneShrineRunType = rBoneShrineSettings.boneruntype;
 		var rBoneShrineRunType = getPageSetting('rBoneShrineRunType')[rBSIndex];
 		var runType = rBoneShrineRunType == 'Fillers' && rRunningRegular ? true :
 			rBoneShrineRunType == 'Daily' && rRunningDaily ? true :

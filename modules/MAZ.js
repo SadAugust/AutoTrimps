@@ -350,7 +350,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. Input will look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>"
 		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>Gather</b> - Which resource you'd like to gather when popping a Bone Shrine charge to make use of Turkimp resource bonus.</li>";
 		if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) mazHelp += "<li><b>Special</b> - The type of cache you'd like to run during this map. Will override metal cache inputs with savory caches during the Transmute challenge.</li>";
-		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>Use in</b> - What type of run you'd like this line to be run.</li>";
+		if (titleText.includes('Bone Shrine') || titleText.includes('Void Map')) mazHelp += "<li><b>Run Type</b> - What type of run you'd like this line to be run.</li>";
 		if (titleText.includes('Raiding')) mazHelp += "<li><b>Frag Type</b> - Frag: Farm for fragments to afford the maps you want to create. <br>\
 		Frag Min: Used for absolute minimum frag costs (which includes no Prestige special, perfect sliders, random map and the difficulty and size options, however it will try to afford those options first!) and prioritises buying the most maps for a smoother sequential raid. \
 		<br>Frag Max: This option will make sure that the map has perfect sliders and uses the pretegious special.</li>";
@@ -465,7 +465,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowBuildings'>Buy<br/>Buildings</div>"
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'>Gather</div>"
 		if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial'>Special</div>"
-		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneDropdown'>Use in</div>"
+		if (titleText.includes('Bone Shrine') || titleText.includes('Void Map')) tooltipText += "<div class='windowRunType'>Run<br/>Type</div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>"
 		if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) tooltipText += "<div class='windowAtlantrimp'>Run<br/>Atlantrimp</div>"
 		tooltipText += "</div>";
@@ -490,7 +490,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				bonfires: 5,
 				boneamount: 1,
 				bonebelow: 0,
-				bonedropdown: 10,
+				runType: 10,
 				raidingDropdown: 0,
 				jobratio: '1,1,1,1',
 				worshipper: 50,
@@ -511,7 +511,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine') && !titleText.includes('Raiding') && !titleText.includes('Void')) vals.level = autoTrimpSettings[varPrefix + "Settings"].value[x].level
 				if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm')) vals.autoLevel = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel : true;
 				if (titleText.includes('Tribute Farm')) vals.mapType = autoTrimpSettings[varPrefix + "Settings"].value[x].mapType ? autoTrimpSettings[varPrefix + "Settings"].value[x].mapType : 'Absolute';
-				if (titleText.includes('Time Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm')) vals.repeat = autoTrimpSettings[varPrefix + "Settings"].value[x].repeat ? autoTrimpSettings[varPrefix + "Settings"].value[x].repeat : 1;
+				if (titleText.includes('Time Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus')) vals.repeat = autoTrimpSettings[varPrefix + "Settings"].value[x].repeat ? autoTrimpSettings[varPrefix + "Settings"].value[x].repeat : 1;
+				if (titleText.includes('Worshipper Farm')) vals.repeat = autoTrimpSettings[varPrefix + "Settings"].value[x].repeat ? autoTrimpSettings[varPrefix + "Settings"].value[x].repeat : 0;
 				if (titleText.includes('Worshipper Farm')) vals.endzone = autoTrimpSettings[varPrefix + "Settings"].value[x].endzone ? autoTrimpSettings[varPrefix + "Settings"].value[x].endzone : 1;
 				if (titleText.includes('Tribute Farm')) vals.tributes = autoTrimpSettings[varPrefix + "Settings"].value[x].tributes ? autoTrimpSettings[varPrefix + "Settings"].value[x].tributes : 0;
 				if (titleText.includes('Tribute Farm')) vals.mets = autoTrimpSettings[varPrefix + "Settings"].value[x].mets ? autoTrimpSettings[varPrefix + "Settings"].value[x].mets : 0;
@@ -529,15 +530,29 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (titleText.includes('Void')) vals.voidMod = autoTrimpSettings[varPrefix + "Settings"].value[x].voidMod ? autoTrimpSettings[varPrefix + "Settings"].value[x].voidMod : 0;
 				if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) vals.jobratio = autoTrimpSettings[varPrefix + "Settings"].value[x].jobratio ? autoTrimpSettings[varPrefix + "Settings"].value[x].jobratio : '1,1,1,1';
 				if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Bone Shrine') || titleText.includes('Map Bonus')) vals.gather = autoTrimpSettings[varPrefix + "Settings"].value[x].gather ? autoTrimpSettings[varPrefix + "Settings"].value[x].gather : '0';
-				if (titleText.includes('Bone Shrine')) vals.bonedropdown = autoTrimpSettings[varPrefix + "Settings"].value[x].boneruntype ? autoTrimpSettings[varPrefix + "Settings"].value[x].boneruntype : 1;
+				if (titleText.includes('Bone Shrine') || titleText.includes('Void Map')) vals.runType = autoTrimpSettings[varPrefix + "Settings"].value[x].runType ? autoTrimpSettings[varPrefix + "Settings"].value[x].runType : 1;
 				if (titleText.includes('Raiding')) vals.raidingDropdown = autoTrimpSettings[varPrefix + "Settings"].value[x].raidingDropdown ? autoTrimpSettings[varPrefix + "Settings"].value[x].raidingDropdown : 1;
 			}
 
 			else style = " style='display: none' ";
 			var gatherDropdown = "<option value='food'" + ((vals.gather == 'food') ? " selected='selected'" : "") + ">Food</option>\<option value='wood'" + ((vals.gather == 'wood') ? " selected='selected'" : "") + ">Wood</option>\<option value='metal'" + ((vals.gather == 'metal') ? " selected='selected'" : "") + ">Metal</option>\<option value='science'" + ((vals.gather == 'science') ? " selected='selected'" : "") + ">Science</option>"
-			var specialsDropdown = "<option value='0'" + ((vals.special == '0') ? " selected='selected'" : "") + ">No Modifier</option>\<option value='fa'" + ((vals.special == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>\<option value='ssc'" + ((vals.special == 'ssc') ? " selected='selected'" : "") + ">Small Savory Cache</option>\<option value='swc'" + ((vals.special == 'swc') ? " selected='selected'" : "") + ">Small Wooden Cache</option>\<option value='smc'" + ((vals.special == 'smc') ? " selected='selected'" : "") + ">Small Metal Cache</option>\<option value='src'" + ((vals.special == 'src') ? " selected='selected'" : "") + ">Small Resource Cache</option>\<option value='p'" + ((vals.special == 'p') ? " selected='selected'" : "") + ">Prestigious</option>\<option value='hc'" + ((vals.special == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>\<option value='lsc'" + ((vals.special == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\<option value='lwc'" + ((vals.special == 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\<option value='lmc'" + ((vals.special == 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>\<option value='lrc'" + ((vals.special == 'lrc') ? " selected='selected'" : "") + ">Large Research Cache</option>"
+
+			//Specials dropdown with conditions for each unlock to only appear when the user can run them.
+			var specialsDropdown = "<option value='0'" + ((vals.special == '0') ? " selected='selected'" : "") + ">No Modifier</option>"
+			if (game.global.highestRadonLevelCleared >= 14) specialsDropdown += "<option value='fa'" + ((vals.special == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
+			if (game.global.highestRadonLevelCleared >= 24) specialsDropdown += "<option value = 'ssc'" + ((vals.special == 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option >\
+			<option value='swc'" + ((vals.special == 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option >\
+			<option value='smc'" + ((vals.special == 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option > "
+			if (game.global.ArchaeologyDone) specialsDropdown += "<option value='src'" + ((vals.special == 'src') ? " selected='selected'" : "") + ">Small Research Cache</option>"
+			if (game.global.highestRadonLevelCleared >= 54) specialsDropdown += "<option value='p'" + ((vals.special == 'p') ? " selected='selected'" : "") + ">Prestigious</option>"
+			if (game.global.highestRadonLevelCleared >= 64) specialsDropdown += "<option value='hc'" + ((vals.special == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>"
+			if (game.global.highestRadonLevelCleared >= 84) specialsDropdown += "<option value='lsc'" + ((vals.special == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\
+				<option value='lwc'" + ((vals.special == 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\
+				<option value='lmc'" + ((vals.special == 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>"
+			if (game.global.ArchaeologyDone) specialsDropdown += "<option value='lrc'" + ((vals.special == 'lrc') ? " selected='selected'" : "") + ">Large Research Cache</option>"
+
 			var potionDropdown = "<option value='h'" + ((vals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
-			var boneDropdown = "<option value='none'" + ((vals.bonedropdown == 'none') ? " selected='selected'" : "") + ">None</option>\<option value='Fillers'" + ((vals.bonedropdown == 'Fillers') ? " selected='selected'" : "") + ">Fillers</option>\<option value='Daily'" + ((vals.bonedropdown == 'Daily') ? " selected='selected'" : "") + ">Daily</option>\<option value='C3'" + ((vals.bonedropdown == 'C3') ? " selected='selected'" : "") + ">C3</option>\<option value='All'" + ((vals.bonedropdown == 'All') ? " selected='selected'" : "") + ">All</option>"
+			var runTypeDropdown = "<option value='none'" + ((vals.runType == 'none') ? " selected='selected'" : "") + ">None</option>\<option value='Fillers'" + ((vals.runType == 'Fillers') ? " selected='selected'" : "") + ">Fillers</option>\<option value='Daily'" + ((vals.runType == 'Daily') ? " selected='selected'" : "") + ">Daily</option>\<option value='C3'" + ((vals.runType == 'C3') ? " selected='selected'" : "") + ">C3</option>\<option value='All'" + ((vals.runType == 'All') ? " selected='selected'" : "") + ">All</option>"
 			var raidingDropdown = "<option value='0'" + ((vals.raidingDropdown == '0') ? " selected='selected'" : "") + ">Frag</option>\<option value='1'" + ((vals.raidingDropdown == '1') ? " selected='selected'" : "") + ">Frag Min</option>\<option value='2'" + ((vals.raidingDropdown == '2') ? " selected='selected'" : "") + ">Frag Max</option>"
 			var tributeFarmDropdown = "<option value='Absolute'" + ((vals.mapType == 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>\<option value='Map Count'" + ((vals.mapType == 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>\</option>"
 			var className = (vals.special === 'hc' || vals.special === 'lc') ? " windowBwMainOn" : " windowBwMainOff";
@@ -568,7 +583,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) tooltipText += "<div class='windowJobRatio'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
 			if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.buildings) + "</div>";
 			if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.gather + "' id='windowBoneGather" + x + "'>" + gatherDropdown + "</select></div>"
-			if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.bonedropdown + "' id='windowBoneDropdown" + x + "'>" + boneDropdown + "</select></div>"
+			if (titleText.includes('Bone Shrine') || titleText.includes('Void Map')) tooltipText += "<div class='windowRunType' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.runType + "' id='windowRunType" + x + "'>" + runTypeDropdown + "</select></div>"
 			if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.raidingDropdown + "' id='windowRaidingDropdown" + x + "'>" + raidingDropdown + "</select></div>"
 			if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>"
 			if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowGather'>\<div style='text-align: center;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select>\</div>"
@@ -683,7 +698,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Time Farm') || titleText.includes('Tribute') || titleText.includes('Bone Shrine')) var atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) var jobratio = document.getElementById('windowJobRatio' + x).value;
 		if (titleText.includes('Bone')) var gather = document.getElementById('windowBoneGather' + x).value;
-		if (titleText.includes('Bone')) var boneruntype = document.getElementById('windowBoneDropdown' + x).value;
+		if (titleText.includes('Bone') || titleText.includes('Void Map')) var runType = document.getElementById('windowRunType' + x).value;
 		if (titleText.includes('Raiding')) var raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
 
 		if (isNaN(world) || world < 6) {
@@ -759,7 +774,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			bonebelow: bonebelow,
 			worshipper: worshipper,
 			voidMod: voidMod,
-			boneruntype: boneruntype,
+			runType: runType,
 			raidingDropdown: raidingDropdown,
 			buildings: buildings,
 			jobratio: jobratio,
@@ -787,7 +802,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	for (var x = 0; x < setting.length; x++) {
 		autoTrimpSettings[varPrefix + "Settings"].value[x] = setting[x];
 		autoTrimpSettings[varPrefix + "Zone"].value[x] = setting[x].world
-		if (titleText.includes('Bone')) autoTrimpSettings[varPrefix + "RunType"].value[x] = setting[x].boneruntype;
+		if (titleText.includes('Bone Shrine')) autoTrimpSettings[varPrefix + "RunType"].value[x] = setting[x].runType;
 	}
 
 	cancelTooltip(true);
@@ -949,8 +964,10 @@ function addRow(varPrefix, titleText) {
 
 				if (document.getElementById('windowSpecial' + x) !== null)
 					document.getElementById('windowSpecial' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.special
-				if (!titleText.includes('Smithy') && document.getElementById('windowRepeat' + x) !== null)
+				if (!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && document.getElementById('windowRepeat' + x) !== null)
 					document.getElementById('windowRepeat' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.repeat
+				if (titleText.includes('Worshipper Farm') && document.getElementById('windowRepeat' + x) !== null)
+					document.getElementById('windowRepeat' + x).value = 0;
 				if (document.getElementById('windowRaidingZone' + x) !== null)
 					document.getElementById('windowRaidingZone' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.raidingzone
 				if (document.getElementById('windowTributeFarmDropdown' + x) !== null)
@@ -959,8 +976,6 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowBoneBelow' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.bonebelow
 				if (document.getElementById('windowWorshipper' + x) !== null)
 					document.getElementById('windowWorshipper' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.worshipper
-				if (document.getElementById('windowVoidMod' + x) !== null)
-					document.getElementById('windowVoidMod' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.voidMod
 				if (document.getElementById('windowBoneGather' + x) !== null)
 					document.getElementById('windowBoneGather' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.gather
 				if (document.getElementById('windowBuildings' + x) !== null)
@@ -1041,7 +1056,7 @@ function removeRow(index, titleText) {
 		checkBox.setAttribute('data-checked', false);
 	}
 	if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) document.getElementById('windowJobRatio' + index).value = 0;
-	if (titleText.includes('Bone')) document.getElementById('windowBoneDropdown' + index).value = 0;
+	if (titleText.includes('Bone')) document.getElementById('windowRunType' + index).value = 0;
 	if (titleText.includes('Raiding')) document.getElementById('windowRaidingDropdown' + index).value = 0;
 	if (titleText.includes('Tribute Farm')) document.getElementById('windowTributeFarmDropdown' + index).value = 'Absolute';
 	if (titleText.includes('Bone')) document.getElementById('windowBoneGather' + index).value = 0;
