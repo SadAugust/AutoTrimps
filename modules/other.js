@@ -2102,7 +2102,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit) {
 	var maxLevel = typeof (maxLevel) === 'undefined' ? 10 : maxLevel;
 	var minLevel = typeof (minLevel) === 'undefined' ? 0 - game.global.world + 6 : minLevel;
 	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
-	var biome = !biome ? 'Farmlands' : biome;
+	var biome = !biome ? (game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain") : biome;
 	var floorCrit = !floorCrit ? false : floorCrit;
 	var difficulty = 0.75;
 	var questShieldBreak = game.global.challengeActive == 'Quest' && questcheck() == 8;
