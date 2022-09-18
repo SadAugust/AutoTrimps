@@ -82,6 +82,13 @@ function updateAutoMapsStatus(get) {
 	} else {
 		document.getElementById('autoMapStatus').innerHTML = status;
 		document.getElementById('hiderStatus').innerHTML = hiderStatus;
+		if (getPageSetting('freeVoidMap')) {
+			turnOn('freeVoidMap')
+			document.getElementById('freeVoidMap').parentNode.style = ("display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0, 0, 0, 0.3);")
+			document.getElementById('freeVoidMap').innerHTML = "Free void: " + (game.permaBoneBonuses.voidMaps.tracker / 10) + "/10";
+		}
+		else
+			turnOff('freeVoidMap')
 	}
 }
 
@@ -922,6 +929,7 @@ function RupdateAutoMapsStatus(get) {
 	} else {
 		document.getElementById('autoMapStatus').innerHTML = status;
 		document.getElementById('hiderStatus').innerHTML = hiderStatus;
+		turnOff('freeVoidMap')
 	}
 }
 

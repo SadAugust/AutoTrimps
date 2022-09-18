@@ -49,6 +49,13 @@ function automationMenuInit() {
 	newContainer.appendChild(abutton);
 	fightButtonCol.appendChild(newContainer);
 
+	newContainer = document.createElement("DIV");
+	newContainer.setAttribute("style", "display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0, 0, 0, 0.3);");
+	abutton = document.createElement("SPAN");
+	abutton.id = 'freeVoidMap';
+	newContainer.appendChild(abutton);
+	fightButtonCol.appendChild(newContainer);
+
 	var $portalTimer = document.getElementById('portalTimer');
 	$portalTimer.setAttribute('onclick', 'toggleSetting(\'pauseGame\')');
 	$portalTimer.setAttribute('style', 'cursor: default');
@@ -926,6 +933,8 @@ function initializeAllSettings() {
 	createSetting('showhehr', 'Enable He/hr status', 'Enables the display of your helium per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('Rshowautomapstatus', 'Enable AutoMap Status', 'Enables the display of the map status. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('Rshowrnhr', 'Enable Rn/hr status', 'Enables the display of your radon per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
+	createSetting('freeVoidMap', 'Free VM Output', 'Displays tracker information for your next free void map below status section.', 'boolean', false, null, 'Display');
+	createSetting('rfreeVoidMap', 'Free VM Output', 'Displays tracker information for your next free void map below status section.', 'boolean', false, null, 'Display');
 	createSetting('rMapRepeatCount', 'Map Count Output', 'When you finish doing farming for any types of special farming this setting will display a message stating the amount of maps it took to complete and the time it took (format is h:m:s).', 'boolean', true, null, 'Display');
 	createSetting('automateSpireAssault', 'Automate Spire Assault', 'Automates Spire Assault gear swaps from level 92 up to level 128.', 'boolean', false, null, 'Display');
 
@@ -2503,6 +2512,9 @@ function updateCustomButtons() {
 	!radonon ? turnOn("showhehr") : turnOff("showhehr");
 	radonon ? turnOn("Rshowautomapstatus") : turnOff("Rshowautomapstatus");
 	radonon ? turnOn("Rshowrnhr") : turnOff("Rshowrnhr");
+	!radonon ? turnOn("freeVoidMap") : turnOff("freeVoidMap");
+	//!radonon ? turnOn("rfreeVoidMap") : 
+	turnOff("rfreeVoidMap");
 
 	//Heirlooms
 
