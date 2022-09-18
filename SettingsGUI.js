@@ -179,11 +179,48 @@ function initializeAllSettings() {
 	createSetting('HeliumHrBuffer', 'He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
 	createSetting('downloadSaves', 'Download Saves', 'Will automatically download saves whenever AutoTrimps portals.', 'boolean', false, null, 'Core');
 
+	var radonChallenges = ["Off", "Radon Per Hour"];
+	if (game.global.highestRadonLevelCleared >= 39) radonChallenges.push("Bublé");
+	if (game.global.highestRadonLevelCleared >= 54) radonChallenges.push("Melt");
+	if (game.global.highestRadonLevelCleared >= 69) radonChallenges.push("Quagmire");
+	if (game.global.highestRadonLevelCleared >= 89) radonChallenges.push("Archaeology");
+	if (game.global.highestRadonLevelCleared >= 99) radonChallenges.push("Mayhem");
+	if (game.global.highestRadonLevelCleared >= 129) radonChallenges.push("Insanity");
+	if (game.global.highestRadonLevelCleared >= 134) radonChallenges.push("Nurture");
+	if (game.global.highestRadonLevelCleared >= 149) radonChallenges.push("Pandemonium");
+	if (game.global.highestRadonLevelCleared >= 154) radonChallenges.push("Alchemy");
+	if (game.global.highestRadonLevelCleared >= 174) radonChallenges.push("Hypothermia");
+	radonChallenges.push("Custom");
+	if (game.global.highestRadonLevelCleared >= 49) radonChallenges.push("Challenge 3");
+
+	var radonHourChallenges = ["None"];
+	if (game.global.highestRadonLevelCleared >= 39) radonHourChallenges.push("Bublé");
+	if (game.global.highestRadonLevelCleared >= 54) radonHourChallenges.push("Melt");
+	if (game.global.highestRadonLevelCleared >= 69) radonHourChallenges.push("Quagmire");
+	if (game.global.highestRadonLevelCleared >= 89) radonHourChallenges.push("Archaeology");
+	if (game.global.highestRadonLevelCleared >= 129) radonHourChallenges.push("Insanity");
+	if (game.global.highestRadonLevelCleared >= 134) radonHourChallenges.push("Nurture");
+	if (game.global.highestRadonLevelCleared >= 154) radonHourChallenges.push("Alchemy");
+	if (game.global.highestRadonLevelCleared >= 174) radonHourChallenges.push("Hypothermia");
+
+	var radonChallenge3 = ["None"];
+	if (game.global.highestRadonLevelCleared >= 14) radonChallenge3.push("Unlucky");
+	if (game.global.highestRadonLevelCleared >= 24) radonChallenge3.push("Transmute");
+	if (game.global.highestRadonLevelCleared >= 34) radonChallenge3.push("Unbalance");
+	if (game.global.highestRadonLevelCleared >= 44) radonChallenge3.push("Duel");
+	if (game.global.highestRadonLevelCleared >= 59) radonChallenge3.push("Trappapalooza");
+	if (game.global.highestRadonLevelCleared >= 69) radonChallenge3.push("Wither");
+	if (game.global.highestRadonLevelCleared >= 84) radonChallenge3.push("Quest");
+	if (game.global.highestRadonLevelCleared >= 104) radonChallenge3.push("Storm");
+	if (game.global.highestRadonLevelCleared >= 114) radonChallenge3.push("Berserk");
+	if (game.global.highestRadonLevelCleared >= 174) radonChallenge3.push("Glass");
+
+
 	//Radon Portal
 	document.getElementById('RPerkSwapping').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('RAutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Radon Per Hour only <b>portals at cell 1</b> of the first level where your Rn/Hr went down even slightly compared to the current runs Best Rn/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting Rn/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Radon Per Hour', 'Bublé', 'Melt', 'Quagmire', 'Archaeology', 'Mayhem', 'Insanity', 'Nurture', 'Pandemonium', 'Alchemy', 'Hypothermia', 'Custom', 'Challenge 3'], 'Core');
-	createSetting('RadonHourChallenge', 'Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals on the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Bublé', 'Melt', 'Quagmire', 'Archaeology', 'Insanity', 'Nurture', 'Alchemy', 'Hypothermia'], 'Core');
-	createSetting('RadonC3Challenge', 'Challenge', 'Automatically portal into this challenge when using \'Challenge 3\' portal option on autoportal. Custom portals on the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Unlucky', 'Downsize', 'Transmute', 'Unbalance', 'Duel', 'Trappapalooza', 'Wither', 'Quest', 'Storm', 'Berserk', 'Glass', 'Smithless'], 'Core');
+	createSetting('RAutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Radon Per Hour only <b>portals at cell 1</b> of the first level where your Rn/Hr went down even slightly compared to the current runs Best Rn/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting Rn/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', radonChallenges, 'Core');
+	createSetting('RadonHourChallenge', 'Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals on the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', radonHourChallenges, 'Core');
+	createSetting('RadonC3Challenge', 'Challenge', 'Automatically portal into this challenge when using \'Challenge 3\' portal option on autoportal. Custom portals on the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', radonChallenge3, 'Core');
 	createSetting('RCustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('rCustomDailyAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone when a daily is available. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('RnHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in radon/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set)', 'value', '999', null, 'Core');

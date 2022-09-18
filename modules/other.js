@@ -1988,6 +1988,91 @@ function rRunMap() {
 	if (game.global.challengeActive == "Pandemonium") game.challenges.Pandemonium.drawStacks();
 }
 
+function radonChallengesSetting() {
+	var radonHZE = game.global.highestRadonLevelCleared + 1;
+	var radonChallenges = ["Off", "Radon Per Hour"];
+	if (radonHZE >= 40) radonChallenges.push("Bublé");
+	if (radonHZE >= 55) radonChallenges.push("Melt");
+	if (radonHZE >= 70) radonChallenges.push("Quagmire");
+	if (radonHZE >= 90) radonChallenges.push("Archaeology");
+	if (radonHZE >= 100) radonChallenges.push("Mayhem");
+	if (radonHZE >= 110) radonChallenges.push("Insanity");
+	if (radonHZE >= 135) radonChallenges.push("Nurture");
+	if (radonHZE >= 150) radonChallenges.push("Pandemonium");
+	if (radonHZE >= 155) radonChallenges.push("Alchemy");
+	if (radonHZE >= 175) radonChallenges.push("Hypothermia");
+	radonChallenges.push("Custom");
+	if (radonHZE >= 50) radonChallenges.push("Challenge 3");
+
+	document.getElementById('RAutoPortal').innerHTML = ''
+	for (var item in radonChallenges) {
+		var option = document.createElement("option");
+		option.value = radonChallenges[item];
+		option.text = radonChallenges[item];
+		document.getElementById('RAutoPortal').appendChild(option);
+	}
+
+	var radonHourChallenges = ["None"];
+	if (radonHZE >= 40) radonHourChallenges.push("Bublé");
+	if (radonHZE >= 55) radonHourChallenges.push("Melt");
+	if (radonHZE >= 70) radonHourChallenges.push("Quagmire");
+	if (radonHZE >= 90) radonHourChallenges.push("Archaeology");
+	if (radonHZE >= 130) radonHourChallenges.push("Insanity");
+	if (radonHZE >= 135) radonHourChallenges.push("Nurture");
+	if (radonHZE >= 155) radonHourChallenges.push("Alchemy");
+	if (radonHZE >= 175) radonHourChallenges.push("Hypothermia");
+
+	document.getElementById('RadonHourChallenge').innerHTML = ''
+	for (var item in radonHourChallenges) {
+		var option = document.createElement("option");
+		option.value = radonHourChallenges[item];
+		option.text = radonHourChallenges[item];
+		document.getElementById('RadonHourChallenge').appendChild(option);
+	}
+
+	var radonChallenge3 = ["None"];
+	if (radonHZE >= 15) radonChallenge3.push("Unlucky");
+	if (radonHZE >= 25) radonChallenge3.push("Transmute");
+	if (radonHZE >= 35) radonChallenge3.push("Unbalance");
+	if (radonHZE >= 45) radonChallenge3.push("Duel");
+	if (radonHZE >= 60) radonChallenge3.push("Trappapalooza");
+	if (radonHZE >= 70) radonChallenge3.push("Wither");
+	if (radonHZE >= 85) radonChallenge3.push("Quest");
+	if (radonHZE >= 105) radonChallenge3.push("Storm");
+	if (radonHZE >= 115) radonChallenge3.push("Berserk");
+	if (radonHZE >= 175) radonChallenge3.push("Glass");
+
+	document.getElementById('RadonC3Challenge').innerHTML = ''
+	for (var item in radonChallenge3) {
+		var option = document.createElement("option");
+		option.value = radonChallenge3[item];
+		option.text = radonChallenge3[item];
+		document.getElementById('RadonC3Challenge').appendChild(option);
+	}
+
+	//if (radonHZE === 15) debug("You have unlocked the Unlucky challenge.")
+	if (radonHZE === 25) debug("You have unlocked the Transmute challenge. Any metal related settings will be converted to food instead while running this challenge.")
+	if (radonHZE === 35) debug("You have unlocked the Unbalance challenge. There's setting for it in the AT 'C3' tab.")
+	if (radonHZE === 40) debug("You have unlocked the Bublé challenge. It has now been added to AutoPortal setting.")
+	//if (radonHZE === 45) debug("Duel");
+	if (radonHZE === 50) debug("Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them.");
+	if (radonHZE === 55) debug("You have unlocked the Melt challenge. It has now been added to AutoPortal setting.")
+	if (radonHZE === 60) debug("You have unlocked the Trappapalooza challenge. It has now been added to Challenge 3 AutoPortal settings & yhere's setting for it in the AT 'C3' tab.")
+	if (radonHZE === 70) debug("You have unlocked the Quagmire challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (radonHZE === 70) debug("You have unlocked the Wither challenge. It has now been added to Challenge 3 AutoPortal settings & any map level settings with the exception of Map Bonus will make the highest level map you run -1 to not obtain additional stacks.")
+	if (radonHZE === 85) debug("You have unlocked the Quest challenge. It has now been added to Challenge 3 AutoPortal settings & AT will automatically complete Quests if AutoMaps is enabled during this challenge.")
+	if (radonHZE === 90) debug("You have unlocked the Archaeology challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (radonHZE === 100) debug("You have unlocked the Mayhem challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
+	if (radonHZE === 105) debug("You have unlocked the Storm challenge. It has now been added to Challenge 3 AutoPortal setting & there's setting for it in the AT 'C3' tab.")
+	if (radonHZE === 110) debug("You have unlocked the Insanity challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (radonHZE === 115) debug("You have unlocked the Berserk challenge. It has now been added to Challenge 3 AutoPortal setting.")
+	if (radonHZE === 135) debug("You have unlocked the Nurture challenge. It has now been added to AutoPortal setting & there is a setting for Laboratory's that has been added to AT's AutoStructure setting.")
+	if (radonHZE === 150) debug("You have unlocked the Pandemonium challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
+	if (radonHZE === 155) debug("You have unlocked the Alchemy challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (radonHZE === 175) debug("You have unlocked the Hypothermia challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (radonHZE === 175) debug("You have unlocked the Glass challenge. It has now been added to Challenge 3 AutoPortal setting.")
+}
+
 var fastimps =
 	[
 		"Snimp",

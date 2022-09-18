@@ -25,14 +25,6 @@ function delayStart() {
 	setTimeout(delayStartAgain, startupDelay);
 }
 
-/* function delayStartGUI() {
-	game.global.addonUser = true;
-	game.global.autotrimps = true;
-	MODULESdefault = JSON.parse(JSON.stringify(MODULES));
-	mainLoop()
-	guiLoop()
-} */
-
 function delayStartAgain() {
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
@@ -76,6 +68,11 @@ var preBuymaxSplit;
 var currentworld = 0;
 var lastrunworld = 0;
 var aWholeNewWorld = false;
+
+var currentradonhze = 0;
+var lastradonhze = 0;
+var aWholeNewHZE = false;
+
 var needGymystic = true;
 var heirloomFlag = false;
 var daily3 = false;
@@ -83,16 +80,19 @@ var heirloomCache = game.global.heirloomsExtra.length;
 var magmiteSpenderChanged = false;
 var lastHeliumZone = 0;
 var lastRadonZone = 0;
+var HDRatio = 0;
 
 //Get Gamma burst % value
 gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 shieldEquipped = game.global.ShieldEquipped.id;
 
 function mainLoop() {
-	if (document.getElementById('tooltipDiv').classList.contains('tooltipExtraLg') === true && (document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Prestegious Raiding')) && document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 12)
+	if (document.getElementById('tooltipDiv').classList.contains('tooltipExtraLg') === true && (document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Prestegious Raiding')) && document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 12) {
 		document.getElementById('tooltipDiv').style.overflowY = 'scroll';
-	else
+	}
+	else {
 		document.getElementById('tooltipDiv').style.overflowY = '';
+	}
 
 	if (ATrunning == false) return;
 	if (reloadDelay) {
@@ -231,6 +231,8 @@ function mainLoop() {
 
 		//Offline Progress
 		if (!usingRealTimeOffline) RsetScienceNeeded();
+		var date = new Date();
+		var oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
 
 		//Heirloom Shield Swap Check
 		if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
@@ -243,6 +245,7 @@ function mainLoop() {
 		}
 		//RCore
 		//AutoMaps
+		if (oneSecondInterval) HDRatio = RcalcHDratio();
 		if (getPageSetting('RAutoMaps') > 0 && game.global.mapsUnlocked) RautoMap();
 		//Status - AutoMaps
 		if (getPageSetting('Rshowautomapstatus')) RupdateAutoMapsStatus();
@@ -256,7 +259,6 @@ function mainLoop() {
 			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || rShouldWorshipperFarm || rShouldTimeFarm || rShouldEquipFarm))) RbuyJobs();
 			else RquestbuyJobs();
 		}
-
 		if (game.global.runningChallengeSquared && rC3EndZoneSetting != game.stats.zonesCleared.value) {
 			if (getPageSetting('c3finishrun') !== -1) {
 				if ((getPageSetting('c3finishrun') - 1) === game.global.world)
@@ -318,8 +320,6 @@ function mainLoop() {
 		if (game.global.challengeActive == "Pandemonium" && getPageSetting('rPandRespec')) PandemoniumPerkRespec();
 
 		if (getPageSetting('rEquipEfficientEquipDisplay')) {
-			var date = new Date();
-			var oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
 			if (oneSecondInterval) {
 				displayMostEfficientEquipment();
 				if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
@@ -336,6 +336,11 @@ function mainCleanup() {
 	lastrunworld = currentworld;
 	currentworld = game.global.world;
 	aWholeNewWorld = lastrunworld != currentworld;
+
+	lastradonhze = currentradonhze;
+	currentradonhze = game.global.highestRadonLevelCleared + 1;
+	aWholeNewHZE = lastradonhze != currentradonhze;
+
 	if (game.global.universe == 1 && currentworld == 1 && aWholeNewWorld) {
 		lastHeliumZone = 0;
 		zonePostpone = 0;
@@ -402,5 +407,8 @@ function mainCleanup() {
 	if (getPageSetting('AutoEggs'))
 		easterEggClicked();
 
+	if (aWholeNewHZE) {
+		radonChallengesSetting();
+	}
 }
 function throwErrorfromMain() { throw new Error("We have successfully read the thrown error message out of the main file") }
