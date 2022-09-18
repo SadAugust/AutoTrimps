@@ -865,7 +865,6 @@ var rSmithlessautoLevel = Infinity;
 var rSmithlessMapRepeats = 0;
 
 var enemyDamage = 1;
-var HDRatio = 0;
 
 if (typeof (autoTrimpSettings.rAutoStructureSetting.value) !== 'undefined' && autoTrimpSettings.rAutoStructureSetting.value === true)
 	document.getElementById('autoStructureBtn').classList.add("enabled")
@@ -911,9 +910,9 @@ function RupdateAutoMapsStatus(get) {
 	else if (rShouldPandemoniumJestimpFarm) status = 'Pandemonium Farming Equips below ' + prettify(jestMetalTotal);
 	else if (RvanillaMapatZone) status = 'Vanilla MAZ';
 	//Farming or Wants stats
-	else if (RshouldFarm && !RdoVoids) status = 'Farming: ' + RcalcHDratio().toFixed(4) + 'x';
+	else if (RshouldFarm && !RdoVoids) status = 'Farming: ' + HDRatio.toFixed(4) + 'x';
 	else if (!RenoughHealth && !RenoughDamage) status = 'Want Health & Damage';
-	else if (!RenoughDamage) status = 'Want ' + RcalcHDratio().toFixed(4) + 'x &nbspmore damage';
+	else if (!RenoughDamage) status = 'Want ' + HDRatio.toFixed(4) + 'x &nbspmore damage';
 	else if (!RenoughHealth) status = 'Want more health';
 	//Advancing
 	else if (RenoughHealth && RenoughDamage) status = 'Advancing';
@@ -989,7 +988,6 @@ function RautoMap() {
 	if (RvanillaMapatZone && game.options.menu.repeatVoids.enabled != 1) toggleSetting('repeatVoids');
 	if (!RvanillaMapatZone && game.options.menu.repeatVoids.enabled != 0) toggleSetting('repeatVoids');
 	var hitsSurvived = getPageSetting("Rhitssurvived") > 0 ? getPageSetting("Rhitssurvived") : 5;
-	if (oneSecondInterval) HDRatio = RcalcHDratio();
 
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, false);
