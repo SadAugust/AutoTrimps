@@ -82,11 +82,7 @@ function updateAutoMapsStatus(get) {
 	} else {
 		document.getElementById('autoMapStatus').innerHTML = status;
 		document.getElementById('hiderStatus').innerHTML = hiderStatus;
-		if (getPageSetting('showFreeVoidMap')) {
-			document.getElementById('freeVoidMap').innerHTML = "Free void: " + (game.permaBoneBonuses.voidMaps.tracker / 10) + "/10";
-		}
-		else
-			turnOff('freeVoidMap')
+		game.global.universe === 1 && getPageSetting('showFreeVoidMap') ? document.getElementById('freeVoidMap').innerHTML = "Free void: " + (game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" : ""
 	}
 }
 
@@ -926,7 +922,7 @@ function RupdateAutoMapsStatus(get) {
 	} else {
 		document.getElementById('autoMapStatus').innerHTML = status;
 		document.getElementById('hiderStatus').innerHTML = hiderStatus;
-		if (game.global.universe === 2) turnOff('showFreeVoidMap')
+		document.getElementById('freeVoidMap').innerHTML = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' ? "Next Shred: " + ((game.global.hemmTimer / 10).toFixed(1)) + "s" : "";
 	}
 }
 
