@@ -2348,6 +2348,9 @@ function equalityManagement() {
 		var runningGlass = game.global.challengeActive == 'Glass';
 		var runningSmithless = game.global.challengeActive == "Smithless" && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
 
+		//Perk conditions
+		var noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.frenzyStarted == "-1";
+
 		//Gamma burst info
 		var gammaMaxStacks = gammaBurstPct === 1 ? 0 : autoBattle.oneTimers.Burstier.owned ? 4 : 5
 		var gammaToTrigger = gammaMaxStacks - game.heirlooms.Shield.gammaBurst.stacks;
@@ -2380,6 +2383,7 @@ function equalityManagement() {
 		if (game.global.voidBuff === 'doubleAttack') fastEnemy = true
 		if (runningArchaeology) fastEnemy = true;
 		if (runningExperienced) fastEnemy = false;
+		if (noFrenzy) fastEnemy = false;
 
 		//Misc dmg mult
 		if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100)
