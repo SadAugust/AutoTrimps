@@ -2382,8 +2382,9 @@ function equalityManagement() {
 		if (type === 'map' && dailyExplosive) fastEnemy = true;
 		if (game.global.voidBuff === 'doubleAttack') fastEnemy = true
 		if (runningArchaeology) fastEnemy = true;
+		if (noFrenzy) fastEnemy = true;
 		if (runningExperienced) fastEnemy = false;
-		if (noFrenzy) fastEnemy = false;
+		if (runningGlass) fastEnemy = true;
 
 		//Misc dmg mult
 		if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100)
