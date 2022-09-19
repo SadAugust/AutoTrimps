@@ -81,6 +81,7 @@ var magmiteSpenderChanged = false;
 var lastHeliumZone = 0;
 var lastRadonZone = 0;
 var HDRatio = 0;
+var autoLevel = 0;
 
 //Get Gamma burst % value
 gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
@@ -245,7 +246,10 @@ function mainLoop() {
 		}
 		//RCore
 		//AutoMaps
-		if (oneSecondInterval) HDRatio = RcalcHDratio();
+		if (oneSecondInterval) {
+			HDRatio = RcalcHDratio();
+			autoLevel = autoMapLevel();
+		}
 		if (getPageSetting('RAutoMaps') > 0 && game.global.mapsUnlocked) RautoMap();
 		//Status - AutoMaps
 		if (getPageSetting('Rshowautomapstatus')) RupdateAutoMapsStatus();

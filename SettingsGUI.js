@@ -49,11 +49,14 @@ function automationMenuInit() {
 	newContainer.appendChild(abutton);
 	fightButtonCol.appendChild(newContainer);
 
+
 	newContainer = document.createElement("DIV");
-	newContainer.setAttribute("style", "display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0, 0, 0, 0.3);");
+	newContainer.setAttribute("style", "display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);");
 	abutton = document.createElement("SPAN");
 	abutton.id = 'freeVoidMap';
 	newContainer.appendChild(abutton);
+	fightButtonCol.appendChild(newContainer);
+	var fightButtonCol = document.getElementById("trimps");
 	fightButtonCol.appendChild(newContainer);
 
 	var $portalTimer = document.getElementById('portalTimer');

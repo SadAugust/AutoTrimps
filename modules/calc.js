@@ -672,13 +672,14 @@ function debugCalc() {
 }
 
 
-function RgetCritMulti(floorCrit, mult) {
+function RgetCritMulti(floorCrit, mult, ceilCrit) {
 	var mult = (!mult) ? false : true;
 
 	var critChance = getPlayerCritChance();
 	var critD = getPlayerCritDamageMult();
 
 	if (floorCrit) critChance = Math.floor(getPlayerCritChance());
+	if (ceilCrit) critChance = Math.ceil(getPlayerCritChance());
 	var lowTierMulti = getMegaCritDamageMult(Math.floor(critChance));
 	var highTierMulti = getMegaCritDamageMult(Math.ceil(critChance));
 	var highTierChance = critChance - Math.floor(critChance)

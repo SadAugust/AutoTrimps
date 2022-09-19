@@ -214,6 +214,7 @@ ul.tab li a:hover {
 .windowStorage,
 .windowPackrat,
 .windowRecycle,
+.windowRepeatEvery,
 .windowFrozenCastle,
 .windowTributeFarmDropdown,
 .windowTributeFarmDropdownDefault,
@@ -242,7 +243,7 @@ ul.tab li a:hover {
 }
 
 .windowJobRatio {
-	width: 10%;
+	width: 7%;
 	cursor: pointer;
 }
 
@@ -251,16 +252,17 @@ ul.tab li a:hover {
 .windowThrough,
 .windowLevel,
 .windowRepeat,
+.windowRepeatEvery,
 .windowRaidingZone,
 .windowPotionNumber,
 .windowWorshipper,
 .windowEndZone {
-	width: 8%;
+	width: 7%;
 }
 
 .windowTributes,
 .windowMets {
-	width: 10%;
+	width: 8%;
 }
 
 .windowBogs,
@@ -333,11 +335,11 @@ ul.tab li a:hover {
 }
 
 .windowTributeFarmDropdown {
-	width: 13%;
+	width: 10%;
 }
 
 .windowTributeFarmDropdownDefault {
-	width: 13%;
+	width: 10%;
 }
 
 .windowBwZoneOn .windowRepeatUntil,

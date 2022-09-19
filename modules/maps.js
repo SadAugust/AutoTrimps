@@ -922,7 +922,7 @@ function RupdateAutoMapsStatus(get) {
 	} else {
 		document.getElementById('autoMapStatus').innerHTML = status;
 		document.getElementById('hiderStatus').innerHTML = hiderStatus;
-		document.getElementById('freeVoidMap').innerHTML = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' ? "Next Shred: " + ((game.global.hemmTimer / 10).toFixed(1)) + "s" : "";
+		document.getElementById('freeVoidMap').innerHTML = "Void: " + (game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" + (getPageSetting('rManageEquality') == 2 ? " | Auto Level: " + autoLevel : "") + (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' ? " | Shred: " + (Math.max(game.global.hemmTimer / 10).toFixed(0)) + "s" : "");
 	}
 }
 
@@ -1215,11 +1215,16 @@ function RautoMap() {
 		if (rBSRunningAtlantrimp && !(game.global.mapsActive && getCurrentMapObject().name === 'Atlantrimp')) rTFAtlantrimp = false;
 		rTFZone = rRunningC3 ? getPageSetting('rc3TimeFarmZone') : rRunningDaily ? getPageSetting('rdTimeFarmZone') : getPageSetting('rTimeFarmZone');
 		var rTFIndex;
+
 		for (var y = 0; y < rTFZone.length; y++) {
-			if (rTFBaseSetting[y].done === totalPortals + "_" + game.global.world || !rTFBaseSetting[y].active) {
+			if (!rTFBaseSetting[y].active || rTFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world > rTFBaseSetting[y].endzone || (game.global.world > rTFBaseSetting[y].zone && rTFBaseSetting[y].repeatevery === 0)) {
 				continue;
 			}
 			if (game.global.world === rTFZone[y]) {
+				rTFIndex = y;
+				break;
+			}
+			if ((game.global.world - rTFZone[y]) % rTFBaseSetting[y].repeatevery === 0) {
 				rTFIndex = y;
 				break;
 			}
@@ -1296,9 +1301,24 @@ function RautoMap() {
 	//Tribute Farm
 	if ((rRunningRegular && autoTrimpSettings.rTributeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTributeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TributeFarmDefaultSettings.value.active) && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
+		var rTrFBaseSetting = rRunningC3 ? autoTrimpSettings.rc3TributeFarmSettings.value : rRunningDaily ? autoTrimpSettings.rdTributeFarmSettings.value : autoTrimpSettings.rTributeFarmSettings.value;
 		var rTrFZone = rRunningC3 ? getPageSetting('rc3TributeFarmZone') : rRunningDaily ? getPageSetting('rdTributeFarmZone') : getPageSetting('rTributeFarmZone');
-		if (rTrFZone.includes(game.global.world)) {
-			var rTrFIndex = rTrFZone.indexOf(game.global.world);
+
+		for (var y = 0; y < rTrFZone.length; y++) {
+			if (!rTrFBaseSetting[y].active || rTrFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world > rTrFBaseSetting[y].endzone || (game.global.world > rTrFBaseSetting[y].zone && rTrFBaseSetting[y].repeatevery === 0)) {
+				continue;
+			}
+			if (game.global.world === rTrFZone[y]) {
+				rTrFIndex = y;
+				break;
+			}
+			if ((game.global.world - rTrFZone[y]) % rTrFBaseSetting[y].repeatevery === 0) {
+				rTrFIndex = y;
+				break;
+			}
+		}
+
+		if (rTrFIndex >= 0) {
 			var rTrFSettings = rRunningC3 ? autoTrimpSettings.rc3TributeFarmSettings.value[rTrFIndex] : rRunningDaily ? autoTrimpSettings.rdTributeFarmSettings.value[rTrFIndex] : autoTrimpSettings.rTributeFarmSettings.value[rTrFIndex];
 			if (rTrFSettings.active && rTrFSettings.done !== totalPortals + "_" + game.global.world && game.global.lastClearedCell + 2 >= rTrFSettings.cell) {
 
@@ -1582,14 +1602,14 @@ function RautoMap() {
 		var rWFBaseSetting = autoTrimpSettings.rWorshipperFarmSettings.value
 		var rWFIndex = null;
 		for (var y = 0; y < rWFZone.length; y++) {
-			if (!rWFBaseSetting[y].active || game.global.world > rWFBaseSetting[y].endzone || (game.global.world > rWFBaseSetting[y].zone && rWFBaseSetting[y].repeat === 0)) {
+			if (!rWFBaseSetting[y].active || game.global.world > rWFBaseSetting[y].endzone || (game.global.world > rWFBaseSetting[y].zone && rWFBaseSetting[y].repeatevery === 0)) {
 				continue;
 			}
 			if (game.global.world === rWFZone[y]) {
 				rWFIndex = y;
 				break;
 			}
-			if ((game.global.world - rWFZone[y]) % rWFBaseSetting[y].repeat === 0) {
+			if ((game.global.world - rWFZone[y]) % rWFBaseSetting[y].repeatevery === 0) {
 				rWFIndex = y;
 				break;
 			}
