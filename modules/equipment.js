@@ -554,7 +554,7 @@ function Rgetequips(map, special) { //(level, p b or false)
 
 //Shol Territory
 
-function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, fakeLevels = {}, showAllEquips) {
+function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, showAllEquips, fakeLevels = {}) {
 
 	for (var i in RequipmentList) {
 		if (typeof fakeLevels[i] === 'undefined') {

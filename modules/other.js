@@ -1514,7 +1514,6 @@ playerSpire.drawInfo = function (arguments) {
 }
 
 //Radon
-
 function questcheck() {
 	if (game.global.challengeActive !== 'Quest')
 		return 0;
@@ -1536,14 +1535,6 @@ function questcheck() {
 	else if (game.challenges.Quest.getQuestDescription() == "Don't run a map before Cell 100") return 9;
 	else if (game.challenges.Quest.getQuestDescription() == "Buy a Smithy" && questnotcomplete) return 10;
 	else return 0;
-}
-
-function Rgetequipcost(equip, resource, amt) {
-	var artBoost = Math.pow(amt - game.portal.Artisanistry.modifier, game.portal.Artisanistry.radLevel);
-	artBoost *= autoBattle.oneTimers.Artisan.owned ? autoBattle.oneTimers.Artisan.getMult() : 1;
-	if (game.global.challengeActive == "Pandemonium") artBoost *= game.challenges.Pandemonium.getEnemyMult();
-	var cost = Math.ceil(getBuildingItemPrice(game.equipment[equip], resource, true, amt) * artBoost);
-	return cost;
 }
 
 function archstring() {
@@ -3364,7 +3355,7 @@ function displayMostEfficientEquipment() {
 		var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
 		var zoneGo = !zoneGo && (rEquipZone[0] > 0 && (rEquipZone.includes(game.global.world)) || game.global.world >= rEquipZone[rEquipZone.length - 1]) ? true :
 			zoneGo;
-		var bestBuys = mostEfficientEquipment(1, true, true, false, 0, true);
+		var bestBuys = mostEfficientEquipment(1, true, true, false, true);
 		var isAttack = (RequipmentList[item].Stat === 'attack' ? 0 : 1);
 		var $eqNamePrestige = null;
 		if (game.upgrades[RequipmentList[item].Upgrade].locked == 0) {
