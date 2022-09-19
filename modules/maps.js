@@ -1171,6 +1171,7 @@ function RautoMap() {
 					rMBMapLevel = rMBSettings.level;
 					var rMBJobRatio = rMBSettings.jobratio;
 
+
 					if (game.global.mapRunCounter === 0 && game.global.mapsActive && rMBMapRepeats !== 0) {
 						game.global.mapRunCounter = rMBMapRepeats;
 						rMBMapRepeats = 0;
@@ -1240,6 +1241,7 @@ function RautoMap() {
 				rTFRepeatCounter = rTFSettings.repeat
 				var rTFJobRatio = rTFSettings.jobratio
 				rTFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rTFSettings.atlantrimp
+				rTFGather = rTFSettings.gather;
 
 				if (shredActive) {
 					if (foodShred && mapSpecialModifierConfig[rTFSpecial].name.includes('Savory')) {
