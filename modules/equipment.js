@@ -569,7 +569,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		!resourceMaxPercent && getPageSetting('Requippercent') < 0 ? 1 :
 			!resourceMaxPercent ? getPageSetting('Requippercent') / 100 :
 				resourceMaxPercent
-	var metalShred = game.global.challengeActive === 'Daily' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+	var metalShred = !showAllEquips && game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')
 	var skipDamage = false;
 	var ignoreShield = !ignoreShield ? false : ignoreShield;
 	var showAllEquips = !showAllEquips ? false : showAllEquips;
@@ -614,7 +614,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skips through equips if they don't cost metal and you don't have enough resources for them.
 		if (RequipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
 		//Skips through equips if you're on a metal shred daily and you don't have enough resources for them.
-		if (RequipmentList[i].Resource === 'metal' && metalShred && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) {
+		if (!showAllEquips && RequipmentList[i].Resource === 'metal' && metalShred && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) {
 			continue;
 		}
 
@@ -736,7 +736,7 @@ function RautoEquip() {
 	//Initialise settings for later user
 	var alwaysLvl2 = getPageSetting('Requip2');
 	var alwaysPandemonium = getPageSetting('RPandemoniumAutoEquip') > 0;
-	var metalShred = game.global.challengeActive === 'Daily' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+	var metalShred = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')
 	// always2 / alwaysPrestige / alwaysPandemonium
 	if (alwaysLvl2 || (alwaysPandemonium && game.global.challengeActive == 'Pandemonium') || metalShred) {
 		for (var equip in game.equipment) {
