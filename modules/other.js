@@ -2344,6 +2344,7 @@ function equalityManagement() {
 		var runningQuest = ((game.global.challengeActive == 'Quest' && questcheck() == 8)); //Shield break quest
 		var runningArchaeology = game.global.challengeActive === 'Archaeology';
 		var runningBerserk = game.global.challengeActive == 'Berserk';
+		var runningExperienced = game.global.challengeActive == 'Exterminate' && game.challenges.Exterminate.experienced;
 		var runningGlass = game.global.challengeActive == 'Glass';
 		var runningSmithless = game.global.challengeActive == "Smithless" && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
 
@@ -2378,6 +2379,7 @@ function equalityManagement() {
 		if (type === 'map' && dailyExplosive) fastEnemy = true;
 		if (game.global.voidBuff === 'doubleAttack') fastEnemy = true
 		if (runningArchaeology) fastEnemy = true;
+		if (runningExperienced) fastEnemy = false;
 
 		//Misc dmg mult
 		if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100)
@@ -2532,9 +2534,14 @@ function reflectShouldBuyEquips() {
 			var ourDamage = RcalcOurDmg('max', game.portal.Equality.radLevel, false, false, false, true)
 			var gammaToTrigger = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
 			var reflectPct = dailyModifiers.mirrored.getMult(game.global.dailyChallenge.mirrored.strength);
+			var critChance = (getPlayerCritChance() - Math.floor(getPlayerCritChance())) * 100
 			if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
 				ourDamage /= game.portal.Tenacity.getMult();
 				ourDamage *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
+			}
+			if (typeof game.global.dailyChallenge.empower !== 'undefined' || critChance > 30) {
+				ourDamage /= RgetCritMulti(true);
+				ourDamage *= RgetCritMulti(false, false, true);
 			}
 			if (ourDamage * ((1 + (reflectPct * gammaToTrigger))) > ourHealth) {
 				return true
