@@ -146,7 +146,7 @@ function RmanualLabor2() {
 		var preFix = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium' ? 'rc3' :
 			game.global.challengeActive == "Daily" ? 'rd' :
 				'r'
-		gather = rShouldTimeFarm && typeof (autoTrimpSettings[preFix + 'TimeFarmSettings'].value[rTFZone.indexOf(game.global.world)].gather) === 'string' ? autoTrimpSettings[preFix + 'TimeFarmSettings'].value[rTFZone.indexOf(game.global.world)].gather : gather;
+		//gather = rShouldTimeFarm && typeof (autoTrimpSettings[preFix + 'TimeFarmSettings'].value[rTFZone.indexOf(game.global.world)].gather) === 'string' ? autoTrimpSettings[preFix + 'TimeFarmSettings'].value[rTFZone.indexOf(game.global.world)].gather : gather;
 		gather = !rShouldTimeFarm && Rshouldalchfarm && typeof (autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather) === 'string' ? autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather : gather;
 		gather = rShouldMaxMapBonus && !rShouldTimeFarm && !Rshouldalchfarm && typeof (autoTrimpSettings[preFix + 'MapBonusSettings'].value[rMBIndex].gather) === 'string' ? autoTrimpSettings[preFix + 'MapBonusSettings'].value[rMBIndex].gather : gather;
 	}
