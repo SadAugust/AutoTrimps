@@ -2180,7 +2180,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit) {
 			debug("Maplevel = " + y + " Equality = " + equalityAmt + " Our Damage = " + ourDmg);
 			debug("Enemy dmg = " + enemyDmg + " + " + "Enemy health = " + enemyHealth)
 		} */
-		if ((game.resources.fragments.owned >= PerfectMapCost(mapLevel, special, biome) && enemyHealth <= ourDmg) && ((enemyDmg <= ourHealth))) {
+		if ((game.resources.fragments.owned >= PerfectMapCost_Actual(mapLevel, special, biome) && enemyHealth <= ourDmg) && ((enemyDmg <= ourHealth))) {
 			return mapLevel;
 		}
 		if (y === minLevel) {
@@ -2317,6 +2317,7 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	}
 }
 
+//Auto Equality
 function equalityManagement() {
 	if (!game.global.preMapsActive && game.global.gridArray.length > 0) {
 		//Turning off equality scaling
@@ -2360,6 +2361,7 @@ function equalityManagement() {
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || questShieldBreak)) ? 4 : 1;
 		enemyDmg *= !mapping && typeof game.global.dailyChallenge.crits !== 'undefined' && typeof game.global.dailyChallenge.empower !== 'undefined' ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 		enemyDmg *= type === 'map' && mapping && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
+		enemyDmg *= (type === 'world' || type === 'void') && typeof game.global.dailyChallenge.crits !== 'undefined' && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1
 		var enemyDmgEquality = 0;
 
 		//Fast Enemies
@@ -2786,7 +2788,7 @@ function boneShrineOutput(charges) {
 	return text;
 }
 
-function PerfectMapCost_Actual(plusLevel, specialModifier) {
+function PerfectMapCost_Actual(plusLevel, specialModifier, biome) {
 	if (!specialModifier) return Infinity
 	if (!plusLevel) return Infinity
 	var specialModifier = specialModifier;
@@ -2805,7 +2807,7 @@ function PerfectMapCost_Actual(plusLevel, specialModifier) {
 		baseCost += 18
 	baseCost += mapLevel;
 	baseCost = Math.floor((((baseCost / 150) * (Math.pow(1.14, baseCost - 1))) * mapLevel * 2) * Math.pow((1.03 + (mapLevel / 50000)), mapLevel));
-	baseCost *= 2;
+	baseCost *= biome !== 'Random' ? 2 : 1;
 	return baseCost;
 }
 
