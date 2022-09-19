@@ -569,7 +569,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		!resourceMaxPercent && getPageSetting('Requippercent') < 0 ? 1 :
 			!resourceMaxPercent ? getPageSetting('Requippercent') / 100 :
 				resourceMaxPercent
-	var metalShred = false;
+	var metalShred = game.global.challengeActive === 'Daily' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	var skipDamage = false;
 	var ignoreShield = !ignoreShield ? false : ignoreShield;
 	var showAllEquips = !showAllEquips ? false : showAllEquips;
@@ -620,7 +620,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 
 		var metalTotal = 0
 		if (metalShred) {
-			metalTotal = metalShred && (rShouldTimeFarm || rShouldMaxMapBonus) ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 45, true, workerRatio), false, true, rShouldTimeFarm ? rTFMapLevel : rShouldMaxMapBonus ? rMBMapLevel : 0) : game.resources.metal.owned;
+			metalTotal = metalShred && (rShouldTimeFarm || rShouldMaxMapBonus) ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 16, true, workerRatio), false, true, rShouldTimeFarm ? rTFMapLevel : rShouldMaxMapBonus ? rMBMapLevel : 0) : game.resources.metal.owned;
 			if (game.resources.metal.owned > metalTotal) metalTotal = game.resources.metal.owned;
 		}
 		var nextLevelValue = game.equipment[i][RequipmentList[i].Stat + "Calculated"];
@@ -736,17 +736,23 @@ function RautoEquip() {
 	//Initialise settings for later user
 	var alwaysLvl2 = getPageSetting('Requip2');
 	var alwaysPandemonium = getPageSetting('RPandemoniumAutoEquip') > 0;
-
+	var metalShred = game.global.challengeActive === 'Daily' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	// always2 / alwaysPrestige / alwaysPandemonium
-	if (alwaysLvl2 || (alwaysPandemonium && game.global.challengeActive == 'Pandemonium')) {
+	if (alwaysLvl2 || (alwaysPandemonium && game.global.challengeActive == 'Pandemonium') || metalShred) {
 		for (var equip in game.equipment) {
 			if (!game.equipment[equip].locked) {
 				if (alwaysLvl2 && game.equipment[equip].level < 2)
 					buyEquipment(equip, null, true, 1);
-				if (game.challenges.Pandemonium.isEquipBlocked(equip))
-					continue;
-				if (alwaysPandemonium && game.global.challengeActive == 'Pandemonium')
+				if (metalShred && game.global.hemmTimer <= 3) {
+					if (equip === 'Shield') continue;
+					if (reflectShouldBuyEquips() && typeof (item.attack) === 'undefined') continue;
+
 					buyEquipment(equip, null, true, 1);
+				}
+				if (alwaysPandemonium && game.global.challengeActive == 'Pandemonium') {
+					if (game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
+					buyEquipment(equip, null, true, 1);
+				}
 			}
 		}
 	}
@@ -773,7 +779,7 @@ function RautoEquip() {
 		var equipCost = (equipType == 'attack') ? bestBuys[6] : bestBuys[7];
 		var equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5];
 		var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
-		var underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
+		var underStats = (equipType == 'attack') ? HDRatio >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
 		var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 		for (var i = 0; i < 2; i++) {
 			if (canAffordBuilding(equipName, null, null, true, false, 1) || (equipPrestige && game.resources[resourceUsed].owned > equipCost)) {
@@ -801,7 +807,7 @@ function RautoEquip() {
 			equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5];
 			resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 			equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
-			underStats = (equipType == 'attack') ? RcalcHDratio() >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
+			underStats = (equipType == 'attack') ? HDRatio >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
 		}
 
 	} while (keepBuying)
@@ -821,7 +827,7 @@ function equipfarmdynamicHD() {
 	var equipfarmHD = 0;
 	var equipfarmmult = 0;
 	var equipfarmHDzone = 0;
-	var equipfarmHDmult = RcalcHDratio() - 1;
+	var equipfarmHDmult = HDRatio - 1;
 	if (getPageSetting('Requipfarmon') == true && game.global.world > 5 && game.global.world >= (getPageSetting('Requipfarmzone') && getPageSetting('RequipfarmHD') > 0 && getPageSetting('Requipfarmmult') > 0)) {
 		equipfarmzone = getPageSetting('Requipfarmzone');
 		equipfarmHD = getPageSetting('RequipfarmHD');
