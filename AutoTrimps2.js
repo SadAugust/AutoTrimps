@@ -357,6 +357,7 @@ function mainCleanup() {
 		lastRadonZone = 0;
 		zonePostpone = 0;
 		if (!game.upgrades.Battle.done) {
+			game.global.buyAmt = 1;
 			if (getPageSetting('Rautomapsportal') && getPageSetting('RAutoMaps') == 0) {
 				autoTrimpSettings["RAutoMaps"].value = 1;
 				document.getElementById('RAutoMaps').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.RAutoMaps.enabled);
