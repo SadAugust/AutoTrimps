@@ -1056,7 +1056,7 @@ function RautoMap() {
 		game.global.mapRunCounter = 0;
 		rTFMapRepeats = 0;
 		rTrFMapRepeats = 0;
-		rSFMapRepeats = 0;
+		rSFMapRepeats = [0, 0, 0];
 		smithyMapCount = [0, 0, 0];
 		rWFMapRepeats = 0;
 		rMBMapRepeats = 0;
@@ -2805,7 +2805,7 @@ function RautoMap() {
 				debug("Buying a Map, level: #" + maplvlpicked, "maps", 'th-large');
 				if (getPageSetting('SpamFragments') && game.global.preMapsActive) {
 					updateMapCost(true)
-					debug("Spent " + prettify(updateMapCost(true)) + "/" + prettify(game.resources.fragments.owned) + " (" + ((prettify(updateMapCost(true)) / prettify(game.resources.fragments.owned) * 100).toFixed(2)) + "%) fragments on a " + (advExtraLevelSelect.value >= 0 ? "+" : "") + advExtraLevelSelect.value + " " + (advPerfectCheckbox.dataset.checked === 'true' ? "Perfect " : ("(" + lootAdvMapsRange.value + "," + sizeAdvMapsRange.value + "," + difficultyAdvMapsRange.value + ") ")) + advSpecialSelect.value + " map.")
+					debug("Spent " + prettify(updateMapCost(true)) + "/" + prettify(game.resources.fragments.owned) + " (" + ((updateMapCost(true) / game.resources.fragments.owned * 100).toFixed(2)) + "%) fragments on a " + (advExtraLevelSelect.value >= 0 ? "+" : "") + advExtraLevelSelect.value + " " + (advPerfectCheckbox.dataset.checked === 'true' ? "Perfect " : ("(" + lootAdvMapsRange.value + "," + sizeAdvMapsRange.value + "," + difficultyAdvMapsRange.value + ") ")) + advSpecialSelect.value + " map.")
 				}
 				var result = buyMap();
 				if (result == -2) {
