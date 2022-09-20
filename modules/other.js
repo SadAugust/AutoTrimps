@@ -2442,80 +2442,39 @@ function equalityManagement() {
 					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
 					updateEqualityScaling();
 					break;
-				} else if (ourHealth > (enemyDmgEquality * 2) && ourDmgEquality * gammaDmg > enemyHealth && gammaToTrigger == 2 && !fuckGamma) {
-					if (debugStats) {
-						debug("Our health = " + ourHealth)
-						debug("Enemy dmg = " + enemyDmgEquality)
-						debug("Enemy dmg x2 = " + enemyDmgEquality * 2)
-						debug("4 " + i)
+				}
+				else {
+					matchFound = false;
+					for (var y = 2; y < gammaMaxStacks; y++) {
+						if (ourHealth > (enemyDmgEquality * y) && ourDmgEquality * gammaDmg > enemyHealth && gammaToTrigger === y && !fuckGamma) {
+							game.portal.Equality.disabledStackCount = i;
+							if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
+							updateEqualityScaling();
+							matchFound = true;
+							break;
+						}
+						if (ourHealth > (enemyDmgEquality * y) && ourDmgEquality * y > enemyHealth && !fuckGamma) {
+							game.portal.Equality.disabledStackCount = i;
+							if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
+							updateEqualityScaling();
+							matchFound = true;
+							break;
+						} if (ourHealth > (enemyDmgEquality * y) && gammaToTrigger == y && !fuckGamma) {
+							game.portal.Equality.disabledStackCount = i;
+							if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
+							updateEqualityScaling();
+							matchFound = true;
+							break;
+						}
 					}
-					game.portal.Equality.disabledStackCount = i;
-					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				} else if (ourHealth > (enemyDmgEquality * 2) && ourDmgEquality * 2 > enemyHealth && !fuckGamma) {
-					if (debugStats) debug("5")
-					game.portal.Equality.disabledStackCount = i;
-					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				} else if (ourHealth > (enemyDmgEquality * 3) && ourDmgEquality * gammaDmg > enemyHealth && gammaToTrigger == 3 && !fuckGamma) {
-					if (debugStats) debug("6")
-					game.portal.Equality.disabledStackCount = i;
-					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				} else if (ourHealth > (enemyDmgEquality * 3) && ourDmgEquality * 3 > enemyHealth && !fuckGamma) {
-					if (debugStats) debug("7")
-					game.portal.Equality.disabledStackCount = i;
-					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				} else if (ourHealth > (enemyDmgEquality * 4) && ourDmgEquality * gammaDmg > enemyHealth && gammaToTrigger == 4 && !fuckGamma) {
-					if (debugStats) debug("8")
-					game.portal.Equality.disabledStackCount = i;
-					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				} else if (ourHealth > (enemyDmgEquality * 5) && ourDmgEquality * gammaDmg > enemyHealth && gammaToTrigger == 5 && !fuckGamma) {
-					if (debugStats) debug("9")
-					game.portal.Equality.disabledStackCount = i;
-					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				} else if (ourHealth > (enemyDmgEquality * 5) && gammaToTrigger == 5 && !fuckGamma) {
-					if (debugStats) debug("10")
-					game.portal.Equality.disabledStackCount = i;
-					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				} else if (ourHealth > (enemyDmgEquality * 4) && gammaToTrigger == 4 && !fuckGamma) {
-					if (debugStats) debug("11")
-					game.portal.Equality.disabledStackCount = i;
-					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				} else if (ourHealth > (enemyDmgEquality * 3) && gammaToTrigger == 3 && !fuckGamma) {
-					if (debugStats) debug("12")
-					game.portal.Equality.disabledStackCount = i;
-					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				} else if (ourHealth > (enemyDmgEquality * 2) && gammaToTrigger == 2 && !fuckGamma) {
-					if (debugStats) debug("13")
-					game.portal.Equality.disabledStackCount = i;
-					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				} else if (ourHealth > enemyDmgEquality && gammaToTrigger <= 1) {
-					if (debugStats) debug("14")
-					game.portal.Equality.disabledStackCount = i;
-					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
-					updateEqualityScaling();
-					break;
-				} else {
-					game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
-					if (debugStats) debug("15")
+					if (matchFound) break;
+					else if (ourHealth > enemyDmgEquality && gammaToTrigger <= 1) {
+						game.portal.Equality.disabledStackCount = i;
+						if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
+						updateEqualityScaling();
+						break;
+					} else
+						game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
 				}
 			}
 		}
