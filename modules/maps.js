@@ -1218,10 +1218,9 @@ function RautoMap() {
 		var rTFIndex;
 
 		for (var y = 0; y < rTFZone.length; y++) {
-			if (!rTFBaseSetting[y].active || rTFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world > rTFBaseSetting[y].endzone || (game.global.world > rTFBaseSetting[y].zone && rTFBaseSetting[y].repeatevery === 0)) {
+			if (!rTFBaseSetting[y].active || rTFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world < rTFZone[y] || game.global.world > rTFBaseSetting[y].endzone || (game.global.world > rTFBaseSetting[y].zone && rTFBaseSetting[y].repeatevery === 0)) {
 				continue;
 			}
-			if (game.global.world < rTFZone[y]) continue
 			if (game.global.world === rTFZone[y] && game.global.lastClearedCell + 2 >= rTFBaseSetting[y].cell) {
 				rTFIndex = y;
 				break;
@@ -1309,10 +1308,9 @@ function RautoMap() {
 		var rTrFZone = rRunningC3 ? getPageSetting('rc3TributeFarmZone') : rRunningDaily ? getPageSetting('rdTributeFarmZone') : getPageSetting('rTributeFarmZone');
 
 		for (var y = 0; y < rTrFZone.length; y++) {
-			if (!rTrFBaseSetting[y].active || rTrFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world > rTrFBaseSetting[y].endzone || (game.global.world > rTrFBaseSetting[y].zone && rTrFBaseSetting[y].repeatevery === 0)) {
+			if (!rTrFBaseSetting[y].active || rTrFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world < rTrFZone[y] || game.global.world > rTrFBaseSetting[y].endzone || (game.global.world > rTrFBaseSetting[y].zone && rTrFBaseSetting[y].repeatevery === 0)) {
 				continue;
 			}
-			if (game.global.world < rTrFZone[y]) continue
 			if (game.global.world === rTrFZone[y] && game.global.lastClearedCell + 2 >= rTrFBaseSetting[y].cell) {
 				rTrFIndex = y;
 				break;
@@ -1607,10 +1605,9 @@ function RautoMap() {
 		var rWFBaseSetting = autoTrimpSettings.rWorshipperFarmSettings.value
 		var rWFIndex = null;
 		for (var y = 0; y < rWFZone.length; y++) {
-			if (!rWFBaseSetting[y].active || game.global.world > rWFBaseSetting[y].endzone || (game.global.world > rWFBaseSetting[y].zone && rWFBaseSetting[y].repeatevery === 0)) {
+			if (!rWFBaseSetting[y].active || game.global.world < rWFZone[y] || game.global.world > rWFBaseSetting[y].endzone || (game.global.world > rWFBaseSetting[y].zone && rWFBaseSetting[y].repeatevery === 0)) {
 				continue;
 			}
-			if (game.global.world < rWFZone[y]) continue
 			if (game.global.world === rWFZone[y] && game.global.lastClearedCell + 2 >= rWFBaseSetting[y].cell) {
 				rWFIndex = y;
 				break;
