@@ -1303,6 +1303,7 @@ function RautoMap() {
 	//Tribute Farm
 	if ((rRunningRegular && autoTrimpSettings.rTributeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTributeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TributeFarmDefaultSettings.value.active) && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
+		var rTrFIndex;
 		var rTrFBaseSetting = rRunningC3 ? autoTrimpSettings.rc3TributeFarmSettings.value : rRunningDaily ? autoTrimpSettings.rdTributeFarmSettings.value : autoTrimpSettings.rTributeFarmSettings.value;
 		var rTrFZone = rRunningC3 ? getPageSetting('rc3TributeFarmZone') : rRunningDaily ? getPageSetting('rdTributeFarmZone') : getPageSetting('rTributeFarmZone');
 
@@ -1321,7 +1322,7 @@ function RautoMap() {
 		}
 
 		if (rTrFIndex >= 0) {
-			var rTrFSettings = rRunningC3 ? autoTrimpSettings.rc3TributeFarmSettings.value[rTrFIndex] : rRunningDaily ? autoTrimpSettings.rdTributeFarmSettings.value[rTrFIndex] : autoTrimpSettings.rTributeFarmSettings.value[rTrFIndex];
+			var rTrFSettings = rTrFBaseSetting[rTrFIndex];
 			if (rTrFSettings.active && rTrFSettings.done !== totalPortals + "_" + game.global.world && game.global.lastClearedCell + 2 >= rTrFSettings.cell) {
 
 				var rTrFMapLevel = rTrFSettings.level
