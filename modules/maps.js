@@ -1301,7 +1301,7 @@ function RautoMap() {
 	}
 
 	//Tribute Farm
-	if ((rRunningRegular && autoTrimpSettings.rTributeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTributeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TributeFarmDefaultSettings.value.active) && rShouldQuest === 0) {
+	if ((rRunningRegular && autoTrimpSettings.rTributeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTributeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TributeFarmDefaultSettings.value.active) && rShouldQuest === 0 && (!game.buildings.Tribute.locked || !game.jobs.Meteorologist.locked)) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
 		var rTrFIndex;
 		var rTrFBaseSetting = rRunningC3 ? autoTrimpSettings.rc3TributeFarmSettings.value : rRunningDaily ? autoTrimpSettings.rdTributeFarmSettings.value : autoTrimpSettings.rTributeFarmSettings.value;
