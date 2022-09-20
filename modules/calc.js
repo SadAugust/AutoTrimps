@@ -992,7 +992,7 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, ignoreMutation,
 		if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
 			attack *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks)
 
-		if (typeof game.global.dailyChallenge.empower !== 'undefined' && (!game.global.mapsActive || (mapType !== false && mapType === 'world')))
+		if (typeof game.global.dailyChallenge.empower !== 'undefined' && ((!game.global.mapsActive && mapType === false) || mapType === 'world'))
 			attack *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
 	}
 
@@ -1245,7 +1245,7 @@ function RcalcEnemyHealthMod(world, cell, name, type, query, checkMutations) {
 	if (game.global.challengeActive == 'Daily') {
 		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
 		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && (game.global.mapsActive || (type === 'map' || type === 'void')) ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
-		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && (!game.global.mapsActive || checkMutations || type === 'world') ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
+		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && (type === 'world' && (!game.global.mapsActive || checkMutations)) ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
 
 	if (!checkMutations && !query && type !== 'world' && game.global.mapsActive) health *= getCurrentMapObject().difficulty;
