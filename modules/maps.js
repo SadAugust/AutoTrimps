@@ -1221,11 +1221,12 @@ function RautoMap() {
 			if (!rTFBaseSetting[y].active || rTFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world > rTFBaseSetting[y].endzone || (game.global.world > rTFBaseSetting[y].zone && rTFBaseSetting[y].repeatevery === 0)) {
 				continue;
 			}
-			if (game.global.world === rTFZone[y]) {
+			if (game.global.world < rTFZone[y]) continue
+			if (game.global.world === rTFZone[y] && game.global.lastClearedCell + 2 >= rTFBaseSetting[y].cell) {
 				rTFIndex = y;
 				break;
 			}
-			if ((game.global.world - rTFZone[y]) % rTFBaseSetting[y].repeatevery === 0) {
+			if ((game.global.world - rTFZone[y]) % rTFBaseSetting[y].repeatevery === 0 && game.global.lastClearedCell + 2 >= rTFBaseSetting[y].cell) {
 				rTFIndex = y;
 				break;
 			}
@@ -1311,11 +1312,12 @@ function RautoMap() {
 			if (!rTrFBaseSetting[y].active || rTrFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world > rTrFBaseSetting[y].endzone || (game.global.world > rTrFBaseSetting[y].zone && rTrFBaseSetting[y].repeatevery === 0)) {
 				continue;
 			}
-			if (game.global.world === rTrFZone[y]) {
+			if (game.global.world < rTrFZone[y]) continue
+			if (game.global.world === rTrFZone[y] && game.global.lastClearedCell + 2 >= rTrFBaseSetting[y].cell) {
 				rTrFIndex = y;
 				break;
 			}
-			if ((game.global.world - rTrFZone[y]) % rTrFBaseSetting[y].repeatevery === 0) {
+			if ((game.global.world - rTrFZone[y]) % rTrFBaseSetting[y].repeatevery === 0 && game.global.lastClearedCell + 2 >= rTrFBaseSetting[y].cell) {
 				rTrFIndex = y;
 				break;
 			}
@@ -1608,11 +1610,12 @@ function RautoMap() {
 			if (!rWFBaseSetting[y].active || game.global.world > rWFBaseSetting[y].endzone || (game.global.world > rWFBaseSetting[y].zone && rWFBaseSetting[y].repeatevery === 0)) {
 				continue;
 			}
-			if (game.global.world === rWFZone[y]) {
+			if (game.global.world < rWFZone[y]) continue
+			if (game.global.world === rWFZone[y] && game.global.lastClearedCell + 2 >= rWFBaseSetting[y].cell) {
 				rWFIndex = y;
 				break;
 			}
-			if ((game.global.world - rWFZone[y]) % rWFBaseSetting[y].repeatevery === 0) {
+			if ((game.global.world - rWFZone[y]) % rWFBaseSetting[y].repeatevery === 0 && game.global.lastClearedCell + 2 >= rWFBaseSetting[y].cell) {
 				rWFIndex = y;
 				break;
 			}
@@ -2320,7 +2323,6 @@ function RautoMap() {
 	if (!rShouldPrestigeRaid && (RdoVoids || RshouldDoMaps || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldWorshipperFarm || rShouldUnbalance || rShouldStorm || rShouldMayhem || rShouldInsanityFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || Rshouldalchfarm || rShouldHypoFarm || rFragmentFarming || rShouldMaxMapBonus || rShouldSmithless || rShouldEquipFarm || rShouldQuest || Rshouldstormfarm)) {
 		if (selectedMap == "world") {
 			if (!rShouldPrestigeRaid && (rShouldQuest || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldWorshipperFarm || rShouldUnbalance || rShouldStorm || rShouldMayhem || rShouldInsanityFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || Rshouldalchfarm || rShouldHypoFarm || rFragmentFarming || rShouldMaxMapBonus || rShouldSmithless || rShouldEquipFarm)) {
-				//Checking hyperspeed 2 percentage
 				if (game.global.challengeActive == "Alchemy" && typeof (alchmaplevel) != 'undefined') {
 					var alchspecial_alt = (Math.floor((game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100)) >= game.global.world && alchspecial.includes('l') && alchspecial.length === 3 && PerfectMapCost(alchmaplevel, alchspecial) >= game.resources.fragments.owned) ? "ssc" :
 						alchspecial;
