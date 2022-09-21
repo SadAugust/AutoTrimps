@@ -1338,7 +1338,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		autoTrimpSettings[id].description = description;
 
 	//Adding onto settings
-	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"] !== ATversion) {
+	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"] !== ATversion && autoTrimpSettings["ATversion"].includes('SadAugust')) {
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '4.5.0') {
 			if (typeof (autoTrimpSettings.rTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rTimeFarmSettings.value[0].done === undefined) {
 				for (var y = 0; y < autoTrimpSettings.rTimeFarmSettings.value.length; y++) {
@@ -1822,48 +1822,6 @@ function updateCustomButtons() {
 	}
 	turnOff('rAutoStructureSetting');
 
-
-	if (autoTrimpSettings.rQuagOn.enabled) {
-		autoTrimpSettings.rQuagDefaultSettings.value.active = true;
-		autoTrimpSettings.rQuagOn.enabled = false;
-		saveSettings();
-	}
-
-	if (autoTrimpSettings.rInsanityOn.enabled) {
-		autoTrimpSettings.rInsanityDefaultSettings.value.active = true;
-		autoTrimpSettings.rInsanityOn.enabled = false;
-		saveSettings();
-	}
-
-	if (autoTrimpSettings.rAlchOn.enabled) {
-		autoTrimpSettings.rAlchDefaultSettings.value.active = true;
-		autoTrimpSettings.rAlchOn.enabled = false;
-		saveSettings();
-	}
-
-	if (autoTrimpSettings.rHypoOn.enabled) {
-		autoTrimpSettings.rHypoDefaultSettings.value.active = true;
-		autoTrimpSettings.rHypoOn.enabled = false;
-		saveSettings();
-	}
-
-	if (autoTrimpSettings.rHypoBuyPackrat.value > 0) {
-		autoTrimpSettings.rHypoDefaultSettings.value.packrat = true;
-		autoTrimpSettings.rHypoBuyPackrat.value = 0;
-		saveSettings();
-	}
-
-	if (Array.isArray(autoTrimpSettings.rHypoFrozenCastle.value)) {
-		autoTrimpSettings.rHypoDefaultSettings.value.frozencastle = [autoTrimpSettings.rHypoFrozenCastle.value[0], autoTrimpSettings.rHypoFrozenCastle.value[1]];
-		autoTrimpSettings.rHypoFrozenCastle.value = 'undefined';
-		saveSettings();
-	}
-
-	if (autoTrimpSettings.rHypoOn.enabled) {
-		autoTrimpSettings.rHypoDefaultSettings.value.active = true;
-		autoTrimpSettings.rHypoOn.enabled = false;
-		saveSettings();
-	}
 	//Core
 	!radonon ? turnOn('ManualGather2') : turnOff('ManualGather2');
 	!radonon ? turnOn('TrapTrimps') : turnOff('TrapTrimps');
