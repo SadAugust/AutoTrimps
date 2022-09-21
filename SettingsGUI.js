@@ -1338,7 +1338,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		autoTrimpSettings[id].description = description;
 
 	//Adding onto settings
-	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"] !== ATversion && autoTrimpSettings["ATversion"].includes('SadAugust')) {
+	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] !== ATversion) {
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '4.5.0') {
 			if (typeof (autoTrimpSettings.rTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rTimeFarmSettings.value[0].done === undefined) {
 				for (var y = 0; y < autoTrimpSettings.rTimeFarmSettings.value.length; y++) {
