@@ -1790,6 +1790,9 @@ function updateCustomButtons() {
 	if (document.getElementById("tabΜaps") != null) {
 		document.getElementById("tabΜaps").style.display = !radonon ? "none" : "";
 	}
+	if (document.getElementById("tabDaily") != null) {
+		document.getElementById("tabDaily").style.display = radonon && game.global.highestRadonLevelCleared < 29 ? "none" : "";
+	}
 	if (document.getElementById("tabSpire") != null) {
 		document.getElementById("tabSpire").style.display = radonon ? "none" : "";
 	}
@@ -1812,7 +1815,7 @@ function updateCustomButtons() {
 		document.getElementById("tabC2").style.display = radonon ? "none" : "";
 	}
 	if (document.getElementById("tabC3") != null) {
-		document.getElementById("tabC3").style.display = !radonon ? "none" : "";
+		document.getElementById("tabC3").style.display = !radonon || game.global.highestRadonLevelCleared < 49 ? "none" : "";
 	}
 	if (document.getElementById("tabChallenges") != null) {
 		document.getElementById("tabChallenges").style.display = !radonon ? "none" : "";
@@ -1967,7 +1970,7 @@ function updateCustomButtons() {
 
 	//Daily Smithy Farming  
 	turnOff('rdSmithyFarm');
-	radonon ? turnOn('rdSmithyFarmPopup') : turnOff('rdSmithyFarmPopup');
+	radonon && game.global.highestRadonLevelCleared > 4 ? turnOn('rdSmithyFarmPopup') : turnOff('rdSmithyFarmPopup');
 	turnOff('rdSmithyFarmSettings');
 	turnOff('rdSmithyFarmDefaultSettings');
 	turnOff('rdSmithyFarmZone');
@@ -2024,7 +2027,7 @@ function updateCustomButtons() {
 
 	//C3 Smithy Farming  
 	turnOff('rc3SmithyFarm');
-	radonon ? turnOn('rc3SmithyFarmPopup') : turnOff('rc3SmithyFarmPopup');
+	radonon && game.global.highestRadonLevelCleared > 4 ? turnOn('rc3SmithyFarmPopup') : turnOff('rc3SmithyFarmPopup');
 	turnOff('rc3SmithyFarmSettings');
 	turnOff('rc3SmithyFarmDefaultSettings');
 	turnOff('rc3SmithyFarmZone');
@@ -2219,14 +2222,14 @@ function updateCustomButtons() {
 
 	//Smithy Farming  
 	turnOff('rSmithyFarm');
-	radonon ? turnOn('rSmithyFarmPopup') : ('rSmithyFarmPopup');
+	radonon && game.global.highestRadonLevelCleared > 4 ? turnOn('rSmithyFarmPopup') : ('rSmithyFarmPopup');
 	turnOff('rSmithyFarmSettings');
 	turnOff('rSmithyFarmDefaultSettings');
 	turnOff('rSmithyFarmZone');
 
 	//Worshippers 
 	turnOff('rWorshipperFarm');
-	radonon ? turnOn('rWorshipperFarmPopup') : turnOff('rWorshipperFarmPopup');
+	radonon && game.global.highestRadonLevelCleared > 49 ? turnOn('rWorshipperFarmPopup') : turnOff('rWorshipperFarmPopup');
 	turnOff('rWorshipperFarmSettings');
 	turnOff('rWorshipperFarmDefaultSettings');
 	turnOff('rWorshipperFarmZone');
@@ -2338,8 +2341,8 @@ function updateCustomButtons() {
 	radonon && getPageSetting('rUnbalance') ? turnOn('rUnbalanceImprobDestack') : turnOff('rUnbalanceImprobDestack');
 
 	//Trappapalooza
-	radonon ? turnOn('rTrappa') : turnOff('rTrappa');
-	radonon && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
+	radonon && game.global.highestRadonLevelCleared >= 59 ? turnOn('rTrappa') : turnOff('rTrappa');
+	radonon && game.global.highestRadonLevelCleared >= 59 && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
 	//Quagmire
 	turnOff('rQuagOn');
 	radonon && game.global.highestRadonLevelCleared >= 69 ? turnOn('rQuagPopup') : turnOff('rQuagPopup');
