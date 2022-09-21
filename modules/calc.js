@@ -671,7 +671,6 @@ function debugCalc() {
 	debug("Enemy Health: " + RcalcEnemyHealthMod(zone, cell, name, type).toExponential(2));
 }
 
-
 function RgetCritMulti(floorCrit, mult, ceilCrit) {
 	var mult = (!mult) ? false : true;
 

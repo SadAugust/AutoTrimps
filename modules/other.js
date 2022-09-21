@@ -2362,7 +2362,7 @@ function equalityManagement() {
 		var ourHealth = remainingHealth();
 		var ourHealthMax = RcalcOurHealth(runningQuest)
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
-		var ourDmg = RcalcOurDmg('min', 0, mapping, true, false) * bionicTalent;
+		var ourDmg = RcalcOurDmg('min', 0, mapping, true, false, debugStats) * bionicTalent;
 		var ourDmgEquality = 0;
 
 		//Enemy stats
@@ -2401,7 +2401,6 @@ function equalityManagement() {
 				}
 
 				if (!fastEnemy && !runningGlass && !runningBerserk && !runningTrappa && !runningArchaeology && !runningQuest) {
-					if (debugStats) debug("1")
 					game.portal.Equality.disabledStackCount = i;
 					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
 					updateEqualityScaling();
@@ -2426,18 +2425,17 @@ function equalityManagement() {
 					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
 					updateEqualityScaling();
 				} else if ((ourDmgEquality * gammaDmg) < enemyHealth && (gammaToTrigger > 1 || (gammaToTrigger > 1 && fuckGamma))) {
-					if (debugStats) debug("2")
 					game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
 					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				} else if (ourHealth > enemyDmgEquality && gammaToTrigger <= 1) {
 					game.portal.Equality.disabledStackCount = i;
+					if (debugStats) queryAutoEqualityStats(ourDmgEquality, ourHealth, enemyDmgEquality, enemyHealth, i)
 					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
 					updateEqualityScaling();
 					break;
 				} else if (ourHealth > enemyDmgEquality && ourDmgEquality > enemyHealth) {
-					if (debugStats) debug("3")
 					game.portal.Equality.disabledStackCount = i;
 					if (!document.getElementById('equalityStacks').children[0].innerHTML.includes(game.portal.Equality.disabledStackCount)) manageEqualityStacks();
 					updateEqualityScaling();
@@ -2466,11 +2464,12 @@ function equalityManagement() {
 }
 
 function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHealth, equalityStacks, dmgMult) {
-	debug("Our dmg = " + ourDamage)
+	debug("Our dmg (min) = " + ourDamage)
+	debug("Our dmg (min) * gammaDmg = " + ourDamage * gammaBurstPct)
 	debug("Our health = " + ourHealth)
 	debug("Enemy dmg = " + enemyDmgEquality)
 	debug("Enemy health = " + enemyHealth)
-	debug("4 " + equalityStacks)
+	debug("Equality = " + equalityStacks)
 	if (dmgMult) debug("Mult = " + dmgMult)
 }
 
