@@ -2343,6 +2343,7 @@ function equalityManagement() {
 		var runningTrappa = game.global.challengeActive === 'Trappapalooza';
 		var runningQuest = ((game.global.challengeActive == 'Quest' && questcheck() == 8)); //Shield break quest
 		var runningArchaeology = game.global.challengeActive === 'Archaeology';
+		var runningMayhem = game.global.challengeActive === 'Mayhem';
 		var runningBerserk = game.global.challengeActive == 'Berserk';
 		var runningExperienced = game.global.challengeActive == 'Exterminate' && game.challenges.Exterminate.experienced;
 		var runningGlass = game.global.challengeActive == 'Glass';
@@ -2373,6 +2374,7 @@ function equalityManagement() {
 		enemyDmg *= !mapping && dailyCrit && dailyEmpower ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 		enemyDmg *= type === 'map' && mapping && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 		enemyDmg *= (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1
+		enemyDmg *= runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
 		var enemyDmgEquality = 0;
 
 		//Fast Enemy conditions
@@ -2393,6 +2395,8 @@ function equalityManagement() {
 			for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
 				enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i);
 				ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
+
+				if (runningMayhem && fastEnemy) enemyDmgEquality += game.challenges.Mayhem.poison;
 
 				if (runningUnlucky) {
 					ourDmgEquality = RcalcOurDmg('min', i, mapping, true) * bionicTalent;
