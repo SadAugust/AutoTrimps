@@ -1002,7 +1002,6 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, ignoreMutation,
 	attack *= game.global.challengeActive == 'Mayhem' && ((!game.global.mapsActive && mapType !== 'map') || mapType === 'world') && game.global.lastClearedCell + 2 == 100 ? game.challenges.Mayhem.getBossMult() : 1;
 	//Purposefully don't put Storm in here.
 	attack *= game.global.challengeActive == 'Storm' && !game.global.mapsActive ? game.challenges.Storm.getAttackMult() : 1;
-	//attack *= game.global.challengeActive == 'Berserk' ? 1.5 : 1;
 	attack *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
 	attack *= game.global.challengeActive == 'Nurture' ? 2 : 1;
 	attack *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
