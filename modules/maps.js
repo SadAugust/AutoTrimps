@@ -1759,7 +1759,7 @@ function RautoMap() {
 
 		if (rShouldMayhem) {
 			rMayhemSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
-			rMayhemMapLevel = autoMapLevel(rMayhemSpecial);
+			rMayhemMapLevel = autoMapLevel(rMayhemSpecial, 10, 0);
 		}
 	}
 
@@ -1824,7 +1824,7 @@ function RautoMap() {
 
 			if (rShouldPandemoniumDestack) {
 				pandspecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
-				rPandemoniumMapLevel = autoMapLevel(pandspecial, 10, 0, true);
+				rPandemoniumMapLevel = autoMapLevel(pandspecial, 10, 1);
 			}
 		}
 
