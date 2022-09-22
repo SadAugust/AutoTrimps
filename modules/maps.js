@@ -817,6 +817,9 @@ var rHFCurrentMap = undefined;
 var rHFBonfireCostTotal = 0;
 var rHypoRespecced = null;
 var rHypoBuyPackrat = false;
+//Smithless
+var rShouldSmithless = false;
+var rSmithlessCurrentMap = undefined;
 //Prestige
 var rShouldPrestigeRaid = false;
 var RAMPfragmappy = undefined;
@@ -837,7 +840,6 @@ var rSFCurrentMap = undefined;
 
 //Daily Shred Variables
 var shredActive = false;
-var rShouldSmithless = false;
 
 //Auto Level variables
 var rTFautoLevel = Infinity;
@@ -1757,7 +1759,7 @@ function RautoMap() {
 
 		if (rShouldMayhem) {
 			rMayhemSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
-			rMayhemMapLevel = autoMapLevel(rMayhemSpecial, 10, 0, true);
+			rMayhemMapLevel = autoMapLevel(rMayhemSpecial);
 		}
 	}
 
@@ -2126,6 +2128,9 @@ function RautoMap() {
 			if (rSmithlessautoLevel !== Infinity) {
 				rSmithlessMapLevel = rSmithlessautoLevel;
 			}
+		}
+		if (!rShouldSmithless && rSmithlessCurrentMap !== undefined) {
+			rSmithlessCurrentMap = undefined;
 		}
 	}
 
