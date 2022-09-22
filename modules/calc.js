@@ -1005,8 +1005,8 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, ignoreMutation,
 	attack *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
 	attack *= game.global.challengeActive == 'Nurture' ? 2 : 1;
 	attack *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-	attack *= game.global.challengeActive == 'Pandemonium' && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Pandemonium.getBossMult() : 1;
-	attack *= game.global.challengeActive == 'Pandemonium' && !(!game.global.mapsActive && game.global.lastClearedCell + 2 == 100) ? game.challenges.Pandemonium.getPandMult() : 1;
+	attack *= game.global.challengeActive == 'Pandemonium' && ((!game.global.mapsActive && mapType !== 'map' && game.global.lastClearedCell + 2 == 100) || mapType === 'world') ? game.challenges.Pandemonium.getBossMult() : 1;
+	attack *= game.global.challengeActive == 'Pandemonium' && (!(!game.global.mapsActive && game.global.lastClearedCell + 2 == 100) || mapType === 'map') ? game.challenges.Pandemonium.getPandMult() : 1;
 	attack *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	attack *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	attack *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
@@ -1232,8 +1232,8 @@ function RcalcEnemyHealthMod(world, cell, name, type, query, checkMutations) {
 	health *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
 	health *= game.global.challengeActive == 'Nurture' ? 2 : 1;
 	health *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-	health *= game.global.challengeActive == 'Pandemonium' && type === 'world' && (game.global.lastClearedCell === 99 || query) ? game.challenges.Pandemonium.getBossMult() : 1;
-	health *= game.global.challengeActive == 'Pandemonium' && ((type === 'world' && game.global.lastClearedCell !== 99) || (type !== 'world' || game.global.mapsActive)) ? game.challenges.Pandemonium.getPandMult() : 1;
+	health *= game.global.challengeActive == 'Pandemonium' && type === 'world' && (game.global.lastClearedCell + 2 === 100 || query) ? game.challenges.Pandemonium.getBossMult() : 1;
+	health *= game.global.challengeActive == 'Pandemonium' && ((type === 'world' && game.global.lastClearedCell + 2 !== 100) || (type !== 'world' || game.global.mapsActive)) ? game.challenges.Pandemonium.getPandMult() : 1;
 	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
