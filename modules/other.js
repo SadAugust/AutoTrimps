@@ -2344,6 +2344,7 @@ function equalityManagement() {
 
 		//Challenge conditions
 		var runningUnlucky = game.global.challengeActive == 'Unlucky';
+		var runningDuel = game.global.challengeActive == 'Duel';
 		var runningTrappa = game.global.challengeActive === 'Trappapalooza';
 		var runningQuest = ((game.global.challengeActive == 'Quest' && questcheck() == 8)); //Shield break quest
 		var runningArchaeology = game.global.challengeActive === 'Archaeology';
@@ -2379,6 +2380,7 @@ function equalityManagement() {
 		enemyDmg *= type === 'map' && mapping && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 		enemyDmg *= (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1
 		enemyDmg *= runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
+		enemyDmg *= runningDuel && game.challenges.Duel.enemyStacks > 25 ? 10 : 1;
 		var enemyDmgEquality = 0;
 
 		//Fast Enemy conditions
