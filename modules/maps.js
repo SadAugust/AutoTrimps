@@ -2396,6 +2396,7 @@ function RautoMap() {
 				} else if (rShouldSmithless) {
 					selectedMap = RShouldFarmMapCreation(rSmithlessMapLevel, 'lmc');
 					workerRatio = rSmithlessJobRatio;
+					rSmithlessCurrentMap = 'rSmithless'
 					if (currTime === 0) currTime = getGameTime();
 				} else if (rShouldEquipFarm) {
 					selectedMap = RShouldFarmMapCreation(equipminus, 'lmc');
