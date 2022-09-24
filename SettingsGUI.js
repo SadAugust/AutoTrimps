@@ -433,10 +433,6 @@ function initializeAllSettings() {
 	//General
 	createSetting('rJobSettingsArray', 'Job Settings', 'Click to adjust settings. ', 'mazDefaultArray', { FarmersUntil: { enabled: false, zone: 999 }, NoLumberjacks: { enabled: false }, Worshipper: { enabled: true, percent: '5' }, Miner: { enabled: true, ratio: 1 }, Lumberjack: { enabled: true, ratio: 1 }, Farmer: { enabled: true, ratio: 1 }, Explorer: { enabled: true, percent: '5' }, Meteorologist: { enabled: true, percent: '100' } }, null, 'Jobs');
 	createSetting('RBuyJobsNew', ['AT AutoJobs Off', 'Auto Ratios', 'Manual Ratios'], 'Manual Worker Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, "Jobs");
-	createSetting('RFarmerRatio', 'Farmer Ratio', '', 'value', '1', null, "Jobs");
-	createSetting('RLumberjackRatio', 'Lumberjack Ratio', '', 'value', '1', null, "Jobs");
-	createSetting('RMinerRatio', 'Miner Ratio', '', 'value', '1', null, "Jobs");
-	createSetting('RMaxExplorers', 'Max Explorers', 'Advanced. Cap your explorers (This is an absolute number not a ratio). recommend: -1', 'value', '-1', null, "Jobs");
 
 	//Gear
 	//Helium
@@ -2097,12 +2093,6 @@ function updateCustomButtons() {
 
 	//RJobs
 	radonon ? turnOn('RBuyJobsNew') : turnOff('RBuyJobsNew');
-	var nojobs = getPageSetting('RBuyJobsNew') == 2;
-	radonon && nojobs ? turnOn('RFarmerRatio') : turnOff('RFarmerRatio');
-	radonon && nojobs ? turnOn('RLumberjackRatio') : turnOff('RLumberjackRatio');
-	radonon && nojobs ? turnOn('RMinerRatio') : turnOff('RMinerRatio');
-	turnOff('RMaxExplorers');
-
 	turnOff('rJobSettingsArray');
 	turnOff('rBuildingSettingsArray');
 	turnOff('rDailyPortalSettingsArray');

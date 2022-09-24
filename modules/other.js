@@ -2601,7 +2601,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 
 	var amt_local = workers * job.modifier * seconds;
 	amt_local += (amt_local * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
-	if (what != "gems" && game.permaBoneBonuses.multitasking.owned > 0 && (game.resources.trimps.owned >= game.resources.trimps.realMax()))
+	if (what != "gems" && game.permaBoneBonuses.multitasking.owned > 0)
 		amt_local *= (1 + game.permaBoneBonuses.multitasking.mult());
 	if (what != "science" && what != "fragments" && game.global.challengeActive == "Alchemy")
 		amt_local *= alchObj.getPotionEffect("Potion of Finding");

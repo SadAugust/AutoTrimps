@@ -441,8 +441,29 @@ function RquestbuyJobs() {
 		RsafeFireJob('Scientist', n);
 	}
 
-	if (getPageSetting('RMaxExplorers') > game.jobs.Explorer.owned || getPageSetting('RMaxExplorers') == -1) {
-		RsafeBuyJob("Explorer", 1);
+	//Explorers
+	if (autoTrimpSettings.rJobSettingsArray.value.Explorer.enabled) {
+		var maxExplorers = 90000//(getPageSetting('RMaxExplorers') == -1) ? Infinity : getPageSetting('RMaxExplorers');
+		if (!game.jobs.Explorer.locked) {
+			var affordableExplorers = Math.min(maxExplorers - game.jobs.Explorer.owned,
+				getMaxAffordable(
+					game.jobs.Explorer.cost.food[0] * Math.pow(game.jobs.Explorer.cost.food[1], game.jobs.Explorer.owned),
+					game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Explorer.percent / 100),
+					game.jobs.Explorer.cost.food[1],
+					true
+				)
+			);
+
+			if (affordableExplorers > 0) {
+				var buyAmountStoreExp = game.global.buyAmt;
+				game.global.buyAmt = affordableExplorers;
+				if (firing) fireModeLocal();
+				RsafeBuyJob('Explorer', 1);
+				if (firing) fireModeLocal();
+				freeWorkers -= affordableExplorers;
+				game.global.buyAmt = buyAmountStoreExp;
+			}
+		}
 	}
 
 	freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
