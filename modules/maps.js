@@ -82,7 +82,7 @@ function updateAutoMapsStatus(get) {
 	} else {
 		document.getElementById('autoMapStatus').innerHTML = status;
 		document.getElementById('hiderStatus').innerHTML = hiderStatus;
-		game.global.universe === 1 && getPageSetting('showFreeVoidMap') ? document.getElementById('freeVoidMap').innerHTML = "Free void: " + (game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" : ""
+		game.global.universe === 1 ? document.getElementById('freeVoidMap').innerHTML = "Free void: " + (game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" : ""
 	}
 }
 
@@ -925,7 +925,7 @@ function RupdateAutoMapsStatus(get) {
 	} else {
 		document.getElementById('autoMapStatus').innerHTML = status;
 		document.getElementById('hiderStatus').innerHTML = hiderStatus;
-		document.getElementById('freeVoidMap').innerHTML = "Void: " + (game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" + (getPageSetting('rManageEquality') == 2 ? " | Auto Level: " + autoLevel : "") + (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' ? " | Shred: " + (Math.max(game.global.hemmTimer / 10).toFixed(0)) + "s" : "");
+		document.getElementById('freeVoidMap').innerHTML = "Void: " + (game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" + (getPageSetting('rManageEquality') == 2 ? " | Auto Level: " + autoLevel : "") + (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' ? " | Shred: " + (Math.max(game.global.hemmTimer / 10).toFixed(0)) + "s" : "");
 	}
 }
 
@@ -1511,18 +1511,18 @@ function RautoMap() {
 					}
 				}
 				//Checking for daily resource shred
-				if (typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') || dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal'))) {
+				if (typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && (woodShred || metalShred)) {
 					var rSFSpecialTime = game.global.highestRadonLevelCleared > 83 ? 20 : 10;
 
-					if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood') && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')) {
-						var woodGain = Infinity
+					if (woodShred && metalShred) {
+						var woodGain = scaleToCurrentMapLocal(simpleSecondsLocal("wood", rSFSpecialTime, true, '0,1,0,0'), false, true, rSFMapLevel);
 						var metalGain = scaleToCurrentMapLocal(simpleSecondsLocal("metal", rSFSpecialTime, true, '0,0,1,0'), false, true, rSFMapLevel)
 					}
-					else if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood')) {
+					else if (woodShred) {
 						var woodGain = scaleToCurrentMapLocal(simpleSecondsLocal("wood", (rSFSpecialTime * 2) + 45, true, '0,1,0,0'), false, true, rSFMapLevel)
 						var metalGain = Infinity;
 					}
-					else if (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')) {
+					else if (metalShred) {
 						var woodGain = Infinity;
 						var metalGain = scaleToCurrentMapLocal(simpleSecondsLocal("metal", (rSFSpecialTime * 2) + 45, true, '0,0,1,0'), false, true, rSFMapLevel)
 					}

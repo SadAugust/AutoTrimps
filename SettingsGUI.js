@@ -973,8 +973,6 @@ function initializeAllSettings() {
 	createSetting('showhehr', 'Enable He/hr status', 'Enables the display of your helium per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('Rshowautomapstatus', 'Enable AutoMap Status', 'Enables the display of the map status. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('Rshowrnhr', 'Enable Rn/hr status', 'Enables the display of your radon per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
-	createSetting('showFreeVoidMap', 'Free VM Output', 'Displays tracker information for your next free void map below status section.', 'boolean', false, null, 'Display');
-	createSetting('rshowFreeVoidMap', 'Free VM Output', 'Displays tracker information for your next free void map below status section.', 'boolean', false, null, 'Display');
 	createSetting('rMapRepeatCount', 'Map Count Output', 'When you finish doing farming for any types of special farming this setting will display a message stating the amount of maps it took to complete and the time it took (format is h:m:s).', 'boolean', true, null, 'Display');
 	createSetting('rDisplayAllSettings', 'Display all u2 settings', 'Will display all of the locked settings that have HZE requirements to be displayed.', 'boolean', true, null, 'Display');
 	createSetting('automateSpireAssault', 'Automate Spire Assault', 'Automates Spire Assault gear swaps from level 92 up to level 128. HIGHLY RECOMMENDED THAT YOU DO NOT USE THIS SETTING.', 'boolean', false, null, 'Display');
@@ -1021,7 +1019,6 @@ function initializeAllSettings() {
 	document.getElementById('showautomapstatus').setAttribute('onclick', 'toggleStatus()');
 	document.getElementById('Rshowautomapstatus').setAttribute('onclick', 'toggleRadonStatus()');
 	document.getElementById('showhehr').setAttribute('onclick', 'toggleHeHr()');
-	document.getElementById('showFreeVoidMap').setAttribute('onclick', 'toggleFreeVoid()');
 	document.getElementById('Rshowrnhr').setAttribute('onclick', 'toggleRnHr()');
 
 	document.getElementById('rHideArchaeology').setAttribute('onclick', 'settingChanged("rHideArchaeology"), modifyParentNode("rHideArchaeology", "Rarchstring3", "hide")');
@@ -2508,9 +2505,6 @@ function updateCustomButtons() {
 	!radonon ? turnOn("showhehr") : turnOff("showhehr");
 	radonon ? turnOn("Rshowautomapstatus") : turnOff("Rshowautomapstatus");
 	radonon ? turnOn("Rshowrnhr") : turnOff("Rshowrnhr");
-	!radonon ? turnOn("showFreeVoidMap") : turnOff("showFreeVoidMap");
-	//!radonon ? turnOn("rshowFreeVoidMap") : 
-	turnOff("rshowFreeVoidMap");
 
 	//Heirlooms
 
@@ -2859,36 +2853,6 @@ function toggleRadonStatus(update) {
 		if (game.global.universe == 2) {
 			turnOn('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		}
-	}
-	saveSettings();
-}
-
-function toggleFreeVoid(update) {
-	if (update) {
-		if (getPageSetting('showFreeVoidMap')) {
-			document.getElementById('freeVoidMap').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('freeVoidMap').style = 'display: block'
-		} else {
-			document.getElementById('freeVoidMap').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('freeVoidMap').style = 'display: none'
-		}
-		return
-	}
-	if (getPageSetting('showFreeVoidMap')) {
-		setPageSetting('showFreeVoidMap', 0);
-		if (game.global.universe == 1) {
-			turnOff('freeVoidMap')
-			document.getElementById('freeVoidMap').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('freeVoidMap').style = 'display: none'
-		}
-	}
-	else {
-		setPageSetting('showFreeVoidMap', 1);
-		if (game.global.universe == 1) {
-			turnOn('freeVoidMap');
-			document.getElementById('freeVoidMap').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('freeVoidMap').style = 'display: block'
 		}
 	}
 	saveSettings();
