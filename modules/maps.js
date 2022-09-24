@@ -896,7 +896,8 @@ function RupdateAutoMapsStatus(get) {
 	else if (rShouldWorshipperFarm) status = 'Ship Farming: ' + game.jobs.Worshipper.owned + "/" + rWFGoal;
 	else if (rShouldEquipFarm) status = 'Equip Farming to ' + equipfarmdynamicHD().toFixed(2) + " and " + estimateEquipsForZone()[2] + " Equality";
 	else if (rShouldMaxMapBonus) status = 'Map Bonus: ' + game.global.mapBonus + "/" + rMBRepeatCounter;
-	else if (rShouldSmithless) status = 'Smithless Map Bonus: ' + game.global.mapBonus + "/10";
+	else if (rShouldSmithless && game.global.mapBonus !== 10) status = 'Smithless Map Bonus: ' + game.global.mapBonus + "/10";
+	else if (rShouldSmithless) status = 'Smithless: Want ' + damageTarget.toFixed(2) + 'x more damage for 3/3';
 	//Challenges
 	else if (Rshoulddobogs) status = 'Black Bogs: ' + (game.challenges.Quagmire.motivatedStacks - totalstacks) + " remaining";
 	else if (rShouldQuest) status = 'Questing: ' + game.challenges.Quest.getQuestProgress() + (questcheck() === 10 ? 'Smithy' : '');
@@ -2095,19 +2096,22 @@ function RautoMap() {
 	}
 
 	//Smithless
-	if ((game.global.challengeActive == "Smithless")) {
+	if (game.global.challengeActive == "Smithless" && getPageSetting('rSmithless')) {
 		//Setting up variables
 		if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
 			var name = game.global.gridArray[0].name
+			var gammaDmg = gammaBurstPct;
 			var equalityAmt = equalityQuery(true, true, name, game.global.world, 1, 'world', 1, false, true)
 			var ourDmg = (RcalcOurDmg('min', equalityAmt, false, false, false, true));
+			var totalDmg = (ourDmg * 2 + (ourDmg * gammaDmg * 2))
 			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world', true);
 			enemyHealth *= 3e15;
 			var stacksRemaining = 10 - game.challenges.Smithless.uberAttacks;
-			var gammaDmg = gammaBurstPct;
 			var rSmithlessJobRatio = '0,0,1,0';
 
-			if ((ourDmg * 2 + (ourDmg * gammaDmg * 2)) < enemyHealth) {
+			damageTarget = enemyHealth / totalDmg;
+
+			if (totalDmg < enemyHealth) {
 				if (game.global.mapBonus != 10)
 					rShouldSmithless = true;
 				else if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))))

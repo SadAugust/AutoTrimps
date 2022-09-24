@@ -884,7 +884,7 @@ function RcalcOurHealth(onlyShield, checkMutations) {
 	//Mutator
 	health *= game.global.stringVersion >= '5.8.0' && u2Mutations.tree.Health.purchased ? 1.5 : 1;
 	//Duel Mult
-	health *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 20 ? game.challenges.Duel.healthMult : 1;
+	//health *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 20 ? game.challenges.Duel.healthMult : 1;
 	//Revenge Mult
 	health *= game.global.challengeActive == 'Revenge' && game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1;
 	//Wither Mult
@@ -1224,6 +1224,7 @@ function RcalcEnemyHealthMod(world, cell, name, type, query, checkMutations) {
 
 	//Challenges
 	health *= game.global.challengeActive == 'Unbalance' && game.global.mapsActive ? 2 : game.global.challengeActive == 'Unbalance' ? 3 : 1;
+	//health *= game.global.challengeActive == 'Duel' && game.challenges.Duel.enemyStacks < 20 ? game.challenges.Duel.healthMult : 1;
 	health *= game.global.challengeActive == 'Quest' ? game.challenges.Quest.getHealthMult() : 1;
 	health *= game.global.challengeActive == 'Revenge' && game.global.world % 2 == 0 ? 10 : 1;
 	health *= game.global.challengeActive == 'Mayhem' && ((!game.global.mapsActive && type !== 'map') || type === 'world') && game.global.lastClearedCell + 2 == 100 ? game.challenges.Mayhem.getBossMult() : 1;

@@ -186,13 +186,13 @@ function initializeAllSettings() {
 	if (game.global.highestRadonLevelCleared >= 39) radonChallenges.push("Bublé");
 	if (game.global.highestRadonLevelCleared >= 54) radonChallenges.push("Melt");
 	if (game.global.highestRadonLevelCleared >= 69) radonChallenges.push("Quagmire");
-	if (game.global.highestRadonLevelCleared >= 89) radonChallenges.push("Archaeology");
-	if (game.global.highestRadonLevelCleared >= 99) radonChallenges.push("Mayhem");
+	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 89)) radonChallenges.push("Archaeology");
+	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 99)) radonChallenges.push("Mayhem");
 	if (game.global.highestRadonLevelCleared >= 129) radonChallenges.push("Insanity");
 	if (game.global.highestRadonLevelCleared >= 134) radonChallenges.push("Nurture");
-	if (game.global.highestRadonLevelCleared >= 149) radonChallenges.push("Pandemonium");
-	if (game.global.highestRadonLevelCleared >= 154) radonChallenges.push("Alchemy");
-	if (game.global.highestRadonLevelCleared >= 174) radonChallenges.push("Hypothermia");
+	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149)) radonChallenges.push("Pandemonium");
+	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154)) radonChallenges.push("Alchemy");
+	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174)) radonChallenges.push("Hypothermia");
 	radonChallenges.push("Custom");
 	if (game.global.highestRadonLevelCleared >= 49) radonChallenges.push("Challenge 3");
 
@@ -200,11 +200,11 @@ function initializeAllSettings() {
 	if (game.global.highestRadonLevelCleared >= 39) radonHourChallenges.push("Bublé");
 	if (game.global.highestRadonLevelCleared >= 54) radonHourChallenges.push("Melt");
 	if (game.global.highestRadonLevelCleared >= 69) radonHourChallenges.push("Quagmire");
-	if (game.global.highestRadonLevelCleared >= 89) radonHourChallenges.push("Archaeology");
+	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 89)) radonHourChallenges.push("Archaeology");
 	if (game.global.highestRadonLevelCleared >= 129) radonHourChallenges.push("Insanity");
 	if (game.global.highestRadonLevelCleared >= 134) radonHourChallenges.push("Nurture");
-	if (game.global.highestRadonLevelCleared >= 154) radonHourChallenges.push("Alchemy");
-	if (game.global.highestRadonLevelCleared >= 174) radonHourChallenges.push("Hypothermia");
+	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154)) radonHourChallenges.push("Alchemy");
+	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174)) radonHourChallenges.push("Hypothermia");
 
 	var radonChallenge3 = ["None"];
 	if (game.global.highestRadonLevelCleared >= 14) radonChallenge3.push("Unlucky");
@@ -214,9 +214,9 @@ function initializeAllSettings() {
 	if (game.global.highestRadonLevelCleared >= 59) radonChallenge3.push("Trappapalooza");
 	if (game.global.highestRadonLevelCleared >= 69) radonChallenge3.push("Wither");
 	if (game.global.highestRadonLevelCleared >= 84) radonChallenge3.push("Quest");
-	if (game.global.highestRadonLevelCleared >= 104) radonChallenge3.push("Storm");
+	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104)) radonChallenge3.push("Storm");
 	if (game.global.highestRadonLevelCleared >= 114) radonChallenge3.push("Berserk");
-	if (game.global.highestRadonLevelCleared >= 174) radonChallenge3.push("Glass");
+	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174)) radonChallenge3.push("Glass");
 
 
 	//Radon Portal
@@ -739,10 +739,14 @@ function initializeAllSettings() {
 	createSetting('rPandRespecZone', 'P: Respec Zone', 'The zone you\'d like to start respeccing from.', 'value', '-1', null, 'C3');
 	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'C3');
 
-	//Unbalance
+	//Glass
 	document.getElementById('RPandemoniumMP').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rGlass', 'Glass NYI!', 'Turn this on if you want to enable Glass destacking feautres.', 'boolean', false, null, 'C3');
 	createSetting('rGlassStacks', 'G: Stacks NYI!', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C3');
+
+	//Smithless
+	document.getElementById('rGlassStacks').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('rSmithless', 'Smithless', 'Turn this on if you want to enable AT farming for damage to kill Ubersmiths on the Smithless challenge. It is not fully implemented currently but it will farm until you either reach max tenacity or can fully kill the Ubersmith on a zone. In the future this will be changed to identify what health breakpoint you can reach and have that as the target but it won\'t be done for a while.', 'boolean', false, null, 'C3');
 
 	//Challenges
 
@@ -976,11 +980,12 @@ function initializeAllSettings() {
 	createSetting('showFreeVoidMap', 'Free VM Output', 'Displays tracker information for your next free void map below status section.', 'boolean', false, null, 'Display');
 	createSetting('rshowFreeVoidMap', 'Free VM Output', 'Displays tracker information for your next free void map below status section.', 'boolean', false, null, 'Display');
 	createSetting('rMapRepeatCount', 'Map Count Output', 'When you finish doing farming for any types of special farming this setting will display a message stating the amount of maps it took to complete and the time it took (format is h:m:s).', 'boolean', true, null, 'Display');
-	createSetting('automateSpireAssault', 'Automate Spire Assault', 'Automates Spire Assault gear swaps from level 92 up to level 128.', 'boolean', false, null, 'Display');
-
+	createSetting('rDisplayAllSettings', 'Display all u2 settings', 'Will display all of the locked settings that have HZE requirements to be displayed.', 'boolean', true, null, 'Display');
+	createSetting('automateSpireAssault', 'Automate Spire Assault', 'Automates Spire Assault gear swaps from level 92 up to level 128. HIGHLY RECOMMENDED THAT YOU DO NOT USE THIS SETTING.', 'boolean', false, null, 'Display');
 
 	createSetting('EnableAFK', 'Go AFK Mode', '(Action Button). Go AFK uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU and RAM saving mode. Everything will resume when you come back and press the Back button. Console debug output is also disabled. The blue color means this is not a settable setting, just a button. You can now also click the Zone # (World Info) area to go AFK now.', 'action', 'MODULES["performance"].EnableAFKMode()', null, 'Display');
 	document.getElementById('battleSideTitle').setAttribute('onclick', 'MODULES["performance"].EnableAFKMode()');
+
 	//Map Bonus
 	document.getElementById('rMapBonusPopup').setAttribute('onclick', 'MAZLookalike("Map Bonus", "rMapBonus", "MAZ")');
 	document.getElementById('rdMapBonusPopup').setAttribute('onclick', 'MAZLookalike("Daily Map Bonus", "rdMapBonus", "MAZ")');
@@ -1016,7 +1021,6 @@ function initializeAllSettings() {
 	document.getElementById('rInsanityPopup').setAttribute('onclick', 'MAZLookalike("Insanity Farm", "rInsanity", "MAZ")');
 	document.getElementById('rAlchPopup').setAttribute('onclick', 'MAZLookalike("Alchemy Farm", "rAlch", "MAZ")');
 	document.getElementById('rHypoPopup').setAttribute('onclick', 'MAZLookalike("Hypothermia Farm", "rHypo", "MAZ")');
-
 
 	document.getElementById('showautomapstatus').setAttribute('onclick', 'toggleStatus()');
 	document.getElementById('Rshowautomapstatus').setAttribute('onclick', 'toggleRadonStatus()');
@@ -1791,7 +1795,7 @@ function updateCustomButtons() {
 		document.getElementById("tabΜaps").style.display = !radonon ? "none" : "";
 	}
 	if (document.getElementById("tabDaily") != null) {
-		document.getElementById("tabDaily").style.display = radonon && game.global.highestRadonLevelCleared < 29 ? "none" : "";
+		document.getElementById("tabDaily").style.display = radonon && (!getPageSetting('rDisplayAllSettings') && game.global.highestRadonLevelCleared < 29) ? "none" : "";
 	}
 	if (document.getElementById("tabSpire") != null) {
 		document.getElementById("tabSpire").style.display = radonon ? "none" : "";
@@ -1815,7 +1819,7 @@ function updateCustomButtons() {
 		document.getElementById("tabC2").style.display = radonon ? "none" : "";
 	}
 	if (document.getElementById("tabC3") != null) {
-		document.getElementById("tabC3").style.display = !radonon || game.global.highestRadonLevelCleared < 49 ? "none" : "";
+		document.getElementById("tabC3").style.display = !radonon ? "none" : radonon && (!getPageSetting('rDisplayAllSettings') && game.global.highestRadonLevelCleared < 49) ? "none" : "";
 	}
 	if (document.getElementById("tabChallenges") != null) {
 		document.getElementById("tabChallenges").style.display = !radonon ? "none" : "";
@@ -1970,7 +1974,7 @@ function updateCustomButtons() {
 
 	//Daily Smithy Farming  
 	turnOff('rdSmithyFarm');
-	radonon && game.global.highestRadonLevelCleared > 4 ? turnOn('rdSmithyFarmPopup') : turnOff('rdSmithyFarmPopup');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rdSmithyFarmPopup') : turnOff('rdSmithyFarmPopup');
 	turnOff('rdSmithyFarmSettings');
 	turnOff('rdSmithyFarmDefaultSettings');
 	turnOff('rdSmithyFarmZone');
@@ -2007,8 +2011,8 @@ function updateCustomButtons() {
 
 	radonon ? turnOn('c3finishrun') : turnOff('c3finishrun');
 	radonon ? turnOn('c3meltingpoint') : turnOff('c3meltingpoint');
-	radonon && !autoBattle.oneTimers.Expanding_Tauntimp.owned ? turnOn('c3buildings') : turnOff('c3buildings');
-	radonon && !autoBattle.oneTimers.Expanding_Tauntimp.owned && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
+	radonon && (getPageSetting('rDisplayAllSettings') || !autoBattle.oneTimers.Expanding_Tauntimp.owned) ? turnOn('c3buildings') : turnOff('c3buildings');
+	radonon && (getPageSetting('rDisplayAllSettings') || !autoBattle.oneTimers.Expanding_Tauntimp.owned) && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
 
 	//C3 Time Farm
@@ -2027,7 +2031,7 @@ function updateCustomButtons() {
 
 	//C3 Smithy Farming  
 	turnOff('rc3SmithyFarm');
-	radonon && game.global.highestRadonLevelCleared > 4 ? turnOn('rc3SmithyFarmPopup') : turnOff('rc3SmithyFarmPopup');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rc3SmithyFarmPopup') : turnOff('rc3SmithyFarmPopup');
 	turnOff('rc3SmithyFarmSettings');
 	turnOff('rc3SmithyFarmDefaultSettings');
 	turnOff('rc3SmithyFarmZone');
@@ -2193,18 +2197,18 @@ function updateCustomButtons() {
 	radonon ? turnOn('Rhitssurvived') : turnOff('Rhitssurvived');
 	radonon ? turnOn('Rmapcuntoff') : turnOff('Rmapcuntoff');
 	radonon ? turnOn('RDisableFarm') : turnOff('RDisableFarm');
-	radonon ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
 	radonon ? turnOn('rMapRepeatCount') : turnOff('rMapRepeatCount');
 	radonon ? turnOn('automateSpireAssault') : turnOff('automateSpireAssault');
 
-	radonon && game.portal.Prismal.radLevel < 50 ? turnOn('Rprispalace') : turnOff('Rprispalace');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.portal.Prismal.radLevel < 50) ? turnOn('Rprispalace') : turnOff('Rprispalace');
 
 	//Atlantrimp
-	radonon && game.global.highestRadonLevelCleared >= 32 ? turnOn('RAtlantrimp') : turnOff('RAtlantrimp');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 32) ? turnOn('RAtlantrimp') : turnOff('RAtlantrimp');
 	//Melting Point
-	radonon && game.global.highestRadonLevelCleared >= 49 ? turnOn('RMeltingPoint') : turnOff('RMeltingPoint');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('RMeltingPoint') : turnOff('RMeltingPoint');
 	//Frozen Castle
-	radonon && game.global.stringVersion != '5.5.1' && game.global.highestRadonLevelCleared >= 174 ? turnOn('rFrozenCastle') : turnOff('rFrozenCastle');
+	radonon && game.global.stringVersion != '5.5.1' && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) ? turnOn('rFrozenCastle') : turnOff('rFrozenCastle');
 
 	//Tribute Farming
 	turnOff('rTributeFarm');
@@ -2222,14 +2226,14 @@ function updateCustomButtons() {
 
 	//Smithy Farming  
 	turnOff('rSmithyFarm');
-	radonon && game.global.highestRadonLevelCleared > 4 ? turnOn('rSmithyFarmPopup') : ('rSmithyFarmPopup');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rSmithyFarmPopup') : ('rSmithyFarmPopup');
 	turnOff('rSmithyFarmSettings');
 	turnOff('rSmithyFarmDefaultSettings');
 	turnOff('rSmithyFarmZone');
 
 	//Worshippers 
 	turnOff('rWorshipperFarm');
-	radonon && game.global.highestRadonLevelCleared > 49 ? turnOn('rWorshipperFarmPopup') : turnOff('rWorshipperFarmPopup');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('rWorshipperFarmPopup') : turnOff('rWorshipperFarmPopup');
 	turnOff('rWorshipperFarmSettings');
 	turnOff('rWorshipperFarmDefaultSettings');
 	turnOff('rWorshipperFarmZone');
@@ -2320,19 +2324,15 @@ function updateCustomButtons() {
 	//RCombat
 	radonon ? turnOn('rManageEquality') : turnOff('rManageEquality');
 	radonon && getPageSetting('rManageEquality') < 2 ? turnOn('Rcalcmaxequality') : turnOff('Rcalcmaxequality');
-	radonon && !game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
-	radonon && game.global.highestRadonLevelCleared > 200 ? turnOn('rMutationCalc') : turnOff('rMutationCalc');
+	radonon && (getPageSetting('rDisplayAllSettings') || (!game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned)) ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 200) ? turnOn('rMutationCalc') : turnOff('rMutationCalc');
 
 	//Challenges
 
 	//Hide Challenges
 	radonon ? turnOn("rHideChallenge") : turnOff("rHideChallenge");
-	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideQuagmire") : turnOff("rHideQuagmire");
-	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideArchaeology") : turnOff("rHideArchaeology");
-	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideInsanity") : turnOff("rHideInsanity");
-	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideExterminate") : turnOff("rHideExterminate");
-	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideAlchemy") : turnOff("rHideAlchemy");
-	radonon && getPageSetting('rHideChallenge') ? turnOn("rHideHypothermia") : turnOff("rHideHypothermia");
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 89) && getPageSetting('rHideChallenge') ? turnOn("rHideArchaeology") : turnOff("rHideArchaeology");
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 119) && getPageSetting('rHideChallenge') ? turnOn("rHideExterminate") : turnOff("rHideExterminate");
 
 	//Unbalance
 	radonon ? turnOn('rUnbalance') : turnOff('rUnbalance');
@@ -2341,68 +2341,68 @@ function updateCustomButtons() {
 	radonon && getPageSetting('rUnbalance') ? turnOn('rUnbalanceImprobDestack') : turnOff('rUnbalanceImprobDestack');
 
 	//Trappapalooza
-	radonon && game.global.highestRadonLevelCleared >= 59 ? turnOn('rTrappa') : turnOff('rTrappa');
-	radonon && game.global.highestRadonLevelCleared >= 59 && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) ? turnOn('rTrappa') : turnOff('rTrappa');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
 	//Quagmire
 	turnOff('rQuagOn');
-	radonon && game.global.highestRadonLevelCleared >= 69 ? turnOn('rQuagPopup') : turnOff('rQuagPopup');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 69) ? turnOn('rQuagPopup') : turnOff('rQuagPopup');
 	turnOff('rQuagSettings');
 	turnOff('rQuagDefaultSettings');
 	turnOff('rQuagZone');
 
 	//Archaeology
-	radonon && game.global.highestRadonLevelCleared >= 89 && !getPageSetting('rHideArchaeology') ? turnOn('Rarchon') : turnOff('Rarchon');
-	radonon && game.global.highestRadonLevelCleared >= 89 && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring1') : turnOff('Rarchstring1');
-	radonon && game.global.highestRadonLevelCleared >= 89 && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring2') : turnOff('Rarchstring2');
-	radonon && game.global.highestRadonLevelCleared >= 89 && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring3') : turnOff('Rarchstring3');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 89) && !getPageSetting('rHideArchaeology') ? turnOn('Rarchon') : turnOff('Rarchon');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 89) && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring1') : turnOff('Rarchstring1');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 89) && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring2') : turnOff('Rarchstring2');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 89) && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring3') : turnOff('Rarchstring3');
 
 	//Mayhem
-	radonon && game.global.highestRadonLevelCleared >= 99 && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') ? turnOn('rMayhem') : turnOff('rMayhem');
-	radonon && game.global.highestRadonLevelCleared >= 99 && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemDestack') : turnOff('rMayhemDestack');
-	radonon && game.global.highestRadonLevelCleared >= 99 && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemZone') : turnOff('rMayhemZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 99) && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') ? turnOn('rMayhem') : turnOff('rMayhem');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 99) && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemDestack') : turnOff('rMayhemDestack');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 99) && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemZone') : turnOff('rMayhemZone');
 
 
 	//Storm
-	radonon && game.global.highestRadonLevelCleared >= 104 ? turnOn('Rstormon') : turnOff('Rstormon');
-	radonon && game.global.highestRadonLevelCleared >= 104 && getPageSetting('Rstormon') ? turnOn('rStormZone') : turnOff('rStormZone');
-	radonon && game.global.highestRadonLevelCleared >= 104 && getPageSetting('Rstormon') ? turnOn('rStormStacks') : turnOff('rStormStacks');
-	radonon && game.global.highestRadonLevelCleared >= 104 && getPageSetting('Rstormon') ? turnOn('Rstormzone') : turnOff('Rstormzone');
-	radonon && game.global.highestRadonLevelCleared >= 104 && getPageSetting('Rstormon') ? turnOn('RstormHD') : turnOff('RstormHD');
-	radonon && game.global.highestRadonLevelCleared >= 104 && getPageSetting('Rstormon') ? turnOn('Rstormmult') : turnOff('Rstormmult');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) ? turnOn('Rstormon') : turnOff('Rstormon');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('rStormZone') : turnOff('rStormZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('rStormStacks') : turnOff('rStormStacks');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('Rstormzone') : turnOff('Rstormzone');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('RstormHD') : turnOff('RstormHD');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('Rstormmult') : turnOff('Rstormmult');
 
 	//Insanity
-	radonon && game.global.highestRadonLevelCleared >= 109 ? turnOn('rInsanityPopup') : turnOff('rInsanityPopup');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 109) ? turnOn('rInsanityPopup') : turnOff('rInsanityPopup');
 	turnOff('rInsanityOn');
 	turnOff('rInsanitySettings');
 	turnOff('rInsanityDefaultSettings');
 	turnOff('rInsanityZone');
 
 	//Exterminate
-	radonon && game.global.highestRadonLevelCleared >= 119 && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateon') : turnOff('Rexterminateon');
-	radonon && game.global.highestRadonLevelCleared >= 119 && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminatecalc') : turnOff('Rexterminatecalc');
-	radonon && game.global.highestRadonLevelCleared >= 119 && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateeq') : turnOff('Rexterminateeq');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 119) && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateon') : turnOff('Rexterminateon');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 119) && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminatecalc') : turnOff('Rexterminatecalc');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 119) && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateeq') : turnOff('Rexterminateeq');
 
 	//Pandemonium
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') ? turnOn('RPandemoniumOn') : turnOff('RPandemoniumOn');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMaps') : turnOff('RPandemoniumMaps');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumZone') : turnOff('RPandemoniumZone');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumHits') : turnOff('RPandemoniumHits');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip') : turnOff('RPandemoniumAutoEquip');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RPandemoniumAEZone') : turnOff('RPandemoniumAEZone');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('PandemoniumFarmLevel') : turnOff('PandemoniumFarmLevel');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumJestZone') : turnOff('RPandemoniumJestZone');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') ? turnOn('RPandemoniumOn') : turnOff('RPandemoniumOn');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMaps') : turnOff('RPandemoniumMaps');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumZone') : turnOff('RPandemoniumZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumMaps') ? turnOn('RPandemoniumHits') : turnOff('RPandemoniumHits');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip') : turnOff('RPandemoniumAutoEquip');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RPandemoniumAEZone') : turnOff('RPandemoniumAEZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('PandemoniumFarmLevel') : turnOff('PandemoniumFarmLevel');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumJestZone') : turnOff('RPandemoniumJestZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
 
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('rPandRespec') : turnOff('rPandRespec');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('rPandRespec') ? turnOn('rPandRespecZone') : turnOff('rPandRespecZone');
-	radonon && game.global.highestRadonLevelCleared >= 149 && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('rPandRespec') : turnOff('rPandRespec');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('rPandRespec') ? turnOn('rPandRespecZone') : turnOff('rPandRespecZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
 
 	//Alchemy
 	turnOff('rAlchOn');
-	radonon && game.global.highestRadonLevelCleared >= 154 ? turnOn('rAlchPopup') : turnOff('rAlchPopup');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154) ? turnOn('rAlchPopup') : turnOff('rAlchPopup');
 	turnOff('rAlchSettings');
 	turnOff('rAlchDefaultSettings');
 	turnOff('rAlchZone');
@@ -2413,9 +2413,12 @@ function updateCustomButtons() {
 	turnOff('rGlass');
 	turnOff('rGlassStacks');
 
+	//Smithless
+	radonon ? turnOn('rSmithless') : turnOff('rSmithless');
+
 	//Hypothermia 
 	turnOff('rHypoOn');
-	radonon && game.global.highestRadonLevelCleared >= 174 ? turnOn('rHypoPopup') : turnOff('rHypoPopup');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) ? turnOn('rHypoPopup') : turnOff('rHypoPopup');
 	turnOff('rHypoSettings');
 	turnOff('rHypoDefaultSettings');
 	turnOff('rHypoZone');
@@ -2509,6 +2512,7 @@ function updateCustomButtons() {
 	radonon ? turnOn('SpamFragments') : turnOff('SpamFragments');
 
 	//Memory
+	!radonon ? turnOn("showbreedtimer") : turnOff("showbreedtimer");
 	game.global.universe == 1 && !getPageSetting('showbreedtimer') ? turnOn("hiddenBreedTimer") : turnOff("hiddenBreedTimer");
 	!radonon ? turnOn("showautomapstatus") : turnOff("showautomapstatus");
 	!radonon ? turnOn("showhehr") : turnOff("showhehr");
