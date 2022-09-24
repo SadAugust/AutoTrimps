@@ -49,6 +49,7 @@ for (var item in (($u1graphSel.id = "u1graphSelection"), $u1graphSel.setAttribut
 var $u2Graph = document.getElementById("graphFooterLine1"),
 	u2graphList = [
 		"Radon - Rn/Hr",
+		"Radon - Rn/Hr Normalized",
 		"Radon - Total",
 		"RnHr % / LifetimeRn",
 		"Rn % / LifetimeRn",
@@ -300,6 +301,7 @@ function pushData() {
 		radonOwned: game.resources.radon.owned,
 		rnhr: RgetPercent.toFixed(4),
 		rnlife: Rlifetime.toFixed(4),
+		s3: game.global.lastRadonPortal,
 		universe: game.global.universe,
 		population: game.resources.trimps.owned,
 		universeSelection: typeof (document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value) === 'undefined'
@@ -693,6 +695,17 @@ function setGraphData(graph) {
 				return Math.floor(e1.radonOwned / ((e1.currentTime - e1.portalTime) / 3600000));
 			});
 			title = "Radon/Hour (Cumulative)";
+			xTitle = "Zone";
+			yTitle = "Radon/Hour";
+			yType = "Linear";
+			yminFloor = 0;
+			precision = 2;
+			break;
+		case "Radon - Rn/Hr Normalized":
+			graphData = allPurposeGraph("radonhr", true, null, function specialCalc(e1, e2) {
+				return Math.floor(e1.radonOwned / 1.03 ** e1.s3 / ((e1.currentTime - e1.portalTime) / 3600000));
+			});
+			title = "Radon/Hour (Cumulative, S3 Normalized)";
 			xTitle = "Zone";
 			yTitle = "Radon/Hour";
 			yType = "Linear";
