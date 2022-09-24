@@ -2180,7 +2180,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit) {
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 		//debug("Maplevel = " + y + " Equality = " + equalityAmt + " Our Damage = " + ourDmg);
 
-		/* if (y === -2) {
+		/* if (y === 0) {
 			debug("Maplevel = " + y + " Equality = " + equalityAmt + " Our Damage = " + ourDmg);
 			debug("Enemy dmg = " + enemyDmg + " + " + "Enemy health = " + enemyHealth)
 		} */
@@ -2794,7 +2794,7 @@ function boneShrineOutput(charges) {
 
 function PerfectMapCost_Actual(plusLevel, specialModifier, biome) {
 	if (!specialModifier) return Infinity
-	if (!plusLevel) return Infinity
+	if (!plusLevel && plusLevel !== 0) return Infinity
 	var specialModifier = specialModifier;
 	var plusLevel = plusLevel;
 	var baseCost = 27;
