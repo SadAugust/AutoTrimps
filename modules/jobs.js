@@ -585,7 +585,7 @@ function RbuyJobs() {
 
 	//Ships
 	if ((autoTrimpSettings.rJobSettingsArray.value.Worshipper.enabled || rShouldWorshipperFarm) && !rBSRunningAtlantrimp) {
-		var affordableShips = Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (autoTrimpSettings.rJobSettingsArray.value.Worshipper.percent / 100));
+		var affordableShips = rShouldWorshipperFarm ? Math.floor(game.resources.food.owned / game.jobs.Worshipper.getCost()) : Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (autoTrimpSettings.rJobSettingsArray.value.Worshipper.percent / 100));
 		if (affordableShips > 50 - game.jobs.Worshipper.owned)
 			affordableShips = 50 - game.jobs.Worshipper.owned;
 		if (affordableShips > 0 && !game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50) {
