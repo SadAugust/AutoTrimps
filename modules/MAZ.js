@@ -350,6 +350,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. Input will look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>"
 		if (titleText.includes('Bone Shrine')) mazHelp += "<li><b>Gather</b> - Which resource you'd like to gather when popping a Bone Shrine charge to make use of Turkimp resource bonus.</li>";
 		if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) mazHelp += "<li><b>Special</b> - The type of cache you'd like to run during this map. Will override metal cache inputs with savory caches during the Transmute challenge.</li>";
+		if (titleText.includes('Insanity')) mazHelp += "<li><b>Destack</b> - Toggle to allow you to run maps that are lower than world level during Insanity.</li>";
 		if (titleText.includes('Bone Shrine') || titleText.includes('Void Map')) mazHelp += "<li><b>Run Type</b> - What type of run you'd like this line to be run.</li>";
 		if (titleText.includes('Raiding')) mazHelp += "<li><b>Frag Type</b> - Frag: Farm for fragments to afford the maps you want to create. <br>\
 		Frag Min: Used for absolute minimum frag costs (which includes no Prestige special, perfect sliders, random map and the difficulty and size options, however it will try to afford those options first!) and prioritises buying the most maps for a smoother sequential raid. \
@@ -468,6 +469,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Bone Shrine') || titleText.includes('Void Map')) tooltipText += "<div class='windowRunType'>Run<br/>Type</div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>"
 		if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) tooltipText += "<div class='windowAtlantrimp'>Run<br/>Atlantrimp</div>"
+		if (titleText.includes('Insanity Farm')) tooltipText += "<div class='windowBuildings'>Destack</div>"
 		tooltipText += "</div>";
 
 		var current = autoTrimpSettings[varPrefix + "Settings"].value;
@@ -501,7 +503,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				mapType: 'Absolute',
 				autoLevel: true,
 				endzone: -1,
-				repeatevery: 0
+				repeatevery: 0,
+				destack: false
 			}
 			var style = "";
 			if (current.length - 1 >= x) {
@@ -533,6 +536,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Bone Shrine') || titleText.includes('Map Bonus')) vals.gather = autoTrimpSettings[varPrefix + "Settings"].value[x].gather ? autoTrimpSettings[varPrefix + "Settings"].value[x].gather : '0';
 				if (titleText.includes('Bone Shrine') || titleText.includes('Void Map')) vals.runType = autoTrimpSettings[varPrefix + "Settings"].value[x].runType ? autoTrimpSettings[varPrefix + "Settings"].value[x].runType : 1;
 				if (titleText.includes('Raiding')) vals.raidingDropdown = autoTrimpSettings[varPrefix + "Settings"].value[x].raidingDropdown ? autoTrimpSettings[varPrefix + "Settings"].value[x].raidingDropdown : 1;
+				if (titleText.includes('Insanity Farm')) vals.destack = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].destack) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].destack : false;
 			}
 
 			else style = " style='display: none' ";
@@ -590,6 +594,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>"
 			if (titleText.includes('Time Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowGather'>\<div style='text-align: center;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select>\</div>"
 			if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) tooltipText += "<div class='windowAtlantrimp' style='text-align: center;'>" + buildNiceCheckbox("windowAtlantrimp" + x, null, vals.atlantrimp) + "</div>";
+			if (titleText.includes('Insanity Farm')) tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.destack) + "</div>";
 			tooltipText += "</div>"
 		}
 
@@ -703,6 +708,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Bone')) var gather = document.getElementById('windowBoneGather' + x).value;
 		if (titleText.includes('Bone') || titleText.includes('Void Map')) var runType = document.getElementById('windowRunType' + x).value;
 		if (titleText.includes('Raiding')) var raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
+		if (titleText.includes('Insanity')) var destack = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 
 		if (isNaN(world) || world < 6) {
 			error += " Preset " + (x + 1) + " needs a value for Start Zone that's greater than 5.<br>";
@@ -736,8 +742,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			error += " Preset " + (x + 1) + " can\'t have a map level of 0 as you won\'t gain any Insanity stacks running this map.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Insanity') && level < 0) {
-			error += " Preset " + (x + 1) + " can\'t have a map level below world level as you will lose Insanity stacks running this map.<br>";
+		if (titleText.includes('Insanity') && level < 0 && destack === false) {
+			error += " Preset " + (x + 1) + " can\'t have a map level below world level as you will lose Insanity stacks running this map. To do this toggle the 'Destack' option.<br>";
 			errorMessage = true;
 		}
 		if (titleText.includes('Insanity') && insanity < 0) {
@@ -787,6 +793,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			autoLevel: autoLevel,
 			endzone: endzone,
 			repeatevery,
+			destack,
 			done: (currSetting && currSetting.done) ? currSetting.done : false
 		};
 		setting.push(thisSetting);
