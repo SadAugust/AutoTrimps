@@ -743,7 +743,11 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			errorMessage = true;
 		}
 		if (titleText.includes('Insanity') && level < 0 && destack === false) {
-			error += " Preset " + (x + 1) + " can\'t have a map level below world level as you will lose Insanity stacks running this map. To do this toggle the 'Destack' option.<br>";
+			error += " Preset " + (x + 1) + " can\'t have a map level below world level as you will lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
+			errorMessage = true;
+		}
+		if (titleText.includes('Insanity') && level >= 0 && destack === true) {
+			error += " Preset " + (x + 1) + " can\'t have a map level at or above world level as you won't be able to lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
 			errorMessage = true;
 		}
 		if (titleText.includes('Insanity') && insanity < 0) {
