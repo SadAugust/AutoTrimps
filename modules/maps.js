@@ -1789,7 +1789,7 @@ function RautoMap() {
 
 				if (rIFStacks > game.challenges.Insanity.maxInsanity)
 					rIFStacks = game.challenges.Insanity.maxInsanity;
-				if (rIFStacks > game.challenges.Insanity.insanity || (rIFSettings.destack && game.challenges.Insanity.maxInsanity > rIFStacks))
+				if (rIFStacks > game.challenges.Insanity.insanity || (rIFSettings.destack && game.challenges.Insanity.insanity > rIFStacks))
 					rShouldInsanityFarm = true;
 
 				if (rInsanityCurrentMap != undefined && !rShouldInsanityFarm) {
