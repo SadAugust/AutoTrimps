@@ -1474,7 +1474,7 @@ function RautoMap() {
 		}
 	}
 
-	//Smithy Farming
+	//Smithy Farming ---- THIS NEEDS REWRITTEN. IT'S A COMPELTE MESS ;(
 	if (game.buildings.Smithy.locked == 0 && game.global.challengeActive !== 'Transmute' && ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && rShouldQuest === 10))) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
 		var rSFZone = game.global.challengeActive == 'Quest' ? [game.global.world] : rRunningC3 ? getPageSetting('rc3SmithyFarmZone') : rRunningDaily ? getPageSetting('rdSmithyFarmZone') : getPageSetting('rSmithyFarmZone');
@@ -1493,7 +1493,6 @@ function RautoMap() {
 					if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') game.global.mapRunCounter = smithyMapCount[0];
 					else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') game.global.mapRunCounter = smithyMapCount[1];
 					else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') game.global.mapRunCounter = smithyMapCount[2];
-					smithyMapCount = [0, 0, 0];
 				}
 				if ((rSFSettings.autoLevel || (rShouldQuest === 10 && getPageSetting('rManageEquality') == 2))) {
 					if (rSFCurrentMap === undefined) {
@@ -1510,6 +1509,10 @@ function RautoMap() {
 						rSFMapLevel = rSFautoLevel;
 					}
 				}
+
+				if (game.global.challengeActive == "Wither" && rSFMapLevel >= 0)
+					rSFMapLevel = -1;
+
 				//Checking for daily resource shred
 				if (typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && (woodShred || metalShred)) {
 					var rSFSpecialTime = game.global.highestRadonLevelCleared > 83 ? 20 : 10;
@@ -1526,12 +1529,12 @@ function RautoMap() {
 						var woodGain = Infinity;
 						var metalGain = scaleToCurrentMapLocal(simpleSecondsLocal("metal", (rSFSpecialTime * 2) + 45, true, '0,0,1,0'), false, true, rSFMapLevel)
 					}
-					var smithy_pet = game.buildings.Smithy.cost.gems[1];
-					var smithycost = [getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.gems[0], (Infinity), (smithy_pet), true),
-					getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.metal[0], (woodGain), (smithy_pet), true),
-					getMaxAffordable(Math.pow((smithy_pet), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (metalGain), (smithy_pet), true)]
-					var smithyAmt = game.buildings.Smithy.purchased + Math.min(smithycost[0], smithycost[1], smithycost[2])
-					rSFSmithies = smithyAmt > 0 && rSFSmithies > smithyAmt ? smithyAmt : rSFSmithies;
+					var smithy_Cost_Mult = game.buildings.Smithy.cost.gems[1];
+					var smithy_Max_Affordable = [getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.gems[0], (Infinity), (smithy_Cost_Mult), true),
+					getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.metal[0], (woodGain), (smithy_Cost_Mult), true),
+					getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (metalGain), (smithy_Cost_Mult), true)]
+					var smithy_Can_Afford = game.buildings.Smithy.purchased + Math.min(smithy_Max_Affordable[0], smithy_Max_Affordable[1], smithy_Max_Affordable[2])
+					rSFSmithies = smithyAmt > 0 && rSFSmithies > smithy_Can_Afford ? smithy_Can_Afford : rSFSmithies;
 				}
 
 				rSFGoal = 0;
@@ -1539,9 +1542,6 @@ function RautoMap() {
 				var smithyGemCost = getBuildingItemPrice(game.buildings.Smithy, 'gems', false, rSFSmithies - game.buildings.Smithy.purchased);
 				var smithyWoodCost = getBuildingItemPrice(game.buildings.Smithy, 'wood', false, rSFSmithies - game.buildings.Smithy.purchased);
 				var smithyMetalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, rSFSmithies - game.buildings.Smithy.purchased);
-
-				if (game.global.challengeActive == "Wither" && rSFMapLevel >= 0)
-					rSFMapLevel = -1;
 
 				if (rSFSmithies > game.buildings.Smithy.purchased) {
 					if (smithyGemCost > game.resources.gems.owned) {
@@ -1565,21 +1565,13 @@ function RautoMap() {
 					rShouldSmithyFarm = true;
 				}
 
-				if (rShouldSmithyFarm && !rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && game.global.mapsActive && getCurrentMapObject().bonus !== undefined) {
-					if ((!rShouldSmithyGemFarm && getCurrentMapObject().bonus.includes('sc')) || (!rShouldSmithyWoodFarm && getCurrentMapObject().bonus.includes('wc')) || (!rShouldSmithyMetalFarm && getCurrentMapObject().bonus.includes('mc'))) {
-						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') rSFMapRepeats[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-						if (!dontRecycleMaps) {
-							mapsClicked();
-							recycleMap();
-						}
-					}
+				if ((!autoTrimpSettings.RBuyBuildingsNew.enabled || !autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled) && rShouldSmithyFarm && rSFSmithies > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, false, 1)) {
+					buyBuilding("Smithy", true, true, 1);
 				}
 
-				//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
-				if (!rShouldTributeFarm && !rShouldMetFarm && !rShouldSmithyFarm && rSFCurrentMap != undefined) {
-					if (game.global.mapsActive) {
+				//Recycles map if we don't need to finish it for meeting the farm requirements
+				if (!rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && rSFCurrentMap != undefined) {
+					if (game.global.mapsActive && ((!rShouldSmithyGemFarm && getCurrentMapObject().bonus.includes('sc')) || (!rShouldSmithyWoodFarm && getCurrentMapObject().bonus.includes('wc')) || (!rShouldSmithyMetalFarm && getCurrentMapObject().bonus.includes('mc')))) {
 						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') rSFMapRepeats[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
@@ -1588,15 +1580,17 @@ function RautoMap() {
 							recycleMap();
 						}
 					}
-					if (getPageSetting('rMapRepeatCount'))
-						debug("Smithy Farm took " + rSFMapRepeats[0] + " food map" + (rSFMapRepeats[0] === 1 ? ", " : "s, ") + rSFMapRepeats[1] + " wood map" + (rSFMapRepeats[1] === 1 ? ", " : "s, ") + rSFMapRepeats[2] + " metal map" + (rSFMapRepeats[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
-					currTime = 0
-					rSFCurrentMap = undefined;
-					if (typeof (rSFautoLevel) !== 'undefined' && rSFautoLevel !== Infinity) rSFautoLevel = Infinity;
-					if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
-						toggleAutoStructure();
-					rSFMapRepeats = [0, 0, 0]
-					smithyMapCount = [0, 0, 0]
+					if (!rShouldSmithyFarm && rSFCurrentMap != undefined) {
+						if (getPageSetting('rMapRepeatCount'))
+							debug("Smithy Farm took " + rSFMapRepeats[0] + " food map" + (rSFMapRepeats[0] === 1 ? ", " : "s, ") + rSFMapRepeats[1] + " wood map" + (rSFMapRepeats[1] === 1 ? ", " : "s, ") + rSFMapRepeats[2] + " metal map" + (rSFMapRepeats[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.")
+						currTime = 0
+						rSFCurrentMap = undefined;
+						if (typeof (rSFautoLevel) !== 'undefined' && rSFautoLevel !== Infinity) rSFautoLevel = Infinity;
+						if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
+							toggleAutoStructure();
+						rSFMapRepeats = [0, 0, 0]
+						smithyMapCount = [0, 0, 0]
+					}
 				}
 			}
 		}
