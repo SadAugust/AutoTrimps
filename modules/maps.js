@@ -1789,7 +1789,7 @@ function RautoMap() {
 
 				if (rIFStacks > game.challenges.Insanity.maxInsanity)
 					rIFStacks = game.challenges.Insanity.maxInsanity;
-				if (rIFStacks >= game.challenges.Insanity.insanity || (rIFSettings.destack && game.challenges.Insanity.maxInsanity >= game.challenges.Insanity.insanity))
+				if (rIFStacks > game.challenges.Insanity.insanity || (rIFSettings.destack && game.challenges.Insanity.maxInsanity > game.challenges.Insanity.insanity))
 					rShouldInsanityFarm = true;
 
 				if (rInsanityCurrentMap != undefined && !rShouldInsanityFarm) {
@@ -2504,8 +2504,8 @@ function RautoMap() {
 					if (currentLevel != rMayhemMapLevel || getCurrentMapObject().bonus !== rMayhemSpecial || (game.challenges.Mayhem.stacks <= rMayhemMapLevel + 1)) repeatClicked();
 				}
 				//Insanity Frag Farm
-				else if (rShouldInsanityFarm) {
-					if (rFragmentFarming && game.resources.fragments.owned >= PerfectMapCost(rIFMapLevel, rIFSpecial)) repeatClicked();
+				else if (rShouldInsanityFarm && rFragmentFarming) {
+					if (game.resources.fragments.owned >= PerfectMapCost(rIFMapLevel, rIFSpecial)) repeatClicked();
 				}
 				//Insanity Farm
 				else if (rShouldInsanityFarm) {
