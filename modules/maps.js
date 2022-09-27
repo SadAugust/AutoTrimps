@@ -1160,7 +1160,7 @@ function RautoMap() {
 		var rMBZone = rRunningC3 ? getPageSetting('rc3MapBonusZone') : rRunningDaily ? getPageSetting('rdMapBonusZone') : getPageSetting('rMapBonusZone');
 		var rMBBaseSettings = rRunningC3 ? autoTrimpSettings.rc3MapBonusSettings.value : rRunningDaily ? autoTrimpSettings.rdMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
 		rMBIndex = null;
-		for (var y = 0; y < rMapBonusSettings.length; y++) {
+		for (var y = 0; y < rMBZone.length; y++) {
 			if (game.global.world - rMBZone[y] >= 0 && rMBBaseSettings[y].active)
 				rMBIndex = rMBZone.indexOf(rMBZone[y]);
 			else
@@ -1178,7 +1178,6 @@ function RautoMap() {
 				if (game.global.lastClearedCell + 2 >= rMBCell) {
 					rMBMapLevel = rMBSettings.level;
 					var rMBJobRatio = rMBSettings.jobratio;
-
 
 					if (game.global.mapRunCounter === 0 && game.global.mapsActive && rMBMapRepeats !== 0) {
 						game.global.mapRunCounter = rMBMapRepeats;
