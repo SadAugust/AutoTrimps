@@ -630,8 +630,8 @@ function Rresetmapvars() {
 	rWFDebug = 0;
 	rWFCurrentMap = undefined;
 	//Quagmire
-	Rshoulddobogs = false;
-	rBlackBogCurrentMap = undefined;
+	rShouldQuagFarm = false;
+	rQFCurrentMap = undefined;
 	//Quest
 	rShouldQuest = false;
 	rHasQuested = false;
@@ -661,13 +661,12 @@ function Rresetmapvars() {
 	jestFarmMap = false;
 	rPandemoniumCurrentMap = undefined;
 	//Alchemy
-	Rshouldalchfarm = false;
+	rShouldAlchFarm = false;
 	RAlchFarm = false;
 	rAlchSpecialError = 0;
 	rAlchemyCurrentMap = undefined;
 	//Hypothermia
 	rHypoFarm = false;
-	rHFSaveWood = false;
 	rShouldHypoFarm = false;
 	rHFCurrentMap = undefined;
 	rHFBonfireCostTotal = 0;

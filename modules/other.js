@@ -2160,6 +2160,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit) {
 	if (maxLevel > 10) maxLevel = 10;
 	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
 	if (game.global.challengeActive === 'Wither' && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
+	if (game.global.challengeActive === 'Insanity' && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
 
 	var maxLevel = typeof (maxLevel) === 'undefined' ? 10 : maxLevel;
 	var minLevel = typeof (minLevel) === 'undefined' ? 0 - game.global.world + 6 : minLevel;

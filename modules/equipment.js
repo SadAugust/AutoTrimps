@@ -598,7 +598,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		var prestige = false;
 
 		//Skips if we have the required number of that item and below zoneGo
-		if (!zoneGo && !buyPrestigeMaybe(i, resourceMaxPercent) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
+		if (!zoneGo && !buyPrestigeMaybe(i, resourceMaxPercent) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels && !rShouldSmithless) continue;
 		//Skips if ignoreShield variable is true.
 		if ((ignoreShield || getPageSetting('rEquipNoShields')) && i == 'Shield') continue;
 		//Skipping if on reflect daily and our dmg is too high
@@ -757,8 +757,8 @@ function RautoEquip() {
 		}
 	}
 
-	var attackEquipCap = ((getPageSetting('Requipcapattack') <= 0) ? Infinity : getPageSetting('Requipcapattack'));
-	var healthEquipCap = ((getPageSetting('Requipcaphealth') <= 0) ? Infinity : getPageSetting('Requipcaphealth'));
+	var attackEquipCap = (getPageSetting('Requipcapattack') <= 0 || rShouldSmithless ? Infinity : getPageSetting('Requipcapattack'));
+	var healthEquipCap = (getPageSetting('Requipcaphealth') <= 0 || rShouldSmithless ? Infinity : getPageSetting('Requipcaphealth'));
 	var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
 	var resourceSpendingPct = zoneGo ? 1 : getPageSetting('Requippercent') < 0 ? 1 : getPageSetting('Requippercent') / 100;
 	var maxCanAfford = 0;

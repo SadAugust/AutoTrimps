@@ -321,7 +321,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		mazHelp += "<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>"
 		if (titleText.includes('Raiding')) mazHelp += "<li><b>Raiding Zone</b> - The zone you'd like to raid when this line is run. If your 'Zone' input is 231 then the highest zone you can input is 241.</li>"
 		mazHelp += "<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell. This line will trigger before starting combat against that cell.</li>"
-		if (titleText.includes('Worshipper Farm') || titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus')) mazHelp += "<li><b>Auto Level</b> - Will automatically identify the best map level for your farming needs by looking at highest affordable map level and then calculating if you can one shot enemies with Titimp buff. Highly recommended to use 'Auto Equality: Advanced' with this setting as it'll speed up map runs by a significant amount.</li>"
+		if (titleText.includes('Worshipper Farm') || titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Insanity Farm') || titleText.includes('Alchemy Farm') || titleText.includes('Hypothermia Farm')) mazHelp += "<li><b>Auto Level</b> - Will automatically identify the best map level for your farming needs by looking at highest affordable map level and then calculating if you can one shot enemies with Titimp buff. Highly recommended to use 'Auto Equality: Advanced' with this setting as it'll speed up map runs by a significant amount.</li>"
 		if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine') && !titleText.includes('Raiding') && !titleText.includes('Map Bonus') && !titleText.includes('Void') && (titleText.includes('Worshipper Farm') || titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm'))) mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can input a positive or negative number for this so input could be '-5', '0', or '3'. Will override inputs above -1 during the Wither challenge.</li>"
 
 		if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine') && !titleText.includes('Raiding') && !titleText.includes('Map Bonus') && !titleText.includes('Void') && !(titleText.includes('Worshipper Farm') || titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm'))) mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can input a positive or negative number for this so input could be '-5', '0', or '3'.</li>"
@@ -443,7 +443,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		<div class='windowWorld'>Zone</div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingZone'>Raiding<br/>Zone</div>"
 		tooltipText += "<div class='windowCell'>Cell</div>"
-		if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm')) tooltipText += "<div class='windowCheckbox'>Auto Level</div>"
+		if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Insanity Farm') || titleText.includes('Alchemy Farm') || titleText.includes('Hypothermia Farm')) tooltipText += "<div class='windowCheckbox'>Auto<br/>Level</div>"
 		if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine') && !titleText.includes('Raiding') && !titleText.includes('Void')) tooltipText += "<div class='windowLevel'>Map<br/>Level</div>"
 		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributeFarmDropdown'>Farm Type</div>"
 		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributes'>Tributes</div>"
@@ -513,7 +513,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (titleText.includes('Raiding')) vals.raidingzone = autoTrimpSettings[varPrefix + "Settings"].value[x].raidingzone ? autoTrimpSettings[varPrefix + "Settings"].value[x].raidingzone : 1;
 				vals.cell = autoTrimpSettings[varPrefix + "Settings"].value[x].cell ? autoTrimpSettings[varPrefix + "Settings"].value[x].cell : 81;
 				if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine') && !titleText.includes('Raiding') && !titleText.includes('Void')) vals.level = autoTrimpSettings[varPrefix + "Settings"].value[x].level
-				if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm')) vals.autoLevel = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel : true;
+				if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Insanity Farm') || titleText.includes('Alchemy Farm') || titleText.includes('Hypothermia Farm')) vals.autoLevel = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].autoLevel : true;
 				if (titleText.includes('Tribute Farm')) vals.mapType = autoTrimpSettings[varPrefix + "Settings"].value[x].mapType ? autoTrimpSettings[varPrefix + "Settings"].value[x].mapType : 'Absolute';
 				if (titleText.includes('Time Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus')) vals.repeat = autoTrimpSettings[varPrefix + "Settings"].value[x].repeat ? autoTrimpSettings[varPrefix + "Settings"].value[x].repeat : 1;
 				if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm')) vals.repeatevery = autoTrimpSettings[varPrefix + "Settings"].value[x].repeatevery ? autoTrimpSettings[varPrefix + "Settings"].value[x].repeatevery : 0;
@@ -569,7 +569,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<div class='windowWorld'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
 			if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingZone'><input value='" + vals.raidingzone + "' type='number' id='windowRaidingZone" + x + "'/></div>";
 			tooltipText += "<div class='windowCell'><input value='" + vals.cell + "' type='number' id='windowCell" + x + "'/></div>";
-			if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm')) tooltipText += "<div class='windowAutoLevel' style='text-align: center;'>" + buildNiceCheckbox("windowAutoLevel" + x, null, vals.autoLevel) + "</div>";
+			if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Insanity Farm') || titleText.includes('Alchemy Farm') || titleText.includes('Hypothermia Farm')) tooltipText += "<div class='windowAutoLevel' style='text-align: center;'>" + buildNiceCheckbox("windowAutoLevel" + x, null, vals.autoLevel) + "</div>";
 			if (!titleText.includes('Quagmire Farm') && !titleText.includes('Bone Shrine') && !titleText.includes('Raiding') && !titleText.includes('Void')) tooltipText += "<div class='windowLevel'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
 			if (titleText.includes('Worshipper Farm')) tooltipText += "<div class='windowWorshipper'><input value='" + vals.worshipper + "' type='number' id='windowWorshipper" + x + "'/></div>";
 			if (titleText.includes('Time Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus')) tooltipText += "<div class='windowRepeat'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
@@ -689,7 +689,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 				var gather = null;
 		}
 
-		if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm')) var autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
+		if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Insanity Farm') || titleText.includes('Alchemy Farm') || titleText.includes('Hypothermia Farm')) var autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
 		if (titleText.includes('Tribute')) var mapType = document.getElementById('windowTributeFarmDropdown' + x).value;
 		if (titleText.includes('Tribute')) var tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
 		if (titleText.includes('Tribute')) var mets = parseInt(document.getElementById('windowMets' + x).value, 10);
@@ -1066,7 +1066,7 @@ function removeRow(index, titleText) {
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', true);
 	}
-	if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm')) {
+	if (titleText.includes('Time Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Insanity Farm') || titleText.includes('Alchemy Farm') || titleText.includes('Hypothermia Farm')) {
 		var checkBox = document.getElementById('windowAutoLevel' + index);
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', false);
