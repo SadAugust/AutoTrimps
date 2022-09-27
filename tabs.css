@@ -207,6 +207,7 @@ ul.tab li a:hover {
 .windowBoneAmount,
 .windowBoneGather,
 .windowJobRatio,
+.windowJobRatioTribute,
 .windowWorshipper,
 .windowBuildings,
 .windowAtlantrimp,
@@ -243,6 +244,11 @@ ul.tab li a:hover {
 }
 
 .windowJobRatio {
+	width: 11%;
+	cursor: pointer;
+}
+
+.windowJobRatioTribute {
 	width: 7%;
 	cursor: pointer;
 }
@@ -250,7 +256,6 @@ ul.tab li a:hover {
 .windowWorld,
 .windowCell,
 .windowThrough,
-.windowLevel,
 .windowRepeat,
 .windowRepeatEvery,
 .windowRaidingZone,
@@ -348,8 +353,7 @@ ul.tab li a:hover {
 }
 
 .windowBwZoneOff .windowBwWorld,
-.windowGatherOff .windowGather,
-.windowLevelOff .windowLevel {
+.windowGatherOff .windowGather {
 	display: none;
 }
 
@@ -358,8 +362,22 @@ ul.tab li a:hover {
 	width: 8%;
 }
 
+
+.windowLevel {
+	width: 7%;
+	opacity: 1;
+}
+
+.windowLevelOff .windowLevel {
+	width: 7%;
+	opacity: 0.3;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
 .windowLevelOn .windowLevel {
 	width: 7%;
+	opacity: 1;
 }
 
 .windowTxOn .windowTimes {
