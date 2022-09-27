@@ -648,7 +648,7 @@ function Rresetmapvars() {
 	insanityfragmappy = undefined;
 	insanityprefragmappy = undefined;
 	insanityfragmappybought = false;
-	rInsanityCurrentMap = undefined;
+	rIFCurrentMap = undefined;
 	//Equip Farm
 	Requipfarm = !1;
 	Rshouldequipfarm = !1;
@@ -664,7 +664,7 @@ function Rresetmapvars() {
 	rShouldAlchFarm = false;
 	RAlchFarm = false;
 	rAlchSpecialError = 0;
-	rAlchemyCurrentMap = undefined;
+	rAFCurrentMap = undefined;
 	//Hypothermia
 	rHypoFarm = false;
 	rShouldHypoFarm = false;

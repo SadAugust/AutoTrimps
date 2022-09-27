@@ -803,7 +803,7 @@ var rFragmentFarming = false;
 var rFragmentMapID = undefined;
 var rInitialFragmentMapID = undefined;
 var rFragMapBought = false;
-var rInsanityCurrentMap = undefined;
+var rIFCurrentMap = undefined;
 //Pandemonium
 var rShouldPandemoniumDestack = false;
 var rShouldPandemoniumFarm = false;
@@ -814,7 +814,7 @@ var rPandemoniumCurrentMap = undefined;
 //Alchemy
 var rShouldAlchFarm = false;
 var rAlchSpecialError = 0;
-var rAlchemyCurrentMap = undefined;
+var rAFCurrentMap = undefined;
 //Hypothermia
 var rHypoFarm = false;
 var rShouldHypoFarm = false;
@@ -1160,7 +1160,7 @@ function RautoMap() {
 		var rMBZone = rRunningC3 ? getPageSetting('rc3MapBonusZone') : rRunningDaily ? getPageSetting('rdMapBonusZone') : getPageSetting('rMapBonusZone');
 		var rMBBaseSettings = rRunningC3 ? autoTrimpSettings.rc3MapBonusSettings.value : rRunningDaily ? autoTrimpSettings.rdMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
 		rMBIndex = null;
-		for (var y = 0; y < rMBZone.length; y++) {
+		for (var y = 0; y < rMBBaseSettings.length; y++) {
 			if (game.global.world - rMBZone[y] >= 0 && rMBBaseSettings[y].active)
 				rMBIndex = rMBZone.indexOf(rMBZone[y]);
 			else
@@ -1814,8 +1814,8 @@ function RautoMap() {
 				if (rIFStacks > game.challenges.Insanity.insanity || (rIFSettings.destack && game.challenges.Insanity.insanity > rIFStacks))
 					rShouldInsanityFarm = true;
 
-				if (rInsanityCurrentMap != undefined && !rShouldInsanityFarm) {
-					rInsanityCurrentMap = undefined;
+				if (rIFCurrentMap != undefined && !rShouldInsanityFarm) {
+					rIFCurrentMap = undefined;
 					if (getPageSetting('rMapRepeatCount')) debug("Insanity Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 					currTime = 0
 					if (rIFautoLevel !== Infinity) rIFautoLevel = Infinity;
@@ -2061,8 +2061,8 @@ function RautoMap() {
 						if (alchpotions.toString().replace(/[^\d,:-]/g, '') > alchObj.potionsOwned[potion])
 							rShouldAlchFarm = true;
 					}
-					if (rAlchemyCurrentMap != undefined && !rShouldAlchFarm) {
-						rAlchemyCurrentMap = undefined;
+					if (rAFCurrentMap != undefined && !rShouldAlchFarm) {
+						rAFCurrentMap = undefined;
 						if (getPageSetting('rMapRepeatCount')) debug("Alchemy Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 						currTime = 0
 						if (rAFautoLevel !== Infinity) rAFautoLevel = Infinity;
@@ -2419,9 +2419,9 @@ function RautoMap() {
 					selectedMap = RShouldFarmMapCreation(rMayhemMapLevel, rMayhemSpecial);
 				} else if (rShouldInsanityFarm) {
 					selectedMap = RShouldFarmMapCreation(rIFMapLevel, rIFSpecial);
-					rInsanityCurrentMap = "rInsanity";
+					rIFCurrentMap = "rInsanity";
 					workerRatio = rIFJobRatio;
-					if (rInsanityCurrentMap !== 'rInsanity' || currTime === 0) currTime = getGameTime();
+					if (rIFCurrentMap !== 'rInsanity' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldPandemoniumDestack) {
 					selectedMap = RShouldFarmMapCreation(rPandemoniumMapLevel, pandspecial);
 				} else if (rShouldPandemoniumFarm) {
@@ -2436,9 +2436,9 @@ function RautoMap() {
 						rAlchSpecialError = game.stats.zonesCleared.value;
 					}
 					selectedMap = RShouldFarmMapCreation(alchmaplevel, alchspecial_alt, alchbiome);
-					rAlchemyCurrentMap = "rAlchemy";
+					rAFCurrentMap = "rAlchemy";
 					workerRatio = rAlchJobRatio;
-					if (rAlchemyCurrentMap !== 'rAlchemy' || currTime === 0) currTime = getGameTime();
+					if (rAFCurrentMap !== 'rAlchemy' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldHypoFarm) {
 					selectedMap = RShouldFarmMapCreation(rHFMapLevel, rHFSpecial);
 					rHFCurrentMap = "rHypoFarm";
