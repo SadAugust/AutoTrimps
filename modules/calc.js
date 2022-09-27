@@ -1257,7 +1257,7 @@ function RcalcHDratio() {
 		if (getPageSetting('rManageEquality') == 2) {
 			var ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1, false, false, checkMutations), false, false, false, false, false, checkMutations) * gammaBurstPct;
 			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', false, checkMutations);
-			ratio = (enemyHealth / ourDamage) * 4;
+			ratio = (enemyHealth / ourDamage) * (autoBattle.oneTimers.Burstier.owned ? 4 : 5;);
 		}
 		else {
 			var ourBaseDamage = RcalcOurDmg("avg", false, false, false);

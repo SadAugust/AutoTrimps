@@ -1754,7 +1754,7 @@ function RautoMap() {
 	if (game.global.challengeActive == "Mayhem" && getPageSetting('rMayhem')) {
 		var destackHits = getPageSetting('rMayhemDestack') > 0 ? getPageSetting('rMayhemDestack') : Infinity;
 		var destackZone = getPageSetting('rMayhemZone') > 0 ? getPageSetting('rMayhemZone') : Infinity;
-		if (game.challenges.Mayhem.stacks > 0 && (HDRatio * 4 > destackHits || game.global.world >= destackZone))
+		if (game.challenges.Mayhem.stacks > 0 && (HDRatio > destackHits || game.global.world >= destackZone))
 			rShouldMayhem = true;
 
 		if (rShouldMayhem) {
