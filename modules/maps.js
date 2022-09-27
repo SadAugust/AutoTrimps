@@ -1155,7 +1155,7 @@ function RautoMap() {
 		var rMBZone = rRunningC3 ? getPageSetting('rc3MapBonusZone') : rRunningDaily ? getPageSetting('rdMapBonusZone') : getPageSetting('rMapBonusZone');
 		var rMBBaseSettings = rRunningC3 ? autoTrimpSettings.rc3MapBonusSettings.value : rRunningDaily ? autoTrimpSettings.rdMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
 		rMBIndex = null;
-		for (var y = 0; y < rMBZone.length; y++) {
+		for (var y = 0; y < rMapBonusSettings.length; y++) {
 			if (game.global.world - rMBZone[y] >= 0 && rMBBaseSettings[y].active)
 				rMBIndex = rMBZone.indexOf(rMBZone[y]);
 			else
@@ -1806,16 +1806,12 @@ function RautoMap() {
 		rShouldPandemoniumDestack = false;
 		rShouldPandemoniumFarm = false;
 		rShouldPandemoniumJestimpFarm = false;
-		if (game.challenges.Pandemonium.pandemonium > 0 && game.global.world >= getPageSetting('RPandemoniumZone') && getPageSetting('RPandemoniumMaps')) {
+		if (game.challenges.Pandemonium.pandemonium > 0 && game.global.world >= getPageSetting('RPandemoniumZone')) {
 			rShouldPandemoniumDestack = true;
 		}
 		//Pandemonium destacking settings
-		if (rShouldPandemoniumDestack && getPageSetting('RPandemoniumMaps')) {
+		if (rShouldPandemoniumDestack) {
 			pandspecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc");
-			gammaburstmult = getPageSetting('RPandemoniumHits') < 5 && (RcalcOurHealth() / RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 20, 'Snimp'))) >= 5 ? (1 + (gammaBurstPct)) : 1;
-			hitsmap = getPageSetting('RPandemoniumHits') > 0 ? getPageSetting('RPandemoniumHits') : 10;
-			hitssurv = getPageSetting('RPandemoniumHits') < 5 ? getPageSetting('RPandemoniumHits') : 5;
-			go = false;
 
 			if (rShouldPandemoniumDestack) {
 				pandspecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
@@ -2752,7 +2748,7 @@ function RautoMap() {
 					if (rIFautoLevel !== Infinity) PerfectMapCost(rIFMapLevel, rIFSpecial, biome);
 					else RShouldFarmMapCost(rIFMapLevel, rIFSpecial, biome);
 				}
-				else if (rShouldPandemoniumDestack && getPageSetting('RPandemoniumMaps')) PerfectMapCost(rPandemoniumMapLevel, pandspecial);
+				else if (rShouldPandemoniumDestack) PerfectMapCost(rPandemoniumMapLevel, pandspecial);
 				else if (rShouldPandemoniumFarm) PerfectMapCost(getPageSetting('PandemoniumFarmLevel'), pandfarmspecial);
 				else if (rShouldPandemoniumJestimpFarm) PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'), 0)
 				else if (Rshouldalchfarm) {
