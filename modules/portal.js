@@ -602,7 +602,7 @@ function Rresetmapvars() {
 	RshouldDoMaps = false;
 	RlastMapWeWereIn = null;
 	RdoMaxMapBonus = false;
-	RvanillaMapatZone = false;
+	rVanillaMAZ = false;
 	rShouldMaxMapBonus = false;
 	rShouldSmithless = false;
 	rMBCurrentMap = undefined;
