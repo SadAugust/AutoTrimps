@@ -1014,9 +1014,8 @@ function initializeAllSettings() {
 	createSetting('ImportAutoTrimps', 'Import AutoTrimps', 'Import your AutoTrimps Settings. Asks you to name it as a profile afterwards.', 'infoclick', 'ImportAutoTrimps', null, 'Import Export');
 	createSetting('ExportAutoTrimps', 'Export AutoTrimps', 'Export your AutoTrimps Settings as a output string text formatted in JSON.', 'infoclick', 'ExportAutoTrimps', null, 'Import Export');
 	createSetting('DefaultAutoTrimps', 'Reset to Default', 'Reset everything to the way it was when you first installed the script. ', 'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export');
-	createSetting('DownloadDebug', 'Download for debug', 'Will download both your save and AT settings so that they can be debugged easier.', 'infoclick', 'ExportAutoTrimps, ', null, 'Import Export');
-	createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps, update, true', null, 'Import Export');
-	document.getElementById('DownloadDebug').setAttribute('onclick', 'ImportExportTooltip("ExportAutoTrimps","update",true)');
+	createSetting('DownloadDebug', 'Download for debug', 'Will download both your save and AT settings so that they can be debugged easier.', 'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export');
+	createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export');
 	settingsProfileMakeGUI();
 
 }
@@ -1042,7 +1041,6 @@ function convertSettings(oldSetting, newSetting, type, newName) {
 		autoTrimpSettings[oldSetting].value = 'undefined';
 
 }
-
 
 function createSetting(id, name, description, type, defaultValue, list, container) {
 	var btnParent = document.createElement("DIV");
