@@ -1064,7 +1064,7 @@ function RautoMap() {
 		rWFMapRepeats = 0;
 		rMBMapRepeats = 0;
 		rIFMapRepeats = 0;
-		rAlchemyMapRepeats = 0;
+		rAFMapRepeats = 0;
 		rHFMapRepeats = 0;
 		rSmithlessMapRepeats = 0;
 		currTime = 0;
@@ -1785,6 +1785,23 @@ function RautoMap() {
 				rIFStacks = rIFSettings.insanity;
 				var rIFJobRatio = rIFSettings.jobratio;
 
+				if (game.global.mapRunCounter === 0 && game.global.mapsActive && rIFMapRepeats !== 0) {
+					game.global.mapRunCounter = rIFMapRepeats
+					rIFMapRepeats = 0;
+				}
+				if (rIFSettings.autoLevel) {
+					if (rIFCurrentMap === undefined) {
+						if (rIFautoLevel === Infinity) rIFautoLevel = autoMapLevel(rIFSpecial);
+						if (rIFautoLevel !== Infinity && twoSecondInterval) rIFautoLevel = autoMapLevel(rIFSpecial);
+					}
+					if (sixSecondInterval && rIFCurrentMap !== undefined && autoMapLevel(rIFSpecial) > rIFautoLevel) {
+						rIFautoLevel = autoMapLevel(rIFSpecial);
+						rIFMapRepeats = game.global.mapRunCounter + 1;
+					}
+					if (rIFautoLevel !== Infinity) {
+						rIFMapLevel = rIFautoLevel;
+					}
+				}
 				if (rIFStacks > game.challenges.Insanity.maxInsanity)
 					rIFStacks = game.challenges.Insanity.maxInsanity;
 				if (rIFStacks > game.challenges.Insanity.insanity || (rIFSettings.destack && game.challenges.Insanity.insanity > rIFStacks))
@@ -1794,6 +1811,8 @@ function RautoMap() {
 					rInsanityCurrentMap = undefined;
 					if (getPageSetting('rMapRepeatCount')) debug("Insanity Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 					currTime = 0
+					if (rIFautoLevel !== Infinity) rIFautoLevel = Infinity;
+					rIFMapRepeats = 0;
 				}
 			}
 		}
@@ -1961,6 +1980,25 @@ function RautoMap() {
 				var rAlchJobRatio = rAlchSettings.jobratio;
 				alchpotions = rAlchSettings.potion;
 
+
+				if (game.global.mapRunCounter === 0 && game.global.mapsActive && rAFMapRepeats !== 0) {
+					game.global.mapRunCounter = rAFMapRepeats
+					rAFMapRepeats = 0;
+				}
+				if (rAFSettings.autoLevel) {
+					if (rAFCurrentMap === undefined) {
+						if (rAFautoLevel === Infinity) rAFautoLevel = autoMapLevel(rAFSpecial);
+						if (rAFautoLevel !== Infinity && twoSecondInterval) rAFautoLevel = autoMapLevel(rAFSpecial);
+					}
+					if (sixSecondInterval && rAFCurrentMap !== undefined && autoMapLevel(rAFSpecial) > rAFautoLevel) {
+						rAFautoLevel = autoMapLevel(rAFSpecial);
+						rAFMapRepeats = game.global.mapRunCounter + 1;
+					}
+					if (rAFautoLevel !== Infinity) {
+						rAFMapLevel = rAFautoLevel;
+					}
+				}
+
 				if (alchpotions != undefined) {
 					//Working out which potion the input corresponds to.
 					potion = alchpotions.charAt('0') == 'h' ? 0 :
@@ -2020,6 +2058,8 @@ function RautoMap() {
 						rAlchemyCurrentMap = undefined;
 						if (getPageSetting('rMapRepeatCount')) debug("Alchemy Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 						currTime = 0
+						if (rAFautoLevel !== Infinity) rAFautoLevel = Infinity;
+						rAFMapRepeats = 0;
 					}
 				}
 			}
@@ -2070,6 +2110,23 @@ function RautoMap() {
 					shedCost += game.buildings.Shed.cost.wood()
 				rHFBonfireCostTotal += shedCost;
 
+				if (game.global.mapRunCounter === 0 && game.global.mapsActive && rHFMapRepeats !== 0) {
+					game.global.mapRunCounter = rHFMapRepeats
+					rHFMapRepeats = 0;
+				}
+				if (rHFSettings.autoLevel) {
+					if (rHFCurrentMap === undefined) {
+						if (rHFautoLevel === Infinity) rHFautoLevel = autoMapLevel(rHFSpecial);
+						if (rHFautoLevel !== Infinity && twoSecondInterval) rHFautoLevel = autoMapLevel(rHFSpecial);
+					}
+					if (sixSecondInterval && rHFCurrentMap !== undefined && autoMapLevel(rHFSpecial) > rHFautoLevel) {
+						rHFautoLevel = autoMapLevel(rHFSpecial);
+						rHFMapRepeats = game.global.mapRunCounter + 1;
+					}
+					if (rHFautoLevel !== Infinity) {
+						rHFMapLevel = rHFautoLevel;
+					}
+				}
 
 				if (rHFBonfireCostTotal > game.resources.wood.owned && rHFBonfire > game.challenges.Hypothermia.totalBonfires) {
 					rShouldHypoFarm = true;
@@ -2078,6 +2135,8 @@ function RautoMap() {
 					rHFCurrentMap = undefined;
 					if (getPageSetting('rMapRepeatCount')) debug("Hypothermia took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
 					currTime = 0
+					if (rTFautoLevel !== Infinity) rHFautoLevel = Infinity;
+					rHFMapRepeats = 0;
 				}
 			}
 		}
