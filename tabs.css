@@ -348,13 +348,18 @@ ul.tab li a:hover {
 }
 
 .windowBwZoneOff .windowBwWorld,
-.windowGatherOff .windowGather {
+.windowGatherOff .windowGather,
+.windowLevelOff .windowLevel {
 	display: none;
 }
 
 .windowBwZoneOn .windowBwWorld,
 .windowGatherOn .windowGather {
-	width: 10%;
+	width: 8%;
+}
+
+.windowLevelOn .windowLevel {
+	width: 7%;
 }
 
 .windowTxOn .windowTimes {
