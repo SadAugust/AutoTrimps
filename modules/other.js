@@ -2393,13 +2393,14 @@ function equalityManagement() {
 		var ourHealth = remainingHealth();
 		var ourHealthMax = RcalcOurHealth(runningQuest)
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
-		var ourDmg = RcalcOurDmg('min', 0, mapping, true, false, debugStats) * bionicTalent;
+		var ourDmg = RcalcOurDmg('min', 0, mapping, true, false) * bionicTalent;
 		var ourDmgEquality = 0;
 
 		//Enemy stats
 		var enemyName = game.global[mapGrid][currentCell].name;
 		var enemyHealth = game.global[mapGrid][currentCell].health;
 		var enemyDmg = getCurrentEnemy().attack * RcalcBadGuyDmgMod() * 1.5;
+		if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
 		enemyDmg *= !mapping && dailyCrit && dailyEmpower ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 		enemyDmg *= type === 'map' && mapping && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
