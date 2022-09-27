@@ -1425,6 +1425,9 @@ function RautoMap() {
 					if (rTrFMeteorologists > game.jobs.Meteorologist.owned)
 						rShouldMetFarm = true;
 				}
+
+				if (rShouldTributeFarm && !getPageSetting('RBuyBuildingsNew')) rBuyTributes;
+
 				if (!rShouldTimeFarm && totalTrFCost > game.resources.food.owned && game.global.world > 34 && game.mapUnlocks.AncientTreasure.canRunOnce && rTrFAtlantrimp && (rShouldTributeFarm || rShouldMetFarm)) {
 					var barnCost = 0;
 					//Seconds is 165 due to avg of 5x caches (20s per), 4x chronoimps (5s per), 1x jestimp (45s)

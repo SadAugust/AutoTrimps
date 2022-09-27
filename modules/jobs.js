@@ -567,7 +567,7 @@ function RbuyJobs() {
 	if ((autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rShouldMetFarm) && !rBSRunningAtlantrimp) {
 		var affordableMets = getMaxAffordable(
 			game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
-			game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100),
+			game.resources.food.owned * (rShouldMetFarm ? 1 : (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100)),
 			game.jobs.Meteorologist.cost.food[1],
 			true
 		);
