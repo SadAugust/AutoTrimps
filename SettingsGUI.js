@@ -29,7 +29,7 @@ function automationMenuInit() {
 		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 	}
 	if (game.global.universe == 2) {
-		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + HDRatio  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \"Advanced\" it will factor in the equality required for the zone too. Additionally if you have a shield with Gamma Burst on it it\'ll assume every hit procs Gamma Burst as that will be your main damage source.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + HDRatio  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 	}
 	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
 	abutton = document.createElement("SPAN");
@@ -810,6 +810,7 @@ function initializeAllSettings() {
 	//Radon
 	createSetting('rManageEquality', ['Auto Equality Off', 'Auto Equality: Basic', 'Auto Equality: Advanced'], 'Manages Equality settings for you. <br><br><b>Auto Equality: Basic</b><br>Sets Equality to 0 on Slow enemies, and Autoscaling on for Fast enemies.<br><br><b>Auto Equality: Advanced</b><br>Will automatically identify the best equality levels to kill the current enemy and change it when necessary.', 'multitoggle', 0, null, 'Combat');
 	createSetting('Rcalcmaxequality', ['Equality Calc Off', 'EC: On', 'EC: Health'], '<b>Experimental. </b><br>Adds Equality Scaling levels to the battlecalc. Will always calculate equality based on actual scaling levels when its turned off by other settings. Assumes you use Equality Scaling. Turning this on allows in-game Equality Scaling to adjust your Health accordingly. EC: Health only decreases enemies attack in the calculation which may improve speed. ', 'multitoggle', 0, null, 'Combat');
+	createSetting('rCalcGammaBurst', 'Gamma Burst Calc', '<b>Experimental.</b><br>Adds Gamma Burst to your HD Ratio. Be warned, it will assume that you have a gamma burst ready to trigger for every attack so your HD Ratio might be 1 but you\'d need to attack 4-5 times to reach that damage theshold.', 'boolean', true, null, 'Combat');
 	createSetting('Rcalcfrenzy', 'Frenzy Calc', '<b>Experimental.</b><br>Adds frenzy to the calc. Be warned, it will not farm as much with this on as it expects 100% frenzy uptime.', 'boolean', false, null, 'Combat');
 	createSetting('rMutationCalc', 'Mutation Calc', 'Whether you\'d like to factor Mutations into HD calc.', 'boolean', false, null, 'Combat');
 
@@ -2273,7 +2274,9 @@ function updateCustomButtons() {
 	//RCombat
 	radonon ? turnOn('rManageEquality') : turnOff('rManageEquality');
 	radonon && getPageSetting('rManageEquality') < 2 ? turnOn('Rcalcmaxequality') : turnOff('Rcalcmaxequality');
+	radonon && (getPageSetting('rDisplayAllSettings') || getPageSetting('rManageEquality') === 2) ? turnOn('rCalcGammaBurst') : turnOff('rCalcGammaBurst');
 	radonon && (getPageSetting('rDisplayAllSettings') || (!game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned)) ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
+
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 200) ? turnOn('rMutationCalc') : turnOff('rMutationCalc');
 
 	//Challenges
@@ -2794,7 +2797,7 @@ function toggleRadonStatus(update) {
 	if (update) {
 		if (getPageSetting('Rshowautomapstatus')) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + HDRatio  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'\Advanced\'\ it will factor in the equality required for the zone too. Additionally if you have a shield with Gamma Burst on it it\'\ll assume every hit procs Gamma Burst as that will be your main damage source.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + HDRatio  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 		} else
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
@@ -2805,7 +2808,8 @@ function toggleRadonStatus(update) {
 		if (game.global.universe == 2) {
 			turnOff('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + HDRatio  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \"Advanced\" it will factor in the equality required for the zone too. Additionally if you have a shield with Gamma Burst on it it\'ll assume every hit procs Gamma Burst as that will be your main damage source.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + HDRatio  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 		}
 	}
 	else {

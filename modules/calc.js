@@ -1254,18 +1254,17 @@ function RcalcEnemyHealthMod(world, cell, name, type, query, checkMutations) {
 }
 
 function RcalcHDratio() {
-	var ratio = 0;
+	var ratio = Infinity;
 	var checkMutations = game.global.world > 200 && getPageSetting('rMutationCalc')
 	if (game.global.gridArray.length > 0) {
+		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', false, checkMutations);
+		var ourDamage = RcalcOurDmg("avg", false, false, false);
 		if (getPageSetting('rManageEquality') == 2) {
-			var ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1, false, false, checkMutations), false, false, false, false, false, checkMutations) * gammaBurstPct;
-			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', false, checkMutations);
-			ratio = (enemyHealth / ourDamage) * (autoBattle.oneTimers.Burstier.owned ? 4 : 5);
+			var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
+			ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1, false, false, checkMutations), false, false, false, false, false, checkMutations) * gammaBurstDmg;
 		}
-		else {
-			var ourBaseDamage = RcalcOurDmg("avg", false, false, false);
-			ratio = RcalcEnemyHealth(game.global.world) / ourBaseDamage;
-		}
+
+		ratio = enemyHealth / ourDamage;
 	}
 	return ratio;
 }
