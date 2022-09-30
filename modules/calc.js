@@ -932,9 +932,10 @@ function rMutationAttack(cell) {
 	return baseAttack;
 }
 
-function rCalcMutationAttack() {
+function rCalcMutationAttack(muteCell) {
 	var attack;
 	var highest = 1;
+	var worstCell = 0;
 
 	for (var i = 0; i < game.global.gridArray.length; i++) {
 		var hasRage = game.global.gridArray[i].u2Mutation.includes('RGE');
@@ -948,10 +949,12 @@ function rCalcMutationAttack() {
 		}
 		var cell = game.global.gridArray[i];
 		if (cell.u2Mutation && cell.u2Mutation.length) {
+			if (rMutationAttack(cell) > highest) worstCell = i;
 			highest = Math.max(rMutationAttack(cell) * (hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1), highest);
 			attack = highest;
 		}
 	}
+	if (muteCell) debug(worstCell + 1)
 
 	return attack;
 }
@@ -1033,6 +1036,9 @@ function RcalcBadGuyDmgMod(forceMaps) {
 	dmg *= game.global.challengeActive == 'Mayhem' && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Mayhem.getBossMult() : 1;
 	dmg *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult() : 1;
 	dmg *= game.global.challengeActive == 'Storm' && !game.global.mapsActive ? game.challenges.Storm.getAttackMult() : 1;
+	dmg *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
+	dmg *= game.global.challengeActive == 'Nurture' ? 2 : 1;
+	dmg *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	dmg *= game.global.challengeActive == 'Pandemonium' && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Pandemonium.getBossMult() : 1;
 	dmg *= game.global.challengeActive == 'Pandemonium' && !(!game.global.mapsActive && game.global.lastClearedCell + 2 == 100) ? game.challenges.Pandemonium.getPandMult() : 1;
 	dmg *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
@@ -1178,19 +1184,22 @@ function rMutationHealth(cell) {
 	return baseHealth;
 }
 
-function rCalcMutationHealth() {
+function rCalcMutationHealth(muteCell) {
 	var health;
 	var highest = 1;
 	var mute = false;
+	var worstCell = 0;
 	if (game.global.world > 200 && getPageSetting('rMutationCalc')) {
 		for (var i = 0; i < game.global.gridArray.length; i++) {
 			var cell = game.global.gridArray[i];
 			if (cell.u2Mutation && cell.u2Mutation.length) {
+				if (rMutationHealth(cell) > highest) worstCell = i;
 				highest = Math.max(rMutationHealth(cell), highest);
 				mute = true;
 				health = highest;
 			}
 		}
+		if (muteCell) debug(worstCell + 1)
 	}
 	if (!mute) health = RcalcEnemyBaseHealth("world", game.global.world, 99, 'Gorillimp');
 
@@ -1234,7 +1243,8 @@ function RcalcEnemyHealthMod(world, cell, name, type, query, checkMutations) {
 	health *= game.global.challengeActive == 'Storm' && !game.global.mapsActive ? game.challenges.Storm.getHealthMult() : 1;
 	//health *= game.global.challengeActive == 'Berserk' ? 1.5 : 1;
 	health *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
-	health *= game.global.challengeActive == 'Nurture' ? 2 : 1;
+	health *= game.global.challengeActive == 'Nurture' && type === 'world' ? 2 : 1;
+	health *= game.global.challengeActive == 'Nurture' && (type === 'map' || (!query && game.global.mapsActive)) ? 10 : 1;
 	health *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Pandemonium' && type === 'world' && (game.global.lastClearedCell + 2 === 100 || query) ? game.challenges.Pandemonium.getBossMult() : 1;
 	health *= game.global.challengeActive == 'Pandemonium' && ((type === 'world' && game.global.lastClearedCell + 2 !== 100) || (type !== 'world' || game.global.mapsActive)) ? game.challenges.Pandemonium.getPandMult() : 1;
