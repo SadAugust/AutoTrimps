@@ -2155,15 +2155,33 @@ function rManageEquality() {
 	}
 }
 
-function autoMapLevel(special, maxLevel, minLevel, floorCrit) {
+function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLevel, floorCrit) {
+	if (currentMap === undefined) {
+		if (currentAutoLevel === Infinity) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel, floorCrit);
+		if (currentAutoLevel !== Infinity && twoSecondInterval) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel, floorCrit);
+	}
+
+	//Increasing Map Level
+	if (sixSecondInterval && currentMap !== undefined && (autoMapLevel(special, maxLevel, minLevel, floorCrit) > currentAutoLevel)) {
+		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel, floorCrit);
+	}
+
+	if (sixSecondInterval && currentMap !== undefined && (autoMapLevel(special, maxLevel, minLevel, floorCrit, true) < currentAutoLevel)) {
+		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel, floorCrit, true);
+	}
+	return currentAutoLevel
+}
+
+function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	if (game.global.universe === 1) return 0;
 	if (maxLevel > 10) maxLevel = 10;
+	if (!statCheck) statCheck = false;
 	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
 	if (game.global.challengeActive === 'Wither' && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
 	if (game.global.challengeActive === 'Insanity' && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
 
-	var maxLevel = typeof (maxLevel) === 'undefined' ? 10 : maxLevel;
-	var minLevel = typeof (minLevel) === 'undefined' ? 0 - game.global.world + 6 : minLevel;
+	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
+	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - game.global.world + 6 : minLevel;
 	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
 	var biome = !biome ? (game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain") : biome;
 	var floorCrit = !floorCrit ? false : floorCrit;
@@ -2173,6 +2191,9 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit) {
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
+		if (!statCheck && game.resources.fragments.owned < PerfectMapCost_Actual(mapLevel, special, biome))
+			continue;
+
 		var equalityAmt = equalityQuery(true, false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
 		var ourDmg = (RcalcOurDmg('min', equalityAmt, true, false, false, floorCrit, true)) * 2;
 		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
@@ -2185,7 +2206,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit) {
 			debug("Maplevel = " + y + " Equality = " + equalityAmt + " Our Damage = " + ourDmg);
 			debug("Enemy dmg = " + enemyDmg + " + " + "Enemy health = " + enemyHealth)
 		} */
-		if ((game.resources.fragments.owned >= PerfectMapCost_Actual(mapLevel, special, biome) && enemyHealth <= ourDmg) && ((enemyDmg <= ourHealth))) {
+		if (enemyHealth <= ourDmg && enemyDmg <= ourHealth) {
 			return mapLevel;
 		}
 		if (y === minLevel) {

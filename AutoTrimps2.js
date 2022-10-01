@@ -233,8 +233,11 @@ function mainLoop() {
 
 		//Offline Progress
 		if (!usingRealTimeOffline) RsetScienceNeeded();
-		var date = new Date();
-		var oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
+		//Interval code
+		date = new Date();
+		oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
+		twoSecondInterval = ((date.getSeconds() % 2) === 0 && (date.getMilliseconds() < 100));
+		sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
 
 		//Heirloom Shield Swap Check
 		if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
