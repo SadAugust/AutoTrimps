@@ -2471,7 +2471,7 @@ function equalityManagement() {
 					break;
 				}
 				else if ((ourHealth < (ourHealthMax * 0.75) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
-					if (runningQuest && !mapping && !runningMayhem) {
+					if (runningQuest || (!mapping && !runningMayhem)) {
 						mapsClicked();
 						mapsClicked();
 					}
