@@ -758,6 +758,7 @@ var RneedToVoid = false;
 var Requipfarm = !1;
 var rShouldEquipFarm = !1;
 var Requipminusglobal = -1;
+var rEquipCurrentMap = undefined;
 //Time Farm
 rShouldTimeFarm = false;
 var rTFCurrentMap = undefined;
@@ -1145,9 +1146,9 @@ function RautoMap() {
 				if (game.global.lastClearedCell + 2 >= rVMCell) {
 					var rVMJobRatio = rVMSettings.jobratio
 					if (rVMCurrentMap != undefined && game.global.totalVoidMaps === 0) {
-						if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+						if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
 						rVMCurrentMap = undefined;
-						currTime = 0
+						currTime = 0;
 						RdoVoids = false;
 					}
 					if (game.global.totalVoidMaps > 0)
@@ -2448,7 +2449,7 @@ function RautoMap() {
 					if (rSmithlessCurrentMap !== 'rSmithless' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldEquipFarm) {
 					selectedMap = RShouldFarmMapCreation(equipminus, 'lmc');
-					rEquipCurrentMap = 'rEquipFarm'
+					rEquipCurrentMap = 'rEquipFarm';
 					//workerRatio = rEFJobRatio;
 					if (rEquipCurrentMap !== 'rEquipFarm' || currTime === 0) currTime = getGameTime();
 				}
