@@ -220,7 +220,8 @@ ul.tab li a:hover {
 .windowTributeFarmDropdown,
 .windowTributeFarmDropdownDefault,
 .windowAutoLevel,
-.windowEndZone {
+.windowEndZone,
+.windowShred {
 	display: inline-block;
 }
 
@@ -347,17 +348,15 @@ ul.tab li a:hover {
 	width: 10%;
 }
 
-.windowBwZoneOn .windowRepeatUntil,
+.windowRepeatUntil,
 .windowGatherOn .windowSpecial {
 	width: 16%;
 }
 
-.windowBwZoneOff .windowBwWorld,
 .windowGatherOff .windowGather {
 	display: none;
 }
 
-.windowBwZoneOn .windowBwWorld,
 .windowGatherOn .windowGather {
 	width: 8%;
 }
@@ -380,21 +379,22 @@ ul.tab li a:hover {
 	opacity: 1;
 }
 
-.windowTxOn .windowTimes {
-	width: 11.5% !important;
+.windowShred {
+	width: 12%;
 }
 
-.windowTxOff .windowTx {
+.windowShredOff .windowShred {
 	display: none;
 }
 
-.windowTx {
-	width: 5.5%;
+.windowShredOn .windowShred {
+	width: 12%;
+	opacity: 1;
 }
 
-.windowBwMainOff .windowRepeatUntil select .windowBwClimbOption {
-	display: none;
-}
+
+
+
 
 #tooltipDiv.tooltipWindowLg {
 	width: 60%;
@@ -416,7 +416,6 @@ ul.tab li a:hover {
 #tooltipDiv.tooltipExtraBiggest {
 	width: 90%;
 }
-
 
 
 

@@ -1429,6 +1429,15 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				saveSettings();
 			}
 		}
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.2') {
+			if (typeof (autoTrimpSettings.rBoneShrineSettings.value[0]) !== 'undefined' && autoTrimpSettings.rBoneShrineSettings.value[0].shredActive === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rBoneShrineSettings.value.length; y++) {
+					autoTrimpSettings.rBoneShrineSettings.value[y].shredActive = 'All';
+				}
+				saveSettings();
+			}
+		}
+
 
 
 		autoTrimpSettings["ATversion"] = ATversion;

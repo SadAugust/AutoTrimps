@@ -2789,7 +2789,6 @@ function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceM
 }
 
 function boneShrineOutput(charges) {
-	if (game.permaBoneBonuses.boosts.charges <= 0) return;
 
 	charges = !charges ? 0 : charges;
 
