@@ -407,6 +407,7 @@ function RquestbuyJobs() {
 	var freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	var totalDistributableWorkers = freeWorkers + game.jobs.Farmer.owned + game.jobs.Miner.owned + game.jobs.Lumberjack.owned;
 
+	var firing = game.global.firing;
 	var farmerRatio = 0;
 	var lumberjackRatio = 0;
 	var minerRatio = 0;

@@ -2456,7 +2456,7 @@ function equalityManagement() {
 				enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i);
 				ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 
-				if (runningMayhem && fastEnemy) enemyDmgEquality += game.challenges.Mayhem.poison;
+				if (runningMayhem) enemyDmgEquality += game.challenges.Mayhem.poison;
 
 				if (runningUnlucky) {
 					ourDmgEquality = RcalcOurDmg('min', i, mapping, true) * bionicTalent;
@@ -2471,11 +2471,11 @@ function equalityManagement() {
 					break;
 				}
 				else if ((ourHealth < (ourHealthMax * 0.75) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
-					if ((runningQuest) || !mapping) {
+					if (runningQuest || (!mapping && !runningMayhem)) {
 						mapsClicked();
 						mapsClicked();
 					}
-					else if (mapping && currentCell > 0 && type !== 'void' && game.global.titimpLeft == 0) {
+					else if (mapping && currentCell > 0 && type !== 'void' && game.global.titimpLeft === 0) {
 						mapsClicked();
 						rRunMap();
 					}
@@ -2488,6 +2488,8 @@ function equalityManagement() {
 					game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
 					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
 					updateEqualityScaling();
+				} else if (runningMayhem && fastEnemy && enemyDmgEquality > ((game.global.soldierHealth * 6) + game.challenges.Mayhem.poison)) {
+					continue;
 				} else if ((ourDmgEquality * gammaDmg) < enemyHealth && (gammaToTrigger > 1 || (gammaToTrigger > 1 && fuckGamma))) {
 					game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
 					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
@@ -2787,7 +2789,6 @@ function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceM
 }
 
 function boneShrineOutput(charges) {
-	if (game.permaBoneBonuses.boosts.charges <= 0) return;
 
 	charges = !charges ? 0 : charges;
 

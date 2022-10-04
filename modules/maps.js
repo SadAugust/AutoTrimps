@@ -742,22 +742,20 @@ MODULES.maps.PandemoniumFarmLevel = -1;
 //General
 var RshouldDoMaps = false;
 var RlastMapWeWereIn = null;
-var RdoMaxMapBonus = false;
 var rVanillaMAZ = false;
+var currTime = 0;
+//Map Bonus
 var rShouldMaxMapBonus = false;
 var rMBCurrentMap = undefined;
-var rVMCurrentMap = undefined;
-var rC3EndZoneSetting = -1;
-currTime = 0;
-var currentFarmingType = undefined;
-var rCurrentMap = undefined;
 //Void Maps
 var RdoVoids = false;
 var RneedToVoid = false;
+var rVMCurrentMap = undefined;
 //Equip Farm
 var Requipfarm = !1;
 var rShouldEquipFarm = !1;
 var Requipminusglobal = -1;
+var rEquipCurrentMap = undefined;
 //Time Farm
 rShouldTimeFarm = false;
 var rTFCurrentMap = undefined;
@@ -789,8 +787,6 @@ var rQFCurrentMap = undefined;
 //Quest
 var rShouldQuest = 0;
 var rHasQuested = false;
-var RquestSmithyWarning = -1;
-var RquestSmithyWarning_Setting = -1;
 //Mayhem
 var rShouldMayhem = false;
 var rMayhemCurrentMap = undefined;
@@ -800,10 +796,6 @@ var Rstormfarm = false;
 var Rshouldstormfarm = false;
 //Insanity
 var rShouldInsanityFarm = false;
-var rFragmentFarming = false;
-var rFragmentMapID = undefined;
-var rInitialFragmentMapID = undefined;
-var rFragMapBought = false;
 var rIFCurrentMap = undefined;
 //Pandemonium
 var rShouldPandemoniumDestack = false;
@@ -812,18 +804,15 @@ var rShouldPandemoniumFarm = false;
 var rShouldPandemoniumJestimpFarm = false;
 var savefile = null;
 var jestFarmMap = false;
-var rPandemoniumCurrentMap = undefined;
 //Alchemy
 var rShouldAlchFarm = false;
-var rAFSpecialError = 0;
 var rAFCurrentMap = undefined;
+var rAFSpecialError = 0;
 //Hypothermia
-var rHypoFarm = false;
 var rShouldHypoFarm = false;
 var rHFCurrentMap = undefined;
 var rHFBonfireCostTotal = 0;
-var rHypoRespecced = null;
-var rHypoBuyPackrat = false;
+var rHFBuyPackrat = false;
 //Smithless
 var rShouldSmithless = false;
 var rSmithlessCurrentMap = undefined;
@@ -1145,9 +1134,9 @@ function RautoMap() {
 				if (game.global.lastClearedCell + 2 >= rVMCell) {
 					var rVMJobRatio = rVMSettings.jobratio
 					if (rVMCurrentMap != undefined && game.global.totalVoidMaps === 0) {
-						if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".")
+						if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
 						rVMCurrentMap = undefined;
-						currTime = 0
+						currTime = 0;
 						RdoVoids = false;
 					}
 					if (game.global.totalVoidMaps > 0)
@@ -2075,15 +2064,15 @@ function RautoMap() {
 	}
 
 	//Hypothermia Farm
-	if ((game.global.challengeActive == 'Hypothermia' || (autoTrimpSettings.rHypoDefaultSettings.value.packrat && rHypoBuyPackrat)) && autoTrimpSettings.rHypoDefaultSettings.value.active) {
+	if ((game.global.challengeActive == 'Hypothermia' || (autoTrimpSettings.rHypoDefaultSettings.value.packrat && rHFBuyPackrat)) && autoTrimpSettings.rHypoDefaultSettings.value.active) {
 		if (autoTrimpSettings.rHypoDefaultSettings.value.packrat) {
-			if (!rHypoBuyPackrat && game.global.challengeActive == 'Hypothermia')
-				rHypoBuyPackrat = true;
-			if (rHypoBuyPackrat && game.global.challengeActive == '') {
+			if (!rHFBuyPackrat && game.global.challengeActive == 'Hypothermia')
+				rHFBuyPackrat = true;
+			if (rHFBuyPackrat && game.global.challengeActive == '') {
 				viewPortalUpgrades();
 				numTab(6, true);
 				buyPortalUpgrade('Packrat');
-				rHypoBuyPackrat = null;
+				rHFBuyPackrat = null;
 				activateClicked();
 			}
 		}
@@ -2448,7 +2437,7 @@ function RautoMap() {
 					if (rSmithlessCurrentMap !== 'rSmithless' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldEquipFarm) {
 					selectedMap = RShouldFarmMapCreation(equipminus, 'lmc');
-					rEquipCurrentMap = 'rEquipFarm'
+					rEquipCurrentMap = 'rEquipFarm';
 					//workerRatio = rEFJobRatio;
 					if (rEquipCurrentMap !== 'rEquipFarm' || currTime === 0) currTime = getGameTime();
 				}
@@ -2480,7 +2469,7 @@ function RautoMap() {
 			debug("Running LMC map due to only having 1 equip remaining on this map.")
 		}
 		if ((rShouldPrestigeRaid || (rShouldPrestigeRaid && RAMPfragfarming)) || (rFragmentFarming && (rShouldWorshipperFarm || rShouldInsanityFarm)) ||
-			(selectedMap == game.global.currentMapId || (rShouldQuagFarm || (!getCurrentMapObject().noRecycle && (rVanillaMAZ || RdoMaxMapBonus ||
+			(selectedMap == game.global.currentMapId || (rShouldQuagFarm || (!getCurrentMapObject().noRecycle && (rVanillaMAZ ||
 				RshouldFarm || RneedToVoid || rShouldTimeFarm || rShouldTributeFarm || rShouldMetFarm || rShouldSmithyFarm || rShouldPrestigeRaid || rShouldWorshipperFarm || rShouldEquipFarm || rShouldMaxMapBonus || rShouldSmithless || rShouldUnbalance || rShouldStorm || rShouldQuest > 0 || rShouldMayhem > 0 || Rshouldstormfarm || rShouldInsanityFarm || rShouldPandemoniumDestack || rShouldPandemoniumFarm || rShouldPandemoniumJestimpFarm || rShouldAlchFarm || rShouldHypoFarm || rShouldSmithless))))) {
 			//Starting with repeat on
 			if (!game.global.repeatMap)
