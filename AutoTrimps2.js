@@ -82,6 +82,7 @@ var lastHeliumZone = 0;
 var lastRadonZone = 0;
 var HDRatio = 0;
 var autoLevel = 0;
+var rC3EndZoneSetting = -1;
 
 //Get Gamma burst % value
 gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
@@ -281,12 +282,12 @@ function mainLoop() {
 			}
 			//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
 			if (game.global.challengeActive == "Quest" && getPageSetting('RBuyBuildingsNew')) {
-				if (game.global.autoStructureSettingU2.Smithy.enabled) {
+				if (getAutoStructureSetting().enabled && game.global.autoStructureSettingU2.Smithy.enabled) {
 					debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.")
 				}
 				//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
-				if (game.global.runningChallengeSquared && (getPageSetting('c3finishrun') === -1 ? Infinity : getPageSetting('c3finishrun')) <= game.c2.Quest) {
-					debug("The setting 'Finish C3' is lower or equal to your current Quest HZE. Increase this or smithies will be bought earlier than they should be.")
+				if (game.global.runningChallengeSquared && (getPageSetting('rQuestSmithyZone') === -1 ? Infinity : getPageSetting('rQuestSmithyZone')) <= game.c2.Quest) {
+					debug("The setting 'Q: Smithy Zone' is lower or equal to your current Quest HZE. Increase this or smithies will be bought earlier than they should be.")
 				}
 			}
 			//Downsize -- Warning message when about map settings causing issues later.

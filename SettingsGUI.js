@@ -703,8 +703,13 @@ function initializeAllSettings() {
 	createSetting('rTrappa', 'Trappa', 'Turn this on if you want to enable Trappa feautres.', 'boolean', false, null, 'C3');
 	createSetting('rTrappaCoords', 'T: Coords', 'The zone you would like to stop buying additional coordinations at.', 'value', -1, null, 'C3');
 
-	//Mayhem
+	//Unbalance
 	document.getElementById('rTrappaCoords').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('rQuest', 'Quest', 'Turn this on if you want AT to automate Quests. Will only function properly with AutoMaps enabled.', 'boolean', true, null, 'C3');
+	createSetting('rQuestSmithyZone', 'Q: Smithy Zone', 'The zone you\'ll stop your Quest run at (will assume 85 for non C3 version). Will calculate the smithies required for Quests and purchase spare ones if possible.', 'value', [999], null, 'C3');
+
+	//Mayhem
+	document.getElementById('rQuestSmithyZone').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rMayhem', 'Mayhem', 'Turn on Mayhem settings. ', 'boolean', false, null, 'C3');
 	createSetting('rMayhemDestack', 'M: HD Ratio', 'What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Mayhem stacks remaining to clear. ', 'value', '-1', null, 'C3');
 	createSetting('rMayhemZone', 'M: Zone', 'What zone you\'d like to start destacking from, can be used in conjunction with \'M: HD Ratio\' but will clear stacks until 0 are remaining regardless of the value set in \'M: HD Ratio\'.', 'value', '-1', null, 'C3');
@@ -2304,6 +2309,9 @@ function updateCustomButtons() {
 	//Trappapalooza
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) ? turnOn('rTrappa') : turnOff('rTrappa');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
+	//Quest
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) ? turnOn('rQuest') : turnOff('rQuest');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) && getPageSetting('rQuest') ? turnOn('rQuestSmithyZone') : turnOff('rQuestSmithyZone');
 	//Quagmire
 	turnOff('rQuagOn');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 69) ? turnOn('rQuagPopup') : turnOff('rQuagPopup');

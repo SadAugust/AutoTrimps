@@ -398,9 +398,9 @@ function RbuyBuildings() {
 	//Smithy purchasing
 	if (!game.buildings.Smithy.locked) {
 		// Purchasing a smithy whilst on Quest
-		if (game.global.challengeActive == 'Quest' && (smithiesBoughtThisZone < game.global.world || questcheck() === 10) && canAffordBuilding('Smithy')) {
+		if (game.global.challengeActive == 'Quest' && (smithiesBoughtThisZone < game.global.world || questcheck() === 10) && canAffordBuilding('Smithy') && getPageSetting('rQuest')) {
 			var smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1)
-			var questZones = Math.floor(((!game.global.runningChallengeSquared ? 85 : getPageSetting('c3finishrun') === -1 ? Infinity : getPageSetting('c3finishrun') - game.global.world) / 2) - 1);
+			var questZones = Math.floor(((!game.global.runningChallengeSquared ? 85 : getPageSetting('rQuestSmithyZone') === -1 ? Infinity : getPageSetting('rQuestSmithyZone') - game.global.world) / 2) - 1);
 			var smithiesToBuy = smithycanBuy > questZones ? smithycanBuy - questZones : questcheck() == 10 || (HDRatio * 10 >= getPageSetting('Rmapcuntoff')) ? 1 : 0;
 			if (smithiesBoughtThisZone > game.global.world) smithiesBoughtThisZone = 0;
 			//Buying smithies that won't be needed for quests before user entered end goal
@@ -409,7 +409,7 @@ function RbuyBuildings() {
 				smithiesBoughtThisZone = game.global.world;
 			}
 		}
-		else if (game.global.challengeActive !== 'Quest' && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax) > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, false, autoTrimpSettings.rBuildingSettingsArray.value.Smithy.percent) || rShouldSmithyFarm)) {
+		else if ((game.global.challengeActive !== 'Quest' || !getPageSetting('rQuest')) && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax) > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, false, autoTrimpSettings.rBuildingSettingsArray.value.Smithy.percent) || rShouldSmithyFarm)) {
 			buyBuilding("Smithy", true, true, 1);
 		}
 	}

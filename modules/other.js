@@ -1515,11 +1515,8 @@ playerSpire.drawInfo = function (arguments) {
 
 //Radon
 function questcheck() {
-	if (game.global.challengeActive !== 'Quest')
+	if (game.global.challengeActive !== 'Quest' || game.global.world < game.challenges.Quest.getQuestStartZone() || !getPageSetting('rQuest'))
 		return 0;
-	if (game.global.world < game.challenges.Quest.getQuestStartZone()) {
-		return 0;
-	}
 	var questnotcomplete = game.challenges.Quest.getQuestProgress() != "Quest Complete!";
 	if (game.challenges.Quest.getQuestProgress() == "Failed!") return 0;
 	//Resource multipliers

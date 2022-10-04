@@ -954,7 +954,7 @@ function RautoMap() {
 	//Quest
 	var Rquestfarming = false;
 	rShouldQuest = 0;
-	Rquestfarming = (game.global.world > 5 && game.global.challengeActive == "Quest" && questcheck() > 0 && game.challenges.Quest.getQuestProgress != 'Quest Complete!');
+	Rquestfarming = (game.global.world > 5 && game.global.challengeActive === "Quest" && questcheck() > 0 && game.challenges.Quest.getQuestProgress !== 'Quest Complete!');
 
 	if (Rquestfarming) {
 		//Setting fallback to 0 might cause a repeat issue later on, need to test and debug
