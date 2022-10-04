@@ -398,7 +398,7 @@ function RbuyBuildings() {
 	//Smithy purchasing
 	if (!game.buildings.Smithy.locked) {
 		// Purchasing a smithy whilst on Quest
-		if (game.global.challengeActive == 'Quest' && smithiesBoughtThisZone < game.global.world && canAffordBuilding('Smithy')) {
+		if (game.global.challengeActive == 'Quest' && (smithiesBoughtThisZone < game.global.world || questcheck() === 10) && canAffordBuilding('Smithy')) {
 			var smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1)
 			var questZones = Math.floor(((!game.global.runningChallengeSquared ? 85 : getPageSetting('c3finishrun') === -1 ? Infinity : getPageSetting('c3finishrun') - game.global.world) / 2) - 1);
 			var smithiesToBuy = smithycanBuy > questZones ? smithycanBuy - questZones : questcheck() == 10 || (HDRatio * 10 >= getPageSetting('Rmapcuntoff')) ? 1 : 0;
