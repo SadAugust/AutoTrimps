@@ -988,7 +988,7 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, ignoreMutation,
 		if (typeof game.global.dailyChallenge.badStrength !== 'undefined')
 			attack *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
 
-		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && (game.global.mapsActive || (mapType !== false && mapType === 'map')))
+		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && (mapType !== 'world' && game.global.mapsActive))
 			attack *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
 
 		if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
@@ -1139,37 +1139,6 @@ function RcalcEnemyBaseHealth(type, zone, cell, name, query) {
 	return Math.floor(health);
 }
 
-function RcalcEnemyHealth(world) {
-	//Initialising variables
-	world = !world ? game.global.world : world;
-	var health = RcalcEnemyBaseHealth("world", world, 67, 'Gorillimp');
-
-	//Challenges
-	health *= game.global.challengeActive == 'Unbalance' ? 2 : 1;
-	health *= game.global.challengeActive == 'Quest' ? game.challenges.Quest.getHealthMult() : 1;
-	health *= game.global.challengeActive == 'Revenge' && game.global.world % 2 == 0 ? 10 : 1;
-	health *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult() : 1;
-	health *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getBossMult() : 1;
-	health *= game.global.challengeActive == 'Storm' && !game.global.mapsActive ? game.challenges.Storm.getHealthMult() : 1;
-	//health *= game.global.challengeActive == 'Berserk' ? 1.5 : 1;
-	health *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
-	health *= game.global.challengeActive == 'Nurture' ? 2 : 1;
-	health *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-	health *= game.global.challengeActive == 'Pandemonium' ? game.challenges.Pandemonium.getBossMult() : 1;
-	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
-	health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
-	health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
-
-	//Dailies
-	if (game.global.challengeActive == 'Daily') {
-		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
-		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
-		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
-	}
-
-	return health;
-}
-
 function rMutationHealth(cell) {
 	var baseHealth;
 	var addHealth = 0;
@@ -1202,16 +1171,6 @@ function rCalcMutationHealth(muteCell) {
 		if (muteCell) debug(worstCell + 1)
 	}
 	if (!mute) health = RcalcEnemyBaseHealth("world", game.global.world, 99, 'Gorillimp');
-
-	health *= game.global.challengeActive == 'Unbalance' && game.global.mapsActive ? 2 : game.global.challengeActive == 'Unbalance' ? 3 : 1;
-	health *= game.global.challengeActive == 'Quest' ? game.challenges.Quest.getHealthMult() : 1;
-	health *= game.global.challengeActive == 'Storm' && !game.global.mapsActive ? game.challenges.Storm.getHealthMult() : 1;
-	health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
-	//Dailies
-	if (game.global.challengeActive == 'Daily') {
-		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
-		health *= typeof game.global.dailyChallenge.empower !== 'undefined' ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
-	}
 
 	return health;
 }
@@ -1255,7 +1214,7 @@ function RcalcEnemyHealthMod(world, cell, name, type, query, checkMutations) {
 	//Dailies
 	if (game.global.challengeActive == 'Daily') {
 		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
-		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && (game.global.mapsActive || (type === 'map' || type === 'void')) ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
+		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && (type !== 'world' && (game.global.mapsActive || (type === 'map' || type === 'void'))) ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
 		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && (type === 'world' && (!game.global.mapsActive || checkMutations)) ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
 
@@ -1273,51 +1232,59 @@ function RcalcHDratio() {
 			var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
 			ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1, false, false, checkMutations), false, false, false, false, false, checkMutations) * gammaBurstDmg;
 		}
+		//debug("T_dmg - " + ourDamage.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
 
 		ratio = enemyHealth / ourDamage;
 	}
 	return ratio;
 }
 
+//This needs majorly updated!
 function getTotalHealthMod() {
 	var healthMulti = 1;
-	// Smithies
-	healthMulti *= game.buildings.Smithy.getMult();
-	// Antenna Array
-	healthMulti *= (game.buildings.Antenna.owned >= 10 ? game.jobs.Meteorologist.getExtraMult() : 1);
-	// Perks
-	healthMulti *= 1 + (game.portal.Toughness.radLevel * game.portal.Toughness.modifier);
-	healthMulti *= Math.pow(1 + game.portal.Resilience.modifier, game.portal.Resilience.radLevel);
-	healthMulti *= game.portal.Observation.getMult();
-	// Scruffy's +50% health bonus
-	healthMulti *= (Fluffy.isRewardActive("healthy") ? 1.5 : 1);
-	// Mayhem
-	healthMulti *= game.challenges.Mayhem.getTrimpMult();
-	// Pandemonium
-	healthMulti *= game.challenges.Pandemonium.getTrimpMult();
+	//Smithies
+	healthMulti *= game.buildings.Smithy.owned > 0 ? game.buildings.Smithy.getMult() : 1;
+	//Antenna Array
+	healthMulti *= game.buildings.Antenna.owned >= 10 ? game.jobs.Meteorologist.getExtraMult() : 1;
+	//Toughness add
+	healthMulti *= game.portal.Toughness.radLevel > 0 ? 1 + (game.portal.Toughness.radLevel * game.portal.Toughness.modifier) : 1;
+	//Resilience
+	healthMulti *= game.portal.Resilience.radLevel > 0 ? Math.pow(game.portal.Resilience.modifier + 1, game.portal.Resilience.radLevel) : 1;
+	//Scruffy is Life
+	healthMulti *= Fluffy.isRewardActive('healthy') ? 1.5 : 1;
+	//Observation
+	healthMulti *= game.portal.Observation.radLevel > 0 ? game.portal.Observation.getMult() : 1;
+	//Mayhem Completions
+	healthMulti *= game.global.mayhemCompletions > 0 ? game.challenges.Mayhem.getTrimpMult() : 1;
+	//Pandemonium Completions
+	healthMulti *= game.global.pandCompletions > 0 ? game.challenges.Pandemonium.getTrimpMult() : 1;
 	//AutoBattle
 	healthMulti *= autoBattle.bonuses.Stats.getMult();
 	// Heirloom Health bonus
 	healthMulti *= 1 + calcHeirloomBonus('Shield', 'trimpHealth', 1, true) / 100;
-	// Championism
+	//Championism
 	healthMulti *= game.portal.Championism.getMult();
-	// Golden Upgrades
-	healthMulti *= 1 + game.goldenUpgrades.Battle.currentBonus;
+	//Golden Battle
+	healthMulti *= game.goldenUpgrades.Battle.currentBonus > 0 ? 1 + game.goldenUpgrades.Battle.currentBonus : 1;
 	// Cinf
-	healthMulti *= 1 + game.global.totalSquaredReward / 100;
+	healthMulti *= game.global.totalSquaredReward > 0 ? 1 + (game.global.totalSquaredReward / 100) : 1;
+	//Mutator
+	healthMulti *= game.global.stringVersion >= '5.8.0' && u2Mutations.tree.Health.purchased ? 1.5 : 1;
 	// Challenge Multis
-	healthMulti *= game.global.challengeActive == 'Revenge' ? game.challenges.Revenge.getMult() : 1;
-	healthMulti *= game.global.challengeActive == 'Wither' ? game.challenges.Wither.getTrimpHealthMult() : 1;
+	healthMulti *= game.global.challengeActive == 'Revenge' && game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1;
+	healthMulti *= game.global.challengeActive == 'Wither' && game.challenges.Wither.trimpStacks > 0 ? game.challenges.Wither.getTrimpHealthMult() : 1;
 	healthMulti *= game.global.challengeActive == 'Insanity' ? game.challenges.Insanity.getHealthMult() : 1;
-	healthMulti *= game.global.challengeActive == 'Berserk' ? (game.challenges.Berserk.frenzyStacks > 0) ? 0.5 : game.challenges.Berserk.getHealthMult(true) : 1;
+	healthMulti *= game.global.challengeActive == 'Berserk' && game.challenges.Berserk.frenzyStacks > 0 ? game.challenges.Berserk.getHealthMult() : 1;
+	healthMulti *= game.global.challengeActive == 'Berserk' && game.challenges.Berserk.frenzyStacks <= 0 ? game.challenges.Berserk.getHealthMult(true) : 1;
 	healthMulti *= game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
 	healthMulti *= game.global.challengeActive == 'Alchemy' ? alchObj.getPotionEffect("Potion of Strength") : 1;
+	healthMulti *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 	// Daily mod
 	healthMulti *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
 	// Prismatic
 	healthMulti *= 1 + getEnergyShieldMult();
 	// Shield layer
-	healthMulti *= (Fluffy.isRewardActive('shieldlayer') ? 2 : 1);
+	healthMulti *= (Fluffy.isRewardActive('shieldlayer') ? 1 + Fluffy.isRewardActive('shieldlayer') : 1);
 	return healthMulti;
 }
 

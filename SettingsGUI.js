@@ -298,28 +298,24 @@ function initializeAllSettings() {
 	createSetting('dBWraidingmax', 'Daily Max BW to raid', 'Raids BWs until zone specified in dailys. Example: 515, will raid all BWs for all gear until 515. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Now accepts comma separated lists - see description of Daily Z to BW raid setting for details.', 'multiValue', [-1], null, 'Daily');
 
 	//Map Bonus
-	createSetting('rdMapBonus', 'Map Bonus', 'Turn this on if you want to use Map Bonus. ', 'boolean', false, null, 'Daily');
 	createSetting('rdMapBonusPopup', 'Map Bonus Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Daily Map Bonus", "rdMapBonus", "MAZ")', null, 'Daily');
 	createSetting('rdMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
 	createSetting('rdMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Daily');
 	createSetting('rdMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Daily');
 
 	//Radon Daily Time Farming 
-	createSetting('rdTimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'Daily');
 	createSetting('rdTimeFarmPopup', 'Time Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Daily Time Farm", "rdTimeFarm", "MAZ")', null, 'Daily');
 	createSetting('rdTimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'mazArray', [], null, 'Daily');
 	createSetting('rdTimeFarmDefaultSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Daily');
 	createSetting('rdTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
 
 	//Radon Daily Tribute Farming 
-	createSetting('rdTributeFarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Daily');
 	createSetting('rdTributeFarmPopup', 'Tribute Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Daily Tribute Farm", "rdTributeFarm", "MAZ")', null, 'Daily');
 	createSetting('rdTributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'mazArray', [], null, 'Daily');
 	createSetting('rdTributeFarmDefaultSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'mazDefaultArray', { cell: 83, jobratio: '100,1,1,1' }, null, 'Daily');
 	createSetting('rdTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Daily');
 
 	//Daily Smithy Farming
-	createSetting('rdSmithyFarm', 'Smithy Farm', 'Turn this on if you want to use Smithy Farming. ', 'boolean', false, null, 'Daily');
 	createSetting('rdSmithyFarmPopup', 'Smithy Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Daily Smithy Farm", "rdSmithyFarm", "MAZ")', null, 'Daily');
 	createSetting('rdSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
 	createSetting('rdSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'Daily');
@@ -465,11 +461,10 @@ function initializeAllSettings() {
 	createSetting('rEquipHighestPrestige', 'AE: Highest Prestige', 'Will only buy equips for the highest prestige currently owned.', 'boolean', true, null, "Gear");
 	createSetting('rEquipEfficientEquipDisplay', 'AE: Highlight Equips', 'Will highlight the most efficient equipment or prestige to buy. <b>This setting will disable the default game setting.', 'boolean', true, null, "Gear");
 	createSetting('rEquipNoShields', 'AE: No Shields', 'Will stop AT from buying Shield prestiges or upgrades when they\'re available.', 'boolean', false, null, "Gear");
-	createSetting('Requipfarmon', 'AE: Farm', 'AutoEquip Farm. Calculates metal needed to reach the target you have defined in the AEF settings. Will try to buy the best map you can make. Will never make a plus map as this is intended for us on deep push runs.', 'boolean', false, null, "Gear");
+	/* createSetting('Requipfarmon', 'AE: Farm', 'AutoEquip Farm. CURRENTLY BROKEN. WILL NOT WORK AS INTENDED. <br>Calculates metal needed to reach the target you have defined in the AEF settings. Will try to buy the best map you can make. Will never make a plus map as this is intended for use on deep push runs.', 'boolean', false, null, "Gear"); */
 	createSetting('Requipfarmzone', 'AEF: Zone', 'What zone to start AEF: H:D and AEF: Multiplier.', 'value', '-1', null, 'Gear');
 	createSetting('RequipfarmHD', 'AEF: H:D', 'What H:D to use for AEF target.', 'value', '-1', null, 'Gear');
 	createSetting('Requipfarmmult', 'AEF: Multiplier', 'Starting from the zone above AEF: Zone, this setting will multiply the H:D you have set in AEF: H:D. So if AEF: Zone was 100, AEF: H:D was 10, AEF: Multiplier was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low H:D.', 'value', '-1', null, 'Gear');
-	createSetting('Requipfarmhits', 'AEF: Hits', 'How many hits do you want to kill an enemy in a AEF map.', 'value', '-1', null, 'Gear');
 
 	//Maps
 	//Helium
@@ -506,8 +501,14 @@ function initializeAllSettings() {
 	createSetting('RMaxMapBonushealth', 'Max MapBonus Health', 'Limit the amount of map bonuses you get when AutoMaps requires more health. Default is 10.', 'value', '10', null, 'Μaps');
 	createSetting('Rhitssurvived', 'Hits Survived', 'Set this value to tell the script how many enemy attacks you wish to survive for. The default is 10. The lower this is the less health the script will get. If you set this too high it will farm too much so please be careful. ', 'value', '10', null, 'Μaps');
 	createSetting('Rmapcuntoff', 'Map Cut Off', 'Decides when to get max map bonus. 4 is default. This means it will take 1 hit to kill an enemy if in D stance.', 'value', '4', null, 'Μaps');
-	createSetting('RDisableFarm', 'Farming H:D', 'If H:D goes above this value, it will farm for Damage & Health. The lower this setting, the more it will want to farm. Default is <b>16<b/>. <b>-1 to disable farming!</b>', 'value', -1, null, 'Μaps');
+	//createSetting('RDisableFarm', 'Farming H:D', 'If H:D goes above this value, it will farm for Damage & Health. The lower this setting, the more it will want to farm. Default is <b>16<b/>. <b>-1 to disable farming!</b>', 'value', -1, null, 'Μaps');
 	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value.', 'value', '-1', null, 'Μaps');
+
+	//HD Farm
+	createSetting('rHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. NOT FULLY IMPLEMENTED YET .', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'Μaps');
+	createSetting('rHDFarmSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rHDFarmDefaultSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Μaps');
+	createSetting('rHDFarmZone', 'HD Farm: Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
 
 	//Worshipper Farm 
 	createSetting('rWorshipperFarmPopup', 'Worshipper Farm Settings', 'Contains arrays for this setting', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'Μaps');
@@ -523,31 +524,27 @@ function initializeAllSettings() {
 	createSetting('RMeltingPoint', 'Melting Point', '-1 to disable. When to run Melting Point. Use it like this: 50,91. The first number is what zone Melting Point should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Melting Point at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
 	//Frozen Castle
 	createSetting('rFrozenCastle', 'Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
+	document.getElementById('rFrozenCastle').parentNode.insertAdjacentHTML('afterend', '<br>');
 
 	//Map Bonus
-	createSetting('rMapBonus', 'Map Bonus', 'Turn this on if you want to use Map Bonus. ', 'boolean', false, null, 'Μaps');
 	createSetting('rMapBonusPopup', 'Map Bonus Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Map Bonus", "rMapBonus", "MAZ")', null, 'Μaps');
 	createSetting('rMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Μaps');
 	createSetting('rMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
 
 	//Time Farming
-	document.getElementById('rFrozenCastle').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('rTimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'Μaps');
 	createSetting('rTimeFarmPopup', 'Time Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")', null, 'Μaps');
 	createSetting('rTimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rTimeFarmDefaultSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Μaps');
 	createSetting('rTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
 
 	//Tribute Farming
-	createSetting('rTributeFarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. ', 'boolean', false, null, 'Μaps');
 	createSetting('rTributeFarmPopup', 'Tribute Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Tribute Farm", "rTributeFarm", "MAZ")', null, 'Μaps');
 	createSetting('rTributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rTributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83, jobratio: '100,1,1,1' }, null, 'Μaps');
 	createSetting('rTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
 
 	//Smithy Farming
-	createSetting('rSmithyFarm', 'Smithy Farm', 'Turn this on if you want to use Smithy Farming. ', 'boolean', false, null, 'Μaps');
 	createSetting('rSmithyFarmPopup', 'Smithy Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Smithy Farm", "rSmithyFarm", "MAZ")', null, 'Μaps');
 	createSetting('rSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'Μaps');
@@ -560,7 +557,6 @@ function initializeAllSettings() {
 	createSetting('rRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
 
 	//Void Maps
-	createSetting('rVoidMap', 'Void Map Settings', 'Turn this on if you want to use Void Map settings. ', 'boolean', false, null, 'Μaps');
 	createSetting('rVoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Μaps');
 	createSetting('rVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Μaps');
@@ -568,7 +564,6 @@ function initializeAllSettings() {
 
 	//Bone Shrine (bone) 
 	if (game.global.stringVersion >= '5.7.0') {
-		createSetting('rBoneShrine', 'Bone Shrine', 'Turn Bone Shrine settings on or off.', 'boolean', false, null, 'Μaps');
 		createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Click to adjust settings.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Μaps');
 		createSetting('rBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 		createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, bonebelow: 1, jobratio: '1,1,10,1', gather: 'metal' }, null, 'Μaps');
@@ -652,28 +647,24 @@ function initializeAllSettings() {
 	document.getElementById('c3GM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
 
 	//C3 Map Bonus
-	createSetting('rc3MapBonus', 'Map Bonus', 'Turn this on if you want to use Map Bonus. ', 'boolean', false, null, 'C3');
 	createSetting('rc3MapBonusPopup', 'Map Bonus Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("C3 Map Bonus", "rc3MapBonus", "MAZ")', null, 'C3');
 	createSetting('rc3MapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3MapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'C3');
 	createSetting('rc3MapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'C3');
 
 	//C3 Time Farm
-	createSetting('rc3TimeFarm', 'Time Farm', 'Turn this on if you want to use Time Farming. ', 'boolean', false, null, 'C3');
 	createSetting('rc3TimeFarmPopup', 'Time Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm", "MAZ")', null, 'C3');
 	createSetting('rc3TimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3TimeFarmDefaultSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'C3');
 	createSetting('rc3TimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 
 	//C3 Tribute (Met) Farm
-	createSetting('rc3TributeFarm', 'Tribute Farm', 'Turn this on if you want to use Tribute Farming. Doesn\'t run during the Downsize challenge. ', 'boolean', false, null, 'C3');
 	createSetting('rc3TributeFarmPopup', 'Tribute Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("C3 Tribute Farm", "rc3TributeFarm", "MAZ")', null, 'C3');
 	createSetting('rc3TributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3TributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83, jobratio: '100,1,1,1' }, null, 'C3');
 	createSetting('rc3TributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 
 	//Smithy Farming
-	createSetting('rc3SmithyFarm', 'Smithy Farm', 'Turn this on if you want to use Smithy Farming. ', 'boolean', false, null, 'C3');
 	createSetting('rc3SmithyFarmPopup', 'Smithy Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("C3 Smithy Farm", "rc3SmithyFarm", "MAZ")', null, 'C3');
 	createSetting('rc3SmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3SmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'C3');
@@ -1901,7 +1892,6 @@ function updateCustomButtons() {
 	radonon ? turnOn('buyradony') : turnOff('buyradony');
 
 	//Map Bonus  
-	turnOff('rdMapBonus');
 	radonon ? turnOn('rdMapBonusPopup') : turnOff('rdMapBonusPopup');
 	turnOff('rdMapBonusSettings');
 	turnOff('rdMapBonusDefaultSettings');
@@ -1929,21 +1919,18 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeliumHrBuffer') : turnOff('RdHeliumHrBuffer');
 
 	//Radon Daily Time Farming
-	turnOff('rdTimeFarm');
 	radonon ? turnOn('rdTimeFarmPopup') : turnOff('rdTimeFarmPopup');
 	turnOff('rdTimeFarmSettings');
 	turnOff('rdTimeFarmDefaultSettings');
 	turnOff('rdTimeFarmZone');
 
 	//Radon Daily Tribute Farming
-	turnOff('rdTributeFarm');
 	radonon ? turnOn('rdTributeFarmPopup') : turnOff('rdTributeFarmPopup');
 	turnOff('rdTributeFarmSettings');
 	turnOff('rdTributeFarmDefaultSettings');
 	turnOff('rdTributeFarmZone');
 
 	//Daily Smithy Farming  
-	turnOff('rdSmithyFarm');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rdSmithyFarmPopup') : turnOff('rdSmithyFarmPopup');
 	turnOff('rdSmithyFarmSettings');
 	turnOff('rdSmithyFarmDefaultSettings');
@@ -1970,7 +1957,6 @@ function updateCustomButtons() {
 
 	//C3
 	//Map Bonus  
-	turnOff('rc3MapBonus');
 	radonon ? turnOn('rc3MapBonusPopup') : turnOff('rc3MapBonusPopup');
 	turnOff('rc3MapBonusSettings');
 	turnOff('rc3MapBonusDefaultSettings');
@@ -1986,21 +1972,18 @@ function updateCustomButtons() {
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
 
 	//C3 Time Farm
-	turnOff('rc3TimeFarm');
 	radonon ? turnOn('rc3TimeFarmPopup') : turnOff('rc3TimeFarmPopup');
 	turnOff('rc3TimeFarmSettings');
 	turnOff('rc3TimeFarmDefaultSettings');
 	turnOff('rc3TimeFarmZone');
 
 	//C3 Tribute Farming
-	turnOff('rc3TributeFarm');
 	radonon ? turnOn('rc3TributeFarmPopup') : turnOff('rc3TributeFarmPopup');
 	turnOff('rc3TributeFarmSettings');
 	turnOff('rc3TributeFarmDefaultSettings');
 	turnOff('rc3TributeFarmZone');
 
 	//C3 Smithy Farming  
-	turnOff('rc3SmithyFarm');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rc3SmithyFarmPopup') : turnOff('rc3SmithyFarmPopup');
 	turnOff('rc3SmithyFarmSettings');
 	turnOff('rc3SmithyFarmDefaultSettings');
@@ -2103,11 +2086,10 @@ function updateCustomButtons() {
 	radonon && getPageSetting('Requipon') ? turnOn('Rdmgcuntoff') : turnOff('Rdmgcuntoff');
 
 	//RGear AutoEquip Farm
-	radonon && getPageSetting('Requipon') ? turnOn('Requipfarmon') : turnOff('Requipfarmon');
-	radonon && getPageSetting('Requipon') && getPageSetting('Requipfarmon') ? turnOn('Requipfarmzone') : turnOff('Requipfarmzone');
-	radonon && getPageSetting('Requipon') && getPageSetting('Requipfarmon') ? turnOn('RequipfarmHD') : turnOff('RequipfarmHD');
-	radonon && getPageSetting('Requipon') && getPageSetting('Requipfarmon') ? turnOn('Requipfarmmult') : turnOff('Requipfarmmult');
-	radonon && getPageSetting('Requipon') && getPageSetting('Requipfarmon') ? turnOn('Requipfarmhits') : turnOff('Requipfarmhits');
+	/* turnOn('Requipfarmon'); */
+	turnOff('Requipfarmzone');
+	turnOff('RequipfarmHD');
+	turnOff('Requipfarmmult');
 
 	//Maps
 	!radonon ? turnOn('AutoMaps') : turnOff('AutoMaps');
@@ -2139,7 +2121,6 @@ function updateCustomButtons() {
 	radonon ? turnOn('rMapSpecial') : turnOff('rMapSpecial');
 
 	//Map Bonus  
-	turnOff('rMapBonus');
 	radonon ? turnOn('rMapBonusPopup') : turnOff('rMapBonusPopup');
 	turnOff('rMapBonusSettings');
 	turnOff('rMapBonusDefaultSettings');
@@ -2147,7 +2128,6 @@ function updateCustomButtons() {
 
 
 	//Void Map 
-	turnOff('rVoidMap');
 	radonon ? turnOn('rVoidMapPopup') : turnOff('rVoidMapPopup');
 	turnOff('rVoidMapSettings');
 	turnOff('rVoidMapDefaultSettings');
@@ -2158,9 +2138,9 @@ function updateCustomButtons() {
 	radonon ? turnOn('RMaxMapBonusAfterZone') : turnOff('RMaxMapBonusAfterZone');
 	radonon ? turnOn('RMaxMapBonuslimit') : turnOff('RMaxMapBonuslimit');
 	radonon ? turnOn('RMaxMapBonushealth') : turnOff('RMaxMapBonushealth');
-	radonon ? turnOn('Rhitssurvived') : turnOff('Rhitssurvived');
+	radonon && (getPageSetting('rDisplayAllSettings') || getPageSetting('rManageEquality') !== 2) ? turnOn('Rhitssurvived') : turnOff('Rhitssurvived');
 	radonon ? turnOn('Rmapcuntoff') : turnOff('Rmapcuntoff');
-	radonon ? turnOn('RDisableFarm') : turnOff('RDisableFarm');
+	//radonon ? turnOn('RDisableFarm') : turnOff('RDisableFarm');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
 	radonon ? turnOn('rMapRepeatCount') : turnOff('rMapRepeatCount');
 	radonon ? turnOn('automateSpireAssault') : turnOff('automateSpireAssault');
@@ -2175,28 +2155,31 @@ function updateCustomButtons() {
 	radonon && game.global.stringVersion != '5.5.1' && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) ? turnOn('rFrozenCastle') : turnOff('rFrozenCastle');
 
 	//Tribute Farming
-	turnOff('rTributeFarm');
 	radonon ? turnOn('rTributeFarmPopup') : turnOff('rTributeFarmPopup');
 	turnOff('rTributeFarmSettings');
 	turnOff('rTributeFarmDefaultSettings');
 	turnOff('rTributeFarmZone');
 
 	//Time Farming  
-	turnOff('rTimeFarm');
 	radonon ? turnOn('rTimeFarmPopup') : turnOff('rTimeFarmPopup');
 	turnOff('rTimeFarmSettings');
 	turnOff('rTimeFarmDefaultSettings');
 	turnOff('rTimeFarmZone');
 
 	//Smithy Farming  
-	turnOff('rSmithyFarm');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rSmithyFarmPopup') : ('rSmithyFarmPopup');
 	turnOff('rSmithyFarmSettings');
 	turnOff('rSmithyFarmDefaultSettings');
 	turnOff('rSmithyFarmZone');
 
+
+	//HD Farm
+	radonon ? turnOn('rHDFarmPopup') : turnOff('rHDFarmPopup');
+	turnOff('rHDFarmSettings');
+	turnOff('rHDFarmDefaultSettings');
+	turnOff('rHDFarmZone');
+
 	//Worshippers 
-	turnOff('rWorshipperFarm');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('rWorshipperFarmPopup') : turnOff('rWorshipperFarmPopup');
 	turnOff('rWorshipperFarmSettings');
 	turnOff('rWorshipperFarmDefaultSettings');
@@ -2204,7 +2187,6 @@ function updateCustomButtons() {
 
 	//Bone Shrine (bones) 
 	if (game.global.stringVersion >= '5.7.0') {
-		turnOff('rBoneShrine');
 		radonon ? turnOn('rBoneShrinePopup') : turnOff('rBoneShrinePopup');
 		turnOff('rBoneShrineSettings');
 		turnOff('rBoneShrineDefaultSettings');
@@ -2341,7 +2323,6 @@ function updateCustomButtons() {
 
 	//Insanity
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 109) ? turnOn('rInsanityPopup') : turnOff('rInsanityPopup');
-	turnOff('rInsanityOn');
 	turnOff('rInsanitySettings');
 	turnOff('rInsanityDefaultSettings');
 	turnOff('rInsanityZone');
@@ -2368,7 +2349,6 @@ function updateCustomButtons() {
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
 
 	//Alchemy
-	turnOff('rAlchOn');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154) ? turnOn('rAlchPopup') : turnOff('rAlchPopup');
 	turnOff('rAlchSettings');
 	turnOff('rAlchDefaultSettings');
@@ -2384,7 +2364,6 @@ function updateCustomButtons() {
 	radonon ? turnOn('rSmithless') : turnOff('rSmithless');
 
 	//Hypothermia 
-	turnOff('rHypoOn');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) ? turnOn('rHypoPopup') : turnOff('rHypoPopup');
 	turnOff('rHypoSettings');
 	turnOff('rHypoDefaultSettings');
@@ -2493,7 +2472,6 @@ function updateCustomButtons() {
 	var hson = getPageSetting('Rhs')
 	var hsshieldon = getPageSetting('RhsShield');
 	radonon && hson && hsshieldon ? turnOn('RhsMapSwap') : turnOff('RhsMapSwap');
-	//radonon && hson && hsshieldon ? turnOn('RhsPlagueBringerSwap') : turnOff('RhsPlagueBringerSwap');
 	turnOff('RhsPlagueBringerSwap');
 
 	//Shields
@@ -2606,8 +2584,8 @@ function updateCustomButtons() {
 
 	if (game.global.universe == 1 && getPageSetting('DisableFarm') <= 0)
 		shouldFarm = false;
-	if (game.global.universe == 2 && getPageSetting('RDisableFarm') <= 0)
-		RshouldFarm = false;
+	/* if (game.global.universe == 2 && getPageSetting('RDisableFarm') <= 0)
+		RshouldFarm = false; */
 
 	MODULES["maps"] && (MODULES["maps"].preferGardens = !getPageSetting('PreferMetal'));
 	if (document.getElementById('Prestige').selectedIndex > 11 && !game.global.slowDone) {

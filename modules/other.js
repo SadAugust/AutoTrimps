@@ -2171,6 +2171,7 @@ function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLe
 
 function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	if (game.global.universe === 1) return 0;
+	if (!game.global.mapsUnlocked) return 0;
 	if (maxLevel > 10) maxLevel = 10;
 	if (!statCheck) statCheck = false;
 	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
@@ -2213,26 +2214,22 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 }
 
 function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty, forceOneShot, floorCrit, checkMutations) {
-	//Turning off equality scaling
-	game.portal.Equality.scalingActive = false;
+	var query = true;
 	//Misc vars
 
-	var currentCell = !cell && mapping ? game.global.lastClearedMapCell : !cell ? game.global.lastClearedCell : cell - 2;
-	var enemyName = !name ? game.global[mapGrid][currentCell + 1].name : name;
+	var currentCell = cell;
+	var enemyName = name;
 
 	var mapType = !mapType ? "world" : !mapType ? (getCurrentMapObject().location == "Void" ? "void" : "map") : mapType;
 	var mapping = mapType === 'world' ? false : true;
 	var zone = !zone && (mapType == "world" || !mapping) ? game.global.world : !zone ? getCurrentMapObject().level : zone;
-	var mapGrid = game.global.mapsActive ? 'mapGridArray' : 'gridArray';
 	var forceGamma = !forceGamma ? false : forceGamma;
 	var forceOneShot = !forceOneShot ? false : forceOneShot;
-	var query = !query ? false : query;
-	var difficulty = !query && !difficulty && !mapping ? 1 : !query && !difficulty ? getCurrentMapObject().difficulty : difficulty ? difficulty : 1;
-
+	var floorCrit = !floorCrit ? false : floorCrit;
+	var difficulty = !difficulty ? 1 : difficulty;
+	var bionicTalent = mapType !== 'world' && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 
 	//Daily modifiers active
-	var dailyEmpower = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.empower !== 'undefined' //Empower
-	var dailyReflect = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.mirrored !== 'undefined'; //Reflect
 	var dailyCrit = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var dailyExplosive = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
 	var dailyWeakness = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
@@ -2248,75 +2245,50 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	var runningExperienced = game.global.challengeActive == 'Exterminate' && game.challenges.Exterminate.experienced;
 	var runningGlass = game.global.challengeActive == 'Glass';
 	var runningSmithless = game.global.challengeActive == "Smithless" && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
-	//Challenge conditions
-	var runningUnlucky = game.global.challengeActive == 'Unlucky';
-	var runningTrappa = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology'
-	var runningQuest = ((game.global.challengeActive == 'Quest' && questcheck() == 8) || game.global.challengeActive == 'Berserk');
-	var runningGlass = game.global.challengeActive == 'Glass';
-	var floorCrit = !floorCrit ? false : floorCrit;
 
 	//Initialising name/health/dmg variables
 	//Enemy stats
-	var enemyName = !name ? game.global[mapGrid][currentCell + 1].name : name;
 	if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
-	var enemyHealth = !query ? game.global[mapGrid][currentCell + 1].health : RcalcEnemyHealthMod(zone, currentCell + 2, enemyName, mapType, true) * difficulty;
-	var enemyAttack = !query && getCurrentEnemy() ? getCurrentEnemy().attack * RcalcBadGuyDmgMod(true) :
-		RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType, mapping);
-
-	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType, mapping) * difficulty == enemyAttack ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType, mapping) * 1.5 * difficulty : enemyAttack * 1.5 * difficulty;
-
-	var enemyDmg = query ? RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell + 2, enemyName, mapType, query), 0, query, mapType, mapping) * difficulty * 1.5 : enemyDmg;
-
+	var enemyHealth = RcalcEnemyHealthMod(zone, currentCell, enemyName, mapType, true) * difficulty;
+	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, query), 0, query, mapType, mapping) * difficulty * 1.5;
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 
 	enemyDmg *= runningDuel ? 10 : 1;
-	if (!query || mapType === 'void') enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
+	if (mapType === 'void') enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
 	var enemyDmgEquality = 0;
-	var bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 	//Our stats
-	var ourHealth = query ? RcalcOurHealth(runningQuest) : remainingHealth();
-	var ourHealthMax = RcalcOurHealth(runningQuest)
+	var ourHealth = RcalcOurHealth(runningQuest, true);
 	var ourDmg = RcalcOurDmg('min', 0, mapping, false, false, floorCrit, true) * bionicTalent;
 
 	if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 
-	if (forceOneShot) ourDmg *= 2;
-	var ourDmgEquality = 0;
 	//Figuring out gamma burst stacks to proc and dmg bonus
 	var gammaToTrigger = forceGamma ? 0 : forceOneShot ? 999 : (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
-	var gammaDmg = gammaBurstPct;
-	var fastEnemy = fastimps.includes(enemyName);
-	if (!checkMutations && game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
-	if (query && mapType === 'map' && game.talents.mapHealth.purchased) ourHealth *= 2;
 
-
+	if (forceOneShot && mapping) ourDmg *= 2;
+	if (mapType === 'map' && game.talents.mapHealth.purchased) ourHealth *= 2;
 	if (checkMutations) {
-		ourDmg = RcalcOurDmg('min', 0, false, false, false, false, false, true);
-		enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, currentCell + 2, enemyName, 'world', false), 0, true, 'world', false, true);
-		enemyHealth = RcalcEnemyHealthMod(game.global.world, currentCell + 2, enemyName, null, false, true);
+		ourDmg = RcalcOurDmg('avg', 0, false, false, false, false, checkMutations);
+		enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, currentCell, enemyName, 'world', false), 0, true, 'world', false, checkMutations) * 1.5;
+		enemyHealth = RcalcEnemyHealthMod(game.global.world, currentCell, enemyName, null, false, checkMutations);
 		fastEnemy = true;
 	}
+	//if (checkMutations) debug("T_dmg - " + ourDmg.toExponential(2) + " E_dmg - " + enemyDmg.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
 
-	if (enemyHealth !== 0 && enemyHealth !== -1) {
+	var ourDmgEquality = 0;
+	if (enemyHealth !== 0) {
 		for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
-			enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i) * (runningTrappa ? 1.25 : 1);
+			enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i)
 			ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 			if (runningUnlucky) {
 				var unluckyDmg = Number(RcalcOurDmg('min', i, mapping, false, true, floorCrit, true) * bionicTalent)
 				ourDmgEquality = RcalcOurDmg('min', i, mapping, false, false, floorCrit, true) * bionicTalent;
-				if (forceOneShot) ourDmgEquality *= 2;
+				if (forceOneShot && (mapType === 'map' || mapType === 'void')) ourDmgEquality *= 2;
 				if (unluckyDmg.toString()[0] % 2 == 1) {
-					/* debug(i) */
 					continue;
 				}
 			}
-			if (!fastEnemy && !runningGlass && !runningTrappa && game.global.voidBuff != 'doubleAttack' && !runningQuest) {
-				return i;
-			}
 			else if (ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
-				if (query) {
-					return i;
-				}
 				return i;
 			}
 			else if (ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
@@ -2325,36 +2297,6 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 				console.log("our dmg =" + ourDmgEquality)
 				console.log("our health =" + ourHealth)
 				console.log(i); */
-				return i;
-			}
-			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
-				return i;
-			}
-			else if (!forceOneShot && ourDmgEquality * 2 > enemyHealth && ourHealth >= enemyDmgEquality * 2) {
-				return i;
-			}
-			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
-				return i;
-			}
-			else if (!forceOneShot && ourDmgEquality * 3 > enemyHealth && ourHealth >= enemyDmgEquality * 3) {
-				return i;
-			}
-			else if (!forceOneShot && ourDmgEquality * gammaDmg > enemyHealth && ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
-				return i;
-			}
-			else if (!forceOneShot && ourHealth >= enemyDmgEquality * 4 && gammaToTrigger == 4) {
-				return i;
-			}
-			else if (!forceOneShot && ourHealth >= enemyDmgEquality * 3 && gammaToTrigger == 3) {
-				return i;
-			}
-			else if (!forceOneShot && ourHealth >= enemyDmgEquality * 2 && gammaToTrigger == 2) {
-				return i;
-			}
-			else if (!forceOneShot && ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
-				return i;
-			}
-			else if (!forceOneShot && ourHealth >= enemyDmgEquality && gammaToTrigger == 0) {
 				return i;
 			}
 			else if (i === game.portal.Equality.radLevel) {

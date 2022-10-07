@@ -554,13 +554,17 @@ function Rgetequips(map, special) { //(level, p b or false)
 
 //Shol Territory
 
-function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, showAllEquips, fakeLevels = {}) {
+function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, showAllEquips, fakeLevels = {}, ignorePrestiges) {
 
 	for (var i in RequipmentList) {
 		if (typeof fakeLevels[i] === 'undefined') {
 			fakeLevels[i] = 0;
 		}
 	}
+	var ignorePrestiges = !ignorePrestiges ? false : ignorePrestiges;
+	var ignoreShield = !ignoreShield ? false : ignoreShield;
+	var skipForLevels = !skipForLevels ? false : skipForLevels;
+	var showAllEquips = !showAllEquips ? false : showAllEquips;
 
 	var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
 	var zoneGo = !zoneGo && (rEquipZone[0] > 0 && (rEquipZone.includes(game.global.world)) || game.global.world >= rEquipZone[rEquipZone.length - 1]) ? true :
@@ -570,9 +574,6 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			!resourceMaxPercent ? getPageSetting('Requippercent') / 100 :
 				resourceMaxPercent
 	var metalShred = !showAllEquips && game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')
-	var skipDamage = false;
-	var ignoreShield = !ignoreShield ? false : ignoreShield;
-	var showAllEquips = !showAllEquips ? false : showAllEquips;
 	var mostEfficient = [
 		{
 			name: "",
@@ -627,13 +628,13 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
 		var safeRatio = nextLevelCost / nextLevelValue;
 
-		if ((buyPrestigeMaybe(i, resourceMaxPercent)[0] && (buyPrestigeMaybe(i, resourceMaxPercent)[1] > mostEfficient[isAttack].statPerResource || buyPrestigeMaybe(i, resourceMaxPercent)[3])) && !(metalShred && metalTotal < buyPrestigeMaybe(i, resourceMaxPercent)[2])) {
+		if (!ignorePrestiges && (buyPrestigeMaybe(i, resourceMaxPercent)[0] && (buyPrestigeMaybe(i, resourceMaxPercent)[1] > mostEfficient[isAttack].statPerResource || buyPrestigeMaybe(i, resourceMaxPercent)[3])) && !(metalShred && metalTotal < buyPrestigeMaybe(i, resourceMaxPercent)[2])) {
 			safeRatio = buyPrestigeMaybe(i, resourceMaxPercent)[1];
 			nextLevelCost = buyPrestigeMaybe(i, resourceMaxPercent)[2]
 			prestige = true;
 		}
 
-		if (getPageSetting('rEquipHighestPrestige')) {
+		if (!ignorePrestiges && getPageSetting('rEquipHighestPrestige')) {
 			for (var item in game.equipment) {
 				//if (item == "Shield") continue;
 				var equip = game.equipment[item];
@@ -764,7 +765,7 @@ function RautoEquip() {
 	var maxCanAfford = 0;
 
 	//Buy as many shields as possible when running Melting Point
-	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')
+	if (!getPageSetting('rEquipNoShields') && autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')
 		buyEquipment('Shield', null, true, 999)
 
 	// Loop through actually getting equips
@@ -772,6 +773,7 @@ function RautoEquip() {
 	do {
 		keepBuying = false;
 		var bestBuys = mostEfficientEquipment(resourceSpendingPct);
+		bestBuys = mostEfficientEquipment(1, true, true, false, true);
 
 		// Set up for both Attack and Health depending on which is more efficient to purchase
 		var equipType = (bestBuys[6] < bestBuys[7]) ? 'attack' : 'health';
@@ -785,7 +787,7 @@ function RautoEquip() {
 			if (canAffordBuilding(equipName, null, null, true, false, 1) || (equipPrestige && game.resources[resourceUsed].owned > equipCost)) {
 				if (game.equipment[equipName].level < equipCap || equipPrestige) {
 					if (!equipPrestige) {
-						maxCanAfford = equipPrestige ? 1 : getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * resourceSpendingPct) / 5, 1.2, true);
+						maxCanAfford = equipPrestige ? 1 : getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.01) / 5, 1.2, true);
 						if (maxCanAfford == 0) maxCanAfford = 1;
 						if (maxCanAfford >= (equipCap - game.equipment[equipName].level)) maxCanAfford = equipCap - game.equipment[equipName].level;
 					}
@@ -815,6 +817,7 @@ function RautoEquip() {
 }
 
 function getTotalMultiCost(baseCost, multiBuyCount, costScaling, isCompounding) {
+
 	if (!isCompounding) {
 		return multiBuyCount * (multiBuyCount * costScaling - costScaling + 2 * baseCost) / 2;
 	} else {
@@ -822,51 +825,53 @@ function getTotalMultiCost(baseCost, multiBuyCount, costScaling, isCompounding) 
 	}
 }
 
-function equipfarmdynamicHD() {
-	var equipfarmzone = 0;
+function equipfarmdynamicHD(rEFIndex) {
+	var HDFSettings = autoTrimpSettings.rHDFarmSettings.value[rEFIndex]
 	var equipfarmHD = 0;
-	var equipfarmmult = 0;
-	var equipfarmHDzone = 0;
-	var equipfarmHDmult = HDRatio - 1;
-	if (getPageSetting('Requipfarmon') == true && game.global.world > 5 && game.global.world >= (getPageSetting('Requipfarmzone') && getPageSetting('RequipfarmHD') > 0 && getPageSetting('Requipfarmmult') > 0)) {
-		equipfarmzone = getPageSetting('Requipfarmzone');
-		equipfarmHD = getPageSetting('RequipfarmHD');
-		equipfarmmult = getPageSetting('Requipfarmmult');
-		equipfarmHDzone = (game.global.world - equipfarmzone);
-		equipfarmHDmult = (equipfarmHDzone == 0) ? equipfarmHD : Math.pow(equipfarmmult, equipfarmHDzone) * equipfarmHD;
-	}
+	var equipfarmHDmult = 1;
+	var HDFMult = HDFSettings.hdMult;
+	var HDFZone = HDFSettings.world
+	equipfarmHD = HDFSettings.hdBase;
+	HDFZone = (game.global.world - HDFZone);
+	equipfarmHDmult = (HDFZone == 0) ? equipfarmHD : Math.pow(HDFMult, HDFZone) * equipfarmHD;
 	return equipfarmHDmult;
 }
 
-function estimateEquipsForZone() {
-	var MAX_EQUIP_DELTA = 700;
+function estimateEquipsForZone(rEFIndex) {
+	var MAX_EQUIP_DELTA = 1000;
+	var checkMutations = game.global.world > 200 && getPageSetting('rMutationCalc')
 
 	// calculate stats needed pass zone
-	var enemyDamageBeforeEquality = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'), true); //game.global.getEnemyAttack(100, 'Snimp', true);
-	var ourHealth = RcalcOurHealth();
-	var hits = (getPageSetting("Rhitssurvived") > 0) ? getPageSetting("Rhitssurvived") : 1;
+	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
+	var ourHealth = RcalcOurHealth(false, true);
+	var ourDmg = RcalcOurDmg('avg', 0, false, false, false, false, false, checkMutations) * gammaBurstDmg;
+	var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', false, checkMutations);
+	var enemyDamageBeforeEquality = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Snimp', 'world', true), 0, true, 'world', false, checkMutations) * 1.5
 
-	var healthNeededMulti = (enemyDamageBeforeEquality * hits) / ourHealth; // The multiplier we need to apply to our health to survive
+	var healthNeededMulti = enemyDamageBeforeEquality / ourHealth; // The multiplier we need to apply to our health to survive
 
 	// Get a fake ratio pretending that we don't have any equality in.
-	var fakeHDRatio = RgetEnemyMaxHealth(game.global.world, 100) / (RcalcOurDmg('avg', true)); // game.global.getEnemyHealth(100, 'Snimp', true)
-	var attackNeededMulti = fakeHDRatio / (game.global.mapBonus < 10 ? (equipfarmdynamicHD() * 5) : equipfarmdynamicHD());
+	var fakeHDRatio = enemyHealth / ourDmg;
+	var attackNeededMulti = fakeHDRatio / (equipfarmdynamicHD(rEFIndex));
 
 	// Something something figure out equality vs health farming
 	var tempEqualityUse = 0;
 	while (
 		(healthNeededMulti > 1 || attackNeededMulti > 1)  // If it's below 1 we don't actually need more
 		&&
-		(healthNeededMulti * game.portal.Equality.modifier > attackNeededMulti / game.portal.Equality.modifier) // Need more health proportionally
+		(healthNeededMulti * game.portal.Equality.getModifier() > attackNeededMulti / game.portal.Equality.getModifier(true)) // Need more health proportionally
 		&&
 		tempEqualityUse < game.portal.Equality.radLevel
 	) {
 		tempEqualityUse++;
-		healthNeededMulti *= game.portal.Equality.modifier;
-		attackNeededMulti /= game.portal.Equality.modifier;
+		healthNeededMulti *= game.portal.Equality.getModifier();
+		attackNeededMulti /= game.portal.Equality.getModifier(true);
+		enemyDamageBeforeEquality *= game.portal.Equality.getModifier();
 	}
 
-	if (healthNeededMulti < 1 && attackNeededMulti < 1) { return [0, {}] };
+	//debug("E = " + tempEqualityUse + " HPmult = " + healthNeededMulti + " Atkmult = " + attackNeededMulti)
+
+	if (healthNeededMulti < 1 && attackNeededMulti < 1 || ((healthNeededMulti + attackNeededMulti) / 2 < 1)) { return [0, {}] };
 
 	var ourAttack = 6;
 	for (var i in RequipmentList) {
@@ -882,15 +887,19 @@ function estimateEquipsForZone() {
 
 	var bonusLevels = {}; // How many levels you'll be getting in each shield-gambeson armor slots
 
+
 	while (healthNeeded > 0) {
-		var bestArmor = mostEfficientEquipment(bonusLevels)[1];
+		var bestArmor = mostEfficientEquipment(1, true, true, false, true, bonusLevels, true)[1];
 		healthNeeded -= game.equipment[bestArmor][RequipmentList[bestArmor].Stat + "Calculated"];
 		if (typeof bonusLevels[bestArmor] === 'undefined') {
 			bonusLevels[bestArmor] = 0;
 		}
+		if (bonusLevels[bestArmor]++ > MAX_EQUIP_DELTA) {
+			return [Infinity, bonusLevels];
+		}
 	}
 	while (attackNeeded > 0) {
-		var bestWeapon = mostEfficientEquipment(bonusLevels)[0];
+		var bestWeapon = mostEfficientEquipment(1, true, true, false, true, bonusLevels, true)[0];
 		attackNeeded -= game.equipment[bestWeapon][RequipmentList[bestWeapon].Stat + "Calculated"];
 		if (typeof bonusLevels[bestWeapon] === 'undefined') {
 			bonusLevels[bestWeapon] = 0;
@@ -903,8 +912,8 @@ function estimateEquipsForZone() {
 	var totalCost = 0;
 	for (var equip in bonusLevels) {
 		var equipCost = game.equipment[equip].cost[RequipmentList[equip].Resource];
-		totalCost += getTotalMultiCost(equipCost[0], bonusLevels[equip], equipCost[1], true) * getEquipPriceMult();
+		totalCost += getTotalMultiCost((equipCost[0]), bonusLevels[equip], equipCost[1], true) * getEquipPriceMult();
 	}
 
-	return [totalCost, bonusLevels, tempEqualityUse];
+	return [totalCost, bonusLevels];
 }
