@@ -781,7 +781,7 @@ function RautoEquip() {
 		var equipCost = (equipType == 'attack') ? bestBuys[6] : bestBuys[7];
 		var equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5];
 		var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
-		var underStats = (equipType == 'attack') ? HDRatio >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
+		var underStats = (equipType == 'attack') ? HDRatio >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(false, 'world') < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
 		var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 		for (var i = 0; i < 2; i++) {
 			if (canAffordBuilding(equipName, null, null, true, false, 1) || (equipPrestige && game.resources[resourceUsed].owned > equipCost)) {
@@ -809,7 +809,7 @@ function RautoEquip() {
 			equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5];
 			resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 			equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
-			underStats = (equipType == 'attack') ? HDRatio >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(true) < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
+			underStats = (equipType == 'attack') ? HDRatio >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(false, 'world') < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
 		}
 
 	} while (keepBuying)
@@ -843,10 +843,10 @@ function estimateEquipsForZone(rEFIndex) {
 
 	// calculate stats needed pass zone
 	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
-	var ourHealth = RcalcOurHealth(false, true);
-	var ourDmg = RcalcOurDmg('avg', 0, false, false, false, false, false, checkMutations) * gammaBurstDmg;
-	var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', false, checkMutations);
-	var enemyDamageBeforeEquality = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Snimp', 'world', true), 0, true, 'world', false, checkMutations) * 1.5
+	var ourHealth = RcalcOurHealth(false, 'world');
+	var ourDmg = RcalcOurDmg('avg', 0, 'world', false, false, false) * gammaBurstDmg;
+	var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', checkMutations);
+	var enemyDamageBeforeEquality = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Snimp', 'world', true), 0, true, 'world', checkMutations) * 1.5
 
 	var healthNeededMulti = enemyDamageBeforeEquality / ourHealth; // The multiplier we need to apply to our health to survive
 

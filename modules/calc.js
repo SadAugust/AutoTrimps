@@ -656,14 +656,14 @@ function debugCalc() {
 	var runningUnlucky = game.global.challengeActive == 'Unlucky'
 
 	//Init
-	var displayedMin = RcalcOurDmg("min", game.portal.Equality.disabledStackCount, mapping, true, runningUnlucky, true) * bionic;
-	var displayedMax = RcalcOurDmg("max", game.portal.Equality.disabledStackCount, mapping, true, runningUnlucky, true) * bionic * (runningUnlucky ? 399 : 1);
+	var displayedMin = RcalcOurDmg("min", game.portal.Equality.disabledStackCount, type, true, runningUnlucky, true) * bionic;
+	var displayedMax = RcalcOurDmg("max", game.portal.Equality.disabledStackCount, type, true, runningUnlucky, true) * bionic * (runningUnlucky ? 399 : 1);
 
 	//Trimp Stats
 	debug("Our Stats");
 	debug("Our attack: " + displayedMin.toExponential(2) + "-" + displayedMax.toExponential(2));
 	debug("Our crit: " + 100 * getPlayerCritChance() + "% for " + getPlayerCritDamageMult().toFixed(1) + "x Damage. Average of " + RgetCritMulti(true, true).toFixed(2) + "x");
-	debug("Our Health: " + (RcalcOurHealth() * safeMapping).toExponential(2));
+	debug("Our Health: " + (RcalcOurHealth(false, type) * safeMapping).toExponential(2));
 
 	//Enemy stats
 	debug("Enemy Stats");
@@ -694,9 +694,10 @@ function RgetCritMulti(floorCrit, mult, ceilCrit) {
 		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * critD
 }
 
-function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, useTitimp, runningUnlucky, floorCrit, ignoreMutation, checkMutations) {
+function RcalcOurDmg(minMaxAvg, equality, mapType, useTitimp, runningUnlucky, floorCrit) {
 
 	useTitimp = useTitimp ? true : false;
+	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	runningUnlucky = !runningUnlucky ? false : true;
 	floorCrit = !floorCrit ? false : true;
 	// Base + equipment
@@ -718,7 +719,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, useTitimp, runningUnlu
 	// Power
 	attack += (attack * game.portal.Power.radLevel * game.portal.Power.modifier);
 	// Map Bonus
-	attack *= ignoreMapBonus ? 1 : game.talents.mapBattery.purchased && game.global.mapBonus == 10 ? 5 : 1 + (game.global.mapBonus * .2);
+	attack *= mapType !== 'world' ? 1 : game.talents.mapBattery.purchased && game.global.mapBonus == 10 ? 5 : 1 + (game.global.mapBonus * .2);
 	// Tenacity
 	attack *= game.portal.Tenacity.getMult();
 	// Hunger
@@ -726,7 +727,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, useTitimp, runningUnlu
 	// Observation
 	attack *= game.portal.Observation.getMult();
 	//Titimp
-	attack *= useTitimp && game.global.titimpLeft > 0 ? 2 : 1;
+	attack *= mapType !== 'world' && useTitimp && game.global.titimpLeft > 0 ? 2 : 1;
 	// Robotrimp
 	attack *= 1 + (0.2 * game.global.roboTrimpLevel);
 	// Mayhem Completions
@@ -770,7 +771,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, useTitimp, runningUnlu
 	attack *= game.global.challengeActive == 'Nurture' && game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
 	attack *= game.global.challengeActive == 'Alchemy' ? alchObj.getPotionEffect('Potion of Strength') : 1;
 	if (game.global.stringVersion >= '5.8.0') {
-		attack *= (checkMutations || (!ignoreMutation && !game.global.mapsActive)) && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
+		attack *= mapType === 'world' && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
 		//Smithies (smithless challenge)
 		attack *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 	}
@@ -795,7 +796,7 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, useTitimp, runningUnlu
 		attack -= typeof game.global.dailyChallenge.rampage !== 'undefined' ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 0;
 	}
 
-	if (game.talents.voidPower.purchased && game.global.voidBuff !== '' && !checkMutations) {
+	if (game.talents.voidPower.purchased && mapType === 'void') {
 		attack *= (game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? 1.65 : 1.35) : 1.15;
 		attack *= (game.talents.voidMastery.purchased) ? 5 : 1;
 	}
@@ -837,7 +838,8 @@ function RcalcOurDmg(minMaxAvg, equality, ignoreMapBonus, useTitimp, runningUnlu
 	return attack;
 }
 
-function RcalcOurHealth(onlyShield, checkMutations) {
+function RcalcOurHealth(onlyShield, mapType) {
+	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	//Initiatising health
 	var onlyShield = !onlyShield ? false : onlyShield;
 	var health = 50;
@@ -903,7 +905,7 @@ function RcalcOurHealth(onlyShield, checkMutations) {
 	//Pressure (Dailies)
 	health *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
 	//Void Map Talents
-	health *= (game.talents.voidPower.purchased && game.global.voidBuff && !checkMutations) ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
+	health *= (game.talents.voidPower.purchased && game.global.voidBuff && mapType === 'void') ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
 
 	//Prismatic Shield and Shield Layer, scales with multiple Scruffy shield layers
 	shield = (health * (Fluffy.isRewardActive('shieldlayer') ? 1 + (getEnergyShieldMult() * (1 + Fluffy.isRewardActive('shieldlayer'))) : 1 + getEnergyShieldMult())) - health;
@@ -959,10 +961,10 @@ function rCalcMutationAttack(muteCell) {
 	return attack;
 }
 
-function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, ignoreMutation, checkMutations) { //Works out avg dmg. For max dmg * 1.5.
+function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, checkMutations) { //Works out avg dmg. For max dmg * 1.5.
 	var attack = enemy ? enemy.attack : attack;
 	var query = !query ? false : query;
-	var mapType = !mapType ? false : mapType;
+	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	attack = game.global.challengeActive == 'Exterminate' && getPageSetting('Rexterminateon') && getPageSetting('Rexterminatecalc') ? RgetEnemyAvgAttack(game.global.world, 90, 'Mantimp') : attack;
 
 	if (enemy)
@@ -1021,7 +1023,7 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, ignoreMutation,
 				attack *= (1.01, game.global.world - 201)
 				if (cell.u2Mutation.indexOf('RGE') != -1 || (cell.cc && cell.cc[3] > 0)) attack *= u2Mutations.types.Rage.enemyAttackMult();
 			}
-			attack *= !ignoreMutation && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
+			attack *= mapType === 'world' && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
 		}
 	}
 	return attack;
@@ -1064,7 +1066,7 @@ function RcalcBadGuyDmgMod(forceMaps) {
 	return dmg;
 }
 
-function RcalcEnemyBaseHealth(type, zone, cell, name, query) {
+function RcalcEnemyBaseHealth(type, zone, cell, name) {
 	//Pre-Init
 	if (!type) type = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	if (!zone) zone = (type == "world" || !game.global.mapsActive) ? game.global.world : getCurrentMapObject().level;
@@ -1075,7 +1077,7 @@ function RcalcEnemyBaseHealth(type, zone, cell, name, query) {
 	var base = (game.global.universe == 2) ? 10e7 : 130;
 	var health = base * Math.sqrt(zone) * Math.pow(3.265, zone / 2) - 110;
 
-	if (!query && game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && type === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
+	if (game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && type === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
 		if (game.global.world > 200 && game.global.universe === 2 && type === 'world') {
 			if (game.global.gridArray[cell - 1].u2Mutation.length > 0 && (game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1 || game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1)) {
 				cell = cell - 1
@@ -1143,7 +1145,7 @@ function rMutationHealth(cell) {
 	var baseHealth;
 	var addHealth = 0;
 
-	baseHealth = RcalcEnemyBaseHealth('world', game.global.world, cell.level, cell.name, false);
+	baseHealth = RcalcEnemyBaseHealth('world', game.global.world, cell.level, cell.name);
 	if (cell.cc) addHealth = u2Mutations.types.Compression.health(cell, baseHealth);
 	if (cell.u2Mutation.indexOf('NVA') != -1) baseHealth *= 0.01;
 	else if (cell.u2Mutation.indexOf('NVX') != -1) baseHealth *= 0.1;
@@ -1175,35 +1177,35 @@ function rCalcMutationHealth(muteCell) {
 	return health;
 }
 
-function RcalcEnemyHealthMod(world, cell, name, type, query, checkMutations) {
+function RcalcEnemyHealthMod(world, cell, name, type, checkMutations) {
 	//Initialising variables
 	var type = !type ? 'world' : type;
 	var world = !world ? game.global.world : world;
-	var health = RcalcEnemyBaseHealth(type, world, cell, name, query);
+	var health = RcalcEnemyBaseHealth(type, world, cell, name);
 
-	if (checkMutations && game.global.world > 200 && getPageSetting('rMutationCalc')) {
+	if (type === 'world' && checkMutations && game.global.world > 200 && getPageSetting('rMutationCalc')) {
 		health = rCalcMutationHealth();
 	}
 
 	var mapGrid = type === 'world' ? 'gridArray' : 'mapGridArray';
-	if (!checkMutations && !query && game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && type === 'world' && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined') {
+	if (!checkMutations && game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && type === 'world' && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined') {
 		if (game.global[mapGrid][cell].u2Mutation) {
 			health = u2Mutations.getHealth(game.global[mapGrid][cell - 1])
 		}
 	}
 
 	//Challenges
-	health *= game.global.challengeActive == 'Unbalance' && game.global.mapsActive ? 2 : game.global.challengeActive == 'Unbalance' ? 3 : 1;
+	health *= game.global.challengeActive == 'Unbalance' && type !== 'world' ? 2 : game.global.challengeActive == 'Unbalance' ? 3 : 1;
 	//health *= game.global.challengeActive == 'Duel' && game.challenges.Duel.enemyStacks < 20 ? game.challenges.Duel.healthMult : 1;
 	health *= game.global.challengeActive == 'Quest' ? game.challenges.Quest.getHealthMult() : 1;
 	health *= game.global.challengeActive == 'Revenge' && game.global.world % 2 == 0 ? 10 : 1;
-	health *= game.global.challengeActive == 'Mayhem' && ((!game.global.mapsActive && type !== 'map') || type === 'world') ? game.challenges.Mayhem.getBossMult() : 1;
+	health *= game.global.challengeActive == 'Mayhem' && (type === 'world') ? game.challenges.Mayhem.getBossMult() : 1;
 	health *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult() : 1;
-	health *= game.global.challengeActive == 'Storm' && !game.global.mapsActive ? game.challenges.Storm.getHealthMult() : 1;
+	health *= game.global.challengeActive == 'Storm' && type === 'world' ? game.challenges.Storm.getHealthMult() : 1;
 	//health *= game.global.challengeActive == 'Berserk' ? 1.5 : 1;
 	health *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
 	health *= game.global.challengeActive == 'Nurture' && type === 'world' ? 2 : 1;
-	health *= game.global.challengeActive == 'Nurture' && (type === 'map' || (!query && game.global.mapsActive)) ? 10 : 1;
+	health *= game.global.challengeActive == 'Nurture' && type !== 'world' ? 10 : 1;
 	health *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Pandemonium' && type === 'world' && (game.global.lastClearedCell + 2 === 100 || query) ? game.challenges.Pandemonium.getBossMult() : 1;
 	health *= game.global.challengeActive == 'Pandemonium' && ((type === 'world' && game.global.lastClearedCell + 2 !== 100) || (type !== 'world' || game.global.mapsActive)) ? game.challenges.Pandemonium.getPandMult() : 1;
@@ -1214,11 +1216,10 @@ function RcalcEnemyHealthMod(world, cell, name, type, query, checkMutations) {
 	//Dailies
 	if (game.global.challengeActive == 'Daily') {
 		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
-		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && (type !== 'world' && (game.global.mapsActive || (type === 'map' || type === 'void'))) ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
-		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && (type === 'world' && (!game.global.mapsActive || checkMutations)) ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
+		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && type !== 'world' ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
+		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && type === 'world' ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
 
-	if (!checkMutations && !query && type !== 'world' && game.global.mapsActive) health *= getCurrentMapObject().difficulty;
 	return health;
 }
 
@@ -1226,11 +1227,11 @@ function RcalcHDratio() {
 	var ratio = Infinity;
 	var checkMutations = game.global.world > 200 && getPageSetting('rMutationCalc')
 	if (game.global.gridArray.length > 0) {
-		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', false, checkMutations);
-		var ourDamage = RcalcOurDmg("avg", false, false, false);
+		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', checkMutations);
+		var ourDamage = RcalcOurDmg("avg", false, false, 'world');
 		if (getPageSetting('rManageEquality') == 2) {
 			var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
-			ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1, false, false, checkMutations), false, false, false, false, false, checkMutations) * gammaBurstDmg;
+			ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1, false, false, checkMutations), 'world', false, false, false) * gammaBurstDmg;
 		}
 		//debug("T_dmg - " + ourDamage.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
 

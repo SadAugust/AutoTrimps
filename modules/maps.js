@@ -955,7 +955,7 @@ function RautoMap() {
 	}
 
 	//Failsafes
-	if (!game.global.mapsUnlocked || RcalcOurDmg("avg", false, false) <= 0 || rShouldQuest == 9 || rShouldQuest == 8) {
+	if (!game.global.mapsUnlocked || RcalcOurDmg("avg", false, 'world') <= 0 || rShouldQuest == 9 || rShouldQuest == 8) {
 		RenoughDamage = true;
 		RenoughHealth = true;
 		RshouldFarm = false;
@@ -978,7 +978,7 @@ function RautoMap() {
 					questcheck() == 4 ? 4 :
 						questcheck() == 5 ? 5 :
 							questcheck() == 6 ? 6 :
-								questcheck() == 7 && (RcalcOurDmg('min', 0, false) < game.global.gridArray[50].maxHealth) && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))) ? 7 :
+								questcheck() == 7 && (RcalcOurDmg('min', 0, 'world') < game.global.gridArray[50].maxHealth) && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))) ? 7 :
 									questcheck() == 8 ? 8 :
 										questcheck() == 9 ? 9 :
 											questcheck() == 10 && game.mapUnlocks.SmithFree.canRunOnce && !canAffordBuilding('Smithy') ? 10 :
@@ -1002,11 +1002,11 @@ function RautoMap() {
 	var hitsSurvived = getPageSetting('rManageEquality') === 2 ? 1 : getPageSetting("Rhitssurvived") > 0 ? getPageSetting("Rhitssurvived") : 5;
 
 	//Calc
-	var ourBaseDamage = RcalcOurDmg("avg", false, false);
+	var ourBaseDamage = RcalcOurDmg("avg", false, 'world');
 	if (getPageSetting('rManageEquality') === 2 && oneSecondInterval)
-		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), equalityQuery(true, true, 'Improbability', game.global.world, 99, 'world', 1, false, false, true), false, null, false, true);
+		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), equalityQuery(true, true, 'Improbability', game.global.world, 99, 'world', 1, false, false, true), false, null, true);
 	else if (getPageSetting('rManageEquality') !== 2)
-		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), game.portal.Equality.getMult(), false, null, false, true);
+		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), game.portal.Equality.getMult(), false, null, true);
 
 	/* if (getPageSetting('RDisableFarm') > 0) {
 		RshouldFarm = (HDRatio >= getPageSetting('RDisableFarm'));
@@ -1014,7 +1014,7 @@ function RautoMap() {
 			toggleSetting('repeatUntil');
 	} */
 
-	RenoughHealth = (RcalcOurHealth() > (hitsSurvived * enemyDamage));
+	RenoughHealth = (RcalcOurHealth(false, 'world') > (hitsSurvived * enemyDamage));
 	RenoughDamage = (HDRatio <= mapenoughdamagecutoff || game.global.mapBonus === 10);
 	RupdateAutoMapsStatus();
 
@@ -2134,9 +2134,9 @@ function RautoMap() {
 			var name = game.global.gridArray[0].name
 			var gammaDmg = gammaBurstPct;
 			var equalityAmt = equalityQuery(true, true, name, game.global.world, 1, 'world', 1, false, true)
-			var ourDmg = (RcalcOurDmg('min', equalityAmt, false, false, false, true));
+			var ourDmg = (RcalcOurDmg('min', equalityAmt, 'world', false, false, true));
 			var totalDmg = (ourDmg * 2 + (ourDmg * gammaDmg * 2))
-			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world', true);
+			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world');
 			enemyHealth *= 3e15;
 			var stacksRemaining = 10 - game.challenges.Smithless.uberAttacks;
 			var rSmithlessJobRatio = '0,0,1,0';
