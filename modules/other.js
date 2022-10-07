@@ -2192,15 +2192,14 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 		if (!statCheck && game.resources.fragments.owned < PerfectMapCost_Actual(mapLevel, special, biome))
 			continue;
 
-		var equalityAmt = equalityQuery(true, false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
+		var equalityAmt = equalityQuery(false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
 		var ourDmg = (RcalcOurDmg('min', equalityAmt, 'map', false, false, floorCrit)) * 2;
 		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Turtlimp', 'map') * difficulty;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, true, 'map') * 1.5 * difficulty;
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
-		//debug("Maplevel = " + y + " Equality = " + equalityAmt + " Our Damage = " + ourDmg);
 
-		/* if (y === 0) {
+		/* if (y === -3) {
 			debug("Maplevel = " + y + " Equality = " + equalityAmt + " Our Damage = " + ourDmg);
 			debug("Enemy dmg = " + enemyDmg + " + " + "Enemy health = " + enemyHealth)
 		} */
@@ -2213,9 +2212,8 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	}
 }
 
-function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty, forceOneShot, floorCrit, checkMutations) {
+function equalityQuery(forceGamma, name, zone, cell, mapType, difficulty, forceOneShot, floorCrit, checkMutations) {
 	var query = true;
-	//Misc vars
 
 	var currentCell = cell;
 	var enemyName = name;
@@ -2238,7 +2236,7 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 	//Enemy stats
 	if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
 	var enemyHealth = RcalcEnemyHealthMod(zone, currentCell, enemyName, mapType) * difficulty;
-	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, query), 0, query, mapType, mapping) * difficulty * 1.5;
+	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, query), 0, query, mapType) * difficulty * 1.5;
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 
 	enemyDmg *= runningDuel ? 10 : 1;
@@ -2275,6 +2273,10 @@ function equalityQuery(query, forceGamma, name, zone, cell, mapType, difficulty,
 					continue;
 				}
 			}
+			/* if (i === 86) {
+				debug("Equality = " + i + " Our Damage = " + ourDmgEquality + " Our health = " + ourHealth);
+				debug("Enemy dmg = " + enemyDmgEquality + " + " + "Enemy health = " + enemyHealth)
+			} */
 			else if (ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
 				return i;
 			}

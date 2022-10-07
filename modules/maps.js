@@ -1004,7 +1004,7 @@ function RautoMap() {
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, 'world');
 	if (getPageSetting('rManageEquality') === 2 && oneSecondInterval)
-		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), equalityQuery(true, true, 'Improbability', game.global.world, 99, 'world', 1, false, false, true), false, null, true);
+		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), equalityQuery(true, 'Improbability', game.global.world, 99, 'world', 1, false, false, true), false, null, true);
 	else if (getPageSetting('rManageEquality') !== 2)
 		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), game.portal.Equality.getMult(), false, null, true);
 
@@ -2133,7 +2133,7 @@ function RautoMap() {
 		if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
 			var name = game.global.gridArray[0].name
 			var gammaDmg = gammaBurstPct;
-			var equalityAmt = equalityQuery(true, true, name, game.global.world, 1, 'world', 1, false, true)
+			var equalityAmt = equalityQuery(true, name, game.global.world, 1, 'world', 1, false, true)
 			var ourDmg = (RcalcOurDmg('min', equalityAmt, 'world', false, false, true));
 			var totalDmg = (ourDmg * 2 + (ourDmg * gammaDmg * 2))
 			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world');

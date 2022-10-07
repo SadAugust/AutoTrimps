@@ -1231,7 +1231,7 @@ function RcalcHDratio() {
 		var ourDamage = RcalcOurDmg("avg", false, false, 'world');
 		if (getPageSetting('rManageEquality') == 2) {
 			var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
-			ourDamage = RcalcOurDmg('avg', equalityQuery(true, true, 'Snimp', game.global.world, 99, 'world', 1, false, false, checkMutations), 'world', false, false, false) * gammaBurstDmg;
+			ourDamage = RcalcOurDmg('avg', equalityQuery(true, 'Snimp', game.global.world, 99, 'world', 1, false, false, checkMutations), 'world', false, false, false) * gammaBurstDmg;
 		}
 		//debug("T_dmg - " + ourDamage.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
 
