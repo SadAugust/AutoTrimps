@@ -2192,7 +2192,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 		if (!statCheck && game.resources.fragments.owned < PerfectMapCost_Actual(mapLevel, special, biome))
 			continue;
 
-		var equalityAmt = equalityQuery(false, 'Snimp', game.global.world + mapLevel, 20, 'map', difficulty, true)
+		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot')
 		var ourDmg = (RcalcOurDmg('min', equalityAmt, 'map', false, false, floorCrit)) * 2;
 		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Turtlimp', 'map') * difficulty;
@@ -2212,19 +2212,21 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	}
 }
 
-function equalityQuery(forceGamma, name, zone, cell, mapType, difficulty, forceOneShot, floorCrit, checkMutations) {
+function equalityQuery(name, zone, cell, mapType, difficulty, farmType, floorCrit, checkMutations) {
 	var query = true;
 
 	var currentCell = cell;
 	var enemyName = name;
+
+	if (!farmType) farmType = 'gamma';
+	if (!floorCrit) floorCrit = false;
+	if (!difficulty) difficulty = 1;
 
 	var mapType = !mapType ? "world" : !mapType ? (getCurrentMapObject().location == "Void" ? "void" : "map") : mapType;
 	var mapping = mapType === 'world' ? false : true;
 	var zone = !zone && (mapType == "world" || !mapping) ? game.global.world : !zone ? getCurrentMapObject().level : zone;
 	var forceGamma = !forceGamma ? false : forceGamma;
 	var forceOneShot = !forceOneShot ? false : forceOneShot;
-	var floorCrit = !floorCrit ? false : floorCrit;
-	var difficulty = !difficulty ? 1 : difficulty;
 	var bionicTalent = mapType !== 'world' && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 
 	//Challenge conditions
@@ -2247,8 +2249,8 @@ function equalityQuery(forceGamma, name, zone, cell, mapType, difficulty, forceO
 
 	if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 
-	//Figuring out gamma burst stacks to proc and dmg bonus
-	var gammaToTrigger = forceGamma ? 0 : forceOneShot ? 999 : (autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks;
+	//Figuring out gamma to proc value
+	var gammaToTrigger = farmType === 'gamma' ? 0 : farmType === 'oneShot' ? 999 : Infinity
 
 	if (forceOneShot && mapping) ourDmg *= 2;
 	if (mapping && game.talents.mapHealth.purchased) ourHealth *= 2;
@@ -2273,14 +2275,10 @@ function equalityQuery(forceGamma, name, zone, cell, mapType, difficulty, forceO
 					continue;
 				}
 			}
-			/* if (i === 86) {
-				debug("Equality = " + i + " Our Damage = " + ourDmgEquality + " Our health = " + ourHealth);
-				debug("Enemy dmg = " + enemyDmgEquality + " + " + "Enemy health = " + enemyHealth)
-			} */
-			else if (ourHealth >= enemyDmgEquality && gammaToTrigger <= 1) {
+			else if (farmType === 'gamma' && ourHealth >= enemyDmgEquality) {
 				return i;
 			}
-			else if (ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
+			else if (farmType === 'oneShot' && ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
 				return i;
 			}
 			else if (i === game.portal.Equality.radLevel) {
