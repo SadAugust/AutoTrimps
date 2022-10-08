@@ -771,11 +771,8 @@ function RcalcOurDmg(minMaxAvg, equality, mapType, useTitimp, runningUnlucky, fl
 	attack *= game.global.challengeActive == 'Berserk' ? game.challenges.Berserk.getAttackMult() : 1;
 	attack *= game.global.challengeActive == 'Nurture' && game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
 	attack *= game.global.challengeActive == 'Alchemy' ? alchObj.getPotionEffect('Potion of Strength') : 1;
-	if (game.global.stringVersion >= '5.8.0') {
-		attack *= mapType === 'world' && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
-		//Smithies (smithless challenge)
-		attack *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
-	}
+	attack *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
+	attack *= mapType === 'world' && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
 
 	// Dailies
 	var minDailyMod = 1;
@@ -1021,7 +1018,7 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, checkMutations)
 	return attack;
 }
 
-function RcalcBadGuyDmgMod(forceMaps) {
+function RcalcBadGuyDmgMod() {
 	forceMaps = !forceMaps ? false : forceMaps;
 	dmg = 1;
 	dmg *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
@@ -1038,18 +1035,14 @@ function RcalcBadGuyDmgMod(forceMaps) {
 	dmg *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
 	if (game.global.challengeActive == "Daily") {
 		dmg *= typeof game.global.dailyChallenge.badStrength !== 'undefined' ? dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength) : 1;
-		dmg *= typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && (game.global.mapsActive || forceMaps) ? dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength) : 1;
+		dmg *= typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength) : 1;
 		dmg *= typeof game.global.dailyChallenge.bloodthirst !== 'undefined' ? dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks) : 1;
-		dmg *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive && !forceMaps ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
+		dmg *= typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.mapsActive ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 	}
-	if (game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined') {
-		if (game.global.world > 200 && game.global.universe === 2 && !game.global.mapsActive) {
+	if (game.global.world > 200 && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined') {
+		if (!game.global.mapsActive) {
 			if (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.length > 0) {
 				var cell = game.global.gridArray[game.global.lastClearedCell + 1]
-				/* if (cell.u2Mutation.indexOf('CMP') == -1) {
-					if (cell.u2Mutation.indexOf('NVA') != -1) dmg *= 0.01;
-					else if (cell.u2Mutation.indexOf('NVX') != -1) dmg *= 10;
-				} */
 				if (cell.u2Mutation.indexOf('RGE') != -1 || (cell.cc && cell.cc[3] > 0)) dmg *= u2Mutations.types.Rage.enemyAttackMult();
 			}
 			dmg *= game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
@@ -1069,33 +1062,32 @@ function RcalcEnemyBaseHealth(mapType, zone, cell, name) {
 	var base = (game.global.universe == 2) ? 10e7 : 130;
 	var health = base * Math.sqrt(zone) * Math.pow(3.265, zone / 2) - 110;
 
-	if (game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && mapType === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
-		if (game.global.world > 200 && game.global.universe === 2 && mapType === 'world') {
-			if (game.global.gridArray[cell - 1].u2Mutation.length > 0 && (game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1 || game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1)) {
-				cell = cell - 1
-				var grid = game.global.gridArray
-				var go = false;
-				var row = 0;
-				var currRow = Number(String(cell)[0]) * 10;
-				if (!go && game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1) {
-					for (i = 5; 9 >= i; i++) {
-						if (grid[i * 10].u2Mutation.indexOf('CSP') != -1) {
-							row = (i * 10);
-							go = true;
-						}
+	if (game.global.world > 200 && mapType === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
+		if (game.global.gridArray[cell - 1].u2Mutation.length > 0 && (game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1 || game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1)) {
+			cell = cell - 1
+			var grid = game.global.gridArray
+			var go = false;
+			var row = 0;
+			var currRow = Number(String(cell)[0]) * 10;
+			if (!go && game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1) {
+				for (i = 5; 9 >= i; i++) {
+					if (grid[i * 10].u2Mutation.indexOf('CSP') != -1) {
+						row = (i * 10);
+						go = true;
 					}
-					cell += (row - currRow);
 				}
-				if (!go && game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1) {
-					for (i = 0; 5 >= i; i++) {
-						if (grid[i * 10].u2Mutation.indexOf('CSX') != -1) {
-							row = (i * 10);
-							go = true;
-						}
-					}
-					cell -= (currRow - row);
-				}
+				cell += (row - currRow);
 			}
+			if (!go && game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1) {
+				for (i = 0; 5 >= i; i++) {
+					if (grid[i * 10].u2Mutation.indexOf('CSX') != -1) {
+						row = (i * 10);
+						go = true;
+					}
+				}
+				cell -= (currRow - row);
+			}
+
 		}
 	}
 	//First Two Zones
