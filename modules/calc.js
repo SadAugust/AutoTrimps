@@ -1209,12 +1209,11 @@ function RcalcHDratio() {
 	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
 	if (game.global.gridArray.length > 0) {
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', checkMutations);
-		var ourDamage = RcalcOurDmg("avg", false, false, 'world');
+		var ourDamage = RcalcOurDmg("avg", 0, 'world');
 		if (getPageSetting('rManageEquality') == 2) {
 			ourDamage = RcalcOurDmg('avg', equalityQuery('Snimp', game.global.world, 99, 'world', 1, 'gamma'), 'world', false, false, false) * gammaBurstDmg;
 		}
 		//debug("T_dmg - " + ourDamage.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
-
 		ratio = enemyHealth / ourDamage;
 	}
 	return ratio;

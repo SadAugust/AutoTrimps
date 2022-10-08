@@ -2213,7 +2213,6 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 }
 
 function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType) {
-	var query = false;
 
 	if (!enemyName) enemyName = 'Snimp';
 	if (!zone) zone = game.global.world;
@@ -2235,7 +2234,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	//Enemy stats
 	if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
 	var enemyHealth = RcalcEnemyHealthMod(zone, currentCell, enemyName, mapType, checkMutations) * difficulty;
-	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, query), 0, query, mapType) * difficulty * 1.5;
+	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, false), 0, false, mapType) * difficulty * 1.5;
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 
 	enemyDmg *= runningDuel ? 10 : 1;
@@ -2250,7 +2249,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (farmType === 'oneShot' && mapping) ourDmg *= 2;
 	if (mapping && game.talents.mapHealth.purchased) ourHealth *= 2;
 	if (checkMutations) {
-		enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, currentCell, enemyName, 'world', false), 0, 'world', checkMutations);
+		enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, currentCell, enemyName, 'world', true), 0, 'world', checkMutations);
 		enemyHealth = RcalcEnemyHealthMod(game.global.world, currentCell, enemyName, 'world', checkMutations);
 	}
 
