@@ -991,13 +991,13 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, checkMutations)
 		if (typeof game.global.dailyChallenge.badStrength !== 'undefined')
 			attack *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
 
-		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && (mapType !== 'world' && game.global.mapsActive))
+		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && mapType !== 'world')
 			attack *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
 
 		if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
 			attack *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks)
 
-		if (typeof game.global.dailyChallenge.empower !== 'undefined' && ((!game.global.mapsActive && mapType === false) || mapType === 'world'))
+		if (typeof game.global.dailyChallenge.empower !== 'undefined' && mapType === 'world')
 			attack *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
 	}
 
