@@ -1019,7 +1019,6 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, checkMutations)
 }
 
 function RcalcBadGuyDmgMod() {
-	forceMaps = !forceMaps ? false : forceMaps;
 	dmg = 1;
 	dmg *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
 	dmg *= game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
