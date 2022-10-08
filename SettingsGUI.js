@@ -766,21 +766,18 @@ function initializeAllSettings() {
 	createSetting('rQuagZone', 'BB: Zone', 'What zones to run Black Bogs at. Can use 40,50,60. ', 'multiValue', [6], null, 'Challenges');
 
 	//Insanity
-	createSetting('rInsanityOn', 'Insanity', 'Turn on Insanity settings. This also controls the entireity of IF. If you turn this off it will not Insanity Farm.', 'boolean', false, null, 'Challenges');
 	createSetting('rInsanityPopup', 'Insanity Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Insanity Farm", "rInsanity", "MAZ")', null, 'Challenges');
 	createSetting('rInsanitySettings', 'Insanity: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges');
 	createSetting('rInsanityDefaultSettings', 'Insanity: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '1,1,10,1' }, null, 'Challenges');
 	createSetting('rInsanityZone', 'Insanity Farming', 'Farms for specified stacks in IF: Stacks at zone according to this settings value. Can use 108,109,110. ', 'multiValue', [6], null, 'Challenges');
 
 	//Alchemy
-	createSetting('rAlchOn', 'Alchemy', 'Turn on Alchemy settings. This also controls the entireity of Alchemy. If you turn this off it will not do any specific farming during the challenge. Whilst enabled will purchase as many Void and Strength potions as you can afford whilst inside void maps.', 'boolean', false, null, 'Challenges');
 	createSetting('rAlchPopup', 'Alchemy Farm Settings', 'Click to adjust settings.', 'action', 'MAZLookalike("Alchemy Farm", "rAlch", "MAZ")', null, 'Challenges');
 	createSetting('rAlchSettings', 'AF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges');
 	createSetting('rAlchDefaultSettings', 'AF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '10,1,1,1', special: 'lsc' }, null, 'Challenges');
 	createSetting('rAlchZone', 'AF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [6], null, 'Challenges');
 
 	//Hypothermia
-	createSetting('rHypoOn', 'Hypothermia', 'Turn on Hypothermia settings. This also controls the entireity of Hypothermia. If you turn this off it will not do any specific farming during the challenge. Will automatically select LWC maps if you have enough fragments else it\'ll use SWC maps.', 'boolean', false, null, 'Challenges');
 	createSetting('rHypoPopup', 'Hypo Farm Settings', 'Click to adjust settings.', 'action', 'MAZLookalike("Hypothermia Farm", "rHypo", "MAZ")', null, 'Challenges');
 	createSetting('rHypoSettings', 'HF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges');
 	createSetting('rHypoDefaultSettings', 'HF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '1,100,1,1', packrat: true, autostorage: true, active: true }, null, 'Challenges');
