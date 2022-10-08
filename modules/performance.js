@@ -53,6 +53,7 @@
 	.at-afk-zone, .at-afk-helium, .at-afk-status, .at-afk-heliumperhour
 	{
 		font-size: 18pt;
+		text-align: center;
 	}
 
 	.at-afk-overlay-disable-btn
@@ -142,7 +143,9 @@
 	}
 
 	M["performance"].UpdateAFKOverlay = function UpdateAFKOverlay() {
-		M["performance"].AFKOverlayZone.innerText = 'Zone: ' + game.global.world + (game.global.mapsActive ? " (Map: " + ((getCurrentMapObject().level - game.global.world) >= 0 ? "+" : "") + (getCurrentMapObject().level - game.global.world) + " " + (getCurrentMapObject().bonus !== undefined ? getCurrentMapObject().bonus : "") + ")" : "")
+		M["performance"].AFKOverlayZone.innerHTML = 'Zone: ' + game.global.world + " Cell: " + (game.global.lastClearedCell + 2) +
+
+			(game.global.mapsActive ? "<br>\ Map: " + ((getCurrentMapObject().level - game.global.world) >= 0 ? " + " : "") + (getCurrentMapObject().level - game.global.world) + " " + (getCurrentMapObject().bonus !== undefined ? getCurrentMapObject().bonus : "") : "")
 		if (game.global.universe == 1) {
 			M["performance"].AFKOverlayHelium.innerText = 'Helium: ' + prettify(Math.floor(game.resources.helium.owned));
 			M["performance"].AFKOverlayHeliumPerHour.innerText = 'He/hr: ' + prettify(game.stats.heliumHour.value());
