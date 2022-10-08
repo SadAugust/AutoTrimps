@@ -2257,7 +2257,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		enemyHealth = RcalcEnemyHealthMod(game.global.world, currentCell, enemyName, 'world', checkMutations);
 	}
 
-	if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
+	if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
 
 	var ourDmgEquality = 0;
 	var enemyDmgEquality = 0;
