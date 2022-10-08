@@ -2212,22 +2212,20 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	}
 }
 
-function equalityQuery(name, zone, cell, mapType, difficulty, farmType, floorCrit, checkMutations) {
+function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, floorCrit) {
 	var query = true;
 
-	var currentCell = cell;
-	var enemyName = name;
-
+	if (!enemyName) enemyName = 'Snimp';
+	if (!zone) zone = game.global.world;
+	if (!currentCell) mapType = 'world' ? 100 : 20;
+	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
+	if (!difficulty) difficulty = 1;
 	if (!farmType) farmType = 'gamma';
 	if (!floorCrit) floorCrit = false;
-	if (!difficulty) difficulty = 1;
 
-	var mapType = !mapType ? "world" : !mapType ? (getCurrentMapObject().location == "Void" ? "void" : "map") : mapType;
 	var mapping = mapType === 'world' ? false : true;
-	var zone = !zone && (mapType == "world" || !mapping) ? game.global.world : !zone ? getCurrentMapObject().level : zone;
-	var forceGamma = !forceGamma ? false : forceGamma;
-	var forceOneShot = !forceOneShot ? false : forceOneShot;
 	var bionicTalent = mapType !== 'world' && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
+	var checkMutations = mapType === 'world' && game.global.world > 200 && getPageSetting('rMutationCalc');
 
 	//Challenge conditions
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
@@ -2242,24 +2240,24 @@ function equalityQuery(name, zone, cell, mapType, difficulty, farmType, floorCri
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 
 	enemyDmg *= runningDuel ? 10 : 1;
-	if (mapType === 'void') enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : game.global.voidBuff == 'getCrit' ? 4 : 1;
+	if (mapType === 'void') enemyDmg *= 2;
 	//Our stats
 	var ourHealth = RcalcOurHealth(runningQuest, mapType);
-	var ourDmg = RcalcOurDmg('min', 0, mapType, false, false, floorCrit) * bionicTalent;
+	var ourDmg = RcalcOurDmg('avg', 0, mapType, false, false, floorCrit) * bionicTalent;
 
-	if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 
 	//Figuring out gamma to proc value
-	var gammaToTrigger = farmType === 'gamma' ? 0 : farmType === 'oneShot' ? 999 : Infinity
+	var gammaToTrigger = gammaBurstPct === 1 ? 0 : autoBattle.oneTimers.Burstier.owned ? 4 : 5
 
-	if (forceOneShot && mapping) ourDmg *= 2;
+	if (farmType === 'oneShot' && mapping) ourDmg *= 2;
 	if (mapping && game.talents.mapHealth.purchased) ourHealth *= 2;
 	if (checkMutations) {
-		ourDmg = RcalcOurDmg('avg', 0, 'world', false, false, false);
+		ourDmg = RcalcOurDmg('avg', 0, 'world', false, false, floorCrit);
 		enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, currentCell, enemyName, 'world', false), 0, true, 'world', checkMutations) * 1.5;
-		enemyHealth = RcalcEnemyHealthMod(game.global.world, currentCell, enemyName, null, checkMutations);
-		fastEnemy = true;
+		enemyHealth = RcalcEnemyHealthMod(game.global.world, currentCell, enemyName, 'world', checkMutations);
 	}
+
+	if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 
 	var ourDmgEquality = 0;
 	var enemyDmgEquality = 0;
@@ -2270,7 +2268,7 @@ function equalityQuery(name, zone, cell, mapType, difficulty, farmType, floorCri
 			if (runningUnlucky) {
 				var unluckyDmg = Number(RcalcOurDmg('min', i, mapType, false, true, floorCrit) * bionicTalent)
 				ourDmgEquality = RcalcOurDmg('min', i, mapType, false, false, floorCrit) * bionicTalent;
-				if (forceOneShot && mapping) ourDmgEquality *= 2;
+				if (farmType === 'oneShot' && mapping) ourDmgEquality *= 2;
 				if (unluckyDmg.toString()[0] % 2 == 1) {
 					continue;
 				}
