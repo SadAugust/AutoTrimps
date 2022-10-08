@@ -650,7 +650,7 @@ function debugCalc() {
 	var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
 	var name = getCurrentEnemy() ? getCurrentEnemy().name : "Chimp";
 	var equality = Math.pow(game.portal.Equality.getModifier(), game.portal.Equality.disabledStackCount)
-	var attack = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, cell, name), 0) * difficulty
+	var attack = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, cell, name, mapType, false), 0, true, mapType, false) * difficulty
 	var safeMapping = mapping && game.talents.mapHealth.purchased ? 2 : 1;
 	var bionic = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 	var runningUnlucky = game.global.challengeActive == 'Unlucky'
@@ -668,7 +668,7 @@ function debugCalc() {
 	//Enemy stats
 	debug("Enemy Stats");
 	debug("Enemy Attack: " + (attack * 0.5 * equality).toExponential(2) + "-" + (attack * 1.5 * equality).toExponential(2));
-	debug("Enemy Health: " + RcalcEnemyHealthMod(zone, cell, name, mapType).toExponential(2));
+	debug("Enemy Health: " + (RcalcEnemyHealthMod(zone, cell, name, mapType) * difficulty).toExponential(2));
 }
 
 function RgetCritMulti(floorCrit, mult, ceilCrit) {
@@ -696,10 +696,11 @@ function RgetCritMulti(floorCrit, mult, ceilCrit) {
 
 function RcalcOurDmg(minMaxAvg, equality, mapType, useTitimp, runningUnlucky, floorCrit) {
 
-	useTitimp = useTitimp ? true : false;
 	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
-	runningUnlucky = !runningUnlucky ? false : true;
-	floorCrit = !floorCrit ? false : true;
+	if (!useTitimp) useTitimp = false;
+	if (!runningUnlucky) runningUnlucky = false;
+	if (!floorCrit) floorCrit = false;
+
 	// Base + equipment
 	var attack = 6;
 	var equipmentList = ["Dagger", "Mace", "Polearm", "Battleaxe", "Greatsword", "Arbalest"];
@@ -1016,16 +1017,7 @@ function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, checkMutations)
 	attack *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	attack *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	attack *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
-	if (game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2) {
-		if (game.global.world > 200 && game.global.universe === 2 && (!game.global.mapsActive || checkMutations)) {
-			if (!query && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined' && game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.length > 0) {
-				var cell = game.global.gridArray[game.global.lastClearedCell + 1]
-				attack *= (1.01, game.global.world - 201)
-				if (cell.u2Mutation.indexOf('RGE') != -1 || (cell.cc && cell.cc[3] > 0)) attack *= u2Mutations.types.Rage.enemyAttackMult();
-			}
-			attack *= mapType === 'world' && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
-		}
-	}
+	attack *= mapType === 'world' && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.enemyAttackMult() : 1;
 	return attack;
 }
 
@@ -1184,13 +1176,10 @@ function RcalcEnemyHealthMod(world, cell, name, mapType, checkMutations) {
 	var health = RcalcEnemyBaseHealth(mapType, world, cell, name);
 
 	if (mapType === 'world' && checkMutations && game.global.world > 200 && getPageSetting('rMutationCalc')) {
-		health = rCalcMutationHealth();
-	}
-
-	var mapGrid = mapType === 'world' ? 'gridArray' : 'mapGridArray';
-	if (!checkMutations && game.global.stringVersion >= '5.8.0' && game.global.world > 200 && game.global.universe === 2 && mapType === 'world' && typeof (game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation) !== 'undefined') {
-		if (game.global[mapGrid][cell].u2Mutation) {
-			health = u2Mutations.getHealth(game.global[mapGrid][cell - 1])
+		health = rCalcMutationHealth() > health ? rCalcMutationHealth() : health;
+	} else if (game.global.world > 200 && mapType === 'world' && world === game.global.world) {
+		if (game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
+			health = u2Mutations.getHealth(game.global.gridArray[cell - 1])
 		}
 	}
 
@@ -1226,12 +1215,12 @@ function RcalcEnemyHealthMod(world, cell, name, mapType, checkMutations) {
 function RcalcHDratio() {
 	var ratio = Infinity;
 	var checkMutations = game.global.world > 200 && getPageSetting('rMutationCalc')
+	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
 	if (game.global.gridArray.length > 0) {
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', checkMutations);
 		var ourDamage = RcalcOurDmg("avg", false, false, 'world');
 		if (getPageSetting('rManageEquality') == 2) {
-			var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
-			ourDamage = RcalcOurDmg('avg', equalityQuery('Snimp', game.global.world, 99, 'world', 1, 'gamma', false, checkMutations), 'world', false, false, false) * gammaBurstDmg;
+			ourDamage = RcalcOurDmg('avg', equalityQuery('Snimp', game.global.world, 99, 'world', 1, 'gamma'), 'world', false, false, false) * gammaBurstDmg;
 		}
 		//debug("T_dmg - " + ourDamage.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
 

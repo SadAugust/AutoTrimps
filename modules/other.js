@@ -2212,16 +2212,15 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	}
 }
 
-function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, floorCrit) {
-	var query = true;
+function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType) {
+	var query = false;
 
 	if (!enemyName) enemyName = 'Snimp';
 	if (!zone) zone = game.global.world;
-	if (!currentCell) mapType = 'world' ? 100 : 20;
-	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
+	if (!mapType) mapType = 'world'
+	if (!currentCell) mapType === 'world' ? 98 : 20;
 	if (!difficulty) difficulty = 1;
 	if (!farmType) farmType = 'gamma';
-	if (!floorCrit) floorCrit = false;
 
 	var mapping = mapType === 'world' ? false : true;
 	var bionicTalent = mapType !== 'world' && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
@@ -2230,12 +2229,12 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	//Challenge conditions
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
 	var runningDuel = game.global.challengeActive == 'Duel';
-	var runningQuest = ((game.global.challengeActive == 'Quest' && questcheck() == 8)); //Shield break quest
+	var runningQuest = game.global.challengeActive == 'Quest' && questcheck() == 8; //Shield break quest
 
 	//Initialising name/health/dmg variables
 	//Enemy stats
 	if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
-	var enemyHealth = RcalcEnemyHealthMod(zone, currentCell, enemyName, mapType) * difficulty;
+	var enemyHealth = RcalcEnemyHealthMod(zone, currentCell, enemyName, mapType, checkMutations) * difficulty;
 	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, query), 0, query, mapType) * difficulty * 1.5;
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 
@@ -2243,8 +2242,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (mapType === 'void') enemyDmg *= 2;
 	//Our stats
 	var ourHealth = RcalcOurHealth(runningQuest, mapType);
-	var ourDmg = RcalcOurDmg('avg', 0, mapType, false, false, floorCrit) * bionicTalent;
-
+	var ourDmg = RcalcOurDmg('avg', 0, mapType, false, false) * bionicTalent;
 
 	//Figuring out gamma to proc value
 	var gammaToTrigger = gammaBurstPct === 1 ? 0 : autoBattle.oneTimers.Burstier.owned ? 4 : 5
@@ -2252,8 +2250,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (farmType === 'oneShot' && mapping) ourDmg *= 2;
 	if (mapping && game.talents.mapHealth.purchased) ourHealth *= 2;
 	if (checkMutations) {
-		ourDmg = RcalcOurDmg('avg', 0, 'world', false, false, floorCrit);
-		enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, currentCell, enemyName, 'world', false), 0, true, 'world', checkMutations) * 1.5;
+		enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, currentCell, enemyName, 'world', false), 0, 'world', checkMutations);
 		enemyHealth = RcalcEnemyHealthMod(game.global.world, currentCell, enemyName, 'world', checkMutations);
 	}
 

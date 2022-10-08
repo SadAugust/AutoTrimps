@@ -1720,6 +1720,7 @@ function RautoMap() {
 		var destackHits = getPageSetting('rMayhemDestack') > 0 ? getPageSetting('rMayhemDestack') : Infinity;
 		var destackZone = getPageSetting('rMayhemZone') > 0 ? getPageSetting('rMayhemZone') : Infinity;
 		var rMayhemMapLevel = 0;
+		var rMayhemMapIncrease = getPageSetting('rMayhemMapIncrease') > 0 ? getPageSetting('rMayhemMapIncrease') : 0;
 		rMayhemSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
 		if (game.challenges.Mayhem.stacks > 0 && (HDRatio > destackHits || game.global.world >= destackZone))
 			rShouldMayhem = true;
@@ -1733,7 +1734,7 @@ function RautoMap() {
 			rMayhemautoLevel = callAutoMapLevel(rMayhemCurrentMap, rMayhemautoLevel, rMayhemSpecial, 10, 0, false);
 			if (rMayhemautoLevel !== Infinity) {
 				if (rMayhemautoLevel_Repeat !== Infinity && rMayhemautoLevel !== rMayhemautoLevel_Repeat) rMayhemMapRepeats = game.global.mapRunCounter + 1;
-				rMayhemMapLevel = rMayhemautoLevel;
+				rMayhemMapLevel = (rMayhemautoLevel + rMayhemMapIncrease > 10 ? 10 : rMayhemautoLevel + rMayhemMapIncrease);
 			}
 		}
 		if (rMayhemCurrentMap != undefined && !rShouldMayhem) {
@@ -2133,8 +2134,8 @@ function RautoMap() {
 		if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
 			var name = game.global.gridArray[0].name
 			var gammaDmg = gammaBurstPct;
-			var equalityAmt = equalityQuery(name, game.global.world, 1, 'world', 1, 'gamma', true)
-			var ourDmg = (RcalcOurDmg('min', equalityAmt, 'world', false, false, true));
+			var equalityAmt = equalityQuery(name, game.global.world, 1, 'world', 1, 'gamma')
+			var ourDmg = RcalcOurDmg('min', equalityAmt, 'world', false, false, true);
 			var totalDmg = (ourDmg * 2 + (ourDmg * gammaDmg * 2))
 			var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world');
 			enemyHealth *= 3e15;

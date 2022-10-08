@@ -704,9 +704,10 @@ function initializeAllSettings() {
 	createSetting('rMayhem', 'Mayhem', 'Turn on Mayhem settings. ', 'boolean', false, null, 'C3');
 	createSetting('rMayhemDestack', 'M: HD Ratio', 'What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Mayhem stacks remaining to clear. ', 'value', '-1', null, 'C3');
 	createSetting('rMayhemZone', 'M: Zone', 'What zone you\'d like to start destacking from, can be used in conjunction with \'M: HD Ratio\' but will clear stacks until 0 are remaining regardless of the value set in \'M: HD Ratio\'.', 'value', '-1', null, 'C3');
+	createSetting('rMayhemMapIncrease', 'M: Map Increase', 'Will increase the map level of Mayhem farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.<br>This setting will make it so that AT doesn\'t check if you can afford the new map level so beware it could cause some issues.', 'value', '-1', null, 'C3');
 
 	//Storm
-	document.getElementById('rMayhemZone').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('rMayhemMapIncrease').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rstormon', 'Storm', 'Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ', 'boolean', false, null, 'C3');
 	createSetting('rStormZone', 'S: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C3');
 	createSetting('rStormStacks', 'S: Stacks', 'The amount of stack you have to reach before clearing all of them.', 'value', -1, null, 'C3');
@@ -2308,6 +2309,7 @@ function updateCustomButtons() {
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 99) && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') ? turnOn('rMayhem') : turnOff('rMayhem');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 99) && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemDestack') : turnOff('rMayhemDestack');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 99) && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemZone') : turnOff('rMayhemZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 99) && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemMapIncrease') : turnOff('rMayhemMapIncrease');
 
 
 	//Storm
