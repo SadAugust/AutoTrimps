@@ -860,8 +860,9 @@ var rHDFIndex;
 
 var enemyDamage = 1;
 
-if (typeof (autoTrimpSettings.rAutoStructureSetting.value) !== 'undefined' && autoTrimpSettings.rAutoStructureSetting.value === true)
+if (getAutoStructureSetting().enabled) {
 	document.getElementById('autoStructureBtn').classList.add("enabled")
+}
 
 function RupdateAutoMapsStatus(get) {
 
