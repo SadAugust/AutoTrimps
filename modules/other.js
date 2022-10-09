@@ -2262,8 +2262,8 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 			enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i)
 			ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 			if (runningUnlucky) {
-				var unluckyDmg = Number(RcalcOurDmg('min', i, mapType, false, true, floorCrit) * bionicTalent)
-				ourDmgEquality = RcalcOurDmg('min', i, mapType, false, false, floorCrit) * bionicTalent;
+				var unluckyDmg = Number(RcalcOurDmg('min', i, mapType, false, true, true) * bionicTalent)
+				ourDmgEquality = RcalcOurDmg('min', i, mapType, false, false, false) * bionicTalent;
 				if (farmType === 'oneShot' && mapping) ourDmgEquality *= 2;
 				if (unluckyDmg.toString()[0] % 2 == 1) {
 					continue;
