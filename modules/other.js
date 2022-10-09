@@ -2289,6 +2289,7 @@ function equalityManagement() {
 		game.portal.Equality.scalingActive = false;
 		//Misc vars
 		var debugStats = false;
+		voidPBSwap = false;
 		var mapping = game.global.mapsActive ? true : false;
 		var currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
 		var mapGrid = mapping ? 'mapGridArray' : 'gridArray';
