@@ -134,6 +134,7 @@ ul.tab li a:hover {
 	background: -webkit-linear-gradient(left, #323341 12%, #626368 29.5%, #727275 47%, #727275 53%, #4c4d56 70.5%, #323341 88%);
 }
 
+/*MAZ LAYOUT CSS*/
 
 .structConfigPercent,
 .dailyAutoPortalZone,
@@ -176,111 +177,560 @@ ul.tab li a:hover {
 	margin-top: 0.5vw;
 }
 
-.windowDelete,
-.windowWorld,
-.windowCheckbox,
-.windowPreset,
-.windowRepeatUntil,
-.windowExit,
-.windowBwWorld,
-.windowCell,
-.windowTimes,
-.windowThrough,
-.windowRx,
-.windowPrio,
-.windowTx,
-.windowLevel,
-.windowRepeat,
-.windowRaidingZone,
-.windowGather,
-.windowSpecial,
-.windowTributes,
-.windowMets,
-.windowBogs,
-.windowInsanity,
-.windowPotionType,
-.windowPotionNumber,
-.windowBonfire,
-.windowRunType,
-.windowRaidingDropdown,
-.windowBoneBelow,
-.windowBoneAmount,
-.windowBoneGather,
-.windowJobRatio,
-.windowJobRatioTribute,
-.windowWorshipper,
-.windowBuildings,
-.windowAtlantrimp,
-.windowActive,
-.windowStorage,
-.windowPackrat,
-.windowRecycle,
-.windowRepeatEvery,
-.windowFrozenCastle,
-.windowTributeFarmDropdown,
-.windowTributeFarmDropdownDefault,
-.windowAutoLevel,
-.windowEndZone,
-.windowHDMult,
-.windowShred {
+
+
+
+
+.windowDeleterTimeFarm,
+.windowDeleterTributeFarm,
+.windowDeleterBoneShrine {
 	display: inline-block;
+	width: 2%;
+	padding: 1px;
+	cursor: pointer;
 }
 
-.windowDelete .icomoon {
+
+.windowDeleterWorshipperFarm,
+.windowDeleterVoidMap,
+.windowDeleterRaiding,
+.windowDeleterSmithyFarm,
+.windowDeleterQuag,
+.windowDeleterInsanity,
+.windowDeleterAlch,
+.windowDeleterHypo,
+.windowDeleterHDFarm,
+.windowDeleterMapBonus {
+	display: inline-block;
+	width: 3%;
+	padding: 1px;
+	cursor: pointer;
+}
+
+.windowDeleterTimeFarm .icomoon,
+.windowDeleterTributeFarm .icomoon,
+.windowDeleterSmithyFarm .icomoon,
+.windowDeleterWorshipperFarm .icomoon,
+.windowDeleterMapBonus .icomoon,
+.windowDeleterBoneShrine .icomoon,
+.windowDeleterQuag .icomoon,
+.windowDeleterInsanity .icomoon,
+.windowDeleterAlch .icomoon,
+.windowDeleterHypo .icomoon,
+.windowDeleterHDFarm .icomoon,
+.windowDeleterVoidMap .icomoon,
+.windowDeleterRaiding .icomoon {
 	position: relative;
 	top: 0.6vw;
-	left: -0.55vw;
+	left: -1vw;
 	color: red;
 	font-weight: bold;
 	font-size: 2vw;
+	padding: 1px;
+}
+
+.windowActiverTimeFarm,
+.windowActiverTributeFarm,
+.windowActiverWorshipperFarm,
+.windowActiverMapBonus,
+.windowActiverBoneShrine,
+.windowActiverInsanity,
+.windowActiverHDFarm {
+	display: inline-block;
+	width: 7%;
+	padding: 1px;
+}
+
+.windowActiverVoidMap,
+.windowActiverRaiding,
+.windowActiverSmithyFarm,
+.windowActiverQuag,
+.windowActiverAlch,
+.windowActiverHypo {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+/*I'm creating so much work for myself here :(*/
+/*World columns*/
+.windowWorldrTimeFarm,
+.windowWorldrTributeFarm,
+.windowWorldrBoneShrine,
+.windowWorldrAlch {
+	display: inline-block;
+	width: 7%;
+	padding: 1px;
+}
+
+.windowWorldrInsanity {
+	display: inline-block;
+	width: 10%;
+	padding: 1px;
+
+}
+
+.windowWorldrMapBonus {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+
+}
+
+.windowWorldrHypo {
+	display: inline-block;
+	width: 16%;
+	padding: 1px;
+
+}
+
+.windowWorldrQuag {
+	display: inline-block;
+	width: 20%;
+	padding: 1px;
+
+}
+
+.windowWorldrWorshipperFarm {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+
+}
+
+.windowWorldrHDFarm {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+
+}
+
+.windowWorldrRaiding {
+	display: inline-block;
+	width: 20%;
+	padding: 1px;
+
+}
+
+.windowWorldrSmithyFarm {
+	display: inline-block;
+	width: 18%;
+	padding: 1px;
+
+}
+
+.windowWorldrVoidMap {
+	display: inline-block;
+	width: 17%;
+	padding: 1px;
+
+}
+
+/*Cell columns*/
+.windowCellrTimeFarm,
+.windowCellrTributeFarm,
+.windowCellrBoneShrine,
+.windowCellrAlch {
+	display: inline-block;
+	width: 7%;
+	padding: 1px;
+}
+
+.windowCellrInsanity {
+	display: inline-block;
+	width: 10%;
+	padding: 1px;
+}
+
+.windowCellrMapBonus {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+.windowCellrHypo {
+	display: inline-block;
+	width: 16%;
+	padding: 1px;
+}
+
+.windowCellrQuag {
+	display: inline-block;
+	width: 20%;
+	padding: 1px;
+}
+
+.windowCellrHDFarm {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+.windowCellrWorshipperFarm {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+.windowCellrRaiding {
+	display: inline-block;
+	width: 20%;
+	padding: 1px;
+}
+
+.windowCellrSmithyFarm {
+	display: inline-block;
+	width: 18%;
+	padding: 1px;
+}
+
+.windowCellrVoidMap {
+	display: inline-block;
+	width: 15%;
+	padding: 1px;
+}
+
+/*Auto Level columns*/
+.windowAutoLevelrTimeFarm,
+.windowAutoLevelrTributeFarm,
+.windowAutoLevelrAlch {
+	display: inline-block;
+	width: 4%;
+	padding: 1px;
+}
+
+.windowAutoLevelrInsanity {
+	display: inline-block;
+	width: 5%;
+	padding: 1px;
+}
+
+.windowAutoLevelrMapBonus {
+	display: inline-block;
+	width: 6%;
+	padding: 1px;
+}
+
+.windowAutoLevelrHypo {
+	display: inline-block;
+	width: 5%;
+	padding: 1px;
+}
+
+.windowAutoLevelrWorshipperFarm {
+	display: inline-block;
+	width: 6%;
+	padding: 1px;
+}
+
+.windowAutoLevelrHDFarm {
+	display: inline-block;
+	width: 6%;
+	padding: 1px;
+}
+
+.windowAutoLevelrSmithyFarm {
+	display: inline-block;
+	width: 13%;
+	padding: 1px;
+}
+
+/*Map Level columns*/
+.windowLevelrTimeFarm,
+.windowLevelrTributeFarm,
+.windowLevelrVoidMap,
+.windowLevelrBoneShrine,
+.windowLevelrAlch,
+.windowLevelrHypo {
+	display: inline-block;
+	width: 7%;
+	padding: 1px;
+}
+
+.windowLevelrInsanity {
+	display: inline-block;
+	width: 10%;
+	padding: 1px;
+}
+
+.windowLevelrMapBonus {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+.windowLevelrHypo {
+	display: inline-block;
+	width: 16%;
+	padding: 1px;
+}
+
+.windowLevelrQuag {
+	display: inline-block;
+	width: 20%;
+	padding: 1px;
+}
+
+.windowLevelrWorshipperFarm {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+.windowLevelrHDFarm {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+.windowLevelrSmithyFarm {
+	display: inline-block;
+	width: 18%;
+	padding: 1px;
+}
+
+/*Job Ratio columns*/
+.windowJobRatiorTimeFarm,
+.windowJobRatiorTributeFarm,
+.windowJobRatiorVoidMap,
+.windowJobRatiorBoneShrine,
+.windowJobRatiorAlch {
+	display: inline-block;
+	width: 11%;
+	padding: 1px;
+}
+
+.windowJobRatiorInsanity {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+.windowJobRatiorMapBonus {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+.windowJobRatiorHypo {
+	display: inline-block;
+	width: 20%;
+	padding: 1px;
+}
+
+.windowJobRatiorWorshipperFarm {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+.windowJobRatiorVoidMap {
+	display: inline-block;
+	width: 18%;
+	padding: 1px;
+}
+
+.windowJobRatiorQuag {
+	display: inline-block;
+	width: 25%;
+	padding: 1px;
+}
+
+/*Run Type columns*/
+.windowRunTyperBoneShrine,
+.windowRunTyperHDFarm {
+	display: inline-block;
+	width: 10%;
+	padding: 1px;
+}
+
+.windowRunTyperHDFarm {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+.windowRunTyperVoidMap {
+	display: inline-block;
+	width: 18%;
+	padding: 1px;
+}
+
+
+/*Repeat Every columns*/
+.windowRepeatEveryrTimeFarm,
+.windowRepeatEveryrTributeFarm {
+	display: inline-block;
+	width: 8%;
+	padding: 1px;
+}
+
+.windowRepeatEveryrWorshipperFarm {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+/*End Zone columns*/
+.windowEndZonerTimeFarm,
+.windowEndZonerTributeFarm {
+	display: inline-block;
+	width: 7%;
+	padding: 1px;
+}
+
+.windowEndZonerWorshipperFarm {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+.windowEndZonerHDFarm {
+	display: inline-block;
+	width: 12%;
+	padding: 1px;
+}
+
+/*Cell columns*/
+.window {
+	display: inline-block;
+	padding: 1px;
+}
+
+.windowRepeatEvery,
+
+/*Base Settings*/
+.windowWorld,
+.windowCell,
+.windowAutoLevel,
+.windowLevel,
+/*Map Level*/
+.windowDelete,
+.windowRepeat,
+/*Turkimp Gather*/
+.windowGather,
+/*Map Special Modifier*/
+.windowSpecial,
+/*Tribute Farm*/
+.windowTributes,
+.windowMets,
+.windowBuildings,
+.windowTributeFarmDropdown,
+.windowTributeFarmDropdownDefault,
+/*Smithy Farm*/
+.windowSmithies,
+/*Void Map*/
+.windowVoidMod,
+/*Quagmire*/
+.windowBogs,
+/*Insanity*/
+.windowInsanity,
+/*Alchemy*/
+.windowPotionType,
+.windowPotionNumber,
+/*Hypothermia*/
+.windowStorage,
+.windowPackrat,
+.windowBonfire,
+.windowFrozenCastle,
+/*Raiding*/
+.windowRaidingZone,
+.windowRaidingDropdown,
+/*Bone Shrine*/
+.windowBoneBelow,
+.windowBoneAmount,
+.windowBoneGather,
+/*Miscellaneous*/
+.windowRunType,
+.windowJobRatio,
+.windowJobRatioTribute,
+.windowWorshipper,
+.windowAtlantrimp,
+.windowActive,
+.windowRecycle,
+.windowRepeatEvery,
+.windowEndZone,
+.windowHDBase,
+.windowHDMult,
+.windowShred,
+.windowMapStacks {
+	display: inline-block;
 }
 
 #windowError {
 	font-weight: bold;
 	color: red;
-}
-
-.windowDelete {
-	width: 2%;
-	cursor: pointer;
+	padding: 1px;
 }
 
 .windowJobRatio {
 	width: 11%;
 	cursor: pointer;
+	padding: 1px;
 }
 
 .windowJobRatioTribute {
 	width: 7%;
 	cursor: pointer;
+	padding: 1px;
 }
 
 .windowWorld,
 .windowCell,
-.windowThrough,
 .windowRepeat,
 .windowRepeatEvery,
-.windowRaidingZone,
 .windowPotionNumber,
-.windowWorshipper,
-.windowHDMult,
 .windowEndZone {
 	width: 7%;
+	padding: 1px;
+}
+
+.windowMapStacks {
+	width: 12%;
+	padding: 1px;
+}
+
+.windowWorshipper {
+	width: 12%;
+	padding: 1px;
+}
+
+.windowHDMult,
+.windowHDBase {
+	width: 12%;
+	padding: 1px;
+}
+
+.windowVoidMod {
+	width: 17%;
+	padding: 1px;
 }
 
 .windowTributes,
 .windowMets {
 	width: 8%;
+	padding: 1px;
 }
 
-.windowBogs,
-.windowInsanity,
-.windowBonfire {
+.windowInsanity {
 	width: 10%;
+	padding: 1px;
+}
+
+.windowBonfire {
+	width: 12%;
+	padding: 1px;
+}
+
+.windowBogs {
+	width: 20%;
+	padding: 1px;
 }
 
 .windowCheckbox {
 	width: 4%;
+	padding: 1px;
+	padding: 1px;
 }
 
 .windowActive,
@@ -288,71 +738,81 @@ ul.tab li a:hover {
 .windowPackrat,
 .windowRecycle,
 .windowFrozenCastle {
-	width: 8%;
+	width: 15%;
+	padding: 1px;
 }
 
 .windowBuildings,
 .windowAtlantrimp {
-	width: 9%
+	width: 9%;
+	padding: 1px;
 }
 
 .windowAutoLevel {
 	width: 4%;
+	padding: 1px;
 }
 
 .windowPotionType {
 	width: 18%;
+	padding: 1px;
 }
 
-.windowPreset,
 .windowSpecial {
 	width: 24%;
+	padding: 1px;
 }
 
-.windowRepeat .windowRaidingZone {
-	width: 8.5%;
+
+/*Smithy Farm*/
+.windowSmithies {
+	width: 18%;
+	padding: 1px;
 }
 
-.windowRepeatUntil {
-	width: 15%;
+/*Raiding*/
+.windowRaidingDropdown {
+	width: 25%;
+	padding: 1px;
 }
 
-.windowExit {
-	width: 8%;
+.windowRaidingZone {
+	width: 20%;
+	padding: 1px;
 }
 
-.windowTimes {
-	width: 17%;
+
+/*Bone Shrine*/
+.windowBoneBelow,
+.windowBoneAmount {
+	width: 10%;
+	padding: 1px;
 }
 
 .windowBoneGather {
 	width: 10%;
-}
-
-.windowBoneBelow,
-.windowBoneAmount {
-	width: 10%;
+	padding: 1px;
 }
 
 .windowRunType {
 	width: 10%;
-}
-
-.windowRaidingDropdown {
-	width: 15%;
+	padding: 1px;
 }
 
 .windowTributeFarmDropdown {
 	width: 10%;
+	padding: 1px;
 }
 
 .windowTributeFarmDropdownDefault {
 	width: 10%;
+	padding: 1px;
 }
 
 .windowRepeatUntil,
 .windowGatherOn .windowSpecial {
 	width: 16%;
+	padding: 1px;
 }
 
 .windowGatherOff .windowGather {
@@ -361,46 +821,113 @@ ul.tab li a:hover {
 
 .windowGatherOn .windowGather {
 	width: 8%;
+	padding: 1px;
 }
 
 
 .windowLevel {
 	width: 7%;
 	opacity: 1;
+	padding: 1px;
 }
 
-.windowLevelOff .windowLevel {
-	width: 7%;
+
+
+/*Why does this exist. Surely there's a better way?*/
+.windowLevelOff .windowLevel,
+.windowLevelOff .windowLevelrTimeFarm,
+.windowLevelOff .windowLevelrTributeFarm,
+.windowLevelOff .windowLevelrSmithyFarm,
+.windowLevelOff .windowLevelrWorshipperFarm,
+.windowLevelOff .windowLevelrVoidMap,
+.windowLevelOff .windowLevelrMapBonus,
+.windowLevelOff .windowLevelrBoneShrine,
+.windowLevelOff .windowLevelrQuag,
+.windowLevelOff .windowLevelrInsanity,
+.windowLevelOff .windowLevelrAlch,
+.windowLevelOff .windowLevelrHypo,
+.windowLevelOff .windowLevelrHDFarm {
 	opacity: 0.3;
 	cursor: not-allowed;
 	pointer-events: none;
+	padding: 1px;
 }
 
-.windowLevelOn .windowLevel {
-	width: 7%;
+/*Why does this exist. Surely there's a better way?*/
+.windowLevelOn .windowLevel .windowLevelOn .windowLevelrTimeFarm,
+.windowLevelOn .windowLevelrTributeFarm,
+.windowLevelOn .windowLevelrSmithyFarm,
+.windowLevelOn .windowLevelrWorshipperFarm,
+.windowLevelOn .windowLevelrVoidMap,
+.windowLevelOn .windowLevelrMapBonus,
+.windowLevelOn .windowLevelrBoneShrine,
+.windowLevelOn .windowLevelrQuag,
+.windowLevelOn .windowLevelrInsanity,
+.windowLevelOn .windowLevelrAlch,
+.windowLevelOn .windowLevelrHypo,
+.windowLevelOn .windowLevelrHDFarm {
 	opacity: 1;
+	padding: 1px;
 }
 
 .windowShred {
 	width: 12%;
+	padding: 1px;
 }
 
 .windowShredOff .windowShred {
 	display: none;
+	padding: 1px;
 }
 
 .windowShredOn .windowShred {
 	width: 12%;
 	opacity: 1;
+	padding: 1px;
 }
 
 
 
 
 
+#tooltipDiv.tooltipWindow15 {
+	width: 15%;
+}
+
+#tooltipDiv.tooltipWindow20 {
+	width: 20%;
+}
+
+#tooltipDiv.tooltipWindow25 {
+	width: 25%;
+}
+
+#tooltipDiv.tooltipWindow30 {
+	width: 30%;
+}
+
 #tooltipDiv.tooltipWindowLg {
-	width: 60%;
-	overflow-y: scroll;
+	width: 30%;
+}
+
+#tooltipDiv.tooltipWindow35 {
+	width: 35%;
+}
+
+#tooltipDiv.tooltipWindow40 {
+	width: 40%;
+}
+
+#tooltipDiv.tooltipWindow45 {
+	width: 45%;
+}
+
+#tooltipDiv.tooltipWindow50 {
+	width: 50%;
+}
+
+#tooltipDiv.tooltipWindow55 {
+	width: 55%;
 }
 
 #tooltipDiv.tooltipExtraLg {
