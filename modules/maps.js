@@ -928,6 +928,11 @@ function RupdateAutoMapsStatus(get) {
 
 function RautoMap() {
 	//Stops maps from running while doing Atlantrimp.
+	if (!game.mapUnlocks.AncientTreasure.canRunOnce) {
+		rBSRunningAtlantrimp = false;
+		rTFAtlantrimp = false;
+		rTrFAtlantrimp = false;
+	}
 	if (rBSRunningAtlantrimp)
 		return RupdateAutoMapsStatus();
 
