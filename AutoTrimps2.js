@@ -83,6 +83,7 @@ var lastRadonZone = 0;
 var HDRatio = 0;
 var autoLevel = 0;
 var rC3EndZoneSetting = -1;
+var voidPBSwap = false;
 
 //Get Gamma burst % value
 gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
