@@ -981,6 +981,7 @@ function saveATAutoStructureConfig() {
 
 	autoTrimpSettings.rBuildingSettingsArray.value = setting;
 	if (game.global.highestRadonLevelCleared < 129) {
+		autoTrimpSettings.rBuildingSettingsArray.value.Laboratory = {};
 		autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.enabled = true;
 		autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.percent = 100;
 		autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.buyMax = 0;
