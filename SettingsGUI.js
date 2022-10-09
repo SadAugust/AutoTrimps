@@ -853,10 +853,10 @@ function initializeAllSettings() {
 	//Heirloom Swapping
 	createSetting('Rhs', 'Heirloom Swapping', 'Heirloom swapping master button. Turn this on to allow heirloom swapping and its associated settings. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsMapSwap', 'Map Swap', 'Toggle to swap to your afterpush shield when inside maps', 'boolean', false, null, 'Heirlooms');
-	createSetting('RhsPlagueBringerSwap', 'Plaguebringer Swap', 'Toggle to swap to your initial shield when the enemy 2 cells from now is Fast to maximise plaguebringer damage.', 'boolean', false, null, 'Heirlooms');
+	createSetting('RhsVoidSwap', 'Void PB Swap', 'Toggle to swap to your initial shield when your current enemy is slow and the next enemy is fast to maximise plaguebringer damage.<br><br>Will only run during Void Maps and won\'t function properly if your Initial Shield has PlagueBringer or your Afterpush shield doesn\'t have PlagueBringer.', 'boolean', false, null, 'Heirlooms');
 
 	//Shield swapping
-	document.getElementById('RhsPlagueBringerSwap').parentNode.insertAdjacentHTML('afterend', '<br>');
+	document.getElementById('RhsVoidSwap').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RhsShield', 'Shields', 'Toggle to swap Shields', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsInitial', 'Initial', '<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsAfterpush', 'Afterpush', '<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
@@ -2471,7 +2471,7 @@ function updateCustomButtons() {
 	var hson = getPageSetting('Rhs')
 	var hsshieldon = getPageSetting('RhsShield');
 	radonon && hson && hsshieldon ? turnOn('RhsMapSwap') : turnOff('RhsMapSwap');
-	turnOff('RhsPlagueBringerSwap');
+	radonon && hson && hsshieldon ? turnOn('RhsVoidSwap') : turnOff('RhsVoidSwap');
 
 	//Shields
 	radonon && hson ? turnOn('RhsShield') : turnOff('RhsShield');

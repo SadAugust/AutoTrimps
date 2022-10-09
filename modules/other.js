@@ -2295,6 +2295,10 @@ function equalityManagement() {
 		var type = (!mapping) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 		var zone = (type == "world" || !mapping) ? game.global.world : getCurrentMapObject().level;
 		var bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
+		if (type === 'void') {
+			voidPBSwap = getPageSetting('RhsVoidSwap') && game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 && fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) && game.global.voidBuff !== 'doubleAttack';
+			if (getPageSetting('RhsVoidSwap')) HeirloomSwapping();
+		}
 
 		//Daily modifiers active
 		var dailyEmpower = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.empower !== 'undefined' //Empower
@@ -2378,6 +2382,13 @@ function equalityManagement() {
 						continue;
 				}
 
+				if (voidPBSwap && !fastEnemy && RcalcOurDmg('max', i, 'void', true, false, true) * 8 > enemyHealth && (typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' || game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) && (getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
+					game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
+					while (RcalcOurDmg('max', i, 'void', true, false, true) * 8 > getCurrentEnemy().health) {
+						i++;
+					}
+					continue;
+				}
 				if (!fastEnemy && !runningGlass && !runningBerserk && !runningTrappa && !runningArchaeology && !runningQuest) {
 					game.portal.Equality.disabledStackCount = i;
 					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
