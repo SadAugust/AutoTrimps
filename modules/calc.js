@@ -650,7 +650,7 @@ function debugCalc() {
 	var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
 	var name = getCurrentEnemy() ? getCurrentEnemy().name : "Chimp";
 	var equality = Math.pow(game.portal.Equality.getModifier(), game.portal.Equality.disabledStackCount)
-	var attack = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, cell, name, mapType, false), 0, true, mapType, false) * difficulty
+	var attack = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, cell, name, mapType, false), 0, mapType, false) * difficulty
 	var safeMapping = mapping && game.talents.mapHealth.purchased ? 2 : 1;
 	var bionic = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
 	var runningUnlucky = game.global.challengeActive == 'Unlucky'
@@ -954,14 +954,14 @@ function rCalcMutationAttack(muteCell) {
 			attack = highest;
 		}
 	}
-	if (muteCell) debug(worstCell + 1)
+	//Showing which cell has the highest attack value
+	if (muteCell) debug(worstCell)
 
 	return attack;
 }
 
-function RcalcBadGuyDmg(enemy, attack, equality, query, mapType, checkMutations) { //Works out avg dmg. For max dmg * 1.5.
+function RcalcBadGuyDmg(enemy, attack, equality, mapType, checkMutations) { //Works out avg dmg. For max dmg * 1.5.
 	var attack = enemy ? enemy.attack : attack;
-	var query = !query ? false : query;
 	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	attack = game.global.challengeActive == 'Exterminate' && getPageSetting('Rexterminateon') && getPageSetting('Rexterminatecalc') ? RgetEnemyAvgAttack(game.global.world, 90, 'Mantimp') : attack;
 
@@ -1153,7 +1153,8 @@ function rCalcMutationHealth(muteCell) {
 				health = highest;
 			}
 		}
-		if (muteCell) debug(worstCell + 1)
+		//Showing which cell has the highest health value
+		if (muteCell) debug(worstCell)
 	}
 	if (!mute) health = RcalcEnemyBaseHealth("world", game.global.world, 99, 'Gorillimp');
 

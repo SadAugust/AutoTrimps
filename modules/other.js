@@ -2196,7 +2196,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 		var ourDmg = (RcalcOurDmg('min', equalityAmt, 'map', false, false, floorCrit)) * 2;
 		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Turtlimp', 'map') * difficulty;
-		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, true, 'map') * 1.5 * difficulty;
+		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, 'map') * 1.5 * difficulty;
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 
 		/* if (y === -3) {
@@ -2234,7 +2234,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	//Enemy stats
 	if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
 	var enemyHealth = RcalcEnemyHealthMod(zone, currentCell, enemyName, mapType, checkMutations) * difficulty;
-	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, false), 0, false, mapType) * difficulty * 1.5;
+	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, false), 0, mapType) * difficulty * 1.5;
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 
 	enemyDmg *= runningDuel ? 10 : 1;
@@ -2249,7 +2249,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (farmType === 'oneShot' && mapping) ourDmg *= 2;
 	if (mapping && game.talents.mapHealth.purchased) ourHealth *= 2;
 	if (checkMutations) {
-		enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, currentCell, enemyName, 'world', true), 0, 'world', checkMutations);
+		enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, currentCell, enemyName, 'world', true), 0, 'world', checkMutations) * 1.5;
 		enemyHealth = RcalcEnemyHealthMod(game.global.world, currentCell, enemyName, 'world', checkMutations);
 	}
 

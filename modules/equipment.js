@@ -846,7 +846,7 @@ function estimateEquipsForZone(rEFIndex) {
 	var ourHealth = RcalcOurHealth(false, 'world');
 	var ourDmg = RcalcOurDmg('avg', 0, 'world', false, false, false) * gammaBurstDmg;
 	var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', checkMutations);
-	var enemyDamageBeforeEquality = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Snimp', 'world', true), 0, true, 'world', checkMutations) * 1.5
+	var enemyDamageBeforeEquality = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Snimp', 'world', true), 0, 'world', checkMutations) * 1.5
 
 	var healthNeededMulti = enemyDamageBeforeEquality / ourHealth; // The multiplier we need to apply to our health to survive
 

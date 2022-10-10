@@ -1010,9 +1010,9 @@ function RautoMap() {
 	//Calc
 	var ourBaseDamage = RcalcOurDmg("avg", false, 'world');
 	if (getPageSetting('rManageEquality') === 2 && oneSecondInterval)
-		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), equalityQuery('Improbability', game.global.world, 99, 'world', 1, 'gamma', false, true), false, null, true);
+		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), equalityQuery('Improbability', game.global.world, 99, 'world', 1, 'gamma', false, true), 'world', true);
 	else if (getPageSetting('rManageEquality') !== 2)
-		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), game.portal.Equality.getMult(), false, null, true);
+		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), game.portal.Equality.getMult(), 'world', true);
 
 	/* if (getPageSetting('RDisableFarm') > 0) {
 		RshouldFarm = (HDRatio >= getPageSetting('RDisableFarm'));
