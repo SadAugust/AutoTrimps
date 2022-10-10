@@ -853,7 +853,7 @@ function initializeAllSettings() {
 	//Heirloom Swapping
 	createSetting('Rhs', 'Heirloom Swapping', 'Heirloom swapping master button. Turn this on to allow heirloom swapping and its associated settings. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsMapSwap', 'Map Swap', 'Toggle to swap to your afterpush shield when inside maps', 'boolean', false, null, 'Heirlooms');
-	createSetting('RhsVoidSwap', 'Void PB Swap', 'Toggle to swap to your initial shield when your current enemy is slow and the next enemy is fast to maximise plaguebringer damage.<br><br>Will only run during Void Maps and won\'t function properly if your Initial Shield has PlagueBringer or your Afterpush shield doesn\'t have PlagueBringer.', 'boolean', false, null, 'Heirlooms');
+	createSetting('RhsVoidSwap', 'Void PB Swap', 'Toggle to swap to your initial shield when your current enemy is slow and the next enemy is fast to maximise plaguebringer damage.<br><br>Will only run during Void Maps that aren\'t double attack and won\'t function properly if your Initial Shield has PlagueBringer or your Afterpush shield doesn\'t have PlagueBringer.', 'boolean', false, null, 'Heirlooms');
 
 	//Shield swapping
 	document.getElementById('RhsVoidSwap').parentNode.insertAdjacentHTML('afterend', '<br>');
