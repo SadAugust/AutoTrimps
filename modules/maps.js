@@ -1472,7 +1472,7 @@ function RautoMap() {
 				var rSFJobRatio = '1,1,1,0';
 				rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : game.global.challengeActive == 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
-				if (game.global.mapRunCounter === 0 && game.global.mapsActive && smithyMapCount !== [0, 0, 0]) {
+				if (game.global.mapRunCounter === 0 && game.global.mapsActive && smithyMapCount !== [0, 0, 0] && typeof getCurrentMapObject().bonus !== 'undefined') {
 					if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') game.global.mapRunCounter = smithyMapCount[0];
 					else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') game.global.mapRunCounter = smithyMapCount[1];
 					else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') game.global.mapRunCounter = smithyMapCount[2];
@@ -1483,7 +1483,7 @@ function RautoMap() {
 					rSFautoLevel = callAutoMapLevel(rSFCurrentMap, rSFautoLevel, rSFSpecial, null, null, false);
 					if (rSFautoLevel !== Infinity) {
 						if (rSFautoLevel_Repeat !== Infinity && rSFautoLevel !== rSFautoLevel_Repeat) {
-							if (game.global.mapsActive) {
+							if (game.global.mapsActive && typeof getCurrentMapObject().bonus !== 'undefined') {
 								if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') smithyMapCount[0] = game.global.mapRunCounter + 1;
 								else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') smithyMapCount[1] = game.global.mapRunCounter + 1;
 								else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') smithyMapCount[2] = game.global.mapRunCounter + 1;
@@ -1554,7 +1554,7 @@ function RautoMap() {
 
 				//Recycles map if we don't need to finish it for meeting the farm requirements
 				if (!rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && rSFCurrentMap != undefined) {
-					if (game.global.mapsActive && ((!rShouldSmithyGemFarm && getCurrentMapObject().bonus.includes('sc')) || (!rShouldSmithyWoodFarm && getCurrentMapObject().bonus.includes('wc')) || (!rShouldSmithyMetalFarm && getCurrentMapObject().bonus.includes('mc')))) {
+					if (game.global.mapsActive && typeof getCurrentMapObject().bonus !== 'undefined' && ((!rShouldSmithyGemFarm && getCurrentMapObject().bonus.includes('sc')) || (!rShouldSmithyWoodFarm && getCurrentMapObject().bonus.includes('wc')) || (!rShouldSmithyMetalFarm && getCurrentMapObject().bonus.includes('mc')))) {
 						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') rSFMapRepeats[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
