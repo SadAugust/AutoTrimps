@@ -2236,9 +2236,10 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var enemyHealth = RcalcEnemyHealthMod(zone, currentCell, enemyName, mapType, checkMutations) * difficulty;
 	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, false), 0, mapType) * difficulty * 1.5;
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
+	//debug("Enemy dmg = " + enemyDmg + " Enemy health = " + enemyHealth)
 
 	enemyDmg *= runningDuel ? 10 : 1;
-	if (mapType === 'void') enemyDmg *= 2;
+	//if (mapType === 'void') enemyDmg *= 2;
 	//Our stats
 	var ourHealth = RcalcOurHealth(runningQuest, mapType);
 	var ourDmg = RcalcOurDmg('avg', 0, mapType, false, false) * bionicTalent;
@@ -2263,13 +2264,13 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 			ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 			if (runningUnlucky) {
 				var unluckyDmg = Number(RcalcOurDmg('min', i, mapType, false, true, true) * bionicTalent)
-				ourDmgEquality = RcalcOurDmg('min', i, mapType, false, false, false) * bionicTalent;
+				ourDmgEquality = RcalcOurDmg('min', i, mapType, false, true, false) * bionicTalent;
 				if (farmType === 'oneShot' && mapping) ourDmgEquality *= 2;
 				if (unluckyDmg.toString()[0] % 2 == 1) {
 					continue;
 				}
 			}
-			else if (farmType === 'gamma' && ourHealth >= enemyDmgEquality) {
+			if (farmType === 'gamma' && ourHealth >= enemyDmgEquality) {
 				return i;
 			}
 			else if (farmType === 'oneShot' && ourDmgEquality > enemyHealth && ourHealth > enemyDmgEquality) {
@@ -2280,6 +2281,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 			}
 		}
 	}
+	//return game.portal.Equality.radLevel;
 }
 
 //Auto Equality
@@ -2378,7 +2380,7 @@ function equalityManagement() {
 				if (runningMayhem) enemyDmgEquality += game.challenges.Mayhem.poison;
 
 				if (runningUnlucky) {
-					ourDmgEquality = RcalcOurDmg('min', i, type, true) * bionicTalent;
+					ourDmgEquality = RcalcOurDmg('min', i, type, true, true) * bionicTalent;
 					if (Number(RcalcOurDmg('min', i, type, true, true, true) * bionicTalent).toString()[0] % 2 == 1)
 						continue;
 				}
@@ -2396,7 +2398,7 @@ function equalityManagement() {
 					updateEqualityScaling();
 					break;
 				}
-				else if ((ourHealth < (ourHealthMax * 0.75) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
+				else if ((ourHealth < (ourHealthMax * 0.65) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
 					if (game.global.mapsUnlocked && (runningQuest || (!mapping && !runningMayhem))) {
 						mapsClicked();
 						mapsClicked();
