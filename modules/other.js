@@ -2337,6 +2337,7 @@ function equalityManagement() {
 		var ourHealthMax = RcalcOurHealth(runningQuest, type)
 		if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
 		var ourDmg = RcalcOurDmg('min', 0, type, true) * bionicTalent;
+		if (getPageSetting('Rcalcfrenzy') && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.frenzyStarted === -1) ourDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel)
 		var ourDmgEquality = 0;
 
 		//Enemy stats
@@ -2380,8 +2381,9 @@ function equalityManagement() {
 				if (runningMayhem) enemyDmgEquality += game.challenges.Mayhem.poison;
 
 				if (runningUnlucky) {
-					ourDmgEquality = RcalcOurDmg('min', i, type, true, true) * bionicTalent;
-					if (Number(RcalcOurDmg('min', i, type, true, true, true) * bionicTalent).toString()[0] % 2 == 1)
+					var unluckyDamage = RcalcOurDmg('min', i, type, true, true, true) * bionicTalent
+					if (getPageSetting('Rcalcfrenzy') && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.frenzyStarted === -1) unluckyDamage /= 1 + (0.5 * game.portal.Frenzy.radLevel)
+					if (Number(unluckyDamage).toString()[0] % 2 == 1)
 						continue;
 				}
 
