@@ -2242,7 +2242,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	//if (mapType === 'void') enemyDmg *= 2;
 	//Our stats
 	var ourHealth = RcalcOurHealth(runningQuest, mapType);
-	var ourDmg = RcalcOurDmg('avg', 0, mapType, false, false) * bionicTalent;
+	var ourDmg = RcalcOurDmg('avg', 0, mapType) * bionicTalent;
 
 	//Figuring out gamma to proc value
 	var gammaToTrigger = gammaBurstPct === 1 ? 0 : autoBattle.oneTimers.Burstier.owned ? 4 : 5
@@ -2264,7 +2264,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 			ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 			if (runningUnlucky) {
 				var unluckyDmg = Number(RcalcOurDmg('min', i, mapType, false, true, true) * bionicTalent)
-				ourDmgEquality = RcalcOurDmg('min', i, mapType, false, true, false) * bionicTalent;
+				ourDmgEquality = RcalcOurDmg('min', i, mapType) * bionicTalent;
 				if (farmType === 'oneShot' && mapping) ourDmgEquality *= 2;
 				if (unluckyDmg.toString()[0] % 2 == 1) {
 					continue;
