@@ -7,7 +7,7 @@ function initializeAutoTrimps() {
 	loadPageVariables();
 	ATscriptLoad('', 'SettingsGUI');
 	ATscriptLoad('', 'Graphs');
-	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'dynprestige', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perks', 'fight-info', 'performance', 'bones', 'MAZ'];
+	ATmoduleList = ['import-export', 'bones', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'dynprestige', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perks', 'fight-info', 'performance', 'MAZ'];
 	for (var m in ATmoduleList) {
 		ATscriptLoad(modulepath, ATmoduleList[m]);
 	}
@@ -84,6 +84,7 @@ var HDRatio = 0;
 var autoLevel = 0;
 var rC3EndZoneSetting = -1;
 var voidPBSwap = false;
+var rBSRunningAtlantrimp = false;
 
 //Get Gamma burst % value
 gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
