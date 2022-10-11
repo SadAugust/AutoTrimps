@@ -781,11 +781,11 @@ function RautoEquip() {
 		var equipCost = (equipType == 'attack') ? bestBuys[6] : bestBuys[7];
 		var equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5];
 		var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
-		var underStats = (equipType == 'attack') ? HDRatio >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(false, 'world') < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
+		var underStats = (equipType == 'attack') ? HDRatio >= getPageSetting('Rdmgcuntoff') : false;
 		var resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 		for (var i = 0; i < 2; i++) {
 			if (canAffordBuilding(equipName, null, null, true, false, 1) || (equipPrestige && game.resources[resourceUsed].owned > equipCost)) {
-				if (game.equipment[equipName].level < equipCap || equipPrestige) {
+				if (game.equipment[equipName].level < equipCap || equipPrestige || underStats) {
 					if (!equipPrestige) {
 						maxCanAfford = equipPrestige ? 1 : getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.01) / 5, 1.2, true);
 						if (maxCanAfford == 0) maxCanAfford = 1;
@@ -793,10 +793,11 @@ function RautoEquip() {
 					}
 
 					// Check any of the overrides
-					if (underStats || equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned) {
+					if (equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned) {
 						if (!game.equipment[equipName].locked) {
 							if (equipPrestige) buyUpgrade(RequipmentList[equipName].Upgrade, true, true)
 							else if (buyEquipment(equipName, null, true, maxCanAfford)) keepBuying = true;
+							HDRatio = RcalcHDratio();
 						}
 					}
 				}
@@ -809,7 +810,7 @@ function RautoEquip() {
 			equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5];
 			resourceUsed = resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 			equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
-			underStats = (equipType == 'attack') ? HDRatio >= getPageSetting('Rdmgcuntoff') : RcalcOurHealth(false, 'world') < getPageSetting('Rhitssurvived') * RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 100, 'Improbability'));
+			underStats = (equipType == 'attack') ? HDRatio >= getPageSetting('Rdmgcuntoff') : false;
 		}
 
 	} while (keepBuying)

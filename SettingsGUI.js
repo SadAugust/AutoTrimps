@@ -258,16 +258,15 @@ function initializeAllSettings() {
 	//Radon Daily
 	createSetting('buyradony', 'Buy Radonculous %', 'Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
 	createSetting('Rdmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Daily');
-	createSetting('rdMeltSmithyShred', 'Melt Smithy (shred)', 'Run the Melting Point Map to gain one extra Smithy when at or above this value and have either the metal or wood shred modifier active. ', 'value', '-1', null, 'Daily');
-	createSetting('Rdequipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency. ', 'boolean', false, null, "Daily");
-	createSetting('Rdequipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input. ', 'multiValue', -1, null, "Daily");
+	createSetting('rdMeltSmithyShred', 'Melt Smithy (shred)', 'Run the Melting Point Map to gain one extra Smithy when at or above this value when your curreny daily has either the metal or wood shred modifier active. ', 'value', '-1', null, 'Daily');
+	createSetting('Rdequipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to the settings in the \'Gear\' tab. Levels all eqiupment according to best efficiency.', 'boolean', false, null, "Daily");
+	createSetting('Rdequipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as many prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will buy them until the end of the run after you reach the zone specified in the last input.', 'multiValue', -1, null, "Daily");
 
 	//Helium Spire
 	document.getElementById('dscryvoidmaps').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('dIgnoreSpiresUntil', 'Daily Ignore Spires Until', 'Spire specific settings like end-at-cell are ignored until at least this zone is reached in Dailies (0 to disable). ', 'value', '200', null, 'Daily');
 	createSetting('dExitSpireCell', 'Daily Exit Spire Cell', 'What cell to exit spire in dailys. ', 'value', -1, null, 'Daily');
 	createSetting('dPreSpireNurseries', 'Daily Nurseries pre-Spire', 'Set the maximum number of Nurseries to build for Spires in Dailies. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Disable with -1.', 'value', -1, null, 'Daily');
-
 
 	//Helium Windstacking
 	document.getElementById('dPreSpireNurseries').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -298,40 +297,40 @@ function initializeAllSettings() {
 	createSetting('dBWraidingmax', 'Daily Max BW to raid', 'Raids BWs until zone specified in dailys. Example: 515, will raid all BWs for all gear until 515. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Now accepts comma separated lists - see description of Daily Z to BW raid setting for details.', 'multiValue', [-1], null, 'Daily');
 
 	//Map Bonus
-	createSetting('rdMapBonusPopup', 'Map Bonus Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Daily Map Bonus", "rdMapBonus", "MAZ")', null, 'Daily');
+	createSetting('rdMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Daily Map Bonus", "rdMapBonus", "MAZ")', null, 'Daily');
 	createSetting('rdMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
 	createSetting('rdMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Daily');
 	createSetting('rdMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Daily');
 
 	//Radon Daily Time Farming 
-	createSetting('rdTimeFarmPopup', 'Time Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Daily Time Farm", "rdTimeFarm", "MAZ")', null, 'Daily');
+	createSetting('rdTimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Daily Time Farm", "rdTimeFarm", "MAZ")', null, 'Daily');
 	createSetting('rdTimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'mazArray', [], null, 'Daily');
 	createSetting('rdTimeFarmDefaultSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Daily');
 	createSetting('rdTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
 
 	//Radon Daily Tribute Farming 
-	createSetting('rdTributeFarmPopup', 'Tribute Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Daily Tribute Farm", "rdTributeFarm", "MAZ")', null, 'Daily');
+	createSetting('rdTributeFarmPopup', 'Tribute Farm Settings', 'Will farm for a specified amount of Tributes/Meteorologists according to this settings value.', 'action', 'MAZLookalike("Daily Tribute Farm", "rdTributeFarm", "MAZ")', null, 'Daily');
 	createSetting('rdTributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'mazArray', [], null, 'Daily');
 	createSetting('rdTributeFarmDefaultSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'mazDefaultArray', { cell: 83, jobratio: '100,1,1,1' }, null, 'Daily');
 	createSetting('rdTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Daily');
 
 	//Daily Smithy Farming
-	createSetting('rdSmithyFarmPopup', 'Smithy Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Daily Smithy Farm", "rdSmithyFarm", "MAZ")', null, 'Daily');
+	createSetting('rdSmithyFarmPopup', 'Smithy Farm Settings', 'Will farm for a specified amount of Smithies according to this settings value.', 'action', 'MAZLookalike("Daily Smithy Farm", "rdSmithyFarm", "MAZ")', null, 'Daily');
 	createSetting('rdSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
 	createSetting('rdSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'Daily');
 	createSetting('rdSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Daily');
 
 	//Prestige Raiding
-	createSetting('rdRaidingPopup', 'Raiding Settings', 'Contains arrays for this setting', 'action', 'MAZLookalike("Raiding", "rdRaiding", "MAZ")', null, 'Daily');
+	createSetting('rdRaidingPopup', 'Raiding Settings', 'Will raid up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Raiding", "rdRaiding", "MAZ")', null, 'Daily');
 	createSetting('rdRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
 	createSetting('rdRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Daily');
 	createSetting('rdRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
 
 	//Daily Void Maps
-	createSetting('rdVoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Daily');
+	createSetting('rdVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Daily');
 
 	//Bone Shrine Popup
-	createSetting('rdBoneShrinePopup', 'Bone Shrine Settings', 'Contains arrays for this setting', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Daily');
+	createSetting('rdBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Daily');
 
 	//Helium Heirloom
 	document.getElementById('dBWraidingmax').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -527,44 +526,44 @@ function initializeAllSettings() {
 	document.getElementById('rFrozenCastle').parentNode.insertAdjacentHTML('afterend', '<br>');
 
 	//Map Bonus
-	createSetting('rMapBonusPopup', 'Map Bonus Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Map Bonus", "rMapBonus", "MAZ")', null, 'Μaps');
+	createSetting('rMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Map Bonus", "rMapBonus", "MAZ")', null, 'Μaps');
 	createSetting('rMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Μaps');
 	createSetting('rMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
 
 	//Time Farming
-	createSetting('rTimeFarmPopup', 'Time Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")', null, 'Μaps');
+	createSetting('rTimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")', null, 'Μaps');
 	createSetting('rTimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rTimeFarmDefaultSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Μaps');
 	createSetting('rTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
 
 	//Tribute Farming
-	createSetting('rTributeFarmPopup', 'Tribute Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Tribute Farm", "rTributeFarm", "MAZ")', null, 'Μaps');
+	createSetting('rTributeFarmPopup', 'Tribute Farm Settings', 'Will farm for a specified amount of Tributes/Meteorologists according to this settings value.', 'action', 'MAZLookalike("Tribute Farm", "rTributeFarm", "MAZ")', null, 'Μaps');
 	createSetting('rTributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rTributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83, jobratio: '100,1,1,1' }, null, 'Μaps');
 	createSetting('rTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
 
 	//Smithy Farming
-	createSetting('rSmithyFarmPopup', 'Smithy Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Smithy Farm", "rSmithyFarm", "MAZ")', null, 'Μaps');
+	createSetting('rSmithyFarmPopup', 'Smithy Farm Settings', 'Will farm for a specified amount of Smithies according to this settings value.', 'action', 'MAZLookalike("Smithy Farm", "rSmithyFarm", "MAZ")', null, 'Μaps');
 	createSetting('rSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'Μaps');
 	createSetting('rSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
 
 	//Prestige Raiding
-	createSetting('rRaidingPopup', 'Raiding Settings', 'Contains arrays for this setting', 'action', 'MAZLookalike("Raiding", "rRaiding", "MAZ")', null, 'Μaps');
+	createSetting('rRaidingPopup', 'Raiding Settings', 'Will raid up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Raiding", "rRaiding", "MAZ")', null, 'Μaps');
 	createSetting('rRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Μaps');
 	createSetting('rRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
 
 	//Void Maps
-	createSetting('rVoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Μaps');
+	createSetting('rVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Μaps');
 	createSetting('rVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Μaps');
 	createSetting('rVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
 
 	//Bone Shrine (bone) 
 	if (game.global.stringVersion >= '5.7.0') {
-		createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Click to adjust settings.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Μaps');
+		createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Μaps');
 		createSetting('rBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
 		createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, bonebelow: 1, jobratio: '1,1,10,1', gather: 'metal' }, null, 'Μaps');
 		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
@@ -647,40 +646,40 @@ function initializeAllSettings() {
 	document.getElementById('c3GM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
 
 	//C3 Map Bonus
-	createSetting('rc3MapBonusPopup', 'Map Bonus Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("C3 Map Bonus", "rc3MapBonus", "MAZ")', null, 'C3');
+	createSetting('rc3MapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("C3 Map Bonus", "rc3MapBonus", "MAZ")', null, 'C3');
 	createSetting('rc3MapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3MapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'C3');
 	createSetting('rc3MapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'C3');
 
 	//C3 Time Farm
-	createSetting('rc3TimeFarmPopup', 'Time Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm", "MAZ")', null, 'C3');
+	createSetting('rc3TimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm", "MAZ")', null, 'C3');
 	createSetting('rc3TimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3TimeFarmDefaultSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'C3');
 	createSetting('rc3TimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 
 	//C3 Tribute (Met) Farm
-	createSetting('rc3TributeFarmPopup', 'Tribute Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("C3 Tribute Farm", "rc3TributeFarm", "MAZ")', null, 'C3');
+	createSetting('rc3TributeFarmPopup', 'Tribute Farm Settings', 'Will farm for a specified amount of Tributes/Meteorologists according to this settings value.', 'action', 'MAZLookalike("C3 Tribute Farm", "rc3TributeFarm", "MAZ")', null, 'C3');
 	createSetting('rc3TributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3TributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83, jobratio: '100,1,1,1' }, null, 'C3');
 	createSetting('rc3TributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 
 	//Smithy Farming
-	createSetting('rc3SmithyFarmPopup', 'Smithy Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("C3 Smithy Farm", "rc3SmithyFarm", "MAZ")', null, 'C3');
+	createSetting('rc3SmithyFarmPopup', 'Smithy Farm Settings', 'Will farm for a specified amount of Smithies according to this settings value.', 'action', 'MAZLookalike("C3 Smithy Farm", "rc3SmithyFarm", "MAZ")', null, 'C3');
 	createSetting('rc3SmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3SmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'C3');
 	createSetting('rc3SmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'C3');
 
 	//Prestige Raiding
-	createSetting('rc3RaidingPopup', 'Raiding Settings', 'Contains arrays for this setting', 'action', 'MAZLookalike("Raiding", "rc3Raiding", "MAZ")', null, 'C3');
+	createSetting('rc3RaidingPopup', 'Raiding Settings', 'Will raid up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Raiding", "rc3Raiding", "MAZ")', null, 'C3');
 	createSetting('rc3RaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3RaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'C3');
 	createSetting('rc3RaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 
 	//C3 Void Maps
-	createSetting('rc3VoidMapPopup', 'Void Map Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'C3');
+	createSetting('rc3VoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'C3');
 
 	//Bone Shrine popup
-	createSetting('rc3BoneShrinePopup', 'Bone Shrine Settings', 'Click to adjust settings.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'C3');
+	createSetting('rc3BoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'C3');
 
 	//Unbalance
 	document.getElementById('rc3BoneShrinePopup').parentNode.insertAdjacentHTML('afterend', '<br>');
