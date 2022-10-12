@@ -747,6 +747,8 @@ var currTime = 0;
 //Map Bonus
 var rShouldMaxMapBonus = false;
 var rMBCurrentMap = undefined;
+var rMBshouldDoHealthMaps = false;
+var rMBHealthFarm = false;
 //Void Maps
 var RdoVoids = false;
 var RneedToVoid = false;
@@ -1057,7 +1059,7 @@ function RautoMap() {
 	var rRunningC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
 	var rRunningDaily = game.global.challengeActive == "Daily";
 	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
-	var dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk';
+	var dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 	var totalPortals = getTotalPortals();
 
@@ -1084,6 +1086,8 @@ function RautoMap() {
 		rHFMapRepeats = 0;
 		rSmithlessMapRepeats = 0;
 		currTime = 0;
+		rMBshouldDoHealthMaps = false;
+		rMBHealthFarm = false;
 		rMFAtlantrimp = false;
 		if (game.global.repeatMap) repeatClicked();
 		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
@@ -1187,17 +1191,24 @@ function RautoMap() {
 							rMBMapLevel = rMBautoLevel;
 						}
 					}
-					if (rMBRepeatCounter > game.global.mapBonus)
+					if (rMBRepeatCounter > game.global.mapBonus) {
 						rShouldMaxMapBonus = true;
+						if (rMBshouldDoHealthMaps) rMBHealthFarm = true;
+					}
 				}
 			}
 		}
-		if (rMBCurrentMap !== undefined && game.global.mapBonus >= rMBRepeatCounter) {
+		if (rMBCurrentMap !== undefined && (game.global.mapBonus >= rMBRepeatCounter || (rMBHealthFarm && !rMBshouldDoHealthMaps && !rShouldMaxMapBonus))) {
 			if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rMBMapLevel >= 0 ? "+" : "") + rMBMapLevel + " " + rMBSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+			rMBHealthFarm = false;
 			rMBCurrentMap = undefined;
 			rMBautoLevel = Infinity;
 			rMBMapRepeats = 0;
 			currTime = 0;
+			if (!dontRecycleMaps && game.global.mapsActive) {
+				mapsClicked();
+				recycleMap();
+			}
 		}
 	}
 
