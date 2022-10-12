@@ -909,11 +909,9 @@ function RupdateAutoMapsStatus(get) {
 	else if (rVanillaMAZ) status = 'Vanilla MAZ';
 	//Farming or Wants stats
 	else if (RshouldFarm && !RdoVoids) status = 'Farming: ' + HDRatio.toFixed(4) + 'x';
-	else if (!RenoughHealth && !RenoughDamage) status = 'Want Health & Damage';
-	else if (!RenoughDamage) status = 'Want ' + HDRatio.toFixed(4) + 'x &nbspmore damage';
 	else if (!RenoughHealth) status = 'Want more health';
 	//Advancing
-	else if (RenoughHealth && RenoughDamage) status = 'Advancing';
+	else status = 'Advancing';
 
 	var getPercent = (game.stats.heliumHour.value() / (game.global.totalRadonEarned - (game.global.radonLeftover + game.resources.radon.owned))) * 100;
 	var lifetime = (game.resources.radon.owned / (game.global.totalRadonEarned - game.resources.radon.owned)) * 100;
@@ -964,7 +962,6 @@ function RautoMap() {
 
 	//Failsafes
 	if (!game.global.mapsUnlocked || RcalcOurDmg("avg", false, 'world') <= 0 || rShouldQuest == 9 || rShouldQuest == 8) {
-		RenoughDamage = true;
 		RenoughHealth = true;
 		RshouldFarm = false;
 		RshouldDoMaps = false;
@@ -1002,7 +999,6 @@ function RautoMap() {
 	}
 
 	//Vars
-	var mapenoughdamagecutoff = getPageSetting("Rmapcuntoff");
 	var customVars = MODULES["maps"];
 	if ((game.options.menu.repeatUntil.enabled == 1 || game.options.menu.repeatUntil.enabled == 2 || game.options.menu.repeatUntil.enabled == 3) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
 	if (game.options.menu.exitTo.enabled != 0) toggleSetting('exitTo');
@@ -1017,7 +1013,6 @@ function RautoMap() {
 		enemyDamage = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, 99, 'Improbability', 'world', true), game.portal.Equality.getMult(), 'world', true);
 
 	RenoughHealth = (RcalcOurHealth(false, 'world') > (hitsSurvived * enemyDamage));
-	RenoughDamage = (HDRatio <= mapenoughdamagecutoff || game.global.mapBonus === 10);
 	RupdateAutoMapsStatus();
 
 	//Farming & resetting variables.
@@ -1063,9 +1058,6 @@ function RautoMap() {
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 	var totalPortals = getTotalPortals();
 
-	if (ourBaseDamage > 0) {
-		RshouldDoMaps = (!RenoughDamage || RshouldFarm);
-	}
 	shouldDoHealthMaps = false;
 
 
@@ -1817,6 +1809,7 @@ function RautoMap() {
 		rShouldPandemoniumFarm = false;
 		rShouldPandemoniumJestimpFarm = false;
 		var rPandemoniumMapLevel = 1;
+		rPandemoniumJobRatio = '0.1,0.1,1,0';
 		if (game.challenges.Pandemonium.pandemonium > 0 && game.global.world >= getPageSetting('RPandemoniumZone')) {
 			rShouldPandemoniumDestack = true;
 		}
@@ -1856,18 +1849,15 @@ function RautoMap() {
 			var prestigeUpgradeName = "";
 			var allUpgradeNames = Object.getOwnPropertyNames(game.upgrades);
 			//Setting up artisanitry modifier
-			var artBoost = Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.radLevel);
-			artBoost *= autoBattle.oneTimers.Artisan.owned ? autoBattle.oneTimers.Artisan.getMult() : 1;
-			artBoost *= game.challenges.Pandemonium.getEnemyMult();
 			//Working out how much metal a large metal cache or jestimp proc provides.
-			amt_cache = getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') ? simpleSecondsLocal("metal", 40, true, '0.1,0.1,0.1,0.001') :
-				simpleSecondsLocal("metal", 20, true, '0.1,0.1,0.1,0.001');
+			amt_cache = getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') ? simpleSecondsLocal("metal", 40, true, rPandemoniumJobRatio) :
+				simpleSecondsLocal("metal", 20, true, rPandemoniumJobRatio);
 			//Looping through each piece of equipment
 			for (var equipName in game.equipment) {
 				if (!game.equipment[equipName].locked) {
 					//Checking cost of next equipment level. Blocks unavailable ones.
 					if (game.challenges.Pandemonium.isEquipBlocked(equipName) || RequipmentList[equipName].Resource == 'wood') continue;
-					nextLevelEquipmentCost = game.equipment[equipName].cost[RequipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[RequipmentList[equipName].Resource][1], game.equipment[equipName].level) * artBoost;
+					nextLevelEquipmentCost = game.equipment[equipName].cost[RequipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[RequipmentList[equipName].Resource][1], game.equipment[equipName].level) * getEquipPriceMult();
 					//Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
 					if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost == null)
 						nextEquipmentCost = nextLevelEquipmentCost;
@@ -1877,7 +1867,7 @@ function RautoMap() {
 							prestigeUpgradeName = upgrade;
 							//Checking if prestiges are purchasable
 							if (game.challenges.Pandemonium.isEquipBlocked(game.upgrades[upgrade].prestiges) || game.upgrades[prestigeUpgradeName].locked) continue;
-							nextLevelPrestigeCost = getNextPrestigeCost(prestigeUpgradeName) * artBoost;
+							nextLevelPrestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
 							//Sets nextPrestigeCost to the price of an equip if it costs less than the current value of nextEquipCost
 							if (nextLevelPrestigeCost < nextPrestigeCost || nextPrestigeCost == null)
 								nextPrestigeCost = nextLevelPrestigeCost;
@@ -1889,7 +1879,8 @@ function RautoMap() {
 			//Identifying how much metal you'd get from the amount of jestimps you want to farm on the map level you've selected for them
 			if (getPageSetting('RPandemoniumAutoEquip') > 3 && !rShouldPandemoniumFarm && game.global.world >= getPageSetting('RPandemoniumJestZone')) {
 				var jestMapLevel = getPageSetting('PandemoniumJestFarmLevel');
-				var jestDrop = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 45, true, '10,10,100,1'), false, true, jestMapLevel);
+
+				var jestDrop = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 45, true, rPandemoniumJobRatio), false, true, jestMapLevel);
 				var shred = 1 - (0.75 - (jestMapLevel * 0.05));
 				var kills = getPageSetting('PandemoniumJestFarmKills');
 				jestMetalTotal = jestDrop;
@@ -1907,7 +1898,7 @@ function RautoMap() {
 			}
 
 			//Switching to Huge Cache maps if LMC maps don't give enough metal for equip levels.
-			pandfarmspecial = nextEquipmentCost > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20, true, '0.1,0.1,0.1,0.001'), false, true, getPageSetting('PandemoniumFarmLevel')) ? "hc" : "lmc";
+			pandfarmspecial = nextEquipmentCost > scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20, true, rPandemoniumJobRatio), false, true, getPageSetting('PandemoniumFarmLevel')) ? "hc" : "lmc";
 			//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
 			if (!rShouldPandemoniumJestimpFarm && nextEquipmentCost < scaleToCurrentMapLocal(amt_cache, false, true, getPageSetting('PandemoniumFarmLevel')))
 				rShouldPandemoniumFarm = true;
@@ -1975,14 +1966,14 @@ function RautoMap() {
 		alchfarmzone = getPageSetting('rAlchZone');
 		if (alchfarmzone.includes(game.global.world)) {
 			var alchfarmindex = alchfarmzone.indexOf(game.global.world);
-			var rAlchSettings = autoTrimpSettings.rAlchSettings.value[alchfarmindex];
-			var alchfarmcell = rAlchSettings.cell;
+			var rAFSettings = autoTrimpSettings.rAlchSettings.value[alchfarmindex];
+			var alchfarmcell = rAFSettings.cell;
 
-			if (rAlchSettings.active && game.global.lastClearedCell + 2 >= alchfarmcell) {
-				var rAFMapLevel = rAlchSettings.level;
-				var rAFSpecial = rAlchSettings.special;
-				var rAFJobRatio = rAlchSettings.jobratio;
-				alchpotions = rAlchSettings.potion;
+			if (rAFSettings.active && game.global.lastClearedCell + 2 >= alchfarmcell) {
+				var rAFMapLevel = rAFSettings.level;
+				var rAFSpecial = rAFSettings.special;
+				var rAFJobRatio = rAFSettings.jobratio;
+				alchpotions = rAFSettings.potion;
 
 
 				if (game.global.mapRunCounter === 0 && game.global.mapsActive && rAFMapRepeats !== 0) {
@@ -2441,12 +2432,14 @@ function RautoMap() {
 				} else if (rShouldPandemoniumDestack) {
 					selectedMap = RShouldFarmMapCreation(rPandemoniumMapLevel, rPandemoniumSpecial);
 					rPandemoniumCurrentMap = "rPandemoniumMap";
-					//workerRatio = rPandemoniumJobRatio;
+					workerRatio = rPandemoniumJobRatio;
 					if (rPandemoniumCurrentMap !== 'rPandemoniumMap' || currTime === 0) currTime = getGameTime();
 				} else if (rShouldPandemoniumFarm) {
 					selectedMap = RShouldFarmMapCreation(rPandemoniumMapLevel, pandfarmspecial);
+					workerRatio = rPandemoniumJobRatio;
 				} else if (rShouldPandemoniumJestimpFarm) {
 					selectedMap = RShouldFarmMapCreation(getPageSetting('PandemoniumJestFarmLevel'), '0');
+					workerRatio = rPandemoniumJobRatio;
 				} else if (rShouldAlchFarm) {
 					selectedMap = RShouldFarmMapCreation(rAFMapLevel, rAFSpecial, rAFBiome);
 					rAFCurrentMap = "rAlchemyFarm";
@@ -2621,9 +2614,6 @@ function RautoMap() {
 				else if (rShouldHDFarm) {
 					if (currentLevel !== rHDFMapLevel || getCurrentMapObject().bonus !== rHDFSpecial) repeatClicked();
 				}
-				else if (!RenoughDamage) {
-					if (game.global.mapBonus >= 9) repeatClicked();
-				}
 			}
 		} else {
 			if (game.global.repeatMap) {
@@ -2635,20 +2625,8 @@ function RautoMap() {
 			if (!game.global.switchToMaps) {
 				mapsClicked();
 			}
-			if (RdoVoids && game.global.switchToMaps &&
-				(RdoVoids ||
-					(!RenoughDamage && RenoughHealth && game.global.lastClearedCell < 9) ||
-					(RshouldFarm && game.global.lastClearedCell >= customVars.RshouldFarmCell)) &&
-				(
-					(game.resources.trimps.realMax() <= game.resources.trimps.owned + 1) ||
-					(RdoVoids && game.global.lastClearedCell > 70)
-				)
-			) {
-				mapsClicked();
-			}
 		}
-
-		//Creating Map
+		//Creating Maps
 	} else if (game.global.preMapsActive) {
 		document.getElementById("mapLevelInput").value = game.global.world;
 		if (selectedMap == "world") {
@@ -2854,7 +2832,6 @@ function RautoMap() {
 				}
 			}
 			if (updateMapCost(true) > game.resources.fragments.owned) {
-				if (!RenoughDamage && !rFragmentFarming) decrement.push('diff');
 				if (RshouldFarm) decrement.push('size');
 			}
 			while (!rFragmentFarming && decrement.indexOf('loot') > -1 && lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
