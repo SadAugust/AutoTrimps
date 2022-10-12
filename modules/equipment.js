@@ -621,7 +621,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 
 		var metalTotal = 0
 		if (metalShred) {
-			metalTotal = metalShred && (rShouldTimeFarm || rShouldMaxMapBonus) ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 16, true, workerRatio), false, true, rShouldTimeFarm ? rTFMapLevel : rShouldMaxMapBonus ? rMBMapLevel : 0) : game.resources.metal.owned;
+			metalTotal = metalShred && (rShouldMapFarm || rShouldMaxMapBonus) ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 16, true, workerRatio), false, true, rShouldMapFarm ? rMFMapLevel : rShouldMaxMapBonus ? rMBMapLevel : 0) : game.resources.metal.owned;
 			if (game.resources.metal.owned > metalTotal) metalTotal = game.resources.metal.owned;
 		}
 		var nextLevelValue = game.equipment[i][RequipmentList[i].Stat + "Calculated"];
@@ -707,7 +707,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 
 function RautoEquip() {
 
-	if (!getPageSetting('Requipon') || (!rShouldTimeFarm && !rShouldTributeFarm && !rShouldMetFarm && rShouldSmithyFarm) || (game.mapUnlocks.AncientTreasure.canRunOnce && (rBSRunningAtlantrimp || (typeof (rTFAtlantrimp) !== 'undefined' && rTFAtlantrimp))))
+	if (!getPageSetting('Requipon') || (!rShouldMapFarm && !rShouldTributeFarm && !rShouldMetFarm && rShouldSmithyFarm) || (game.mapUnlocks.AncientTreasure.canRunOnce && (rBSRunningAtlantrimp || (typeof (rMFAtlantrimp) !== 'undefined' && rMFAtlantrimp))))
 		return;
 
 	var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');

@@ -614,10 +614,10 @@ function Rresetmapvars() {
 	//Void Maps
 	RdoVoids = false;
 	RneedToVoid = false;
-	//Time Farm
-	rShouldTimeFarm = false;
-	rTFCurrentMap = undefined;
-	rTFMapRepeats = 0;
+	//Map Farm
+	rShouldMapFarm = false;
+	rMFCurrentMap = undefined;
+	rMFMapRepeats = 0;
 	//Tribute Farm
 	rTributeFarming = false;
 	rShouldTributeFarm = false;
@@ -695,7 +695,7 @@ function Rresetmapvars() {
 	smithyMapCount = [0, 0, 0];
 
 	//Auto Level variables
-	rTFautoLevel = Infinity;
+	rMFautoLevel = Infinity;
 	rTrFautoLevel = Infinity;
 	rSFautoLevel = Infinity;
 	rMBautoLevel = Infinity;

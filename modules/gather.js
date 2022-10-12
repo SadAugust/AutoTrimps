@@ -142,13 +142,13 @@ function RmanualLabor2() {
 			getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('lc') || getCurrentMapObject().bonus.includes('hc') || getCurrentMapObject().bonus.includes('wc') || getCurrentMapObject().bonus.includes('mc') || getCurrentMapObject().bonus.includes('rc') ? true :
 				null;
 	var gather = null;
-	if (rShouldTimeFarm || rShouldAlchFarm || rShouldMaxMapBonus) {
+	if (rShouldMapFarm || rShouldAlchFarm || rShouldMaxMapBonus) {
 		var preFix = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium' ? 'rc3' :
 			game.global.challengeActive == "Daily" ? 'rd' :
 				'r'
-		gather = rShouldTimeFarm && typeof (rTFGather) === 'string' ? rTFGather : gather;
-		gather = !rShouldTimeFarm && rShouldAlchFarm && typeof (autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather) === 'string' ? autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather : gather;
-		gather = rShouldMaxMapBonus && !rShouldTimeFarm && !rShouldAlchFarm && typeof (autoTrimpSettings[preFix + 'MapBonusSettings'].value[rMBIndex].gather) === 'string' ? autoTrimpSettings[preFix + 'MapBonusSettings'].value[rMBIndex].gather : gather;
+		gather = rShouldMapFarm && typeof (rMFGather) === 'string' ? rMFGather : gather;
+		gather = !rShouldMapFarm && rShouldAlchFarm && typeof (autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather) === 'string' ? autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather : gather;
+		gather = rMBIndex !== null && rShouldMaxMapBonus && !rShouldMapFarm && !rShouldAlchFarm && typeof (autoTrimpSettings[preFix + 'MapBonusSettings'].value[rMBIndex].gather) === 'string' ? autoTrimpSettings[preFix + 'MapBonusSettings'].value[rMBIndex].gather : gather;
 	}
 	var questGather = game.global.challengeActive == "Quest" && questcheck() == 1 ? 'food' :
 		game.global.challengeActive == "Quest" && questcheck() == 2 ? 'wood' :

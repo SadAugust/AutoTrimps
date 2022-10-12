@@ -1,13 +1,24 @@
-var ATversion = 'SadAugust v5.7.2', atscript = document.getElementById('AutoTrimps-script'), basepath = 'https://SadAugust.github.io/AutoTrimps_Local/', modulepath = 'modules/'; null !== atscript && (basepath = atscript.src.replace(/AutoTrimps2\.js$/, ''));
-function ATscriptLoad(a, b) { null == b && debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(modulepath, \'example.js\'); '); var c = document.createElement('script'); null == a && (a = ''), c.src = basepath + a + b + '.js', c.id = b + '_MODULE', document.head.appendChild(c) }
-function ATscriptUnload(a) { var b = document.getElementById(a + "_MODULE"); b && (document.head.removeChild(b), debug("Removing " + a + "_MODULE", "other")) }
+var ATversion = 'SadAugust v5.7.3',
+	atscript = document.getElementById('AutoTrimps-script'),
+	basepath = 'https://SadAugust.github.io/AutoTrimps_Local/',
+	modulepath = 'modules/';
+null !== atscript && (basepath = atscript.src.replace(/AutoTrimps2\.js$/, ''));
+function ATscriptLoad(a, b) {
+	null == b && debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(modulepath, \'example.js\'); ');
+	var c = document.createElement('script');
+	null == a && (a = ''), c.src = basepath + a + b + '.js', c.id = b + '_MODULE', document.head.appendChild(c)
+}
+function ATscriptUnload(a) {
+	var b = document.getElementById(a + "_MODULE");
+	b && (document.head.removeChild(b), debug("Removing " + a + "_MODULE", "other"))
+}
 ATscriptLoad(modulepath, 'utils');
 
 function initializeAutoTrimps() {
 	loadPageVariables();
 	ATscriptLoad('', 'SettingsGUI');
 	ATscriptLoad('', 'Graphs');
-	ATmoduleList = ['import-export', 'bones', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'dynprestige', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perks', 'fight-info', 'performance', 'MAZ'];
+	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'dynprestige', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perks', 'fight-info', 'performance', 'bones', 'MAZ'];
 	for (var m in ATmoduleList) {
 		ATscriptLoad(modulepath, ATmoduleList[m]);
 	}
@@ -15,13 +26,14 @@ function initializeAutoTrimps() {
 }
 
 var runInterval = 100;
-var startupDelay = 1000;
+var startupDelay = 2000;
 
-setTimeout(delayStart, startupDelay);
+setTimeout(delayStart, 100);
 
 function delayStart() {
 	initializeAutoTrimps();
-	//setTimeout(delayStartGUI, runInterval * 5);
+	game.global.addonUser = true;
+	game.global.autotrimps = true;
 	setTimeout(delayStartAgain, startupDelay);
 }
 
@@ -43,7 +55,6 @@ var MODULES = {};
 var MODULESdefault = {};
 var ATMODULES = {};
 var ATmoduleList = [];
-
 var bestBuilding;
 var scienceNeeded;
 var RscienceNeeded;
@@ -115,11 +126,6 @@ function mainLoop() {
 	}
 	if (getPageSetting('PauseScript') || game.options.menu.pauseGame.enabled || game.global.viewingUpgrades) return;
 	ATrunning = true;
-	if (getPageSetting('showbreedtimer') == true) {
-		if (game.options.menu.showFullBreed.enabled != 1) toggleSetting("showFullBreed");
-		addbreedTimerInsideText.innerHTML = ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) + 's'; //add breed time for next army;
-		addToolTipToArmyCount();
-	}
 	if (mainCleanup() || portalWindowOpen || (!heirloomsShown && heirloomFlag) || (heirloomCache != game.global.heirloomsExtra.length)) {
 		heirloomCache = game.global.heirloomsExtra.length;
 	}
@@ -148,6 +154,11 @@ function mainLoop() {
 			autoLevelEquipment();
 		}
 
+		if (getPageSetting('showbreedtimer')) {
+			if (game.options.menu.showFullBreed.enabled != 1) toggleSetting("showFullBreed");
+			addbreedTimerInsideText.innerHTML = ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) + 's'; //add breed time for next army;
+			addToolTipToArmyCount();
+		}
 		//Core
 		if (getPageSetting('AutoMaps') > 0 && game.global.mapsUnlocked) autoMap();
 		if (getPageSetting('showautomapstatus') == true) updateAutoMapsStatus();
@@ -272,7 +283,7 @@ function mainLoop() {
 		//RJobs
 		if (getPageSetting('RBuyJobsNew') > 0) {
 			//Check to see if we're on quest and at a quest zone or if we're trying to do some farming that needs other jobs.
-			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || rShouldWorshipperFarm || rShouldTimeFarm || rShouldEquipFarm))) RbuyJobs();
+			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || rShouldWorshipperFarm || rShouldMapFarm || rShouldEquipFarm))) RbuyJobs();
 			else RquestbuyJobs();
 		}
 		if (game.global.runningChallengeSquared && rC3EndZoneSetting != game.stats.zonesCleared.value) {
@@ -347,7 +358,12 @@ function mainLoop() {
 		automateSpireAssault();
 }
 
-function guiLoop() { updateCustomButtons(), safeSetItems('storedMODULES', JSON.stringify(compareModuleVars())), getPageSetting('EnhanceGrids') && MODULES.fightinfo.Update(), 'undefined' != typeof MODULES && 'undefined' != typeof MODULES.performance && MODULES.performance.isAFK && MODULES.performance.UpdateAFKOverlay() }
+function guiLoop() {
+	updateCustomButtons(),
+		safeSetItems('storedMODULES', JSON.stringify(compareModuleVars())),
+		getPageSetting('EnhanceGrids') &&
+		MODULES.fightinfo.Update(), 'undefined' != typeof MODULES && 'undefined' != typeof MODULES.performance && MODULES.performance.isAFK && MODULES.performance.UpdateAFKOverlay()
+}
 function mainCleanup() {
 	lastrunworld = currentworld;
 	currentworld = game.global.world;

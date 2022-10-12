@@ -302,6 +302,12 @@ function initializeAllSettings() {
 	createSetting('rdMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Daily');
 	createSetting('rdMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Daily');
 
+	//Radon Daily Map Farm
+	createSetting('rdMapFarmPopup', 'Map Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Daily Map Farm", "rdMapFarm", "MAZ")', null, 'Daily');
+	createSetting('rdMapFarmSettings', 'Map Farm Settings', 'Click to adjust settings. ', 'mazArray', [], null, 'Daily');
+	createSetting('rdMapFarmDefaultSettings', 'Map Farm Settings', 'Click to adjust settings. ', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Daily');
+	createSetting('rdMapFarmZone', 'MF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
+
 	//Radon Daily Time Farming 
 	createSetting('rdTimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Daily Time Farm", "rdTimeFarm", "MAZ")', null, 'Daily');
 	createSetting('rdTimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'mazArray', [], null, 'Daily');
@@ -531,6 +537,12 @@ function initializeAllSettings() {
 	createSetting('rMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Μaps');
 	createSetting('rMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
 
+	//Map Farm
+	createSetting('rMapFarmPopup', 'Map Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Map Farm", "rMapFarm", "MAZ")', null, 'Μaps');
+	createSetting('rMapFarmSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
+	createSetting('rMapFarmDefaultSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Μaps');
+	createSetting('rMapFarmZone', 'MF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+
 	//Time Farming
 	createSetting('rTimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")', null, 'Μaps');
 	createSetting('rTimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
@@ -650,6 +662,12 @@ function initializeAllSettings() {
 	createSetting('rc3MapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3MapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'C3');
 	createSetting('rc3MapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'C3');
+
+	//C3 Map Farm
+	createSetting('rc3MapFarmPopup', 'Map Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("C3 Map Farm", "rc3MapFarm", "MAZ")', null, 'C3');
+	createSetting('rc3MapFarmSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
+	createSetting('rc3MapFarmDefaultSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'C3');
+	createSetting('rc3MapFarmZone', 'MF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 
 	//C3 Time Farm
 	createSetting('rc3TimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm", "MAZ")', null, 'C3');
@@ -1016,6 +1034,7 @@ function initializeAllSettings() {
 
 initializeAllSettings();
 automationMenuInit();
+updateATVersion();
 
 function convertSettings(oldSetting, newSetting, type, newName) {
 
@@ -1290,7 +1309,130 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 	if (autoTrimpSettings[id].description != description)
 		autoTrimpSettings[id].description = description;
 
-	//Adding onto settings
+}
+
+function createInput(id, name, description) {
+	var $btnParent = document.createElement("DIV");
+	$btnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-bottom: 0.5vw; width: 6.5vw;');
+	$btnParent.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
+	$btnParent.setAttribute("onmouseout", 'tooltip("hide")');
+	var $input = document.createElement("input");
+	$input.type = 'checkbox';
+	$input.setAttribute('id', id);
+	$input.setAttribute('style', 'text-align: left; width: 0.8vw; ');
+	$btnParent.appendChild($input);
+	var $label = document.createElement("label");
+	$label.setAttribute('style', 'text-align: left; margin-left: 0.2vw; font-size: 0.6vw');
+	$label.innerHTML = name;
+	$btnParent.appendChild($label);
+	document.getElementById("autoSettings").appendChild($btnParent);
+}
+
+function settingChanged(id) {
+	var btn = autoTrimpSettings[id];
+	if (btn.type == 'boolean') {
+		btn.enabled = !btn.enabled;
+		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn.enabled);
+		if (id == 'rEquipEfficientEquipDisplay') {
+			displayMostEfficientEquipment()
+		}
+		if (btn = autoTrimpSettings.RAutoStartDaily) {
+			document.getElementById('RAutoStartDaily').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
+		}
+		if (btn = autoTrimpSettings.Requipon) {
+			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
+		}
+		if (btn = autoTrimpSettings.RBuyBuildingsNew) {
+			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
+		}
+	}
+	if (btn.type == 'multitoggle') {
+		if (id == 'AutoMagmiteSpender2' && btn.value == 1) {
+			magmiteSpenderChanged = true;
+			setTimeout(function () {
+				magmiteSpenderChanged = false;
+			}, 5000);
+		}
+		btn.value++;
+		if (btn.value > btn.name.length - 1)
+			btn.value = 0;
+		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + (btn.value));
+		document.getElementById(id).innerHTML = btn.name[btn.value]
+		if (btn.id === 'RBuyJobsNew') {
+			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
+			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
+		}
+		if (btn.id === 'RAutoPortalDaily') {
+			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
+		}
+	}
+	if (btn.type == 'dropdown') {
+		btn.selected = document.getElementById(id).value;
+		if (id == "Prestige")
+			autoTrimpSettings["PrestigeBackup"].selected = document.getElementById(id).value;
+	}
+
+	updateCustomButtons();
+	saveSettings();
+	checkPortalSettings();
+}
+
+function modifyParentNode(setting, id, style) {
+	var style = !style ? 'show' : style;
+	var toggled = style == 'show' ? false : true;
+	var elem = document.getElementById(id).parentNode.parentNode.children;
+	for (i = 0; i < elem.length; i++) {
+		if (document.getElementById(id).parentNode.parentNode.children[i].children[0] === undefined) {
+			continue
+		}
+		else {
+			if (document.getElementById(id).parentNode.parentNode.children[i].children[0].id === id || document.getElementById(id).parentNode.parentNode.children[i].children[0].id === (id + 'Label')) {
+				if (autoTrimpSettings[setting].enabled == toggled) {
+					if (elem.length >= (i + 1)) {
+						if (document.getElementById(id).parentNode.parentNode.children[(i + 1)].style.length == 0) {
+							document.getElementById(id).parentNode.parentNode.children[(i + 1)].remove()
+							break;
+						}
+					}
+				}
+				else {
+					document.getElementById(id).parentNode.parentNode.children[i].insertAdjacentHTML('afterend', '<br>');
+				}
+			}
+		}
+	}
+}
+
+function autoSetValueToolTip(id, text, negative, multi) {
+	ranstring = text;
+	var elem = document.getElementById("tooltipDiv");
+	var tooltipText = 'Type a number below. You can also use shorthand such as 2e5 or 200k.';
+	if (negative)
+		tooltipText += ' Accepts negative numbers as validated inputs.';
+	else
+		tooltipText += ' Put -1 for Infinite.';
+	tooltipText += `<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${negative}, ${multi})" value="${autoTrimpSettings[id].value}"></input>`;
+	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetValue(\'' + id + '\',' + negative + ',' + multi + ')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
+	game.global.lockTooltip = true;
+	elem.style.left = '32.5%';
+	elem.style.top = '25%';
+	document.getElementById('tipTitle').innerHTML = ranstring + ':  Value Input';
+	document.getElementById('tipText').innerHTML = tooltipText;
+	document.getElementById('tipCost').innerHTML = costText;
+	elem.style.display = 'block';
+	var box = document.getElementById('customNumberBox');
+	try {
+		box.setSelectionRange(0, box.value.length);
+	} catch (e) {
+		box.select();
+	}
+	box.focus();
+}
+
+function updateATVersion() {
+	//Setting Conversion!
+	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === ATversion) return;
+
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] !== ATversion) {
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '4.5.0') {
 			if (typeof (autoTrimpSettings.rTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rTimeFarmSettings.value[0].done === undefined) {
@@ -1430,131 +1572,47 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				saveSettings();
 			}
 		}
-
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.3') {
+			if (typeof (autoTrimpSettings.rMapBonusDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rMapBonusDefaultSettings.value.healthBonus === undefined) {
+				autoTrimpSettings.rMapBonusDefaultSettings.value.healthBonus = 10;
+				autoTrimpSettings.rMapBonusDefaultSettings.value.healthHDRatio = 10;
+				saveSettings();
+			}
+			if (typeof (autoTrimpSettings.rdMapBonusDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rdMapBonusDefaultSettings.value.healthBonus === undefined) {
+				autoTrimpSettings.rdMapBonusDefaultSettings.value.healthBonus = 10;
+				autoTrimpSettings.rdMapBonusDefaultSettings.value.healthHDRatio = 10;
+				saveSettings();
+			}
+			if (typeof (autoTrimpSettings.rc3MapBonusDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rc3MapBonusDefaultSettings.value.healthBonus === undefined) {
+				autoTrimpSettings.rc3MapBonusDefaultSettings.value.healthBonus = 10;
+				autoTrimpSettings.rc3MapBonusDefaultSettings.value.healthHDRatio = 10;
+				saveSettings();
+			}
+			if (typeof (autoTrimpSettings.rMapFarmSettings.value) !== 'undefined') {
+				autoTrimpSettings.rMapFarmSettings.value = autoTrimpSettings.rTimeFarmSettings.value
+				autoTrimpSettings.rMapFarmDefaultSettings.value = autoTrimpSettings.rTimeFarmDefaultSettings?.value
+				autoTrimpSettings.rMapFarmZone.value = autoTrimpSettings.rTimeFarmZone?.value
+				saveSettings();
+			}
+			if (typeof (autoTrimpSettings.rdMapFarmSettings.value) !== 'undefined') {
+				autoTrimpSettings.rdMapFarmSettings.value = autoTrimpSettings.rdTimeFarmSettings?.value
+				autoTrimpSettings.rdMapFarmDefaultSettings.value = autoTrimpSettings.rdTimeFarmDefaultSettings?.value
+				autoTrimpSettings.rdMapFarmZone.value = autoTrimpSettings?.rdTimeFarmZone.value
+				saveSettings();
+			}
+			if (typeof (autoTrimpSettings.rc3MapFarmSettings.value) !== 'undefined') {
+				autoTrimpSettings.rc3MapFarmSettings.value = autoTrimpSettings.rc3TimeFarmSettings?.value
+				autoTrimpSettings.rc3MapFarmDefaultSettings.value = autoTrimpSettings.rc3TimeFarmDefaultSettings?.value
+				autoTrimpSettings.rc3MapFarmZone.value = autoTrimpSettings.rc3TimeFarmZone?.value
+				saveSettings();
+			}
+		}
 
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		saveSettings();
 	}
 	autoTrimpSettings["ATversion"] = ATversion;
-}
-
-function createInput(id, name, description) {
-	var $btnParent = document.createElement("DIV");
-	$btnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-bottom: 0.5vw; width: 6.5vw;');
-	$btnParent.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
-	$btnParent.setAttribute("onmouseout", 'tooltip("hide")');
-	var $input = document.createElement("input");
-	$input.type = 'checkbox';
-	$input.setAttribute('id', id);
-	$input.setAttribute('style', 'text-align: left; width: 0.8vw; ');
-	$btnParent.appendChild($input);
-	var $label = document.createElement("label");
-	$label.setAttribute('style', 'text-align: left; margin-left: 0.2vw; font-size: 0.6vw');
-	$label.innerHTML = name;
-	$btnParent.appendChild($label);
-	document.getElementById("autoSettings").appendChild($btnParent);
-}
-
-function settingChanged(id) {
-	var btn = autoTrimpSettings[id];
-	if (btn.type == 'boolean') {
-		btn.enabled = !btn.enabled;
-		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn.enabled);
-		if (id == 'rEquipEfficientEquipDisplay') {
-			displayMostEfficientEquipment()
-		}
-		if (btn = autoTrimpSettings.RAutoStartDaily) {
-			document.getElementById('RAutoStartDaily').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
-		}
-		if (btn = autoTrimpSettings.Requipon) {
-			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
-		}
-		if (btn = autoTrimpSettings.RBuyBuildingsNew) {
-			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
-		}
-	}
-	if (btn.type == 'multitoggle') {
-		if (id == 'AutoMagmiteSpender2' && btn.value == 1) {
-			magmiteSpenderChanged = true;
-			setTimeout(function () {
-				magmiteSpenderChanged = false;
-			}, 5000);
-		}
-		btn.value++;
-		if (btn.value > btn.name.length - 1)
-			btn.value = 0;
-		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + (btn.value));
-		document.getElementById(id).innerHTML = btn.name[btn.value]
-		if (btn.id === 'RBuyJobsNew') {
-			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
-			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
-		}
-		if (btn.id === 'RAutoPortalDaily') {
-			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
-		}
-	}
-	if (btn.type == 'dropdown') {
-		btn.selected = document.getElementById(id).value;
-		if (id == "Prestige")
-			autoTrimpSettings["PrestigeBackup"].selected = document.getElementById(id).value;
-	}
-
-	updateCustomButtons();
-	saveSettings();
-	checkPortalSettings();
-}
-
-function modifyParentNode(setting, id, style) {
-	var style = !style ? 'show' : style;
-	var toggled = style == 'show' ? false : true;
-	var elem = document.getElementById(id).parentNode.parentNode.children;
-	for (i = 0; i < elem.length; i++) {
-		if (document.getElementById(id).parentNode.parentNode.children[i].children[0] === undefined) {
-			continue
-		}
-		else {
-			if (document.getElementById(id).parentNode.parentNode.children[i].children[0].id === id || document.getElementById(id).parentNode.parentNode.children[i].children[0].id === (id + 'Label')) {
-				if (autoTrimpSettings[setting].enabled == toggled) {
-					if (elem.length >= (i + 1)) {
-						if (document.getElementById(id).parentNode.parentNode.children[(i + 1)].style.length == 0) {
-							document.getElementById(id).parentNode.parentNode.children[(i + 1)].remove()
-							break;
-						}
-					}
-				}
-				else {
-					document.getElementById(id).parentNode.parentNode.children[i].insertAdjacentHTML('afterend', '<br>');
-				}
-			}
-		}
-	}
-}
-
-function autoSetValueToolTip(id, text, negative, multi) {
-	ranstring = text;
-	var elem = document.getElementById("tooltipDiv");
-	var tooltipText = 'Type a number below. You can also use shorthand such as 2e5 or 200k.';
-	if (negative)
-		tooltipText += ' Accepts negative numbers as validated inputs.';
-	else
-		tooltipText += ' Put -1 for Infinite.';
-	tooltipText += `<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${negative}, ${multi})" value="${autoTrimpSettings[id].value}"></input>`;
-	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetValue(\'' + id + '\',' + negative + ',' + multi + ')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
-	game.global.lockTooltip = true;
-	elem.style.left = '32.5%';
-	elem.style.top = '25%';
-	document.getElementById('tipTitle').innerHTML = ranstring + ':  Value Input';
-	document.getElementById('tipText').innerHTML = tooltipText;
-	document.getElementById('tipCost').innerHTML = costText;
-	elem.style.display = 'block';
-	var box = document.getElementById('customNumberBox');
-	try {
-		box.setSelectionRange(0, box.value.length);
-	} catch (e) {
-		box.select();
-	}
-	box.focus();
 }
 
 function autoSetTextToolTip(id, text) {
@@ -1916,10 +1974,16 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeliumHrBuffer') : turnOff('RdHeliumHrBuffer');
 
 	//Radon Daily Time Farming
-	radonon ? turnOn('rdTimeFarmPopup') : turnOff('rdTimeFarmPopup');
+	turnOff('rdTimeFarmPopup');
 	turnOff('rdTimeFarmSettings');
 	turnOff('rdTimeFarmDefaultSettings');
 	turnOff('rdTimeFarmZone');
+
+	//Radon Daily Map Farm
+	radonon ? turnOn('rdMapFarmPopup') : turnOff('rdMapFarmPopup');
+	turnOff('rdMapFarmSettings');
+	turnOff('rdMapFarmDefaultSettings');
+	turnOff('rdMapFarmZone');
 
 	//Radon Daily Tribute Farming
 	radonon ? turnOn('rdTributeFarmPopup') : turnOff('rdTributeFarmPopup');
@@ -1969,10 +2033,16 @@ function updateCustomButtons() {
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
 
 	//C3 Time Farm
-	radonon ? turnOn('rc3TimeFarmPopup') : turnOff('rc3TimeFarmPopup');
+	turnOff('rc3TimeFarmPopup');
 	turnOff('rc3TimeFarmSettings');
 	turnOff('rc3TimeFarmDefaultSettings');
 	turnOff('rc3TimeFarmZone');
+
+	//C3 Map Farm
+	radonon ? turnOn('rc3MapFarmPopup') : turnOff('rc3MapFarmPopup');
+	turnOff('rc3MapFarmSettings');
+	turnOff('rc3MapFarmDefaultSettings');
+	turnOff('rc3MapFarmZone');
 
 	//C3 Tribute Farming
 	radonon ? turnOn('rc3TributeFarmPopup') : turnOff('rc3TributeFarmPopup');
@@ -2158,10 +2228,16 @@ function updateCustomButtons() {
 	turnOff('rTributeFarmZone');
 
 	//Time Farming  
-	radonon ? turnOn('rTimeFarmPopup') : turnOff('rTimeFarmPopup');
+	turnOff('rTimeFarmPopup');
 	turnOff('rTimeFarmSettings');
 	turnOff('rTimeFarmDefaultSettings');
 	turnOff('rTimeFarmZone');
+
+	//Map Farming  
+	radonon ? turnOn('rMapFarmPopup') : turnOff('rMapFarmPopup');
+	turnOff('rMapFarmSettings');
+	turnOff('rMapFarmDefaultSettings');
+	turnOff('rMapFarmZone');
 
 	//Smithy Farming  
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rSmithyFarmPopup') : ('rSmithyFarmPopup');

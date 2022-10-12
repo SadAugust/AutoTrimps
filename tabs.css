@@ -181,7 +181,7 @@ ul.tab li a:hover {
 
 
 
-.windowDeleterTimeFarm,
+.windowDeleterMapFarm,
 .windowDeleterTributeFarm,
 .windowDeleterBoneShrine {
 	display: inline-block;
@@ -207,7 +207,7 @@ ul.tab li a:hover {
 	cursor: pointer;
 }
 
-.windowDeleterTimeFarm .icomoon,
+.windowDeleterMapFarm .icomoon,
 .windowDeleterTributeFarm .icomoon,
 .windowDeleterSmithyFarm .icomoon,
 .windowDeleterWorshipperFarm .icomoon,
@@ -229,7 +229,7 @@ ul.tab li a:hover {
 	padding: 1px;
 }
 
-.windowActiverTimeFarm,
+.windowActiverMapFarm,
 .windowActiverTributeFarm,
 .windowActiverWorshipperFarm,
 .windowActiverMapBonus,
@@ -254,7 +254,7 @@ ul.tab li a:hover {
 
 /*I'm creating so much work for myself here :(*/
 /*World columns*/
-.windowWorldrTimeFarm,
+.windowWorldrMapFarm,
 .windowWorldrTributeFarm,
 .windowWorldrBoneShrine,
 .windowWorldrAlch {
@@ -327,7 +327,7 @@ ul.tab li a:hover {
 }
 
 /*Cell columns*/
-.windowCellrTimeFarm,
+.windowCellrMapFarm,
 .windowCellrTributeFarm,
 .windowCellrBoneShrine,
 .windowCellrAlch {
@@ -391,7 +391,7 @@ ul.tab li a:hover {
 }
 
 /*Auto Level columns*/
-.windowAutoLevelrTimeFarm,
+.windowAutoLevelrMapFarm,
 .windowAutoLevelrTributeFarm,
 .windowAutoLevelrAlch {
 	display: inline-block;
@@ -436,7 +436,7 @@ ul.tab li a:hover {
 }
 
 /*Map Level columns*/
-.windowLevelrTimeFarm,
+.windowLevelrMapFarm,
 .windowLevelrTributeFarm,
 .windowLevelrVoidMap,
 .windowLevelrBoneShrine,
@@ -490,7 +490,7 @@ ul.tab li a:hover {
 }
 
 /*Job Ratio columns*/
-.windowJobRatiorTimeFarm,
+.windowJobRatiorMapFarm,
 .windowJobRatiorTributeFarm,
 .windowJobRatiorVoidMap,
 .windowJobRatiorBoneShrine,
@@ -558,7 +558,7 @@ ul.tab li a:hover {
 
 
 /*Repeat Every columns*/
-.windowRepeatEveryrTimeFarm,
+.windowRepeatEveryrMapFarm,
 .windowRepeatEveryrTributeFarm {
 	display: inline-block;
 	width: 8%;
@@ -572,7 +572,7 @@ ul.tab li a:hover {
 }
 
 /*End Zone columns*/
-.windowEndZonerTimeFarm,
+.windowEndZonerMapFarm,
 .windowEndZonerTributeFarm {
 	display: inline-block;
 	width: 7%;
@@ -835,7 +835,7 @@ ul.tab li a:hover {
 
 /*Why does this exist. Surely there's a better way?*/
 .windowLevelOff .windowLevel,
-.windowLevelOff .windowLevelrTimeFarm,
+.windowLevelOff .windowLevelrMapFarm,
 .windowLevelOff .windowLevelrTributeFarm,
 .windowLevelOff .windowLevelrSmithyFarm,
 .windowLevelOff .windowLevelrWorshipperFarm,
@@ -854,7 +854,7 @@ ul.tab li a:hover {
 }
 
 /*Why does this exist. Surely there's a better way?*/
-.windowLevelOn .windowLevel .windowLevelOn .windowLevelrTimeFarm,
+.windowLevelOn .windowLevel .windowLevelOn .windowLevelrMapFarm,
 .windowLevelOn .windowLevelrTributeFarm,
 .windowLevelOn .windowLevelrSmithyFarm,
 .windowLevelOn .windowLevelrWorshipperFarm,

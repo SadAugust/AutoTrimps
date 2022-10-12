@@ -19,7 +19,7 @@ function RgetEnemyAvgAttack(zone, cell, name, type, query) {
 	if (!zone) zone = (type == "world" || !game.global.mapsActive) ? game.global.world : getCurrentMapObject().level;
 	if (!cell) cell = (type == "world" || !game.global.mapsActive) ? getCurrentWorldCell().level : (getCurrentMapCell() ? getCurrentMapCell().level : 1);
 	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : "Snimp";
-	if (!query) query = !query ? false : query;
+	if (!query) query = false;
 	var mapGrid = type === 'world' ? 'gridArray' : 'mapGridArray';
 
 	if (!query && game.global.stringVersion >= '5.8.0' && zone >= 200 && cell !== 100 && type === 'world' && game.global[mapGrid][cell].u2Mutation) {

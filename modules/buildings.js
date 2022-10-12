@@ -385,7 +385,7 @@ function RbuyBuildings() {
 		}
 	}
 
-	if (rBSRunningAtlantrimp)
+	if (typeof rBSRunningAtlantrimp !== 'undefined' && rBSRunningAtlantrimp)
 		return;
 
 	//Still allows you to buy tributes during gem quests
