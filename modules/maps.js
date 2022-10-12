@@ -1982,7 +1982,7 @@ function RautoMap() {
 				}
 				if (rAFSettings.autoLevel) {
 					var rAFautoLevel_Repeat = rAFautoLevel;
-					rAFautoLevel = callAutoMapLevel(rAFCurrentMap, rAFautoLevel, rAFSpecial, null, null, false);
+					rAFautoLevel = callAutoMapLevel(rAFCurrentMap, rAFautoLevel, rAFSpecial, 10, 1, false);
 					if (rAFautoLevel !== Infinity) {
 						if (rAFautoLevel_Repeat !== Infinity && rAFautoLevel !== rAFautoLevel_Repeat) rAFMapRepeats = game.global.mapRunCounter + 1;
 						rAFMapLevel = rAFautoLevel;
