@@ -599,79 +599,82 @@ function isNextU1DailyWind() {
 
 function Rresetmapvars() {
 	//General
-	RshouldDoMaps = false;
 	RlastMapWeWereIn = null;
-	RdoMaxMapBonus = false;
 	rVanillaMAZ = false;
-	rShouldMaxMapBonus = false;
-	rShouldSmithless = false;
-	rMBCurrentMap = undefined;
-	rVMCurrentMap = undefined;
-	rC3EndZoneSetting = -1;
 	currTime = 0;
-	shredActive = false;
-	rCurrentMap = undefined;
+	//Map Bonus
+	rShouldMaxMapBonus = false;
+	rMBCurrentMap = undefined;
+	rMBshouldDoHealthMaps = false;
+	rMBHealthFarm = false;
 	//Void Maps
 	RdoVoids = false;
 	RneedToVoid = false;
+	rVMCurrentMap = undefined;
+	//Equip Farm
+	rHDFarm = !1;
+	rShouldHDFarm = false;
+	rHDFCurrentMap = undefined;
 	//Map Farm
 	rShouldMapFarm = false;
 	rMFCurrentMap = undefined;
-	rMFMapRepeats = 0;
 	//Tribute Farm
 	rTributeFarming = false;
 	rShouldTributeFarm = false;
 	rShouldMetFarm = false;
 	rTrFCurrentMap = undefined;
-	//Unbalance
-	rShouldUnbalance = false;
+	//Smithy Farming
+	rShouldSmithyFarm = false;
+	rShouldSmithyGemFarm = false;
+	rShouldSmithyWoodFarm = false;
+	rShouldSmithyMetalFarm = false;
+	rSFCurrentMap = undefined;
+	//Fragment Farming
+	rFragmentFarming = false;
+	rFragmentMapID = undefined;
+	rInitialFragmentMapID = undefined;
+	rFragMapBought = false;
 	//Worshipper
 	rShouldWorshipperFarm = false;
 	rWFDebug = 0;
 	rWFCurrentMap = undefined;
+	//Unbalance
+	rShouldUnbalance = false;
 	//Quagmire
 	rShouldQuagFarm = false;
 	rQFCurrentMap = undefined;
 	//Quest
-	rShouldQuest = false;
+	rShouldQuest = 0;
 	rHasQuested = false;
-	RquestSmithyWarning = -1;
-	RquestSmithyWarning_Setting = -1;
 	//Mayhem
 	rShouldMayhem = false;
+	rMayhemCurrentMap = undefined;
 	//Storm
+	rShouldStorm = false;
 	Rstormfarm = false;
 	Rshouldstormfarm = false;
 	//Insanity
 	rShouldInsanityFarm = false;
-	Rinsanityfragfarming = false;
-	insanityfragmappy = undefined;
-	insanityprefragmappy = undefined;
-	insanityfragmappybought = false;
 	rIFCurrentMap = undefined;
-	//Equip Farm
-	Requipfarm = !1;
-	Rshouldequipfarm = !1;
-	Requipminusglobal = -1;
 	//Pandemonium
 	rShouldPandemoniumDestack = false;
+	rPandemoniumCurrentMap = undefined;
 	rShouldPandemoniumFarm = false;
 	rShouldPandemoniumJestimpFarm = false;
 	savefile = null;
 	jestFarmMap = false;
-	rPandemoniumCurrentMap = undefined;
 	//Alchemy
 	rShouldAlchFarm = false;
-	RAlchFarm = false;
-	rAlchSpecialError = 0;
 	rAFCurrentMap = undefined;
+	rAFSpecialError = 0;
 	//Hypothermia
-	rHypoFarm = false;
 	rShouldHypoFarm = false;
 	rHFCurrentMap = undefined;
 	rHFBonfireCostTotal = 0;
-	rHypoRespecced = null;
-	rHypoBuyPackrat = false;
+	rHFBuyPackrat = false;
+	//Smithless
+	rShouldSmithless = false;
+	rSmithlessCurrentMap = undefined;
 	//Prestige
 	rShouldPrestigeRaid = false;
 	RAMPfragmappy = undefined;
@@ -683,23 +686,37 @@ function Rresetmapvars() {
 	RAMPfragmappybought = false;
 	RAMPfragfarming = false;
 	runningPrestigeMaps = false;
-	//Bone Shrine
-	rShouldBoneShrine = false;
-	rBoneShrineUsedZone = 0;
-	workerRatio = null;
-	//Smithy Farming
-	rShouldSmithyFarm = false;
-	rShouldSmithyGemFarm = false;
-	rShouldSmithyWoodFarm = false;
-	rShouldSmithyMetalFarm = false;
-	smithyMapCount = [0, 0, 0];
+
+	//Daily Shred Variables
+	shredActive = false;
 
 	//Auto Level variables
 	rMFautoLevel = Infinity;
+	rMFMapRepeats = 0;
 	rTrFautoLevel = Infinity;
+	rTrFMapRepeats = 0;
 	rSFautoLevel = Infinity;
+	rSFMapRepeats = [0, 0, 0];
+	smithyMapCount = [0, 0, 0];
+	rWFautoLevel = Infinity;
+	rWFMapRepeats = 0;
 	rMBautoLevel = Infinity;
+	rMBMapRepeats = 0;
+	rMayhemautoLevel = Infinity;
+	rMayhemMapRepeats = 0;
+	rIFautoLevel = Infinity;
+	rIFMapRepeats = 0;
+	rPandemoniumautoLevel = Infinity;
+	rPandemoniumMapRepeats = 0;
+	rAFautoLevel = Infinity;
+	rAFMapRepeats = 0;
+	rHFautoLevel = Infinity;
+	rHFMapRepeats = 0;
 	rSmithlessautoLevel = Infinity;
+	rSmithlessMapRepeats = 0;
+	rHDFautoLevel = Infinity;
+	rHDFMapRepeats = 0;
+	rHDFIndex;
 
 	if (document.getElementById('hiderStatus').style.display == 'None' && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) {
 		turnOn("hiderStatus")

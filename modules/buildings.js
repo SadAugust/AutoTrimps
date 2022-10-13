@@ -401,7 +401,7 @@ function RbuyBuildings() {
 		if (game.global.challengeActive == 'Quest' && (smithiesBoughtThisZone < game.global.world || questcheck() === 10) && canAffordBuilding('Smithy') && getPageSetting('rQuest')) {
 			var smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1)
 			var questZones = Math.floor(((!game.global.runningChallengeSquared ? 85 : getPageSetting('rQuestSmithyZone') === -1 ? Infinity : getPageSetting('rQuestSmithyZone') - game.global.world) / 2) - 1);
-			var smithiesToBuy = smithycanBuy > questZones ? smithycanBuy - questZones : questcheck() == 10 || (HDRatio * 10 >= getPageSetting('Rmapcuntoff')) ? 1 : 0;
+			var smithiesToBuy = smithycanBuy > questZones ? smithycanBuy - questZones : questcheck() == 10 ? 1 : 0;
 			if (smithiesBoughtThisZone > game.global.world) smithiesBoughtThisZone = 0;
 			//Buying smithies that won't be needed for quests before user entered end goal
 			if (smithiesToBuy > 0) {

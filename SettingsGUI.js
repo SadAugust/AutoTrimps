@@ -29,7 +29,8 @@ function automationMenuInit() {
 		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 	}
 	if (game.global.universe == 2) {
-		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \"Advanced\" it will factor in the equality required for the zone too.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + HDRatio  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + HDRatio.toFixed(2)  + \"<br>\<b>Optimal Map Level = </b>\" + rCalcVoidHDratio().toFixed(2) + \"<br>\")');
+
 	}
 	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
 	abutton = document.createElement("SPAN");
@@ -502,11 +503,6 @@ function initializeAllSettings() {
 	createSetting('Rmapselection', 'Biome', 'Select which biome you\'d prefer to use. Recommend Farmlands if you have unlocked it else Plentiful (Gardens).', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Plentiful", "Farmlands"], 'Μaps');
 	createSetting('rMapSpecial', 'Map Special', 'Select which Special to use. May bug out if you cannot afford selected. <br>0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'Μaps');
 
-
-	createSetting('RMaxMapBonushealth', 'Max MapBonus Health', 'Limit the amount of map bonuses you get when AutoMaps requires more health. Default is 10.', 'value', '10', null, 'Μaps');
-	createSetting('Rhitssurvived', 'Hits Survived', 'Set this value to tell the script how many enemy attacks you wish to survive for. The default is 10. The lower this is the less health the script will get. If you set this too high it will farm too much so please be careful. ', 'value', '10', null, 'Μaps');
-	createSetting('Rmapcuntoff', 'Map Cut Off', 'Decides when to get max map bonus. 4 is default. This means it will take 1 hit to kill an enemy if in D stance.', 'value', '4', null, 'Μaps');
-	//createSetting('RDisableFarm', 'Farming H:D', 'If H:D goes above this value, it will farm for Damage & Health. The lower this setting, the more it will want to farm. Default is <b>16<b/>. <b>-1 to disable farming!</b>', 'value', -1, null, 'Μaps');
 	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value.', 'value', '-1', null, 'Μaps');
 
 	//HD Farm
@@ -2200,14 +2196,6 @@ function updateCustomButtons() {
 	turnOff('rVoidMapDefaultSettings');
 	turnOff('rVoidMapZone');
 
-
-
-	radonon ? turnOn('RMaxMapBonusAfterZone') : turnOff('RMaxMapBonusAfterZone');
-	radonon ? turnOn('RMaxMapBonuslimit') : turnOff('RMaxMapBonuslimit');
-	radonon ? turnOn('RMaxMapBonushealth') : turnOff('RMaxMapBonushealth');
-	radonon && (getPageSetting('rDisplayAllSettings') || getPageSetting('rManageEquality') !== 2) ? turnOn('Rhitssurvived') : turnOff('Rhitssurvived');
-	radonon ? turnOn('Rmapcuntoff') : turnOff('Rmapcuntoff');
-	//radonon ? turnOn('RDisableFarm') : turnOff('RDisableFarm');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
 	radonon ? turnOn('rMapRepeatCount') : turnOff('rMapRepeatCount');
 	radonon ? turnOn('automateSpireAssault') : turnOff('automateSpireAssault');
@@ -2428,9 +2416,6 @@ function updateCustomButtons() {
 	turnOff('rAlchDefaultSettings');
 	turnOff('rAlchZone');
 
-	//Glass
-	//radonon ? turnOn('rGlass') : turnOff('rGlass');
-	//radonon && getPageSetting('rGlass') ? turnOn('rGlassStacks') : turnOff('rGlassStacks');
 	turnOff('rGlass');
 	turnOff('rGlassStacks');
 
@@ -2658,8 +2643,6 @@ function updateCustomButtons() {
 
 	if (game.global.universe == 1 && getPageSetting('DisableFarm') <= 0)
 		shouldFarm = false;
-	/* if (game.global.universe == 2 && getPageSetting('RDisableFarm') <= 0)
-		RshouldFarm = false; */
 
 	MODULES["maps"] && (MODULES["maps"].preferGardens = !getPageSetting('PreferMetal'));
 	if (document.getElementById('Prestige').selectedIndex > 11 && !game.global.slowDone) {
@@ -2715,19 +2698,12 @@ function checkPortalSettings() {
 	return portalLevel;
 }
 
-
-
-
-
-
-
 //AutoJobs
 
 //Changing Default Widths for Job buttons
 document.getElementById('fireBtn').parentElement.style.width = '14.2%'
 document.getElementById('fireBtn').parentElement.style.paddingRight = '2px'
 document.getElementById('jobsTitleSpan').parentElement.style.width = '10%'
-
 
 //AutoJobs button.
 //Creating button
@@ -2797,17 +2773,9 @@ autoEquipText.innerHTML = 'AT AutoEquip';
 autoEquipText.setAttribute("id", "autoEquipLabel");
 autoEquipText.setAttribute("onClick", "settingChanged('Requipon')");
 
-//Creating cogwheel & linking onclick
-//var autoEquipSettings = document.createElement("DIV");
-//autoEquipSettings.setAttribute('onclick', 'MAZLookalike("AT AutoJobs", "a", "AutoEquip")');
-//var autoEquipSettingsButton = document.createElement("SPAN");
-//autoEquipSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
-
 //Setting up positioning
 var autoEquipColumn = document.getElementById("equipmentTitleDiv").children[0];
 autoEquipContainer.appendChild(autoEquipText);
-//autoEquipContainer.appendChild(autoEquipSettings);
-//autoEquipSettings.appendChild(autoEquipSettingsButton);
 autoEquipColumn.replaceChild(autoEquipContainer, document.getElementById('equipmentTitleDiv').children[0].children[2]);
 
 function getDailyHeHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalHeliumEarned - (game.global.heliumLeftover + game.resources.helium.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily He/Hr: " + b.toFixed(3) + "%" } return a }
@@ -2866,7 +2834,7 @@ function toggleRadonStatus(update) {
 	if (update) {
 		if (getPageSetting('Rshowautomapstatus')) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'\Advanced\'\ it will factor in the equality required for the zone too.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + HDRatio  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + HDRatio.toFixed(2)  + \"<br>\<b>Void H:D ratio = </b>\" + rCalcVoidHDratio().toFixed(2) + \"<br>\")');
 		} else
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
@@ -2878,7 +2846,7 @@ function toggleRadonStatus(update) {
 			turnOff('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \"Advanced\" it will factor in the equality required for the zone too.<p>\<b>Enough Health: </b>\" + RenoughHealth + \"<br>\<b>Enough Damage: </b>\" + RenoughDamage +\"<br>\<b>Should Farm: </b>\" + RshouldFarm +\"<br>\<b>H:D ratio = </b>\" + HDRatio  + \"<br>\<b>Optimal Map Level = </b>\" + autoMapLevel()+ \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + HDRatio.toFixed(2)  + \"<br>\<b>Optimal Map Level = </b>\" + rCalcVoidHDratio().toFixed(2) + \"<br>\")');
 		}
 	}
 	else {

@@ -1225,7 +1225,7 @@ function rCalcVoidHDratio() {
 	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
 	if (game.global.gridArray.length > 0) {
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 100, 'Cthulimp', 'void') * 4;
-		var ourDamage = RcalcOurDmg('avg', equalityQuery('Cthulimp', game.global.world, 100, 'void', 4, 'gamma'), 'world', false, false, false) * gammaBurstDmg;
+		var ourDamage = RcalcOurDmg('avg', equalityQuery('Cthulimp', game.global.world, 100, 'void', 4, 'gamma'), 'void', false, false, false) * gammaBurstDmg;
 		ratio = enemyHealth / ourDamage;
 	}
 	return ratio;
