@@ -2012,7 +2012,8 @@ function RautoMap() {
 				}
 			}
 		}
-		if (RdoVoids && game.global.mapsActive) {
+
+		if ((typeof (autoTrimpSettings.rAlchDefaultSettings.value.voidPurchase) === 'undefined' ? true : autoTrimpSettings.rAlchDefaultSettings.value.voidPurchase) && RdoVoids && game.global.mapsActive) {
 			if (getCurrentMapObject().location == "Void" && (alchObj.canAffordPotion('Potion of the Void') || alchObj.canAffordPotion('Potion of Strength'))) {
 				alchObj.craftPotion('Potion of the Void');
 				alchObj.craftPotion('Potion of Strength');

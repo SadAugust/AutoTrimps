@@ -218,12 +218,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 		mazHelp += "<br><br>The default values section are values which will automatically be input when a new row has been added. There's a few exception to this such as:<br></br><ul>"
 		mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable the entire setting.</li>"
 		if (titleText.includes('Worshipper Farm')) mazHelp += "<li><b>Skip Value</b> - How many worshippers a map must provide for you to run your Worshipper Farming.</li>";
-		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>"
-		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>"
-		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>"
 		if (titleText.includes('Raiding')) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after raiding has finished.</li>"
 		if (titleText.includes('Map Bonus')) mazHelp += "<li><b>Health Bonus</b> - The amount of map stacks to farm when your HD Ratio is below that of the <b>Health HDRatio</b> field. Default is 10.</li>"
 		if (titleText.includes('Map Bonus')) mazHelp += "<li><b>Health HD Ratio</b> - Decides when to start getting the map stack bonus value in the <b>Health Bonus</b> field. 10 is default, this means it\'d go for it when your HDRatio is below 10.</li>"
+		if (titleText.includes('Alchemy Farm')) mazHelp += "<li><b>Void Purchase</b> - Will purchase as many void and strength potions as you can currently afford when you go into a void map. Would recommend only disabling this setting when going for the Alchemy achievement.</li>"
+		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>"
+		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>"
+		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>"
 
 		//Row Settings
 		mazHelp += "</ul></br> The settings for each row that is added:<ul>"
@@ -317,11 +318,12 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm')) tooltipText += "<div class='windowJobRatio" + varPrefix_Adjusted + "\'>Job<br/>Ratio</div>"
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'>Gather</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial'>Special</div>"
+		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributeFarmDropdown'>Farm Type</div>"
+		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRecycle'>Recycle</div>"
+		if (titleText.includes('Alchemy Farm')) tooltipText += "<div class='windowStorage'>Void<br>Purchase</div>"
 		if (titleText.includes('Hypothermia')) tooltipText += "<div class='windowFrozenCastle'>Frozen<br>Castle</div>"
 		if (titleText.includes('Hypothermia')) tooltipText += "<div class='windowStorage'>Auto<br>Storage</div>"
 		if (titleText.includes('Hypothermia')) tooltipText += "<div class='windowPackrat'>Packrat</div>"
-		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributeFarmDropdown'>Farm Type</div>"
-		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRecycle'>Recycle</div>"
 		if (titleText.includes('Map Bonus')) tooltipText += "<div class='windowJobRatio'>Health<br>Bonus</div>"
 		if (titleText.includes('Map Bonus')) tooltipText += "<div class='windowJobRatio'>Health<br>HD Ratio</div>"
 		tooltipText += "</div>";
@@ -342,7 +344,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			mapType: 'Absolute',
 			healthBonus: 10,
 			healthHDRatio: 10,
-			recycle: false
+			recycle: false,
+			voidPurchase: true
 		}
 		var style = "";
 
@@ -361,6 +364,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Map Farm') || titleText.includes('Map Bonus')) defaultVals.repeat = autoTrimpSettings[varPrefix + "DefaultSettings"].value.repeat ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.repeat : '0';
 		if (titleText.includes('Worshipper Farm'))
 			defaultVals.shipskip = autoTrimpSettings[varPrefix + "DefaultSettings"].value.shipskip ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.shipskip : '10';
+		if (titleText.includes('Alchemy Farm'))
+			defaultVals.voidPurchase = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.voidPurchase) === 'undefined' ? true : autoTrimpSettings[varPrefix + "DefaultSettings"].value.voidPurchase ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.voidPurchase : false;
 		if (titleText.includes('Hypo'))
 			defaultVals.frozencastle = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.frozencastle) === 'undefined' ? [200, 99] : autoTrimpSettings[varPrefix + "DefaultSettings"].value.frozencastle ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.frozencastle : [200, 99];
 		if (titleText.includes('Hypo'))
@@ -410,6 +415,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<div class='windowJobRatio'><input value='" + defaultVals.healthHDRatio + "' type='number' id='healthHDRatio'/></div>";
 		if (titleText.includes('Raiding'))
 			tooltipText += "<div class='windowRecycle' style='text-align: center;'>" + buildNiceCheckbox("windowRecycleDefault", null, defaultVals.recycle) + "</div>";
+		if (titleText.includes('Alchemy Farm'))
+			tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowVoidPurchase", null, defaultVals.voidPurchase) + "</div>";
 		tooltipText += "</div>"
 
 
@@ -713,6 +720,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	if (titleText.includes('Worshipper Farm')) var defaultWorshipper = parseInt(document.getElementById('windowWorshipperDefault').value, 10);
 	if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm')) var defaultJobratio = document.getElementById('windowJobRatioDefault').value;
 	if (titleText.includes('Bone')) var defaultBonegather = document.getElementById('windowBoneGatherDefault').value;
+	if (titleText.includes('Alchemy Farm')) var defaultVoidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
 	if (titleText.includes('Hypo')) var defaultFrozenCastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
 	if (titleText.includes('Hypo')) var defaultAutoStorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
 	if (titleText.includes('Hypo')) var defaultPackrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
@@ -742,6 +750,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		recycle: defaultRecycle,
 		mapType: mapType,
 		shipskip: defaultShipSkip,
+		voidPurchase: defaultVoidPurchase,
 		frozencastle: defaultFrozenCastle,
 		healthBonus: healthBonus,
 		healthHDRatio: healthHDRatio
