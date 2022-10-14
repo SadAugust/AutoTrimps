@@ -2475,11 +2475,10 @@ function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHea
 }
 
 function reflectShouldBuyEquips() {
-	//Daily Shred variables
 	if (game.global.challengeActive === 'Daily') {
 		if (typeof (game.global.dailyChallenge.mirrored) !== 'undefined') {
 			var ourHealth = RcalcOurHealth(false, 'world');
-			var ourDamage = RcalcOurDmg('max', game.portal.Equality.radLevel, 'world', false, false, true)
+			var ourDamage = RcalcOurDmg('max', (game.portal.Equality.radLevel - 25), 'world', false, false, true)
 			var gammaToTrigger = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
 			var reflectPct = dailyModifiers.mirrored.getMult(game.global.dailyChallenge.mirrored.strength);
 			var critChance = (getPlayerCritChance() - Math.floor(getPlayerCritChance())) * 100
@@ -2487,18 +2486,17 @@ function reflectShouldBuyEquips() {
 				ourDamage /= game.portal.Tenacity.getMult();
 				ourDamage *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
 			}
-			if (typeof game.global.dailyChallenge.empower !== 'undefined' || critChance > 30) {
+			if (typeof game.global.dailyChallenge.empower !== 'undefined' || critChance > 10) {
 				ourDamage /= RgetCritMulti(true);
 				ourDamage *= RgetCritMulti(false, false, true);
 			}
-			if (ourDamage * ((1 + (reflectPct * gammaToTrigger))) > ourHealth) {
+			if (ourDamage * (1 + (reflectPct * gammaToTrigger)) > ourHealth) {
 				return true
 			}
-			else {
-				return false;
-			}
+
 		}
 	}
+	return false;
 }
 
 function* finder(array, item) {
