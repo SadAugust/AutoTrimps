@@ -2478,7 +2478,7 @@ function reflectShouldBuyEquips() {
 	if (game.global.challengeActive === 'Daily') {
 		if (typeof (game.global.dailyChallenge.mirrored) !== 'undefined') {
 			var ourHealth = RcalcOurHealth(false, 'world');
-			var ourDamage = RcalcOurDmg('max', (game.portal.Equality.radLevel - 25), 'world', false, false, true)
+			var ourDamage = RcalcOurDmg('max', (game.portal.Equality.radLevel - 15), 'world', false, false, true)
 			var gammaToTrigger = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
 			var reflectPct = dailyModifiers.mirrored.getMult(game.global.dailyChallenge.mirrored.strength);
 			var critChance = (getPlayerCritChance() - Math.floor(getPlayerCritChance())) * 100
