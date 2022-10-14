@@ -796,7 +796,7 @@ function RautoEquip() {
 					if (equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned) {
 						if (!game.equipment[equipName].locked) {
 							if (equipPrestige) buyUpgrade(RequipmentList[equipName].Upgrade, true, true)
-							else if (buyEquipment(equipName, null, true, maxCanAfford)) keepBuying = true;
+							else if (maxCanAfford > 0 && buyEquipment(equipName, null, true, maxCanAfford)) keepBuying = true;
 							HDRatio = RcalcHDratio();
 						}
 					}
