@@ -897,8 +897,7 @@ function RupdateAutoMapsStatus(get) {
 	else if (rShouldMaxMapBonus) status = 'Map Bonus: ' + game.global.mapBonus + "/" + rMBRepeatCounter;
 	else if (rShouldSmithless && game.global.mapBonus !== 10) status = 'Smithless Map Bonus: ' + game.global.mapBonus + "/10";
 	else if (rShouldSmithless) status = 'Smithless: Want ' + damageTarget.toFixed(2) + 'x more damage for 3/3';
-	else if (rShouldHDFarm) status = 'HD Farm: Wants ' + (HDRatio - equipfarmdynamicHD(rHDFIndex)).toFixed(2) + 'x&nbspmore stats';
-	//else if (rShouldHDFarm) status = 'HD Farming to ' + equipfarmdynamicHD(rHDFIndex).toFixed(2);
+	else if (rShouldHDFarm) status = 'HD Farm (' + equipfarmdynamicHD(rHDFIndex).toFixed(2) + '): Wants ' + (HDRatio - equipfarmdynamicHD(rHDFIndex)).toFixed(2) + 'x&nbspmore stats';
 	else if (rFragmentFarming) status = 'Fragment Farming to: an amount (TBI)';
 	else if (rShouldPrestigeRaid) status = 'Prestige Raiding: ' + Rgetequips(raidzones, false) + ' items remaining';
 	//Advancing
