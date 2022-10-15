@@ -29,7 +29,7 @@ function automationMenuInit() {
 		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 	}
 	if (game.global.universe == 2) {
-		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + HDRatio.toFixed(2)  + \"<br>\<b>Optimal Map Level = </b>\" + rCalcVoidHDratio().toFixed(2) + \"<br>\")');
+		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Optimal Map Level = </b>\" + prettify(rCalcVoidHDratio()) + \"<br>\")');
 
 	}
 	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
@@ -2834,7 +2834,7 @@ function toggleRadonStatus(update) {
 	if (update) {
 		if (getPageSetting('Rshowautomapstatus')) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + HDRatio.toFixed(2)  + \"<br>\<b>Void H:D ratio = </b>\" + rCalcVoidHDratio().toFixed(2) + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Optimal Map Level = </b>\" + prettify(rCalcVoidHDratio()) + \"<br>\")');
 		} else
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
@@ -2846,7 +2846,7 @@ function toggleRadonStatus(update) {
 			turnOff('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + HDRatio.toFixed(2)  + \"<br>\<b>Optimal Map Level = </b>\" + rCalcVoidHDratio().toFixed(2) + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Optimal Map Level = </b>\" + prettify(rCalcVoidHDratio()) + \"<br>\")');
 		}
 	}
 	else {
