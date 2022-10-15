@@ -1593,7 +1593,7 @@ function updateATVersion() {
 			if (typeof (autoTrimpSettings.rdMapFarmSettings.value) !== 'undefined') {
 				autoTrimpSettings.rdMapFarmSettings.value = autoTrimpSettings.rdTimeFarmSettings.value
 				autoTrimpSettings.rdMapFarmDefaultSettings.value = autoTrimpSettings.rdTimeFarmDefaultSettings.value
-				autoTrimpSettings.rdMapFarmZone.value = autoTrimpSettings?.rdTimeFarmZone.value
+				autoTrimpSettings.rdMapFarmZone.value = autoTrimpSettings.rdTimeFarmZone.value
 				saveSettings();
 			}
 			if (typeof (autoTrimpSettings.rc3MapFarmSettings.value) !== 'undefined') {
