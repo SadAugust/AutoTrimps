@@ -1587,19 +1587,19 @@ function updateATVersion() {
 			if (typeof (autoTrimpSettings.rMapFarmSettings.value) !== 'undefined') {
 				autoTrimpSettings.rMapFarmSettings.value = autoTrimpSettings.rTimeFarmSettings.value
 				autoTrimpSettings.rMapFarmDefaultSettings.value = autoTrimpSettings.rTimeFarmDefaultSettings.value
-				autoTrimpSettings.rMapFarmZone.value = autoTrimpSettings.rTimeFarmZone?.value
+				autoTrimpSettings.rMapFarmZone.value = autoTrimpSettings.rTimeFarmZone.value
 				saveSettings();
 			}
 			if (typeof (autoTrimpSettings.rdMapFarmSettings.value) !== 'undefined') {
-				autoTrimpSettings.rdMapFarmSettings.value = autoTrimpSettings.rdTimeFarmSettings?.value
+				autoTrimpSettings.rdMapFarmSettings.value = autoTrimpSettings.rdTimeFarmSettings.value
 				autoTrimpSettings.rdMapFarmDefaultSettings.value = autoTrimpSettings.rdTimeFarmDefaultSettings.value
 				autoTrimpSettings.rdMapFarmZone.value = autoTrimpSettings?.rdTimeFarmZone.value
 				saveSettings();
 			}
 			if (typeof (autoTrimpSettings.rc3MapFarmSettings.value) !== 'undefined') {
-				autoTrimpSettings.rc3MapFarmSettings.value = autoTrimpSettings.rc3TimeFarmSettings?.value
+				autoTrimpSettings.rc3MapFarmSettings.value = autoTrimpSettings.rc3TimeFarmSettings.value
 				autoTrimpSettings.rc3MapFarmDefaultSettings.value = autoTrimpSettings.rc3TimeFarmDefaultSettings.value
-				autoTrimpSettings.rc3MapFarmZone.value = autoTrimpSettings.rc3TimeFarmZone?.value
+				autoTrimpSettings.rc3MapFarmZone.value = autoTrimpSettings.rc3TimeFarmZone.value
 				saveSettings();
 			}
 		}
