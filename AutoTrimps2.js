@@ -26,9 +26,9 @@ function initializeAutoTrimps() {
 }
 
 var runInterval = 100;
-var startupDelay = 2000;
+var startupDelay = 4000;
 
-setTimeout(delayStart, 500);
+setTimeout(delayStart, 1000);
 
 function delayStart() {
 	initializeAutoTrimps();
