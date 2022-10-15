@@ -1169,10 +1169,6 @@ function RcalcEnemyHealthMod(world, cell, name, mapType, checkMutations) {
 
 	if (mapType === 'world' && checkMutations && game.global.world > 200 && getPageSetting('rMutationCalc')) {
 		health = rCalcMutationHealth() > health ? rCalcMutationHealth() : health;
-	} else if (game.global.world > 200 && mapType === 'world' && world === game.global.world) {
-		if (game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
-			health = u2Mutations.getHealth(game.global.gridArray[cell - 1])
-		}
 	}
 
 	//Challenges
