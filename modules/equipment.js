@@ -773,7 +773,7 @@ function RautoEquip() {
 	do {
 		keepBuying = false;
 		var bestBuys = mostEfficientEquipment(resourceSpendingPct);
-		bestBuys = mostEfficientEquipment(1, true, true, false, true);
+		bestBuys = mostEfficientEquipment(1, true, getPageSetting('rEquipNoShields'), false, true);
 
 		// Set up for both Attack and Health depending on which is more efficient to purchase
 		var equipType = (bestBuys[6] < bestBuys[7]) ? 'attack' : 'health';
