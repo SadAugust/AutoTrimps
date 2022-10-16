@@ -3319,9 +3319,6 @@ function displayMostEfficientEquipment() {
 	for (var item in game.equipment) {
 		if (game.equipment[item].locked) continue;
 		if (item == "Shield") continue;
-		var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
-		var zoneGo = !zoneGo && (rEquipZone[0] > 0 && (rEquipZone.includes(game.global.world)) || game.global.world >= rEquipZone[rEquipZone.length - 1]) ? true :
-			zoneGo;
 		var bestBuys = mostEfficientEquipment(1, true, true, false, true);
 		var isAttack = (RequipmentList[item].Stat === 'attack' ? 0 : 1);
 		var $eqNamePrestige = null;

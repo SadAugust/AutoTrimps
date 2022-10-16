@@ -92,7 +92,6 @@ function initializeAllTabs() {
 	createTabs("Buildings", "Building Settings");
 	createTabs("Jobs", "Jobs - Worker Settings");
 	createTabs("Gear", "Gear - Equipment Settings");
-	createTabs("Μaps", "Maps - AutoMaps & VoidMaps Settings");
 	createTabs("Maps", "Maps - AutoMaps & VoidMaps Settings");
 	createTabs("Spire", "Spire - Settings for Spires");
 	createTabs("Raiding", "Raiding - Settings for Raiding");
@@ -153,7 +152,8 @@ initializeAllTabs();
 function initializeAllSettings() {
 
 	//Core
-	//Helium General
+
+	//Helium Core
 	createSetting('ManualGather2', ['Manual Gather/Build', 'Auto Gather/Build', 'Mining/Building Only', 'Science Research OFF'], 'Controls what you gather/build do. Manual does nothing<br>Auto Gathering of Food,Wood,Metal(w/turkimp) & Science. Auto speed-Builds your build queue. <br>Mining/Building only does exactly what it says. Only use if you are passed the early stages of the game and have the mastery foremany unlocked (No longer need to trap, food and wood are useless). <br>You can disable science researching for the achievement: Reach Z120 without using manual research.', 'multitoggle', 1, null, 'Core');
 	createSetting('gathermetal', 'Metal Only', 'For use with Mining/Gather Only. Only gathers Metal if you have foremany unlocked. ', 'boolean', false, null, "Core");
 	createSetting('BuyUpgradesNew', ['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords'], 'Autobuys non-equipment upgrades (equipment is controlled in the Gear tab). The second option does NOT buy coordination (use this <b>ONLY</b> if you know what you\'re doing).', 'multitoggle', 1, null, 'Core');
@@ -164,17 +164,7 @@ function initializeAllSettings() {
 	createSetting('AutoAllocatePerks', ['Auto Allocate Off', 'Auto Allocate On', 'Dump into Looting II'], 'Uses the AutoPerks ratio based preset system to automatically allocate your perks to spend whatever helium you have when you AutoPortal. Does not change Fixed Perks: siphonology, anticipation, meditation, relentlessness, range, agility, bait, trumps, packrat, capable. NEW: Dump into Looting II, dumps all loot gained from previous portal at specified zone', 'multitoggle', 0, null, 'Core');
 	createSetting('fastallocate', 'Fast Allocate', 'Turn on if your helium is above 500Qa. Not recommended for low amounts of helium. ', 'boolean', false, null, 'Core');
 	createSetting('TrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core');
-	document.getElementById('TrapTrimps').parentNode.insertAdjacentHTML('afterend', '<br>');
 
-	//Radon Core
-	//Radon General
-	createSetting('RManualGather2', ['Manual Gather/Build', 'Auto Gather/Build', 'Mining/Building Only'], 'Controls what you gather/build do. Manual does nothing<br>Auto Gathering of Food,Wood,Metal(w/turkimp) & Science. Auto speed-Builds your build queue. <br>Mining/Building only does exactly what it says. Only use if you are passed the early stages of the game and have the mastery foremany unlocked (No longer need to trap, food and wood are useless). ', 'multitoggle', 1, null, 'Core');
-	createSetting('RTrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core');
-	createSetting('RBuyUpgradesNew', ['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords'], 'Autobuys non-equipment upgrades (equipment is controlled in the Gear tab). The second option does NOT buy coordination (use this <b>ONLY</b> if you know what you\'re doing).', 'multitoggle', 1, null, 'Core');
-	createSetting('RAutoAllocatePerks', ['Auto Allocate Off', 'Dump into Looting', 'Dump into Greed', 'Dump into Moti'], 'Dumps all excess radon into the selected perk when AutoPortaling.', 'multitoggle', 0, null, 'Core');
-	createSetting('RPerkSwapping', 'Preset Swapping', 'Will automatically load Preset 1 if portaling into a normal run, Preset 2 if portaling into a daily run or Preset 3 if portaling into a C3.<br>Be aware that you need to save your presets when making adjustments or it\'ll revert to the previous one you saved.', 'boolean', false, null, 'Core');
-
-	//Helium Portal
 	createSetting('AutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Helium Per Hour only <b>portals at cell 1</b> of the first level where your He/Hr went down even slightly compared to the current runs Best He/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting He/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Helium Per Hour', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Custom'], 'Core');
 	createSetting('HeliumHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination'], 'Core');
 	document.getElementById("HeliumHourChallengeLabel").innerHTML = "Portal Challenge:";
@@ -184,44 +174,72 @@ function initializeAllSettings() {
 	createSetting('downloadSaves', 'Download Saves', 'Will automatically download saves whenever AutoTrimps portals.', 'boolean', false, null, 'Core');
 
 	var radonChallenges = ["Off", "Radon Per Hour"];
-	if (game.global.highestRadonLevelCleared >= 39) radonChallenges.push("Bublé");
-	if (game.global.highestRadonLevelCleared >= 54) radonChallenges.push("Melt");
-	if (game.global.highestRadonLevelCleared >= 69) radonChallenges.push("Quagmire");
-	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 89)) radonChallenges.push("Archaeology");
-	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 99)) radonChallenges.push("Mayhem");
-	if (game.global.highestRadonLevelCleared >= 129) radonChallenges.push("Insanity");
-	if (game.global.highestRadonLevelCleared >= 134) radonChallenges.push("Nurture");
-	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149)) radonChallenges.push("Pandemonium");
-	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154)) radonChallenges.push("Alchemy");
-	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174)) radonChallenges.push("Hypothermia");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 39) radonChallenges.push("Bublé");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 54) radonChallenges.push("Melt");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 69) radonChallenges.push("Quagmire");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 89) radonChallenges.push("Archaeology");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 99) radonChallenges.push("Mayhem");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 129) radonChallenges.push("Insanity");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 134) radonChallenges.push("Nurture");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) radonChallenges.push("Pandemonium");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154) radonChallenges.push("Alchemy");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) radonChallenges.push("Hypothermia");
 	radonChallenges.push("Custom");
-	if (game.global.highestRadonLevelCleared >= 49) radonChallenges.push("Challenge 3");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) radonChallenges.push("Challenge 3");
 
 	var radonHourChallenges = ["None"];
-	if (game.global.highestRadonLevelCleared >= 39) radonHourChallenges.push("Bublé");
-	if (game.global.highestRadonLevelCleared >= 54) radonHourChallenges.push("Melt");
-	if (game.global.highestRadonLevelCleared >= 69) radonHourChallenges.push("Quagmire");
-	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 89)) radonHourChallenges.push("Archaeology");
-	if (game.global.highestRadonLevelCleared >= 129) radonHourChallenges.push("Insanity");
-	if (game.global.highestRadonLevelCleared >= 134) radonHourChallenges.push("Nurture");
-	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154)) radonHourChallenges.push("Alchemy");
-	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174)) radonHourChallenges.push("Hypothermia");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 39) radonHourChallenges.push("Bublé");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 54) radonHourChallenges.push("Melt");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 69) radonHourChallenges.push("Quagmire");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 89) radonHourChallenges.push("Archaeology");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 129) radonHourChallenges.push("Insanity");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 134) radonHourChallenges.push("Nurture");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154) radonHourChallenges.push("Alchemy");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) radonHourChallenges.push("Hypothermia");
 
 	var radonChallenge3 = ["None"];
-	if (game.global.highestRadonLevelCleared >= 14) radonChallenge3.push("Unlucky");
-	if (game.global.highestRadonLevelCleared >= 24) radonChallenge3.push("Transmute");
-	if (game.global.highestRadonLevelCleared >= 34) radonChallenge3.push("Unbalance");
-	if (game.global.highestRadonLevelCleared >= 44) radonChallenge3.push("Duel");
-	if (game.global.highestRadonLevelCleared >= 59) radonChallenge3.push("Trappapalooza");
-	if (game.global.highestRadonLevelCleared >= 69) radonChallenge3.push("Wither");
-	if (game.global.highestRadonLevelCleared >= 84) radonChallenge3.push("Quest");
-	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104)) radonChallenge3.push("Storm");
-	if (game.global.highestRadonLevelCleared >= 114) radonChallenge3.push("Berserk");
-	if ((getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174)) radonChallenge3.push("Glass");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 14) radonChallenge3.push("Unlucky");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 24) radonChallenge3.push("Transmute");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 34) radonChallenge3.push("Unbalance");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 44) radonChallenge3.push("Duel");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) radonChallenge3.push("Trappapalooza");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 69) radonChallenge3.push("Wither");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 84) radonChallenge3.push("Quest");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) radonChallenge3.push("Storm");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 114) radonChallenge3.push("Berserk");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) radonChallenge3.push("Glass");
 
+	var radonBiome = ["Random"];
+	radonBiome.push("Mountain");
+	radonBiome.push("Forest");
+	radonBiome.push("Sea");
+	radonBiome.push("Depths");
+	if (getPageSetting('rDisplayAllSettings') || game.global.decayDone) radonBiome.push("Gardens");
+	if (getPageSetting('rDisplayAllSettings') || game.global.farmlandsUnlocked) radonBiome.push("Farmlands");
+
+	var radonSpecial = ["0"];
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 14) radonSpecial.push('fa');
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 14) radonSpecial.push("lc");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 24) radonSpecial.push('ssc');
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 24) radonSpecial.push('swc');
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 24) radonSpecial.push('smc');
+	if (getPageSetting('rDisplayAllSettings') || game.global.ArchaeologyDone) radonSpecial.push('src');
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 54) radonSpecial.push('p');
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 64) radonSpecial.push('hc');
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 84) radonSpecial.push('lsc');
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 84) radonSpecial.push('lwc');
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 84) radonSpecial.push('lmc');
+	if (getPageSetting('rDisplayAllSettings') || game.global.ArchaeologyDone) radonSpecial.push('lrc');
+
+
+	//Radon Core
+	createSetting('RManualGather2', ['Manual Gather/Build', 'Auto Gather/Build', 'Mining/Building Only'], 'Controls what you gather/build do. Manual does nothing<br>Auto Gathering of Food,Wood,Metal(w/turkimp) & Science. Auto speed-Builds your build queue. <br>Mining/Building only does exactly what it says. Only use if you are passed the early stages of the game and have the mastery foremany unlocked (No longer need to trap, food and wood are useless). ', 'multitoggle', 1, null, 'Core');
+	createSetting('RTrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core');
+	createSetting('RBuyUpgradesNew', ['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords'], 'Autobuys non-equipment upgrades (equipment is controlled in the Gear tab). The second option does NOT buy coordination (use this <b>ONLY</b> if you know what you\'re doing).', 'multitoggle', 1, null, 'Core');
+	createSetting('RAutoAllocatePerks', ['Auto Allocate Off', 'Dump into Looting', 'Dump into Greed', 'Dump into Moti'], 'Dumps all excess radon into the selected perk when AutoPortaling.', 'multitoggle', 0, null, 'Core');
+	createSetting('RPerkSwapping', 'Preset Swapping', 'Will automatically load Preset 1 if portaling into a normal run, Preset 2 if portaling into a daily run or Preset 3 if portaling into a C3.<br>Be aware that you need to save your presets when making adjustments or it\'ll revert to the previous one you saved.', 'boolean', false, null, 'Core');
 
 	//Radon Portal
-	document.getElementById('RPerkSwapping').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Radon Per Hour only <b>portals at cell 1</b> of the first level where your Rn/Hr went down even slightly compared to the current runs Best Rn/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting Rn/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', radonChallenges, 'Core');
 	createSetting('RadonHourChallenge', 'Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals on the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', radonHourChallenges, 'Core');
 	createSetting('RadonC3Challenge', 'Challenge', 'Automatically portal into this challenge when using \'Challenge 3\' portal option on autoportal. Custom portals on the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', radonChallenge3, 'Core');
@@ -248,6 +266,8 @@ function initializeAllSettings() {
 	$eggSettings.parentNode.style.setProperty('margin-right', '1vw');
 	$eggSettings.parentNode.style.setProperty('margin-left', '0');
 
+	//--------------------------------------------------------------------------------------------------------------------------
+
 	//Daily
 	//Helium Daily
 	createSetting('buyheliumy', 'Buy Heliumy %', 'Buys the Heliumy bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
@@ -256,21 +276,12 @@ function initializeAllSettings() {
 	createSetting('darmormagic', ['Daily Armor Magic Off', 'DAM: Above 80%', 'DAM: H:D', 'DAM: Always'], 'Will buy Armor to try and prevent death on Bleed/Plague/Bogged Dailies under the 3 conditions. <br><b>Above 80%:</b> Will activate at and above 80% of your HZE. <br><b>H:D:</b> Will activate at and above the H:D you have defined in maps. <br><b>Always</b> Will activate always. <br>All options will activate at or <b>below 25% of your health.</b> ', 'multitoggle', 0, null, "Daily");
 	createSetting('dscryvoidmaps', 'Daily VM Scryer', 'Only use in Dailies if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Daily');
 
-	//Radon Daily
-	createSetting('buyradony', 'Buy Radonculous %', 'Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
-	createSetting('Rdmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value. ', 'value', '-1', null, 'Daily');
-	createSetting('rdMeltSmithyShred', 'Melt Smithy (shred)', 'Run the Melting Point Map to gain one extra Smithy when at or above this value when your curreny daily has either the metal or wood shred modifier active. ', 'value', '-1', null, 'Daily');
-	createSetting('Rdequipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to the settings in the \'Gear\' tab. Levels all eqiupment according to best efficiency.', 'boolean', false, null, "Daily");
-	createSetting('Rdequipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as many prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will buy them until the end of the run after you reach the zone specified in the last input.', 'multiValue', -1, null, "Daily");
-
 	//Helium Spire
-	document.getElementById('dscryvoidmaps').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('dIgnoreSpiresUntil', 'Daily Ignore Spires Until', 'Spire specific settings like end-at-cell are ignored until at least this zone is reached in Dailies (0 to disable). ', 'value', '200', null, 'Daily');
 	createSetting('dExitSpireCell', 'Daily Exit Spire Cell', 'What cell to exit spire in dailys. ', 'value', -1, null, 'Daily');
 	createSetting('dPreSpireNurseries', 'Daily Nurseries pre-Spire', 'Set the maximum number of Nurseries to build for Spires in Dailies. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Disable with -1.', 'value', -1, null, 'Daily');
 
 	//Helium Windstacking
-	document.getElementById('dPreSpireNurseries').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('use3daily', 'Daily Windstacking', '<b> This must be on for Daily windstacking settings to appear!</b> Overrides your Autostance settings to use the WS stance on Dailies. ', 'boolean', false, null, 'Daily');
 	createSetting('dWindStackingMin', 'Daily Windstack Min Zone', 'For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set for dailys. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from Daily WS MAX work off this setting. ', 'value', '-1', null, 'Daily');
 	createSetting('dWindStackingMinHD', 'Daily Windstack H:D', 'For use with Windstacking Stance in Dailies, fiddle with this to maximise your stacks in wind zones for Dailies. If H:D is above this setting it will not use W stance. If it is below it will. ', 'value', '-1', null, 'Daily');
@@ -282,7 +293,6 @@ function initializeAllSettings() {
 	createSetting('dwsmaxhd', 'Daily WSM H:D', 'Fiddle with this to maximise your DWSM settings. Default is 0.00025. ', 'value', '-1', null, 'Daily');
 
 	//Helium Raiding
-	document.getElementById('dwsmaxhd').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('dPraidingzone', 'Daily P Raiding Z', 'Raids Maps for prestiges at zone specified in Dailies. Example: 495, will raid Maps at 501. Once all gear is obtained from the map, it will revert back to regular farming. Extremely helpful for spire. Best used in poison zones. <b>You can use multiple values like this 495,506,525! </b>', 'multiValue', [-1], null, 'Daily');
 	createSetting('dPraidingcell', 'Daily P Raiding Cell', 'What Cell to start P Raiding at. Recommend below your BW Raiding cell if used together. -1 to Raid at cell 1. ', 'value', -1, null, 'Daily');
 	createSetting('dPraidingHD', 'Daily P Raiding HD', 'Checks if you can raid the map. If your HD value (calculated using the maps you will raid) is below this value it will not buy the map and you will stop raiding. The higher this value the higher zones it will raid. Can raid up to +10 depending on the zone. -1 or 0 to remove this check.', 'value', -1, null, 'Daily');
@@ -297,6 +307,31 @@ function initializeAllSettings() {
 	createSetting('dBWraidingz', 'Daily Z to BW Raid', 'Raids BWs at zone specified in dailys. Example: 495, will raid all BWs for all gear starting from 495. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Accepts comma separated lists, and raids up to the value in the corrsponding position in the Max BW to raid setting. So if this is set to 480,495 and Daily Max BW to Raid is set to 500,515 AT will BW raid up to 500 from 480, and 515 from 495. Make sure these lists are the same length or BW raiding may fail.', 'multiValue', [-1], null, 'Daily');
 	createSetting('dBWraidingmax', 'Daily Max BW to raid', 'Raids BWs until zone specified in dailys. Example: 515, will raid all BWs for all gear until 515. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Now accepts comma separated lists - see description of Daily Z to BW raid setting for details.', 'multiValue', [-1], null, 'Daily');
 
+	//Helium Heirloom
+	createSetting('dhighdmg', 'DHS: High Damage', '<b>HIGH DAMAGE HEIRLOOM</b><br><br>Enter the name of your high damage heirloom. This is your heirloom that you will use normally in dailies. ', 'textValue', 'undefined', null, 'Daily');
+	createSetting('dlowdmg', 'DHS: Low Damage', '<b>LOW DAMAGE HEIRLOOM</b><br><br>Enter the name of your low damage heirloom. This is the heirloom that you will use for windstacking in dailies. ', 'textValue', 'undefined', null, 'Daily');
+	//Helium Daily Portal
+	createSetting('AutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
+	createSetting('u2daily', 'Daily in U2', 'If this is on, you will do your daily in U2. ', 'boolean', false, null, 'Daily');
+	createSetting('AutoPortalDaily', ['Daily Portal Off', 'DP: He/Hr', 'DP: Custom'], '<b>DP: He/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
+	createSetting('dHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination'], 'Daily');
+	createSetting('dCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone during dailies. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Daily');
+	createSetting('dHeHrDontPortalBefore', 'D: Don\'t Portal Before', 'Do NOT allow Helium per Hour Daily AutoPortal setting to portal BEFORE this level is reached in dailies. It is an additional check that prevents drops in helium/hr from triggering autoportal in dailies. Set to 0 or -1 to completely disable this check. (only shows up with Helium per Hour set in dailies)', 'value', '999', null, 'Daily');
+	createSetting('dHeliumHrBuffer', 'D: He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
+	createSetting('DailyVoidMod', 'Daily Void Zone', 'What zone to do void maps in dailies. Disable with -1', 'value', -1, null, 'Daily');
+	createSetting('dvoidscell', 'Daily Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Daily');
+	createSetting('dRunNewVoidsUntilNew', 'Daily New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Daily');
+	createSetting('drunnewvoidspoison', 'New Voids Poison', 'Only run new voids in poison zones.', 'boolean', false, null, 'Daily');
+
+	//--------------------------------------------------------------------------------------------------------
+
+	//Radon Daily
+	createSetting('buyradony', 'Buy Radonculous %', 'Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
+	createSetting('Rdmeltsmithy', 'D: Melt Smithy', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value. ', 'value', '-1', null, 'Daily');
+	createSetting('rdMeltSmithyShred', 'D: Melt Smithy (shred)', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value when your current daily has either the metal or wood shred modifier active. ', 'value', '-1', null, 'Daily');
+
+	createSetting('rdHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'Daily');
+	createSetting('rdWorshipperFarmPopup', 'Worshipper Farm Settings', 'Will farm to a specified amount of Worshippers according to this settings value.', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'Daily');
 	//Map Bonus
 	createSetting('rdMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Daily Map Bonus", "rdMapBonus", "MAZ")', null, 'Daily');
 	createSetting('rdMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
@@ -338,27 +373,7 @@ function initializeAllSettings() {
 
 	//Bone Shrine Popup
 	createSetting('rdBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Daily');
-
-	//Helium Heirloom
-	document.getElementById('dBWraidingmax').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('dhighdmg', 'DHS: High Damage', '<b>HIGH DAMAGE HEIRLOOM</b><br><br>Enter the name of your high damage heirloom. This is your heirloom that you will use normally in dailies. ', 'textValue', 'undefined', null, 'Daily');
-	createSetting('dlowdmg', 'DHS: Low Damage', '<b>LOW DAMAGE HEIRLOOM</b><br><br>Enter the name of your low damage heirloom. This is the heirloom that you will use for windstacking in dailies. ', 'textValue', 'undefined', null, 'Daily');
-	//Helium Daily Portal
-	document.getElementById('dlowdmg').parentNode.insertAdjacentHTML('afterend', '<br>');
-	createSetting('AutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
-	createSetting('u2daily', 'Daily in U2', 'If this is on, you will do your daily in U2. ', 'boolean', false, null, 'Daily');
-	createSetting('AutoPortalDaily', ['Daily Portal Off', 'DP: He/Hr', 'DP: Custom'], '<b>DP: He/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
-	createSetting('dHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination'], 'Daily');
-	createSetting('dCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone during dailies. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Daily');
-	createSetting('dHeHrDontPortalBefore', 'D: Don\'t Portal Before', 'Do NOT allow Helium per Hour Daily AutoPortal setting to portal BEFORE this level is reached in dailies. It is an additional check that prevents drops in helium/hr from triggering autoportal in dailies. Set to 0 or -1 to completely disable this check. (only shows up with Helium per Hour set in dailies)', 'value', '999', null, 'Daily');
-	createSetting('dHeliumHrBuffer', 'D: He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
-	createSetting('DailyVoidMod', 'Daily Void Zone', 'What zone to do void maps in dailies. Disable with -1', 'value', -1, null, 'Daily');
-	createSetting('dvoidscell', 'Daily Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Daily');
-	createSetting('dRunNewVoidsUntilNew', 'Daily New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Daily');
-	createSetting('drunnewvoidspoison', 'New Voids Poison', 'Only run new voids in poison zones.', 'boolean', false, null, 'Daily');
-
 	//Radon Daily Portal
-	document.getElementById('rdBoneShrinePopup').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RAutoStartDaily', 'Auto Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
 	createSetting('RdHeliumHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
@@ -366,6 +381,8 @@ function initializeAllSettings() {
 	createSetting('u1daily', 'Daily in U1', 'If this is on, you will do your daily in U1. ', 'boolean', false, null, 'Daily');
 	createSetting('dontCapDailies', 'Use when capped', 'If this is on, you will only do the oldest daily when you have 7 dailies available. ', 'boolean', false, null, 'Daily');
 	createSetting('rDailyPortalSettingsArray', 'Daily Portal Settings', 'Click to adjust settings. ', 'mazDefaultArray', { portalZone: 0, portalChallenge: "None", Reflect: { enabled: true, zone: 0 }, ShredFood: { enabled: true, zone: 0 }, ShredWood: { enabled: true, zone: 0 }, ShredMetal: { enabled: true, zone: 0 }, Empower: { enabled: true, zone: 0 }, Mutimp: { enabled: true, zone: 0 }, Bloodthirst: { enabled: true, zone: 0 }, Famine: { enabled: true, zone: 0 }, Large: { enabled: true, zone: 0 }, Weakness: { enabled: true, zone: 0 } }, null, 'Jobs');
+
+	//---------------------------------------------------------------------------------------------------------
 
 	//C2
 	createSetting('FinishC2', 'Finish Challenge2', '<b>DONT USE THIS WITH C2 RUNNER</b><br>Finish / Abandon Challenge2 (any) when this zone is reached, if you are running one. For manual use. Recommended: Zones ending with 0 for most Challenge2. Disable with -1. Does not affect Non-Challenge2 runs.', 'value', -1, null, 'C2');
@@ -376,11 +393,12 @@ function initializeAllSettings() {
 	createSetting('novmsc2', 'No VMs', 'Turn off VM running for C2s. Handy for the C2 Runner. ', 'boolean', false, null, 'C2');
 
 	//C2 Runner
-	document.getElementById('novmsc2').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('c2runnerstart', 'C2 Runner', 'Runs the normal C2s in sequence according to difficulty. See C2Table for list. Once zone you have defined has been reached, will portal into next. I will advise you not to touch the challenges (abandoning, doing a different one, etc) if you are running this, it could break it. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
 	createSetting('c2runnerportal', 'C2 Runner Portal', 'Automatically portal AFTER clearing this level in C2 Runner. (ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, 'C2');
 	createSetting('c2runnerpercent', 'C2 Runner %', 'What percent Threshhold you want C2s to be over. E.g 85, will only run C2s with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ', 'value', '85', null, 'C2');
 	createSetting('c2table', 'C2 Table', 'Display your C2s and C3s in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this C2/C3 is worth doing. <br><b>Blue</b> = You have not yet done/unlocked this C2/C3 challenge. ', 'infoclick', 'c2table', null, 'C2');
+
+	//--------------------------------------------------------------------------------------------------------
 
 	//Buildings
 	//Helium
@@ -398,7 +416,7 @@ function initializeAllSettings() {
 	createSetting('MaxCollector', 'Max Collectors', 'recommend: -1', 'value', '-1', null, 'Buildings');
 	createSetting('MaxGym', 'Max Gyms', 'Advanced. recommend: -1', 'value', '-1', null, 'Buildings');
 	createSetting('MaxTribute', 'Max Tributes', 'Advanced. recommend: -1 ', 'value', '-1', null, 'Buildings');
-	createSetting('GymWall', 'Gym Wall', 'Conserves Wood. Only buys 1 Gym when you can afford <b>X</b> gyms wood cost (at the first one\'s price, simple math). -1 or 0 to disable. In other words, only allows gyms that cost less than 1/nth your currently owned wood. (to save wood for nurseries for new z230+ Magma nursery strategy). Takes decimal numbers. (Identical to the Warpstation wall setting which is why its called that). Setting to 1 does nothing besides stopping gyms from being bought 2 at a time due to the mastery.', 'value', -1, null, 'Buildings'); //remove?
+	createSetting('GymWall', 'Gym Wall', 'Conserves Wood. Only buys 1 Gym when you can afford <b>X</b> gyms wood cost (at the first one\'s price, simple math). -1 or 0 to disable. In other words, only allows gyms that cost less than 1/nth your currently owned wood. (to save wood for nurseries for new z230+ Magma nursery strategy). Takes decimal numbers. (Identical to the Warpstation wall setting which is why its called that). Setting to 1 does nothing besides stopping gyms from being bought 2 at a time due to the mastery.', 'value', -1, null, 'Buildings');
 	createSetting('FirstGigastation', 'First Gigastation', 'How many warpstations to buy before your first gigastation', 'value', '20', null, 'Buildings');
 	createSetting('DeltaGigastation', 'Delta Gigastation', '<b>YOU MUST HAVE BUY UPGRADES ENABLED!</b><br> How many extra warpstations to buy for each gigastation. Supports decimal values. For example 2.5 will buy +2/+3/+2/+3...', 'value', '2', null, 'Buildings');
 	createSetting('WarpstationWall3', 'Warpstation Wall', 'Conserves Metal. Only buys 1 Warpstation when you can afford <b>X</b> warpstations metal cost (at the first one\'s price, simple math). -1, 0, 1 = disable. In other words, only allows warps that cost less than 1/nth your currently owned metal. (to save metal for prestiges)', 'value', -1, null, 'Buildings');
@@ -419,6 +437,8 @@ function initializeAllSettings() {
 	createSetting('rBuildingSpendPct', 'Building Spend pct', 'The percentage of total food you\'d like you spend on Buildings excluding Collectors which will always build at 100%.', 'value', '-1', null, 'Buildings');
 	createSetting('RTributeSpendingPct', 'Tribute Spending pct', 'The percentage of total food you\'d like you spend on Tributes.', 'value', '-1', null, 'Buildings');
 
+	//--------------------------------------------------------------------------------------------------------
+
 	//Jobs
 	//Helium
 	createSetting('fuckjobs', 'Hide Jobs', 'Hides obsolete settings when you have obtained the AutoJobs Mastery. It should be far better to use than AT, Especially on c2 Challenges like Watch. ', 'boolean', false, null, 'Jobs');
@@ -435,6 +455,8 @@ function initializeAllSettings() {
 	//General
 	createSetting('rJobSettingsArray', 'Job Settings', 'Click to adjust settings. ', 'mazDefaultArray', { FarmersUntil: { enabled: false, zone: 999 }, NoLumberjacks: { enabled: false }, Worshipper: { enabled: true, percent: '5' }, Miner: { enabled: true, ratio: 1 }, Lumberjack: { enabled: true, ratio: 1 }, Farmer: { enabled: true, ratio: 1 }, Explorer: { enabled: true, percent: '5' }, Meteorologist: { enabled: true, percent: '100' } }, null, 'Jobs');
 	createSetting('RBuyJobsNew', ['AT AutoJobs Off', 'Auto Ratios', 'Manual Ratios'], 'Manual Worker Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, "Jobs");
+
+	//--------------------------------------------------------------------------------------------------------
 
 	//Gear
 	//Helium
@@ -472,6 +494,8 @@ function initializeAllSettings() {
 	createSetting('RequipfarmHD', 'AEF: H:D', 'What H:D to use for AEF target.', 'value', '-1', null, 'Gear');
 	createSetting('Requipfarmmult', 'AEF: Multiplier', 'Starting from the zone above AEF: Zone, this setting will multiply the H:D you have set in AEF: H:D. So if AEF: Zone was 100, AEF: H:D was 10, AEF: Multiplier was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low H:D.', 'value', '-1', null, 'Gear');
 
+	//--------------------------------------------------------------------------------------------------------
+
 	//Maps
 	//Helium
 	createSetting('AutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use window, it will not work. ', 'multitoggle', 1, null, "Maps");
@@ -498,84 +522,82 @@ function initializeAllSettings() {
 
 	//Radon
 	//General
-	createSetting('RAutoMaps', ["Auto Maps", "Auto Maps", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use window, it will not work.', 'multitoggle', 1, null, "Μaps");
-	createSetting('Rautomapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', true, null, 'Μaps');
-	createSetting('Rmapselection', 'Biome', 'Select which biome you\'d prefer to use. Recommend Farmlands if you have unlocked it else Plentiful (Gardens).', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Plentiful", "Farmlands"], 'Μaps');
-	createSetting('rMapSpecial', 'Map Special', 'Select which Special to use. May bug out if you cannot afford selected. <br>0 = None<br>fa = Fast Attacks<br>lc = Large Cache<br>ssc = Small Savory Cache<br>swc = Small Wooden Cache<br>smc = Small Metal Cache<br>src = Small Research Cache<br>p = Prestigous<br>hc = Huge Cache<br>lsc = Large Savory Cache<br>lwc = Large Wooden Cache<br>lmc = Large Metal Cache<br>lrc = Large Research Cache ', 'dropdown', '0', ["0", "fa", "lc", "ssc", "swc", "smc", "src", "p", "hc", "lsc", "lwc", "lmc", "lrc"], 'Μaps');
+	createSetting('RAutoMaps', ["Auto Maps", "Auto Maps", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use window, it will not work.', 'multitoggle', 1, null, "Maps");
+	createSetting('Rautomapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', true, null, 'Maps');
+	createSetting('Rmapselection', 'Biome', 'Select which biome you\'d prefer to use.', 'dropdown', 'Mountain', radonBiome, 'Maps');
+	createSetting('rMapSpecial', 'Map Special', 'Select which Special to use. May bug out if you cannot afford selected. You\'ll be able to find a list of what each of them represents by mousing over the \'Special Modifier\' text in the games Maps window. ', 'dropdown', '0', radonSpecial, 'Maps');
 
-	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point Map to gain one extra Smithy when at or above this value.', 'value', '-1', null, 'Μaps');
-
-	//HD Farm
-	createSetting('rHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. NOT FULLY IMPLEMENTED YET .', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'Μaps');
-	createSetting('rHDFarmSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rHDFarmDefaultSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Μaps');
-	createSetting('rHDFarmZone', 'HD Farm: Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
-
-	//Worshipper Farm 
-	createSetting('rWorshipperFarmPopup', 'Worshipper Farm Settings', 'Contains arrays for this setting', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'Μaps');
-	createSetting('rWorshipperFarmSettings', 'WF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rWorshipperFarmDefaultSettings', 'WF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food' }, null, 'Μaps');
-	createSetting('rWorshipperFarmZone', 'WF: Zone', 'Farms for specified worshippers in WF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value.', 'value', '-1', null, 'Maps');
 
 	//Prismatic Palace
-	createSetting('Rprispalace', 'Prismatic Palace', 'Run Prismatic Palace when its unlocked. ', 'boolean', true, null, 'Μaps');
+	createSetting('Rprispalace', 'Prismatic Palace', 'Run Prismatic Palace when its unlocked. ', 'boolean', true, null, 'Maps');
 	//Atlantrimp
-	createSetting('RAtlantrimp', 'Atlantrimp', '-1 to disable. When to run Atlantrimp. Use it like this: 50,91. The first number is what zone Atlantrimp should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Atlantrimp at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
+	createSetting('RAtlantrimp', 'Atlantrimp', '-1 to disable. When to run Atlantrimp. Use it like this: 50,91. The first number is what zone Atlantrimp should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Atlantrimp at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Maps');
 	//Melting Point
-	createSetting('RMeltingPoint', 'Melting Point', '-1 to disable. When to run Melting Point. Use it like this: 50,91. The first number is what zone Melting Point should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Melting Point at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
+	createSetting('RMeltingPoint', 'Melting Point', '-1 to disable. When to run Melting Point. Use it like this: 50,91. The first number is what zone Melting Point should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Melting Point at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Maps');
 	//Frozen Castle
-	createSetting('rFrozenCastle', 'Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Μaps');
-	document.getElementById('rFrozenCastle').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('rFrozenCastle', 'Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Maps');
 
+	//HD Farm
+	createSetting('rHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'Maps');
+	createSetting('rHDFarmSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rHDFarmDefaultSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Maps');
+	createSetting('rHDFarmZone', 'HD Farm: Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
+
+	//Worshipper Farm 
+	createSetting('rWorshipperFarmPopup', 'Worshipper Farm Settings', 'Will farm to a specified amount of Worshippers according to this settings value.', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'Maps');
+	createSetting('rWorshipperFarmSettings', 'WF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rWorshipperFarmDefaultSettings', 'WF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food' }, null, 'Maps');
+	createSetting('rWorshipperFarmZone', 'WF: Zone', 'Farms for specified worshippers in WF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 	//Map Bonus
-	createSetting('rMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Map Bonus", "rMapBonus", "MAZ")', null, 'Μaps');
-	createSetting('rMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Μaps');
-	createSetting('rMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
+	createSetting('rMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Map Bonus", "rMapBonus", "MAZ")', null, 'Maps');
+	createSetting('rMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Maps');
+	createSetting('rMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
 
 	//Map Farm
-	createSetting('rMapFarmPopup', 'Map Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Map Farm", "rMapFarm", "MAZ")', null, 'Μaps');
-	createSetting('rMapFarmSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rMapFarmDefaultSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Μaps');
-	createSetting('rMapFarmZone', 'MF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+	createSetting('rMapFarmPopup', 'Map Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Map Farm", "rMapFarm", "MAZ")', null, 'Maps');
+	createSetting('rMapFarmSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rMapFarmDefaultSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Maps');
+	createSetting('rMapFarmZone', 'MF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 
 	//Time Farming
-	createSetting('rTimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")', null, 'Μaps');
-	createSetting('rTimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rTimeFarmDefaultSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Μaps');
-	createSetting('rTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+	createSetting('rTimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")', null, 'Maps');
+	createSetting('rTimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rTimeFarmDefaultSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Maps');
+	createSetting('rTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 
 	//Tribute Farming
-	createSetting('rTributeFarmPopup', 'Tribute Farm Settings', 'Will farm for a specified amount of Tributes/Meteorologists according to this settings value.', 'action', 'MAZLookalike("Tribute Farm", "rTributeFarm", "MAZ")', null, 'Μaps');
-	createSetting('rTributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rTributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83, jobratio: '100,1,1,1' }, null, 'Μaps');
-	createSetting('rTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
+	createSetting('rTributeFarmPopup', 'Tribute Farm Settings', 'Will farm for a specified amount of Tributes/Meteorologists according to this settings value.', 'action', 'MAZLookalike("Tribute Farm", "rTributeFarm", "MAZ")', null, 'Maps');
+	createSetting('rTributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rTributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83, jobratio: '100,1,1,1' }, null, 'Maps');
+	createSetting('rTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Maps');
 
 	//Smithy Farming
-	createSetting('rSmithyFarmPopup', 'Smithy Farm Settings', 'Will farm for a specified amount of Smithies according to this settings value.', 'action', 'MAZLookalike("Smithy Farm", "rSmithyFarm", "MAZ")', null, 'Μaps');
-	createSetting('rSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'Μaps');
-	createSetting('rSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Μaps');
+	createSetting('rSmithyFarmPopup', 'Smithy Farm Settings', 'Will farm for a specified amount of Smithies according to this settings value.', 'action', 'MAZLookalike("Smithy Farm", "rSmithyFarm", "MAZ")', null, 'Maps');
+	createSetting('rSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'Maps');
+	createSetting('rSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Maps');
 
 	//Prestige Raiding
-	createSetting('rRaidingPopup', 'Raiding Settings', 'Will raid up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Raiding", "rRaiding", "MAZ")', null, 'Μaps');
-	createSetting('rRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Μaps');
-	createSetting('rRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
+	createSetting('rRaidingPopup', 'Raiding Settings', 'Will raid up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Raiding", "rRaiding", "MAZ")', null, 'Maps');
+	createSetting('rRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Maps');
+	createSetting('rRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 
 	//Void Maps
-	createSetting('rVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Μaps');
-	createSetting('rVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Μaps');
-	createSetting('rVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Μaps');
+	createSetting('rVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Maps');
+	createSetting('rVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Maps');
+	createSetting('rVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
 
 	//Bone Shrine (bone) 
 	if (game.global.stringVersion >= '5.7.0') {
-		createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Μaps');
-		createSetting('rBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Μaps');
-		createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, bonebelow: 1, jobratio: '1,1,10,1', gather: 'metal' }, null, 'Μaps');
-		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Μaps');
-		createSetting('rBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Μaps");
+		createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Maps');
+		createSetting('rBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+		createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, bonebelow: 1, jobratio: '1,1,10,1', gather: 'metal' }, null, 'Maps');
+		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
+		createSetting('rBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Maps");
 	}
 
 	//Spire
@@ -605,6 +627,8 @@ function initializeAllSettings() {
 	createSetting('BWraidingz', 'Z to BW Raid', 'Raids BWs at zone specified. Example: 495, will raid all BWs for all gear starting from 495. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Accepts comma separated lists, and raids up to the value in the corrsponding position in the Max BW to raid setting. So if this is set to 480,495 and Max BW to Raid is set to 500,515 AT will BW raid up to 500 from 480, and 515 from 495. Make sure these lists are the same length or BW raiding may fail.', 'multiValue', [-1], null, 'Raiding');
 	createSetting('BWraidingmax', 'Max BW to raid', 'Raids BWs until zone specified. Example: 515, will raid all BWs for all gear until 515. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Now accepts comma separated lists - see description of Z to BW raid setting for details.', 'multiValue', [-1], null, 'Raiding');
 
+	//--------------------------------------------------------------
+
 	//Windstacking
 	createSetting('turnwson', 'Turn WS On!', 'Turn on Windstacking Stance in Combat to see the settings! ', 'boolean', false, null, 'Windstacking');
 	createSetting('WindStackingMin', 'Windstack Min Zone', 'For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from WS MAX work off this setting. ', 'value', '-1', null, 'Windstacking');
@@ -615,43 +639,43 @@ function initializeAllSettings() {
 	createSetting('wsmax', 'WS MAX', 'For maximising Windstacking an entire run. Withholds damage to try and get your max windstacks every wind zone. Not recommended for normal usage. Good for BPs. ', 'value', '-1', null, 'Windstacking');
 	createSetting('wsmaxhd', 'WSM H:D', 'Fiddle with this to maximise your WSM settings. Default is 0.00025. ', 'value', '-1', null, 'Windstacking');
 
+	//--------------------------------------------------------------
+
 	//ATGA
 	createSetting('ATGA2', 'ATGA', '<b>ATGA MASTER BUTTON</b><br>AT Geneticassist. Do not use vanilla GA, as it will conflict otherwise. May get fucky with super high values. ', 'boolean', false, null, 'ATGA');
 	createSetting('ATGA2gen', 'ATGA: Gen %', '<b>ATGA: Geneassist %</b><br>ATGA will only hire geneticists if they cost less than this value. E.g if this setting is 1 it will only buy geneticists if they cost less than 1% of your food. Default is 1%. ', 'value', '1', null, 'ATGA');
 	createSetting('ATGA2timer', 'ATGA: Timer', '<b>ATGA Timer</b><br>This is the default time your ATGA will use. ', 'value', '-1', null, 'ATGA');
 
 	//Zone Timers
-	document.getElementById('ATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('zATGA2timer', 'ATGA: T: Before Z', '<b>ATGA Timer: Before Z</b><br>ATGA will use the value you define in ATGA: T: BZT before the zone you have defined in this setting, overwriting your default timer. Useful for Liq or whatever. ', 'value', '-1', null, 'ATGA');
 	createSetting('ztATGA2timer', 'ATGA: T: BZT', '<b>ATGA Timer: Before Z Timer</b><br>ATGA will use this value before the zone you have defined in ATGA: T: Before Z, overwriting your default timer. Useful for Liq or whatever. Does not work on challenges. ', 'value', '-1', null, 'ATGA');
 	createSetting('ATGA2timerz', 'ATGA: T: After Z', '<b>ATGA Timer: After Z</b><br>ATGA will use the value you define in ATGA: T: AZT after the zone you have defined in this setting, overwriting your default timer. Useful for super push runs or whatever. Does not work on challenges. ', 'value', '-1', null, 'ATGA');
 	createSetting('ATGA2timerzt', 'ATGA: T: AZT', '<b>ATGA Timer: After Z Timer</b><br>ATGA will use this value after the zone that has been defined in ATGA: T: After Z, overwriting your default timer. Useful for super push runs or whatever. ', 'value', '-1', null, 'ATGA');
 
 	//Spire Timers
-	document.getElementById('ATGA2timerzt').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('sATGA2timer', 'ATGA: T: Spire', '<b>ATGA Timer: Spire</b><br>ATGA will use this value in Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this except Daily Spire. ', 'value', '-1', null, 'ATGA');
 	createSetting('dsATGA2timer', 'ATGA: T: Daily Spire', '<b>ATGA Timer: Daily Spire</b><br>ATGA will use this value in Daily Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this. ', 'value', '-1', null, 'ATGA');
 
 	//Daily Timers
-	document.getElementById('dsATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('dATGA2Auto', ['ATGA: Manual', 'ATGA: Auto No Spire', 'ATGA: Auto Dailies'], '<b>EXPERIMENTAL</b><br><b>ATGA Timer: Auto Dailies</b><br>ATGA will use automatically set breed timers in plague and bogged, overwriting your default timer.<br/>Set No Spire to not override in spire, respecting ignore spire settings.', 'multitoggle', 2, null, 'ATGA');
 	createSetting('dATGA2timer', 'ATGA: T: Dailies', '<b>ATGA Timer: Normal Dailies</b><br>ATGA will use this value for normal Dailies such as ones without plague etc, overwriting your default timer. Useful for pushing your dailies that extra bit at the end. Overwrites Default, Before Z and After Z. ', 'value', '-1', null, 'ATGA');
 	createSetting('dhATGA2timer', 'ATGA: T: D: Hard', '<b>ATGA Timer: Hard Dailies</b><br>ATGA will use this value in Dailies that are considered Hard. Such Dailies include plaged, bloodthirst and Dailies with a lot of negative mods. Overwrites Default, Before Z and After Z and normal Daily ATGA Timer. ', 'value', '-1', null, 'ATGA');
 
 	//C2 Timers
-	document.getElementById('dhATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('cATGA2timer', 'ATGA: T: C2', '<b>ATGA Timer: C2s</b><br>ATGA will use this value in C2s. Overwrites Default, Before Z and After Z. ', 'value', '-1', null, 'ATGA');
 	createSetting('chATGA2timer', 'ATGA: T: C: Hard', '<b>ATGA Timer: Hard C2s</b><br>ATGA will use this value in C2s that are considered Hard. Electricity, Nom, Toxicity. Overwrites Default, Before Z and After Z and C2 ATGA', 'value', '-1', null, 'ATGA');
 
+	//--------------------------------------------------------------
+
 	//C3
 	createSetting('c3finishrun', 'Finish C3', 'Finish / Abandon Challenge3 (any) when this zone is reached, if you are running one. Does not affect Non-C3 runs.', 'value', -1, null, 'C3');
-	createSetting('c3meltingpoint', 'Melt Smithy', 'Run the Melting Point map to gain an extra Smithies when at or above this value on C3 runs.', 'value', -1, null, 'C3');
+	createSetting('c3meltingpoint', 'C3: Melt Smithy', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value on C3 runs.', 'value', -1, null, 'C3');
 	createSetting('c3buildings', 'Building max purchase', 'When in a C3 or special challenge  (Mayhem, Panda) run will spend 99% of resources on buildings regardless of your other designated caps until the zone you specify in the Buy Buildings Till setting.', 'boolean', false, null, 'C3');
 	createSetting('c3buildingzone', 'Buy buildings till', 'When in a C3 or special challenge  (Mayhem, Panda) will spend 99% of resource on buildings until this zone.', 'value', -1, null, 'C3');
 	createSetting('c3GM_ST', ['c3: GM/ST', 'c3: Golden Maps', 'c3: Sharp Trimps', 'c3: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during C3 or special challenge (Mayhem, Pandemonium) runs.', 'multitoggle', 0, null, 'C3');
 
-	//C3 Voids
-	document.getElementById('c3GM_ST').parentNode.insertAdjacentHTML('afterend', '<br>');
+	createSetting('rc3HDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'C3');
+	createSetting('rc3WorshipperFarmPopup', 'Worshipper Farm Settings', 'Will farm to a specified amount of Worshippers according to this settings value.', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'C3');
 
 	//C3 Map Bonus
 	createSetting('rc3MapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("C3 Map Bonus", "rc3MapBonus", "MAZ")', null, 'C3');
@@ -696,31 +720,26 @@ function initializeAllSettings() {
 	createSetting('rc3BoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'C3');
 
 	//Unbalance
-	document.getElementById('rc3BoneShrinePopup').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rUnbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
 	createSetting('rUnbalanceZone', 'U: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C3');
 	createSetting('rUnbalanceStacks', 'U: Stacks', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C3');
 	createSetting('rUnbalanceImprobDestack', 'U: Improbability Destack', 'Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone', 'boolean', false, null, 'C3');
 
 	//Trappapalooza
-	document.getElementById('rUnbalanceImprobDestack').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rTrappa', 'Trappa', 'Turn this on if you want to enable Trappa feautres.', 'boolean', false, null, 'C3');
 	createSetting('rTrappaCoords', 'T: Coords', 'The zone you would like to stop buying additional coordinations at.', 'value', -1, null, 'C3');
 
-	//Unbalance
-	document.getElementById('rTrappaCoords').parentNode.insertAdjacentHTML('afterend', '<br>');
+	//Quest
 	createSetting('rQuest', 'Quest', 'Turn this on if you want AT to automate Quests. Will only function properly with AutoMaps enabled.', 'boolean', true, null, 'C3');
 	createSetting('rQuestSmithyZone', 'Q: Smithy Zone', 'The zone you\'ll stop your Quest run at (will assume 85 for non C3 version). Will calculate the smithies required for Quests and purchase spare ones if possible.', 'value', [999], null, 'C3');
 
 	//Mayhem
-	document.getElementById('rQuestSmithyZone').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rMayhem', 'Mayhem', 'Turn on Mayhem settings. ', 'boolean', false, null, 'C3');
 	createSetting('rMayhemDestack', 'M: HD Ratio', 'What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Mayhem stacks remaining to clear. ', 'value', '-1', null, 'C3');
 	createSetting('rMayhemZone', 'M: Zone', 'What zone you\'d like to start destacking from, can be used in conjunction with \'M: HD Ratio\' but will clear stacks until 0 are remaining regardless of the value set in \'M: HD Ratio\'.', 'value', '-1', null, 'C3');
 	createSetting('rMayhemMapIncrease', 'M: Map Increase', 'Will increase the map level of Mayhem farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.<br>This setting will make it so that AT doesn\'t check if you can afford the new map level so beware it could cause some issues.', 'value', '-1', null, 'C3');
 
 	//Storm
-	document.getElementById('rMayhemMapIncrease').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rstormon', 'Storm', 'Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ', 'boolean', false, null, 'C3');
 	createSetting('rStormZone', 'S: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C3');
 	createSetting('rStormStacks', 'S: Stacks', 'The amount of stack you have to reach before clearing all of them.', 'value', -1, null, 'C3');
@@ -729,7 +748,6 @@ function initializeAllSettings() {
 	createSetting('Rstormmult', 'S: Multiplier', 'Starting from the zone above S: Zone, this setting will multiply the H:D you have set in S: H:D. So if S: Zone was 100, S: H:D was 10, S: Multiplier was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low H:D. ', 'value', '-1', null, 'C3');
 
 	//Pandemonium
-	document.getElementById('Rstormmult').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RPandemoniumOn', 'Pandemonium', 'Turn on Pandemonium settings.', 'boolean', false, null, 'C3');
 	createSetting('RPandemoniumZone', 'P: Destack Zone', 'What zone to start Pandemonium mapping at. Will ignore Pandemonium stacks below this zone.', 'value', '-1', null, 'C3');
 	createSetting('RPandemoniumAutoEquip', ['P: AutoEquip Off', 'P: AutoEquip', 'P AE: LMC', 'P AE: Huge Cache', 'P AE: Jestimp'], '<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.<br><br/><b>P AE: LMC Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache<br/>Will also purchase prestiges when they cost less than a Jestimp proc. Additionally will override worker settings to ensure that you farm as much metal as possible.<br/><br><b>P AE: Huge Cache</b><br>Uses the same settings as \'P: AE LMC\' but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure fast farming speed.<br/><br/><b>P AE: Jestimp</b><br/>Provides a setting for Jestimp farming from a set zone which will change the equipment buying condition from if they cost less than a huge cache to if they cost less than the metal you\'d gain from a Jestimp kill. <br/>Recommended to only use the later part of Pandemonium runs as it will increase farming time by a drastic amount.', 'multitoggle', 0, null, 'C3');
@@ -745,13 +763,13 @@ function initializeAllSettings() {
 	createSetting('rPandRespecZone', 'P: Respec Zone', 'The zone you\'d like to start respeccing from.', 'value', '-1', null, 'C3');
 
 	//Glass
-	document.getElementById('rPandRespecZone').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rGlass', 'Glass NYI!', 'Turn this on if you want to enable Glass destacking feautres.', 'boolean', false, null, 'C3');
 	createSetting('rGlassStacks', 'G: Stacks NYI!', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C3');
 
 	//Smithless
-	document.getElementById('rGlassStacks').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('rSmithless', 'Smithless', 'Turn this on if you want to enable AT farming for damage to kill Ubersmiths on the Smithless challenge. It is not fully implemented currently but it will farm until you either reach max tenacity or can fully kill the Ubersmith on a zone. In the future this will be changed to identify what health breakpoint you can reach and have that as the target but it won\'t be done for a while.', 'boolean', false, null, 'C3');
+
+	//--------------------------------------------------------------
 
 	//Challenges
 
@@ -761,7 +779,6 @@ function initializeAllSettings() {
 	createSetting('rHideExterminate', 'Exterminate', 'Enable to hide Exterminate challenge settings. ', 'boolean', false, null, 'Challenges');
 
 	//Arch
-	document.getElementById('rHideExterminate').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('Rarchon', 'Archaeology', 'Turn on Archaeology settings. ', 'boolean', false, null, 'Challenges');
 	createSetting('Rarchstring1', 'First String', 'First string to use in Archaeology. Put the zone you want to stop using this string and start using the second string (Make sure the second string has a value) at the start. I.e: 70,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
 	createSetting('Rarchstring2', 'Second String', 'Second string to use in Archaeology. Put the zone you want to stop using this string and start using the third string (Make sure the third string has a value) at the start. I.e: 94,10a,10e ', 'textValue', 'undefined', null, 'Challenges');
@@ -800,6 +817,8 @@ function initializeAllSettings() {
 	createSetting('rHypoStorage', ['HF: Storage', 'HF: Storage', 'HF: Storage First'], 'Enable this setting to disable AutoStorage inside of Hypothermia when not at one of your designated Bonfire farming zones. Needs to be used in conjunction with the other Hypothermia settings otherwise it will break.<br><br>HF: Storage First<br>Will enable AutoStorage again after your first Bonfire farm. Make sure to only use this setting if you\'re confident your Bonfire farming settings won\'t allow for an accidental bonfire.', 'multitoggle', 0, null, 'Challenges');
 	createSetting('rHypoBuyPackrat', 'HF: Buy Packrat', 'Turn on to reset your packrat level to 3 when autoportaling into packrat and also purchase packrat after the Hypothermia challenge is completed. Useful setting for when running 3 or less packrat for an extra bonfire.', 'boolean', false, null, 'Challenges');
 
+	//--------------------------------------------------------------
+
 	//Combat
 	//Helium
 	createSetting('BetterAutoFight', ['Better AutoFight OFF', 'Better Auto Fight', 'Vanilla'], '3-Way Button, Recommended. Will automatically handle fighting.<br>BAF = Old Algo (Fights if dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds<br>BAF3 = Uses vanilla autofight and makes sure you fight on portal. <br> WARNING: If you autoportal with BetterAutoFight disabled, the game may sit there doing nothing until you click FIGHT. (not good for afk) ', 'multitoggle', 1, null, "Combat");
@@ -821,6 +840,8 @@ function initializeAllSettings() {
 	createSetting('Rcalcfrenzy', 'Frenzy Calc', '<b>Experimental.</b><br>Adds frenzy to the calc. Be warned, it will not farm as much with this on as it expects 100% frenzy uptime.', 'boolean', false, null, 'Combat');
 	createSetting('rMutationCalc', 'Mutation Calc', 'Whether you\'d like to factor Mutations into HD calc.', 'boolean', false, null, 'Combat');
 
+	//--------------------------------------------------------------
+
 	//Scryer
 	createSetting('UseScryerStance', 'Enable Scryer Stance', '<b>MASTER BUTTON</b> Activates all other scrying settings, and overrides AutoStance when scryer conditions are met. Leave regular Autostance on while this is active. Scryer gives 2x Resources (Non-Helium/Nullifium) and a chance for Dark Essence. Once this is on, priority for Scryer decisions goes as such:<br>NEVER USE, FORCE USE, OVERKILL, MIN/MAX ZONE<br><br><b>NO OTHER BUTTONS WILL DO ANYTHING IF THIS IS OFF.</b>', 'boolean', true, null, 'Scryer');
 	createSetting('ScryerUseWhenOverkill', 'Use When Overkill', 'Overrides everything! Toggles stance when we can Overkill in S, giving us double loot with no speed penalty (minimum one overkill, if you have more than 1, it will lose speed) <b>NOTE:</b> This being on, and being able to overkill in S will override ALL other settings <u>(Except never use in spire)</u>. This is a boolean logic shortcut that disregards all the other settings including Min and Max Zone. If you ONLY want to use S during Overkill, as a workaround: turn this on and Min zone: to 9999 and everything else off(red). ', 'boolean', true, null, 'Scryer');
@@ -841,6 +862,8 @@ function initializeAllSettings() {
 	createSetting('ScryerDieZ', 'Die To Use S', '<b>-1 to disable.</b><br>Turning this on will switch you back to S even when doing so would kill you. Happens in scenarios where you used Skip Corrupteds that took you into regular Autostance X/H stance, killed the corrupted and reached a non-corrupted enemy that you wish to use S on, but you havent bred yet and you are too low on health to just switch back to S. So you\'d rather die, wait to breed, then use S for the full non-corrupted enemy, to maximize DE. NOTE: Use at your own risk.<br>Use this input to set the minimum zone that scryer activates in (You can use decimal values to specify what cell this setting starts from)', 'value', 230.60, null, 'Scryer');
 	createSetting('screwessence', 'Remaining Essence Only', 'Why scry when theres no essence? Turns off scrying when the remaining enemies with essence drops to 0. ', 'boolean', false, null, 'Scryer');
 
+	//--------------------------------------------------------------
+
 	//Magma
 	createSetting('UseAutoGen', 'Auto Generator', 'Turn this on to use these settings. ', 'boolean', false, null, 'Magma');
 	createSetting('beforegen', ['Gain Mi', 'Gain Fuel', 'Hybrid'], '<b>MODE BEFORE FUELING: </b>Which mode to use before fueling. This is the mode which the generator will use if you fuel after z230. ', 'multitoggle', 1, null, 'Magma');
@@ -851,7 +874,6 @@ function initializeAllSettings() {
 	createSetting('AutoGenC2', ['C2: Normal', 'C2: Fuel', 'C2: Hybrid'], '<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire C2. <br><b>Hybrid:</b> Uses Hybrid for the entire C2. ', 'multitoggle', 1, null, 'Magma');
 
 	//Spend Mi
-	document.getElementById('AutoGenC2').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('spendmagmite', ['Spend Magmite OFF', 'Spend Magmite (Portal)', 'Spend Magmite Always'], 'Auto Spends any unspent Magmite immediately before portaling. (Or Always, if toggled). Part 1 buys any permanent one-and-done upgrades in order from most expensive to least. Part 2 then analyzes Efficiency vs Capacity for cost/benefit, and buys Efficiency if its BETTER than Capacity. If not, if the PRICE of Capacity is less than the price of Supply, it buys Capacity. If not, it buys Supply. And then it repeats itself until you run out of Magmite and cant buy anymore. ', 'multitoggle', 1, null, 'Magma');
 	createSetting('ratiospend', 'Ratio Spending', 'Spends Magmite in a Ratio you define. ', 'boolean', false, null, 'Magma');
 	createSetting('effratio', 'Efficiency', 'Use -1 or 0 to not spend on this. Any value above 0 will spend. ', 'value', -1, null, 'Magma');
@@ -862,6 +884,9 @@ function initializeAllSettings() {
 	createSetting('spendmagmitesetting', ['Normal', 'Normal & No OC', 'OneTime Only', 'OneTime & OC'], '<b>Normal:</b> Spends Magmite Normally as Explained in Magmite spending behaviour. <br><b>Normal & No OC:</b> Same as normal, except skips OC afterbuying 1 OC upgrade. <br><b>OneTime Only:</b> Only Buys the One off upgrades except skips OC afterbuying 1 OC upgrade. <br><b>OneTime & OC:</b> Buys all One off upgrades, then buys OC only. ', 'multitoggle', 0, null, 'Magma');
 	createSetting('MagmiteExplain', 'Magmite spending behaviour', '1. Buy one-and-done upgrades, expensive first, then consider 1st level of Overclocker;<br>2. Buy Overclocker IF AND ONLY IF we can afford it;<br>2.5. Exit if OneTimeOnly<br>3. Buy Efficiency if it is better than capacity;<br>4. Buy Capacity or Supply depending on which is cheaper, or based on SupplyWall', 'infoclick', 'MagmiteExplain', null, 'Magma');
 
+	//--------------------------------------------------------------
+
+
 	//Heirloom
 	//Heirloom Swapping
 	createSetting('Rhs', 'Heirloom Swapping', 'Heirloom swapping master button. Turn this on to allow heirloom swapping and its associated settings. ', 'boolean', false, null, 'Heirlooms');
@@ -869,7 +894,6 @@ function initializeAllSettings() {
 	createSetting('RhsVoidSwap', 'Void PB Swap', 'Toggle to swap to your initial shield when your current enemy is slow and the next enemy is fast to maximise plaguebringer damage.<br><br>Will only run during Void Maps that aren\'t double attack and won\'t function properly if your Initial Shield has PlagueBringer or your Afterpush shield doesn\'t have PlagueBringer.', 'boolean', false, null, 'Heirlooms');
 
 	//Shield swapping
-	document.getElementById('RhsVoidSwap').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RhsShield', 'Shields', 'Toggle to swap Shields', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsInitial', 'Initial', '<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsAfterpush', 'Afterpush', '<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
@@ -879,22 +903,20 @@ function initializeAllSettings() {
 	createSetting('RhsC3SwapZone', 'C3 Swap Zone', 'Which zone to swap from your first heirloom you have defined to the C3 heirloom you have defined. I.e if this value is 75 it will switch to the C3 heirloom <b>on z75</b>', 'value', -1, null, 'Heirlooms');
 
 	//Staff swapping
-	document.getElementById('RhsC3SwapZone').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('RhsStaff', 'Staffs', 'Toggle to swap Staffs', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsWorldStaff', 'World', '<b>World Staff</b><br><br>Enter the name of your world staff.', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsMapStaff', 'Map', '<b>General Map Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside maps, will be overwritten by the proceeding 3 heirloom settings if they\'re being used otherwise will work in every maptype.', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsFoodStaff', 'Savory Cache', '<b>Savory Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Savory Cache maps. Will use this staff for Tribute farming if it\'s enabled.', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsWoodStaff', 'Wooden Cache', '<b>Wooden Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Wooden Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
 	createSetting('RhsMetalStaff', 'Metal Cache', '<b>Metal Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Metal Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('RhsResourceStaff', 'Resource Cache', '<b>Resource Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Resource (Science) Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
 
 	//Heirloom Line
-	document.getElementById('RhsMetalStaff').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('autoheirlooms', 'Auto Heirlooms', 'Auto Heirlooms master button. Turn this on to enable all Auto Heirloom settings. <br><br><b>The Modifier points will be explained here.</b> The more points an heirloom has, the better chance it has of being kept. If empty is selected, it will muliplty the score by 4. If any is selected, it will multiply the score of the heirloom by 2. <br><br>E.g Mod 1 = CC (+6 if dropped, 1st modifier) <br>Mod 2 = CD (+5 if dropped, 2nd modifier) <br>Mod 3 = PB (+4 if dropped, 3rd modifier) <br>Mod 4 = Empty (x4 if dropped, +0 if not) <br>Mod 5 = Empty (x4 if dropped, +0 if not) <br><br>If an heirloom dropped with these exact modifiers, it would get a score of 192 (6+5+4*4*4=240). The highest point heirlooms will be kept. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('typetokeep', ['None', 'Shields', 'Staffs', 'Cores', 'All'], '<b>Shields: </b>Keeps Shields and nothing else.<br><b>Staffs: </b>Keeps Staffs and nothing else.<br><b>Cores: </b>Keeps Cores and nothing else.<br><b>All: </b>Keeps 4 Shields and 3 Staffs and 3 Cores. If you have protected heirlooms in your inventory it will overrite one slot. E.g if one heirloom is protected, you will keep 4 Shields and 3 Staffs and 2 Cores. ', 'multitoggle', 0, null, 'Heirlooms');
 	createSetting('raretokeep', 'Rarity to Keep', 'Auto Heirlooms. Keeps the selected rarity of heirloom, recycles all others. ', 'dropdown', 'Any', ["Any", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Magnificent", "Ethereal", "Magmatic", "Plagued", "Radiating", "Hazardous", "Enigmatic"], 'Heirlooms');
 
 	//Shield Line
-	//document.getElementById('raretokeep').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('keepshields', 'Shields', 'Auto Heirlooms. Enables in-depth shield settings. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('slot1modsh', 'Shield: Modifier 1', 'Auto Heirlooms. Keeps Shields with selected Mod. Modifier 1 is worth 6 points. ', 'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms');
 	createSetting('slot2modsh', 'Shield: Modifier 2', 'Auto Heirlooms. Keeps Shields with selected Mod. Modifier 2 is worth 5 points. ', 'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms');
@@ -905,7 +927,6 @@ function initializeAllSettings() {
 	createSetting('slot7modsh', 'Shield: Modifier 7', 'Auto Heirlooms. Keeps Shields with selected Mod. Modifier 7 is worth 1 points. ', 'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms');
 
 	//Staff Line
-	//document.getElementById('slot7modsh').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('keepstaffs', 'Staffs', 'Auto Heirlooms. Enables in-depth staff settings. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('slot1modst', 'Staff: Modifier 1', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 1 is worth 6 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
 	createSetting('slot2modst', 'Staff: Modifier 2', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 2 is worth 5 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
@@ -916,19 +937,21 @@ function initializeAllSettings() {
 	createSetting('slot7modst', 'Staff: Modifier 7', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 7 is worth 1 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
 
 	//Core Line
-	//document.getElementById('slot7modst').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('keepcores', 'Cores', 'Auto Heirlooms. Enables in-depth core settings. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('slot1modcr', 'Cores: Modifier 1', 'Auto Heirlooms. Keeps Cores with selected Mod. Modifier 1 is worth 5 points. ', 'dropdown', 'empty', ["empty", "fireTrap", "poisonTrap", "lightningTrap", "runestones", "strengthEffect", "condenserEffect"], 'Heirlooms');
 	createSetting('slot2modcr', 'Cores: Modifier 2', 'Auto Heirlooms. Keeps Cores with selected Mod. Modifier 2 is worth 4 points. ', 'dropdown', 'empty', ["empty", "fireTrap", "poisonTrap", "lightningTrap", "runestones", "strengthEffect", "condenserEffect"], 'Heirlooms');
 	createSetting('slot3modcr', 'Cores: Modifier 3', 'Auto Heirlooms. Keeps Cores with selected Mod. Modifier 3 is worth 3 points. ', 'dropdown', 'empty', ["empty", "fireTrap", "poisonTrap", "lightningTrap", "runestones", "strengthEffect", "condenserEffect"], 'Heirlooms');
 	createSetting('slot4modcr', 'Cores: Modifier 4', 'Auto Heirlooms. Keeps Cores with selected Mod. Modifier 4 is worth 2 points. ', 'dropdown', 'empty', ["empty", "fireTrap", "poisonTrap", "lightningTrap", "runestones", "strengthEffect", "condenserEffect"], 'Heirlooms');
 
+	//--------------------------------------------------------------
+
 	//Golden
 	//Helium
 	createSetting('AutoGoldenUpgrades', 'AutoGoldenUpgrades', 'Buys Golden Upgrades in Fillers. Helium buys all Helium golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Helium", "Battle", "Void", "Void + Battle"], 'Golden');
 	createSetting('dAutoGoldenUpgrades', 'Daily AutoGoldenUpgrades', 'Buys Golden Upgrades in Dailies. Helium buys all Helium golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Helium", "Battle", "Void", "Void + Battle"], 'Golden');
 	createSetting('cAutoGoldenUpgrades', 'C2 AutoGoldenUpgrades', 'Buys Golden Upgrades in C2s. Helium buys all Helium golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Battle", "Void", "Void + Battle"], 'Golden');
-	document.getElementById('cAutoGoldenUpgrades').parentNode.insertAdjacentHTML('afterend', '<br>');
+
+	//Break
 	createSetting('voidheliumbattle', 'Void Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Helium at this zone and onwards. This option only appears when selecting void. ', 'value', -1, null, 'Golden');
 	createSetting('dvoidheliumbattle', 'Daily Void Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Helium at this zone and onwards in Dailies. This option only appears when selecting void. ', 'value', -1, null, 'Golden');
 	createSetting('radonbattle', 'Helium Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of helium after this many helium goldens have been purchased and onwards. This option only appears when selecting helium. ', 'value', -1, null, 'Golden');
@@ -940,7 +963,8 @@ function initializeAllSettings() {
 	createSetting('RAutoGoldenUpgrades', 'AutoGoldenUpgrades', 'Buys Golden Upgrades in Fillers. Radon buys all Radon golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Radon", "Battle", "Void", "Void + Battle"], 'Golden');
 	createSetting('RdAutoGoldenUpgrades', 'Daily AutoGoldenUpgrades', 'Buys Golden Upgrades in Dailies. Radon buys all Radon golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Radon", "Battle", "Void", "Void + Battle"], 'Golden');
 	createSetting('RcAutoGoldenUpgrades', 'C2 AutoGoldenUpgrades', 'Buys Golden Upgrades in C2s. Radon buys all Radon golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Battle", "Void", "Void + Battle"], 'Golden');
-	document.getElementById('RcAutoGoldenUpgrades').parentNode.insertAdjacentHTML('afterend', '<br>');
+
+	//Break
 	createSetting('Rvoidheliumbattle', 'Void Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Radon at this zone and onwards. This option only appears when selecting void. ', 'value', -1, null, 'Golden');
 	createSetting('Rdvoidheliumbattle', 'Daily Void Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Radon at this zone and onwards in Dailies. This option only appears when selecting void. ', 'value', -1, null, 'Golden');
 	createSetting('Rradonbattle', 'Radon Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Radon after this many Radon goldens have been purchased and onwards. This option only appears when selecting radon. ', 'value', -1, null, 'Golden');
@@ -948,6 +972,8 @@ function initializeAllSettings() {
 	createSetting('Rbattleradon', 'Battle Radon', '<b>-1 to disable.</b><br> Buys Radon goldens instead of Battle after this many Battle goldens have been purchased and onwards. This option only appears when selecting battle. ', 'value', -1, null, 'Golden');
 	createSetting('Rdbattleradon', 'Daily Battle Radon', '<b>-1 to disable.</b><br> Buys Radon goldens instead of Battle after this many battle goldens have been purchased and onwards in Dailies. This option only appears when selecting battle. ', 'value', -1, null, 'Golden');
 	createSetting('rNonRadonUpgrade', 'Non radon challenges', 'Use C3 golden upgrade setting for regular challenges that aren\'t helium runs.', 'boolean', false, null, 'Golden');
+
+	//--------------------------------------------------------------
 
 	//Nature
 	//Tokens
@@ -958,17 +984,13 @@ function initializeAllSettings() {
 	createSetting('AutoIce', 'Ice', 'Spend/convert Ice tokens', 'dropdown', 'Off', ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Wind', 'Convert to Both'], 'Nature');
 
 	//Enlights
-	document.getElementById('AutoIce').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('autoenlight', 'Enlight: Auto', 'Enables Automatic Enlightenment. Use the settings to define how it works. ', 'boolean', false, null, 'Nature');
-	document.getElementById('autoenlight').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('pfillerenlightthresh', 'E: F: Poison', 'Activate Poison Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable. ', 'value', -1, null, 'Nature');
 	createSetting('wfillerenlightthresh', 'E: F: Wind', 'Activate Wind Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable. ', 'value', -1, null, 'Nature');
 	createSetting('ifillerenlightthresh', 'E: F: Ice', 'Activate Ice Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable. ', 'value', -1, null, 'Nature');
-	document.getElementById('ifillerenlightthresh').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('pdailyenlightthresh', 'E: D: Poison', 'Activate Poison Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable. ', 'value', -1, null, 'Nature');
 	createSetting('wdailyenlightthresh', 'E: D: Wind', 'Activate Wind Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable. ', 'value', -1, null, 'Nature');
 	createSetting('idailyenlightthresh', 'E: D: Ice', 'Activate Ice Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable. ', 'value', -1, null, 'Nature');
-	document.getElementById('idailyenlightthresh').parentNode.insertAdjacentHTML('afterend', '<br>');
 	createSetting('pc2enlightthresh', 'E: C: Poison', 'Activate Poison Enlight when Enlight cost is below this Thresh in C2s. Consumes Tokens. -1 to disable. ', 'value', -1, null, 'Nature');
 	createSetting('wc2enlightthresh', 'E: C: Wind', 'Activate Wind Enlight when Enlight cost is below this Thresh in C2s. Consumes Tokens. -1 to disable. ', 'value', -1, null, 'Nature');
 	createSetting('ic2enlightthresh', 'E: C: Ice', 'Activate Ice Enlight when Enlight cost is below this Thresh in C2s. Consumes Tokens. -1 to disable. ', 'value', -1, null, 'Nature');
@@ -992,18 +1014,23 @@ function initializeAllSettings() {
 	document.getElementById('showhehr').setAttribute('onclick', 'toggleHeHr()');
 	document.getElementById('Rshowrnhr').setAttribute('onclick', 'toggleRnHr()');
 
+
+	//Sorting out spacing issues with swapping between Helium & Radon settings.
+	document.getElementById('radonsettings').setAttribute('onclick', 'settingChanged("radonsettings"), modifyParentNodeUniverseSwap()');
+	document.getElementById('autoheirlooms').setAttribute('onclick', 'settingChanged("autoheirlooms"), modifyParentNodeUniverseSwap()');
+	document.getElementById('rDisplayAllSettings').setAttribute('onclick', 'settingChanged("rDisplayAllSettings"), modifyParentNodeUniverseSwap()');
+
 	document.getElementById('rHideArchaeology').setAttribute('onclick', 'settingChanged("rHideArchaeology"), modifyParentNode("rHideArchaeology", "Rarchstring3", "hide")');
 	modifyParentNode("rHideArchaeology", "Rarchstring3", "hide");
 
 	document.getElementById('rHideExterminate').setAttribute('onclick', 'settingChanged("rHideExterminate"), modifyParentNode("rHideExterminate", "Rexterminateeq", "hide")');
 	modifyParentNode("rHideExterminate", "Rexterminateeq", "hide");
 
-	document.getElementById('autoheirlooms').setAttribute('onclick', 'settingChanged("autoheirlooms"), modifyParentNode("autoheirlooms", "raretokeep"), modifyParentNode("autoheirlooms", "slot7modsh")');
+	/* document.getElementById('autoheirlooms').setAttribute('onclick', 'settingChanged("autoheirlooms"), modifyParentNode("autoheirlooms", "raretokeep"), modifyParentNode("autoheirlooms", "slot7modsh")');
 	modifyParentNode("autoheirlooms", "raretokeep");
-	modifyParentNode("autoheirlooms", "slot7modsh");
+	modifyParentNode("autoheirlooms", "slot7modsh"); */
 
 	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
-	document.getElementById('Display').lastChild.insertAdjacentHTML('afterend', '<br>');
 
 	//SPAM
 	createSetting('SpamGeneral', 'General Spam', 'General Spam = Notification Messages, Auto He/Hr', 'boolean', false, null, 'Display');
@@ -1031,6 +1058,118 @@ function initializeAllSettings() {
 initializeAllSettings();
 automationMenuInit();
 updateATVersion();
+modifyParentNodeUniverseSwap();
+
+function modifyParentNodeUniverseSwap() {
+
+	radonon = getPageSetting('radonsettings') === 1 ? 'show' : 'hide'
+	radonon_mayhem = getPageSetting('radonsettings') === 1 && (getPageSetting('rDisplayAllSettings') || game.global.mayhemCompletions < 25) ? 'show' : 'hide'
+	radonon_panda = getPageSetting('radonsettings') === 1 && (getPageSetting('rDisplayAllSettings') || game.global.pandCompletions < 25) ? 'show' : 'hide'
+	radonon_heirloom = getPageSetting('radonsettings') === 1 && getPageSetting('autoheirlooms') ? 'show' : 'hide'
+	radonoff = getPageSetting('radonsettings') === 0 ? 'show' : 'hide'
+	radonoff_heirloom = getPageSetting('radonsettings') === 0 && getPageSetting('autoheirlooms') ? 'show' : 'hide'
+
+	//Core
+	//Helium Settings
+	modifyParentNode_Initial("TrapTrimps", radonoff);
+	//Radon Settings
+	modifyParentNode_Initial("RPerkSwapping", radonon);
+
+	//Dailies
+	//Helium Settings
+	modifyParentNode_Initial("dscryvoidmaps", radonoff);
+	modifyParentNode_Initial("dPreSpireNurseries", radonoff);
+	modifyParentNode_Initial("dwsmaxhd", radonoff);
+	modifyParentNode_Initial("dBWraidingmax", radonoff);
+	modifyParentNode_Initial("dlowdmg", radonoff);
+	//Radon Settings
+	modifyParentNode_Initial("rdWorshipperFarmPopup", radonon);
+	modifyParentNode_Initial("rdBoneShrinePopup", radonon);
+
+	//Maps
+	//Helium Settings
+	//None!
+
+	//Radon Settings
+	modifyParentNode_Initial("rFrozenCastle", radonon);
+	modifyParentNode_Initial("rWorshipperFarmZone", radonon);
+
+	//Spire
+	//None!
+
+	//ATGA
+	//Helium Settings
+	modifyParentNode_Initial("ATGA2timer", radonoff);
+	modifyParentNode_Initial("ATGA2timerzt", radonoff);
+	modifyParentNode_Initial("dsATGA2timer", radonoff);
+	modifyParentNode_Initial("dhATGA2timer", radonoff);
+	modifyParentNode_Initial("dsATGA2timer", radonoff);
+	modifyParentNode_Initial("dsATGA2timer", radonoff);
+	//Radon Settings
+	//None!
+
+	//C2
+	//Helium Settings
+	modifyParentNode_Initial("novmsc2", radonoff);
+	//Radon Settings
+	//None!
+
+	//C3
+	//Helium Settings
+	//None!
+	//Radon Settings
+	modifyParentNode_Initial("rc3WorshipperFarmPopup", radonon);
+	modifyParentNode_Initial("rc3BoneShrinePopup", radonon);
+	modifyParentNode_Initial("rUnbalanceImprobDestack", radonon);
+	modifyParentNode_Initial("rTrappaCoords", radonon);
+	modifyParentNode_Initial("rQuestSmithyZone", radonon);
+	modifyParentNode_Initial("rMayhemMapIncrease", radonon_mayhem);
+	modifyParentNode_Initial("Rstormmult", radonon);
+	modifyParentNode_Initial("rPandRespecZone", radonon_panda);
+	//modifyParentNode_Initial("rGlassStacks", radonon);
+
+	//Challenges
+	//Helium Settings
+	//None!
+	//Radon Settings
+	modifyParentNode_Initial("rHideExterminate", radonon);
+
+	//Magma
+	//Helium Settings
+	modifyParentNode_Initial("AutoGenC2", radonoff);
+	//Radon Settings
+	//None!
+
+	//Heirlooms
+	//Helium Settings
+	if (getPageSetting('radonsettings') === 0) {
+		modifyParentNode_Initial("raretokeep", radonoff_heirloom);
+		modifyParentNode_Initial("slot7modsh", radonoff_heirloom);
+		modifyParentNode_Initial("slot7modst", radonoff_heirloom);
+	}
+	//Radon Settings
+	modifyParentNode_Initial("RhsVoidSwap", radonon);
+	modifyParentNode_Initial("RhsC3SwapZone", radonon);
+	modifyParentNode_Initial("RhsResourceStaff", radonon);
+	if (getPageSetting('radonsettings') === 1) {
+		modifyParentNode_Initial("raretokeep", radonon_heirloom);
+		modifyParentNode_Initial("slot7modsh", radonon_heirloom);
+	}
+	//Golden Upgrades
+	//Helium Settings
+	modifyParentNode_Initial("cAutoGoldenUpgrades", radonoff);
+	//Radon Settings
+	modifyParentNode_Initial("RcAutoGoldenUpgrades", radonon);
+
+	//Nature Upgrades
+	//Helium Settings
+	modifyParentNode_Initial("AutoIce", radonoff);
+	modifyParentNode_Initial("autoenlight", radonoff);
+	modifyParentNode_Initial("ifillerenlightthresh", radonoff);
+	modifyParentNode_Initial("idailyenlightthresh", radonoff);
+	//Radon Settings
+	//None!
+}
 
 function convertSettings(oldSetting, newSetting, type, newName) {
 
@@ -1373,6 +1512,28 @@ function settingChanged(id) {
 	checkPortalSettings();
 }
 
+function modifyParentNode_Initial(id, style) {
+	var style = !style ? 'show' : style;
+	var elem = document.getElementById(id).parentNode.parentNode.children;
+	for (i = 0; i < elem.length; i++) {
+		if (document.getElementById(id).parentNode.parentNode.children[i].children[0] === undefined) {
+			continue
+		}
+		else {
+			if (document.getElementById(id).parentNode.parentNode.children[i].children[0].id === id || document.getElementById(id).parentNode.parentNode.children[i].children[0].id === (id + 'Label')) {
+				if (elem.length >= (i + 1) && document.getElementById(id).parentNode.parentNode.children[(i + 1)].style.length == 0) {
+					if (style === 'hide') document.getElementById(id).parentNode.parentNode.children[(i + 1)].remove()
+					break;
+
+				}
+				else if (style === 'show') {
+					document.getElementById(id).parentNode.parentNode.children[i].insertAdjacentHTML('afterend', '<br>');
+				}
+			}
+		}
+	}
+}
+
 function modifyParentNode(setting, id, style) {
 	var style = !style ? 'show' : style;
 	var toggled = style == 'show' ? false : true;
@@ -1604,7 +1765,6 @@ function updateATVersion() {
 			}
 		}
 
-
 		autoTrimpSettings["ATversion"] = ATversion;
 		saveSettings();
 	}
@@ -1800,12 +1960,6 @@ function updateCustomButtons() {
 	if (document.getElementById("tabRaiding") != null) {
 		document.getElementById("tabRaiding").style.display = radonon ? "none" : "";
 	}
-	if (document.getElementById("tabMaps") != null) {
-		document.getElementById("tabMaps").style.display = radonon ? "none" : "";
-	}
-	if (document.getElementById("tabΜaps") != null) {
-		document.getElementById("tabΜaps").style.display = !radonon ? "none" : "";
-	}
 	if (document.getElementById("tabDaily") != null) {
 		document.getElementById("tabDaily").style.display = radonon && (!getPageSetting('rDisplayAllSettings') && game.global.highestRadonLevelCleared < 29) ? "none" : "";
 	}
@@ -1843,7 +1997,6 @@ function updateCustomButtons() {
 
 	//Core
 	!radonon ? turnOn('ManualGather2') : turnOff('ManualGather2');
-	!radonon ? turnOn('TrapTrimps') : turnOff('TrapTrimps');
 	!radonon ? turnOn('BuyUpgradesNew') : turnOff('BuyUpgradesNew');
 	(!radonon && getPageSetting('ManualGather2') == 2 && bwRewardUnlocked('Foremany')) ? turnOn('gathermetal') : turnOff('gathermetal');
 	!radonon ? turnOn('amalcoord') : turnOff('amalcoord');
@@ -1852,6 +2005,7 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('amalcoord') ? turnOn('amalcoordz') : turnOff('amalcoordz');
 	!radonon ? turnOn('AutoAllocatePerks') : turnOff('AutoAllocatePerks');
 	!radonon && getPageSetting('AutoAllocatePerks') == 1 ? turnOn('fastallocate') : turnOff('fastallocate');
+	!radonon ? turnOn('TrapTrimps') : turnOff('TrapTrimps');
 
 	//Portal
 	!radonon ? turnOn('AutoPortal') : turnOff('AutoPortal');
@@ -1942,6 +2096,7 @@ function updateCustomButtons() {
 	//RDaily
 	radonon ? turnOn('buyradony') : turnOff('buyradony');
 
+
 	//Map Bonus  
 	radonon ? turnOn('rdMapBonusPopup') : turnOff('rdMapBonusPopup');
 	turnOff('rdMapBonusSettings');
@@ -1953,11 +2108,6 @@ function updateCustomButtons() {
 
 	radonon ? turnOn('Rdmeltsmithy') : turnOff('Rdmeltsmithy');
 	radonon ? turnOn('rdMeltSmithyShred') : turnOff('rdMeltSmithyShred');
-
-
-	//Radon Daily Gear & Raid
-	radonon ? turnOn('Rdequipon') : turnOff('Rdequipon');
-	radonon && getPageSetting('Rdequipon') ? turnOn('Rdequipzone') : turnOff('Rdequipzone');
 
 	//RDPortal 
 	radonon ? turnOn('RAutoStartDaily') : turnOff('RAutoStartDaily');
@@ -1999,7 +2149,12 @@ function updateCustomButtons() {
 	turnOff('rdRaidingDefaultSettings');
 	turnOff('rdRaidingZone');
 
+	//HD Farm
+	radonon ? turnOn('rdHDFarmPopup') : turnOff('rdHDFarmPopup');
+	//Bone Shrine
 	radonon ? turnOn('rdBoneShrinePopup') : turnOff('rdBoneShrinePopup');
+	//Worshipper
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('rdWorshipperFarmPopup') : turnOff('rdWorshipperFarmPopup');
 
 	//C2
 	!radonon ? turnOn('FinishC2') : turnOff('FinishC2');
@@ -2059,6 +2214,8 @@ function updateCustomButtons() {
 	turnOff('rc3RaidingZone');
 
 	radonon ? turnOn('rc3BoneShrinePopup') : turnOff('rc3BoneShrinePopup');
+	radonon ? turnOn('rc3HDFarmPopup') : turnOff('rc3HDFarmPopup');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('rc3WorshipperFarmPopup') : turnOff('rc3WorshipperFarmPopup');
 
 	//Buildings
 	!radonon ? turnOn('BuyBuildingsNew') : turnOff('BuyBuildingsNew');
@@ -2180,8 +2337,10 @@ function updateCustomButtons() {
 	//RMaps
 	radonon ? turnOn('RAutoMaps') : turnOff('RAutoMaps');
 	radonon ? turnOn('Rautomapsportal') : turnOff('Rautomapsportal');
-	radonon ? turnOn('Rmapselection') : turnOff('Rmapselection');
-	radonon ? turnOn('rMapSpecial') : turnOff('rMapSpecial');
+	//radonon ? turnOn('Rmapselection') : 
+	turnOff('Rmapselection');
+	//radonon ? turnOn('rMapSpecial') : 
+	turnOff('rMapSpecial');
 
 	//Map Bonus  
 	radonon ? turnOn('rMapBonusPopup') : turnOff('rMapBonusPopup');
@@ -2228,7 +2387,7 @@ function updateCustomButtons() {
 	turnOff('rMapFarmZone');
 
 	//Smithy Farming  
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rSmithyFarmPopup') : ('rSmithyFarmPopup');
+	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rSmithyFarmPopup') : turnOff('rSmithyFarmPopup');
 	turnOff('rSmithyFarmSettings');
 	turnOff('rSmithyFarmDefaultSettings');
 	turnOff('rSmithyFarmZone');
@@ -2369,10 +2528,10 @@ function updateCustomButtons() {
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 89) && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring3') : turnOff('Rarchstring3');
 
 	//Mayhem
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 99) && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') ? turnOn('rMayhem') : turnOff('rMayhem');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 99) && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemDestack') : turnOff('rMayhemDestack');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 99) && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemZone') : turnOff('rMayhemZone');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 99) && (game.global.mayhemCompletions < 25 || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemMapIncrease') : turnOff('rMayhemMapIncrease');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 99 && game.global.mayhemCompletions < 25) || game.global.challengeActive === 'Mayhem') ? turnOn('rMayhem') : turnOff('rMayhem');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 99 && game.global.mayhemCompletions < 25) || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemDestack') : turnOff('rMayhemDestack');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 99 && game.global.mayhemCompletions < 25) || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemZone') : turnOff('rMayhemZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 99 && game.global.mayhemCompletions < 25) || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemMapIncrease') : turnOff('rMayhemMapIncrease');
 
 
 	//Storm
@@ -2395,20 +2554,20 @@ function updateCustomButtons() {
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 119) && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateeq') : turnOff('Rexterminateeq');
 
 	//Pandemonium
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') ? turnOn('RPandemoniumOn') : turnOff('RPandemoniumOn');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumZone') : turnOff('RPandemoniumZone');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip') : turnOff('RPandemoniumAutoEquip');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RPandemoniumAEZone') : turnOff('RPandemoniumAEZone');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('PandemoniumFarmLevel') : turnOff('PandemoniumFarmLevel');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumJestZone') : turnOff('RPandemoniumJestZone');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') ? turnOn('RPandemoniumOn') : turnOff('RPandemoniumOn');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumZone') : turnOff('RPandemoniumZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip') : turnOff('RPandemoniumAutoEquip');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RPandemoniumAEZone') : turnOff('RPandemoniumAEZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('PandemoniumFarmLevel') : turnOff('PandemoniumFarmLevel');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumJestZone') : turnOff('RPandemoniumJestZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
 
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('rPandRespec') : turnOff('rPandRespec');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('rPandRespec') ? turnOn('rPandRespecZone') : turnOff('rPandRespecZone');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) && (game.global.pandCompletions < 25 || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('rPandRespec') : turnOff('rPandRespec');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('rPandRespec') ? turnOn('rPandRespecZone') : turnOff('rPandRespecZone');
+	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
 
 	//Alchemy
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154) ? turnOn('rAlchPopup') : turnOff('rAlchPopup');
@@ -2551,10 +2710,9 @@ function updateCustomButtons() {
 	radonon && hson && hsstaffon ? turnOn('RhsFoodStaff') : turnOff('RhsFoodStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsWoodStaff') : turnOff('RhsWoodStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsMetalStaff') : turnOff('RhsMetalStaff');
+	radonon && hson && hsstaffon && game.global.ArchaeologyDone ? turnOn('RhsResourceStaff') : turnOff('RhsResourceStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsWCStaff') : turnOff('RhsWCStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsMCStaff') : turnOff('RhsMCStaff');
-
-
 
 	!radonon ? turnOn('SpamJobs') : turnOff('SpamJobs');
 	!radonon ? turnOn('SpamBuilding') : turnOff('SpamBuilding');

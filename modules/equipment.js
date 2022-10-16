@@ -566,7 +566,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	var skipForLevels = !skipForLevels ? false : skipForLevels;
 	var showAllEquips = !showAllEquips ? false : showAllEquips;
 
-	var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
+	var rEquipZone = getPageSetting('Requipzone');
 	var zoneGo = !zoneGo && (rEquipZone[0] > 0 && (rEquipZone.includes(game.global.world)) || game.global.world >= rEquipZone[rEquipZone.length - 1]) ? true :
 		zoneGo;
 	var resourceMaxPercent = !resourceMaxPercent && zoneGo ? 1 :
@@ -710,7 +710,7 @@ function RautoEquip() {
 	if (!getPageSetting('Requipon') || (!rShouldMapFarm && !rShouldTributeFarm && !rShouldMetFarm && rShouldSmithyFarm) || (game.mapUnlocks.AncientTreasure.canRunOnce && (rBSRunningAtlantrimp || (typeof (rMFAtlantrimp) !== 'undefined' && rMFAtlantrimp))))
 		return;
 
-	var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
+	var rEquipZone = getPageSetting('Requipzone');
 	var zoneGo = (rEquipZone[0] > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 
 	if (getPageSetting('Requipprestige') == 2 && !zoneGo) {
@@ -760,7 +760,7 @@ function RautoEquip() {
 
 	var attackEquipCap = (getPageSetting('Requipcapattack') <= 0 || rShouldSmithless ? Infinity : getPageSetting('Requipcapattack'));
 	var healthEquipCap = (getPageSetting('Requipcaphealth') <= 0 || rShouldSmithless ? Infinity : getPageSetting('Requipcaphealth'));
-	var rEquipZone = game.global.challengeActive == "Daily" && getPageSetting('Rdequipon') ? getPageSetting('Rdequipzone') : getPageSetting('Requipzone');
+	var rEquipZone = getPageSetting('Requipzone');
 	var resourceSpendingPct = zoneGo ? 1 : getPageSetting('Requippercent') < 0 ? 1 : getPageSetting('Requippercent') / 100;
 	var maxCanAfford = 0;
 
