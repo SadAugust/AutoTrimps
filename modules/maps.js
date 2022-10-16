@@ -1081,20 +1081,17 @@ function RautoMap() {
 		}
 		if (rVMIndex !== null && rVMIndex >= 0) {
 			var rVMSettings = rVMBaseSettings[rVMIndex];
-			rVMRepeatCounter = rVMSettings.repeat;
-			if (rVMSettings.active) {
-				var rVMCell = rVMSettings.cell;
-				if (game.global.lastClearedCell + 2 >= rVMCell) {
-					var rVMJobRatio = rVMSettings.jobratio
-					if (rVMCurrentMap != undefined && game.global.totalVoidMaps === 0) {
-						if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
-						rVMCurrentMap = undefined;
-						currTime = 0;
-						RdoVoids = false;
-					}
-					if (game.global.totalVoidMaps > 0)
-						RneedToVoid = true;
+			var rVMCell = rVMSettings.cell;
+			if (game.global.lastClearedCell + 2 >= rVMCell) {
+				var rVMJobRatio = rVMSettings.jobratio
+				if (rVMCurrentMap != undefined && game.global.totalVoidMaps === 0) {
+					if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+					rVMCurrentMap = undefined;
+					currTime = 0;
+					RdoVoids = false;
 				}
+				if (game.global.totalVoidMaps > 0)
+					RneedToVoid = true;
 			}
 		}
 		if (game.global.totalVoidMaps <= 0 || !RneedToVoid)

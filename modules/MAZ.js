@@ -278,7 +278,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Tribute Farm'))
 			mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. Autoamtically calculates when it would be more efficient to run Atlantrimp or continue farming Savory Cache maps to reach your target in the fastest time possible. <b>Won't run on food shred dailies.</b></li>";
 		if (titleText.includes('Bone Shrine'))
-			mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. After using the bone shrine charges specified for this line it will stop AT purchasing equips until Atlantrimp has been run so that there is no wasted resources. <b>Won't run on shred dailies that would be impacted by your farming choices.</b></li>";
+			mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. After using the bone shrine charges specified for this line it will stop AT purchasing equips until Atlantrimp has been run so that there is no wasted resources. <b>Will run Atlantrimp and use the charges after cell 95. Will pause Atlantrimp if necessary in a shred daily to ensure you don't waste resources.</b></li>";
 		if (titleText.includes('Map Farm'))
 			mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until Atlantrimp has been run so that there is no wasted resources. <b>Won't run on shred dailies that would be impacted by your farming choices.</b></li>";
 		if (titleText.includes('Smithy Farm'))
@@ -297,7 +297,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm'))
 			mazHelp += "<li><b>Run Type</b> - What type of run you'd like this line to be run.</li>";
 		if (titleText.includes('Bone Shrine'))
-			mazHelp += "<li><b>Shred</b> - This dropdown will only appear when the Run Type dropdown has Daily selected. Will allow you to decide if you'd like that line to be run on dailies with or without the shred that matches your gather type or on both.</li>";
+			mazHelp += "<li><b>Shred</b> - This dropdown will only appear when the Run Type dropdown has All or Daily selected. Will allow you to decide if you'd like that line to be run on dailies with or without the shred that matches your gather type or on both.</li>";
 		if (titleText.includes('Raiding'))
 			mazHelp += "<li><b>Frag Type</b> - Frag: Farm for fragments to afford the maps you want to create. <br>\
 		Frag Min: Used for absolute minimum frag costs (which includes no Prestige special, perfect sliders, random map and the difficulty and size options, however it will try to afford those options first!) and prioritises buying the most maps for a smoother sequential raid. \
@@ -556,7 +556,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (titleText.includes('Insanity Farm'))
 					vals.destack = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].destack) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].destack : false;
 				if (titleText.includes('Bone Shrine'))
-					vals.shredActive = autoTrimpSettings[varPrefix + "Settings"].value[x].shredActive ? autoTrimpSettings[varPrefix + "Settings"].value[x].shredActive : 'All';
+					vals.shredActive = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].shredActive) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].shredActive : 'All';
 				if (titleText.includes('HD Farm'))
 					vals.hdBase = autoTrimpSettings[varPrefix + "Settings"].value[x].hdBase ? autoTrimpSettings[varPrefix + "Settings"].value[x].hdBase : 1;
 				if (titleText.includes('HD Farm'))
@@ -588,7 +588,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			var className = (vals.special == 'hc' || vals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
 			className += (!vals.autoLevel) ? " windowLevelOn" : " windowLevelOff";
-			if (titleText.includes('Bone Shrine')) className += (vals.runType === 'Daily') ? " windowShredOn" : " windowShredOff";
+			if (titleText.includes('Bone Shrine')) className += (vals.runType === 'Daily' || vals.runType === 'All') ? " windowShredOn" : " windowShredOff";
 			className += (x <= current.length - 1) ? " active" : "  disabled";
 			tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
 			tooltipText += "<div class='windowDelete" + varPrefix_Adjusted + "\' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
@@ -657,8 +657,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowAtlantrimp' style='text-align: center;'>" + buildNiceCheckbox("windowAtlantrimp" + x, null, vals.atlantrimp) + "</div>";
 			if (titleText.includes('Insanity Farm'))
 				tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.destack) + "</div>";
-
-
 			if (titleText.includes('Bone Shrine'))
 				tooltipText += "<div class='windowShred'>\<div style='text-align: center; font-size: 0.6vw;'>Shred</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.shredActive + "' id='windowShred" + x + "'>" + shredDropdown + "</select>\</div>"
 
@@ -806,7 +804,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Insanity')) var destack = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 
 		if (titleText.includes('Bone Shrine')) {
-			if (runType == 'Daily')
+			if (runType == 'Daily' || runType == 'All')
 				var shredActive = document.getElementById('windowShred' + x).value;
 			else
 				var shredActive = false;
@@ -1112,7 +1110,7 @@ function addRow(varPrefix, titleText) {
 				if (document.getElementById('windowBuildings' + x) !== null)
 					document.getElementById('windowBuildings' + x).value = true;
 				if (document.getElementById('windowShred' + x) !== null)
-					document.getElementById('windowShred' + x).value = false;
+					document.getElementById('windowShred' + x).value = 'All';
 				if (document.getElementById('windowAtlantrimp' + x) !== null)
 					document.getElementById('windowAtlantrimp' + x).value = false;
 				if (document.getElementById('windowAutoLevel' + x) !== null)
@@ -1185,11 +1183,6 @@ function removeRow(index, titleText) {
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', true);
 	}
-	if (titleText.includes('Bone Shrine')) {
-		var checkBox = document.getElementById('windowShred' + index);
-		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
-		checkBox.setAttribute('data-checked', false);
-	}
 	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Insanity Farm') || titleText.includes('Alchemy Farm') || titleText.includes('Hypothermia Farm') || titleText.includes('HD Farm')) {
 		var checkBox = document.getElementById('windowAutoLevel' + index);
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
@@ -1199,7 +1192,8 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm')) document.getElementById('windowRunType' + index).value = 0;
 	if (titleText.includes('Raiding')) document.getElementById('windowRaidingDropdown' + index).value = 0;
 	if (titleText.includes('Tribute Farm')) document.getElementById('windowTributeFarmDropdown' + index).value = 'Absolute';
-	if (titleText.includes('Bone')) document.getElementById('windowBoneGather' + index).value = 'All';
+	if (titleText.includes('Bone')) document.getElementById('windowShred' + index).value = 'All';
+	if (titleText.includes('Bone')) document.getElementById('windowBoneGather' + index).value = 'Metal';
 
 	elem.style.display = 'none';
 	var btnElem = document.getElementById('windowAddRowBtn');
@@ -1229,7 +1223,7 @@ function updateWindowPreset(index, varPrefix) {
 		var runType = document.getElementById('windowRunType' + index).value;
 		var row = document.getElementById('windowRow' + index);
 
-		newClass = runType === 'Daily' ? 'windowShredOn' : 'windowShredOff';
+		newClass = runType === 'Daily' || runType === 'All' ? 'windowShredOn' : 'windowShredOff';
 		swapClass('windowShred', newClass, row);
 	}
 }
