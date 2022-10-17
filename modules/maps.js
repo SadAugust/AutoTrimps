@@ -1106,9 +1106,9 @@ function RautoMap() {
 	//Map Bonus
 	if (autoTrimpSettings.rMapBonusDefaultSettings.value.active && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
-		var rMBZone = rRunningC3 ? getPageSetting('rc3MapBonusZone') : rRunningDaily ? getPageSetting('rdMapBonusZone') : getPageSetting('rMapBonusZone');
-		var rMBBaseSettings = rRunningC3 ? autoTrimpSettings.rc3MapBonusSettings.value : rRunningDaily ? autoTrimpSettings.rdMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
-		var rMBDefaultSettings = rRunningC3 ? autoTrimpSettings.rc3MapBonusDefaultSettings.value : rRunningDaily ? autoTrimpSettings.rdMapBonusDefaultSettings.value : autoTrimpSettings.rMapBonusDefaultSettings.value;
+		var rMBZone = getPageSetting('rMapBonusZone');
+		var rMBBaseSettings = autoTrimpSettings.rMapBonusSettings.value;
+		var rMBDefaultSettings = autoTrimpSettings.rMapBonusDefaultSettings.value;
 		var rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio;
 		rMBIndex = null;
 		for (var y = 0; y < rMBBaseSettings.length; y++) {
