@@ -330,8 +330,18 @@ function initializeAllSettings() {
 	createSetting('Rdmeltsmithy', 'D: Melt Smithy', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value. ', 'value', '-1', null, 'Daily');
 	createSetting('rdMeltSmithyShred', 'D: Melt Smithy (shred)', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value when your current daily has either the metal or wood shred modifier active. ', 'value', '-1', null, 'Daily');
 
+	//HD Farm Popup
 	createSetting('rdHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'Daily');
+
+	//Worshipper Farm Popup
 	createSetting('rdWorshipperFarmPopup', 'Worshipper Farm Settings', 'Will farm to a specified amount of Worshippers according to this settings value.', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'Daily');
+
+	//Bone Shrine Popup
+	createSetting('rdBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Daily');
+
+	//Daily Void Maps
+	createSetting('rdVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Daily');
+
 	//Map Bonus
 	createSetting('rdMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Daily Map Bonus", "rdMapBonus", "MAZ")', null, 'Daily');
 	createSetting('rdMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
@@ -368,11 +378,6 @@ function initializeAllSettings() {
 	createSetting('rdRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Daily');
 	createSetting('rdRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
 
-	//Daily Void Maps
-	createSetting('rdVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Daily');
-
-	//Bone Shrine Popup
-	createSetting('rdBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Daily');
 	//Radon Daily Portal
 	createSetting('RAutoStartDaily', 'Auto Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
@@ -549,6 +554,22 @@ function initializeAllSettings() {
 	createSetting('rWorshipperFarmSettings', 'WF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
 	createSetting('rWorshipperFarmDefaultSettings', 'WF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food' }, null, 'Maps');
 	createSetting('rWorshipperFarmZone', 'WF: Zone', 'Farms for specified worshippers in WF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
+
+	//Bone Shrine (bone) 
+	if (game.global.stringVersion >= '5.7.0') {
+		createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Maps');
+		createSetting('rBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+		createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, bonebelow: 1, jobratio: '1,1,10,1', gather: 'metal' }, null, 'Maps');
+		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
+		createSetting('rBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Maps");
+	}
+
+	//Void Maps
+	createSetting('rVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Maps');
+	createSetting('rVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Maps');
+	createSetting('rVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
+
 	//Map Bonus
 	createSetting('rMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Map Bonus", "rMapBonus", "MAZ")', null, 'Maps');
 	createSetting('rMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
@@ -584,21 +605,6 @@ function initializeAllSettings() {
 	createSetting('rRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
 	createSetting('rRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Maps');
 	createSetting('rRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
-
-	//Void Maps
-	createSetting('rVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Maps');
-	createSetting('rVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Maps');
-	createSetting('rVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
-
-	//Bone Shrine (bone) 
-	if (game.global.stringVersion >= '5.7.0') {
-		createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Maps');
-		createSetting('rBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-		createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, bonebelow: 1, jobratio: '1,1,10,1', gather: 'metal' }, null, 'Maps');
-		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
-		createSetting('rBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Maps");
-	}
 
 	//Spire
 	//Helium
@@ -674,8 +680,16 @@ function initializeAllSettings() {
 	createSetting('c3buildingzone', 'Buy buildings till', 'When in a C3 or special challenge  (Mayhem, Panda) will spend 99% of resource on buildings until this zone.', 'value', -1, null, 'C3');
 	createSetting('c3GM_ST', ['c3: GM/ST', 'c3: Golden Maps', 'c3: Sharp Trimps', 'c3: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during C3 or special challenge (Mayhem, Pandemonium) runs.', 'multitoggle', 0, null, 'C3');
 
+	//C3 HD Farm Popup
 	createSetting('rc3HDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'C3');
+	//C3 Worshipper Farm Popup
 	createSetting('rc3WorshipperFarmPopup', 'Worshipper Farm Settings', 'Will farm to a specified amount of Worshippers according to this settings value.', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'C3');
+
+	//C3 Bone Shrine popup
+	createSetting('rc3BoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'C3');
+
+	//C3 Void Maps
+	createSetting('rc3VoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'C3');
 
 	//C3 Map Bonus
 	createSetting('rc3MapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("C3 Map Bonus", "rc3MapBonus", "MAZ")', null, 'C3');
@@ -712,12 +726,6 @@ function initializeAllSettings() {
 	createSetting('rc3RaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
 	createSetting('rc3RaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'C3');
 	createSetting('rc3RaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
-
-	//C3 Void Maps
-	createSetting('rc3VoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'C3');
-
-	//Bone Shrine popup
-	createSetting('rc3BoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'C3');
 
 	//Unbalance
 	createSetting('rUnbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
@@ -1083,8 +1091,9 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("dBWraidingmax", radonoff);
 	modifyParentNode_Initial("dlowdmg", radonoff);
 	//Radon Settings
-	modifyParentNode_Initial("rdWorshipperFarmPopup", radonon);
-	modifyParentNode_Initial("rdBoneShrinePopup", radonon);
+	modifyParentNode_Initial("rdMeltSmithyShred", radonon);
+	modifyParentNode_Initial("rdVoidMapPopup", radonon);
+	modifyParentNode_Initial("rdRaidingPopup", radonon);
 
 	//Maps
 	//Helium Settings
@@ -1092,7 +1101,7 @@ function modifyParentNodeUniverseSwap() {
 
 	//Radon Settings
 	modifyParentNode_Initial("rFrozenCastle", radonon);
-	modifyParentNode_Initial("rWorshipperFarmZone", radonon);
+	modifyParentNode_Initial("rVoidMapPopup", radonon);
 
 	//Spire
 	//None!
@@ -1118,8 +1127,9 @@ function modifyParentNodeUniverseSwap() {
 	//Helium Settings
 	//None!
 	//Radon Settings
-	modifyParentNode_Initial("rc3WorshipperFarmPopup", radonon);
-	modifyParentNode_Initial("rc3BoneShrinePopup", radonon);
+	modifyParentNode_Initial("c3GM_ST", radonon);
+	modifyParentNode_Initial("rc3VoidMapPopup", radonon);
+	modifyParentNode_Initial("rc3RaidingPopup", radonon);
 	modifyParentNode_Initial("rUnbalanceImprobDestack", radonon);
 	modifyParentNode_Initial("rTrappaCoords", radonon);
 	modifyParentNode_Initial("rQuestSmithyZone", radonon);
