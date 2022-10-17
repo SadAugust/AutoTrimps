@@ -316,8 +316,8 @@ function HeirloomSwapping() {
 						HeirloomEquipStaff('RhsWoodStaff');
 					else if (getPageSetting('RhsMetalStaff') != "undefined" && getCurrentMapObject().bonus.includes("mc"))
 						HeirloomEquipStaff('RhsMetalStaff');
-					else if (getPageSetting('RhsScienceStaff') != "undefined" && getCurrentMapObject().bonus.includes("rc"))
-						HeirloomEquipStaff('RhsScienceStaff');
+					else if (getPageSetting('RhsResourceStaff') != "undefined" && getCurrentMapObject().bonus.includes("rc"))
+						HeirloomEquipStaff('RhsResourceStaff');
 					else if (getPageSetting('RhsMapStaff') != "undefined")
 						HeirloomEquipStaff('RhsMapStaff');
 				}

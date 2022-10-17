@@ -196,15 +196,16 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (varPrefix.includes('rd')) varPrefix_Adjusted = "r" + varPrefix.slice(2, varPrefix.length);
 		var windowSize = 'tooltipWindow50';
 		if (titleText.includes('Quagmire Farm')) windowSize = 'tooltipWindow25'
-		if (titleText.includes('Raiding')) windowSize = 'tooltipWindow25'
+		if (titleText.includes('Raiding')) windowSize = 'tooltipWindow30'
 		if (titleText.includes('Void Map')) windowSize = 'tooltipWindow30'
-		if (titleText.includes('Smithy Farm')) windowSize = 'tooltipWindow30'
 		if (titleText.includes('Hypothermia Farm')) windowSize = 'tooltipWindow30'
-		if (titleText.includes('Worshipper Farm')) windowSize = 'tooltipWindow35'
+		if (titleText.includes('Smithy Farm')) windowSize = 'tooltipWindow35'
+		if (titleText.includes('Worshipper Farm')) windowSize = 'tooltipWindow40'
 		if (titleText.includes('HD Farm')) windowSize = 'tooltipWindow40'
-		if (titleText.includes('Map Bonus')) windowSize = 'tooltipWindow40'
 		if (titleText.includes('Insanity Farm')) windowSize = 'tooltipWindow40'
-
+		if (titleText.includes('Map Bonus')) windowSize = 'tooltipWindow45'
+		if (titleText.includes('Map Farm')) windowSize = 'tooltipWindow55'
+		if (titleText.includes('Tribute Farm')) windowSize = 'tooltipWindow55'
 
 		var maxSettings = 30;
 
@@ -220,11 +221,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Worshipper Farm')) mazHelp += "<li><b>Skip Value</b> - How many worshippers a map must provide for you to run your Worshipper Farming.</li>";
 		if (titleText.includes('Raiding')) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after raiding has finished.</li>"
 		if (titleText.includes('Map Bonus')) mazHelp += "<li><b>Health Bonus</b> - The amount of map stacks to farm when your HD Ratio is below that of the <b>Health HDRatio</b> field. Default is 10.</li>"
-		if (titleText.includes('Map Bonus')) mazHelp += "<li><b>Health HD Ratio</b> - Decides when to start getting the map stack bonus value in the <b>Health Bonus</b> field. 10 is default, this means it\'d go for it when your HDRatio is below 10.</li>"
+		if (titleText.includes('Map Bonus')) mazHelp += "<li><b>Health HD Ratio</b> - Decides when to start getting the map stack bonus value in the <b>Health Bonus</b> field. 10 is default, this means it\'d go for it when your HDRatio is above 10.</li>"
 		if (titleText.includes('Alchemy Farm')) mazHelp += "<li><b>Void Purchase</b> - Will purchase as many void and strength potions as you can currently afford when you go into a void map. Would recommend only disabling this setting when going for the Alchemy achievement.</li>"
 		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>"
 		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>"
 		if (titleText.includes('Hypothermia')) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>"
+		if (titleText.includes('HD Farm')) mazHelp += "<li><b>Shred Map Cap</b> - Will cap the amount of maps being run to this value when in a metal shred daily.</li>"
+		if (titleText.includes('Map Farm')) mazHelp += "<li><b>Shred Map Cap</b> - Will cap the amount of maps being run to this value when in a shred daily that matches your cache option.</li>"
 
 		//Row Settings
 		mazHelp += "</ul></br> The settings for each row that is added:<ul>"
@@ -317,7 +320,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Worshipper Farm')) tooltipText += "<div class='windowWorshipper'>Ships</div>"
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm')) tooltipText += "<div class='windowJobRatio" + varPrefix_Adjusted + "\'>Job<br/>Ratio</div>"
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'>Gather</div>"
-		if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial'>Special</div>"
+		if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial" + varPrefix_Adjusted + "\'>Special</div>"
 		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowTributeFarmDropdown'>Farm Type</div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRecycle'>Recycle</div>"
 		if (titleText.includes('Alchemy Farm')) tooltipText += "<div class='windowStorage'>Void<br>Purchase</div>"
@@ -326,6 +329,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Hypothermia')) tooltipText += "<div class='windowPackrat'>Packrat</div>"
 		if (titleText.includes('Map Bonus')) tooltipText += "<div class='windowJobRatio'>Health<br>Bonus</div>"
 		if (titleText.includes('Map Bonus')) tooltipText += "<div class='windowJobRatio'>Health<br>HD Ratio</div>"
+		if (titleText.includes('Map Farm') || titleText.includes('HD Farm')) tooltipText += "<div class='windowJobRatio'>Shred<br>Map Cap</div>"
 		tooltipText += "</div>";
 
 		var defaultVals = {
@@ -345,7 +349,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			healthBonus: 10,
 			healthHDRatio: 10,
 			recycle: false,
-			voidPurchase: true
+			voidPurchase: true,
+			shredMapCap: 100
 		}
 		var style = "";
 
@@ -380,6 +385,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			defaultVals.healthBonus = autoTrimpSettings[varPrefix + "DefaultSettings"].value.healthBonus ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.healthBonus : 10;
 		if (titleText.includes('Map Bonus'))
 			defaultVals.healthHDRatio = autoTrimpSettings[varPrefix + "DefaultSettings"].value.healthHDRatio ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.healthHDRatio : 10;
+		if (titleText.includes('Map Farm') || titleText.includes('HD Farm'))
+			defaultVals.shredMapCap = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.shredMapCap) === 'undefined' ? 100 : autoTrimpSettings[varPrefix + "DefaultSettings"].value.shredMapCap ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.shredMapCap : 100;
 
 		var defaultGatherDropdown = "<option value='food'" + ((defaultVals.gather == 'food') ? " selected='selected'" : "") + ">Food</option>\<option value='wood'" + ((defaultVals.gather == 'wood') ? " selected='selected'" : "") + ">Wood</option>\<option value='metal'" + ((defaultVals.gather == 'metal') ? " selected='selected'" : "") + ">Metal</option>\<option value='science'" + ((defaultVals.gather == 'science') ? " selected='selected'" : "") + ">Science</option>"
 		var defaultSpecialsDropdown = "<option value='0'" + ((defaultVals.special == '0') ? " selected='selected'" : "") + ">No Modifier</option>\<option value='fa'" + ((defaultVals.special == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((defaultVals.special == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>\<option value='ssc'" + ((defaultVals.special == 'ssc') ? " selected='selected'" : "") + ">Small Savory Cache</option>\<option value='swc'" + ((defaultVals.special == 'swc') ? " selected='selected'" : "") + ">Small Wooden Cache</option>\<option value='smc'" + ((defaultVals.special == 'smc') ? " selected='selected'" : "") + ">Small Metal Cache</option>\<option value='src'" + ((defaultVals.special == 'src') ? " selected='selected'" : "") + ">Small Resource Cache</option>\<option value='p'" + ((defaultVals.special == 'p') ? " selected='selected'" : "") + ">Prestigious</option>\<option value='hc'" + ((defaultVals.special == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>\<option value='lsc'" + ((defaultVals.special == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\<option value='lwc'" + ((defaultVals.special == 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\<option value='lmc'" + ((defaultVals.special == 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>\<option value='lrc'" + ((defaultVals.special == 'lrc') ? " selected='selected'" : "") + ">Large Research Cache</option>"
@@ -400,7 +407,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Bone Shrine'))
 			tooltipText += "<div class='windowBoneGather'><select value='" + defaultVals.gather + "' id='windowBoneGatherDefault'>" + defaultGatherDropdown + "</select></div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity'))
-			tooltipText += "<div class='windowSpecial'><select value='" + defaultVals.special + "' id='windowSpecialDefault'>" + defaultSpecialsDropdown + "</select></div>"
+			tooltipText += "<div class='windowSpecial" + varPrefix_Adjusted + "\'><select value='" + defaultVals.special + "' id='windowSpecialDefault'>" + defaultSpecialsDropdown + "</select></div>"
 		if (titleText.includes('Hypo'))
 			tooltipText += "<div class='windowFrozenCastle'><input value='" + defaultVals.frozencastle + "' type='text' id='windowFrozenCastleDefault'/></div>";
 		if (titleText.includes('Hypo'))
@@ -417,6 +424,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<div class='windowRecycle' style='text-align: center;'>" + buildNiceCheckbox("windowRecycleDefault", null, defaultVals.recycle) + "</div>";
 		if (titleText.includes('Alchemy Farm'))
 			tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowVoidPurchase", null, defaultVals.voidPurchase) + "</div>";
+		if (titleText.includes('Map Farm') || titleText.includes('HD Farm'))
+			tooltipText += "<div class='windowJobRatio'><input value='" + defaultVals.shredMapCap + "' type='number' id='shredMapCap'/></div>";
 		tooltipText += "</div>"
 
 
@@ -454,11 +463,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowBuildings'>Buy<br/>Buildings</div>"
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'>Gather</div>"
-		if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial'>Special</div>"
-		if (titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm')) tooltipText += "<div class='windowRunType" + varPrefix_Adjusted + "\'>Run<br/>Type</div>"
+		if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial" + varPrefix_Adjusted + "\'>Special</div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) tooltipText += "<div class='windowAtlantrimp'>Run<br/>Atlantrimp</div>"
 		if (titleText.includes('Insanity Farm')) tooltipText += "<div class='windowBuildings'>Destack</div>"
+		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) tooltipText += "<div class='windowRunType" + varPrefix_Adjusted + "\'>Run<br/>Type</div>"
 		tooltipText += "</div>";
 
 		var current = autoTrimpSettings[varPrefix + "Settings"].value;
@@ -549,7 +558,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.jobratio = autoTrimpSettings[varPrefix + "Settings"].value[x].jobratio ? autoTrimpSettings[varPrefix + "Settings"].value[x].jobratio : '1,1,1,1';
 				if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Bone Shrine') || titleText.includes('Map Bonus'))
 					vals.gather = autoTrimpSettings[varPrefix + "Settings"].value[x].gather ? autoTrimpSettings[varPrefix + "Settings"].value[x].gather : '0';
-				if (titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm'))
+				if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding'))
 					vals.runType = autoTrimpSettings[varPrefix + "Settings"].value[x].runType ? autoTrimpSettings[varPrefix + "Settings"].value[x].runType : 1;
 				if (titleText.includes('Raiding'))
 					vals.raidingDropdown = autoTrimpSettings[varPrefix + "Settings"].value[x].raidingDropdown ? autoTrimpSettings[varPrefix + "Settings"].value[x].raidingDropdown : 1;
@@ -646,17 +655,17 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.buildings) + "</div>";
 			if (titleText.includes('Bone Shrine'))
 				tooltipText += "<div class='windowBoneGather' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.gather + "' id='windowBoneGather" + x + "'>" + gatherDropdown + "</select></div>"
-			if (titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm'))
-				tooltipText += "<div class='windowRunType" + varPrefix_Adjusted + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.runType + "' id='windowRunType" + x + "'>" + runTypeDropdown + "</select></div>"
 			if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.raidingDropdown + "' id='windowRaidingDropdown" + x + "'>" + raidingDropdown + "</select></div>"
 			if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity'))
-				tooltipText += "<div class='windowSpecial' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>"
+				tooltipText += "<div class='windowSpecial" + varPrefix_Adjusted + "\'  onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>"
 			if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity'))
 				tooltipText += "<div class='windowGather'>\<div style='text-align: center; font-size: 0.6vw;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select>\</div>"
 			if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine'))
 				tooltipText += "<div class='windowAtlantrimp' style='text-align: center;'>" + buildNiceCheckbox("windowAtlantrimp" + x, null, vals.atlantrimp) + "</div>";
 			if (titleText.includes('Insanity Farm'))
 				tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.destack) + "</div>";
+			if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding'))
+				tooltipText += "<div class='windowRunType" + varPrefix_Adjusted + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.runType + "' id='windowRunType" + x + "'>" + runTypeDropdown + "</select></div>"
 			if (titleText.includes('Bone Shrine'))
 				tooltipText += "<div class='windowShred'>\<div style='text-align: center; font-size: 0.6vw;'>Shred</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.shredActive + "' id='windowShred" + x + "'>" + shredDropdown + "</select>\</div>"
 
@@ -726,6 +735,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	if (titleText.includes('Tribute Farm')) var mapType = document.getElementById('windowTributeFarmDropdownDefault').value;
 	if (titleText.includes('Map Bonus')) var healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
 	if (titleText.includes('Map Bonus')) var healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10);
+	if (titleText.includes('Map Farm') || titleText.includes('HD Farm')) var shredMapCap = parseFloat(document.getElementById('shredMapCap').value, 10);
 
 	if (defaultCell < 1) defaultCell = 1;
 	if (defaultCell > 100) defaultCell = 100;
@@ -751,7 +761,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		voidPurchase: defaultVoidPurchase,
 		frozencastle: defaultFrozenCastle,
 		healthBonus: healthBonus,
-		healthHDRatio: healthHDRatio
+		healthHDRatio: healthHDRatio,
+		shredMapCap: shredMapCap
 	};
 	autoTrimpSettings[varPrefix + "DefaultSettings"].value = thisDefaultSetting;
 
@@ -799,7 +810,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute') || titleText.includes('Bone Shrine')) var atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm')) var jobratio = document.getElementById('windowJobRatio' + x).value;
 		if (titleText.includes('Bone')) var gather = document.getElementById('windowBoneGather' + x).value;
-		if (titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm')) var runType = document.getElementById('windowRunType' + x).value;
+		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) var runType = document.getElementById('windowRunType' + x).value;
 		if (titleText.includes('Raiding')) var raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
 		if (titleText.includes('Insanity')) var destack = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 
@@ -915,12 +926,10 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	//Reset variables that are about to get used.
 	autoTrimpSettings[varPrefix + "Settings"].value = [];
 	autoTrimpSettings[varPrefix + "Zone"].value = [];
-	if (titleText.includes('Bone')) autoTrimpSettings[varPrefix + "RunType"].value = [];
 
 	for (var x = 0; x < setting.length; x++) {
 		autoTrimpSettings[varPrefix + "Settings"].value[x] = setting[x];
 		autoTrimpSettings[varPrefix + "Zone"].value[x] = setting[x].world
-		if (titleText.includes('Bone Shrine')) autoTrimpSettings[varPrefix + "RunType"].value[x] = setting[x].runType;
 	}
 
 	cancelTooltip(true);
@@ -1189,7 +1198,7 @@ function removeRow(index, titleText) {
 		checkBox.setAttribute('data-checked', false);
 	}
 	if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm')) document.getElementById('windowJobRatio' + index).value = 0;
-	if (titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm')) document.getElementById('windowRunType' + index).value = 0;
+	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) document.getElementById('windowRunType' + index).value = 0;
 	if (titleText.includes('Raiding')) document.getElementById('windowRaidingDropdown' + index).value = 0;
 	if (titleText.includes('Tribute Farm')) document.getElementById('windowTributeFarmDropdown' + index).value = 'Absolute';
 	if (titleText.includes('Bone')) document.getElementById('windowShred' + index).value = 'All';

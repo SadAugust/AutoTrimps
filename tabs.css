@@ -229,15 +229,20 @@ ul.tab li a:hover {
 	padding: 1px;
 }
 
-.windowActiverMapFarm,
-.windowActiverTributeFarm,
-.windowActiverWorshipperFarm,
-.windowActiverMapBonus,
 .windowActiverBoneShrine,
 .windowActiverInsanity,
 .windowActiverHDFarm {
 	display: inline-block;
 	width: 7%;
+	padding: 1px;
+}
+
+.windowActiverMapFarm,
+.windowActiverTributeFarm,
+.windowActiverWorshipperFarm,
+.windowActiverMapBonus {
+	display: inline-block;
+	width: 6%;
 	padding: 1px;
 }
 
@@ -255,8 +260,18 @@ ul.tab li a:hover {
 /*I'm creating so much work for myself here :(*/
 /*World columns*/
 .windowWorldrMapFarm,
-.windowWorldrTributeFarm,
-.windowWorldrBoneShrine,
+.windowWorldrTributeFarm {
+	display: inline-block;
+	width: 6%;
+	padding: 1px;
+}
+
+.windowWorldrBoneShrine {
+	display: inline-block;
+	width: 10%;
+	padding: 1px;
+}
+
 .windowWorldrAlch {
 	display: inline-block;
 	width: 7%;
@@ -272,7 +287,7 @@ ul.tab li a:hover {
 
 .windowWorldrMapBonus {
 	display: inline-block;
-	width: 12%;
+	width: 10%;
 	padding: 1px;
 
 }
@@ -293,7 +308,7 @@ ul.tab li a:hover {
 
 .windowWorldrWorshipperFarm {
 	display: inline-block;
-	width: 12%;
+	width: 11%;
 	padding: 1px;
 
 }
@@ -307,14 +322,14 @@ ul.tab li a:hover {
 
 .windowWorldrRaiding {
 	display: inline-block;
-	width: 20%;
+	width: 16%;
 	padding: 1px;
 
 }
 
 .windowWorldrSmithyFarm {
 	display: inline-block;
-	width: 18%;
+	width: 15%;
 	padding: 1px;
 
 }
@@ -336,6 +351,20 @@ ul.tab li a:hover {
 	padding: 1px;
 }
 
+.windowCellrBoneShrine {
+	display: inline-block;
+	width: 10%;
+	padding: 1px;
+}
+
+/*Cell columns*/
+.windowCellrMapFarm,
+.windowCellrTributeFarm {
+	display: inline-block;
+	width: 6%;
+	padding: 1px;
+}
+
 .windowCellrInsanity {
 	display: inline-block;
 	width: 10%;
@@ -344,7 +373,7 @@ ul.tab li a:hover {
 
 .windowCellrMapBonus {
 	display: inline-block;
-	width: 12%;
+	width: 10%;
 	padding: 1px;
 }
 
@@ -368,19 +397,19 @@ ul.tab li a:hover {
 
 .windowCellrWorshipperFarm {
 	display: inline-block;
-	width: 12%;
+	width: 11%;
 	padding: 1px;
 }
 
 .windowCellrRaiding {
 	display: inline-block;
-	width: 20%;
+	width: 16%;
 	padding: 1px;
 }
 
 .windowCellrSmithyFarm {
 	display: inline-block;
-	width: 18%;
+	width: 15%;
 	padding: 1px;
 }
 
@@ -396,6 +425,14 @@ ul.tab li a:hover {
 .windowAutoLevelrAlch {
 	display: inline-block;
 	width: 4%;
+	padding: 1px;
+}
+
+/*Auto Level columns*/
+.windowAutoLevelrMapFarm,
+.windowAutoLevelrTributeFarm {
+	display: inline-block;
+	width: 3%;
 	padding: 1px;
 }
 
@@ -431,19 +468,25 @@ ul.tab li a:hover {
 
 .windowAutoLevelrSmithyFarm {
 	display: inline-block;
-	width: 13%;
+	width: 10%;
 	padding: 1px;
 }
 
 /*Map Level columns*/
-.windowLevelrMapFarm,
-.windowLevelrTributeFarm,
 .windowLevelrVoidMap,
 .windowLevelrBoneShrine,
 .windowLevelrAlch,
 .windowLevelrHypo {
 	display: inline-block;
 	width: 7%;
+	padding: 1px;
+}
+
+/*Map Level columns*/
+.windowLevelrMapFarm,
+.windowLevelrTributeFarm {
+	display: inline-block;
+	width: 6%;
 	padding: 1px;
 }
 
@@ -455,7 +498,7 @@ ul.tab li a:hover {
 
 .windowLevelrMapBonus {
 	display: inline-block;
-	width: 12%;
+	width: 10%;
 	padding: 1px;
 }
 
@@ -473,7 +516,7 @@ ul.tab li a:hover {
 
 .windowLevelrWorshipperFarm {
 	display: inline-block;
-	width: 12%;
+	width: 11%;
 	padding: 1px;
 }
 
@@ -485,18 +528,23 @@ ul.tab li a:hover {
 
 .windowLevelrSmithyFarm {
 	display: inline-block;
-	width: 18%;
+	width: 15%;
 	padding: 1px;
 }
 
 /*Job Ratio columns*/
-.windowJobRatiorMapFarm,
-.windowJobRatiorTributeFarm,
 .windowJobRatiorVoidMap,
 .windowJobRatiorBoneShrine,
 .windowJobRatiorAlch {
 	display: inline-block;
 	width: 11%;
+	padding: 1px;
+}
+
+.windowJobRatiorMapFarm,
+.windowJobRatiorTributeFarm {
+	display: inline-block;
+	width: 10%;
 	padding: 1px;
 }
 
@@ -508,7 +556,7 @@ ul.tab li a:hover {
 
 .windowJobRatiorMapBonus {
 	display: inline-block;
-	width: 12%;
+	width: 10%;
 	padding: 1px;
 }
 
@@ -520,7 +568,7 @@ ul.tab li a:hover {
 
 .windowJobRatiorWorshipperFarm {
 	display: inline-block;
-	width: 12%;
+	width: 11%;
 	padding: 1px;
 }
 
@@ -538,9 +586,39 @@ ul.tab li a:hover {
 
 /*Run Type columns*/
 .windowRunTyperBoneShrine,
+.windowRunTyperMapFarm,
+.windowRunTyperTributeFarm,
+.windowRunTyperWorshipperFarm,
+.windowRunTyperSmithyFarm,
 .windowRunTyperHDFarm {
 	display: inline-block;
 	width: 10%;
+	padding: 1px;
+}
+
+.windowRunTyperRaiding {
+	display: inline-block;
+	width: 16%;
+	padding: 1px;
+}
+
+.windowRunTyperMapBonus {
+	display: inline-block;
+	width: 10%;
+	padding: 1px;
+}
+
+/*Run Type columns*/
+.windowRunTyperMapFarm,
+.windowRunTyperTributeFarm {
+	display: inline-block;
+	width: 11%;
+	padding: 1px;
+}
+
+.windowRunTyperSmithyFarm {
+	display: inline-block;
+	width: 15%;
 	padding: 1px;
 }
 
@@ -561,13 +639,13 @@ ul.tab li a:hover {
 .windowRepeatEveryrMapFarm,
 .windowRepeatEveryrTributeFarm {
 	display: inline-block;
-	width: 8%;
+	width: 7%;
 	padding: 1px;
 }
 
 .windowRepeatEveryrWorshipperFarm {
 	display: inline-block;
-	width: 12%;
+	width: 10%;
 	padding: 1px;
 }
 
@@ -575,13 +653,13 @@ ul.tab li a:hover {
 .windowEndZonerMapFarm,
 .windowEndZonerTributeFarm {
 	display: inline-block;
-	width: 7%;
+	width: 6%;
 	padding: 1px;
 }
 
 .windowEndZonerWorshipperFarm {
 	display: inline-block;
-	width: 12%;
+	width: 10%;
 	padding: 1px;
 }
 
@@ -592,12 +670,40 @@ ul.tab li a:hover {
 }
 
 /*Cell columns*/
+.windowSpecialrSmithyFarm,
+.windowSpecialrWorshipperFarm,
+.windowSpecialrMapBonus,
+.windowSpecialrBoneShrine,
+.windowSpecialrQuag,
+.windowSpecialrInsanity,
+.windowSpecialrAlch,
+.windowSpecialrHypo,
+.windowSpecialrHDFarm,
+.windowSpecialrVoidMap {
+	display: inline-block;
+	width: 24%;
+	padding: 1px;
+}
+
+.windowSpecialrMapBonus {
+	display: inline-block;
+	width: 23%;
+	padding: 1px;
+}
+
+/*Cell columns*/
+.windowSpecialrMapFarm,
+.windowSpecialrTributeFarm {
+	display: inline-block;
+	width: 20%;
+	padding: 1px;
+}
+
+/*Cell columns*/
 .window {
 	display: inline-block;
 	padding: 1px;
 }
-
-.windowRepeatEvery,
 
 /*Base Settings*/
 .windowWorld,
@@ -691,7 +797,7 @@ ul.tab li a:hover {
 }
 
 .windowWorshipper {
-	width: 12%;
+	width: 11%;
 	padding: 1px;
 }
 
@@ -708,7 +814,7 @@ ul.tab li a:hover {
 
 .windowTributes,
 .windowMets {
-	width: 8%;
+	width: 7%;
 	padding: 1px;
 }
 
@@ -744,7 +850,7 @@ ul.tab li a:hover {
 
 .windowBuildings,
 .windowAtlantrimp {
-	width: 9%;
+	width: 8%;
 	padding: 1px;
 }
 
@@ -766,18 +872,18 @@ ul.tab li a:hover {
 
 /*Smithy Farm*/
 .windowSmithies {
-	width: 18%;
+	width: 15%;
 	padding: 1px;
 }
 
 /*Raiding*/
 .windowRaidingDropdown {
-	width: 25%;
+	width: 21%;
 	padding: 1px;
 }
 
 .windowRaidingZone {
-	width: 20%;
+	width: 16%;
 	padding: 1px;
 }
 

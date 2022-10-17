@@ -1011,14 +1011,19 @@ function RautoMap() {
 	rShouldMaxMapBonus = false;
 	rShouldSmithless = false;
 	rShouldHDFarm = false;
+	rShouldPrestigeRaid = false;
 	rVanillaMAZ = false;
 	workerRatio = null;
 	rTributeFarming = false;
 	rTrFTributes = 0;
 	rTrFMeteorologists = 0;
 	RneedToVoid = false;
+
 	//Daily Shred
 	shredActive = false;
+	var foodShred = false;
+	var woodShred = false;
+	var metalShred = false;
 
 	//Smithy Farming
 	rShouldSmithyFarm = false;
@@ -1054,9 +1059,9 @@ function RautoMap() {
 	//Daily Shred variables
 	if (game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined') {
 		shredActive = true;
-		var foodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
-		var woodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
-		var metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+		foodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
+		woodShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
+		metalShred = dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	}
 
 	//Void Maps
@@ -1099,7 +1104,7 @@ function RautoMap() {
 	}
 
 	//Map Bonus
-	if ((rRunningRegular && autoTrimpSettings.rMapBonusDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdMapBonusDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3MapBonusDefaultSettings.value.active) && rShouldQuest === 0) {
+	if (autoTrimpSettings.rMapBonusDefaultSettings.value.active && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
 		var rMBZone = rRunningC3 ? getPageSetting('rc3MapBonusZone') : rRunningDaily ? getPageSetting('rdMapBonusZone') : getPageSetting('rMapBonusZone');
 		var rMBBaseSettings = rRunningC3 ? autoTrimpSettings.rc3MapBonusSettings.value : rRunningDaily ? autoTrimpSettings.rdMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
@@ -1107,6 +1112,11 @@ function RautoMap() {
 		var rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio;
 		rMBIndex = null;
 		for (var y = 0; y < rMBBaseSettings.length; y++) {
+			if (rMBBaseSettings[y].runType !== 'All') {
+				if (rRunningRegular && rMBBaseSettings[y].runType !== 'Fillers') continue;
+				if (rRunningDaily && rMBBaseSettings[y].runType !== 'Daily') continue;
+				if (rRunningC3 && rMBBaseSettings[y].runType !== 'C3') continue;
+			}
 			if (game.global.world - rMBZone[y] >= 0 && rMBBaseSettings[y].active)
 				rMBIndex = rMBZone.indexOf(rMBZone[y]);
 			else
@@ -1159,16 +1169,21 @@ function RautoMap() {
 	}
 
 	//Map Farm
-	if ((rRunningRegular && autoTrimpSettings.rMapFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdMapFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3MapFarmDefaultSettings.value.active) && rShouldQuest === 0) {
+	if (autoTrimpSettings.rMapFarmDefaultSettings.value.active && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Map Farm settings
-		var rMFBaseSetting = rRunningC3 ? autoTrimpSettings.rc3MapFarmSettings.value : rRunningDaily ? autoTrimpSettings.rdMapFarmSettings.value : autoTrimpSettings.rMapFarmSettings.value;
+		var rMFBaseSetting = autoTrimpSettings.rMapFarmSettings.value;
 
-		rMFZone = rRunningC3 ? getPageSetting('rc3MapFarmZone') : rRunningDaily ? getPageSetting('rdMapFarmZone') : getPageSetting('rMapFarmZone');
+		rMFZone = getPageSetting('rMapFarmZone');
 		var rMFIndex;
 
 		for (var y = 0; y < rMFZone.length; y++) {
 			if (!rMFBaseSetting[y].active || rMFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world < rMFZone[y] || game.global.world > rMFBaseSetting[y].endzone || (game.global.world > rMFBaseSetting[y].zone && rMFBaseSetting[y].repeatevery === 0)) {
 				continue;
+			}
+			if (rMFBaseSetting[y].runType !== 'All') {
+				if (rRunningRegular && rMFBaseSetting[y].runType !== 'Fillers') continue;
+				if (rRunningDaily && rMFBaseSetting[y].runType !== 'Daily') continue;
+				if (rRunningC3 && rMFBaseSetting[y].runType !== 'C3') continue;
 			}
 			if (game.global.world === rMFZone[y] && game.global.lastClearedCell + 2 >= rMFBaseSetting[y].cell) {
 				rMFIndex = y;
@@ -1191,18 +1206,11 @@ function RautoMap() {
 				var rMFJobRatio = rMFSettings.jobratio;
 				rMFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rMFSettings.atlantrimp;
 				rMFGather = rMFSettings.gather;
+				var rMFshredMapCap = autoTrimpSettings.rMapFarmDefaultSettings.value.shredMapCap;
 
-				if (shredActive) {
-					if (foodShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Savory')) {
-						if (rMFRepeatCounter > 50) rMFRepeatCounter = 50;
-						rMFAtlantrimp = false;
-					}
-					if (woodShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Wooden')) {
-						if (rMFRepeatCounter > 50) rMFRepeatCounter = 50;
-						rMFAtlantrimp = false;
-					}
-					if (metalShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Metal')) {
-						if (rMFRepeatCounter > 50) rMFRepeatCounter = 50;
+				if (shredActive && (rMFRepeatCounter > rMFshredMapCap || rMFAtlantrimp === true)) {
+					if ((foodShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Savory')) || (woodShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Wooden')) || (metalShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Metal'))) {
+						if (rMFRepeatCounter > rMFshredMapCap) rMFRepeatCounter = rMFshredMapCap;
 						rMFAtlantrimp = false;
 					}
 				}
@@ -1242,15 +1250,20 @@ function RautoMap() {
 	}
 
 	//Tribute Farm
-	if ((rRunningRegular && autoTrimpSettings.rTributeFarmDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdTributeFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3TributeFarmDefaultSettings.value.active) && rShouldQuest === 0 && (!game.buildings.Tribute.locked || !game.jobs.Meteorologist.locked)) {
+	if (autoTrimpSettings.rTributeFarmDefaultSettings.value.active && (!game.buildings.Tribute.locked || !game.jobs.Meteorologist.locked) && rShouldQuest === 0) {
 		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
 		var rTrFIndex;
-		var rTrFBaseSetting = rRunningC3 ? autoTrimpSettings.rc3TributeFarmSettings.value : rRunningDaily ? autoTrimpSettings.rdTributeFarmSettings.value : autoTrimpSettings.rTributeFarmSettings.value;
-		var rTrFZone = rRunningC3 ? getPageSetting('rc3TributeFarmZone') : rRunningDaily ? getPageSetting('rdTributeFarmZone') : getPageSetting('rTributeFarmZone');
+		var rTrFBaseSetting = autoTrimpSettings.rTributeFarmSettings.value;
+		var rTrFZone = getPageSetting('rTributeFarmZone');
 
 		for (var y = 0; y < rTrFZone.length; y++) {
 			if (!rTrFBaseSetting[y].active || rTrFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world < rTrFZone[y] || game.global.world > rTrFBaseSetting[y].endzone || (game.global.world > rTrFBaseSetting[y].zone && rTrFBaseSetting[y].repeatevery === 0)) {
 				continue;
+			}
+			if (rTrFBaseSetting[y].runType !== 'All') {
+				if (rRunningRegular && rTrFBaseSetting[y].runType !== 'Fillers') continue;
+				if (rRunningDaily && rTrFBaseSetting[y].runType !== 'Daily') continue;
+				if (rRunningC3 && rTrFBaseSetting[y].runType !== 'C3') continue;
 			}
 			if (game.global.world === rTrFZone[y] && game.global.lastClearedCell + 2 >= rTrFBaseSetting[y].cell) {
 				rTrFIndex = y;
@@ -1405,13 +1418,29 @@ function RautoMap() {
 		}
 	}
 
-	//Smithy Farming ---- THIS NEEDS REWRITTEN. IT'S A COMPELTE MESS ;(
-	if (game.buildings.Smithy.locked == 0 && game.global.challengeActive !== 'Transmute' && ((rRunningRegular && autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (rRunningDaily && autoTrimpSettings.rdSmithyFarmDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3SmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && rShouldQuest === 10))) {
-		//Setting up variables and checking if we should use daily settings instead of regular Tribute Farm settings
-		var rSFZone = game.global.challengeActive == 'Quest' ? [game.global.world] : rRunningC3 ? getPageSetting('rc3SmithyFarmZone') : rRunningDaily ? getPageSetting('rdSmithyFarmZone') : getPageSetting('rSmithyFarmZone');
-		if (rSFZone.includes(game.global.world)) {
-			var rSFIndex = rSFZone.indexOf(game.global.world);
-			var rSFSettings = rRunningC3 ? autoTrimpSettings.rc3SmithyFarmSettings.value[rSFIndex] : rRunningDaily ? autoTrimpSettings.rdSmithyFarmSettings.value[rSFIndex] : autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
+	//Smithy Farming
+	if (game.buildings.Smithy.locked == 0 && game.global.challengeActive !== 'Transmute' && (autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && rShouldQuest === 10)) {
+		var rSFIndex;
+		var rSFBaseSetting = autoTrimpSettings.rSmithyFarmSettings.value;
+		var rSFZone = getPageSetting('rSmithyFarmZone');
+
+		for (var y = 0; y < rSFZone.length; y++) {
+			if (!rSFBaseSetting[y].active || rSFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world < rSFZone[y]) {
+				continue;
+			}
+			if (rSFBaseSetting[y].runType !== 'All') {
+				if (rRunningRegular && rSFBaseSetting[y].runType !== 'Fillers') continue;
+				if (rRunningDaily && rSFBaseSetting[y].runType !== 'Daily') continue;
+				if (rRunningC3 && rSFBaseSetting[y].runType !== 'C3') continue;
+			}
+			if (game.global.world === rSFZone[y] && game.global.lastClearedCell + 2 >= rSFBaseSetting[y].cell) {
+				rSFIndex = y;
+				break;
+			}
+		}
+
+		if (rSFIndex >= 0 || rShouldQuest === 10) {
+			var rSFSettings = autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
 			var rSFCell = game.global.challengeActive == 'Quest' ? 1 : rSFSettings.cell;
 			if ((rSFSettings.active || game.global.challengeActive === 'Quest') && game.global.lastClearedCell + 2 >= rSFCell) {
 				var rSFMapLevel = game.global.challengeActive == 'Quest' ? -1 : rSFSettings.level;
@@ -1525,7 +1554,7 @@ function RautoMap() {
 		}
 	}
 
-	//Worshipper Farm -- Think there's an issue with variable setup here
+	//Worshipper Farm
 	if (game.jobs.Worshipper.locked == 0 && autoTrimpSettings.rWorshipperFarmDefaultSettings.value.active && rShouldQuest === 0) {
 		var rWFZone = getPageSetting('rWorshipperFarmZone');
 		var rWFBaseSetting = autoTrimpSettings.rWorshipperFarmSettings.value
@@ -1533,6 +1562,11 @@ function RautoMap() {
 		for (var y = 0; y < rWFZone.length; y++) {
 			if (!rWFBaseSetting[y].active || game.global.world < rWFZone[y] || game.global.world > rWFBaseSetting[y].endzone || (game.global.world > rWFBaseSetting[y].zone && rWFBaseSetting[y].repeatevery === 0)) {
 				continue;
+			}
+			if (rWFBaseSetting[y].runType !== 'All') {
+				if (rRunningRegular && rWFBaseSetting[y].runType !== 'Fillers') continue;
+				if (rRunningDaily && rWFBaseSetting[y].runType !== 'Daily') continue;
+				if (rRunningC3 && rWFBaseSetting[y].runType !== 'C3') continue;
 			}
 			if (game.global.world === rWFZone[y] && game.global.lastClearedCell + 2 >= rWFBaseSetting[y].cell) {
 				rWFIndex = y;
@@ -1601,25 +1635,38 @@ function RautoMap() {
 	}
 
 	//Prestige Raiding
-	if ((rRunningRegular && autoTrimpSettings.rRaidingDefaultSettings.value.active) || (rRunningDaily && autoTrimpSettings.rdRaidingDefaultSettings.value.active) || (rRunningC3 && autoTrimpSettings.rc3RaidingDefaultSettings.value.active) && rShouldQuest === 0) {
+	if (autoTrimpSettings.rRaidingDefaultSettings.value.active && rShouldQuest === 0) {
 
-		var rRaidingZone = rRunningC3 ? getPageSetting('rc3RaidingZone') : rRunningDaily ? getPageSetting('rdRaidingZone') : getPageSetting('rRaidingZone');
-		if (rRaidingZone.includes(game.global.world)) {
-			rShouldPrestigeRaid = false;
-			//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
-			var rRaidingIndex = rRaidingZone.indexOf(game.global.world);
-			var rRaidingSettings = rRunningC3 ? autoTrimpSettings.rc3RaidingSettings.value[rRaidingIndex] : rRunningDaily ? autoTrimpSettings.rdRaidingSettings.value[rRaidingIndex] : autoTrimpSettings.rRaidingSettings.value[rRaidingIndex];
-			if (rRaidingSettings.active) {
-				var rRaidingDefaultSettings = rRunningC3 ? autoTrimpSettings.rc3RaidingDefaultSettings.value : rRunningDaily ? autoTrimpSettings.rdRaidingDefaultSettings.value : autoTrimpSettings.rRaidingDefaultSettings.value;
-				var rPRCell = rRaidingSettings.cell;
-				raidzones = rRaidingSettings.raidingzone;
-				var rPRRecycle = rRaidingDefaultSettings.recycle;
-				var rPRFragFarm = rRaidingSettings.raidingDropdown;
+		var rRaidingIndex;
+		var rRaidingBaseSetting = autoTrimpSettings.rRaidingSettings.value;
+		var rRaidingZone = getPageSetting('rRaidingZone');
 
-				if (game.global.lastClearedCell + 2 >= rPRCell && Rgetequips(raidzones, false) > 0) {
-					rShouldPrestigeRaid = true;
-				}
+		for (var y = 0; y < rRaidingZone.length; y++) {
+			if (!rRaidingBaseSetting[y].active || rRaidingBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world < rRaidingZone[y]) {
+				continue;
 			}
+			if (rRaidingBaseSetting[y].runType !== 'All') {
+				if (rRunningRegular && rRaidingBaseSetting[y].runType !== 'Fillers') continue;
+				if (rRunningDaily && rRaidingBaseSetting[y].runType !== 'Daily') continue;
+				if (rRunningC3 && rRaidingBaseSetting[y].runType !== 'C3') continue;
+			}
+			if (game.global.world === rRaidingZone[y] && game.global.lastClearedCell + 2 >= rRaidingBaseSetting[y].cell) {
+				rRaidingIndex = y;
+				break;
+			}
+		}
+
+		if (rRaidingIndex >= 0) {
+			//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
+			var rRaidingSettings = rRaidingBaseSetting[rRaidingIndex];
+			raidzones = rRaidingSettings.raidingzone;
+			var rPRRecycle = autoTrimpSettings.rRaidingDefaultSettings.value.recycle;
+			var rPRFragFarm = rRaidingSettings.raidingDropdown;
+
+			if (Rgetequips(raidzones, false) > 0) {
+				rShouldPrestigeRaid = true;
+			}
+
 			//Resetting variables and recycling the maps used
 			if (!rShouldPrestigeRaid && (RAMPrepMap[0] != undefined || RAMPrepMap[1] != undefined || RAMPrepMap[2] != undefined || RAMPrepMap[3] != undefined || RAMPrepMap[4] != undefined)) {
 				RAMPfragmappy = undefined;
@@ -1636,6 +1683,7 @@ function RautoMap() {
 						RAMPrepMap[x] = undefined;
 					}
 				}
+				rRaidingSettings.done = totalPortals + "_" + game.global.world;
 			}
 		}
 	}
@@ -2135,7 +2183,7 @@ function RautoMap() {
 		var rHDFZone = getPageSetting('rHDFarmZone');
 		rHDFIndex = -1;
 		for (var y = 0; y < rHDFZone.length; y++) {
-			if (!rHDFBaseSetting[y].active || rHDFZone[y] > game.global.world || game.global.world > rHDFBaseSetting[y].endzone) {
+			if (!rHDFBaseSetting[y].active || rHDFBaseSetting[y].done === totalPortals + "_" + game.global.world || rHDFZone[y] > game.global.world || game.global.world > rHDFBaseSetting[y].endzone) {
 				continue;
 			}
 			if (rHDFBaseSetting[y].runType !== 'All') {
@@ -2159,6 +2207,7 @@ function RautoMap() {
 			var rHDFJobRatio = '0,0,1,0';
 			var rHDFMax = game.global.mapBonus != 10 ? 10 : null;
 			var rHDFMin = game.global.mapBonus != 10 ? 0 : null;
+			var rHDFshredMapCap = autoTrimpSettings.rHDFarmDefaultSettings.value.shredMapCap;
 
 			if (rHDFSettings.autoLevel) {
 				if (game.global.mapRunCounter === 0 && game.global.mapsActive && rHDFMapRepeats !== 0) {
@@ -2176,7 +2225,11 @@ function RautoMap() {
 			/* var rHDFMetalneeded = estimateEquipsForZone(rHDFIndex)[0];
 			var metal = game.resources.metal.owned;
 			if (metal < rHDFMetalneeded) rShouldHDFarm = true; */
-			if (HDRatio > equipfarmdynamicHD(rHDFIndex)) rShouldHDFarm = true;
+			if (HDRatio > equipfarmdynamicHD(rHDFIndex))
+				rShouldHDFarm = true;
+			if (game.global.mapsActive && metalShred && rHDFCurrentMap != undefined && game.global.mapRunCounter >= rHDFshredMapCap) {
+				rShouldHDFarm = false;
+			}
 
 			if (rHDFCurrentMap != undefined && !rShouldHDFarm) {
 				var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
@@ -2185,6 +2238,7 @@ function RautoMap() {
 				rHDFautoLevel = Infinity;
 				rHDFMapRepeats = 0;
 				currTime = 0;
+				rHDFSettings.done = totalPortals + "_" + game.global.world;
 				if (!dontRecycleMaps && game.global.mapsActive) {
 					mapsClicked();
 					recycleMap();
@@ -2641,6 +2695,8 @@ function RautoMap() {
 			}
 			if (RAMPfragcheck) {
 				raiding = rPRFragFarm == 2 ? RAMPplusPresfragmax : rPRFragFarm == 1 ? RAMPplusPresfragmin : RAMPplusPres
+				document.getElementById("mapLevelInput").value = game.global.world;
+				incrementMapLevel(1);
 				for (var x = 0; x < 5; x++) {
 					if (RAMPfragcheck && RAMPpMap[x] == undefined && !RAMPmapbought[x] && game.global.preMapsActive && rShouldPrestigeRaid && RAMPshouldrunmap(x, raidzones)) {
 						raiding(x, raidzones);
