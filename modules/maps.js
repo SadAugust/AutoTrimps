@@ -1125,11 +1125,16 @@ function RautoMap() {
 
 		if ((rMBIndex !== null && rMBIndex >= 0) || rMBshouldDoHealthMaps) {
 			var rMBSettings = rMBIndex !== null ? rMBBaseSettings[rMBIndex] : rMBDefaultSettings;
-			rMBRepeatCounter = rMBIndex !== null && rMBshouldDoHealthMaps && rMBSettings.repeat > rMBDefaultSettings.healthBonus ? rMBSettings.repeat : rMBDefaultSettings.healthBonus;
+			rMBRepeatCounter = 0;
+			if (rMBIndex !== null) {
+				rMBRepeatCounter = 1
+			}
+			rMBRepeatCounter = rMBIndex !== null && rMBshouldDoHealthMaps && rMBSettings.repeat !== rMBDefaultSettings.healthBonus ?
+				Math.max(rMBSettings.repeat, rMBDefaultSettings.healthBonus) : rMBIndex === null ? rMBDefaultSettings.healthBonus : rMBSettings.repeat
 			rMBSpecial = rMBSettings.special;
 			if (game.global.challengeActive == 'Transmute' && rMBSpecial.includes('mc'))
 				rMBSpecial = rMBSpecial.charAt(0) + "sc";
-			if (rMBSettings.active && game.global.mapBonus < rMBRepeatCounter) {
+			if (game.global.mapBonus < rMBRepeatCounter) {
 				var rMBCell = rMBSettings.cell;
 				if (game.global.lastClearedCell + 2 >= rMBCell) {
 					rMBMapLevel = rMBIndex !== null ? rMBSettings.level : 0;
