@@ -143,12 +143,10 @@ function RmanualLabor2() {
 				null;
 	var gather = null;
 	if (rShouldMapFarm || rShouldAlchFarm || rShouldMaxMapBonus) {
-		var preFix = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium' ? 'rc3' :
-			game.global.challengeActive == "Daily" ? 'rd' :
-				'r'
-		gather = rShouldMapFarm && typeof (rMFGather) === 'string' ? rMFGather : gather;
-		gather = !rShouldMapFarm && rShouldAlchFarm && typeof (autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather) === 'string' ? autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather : gather;
-		gather = rMBIndex !== null && rShouldMaxMapBonus && !rShouldMapFarm && !rShouldAlchFarm && typeof (autoTrimpSettings[preFix + 'MapBonusSettings'].value[rMBIndex].gather) === 'string' ? autoTrimpSettings[preFix + 'MapBonusSettings'].value[rMBIndex].gather : gather;
+		gather =
+			rShouldMapFarm && typeof (rMFGather) === 'string' ? rMFGather :
+				rShouldAlchFarm && typeof (autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather) === 'string' ? autoTrimpSettings.rAlchSettings.value[getPageSetting('rAlchZone').indexOf(game.global.world)].gather :
+					rShouldMaxMapBonus && typeof (rMBIndex) !== 'undefined' && rMBIndex !== null && typeof (autoTrimpSettings['rMapBonusSettings'].value[rMBIndex].gather) === 'string' ? autoTrimpSettings['rMapBonusSettings'].value[rMBIndex].gather : gather;
 	}
 	var questGather = game.global.challengeActive == "Quest" && questcheck() == 1 ? 'food' :
 		game.global.challengeActive == "Quest" && questcheck() == 2 ? 'wood' :
