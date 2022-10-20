@@ -694,7 +694,7 @@ function RgetCritMulti(floorCrit, mult, ceilCrit) {
 		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * critD
 }
 
-function RcalcOurDmg(minMaxAvg, equality, mapType, useTitimp, runningUnlucky, floorCrit) {
+function RcalcOurDmg(minMaxAvg, equality, mapType, useTitimp, runningUnlucky, floorCrit, mapLevel) {
 
 	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	if (!useTitimp) useTitimp = false;
@@ -728,7 +728,7 @@ function RcalcOurDmg(minMaxAvg, equality, mapType, useTitimp, runningUnlucky, fl
 	// Observation
 	attack *= game.portal.Observation.getMult();
 	//Titimp
-	attack *= mapType !== 'world' && useTitimp && game.global.titimpLeft > 0 ? 2 : 1;
+	attack *= mapType !== 'world' && useTitimp === 'force' ? 2 : mapType !== 'world' && useTitimp && game.global.titimpLeft > 0 ? 2 : 1;
 	// Robotrimp
 	attack *= 1 + (0.2 * game.global.roboTrimpLevel);
 	// Mayhem Completions
@@ -747,6 +747,8 @@ function RcalcOurDmg(minMaxAvg, equality, mapType, useTitimp, runningUnlucky, fl
 	attack *= 1 + game.goldenUpgrades.Battle.currentBonus;
 	// Herbalist Mastery
 	attack *= game.talents.herbalist.purchased ? game.talents.herbalist.getBonus() : 1;
+	// Bionic Magnet Mastery
+	attack *= mapType !== 'world' && game.talents.bionic2.purchased && mapLevel > 0 ? 1.5 : 1;
 	// Challenge 2 or 3 reward
 	attack *= 1 + (game.global.totalSquaredReward / 100);
 	// Fluffy Modifier
@@ -1009,8 +1011,7 @@ function RcalcBadGuyDmg(enemy, attack, equality, mapType, checkMutations) { //Wo
 	attack *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
 	attack *= game.global.challengeActive == 'Nurture' ? 2 : 1;
 	attack *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-	attack *= game.global.challengeActive == 'Pandemonium' && ((!game.global.mapsActive && mapType !== 'map' && game.global.lastClearedCell + 2 == 100) || mapType === 'world') ? game.challenges.Pandemonium.getBossMult() : 1;
-	attack *= game.global.challengeActive == 'Pandemonium' && (!(!game.global.mapsActive && game.global.lastClearedCell + 2 == 100) || mapType === 'map') ? game.challenges.Pandemonium.getPandMult() : 1;
+	if (game.global.challengeActive == 'Pandemonium') attack *= mapType === 'world' ? game.challenges.Pandemonium.getBossMult() : mapType !== 'world' ? game.challenges.Pandemonium.getPandMult() : 1;
 	attack *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	attack *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	attack *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
@@ -1185,11 +1186,11 @@ function RcalcEnemyHealthMod(world, cell, name, mapType, checkMutations) {
 	health *= game.global.challengeActive == 'Storm' && mapType === 'world' ? game.challenges.Storm.getHealthMult() : 1;
 	//health *= game.global.challengeActive == 'Berserk' ? 1.5 : 1;
 	health *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
-	health *= game.global.challengeActive == 'Nurture' && mapType === 'world' ? 2 : 1;
-	health *= game.global.challengeActive == 'Nurture' && mapType !== 'world' ? 10 : 1;
-	health *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-	health *= game.global.challengeActive == 'Pandemonium' && mapType === 'world' && (game.global.lastClearedCell + 2 === 100 || query) ? game.challenges.Pandemonium.getBossMult() : 1;
-	health *= game.global.challengeActive == 'Pandemonium' && ((mapType === 'world' && game.global.lastClearedCell + 2 !== 100) || (mapType !== 'world' || game.global.mapsActive)) ? game.challenges.Pandemonium.getPandMult() : 1;
+	if (game.global.challengeActive == 'Nurture') {
+		health *= mapType === 'world' ? 2 : mapType !== 'world' ? 10 : 1;
+		health *= game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
+	}
+	if (game.global.challengeActive == 'Pandemonium') health *= mapType === 'world' ? game.challenges.Pandemonium.getBossMult() : mapType !== 'world' ? game.challenges.Pandemonium.getPandMult() : 1;
 	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
@@ -1207,14 +1208,15 @@ function RcalcEnemyHealthMod(world, cell, name, mapType, checkMutations) {
 function RcalcHDratio() {
 	var ratio = Infinity;
 	var checkMutations = game.global.world > 200 && getPageSetting('rMutationCalc')
-	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
 	if (game.global.gridArray.length > 0) {
-		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', checkMutations);
+		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 100, 'Improbability', 'world', checkMutations);
 		var ourDamage = RcalcOurDmg("avg", 0, 'world');
 		if (getPageSetting('rManageEquality') == 2) {
-			ourDamage = RcalcOurDmg('avg', equalityQuery('Snimp', game.global.world, 99, 'world', 1, 'gamma'), 'world', false, false, false) * gammaBurstDmg;
+			var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
+			var equality = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma')
+			ourDamage = RcalcOurDmg('avg', equality, 'world') * gammaBurstDmg;
 		}
-		//debug("T_dmg - " + ourDamage.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
+		//debug("Eq - " + equality + " T_dmg - " + ourDamage.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
 		ratio = enemyHealth / ourDamage;
 	}
 	return ratio;
@@ -1225,7 +1227,8 @@ function rCalcVoidHDratio() {
 	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
 	if (game.global.gridArray.length > 0) {
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 100, 'Cthulimp', 'void') * 4;
-		var ourDamage = RcalcOurDmg('avg', equalityQuery('Cthulimp', game.global.world, 100, 'void', 4, 'gamma'), 'void', false, false, false) * gammaBurstDmg;
+		var equality = equalityQuery('Cthulimp', game.global.world, 100, 'void', 4, 'gamma');
+		var ourDamage = RcalcOurDmg('avg', equality, 'void', false, false, false) * gammaBurstDmg;
 		ratio = enemyHealth / ourDamage;
 	}
 	return ratio;

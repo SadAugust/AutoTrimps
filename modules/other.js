@@ -2192,17 +2192,15 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 		if (!statCheck && game.resources.fragments.owned < PerfectMapCost_Actual(mapLevel, special, biome))
 			continue;
 
-		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot')
-		var ourDmg = (RcalcOurDmg('min', equalityAmt, 'map', false, false, floorCrit)) * 2;
+		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot');
+		var ourDmg = RcalcOurDmg('min', equalityAmt, 'map', 'force', false, false, y);
 		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Turtlimp', 'map') * difficulty;
 		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, 'map') * 1.5 * difficulty;
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 
-		/* if (y === -3) {
-			debug("Maplevel = " + y + " Equality = " + equalityAmt + " Our Damage = " + ourDmg);
-			debug("Enemy dmg = " + enemyDmg + " + " + "Enemy health = " + enemyHealth)
-		} */
+		//if (y === 2) queryAutoEqualityStats(ourDmg, ourHealth, enemyDmg, enemyHealth, equalityAmt)
+
 		if (enemyHealth <= ourDmg && enemyDmg <= ourHealth) {
 			return mapLevel;
 		}
@@ -2222,8 +2220,9 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (!farmType) farmType = 'gamma';
 
 	var mapping = mapType === 'world' ? false : true;
-	var bionicTalent = mapType !== 'world' && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
+	var bionicTalent = zone - game.global.world;
 	var checkMutations = mapType === 'world' && game.global.world > 200 && getPageSetting('rMutationCalc');
+	var titimp = mapType !== 'world' && farmType === 'oneShot' ? 'force' : false;
 
 	//Challenge conditions
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
@@ -2242,7 +2241,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	//if (mapType === 'void') enemyDmg *= 2;
 	//Our stats
 	var ourHealth = RcalcOurHealth(runningQuest, mapType);
-	var ourDmg = RcalcOurDmg('avg', 0, mapType) * bionicTalent;
+	var ourDmg = RcalcOurDmg('avg', 0, mapType, titimp, false, false, bionicTalent);
 
 	//Figuring out gamma to proc value
 	var gammaToTrigger = gammaBurstPct === 1 ? 0 : autoBattle.oneTimers.Burstier.owned ? 4 : 5
@@ -2263,9 +2262,10 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 			enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i)
 			ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 			if (runningUnlucky) {
-				var unluckyDmg = Number(RcalcOurDmg('min', i, mapType, false, true, true) * bionicTalent)
-				ourDmgEquality = RcalcOurDmg('min', i, mapType) * bionicTalent;
-				if (farmType === 'oneShot' && mapping) ourDmgEquality *= 2;
+				var unluckyDmg = Number(RcalcOurDmg('min', i, mapType, titimp, true, false, bionicTalent))
+				//if (i === 1) debug(unluckyDmg)
+				ourDmgEquality = RcalcOurDmg('min', i, mapType, titimp, false, false, bionicTalent);
+				//if (i === 1) debug("Equal = " + ourDmgEquality)
 				if (unluckyDmg.toString()[0] % 2 == 1) {
 					continue;
 				}
@@ -2349,7 +2349,7 @@ function equalityManagement() {
 		if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
 		enemyDmg *= !mapping && dailyEmpower && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
-		enemyDmg *= !mapping && dailyEmpower && dailyExplosive ? dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1;
+		//enemyDmg *= !mapping && dailyEmpower && dailyExplosive ? dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1;
 		enemyDmg *= type === 'map' && mapping && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 		enemyDmg *= (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1
 		enemyDmg *= runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
@@ -2466,12 +2466,9 @@ function equalityManagement() {
 }
 
 function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHealth, equalityStacks, dmgMult) {
-	debug("Our dmg (min) = " + ourDamage)
-	debug("Our dmg (min) * gammaDmg = " + ourDamage * gammaBurstPct)
-	debug("Our health = " + ourHealth)
-	debug("Enemy dmg = " + enemyDmgEquality)
-	debug("Enemy health = " + enemyHealth)
 	debug("Equality = " + equalityStacks)
+	debug("Our dmg (min) = " + ourDamage.toFixed(4) + " | " + "Our health = " + ourHealth.toFixed(4))
+	debug("Enemy dmg = " + enemyDmgEquality.toFixed(4) + " | " + "Enemy health = " + enemyHealth.toFixed(4))
 	if (dmgMult) debug("Mult = " + dmgMult)
 }
 

@@ -838,7 +838,19 @@ function ImportExportTooltip(what, event, download) {
 }
 
 function resetAutoTrimps(a, b) { ATrunning = !1, setTimeout(function (d) { localStorage.removeItem("autoTrimpSettings"), autoTrimpSettings = d ? d : {}; var e = document.getElementById("settingsRow"); e.removeChild(document.getElementById("autoSettings")), e.removeChild(document.getElementById("autoTrimpsTabBarMenu")), automationMenuSettingsInit(), initializeAllTabs(), initializeAllSettings(), initializeSettingsProfiles(), updateCustomButtons(), saveSettings(), checkPortalSettings(), ATrunning = !0 }(a), 101), a ? (debug("Successfully imported new AT settings...", "profile"), b ? ImportExportTooltip("message", "Successfully Imported Autotrimps Settings File!: " + b) : ImportExportTooltip("NameSettingsProfiles")) : (debug("Successfully reset AT settings to Defaults...", "profile"), ImportExportTooltip("message", "Autotrimps has been successfully reset to its defaults!")) }
-function loadAutoTrimps() { try { var a = document.getElementById("importBox").value.replace(/[\n\r]/gm, ""), b = JSON.parse(a); if (null == b) return void debug("Error importing AT settings, the string is empty.", "profile") } catch (c) { return void debug("Error importing AT settings, the string is bad." + c.message, "profile") } debug("Importing new AT settings file...", "profile"), resetAutoTrimps(b) }
+function loadAutoTrimps() {
+	try {
+		var a = document.getElementById("importBox").value.replace(/[\n\r]/gm, ""),
+			b = JSON.parse(a);
+		if (null == b) return void
+			debug("Error importing AT settings, the string is empty.", "profile")
+	}
+	catch (c) {
+		return void debug("Error importing AT settings, the string is bad." + c.message, "profile")
+	}
+	debug("Importing new AT settings file...", "profile"), resetAutoTrimps(b)
+	modifyParentNodeUniverseSwap();
+}
 function cleanupAutoTrimps() { for (var a in autoTrimpSettings) { var b = document.getElementById(autoTrimpSettings[a].id); null == b && delete autoTrimpSettings[a] } }
 function exportModuleVars() { return JSON.stringify(compareModuleVars()) }
 
