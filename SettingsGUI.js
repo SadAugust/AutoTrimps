@@ -330,54 +330,6 @@ function initializeAllSettings() {
 	createSetting('Rdmeltsmithy', 'D: Melt Smithy', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value. ', 'value', '-1', null, 'Daily');
 	createSetting('rdMeltSmithyShred', 'D: Melt Smithy (shred)', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value when your current daily has either the metal or wood shred modifier active. ', 'value', '-1', null, 'Daily');
 
-	//HD Farm Popup
-	createSetting('rdHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'Daily');
-
-	//Worshipper Farm Popup
-	createSetting('rdWorshipperFarmPopup', 'Worshipper Farm Settings', 'Will farm to a specified amount of Worshippers according to this settings value.', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'Daily');
-
-	//Bone Shrine Popup
-	createSetting('rdBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Daily');
-
-	//Daily Void Maps
-	createSetting('rdVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Daily');
-
-	//Map Bonus
-	createSetting('rdMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Daily Map Bonus", "rdMapBonus", "MAZ")', null, 'Daily');
-	createSetting('rdMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
-	createSetting('rdMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Daily');
-	createSetting('rdMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Daily');
-
-	//Radon Daily Map Farm
-	createSetting('rdMapFarmPopup', 'Map Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Daily Map Farm", "rdMapFarm", "MAZ")', null, 'Daily');
-	createSetting('rdMapFarmSettings', 'Map Farm Settings', 'Click to adjust settings. ', 'mazArray', [], null, 'Daily');
-	createSetting('rdMapFarmDefaultSettings', 'Map Farm Settings', 'Click to adjust settings. ', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Daily');
-	createSetting('rdMapFarmZone', 'MF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
-
-	//Radon Daily Time Farming 
-	createSetting('rdTimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Daily Time Farm", "rdTimeFarm", "MAZ")', null, 'Daily');
-	createSetting('rdTimeFarmSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'mazArray', [], null, 'Daily');
-	createSetting('rdTimeFarmDefaultSettings', 'Time Farm Settings', 'Click to adjust settings. ', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Daily');
-	createSetting('rdTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
-
-	//Radon Daily Tribute Farming 
-	createSetting('rdTributeFarmPopup', 'Tribute Farm Settings', 'Will farm for a specified amount of Tributes/Meteorologists according to this settings value.', 'action', 'MAZLookalike("Daily Tribute Farm", "rdTributeFarm", "MAZ")', null, 'Daily');
-	createSetting('rdTributeFarmSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'mazArray', [], null, 'Daily');
-	createSetting('rdTributeFarmDefaultSettings', 'Tribute Farm Settings', 'Click to adjust settings. ', 'mazDefaultArray', { cell: 83, jobratio: '100,1,1,1' }, null, 'Daily');
-	createSetting('rdTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Daily');
-
-	//Daily Smithy Farming
-	createSetting('rdSmithyFarmPopup', 'Smithy Farm Settings', 'Will farm for a specified amount of Smithies according to this settings value.', 'action', 'MAZLookalike("Daily Smithy Farm", "rdSmithyFarm", "MAZ")', null, 'Daily');
-	createSetting('rdSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
-	createSetting('rdSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'Daily');
-	createSetting('rdSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Daily');
-
-	//Prestige Raiding
-	createSetting('rdRaidingPopup', 'Raiding Settings', 'Will raid up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Raiding", "rdRaiding", "MAZ")', null, 'Daily');
-	createSetting('rdRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Daily');
-	createSetting('rdRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Daily');
-	createSetting('rdRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Daily');
-
 	//Radon Daily Portal
 	createSetting('RAutoStartDaily', 'Auto Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
@@ -490,14 +442,12 @@ function initializeAllSettings() {
 	createSetting('Requippercent', 'AE: Percent', 'What percent of resources to spend on equipment before the zone you have set in AE: Zone.', 'value', 1, null, "Gear");
 	createSetting('Rautoequipportal', 'AE: Portal', 'Makes sure Auto Equip is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', false, null, 'Gear');
 	createSetting('Requip2', 'AE: 2', 'Always buys level 2 of weapons and armor regardless of efficiency.', 'boolean', true, null, "Gear");
-	createSetting('Requipprestige', ['AE: Prestige Off', 'AE: Prestige', 'AE: Always Prestige'], '<b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased.<br><br><b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.', 'multitoggle', 0, null, "Gear");
+	createSetting('Requipprestige', ['AE: Prestige Off', 'AE: Prestige', 'AE: Always Prestige'], '<b>AE: Prestige Off</b><br>Will purchase equipment in the most efficient way possible.<br><br>\
+	<b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased.<br><br>\
+	<b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.', 'multitoggle', 0, null, "Gear");
 	createSetting('rEquipHighestPrestige', 'AE: Highest Prestige', 'Will only buy equips for the highest prestige currently owned.', 'boolean', true, null, "Gear");
 	createSetting('rEquipEfficientEquipDisplay', 'AE: Highlight Equips', 'Will highlight the most efficient equipment or prestige to buy. <b>This setting will disable the default game setting.', 'boolean', true, null, "Gear");
 	createSetting('rEquipNoShields', 'AE: No Shields', 'Will stop AT from buying Shield prestiges or upgrades when they\'re available.', 'boolean', false, null, "Gear");
-	/* createSetting('Requipfarmon', 'AE: Farm', 'AutoEquip Farm. CURRENTLY BROKEN. WILL NOT WORK AS INTENDED. <br>Calculates metal needed to reach the target you have defined in the AEF settings. Will try to buy the best map you can make. Will never make a plus map as this is intended for use on deep push runs.', 'boolean', false, null, "Gear"); */
-	createSetting('Requipfarmzone', 'AEF: Zone', 'What zone to start AEF: H:D and AEF: Multiplier.', 'value', '-1', null, 'Gear');
-	createSetting('RequipfarmHD', 'AEF: H:D', 'What H:D to use for AEF target.', 'value', '-1', null, 'Gear');
-	createSetting('Requipfarmmult', 'AEF: Multiplier', 'Starting from the zone above AEF: Zone, this setting will multiply the H:D you have set in AEF: H:D. So if AEF: Zone was 100, AEF: H:D was 10, AEF: Multiplier was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low H:D.', 'value', '-1', null, 'Gear');
 
 	//--------------------------------------------------------------------------------------------------------
 
@@ -679,53 +629,6 @@ function initializeAllSettings() {
 	createSetting('c3buildings', 'Building max purchase', 'When in a C3 or special challenge  (Mayhem, Panda) run will spend 99% of resources on buildings regardless of your other designated caps until the zone you specify in the Buy Buildings Till setting.', 'boolean', false, null, 'C3');
 	createSetting('c3buildingzone', 'Buy buildings till', 'When in a C3 or special challenge  (Mayhem, Panda) will spend 99% of resource on buildings until this zone.', 'value', -1, null, 'C3');
 	createSetting('c3GM_ST', ['c3: GM/ST', 'c3: Golden Maps', 'c3: Sharp Trimps', 'c3: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during C3 or special challenge (Mayhem, Pandemonium) runs.', 'multitoggle', 0, null, 'C3');
-
-	//C3 HD Farm Popup
-	createSetting('rc3HDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'C3');
-	//C3 Worshipper Farm Popup
-	createSetting('rc3WorshipperFarmPopup', 'Worshipper Farm Settings', 'Will farm to a specified amount of Worshippers according to this settings value.', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'C3');
-
-	//C3 Bone Shrine popup
-	createSetting('rc3BoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'C3');
-
-	//C3 Void Maps
-	createSetting('rc3VoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'C3');
-
-	//C3 Map Bonus
-	createSetting('rc3MapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("C3 Map Bonus", "rc3MapBonus", "MAZ")', null, 'C3');
-	createSetting('rc3MapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
-	createSetting('rc3MapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'C3');
-	createSetting('rc3MapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'C3');
-
-	//C3 Map Farm
-	createSetting('rc3MapFarmPopup', 'Map Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("C3 Map Farm", "rc3MapFarm", "MAZ")', null, 'C3');
-	createSetting('rc3MapFarmSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
-	createSetting('rc3MapFarmDefaultSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'C3');
-	createSetting('rc3MapFarmZone', 'MF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
-
-	//C3 Time Farm
-	createSetting('rc3TimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("C3 Time Farm", "rc3TimeFarm", "MAZ")', null, 'C3');
-	createSetting('rc3TimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
-	createSetting('rc3TimeFarmDefaultSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'C3');
-	createSetting('rc3TimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
-
-	//C3 Tribute (Met) Farm
-	createSetting('rc3TributeFarmPopup', 'Tribute Farm Settings', 'Will farm for a specified amount of Tributes/Meteorologists according to this settings value.', 'action', 'MAZLookalike("C3 Tribute Farm", "rc3TributeFarm", "MAZ")', null, 'C3');
-	createSetting('rc3TributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
-	createSetting('rc3TributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83, jobratio: '100,1,1,1' }, null, 'C3');
-	createSetting('rc3TributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
-
-	//Smithy Farming
-	createSetting('rc3SmithyFarmPopup', 'Smithy Farm Settings', 'Will farm for a specified amount of Smithies according to this settings value.', 'action', 'MAZLookalike("C3 Smithy Farm", "rc3SmithyFarm", "MAZ")', null, 'C3');
-	createSetting('rc3SmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
-	createSetting('rc3SmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'C3');
-	createSetting('rc3SmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'C3');
-
-	//Prestige Raiding
-	createSetting('rc3RaidingPopup', 'Raiding Settings', 'Will raid up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Raiding", "rc3Raiding", "MAZ")', null, 'C3');
-	createSetting('rc3RaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'C3');
-	createSetting('rc3RaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'C3');
-	createSetting('rc3RaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'C3');
 
 	//Unbalance
 	createSetting('rUnbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
@@ -1092,8 +995,6 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("dlowdmg", radonoff);
 	//Radon Settings
 	modifyParentNode_Initial("rdMeltSmithyShred", radonon);
-	modifyParentNode_Initial("rdVoidMapPopup", radonon);
-	modifyParentNode_Initial("rdRaidingPopup", radonon);
 
 	//Maps
 	//Helium Settings
@@ -1128,8 +1029,6 @@ function modifyParentNodeUniverseSwap() {
 	//None!
 	//Radon Settings
 	modifyParentNode_Initial("c3GM_ST", radonon);
-	modifyParentNode_Initial("rc3VoidMapPopup", radonon);
-	modifyParentNode_Initial("rc3RaidingPopup", radonon);
 	modifyParentNode_Initial("rUnbalanceImprobDestack", radonon);
 	modifyParentNode_Initial("rTrappaCoords", radonon);
 	modifyParentNode_Initial("rQuestSmithyZone", radonon);
@@ -1608,18 +1507,6 @@ function updateATVersion() {
 				}
 				saveSettings();
 			}
-			if (typeof (autoTrimpSettings.rdTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rdTimeFarmSettings.value[0].done === undefined) {
-				for (var y = 0; y < autoTrimpSettings.rdTimeFarmSettings.value.length; y++) {
-					autoTrimpSettings.rdTimeFarmSettings.value[y].done = 1;
-				}
-				saveSettings();
-			}
-			if (typeof (autoTrimpSettings.rc3TimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rc3TimeFarmSettings.value[0].done === undefined) {
-				for (var y = 0; y < autoTrimpSettings.rc3TimeFarmSettings.value.length; y++) {
-					autoTrimpSettings.rc3TimeFarmSettings.value[y].done = 1;
-				}
-				saveSettings();
-			}
 		}
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '4.6.0') {
 
@@ -1689,36 +1576,12 @@ function updateATVersion() {
 				}
 				saveSettings();
 			}
-			if (typeof (autoTrimpSettings.rdTributeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rdTributeFarmSettings.value[0].done === undefined) {
-				for (var y = 0; y < autoTrimpSettings.rdTributeFarmSettings.value.length; y++) {
-					autoTrimpSettings.rdTributeFarmSettings.value[y].done = 1;
-				}
-				saveSettings();
-			}
-			if (typeof (autoTrimpSettings.rc3TributeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rc3TributeFarmSettings.value[0].done === undefined) {
-				for (var y = 0; y < autoTrimpSettings.rc3TributeFarmSettings.value.length; y++) {
-					autoTrimpSettings.rc3TributeFarmSettings.value[y].done = 1;
-				}
-				saveSettings();
-			}
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.6.0') {
 			if (typeof (autoTrimpSettings.rMapBonusSettings.value[0]) !== 'undefined' && autoTrimpSettings.rMapBonusSettings.value[0].done === undefined) {
 				for (var y = 0; y < autoTrimpSettings.rMapBonusSettings.value.length; y++) {
 					autoTrimpSettings.rMapBonusSettings.value[y].done = 1;
-				}
-				saveSettings();
-			}
-			if (typeof (autoTrimpSettings.rdMapBonusSettings.value[0]) !== 'undefined' && autoTrimpSettings.rdMapBonusSettings.value[0].done === undefined) {
-				for (var y = 0; y < autoTrimpSettings.rdMapBonusSettings.value.length; y++) {
-					autoTrimpSettings.rdMapBonusSettings.value[y].done = 1;
-				}
-				saveSettings();
-			}
-			if (typeof (autoTrimpSettings.rc3MapBonusSettings.value[0]) !== 'undefined' && autoTrimpSettings.rc3MapBonusSettings.value[0].done === undefined) {
-				for (var y = 0; y < autoTrimpSettings.rc3MapBonusSettings.value.length; y++) {
-					autoTrimpSettings.rc3MapBonusSettings.value[y].done = 1;
 				}
 				saveSettings();
 			}
@@ -1745,32 +1608,10 @@ function updateATVersion() {
 				autoTrimpSettings.rMapBonusDefaultSettings.value.healthHDRatio = 10;
 				saveSettings();
 			}
-			if (typeof (autoTrimpSettings.rdMapBonusDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rdMapBonusDefaultSettings.value.healthBonus === undefined) {
-				autoTrimpSettings.rdMapBonusDefaultSettings.value.healthBonus = 10;
-				autoTrimpSettings.rdMapBonusDefaultSettings.value.healthHDRatio = 10;
-				saveSettings();
-			}
-			if (typeof (autoTrimpSettings.rc3MapBonusDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rc3MapBonusDefaultSettings.value.healthBonus === undefined) {
-				autoTrimpSettings.rc3MapBonusDefaultSettings.value.healthBonus = 10;
-				autoTrimpSettings.rc3MapBonusDefaultSettings.value.healthHDRatio = 10;
-				saveSettings();
-			}
 			if (typeof (autoTrimpSettings.rMapFarmSettings.value) !== 'undefined') {
 				autoTrimpSettings.rMapFarmSettings.value = autoTrimpSettings.rTimeFarmSettings.value
 				autoTrimpSettings.rMapFarmDefaultSettings.value = autoTrimpSettings.rTimeFarmDefaultSettings.value
 				autoTrimpSettings.rMapFarmZone.value = autoTrimpSettings.rTimeFarmZone.value
-				saveSettings();
-			}
-			if (typeof (autoTrimpSettings.rdMapFarmSettings.value) !== 'undefined') {
-				autoTrimpSettings.rdMapFarmSettings.value = autoTrimpSettings.rdTimeFarmSettings.value
-				autoTrimpSettings.rdMapFarmDefaultSettings.value = autoTrimpSettings.rdTimeFarmDefaultSettings.value
-				autoTrimpSettings.rdMapFarmZone.value = autoTrimpSettings.rdTimeFarmZone.value
-				saveSettings();
-			}
-			if (typeof (autoTrimpSettings.rc3MapFarmSettings.value) !== 'undefined') {
-				autoTrimpSettings.rc3MapFarmSettings.value = autoTrimpSettings.rc3TimeFarmSettings.value
-				autoTrimpSettings.rc3MapFarmDefaultSettings.value = autoTrimpSettings.rc3TimeFarmDefaultSettings.value
-				autoTrimpSettings.rc3MapFarmZone.value = autoTrimpSettings.rc3TimeFarmZone.value
 				saveSettings();
 			}
 		}
@@ -2115,17 +1956,6 @@ function updateCustomButtons() {
 
 	//RDaily
 	radonon ? turnOn('buyradony') : turnOff('buyradony');
-
-
-	//Map Bonus  
-	radonon ? turnOn('rdMapBonusPopup') : turnOff('rdMapBonusPopup');
-	turnOff('rdMapBonusSettings');
-	turnOff('rdMapBonusDefaultSettings');
-	turnOff('rdMapBonusZone');
-
-	//Void Map 
-	radonon ? turnOn('rdVoidMapPopup') : turnOff('rdVoidMapPopup');
-
 	radonon ? turnOn('Rdmeltsmithy') : turnOff('Rdmeltsmithy');
 	radonon ? turnOn('rdMeltSmithyShred') : turnOff('rdMeltSmithyShred');
 
@@ -2139,43 +1969,6 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeHrDontPortalBefore') : turnOff('RdHeHrDontPortalBefore');
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeliumHrBuffer') : turnOff('RdHeliumHrBuffer');
 
-	//Radon Daily Time Farming
-	turnOff('rdTimeFarmPopup');
-	turnOff('rdTimeFarmSettings');
-	turnOff('rdTimeFarmDefaultSettings');
-	turnOff('rdTimeFarmZone');
-
-	//Radon Daily Map Farm
-	radonon ? turnOn('rdMapFarmPopup') : turnOff('rdMapFarmPopup');
-	turnOff('rdMapFarmSettings');
-	turnOff('rdMapFarmDefaultSettings');
-	turnOff('rdMapFarmZone');
-
-	//Radon Daily Tribute Farming
-	radonon ? turnOn('rdTributeFarmPopup') : turnOff('rdTributeFarmPopup');
-	turnOff('rdTributeFarmSettings');
-	turnOff('rdTributeFarmDefaultSettings');
-	turnOff('rdTributeFarmZone');
-
-	//Daily Smithy Farming  
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rdSmithyFarmPopup') : turnOff('rdSmithyFarmPopup');
-	turnOff('rdSmithyFarmSettings');
-	turnOff('rdSmithyFarmDefaultSettings');
-	turnOff('rdSmithyFarmZone');
-
-	//C3 Raiding  
-	radonon ? turnOn('rdRaidingPopup') : turnOff('rdRaidingPopup');
-	turnOff('rdRaidingSettings');
-	turnOff('rdRaidingDefaultSettings');
-	turnOff('rdRaidingZone');
-
-	//HD Farm
-	radonon ? turnOn('rdHDFarmPopup') : turnOff('rdHDFarmPopup');
-	//Bone Shrine
-	radonon ? turnOn('rdBoneShrinePopup') : turnOff('rdBoneShrinePopup');
-	//Worshipper
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('rdWorshipperFarmPopup') : turnOff('rdWorshipperFarmPopup');
-
 	//C2
 	!radonon ? turnOn('FinishC2') : turnOff('FinishC2');
 	!radonon ? turnOn('buynojobsc') : turnOff('buynojobsc');
@@ -2188,54 +1981,11 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerpercent') : turnOff('c2runnerpercent');
 
 	//C3
-	//Map Bonus  
-	radonon ? turnOn('rc3MapBonusPopup') : turnOff('rc3MapBonusPopup');
-	turnOff('rc3MapBonusSettings');
-	turnOff('rc3MapBonusDefaultSettings');
-	turnOff('rc3MapBonusZone');
-
-	//Void Map 
-	radonon ? turnOn('rc3VoidMapPopup') : turnOff('rc3VoidMapPopup');
-
 	radonon ? turnOn('c3finishrun') : turnOff('c3finishrun');
 	radonon ? turnOn('c3meltingpoint') : turnOff('c3meltingpoint');
 	radonon && (getPageSetting('rDisplayAllSettings') || !autoBattle.oneTimers.Expanding_Tauntimp.owned) ? turnOn('c3buildings') : turnOff('c3buildings');
 	radonon && (getPageSetting('rDisplayAllSettings') || !autoBattle.oneTimers.Expanding_Tauntimp.owned) && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
-
-	//C3 Time Farm
-	turnOff('rc3TimeFarmPopup');
-	turnOff('rc3TimeFarmSettings');
-	turnOff('rc3TimeFarmDefaultSettings');
-	turnOff('rc3TimeFarmZone');
-
-	//C3 Map Farm
-	radonon ? turnOn('rc3MapFarmPopup') : turnOff('rc3MapFarmPopup');
-	turnOff('rc3MapFarmSettings');
-	turnOff('rc3MapFarmDefaultSettings');
-	turnOff('rc3MapFarmZone');
-
-	//C3 Tribute Farming
-	radonon ? turnOn('rc3TributeFarmPopup') : turnOff('rc3TributeFarmPopup');
-	turnOff('rc3TributeFarmSettings');
-	turnOff('rc3TributeFarmDefaultSettings');
-	turnOff('rc3TributeFarmZone');
-
-	//C3 Smithy Farming  
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rc3SmithyFarmPopup') : turnOff('rc3SmithyFarmPopup');
-	turnOff('rc3SmithyFarmSettings');
-	turnOff('rc3SmithyFarmDefaultSettings');
-	turnOff('rc3SmithyFarmZone');
-
-	//C3 Raiding  
-	radonon ? turnOn('rc3RaidingPopup') : turnOff('rc3RaidingPopup');
-	turnOff('rc3RaidingSettings');
-	turnOff('rc3RaidingDefaultSettings');
-	turnOff('rc3RaidingZone');
-
-	radonon ? turnOn('rc3BoneShrinePopup') : turnOff('rc3BoneShrinePopup');
-	radonon ? turnOn('rc3HDFarmPopup') : turnOff('rc3HDFarmPopup');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('rc3WorshipperFarmPopup') : turnOff('rc3WorshipperFarmPopup');
 
 	//Buildings
 	!radonon ? turnOn('BuyBuildingsNew') : turnOff('BuyBuildingsNew');
@@ -2320,7 +2070,7 @@ function updateCustomButtons() {
 	radonon ? turnOn('Rautoequipportal') : turnOff('Rautoequipportal');
 	radonon && getPageSetting('Requipon') ? turnOn('Requip2') : turnOff('Requip2');
 	radonon && getPageSetting('Requipon') ? turnOn('Requipprestige') : turnOff('Requipprestige');
-	radonon && getPageSetting('Requipon') ? turnOn('rEquipHighestPrestige') : turnOff('rEquipHighestPrestige');
+	radonon && getPageSetting('Requipon') && getPageSetting('Requipprestige') !== 0 ? turnOn('rEquipHighestPrestige') : turnOff('rEquipHighestPrestige');
 	radonon ? turnOn('rEquipEfficientEquipDisplay') : turnOff('rEquipEfficientEquipDisplay');
 	radonon && getPageSetting('Requipon') ? turnOn('rEquipNoShields') : turnOff('rEquipNoShields');
 	radonon && getPageSetting('Requipon') ? turnOn('Rdmgcuntoff') : turnOff('Rdmgcuntoff');
