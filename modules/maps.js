@@ -2044,7 +2044,13 @@ function RautoMap() {
 						if (alchpotions.toString().replace(/[^\d:-]/g, '') > potionscurrent) {
 							if (alchObj.canAffordPotion(alchObj.potionNames[potion])) {
 								for (z = potionscurrent; z < alchpotions.toString().replace(/[^\d:-]/g, ''); z++) {
-									alchObj.craftPotion(alchObj.potionNames[potion]);
+									if (potion === 1) {
+										if (game.herbs[alchObj.potions[potion].cost[0][0]].cowned > potioncosttotal)
+											for (var x = potionscurrent; x < alchpotions.toString().replace(/[^\d,:-]/g, ''); x++) {
+												alchObj.craftPotion(alchObj.potionNames[potion]);
+											}
+									}
+									else alchObj.craftPotion(alchObj.potionNames[potion]);
 								}
 							}
 						}
