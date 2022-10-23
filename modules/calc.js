@@ -905,7 +905,7 @@ function RcalcOurHealth(onlyShield, mapType) {
 	//Pressure (Dailies)
 	health *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
 	//Void Map Talents
-	health *= (game.talents.voidPower.purchased && game.global.voidBuff && mapType === 'void') ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
+	health *= (game.talents.voidPower.purchased && mapType === 'void') ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
 
 	//Prismatic Shield and Shield Layer, scales with multiple Scruffy shield layers
 	shield = (health * (Fluffy.isRewardActive('shieldlayer') ? 1 + (getEnergyShieldMult() * (1 + Fluffy.isRewardActive('shieldlayer'))) : 1 + getEnergyShieldMult())) - health;
@@ -1004,7 +1004,7 @@ function RcalcBadGuyDmg(enemy, attack, equality, mapType, checkMutations) { //Wo
 	attack *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
 	attack *= game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
 	attack *= game.global.challengeActive == 'Archaeology' ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
-	attack *= game.global.challengeActive == 'Mayhem' && ((!game.global.mapsActive && mapType !== 'map') || mapType === 'world') && game.global.lastClearedCell + 2 == 100 ? game.challenges.Mayhem.getBossMult() : 1;
+	attack *= game.global.challengeActive == 'Mayhem' && mapType === 'world' ? game.challenges.Mayhem.getBossMult() : 1;
 	attack *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult() : 1;
 	//Purposefully don't put Storm in here.
 	attack *= game.global.challengeActive == 'Storm' && !game.global.mapsActive ? game.challenges.Storm.getAttackMult() : 1;
@@ -1181,7 +1181,7 @@ function RcalcEnemyHealthMod(world, cell, name, mapType, checkMutations) {
 	//health *= game.global.challengeActive == 'Duel' && game.challenges.Duel.enemyStacks < 20 ? game.challenges.Duel.healthMult : 1;
 	health *= game.global.challengeActive == 'Quest' ? game.challenges.Quest.getHealthMult() : 1;
 	health *= game.global.challengeActive == 'Revenge' && game.global.world % 2 == 0 ? 10 : 1;
-	health *= game.global.challengeActive == 'Mayhem' && (mapType === 'world') ? game.challenges.Mayhem.getBossMult() : 1;
+	health *= game.global.challengeActive == 'Mayhem' && mapType === 'world' ? game.challenges.Mayhem.getBossMult() : 1;
 	health *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Storm' && mapType === 'world' ? game.challenges.Storm.getHealthMult() : 1;
 	//health *= game.global.challengeActive == 'Berserk' ? 1.5 : 1;
@@ -1229,6 +1229,7 @@ function rCalcVoidHDratio() {
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 100, 'Cthulimp', 'void') * 4;
 		var equality = equalityQuery('Cthulimp', game.global.world, 100, 'void', 4, 'gamma');
 		var ourDamage = RcalcOurDmg('avg', equality, 'void', false, false, false) * gammaBurstDmg;
+		//debug("Eq - " + equality + " T_dmg - " + ourDamage.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
 		ratio = enemyHealth / ourDamage;
 	}
 	return ratio;
