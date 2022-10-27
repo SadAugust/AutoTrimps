@@ -1987,7 +1987,7 @@ function radonChallengesSetting() {
 	if (radonHZE >= 55) radonHourChallenges.push("Melt");
 	if (radonHZE >= 70) radonHourChallenges.push("Quagmire");
 	if (radonHZE >= 90) radonHourChallenges.push("Archaeology");
-	if (radonHZE >= 130) radonHourChallenges.push("Insanity");
+	if (radonHZE >= 110) radonHourChallenges.push("Insanity");
 	if (radonHZE >= 135) radonHourChallenges.push("Nurture");
 	if (radonHZE >= 155) radonHourChallenges.push("Alchemy");
 	if (radonHZE >= 175) radonHourChallenges.push("Hypothermia");
@@ -2235,13 +2235,14 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var enemyHealth = RcalcEnemyHealthMod(zone, currentCell, enemyName, mapType, checkMutations) * difficulty;
 	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, false), 0, mapType) * difficulty * 1.5;
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
-	//debug("Enemy dmg = " + enemyDmg + " Enemy health = " + enemyHealth)
+	//if (mapType === 'void') debug("Enemy dmg = " + enemyDmg + " Enemy health = " + enemyHealth)
 
 	enemyDmg *= runningDuel ? 10 : 1;
 	//if (mapType === 'void') enemyDmg *= 2;
 	//Our stats
 	var ourHealth = RcalcOurHealth(runningQuest, mapType);
 	var ourDmg = RcalcOurDmg('avg', 0, mapType, titimp, false, false, bionicTalent);
+	//if (mapType === 'void') debug("Our dmg = " + ourDmg + " Our health = " + ourHealth)
 
 	//Figuring out gamma to proc value
 	var gammaToTrigger = gammaBurstPct === 1 ? 0 : autoBattle.oneTimers.Burstier.owned ? 4 : 5
