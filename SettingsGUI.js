@@ -179,7 +179,7 @@ function initializeAllSettings() {
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 69) radonChallenges.push("Quagmire");
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 89) radonChallenges.push("Archaeology");
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 99) radonChallenges.push("Mayhem");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 129) radonChallenges.push("Insanity");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 109) radonChallenges.push("Insanity");
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 134) radonChallenges.push("Nurture");
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) radonChallenges.push("Pandemonium");
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154) radonChallenges.push("Alchemy");
@@ -192,7 +192,7 @@ function initializeAllSettings() {
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 54) radonHourChallenges.push("Melt");
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 69) radonHourChallenges.push("Quagmire");
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 89) radonHourChallenges.push("Archaeology");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 129) radonHourChallenges.push("Insanity");
+	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 109) radonHourChallenges.push("Insanity");
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 134) radonHourChallenges.push("Nurture");
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154) radonHourChallenges.push("Alchemy");
 	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) radonHourChallenges.push("Hypothermia");
@@ -442,8 +442,9 @@ function initializeAllSettings() {
 	createSetting('Requippercent', 'AE: Percent', 'What percent of resources to spend on equipment before the zone you have set in AE: Zone.', 'value', 1, null, "Gear");
 	createSetting('Rautoequipportal', 'AE: Portal', 'Makes sure Auto Equip is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', false, null, 'Gear');
 	createSetting('Requip2', 'AE: 2', 'Always buys level 2 of weapons and armor regardless of efficiency.', 'boolean', true, null, "Gear");
-	createSetting('Requipprestige', ['AE: Prestige Off', 'AE: Prestige', 'AE: Always Prestige'], '<b>AE: Prestige Off</b><br>Will purchase equipment in the most efficient way possible.<br><br>\
-	<b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased.<br><br>\
+	createSetting('Requipprestige', ['AE: Prestige Off', 'AE: Prestige', 'AE: Always Prestige'], '\
+	<b>AE: Prestige Off</b><br>Will go for a new prestige when you have 6 or more levels in your equipment.<br><br>\
+	<b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run Atlantrimp (will buy any prestiges that cost less than 8% of your current metal).<br><br>\
 	<b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.', 'multitoggle', 0, null, "Gear");
 	createSetting('rEquipHighestPrestige', 'AE: Highest Prestige', 'Will only buy equips for the highest prestige currently owned.', 'boolean', true, null, "Gear");
 	createSetting('rEquipEfficientEquipDisplay', 'AE: Highlight Equips', 'Will highlight the most efficient equipment or prestige to buy. <b>This setting will disable the default game setting.', 'boolean', true, null, "Gear");
@@ -2074,12 +2075,6 @@ function updateCustomButtons() {
 	radonon ? turnOn('rEquipEfficientEquipDisplay') : turnOff('rEquipEfficientEquipDisplay');
 	radonon && getPageSetting('Requipon') ? turnOn('rEquipNoShields') : turnOff('rEquipNoShields');
 	radonon && getPageSetting('Requipon') ? turnOn('Rdmgcuntoff') : turnOff('Rdmgcuntoff');
-
-	//RGear AutoEquip Farm
-	/* turnOn('Requipfarmon'); */
-	turnOff('Requipfarmzone');
-	turnOff('RequipfarmHD');
-	turnOff('Requipfarmmult');
 
 	//Maps
 	!radonon ? turnOn('AutoMaps') : turnOff('AutoMaps');
