@@ -329,6 +329,7 @@ function initializeAllSettings() {
 	createSetting('buyradony', 'Buy Radonculous %', 'Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
 	createSetting('Rdmeltsmithy', 'D: Melt Smithy', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value. ', 'value', '-1', null, 'Daily');
 	createSetting('rdMeltSmithyShred', 'D: Melt Smithy (shred)', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value when your current daily has either the metal or wood shred modifier active. ', 'value', '-1', null, 'Daily');
+	createSetting('rBloodthirstDestack', 'Bloodthirst Destack', 'Will automatically run a level 6 map when you are one stack (death) away from the enemy healing and gaining additional attack. <b>Won\'t function properly without Auto Maps enabled.</b>', 'boolean', true, null, 'Daily');
 
 	//Radon Daily Portal
 	createSetting('RAutoStartDaily', 'Auto Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
@@ -655,9 +656,6 @@ function initializeAllSettings() {
 	createSetting('Rstormon', 'Storm', 'Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ', 'boolean', false, null, 'C3');
 	createSetting('rStormZone', 'S: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C3');
 	createSetting('rStormStacks', 'S: Stacks', 'The amount of stack you have to reach before clearing all of them.', 'value', -1, null, 'C3');
-	createSetting('Rstormzone', 'S: Zone', 'What zone to start S: H:D and S: Multiplier. ', 'value', '-1', null, 'C3');
-	createSetting('RstormHD', 'S: H:D', 'What H:D to use inside Storm. ', 'value', '-1', null, 'C3');
-	createSetting('Rstormmult', 'S: Multiplier', 'Starting from the zone above S: Zone, this setting will multiply the H:D you have set in S: H:D. So if S: Zone was 100, S: H:D was 10, S: Multiplier was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste time farming for a really low H:D. ', 'value', '-1', null, 'C3');
 
 	//Pandemonium
 	createSetting('RPandemoniumOn', 'Pandemonium', 'Turn on Pandemonium settings.', 'boolean', false, null, 'C3');
@@ -995,7 +993,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("dBWraidingmax", radonoff);
 	modifyParentNode_Initial("dlowdmg", radonoff);
 	//Radon Settings
-	modifyParentNode_Initial("rdMeltSmithyShred", radonon);
+	modifyParentNode_Initial("rBloodthirstDestack", radonon);
 
 	//Maps
 	//Helium Settings
@@ -1034,7 +1032,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("rTrappaCoords", radonon);
 	modifyParentNode_Initial("rQuestSmithyZone", radonon);
 	modifyParentNode_Initial("rMayhemMapIncrease", radonon_mayhem);
-	modifyParentNode_Initial("Rstormmult", radonon);
+	modifyParentNode_Initial("rStormStacks", radonon);
 	modifyParentNode_Initial("rPandRespecZone", radonon_panda);
 	//modifyParentNode_Initial("rGlassStacks", radonon);
 
@@ -1959,6 +1957,8 @@ function updateCustomButtons() {
 	radonon ? turnOn('buyradony') : turnOff('buyradony');
 	radonon ? turnOn('Rdmeltsmithy') : turnOff('Rdmeltsmithy');
 	radonon ? turnOn('rdMeltSmithyShred') : turnOff('rdMeltSmithyShred');
+	radonon ? turnOn('rBloodthirstDestack') : turnOff('rBloodthirstDestack');
+
 
 	//RDPortal 
 	radonon ? turnOn('RAutoStartDaily') : turnOff('RAutoStartDaily');
@@ -2303,9 +2303,6 @@ function updateCustomButtons() {
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) ? turnOn('Rstormon') : turnOff('Rstormon');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('rStormZone') : turnOff('rStormZone');
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('rStormStacks') : turnOff('rStormStacks');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('Rstormzone') : turnOff('Rstormzone');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('RstormHD') : turnOff('RstormHD');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('Rstormmult') : turnOff('Rstormmult');
 
 	//Insanity
 	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 109) ? turnOn('rInsanityPopup') : turnOff('rInsanityPopup');
