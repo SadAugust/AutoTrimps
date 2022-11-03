@@ -925,8 +925,20 @@ ul.tab li a:hover {
 	padding: 1px;
 }
 
+
+
+.windowGatherOn .windowSpecialrMapBonus {
+	width: 15%;
+	padding: 1px;
+}
+
 .windowRepeatUntil,
-.windowGatherOn .windowSpecial {
+.windowGatherOn .windowSpecialrMapFarm {
+	width: 12%;
+	padding: 1px;
+}
+
+.windowGatherOn .windowSpecialrAlch {
 	width: 16%;
 	padding: 1px;
 }
