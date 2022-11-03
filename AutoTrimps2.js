@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v5.7.4',
+var ATversion = 'SadAugust v5.7.5',
 	atscript = document.getElementById('AutoTrimps-script'),
 	basepath = 'https://SadAugust.github.io/AutoTrimps_Local/',
 	modulepath = 'modules/';
@@ -18,7 +18,7 @@ function initializeAutoTrimps() {
 	loadPageVariables();
 	ATscriptLoad('', 'SettingsGUI');
 	ATscriptLoad('', 'Graphs');
-	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'dynprestige', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perks', 'fight-info', 'performance', 'bones', 'MAZ'];
+	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'dynprestige', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perks', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions'];
 	for (var m in ATmoduleList) {
 		ATscriptLoad(modulepath, ATmoduleList[m]);
 	}
@@ -26,9 +26,9 @@ function initializeAutoTrimps() {
 }
 
 var runInterval = 100;
-var startupDelay = 4000;
+var startupDelay = 1500;
 
-setTimeout(delayStart, 1000);
+setTimeout(delayStart, 2500);
 
 function delayStart() {
 	initializeAutoTrimps();
@@ -61,11 +61,8 @@ var RscienceNeeded;
 var breedFire = false;
 
 var shouldFarm = false;
-var RshouldFarm = false;
 var enoughDamage = true;
-var RenoughDamage = true;
 var enoughHealth = true;
-var RenoughHealth = true;
 
 var baseDamage = 0;
 var baseBlock = 0;
@@ -93,15 +90,27 @@ var lastHeliumZone = 0;
 var lastRadonZone = 0;
 var HDRatio = 0;
 var autoLevel = 0;
+var autoLevelCurrent = 0;
 var rC3EndZoneSetting = -1;
 var voidPBSwap = false;
 var rBSRunningAtlantrimp = false;
+var rCurrentMap = undefined;
+var rAutoLevel = Infinity;
+var rMapRepeats = 0;
+var freeVoids = 0;
+var shredTimer = 0;
 
 //Get Gamma burst % value
 gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 shieldEquipped = game.global.ShieldEquipped.id;
 
 function mainLoop() {
+	//Interval code
+	date = new Date();
+	oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
+	twoSecondInterval = ((date.getSeconds() % 2) === 0 && (date.getMilliseconds() < 100));
+	sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
+	tenSecondInterval = ((date.getSeconds() % 10) === 0 && (date.getMilliseconds() < 100));
 	var MAZCheck = document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Void Map') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Map Bonus') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Raiding');
 
 	if (document.getElementById('tooltipDiv').classList[0] !== undefined && document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow') && (MAZCheck) && document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 12) {
@@ -113,6 +122,13 @@ function mainLoop() {
 	}
 
 	if (document.getElementById('tooltipDiv').classList[0] !== undefined && !MAZCheck && document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow')) document.getElementById('tooltipDiv').classList.remove(document.getElementById('tooltipDiv').classList[0])
+
+	if (freeVoids !== game.permaBoneBonuses.voidMaps.tracker || autoLevel !== autoLevelCurrent || shredTimer !== Math.floor(game.global.hemmTimer / 10)) {
+		document.getElementById('freeVoidMap').innerHTML = "Void: " + (game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" + (getPageSetting('rManageEquality') == 2 ? " | Auto Level: " + autoLevel : "") + (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' ? " | Shred: " + (Math.max(game.global.hemmTimer / 10).toFixed(0)) + "s" : "");
+		freeVoids = game.permaBoneBonuses.voidMaps.tracker
+		autoLevelCurrent = autoLevel;
+		shredTimer = game.global.hemmTimer / 10;
+	}
 
 	if (ATrunning == false) return;
 	if (reloadDelay) {
@@ -251,22 +267,11 @@ function mainLoop() {
 
 		//Offline Progress
 		if (!usingRealTimeOffline) RsetScienceNeeded();
-		//Interval code
-		date = new Date();
-		oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
-		twoSecondInterval = ((date.getSeconds() % 2) === 0 && (date.getMilliseconds() < 100));
-		sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
-		tenSecondInterval = ((date.getSeconds() % 10) === 0 && (date.getMilliseconds() < 100));
 
 		//Heirloom Shield Swap Check
 		if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
-		//RBuildings
-		if (getPageSetting('RBuyBuildingsNew')) RbuyBuildings();
-		//RUpgrades
-		if (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([5].indexOf(questcheck()) >= 0))) {
-			if (getPageSetting('RBuyUpgradesNew') != 0)
-				RbuyUpgrades();
-		}
+		//Initiate Farming Code
+		rMapSettings = FarmingDecision();
 		//RCore
 		//AutoMaps
 		if (oneSecondInterval) {
@@ -276,6 +281,13 @@ function mainLoop() {
 		if (getPageSetting('RAutoMaps') > 0 && game.global.mapsUnlocked) RautoMap();
 		//Status - AutoMaps
 		if (getPageSetting('Rshowautomapstatus')) RupdateAutoMapsStatus();
+		//RBuildings
+		if (getPageSetting('RBuyBuildingsNew')) RbuyBuildings();
+		//RUpgrades
+		if (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([5].indexOf(questcheck()) >= 0))) {
+			if (getPageSetting('RBuyUpgradesNew') != 0)
+				RbuyUpgrades();
+		}
 		//Gather
 		if (getPageSetting('RManualGather2') == 1) RmanualLabor2();
 		//Auto Traps
@@ -283,7 +295,7 @@ function mainLoop() {
 		//RJobs
 		if (getPageSetting('RBuyJobsNew') > 0) {
 			//Check to see if we're on quest and at a quest zone or if we're trying to do some farming that needs other jobs.
-			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && (rShouldTributeFarm || rShouldWorshipperFarm || rShouldMapFarm || rShouldHDFarm))) RbuyJobs();
+			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && rCurrentMap !== '')) RbuyJobs();
 			else RquestbuyJobs();
 		}
 		if (game.global.runningChallengeSquared && rC3EndZoneSetting != game.stats.zonesCleared.value) {
@@ -445,3 +457,4 @@ function mainCleanup() {
 	}
 }
 function throwErrorfromMain() { throw new Error("We have successfully read the thrown error message out of the main file") }
+

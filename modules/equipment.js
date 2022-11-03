@@ -552,6 +552,52 @@ function Rgetequips(map, special) { //(level, p b or false)
 	return specialCount;
 }
 
+
+//Working out cheapestt Equips & Prestiges
+function CheapestEquipmentCost() {
+	//Looping through each piece of equipment
+
+	var mapAutoLevel = Infinity;
+	var equipmentName = null;
+	var prestigeName = null;
+	//Initialising Variables
+	nextLevelEquipmentCost = null;
+	nextEquipmentCost = null;
+	nextLevelPrestigeCost = null;
+	nextPrestigeCost = null;
+	jestMetalTotal = null;
+	var prestigeUpgradeName = "";
+	var allUpgradeNames = Object.getOwnPropertyNames(game.upgrades);
+
+	for (var equipName in game.equipment) {
+		if (!game.equipment[equipName].locked) {
+			//Checking cost of next equipment level. Blocks unavailable ones.
+			if (game.challenges.Pandemonium.isEquipBlocked(equipName) || RequipmentList[equipName].Resource == 'wood') continue;
+			nextLevelEquipmentCost = game.equipment[equipName].cost[RequipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[RequipmentList[equipName].Resource][1], game.equipment[equipName].level) * getEquipPriceMult();
+			//Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
+			if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost == null) {
+				equipmentName = equipName;
+				nextEquipmentCost = nextLevelEquipmentCost;
+			}
+			//Checking cost of prestiges if any are available to purchase
+			for (var upgrade of allUpgradeNames) {
+				if (game.upgrades[upgrade].prestiges === equipName) {
+					prestigeUpgradeName = upgrade;
+					//Checking if prestiges are purchasable
+					if (game.challenges.Pandemonium.isEquipBlocked(game.upgrades[upgrade].prestiges) || game.upgrades[prestigeUpgradeName].locked) continue;
+					nextLevelPrestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
+					//Sets nextPrestigeCost to the price of an equip if it costs less than the current value of nextEquipCost
+					if (nextLevelPrestigeCost < nextPrestigeCost || nextPrestigeCost == null) {
+						prestigeName = prestigeUpgradeName
+						nextPrestigeCost = nextLevelPrestigeCost;
+					}
+				}
+			}
+		}
+	}
+	return [equipmentName, nextEquipmentCost, prestigeName, nextLevelPrestigeCost]
+}
+
 //Shol Territory
 
 function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, showAllEquips, fakeLevels = {}, ignorePrestiges) {
@@ -590,7 +636,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	var metalTotal = 0;
 
 	if (metalShred) {
-		metalTotal = metalShred && (rShouldMapFarm || rShouldMaxMapBonus) ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 16, true, workerRatio), false, true, rShouldMapFarm ? rMFMapLevel : rShouldMaxMapBonus ? rMBMapLevel : 0) : game.resources.metal.owned;
+		metalTotal = metalShred && (rCurrentMap === 'rMapFarm' || rCurrentMap === 'rMapBonus') ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 16, true, workerRatio), false, true, rMapSettings.mapLevel) : game.resources.metal.owned;
 		if (game.resources.metal.owned > metalTotal) metalTotal = game.resources.metal.owned;
 	}
 
@@ -603,7 +649,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		var prestige = false;
 		var ignorePrestiges_temp = ignorePrestiges;
 		//Skips if we have the required number of that item and below zoneGo
-		if (!zoneGo && !buyPrestigeMaybe(i, resourceMaxPercent) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels && !rShouldSmithless) continue;
+		if (!zoneGo && !buyPrestigeMaybe(i, resourceMaxPercent) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels && rCurrentMap !== 'rSmithlessFarm') continue;
 		//Skips if ignoreShield variable is true.
 		if (ignoreShield && i == 'Shield') continue;
 		//Skipping if on reflect daily and our dmg is too high
@@ -711,10 +757,9 @@ function RautoEquip() {
 
 	if (
 		!getPageSetting('Requipon') ||
-		(!rShouldMapFarm && !rShouldTributeFarm && !rShouldMetFarm && rShouldSmithyFarm) ||
+		(rCurrentMap === 'rSmithyFarm') ||
 		(game.mapUnlocks.AncientTreasure.canRunOnce &&
-			(rBSRunningAtlantrimp ||
-				(typeof (rMFAtlantrimp) !== 'undefined' && rMFAtlantrimp) ||
+			(rBSRunningAtlantrimp || rMapSettings.runAtlantrimp ||
 				(game.global.mapsActive && getCurrentMapObject().name == 'Atlantrimp')
 			)
 		)
@@ -768,8 +813,8 @@ function RautoEquip() {
 		}
 	}
 
-	var attackEquipCap = (getPageSetting('Requipcapattack') <= 0 || rShouldSmithless ? Infinity : getPageSetting('Requipcapattack'));
-	var healthEquipCap = (getPageSetting('Requipcaphealth') <= 0 || rShouldSmithless ? Infinity : getPageSetting('Requipcaphealth'));
+	var attackEquipCap = (getPageSetting('Requipcapattack') <= 0 || rCurrentMap === 'rSmithlessFarm' ? Infinity : getPageSetting('Requipcapattack'));
+	var healthEquipCap = (getPageSetting('Requipcaphealth') <= 0 || rCurrentMap === 'rSmithlessFarm' ? Infinity : getPageSetting('Requipcaphealth'));
 	var resourceSpendingPct = zoneGo ? 1 : getPageSetting('Requippercent') < 0 ? 1 : getPageSetting('Requippercent') / 100;
 	var maxCanAfford = 0;
 

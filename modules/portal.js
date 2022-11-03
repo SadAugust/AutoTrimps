@@ -602,79 +602,15 @@ function Rresetmapvars() {
 	RlastMapWeWereIn = null;
 	rVanillaMAZ = false;
 	currTime = 0;
-	//Map Bonus
-	rShouldMaxMapBonus = false;
-	rMBCurrentMap = undefined;
-	rMBshouldDoHealthMaps = false;
-	rMBHealthFarm = false;
-	//Void Maps
-	RdoVoids = false;
-	RneedToVoid = false;
-	rVMCurrentMap = undefined;
-	//Equip Farm
-	rHDFarm = !1;
-	rShouldHDFarm = false;
-	rHDFCurrentMap = undefined;
-	//Map Farm
-	rShouldMapFarm = false;
-	rMFCurrentMap = undefined;
-	//Tribute Farm
-	rTributeFarming = false;
-	rShouldTributeFarm = false;
-	rShouldMetFarm = false;
-	rTrFCurrentMap = undefined;
-	//Smithy Farming
-	rShouldSmithyFarm = false;
-	rShouldSmithyGemFarm = false;
-	rShouldSmithyWoodFarm = false;
-	rShouldSmithyMetalFarm = false;
-	rSFCurrentMap = undefined;
+
 	//Fragment Farming
 	rFragmentFarming = false;
 	rFragmentMapID = undefined;
 	rInitialFragmentMapID = undefined;
 	rFragMapBought = false;
-	//Worshipper
-	rShouldWorshipperFarm = false;
-	rWFDebug = 0;
-	rWFCurrentMap = undefined;
-	//Unbalance
-	rShouldUnbalance = false;
-	//Quagmire
-	rShouldQuagFarm = false;
-	rQFCurrentMap = undefined;
-	//Quest
-	rShouldQuest = 0;
-	rHasQuested = false;
-	//Mayhem
-	rShouldMayhem = false;
-	rMayhemCurrentMap = undefined;
-	//Storm
-	rShouldStorm = false;
-	Rstormfarm = false;
-	Rshouldstormfarm = false;
-	//Insanity
-	rShouldInsanityFarm = false;
-	rIFCurrentMap = undefined;
 	//Pandemonium
-	rShouldPandemoniumDestack = false;
-	rPandemoniumCurrentMap = undefined;
-	rShouldPandemoniumFarm = false;
-	rShouldPandemoniumJestimpFarm = false;
 	savefile = null;
 	jestFarmMap = false;
-	//Alchemy
-	rShouldAlchFarm = false;
-	rAFCurrentMap = undefined;
-	rAFSpecialError = 0;
-	//Hypothermia
-	rShouldHypoFarm = false;
-	rHFCurrentMap = undefined;
-	rHFBonfireCostTotal = 0;
-	rHFBuyPackrat = false;
-	//Smithless
-	rShouldSmithless = false;
-	rSmithlessCurrentMap = undefined;
 	//Prestige
 	rShouldPrestigeRaid = false;
 	RAMPfragmappy = undefined;
@@ -687,36 +623,21 @@ function Rresetmapvars() {
 	RAMPfragfarming = false;
 	runningPrestigeMaps = false;
 
-	//Daily Shred Variables
-	shredActive = false;
-
 	//Auto Level variables
-	rMFautoLevel = Infinity;
 	rMFMapRepeats = 0;
-	rTrFautoLevel = Infinity;
 	rTrFMapRepeats = 0;
-	rSFautoLevel = Infinity;
 	rSFMapRepeats = [0, 0, 0];
 	smithyMapCount = [0, 0, 0];
-	rWFautoLevel = Infinity;
 	rWFMapRepeats = 0;
-	rMBautoLevel = Infinity;
 	rMBMapRepeats = 0;
-	rMayhemautoLevel = Infinity;
 	rMayhemMapRepeats = 0;
-	rIFautoLevel = Infinity;
+	rAutoLevel = Infinity;
 	rIFMapRepeats = 0;
-	rPandemoniumautoLevel = Infinity;
 	rPandemoniumMapRepeats = 0;
-	rAFautoLevel = Infinity;
 	rAFMapRepeats = 0;
-	rHFautoLevel = Infinity;
 	rHFMapRepeats = 0;
-	rSmithlessautoLevel = Infinity;
 	rSmithlessMapRepeats = 0;
-	rHDFautoLevel = Infinity;
 	rHDFMapRepeats = 0;
-	rHDFIndex;
 
 	if (document.getElementById('hiderStatus').style.display == 'None' && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) {
 		turnOn("hiderStatus")

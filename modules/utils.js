@@ -81,6 +81,13 @@ function setPageSetting(setting, value) {
 	}
 }
 
+function shouldSpeedRun(achievement) {
+	//Returns false if we can't any new speed runs, unless it's the first tier
+	var minutesThisRun = Math.floor((new Date().getTime() - game.global.portalTime) / 1000 / 60);
+	if (achievement.finished == achievement.tiers.length) return false;
+	return minutesThisRun < achievement.breakpoints[achievement.finished];
+}
+
 function saveSettings() { safeSetItems('autoTrimpSettings', serializeSettings()) }
 function debug(a, b, c) { var d = getPageSetting('SpamGeneral'), e = getPageSetting('SpamUpgrades'), f = getPageSetting('SpamEquipment'), g = getPageSetting('SpamMaps'), h = getPageSetting('SpamOther'), i = getPageSetting('SpamBuilding'), j = getPageSetting('SpamJobs'), k = getPageSetting('SpamGraphs'), l = getPageSetting('SpamMagmite'), m = getPageSetting('SpamPerks'), n = getPageSetting('SpamProfiles'), o = getPageSetting('SpamNature'), p = !0; switch (b) { case null: break; case 'general': p = d; break; case 'upgrades': p = e; break; case 'equips': p = f; break; case 'buildings': p = i; break; case 'jobs': p = j; break; case 'maps': p = g; break; case 'other': p = h; break; case 'graphs': p = k; break; case 'magmite': p = l; break; case 'perks': p = m; break; case 'profiles': p = n; break; case 'nature': p = o; }p && (enableDebug && console.log(timeStamp() + ' ' + a), message2(a, 'AutoTrimps', c, b)) }
 function timeStamp() { for (var a = new Date, b = [a.getHours(), a.getMinutes(), a.getSeconds()], c = 1; 3 > c; c++)10 > b[c] && (b[c] = "0" + b[c]); return b.join(":") }

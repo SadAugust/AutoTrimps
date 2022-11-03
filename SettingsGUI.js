@@ -151,6 +151,7 @@ initializeAllTabs();
 
 function initializeAllSettings() {
 
+	var highestZone = game.global.highestRadonLevelCleared;
 	//Core
 
 	//Helium Core
@@ -174,40 +175,40 @@ function initializeAllSettings() {
 	createSetting('downloadSaves', 'Download Saves', 'Will automatically download saves whenever AutoTrimps portals.', 'boolean', false, null, 'Core');
 
 	var radonChallenges = ["Off", "Radon Per Hour"];
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 39) radonChallenges.push("Bublé");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 54) radonChallenges.push("Melt");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 69) radonChallenges.push("Quagmire");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 89) radonChallenges.push("Archaeology");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 99) radonChallenges.push("Mayhem");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 109) radonChallenges.push("Insanity");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 134) radonChallenges.push("Nurture");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 149) radonChallenges.push("Pandemonium");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154) radonChallenges.push("Alchemy");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) radonChallenges.push("Hypothermia");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 39) radonChallenges.push("Bublé");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 54) radonChallenges.push("Melt");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 69) radonChallenges.push("Quagmire");
+	if (getPageSetting('rDisplayAllSettings') || highestZone > 89) radonChallenges.push("Archaeology");
+	if (getPageSetting('rDisplayAllSettings') || highestZone > 99) radonChallenges.push("Mayhem");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 109) radonChallenges.push("Insanity");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 134) radonChallenges.push("Nurture");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 149) radonChallenges.push("Pandemonium");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 154) radonChallenges.push("Alchemy");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) radonChallenges.push("Hypothermia");
 	radonChallenges.push("Custom");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) radonChallenges.push("Challenge 3");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 49) radonChallenges.push("Challenge 3");
 
 	var radonHourChallenges = ["None"];
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 39) radonHourChallenges.push("Bublé");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 54) radonHourChallenges.push("Melt");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 69) radonHourChallenges.push("Quagmire");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 89) radonHourChallenges.push("Archaeology");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 109) radonHourChallenges.push("Insanity");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 134) radonHourChallenges.push("Nurture");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154) radonHourChallenges.push("Alchemy");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) radonHourChallenges.push("Hypothermia");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 39) radonHourChallenges.push("Bublé");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 54) radonHourChallenges.push("Melt");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 69) radonHourChallenges.push("Quagmire");
+	if (getPageSetting('rDisplayAllSettings') || highestZone > 89) radonHourChallenges.push("Archaeology");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 109) radonHourChallenges.push("Insanity");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 134) radonHourChallenges.push("Nurture");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 154) radonHourChallenges.push("Alchemy");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) radonHourChallenges.push("Hypothermia");
 
 	var radonChallenge3 = ["None"];
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 14) radonChallenge3.push("Unlucky");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 24) radonChallenge3.push("Transmute");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 34) radonChallenge3.push("Unbalance");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 44) radonChallenge3.push("Duel");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) radonChallenge3.push("Trappapalooza");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 69) radonChallenge3.push("Wither");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 84) radonChallenge3.push("Quest");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) radonChallenge3.push("Storm");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 114) radonChallenge3.push("Berserk");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) radonChallenge3.push("Glass");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 14) radonChallenge3.push("Unlucky");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) radonChallenge3.push("Transmute");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 34) radonChallenge3.push("Unbalance");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 44) radonChallenge3.push("Duel");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 59) radonChallenge3.push("Trappapalooza");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 69) radonChallenge3.push("Wither");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 84) radonChallenge3.push("Quest");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 104) radonChallenge3.push("Storm");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 114) radonChallenge3.push("Berserk");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) radonChallenge3.push("Glass");
 
 	var radonBiome = ["Random"];
 	radonBiome.push("Mountain");
@@ -218,17 +219,17 @@ function initializeAllSettings() {
 	if (getPageSetting('rDisplayAllSettings') || game.global.farmlandsUnlocked) radonBiome.push("Farmlands");
 
 	var radonSpecial = ["0"];
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 14) radonSpecial.push('fa');
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 14) radonSpecial.push("lc");
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 24) radonSpecial.push('ssc');
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 24) radonSpecial.push('swc');
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 24) radonSpecial.push('smc');
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 14) radonSpecial.push('fa');
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 14) radonSpecial.push("lc");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) radonSpecial.push('ssc');
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) radonSpecial.push('swc');
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) radonSpecial.push('smc');
 	if (getPageSetting('rDisplayAllSettings') || game.global.ArchaeologyDone) radonSpecial.push('src');
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 54) radonSpecial.push('p');
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 64) radonSpecial.push('hc');
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 84) radonSpecial.push('lsc');
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 84) radonSpecial.push('lwc');
-	if (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 84) radonSpecial.push('lmc');
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 54) radonSpecial.push('p');
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 64) radonSpecial.push('hc');
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 84) radonSpecial.push('lsc');
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 84) radonSpecial.push('lwc');
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 84) radonSpecial.push('lmc');
 	if (getPageSetting('rDisplayAllSettings') || game.global.ArchaeologyDone) radonSpecial.push('lrc');
 
 
@@ -377,6 +378,9 @@ function initializeAllSettings() {
 	createSetting('GymWall', 'Gym Wall', 'Conserves Wood. Only buys 1 Gym when you can afford <b>X</b> gyms wood cost (at the first one\'s price, simple math). -1 or 0 to disable. In other words, only allows gyms that cost less than 1/nth your currently owned wood. (to save wood for nurseries for new z230+ Magma nursery strategy). Takes decimal numbers. (Identical to the Warpstation wall setting which is why its called that). Setting to 1 does nothing besides stopping gyms from being bought 2 at a time due to the mastery.', 'value', -1, null, 'Buildings');
 	createSetting('FirstGigastation', 'First Gigastation', 'How many warpstations to buy before your first gigastation', 'value', '20', null, 'Buildings');
 	createSetting('DeltaGigastation', 'Delta Gigastation', '<b>YOU MUST HAVE BUY UPGRADES ENABLED!</b><br> How many extra warpstations to buy for each gigastation. Supports decimal values. For example 2.5 will buy +2/+3/+2/+3...', 'value', '2', null, 'Buildings');
+	createSetting('AutoGigas', 'Auto Gigas', "Advanced. <br>If enabled, AT will buy its first Gigastation if: <br>A) Has more than 2 Warps & <br>B) Can't afford more Coords & <br>C) (Only if Custom Delta Factor > 20) Lacking Health or Damage & <br>D) (Only if Custom Delta Factor > 20) Has run at least 1 map stack or <br>E) If forced to by using the firstGiga(true) command in the console. <br>Then, it'll calculate the delta based on your Custom Delta Factor and your Auto Portal/VM zone (whichever is higher), or Daily Auto Portal/VM zone, or C2 zone, or Custom AutoGiga Zone.", 'boolean', 'true', null, 'Buildings');
+	createSetting('CustomTargetZone', 'Custom Target Zone', 'To be used with Auto Gigas. <br>The zone to be used as a the target zone when calculating the Auto Gigas delta. <br>Values below 60 will be discarded.', 'value', '-1', null, "Buildings");
+	createSetting('CustomDeltaFactor', 'Custom Delta Factor', 'Advanced. To be used with Auto Gigas. <br>This setting is used to calculate a better Delta. Think of this setting as how long your target zone takes to complete divided by the zone you bought your first giga in. <br>Basically, a higher number means a higher delta. Values below 1 will default to 10. <br><b>Recommended: 1-2 for very quick runs. 5-10 for regular runs where you slow down at the end. 20-100+ for very pushy runs.</b>', 'value', '-1', null, "Buildings");
 	createSetting('WarpstationWall3', 'Warpstation Wall', 'Conserves Metal. Only buys 1 Warpstation when you can afford <b>X</b> warpstations metal cost (at the first one\'s price, simple math). -1, 0, 1 = disable. In other words, only allows warps that cost less than 1/nth your currently owned metal. (to save metal for prestiges)', 'value', -1, null, 'Buildings');
 	createSetting('MaxNursery', 'Max Nurseries', 'Advanced. Recommend: -1 until you reach Magma (z230+)', 'value', '-1', null, 'Buildings');
 	createSetting('NoNurseriesUntil', 'No Nurseries Until z', 'Builds Nurseries starting from this zone. -1 to build from when they are unlocked. ', 'value', '-1', null, 'Buildings');
@@ -384,16 +388,6 @@ function initializeAllSettings() {
 	//Radon
 	createSetting('rBuildingSettingsArray', 'Building Settings', 'Click to adjust settings. ', 'mazDefaultArray', { Collector: { enabled: true, percent: 100, buyMax: 0 }, Gateway: { enabled: true, percent: 100, buyMax: 0 }, Hotel: { enabled: true, percent: 100, buyMax: 0 }, House: { enabled: true, percent: 100, buyMax: 0 }, Hut: { enabled: true, percent: 100, buyMax: 0 }, Mansion: { enabled: true, percent: 100, buyMax: 0 }, Resort: { enabled: true, percent: 100, buyMax: 0 }, Laboratory: { enabled: true, percent: 100, buyMax: 0 }, Smithy: { enabled: true, percent: 100, buyMax: 0 }, Tribute: { enabled: true, percent: 100, buyMax: 0 }, SafeGateway: { enabled: true, mapCount: 3, zone: 0 } }, null, 'Jobs');
 	createSetting('RBuyBuildingsNew', 'AutoBuildings', 'Buys buildings in an efficient way. Also enables Vanilla AutoStorage if its off. ', 'boolean', 'true', null, 'Buildings');
-	createSetting('RMaxHut', 'Max Huts', 'Huts', 'value', '100', null, 'Buildings');
-	createSetting('RMaxHouse', 'Max Houses', 'Houses', 'value', '100', null, 'Buildings');
-	createSetting('RMaxMansion', 'Max Mansions', 'Mansions', 'value', '100', null, 'Buildings');
-	createSetting('RMaxHotel', 'Max Hotels', 'Hotels', 'value', '100', null, 'Buildings');
-	createSetting('RMaxResort', 'Max Resorts', 'Resorts', 'value', '100', null, 'Buildings');
-	createSetting('RMaxGateway', 'Max Gateways', 'Gateways', 'value', '25', null, 'Buildings');
-	createSetting('RMaxCollector', 'Max Collectors', 'recommend: -1', 'value', '-1', null, 'Buildings');
-	createSetting('RMaxTribute', 'Max Tributes', 'Advanced. recommend: -1 ', 'value', '-1', null, 'Buildings');
-	createSetting('rBuildingSpendPct', 'Building Spend pct', 'The percentage of total food you\'d like you spend on Buildings excluding Collectors which will always build at 100%.', 'value', '-1', null, 'Buildings');
-	createSetting('RTributeSpendingPct', 'Tribute Spending pct', 'The percentage of total food you\'d like you spend on Tributes.', 'value', '-1', null, 'Buildings');
 
 	//--------------------------------------------------------------------------------------------------------
 
@@ -484,6 +478,19 @@ function initializeAllSettings() {
 	createSetting('Rmapselection', 'Biome', 'Select which biome you\'d prefer to use.', 'dropdown', 'Mountain', radonBiome, 'Maps');
 	createSetting('rMapSpecial', 'Map Special', 'Select which Special to use. May bug out if you cannot afford selected. You\'ll be able to find a list of what each of them represents by mousing over the \'Special Modifier\' text in the games Maps window. ', 'dropdown', '0', radonSpecial, 'Maps');
 
+	createSetting('rUniqueMapSettingsArray', 'Unqiue Map Settings', 'Click to adjust settings.', 'mazDefaultArray', {
+		Dimension_of_Rage: { enabled: false, zone: 100, cell: 0 },
+		Prismatic_Palace: { enabled: false, zone: 100, cell: 0 },
+		Atlantrimp: { enabled: false, zone: 100, cell: 0 },
+		Melting_Point: { enabled: false, zone: 100, cell: 0 },
+		Frozen_Castle: { enabled: false, zone: 100, cell: 0 },
+
+		MP_Smithy: { enabled: false, value: 100 },
+		MP_Smithy_Daily: { enabled: false, value: 100 },
+		MP_Smithy_Daily_Shred: { enabled: false, value: 100 },
+		MP_Smithy_C3: { enabled: false, value: 100 },
+	}, null, 'Maps');
+	createSetting('rUniqueMapPopup', 'Unique Map Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("Unique Maps", " ", "UniqueMaps")', null, 'Maps');
 	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value.', 'value', '-1', null, 'Maps');
 
 	//Prismatic Palace
@@ -723,9 +730,6 @@ function initializeAllSettings() {
 	createSetting('rHypoSettings', 'HF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges');
 	createSetting('rHypoDefaultSettings', 'HF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '1,100,1,1', packrat: true, autostorage: true, active: true }, null, 'Challenges');
 	createSetting('rHypoZone', 'HF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Challenges');
-	createSetting('rHypoFrozenCastle', 'HF: Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Challenges');
-	createSetting('rHypoStorage', ['HF: Storage', 'HF: Storage', 'HF: Storage First'], 'Enable this setting to disable AutoStorage inside of Hypothermia when not at one of your designated Bonfire farming zones. Needs to be used in conjunction with the other Hypothermia settings otherwise it will break.<br><br>HF: Storage First<br>Will enable AutoStorage again after your first Bonfire farm. Make sure to only use this setting if you\'re confident your Bonfire farming settings won\'t allow for an accidental bonfire.', 'multitoggle', 0, null, 'Challenges');
-	createSetting('rHypoBuyPackrat', 'HF: Buy Packrat', 'Turn on to reset your packrat level to 3 when autoportaling into packrat and also purchase packrat after the Hypothermia challenge is completed. Useful setting for when running 3 or less packrat for an extra bonfire.', 'boolean', false, null, 'Challenges');
 
 	//--------------------------------------------------------------
 
@@ -1498,7 +1502,9 @@ function updateATVersion() {
 	//Setting Conversion!
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === ATversion) return;
 
-	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] !== ATversion) {
+	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust')
+		&& autoTrimpSettings["ATversion"] !== ATversion
+	) {
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '4.5.0') {
 			if (typeof (autoTrimpSettings.rTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rTimeFarmSettings.value[0].done === undefined) {
 				for (var y = 0; y < autoTrimpSettings.rTimeFarmSettings.value.length; y++) {
@@ -1621,6 +1627,41 @@ function updateATVersion() {
 			}
 			if (typeof (autoTrimpSettings.rHDFarmDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rHDFarmDefaultSettings.value.shredMapCap === undefined) {
 				autoTrimpSettings.rHDFarmDefaultSettings.value.shredMapCap = 100;
+				saveSettings();
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5') {
+			if (typeof (autoTrimpSettings.rUniqueMapSettingsArray.value) !== 'undefined') {
+
+				autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy.value = getPageSetting('Rmeltsmithy');
+				if (getPageSetting('Rmeltsmithy') > 0) autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy.enabled = true;
+
+				autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_C3.value = getPageSetting('c3meltingpoint');
+				if (getPageSetting('c3meltingpoint') > 0) autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_C3.enabled = true;
+
+				autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_Daily.value = getPageSetting('Rdmeltsmithy');
+				if (getPageSetting('Rdmeltsmithy') > 0) autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_Daily.enabled = true;
+
+				autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_Daily_Shred.value = getPageSetting('rdMeltSmithyShred');
+				if (getPageSetting('rdMeltSmithyShred') > 0) autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_Daily_Shred.enabled = true;
+
+				if (getPageSetting('RAtlantrimp')[1] !== undefined) {
+					autoTrimpSettings.rUniqueMapSettingsArray.value.Atlantrimp.enabled = true;
+					autoTrimpSettings.rUniqueMapSettingsArray.value.Atlantrimp.zone = getPageSetting('RAtlantrimp')[0];
+					autoTrimpSettings.rUniqueMapSettingsArray.value.Atlantrimp.cell = getPageSetting('RAtlantrimp')[1];
+				}
+				if (getPageSetting('RMeltingPoint')[1] !== undefined) {
+					autoTrimpSettings.rUniqueMapSettingsArray.value.Melting_Point.enabled = true;
+					autoTrimpSettings.rUniqueMapSettingsArray.value.Melting_Point.zone = getPageSetting('RMeltingPoint')[0];
+					autoTrimpSettings.rUniqueMapSettingsArray.value.Melting_Point.cell = getPageSetting('RMeltingPoint')[1];
+				}
+				if (getPageSetting('rFrozenCastle')[1] !== undefined) {
+					autoTrimpSettings.rUniqueMapSettingsArray.value.Frozen_Castle.enabled = true;
+					autoTrimpSettings.rUniqueMapSettingsArray.value.Frozen_Castle.zone = getPageSetting('rFrozenCastle')[0];
+					autoTrimpSettings.rUniqueMapSettingsArray.value.Frozen_Castle.cell = getPageSetting('rFrozenCastle')[1];
+				}
+
 				saveSettings();
 			}
 		}
@@ -1790,20 +1831,12 @@ function updateCustomButtons() {
 		debug("Theme change - AutoTrimps styles updated.");
 	}
 	lastTheme = game.options.menu.darkTheme.enabled;
-	function toggleElem(elem, showHide) {
-		var $item = document.getElementById(elem);
-		if ($item == null) return;
-		var state = showHide ? '' : 'none';
-		var stateParent = showHide ? 'inline-block' : 'none';
-		$item.style.display = state;
-		$item.parentNode.style.display = stateParent;
-	}
-	function turnOff(elem) {
-		toggleElem(elem, false);
-	}
-	function turnOn(elem) {
-		toggleElem(elem, true);
-	}
+
+	var highestZone = game.global.highestRadonLevelCleared;
+	var mayhemCompletions = game.global.mayhemCompletions;
+	var pandCompletions = game.global.pandCompletions;
+	var currentChallenge = game.global.challengeActive;
+	var displayAllSettings = getPageSetting('rDisplayAllSettings');
 
 	//Hide settings
 	//Radon
@@ -1821,7 +1854,7 @@ function updateCustomButtons() {
 		document.getElementById("tabRaiding").style.display = radonon ? "none" : "";
 	}
 	if (document.getElementById("tabDaily") != null) {
-		document.getElementById("tabDaily").style.display = radonon && (!getPageSetting('rDisplayAllSettings') && game.global.highestRadonLevelCleared < 29) ? "none" : "";
+		document.getElementById("tabDaily").style.display = radonon && (!displayAllSettings && highestZone < 29) ? "none" : "";
 	}
 	if (document.getElementById("tabSpire") != null) {
 		document.getElementById("tabSpire").style.display = radonon ? "none" : "";
@@ -1845,7 +1878,7 @@ function updateCustomButtons() {
 		document.getElementById("tabC2").style.display = radonon ? "none" : "";
 	}
 	if (document.getElementById("tabC3") != null) {
-		document.getElementById("tabC3").style.display = !radonon ? "none" : radonon && (!getPageSetting('rDisplayAllSettings') && game.global.highestRadonLevelCleared < 49) ? "none" : "";
+		document.getElementById("tabC3").style.display = !radonon ? "none" : radonon && (!displayAllSettings && highestZone < 49) ? "none" : "";
 	}
 	if (document.getElementById("tabChallenges") != null) {
 		document.getElementById("tabChallenges").style.display = !radonon ? "none" : "";
@@ -1983,9 +2016,9 @@ function updateCustomButtons() {
 
 	//C3
 	radonon ? turnOn('c3finishrun') : turnOff('c3finishrun');
-	radonon ? turnOn('c3meltingpoint') : turnOff('c3meltingpoint');
-	radonon && (getPageSetting('rDisplayAllSettings') || !autoBattle.oneTimers.Expanding_Tauntimp.owned) ? turnOn('c3buildings') : turnOff('c3buildings');
-	radonon && (getPageSetting('rDisplayAllSettings') || !autoBattle.oneTimers.Expanding_Tauntimp.owned) && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
+	turnOff('c3meltingpoint');
+	radonon && (displayAllSettings || !autoBattle.oneTimers.Expanding_Tauntimp.owned) ? turnOn('c3buildings') : turnOff('c3buildings');
+	radonon && (displayAllSettings || !autoBattle.oneTimers.Expanding_Tauntimp.owned) && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
 
 	//Buildings
@@ -2010,22 +2043,13 @@ function updateCustomButtons() {
 	(!radonon && !fuckbuilding) ? turnOn('WarpstationCoordBuy') : turnOff('WarpstationCoordBuy');
 	(!radonon && !fuckbuilding) ? turnOn('FirstGigastation') : turnOff('FirstGigastation');
 	(!radonon && !fuckbuilding) ? turnOn('DeltaGigastation') : turnOff('DeltaGigastation');
+	(!radonon && !fuckbuilding) ? turnOn("AutoGigas") : turnOff("AutoGigas");
+	(!radonon && !fuckbuilding && getPageSetting("AutoGigas") == true) ? turnOn("CustomTargetZone") : turnOff("CustomTargetZone");
+	(!radonon && !fuckbuilding && getPageSetting("AutoGigas") == true) ? turnOn("CustomDeltaFactor") : turnOff("CustomDeltaFactor");
 	(!radonon && !fuckbuilding) ? turnOn('WarpstationWall3') : turnOff('WarpstationWall3');
 
 	//RBuildings
-	radonon ? turnOn('RBuyBuildingsNew') : turnOff('RBuyBuildingsNew');
-	var buildingstoggle = getPageSetting('RBuyBuildingsNew');
-	radonon && buildingstoggle ? turnOn('RMaxHut') : turnOff('RMaxHut');
-	radonon && buildingstoggle ? turnOn('RMaxHouse') : turnOff('RMaxHouse');
-	radonon && buildingstoggle ? turnOn('RMaxMansion') : turnOff('RMaxMansion');
-	radonon && buildingstoggle ? turnOn('RMaxHotel') : turnOff('RMaxHotel');
-	radonon && buildingstoggle ? turnOn('RMaxResort') : turnOff('RMaxResort');
-	radonon && buildingstoggle ? turnOn('RMaxGateway') : turnOff('RMaxGateway');
-	radonon && buildingstoggle ? turnOn('RMaxCollector') : turnOff('RMaxCollector');
-	radonon && buildingstoggle ? turnOn('RMaxTribute') : turnOff('RMaxTribute');
-	radonon && buildingstoggle ? turnOn('rBuildingSpendPct') : turnOff('rBuildingSpendPct');
-	radonon && buildingstoggle ? turnOn('RTributeSpendingPct') : turnOff('RTributeSpendingPct');
-	radonon && buildingstoggle ? turnOn('RSpendTribute') : turnOff('RSpendTribute');
+	turnOff('RBuyBuildingsNew');
 
 	//Jobs
 	!radonon ? turnOn('BuyJobsNew') : turnOff('BuyJobsNew');
@@ -2106,6 +2130,8 @@ function updateCustomButtons() {
 	turnOff('Rmapselection');
 	//radonon ? turnOn('rMapSpecial') : 
 	turnOff('rMapSpecial');
+	turnOff('rUniqueMapSettingsArray');
+	radonon ? turnOn('rUniqueMapPopup') : turnOff('rUniqueMapPopup');
 
 	//Map Bonus  
 	radonon ? turnOn('rMapBonusPopup') : turnOff('rMapBonusPopup');
@@ -2120,18 +2146,18 @@ function updateCustomButtons() {
 	turnOff('rVoidMapDefaultSettings');
 	turnOff('rVoidMapZone');
 
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('Rmeltsmithy') : turnOff('Rmeltsmithy');
+	turnOff('Rmeltsmithy');
 	radonon ? turnOn('rMapRepeatCount') : turnOff('rMapRepeatCount');
 	radonon ? turnOn('automateSpireAssault') : turnOff('automateSpireAssault');
 
-	radonon && (getPageSetting('rDisplayAllSettings') || game.portal.Prismal.radLevel < 50) ? turnOn('Rprispalace') : turnOff('Rprispalace');
+	radonon && (displayAllSettings || game.portal.Prismal.radLevel < 50) ? turnOn('Rprispalace') : turnOff('Rprispalace');
 
 	//Atlantrimp
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 32) ? turnOn('RAtlantrimp') : turnOff('RAtlantrimp');
+	turnOff('RAtlantrimp');
 	//Melting Point
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('RMeltingPoint') : turnOff('RMeltingPoint');
+	turnOff('RMeltingPoint');
 	//Frozen Castle
-	radonon && game.global.stringVersion != '5.5.1' && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) ? turnOn('rFrozenCastle') : turnOff('rFrozenCastle');
+	turnOff('rFrozenCastle');
 
 	//Tribute Farming
 	radonon ? turnOn('rTributeFarmPopup') : turnOff('rTributeFarmPopup');
@@ -2152,7 +2178,7 @@ function updateCustomButtons() {
 	turnOff('rMapFarmZone');
 
 	//Smithy Farming  
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 4) ? turnOn('rSmithyFarmPopup') : turnOff('rSmithyFarmPopup');
+	radonon && (displayAllSettings || highestZone >= 4) ? turnOn('rSmithyFarmPopup') : turnOff('rSmithyFarmPopup');
 	turnOff('rSmithyFarmSettings');
 	turnOff('rSmithyFarmDefaultSettings');
 	turnOff('rSmithyFarmZone');
@@ -2165,7 +2191,7 @@ function updateCustomButtons() {
 	turnOff('rHDFarmZone');
 
 	//Worshippers 
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 49) ? turnOn('rWorshipperFarmPopup') : turnOff('rWorshipperFarmPopup');
+	radonon && (displayAllSettings || highestZone >= 49) ? turnOn('rWorshipperFarmPopup') : turnOff('rWorshipperFarmPopup');
 	turnOff('rWorshipperFarmSettings');
 	turnOff('rWorshipperFarmDefaultSettings');
 	turnOff('rWorshipperFarmZone');
@@ -2255,17 +2281,17 @@ function updateCustomButtons() {
 	//RCombat
 	radonon ? turnOn('rManageEquality') : turnOff('rManageEquality');
 	radonon && getPageSetting('rManageEquality') < 2 ? turnOn('Rcalcmaxequality') : turnOff('Rcalcmaxequality');
-	radonon && (getPageSetting('rDisplayAllSettings') || getPageSetting('rManageEquality') === 2) ? turnOn('rCalcGammaBurst') : turnOff('rCalcGammaBurst');
-	radonon && (getPageSetting('rDisplayAllSettings') || (!game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned)) ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
+	radonon && (displayAllSettings || getPageSetting('rManageEquality') === 2) ? turnOn('rCalcGammaBurst') : turnOff('rCalcGammaBurst');
+	radonon && (displayAllSettings || (!game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned)) ? turnOn('Rcalcfrenzy') : turnOff('Rcalcfrenzy');
 
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared > 200) ? turnOn('rMutationCalc') : turnOff('rMutationCalc');
+	radonon && (displayAllSettings || highestZone > 200) ? turnOn('rMutationCalc') : turnOff('rMutationCalc');
 
 	//Challenges
 
 	//Hide Challenges
 	radonon ? turnOn("rHideChallenge") : turnOff("rHideChallenge");
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 89) && getPageSetting('rHideChallenge') ? turnOn("rHideArchaeology") : turnOff("rHideArchaeology");
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 119) && getPageSetting('rHideChallenge') ? turnOn("rHideExterminate") : turnOff("rHideExterminate");
+	radonon && (displayAllSettings || highestZone >= 89) && getPageSetting('rHideChallenge') ? turnOn("rHideArchaeology") : turnOff("rHideArchaeology");
+	radonon && (displayAllSettings || highestZone >= 119) && getPageSetting('rHideChallenge') ? turnOn("rHideExterminate") : turnOff("rHideExterminate");
 
 	//Unbalance
 	radonon ? turnOn('rUnbalance') : turnOff('rUnbalance');
@@ -2274,65 +2300,65 @@ function updateCustomButtons() {
 	radonon && getPageSetting('rUnbalance') ? turnOn('rUnbalanceImprobDestack') : turnOff('rUnbalanceImprobDestack');
 
 	//Trappapalooza
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) ? turnOn('rTrappa') : turnOff('rTrappa');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
+	radonon && (displayAllSettings || highestZone >= 59) ? turnOn('rTrappa') : turnOff('rTrappa');
+	radonon && (displayAllSettings || highestZone >= 59) && getPageSetting('rTrappa') ? turnOn('rTrappaCoords') : turnOff('rTrappaCoords');
 	//Quest
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) ? turnOn('rQuest') : turnOff('rQuest');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 59) && getPageSetting('rQuest') ? turnOn('rQuestSmithyZone') : turnOff('rQuestSmithyZone');
+	radonon && (displayAllSettings || highestZone >= 59) ? turnOn('rQuest') : turnOff('rQuest');
+	radonon && (displayAllSettings || highestZone >= 59) && getPageSetting('rQuest') ? turnOn('rQuestSmithyZone') : turnOff('rQuestSmithyZone');
 	//Quagmire
 	turnOff('rQuagOn');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 69) ? turnOn('rQuagPopup') : turnOff('rQuagPopup');
+	radonon && (displayAllSettings || highestZone >= 69) ? turnOn('rQuagPopup') : turnOff('rQuagPopup');
 	turnOff('rQuagSettings');
 	turnOff('rQuagDefaultSettings');
 	turnOff('rQuagZone');
 
 	//Archaeology
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 89) && !getPageSetting('rHideArchaeology') ? turnOn('Rarchon') : turnOff('Rarchon');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 89) && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring1') : turnOff('Rarchstring1');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 89) && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring2') : turnOff('Rarchstring2');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 89) && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring3') : turnOff('Rarchstring3');
+	radonon && (displayAllSettings || highestZone >= 89) && !getPageSetting('rHideArchaeology') ? turnOn('Rarchon') : turnOff('Rarchon');
+	radonon && (displayAllSettings || highestZone >= 89) && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring1') : turnOff('Rarchstring1');
+	radonon && (displayAllSettings || highestZone >= 89) && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring2') : turnOff('Rarchstring2');
+	radonon && (displayAllSettings || highestZone >= 89) && getPageSetting('Rarchon') && !getPageSetting('rHideArchaeology') ? turnOn('Rarchstring3') : turnOff('Rarchstring3');
 
 	//Mayhem
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 99 && game.global.mayhemCompletions < 25) || game.global.challengeActive === 'Mayhem') ? turnOn('rMayhem') : turnOff('rMayhem');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 99 && game.global.mayhemCompletions < 25) || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemDestack') : turnOff('rMayhemDestack');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 99 && game.global.mayhemCompletions < 25) || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemZone') : turnOff('rMayhemZone');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 99 && game.global.mayhemCompletions < 25) || game.global.challengeActive === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemMapIncrease') : turnOff('rMayhemMapIncrease');
+	radonon && (displayAllSettings || (highestZone >= 99 && mayhemCompletions < 25) || currentChallenge === 'Mayhem') ? turnOn('rMayhem') : turnOff('rMayhem');
+	radonon && (displayAllSettings || (highestZone >= 99 && mayhemCompletions < 25) || currentChallenge === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemDestack') : turnOff('rMayhemDestack');
+	radonon && (displayAllSettings || (highestZone >= 99 && mayhemCompletions < 25) || currentChallenge === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemZone') : turnOff('rMayhemZone');
+	radonon && (displayAllSettings || (highestZone >= 99 && mayhemCompletions < 25) || currentChallenge === 'Mayhem') && getPageSetting('rMayhem') ? turnOn('rMayhemMapIncrease') : turnOff('rMayhemMapIncrease');
 
 
 	//Storm
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) ? turnOn('Rstormon') : turnOff('Rstormon');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('rStormZone') : turnOff('rStormZone');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 104) && getPageSetting('Rstormon') ? turnOn('rStormStacks') : turnOff('rStormStacks');
+	radonon && (displayAllSettings || highestZone >= 104) ? turnOn('Rstormon') : turnOff('Rstormon');
+	radonon && (displayAllSettings || highestZone >= 104) && getPageSetting('Rstormon') ? turnOn('rStormZone') : turnOff('rStormZone');
+	radonon && (displayAllSettings || highestZone >= 104) && getPageSetting('Rstormon') ? turnOn('rStormStacks') : turnOff('rStormStacks');
 
 	//Insanity
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 109) ? turnOn('rInsanityPopup') : turnOff('rInsanityPopup');
+	radonon && (displayAllSettings || highestZone >= 109) ? turnOn('rInsanityPopup') : turnOff('rInsanityPopup');
 	turnOff('rInsanitySettings');
 	turnOff('rInsanityDefaultSettings');
 	turnOff('rInsanityZone');
 
 	//Exterminate
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 119) && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateon') : turnOff('Rexterminateon');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 119) && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminatecalc') : turnOff('Rexterminatecalc');
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 119) && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateeq') : turnOff('Rexterminateeq');
+	radonon && (displayAllSettings || highestZone >= 119) && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateon') : turnOff('Rexterminateon');
+	radonon && (displayAllSettings || highestZone >= 119) && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminatecalc') : turnOff('Rexterminatecalc');
+	radonon && (displayAllSettings || highestZone >= 119) && getPageSetting('Rexterminateon') && !getPageSetting('rHideExterminate') ? turnOn('Rexterminateeq') : turnOff('Rexterminateeq');
 
 	//Pandemonium
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') ? turnOn('RPandemoniumOn') : turnOff('RPandemoniumOn');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumZone') : turnOff('RPandemoniumZone');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip') : turnOff('RPandemoniumAutoEquip');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RPandemoniumAEZone') : turnOff('RPandemoniumAEZone');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('PandemoniumFarmLevel') : turnOff('PandemoniumFarmLevel');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumJestZone') : turnOff('RPandemoniumJestZone');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') ? turnOn('RPandemoniumOn') : turnOff('RPandemoniumOn');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumZone') : turnOff('RPandemoniumZone');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip') : turnOff('RPandemoniumAutoEquip');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RPandemoniumAEZone') : turnOff('RPandemoniumAEZone');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('PandemoniumFarmLevel') : turnOff('PandemoniumFarmLevel');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumJestZone') : turnOff('RPandemoniumJestZone');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
 
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('rPandRespec') : turnOff('rPandRespec');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('rPandRespec') ? turnOn('rPandRespecZone') : turnOff('rPandRespecZone');
-	radonon && (getPageSetting('rDisplayAllSettings') || (game.global.highestRadonLevelCleared >= 149 && game.global.pandCompletions < 25) || game.global.challengeActive === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('rPandRespec') : turnOff('rPandRespec');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('rPandRespec') ? turnOn('rPandRespecZone') : turnOff('rPandRespecZone');
+	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumMP') : turnOff('RPandemoniumMP');
 
 	//Alchemy
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 154) ? turnOn('rAlchPopup') : turnOff('rAlchPopup');
+	radonon && (displayAllSettings || highestZone >= 154) ? turnOn('rAlchPopup') : turnOff('rAlchPopup');
 	turnOff('rAlchSettings');
 	turnOff('rAlchDefaultSettings');
 	turnOff('rAlchZone');
@@ -2344,13 +2370,10 @@ function updateCustomButtons() {
 	radonon ? turnOn('rSmithless') : turnOff('rSmithless');
 
 	//Hypothermia 
-	radonon && (getPageSetting('rDisplayAllSettings') || game.global.highestRadonLevelCleared >= 174) ? turnOn('rHypoPopup') : turnOff('rHypoPopup');
+	radonon && (displayAllSettings || highestZone >= 174) ? turnOn('rHypoPopup') : turnOff('rHypoPopup');
 	turnOff('rHypoSettings');
 	turnOff('rHypoDefaultSettings');
 	turnOff('rHypoZone');
-	turnOff('rHypoFrozenCastle');
-	turnOff('rHypoStorage');
-	turnOff('rHypoBuyPackrat');
 
 	//Scryer
 	!radonon ? turnOn('UseScryerStance') : turnOff('UseScryerStance');
@@ -2574,6 +2597,7 @@ function updateCustomButtons() {
 		var item = autoTrimpSettings[setting];
 		if (item.type == 'value' || item.type == 'valueNegative' || item.type == 'multitoggle' || item.type == 'multiValue' || item.type == 'textValue') {
 			var elem = document.getElementById(item.id);
+			if (elem.parentNode.style.display === 'none') continue;
 			if (elem != null) {
 				if (item.type == 'multitoggle')
 					elem.innerHTML = item.name[item.value];
@@ -2591,8 +2615,9 @@ function updateCustomButtons() {
 					else
 						elem.innerHTML = item.name + ': ' + item.value.substring(0, 21);
 				}
-				else if (item.value > -1 || item.type == 'valueNegative')
+				else if (item.value > -1 || item.type == 'valueNegative') {
 					elem.innerHTML = item.name + ': ' + prettify(item.value);
+				}
 				else
 					elem.innerHTML = item.name + ': ' + "<span class='icomoon icon-infinity'></span>";
 			}
@@ -2701,25 +2726,17 @@ autoEquipColumn.replaceChild(autoEquipContainer, document.getElementById('equipm
 function getDailyHeHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalHeliumEarned - (game.global.heliumLeftover + game.resources.helium.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily He/Hr: " + b.toFixed(3) + "%" } return a }
 function getDailyRnHrStats() { var a = ""; if ("Daily" == game.global.challengeActive) { var b = game.stats.heliumHour.value() / (game.global.totalRadonEarned - (game.global.radonLeftover + game.resources.radon.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily Rn/Hr: " + b.toFixed(3) + "%" } return a }
 function settingsProfileMakeGUI() { }
+
 function toggleAutoMaps() {
-	if (game.global.universe == 1) {
-		if (getPageSetting('AutoMaps')) {
-			setPageSetting('AutoMaps', 0);
-		}
-		else {
-			setPageSetting('AutoMaps', 1);
-		}
-		document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings.AutoMaps.value);
-	}
-	if (game.global.universe == 2) {
-		if (getPageSetting('RAutoMaps')) {
-			setPageSetting('RAutoMaps', 0);
-		}
-		else {
-			setPageSetting('RAutoMaps', 1);
-		}
-		document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings.RAutoMaps.value);
-	}
+	const autoMaps = game.global.universe === 2 ? 'RAutoMaps' : 'AutoMaps';
+
+	if (getPageSetting(autoMaps))
+		setPageSetting(autoMaps, 0);
+	else
+		setPageSetting(autoMaps, 1);
+
+	document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[autoMaps].value);
+
 	saveSettings();
 }
 

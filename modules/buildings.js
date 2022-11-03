@@ -4,8 +4,11 @@ MODULES["buildings"].storageLowlvlCutoff1 = 0.7;
 MODULES["buildings"].storageLowlvlCutoff2 = 0.5;
 
 //Helium
-
 var housingList = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector', 'Warpstation'];
+
+function needGymystic() {
+	return game.upgrades['Gymystic'].allowed - game.upgrades['Gymystic'].done > 0;
+}
 
 function safeBuyBuilding(building) {
 	if (isBuildingInQueue(building))
@@ -13,9 +16,8 @@ function safeBuyBuilding(building) {
 	if (game.buildings[building].locked)
 		return false;
 	var oldBuy = preBuy2();
-	var decaChange = game.global.stringVersion < '5.7.0' ? game.talents.deciBuild.purchased : bwRewardUnlocked('DecaBuild');
 
-	if (decaChange) {
+	if (bwRewardUnlocked("DecaBuild")) {
 		game.global.buyAmt = 10;
 		if (!canAffordBuilding(building)) {
 			game.global.buyAmt = 2;
@@ -52,7 +54,7 @@ function safeBuyBuilding(building) {
 		postBuy2(oldBuy);
 		return;
 	}
-	debug('Building ' + building, "buildings", '*hammer2');
+	if (building != 'Trap') debug('Building ' + building, "buildings", '*hammer2');
 	if (!game.buildings[building].locked && canAffordBuilding(building)) {
 		buyBuilding(building, true, true);
 	}
@@ -61,41 +63,45 @@ function safeBuyBuilding(building) {
 }
 
 function buyFoodEfficientHousing() {
-	var foodHousing = ["Hut", "House", "Mansion", "Hotel", "Resort"];
-	var unlockedHousing = [];
-	for (var house in foodHousing) {
-		if (game.buildings[foodHousing[house]].locked === 0) {
-			unlockedHousing.push(foodHousing[house]);
-		}
+	//Init
+	var ignoresLimit = getPageSetting('FoodEfficiencyIgnoresMax')
+	var unlockedHousing = ["Hut", "House", "Mansion", "Hotel", "Resort"].filter(b => !game.buildings[b].locked);
+
+	//Resets Border Color
+	unlockedHousing.forEach(b => document.getElementById(b).style.border = "1px solid #FFFFFF")
+
+	//Checks for Limits
+	if (!ignoresLimit) {
+		unlockedHousing = unlockedHousing.filter(b => {
+			//Filter out buildings that are past the limits
+			if (game.buildings[b].owned < getPageSetting('Max' + b) || getPageSetting('Max' + b) < 1)
+				return true;
+
+			//But paints their border before removing them
+			document.getElementById(b).style.border = "1px solid orange"
+			return false
+		})
 	}
-	var buildorder = [];
-	for (var house in unlockedHousing) {
-		var building = game.buildings[unlockedHousing[house]];
-		var cost = getBuildingItemPrice(building, "food", false, 1);
-		var ratio = cost / building.increase.by;
-		buildorder.push({
-			'name': unlockedHousing[house],
-			'ratio': ratio
-		});
-		document.getElementById(unlockedHousing[house]).style.border = "1px solid #FFFFFF";
-	}
-	buildorder.sort(function (a, b) {
-		return a.ratio - b.ratio;
-	});
-	var bestfoodBuilding = null;
-	var bb = buildorder[0];
-	var max = getPageSetting('Max' + bb.name);
-	if (game.buildings[bb.name].owned < max || max == -1) {
-		bestfoodBuilding = bb.name;
-	}
-	if (bestfoodBuilding) {
-		document.getElementById(bestfoodBuilding).style.border = "1px solid #00CC01";
-		safeBuyBuilding(bestfoodBuilding);
+
+	//Determines Food Efficiency for each housing
+	var buildOrder = unlockedHousing.map(b => ({
+		'name': b,
+		'ratio': getBuildingItemPrice(game.buildings[b], "food", false, 1) / game.buildings[b].increase.by
+	}));
+
+	//Grabs the most Food Efficient Housing
+	if (buildOrder.length == 0) return;
+	bestFoodBuilding = buildOrder.reduce((best, current) => current.ratio < best.ratio ? current : best)
+
+	//If Food Efficiency Ignores Limit is enabled, then it only buy Huts and Houses here
+	if (!ignoresLimit || ["Hut", "House"].includes(bestFoodBuilding.name)) {
+		document.getElementById(bestFoodBuilding.name).style.border = "1px solid #00CC01";
+		safeBuyBuilding(bestFoodBuilding.name);
 	}
 }
 
 function buyGemEfficientHousing() {
-	var gemHousing = ["Hotel", "Resort", "Gateway", "Collector", "Warpstation"];
+	var gemHousing = ["Mansion", "Hotel", "Resort", "Gateway", "Collector", "Warpstation"];
 	var unlockedHousing = [];
 	for (var house in gemHousing) {
 		if (game.buildings[gemHousing[house]].locked === 0) {
@@ -107,33 +113,42 @@ function buyGemEfficientHousing() {
 		var building = game.buildings[unlockedHousing[house]];
 		var cost = getBuildingItemPrice(building, "gems", false, 1);
 		var ratio = cost / building.increase.by;
-		if (unlockedHousing[house] == "Gateway" && !canAffordBuilding('Gateway'))
-			continue;
 		obj[unlockedHousing[house]] = ratio;
 		document.getElementById(unlockedHousing[house]).style.border = "1px solid #FFFFFF";
 	}
 	var keysSorted = Object.keys(obj).sort(function (a, b) {
 		return obj[a] - obj[b];
 	});
-	bestBuilding = null;
+	var bestGemBuilding = null;
 	for (var best in keysSorted) {
 		var max = getPageSetting('Max' + keysSorted[best]);
 		if (max === false) max = -1;
-		if (game.buildings[keysSorted[best]].owned < max || max == -1) {
-			bestBuilding = keysSorted[best];
-			document.getElementById(bestBuilding).style.border = "1px solid #00CC00";
+		if (game.buildings[keysSorted[best]].owned < max || max == -1 || (getPageSetting('GemEfficiencyIgnoresMax') && keysSorted[best] != "Gateway")) {
+			bestGemBuilding = keysSorted[best];
+			document.getElementById(bestGemBuilding).style.border = "1px solid #00CC00";
+
+			//Gateway Wall
+			if (bestGemBuilding == "Gateway" && getPageSetting('GatewayWall') > 1) {
+				if (getBuildingItemPrice(game.buildings.Gateway, "fragments", false, 1) > (game.resources.fragments.owned / getPageSetting('GatewayWall'))) {
+					document.getElementById(bestGemBuilding).style.border = "1px solid orange";
+					bestGemBuilding = null;
+					continue;
+				}
+			}
+
 			var skipWarp = false;
-			if (getPageSetting('WarpstationCap') && bestBuilding == "Warpstation") {
-				if (game.buildings.Warpstation.owned >= (Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation')))
-					skipWarp = true;
+			if (getPageSetting('WarpstationCap') && bestGemBuilding == "Warpstation") {
+				var firstGigaOK = MODULES["upgrades"].autoGigas == false || game.upgrades.Gigastation.done > 0;
+				var gigaCapped = game.buildings.Warpstation.owned >= (Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation'))
+				if (firstGigaOK && gigaCapped) skipWarp = true;
 			}
 			var warpwallpct = getPageSetting('WarpstationWall3');
-			if (warpwallpct > 1 && bestBuilding == "Warpstation") {
+			if (warpwallpct > 1 && bestGemBuilding == "Warpstation") {
 				if (getBuildingItemPrice(game.buildings.Warpstation, "metal", false, 1) * Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level) > (game.resources.metal.owned / warpwallpct))
 					skipWarp = true;
 			}
 			if (skipWarp)
-				bestBuilding = null;
+				bestGemBuilding = null;
 			var getcoord = getPageSetting('WarpstationCoordBuy');
 			if (getcoord && skipWarp) {
 				var toTip = game.buildings.Warpstation;
@@ -148,20 +163,20 @@ function buyGemEfficientHousing() {
 						if (game.portal.Carpentry.level && toTip.increase.what == "trimps.max") increase *= Math.pow(1.1, game.portal.Carpentry.level);
 						if (game.portal.Carpentry_II.level && toTip.increase.what == "trimps.max") increase *= (1 + (game.portal.Carpentry_II.modifier * game.portal.Carpentry_II.level));
 						if (amtToGo < increase * howMany)
-							bestBuilding = "Warpstation";
+							bestGemBuilding = "Warpstation";
 					}
 				}
 			}
 			break;
 		}
 	}
-	if (bestBuilding) {
-		safeBuyBuilding(bestBuilding);
+	if (bestGemBuilding) {
+		bestBuilding = bestGemBuilding
+		safeBuyBuilding(bestGemBuilding);
 	}
 }
 
 function buyBuildings() {
-	if ((game.jobs.Miner.locked && game.global.challengeActive != 'Metal') || (game.jobs.Scientist.locked && game.global.challengeActive != "Scientist")) return;
 	var customVars = MODULES["buildings"];
 	var oldBuy = preBuy2();
 	var hidebuild = (getPageSetting('BuyBuildingsNew') === 0 && getPageSetting('hidebuildings') == true);
@@ -177,15 +192,37 @@ function buyBuildings() {
 	//Gyms:
 	if (!game.buildings.Gym.locked && (getPageSetting('MaxGym') > game.buildings.Gym.owned || getPageSetting('MaxGym') == -1)) {
 		var skipGym = false;
+
+		//Dynamic Gyms
 		if (getPageSetting('DynamicGyms')) {
-			if (!game.global.preMapsActive && calcOurBlock(true) > calcBadGuyDmg(getCurrentEnemy(), null, true, true))
-				skipGym = true;
+			//Target Zone
+			var targetZone = game.global.world;
+
+			//Enemy stats
+			var block = calcOurBlock() / (game.global.brokenPlanet ? 2 : 1);
+			var pierce = game.global.brokenPlanet ? (getPierceAmt() * (game.global.formation == 3 ? 2 : 1)) : 0;
+			var nextGym = game.upgrades.Gymystic.modifier + Math.max(0, game.upgrades.Gymystic.done - 1) / 100;
+			var currentEnemyDamageOK = block > nextGym * calcSpecificEnemyAttack();
+			var zoneEnemyDamageOK = block > calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world, 90, 'Snimp', 1.0), true, true) * (1 - pierce);
+
+			//Challenge stats
+			var moreBlockThanHealth = block >= nextGym * calcOurHealth(false);
+			var crushedOK = game.global.challengeActive != "Crushed";
+			var explosiveOK = game.global.challengeActive != "Daily" || typeof game.global.dailyChallenge.explosive == "undefined";
+			var challengeOK = moreBlockThanHealth || crushedOK && explosiveOK;
+
+			//Stop buying Gyms if we already have enough block for our current enemy and also a C99 Snimp
+			if (currentEnemyDamageOK && zoneEnemyDamageOK && challengeOK) skipGym = true;
 		}
+
+		//Gym Wall
 		var gymwallpct = getPageSetting('GymWall');
 		if (gymwallpct > 1) {
-			if (getBuildingItemPrice(game.buildings.Gym, "wood", false, 1) * Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level) > (game.resources.wood.owned / gymwallpct))
+			if (getBuildingItemPrice(game.buildings.Gym, "wood", false, 1) * Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level)
+				> (game.resources.wood.owned / gymwallpct))
 				skipGym = true;
 		}
+
 		//ShieldBlock cost Effectiveness:
 		if (game.equipment['Shield'].blockNow) {
 			var gymEff = evaluateEquipmentEfficiency('Gym');
@@ -193,17 +230,27 @@ function buyBuildings() {
 			if ((gymEff.Wall) || (gymEff.Factor <= shieldEff.Factor && !gymEff.Wall))
 				skipGym = true;
 		}
-		if (needGymystic) skipGym = true;
-		if (!skipGym)
-			safeBuyBuilding('Gym');
-		needGymystic = false;
+
+		//Buy Gym
+		if (!((game.upgrades['Gymystic'].allowed - game.upgrades['Gymystic'].done) > 0) && !skipGym) safeBuyBuilding('Gym');
 	}
+
 	//Tributes:
-	if (!game.buildings.Tribute.locked && !hidebuild && (getPageSetting('MaxTribute') > game.buildings.Tribute.owned || getPageSetting('MaxTribute') == -1)) {
+	if (!game.buildings.Tribute.locked && !hidebuild && (getPageSetting('MaxTribute') > game.buildings.Tribute.owned || getPageSetting('MaxTribute') == -1))
 		safeBuyBuilding('Tribute');
-	}
+
+	//Nurseries Init
+	var nurseryZoneOk = game.global.world >= getPageSetting('NoNurseriesUntil');
+	var maxNurseryOk = getPageSetting('MaxNursery') < 0 || game.buildings.Nursery.owned < getPageSetting('MaxNursery');
+
+	var spireNurseryActive = game.global.challengeActive != "Daily" && (game.global.world > 200 && isActiveSpireAT() || game.global.world <= 200 && getPageSetting('IgnoreSpiresUntil') <= 200);
+	var nurseryPreSpire = spireNurseryActive && game.buildings.Nursery.owned < getPageSetting('PreSpireNurseries');
+
+	var dailySpireNurseryActive = game.global.challengeActive == "Daily" && (disActiveSpireAT() || game.global.world <= 200 && getPageSetting('dIgnoreSpiresUntil') <= 200);
+	var dailyNurseryPreSpire = dailySpireNurseryActive && game.buildings.Nursery.owned < getPageSetting('dPreSpireNurseries');
+
 	//Nurseries
-	if (game.buildings.Nursery.locked == 0 && (!hidebuild && (game.global.world >= getPageSetting('NoNurseriesUntil') || getPageSetting('NoNurseriesUntil') < 1) && (getPageSetting('MaxNursery') > game.buildings.Nursery.owned || getPageSetting('MaxNursery') == -1)) || (game.global.challengeActive != "Daily" && getPageSetting('PreSpireNurseries') > game.buildings.Nursery.owned && isActiveSpireAT()) || (game.global.challengeActive == "Daily" && getPageSetting('dPreSpireNurseries') > game.buildings.Nursery.owned && disActiveSpireAT())) {
+	if (game.buildings.Nursery.locked == 0 && !hidebuild && (nurseryZoneOk && maxNurseryOk || nurseryPreSpire || dailyNurseryPreSpire)) {
 		safeBuyBuilding('Nursery');
 	}
 
@@ -288,7 +335,7 @@ function mostEfficientHousing() {
 	// Which houses we actually want to check
 	var housingTargets = [];
 
-	if (rTributeFarming && typeof (rTrFbuyBuildings) !== 'undefined') {
+	if (rCurrentMap === 'rTributeFarm' && typeof (rTrFbuyBuildings) !== 'undefined') {
 		if (!rTrFbuyBuildings && getAutoStructureSetting().enabled && document.getElementById('autoStructureBtn').classList.contains("enabled"))
 			toggleAutoStructure();
 	}
@@ -317,7 +364,7 @@ function mostEfficientHousing() {
 		if (!autoTrimpSettings.rBuildingSettingsArray.value[housing].enabled) dontbuy.push(housing);
 		if (game.global.challengeActive === 'Quest' && questcheck() === 4 && housing === 'Collector') dontbuy.push(housing);
 		if (game.global.challengeActive == 'Hypothermia' && (housing !== 'Collector' || housing !== 'Gateway') && game.challenges.Hypothermia.bonfires > 0 && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
-		if (rTributeFarming && typeof (rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings && housing !== 'Collector') dontbuy.push(housing);
+		if (rCurrentMap === 'rTributeFarm' && typeof (rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings && housing !== 'Collector') dontbuy.push(housing);
 		for (var resource in game.buildings[housing].cost) {
 			// Get production time for that resource
 			var baseCost = game.buildings[housing].cost[resource][0];
@@ -409,7 +456,7 @@ function RbuyBuildings() {
 				smithiesBoughtThisZone = game.global.world;
 			}
 		}
-		else if ((game.global.challengeActive !== 'Quest' || !getPageSetting('rQuest')) && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax) > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, false, autoTrimpSettings.rBuildingSettingsArray.value.Smithy.percent) || rShouldSmithyFarm)) {
+		else if ((game.global.challengeActive !== 'Quest' || !getPageSetting('rQuest')) && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax) > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, false, autoTrimpSettings.rBuildingSettingsArray.value.Smithy.percent) || rCurrentMap === 'rSmithyFarm')) {
 			buyBuilding("Smithy", true, true, 1);
 		}
 	}
@@ -428,7 +475,7 @@ function RbuyBuildings() {
 		buyBuilding('Microchip', true, true, 1);
 	}
 
-	if (!rTributeFarming) {
+	if (rCurrentMap !== 'rTributeFarm') {
 		if (getAutoStructureSetting().enabled && !document.getElementById('autoStructureBtn').classList.contains("enabled")) {
 			document.getElementById('autoStructureBtn').classList.add("enabled")
 			autoTrimpSettings.rAutoStructureSetting.value = true;
@@ -454,10 +501,10 @@ function RbuyBuildings() {
 		if (runningC3 || (!game.global.autoStorage && game.global.challengeActive === 'Hypothermia' && (housing !== 'Collector' && housing !== 'Gateway'))) buildingspending = 1;
 		var maxCanAfford = housing !== null ? calculateMaxAffordLocal(game.buildings[housing], true, false, false, housingAmt, buildingspending) : false;
 		if (((housing != null && canAffordBuilding(housing)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt) || runningC3))) {
-			if (rShouldSmithyFarm) return;
+			if (rCurrentMap === 'rSmithyFarm') return;
 			else if (runningC3)
 				buyBuilding(housing, true, true, 999);
-			else if (rTributeFarming && typeof (rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings) {
+			else if (rCurrentMap === 'rTributeFarm' && rMapSettings.buyBuildings) {
 				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && getAutoStructureSetting().enabled)
 					toggleAutoStructure();
 				return;
@@ -475,7 +522,7 @@ function RbuyBuildings() {
 
 function rBuyTributes() {
 	var affordableMets = 0;
-	if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rShouldTributeFarm || rShouldSmithyGemFarm) {
+	if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rMapSettings.shouldTribute || (rCurrentMap === 'rSmithyFarm' && rMapSettings.farmGoal.includes('gems'))) {
 		affordableMets = getMaxAffordable(
 			game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
 			game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100),
@@ -484,13 +531,13 @@ function rBuyTributes() {
 		);
 	}
 	//Won't buy Tributes if they're locked or if a meteorologist can be purchased as that should always be the more efficient purchase
-	if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(affordableMets > 0 && !game.jobs.Meteorologist.locked && !rShouldTributeFarm))) {
-		if ((!autoTrimpSettings.rBuildingSettingsArray.value.Tribute.enabled || rShouldMetFarm || rShouldWorshipperFarm) && !rShouldTributeFarm) return;
+	if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(affordableMets > 0 && !game.jobs.Meteorologist.locked && !rMapSettings.shouldTribute))) {
+		if ((!autoTrimpSettings.rBuildingSettingsArray.value.Tribute.enabled || rMapSettings.shouldMeteorologist || rCurrentMap === 'rWorshipperFarm') && !rMapSettings.shouldTribute) return;
 		//Spend 100% of food on Tributes if Tribute Farming otherwise uses the value in RTributeSpendingPct.
 		var rTributeSpendPct = typeof (rTrFTributes) !== 'undefined' && rTrFTributes > 0 ? 1 : autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent > 0 ? autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent / 100 : 1;
 		var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned * rTributeSpendPct), 1.05, true);
 		maxTributes = autoTrimpSettings.rBuildingSettingsArray.value.Tribute.buyMax === 0 ? Infinity : typeof (rTrFTributes) !== 'undefined' && rTrFTributes > autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax ? rTrFTributes : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax;
-		if (rShouldSmithyGemFarm || rShouldQuest === 4) {
+		if ((rCurrentMap === 'rSmithyFarm' && rMapSettings.farmGoal.includes('gems')) || rShouldQuest === 4) {
 			maxTributes = Infinity;
 			rTributeSpendPct = 1;
 		}

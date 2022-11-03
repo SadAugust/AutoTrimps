@@ -565,15 +565,15 @@ function RbuyJobs() {
 	}
 
 	//Meteorologists
-	if ((autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rShouldMetFarm) && !rBSRunningAtlantrimp) {
+	if ((autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rMapSettings.shouldMeteorologist) && !rBSRunningAtlantrimp) {
 		var affordableMets = getMaxAffordable(
 			game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
-			game.resources.food.owned * (rShouldMetFarm ? 1 : (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100)),
+			game.resources.food.owned * (rMapSettings.shouldMeteorologist ? 1 : (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100)),
 			game.jobs.Meteorologist.cost.food[1],
 			true
 		);
-		affordableMets = rShouldMetFarm && typeof (rTrFAtlantrimp) !== 'undefined' && rTrFAtlantrimp === true && game.mapUnlocks.AncientTreasure.canRunOnce && !(game.resources.food.owned > (typeof (totalTrFCost) === 'undefined' ? 0 : totalTrFCost)) ? 0 : affordableMets;
-		if (affordableMets > 0 && !game.jobs.Meteorologist.locked && !rShouldTributeFarm) {
+		affordableMets = rMapSettings.shouldMeteorologist && rMapSettings.runAtlantrimp && game.mapUnlocks.AncientTreasure.canRunOnce && !(game.resources.food.owned > (typeof (totalTrFCost) === 'undefined' ? 0 : totalTrFCost)) ? 0 : affordableMets;
+		if (affordableMets > 0 && !game.jobs.Meteorologist.locked && !rMapSettings.shouldTribute) {
 			var buyAmountStoreMet = game.global.buyAmt;
 			game.global.buyAmt = affordableMets;
 			if (firing) fireModeLocal();
@@ -585,8 +585,8 @@ function RbuyJobs() {
 	}
 
 	//Ships
-	if ((autoTrimpSettings.rJobSettingsArray.value.Worshipper.enabled || rShouldWorshipperFarm) && !rBSRunningAtlantrimp) {
-		var affordableShips = rShouldWorshipperFarm ? Math.floor(game.resources.food.owned / game.jobs.Worshipper.getCost()) : Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (autoTrimpSettings.rJobSettingsArray.value.Worshipper.percent / 100));
+	if ((autoTrimpSettings.rJobSettingsArray.value.Worshipper.enabled || rCurrentMap === 'rWorshipperFarm') && !rBSRunningAtlantrimp) {
+		var affordableShips = rCurrentMap === 'rWorshipperFarm' ? Math.floor(game.resources.food.owned / game.jobs.Worshipper.getCost()) : Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (autoTrimpSettings.rJobSettingsArray.value.Worshipper.percent / 100));
 		if (affordableShips > 50 - game.jobs.Worshipper.owned)
 			affordableShips = 50 - game.jobs.Worshipper.owned;
 		if (affordableShips > 0 && !game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50) {
@@ -634,9 +634,9 @@ function RbuyJobs() {
 		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
 	}
 
-	if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && !rShouldMapFarm && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm && !rShouldBoneShrine)
+	if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && typeof (workerRatio) !== 'undefined' && workerRatio !== null)
 		desiredRatios[0] = 0;
-	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && !rShouldMapFarm && !rShouldBoneShrine && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
+	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && typeof (workerRatio) !== 'undefined' && workerRatio !== null && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
 		desiredRatios[1] = 0;
 
 	if (typeof (workerRatio) !== 'undefined' && workerRatio !== null) {
@@ -671,10 +671,10 @@ function RbuyJobs() {
 				}
 				else
 					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(RworkerRatios('R' + worker + 'Ratio'));
-				if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && !rShouldTributeFarm && !rShouldMetFarm && !rShouldWorshipperFarm && !rShouldSmithyFarm) {
+				if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && typeof (workerRatio) !== 'undefined' && workerRatio !== null) {
 					desiredRatios[ratioWorkers.indexOf("Farmer")] = 0;
 				}
-				if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && !rShouldSmithyFarm && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
+				if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && typeof (workerRatio) !== 'undefined' && workerRatio !== null && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
 					desiredRatios[ratioWorkers.indexOf("Lumberjack")] = 0;
 				}
 			}

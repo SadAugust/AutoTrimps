@@ -116,6 +116,84 @@ function MAZLookalike(titleText, varPrefix, event) {
 		};
 	}
 
+	//Map tab - Special Maps!
+	if (event == "UniqueMaps") {
+		if (game.global.universe === 1) return;
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>\
+		<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone.\
+		</p><p>The MP Smithy settings will run the Melting Point map once you've reached the value of Smithies in this setting. Each run type has it's own setting and the daily shred setting will override the regular daily setting if either wood or metal shred is active.\
+		</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+
+		var count = 0;
+		var setting, checkbox;
+		//var settingGroup = false;
+		var settingGroup = autoTrimpSettings.rUniqueMapSettingsArray.value;
+		var mapUnlocks = [
+			'Dimension_of_Rage', 'Prismatic_Palace'
+		]
+
+		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 32) mapUnlocks.push("Atlantrimp");
+		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) mapUnlocks.push("Melting_Point");
+		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 174) mapUnlocks.push("Frozen_Castle");
+
+		var smithySettings = [];
+		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy");
+		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_Daily");
+		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_Daily_Shred");
+		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_C3");
+		for (var x = 0; x < mapUnlocks.length; x++)
+		//for (var item in game.buildings) 
+		{
+			tooltipText += "<tr>";
+			var item = mapUnlocks[x];
+			var setting = settingGroup[item];
+			var settingZone = (setting) ? setting.zone : 999;
+			var settingCell = (setting) ? setting.cell : 999;
+			if (item === 'Atlantrimp' && game.global.highestRadonLevelCleared < 33) continue;
+			if (item === 'Melting_Point' && game.global.highestRadonLevelCleared < 49) continue;
+			if (item.includes('Smithy') && game.global.highestRadonLevelCleared < 49) continue;
+			var max;
+			var checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
+
+			item = mapUnlocks[x];
+			setting = settingGroup[item];
+			max = ((setting && setting.buyMax) ? setting.buyMax : 0);
+			if (max > 1e4) max = max.toExponential().replace('+', '');
+
+			//Checkbox
+			checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
+
+			//Start
+			tooltipText += "<td><div class='row'>"
+			//Checkbox & name
+			tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item.replace(/_/g, '&nbsp;<span>') + "</span></div>"
+			//Zone options
+			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Zone: <input class='structConfigZone' id='structPercent" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 999) + "'/></div>";
+			//Cell options
+			tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Cell: <input class='structConfigCell' id='structMax" + item + "' type='number'  value='" + ((setting && setting.cell) ? setting.cell : 0) + "'/></div>";
+			//Finish
+			tooltipText += "</div></td>";
+
+			if (smithySettings.length > x) {
+				item = smithySettings[x];
+				setting = settingGroup[item];
+				checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
+				tooltipText += "<td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item.replace(/_/g, '&nbsp;<span>') + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Value: <input class='jobConfigQuantity' id='uniqueMapValue" + item + "' type='number'  value='" + ((setting && setting.value) ? setting.value : 1) + "'/></div></div>"
+			}
+			else {
+				tooltipText += "<tr>";
+			}
+		}
+
+		tooltipText += "</tr><tr>";
+		tooltipText += "</tr></tbody></table>";
+		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='saveATUniqueMapsConfig()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+		game.global.lockTooltip = true;
+		ondisplay = function () {
+			verticalCenterTooltip((smithySettings.length > 0 ? false : true), (smithySettings.length > 0 ? true : false));
+		};
+	}
+
 	//Daily Auto Portal
 	if (event == "DailyAutoPortal") {
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose different portal zones depending on specific modifiers that the daily you're running has. For example if your Daily has a resource shred modifier and you have '-3' input in that box then it will set both your void map zone and daily portal zone to 3 zones lower than your settings. Will only ever use the lowest value that is listed so you can't do a combination of -6 for dailies that have both Shred and Reflect by doing a -3 in each box.\
@@ -306,7 +384,19 @@ function MAZLookalike(titleText, varPrefix, event) {
 		Frag Min: Used for absolute minimum frag costs (which includes no Prestige special, perfect sliders, random map and the difficulty and size options, however it will try to afford those options first!) and prioritises buying the most maps for a smoother sequential raid. \
 		<br>Frag Max: This option will make sure that the map has perfect sliders and uses the pretegious special.</li>";
 
+
+
+
+
+
+
+
+
+
+
 		//Setting up default values section
+
+		//Header
 		tooltipText = "\
 		<div id='windowContainer' style='display: block'><div id='windowError'></div>\
 		<div class='row windowRow'>Default Values</div>\
@@ -330,6 +420,12 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Map Bonus')) tooltipText += "<div class='windowJobRatio'>Health<br>Bonus</div>"
 		if (titleText.includes('Map Bonus')) tooltipText += "<div class='windowJobRatio'>Health<br>HD Ratio</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('HD Farm')) tooltipText += "<div class='windowJobRatio'>Shred<br>Map Cap</div>"
+
+		if (titleText.includes('Smithy Farm')) tooltipText += "<div class='windowJobRatio'>Smithy</div>"
+		if (titleText.includes('Smithy Farm')) tooltipText += "<div class='windowJobRatio'>Daily<br>Smithy</div>"
+		if (titleText.includes('Smithy Farm')) tooltipText += "<div class='windowJobRatio'>Daily Shred<br>Smithy</div>"
+		if (titleText.includes('Smithy Farm')) tooltipText += "<div class='windowJobRatio'>C3<br>Smithy</div>"
+
 		tooltipText += "</div>";
 
 		var defaultVals = {
@@ -426,6 +522,17 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowVoidPurchase", null, defaultVals.voidPurchase) + "</div>";
 		if (titleText.includes('Map Farm') || titleText.includes('HD Farm'))
 			tooltipText += "<div class='windowJobRatio'><input value='" + defaultVals.shredMapCap + "' type='number' id='shredMapCap'/></div>";
+
+
+		if (titleText.includes('Smithy Farm'))
+			tooltipText += "<div class='windowJobRatio'><input value='" + defaultVals.healthHDRatio + "' type='number' id='healthHDRatio'/></div>";
+		if (titleText.includes('Smithy Farm'))
+			tooltipText += "<div class='windowJobRatio'><input value='" + defaultVals.healthHDRatio + "' type='number' id='healthHDRatio'/></div>";
+		if (titleText.includes('Smithy Farm'))
+			tooltipText += "<div class='windowJobRatio'><input value='" + defaultVals.healthHDRatio + "' type='number' id='healthHDRatio'/></div>";
+		if (titleText.includes('Smithy Farm'))
+			tooltipText += "<div class='windowJobRatio'><input value='" + defaultVals.healthHDRatio + "' type='number' id='healthHDRatio'/></div>";
+
 		tooltipText += "</div>"
 
 
@@ -674,7 +781,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		tooltipText += "<div id='windowAddRowBtn' style='display: " + ((current.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\",\"" + titleText + "\")'>+ Add Row</div>"
 		tooltipText += "</div></div><div style='display: none' id='mazHelpContainer'>" + mazHelp + "</div>";
-		costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\", true)'>Save</span><span class='btn btn-info btn-md' onclick='windowToggleHelp(\"" + windowSize + "\")'>Help</span></div>"
+		costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\")'>Save</span><span class='btn btn-info btn-md' onclick='windowToggleHelp(\"" + windowSize + "\")'>Help</span></div>"
 
 
 		//Changing window size depending on setting being opened.
@@ -716,6 +823,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 	var setting = [];
 	var error = "";
+	var errorMessage = false;
 	var maxSettings = 30;
 
 	var defaultActive = readNiceCheckbox(document.getElementById('windowActiveDefault'));
@@ -765,8 +873,6 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		shredMapCap: shredMapCap
 	};
 	autoTrimpSettings[varPrefix + "DefaultSettings"].value = thisDefaultSetting;
-
-	var errorMessage = false;
 
 	for (var x = 0; x < maxSettings; x++) {
 		var world = document.getElementById('windowWorld' + x);
@@ -939,39 +1045,6 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	document.getElementById('tooltipDiv').style.overflowY = '';
 }
 
-function saveATAutoJobsConfig() {
-	autoTrimpSettings.rJobSettingsArray.value = {};
-	var setting = {};
-	var checkboxes = document.getElementsByClassName('autoCheckbox');
-	var quantboxes = document.getElementsByClassName('jobConfigQuantity');
-	var ratios = ["Farmer", "Lumberjack", "Miner"];
-	for (var x = 0; x < checkboxes.length; x++) {
-		var name = checkboxes[x].id.split('autoJobCheckbox')[1];
-		var checked = checkboxes[x].dataset.checked == 'true';
-		if (!setting[name]) setting[name] = {};
-		setting[name].enabled = checked;
-		if (name === 'NoLumberjacks')
-			continue;
-		if (name === 'FarmersUntil') {
-			setting[name].zone = (quantboxes[x].value);
-			continue;
-		}
-		if (ratios.indexOf(name) != -1) {
-			setting[name].ratio = parseFloat(quantboxes[x].value);
-			continue;
-		}
-		setting[name].percent = (document.getElementById('autoJobQuant' + name).value);
-	}
-	var gatherElem = document.getElementById('autoJobSelfGather');
-	if (gatherElem) {
-		if (gatherElem.value) setting.portalOption = gatherElem.value;
-	}
-
-	autoTrimpSettings.rJobSettingsArray.value = setting;
-	cancelTooltip();
-	saveSettings();
-}
-
 function windowToggleHelp(windowSize) {
 	var mazContainer = document.getElementById('windowContainer');
 	var helpContainer = document.getElementById('mazHelpContainer');
@@ -995,6 +1068,39 @@ function windowToggleHelp(windowSize) {
 	parentWindow.style.left = "1%";
 	parentWindow.style.height = 'auto';
 	parentWindow.style.maxHeight = window.innerHeight * .85 + 'px';
+}
+
+function saveATAutoJobsConfig() {
+	autoTrimpSettings.rJobSettingsArray.value = {};
+	var setting = {};
+	var checkboxes = document.getElementsByClassName('autoCheckbox');
+	var quantboxes = document.getElementsByClassName('jobConfigQuantity');
+	var ratios = ["Farmer", "Lumberjack", "Miner"];
+	for (var x = 0; x < checkboxes.length; x++) {
+		var name = checkboxes[x].id.split('autoJobCheckbox')[1];
+		var checked = checkboxes[x].dataset.checked == 'true';
+		if (!setting[name]) setting[name] = {};
+		setting[name].enabled = checked;
+		if (name === 'NoLumberjacks')
+			continue;
+		if (name === 'FarmersUntil') {
+			setting[name].zone = (quantboxes[x].value);
+			continue;
+		}
+		if (ratios.indexOf(name) != -1) {
+			setting[name].ratio = parseFloat(quantboxes[x].value);
+			continue;
+		}
+		setting[name].percent = (document.getElementById('autoJobQuant' + name).value);
+	}
+	var portalElem = document.getElementById('autoJobSelfGather');
+	if (portalElem) {
+		if (portalElem.value) setting.portalOption = portalElem.value;
+	}
+
+	autoTrimpSettings.rJobSettingsArray.value = setting;
+	cancelTooltip();
+	saveSettings();
 }
 
 function saveATAutoStructureConfig() {
@@ -1046,6 +1152,83 @@ function saveATAutoStructureConfig() {
 		autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.percent = 100;
 		autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.buyMax = 0;
 	}
+	cancelTooltip();
+	saveSettings();
+}
+
+function saveATUniqueMapsConfig() {
+
+	var error = "";
+	var errorMessage = false;
+	var setting = autoTrimpSettings.rUniqueMapSettingsArray.value;
+	var checkboxes = document.getElementsByClassName('autoCheckbox');
+	var zoneBoxes = document.getElementsByClassName('structConfigZone');
+	var cellBoxes = document.getElementsByClassName('structConfigCell');
+	var y = 0;
+	var z = 0;
+	for (var x = 0; x < checkboxes.length; x++) {
+		var name = checkboxes[x].id.split('autoJobCheckbox')[1];
+		var checked = (checkboxes[x].dataset.checked == 'true');
+		//if (!checked && !setting[name]) continue;
+		if (!setting[name]) setting[name] = {};
+		setting[name].enabled = checked;
+
+		if (name.includes('MP_Smithy')) {
+			var valueBoxes = document.getElementsByClassName('jobConfigQuantity');
+
+			var value = parseInt(valueBoxes[z].value, 10);
+			if (value > 10000) value = 10000;
+			value = (isNumberBad(value)) ? 999 : value;
+			setting[name].value = value;
+			z++;
+			continue;
+		}
+
+		var zone = parseInt(zoneBoxes[y].value, 10);
+		if (zone > 999) zone = 999;
+		if (zone < 0) zone = 0;
+		zone = (isNumberBad(zone)) ? 0 : zone;
+
+		setting[name].zone = zone;
+
+		var cell = parseInt(cellBoxes[y].value, 10);
+		if (cell > 100) cell = 100;
+		if (cell < 1) cell = 1;
+		cell = (isNumberBad(cell)) ? 0 : cell;
+		setting[name].cell = cell;
+
+		//Error checking
+		if (name.includes('Dimension_of_Rage') && zone < 16) {
+			error += " Dimension of Rage can\'t be run below zone 16.<br>";
+			errorMessage = true;
+		}
+		if (name.includes('Prismatic_Palace') && zone < 21) {
+			error += " Prismatic Palace can\'t be run below zone 21.<br>";
+			errorMessage = true;
+		}
+		if (name.includes('Atlantrimp') && (zone < 33 || (zone === 33 && cell < 50))) {
+			error += " Atlantrimp can\'t be run below zone 33 cell 50.<br>";
+			errorMessage = true;
+		}
+		if (name.includes('Melting_Point') && (zone < 55 || (zone === 55 && cell < 56))) {
+			error += " Melting Point can\'t be run below zone 55 cell 56.<br>";
+			errorMessage = true;
+		}
+		if (name.includes('Frozen_Castle') && zone < 175) {
+			error += " Frozen Castle can\'t be run below zone 175.<br>";
+			errorMessage = true;
+		}
+
+		y++;
+	}
+
+	if (error) {
+		var elem = document.getElementById('autoJobsError');
+		if (elem) elem.innerHTML = error;
+		return;
+	}
+
+	autoTrimpSettings.rUniqueMapSettingsArray.value = setting;
 	cancelTooltip();
 	saveSettings();
 }
