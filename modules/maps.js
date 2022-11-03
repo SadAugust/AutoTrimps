@@ -838,6 +838,7 @@ function RautoMap() {
 	//New Mapping Organisation!
 	rShouldMap = rMapSettings.shouldRun;
 	rCurrentMap = rMapSettings.mapName;
+	rCurrentSetting = rMapSettings;
 	rAutoLevel = rMapSettings.autoLevel ? rMapSettings.mapLevel : Infinity;
 
 	//Vars

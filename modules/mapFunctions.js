@@ -213,11 +213,11 @@ function VoidMaps() {
 	return farmingDetails;
 }
 
+var rMBHealthFarm = false;
 //Map Bonus -- WORKING AS IS
 function MapBonus() {
 
 	var rShouldMaxMapBonus = false;
-	var rMBHealthFarm = false;
 	var mapAutoLevel = Infinity;
 
 	const mapName = 'rMapBonus';
@@ -290,12 +290,12 @@ function MapBonus() {
 		farmingDetails.jobRatio = rMBJobRatio;
 		farmingDetails.special = rMBSpecial;
 		farmingDetails.mapRepeats = rMBRepeatCounter;
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || game.global.mapBonus >= (farmingDetails.mapRepeats));
+		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || game.global.mapBonus >= (farmingDetails.mapRepeats - 1));
 		farmingDetails.status = 'Map Bonus: ' + game.global.mapBonus + "/" + farmingDetails.mapRepeats;
 	}
 
-	if (rCurrentMap === mapName && (game.global.mapBonus >= rMBRepeatCounter || (rMBHealthFarm && !farmingDetails.shouldRun))) {
-		if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rMBMapLevel >= 0 ? "+" : "") + rMBMapLevel + " " + rMBSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+	if (rCurrentMap === mapName && (game.global.mapBonus >= rMBRepeatCounter || !farmingDetails.shouldRun || (rMBHealthFarm && !rMBshouldDoHealthMaps && !rShouldMaxMapBonus))) {
+		if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rCurrentSetting.mapLevel >= 0 ? "+" : "") + rCurrentSetting.mapLevel + " " + rCurrentSetting.special + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
 		rMBHealthFarm = false;
 		rCurrentMap = undefined;
 		mapAutoLevel = Infinity;
