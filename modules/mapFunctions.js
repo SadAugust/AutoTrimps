@@ -78,6 +78,9 @@ function shouldRunUniqueMap(map) {
 			return true;
 		}
 	} else if (map.name === 'Melting Point') {
+		const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+		const woodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
+		const smithyShred = woodShred || metalShred;
 		// maybe get extra smithiesvar 
 		meltsmithy =
 			game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') :
