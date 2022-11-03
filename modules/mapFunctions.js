@@ -1985,7 +1985,7 @@ function HDFarm() {
 		farmingDetails.jobRatio = rHDFJobRatio;
 		farmingDetails.HDRatio = equipfarmdynamicHD(rHDFIndex);
 		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special);
-		farmingDetails.status = 'HD Farm (' + rMapSettings.HDRatio.toFixed(2) + '): Wants ' + (HDRatio - farmingDetails.HDRatio).toFixed(2) + 'x&nbspmore stats';
+		farmingDetails.status = 'HD Farm (' + farmingDetails.HDRatio.toFixed(2) + '): Wants ' + (HDRatio - farmingDetails.HDRatio).toFixed(2) + 'x&nbspmore stats';
 	}
 
 	return farmingDetails;
