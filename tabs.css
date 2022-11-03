@@ -147,6 +147,16 @@ ul.tab li a:hover {
 	margin-right: 10%;
 }
 
+.structConfigZone,
+.structConfigCell {
+	display: inline-block;
+	width: 50%;
+	padding: 1%;
+	line-height: normal;
+	border-width: 1px;
+	margin-right: 5%;
+}
+
 .windowRow div input {
 	width: 100%;
 }
@@ -1053,6 +1063,15 @@ ul.tab li a:hover {
 }
 
 
+
+.uniqueMapValue {
+	display: inline-block;
+	width: 50%;
+	padding: 1%;
+	line-height: normal;
+	border-width: 1px;
+	margin-right: 10%;
+}
 
 
 .settingsBtnLocal {
