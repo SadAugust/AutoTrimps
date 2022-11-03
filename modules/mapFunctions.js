@@ -199,7 +199,7 @@ function VoidMaps() {
 		farmingDetails.shouldRun = rDoVoids;
 		farmingDetails.mapName = mapName;
 		farmingDetails.jobRatio = rVMJobRatio;
-		farmingDetails.repeat = false;
+		farmingDetails.repeat = true;
 		farmingDetails.status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
 	}
 
