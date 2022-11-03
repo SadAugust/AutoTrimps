@@ -605,7 +605,7 @@ function SmithyFarm() {
 		mapName: mapName
 	};
 
-	if (game.buildings.Smithy.locked || !(autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && rShouldQuest !== 10) || game.global.challengeActive === 'Transmute') return farmingDetails;
+	if (game.buildings.Smithy.locked || !(autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && questcheck() !== 10) || game.global.challengeActive === 'Transmute') return farmingDetails;
 
 	var rShouldSmithyFarm = false;
 	var rShouldSmithyGemFarm = false;
@@ -638,7 +638,7 @@ function SmithyFarm() {
 		}
 	}
 
-	if (rSFIndex >= 0 || rShouldQuest === 10) {
+	if (rSFIndex >= 0 || questcheck() === 10) {
 
 		var rSFSettings = autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
 		if ((rSFSettings.active || game.global.challengeActive === 'Quest')) {
@@ -653,7 +653,7 @@ function SmithyFarm() {
 				else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') game.global.mapRunCounter = smithyMapCount[2];
 			}
 
-			if (rSFSettings.autoLevel || rShouldQuest === 10) {
+			if (rSFSettings.autoLevel || questcheck() === 10) {
 				var rAutoLevel_Repeat = rAutoLevel;
 				mapAutoLevel = callAutoMapLevel(rCurrentMap, rAutoLevel, rSFSpecial, null, null, false);
 				if (mapAutoLevel !== Infinity) {
@@ -1995,7 +1995,7 @@ function FarmingDecision() {
 		mapName: ''
 	}
 
-	const mapTypes = [Quest(), PandemoniumDestack(), MapFarm(), SmithyFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), MapBonus(), Smithless()]
+	const mapTypes = [Quest(), PandemoniumDestack(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), MapBonus(), Smithless()]
 
 	for (const map of mapTypes) {
 		if (map.shouldRun) {
