@@ -63,17 +63,17 @@ function shouldRunUniqueMap(map) {
 		}
 	} else if (map.name === 'Dimension of Rage') {
 		// unlock the portal
-		if (document.getElementById("portalBtn").style.display === "none" && game.upgrades.Rage.done == 1 && uniqueMapSetting.Dimension_of_Rage.enabled && game.global.world === uniqueMapSetting.Dimension_of_Rage.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Rage.cell) {
+		if (document.getElementById("portalBtn").style.display === "none" && game.upgrades.Rage.done == 1 && uniqueMapSetting.Dimension_of_Rage.enabled && game.global.world >= uniqueMapSetting.Dimension_of_Rage.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Rage.cell) {
 			return true;
 		}
 	} else if (map.name === 'Prismatic Palace') {
 		// we need Shieldblock
-		if (game.mapUnlocks.Prismalicious.canRunOnce && uniqueMapSetting.Prismatic_Palace.enabled && game.global.world === uniqueMapSetting.Prismatic_Palace.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Prismatic_Palace.cell) {
+		if (game.mapUnlocks.Prismalicious.canRunOnce && uniqueMapSetting.Prismatic_Palace.enabled && game.global.world >= uniqueMapSetting.Prismatic_Palace.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Prismatic_Palace.cell) {
 			return true;
 		}
 	} else if (map.name === 'Atlantrimp') {
 		// maybe get the treasure
-		if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Atlantrimp.enabled && game.global.world === uniqueMapSetting.Atlantrimp.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Atlantrimp.cell) {
+		if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Atlantrimp.enabled && game.global.world >= uniqueMapSetting.Atlantrimp.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Atlantrimp.cell) {
 			if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running Atlantrimp on zone ' + game.global.world + '.')
 			return true;
 		}
@@ -90,7 +90,7 @@ function shouldRunUniqueMap(map) {
 							uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
 								0;
 		if (game.mapUnlocks.SmithFree.canRunOnce &&
-			((!isC3 && !isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world === uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
+			((!isC3 && !isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world >= uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
 				(meltsmithy > 0 && meltsmithy <= game.buildings.Smithy.owned))) {
 			if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive)
 				debug('Running Melting Point at ' + game.buildings.Smithy.owned + ' smithies on zone ' + game.global.world + '.')
@@ -98,7 +98,7 @@ function shouldRunUniqueMap(map) {
 		}
 	} else if (map.name === 'Frozen Castle') {
 		// maybe get the treasure
-		var frozencastle = !game.global.challengeActive !== 'Hypothermia' && uniqueMapSetting.Frozen_Castle.enabled && game.global.world === uniqueMapSetting.Frozen_Castle.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Frozen_Castle.cell;
+		var frozencastle = !game.global.challengeActive !== 'Hypothermia' && uniqueMapSetting.Frozen_Castle.enabled && game.global.world >= uniqueMapSetting.Frozen_Castle.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Frozen_Castle.cell;
 		var hypothermia = game.global.challengeActive === 'Hypothermia' &&
 			game.global.world >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0]) : 200) &&
 			game.global.lastClearedCell + 2 >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1]) : 99);
@@ -294,7 +294,7 @@ function MapBonus() {
 		farmingDetails.status = 'Map Bonus: ' + game.global.mapBonus + "/" + farmingDetails.mapRepeats;
 	}
 
-	if (rCurrentMap === mapName && (game.global.mapBonus >= rMBRepeatCounter || !farmingDetails.shouldRun || (rMBHealthFarm && !rMBshouldDoHealthMaps && !rShouldMaxMapBonus))) {
+	if (rCurrentMap === mapName && (game.global.mapBonus >= rMBRepeatCounter || !farmingDetails.shouldRun)) {
 		if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rCurrentSetting.mapLevel >= 0 ? "+" : "") + rCurrentSetting.mapLevel + " " + rCurrentSetting.special + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
 		rMBHealthFarm = false;
 		rCurrentMap = undefined;

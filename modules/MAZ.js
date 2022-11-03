@@ -120,7 +120,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 	if (event == "UniqueMaps") {
 		if (game.global.universe === 1) return;
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>\
-		<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone.\
+		<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input.\
 		</p><p>The MP Smithy settings will run the Melting Point map once you've reached the value of Smithies in this setting. Each run type has it's own setting and the daily shred setting will override the regular daily setting if either wood or metal shred is active.\
 		</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
@@ -1159,7 +1159,6 @@ function saveATAutoStructureConfig() {
 function saveATUniqueMapsConfig() {
 
 	var error = "";
-	var errorMessage = false;
 	var setting = autoTrimpSettings.rUniqueMapSettingsArray.value;
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var zoneBoxes = document.getElementsByClassName('structConfigZone');
