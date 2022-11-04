@@ -782,12 +782,10 @@ function SmithyFarm() {
 	return farmingDetails;
 }
 
+var rWFDebug = 0;
+
 //Worshipper Farm -- WORKING AS IS
 function WorshipperFarm() {
-
-	var rShouldWorshipperFarm = false;
-	var mapAutoLevel = Infinity;
-
 	const mapName = 'rWorshipperFarm';
 	const farmingDetails = {
 		shouldRun: false,
@@ -796,6 +794,11 @@ function WorshipperFarm() {
 	if (game.jobs.Worshipper.locked || !autoTrimpSettings.rWorshipperFarmDefaultSettings.value.active) return farmingDetails;
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
 	const isDaily = game.global.challengeActive === 'Daily';
+
+	var rShouldWorshipperFarm = false;
+	var rShouldSkip = false;
+	var mapAutoLevel = Infinity;
+
 	var rWFBaseSetting = autoTrimpSettings.rWorshipperFarmSettings.value
 	var rWFIndex;
 	for (var y = 0; y < rWFBaseSetting.length; y++) {
@@ -847,7 +850,8 @@ function WorshipperFarm() {
 
 
 		if (rCurrentMap === mapName && !rShouldWorshipperFarm) {
-			if (getPageSetting('rMapRepeatCount')) debug("Worshipper Farm took " + (game.global.mapRunCounter) + " (" + (rWFMapLevel >= 0 ? "+" : "") + rWFMapLevel + " " + rWFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+			if (getPageSetting('rMapRepeatCount') && !rShouldSkip) debug("Worshipper Farm took " + (game.global.mapRunCounter) + " (" + (rWFMapLevel >= 0 ? "+" : "") + rWFMapLevel + " " + rWFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+			if (getPageSetting('rMapRepeatCount') && rShouldSkip) debug("Worshipper Farm was skipped on zone " + game.global.world + " as you already had " + rWFGoal + " worshippers.");
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
 			rWFMapRepeats = 0;
