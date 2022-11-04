@@ -30,7 +30,7 @@ function BoneShrine() {
 			//Skipping lines with Shred
 			if (rRunningDaily &&
 				(
-					(!shredActive && rBoneShrineBaseSettings[y].shredActive === 'Shred')
+					((!shredActive || (shredActive && !dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineBaseSettings[y].gather))) && rBoneShrineBaseSettings[y].shredActive === 'Shred')
 					||
 					(shredActive && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineBaseSettings[y].gather) && rBoneShrineBaseSettings[y].shredActive === 'No Shred')
 				)
