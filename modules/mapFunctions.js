@@ -265,6 +265,7 @@ function MapBonus() {
 			rMBSpecial = rMBSpecial.charAt(0) + "sc";
 		var rMBMapLevel = rMBIndex !== null ? rMBSettings.level : 0;
 		var rMBJobRatio = rMBSettings.jobratio;
+		var rMBautoLevel = rMBSettings.autoLevel || rMBIndex === null;
 
 		if (rMBSettings.autoLevel || rMBIndex === null) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && rMBMapRepeats !== 0) {
@@ -284,13 +285,13 @@ function MapBonus() {
 			rShouldMaxMapBonus = true;
 			if (rMBshouldDoHealthMaps) rMBHealthFarm = true;
 		}
-		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || game.global.mapBonus >= (farmingDetails.mapRepeats - 1));
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMBMapLevel || getCurrentMapObject().bonus !== rMBSpecial || game.global.mapBonus >= (rMBRepeatCounter - 1));
 		var status = 'Map Bonus: ' + game.global.mapBonus + "/" + rMBRepeatCounter;
 
 		farmingDetails.shouldRun = rShouldMaxMapBonus || rMBHealthFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rMBMapLevel;
-		farmingDetails.autoLevel = rMBSettings.autoLevel;
+		farmingDetails.autoLevel = rMBautoLevel;
 		farmingDetails.jobRatio = rMBJobRatio;
 		farmingDetails.special = rMBSpecial;
 		farmingDetails.mapRepeats = rMBRepeatCounter;

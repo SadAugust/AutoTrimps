@@ -943,7 +943,7 @@ function RautoMap() {
 				repeatClicked();
 			if (game.global.repeatMap && rCurrentMap !== 'rPrestige') {
 				if (rCurrentMap !== '') {
-					if (rMapSettings.repeat) repeatClicked();
+					if (!rMapSettings.repeat) repeatClicked();
 				}
 			}
 		} else {
