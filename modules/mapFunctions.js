@@ -1965,6 +1965,7 @@ function HDFarm() {
 	const rHDFBaseSetting = autoTrimpSettings.rHDFarmSettings.value;
 	const rHDFZone = getPageSetting('rHDFarmZone');
 	var rShouldHDFarm = false;
+	var rShouldSkip = false;
 	var mapAutoLevel = Infinity;
 
 	var rHDFIndex;
@@ -2010,13 +2011,16 @@ function HDFarm() {
 
 		if (HDRatio > equipfarmdynamicHD(rHDFIndex))
 			rShouldHDFarm = true;
-		if (game.global.mapsActive && metalShred && rHDFCurrentMap != undefined && game.global.mapRunCounter >= rHDFshredMapCap) {
+		if (rShouldHDFarm && game.global.mapsActive && metalShred && rHDFCurrentMap != undefined && game.global.mapRunCounter >= rHDFshredMapCap) {
 			rShouldHDFarm = false;
 		}
+		if (rCurrentMap !== mapName && equipfarmdynamicHD(rHDFIndex) > HDRatio)
+			rShouldSkip = true;
 
-		if (rCurrentMap === mapName && !rShouldHDFarm && HDRatio !== Infinity) {
+		if (((rCurrentMap === mapName && !rShouldHDFarm) || rShouldSkip) && HDRatio !== Infinity) {
 			var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
-			if (getPageSetting('rMapRepeatCount')) debug("Equip Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rHDFMapLevel >= 0 ? "+" : "") + rHDFMapLevel + " " + rHDFSpecial + ")" + (game.global.mapRunCounter + mapProg == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with a HD Ratio of " + RcalcHDratio().toFixed(2) + ".");
+			if (getPageSetting('rMapRepeatCount') && !rShouldSkip) debug("Equip Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rHDFMapLevel >= 0 ? "+" : "") + rHDFMapLevel + " " + rHDFSpecial + ")" + (game.global.mapRunCounter + mapProg == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with a HD Ratio of " + RcalcHDratio().toFixed(2) + ".");
+			if (getPageSetting('rMapRepeatCount') && rShouldSkip) debug("Equip Farm took was skipped on zone " + game.global.world + ". It wanted a HD Ratio of " + equipfarmdynamicHD(rHDFIndex) + " but you already had a HD Ratio of " + RcalcHDratio().toFixed(2) + ".");
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
 			rHDFMapRepeats = 0;
