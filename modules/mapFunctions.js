@@ -196,11 +196,13 @@ function VoidMaps() {
 			var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
 		}
 
+		var status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining'
+
 		farmingDetails.shouldRun = rDoVoids;
 		farmingDetails.mapName = mapName;
 		farmingDetails.jobRatio = rVMJobRatio;
-		farmingDetails.repeat = true;
-		farmingDetails.status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining';
+		farmingDetails.repeat = false;
+		farmingDetails.status = status;
 	}
 
 	if (rCurrentMap === mapName && !rDoVoids) {
@@ -282,6 +284,8 @@ function MapBonus() {
 			rShouldMaxMapBonus = true;
 			if (rMBshouldDoHealthMaps) rMBHealthFarm = true;
 		}
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || game.global.mapBonus >= (farmingDetails.mapRepeats - 1));
+		var status = 'Map Bonus: ' + game.global.mapBonus + "/" + rMBRepeatCounter;
 
 		farmingDetails.shouldRun = rShouldMaxMapBonus || rMBHealthFarm;
 		farmingDetails.mapName = mapName;
@@ -290,8 +294,8 @@ function MapBonus() {
 		farmingDetails.jobRatio = rMBJobRatio;
 		farmingDetails.special = rMBSpecial;
 		farmingDetails.mapRepeats = rMBRepeatCounter;
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || game.global.mapBonus >= (farmingDetails.mapRepeats - 1));
-		farmingDetails.status = 'Map Bonus: ' + game.global.mapBonus + "/" + farmingDetails.mapRepeats;
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 	}
 
 	if (rCurrentMap === mapName && (game.global.mapBonus >= rMBRepeatCounter || !farmingDetails.shouldRun)) {
@@ -403,6 +407,9 @@ function MapFarm() {
 		if (rMFRepeatCounter > game.global.mapRunCounter)
 			rShouldMapFarm = true;
 
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMFMapLevel || getCurrentMapObject().bonus !== rMFSpecial || game.global.mapRunCounter + 1 === rMFRepeatCounter);
+		var status = 'Map Farm: ' + game.global.mapRunCounter + "/" + rMFRepeatCounter;
+
 		farmingDetails.shouldRun = rShouldMapFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rMFMapLevel;
@@ -412,8 +419,8 @@ function MapFarm() {
 		farmingDetails.mapRepeats = rMFRepeatCounter;
 		farmingDetails.gather = rMFGather;
 		farmingDetails.runAtlantrimp = rMFAtlantrimp;
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || game.global.mapRunCounter + 1 === farmingDetails.mapRepeats);
-		farmingDetails.status = 'Map Farm: ' + game.global.mapRunCounter + "/" + farmingDetails.mapRepeats;
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 	}
 
 	return farmingDetails;
@@ -579,6 +586,11 @@ function TributeFarm() {
 			rTrFbuyBuildings = false;
 		}
 
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rTrFMapLevel || getCurrentMapObject().bonus !== rTrFSpecial);
+		var status = rTrFTributes > game.buildings.Tribute.owned ?
+			'Tribute Farm: ' + game.buildings.Tribute.owned + "/" + rTrFTributes :
+			'Meteorologist Farm: ' + game.jobs.Meteorologist.owned + "/" + rTrFMeteorologists;
+
 		farmingDetails.shouldRun = rShouldTributeFarm || rShouldMetFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rTrFMapLevel;
@@ -591,10 +603,8 @@ function TributeFarm() {
 		farmingDetails.meteorologist = rTrFMeteorologists;
 		farmingDetails.runAtlantrimp = rTrFAtlantrimp;
 		farmingDetails.buyBuildings = rTrFbuyBuildings;
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special);
-		farmingDetails.status = farmingDetails.tribute > game.buildings.Tribute.owned ?
-			'Tribute Farm: ' + game.buildings.Tribute.owned + "/" + farmingDetails.tribute :
-			'Meteorologist Farm: ' + game.jobs.Meteorologist.owned + "/" + farmingDetails.meteorologist;
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 	}
 	return farmingDetails;
 }
@@ -753,6 +763,9 @@ function SmithyFarm() {
 			}
 		}
 
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rSFMapLevel || getCurrentMapObject().bonus !== rSFSpecial);
+		var status = 'Smithy Farming for ' + rSFGoal;
+
 		farmingDetails.shouldRun = rShouldSmithyFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rSFMapLevel;
@@ -761,8 +774,8 @@ function SmithyFarm() {
 		farmingDetails.special = rSFSpecial;
 		farmingDetails.smithies = rSFSmithies;
 		farmingDetails.farmGoal = rSFGoal;
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special);
-		farmingDetails.status = 'Smithy Farming for ' + farmingDetails.farmGoal;
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 
 	}
 	return farmingDetails;
@@ -840,6 +853,9 @@ function WorshipperFarm() {
 			currTime = 0;
 		}
 
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rWFMapLevel || getCurrentMapObject().bonus !== rWFSpecial);
+		var status = 'Worshipper Farm: ' + game.jobs.Worshipper.owned + "/" + rWFGoal;
+
 		farmingDetails.shouldRun = rShouldWorshipperFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rWFMapLevel;
@@ -847,8 +863,8 @@ function WorshipperFarm() {
 		farmingDetails.jobRatio = rWFJobRatio;
 		farmingDetails.special = rWFSpecial;
 		farmingDetails.worshipper = rWFGoal;
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special);
-		farmingDetails.status = 'Worshipper Farm: ' + game.jobs.Worshipper.owned + "/" + farmingDetails.worshipper;
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 
 	}
 	return farmingDetails;
@@ -917,14 +933,17 @@ function MapDestacking() {
 		recycleMap();
 	}
 
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rDMapLevel || getCurrentMapObject().bonus !== rDSpecial || (getCurrentMapObject().size - getCurrentMapCell().level) > rDDestack);
+	var status = 'Destacking: ' + rDDestack + ' stacks remaining';
+
 	farmingDetails.shouldRun = rShouldDestack;
 	farmingDetails.mapName = mapName;
 	farmingDetails.mapLevel = rDMapLevel;
 	farmingDetails.autoLevel = false;
 	farmingDetails.special = rDSpecial;
 	farmingDetails.destack = rDDestack;
-	farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || (getCurrentMapObject().size - getCurrentMapCell().level) > farmingDetails.destack);
-	farmingDetails.status = 'Destacking: ' + farmingDetails.destack + ' stacks remaining';
+	farmingDetails.repeat = !repeat;
+	farmingDetails.status = status;
 
 
 	return farmingDetails;
@@ -985,11 +1004,13 @@ function PrestigeRaiding() {
 			rShouldPrestigeRaid = true;
 		}
 
+		var status = 'Prestige Raiding: ' + Rgetequips(raidzones, false) + ' items remaining';
+
 		farmingDetails.shouldRun = rShouldPrestigeRaid;
 		farmingDetails.mapName = mapName;
 		farmingDetails.recycle = rPRRecycle;
 		farmingDetails.fragSetting = rPRFragFarm;
-		farmingDetails.status = 'Prestige Raiding: ' + Rgetequips(raidzones, false) + ' items remaining';
+		farmingDetails.status = status;
 	}
 
 
@@ -1161,13 +1182,16 @@ function Quagmire() {
 			if (getPageSetting('rMapRepeatCount')) debug("Quag Farm took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
 		}
 
+		var repeat = game.global.mapsActive && (getCurrentMapObject().name !== 'The Black Bog' || (game.challenges.Quagmire.motivatedStacks - totalstacks) === 1);
+		var status = 'Black Bogs: ' + game.challenges.Quagmire.motivatedStacks - totalstacks + " remaining";
+
 		farmingDetails.shouldRun = rShouldQuagFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.jobRatio = rQFJobRatio;
 		farmingDetails.bogs = totalstacks;
 		farmingDetails.bogsToClear = game.challenges.Quagmire.motivatedStacks - totalstacks;
-		farmingDetails.repeat = game.global.mapsActive && (getCurrentMapObject().name !== 'The Black Bog' || farmingDetails.bogsToClear === 1);
-		farmingDetails.status = 'Black Bogs: ' + farmingDetails.bogsToClear + " remaining";
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 	}
 
 	return farmingDetails;
@@ -1215,14 +1239,17 @@ function Quest() {
 			rQuestMapLevel = mapAutoLevel;
 		}
 
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rQuestMapLevel || getCurrentMapObject().bonus !== rQuestSpecial || (rShouldQuest == 6 && (game.global.mapBonus >= 4 || getCurrentMapObject().level - game.global.world < 0)));
+		var status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
+
 		farmingDetails.shouldRun = rShouldQuest;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rQuestMapLevel;
 		farmingDetails.autoLevel = true;
 		farmingDetails.special = rQuestSpecial;
 		farmingDetails.jobRatio = rQuestJobRatio;
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || (rShouldQuest == 6 && (game.global.mapBonus >= 4 || getCurrentMapObject().level - game.global.world < 0)));
-		farmingDetails.status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 
 	}
 	if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
@@ -1272,13 +1299,16 @@ function Mayhem() {
 		rMayhemMapLevel = (mapAutoLevel + rMayhemMapIncrease > 10 ? 10 : mapAutoLevel + rMayhemMapIncrease);
 	}
 
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMayhemMapLevel || getCurrentMapObject().bonus !== rMayhemSpecial || game.challenges.Mayhem.stacks <= rMayhemMapLevel + 1);
+	var status = 'Mayhem Destacking: ' + game.challenges.Mayhem.stacks + " remaining";
+
 	farmingDetails.shouldRun = rShouldMayhem;
 	farmingDetails.mapName = mapName;
 	farmingDetails.mapLevel = rMayhemMapLevel;
 	farmingDetails.autoLevel = true;
 	farmingDetails.special = rMayhemSpecial;
-	farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || game.challenges.Mayhem.stacks <= farmingDetails.mapLevel + 1);
-	farmingDetails.status = 'Mayhem Destacking: ' + game.challenges.Mayhem.stacks + " remaining";
+	farmingDetails.repeat = !repeat;
+	farmingDetails.status = status;
 
 	if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
 		if (getPageSetting('rMapRepeatCount')) debug("Mayhem Destacking took " + (game.global.mapRunCounter) + " (" + (rMayhemMapLevel >= 0 ? "+" : "") + rMayhemMapLevel + " " + rMayhemSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
@@ -1343,6 +1373,9 @@ function Insanity() {
 		if (rIFStacks > game.challenges.Insanity.insanity || (rIFSettings.destack && game.challenges.Insanity.insanity > rIFStacks))
 			rShouldInsanityFarm = true;
 
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rIFMapLevel || getCurrentMapObject().bonus !== rIFSpecial || rIFStacks <= game.challenges.Insanity.insanity);
+		var status = 'Insanity Farming: ' + game.challenges.Insanity.insanity + "/" + rIFStacks;
+
 		farmingDetails.shouldRun = rShouldInsanityFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rIFMapLevel;
@@ -1350,8 +1383,8 @@ function Insanity() {
 		farmingDetails.special = rIFSpecial;
 		farmingDetails.jobRatio = rIFJobRatio;
 		farmingDetails.insanity = rIFStacks;
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || farmingDetails.insanity <= game.challenges.Insanity.insanity);
-		farmingDetails.status = 'Insanity Farming: ' + game.challenges.Insanity.insanity + "/" + farmingDetails.insanity;
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 
 		if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
 			if (getPageSetting('rMapRepeatCount')) debug("Insanity Farm took " + (game.global.mapRunCounter) + " (" + (rIFMapLevel >= 0 ? "+" : "") + rIFMapLevel + " " + rIFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.challenges.Insanity.insanity + " insanity stacks.");
@@ -1401,6 +1434,9 @@ function PandemoniumDestack() {
 		rShouldPandemoniumDestack = true;
 	}
 
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rPandemoniumMapLevel || getCurrentMapObject().bonus !== rPandemoniumSpecial || ((game.challenges.Pandemonium.pandemonium - rPandemoniumMapLevel) < rPandemoniumMapLevel));
+	var status = 'Pandemonium Destacking: ' + game.challenges.Pandemonium.pandemonium + " remaining";
+
 	farmingDetails.shouldRun = rShouldPandemoniumDestack;
 	farmingDetails.mapName = mapName;
 	farmingDetails.mapLevel = rPandemoniumMapLevel;
@@ -1408,8 +1444,8 @@ function PandemoniumDestack() {
 	farmingDetails.special = rPandemoniumSpecial;
 	farmingDetails.jobRatio = rPandemoniumJobRatio;
 	farmingDetails.pandemonium = game.challenges.Pandemonium.pandemonium;
-	farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || ((game.challenges.Pandemonium.pandemonium - farmingDetails.mapLevel) < farmingDetails.mapLevel));
-	farmingDetails.status = 'Pandemonium Destacking: ' + game.challenges.Pandemonium.pandemonium + " remaining";
+	farmingDetails.repeat = !repeat;
+	farmingDetails.status = status;
 
 	if (rCurrentMap === mapName && !rShouldPandemoniumDestack) {
 		if (getPageSetting('rMapRepeatCount')) debug("Pandemonium Destacking took " + (game.global.mapRunCounter) + " (" + (rPandemoniumMapLevel >= 0 ? "+" : "") + rPandemoniumMapLevel + " " + rPandemoniumSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
@@ -1450,6 +1486,8 @@ function PandemoniumFarm() {
 	if (getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') && nextEquipmentCost < rPandemonium_Resource_Gain)
 		rShouldPandemoniumFarm = true;
 
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rPandemoniumMapLevel || getCurrentMapObject().bonus != rPandemoniumSpecial || nextEquipmentCost >= rPandemonium_Resource_Gain);
+	var status = 'Pandemonium Farming Equips below ' + prettify(rPandemonium_Resource_Gain);
 
 	if (rShouldPandemoniumFarm) {
 		farmingDetails.shouldRun = rShouldPandemoniumFarm;
@@ -1459,8 +1497,8 @@ function PandemoniumFarm() {
 		farmingDetails.special = rPandemoniumSpecial;
 		farmingDetails.jobRatio = rPandemoniumJobRatio;
 		farmingDetails.pandemonium = game.challenges.Pandemonium.pandemonium;
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus != rPandemoniumSpecial || nextEquipmentCost >= rPandemonium_Resource_Gain);
-		farmingDetails.status = 'Pandemonium Farming Equips below ' + prettify(rPandemonium_Resource_Gain);
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 	}
 
 	return farmingDetails;
@@ -1502,16 +1540,19 @@ function PandemoniumJestimpFarm() {
 			if (!game.global.messages.Loot.exotic)
 				game.global.messages.Loot.exotic = true;
 		}
-	}
 
-	farmingDetails.shouldRun = rShouldPandemoniumJestimpFarm;
-	farmingDetails.mapName = mapName;
-	farmingDetails.mapLevel = rPandemoniumMapLevel;
-	farmingDetails.autoLevel = true;
-	farmingDetails.special = rPandemoniumSpecial;
-	farmingDetails.jobRatio = rPandemoniumJobRatio;
-	farmingDetails.repeat = nextEquipmentCost > jestMetalTotal
-	farmingDetails.status = 'Jestimp Scumming Equips below ' + prettify(jestMetalTotal);
+		var repeat = nextEquipmentCost > jestMetalTotal;
+		var status = 'Jestimp Scumming Equips below ' + prettify(jestMetalTotal);
+
+		farmingDetails.shouldRun = rShouldPandemoniumJestimpFarm;
+		farmingDetails.mapName = mapName;
+		farmingDetails.mapLevel = rPandemoniumMapLevel;
+		farmingDetails.autoLevel = true;
+		farmingDetails.special = rPandemoniumSpecial;
+		farmingDetails.jobRatio = rPandemoniumJobRatio;
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
+	}
 
 	if (rShouldPandemoniumJestimpFarm) {
 		PandemoniumJestimpScumming();
@@ -1690,6 +1731,9 @@ function Alchemy() {
 					rShouldAlchFarm = true;
 			}
 
+			var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rAFMapLevel || getCurrentMapObject().bonus !== rAFSpecial || herbtotal >= potioncosttotal);
+			var status = 'Alchemy Farming ' + alchObj.potionNames[potion] + " (" + alchObj.potionsOwned[potion] + "/" + rAFPotions.toString().replace(/[^\d,:-]/g, '') + ")";
+
 			farmingDetails.shouldRun = rShouldAlchFarm;
 			farmingDetails.mapName = mapName;
 			farmingDetails.mapLevel = rAFMapLevel;
@@ -1702,8 +1746,8 @@ function Alchemy() {
 			farmingDetails.potionName = alchObj.potionNames[potion];
 			farmingDetails.potionOwned = alchObj.potionsOwned[potion];
 			farmingDetails.potionGoal = rAFPotions.toString().replace(/[^\d,:-]/g, '');
-			farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || farmingDetails.herbtotal >= farmingDetails.potionTotalCost);
-			farmingDetails.status = 'Alchemy Farming ' + farmingDetails.potionName + " (" + farmingDetails.potionOwned + "/" + farmingDetails.potionGoal + ")";
+			farmingDetails.repeat = !repeat;
+			farmingDetails.status = status;
 
 			if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
 				if (getPageSetting('rMapRepeatCount')) debug("Alchemy Farm took " + (game.global.mapRunCounter) + " (" + (rAFMapLevel >= 0 ? "+" : "") + rAFMapLevel + " " + rAFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
@@ -1812,6 +1856,9 @@ function Hypothermia() {
 			currTime = 0;
 		}
 
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHFMapLevel || getCurrentMapObject().bonus !== rHFSpecial || game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20), false, true, rHFMapLevel) + game.resources.wood.owned > rHFBonfireCostTotal);
+		var status = 'Hypo Farming to ' + prettify(rHFBonfireCostTotal) + ' wood';
+
 		farmingDetails.shouldRun = rShouldHypoFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rHFMapLevel;
@@ -1820,8 +1867,8 @@ function Hypothermia() {
 		farmingDetails.jobRatio = rHFJobRatio;
 		farmingDetails.bonfire = rHFBonfire;
 		farmingDetails.woodGoal = rHFBonfireCostTotal;
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special || game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20), false, true, farmingDetails.mapLevel) + game.resources.wood.owned > farmingDetails.woodGoal);
-		farmingDetails.status = 'Hypo Farming to ' + prettify(farmingDetails.woodGoal) + ' wood';
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 	}
 
 	return farmingDetails;
@@ -1873,6 +1920,9 @@ function Smithless() {
 				rShouldSmithless = true;
 		}
 
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rSmithlessMapLevel || getCurrentMapObject().bonus !== rSmithlessSpecial);
+		var status = 'Smithless: Want ' + damageTarget.toFixed(2) + 'x more damage for 3/3';
+
 		farmingDetails.shouldRun = rShouldSmithless;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rSmithlessMapLevel;
@@ -1880,8 +1930,8 @@ function Smithless() {
 		farmingDetails.special = rSmithlessSpecial;
 		farmingDetails.jobRatio = rSmithlessJobRatio;
 		farmingDetails.damageTarget = damageTarget;
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special);
-		farmingDetails.status = 'Smithless: Want ' + farmingDetails.damageTarget.toFixed(2) + 'x more damage for 3/3';
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 
 	}
 	if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
@@ -1977,6 +2027,9 @@ function HDFarm() {
 			}
 		}
 
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHDFMapLevel || getCurrentMapObject().bonus !== rHDFSpecial);
+		var status = 'HD Farm (' + equipfarmdynamicHD(rHDFIndex).toFixed(2) + '): Wants ' + (HDRatio - equipfarmdynamicHD(rHDFIndex)).toFixed(2) + 'x&nbspmore stats';
+
 		farmingDetails.shouldRun = rShouldHDFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rHDFMapLevel;
@@ -1984,8 +2037,8 @@ function HDFarm() {
 		farmingDetails.special = rHDFSpecial;
 		farmingDetails.jobRatio = rHDFJobRatio;
 		farmingDetails.HDRatio = equipfarmdynamicHD(rHDFIndex);
-		farmingDetails.repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== farmingDetails.mapLevel || getCurrentMapObject().bonus !== farmingDetails.special);
-		farmingDetails.status = 'HD Farm (' + farmingDetails.HDRatio.toFixed(2) + '): Wants ' + (HDRatio - farmingDetails.HDRatio).toFixed(2) + 'x&nbspmore stats';
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
 	}
 
 	return farmingDetails;
