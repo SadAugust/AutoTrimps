@@ -626,7 +626,7 @@ function RbuyJobs() {
 
 	var allIn = "";
 
-	if (workerRatio !== null) {
+	if (workerRatio !== null && workerRatio !== undefined) {
 		var desiredRatios = Array.from(workerRatio.split(','))
 		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
 	} else if (allIn != "") {
@@ -667,7 +667,7 @@ function RbuyJobs() {
 	}
 
 	//Setting lumberjacks to 0 if Melting Point has been run.
-	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && workerRatio === null && !game.mapUnlocks.SmithFree.canRunOnce) {
+	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && (workerRatio !== null && workerRatio !== undefined) && !game.mapUnlocks.SmithFree.canRunOnce) {
 		desiredRatios[1] = 0;
 	}
 
