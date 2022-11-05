@@ -657,7 +657,7 @@ function RbuyBuildings() {
 
 function rBuyTributes() {
 	var affordableMets = 0;
-	if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rMapSettings.shouldTribute || (rCurrentMap === 'rSmithyFarm' && rMapSettings.farmGoal.includes('gems'))) {
+	if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rMapSettings.shouldTribute || (rCurrentMap === 'rSmithyFarm' && rMapSettings.farmGoal !== undefined && rMapSettings.farmGoal.includes('gems'))) {
 		affordableMets = getMaxAffordable(
 			game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
 			game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100),
@@ -672,7 +672,7 @@ function rBuyTributes() {
 		var rTributeSpendPct = typeof (rTrFTributes) !== 'undefined' && rTrFTributes > 0 ? 1 : autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent > 0 ? autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent / 100 : 1;
 		var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned * rTributeSpendPct), 1.05, true);
 		maxTributes = autoTrimpSettings.rBuildingSettingsArray.value.Tribute.buyMax === 0 ? Infinity : typeof (rTrFTributes) !== 'undefined' && rTrFTributes > autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax ? rTrFTributes : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax;
-		if ((rCurrentMap === 'rSmithyFarm' && rMapSettings.farmGoal.includes('gems')) || questcheck() === 4) {
+		if ((rCurrentMap === 'rSmithyFarm' && rMapSettings.farmGoal !== undefined && rMapSettings.farmGoal.includes('gems')) || questcheck() === 4) {
 			maxTributes = Infinity;
 			rTributeSpendPct = 1;
 		}
