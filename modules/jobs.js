@@ -528,6 +528,8 @@ function fireModeLocal() {
 	}
 }
 
+workerRatio = null;
+
 function RbuyJobs() {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
@@ -615,12 +617,6 @@ function RbuyJobs() {
 
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs * reserveMod : 0;
 
-	//Figuring out what value we should use for when to run Melting Point
-	var MPSmithy = game.global.runningChallengeSquared && getPageSetting('c3meltingpoint') > 0 ? getPageSetting('c3meltingpoint') :
-		game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') :
-			game.global.challengeActive == "Daily" && getPageSetting('Rdmeltsmithy') > 0 ? getPageSetting('Rdmeltsmithy') :
-				getPageSetting('Rmeltsmithy');
-
 	// Calculate how much of each worker we should have
 	if (game.global.StaffEquipped.rarity >= 10) {
 		var desiredRatios = [10, 10, 10, 1];
@@ -629,18 +625,10 @@ function RbuyJobs() {
 	}
 
 	var allIn = "";
-	if (typeof (workerRatio) !== 'undefined' && workerRatio !== null) {
+
+	if (workerRatio !== null) {
 		var desiredRatios = Array.from(workerRatio.split(','))
 		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
-	}
-
-	if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && (typeof (workerRatio) === 'undefined' || workerRatio === null))
-		desiredRatios[0] = 0;
-	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && (typeof (workerRatio) === 'undefined' || workerRatio === null) && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
-		desiredRatios[1] = 0;
-
-	if (typeof (workerRatio) !== 'undefined' && workerRatio !== null) {
-		desiredRatios = desiredRatios;
 	} else if (allIn != "") {
 		desiredRatios[ratioWorkers.indexOf(allIn)] = 100;
 	} else {
@@ -669,18 +657,21 @@ function RbuyJobs() {
 					desiredRatios[ratioWorkers.indexOf(worker)] = 1;
 					continue;
 				}
-				else
-					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(RworkerRatios('R' + worker + 'Ratio'));
-				if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && typeof (workerRatio) !== 'undefined' && workerRatio !== null) {
-					desiredRatios[ratioWorkers.indexOf("Farmer")] = 0;
-				}
-				if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && typeof (workerRatio) !== 'undefined' && workerRatio !== null && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy))) {
-					desiredRatios[ratioWorkers.indexOf("Lumberjack")] = 0;
-				}
 			}
 		}
 	}
 
+	//Setting farmers to 0 if past NFF zone & in world.
+	if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && workerRatio === null) {
+		desiredRatios[0] = 0;
+	}
+
+	//Setting lumberjacks to 0 if Melting Point has been run.
+	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && workerRatio === null && !game.mapUnlocks.SmithFree.canRunOnce) {
+		desiredRatios[1] = 0;
+	}
+
+	//Adding Miners to Farmer ratio if in Transmute challenge
 	if (game.global.challengeActive == 'Transmute') {
 		desiredRatios[0] += desiredRatios[2];
 		desiredRatios[2] = 0;
