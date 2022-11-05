@@ -339,7 +339,7 @@ ul.tab li a:hover {
 
 .windowWorldrSmithyFarm {
 	display: inline-block;
-	width: 15%;
+	width: 12%;
 	padding: 1px;
 
 }
@@ -419,7 +419,7 @@ ul.tab li a:hover {
 
 .windowCellrSmithyFarm {
 	display: inline-block;
-	width: 15%;
+	width: 12%;
 	padding: 1px;
 }
 
@@ -478,7 +478,7 @@ ul.tab li a:hover {
 
 .windowAutoLevelrSmithyFarm {
 	display: inline-block;
-	width: 10%;
+	width: 7%;
 	padding: 1px;
 }
 
@@ -538,7 +538,7 @@ ul.tab li a:hover {
 
 .windowLevelrSmithyFarm {
 	display: inline-block;
-	width: 15%;
+	width: 12%;
 	padding: 1px;
 }
 
@@ -708,6 +708,29 @@ ul.tab li a:hover {
 	width: 20%;
 	padding: 1px;
 }
+
+
+
+.windowMapTypeDropdownrTributeFarm {
+	display: inline-block;
+	width: 10%;
+	padding: 1px;
+}
+
+.windowMapTypeDropdownDefaultrTributeFarm {
+	display: inline-block;
+	width: 15%;
+	padding: 1px;
+}
+
+.windowMapTypeDropdownrSmithyFarm,
+.windowMapTypeDropdownDefaultrSmithyFarm {
+	display: inline-block;
+	width: 15%;
+	padding: 1px;
+}
+
+
 
 /*Cell columns*/
 .window {
@@ -882,7 +905,7 @@ ul.tab li a:hover {
 
 /*Smithy Farm*/
 .windowSmithies {
-	width: 15%;
+	width: 12%;
 	padding: 1px;
 }
 
@@ -924,8 +947,6 @@ ul.tab li a:hover {
 	width: 10%;
 	padding: 1px;
 }
-
-
 
 .windowGatherOn .windowSpecialrMapBonus {
 	width: 15%;

@@ -1666,6 +1666,19 @@ function updateATVersion() {
 			}
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.1') {
+			if (typeof (autoTrimpSettings.rSmithyFarmDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rSmithyFarmDefaultSettings.value.mapType === undefined) {
+				autoTrimpSettings.rSmithyFarmDefaultSettings.value.mapType = 'Absolute';
+				saveSettings();
+			}
+			if (typeof (autoTrimpSettings.rSmithyFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rSmithyFarmSettings.value[0].mapType === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rSmithyFarmSettings.value.length; y++) {
+					autoTrimpSettings.rSmithyFarmSettings.value[y].mapType = 'Absolute';
+				}
+				saveSettings();
+			}
+		}
+
 		autoTrimpSettings["ATversion"] = ATversion;
 		saveSettings();
 	}
