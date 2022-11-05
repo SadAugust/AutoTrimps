@@ -329,6 +329,7 @@ function MapFarm() {
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const shredActive = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined';
+	const totalPortals = getTotalPortals();
 	const shredMods = shredActive ? dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength) : [];
 	const foodShred = shredActive && shredMods.includes('food');
 	const metalShred = shredActive && shredMods.includes('metal');
@@ -446,6 +447,7 @@ function TributeFarm() {
 	const isDaily = game.global.challengeActive === 'Daily';
 	const foodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
 	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
+	const totalPortals = getTotalPortals();
 	var rTrFIndex;
 	var rTrFBaseSetting = autoTrimpSettings.rTributeFarmSettings.value;
 
@@ -633,6 +635,7 @@ function SmithyFarm() {
 	const woodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
 	const smithyShred = woodShred || metalShred;
 	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
+	const totalPortals = getTotalPortals();
 
 	var rSFIndex;
 	var rSFBaseSetting = autoTrimpSettings.rSmithyFarmSettings.value;
@@ -654,114 +657,117 @@ function SmithyFarm() {
 
 	if (rSFIndex >= 0 || questcheck() === 10) {
 
-		var rSFSettings = autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
-		if ((rSFSettings.active || game.global.challengeActive === 'Quest')) {
-			var rSFMapLevel = game.global.challengeActive === 'Quest' ? -1 : rSFSettings.level;
-			var rSFSpecial = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
-			var rSFJobRatio = '1,1,1,0';
-			rSFSmithies = game.buildings.Smithy.locked == 1 ? 0 : game.global.challengeActive === 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
+		//NO IDEA HOW TO IMPLEMENT THIS. HELP PLEASE!
+		// 0 === cache, 1 === job ratio, 2 === farm type, 3 === amount needed to farm for
+		//var rSmithyArray = questcheck() == 1 ? ['lsc', '1', ' gems.'] : questcheck() == 2 ? ['lwc', '0,1', ' wood.'] : questcheck() == 3 ? ['lmc', '0,0,1', ' metal.'] : [0, 0, 0, 0];
 
+		var rSFSettings = autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
+		var rSFMapLevel = game.global.challengeActive === 'Quest' ? -1 : rSFSettings.level;
+		var rSFSpecial = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
+		var rSFJobRatio = '1,1,1,0';
+		rSFSmithies = game.global.challengeActive === 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
+
+		if (rSFSettings.autoLevel || questcheck() === 10) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && smithyMapCount !== [0, 0, 0] && typeof getCurrentMapObject().bonus !== 'undefined') {
 				if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') game.global.mapRunCounter = smithyMapCount[0];
 				else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') game.global.mapRunCounter = smithyMapCount[1];
 				else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') game.global.mapRunCounter = smithyMapCount[2];
 			}
 
-			if (rSFSettings.autoLevel || questcheck() === 10) {
-				var rAutoLevel_Repeat = rAutoLevel;
-				mapAutoLevel = callAutoMapLevel(rCurrentMap, rAutoLevel, rSFSpecial, null, null, false);
-				if (mapAutoLevel !== Infinity) {
-					if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) {
-						if (game.global.mapsActive && typeof getCurrentMapObject().bonus !== 'undefined') {
-							if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') smithyMapCount[0] = game.global.mapRunCounter + 1;
-							else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') smithyMapCount[1] = game.global.mapRunCounter + 1;
-							else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') smithyMapCount[2] = game.global.mapRunCounter + 1;
-						}
-					}
-					rSFMapLevel = mapAutoLevel;
-				}
-			}
-			if (game.global.challengeActive == "Wither" && rSFMapLevel >= 0)
-				rSFMapLevel = -1;
-
-			//Checking for daily resource shred
-			if (typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && smithyShred) {
-				var rSFSpecialTime = game.global.highestRadonLevelCleared > 83 ? 20 : 10;
-
-				if (woodShred && metalShred) {
-					var woodGain = scaleToCurrentMapLocal(simpleSecondsLocal("wood", rSFSpecialTime, true, '0,1,0,0'), false, true, rSFMapLevel);
-					var metalGain = scaleToCurrentMapLocal(simpleSecondsLocal("metal", rSFSpecialTime, true, '0,0,1,0'), false, true, rSFMapLevel);
-				}
-				else if (woodShred) {
-					var woodGain = scaleToCurrentMapLocal(simpleSecondsLocal("wood", (rSFSpecialTime * 2) + 45, true, '0,1,0,0'), false, true, rSFMapLevel);
-					var metalGain = Infinity;
-				}
-				else if (metalShred) {
-					var woodGain = Infinity;
-					var metalGain = scaleToCurrentMapLocal(simpleSecondsLocal("metal", (rSFSpecialTime * 2) + 45, true, '0,0,1,0'), false, true, rSFMapLevel);
-				}
-				var smithy_Cost_Mult = game.buildings.Smithy.cost.gems[1];
-				var smithy_Max_Affordable = [getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.gems[0], (Infinity), (smithy_Cost_Mult), true),
-				getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.metal[0], (woodGain), (smithy_Cost_Mult), true),
-				getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (metalGain), (smithy_Cost_Mult), true)];
-				var smithy_Can_Afford = game.buildings.Smithy.purchased + Math.min(smithy_Max_Affordable[0], smithy_Max_Affordable[1], smithy_Max_Affordable[2]);
-				rSFSmithies = smithy_Can_Afford > 0 && rSFSmithies > smithy_Can_Afford ? smithy_Can_Afford : rSFSmithies;
-			}
-
-			rSFGoal = 0;
-
-			var smithyGemCost = getBuildingItemPrice(game.buildings.Smithy, 'gems', false, rSFSmithies - game.buildings.Smithy.purchased);
-			var smithyWoodCost = getBuildingItemPrice(game.buildings.Smithy, 'wood', false, rSFSmithies - game.buildings.Smithy.purchased);
-			var smithyMetalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, rSFSmithies - game.buildings.Smithy.purchased);
-
-			if (rSFSmithies > game.buildings.Smithy.purchased) {
-				if (smithyGemCost > game.resources.gems.owned) {
-					rShouldSmithyGemFarm = true;
-					rSFSpecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
-					rSFJobRatio = '1,0,0,0';
-					rSFGoal = smithyGemCost.toExponential(2) + ' gems.';
-				}
-				else if (smithyWoodCost > game.resources.wood.owned) {
-					rShouldSmithyWoodFarm = true;
-					rSFSpecial = game.global.highestRadonLevelCleared > 83 ? "lwc" : "swc";
-					rSFJobRatio = '0,1,0,0';
-					rSFGoal = smithyWoodCost.toExponential(2) + ' wood.';
-				}
-				else if (smithyMetalCost > game.resources.metal.owned) {
-					rShouldSmithyMetalFarm = true;
-					rSFSpecial = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
-					rSFJobRatio = '0,0,1,0';
-					rSFGoal = smithyMetalCost.toExponential(2) + ' metal.';
-				}
-				rShouldSmithyFarm = true;
-			}
-
-			if ((!autoTrimpSettings.RBuyBuildingsNew.enabled || !autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled) && rShouldSmithyFarm && rSFSmithies > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, false, 1)) {
-				buyBuilding("Smithy", true, true, 1);
-			}
-
-			//Recycles map if we don't need to finish it for meeting the farm requirements
-			if (rCurrentMap === mapName && !dontRecycleMaps) {
-				if (game.global.mapsActive && typeof getCurrentMapObject().bonus !== 'undefined' && ((!rShouldSmithyGemFarm && getCurrentMapObject().bonus.includes('sc')) || (!rShouldSmithyWoodFarm && getCurrentMapObject().bonus.includes('wc')) || (!rShouldSmithyMetalFarm && getCurrentMapObject().bonus.includes('mc')))) {
-					if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') rSFMapRepeats[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-					else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-					else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-					if (!dontRecycleMaps) {
-						mapsClicked();
-						recycleMap();
+			var rAutoLevel_Repeat = rAutoLevel;
+			mapAutoLevel = callAutoMapLevel(rCurrentMap, rAutoLevel, rSFSpecial, null, null, false);
+			if (mapAutoLevel !== Infinity) {
+				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) {
+					if (game.global.mapsActive && typeof getCurrentMapObject().bonus !== 'undefined') {
+						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') smithyMapCount[0] = game.global.mapRunCounter + 1;
+						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') smithyMapCount[1] = game.global.mapRunCounter + 1;
+						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') smithyMapCount[2] = game.global.mapRunCounter + 1;
 					}
 				}
-				if (rCurrentMap === mapName && !rShouldSmithyFarm) {
-					if (getPageSetting('rMapRepeatCount')) debug("Smithy Farm took " + rSFMapRepeats[0] + " food map" + (rSFMapRepeats[0] === 1 ? ", " : "s, ") + rSFMapRepeats[1] + " wood map" + (rSFMapRepeats[1] === 1 ? ", " : "s, ") + rSFMapRepeats[2] + " metal map" + (rSFMapRepeats[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.");
-					rCurrentMap = undefined;
-					mapAutoLevel = Infinity;
-					if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
-						toggleAutoStructure();
-					rSFMapRepeats = [0, 0, 0];
-					smithyMapCount = [0, 0, 0];
-					currTime = 0;
+				rSFMapLevel = mapAutoLevel;
+			}
+		}
+		if (game.global.challengeActive == "Wither" && rSFMapLevel >= 0)
+			rSFMapLevel = -1;
+
+		//Checking for daily resource shred
+		if (typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && smithyShred) {
+			var rSFSpecialTime = game.global.highestRadonLevelCleared > 83 ? 20 : 10;
+
+			if (woodShred && metalShred) {
+				var woodGain = scaleToCurrentMapLocal(simpleSecondsLocal("wood", rSFSpecialTime, true, '0,1,0,0'), false, true, rSFMapLevel);
+				var metalGain = scaleToCurrentMapLocal(simpleSecondsLocal("metal", rSFSpecialTime, true, '0,0,1,0'), false, true, rSFMapLevel);
+			}
+			else if (woodShred) {
+				var woodGain = scaleToCurrentMapLocal(simpleSecondsLocal("wood", (rSFSpecialTime * 2) + 45, true, '0,1,0,0'), false, true, rSFMapLevel);
+				var metalGain = Infinity;
+			}
+			else if (metalShred) {
+				var woodGain = Infinity;
+				var metalGain = scaleToCurrentMapLocal(simpleSecondsLocal("metal", (rSFSpecialTime * 2) + 45, true, '0,0,1,0'), false, true, rSFMapLevel);
+			}
+			var smithy_Cost_Mult = game.buildings.Smithy.cost.gems[1];
+			var smithy_Max_Affordable = [getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.gems[0], (Infinity), (smithy_Cost_Mult), true),
+			getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.metal[0], (woodGain), (smithy_Cost_Mult), true),
+			getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (metalGain), (smithy_Cost_Mult), true)];
+			var smithy_Can_Afford = game.buildings.Smithy.purchased + Math.min(smithy_Max_Affordable[0], smithy_Max_Affordable[1], smithy_Max_Affordable[2]);
+			rSFSmithies = smithy_Can_Afford > 0 && rSFSmithies > smithy_Can_Afford ? smithy_Can_Afford : rSFSmithies;
+		}
+
+		rSFGoal = 0;
+
+		var smithyGemCost = getBuildingItemPrice(game.buildings.Smithy, 'gems', false, rSFSmithies - game.buildings.Smithy.purchased);
+		var smithyWoodCost = getBuildingItemPrice(game.buildings.Smithy, 'wood', false, rSFSmithies - game.buildings.Smithy.purchased);
+		var smithyMetalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, rSFSmithies - game.buildings.Smithy.purchased);
+
+		if (rSFSmithies > game.buildings.Smithy.purchased) {
+			if (smithyGemCost > game.resources.gems.owned) {
+				rShouldSmithyGemFarm = true;
+				rSFSpecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
+				rSFJobRatio = '1,0,0,0';
+				rSFGoal = smithyGemCost.toExponential(2) + ' gems.';
+			}
+			else if (smithyWoodCost > game.resources.wood.owned) {
+				rShouldSmithyWoodFarm = true;
+				rSFSpecial = game.global.highestRadonLevelCleared > 83 ? "lwc" : "swc";
+				rSFJobRatio = '0,1,0,0';
+				rSFGoal = smithyWoodCost.toExponential(2) + ' wood.';
+			}
+			else if (smithyMetalCost > game.resources.metal.owned) {
+				rShouldSmithyMetalFarm = true;
+				rSFSpecial = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
+				rSFJobRatio = '0,0,1,0';
+				rSFGoal = smithyMetalCost.toExponential(2) + ' metal.';
+			}
+			rShouldSmithyFarm = true;
+		}
+
+		if ((!autoTrimpSettings.RBuyBuildingsNew.enabled || !autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled) && rShouldSmithyFarm && rSFSmithies > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, false, 1)) {
+			buyBuilding("Smithy", true, true, 1);
+		}
+
+		//Recycles map if we don't need to finish it for meeting the farm requirements
+		if (rCurrentMap === mapName && !dontRecycleMaps) {
+			if (game.global.mapsActive && typeof getCurrentMapObject().bonus !== 'undefined' && ((!rShouldSmithyGemFarm && getCurrentMapObject().bonus.includes('sc')) || (!rShouldSmithyWoodFarm && getCurrentMapObject().bonus.includes('wc')) || (!rShouldSmithyMetalFarm && getCurrentMapObject().bonus.includes('mc')))) {
+				if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') rSFMapRepeats[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+				else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+				else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+				if (!dontRecycleMaps) {
+					mapsClicked();
+					recycleMap();
 				}
 			}
+			if (rCurrentMap === mapName && !rShouldSmithyFarm) {
+				if (getPageSetting('rMapRepeatCount')) debug("Smithy Farm took " + rSFMapRepeats[0] + " food map" + (rSFMapRepeats[0] === 1 ? ", " : "s, ") + rSFMapRepeats[1] + " wood map" + (rSFMapRepeats[1] === 1 ? ", " : "s, ") + rSFMapRepeats[2] + " metal map" + (rSFMapRepeats[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.");
+				rCurrentMap = undefined;
+				mapAutoLevel = Infinity;
+				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
+					toggleAutoStructure();
+				rSFMapRepeats = [0, 0, 0];
+				smithyMapCount = [0, 0, 0];
+				currTime = 0;
+			}
+
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rSFMapLevel || getCurrentMapObject().bonus !== rSFSpecial);
@@ -1245,6 +1251,7 @@ function Quest() {
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rQuestMapLevel || getCurrentMapObject().bonus !== rQuestSpecial || (rShouldQuest == 6 && (game.global.mapBonus >= 4 || getCurrentMapObject().level - game.global.world < 0)));
+
 		var status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
 
 		farmingDetails.shouldRun = rShouldQuest;
@@ -1965,6 +1972,7 @@ function HDFarm() {
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
+	const totalPortals = getTotalPortals();
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const rHDFBaseSetting = autoTrimpSettings.rHDFarmSettings.value;
 	const rHDFZone = getPageSetting('rHDFarmZone');

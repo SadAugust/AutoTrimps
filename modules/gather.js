@@ -189,7 +189,7 @@ function manualLabor2() {
 
 	//Low Priority Research
 	if (getPageSetting('ManualGather2') != 2 && researchAvailable && haveWorkers) {
-		if (game.resources.science.owned < getPsString('science', true) * MODULES["gather"].minScienceSeconds) {
+		if (game.resources.science.owned < getPsStringLocal('science', true) * MODULES["gather"].minScienceSeconds) {
 			setGather('science');
 			return;
 		}
@@ -216,31 +216,22 @@ function RmanualLabor2() {
 	var hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
 	var needToTrap = (game.resources.trimps.max - game.resources.trimps.owned >= game.resources.trimps.max * 0.05) || (game.resources.trimps.getCurrentSend() > game.resources.trimps.owned - game.resources.trimps.employed);
 	var fresh = false;
-	var mapping = !game.global.mapsActive ? null :
-		getCurrentMapObject().bonus == undefined ? null :
-			getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('lc') || getCurrentMapObject().bonus.includes('hc') || getCurrentMapObject().bonus.includes('wc') || getCurrentMapObject().bonus.includes('mc') || getCurrentMapObject().bonus.includes('rc') ? true :
-				null;
+	var mapping = !game.global.mapsActive ? null : getCurrentMapObject().bonus === undefined ? null : true;
 	var gather = null;
 	if (rMapSettings.gather !== undefined) gather = rMapSettings.gather;
-
-	var questGather = game.global.challengeActive == "Quest" && questcheck() == 1 ? 'food' :
-		game.global.challengeActive == "Quest" && questcheck() == 2 ? 'wood' :
-			game.global.challengeActive == "Quest" && (questcheck() == 3 || questcheck() == 7) ? 'metal' :
-				game.global.challengeActive == "Quest" && questcheck() == 5 ? 'science' :
-					null;
 
 	//ULTRA FRESH
 	if (!game.upgrades.Battle.done) {
 		fresh = true;
 		if (game.resources.food.owned < 10)
 			setGather('food');
-		if (game.resources.wood.owned < 10 && game.resources.food.owned >= 10)
+		else if (game.resources.wood.owned < 10 && game.resources.food.owned >= 10)
 			setGather('wood');
-		if (game.resources.food.owned >= 10 && game.resources.wood.owned >= 10)
+		else if (game.resources.food.owned >= 10 && game.resources.wood.owned >= 10)
 			safeBuyBuilding('Trap');
-		if (game.buildings.Trap.owned > 0 && game.resources.trimps.owned < 1)
+		else if (game.buildings.Trap.owned > 0 && game.resources.trimps.owned < 1)
 			setGather('trimps');
-		if (game.resources.trimps.owned >= 1)
+		else if (game.resources.trimps.owned >= 1)
 			setGather('science');
 		return;
 	}
@@ -265,18 +256,9 @@ function RmanualLabor2() {
 		}
 		return;
 	}
-	if (game.global.challengeActive == "Pandemonium" && !rShouldPandemoniumDestack && getPageSetting('RPandemoniumAutoEquip') > 0 && getPageSetting('RhsPandStaff') != "undefined" && getPageSetting('RPandemoniumAEZone') > 1 && game.global.lastClearedCell > 59) {
-		if (game.global.world >= getPageSetting('RPandemoniumAEZone'))
-			setGather('metal');
-	}
-	else if (questGather !== null)
-		setGather(questGather);
-	else if ((game.global.mapsActive && mapping != null) || rCurrentMap === 'rWorshipperFarm') {
-		if (rCurrentMap === 'rWorshipperFarm' && mapping == null)
-			setGather('food');
-		else if (gather !== null && gather !== undefined) {
+	else if ((game.global.mapsActive && mapping != null)) {
+		if (gather !== null)
 			setGather(gather)
-		}
 		else if (getCurrentMapObject().bonus.includes('sc') || getCurrentMapObject().bonus.includes('hc') || getCurrentMapObject().bonus.includes('lc'))
 			setGather('food');
 		else if (getCurrentMapObject().bonus.includes('wc'))
@@ -285,6 +267,8 @@ function RmanualLabor2() {
 			setGather('metal');
 		else if (getCurrentMapObject().bonus.includes('rc'))
 			setGather('science');
+		else
+			setGather('metal');
 	}
 	else {
 		if (getPageSetting('RManualGather2') != 2 && game.resources.science.owned < MODULES["gather"].RminScienceAmount && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden')
@@ -350,7 +334,7 @@ function RmanualLabor2() {
 				else
 					setGather(lowestResource);
 			} else if (getPageSetting('RManualGather2') != 2 && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
-				if (game.resources.science.owned < getPsString('science', true) * MODULES["gather"].minScienceSeconds && game.global.turkimpTimer < 1 && haveWorkers)
+				if (game.resources.science.owned < getPsStringLocal('science', true) * MODULES["gather"].minScienceSeconds && game.global.turkimpTimer < 1 && haveWorkers)
 					setGather('science');
 				else if (game.global.challengeActive == "Transmute" && hasTurkimp)
 					setGather('food');

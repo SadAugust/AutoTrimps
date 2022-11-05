@@ -2370,7 +2370,8 @@ function PerfectMapCost_Actual(plusLevel, specialModifier, biome) {
 }
 
 function runAtlantrimp(dontRecycle) {
-	if (game.global.mapsActive && getCurrentMapObject().name !== 'Atlantrimp') return;
+	if (game.global.mapsActive && getCurrentMapObject().name === 'Atlantrimp') return;
+
 	if (!game.global.preMapsActive && !game.global.mapsActive)
 		mapsClicked();
 	if (!dontRecycle && game.global.mapsActive && getCurrentMapObject().name !== 'Atlantrimp') {

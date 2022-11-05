@@ -760,7 +760,7 @@ function RautoEquip() {
 		(rCurrentMap === 'rSmithyFarm') ||
 		(game.mapUnlocks.AncientTreasure.canRunOnce &&
 			(rBSRunningAtlantrimp || rMapSettings.runAtlantrimp ||
-				(game.global.mapsActive && getCurrentMapObject().name == 'Atlantrimp')
+				(game.global.mapsActive && getCurrentMapObject().name === 'Atlantrimp')
 			)
 		)
 	)

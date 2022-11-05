@@ -444,7 +444,7 @@ function RquestbuyJobs() {
 
 	//Explorers
 	if (autoTrimpSettings.rJobSettingsArray.value.Explorer.enabled) {
-		var maxExplorers = 90000//(getPageSetting('RMaxExplorers') == -1) ? Infinity : getPageSetting('RMaxExplorers');
+		var maxExplorers = Infinity;
 		if (!game.jobs.Explorer.locked) {
 			var affordableExplorers = Math.min(maxExplorers - game.jobs.Explorer.owned,
 				getMaxAffordable(

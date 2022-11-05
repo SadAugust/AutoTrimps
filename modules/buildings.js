@@ -286,6 +286,141 @@ function buyStorage() {
 
 //Radon
 
+
+function getPsStringLocal(what, rawNum) {
+	if (what == "helium") return;
+	var resOrder = ["food", "wood", "metal", "science", "gems", "fragments"];
+	var books = ["farming", "lumber", "miner", "science"];
+	var jobs = ["Farmer", "Lumberjack", "Miner", "Scientist", "Dragimp", "Explorer"];
+	var index = resOrder.indexOf(what);
+	var job = game.jobs[jobs[index]];
+	var book = game.upgrades["Speed" + books[index]];
+	var base = (what == "fragments") ? 0.4 : 0.5;
+	//Add base
+	//Add job count
+	var currentCalc = job.owned * base;
+	var s = job.owned == 1 ? "" : "s";
+	//Add books
+	if (what != "gems" && game.permaBoneBonuses.multitasking.owned > 0) {
+		var str = (game.resources.trimps.owned >= game.resources.trimps.realMax()) ? game.permaBoneBonuses.multitasking.mult() : 0;
+		currentCalc *= (1 + str);
+	}
+	//Add books
+	if (typeof book !== 'undefined' && book.done > 0) {
+		var bookStrength = Math.pow(1.25, book.done);
+		currentCalc *= bookStrength;
+	}
+	//Add bounty
+	if (what != "gems" && game.upgrades.Bounty.done > 0) {
+		currentCalc *= 2;
+	}
+	//Add Tribute
+	if (what == "gems" && game.buildings.Tribute.owned > 0) {
+		var tributeStrength = Math.pow(game.buildings.Tribute.increase.by, game.buildings.Tribute.owned);
+		currentCalc *= tributeStrength;
+	}
+	//Add Whipimp
+	if (game.unlocks.impCount.Whipimp > 0) {
+		var whipStrength = Math.pow(1.003, game.unlocks.impCount.Whipimp);
+		currentCalc *= (whipStrength);
+	}
+	//Add motivation
+	if (getPerkLevel("Motivation") > 0) {
+		var motivationStrength = (getPerkLevel("Motivation") * game.portal.Motivation.modifier);
+		currentCalc *= (motivationStrength + 1);
+	}
+	if (!game.portal.Observation.radLocked && game.global.universe == 2 && game.portal.Observation.trinkets > 0) {
+		var mult = game.portal.Observation.getMult();
+		currentCalc *= mult;
+	}
+	//Add Fluffy Gatherer
+	if (Fluffy.isRewardActive('gatherer')) {
+		currentCalc *= 2;
+	}
+	var potionFinding;
+	if (game.global.challengeActive == "Alchemy") potionFinding = alchObj.getPotionEffect("Potion of Finding");
+	if (potionFinding > 1 && what != "fragments" && what != "science") {
+		currentCalc *= potionFinding;
+	}
+	if (game.upgrades.Speedexplorer.done > 0 && what == "fragments") {
+		var bonus = Math.pow(4, game.upgrades.Speedexplorer.done);
+		currentCalc *= bonus;
+	}
+	if (game.global.challengeActive == "Melt") {
+		currentCalc *= 10;
+		var stackStr = Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
+		currentCalc *= stackStr;
+	}
+	if (game.global.challengeActive == "Archaeology" && what != "fragments") {
+		var mult = game.challenges.Archaeology.getStatMult("science");
+		currentCalc *= mult;
+	}
+	if (game.global.challengeActive == "Insanity") {
+		var mult = game.challenges.Insanity.getLootMult();
+		currentCalc *= mult;
+	}
+	if (game.challenges.Nurture.boostsActive() && what != "fragments") {
+		var mult = game.challenges.Nurture.getResourceBoost();
+		currentCalc *= mult;
+	}
+	if (game.global.pandCompletions && what != "fragments") {
+		var mult = game.challenges.Pandemonium.getTrimpMult();
+		currentCalc *= mult;
+	}
+	if (game.global.challengeActive == "Daily") {
+		var mult = 0;
+		if (typeof game.global.dailyChallenge.dedication !== 'undefined') {
+			mult = dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
+			currentCalc *= mult;
+		}
+		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what != "fragments" && what != "science") {
+			mult = dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
+			currentCalc *= mult;
+		}
+	}
+	if (game.global.challengeActive == "Hypothermia" && what == "wood") {
+		var mult = game.challenges.Hypothermia.getWoodMult(true);
+		currentCalc *= mult;
+	}
+	if ((what == "food" && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15)) {
+		var mult = game.jobs.Meteorologist.getExtraMult();
+		currentCalc *= mult;
+	}
+	if ((what == "food" || what == "metal" || what == "wood") && getParityBonus() > 1) {
+		var mult = getParityBonus();
+		currentCalc *= mult;
+	}
+	if ((what == "food" || what == "metal" || what == "wood") && autoBattle.oneTimers.Gathermate.owned && game.global.universe == 2) {
+		var mult = autoBattle.oneTimers.Gathermate.getMult();
+		currentCalc *= mult;
+	}
+	var heirloomBonus = calcHeirloomBonus("Staff", jobs[index] + "Speed", 0, true);
+	if (heirloomBonus > 0) {
+		currentCalc *= ((heirloomBonus / 100) + 1);
+	}
+	//Add player
+	if (game.global.playerGathering == what) {
+		if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == "food" || what == "wood" || what == "metal")) {
+			var tBonus = 50;
+			if (game.talents.turkimp2.purchased) tBonus = 100;
+			else if (game.talents.turkimp2.purchased) tBonus = 75;
+			currentCalc *= (1 + (tBonus / 100));
+		}
+		var playerStrength = getPlayerModifier();
+		currentCalc += playerStrength;
+
+	}
+	//Add Loot	ALWAYS LAST
+	if (game.options.menu.useAverages.enabled) {
+		var avg = getAvgLootSecond(what);
+		if (avg > 0.001) {
+			currentCalc += avg;
+		}
+	}
+	if (rawNum) return currentCalc;
+	game.global.lockTooltip = false;
+}
+
 var RhousingList = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
 
 function RsafeBuyBuilding(building) {
@@ -369,7 +504,7 @@ function mostEfficientHousing() {
 			// Get production time for that resource
 			var baseCost = game.buildings[housing].cost[resource][0];
 			var costScaling = game.buildings[housing].cost[resource][1];
-			var avgProduction = getPsString(resource, true);
+			var avgProduction = getPsStringLocal(resource, true);
 			if (avgProduction <= 0) avgProduction = 1;
 			var housingBonus = game.buildings[housing].increase.by;
 			if (!game.buildings.Hub.locked) housingBonus += 500;

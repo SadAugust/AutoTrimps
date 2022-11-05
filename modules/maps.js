@@ -804,19 +804,23 @@ function RautoMap() {
 	//Vanilla Map at Zone
 	rVanillaMAZ = false;
 	if (game.options.menu.mapAtZone.enabled && game.global.canMapAtZone) {
+		var nextCell = game.global.lastClearedCell;
+		if (nextCell == -1) nextCell = 1;
+		else nextCell += 2;
+		var totalPortals = getTotalPortals();
 		let setZone = game.options.menu.mapAtZone.getSetZone();
 		for (var x = 0; x < setZone.length; x++) {
 			if (!setZone[x].on) continue;
-			//if (option.done === getTotalPortals() + "_" + game.global.world + "_" + option.cell) continue;
 			if (game.global.world < setZone[x].world || game.global.world > setZone[x].through) continue;
+			if (game.global.preMapsActive && setZone[x].done == totalPortals + "_" + game.global.world + "_" + nextCell) continue;
 			if (setZone[x].times === -1 && game.global.world !== setZone[x].world) continue;
 			if (setZone[x].times > 0 && (game.global.world - setZone[x].world) % setZone[x].times !== 0) continue;
 			if (setZone[x].cell === game.global.lastClearedCell + 2) {
 				rVanillaMAZ = true;
-				if (setZone.until == 6) game.global.mapCounterGoal = 25;
-				if (setZone.until == 7) game.global.mapCounterGoal = 50;
-				if (setZone.until == 8) game.global.mapCounterGoal = 100;
-				if (setZone.until == 9) game.global.mapCounterGoal = setZone[x].rx;
+				if (setZone[x].until == 6) game.global.mapCounterGoal = 25;
+				if (setZone[x].until == 7) game.global.mapCounterGoal = 50;
+				if (setZone[x].until == 8) game.global.mapCounterGoal = 100;
+				if (setZone[x].until == 9) game.global.mapCounterGoal = setZone[x].rx;
 				break;
 			}
 		}
