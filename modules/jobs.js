@@ -634,9 +634,9 @@ function RbuyJobs() {
 		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
 	}
 
-	if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && typeof (workerRatio) !== 'undefined' && workerRatio !== null)
+	if (game.global.challengeActive !== 'Transmute' && autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.enabled && game.global.world >= autoTrimpSettings.rJobSettingsArray.value.FarmersUntil.zone && (typeof (workerRatio) === 'undefined' || workerRatio === null))
 		desiredRatios[0] = 0;
-	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && typeof (workerRatio) !== 'undefined' && workerRatio !== null && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
+	if (autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && (typeof (workerRatio) === 'undefined' || workerRatio === null) && (!game.mapUnlocks.SmithFree.canRunOnce || (MPSmithy > 0 && game.buildings.Smithy.owned >= MPSmithy)))
 		desiredRatios[1] = 0;
 
 	if (typeof (workerRatio) !== 'undefined' && workerRatio !== null) {
