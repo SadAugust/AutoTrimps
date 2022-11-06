@@ -801,6 +801,10 @@ function RautoMap() {
 		rTrFAtlantrimp = false;
 	}
 
+	if (game.global.mapsActive && getCurrentMapObject().name == 'Atlantrimp') return;
+	if (game.global.mapsActive && getCurrentMapObject().name == 'Melting Point') return;
+	if (game.global.mapsActive && getCurrentMapObject().name == 'Frozen Castle') return;
+
 	//Vanilla Map at Zone
 	rVanillaMAZ = false;
 	if (game.options.menu.mapAtZone.enabled && game.global.canMapAtZone) {
