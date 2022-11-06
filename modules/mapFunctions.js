@@ -621,7 +621,7 @@ function SmithyFarm() {
 		mapName: mapName
 	};
 
-	if (game.buildings.Smithy.locked || !(autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && questcheck() !== 10) || game.global.challengeActive === 'Transmute') return farmingDetails;
+	if (game.buildings.Smithy.locked || (!autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && questcheck() !== 10) || game.global.challengeActive === 'Transmute') return farmingDetails;
 
 	var rShouldSmithyFarm = false;
 	var rShouldSmithyGemFarm = false;
@@ -669,7 +669,8 @@ function SmithyFarm() {
 
 
 
-		if (rSFSettings.autoLevel || questcheck() === 10) {
+
+		if (questcheck() === 10 || rSFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && smithyMapCount !== [0, 0, 0] && typeof getCurrentMapObject().bonus !== 'undefined') {
 				if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') game.global.mapRunCounter = smithyMapCount[0];
 				else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') game.global.mapRunCounter = smithyMapCount[1];
@@ -694,7 +695,7 @@ function SmithyFarm() {
 
 
 		//When mapType is set as Map Count work out how many Smithies we can farm in the amount of maps specified.
-		if (rSFSettings.mapType === 'Map Count' && rSFSmithies !== 0) {
+		if (questcheck() !== 10 && rSFSettings.mapType === 'Map Count' && rSFSmithies !== 0) {
 			var smithyCount = 0;
 			//Checking total map count user wants to run
 			var totalMaps = rCurrentMap === mapName ? rSFSmithies - game.global.mapRunCounter : rSFSmithies;
@@ -815,7 +816,7 @@ function SmithyFarm() {
 		farmingDetails.shouldRun = rShouldSmithyFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rSFMapLevel;
-		farmingDetails.autoLevel = rSFSettings.autoLevel;
+		farmingDetails.autoLevel = questcheck() === 10 ? true : rSFSettings.autoLevel;
 		farmingDetails.jobRatio = rSFJobRatio;
 		farmingDetails.special = rSFSpecial;
 		farmingDetails.smithies = rSFSmithies;
@@ -2254,6 +2255,7 @@ function RAMPfrag(raidzones, fragtype) {
 }
 
 function fragmap() {
+	var fragmentsOwned = game.resources.fragments.owned
 	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
 	document.getElementById("advExtraLevelSelect").value = 0;
 	document.getElementById("advSpecialSelect").value = "fa";
@@ -2264,23 +2266,23 @@ function fragmap() {
 	document.getElementById("mapLevelInput").value = game.global.world;
 	updateMapCost();
 
-	if (updateMapCost(true) > game.resources.fragments.owned) {
+	if (updateMapCost(true) > fragmentsOwned) {
 		document.getElementById("biomeAdvMapsSelect").value = "Random";
 		updateMapCost();
 	}
-	if (updateMapCost(true) > game.resources.fragments.owned) {
+	if (updateMapCost(true) > fragmentsOwned) {
 		document.getElementById("advPerfectCheckbox").dataset.checked = false;
 		updateMapCost();
 	}
 
-	while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-		difficultyAdvMapsRange.value -= 1;
-		if (updateMapCost(true) <= game.resources.fragments.owned) break;
-		sizeAdvMapsRange.value -= 1;
+	while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > fragmentsOwned) {
+		if (difficultyAdvMapsRange.value !== 0) difficultyAdvMapsRange.value -= 1;
+		if (updateMapCost(true) <= fragmentsOwned) break;
+		if (sizeAdvMapsRange.value !== 0) sizeAdvMapsRange.value -= 1;
 	}
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
+	if (updateMapCost(true) <= fragmentsOwned) return updateMapCost(true);
 
-	if (updateMapCost(true) > game.resources.fragments.owned) {
+	if (updateMapCost(true) > fragmentsOwned) {
 		document.getElementById("advSpecialSelect").value = 0;
 		updateMapCost();
 	}
