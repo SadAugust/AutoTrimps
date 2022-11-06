@@ -641,8 +641,7 @@ function SmithyFarm() {
 	var rSFBaseSetting = autoTrimpSettings.rSmithyFarmSettings.value;
 
 	for (var y = 0; y < rSFBaseSetting.length; y++) {
-		if (!rSFBaseSetting[y].active || //rSFBaseSetting[y].done === totalPortals + "_" + game.global.world || 
-			game.global.world !== rSFBaseSetting[y].world || game.global.lastClearedCell + 2 < rSFBaseSetting[y].cell) {
+		if (!rSFBaseSetting[y].active || rSFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world !== rSFBaseSetting[y].world || game.global.lastClearedCell + 2 < rSFBaseSetting[y].cell) {
 			continue;
 		}
 		if (rSFBaseSetting[y].runType !== 'All') {
@@ -805,6 +804,7 @@ function SmithyFarm() {
 				currTime = 0;
 				HDRatio = RcalcHDratio();
 				if (rSFSettings.meltingPoint) runUnique('Melting Point', false);
+				rSFSettings.done = totalPortals + "_" + game.global.world;
 			}
 
 		}
