@@ -87,11 +87,11 @@ function shouldRunUniqueMap(map) {
 				isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
 					isDaily && !smithyShred && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
 						isDaily && smithyShred && uniqueMapSetting.MP_Smithy_Daily_Shred.enabled && uniqueMapSetting.MP_Smithy_Daily_Shred.value > 0 ? uniqueMapSetting.MP_Smithy_Daily_Shred.value :
-							uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
-								0;
+							!isC3 && !isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
+								Infinity;
 		if (game.mapUnlocks.SmithFree.canRunOnce &&
 			((!isC3 && !isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world >= uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
-				(meltsmithy > 0 && meltsmithy <= game.buildings.Smithy.owned))) {
+				(meltsmithy !== Infinity && meltsmithy <= game.buildings.Smithy.owned))) {
 			if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive)
 				debug('Running Melting Point at ' + game.buildings.Smithy.owned + ' smithies on zone ' + game.global.world + '.')
 			return true;
@@ -804,7 +804,7 @@ function SmithyFarm() {
 				smithyMapCount = [0, 0, 0];
 				currTime = 0;
 				HDRatio = RcalcHDratio();
-				if (rSFSettings.meltingPoint) runUnique('Melting Point', false);
+				if (game.global.challengeActive !== 'Quest' && rSFSettings.meltingPoint) runUnique('Melting Point', false);
 				rSFSettings.done = totalPortals + "_" + game.global.world;
 			}
 
