@@ -360,20 +360,10 @@ function RworkerRatios(workerRatio) {
 	var workerRatio = !workerRatio ? null : workerRatio
 	if (workerRatio == null) return;
 	if (getPageSetting('RBuyJobsNew') == 2) {
-		if (workerRatio.includes('Farmer')) {
-			if (autoTrimpSettings.rJobSettingsArray.value.Farmer.enabled) return autoTrimpSettings.rJobSettingsArray.value.Farmer.ratio;
-			else return 0;
-		}
-		else if (workerRatio.includes('Lumber')) {
-			if (autoTrimpSettings.rJobSettingsArray.value.Lumberjack.enabled)
-				return autoTrimpSettings.rJobSettingsArray.value.Lumberjack.ratio;
-			else
-				return 0;
-		}
-		else if (workerRatio.includes('Miner')) {
-			if (autoTrimpSettings.rJobSettingsArray.value.Miner.enabled) return autoTrimpSettings.rJobSettingsArray.value.Miner.ratio;
-			else return 0;
-		}
+		if (autoTrimpSettings.rJobSettingsArray.value[workerRatio].enabled)
+			return autoTrimpSettings.rJobSettingsArray.value[workerRatio].ratio;
+		else
+			return 0;
 	}
 
 	var ratioSet;
@@ -417,7 +407,7 @@ function RquestbuyJobs() {
 	}
 
 	if (game.global.challengeActive == 'Quest' && game.global.mapsUnlocked) {
-		if ((questcheck() == 10 && !canAffordBuilding('Smithy')) || questcheck() == 6) {
+		if ((questcheck() == 10 && !canAffordBuilding('Smithy', false, false, false, false, 1)) || questcheck() == 6) {
 			farmerRatio = 10;
 			lumberjackRatio = 10;
 			minerRatio = 10;
@@ -609,7 +599,7 @@ function RbuyJobs() {
 	for (var worker of ratioWorkers) {
 		currentworkers.push(game.jobs[worker].owned);
 	}
-	var desiredRatios = null;
+	var desiredRatios = [0, 0, 0, 0];
 	freeWorkers += currentworkers.reduce((a, b) => { return a + b; });
 
 	// Explicit firefox handling because Ff specifically reduces free workers to 0.
@@ -617,20 +607,9 @@ function RbuyJobs() {
 
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs * reserveMod : 0;
 
-	// Calculate how much of each worker we should have
-	if (game.global.StaffEquipped.rarity >= 10) {
-		var desiredRatios = [10, 10, 10, 1];
-	} else {
-		var desiredRatios = [0, 0, 0, 0];
-	}
-
-	var allIn = "";
-
 	if (workerRatio !== null && (rShouldBoneShrine || rMapSettings.jobRatio !== undefined)) {
-		var desiredRatios = Array.from(workerRatio.split(','))
+		desiredRatios = Array.from(workerRatio.split(','))
 		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
-	} else if (allIn != "") {
-		desiredRatios[ratioWorkers.indexOf(allIn)] = 100;
 	} else {
 		// Weird scientist ratio hack. Based on previous AJ, I don't know why it's like this.
 		var scientistMod = MODULES["jobs"].RscientistRatio;
@@ -650,13 +629,16 @@ function RbuyJobs() {
 		for (var worker of ratioWorkers) {
 			//Get ratio from AT
 			if (game.global.challengeActive == 'Transmute' && worker === 'Miner') {
-				desiredRatios[ratioWorkers.indexOf('Farmer')] += scientistMod * parseFloat(RworkerRatios('R' + worker + 'Ratio'));
+				desiredRatios[ratioWorkers.indexOf('Farmer')] += scientistMod * parseFloat(getPageSetting('RBuyJobsNew') == 2 ? worker : RworkerRatios('R' + worker + 'Ratio'));
 			}
+
 			if (!game.jobs[worker].locked) {
 				if (worker == "Scientist") {
 					desiredRatios[ratioWorkers.indexOf(worker)] = 1;
 					continue;
 				}
+				else
+					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(RworkerRatios(getPageSetting('RBuyJobsNew') == 2 ? worker : 'R' + worker + 'Ratio'))
 			}
 		}
 	}
