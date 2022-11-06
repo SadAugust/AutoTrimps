@@ -279,10 +279,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Raiding')) windowSize = 'tooltipWindow30'
 		if (titleText.includes('Void Map')) windowSize = 'tooltipWindow30'
 		if (titleText.includes('Hypothermia Farm')) windowSize = 'tooltipWindow30'
-		if (titleText.includes('Smithy Farm')) windowSize = 'tooltipWindow40'
 		if (titleText.includes('Worshipper Farm')) windowSize = 'tooltipWindow40'
 		if (titleText.includes('HD Farm')) windowSize = 'tooltipWindow40'
 		if (titleText.includes('Insanity Farm')) windowSize = 'tooltipWindow40'
+		if (titleText.includes('Smithy Farm')) windowSize = 'tooltipWindow45'
 		if (titleText.includes('Map Bonus')) windowSize = 'tooltipWindow45'
 		if (titleText.includes('Map Farm')) windowSize = 'tooltipWindow55'
 		if (titleText.includes('Tribute Farm')) windowSize = 'tooltipWindow55'
@@ -368,6 +368,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			mazHelp += "<li><b>Run Atlantrimp</b> - Will run Atlantrimp during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until Atlantrimp has been run so that there is no wasted resources. <b>Won't run on shred dailies that would be impacted by your farming choices.</b></li>";
 		if (titleText.includes('Smithy Farm'))
 			mazHelp += "<li><b>Smithies</b> - Smithy count you'd like to reach during this line. If you currently own 18 and want to reach 21 you'd enter 21 into this field.</li>";
+		if (titleText.includes('Smithy Farm'))
+			mazHelp += "<li><b>Run MP</b> - Will run Melting Point after this line has been run.</b></li>";
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm')) mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. Input will look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>"
 		if (titleText.includes('Bone Shrine'))
 			mazHelp += "<li><b>Gather</b> - Which resource you'd like to gather when popping a Bone Shrine charge to make use of Turkimp resource bonus.</li>";
@@ -555,6 +557,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial" + varPrefix_Adjusted + "\'>Special</div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) tooltipText += "<div class='windowAtlantrimp'>Run<br/>Atlantrimp</div>"
+		if (titleText.includes('Smithy Farm')) tooltipText += "<div class='windowMeltingPoint'>Run<br/>MP</div>"
 		if (titleText.includes('Insanity Farm')) tooltipText += "<div class='windowBuildings'>Destack</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) tooltipText += "<div class='windowRunType" + varPrefix_Adjusted + "\'>Run<br/>Type</div>"
 		tooltipText += "</div>";
@@ -586,6 +589,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				voidMod: 0,
 				buildings: true,
 				atlantrimp: false,
+				meltingPoint: false,
 				raidingzone: 6,
 				mapType: 'Absolute',
 				autoLevel: true,
@@ -623,6 +627,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.buildings = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].buildings) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].buildings : true;
 				if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine'))
 					vals.atlantrimp = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].atlantrimp) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].atlantrimp : false;
+				if (titleText.includes('Smithy Farm'))
+					vals.meltingPoint = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].meltingPoint) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].meltingPoint : false;
 				if (titleText.includes('Quagmire Farm'))
 					vals.bogs = autoTrimpSettings[varPrefix + "Settings"].value[x].bogs ? autoTrimpSettings[varPrefix + "Settings"].value[x].bogs : 0;
 				if (titleText.includes('Insanity Farm'))
@@ -751,6 +757,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowGather'>\<div style='text-align: center; font-size: 0.6vw;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select>\</div>"
 			if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine'))
 				tooltipText += "<div class='windowAtlantrimp' style='text-align: center;'>" + buildNiceCheckbox("windowAtlantrimp" + x, null, vals.atlantrimp) + "</div>";
+			if (titleText.includes('Smithy Farm'))
+				tooltipText += "<div class='windowMeltingPoint' style='text-align: center;'>" + buildNiceCheckbox("windowMeltingPoint" + x, null, vals.meltingPoint) + "</div>";
 			if (titleText.includes('Insanity Farm'))
 				tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.destack) + "</div>";
 			if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding'))
@@ -898,6 +906,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Void')) var voidMod = parseInt(document.getElementById('windowVoidMod' + x).value, 10);
 		if (titleText.includes('Tribute')) var buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute') || titleText.includes('Bone Shrine')) var atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
+		if (titleText.includes('Smithy Farm')) var meltingPoint = readNiceCheckbox(document.getElementById('windowMeltingPoint' + x));
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm')) var jobratio = document.getElementById('windowJobRatio' + x).value;
 		if (titleText.includes('Bone')) var gather = document.getElementById('windowBoneGather' + x).value;
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) var runType = document.getElementById('windowRunType' + x).value;
@@ -993,6 +1002,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			buildings: buildings,
 			jobratio: jobratio,
 			atlantrimp: atlantrimp,
+			meltingPoint: meltingPoint,
 			raidingzone: raidingzone,
 			mapType: mapType,
 			autoLevel: autoLevel,
@@ -1288,6 +1298,8 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowShred' + x).value = 'All';
 				if (document.getElementById('windowAtlantrimp' + x) !== null)
 					document.getElementById('windowAtlantrimp' + x).value = false;
+				if (document.getElementById('windowMeltingPoint' + x) !== null)
+					document.getElementById('windowMeltingPoint' + x).value = false;
 				if (document.getElementById('windowAutoLevel' + x) !== null)
 					document.getElementById('windowAutoLevel' + x).value = true;
 				if (document.getElementById('windowJobRatio' + x) !== null)
@@ -1350,6 +1362,11 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Void')) document.getElementById('windowVoidMod' + index).value = 0;
 	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) {
 		var checkBox = document.getElementById('windowAtlantrimp' + index);
+		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
+		checkBox.setAttribute('data-checked', false);
+	}
+	if (titleText.includes('Smithy Farm')) {
+		var checkBox = document.getElementById('windowMeltingPoint' + index);
 		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}

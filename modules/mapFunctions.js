@@ -641,7 +641,8 @@ function SmithyFarm() {
 	var rSFBaseSetting = autoTrimpSettings.rSmithyFarmSettings.value;
 
 	for (var y = 0; y < rSFBaseSetting.length; y++) {
-		if (!rSFBaseSetting[y].active || rSFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world !== rSFBaseSetting[y].world || game.global.lastClearedCell + 2 < rSFBaseSetting[y].cell) {
+		if (!rSFBaseSetting[y].active || //rSFBaseSetting[y].done === totalPortals + "_" + game.global.world || 
+			game.global.world !== rSFBaseSetting[y].world || game.global.lastClearedCell + 2 < rSFBaseSetting[y].cell) {
 			continue;
 		}
 		if (rSFBaseSetting[y].runType !== 'All') {
@@ -694,38 +695,36 @@ function SmithyFarm() {
 
 
 		//When mapType is set as Map Count work out how many Smithies we can farm in the amount of maps specified.
-		if (rSFSettings.mapType === 'Map Count') {
-			if (rSFSmithies !== 0) {
-				var smithyCount = 0;
-				//Checking total map count user wants to run
-				var totalMaps = rCurrentMap === mapName ? rSFSmithies - game.global.mapRunCounter : rSFSmithies;
-				//Calculating cache + jestimp + chronoimp
-				var mapTime = totalMaps * 25;
-				if (totalMaps > 4) mapTime += (Math.floor(totalMaps / 5) * 45);
+		if (rSFSettings.mapType === 'Map Count' && rSFSmithies !== 0) {
+			var smithyCount = 0;
+			//Checking total map count user wants to run
+			var totalMaps = rCurrentMap === mapName ? rSFSmithies - game.global.mapRunCounter : rSFSmithies;
+			//Calculating cache + jestimp + chronoimp
+			var mapTime = totalMaps * 25;
+			if (totalMaps > 4) mapTime += (Math.floor(totalMaps / 5) * 45);
 
-				//Calculating wood & metal earned then using that info to identify how many Smithies you can afford from those values.
-				var woodEarned = scaleToCurrentMapLocal(simpleSecondsLocal("wood", mapTime, true, '0,1'), false, true, rSFMapLevel);
-				var metalEarned = scaleToCurrentMapLocal(simpleSecondsLocal("metal", mapTime, true, '0,0,1'), false, true, rSFMapLevel);
-				var woodSmithies = game.buildings.Smithy.purchased + calculateMaxAffordLocal(game.buildings.Smithy, true, false, false, false, 1, game.resources.wood.owned + woodEarned);
-				var metalSmithies = game.buildings.Smithy.purchased + calculateMaxAffordLocal(game.buildings.Smithy, true, false, false, false, 1, game.resources.metal.owned + metalEarned);
+			//Calculating wood & metal earned then using that info to identify how many Smithies you can afford from those values.
+			var woodEarned = scaleToCurrentMapLocal(simpleSecondsLocal("wood", mapTime, true, '0,1'), false, true, rSFMapLevel);
+			var metalEarned = scaleToCurrentMapLocal(simpleSecondsLocal("metal", mapTime, true, '0,0,1'), false, true, rSFMapLevel);
+			var woodSmithies = game.buildings.Smithy.purchased + calculateMaxAffordLocal(game.buildings.Smithy, true, false, false, false, 1, game.resources.wood.owned + woodEarned);
+			var metalSmithies = game.buildings.Smithy.purchased + calculateMaxAffordLocal(game.buildings.Smithy, true, false, false, false, 1, game.resources.metal.owned + metalEarned);
 
-				if (woodSmithies > 0 && metalSmithies > 0) {
-					//Taking the minimum value of the 2 to see which is more reasonable to aim for
-					smithyCount = Math.min(woodSmithies, metalSmithies)
+			if (woodSmithies > 0 && metalSmithies > 0) {
+				//Taking the minimum value of the 2 to see which is more reasonable to aim for
+				smithyCount = Math.min(woodSmithies, metalSmithies)
 
-					//Figuring out Smithy cost of the 2 different resources
-					var rSFWoodCost = getBuildingItemPrice(game.buildings.Smithy, 'wood', false, smithyCount - game.buildings.Smithy.purchased);
-					var rSFMetalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, smithyCount - game.buildings.Smithy.purchased);
+				//Figuring out Smithy cost of the 2 different resources
+				var rSFWoodCost = getBuildingItemPrice(game.buildings.Smithy, 'wood', false, smithyCount - game.buildings.Smithy.purchased);
+				var rSFMetalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, smithyCount - game.buildings.Smithy.purchased);
 
-					//Looking to see how many maps it would take to reach this smithy target
-					var rSFWoodMapCount = Math.floor((rSFWoodCost - game.resources.wood.owned) / scaleToCurrentMapLocal(simpleSecondsLocal("wood", 34, true, '0,1'), false, true, rSFMapLevel));
-					var rSFMetalMapCount = Math.floor((rSFMetalCost - game.resources.metal.owned) / scaleToCurrentMapLocal(simpleSecondsLocal("metal", 34, true, '0,0,1'), false, true, rSFMapLevel));
-					//If combined maps for both resources is higher than desired maps to be run then will farm 1 less smithy
-					if (rSFWoodMapCount + rSFMetalMapCount > rSFSmithies) rSFSmithies = smithyCount - 1
-					else rSFSmithies = smithyCount;
-				}
-				else rSFSmithies = 1;
+				//Looking to see how many maps it would take to reach this smithy target
+				var rSFWoodMapCount = Math.floor((rSFWoodCost - game.resources.wood.owned) / scaleToCurrentMapLocal(simpleSecondsLocal("wood", 34, true, '0,1'), false, true, rSFMapLevel));
+				var rSFMetalMapCount = Math.floor((rSFMetalCost - game.resources.metal.owned) / scaleToCurrentMapLocal(simpleSecondsLocal("metal", 34, true, '0,0,1'), false, true, rSFMapLevel));
+				//If combined maps for both resources is higher than desired maps to be run then will farm 1 less smithy
+				if (rSFWoodMapCount + rSFMetalMapCount > rSFSmithies) rSFSmithies = smithyCount - 1
+				else rSFSmithies = smithyCount;
 			}
+			else rSFSmithies = 1;
 		}
 
 		//Checking for daily resource shred
@@ -780,7 +779,7 @@ function SmithyFarm() {
 			rShouldSmithyFarm = true;
 		}
 
-		if ((!autoTrimpSettings.RBuyBuildingsNew.enabled || !autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled) && rShouldSmithyFarm && rSFSmithies > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, false, 1)) {
+		if ((!autoTrimpSettings.RBuyBuildingsNew.enabled || !autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled) && rShouldSmithyFarm && rSFSmithies > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, 1)) {
 			buyBuilding("Smithy", true, true, 1);
 		}
 
@@ -804,6 +803,8 @@ function SmithyFarm() {
 				rSFMapRepeats = [0, 0, 0];
 				smithyMapCount = [0, 0, 0];
 				currTime = 0;
+				HDRatio = RcalcHDratio();
+				if (rSFSettings.meltingPoint) runUnique('Melting Point', false);
 			}
 
 		}
@@ -819,6 +820,7 @@ function SmithyFarm() {
 		farmingDetails.special = rSFSpecial;
 		farmingDetails.smithies = rSFSmithies;
 		farmingDetails.farmGoal = rSFGoal;
+		farmingDetails.gemFarm = rShouldSmithyGemFarm;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 

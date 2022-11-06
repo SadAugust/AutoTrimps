@@ -2384,8 +2384,34 @@ function runAtlantrimp(dontRecycle) {
 			if (game.global.mapsOwnedArray[map].name == 'Atlantrimp') {
 				selectMap(game.global.mapsOwnedArray[map].id)
 				rRunMap();
-				debug('Running Atlantrimp');
+				debug('Running Atlantrimp on zone ' + game.global.world + '.');
 				rBSRunningAtlantrimp = true;
+			}
+		}
+	}
+}
+
+function runUnique(mapName, dontRecycle) {
+	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
+	var zone = game.global.world;
+	var cell = game.global.lastClearedCell + 2;
+	if (mapName === 'Melting Point' && (!game.mapUnlocks.SmithFree.canRunOnce || zone < 55 || (zone === 55 && cell < 56))) return
+	if (mapName === 'Atlantrimp' && (!game.mapUnlocks.AncientTreasure.canRunOnce || zone < 33 || (zone === 33 && cell < 50))) return
+
+	if (!game.global.preMapsActive && !game.global.mapsActive)
+		mapsClicked();
+	if (!dontRecycle && game.global.mapsActive && getCurrentMapObject().name !== mapName) {
+		mapsClicked();
+		recycleMap();
+	}
+
+	if (game.global.preMapsActive) {
+		for (var map in game.global.mapsOwnedArray) {
+			if (game.global.mapsOwnedArray[map].name == mapName) {
+				selectMap(game.global.mapsOwnedArray[map].id)
+				rRunMap();
+				debug('Running ' + mapName + ' on zone ' + game.global.world + '.');
+				if (mapName === 'Atlantrimp') rBSRunningAtlantrimp = true;
 			}
 		}
 	}

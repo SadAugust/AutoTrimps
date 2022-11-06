@@ -339,7 +339,7 @@ ul.tab li a:hover {
 
 .windowWorldrSmithyFarm {
 	display: inline-block;
-	width: 12%;
+	width: 11%;
 	padding: 1px;
 
 }
@@ -419,7 +419,7 @@ ul.tab li a:hover {
 
 .windowCellrSmithyFarm {
 	display: inline-block;
-	width: 12%;
+	width: 11%;
 	padding: 1px;
 }
 
@@ -538,7 +538,7 @@ ul.tab li a:hover {
 
 .windowLevelrSmithyFarm {
 	display: inline-block;
-	width: 12%;
+	width: 11%;
 	padding: 1px;
 }
 
@@ -628,7 +628,7 @@ ul.tab li a:hover {
 
 .windowRunTyperSmithyFarm {
 	display: inline-block;
-	width: 15%;
+	width: 12%;
 	padding: 1px;
 }
 
@@ -731,6 +731,11 @@ ul.tab li a:hover {
 }
 
 
+.windowMeltingPoint {
+	display: inline-block;
+	width: 7%;
+	padding: 1px;
+}
 
 /*Cell columns*/
 .window {
@@ -905,7 +910,7 @@ ul.tab li a:hover {
 
 /*Smithy Farm*/
 .windowSmithies {
-	width: 12%;
+	width: 11%;
 	padding: 1px;
 }
 

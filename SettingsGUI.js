@@ -1679,6 +1679,15 @@ function updateATVersion() {
 			}
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.2') {
+			if (typeof (autoTrimpSettings.rSmithyFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rSmithyFarmSettings.value[0].meltingPoint === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rSmithyFarmSettings.value.length; y++) {
+					autoTrimpSettings.rSmithyFarmSettings.value[y].meltingPoint = false;
+				}
+				saveSettings();
+			}
+		}
+
 		autoTrimpSettings["ATversion"] = ATversion;
 		saveSettings();
 	}
