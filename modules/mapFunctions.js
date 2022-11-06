@@ -206,7 +206,7 @@ function VoidMaps() {
 	}
 
 	if (rCurrentMap === mapName && !rDoVoids) {
-		if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+		if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 		rCurrentMap = undefined;
 		rAutoLevel = Infinity;
 		currTime = 0;
@@ -300,7 +300,7 @@ function MapBonus() {
 	}
 
 	if (rCurrentMap === mapName && (game.global.mapBonus >= rMBRepeatCounter || !farmingDetails.shouldRun)) {
-		if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rCurrentSetting.mapLevel >= 0 ? "+" : "") + rCurrentSetting.mapLevel + " " + rCurrentSetting.special + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+		if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rCurrentSetting.mapLevel >= 0 ? "+" : "") + rCurrentSetting.mapLevel + " " + rCurrentSetting.special + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 		rMBHealthFarm = false;
 		rCurrentMap = undefined;
 		mapAutoLevel = Infinity;
@@ -397,7 +397,7 @@ function MapFarm() {
 
 		//Marking setting as complete if we've run enough maps.
 		if (rCurrentMap === mapName && game.global.mapRunCounter >= rMFRepeatCounter) {
-			if (getPageSetting('rMapRepeatCount')) debug("Map Farm took " + (game.global.mapRunCounter) + " (" + (rMFMapLevel >= 0 ? "+" : "") + rMFMapLevel + " " + rMFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+			if (getPageSetting('rMapRepeatCount')) debug("Map Farm took " + (game.global.mapRunCounter) + " (" + (rMFMapLevel >= 0 ? "+" : "") + rMFMapLevel + " " + rMFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
 			rMFMapRepeats = 0;
@@ -574,7 +574,7 @@ function TributeFarm() {
 		//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
 		if (rCurrentMap === mapName && !rShouldTributeFarm && !rShouldMetFarm) {
 			var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
-			if (getPageSetting('rMapRepeatCount')) debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rTrFMapLevel >= 0 ? "+" : "") + rTrFMapLevel + " " + rTrFSpecial + ")" + (game.global.mapRunCounter + mapProg == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.");
+			if (getPageSetting('rMapRepeatCount')) debug("Tribute Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rTrFMapLevel >= 0 ? "+" : "") + rTrFMapLevel + " " + rTrFSpecial + ")" + (game.global.mapRunCounter + mapProg == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You ended it with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.");
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
 			rTrFMapRepeats = 0;
@@ -795,7 +795,7 @@ function SmithyFarm() {
 				}
 			}
 			if (rCurrentMap === mapName && !rShouldSmithyFarm) {
-				if (getPageSetting('rMapRepeatCount')) debug("Smithy Farm took " + rSFMapRepeats[0] + " food map" + (rSFMapRepeats[0] === 1 ? ", " : "s, ") + rSFMapRepeats[1] + " wood map" + (rSFMapRepeats[1] === 1 ? ", " : "s, ") + rSFMapRepeats[2] + " metal map" + (rSFMapRepeats[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.");
+				if (getPageSetting('rMapRepeatCount')) debug("Smithy Farm took " + rSFMapRepeats[0] + " food map" + (rSFMapRepeats[0] === 1 ? ", " : "s, ") + rSFMapRepeats[1] + " wood map" + (rSFMapRepeats[1] === 1 ? ", " : "s, ") + rSFMapRepeats[2] + " metal map" + (rSFMapRepeats[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.");
 				rCurrentMap = undefined;
 				mapAutoLevel = Infinity;
 				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
@@ -897,7 +897,7 @@ function WorshipperFarm() {
 
 
 		if (rCurrentMap === mapName && !rShouldWorshipperFarm) {
-			if (getPageSetting('rMapRepeatCount') && !rShouldSkip) debug("Worshipper Farm took " + (game.global.mapRunCounter) + " (" + (rWFMapLevel >= 0 ? "+" : "") + rWFMapLevel + " " + rWFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+			if (getPageSetting('rMapRepeatCount') && !rShouldSkip) debug("Worshipper Farm took " + (game.global.mapRunCounter) + " (" + (rWFMapLevel >= 0 ? "+" : "") + rWFMapLevel + " " + rWFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 			if (getPageSetting('rMapRepeatCount') && rShouldSkip) debug("Worshipper Farm was skipped on zone " + game.global.world + " as you already had " + rWFGoal + " worshippers.");
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
@@ -1364,7 +1364,7 @@ function Mayhem() {
 	farmingDetails.status = status;
 
 	if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
-		if (getPageSetting('rMapRepeatCount')) debug("Mayhem Destacking took " + (game.global.mapRunCounter) + " (" + (rMayhemMapLevel >= 0 ? "+" : "") + rMayhemMapLevel + " " + rMayhemSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+		if (getPageSetting('rMapRepeatCount')) debug("Mayhem Destacking took " + (game.global.mapRunCounter) + " (" + (rMayhemMapLevel >= 0 ? "+" : "") + rMayhemMapLevel + " " + rMayhemSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 		rCurrentMap = undefined;
 		rAutoLevel = Infinity;
 		rMayhemMapRepeats = 0;
@@ -1440,7 +1440,7 @@ function Insanity() {
 		farmingDetails.status = status;
 
 		if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
-			if (getPageSetting('rMapRepeatCount')) debug("Insanity Farm took " + (game.global.mapRunCounter) + " (" + (rIFMapLevel >= 0 ? "+" : "") + rIFMapLevel + " " + rIFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with " + game.challenges.Insanity.insanity + " insanity stacks.");
+			if (getPageSetting('rMapRepeatCount')) debug("Insanity Farm took " + (game.global.mapRunCounter) + " (" + (rIFMapLevel >= 0 ? "+" : "") + rIFMapLevel + " " + rIFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You ended it with " + game.challenges.Insanity.insanity + " insanity stacks.");
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
 			rIFMapRepeats = 0;
@@ -1501,7 +1501,7 @@ function PandemoniumDestack() {
 	farmingDetails.status = status;
 
 	if (rCurrentMap === mapName && !rShouldPandemoniumDestack) {
-		if (getPageSetting('rMapRepeatCount')) debug("Pandemonium Destacking took " + (game.global.mapRunCounter) + " (" + (rPandemoniumMapLevel >= 0 ? "+" : "") + rPandemoniumMapLevel + " " + rPandemoniumSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+		if (getPageSetting('rMapRepeatCount')) debug("Pandemonium Destacking took " + (game.global.mapRunCounter) + " (" + (rPandemoniumMapLevel >= 0 ? "+" : "") + rPandemoniumMapLevel + " " + rPandemoniumSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 		rCurrentMap = undefined;
 		mapAutoLevel = Infinity;
 		rPandemoniumMapRepeats = 0;
@@ -1803,7 +1803,7 @@ function Alchemy() {
 			farmingDetails.status = status;
 
 			if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
-				if (getPageSetting('rMapRepeatCount')) debug("Alchemy Farm took " + (game.global.mapRunCounter) + " (" + (rAFMapLevel >= 0 ? "+" : "") + rAFMapLevel + " " + rAFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+				if (getPageSetting('rMapRepeatCount')) debug("Alchemy Farm took " + (game.global.mapRunCounter) + " (" + (rAFMapLevel >= 0 ? "+" : "") + rAFMapLevel + " " + rAFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 				rCurrentMap = undefined;
 				mapAutoLevel = Infinity;
 				rAFMapRepeats = 0;
@@ -1902,7 +1902,7 @@ function Hypothermia() {
 			rShouldHypoFarm = true;
 		}
 		if (rCurrentMap === mapName && !rShouldHypoFarm) {
-			if (getPageSetting('rMapRepeatCount')) debug("Hypothermia Farm took " + (game.global.mapRunCounter) + " (" + (rHFMapLevel >= 0 ? "+" : "") + rHFMapLevel + " " + rHFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+			if (getPageSetting('rMapRepeatCount')) debug("Hypothermia Farm took " + (game.global.mapRunCounter) + " (" + (rHFMapLevel >= 0 ? "+" : "") + rHFMapLevel + " " + rHFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
 			rHFMapRepeats = 0;
@@ -1988,7 +1988,7 @@ function Smithless() {
 
 	}
 	if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
-		if (getPageSetting('rMapRepeatCount')) debug("Smithless Farming took " + (game.global.mapRunCounter) + " (" + (rSmithlessMapLevel >= 0 ? "+" : "") + rSmithlessMapLevel + " " + rSmithlessSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ".");
+		if (getPageSetting('rMapRepeatCount')) debug("Smithless Farming took " + (game.global.mapRunCounter) + " (" + (rSmithlessMapLevel >= 0 ? "+" : "") + rSmithlessMapLevel + " " + rSmithlessSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 		rCurrentMap = undefined;
 		rAutoLevel = Infinity;
 		rSmithlessMapRepeats = 0;
@@ -2072,7 +2072,7 @@ function HDFarm() {
 
 		if (((rCurrentMap === mapName && !rShouldHDFarm) || rShouldSkip) && HDRatio !== Infinity) {
 			var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
-			if (getPageSetting('rMapRepeatCount') && !rShouldSkip) debug("Equip Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rHDFMapLevel >= 0 ? "+" : "") + rHDFMapLevel + " " + rHDFSpecial + ")" + (game.global.mapRunCounter + mapProg == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime)) + " to complete on zone " + game.global.world + ". You ended it with a HD Ratio of " + RcalcHDratio().toFixed(2) + ".");
+			if (getPageSetting('rMapRepeatCount') && !rShouldSkip) debug("Equip Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rHDFMapLevel >= 0 ? "+" : "") + rHDFMapLevel + " " + rHDFSpecial + ")" + (game.global.mapRunCounter + mapProg == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You ended it with a HD Ratio of " + RcalcHDratio().toFixed(2) + ".");
 			if (getPageSetting('rMapRepeatCount') && rShouldSkip) debug("Equip Farm took was skipped on zone " + game.global.world + ". It wanted a HD Ratio of " + equipfarmdynamicHD(rHDFIndex) + " but you already had a HD Ratio of " + RcalcHDratio().toFixed(2) + ".");
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
