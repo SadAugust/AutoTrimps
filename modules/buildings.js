@@ -636,7 +636,7 @@ function RbuyBuildings() {
 		if (runningC3 || (!game.global.autoStorage && game.global.challengeActive === 'Hypothermia' && (housing !== 'Collector' && housing !== 'Gateway'))) buildingspending = 1;
 		var maxCanAfford = housing !== null ? calculateMaxAffordLocal(game.buildings[housing], true, false, false, housingAmt, buildingspending) : false;
 		if (((housing != null && canAffordBuilding(housing, false, false, false, false, 1)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt) || runningC3))) {
-			if (rCurrentMap === 'rSmithyFarm') return;
+			if (rCurrentMap === 'rSmithyFarm' && housing !== 'Gateway') return;
 			else if (runningC3)
 				buyBuilding(housing, true, true, 999);
 			else if (rCurrentMap === 'rTributeFarm' && !rMapSettings.buyBuildings) {
@@ -669,9 +669,11 @@ function rBuyTributes() {
 	if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(affordableMets > 0 && !game.jobs.Meteorologist.locked && !rMapSettings.shouldTribute))) {
 		if ((!autoTrimpSettings.rBuildingSettingsArray.value.Tribute.enabled || rMapSettings.shouldMeteorologist || rCurrentMap === 'rWorshipperFarm') && !rMapSettings.shouldTribute) return;
 		//Spend 100% of food on Tributes if Tribute Farming otherwise uses the value in RTributeSpendingPct.
-		var rTributeSpendPct = typeof (rTrFTributes) !== 'undefined' && rTrFTributes > 0 ? 1 : autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent > 0 ? autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent / 100 : 1;
+		var rTributeSpendPct = rCurrentMap === 'rTributeFarm' && rMapSettings.tribute > 0 ? 1 : autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent > 0 ? autoTrimpSettings.rBuildingSettingsArray.value.Tribute.percent / 100 : 1;
+
 		var buyTributeCount = getMaxAffordable(Math.pow(1.05, game.buildings.Tribute.purchased) * 10000, (game.resources.food.owned * rTributeSpendPct), 1.05, true);
-		maxTributes = autoTrimpSettings.rBuildingSettingsArray.value.Tribute.buyMax === 0 ? Infinity : typeof (rTrFTributes) !== 'undefined' && rTrFTributes > autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax ? rTrFTributes : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax;
+
+		var maxTributes = autoTrimpSettings.rBuildingSettingsArray.value.Tribute.buyMax === 0 ? Infinity : rCurrentMap === 'rTributeFarm' && rMapSettings.tribute > autoTrimpSettings.rBuildingSettingsArray.value.Tribute.buyMax ? rMapSettings.tribute : autoTrimpSettings.rBuildingSettingsArray.value.Tribute.buyMax;
 		if ((rCurrentMap === 'rSmithyFarm' && rMapSettings.gemFarm) || questcheck() === 4) {
 			maxTributes = Infinity;
 			rTributeSpendPct = 1;
