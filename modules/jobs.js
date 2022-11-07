@@ -360,8 +360,10 @@ function RworkerRatios(workerRatio) {
 	var workerRatio = !workerRatio ? null : workerRatio
 	if (workerRatio == null) return;
 	if (getPageSetting('RBuyJobsNew') == 2) {
-		if (autoTrimpSettings.rJobSettingsArray.value[workerRatio].enabled)
+		if (autoTrimpSettings.rJobSettingsArray.value[workerRatio].enabled) {
+			if (game.global.challengeActive === 'Transmute' && workerRatio === 'Farmer' && autoTrimpSettings.rJobSettingsArray.value.Miner.enabled) return autoTrimpSettings.rJobSettingsArray.value[workerRatio].ratio + autoTrimpSettings.rJobSettingsArray.value.Miner.ratio;
 			return autoTrimpSettings.rJobSettingsArray.value[workerRatio].ratio;
+		}
 		else
 			return 0;
 	}
