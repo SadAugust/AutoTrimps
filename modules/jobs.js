@@ -627,11 +627,6 @@ function RbuyJobs() {
 			scientistMod = MODULES["jobs"].RscientistRatio7;
 
 		for (var worker of ratioWorkers) {
-			//Get ratio from AT
-			if (game.global.challengeActive == 'Transmute' && worker === 'Miner') {
-				desiredRatios[ratioWorkers.indexOf('Farmer')] += scientistMod * parseFloat(getPageSetting('RBuyJobsNew') == 2 ? worker : RworkerRatios('R' + worker + 'Ratio'));
-			}
-
 			if (!game.jobs[worker].locked) {
 				if (worker == "Scientist") {
 					desiredRatios[ratioWorkers.indexOf(worker)] = 1;

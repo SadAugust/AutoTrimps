@@ -807,7 +807,6 @@ function SmithyFarm() {
 				if (game.global.challengeActive !== 'Quest' && rSFSettings.meltingPoint) runUnique('Melting Point', false);
 				rSFSettings.done = totalPortals + "_" + game.global.world;
 			}
-
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rSFMapLevel || getCurrentMapObject().bonus !== rSFSpecial);
@@ -1524,17 +1523,19 @@ function PandemoniumFarm() {
 
 	var rShouldPandemoniumFarm = false;
 
-	var rPandemoniumJobRatio = '0.001,0.001,1,0';
+	var rPandemoniumJobRatio = '1,1,100,0';
 	var equipCost = CheapestEquipmentCost();
 	var nextEquipmentCost = equipCost[1];
 
 	var rPandemoniumMapLevel = getPageSetting('PandemoniumFarmLevel');
 	var rPandemonium_LMC = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20, true, rPandemoniumJobRatio), false, true, getPageSetting('PandemoniumFarmLevel'));
-	var rPandemonium_HC = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 40, true, rPandemoniumJobRatio), false, true, getPageSetting('PandemoniumFarmLevel'));
+	var rPandemonium_HC = rPandemonium_LMC * 2;
 	var rPandemoniumSpecial = nextEquipmentCost > rPandemonium_LMC ? 'hc' : 'lmc'
 
 	var rPandemonium_Resource_Gain = rPandemoniumSpecial === 'hc' ? rPandemonium_HC : rPandemonium_LMC;
 
+
+	debug(rPandemonium_Resource_Gain);
 	//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
 	if (getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') && nextEquipmentCost < rPandemonium_Resource_Gain)
 		rShouldPandemoniumFarm = true;
