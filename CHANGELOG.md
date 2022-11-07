@@ -16,6 +16,8 @@ Jobs tab has been removed. Instead it has been worked into an AutoJobs setting o
 
 Info for void map tracker, recommended map level for autoLevel & shred counter displayed in trimps column.
 
+Settings won't display for challenges until they've been unlocked in your save. Messages will be put in the chat tab when you've unlocked a different setting.
+
 **Core**
 
 Preset swapping - Will swap between preset 1 when running fillers and preset 2 when doing dailies, preset 3 when doing C3s
@@ -49,6 +51,10 @@ AE: Prestige & AE: Highest Prestige are new
 **Maps**
 
 All of the map settings have been condensed into various buttons.
+
+Farming Setting priorities are
+
+	Vanilla MAZ > Quest > Pandemonium Destacking > Smithy Farm > Map Farm > Tribute Farm > Worshipper Farm > Map Destacking (Unbalance, Storm, Bloodthirst) > Prestige Raiding > Mayhem > Insanity > Pandemonium Jestimp Farm > Pandemonium Farm > Alchemy > Hypothermia > HD Farm > Void Maps > Quagmire > Map Bonus > Smithless
 
 Unique Map Settings
 	Has got the settings for all Unique Maps you'd want to run in it. Can set zones & cells for them to be run on.
@@ -174,6 +180,6 @@ Added settings for Daily & C3 swap zones.
 
 Added options for each cache staff that will equip when you're in a map with that cache
 
-**Heirlooms**
+**Display**
 
 Added setting 'Map Count Output' which will output relevant information (time taken, amount of maps run, map level) when you finish any farming setting.
