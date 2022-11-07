@@ -535,7 +535,7 @@ function RbuyJobs() {
 	//Do non-ratio/limited jobs first
 	//Explorers
 	if (autoTrimpSettings.rJobSettingsArray.value.Explorer.enabled) {
-		var maxExplorers = 90000//(getPageSetting('RMaxExplorers') == -1) ? Infinity : getPageSetting('RMaxExplorers');
+		var maxExplorers = Infinity;
 		if (!game.jobs.Explorer.locked) {
 			var affordableExplorers = Math.min(maxExplorers - game.jobs.Explorer.owned,
 				getMaxAffordable(
@@ -596,14 +596,15 @@ function RbuyJobs() {
 
 	//Gather up the total number of workers available to be distributed across ratio workers
 	//In the process store how much of each for later.
+	if (game.global.challengeActive === 'Trappapalooza') freeWorkers = game.resources.trimps.owned - (game.resources.trimps.employed - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
 	var ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	var currentworkers = [];
 	for (var worker of ratioWorkers) {
 		currentworkers.push(game.jobs[worker].owned);
 	}
-	var desiredRatios = [0, 0, 0, 0];
 	freeWorkers += currentworkers.reduce((a, b) => { return a + b; });
 
+	var desiredRatios = [0, 0, 0, 0];
 	// Explicit firefox handling because Ff specifically reduces free workers to 0.
 	var reserveMod = 1 + (game.resources.trimps.owned / 1e14);
 
