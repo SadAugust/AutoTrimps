@@ -475,12 +475,12 @@ function TributeFarm() {
 		//Initialing variables
 		var rTrFSettings = rTrFBaseSetting[rTrFIndex];
 		var rTrFMapLevel = rTrFSettings.level
-		rTrFTributes = game.buildings.Tribute.locked == 1 ? 0 : rTrFSettings.tributes;
-		rTrFMeteorologists = game.jobs.Meteorologist.locked == 1 ? 0 : rTrFSettings.mets;
+		var rTrFTributes = game.buildings.Tribute.locked == 1 ? 0 : rTrFSettings.tributes;
+		var rTrFMeteorologists = game.jobs.Meteorologist.locked == 1 ? 0 : rTrFSettings.mets;
 		var rTrFSpecial = game.global.highestRadonLevelCleared > 83 ? "lsc" : "ssc";
 		var rTrFJobRatio = rTrFSettings.jobratio;
-		rTrFbuyBuildings = rTrFSettings.buildings;
-		rTrFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce || (isDaily && foodShred) ? false : rTrFSettings.atlantrimp;
+		var rTrFbuyBuildings = rTrFSettings.buildings;
+		var rTrFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce || (isDaily && foodShred) ? false : rTrFSettings.atlantrimp;
 
 		//AutoLevel code.
 		if (rTrFSettings.autoLevel) {
@@ -666,9 +666,6 @@ function SmithyFarm() {
 		var rSFSpecial = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
 		var rSFJobRatio = '0,0,0,0';
 		var rSFSmithies = game.global.challengeActive === 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
-
-
-
 
 		if (questcheck() === 10 || rSFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && smithyMapCount !== [0, 0, 0] && typeof getCurrentMapObject().bonus !== 'undefined') {
@@ -1534,8 +1531,6 @@ function PandemoniumFarm() {
 
 	var rPandemonium_Resource_Gain = rPandemoniumSpecial === 'hc' ? rPandemonium_HC : rPandemonium_LMC;
 
-
-	debug(rPandemonium_Resource_Gain);
 	//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
 	if (getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') && nextEquipmentCost < rPandemonium_Resource_Gain)
 		rShouldPandemoniumFarm = true;
@@ -1912,7 +1907,7 @@ function Hypothermia() {
 			currTime = 0;
 		}
 
-		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHFMapLevel || getCurrentMapObject().bonus !== rHFSpecial || game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20), false, true, rHFMapLevel) + game.resources.wood.owned > rHFBonfireCostTotal);
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHFMapLevel || getCurrentMapObject().bonus !== rHFSpecial || game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20, true, rHFJobRatio), false, true, rHFMapLevel) + game.resources.wood.owned > rHFBonfireCostTotal);
 		var status = 'Hypo Farming to ' + prettify(rHFBonfireCostTotal) + ' wood';
 
 		farmingDetails.shouldRun = rShouldHypoFarm;

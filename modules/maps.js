@@ -797,8 +797,6 @@ function RautoMap() {
 	//Stops maps from running while doing Atlantrimp.
 	if (!game.mapUnlocks.AncientTreasure.canRunOnce) {
 		rBSRunningAtlantrimp = false;
-		rMFAtlantrimp = false;
-		rTrFAtlantrimp = false;
 	}
 
 	if (game.global.mapsActive && (getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle')) {
@@ -866,7 +864,6 @@ function RautoMap() {
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0;
 		currTime = 0;
-		rMFAtlantrimp = false;
 		if (game.global.repeatMap) repeatClicked();
 		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
 		if (document.getElementById('advExtraLevelSelect').value > 0)

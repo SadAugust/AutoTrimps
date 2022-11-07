@@ -1959,8 +1959,10 @@ function equalityManagement() {
 		if (game.global.voidBuff === 'doubleAttack') fastEnemy = true
 		if (runningArchaeology) fastEnemy = true;
 		if (noFrenzy) fastEnemy = true;
+		if (runningTrappa) fastEnemy = true;
 		if (runningExperienced) fastEnemy = false;
 		if (runningGlass) fastEnemy = true;
+		if (runningBerserk) fastEnemy = true;
 		if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
 		if (runningDuel && fastEnemy && (RcalcOurHealth(false, type) * 10 * (mapping ? 2 : 1) * 0.9) > remainingHealth(true) && gammaToTrigger === gammaMaxStacks && game.global.armyAttackCount === 0) {
 			game.portal.Equality.disabledStackCount = 0;
@@ -1995,7 +1997,7 @@ function equalityManagement() {
 					}
 					continue;
 				}
-				if (!fastEnemy && !runningGlass && !runningBerserk && !runningTrappa && !runningArchaeology && !runningQuest) {
+				if (!fastEnemy && !runningGlass && !runningBerserk && !runningArchaeology && !runningQuest) {
 					game.portal.Equality.disabledStackCount = i;
 					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
 					updateEqualityScaling();
@@ -2140,7 +2142,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 			break;
 	}
 	var heirloom = !jobName ? null :
-		jobName == "Miner" && game.challengeActive == "Pandemonium" && getPageSetting("RhsPandStaff") !== 'undefined' ? "RhsPandStaff" :
+		jobName == "Miner" && game.global.challengeActive == "Pandemonium" && getPageSetting("RhsPandStaff") !== 'undefined' ? "RhsPandStaff" :
 			jobName == "Farmer" && getPageSetting("RhsFoodStaff") != 'undefined' ? "RhsFoodStaff" :
 				jobName == "Lumberjack" && getPageSetting("RhsWoodStaff") != 'undefined' ? "RhsWoodStaff" :
 					jobName == "Miner" && getPageSetting("RhsMetalStaff") != 'undefined' ? "RhsMetalStaff" :
@@ -2149,10 +2151,9 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 								null;
 	var job = game.jobs[jobName];
 	var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
-	var workers = game.global.challengeActive == "Pandemonium" && jobName == "Miner" ? (trimpworkers / 1000) * 997.90440075 :
-		ssWorkerRatio !== null ? Math.floor(trimpworkers * desiredRatios[pos] / totalFraction) :
-			rCurrentMap === 'rWorshipperFarm' ? trimpworkers :
-				job.owned;
+	var workers = ssWorkerRatio !== null ? Math.floor(trimpworkers * desiredRatios[pos] / totalFraction) :
+		rCurrentMap === 'rWorshipperFarm' ? trimpworkers :
+			job.owned;
 
 	var amt_local = workers * job.modifier * seconds;
 	amt_local += (amt_local * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
@@ -2160,13 +2161,15 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt_local *= (1 + game.permaBoneBonuses.multitasking.mult());
 	if (what != "science" && what != "fragments" && game.global.challengeActive == "Alchemy")
 		amt_local *= alchObj.getPotionEffect("Potion of Finding");
+
 	if (game.global.pandCompletions && game.global.universe == 2 && what != "fragments")
 		amt_local *= game.challenges.Pandemonium.getTrimpMult();
 	if (getPerkLevel("Observation") > 0 && game.portal.Observation.trinkets > 0)
 		amt_local *= game.portal.Observation.getMult();
 
 	if (what == "food" || what == "wood" || what == "metal") {
-		amt_local *= getParityBonus();
+		if (ssWorkerRatio) amt_local *= calculateParityBonus(ssWorkerRatio);
+		else amt_local *= getParityBonus();
 		if (autoBattle.oneTimers.Gathermate.owned)
 			amt_local *= autoBattle.oneTimers.Gathermate.getMult();
 	}
@@ -2199,7 +2202,8 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 	//Calculating proper value for the staff we should be using instead of equipped
 	else if (event != null && game.global.StaffEquipped != getPageSetting(heirloom)) {
 		if (what == "food" || what == "wood" || what == "metal") {
-			amt_local /= getParityBonus();
+			if (ssWorkerRatio) amt_local /= calculateParityBonus(ssWorkerRatio);
+			else amt_local /= getParityBonus();
 			amt_local *= getHazardParityMult(HeirloomSearch(heirloom)) > 0 ? getHazardParityMult(HeirloomSearch(heirloom)) : 1
 		}
 		amt_local = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"), amt_local);
@@ -2212,6 +2216,49 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 	}
 	return amt_local;
 }
+
+function calculateParityBonus(workerRatio) {
+	if (!game.global.StaffEquipped || game.global.StaffEquipped.rarity < 10) {
+		game.global.parityBonus = 1;
+		return;
+	}
+	var allowed = ["Farmer", "Lumberjack", "Miner"];
+	var totalWorkers = 0;
+	var numWorkers = [];
+	if (!workerRatio) {
+		for (var x = 0; x < allowed.length; x++) {
+			var thisWorkers = game.jobs[allowed[x]].owned;
+			totalWorkers += thisWorkers;
+			numWorkers[x] = thisWorkers;
+		}
+		var workerRatios = [];
+		for (var x = 0; x < numWorkers.length; x++) {
+			workerRatios.push(numWorkers[x] / totalWorkers);
+		}
+	} else {
+
+		var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
+		desiredRatios = Array.from(workerRatio.split(','));
+		var workerRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0]
+		var ratio = desiredRatios.reduce((a, b) => a + b, 0)
+		var freeWorkerDivided = freeWorkers / ratio;
+
+		for (var x = 0; x < allowed.length; x++) {
+			var thisWorkers = freeWorkerDivided * desiredRatios[x];
+			totalWorkers += thisWorkers;
+			numWorkers[x] = thisWorkers;
+		}
+	}
+	var resourcePop = totalWorkers;
+	resourcePop = Math.log(resourcePop) / Math.log(3);
+	var largestWorker = Math.log(Math.max(...numWorkers)) / Math.log(3);
+	var spreadFactor = resourcePop - largestWorker;
+	var preLoomBonus = (spreadFactor * spreadFactor);
+	var finalWithParity = (1 + preLoomBonus) * getHazardParityMult();
+	game.global.parityBonus = finalWithParity;
+	return finalWithParity;
+}
+
 
 function calcHeirloomBonusLocal(mod, number) {
 	var mod = mod;
