@@ -470,8 +470,8 @@ function mostEfficientHousing() {
 	// Which houses we actually want to check
 	var housingTargets = [];
 
-	if (rCurrentMap === 'rTributeFarm' && typeof (rTrFbuyBuildings) !== 'undefined') {
-		if (!rTrFbuyBuildings && getAutoStructureSetting().enabled && document.getElementById('autoStructureBtn').classList.contains("enabled"))
+	if (rCurrentMap === 'rTributeFarm' && rMapSettings.buyBuildings !== 'undefined') {
+		if (!!rMapSettings.buyBuildings && getAutoStructureSetting().enabled && document.getElementById('autoStructureBtn').classList.contains("enabled"))
 			toggleAutoStructure();
 	}
 
@@ -499,7 +499,7 @@ function mostEfficientHousing() {
 		if (!autoTrimpSettings.rBuildingSettingsArray.value[housing].enabled) dontbuy.push(housing);
 		if (game.global.challengeActive === 'Quest' && questcheck() === 4 && housing === 'Collector') dontbuy.push(housing);
 		if (game.global.challengeActive == 'Hypothermia' && (housing !== 'Collector' || housing !== 'Gateway') && game.challenges.Hypothermia.bonfires > 0 && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
-		if (rCurrentMap === 'rTributeFarm' && typeof (rTrFbuyBuildings) !== 'undefined' && !rTrFbuyBuildings && housing !== 'Collector') dontbuy.push(housing);
+		if (rCurrentMap === 'rTributeFarm' && !rMapSettings.buyBuildings && housing !== 'Collector') dontbuy.push(housing);
 		for (var resource in game.buildings[housing].cost) {
 			// Get production time for that resource
 			var baseCost = game.buildings[housing].cost[resource][0];
@@ -639,7 +639,7 @@ function RbuyBuildings() {
 			if (rCurrentMap === 'rSmithyFarm') return;
 			else if (runningC3)
 				buyBuilding(housing, true, true, 999);
-			else if (rCurrentMap === 'rTributeFarm' && rMapSettings.buyBuildings) {
+			else if (rCurrentMap === 'rTributeFarm' && !rMapSettings.buyBuildings) {
 				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && getAutoStructureSetting().enabled)
 					toggleAutoStructure();
 				return;
