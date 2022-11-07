@@ -1549,6 +1549,7 @@ function PandemoniumFarm() {
 		farmingDetails.autoLevel = true;
 		farmingDetails.special = rPandemoniumSpecial;
 		farmingDetails.jobRatio = rPandemoniumJobRatio;
+		farmingDetails.gather = 'metal';
 		farmingDetails.pandemonium = game.challenges.Pandemonium.pandemonium;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
@@ -1601,6 +1602,7 @@ function PandemoniumJestimpFarm() {
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rPandemoniumMapLevel;
 		farmingDetails.autoLevel = true;
+		farmingDetails.gather = 'metal';
 		farmingDetails.special = rPandemoniumSpecial;
 		farmingDetails.jobRatio = rPandemoniumJobRatio;
 		farmingDetails.repeat = !repeat;
@@ -2073,7 +2075,7 @@ function HDFarm() {
 		if (((rCurrentMap === mapName && !rShouldHDFarm) || rShouldSkip) && HDRatio !== Infinity) {
 			var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
 			if (getPageSetting('rMapRepeatCount') && !rShouldSkip) debug("Equip Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rHDFMapLevel >= 0 ? "+" : "") + rHDFMapLevel + " " + rHDFSpecial + ")" + (game.global.mapRunCounter + mapProg == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You ended it with a HD Ratio of " + RcalcHDratio().toFixed(2) + ".");
-			if (getPageSetting('rMapRepeatCount') && rShouldSkip) debug("Equip Farm took was skipped on zone " + game.global.world + ". It wanted a HD Ratio of " + equipfarmdynamicHD(rHDFIndex) + " but you already had a HD Ratio of " + RcalcHDratio().toFixed(2) + ".");
+			if (getPageSetting('rMapRepeatCount') && rShouldSkip) debug("Equip Farm took was skipped on zone " + game.global.world + ". It wanted a HD Ratio of " + equipfarmdynamicHD(rHDFIndex).toFixed(2) + " but you already had a HD Ratio of " + RcalcHDratio().toFixed(2) + ".");
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
 			rHDFMapRepeats = 0;
@@ -2104,10 +2106,13 @@ function HDFarm() {
 
 function FarmingDecision() {
 
+
 	var farmingDetails = {
 		shouldRun: false,
 		mapName: ''
 	}
+
+	if (!autoTrimpSettings.RAutoMaps.value) return farmingDetails;
 
 	const mapTypes = [Quest(), PandemoniumDestack(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), MapBonus(), Smithless()]
 
