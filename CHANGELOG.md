@@ -18,6 +18,10 @@ Info for void map tracker, recommended map level for autoLevel & shred counter d
 
 Settings won't display for challenges until they've been unlocked in your save. Messages will be put in the chat tab when you've unlocked a different setting.
 
+The status setting will now actually display relevant information for the farming that AT is currently doing.
+
+
+
 **Core**
 
 Preset swapping - Will swap between preset 1 when running fillers and preset 2 when doing dailies, preset 3 when doing C3s
@@ -159,6 +163,24 @@ Smithless farming setting (isn't fully implemented, only goes for 3/3)
 Trappa stop buying coords at input
 
 **Challenges**
+
+Insanity Farm Settings
+
+	Added setting for destacking where it'll allow you to reduce your Insanity
+
+Alchemy Farm Settings
+
+	Gasesous Brew potions will only purchase when you can afford all the potions you are farming for to stop you unnecessarily making enemies harder than they need to be.
+
+	Void Purchase toggle which will purchase as many PoS & PotV potions when running Void Maps.
+
+Hypo Farm Settings
+
+	Hypo Frozen Castle setting is in the top bar, input needs to be (zone,cell).
+
+	Auto Storage setting in the top bar
+
+	Packrat setting in the top bar which will set Packrat to 3 when portaling into Hypo and then buy as many Packrat levels as possible when you finish the challenge.
 
 **Combat**
 
