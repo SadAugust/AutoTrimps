@@ -558,8 +558,8 @@ function RbuyBuildings() {
 				game.global.mapsActive && game.unlocks.imps.Jestimp ? scaleToCurrentMap(simpleSeconds(rBuildings[resources], 45)) :
 					curRes * 1.1;
 			//Skips buying sheds if you're not on one of your specified bonfire zones
-			if (resources == 'Shed' && rHFBonfireCostTotal == 0) continue;
-			if ((resources != 'Shed' && curRes + jestValue > maxRes) || (resources == 'Shed' && rHFBonfireCostTotal > maxRes)) {
+			if (resources === 'Shed') continue;
+			if ((resources !== 'Shed' && curRes + jestValue > maxRes)) {
 				if (canAffordBuilding(resources, null, null, null, null, null) && game.triggers[resources].done) {
 					RsafeBuyBuilding(resources);
 				}
