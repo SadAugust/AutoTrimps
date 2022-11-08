@@ -493,20 +493,20 @@ function initializeAllSettings() {
 	//HD Farm
 	createSetting('rHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'Maps');
 	createSetting('rHDFarmSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rHDFarmDefaultSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { repeat: 10, jobratio: '1,1,1', special: 'fa', mapCap: 900, shredMapCap: 100 }, null, 'Maps');
+	createSetting('rHDFarmDefaultSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rHDFarmZone', 'HD Farm: Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
 
 	//Worshipper Farm 
 	createSetting('rWorshipperFarmPopup', 'Worshipper Farm Settings', 'Will farm to a specified amount of Worshippers according to this settings value.', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'Maps');
 	createSetting('rWorshipperFarmSettings', 'WF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rWorshipperFarmDefaultSettings', 'WF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, worshipper: 50, jobratio: '1,0,0,0', gather: 'food' }, null, 'Maps');
+	createSetting('rWorshipperFarmDefaultSettings', 'WF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rWorshipperFarmZone', 'WF: Zone', 'Farms for specified worshippers in WF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 
 	//Bone Shrine (bone) 
 	if (game.global.stringVersion >= '5.7.0') {
 		createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Maps');
 		createSetting('rBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-		createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, bonebelow: 1, jobratio: '1,1,10,1', gather: 'metal' }, null, 'Maps');
+		createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 		createSetting('rBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Maps");
 	}
@@ -514,43 +514,43 @@ function initializeAllSettings() {
 	//Void Maps
 	createSetting('rVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Maps');
 	createSetting('rVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, jobratio: '1,1,1', }, null, 'Maps');
+	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
 
 	//Map Bonus
 	createSetting('rMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Map Bonus", "rMapBonus", "MAZ")', null, 'Maps');
 	createSetting('rMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 1, repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Maps');
+	createSetting('rMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
 
 	//Map Farm
 	createSetting('rMapFarmPopup', 'Map Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Map Farm", "rMapFarm", "MAZ")', null, 'Maps');
 	createSetting('rMapFarmSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rMapFarmDefaultSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Maps');
+	createSetting('rMapFarmDefaultSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rMapFarmZone', 'MF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 
 	//Time Farming
 	createSetting('rTimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")', null, 'Maps');
 	createSetting('rTimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rTimeFarmDefaultSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 81, repeat: 1, jobratio: '1,1,10,1', special: 'lmc' }, null, 'Maps');
+	createSetting('rTimeFarmDefaultSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 
 	//Tribute Farming
 	createSetting('rTributeFarmPopup', 'Tribute Farm Settings', 'Will farm for a specified amount of Tributes/Meteorologists according to this settings value.', 'action', 'MAZLookalike("Tribute Farm", "rTributeFarm", "MAZ")', null, 'Maps');
 	createSetting('rTributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rTributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83, jobratio: '100,1,1,1' }, null, 'Maps');
+	createSetting('rTributeFarmDefaultSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rTributeFarmZone', 'TrF: Zone', 'Farms for specified tributes in TF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Maps');
 
 	//Smithy Farming
 	createSetting('rSmithyFarmPopup', 'Smithy Farm Settings', 'Will farm for a specified amount of Smithies according to this settings value.', 'action', 'MAZLookalike("Smithy Farm", "rSmithyFarm", "MAZ")', null, 'Maps');
 	createSetting('rSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 83 }, null, 'Maps');
+	createSetting('rSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Maps');
 
 	//Prestige Raiding
 	createSetting('rRaidingPopup', 'Raiding Settings', 'Will raid up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Raiding", "rRaiding", "MAZ")', null, 'Maps');
 	createSetting('rRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false, cell: 81 }, null, 'Maps');
+	createSetting('rRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 
 	//Spire
@@ -697,25 +697,25 @@ function initializeAllSettings() {
 	createSetting('rQuagOn', 'Quagmire', 'Enable Bog Running for Quagmire. ', 'boolean', false, null, 'Challenges');
 	createSetting('rQuagPopup', 'Quag Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Quagmire Farm", "rQuag", "MAZ")', null, 'Challenges');
 	createSetting('rQuagSettings', 'Quag: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges');
-	createSetting('rQuagDefaultSettings', 'Quag: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '1,1,10,1' }, null, 'Challenges');
+	createSetting('rQuagDefaultSettings', 'Quag: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Challenges');
 	createSetting('rQuagZone', 'BB: Zone', 'What zones to run Black Bogs at. Can use 40,50,60. ', 'multiValue', [6], null, 'Challenges');
 
 	//Insanity
 	createSetting('rInsanityPopup', 'Insanity Farm Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Insanity Farm", "rInsanity", "MAZ")', null, 'Challenges');
 	createSetting('rInsanitySettings', 'Insanity: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges');
-	createSetting('rInsanityDefaultSettings', 'Insanity: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '1,1,10,1' }, null, 'Challenges');
+	createSetting('rInsanityDefaultSettings', 'Insanity: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Challenges');
 	createSetting('rInsanityZone', 'Insanity Farming', 'Farms for specified stacks in IF: Stacks at zone according to this settings value. Can use 108,109,110. ', 'multiValue', [6], null, 'Challenges');
 
 	//Alchemy
 	createSetting('rAlchPopup', 'Alchemy Farm Settings', 'Click to adjust settings.', 'action', 'MAZLookalike("Alchemy Farm", "rAlch", "MAZ")', null, 'Challenges');
 	createSetting('rAlchSettings', 'AF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges');
-	createSetting('rAlchDefaultSettings', 'AF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '10,1,1,1', special: 'lsc' }, null, 'Challenges');
+	createSetting('rAlchDefaultSettings', 'AF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Challenges');
 	createSetting('rAlchZone', 'AF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [6], null, 'Challenges');
 
 	//Hypothermia
 	createSetting('rHypoPopup', 'Hypo Farm Settings', 'Click to adjust settings.', 'action', 'MAZLookalike("Hypothermia Farm", "rHypo", "MAZ")', null, 'Challenges');
 	createSetting('rHypoSettings', 'HF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges');
-	createSetting('rHypoDefaultSettings', 'HF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { cell: 88, jobratio: '1,100,1,1', packrat: true, autostorage: true, active: true }, null, 'Challenges');
+	createSetting('rHypoDefaultSettings', 'HF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Challenges');
 	createSetting('rHypoZone', 'HF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Challenges');
 
 	//--------------------------------------------------------------
