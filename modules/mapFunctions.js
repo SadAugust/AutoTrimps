@@ -711,12 +711,13 @@ function SmithyFarm() {
 			//Calculating cache + jestimp + chronoimp
 			var mapTime = totalMaps * 25;
 			if (totalMaps > 4) mapTime += (Math.floor(totalMaps / 5) * 45);
+			var smithy_Cost_Mult = game.buildings.Smithy.cost.gems[1];
 
 			//Calculating wood & metal earned then using that info to identify how many Smithies you can afford from those values.
-			var woodEarned = scaleToCurrentMapLocal(simpleSecondsLocal("wood", mapTime, true, '0,1'), false, true, rSFMapLevel);
+			var woodEarned = scaleToCurrentMapLocal(simpleSecondsLocal("wood", mapTime, true, '0,1,0'), false, true, rSFMapLevel);
 			var metalEarned = scaleToCurrentMapLocal(simpleSecondsLocal("metal", mapTime, true, '0,0,1'), false, true, rSFMapLevel);
-			var woodSmithies = game.buildings.Smithy.purchased + calculateMaxAffordLocal(game.buildings.Smithy, true, false, false, false, 1, game.resources.wood.owned + woodEarned);
-			var metalSmithies = game.buildings.Smithy.purchased + calculateMaxAffordLocal(game.buildings.Smithy, true, false, false, false, 1, game.resources.metal.owned + metalEarned);
+			var woodSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (game.resources.wood.owned + woodEarned), (smithy_Cost_Mult), true)
+			var metalSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (game.resources.metal.owned + metalEarned), (smithy_Cost_Mult), true)
 
 			if (woodSmithies > 0 && metalSmithies > 0) {
 				//Taking the minimum value of the 2 to see which is more reasonable to aim for
@@ -730,7 +731,7 @@ function SmithyFarm() {
 				var rSFWoodMapCount = Math.floor((rSFWoodCost - game.resources.wood.owned) / scaleToCurrentMapLocal(simpleSecondsLocal("wood", 34, true, '0,1'), false, true, rSFMapLevel));
 				var rSFMetalMapCount = Math.floor((rSFMetalCost - game.resources.metal.owned) / scaleToCurrentMapLocal(simpleSecondsLocal("metal", 34, true, '0,0,1'), false, true, rSFMapLevel));
 				//If combined maps for both resources is higher than desired maps to be run then will farm 1 less smithy
-				if (rSFWoodMapCount + rSFMetalMapCount > rSFSmithies) rSFSmithies = smithyCount - 1
+				if ((rSFWoodMapCount + rSFMetalMapCount) > rSFSmithies) rSFSmithies = smithyCount - 1
 				else rSFSmithies = smithyCount;
 			}
 			else rSFSmithies = 1;
