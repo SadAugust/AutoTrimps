@@ -1649,6 +1649,12 @@ function updateATVersion() {
 				saveSettings();
 			}
 		}
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.4') {
+			if (typeof (autoTrimpSettings.rHDFarmDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rHDFarmDefaultSettings.value.mapCap === undefined) {
+				autoTrimpSettings.rHDFarmDefaultSettings.value.mapCap = 900;
+				saveSettings();
+			}
+		}
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		saveSettings();

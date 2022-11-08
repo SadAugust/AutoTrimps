@@ -424,6 +424,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Hypothermia')) tooltipText += "<div class='windowPackrat'>Packrat</div>"
 		if (titleText.includes('Map Bonus')) tooltipText += "<div class='windowJobRatio" + varPrefix_Adjusted + "\'>Health<br>Bonus</div>"
 		if (titleText.includes('Map Bonus')) tooltipText += "<div class='windowJobRatio" + varPrefix_Adjusted + "\'>Health<br>HD Ratio</div>"
+		if (titleText.includes('HD Farm')) tooltipText += "<div class='windowCell" + varPrefix_Adjusted + "\'>Map<br>Cap</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('HD Farm')) tooltipText += "<div class='windowCell" + varPrefix_Adjusted + "\'>Shred<br>Map Cap</div>"
 
 		tooltipText += "</div>";
@@ -446,6 +447,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			healthHDRatio: 10,
 			recycle: false,
 			voidPurchase: true,
+			mapCap: 900,
 			shredMapCap: 100
 		}
 		var style = "";
@@ -482,6 +484,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			defaultVals.healthBonus = autoTrimpSettings[varPrefix + "DefaultSettings"].value.healthBonus ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.healthBonus : 10;
 		if (titleText.includes('Map Bonus'))
 			defaultVals.healthHDRatio = autoTrimpSettings[varPrefix + "DefaultSettings"].value.healthHDRatio ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.healthHDRatio : 10;
+		if (titleText.includes('HD Farm'))
+			defaultVals.mapCap = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.mapCap) === 'undefined' ? 900 : autoTrimpSettings[varPrefix + "DefaultSettings"].value.mapCap ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.mapCap : 900;
 		if (titleText.includes('Map Farm') || titleText.includes('HD Farm'))
 			defaultVals.shredMapCap = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.shredMapCap) === 'undefined' ? 100 : autoTrimpSettings[varPrefix + "DefaultSettings"].value.shredMapCap ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.shredMapCap : 100;
 
@@ -521,6 +525,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<div class='windowRecycle' style='text-align: center;'>" + buildNiceCheckbox("windowRecycleDefault", null, defaultVals.recycle) + "</div>";
 		if (titleText.includes('Alchemy Farm'))
 			tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowVoidPurchase", null, defaultVals.voidPurchase) + "</div>";
+		if (titleText.includes('HD Farm'))
+			tooltipText += "<div class='windowCell" + varPrefix_Adjusted + "\'><input value='" + defaultVals.mapCap + "' type='number' id='mapCap'/></div>";
 		if (titleText.includes('Map Farm') || titleText.includes('HD Farm'))
 			tooltipText += "<div class='windowCell" + varPrefix_Adjusted + "\'><input value='" + defaultVals.shredMapCap + "' type='number' id='shredMapCap'/></div>";
 
@@ -890,6 +896,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	if (titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm')) var mapType = document.getElementById('windowMapTypeDropdownDefault').value;
 	if (titleText.includes('Map Bonus')) var healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
 	if (titleText.includes('Map Bonus')) var healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10);
+	if (titleText.includes('HD Farm')) var mapCap = parseFloat(document.getElementById('mapCap').value, 10);
 	if (titleText.includes('Map Farm') || titleText.includes('HD Farm')) var shredMapCap = parseFloat(document.getElementById('shredMapCap').value, 10);
 
 	if (defaultCell < 1) defaultCell = 1;
@@ -917,6 +924,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		frozencastle: defaultFrozenCastle,
 		healthBonus: healthBonus,
 		healthHDRatio: healthHDRatio,
+		mapCap: mapCap,
 		shredMapCap: shredMapCap
 	};
 	autoTrimpSettings[varPrefix + "DefaultSettings"].value = thisDefaultSetting;

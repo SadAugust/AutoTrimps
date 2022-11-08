@@ -2058,6 +2058,7 @@ function HDFarm() {
 		var rHDFMax = game.global.mapBonus != 10 ? 10 : null;
 		var rHDFMin = game.global.mapBonus != 10 ? 0 : null;
 		var rHDFshredMapCap = autoTrimpSettings.rHDFarmDefaultSettings.value.shredMapCap;
+		var rHDFmapCap = autoTrimpSettings.rHDFarmDefaultSettings.value.mapCap;
 
 		if (rHDFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && rHDFMapRepeats !== 0) {
@@ -2075,7 +2076,12 @@ function HDFarm() {
 
 		if (HDRatio > equipfarmdynamicHD(rHDFIndex))
 			rShouldHDFarm = true;
-		if (rShouldHDFarm && game.global.mapsActive && metalShred && rHDFCurrentMap != undefined && game.global.mapRunCounter >= rHDFshredMapCap) {
+		//Skipping farm if map repeat value is greater than our shred map cap value
+		if (rShouldHDFarm && game.global.mapsActive && metalShred && rCurrentMap === mapName && game.global.mapRunCounter >= rHDFshredMapCap) {
+			rShouldHDFarm = false;
+		}
+		//Skipping farm if map repeat value is greater than our map cap value
+		if (rShouldHDFarm && game.global.mapsActive && !metalShred && rCurrentMap === mapName && game.global.mapRunCounter >= rHDFmapCap) {
 			rShouldHDFarm = false;
 		}
 		if (rCurrentMap !== mapName && equipfarmdynamicHD(rHDFIndex) > HDRatio)
