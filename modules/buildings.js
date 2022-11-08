@@ -528,13 +528,24 @@ function mostEfficientHousing() {
 
 function RbuyBuildings() {
 
+	var hypoZone = 0;
+	if (game.global.challengeActive === 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && autoTrimpSettings.rHypoSettings.value.length > 0) {
+		var rHFBaseSettings = autoTrimpSettings.rHypoSettings.value;
+		for (var y = 0; y < rHFBaseSettings.length; y++) {
+			if (!rHFBaseSettings[y].active) {
+				continue;
+			}
+			hypoZone = rHFBaseSettings[y].world;
+			break;
+		}
+	}
 	// Storage, shouldn't be needed anymore that autostorage is lossless. Hypo fucked this statement :(
 	//Turn on autostorage if you're past your last farmzone and you don't need to save wood anymore. Else will have to force it to purchase enough storage up to the cost of whatever bonfires
-	if (!game.global.autoStorage && (game.global.challengeActive != 'Hypothermia' || (game.global.challengeActive == 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && (autoTrimpSettings.rHypoDefaultSettings.value.autostorage && game.global.world >= getPageSetting('rHypoZone')[0]))))
+	if (!game.global.autoStorage && (game.global.challengeActive != 'Hypothermia' || (game.global.challengeActive == 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && (autoTrimpSettings.rHypoDefaultSettings.value.autostorage && game.global.world >= hypoZone))))
 		toggleAutoStorage(false);
 
 	//Disables AutoStorage 
-	if (game.global.challengeActive == 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && (autoTrimpSettings.rHypoDefaultSettings.value.autostorage && game.global.world < getPageSetting('rHypoZone')[0])) {
+	if (game.global.challengeActive == 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && (autoTrimpSettings.rHypoDefaultSettings.value.autostorage && game.global.world < hypoZone)) {
 		if (game.global.autoStorage)
 			toggleAutoStorage(false);
 	}
