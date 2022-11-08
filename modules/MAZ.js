@@ -32,9 +32,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<tr>";
 			var item = ratioJobs[x];
 			var setting = settingGroup[item];
+			var settingRatio = setting.ratio === 0 ? 0 : setting.ratio
 			var max;
 			var checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
-			tooltipText += "<td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Ratio: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number'  value='" + ((setting && setting.ratio) ? setting.ratio : 1) + "'/></div></div>"
+			tooltipText += "<td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Ratio: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number'  value='" + ((setting && setting.ratio >= 0) ? setting.ratio : 0) + "'/></div></div>"
 			tooltipText += "</td>";
 			if (percentJobs.length > x) {
 				item = percentJobs[x];
@@ -1126,6 +1127,8 @@ function windowToggleHelp(windowSize) {
 }
 
 function saveATAutoJobsConfig() {
+	var error = "";
+	var errorMessage = false;
 	autoTrimpSettings.rJobSettingsArray.value = {};
 	var setting = {};
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
@@ -1144,6 +1147,11 @@ function saveATAutoJobsConfig() {
 		}
 		if (ratios.indexOf(name) != -1) {
 			setting[name].ratio = parseFloat(quantboxes[x].value);
+			//Error checking
+			if (setting[name].ratio < 0) {
+				error += "Your ratio for " + name + " can't be negative.<br>";
+				errorMessage = true;
+			}
 			continue;
 		}
 		setting[name].percent = (document.getElementById('autoJobQuant' + name).value);
@@ -1151,6 +1159,12 @@ function saveATAutoJobsConfig() {
 	var portalElem = document.getElementById('autoJobSelfGather');
 	if (portalElem) {
 		if (portalElem.value) setting.portalOption = portalElem.value;
+	}
+
+	if (errorMessage) {
+		var elem = document.getElementById('autoJobsError');
+		if (elem) elem.innerHTML = error;
+		return;
 	}
 
 	autoTrimpSettings.rJobSettingsArray.value = setting;
@@ -1214,6 +1228,7 @@ function saveATAutoStructureConfig() {
 function saveATUniqueMapsConfig() {
 
 	var error = "";
+	var errorMessage = false;
 	var setting = autoTrimpSettings.rUniqueMapSettingsArray.value;
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var zoneBoxes = document.getElementsByClassName('structConfigZone');
@@ -1276,7 +1291,7 @@ function saveATUniqueMapsConfig() {
 		y++;
 	}
 
-	if (error) {
+	if (errorMessage) {
 		var elem = document.getElementById('autoJobsError');
 		if (elem) elem.innerHTML = error;
 		return;
