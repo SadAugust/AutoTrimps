@@ -580,26 +580,25 @@ function RbuyBuildings() {
 	//Smithy purchasing
 	if (!game.buildings.Smithy.locked) {
 		// Purchasing a smithy whilst on Quest
-		if (!(game.global.challengeActive == 'Hypothermia' && game.challenges.Hypothermia.bonfires > 0 && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()))
-			if (game.global.challengeActive == 'Quest' && (smithiesBoughtThisZone < game.global.world || questcheck() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1) && getPageSetting('rQuest')) {
-				var smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1);
-				var questZones = Math.floor(((!game.global.runningChallengeSquared ? 85 : getPageSetting('rQuestSmithyZone') === -1 ? Infinity : getPageSetting('rQuestSmithyZone') - game.global.world) / 2) - 1);
-				var smithiesToBuy = smithycanBuy > questZones ? smithycanBuy - questZones : questcheck() == 10 ? 1 : 0;
-				if (smithiesBoughtThisZone > game.global.world) smithiesBoughtThisZone = 0;
-				//Buying smithies that won't be needed for quests before user entered end goal
-				if (smithiesToBuy > 0) {
-					buyBuilding("Smithy", true, true, smithiesToBuy);
-					smithiesBoughtThisZone = game.global.world;
-				}
+		if (game.global.challengeActive == 'Quest' && (smithiesBoughtThisZone < game.global.world || questcheck() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1) && getPageSetting('rQuest')) {
+			var smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1);
+			var questZones = Math.floor(((!game.global.runningChallengeSquared ? 85 : getPageSetting('rQuestSmithyZone') === -1 ? Infinity : getPageSetting('rQuestSmithyZone') - game.global.world) / 2) - 1);
+			var smithiesToBuy = smithycanBuy > questZones ? smithycanBuy - questZones : questcheck() == 10 ? 1 : 0;
+			if (smithiesBoughtThisZone > game.global.world) smithiesBoughtThisZone = 0;
+			//Buying smithies that won't be needed for quests before user entered end goal
+			if (smithiesToBuy > 0) {
+				buyBuilding("Smithy", true, true, smithiesToBuy);
+				smithiesBoughtThisZone = game.global.world;
 			}
-			else if (!(game.global.challengeActive === 'Hypothermia' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) &&
-				(game.global.challengeActive !== 'Quest' || !getPageSetting('rQuest')) &&
-				((autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled &&
-					autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax > game.buildings.Smithy.purchased &&
-				canAffordBuilding('Smithy', false, false, false, false, 1, autoTrimpSettings.rBuildingSettingsArray.value.Smithy.percent))
-					|| rCurrentMap === 'rSmithyFarm')) {
-				buyBuilding("Smithy", true, true, 1);
-			}
+		}
+		else if (!(game.global.challengeActive === 'Hypothermia' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) &&
+			(game.global.challengeActive !== 'Quest' || !getPageSetting('rQuest')) &&
+			((autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled &&
+				autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax > game.buildings.Smithy.purchased &&
+			canAffordBuilding('Smithy', false, false, false, false, 1, autoTrimpSettings.rBuildingSettingsArray.value.Smithy.percent))
+				|| rCurrentMap === 'rSmithyFarm')) {
+			buyBuilding("Smithy", true, true, 1);
+		}
 	}
 
 	//Laboratory Purchasing (Nurture)
