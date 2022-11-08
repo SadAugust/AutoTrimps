@@ -2094,14 +2094,6 @@ function reflectShouldBuyEquips() {
 	return false;
 }
 
-function* finder(array, item) {
-	let index = -1;
-	while ((index = array.indexOf(item, index + 1)) > -1) {
-		yield index;
-	}
-	return -1;
-}
-
 function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 	var event = !event ? null : event;
 	var ssWorkerRatio = !ssWorkerRatio ? null : ssWorkerRatio;
@@ -2168,7 +2160,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt_local *= game.portal.Observation.getMult();
 
 	if (what == "food" || what == "wood" || what == "metal") {
-		if (ssWorkerRatio) amt_local *= calculateParityBonus(ssWorkerRatio);
+		if (ssWorkerRatio) amt_local *= calculateParityBonus(desiredRatios);
 		else amt_local *= getParityBonus();
 		if (autoBattle.oneTimers.Gathermate.owned)
 			amt_local *= autoBattle.oneTimers.Gathermate.getMult();
@@ -2202,7 +2194,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 	//Calculating proper value for the staff we should be using instead of equipped
 	else if (event != null && game.global.StaffEquipped != getPageSetting(heirloom)) {
 		if (what == "food" || what == "wood" || what == "metal") {
-			if (ssWorkerRatio) amt_local /= calculateParityBonus(ssWorkerRatio);
+			if (ssWorkerRatio) amt_local /= calculateParityBonus(desiredRatios);
 			else amt_local /= getParityBonus();
 			amt_local *= getHazardParityMult(HeirloomSearch(heirloom)) > 0 ? getHazardParityMult(HeirloomSearch(heirloom)) : 1
 		}
@@ -2238,8 +2230,7 @@ function calculateParityBonus(workerRatio) {
 	} else {
 
 		var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
-		desiredRatios = Array.from(workerRatio.split(','));
-		var workerRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0]
+		var workerRatios = workerRatio;
 		var ratio = desiredRatios.reduce((a, b) => a + b, 0)
 		var freeWorkerDivided = freeWorkers / ratio;
 
