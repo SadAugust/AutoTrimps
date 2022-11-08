@@ -640,6 +640,7 @@ function Rresetmapvars() {
 	rHDFMapRepeats = 0;
 
 	if (game.global.universe === 2) HDRatio = RcalcHDratio();
+	if (game.global.universe === 2) voidHDRatio = rCalcVoidHDratio()
 
 	if (document.getElementById('hiderStatus').style.display == 'None' && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) {
 		turnOn("hiderStatus")

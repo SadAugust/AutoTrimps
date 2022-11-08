@@ -29,7 +29,7 @@ function automationMenuInit() {
 		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 	}
 	if (game.global.universe == 2) {
-		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Void H:D Ratio = </b>\" + prettify(rCalcVoidHDratio()) + \"<br>\")');
+		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
 
 	}
 	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
@@ -328,8 +328,6 @@ function initializeAllSettings() {
 
 	//Radon Daily
 	createSetting('buyradony', 'Buy Radonculous %', 'Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
-	createSetting('Rdmeltsmithy', 'D: Melt Smithy', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value. ', 'value', '-1', null, 'Daily');
-	createSetting('rdMeltSmithyShred', 'D: Melt Smithy (shred)', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value when your current daily has either the metal or wood shred modifier active. ', 'value', '-1', null, 'Daily');
 	createSetting('rBloodthirstDestack', 'Bloodthirst Destack', 'Will automatically run a level 6 map when you are one stack (death) away from the enemy healing and gaining additional attack. <b>Won\'t function properly without Auto Maps enabled.</b>', 'boolean', true, null, 'Daily');
 
 	//Radon Daily Portal
@@ -491,16 +489,6 @@ function initializeAllSettings() {
 		MP_Smithy_C3: { enabled: false, value: 100 },
 	}, null, 'Maps');
 	createSetting('rUniqueMapPopup', 'Unique Map Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("Unique Maps", " ", "UniqueMaps")', null, 'Maps');
-	createSetting('Rmeltsmithy', 'Melt Smithy', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value.', 'value', '-1', null, 'Maps');
-
-	//Prismatic Palace
-	createSetting('Rprispalace', 'Prismatic Palace', 'Run Prismatic Palace when its unlocked. ', 'boolean', true, null, 'Maps');
-	//Atlantrimp
-	createSetting('RAtlantrimp', 'Atlantrimp', '-1 to disable. When to run Atlantrimp. Use it like this: 50,91. The first number is what zone Atlantrimp should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Atlantrimp at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Maps');
-	//Melting Point
-	createSetting('RMeltingPoint', 'Melting Point', '-1 to disable. When to run Melting Point. Use it like this: 50,91. The first number is what zone Melting Point should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Melting Point at zone 50 cell 91. Must define both values.', 'multiValue', [-1], null, 'Maps');
-	//Frozen Castle
-	createSetting('rFrozenCastle', 'Frozen Castle', '-1 to disable. When to run Frozen Castle. Use it like this: 175,91. The first number is what zone Frozen Castle should be run at, the second number is which Cell to run it at. In this example AutoMaps would run Frozen Castle at zone 175 cell 91. Must define both values.', 'multiValue', [-1], null, 'Maps');
 
 	//HD Farm
 	createSetting('rHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'Maps');
@@ -634,7 +622,6 @@ function initializeAllSettings() {
 
 	//C3
 	createSetting('c3finishrun', 'Finish C3', 'Finish / Abandon Challenge3 (any) when this zone is reached, if you are running one. Does not affect Non-C3 runs.', 'value', -1, null, 'C3');
-	createSetting('c3meltingpoint', 'C3: Melt Smithy', 'Run the Melting Point map to gain an extra Smithy when the amount of Smithies you\'ve purchased is at or above this value on C3 runs.', 'value', -1, null, 'C3');
 	createSetting('c3buildings', 'Building max purchase', 'When in a C3 or special challenge  (Mayhem, Panda) run will spend 99% of resources on buildings regardless of your other designated caps until the zone you specify in the Buy Buildings Till setting.', 'boolean', false, null, 'C3');
 	createSetting('c3buildingzone', 'Buy buildings till', 'When in a C3 or special challenge  (Mayhem, Panda) will spend 99% of resource on buildings until this zone.', 'value', -1, null, 'C3');
 	createSetting('c3GM_ST', ['c3: GM/ST', 'c3: Golden Maps', 'c3: Sharp Trimps', 'c3: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during C3 or special challenge (Mayhem, Pandemonium) runs.', 'multitoggle', 0, null, 'C3');
@@ -1004,7 +991,7 @@ function modifyParentNodeUniverseSwap() {
 	//None!
 
 	//Radon Settings
-	modifyParentNode_Initial("rFrozenCastle", radonon);
+	modifyParentNode_Initial("rUniqueMapPopup", radonon);
 	modifyParentNode_Initial("rVoidMapPopup", radonon);
 
 	//Spire
@@ -1631,41 +1618,6 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5') {
-			if (typeof (autoTrimpSettings.rUniqueMapSettingsArray.value) !== 'undefined') {
-
-				autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy.value = getPageSetting('Rmeltsmithy');
-				if (getPageSetting('Rmeltsmithy') > 0) autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy.enabled = true;
-
-				autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_C3.value = getPageSetting('c3meltingpoint');
-				if (getPageSetting('c3meltingpoint') > 0) autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_C3.enabled = true;
-
-				autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_Daily.value = getPageSetting('Rdmeltsmithy');
-				if (getPageSetting('Rdmeltsmithy') > 0) autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_Daily.enabled = true;
-
-				autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_Daily_Shred.value = getPageSetting('rdMeltSmithyShred');
-				if (getPageSetting('rdMeltSmithyShred') > 0) autoTrimpSettings.rUniqueMapSettingsArray.value.MP_Smithy_Daily_Shred.enabled = true;
-
-				if (getPageSetting('RAtlantrimp')[1] !== undefined) {
-					autoTrimpSettings.rUniqueMapSettingsArray.value.Atlantrimp.enabled = true;
-					autoTrimpSettings.rUniqueMapSettingsArray.value.Atlantrimp.zone = getPageSetting('RAtlantrimp')[0];
-					autoTrimpSettings.rUniqueMapSettingsArray.value.Atlantrimp.cell = getPageSetting('RAtlantrimp')[1];
-				}
-				if (getPageSetting('RMeltingPoint')[1] !== undefined) {
-					autoTrimpSettings.rUniqueMapSettingsArray.value.Melting_Point.enabled = true;
-					autoTrimpSettings.rUniqueMapSettingsArray.value.Melting_Point.zone = getPageSetting('RMeltingPoint')[0];
-					autoTrimpSettings.rUniqueMapSettingsArray.value.Melting_Point.cell = getPageSetting('RMeltingPoint')[1];
-				}
-				if (getPageSetting('rFrozenCastle')[1] !== undefined) {
-					autoTrimpSettings.rUniqueMapSettingsArray.value.Frozen_Castle.enabled = true;
-					autoTrimpSettings.rUniqueMapSettingsArray.value.Frozen_Castle.zone = getPageSetting('rFrozenCastle')[0];
-					autoTrimpSettings.rUniqueMapSettingsArray.value.Frozen_Castle.cell = getPageSetting('rFrozenCastle')[1];
-				}
-
-				saveSettings();
-			}
-		}
-
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.1') {
 			if (typeof (autoTrimpSettings.rSmithyFarmDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rSmithyFarmDefaultSettings.value.mapType === undefined) {
 				autoTrimpSettings.rSmithyFarmDefaultSettings.value.mapType = 'Absolute';
@@ -1683,6 +1635,16 @@ function updateATVersion() {
 			if (typeof (autoTrimpSettings.rSmithyFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rSmithyFarmSettings.value[0].meltingPoint === undefined) {
 				for (var y = 0; y < autoTrimpSettings.rSmithyFarmSettings.value.length; y++) {
 					autoTrimpSettings.rSmithyFarmSettings.value[y].meltingPoint = false;
+				}
+				saveSettings();
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.3') {
+			if (typeof (autoTrimpSettings.rVoidMapSettings.value[0]) !== 'undefined' && autoTrimpSettings.rVoidMapSettings.value[0].voidHDRatio === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rVoidMapSettings.value.length; y++) {
+					autoTrimpSettings.rVoidMapSettings.value[y].voidHDRatio = 0;
+					autoTrimpSettings.rVoidMapSettings.value[y].maxvoidzone = autoTrimpSettings.rVoidMapSettings.value[y].world;
 				}
 				saveSettings();
 			}
@@ -2010,8 +1972,6 @@ function updateCustomButtons() {
 
 	//RDaily
 	radonon ? turnOn('buyradony') : turnOff('buyradony');
-	radonon ? turnOn('Rdmeltsmithy') : turnOff('Rdmeltsmithy');
-	radonon ? turnOn('rdMeltSmithyShred') : turnOff('rdMeltSmithyShred');
 	radonon ? turnOn('rBloodthirstDestack') : turnOff('rBloodthirstDestack');
 
 
@@ -2038,7 +1998,6 @@ function updateCustomButtons() {
 
 	//C3
 	radonon ? turnOn('c3finishrun') : turnOff('c3finishrun');
-	turnOff('c3meltingpoint');
 	radonon && (displayAllSettings || !autoBattle.oneTimers.Expanding_Tauntimp.owned) ? turnOn('c3buildings') : turnOff('c3buildings');
 	radonon && (displayAllSettings || !autoBattle.oneTimers.Expanding_Tauntimp.owned) && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
@@ -2168,18 +2127,8 @@ function updateCustomButtons() {
 	turnOff('rVoidMapDefaultSettings');
 	turnOff('rVoidMapZone');
 
-	turnOff('Rmeltsmithy');
 	radonon ? turnOn('rMapRepeatCount') : turnOff('rMapRepeatCount');
 	radonon ? turnOn('automateSpireAssault') : turnOff('automateSpireAssault');
-
-	radonon && (displayAllSettings || game.portal.Prismal.radLevel < 50) ? turnOn('Rprispalace') : turnOff('Rprispalace');
-
-	//Atlantrimp
-	turnOff('RAtlantrimp');
-	//Melting Point
-	turnOff('RMeltingPoint');
-	//Frozen Castle
-	turnOff('rFrozenCastle');
 
 	//Tribute Farming
 	radonon ? turnOn('rTributeFarmPopup') : turnOff('rTributeFarmPopup');
@@ -2793,7 +2742,7 @@ function toggleRadonStatus(update) {
 	if (update) {
 		if (getPageSetting('Rshowautomapstatus')) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Void H:D Ratio = </b>\" + prettify(rCalcVoidHDratio()) + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
 		} else
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
@@ -2805,7 +2754,7 @@ function toggleRadonStatus(update) {
 			turnOff('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Void H:D Ratio = </b>\" + prettify(rCalcVoidHDratio()) + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
 		}
 	}
 	else {

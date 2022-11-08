@@ -170,16 +170,25 @@ function VoidMaps() {
 	if (!autoTrimpSettings.rVoidMapDefaultSettings.value.active) return farmingDetails;
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
 	const isDaily = game.global.challengeActive === 'Daily';
+	const dailyReduction = isDaily ? dailyModiferReduction() : 0;
 	var rVMBaseSettings = autoTrimpSettings.rVoidMapSettings.value;
 	var rVMIndex;
 	for (var y = 0; y < rVMBaseSettings.length; y++) {
 		if (!rVMBaseSettings[y].active || game.global.lastClearedCell + 2 < rVMBaseSettings[y].cell) continue;
+		if (game.global.world < (rVMBaseSettings[y].world + dailyReduction)) continue;
+		if (game.global.world > (rVMBaseSettings[y].maxvoidzone + dailyReduction)) continue;
 		if (rVMBaseSettings[y].runType !== 'All') {
 			if (!isC3 && !isDaily && rVMBaseSettings[y].runType !== 'Fillers') continue;
 			if (isDaily && rVMBaseSettings[y].runType !== 'Daily') continue;
 			if (isC3 && rVMBaseSettings[y].runType !== 'C3') continue;
 		}
-		if (((rVMBaseSettings[y].world + (isDaily ? dailyModiferReduction() : 0)) + rVMBaseSettings[y].voidMod) - game.global.world >= 0 && game.global.world >= (rVMBaseSettings[y].world + (isDaily ? dailyModiferReduction() : 0))) {
+		//Running voids regardless of HD if we reach our max void zone
+		if ((rVMBaseSettings[y].maxvoidzone + dailyReduction) === game.global.world) {
+			rVMIndex = y;
+			break;
+		}
+		//Running voids if our voidHDRatio is greater than our target value
+		if (game.global.world - (rVMBaseSettings[y].world + dailyReduction) >= 0 && rVMBaseSettings[y].voidHDRatio < voidHDRatio) {
 			rVMIndex = y;
 			break;
 		}
@@ -206,7 +215,7 @@ function VoidMaps() {
 	}
 
 	if (rCurrentMap === mapName && !rDoVoids) {
-		if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
+		if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You ended with a Void HD Ratio of " + voidHDRatio.toFixed(2) + ".");
 		rCurrentMap = undefined;
 		rAutoLevel = Infinity;
 		currTime = 0;
@@ -2105,14 +2114,12 @@ function HDFarm() {
 }
 
 function FarmingDecision() {
-
-
 	var farmingDetails = {
 		shouldRun: false,
 		mapName: ''
 	}
 
-	if (!autoTrimpSettings.RAutoMaps.value) return farmingDetails;
+	if (!autoTrimpSettings.RAutoMaps.value || !game.global.mapsUnlocked) return farmingDetails;
 
 	const mapTypes = [Quest(), PandemoniumDestack(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), MapBonus(), Smithless()]
 

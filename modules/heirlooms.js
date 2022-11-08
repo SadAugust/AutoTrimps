@@ -288,7 +288,7 @@ function HeirloomSwapping() {
 	if (game.global.universe == 2) {
 		//Swapping Shields
 		if (getPageSetting('RhsShield')) {
-			if (game.global.challengeActive == 'Pandemonium' && rShouldPandemoniumJestimpFarm && getPageSetting('RhsPandJestFarmShield') != 'undefined' && autoBattle.oneTimers.Mass_Hysteria.owned)
+			if (game.global.challengeActive == 'Pandemonium' && rCurrentMap === 'rPandemoniumJestimpFarm' && getPageSetting('RhsPandJestFarmShield') != 'undefined' && autoBattle.oneTimers.Mass_Hysteria.owned)
 				HeirloomEquipShield('RhsPandJestFarmShield');
 			else if (game.global.mapsActive && getCurrentMapObject().location == "Void" && getPageSetting('RhsVoidSwap') && game.global.voidBuff !== 'doubleAttack' && getPageSetting('RhsInitial') !== "undefined" && !voidPBSwap) {
 				HeirloomEquipShield('RhsInitial');

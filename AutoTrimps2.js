@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v5.7.5.2',
+var ATversion = 'SadAugust v5.7.5.3',
 	atscript = document.getElementById('AutoTrimps-script'),
 	basepath = 'https://SadAugust.github.io/AutoTrimps_Local/',
 	modulepath = 'modules/';
@@ -89,6 +89,7 @@ var magmiteSpenderChanged = false;
 var lastHeliumZone = 0;
 var lastRadonZone = 0;
 var HDRatio = 0;
+var voidHDRatio = 0;
 var autoLevel = 0;
 var autoLevelCurrent = 0;
 var rC3EndZoneSetting = -1;
@@ -276,6 +277,7 @@ function mainLoop() {
 		//AutoMaps
 		if (oneSecondInterval) {
 			HDRatio = RcalcHDratio();
+			voidHDRatio = rCalcVoidHDratio();
 			autoLevel = autoMapLevel();
 		}
 		if (getPageSetting('RAutoMaps') > 0 && game.global.mapsUnlocked) RautoMap();
@@ -457,4 +459,3 @@ function mainCleanup() {
 	}
 }
 function throwErrorfromMain() { throw new Error("We have successfully read the thrown error message out of the main file") }
-

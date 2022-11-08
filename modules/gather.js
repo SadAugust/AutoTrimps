@@ -129,7 +129,7 @@ function manualLabor2() {
 	}
 
 	//High Priority Trap Building
-	if (trapTrimpsOK && trappingIsRelevant && canAffordBuilding('Trap') && (lowOnTraps || trapBuffering)) {
+	if (trapTrimpsOK && trappingIsRelevant && canAffordBuilding('Trap', false, false, false, false, 1) && (lowOnTraps || trapBuffering)) {
 		trapBuffering = true;
 		safeBuyBuilding('Trap');
 		setGather('buildings');
@@ -143,7 +143,7 @@ function manualLabor2() {
 	if (getPageSetting('ManualGather2') != 2 && researchAvailable && needScience) { setGather('science'); return; }
 
 	//Low Priority Trap Building
-	if (trapTrimpsOK && trappingIsRelevant && canAffordBuilding('Trap') && (!fullOfTraps || maxTrapBuffering)) {
+	if (trapTrimpsOK && trappingIsRelevant && canAffordBuilding('Trap', false, false, false, false, 1) && (!fullOfTraps || maxTrapBuffering)) {
 		trapBuffering = !fullOfTraps;
 		maxTrapBuffering = true;
 		safeBuyBuilding('Trap');
@@ -275,7 +275,7 @@ function RmanualLabor2() {
 			setGather('science');
 		else if (game.resources.science.owned < RscienceNeeded && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden')
 			setGather('science');
-		else if (trapTrimpsOK && needToTrap && game.buildings.Trap.owned == 0 && canAffordBuilding('Trap')) {
+		else if (trapTrimpsOK && needToTrap && game.buildings.Trap.owned == 0 && canAffordBuilding('Trap', false, false, false, false, 1)) {
 			if (!safeBuyBuilding('Trap'))
 				setGather('buildings');
 		}
@@ -294,7 +294,7 @@ function RmanualLabor2() {
 				setGather('metal');
 		}
 		else if (trapTrimpsOK) {
-			if (game.buildings.Trap.owned < 5 && canAffordBuilding('Trap')) {
+			if (game.buildings.Trap.owned < 5 && canAffordBuilding('Trap', false, false, false, false, 1)) {
 				safeBuyBuilding('Trap');
 				setGather('buildings');
 			}
