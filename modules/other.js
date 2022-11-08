@@ -2231,11 +2231,11 @@ function calculateParityBonus(workerRatio) {
 
 		var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
 		var workerRatios = workerRatio;
-		var ratio = desiredRatios.reduce((a, b) => a + b, 0)
+		var ratio = workerRatios.reduce((a, b) => a + b, 0)
 		var freeWorkerDivided = freeWorkers / ratio;
 
 		for (var x = 0; x < allowed.length; x++) {
-			var thisWorkers = freeWorkerDivided * desiredRatios[x];
+			var thisWorkers = freeWorkerDivided * workerRatios[x];
 			totalWorkers += thisWorkers;
 			numWorkers[x] = thisWorkers;
 		}
