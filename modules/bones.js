@@ -69,6 +69,7 @@ function BoneShrine() {
 				if (shredActive && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineGather) && game.global.preMapsActive && game.global.currentMapId !== '' && game.global.hemmTimer >= 140) rRunMap();
 			}
 			if (!rBoneShrineAtlantrimp || (rBoneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === 'Atlantrimp' && game.global.lastClearedMapCell === getCurrentMapObject().size - 2)) {
+				rShouldBoneShrine = true;
 				for (var x = 0; x < rBoneShrineCharges; x++) {
 					if (getPageSetting('RBuyJobsNew') > 0) {
 						workerRatio = rBoneShrineSettings.jobratio;
@@ -79,6 +80,7 @@ function BoneShrine() {
 				debug('Consumed ' + rBoneShrineCharges + " bone shrine " + (rBoneShrineCharges == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(rBoneShrineCharges));
 				rBoneShrineSettings.done = totalPortals + "_" + game.global.world;
 				rBSRunningAtlantrimp = false;
+				rShouldBoneShrine = false;
 				saveSettings();
 			}
 		}

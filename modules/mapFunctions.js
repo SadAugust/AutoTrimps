@@ -310,6 +310,7 @@ function MapBonus() {
 			mapsClicked();
 			recycleMap();
 		}
+		return farmingDetails;
 	}
 	return farmingDetails;
 }
@@ -587,6 +588,7 @@ function TributeFarm() {
 			if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
 				toggleAutoStructure();
 			rTrFbuyBuildings = false;
+			return farmingDetails;
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rTrFMapLevel || getCurrentMapObject().bonus !== rTrFSpecial);
@@ -609,6 +611,7 @@ function TributeFarm() {
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 	}
+
 	return farmingDetails;
 }
 
@@ -791,19 +794,20 @@ function SmithyFarm() {
 					recycleMap();
 				}
 			}
-			if (rCurrentMap === mapName && !rShouldSmithyFarm) {
-				if (getPageSetting('rMapRepeatCount')) debug("Smithy Farm took " + rSFMapRepeats[0] + " food map" + (rSFMapRepeats[0] === 1 ? ", " : "s, ") + rSFMapRepeats[1] + " wood map" + (rSFMapRepeats[1] === 1 ? ", " : "s, ") + rSFMapRepeats[2] + " metal map" + (rSFMapRepeats[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.");
-				rCurrentMap = undefined;
-				mapAutoLevel = Infinity;
-				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
-					toggleAutoStructure();
-				rSFMapRepeats = [0, 0, 0];
-				smithyMapCount = [0, 0, 0];
-				currTime = 0;
-				HDRatio = RcalcHDratio();
-				if (game.global.challengeActive !== 'Quest' && rSFSettings.meltingPoint) runUnique('Melting Point', false);
-				rSFSettings.done = totalPortals + "_" + game.global.world;
-			}
+		}
+		if (rCurrentMap === mapName && !rShouldSmithyFarm) {
+			if (getPageSetting('rMapRepeatCount')) debug("Smithy Farm took " + rSFMapRepeats[0] + " food map" + (rSFMapRepeats[0] === 1 ? ", " : "s, ") + rSFMapRepeats[1] + " wood map" + (rSFMapRepeats[1] === 1 ? ", " : "s, ") + rSFMapRepeats[2] + " metal map" + (rSFMapRepeats[2] === 1 ? " " : "s ") + " (" + (rSFMapLevel >= 0 ? "+" : "") + rSFMapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on z" + game.global.world + ". You ended it with " + game.buildings.Smithy.purchased + " smithies.");
+			rCurrentMap = undefined;
+			mapAutoLevel = Infinity;
+			if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
+				toggleAutoStructure();
+			rSFMapRepeats = [0, 0, 0];
+			smithyMapCount = [0, 0, 0];
+			currTime = 0;
+			HDRatio = RcalcHDratio();
+			if (game.global.challengeActive !== 'Quest' && rSFSettings.meltingPoint) runUnique('Melting Point', false);
+			rSFSettings.done = totalPortals + "_" + game.global.world;
+			return farmingDetails;
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rSFMapLevel || getCurrentMapObject().bonus !== rSFSpecial);

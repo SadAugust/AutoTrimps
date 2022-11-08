@@ -591,7 +591,7 @@ function RbuyBuildings() {
 				smithiesBoughtThisZone = game.global.world;
 			}
 		}
-		else if ((game.global.challengeActive !== 'Quest' || !getPageSetting('rQuest')) && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax) > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, false, autoTrimpSettings.rBuildingSettingsArray.value.Smithy.percent) || rCurrentMap === 'rSmithyFarm')) {
+		else if ((game.global.challengeActive !== 'Quest' || !getPageSetting('rQuest')) && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled && (autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax === 0 ? Infinity : autoTrimpSettings.rBuildingSettingsArray.value.Smithy.buyMax) > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, 1, autoTrimpSettings.rBuildingSettingsArray.value.Smithy.percent) || rCurrentMap === 'rSmithyFarm')) {
 			buyBuilding("Smithy", true, true, 1);
 		}
 	}
