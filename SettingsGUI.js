@@ -493,7 +493,7 @@ function initializeAllSettings() {
 	//HD Farm
 	createSetting('rHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "rHDFarm", "MAZ")', null, 'Maps');
 	createSetting('rHDFarmSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rHDFarmDefaultSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { repeat: 10, jobratio: '1,1,1', special: 'fa' }, null, 'Maps');
+	createSetting('rHDFarmDefaultSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { repeat: 10, jobratio: '1,1,1', special: 'fa', mapCap: 900, shredMapCap: 100 }, null, 'Maps');
 	createSetting('rHDFarmZone', 'HD Farm: Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
 
 	//Worshipper Farm 
