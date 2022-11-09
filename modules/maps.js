@@ -842,6 +842,17 @@ function RautoMap() {
 		return;
 	}
 
+	//Reset to defaults when on world grid
+	if (!game.global.mapsActive && !game.global.preMapsActive) {
+		game.global.mapRunCounter = 0;
+		currTime = 0;
+		if (game.global.repeatMap) repeatClicked();
+		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
+		if (document.getElementById('advExtraLevelSelect').value > 0)
+			document.getElementById('advExtraLevelSelect').value = "0";
+		runningPrestigeMaps = false;
+	}
+
 	//New Mapping Organisation!
 	rShouldMap = rMapSettings.shouldRun;
 	rCurrentMap = rMapSettings.mapName;
@@ -859,17 +870,6 @@ function RautoMap() {
 	workerRatio = null;
 
 	var dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
-
-	//Reset to defaults when on world grid
-	if (!game.global.mapsActive && !game.global.preMapsActive) {
-		game.global.mapRunCounter = 0;
-		currTime = 0;
-		if (game.global.repeatMap) repeatClicked();
-		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
-		if (document.getElementById('advExtraLevelSelect').value > 0)
-			document.getElementById('advExtraLevelSelect').value = "0";
-		runningPrestigeMaps = false;
-	}
 
 	//Map Selection
 	var obj = {};
