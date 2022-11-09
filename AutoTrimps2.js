@@ -25,6 +25,28 @@ function initializeAutoTrimps() {
 	debug('AutoTrimps Loaded!');
 }
 
+function printChangelog(changes) {
+	var body = "";
+	for (var i in changes) {
+		var $item = changes[i];
+		var result = assembleChangelog($item);
+		body += result;
+	}
+	var footer =
+		'<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!\
+        <br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
+        <br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).',
+		action = 'cancelTooltip()',
+		title = 'Script Update Notice<br>' + ATversion,
+		acceptBtnText = "Thank you for playing AutoTrimps. Accept and Continue.",
+		hideCancel = true;
+	tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
+}
+
+function assembleChangelog(c) {
+	return `${c}<br>`
+}
+
 var runInterval = 100;
 var startupDelay = 1500;
 

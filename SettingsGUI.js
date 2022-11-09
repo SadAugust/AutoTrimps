@@ -1490,9 +1490,22 @@ function updateATVersion() {
 	//Setting Conversion!
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === ATversion) return;
 
+	if (autoTrimpSettings["ATversion"] === undefined || !autoTrimpSettings["ATversion"].includes('SadAugust')) {
+		var changelog = [];
+		changelog.push('Welcome to SadAugust fork! <br><br>\
+		I highly recommend you check the <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">list of changes from Zeks fork</a> (if you haven\'t already).<br><br>\
+		If you\'re unsure on what a setting does then I highly recommend checking the "Help" toggle on the popups that have been introduced as it should explain almost everything!<br><br>\
+		You\'ll need to redo all of your farming settings as everything is drastically different :(')
+		printChangelog(changelog);
+	}
+
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust')
 		&& autoTrimpSettings["ATversion"] !== ATversion
 	) {
+
+		var changelog = [];
+
+
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '4.5.0') {
 			if (typeof (autoTrimpSettings.rTimeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rTimeFarmSettings.value[0].done === undefined) {
 				for (var y = 0; y < autoTrimpSettings.rTimeFarmSettings.value.length; y++) {
@@ -1665,12 +1678,16 @@ function updateATVersion() {
 				}
 				saveSettings();
 			}
+			changelog.push('Have added HD Ratio to Void Map settings! Will run Voids if either HD Ratio or Void HD Ratio are lower than their respective ratios')
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;
+		printChangelog(changelog);
 		saveSettings();
 	}
+
 	autoTrimpSettings["ATversion"] = ATversion;
+	saveSettings();
 }
 
 function autoSetTextToolTip(id, text) {
