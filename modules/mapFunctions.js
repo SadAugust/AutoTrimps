@@ -157,11 +157,6 @@ function selectEasierVoidMap(map1, map2) {
 	}
 }
 
-MODULES.mapFunctions = {};
-MODULES.mapFunctions.rVoidHDRatio = Infinity;
-MODULES.mapFunctions.rVoidVHDRatio = Infinity;
-MODULES.mapFunctions.rVoidHDIndex = Infinity;
-
 //Void Maps -- WORKING AS IS
 function VoidMaps() {
 
@@ -173,7 +168,6 @@ function VoidMaps() {
 	};
 
 	if (!autoTrimpSettings.rVoidMapDefaultSettings.value.active) return farmingDetails;
-	var module = MODULES['mapFunctions'];
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const dailyReduction = isDaily ? dailyModiferReduction() : 0;
@@ -196,17 +190,14 @@ function VoidMaps() {
 		//Running voids if our voidHDRatio is greater than our target value
 		if (game.global.world - (rVMBaseSettings[y].world + dailyReduction) >= 0 && rVMBaseSettings[y].voidHDRatio < voidHDRatio) {
 			rVMIndex = y;
-			if (module.rVoidHDRatio === Infinity) module.rVoidHDRatio = HDRatio;
-			if (module.rVoidVHDRatio === Infinity) module.rVoidVHDRatio = voidHDRatio;
-			module.rVoidHDIndex = y;
 			break;
 		}
 		else
 			continue;
 	}
 
-	if (rVMIndex >= 0 || module.rVoidHDIndex !== Infinity) {
-		var rVMSettings = rVMBaseSettings[rVMIndex >= 0 ? rVMIndex : module.rVoidHDIndex];
+	if (rVMIndex >= 0) {
+		var rVMSettings = rVMBaseSettings[rVMIndex];
 		var rVMJobRatio = rVMSettings.jobratio
 
 		if (game.global.totalVoidMaps > 0) {
@@ -224,19 +215,15 @@ function VoidMaps() {
 	}
 
 	if (rCurrentMap === mapName && !rDoVoids) {
-		if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You started with " + module.voidVHDRatio.toFixed(2) + " and ended with a Void HD Ratio of " + voidHDRatio.toFixed(2) + ".");
+		if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You ended with a Void HD Ratio of " + voidHDRatio.toFixed(2) + ".");
 		rCurrentMap = undefined;
 		rAutoLevel = Infinity;
 		currTime = 0;
-		module.rVoidHDIndex = Infinity;
-		module.voidHDRatio = Infinity;
-		module.rVoidVHDRatio = Infinity;
 	}
 
 	return farmingDetails;
 }
 
-MODULES.mapFunctions.rMBHealthFarm = false;
 var rMBHealthFarm = false;
 //Map Bonus -- WORKING AS IS
 function MapBonus() {
@@ -802,7 +789,7 @@ function SmithyFarm() {
 			rShouldSmithyFarm = true;
 		}
 
-		if ((!autoTrimpSettings.RBuyBuildingsNew.enabled || !autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled || game.global.challengeActive === 'Hypothermia') && rShouldSmithyFarm && rSFSmithies > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, 1)) {
+		if ((!autoTrimpSettings.RBuyBuildingsNew.enabled || !autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled) && rShouldSmithyFarm && rSFSmithies > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, 1)) {
 			buyBuilding("Smithy", true, true, 1);
 		}
 
@@ -1694,7 +1681,6 @@ function PandemoniumJestimpScumming() {
 	}
 }
 
-MODULES.mapFunctions.rHFBuyPackrat = false;
 rHFBuyPackrat = false;
 //Alchemy Farm -- WORKING AS IS
 function Alchemy() {
