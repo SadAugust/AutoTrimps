@@ -200,6 +200,7 @@ function initializeAllSettings() {
 
 	var radonChallenge3 = ["None"];
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 14) radonChallenge3.push("Unlucky");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 19) radonChallenge3.push("Downsize");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) radonChallenge3.push("Transmute");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 34) radonChallenge3.push("Unbalance");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 44) radonChallenge3.push("Duel");

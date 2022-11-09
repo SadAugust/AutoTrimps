@@ -1595,6 +1595,7 @@ function radonChallengesSetting() {
 
 	var radonChallenge3 = ["None"];
 	if (radonHZE >= 15) radonChallenge3.push("Unlucky");
+	if (radonHZE >= 20) radonChallenge3.push("Downsize");
 	if (radonHZE >= 25) radonChallenge3.push("Transmute");
 	if (radonHZE >= 35) radonChallenge3.push("Unbalance");
 	if (radonHZE >= 45) radonChallenge3.push("Duel");
