@@ -191,10 +191,14 @@ function VoidMaps() {
 		//Running voids regardless of HD if we reach our max void zone
 		if ((rVMBaseSettings[y].maxvoidzone + dailyReduction) === game.global.world) {
 			rVMIndex = y;
+			if (module.rVoidHDRatio === Infinity) module.rVoidHDRatio = HDRatio;
+			if (module.rVoidVHDRatio === Infinity) module.rVoidVHDRatio = voidHDRatio;
 			break;
 		}
 		//Running voids if our voidHDRatio is greater than our target value
-		if (game.global.world - (rVMBaseSettings[y].world + dailyReduction) >= 0 && rVMBaseSettings[y].voidHDRatio < voidHDRatio) {
+		if ((rVMBaseSettings[y].maxvoidzone + dailyReduction) === game.global.world ||
+			(game.global.world - (rVMBaseSettings[y].world + dailyReduction) >= 0 &&
+				(rVMBaseSettings[y].hdRatio < HDRatio || rVMBaseSettings[y].voidHDRatio < voidHDRatio))) {
 			rVMIndex = y;
 			if (module.rVoidHDRatio === Infinity) module.rVoidHDRatio = HDRatio;
 			if (module.rVoidVHDRatio === Infinity) module.rVoidVHDRatio = voidHDRatio;
@@ -229,7 +233,7 @@ function VoidMaps() {
 		rAutoLevel = Infinity;
 		currTime = 0;
 		module.rVoidHDIndex = Infinity;
-		module.voidHDRatio = Infinity;
+		module.rVoidHDRatio = Infinity;
 		module.rVoidVHDRatio = Infinity;
 	}
 

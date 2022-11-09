@@ -1649,9 +1649,19 @@ function updateATVersion() {
 				saveSettings();
 			}
 		}
+
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.4') {
 			if (typeof (autoTrimpSettings.rHDFarmDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rHDFarmDefaultSettings.value.mapCap === undefined) {
 				autoTrimpSettings.rHDFarmDefaultSettings.value.mapCap = 900;
+				saveSettings();
+			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.5') {
+			if (typeof (autoTrimpSettings.rVoidMapSettings.value[0]) !== 'undefined' && autoTrimpSettings.rVoidMapSettings.value[0].hdRatio === undefined) {
+				for (var y = 0; y < autoTrimpSettings.rVoidMapSettings.value.length; y++) {
+					autoTrimpSettings.rVoidMapSettings.value[y].hdRatio = 9999;
+				}
 				saveSettings();
 			}
 		}

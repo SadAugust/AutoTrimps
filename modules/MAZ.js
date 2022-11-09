@@ -295,7 +295,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		//Map Bonus Information to detail how it functions since it's unclear compared to every other setting
 		if (titleText.includes('Map Bonus')) mazHelp += "<br><br>Map Bonus works by using the last line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it."
-		if (titleText.includes('Void Map')) mazHelp += "<br><br>Void Map works by using 'Min Zone' as the lower bound zone to run voids on and 'Max Zone' as the upper bound. If your Void HD Ratio value (can be seen in status tooltip) is greater than the set value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'."
+		if (titleText.includes('Void Map')) mazHelp += "<br><br>Void Map works by using 'Min Zone' as the lower bound zone to run voids on and 'Max Zone' as the upper bound. If your HD Ratio OR Void HD Ratio value (can be seen in status tooltip) is greater than the set value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'."
 
 		//Default Value settings
 		mazHelp += "<br><br>The default values section are values which will automatically be input when a new row has been added. There's a few exception to this such as:<br></br><ul>"
@@ -374,6 +374,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			mazHelp += "<li><b>Smithies</b> - Smithy count you'd like to reach during this line. If you currently own 18 and want to reach 21 you'd enter 21 into this field.</li>";
 		if (titleText.includes('Smithy Farm'))
 			mazHelp += "<li><b>Run MP</b> - Will run Melting Point after this line has been run.</b></li>";
+		if (titleText.includes('Void Map'))
+			mazHelp += "<li><b>HD Ratio</b> - If your HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>"
 		if (titleText.includes('Void Map'))
 			mazHelp += "<li><b>Void HD Ratio</b> - If your Void HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>"
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm')) mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. Input will look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>"
@@ -562,6 +564,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('HD Farm')) tooltipText += "<div class='windowHDMult'>HD Mult</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm')) tooltipText += "<div class='windowRepeatEvery" + varPrefix_Adjusted + "\'>Repeat<br/>Every</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm')) tooltipText += "<div class='windowEndZone" + varPrefix_Adjusted + "\'>End<br/>Zone</div>"
+		if (titleText.includes('Void')) tooltipText += "<div class='windowVoidHDRatio'>HD<br/>Ratio</div>"
 		if (titleText.includes('Void')) tooltipText += "<div class='windowVoidHDRatio'>Void HD<br/>Ratio</div>"
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('Tribute Farm') && !titleText.includes('HD Farm')) tooltipText += "<div class='windowJobRatio" + varPrefix_Adjusted + "\'>Job<br/>Ratio</div>"
 		if (titleText.includes('Tribute Farm')) tooltipText += "<div class='windowJobRatio" + varPrefix_Adjusted + "\'>Job<br/>Ratio</div>"
@@ -600,12 +603,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 				raidingDropdown: 0,
 				jobratio: '1,1,1,1',
 				worshipper: 50,
+				hdRatio: 0,
 				voidHDRatio: 0,
 				buildings: true,
 				atlantrimp: false,
 				meltingPoint: false,
 				raidingzone: 6,
-				maxvoidzone: 6,
+				maxvoidzone: -1,
 				mapType: 'Absolute',
 				autoLevel: true,
 				endzone: 999,
@@ -666,6 +670,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.bonebelow = autoTrimpSettings[varPrefix + "Settings"].value[x].bonebelow ? autoTrimpSettings[varPrefix + "Settings"].value[x].bonebelow : 0;
 				if (titleText.includes('Worshipper Farm'))
 					vals.worshipper = autoTrimpSettings[varPrefix + "Settings"].value[x].worshipper ? autoTrimpSettings[varPrefix + "Settings"].value[x].worshipper : 50;
+				if (titleText.includes('Void'))
+					vals.hdRatio = autoTrimpSettings[varPrefix + "Settings"].value[x].hdRatio ? autoTrimpSettings[varPrefix + "Settings"].value[x].hdRatio : 0;
 				if (titleText.includes('Void'))
 					vals.voidHDRatio = autoTrimpSettings[varPrefix + "Settings"].value[x].voidHDRatio ? autoTrimpSettings[varPrefix + "Settings"].value[x].voidHDRatio : 0;
 				if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm'))
@@ -797,6 +803,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowBoneAmount'><input value='" + vals.boneamount + "' type='number' id='windowBoneAmount" + x + "'/></div>";
 			if (titleText.includes('Bone Shrine'))
 				tooltipText += "<div class='windowBoneBelow'><input value='" + vals.bonebelow + "' type='number' id='windowBoneBelow" + x + "'/></div>";
+			if (titleText.includes('Void'))
+				tooltipText += "<div class='windowVoidHDRatio'><input value='" + vals.hdRatio + "' type='number' id='windowHDRatio" + x + "'/></div>";
 			if (titleText.includes('Void'))
 				tooltipText += "<div class='windowVoidHDRatio'><input value='" + vals.voidHDRatio + "' type='number' id='windowVoidHDRatio" + x + "'/></div>";
 			if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm'))
@@ -966,6 +974,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Bone')) var bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);
 		if (titleText.includes('Worshipper Farm')) var worshipper = parseInt(document.getElementById('windowWorshipper' + x).value, 10);
 		if (titleText.includes('Void')) var maxvoidzone = parseInt(document.getElementById('windowMaxVoidZone' + x).value, 10);
+		if (titleText.includes('Void')) var hdRatio = parseInt(document.getElementById('windowHDRatio' + x).value, 10);
 		if (titleText.includes('Void')) var voidHDRatio = parseInt(document.getElementById('windowVoidHDRatio' + x).value, 10);
 		if (titleText.includes('Tribute')) var buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute') || titleText.includes('Bone Shrine')) var atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
@@ -1039,6 +1048,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (cell > 100) cell = 100;
 		if (worshipper > game.jobs.Worshipper.max) worshipper = game.jobs.Worshipper.max;
 		if (voidHDRatio < 0) voidHDRatio = 0;
+		if (hdRatio < 0) hdRatio = 0;
+		if (maxvoidzone < world) maxvoidzone = world;
 
 		if (repeat < 0) repeat = 0;
 		if (raidingzone - world > 10) raidingzone = world + 10;
@@ -1064,6 +1075,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			bonebelow: bonebelow,
 			worshipper: worshipper,
 			maxvoidzone: maxvoidzone,
+			hdRatio: hdRatio,
 			voidHDRatio: voidHDRatio,
 			runType: runType,
 			/* challenge: challenge,
@@ -1366,6 +1378,8 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowRepeatEvery' + x).value = 0;
 				if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') && document.getElementById('windowEndZone' + x) !== null)
 					document.getElementById('windowEndZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
+				if (titleText.includes('Void Map') && document.getElementById('windowMaxVoidZone' + x) !== null)
+					document.getElementById('windowMaxVoidZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
 				if (document.getElementById('windowRaidingZone' + x) !== null)
 					document.getElementById('windowRaidingZone' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.raidingzone
 				if (document.getElementById('windowMapTypeDropdown' + x) !== null)
@@ -1447,6 +1461,7 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Bone')) document.getElementById('windowBoneAmount' + index).value = 0;
 	if (titleText.includes('Bone')) document.getElementById('windowBoneBelow' + index).value = 0;
 	if (titleText.includes('Worshipper Farm')) document.getElementById('windowWorshipper' + index).value = 0;
+	if (titleText.includes('Void')) document.getElementById('windowHDRatio' + index).value = 0;
 	if (titleText.includes('Void')) document.getElementById('windowVoidHDRatio' + index).value = 0;
 	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) {
 		var checkBox = document.getElementById('windowAtlantrimp' + index);
