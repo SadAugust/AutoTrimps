@@ -188,17 +188,9 @@ function VoidMaps() {
 			if (isDaily && rVMBaseSettings[y].runType !== 'Daily') continue;
 			if (isC3 && rVMBaseSettings[y].runType !== 'C3') continue;
 		}
-		//Running voids regardless of HD if we reach our max void zone
-		if ((rVMBaseSettings[y].maxvoidzone + dailyReduction) === game.global.world) {
-			rVMIndex = y;
-			if (module.rVoidHDRatio === Infinity) module.rVoidHDRatio = HDRatio;
-			if (module.rVoidVHDRatio === Infinity) module.rVoidVHDRatio = voidHDRatio;
-			break;
-		}
-		//Running voids if our voidHDRatio is greater than our target value
-		if ((rVMBaseSettings[y].maxvoidzone + dailyReduction) === game.global.world ||
-			(game.global.world - (rVMBaseSettings[y].world + dailyReduction) >= 0 &&
-				(rVMBaseSettings[y].hdRatio < HDRatio || rVMBaseSettings[y].voidHDRatio < voidHDRatio))) {
+		//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value
+		if (((rVMBaseSettings[y].maxvoidzone + dailyReduction) === game.global.world) ||
+			(game.global.world - (rVMBaseSettings[y].world + dailyReduction) >= 0 && rVMBaseSettings[y].voidHDRatio < voidHDRatio)) {
 			rVMIndex = y;
 			if (module.rVoidHDRatio === Infinity) module.rVoidHDRatio = HDRatio;
 			if (module.rVoidVHDRatio === Infinity) module.rVoidVHDRatio = voidHDRatio;
@@ -228,7 +220,7 @@ function VoidMaps() {
 	}
 
 	if (rCurrentMap === mapName && !rDoVoids) {
-		if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You started with " + module.voidVHDRatio.toFixed(2) + " and ended with a Void HD Ratio of " + voidHDRatio.toFixed(2) + ".");
+		if (getPageSetting('rMapRepeatCount')) debug("Void Maps took " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You started with " + module.rVoidVHDRatio.toFixed(2) + " and ended with a Void HD Ratio of " + voidHDRatio.toFixed(2) + ".");
 		rCurrentMap = undefined;
 		rAutoLevel = Infinity;
 		currTime = 0;
