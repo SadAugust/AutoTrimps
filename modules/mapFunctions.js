@@ -188,9 +188,10 @@ function VoidMaps() {
 			if (isDaily && rVMBaseSettings[y].runType !== 'Daily') continue;
 			if (isC3 && rVMBaseSettings[y].runType !== 'C3') continue;
 		}
-		//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value
 		if (((rVMBaseSettings[y].maxvoidzone + dailyReduction) === game.global.world) ||
-			(game.global.world - (rVMBaseSettings[y].world + dailyReduction) >= 0 && rVMBaseSettings[y].voidHDRatio < voidHDRatio)) {
+			(game.global.world - (rVMBaseSettings[y].world + dailyReduction) >= 0 &&
+				//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value
+				(rVMBaseSettings[y].voidHDRatio < voidHDRatio || rVMBaseSettings[y].hdRatio < HDRatio))) {
 			rVMIndex = y;
 			if (module.rVoidHDRatio === Infinity) module.rVoidHDRatio = HDRatio;
 			if (module.rVoidVHDRatio === Infinity) module.rVoidVHDRatio = voidHDRatio;
@@ -255,8 +256,8 @@ function MapBonus() {
 	var rMBZone = getPageSetting('rMapBonusZone');
 	var rMBBaseSettings = autoTrimpSettings.rMapBonusSettings.value;
 	var rMBDefaultSettings = autoTrimpSettings.rMapBonusDefaultSettings.value;
-	var rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio;
-	rMBIndex = null;
+	var rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio && game.global.mapBonus !== 10;
+	var rMBIndex = null;
 	for (var y = 0; y < rMBBaseSettings.length; y++) {
 		if (!rMBBaseSettings[y].active || game.global.lastClearedCell + 2 < rMBBaseSettings[y].cell) continue;
 		if (rMBBaseSettings[y].runType !== 'All') {
@@ -302,11 +303,12 @@ function MapBonus() {
 		if (rMBRepeatCounter > game.global.mapBonus) {
 			rShouldMaxMapBonus = true;
 			if (rMBshouldDoHealthMaps) rMBHealthFarm = true;
+			else rMBHealthFarm = false;
 		}
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMBMapLevel || getCurrentMapObject().bonus !== rMBSpecial || game.global.mapBonus >= (rMBRepeatCounter - 1));
 		var status = 'Map Bonus: ' + game.global.mapBonus + "/" + rMBRepeatCounter;
 
-		farmingDetails.shouldRun = rShouldMaxMapBonus || rMBHealthFarm;
+		if (rShouldMaxMapBonus) farmingDetails.shouldRun = rShouldMaxMapBonus || rMBHealthFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rMBMapLevel;
 		farmingDetails.autoLevel = rMBautoLevel;
