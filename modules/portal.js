@@ -639,8 +639,14 @@ function Rresetmapvars() {
 	rSmithlessMapRepeats = 0;
 	rHDFMapRepeats = 0;
 
-	if (game.global.universe === 2) HDRatio = RcalcHDratio();
-	if (game.global.universe === 2) voidHDRatio = rCalcVoidHDratio()
+	//Resetting variables that would cause issues if they were left as is
+	if (game.global.universe === 2) {
+		MODULES.mapFunctions.rVoidHDRatio = Infinity;
+		MODULES.mapFunctions.rVoidVHDRatio = Infinity;
+		MODULES.mapFunctions.rVoidHDIndex = Infinity;
+		HDRatio = RcalcHDratio();
+		voidHDRatio = rCalcVoidHDratio()
+	}
 
 	if (document.getElementById('hiderStatus').style.display == 'None' && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) {
 		turnOn("hiderStatus")

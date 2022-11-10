@@ -174,7 +174,7 @@ function VoidMaps() {
 
 	if (!autoTrimpSettings.rVoidMapDefaultSettings.value.active) return farmingDetails;
 	var module = MODULES['mapFunctions'];
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
+	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const dailyReduction = isDaily ? dailyModiferReduction() : 0;
 	var rVMBaseSettings = autoTrimpSettings.rVoidMapSettings.value;
@@ -250,7 +250,7 @@ function MapBonus() {
 	if (!autoTrimpSettings.rMapBonusDefaultSettings.value.active) return farmingDetails;
 
 	//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
+	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
 	var rMBZone = getPageSetting('rMapBonusZone');
@@ -347,7 +347,7 @@ function MapFarm() {
 	};
 
 	if (!autoTrimpSettings.rMapFarmDefaultSettings.value.active) return farmingDetails;
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
+	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const shredActive = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined';
 	const totalPortals = getTotalPortals();
@@ -464,7 +464,7 @@ function TributeFarm() {
 	if (!autoTrimpSettings.rTributeFarmDefaultSettings.value.active || (game.buildings.Tribute.locked && game.jobs.Meteorologist.locked)) return farmingDetails;
 	var rShouldTributeFarm = false;
 	var rShouldMetFarm = false;
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
+	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const foodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
 	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
@@ -652,7 +652,7 @@ function SmithyFarm() {
 	var rShouldSmithyMetalFarm = false;
 	var mapAutoLevel = Infinity;
 
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
+	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const woodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
@@ -860,7 +860,7 @@ function WorshipperFarm() {
 		mapName: mapName
 	};
 	if (game.jobs.Worshipper.locked || !autoTrimpSettings.rWorshipperFarmDefaultSettings.value.active) return farmingDetails;
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
+	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 
 	var rShouldWorshipperFarm = false;
@@ -1045,7 +1045,7 @@ function PrestigeRaiding() {
 	if (!autoTrimpSettings.rRaidingDefaultSettings.value.active) return farmingDetails;
 
 	var rShouldPrestigeRaid = false;
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
+	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 
 	var rRaidingIndex;
@@ -2034,7 +2034,7 @@ function HDFarm() {
 	if (!autoTrimpSettings.rHDFarmDefaultSettings.value.active) return farmingDetails;
 
 
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem';
+	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
 	const totalPortals = getTotalPortals();
