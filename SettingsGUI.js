@@ -1528,7 +1528,7 @@ function updateATVersion() {
 
 			var settings_Active = ['rTimeFarmSettings', 'rdTimeFarmSettings', 'rc3TimeFarmSettings', 'rTributeFarmSettings', 'rdTributeFarmSettings', 'rc3TributeFarmSettings',
 				'rMapBonusSettings', 'rdMapBonusSettings', 'rc3MapBonusSettings', 'rSmithyFarmSettings', 'rdSmithyFarmSettings', 'rc3SmithyFarmSettings', 'rRaidingSettings', 'rdRaidingSettings', 'rc3RaidingSettings',
-				'rBoneShrineSettings', 'rShipFarmSettings', 'rQuagSettings', 'rInsanitySettings', 'rAlchSettings', 'rHypoSettings']
+				'rBoneShrineSettings', 'rQuagSettings', 'rInsanitySettings', 'rAlchSettings', 'rHypoSettings']
 
 			for (var x = 0; x < settings_Active.length; x++) {
 				if (typeof (autoTrimpSettings[settings_Active[x]].value[0]) !== 'undefined' && autoTrimpSettings[settings_Active[x]].value[0].active === undefined) {
@@ -1679,6 +1679,31 @@ function updateATVersion() {
 				saveSettings();
 			}
 			changelog.push('Have added HD Ratio to Void Map settings! Will run Voids if either HD Ratio or Void HD Ratio are lower than their respective ratios')
+		}
+
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.6') {
+			var settings_List = [
+				'rHDFarmSettings', 'rWorshipperFarmSettings', 'rBoneShrineSettings', 'rVoidMapSettings',
+				'rMapBonusSettings', 'rMapFarmSettings', 'rTributeFarmSettings', 'rSmithyFarmSettings', 'rRaidingSettings',
+				//'rQuagSettings', 'rInsanitySettings', 'rAlchSettings', 'rHypoSettings'
+			]
+
+			for (var x = 0; x < settings_List.length; x++) {
+				if (typeof (autoTrimpSettings[settings_List[x]].value[0]) !== 'undefined') {
+					for (var y = 0; y < autoTrimpSettings[settings_List[x]].value.length; y++) {
+						if (autoTrimpSettings[settings_List[x]].value[y].runType === 'Fillers') {
+							autoTrimpSettings[settings_List[x]].value[y].runType = 'Filler'
+							autoTrimpSettings[settings_List[x]].value[y].challenge = 'All'
+						}
+						if (autoTrimpSettings[settings_List[x]].value[y].runType === 'C3') {
+							autoTrimpSettings[settings_List[x]].value[y].challenge3 = 'All'
+						}
+					}
+					saveSettings();
+				}
+			}
+			changelog.push("Each farming setting now has a Challenge & Challenge 3 dropdown when the Run Type dropdown has either 'Filler' or 'C3' selected. With this you can choose to have seperate settings for your radon challenge or for specific C3s.")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;

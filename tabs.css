@@ -210,7 +210,7 @@ ul.tab li a:hover {
 	color: red;
 	font-weight: bold;
 	font-size: 2vw;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowLevelOff .windowLevelrMapFarm,
@@ -226,7 +226,7 @@ ul.tab li a:hover {
 	opacity: 0.3;
 	cursor: not-allowed;
 	pointer-events: none;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowLevelOn .windowLevelrMapFarm,
@@ -240,7 +240,7 @@ ul.tab li a:hover {
 .windowLevelOn .windowLevelrHypo,
 .windowLevelOn .windowLevelrHDFarm {
 	opacity: 1;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 /* Map Farm */
@@ -254,11 +254,9 @@ ul.tab li a:hover {
 .windowRepeatEveryrMapFarm,
 .windowEndZonerMapFarm,
 .windowSpecialrMapFarm,
-.windowRunTyperMapFarm,
-.windowChallengeOn .windowChallengerMapFarm,
-.windowChallenge3On .windowChallenge3rMapFarm {
+.windowRunTyperMapFarm {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowDeleterMapFarm {
@@ -302,36 +300,29 @@ ul.tab li a:hover {
 }
 
 .windowRunTyperMapFarm {
-	width: 22%;
+	width: 24%;
 }
 
-.windowChallengeOn .windowRunTyperMapFarm {
-	width: 11%;
+.windowChallengeOnrMapFarm .windowChallengerMapFarm,
+.windowChallenge3OnrMapFarm .windowChallenge3rMapFarm {
+	display: inline-block;
+	width: 12%;
 }
 
-.windowChallengeOn .windowChallengerMapFarm {
-	width: 10%;
+.windowChallenge3OnrMapFarm .windowRunTyperMapFarm,
+.windowChallengeOnrMapFarm .windowRunTyperMapFarm {
+	display: inline-block;
+	width: 12%;
 }
 
-.windowChallengeOff .windowChallengerMapFarm {
-	display: none;
-}
-
-.windowChallenge3On .windowRunTyperMapFarm {
-	width: 11%;
-}
-
-.windowChallenge3On .windowChallenge3rMapFarm {
-	width: 10%;
-}
-
-.windowChallenge3Off .windowChallenge3rMapFarm {
+.windowChallengeOffrMapFarm .windowChallengerMapFarm,
+.windowChallenge3OffrMapFarm .windowChallenge3rMapFarm {
 	display: none;
 }
 
 .windowGatherOn .windowSpecialrMapFarm {
-	width: 11%;
-	padding: 1px;
+	width: 10%;
+	padding-left: 1%;
 }
 
 /* Tribute Farm */
@@ -344,7 +335,6 @@ ul.tab li a:hover {
 .windowJobRatiorTributeFarm,
 .windowRepeatEveryrTributeFarm,
 .windowEndZonerTributeFarm,
-.windowSpecialrTributeFarm,
 .windowRunTyperTributeFarm,
 .windowMapTypeDropdownrTributeFarm,
 .windowMapTypeDropdownDefaultrTributeFarm,
@@ -352,7 +342,7 @@ ul.tab li a:hover {
 .windowMets,
 .windowBuildings {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowDeleterTributeFarm {
@@ -373,7 +363,7 @@ ul.tab li a:hover {
 }
 
 .windowAutoLevelrTributeFarm {
-	width: 3%;
+	width: 4%;
 }
 
 .windowLevelrTributeFarm {
@@ -381,24 +371,15 @@ ul.tab li a:hover {
 }
 
 .windowJobRatiorTributeFarm {
-	width: 9%;
+	width: 7%;
 }
 
 .windowRepeatEveryrTributeFarm {
 	width: 6%;
-	padding: 1px;
 }
 
 .windowEndZonerTributeFarm {
 	width: 5%;
-}
-
-.windowSpecialrTributeFarm {
-	width: 18%;
-}
-
-.windowRunTyperTributeFarm {
-	width: 15%;
 }
 
 .windowMapTypeDropdownrTributeFarm {
@@ -415,7 +396,28 @@ ul.tab li a:hover {
 }
 
 .windowBuildings {
-	width: 8%;
+	width: 6%;
+}
+
+.windowRunTyperTributeFarm {
+	width: 20%;
+}
+
+.windowChallengeOnrTributeFarm .windowChallengerTributeFarm,
+.windowChallenge3OnrTributeFarm .windowChallenge3rTributeFarm {
+	display: inline-block;
+	width: 10%;
+}
+
+.windowChallenge3OnrTributeFarm .windowRunTyperTributeFarm,
+.windowChallengeOnrTributeFarm .windowRunTyperTributeFarm {
+	display: inline-block;
+	width: 10%;
+}
+
+.windowChallengeOffrTributeFarm .windowChallengerTributeFarm,
+.windowChallenge3OffrTributeFarm .windowChallenge3rTributeFarm {
+	display: none;
 }
 
 /* Smithy Farm */
@@ -431,7 +433,7 @@ ul.tab li a:hover {
 .windowSmithies,
 .windowMeltingPoint {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowDeleterSmithyFarm {
@@ -464,16 +466,33 @@ ul.tab li a:hover {
 	width: 13%;
 }
 
-.windowRunTyperSmithyFarm {
-	width: 28%;
-}
-
 .windowSmithies {
 	width: 9%;
 }
 
 .windowMeltingPoint {
 	width: 7%;
+}
+
+.windowRunTyperSmithyFarm {
+	width: 28%;
+}
+
+.windowChallengeOnrSmithyFarm .windowChallengerSmithyFarm,
+.windowChallenge3OnrSmithyFarm .windowChallenge3rSmithyFarm {
+	display: inline-block;
+	width: 14%;
+}
+
+.windowChallenge3OnrSmithyFarm .windowRunTyperSmithyFarm,
+.windowChallengeOnrSmithyFarm .windowRunTyperSmithyFarm {
+	display: inline-block;
+	width: 14%;
+}
+
+.windowChallengeOffrSmithyFarm .windowChallengerSmithyFarm,
+.windowChallenge3OffrSmithyFarm .windowChallenge3rSmithyFarm {
+	display: none;
 }
 
 /* Map Bonus */
@@ -488,24 +507,24 @@ ul.tab li a:hover {
 .windowRunTyperMapBonus,
 .windowMapStacks {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowDeleterMapBonus {
-	width: 3%;
+	width: 0%;
 	cursor: pointer;
 }
 
 .windowActiverMapBonus {
-	width: 5%;
+	width: 8%;
 }
 
 .windowWorldrMapBonus {
-	width: 10%;
+	width: 8%;
 }
 
 .windowCellrMapBonus {
-	width: 10%;
+	width: 8%;
 }
 
 .windowAutoLevelrMapBonus {
@@ -513,23 +532,45 @@ ul.tab li a:hover {
 }
 
 .windowLevelrMapBonus {
-	width: 10%;
+	width: 8%;
 }
 
 .windowJobRatiorMapBonus {
-	width: 10%;
+	width: 8%;
 }
 
 .windowSpecialrMapBonus {
-	width: 23%;
-}
-
-.windowRunTyperMapBonus {
-	width: 10%;
+	width: 20%;
 }
 
 .windowMapStacks {
+	width: 8%;
+}
+
+.windowRunTyperMapBonus {
+	width: 25%;
+}
+
+.windowChallengeOnrMapBonus .windowChallengerMapBonus,
+.windowChallenge3OnrMapBonus .windowChallenge3rMapBonus {
+	display: inline-block;
 	width: 12%;
+}
+
+.windowChallenge3OnrMapBonus .windowRunTyperMapBonus,
+.windowChallengeOnrMapBonus .windowRunTyperMapBonus {
+	display: inline-block;
+	width: 13%;
+}
+
+.windowChallengeOffrMapBonus .windowChallengerMapBonus,
+.windowChallenge3OffrMapBonus .windowChallenge3rMapBonus {
+	display: none;
+}
+
+.windowChallengeOffrMapBonus .windowChallengerMapBonus,
+.windowChallenge3OffrMapBonus .windowChallenge3rMapBonus {
+	display: none;
 }
 
 /* Raiding */
@@ -542,40 +583,57 @@ ul.tab li a:hover {
 .windowRaidingZone,
 .windowRecycle {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowDeleterRaiding {
-	width: 3%;
+	width: 0%;
 	cursor: pointer;
 }
 
 .windowActiverRaiding {
-	width: 12%;
+	width: 8%;
 }
 
 .windowWorldrRaiding {
-	width: 16%;
+	width: 14%;
 }
 
 .windowCellrRaiding {
-	width: 16%;
-}
-
-.windowRunTyperRaiding {
-	width: 16%;
+	width: 14%;
 }
 
 .windowRaidingDropdown {
-	width: 21%;
+	width: 15%;
 }
 
 .windowRaidingZone {
-	width: 16%;
+	width: 14%;
 }
 
 .windowRecycle {
 	width: 15%;
+}
+
+.windowRunTyperRaiding {
+	width: 34%;
+}
+
+.windowChallengeOnrRaiding .windowChallengerRaiding,
+.windowChallenge3OnrRaiding .windowChallenge3rRaiding {
+	display: inline-block;
+	width: 17%;
+}
+
+.windowChallenge3OnrRaiding .windowRunTyperRaiding,
+.windowChallengeOnrRaiding .windowRunTyperRaiding {
+	display: inline-block;
+	width: 17%;
+}
+
+.windowChallengeOffrRaiding .windowChallengerRaiding,
+.windowChallenge3OffrRaiding .windowChallenge3rRaiding {
+	display: none;
 }
 
 /* HD Farm */
@@ -592,11 +650,11 @@ ul.tab li a:hover {
 .windowChallengeOn .windowChallengerHDFarm,
 .windowChallenge3On .windowChallenge3rHDFarm {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowDeleterHDFarm {
-	width: 3%;
+	width: 0%;
 	cursor: pointer;
 }
 
@@ -630,21 +688,23 @@ ul.tab li a:hover {
 }
 
 .windowRunTyperHDFarm {
-	width: 24%;
+	width: 26%;
 }
 
-.windowChallengeOn .windowRunTyperHDFarm,
-.windowChallenge3On .windowRunTyperHDFarm {
-	width: 10%;
+.windowChallengeOnrHDFarm .windowChallengerHDFarm,
+.windowChallenge3OnrHDFarm .windowChallenge3rHDFarm {
+	display: inline-block;
+	width: 13%;
 }
 
-.windowChallengeOn .windowChallengerHDFarm,
-.windowChallenge3On .windowChallenge3rHDFarm {
-	width: 14%;
+.windowChallenge3OnrHDFarm .windowRunTyperHDFarm,
+.windowChallengeOnrHDFarm .windowRunTyperHDFarm {
+	display: inline-block;
+	width: 13%;
 }
 
-.windowChallengeOff .windowChallengerHDFarm,
-.windowChallenge3Off .windowChallenge3rHDFarm {
+.windowChallengeOffrHDFarm .windowChallengerHDFarm,
+.windowChallenge3OffrHDFarm .windowChallenge3rHDFarm {
 	display: none;
 }
 
@@ -659,21 +719,19 @@ ul.tab li a:hover {
 .windowEndZonerWorshipperFarm,
 .windowRunTyperWorshipperFarm,
 .windowWorshipper,
-.windowCellrWorshipperFarm,
-.windowChallengeOn .windowChallengerWorshipperFarm,
-.windowChallenge3On .windowChallenge3rWorshipperFarm {
+.windowCellrWorshipperFarm {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 
 .windowDeleterWorshipperFarm {
-	width: 3%;
+	width: 0%;
 	cursor: pointer;
 }
 
 .windowActiverWorshipperFarm {
-	width: 5%;
+	width: 6%;
 }
 
 .windowWorldrWorshipperFarm {
@@ -704,26 +762,28 @@ ul.tab li a:hover {
 	width: 9%;
 }
 
-.windowRunTyperWorshipperFarm {
-	width: 24%;
-}
-
 .windowWorshipper {
 	width: 9%;
 }
 
-.windowChallengeOn .windowRunTyperWorshipperFarm,
-.windowChallenge3On .windowRunTyperWorshipperFarm {
-	width: 10%;
+.windowRunTyperWorshipperFarm {
+	width: 25%;
 }
 
-.windowChallengeOn .windowChallengerWorshipperFarm,
-.windowChallenge3On .windowChallenge3rWorshipperFarm {
-	width: 14%;
+.windowChallengeOnrWorshipperFarm .windowChallengerWorshipperFarm,
+.windowChallenge3OnrWorshipperFarm .windowChallenge3rWorshipperFarm {
+	display: inline-block;
+	width: 12%;
 }
 
-.windowChallengeOff .windowChallengerWorshipperFarm,
-.windowChallenge3Off .windowChallenge3rWorshipperFarm {
+.windowChallenge3OnrWorshipperFarm .windowRunTyperWorshipperFarm,
+.windowChallengeOnrWorshipperFarm .windowRunTyperWorshipperFarm {
+	display: inline-block;
+	width: 13%;
+}
+
+.windowChallengeOffrWorshipperFarm .windowChallengerWorshipperFarm,
+.windowChallenge3OffrWorshipperFarm .windowChallenge3rWorshipperFarm {
 	display: none;
 }
 
@@ -739,11 +799,11 @@ ul.tab li a:hover {
 .windowBoneAmount,
 .windowBoneGather {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowDeleterBoneShrine {
-	width: 2%;
+	width: 0%;
 	cursor: pointer;
 }
 
@@ -767,10 +827,6 @@ ul.tab li a:hover {
 	width: 24%;
 }
 
-.windowRunTyperBoneShrine {
-	width: 22%;
-}
-
 .windowBoneBelow,
 .windowBoneAmount {
 	width: 10%;
@@ -780,26 +836,27 @@ ul.tab li a:hover {
 	width: 10%;
 }
 
-.windowShredOn .windowRunTyperBoneShrine,
-.windowChallengeOn .windowRunTyperBoneShrine,
-.windowChallenge3On .windowRunTyperBoneShrine {
-	display: inline-block;
-	width: 11%;
-	padding: 1px;
+.windowRunTyperBoneShrine {
+	width: 25%;
 }
 
 .windowShredOn .windowShred,
-.windowChallengeOn .windowChallengerBoneShrine,
-.windowChallenge3On .windowChallenge3rBoneShrine {
+.windowChallengeOnrBoneShrine .windowChallengerBoneShrine,
+.windowChallenge3OnrBoneShrine .windowChallenge3rBoneShrine {
 	display: inline-block;
-	width: 11%;
-	opacity: 1;
-	padding: 1px;
+	width: 12%;
+}
+
+.windowShredOn .windowRunTyperBoneShrine,
+.windowChallenge3OnrBoneShrine .windowRunTyperBoneShrine,
+.windowChallengeOnrBoneShrine .windowRunTyperBoneShrine {
+	display: inline-block;
+	width: 13%;
 }
 
 .windowShredOff .windowShred,
-.windowChallengeOff .windowChallengerBoneShrine,
-.windowChallenge3Off .windowChallenge3rBoneShrine {
+.windowChallengeOffrBoneShrine .windowChallengerBoneShrine,
+.windowChallenge3OffrBoneShrine .windowChallenge3rBoneShrine {
 	display: none;
 }
 
@@ -808,40 +865,35 @@ ul.tab li a:hover {
 .windowActiverQuag,
 .windowWorldrQuag,
 .windowCellrQuag,
-.windowSpecialrQuag,
 .windowJobRatiorQuag,
 .windowBogs {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowDeleterQuag {
-	width: 3%;
+	width: 0%;
 	cursor: pointer;
 }
 
 .windowActiverQuag {
-	width: 12%;
+	width: 11%;
 }
 
 .windowWorldrQuag {
-	width: 20%;
+	width: 21%;
 }
 
 .windowCellrQuag {
-	width: 20%;
+	width: 21%;
 }
 
 .windowJobRatiorQuag {
-	width: 25%;
-}
-
-.windowSpecialrQuag {
 	width: 24%;
 }
 
 .windowBogs {
-	width: 20%;
+	width: 21%;
 }
 
 /* Insanity */
@@ -855,16 +907,15 @@ ul.tab li a:hover {
 .windowSpecialrInsanity,
 .windowInsanity {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowDeleterInsanity {
-	width: 3%;
-	padding: 1px;
+	width: 0%;
 }
 
 .windowActiverInsanity {
-	width: 7%;
+	width: 8%;
 }
 
 .windowWorldrInsanity {
@@ -888,7 +939,7 @@ ul.tab li a:hover {
 }
 
 .windowSpecialrInsanity {
-	width: 24%;
+	width: 28%;
 }
 
 .windowInsanity {
@@ -907,16 +958,16 @@ ul.tab li a:hover {
 .windowPotionNumber,
 .windowPotionType {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowDeleterAlch {
-	width: 3%;
+	width: 0%;
 	cursor: pointer;
 }
 
 .windowActiverAlch {
-	width: 12%;
+	width: 7%;
 }
 
 
@@ -925,11 +976,11 @@ ul.tab li a:hover {
 }
 
 .windowCellrAlch {
-	width: 6%;
+	width: 7%;
 }
 
 .windowAutoLevelrAlch {
-	width: 4%;
+	width: 6%;
 }
 
 .windowLevelrAlch {
@@ -941,7 +992,7 @@ ul.tab li a:hover {
 }
 
 .windowSpecialrAlch {
-	width: 24%;
+	width: 26%;
 }
 
 .windowPotionNumber {
@@ -949,7 +1000,7 @@ ul.tab li a:hover {
 }
 
 .windowPotionType {
-	width: 18%;
+	width: 20%;
 }
 
 /* Hypothermia */
@@ -960,22 +1011,21 @@ ul.tab li a:hover {
 .windowAutoLevelrHypo,
 .windowLevelrHypo,
 .windowJobRatiorHypo,
-.windowSpecialrHypo,
 .windowBonfire,
 .windowFrozenCastle,
 .windowStorage,
 .windowPackrat {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 .windowDeleterHypo {
-	width: 3%;
+	width: 0%;
 	cursor: pointer;
 }
 
 .windowActiverHypo {
-	width: 12%;
+	width: 10%;
 }
 
 .windowWorldrHypo {
@@ -987,7 +1037,7 @@ ul.tab li a:hover {
 }
 
 .windowAutoLevelrHypo {
-	width: 5%;
+	width: 8%;
 }
 
 .windowLevelrHypo {
@@ -995,11 +1045,7 @@ ul.tab li a:hover {
 }
 
 .windowJobRatiorHypo {
-	width: 20%;
-}
-
-.windowSpecialrHypo {
-	width: 24%;
+	width: 21%;
 }
 
 .windowBonfire {
@@ -1007,7 +1053,7 @@ ul.tab li a:hover {
 }
 
 .windowFrozenCastle {
-	width: 15%;
+	width: 22%;
 }
 
 .windowStorage {
@@ -1028,7 +1074,7 @@ ul.tab li a:hover {
 .windowRunTyperVoidMap,
 .windowVoidHDRatio {
 	display: inline-block;
-	padding: 0.5%;
+	padding-left: 1%;
 }
 
 .windowDeleterVoidMap {
@@ -1064,65 +1110,20 @@ ul.tab li a:hover {
 	width: 25%;
 }
 
-
-
-
-
-
-
-.windowChallengeOff .windowChallengerSmithyFarm,
-.windowChallengeOff .windowChallengerWorshipperFarm,
-.windowChallengeOff .windowChallengerMapBonus,
-.windowChallengeOff .windowChallengerQuag,
-.windowChallengeOff .windowChallengerInsanity,
-.windowChallengeOff .windowChallengerAlch,
-.windowChallengeOff .windowChallengerHypo,
-.windowChallengeOff .windowChallengerHDFarm,
-.windowChallengeOff .windowChallengerVoidMap,
-.windowChallengeOff .windowChallengerTributeFarm,
-.windowChallengeOff .windowChallengerRaiding {
-	display: none;
+.windowChallengeOnrVoidMap .windowChallengerVoidMap,
+.windowChallenge3OnrVoidMap .windowChallenge3rVoidMap {
+	display: inline-block;
+	width: 12%;
 }
 
-.windowChallengeOn .windowChallengerSmithyFarm,
-.windowChallengeOn .windowChallengerWorshipperFarm,
-.windowChallengeOn .windowChallengerMapBonus,
-.windowChallengeOn .windowChallengerQuag,
-.windowChallengeOn .windowChallengerInsanity,
-.windowChallengeOn .windowChallengerAlch,
-.windowChallengeOn .windowChallengerHypo,
-.windowChallengeOn .windowChallengerHDFarm,
-.windowChallengeOn .windowChallengerVoidMap,
-.windowChallengeOn .windowChallengerTributeFarm,
-.windowChallengeOn .windowChallengerRaiding {
-	display: none;
+.windowChallenge3OnrVoidMap .windowRunTyperVoidMap,
+.windowChallengeOnrVoidMap .windowRunTyperVoidMap {
+	display: inline-block;
+	width: 13%;
 }
 
-.windowChallenge3On .windowChallenge3rSmithyFarm,
-.windowChallenge3On .windowChallenge3rWorshipperFarm,
-.windowChallenge3On .windowChallenge3rMapBonus,
-.windowChallenge3On .windowChallenge3rQuag,
-.windowChallenge3On .windowChallenge3rInsanity,
-.windowChallenge3On .windowChallenge3rAlch,
-.windowChallenge3On .windowChallenge3rHypo,
-.windowChallenge3On .windowChallenge3rHDFarm,
-.windowChallenge3On .windowChallenge3rVoidMap,
-.windowChallenge3On .windowChallenge3rTributeFarm,
-.windowChallenge3On .windowChallenge3rRaiding {
-	display: none;
-}
-
-.windowChallenge3Off .windowChallenge3rSmithyFarm,
-.windowChallenge3Off .windowChallenge3rWorshipperFarm,
-.windowChallenge3Off .windowChallenge3rMapBonus,
-.windowChallenge3Off .windowChallenge3rQuag,
-.windowChallenge3Off .windowChallenge3rInsanity,
-.windowChallenge3Off .windowChallenge3rAlch,
-.windowChallenge3Off .windowChallenge3rHypo,
-.windowChallenge3Off .windowChallenge3rHDFarm,
-.windowChallenge3Off .windowChallenge3rVoidMap,
-.windowChallenge3Off .windowChallenge3rTributeFarm,
-.windowChallenge3Off .windowChallenge3rRaiding {
+.windowChallengeOffrVoidMap .windowChallengerVoidMap,
+.windowChallenge3OffrVoidMap .windowChallenge3rVoidMap {
 	display: none;
 }
 
@@ -1130,7 +1131,7 @@ ul.tab li a:hover {
 .windowGather,
 .windowAtlantrimp {
 	display: inline-block;
-	padding: 1px;
+	padding-left: 1%;
 }
 
 #windowError {
@@ -1143,7 +1144,7 @@ ul.tab li a:hover {
 }
 
 .windowAtlantrimp {
-	width: 8%;
+	width: 6%;
 }
 
 .windowGatherOn .windowSpecialrMapBonus {
@@ -1161,18 +1162,6 @@ ul.tab li a:hover {
 .windowGatherOn .windowGather {
 	width: 8%;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1223,6 +1212,18 @@ ul.tab li a:hover {
 
 #tooltipDiv.tooltipWindow65 {
 	width: 65%;
+}
+
+#tooltipDiv.tooltipWindow70 {
+	width: 70%;
+}
+
+#tooltipDiv.tooltipWindow75 {
+	width: 75%;
+}
+
+#tooltipDiv.tooltipWindow80 {
+	width: 80%;
 }
 
 #tooltipDiv.tooltipExtraLg {

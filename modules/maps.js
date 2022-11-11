@@ -1007,7 +1007,7 @@ function RautoMap() {
 			}
 			//Setting sliders appropriately. --- ITS ALREADY PRESTIGE RAIDING HERE
 			if (rShouldMap) {
-				mapBiome = FarmingDecision().biome !== undefined ? FarmingDecision().biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
+				mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 				if (rCurrentMap !== '') {
 					if (rMapSettings.autoLevel) PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
 					else RShouldFarmMapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome);

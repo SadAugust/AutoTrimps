@@ -177,21 +177,25 @@ function VoidMaps() {
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const dailyReduction = isDaily ? dailyModiferReduction() : 0;
-	var rVMBaseSettings = autoTrimpSettings.rVoidMapSettings.value;
+	const currChall = game.global.challengeActive;
+	const rVMBaseSettings = autoTrimpSettings.rVoidMapSettings.value;
 	var rVMIndex;
 	for (var y = 0; y < rVMBaseSettings.length; y++) {
-		if (!rVMBaseSettings[y].active || game.global.lastClearedCell + 2 < rVMBaseSettings[y].cell) continue;
-		if (game.global.world < (rVMBaseSettings[y].world + dailyReduction)) continue;
-		if (game.global.world > (rVMBaseSettings[y].maxvoidzone + dailyReduction)) continue;
-		if (rVMBaseSettings[y].runType !== 'All') {
-			if (!isC3 && !isDaily && rVMBaseSettings[y].runType !== 'Fillers') continue;
-			if (isDaily && rVMBaseSettings[y].runType !== 'Daily') continue;
-			if (isC3 && rVMBaseSettings[y].runType !== 'C3') continue;
+		const currSetting = rVMBaseSettings[y];
+		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell) continue;
+		if (game.global.world < (currSetting.world + dailyReduction)) continue;
+		if (game.global.world > (currSetting.maxvoidzone + dailyReduction)) continue;
+		if (currSetting.runType !== 'All') {
+			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+			if (isDaily && currSetting.runType !== 'Daily') continue;
+			if (isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (((rVMBaseSettings[y].maxvoidzone + dailyReduction) === game.global.world) ||
-			(game.global.world - (rVMBaseSettings[y].world + dailyReduction) >= 0 &&
+		if (((currSetting.maxvoidzone + dailyReduction) === game.global.world) ||
+			(game.global.world - (currSetting.world + dailyReduction) >= 0 &&
 				//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value
-				(rVMBaseSettings[y].voidHDRatio < voidHDRatio || rVMBaseSettings[y].hdRatio < HDRatio))) {
+				(currSetting.voidHDRatio < voidHDRatio || currSetting.hdRatio < HDRatio))) {
 			rVMIndex = y;
 			if (module.rVoidHDRatio === Infinity) module.rVoidHDRatio = HDRatio;
 			if (module.rVoidVHDRatio === Infinity) module.rVoidVHDRatio = voidHDRatio;
@@ -254,17 +258,21 @@ function MapBonus() {
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
-	var rMBZone = getPageSetting('rMapBonusZone');
-	var rMBBaseSettings = autoTrimpSettings.rMapBonusSettings.value;
-	var rMBDefaultSettings = autoTrimpSettings.rMapBonusDefaultSettings.value;
+	const currChall = game.global.challengeActive;
+	const rMBZone = getPageSetting('rMapBonusZone');
+	const rMBBaseSettings = autoTrimpSettings.rMapBonusSettings.value;
+	const rMBDefaultSettings = autoTrimpSettings.rMapBonusDefaultSettings.value;
 	var rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio && game.global.mapBonus !== 10;
 	var rMBIndex = null;
 	for (var y = 0; y < rMBBaseSettings.length; y++) {
-		if (!rMBBaseSettings[y].active || game.global.lastClearedCell + 2 < rMBBaseSettings[y].cell) continue;
-		if (rMBBaseSettings[y].runType !== 'All') {
-			if (!isC3 && !isDaily && rMBBaseSettings[y].runType !== 'Fillers') continue;
-			if (isDaily && rMBBaseSettings[y].runType !== 'Daily') continue;
-			if (isC3 && rMBBaseSettings[y].runType !== 'C3') continue;
+		const currSetting = rMBBaseSettings[y];
+		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell) continue;
+		if (currSetting.runType !== 'All') {
+			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+			if (isDaily && currSetting.runType !== 'Daily') continue;
+			if (isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
 		if (game.global.world - rMBZone[y] >= 0)
 			rMBIndex = rMBZone.indexOf(rMBZone[y]);
@@ -357,25 +365,29 @@ function MapFarm() {
 	const foodShred = shredActive && shredMods.includes('food');
 	const metalShred = shredActive && shredMods.includes('metal');
 	const woodShred = shredActive && shredMods.includes('wood');
+	const currChall = game.global.challengeActive;
 
-	var rMFBaseSetting = autoTrimpSettings.rMapFarmSettings.value;
+	const rMFBaseSetting = autoTrimpSettings.rMapFarmSettings.value;
 	var rMFIndex;
 
 	//Checking to see if any lines are to be run.
 	for (var y = 0; y < rMFBaseSetting.length; y++) {
-		if (!rMFBaseSetting[y].active || rMFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.lastClearedCell + 2 < rMFBaseSetting[y].cell || game.global.world < rMFBaseSetting[y].world || game.global.world > rMFBaseSetting[y].endzone || (game.global.world > rMFBaseSetting[y].world && rMFBaseSetting[y].repeatevery === 0)) {
+		const currSetting = rMFBaseSetting[y];
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.world && currSetting.repeatevery === 0)) {
 			continue;
 		}
-		if (rMFBaseSetting[y].runType !== 'All') {
-			if (!isC3 && !isDaily && rMFBaseSetting[y].runType !== 'Fillers') continue;
-			if (isDaily && rMFBaseSetting[y].runType !== 'Daily') continue;
-			if (isC3 && rMFBaseSetting[y].runType !== 'C3') continue;
+		if (currSetting.runType !== 'All') {
+			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+			if (isDaily && currSetting.runType !== 'Daily') continue;
+			if (isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === rMFBaseSetting[y].world) {
+		if (game.global.world === currSetting.world) {
 			rMFIndex = y;
 			break;
 		}
-		if ((game.global.world - rMFBaseSetting[y].world) % rMFBaseSetting[y].repeatevery === 0) {
+		if ((game.global.world - currSetting.world) % currSetting.repeatevery === 0) {
 			rMFIndex = y;
 			break;
 		}
@@ -472,24 +484,28 @@ function TributeFarm() {
 	const foodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
 	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
 	const totalPortals = getTotalPortals();
+	const currChall = game.global.challengeActive;
+	const rTrFBaseSetting = autoTrimpSettings.rTributeFarmSettings.value;
 	var rTrFIndex;
-	var rTrFBaseSetting = autoTrimpSettings.rTributeFarmSettings.value;
 
 	//Identifying which map line to run.
 	for (var y = 0; y < rTrFBaseSetting.length; y++) {
-		if (!rTrFBaseSetting[y].active || rTrFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world < rTrFBaseSetting[y].world || game.global.world > rTrFBaseSetting[y].endzone || (game.global.world > rTrFBaseSetting[y].zone && rTrFBaseSetting[y].repeatevery === 0) || game.global.lastClearedCell + 2 < rTrFBaseSetting[y].cell) {
+		const currSetting = rTrFBaseSetting[y];
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
-		if (rTrFBaseSetting[y].runType !== 'All') {
-			if (!isC3 && !isDaily && rTrFBaseSetting[y].runType !== 'Fillers') continue;
-			if (isDaily && rTrFBaseSetting[y].runType !== 'Daily') continue;
-			if (isC3 && rTrFBaseSetting[y].runType !== 'C3') continue;
+		if (currSetting.runType !== 'All') {
+			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+			if (isDaily && currSetting.runType !== 'Daily') continue;
+			if (isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === rTrFBaseSetting[y].world) {
+		if (game.global.world === currSetting.world) {
 			rTrFIndex = y;
 			break;
 		}
-		if ((game.global.world - rTrFBaseSetting[y].world) % rTrFBaseSetting[y].repeatevery === 0) {
+		if ((game.global.world - currSetting.world) % currSetting.repeatevery === 0) {
 			rTrFIndex = y;
 			break;
 		}
@@ -663,20 +679,24 @@ function SmithyFarm() {
 	const smithyShred = woodShred || metalShred;
 	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
 	const totalPortals = getTotalPortals();
+	const currChall = game.global.challengeActive;
+	const rSFBaseSetting = autoTrimpSettings.rSmithyFarmSettings.value;
 
 	var rSFIndex;
-	var rSFBaseSetting = autoTrimpSettings.rSmithyFarmSettings.value;
 
 	for (var y = 0; y < rSFBaseSetting.length; y++) {
-		if (!rSFBaseSetting[y].active || rSFBaseSetting[y].done === totalPortals + "_" + game.global.world || game.global.world !== rSFBaseSetting[y].world || game.global.lastClearedCell + 2 < rSFBaseSetting[y].cell) {
+		const currSetting = rSFBaseSetting[y];
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world !== currSetting.world || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
-		if (rSFBaseSetting[y].runType !== 'All') {
-			if (!isC3 && !isDaily && rSFBaseSetting[y].runType !== 'Fillers') continue;
-			if (isDaily && rSFBaseSetting[y].runType !== 'Daily') continue;
-			if (isC3 && rSFBaseSetting[y].runType !== 'C3') continue;
+		if (currSetting.runType !== 'All') {
+			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+			if (isDaily && currSetting.runType !== 'Daily') continue;
+			if (isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === rSFBaseSetting[y].world) {
+		if (game.global.world === currSetting.world) {
 			rSFIndex = y;
 			break;
 		}
@@ -867,27 +887,31 @@ function WorshipperFarm() {
 	if (game.jobs.Worshipper.locked || !autoTrimpSettings.rWorshipperFarmDefaultSettings.value.active) return farmingDetails;
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
+	const currChall = game.global.challengeActive;
+	const rWFBaseSetting = autoTrimpSettings.rWorshipperFarmSettings.value
 
 	var rShouldWorshipperFarm = false;
 	var rShouldSkip = false;
 	var mapAutoLevel = Infinity;
 
-	var rWFBaseSetting = autoTrimpSettings.rWorshipperFarmSettings.value
 	var rWFIndex;
 	for (var y = 0; y < rWFBaseSetting.length; y++) {
-		if (!rWFBaseSetting[y].active || game.global.world < rWFBaseSetting[y].world || game.global.world > rWFBaseSetting[y].endzone || (game.global.world > rWFBaseSetting[y].zone && rWFBaseSetting[y].repeatevery === 0)) {
+		const currSetting = rWFBaseSetting[y];
+		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0)) {
 			continue;
 		}
-		if (rWFBaseSetting[y].runType !== 'All') {
-			if (!isC3 && !isDaily && rWFBaseSetting[y].runType !== 'Fillers') continue;
-			if (isDaily && rWFBaseSetting[y].runType !== 'Daily') continue;
-			if (isC3 && rWFBaseSetting[y].runType !== 'C3') continue;
+		if (currSetting.runType !== 'All') {
+			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+			if (isDaily && currSetting.runType !== 'Daily') continue;
+			if (isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === rWFBaseSetting[y].world && game.global.lastClearedCell + 2 >= rWFBaseSetting[y].cell) {
+		if (game.global.world === currSetting.world && game.global.lastClearedCell + 2 >= currSetting.cell) {
 			rWFIndex = y;
 			break;
 		}
-		if ((game.global.world - rWFBaseSetting[y].world) % rWFBaseSetting[y].repeatevery === 0 && game.global.lastClearedCell + 2 >= rWFBaseSetting[y].cell) {
+		if ((game.global.world - currSetting.world) % currSetting.repeatevery === 0 && game.global.lastClearedCell + 2 >= currSetting.cell) {
 			rWFIndex = y;
 			break;
 		}
@@ -1053,20 +1077,24 @@ function PrestigeRaiding() {
 	var rShouldPrestigeRaid = false;
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
+	const currChall = game.global.challengeActive;
+	const rRaidingBaseSetting = autoTrimpSettings.rRaidingSettings.value;
 
 	var rRaidingIndex;
-	var rRaidingBaseSetting = autoTrimpSettings.rRaidingSettings.value;
 
 	for (var y = 0; y < rRaidingBaseSetting.length; y++) {
-		if (!rRaidingBaseSetting[y].active || game.global.world < rRaidingBaseSetting[y].world || game.global.lastClearedCell + 2 < rRaidingBaseSetting[y].cell || Rgetequips(rRaidingBaseSetting[y].raidingzone, false) === 0) {
+		const currSetting = rRaidingBaseSetting[y];
+		if (!currSetting.active || game.global.world < currSetting.world || game.global.lastClearedCell + 2 < currSetting.cell || Rgetequips(currSetting.raidingzone, false) === 0) {
 			continue;
 		}
-		if (rRaidingBaseSetting[y].runType !== 'All') {
-			if (!isC3 && !isDaily && rRaidingBaseSetting[y].runType !== 'Fillers') continue;
-			if (isDaily && rRaidingBaseSetting[y].runType !== 'Daily') continue;
-			if (isC3 && rRaidingBaseSetting[y].runType !== 'C3') continue;
+		if (currSetting.runType !== 'All') {
+			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+			if (isDaily && currSetting.runType !== 'Daily') continue;
+			if (isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === rRaidingBaseSetting[y].world) {
+		if (game.global.world === currSetting.world) {
 			rRaidingIndex = y;
 			break;
 		}
@@ -1226,15 +1254,16 @@ function Quagmire() {
 
 	if (game.global.challengeActive !== "Quagmire" || !autoTrimpSettings.rQuagDefaultSettings.value.active) return farmingDetails;
 
-	var rQFBaseSettings = autoTrimpSettings.rQuagSettings.value;
+	const rQFBaseSettings = autoTrimpSettings.rQuagSettings.value;
 	var rQFIndex;
 	//Checking to see if any lines are to be run.
 	for (var y = 0; y < rQFBaseSettings.length; y++) {
-		if (!rQFBaseSettings[y].active || game.global.world !== rQFBaseSettings[y].world || game.global.lastClearedCell + 2 < rQFBaseSettings[y].cell) {
+		const currSetting = rQFBaseSettings[y];
+		if (!currSetting.active || game.global.world !== currSetting.world || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 
-		if (game.global.world === rQFBaseSettings[y].world) {
+		if (game.global.world === currSetting.world) {
 			rQFIndex = y;
 			break;
 		}
@@ -1415,15 +1444,16 @@ function Insanity() {
 	var rShouldInsanityFarm = false;
 	var mapAutoLevel = Infinity;
 
-	var rIFBaseSettings = autoTrimpSettings.rInsanitySettings.value;
+	const rIFBaseSettings = autoTrimpSettings.rInsanitySettings.value;
 	var rIFIndex;
 	//Checking to see if any lines are to be run.
 	for (var y = 0; y < rIFBaseSettings.length; y++) {
-		if (!rIFBaseSettings[y].active || game.global.world !== rIFBaseSettings[y].world || game.global.lastClearedCell + 2 < rIFBaseSettings[y].cell) {
+		const currSetting = rIFBaseSettings[y];
+		if (!currSetting.active || game.global.world !== currSetting.world || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 
-		if (game.global.world === rIFBaseSettings[y].world) {
+		if (game.global.world === currSetting.world) {
 			rIFIndex = y;
 			break;
 		}
@@ -1719,16 +1749,17 @@ function Alchemy() {
 
 	if (game.global.challengeActive !== "Alchemy" || !autoTrimpSettings.rAlchDefaultSettings.value.active) return farmingDetails;
 
-	var rAFBaseSettings = autoTrimpSettings.rAlchSettings.value;
+	const rAFBaseSettings = autoTrimpSettings.rAlchSettings.value;
 	var rAFIndex;
 
 	//Checking to see if any lines are to be run.
 	for (var y = 0; y < rAFBaseSettings.length; y++) {
-		if (!rAFBaseSettings[y].active || game.global.world !== rAFBaseSettings[y].world || game.global.lastClearedCell + 2 < rAFBaseSettings[y].cell) {
+		const currSetting = rAFBaseSettings[y];
+		if (!currSetting.active || game.global.world !== currSetting.world || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 
-		if (game.global.world === rAFBaseSettings[y].world) {
+		if (game.global.world === currSetting.world) {
 			rAFIndex = y;
 			break;
 		}
@@ -1886,16 +1917,17 @@ function Hypothermia() {
 	}
 	rHFBonfireCostTotal = 0;
 
-	var rHFBaseSettings = autoTrimpSettings.rHypoSettings.value;
+	const rHFBaseSettings = autoTrimpSettings.rHypoSettings.value;
 	var rHFIndex;
 
 	//Checking to see if any lines are to be run.
 	for (var y = 0; y < rHFBaseSettings.length; y++) {
-		if (!rHFBaseSettings[y].active || game.global.world !== rHFBaseSettings[y].world || game.global.lastClearedCell + 2 < rHFBaseSettings[y].cell) {
+		const currSetting = rHFBaseSettings[y];
+		if (!currSetting.active || game.global.world !== currSetting.world || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 
-		if (game.global.world === rHFBaseSettings[y].world) {
+		if (game.global.world === currSetting.world) {
 			rHFIndex = y;
 			break;
 		}
@@ -2055,21 +2087,25 @@ function HDFarm() {
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const rHDFBaseSetting = autoTrimpSettings.rHDFarmSettings.value;
 	const rHDFZone = getPageSetting('rHDFarmZone');
+	const currChall = game.global.challengeActive;
 	var rShouldHDFarm = false;
 	var rShouldSkip = false;
 	var mapAutoLevel = Infinity;
 
 	var rHDFIndex;
-	for (var y = 0; y < rHDFZone.length; y++) {
-		if (!rHDFBaseSetting[y].active || rHDFBaseSetting[y].done === totalPortals + "_" + game.global.world || rHDFZone[y] > game.global.world || game.global.world > rHDFBaseSetting[y].endzone) {
+	for (var y = 0; y < rHDFBaseSetting.length; y++) {
+		const currSetting = rHDFBaseSetting[y];
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || currSetting.world > game.global.world || game.global.world > currSetting.endzone) {
 			continue;
 		}
-		if (rHDFBaseSetting[y].runType !== 'All') {
-			if (!isC3 && !isDaily && rHDFBaseSetting[y].runType !== 'Fillers') continue;
-			if (isDaily && rHDFBaseSetting[y].runType !== 'Daily') continue;
-			if (isC3 && rHDFBaseSetting[y].runType !== 'C3') continue;
+		if (currSetting.runType !== 'All') {
+			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+			if (isDaily && currSetting.runType !== 'Daily') continue;
+			if (isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world >= rHDFZone[y] && game.global.lastClearedCell + 2 >= rHDFBaseSetting[y].cell) {
+		if (game.global.world >= currSetting.world && game.global.lastClearedCell + 2 >= currSetting.cell) {
 			rHDFIndex = y;
 			break;
 		}

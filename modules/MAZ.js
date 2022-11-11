@@ -1,5 +1,5 @@
 function MAZLookalike(titleText, varPrefix, event) {
-	cancelTooltip();
+	if (!document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow')) cancelTooltip();
 	var titleText = !titleText ? 'undefined' : titleText;
 	var varPrefix = !varPrefix ? 'undefined' : varPrefix;
 
@@ -273,20 +273,18 @@ function MAZLookalike(titleText, varPrefix, event) {
 	//Farming Settings
 	if (event == 'MAZ') {
 		var varPrefix_Adjusted = varPrefix
-		if (varPrefix.includes('rc3')) varPrefix_Adjusted = "r" + varPrefix.slice(3, varPrefix.length);
-		if (varPrefix.includes('rd')) varPrefix_Adjusted = "r" + varPrefix.slice(2, varPrefix.length);
 		var windowSize = 'tooltipWindow50';
 		if (titleText.includes('Quagmire Farm')) windowSize = 'tooltipWindow25'
-		if (titleText.includes('Raiding')) windowSize = 'tooltipWindow30'
+		if (titleText.includes('Raiding')) windowSize = 'tooltipWindow35'
 		if (titleText.includes('Hypothermia Farm')) windowSize = 'tooltipWindow30'
 		if (titleText.includes('Insanity Farm')) windowSize = 'tooltipWindow40'
-		if (titleText.includes('Void Map')) windowSize = 'tooltipWindow40'
-		if (titleText.includes('HD Farm')) windowSize = 'tooltipWindow45'
-		if (titleText.includes('Worshipper Farm')) windowSize = 'tooltipWindow45'
-		if (titleText.includes('Smithy Farm')) windowSize = 'tooltipWindow45'
-		if (titleText.includes('Map Bonus')) windowSize = 'tooltipWindow45'
-		if (titleText.includes('Map Farm')) windowSize = 'tooltipWindow60'
-		if (titleText.includes('Tribute Farm')) windowSize = 'tooltipWindow55'
+		if (titleText.includes('Void Map')) windowSize = 'tooltipWindow50'
+		if (titleText.includes('HD Farm')) windowSize = 'tooltipWindow50'
+		if (titleText.includes('Worshipper Farm')) windowSize = 'tooltipWindow50'
+		if (titleText.includes('Smithy Farm')) windowSize = 'tooltipWindow50'
+		if (titleText.includes('Map Bonus')) windowSize = 'tooltipWindow60'
+		if (titleText.includes('Map Farm')) windowSize = 'tooltipWindow75'
+		if (titleText.includes('Tribute Farm')) windowSize = 'tooltipWindow80'
 
 		var maxSettings = 30;
 
@@ -573,7 +571,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Bone Shrine')) tooltipText += "<div class='windowBoneGather'>Gather</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) tooltipText += "<div class='windowSpecial" + varPrefix_Adjusted + "\'>Special</div>"
 		if (titleText.includes('Raiding')) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>"
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) tooltipText += "<div class='windowAtlantrimp'>Run<br/>Atlantrimp</div>"
+		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) tooltipText += "<div class='windowAtlantrimp'>Run<br/>Atl</div>"
 		if (titleText.includes('Smithy Farm')) tooltipText += "<div class='windowMeltingPoint'>Run<br/>MP</div>"
 		if (titleText.includes('Insanity Farm')) tooltipText += "<div class='windowBuildings'>Destack</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) tooltipText += "<div class='windowRunType" + varPrefix_Adjusted + "\'>Run<br/>Type</div>"
@@ -721,10 +719,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (radonHZE >= 55) challengeDropdown += "<option value = 'Melt'" + ((vals.challenge == 'Melt') ? " selected = 'selected'" : "") + " > Melt</option >";
 			if (radonHZE >= 70) challengeDropdown += "<option value='Quagmire'" + ((vals.challenge == 'Quagmire') ? " selected='selected'" : "") + ">Quagmire</option>";
 			if (radonHZE >= 90) challengeDropdown += "<option value='Archaeology'" + ((vals.challenge == 'Archaeology') ? " selected='selected'" : "") + ">Archaeology</option>";
-			if (radonHZE >= 100) challengeDropdown += "<option value='Mayhem'" + ((vals.challenge == 'Mayhem') ? " selected='selected'" : "") + ">Mayhem</option>";
 			if (radonHZE >= 110) challengeDropdown += "<option value='Insanity'" + ((vals.challenge == 'Insanity') ? " selected='selected'" : "") + ">Insanity</option>";
 			if (radonHZE >= 135) challengeDropdown += "<option value='Nurture'" + ((vals.challenge == 'Nurture') ? " selected='selected'" : "") + ">Nurture</option>";
-			if (radonHZE >= 150) challengeDropdown += "<option value='Pandemonium'" + ((vals.challenge == 'Pandemonium') ? " selected='selected'" : "") + ">Pandemonium</option>";
 			if (radonHZE >= 155) challengeDropdown += "<option value='Alchemy'" + ((vals.challenge == 'Alchemy') ? " selected='selected'" : "") + ">Alchemy</option>";
 			if (radonHZE >= 175) challengeDropdown += "<option value='Hypothermia'" + ((vals.challenge == 'Hypothermia') ? " selected='selected'" : "") + ">Hypothermia</option>";
 
@@ -738,13 +734,15 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (radonHZE >= 60) challenge3Dropdown += "<option value='Trappapalooza'" + ((vals.challenge3 == 'Trappapalooza') ? " selected='selected'" : "") + ">Trappa</option>";
 			if (radonHZE >= 70) challenge3Dropdown += "<option value='Wither'" + ((vals.challenge3 == 'Wither') ? " selected='selected'" : "") + ">Wither</option>";
 			if (radonHZE >= 85) challenge3Dropdown += "<option value='Quest'" + ((vals.challenge3 == 'Quest') ? " selected='selected'" : "") + ">Quest</option>";
+			if (radonHZE >= 100) challengeDropdown += "<option value='Mayhem'" + ((vals.challenge == 'Mayhem') ? " selected='selected'" : "") + ">Mayhem</option>";
 			if (radonHZE >= 105) challenge3Dropdown += "<option value='Storm'" + ((vals.challenge3 == 'Storm') ? " selected='selected'" : "") + ">Storm</option>";
 			if (radonHZE >= 115) challenge3Dropdown += "<option value='Berserk'" + ((vals.challenge3 == 'Berserk') ? " selected='selected'" : "") + ">Berserk</option>";
+			if (radonHZE >= 150) challengeDropdown += "<option value='Pandemonium'" + ((vals.challenge == 'Pandemonium') ? " selected='selected'" : "") + ">Pandemonium</option>";
 			if (radonHZE >= 175) challenge3Dropdown += "<option value='Glass'" + ((vals.challenge3 == 'Glass') ? " selected='selected'" : "") + ">Glass</option>";
 			if (radonHZE >= 201) challenge3Dropdown += "<option value='Smithless'" + ((vals.challenge3 == 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
 
 			var potionDropdown = "<option value='h'" + ((vals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
-			var runTypeDropdown = "<option value='none'" + ((vals.runType == 'none') ? " selected='selected'" : "") + ">None</option>\<option value='Fillers'" + ((vals.runType == 'Fillers') ? " selected='selected'" : "") + ">Fillers</option>\<option value='Daily'" + ((vals.runType == 'Daily') ? " selected='selected'" : "") + ">Daily</option>\<option value='C3'" + ((vals.runType == 'C3') ? " selected='selected'" : "") + ">C3</option>\<option value='All'" + ((vals.runType == 'All') ? " selected='selected'" : "") + ">All</option>"
+			var runTypeDropdown = "<option value='none'" + ((vals.runType == 'none') ? " selected='selected'" : "") + ">None</option>\<option value='Filler'" + ((vals.runType == 'Filler') ? " selected='selected'" : "") + ">Filler</option>\<option value='Daily'" + ((vals.runType == 'Daily') ? " selected='selected'" : "") + ">Daily</option>\<option value='C3'" + ((vals.runType == 'C3') ? " selected='selected'" : "") + ">C3</option>\<option value='All'" + ((vals.runType == 'All') ? " selected='selected'" : "") + ">All</option>"
 			var raidingDropdown = "<option value='0'" + ((vals.raidingDropdown == '0') ? " selected='selected'" : "") + ">Frag</option>\<option value='1'" + ((vals.raidingDropdown == '1') ? " selected='selected'" : "") + ">Frag Min</option>\<option value='2'" + ((vals.raidingDropdown == '2') ? " selected='selected'" : "") + ">Frag Max</option>"
 			var mapTypeDropdown = "<option value='Absolute'" + ((vals.mapType == 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>\<option value='Map Count'" + ((vals.mapType == 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>\</option>"
 			var shredDropdown = "<option value='All'" + ((vals.shredActive == 'All') ? " selected='selected'" : "") + ">All</option>\<option value='Shred'" + ((vals.shredActive == 'Shred') ? " selected='selected'" : "") + ">Shred</option>\<option value='No Shred'" + ((vals.shredActive == 'No Shred') ? " selected='selected'" : "") + ">No Shred</option>\</option>"
@@ -752,8 +750,12 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var className = (vals.special == 'hc' || vals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
 			className += (!vals.autoLevel) ? " windowLevelOn" : " windowLevelOff";
 			if (titleText.includes('Bone Shrine')) className += (vals.runType === 'Daily' || vals.runType === 'All') ? " windowShredOn" : " windowShredOff";
-			/* if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) className += (vals.runType === 'C3') ? " windowChallenge3On" : " windowChallenge3Off";
-			if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) className += (vals.runType === 'Fillers') ? " windowChallengeOff" : " windowChallengeOff"; */
+			if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding'))
+				className += (vals.runType === 'C3') ?
+					" windowChallenge3On" + varPrefix + "" : " windowChallenge3Off" + varPrefix + "";
+			if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding'))
+				className += (vals.runType === 'Filler') ?
+					" windowChallengeOn" + varPrefix + "" : " windowChallengeOff" + varPrefix + "";
 			className += (x <= current.length - 1) ? " active" : "  disabled";
 			tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
 			tooltipText += "<div class='windowDelete" + varPrefix_Adjusted + "\' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
@@ -828,10 +830,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowRunType" + varPrefix_Adjusted + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.runType + "' id='windowRunType" + x + "'>" + runTypeDropdown + "</select></div>"
 
 
-			/* if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding'))
+			if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding'))
 				tooltipText += "<div class='windowChallenge" + varPrefix_Adjusted + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge</div>\<select value='" + vals.challenge + "' id='windowChallenge" + x + "'>" + challengeDropdown + "</select>\</div>"
 			if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding'))
-				tooltipText += "<div class='windowChallenge3" + varPrefix_Adjusted + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge3</div>\<select value='" + vals.challenge3 + "' id='windowChallenge" + x + "'>" + challenge3Dropdown + "</select>\</div>" */
+				tooltipText += "<div class='windowChallenge3" + varPrefix_Adjusted + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge3</div>\<select value='" + vals.challenge3 + "' id='windowChallenge3" + x + "'>" + challenge3Dropdown + "</select>\</div>"
 			if (titleText.includes('Bone Shrine'))
 				tooltipText += "<div class='windowShred'>\<div style='text-align: center; font-size: 0.6vw;'>Shred</div>\<select value='" + vals.shredActive + "' id='windowShred" + x + "'>" + shredDropdown + "</select>\</div>"
 
@@ -985,10 +987,10 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Raiding')) var raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
 		if (titleText.includes('Insanity')) var destack = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 
-		/* if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) {
-			var challenge = runType === 'Fillers' ? document.getElementById('windowChallenge' + x).value : null;
+		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) {
+			var challenge = runType === 'Filler' ? document.getElementById('windowChallenge' + x).value : null;
 			var challenge3 = runType === 'C3' ? document.getElementById('windowChallenge3' + x).value : null;
-		} */
+		}
 		if (titleText.includes('Bone Shrine')) {
 			if (runType == 'Daily' || runType == 'All')
 				var shredActive = document.getElementById('windowShred' + x).value;
@@ -1078,8 +1080,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			hdRatio: hdRatio,
 			voidHDRatio: voidHDRatio,
 			runType: runType,
-			/* challenge: challenge,
-			challenge3: challenge3, */
+			challenge: challenge,
+			challenge3: challenge3,
 			raidingDropdown: raidingDropdown,
 			buildings: buildings,
 			jobratio: jobratio,
@@ -1114,6 +1116,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		autoTrimpSettings[varPrefix + "Zone"].value[x] = setting[x].world
 	}
 
+	var elem = document.getElementById("tooltipDiv");
+	swapClass(document.getElementById('tooltipDiv').classList[0], "tooltipExtraNone", elem);
 	cancelTooltip(true);
 	if (reopen) MAZLookalike(titleText, varPrefix, 'MAZ');
 
@@ -1381,7 +1385,7 @@ function addRow(varPrefix, titleText) {
 				if (titleText.includes('Void Map') && document.getElementById('windowMaxVoidZone' + x) !== null)
 					document.getElementById('windowMaxVoidZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
 				if (document.getElementById('windowRaidingZone' + x) !== null)
-					document.getElementById('windowRaidingZone' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.raidingzone
+					document.getElementById('windowRaidingZone' + x).value = elem.value
 				if (document.getElementById('windowMapTypeDropdown' + x) !== null)
 					document.getElementById('windowMapTypeDropdown' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.mapType
 				if (document.getElementById('windowBoneBelow' + x) !== null)
@@ -1394,10 +1398,10 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowBuildings' + x).value = true;
 				if (document.getElementById('windowShred' + x) !== null)
 					document.getElementById('windowShred' + x).value = 'All';
-				/* if (document.getElementById('windowChallenge' + x) !== null)
+				if (document.getElementById('windowChallenge' + x) !== null)
 					document.getElementById('windowChallenge' + x).value = 'All';
 				if (document.getElementById('windowChallenge3' + x) !== null)
-					document.getElementById('windowChallenge3' + x).value = 'All'; */
+					document.getElementById('windowChallenge3' + x).value = 'All';
 				if (document.getElementById('windowAtlantrimp' + x) !== null)
 					document.getElementById('windowAtlantrimp' + x).value = false;
 				if (document.getElementById('windowMeltingPoint' + x) !== null)
@@ -1499,22 +1503,27 @@ function removeRow(index, titleText) {
 function updateWindowPreset(index, varPrefix) {
 	var varPrefix = !varPrefix ? '' : varPrefix
 
-	/* if (varPrefix.includes('MapFarm') || varPrefix.includes('TributeFarm') || varPrefix.includes('SmithyFarm') || varPrefix.includes('MapBonus') || varPrefix.includes('WorshipperFarm') || varPrefix.includes('BoneShrine') || varPrefix.includes('VoidMap') || varPrefix.includes('HDFarm') || varPrefix.includes('Raiding')) {
-		var runType = document.getElementById('windowRunType' + index).value;
-		var row = document.getElementById('windowRow' + index);
+	if (varPrefix.includes('MapFarm') || varPrefix.includes('TributeFarm') || varPrefix.includes('SmithyFarm') || varPrefix.includes('MapBonus') || varPrefix.includes('WorshipperFarm') || varPrefix.includes('BoneShrine') || varPrefix.includes('VoidMap') || varPrefix.includes('HDFarm') || varPrefix.includes('Raiding')) {
+		if (varPrefix !== '') {
+			var runType = document.getElementById('windowRunType' + index).value;
+			var row = document.getElementById('windowRow' + index);
 
-		newClass = runType === 'Fillers' ? 'windowChallengeOn' : 'windowChallengeOff';
-		swapClass('windowChallenge', newClass, row);
-	} */
+			if ((runType !== 'Filler' && row.classList.contains('windowChallengeOn' + varPrefix)) ||
+				(runType === 'Filler' && row.classList.contains('windowChallengeOff' + varPrefix))) {
+				newClass = runType === 'Filler' ? "windowChallengeOn" + varPrefix + "" : "windowChallengeOff" + varPrefix + "";
+				newClass2 = runType !== 'Filler' ? "windowChallengeOn" + varPrefix + "" : "windowChallengeOff" + varPrefix + "";
+				swapClass(newClass2, newClass, row);
+			}
 
-	/* if (varPrefix.includes('MapFarm') || varPrefix.includes('TributeFarm') || varPrefix.includes('SmithyFarm') || varPrefix.includes('MapBonus') || varPrefix.includes('WorshipperFarm') || varPrefix.includes('BoneShrine') || varPrefix.includes('VoidMap') || varPrefix.includes('HDFarm') || varPrefix.includes('Raiding')) {
-		var runType = document.getElementById('windowRunType' + index).value;
-		var row = document.getElementById('windowRow' + index);
-
-		newClass = runType === 'C3' ? 'windowChallenge3On' : 'windowChallenge3Off';
-		swapClass('windowChallenge3', newClass, row);
+			if ((runType !== 'C3' && row.classList.contains('windowChallenge3On' + varPrefix)) ||
+				(runType === 'C3' && row.classList.contains('windowChallenge3Off' + varPrefix))) {
+				newClass = runType === 'C3' ? "windowChallenge3On" + varPrefix + "" : "windowChallenge3Off" + varPrefix + "";
+				newClass2 = runType !== 'C3' ? "windowChallenge3On" + varPrefix + "" : "windowChallenge3Off" + varPrefix + "";
+				swapClass(newClass2, newClass, row);
+			}
+		}
 	}
- */
+
 	if (varPrefix.includes('MapFarm') || varPrefix.includes('TributeFarm') || varPrefix.includes('SmithyFarm') || varPrefix.includes('MapBonus') || varPrefix.includes('Worshipper') || varPrefix.includes('Insanity') || varPrefix.includes('Alch') || varPrefix.includes('Hypo')) {
 		var autoLevel = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? 'windowLevelOff' : 'windowLevelOn';
 		var row = document.getElementById('windowRow' + index);
