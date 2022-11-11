@@ -2073,6 +2073,8 @@ function HDFarm() {
 		var rHDFshredMapCap = autoTrimpSettings.rHDFarmDefaultSettings.value.shredMapCap;
 		var rHDFmapCap = autoTrimpSettings.rHDFarmDefaultSettings.value.mapCap;
 
+		var rHDFmaxMaps = metalShred ? rHDFshredMapCap : rHDFmapCap;
+
 		if (rHDFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && rHDFMapRepeats !== 0) {
 				game.global.mapRunCounter = rHDFMapRepeats;
@@ -2089,12 +2091,8 @@ function HDFarm() {
 
 		if (HDRatio > equipfarmdynamicHD(rHDFIndex))
 			rShouldHDFarm = true;
-		//Skipping farm if map repeat value is greater than our shred map cap value
-		if (rShouldHDFarm && game.global.mapsActive && metalShred && rCurrentMap === mapName && game.global.mapRunCounter >= rHDFshredMapCap) {
-			rShouldHDFarm = false;
-		}
-		//Skipping farm if map repeat value is greater than our map cap value
-		if (rShouldHDFarm && game.global.mapsActive && !metalShred && rCurrentMap === mapName && game.global.mapRunCounter >= rHDFmapCap) {
+		//Skipping farm if map repeat value is greater than our max maps value
+		if (rShouldHDFarm && game.global.mapsActive && rCurrentMap === mapName && game.global.mapRunCounter >= rHDFmaxMaps) {
 			rShouldHDFarm = false;
 		}
 		if (rCurrentMap !== mapName && equipfarmdynamicHD(rHDFIndex) > HDRatio)
@@ -2116,7 +2114,9 @@ function HDFarm() {
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHDFMapLevel || getCurrentMapObject().bonus !== rHDFSpecial);
-		var status = 'HD Farm (' + equipfarmdynamicHD(rHDFIndex).toFixed(2) + '): Wants ' + (HDRatio - equipfarmdynamicHD(rHDFIndex)).toFixed(2) + 'x&nbspmore stats';
+		var status = 'HD Farm to:&nbsp;' + equipfarmdynamicHD(rHDFIndex).toFixed(2) + '<br>\
+		Current HD:&nbsp;' + HDRatio.toFixed(2) + '<br>\
+		Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + rHDFmaxMaps;
 
 		farmingDetails.shouldRun = rShouldHDFarm;
 		farmingDetails.mapName = mapName;
