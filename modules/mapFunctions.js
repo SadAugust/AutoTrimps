@@ -225,6 +225,7 @@ function VoidMaps() {
 		rCurrentMap = undefined;
 		rAutoLevel = Infinity;
 		currTime = 0;
+		game.global.mapRunCounter = 0;
 		module.rVoidHDIndex = Infinity;
 		module.rVoidHDRatio = Infinity;
 		module.rVoidVHDRatio = Infinity;
@@ -326,6 +327,7 @@ function MapBonus() {
 		mapAutoLevel = Infinity;
 		rMBMapRepeats = 0;
 		currTime = 0;
+		game.global.mapRunCounter = 0;
 		if (!dontRecycleMaps && game.global.mapsActive) {
 			mapsClicked();
 			recycleMap();
@@ -423,6 +425,7 @@ function MapFarm() {
 			mapAutoLevel = Infinity;
 			rMFMapRepeats = 0;
 			currTime = 0;
+			game.global.mapRunCounter = 0;
 			rMFSettings.done = totalPortals + "_" + game.global.world;
 			if (rMFAtlantrimp) runAtlantrimp();
 			saveSettings();
@@ -600,6 +603,7 @@ function TributeFarm() {
 			mapAutoLevel = Infinity;
 			rTrFMapRepeats = 0;
 			currTime = 0;
+			game.global.mapRunCounter = 0;
 			rTrFSettings.done = totalPortals + "_" + game.global.world;
 			if (!dontRecycleMaps && game.global.mapsActive) {
 				mapsClicked();
@@ -825,6 +829,7 @@ function SmithyFarm() {
 			rSFMapRepeats = [0, 0, 0];
 			smithyMapCount = [0, 0, 0];
 			currTime = 0;
+			game.global.mapRunCounter = 0;
 			HDRatio = RcalcHDratio();
 			if (game.global.challengeActive !== 'Quest' && rSFSettings.meltingPoint) runUnique('Melting Point', false);
 			rSFSettings.done = totalPortals + "_" + game.global.world;
@@ -924,6 +929,7 @@ function WorshipperFarm() {
 			mapAutoLevel = Infinity;
 			rWFMapRepeats = 0;
 			currTime = 0;
+			game.global.mapRunCounter = 0;
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rWFMapLevel || getCurrentMapObject().bonus !== rWFSpecial);
@@ -1390,6 +1396,8 @@ function Mayhem() {
 		rAutoLevel = Infinity;
 		rMayhemMapRepeats = 0;
 		currTime = 0;
+		game.global.mapRunCounter = 0;
+		mapAutoLevel = Infinity;
 	}
 	return farmingDetails;
 }
@@ -1466,6 +1474,7 @@ function Insanity() {
 			mapAutoLevel = Infinity;
 			rIFMapRepeats = 0;
 			currTime = 0;
+			game.global.mapRunCounter = 0;
 		}
 
 	}
@@ -1527,6 +1536,7 @@ function PandemoniumDestack() {
 		mapAutoLevel = Infinity;
 		rPandemoniumMapRepeats = 0;
 		currTime = 0;
+		game.global.mapRunCounter = 0;
 	}
 
 	return farmingDetails;
@@ -1832,6 +1842,7 @@ function Alchemy() {
 				mapAutoLevel = Infinity;
 				rAFMapRepeats = 0;
 				currTime = 0;
+				game.global.mapRunCounter = 0;
 			}
 		}
 
@@ -1931,6 +1942,7 @@ function Hypothermia() {
 			mapAutoLevel = Infinity;
 			rHFMapRepeats = 0;
 			currTime = 0;
+			game.global.mapRunCounter = 0;
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHFMapLevel || getCurrentMapObject().bonus !== rHFSpecial || game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20, true, rHFJobRatio), false, true, rHFMapLevel) + game.resources.wood.owned > rHFBonfireCostTotal);
@@ -2017,6 +2029,8 @@ function Smithless() {
 		rAutoLevel = Infinity;
 		rSmithlessMapRepeats = 0;
 		currTime = 0;
+		game.global.mapRunCounter = 0;
+		mapAutoLevel = Infinity;
 	}
 
 	return farmingDetails;
@@ -2106,6 +2120,7 @@ function HDFarm() {
 			mapAutoLevel = Infinity;
 			rHDFMapRepeats = 0;
 			currTime = 0;
+			game.global.mapRunCounter = 0;
 			rHDFSettings.done = totalPortals + "_" + game.global.world;
 			if (!dontRecycleMaps && game.global.mapsActive) {
 				mapsClicked();
@@ -2136,6 +2151,11 @@ function FarmingDecision() {
 	var farmingDetails = {
 		shouldRun: false,
 		mapName: ''
+	}
+
+	//Resetting map run counter to 0 when in world
+	if (!game.global.mapsActive && !game.global.preMapsActive) {
+		game.global.mapRunCounter = 0;
 	}
 
 	if (!autoTrimpSettings.RAutoMaps.value || !game.global.mapsUnlocked) return farmingDetails;
