@@ -496,7 +496,7 @@ function Rgetequips(map, special) { //(level, p b or false)
 		if (special.locked) continue;
 		if (game.global.universe == 2 && special.blockU2) continue;
 		if (game.global.universe == 1 && special.blockU1) continue;
-		if (game.global.challengeActive == "Pandemonium" && upgradeToUnlock.prestige && game.challenges.Pandemonium.isEquipBlocked(game.upgrades[toUnlock[x]].prestiges)) continue;
+		if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(game.upgrades[item].prestiges)) continue;
 		if (special.brokenPlanet && ((special.brokenPlanet == 1 && !game.global.brokenPlanet) || special.brokenPlanet == -1 && game.global.brokenPlanet)) continue;
 		if (special.startAt < 0) continue;
 		if (special.lastAt < game.global.world) continue;
