@@ -6,38 +6,35 @@ function BoneShrine() {
 
 	if (!autoTrimpSettings.rBoneShrineDefaultSettings.value.active) return;
 
-	var rRunningC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
-	var rRunningDaily = game.global.challengeActive == "Daily";
-	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
-	var shredActive = game.global.challengeActive === 'Daily' && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined';
+	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
+	const isDaily = game.global.challengeActive === 'Daily';
+	const shredActive = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined';
+	const shredMods = shredActive ? dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength) : [];
 
 	//Setting up variables
 	var rBoneShrineZone = getPageSetting('rBoneShrineZone');
 
 	if (rBoneShrineZone.includes(game.global.world)) {
-		var rBoneShrineBaseSettings = autoTrimpSettings.rBoneShrineSettings.value;
+		const rBoneShrineBaseSettings = autoTrimpSettings.rBoneShrineSettings.value;
 		var rBSIndex = null;
-		var totalPortals = getTotalPortals();
+		const totalPortals = getTotalPortals();
 		for (var y = 0; y < rBoneShrineBaseSettings.length; y++) {
-			if (game.global.world !== rBoneShrineBaseSettings[y].world || rBoneShrineBaseSettings[y].done === totalPortals + "_" + game.global.world || !rBoneShrineBaseSettings[y].active) {
+			const currSetting = rBoneShrineBaseSettings[y];
+			if (game.global.world !== currSetting.world || currSetting.done === totalPortals + "_" + game.global.world || !currSetting.active) {
 				continue;
 			}
-			if (rBoneShrineBaseSettings[y].runType !== 'All') {
-				if (rRunningRegular && rBoneShrineBaseSettings[y].runType !== 'Fillers') continue;
-				if (rRunningDaily && rBoneShrineBaseSettings[y].runType !== 'Daily') continue;
-				if (rRunningC3 && rBoneShrineBaseSettings[y].runType !== 'C3') continue;
+			if (currSetting.runType !== 'All') {
+				if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+					(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+				if (isDaily && currSetting.runType !== 'Daily') continue;
+				if (isDaily && (currSetting.runType !== 'Daily' ||
+					currSetting.shredActive === 'Shred' && (!shredActive || (shredActive && !shredMods.includes(currSetting.gather))) ||
+					currSetting.shredActive === 'No Shred' && shredActive && shredMods.includes(currSetting.gather))
+				) continue;
+				if (isC3 && (currSetting.runType !== 'C3' ||
+					(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 			}
-			//Skipping lines with Shred
-			if (rRunningDaily &&
-				(
-					((!shredActive || (shredActive && !dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineBaseSettings[y].gather))) && rBoneShrineBaseSettings[y].shredActive === 'Shred')
-					||
-					(shredActive && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineBaseSettings[y].gather) && rBoneShrineBaseSettings[y].shredActive === 'No Shred')
-				)
-			) {
-				continue;
-			}
-			if (game.global.lastClearedCell + 2 >= rBoneShrineBaseSettings[y].cell && game.permaBoneBonuses.boosts.charges > rBoneShrineBaseSettings[y].bonebelow) {
+			if (game.global.lastClearedCell + 2 >= currSetting.cell && game.permaBoneBonuses.boosts.charges > currSetting.bonebelow) {
 				rBSIndex = y;
 				break;
 			}
