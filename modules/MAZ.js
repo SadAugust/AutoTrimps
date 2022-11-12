@@ -613,8 +613,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				endzone: 999,
 				repeatevery: 0,
 				shredActive: 'All',
-				/* challenge: 'All',
-				challenge3: 'All', */
+				challenge: 'All',
+				challenge3: 'All',
 				hdBase: 1,
 				hdMult: 1,
 				destack: false
@@ -734,10 +734,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (radonHZE >= 60) challenge3Dropdown += "<option value='Trappapalooza'" + ((vals.challenge3 == 'Trappapalooza') ? " selected='selected'" : "") + ">Trappa</option>";
 			if (radonHZE >= 70) challenge3Dropdown += "<option value='Wither'" + ((vals.challenge3 == 'Wither') ? " selected='selected'" : "") + ">Wither</option>";
 			if (radonHZE >= 85) challenge3Dropdown += "<option value='Quest'" + ((vals.challenge3 == 'Quest') ? " selected='selected'" : "") + ">Quest</option>";
-			if (radonHZE >= 100) challengeDropdown += "<option value='Mayhem'" + ((vals.challenge == 'Mayhem') ? " selected='selected'" : "") + ">Mayhem</option>";
+			if (radonHZE >= 100) challenge3Dropdown += "<option value='Mayhem'" + ((vals.challenge3 == 'Mayhem') ? " selected='selected'" : "") + ">Mayhem</option>";
 			if (radonHZE >= 105) challenge3Dropdown += "<option value='Storm'" + ((vals.challenge3 == 'Storm') ? " selected='selected'" : "") + ">Storm</option>";
 			if (radonHZE >= 115) challenge3Dropdown += "<option value='Berserk'" + ((vals.challenge3 == 'Berserk') ? " selected='selected'" : "") + ">Berserk</option>";
-			if (radonHZE >= 150) challengeDropdown += "<option value='Pandemonium'" + ((vals.challenge == 'Pandemonium') ? " selected='selected'" : "") + ">Pandemonium</option>";
+			if (radonHZE >= 150) challenge3Dropdown += "<option value='Pandemonium'" + ((vals.challenge3 == 'Pandemonium') ? " selected='selected'" : "") + ">Pandemonium</option>";
 			if (radonHZE >= 175) challenge3Dropdown += "<option value='Glass'" + ((vals.challenge3 == 'Glass') ? " selected='selected'" : "") + ">Glass</option>";
 			if (radonHZE >= 201) challenge3Dropdown += "<option value='Smithless'" + ((vals.challenge3 == 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
 
@@ -845,7 +845,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\", true)'>Save</span><span class='btn btn-info btn-md' onclick='windowToggleHelp(\"" + windowSize + "\")'>Help</span></div>"
 
 
-		////Changing window size depending on setting being opened.
+		//Changing window size depending on setting being opened.
 		if (document.getElementById('tooltipDiv').classList[0] !== windowSize) {
 			swapClass(document.getElementById('tooltipDiv').classList[0], windowSize, elem);
 		}
