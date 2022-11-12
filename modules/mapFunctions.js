@@ -1732,8 +1732,6 @@ function PandemoniumJestimpScumming() {
 	}
 }
 
-MODULES.mapFunctions.rHFBuyPackrat = false;
-rHFBuyPackrat = false;
 //Alchemy Farm -- WORKING AS IS
 function Alchemy() {
 
@@ -1890,6 +1888,9 @@ function Alchemy() {
 	return farmingDetails;
 }
 
+MODULES.mapFunctions.rHFBuyPackrat = false;
+rHFBuyPackrat = false;
+
 //Hypothermia Farm -- WORKING AS IS
 function Hypothermia() {
 
@@ -1902,7 +1903,8 @@ function Hypothermia() {
 		mapName: mapName
 	};
 
-	if ((game.global.challengeActive !== 'Hypothermia' || (game.global.challengeActive !== 'Hypothermia' && (!autoTrimpSettings.rHypoDefaultSettings.value.packrat || !rHFBuyPackrat))) || !autoTrimpSettings.rHypoDefaultSettings.value.active) return farmingDetails;
+	if ((!autoTrimpSettings.rHypoDefaultSettings.value.active ||
+		(game.global.challengeActive !== 'Hypothermia' && (!autoTrimpSettings.rHypoDefaultSettings.value.packrat || !rHFBuyPackrat)))) return farmingDetails;
 
 	if (autoTrimpSettings.rHypoDefaultSettings.value.packrat) {
 		if (!rHFBuyPackrat && game.global.challengeActive === 'Hypothermia')
@@ -1917,6 +1919,7 @@ function Hypothermia() {
 	}
 	rHFBonfireCostTotal = 0;
 
+	if (game.global.challengeActive !== 'Hypothermia') return farmingDetails;
 	const rHFBaseSettings = autoTrimpSettings.rHypoSettings.value;
 	var rHFIndex;
 
