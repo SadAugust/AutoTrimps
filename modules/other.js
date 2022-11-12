@@ -1893,6 +1893,7 @@ function equalityManagement() {
 		var type = (!mapping) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 		var zone = (type == "world" || !mapping) ? game.global.world : getCurrentMapObject().level;
 		var bionicTalent = mapping && game.talents.bionic2.purchased && zone > game.global.world ? 1.5 : 1;
+		var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
 		if (type === 'void') {
 			voidPBSwap = getPageSetting('RhsVoidSwap') && game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 && fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) && game.global.voidBuff !== 'doubleAttack';
 			if (getPageSetting('RhsVoidSwap')) HeirloomSwapping();
@@ -1904,6 +1905,8 @@ function equalityManagement() {
 		var dailyCrit = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 		var dailyExplosive = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
 		var dailyWeakness = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
+		var dailyBloodthirst = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
+
 
 		//Challenge conditions
 		var runningUnlucky = game.global.challengeActive == 'Unlucky';
@@ -1952,6 +1955,9 @@ function equalityManagement() {
 		//enemyDmg *= runningDuel && game.challenges.Duel.enemyStacks > 25 ? 10 : 1;
 		var enemyDmgEquality = 0;
 
+		//Misc dmg mult
+		if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100)
+
 		//Fast Enemy conditions
 		var fastEnemy = !game.global.preMapsActive && fastimps.includes(enemyName);
 		if (type === 'world' && game.global.world > 200 && game.global.gridArray[currentCell].u2Mutation.length > 0) fastEnemy = true;
@@ -1965,14 +1971,30 @@ function equalityManagement() {
 		if (runningGlass) fastEnemy = true;
 		if (runningBerserk) fastEnemy = true;
 		if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
+
+		//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
 		if (runningDuel && fastEnemy && (RcalcOurHealth(false, type) * 10 * (mapping ? 2 : 1) * 0.9) > remainingHealth(true) && gammaToTrigger === gammaMaxStacks && game.global.armyAttackCount === 0) {
 			game.portal.Equality.disabledStackCount = 0;
 			if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
 			updateEqualityScaling();
 			return;
 		}
-		//Misc dmg mult
-		if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100)
+
+		//Suiciding to get max bloodthirst stacks if our avg attacks to kill is greater than the attacks to proc a bloodthirst stack. 
+		if (dailyBloodthirst && mapping && fastEnemy) {
+			var maxStacks = dailyModifiers.bloodthirst.getMaxStacks(game.global.dailyChallenge.bloodthirst.strength);
+			var currStacks = game.global.dailyChallenge.bloodthirst.stacks;
+			var stacksToProc = game.global.dailyChallenge.bloodthirst.stacks % dailyModifiers.bloodthirst.getFreq(game.global.dailyChallenge.bloodthirst.strength);
+			var avgTrimpAttack = (ourDmg * Math.pow(game.portal.Equality.getModifier(1),
+				equalityQuery(enemyName, zone, currentCell, type, difficulty, 'gamma')) * gammaDmg)
+			var timeToKill = enemyHealth / avgTrimpAttack;
+			if (currStacks !== maxStacks && stacksToProc < timeToKill) {
+				game.portal.Equality.disabledStackCount = 0;
+				if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
+				updateEqualityScaling();
+				return;
+			}
+		}
 
 		if (enemyHealth !== 0 && enemyHealth !== -1) {
 			for (var i = 0; i <= game.portal.Equality.radLevel; i++) {
@@ -2000,8 +2022,6 @@ function equalityManagement() {
 				}
 				if (!fastEnemy && !runningGlass && !runningBerserk && !runningArchaeology && !runningQuest) {
 					game.portal.Equality.disabledStackCount = i;
-					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-					updateEqualityScaling();
 					break;
 				}
 				else if ((ourHealth < (ourHealthMax * 0.65) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
@@ -2015,50 +2035,36 @@ function equalityManagement() {
 					}
 					else
 						game.portal.Equality.disabledStackCount = 0;
-					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-					updateEqualityScaling();
 					break;
 				} else if (fastEnemy && enemyDmgEquality > ourHealth) {
 					game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
-					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-					updateEqualityScaling();
 				} else if (runningMayhem && fastEnemy && enemyDmgEquality > ((game.global.soldierHealth * 6) + game.challenges.Mayhem.poison)) {
 					continue;
 				} else if ((ourDmgEquality * gammaDmg) < enemyHealth && (gammaToTrigger > 1 || (gammaToTrigger > 1 && fuckGamma))) {
 					game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
-					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-					updateEqualityScaling();
 					break;
 				} else if (ourHealth > enemyDmgEquality && gammaToTrigger <= 1) {
 					game.portal.Equality.disabledStackCount = i;
 					if (debugStats) queryAutoEqualityStats(ourDmgEquality, ourHealth, enemyDmgEquality, enemyHealth, i)
-					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-					updateEqualityScaling();
 					break;
 				} else if (ourHealth > enemyDmgEquality && ourDmgEquality > enemyHealth) {
 					game.portal.Equality.disabledStackCount = i;
-					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-					updateEqualityScaling();
 					break;
 				} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaDmg > enemyHealth && !fuckGamma) {
 					game.portal.Equality.disabledStackCount = i;
-					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-					updateEqualityScaling();
 					break;
 				} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaToTrigger > enemyHealth && !fuckGamma) {
 					game.portal.Equality.disabledStackCount = i;
-					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-					updateEqualityScaling();
 					break;
 				} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && !fuckGamma) {
 					game.portal.Equality.disabledStackCount = i;
-					if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
-					updateEqualityScaling();
 					break;
 				} else {
 					game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
 				}
 			}
+			if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
+			updateEqualityScaling();
 		}
 	}
 }
