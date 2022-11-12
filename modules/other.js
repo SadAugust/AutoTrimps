@@ -1984,10 +1984,11 @@ function equalityManagement() {
 		if (dailyBloodthirst && mapping && fastEnemy) {
 			var maxStacks = dailyModifiers.bloodthirst.getMaxStacks(game.global.dailyChallenge.bloodthirst.strength);
 			var currStacks = game.global.dailyChallenge.bloodthirst.stacks;
-			var stacksToProc = game.global.dailyChallenge.bloodthirst.stacks % dailyModifiers.bloodthirst.getFreq(game.global.dailyChallenge.bloodthirst.strength);
+			var stacksToProc = dailyModifiers.bloodthirst.getFreq(game.global.dailyChallenge.bloodthirst.strength) - (game.global.dailyChallenge.bloodthirst.stacks % dailyModifiers.bloodthirst.getFreq(game.global.dailyChallenge.bloodthirst.strength));
 			var avgTrimpAttack = (ourDmg * Math.pow(game.portal.Equality.getModifier(1),
 				equalityQuery(enemyName, zone, currentCell, type, difficulty, 'gamma')) * gammaDmg)
 			var timeToKill = enemyHealth / avgTrimpAttack;
+
 			if (currStacks !== maxStacks && stacksToProc < timeToKill) {
 				game.portal.Equality.disabledStackCount = 0;
 				if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
