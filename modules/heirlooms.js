@@ -11,7 +11,6 @@ function getHeirloomEff(modName, heirloomType, heirloomMods) {
 
 	for (var x = 1; x < heirloomMods + 1; x++) {
 		if (getPageSetting('slot' + x + varAffix) === modName || getPageSetting('slot' + x + varAffix) === 'empty') {
-			if (getPageSetting('slot' + x + varAffix) === 'empty') debug("works")
 			return 5;
 		}
 	}
