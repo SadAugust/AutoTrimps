@@ -817,6 +817,7 @@ function initializeAllSettings() {
 	createSetting('autoheirlooms', 'Auto Heirlooms', 'Auto Heirlooms master button. Turn this on to enable all Auto Heirloom settings. <br><br><b>The Modifier points will be explained here.</b> The more points an heirloom has, the better chance it has of being kept. If empty is selected, it will muliplty the score by 4. If any is selected, it will multiply the score of the heirloom by 2. <br><br>E.g Mod 1 = CC (+6 if dropped, 1st modifier) <br>Mod 2 = CD (+5 if dropped, 2nd modifier) <br>Mod 3 = PB (+4 if dropped, 3rd modifier) <br>Mod 4 = Empty (x4 if dropped, +0 if not) <br>Mod 5 = Empty (x4 if dropped, +0 if not) <br><br>If an heirloom dropped with these exact modifiers, it would get a score of 192 (6+5+4*4*4=240). The highest point heirlooms will be kept. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('typetokeep', ['None', 'Shields', 'Staffs', 'Cores', 'All'], '<b>Shields: </b>Keeps Shields and nothing else.<br><b>Staffs: </b>Keeps Staffs and nothing else.<br><b>Cores: </b>Keeps Cores and nothing else.<br><b>All: </b>Keeps 4 Shields and 3 Staffs and 3 Cores. If you have protected heirlooms in your inventory it will overrite one slot. E.g if one heirloom is protected, you will keep 4 Shields and 3 Staffs and 2 Cores. ', 'multitoggle', 0, null, 'Heirlooms');
 	createSetting('raretokeep', 'Rarity to Keep', 'Auto Heirlooms. Keeps the selected rarity of heirloom, recycles all others. ', 'dropdown', 'Any', ["Any", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Magnificent", "Ethereal", "Magmatic", "Plagued", "Radiating", "Hazardous", "Enigmatic"], 'Heirlooms');
+	createSetting('autoheirloomsperfect', 'Only Perfect', 'Will make sure that Auto Heirlooms will only keep heirlooms that have the mods you selected on them. Be warned you have to ensure that all modifier slots have been selected when using this setting or it won\'t function properly.', 'boolean', false, null, 'Heirlooms');
 
 	//Shield Line
 	createSetting('keepshields', 'Shields', 'Auto Heirlooms. Enables in-depth shield settings. ', 'boolean', false, null, 'Heirlooms');
@@ -906,6 +907,7 @@ function initializeAllSettings() {
 	createSetting('Rshowrnhr', 'Enable Rn/hr status', 'Enables the display of your radon per hour. Turn this off to reduce memory. ', 'boolean', true, null, 'Display');
 	createSetting('rMapRepeatCount', 'Map Count Output', 'When you finish doing farming for any types of special farming this setting will display a message stating the amount of maps it took to complete and the time it took (format is h:m:s).', 'boolean', true, null, 'Display');
 	createSetting('rDisplayAllSettings', 'Display all u2 settings', 'Will display all of the locked settings that have HZE requirements to be displayed.', 'boolean', true, null, 'Display');
+	createSetting('debugEqualityStats', 'debugEqualityStats', 'Will display details of trimp/enemy stats when you gamma burst.', 'boolean', false, null, 'Display');
 	createSetting('automateSpireAssault', 'Automate Spire Assault', 'Automates Spire Assault gear swaps from level 92 up to level 128. HIGHLY RECOMMENDED THAT YOU DO NOT USE THIS SETTING.', 'boolean', false, null, 'Display');
 
 	createSetting('EnableAFK', 'Go AFK Mode', '(Action Button). Go AFK uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU and RAM saving mode. Everything will resume when you come back and press the Back button. Console debug output is also disabled. The blue color means this is not a settable setting, just a button. You can now also click the Zone # (World Info) area to go AFK now.', 'action', 'MODULES["performance"].EnableAFKMode()', null, 'Display');
@@ -927,10 +929,6 @@ function initializeAllSettings() {
 
 	document.getElementById('rHideExterminate').setAttribute('onclick', 'settingChanged("rHideExterminate"), modifyParentNode("rHideExterminate", "Rexterminateeq", "hide")');
 	modifyParentNode("rHideExterminate", "Rexterminateeq", "hide");
-
-	/* document.getElementById('autoheirlooms').setAttribute('onclick', 'settingChanged("autoheirlooms"), modifyParentNode("autoheirlooms", "raretokeep"), modifyParentNode("autoheirlooms", "slot7modsh")');
-	modifyParentNode("autoheirlooms", "raretokeep");
-	modifyParentNode("autoheirlooms", "slot7modsh"); */
 
 	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
 
@@ -1043,7 +1041,7 @@ function modifyParentNodeUniverseSwap() {
 	//Heirlooms
 	//Helium Settings
 	if (getPageSetting('radonsettings') === 0) {
-		modifyParentNode_Initial("raretokeep", radonoff_heirloom);
+		modifyParentNode_Initial("autoheirloomsperfect", radonoff_heirloom);
 		modifyParentNode_Initial("slot7modsh", radonoff_heirloom);
 		modifyParentNode_Initial("slot7modst", radonoff_heirloom);
 	}
@@ -1052,7 +1050,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("RhsC3SwapZone", radonon);
 	modifyParentNode_Initial("RhsResourceStaff", radonon);
 	if (getPageSetting('radonsettings') === 1) {
-		modifyParentNode_Initial("raretokeep", radonon_heirloom);
+		modifyParentNode_Initial("autoheirloomsperfect", radonon_heirloom);
 		modifyParentNode_Initial("slot7modsh", radonon_heirloom);
 	}
 	//Golden Upgrades
@@ -1681,7 +1679,6 @@ function updateATVersion() {
 			changelog.push('Have added HD Ratio to Void Map settings! Will run Voids if either HD Ratio or Void HD Ratio are lower than their respective ratios')
 		}
 
-
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.6') {
 			var settings_List = [
 				'rHDFarmSettings', 'rWorshipperFarmSettings', 'rBoneShrineSettings', 'rVoidMapSettings',
@@ -1704,6 +1701,10 @@ function updateATVersion() {
 				}
 			}
 			changelog.push("Each farming setting now has a Challenge & Challenge 3 dropdown when the Run Type dropdown has either 'Filler' or 'C3' selected. With this you can choose to have seperate settings for your radon challenge or for specific C3s.")
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7') {
+			changelog.push("Auto Heirlooms has been rewritten. Will now no longer keep heirlooms that aren't the rarity you select in 'Rarity to Keep' and have added a 'Only Perfect' setting to it which will recycle any heirloom that doesn't have the exact mods you desire but be warned you have to ensure that all modifier slots have been selected when using this setting or it won't function properly.")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;
@@ -2188,6 +2189,7 @@ function updateCustomButtons() {
 
 	radonon ? turnOn('rMapRepeatCount') : turnOff('rMapRepeatCount');
 	radonon ? turnOn('automateSpireAssault') : turnOff('automateSpireAssault');
+	radonon ? turnOn('debugStats') : turnOff('debugStats');
 
 	//Tribute Farming
 	radonon ? turnOn('rTributeFarmPopup') : turnOff('rTributeFarmPopup');
@@ -2541,6 +2543,7 @@ function updateCustomButtons() {
 
 	(autoheirloomenable) ? turnOn('typetokeep') : turnOff('typetokeep');
 	(autoheirloomenable) ? turnOn('raretokeep') : turnOff('raretokeep');
+	(autoheirloomenable) ? turnOn('autoheirloomsperfect') : turnOff('autoheirloomsperfect');
 	(autoheirloomenable) ? turnOn('keepshields') : turnOff('keepshields');
 	(autoheirloomenable) ? turnOn('keepstaffs') : turnOff('keepstaffs');
 	!radonon && (autoheirloomenable) ? turnOn('keepcores') : turnOff('keepcores');
