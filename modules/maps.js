@@ -914,8 +914,9 @@ function RautoMap() {
 	//Map Creation!
 	if (selectedMap === "world" && rShouldMap) {
 		if (rCurrentMap !== '') {
+			mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 			if (rCurrentMap === 'rPrestige') selectedMap = "createp";
-			else selectedMap = RShouldFarmMapCreation(rMapSettings.mapLevel, rMapSettings.special);
+			else selectedMap = RShouldFarmMapCreation(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
 			workerRatio = rMapSettings.jobRatio;
 			if (currTime === 0) currTime = getGameTime();
 		}
