@@ -816,7 +816,7 @@ function initializeAllSettings() {
 	//Heirloom Line
 	createSetting('autoheirlooms', 'Auto Heirlooms', 'Auto Heirlooms master button. Turn this on to enable all Auto Heirloom settings. <br><br><b>The Modifier points will be explained here.</b> The more points an heirloom has, the better chance it has of being kept. If empty is selected, it will muliplty the score by 4. If any is selected, it will multiply the score of the heirloom by 2. <br><br>E.g Mod 1 = CC (+6 if dropped, 1st modifier) <br>Mod 2 = CD (+5 if dropped, 2nd modifier) <br>Mod 3 = PB (+4 if dropped, 3rd modifier) <br>Mod 4 = Empty (x4 if dropped, +0 if not) <br>Mod 5 = Empty (x4 if dropped, +0 if not) <br><br>If an heirloom dropped with these exact modifiers, it would get a score of 192 (6+5+4*4*4=240). The highest point heirlooms will be kept. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('typetokeep', ['None', 'Shields', 'Staffs', 'Cores', 'All'], '<b>Shields: </b>Keeps Shields and nothing else.<br><b>Staffs: </b>Keeps Staffs and nothing else.<br><b>Cores: </b>Keeps Cores and nothing else.<br><b>All: </b>Keeps 4 Shields and 3 Staffs and 3 Cores. If you have protected heirlooms in your inventory it will overrite one slot. E.g if one heirloom is protected, you will keep 4 Shields and 3 Staffs and 2 Cores. ', 'multitoggle', 0, null, 'Heirlooms');
-	createSetting('raretokeep', 'Rarity to Keep', 'Auto Heirlooms. Keeps the selected rarity of heirloom, recycles all others. ', 'dropdown', 'Any', ["Any", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Magnificent", "Ethereal", "Magmatic", "Plagued", "Radiating", "Hazardous", "Enigmatic"], 'Heirlooms');
+	createSetting('raretokeep', 'Rarity to Keep', 'Auto Heirlooms. Keeps the selected rarity of heirloom, recycles all others. ', 'dropdown', 'Any', ["None", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Magnificent", "Ethereal", "Magmatic", "Plagued", "Radiating", "Hazardous", "Enigmatic"], 'Heirlooms');
 	createSetting('autoheirloomsperfect', 'Only Perfect', 'Will make sure that Auto Heirlooms will only keep heirlooms that have the mods you selected on them. Be warned you have to ensure that all modifier slots have been selected when using this setting or it won\'t function properly.', 'boolean', false, null, 'Heirlooms');
 
 	//Shield Line
@@ -2548,21 +2548,25 @@ function updateCustomButtons() {
 	(autoheirloomenable) ? turnOn('keepstaffs') : turnOff('keepstaffs');
 	!radonon && (autoheirloomenable) ? turnOn('keepcores') : turnOff('keepcores');
 
-	(keepshieldenable) ? turnOn('slot1modsh') : turnOff('slot1modsh');
-	(keepshieldenable) ? turnOn('slot2modsh') : turnOff('slot2modsh');
-	(keepshieldenable) ? turnOn('slot3modsh') : turnOff('slot3modsh');
-	(keepshieldenable) ? turnOn('slot4modsh') : turnOff('slot4modsh');
-	(keepshieldenable) ? turnOn('slot5modsh') : turnOff('slot5modsh');
-	(keepshieldenable) ? turnOn('slot6modsh') : turnOff('slot6modsh');
-	(keepshieldenable) ? turnOn('slot7modsh') : turnOff('slot7modsh');
 
-	(keepstaffenable) ? turnOn('slot1modst') : turnOff('slot1modst');
-	(keepstaffenable) ? turnOn('slot2modst') : turnOff('slot2modst');
-	(keepstaffenable) ? turnOn('slot3modst') : turnOff('slot3modst');
-	(keepstaffenable) ? turnOn('slot4modst') : turnOff('slot4modst');
-	(keepstaffenable) ? turnOn('slot5modst') : turnOff('slot5modst');
-	(keepstaffenable) ? turnOn('slot6modst') : turnOff('slot6modst');
-	(keepstaffenable) ? turnOn('slot7modst') : turnOff('slot7modst');
+	const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+	const raretokeep = heirloomType.indexOf(getPageSetting('raretokeep'));
+
+	(keepshieldenable && raretokeep >= 0) ? turnOn('slot1modsh') : turnOff('slot1modsh');
+	(keepshieldenable && raretokeep >= 1) ? turnOn('slot2modsh') : turnOff('slot2modsh');
+	(keepshieldenable && raretokeep >= 2) ? turnOn('slot3modsh') : turnOff('slot3modsh');
+	(keepshieldenable && raretokeep >= 5) ? turnOn('slot4modsh') : turnOff('slot4modsh');
+	(keepshieldenable && raretokeep >= 7) ? turnOn('slot5modsh') : turnOff('slot5modsh');
+	(keepshieldenable && raretokeep >= 9) ? turnOn('slot6modsh') : turnOff('slot6modsh');
+	(keepshieldenable && raretokeep >= 11) ? turnOn('slot7modsh') : turnOff('slot7modsh');
+
+	(keepstaffenable && raretokeep >= 0) ? turnOn('slot1modst') : turnOff('slot1modst');
+	(keepstaffenable && raretokeep >= 1) ? turnOn('slot2modst') : turnOff('slot2modst');
+	(keepstaffenable && raretokeep >= 2) ? turnOn('slot3modst') : turnOff('slot3modst');
+	(keepstaffenable && raretokeep >= 5) ? turnOn('slot4modst') : turnOff('slot4modst');
+	(keepstaffenable && raretokeep >= 7) ? turnOn('slot5modst') : turnOff('slot5modst');
+	(keepstaffenable && raretokeep >= 9) ? turnOn('slot6modst') : turnOff('slot6modst');
+	(keepstaffenable && raretokeep >= 11) ? turnOn('slot7modst') : turnOff('slot7modst');
 
 	!radonon && (keepcoreenable) ? turnOn('slot1modcr') : turnOff('slot1modcr');
 	!radonon && (keepcoreenable) ? turnOn('slot2modcr') : turnOff('slot2modcr');
