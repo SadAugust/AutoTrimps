@@ -210,6 +210,7 @@ function VoidMaps() {
 	if (rVMIndex >= 0 || module.rVoidHDIndex !== Infinity) {
 		var rVMSettings = rVMBaseSettings[rVMIndex >= 0 ? rVMIndex : module.rVoidHDIndex];
 		var rVMJobRatio = rVMSettings.jobratio
+		var shouldPortal = rVMSettings.portalAfter
 
 		if (game.global.totalVoidMaps > 0) {
 			rDoVoids = true;
@@ -234,7 +235,7 @@ function VoidMaps() {
 		module.rVoidHDIndex = Infinity;
 		module.rVoidHDRatio = Infinity;
 		module.rVoidVHDRatio = Infinity;
-		module.rPortalZone = game.global.world;
+		if (shouldPortal) module.rPortalZone = game.global.world;
 	}
 
 	return farmingDetails;
