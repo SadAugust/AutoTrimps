@@ -1113,11 +1113,11 @@ function RcalcOurDmg(minMaxAvg, equality, mapType, useTitimp, runningUnlucky, fl
 		// Max damage increased (additive)
 		maxDailyMod += typeof game.global.dailyChallenge.maxDamage !== 'undefined' ? dailyModifiers.maxDamage.getMult(game.global.dailyChallenge.maxDamage.strength) : 0;
 		// Minus attack on odd zones
-		attack += typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined' && ((game.global.world % 2) == 1) ? dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength) : 0;
+		attack *= typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined' && ((game.global.world % 2) == 1) ? dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength) : 1;
 		// Bonus attack on even zones
-		attack -= typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined' && ((game.global.world % 2) == 0) ? dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength) : 0;
+		attack *= typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined' && ((game.global.world % 2) == 0) ? dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength) : 1;
 		// Rampage Daily mod
-		attack -= typeof game.global.dailyChallenge.rampage !== 'undefined' ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 0;
+		attack *= typeof game.global.dailyChallenge.rampage !== 'undefined' ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 1;
 	}
 
 	if (game.talents.voidPower.purchased && mapType === 'void') {
@@ -1537,7 +1537,7 @@ function RcalcHDratio() {
 		var ourDamage = RcalcOurDmg("avg", 0, 'world');
 		if (getPageSetting('rManageEquality') == 2) {
 			var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
-			var equality = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma')
+			var equality = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
 			ourDamage = RcalcOurDmg('avg', equality, 'world') * gammaBurstDmg;
 		}
 		//debug("Eq - " + equality + " T_dmg - " + ourDamage.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
