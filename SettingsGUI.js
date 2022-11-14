@@ -1707,6 +1707,21 @@ function updateATVersion() {
 			changelog.push("Auto Heirlooms has been rewritten. Will now no longer keep heirlooms that aren't the rarity you select in 'Rarity to Keep' and have added a 'Only Perfect' setting to it which will recycle any heirloom that doesn't have the exact mods you desire but be warned you have to ensure that all modifier slots have been selected when using this setting or it won't function properly.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.2') {
+			var settings_List = ['rVoidMapSettings']
+
+			for (var x = 0; x < settings_List.length; x++) {
+				if (typeof (autoTrimpSettings[settings_List[x]].value[0]) !== 'undefined') {
+					for (var y = 0; y < autoTrimpSettings[settings_List[x]].value.length; y++) {
+						autoTrimpSettings[settings_List[x]].value[y].portalAfter = false;
+					}
+				}
+				saveSettings();
+			}
+			changelog.push("Added a 'Portal After' setting to Void Map settings. Will cause your portal zone to be set to current zone once your Void Maps have finished running!")
+		}
+
+
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
 		saveSettings();

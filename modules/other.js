@@ -1885,7 +1885,7 @@ function equalityManagement() {
 		//Turning off equality scaling
 		game.portal.Equality.scalingActive = false;
 		//Misc vars
-		var debugStats = false;
+		var debugStats = getPageSetting('debugEqualityStats');
 		voidPBSwap = false;
 		var mapping = game.global.mapsActive ? true : false;
 		var currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;

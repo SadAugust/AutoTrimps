@@ -1072,6 +1072,7 @@ ul.tab li a:hover {
 .windowCellrVoidMap,
 .windowJobRatiorVoidMap,
 .windowRunTyperVoidMap,
+.windowPortalAfter,
 .windowVoidHDRatio {
 	display: inline-block;
 	padding-left: 1%;
@@ -1087,27 +1088,31 @@ ul.tab li a:hover {
 }
 
 .windowWorldrVoidMap {
-	width: 11%;
+	width: 10%;
 }
 
 .windowMaxVoidZone {
-	width: 11%;
+	width: 10%;
 }
 
 .windowVoidHDRatio {
-	width: 11%;
+	width: 10%;
 }
 
 .windowCellrVoidMap {
-	width: 11%;
+	width: 10%;
+}
+
+.windowPortalAfter {
+	width: 7%;
 }
 
 .windowJobRatiorVoidMap {
-	width: 11%;
+	width: 10%;
 }
 
 .windowRunTyperVoidMap {
-	width: 25%;
+	width: 24%;
 }
 
 .windowChallengeOnrVoidMap .windowChallengerVoidMap,
@@ -1119,7 +1124,7 @@ ul.tab li a:hover {
 .windowChallenge3OnrVoidMap .windowRunTyperVoidMap,
 .windowChallengeOnrVoidMap .windowRunTyperVoidMap {
 	display: inline-block;
-	width: 13%;
+	width: 12%;
 }
 
 .windowChallengeOffrVoidMap .windowChallengerVoidMap,

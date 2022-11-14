@@ -161,6 +161,7 @@ MODULES.mapFunctions = {};
 MODULES.mapFunctions.rVoidHDRatio = Infinity;
 MODULES.mapFunctions.rVoidVHDRatio = Infinity;
 MODULES.mapFunctions.rVoidHDIndex = Infinity;
+MODULES.mapFunctions.rPortalZone = Infinity;
 
 //Void Maps -- WORKING AS IS
 function VoidMaps() {
@@ -233,6 +234,7 @@ function VoidMaps() {
 		module.rVoidHDIndex = Infinity;
 		module.rVoidHDRatio = Infinity;
 		module.rVoidVHDRatio = Infinity;
+		module.rPortalZone = game.global.world;
 	}
 
 	return farmingDetails;

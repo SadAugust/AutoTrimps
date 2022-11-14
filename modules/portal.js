@@ -217,9 +217,7 @@ function doPortal(challenge) {
 	if (getPageSetting('spendmagmite') == 1) {
 		autoMagmiteSpender();
 	}
-	if (getPageSetting('autoheirlooms') == true && getPageSetting('typetokeep') != 'None' && getPageSetting('raretokeep') != 'None') {
-		autoheirlooms3();
-	}
+	autoheirlooms3();
 	if (game.global.ShieldEquipped.name != getPageSetting('highdmg') || game.global.ShieldEquipped.name != getPageSetting('dhighdmg')) {
 		if (highdmgshield() != undefined) {
 			selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
@@ -303,6 +301,23 @@ var RzonePostpone = 0;
 
 function RautoPortal() {
 	if (!game.global.portalActive) return;
+
+	var portalZone = getPageSetting('RCustomAutoPortal');
+	var dailyPortalZone = game.global.challengeActive === 'Daily' ? getPageSetting('rCustomDailyAutoPortal') + dailyModiferReduction() :
+		getPageSetting('rCustomDailyAutoPortal');
+	//Set portal zone to current zone!
+	if (MODULES.mapFunctions.rPortalZone === game.global.world) {
+		portalZone = game.global.world;
+		dailyPortalZone = game.global.world
+	}
+
+	if (game.global.world >= dailyPortalZone && getPageSetting('RAutoStartDaily')) {
+		checkCompleteDailies();
+		if (game.global.recentDailies.length !== 7 && !(getPageSetting('dontCapDailies') && game.global.recentDailies.length != 0)) {
+			RdoPortal(null, true);
+			return;
+		}
+	}
 	switch (autoTrimpSettings.RAutoPortal.selected) {
 		case "Radon Per Hour":
 			var OKtoPortal = false;
@@ -341,33 +356,19 @@ function RautoPortal() {
 			}
 			break;
 		case "Custom":
-			var portalzone = getPageSetting('RCustomAutoPortal');
-			var dailyportalzone = getPageSetting('rCustomDailyAutoPortal');
-			if (game.global.world >= portalzone) {
+			if (game.global.world >= portalZone) {
 				if (autoTrimpSettings.RadonHourChallenge.selected != 'None')
 					RdoPortal(autoTrimpSettings.RadonHourChallenge.selected);
 				else
 					RdoPortal();
 			}
-			if (game.global.world >= dailyportalzone && getPageSetting('RAutoStartDaily')) {
-				checkCompleteDailies();
-				if (game.global.recentDailies.length !== 7 && !(getPageSetting('dontCapDailies') && game.global.recentDailies.length != 0))
-					RdoPortal(null, true);
-			}
 			break;
 		case "Challenge 3":
-			var portalzone = getPageSetting('RCustomAutoPortal');
-			var dailyportalzone = getPageSetting('rCustomDailyAutoPortal');
-			if (game.global.world >= portalzone) {
+			if (game.global.world >= portalZone) {
 				if (autoTrimpSettings.RadonC3Challenge.selected != 'None')
 					RdoPortal(autoTrimpSettings.RadonC3Challenge.selected, false, true);
 				else
 					RdoPortal();
-			}
-			if (game.global.world >= dailyportalzone && getPageSetting('RAutoStartDaily')) {
-				checkCompleteDailies();
-				if (game.global.recentDailies.length !== 7 && !(getPageSetting('dontCapDailies') && game.global.recentDailies.length != 0))
-					RdoPortal(null, true);
 			}
 			break;
 		case "Melt":
@@ -435,8 +436,12 @@ function RdailyAutoPortal() {
 		}
 	}
 	if (getPageSetting('RAutoPortalDaily') == 2) {
-		var portalzone = autoTrimpSettings.rDailyPortalSettingsArray.value.portalZone + dailyModiferReduction();
-		if (portalzone > 0 && game.global.world >= portalzone) {
+		var portalZone = autoTrimpSettings.rDailyPortalSettingsArray.value.portalZone + dailyModiferReduction();
+
+		if (MODULES.mapFunctions.rPortalZone === game.global.world) {
+			portalZone = game.global.world;
+		}
+		if (portalZone > 0 && game.global.world >= portalZone) {
 			if (autoTrimpSettings.rDailyPortalSettingsArray.value.portalChallenge != 'None' && getPageSetting('u2daily') == false)
 				RdoPortal(autoTrimpSettings.rDailyPortalSettingsArray.value.portalChallenge);
 			else if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') === true)
@@ -453,7 +458,6 @@ function RdailyAutoPortal() {
 function RdoPortal(challenge, daily, c3) {
 	var daily = !daily ? false : true;
 	var preset = 0;
-
 
 	if (!game.global.portalActive) return;
 	//Will stop it from autoPortaling into dailies when you have dontCapDailies enabled and don't have 7 dailies stored.
@@ -532,6 +536,10 @@ function RdoPortal(challenge, daily, c3) {
 	activatePortal();
 	lastRadonZone = 0; RzonePostpone = 0;
 	Rresetmapvars();
+}
+
+function rCallPortal() {
+
 }
 
 function isNextU1DailyWind() {
@@ -644,6 +652,7 @@ function Rresetmapvars() {
 		MODULES.mapFunctions.rVoidHDRatio = Infinity;
 		MODULES.mapFunctions.rVoidVHDRatio = Infinity;
 		MODULES.mapFunctions.rVoidHDIndex = Infinity;
+		MODULES.mapFunctions.rPortalZone = Infinity;
 		HDRatio = RcalcHDratio();
 		voidHDRatio = rCalcVoidHDratio()
 	}

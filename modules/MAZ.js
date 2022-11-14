@@ -224,8 +224,22 @@ function MAZLookalike(titleText, varPrefix, event) {
 		tooltipText += "<div class='col-xs-3' style='width: 40%; padding-right: 5px'>" + "" + "&nbsp;&nbsp;<span>" + "Portal Challenge:</span></div>"
 		tooltipText += "<div class='col-xs-5' style='width: 60%; text-align: right'><select class ='dailyAutoPortalChallenge' id='autoDailyPortalChallenge'><option value='None'>None</option>";
 		var values = ['Bublé', 'Melt', 'Quagmire', 'Archaeology', 'Insanity', 'Nurture', 'Alchemy', 'Hypothermia'];
-		for (var x = 0; x < values.length; x++) {
-			tooltipText += "<option" + ((settingGroup.portalChallenge && settingGroup.portalChallenge == values[x]) ? " selected='selected'" : "") + " value='" + values[x] + "'>" + values[x] + "</option>";
+
+		var highestZone = game.global.highestRadonLevelCleared;
+		var radonChallenges = [];
+		if (getPageSetting('rDisplayAllSettings') || highestZone >= 39) radonChallenges.push("Bublé");
+		if (getPageSetting('rDisplayAllSettings') || highestZone >= 54) radonChallenges.push("Melt");
+		if (getPageSetting('rDisplayAllSettings') || highestZone >= 69) radonChallenges.push("Quagmire");
+		if (getPageSetting('rDisplayAllSettings') || highestZone > 89) radonChallenges.push("Archaeology");
+		if (getPageSetting('rDisplayAllSettings') || highestZone > 99) radonChallenges.push("Mayhem");
+		if (getPageSetting('rDisplayAllSettings') || highestZone >= 109) radonChallenges.push("Insanity");
+		if (getPageSetting('rDisplayAllSettings') || highestZone >= 134) radonChallenges.push("Nurture");
+		if (getPageSetting('rDisplayAllSettings') || highestZone >= 149) radonChallenges.push("Pandemonium");
+		if (getPageSetting('rDisplayAllSettings') || highestZone >= 154) radonChallenges.push("Alchemy");
+		if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) radonChallenges.push("Hypothermia");
+
+		for (var x = 0; x < radonChallenges.length; x++) {
+			tooltipText += "<option" + ((settingGroup.portalChallenge && settingGroup.portalChallenge == radonChallenges[x]) ? " selected='selected'" : "") + " value='" + values[x] + "'>" + values[x] + "</option>";
 		}
 		tooltipText += "</select></div></div></td></tr>";
 		tooltipText += "</div></div>"
@@ -395,6 +409,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			mazHelp += "<li><b>Frag Type</b> - Frag: Farm for fragments to afford the maps you want to create. <br>\
 		Frag Min: Used for absolute minimum frag costs (which includes no Prestige special, perfect sliders, random map and the difficulty and size options, however it will try to afford those options first!) and prioritises buying the most maps for a smoother sequential raid. \
 		<br>Frag Max: This option will make sure that the map has perfect sliders and uses the pretegious special.</li>";
+		if (titleText.includes('Void Map'))
+			mazHelp += "<li><b>Portal After</b> - Will run AutoPortal immediately after this line has run. Won't do anything if AutoPortal is disabled!</b></li>";
 
 
 
@@ -575,6 +591,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Smithy Farm')) tooltipText += "<div class='windowMeltingPoint'>Run<br/>MP</div>"
 		if (titleText.includes('Insanity Farm')) tooltipText += "<div class='windowBuildings'>Destack</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) tooltipText += "<div class='windowRunType" + varPrefix_Adjusted + "\'>Run<br/>Type</div>"
+		if (titleText.includes('Void Map')) tooltipText += "<div class='windowPortalAfter'>Portal<br/>After</div>"
 		tooltipText += "</div>";
 
 		var current = autoTrimpSettings[varPrefix + "Settings"].value;
@@ -606,6 +623,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				buildings: true,
 				atlantrimp: false,
 				meltingPoint: false,
+				portalAfter: false,
 				raidingzone: 6,
 				maxvoidzone: -1,
 				mapType: 'Absolute',
@@ -650,6 +668,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.atlantrimp = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].atlantrimp) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].atlantrimp : false;
 				if (titleText.includes('Smithy Farm'))
 					vals.meltingPoint = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].meltingPoint) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].meltingPoint : false;
+				if (titleText.includes('Void Map'))
+					vals.portalAfter = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].portalAfter) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].portalAfter : false;
 				if (titleText.includes('Quagmire Farm'))
 					vals.bogs = autoTrimpSettings[varPrefix + "Settings"].value[x].bogs ? autoTrimpSettings[varPrefix + "Settings"].value[x].bogs : 0;
 				if (titleText.includes('Insanity Farm'))
@@ -836,6 +856,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowChallenge3" + varPrefix_Adjusted + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge3</div>\<select value='" + vals.challenge3 + "' id='windowChallenge3" + x + "'>" + challenge3Dropdown + "</select>\</div>"
 			if (titleText.includes('Bone Shrine'))
 				tooltipText += "<div class='windowShred'>\<div style='text-align: center; font-size: 0.6vw;'>Shred</div>\<select value='" + vals.shredActive + "' id='windowShred" + x + "'>" + shredDropdown + "</select>\</div>"
+			if (titleText.includes('Void Map'))
+				tooltipText += "<div class='windowPortalAfter' style='text-align: center;'>" + buildNiceCheckbox("windowPortalAfter" + x, null, vals.portalAfter) + "</div>";
 
 			tooltipText += "</div>"
 		}
@@ -981,6 +1003,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Tribute')) var buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute') || titleText.includes('Bone Shrine')) var atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
 		if (titleText.includes('Smithy Farm')) var meltingPoint = readNiceCheckbox(document.getElementById('windowMeltingPoint' + x));
+		if (titleText.includes('Void Map')) var portalAfter = readNiceCheckbox(document.getElementById('windowPortalAfter' + x));
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm')) var jobratio = document.getElementById('windowJobRatio' + x).value;
 		if (titleText.includes('Bone')) var gather = document.getElementById('windowBoneGather' + x).value;
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) var runType = document.getElementById('windowRunType' + x).value;
@@ -1080,6 +1103,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			hdRatio: hdRatio,
 			voidHDRatio: voidHDRatio,
 			runType: runType,
+			portalAfter: portalAfter,
 			challenge: challenge,
 			challenge3: challenge3,
 			raidingDropdown: raidingDropdown,
@@ -1406,6 +1430,8 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowAtlantrimp' + x).value = false;
 				if (document.getElementById('windowMeltingPoint' + x) !== null)
 					document.getElementById('windowMeltingPoint' + x).value = false;
+				if (document.getElementById('windowPortalAfter' + x) !== null)
+					document.getElementById('windowPortalAfter' + x).value = false;
 				if (document.getElementById('windowAutoLevel' + x) !== null)
 					document.getElementById('windowAutoLevel' + x).value = true;
 				if (document.getElementById('windowJobRatio' + x) !== null)
@@ -1474,6 +1500,11 @@ function removeRow(index, titleText) {
 	}
 	if (titleText.includes('Smithy Farm')) {
 		var checkBox = document.getElementById('windowMeltingPoint' + index);
+		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
+		checkBox.setAttribute('data-checked', false);
+	}
+	if (titleText.includes('Void Map')) {
+		var checkBox = document.getElementById('windowPortalAfter' + index);
 		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
