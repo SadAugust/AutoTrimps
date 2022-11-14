@@ -534,7 +534,7 @@ function RbuyJobs() {
 
 	//Do non-ratio/limited jobs first
 	//Explorers
-	if (autoTrimpSettings.rJobSettingsArray.value.Explorer.enabled) {
+	if (autoTrimpSettings.rJobSettingsArray.value.Explorer.enabled && rCurrentMap !== 'rTributeFarm') {
 		var maxExplorers = Infinity;
 		if (!game.jobs.Explorer.locked) {
 			var affordableExplorers = Math.min(maxExplorers - game.jobs.Explorer.owned,
