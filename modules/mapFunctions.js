@@ -433,20 +433,22 @@ function MapFarm() {
 		if (game.global.challengeActive === 'Transmute' && rMFSpecial.includes('mc'))
 			rMFSpecial = rMFSpecial.charAt(0) + "sc";
 
+		if (rMFRepeatCounter > game.global.mapRunCounter)
+			rShouldMapFarm = true;
+
 		//Marking setting as complete if we've run enough maps.
 		if (rCurrentMap === mapName && game.global.mapRunCounter >= rMFRepeatCounter) {
 			if (getPageSetting('rMapRepeatCount')) debug("Map Farm took " + (game.global.mapRunCounter) + " (" + (rMFMapLevel >= 0 ? "+" : "") + rMFMapLevel + " " + rMFSpecial + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
+			rShouldMapFarm = false;
 			rMFMapRepeats = 0;
 			currTime = 0;
-			game.global.mapRunCounter = 0;
 			rMFSettings.done = totalPortals + "_" + game.global.world;
 			if (rMFAtlantrimp) runAtlantrimp();
+			game.global.mapRunCounter = 0;
 			saveSettings();
 		}
-		if (rMFRepeatCounter > game.global.mapRunCounter)
-			rShouldMapFarm = true;
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMFMapLevel || getCurrentMapObject().bonus !== rMFSpecial || game.global.mapRunCounter + 1 === rMFRepeatCounter);
 		var status = 'Map Farm: ' + game.global.mapRunCounter + "/" + rMFRepeatCounter;
