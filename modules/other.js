@@ -1650,7 +1650,6 @@ function dailyModifiersOutput() {
 }
 
 function dailyModiferReduction() {
-	MAZ
 	if (game.global.challengeActive !== 'Daily') return 0;
 	var dailyMods = dailyModifiersOutput().split('<br>')
 	dailyMods.length = dailyMods.length - 1;
