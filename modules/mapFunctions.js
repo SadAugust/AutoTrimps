@@ -109,7 +109,7 @@ function shouldRunUniqueMap(map) {
 	if (mapData.speedrun && shouldSpeedRun(game.achievements[mapData.speedrun])) {
 		return true;
 	}
-	if (game.global.world === 1) {
+	if (game.global.universe === 1) {
 		if (map.name === 'The Block') {
 			//We need Shieldblock
 			if (!game.upgrades.Shieldblock.allowed && getPageSetting('BuyShieldblock')) {
@@ -139,7 +139,7 @@ function shouldRunUniqueMap(map) {
 				return true;
 			}
 		}
-	} else if (game.global.world === 2) {
+	} else if (game.global.universe === 2) {
 		if (rCurrentMap === 'rQuagmireFarm' && map.name === 'The Black Bog') {
 			return true;
 		}
