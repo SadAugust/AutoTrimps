@@ -97,9 +97,10 @@ function shouldRunUniqueMap(map) {
 	const mapData = uniqueMaps[map.name];
 	const uniqueMapSetting = autoTrimpSettings.rUniqueMapSettingsArray.value;
 
-	if (game.global.universe !== mapData.universe)
-		return false;
 	if (mapData === undefined || game.global.world < mapData.zone) {
+		return false;
+	}
+	if (game.global.universe !== mapData.universe) {
 		return false;
 	}
 	if (!isC3 && mapData.challenges.includes(challenge) && game.global.challengeActive !== '') {

@@ -273,7 +273,7 @@ function radonChallengesSetting() {
 }
 
 function challengeListSetting() {
-	var highestZone = highestZone + 1;
+	var highestZone = game.global.highestRadonLevelCleared + 1;
 	var challengeList = ["Off", "Radon Per Hour"];
 	if (highestZone >= 40) challengeList.push("Bublé");
 	if (highestZone >= 55) challengeList.push("Melt");
@@ -496,7 +496,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 
 	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
 	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - game.global.world + 6 : minLevel;
-	var special = !special ? (highestZone > 83 ? 'lmc' : 'smc') : special;
+	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
 	var biome = !biome ? (game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain") : biome;
 	var floorCrit = !floorCrit ? false : floorCrit;
 	var difficulty = 0.75;
