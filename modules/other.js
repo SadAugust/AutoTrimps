@@ -45,1015 +45,6 @@ function autoGoldenUpgradesAT(setting) {
 	}
 }
 
-//Praiding
-
-function plusMapToRun1() {
-	var map = 1;
-	if (game.global.world % 10 == 5)
-		map = 6;
-	if (game.global.world % 10 == 6)
-		map = 5;
-	if (game.global.world % 10 == 7)
-		map = 4;
-	if (game.global.world % 10 == 8)
-		map = 3;
-	if (game.global.world % 10 == 9)
-		map = 2;
-	return map;
-}
-
-function plusMapToRun2() {
-	var map = 2;
-	if (game.global.world % 10 == 4)
-		map = 7;
-	if (game.global.world % 10 == 5)
-		map = 7;
-	if (game.global.world % 10 == 6)
-		map = 6;
-	if (game.global.world % 10 == 7)
-		map = 5;
-	if (game.global.world % 10 == 8)
-		map = 4;
-	if (game.global.world % 10 == 9)
-		map = 3;
-	return map;
-}
-
-function plusMapToRun3() {
-	var map = 3;
-	if (game.global.world % 10 == 3)
-		map = 8;
-	if (game.global.world % 10 == 4)
-		map = 8;
-	if (game.global.world % 10 == 5)
-		map = 8;
-	if (game.global.world % 10 == 6)
-		map = 7;
-	if (game.global.world % 10 == 7)
-		map = 6;
-	if (game.global.world % 10 == 8)
-		map = 5;
-	if (game.global.world % 10 == 9)
-		map = 4;
-	return map;
-}
-
-function plusMapToRun4() {
-	var map = 4;
-	if (game.global.world % 10 == 2)
-		map = 9;
-	if (game.global.world % 10 == 3)
-		map = 9;
-	if (game.global.world % 10 == 4)
-		map = 9;
-	if (game.global.world % 10 == 5)
-		map = 9;
-	if (game.global.world % 10 == 6)
-		map = 8;
-	if (game.global.world % 10 == 7)
-		map = 7;
-	if (game.global.world % 10 == 8)
-		map = 6;
-	if (game.global.world % 10 == 9)
-		map = 5;
-	return map;
-}
-
-function plusMapToRun5() {
-	var map = 5;
-	if (game.global.world % 10 == 1)
-		map = 10;
-	if (game.global.world % 10 == 2)
-		map = 10;
-	if (game.global.world % 10 == 3)
-		map = 10;
-	if (game.global.world % 10 == 4)
-		map = 10;
-	if (game.global.world % 10 == 5)
-		map = 10;
-	if (game.global.world % 10 == 6)
-		map = 9;
-	if (game.global.world % 10 == 7)
-		map = 8;
-	if (game.global.world % 10 == 8)
-		map = 7;
-	if (game.global.world % 10 == 9)
-		map = 6;
-	return map;
-}
-
-function plusPres1() {
-	document.getElementById("biomeAdvMapsSelect").value = "Depths";
-	document.getElementById("advExtraLevelSelect").value = plusMapToRun1();
-	document.getElementById("advSpecialSelect").value = "p";
-	document.getElementById("lootAdvMapsRange").value = 0;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
-	document.getElementById("sizeAdvMapsRange").value = 9;
-	document.getElementById("advPerfectCheckbox").dataset.checked = true;
-	document.getElementById("mapLevelInput").value = game.global.world;
-	updateMapCost();
-
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("biomeAdvMapsSelect").value = "Random";
-		updateMapCost();
-	}
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advPerfectCheckbox").dataset.checked = false;
-		updateMapCost();
-	}
-
-	while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-		difficultyAdvMapsRange.value -= 1;
-		if (updateMapCost(true) <= game.resources.fragments.owned) break;
-		sizeAdvMapsRange.value -= 1;
-	}
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advSpecialSelect").value = 0;
-		updateMapCost();
-	}
-}
-
-function plusPres2() {
-	document.getElementById("biomeAdvMapsSelect").value = "Depths";
-	document.getElementById("advExtraLevelSelect").value = plusMapToRun2();
-	document.getElementById("advSpecialSelect").value = "p";
-	document.getElementById("lootAdvMapsRange").value = 0;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
-	document.getElementById("sizeAdvMapsRange").value = 9;
-	document.getElementById("advPerfectCheckbox").dataset.checked = true;
-	document.getElementById("mapLevelInput").value = game.global.world;
-	updateMapCost();
-
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("biomeAdvMapsSelect").value = "Random";
-		updateMapCost();
-	}
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advPerfectCheckbox").dataset.checked = false;
-		updateMapCost();
-	}
-
-	while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-		difficultyAdvMapsRange.value -= 1;
-		if (updateMapCost(true) <= game.resources.fragments.owned) break;
-		sizeAdvMapsRange.value -= 1;
-	}
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advSpecialSelect").value = 0;
-		updateMapCost();
-	}
-}
-
-function plusPres3() {
-	document.getElementById("biomeAdvMapsSelect").value = "Depths";
-	document.getElementById("advExtraLevelSelect").value = plusMapToRun3();
-	document.getElementById("advSpecialSelect").value = "p";
-	document.getElementById("lootAdvMapsRange").value = 0;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
-	document.getElementById("sizeAdvMapsRange").value = 9;
-	document.getElementById("advPerfectCheckbox").dataset.checked = true;
-	document.getElementById("mapLevelInput").value = game.global.world;
-	updateMapCost();
-
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("biomeAdvMapsSelect").value = "Random";
-		updateMapCost();
-	}
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advPerfectCheckbox").dataset.checked = false;
-		updateMapCost();
-	}
-
-	while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-		difficultyAdvMapsRange.value -= 1;
-		if (updateMapCost(true) <= game.resources.fragments.owned) break;
-		sizeAdvMapsRange.value -= 1;
-	}
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advSpecialSelect").value = 0;
-		updateMapCost();
-	}
-}
-
-function plusPres4() {
-	document.getElementById("biomeAdvMapsSelect").value = "Depths";
-	document.getElementById("advExtraLevelSelect").value = plusMapToRun4();
-	document.getElementById("advSpecialSelect").value = "p";
-	document.getElementById("lootAdvMapsRange").value = 0;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
-	document.getElementById("sizeAdvMapsRange").value = 9;
-	document.getElementById("advPerfectCheckbox").dataset.checked = true;
-	document.getElementById("mapLevelInput").value = game.global.world;
-	updateMapCost();
-
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("biomeAdvMapsSelect").value = "Random";
-		updateMapCost();
-	}
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advPerfectCheckbox").dataset.checked = false;
-		updateMapCost();
-	}
-
-	while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-		difficultyAdvMapsRange.value -= 1;
-		if (updateMapCost(true) <= game.resources.fragments.owned) break;
-		sizeAdvMapsRange.value -= 1;
-	}
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advSpecialSelect").value = 0;
-		updateMapCost();
-	}
-}
-
-function plusPres5() {
-	document.getElementById("biomeAdvMapsSelect").value = "Depths";
-	document.getElementById("advExtraLevelSelect").value = plusMapToRun5();
-	document.getElementById("advSpecialSelect").value = "p";
-	document.getElementById("lootAdvMapsRange").value = 0;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
-	document.getElementById("sizeAdvMapsRange").value = 9;
-	document.getElementById("advPerfectCheckbox").dataset.checked = true;
-	document.getElementById("mapLevelInput").value = game.global.world;
-	updateMapCost();
-
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("biomeAdvMapsSelect").value = "Random";
-		updateMapCost();
-	}
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advPerfectCheckbox").dataset.checked = false;
-		updateMapCost();
-	}
-
-	while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-		difficultyAdvMapsRange.value -= 1;
-		if (updateMapCost(true) <= game.resources.fragments.owned) break;
-		sizeAdvMapsRange.value -= 1;
-	}
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advSpecialSelect").value = 0;
-		updateMapCost();
-	}
-}
-
-function pcheck1() {
-	var HD;
-	var P;
-	var I;
-
-	if (game.global.challengeActive != "Daily") {
-		HD = getPageSetting('PraidingHD');
-		P = (getPageSetting('PraidingP') > 0 ? getPageSetting('PraidingP') : 0);
-		I = (getPageSetting('PraidingI') > 0 ? getPageSetting('PraidingI') : 0);
-	}
-	if (game.global.challengeActive == "Daily") {
-		HD = getPageSetting('dPraidingHD');
-		P = (getPageSetting('dPraidingP') > 0 ? getPageSetting('dPraidingP') : 0);
-		I = (getPageSetting('dPraidingI') > 0 ? getPageSetting('dPraidingI') : 0);
-	}
-
-	var go = false;
-
-	if (HD <= 0) {
-		go = true;
-	}
-	else if (HD > 0) {
-		go = (HD >= calcHDratio(game.global.world + plusMapToRun1()));
-	}
-	if (P > 0 && getEmpowerment() == "Poison") {
-		go = (P >= plusMapToRun1());
-	}
-	if (I > 0 && getEmpowerment() == "Ice") {
-		go = (I >= plusMapToRun1());
-	}
-	return go;
-}
-
-function pcheck2() {
-	var HD;
-	var P;
-	var I;
-
-	if (game.global.challengeActive != "Daily") {
-		HD = getPageSetting('PraidingHD');
-		P = (getPageSetting('PraidingP') > 0 ? getPageSetting('PraidingP') : 0);
-		I = (getPageSetting('PraidingI') > 0 ? getPageSetting('PraidingI') : 0);
-	}
-	if (game.global.challengeActive == "Daily") {
-		HD = getPageSetting('dPraidingHD');
-		P = (getPageSetting('dPraidingP') > 0 ? getPageSetting('dPraidingP') : 0);
-		I = (getPageSetting('dPraidingI') > 0 ? getPageSetting('dPraidingI') : 0);
-	}
-
-	var go = false;
-
-	if (HD <= 0) {
-		go = true;
-	}
-	else if (HD > 0) {
-		go = (HD >= calcHDratio(game.global.world + plusMapToRun2()));
-	}
-	if (P > 0 && getEmpowerment() == "Poison") {
-		go = (P >= plusMapToRun2());
-	}
-	if (I > 0 && getEmpowerment() == "Ice") {
-		go = (I >= plusMapToRun2());
-	}
-	return go;
-}
-
-function pcheck3() {
-	var HD;
-	var P;
-	var I;
-
-	if (game.global.challengeActive != "Daily") {
-		HD = getPageSetting('PraidingHD');
-		P = (getPageSetting('PraidingP') > 0 ? getPageSetting('PraidingP') : 0);
-		I = (getPageSetting('PraidingI') > 0 ? getPageSetting('PraidingI') : 0);
-	}
-	if (game.global.challengeActive == "Daily") {
-		HD = getPageSetting('dPraidingHD');
-		P = (getPageSetting('dPraidingP') > 0 ? getPageSetting('dPraidingP') : 0);
-		I = (getPageSetting('dPraidingI') > 0 ? getPageSetting('dPraidingI') : 0);
-	}
-
-	var go = false;
-
-	if (HD <= 0) {
-		go = true;
-	}
-	else if (HD > 0) {
-		go = (HD >= calcHDratio(game.global.world + plusMapToRun3()));
-	}
-	if (P > 0 && getEmpowerment() == "Poison") {
-		go = (P >= plusMapToRun3());
-	}
-	if (I > 0 && getEmpowerment() == "Ice") {
-		go = (I >= plusMapToRun3());
-	}
-	return go;
-}
-
-function pcheck4() {
-	var HD;
-	var P;
-	var I;
-
-	if (game.global.challengeActive != "Daily") {
-		HD = getPageSetting('PraidingHD');
-		P = (getPageSetting('PraidingP') > 0 ? getPageSetting('PraidingP') : 0);
-		I = (getPageSetting('PraidingI') > 0 ? getPageSetting('PraidingI') : 0);
-	}
-	if (game.global.challengeActive == "Daily") {
-		HD = getPageSetting('dPraidingHD');
-		P = (getPageSetting('dPraidingP') > 0 ? getPageSetting('dPraidingP') : 0);
-		I = (getPageSetting('dPraidingI') > 0 ? getPageSetting('dPraidingI') : 0);
-	}
-
-	var go = false;
-
-	if (HD <= 0) {
-		go = true;
-	}
-	else if (HD > 0) {
-		go = (HD >= calcHDratio(game.global.world + plusMapToRun4()));
-	}
-	if (P > 0 && getEmpowerment() == "Poison") {
-		go = (P >= plusMapToRun4());
-	}
-	if (I > 0 && getEmpowerment() == "Ice") {
-		go = (I >= plusMapToRun4());
-	}
-	return go;
-}
-
-function pcheck5() {
-	var HD;
-	var P;
-	var I;
-
-	if (game.global.challengeActive != "Daily") {
-		HD = getPageSetting('PraidingHD');
-		P = (getPageSetting('PraidingP') > 0 ? getPageSetting('PraidingP') : 0);
-		I = (getPageSetting('PraidingI') > 0 ? getPageSetting('PraidingI') : 0);
-	}
-	if (game.global.challengeActive == "Daily") {
-		HD = getPageSetting('dPraidingHD');
-		P = (getPageSetting('dPraidingP') > 0 ? getPageSetting('dPraidingP') : 0);
-		I = (getPageSetting('dPraidingI') > 0 ? getPageSetting('dPraidingI') : 0);
-	}
-
-	var go = false;
-
-	if (HD <= 0) {
-		go = true;
-	}
-	else if (HD > 0) {
-		go = (HD >= calcHDratio(game.global.world + plusMapToRun5()));
-	}
-	if (P > 0 && getEmpowerment() == "Poison") {
-		go = (P >= plusMapToRun5());
-	}
-	if (I > 0 && getEmpowerment() == "Ice") {
-		go = (I >= plusMapToRun5());
-	}
-	return go;
-}
-
-function pcheckmap1() {
-	var go = false;
-	if (game.global.world % 10 == 0 && plusMapToRun1() == 1) {
-		go = true;
-	}
-	if (game.global.world % 10 == 1 && (plusMapToRun1() == 1 || plusMapToRun1() == 10)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 2 && (plusMapToRun1() == 1 || plusMapToRun1() >= 9)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 3 && (plusMapToRun1() == 1 || plusMapToRun1() >= 8)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 4 && (plusMapToRun1() == 1 || plusMapToRun1() >= 7)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 5 && plusMapToRun1() >= 6) {
-		go = true;
-	}
-	if (game.global.world % 10 == 6 && plusMapToRun1() >= 5) {
-		go = true;
-	}
-	if (game.global.world % 10 == 7 && plusMapToRun1() >= 4) {
-		go = true;
-	}
-	if (game.global.world % 10 == 8 && plusMapToRun1() >= 3) {
-		go = true;
-	}
-	if (game.global.world % 10 == 9 && plusMapToRun1() >= 2) {
-		go = true;
-	}
-	return go;
-}
-
-function pcheckmap2() {
-	var go = false;
-	if (game.global.world % 10 == 0 && plusMapToRun2() == 2) {
-		go = true;
-	}
-	if (game.global.world % 10 == 1 && (plusMapToRun2() == 2 || plusMapToRun2() == 10)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 2 && (plusMapToRun2() == 2 || plusMapToRun2() >= 9)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 3 && (plusMapToRun2() == 2 || plusMapToRun2() >= 8)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 4 && plusMapToRun2() >= 7) {
-		go = true;
-	}
-	if (game.global.world % 10 == 5 && plusMapToRun2() >= 6) {
-		go = true;
-	}
-	if (game.global.world % 10 == 6 && plusMapToRun2() >= 6) {
-		go = true;
-	}
-	if (game.global.world % 10 == 7 && plusMapToRun2() >= 5) {
-		go = true;
-	}
-	if (game.global.world % 10 == 8 && plusMapToRun2() >= 4) {
-		go = true;
-	}
-	if (game.global.world % 10 == 9 && plusMapToRun2() >= 3) {
-		go = true;
-	}
-	return go;
-}
-
-function pcheckmap3() {
-	var go = false;
-	if (game.global.world % 10 == 0 && plusMapToRun3() == 3) {
-		go = true;
-	}
-	if (game.global.world % 10 == 1 && (plusMapToRun3() == 3 || plusMapToRun3() == 10)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 2 && (plusMapToRun3() == 3 || plusMapToRun3() >= 9)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 3 && plusMapToRun3() >= 8) {
-		go = true;
-	}
-	if (game.global.world % 10 == 4 && plusMapToRun3() >= 8) {
-		go = true;
-	}
-	if (game.global.world % 10 == 5 && plusMapToRun3() >= 8) {
-		go = true;
-	}
-	if (game.global.world % 10 == 6 && plusMapToRun3() >= 7) {
-		go = true;
-	}
-	if (game.global.world % 10 == 7 && plusMapToRun3() >= 6) {
-		go = true;
-	}
-	if (game.global.world % 10 == 8 && plusMapToRun3() >= 5) {
-		go = true;
-	}
-	if (game.global.world % 10 == 9 && plusMapToRun3() >= 4) {
-		go = true;
-	}
-	return go;
-}
-
-function pcheckmap4() {
-	var go = false;
-	if (game.global.world % 10 == 0 && plusMapToRun4() == 4) {
-		go = true;
-	}
-	if (game.global.world % 10 == 1 && (plusMapToRun4() == 4 || plusMapToRun4() == 10)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 2 && plusMapToRun4() >= 9) {
-		go = true;
-	}
-	if (game.global.world % 10 == 3 && plusMapToRun4() >= 8) {
-		go = true;
-	}
-	if (game.global.world % 10 == 4 && plusMapToRun4() >= 7) {
-		go = true;
-	}
-	if (game.global.world % 10 == 5 && plusMapToRun4() >= 6) {
-		go = true;
-	}
-	if (game.global.world % 10 == 6 && plusMapToRun4() >= 5) {
-		go = true;
-	}
-	if (game.global.world % 10 == 7 && plusMapToRun4() >= 4) {
-		go = true;
-	}
-	if (game.global.world % 10 == 8 && plusMapToRun4() >= 3) {
-		go = true;
-	}
-	if (game.global.world % 10 == 9 && plusMapToRun4() >= 2) {
-		go = true;
-	}
-	return go;
-}
-
-function pcheckmap5() {
-	var go = false;
-	if (game.global.world % 10 == 0 && plusMapToRun5() == 5) {
-		go = true;
-	}
-	if (game.global.world % 10 == 1 && (plusMapToRun5() == 4 || plusMapToRun5() == 10)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 2 && (plusMapToRun5() == 3 || plusMapToRun5() >= 9)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 3 && (plusMapToRun5() == 2 || plusMapToRun5() >= 8)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 4 && (plusMapToRun5() == 1 || plusMapToRun5() >= 7)) {
-		go = true;
-	}
-	if (game.global.world % 10 == 5 && plusMapToRun5() >= 6) {
-		go = true;
-	}
-	if (game.global.world % 10 == 6 && plusMapToRun5() >= 5) {
-		go = true;
-	}
-	if (game.global.world % 10 == 7 && plusMapToRun5() >= 4) {
-		go = true;
-	}
-	if (game.global.world % 10 == 8 && plusMapToRun5() >= 3) {
-		go = true;
-	}
-	if (game.global.world % 10 == 9 && plusMapToRun5() >= 2) {
-		go = true;
-	}
-	return go;
-}
-
-var pMap1 = undefined;
-var pMap2 = undefined;
-var pMap3 = undefined;
-var pMap4 = undefined;
-var pMap5 = undefined;
-var repMap1 = undefined;
-var repMap2 = undefined;
-var repMap3 = undefined;
-var repMap4 = undefined;
-var repMap5 = undefined;
-var mapbought1 = false;
-var mapbought2 = false;
-var mapbought3 = false;
-var mapbought4 = false;
-var mapbought5 = false;
-
-function Praiding() {
-	var cell;
-	cell = ((getPageSetting('Praidingcell') > 0) ? getPageSetting('Praidingcell') : 0);
-	if (getPageSetting('Praidingzone').length) {
-		if (getPageSetting('Praidingzone').includes(game.global.world) && ((cell <= 1) || (cell > 1 && (game.global.lastClearedCell + 1) >= cell)) && !prestraid && !failpraid) {
-			prestraidon = true;
-			if (getPageSetting('AutoMaps') == 1 && !prestraid && !failpraid) {
-				autoTrimpSettings["AutoMaps"].value = 0;
-			}
-			if (!game.global.preMapsActive && !game.global.mapsActive && !prestraid) {
-				mapsClicked();
-				if (!game.global.preMapsActive) {
-					mapsClicked();
-				}
-				debug("Beginning Prestige Raiding...");
-			}
-			if (game.options.menu.repeatUntil.enabled != 2 && !prestraid) {
-				game.options.menu.repeatUntil.enabled = 2;
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && !prestraid) {
-				debug("Map Loop");
-				if (pcheckmap5() == true && pcheck5() == true && pMap5 == undefined && !mapbought5 && game.global.preMapsActive && !prestraid) {
-					debug("Check complete for 5th map");
-					plusPres5();
-					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-						buyMap();
-						mapbought5 = true;
-						if (mapbought5) {
-							pMap5 = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-							debug("5th map bought");
-						}
-					}
-				}
-				if (pcheckmap4() == true && pcheck4() == true && pMap4 == undefined && !mapbought4 && game.global.preMapsActive && !prestraid) {
-					debug("Check complete for 4th map");
-					plusPres4();
-					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-						buyMap();
-						mapbought4 = true;
-						if (mapbought4) {
-							pMap4 = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-							debug("4th map bought");
-						}
-					}
-				}
-				if (pcheckmap3() == true && pcheck3() == true && pMap3 == undefined && !mapbought3 && game.global.preMapsActive && !prestraid) {
-					debug("Check complete for 3rd map");
-					plusPres3();
-					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-						buyMap();
-						mapbought3 = true;
-						if (mapbought3) {
-							pMap3 = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-							debug("3rd map bought");
-						}
-					}
-				}
-				if (pcheckmap2() == true && pcheck2() == true && pMap2 == undefined && !mapbought2 && game.global.preMapsActive && !prestraid) {
-					debug("Check complete for 2nd map");
-					plusPres2();
-					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-						buyMap();
-						mapbought2 = true;
-						if (mapbought2) {
-							pMap2 = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-							debug("2nd map bought");
-						}
-					}
-				}
-				if (pcheckmap1() == true && pcheck1() == true && pMap1 == undefined && !mapbought1 && game.global.preMapsActive && !prestraid) {
-					debug("Check complete for 1st map");
-					plusPres1();
-					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-						buyMap();
-						mapbought1 = true;
-						if (mapbought1) {
-							pMap1 = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-							debug("1st map bought");
-						}
-					}
-				}
-				if (!mapbought1 && !mapbought2 && !mapbought3 && !mapbought4 && !mapbought5) {
-					if (getPageSetting('AutoMaps') == 0 && !prestraid) {
-						autoTrimpSettings["AutoMaps"].value = 1;
-						game.options.menu.repeatUntil.enabled = 0;
-						prestraidon = false;
-						failpraid = true;
-						praidDone = true;
-						pMap1 = undefined;
-						pMap2 = undefined;
-						pMap3 = undefined;
-						pMap4 = undefined;
-						pMap5 = undefined;
-						debug("Failed to Prestige Raid. Looks like you can't afford to or you are too weak or you have limited yourself in a P/I zone. ");
-					}
-					return;
-				}
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && mapbought1 && pMap1 != undefined && !prestraid) {
-				debug("running map 1");
-				selectMap(pMap1);
-				runMap();
-				repMap1 = pMap1;
-				pMap1 = undefined;
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && mapbought2 && pMap2 != undefined && !prestraid) {
-				debug("running map 2");
-				selectMap(pMap2);
-				runMap();
-				repMap2 = pMap2;
-				pMap2 = undefined;
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && mapbought3 && pMap3 != undefined && !prestraid) {
-				debug("running map 3");
-				selectMap(pMap3);
-				runMap();
-				repMap3 = pMap3;
-				pMap3 = undefined;
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && mapbought4 && pMap4 != undefined && !prestraid) {
-				debug("running map 4");
-				selectMap(pMap4);
-				runMap();
-				repMap4 = pMap4;
-				pMap4 = undefined;
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && mapbought5 && pMap5 != undefined && !prestraid) {
-				debug("running map 5");
-				selectMap(pMap5);
-				runMap();
-				repMap5 = pMap5;
-				pMap5 = undefined;
-			}
-			if (!prestraid && !game.global.repeatMap) {
-				repeatClicked();
-			}
-		}
-	}
-	if (game.global.preMapsActive && (mapbought1 || mapbought2 || mapbought3 || mapbought4 || mapbought5) && pMap1 == undefined && pMap2 == undefined && pMap3 == undefined && pMap4 == undefined && pMap5 == undefined && !prestraid && !failpraid) {
-		prestraid = true;
-		failpraid = false;
-		mapbought1 = false;
-		mapbought2 = false;
-		mapbought3 = false;
-		mapbought4 = false;
-		mapbought5 = false;
-	}
-	if (getPageSetting('AutoMaps') == 0 && game.global.preMapsActive && prestraid && !failpraid && prestraidon) {
-		praidDone = true;
-		prestraidon = false;
-		if (repMap1 != undefined) {
-			recycleMap(getMapIndex(repMap1));
-			repMap1 = undefined;
-		}
-		if (repMap2 != undefined) {
-			recycleMap(getMapIndex(repMap2));
-			repMap2 = undefined;
-		}
-		if (repMap3 != undefined) {
-			recycleMap(getMapIndex(repMap3));
-			repMap3 = undefined;
-		}
-		if (repMap4 != undefined) {
-			recycleMap(getMapIndex(repMap4));
-			repMap4 = undefined;
-		}
-		if (repMap5 != undefined) {
-			recycleMap(getMapIndex(repMap5));
-			repMap5 = undefined;
-		}
-		autoTrimpSettings["AutoMaps"].value = 1;
-		game.options.menu.repeatUntil.enabled = 0;
-		pMap1 = undefined;
-		pMap2 = undefined;
-		pMap3 = undefined;
-		pMap4 = undefined;
-		pMap5 = undefined;
-		debug("Prestige raiding successful!");
-		debug("Turning AutoMaps back on");
-	}
-	if (getPageSetting('Praidingzone').every(isBelowThreshold)) {
-		prestraid = false;
-		failpraid = false;
-		prestraidon = false;
-		mapbought1 = false;
-		mapbought2 = false;
-		mapbought3 = false;
-		mapbought4 = false;
-		mapbought5 = false;
-		pMap1 = undefined;
-		pMap2 = undefined;
-		pMap3 = undefined;
-		pMap4 = undefined;
-		pMap5 = undefined;
-		repMap1 = undefined;
-		repMap2 = undefined;
-		repMap3 = undefined;
-		repMap4 = undefined;
-		repMap5 = undefined;
-		praidDone = false;
-	}
-}
-
-function PraidHarder() {
-	var maxPlusZones;
-	var mapModifiers = ["p", "fa", "0"];
-	var farmFragments;
-	var praidBeforeFarm;
-	var pRaidIndex;
-	var maxPraidZSetting;
-	var cell;
-
-	// Determine whether to use daily or normal run settings
-	if (game.global.challengeActive == "Daily") {
-		praidSetting = 'dPraidingzone';
-		maxPraidZSetting = 'dMaxPraidZone';
-		farmFragments = getPageSetting('dPraidFarmFragsZ').includes(game.global.world);
-		praidBeforeFarm = getPageSetting('dPraidBeforeFarmZ').includes(game.global.world);
-		cell = ((getPageSetting('dPraidingcell') > 0) ? getPageSetting('dPraidingcell') : 0);
-	} else {
-		praidSetting = 'Praidingzone';
-		maxPraidZSetting = 'MaxPraidZone';
-		farmFragments = getPageSetting('PraidFarmFragsZ').includes(game.global.world);
-		praidBeforeFarm = getPageSetting('PraidBeforeFarmZ').includes(game.global.world);
-		cell = ((getPageSetting('Praidingcell') > 0) ? getPageSetting('Praidingcell') : 0);
-	}
-
-	pRaidIndex = getPageSetting(praidSetting).indexOf(game.global.world);
-	if (pRaidIndex == -1 || typeof (getPageSetting(maxPraidZSetting)[pRaidIndex]) === "undefined") maxPlusZones = plusMapToRun(game.global.world);
-	else maxPlusZones = getPageSetting(maxPraidZSetting)[pRaidIndex] - game.global.world;
-
-	// Check we have a valid number for maxPlusZones
-	maxPlusZones = maxPlusZones > 10 ? 10 : (maxPlusZones < 0 ? 10 : maxPlusZones);
-
-	// Work out the max number of +map zones it's worth farming for prestige.
-	if ((game.global.world + maxPlusZones) % 10 > 5)
-		maxPlusZones = Math.max(maxPlusZones + (5 - (game.global.world + maxPlusZones) % 10), 0);
-	else if ((game.global.world + maxPlusZones) % 10 == 0)
-		maxPlusZones = Math.min(5, maxPlusZones);
-
-	// If we have any Praiding zones defined...
-	if (getPageSetting(praidSetting).length) {
-		if (getPageSetting(praidSetting).includes(game.global.world) && ((game.global.lastClearedCell + 1) >= cell) && !prestraid && !failpraid && !shouldFarmFrags) {
-			debug('Beginning Praiding');
-			// Initialise shouldFarmFrags to false
-			shouldFarmFrags = false;
-			// Mark that we are prestige raiding and turn off automaps to stop it interfering
-			prestraidon = true;
-			autoTrimpSettings["AutoMaps"].value = 0;
-			// Get into the preMaps screen
-			if (!game.global.preMapsActive && !game.global.mapsActive) {
-				mapsClicked();
-				if (!game.global.preMapsActive) {
-					mapsClicked();
-				}
-			}
-			// Set repeat for items
-			game.options.menu.repeatUntil.enabled = 2;
-			toggleSetting("repeatUntil", null, false, true);
-			// if we can farm for fragments, work out the minimum number we need to get all available prestiges
-			if (farmFragments) {
-				plusPres();
-				document.getElementById('advExtraLevelSelect').value = maxPlusZones;
-				document.getElementById('sizeAdvMapsRange').value = 0;
-				document.getElementById('difficultyAdvMapsRange').value = 0;
-				document.getElementById('advSpecialSelect').value = "0";
-				minMaxMapCost = updateMapCost(true);
-				// If we are not Praiding before farming, and cannot afford a max plus map, set flags for farming
-				if (!praidBeforeFarm && game.resources.fragments.owned < minMaxMapCost) {
-					prestraid = true;
-					failpraid = false;
-					shouldFarmFrags = true;
-				}
-			}
-			// Set map settings to the best map for Praiding (even if we can't afford it)
-			plusPres();
-			document.getElementById('advExtraLevelSelect').value = maxPlusZones;
-			// Iterate down through plusMaps setting until we find one we can afford
-			for (var curPlusZones = maxPlusZones; curPlusZones >= 0; curPlusZones--) {
-				// If the current targeted zone has no prestiges, decrement the number of plusZones and continue
-				if ((game.global.world + curPlusZones) % 10 == 0 || (game.global.world + curPlusZones) % 10 > 5) continue;
-				// Otherwise check to see if we can afford a map at the current plusZones setting
-				document.getElementById('advExtraLevelSelect').value = curPlusZones;
-				// If we find a map we can afford, break out of the loop
-				if (relaxMapReqs(mapModifiers)) break;
-				// conserve fragments if going to farm after by selecting only maps with no special modifier
-				else if (farmFragments) mapModifiers = ["0"];
-			}
-			// If the map is not at the highest level with prestiges possible, set shouldFarmFrags to true
-			if (maxPlusZones > curPlusZones) shouldFarmFrags = true;
-
-			// If we found a suitable map...
-			if (curPlusZones >= 0 && (praidBeforeFarm || shouldFarmFrags == false)) {
-				// ...buy it
-				buyMap();
-				pMap = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-				selectMap(pMap);
-				// Set flags to avoid rerunning this step
-				prestraid = true;
-				// prestraidon = false;
-				failpraid = false;
-				// Set repeat on and run the map
-				game.global.repeatMap = true;
-				runMap();
-				repeatClicked(true);
-			}
-			// If we can't afford a map, and can't farm fragments, fail and turn automaps back on
-			else if (!farmFragments) {
-				failpraid = true;
-				prestraidon = false;
-				praidDone = true;
-				debug("Failed to prestige raid. Looks like you can't afford to.");
-			} else {
-				debug("Turning AutoMaps back on");
-				autoTrimpSettings['AutoMaps'].value = 1;
-				game.options.menu.repeatUntil.enabled = 0;
-			}
-			return;
-		}
-	}
-
-	if (farmFragments && shouldFarmFrags && game.global.preMapsActive && prestraid && !fMap) {
-		if (pMap) recycleMap(getMapIndex(pMap));
-		pMap = null;
-		// Choose a fragment farming map
-		document.getElementById("biomeAdvMapsSelect").value = "Depths";
-		document.getElementById('advExtraLevelSelect').value = 0;
-		document.getElementById('advSpecialSelect').value = "fa";
-		document.getElementById("lootAdvMapsRange").value = 9;
-		document.getElementById("difficultyAdvMapsRange").value = 9;
-		document.getElementById("sizeAdvMapsRange").value = 9;
-		document.getElementById('advPerfectCheckbox').dataset.checked = true;
-		document.getElementById("mapLevelInput").value = game.global.world - 1;
-		game.options.menu.repeatUntil.enabled = 0;
-		toggleSetting("repeatUntil", null, false, true);
-		if (updateMapCost(true) <= game.resources.fragments.owned) {
-			debug("Buying perfect sliders fragment farming map");
-			buyMap();
-			fMap = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-			selectMap(fMap);
-			game.global.repeatMap = true;
-			runMap();
-			repeatClicked(true);
-		} else {
-			document.getElementById('advPerfectCheckbox').dataset.checked = false;
-			if (updateMapCost(true) <= game.resources.fragments.owned) {
-				debug("Buying imperfect sliders fragment farming map");
-				buyMap();
-				fMap = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-				selectMap(fMap);
-				game.global.repeatMap = true;
-				runMap();
-				repeatClicked(true);
-			}
-			// if we can't buy a map, wait until the next main loop iteration and try again
-			else debug("Can't afford fragment farming map yet");
-		}
-	}
-
-	if ((game.global.mapsActive || game.global.preMapsActive) && minMaxMapCost <= game.resources.fragments.owned && shouldFarmFrags) {
-		game.global.repeatMap = false;
-		repeatClicked(true);
-		if (game.global.preMapsActive) {
-			minMaxMapCost = null;
-			shouldFarmFrags = false;
-			prestraid = false;
-			failpraid = false;
-		}
-	}
-	if (game.global.preMapsActive && prestraid && !failpraid && !shouldFarmFrags && prestraidon) {
-		prestraidon = false;
-		praidDone = true;
-		debug("Prestige raiding successful! - recycling Praid map");
-		if (pMap) recycleMap(getMapIndex(pMap));
-		if (fMap) recycleMap(getMapIndex(fMap));
-		pMap = null;
-		fMap = null;
-		debug("Turning AutoMaps back on");
-		game.options.menu.repeatUntil.enabled = 0;
-		autoTrimpSettings['AutoMaps'].value = 1;
-	}
-
-	if (!getPageSetting(praidSetting).includes(game.global.world)) {
-		prestraid = false;
-		failpraid = false;
-		prestraidon = false;
-		shouldFarmFrags = false;
-		praidDone = false;
-	}
-}
-
 function relaxMapReqs(mapModifiers) {
 	for (var j = 0; j < mapModifiers.length; j++) {
 		document.getElementById('sizeAdvMapsRange').value = 9;
@@ -1069,365 +60,6 @@ function relaxMapReqs(mapModifiers) {
 	}
 	return false;
 }
-
-function BWraiding() {
-	var bwraidZ;
-	var bwraidSetting;
-	var bwraidMax;
-	var isBWRaidZ;
-	var targetBW;
-	var bwIndex;
-	var cell;
-
-	if (game.global.challengeActive == "Daily") {
-		bwraidZ = 'dBWraidingz';
-		bwraidSetting = 'Dailybwraid';
-		bwraidMax = 'dBWraidingmax';
-		cell = ((getPageSetting('dbwraidcell') > 0) ? getPageSetting('dbwraidcell') : 1);
-	} else {
-		bwraidZ = 'BWraidingz';
-		bwraidSetting = 'BWraid';
-		bwraidMax = 'BWraidingmax';
-		cell = ((getPageSetting('bwraidcell') > 0) ? getPageSetting('bwraidcell') : 1);
-	}
-
-	isBWRaidZ = getPageSetting(bwraidZ).includes(game.global.world) && ((game.global.lastClearedCell + 1) >= cell);
-	bwIndex = getPageSetting(bwraidZ).indexOf(game.global.world);
-	if (bwIndex == -1 || typeof (getPageSetting(bwraidMax)[bwIndex]) === "undefined") targetBW = -1;
-	else targetBW = getPageSetting(bwraidMax)[bwIndex];
-
-	if (isBWRaidZ && !bwraided && !failbwraid && getPageSetting(bwraidSetting)) {
-		if (getPageSetting('AutoMaps') == 1 && !bwraided && !failbwraid) {
-			autoTrimpSettings["AutoMaps"].value = 0;
-		}
-
-		game.options.menu.climbBw.enabled = 0;
-
-		while (!game.global.preMapsActive && !bwraidon) mapsClicked();
-
-		if (game.options.menu.repeatUntil.enabled != 2 && !bwraided && !failbwraid) {
-			game.options.menu.repeatUntil.enabled = 2;
-		}
-
-		game.options.menu.climbBw.enabled = 0;
-
-		if (game.global.preMapsActive && !bwraided && !failbwraid && findLastBionic()) {
-			selectMap(findLastBionic().id);
-			failbwraid = false;
-			debug("Beginning BW Raiding...");
-		} else if (game.global.preMapsActive && !bwraided && !failbwraid) {
-			if (getPageSetting('AutoMaps') == 0 && isBWRaidZ && !bwraided) {
-				autoTrimpSettings["AutoMaps"].value = 1;
-				failbwraid = true;
-				debug("Failed to BW raid. Looks like you don't have a BW to raid...");
-			}
-		}
-
-		if (findLastBionic().level <= targetBW && !bwraided && !failbwraid && game.global.preMapsActive) {
-			runMap();
-			bwraidon = true;
-		}
-
-		if (!game.global.repeatMap && !bwraided && !failbwraid && game.global.mapsActive) {
-			repeatClicked();
-		}
-
-		if (findLastBionic().level > targetBW && !bwraided && !failbwraid) {
-			bwraided = true;
-			failbwraid = false;
-			bwraidon = false;
-			debug("...Successfully BW raided!");
-		}
-	}
-
-	if (getPageSetting('AutoMaps') == 0 && game.global.preMapsActive && bwraided && !failbwraid) {
-		autoTrimpSettings["AutoMaps"].value = 1;
-		debug("Turning AutoMaps back on");
-	}
-
-	if (!isBWRaidZ) {
-		bwraided = false;
-		failbwraid = false;
-		bwraidon = false;
-	}
-}
-
-var dpMap1 = undefined;
-var dpMap2 = undefined;
-var dpMap3 = undefined;
-var dpMap4 = undefined;
-var dpMap5 = undefined;
-var drepMap1 = undefined;
-var drepMap2 = undefined;
-var drepMap3 = undefined;
-var drepMap4 = undefined;
-var drepMap5 = undefined;
-var dmapbought1 = false;
-var dmapbought2 = false;
-var dmapbought3 = false;
-var dmapbought4 = false;
-var dmapbought5 = false;
-var dpraidDone = false;
-
-function dailyPraiding() {
-	var cell;
-	cell = ((getPageSetting('dPraidingcell') > 0) ? getPageSetting('dPraidingcell') : 0);
-	if (getPageSetting('dPraidingzone').length) {
-		if (getPageSetting('dPraidingzone').includes(game.global.world) && ((cell <= 1) || (cell > 1 && (game.global.lastClearedCell + 1) >= cell)) && !dprestraid && !dfailpraid) {
-			dprestraidon = true;
-			if (getPageSetting('AutoMaps') == 1 && !dprestraid && !dfailpraid) {
-				autoTrimpSettings["AutoMaps"].value = 0;
-			}
-			if (!game.global.preMapsActive && !game.global.mapsActive && !dprestraid) {
-				mapsClicked();
-				if (!game.global.preMapsActive) {
-					mapsClicked();
-				}
-				debug("Beginning Prestige Raiding...");
-			}
-			if (game.options.menu.repeatUntil.enabled != 2 && !dprestraid) {
-				game.options.menu.repeatUntil.enabled = 2;
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && !dprestraid) {
-				debug("Map Loop");
-				if (pcheckmap5() == true && pcheck5() == true && dpMap5 == undefined && !dmapbought5 && game.global.preMapsActive && !dprestraid) {
-					debug("Check complete for 5th map");
-					plusPres5();
-					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-						buyMap();
-						dmapbought5 = true;
-						if (dmapbought5) {
-							dpMap5 = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-							debug("5th map bought");
-						}
-					}
-				}
-				if (pcheckmap4() == true && pcheck4() == true && dpMap4 == undefined && !dmapbought4 && game.global.preMapsActive && !dprestraid) {
-					debug("Check complete for 4th map");
-					plusPres4();
-					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-						buyMap();
-						dmapbought4 = true;
-						if (dmapbought4) {
-							dpMap4 = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-							debug("4th map bought");
-						}
-					}
-				}
-				if (pcheckmap3() == true && pcheck3() == true && dpMap3 == undefined && !dmapbought3 && game.global.preMapsActive && !dprestraid) {
-					debug("Check complete for 3rd map");
-					plusPres3();
-					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-						buyMap();
-						dmapbought3 = true;
-						if (dmapbought3) {
-							dpMap3 = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-							debug("3rd map bought");
-						}
-					}
-				}
-				if (pcheckmap2() == true && pcheck2() == true && dpMap2 == undefined && !dmapbought2 && game.global.preMapsActive && !dprestraid) {
-					debug("Check complete for 2nd map");
-					plusPres2();
-					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-						buyMap();
-						dmapbought2 = true;
-						if (dmapbought2) {
-							dpMap2 = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-							debug("2nd map bought");
-						}
-					}
-				}
-				if (pcheckmap1() == true && pcheck1() == true && dpMap1 == undefined && !dmapbought1 && game.global.preMapsActive && !dprestraid) {
-					debug("Check complete for 1st map");
-					plusPres1();
-					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-						buyMap();
-						dmapbought1 = true;
-						if (dmapbought1) {
-							dpMap1 = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-							debug("1st map bought");
-						}
-					}
-				}
-				if (!dmapbought1 && !dmapbought2 && !dmapbought3 && !dmapbought4 && !dmapbought5) {
-					if (getPageSetting('AutoMaps') == 0 && !dprestraid) {
-						autoTrimpSettings["AutoMaps"].value = 1;
-						game.options.menu.repeatUntil.enabled = 0;
-						dprestraidon = false;
-						dfailpraid = true;
-						dpraidDone = true;
-						dpMap1 = undefined;
-						dpMap2 = undefined;
-						dpMap3 = undefined;
-						dpMap4 = undefined;
-						dpMap5 = undefined;
-						debug("Failed to Prestige Raid. Looks like you can't afford to or you are too weak or you have limited yourself in a P/I zone. ");
-					}
-					return;
-				}
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && dmapbought1 && dpMap1 != undefined && !dprestraid) {
-				debug("running map 1");
-				selectMap(dpMap1);
-				runMap();
-				drepMap1 = dpMap1;
-				dpMap1 = undefined;
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && dmapbought2 && dpMap2 != undefined && !dprestraid) {
-				debug("running map 2");
-				selectMap(dpMap2);
-				runMap();
-				drepMap2 = dpMap2;
-				dpMap2 = undefined;
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && dmapbought3 && dpMap3 != undefined && !dprestraid) {
-				debug("running map 3");
-				selectMap(dpMap3);
-				runMap();
-				drepMap3 = dpMap3;
-				dpMap3 = undefined;
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && dmapbought4 && dpMap4 != undefined && !dprestraid) {
-				debug("running map 4");
-				selectMap(dpMap4);
-				runMap();
-				drepMap4 = dpMap4;
-				dpMap4 = undefined;
-			}
-			if (game.global.preMapsActive && !game.global.mapsActive && dmapbought5 && dpMap5 != undefined && !dprestraid) {
-				debug("running map 5");
-				selectMap(dpMap5);
-				runMap();
-				drepMap5 = dpMap5;
-				dpMap5 = undefined;
-			}
-			if (!dprestraid && !game.global.repeatMap) {
-				repeatClicked();
-			}
-		}
-	}
-	if (game.global.preMapsActive && (dmapbought1 || dmapbought2 || dmapbought3 || dmapbought4 || dmapbought5) && pMap1 == undefined && dpMap2 == undefined && dpMap3 == undefined && dpMap4 == undefined && dpMap5 == undefined && !dprestraid && !dfailpraid) {
-		dprestraid = true;
-		dfailpraid = false;
-		dmapbought1 = false;
-		dmapbought2 = false;
-		dmapbought3 = false;
-		dmapbought4 = false;
-		dmapbought5 = false;
-	}
-	if (getPageSetting('AutoMaps') == 0 && game.global.preMapsActive && dprestraid && !dfailpraid && dprestraidon) {
-		dpraidDone = true;
-		dprestraidon = false;
-		if (drepMap1 != undefined) {
-			recycleMap(getMapIndex(drepMap1));
-			drepMap1 = undefined;
-		}
-		if (drepMap2 != undefined) {
-			recycleMap(getMapIndex(drepMap2));
-			drepMap2 = undefined;
-		}
-		if (drepMap3 != undefined) {
-			recycleMap(getMapIndex(drepMap3));
-			drepMap3 = undefined;
-		}
-		if (drepMap4 != undefined) {
-			recycleMap(getMapIndex(drepMap4));
-			drepMap4 = undefined;
-		}
-		if (drepMap5 != undefined) {
-			recycleMap(getMapIndex(drepMap5));
-			drepMap5 = undefined;
-		}
-		autoTrimpSettings["AutoMaps"].value = 1;
-		game.options.menu.repeatUntil.enabled = 0;
-		pMap1 = undefined;
-		dpMap2 = undefined;
-		dpMap3 = undefined;
-		dpMap4 = undefined;
-		dpMap5 = undefined;
-		debug("Prestige raiding successful!");
-		debug("Turning AutoMaps back on");
-	}
-	if (getPageSetting('dPraidingzone').every(isBelowThreshold)) {
-		dprestraid = false;
-		dfailpraid = false;
-		dprestraidon = false;
-		dmapbought1 = false;
-		dmapbought2 = false;
-		dmapbought3 = false;
-		dmapbought4 = false;
-		dmapbought5 = false;
-		pMap1 = undefined;
-		dpMap2 = undefined;
-		dpMap3 = undefined;
-		dpMap4 = undefined;
-		dpMap5 = undefined;
-		repMap1 = undefined;
-		repMap2 = undefined;
-		repMap3 = undefined;
-		repMap4 = undefined;
-		repMap5 = undefined;
-		dpraidDone = false;
-	}
-}
-
-function dailyBWraiding() {
-	var cell;
-	cell = ((getPageSetting('dbwraidcell') > 0) ? getPageSetting('dbwraidcell') : 1);
-	if (!dprestraidon && game.global.world == getPageSetting('dBWraidingz') && ((game.global.lastClearedCell + 1) >= cell) && !dbwraided && !dfailbwraid && getPageSetting('Dailybwraid')) {
-		if (getPageSetting('AutoMaps') == 1 && !dbwraided && !dfailbwraid) {
-			autoTrimpSettings["AutoMaps"].value = 0;
-		}
-		if (!game.global.preMapsActive && !game.global.mapsActive && !dbwraided && !dfailbwraid) {
-			mapsClicked();
-			if (!game.global.preMapsActive) {
-				mapsClicked();
-			}
-		}
-		if (game.options.menu.repeatUntil.enabled != 2 && !dbwraided && !dfailbwraid) {
-			game.options.menu.repeatUntil.enabled = 2;
-		}
-		if (game.global.preMapsActive && !dbwraided && !dfailbwraid) {
-			selectMap(findLastBionic().id);
-			dfailbwraid = false;
-			debug("Beginning Daily BW Raiding...");
-		} else if (game.global.preMapsActive && !dbwraided && !dfailbwraid) {
-			if (getPageSetting('AutoMaps') == 0 && game.global.world == getPageSetting('dBWraidingz') && !dbwraided) {
-				autoTrimpSettings["AutoMaps"].value = 1;
-				dfailbwraid = true;
-				debug("Failed to Daily BW raid. Looks like you don't have a BW to raid...");
-			}
-		}
-		if (findLastBionic().level <= getPageSetting('dBWraidingmax') && !dbwraided && !dfailbwraid && game.global.preMapsActive) {
-			runMap();
-			dbwraidon = true;
-		}
-		if (!game.global.repeatMap && !dbwraided && !dfailbwraid && game.global.mapsActive) {
-
-		}
-		if (findLastBionic().level > getPageSetting('dBWraidingmax') && !dbwraided && !dfailbwraid) {
-			dbwraided = true;
-			dfailbwraid = false;
-			dbwraidon = false;
-			debug("...Successfully Daily BW raided!");
-		}
-		if (getPageSetting('AutoMaps') == 0 && game.global.preMapsActive && game.global.world == getPageSetting('dBWraidingz') && dbwraided && !dfailbwraid) {
-			autoTrimpSettings["AutoMaps"].value = 1;
-			debug("Turning AutoMaps back on");
-		}
-	}
-	if (getPageSetting('AutoMaps') == 0 && game.global.preMapsActive && dbwraided && !dfailbwraid) {
-		autoTrimpSettings["AutoMaps"].value = 1;
-		debug("Turning AutoMaps back on");
-	}
-	if (dbwraided && !dfailbwraid && game.global.world !== getPageSetting('dBWraidingz')) {
-		dbwraided = false;
-		dfailbwraid = false;
-		dbwraidon = false;
-	}
-}
-
 function trimpcide() {
 	if (game.portal.Anticipation.level > 0) {
 		var antistacklimit = (game.talents.patience.purchased) ? 45 : 30;
@@ -1550,7 +182,6 @@ function archstring() {
 	}
 }
 
-
 function radonChallengesSetting() {
 	var radonHZE = game.global.highestRadonLevelCleared + 1;
 	var radonChallenges = ["Off", "Radon Per Hour"];
@@ -1639,6 +270,96 @@ function radonChallengesSetting() {
 	if (radonHZE === 155) debug("You have unlocked the Alchemy challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
 	if (radonHZE === 175) debug("You have unlocked the Hypothermia challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
 	if (radonHZE === 175) debug("You have unlocked the Glass challenge. It has now been added to Challenge 3 AutoPortal setting.")
+}
+
+function challengeListSetting() {
+	var highestZone = highestZone + 1;
+	var challengeList = ["Off", "Radon Per Hour"];
+	if (highestZone >= 40) challengeList.push("Bublé");
+	if (highestZone >= 55) challengeList.push("Melt");
+	if (highestZone >= 70) challengeList.push("Quagmire");
+	if (highestZone >= 90) challengeList.push("Archaeology");
+	if (highestZone >= 100) challengeList.push("Mayhem");
+	if (highestZone >= 110) challengeList.push("Insanity");
+	if (highestZone >= 135) challengeList.push("Nurture");
+	if (highestZone >= 150) challengeList.push("Pandemonium");
+	if (highestZone >= 155) challengeList.push("Alchemy");
+	if (highestZone >= 175) challengeList.push("Hypothermia");
+	challengeList.push("Custom");
+	if (highestZone >= 50) challengeList.push("Challenge 3");
+
+	document.getElementById('RAutoPortal').innerHTML = ''
+	for (var item in challengeList) {
+		var option = document.createElement("option");
+		option.value = challengeList[item];
+		option.text = challengeList[item];
+		document.getElementById('RAutoPortal').appendChild(option);
+	}
+
+	var radonHourChallenges = ["None"];
+	if (highestZone >= 40) radonHourChallenges.push("Bublé");
+	if (highestZone >= 55) radonHourChallenges.push("Melt");
+	if (highestZone >= 70) radonHourChallenges.push("Quagmire");
+	if (highestZone >= 90) radonHourChallenges.push("Archaeology");
+	if (highestZone >= 110) radonHourChallenges.push("Insanity");
+	if (highestZone >= 135) radonHourChallenges.push("Nurture");
+	if (highestZone >= 155) radonHourChallenges.push("Alchemy");
+	if (highestZone >= 175) radonHourChallenges.push("Hypothermia");
+
+	document.getElementById('RadonHourChallenge').innerHTML = ''
+	for (var item in radonHourChallenges) {
+		var option = document.createElement("option");
+		option.value = radonHourChallenges[item];
+		option.text = radonHourChallenges[item];
+		document.getElementById('RadonHourChallenge').appendChild(option);
+	}
+
+	var challengeList = ["None"];
+	if (highestZone >= 15) challengeList.push("Unlucky");
+	if (highestZone >= 20) challengeList.push("Downsize");
+	if (highestZone >= 25) challengeList.push("Transmute");
+	if (highestZone >= 35) challengeList.push("Unbalance");
+	if (highestZone >= 45) challengeList.push("Duel");
+	if (highestZone >= 60) challengeList.push("Trappapalooza");
+	if (highestZone >= 70) challengeList.push("Wither");
+	if (highestZone >= 85) challengeList.push("Quest");
+	if (highestZone >= 105) challengeList.push("Storm");
+	if (highestZone >= 115) challengeList.push("Berserk");
+	if (highestZone >= 175) challengeList.push("Glass");
+
+	document.getElementById('RadonC3Challenge').innerHTML = ''
+	for (var item in challengeList) {
+		var option = document.createElement("option");
+		option.value = challengeList[item];
+		option.text = challengeList[item];
+		document.getElementById('RadonC3Challenge').appendChild(option);
+	}
+
+	//if (highestZone === 15) debug("You have unlocked the Unlucky challenge.")
+	if (highestZone === 5) debug("You can now use the Smithy Farm setting. This can be found in the AT 'Maps' tab.")
+	if (highestZone === 25) debug("You have unlocked the Transmute challenge. Any metal related settings will be converted to food instead while running this challenge.")
+	if (highestZone === 30) debug("You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.")
+	if (highestZone === 35) debug("You have unlocked the Unbalance challenge. There's setting for it in the AT 'C3' tab.")
+	if (highestZone === 40) debug("You have unlocked the Bublé challenge. It has now been added to AutoPortal setting.")
+	//if (highestZone === 45) debug("Duel");
+	if (highestZone === 50) debug("You can now use the Worshipper Farm setting. This can be found in the AT 'Maps' tab.")
+	if (highestZone === 50) debug("You can now access the C3 tab within the AT settings. Here you will find a variety of settings that will help optimise your C3 runs.")
+	if (highestZone === 50) debug("Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them.");
+	if (highestZone === 50) debug("You have unlocked the Melt challenge. It has now been added to AutoPortal setting.")
+	if (highestZone === 60) debug("You have unlocked the Trappapalooza challenge. It has now been added to Challenge 3 AutoPortal settings & there's a setting for it in the AT 'C3' tab.")
+	if (highestZone === 70) debug("You have unlocked the Quagmire challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (highestZone === 70) debug("You have unlocked the Wither challenge. It has now been added to Challenge 3 AutoPortal settings & any map level settings with the exception of Map Bonus will make the highest level map you run -1 to not obtain additional stacks.")
+	if (highestZone === 85) debug("You have unlocked the Quest challenge. It has now been added to Challenge 3 AutoPortal settings & AT will automatically complete Quests if AutoMaps is enabled during this challenge.")
+	if (highestZone === 90) debug("You have unlocked the Archaeology challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (highestZone === 100) debug("You have unlocked the Mayhem challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
+	if (highestZone === 105) debug("You have unlocked the Storm challenge. It has now been added to Challenge 3 AutoPortal setting & there's setting for it in the AT 'C3' tab.")
+	if (highestZone === 110) debug("You have unlocked the Insanity challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (highestZone === 115) debug("You have unlocked the Berserk challenge. It has now been added to Challenge 3 AutoPortal setting.")
+	if (highestZone === 135) debug("You have unlocked the Nurture challenge. It has now been added to AutoPortal setting & there is a setting for Laboratory's that has been added to AT's AutoStructure setting.")
+	if (highestZone === 150) debug("You have unlocked the Pandemonium challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
+	if (highestZone === 155) debug("You have unlocked the Alchemy challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (highestZone === 175) debug("You have unlocked the Hypothermia challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (highestZone === 175) debug("You have unlocked the Glass challenge. It has now been added to Challenge 3 AutoPortal setting.")
 }
 
 var fastimps =
@@ -1775,7 +496,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 
 	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
 	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - game.global.world + 6 : minLevel;
-	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
+	var special = !special ? (highestZone > 83 ? 'lmc' : 'smc') : special;
 	var biome = !biome ? (game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain") : biome;
 	var floorCrit = !floorCrit ? false : floorCrit;
 	var difficulty = 0.75;
@@ -2439,6 +1160,7 @@ function runAtlantrimp(dontRecycle) {
 
 function runUnique(mapName, dontRecycle) {
 	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
+	if (mapName === 'Atlantrimp' && game.global.universe === 1) mapName === 'Trimple of Doom'
 	var zone = game.global.world;
 	var cell = game.global.lastClearedCell + 2;
 	if (mapName === 'Melting Point' && (!game.mapUnlocks.SmithFree.canRunOnce || zone < 55 || (zone === 55 && cell < 56))) return
@@ -2928,6 +1650,7 @@ function dailyModifiersOutput() {
 }
 
 function dailyModiferReduction() {
+	MAZ
 	if (game.global.challengeActive !== 'Daily') return 0;
 	var dailyMods = dailyModifiersOutput().split('<br>')
 	dailyMods.length = dailyMods.length - 1;
@@ -3015,4 +1738,153 @@ function displayMostEfficientEquipment() {
 			swapClass('efficient', 'efficientNo', $eqName)
 		}
 	}
+}
+
+function displayChallenges(universe, runType, MAZ) {
+
+	//if (!runType) return;
+	if (!universe) universe = game.global.universe;
+	if (!MAZ) MAZ = '';
+
+	if (runType === 'Gather') {
+		var gatherDropdown = "<option value='food'" + ((MAZ == 'food') ? " selected='selected'" : "") + ">Food</option >\
+		<option value='wood'" + ((MAZ == 'wood') ? " selected = 'selected'" : "") + " > Wood</option >\
+		<option value='metal'" + ((MAZ == 'metal') ? " selected = 'selected'" : "") + " > Metal</option >\
+		<option value='science'" + ((MAZ == 'science') ? " selected = 'selected'" : "") + " > Science</option > "
+		return gatherDropdown;
+	}
+
+	var highestZone = universe === 1 ? game.global.highestLevelCleared + 1 : game.global.highestRadonLevelCleared + 1;
+	if (universe === 1) {
+		if (runType === 'Cache') {
+			//Specials dropdown with conditions for each unlock to only appear when the user can run them.
+			var specialsDropdown = "<option value='0'" + ((MAZ == '0') ? " selected='selected'" : "") + ">No Modifier</option>"
+			if (highestZone >= 60) specialsDropdown += "<option value='fa'" + ((MAZ == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((MAZ == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
+			if (highestZone >= 85) specialsDropdown += "<option value = 'ssc'" + ((MAZ == 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option >\
+				<option value='swc'" + ((MAZ == 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option >\
+				<option value='smc'" + ((MAZ == 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option > "
+			if (highestZone >= 135) specialsDropdown += "<option value='p'" + ((MAZ == 'p') ? " selected='selected'" : "") + ">Prestigious</option>"
+			if (highestZone >= 160) specialsDropdown += "<option value='hc'" + ((MAZ == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>"
+			if (highestZone >= 185) specialsDropdown += "<option value='lsc'" + ((MAZ == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\
+				<option value='lwc'" + ((MAZ == 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\
+				<option value='lmc'" + ((MAZ == 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>"
+			return specialsDropdown;
+		}
+		if (runType === 'Filler') {
+			challengeDropdown = "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+			if (highestZone >= 40) challengeDropdown += "<option value='Balance'" + ((MAZ == 'Balance') ? " selected='selected'" : "") + ">Balance</option>";
+			if (highestZone >= 55) challengeDropdown += "<option value = 'Decay'" + ((MAZ == 'Decay') ? " selected = 'selected'" : "") + " >Decay</option >";
+			if (game.global.prisonClear >= 1) challengeDropdown += "<option value='Electricity'" + ((MAZ == 'Electricity') ? " selected='selected'" : "") + ">Electricity</option>";
+			if (highestZone >= 110) challengeDropdown += "<option value='Life'" + ((MAZ == 'Life') ? " selected='selected'" : "") + ">Life</option>";
+			if (highestZone >= 125) challengeDropdown += "<option value='Crushed'" + ((MAZ == 'Crushed') ? " selected='selected'" : "") + ">Crushed</option>";
+			if (highestZone >= 145) challengeDropdown += "<option value='Nom'" + ((MAZ == 'Nom') ? " selected='selected'" : "") + ">Nom</option>";
+			if (highestZone >= 165) challengeDropdown += "<option value='Toxicity'" + ((MAZ == 'Toxicity') ? " selected='selected'" : "") + ">Toxicity</option>";
+			if (highestZone >= 180) challengeDropdown += "<option value='Watch'" + ((MAZ == 'Watch') ? " selected='selected'" : "") + ">Watch</option>";
+			if (highestZone >= 180) challengeDropdown += "<option value='Lead'" + ((MAZ == 'Lead') ? " selected='selected'" : "") + ">Lead</option>";
+			if (highestZone >= 190) challengeDropdown += "<option value='Corrupted'" + ((MAZ == 'Corrupted') ? " selected='selected'" : "") + ">Corrupted</option>";
+			if (highestZone >= 215) challengeDropdown += "<option value='Domination'" + ((MAZ == 'Domination') ? " selected='selected'" : "") + ">Domination</option>";
+			if (highestZone >= 600) challengeDropdown += "<option value='Experience'" + ((MAZ == 'Experience') ? " selected='selected'" : "") + ">Experience</option>";
+			return challengeDropdown;
+		}
+		else if (runType === 'C3') {
+			var challengeDropdown = "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+			if (getTotalPerkResource(true) >= 30) challengeDropdown += "<option value='Discipline'" + ((MAZ == 'Discipline') ? " selected='selected'" : "") + ">Discipline</option>";
+			if (highestZone >= 25) challengeDropdown += "<option value='Metal'" + ((MAZ == 'Metal') ? " selected='selected'" : "") + ">Metal</option>";
+			if (highestZone >= 35) challengeDropdown += "<option value='Size'" + ((MAZ == 'Size') ? " selected='selected'" : "") + ">Size</option>";
+			if (highestZone >= 40) challengeDropdown += "<option value = 'Balance'" + ((MAZ == 'Balance') ? " selected = 'selected'" : "") + " > Balance</option >";
+			if (highestZone >= 45) challengeDropdown += "<option value='Meditate'" + ((MAZ == 'Meditate') ? " selected='selected'" : "") + ">Meditate</option>";
+			if (highestZone >= 60) challengeDropdown += "<option value='Trimp'" + ((MAZ == 'Trimp') ? " selected='selected'" : "") + ">Trimp</option>";
+			if (highestZone >= 70) challengeDropdown += "<option value='Trapper'" + ((MAZ == 'Trapper') ? " selected='selected'" : "") + ">Trapper</option>";
+			if (game.global.prisonClear >= 1) challengeDropdown += "<option value='Electricity'" + ((MAZ == 'Electricity') ? " selected='selected'" : "") + ">Electricity</option>";
+			if (highestZone >= 120) challengeDropdown += "<option value='Coordinate'" + ((MAZ == 'Coordinate') ? " selected='selected'" : "") + ">Coordinate</option>";
+			if (highestZone >= 130) challengeDropdown += "<option value='Slow'" + ((MAZ == 'Slow') ? " selected='selected'" : "") + ">Slow</option>";
+			if (highestZone >= 145) challengeDropdown += "<option value='Nom'" + ((MAZ == 'Nom') ? " selected='selected'" : "") + ">Nom</option>";
+			if (highestZone >= 150) challengeDropdown += "<option value='Mapology'" + ((MAZ == 'Mapology') ? " selected='selected'" : "") + ">Mapology</option>";
+			if (highestZone >= 165) challengeDropdown += "<option value='Toxicity'" + ((MAZ == 'Toxicity') ? " selected='selected'" : "") + ">Toxicity</option>";
+			if (highestZone >= 180) challengeDropdown += "<option value='Watch'" + ((MAZ == 'Watch') ? " selected='selected'" : "") + ">Watch</option>";
+			if (highestZone >= 180) challengeDropdown += "<option value='Lead'" + ((MAZ == 'Lead') ? " selected='selected'" : "") + ">Lead</option>";
+			if (highestZone >= 425) challengeDropdown += "<option value='Obliterated'" + ((MAZ == 'Obliterated') ? " selected='selected'" : "") + ">Obliterated</option>";
+			if (game.global.totalSquaredReward >= 4500) challengeDropdown += "<option value='Eradicated'" + ((MAZ == 'Eradicated') ? " selected='selected'" : "") + ">Eradicated</option>";
+			return challengeDropdown;
+		}
+	}
+
+	if (universe === 2) {
+		if (MAZ !== '') {
+			if (runType === 'Cache') {
+				//Specials dropdown with conditions for each unlock to only appear when the user can run them.
+				var specialsDropdown = "<option value='0'" + ((MAZ == '0') ? " selected='selected'" : "") + ">No Modifier</option>"
+				if (highestZone >= 15) specialsDropdown += "<option value='fa'" + ((MAZ == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((MAZ == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
+				if (highestZone >= 25) specialsDropdown += "<option value = 'ssc'" + ((MAZ == 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option >\
+				<option value='swc'" + ((MAZ == 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option >\
+				<option value='smc'" + ((MAZ == 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option > "
+				if (game.global.ArchaeologyDone) specialsDropdown += "<option value='src'" + ((MAZ == 'src') ? " selected='selected'" : "") + ">Small Research Cache</option>"
+				if (highestZone >= 55) specialsDropdown += "<option value='p'" + ((MAZ == 'p') ? " selected='selected'" : "") + ">Prestigious</option>"
+				if (highestZone >= 65) specialsDropdown += "<option value='hc'" + ((MAZ == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>"
+				if (highestZone >= 85) specialsDropdown += "<option value='lsc'" + ((MAZ == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\
+				<option value='lwc'" + ((MAZ == 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\
+				<option value='lmc'" + ((MAZ == 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>"
+				if (game.global.ArchaeologyDone) specialsDropdown += "<option value='lrc'" + ((MAZ == 'lrc') ? " selected='selected'" : "") + ">Large Research Cache</option>"
+				return specialsDropdown;
+			}
+			if (runType === 'Filler') {
+				challengeDropdown = "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+				if (highestZone >= 40) challengeDropdown += "<option value='Bublé'" + ((MAZ == 'Bublé') ? " selected='selected'" : "") + ">Bublé</option>";
+				if (highestZone >= 55) challengeDropdown += "<option value = 'Melt'" + ((MAZ == 'Melt') ? " selected = 'selected'" : "") + " > Melt</option >";
+				if (highestZone >= 70) challengeDropdown += "<option value='Quagmire'" + ((MAZ == 'Quagmire') ? " selected='selected'" : "") + ">Quagmire</option>";
+				if (highestZone >= 90) challengeDropdown += "<option value='Archaeology'" + ((MAZ == 'Archaeology') ? " selected='selected'" : "") + ">Archaeology</option>";
+				if (highestZone >= 110) challengeDropdown += "<option value='Insanity'" + ((MAZ == 'Insanity') ? " selected='selected'" : "") + ">Insanity</option>";
+				if (highestZone >= 135) challengeDropdown += "<option value='Nurture'" + ((MAZ == 'Nurture') ? " selected='selected'" : "") + ">Nurture</option>";
+				if (highestZone >= 155) challengeDropdown += "<option value='Alchemy'" + ((MAZ == 'Alchemy') ? " selected='selected'" : "") + ">Alchemy</option>";
+				if (highestZone >= 175) challengeDropdown += "<option value='Hypothermia'" + ((MAZ == 'Hypothermia') ? " selected='selected'" : "") + ">Hypothermia</option>";
+				return challengeDropdown;
+			}
+			else if (runType === 'C3') {
+				var challengeDropdown = "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+				if (highestZone >= 15) challengeDropdown += "<option value='Unlucky'" + ((MAZ == 'Unlucky') ? " selected='selected'" : "") + ">Unlucky</option>";
+				if (highestZone >= 20) challengeDropdown += "<option value='Downsize'" + ((MAZ == 'Downsize') ? " selected='selected'" : "") + ">Downsize</option>";
+				if (highestZone >= 25) challengeDropdown += "<option value='Transmute'" + ((MAZ == 'Transmute') ? " selected='selected'" : "") + ">Transmute</option>";
+				if (highestZone >= 35) challengeDropdown += "<option value = 'Unbalance'" + ((MAZ == 'Unbalance') ? " selected = 'selected'" : "") + " > Unbalance</option >";
+				if (highestZone >= 45) challengeDropdown += "<option value='Duel'" + ((MAZ == 'Duel') ? " selected='selected'" : "") + ">Duel</option>";
+				if (highestZone >= 60) challengeDropdown += "<option value='Trappapalooza'" + ((MAZ == 'Trappapalooza') ? " selected='selected'" : "") + ">Trappa</option>";
+				if (highestZone >= 70) challengeDropdown += "<option value='Wither'" + ((MAZ == 'Wither') ? " selected='selected'" : "") + ">Wither</option>";
+				if (highestZone >= 85) challengeDropdown += "<option value='Quest'" + ((MAZ == 'Quest') ? " selected='selected'" : "") + ">Quest</option>";
+				if (highestZone >= 100) challengeDropdown += "<option value='Mayhem'" + ((MAZ == 'Mayhem') ? " selected='selected'" : "") + ">Mayhem</option>";
+				if (highestZone >= 105) challengeDropdown += "<option value='Storm'" + ((MAZ == 'Storm') ? " selected='selected'" : "") + ">Storm</option>";
+				if (highestZone >= 115) challengeDropdown += "<option value='Berserk'" + ((MAZ == 'Berserk') ? " selected='selected'" : "") + ">Berserk</option>";
+				if (highestZone >= 150) challengeDropdown += "<option value='Pandemonium'" + ((MAZ == 'Pandemonium') ? " selected='selected'" : "") + ">Pandemonium</option>";
+				if (highestZone >= 175) challengeDropdown += "<option value='Glass'" + ((MAZ == 'Glass') ? " selected='selected'" : "") + ">Glass</option>";
+				if (highestZone >= 201) challengeDropdown += "<option value='Smithless'" + ((MAZ == 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
+				return challengeDropdown;
+			}
+		}
+		else if (runType === 'Filler') {
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 40) challengeList.push("Bublé");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 55) challengeList.push("Melt");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 70) challengeList.push("Quagmire");
+			if (getPageSetting('rDisplayAllSettings') || highestZone > 90) challengeList.push("Archaeology");
+			if (getPageSetting('rDisplayAllSettings') || highestZone > 100) challengeList.push("Mayhem");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 110) challengeList.push("Insanity");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 135) challengeList.push("Nurture");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 150) challengeList.push("Pandemonium");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 155) challengeList.push("Alchemy");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 175) challengeList.push("Hypothermia");
+		}
+		else if (runType === 'C3') {
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 15) challengeList.push("Unlucky");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 20) challengeList.push("Downsize");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 25) challengeList.push("Transmute");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 35) challengeList.push("Unbalance");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 45) challengeList.push("Duel");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 60) challengeList.push("Trappapalooza");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 70) challengeList.push("Wither");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 85) challengeList.push("Quest");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 105) challengeList.push("Storm");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 115) challengeList.push("Berserk");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 175) challengeList.push("Glass");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 201) challengeList.push("Smithless");
+		}
+	}
+
+	return challengeList;
 }

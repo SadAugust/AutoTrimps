@@ -188,22 +188,20 @@ ul.tab li a:hover {
 }
 
 
-
-
-
-.windowDeleterMapFarm .icomoon,
-.windowDeleterTributeFarm .icomoon,
-.windowDeleterSmithyFarm .icomoon,
-.windowDeleterWorshipperFarm .icomoon,
-.windowDeleterMapBonus .icomoon,
-.windowDeleterBoneShrine .icomoon,
-.windowDeleterQuag .icomoon,
-.windowDeleterInsanity .icomoon,
-.windowDeleterAlch .icomoon,
-.windowDeleterHypo .icomoon,
-.windowDeleterHDFarm .icomoon,
-.windowDeleterVoidMap .icomoon,
-.windowDeleterRaiding .icomoon {
+.windowDeleteMapFarm .icomoon,
+.windowDeleteTributeFarm .icomoon,
+.windowDeleteSmithyFarm .icomoon,
+.windowDeleteWorshipperFarm .icomoon,
+.windowDeleteMapBonus .icomoon,
+.windowDeleteBoneShrine .icomoon,
+.windowDeleteQuag .icomoon,
+.windowDeleteInsanity .icomoon,
+.windowDeleteAlch .icomoon,
+.windowDeleteHypo .icomoon,
+.windowDeleteHDFarm .icomoon,
+.windowDeleteVoidMap .icomoon,
+.windowDeleteRaiding .icomoon,
+.windowDeleteBionicRaiding .icomoon {
 	position: relative;
 	top: 0.6vw;
 	left: -1vw;
@@ -213,131 +211,131 @@ ul.tab li a:hover {
 	padding-left: 1%;
 }
 
-.windowLevelOff .windowLevelrMapFarm,
-.windowLevelOff .windowLevelrTributeFarm,
-.windowLevelOff .windowLevelrSmithyFarm,
-.windowLevelOff .windowLevelrWorshipperFarm,
-.windowLevelOff .windowLevelrMapBonus,
-.windowLevelOff .windowLevelrQuag,
-.windowLevelOff .windowLevelrInsanity,
-.windowLevelOff .windowLevelrAlch,
-.windowLevelOff .windowLevelrHypo,
-.windowLevelOff .windowLevelrHDFarm {
+.windowLevelOff .windowLevelMapFarm,
+.windowLevelOff .windowLevelTributeFarm,
+.windowLevelOff .windowLevelSmithyFarm,
+.windowLevelOff .windowLevelWorshipperFarm,
+.windowLevelOff .windowLevelMapBonus,
+.windowLevelOff .windowLevelQuag,
+.windowLevelOff .windowLevelInsanity,
+.windowLevelOff .windowLevelAlch,
+.windowLevelOff .windowLevelHypo,
+.windowLevelOff .windowLevelHDFarm {
 	opacity: 0.3;
 	cursor: not-allowed;
 	pointer-events: none;
 	padding-left: 1%;
 }
 
-.windowLevelOn .windowLevelrMapFarm,
-.windowLevelOn .windowLevelrTributeFarm,
-.windowLevelOn .windowLevelrSmithyFarm,
-.windowLevelOn .windowLevelrWorshipperFarm,
-.windowLevelOn .windowLevelrMapBonus,
-.windowLevelOn .windowLevelrQuag,
-.windowLevelOn .windowLevelrInsanity,
-.windowLevelOn .windowLevelrAlch,
-.windowLevelOn .windowLevelrHypo,
-.windowLevelOn .windowLevelrHDFarm {
+.windowLevelOn .windowLevelMapFarm,
+.windowLevelOn .windowLevelTributeFarm,
+.windowLevelOn .windowLevelSmithyFarm,
+.windowLevelOn .windowLevelWorshipperFarm,
+.windowLevelOn .windowLevelMapBonus,
+.windowLevelOn .windowLevelQuag,
+.windowLevelOn .windowLevelInsanity,
+.windowLevelOn .windowLevelAlch,
+.windowLevelOn .windowLevelHypo,
+.windowLevelOn .windowLevelHDFarm {
 	opacity: 1;
 	padding-left: 1%;
 }
 
 /* Map Farm */
-.windowDeleterMapFarm,
-.windowActiverMapFarm,
-.windowWorldrMapFarm,
-.windowCellrMapFarm,
-.windowAutoLevelrMapFarm,
-.windowLevelrMapFarm,
-.windowJobRatiorMapFarm,
-.windowRepeatEveryrMapFarm,
-.windowEndZonerMapFarm,
-.windowSpecialrMapFarm,
-.windowRunTyperMapFarm {
+.windowDeleteMapFarm,
+.windowActiveMapFarm,
+.windowWorldMapFarm,
+.windowCellMapFarm,
+.windowAutoLevelMapFarm,
+.windowLevelMapFarm,
+.windowJobRatioMapFarm,
+.windowRepeatEveryMapFarm,
+.windowEndZoneMapFarm,
+.windowSpecialMapFarm,
+.windowRunTypeMapFarm {
 	display: inline-block;
 	padding-left: 1%;
 }
 
-.windowDeleterMapFarm {
+.windowDeleteMapFarm {
 	width: 0%;
 }
 
-.windowActiverMapFarm {
+.windowActiveMapFarm {
 	width: 6%;
 }
 
-.windowWorldrMapFarm {
+.windowWorldMapFarm {
 	width: 5%;
 }
 
-.windowCellrMapFarm {
+.windowCellMapFarm {
 	width: 5%;
 }
 
-.windowAutoLevelrMapFarm {
+.windowAutoLevelMapFarm {
 	width: 3%;
 }
 
-.windowLevelrMapFarm {
+.windowLevelMapFarm {
 	width: 5%;
 }
 
-.windowJobRatiorMapFarm {
+.windowJobRatioMapFarm {
 	width: 9%;
 }
 
-.windowRepeatEveryrMapFarm {
+.windowRepeatEveryMapFarm {
 	width: 6%;
 }
 
-.windowEndZonerMapFarm {
+.windowEndZoneMapFarm {
 	width: 5%;
 }
 
-.windowSpecialrMapFarm {
+.windowSpecialMapFarm {
 	width: 18%;
 }
 
-.windowRunTyperMapFarm {
+.windowRunTypeMapFarm {
 	width: 24%;
 }
 
-.windowChallengeOnrMapFarm .windowChallengerMapFarm,
-.windowChallenge3OnrMapFarm .windowChallenge3rMapFarm {
+.windowChallengeOnMapFarm .windowChallengeMapFarm,
+.windowChallenge3OnMapFarm .windowChallenge3MapFarm {
 	display: inline-block;
 	width: 12%;
 }
 
-.windowChallenge3OnrMapFarm .windowRunTyperMapFarm,
-.windowChallengeOnrMapFarm .windowRunTyperMapFarm {
+.windowChallenge3OnMapFarm .windowRunTypeMapFarm,
+.windowChallengeOnMapFarm .windowRunTypeMapFarm {
 	display: inline-block;
 	width: 12%;
 }
 
-.windowChallengeOffrMapFarm .windowChallengerMapFarm,
-.windowChallenge3OffrMapFarm .windowChallenge3rMapFarm {
+.windowChallengeOffMapFarm .windowChallengeMapFarm,
+.windowChallenge3OffMapFarm .windowChallenge3MapFarm {
 	display: none;
 }
 
-.windowGatherOn .windowSpecialrMapFarm {
+.windowGatherOn .windowSpecialMapFarm {
 	width: 10%;
 	padding-left: 1%;
 }
 
 /* Tribute Farm */
-.windowDeleterTributeFarm,
-.windowActiverTributeFarm,
-.windowWorldrTributeFarm,
-.windowCellrTributeFarm,
-.windowAutoLevelrTributeFarm,
-.windowLevelrTributeFarm,
-.windowJobRatiorTributeFarm,
-.windowRepeatEveryrTributeFarm,
-.windowEndZonerTributeFarm,
-.windowRunTyperTributeFarm,
-.windowMapTypeDropdownrTributeFarm,
-.windowMapTypeDropdownDefaultrTributeFarm,
+.windowDeleteTributeFarm,
+.windowActiveTributeFarm,
+.windowWorldTributeFarm,
+.windowCellTributeFarm,
+.windowAutoLevelTributeFarm,
+.windowLevelTributeFarm,
+.windowJobRatioTributeFarm,
+.windowRepeatEveryTributeFarm,
+.windowEndZoneTributeFarm,
+.windowRunTypeTributeFarm,
+.windowMapTypeDropdownTributeFarm,
+.windowMapTypeDropdownDefaultTributeFarm,
 .windowTributes,
 .windowMets,
 .windowBuildings {
@@ -345,48 +343,48 @@ ul.tab li a:hover {
 	padding-left: 1%;
 }
 
-.windowDeleterTributeFarm {
+.windowDeleteTributeFarm {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiverTributeFarm {
+.windowActiveTributeFarm {
 	width: 6%;
 }
 
-.windowWorldrTributeFarm {
+.windowWorldTributeFarm {
 	width: 5%;
 }
 
-.windowCellrTributeFarm {
+.windowCellTributeFarm {
 	width: 5%;
 }
 
-.windowAutoLevelrTributeFarm {
+.windowAutoLevelTributeFarm {
 	width: 4%;
 }
 
-.windowLevelrTributeFarm {
+.windowLevelTributeFarm {
 	width: 5%;
 }
 
-.windowJobRatiorTributeFarm {
+.windowJobRatioTributeFarm {
 	width: 7%;
 }
 
-.windowRepeatEveryrTributeFarm {
+.windowRepeatEveryTributeFarm {
 	width: 6%;
 }
 
-.windowEndZonerTributeFarm {
+.windowEndZoneTributeFarm {
 	width: 5%;
 }
 
-.windowMapTypeDropdownrTributeFarm {
+.windowMapTypeDropdownTributeFarm {
 	width: 10%;
 }
 
-.windowMapTypeDropdownDefaultrTributeFarm {
+.windowMapTypeDropdownDefaultTributeFarm {
 	width: 15%;
 }
 
@@ -399,70 +397,70 @@ ul.tab li a:hover {
 	width: 6%;
 }
 
-.windowRunTyperTributeFarm {
+.windowRunTypeTributeFarm {
 	width: 20%;
 }
 
-.windowChallengeOnrTributeFarm .windowChallengerTributeFarm,
-.windowChallenge3OnrTributeFarm .windowChallenge3rTributeFarm {
+.windowChallengeOnTributeFarm .windowChallengeTributeFarm,
+.windowChallenge3OnTributeFarm .windowChallenge3TributeFarm {
 	display: inline-block;
 	width: 10%;
 }
 
-.windowChallenge3OnrTributeFarm .windowRunTyperTributeFarm,
-.windowChallengeOnrTributeFarm .windowRunTyperTributeFarm {
+.windowChallenge3OnTributeFarm .windowRunTypeTributeFarm,
+.windowChallengeOnTributeFarm .windowRunTypeTributeFarm {
 	display: inline-block;
 	width: 10%;
 }
 
-.windowChallengeOffrTributeFarm .windowChallengerTributeFarm,
-.windowChallenge3OffrTributeFarm .windowChallenge3rTributeFarm {
+.windowChallengeOffTributeFarm .windowChallengeTributeFarm,
+.windowChallenge3OffTributeFarm .windowChallenge3TributeFarm {
 	display: none;
 }
 
 /* Smithy Farm */
-.windowDeleterSmithyFarm,
-.windowActiverSmithyFarm,
-.windowWorldrSmithyFarm,
-.windowCellrSmithyFarm,
-.windowAutoLevelrSmithyFarm,
-.windowLevelrSmithyFarm,
-.windowMapTypeDropdownrSmithyFarm,
-.windowMapTypeDropdownDefaultrSmithyFarm,
-.windowRunTyperSmithyFarm,
+.windowDeleteSmithyFarm,
+.windowActiveSmithyFarm,
+.windowWorldSmithyFarm,
+.windowCellSmithyFarm,
+.windowAutoLevelSmithyFarm,
+.windowLevelSmithyFarm,
+.windowMapTypeDropdownSmithyFarm,
+.windowMapTypeDropdownDefaultSmithyFarm,
+.windowRunTypeSmithyFarm,
 .windowSmithies,
 .windowMeltingPoint {
 	display: inline-block;
 	padding-left: 1%;
 }
 
-.windowDeleterSmithyFarm {
+.windowDeleteSmithyFarm {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiverSmithyFarm {
+.windowActiveSmithyFarm {
 	width: 8%;
 }
 
-.windowWorldrSmithyFarm {
+.windowWorldSmithyFarm {
 	width: 9%;
 }
 
-.windowCellrSmithyFarm {
+.windowCellSmithyFarm {
 	width: 9%;
 }
 
-.windowAutoLevelrSmithyFarm {
+.windowAutoLevelSmithyFarm {
 	width: 7%;
 }
 
-.windowLevelrSmithyFarm {
+.windowLevelSmithyFarm {
 	width: 9%;
 }
 
-.windowMapTypeDropdownrSmithyFarm,
-.windowMapTypeDropdownDefaultrSmithyFarm {
+.windowMapTypeDropdownSmithyFarm,
+.windowMapTypeDropdownDefaultSmithyFarm {
 	width: 13%;
 }
 
@@ -474,72 +472,72 @@ ul.tab li a:hover {
 	width: 7%;
 }
 
-.windowRunTyperSmithyFarm {
+.windowRunTypeSmithyFarm {
 	width: 28%;
 }
 
-.windowChallengeOnrSmithyFarm .windowChallengerSmithyFarm,
-.windowChallenge3OnrSmithyFarm .windowChallenge3rSmithyFarm {
+.windowChallengeOnSmithyFarm .windowChallengeSmithyFarm,
+.windowChallenge3OnSmithyFarm .windowChallenge3SmithyFarm {
 	display: inline-block;
 	width: 14%;
 }
 
-.windowChallenge3OnrSmithyFarm .windowRunTyperSmithyFarm,
-.windowChallengeOnrSmithyFarm .windowRunTyperSmithyFarm {
+.windowChallenge3OnSmithyFarm .windowRunTypeSmithyFarm,
+.windowChallengeOnSmithyFarm .windowRunTypeSmithyFarm {
 	display: inline-block;
 	width: 14%;
 }
 
-.windowChallengeOffrSmithyFarm .windowChallengerSmithyFarm,
-.windowChallenge3OffrSmithyFarm .windowChallenge3rSmithyFarm {
+.windowChallengeOffSmithyFarm .windowChallengeSmithyFarm,
+.windowChallenge3OffSmithyFarm .windowChallenge3SmithyFarm {
 	display: none;
 }
 
 /* Map Bonus */
-.windowDeleterMapBonus,
-.windowActiverMapBonus,
-.windowWorldrMapBonus,
-.windowCellrMapBonus,
-.windowAutoLevelrMapBonus,
-.windowLevelrMapBonus,
-.windowJobRatiorMapBonus,
-.windowSpecialrMapBonus,
-.windowRunTyperMapBonus,
+.windowDeleteMapBonus,
+.windowActiveMapBonus,
+.windowWorldMapBonus,
+.windowCellMapBonus,
+.windowAutoLevelMapBonus,
+.windowLevelMapBonus,
+.windowJobRatioMapBonus,
+.windowSpecialMapBonus,
+.windowRunTypeMapBonus,
 .windowMapStacks {
 	display: inline-block;
 	padding-left: 1%;
 }
 
-.windowDeleterMapBonus {
+.windowDeleteMapBonus {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiverMapBonus {
+.windowActiveMapBonus {
 	width: 8%;
 }
 
-.windowWorldrMapBonus {
+.windowWorldMapBonus {
 	width: 8%;
 }
 
-.windowCellrMapBonus {
+.windowCellMapBonus {
 	width: 8%;
 }
 
-.windowAutoLevelrMapBonus {
+.windowAutoLevelMapBonus {
 	width: 6%;
 }
 
-.windowLevelrMapBonus {
+.windowLevelMapBonus {
 	width: 8%;
 }
 
-.windowJobRatiorMapBonus {
+.windowJobRatioMapBonus {
 	width: 8%;
 }
 
-.windowSpecialrMapBonus {
+.windowSpecialMapBonus {
 	width: 20%;
 }
 
@@ -547,59 +545,59 @@ ul.tab li a:hover {
 	width: 8%;
 }
 
-.windowRunTyperMapBonus {
+.windowRunTypeMapBonus {
 	width: 25%;
 }
 
-.windowChallengeOnrMapBonus .windowChallengerMapBonus,
-.windowChallenge3OnrMapBonus .windowChallenge3rMapBonus {
+.windowChallengeOnMapBonus .windowChallengeMapBonus,
+.windowChallenge3OnMapBonus .windowChallenge3MapBonus {
 	display: inline-block;
 	width: 12%;
 }
 
-.windowChallenge3OnrMapBonus .windowRunTyperMapBonus,
-.windowChallengeOnrMapBonus .windowRunTyperMapBonus {
+.windowChallenge3OnMapBonus .windowRunTypeMapBonus,
+.windowChallengeOnMapBonus .windowRunTypeMapBonus {
 	display: inline-block;
 	width: 13%;
 }
 
-.windowChallengeOffrMapBonus .windowChallengerMapBonus,
-.windowChallenge3OffrMapBonus .windowChallenge3rMapBonus {
+.windowChallengeOffMapBonus .windowChallengeMapBonus,
+.windowChallenge3OffMapBonus .windowChallenge3MapBonus {
 	display: none;
 }
 
-.windowChallengeOffrMapBonus .windowChallengerMapBonus,
-.windowChallenge3OffrMapBonus .windowChallenge3rMapBonus {
+.windowChallengeOffMapBonus .windowChallengeMapBonus,
+.windowChallenge3OffMapBonus .windowChallenge3MapBonus {
 	display: none;
 }
 
 /* Raiding */
-.windowDeleterRaiding,
-.windowActiverRaiding,
-.windowWorldrRaiding,
-.windowCellrRaiding,
-.windowRunTyperRaiding,
+.windowDeleteRaiding,
+.windowActiveRaiding,
+.windowWorldRaiding,
+.windowCellRaiding,
+.windowRunTypeRaiding,
 .windowRaidingDropdown,
-.windowRaidingZone,
+.windowRaidingZoneRaiding,
 .windowRecycle {
 	display: inline-block;
 	padding-left: 1%;
 }
 
-.windowDeleterRaiding {
+.windowDeleteRaiding {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiverRaiding {
+.windowActiveRaiding {
 	width: 8%;
 }
 
-.windowWorldrRaiding {
+.windowWorldRaiding {
 	width: 14%;
 }
 
-.windowCellrRaiding {
+.windowCellRaiding {
 	width: 14%;
 }
 
@@ -607,7 +605,7 @@ ul.tab li a:hover {
 	width: 15%;
 }
 
-.windowRaidingZone {
+.windowRaidingZoneRaiding {
 	width: 14%;
 }
 
@@ -615,70 +613,128 @@ ul.tab li a:hover {
 	width: 15%;
 }
 
-.windowRunTyperRaiding {
+.windowRunTypeRaiding {
 	width: 34%;
 }
 
-.windowChallengeOnrRaiding .windowChallengerRaiding,
-.windowChallenge3OnrRaiding .windowChallenge3rRaiding {
+.windowChallengeOnRaiding .windowChallengeRaiding,
+.windowChallenge3OnRaiding .windowChallenge3Raiding {
 	display: inline-block;
 	width: 17%;
 }
 
-.windowChallenge3OnrRaiding .windowRunTyperRaiding,
-.windowChallengeOnrRaiding .windowRunTyperRaiding {
+.windowChallenge3OnRaiding .windowRunTypeRaiding,
+.windowChallengeOnRaiding .windowRunTypeRaiding {
 	display: inline-block;
 	width: 17%;
 }
 
-.windowChallengeOffrRaiding .windowChallengerRaiding,
-.windowChallenge3OffrRaiding .windowChallenge3rRaiding {
+.windowChallengeOffRaiding .windowChallengeRaiding,
+.windowChallenge3OffRaiding .windowChallenge3Raiding {
 	display: none;
 }
 
-/* HD Farm */
-.windowDeleterHDFarm,
-.windowActiverHDFarm,
-.windowWorldrHDFarm,
-.windowCellrHDFarm,
-.windowAutoLevelrHDFarm,
-.windowLevelrHDFarm,
-.windowEndZonerHDFarm,
-.windowHDMult,
-.windowHDBase,
-.windowRunTyperHDFarm,
-.windowChallengeOn .windowChallengerHDFarm,
-.windowChallenge3On .windowChallenge3rHDFarm {
+/* Bionic Raiding */
+.windowDeleteBionicRaiding,
+.windowActiveBionicRaiding,
+.windowWorldBionicRaiding,
+.windowCellBionicRaiding,
+.windowRepeatEveryBionicRaiding,
+.windowRunTypeBionicRaiding,
+.windowRaidingZoneBionicRaiding {
 	display: inline-block;
 	padding-left: 1%;
 }
 
-.windowDeleterHDFarm {
+.windowDeleteBionicRaiding {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiverHDFarm {
+.windowActiveBionicRaiding {
+	width: 9%;
+}
+
+.windowWorldBionicRaiding {
+	width: 14%;
+}
+
+.windowCellBionicRaiding {
+	width: 14%;
+}
+
+.windowRepeatEveryBionicRaiding {
+	width: 14%;
+}
+
+.windowRaidingZoneBionicRaiding {
+	width: 14%;
+}
+
+.windowRunTypeBionicRaiding {
+	width: 34%;
+}
+
+.windowChallengeOnBionicRaiding .windowChallengeBionicRaiding,
+.windowChallenge3OnBionicRaiding .windowChallenge3BionicRaiding {
+	display: inline-block;
+	width: 17%;
+}
+
+.windowChallenge3OnBionicRaiding .windowRunTypeBionicRaiding,
+.windowChallengeOnBionicRaiding .windowRunTypeBionicRaiding {
+	display: inline-block;
+	width: 17%;
+}
+
+.windowChallengeOffBionicRaiding .windowChallengeBionicRaiding,
+.windowChallenge3OffBionicRaiding .windowChallenge3BionicRaiding {
+	display: none;
+}
+
+/* HD Farm */
+.windowDeleteHDFarm,
+.windowActiveHDFarm,
+.windowWorldHDFarm,
+.windowCellHDFarm,
+.windowAutoLevelHDFarm,
+.windowLevelHDFarm,
+.windowEndZoneHDFarm,
+.windowHDMult,
+.windowHDBase,
+.windowRunTypeHDFarm,
+.windowChallengeOn .windowChallengeHDFarm,
+.windowChallenge3On .windowChallenge3HDFarm {
+	display: inline-block;
+	padding-left: 1%;
+}
+
+.windowDeleteHDFarm {
+	width: 0%;
+	cursor: pointer;
+}
+
+.windowActiveHDFarm {
 	width: 7%;
 }
 
-.windowWorldrHDFarm {
+.windowWorldHDFarm {
 	width: 10%;
 }
 
-.windowCellrHDFarm {
+.windowCellHDFarm {
 	width: 10%;
 }
 
-.windowAutoLevelrHDFarm {
+.windowAutoLevelHDFarm {
 	width: 6%;
 }
 
-.windowLevelrHDFarm {
+.windowLevelHDFarm {
 	width: 10%;
 }
 
-.windowEndZonerHDFarm {
+.windowEndZoneHDFarm {
 	width: 10%;
 }
 
@@ -687,78 +743,78 @@ ul.tab li a:hover {
 	width: 10%;
 }
 
-.windowRunTyperHDFarm {
+.windowRunTypeHDFarm {
 	width: 26%;
 }
 
-.windowChallengeOnrHDFarm .windowChallengerHDFarm,
-.windowChallenge3OnrHDFarm .windowChallenge3rHDFarm {
+.windowChallengeOnHDFarm .windowChallengeHDFarm,
+.windowChallenge3OnHDFarm .windowChallenge3HDFarm {
 	display: inline-block;
 	width: 13%;
 }
 
-.windowChallenge3OnrHDFarm .windowRunTyperHDFarm,
-.windowChallengeOnrHDFarm .windowRunTyperHDFarm {
+.windowChallenge3OnHDFarm .windowRunTypeHDFarm,
+.windowChallengeOnHDFarm .windowRunTypeHDFarm {
 	display: inline-block;
 	width: 13%;
 }
 
-.windowChallengeOffrHDFarm .windowChallengerHDFarm,
-.windowChallenge3OffrHDFarm .windowChallenge3rHDFarm {
+.windowChallengeOffHDFarm .windowChallengeHDFarm,
+.windowChallenge3OffHDFarm .windowChallenge3HDFarm {
 	display: none;
 }
 
 /* Worshipper Farm */
-.windowDeleterWorshipperFarm,
-.windowActiverWorshipperFarm,
-.windowWorldrWorshipperFarm,
-.windowAutoLevelrWorshipperFarm,
-.windowLevelrWorshipperFarm,
-.windowJobRatiorWorshipperFarm,
-.windowRepeatEveryrWorshipperFarm,
-.windowEndZonerWorshipperFarm,
-.windowRunTyperWorshipperFarm,
+.windowDeleteWorshipperFarm,
+.windowActiveWorshipperFarm,
+.windowWorldWorshipperFarm,
+.windowAutoLevelWorshipperFarm,
+.windowLevelWorshipperFarm,
+.windowJobRatioWorshipperFarm,
+.windowRepeatEveryWorshipperFarm,
+.windowEndZoneWorshipperFarm,
+.windowRunTypeWorshipperFarm,
 .windowWorshipper,
-.windowCellrWorshipperFarm {
+.windowCellWorshipperFarm {
 	display: inline-block;
 	padding-left: 1%;
 }
 
 
-.windowDeleterWorshipperFarm {
+.windowDeleteWorshipperFarm {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiverWorshipperFarm {
+.windowActiveWorshipperFarm {
 	width: 6%;
 }
 
-.windowWorldrWorshipperFarm {
+.windowWorldWorshipperFarm {
 	width: 9%;
 }
 
-.windowCellrWorshipperFarm {
+.windowCellWorshipperFarm {
 	width: 9%;
 }
 
-.windowAutoLevelrWorshipperFarm {
+.windowAutoLevelWorshipperFarm {
 	width: 5%;
 }
 
-.windowLevelrWorshipperFarm {
+.windowLevelWorshipperFarm {
 	width: 9%;
 }
 
-.windowJobRatiorWorshipperFarm {
+.windowJobRatioWorshipperFarm {
 	width: 9%;
 }
 
-.windowRepeatEveryrWorshipperFarm {
+.windowRepeatEveryWorshipperFarm {
 	width: 9%;
 }
 
-.windowEndZonerWorshipperFarm {
+.windowEndZoneWorshipperFarm {
 	width: 9%;
 }
 
@@ -766,35 +822,35 @@ ul.tab li a:hover {
 	width: 9%;
 }
 
-.windowRunTyperWorshipperFarm {
+.windowRunTypeWorshipperFarm {
 	width: 25%;
 }
 
-.windowChallengeOnrWorshipperFarm .windowChallengerWorshipperFarm,
-.windowChallenge3OnrWorshipperFarm .windowChallenge3rWorshipperFarm {
+.windowChallengeOnWorshipperFarm .windowChallengeWorshipperFarm,
+.windowChallenge3OnWorshipperFarm .windowChallenge3WorshipperFarm {
 	display: inline-block;
 	width: 12%;
 }
 
-.windowChallenge3OnrWorshipperFarm .windowRunTyperWorshipperFarm,
-.windowChallengeOnrWorshipperFarm .windowRunTyperWorshipperFarm {
+.windowChallenge3OnWorshipperFarm .windowRunTypeWorshipperFarm,
+.windowChallengeOnWorshipperFarm .windowRunTypeWorshipperFarm {
 	display: inline-block;
 	width: 13%;
 }
 
-.windowChallengeOffrWorshipperFarm .windowChallengerWorshipperFarm,
-.windowChallenge3OffrWorshipperFarm .windowChallenge3rWorshipperFarm {
+.windowChallengeOffWorshipperFarm .windowChallengeWorshipperFarm,
+.windowChallenge3OffWorshipperFarm .windowChallenge3WorshipperFarm {
 	display: none;
 }
 
 /* Bone Shrine */
-.windowDeleterBoneShrine,
-.windowActiverBoneShrine,
-.windowWorldrBoneShrine,
-.windowCellrBoneShrine,
-.windowJobRatiorBoneShrine,
-.windowSpecialrBoneShrine,
-.windowRunTyperBoneShrine,
+.windowDeleteBoneShrine,
+.windowActiveBoneShrine,
+.windowWorldBoneShrine,
+.windowCellBoneShrine,
+.windowJobRatioBoneShrine,
+.windowSpecialBoneShrine,
+.windowRunTypeBoneShrine,
 .windowBoneBelow,
 .windowBoneAmount,
 .windowBoneGather {
@@ -802,28 +858,28 @@ ul.tab li a:hover {
 	padding-left: 1%;
 }
 
-.windowDeleterBoneShrine {
+.windowDeleteBoneShrine {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiverBoneShrine {
+.windowActiveBoneShrine {
 	width: 7%;
 }
 
-.windowWorldrBoneShrine {
+.windowWorldBoneShrine {
 	width: 10%;
 }
 
-.windowCellrBoneShrine {
+.windowCellBoneShrine {
 	width: 10%;
 }
 
-.windowJobRatiorBoneShrine {
+.windowJobRatioBoneShrine {
 	width: 11%;
 }
 
-.windowSpecialrBoneShrine {
+.windowSpecialBoneShrine {
 	width: 24%;
 }
 
@@ -836,59 +892,59 @@ ul.tab li a:hover {
 	width: 10%;
 }
 
-.windowRunTyperBoneShrine {
+.windowRunTypeBoneShrine {
 	width: 25%;
 }
 
 .windowShredOn .windowShred,
-.windowChallengeOnrBoneShrine .windowChallengerBoneShrine,
-.windowChallenge3OnrBoneShrine .windowChallenge3rBoneShrine {
+.windowChallengeOnBoneShrine .windowChallengeBoneShrine,
+.windowChallenge3OnBoneShrine .windowChallenge3BoneShrine {
 	display: inline-block;
 	width: 12%;
 }
 
-.windowShredOn .windowRunTyperBoneShrine,
-.windowChallenge3OnrBoneShrine .windowRunTyperBoneShrine,
-.windowChallengeOnrBoneShrine .windowRunTyperBoneShrine {
+.windowShredOn .windowRunTypeBoneShrine,
+.windowChallenge3OnBoneShrine .windowRunTypeBoneShrine,
+.windowChallengeOnBoneShrine .windowRunTypeBoneShrine {
 	display: inline-block;
 	width: 13%;
 }
 
 .windowShredOff .windowShred,
-.windowChallengeOffrBoneShrine .windowChallengerBoneShrine,
-.windowChallenge3OffrBoneShrine .windowChallenge3rBoneShrine {
+.windowChallengeOffBoneShrine .windowChallengeBoneShrine,
+.windowChallenge3OffBoneShrine .windowChallenge3BoneShrine {
 	display: none;
 }
 
 /* Quagmire */
-.windowDeleterQuag,
-.windowActiverQuag,
-.windowWorldrQuag,
-.windowCellrQuag,
-.windowJobRatiorQuag,
+.windowDeleteQuag,
+.windowActiveQuag,
+.windowWorldQuag,
+.windowCellQuag,
+.windowJobRatioQuag,
 .windowBogs {
 	display: inline-block;
 	padding-left: 1%;
 }
 
-.windowDeleterQuag {
+.windowDeleteQuag {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiverQuag {
+.windowActiveQuag {
 	width: 11%;
 }
 
-.windowWorldrQuag {
+.windowWorldQuag {
 	width: 21%;
 }
 
-.windowCellrQuag {
+.windowCellQuag {
 	width: 21%;
 }
 
-.windowJobRatiorQuag {
+.windowJobRatioQuag {
 	width: 24%;
 }
 
@@ -897,48 +953,48 @@ ul.tab li a:hover {
 }
 
 /* Insanity */
-.windowDeleterInsanity,
-.windowActiverInsanity,
-.windowWorldrInsanity,
-.windowCellrInsanity,
-.windowAutoLevelrInsanity,
-.windowLevelrInsanity,
-.windowJobRatiorInsanity,
-.windowSpecialrInsanity,
+.windowDeleteInsanity,
+.windowActiveInsanity,
+.windowWorldInsanity,
+.windowCellInsanity,
+.windowAutoLevelInsanity,
+.windowLevelInsanity,
+.windowJobRatioInsanity,
+.windowSpecialInsanity,
 .windowInsanity {
 	display: inline-block;
 	padding-left: 1%;
 }
 
-.windowDeleterInsanity {
+.windowDeleteInsanity {
 	width: 0%;
 }
 
-.windowActiverInsanity {
+.windowActiveInsanity {
 	width: 8%;
 }
 
-.windowWorldrInsanity {
+.windowWorldInsanity {
 	width: 10%;
 }
 
-.windowCellrInsanity {
+.windowCellInsanity {
 	width: 10%;
 }
 
-.windowAutoLevelrInsanity {
+.windowAutoLevelInsanity {
 	width: 5%;
 }
 
-.windowLevelrInsanity {
+.windowLevelInsanity {
 	width: 10%;
 }
 
-.windowJobRatiorInsanity {
+.windowJobRatioInsanity {
 	width: 12%;
 }
 
-.windowSpecialrInsanity {
+.windowSpecialInsanity {
 	width: 28%;
 }
 
@@ -947,51 +1003,51 @@ ul.tab li a:hover {
 }
 
 /* Alchemy */
-.windowDeleterAlch,
-.windowActiverAlch,
-.windowWorldrAlch,
-.windowCellrAlch,
-.windowAutoLevelrAlch,
-.windowLevelrAlch,
-.windowJobRatiorAlch,
-.windowSpecialrAlch,
+.windowDeleteAlch,
+.windowActiveAlch,
+.windowWorldAlch,
+.windowCellAlch,
+.windowAutoLevelAlch,
+.windowLevelAlch,
+.windowJobRatioAlch,
+.windowSpecialAlch,
 .windowPotionNumber,
 .windowPotionType {
 	display: inline-block;
 	padding-left: 1%;
 }
 
-.windowDeleterAlch {
+.windowDeleteAlch {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiverAlch {
+.windowActiveAlch {
 	width: 7%;
 }
 
 
-.windowWorldrAlch {
+.windowWorldAlch {
 	width: 7%;
 }
 
-.windowCellrAlch {
+.windowCellAlch {
 	width: 7%;
 }
 
-.windowAutoLevelrAlch {
+.windowAutoLevelAlch {
 	width: 6%;
 }
 
-.windowLevelrAlch {
+.windowLevelAlch {
 	width: 7%;
 }
 
-.windowJobRatiorAlch {
+.windowJobRatioAlch {
 	width: 11%;
 }
 
-.windowSpecialrAlch {
+.windowSpecialAlch {
 	width: 26%;
 }
 
@@ -1004,13 +1060,13 @@ ul.tab li a:hover {
 }
 
 /* Hypothermia */
-.windowDeleterHypo,
-.windowActiverHypo,
-.windowWorldrHypo,
-.windowCellrHypo,
-.windowAutoLevelrHypo,
-.windowLevelrHypo,
-.windowJobRatiorHypo,
+.windowDeleteHypo,
+.windowActiveHypo,
+.windowWorldHypo,
+.windowCellHypo,
+.windowAutoLevelHypo,
+.windowLevelHypo,
+.windowJobRatioHypo,
 .windowBonfire,
 .windowFrozenCastle,
 .windowStorage,
@@ -1019,32 +1075,32 @@ ul.tab li a:hover {
 	padding-left: 1%;
 }
 
-.windowDeleterHypo {
+.windowDeleteHypo {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiverHypo {
+.windowActiveHypo {
 	width: 10%;
 }
 
-.windowWorldrHypo {
+.windowWorldHypo {
 	width: 16%;
 }
 
-.windowCellrHypo {
+.windowCellHypo {
 	width: 16%;
 }
 
-.windowAutoLevelrHypo {
+.windowAutoLevelHypo {
 	width: 8%;
 }
 
-.windowLevelrHypo {
+.windowLevelHypo {
 	width: 16%;
 }
 
-.windowJobRatiorHypo {
+.windowJobRatioHypo {
 	width: 21%;
 }
 
@@ -1065,29 +1121,29 @@ ul.tab li a:hover {
 }
 
 /* Void Map */
-.windowDeleterVoidMap,
-.windowActiverVoidMap,
-.windowWorldrVoidMap,
+.windowDeleteVoidMap,
+.windowActiveVoidMap,
+.windowWorldVoidMap,
 .windowMaxVoidZone,
-.windowCellrVoidMap,
-.windowJobRatiorVoidMap,
-.windowRunTyperVoidMap,
+.windowCellVoidMap,
+.windowJobRatioVoidMap,
+.windowRunTypeVoidMap,
 .windowPortalAfter,
 .windowVoidHDRatio {
 	display: inline-block;
 	padding-left: 1%;
 }
 
-.windowDeleterVoidMap {
+.windowDeleteVoidMap {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiverVoidMap {
+.windowActiveVoidMap {
 	width: 8%;
 }
 
-.windowWorldrVoidMap {
+.windowWorldVoidMap {
 	width: 10%;
 }
 
@@ -1099,7 +1155,7 @@ ul.tab li a:hover {
 	width: 10%;
 }
 
-.windowCellrVoidMap {
+.windowCellVoidMap {
 	width: 10%;
 }
 
@@ -1107,28 +1163,28 @@ ul.tab li a:hover {
 	width: 7%;
 }
 
-.windowJobRatiorVoidMap {
+.windowJobRatioVoidMap {
 	width: 10%;
 }
 
-.windowRunTyperVoidMap {
+.windowRunTypeVoidMap {
 	width: 24%;
 }
 
-.windowChallengeOnrVoidMap .windowChallengerVoidMap,
-.windowChallenge3OnrVoidMap .windowChallenge3rVoidMap {
+.windowChallengeOnVoidMap .windowChallengeVoidMap,
+.windowChallenge3OnVoidMap .windowChallenge3VoidMap {
 	display: inline-block;
 	width: 12%;
 }
 
-.windowChallenge3OnrVoidMap .windowRunTyperVoidMap,
-.windowChallengeOnrVoidMap .windowRunTyperVoidMap {
+.windowChallenge3OnVoidMap .windowRunTypeVoidMap,
+.windowChallengeOnVoidMap .windowRunTypeVoidMap {
 	display: inline-block;
 	width: 12%;
 }
 
-.windowChallengeOffrVoidMap .windowChallengerVoidMap,
-.windowChallenge3OffrVoidMap .windowChallenge3rVoidMap {
+.windowChallengeOffVoidMap .windowChallengeVoidMap,
+.windowChallenge3OffVoidMap .windowChallenge3VoidMap {
 	display: none;
 }
 
@@ -1152,11 +1208,11 @@ ul.tab li a:hover {
 	width: 6%;
 }
 
-.windowGatherOn .windowSpecialrMapBonus {
+.windowGatherOn .windowSpecialMapBonus {
 	width: 15%;
 }
 
-.windowGatherOn .windowSpecialrAlch {
+.windowGatherOn .windowSpecialAlch {
 	width: 16%;
 }
 

@@ -184,6 +184,19 @@ function mainLoop() {
 		setTitle();
 	}
 
+	//Heirloom Shield Swap Check
+	if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
+	//Initiate Farming Code
+	rMapSettings = FarmingDecision();
+	rCurrentMap = rMapSettings.mapName;
+	//RCore
+	//AutoMaps
+	if (oneSecondInterval) {
+		HDRatio = game.global.universe === 1 ? calcHDratio() : RcalcHDratio();
+		voidHDRatio = game.global.universe === 1 ? calcVoidHDratio() : rCalcVoidHDratio();
+		autoLevel = autoMapLevel();
+	}
+
 	//Logic for Universe 1
 	if (game.global.universe == 1) {
 
@@ -266,18 +279,6 @@ function mainLoop() {
 		if (getPageSetting('SpireBreedTimer') > 0 && getPageSetting('IgnoreSpiresUntil') <= game.global.world) ATspirebreed();
 		if (getPageSetting('spireshitbuy') == true && (isActiveSpireAT() || disActiveSpireAT())) buyshitspire();
 
-		//Raiding
-		if ((getPageSetting('PraidHarder') == true && getPageSetting('Praidingzone').length > 0 && game.global.challengeActive != "Daily") || (getPageSetting('dPraidHarder') == true && getPageSetting('dPraidingzone').length > 0 && game.global.challengeActive == "Daily")) PraidHarder();
-		else {
-			if (getPageSetting('Praidingzone').length && game.global.challengeActive != "Daily") Praiding();
-			if (getPageSetting('dPraidingzone').length && game.global.challengeActive == "Daily") dailyPraiding();
-		}
-		if (((getPageSetting('BWraid') && game.global.challengeActive != "Daily") || (getPageSetting('Dailybwraid') && game.global.challengeActive == "Daily"))) {
-			BWraiding();
-		}
-		if ((getPageSetting('BWraid') == true || getPageSetting('DailyBWraid') == true) && bwraidon) buyWeps();
-		if (game.global.mapsActive && getPageSetting('game.global.universe == 1 && BWraid') == true && game.global.world == getPageSetting('BWraidingz') && getCurrentMapObject().level <= getPageSetting('BWraidingmax')) buyWeps();
-
 		//Golden
 		var agu = game.global.runningChallengeSquared ? getPageSetting('cAutoGoldenUpgrades') :
 			game.global.challengeActive == "Daily" ? getPageSetting('dAutoGoldenUpgrades') :
@@ -290,18 +291,6 @@ function mainLoop() {
 
 		//Offline Progress
 		if (!usingRealTimeOffline) RsetScienceNeeded();
-
-		//Heirloom Shield Swap Check
-		if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
-		//Initiate Farming Code
-		rMapSettings = FarmingDecision();
-		//RCore
-		//AutoMaps
-		if (oneSecondInterval) {
-			HDRatio = RcalcHDratio();
-			voidHDRatio = rCalcVoidHDratio();
-			autoLevel = autoMapLevel();
-		}
 		if (getPageSetting('RAutoMaps') > 0 && game.global.mapsUnlocked) RautoMap();
 		//Status - AutoMaps
 		if (getPageSetting('Rshowautomapstatus')) RupdateAutoMapsStatus();

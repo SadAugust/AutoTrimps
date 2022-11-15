@@ -1,39 +1,91 @@
 //Unique Maps
 const uniqueMaps = {
+	//Universe 1 Unique Maps
+	'The Block': {
+		zone: 11,
+		challenges: ["Scientist", "Trimp"],
+		speedrun: 'blockTimed',
+		universe: 1
+	},
+	'The Wall': {
+		zone: 15,
+		challenges: [],
+		speedrun: 'wallTimed',
+		universe: 1
+	},
+	'Dimension of Anger': {
+		zone: 20,
+		challenges: ["Discipline", "Metal", "Size", "Frugal", "Coordinate"],
+		speedrun: 'angerTimed',
+		universe: 1
+	},
+	'Trimple Of Doom': {
+		zone: 33,
+		challenges: ["Meditate", "Anger"],
+		speedrun: 'doomTimed',
+		universe: 1
+	},
+	'The Prison': {
+		zone: 80,
+		challenges: ["Electricity", "Mapocalypse"],
+		speedrun: 'prisonTimed',
+		universe: 1
+	},
+	'Imploding Star': {
+		zone: 170,
+		challenges: ["Devastation"],
+		speedrun: 'starTimed',
+		universe: 1
+	},
+	'Bionic Wonderland': {
+		zone: 125,
+		challenges: ["Crushed"],
+		speedrun: 'bionicTimed',
+		universe: 1
+	},
+
+	//Universe 2 Unique Maps
 	'Big Wall': {
 		zone: 8,
 		challenges: [""],
-		speedrun: 'bigWallTimed'
+		speedrun: 'bigWallTimed',
+		universe: 2
 	},
 	'Dimension of Rage': {
 		zone: 15,
 		challenges: ["Unlucky"],
-		speedrun: ''
+		speedrun: '',
+		universe: 2
 	},
 	'Prismatic Palace': {
 		zone: 20,
 		challenges: [""],
-		speedrun: 'palaceTimed'
+		speedrun: 'palaceTimed',
+		universe: 2
 	},
 	'Atlantrimp': {
 		zone: 33,
 		challenges: [""],
-		speedrun: 'atlantrimpTimed'
+		speedrun: 'atlantrimpTimed',
+		universe: 2
 	},
 	'Melting Point': {
 		zone: 55,
 		challenges: [""],
-		speedrun: 'meltingTimed'
+		speedrun: 'meltingTimed',
+		universe: 2
 	},
 	'The Black Bog': {
 		zone: 6,
 		challenges: [""],
-		speedrun: ''
+		speedrun: '',
+		universe: 2
 	},
 	'Frozen Castle': {
 		zone: 174,
 		challenges: [""],
-		speedrun: 'starTimed'
+		speedrun: 'starTimed',
+		universe: 2
 	}
 };
 
@@ -45,6 +97,8 @@ function shouldRunUniqueMap(map) {
 	const mapData = uniqueMaps[map.name];
 	const uniqueMapSetting = autoTrimpSettings.rUniqueMapSettingsArray.value;
 
+	if (game.global.universe !== mapData.universe)
+		return false;
 	if (mapData === undefined || game.global.world < mapData.zone) {
 		return false;
 	}
@@ -54,60 +108,92 @@ function shouldRunUniqueMap(map) {
 	if (mapData.speedrun && shouldSpeedRun(game.achievements[mapData.speedrun])) {
 		return true;
 	}
-	if (rCurrentMap === 'rQuagmireFarm' && map.name === 'The Black Bog') {
-		return true;
-	} else if (map.name === 'Big Wall') {
-		// we need Bounty
-		if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
+	if (game.global.world === 1) {
+		if (map.name === 'The Block') {
+			//We need Shieldblock
+			if (!game.upgrades.Shieldblock.allowed && getPageSetting('BuyShieldblock')) {
+				return true;
+			}
+		} else if (map.name === 'The Wall') {
+			//We need Bounty
+			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
+				return true;
+			}
+		} else if (map.name === 'Dimension of Anger') {
+			//Unlock the portal
+			if (!game.talents.portal.purchased && document.getElementById("portalBtn").style.display === "none") {
+				return true;
+			}
+		} else if (map.name === 'Trimple Of Doom') {
+			if (game.portal.Relentlessness.locked) {
+				//Unlock the Relentlessness perk
+				return true;
+			}
+			//Maybe get the treasure
+			const trimpleZ = Math.abs(getPageSetting('TrimpleZ'));
+			if (trimpleZ >= 33 && game.global.world >= trimpleZ && game.mapUnlocks.AncientTreasure.canRunOnce) {
+				if (getPageSetting('TrimpleZ') < 0) {
+					setPageSetting('TrimpleZ', 0);
+				}
+				return true;
+			}
+		}
+	} else if (game.global.world === 2) {
+		if (rCurrentMap === 'rQuagmireFarm' && map.name === 'The Black Bog') {
 			return true;
 		}
-	} else if (map.name === 'Dimension of Rage') {
-		// unlock the portal
-		if (document.getElementById("portalBtn").style.display === "none" && game.upgrades.Rage.done == 1 && uniqueMapSetting.Dimension_of_Rage.enabled && game.global.world >= uniqueMapSetting.Dimension_of_Rage.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Rage.cell) {
-			return true;
-		}
-	} else if (map.name === 'Prismatic Palace') {
-		// we need Shieldblock
-		if (game.mapUnlocks.Prismalicious.canRunOnce && uniqueMapSetting.Prismatic_Palace.enabled && game.global.world >= uniqueMapSetting.Prismatic_Palace.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Prismatic_Palace.cell) {
-			return true;
-		}
-	} else if (map.name === 'Atlantrimp') {
-		// maybe get the treasure
-		if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Atlantrimp.enabled && game.global.world >= uniqueMapSetting.Atlantrimp.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Atlantrimp.cell) {
-			if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running Atlantrimp on zone ' + game.global.world + '.')
-			return true;
-		}
-	} else if (map.name === 'Melting Point') {
-		const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
-		const woodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
-		const smithyShred = woodShred || metalShred;
-		// maybe get extra smithiesvar 
-		meltsmithy =
-			game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') :
-				isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
-					isDaily && !smithyShred && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
-						isDaily && smithyShred && uniqueMapSetting.MP_Smithy_Daily_Shred.enabled && uniqueMapSetting.MP_Smithy_Daily_Shred.value > 0 ? uniqueMapSetting.MP_Smithy_Daily_Shred.value :
-							!isC3 && !isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
-								Infinity;
-		if (game.mapUnlocks.SmithFree.canRunOnce &&
-			((!isC3 && !isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world >= uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
-				(meltsmithy !== Infinity && meltsmithy <= game.buildings.Smithy.owned))) {
-			if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive)
-				debug('Running Melting Point at ' + game.buildings.Smithy.owned + ' smithies on zone ' + game.global.world + '.')
-			return true;
-		}
-	} else if (map.name === 'Frozen Castle') {
-		// maybe get the treasure
-		var frozencastle = game.global.challengeActive !== 'Hypothermia' && uniqueMapSetting.Frozen_Castle.enabled && game.global.world >= uniqueMapSetting.Frozen_Castle.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Frozen_Castle.cell;
-		var hypothermia = game.global.challengeActive === 'Hypothermia' && !VoidMaps().shouldRun &&
-			game.global.world >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0]) : 200) &&
-			game.global.lastClearedCell + 2 >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1]) : 99);
-		if (frozencastle || hypothermia) {
-			if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running Frozen Castle on zone ' + game.global.world + '.')
-			return true;
+		else if (map.name === 'Big Wall') {
+			// we need Bounty
+			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
+				return true;
+			}
+		} else if (map.name === 'Dimension of Rage') {
+			// unlock the portal
+			if (document.getElementById("portalBtn").style.display === "none" && game.upgrades.Rage.done == 1 && uniqueMapSetting.Dimension_of_Rage.enabled && game.global.world >= uniqueMapSetting.Dimension_of_Rage.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Rage.cell) {
+				return true;
+			}
+		} else if (map.name === 'Prismatic Palace') {
+			// we need Shieldblock
+			if (game.mapUnlocks.Prismalicious.canRunOnce && uniqueMapSetting.Prismatic_Palace.enabled && game.global.world >= uniqueMapSetting.Prismatic_Palace.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Prismatic_Palace.cell) {
+				return true;
+			}
+		} else if (map.name === 'Atlantrimp') {
+			// maybe get the treasure
+			if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Atlantrimp.enabled && game.global.world >= uniqueMapSetting.Atlantrimp.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Atlantrimp.cell) {
+				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running Atlantrimp on zone ' + game.global.world + '.')
+				return true;
+			}
+		} else if (map.name === 'Melting Point') {
+			const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+			const woodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
+			const smithyShred = woodShred || metalShred;
+			// maybe get extra smithiesvar 
+			meltsmithy =
+				game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') :
+					isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
+						isDaily && !smithyShred && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
+							isDaily && smithyShred && uniqueMapSetting.MP_Smithy_Daily_Shred.enabled && uniqueMapSetting.MP_Smithy_Daily_Shred.value > 0 ? uniqueMapSetting.MP_Smithy_Daily_Shred.value :
+								!isC3 && !isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
+									Infinity;
+			if (game.mapUnlocks.SmithFree.canRunOnce &&
+				((!isC3 && !isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world >= uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
+					(meltsmithy !== Infinity && meltsmithy <= game.buildings.Smithy.owned))) {
+				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive)
+					debug('Running Melting Point at ' + game.buildings.Smithy.owned + ' smithies on zone ' + game.global.world + '.')
+				return true;
+			}
+		} else if (map.name === 'Frozen Castle') {
+			// maybe get the treasure
+			var frozencastle = game.global.challengeActive !== 'Hypothermia' && uniqueMapSetting.Frozen_Castle.enabled && game.global.world >= uniqueMapSetting.Frozen_Castle.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Frozen_Castle.cell;
+			var hypothermia = game.global.challengeActive === 'Hypothermia' && !VoidMaps().shouldRun &&
+				game.global.world >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0]) : 200) &&
+				game.global.lastClearedCell + 2 >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1]) : 99);
+			if (frozencastle || hypothermia) {
+				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running Frozen Castle on zone ' + game.global.world + '.')
+				return true;
+			}
 		}
 	}
-
 	return false;
 }
 
@@ -173,13 +259,14 @@ function VoidMaps() {
 		mapName: mapName
 	};
 
-	if (!autoTrimpSettings.rVoidMapDefaultSettings.value.active) return farmingDetails;
+	if (game.global.universe === 1 && !autoTrimpSettings.hVoidMapDefaultSettings.value.active) return farmingDetails;
+	if (game.global.universe === 2 && !autoTrimpSettings.rVoidMapDefaultSettings.value.active) return farmingDetails;
 	var module = MODULES['mapFunctions'];
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
-	const dailyReduction = isDaily ? dailyModiferReduction() : 0;
+	const dailyReduction = isDaily && game.global.universe === 2 ? dailyModiferReduction() : 0;
 	const currChall = game.global.challengeActive;
-	const rVMBaseSettings = autoTrimpSettings.rVoidMapSettings.value;
+	const rVMBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hVoidMapSettings.value : autoTrimpSettings.rVoidMapSettings.value;
 	var rVMIndex;
 	for (var y = 0; y < rVMBaseSettings.length; y++) {
 		const currSetting = rVMBaseSettings[y];
@@ -255,16 +342,17 @@ function MapBonus() {
 		mapName: mapName
 	};
 
-	if (!autoTrimpSettings.rMapBonusDefaultSettings.value.active) return farmingDetails;
+	if (game.global.universe === 1 && !autoTrimpSettings.hMapBonusDefaultSettings.value.active) return farmingDetails;
+	if (game.global.universe === 2 && !autoTrimpSettings.rMapBonusDefaultSettings.value.active) return farmingDetails;
 
 	//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
 	const currChall = game.global.challengeActive;
-	const rMBZone = getPageSetting('rMapBonusZone');
-	const rMBBaseSettings = autoTrimpSettings.rMapBonusSettings.value;
-	const rMBDefaultSettings = autoTrimpSettings.rMapBonusDefaultSettings.value;
+	const rMBZone = game.global.universe === 1 ? getPageSetting('hMapBonusZone') : getPageSetting('rMapBonusZone');
+	const rMBBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
+	const rMBDefaultSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusDefaultSettings.value : autoTrimpSettings.rMapBonusDefaultSettings.value;
 	var rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio && game.global.mapBonus !== 10;
 	var rMBIndex = null;
 	for (var y = 0; y < rMBBaseSettings.length; y++) {
@@ -297,6 +385,7 @@ function MapBonus() {
 		var rMBMapLevel = rMBIndex !== null ? rMBSettings.level : 0;
 		var rMBJobRatio = rMBSettings.jobratio;
 		var rMBautoLevel = rMBSettings.autoLevel || rMBIndex === null;
+		var rMBminZone = game.global.universe === 1 ? game.global.world - game.portal.Siphonology.level : 0
 
 		if (rMBSettings.autoLevel || rMBIndex === null) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && rMBMapRepeats !== 0) {
@@ -305,7 +394,7 @@ function MapBonus() {
 			}
 
 			var rAutoLevel_Repeat = rAutoLevel;
-			mapAutoLevel = callAutoMapLevel(rCurrentMap, rAutoLevel, rMBSpecial, 10, 0, true);
+			mapAutoLevel = callAutoMapLevel(rCurrentMap, rAutoLevel, rMBSpecial, 10, rMBminZone, true);
 			if (mapAutoLevel !== Infinity) {
 				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) rMBMapRepeats = game.global.mapRunCounter + 1;
 				rMBMapLevel = mapAutoLevel;
@@ -359,18 +448,19 @@ function MapFarm() {
 		mapName: mapName
 	};
 
-	if (!autoTrimpSettings.rMapFarmDefaultSettings.value.active) return farmingDetails;
+	if (game.global.universe === 1 && !autoTrimpSettings.hMapFarmDefaultSettings.value.active) return farmingDetails;
+	if (game.global.universe === 2 && !autoTrimpSettings.rMapFarmDefaultSettings.value.active) return farmingDetails;
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
-	const shredActive = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined';
 	const totalPortals = getTotalPortals();
+	const shredActive = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined';
 	const shredMods = shredActive ? dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength) : [];
 	const foodShred = shredActive && shredMods.includes('food');
 	const metalShred = shredActive && shredMods.includes('metal');
 	const woodShred = shredActive && shredMods.includes('wood');
 	const currChall = game.global.challengeActive;
 
-	const rMFBaseSetting = autoTrimpSettings.rMapFarmSettings.value;
+	const rMFBaseSetting = game.global.universe === 1 ? autoTrimpSettings.hMapFarmSettings.value : autoTrimpSettings.rMapFarmSettings.value;
 	var rMFIndex;
 
 	//Checking to see if any lines are to be run.
@@ -442,11 +532,11 @@ function MapFarm() {
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
 			rShouldMapFarm = false;
+			rMFSettings.done = totalPortals + "_" + game.global.world;
+			if (rMFAtlantrimp) runUnique('Atlantrimp', false);
+			game.global.mapRunCounter = 0;
 			rMFMapRepeats = 0;
 			currTime = 0;
-			rMFSettings.done = totalPortals + "_" + game.global.world;
-			if (rMFAtlantrimp) runAtlantrimp();
-			game.global.mapRunCounter = 0;
 			saveSettings();
 		}
 
@@ -1077,13 +1167,15 @@ function PrestigeRaiding() {
 		mapName: mapName
 	};
 
-	if (!autoTrimpSettings.rRaidingDefaultSettings.value.active) return farmingDetails;
+	if (game.global.universe === 1 && !autoTrimpSettings.hRaidingDefaultSettings.value.active) return farmingDetails;
+	if (game.global.universe === 2 && !autoTrimpSettings.rRaidingDefaultSettings.value.active) return farmingDetails;
 
 	var rShouldPrestigeRaid = false;
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const currChall = game.global.challengeActive;
-	const rRaidingBaseSetting = autoTrimpSettings.rRaidingSettings.value;
+	const rRaidingDefaultSetting = game.global.universe === 1 ? autoTrimpSettings.hRaidingDefaultSettings.value : autoTrimpSettings.rRaidingDefaultSettings.value;
+	const rRaidingBaseSetting = game.global.universe === 1 ? autoTrimpSettings.hRaidingSettings.value : autoTrimpSettings.rRaidingSettings.value;
 
 	var rRaidingIndex;
 
@@ -1109,7 +1201,7 @@ function PrestigeRaiding() {
 		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
 		var rRaidingSettings = rRaidingBaseSetting[rRaidingIndex];
 		raidzones = rRaidingSettings.raidingzone;
-		var rPRRecycle = autoTrimpSettings.rRaidingDefaultSettings.value.recycle;
+		var rPRRecycle = rRaidingDefaultSetting.recycle;
 		var rPRFragFarm = rRaidingSettings.raidingDropdown;
 
 		if (Rgetequips(raidzones, false) > 0) {
@@ -1145,6 +1237,91 @@ function PrestigeRaiding() {
 	}
 
 	return farmingDetails;
+}
+
+function BionicRaiding() {
+
+	const mapName = 'BionicRaiding'
+	const farmingDetails = {
+		shouldRun: false,
+		mapName: mapName
+	};
+
+	if (game.global.universe === 1 && !autoTrimpSettings.hBionicRaidingDefaultSettings.value.active) return farmingDetails;
+
+	var rShouldBionicRaid = false;
+	const isC3 = game.global.runningChallengeSquared;
+	const isDaily = game.global.challengeActive === 'Daily';
+	const currChall = game.global.challengeActive;
+	const rBionicRaidingDefaultSetting = autoTrimpSettings.hBionicRaidingDefaultSettings.value;
+	const rBionicRaidingBaseSetting = autoTrimpSettings.hBionicRaidingSettings.value;
+
+	var index;
+
+	for (var y = 0; y < rBionicRaidingBaseSetting.length; y++) {
+		const currSetting = rBionicRaidingBaseSetting[y];
+		var raidZones = currSetting.raidingzone
+		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
+			continue;
+		}
+		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
+			var times = currSetting.repeatevery;
+			var repeats = Math.round((game.global.world - currSetting.world) / times);
+			if (repeats > 0) raidZones += (times * repeats);
+		}
+		if (Rgetequips(raidZones, false) === 0) continue;
+		if (currSetting.runType !== 'All') {
+			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+			if (isDaily && currSetting.runType !== 'Daily') continue;
+			if (isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
+		}
+		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
+			index = y;
+			break;
+		}
+	}
+
+	if (index >= 0) {
+		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
+		var rBionicRaidingSetting = rBionicRaidingBaseSetting[index];
+		var raidzonesBW = raidZones;
+
+		if (Rgetequips(raidzonesBW, false) > 0) {
+			rShouldBionicRaid = true;
+		}
+
+		var status = 'Raiding to BW' + raidzonesBW + ': ' + Rgetequips(raidzonesBW, false) + ' items remaining';
+
+		farmingDetails.shouldRun = rShouldBionicRaid;
+		farmingDetails.mapName = mapName;
+		farmingDetails.raidingZone = raidzonesBW;
+		farmingDetails.status = status;
+	}
+	return farmingDetails;
+}
+
+function runBionicRaiding() {
+
+	if (game.options.menu.repeatUntil.enabled != 2) {
+		game.options.menu.repeatUntil.enabled = 2;
+	}
+	game.options.menu.climbBw.enabled = 0;
+
+	if (!game.global.preMapsActive && !game.global.mapsActive) {
+		mapsClicked();
+		if (!game.global.preMapsActive) {
+			mapsClicked();
+		}
+	}
+
+	if (game.global.preMapsActive) {
+		selectMap(findLastBionic().id);
+	}
+	if (findLastBionic().level >= rMapSettings.raidingZone && game.global.preMapsActive) {
+		runMap();
+	}
 }
 
 //Running Prestige Raid Code -- WORKING AS IS
@@ -2085,7 +2262,8 @@ function HDFarm() {
 		mapName: mapName
 	};
 
-	if (!autoTrimpSettings.rHDFarmDefaultSettings.value.active) return farmingDetails;
+	if (game.global.universe === 1 && !autoTrimpSettings.hHDFarmDefaultSettings.value.active) return farmingDetails;
+	if (game.global.universe === 2 && !autoTrimpSettings.rHDFarmDefaultSettings.value.active) return farmingDetails;
 
 
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
@@ -2093,8 +2271,7 @@ function HDFarm() {
 	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
 	const totalPortals = getTotalPortals();
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
-	const rHDFBaseSetting = autoTrimpSettings.rHDFarmSettings.value;
-	const rHDFZone = getPageSetting('rHDFarmZone');
+	const rHDFBaseSetting = game.global.universe === 1 ? autoTrimpSettings.hHDFarmSettings.value : autoTrimpSettings.rHDFarmSettings.value;
 	const currChall = game.global.challengeActive;
 	var rShouldHDFarm = false;
 	var rShouldSkip = false;
@@ -2122,7 +2299,7 @@ function HDFarm() {
 	}
 
 	if (rHDFIndex >= 0) {
-		var rHDFSettings = autoTrimpSettings.rHDFarmSettings.value[rHDFIndex];
+		var rHDFSettings = rHDFBaseSetting[rHDFIndex];
 		var rHDFMapLevel = rHDFSettings.level;
 		var rHDFSpecial = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
 		var rHDFJobRatio = '0,0,1,0';
@@ -2202,9 +2379,10 @@ function FarmingDecision() {
 		game.global.mapRunCounter = 0;
 	}
 
-	if (!autoTrimpSettings.RAutoMaps.value || !game.global.mapsUnlocked) return farmingDetails;
+	if (game.global.universe === 2 && (!autoTrimpSettings.RAutoMaps.value || !game.global.mapsUnlocked)) return farmingDetails;
 
-	const mapTypes = [Quest(), PandemoniumDestack(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), MapBonus(), Smithless()]
+	if (game.global.universe === 1) var mapTypes = [MapFarm(), PrestigeRaiding(), BionicRaiding(), HDFarm(), VoidMaps(), MapBonus()]
+	if (game.global.universe === 2) var mapTypes = [Quest(), PandemoniumDestack(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), MapBonus(), Smithless()]
 
 	for (const map of mapTypes) {
 		if (map.shouldRun) {
@@ -2321,32 +2499,30 @@ function RAMPplusPresfragmin(number, raidzones) {
 
 function RAMPfrag(raidzones, fragtype) {
 	var cost = 0;
-	if (rShouldPrestigeRaid) {
 
-		if (Rgetequips(raidzones, false)) {
-			if (fragtype == 1) cost += RAMPplusPresfragmin(0);
-			else if (fragtype == 2) cost += RAMPplusPresfragmax(0);
-		}
-		if (Rgetequips((raidzones - 1), false)) {
-			if (fragtype == 1) cost += RAMPplusPresfragmin(1);
-			else if (fragtype == 2) cost += RAMPplusPresfragmax(1);
-		}
-		if (Rgetequips((raidzones - 2), false)) {
-			if (fragtype == 1) cost += RAMPplusPresfragmin(2);
-			else if (fragtype == 2) cost += RAMPplusPresfragmax(2);
-		}
-		if (Rgetequips((raidzones - 3), false)) {
-			if (fragtype == 1) cost += RAMPplusPresfragmin(3);
-			else if (fragtype == 2) cost += RAMPplusPresfragmax(3);
-		}
-		if (Rgetequips((raidzones - 4), false)) {
-			if (fragtype == 1) cost += RAMPplusPresfragmin(4);
-			else if (fragtype == 2) cost += RAMPplusPresfragmax(4);
-		}
-
-		if (game.resources.fragments.owned >= cost) return true;
-		else return false;
+	if (Rgetequips(raidzones, false)) {
+		if (fragtype == 1) cost += RAMPplusPresfragmin(0);
+		else if (fragtype == 2) cost += RAMPplusPresfragmax(0);
 	}
+	if (Rgetequips((raidzones - 1), false)) {
+		if (fragtype == 1) cost += RAMPplusPresfragmin(1);
+		else if (fragtype == 2) cost += RAMPplusPresfragmax(1);
+	}
+	if (Rgetequips((raidzones - 2), false)) {
+		if (fragtype == 1) cost += RAMPplusPresfragmin(2);
+		else if (fragtype == 2) cost += RAMPplusPresfragmax(2);
+	}
+	if (Rgetequips((raidzones - 3), false)) {
+		if (fragtype == 1) cost += RAMPplusPresfragmin(3);
+		else if (fragtype == 2) cost += RAMPplusPresfragmax(3);
+	}
+	if (Rgetequips((raidzones - 4), false)) {
+		if (fragtype == 1) cost += RAMPplusPresfragmin(4);
+		else if (fragtype == 2) cost += RAMPplusPresfragmax(4);
+	}
+
+	if (game.resources.fragments.owned >= cost) return true;
+	else return false;
 }
 
 function fragmap() {

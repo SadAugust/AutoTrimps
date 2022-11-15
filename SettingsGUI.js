@@ -166,8 +166,8 @@ function initializeAllSettings() {
 	createSetting('fastallocate', 'Fast Allocate', 'Turn on if your helium is above 500Qa. Not recommended for low amounts of helium. ', 'boolean', false, null, 'Core');
 	createSetting('TrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core');
 
-	createSetting('AutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Helium Per Hour only <b>portals at cell 1</b> of the first level where your He/Hr went down even slightly compared to the current runs Best He/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting He/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Helium Per Hour', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Custom'], 'Core');
-	createSetting('HeliumHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination'], 'Core');
+	createSetting('AutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Helium Per Hour only <b>portals at cell 1</b> of the first level where your He/Hr went down even slightly compared to the current runs Best He/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting He/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Helium Per Hour', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience', 'Custom'], 'Core');
+	createSetting('HeliumHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience'], 'Core');
 	document.getElementById("HeliumHourChallengeLabel").innerHTML = "Portal Challenge:";
 	createSetting('CustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('HeHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Helium per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in helium/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Helium per Hour set)', 'value', '999', null, 'Core');
@@ -210,6 +210,7 @@ function initializeAllSettings() {
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 104) radonChallenge3.push("Storm");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 114) radonChallenge3.push("Berserk");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) radonChallenge3.push("Glass");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 200) radonChallenge3.push("Smithless");
 
 	var radonBiome = ["Random"];
 	radonBiome.push("Mountain");
@@ -294,21 +295,6 @@ function initializeAllSettings() {
 	createSetting('dwsmax', 'Daily WS MAX', 'For maximising Windstacking an entire Daily. Withholds damage to try and get your max windstacks every wind zone. Not recommended for terrible Dailies. ', 'value', '-1', null, 'Daily');
 	createSetting('dwsmaxhd', 'Daily WSM H:D', 'Fiddle with this to maximise your DWSM settings. Default is 0.00025. ', 'value', '-1', null, 'Daily');
 
-	//Helium Raiding
-	createSetting('dPraidingzone', 'Daily P Raiding Z', 'Raids Maps for prestiges at zone specified in Dailies. Example: 495, will raid Maps at 501. Once all gear is obtained from the map, it will revert back to regular farming. Extremely helpful for spire. Best used in poison zones. <b>You can use multiple values like this 495,506,525! </b>', 'multiValue', [-1], null, 'Daily');
-	createSetting('dPraidingcell', 'Daily P Raiding Cell', 'What Cell to start P Raiding at. Recommend below your BW Raiding cell if used together. -1 to Raid at cell 1. ', 'value', -1, null, 'Daily');
-	createSetting('dPraidingHD', 'Daily P Raiding HD', 'Checks if you can raid the map. If your HD value (calculated using the maps you will raid) is below this value it will not buy the map and you will stop raiding. The higher this value the higher zones it will raid. Can raid up to +10 depending on the zone. -1 or 0 to remove this check.', 'value', -1, null, 'Daily');
-	createSetting('dPraidingP', 'Daily P Raiding Poison', 'Maximum level of map to P Raid at in Poison. If this value is 10 it will be able to go to +10 maps in Poison. You should use this instead of the HD function if you feel the calculations are off, but you can use both if needed. -1 or 0 to have no max. ', 'value', -1, null, 'Daily');
-	createSetting('dPraidingI', 'Daily P Raiding Ice', 'Maximum level of map to P Raid at in Ice. If this value is 10 it will be able to go to +10 maps in Ice. You should use this instead of the HD function if you feel the calculations are off, but you can use both if needed. -1 or 0 to have no max. ', 'value', -1, null, 'Daily');
-	createSetting('dPraidHarder', 'Daily Hardcore P Raiding', '(EXPERIMENTAL) P Raid Harder: When enabled, always buys the highest prestige map we can afford when P raiding, with option to farm fragments for highest available prestige level.', 'boolean', false, null, 'Daily');
-	createSetting('dMaxPraidZone', 'Daily Max P Raid Z', 'List of maximum zones to Praid on Dailies corresponding to the list specified in Daily Praiding Z.  e.g. if Daily P raiding Z setting is 491,495 and this setting is 495,505, AT will P raid up to 495 from 491, and 505 from 495.  Set to -1 to always buy highest available prestige map.  If no corrsponding value, or value is invalid, defaults to max available (up to +10)', 'multiValue', [-1], null, 'Daily');
-	createSetting('dPraidFarmFragsZ', 'Daily Farm Frags Z', 'P Raiding harder: List of zones where we should farm fragments until we can afford the highest or target prestige map for P raiding. Set to -1 to never farm fragments.', 'multiValue', [-1], null, 'Daily');
-	createSetting('dPraidBeforeFarmZ', 'Dy Raid bef farm Z', 'P Raiding harder: List of zones where we should P Raid as far as we can afford before trying to farm fragments to Praid the highest or target prestige map.  Only occasionally useful, e.g. if it picks up a Speedexplorer or farming fragments is slow due to low damage. Set to -1 to never raid prestiges before farming fragents.', 'multiValue', [-1], null, 'Daily');
-	createSetting('Dailybwraid', 'Daily BW Raid', 'Toggle for Daily BW Raid settings. ', 'boolean', false, null, 'Daily');
-	createSetting('dbwraidcell', 'Daily BW Raiding Cell', 'What Cell to start BW Raiding at. Recommend above your P Raiding cell if used together. -1 to Raid at cell 1. ', 'value', -1, null, 'Daily');
-	createSetting('dBWraidingz', 'Daily Z to BW Raid', 'Raids BWs at zone specified in dailys. Example: 495, will raid all BWs for all gear starting from 495. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Accepts comma separated lists, and raids up to the value in the corrsponding position in the Max BW to raid setting. So if this is set to 480,495 and Daily Max BW to Raid is set to 500,515 AT will BW raid up to 500 from 480, and 515 from 495. Make sure these lists are the same length or BW raiding may fail.', 'multiValue', [-1], null, 'Daily');
-	createSetting('dBWraidingmax', 'Daily Max BW to raid', 'Raids BWs until zone specified in dailys. Example: 515, will raid all BWs for all gear until 515. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Now accepts comma separated lists - see description of Daily Z to BW raid setting for details.', 'multiValue', [-1], null, 'Daily');
-
 	//Helium Heirloom
 	createSetting('dhighdmg', 'DHS: High Damage', '<b>HIGH DAMAGE HEIRLOOM</b><br><br>Enter the name of your high damage heirloom. This is your heirloom that you will use normally in dailies. ', 'textValue', 'undefined', null, 'Daily');
 	createSetting('dlowdmg', 'DHS: Low Damage', '<b>LOW DAMAGE HEIRLOOM</b><br><br>Enter the name of your low damage heirloom. This is the heirloom that you will use for windstacking in dailies. ', 'textValue', 'undefined', null, 'Daily');
@@ -316,14 +302,10 @@ function initializeAllSettings() {
 	createSetting('AutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('u2daily', 'Daily in U2', 'If this is on, you will do your daily in U2. ', 'boolean', false, null, 'Daily');
 	createSetting('AutoPortalDaily', ['Daily Portal Off', 'DP: He/Hr', 'DP: Custom'], '<b>DP: He/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
-	createSetting('dHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination'], 'Daily');
+	createSetting('dHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience'], 'Daily');
 	createSetting('dCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone during dailies. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Daily');
 	createSetting('dHeHrDontPortalBefore', 'D: Don\'t Portal Before', 'Do NOT allow Helium per Hour Daily AutoPortal setting to portal BEFORE this level is reached in dailies. It is an additional check that prevents drops in helium/hr from triggering autoportal in dailies. Set to 0 or -1 to completely disable this check. (only shows up with Helium per Hour set in dailies)', 'value', '999', null, 'Daily');
 	createSetting('dHeliumHrBuffer', 'D: He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
-	createSetting('DailyVoidMod', 'Daily Void Zone', 'What zone to do void maps in dailies. Disable with -1', 'value', -1, null, 'Daily');
-	createSetting('dvoidscell', 'Daily Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Daily');
-	createSetting('dRunNewVoidsUntilNew', 'Daily New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps in Dailies obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Daily');
-	createSetting('drunnewvoidspoison', 'New Voids Poison', 'Only run new voids in poison zones.', 'boolean', false, null, 'Daily');
 
 	//--------------------------------------------------------------------------------------------------------
 
@@ -453,22 +435,57 @@ function initializeAllSettings() {
 	createSetting('DynamicSiphonology', 'Dynamic Siphonology', 'Recommended Always ON. Use the right level of siphonology based on your damage output. IE: Only uses  siphonology if you are weak. With this OFF it means it ALWAYS uses the lowest siphonology map you can create. Siphonology is a perk you get at level 115-125ish, and means you receive map bonus stacks for running maps below your current zone - Up to 3 zones below (1 per perk level).', 'boolean', true, null, 'Maps');
 	createSetting('PreferMetal', 'Prefer Metal Maps', 'Always prefer metal maps, intended for manual use, such as pre-spire farming. Remember to turn it back off after you\'re done farming!', 'boolean', false, null, 'Maps');
 	createSetting('mapselection', 'Map Selection', 'Select which you prefer to use. Recommend Plentiful (Gardens) if you have unlocked it. ', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Gardens"], 'Maps');
-	createSetting('MaxMapBonusAfterZone', 'Max MapBonus From', 'Always gets Max Map Bonus from this zone on. (inclusive and after).<br><b>NOTE:</b> Set -1 to disable entirely (default). Set 0 to use it always.<br><b>Advanced:</b>User can set a lower number than the default 10 maps with the AT hidden console command: MODULES[\\"maps\\"].maxMapBonusAfterZ = 9;', 'value', '-1', null, 'Maps');
-	createSetting('MaxMapBonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10. ', 'value', '10', null, 'Maps');
-	createSetting('MaxMapBonushealth', 'Max MapBonus Health', 'Limit the amount of map bonuses you get when AutoMaps requires more health. Default is 10. ', 'value', '10', null, 'Maps');
-	createSetting('mapcuntoff', 'Map Cut Off', 'Decides when to get max map bonus. 4 is default. This means it will take 1 hit to kill an enemy if in D stance. ', 'value', '4', null, 'Maps');
-	createSetting('DisableFarm', 'Farming H:D', 'If H:D goes above this value, it will farm for Damage & Health. The lower this setting, the more it will want to farm. Default is <b>16<b/>. <b>-1 to disable farming!</b>', 'value', -1, null, 'Maps');
 	createSetting('LowerFarmingZone', 'Lower Farming Zone', 'Lowers the zone used during Farming mode. Uses the dynamic siphonology code, to Find the minimum map level you can successfully one-shot, and uses this level for any maps done after the first 10 map stacks. The difference being it goes LOWER than what Siphonology gives you map-bonus for, but after 10 stacks you dont need bonus, you just want to do maps that you can one-shot. Goes as low as 10 below current zone if your damage is that bad, but this is extreme and indicates you should probably portal.', 'boolean', true, null, 'Maps');
 	createSetting('FarmWhenNomStacks7', 'Farm on >7 NOMstacks', 'Optional. If Improbability already has 5 NOMstacks, stack 30 Anticipation. If the Improbability has >7 NOMstacks on it, get +200% dmg from MapBonus. If we still cant kill it, enter Farming mode at 30 stacks, Even with DisableFarming On! (exits when we get under 10x). Farms if we hit 100 stacks in the world. If we ever hit (100) nomstacks in a map (likely a voidmap), farm, (exit the voidmap) and (prevent void from running, until situation is clear). Restarts any voidmaps if we hit 100 stacks. ', 'boolean', false, null, 'Maps');
-	createSetting('VoidMaps', 'Void Maps', '<b>0 to disable</b> The zone at which you want all your void maps to be cleared inclusive of the zone you type. Runs them at Cell 70. Use odd zones on Lead.<br>', 'value', '0', null, "Maps");
-	createSetting('voidscell', 'Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Maps');
-	createSetting('RunNewVoidsUntilNew', 'New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Maps');
-	createSetting('runnewvoidspoison', 'New Voids Poison', 'Only run new voids in poison zones.', 'boolean', false, null, 'Maps');
-	createSetting('onlystackedvoids', 'Stacked Voids Only', 'Only run stacked voids. ', 'boolean', false, null, 'Maps');
 	createSetting('TrimpleZ', 'Trimple Z', 'I don\'t really think doing this automatically is a good idea. You might want to farm for a bit before this, but I\'m not sure if it\'s meaningful at all to make a \'farm X minutes before trimple\' parameter to go along with it. Set it to the zone you want and it will run Trimple of Doom for Ancient Treasure AFTER farming and getting map stacks. If it is a negative number, this will be disabled after a successful run so you can set it differently next time.', 'valueNegative', 0, null, 'Maps');
 	createSetting('AdvMapSpecialModifier', 'Map Special Modifier', '<b>BELOW 300 ONLY</b><br> Attempt to select the BEST map special modifier. When starting a map for <b>Prestige</b> it will use <i>Prestigious</i>. When starting a map for <b>Farming</b> (for equipment) it will use your best metal cache. In any other case (such as farming for map stacks) it will use <i>Fast Attacks</i>. In all cases it uses the best modifier that can be afforded.', 'boolean', true, null, 'Maps');
 	createSetting('scryvoidmaps', 'VM Scryer', 'Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Maps');
 	createSetting('buywepsvoid', 'VM Buy Weps', 'Buys gear in Void maps regardless of your H:D ratio. Useful if you want to overkill as much as possible. ', 'boolean', false, null, 'Maps');
+
+	//Void Maps
+	createSetting('hVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Helium Void Map", "hVoidMap", "MAZ")', null, 'Maps');
+	createSetting('hVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('hVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+	createSetting('hVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
+
+	//Map Bonus
+	createSetting('hMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Map Bonus", "hMapBonus", "MAZ")', null, 'Maps');
+	createSetting('hMapBonusSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('hMapBonusDefaultSettings', 'Map Bonus: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+	createSetting('hMapBonusZone', 'Map Bonus: Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
+
+	//Map Farm
+	createSetting('hMapFarmPopup', 'Map Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Map Farm", "hMapFarm", "MAZ")', null, 'Maps');
+	createSetting('hMapFarmSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('hMapFarmDefaultSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+	createSetting('hMapFarmZone', 'MF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
+
+	//Prestige Raiding
+	createSetting('hRaidingPopup', 'Raiding Settings', 'Will raid up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Raiding", "hRaiding", "MAZ")', null, 'Maps');
+	createSetting('hRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('hRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+	createSetting('hRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
+
+	//Prestige Raiding
+	createSetting('hBionicRaidingPopup', 'BW Raiding Settings', 'Will Bionic Wonderlands up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Bionic Raiding", "hBionicRaiding", "MAZ")', null, 'Maps');
+	createSetting('hBionicRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('hBionicRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+	createSetting('hBionicRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
+
+	//HD Farm
+	createSetting('hHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "hHDFarm", "MAZ")', null, 'Maps');
+	createSetting('hHDFarmSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('hHDFarmDefaultSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+	createSetting('hHDFarmZone', 'HD Farm: Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
+
+	//Bone Shrine (bone) 
+	if (game.global.stringVersion >= '5.7.0') {
+		createSetting('hBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "hBoneShrine", "MAZ")', null, 'Maps');
+		createSetting('hBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+		createSetting('hBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+		createSetting('hBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
+		createSetting('hBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Maps");
+	}
 
 	//Radon
 	//General
@@ -530,12 +547,6 @@ function initializeAllSettings() {
 	createSetting('rMapFarmDefaultSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rMapFarmZone', 'MF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 
-	//Time Farming
-	createSetting('rTimeFarmPopup', 'Time Farm Settings', 'Will farm a specified amount of maps according to this settings value.', 'action', 'MAZLookalike("Time Farm", "rTimeFarm", "MAZ")', null, 'Maps');
-	createSetting('rTimeFarmSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rTimeFarmDefaultSettings', 'TF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
-	createSetting('rTimeFarmZone', 'TF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
-
 	//Tribute Farming
 	createSetting('rTributeFarmPopup', 'Tribute Farm Settings', 'Will farm for a specified amount of Tributes/Meteorologists according to this settings value.', 'action', 'MAZLookalike("Tribute Farm", "rTributeFarm", "MAZ")', null, 'Maps');
 	createSetting('rTributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
@@ -564,22 +575,6 @@ function initializeAllSettings() {
 	createSetting('PreSpireNurseries', 'Nurseries pre-Spire', 'Set the maximum number of Nurseries to build for Spires. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Will build nurseries before z200 for Spire 1, but only on the zone of Spires 2+ to avoid unnecessary burning. Disable with -1.', 'value', -1, null, 'Spire');
 	createSetting('spireshitbuy', 'Buy Gear in Spire', 'Will buy Weapons and Armor in Spire regardless of your H:D ratio. Respects your max gear level and ignore spires setting. ', 'boolean', false, null, 'Spire');
 	createSetting('SkipSpires', 'Skip Spires', 'Will disregard your H:D ratio after Farm Before Spire is done (if set). Useful to die in spires if farming takes too long', 'boolean', false, null, 'Spire');
-
-	//Raiding
-	//Helium
-	createSetting('Praidingzone', 'P Raiding Z', 'Raids Maps for prestiges at zone specified. Example: 495, will raid Maps at 501-505 sequentially. Once all gear is obtained from the maps, it will revert back to regular farming. Use P Raiding HD to determine how many extra maps you wish you raid. Extremely helpful for spire. Best used in poison zones. <b>You can use multiple values like this 495,506,525! </b>', 'multiValue', [-1], null, 'Raiding');
-	createSetting('Praidingcell', 'P Raiding Cell', 'What Cell to start P Raiding at. Recommend below your BW Raiding cell if used together. -1 to Raid at cell 1. ', 'value', -1, null, 'Raiding');
-	createSetting('PraidingHD', 'P Raiding HD', 'Checks if you can raid the map. If your HD value (calculated using the maps you will raid) is below this value it will not buy the map and you will stop raiding. The higher this value the higher zones it will raid. Can raid up to +10 depending on the zone. -1 or 0 to remove this check.', 'value', -1, null, 'Raiding');
-	createSetting('PraidingP', 'P Raiding Poison', 'Maximum level of map to P Raid at in Poison. If this value is 10 it will be able to go to +10 maps in Poison. You should use this instead of the HD function if you feel the calculations are off, but you can use both if needed. -1 or 0 to have no max. ', 'value', -1, null, 'Raiding');
-	createSetting('PraidingI', 'P Raiding Ice', 'Maximum level of map to P Raid at in Ice. If this value is 10 it will be able to go to +10 maps in Ice. You should use this instead of the HD function if you feel the calculations are off, but you can use both if needed. -1 or 0 to have no max. ', 'value', -1, null, 'Raiding');
-	createSetting('PraidHarder', 'Hardcore P Raiding', '(EXPERIMENTAL) P Raid Harder: When enabled, always buys the highest prestige map we can afford when P raiding, with option to farm fragments for highest available prestige level.', 'boolean', false, null, 'Raiding');
-	createSetting('MaxPraidZone', 'Max P Raid Zones', 'List of maximum zones to Praid corresponding to the list specified in Praiding zones.  e.g. if P raiding zones setting is 491,495 and this setting is 495,505, AT will P raid up to 495 from 491, and 505 from 495. Set to -1 to always buy highest available prestige map.  If no corrsponding value, or value is invalid, defaults to max available (up to +10)', 'multiValue', [-1], null, 'Raiding');
-	createSetting('PraidFarmFragsZ', 'Farm Fragments Z', 'P Raiding harder: List of zones where we should farm fragments until we can afford the highest or target prestige map for P raiding. Set to -1 to never farm fragments. ', 'multiValue', [-1], null, 'Raiding');
-	createSetting('PraidBeforeFarmZ', 'Raid before farm Z', 'P Raiding harder: List of zones where we should P Raid as far as we can afford before trying to farm fragments to Praid the highest or target prestige map.  Only occasionally useful, e.g. if it picks up a Speedexplorer or farming fragments is slow due to low damage. Set to -1 to never raid prestiges before farming fragents.', 'multiValue', [-1], null, 'Raiding');
-	createSetting('BWraid', 'BW Raiding', 'Raids BW at zone specified in BW Raiding Z/max.', 'boolean', false, null, 'Raiding');
-	createSetting('bwraidcell', 'BW Raiding Cell', 'What Cell to start BW Raiding at. Recommend above your P Raiding cell if used together. -1 to Raid at cell 1. ', 'value', -1, null, 'Raiding');
-	createSetting('BWraidingz', 'Z to BW Raid', 'Raids BWs at zone specified. Example: 495, will raid all BWs for all gear starting from 495. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Accepts comma separated lists, and raids up to the value in the corrsponding position in the Max BW to raid setting. So if this is set to 480,495 and Max BW to Raid is set to 500,515 AT will BW raid up to 500 from 480, and 515 from 495. Make sure these lists are the same length or BW raiding may fail.', 'multiValue', [-1], null, 'Raiding');
-	createSetting('BWraidingmax', 'Max BW to raid', 'Raids BWs until zone specified. Example: 515, will raid all BWs for all gear until 515. Will skip lower BWs if you have enough damage. Once all gear is obtained, will return to regular farming. Now accepts comma separated lists - see description of Z to BW raid setting for details.', 'multiValue', [-1], null, 'Raiding');
 
 	//--------------------------------------------------------------
 
@@ -980,14 +975,13 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("dscryvoidmaps", radonoff);
 	modifyParentNode_Initial("dPreSpireNurseries", radonoff);
 	modifyParentNode_Initial("dwsmaxhd", radonoff);
-	modifyParentNode_Initial("dBWraidingmax", radonoff);
 	modifyParentNode_Initial("dlowdmg", radonoff);
 	//Radon Settings
 	modifyParentNode_Initial("rBloodthirstDestack", radonon);
 
 	//Maps
 	//Helium Settings
-	//None!
+	modifyParentNode_Initial("buywepsvoid", radonoff);
 
 	//Radon Settings
 	modifyParentNode_Initial("rUniqueMapPopup", radonon);
@@ -1721,6 +1715,10 @@ function updateATVersion() {
 			changelog.push("Added a 'Portal After' setting to Void Map settings. Will cause your portal zone to be set to current zone once your Void Maps have finished running!")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.3') {
+			changelog.push("Have reworked U1 settings somewhat, added the Map Bonus, Map Farm, Raiding, HD Farm & Bone Shrine settings from u2. Have also reworked BW Raiding and implemented it into the MAZ layout window!.<br>This does mean that I've deleted all of the old raiding, map bonus, BW raiding etc settings, if you need to find out what your settings were before I'd recommend loading Zeks fork to see them as they'll still be intact there.")
+		}
+
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
@@ -1910,7 +1908,7 @@ function updateCustomButtons() {
 		document.getElementById("tabJobs").style.display = radonon ? "none" : "";
 	}
 	if (document.getElementById("tabRaiding") != null) {
-		document.getElementById("tabRaiding").style.display = radonon ? "none" : "";
+		document.getElementById("tabRaiding").style.display = radonon ? "none" : !radonon ? "none" : "";
 	}
 	if (document.getElementById("tabDaily") != null) {
 		document.getElementById("tabDaily").style.display = radonon && (!displayAllSettings && highestZone < 29) ? "none" : "";
@@ -2012,21 +2010,6 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('use3daily') ? turnOn('dwsmax') : turnOff('dwsmax');
 	!radonon && getPageSetting('use3daily') ? turnOn('dwsmaxhd') : turnOff('dwsmaxhd');
 
-	//DRaid
-	!radonon ? turnOn('dPraidingzone') : turnOff('dPraidingzone');
-	!radonon ? turnOn('dPraidingcell') : turnOff('dPraidingcell');
-	!radonon ? turnOn('dPraidingHD') : turnOff('dPraidingHD');
-	!radonon ? turnOn('dPraidingP') : turnOff('dPraidingP');
-	!radonon ? turnOn('dPraidingI') : turnOff('dPraidingI');
-	!radonon && getPageSetting('dPraidingzone') != -1 ? turnOn('dPraidHarder') : turnOff('dPraidHarder');
-	!radonon && getPageSetting('dPraidHarder') ? turnOn('dMaxPraidZone') : turnOff('dMaxPraidZone');
-	!radonon && getPageSetting('dPraidHarder') ? turnOn('dPraidFarmFragsZ') : turnOff('dPraidFarmFragsZ');
-	!radonon && getPageSetting('dPraidHarder') ? turnOn('dPraidBeforeFarmZ') : turnOff('dPraidBeforeFarmZ');
-	!radonon ? turnOn('Dailybwraid') : turnOff('Dailybwraid');
-	!radonon && getPageSetting('Dailybwraid') ? turnOn('dbwraidcell') : turnOff('dbwraidcell');
-	!radonon && getPageSetting('Dailybwraid') ? turnOn('dBWraidingz') : turnOff('dBWraidingz');
-	!radonon && getPageSetting('Dailybwraid') ? turnOn('dBWraidingmax') : turnOff('dBWraidingmax');
-
 	//DHeirlooms
 	!radonon && getPageSetting('dloomswap') > 0 ? turnOn('dloomswaphd') : turnOff('dloomswaphd');
 	!radonon ? turnOn('dhighdmg') : turnOff('dhighdmg');
@@ -2040,11 +2023,6 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('AutoPortalDaily') == 2 ? turnOn('dCustomAutoPortal') : turnOff('dCustomAutoPortal');
 	!radonon && getPageSetting('AutoPortalDaily') == 1 ? turnOn('dHeHrDontPortalBefore') : turnOff('dHeHrDontPortalBefore');
 	!radonon && getPageSetting('AutoPortalDaily') == 1 ? turnOn('dHeliumHrBuffer') : turnOff('dHeliumHrBuffer');
-	!radonon ? turnOn('DailyVoidMod') : turnOff('DailyVoidMod');
-	!radonon ? turnOn('dvoidscell') : turnOff('dvoidscell');
-	!radonon ? turnOn('dRunNewVoidsUntilNew') : turnOff('dRunNewVoidsUntilNew');
-	!radonon ? turnOn('drunnewvoidspoison') : turnOff('drunnewvoidspoison');
-
 	//RDaily
 	radonon ? turnOn('buyradony') : turnOff('buyradony');
 	radonon ? turnOn('rBloodthirstDestack') : turnOff('rBloodthirstDestack');
@@ -2162,22 +2140,59 @@ function updateCustomButtons() {
 	!radonon ? turnOn('mapselection') : turnOff('mapselection');
 	!radonon ? turnOn('DynamicSiphonology') : turnOff('DynamicSiphonology');
 	!radonon ? turnOn('PreferMetal') : turnOff('PreferMetal');
-	!radonon ? turnOn('MaxMapBonusAfterZone') : turnOff('MaxMapBonusAfterZone');
-	!radonon ? turnOn('MaxMapBonuslimit') : turnOff('MaxMapBonuslimit');
-	!radonon ? turnOn('MaxMapBonushealth') : turnOff('MaxMapBonushealth');
-	!radonon ? turnOn('mapcuntoff') : turnOff('mapcuntoff');
-	!radonon ? turnOn('DisableFarm') : turnOff('DisableFarm');
 	!radonon ? turnOn('LowerFarmingZone') : turnOff('LowerFarmingZone');
 	!radonon ? turnOn('FarmWhenNomStacks7') : turnOff('FarmWhenNomStacks7');
-	!radonon ? turnOn('VoidMaps') : turnOff('VoidMaps');
-	!radonon ? turnOn('voidscell') : turnOff('voidscell');
-	!radonon ? turnOn('RunNewVoidsUntilNew') : turnOff('RunNewVoidsUntilNew');
-	!radonon ? turnOn('runnewvoidspoison') : turnOff('runnewvoidspoison');
-	!radonon ? turnOn('onlystackedvoids') : turnOff('onlystackedvoids');
 	!radonon ? turnOn('TrimpleZ') : turnOff('TrimpleZ');
 	!radonon ? turnOn('AdvMapSpecialModifier') : turnOff('AdvMapSpecialModifier');
 	!radonon ? turnOn('scryvoidmaps') : turnOff('scryvoidmaps');
 	!radonon ? turnOn('buywepsvoid') : turnOff('buywepsvoid');
+
+
+
+	//Map Bonus  
+	!radonon ? turnOn('hMapBonusPopup') : turnOff('hMapBonusPopup');
+	turnOff('hMapBonusSettings');
+	turnOff('hMapBonusDefaultSettings');
+	turnOff('hMapBonusZone');
+
+	//Void Map 
+	!radonon ? turnOn('hVoidMapPopup') : turnOff('hVoidMapPopup');
+	turnOff('hVoidMapSettings');
+	turnOff('hVoidMapDefaultSettings');
+	turnOff('hVoidMapZone');
+
+	//Map Farming  
+	!radonon ? turnOn('hMapFarmPopup') : turnOff('hMapFarmPopup');
+	turnOff('hMapFarmSettings');
+	turnOff('hMapFarmDefaultSettings');
+	turnOff('hMapFarmZone');
+
+	//HD Farm
+	!radonon ? turnOn('hHDFarmPopup') : turnOff('hHDFarmPopup');
+	turnOff('hHDFarmSettings');
+	turnOff('hHDFarmDefaultSettings');
+	turnOff('hHDFarmZone');
+
+	//Raiding 
+	!radonon ? turnOn('hRaidingPopup') : turnOff('hRaidingPopup');
+	turnOff('hRaidingSettings');
+	turnOff('hRaidingDefaultSettings');
+	turnOff('hRaidingZone');
+
+	//BW Raiding 
+	!radonon ? turnOn('hBionicRaidingPopup') : turnOff('hBionicRaidingPopup');
+	turnOff('hBionicRaidingSettings');
+	turnOff('hBionicRaidingDefaultSettings');
+	turnOff('hBionicRaidingZone');
+
+	//Bone Shrine (bones) 
+	if (game.global.stringVersion >= '5.7.0') {
+		!radonon ? turnOn('hBoneShrinePopup') : turnOff('hBoneShrinePopup');
+		turnOff('hBoneShrineSettings');
+		turnOff('hBoneShrineDefaultSettings');
+		turnOff('hBoneShrineZone');
+		turnOff('hBoneShrineRunType');
+	}
 
 	//RMaps
 	radonon ? turnOn('RAutoMaps') : turnOff('RAutoMaps');
@@ -2195,7 +2210,6 @@ function updateCustomButtons() {
 	turnOff('rMapBonusDefaultSettings');
 	turnOff('rMapBonusZone');
 
-
 	//Void Map 
 	radonon ? turnOn('rVoidMapPopup') : turnOff('rVoidMapPopup');
 	turnOff('rVoidMapSettings');
@@ -2212,12 +2226,6 @@ function updateCustomButtons() {
 	turnOff('rTributeFarmDefaultSettings');
 	turnOff('rTributeFarmZone');
 
-	//Time Farming  
-	turnOff('rTimeFarmPopup');
-	turnOff('rTimeFarmSettings');
-	turnOff('rTimeFarmDefaultSettings');
-	turnOff('rTimeFarmZone');
-
 	//Map Farming  
 	radonon ? turnOn('rMapFarmPopup') : turnOff('rMapFarmPopup');
 	turnOff('rMapFarmSettings');
@@ -2229,7 +2237,6 @@ function updateCustomButtons() {
 	turnOff('rSmithyFarmSettings');
 	turnOff('rSmithyFarmDefaultSettings');
 	turnOff('rSmithyFarmZone');
-
 
 	//HD Farm
 	radonon ? turnOn('rHDFarmPopup') : turnOff('rHDFarmPopup');
@@ -2267,21 +2274,6 @@ function updateCustomButtons() {
 	!radonon ? turnOn('PreSpireNurseries') : turnOff('PreSpireNurseries');
 	!radonon ? turnOn('spireshitbuy') : turnOff('spireshitbuy');
 	!radonon ? turnOn('SkipSpires') : turnOff('SkipSpires');
-
-	//Raiding
-	!radonon ? turnOn('Praidingzone') : turnOff('Praidingzone');
-	!radonon ? turnOn('Praidingcell') : turnOff('Praidingcell');
-	!radonon ? turnOn('PraidingHD') : turnOff('PraidingHD');
-	!radonon ? turnOn('PraidingP') : turnOff('PraidingP');
-	!radonon ? turnOn('PraidingI') : turnOff('PraidingI');
-	!radonon && getPageSetting('Praidingzone') != -1 ? turnOn('PraidHarder') : turnOff('PraidHarder');
-	!radonon && getPageSetting('PraidHarder') ? turnOn('PraidFarmFragsZ') : turnOff('PraidFarmFragsZ');
-	!radonon && getPageSetting('PraidHarder') ? turnOn('PraidBeforeFarmZ') : turnOff('PraidBeforeFarmZ');
-	!radonon && getPageSetting('PraidHarder') ? turnOn('MaxPraidZone') : turnOff('MaxPraidZone');
-	!radonon ? turnOn('BWraid') : turnOff('BWraid');
-	!radonon && getPageSetting('BWraid') ? turnOn('bwraidcell') : turnOff('bwraidcell');
-	!radonon && getPageSetting('BWraid') ? turnOn('BWraidingz') : turnOff('BWraidingz');
-	!radonon && getPageSetting('BWraid') ? turnOn('BWraidingmax') : turnOff('BWraidingmax');
 
 	//Windstacking
 	var wson = (getPageSetting('AutoStance') == 3);
@@ -2796,7 +2788,16 @@ function toggleStatus(update) {
 	if (update) {
 		if (getPageSetting('showautomapstatus')) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.\
+			<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br>\
+			<b>shouldFarm: </b>\" + shouldFarm +\"<br>\
+			<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
+			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\
+			")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.\
+			<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
+			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\
+			")');
 		} else
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return

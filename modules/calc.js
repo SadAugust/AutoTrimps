@@ -321,18 +321,6 @@ function calcOurDmg(minMaxAvg, incStance, incFlucts) {
 	if (Fluffy.isActive()) {
 		number *= Fluffy.getDamageModifier();
 	}
-	// Gamma Burst
-	if (autoBattle.oneTimers.Burstier.owned == false) {
-		if (gammaBurstPct > 0 && (calcOurHealth() / (calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0))) >= 5)) {
-			number *= (gammaBurstPct + 1) / 5;
-		}
-	}
-	if (autoBattle.oneTimers.Burstier.owned == true) {
-		if (gammaBurstPct > 0 && (calcOurHealth() / (calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world, 50, 'Snimp', 1.0))) >= 4)) {
-			number *= (gammaBurstPct + 1) / 4;
-		}
-	}
-
 
 	if (!incStance && game.global.formation != 0) {
 		number /= (game.global.formation == 2) ? 4 : 0.5;
@@ -470,7 +458,6 @@ function calcEnemyBaseAttack(type, zone, cell, name) {
 
 	return Math.floor(attack);
 }
-
 
 function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack) {
 	//Pre-Init
@@ -654,12 +641,12 @@ function calcEnemyBaseHealth(zone, level, name) {
 		health *= 0.75;
 		health *= game.badGuys[name].health;
 	}
-	return health;
+	return Math.floor(health);
 }
 
 function calcEnemyHealth(world, map) {
 	world = !world ? game.global.world : world;
-	var health = calcEnemyBaseHealth(world, 50, "Snimp");
+	var health = calcEnemyBaseHealth(world, 99, "Snimp");
 	var corrupt = mutations.Corruption.active();
 	var healthy = mutations.Healthy.active();
 	if (map) {
@@ -728,7 +715,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	var health = calcEnemyBaseHealth(zone, cell, name);
 
 	//Spire - Overrides the base health number
-	if (type == "world" && game.global.spireActive) health = calcSpire(99, "Snimp", "healh");
+	if (type == "world" && game.global.spireActive) health = calcSpire(99, "Snimp", "health");
 
 	//Map and Void Corruption
 	if (type != "world") {
@@ -822,10 +809,10 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	return health;
 }
 
-
 function calcHDratio(map) {
-	var ratio = 0;
-	var ourBaseDamage = calcOurDmg("avg", false, true);
+	var ratio = Infinity;
+	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
+	var ourBaseDamage = calcOurDmg("avg", false, true) * gammaBurstDmg;
 
 	//Shield
 	highDamageShield();
@@ -844,6 +831,30 @@ function calcHDratio(map) {
 	}
 	if (map || map >= 1)
 		ratio = calcEnemyHealth(map, true) / ourBaseDamage;
+	return ratio;
+}
+
+function calcVoidHDratio() {
+	var ratio = Infinity;
+	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
+	var ourDamage = calcOurDmg("avg", false, true) * gammaBurstDmg;
+
+	//Shield
+	highDamageShield();
+	if (getPageSetting('AutoStance') == 3 && getPageSetting('highdmg') != undefined && game.global.challengeActive != "Daily" && game.global.ShieldEquipped.name != getPageSetting('highdmg')) {
+		ourDamage /= getCritMulti(false);
+		ourDamage *= trimpAA;
+		ourDamage *= getCritMulti(true);
+	}
+	if (getPageSetting('use3daily') == true && getPageSetting('dhighdmg') != undefined && game.global.challengeActive == "Daily" && game.global.ShieldEquipped.name != getPageSetting('dhighdmg')) {
+		ourDamage /= getCritMulti(false);
+		ourDamage *= trimpAA;
+		ourDamage *= getCritMulti(true);
+	}
+
+	var enemyHealth = calcSpecificEnemyHealth('world', game.global.world, 99, 'Snimp');
+	ratio = enemyHealth / ourDamage;
+
 	return ratio;
 }
 
@@ -1386,7 +1397,7 @@ function RcalcEnemyBaseHealth(mapType, zone, cell, name) {
 	var base = (game.global.universe == 2) ? 10e7 : 130;
 	var health = base * Math.sqrt(zone) * Math.pow(3.265, zone / 2) - 110;
 
-	if (game.global.world > 200 && mapType === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
+	if (game.global.universe === 2 && game.global.world > 200 && mapType === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
 		if (game.global.gridArray[cell - 1].u2Mutation.length > 0 && (game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1 || game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1)) {
 			cell = cell - 1
 			var grid = game.global.gridArray
@@ -1492,11 +1503,13 @@ function RcalcEnemyHealthMod(world, cell, name, mapType, checkMutations) {
 	var world = !world ? game.global.world : world;
 	var health = RcalcEnemyBaseHealth(mapType, world, cell, name);
 
-	if (mapType === 'world' && checkMutations && game.global.world > 200 && getPageSetting('rMutationCalc')) {
-		health = rCalcMutationHealth() > health ? rCalcMutationHealth() : health;
-	} else if (game.global.world > 200 && mapType === 'world' && world === game.global.world) {
-		if (game.global.gridArray[cell - 1].u2Mutation && game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
-			health = u2Mutations.getHealth(game.global.gridArray[cell - 1])
+	if (game.global.universe === 2) {
+		if (mapType === 'world' && checkMutations && game.global.world > 200 && getPageSetting('rMutationCalc')) {
+			health = rCalcMutationHealth() > health ? rCalcMutationHealth() : health;
+		} else if (game.global.world > 200 && mapType === 'world' && world === game.global.world) {
+			if (game.global.gridArray[cell - 1].u2Mutation && game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
+				health = u2Mutations.getHealth(game.global.gridArray[cell - 1])
+			}
 		}
 	}
 
