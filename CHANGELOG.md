@@ -61,6 +61,7 @@ Farming Setting priorities are
 	Vanilla MAZ > Quest > Pandemonium Destacking > Smithy Farm > Map Farm > Tribute Farm > Worshipper Farm > Map Destacking (Unbalance, Storm, Bloodthirst) > Prestige Raiding > Mayhem > Insanity > Pandemonium Jestimp Farm > Pandemonium Farm > Alchemy > Hypothermia > HD Farm > Void Maps > Quagmire > Map Bonus > Smithless
 
 Unique Map Settings
+	
 	Has got the settings for all Unique Maps you'd want to run in it. Can set zones & cells for them to be run on.
 	
 	MP Smithy settings for fillers, dailies & c3s are in here.
@@ -97,7 +98,7 @@ Bone Shrine Settings
 
 Void Map Settings
 
-	All Void Map settings in here.
+	Void Map Settings have been reworked to allow you to use a range of zones where the void zone is dependant on both your HD & Void HD Ratios that you input, whenever one of the 2 values has been reached it'll run voids so the need for split tabbing voids is removed.
 
 Map Bonus Settings
 
