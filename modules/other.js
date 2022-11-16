@@ -607,6 +607,7 @@ function equalityManagement() {
 		game.portal.Equality.scalingActive = false;
 		//Misc vars
 		var debugStats = getPageSetting('debugEqualityStats');
+		var dailyEmpower = getPageSetting('rAutoEqualityEmpower');
 		voidPBSwap = false;
 		var mapping = game.global.mapsActive ? true : false;
 		var currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
@@ -627,7 +628,6 @@ function equalityManagement() {
 		var dailyExplosive = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
 		var dailyWeakness = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
 		var dailyBloodthirst = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
-
 
 		//Challenge conditions
 		var runningUnlucky = game.global.challengeActive == 'Unlucky';
@@ -668,8 +668,8 @@ function equalityManagement() {
 		var enemyDmg = getCurrentEnemy().attack * RcalcBadGuyDmgMod() * 1.5;
 		if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
-		enemyDmg *= !mapping && dailyEmpower && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
-		//enemyDmg *= !mapping && dailyEmpower && dailyExplosive ? dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1;
+		enemyDmg *= dailyEmpower && !mapping && dailyEmpower && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
+		enemyDmg *= dailyEmpower && !mapping && dailyEmpower && dailyExplosive ? dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1;
 		enemyDmg *= type === 'map' && mapping && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 		enemyDmg *= (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1
 		enemyDmg *= runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
@@ -684,6 +684,7 @@ function equalityManagement() {
 		if (type === 'world' && game.global.world > 200 && game.global.gridArray[currentCell].u2Mutation.length > 0) fastEnemy = true;
 		if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
 		if (type === 'map' && dailyExplosive) fastEnemy = true;
+		if (type === 'world' && dailyExplosive) fastEnemy = true;
 		if (game.global.voidBuff === 'doubleAttack') fastEnemy = true
 		if (runningArchaeology) fastEnemy = true;
 		if (noFrenzy) fastEnemy = true;
@@ -1857,7 +1858,7 @@ function displayDropdowns(universe, runType, MAZ) {
 				if (highestZone >= 201) challengeDropdown += "<option value='Smithless'" + ((MAZ == 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
 				return challengeDropdown;
 			}
-		}
+		}/* 
 		else if (runType === 'Filler') {
 			if (getPageSetting('rDisplayAllSettings') || highestZone >= 40) challengeList2.push("Bublé");
 			if (getPageSetting('rDisplayAllSettings') || highestZone >= 55) challengeList2.push("Melt");
@@ -1883,7 +1884,7 @@ function displayDropdowns(universe, runType, MAZ) {
 			if (getPageSetting('rDisplayAllSettings') || highestZone >= 115) challengeList2.push("Berserk");
 			if (getPageSetting('rDisplayAllSettings') || highestZone >= 175) challengeList2.push("Glass");
 			if (getPageSetting('rDisplayAllSettings') || highestZone >= 201) challengeList2.push("Smithless");
-		}
+		} */
 	}
 
 	return challengeList2;
