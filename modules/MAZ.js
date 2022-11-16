@@ -598,8 +598,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		var current = autoTrimpSettings[varPrefix + "Settings"].value;
 
-		//var challengeFillers = displayChallenges(2, 'Filler');
-		//debug(challengeFillers)
 		for (var x = 0; x < maxSettings; x++) {
 			var vals = {
 				active: true,
@@ -720,13 +718,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			else style = " style='display: none' ";
 
-			var gatherDropdown = displayChallenges(universe, 'Gather', vals.gather);
+			var gatherDropdown = displayDropdowns(universe, 'Gather', vals.gather);
 			//Specials dropdown with conditions for each unlock to only appear when the user can run them.
-			var specialsDropdown = displayChallenges(universe, 'Cache', vals.special);
+			var specialsDropdown = displayDropdowns(universe, 'Cache', vals.special);
 			//Filler Challenges
-			var challengeDropdown = displayChallenges(universe, 'Filler', vals.challenge);
+			var challengeDropdown = displayDropdowns(universe, 'Filler', vals.challenge);
 			//C3 Challenges
-			var challenge3Dropdown = displayChallenges(universe, 'C3', vals.challenge3);
+			var challenge3Dropdown = displayDropdowns(universe, 'C3', vals.challenge3);
 
 			var potionDropdown = "<option value='h'" + ((vals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
 			var runTypeDropdown = "<option value='none'" + ((vals.runType == 'none') ? " selected='selected'" : "") + ">None</option>\<option value='Filler'" + ((vals.runType == 'Filler') ? " selected='selected'" : "") + ">Filler</option>\<option value='Daily'" + ((vals.runType == 'Daily') ? " selected='selected'" : "") + ">Daily</option>\<option value='C3'" + ((vals.runType == 'C3') ? " selected='selected'" : "") + ">C3</option>\<option value='All'" + ((vals.runType == 'All') ? " selected='selected'" : "") + ">All</option>"

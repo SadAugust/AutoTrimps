@@ -1739,12 +1739,12 @@ function displayMostEfficientEquipment() {
 	}
 }
 
-function displayChallenges(universe, runType, MAZ) {
+function displayDropdowns(universe, runType, MAZ) {
 
 	//if (!runType) return;
 	if (!universe) universe = game.global.universe;
 	if (!MAZ) MAZ = '';
-	var challengeList = [];
+	var challengeList2 = [];
 
 	if (runType === 'Gather') {
 		var gatherDropdown = "<option value='food'" + ((MAZ == 'food') ? " selected='selected'" : "") + ">Food</option >\
@@ -1859,32 +1859,32 @@ function displayChallenges(universe, runType, MAZ) {
 			}
 		}
 		else if (runType === 'Filler') {
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 40) challengeList.push("Bublé");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 55) challengeList.push("Melt");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 70) challengeList.push("Quagmire");
-			if (getPageSetting('rDisplayAllSettings') || highestZone > 90) challengeList.push("Archaeology");
-			if (getPageSetting('rDisplayAllSettings') || highestZone > 100) challengeList.push("Mayhem");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 110) challengeList.push("Insanity");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 135) challengeList.push("Nurture");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 150) challengeList.push("Pandemonium");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 155) challengeList.push("Alchemy");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 175) challengeList.push("Hypothermia");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 40) challengeList2.push("Bublé");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 55) challengeList2.push("Melt");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 70) challengeList2.push("Quagmire");
+			if (getPageSetting('rDisplayAllSettings') || highestZone > 90) challengeList2.push("Archaeology");
+			if (getPageSetting('rDisplayAllSettings') || highestZone > 100) challengeList2.push("Mayhem");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 110) challengeList2.push("Insanity");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 135) challengeList2.push("Nurture");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 150) challengeList2.push("Pandemonium");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 155) challengeList2.push("Alchemy");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 175) challengeList2.push("Hypothermia");
 		}
 		else if (runType === 'C3') {
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 15) challengeList.push("Unlucky");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 20) challengeList.push("Downsize");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 25) challengeList.push("Transmute");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 35) challengeList.push("Unbalance");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 45) challengeList.push("Duel");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 60) challengeList.push("Trappapalooza");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 70) challengeList.push("Wither");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 85) challengeList.push("Quest");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 105) challengeList.push("Storm");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 115) challengeList.push("Berserk");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 175) challengeList.push("Glass");
-			if (getPageSetting('rDisplayAllSettings') || highestZone >= 201) challengeList.push("Smithless");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 15) challengeList2.push("Unlucky");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 20) challengeList2.push("Downsize");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 25) challengeList2.push("Transmute");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 35) challengeList2.push("Unbalance");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 45) challengeList2.push("Duel");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 60) challengeList2.push("Trappapalooza");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 70) challengeList2.push("Wither");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 85) challengeList2.push("Quest");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 105) challengeList2.push("Storm");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 115) challengeList2.push("Berserk");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 175) challengeList2.push("Glass");
+			if (getPageSetting('rDisplayAllSettings') || highestZone >= 201) challengeList2.push("Smithless");
 		}
 	}
 
-	return challengeList;
+	return challengeList2;
 }
