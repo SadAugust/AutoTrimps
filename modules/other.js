@@ -1744,6 +1744,7 @@ function displayChallenges(universe, runType, MAZ) {
 	//if (!runType) return;
 	if (!universe) universe = game.global.universe;
 	if (!MAZ) MAZ = '';
+	var challengeList = [];
 
 	if (runType === 'Gather') {
 		var gatherDropdown = "<option value='food'" + ((MAZ == 'food') ? " selected='selected'" : "") + ">Food</option >\
