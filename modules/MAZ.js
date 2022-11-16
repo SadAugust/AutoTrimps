@@ -1319,7 +1319,7 @@ function saveATDailyAutoPortalConfig() {
 	var setting = autoTrimpSettings.rDailyPortalSettingsArray.value;
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var percentboxes = document.getElementsByClassName('structConfigPercent');
-	var portalZoneBox = document.getElementsByClassName('dailyAutoPortalZone')[0];
+	/* var portalZoneBox = document.getElementsByClassName('dailyAutoPortalZone')[0];
 
 	var portalZone = parseInt(portalZoneBox.value, 10);
 	if (portalZone > 999) portalZone = 999;
@@ -1333,7 +1333,7 @@ function saveATDailyAutoPortalConfig() {
 	if (challengeElem) {
 		if (challengeElem.value) setting.portalChallenge = challengeElem.value;
 		else delete setting.portalChallenge;
-	}
+	} */
 
 	for (var x = 0; x < checkboxes.length; x++) {
 		var name = checkboxes[x].id.split('structConfig')[1];
