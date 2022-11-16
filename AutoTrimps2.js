@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v5.7.5.7.2',
+var ATversion = 'SadAugust v5.7.5.7.4',
 	atscript = document.getElementById('AutoTrimps-script'),
 	basepath = 'https://SadAugust.github.io/AutoTrimps_Local/',
 	modulepath = 'modules/';
@@ -44,7 +44,7 @@ function printChangelog(changes) {
 }
 
 function assembleChangelog(c) {
-	return `${c}<br>`
+	return `${c}<br><br>`
 }
 
 var runInterval = 100;

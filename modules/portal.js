@@ -395,7 +395,7 @@ function RdailyAutoPortal() {
 	if (getPageSetting('RAutoPortalDaily') == 1) {
 		var OKtoPortal = false;
 		if (!game.global.runningChallengeSquared) {
-			var minZone = autoTrimpSettings.rDailyPortalSettingsArray.value.portalZone + dailyModiferReduction();
+			var minZone = getPageSetting('RdHeHrDontPortalBefore') + dailyModiferReduction();
 			game.stats.bestHeliumHourThisRun.evaluate();
 			var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
 			var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
@@ -424,9 +424,9 @@ function RdailyAutoPortal() {
 							abandonDaily();
 							document.getElementById('finishDailyBtnContainer').style.display = 'none';
 						}
-						if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') == false)
+						if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None' && !getPageSetting('u2daily'))
 							RdoPortal(autoTrimpSettings.RdHeliumHourChallenge.selected);
-						else if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') == true)
+						else if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily'))
 							RdoPortal(autoTrimpSettings.dHeliumHourChallenge.selected);
 						else
 							RdoPortal();
@@ -436,15 +436,15 @@ function RdailyAutoPortal() {
 		}
 	}
 	if (getPageSetting('RAutoPortalDaily') == 2) {
-		var portalZone = autoTrimpSettings.rDailyPortalSettingsArray.value.portalZone + dailyModiferReduction();
+		var portalZone = getPageSetting('RdCustomAutoPortal') + dailyModiferReduction();
 
 		if (MODULES.mapFunctions.rPortalZone === game.global.world) {
 			portalZone = game.global.world;
 		}
 		if (portalZone > 0 && game.global.world >= portalZone) {
-			if (autoTrimpSettings.rDailyPortalSettingsArray.value.portalChallenge != 'None' && getPageSetting('u2daily') == false)
-				RdoPortal(autoTrimpSettings.rDailyPortalSettingsArray.value.portalChallenge);
-			else if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') === true)
+			if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None' && !getPageSetting('u2daily'))
+				RdoPortal(autoTrimpSettings.RdHeliumHourChallenge.selected);
+			else if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily'))
 				RdoPortal(autoTrimpSettings.dHeliumHourChallenge.selected);
 			else {
 				abandonDaily();

@@ -216,16 +216,16 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		//Always Needed Settings
 
-		tooltipText += "<td><div class='row'>"
+		/* tooltipText += "<td><div class='row'>"
 		tooltipText += "<div class='col-xs-6' style='width: 50%; padding-right: 5px'>" + "" + "&nbsp;&nbsp;<span>" + "Portal Zone:" + "</span></div>"
 		tooltipText += "<div class='col-xs-6' style='width: 50%; text-align: right;'> <input class='dailyAutoPortalZone' 'id='portalZone ' type='number'  value='" + ((settingGroup && settingGroup.portalZone) ? settingGroup.portalZone : 0) + "'/></div></div></td>";
 
 		tooltipText += "<td><div class='row'>"
 		tooltipText += "<div class='col-xs-3' style='width: 40%; padding-right: 5px'>" + "" + "&nbsp;&nbsp;<span>" + "Portal Challenge:</span></div>"
-		tooltipText += "<div class='col-xs-5' style='width: 60%; text-align: right'><select class ='dailyAutoPortalChallenge' id='autoDailyPortalChallenge'><option value='None'>None</option>";
+		tooltipText += "<div class='col-xs-5' style='width: 60%; text-align: right'><select class ='dailyAutoPortalChallenge' id='autoDailyPortalChallenge'><option value='None'>None</option>"; */
 
 		//Identifying which challenges the user can run
-		var highestZone = game.global.highestRadonLevelCleared;
+		/* var highestZone = game.global.highestRadonLevelCleared;
 		var radonChallenges = [];
 		if (getPageSetting('rDisplayAllSettings') || highestZone >= 39) radonChallenges.push("Bublé");
 		if (getPageSetting('rDisplayAllSettings') || highestZone >= 54) radonChallenges.push("Melt");
@@ -242,7 +242,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<option" + ((settingGroup.portalChallenge && settingGroup.portalChallenge == radonChallenges[x]) ? " selected='selected'" : "") + " value='" + radonChallenges[x] + "'>" + radonChallenges[x] + "</option>";
 		}
 		tooltipText += "</select></div></div></td></tr>";
-		tooltipText += "</div></div>"
+		tooltipText += "</div></div>" */
 
 		//Skip Lines to seperate
 		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 100%; padding-right: 5px'>" + "" + "&nbsp;&nbsp;<span>" + "<u>Modifier ± Zones</u>" + "</span></div></div>"

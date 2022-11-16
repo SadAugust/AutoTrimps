@@ -316,6 +316,8 @@ function initializeAllSettings() {
 	//Radon Daily Portal
 	createSetting('RAutoStartDaily', 'Auto Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
+	createSetting('RdHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', radonHourChallenges, "Daily");
+	createSetting('RdCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal AFTER clearing this level in dailies. (ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, "Daily");
 	createSetting('RdHeliumHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
 	createSetting('RFillerRun', 'Filler run', 'Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.', 'boolean', false, null, 'Daily');
 	createSetting('u1daily', 'Daily in U1', 'If this is on, you will do your daily in U1. ', 'boolean', false, null, 'Daily');
@@ -1719,6 +1721,13 @@ function updateATVersion() {
 			changelog.push("Have reworked U1 settings somewhat, added the Map Bonus, Map Farm, Raiding, HD Farm & Bone Shrine settings from u2. Have also reworked BW Raiding and implemented it into the MAZ layout window!.<br>This does mean that I've deleted all of the old raiding, map bonus, BW raiding etc settings, if you need to find out what your settings were before I'd recommend loading Zeks fork to see them as they'll still be intact there.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.4') {
+			autoTrimpSettings.RdCustomAutoPortal.value = autoTrimpSettings.rDailyPortalSettingsArray.value.portalChallenge;
+			autoTrimpSettings.RdHeliumHourChallenge.value = autoTrimpSettings.rDailyPortalSettingsArray.value.portalZone;
+
+			changelog.push("I regret my decision of condensing the daily portal settings into the daily reduction settings window so have reverted that changed.")
+		}
+
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
@@ -2037,6 +2046,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAutoPortalDaily') == 2 ? turnOn('RdCustomAutoPortal') : turnOff('RdCustomAutoPortal');
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeHrDontPortalBefore') : turnOff('RdHeHrDontPortalBefore');
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeliumHrBuffer') : turnOff('RdHeliumHrBuffer');
+	radonon && getPageSetting('RAutoPortalDaily') > 0 ? turnOn("RdHeliumHourChallenge") : turnOff("RdHeliumHourChallenge");
 
 	//C2
 	!radonon ? turnOn('FinishC2') : turnOff('FinishC2');
