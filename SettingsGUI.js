@@ -1723,8 +1723,8 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.4') {
-			autoTrimpSettings.RdCustomAutoPortal.value = autoTrimpSettings.rDailyPortalSettingsArray.value.portalChallenge;
-			autoTrimpSettings.RdHeliumHourChallenge.value = autoTrimpSettings.rDailyPortalSettingsArray.value.portalZone;
+			autoTrimpSettings.RdCustomAutoPortal.value = autoTrimpSettings.rDailyPortalSettingsArray.value.portalZone;
+			autoTrimpSettings.RdHeliumHourChallenge.value = autoTrimpSettings.rDailyPortalSettingsArray.value.portalChallenge;
 
 			changelog.push("I regret my decision of condensing the daily portal settings into the daily reduction settings window so have reverted that changed.")
 		}
