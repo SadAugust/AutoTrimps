@@ -607,7 +607,7 @@ function equalityManagement() {
 		game.portal.Equality.scalingActive = false;
 		//Misc vars
 		var debugStats = getPageSetting('debugEqualityStats');
-		var dailyEmpower = getPageSetting('rAutoEqualityEmpower');
+		var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
 		voidPBSwap = false;
 		var mapping = game.global.mapsActive ? true : false;
 		var currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
@@ -668,8 +668,8 @@ function equalityManagement() {
 		var enemyDmg = getCurrentEnemy().attack * RcalcBadGuyDmgMod() * 1.5;
 		if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
 		enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
-		enemyDmg *= dailyEmpower && !mapping && dailyEmpower && dailyCrit ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
-		enemyDmg *= dailyEmpower && !mapping && dailyEmpower && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1;
+		enemyDmg *= dailyEmpowerToggle && !mapping && dailyEmpower && dailyCrit ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
+		enemyDmg *= dailyEmpowerToggle && !mapping && dailyEmpower && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1;
 		enemyDmg *= type === 'map' && mapping && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 		enemyDmg *= (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1
 		enemyDmg *= runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
