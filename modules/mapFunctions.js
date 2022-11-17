@@ -1320,7 +1320,7 @@ function runBionicRaiding() {
 	if (game.global.preMapsActive) {
 		selectMap(findLastBionic().id);
 	}
-	if (findLastBionic().level >= rMapSettings.raidingZone && game.global.preMapsActive) {
+	if ((findLastBionic().level >= rMapSettings.raidingZone || findLastBionic().level < rMapSettings.raidingZone) && game.global.preMapsActive) {
 		runMap();
 	}
 }
