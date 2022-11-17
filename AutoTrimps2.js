@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v5.7.5.7.5',
+var ATversion = 'SadAugust v5.7.5.7.6',
 	atscript = document.getElementById('AutoTrimps-script'),
 	basepath = 'https://SadAugust.github.io/AutoTrimps_Local/',
 	modulepath = 'modules/';
@@ -237,7 +237,9 @@ function mainLoop() {
 		if (getPageSetting('UseAutoGen') == true && game.global.world > 229) autoGenerator();
 
 		//Jobs
-		if (getPageSetting('BuyJobsNew') == 2) RbuyJobs();
+		if (getPageSetting('BuyJobsNew') > 0) RbuyJobs();
+		//Heirloom Management
+		if (getPageSetting('Hhs')) HeirloomSwapping();
 
 		//Portal
 		if (autoTrimpSettings.AutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) autoPortal();

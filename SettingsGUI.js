@@ -295,9 +295,6 @@ function initializeAllSettings() {
 	createSetting('dwsmax', 'Daily WS MAX', 'For maximising Windstacking an entire Daily. Withholds damage to try and get your max windstacks every wind zone. Not recommended for terrible Dailies. ', 'value', '-1', null, 'Daily');
 	createSetting('dwsmaxhd', 'Daily WSM H:D', 'Fiddle with this to maximise your DWSM settings. Default is 0.00025. ', 'value', '-1', null, 'Daily');
 
-	//Helium Heirloom
-	createSetting('dhighdmg', 'DHS: High Damage', '<b>HIGH DAMAGE HEIRLOOM</b><br><br>Enter the name of your high damage heirloom. This is your heirloom that you will use normally in dailies. ', 'textValue', 'undefined', null, 'Daily');
-	createSetting('dlowdmg', 'DHS: Low Damage', '<b>LOW DAMAGE HEIRLOOM</b><br><br>Enter the name of your low damage heirloom. This is the heirloom that you will use for windstacking in dailies. ', 'textValue', 'undefined', null, 'Daily');
 	//Helium Daily Portal
 	createSetting('AutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('u2daily', 'Daily in U2', 'If this is on, you will do your daily in U2. ', 'boolean', false, null, 'Daily');
@@ -787,8 +784,28 @@ function initializeAllSettings() {
 
 	//--------------------------------------------------------------
 
-
 	//Heirloom
+	//Heirloom Swapping
+	createSetting('Hhs', 'Heirloom Swapping', 'Heirloom swapping master button. Turn this on to allow heirloom swapping and its associated settings. ', 'boolean', false, null, 'Heirlooms');
+	createSetting('HhsMapSwap', 'Map Swap', 'Toggle to swap to your afterpush shield when inside maps', 'boolean', false, null, 'Heirlooms');
+
+	//Shield swapping
+	createSetting('HhsShield', 'Shields', 'Toggle to swap Shields', 'boolean', false, null, 'Heirlooms');
+	createSetting('HhsInitial', 'Initial', '<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('HhsAfterpush', 'Afterpush', '<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('HhsC3', 'C3', '<b>C3 heirloom to use</b><br><br>Enter the name of the heirloom you would like to use during C3\s and special challenges (Mayhem, Pandemonium).', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('HhsSwapZone', 'Swap Zone', 'Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>', 'value', '-1', null, 'Heirlooms');
+	createSetting('HhsDailySwapZone', 'Daily Swap Zone', 'Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>', 'value', '-1', null, 'Heirlooms');
+	createSetting('HhsC3SwapZone', 'C3 Swap Zone', 'Which zone to swap from your first heirloom you have defined to the C3 heirloom you have defined. I.e if this value is 75 it will switch to the C3 heirloom <b>on z75</b>', 'value', -1, null, 'Heirlooms');
+
+	//Staff swapping
+	createSetting('HhsStaff', 'Staffs', 'Toggle to swap Staffs', 'boolean', false, null, 'Heirlooms');
+	createSetting('HhsWorldStaff', 'World', '<b>World Staff</b><br><br>Enter the name of your world staff.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('HhsMapStaff', 'Map', '<b>General Map Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside maps, will be overwritten by the proceeding 3 heirloom settings if they\'re being used otherwise will work in every maptype.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('HhsFoodStaff', 'Savory Cache', '<b>Savory Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Savory Cache maps. Will use this staff for Tribute farming if it\'s enabled.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('HhsWoodStaff', 'Wooden Cache', '<b>Wooden Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Wooden Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
+	createSetting('HhsMetalStaff', 'Metal Cache', '<b>Metal Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Metal Cache maps.', 'textValue', 'undefined', null, 'Heirlooms');
+
 	//Heirloom Swapping
 	createSetting('Rhs', 'Heirloom Swapping', 'Heirloom swapping master button. Turn this on to allow heirloom swapping and its associated settings. ', 'boolean', false, null, 'Heirlooms');
 	createSetting('RhsMapSwap', 'Map Swap', 'Toggle to swap to your afterpush shield when inside maps', 'boolean', false, null, 'Heirlooms');
@@ -979,7 +996,6 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("dscryvoidmaps", radonoff);
 	modifyParentNode_Initial("dPreSpireNurseries", radonoff);
 	modifyParentNode_Initial("dwsmaxhd", radonoff);
-	modifyParentNode_Initial("dlowdmg", radonoff);
 	//Radon Settings
 	modifyParentNode_Initial("rAutoEqualityEmpower", radonon);
 
@@ -1038,6 +1054,9 @@ function modifyParentNodeUniverseSwap() {
 
 	//Heirlooms
 	//Helium Settings
+	modifyParentNode_Initial("HhsMapSwap", radonoff);
+	modifyParentNode_Initial("HhsC3SwapZone", radonoff);
+	modifyParentNode_Initial("HhsMetalStaff", radonoff);
 	if (getPageSetting('radonsettings') === 0) {
 		modifyParentNode_Initial("autoheirloomsperfect", radonoff_heirloom);
 		modifyParentNode_Initial("slot7modsh", radonoff_heirloom);
@@ -1755,6 +1774,11 @@ function updateATVersion() {
 			I converted over the ratio settings for Farmers, Lumberjacks & Miners but you'll need to adjust the other settings yourself.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.5') {
+
+			changelog.push("The Heirloom swapping settings from U2 have been added, have deleted all of the old U1 settings as they done the same thing but worse.")
+		}
+
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
@@ -2045,11 +2069,6 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('use3daily') ? turnOn('liqstack') : turnOff('liqstack');
 	!radonon && getPageSetting('use3daily') ? turnOn('dwsmax') : turnOff('dwsmax');
 	!radonon && getPageSetting('use3daily') ? turnOn('dwsmaxhd') : turnOff('dwsmaxhd');
-
-	//DHeirlooms
-	!radonon && getPageSetting('dloomswap') > 0 ? turnOn('dloomswaphd') : turnOff('dloomswaphd');
-	!radonon ? turnOn('dhighdmg') : turnOff('dhighdmg');
-	!radonon ? turnOn('dlowdmg') : turnOff('dlowdmg');
 
 	//DPortal
 	!radonon ? turnOn('AutoStartDaily') : turnOff('AutoStartDaily');
@@ -2547,6 +2566,36 @@ function updateCustomButtons() {
 
 	//Heirlooms
 
+	//U1 Heirloom Swapping
+	//Heirloom Swapping
+	!radonon ? turnOn('Hhs') : turnOff('Hhs');
+	var hson = getPageSetting('Hhs')
+	var hsshieldon = getPageSetting('HhsShield');
+	!radonon && hson && hsshieldon ? turnOn('HhsMapSwap') : turnOff('HhsMapSwap');
+
+	//Shields
+	!radonon && hson ? turnOn('HhsShield') : turnOff('HhsShield');
+
+	!radonon && hson && hsshieldon ? turnOn('HhsInitial') : turnOff('HhsInitial');
+	!radonon && hson && hsshieldon ? turnOn('HhsAfterpush') : turnOff('HhsAfterpush');
+	!radonon && hson && hsshieldon ? turnOn('HhsSwapZone') : turnOff('HhsSwapZone');
+	!radonon && hson && hsshieldon ? turnOn('HhsDailySwapZone') : turnOff('HhsDailySwapZone');
+	!radonon && hson && hsshieldon ? turnOn('HhsC3SwapZone') : turnOff('HhsC3SwapZone');
+	!radonon && hson && hsshieldon ? turnOn('HhsC3') : turnOff('HhsC3');
+
+	//Staffs
+	!radonon && hson ? turnOn('HhsStaff') : turnOff('HhsStaff');
+	var hsstaffon = getPageSetting('HhsStaff');
+	!radonon && hson && hsstaffon ? turnOn('HhsWorldStaff') : turnOff('HhsWorldStaff');
+	!radonon && hson && hsstaffon ? turnOn('HhsMapStaff') : turnOff('HhsMapStaff');
+	!radonon && hson && hsstaffon ? turnOn('HhsFoodStaff') : turnOff('HhsFoodStaff');
+	!radonon && hson && hsstaffon ? turnOn('HhsWoodStaff') : turnOff('HhsWoodStaff');
+	!radonon && hson && hsstaffon ? turnOn('HhsMetalStaff') : turnOff('HhsMetalStaff');
+	!radonon && hson && hsstaffon && game.global.ArchaeologyDone ? turnOn('HhsResourceStaff') : turnOff('HhsResourceStaff');
+	!radonon && hson && hsstaffon ? turnOn('HhsWCStaff') : turnOff('HhsWCStaff');
+	!radonon && hson && hsstaffon ? turnOn('HhsMCStaff') : turnOff('HhsMCStaff');
+
+	//U2 Heirloom Swapping
 	//Heirloom Swapping
 	radonon ? turnOn('Rhs') : turnOff('Rhs');
 	var hson = getPageSetting('Rhs')
