@@ -28,7 +28,7 @@ var preSpireFarming = !1;
 var spireMapBonusFarming = !1;
 var spireTime = 0;
 var doMaxMapBonus = !1;
-var vanillaMapatZone = !1;
+var rVanillaMAZ = false;
 var additionalCritMulti = 2 < getPlayerCritChance() ? 25 : 5;
 
 function updateAutoMapsStatus(get) {
@@ -323,7 +323,7 @@ function autoMap() {
 		shouldDoMaps = false;
 	}
 
-	//Automaps
+	//Automaps -- Map Creation
 	if (shouldDoMaps || doVoids || rShouldMap) {
 		if (selectedMap == "world") {
 			if (preSpireFarming) {
@@ -465,7 +465,6 @@ function autoMap() {
 					else RShouldFarmMapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
 				}
 			}
-
 			while (decrement.indexOf('loot') > -1 && lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 				lootAdvMapsRange.value -= 1;
 			}
@@ -484,10 +483,10 @@ function autoMap() {
 			while (sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
 				sizeAdvMapsRange.value -= 1;
 			}
-			if (getPageSetting('AdvMapSpecialModifier'))
+			if (rCurrentMap === '' && getPageSetting('AdvMapSpecialModifier'))
 				testMapSpecialModController();
 			var maplvlpicked = parseInt($mapLevelInput.value) + (getPageSetting('AdvMapSpecialModifier') ? getExtraMapLevels() : 0);
-			if (updateMapCost(true) > game.resources.fragments.owned) {
+			if (highestMap !== undefined && updateMapCost(true) > game.resources.fragments.owned) {
 				selectMap(game.global.mapsOwnedArray[highestMap].id);
 				debug("Can't afford the map we designed, #" + maplvlpicked, "maps", '*crying2');
 				debug("...selected our highest map instead # " + game.global.mapsOwnedArray[highestMap].id + " Level: " + game.global.mapsOwnedArray[highestMap].level, "maps", '*happy2');
@@ -792,7 +791,6 @@ function RautoMap() {
 			lootAdvMapsRange.value = tier[2];
 			adjustMap('loot', tier[2]);
 			biomeAdvMapsSelect.value = autoTrimpSettings.Rmapselection.selected == "Gardens" ? "Plentiful" : autoTrimpSettings.Rmapselection.selected;
-			advSpecialSelect.value = autoTrimpSettings.rMapSpecial.selected;
 			if (game.global.challengeActive === 'Transmute' && autoTrimpSettings.rMapSpecial.selected.includes('mc'))
 				advSpecialSelect.value = autoTrimpSettings.rMapSpecial.selected.charAt(0) + "sc";
 			document.getElementById("advSpecialSelect").value
