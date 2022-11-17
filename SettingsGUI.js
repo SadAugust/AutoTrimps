@@ -378,7 +378,7 @@ function initializeAllSettings() {
 	//Jobs
 	//Helium
 	createSetting('fuckjobs', 'Hide Jobs', 'Hides obsolete settings when you have obtained the AutoJobs Mastery. It should be far better to use than AT, Especially on c2 Challenges like Watch. ', 'boolean', false, null, 'Jobs');
-	createSetting('BuyJobsNew', ['Don\'t Buy Jobs', 'Auto Worker Ratios', 'Manual Worker Ratios'], 'Manual Worker Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, 'Jobs');
+	createSetting('BuyJobsNew', ['Don\'t Buy Jobs', 'Auto Worker Ratios', 'Manual Ratios'], 'Manual Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, 'Jobs');
 	createSetting('AutoMagmamancers', 'Auto Magmamancers', 'Auto Magmamancer Management. Hires Magmamancers when the Current Zone time goes over 10 minutes. Does a one-time spend of at most 10% of your gem resources. Every increment of 10 minutes after that repeats the 10% hiring process. Magmamancery mastery is accounted for, with that it hires them at 5 minutes instead of 10. Disclaimer: May negatively impact Gem count.', 'boolean', true, null, 'Jobs');
 	createSetting('FarmerRatio', 'Farmer Ratio', '', 'value', '1', null, 'Jobs');
 	createSetting('LumberjackRatio', 'Lumberjack Ratio', '', 'value', '1', null, 'Jobs');
@@ -389,8 +389,9 @@ function initializeAllSettings() {
 
 	//Radon
 	//General
-	createSetting('rJobSettingsArray', 'Job Settings', 'Click to adjust settings. ', 'mazDefaultArray', { FarmersUntil: { enabled: false, zone: 999 }, NoLumberjacks: { enabled: false }, Worshipper: { enabled: true, percent: '5' }, Miner: { enabled: true, ratio: 1 }, Lumberjack: { enabled: true, ratio: 1 }, Farmer: { enabled: true, ratio: 1 }, Explorer: { enabled: true, percent: '5' }, Meteorologist: { enabled: true, percent: '100' } }, null, 'Jobs');
-	createSetting('RBuyJobsNew', ['AT AutoJobs Off', 'Auto Ratios', 'Manual Ratios'], 'Manual Worker Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, "Jobs");
+	createSetting('hJobSettingsArray', 'Job Settings', 'Click to adjust settings. ', 'mazDefaultArray', { Miner: { enabled: true, ratio: 1 }, Lumberjack: { enabled: true, ratio: 1 }, Farmer: { enabled: true, ratio: 1 }, Trainer: { enabled: true, percent: 5 }, Explorer: { enabled: true, percent: '5' }, Magmamancer: { enabled: true, percent: 50 } }, null, 'Jobs');
+	createSetting('rJobSettingsArray', 'Job Settings', 'Click to adjust settings. ', 'mazDefaultArray', { FarmersUntil: { enabled: false, zone: 999 }, NoLumberjacks: { enabled: false }, Worshipper: { enabled: true, percent: 5 }, Miner: { enabled: true, ratio: 1 }, Lumberjack: { enabled: true, ratio: 1 }, Farmer: { enabled: true, ratio: 1 }, Explorer: { enabled: true, percent: 5 }, Meteorologist: { enabled: true, percent: 100 } }, null, 'Jobs');
+	createSetting('RBuyJobsNew', ['AT AutoJobs Off', 'Auto Ratios', 'Manual Ratios'], 'Manual Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, "Jobs");
 
 	//--------------------------------------------------------------------------------------------------------
 
@@ -1388,7 +1389,7 @@ function settingChanged(id) {
 			btn.value = 0;
 		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + (btn.value));
 		document.getElementById(id).innerHTML = btn.name[btn.value]
-		if (btn.id === 'RBuyJobsNew') {
+		if (btn.id === 'BuyJobsNew' || btn.id === 'RBuyJobsNew') {
 			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
 			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
 		}
@@ -1405,6 +1406,20 @@ function settingChanged(id) {
 	updateCustomButtons();
 	saveSettings();
 	checkPortalSettings();
+}
+
+function updateButtonText() {
+	var id = game.global.universe === 1 ? 'BuyJobsNew' : 'RBuyJobsNew'
+	var btn = autoTrimpSettings[id];
+	if (btn.type == 'multitoggle') {
+		if (btn.id === 'BuyJobsNew' || btn.id === 'RBuyJobsNew') {
+			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
+			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
+		}
+		if (btn.id === 'RAutoPortalDaily') {
+			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
+		}
+	}
 }
 
 function modifyParentNode_Initial(id, style) {
@@ -1729,6 +1744,17 @@ function updateATVersion() {
 			changelog.push("I regret my decision of condensing the daily portal settings into the daily reduction settings window so have reverted that changed.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.5') {
+			var setting = autoTrimpSettings.hJobSettingsArray.value;
+
+			setting.Miner.ratio = autoTrimpSettings.MinerRatio.value;
+			setting.Farmer.ratio = autoTrimpSettings.FarmerRatio.value;
+			setting.Lumberjack.ratio = autoTrimpSettings.LumberjackRatio.value;
+
+			changelog.push("U1 job settings have been converted over to the way that U2 does jobs (button in vanilla jobs tab) also U1 settings that use job ratios should now function properly!<br><br>\
+			I converted over the ratio settings for Farmers, Lumberjacks & Miners but you'll need to adjust the other settings yourself.")
+		}
+
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
@@ -1915,7 +1941,7 @@ function updateCustomButtons() {
 		document.getElementById("tabBuildings").style.display = radonon ? "none" : "";
 	}
 	if (document.getElementById("tabJobs") != null) {
-		document.getElementById("tabJobs").style.display = radonon ? "none" : "";
+		document.getElementById("tabJobs").style.display = radonon ? "none" : !radonon ? "none" : "";
 	}
 	if (document.getElementById("tabRaiding") != null) {
 		document.getElementById("tabRaiding").style.display = radonon ? "none" : !radonon ? "none" : "";
@@ -2111,6 +2137,7 @@ function updateCustomButtons() {
 	//RJobs
 	radonon ? turnOn('RBuyJobsNew') : turnOff('RBuyJobsNew');
 	turnOff('rJobSettingsArray');
+	turnOff('hJobSettingsArray');
 	turnOff('rBuildingSettingsArray');
 	turnOff('rDailyPortalSettingsArray');
 
@@ -2707,17 +2734,18 @@ document.getElementById('jobsTitleSpan').parentElement.style.width = '10%'
 
 //AutoJobs button.
 //Creating button
+var autoJobSetting = game.global.universe === 1 ? 'BuyJobsNew' : 'RBuyJobsNew'
 var autoJobContainer = document.createElement("DIV");
 autoJobContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
-autoJobContainer.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
+autoJobContainer.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[autoJobSetting].value == 2 ? 3 : autoTrimpSettings[autoJobSetting].value));
 autoJobContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, \"Toggle between the AutoJob settings.\")');
 autoJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
 //Text
 var autoJobText = document.createElement("DIV");
-autoJobText.innerHTML = autoTrimpSettings.RBuyJobsNew.name[autoTrimpSettings.RBuyJobsNew.value];
+autoJobText.innerHTML = autoTrimpSettings[autoJobSetting].name[autoTrimpSettings[autoJobSetting].value];
 autoJobText.setAttribute("id", "autoJobLabel");
-autoJobText.setAttribute("onClick", "settingChanged('RBuyJobsNew')");
+autoJobText.setAttribute("onClick", "settingChanged(autoJobSetting)");
 
 //Creating cogwheel & linking onclick
 var autoJobSettings = document.createElement("DIV");

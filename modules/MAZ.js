@@ -20,19 +20,19 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//AutoJobs
 	if (event == 'AutoJobs') {
-		if (game.global.universe === 1) return;
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Job Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>The left side of this window is dedicated to jobs that are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. You can use any number larger than 0.</p><p><b>Farmers Until:</b> Stops buying Farmers from this zone. The Tribute & Worshipper farm settings override this setting and hire farmers during them.</p><p><b>No Lumberjacks Post MP:</b> Stops buying Lumberjacks after Melting Point has been run. The Smithy Farm setting will override this setting.</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 		var percentJobs = ["Explorer"];
+		if (game.global.universe == 1 && game.global.highestLevelCleared > 2) percentJobs.push("Trainer");
+		if (game.global.universe == 1 && game.global.highestLevelCleared > 229) percentJobs.push("Magmamancer");
 		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 29) percentJobs.push("Meteorologist");
 		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) percentJobs.push("Worshipper");
 		var ratioJobs = ["Farmer", "Lumberjack", "Miner"];
 		var sciMax = 1;
-		var settingGroup = autoTrimpSettings.rJobSettingsArray.value;
+		var settingGroup = game.global.universe === 1 ? autoTrimpSettings.hJobSettingsArray.value : autoTrimpSettings.rJobSettingsArray.value;
 		for (var x = 0; x < ratioJobs.length; x++) {
 			tooltipText += "<tr>";
 			var item = ratioJobs[x];
 			var setting = settingGroup[item];
-			var settingRatio = setting.ratio === 0 ? 0 : setting.ratio
 			var max;
 			var checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
 			tooltipText += "<td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Ratio: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number'  value='" + ((setting && setting.ratio >= 0) ? setting.ratio : 0) + "'/></div></div>"
@@ -45,9 +45,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 				checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
 				tooltipText += "<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Percent: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number'  value='" + ((setting && setting.percent) ? setting.percent : 100) + "'/></div></div>"
 			}
-
-			if (x == ratioJobs.length - 1) tooltipText += "<tr><td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + buildNiceCheckbox('autoJobCheckboxFarmersUntil', 'autoCheckbox', (settingGroup.FarmersUntil.enabled)) + "&nbsp;&nbsp;<span>" + "Farmers Until</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Zone: <input class='jobConfigQuantity' id='FarmersUntilZone' type='number'  value='" + ((settingGroup.FarmersUntil.zone) ? settingGroup.FarmersUntil.zone : 999) + "'/></div></div></td>";
-			if (x == ratioJobs.length - 1) tooltipText += "<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 1px'>" + buildNiceCheckbox('autoJobCheckboxNoLumberjacks', 'autoCheckbox', (settingGroup.NoLumberjacks.enabled)) + "&nbsp;&nbsp;<span>" + "No Lumberjacks Post MP</span></div></td></tr>";
+			if (game.global.universe === 2) {
+				if (x == ratioJobs.length - 1) tooltipText += "<tr><td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + buildNiceCheckbox('autoJobCheckboxFarmersUntil', 'autoCheckbox', (settingGroup.FarmersUntil.enabled)) + "&nbsp;&nbsp;<span>" + "Farmers Until</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Zone: <input class='jobConfigQuantity' id='FarmersUntilZone' type='number'  value='" + ((settingGroup.FarmersUntil.zone) ? settingGroup.FarmersUntil.zone : 999) + "'/></div></div></td>";
+				if (x == ratioJobs.length - 1) tooltipText += "<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 1px'>" + buildNiceCheckbox('autoJobCheckboxNoLumberjacks', 'autoCheckbox', (settingGroup.NoLumberjacks.enabled)) + "&nbsp;&nbsp;<span>" + "No Lumberjacks Post MP</span></div></td></tr>";
+			}
 		}
 		var values = ['AutoJobs Off', 'Auto Ratios', 'Manual Ratios'];
 		tooltipText += "<tr><td style='width: 40%'><div class='col-xs-6' style='padding-right: 5px'>Setting on Portal:</div><div class='col-xs-6 lowPad' style='text-align: right'><select style='width: 100%' id='autoJobSelfGather'><option value='0'>No change</option>";
@@ -868,7 +869,6 @@ function buildNiceCheckboxAutoLevel(id, extraClass, enabled, index, varPrefix) {
 	return html;
 }
 
-
 function settingsWindowSave(titleText, varPrefix, reopen) {
 
 	var setting = [];
@@ -1142,7 +1142,9 @@ function windowToggleHelp(windowSize) {
 function saveATAutoJobsConfig() {
 	var error = "";
 	var errorMessage = false;
-	autoTrimpSettings.rJobSettingsArray.value = {};
+
+	var ATsetting = game.global.universe === 1 ? autoTrimpSettings.hJobSettingsArray : autoTrimpSettings.rJobSettingsArray;
+	ATsetting.value = {};
 	var setting = {};
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var quantboxes = document.getElementsByClassName('jobConfigQuantity');
@@ -1152,12 +1154,16 @@ function saveATAutoJobsConfig() {
 		var checked = checkboxes[x].dataset.checked == 'true';
 		if (!setting[name]) setting[name] = {};
 		setting[name].enabled = checked;
-		if (name === 'NoLumberjacks')
-			continue;
-		if (name === 'FarmersUntil') {
-			setting[name].zone = (quantboxes[x].value);
-			continue;
+
+		if (game.global.universe === 2) {
+			if (name === 'NoLumberjacks')
+				continue;
+			if (name === 'FarmersUntil') {
+				setting[name].zone = (quantboxes[x].value);
+				continue;
+			}
 		}
+
 		if (ratios.indexOf(name) != -1) {
 			setting[name].ratio = parseFloat(quantboxes[x].value);
 			//Error checking
@@ -1167,7 +1173,8 @@ function saveATAutoJobsConfig() {
 			}
 			continue;
 		}
-		setting[name].percent = (document.getElementById('autoJobQuant' + name).value);
+		jobquant = document.getElementById('autoJobQuant' + name).value;
+		setting[name].percent = parseFloat(jobquant);
 	}
 	var portalElem = document.getElementById('autoJobSelfGather');
 	if (portalElem) {
@@ -1180,7 +1187,7 @@ function saveATAutoJobsConfig() {
 		return;
 	}
 
-	autoTrimpSettings.rJobSettingsArray.value = setting;
+	ATsetting.value = setting;
 	cancelTooltip();
 	saveSettings();
 }

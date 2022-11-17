@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v5.7.5.7.4',
+var ATversion = 'SadAugust v5.7.5.7.5',
 	atscript = document.getElementById('AutoTrimps-script'),
 	basepath = 'https://SadAugust.github.io/AutoTrimps_Local/',
 	modulepath = 'modules/';
@@ -237,11 +237,7 @@ function mainLoop() {
 		if (getPageSetting('UseAutoGen') == true && game.global.world > 229) autoGenerator();
 
 		//Jobs
-		if (getPageSetting('BuyJobsNew') == 1) {
-			workerRatios();
-			buyJobs();
-		}
-		else if (getPageSetting('BuyJobsNew') == 2) buyJobs();
+		if (getPageSetting('BuyJobsNew') == 2) RbuyJobs();
 
 		//Portal
 		if (autoTrimpSettings.AutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) autoPortal();
@@ -401,8 +397,12 @@ function mainCleanup() {
 	if (game.global.universe == 1 && currentworld == 1 && aWholeNewWorld) {
 		lastHeliumZone = 0;
 		zonePostpone = 0;
-		if (getPageSetting('automapsportal') && getPageSetting('AutoMaps') == 0 && !game.upgrades.Battle.done)
-			autoTrimpSettings["AutoMaps"].value = 1;
+		if (!game.upgrades.Battle.done) {
+			updateButtonText()
+			if (getPageSetting('automapsportal') && getPageSetting('AutoMaps') == 0)
+				autoTrimpSettings["AutoMaps"].value = 1;
+
+		}
 		if (getPageSetting('showautomapstatus')) updateAutoMapsStatus();
 		return true;
 	}
@@ -410,6 +410,7 @@ function mainCleanup() {
 		lastRadonZone = 0;
 		zonePostpone = 0;
 		if (!game.upgrades.Battle.done) {
+			updateButtonText()
 			game.global.buyAmt = 1;
 			if (getPageSetting('Rautomapsportal') && getPageSetting('RAutoMaps') == 0) {
 				autoTrimpSettings["RAutoMaps"].value = 1;
