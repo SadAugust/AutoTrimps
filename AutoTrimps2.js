@@ -177,7 +177,8 @@ function mainLoop() {
 			case 'The Magma':
 				cancelTooltip();
 		}
-		Rresetmapvars()
+		if (game.global.universe == 2)
+			Rresetmapvars()
 		if (getPageSetting('AutoEggs'))
 			easterEggClicked();
 		setTitle();
