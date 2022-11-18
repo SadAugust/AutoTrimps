@@ -1684,7 +1684,8 @@ function displayMostEfficientEquipment() {
 	if (usingRealTimeOffline) return;
 	var $eqNamePrestige = null;
 
-	var highlightSetting = getPageSetting('rEquipEfficientEquipDisplay');
+	var highlightSetting = game.global.universe === 1 ? getPageSetting('rEquipEfficientEquipDisplay') : getPageSetting('rEquipEfficientEquipDisplay');
+
 	if (!highlightSetting) {
 		for (var item in game.equipment) {
 			if (game.upgrades[RequipmentList[item].Upgrade].locked == 0) {

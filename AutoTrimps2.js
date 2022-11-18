@@ -184,6 +184,7 @@ function mainLoop() {
 		setTitle();
 	}
 
+
 	//Heirloom Shield Swap Check
 	if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
 	//Initiate Farming Code
@@ -203,7 +204,7 @@ function mainLoop() {
 		//Offline Progress
 		if (!usingRealTimeOffline) {
 			setScienceNeeded();
-			autoLevelEquipment();
+			//autoLevelEquipment();
 		}
 
 		if (getPageSetting('showbreedtimer')) {
@@ -271,6 +272,22 @@ function mainLoop() {
 		else if (getPageSetting('AutoStance') == 1) autoStance();
 		else if (getPageSetting('AutoStance') == 2) autoStance2();
 
+
+		//AutoEquip
+		if (getPageSetting('Hequipon')) RautoEquip();
+
+		//Bone Upgrades / Settings
+		if (autoTrimpSettings.hBoneShrineDefaultSettings.value.active) BoneShrine();
+
+		if (getPageSetting('hEquipEfficientEquipDisplay')) {
+			if (oneSecondInterval) {
+				displayMostEfficientEquipment();
+				if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
+			}
+		}
+
+
+
 		//Spire
 		if (getPageSetting('ExitSpireCell') > 0 && game.global.challengeActive != "Daily" && getPageSetting('IgnoreSpiresUntil') <= game.global.world && game.global.spireActive) exitSpireCell();
 		if (getPageSetting('dExitSpireCell') >= 1 && game.global.challengeActive == "Daily" && getPageSetting('dIgnoreSpiresUntil') <= game.global.world && game.global.spireActive) dailyexitSpireCell();
@@ -289,6 +306,14 @@ function mainLoop() {
 
 		//Offline Progress
 		if (!usingRealTimeOffline) RsetScienceNeeded();
+
+		//Heirloom Shield Swap Check
+		if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
+		//Initiate Farming Code
+		rMapSettings = FarmingDecision();
+		rCurrentMap = rMapSettings.mapName;
+		//RCore
+		//AutoMaps
 		if (getPageSetting('RAutoMaps') > 0 && game.global.mapsUnlocked) RautoMap();
 		//Status - AutoMaps
 		if (getPageSetting('Rshowautomapstatus')) RupdateAutoMapsStatus();
@@ -412,7 +437,6 @@ function mainCleanup() {
 		lastRadonZone = 0;
 		zonePostpone = 0;
 		if (!game.upgrades.Battle.done) {
-			updateButtonText()
 			game.global.buyAmt = 1;
 			if (getPageSetting('Rautomapsportal') && getPageSetting('RAutoMaps') == 0) {
 				autoTrimpSettings["RAutoMaps"].value = 1;
@@ -449,6 +473,7 @@ function mainCleanup() {
 				document.getElementById('RBuyJobsNew').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
 				document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
 			}
+			updateButtonText()
 			saveSettings();
 		}
 		if (getPageSetting('Rshowautomapstatus')) RupdateAutoMapsStatus();

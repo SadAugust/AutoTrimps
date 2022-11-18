@@ -409,6 +409,23 @@ function initializeAllSettings() {
 	createSetting('gearamounttobuy', 'Gear Levels to Buy', 'Set the amount of Gear Levels to buy for AT. I.e if set to 1 will buy 1 level at a time. Recommended value 1. <b>MUST ALWAYS HAVE A VALUE GREATER THAN 0! </b>', 'value', 1, null, "Gear");
 	createSetting('always2', 'Always Level 2', 'Always buys level 2 of weapons and armor regardless of efficiency', 'boolean', false, null, "Gear");
 
+	//Helium
+	createSetting('Hequipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency.', 'boolean', false, null, "Gear");
+	createSetting('Hdmgcuntoff', 'AE: Cut-off', 'Decides when to buy gear. 1 is default. This means it will take 1 hit to kill an enemy. If zone is below the zone you have defined in AE: Zone then it will only buy equips when needed.', 'value', '1', null, 'Gear');
+	createSetting('Hequipamount', 'AE: Amount', 'How much equipment to level per time.', 'value', 1, null, "Gear");
+	createSetting('Hequipcapattack', 'AE: Weapon Cap', 'What level to stop buying Weapons at.', 'value', 50, null, "Gear");
+	createSetting('Hequipcaphealth', 'AE: Armour Cap', 'What level to stop buying Armour at.', 'value', 50, null, "Gear");
+	createSetting('Hequipzone', 'AE: Zone', 'What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input. ', 'multiValue', -1, null, "Gear");
+	createSetting('Hequippercent', 'AE: Percent', 'What percent of resources to spend on equipment before the zone you have set in AE: Zone.', 'value', 1, null, "Gear");
+	createSetting('Hautoequipportal', 'AE: Portal', 'Makes sure Auto Equip is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', false, null, 'Gear');
+	createSetting('Hequip2', 'AE: 2', 'Always buys level 2 of weapons and armor regardless of efficiency.', 'boolean', true, null, "Gear");
+	createSetting('Hequipprestige', ['AE: Prestige Off', 'AE: Prestige', 'AE: Always Prestige'], '\
+	<b>AE: Prestige Off</b><br>Will go for a new prestige when you have 6 or more levels in your equipment.<br><br>\
+	<b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run Atlantrimp (will buy any prestiges that cost less than 8% of your current metal).<br><br>\
+	<b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.', 'multitoggle', 0, null, "Gear");
+	createSetting('hEquipHighestPrestige', 'AE: Highest Prestige', 'Will only buy equips for the highest prestige currently owned.', 'boolean', true, null, "Gear");
+	createSetting('hEquipEfficientEquipDisplay', 'AE: Highlight Equips', 'Will highlight the most efficient equipment or prestige to buy. <b>This setting will disable the default game setting.', 'boolean', true, null, "Gear");
+
 	//Radon
 	createSetting('Requipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency.', 'boolean', false, null, "Gear");
 	createSetting('Rdmgcuntoff', 'AE: Cut-off', 'Decides when to buy gear. 1 is default. This means it will take 1 hit to kill an enemy. If zone is below the zone you have defined in AE: Zone then it will only buy equips when needed.', 'value', '1', null, 'Gear');
@@ -1386,13 +1403,13 @@ function settingChanged(id) {
 		if (id == 'rEquipEfficientEquipDisplay') {
 			displayMostEfficientEquipment()
 		}
-		if (btn = autoTrimpSettings.RAutoStartDaily) {
+		if (btn === autoTrimpSettings.RAutoStartDaily) {
 			document.getElementById('RAutoStartDaily').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
 		}
-		if (btn = autoTrimpSettings.Requipon) {
+		if (btn.id === 'Hequipon' || btn.id === 'Requipon') {
 			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
 		}
-		if (btn = autoTrimpSettings.RBuyBuildingsNew) {
+		if (btn === autoTrimpSettings.RBuyBuildingsNew) {
 			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
 		}
 	}
@@ -1435,10 +1452,11 @@ function updateButtonText() {
 			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
 			document.getElementById('autoJobLabel').innerHTML = btn.name[btn.value];
 		}
-		if (btn.id === 'RAutoPortalDaily') {
-			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn.value == 2 ? 3 : btn.value));
-		}
 	}
+
+	var id = game.global.universe === 1 ? 'Hequipon' : 'Requipon'
+	var btn = autoTrimpSettings[id];
+	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
 }
 
 function modifyParentNode_Initial(id, style) {
@@ -1775,8 +1793,11 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.5') {
+			changelog.push("The Heirloom swapping settings from U2 have been added to U1, have deleted all of the old U1 settings as they done the same thing but worse.")
+		}
 
-			changelog.push("The Heirloom swapping settings from U2 have been added, have deleted all of the old U1 settings as they done the same thing but worse.")
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.6') {
+			changelog.push("The Auto Equip swapping settings from U2 have been added to U1, have deleted all of the old U1 settings as they done the same thing but worse. Not 100% tested so if there's any issues let me know.")
 		}
 
 
@@ -2161,20 +2182,49 @@ function updateCustomButtons() {
 	turnOff('rDailyPortalSettingsArray');
 
 	//Gear
-	!radonon ? turnOn('BuyArmorNew') : turnOff('BuyArmorNew');
-	!radonon ? turnOn('BuyWeaponsNew') : turnOff('BuyWeaponsNew');
-	!radonon ? turnOn('CapEquip2') : turnOff('CapEquip2');
-	!radonon ? turnOn('CapEquiparm') : turnOff('CapEquiparm');
-	!radonon ? turnOn('dmgcuntoff') : turnOff('dmgcuntoff');
-	!radonon ? turnOn('DynamicPrestige2') : turnOff('DynamicPrestige2');
-	!radonon ? turnOn('Prestige') : turnOff('Prestige');
-	!radonon ? turnOn('ForcePresZ') : turnOff('ForcePresZ');
-	!radonon ? turnOn('PrestigeSkip1_2') : turnOff('PrestigeSkip1_2');
-	!radonon ? turnOn('DelayArmorWhenNeeded') : turnOff('DelayArmorWhenNeeded');
-	!radonon ? turnOn('BuyShieldblock') : turnOff('BuyShieldblock');
-	!radonon ? turnOn('trimpsnotdie') : turnOff('trimpsnotdie');
-	!radonon ? turnOn('gearamounttobuy') : turnOff('gearamounttobuy');
-	!radonon ? turnOn('always2') : turnOff('always2');
+	//!radonon ? turnOn('BuyArmorNew') : 
+	turnOff('BuyArmorNew');
+	//!radonon ? turnOn('BuyWeaponsNew') : 
+	turnOff('BuyWeaponsNew');
+	//!radonon ? turnOn('CapEquip2') : 
+	turnOff('CapEquip2');
+	//!radonon ? turnOn('CapEquiparm') : 
+	turnOff('CapEquiparm');
+	//!radonon ? turnOn('dmgcuntoff') : 
+	turnOff('dmgcuntoff');
+	//!radonon ? turnOn('DynamicPrestige2') : 
+	turnOff('DynamicPrestige2');
+	//!radonon ? turnOn('Prestige') : 
+	turnOff('Prestige');
+	//!radonon ? turnOn('ForcePresZ') : 
+	turnOff('ForcePresZ');
+	//!radonon ? turnOn('PrestigeSkip1_2') : 
+	turnOff('PrestigeSkip1_2');
+	//!radonon ? turnOn('DelayArmorWhenNeeded') :
+	turnOff('DelayArmorWhenNeeded');
+	//!radonon ? turnOn('BuyShieldblock') :
+	turnOff('BuyShieldblock');
+	//!radonon ? turnOn('trimpsnotdie') : 
+	turnOff('trimpsnotdie');
+	//!radonon ? turnOn('gearamounttobuy') : 
+	turnOff('gearamounttobuy');
+	//!radonon ? turnOn('always2') : 
+	turnOff('always2');
+
+	//HGear AutoEquip
+	!radonon ? turnOn('Hequipon') : turnOff('Hequipon');
+	!radonon && getPageSetting('Hequipon') ? turnOn('Hequipamount') : turnOff('Hequipamount');
+	!radonon && getPageSetting('Hequipon') ? turnOn('Hequipcapattack') : turnOff('Hequipcapattack');
+	!radonon && getPageSetting('Hequipon') ? turnOn('Hequipcaphealth') : turnOff('Hequipcaphealth');
+	!radonon && getPageSetting('Hequipon') ? turnOn('Hequipzone') : turnOff('Hequipzone');
+	!radonon && getPageSetting('Hequipon') ? turnOn('Hequippercent') : turnOff('Hequippercent');
+	!radonon ? turnOn('Hautoequipportal') : turnOff('Hautoequipportal');
+	!radonon && getPageSetting('Hequipon') ? turnOn('Hequip2') : turnOff('Hequip2');
+	!radonon && getPageSetting('Hequipon') ? turnOn('Hequipprestige') : turnOff('Hequipprestige');
+	!radonon && getPageSetting('Hequipon') && getPageSetting('Hequipprestige') !== 0 ? turnOn('hEquipHighestPrestige') : turnOff('hEquipHighestPrestige');
+	!radonon ? turnOn('hEquipEfficientEquipDisplay') : turnOff('hEquipEfficientEquipDisplay');
+	!radonon && getPageSetting('Hequipon') ? turnOn('Hdmgcuntoff') : turnOff('Hdmgcuntoff');
+
 
 	//RGear AutoEquip
 	radonon ? turnOn('Requipon') : turnOff('Requipon');
@@ -2837,10 +2887,11 @@ autoStructureColumn.replaceChild(autoStructureContainer, document.getElementById
 
 
 //AutoEquip Button
+var autoEquipSetting = game.global.universe === 1 ? 'Hequipon' : 'Requipon'
 //Creating button
 var autoEquipContainer = document.createElement("DIV");
 autoEquipContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
-autoEquipContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.Requipon.enabled);
+autoEquipContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[autoEquipSetting].enabled);
 autoEquipContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoEquip\", \"customText\", event, \"Toggle between the AutoEquip settings.\")');
 autoEquipContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
@@ -2848,7 +2899,7 @@ autoEquipContainer.setAttribute("onmouseout", 'tooltip("hide")');
 var autoEquipText = document.createElement("DIV");
 autoEquipText.innerHTML = 'AT AutoEquip';
 autoEquipText.setAttribute("id", "autoEquipLabel");
-autoEquipText.setAttribute("onClick", "settingChanged('Requipon')");
+autoEquipText.setAttribute("onClick", "settingChanged(autoEquipSetting)");
 
 //Setting up positioning
 var autoEquipColumn = document.getElementById("equipmentTitleDiv").children[0];
