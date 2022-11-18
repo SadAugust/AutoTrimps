@@ -772,7 +772,7 @@ function RautoEquip() {
 
 	if (game.global.universe === 1 && needGymystic() && canAffordTwoLevel('Gymystic')) {
 		buyUpgrade('Gymystic', true, true);
-		debug('Upgrading Gymystic ' + game.equipment[equipName].prestige, "equips", '*upload');
+		debug('Upgrading Gymystic', "equips", '*upload');
 	}
 	var rEquipZone = getPageSetting(prefix + 'equipzone');
 	var zoneGo = (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
