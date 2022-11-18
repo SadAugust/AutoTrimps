@@ -177,13 +177,11 @@ function mainLoop() {
 			case 'The Magma':
 				cancelTooltip();
 		}
-		if (game.global.universe == 2)
-			Rresetmapvars()
+		Rresetmapvars()
 		if (getPageSetting('AutoEggs'))
 			easterEggClicked();
 		setTitle();
 	}
-
 
 	//Heirloom Shield Swap Check
 	if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
