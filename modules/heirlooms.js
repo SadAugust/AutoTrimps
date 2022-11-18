@@ -173,10 +173,9 @@ function HeirloomSwapping() {
 	if (getPageSetting(prefix + 'hsShield')) {
 		if (game.global.challengeActive == 'Pandemonium' && rCurrentMap === prefix + 'PandemoniumJestimpFarm' && getPageSetting(prefix + 'hsPandJestFarmShield') != 'undefined' && autoBattle.oneTimers.Mass_Hysteria.owned)
 			HeirloomEquipShield(prefix + 'hsPandJestFarmShield');
-		else if (game.global.universe === 2 && game.global.mapsActive && getCurrentMapObject().location == "Void" && getPageSetting(prefix + 'hsVoidSwap') && game.global.voidBuff !== 'doubleAttack' && getPageSetting(prefix + 'hsInitial') !== "undefined" && !voidPBSwap) {
+		else if (game.global.universe === 2 && game.global.mapsActive && getCurrentMapObject().location == "Void" && getPageSetting(prefix + 'hsVoidSwap') && game.global.voidBuff !== 'doubleAttack' && getPageSetting(prefix + 'hsInitial') !== "undefined" && !voidPBSwap)
 			HeirloomEquipShield(prefix + 'hsInitial');
-		}
-		else if (getPageSetting(rAfterpushShield) !== "undefined" && (game.global.world >= swapZone || game.global.mapsActive && getPageSetting(prefix + 'hsMapSwap')))
+		else if (getPageSetting(rAfterpushShield) !== "undefined" && (game.global.world >= swapZone || ((game.global.preMapsActive || game.global.mapsActive) && getPageSetting(prefix + 'hsMapSwap'))))
 			HeirloomEquipShield(rAfterpushShield);
 		else if (getPageSetting(prefix + 'hsInitial') !== "undefined") {
 			HeirloomEquipShield(prefix + 'hsInitial');
