@@ -852,7 +852,7 @@ function calcVoidHDratio() {
 		ourDamage *= getCritMulti(true);
 	}
 
-	var enemyHealth = calcSpecificEnemyHealth('world', game.global.world, 99, 'Snimp');
+	var enemyHealth = calcSpecificEnemyHealth('void', game.global.world, 100, 'Cthulimp') * 4
 	ratio = enemyHealth / ourDamage;
 
 	return ratio;

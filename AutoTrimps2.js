@@ -177,8 +177,7 @@ function mainLoop() {
 			case 'The Magma':
 				cancelTooltip();
 		}
-		if (game.global.universe == 2)
-			Rresetmapvars()
+		Rresetmapvars()
 		if (getPageSetting('AutoEggs'))
 			easterEggClicked();
 		setTitle();
@@ -285,8 +284,6 @@ function mainLoop() {
 				if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
 			}
 		}
-
-
 
 		//Spire
 		if (getPageSetting('ExitSpireCell') > 0 && game.global.challengeActive != "Daily" && getPageSetting('IgnoreSpiresUntil') <= game.global.world && game.global.spireActive) exitSpireCell();

@@ -556,74 +556,20 @@ function windStance() {
 	if (game.global.soldierHealth <= 0) return;
 	if (!game.upgrades.Formations.done) return;
 	if (game.global.world <= 70) return;
-	var stancey = 2;
-	if (game.global.challengeActive != "Daily") {
-		if (calcCurrentStance() == 5) {
-			stancey = 5;
-			lowHeirloom();
-		}
-		if (calcCurrentStance() == 2) {
-			stancey = 2;
-			lowHeirloom();
-		}
-		if (calcCurrentStance() == 0) {
-			stancey = 0;
-			lowHeirloom();
-		}
-		if (calcCurrentStance() == 1) {
-			stancey = 1;
-			lowHeirloom();
-		}
-		if (calcCurrentStance() == 15) {
-			stancey = 5;
-			highHeirloom();
-		}
-		if (calcCurrentStance() == 12) {
-			stancey = 2;
-			highHeirloom();
-		}
-		if (calcCurrentStance() == 10) {
-			stancey = 0;
-			highHeirloom();
-		}
-		if (calcCurrentStance() == 11) {
-			stancey = 1;
-			highHeirloom();
-		}
+	var stanceToUse = 2;
+	var currentStance = calcCurrentStance();
+	if (currentStance == 0 || currentStance == 10) {
+		stanceToUse = 0;
 	}
-	if (game.global.challengeActive == "Daily") {
-		if (calcCurrentStance() == 5) {
-			stancey = 5;
-			dlowHeirloom();
-		}
-		if (calcCurrentStance() == 2) {
-			stancey = 2;
-			dlowHeirloom();
-		}
-		if (calcCurrentStance() == 0) {
-			stancey = 0;
-			dlowHeirloom();
-		}
-		if (calcCurrentStance() == 1) {
-			stancey = 1;
-			dlowHeirloom();
-		}
-		if (calcCurrentStance() == 15) {
-			stancey = 5;
-			dhighHeirloom();
-		}
-		if (calcCurrentStance() == 12) {
-			stancey = 2;
-			dhighHeirloom();
-		}
-		if (calcCurrentStance() == 10) {
-			stancey = 0;
-			dhighHeirloom();
-		}
-		if (calcCurrentStance() == 11) {
-			stancey = 1;
-			dhighHeirloom();
-		}
+	if (currentStance == 1 || currentStance == 11) {
+		stanceToUse = 1;
 	}
-	setFormation(stancey);
+	if (currentStance == 2 || currentStance == 12) {
+		stanceToUse = 2;
+	}
+	if (currentStance == 5 || currentStance == 15) {
+		stanceToUse = 5;
+	}
+
+	setFormation(stanceToUse);
 }
