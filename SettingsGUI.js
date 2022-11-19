@@ -394,19 +394,6 @@ function initializeAllSettings() {
 
 	//Gear
 	//Helium
-	createSetting('BuyArmorNew', ['Armor: Buy Neither', 'Armor: Buy Both', 'Armor: Prestiges', 'Armor: Levels'], 'AutoBuys Prestiges and Levels up the most cost efficient Armor available. Gymystic buying is controlled under this setting\'s prestige option', 'multitoggle', 1, null, "Gear"); //This should replace the two below
-	createSetting('BuyWeaponsNew', ['Weapons: Buy Neither', 'Weapons: Buy Both', 'Weapons: Prestiges', 'Weapons: Levels'], 'AutoBuys Prestiges and Levels up the most cost efficient Weapon available.', 'multitoggle', 1, null, "Gear"); //This should replace the two below
-	createSetting('CapEquip2', 'Weapon Level Cap', 'Do not level Weapons past this number. Helps stop wasting metal when the script levels-up equip High, only to prestige right after. Recommended value: earlygame 10, lategame: 100. Disable with -1 or 0. <b>NEW:</b> Also sub-caps to 10% of your number during liquified or overkilled(under 25sec) zones. This does not mean the script always hits the cap. Your Equip will now always be leveled to at least 2 since its the most effective level. It will only be leveled however if you dont have enoughDamage. But During Spire, everything will be leveled up to the cap.<br><b>Hidden var: </b>MODULES[\\"equipment\\"].capDivisor = 10; //number to divide your normal cap by.', 'value', 10, null, 'Gear');
-	createSetting('CapEquiparm', 'Armor Level Cap', 'Do not level Armor past this number. Helps stop wasting metal when the script levels-up equip High, only to prestige right after. Recommended value: earlygame 10, lategame: 100. Disable with -1 or 0. <b>NEW:</b> Also sub-caps to 10% of your number during liquified or overkilled(under 25sec) zones. This does not mean the script always hits the cap. Your Equip will now always be leveled to at least 2 since its the most effective level. It will only be leveled however if you dont have enoughHealth. But During Spire, everything will be leveled up to the cap.<br><b>Hidden var: </b>MODULES[\\"equipment\\"].capDivisor = 10; //number to divide your normal cap by.', 'value', 10, null, 'Gear');
-	createSetting('dmgcuntoff', 'Equipment Cut Off', 'Decides when to buy gear. 4 is default. This means it will take 1 hit to kill an enemy if in D stance. ', 'value', '4', null, 'Gear');
-	createSetting('DynamicPrestige2', 'Dynamic Prestige z', 'Dynamic Prestige: <b>Set Target Zone number: Z #. (disable with 0 or -1)</b><br> Skip getting prestiges at first, and Gradually work up to the desired Prestige setting you have set (set the Prestige dropdown to the highest weapon you want to end up on at the target zone you set here). Runs with Dagger to save a significant amount of time until we need better gear, then starts increasing the prestige setting near the end of the run.  Examines which prestiges you have, how many missing ones youd need to achieve the desired target and starts running maps every zone (more maps for higher settings), Until the target prestige is reached. <b>Use Dagger or else</b>', 'value', -1, null, 'Gear');
-	createSetting('DelayArmorWhenNeeded', 'Delay Armor Prestige', 'Delays buying armor prestige-upgrades during Want More Damage or Farming automap-modes, Although if you need health AND damage, it WILL buy armor prestiges tho. NOTE: <b>Applies to Prestiges only</b>', 'boolean', false, null, 'Gear');
-	createSetting('BuyShieldblock', 'Buy Shield Block', 'Will buy the shield block upgrade. CAUTION: If you are progressing past zone 60, you probably don\'t want this :)', 'boolean', false, null, "Gear");
-	createSetting('trimpsnotdie', 'Buy Armor on Death', 'Buys 10 levels of Armor when Trimps die. Useful when your trimps die frequentely. ', 'boolean', false, null, "Gear");
-	createSetting('gearamounttobuy', 'Gear Levels to Buy', 'Set the amount of Gear Levels to buy for AT. I.e if set to 1 will buy 1 level at a time. Recommended value 1. <b>MUST ALWAYS HAVE A VALUE GREATER THAN 0! </b>', 'value', 1, null, "Gear");
-	createSetting('always2', 'Always Level 2', 'Always buys level 2 of weapons and armor regardless of efficiency', 'boolean', false, null, "Gear");
-
-	//Helium
 	createSetting('Hequipon', 'AutoEquip', 'AutoEquip. Buys Prestiges and levels equipment according to various settings. Will only buy prestiges if it is worth it. Levels all eqiupment according to best efficiency.', 'boolean', false, null, "Gear");
 	createSetting('Hdmgcuntoff', 'AE: Cut-off', 'Decides when to buy gear. 1 is default. This means it will take 1 hit to kill an enemy. If zone is below the zone you have defined in AE: Zone then it will only buy equips when needed.', 'value', '1', null, 'Gear');
 	createSetting('Hequipamount', 'AE: Amount', 'How much equipment to level per time.', 'value', 1, null, "Gear");
@@ -444,6 +431,10 @@ function initializeAllSettings() {
 	createSetting('rEquipHighestPrestige', 'AE: Highest Prestige', 'Will only buy equips for the highest prestige currently owned.', 'boolean', true, null, "Gear");
 	createSetting('rEquipEfficientEquipDisplay', 'AE: Highlight Equips', 'Will highlight the most efficient equipment or prestige to buy. <b>This setting will disable the default game setting.', 'boolean', true, null, "Gear");
 	createSetting('rEquipNoShields', 'AE: No Shields', 'Will stop AT from buying Shield prestiges or upgrades when they\'re available.', 'boolean', false, null, "Gear");
+
+	createSetting('rPrestige', 'Prestige', 'Acquire prestiges through the selected item (inclusive) as soon as they are available in maps. Forces equip first mode. Automap must be enabled. THIS IS AN IMPORTANT SETTING related to speed climbing and should probably always be on something. If you find the script getting stuck somewhere, particularly where you should easily be able to kill stuff, setting this to an option lower down in the list will help ensure you are more powerful at all times, but will spend more time acquiring the prestiges in maps.', 'dropdown', 'Polierarm', ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'], "Gear");
+	createSetting('rForcePresZ', 'Force Prestige Z', 'On and after this zone is reached, always try to prestige for everything immediately, ignoring Dynamic Prestige settings and overriding that of Linear Prestige. Prestige Skip mode will exit this. Disable with -1.', 'value', -1, null, 'Gear');
+	createSetting('rPrestigeSkip1_2', ['Prestige Skip Off', 'Prestige Skip 1 & 2', 'Prestige Skip 1', 'Prestige Skip 2'], '<b>Prestige Skip 1:</b> If there are more than 2 Unbought Prestiges (besides Shield), ie: sitting in your upgrades window but you cant afford them, AutoMaps will not enter Prestige Mode, and/or will exit from it. The amount of unboughts can be configured with this variable MODULES[\\"maps\\"].SkipNumUnboughtPrestiges = 2; <br><b>Prestige Skip 2:</b> If there are 2 or fewer <b>Unobtained Weapon Prestiges in maps</b>, ie: there are less than 2 types to run for, AutoMaps will not enter Prestige Mode, and/or will exit from it. For users who tends to not need the last few prestiges due to resource gain not keeping up. The amount of unboughts can be configured with MODULES.maps.UnearnedPrestigesRequired. If PrestigeSkipMode is enabled, both conditions need to be reached before exiting.', 'multitoggle', 0, null, "Gear");
 
 	//--------------------------------------------------------------------------------------------------------
 
@@ -1028,6 +1019,8 @@ function modifyParentNodeUniverseSwap() {
 	//Gear
 	//Helium
 	modifyParentNode_Initial("hEquipEfficientEquipDisplay", radonoff);
+	//Radon
+	modifyParentNode_Initial("rEquipNoShields", radonon);
 
 	//Spire
 	//None!
@@ -1441,7 +1434,17 @@ function settingChanged(id) {
 	if (btn.type == 'dropdown') {
 		btn.selected = document.getElementById(id).value;
 		if (id == "Prestige")
-			autoTrimpSettings["PrestigeBackup"].selected = document.getElementById(id).value;
+			autoTrimpSettings["PrestigeBackup"] = {
+				selected: document.getElementById(id).value,
+				name: "PrestigeBackup",
+				id: "PrestigeBackup"
+			};
+		if (id === 'rPrestige')
+			autoTrimpSettings["rPrestigeBackup"] = {
+				selected: document.getElementById(id).value,
+				name: "PrestigeBackup",
+				id: "PrestigeBackup"
+			};
 	}
 
 	updateCustomButtons();
@@ -2185,36 +2188,9 @@ function updateCustomButtons() {
 	turnOff('hJobSettingsArray');
 	turnOff('rBuildingSettingsArray');
 	turnOff('rDailyPortalSettingsArray');
-
-	//Gear
-	//!radonon ? turnOn('BuyArmorNew') : 
-	turnOff('BuyArmorNew');
-	//!radonon ? turnOn('BuyWeaponsNew') : 
-	turnOff('BuyWeaponsNew');
-	//!radonon ? turnOn('CapEquip2') : 
-	turnOff('CapEquip2');
-	//!radonon ? turnOn('CapEquiparm') : 
-	turnOff('CapEquiparm');
-	//!radonon ? turnOn('dmgcuntoff') : 
-	turnOff('dmgcuntoff');
-	//!radonon ? turnOn('DynamicPrestige2') : 
-	turnOff('DynamicPrestige2');
-	!radonon ? turnOn('Prestige') :
-		turnOff('Prestige');
-	!radonon ? turnOn('ForcePresZ') :
-		turnOff('ForcePresZ');
-	!radonon ? turnOn('PrestigeSkip1_2') :
-		turnOff('PrestigeSkip1_2');
-	//!radonon ? turnOn('DelayArmorWhenNeeded') :
-	turnOff('DelayArmorWhenNeeded');
-	//!radonon ? turnOn('BuyShieldblock') :
-	turnOff('BuyShieldblock');
-	//!radonon ? turnOn('trimpsnotdie') : 
-	turnOff('trimpsnotdie');
-	//!radonon ? turnOn('gearamounttobuy') : 
-	turnOff('gearamounttobuy');
-	//!radonon ? turnOn('always2') : 
-	turnOff('always2');
+	!radonon ? turnOn('Prestige') : turnOff('Prestige');
+	!radonon ? turnOn('ForcePresZ') : turnOff('ForcePresZ');
+	!radonon ? turnOn('PrestigeSkip1_2') : turnOff('PrestigeSkip1_2');
 
 	//HGear AutoEquip
 	!radonon ? turnOn('Hequipon') : turnOff('Hequipon');
@@ -2245,6 +2221,10 @@ function updateCustomButtons() {
 	radonon ? turnOn('rEquipEfficientEquipDisplay') : turnOff('rEquipEfficientEquipDisplay');
 	radonon && getPageSetting('Requipon') ? turnOn('rEquipNoShields') : turnOff('rEquipNoShields');
 	radonon && getPageSetting('Requipon') ? turnOn('Rdmgcuntoff') : turnOff('Rdmgcuntoff');
+
+	radonon ? turnOn('rPrestige') : turnOff('rPrestige');
+	radonon ? turnOn('rForcePresZ') : turnOff('rForcePresZ');
+	radonon ? turnOn('rPrestigeSkip1_2') : turnOff('rPrestigeSkip1_2');
 
 	//Maps
 	!radonon ? turnOn('AutoMaps') : turnOff('AutoMaps');
@@ -2734,6 +2714,7 @@ function updateCustomButtons() {
 	document.getElementById('Rmapselection').value = autoTrimpSettings.Rmapselection.selected;
 	document.getElementById('rMapSpecial').value = autoTrimpSettings.rMapSpecial.selected;
 	document.getElementById('Prestige').value = autoTrimpSettings.Prestige.selected;
+	document.getElementById('rPrestige').value = autoTrimpSettings.rPrestige.selected;
 	document.getElementById('AutoGoldenUpgrades').value = autoTrimpSettings.AutoGoldenUpgrades.selected;
 	document.getElementById('dAutoGoldenUpgrades').value = autoTrimpSettings.dAutoGoldenUpgrades.selected;
 	document.getElementById('cAutoGoldenUpgrades').value = autoTrimpSettings.cAutoGoldenUpgrades.selected;

@@ -249,6 +249,7 @@ MODULES.mapFunctions.rVoidHDRatio = Infinity;
 MODULES.mapFunctions.rVoidVHDRatio = Infinity;
 MODULES.mapFunctions.rVoidHDIndex = Infinity;
 MODULES.mapFunctions.rPortalZone = Infinity;
+MODULES.mapFunctions.hPortalZone = Infinity;
 
 //Void Maps -- WORKING AS IS
 function VoidMaps() {
@@ -323,7 +324,8 @@ function VoidMaps() {
 		module.rVoidHDIndex = Infinity;
 		module.rVoidHDRatio = Infinity;
 		module.rVoidVHDRatio = Infinity;
-		if (shouldPortal) module.rPortalZone = game.global.world;
+		//Setting portal zone to current zone if setting calls for it
+		if (shouldPortal) (game.global.universe === 1 ? module.hPortalZone = game.global.world : module.rPortalZone = game.global.world);
 	}
 
 	return farmingDetails;
@@ -1236,6 +1238,99 @@ function PrestigeRaiding() {
 			}
 		}
 	}
+
+	return farmingDetails;
+}
+
+//Prestige Raiding -- WORKING AS IS
+function PrestigeClimb() {
+	if (game.options.menu.mapLoot.enabled != 1) toggleSetting('mapLoot');
+
+	const mapName = 'needPrestige'
+	const farmingDetails = {
+		shouldRun: false,
+		mapName: mapName
+	};
+
+	const universe = game.global.universe === 1 ? '' : 'r';
+
+	if (game.global.challengeActive === "Frugal") return farmingDetails;
+	const targetPrestige = autoTrimpSettings[universe + 'Prestige'].selected;
+	if (targetPrestige === "Off") return farmingDetails
+
+	var customVars = MODULES["maps"];
+	var skippedPrestige = false;
+	var needPrestige = false;
+
+	const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
+	const prestigeArmorList = ['Supershield', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
+	const metalPrestigeList = ['Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
+
+	const mapLevel = 0;
+	const z = game.global.world;
+
+	//Prestige
+	if (getPageSetting('ForcePresZ') !== -1 && (game.global.world) >= getPageSetting(universe + 'ForcePresZ')) {
+		needPrestige = (offlineProgress.countMapItems(game.global.world) !== 0);
+	} else
+		needPrestige = game.mapUnlocks[targetPrestige] && game.mapUnlocks[targetPrestige].last <= (game.global.world) - 5;
+
+	//Figure out how many equips to farm for
+	var prestigeToFarmFor = 0;
+	y = 0;
+	for (const p of prestigeList) {
+		const prestigeUnlock = game.mapUnlocks[p];
+		const pMapLevel = prestigeUnlock.last;
+		if (game.upgrades[p].allowed && prestigeUnlock && pMapLevel <= z) {
+			prestigeToFarmFor += Math.floor((z - pMapLevel) / 5)
+			if (prestigeToFarmFor > 2) y++;
+			if (p === targetPrestige) break;
+		}
+	}
+	prestigeToFarmFor -= y;
+
+
+	//Prestige Skip 1
+	if (needPrestige && getPsString("gems", true) > 0 && (getPageSetting(universe + 'PrestigeSkip1_2') == 1 || getPageSetting(universe + 'PrestigeSkip1_2') == 2)) {
+		var numUnbought = 0;
+		for (const p of metalPrestigeList) {
+			if (game.upgrades[p].allowed - game.upgrades[p].done > 0)
+				numUnbought++;
+		}
+		if (numUnbought >= customVars.SkipNumUnboughtPrestiges) {
+			needPrestige = false;
+			skippedPrestige = true;
+		}
+	}
+
+	//Prestige Skip 2
+	if ((needPrestige || skippedPrestige) && (getPageSetting(universe + 'PrestigeSkip1_2') == 1 || getPageSetting(universe + 'PrestigeSkip1_2') == 3)) {
+		const numLeft = prestigeList.filter(targetPrestige => game.mapUnlocks[targetPrestige].last <= (game.global.world) - 5);
+		const shouldSkip = numLeft <= customVars.UnearnedPrestigesRequired;
+		if (shouldSkip != skippedPrestige) {
+			needPrestige = !needPrestige;
+			skippedPrestige = !skippedPrestige;
+		}
+	}
+
+	if (!needPrestige) return farmingDetails;
+
+	var status = 'Prestige Raiding: ' + prestigeToFarmFor + ' items remaining';
+
+	var repeat = !prestigeArmorList.includes(targetPrestige) ? prestigeToFarmFor > 2 : prestigeToFarmFor > 1;
+	let special;
+	if (game.global.universe === 1)
+		special = game.global.highestLevelCleared + 1 >= 135 ? 'p' : game.global.highestLevelCleared + 1 >= 60 ? 'fa' : '0';
+	if (game.global.universe === 2)
+		special = game.global.highestRadonLevelCleared + 1 >= 55 ? 'p' : game.global.highestRadonLevelCleared + 1 >= 15 ? 'fa' : '0';
+
+	farmingDetails.shouldRun = needPrestige;
+	farmingDetails.mapName = mapName;
+	farmingDetails.status = status;
+	farmingDetails.repeat = repeat;
+	farmingDetails.mapLevel = mapLevel;
+	farmingDetails.autoLevel = true;
+	farmingDetails.special = special;
 
 	return farmingDetails;
 }
@@ -2382,8 +2477,8 @@ function FarmingDecision() {
 
 	if (game.global.universe === 2 && (!autoTrimpSettings.RAutoMaps.value || !game.global.mapsUnlocked)) return farmingDetails;
 
-	if (game.global.universe === 1) var mapTypes = [MapFarm(), PrestigeRaiding(), BionicRaiding(), HDFarm(), VoidMaps(), MapBonus()]
-	if (game.global.universe === 2) var mapTypes = [Quest(), PandemoniumDestack(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), MapBonus(), Smithless()]
+	if (game.global.universe === 1) var mapTypes = [PrestigeClimb(), MapFarm(), PrestigeRaiding(), BionicRaiding(), HDFarm(), VoidMaps(), MapBonus()]
+	if (game.global.universe === 2) var mapTypes = [Quest(), PandemoniumDestack(), PrestigeClimb(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), MapBonus(), Smithless()]
 
 	for (const map of mapTypes) {
 		if (map.shouldRun) {

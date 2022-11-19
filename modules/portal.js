@@ -45,6 +45,8 @@ function autoPortal() {
 			break;
 		case "Custom":
 			var portalzone = getPageSetting('CustomAutoPortal');
+			if (MODULES.mapFunctions.hPortalZone === game.global.world)
+				portalzone = game.global.world;
 			if (game.global.world >= portalzone) {
 				if (autoTrimpSettings.HeliumHourChallenge.selected != 'None')
 					doPortal(autoTrimpSettings.HeliumHourChallenge.selected);
@@ -121,6 +123,10 @@ function dailyAutoPortal() {
 	}
 	if (getPageSetting('AutoPortalDaily') == 2) {
 		var portalzone = getPageSetting('dCustomAutoPortal');
+
+		if (MODULES.mapFunctions.hPortalZone === game.global.world) {
+			portalzone = game.global.world;
+		}
 		if (game.global.world >= portalzone) {
 			abandonDaily();
 			document.getElementById('finishDailyBtnContainer').style.display = 'none';
@@ -648,14 +654,13 @@ function Rresetmapvars() {
 	rHDFMapRepeats = 0;
 
 	//Resetting variables that would cause issues if they were left as is
-	if (game.global.universe === 2) {
-		MODULES.mapFunctions.rVoidHDRatio = Infinity;
-		MODULES.mapFunctions.rVoidVHDRatio = Infinity;
-		MODULES.mapFunctions.rVoidHDIndex = Infinity;
-		MODULES.mapFunctions.rPortalZone = Infinity;
-		HDRatio = RcalcHDratio();
-		voidHDRatio = rCalcVoidHDratio()
-	}
+	MODULES.mapFunctions.rVoidHDRatio = Infinity;
+	MODULES.mapFunctions.rVoidVHDRatio = Infinity;
+	MODULES.mapFunctions.rVoidHDIndex = Infinity;
+	MODULES.mapFunctions.rPortalZone = Infinity;
+	MODULES.mapFunctions.hPortalZone = Infinity;
+	HDRatio = game.global.universe === 1 ? calcHDratio() : RcalcHDratio();
+	voidHDRatio = game.global.universe === 1 ? calcVoidHDratio() : rCalcVoidHDratio();
 
 	if (document.getElementById('hiderStatus').style.display == 'None' && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) {
 		turnOn("hiderStatus")

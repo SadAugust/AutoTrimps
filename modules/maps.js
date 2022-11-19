@@ -18,7 +18,6 @@ MODULES.maps.UnearnedPrestigesRequired = 2;
 
 var doVoids = !1;
 var needToVoid = !1;
-var needPrestige = !1;
 var skippedPrestige = !1;
 var scryerStuck = !1;
 var shouldDoMaps = !1;
@@ -67,9 +66,6 @@ function updateAutoMapsStatus(get) {
 	else if (!enoughHealth) status = 'Want more health';
 	else if (enoughHealth && enoughDamage) status = 'Advancing';
 
-	if (skippedPrestige)
-		status += '<br><b style="font-size:.8em;color:pink;margin-top:0.2vw">Prestige Skipped</b>';
-
 	//hider he/hr% status
 	var getPercent = (game.stats.heliumHour.value() / (game.global.totalHeliumEarned - (game.global.heliumLeftover + game.resources.helium.owned))) * 100;
 	var lifetime = (game.resources.helium.owned / (game.global.totalHeliumEarned - game.resources.helium.owned)) * 100;
@@ -95,9 +91,7 @@ function testMapSpecialModController() {
 		var c = document.getElementById("advSpecialSelect");
 		if (c) {
 			if (59 <= game.global.highestLevelCleared) {
-				if (needPrestige && a.includes("p")) {
-					c.value = "p";
-				} else if (shouldFarm || !enoughHealth || preSpireFarming) {
+				if (shouldFarm || !enoughHealth || preSpireFarming) {
 					c.value = a.includes("lmc") ? "lmc" : a.includes("hc") ? "hc" : a.includes("smc") ? "smc" : "lc";
 				} else c.value = "fa";
 				for (var d = updateMapCost(!0), e = game.resources.fragments.owned, f = 100 * (d / e); 0 < c.selectedIndex && d > e;) {
@@ -191,8 +185,6 @@ function autoMap() {
 
 	//Vars
 	var customVars = MODULES["maps"];
-	var prestige = autoTrimpSettings.Prestige.selected;
-	if (prestige != "Off" && game.options.menu.mapLoot.enabled != 1) toggleSetting('mapLoot');
 	if (game.global.repeatMap == true && !game.global.mapsActive && !game.global.preMapsActive) repeatClicked();
 	if ((game.options.menu.repeatUntil.enabled == 1 || game.options.menu.repeatUntil.enabled == 2 || game.options.menu.repeatUntil.enabled == 3) && !game.global.mapsActive && !game.global.preMapsActive) toggleSetting('repeatUntil');
 	if (game.options.menu.exitTo.enabled != 0) toggleSetting('exitTo');
@@ -208,11 +200,7 @@ function autoMap() {
 	if (game.global.spireActive) {
 		enemyDamage = calcSpire(99, game.global.gridArray[99].name, 'attack');
 	}
-	highDamageShield();
-	if (getPageSetting('loomswap') > 0 && game.global.challengeActive != "Daily" && game.global.ShieldEquipped.name != getPageSetting('highdmg'))
-		ourBaseDamage *= trimpAA;
-	if (getPageSetting('dloomswap') > 0 && game.global.challengeActive == "Daily" && game.global.ShieldEquipped.name != getPageSetting('dhighdmg'))
-		ourBaseDamage *= trimpAA;
+
 	var mapbonusmulti = game.talents.mapBattery.purchased && game.global.mapBonus == 10 ? 5 : 1 + (game.global.mapBonus * .2);
 	var ourBaseDamage2 = ourBaseDamage;
 	ourBaseDamage2 /= mapbonusmulti;
@@ -227,23 +215,6 @@ function autoMap() {
 	shouldDoMaps = false;
 	if (ourBaseDamage > 0) {
 		shouldDoMaps = (!enoughDamage || shouldFarm || scryerStuck);
-	}
-
-	var restartVoidMap = false;
-	if (game.global.challengeActive === 'Nom' && getPageSetting('FarmWhenNomStacks7')) {
-		if (game.global.gridArray[99].nomStacks == customVars.NomFarmStacksCutoff[1]) {
-			shouldFarm = (calcHDratio() > customVars.NomfarmingCutoff);
-			shouldDoMaps = true;
-		}
-		if (!game.global.mapsActive && game.global.gridArray[game.global.lastClearedCell + 2].nomStacks >= customVars.NomFarmStacksCutoff[2]) {
-			shouldFarm = (calcHDratio() > customVars.NomfarmingCutoff);
-			shouldDoMaps = true;
-		}
-		if (game.global.mapsActive && game.global.mapGridArray[game.global.lastClearedMapCell + 1].nomStacks >= customVars.NomFarmStacksCutoff[2]) {
-			shouldFarm = (calcHDratio() > customVars.NomfarmingCutoff);
-			shouldDoMaps = true;
-			restartVoidMap = true;
-		}
 	}
 
 	//Spire
@@ -365,7 +336,6 @@ function autoMap() {
 	//Map Repeat
 	if (!game.global.preMapsActive && game.global.mapsActive) {
 		if ((selectedMap == game.global.currentMapId || (!getCurrentMapObject().noRecycle && (doMaxMapBonus || shouldFarm || shouldDoSpireMaps || rShouldMap)) || rCurrentMap === 'BionicRaiding')) {
-			var targetPrestige = autoTrimpSettings.Prestige.selected;
 			if (!game.global.repeatMap) {
 				repeatClicked();
 			}
@@ -374,9 +344,6 @@ function autoMap() {
 					game.options.menu.repeatUntil.enabled = 2;
 			} else if (game.options.menu.repeatUntil.enabled != 0) {
 				game.options.menu.repeatUntil.enabled = 0;
-			}
-			else if (!shouldDoMaps && (game.global.mapGridArray[game.global.mapGridArray.length - 1].special == targetPrestige && game.mapUnlocks[targetPrestige].last >= (game.global.world + extraMapLevels - 9))) {
-				repeatClicked();
 			}
 			else if (game.global.repeatMap && rCurrentMap !== 'rPrestige' && rCurrentMap !== 'BionicRaiding') {
 				if (rCurrentMap !== '') {
@@ -387,9 +354,6 @@ function autoMap() {
 			if (game.global.repeatMap) {
 				repeatClicked();
 			}
-			if (restartVoidMap) {
-				mapsClicked(true);
-			}
 		}
 	} else if (!game.global.preMapsActive && !game.global.mapsActive) {
 		if (selectedMap != "world") {
@@ -397,7 +361,7 @@ function autoMap() {
 				mapsClicked();
 			}
 			if ((!getPageSetting('PowerSaving') || (getPageSetting('PowerSaving') == 2) && doVoids) && game.global.switchToMaps &&
-				(needPrestige || doVoids ||
+				(doVoids ||
 					((game.global.challengeActive === 'Lead' && !challSQ) && game.global.world % 2 == 1) ||
 					(!enoughDamage && enoughHealth && game.global.lastClearedCell < 9) ||
 					(shouldFarm && game.global.lastClearedCell >= customVars.shouldFarmCell) ||
@@ -423,7 +387,7 @@ function autoMap() {
 			runBionicRaiding();
 		} else if (selectedMap == "create") {
 			var $mapLevelInput = document.getElementById("mapLevelInput");
-			$mapLevelInput.value = needPrestige ? game.global.world : siphlvl;
+			$mapLevelInput.value = siphlvl;
 			if (preSpireFarming && MODULES["maps"].SpireFarm199Maps)
 				$mapLevelInput.value = game.talents.mapLoot.purchased ? game.global.world - 1 : game.global.world;
 			var decrement;
@@ -454,7 +418,6 @@ function autoMap() {
 				updateMapCost();
 			}
 			if (updateMapCost(true) > game.resources.fragments.owned) {
-				if (needPrestige && !enoughDamage) decrement.push('diff');
 				if (shouldFarm) decrement.push('size');
 			}
 			//Setting sliders appropriately. --- ITS ALREADY PRESTIGE RAIDING HERE
