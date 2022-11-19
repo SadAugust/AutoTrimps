@@ -1413,9 +1413,9 @@ function runBionicRaiding() {
 	}
 
 	if (game.global.preMapsActive) {
-		selectMap(findLastBionic().id);
+		selectMap(findLastBionicWithItems().id);
 	}
-	if ((findLastBionic().level >= rMapSettings.raidingZone || findLastBionic().level < rMapSettings.raidingZone) && game.global.preMapsActive) {
+	if ((findLastBionicWithItems().level >= rMapSettings.raidingZone || findLastBionicWithItems().level < rMapSettings.raidingZone) && game.global.preMapsActive) {
 		runMap();
 	}
 }

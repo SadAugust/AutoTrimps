@@ -12,7 +12,30 @@ function exitSpireCell() { isActiveSpireAT() && game.global.lastClearedCell >= g
 function dailyexitSpireCell() { disActiveSpireAT() && game.global.lastClearedCell >= getPageSetting('dExitSpireCell') - 1 && endSpire() }
 function plusPres() { document.getElementById("biomeAdvMapsSelect").value = "Random", document.getElementById("advExtraLevelSelect").value = plusMapToRun(game.global.world), document.getElementById("advSpecialSelect").value = "p", document.getElementById("lootAdvMapsRange").value = 0, document.getElementById("difficultyAdvMapsRange").value = 9, document.getElementById("sizeAdvMapsRange").value = 9, document.getElementById("advPerfectCheckbox").dataset.checked = !1, document.getElementById("mapLevelInput").value = game.global.world, updateMapCost() }
 function plusMapToRun(a) { return 9 == a % 10 ? 6 : 5 > a % 10 ? 5 - a % 10 : 11 - a % 10 }
-function findLastBionic() { for (var a = game.global.mapsOwnedArray.length - 1; 0 <= a; a--)if ("Bionic" === game.global.mapsOwnedArray[a].location) return game.global.mapsOwnedArray[a] }
+function findLastBionicWithItems() {
+
+	if (game.global.world < 115)
+		return;
+
+	const bionicPool = []; for (const map of game.global.mapsOwnedArray) {
+		if (map.noRecycle) {
+			if (map.location === "Bionic") {
+				bionicPool.push(map);
+			}
+		}
+	}
+
+	if (bionicPool.length > 0) {
+		bionicPool.sort(function (bionicA, bionicB) { return bionicA.level - bionicB.level });
+		while (bionicPool.length > 0 && Rgetequips(bionicPool[0].level, false) === 0) {
+			bionicPool.shift();
+			if (Rgetequips(bionicPool[0].level, false) !== 0) break;
+		}
+	}
+	else
+		return;
+	return game.global.mapsOwnedArray[bionicPool[0]];
+}
 function helptrimpsnotdie() { if (!game.global.preMapsActive && !game.global.fighting) buyArms(); }
 function usedaily3() { !0 != getPageSetting('use3daily') || 'Daily' != game.global.challengeActive || daily3 || (daily3 = !0), !1 == getPageSetting('use3daily') && 'Daily' != game.global.challengeActive && daily3 && (daily3 = !1), !0 == getPageSetting('use3daily') && 'Daily' != game.global.challengeActive && daily3 && (daily3 = !1) }
 function buyshitspire() { !0 == getPageSetting('spireshitbuy') && game.global.spireActive && game.global.world >= getPageSetting('IgnoreSpiresUntil') && (buyWeps(), buyArms()) }
