@@ -430,7 +430,7 @@ function MapBonus() {
 	}
 
 	if (rCurrentMap === mapName && (game.global.mapBonus >= rMBRepeatCounter || !farmingDetails.shouldRun)) {
-		if (getPageSetting('rMapRepeatCount')) debug((rMBspireMapStack ? 'Spire ' : '') + "Map Bonus took " + (game.global.mapRunCounter) + " (" + (rCurrentSetting.mapLevel >= 0 ? "+" : "") + rCurrentSetting.mapLevel + " " + rCurrentSetting.special + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
+		if (getPageSetting('rMapRepeatCount')) debug((rMBspireMapStack ? 'Spire ' : '') + "Map Bonus took " + (game.global.mapRunCounter) + " (" + (rMapSettings.mapLevel >= 0 ? "+" : "") + rMapSettings.mapLevel + " " + rMapSettings.special + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 		rMBHealthFarm = false;
 		rCurrentMap = undefined;
 		mapAutoLevel = Infinity;

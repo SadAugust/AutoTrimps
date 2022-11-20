@@ -201,7 +201,6 @@ function autoMap() {
 	//New Mapping Organisation!
 	rShouldMap = rMapSettings.shouldRun;
 	rCurrentMap = rShouldMap ? rMapSettings.mapName : '';
-	rCurrentSetting = rMapSettings;
 	rAutoLevel = rMapSettings.autoLevel ? rMapSettings.mapLevel : Infinity;
 
 	if (game.global.spireActive) {
@@ -506,7 +505,6 @@ function RautoMap() {
 	//New Mapping Organisation!
 	rShouldMap = rMapSettings.shouldRun;
 	rCurrentMap = rShouldMap ? rMapSettings.mapName : '';
-	rCurrentSetting = rMapSettings;
 	rAutoLevel = rMapSettings.autoLevel ? rMapSettings.mapLevel : Infinity;
 
 	//Farming & resetting variables.
