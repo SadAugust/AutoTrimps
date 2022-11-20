@@ -177,8 +177,7 @@ function mainLoop() {
 			case 'The Magma':
 				cancelTooltip();
 		}
-		if (game.global.universe == 2)
-			Rresetmapvars()
+		Rresetmapvars()
 		if (getPageSetting('AutoEggs'))
 			easterEggClicked();
 		setTitle();
@@ -213,7 +212,7 @@ function mainLoop() {
 			addToolTipToArmyCount();
 		}
 		//Core
-		if (getPageSetting('AutoMaps') > 0 && game.global.mapsUnlocked) autoMap();
+		if (getPageSetting('AutoMaps') > 0 && game.global.mapsUnlocked) RautoMap();
 		if (getPageSetting('showautomapstatus') == true) updateAutoMapsStatus();
 		if (getPageSetting('ManualGather2') == 1) manualLabor2();
 		if (getPageSetting('TrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
@@ -290,7 +289,7 @@ function mainLoop() {
 		if (getPageSetting('ExitSpireCell') > 0 && game.global.challengeActive != "Daily" && getPageSetting('IgnoreSpiresUntil') <= game.global.world && game.global.spireActive) exitSpireCell();
 		if (getPageSetting('dExitSpireCell') >= 1 && game.global.challengeActive == "Daily" && getPageSetting('dIgnoreSpiresUntil') <= game.global.world && game.global.spireActive) dailyexitSpireCell();
 		if (getPageSetting('SpireBreedTimer') > 0 && getPageSetting('IgnoreSpiresUntil') <= game.global.world) ATspirebreed();
-		if (getPageSetting('spireshitbuy') == true && (isActiveSpireAT() || disActiveSpireAT())) buyshitspire();
+		if (getPageSetting('spireshitbuy') && isDoingSpire()) buyshitspire();
 
 		//Golden
 		var agu = game.global.runningChallengeSquared ? getPageSetting('cAutoGoldenUpgrades') :

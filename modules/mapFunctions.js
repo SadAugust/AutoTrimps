@@ -1,3 +1,7 @@
+function isDoingSpire() {
+	return isActiveSpireAT() || disActiveSpireAT();
+}
+
 //Unique Maps
 const uniqueMaps = {
 	//Universe 1 Unique Maps
@@ -250,6 +254,7 @@ MODULES.mapFunctions.rVoidVHDRatio = Infinity;
 MODULES.mapFunctions.rVoidHDIndex = Infinity;
 MODULES.mapFunctions.rPortalZone = Infinity;
 MODULES.mapFunctions.hPortalZone = Infinity;
+MODULES.mapFunctions.workerRatio = null;
 
 //Void Maps -- WORKING AS IS
 function VoidMaps() {
@@ -345,7 +350,7 @@ function MapBonus() {
 		mapName: mapName
 	};
 
-	if (game.global.universe === 1 && !autoTrimpSettings.hMapBonusDefaultSettings.value.active) return farmingDetails;
+	if (game.global.universe === 1 && !autoTrimpSettings.hMapBonusDefaultSettings.value.active && !isDoingSpire()) return farmingDetails;
 	if (game.global.universe === 2 && !autoTrimpSettings.rMapBonusDefaultSettings.value.active) return farmingDetails;
 
 	//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
@@ -356,7 +361,8 @@ function MapBonus() {
 	const rMBZone = game.global.universe === 1 ? getPageSetting('hMapBonusZone') : getPageSetting('rMapBonusZone');
 	const rMBBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
 	const rMBDefaultSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusDefaultSettings.value : autoTrimpSettings.rMapBonusDefaultSettings.value;
-	var rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio && game.global.mapBonus !== 10;
+	let rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio && game.global.mapBonus !== 10;
+	let rMBspireMapStack = getPageSetting('MaxStacksForSpire') && isDoingSpire() && game.global.mapBonus < 10;
 	var rMBIndex = null;
 	for (var y = 0; y < rMBBaseSettings.length; y++) {
 		const currSetting = rMBBaseSettings[y];
@@ -374,21 +380,21 @@ function MapBonus() {
 			continue;
 	}
 
-	if ((rMBIndex !== null && rMBIndex >= 0) || rMBshouldDoHealthMaps) {
+	if ((rMBIndex !== null && rMBIndex >= 0) || rMBshouldDoHealthMaps || rMBspireMapStack) {
 		var rMBSettings = rMBIndex !== null ? rMBBaseSettings[rMBIndex] : rMBDefaultSettings;
 		var rMBRepeatCounter = 0;
 		if (rMBIndex !== null) {
 			rMBRepeatCounter = 1
 		}
-		rMBRepeatCounter = rMBIndex !== null && rMBshouldDoHealthMaps && rMBSettings.repeat !== rMBDefaultSettings.healthBonus ?
+		rMBRepeatCounter = rMBspireMapStack ? 10 : rMBIndex !== null && rMBshouldDoHealthMaps && rMBSettings.repeat !== rMBDefaultSettings.healthBonus ?
 			Math.max(rMBSettings.repeat, rMBDefaultSettings.healthBonus) : rMBIndex === null ? rMBDefaultSettings.healthBonus : rMBSettings.repeat
 		var rMBSpecial = rMBSettings.special;
 		if (game.global.challengeActive === 'Transmute' && rMBSpecial.includes('mc'))
 			rMBSpecial = rMBSpecial.charAt(0) + "sc";
-		var rMBMapLevel = rMBIndex !== null ? rMBSettings.level : 0;
+		var rMBMapLevel = rMBIndex !== null ? rMBSettings.level : game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
 		var rMBJobRatio = rMBSettings.jobratio;
 		var rMBautoLevel = rMBSettings.autoLevel || rMBIndex === null;
-		var rMBminZone = game.global.universe === 1 ? game.global.world - game.portal.Siphonology.level : 0
+		var rMBminZone = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0
 
 		if (rMBSettings.autoLevel || rMBIndex === null) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && rMBMapRepeats !== 0) {
@@ -409,8 +415,8 @@ function MapBonus() {
 			if (rMBshouldDoHealthMaps) rMBHealthFarm = true;
 			else rMBHealthFarm = false;
 		}
-		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMBMapLevel || getCurrentMapObject().bonus !== rMBSpecial || game.global.mapBonus >= (rMBRepeatCounter - 1));
-		var status = 'Map Bonus: ' + game.global.mapBonus + "/" + rMBRepeatCounter;
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMBMapLevel || (getCurrentMapObject().bonus !== rMBSpecial && (getCurrentMapObject().bonus !== undefined && rMBSpecial !== '0')) || game.global.mapBonus >= (rMBRepeatCounter - 1));
+		var status = (rMBspireMapStack ? 'Spire ' : '') + 'Map Bonus: ' + game.global.mapBonus + "/" + rMBRepeatCounter;
 
 		if (rShouldMaxMapBonus) farmingDetails.shouldRun = rShouldMaxMapBonus || rMBHealthFarm;
 		farmingDetails.mapName = mapName;
@@ -424,7 +430,7 @@ function MapBonus() {
 	}
 
 	if (rCurrentMap === mapName && (game.global.mapBonus >= rMBRepeatCounter || !farmingDetails.shouldRun)) {
-		if (getPageSetting('rMapRepeatCount')) debug("Map Bonus took " + (game.global.mapRunCounter) + " (" + (rCurrentSetting.mapLevel >= 0 ? "+" : "") + rCurrentSetting.mapLevel + " " + rCurrentSetting.special + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
+		if (getPageSetting('rMapRepeatCount')) debug((rMBspireMapStack ? 'Spire ' : '') + "Map Bonus took " + (game.global.mapRunCounter) + " (" + (rCurrentSetting.mapLevel >= 0 ? "+" : "") + rCurrentSetting.mapLevel + " " + rCurrentSetting.special + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
 		rMBHealthFarm = false;
 		rCurrentMap = undefined;
 		mapAutoLevel = Infinity;
@@ -1398,12 +1404,8 @@ function BionicRaiding() {
 	return farmingDetails;
 }
 
-function runBionicRaiding() {
-
-	if (game.options.menu.repeatUntil.enabled != 2) {
-		game.options.menu.repeatUntil.enabled = 2;
-	}
-	game.options.menu.climbBw.enabled = 0;
+function runBionicRaiding(bionicPool) {
+	if (!bionicPool) return false;
 
 	if (!game.global.preMapsActive && !game.global.mapsActive) {
 		mapsClicked();
@@ -1413,9 +1415,11 @@ function runBionicRaiding() {
 	}
 
 	if (game.global.preMapsActive) {
-		selectMap(findLastBionicWithItems().id);
+		selectMap(findLastBionicWithItems(bionicPool).id);
 	}
-	if ((findLastBionicWithItems().level >= rMapSettings.raidingZone || findLastBionicWithItems().level < rMapSettings.raidingZone) && game.global.preMapsActive) {
+	if ((findLastBionicWithItems(bionicPool).level >= rMapSettings.raidingZone
+		|| findLastBionicWithItems(bionicPool).level < rMapSettings.raidingZone)
+		&& game.global.preMapsActive) {
 		runMap();
 	}
 }

@@ -284,8 +284,6 @@ function fireModeLocal() {
 	}
 }
 
-workerRatio = null;
-
 function RbuyJobs() {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
@@ -386,15 +384,21 @@ function RbuyJobs() {
 			}
 		}
 	}
+	let nextCoordCost = 0;
 
 	//Gather up the total number of workers available to be distributed across ratio workers
 	//In the process store how much of each for later.
-	if (game.global.challengeActive === 'Trapper' || game.global.challengeActive === 'Trappapalooza') freeWorkers = game.resources.trimps.owned - (game.resources.trimps.employed -
-		//U1 jobs
-		game.jobs.Geneticist.owned - game.jobs.Trainer.owned - game.jobs.Magmamancer.owned -
-		//U2 jobs
-		game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
+	if (game.global.challengeActive === 'Trapper' || game.global.challengeActive === 'Trappapalooza') {
+		freeWorkers = game.resources.trimps.owned - (game.resources.trimps.employed -
+			//U1 jobs
+			game.jobs.Geneticist.owned - game.jobs.Trainer.owned - game.jobs.Magmamancer.owned -
+			//U2 jobs
+			game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
 
+		var metCoordGoal = game.global.challengeActive === 'Trappapalooza' && game.upgrades.Coordination.done >= getPageSetting('rTrappaCoords');
+		if (!metCoordGoal) nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
+		if (nextCoordCost < freeWorkers) freeWorkers -= nextCoordCost;
+	}
 	var ratioWorkers = ['Farmer', 'Lumberjack', 'Miner', 'Scientist'];
 	var currentworkers = [];
 	for (var worker of ratioWorkers) {
@@ -404,11 +408,14 @@ function RbuyJobs() {
 
 	var desiredRatios = [0, 0, 0, 0];
 	// Explicit firefox handling because Ff specifically reduces free workers to 0.
-	var reserveMod = 1 + (game.resources.trimps.owned / 1e14);
+	var reserveMod = 1 + (game.resources.trimps.owned / 1e14) + nextCoordCost;
 
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs * reserveMod : 0;
 
-	if (workerRatio !== null && (rShouldBoneShrine || rMapSettings.jobRatio !== undefined)) {
+	let workerRatio;
+	if ((MODULES.mapFunctions.workerRatio !== null && rShouldBoneShrine) || rMapSettings.jobRatio !== undefined) {
+		if (MODULES.mapFunctions.workerRatio !== null) workerRatio = MODULES.mapFunctions.workerRatio;
+		else workerRatio = rMapSettings.jobRatio;
 		desiredRatios = Array.from(workerRatio.split(','))
 		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
 	} else {

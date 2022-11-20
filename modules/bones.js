@@ -9,6 +9,7 @@ function BoneShrine() {
 
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
+	const currChall = game.global.challengeActive;
 	const shredActive = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined';
 	const shredMods = shredActive ? dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength) : [];
 
@@ -67,7 +68,7 @@ function BoneShrine() {
 			rShouldBoneShrine = true;
 			for (var x = 0; x < rBoneShrineCharges; x++) {
 				if (getPageSetting('RBuyJobsNew') > 0) {
-					workerRatio = rBoneShrineSettings.jobratio;
+					MODULES.mapFunctions.workerRatio = rBoneShrineSettings.jobratio;
 					RbuyJobs();
 				}
 				game.permaBoneBonuses.boosts.consume();
@@ -76,6 +77,7 @@ function BoneShrine() {
 			rBoneShrineSettings.done = totalPortals + "_" + game.global.world;
 			rBSRunningAtlantrimp = false;
 			rShouldBoneShrine = false;
+			MODULES.mapFunctions.workerRatio = null;
 			saveSettings();
 		}
 	}
