@@ -913,7 +913,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt_local *= game.jobs.Meteorologist.getExtraMult();
 	if (Fluffy.isRewardActive('gatherer'))
 		amt_local *= 2;
-	if (what == "wood" && game.global.challengeActive == "Hypothermia")
+	if (what == "wood" && game.global.challengeActive == "Hypothermia" && game.challenges.Hypothermia.bonfires > 0)
 		amt_local *= game.challenges.Hypothermia.getWoodMult();
 	if (game.global.challengeActive == "Unbalance")
 		amt_local *= game.challenges.Unbalance.getGatherMult();
