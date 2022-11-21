@@ -2634,7 +2634,7 @@ function fragmap() {
 	document.getElementById("difficultyAdvMapsRange").value = 9;
 	document.getElementById("sizeAdvMapsRange").value = 9;
 	document.getElementById("advPerfectCheckbox").dataset.checked = true;
-	document.getElementById("mapLevelInput").value = game.global.world;
+	document.getElementById("mapLevelInput").value = game.talents.mapLoot.purchased ? game.global.world - 1 : game.global.world;
 	updateMapCost();
 
 	if (updateMapCost(true) > fragmentsOwned) {
@@ -2659,75 +2659,10 @@ function fragmap() {
 	}
 }
 
-function fragmin(number) {
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
-	document.getElementById("advExtraLevelSelect").value = number;
-	document.getElementById("advSpecialSelect").value = "fa";
-	document.getElementById("lootAdvMapsRange").value = 9;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
-	document.getElementById("sizeAdvMapsRange").value = 9;
-	document.getElementById("advPerfectCheckbox").dataset.checked = true;
-	document.getElementById("mapLevelInput").value = game.global.world;
-	updateMapCost();
-
-	if (updateMapCost(true) <= game.resources.fragments.owned) {
-		return updateMapCost(true);
-	}
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("biomeAdvMapsSelect").value = "Random";
-		updateMapCost();
-		if (updateMapCost(true) <= game.resources.fragments.owned) {
-			return updateMapCost(true);
-		}
-	}
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advPerfectCheckbox").dataset.checked = false;
-		updateMapCost();
-		if (updateMapCost(true) <= game.resources.fragments.owned) {
-			return updateMapCost(true);
-		}
-	}
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("lootAdvMapsRange").value = 8;
-		updateMapCost();
-		if (updateMapCost(true) <= game.resources.fragments.owned) {
-			return updateMapCost(true);
-		}
-	}
-
-	while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-		difficultyAdvMapsRange.value -= 1;
-		if (updateMapCost(true) <= game.resources.fragments.owned) break;
-		sizeAdvMapsRange.value -= 1;
-	}
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-	if (document.getElementById("sizeAdvMapsRange").value == 0) {
-		return updateMapCost(true);
-	}
-}
-
-function fragmapcost() {
+function fragMapFarmCost() {
 	var cost = 0;
 
-	if (rShouldInsanityFarm) {
-		var insanityfarmzone = getPageSetting('Rinsanityfarmzone');
-		var insanityfarmlevel = getPageSetting('Rinsanityfarmlevel');
-		var insanityfarmlevelindex = insanityfarmzone.indexOf(game.global.world);
-		var insanitylevelzones = insanityfarmlevel[insanityfarmlevelindex];
-
-		if (getPageSetting('Rinsanityfarmfrag')) cost = PerfectMapCost(insanitylevelzones, 'fa');
-	}
-	else if (rShouldWorshipperFarm) {
-		var shipfarmzone = getPageSetting('Rshipfarmzone');
-		var shipfarmlevel = getPageSetting('Rshipfarmlevel');
-		var shipfarmlevelindex = shipfarmzone.indexOf(game.global.world);
-		var shiplevelzones = shipfarmlevel[shipfarmlevelindex];
-
-		if (getPageSetting('Rshipfarmfrag'))
-			cost = fragmin(shiplevelzones);
-	}
-	else
-		cost = 0;
+	cost = PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special);
 
 	if (game.resources.fragments.owned >= cost)
 		return true;
@@ -2735,69 +2670,66 @@ function fragmapcost() {
 		return false;
 }
 
-function rFragmentFarm(type, level, special, perfect) {
+function rFragmentFarm() {
 
-	var perfect = !perfect ? null : perfect;
-
+	var rFragMapBought = false;
 	//Worshipper farming
 	var rFragCheck = true;
-	if (getPageSetting('R' + type + 'farmfrag')) {
-		if (fragmapcost() == true) {
-			rFragCheck = true;
-			rFragmentFarming = false;
-		} else if (fragmapcost() == false) {
-			rFragmentFarming = true;
-			rFragCheck = false;
-			if (!rFragCheck && rInitialFragmentMapID == undefined && !rFragMapBought && game.global.preMapsActive) {
-				debug("Check complete for fragment farming map");
-				fragmap();
-				if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-					buyMap();
-					rFragMapBought = true;
-					if (rFragMapBought) {
-						rInitialFragmentMapID = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-						debug("Fragment farming map purchased");
-					}
+	if (fragMapFarmCost() == true) {
+		rFragCheck = true;
+		MODULES.maps.fragmentFarming = false;
+	} else if (fragMapFarmCost() == false) {
+		MODULES.maps.fragmentFarming = true;
+		rFragCheck = false;
+		if (!rFragCheck && rInitialFragmentMapID == undefined && !rFragMapBought && game.global.preMapsActive) {
+			//debug("Check complete for fragment farming map");
+			fragmap();
+			if ((updateMapCost(true) <= game.resources.fragments.owned)) {
+				buyMap();
+				rFragMapBought = true;
+				if (rFragMapBought) {
+					rInitialFragmentMapID = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
+					//debug("Fragment farming map purchased");
 				}
 			}
-			if (!rFragCheck && game.global.preMapsActive && !game.global.mapsActive && rFragMapBought && rInitialFragmentMapID != undefined) {
-				debug("Running fragment farming map");
-				selectedMap = rInitialFragmentMapID;
-				selectMap(rInitialFragmentMapID);
-				runMap();
-				RlastMapWeWereIn = getCurrentMapObject();
-				rFragmentMapID = rInitialFragmentMapID;
-				rInitialFragmentMapID = undefined;
-			}
-			if (!rFragCheck && game.resources.fragments.owned >= PerfectMapCost(level, special) && game.global.mapsActive && rFragMapBought && rFragmentMapID != undefined) {
-				if (fragmapcost() == false) {
-					if (!game.global.repeatMap) {
-						repeatClicked();
-					}
-				} else if (fragmapcost() == true) {
-					if (game.global.repeatMap) {
-						repeatClicked();
-						//mapsClicked();
-					}
-					if (game.global.preMapsActive && rFragMapBought && rFragmentMapID != undefined) {
-						rFragMapBought = false;
-					}
-					rFragCheck = true;
-					rFragmentFarming = false;
-				}
-			}
-		} else {
-			rFragCheck = true;
-			rFragmentFarming = false;
 		}
+		if (!rFragCheck && game.global.preMapsActive && !game.global.mapsActive && rFragMapBought && rInitialFragmentMapID != undefined) {
+			debug("Fragment farming for a " + (rMapSettings.mapLevel >= 0 ? "+" : "") + rMapSettings.mapLevel + " " + rMapSettings.special + " map.");
+			selectedMap = rInitialFragmentMapID;
+			selectMap(rInitialFragmentMapID);
+			runMap();
+			RlastMapWeWereIn = getCurrentMapObject();
+			rFragmentMapID = rInitialFragmentMapID;
+			rInitialFragmentMapID = undefined;
+		}
+		if (!rFragCheck && !game.global.repeatMap && game.resources.fragments.owned < PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special)) repeatClicked();
+		if (!rFragCheck && game.resources.fragments.owned >= PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special) && game.global.mapsActive && rFragMapBought && rFragmentMapID != undefined) {
+			if (fragMapFarmCost() == false) {
+				if (!game.global.repeatMap) {
+					repeatClicked();
+				}
+			} else if (fragMapFarmCost() == true) {
+				if (game.global.repeatMap) {
+					repeatClicked();
+				}
+				if (game.global.preMapsActive && rFragMapBought && rFragmentMapID != undefined) {
+					rFragMapBought = false;
+				}
+				rFragCheck = true;
+				MODULES.maps.fragmentFarming = false;
+				debug("Fragment farming successful")
+			}
+		}
+	} else {
+		rFragCheck = true;
+		MODULES.maps.fragmentFarming = false;
+		debug("Fragment farming successful")
 	}
 
 	if (rFragCheck) {
-		if (type == 'insanity')
-			PerfectMapCost(level, special);
-		if (type == 'ship')
-			RShouldFarmMapCost(level, special);
+		PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special)
 	}
+
 	updateMapCost();
 }
 

@@ -336,8 +336,9 @@ function autoMap() {
 			var maplvlpicked = parseInt($mapLevelInput.value);
 			if (highestMap !== null && updateMapCost(true) > game.resources.fragments.owned) {
 				debug("Can't afford the map we designed, #" + maplvlpicked, "maps", '*crying2');
-				debug("...selected our highest map instead # " + highestMap.id + " Level: " + highestMap.level, "maps", '*happy2');
-				runSelectedMap(highestMap.id, 'highest');
+				rFragmentFarm();
+				//debug("...selected our highest map instead # " + highestMap.id + " Level: " + highestMap.level, "maps", '*happy2');
+				//runSelectedMap(highestMap.id, 'highest');
 				lastMapWeWereIn = getCurrentMapObject();
 			} else {
 				debug("Buying a Map, level: #" + maplvlpicked, "maps", 'th-large');
@@ -395,6 +396,8 @@ var rHFMapRepeats = 0;
 var rSmithlessMapRepeats = 0;
 var rHDFMapRepeats = 0;
 
+MODULES.maps.fragmentFarming = false;
+
 if (getAutoStructureSetting().enabled) {
 	document.getElementById('autoStructureBtn').classList.add("enabled")
 }
@@ -447,6 +450,12 @@ function RautoMap() {
 
 	//No Mapology Credits
 	if (game.global.challengeActive === "Mapology" && game.challenges.Mapology.credits < 1) {
+		return;
+	}
+
+	//Stop maps from running if frag farming
+	if (MODULES.maps.fragmentFarming) {
+		rFragmentFarm();
 		return;
 	}
 
@@ -616,16 +625,21 @@ function RautoMap() {
 					if (rMapSettings.autoLevel) PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
 					else RShouldFarmMapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
 				}
+				updateMapCost(true);
 			}
 
 			const maplvlpicked = parseInt(document.getElementById("mapLevelInput").value);
+			const mappluslevel = maplvlpicked === game.global.world && document.getElementById("advExtraLevelSelect").value > 0 ? parseInt(document.getElementById("advExtraLevelSelect").value) : "";
+			const mapspecial = document.getElementById("advSpecialSelect").value === '0' ? 'No special' : document.getElementById("advSpecialSelect").value;
 			if (highestMap !== null && updateMapCost(true) > game.resources.fragments.owned) {
-				debug("Can't afford the map we designed, #" + maplvlpicked, "maps", '*crying2');
-				debug("...selected our highest map instead # " + highestMap.id + " Level: " + highestMap.level, "maps", '*happy2');
-				runSelectedMap(highestMap.id, 'highest');
+				debug("Can't afford the map we designed, #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
+
+				rFragmentFarm();
+				//debug("...selected our highest map instead # " + highestMap.id + " Level: " + highestMap.level, "maps", '*happy2');
+				//runSelectedMap(highestMap.id, 'highest');
 				RlastMapWeWereIn = getCurrentMapObject();
 			} else {
-				debug("Buying a Map, level: #" + maplvlpicked, "maps", 'th-large');
+				debug("Buying a Map, level: #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
 				if (getPageSetting('SpamFragments') && game.global.preMapsActive) {
 					updateMapCost(true)
 					debug("Spent " + prettify(updateMapCost(true)) + "/" + prettify(game.resources.fragments.owned) + " (" + ((updateMapCost(true) / game.resources.fragments.owned * 100).toFixed(2)) + "%) fragments on a " + (advExtraLevelSelect.value >= 0 ? "+" : "") + advExtraLevelSelect.value + " " + (advPerfectCheckbox.dataset.checked === 'true' ? "Perfect " : ("(" + lootAdvMapsRange.value + "," + sizeAdvMapsRange.value + "," + difficultyAdvMapsRange.value + ") ")) + advSpecialSelect.value + " map.")
@@ -634,7 +648,7 @@ function RautoMap() {
 				if (result == -2) {
 					debug("Too many maps, recycling now: ", "maps", 'th-large');
 					recycleBelow(true);
-					debug("Retrying, Buying a Map, level: #" + maplvlpicked, "maps", 'th-large');
+					debug("Retrying, Buying a Map, level: #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
 					result = buyMap();
 					if (result == -2) {
 						const mapToRecycleIfBuyingFails = lowestMap;
