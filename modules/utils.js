@@ -122,5 +122,43 @@ function formatMinutesForDescriptions(number) {
 	return text;
 }
 
-//window.onerror = function (b, c, d, e, f) { var g = ['Message: ' + b, 'URL: ' + c, 'Line: ' + d, 'Column: ' + e, 'Error object: ' + JSON.stringify(f)].join(' - '); 0 != d && console.log('AT logged error: ' + g) };
+window.onerror = function (b, c, d, e, f) { var g = ['Message: ' + b, 'URL: ' + c, 'Line: ' + d, 'Column: ' + e, 'Error object: ' + JSON.stringify(f)].join(' - '); 0 != d && console.log('AT logged error: ' + g) };
 function throwErrorfromModule() { throw new Error("We have successfully read the thrown error message out of a module") }
+
+
+function prettifyMap(map) {
+	if (!map) {
+		return 'none'
+	}
+	let descriptor;
+	if (!map.noRecycle) {
+		// a crafted map
+		const bonus = (map.hasOwnProperty('bonus') ? mapSpecialModifierConfig[map.bonus].name : 'no bonus');
+		descriptor = `, Level ${map.level} (${bonus})`;
+	} else if (map.location === 'Void') {
+		descriptor = ' (Void)';
+	} else {
+		descriptor = ' (Unique)';
+	}
+	return `[${map.id}] ${map.name}${descriptor} `;
+}
+
+function debugPrettifyMap(map) {
+	if (!map) {
+		return 'none'
+	}
+	if (['world', 'create'].includes(map)) {
+		return map;
+	}
+	let descriptor;
+	if (!map.noRecycle) {
+		// a crafted map
+		const bonus = (map.hasOwnProperty('bonus') ? `+${map.bonus}` : '');
+		descriptor = `L${map.level}${bonus}`;
+	} else if (map.location === 'Void') {
+		descriptor = `V(${map.name})`;
+	} else {
+		descriptor = `U(${map.name})`;
+	}
+	return `[${map.id}]${descriptor}`;
+}

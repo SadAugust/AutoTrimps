@@ -122,10 +122,10 @@ function testMapSpecialModController() {
 function runSelectedMap(mapId, madAdjective) {
 	selectMap(mapId);
 	runMap();
-	if (lastMapWeWereIn !== getCurrentMapObject()) {
+	if (RlastMapWeWereIn !== getCurrentMapObject()) {
 		const map = game.global.mapsOwnedArray[getMapIndex(mapId)];
 		debug(`Running ${madAdjective} map ${prettifyMap(map)}`, "maps", 'th-large');
-		lastMapWeWereIn = getCurrentMapObject();
+		RlastMapWeWereIn = getCurrentMapObject();
 	}
 }
 
