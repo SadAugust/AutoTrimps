@@ -154,7 +154,7 @@
 		if (game.global.universe == 2) {
 			M["performance"].AFKOverlayHelium.innerText = 'Radon: ' + prettify(Math.floor(game.resources.radon.owned));
 			M["performance"].AFKOverlayHeliumPerHour.innerText = 'Rn/hr: ' + prettify(game.stats.heliumHour.value());
-			M["performance"].AFKOverlayStatus.innerHTML = 'Status: ' + RupdateAutoMapsStatus(true)[0];
+			M["performance"].AFKOverlayStatus.innerHTML = 'Status: ' + updateAutoMapsStatus(true)[0];
 		}
 	}
 
