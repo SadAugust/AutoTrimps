@@ -201,7 +201,7 @@ function autoMap() {
 			rRunMap();
 			debug("Running LMC map due to only having 1 equip remaining on this map.")
 		}
-		if ((selectedMap == game.global.currentMapId || (!getCurrentMapObject().noRecycle && rShouldMap))) {
+		if ((selectedMap == game.global.currentMapId || (!getCurrentMapObject().noRecycle && rShouldMap) || rCurrentMap === 'BionicRaiding')) {
 			//Starting with repeat on
 			if (!game.global.repeatMap)
 				repeatClicked();
@@ -215,6 +215,10 @@ function autoMap() {
 			//Disabling repeat if we shouldn't map
 			if (!rShouldMap)
 				repeatClicked();
+			//Disabling repeat if we'll beat Experience from the BW we're clearing.
+			if (game.global.repeatMap && game.global.challengeActive === 'Experience' && getCurrentMapObject().location === 'Bionic' && game.global.world > 600 && getCurrentMapObject().level >= 605) {
+				repeatClicked();
+			}
 			//Disabling repeat if repeat conditions have been met
 			if (game.global.repeatMap && rCurrentMap !== 'rPrestige' && rCurrentMap !== 'BionicRaiding') {
 				if (rCurrentMap !== '') {

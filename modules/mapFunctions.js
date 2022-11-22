@@ -1349,6 +1349,39 @@ function PrestigeClimb() {
 	return farmingDetails;
 }
 
+//Experience Farm
+function Experience() {
+
+	const mapName = 'Experience'
+	const farmingDetails = {
+		shouldRun: false,
+		mapName: mapName
+	};
+
+	if (game.global.challengeActive !== 'Experience' || !getPageSetting('experience')) return farmingDetails;
+
+	var rShouldExperience = false;
+	const wonderStartZone = getPageSetting('experienceStartZone') >= 300 ? getPageSetting('experienceStartZone') : Infinity;
+	const hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
+	const special = (Math.floor(game.global.highestLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "0" : "fa");
+	const mapLevel = 0;
+
+	if (game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder) rShouldExperience = true;
+
+	var repeat = game.global.world < game.challenges.Experience.nextWonder;
+	var status = 'Farming Wonders';
+
+	if (rShouldExperience) farmingDetails.shouldRun = rShouldExperience;
+	farmingDetails.mapName = mapName;
+	farmingDetails.mapLevel = mapLevel;
+	farmingDetails.autoLevel = true;
+	farmingDetails.special = special;
+	farmingDetails.repeat = !repeat;
+	farmingDetails.status = status;
+
+	return farmingDetails;
+}
+
 //Bionic Wonderland Raiding
 function BionicRaiding() {
 
@@ -2490,7 +2523,7 @@ function FarmingDecision() {
 
 	if (game.global.universe === 2 && (!autoTrimpSettings.RAutoMaps.value || !game.global.mapsUnlocked)) return farmingDetails;
 
-	if (game.global.universe === 1) var mapTypes = [PrestigeClimb(), MapFarm(), PrestigeRaiding(), BionicRaiding(), HDFarm(), VoidMaps(), MapBonus()]
+	if (game.global.universe === 1) var mapTypes = [PrestigeClimb(), MapFarm(), PrestigeRaiding(), BionicRaiding(), HDFarm(), VoidMaps(), MapBonus(), Experience()]
 	if (game.global.universe === 2) var mapTypes = [Quest(), PandemoniumDestack(), PrestigeClimb(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), MapBonus(), Smithless()]
 
 	for (const map of mapTypes) {
