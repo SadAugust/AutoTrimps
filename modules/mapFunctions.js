@@ -362,9 +362,11 @@ function MapBonus() {
 	const rMBBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
 	const rMBDefaultSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusDefaultSettings.value : autoTrimpSettings.rMapBonusDefaultSettings.value;
 	let rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio && game.global.mapBonus !== 10;
-	let rMBspireMapStack = getPageSetting('MaxStacksForSpire') && isDoingSpire() && game.global.mapBonus < 10;
+	let rMBspireMapStack = getPageSetting('MaxStacksForSpire') && isDoingSpire() && game.global.mapBonus !== 10;
 	var rMBIndex = null;
 	for (var y = 0; y < rMBBaseSettings.length; y++) {
+		//Skip iterating lines if map bonus is capped.
+		if (game.global.mapBonus === 10) continue;
 		const currSetting = rMBBaseSettings[y];
 		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell) continue;
 		if (currSetting.runType !== 'All') {
@@ -1341,6 +1343,7 @@ function PrestigeClimb() {
 	return farmingDetails;
 }
 
+//Bionic Wonderland Raiding
 function BionicRaiding() {
 
 	const mapName = 'BionicRaiding'

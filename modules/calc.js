@@ -578,6 +578,7 @@ function badGuyChallengeMult() {
 	else if (game.global.challengeActive == "Domination") number *= 2.5;
 	else if (game.global.challengeActive == "Coordinate") number *= getBadCoordLevel();
 	else if (game.global.challengeActive == "Scientist" && getScientistLevel() == 5) number *= 10;
+	else if (game.global.challengeActive === 'Experience') number *= game.challenges.Experience.getEnemyMult();
 
 	//Obliterated and Eradicated
 	else if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") {
@@ -699,6 +700,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack) {
 	else if (game.global.challengeActive == "Watch") attack *= 1.25;
 	else if (game.global.challengeActive == "Corrupted") attack *= 3;
 	else if (game.global.challengeActive == "Scientist" && getScientistLevel() == 5) attack *= 10;
+	else if (game.global.challengeActive === 'Experience') attack *= game.challenges.Experience.getEnemyMult();
 
 	//Coordinate
 	if (game.global.challengeActive == "Coordinate") {
@@ -884,6 +886,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	if (game.global.challengeActive == "Meditate") health *= 2;
 	if (game.global.challengeActive == "Toxicity") health *= 2;
 	if (game.global.challengeActive == "Life") health *= 11;
+	if (game.global.challengeActive === 'Experience') health *= game.challenges.Experience.getEnemyMult();
 
 	//Coordinate
 	if (game.global.challengeActive == "Coordinate") {
@@ -1357,8 +1360,10 @@ function RcalcOurDmg(minMaxAvg, equality, mapType, useTitimp, runningUnlucky, fl
 			return attack;
 		if (Number(attack.toString()[0] % 2 == 0))
 			attack *= 399
-		attack /= RgetCritMulti(true);
-		attack *= RgetCritMulti(floorCrit);
+		if (!floorCrit) {
+			attack /= RgetCritMulti(true);
+			attack *= RgetCritMulti(floorCrit);
+		}
 	}
 
 	switch (minMaxAvg) {

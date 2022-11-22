@@ -192,7 +192,7 @@ function mainLoop() {
 	//RCore
 	//AutoMaps
 	if (oneSecondInterval) {
-		HDRatio = game.global.universe === 1 ? calcHDratio() : RcalcHDratio();
+		HDRatio = game.global.universe === 1 ? calcHDRatio(game.global.world, 'world') : RcalcHDratio();
 		voidHDRatio = game.global.universe === 1 ? calcVoidHDratio() : rCalcVoidHDratio();
 		autoLevel = autoMapLevel();
 	}
@@ -203,7 +203,6 @@ function mainLoop() {
 		//Offline Progress
 		if (!usingRealTimeOffline) {
 			setScienceNeeded();
-			//autoLevelEquipment();
 		}
 
 		if (getPageSetting('showbreedtimer')) {
@@ -212,7 +211,7 @@ function mainLoop() {
 			addToolTipToArmyCount();
 		}
 		//Core
-		if (getPageSetting('AutoMaps') > 0 && game.global.mapsUnlocked) RautoMap();
+		if (getPageSetting('AutoMaps') > 0 && game.global.mapsUnlocked) autoMap();
 		if (getPageSetting('showautomapstatus') == true) updateAutoMapsStatus();
 		if (getPageSetting('ManualGather2') == 1) manualLabor2();
 		if (getPageSetting('TrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
@@ -311,9 +310,9 @@ function mainLoop() {
 		rCurrentMap = rMapSettings.mapName;
 		//RCore
 		//AutoMaps
-		if (getPageSetting('RAutoMaps') > 0 && game.global.mapsUnlocked) RautoMap();
+		if (getPageSetting('RAutoMaps') > 0 && game.global.mapsUnlocked) autoMap();
 		//Status - AutoMaps
-		if (getPageSetting('Rshowautomapstatus')) RupdateAutoMapsStatus();
+		if (getPageSetting('Rshowautomapstatus')) updateAutoMapsStatus();
 		//RBuildings
 		if (getPageSetting('RBuyBuildingsNew')) RbuyBuildings();
 		//RUpgrades
@@ -473,7 +472,7 @@ function mainCleanup() {
 			updateButtonText()
 			saveSettings();
 		}
-		if (getPageSetting('Rshowautomapstatus')) RupdateAutoMapsStatus();
+		if (getPageSetting('Rshowautomapstatus')) updateAutoMapsStatus();
 		toggleRadonStatus(true);
 		toggleRnHr(true);
 		return true;
