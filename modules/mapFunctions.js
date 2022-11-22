@@ -810,6 +810,9 @@ function SmithyFarm() {
 
 	if (rSFIndex >= 0 || questcheck() === 10) {
 
+		let mapBonus;
+		if (game.global.mapsActive) mapBonus = getCurrentMapObject().bonus;
+
 		//NO IDEA HOW TO IMPLEMENT THIS. HELP PLEASE!
 		// 0 === cache, 1 === job ratio, 2 === farm type, 3 === amount needed to farm for
 		//var rSmithyArray = questcheck() == 1 ? ['lsc', '1', ' gems.'] : questcheck() == 2 ? ['lwc', '0,1', ' wood.'] : questcheck() == 3 ? ['lmc', '0,0,1', ' metal.'] : [0, 0, 0, 0];
@@ -822,19 +825,19 @@ function SmithyFarm() {
 
 		if (questcheck() === 10 || rSFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && smithyMapCount !== [0, 0, 0] && typeof getCurrentMapObject().bonus !== 'undefined') {
-				if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') game.global.mapRunCounter = smithyMapCount[0];
-				else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') game.global.mapRunCounter = smithyMapCount[1];
-				else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') game.global.mapRunCounter = smithyMapCount[2];
+				if (mapBonus === 'lsc' || mapBonus === 'ssc') game.global.mapRunCounter = smithyMapCount[0];
+				else if (mapBonus === 'lwc' || mapBonus === 'swc') game.global.mapRunCounter = smithyMapCount[1];
+				else if (mapBonus === 'lmc' || mapBonus === 'smc') game.global.mapRunCounter = smithyMapCount[2];
 			}
 
 			var rAutoLevel_Repeat = rAutoLevel;
 			mapAutoLevel = callAutoMapLevel(rCurrentMap, rAutoLevel, rSFSpecial, null, null, false);
 			if (mapAutoLevel !== Infinity) {
 				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) {
-					if (game.global.mapsActive && typeof getCurrentMapObject().bonus !== 'undefined') {
-						if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') smithyMapCount[0] = game.global.mapRunCounter + 1;
-						else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') smithyMapCount[1] = game.global.mapRunCounter + 1;
-						else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') smithyMapCount[2] = game.global.mapRunCounter + 1;
+					if (game.global.mapsActive && typeof mapBonus !== 'undefined') {
+						if (mapBonus === 'lsc' || mapBonus === 'ssc') smithyMapCount[0] = game.global.mapRunCounter + 1;
+						else if (mapBonus === 'lwc' || mapBonus === 'swc') smithyMapCount[1] = game.global.mapRunCounter + 1;
+						else if (mapBonus === 'lmc' || mapBonus === 'smc') smithyMapCount[2] = game.global.mapRunCounter + 1;
 					}
 				}
 				rSFMapLevel = mapAutoLevel;
@@ -843,6 +846,9 @@ function SmithyFarm() {
 		if (game.global.challengeActive == "Wither" && rSFMapLevel >= 0)
 			rSFMapLevel = -1;
 
+		//Initialising base food & metal vars for calcs later on
+		let woodBase = scaleToCurrentMapLocal(simpleSecondsLocal("wood", 1, true, '0,1,0'), false, true, rSFMapLevel);
+		let metalBase = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 1, true, '0,0,1'), false, true, rSFMapLevel);
 
 		//When mapType is set as Map Count work out how many Smithies we can farm in the amount of maps specified.
 		if (questcheck() !== 10 && rSFSettings.mapType === 'Map Count' && rSFSmithies !== 0) {
@@ -855,8 +861,8 @@ function SmithyFarm() {
 			var smithy_Cost_Mult = game.buildings.Smithy.cost.gems[1];
 
 			//Calculating wood & metal earned then using that info to identify how many Smithies you can afford from those values.
-			var woodEarned = scaleToCurrentMapLocal(simpleSecondsLocal("wood", mapTime, true, '0,1,0'), false, true, rSFMapLevel);
-			var metalEarned = scaleToCurrentMapLocal(simpleSecondsLocal("metal", mapTime, true, '0,0,1'), false, true, rSFMapLevel);
+			var woodEarned = woodBase * mapTime;
+			var metalEarned = metalBase * mapTime;
 			var woodSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (game.resources.wood.owned + woodEarned), (smithy_Cost_Mult), true)
 			var metalSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (game.resources.metal.owned + metalEarned), (smithy_Cost_Mult), true)
 
@@ -869,8 +875,8 @@ function SmithyFarm() {
 				var rSFMetalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, smithyCount - game.buildings.Smithy.purchased);
 
 				//Looking to see how many maps it would take to reach this smithy target
-				var rSFWoodMapCount = Math.floor((rSFWoodCost - game.resources.wood.owned) / scaleToCurrentMapLocal(simpleSecondsLocal("wood", 34, true, '0,1'), false, true, rSFMapLevel));
-				var rSFMetalMapCount = Math.floor((rSFMetalCost - game.resources.metal.owned) / scaleToCurrentMapLocal(simpleSecondsLocal("metal", 34, true, '0,0,1'), false, true, rSFMapLevel));
+				var rSFWoodMapCount = Math.floor((rSFWoodCost - game.resources.wood.owned) / (woodBase * 34));
+				var rSFMetalMapCount = Math.floor((rSFMetalCost - game.resources.metal.owned) / (metalBase * 34));
 				//If combined maps for both resources is higher than desired maps to be run then will farm 1 less smithy
 				if ((rSFWoodMapCount + rSFMetalMapCount) > rSFSmithies) rSFSmithies = smithyCount - 1
 				else rSFSmithies = smithyCount;
@@ -883,16 +889,16 @@ function SmithyFarm() {
 			var rSFSpecialTime = game.global.highestRadonLevelCleared > 83 ? 20 : 10;
 
 			if (woodShred && metalShred) {
-				var woodGain = scaleToCurrentMapLocal(simpleSecondsLocal("wood", rSFSpecialTime, true, '0,1,0,0'), false, true, rSFMapLevel);
-				var metalGain = scaleToCurrentMapLocal(simpleSecondsLocal("metal", rSFSpecialTime, true, '0,0,1,0'), false, true, rSFMapLevel);
+				var woodGain = woodBase * rSFSpecialTime;
+				var metalGain = metalBase * rSFSpecialTime;
 			}
 			else if (woodShred) {
-				var woodGain = scaleToCurrentMapLocal(simpleSecondsLocal("wood", (rSFSpecialTime * 2) + 45, true, '0,1,0,0'), false, true, rSFMapLevel);
+				var woodGain = woodBase * ((rSFSpecialTime * 2) + 45)
 				var metalGain = Infinity;
 			}
 			else if (metalShred) {
 				var woodGain = Infinity;
-				var metalGain = scaleToCurrentMapLocal(simpleSecondsLocal("metal", (rSFSpecialTime * 2) + 45, true, '0,0,1,0'), false, true, rSFMapLevel);
+				var metalGain = metalBase * ((rSFSpecialTime * 2) + 45)
 			}
 			var smithy_Cost_Mult = game.buildings.Smithy.cost.gems[1];
 			var smithy_Max_Affordable = [getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.gems[0], (Infinity), (smithy_Cost_Mult), true),
@@ -936,10 +942,10 @@ function SmithyFarm() {
 
 		//Recycles map if we don't need to finish it for meeting the farm requirements
 		if (rCurrentMap === mapName && !dontRecycleMaps) {
-			if (game.global.mapsActive && typeof getCurrentMapObject().bonus !== 'undefined' && ((!rShouldSmithyGemFarm && getCurrentMapObject().bonus.includes('sc')) || (!rShouldSmithyWoodFarm && getCurrentMapObject().bonus.includes('wc')) || (!rShouldSmithyMetalFarm && getCurrentMapObject().bonus.includes('mc')))) {
-				if (getCurrentMapObject().bonus === 'lsc' || getCurrentMapObject().bonus === 'ssc') rSFMapRepeats[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-				else if (getCurrentMapObject().bonus === 'lwc' || getCurrentMapObject().bonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
-				else if (getCurrentMapObject().bonus === 'lmc' || getCurrentMapObject().bonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+			if (game.global.mapsActive && typeof mapBonus !== 'undefined' && ((!rShouldSmithyGemFarm && mapBonus.includes('sc')) || (!rShouldSmithyWoodFarm && mapBonus.includes('wc')) || (!rShouldSmithyMetalFarm && mapBonus.includes('mc')))) {
+				if (mapBonus === 'lsc' || mapBonus === 'ssc') rSFMapRepeats[0] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+				else if (mapBonus === 'lwc' || mapBonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
+				else if (mapBonus === 'lmc' || mapBonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 				if (!dontRecycleMaps) {
 					mapsClicked();
 					recycleMap();
@@ -962,7 +968,7 @@ function SmithyFarm() {
 			return farmingDetails;
 		}
 
-		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rSFMapLevel || getCurrentMapObject().bonus !== rSFSpecial);
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rSFMapLevel || mapBonus !== rSFSpecial);
 		var status = 'Smithy Farming for ' + rSFGoal;
 
 		farmingDetails.shouldRun = rShouldSmithyFarm;
