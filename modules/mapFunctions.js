@@ -356,7 +356,7 @@ function MapBonus() {
 	//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
-	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
+	const dontRecycleMaps = game.global.challengeActive === 'Unbalance' || game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
 	const currChall = game.global.challengeActive;
 	const rMBZone = game.global.universe === 1 ? getPageSetting('hMapBonusZone') : getPageSetting('rMapBonusZone');
 	const rMBBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
