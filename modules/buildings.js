@@ -257,36 +257,49 @@ function buyBuildings() {
 	postBuy2(oldBuy);
 }
 
-function buyStorage() {
+function buyStorage(hypoZone) {
 	var customVars = MODULES["buildings"];
-	var packMod = 1 + game.portal.Packrat.level * game.portal.Packrat.modifier;
-	var Bs = {
+	var buildings = {
 		'Barn': 'food',
 		'Shed': 'wood',
 		'Forge': 'metal'
 	};
-	for (var B in Bs) {
-		var jest = 0;
-		var owned = game.resources[Bs[B]].owned;
-		var max = game.resources[Bs[B]].max * packMod;
-		max = calcHeirloomBonus("Shield", "storageSize", max);
-		if (game.global.mapsActive && game.unlocks.imps.Jestimp) {
-			jest = simpleSeconds(Bs[B], 45);
+	for (var resource in buildings) {
+		//Initialising variables
+		var curRes = game.resources[buildings[resource]].owned;
+		var maxRes = game.resources[buildings[resource]].max;
+		//Identifying our max for the resource that's being checked
+		maxRes = game.global.universe == 1 ? maxRes *= 1 + game.portal.Packrat.level * game.portal.Packrat.modifier :
+			maxRes *= 1 + game.portal.Packrat.radLevel * game.portal.Packrat.modifier;
+		maxRes = calcHeirloomBonus("Shield", "storageSize", maxRes);
+
+		//Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
+		var jestValue = 0;
+		if (game.global.mapsActive) {
+			jestValue = (getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Trimple of Doom') ? curRes * 2 :
+				game.unlocks.imps.Jestimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 45)) :
+					game.unlocks.imps.Chronoimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 5)) :
+						jestValue
+			if (game.unlocks.imps.Jestimp) {
+				jest = simpleSeconds(Bs[B], 45);
+			} else if (game.unlocks.imps.Chronoimp) {
+				jest = simpleSeconds(Bs[B], 5);
+			}
 			jest = scaleToCurrentMap(jest);
 		}
-		if ((game.global.world == 1 && owned > max * customVars.storageLowlvlCutoff1) ||
-			(game.global.world >= 2 && game.global.world < 10 && owned > max * customVars.storageLowlvlCutoff2) ||
-			(owned + jest > max * customVars.storageMainCutoff)) {
-			if (canAffordBuilding(B) && game.triggers[B].done) {
-				safeBuyBuilding(B);
+		//Skips buying sheds if you're not on one of your specified bonfire zones
+		if (game.global.challengeActive === 'Hypothermia' && hypoZone > game.global.world && resource === 'Shed') continue;
+		if ((game.global.world == 1 && curRes > maxRes * customVars.storageLowlvlCutoff1) ||
+			(game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * customVars.storageLowlvlCutoff2) ||
+			(curRes + jestValue > maxRes * customVars.storageMainCutoff)) {
+			if (canAffordBuilding(resource, null, null, null, null, null) && game.triggers[resource].done) {
+				safeBuyBuilding(resource);
 			}
 		}
 	}
 }
 
 //Radon
-
-
 function getPsStringLocal(what, rawNum) {
 	if (what == "helium") return;
 	var resOrder = ["food", "wood", "metal", "science", "gems", "fragments"];
@@ -421,46 +434,6 @@ function getPsStringLocal(what, rawNum) {
 	game.global.lockTooltip = false;
 }
 
-var RhousingList = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
-
-function RsafeBuyBuilding(building) {
-	if (isBuildingInQueue(building))
-		return false;
-	if (game.buildings[building].locked)
-		return false;
-	var oldBuy = preBuy2();
-	var decaChange = game.global.stringVersion < '5.7.0' ? game.talents.deciBuild.purchased : bwRewardUnlocked('DecaBuild');
-
-	if (decaChange) {
-		game.global.buyAmt = 10;
-		if (!canAffordBuilding(building)) {
-			game.global.buyAmt = 2;
-			if (!canAffordBuilding(building))
-				game.global.buyAmt = 1;
-		}
-	}
-	else if (bwRewardUnlocked("DoubleBuild")) {
-		game.global.buyAmt = 2;
-		if (!canAffordBuilding(building))
-			game.global.buyAmt = 1;
-	}
-	else game.global.buyAmt = 1;
-
-	if (!canAffordBuilding(building)) {
-		postBuy2(oldBuy);
-		return false;
-	}
-
-	game.global.firing = false;
-
-	debug('Building ' + building, "buildings", '*hammer2');
-	if (!game.buildings[building].locked && canAffordBuilding(building)) {
-		buyBuilding(building, true, true);
-	}
-	postBuy2(oldBuy);
-	return true;
-}
-
 var smithiesBoughtThisZone = 0;
 
 function mostEfficientHousing() {
@@ -529,8 +502,8 @@ function mostEfficientHousing() {
 function RbuyBuildings() {
 
 	var hypoZone = 0;
-	if (game.global.challengeActive === 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && autoTrimpSettings.rHypoSettings.value.length > 0) {
-		var rHFBaseSettings = autoTrimpSettings.rHypoSettings.value;
+	if (game.global.challengeActive === 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && autoTrimpSettings.rHypoDefaultSettings.value.autostorage && autoTrimpSettings.rHypoSettings.value.length > 0) {
+		const rHFBaseSettings = autoTrimpSettings.rHypoSettings.value;
 		for (var y = 0; y < rHFBaseSettings.length; y++) {
 			if (!rHFBaseSettings[y].active) {
 				continue;
@@ -541,41 +514,18 @@ function RbuyBuildings() {
 	}
 	// Storage, shouldn't be needed anymore that autostorage is lossless. Hypo fucked this statement :(
 	//Turn on autostorage if you're past your last farmzone and you don't need to save wood anymore. Else will have to force it to purchase enough storage up to the cost of whatever bonfires
-	if (!game.global.autoStorage && (game.global.challengeActive != 'Hypothermia' || (game.global.challengeActive == 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && (autoTrimpSettings.rHypoDefaultSettings.value.autostorage && game.global.world >= hypoZone))))
+	if (!game.global.autoStorage && game.global.world >= hypoZone)
 		toggleAutoStorage(false);
 
-	//Disables AutoStorage 
-	if (game.global.challengeActive == 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && (autoTrimpSettings.rHypoDefaultSettings.value.autostorage && game.global.world < hypoZone)) {
+	//Disables AutoStorage when our Hypo farm zone is greater than current world zone
+	if (game.global.world < hypoZone) {
 		if (game.global.autoStorage)
 			toggleAutoStorage(false);
 	}
-	if (!game.global.autoStorage) {
-		var rBuildings = {
-			'Barn': 'food',
-			'Shed': 'wood',
-			'Forge': 'metal'
-		};
-		for (var resources in rBuildings) {
-			//Initialising variables
-			var curRes = game.resources[rBuildings[resources]].owned;
-			var maxRes = game.resources[rBuildings[resources]].max;
-			//Identifying our max for the resource that's being checked
-			maxRes = game.global.universe == 1 ? maxRes *= 1 + game.portal.Packrat.level * game.portal.Packrat.modifier :
-				maxRes *= 1 + game.portal.Packrat.radLevel * game.portal.Packrat.modifier;
-			maxRes = calcHeirloomBonus("Shield", "storageSize", maxRes);
 
-			//Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
-			var jestValue = game.global.mapsActive && (getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Trimple of Doom') ? curRes * 2 :
-				game.global.mapsActive && game.unlocks.imps.Jestimp ? scaleToCurrentMap(simpleSeconds(rBuildings[resources], 45)) :
-					curRes * 1.1;
-			//Skips buying sheds if you're not on one of your specified bonfire zones
-			if (resources === 'Shed') continue;
-			if ((resources !== 'Shed' && curRes + jestValue > maxRes)) {
-				if (canAffordBuilding(resources, null, null, null, null, null) && game.triggers[resources].done) {
-					RsafeBuyBuilding(resources);
-				}
-			}
-		}
+	//Buys storage buildings when about to cap resources
+	if (!game.global.autoStorage) {
+		buyStorage(hypoZone);
 	}
 
 	if (typeof rBSRunningAtlantrimp !== 'undefined' && rBSRunningAtlantrimp)
