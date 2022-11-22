@@ -30,7 +30,7 @@ function updateAutoMapsStatus(get) {
 	var status;
 
 	//Fail Safes 
-	if (getPageSetting('RAutoMaps') == 0) status = 'Off';
+	if (game.global.universe === 1 ? getPageSetting('AutoMaps') == 0 : getPageSetting('RAutoMaps') == 0) status = 'Off';
 	//Setting up status
 	else if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
 	else if (vanillaMAZ) status = 'Vanilla MAZ';
