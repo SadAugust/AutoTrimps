@@ -197,13 +197,11 @@ function mainLoop() {
 		autoLevel = autoMapLevel();
 	}
 
+	//Offline Progress
+	if (!usingRealTimeOffline) setScienceNeeded();
+
 	//Logic for Universe 1
 	if (game.global.universe == 1) {
-
-		//Offline Progress
-		if (!usingRealTimeOffline) {
-			setScienceNeeded();
-		}
 
 		if (getPageSetting('showbreedtimer')) {
 			if (game.options.menu.showFullBreed.enabled != 1) toggleSetting("showFullBreed");
@@ -236,7 +234,7 @@ function mainLoop() {
 		if (getPageSetting('UseAutoGen') == true && game.global.world > 229) autoGenerator();
 
 		//Jobs
-		if (getPageSetting('BuyJobsNew') > 0) RbuyJobs();
+		if (getPageSetting('BuyJobsNew') > 0) buyJobs();
 		//Heirloom Management
 		if (getPageSetting('Hhs')) HeirloomSwapping();
 
@@ -299,10 +297,6 @@ function mainLoop() {
 
 	//Logic for Universe 2
 	if (game.global.universe == 2) {
-
-		//Offline Progress
-		if (!usingRealTimeOffline) RsetScienceNeeded();
-
 		//Heirloom Shield Swap Check
 		if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
 		//Initiate Farming Code
@@ -325,11 +319,7 @@ function mainLoop() {
 		//Auto Traps
 		if (getPageSetting('RTrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
 		//RJobs
-		if (getPageSetting('RBuyJobsNew') > 0) {
-			//Check to see if we're on quest and at a quest zone or if we're trying to do some farming that needs other jobs.
-			if (!(game.global.challengeActive == 'Quest' && game.global.world >= game.challenges.Quest.getQuestStartZone()) || (game.global.challengeActive == 'Quest' && rCurrentMap !== '')) RbuyJobs();
-			else RquestbuyJobs();
-		}
+		if (getPageSetting('RBuyJobsNew') > 0) buyJobs();
 		if (game.global.runningChallengeSquared && rC3EndZoneSetting != game.stats.zonesCleared.value) {
 			if (getPageSetting('c3finishrun') !== -1) {
 				if ((getPageSetting('c3finishrun') - 1) === game.global.world)
