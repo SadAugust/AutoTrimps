@@ -58,7 +58,6 @@ function safeBuyJob(jobTitle, amount) {
 }
 
 function workerRatios(workerRatio) {
-
 	var workerRatio = !workerRatio ? null : workerRatio
 	if (workerRatio == null) return;
 	if (getPageSetting('RBuyJobsNew') == 2) {
@@ -99,7 +98,6 @@ function workerRatios(workerRatio) {
 	if (workerRatio.includes('Farmer')) return ratioSet[0]
 	else if (workerRatio.includes('Lumber')) return ratioSet[1]
 	else if (workerRatio.includes('Miner')) return ratioSet[2]
-
 }
 
 var reservedJobs = 100;
@@ -141,7 +139,6 @@ function buyJobs() {
 				game.jobs.Explorer.cost.food[1],
 				true
 			);
-
 			if (affordableExplorers > 0) {
 				safeBuyJob('Explorer', affordableExplorers);
 				freeWorkers -= affordableExplorers;
@@ -158,7 +155,6 @@ function buyJobs() {
 				game.jobs.Trainer.cost.food[1],
 				true
 			);
-
 			if (affordableTrainers > 0) {
 				safeBuyJob('Trainer', affordableTrainers);
 				freeWorkers -= affordableTrainers;
@@ -181,7 +177,6 @@ function buyJobs() {
 					game.jobs.Magmamancer.cost.gems[1],
 					true
 				);
-
 				if (affordableMagmamancer > 0) {
 					safeBuyJob('Magmamancer', affordableMagmamancer);
 					freeWorkers -= affordableMagmamancer;
@@ -301,11 +296,8 @@ function buyJobs() {
 		desiredWorkers[i] = Math.floor(freeWorkers * desiredRatios[i] / totalFraction - currentworkers[i]);
 		if (desiredWorkers[i] > 0) totalWorkerCost += game.jobs[ratioWorkers[i]].cost.food * desiredWorkers[i];
 	}
-	// Check for negative values, in case we need to fire.
 
-	// Safe check total worker costs, almost never going to be an issue
-	// Or another reason that we're unable to buy everything we want
-	if (totalWorkerCost > game.resources.food.owned /* or breeding/available stuff */) {
+	if (totalWorkerCost > game.resources.food.owned) {
 		// Buy max on food and then let the next frame take care of the rest.
 		var buyAmountStore = game.global.buyAmt;
 		game.global.buyAmt = "Max";
@@ -314,7 +306,6 @@ function buyJobs() {
 
 		game.global.buyAmt = buyAmountStore;
 	} else {
-		//buy everything
 
 		// Fire anything that we need to fire to free up workers
 		for (var i = 0; i < desiredWorkers.length; i++) {
