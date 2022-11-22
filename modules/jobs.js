@@ -1,9 +1,6 @@
 MODULES["jobs"] = {};
 
 //Helium Modules
-MODULES["jobs"].scientistRatio = 25;
-MODULES["jobs"].scientistRatio2 = 10;
-MODULES["jobs"].scientistRatio3 = 100;
 MODULES["jobs"].autoRatio7 = [1, 1, 98];
 MODULES["jobs"].autoRatio6 = [1, 7, 12];
 MODULES["jobs"].autoRatio5 = [1, 2, 22];
@@ -75,50 +72,28 @@ function workerRatios(workerRatio) {
 	}
 
 	var ratioSet;
-	if (game.global.universe === 1) {
-		if (MODULES["jobs"].customRatio) {
-			ratioSet = MODULES["jobs"].customRatio;
-		} else if (game.global.world >= 300) {
-			ratioSet = MODULES["jobs"].autoRatio7;
-		} else if (game.buildings.Tribute.owned > 3000 && mutations.Magma.active()) {
-			ratioSet = MODULES["jobs"].autoRatio6;
-		} else if (game.buildings.Tribute.owned > 1500) {
-			ratioSet = MODULES["jobs"].autoRatio5;
-		} else if (game.buildings.Tribute.owned > 1000) {
-			ratioSet = MODULES["jobs"].autoRatio4;
-		} else if (game.resources.trimps.realMax() > 3000000) {
-			ratioSet = MODULES["jobs"].autoRatio3;
-		} else if (game.resources.trimps.realMax() > 300000) {
-			ratioSet = MODULES["jobs"].autoRatio2;
-		} else {
-			ratioSet = MODULES["jobs"].autoRatio1;
-		}
-		if (game.global.challengeActive == 'Watch') {
-			ratioSet = MODULES["jobs"].autoRatio1;
-		} else if (game.global.challengeActive == 'Metal') {
-			ratioSet = [4, 5, 0];
-		}
-	}
-	if (game.global.universe === 2) {
-		if (MODULES["jobs"].RcustomRatio) {
-			ratioSet = MODULES["jobs"].RcustomRatio;
-		} else if (game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10) {
-			ratioSet = MODULES["jobs"].RautoRatioHaz;
-		} else if (game.global.world >= 300) {
-			ratioSet = MODULES["jobs"].RautoRatio7;
-		} else if (game.buildings.Tribute.owned > 1500) {
-			ratioSet = MODULES["jobs"].RautoRatio5;
-		} else if (game.buildings.Tribute.owned > 1000) {
-			ratioSet = MODULES["jobs"].RautoRatio4;
-		} else if (game.resources.trimps.realMax() > 3000000) {
-			ratioSet = MODULES["jobs"].RautoRatio3;
-		} else if (game.resources.trimps.realMax() > 300000) {
-			ratioSet = MODULES["jobs"].RautoRatio2;
-		} else if (game.global.challengeActive == 'Transmute') {
-			ratioSet = [4, 5, 0];
-		} else {
-			ratioSet = MODULES["jobs"].RautoRatio1;
-		}
+	var universe = game.global.universe === 1 ? '' : 'R';
+
+	if (MODULES["jobs"].RcustomRatio) {
+		ratioSet = MODULES["jobs"][universe + 'customRatio'];
+	} else if (game.global.universe === 2 && game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10) {
+		ratioSet = MODULES["jobs"][universe + 'autoRatioHaz'];
+	} else if (game.global.world >= 300) {
+		ratioSet = MODULES["jobs"][universe + 'autoRatio7'];
+	} else if (game.buildings.Tribute.owned > 3000 && mutations.Magma.active()) {
+		ratioSet = MODULES["jobs"][universe + 'autoRatio6'];
+	} else if (game.buildings.Tribute.owned > 1500) {
+		ratioSet = MODULES["jobs"][universe + 'autoRatio5'];
+	} else if (game.buildings.Tribute.owned > 1000) {
+		ratioSet = MODULES["jobs"][universe + 'autoRatio4'];
+	} else if (game.resources.trimps.realMax() > 3000000) {
+		ratioSet = MODULES["jobs"][universe + 'autoRatio3'];
+	} else if (game.resources.trimps.realMax() > 300000) {
+		ratioSet = MODULES["jobs"][universe + 'autoRatio2'];
+	} else if (game.global.challengeActive == 'Metal' || game.global.challengeActive == 'Transmute') {
+		ratioSet = [4, 5, 0];
+	} else {
+		ratioSet = MODULES["jobs"][universe + 'autoRatio1'];
 	}
 
 	if (workerRatio.includes('Farmer')) return ratioSet[0]
