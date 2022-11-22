@@ -2377,7 +2377,7 @@ function HDFarm() {
 
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
-	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
+	const dontRecycleMaps = game.global.challengeActive === 'Unbalance' || game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
 	const totalPortals = getTotalPortals();
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const rHDFBaseSetting = game.global.universe === 1 ? autoTrimpSettings.hHDFarmSettings.value : autoTrimpSettings.rHDFarmSettings.value;
