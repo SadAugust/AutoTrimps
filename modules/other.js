@@ -164,6 +164,16 @@ playerSpire.drawInfo = function (arguments) {
 	return arguments;
 }
 
+function getZoneEmpowerment(zone) {
+	if (!zone) return 'None';
+	var natureStartingZone = getNatureStartZone();
+	if (zone < natureStartingZone) return 'None';
+	var activeEmpowerments = ["Poison", "Wind", "Ice"];
+	zone = Math.floor((zone - natureStartingZone) / 5);
+	zone = zone % activeEmpowerments.length;
+	return activeEmpowerments[zone];
+}
+
 //Radon
 function questcheck() {
 	if (game.global.challengeActive !== 'Quest' || game.global.world < game.challenges.Quest.getQuestStartZone() || !getPageSetting('rQuest'))

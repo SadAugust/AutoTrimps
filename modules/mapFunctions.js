@@ -1366,14 +1366,17 @@ function Experience() {
 	const special = (Math.floor(game.global.highestLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "0" : "fa");
 	const mapLevel = 0;
 
-	if (game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder) shouldExperience = true;
+	if (game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder) {
+		shouldExperience = true;
+		var status = 'Experience: Farming Wonders';
+	}
 	else {
 		shouldExperience = game.global.world > 600 && game.global.world >= getPageSetting('experienceEndZone');
 		if (shouldExperience) mapName = 'BionicRaiding';
+		var status = 'Experience: Ending Challenge';
 	}
 
 	var repeat = game.global.world < game.challenges.Experience.nextWonder;
-	var status = 'Farming Wonders';
 
 	if (shouldExperience) farmingDetails.shouldRun = shouldExperience;
 	farmingDetails.mapName = mapName;
@@ -1396,7 +1399,7 @@ function BionicRaiding() {
 	};
 
 	if (game.global.universe === 1 && !autoTrimpSettings.hBionicRaidingDefaultSettings.value.active) return farmingDetails;
-	if (game.global.challengeActive === 'Exterminate' && game.global.world > 600) return;
+	if (game.global.challengeActive === 'Exterminate' && game.global.world > 600) return farmingDetails;
 
 	var rShouldBionicRaid = false;
 	const isC3 = game.global.runningChallengeSquared;

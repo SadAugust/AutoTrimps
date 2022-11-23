@@ -450,7 +450,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		var defaultVals = {
 			active: true,
-			cell: -1,
+			cell: 1,
 			special: '0',
 			repeat: 1,
 			shipskip: 10,
@@ -473,13 +473,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		//Reading info from each setting
 		defaultVals.active = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.active) === 'undefined' ? false : autoTrimpSettings[varPrefix + "DefaultSettings"].value.active ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.active : false;
-		defaultVals.cell = autoTrimpSettings[varPrefix + "DefaultSettings"].value.cell ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.cell : 81;
+		defaultVals.cell = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.cell) === 'undefined' ? 1 : autoTrimpSettings[varPrefix + "DefaultSettings"].value.cell ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.cell : 81;
 		if (titleText.includes('Bone Shrine'))
 			defaultVals.bonebelow = autoTrimpSettings[varPrefix + "DefaultSettings"].value.bonebelow ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.bonebelow : 1;
 		if (titleText.includes('Bone Shrine'))
 			defaultVals.worshipper = autoTrimpSettings[varPrefix + "DefaultSettings"].value.worshipper ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.worshipper : 50;
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm'))
-			defaultVals.jobratio = autoTrimpSettings[varPrefix + "DefaultSettings"].value.jobratio ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.jobratio : '1,1,1,1';
+			defaultVals.jobratio = typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.jobratio) === 'undefined' ? '1,1,1,1' : autoTrimpSettings[varPrefix + "DefaultSettings"].value.jobratio ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.jobratio : '1,1,1,1';
 		if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Bone Shrine') || titleText.includes('Map Bonus'))
 			defaultVals.gather = autoTrimpSettings[varPrefix + "DefaultSettings"].value.gather ? autoTrimpSettings[varPrefix + "DefaultSettings"].value.gather : '0';
 		if (titleText.includes('Map Farm') || titleText.includes('Alchemy') || titleText.includes('Map Bonus') || titleText.includes('Insanity'))
@@ -719,6 +719,14 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			else style = " style='display: none' ";
 
+			var backgroundStyle = "";
+			if (varPrefix[0] === 'h') {
+				var natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
+				var natureList = ['None', 'Poison', 'Wind', 'Ice'];
+				var index = natureList.indexOf(getZoneEmpowerment(vals.world));
+				backgroundStyle = " 'background:" + natureStyle[index] + "\'";
+			}
+
 			var gatherDropdown = displayDropdowns(universe, 'Gather', vals.gather);
 			//Specials dropdown with conditions for each unlock to only appear when the user can run them.
 			var specialsDropdown = displayDropdowns(universe, 'Cache', vals.special);
@@ -746,7 +754,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
 			tooltipText += "<div class='windowDelete" + varPrefix_Adjusted + "\' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
 			tooltipText += "<div class='windowActive" + varPrefix_Adjusted + "\' style='text-align: center;'>" + buildNiceCheckbox("windowActive" + x, null, vals.active) + "</div>";
-			tooltipText += "<div class='windowWorld" + varPrefix_Adjusted + "\'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
+			tooltipText += "<div class='windowWorld" + varPrefix_Adjusted + "\' style = " + backgroundStyle + "\' oninput='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
+
 			if (titleText.includes('Void'))
 				tooltipText += "<div class='windowMaxVoidZone'><input value='" + vals.maxvoidzone + "' type='number' id='windowMaxVoidZone" + x + "'/></div>";
 			if (titleText.includes('Raiding'))
@@ -831,7 +840,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 		tooltipText += "<div id='windowAddRowBtn' style='display: " + ((current.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\",\"" + titleText + "\")'>+ Add Row</div>"
 		tooltipText += "</div></div><div style='display: none' id='mazHelpContainer'>" + mazHelp + "</div>";
 		costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + varPrefix + "\", true)'>Save</span><span class='btn btn-info btn-md' onclick='windowToggleHelp(\"" + windowSize + "\")'>Help</span></div>"
-
 
 		//Changing window size depending on setting being opened.
 		if (document.getElementById('tooltipDiv').classList[0] !== windowSize) {
@@ -1370,6 +1378,14 @@ function addRow(varPrefix, titleText) {
 				parent.style.display = 'block';
 				elem.value = game.global.world < 6 ? 6 : game.global.world;
 
+				if (varPrefix[0] === 'h') {
+					//Changing rows to use the colour of the Nature type that the world input will be run on.
+					var natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
+					var natureList = ['None', 'Poison', 'Wind', 'Ice'];
+					var index = natureList.indexOf(getZoneEmpowerment(elem.value));
+					elem.parentNode.style.background = natureStyle[index];
+				}
+
 				if (document.getElementById('windowSpecial' + x) !== null)
 					document.getElementById('windowSpecial' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.special
 				if ((!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && !titleText.includes('HD Farm')) && document.getElementById('windowRepeat' + x) !== null)
@@ -1406,7 +1422,7 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowPortalAfter' + x).value = false;
 				if (document.getElementById('windowAutoLevel' + x) !== null)
 					document.getElementById('windowAutoLevel' + x).value = true;
-				if (document.getElementById('windowJobRatio' + x) !== null)
+				if (document.getElementById('windowJobRatio' + x) !== null && typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.jobratio) !== 'undefined')
 					document.getElementById('windowJobRatio' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.jobratio
 				if (titleText.includes('Map Bonus') && document.getElementById('windowLevel' + x) !== null)
 					document.getElementById('windowLevel' + x).value = 0;
@@ -1421,7 +1437,8 @@ function addRow(varPrefix, titleText) {
 			var parent2 = document.getElementById('windowRow' + x);
 			if (parent2) {
 				parent2.style.display = 'block';
-				elemCell.value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.cell
+				if (typeof (autoTrimpSettings[varPrefix + "DefaultSettings"].value.cell) !== 'undefined')
+					elemCell.value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.cell
 				updateWindowPreset(x, varPrefix);
 				break;
 			}
@@ -1506,11 +1523,11 @@ function removeRow(index, titleText) {
 function updateWindowPreset(index, varPrefix) {
 	var varPrefix = !varPrefix ? '' : varPrefix;
 	var varPrefix_Adjusted = varPrefix.slice(1);
+	var row = document.getElementById('windowRow' + index);
 
 	if (varPrefix.includes('MapFarm') || varPrefix.includes('TributeFarm') || varPrefix.includes('SmithyFarm') || varPrefix.includes('MapBonus') || varPrefix.includes('WorshipperFarm') || varPrefix.includes('BoneShrine') || varPrefix.includes('VoidMap') || varPrefix.includes('HDFarm') || varPrefix.includes('Raiding')) {
 		if (varPrefix !== '') {
 			var runType = document.getElementById('windowRunType' + index).value;
-			var row = document.getElementById('windowRow' + index);
 
 			if ((runType !== 'Filler' && row.classList.contains('windowChallengeOn' + varPrefix_Adjusted)) ||
 				(runType === 'Filler' && row.classList.contains('windowChallengeOff' + varPrefix_Adjusted))) {
@@ -1530,14 +1547,12 @@ function updateWindowPreset(index, varPrefix) {
 
 	if (varPrefix.includes('MapFarm') || varPrefix.includes('TributeFarm') || varPrefix.includes('SmithyFarm') || varPrefix.includes('MapBonus') || varPrefix.includes('Worshipper') || varPrefix.includes('Insanity') || varPrefix.includes('Alch') || varPrefix.includes('Hypo')) {
 		var autoLevel = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? 'windowLevelOff' : 'windowLevelOn';
-		var row = document.getElementById('windowRow' + index);
 		swapClass('windowLevel', autoLevel, row);
 		document.getElementById('windowLevel' + index).disabled = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? true : false;
 	}
 
 	if (varPrefix.includes('MapFarm') || varPrefix.includes('Alch') || varPrefix.includes('MapBonus') || varPrefix.includes('Insanity')) {
 		var special = document.getElementById('windowSpecial' + index).value;
-		var row = document.getElementById('windowRow' + index);
 
 		newClass = (special === 'hc' || special === 'lc') ? 'windowGatherOn' : 'windowGatherOff';
 		swapClass('windowGather', newClass, row);
@@ -1545,9 +1560,17 @@ function updateWindowPreset(index, varPrefix) {
 
 	if (varPrefix[0] === 'r' && varPrefix.includes('BoneShrine')) {
 		var runType = document.getElementById('windowRunType' + index).value;
-		var row = document.getElementById('windowRow' + index);
 
 		newClass = runType === 'Daily' || runType === 'All' ? 'windowShredOn' : 'windowShredOff';
 		swapClass('windowShred', newClass, row);
 	}
+	if (varPrefix[0] === 'h') {
+		//Changing rows to use the colour of the Nature type that the world input will be run on.
+		var world = document.getElementById('windowWorld' + index);
+		var natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
+		var natureList = ['None', 'Poison', 'Wind', 'Ice'];
+		var index = natureList.indexOf(getZoneEmpowerment(world.value));
+		world.parentNode.style.background = natureStyle[index];
+	}
+
 }
