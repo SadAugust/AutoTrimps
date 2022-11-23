@@ -530,7 +530,7 @@ ul.tab li a:hover {
 }
 
 .windowLevelMapBonus {
-	width: 8%;
+	width: 6%;
 }
 
 .windowJobRatioMapBonus {
@@ -538,7 +538,7 @@ ul.tab li a:hover {
 }
 
 .windowSpecialMapBonus {
-	width: 20%;
+	width: 22%;
 }
 
 .windowMapStacks {
@@ -569,6 +569,10 @@ ul.tab li a:hover {
 .windowChallengeOffMapBonus .windowChallengeMapBonus,
 .windowChallenge3OffMapBonus .windowChallenge3MapBonus {
 	display: none;
+}
+
+.windowGatherOn .windowSpecialMapBonus {
+	width: 14%;
 }
 
 /* Raiding */
@@ -1059,6 +1063,10 @@ ul.tab li a:hover {
 	width: 20%;
 }
 
+.windowGatherOn .windowSpecialAlch {
+	width: 18%;
+}
+
 /* Hypothermia */
 .windowDeleteHypo,
 .windowActiveHypo,
@@ -1206,14 +1214,6 @@ ul.tab li a:hover {
 
 .windowAtlantrimp {
 	width: 6%;
-}
-
-.windowGatherOn .windowSpecialMapBonus {
-	width: 15%;
-}
-
-.windowGatherOn .windowSpecialAlch {
-	width: 16%;
 }
 
 .windowGatherOff .windowGather {
