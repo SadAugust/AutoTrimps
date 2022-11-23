@@ -734,9 +734,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var challengeDropdown = displayDropdowns(universe, 'Filler', vals.challenge);
 			//C3 Challenges
 			var challenge3Dropdown = displayDropdowns(universe, 'C3', vals.challenge3);
+			//RunType
+			var runTypeDropdown = displayDropdowns(universe, 'runType', vals.runType);
 
 			var potionDropdown = "<option value='h'" + ((vals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
-			var runTypeDropdown = "<option value='none'" + ((vals.runType == 'none') ? " selected='selected'" : "") + ">None</option>\<option value='Filler'" + ((vals.runType == 'Filler') ? " selected='selected'" : "") + ">Filler</option>\<option value='Daily'" + ((vals.runType == 'Daily') ? " selected='selected'" : "") + ">Daily</option>\<option value='C3'" + ((vals.runType == 'C3') ? " selected='selected'" : "") + ">C3</option>\<option value='All'" + ((vals.runType == 'All') ? " selected='selected'" : "") + ">All</option>"
 			var raidingDropdown = "<option value='0'" + ((vals.raidingDropdown == '0') ? " selected='selected'" : "") + ">Frag</option>\<option value='1'" + ((vals.raidingDropdown == '1') ? " selected='selected'" : "") + ">Frag Min</option>\<option value='2'" + ((vals.raidingDropdown == '2') ? " selected='selected'" : "") + ">Frag Max</option>"
 			var mapTypeDropdown = "<option value='Absolute'" + ((vals.mapType == 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>\<option value='Map Count'" + ((vals.mapType == 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>\</option>"
 			var shredDropdown = "<option value='All'" + ((vals.shredActive == 'All') ? " selected='selected'" : "") + ">All</option>\<option value='Shred'" + ((vals.shredActive == 'Shred') ? " selected='selected'" : "") + ">Shred</option>\<option value='No Shred'" + ((vals.shredActive == 'No Shred') ? " selected='selected'" : "") + ">No Shred</option>\</option>"
