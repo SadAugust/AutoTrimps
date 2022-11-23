@@ -280,12 +280,6 @@ function buyStorage(hypoZone) {
 				game.unlocks.imps.Jestimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 45)) :
 					game.unlocks.imps.Chronoimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 5)) :
 						jestValue
-			if (game.unlocks.imps.Jestimp) {
-				jest = simpleSeconds(Bs[B], 45);
-			} else if (game.unlocks.imps.Chronoimp) {
-				jest = simpleSeconds(Bs[B], 5);
-			}
-			jest = scaleToCurrentMap(jest);
 		}
 		//Skips buying sheds if you're not on one of your specified bonfire zones
 		if (game.global.challengeActive === 'Hypothermia' && hypoZone > game.global.world && resource === 'Shed') continue;
