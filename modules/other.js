@@ -166,7 +166,7 @@ playerSpire.drawInfo = function (arguments) {
 
 function getZoneEmpowerment(zone) {
 	if (!zone) return 'None';
-	var natureStartingZone = getNatureStartZone();
+	var natureStartingZone = game.global.universe === 1 ? getNatureStartZone() : 236;
 	if (zone < natureStartingZone) return 'None';
 	var activeEmpowerments = ["Poison", "Wind", "Ice"];
 	zone = Math.floor((zone - natureStartingZone) / 5);
@@ -1760,9 +1760,9 @@ function displayMostEfficientEquipment() {
 
 function displayDropdowns(universe, runType, MAZ) {
 
-	//if (!runType) return;
 	if (!universe) universe = game.global.universe;
 	if (!MAZ) MAZ = '';
+	var highestZone = universe === 1 ? game.global.highestLevelCleared + 1 : game.global.highestRadonLevelCleared + 1;
 
 	if (runType === 'Gather') {
 		var dropdown = "<option value='food'" + ((MAZ == 'food') ? " selected='selected'" : "") + ">Food</option >\
@@ -1771,7 +1771,6 @@ function displayDropdowns(universe, runType, MAZ) {
 		<option value='science'" + ((MAZ == 'science') ? " selected = 'selected'" : "") + " > Science</option > "
 	}
 
-	var highestZone = universe === 1 ? game.global.highestLevelCleared + 1 : game.global.highestRadonLevelCleared + 1;
 	if (universe === 1) {
 		if (runType === 'Cache') {
 			//Specials dropdown with conditions for each unlock to only appear when the user can run them.
@@ -1884,5 +1883,6 @@ function displayDropdowns(universe, runType, MAZ) {
 			}
 		}
 	}
+
 	return dropdown;
 }
