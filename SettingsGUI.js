@@ -339,9 +339,10 @@ function initializeAllSettings() {
 	createSetting('c2table', 'C2 Table', 'Display your C2s and C3s in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this C2/C3 is worth doing. <br><b>Blue</b> = You have not yet done/unlocked this C2/C3 challenge. ', 'infoclick', 'c2table', null, 'C2');
 
 	//Experience
-	createSetting('experience', 'Experience', 'Turn this on if you want to enable Experience feautres. <b>This setting is dependant on using \'Bionic Raiding\' in conjunction with it.</b><br><br>\Will automatically disable repeat within Bionic Wonderland maps if you\'re above z600 and the Bionic map is at or above level 605.', 'boolean', false, null, 'C2');
+	createSetting('experience', 'Experience', 'Turn this on if you want to enable Experience feautres. <b>This setting is dependant on using \'Bionic Raiding\' in conjunction with it.</b><br><br>Will automatically disable repeat within Bionic Wonderland maps if you\'re above z600 and the Bionic map is at or above level 605.', 'boolean', false, null, 'C2');
 	createSetting('experienceStartZone', 'E: Start Zone', 'The zone you would like to start farming for Wonders at.', 'value', -1, null, 'C2');
-	createSetting('experienceEndBW', 'E: End BW', 'Will this Bionic Wonderland map level if the map has been obtained. If the desired map level isn\'t in your map list it\'ll run the highest level if the maps are lower or lowest if the maps are higher.<br>If the Bionic level you want to clear is above z605 you\'ll have to ensure that you use Bionic Raiding to reach that map before z601 or progress enough in the world to unlock it.', 'value', '605', null, 'C2');
+	createSetting('experienceEndZone', 'E: End Zone', 'Will run the Bionic Wonderland map level specified in \'E: End BW\' at this zone. <b>This setting will not work if set below z601.</b>', 'value', '605', null, 'C2');
+	createSetting('experienceEndBW', 'E: End BW', 'Will finish the challenge with specified Bionic Wonderland once reaching end zone. If the specified BW is not available, it will run one closest to the setting.', 'value', '605', null, 'C2');
 
 	//--------------------------------------------------------------------------------------------------------
 
@@ -2140,9 +2141,9 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerportal') : turnOff('c2runnerportal');
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerpercent') : turnOff('c2runnerpercent');
 	!radonon ? turnOn('experience') : turnOff('experience');
-	!radonon ? turnOn('experienceStartZone') : turnOff('experienceStartZone');
-	!radonon ? turnOn('experienceEndBW') : turnOff('experienceEndBW');
-
+	!radonon && getPageSetting('experience') ? turnOn('experienceStartZone') : turnOff('experienceStartZone');
+	!radonon && getPageSetting('experience') ? turnOn('experienceEndZone') : turnOff('experienceEndZone');
+	!radonon && getPageSetting('experience') ? turnOn('experienceEndBW') : turnOff('experienceEndBW');
 
 	//C3
 	radonon ? turnOn('c3finishrun') : turnOff('c3finishrun');

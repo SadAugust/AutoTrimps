@@ -1352,7 +1352,7 @@ function PrestigeClimb() {
 //Experience Farm
 function Experience() {
 
-	const mapName = 'Experience'
+	let mapName = 'Experience'
 	const farmingDetails = {
 		shouldRun: false,
 		mapName: mapName
@@ -1360,18 +1360,22 @@ function Experience() {
 
 	if (game.global.challengeActive !== 'Experience' || !getPageSetting('experience')) return farmingDetails;
 
-	var rShouldExperience = false;
+	var shouldExperience = false;
 	const wonderStartZone = getPageSetting('experienceStartZone') >= 300 ? getPageSetting('experienceStartZone') : Infinity;
 	const hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 	const special = (Math.floor(game.global.highestLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "0" : "fa");
 	const mapLevel = 0;
 
-	if (game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder) rShouldExperience = true;
+	if (game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder) shouldExperience = true;
+	else {
+		shouldExperience = game.global.world > 600 && game.global.world >= getPageSetting('experienceEndZone');
+		if (shouldExperience) mapName = 'BionicRaiding';
+	}
 
 	var repeat = game.global.world < game.challenges.Experience.nextWonder;
 	var status = 'Farming Wonders';
 
-	if (rShouldExperience) farmingDetails.shouldRun = rShouldExperience;
+	if (shouldExperience) farmingDetails.shouldRun = shouldExperience;
 	farmingDetails.mapName = mapName;
 	farmingDetails.mapLevel = mapLevel;
 	farmingDetails.autoLevel = true;
@@ -1392,6 +1396,7 @@ function BionicRaiding() {
 	};
 
 	if (game.global.universe === 1 && !autoTrimpSettings.hBionicRaidingDefaultSettings.value.active) return farmingDetails;
+	if (game.global.challengeActive === 'Exterminate' && game.global.world > 600) return;
 
 	var rShouldBionicRaid = false;
 	const isC3 = game.global.runningChallengeSquared;
@@ -1456,11 +1461,12 @@ function runBionicRaiding(bionicPool) {
 		}
 	}
 
+	const raidingZone = game.global.challengeActive === 'Experience' && game.global.world > 600 ? getPageSetting('experienceEndBW') : rMapSettings.raidingZone
 	if (game.global.preMapsActive) {
 		selectMap(findLastBionicWithItems(bionicPool).id);
 	}
-	if ((findLastBionicWithItems(bionicPool).level >= rMapSettings.raidingZone
-		|| findLastBionicWithItems(bionicPool).level < rMapSettings.raidingZone)
+	if ((findLastBionicWithItems(bionicPool).level >= raidingZone
+		|| findLastBionicWithItems(bionicPool).level < raidingZone)
 		&& game.global.preMapsActive) {
 		runMap();
 	}

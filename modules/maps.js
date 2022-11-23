@@ -1,4 +1,3 @@
-
 //Mapping Variables
 MODULES.maps = {};
 MODULES.maps.fragmentFarming = false;
