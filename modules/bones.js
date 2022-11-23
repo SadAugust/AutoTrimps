@@ -69,7 +69,7 @@ function BoneShrine() {
 			for (var x = 0; x < rBoneShrineCharges; x++) {
 				if (getPageSetting('RBuyJobsNew') > 0) {
 					MODULES.mapFunctions.workerRatio = rBoneShrineSettings.jobratio;
-					RbuyJobs();
+					buyJobs();
 				}
 				game.permaBoneBonuses.boosts.consume();
 			}
