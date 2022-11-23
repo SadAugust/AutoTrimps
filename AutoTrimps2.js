@@ -79,7 +79,6 @@ var ATMODULES = {};
 var ATmoduleList = [];
 var bestBuilding;
 var scienceNeeded;
-var RscienceNeeded;
 var breedFire = false;
 
 var shouldFarm = false;
