@@ -1624,13 +1624,12 @@ function Quagmire() {
 		}
 
 		var repeat = game.global.mapsActive && (getCurrentMapObject().name !== 'The Black Bog' || (game.challenges.Quagmire.motivatedStacks - totalstacks) === 1);
-		var status = 'Black Bogs: ' + game.challenges.Quagmire.motivatedStacks - totalstacks + " remaining";
+		var status = 'Black Bogs: ' + (game.challenges.Quagmire.motivatedStacks - totalstacks) + " remaining";
 
 		farmingDetails.shouldRun = rShouldQuagFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.jobRatio = rQFJobRatio;
 		farmingDetails.bogs = totalstacks;
-		farmingDetails.bogsToClear = game.challenges.Quagmire.motivatedStacks - totalstacks;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 	}
