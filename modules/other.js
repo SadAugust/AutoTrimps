@@ -562,6 +562,8 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var bionicTalent = zone - game.global.world;
 	var checkMutations = mapType === 'world' && game.global.world > 200 && getPageSetting('rMutationCalc');
 	var titimp = mapType !== 'world' && farmType === 'oneShot' ? 'force' : false;
+	var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
+	var dailyCrit = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var maxEquality = game.portal.Equality.radLevel;
 
 	//Challenge conditions
@@ -575,6 +577,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var enemyHealth = RcalcEnemyHealthMod(zone, currentCell, enemyName, mapType, checkMutations) * difficulty;
 	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, false), 0, mapType) * difficulty * 1.5;
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
+	enemyDmg *= dailyEmpowerToggle && mapType === 'map' && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 
 	enemyDmg *= runningDuel ? 10 : 1;
 	//Our stats
@@ -695,8 +698,9 @@ function equalityManagement() {
 	enemyDmg *= dailyEmpowerToggle && !mapping && dailyEmpower && dailyCrit ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 	enemyDmg *= dailyEmpowerToggle && !mapping && dailyEmpower && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1;
 	enemyDmg *= type === 'map' && mapping && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
-	enemyDmg *= (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1
+	enemyDmg *= (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 	enemyDmg *= runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
+	enemyDmg *= dailyEmpowerToggle && type === 'map' && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 	var enemyDmgEquality = 0;
 
 	//Misc dmg mult
