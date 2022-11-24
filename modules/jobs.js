@@ -31,7 +31,6 @@ function safeBuyJob(jobTitle, amount) {
 	if (!Number.isFinite(amount) || amount === 0 || typeof amount === 'undefined' || Number.isNaN(amount)) {
 		return false;
 	}
-	var old = preBuy2();
 	var freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
 	var result;
 	if (amount < 0) {
@@ -50,10 +49,9 @@ function safeBuyJob(jobTitle, amount) {
 		}
 	}
 	if (result) {
-		debug((game.global.firing ? 'Firing ' : 'Hiring ') + prettify(game.global.buyAmt) + ' ' + jobTitle + 's', "jobs", "*users");
+		debug((game.global.firing ? 'Firing ' : 'Hiring ') + prettify(amount) + ' ' + jobTitle + (amount > 1 ? 's' : ''), "jobs", "*users");
 		buyJob(jobTitle, true, true);
 	}
-	postBuy2(old);
 	return true;
 }
 

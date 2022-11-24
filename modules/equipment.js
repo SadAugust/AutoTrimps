@@ -602,18 +602,18 @@ function RautoEquip() {
 				if (alwaysLvl2 && game.equipment[equip].level < 2) {
 					if (game.global.universe === 2 && reflectShouldBuyEquips() && typeof (item.attack) === 'undefined') continue;
 					buyEquipment(equip, null, true, 1);
-					debug('Upgrading ' + equip + " - Prestige " + game.equipment[equip].prestige, "equips", '*upload');
+					debug('Upgrading ' + '1' + ' ' + equip, "equips", '*upload3');
 				}
 				if (metalShred && game.global.hemmTimer <= 3) {
 					if (equip === 'Shield') continue;
 					if (reflectShouldBuyEquips() && typeof (item.attack) === 'undefined') continue;
 					buyEquipment(equip, null, true, 1);
-					debug('Upgrading ' + equip + game.equipment[equip].prestige, "equips", '*upload');
+					debug('Upgrading ' + '1' + ' ' + equip, "equips", '*upload3');
 				}
 				if (alwaysPandemonium && game.global.challengeActive == 'Pandemonium') {
 					if (game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
 					buyEquipment(equip, null, true, 1);
-					debug('Upgrading ' + equip + game.equipment[equip].prestige, "equips", '*upload');
+					debug('Upgrading ' + '1' + ' ' + equip, "equips", '*upload3');
 				}
 			}
 		}
@@ -648,7 +648,7 @@ function RautoEquip() {
 			if (!equipPrestige && canAffordBuilding(equipName, null, null, true, false, 1) || (equipPrestige && game.resources[resourceUsed].owned > equipCost)) {
 				if (game.equipment[equipName].level < equipCap || equipPrestige || zoneGo) {
 					if (!equipPrestige) {
-						maxCanAfford = getMaxAffordable(equipCost, game.resources[resourceUsed].owned * 0.001, 1.2, true);
+						maxCanAfford = getMaxAffordable(equipCost, game.resources[resourceUsed].owned, 1.2, true);
 						if (maxCanAfford === 0)
 							maxCanAfford = 1;
 						if (maxCanAfford >= (equipCap - game.equipment[equipName].level))
@@ -658,9 +658,16 @@ function RautoEquip() {
 					// Check any of the overrides
 					if (equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned) {
 						if (!game.equipment[equipName].locked) {
-							if (equipPrestige) buyUpgrade(RequipmentList[equipName].Upgrade, true, true)
-							else if (maxCanAfford > 0 && buyEquipment(equipName, null, true, maxCanAfford)) keepBuying = true;
-							HDRatio = game.global.universe === 1 ? calcHDratio() : RcalcHDratio();
+							if (equipPrestige) {
+								buyUpgrade(RequipmentList[equipName].Upgrade, true, true)
+								debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, "equips", '*upload');
+							}
+							else if (maxCanAfford > 0) {
+								buyEquipment(equipName, null, true, maxCanAfford)
+								debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), "equips", '*upload3');
+								keepBuying = true;
+							}
+							HDRatio = game.global.universe === 1 ? calcHDRatio() : RcalcHDratio();
 						}
 					}
 				}
