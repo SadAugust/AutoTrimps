@@ -210,9 +210,8 @@ function mainLoop() {
 		//Core
 		if (getPageSetting('AutoMaps') > 0 && game.global.mapsUnlocked) autoMap();
 		if (getPageSetting('showautomapstatus') == true) updateAutoMapsStatus();
-		if (getPageSetting('ManualGather2') == 1) manualLabor2();
+		if (getPageSetting('ManualGather2') > 0) autoGather();
 		if (getPageSetting('TrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
-		if (getPageSetting('ManualGather2') == 2) autogather3();
 		if (getPageSetting('ATGA2') == true) ATGA2();
 		if (aWholeNewWorld && getPageSetting('AutoRoboTrimp')) autoRoboTrimp();
 		if (game.global.challengeActive == "Daily" && getPageSetting('buyheliumy') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
@@ -308,7 +307,7 @@ function mainLoop() {
 				RbuyUpgrades();
 		}
 		//Gather
-		if (getPageSetting('RManualGather2') == 1) RmanualLabor2();
+		if (getPageSetting('RManualGather2') > 0) autoGather();
 		//Auto Traps
 		if (getPageSetting('RTrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
 		//RJobs
