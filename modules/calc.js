@@ -652,13 +652,17 @@ function calcEnemyBaseAttack(type, zone, cell, name) {
 	//Before Breaking the Planet
 	else if (zone < 60) {
 		attack = (0.375 * attack) + (0.7 * attack * (cell / 100));
-		attack *= 0.85;
 	}
 
 	//After Breaking the Planet
 	else {
 		attack = (0.4 * attack) + (0.9 * attack * (cell / 100));
 		attack *= Math.pow(1.15, zone - 59);
+	}
+
+	//Flat Attack reduction for before Z60.
+	if (zone < 60) {
+		attack *= 0.85;
 	}
 
 	//Maps
@@ -839,13 +843,17 @@ function calcEnemyBaseHealth(type, zone, cell, name) {
 	//Before Breaking the Planet
 	else if (zone < 60) {
 		health = (health * 0.4) + ((health * 0.4) * (cell / 110));
-		health *= 0.75;
 	}
 
 	//After Breaking the Planet
 	else {
 		health = (health * 0.5) + ((health * 0.8) * (cell / 100));
 		health *= Math.pow(1.1, zone - 59);
+	}
+
+	//Flat HP reduction for before Z60.
+	if (zone < 60) {
+		health *= 0.75;
 	}
 
 	//Maps
@@ -1059,122 +1067,6 @@ function calcCurrentStance() {
 function calcVoidHDratio() {
 	return calcHDRatio(game.global.world, 'void');
 }
-
-/* function calcCurrentStance() {
-	if (game.global.uberNature == "Wind" && getEmpowerment() == "Wind" && !game.global.mapsActive &&
-		(
-			(
-				(game.global.challengeActive != "Daily" && calcHDratio() < getPageSetting('WindStackingMinHD')) ||
-				(game.global.challengeActive == "Daily" && calcHDratio() < getPageSetting('dWindStackingMinHD'))
-			) &&
-			(
-				(game.global.challengeActive != "Daily" && game.global.world >= getPageSetting('WindStackingMin')) ||
-				(game.global.challengeActive == "Daily" && game.global.world >= getPageSetting('dWindStackingMin')))
-		) ||
-		(game.global.uberNature == "Wind" && getEmpowerment() == "Wind" && !game.global.mapsActive && checkIfLiquidZone() && getPageSetting('liqstack') == true)
-	) {
-		return 15;
-	} else {
-
-		//Base Calc
-		var ehealth = 1;
-		if (game.global.fighting) {
-			ehealth = (getCurrentEnemy().maxHealth - getCurrentEnemy().health);
-		}
-		var attacklow = calcOurDmg("max", false, true);
-		var attackhigh = calcOurDmg("max", false, true);
-
-		//Heirloom Calc
-		highDamageShield();
-		if (getPageSetting('AutoStance') == 3 && getPageSetting('highdmg') != undefined && game.global.challengeActive != "Daily" && game.global.ShieldEquipped.name != getPageSetting('highdmg')) {
-			attackhigh *= trimpAA;
-			attackhigh *= getCritMulti(true);
-		}
-		if (getPageSetting('use3daily') == true && getPageSetting('dhighdmg') != undefined && game.global.challengeActive == "Daily" && game.global.ShieldEquipped.name != getPageSetting('dhighdmg')) {
-			attackhigh *= trimpAA;
-			attackhigh *= getCritMulti(true);
-		}
-
-		//Heirloom Switch
-		if (ehealth > 0) {
-			var hitslow = (ehealth / attacklow);
-			var hitshigh = (ehealth / attackhigh);
-			var stacks = 190;
-			var usehigh = false;
-			var stacksleft = 1;
-
-			if (game.global.challengeActive != "Daily" && getPageSetting('WindStackingMax') > 0) {
-				stacks = getPageSetting('WindStackingMax');
-			}
-			if (game.global.challengeActive == "Daily" && getPageSetting('dWindStackingMax') > 0) {
-				stacks = getPageSetting('dWindStackingMax');
-			}
-			if (game.global.uberNature == "Wind") {
-				stacks += 100;
-			}
-			if (getEmpowerment() == "Wind") {
-				stacksleft = (stacks - game.empowerments.Wind.currentDebuffPower);
-			}
-
-			//Use High
-			if (
-				(getEmpowerment() != "Wind") ||
-				(game.empowerments.Wind.currentDebuffPower >= stacks) ||
-				(hitshigh >= stacksleft) ||
-				(game.global.mapsActive) ||
-				(game.global.challengeActive != "Daily" && game.global.world < getPageSetting('WindStackingMin')) ||
-				(game.global.challengeActive == "Daily" && game.global.world < getPageSetting('dWindStackingMin'))
-			) {
-				usehigh = true;
-			}
-			if (
-				(getPageSetting('wsmax') > 0 && game.global.world >= getPageSetting('wsmax') && !game.global.mapsActive && getEmpowerment() == "Wind" && game.global.challengeActive != "Daily" && getPageSetting('wsmaxhd') > 0 && calcHDratio() < getPageSetting('wsmaxhd')) ||
-				(getPageSetting('dwsmax') > 0 && game.global.world >= getPageSetting('dwsmax') && !game.global.mapsActive && getEmpowerment() == "Wind" && game.global.challengeActive == "Daily" && getPageSetting('dwsmaxhd') > 0 && calcHDratio() < getPageSetting('dwsmaxhd'))
-			) {
-				usehigh = false;
-			}
-
-			//Low
-			if (!usehigh) {
-				if (
-					(game.empowerments.Wind.currentDebuffPower >= stacks) ||
-					((hitslow * 4) > stacksleft)
-				) {
-					return 2;
-				} else if ((hitslow) > stacksleft) {
-					return 0;
-				} else {
-					return 1;
-				}
-
-				//High
-			} else if (usehigh) {
-				if (
-					(getEmpowerment() != "Wind") ||
-					(game.empowerments.Wind.currentDebuffPower >= stacks) ||
-					((hitshigh * 4) > stacksleft) ||
-					(game.global.mapsActive) ||
-					(game.global.challengeActive != "Daily" && game.global.world < getPageSetting('WindStackingMin')) ||
-					(game.global.challengeActive == "Daily" && game.global.world < getPageSetting('dWindStackingMin'))
-				) {
-					return 12;
-				} else if ((hitshigh) > stacksleft) {
-					return 10;
-				} else {
-					return 11;
-				}
-			}
-		}
-	}
-}
-
-function calcBaseDamageInX() {
-	baseMinDamage = calcOurDmg("min", false, false);
-	baseMaxDamage = calcOurDmg("max", false, false);
-	baseDamage = calcOurDmg("avg", false, false);
-	baseHealth = calcOurHealth(false);
-	baseBlock = calcOurBlock(false);
-} */
 
 //Radon
 
@@ -1457,6 +1349,74 @@ function RcalcOurHealth(onlyShield, mapType) {
 	return health;
 }
 
+function RgetEnemyAvgAttack(zone, cell, name, type, query) {
+	//Pre-Init
+	if (!type) type = !game.global.mapsActive ? "world" : getCurrentMapObject().location == "Void" ? "void" : "map";
+	if (!zone) zone = type == "world" || !game.global.mapsActive ? game.global.world : getCurrentMapObject().level;
+	if (!cell) cell = type == "world" || !game.global.mapsActive ? getCurrentWorldCell().level : getCurrentMapCell() ? getCurrentMapCell().level : 1;
+	if (!name) name = getCurrentEnemy() ? getCurrentEnemy().name : "Snimp";
+	if (!query) query = false;
+	var mapGrid = type === "world" ? "gridArray" : "mapGridArray";
+
+	if (!query && game.global.stringVersion >= "5.8.0" && zone >= 200 && cell !== 100 && type === "world" && game.global[mapGrid][cell].u2Mutation) {
+		if (cell !== 100 && type === "world" && game.global[mapGrid][cell].u2Mutation) {
+			attack = u2Mutations.getAttack(game.global[mapGrid][cell - 1]);
+			return attack;
+		}
+	} else {
+		//Init
+		var attackBase = game.global.universe == 2 ? 750 : 50;
+		var attack = attackBase * Math.sqrt(zone) * Math.pow(3.27, zone / 2) - 10;
+
+		//Zone 1
+		if (zone == 1) {
+			attack *= 0.35;
+			attack = 0.2 * attack + 0.75 * attack * (cell / 100);
+		}
+
+		//Zone 2
+		else if (zone == 2) {
+			attack *= 0.5;
+			attack = 0.32 * attack + 0.68 * attack * (cell / 100);
+		}
+
+		//Before Breaking the Planet
+		else if (zone < 60) {
+			attack = 0.375 * attack + 0.7 * attack * (cell / 100);
+		}
+
+		//After Breaking the Planet
+		else {
+			attack = 0.4 * attack + 0.9 * attack * (cell / 100);
+			attack *= Math.pow(1.15, zone - 59);
+		}
+
+		//Flat Attack reduction for before Z60.
+		if (zone < 60) {
+			attack *= 0.85;
+		}
+
+		//Maps
+		if (zone > 6 && type != "world") attack *= 1.1;
+
+		//Specific Imp
+		if (name) attack *= game.badGuys[name].attack;
+
+		//U2
+		if (game.global.universe == 2) {
+			var part1 = zone > 40 ? 40 : zone;
+			var part2 = zone > 60 ? 20 : zone - 40;
+			var part3 = zone - 60;
+			if (part2 < 0) part2 = 0;
+			if (part3 < 0) part3 = 0;
+			attack *= Math.pow(1.5, part1);
+			attack *= Math.pow(1.4, part2);
+			attack *= Math.pow(1.32, part3);
+		}
+		return Math.floor(attack);
+	}
+}
+
 function rMutationAttack(cell) {
 	var baseAttack;
 	var addAttack = 0;
@@ -1599,7 +1559,7 @@ function RcalcEnemyBaseHealth(mapType, zone, cell, name) {
 
 	//Init
 	var base = (game.global.universe == 2) ? 10e7 : 130;
-	var health = base * Math.sqrt(zone) * Math.pow(3.265, zone / 2) - 110;
+	var health = (base * Math.sqrt(zone) * Math.pow(3.265, zone / 2)) - 110;
 
 	if (game.global.universe === 2 && game.global.world > 200 && mapType === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
 		if (game.global.gridArray[cell - 1].u2Mutation.length > 0 && (game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1 || game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1)) {
@@ -1638,13 +1598,17 @@ function RcalcEnemyBaseHealth(mapType, zone, cell, name) {
 	//Before Breaking the Planet
 	else if (zone < 60) {
 		health = (health * 0.4) + ((health * 0.4) * (cell / 110));
-		health *= 0.75;
 	}
 
 	//After Breaking the Planet
 	else {
 		health = (health * 0.5) + ((health * 0.8) * (cell / 100));
 		health *= Math.pow(1.1, zone - 59);
+	}
+
+	//Flat HP reduction for before Z60.
+	if (zone < 60) {
+		health *= 0.75;
 	}
 
 	//Maps
@@ -1757,6 +1721,7 @@ function RcalcHDratio() {
 			var equality = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
 			ourDamage = RcalcOurDmg('avg', equality, 'world') * gammaBurstDmg;
 		}
+		debug(enemyHealth);
 		//debug("Eq - " + equality + " T_dmg - " + ourDamage.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
 		ratio = enemyHealth / ourDamage;
 	}
