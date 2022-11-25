@@ -649,7 +649,7 @@ function RautoEquip() {
 			if (!equipPrestige && canAffordBuilding(equipName, null, null, true, false, 1) || (equipPrestige && game.resources[resourceUsed].owned > equipCost)) {
 				if (game.equipment[equipName].level < equipCap || equipPrestige || zoneGo) {
 					if (!equipPrestige) {
-						maxCanAfford = getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * resourceSpendingPct), 1.2, true);
+						maxCanAfford = getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.001), 1.2, true);
 						if (maxCanAfford === 0)
 							maxCanAfford = 1;
 						if (maxCanAfford >= (equipCap - game.equipment[equipName].level))
