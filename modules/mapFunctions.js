@@ -2528,8 +2528,9 @@ function FarmingDecision() {
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0;
 	}
-
-	if (game.global.universe === 2 && (!autoTrimpSettings.RAutoMaps.value || !game.global.mapsUnlocked)) return farmingDetails;
+	if (!game.global.mapsUnlocked) return farmingDetails;
+	if (game.global.universe === 1 && !autoTrimpSettings.AutoMaps.value) return farmingDetails;
+	if (game.global.universe === 2 && !autoTrimpSettings.RAutoMaps.value) return farmingDetails;
 
 	if (game.global.universe === 1) var mapTypes = [PrestigeClimb(), MapFarm(), PrestigeRaiding(), BionicRaiding(), HDFarm(), VoidMaps(), MapBonus(), Experience()]
 	if (game.global.universe === 2) var mapTypes = [Quest(), PandemoniumDestack(), PrestigeClimb(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), MapBonus(), Smithless()]
