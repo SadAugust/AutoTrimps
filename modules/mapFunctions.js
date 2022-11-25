@@ -394,10 +394,9 @@ function MapBonus() {
 			rMBSpecial = rMBSpecial.charAt(0) + "sc";
 		var rMBMapLevel = rMBIndex !== null ? rMBSettings.level : game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
 		var rMBJobRatio = rMBSettings.jobratio;
-		var rMBautoLevel = rMBSettings.autoLevel || rMBIndex === null;
+		var rMBautoLevel = game.global.universe === 2 && (rMBSettings.autoLevel || rMBIndex === null);
 		var rMBminZone = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0
-
-		if (rMBSettings.autoLevel || rMBIndex === null) {
+		if (rMBSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && rMBMapRepeats !== 0) {
 				game.global.mapRunCounter = rMBMapRepeats;
 				rMBMapRepeats = 0;
