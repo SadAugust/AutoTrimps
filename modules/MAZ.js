@@ -70,16 +70,16 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//AutoStructure
 	if (event == "AutoStructure") {
-		if (game.global.universe === 1) return;
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, the 'Perc:' box specifies the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the 'Perc:' box to 10 and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses.</p><p><b>Safe Gateway:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a Perfect +10 LMC map would cost up to the zone specified in 'Till Z:', if that values is 0 it'll assume you want them capped forever.</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
 		var setting, checkbox;
-		var settingGroup = autoTrimpSettings.rBuildingSettingsArray.value;
+		var settingGroup = game.global.universe === 1 ? autoTrimpSettings.hBuildingSettingsArray.value : autoTrimpSettings.rBuildingSettingsArray.value;
 		for (var item in game.buildings) {
 			var building = game.buildings[item];
 			if (building.blockU2 && game.global.universe == 2) continue;
 			if (building.blockU1 && game.global.universe == 1) continue;
+			if (item === 'Warpstation') continue;
 			if (item == "Laboratory" && game.global.highestRadonLevelCleared < 129) continue;
 			if (!building.AP) continue;
 			if (count != 0 && count % 2 == 0) tooltipText += "</tr><tr>";
@@ -99,10 +99,22 @@ function MAZLookalike(titleText, varPrefix, event) {
 			count++;
 		}
 		tooltipText += "</tr><tr>";
-		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style='padding-right: 5px'>" + buildNiceCheckbox('structConfigSafeGateway', 'autoCheckbox', (typeof (settingGroup.SafeGateway) === 'undefined' ? false : settingGroup.SafeGateway.enabled)) + "&nbsp;&nbsp;<span>" + "Safe Gateway" + "</span></div>";
-		tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Maps: <input class='structConfigQuantity' id='structMapCountSafeGateway" + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.mapCount) ? settingGroup.SafeGateway.mapCount : 0) + "'/></div>";
-		tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Till Z: <input class='structConfigPercent' id='structMax" + item + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.zone) ? settingGroup.SafeGateway.zone : 0) + "'/></div>";
-		tooltipText += "</div></td>";
+		//Nursery Start Zone setting
+		if (game.global.universe === 1) {
+			//Start
+			tooltipText += "<td><div class='row'>"
+			//Checkbox & name
+			tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + "&nbsp;&nbsp;<span>" + 'Nursery (cont)' + "</span></div>"
+			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>From: <input class='structConfigQuantity' id='nurseryFromZ" + "' type='number'  value='" + ((settingGroup.Nursery && settingGroup.Nursery.fromZ) ? settingGroup.Nursery.fromZ : 0) + "'/></div>";
+
+		}
+		//Safe Gateway setting for u2
+		if (game.global.universe === 2) {
+			tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style='padding-right: 5px'>" + buildNiceCheckbox('structConfigSafeGateway', 'autoCheckbox', (typeof (settingGroup.SafeGateway) === 'undefined' ? false : settingGroup.SafeGateway.enabled)) + "&nbsp;&nbsp;<span>" + "Safe Gateway" + "</span></div>";
+			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Maps: <input class='structConfigQuantity' id='structMapCountSafeGateway" + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.mapCount) ? settingGroup.SafeGateway.mapCount : 0) + "'/></div>";
+			tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Till Z: <input class='structConfigPercent' id='structMax" + item + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.zone) ? settingGroup.SafeGateway.zone : 0) + "'/></div>";
+			tooltipText += "</div></td>";
+		}
 		//On Portal Settings
 		var values = ['Off', 'On'];
 		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style='padding-right: 5px'> Setting on Portal:" + "</span></div>";
@@ -1197,12 +1209,29 @@ function saveATAutoJobsConfig() {
 	}
 
 	ATsetting.value = setting;
+
+	//Adding in jobs that are locked so that there won't be any issues later on
+	//Meteorologist
+	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 29) {
+		autoTrimpSettings.rJobSettingsArray.value.Meteorologist = {};
+		autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled = true;
+		autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent = 100;
+	}
+	//Worshipper
+	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 49) {
+		autoTrimpSettings.rJobSettingsArray.value.Worshipper = {};
+		autoTrimpSettings.rJobSettingsArray.value.Worshipper.enabled = true;
+		autoTrimpSettings.rJobSettingsArray.value.Worshipper.percent = 20;
+	}
+
 	cancelTooltip();
 	saveSettings();
 }
 
 function saveATAutoStructureConfig() {
-	var setting = autoTrimpSettings.rBuildingSettingsArray.value;
+	var ATsetting = game.global.universe === 1 ? autoTrimpSettings.hBuildingSettingsArray : autoTrimpSettings.rBuildingSettingsArray;
+	ATsetting.value = {};
+	var setting = {};
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var percentboxes = document.getElementsByClassName('structConfigPercent');
 	var quantboxes = document.getElementsByClassName('structConfigQuantity');
@@ -1212,8 +1241,7 @@ function saveATAutoStructureConfig() {
 		//if (!checked && !setting[name]) continue;
 		if (!setting[name]) setting[name] = {};
 		setting[name].enabled = checked;
-		if (name === 'SafeGateway') {
-
+		if (game.global.universe === 2 && name === 'SafeGateway') {
 			var count = parseInt(quantboxes[x].value, 10);
 			if (count > 10000) count = 10000;
 			count = (isNumberBad(count)) ? 3 : count;
@@ -1236,6 +1264,12 @@ function saveATAutoStructureConfig() {
 		if (max > 10000) max = 10000;
 		max = (isNumberBad(max)) ? 0 : max;
 		setting[name].buyMax = max;
+		if (name === 'Nursery') {
+			var fromZ = parseInt(document.getElementById('nurseryFromZ').value, 10);
+			if (fromZ > 999) fromZ = 999;
+			fromZ = (isNumberBad(fromZ)) ? 999 : fromZ;
+			setting[name].fromZ = fromZ;
+		}
 	}
 
 	var gatherElem = document.getElementById('autoJobSelfGather');
@@ -1243,13 +1277,16 @@ function saveATAutoStructureConfig() {
 		if (gatherElem.value) setting.portalOption = gatherElem.value;
 	}
 
-	autoTrimpSettings.rBuildingSettingsArray.value = setting;
-	if (game.global.highestRadonLevelCleared < 129) {
+	ATsetting.value = setting;
+
+	//Adding in buildings that are locked so that there won't be any issues later on
+	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 129) {
 		autoTrimpSettings.rBuildingSettingsArray.value.Laboratory = {};
 		autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.enabled = true;
 		autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.percent = 100;
 		autoTrimpSettings.rBuildingSettingsArray.value.Laboratory.buyMax = 0;
 	}
+
 	cancelTooltip();
 	saveSettings();
 }

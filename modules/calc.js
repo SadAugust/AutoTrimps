@@ -299,46 +299,6 @@ function addPoison(realDamage, zone) {
 	return 0;
 }
 
-//TODO - Very Important!
-function newGetCritMulti(high) {
-
-	var critChance = getPlayerCritChance();
-	var CritD = getPlayerCritDamageMult();
-
-	if (
-		high &&
-		(getPageSetting('AutoStance') == 3 && getPageSetting('highdmg') != undefined && game.global.challengeActive != "Daily") ||
-		(getPageSetting('use3daily') == true && getPageSetting('dhighdmg') != undefined && game.global.challengeActive == "Daily")
-	) {
-		highDamageShield();
-		critChance = critCC;
-		CritD = critDD;
-	}
-
-	var lowTierMulti = getMegaCritDamageMult(Math.floor(critChance));
-	var highTierMulti = getMegaCritDamageMult(Math.ceil(critChance));
-	var highTierChance = critChance - Math.floor(critChance)
-
-	return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * CritD
-}
-
-function RgetCritMulti(floorCrit, mult, ceilCrit) {
-	var mult = (!mult) ? false : true;
-
-	var critChance = getPlayerCritChance();
-	var critD = getPlayerCritDamageMult();
-
-	if (floorCrit) critChance = Math.floor(getPlayerCritChance());
-	if (ceilCrit) critChance = Math.ceil(getPlayerCritChance());
-	var lowTierMulti = getMegaCritDamageMult(Math.floor(critChance));
-	var highTierMulti = getMegaCritDamageMult(Math.ceil(critChance));
-	var highTierChance = critChance - Math.floor(critChance)
-
-	if (mult) return ((critChance - 2) * Math.pow(getMegaCritDamageMult(2), 2) * critD + (3 - critChance) * getMegaCritDamageMult(2) * critD);
-	else
-		return ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * critD
-}
-
 function getCritMulti(high, crit) {
 	var critChance = getPlayerCritChance();
 	var critD = getPlayerCritDamageMult();
@@ -1721,7 +1681,6 @@ function RcalcHDratio() {
 			var equality = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
 			ourDamage = RcalcOurDmg('avg', equality, 'world') * gammaBurstDmg;
 		}
-		debug(enemyHealth);
 		//debug("Eq - " + equality + " T_dmg - " + ourDamage.toExponential(2) + " E_hp - " + enemyHealth.toExponential(2))
 		ratio = enemyHealth / ourDamage;
 	}

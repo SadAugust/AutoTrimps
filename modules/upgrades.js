@@ -113,16 +113,13 @@ function firstGiga(forced) {
 	return true;
 }
 
-function needGymystic() {
-	return game.upgrades['Gymystic'].allowed - game.upgrades['Gymystic'].done > 0;
-}
 function buyUpgrades() {
 
 	for (var upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
 		var gameUpgrade = game.upgrades[upgrade];
 		var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
-		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") == true && bwRewardUnlocked("DecaBuild") && getPageSetting('hidebuildings') == true && getPageSetting('BuyBuildingsNew') == 0);
+		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") == true && bwRewardUnlocked("DecaBuild") && getPageSetting('BuyBuildingsNew') == 0);
 
 		//Coord & Amals
 		if (upgrade == 'Coordination' && (getPageSetting('BuyUpgradesNew') == 2 || !canAffordCoordinationTrimps())) continue;

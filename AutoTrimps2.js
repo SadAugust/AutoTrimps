@@ -223,13 +223,7 @@ function mainLoop() {
 		if (getPageSetting('BuyUpgradesNew') != 0) buyUpgrades();
 
 		//Buildings
-		if (getPageSetting('BuyBuildingsNew') === 0 && getPageSetting('hidebuildings') == true) buyBuildings();
-		else if (getPageSetting('BuyBuildingsNew') == 1) {
-			buyBuildings();
-			buyStorage();
-		}
-		else if (getPageSetting('BuyBuildingsNew') == 2) buyBuildings();
-		else if (getPageSetting('BuyBuildingsNew') == 3) buyStorage();
+		if (getPageSetting('BuyBuildingsNew') == 1) buyBuildings();
 		if (getPageSetting('UseAutoGen') == true && game.global.world > 229) autoGenerator();
 
 		//Jobs
@@ -307,7 +301,7 @@ function mainLoop() {
 		//Status - AutoMaps
 		if (getPageSetting('Rshowautomapstatus')) updateAutoMapsStatus();
 		//RBuildings
-		if (getPageSetting('RBuyBuildingsNew')) RbuyBuildings();
+		if (getPageSetting('RBuyBuildingsNew')) buyBuildings();
 		//RUpgrades
 		if (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([5].indexOf(questcheck()) >= 0))) {
 			if (getPageSetting('RBuyUpgradesNew') != 0)

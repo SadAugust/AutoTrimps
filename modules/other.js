@@ -558,6 +558,9 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (!difficulty) difficulty = 1;
 	if (!farmType) farmType = 'gamma';
 
+	if (game.portal.Equality.radLevel === 0)
+		return 0;
+
 	var mapping = mapType === 'world' ? false : true;
 	var bionicTalent = zone - game.global.world;
 	var checkMutations = mapType === 'world' && game.global.world > 200 && getPageSetting('rMutationCalc');
@@ -626,6 +629,8 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 function equalityManagement() {
 
 	if (game.global.preMapsActive || game.global.gridArray.length <= 0)
+		return;
+	if (game.portal.Equality.radLevel === 0)
 		return;
 
 	//Turning off equality scaling
@@ -1705,7 +1710,9 @@ function displayMostEfficientEquipment() {
 	if (usingRealTimeOffline) return;
 	var $eqNamePrestige = null;
 
-	var highlightSetting = game.global.universe === 1 ? getPageSetting('rEquipEfficientEquipDisplay') : getPageSetting('rEquipEfficientEquipDisplay');
+	var highlightSetting = game.global.universe === 1 ? getPageSetting('hEquipEfficientEquipDisplay') : getPageSetting('rEquipEfficientEquipDisplay');
+
+	if (!highlightSetting) return;
 
 	if (!highlightSetting) {
 		for (var item in game.equipment) {
@@ -1727,7 +1734,6 @@ function displayMostEfficientEquipment() {
 		}
 
 	}
-	if (!highlightSetting) return;
 
 	for (var item in game.equipment) {
 		if (game.equipment[item].locked) continue;

@@ -686,7 +686,7 @@ function TributeFarm() {
 				rShouldMetFarm = true;
 		}
 
-		if (rShouldTributeFarm && !getPageSetting('RBuyBuildingsNew')) rBuyTributes();
+		if (rShouldTributeFarm && !getPageSetting('RBuyBuildingsNew')) buyTributes();
 
 		//Figuring out if we have enough resources to run Atlantrimp when setting is enabled.
 		if (rTrFAtlantrimp && (rShouldTributeFarm || rShouldMetFarm) && (game.global.world > 33 || (game.global.world === 33 && game.global.lastClearedCell + 2 > 50))) {

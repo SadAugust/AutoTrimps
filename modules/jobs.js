@@ -89,7 +89,10 @@ function workerRatios(workerRatio) {
 		ratioSet = MODULES["jobs"][universe + 'autoRatio2'];
 	} else if (game.global.challengeActive == 'Metal' || game.global.challengeActive == 'Transmute') {
 		ratioSet = [4, 5, 0];
-	} else {
+	} else if (game.global.world < 5) {
+		ratioSet = [3, 1, 1];
+	}
+	else {
 		ratioSet = MODULES["jobs"][universe + 'autoRatio1'];
 	}
 
