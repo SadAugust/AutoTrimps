@@ -668,7 +668,7 @@ function RautoEquip() {
 								debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), "equips", '*upload3');
 								keepBuying = true;
 							}
-							HDRatio = game.global.universe === 1 ? calcHDRatio() : RcalcHDratio();
+							HDRatio = game.global.universe === 1 ? calcHDRatio(game.global.world, 'world') : RcalcHDratio();
 						}
 					}
 				}

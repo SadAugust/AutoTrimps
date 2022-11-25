@@ -176,7 +176,7 @@ function mainLoop() {
 			case 'The Magma':
 				cancelTooltip();
 		}
-		Rresetmapvars()
+		resetmapvars()
 		if (getPageSetting('AutoEggs'))
 			easterEggClicked();
 		setTitle();

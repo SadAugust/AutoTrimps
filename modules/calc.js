@@ -975,6 +975,9 @@ function calcHDRatio(targetZone, type) {
 	var ignoreMapBonus = type != "world" || (game.global.challengeActive == "Lead" && targetZone % 2 == 1);
 	var ourBaseDamage = calcOurDmg("avg", "X", false, ignoreMapBonus);
 
+	if (!targetZone) targetZone = game.global.world;
+	if (!type) type = "world"
+
 	//Void Power compensation
 	if (type == "void" && !(game.global.mapsActive && getCurrentMapObject().location != "Void")) {
 		if (game.talents.voidPower3.purchased) ourBaseDamage *= 1.15;
