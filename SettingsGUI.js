@@ -348,53 +348,70 @@ function initializeAllSettings() {
 
 	//Buildings
 	//Helium
-	createSetting('hidebuildings', 'Hide Buildings', 'If you have unlocked Autostructure and Decabuild, this setting will appear and enable you to hide the now obsolete building settings, so please use AutoStructure instead. The settings will only disappear if you disable the buy buildings button and turn this on. It will not hide the Gym settings as Autostructure does not allow you to customize how you buy them. ', 'boolean', false, null, 'Buildings');
-	createSetting('BuyBuildingsNew', ['Buy Neither', 'Buy Buildings & Storage', 'Buy Buildings', 'Buy Storage'], 'AutoBuys Storage when it is almost full (it even anticipates Jestimp) and Non-Storage Buildings (As soon as they are available). Takes cost efficiency into account before buying Non-Storage Buildings.', 'multitoggle', 1, null, 'Buildings');
+	createSetting('BuyBuildingsNew', 'AutoBuildings', 'Buys buildings in an efficient way. Also enables Vanilla AutoStorage if its off. ', 'boolean', 'true', null, 'Buildings');
 	createSetting('WarpstationCap', 'Warpstation Cap', 'Do not level Warpstations past Basewarp+DeltaGiga **. Without this, if a Giga wasnt available, it would level infinitely (wastes metal better spent on prestiges instead.) **The script bypasses this cap each time a new giga is bought, when it insta-buys as many as it can afford (since AT keeps available metal/gems to a low, overbuying beyond the cap to what is affordable at that first moment is not a bad thing). ', 'boolean', true, null, 'Buildings');
 	createSetting('WarpstationCoordBuy', 'Buy Warp to Hit Coord', 'If we are very close to hitting the next coordination, and we can afford the warpstations it takes to do it, Do it! (even if we are over the Cap/Wall). Recommended with WarpCap/WarpWall. (has no point otherwise) ', 'boolean', true, null, 'Buildings');
-	createSetting('MaxHut', 'Max Huts', 'Huts', 'value', '100', null, 'Buildings');
-	createSetting('MaxHouse', 'Max Houses', 'Houses', 'value', '100', null, 'Buildings');
-	createSetting('MaxMansion', 'Max Mansions', 'Mansions', 'value', '100', null, 'Buildings');
-	createSetting('MaxHotel', 'Max Hotels', 'Hotels', 'value', '100', null, 'Buildings');
-	createSetting('MaxResort', 'Max Resorts', 'Resorts', 'value', '100', null, 'Buildings');
-	createSetting('MaxGateway', 'Max Gateways', 'Gateways', 'value', '25', null, 'Buildings');
-	createSetting('MaxWormhole', 'Max Wormholes', 'WARNING: Wormholes cost helium! Values below 0 do nothing.', 'value', '0', null, 'Buildings');
-	createSetting('MaxCollector', 'Max Collectors', 'recommend: -1', 'value', '-1', null, 'Buildings');
-	createSetting('MaxGym', 'Max Gyms', 'Advanced. recommend: -1', 'value', '-1', null, 'Buildings');
-	createSetting('MaxTribute', 'Max Tributes', 'Advanced. recommend: -1 ', 'value', '-1', null, 'Buildings');
-	createSetting('GymWall', 'Gym Wall', 'Conserves Wood. Only buys 1 Gym when you can afford <b>X</b> gyms wood cost (at the first one\'s price, simple math). -1 or 0 to disable. In other words, only allows gyms that cost less than 1/nth your currently owned wood. (to save wood for nurseries for new z230+ Magma nursery strategy). Takes decimal numbers. (Identical to the Warpstation wall setting which is why its called that). Setting to 1 does nothing besides stopping gyms from being bought 2 at a time due to the mastery.', 'value', -1, null, 'Buildings');
 	createSetting('FirstGigastation', 'First Gigastation', 'How many warpstations to buy before your first gigastation', 'value', '20', null, 'Buildings');
 	createSetting('DeltaGigastation', 'Delta Gigastation', '<b>YOU MUST HAVE BUY UPGRADES ENABLED!</b><br> How many extra warpstations to buy for each gigastation. Supports decimal values. For example 2.5 will buy +2/+3/+2/+3...', 'value', '2', null, 'Buildings');
 	createSetting('AutoGigas', 'Auto Gigas', "Advanced. <br>If enabled, AT will buy its first Gigastation if: <br>A) Has more than 2 Warps & <br>B) Can't afford more Coords & <br>C) (Only if Custom Delta Factor > 20) Lacking Health or Damage & <br>D) (Only if Custom Delta Factor > 20) Has run at least 1 map stack or <br>E) If forced to by using the firstGiga(true) command in the console. <br>Then, it'll calculate the delta based on your Custom Delta Factor and your Auto Portal/VM zone (whichever is higher), or Daily Auto Portal/VM zone, or C2 zone, or Custom AutoGiga Zone.", 'boolean', 'true', null, 'Buildings');
 	createSetting('CustomTargetZone', 'Custom Target Zone', 'To be used with Auto Gigas. <br>The zone to be used as a the target zone when calculating the Auto Gigas delta. <br>Values below 60 will be discarded.', 'value', '-1', null, "Buildings");
 	createSetting('CustomDeltaFactor', 'Custom Delta Factor', 'Advanced. To be used with Auto Gigas. <br>This setting is used to calculate a better Delta. Think of this setting as how long your target zone takes to complete divided by the zone you bought your first giga in. <br>Basically, a higher number means a higher delta. Values below 1 will default to 10. <br><b>Recommended: 1-2 for very quick runs. 5-10 for regular runs where you slow down at the end. 20-100+ for very pushy runs.</b>', 'value', '-1', null, "Buildings");
-	createSetting('WarpstationWall3', 'Warpstation Wall', 'Conserves Metal. Only buys 1 Warpstation when you can afford <b>X</b> warpstations metal cost (at the first one\'s price, simple math). -1, 0, 1 = disable. In other words, only allows warps that cost less than 1/nth your currently owned metal. (to save metal for prestiges)', 'value', -1, null, 'Buildings');
-	createSetting('MaxNursery', 'Max Nurseries', 'Advanced. Recommend: -1 until you reach Magma (z230+)', 'value', '-1', null, 'Buildings');
-	createSetting('NoNurseriesUntil', 'No Nurseries Until z', 'Builds Nurseries starting from this zone. -1 to build from when they are unlocked. ', 'value', '-1', null, 'Buildings');
 
+	createSetting('hBuildingSettingsArray', 'Building Settings', 'Click to adjust settings. ', 'mazDefaultArray', {
+		Hut: { enabled: true, percent: 100, buyMax: 0 },
+		House: { enabled: true, percent: 100, buyMax: 0 },
+		Mansion: { enabled: true, percent: 100, buyMax: 0 },
+		Hotel: { enabled: true, percent: 100, buyMax: 0 },
+		Wormhole: { enabled: false, percent: 1, buyMax: 1 },
+		Resort: { enabled: true, percent: 100, buyMax: 0 },
+		Gateway: { enabled: true, percent: 100, buyMax: 0 },
+		Collector: { enabled: true, percent: 100, buyMax: 0 },
+		Gym: { enabled: true, percent: 100, buyMax: 0 },
+		Tribute: { enabled: true, percent: 100, buyMax: 0 },
+		Nursery: { enabled: true, percent: 100, buyMax: 0, fromZ: 999 }
+	}, null, 'Jobs');
 	//Radon
-	createSetting('rBuildingSettingsArray', 'Building Settings', 'Click to adjust settings. ', 'mazDefaultArray', { Collector: { enabled: true, percent: 100, buyMax: 0 }, Gateway: { enabled: true, percent: 100, buyMax: 0 }, Hotel: { enabled: true, percent: 100, buyMax: 0 }, House: { enabled: true, percent: 100, buyMax: 0 }, Hut: { enabled: true, percent: 100, buyMax: 0 }, Mansion: { enabled: true, percent: 100, buyMax: 0 }, Resort: { enabled: true, percent: 100, buyMax: 0 }, Laboratory: { enabled: true, percent: 100, buyMax: 0 }, Smithy: { enabled: true, percent: 100, buyMax: 0 }, Tribute: { enabled: true, percent: 100, buyMax: 0 }, SafeGateway: { enabled: true, mapCount: 3, zone: 0 } }, null, 'Jobs');
 	createSetting('RBuyBuildingsNew', 'AutoBuildings', 'Buys buildings in an efficient way. Also enables Vanilla AutoStorage if its off. ', 'boolean', 'true', null, 'Buildings');
+	createSetting('rBuildingSettingsArray', 'Building Settings', 'Click to adjust settings. ', 'mazDefaultArray', {
+		Hut: { enabled: true, percent: 100, buyMax: 0 },
+		House: { enabled: true, percent: 100, buyMax: 0 },
+		Mansion: { enabled: true, percent: 100, buyMax: 0 },
+		Hotel: { enabled: true, percent: 100, buyMax: 0 },
+		Resort: { enabled: true, percent: 100, buyMax: 0 },
+		Gateway: { enabled: true, percent: 100, buyMax: 0 },
+		Collector: { enabled: true, percent: 100, buyMax: 0 },
+		Smithy: { enabled: true, percent: 100, buyMax: 0 },
+		Tribute: { enabled: true, percent: 100, buyMax: 0 },
+		Laboratory: { enabled: true, percent: 100, buyMax: 0 },
+		SafeGateway: { enabled: true, mapCount: 3, zone: 0 }
+	}, null, 'Jobs');
 
 	//--------------------------------------------------------------------------------------------------------
 
 	//Jobs
 	//Helium
-	createSetting('fuckjobs', 'Hide Jobs', 'Hides obsolete settings when you have obtained the AutoJobs Mastery. It should be far better to use than AT, Especially on c2 Challenges like Watch. ', 'boolean', false, null, 'Jobs');
 	createSetting('BuyJobsNew', ['Don\'t Buy Jobs', 'Auto Worker Ratios', 'Manual Ratios'], 'Manual Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, 'Jobs');
-	createSetting('AutoMagmamancers', 'Auto Magmamancers', 'Auto Magmamancer Management. Hires Magmamancers when the Current Zone time goes over 10 minutes. Does a one-time spend of at most 10% of your gem resources. Every increment of 10 minutes after that repeats the 10% hiring process. Magmamancery mastery is accounted for, with that it hires them at 5 minutes instead of 10. Disclaimer: May negatively impact Gem count.', 'boolean', true, null, 'Jobs');
-	createSetting('FarmerRatio', 'Farmer Ratio', '', 'value', '1', null, 'Jobs');
-	createSetting('LumberjackRatio', 'Lumberjack Ratio', '', 'value', '1', null, 'Jobs');
-	createSetting('MinerRatio', 'Miner Ratio', '', 'value', '1', null, 'Jobs');
-	createSetting('MaxScientists', 'Max Scientists', 'Advanced. Cap your scientists (This is an absolute number not a ratio). recommend: -1 (infinite still controls itself)', 'value', '-1', null, 'Jobs');
-	createSetting('MaxExplorers', 'Max Explorers', 'Advanced. Cap your explorers (This is an absolute number not a ratio). recommend: -1', 'value', '-1', null, 'Jobs');
-	createSetting('MaxTrainers', 'Max Trainers', 'Advanced. Cap your trainers (This is an absolute number not a ratio). recommend: -1', 'value', '-1', null, 'Jobs');
+	createSetting('hJobSettingsArray', 'Job Settings', 'Click to adjust settings. ', 'mazDefaultArray', {
+		Farmer: { enabled: true, ratio: 1 },
+		Lumberjack: { enabled: true, ratio: 1 },
+		Miner: { enabled: true, ratio: 1 },
+		Explorer: { enabled: true, percent: 5 },
+		Trainer: { enabled: true, percent: 5 },
+		Magmamancer: { enabled: true, percent: 100 }
+	}, null, 'Jobs');
 
 	//Radon
-	//General
-	createSetting('hJobSettingsArray', 'Job Settings', 'Click to adjust settings. ', 'mazDefaultArray', { Miner: { enabled: true, ratio: 1 }, Lumberjack: { enabled: true, ratio: 1 }, Farmer: { enabled: true, ratio: 1 }, Trainer: { enabled: true, percent: 5 }, Explorer: { enabled: true, percent: '5' }, Magmamancer: { enabled: true, percent: 50 } }, null, 'Jobs');
-	createSetting('rJobSettingsArray', 'Job Settings', 'Click to adjust settings. ', 'mazDefaultArray', { FarmersUntil: { enabled: false, zone: 999 }, NoLumberjacks: { enabled: false }, Worshipper: { enabled: true, percent: 5 }, Miner: { enabled: true, ratio: 1 }, Lumberjack: { enabled: true, ratio: 1 }, Farmer: { enabled: true, ratio: 1 }, Explorer: { enabled: true, percent: 5 }, Meteorologist: { enabled: true, percent: 100 } }, null, 'Jobs');
 	createSetting('RBuyJobsNew', ['AT AutoJobs Off', 'Auto Ratios', 'Manual Ratios'], 'Manual Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, "Jobs");
+	createSetting('rJobSettingsArray', 'Job Settings', 'Click to adjust settings. ', 'mazDefaultArray', {
+		Farmer: { enabled: true, ratio: 1 },
+		Lumberjack: { enabled: true, ratio: 1 },
+		Miner: { enabled: true, ratio: 1 },
+		Explorer: { enabled: true, percent: 5 },
+		Meteorologist: { enabled: true, percent: 100 },
+		Worshipper: { enabled: true, percent: 5 },
+		FarmersUntil: { enabled: false, zone: 999 },
+		NoLumberjacks: { enabled: false }
+	}, null, 'Jobs');
 
 	//--------------------------------------------------------------------------------------------------------
 
@@ -739,7 +756,6 @@ function initializeAllSettings() {
 	createSetting('IgnoreCrits', ['Safety First', 'Ignore Void Strength', 'Ignore All Crits'], 'No longer switches to B against corrupted precision and/or void strength. <b>Basically we now treat \'crit things\' as regular in both autoStance and autoStance2</b>. In fact it no longer takes precision / strength into account and will manage like a normal enemy, thus retaining X / D depending on your needs. If you\'re certain your block is high enough regardless if you\'re fighting a crit guy in a crit daily, use this! Alternatively, manage the stances yourself.', 'multitoggle', 0, null, 'Combat');
 	createSetting('PowerSaving', ['AutoAbandon', 'Don\'t Abandon', 'Only Rush Voids'], '<b>Autoabandon:</b> Considers abandoning trimps for void maps/prestiges.<br><b>Don\'t Abandon:</b> Will not abandon troops, but will still agressively autostance even if it will kill you (WILL NOT ABANDON TRIMPS TO DO VOIDS).<br><b>Only Rush Voids:</b> Considers abandoning trimps for void maps, but not prestiges, still autostances aggressively. <br>Made for Empower daily, and you might find this helpful if you\'re doing Workplace Safety feat. Then again with that I strongly recommend doing it fully manually. Anyway, don\'t blame me whatever happens.<br><b>Note:</b> AT will no longer be able to fix when your scryer gets stuck!', 'multitoggle', 0, null, 'Combat');
 	createSetting('ForceAbandon', 'Trimpicide', 'If a new fight group is available and anticipation stacks aren\'t maxed, Trimpicide and grab a new group. Will not abandon in spire. Recommended ON. ', 'boolean', true, null, 'Combat');
-	createSetting('DynamicGyms', 'Dynamic Gyms', 'Designed to limit your block to slightly more than however much the enemy attack is. If MaxGyms is capped or GymWall is set, those will still work, and this will NOT override those (works concurrently), but it will further limit them. In the future it may override, but the calculation is not easy to get right so I dont want it undo-ing other things yet. ', 'boolean', false, null, 'Combat');
 	createSetting('AutoRoboTrimp', 'AutoRoboTrimp', 'Use RoboTrimps ability starting at this level, and every 5 levels thereafter. (set to 0 to disable. default 60.) 60 is a good choice for mostly everybody.', 'value', '60', null, 'Combat');
 	createSetting('fightforever', 'Fight Always', 'U1: -1 to disable. Sends trimps to fight if they\'re not fighting, regardless of BAF. Has 2 uses. Set to 0 to always send out trimps. Or set a number higher than 0 to enable the H:D function. If the H:D ratio is below this number it will send them out. I.e, this is set to 1, it will send out trimps regardless with the H:D ratio is below 1. ', 'value', '-1', null, 'Combat');
 	createSetting('addpoison', 'Poison Calc', '<b>Experimental. </b><br>Adds poison to the battlecalc. May improve your poison zone speed. ', 'boolean', false, null, 'Combat');
@@ -1414,7 +1430,7 @@ function settingChanged(id) {
 		if (btn.id === 'Hequipon' || btn.id === 'Requipon') {
 			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
 		}
-		if (btn === autoTrimpSettings.RBuyBuildingsNew) {
+		if (btn === autoTrimpSettings.BuyBuildingsNew || btn === autoTrimpSettings.RBuyBuildingsNew) {
 			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
 		}
 	}
@@ -1797,12 +1813,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.5') {
-			var setting = autoTrimpSettings.hJobSettingsArray.value;
-
-			setting.Miner.ratio = autoTrimpSettings.MinerRatio.value;
-			setting.Farmer.ratio = autoTrimpSettings.FarmerRatio.value;
-			setting.Lumberjack.ratio = autoTrimpSettings.LumberjackRatio.value;
-
 			changelog.push("U1 job settings have been converted over to the way that U2 does jobs (button in vanilla jobs tab) also U1 settings that use job ratios should now function properly!<br><br>\
 			I converted over the ratio settings for Farmers, Lumberjacks & Miners but you'll need to adjust the other settings yourself.")
 		}
@@ -2152,51 +2162,26 @@ function updateCustomButtons() {
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
 
 	//Buildings
-	!radonon ? turnOn('BuyBuildingsNew') : turnOff('BuyBuildingsNew');
-	!radonon ? turnOn('MaxGym') : turnOff('MaxGym');
-	!radonon ? turnOn('GymWall') : turnOff('GymWall');
-	var decaChange = game.global.stringVersion < '5.7.0' ? game.talents.deciBuild.purchased : bwRewardUnlocked('DecaBuild');
-	var fuckbuilding = (bwRewardUnlocked('AutoStructure') && decaChange && getPageSetting('hidebuildings') && getPageSetting('BuyBuildingsNew') == 0);
-	(!radonon && bwRewardUnlocked('AutoStructure') && decaChange) ? turnOn('hidebuildings') : turnOff('hidebuildings');
-	(!radonon && !fuckbuilding) ? turnOn('MaxHut') : turnOff('MaxHut');
-	(!radonon && !fuckbuilding) ? turnOn('MaxHouse') : turnOff('MaxHouse');
-	(!radonon && !fuckbuilding) ? turnOn('MaxMansion') : turnOff('MaxMansion');
-	(!radonon && !fuckbuilding) ? turnOn('MaxHotel') : turnOff('MaxHotel');
-	(!radonon && !fuckbuilding) ? turnOn('MaxResort') : turnOff('MaxResort');
-	(!radonon && !fuckbuilding) ? turnOn('MaxGateway') : turnOff('MaxGateway');
-	(!radonon && !fuckbuilding) ? turnOn('MaxWormhole') : turnOff('MaxWormhole');
-	(!radonon && !fuckbuilding) ? turnOn('MaxCollector') : turnOff('MaxCollector');
-	(!radonon && !fuckbuilding) ? turnOn('MaxTribute') : turnOff('MaxTribute');
-	(!radonon && !fuckbuilding) ? turnOn('MaxNursery') : turnOff('MaxNursery');
-	(!radonon && !fuckbuilding) ? turnOn('NoNurseriesUntil') : turnOff('NoNurseriesUntil');
-	(!radonon && !fuckbuilding) ? turnOn('WarpstationCap') : turnOff('WarpstationCap');
-	(!radonon && !fuckbuilding) ? turnOn('WarpstationCoordBuy') : turnOff('WarpstationCoordBuy');
-	(!radonon && !fuckbuilding) ? turnOn('FirstGigastation') : turnOff('FirstGigastation');
-	(!radonon && !fuckbuilding) ? turnOn('DeltaGigastation') : turnOff('DeltaGigastation');
-	(!radonon && !fuckbuilding) ? turnOn("AutoGigas") : turnOff("AutoGigas");
-	(!radonon && !fuckbuilding && getPageSetting("AutoGigas") == true) ? turnOn("CustomTargetZone") : turnOff("CustomTargetZone");
-	(!radonon && !fuckbuilding && getPageSetting("AutoGigas") == true) ? turnOn("CustomDeltaFactor") : turnOff("CustomDeltaFactor");
-	(!radonon && !fuckbuilding) ? turnOn('WarpstationWall3') : turnOff('WarpstationWall3');
+	turnOff('BuyBuildingsNew');
+	!radonon ? turnOn('WarpstationCap') : turnOff('WarpstationCap');
+	!radonon ? turnOn('WarpstationCoordBuy') : turnOff('WarpstationCoordBuy');
+	!radonon ? turnOn('FirstGigastation') : turnOff('FirstGigastation');
+	!radonon ? turnOn('DeltaGigastation') : turnOff('DeltaGigastation');
+	!radonon ? turnOn("AutoGigas") : turnOff("AutoGigas");
+	(!radonon && getPageSetting("AutoGigas")) ? turnOn("CustomTargetZone") : turnOff("CustomTargetZone");
+	(!radonon && getPageSetting("AutoGigas")) ? turnOn("CustomDeltaFactor") : turnOff("CustomDeltaFactor");
 
 	//RBuildings
 	turnOff('RBuyBuildingsNew');
 
 	//Jobs
-	!radonon ? turnOn('BuyJobsNew') : turnOff('BuyJobsNew');
-	!radonon ? turnOn('AutoMagmamancers') : turnOff('AutoMagmamancers');
-	var fuckjobbies = (bwRewardUnlocked('AutoJobs') && getPageSetting('fuckjobs') == true && getPageSetting('BuyJobsNew') == 0);
-	(!radonon && bwRewardUnlocked('AutoJobs')) ? turnOn('fuckjobs') : turnOff('fuckjobs');
-	(!radonon && !fuckjobbies) ? turnOn('FarmerRatio') : turnOff('FarmerRatio');
-	(!radonon && !fuckjobbies) ? turnOn('LumberjackRatio') : turnOff('LumberjackRatio');
-	(!radonon && !fuckjobbies) ? turnOn('MinerRatio') : turnOff('MinerRatio');
-	(!radonon && !fuckjobbies) ? turnOn('MaxScientists') : turnOff('MaxScientists');
-	(!radonon && !fuckjobbies) ? turnOn('MaxExplorers') : turnOff('MaxExplorers');
-	(!radonon && !fuckjobbies) ? turnOn('MaxTrainers') : turnOff('MaxTrainers');
+	turnOff('BuyJobsNew');
 
 	//RJobs
 	radonon ? turnOn('RBuyJobsNew') : turnOff('RBuyJobsNew');
-	turnOff('rJobSettingsArray');
 	turnOff('hJobSettingsArray');
+	turnOff('rJobSettingsArray');
+	turnOff('hBuildingSettingsArray');
 	turnOff('rBuildingSettingsArray');
 	turnOff('rDailyPortalSettingsArray');
 	!radonon ? turnOn('Prestige') : turnOff('Prestige');
@@ -2411,7 +2396,6 @@ function updateCustomButtons() {
 	//Combat
 	!radonon ? turnOn('AutoStance') : turnOff('AutoStance');
 	!radonon ? turnOn('AutoStanceNew') : turnOff('AutoStanceNew');
-	!radonon ? turnOn('DynamicGyms') : turnOff('DynamicGyms');
 	!radonon ? turnOn('AutoRoboTrimp') : turnOff('AutoRoboTrimp');
 	!radonon ? turnOn('fightforever') : turnOff('fightforever');
 	!radonon ? turnOn('addpoison') : turnOff('addpoison');
@@ -2600,7 +2584,6 @@ function updateCustomButtons() {
 
 	//Display
 	(!game.worldUnlocks.easterEgg.locked) ? turnOn('AutoEggs') : turnOff('AutoEggs');
-	radonon ? turnOn('SpamFragments') : turnOff('SpamFragments');
 
 	//Memory
 	!radonon ? turnOn("showbreedtimer") : turnOff("showbreedtimer");
@@ -2670,11 +2653,6 @@ function updateCustomButtons() {
 	radonon && hson && hsstaffon && game.global.ArchaeologyDone ? turnOn('RhsResourceStaff') : turnOff('RhsResourceStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsWCStaff') : turnOff('RhsWCStaff');
 	radonon && hson && hsstaffon ? turnOn('RhsMCStaff') : turnOff('RhsMCStaff');
-
-	radonon ? turnOn('SpamJobs') : turnOff('SpamJobs');
-	radonon ? turnOn('SpamBuilding') : turnOff('SpamBuilding');
-	radonon ? turnOn('SpamOther') : turnOff('SpamOther');
-	radonon ? turnOn('SpamEquipment') : turnOff('SpamEquipment');
 
 	var autoheirloomenable = getPageSetting('autoheirlooms');
 	var keepshieldenable = autoheirloomenable && getPageSetting('keepshields');
@@ -2821,6 +2799,11 @@ function checkPortalSettings() {
 	return portalLevel;
 }
 
+function settingUniverse(setting) {
+	if (setting === 'buyBuildings')
+		return game.global.universe === 1 ? 'BuyBuildingsNew' : 'RBuyBuildingsNew'
+}
+
 //AutoJobs
 
 //Changing Default Widths for Job buttons
@@ -2856,10 +2839,11 @@ autoJobSettings.appendChild(autoJobSettingsButton);
 autoJobColumn.insertBefore(autoJobContainer, document.getElementById('jobsTitleDiv').children[0].children[2]);
 
 //AutoStructure Button.
+var autoStructureSetting = game.global.universe === 1 ? 'BuyBuildingsNew' : 'RBuyBuildingsNew'
 //Creating button
 var autoStructureContainer = document.createElement("DIV");
 autoStructureContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
-autoStructureContainer.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings.RBuyBuildingsNew.enabled);
+autoStructureContainer.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[settingUniverse('buyBuildings')].enabled);
 autoStructureContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoStructure\", \"customText\", event, \"Toggle between the AutoStructure settings.\")');
 autoStructureContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
@@ -2867,7 +2851,7 @@ autoStructureContainer.setAttribute("onmouseout", 'tooltip("hide")');
 var autoStructureText = document.createElement("DIV");
 autoStructureText.innerHTML = 'AT AutoStructure';
 autoStructureText.setAttribute("id", "autoStructureLabel");
-autoStructureText.setAttribute("onClick", "settingChanged('RBuyBuildingsNew')");
+autoStructureText.setAttribute("onClick", "settingChanged(settingUniverse('buyBuildings'))");
 
 //Creating cogwheel & linking onclick
 var autoStructureSettings = document.createElement("DIV");
