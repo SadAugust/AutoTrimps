@@ -30,7 +30,7 @@ function autoGather() {
 	if (manualGather === 0) return;
 
 	//Setting it to use mining/building only!
-	if (manualGather === 2) {
+	if (manualGather === 2 && document.getElementById('metalCollectBtn').style.display != 'none' && document.getElementById('metal').style.visibility != 'hidden') {
 		autoGather2();
 		return;
 	}
