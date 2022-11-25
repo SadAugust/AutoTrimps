@@ -464,6 +464,20 @@ function ImportExportTooltip(what, event, download) {
 				zone: game.c2.Wither,
 				percentzone: (100 * (game.c2.Wither / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
 				color: 0
+			},
+			Glass: {
+				number: 28,
+				percent: getIndividualSquaredReward('Glass') + '%',
+				zone: game.c2.Glass,
+				percentzone: (100 * (game.c2.Glass / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+				color: 0
+			},
+			Smithless: {
+				number: 29,
+				percent: getIndividualSquaredReward('Smithless') + '%',
+				zone: game.c2.Smithless,
+				percentzone: (100 * (game.c2.Smithless / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+				color: 0
 			}
 
 		};
@@ -499,12 +513,14 @@ function ImportExportTooltip(what, event, download) {
 						a(b, 85, 75);
 					else if (b == "Wither")
 						a(b, 85, 75);
-					else if (b == "Wither")
-						a(b, 75, 65);
 					else if (b == "Storm")
 						a(b, 90, 80);
 					else if (b == "Berserk")
 						a(b, 85, 75);
+					else if (b == "Glass")
+						a(b, 90, 80);
+					else if (b == "Smithless")
+						a(b, 90, 80);
 				}
 			});
 		}
@@ -753,7 +769,7 @@ function ImportExportTooltip(what, event, download) {
                     <font color=` + c2list.Trappapalooza.color + `>` + c2list.Trappapalooza.percentzone + `
                 </td>
             </tr>
-	    <tr>
+	    	<tr>
                 <td>Berserk</td>
                 <td>` + c2list.Berserk.number + `</td>
                 <td>` + c2list.Berserk.percent + `</td>
@@ -769,6 +785,24 @@ function ImportExportTooltip(what, event, download) {
                 <td>` + c2list.Wither.zone + `</td>
                 <td bgcolor='black'>
                     <font color=` + c2list.Wither.color + `>` + c2list.Wither.percentzone + `
+                </td>
+            </tr>
+            <tr>
+                <td>Glass</td>
+                <td>` + c2list.Glass.number + `</td>
+                <td>` + c2list.Glass.percent + `</td>
+                <td>` + c2list.Glass.zone + `</td>
+                <td bgcolor='black'>
+                    <font color=` + c2list.Glass.color + `>` + c2list.Glass.percentzone + `
+                </td>
+            </tr>
+            <tr>
+                <td>Smithless</td>
+                <td>` + c2list.Smithless.number + `</td>
+                <td>` + c2list.Smithless.percent + `</td>
+                <td>` + c2list.Smithless.zone + `</td>
+                <td bgcolor='black'>
+                    <font color=` + c2list.Smithless.color + `>` + c2list.Smithless.percentzone + `
                 </td>
             </tr>
             <tr>
