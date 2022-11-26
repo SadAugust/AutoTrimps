@@ -541,7 +541,7 @@ function RdoPortal(challenge, daily, c3) {
 
 	activatePortal();
 	lastRadonZone = 0; RzonePostpone = 0;
-	Rresetmapvars();
+	resetmapvars();
 }
 
 function rCallPortal() {
@@ -611,7 +611,7 @@ function isNextU1DailyWind() {
 		return false;
 }
 
-function Rresetmapvars() {
+function resetmapvars() {
 	//General
 	RlastMapWeWereIn = null;
 	rVanillaMAZ = false;
@@ -626,7 +626,6 @@ function Rresetmapvars() {
 	savefile = null;
 	jestFarmMap = false;
 	//Prestige
-	rShouldPrestigeRaid = false;
 	RAMPfragmappy = undefined;
 	RAMPprefragmappy = undefined;
 	RAMPpMap = new Array(5);
