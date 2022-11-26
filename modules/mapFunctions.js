@@ -956,7 +956,7 @@ function SmithyFarm() {
 			smithyMapCount = [0, 0, 0];
 			currTime = 0;
 			game.global.mapRunCounter = 0;
-			HDRatio = RcalcHDratio();
+			HDRatio = calcHDRatio(game.global.world, 'world');
 			if (game.global.challengeActive !== 'Quest' && rSFSettings.meltingPoint) runUnique('Melting Point', false);
 			rSFSettings.done = totalPortals + "_" + game.global.world;
 			return farmingDetails;
@@ -1650,7 +1650,7 @@ function Quest() {
 				questcheck() == 4 ? 4 :
 					questcheck() == 5 ? 5 :
 						questcheck() == 6 ? 6 :
-							questcheck() == 7 && (RcalcOurDmg('min', 0, 'world') < game.global.gridArray[50].maxHealth) && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))) ? 7 :
+							questcheck() == 7 && (calcOurDmg('min', 0, false, 'world', 'maybe') < game.global.gridArray[50].maxHealth) && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))) ? 7 :
 								questcheck() == 8 ? 8 :
 									questcheck() == 9 ? 9 :
 										0;
@@ -2342,7 +2342,7 @@ function Smithless() {
 		var name = game.global.gridArray[0].name
 		var gammaDmg = gammaBurstPct;
 		var equalityAmt = equalityQuery(name, game.global.world, 1, 'world', 1, 'gamma')
-		var ourDmg = RcalcOurDmg('min', equalityAmt, 'world', false, false, true);
+		var ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
 		var totalDmg = (ourDmg * 2 + (ourDmg * gammaDmg * 2))
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world');
 		enemyHealth *= 3e15;
@@ -2478,9 +2478,10 @@ function HDFarm() {
 			rShouldSkip = true;
 
 		if (((rCurrentMap === mapName && !rShouldHDFarm) || rShouldSkip) && HDRatio !== Infinity) {
+			HDRatio = calcHDRatio(game.global.world, 'world');
 			var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
-			if (getPageSetting('rMapRepeatCount') && !rShouldSkip) debug("Equip Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rHDFMapLevel >= 0 ? "+" : "") + rHDFMapLevel + " " + rHDFSpecial + ")" + (game.global.mapRunCounter + mapProg == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You ended it with a HD Ratio of " + RcalcHDratio().toFixed(2) + ".");
-			if (getPageSetting('rMapRepeatCount') && rShouldSkip) debug("Equip Farm took was skipped on zone " + game.global.world + ". It wanted a HD Ratio of " + equipfarmdynamicHD(rHDFIndex).toFixed(2) + " but you already had a HD Ratio of " + RcalcHDratio().toFixed(2) + ".");
+			if (getPageSetting('rMapRepeatCount') && !rShouldSkip) debug("Equip Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rHDFMapLevel >= 0 ? "+" : "") + rHDFMapLevel + " " + rHDFSpecial + ")" + (game.global.mapRunCounter + mapProg == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You ended it with a HD Ratio of " + HDRatio.toFixed(2) + ".");
+			if (getPageSetting('rMapRepeatCount') && rShouldSkip) debug("Equip Farm took was skipped on zone " + game.global.world + ". It wanted a HD Ratio of " + equipfarmdynamicHD(rHDFIndex).toFixed(2) + " but you already had a HD Ratio of " + HDRatio.toFixed(2) + ".");
 			rCurrentMap = undefined;
 			mapAutoLevel = Infinity;
 			rHDFMapRepeats = 0;

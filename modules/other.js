@@ -1,16 +1,82 @@
 MODULES["other"] = {};
 MODULES["other"].enableRoboTrimpSpam = true;
-var prestraid = !1, dprestraid = !1, failpraid = !1, dfailpraid = !1, bwraided = !1, dbwraided = !1, failbwraid = !1, dfailbwraid = !1, perked = !1, prestraidon = !1, dprestraidon = !1, mapbought = !1, dmapbought = !1, bwraidon = !1, dbwraidon = !1, presteps = null, minMaxMapCost, fMap, pMap, shouldFarmFrags = !1, praidDone = !1;
-function armydeath() { if (game.global.mapsActive) return !1; var e = game.global.lastClearedCell + 1, l = game.global.gridArray[e].attack * dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) * game.portal.Equality.getMult(), a = game.global.soldierHealth + game.global.soldierEnergyShield * (Fluffy.isRewardActive('shieldlayer') ? ((1 + Fluffy.isRewardActive('shieldlayer'))) : 1); "Ice" == getEmpowerment() && (l *= game.empowerments.Ice.getCombatModifier()); var g = game.global.soldierCurrentBlock; return 3 == game.global.formation ? g /= 4 : "0" != game.global.formation && (g *= 2), g > game.global.gridArray[e].attack ? l *= getPierceAmt() : l -= g * (1 - getPierceAmt()), "Daily" == game.global.challengeActive && void 0 !== game.global.dailyChallenge.crits && (l *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)), void 0 !== game.global.dailyChallenge.bogged && (a -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)), void 0 !== game.global.dailyChallenge.plague && (a -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks)), "Electricity" == game.global.challengeActive && (a -= game.global.soldierHealth -= game.global.soldierHealthMax * (.1 * game.challenges.Electricity.stacks)), "corruptCrit" == game.global.gridArray[e].corrupted ? l *= 5 : "healthyCrit" == game.global.gridArray[e].corrupted ? l *= 7 : "corruptBleed" == game.global.gridArray[e].corrupted ? a *= .8 : "healthyBleed" == game.global.gridArray[e].corrupted && (a *= .7), (a -= l) <= 1e3 }
-function autoRoboTrimp() { if (!(0 < game.global.roboTrimpCooldown) && game.global.roboTrimpLevel) { var a = parseInt(getPageSetting("AutoRoboTrimp")); 0 == a || game.global.world >= a && !game.global.useShriek && (magnetoShriek(), MODULES.other.enableRoboTrimpSpam && debug("Activated Robotrimp MagnetoShriek Ability @ z" + game.global.world, "graphs", "*podcast")) } }
-function buyWeps() { if (!((getPageSetting('BuyWeaponsNew') == 1) || (getPageSetting('BuyWeaponsNew') == 3))) return; preBuy(), game.global.buyAmt = getPageSetting('gearamounttobuy'), game.equipment.Dagger.level < getPageSetting('CapEquip2') && canAffordBuilding('Dagger', null, null, !0) && buyEquipment('Dagger', !0, !0), game.equipment.Mace.level < getPageSetting('CapEquip2') && canAffordBuilding('Mace', null, null, !0) && buyEquipment('Mace', !0, !0), game.equipment.Polearm.level < getPageSetting('CapEquip2') && canAffordBuilding('Polearm', null, null, !0) && buyEquipment('Polearm', !0, !0), game.equipment.Battleaxe.level < getPageSetting('CapEquip2') && canAffordBuilding('Battleaxe', null, null, !0) && buyEquipment('Battleaxe', !0, !0), game.equipment.Greatsword.level < getPageSetting('CapEquip2') && canAffordBuilding('Greatsword', null, null, !0) && buyEquipment('Greatsword', !0, !0), !game.equipment.Arbalest.locked && game.equipment.Arbalest.level < getPageSetting('CapEquip2') && canAffordBuilding('Arbalest', null, null, !0) && buyEquipment('Arbalest', !0, !0), postBuy() }
-function buyArms() { if (!((getPageSetting('BuyArmorNew') == 1) || (getPageSetting('BuyArmorNew') == 3))) return; preBuy(), game.global.buyAmt = 10, game.equipment.Shield.level < getPageSetting('CapEquiparm') && canAffordBuilding('Shield', null, null, !0) && buyEquipment('Shield', !0, !0), game.equipment.Boots.level < getPageSetting('CapEquiparm') && canAffordBuilding('Boots', null, null, !0) && buyEquipment('Boots', !0, !0), game.equipment.Helmet.level < getPageSetting('CapEquiparm') && canAffordBuilding('Helmet', null, null, !0) && buyEquipment('Helmet', !0, !0), game.equipment.Pants.level < getPageSetting('CapEquiparm') && canAffordBuilding('Pants', null, null, !0) && buyEquipment('Pants', !0, !0), game.equipment.Shoulderguards.level < getPageSetting('CapEquiparm') && canAffordBuilding('Shoulderguards', null, null, !0) && buyEquipment('Shoulderguards', !0, !0), game.equipment.Breastplate.level < getPageSetting('CapEquiparm') && canAffordBuilding('Breastplate', null, null, !0) && buyEquipment('Breastplate', !0, !0), !game.equipment.Gambeson.locked && game.equipment.Gambeson.level < getPageSetting('CapEquiparm') && canAffordBuilding('Gambeson', null, null, !0) && buyEquipment('Gambeson', !0, !0), postBuy() }
-function isActiveSpireAT() { return game.global.challengeActive != 'Daily' && game.global.spireActive && game.global.world >= getPageSetting('IgnoreSpiresUntil') }
-function disActiveSpireAT() { return game.global.challengeActive == 'Daily' && game.global.spireActive && game.global.world >= getPageSetting('dIgnoreSpiresUntil') }
-function exitSpireCell() { isActiveSpireAT() && game.global.lastClearedCell >= getPageSetting('ExitSpireCell') - 1 && endSpire() }
-function dailyexitSpireCell() { disActiveSpireAT() && game.global.lastClearedCell >= getPageSetting('dExitSpireCell') - 1 && endSpire() }
-function plusPres() { document.getElementById("biomeAdvMapsSelect").value = "Random", document.getElementById("advExtraLevelSelect").value = plusMapToRun(game.global.world), document.getElementById("advSpecialSelect").value = "p", document.getElementById("lootAdvMapsRange").value = 0, document.getElementById("difficultyAdvMapsRange").value = 9, document.getElementById("sizeAdvMapsRange").value = 9, document.getElementById("advPerfectCheckbox").dataset.checked = !1, document.getElementById("mapLevelInput").value = game.global.world, updateMapCost() }
-function plusMapToRun(a) { return 9 == a % 10 ? 6 : 5 > a % 10 ? 5 - a % 10 : 11 - a % 10 }
+
+function armydeath() {
+	if (game.global.mapsActive) return !1;
+	var e = game.global.lastClearedCell + 1,
+		l = game.global.gridArray[e].attack * dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) * game.portal.Equality.getMult(),
+		a = game.global.soldierHealth + game.global.soldierEnergyShield * (Fluffy.isRewardActive("shieldlayer") ? 1 + Fluffy.isRewardActive("shieldlayer") : 1);
+	"Ice" == getEmpowerment() && (l *= game.empowerments.Ice.getCombatModifier());
+	var g = game.global.soldierCurrentBlock;
+	return (
+		3 == game.global.formation ? (g /= 4) : "0" != game.global.formation && (g *= 2),
+		g > game.global.gridArray[e].attack ? (l *= getPierceAmt()) : (l -= g * (1 - getPierceAmt())),
+		"Daily" == game.global.challengeActive && void 0 !== game.global.dailyChallenge.crits && (l *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),
+		void 0 !== game.global.dailyChallenge.bogged && (a -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),
+		void 0 !== game.global.dailyChallenge.plague && (a -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks)),
+		"Electricity" == game.global.challengeActive && (a -= game.global.soldierHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)),
+		"corruptCrit" == game.global.gridArray[e].corrupted
+			? (l *= 5)
+			: "healthyCrit" == game.global.gridArray[e].corrupted
+				? (l *= 7)
+				: "corruptBleed" == game.global.gridArray[e].corrupted
+					? (a *= 0.8)
+					: "healthyBleed" == game.global.gridArray[e].corrupted && (a *= 0.7),
+		(a -= l) <= 1e3
+	);
+}
+
+function autoRoboTrimp() {
+	if (!(0 < game.global.roboTrimpCooldown) && game.global.roboTrimpLevel) {
+		var a = parseInt(getPageSetting("AutoRoboTrimp")); 0 == a ||
+			game.global.world >= a && !game.global.useShriek && (magnetoShriek(), MODULES.other.enableRoboTrimpSpam &&
+				debug("Activated Robotrimp MagnetoShriek Ability @ z" + game.global.world, "graphs", "*podcast"))
+	}
+}
+
+function buyWeps() {
+	if (!(getPageSetting("BuyWeaponsNew") == 1 || getPageSetting("BuyWeaponsNew") == 3)) return;
+	preBuy(),
+		(game.global.buyAmt = getPageSetting("gearamounttobuy")),
+		game.equipment.Dagger.level < getPageSetting("CapEquip2") && canAffordBuilding("Dagger", null, null, !0) && buyEquipment("Dagger", !0, !0),
+		game.equipment.Mace.level < getPageSetting("CapEquip2") && canAffordBuilding("Mace", null, null, !0) && buyEquipment("Mace", !0, !0),
+		game.equipment.Polearm.level < getPageSetting("CapEquip2") && canAffordBuilding("Polearm", null, null, !0) && buyEquipment("Polearm", !0, !0),
+		game.equipment.Battleaxe.level < getPageSetting("CapEquip2") && canAffordBuilding("Battleaxe", null, null, !0) && buyEquipment("Battleaxe", !0, !0),
+		game.equipment.Greatsword.level < getPageSetting("CapEquip2") && canAffordBuilding("Greatsword", null, null, !0) && buyEquipment("Greatsword", !0, !0),
+		!game.equipment.Arbalest.locked && game.equipment.Arbalest.level < getPageSetting("CapEquip2") && canAffordBuilding("Arbalest", null, null, !0) && buyEquipment("Arbalest", !0, !0),
+		postBuy();
+}
+
+function buyArms() {
+	if (!(getPageSetting("BuyArmorNew") == 1 || getPageSetting("BuyArmorNew") == 3)) return;
+	preBuy(),
+		(game.global.buyAmt = 10),
+		game.equipment.Shield.level < getPageSetting("CapEquiparm") && canAffordBuilding("Shield", null, null, !0) && buyEquipment("Shield", !0, !0),
+		game.equipment.Boots.level < getPageSetting("CapEquiparm") && canAffordBuilding("Boots", null, null, !0) && buyEquipment("Boots", !0, !0),
+		game.equipment.Helmet.level < getPageSetting("CapEquiparm") && canAffordBuilding("Helmet", null, null, !0) && buyEquipment("Helmet", !0, !0),
+		game.equipment.Pants.level < getPageSetting("CapEquiparm") && canAffordBuilding("Pants", null, null, !0) && buyEquipment("Pants", !0, !0),
+		game.equipment.Shoulderguards.level < getPageSetting("CapEquiparm") && canAffordBuilding("Shoulderguards", null, null, !0) && buyEquipment("Shoulderguards", !0, !0),
+		game.equipment.Breastplate.level < getPageSetting("CapEquiparm") && canAffordBuilding("Breastplate", null, null, !0) && buyEquipment("Breastplate", !0, !0),
+		!game.equipment.Gambeson.locked && game.equipment.Gambeson.level < getPageSetting("CapEquiparm") && canAffordBuilding("Gambeson", null, null, !0) && buyEquipment("Gambeson", !0, !0),
+		postBuy();
+}
+
+
+function isActiveSpireAT() {
+	return game.global.challengeActive != 'Daily' && game.global.spireActive && game.global.world >= getPageSetting('IgnoreSpiresUntil')
+}
+
+function disActiveSpireAT() {
+	return game.global.challengeActive == 'Daily' && game.global.spireActive && game.global.world >= getPageSetting('dIgnoreSpiresUntil')
+}
+
+function exitSpireCell() {
+	isActiveSpireAT() && game.global.lastClearedCell >= getPageSetting('ExitSpireCell') - 1 && endSpire()
+}
+
+function dailyexitSpireCell() {
+	disActiveSpireAT() && game.global.lastClearedCell >= getPageSetting('dExitSpireCell') - 1 && endSpire()
+}
 
 function findLastBionicWithItems(bionicPool) {
 
@@ -60,21 +126,6 @@ function autoGoldenUpgradesAT(setting) {
 	}
 }
 
-function relaxMapReqs(mapModifiers) {
-	for (var j = 0; j < mapModifiers.length; j++) {
-		document.getElementById('sizeAdvMapsRange').value = 9;
-		document.getElementById('advSpecialSelect').value = mapModifiers[j];
-		for (var i = 9; i >= 0; i--) {
-			document.getElementById('difficultyAdvMapsRange').value = i;
-			if (updateMapCost(true) <= game.resources.fragments.owned) return true;
-		}
-		for (i = 9; i >= 0; i--) {
-			document.getElementById('sizeAdvMapsRange').value = i;
-			if (updateMapCost(true) <= game.resources.fragments.owned) return true;
-		}
-	}
-	return false;
-}
 function trimpcide() {
 	if (game.portal.Anticipation.level > 0) {
 		var antistacklimit = (game.talents.patience.purchased) ? 45 : 30;
@@ -523,10 +574,13 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - game.global.world + 6 : minLevel;
 	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
 	var biome = !biome ? (game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain") : biome;
-	var floorCrit = !floorCrit ? false : floorCrit;
 	var difficulty = 0.75;
-	var runningQuest = game.global.challengeActive == 'Quest' && questcheck() == 8;
-	var ourHealth = RcalcOurHealth(runningQuest, 'map') * 2;
+	var runningQuest = game.global.challengeActive === 'Quest' && questcheck() == 8;
+	var runningUnlucky = game.global.challengeActive === 'Unlucky'
+	var ourHealth = calcOurHealth(runningQuest, 'map');
+	var dmgType = runningUnlucky ? 'avg' : 'min'
+	var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
+	var dailyCrit = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
@@ -534,11 +588,12 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 			continue;
 
 		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot');
-		var ourDmg = RcalcOurDmg('min', equalityAmt, 'map', 'force', false, false, y);
+		var ourDmg = calcOurDmg(dmgType, equalityAmt, false, 'map', 'maybe', y, 'force');
 		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Turtlimp', 'map') * difficulty;
-		var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, 'map') * 1.5 * difficulty;
+		var enemyDmg = RcalcBadGuyDmg(null, calcEnemyBaseAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, 'map') * 1.5 * difficulty;
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
+		enemyDmg *= dailyEmpowerToggle && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 
 		if (enemyHealth <= ourDmg && enemyDmg <= ourHealth) {
 			return mapLevel;
@@ -547,6 +602,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 			return minLevel;
 		}
 	}
+	return 0;
 }
 
 function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType) {
@@ -578,25 +634,23 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	//Enemy stats
 	if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
 	var enemyHealth = RcalcEnemyHealthMod(zone, currentCell, enemyName, mapType, checkMutations) * difficulty;
-	var enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(zone, currentCell, enemyName, mapType, false), 0, mapType) * difficulty * 1.5;
+	var enemyDmg = RcalcBadGuyDmg(null, calcEnemyBaseAttack(zone, currentCell, enemyName, mapType, false), 0, mapType) * difficulty * 1.5;
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 	enemyDmg *= dailyEmpowerToggle && mapType === 'map' && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 
 	enemyDmg *= runningDuel ? 10 : 1;
 	//Our stats
-	var ourHealth = RcalcOurHealth(runningQuest, mapType);
-	var ourDmg = RcalcOurDmg('avg', 0, mapType, titimp, false, false, bionicTalent);
+	var dmgType = runningUnlucky ? 'max' : 'avg'
+	var ourHealth = calcOurHealth(runningQuest, mapType);
+	var ourDmg = calcOurDmg(dmgType, 0, false, mapType, 'maybe', bionicTalent, titimp);
 
-
-	if (runningUnlucky) ourDmg = Number(RcalcOurDmg('min', 0, mapType, titimp, true, false, bionicTalent))
+	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, mapType, 'never', bionicTalent, titimp)) : 2;
 
 	//Figuring out gamma to proc value
 	var gammaToTrigger = gammaBurstPct === 1 ? 0 : autoBattle.oneTimers.Burstier.owned ? 4 : 5
 
-	if (farmType === 'oneShot' && mapping) ourDmg *= 2;
-	if (mapping && game.talents.mapHealth.purchased) ourHealth *= 2;
 	if (checkMutations) {
-		enemyDmg = RcalcBadGuyDmg(null, RgetEnemyAvgAttack(game.global.world, currentCell, enemyName, 'world', true), 0, 'world', checkMutations) * 1.5;
+		enemyDmg = RcalcBadGuyDmg(null, calcEnemyBaseAttack(game.global.world, currentCell, enemyName, 'world', true), 0, 'world', checkMutations) * 1.5;
 		enemyHealth = RcalcEnemyHealthMod(game.global.world, currentCell, enemyName, 'world', checkMutations);
 	}
 
@@ -604,13 +658,14 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 
 	var ourDmgEquality = 0;
 	var enemyDmgEquality = 0;
+	var unluckyDmgEquality = 0;
 	if (enemyHealth !== 0) {
 		for (var i = 0; i <= maxEquality; i++) {
 			enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i)
 			ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
 			if (runningUnlucky) {
-				if (Number(ourDmgEquality).toString()[0] % 2 == 1 && i !== maxEquality) continue;
-				ourDmgEquality *= 399;
+				unluckyDmgEquality = unluckyDmg * Math.pow(game.portal.Equality.getModifier(1), i);
+				if (unluckyDmgEquality.toString()[0] % 2 == 1 && i !== maxEquality) continue;
 			}
 			if (farmType === 'gamma' && ourHealth >= enemyDmgEquality) {
 				return i;
@@ -630,6 +685,7 @@ function equalityManagement() {
 
 	if (game.global.preMapsActive || game.global.gridArray.length <= 0)
 		return;
+
 	if (game.portal.Equality.radLevel === 0)
 		return;
 
@@ -653,12 +709,14 @@ function equalityManagement() {
 	}
 
 	//Daily modifiers active
-	var dailyEmpower = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.empower !== 'undefined' //Empower
-	var dailyReflect = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.mirrored !== 'undefined'; //Reflect
-	var dailyCrit = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
-	var dailyExplosive = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
-	var dailyWeakness = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
-	var dailyBloodthirst = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
+	var isDaily = game.global.challengeActive === 'Daily'
+	var dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined' //Empower
+	var dailyReflect = isDaily && typeof game.global.dailyChallenge.mirrored !== 'undefined'; //Reflect
+	var dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
+	var dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
+	var dailyWeakness = isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
+	var dailyBloodthirst = isDaily && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
+	var dailyRampage = isDaily && typeof game.global.dailyChallenge.rampage !== 'undefined'; //Rampage (trimp attack buff)
 
 	//Challenge conditions
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
@@ -683,16 +741,20 @@ function equalityManagement() {
 
 	//Initialising Stat variables
 	//Our stats
+	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var ourHealth = remainingHealth();
-	var ourHealthMax = RcalcOurHealth(runningQuest, type)
-	if (game.global.mapsActive && game.talents.mapHealth.purchased) ourHealthMax *= 2;
-	var ourDmg = RcalcOurDmg('min', 0, type, true) * bionicTalent;
-	if (runningUnlucky) ourDmg = RcalcOurDmg('min', 0, type, true, true, false, bionicTalent);
+	var ourHealthMax = calcOurHealth(runningQuest, type)
+	var ourDmg = calcOurDmg(dmgType, 0, false, type, 'maybe', bionicTalent, true);
+
+	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, type, 'never', bionicTalent, true)) : 2;
+
 	if (noFrenzy) {
 		if (getPageSetting('Rcalcfrenzy') && game.portal.Frenzy.frenzyStarted === -1) ourDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel)
 		if (!getPageSetting('Rcalcfrenzy') && game.portal.Frenzy.frenzyStarted !== -1) ourDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel)
 	}
+	ourDmg *= dailyRampage ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 1;
 	var ourDmgEquality = 0;
+	var unluckyDmgEquality = 0;
 
 	//Enemy stats
 	var enemyName = game.global[mapGrid][currentCell].name;
@@ -727,7 +789,7 @@ function equalityManagement() {
 	if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
 
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
-	if (runningDuel && fastEnemy && (RcalcOurHealth(false, type) * 10 * (mapping ? 2 : 1) * 0.9) > remainingHealth(true) && gammaToTrigger === gammaMaxStacks && game.global.armyAttackCount === 0) {
+	if (runningDuel && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > remainingHealth(true) && gammaToTrigger === gammaMaxStacks && game.global.armyAttackCount === 0) {
 		game.portal.Equality.disabledStackCount = 0;
 		if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
 		updateEqualityScaling();
@@ -759,13 +821,14 @@ function equalityManagement() {
 			if (runningMayhem) enemyDmgEquality += game.challenges.Mayhem.poison;
 
 			if (runningUnlucky) {
-				if (Number(ourDmgEquality).toString()[0] % 2 == 1 && i !== maxEquality) continue;
-				ourDmgEquality *= 399;
+				unluckyDmgEquality = unluckyDmg * Math.pow(game.portal.Equality.getModifier(1), i);
+				if (unluckyDmgEquality.toString()[0] % 2 == 1 && i !== maxEquality) continue;
 			}
 
-			if (voidPBSwap && !fastEnemy && RcalcOurDmg('max', i, 'void', true, false, true) * 8 > enemyHealth && (typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' || game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) && (getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
+
+			if (voidPBSwap && !fastEnemy && calcOurDmg('max', i, false, 'void', 'force', 0, true) > enemyHealth && (typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' || game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) && (getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
 				game.portal.Equality.disabledStackCount = maxEquality;
-				while (RcalcOurDmg('max', i, 'void', true, false, true) * 8 > getCurrentEnemy().health && i < maxEquality) {
+				while (calcOurDmg('max', i, false, 'void', 'force', 0, true) > getCurrentEnemy().health && i < maxEquality) {
 					i++;
 				}
 				continue;
@@ -828,18 +891,14 @@ function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHea
 function reflectShouldBuyEquips() {
 	if (game.global.challengeActive === 'Daily') {
 		if (typeof (game.global.dailyChallenge.mirrored) !== 'undefined') {
-			var ourHealth = RcalcOurHealth(false, 'world');
-			var ourDamage = RcalcOurDmg('max', (game.portal.Equality.radLevel - 15), 'world', false, false, true)
+			var ourHealth = calcOurHealth(false, 'world');
+			var ourDamage = calcOurDmg('max', (game.portal.Equality.radLevel - 15), false, 'world', 'force', 0, false)
 			var gammaToTrigger = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
 			var reflectPct = dailyModifiers.mirrored.getMult(game.global.dailyChallenge.mirrored.strength);
 			var critChance = (getPlayerCritChance() - Math.floor(getPlayerCritChance())) * 100
 			if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
 				ourDamage /= game.portal.Tenacity.getMult();
 				ourDamage *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
-			}
-			if (typeof game.global.dailyChallenge.empower !== 'undefined' || critChance > 10) {
-				ourDamage /= RgetCritMulti(true);
-				ourDamage *= RgetCritMulti(false, false, true);
 			}
 			if (ourDamage * (1 + (reflectPct * gammaToTrigger)) > ourHealth) {
 				return true

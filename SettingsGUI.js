@@ -390,7 +390,7 @@ function initializeAllSettings() {
 
 	//Jobs
 	//Helium
-	createSetting('BuyJobsNew', ['Don\'t Buy Jobs', 'Auto Worker Ratios', 'Manual Ratios'], 'Manual Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, 'Jobs');
+	createSetting('BuyJobsNew', ['Don\'t Buy Jobs', 'Auto Ratios', 'Manual Ratios'], 'Manual Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to', 'multitoggle', 1, null, 'Jobs');
 	createSetting('hJobSettingsArray', 'Job Settings', 'Click to adjust settings. ', 'mazDefaultArray', {
 		Farmer: { enabled: true, ratio: 1 },
 		Lumberjack: { enabled: true, ratio: 1 },
@@ -1050,11 +1050,9 @@ function modifyParentNodeUniverseSwap() {
 	//ATGA
 	//Helium Settings
 	modifyParentNode_Initial("ATGA2timer", radonoff);
-	modifyParentNode_Initial("ATGA2timerzt", radonoff);
-	modifyParentNode_Initial("dsATGA2timer", radonoff);
-	modifyParentNode_Initial("dhATGA2timer", radonoff);
-	modifyParentNode_Initial("dsATGA2timer", radonoff);
-	modifyParentNode_Initial("dsATGA2timer", radonoff);
+	//modifyParentNode_Initial("ATGA2timerzt", radonoff);
+	//modifyParentNode_Initial("dsATGA2timer", radonoff);
+	//modifyParentNode_Initial("dhATGA2timer", radonoff);
 	//Radon Settings
 	//None!
 

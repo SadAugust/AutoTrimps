@@ -70,7 +70,7 @@ function autoMap() {
 	}
 
 	//Failsafes
-	if (!game.global.mapsUnlocked || RcalcOurDmg("avg", 0, 'world') <= 0 || questcheck() === 8 || questcheck() === 9) {
+	if (!game.global.mapsUnlocked || calcOurDmg("avg", 0, false, 'world') <= 0 || questcheck() === 8 || questcheck() === 9) {
 		if (game.global.preMapsActive)
 			mapsClicked();
 		return;

@@ -191,8 +191,8 @@ function mainLoop() {
 	//RCore
 	//AutoMaps
 	if (oneSecondInterval) {
-		HDRatio = game.global.universe === 1 ? calcHDRatio(game.global.world, 'world') : RcalcHDratio();
-		voidHDRatio = game.global.universe === 1 ? calcVoidHDratio() : rCalcVoidHDratio();
+		HDRatio = calcHDRatio(game.global.world, 'world');
+		voidHDRatio = calcHDRatio(game.global.world, 'void');
 		autoLevel = autoMapLevel();
 	}
 

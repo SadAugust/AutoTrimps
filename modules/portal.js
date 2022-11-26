@@ -658,8 +658,8 @@ function resetmapvars() {
 	MODULES.mapFunctions.rVoidHDIndex = Infinity;
 	MODULES.mapFunctions.rPortalZone = Infinity;
 	MODULES.mapFunctions.hPortalZone = Infinity;
-	HDRatio = game.global.universe === 1 ? calcHDRatio(game.global.world, 'world') : RcalcHDratio();
-	voidHDRatio = game.global.universe === 1 ? calcHDRatio(game.global.world, 'void') : rCalcVoidHDratio();
+	HDRatio = calcHDRatio(game.global.world, 'world');
+	voidHDRatio = calcHDRatio(game.global.world, 'void');
 
 	if (document.getElementById('hiderStatus').style.display == 'None' && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) {
 		turnOn("hiderStatus")

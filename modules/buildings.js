@@ -4,10 +4,6 @@ MODULES["buildings"].storageLowlvlCutoff1 = 0.7;
 MODULES["buildings"].storageLowlvlCutoff2 = 0.5;
 MODULES["buildings"].smithiesBoughtThisZone = 0;
 
-function needGymystic() {
-	return game.upgrades['Gymystic'].allowed - game.upgrades['Gymystic'].done > 0;
-}
-
 function safeBuyBuilding(building, amt) {
 	if (!building || !amt)
 		return false;
