@@ -219,10 +219,8 @@ function autoMap() {
 				repeatClicked();
 			}
 			//Disabling repeat if repeat conditions have been met
-			if (game.global.repeatMap && rCurrentMap !== 'rPrestige' && rCurrentMap !== 'BionicRaiding') {
-				if (rCurrentMap !== '') {
-					if (!rMapSettings.repeat) repeatClicked();
-				}
+			if (game.global.repeatMap && rCurrentMap !== '') {
+				if (!rMapSettings.repeat) repeatClicked();
 			}
 		} else {
 			if (game.global.repeatMap) {

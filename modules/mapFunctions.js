@@ -1220,11 +1220,13 @@ function PrestigeRaiding() {
 		}
 
 		var status = 'Prestige Raiding: ' + Rgetequips(raidzones, false) + ' items remaining';
+		var repeat = false;
 
 		farmingDetails.shouldRun = rShouldPrestigeRaid;
 		farmingDetails.mapName = mapName;
 		farmingDetails.recycle = rPRRecycle;
 		farmingDetails.fragSetting = rPRFragFarm;
+		farmingDetails.repeat = !repeat
 		farmingDetails.status = status;
 	}
 
@@ -1439,9 +1441,11 @@ function BionicRaiding() {
 		}
 
 		var status = 'Raiding to BW' + raidzonesBW + ': ' + Rgetequips(raidzonesBW, false) + ' items remaining';
+		var repeat = game.options.menu.climbBw.enabled && Rgetequips(raidzonesBW, false) <= 2 ? true : false;
 
 		farmingDetails.shouldRun = rShouldBionicRaid;
 		farmingDetails.mapName = mapName;
+		farmingDetails.repeat = !repeat
 		farmingDetails.raidingZone = raidzonesBW;
 		farmingDetails.status = status;
 	}
