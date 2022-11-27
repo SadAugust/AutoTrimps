@@ -186,12 +186,6 @@ function getTrimpHealth(realHealth, mapType) {
 	//Mutator
 	health *= game.global.universe === 2 && u2Mutations.tree.Health.purchased ? 1.5 : 1;
 
-
-
-
-
-
-
 	//Pressure (Dailies)
 	health *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
 
@@ -831,26 +825,10 @@ function calcEnemyAttack(type, zone, cell = 99, name = "Snimp", minOrMax) {
 	//Void Map Difficulty (implicit 100% difficulty on regular maps)
 	if (type == "void") attack *= (zone >= 60) ? 4.5 : 2.5;
 
-	//Average corrupt impact on World times two - this is to compensate a bit for Corrupted buffs. Improbabilities count as 5.
+
 	if (type == "world" && corrupt && !game.global.spireActive) {
-		//Corruption during Domination
-		if (game.global.challengeActive == "Domination") attack *= calcCorruptionScale(zone, 3);
-
-		//Calculates the impact of the corruption on the average attack on that map. Improbabilities count as 5.
-		else {
-			//It uses the average times two for damage because otherwise trimps would be full pop half of the time, but dead in the other half
-			var corruptionAmount = 2 * Math.min(52, 7 + ~~((zone - mutations.Corruption.start()) / 3)); //Integer division
-			var corruptionWeight = (104 - corruptionAmount) + corruptionAmount * calcCorruptionScale(zone, 3);
-			attack *= corruptionWeight / 104;
-		}
-	}
-
-	//Healthy
-	if (type == "world" && healthy && !game.global.spireActive) {
-		//Calculates the impact of the Healthy on the average attack on that map.
-		var healthyAmount = 2 * Math.min(50, 2 + ~~((zone - 300) / 15)); //Integer division
-		var healthyWeight = (100 - healthyAmount) + healthyAmount * calcCorruptionScale(zone, 5) / calcCorruptionScale(zone, 3);
-		attack *= healthyWeight / 100;
+		if (healthy) attack *= calcCorruptionScale(zone, 5);
+		else if (corrupt) attack *= calcCorruptionScale(zone, 3);
 	}
 
 	//Ice - Experimental
@@ -1062,25 +1040,9 @@ function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp") {
 	//Void Map Difficulty (implicit 100% difficulty on regular maps)
 	if (type == "void") health *= (game.global.universe === 2 || zone >= 60) ? 4.5 : 2.5;
 
-	//Average corrupt impact on World
 	if (type == "world" && corrupt && !game.global.spireActive) {
-		//Corruption during Domination
-		if (game.global.challengeActive == "Domination") health *= calcCorruptionScale(zone, 10);
-
-		//Calculates the impact of the corruption on the average health on that map times two. Improbabilities count as 5.
-		else {
-			var corruptionAmount = 2 * Math.min(52, 7 + ~~((zone - mutations.Corruption.start()) / 3)); //Integer division
-			var corruptionWeight = (104 - corruptionAmount) + corruptionAmount * calcCorruptionScale(zone, 10);
-			health *= corruptionWeight / 104;
-		}
-	}
-
-	//Healthy
-	if (type == "world" && healthy && !game.global.spireActive) {
-		//Calculates the impact of the Healthy on the average attack on that map.
-		var healthyAmount = 2 * Math.min(50, 2 + ~~((zone - 300) / 15)); //Integer division
-		var healthyWeight = (100 - healthyAmount) + healthyAmount * calcCorruptionScale(zone, 14) / calcCorruptionScale(zone, 10);
-		health *= healthyWeight / 100;
+		if (healthy) health *= calcCorruptionScale(zone, 14);
+		else if (corrupt) health *= calcCorruptionScale(zone, 10);
 	}
 
 	return health;
