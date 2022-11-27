@@ -408,6 +408,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	if (!zoneGo) zoneGo = (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 	if (!resourceMaxPercent) resourceMaxPercent = zoneGo ? 1 : getPageSetting(prefix + 'equippercent') < 0 ? 1 : getPageSetting(prefix + 'equippercent') / 100;
 
+
 	var metalShred = !showAllEquips && game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 
 	var mostEfficient = [
@@ -427,6 +428,12 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 
 	var highestPrestige = 0;
 	var metalTotal = 0;
+
+	var workerRatio = '0,0,1';
+	if ((MODULES.mapFunctions.workerRatio !== null && rShouldBoneShrine) || rMapSettings.jobRatio !== undefined) {
+		if (MODULES.mapFunctions.workerRatio !== null) workerRatio = MODULES.mapFunctions.workerRatio;
+		else workerRatio = rMapSettings.jobRatio;
+	}
 
 	if (metalShred) {
 		metalTotal = metalShred && (rCurrentMap === 'rMapFarm' || rCurrentMap === 'rMapBonus') ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 16, true, workerRatio), false, true, rMapSettings.mapLevel) : game.resources.metal.owned;
