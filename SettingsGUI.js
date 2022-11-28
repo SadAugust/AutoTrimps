@@ -465,13 +465,8 @@ function initializeAllSettings() {
 	//Helium
 	createSetting('AutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use window, it will not work. ', 'multitoggle', 1, null, "Maps");
 	createSetting('automapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice. ', 'boolean', true, null, 'Maps');
-	createSetting('DynamicSiphonology', 'Dynamic Siphonology', 'Recommended Always ON. Use the right level of siphonology based on your damage output. IE: Only uses  siphonology if you are weak. With this OFF it means it ALWAYS uses the lowest siphonology map you can create. Siphonology is a perk you get at level 115-125ish, and means you receive map bonus stacks for running maps below your current zone - Up to 3 zones below (1 per perk level).', 'boolean', true, null, 'Maps');
-	createSetting('PreferMetal', 'Prefer Metal Maps', 'Always prefer metal maps, intended for manual use, such as pre-spire farming. Remember to turn it back off after you\'re done farming!', 'boolean', false, null, 'Maps');
-	createSetting('mapselection', 'Map Selection', 'Select which you prefer to use. Recommend Plentiful (Gardens) if you have unlocked it. ', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Gardens"], 'Maps');
-	createSetting('LowerFarmingZone', 'Lower Farming Zone', 'Lowers the zone used during Farming mode. Uses the dynamic siphonology code, to Find the minimum map level you can successfully one-shot, and uses this level for any maps done after the first 10 map stacks. The difference being it goes LOWER than what Siphonology gives you map-bonus for, but after 10 stacks you dont need bonus, you just want to do maps that you can one-shot. Goes as low as 10 below current zone if your damage is that bad, but this is extreme and indicates you should probably portal.', 'boolean', true, null, 'Maps');
 	createSetting('FarmWhenNomStacks7', 'Farm on >7 NOMstacks', 'Optional. If Improbability already has 5 NOMstacks, stack 30 Anticipation. If the Improbability has >7 NOMstacks on it, get +200% dmg from MapBonus. If we still cant kill it, enter Farming mode at 30 stacks, Even with DisableFarming On! (exits when we get under 10x). Farms if we hit 100 stacks in the world. If we ever hit (100) nomstacks in a map (likely a voidmap), farm, (exit the voidmap) and (prevent void from running, until situation is clear). Restarts any voidmaps if we hit 100 stacks. ', 'boolean', false, null, 'Maps');
 	createSetting('TrimpleZ', 'Trimple Z', 'I don\'t really think doing this automatically is a good idea. You might want to farm for a bit before this, but I\'m not sure if it\'s meaningful at all to make a \'farm X minutes before trimple\' parameter to go along with it. Set it to the zone you want and it will run Trimple of Doom for Ancient Treasure AFTER farming and getting map stacks. If it is a negative number, this will be disabled after a successful run so you can set it differently next time.', 'valueNegative', 0, null, 'Maps');
-	createSetting('AdvMapSpecialModifier', 'Map Special Modifier', '<b>BELOW 300 ONLY</b><br> Attempt to select the BEST map special modifier. When starting a map for <b>Prestige</b> it will use <i>Prestigious</i>. When starting a map for <b>Farming</b> (for equipment) it will use your best metal cache. In any other case (such as farming for map stacks) it will use <i>Fast Attacks</i>. In all cases it uses the best modifier that can be afforded.', 'boolean', true, null, 'Maps');
 	createSetting('scryvoidmaps', 'VM Scryer', 'Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Maps');
 	createSetting('buywepsvoid', 'VM Buy Weps', 'Buys gear in Void maps regardless of your H:D ratio. Useful if you want to overkill as much as possible. ', 'boolean', false, null, 'Maps');
 
@@ -524,7 +519,6 @@ function initializeAllSettings() {
 	//General
 	createSetting('RAutoMaps', ["Auto Maps", "Auto Maps", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use window, it will not work.', 'multitoggle', 1, null, "Maps");
 	createSetting('Rautomapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', true, null, 'Maps');
-	createSetting('Rmapselection', 'Biome', 'Select which biome you\'d prefer to use.', 'dropdown', 'Mountain', radonBiome, 'Maps');
 	createSetting('rMapSpecial', 'Map Special', 'Select which Special to use. May bug out if you cannot afford selected. You\'ll be able to find a list of what each of them represents by mousing over the \'Special Modifier\' text in the games Maps window. ', 'dropdown', '0', radonSpecial, 'Maps');
 
 	createSetting('rUniqueMapSettingsArray', 'Unqiue Map Settings', 'Click to adjust settings.', 'mazDefaultArray', {
@@ -2223,13 +2217,8 @@ function updateCustomButtons() {
 	//Maps
 	!radonon ? turnOn('AutoMaps') : turnOff('AutoMaps');
 	!radonon ? turnOn('automapsportal') : turnOff('automapsportal');
-	!radonon ? turnOn('mapselection') : turnOff('mapselection');
-	!radonon ? turnOn('DynamicSiphonology') : turnOff('DynamicSiphonology');
-	!radonon ? turnOn('PreferMetal') : turnOff('PreferMetal');
-	!radonon ? turnOn('LowerFarmingZone') : turnOff('LowerFarmingZone');
 	!radonon ? turnOn('FarmWhenNomStacks7') : turnOff('FarmWhenNomStacks7');
 	!radonon ? turnOn('TrimpleZ') : turnOff('TrimpleZ');
-	!radonon ? turnOn('AdvMapSpecialModifier') : turnOff('AdvMapSpecialModifier');
 	!radonon ? turnOn('scryvoidmaps') : turnOff('scryvoidmaps');
 	!radonon ? turnOn('buywepsvoid') : turnOff('buywepsvoid');
 
@@ -2283,9 +2272,6 @@ function updateCustomButtons() {
 	//RMaps
 	radonon ? turnOn('RAutoMaps') : turnOff('RAutoMaps');
 	radonon ? turnOn('Rautomapsportal') : turnOff('Rautomapsportal');
-	//radonon ? turnOn('Rmapselection') : 
-	turnOff('Rmapselection');
-	//radonon ? turnOn('rMapSpecial') : 
 	turnOff('rMapSpecial');
 	turnOff('rUniqueMapSettingsArray');
 	radonon ? turnOn('rUniqueMapPopup') : turnOff('rUniqueMapPopup');
@@ -2697,8 +2683,6 @@ function updateCustomButtons() {
 	document.getElementById('RadonC3Challenge').value = autoTrimpSettings.RadonC3Challenge.selected;
 	document.getElementById('dHeliumHourChallenge').value = autoTrimpSettings.dHeliumHourChallenge.selected;
 
-	document.getElementById('mapselection').value = autoTrimpSettings.mapselection.selected;
-	document.getElementById('Rmapselection').value = autoTrimpSettings.Rmapselection.selected;
 	document.getElementById('rMapSpecial').value = autoTrimpSettings.rMapSpecial.selected;
 	document.getElementById('Prestige').value = autoTrimpSettings.Prestige.selected;
 	document.getElementById('rPrestige').value = autoTrimpSettings.rPrestige.selected;
@@ -2741,7 +2725,6 @@ function updateCustomButtons() {
 	if (game.global.universe == 1 && getPageSetting('DisableFarm') <= 0)
 		shouldFarm = false;
 
-	MODULES["maps"] && (MODULES["maps"].preferGardens = !getPageSetting('PreferMetal'));
 	if (document.getElementById('Prestige').selectedIndex > 11 && !game.global.slowDone) {
 		document.getElementById('Prestige').selectedIndex = 11;
 		autoTrimpSettings.Prestige.selected = "Bestplate";
@@ -2798,8 +2781,15 @@ function checkPortalSettings() {
 }
 
 function settingUniverse(setting) {
-	if (setting === 'buyBuildings')
-		return game.global.universe === 1 ? 'BuyBuildingsNew' : 'RBuyBuildingsNew'
+	if (setting === 'buyBuildings') {
+		return game.global.universe === 2 ? 'RBuyBuildingsNew' : 'BuyBuildingsNew'
+	}
+	if (setting === 'equipOn') {
+		return game.global.universe === 2 ? 'Requipon' : 'Hequipon'
+	}
+	if (setting === 'autoJobs') {
+		return game.global.universe === 2 ? 'RBuyJobsNew' : 'BuyJobsNew'
+	}
 }
 
 //AutoJobs
@@ -2814,7 +2804,7 @@ document.getElementById('jobsTitleSpan').parentElement.style.width = '10%'
 var autoJobSetting = game.global.universe === 1 ? 'BuyJobsNew' : 'RBuyJobsNew'
 var autoJobContainer = document.createElement("DIV");
 autoJobContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
-autoJobContainer.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[autoJobSetting].value == 2 ? 3 : autoTrimpSettings[autoJobSetting].value));
+autoJobContainer.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[settingUniverse('autoJobs')].value == 2 ? 3 : autoTrimpSettings[autoJobSetting].value));
 autoJobContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, \"Toggle between the AutoJob settings.\")');
 autoJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
@@ -2822,7 +2812,7 @@ autoJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
 var autoJobText = document.createElement("DIV");
 autoJobText.innerHTML = autoTrimpSettings[autoJobSetting].name[autoTrimpSettings[autoJobSetting].value];
 autoJobText.setAttribute("id", "autoJobLabel");
-autoJobText.setAttribute("onClick", "settingChanged(autoJobSetting)");
+autoJobText.setAttribute("onClick", "settingChanged(settingUniverse('autoJobs))");
 
 //Creating cogwheel & linking onclick
 var autoJobSettings = document.createElement("DIV");
@@ -2864,13 +2854,11 @@ autoStructureContainer.appendChild(autoStructureSettings);
 autoStructureSettings.appendChild(autoStructureSettingsButton);
 autoStructureColumn.replaceChild(autoStructureContainer, document.getElementById('buildingsTitleDiv').children[0].children[1]);
 
-
 //AutoEquip Button
-var autoEquipSetting = game.global.universe === 1 ? 'Hequipon' : 'Requipon'
 //Creating button
 var autoEquipContainer = document.createElement("DIV");
 autoEquipContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
-autoEquipContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[autoEquipSetting].enabled);
+autoEquipContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[settingUniverse('equipOn')].enabled);
 autoEquipContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoEquip\", \"customText\", event, \"Toggle between the AutoEquip settings.\")');
 autoEquipContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
@@ -2878,7 +2866,7 @@ autoEquipContainer.setAttribute("onmouseout", 'tooltip("hide")');
 var autoEquipText = document.createElement("DIV");
 autoEquipText.innerHTML = 'AT AutoEquip';
 autoEquipText.setAttribute("id", "autoEquipLabel");
-autoEquipText.setAttribute("onClick", "settingChanged(autoEquipSetting)");
+autoEquipText.setAttribute("onClick", "settingChanged(settingUniverse('equipOn'))");
 
 //Setting up positioning
 var autoEquipColumn = document.getElementById("equipmentTitleDiv").children[0];
