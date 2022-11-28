@@ -32,6 +32,7 @@ function safeBuyJob(jobTitle, amount) {
 		return false;
 	}
 	var freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
+	var fireState = game.global.firing;
 	var result;
 	if (amount < 0) {
 		amount = Math.abs(amount);
@@ -51,6 +52,8 @@ function safeBuyJob(jobTitle, amount) {
 	if (result) {
 		debug((game.global.firing ? 'Firing ' : 'Hiring ') + prettify(amount) + ' ' + jobTitle + (amount > 1 ? 's' : ''), "jobs", "*users");
 		buyJob(jobTitle, true, true);
+		if (game.global.firing && !fireState) fireModeLocal();
+		if (!game.global.firing && fireState) fireModeLocal();
 	}
 	return true;
 }
@@ -58,7 +61,10 @@ function safeBuyJob(jobTitle, amount) {
 function workerRatios(workerRatio) {
 	var workerRatio = !workerRatio ? null : workerRatio
 	if (workerRatio == null) return;
-	if (getPageSetting('RBuyJobsNew') == 2) {
+
+	const universeSetting = game.global.universe === 2 ? getPageSetting('RBuyJobsNew') : getPageSetting('BuyJobsNew');
+
+	if (universeSetting == 2) {
 		var jobSettings = game.global.universe === 1 ? autoTrimpSettings.hJobSettingsArray.value : autoTrimpSettings.rJobSettingsArray.value;
 		if (jobSettings[workerRatio].enabled) {
 			if (game.global.challengeActive === 'Transmute' && workerRatio === 'Farmer' && jobSettings.Miner.enabled) return jobSettings[workerRatio].ratio + jobSettings.Miner.ratio;
@@ -118,6 +124,10 @@ function fireModeLocal() {
 function buyJobs() {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
+
+	const universeSetting = game.global.universe === 2 ? autoTrimpSettings.RBuyJobsNew : autoTrimpSettings.BuyJobsNew;
+	//Disabling autoJobs if AT AutoJobs is disabled.
+	if (universeSetting.value === 0) return;
 
 	var jobSettings = game.global.universe === 1 ? autoTrimpSettings.hJobSettingsArray.value : autoTrimpSettings.rJobSettingsArray.value;
 
@@ -269,7 +279,7 @@ function buyJobs() {
 					continue;
 				}
 				else
-					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(getPageSetting('RBuyJobsNew') == 2 ? worker : 'R' + worker + 'Ratio'))
+					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(universeSetting.value == 2 ? worker : 'R' + worker + 'Ratio'))
 			}
 		}
 	}

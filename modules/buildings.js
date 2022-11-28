@@ -55,7 +55,7 @@ function buyStorage(hypoZone) {
 			(game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * customVars.storageLowlvlCutoff2) ||
 			(curRes + exoticValue > maxRes * customVars.storageMainCutoff)) {
 			if (canAffordBuilding(resource, null, null, null, null, null) && game.triggers[resource].done) {
-				safeBuyBuilding(resource);
+				safeBuyBuilding(resource, 1);
 			}
 		}
 	}
@@ -269,6 +269,9 @@ function mostEfficientHousing() {
 function buyBuildings() {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
+
+	//Disabling autoBuildings if AT AutoStructure is disabled.
+	if (game.global.universe === 2 ? !getPageSetting('RBuyBuildingsNew') : !getPageSetting('BuyBuildingsNew')) return;
 
 	const buildingSettings = game.global.universe === 1 ? autoTrimpSettings.hBuildingSettingsArray.value : autoTrimpSettings.rBuildingSettingsArray.value;
 
