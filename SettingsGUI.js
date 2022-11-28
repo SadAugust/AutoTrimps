@@ -2812,7 +2812,7 @@ autoJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
 var autoJobText = document.createElement("DIV");
 autoJobText.innerHTML = autoTrimpSettings[autoJobSetting].name[autoTrimpSettings[autoJobSetting].value];
 autoJobText.setAttribute("id", "autoJobLabel");
-autoJobText.setAttribute("onClick", "settingChanged(settingUniverse('autoJobs))");
+autoJobText.setAttribute("onClick", "settingChanged(settingUniverse('autoJobs'))");
 
 //Creating cogwheel & linking onclick
 var autoJobSettings = document.createElement("DIV");
