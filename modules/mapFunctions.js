@@ -2499,8 +2499,8 @@ function HDFarm() {
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHDFMapLevel || getCurrentMapObject().bonus !== rHDFSpecial);
-		var status = 'HD Farm to:&nbsp;' + equipfarmdynamicHD(rHDFIndex).toFixed(2) + '<br>\
-		Current HD:&nbsp;' + HDRatio.toFixed(2) + '<br>\
+		var status = 'HD&nbsp;Farm&nbsp;to:&nbsp;' + equipfarmdynamicHD(rHDFIndex).toFixed(2) + '<br>\
+		Current&nbsp;HD:&nbsp;' + HDRatio.toFixed(2) + '<br>\
 		Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + rHDFmaxMaps;
 
 		farmingDetails.shouldRun = rShouldHDFarm;
