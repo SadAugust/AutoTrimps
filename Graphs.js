@@ -5,7 +5,7 @@ var allSaveData = [],
 null !== tmpGraphData && (console.log("Graphs: Found allSaveData (portal runs data). Yay!"), (allSaveData = tmpGraphData)), (MODULES.graphs = {}), (MODULES.graphs.useDarkAlways = !1);
 var head = document.getElementsByTagName("head")[0],
 	chartscript = document.createElement("script");
-(chartscript.type = "text/javascript"), (chartscript.src = "https://SadAugust.github.io/AutoTrimps_Local/highcharts.js"), head.appendChild(chartscript);
+(chartscript.type = "text/javascript"), (chartscript.src = "https://Zorn192.github.io/AutoTrimps/highcharts.js"), head.appendChild(chartscript);
 var newItem = document.createElement("TD");
 newItem.appendChild(document.createTextNode("Graphs")), newItem.setAttribute("class", "btn btn-default"), newItem.setAttribute("onclick", "autoToggleGraph(); drawGraph(undefined, undefined, true);");
 var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
@@ -40,6 +40,8 @@ var $u1Graph = document.getElementById("graphFooterLine1"),
 		"Fluffy XP",
 		"Fluffy XP PerHour",
 		"Amalgamators",
+		"Wonders",
+		"Empower"
 	],
 	$u1graphSel = document.createElement("select");
 for (var item in (($u1graphSel.id = "u1graphSelection"), $u1graphSel.setAttribute("style", ""), $u1graphSel.setAttribute("onchange", "drawGraph()"), u1graphList)) {
@@ -60,9 +62,15 @@ var $u2Graph = document.getElementById("graphFooterLine1"),
 		"Void Map History",
 		"Coordinations",
 		"OverkillCells",
+		"Smithies",
 		"Scruffy XP",
 		"Scruffy XP PerHour",
-		"Population",
+		"Worshippers",
+		"Bonfires",
+		"Embers",
+		"Cruffys",
+		"Empower",
+		"Population"
 	],
 	$u2graphSel = document.createElement("select");
 for (var item in (($u2graphSel.id = "u2graphSelection"), $u2graphSel.setAttribute("style", ""), $u2graphSel.setAttribute("onchange", "drawGraph()"), u2graphList)) {
@@ -225,12 +233,14 @@ function clearData(portal, clrall = false) {
 
 		allSaveData.splice(0, keepSaveDataIndex + 1);
 	}
+	showHideUnusedGraphs();
 }
 function deleteSpecific() {
 	var a = document.getElementById("deleteSpecificTextBox").value;
 	if ("" != a)
 		if (0 > parseInt(a)) clearData(Math.abs(a));
 		else for (var b = allSaveData.length - 1; 0 <= b; b--) allSaveData[b].totalPortals == a && allSaveData.splice(b, 1);
+	showHideUnusedGraphs();
 }
 function autoToggleGraph() {
 	game.options.displayed && toggleSettingsMenu();
@@ -283,7 +293,7 @@ function pushData() {
 		voids: game.global.totalVoidMaps,
 		heirlooms: { value: game.stats.totalHeirlooms.value, valueTotal: game.stats.totalHeirlooms.valueTotal },
 		nullifium: recycleAllExtraHeirlooms(true),
-		coord: game.upgrades.Coordination.done,
+		coord: game.upgrades.Coordination.allowed - game.upgrades.Coordination.done,
 		lastwarp: game.global.lastWarp,
 		essence: getTotalDarkEssenceCount(),
 		heliumOwned: game.resources.helium.owned,
@@ -297,11 +307,18 @@ function pushData() {
 		fluffy: game.global.fluffyExp,
 		scruffy: game.global.fluffyExp2,
 		nursery: game.buildings.Nursery.purchased,
+		smithies: game.buildings.Smithy.owned,
 		amals: game.jobs.Amalgamator.owned,
 		radonOwned: game.resources.radon.owned,
 		rnhr: RgetPercent.toFixed(4),
 		rnlife: Rlifetime.toFixed(4),
 		s3: game.global.lastRadonPortal,
+		worshippers: game.jobs.Worshipper.owned,
+		bonfires: game.challenges.Hypothermia.bonfires,
+		embers: game.challenges.Hypothermia.embers,
+		wonders: game.challenges.Experience.wonders,
+		empower: game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.empower !== "undefined" ? game.global.dailyChallenge.empower.stacks : 0,
+		cruffys: game.challenges.Nurture.level,
 		universe: game.global.universe,
 		population: game.resources.trimps.owned,
 		universeSelection: typeof (document.getElementById('universeSelection').options[document.getElementById('universeSelection').options.selectedIndex].value) === 'undefined'
@@ -316,8 +333,41 @@ function pushData() {
 	});
 	clearData(10);
 	safeSetItems("allSaveData", JSON.stringify(allSaveData));
+	showHideUnusedGraphs();
 }
 
+function showHideUnusedGraphs() {
+	// Hide challenge graphs that are not in the saved data
+	const graphedChallenges = [...new Set(allSaveData.map((data) => data = data.challenge))];
+	const perChallengeGraphs = {
+		Hypothermia: { graphs: ["Bonfires", "Embers"], universe: "u2" },
+		Nurture: { graphs: ["Cruffys"], universe: "u2" },
+		Experience: { graphs: ["Wonders"], universe: "u1" }
+	};
+	for (const [challenge, data] of Object.entries(perChallengeGraphs)) {
+		const graphs = data.graphs;
+		const style = graphedChallenges.includes(challenge) ? "" : "none";
+		graphs.forEach((graph) => { document.querySelector(`#${data.universe}graphSelection [value=${graph}]`).style.display = style; })
+	}
+	// Hide specific graphs that are constant (either not unlocked yet, or maxed)
+	const emptyGraphs = {
+		OverkillCells: { dataName: "overkill" },
+		Worshippers: { universe: "u2" },
+		"Fluffy XP": { dataName: "fluffy", universe: "u1" },
+		"Fluffy XP PerHour": { dataName: "fluffy", universe: "u1" },
+		Amalgamators: { dataName: "amals", universe: "u1" },
+		Empower: {},
+	}
+	for (const [graphName, data] of Object.entries(emptyGraphs)) {
+		const dataName = data.dataName ? data.dataName : graphName.toLowerCase();
+		const universes = data.universe ? [data.universe] : ["u1", "u2"]
+		for (universe of universes) {
+			const style = [...new Set(allSaveData.map((graphs) => graphs = graphs[dataName]))].length == 1 ? "none" : "";
+			document.querySelector(`#${universe}graphSelection [value="${graphName}"]`).style.display = style;
+		}
+
+	}
+}
 var graphAnal = [];
 function trackHourlyGraphAnalytics() {
 	graphAnal.push({
@@ -755,7 +805,7 @@ function setGraphData(graph) {
 			break;
 		case "Coordinations":
 			graphData = allPurposeGraph("coord", true, "number");
-			title = "Coordination History";
+			title = "Unpurchased Coordinations History";
 			xTitle = "Zone";
 			yTitle = "Coordination";
 			yType = "Linear";
@@ -887,6 +937,12 @@ function setGraphData(graph) {
 			yTitle = "Total Population";
 			yType = "Linear";
 			break;
+		default:
+			graphData = allPurposeGraph(graph.toLowerCase(), true, "number");
+			title = `${graph} History`;
+			xTitle = "Zone";
+			yTitle = graph;
+			yType = "Linear";
 	}
 
 	function allPurposeGraph(item, extraChecks, typeCheck, funcToRun, useAccumulator) {
