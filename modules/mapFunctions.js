@@ -1252,7 +1252,7 @@ function PrestigeRaiding() {
 	return farmingDetails;
 }
 
-//Prestige Raiding -- WORKING AS IS
+//Prestige Climb
 function PrestigeClimb() {
 	if (game.options.menu.mapLoot.enabled != 1) toggleSetting('mapLoot');
 
@@ -1325,7 +1325,7 @@ function PrestigeClimb() {
 
 	if (!needPrestige) return farmingDetails;
 
-	var status = 'Prestige Raiding: ' + prestigeToFarmFor + ' items remaining';
+	var status = 'Prestige Climb: ' + prestigeToFarmFor + ' items remaining';
 
 	var repeat = !prestigeArmorList.includes(targetPrestige) ? prestigeToFarmFor > 2 : prestigeToFarmFor > 1;
 	let special;
