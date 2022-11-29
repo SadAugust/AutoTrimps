@@ -133,38 +133,58 @@ function MAZLookalike(titleText, varPrefix, event) {
 	}
 
 	//Map tab - Special Maps!
-	if (event == "UniqueMaps") {
-		if (game.global.universe === 1) return;
+	if (event == "UniqueMaps" || event === "rUniqueMaps") {
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>\
 		<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input.\
 		</p><p>The MP Smithy settings will run the Melting Point map once you've reached the value of Smithies in this setting. Each run type has it's own setting and the daily shred setting will override the regular daily setting if either wood or metal shred is active.\
-		</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+		</p></div><table id='autoPurchaseConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
 		var setting, checkbox;
 		//var settingGroup = false;
-		var settingGroup = autoTrimpSettings.rUniqueMapSettingsArray.value;
-		var mapUnlocks = [
-			'Dimension_of_Rage', 'Prismatic_Palace'
-		]
-
-		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 32) mapUnlocks.push("Atlantrimp");
-		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) mapUnlocks.push("Melting_Point");
-		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 174) mapUnlocks.push("Frozen_Castle");
+		var settingGroup = event === 'rUniqueMaps' ? autoTrimpSettings.rUniqueMapSettingsArray.value : autoTrimpSettings.hUniqueMapSettingsArray.value;
 
 		var smithySettings = [];
-		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy");
-		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_Daily");
-		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_Daily_Shred");
-		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_C3");
+
+
+		if (event === 'UniqueMaps') {
+			var mapUnlocks = [
+				'The_Block', 'The_Wall', 'Dimension_of_Anger'
+			]
+			if (game.global.highestLevelCleared > 32) mapUnlocks.push("Trimple_of_Doom");
+			if (game.global.highestLevelCleared > 79) mapUnlocks.push("The_Prison");
+			if (game.global.highestLevelCleared > 169) mapUnlocks.push("Imploding_Star");
+		}
+
+		if (event === 'rUniqueMaps') {
+			//Adding in the U2 Unique Maps if they've been unlocked.
+			var mapUnlocks = [
+				'Dimension_of_Rage', 'Prismatic_Palace'
+			]
+
+			if (game.global.highestRadonLevelCleared > 32) mapUnlocks.push("Atlantrimp");
+			if (game.global.highestRadonLevelCleared > 49) mapUnlocks.push("Melting_Point");
+			if (game.global.highestRadonLevelCleared > 174) mapUnlocks.push("Frozen_Castle");
+
+
+			//Adding in Smithy Settings if in u2
+			if (game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy");
+			if (game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_Daily");
+			if (game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_Daily_Shred");
+			if (game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_C3");
+		}
+
 		for (var x = 0; x < mapUnlocks.length; x++)
 		//for (var item in game.buildings) 
 		{
 			tooltipText += "<tr>";
 			var item = mapUnlocks[x];
 			var setting = settingGroup[item];
-			var settingZone = (setting) ? setting.zone : 999;
-			var settingCell = (setting) ? setting.cell : 999;
+			//U1
+			if (item === 'Trimple_of_Doom' && game.global.highestRadonLevelCleared < 33) continue;
+			if (item === 'The_Prison' && game.global.highestRadonLevelCleared < 79) continue;
+			if (item === 'Imploding_Star' && game.global.highestRadonLevelCleared < 169) continue;
+			//U2
 			if (item === 'Atlantrimp' && game.global.highestRadonLevelCleared < 33) continue;
 			if (item === 'Melting_Point' && game.global.highestRadonLevelCleared < 49) continue;
 			if (item.includes('Smithy') && game.global.highestRadonLevelCleared < 49) continue;
@@ -203,7 +223,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		tooltipText += "</tr><tr>";
 		tooltipText += "</tr></tbody></table>";
-		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='saveATUniqueMapsConfig()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='saveATUniqueMapsConfig(\"" + event + "\")'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 		game.global.lockTooltip = true;
 		ondisplay = function () {
 			verticalCenterTooltip((smithySettings.length > 0 ? false : true), (smithySettings.length > 0 ? true : false));
@@ -1291,11 +1311,12 @@ function saveATAutoStructureConfig() {
 	saveSettings();
 }
 
-function saveATUniqueMapsConfig() {
+function saveATUniqueMapsConfig(setting) {
 
 	var error = "";
 	var errorMessage = false;
-	var setting = autoTrimpSettings.rUniqueMapSettingsArray.value;
+	var ATsetting = setting === 'rUniqueMaps' ? autoTrimpSettings.rUniqueMapSettingsArray.value : autoTrimpSettings.hUniqueMapSettingsArray.value;
+	var setting = ATsetting;
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var zoneBoxes = document.getElementsByClassName('structConfigZone');
 	var cellBoxes = document.getElementsByClassName('structConfigCell');
@@ -1333,20 +1354,37 @@ function saveATUniqueMapsConfig() {
 		setting[name].cell = cell;
 
 		//Error checking
-		if (name.includes('Dimension_of_Rage') && zone < 16) {
-			error += " Dimension of Rage can\'t be run below zone 16.<br>";
+		if (name.includes('The_Block') && zone < 11) {
+			error += " The Block can\'t be run below zone 11.<br>";
+			errorMessage = true;
+		}
+		//Error checking
+		if (name.includes('The_Wall') && zone < 15) {
+			error += " The Wall can\'t be run below zone 15.<br>";
+			errorMessage = true;
+		}
+		if (name.includes('Dimension_of_Anger') && zone < 21) {
+			error += " Dimension of Anger can\'t be run below zone 21.<br>";
 			errorMessage = true;
 		}
 		if (name.includes('Prismatic_Palace') && zone < 21) {
 			error += " Prismatic Palace can\'t be run below zone 21.<br>";
 			errorMessage = true;
 		}
-		if (name.includes('Atlantrimp') && (zone < 33 || (zone === 33 && cell < 50))) {
-			error += " Atlantrimp can\'t be run below zone 33 cell 50.<br>";
+		if ((name.includes('Atlantrimp') || name.includes('Trimple_of_Doom')) && (zone < 33 || (zone === 33 && cell < 50))) {
+			error += " " + name + " can\'t be run below zone 33 cell 50.<br>";
 			errorMessage = true;
 		}
 		if (name.includes('Melting_Point') && (zone < 55 || (zone === 55 && cell < 56))) {
 			error += " Melting Point can\'t be run below zone 55 cell 56.<br>";
+			errorMessage = true;
+		}
+		if (name.includes('The_Prison') && zone < 80) {
+			error += " The Prison can\'t be run below zone 80.<br>";
+			errorMessage = true;
+		}
+		if (name.includes('Imploding_Star') && zone < 170) {
+			error += " Imploding Star can\'t be run below zone 170.<br>";
 			errorMessage = true;
 		}
 		if (name.includes('Frozen_Castle') && zone < 175) {
@@ -1363,7 +1401,7 @@ function saveATUniqueMapsConfig() {
 		return;
 	}
 
-	autoTrimpSettings.rUniqueMapSettingsArray.value = setting;
+	ATsetting = setting;
 	cancelTooltip();
 	saveSettings();
 }

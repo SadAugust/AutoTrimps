@@ -99,7 +99,7 @@ function shouldRunUniqueMap(map) {
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const mapData = uniqueMaps[map.name];
-	const uniqueMapSetting = autoTrimpSettings.rUniqueMapSettingsArray.value;
+	const uniqueMapSetting = game.global.universe === 2 ? autoTrimpSettings.rUniqueMapSettingsArray.value : autoTrimpSettings.hUniqueMapSettingsArray.value;
 
 	if (mapData === undefined || game.global.world < mapData.zone) {
 		return false;
@@ -114,9 +114,13 @@ function shouldRunUniqueMap(map) {
 		return true;
 	}
 	if (game.global.universe === 1) {
+		const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name == "Liquimp";
 		if (map.name === 'The Block') {
 			//We need Shieldblock
 			if (!game.upgrades.Shieldblock.allowed && getPageSetting('BuyShieldblock')) {
+				return true;
+			}
+			if (game.mapUnlocks.TheBlock.canRunOnce && uniqueMapSetting.The_Block.enabled && game.global.world >= uniqueMapSetting.The_Block.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Block.cell || liquified)) {
 				return true;
 			}
 		} else if (map.name === 'The Wall') {
@@ -124,22 +128,34 @@ function shouldRunUniqueMap(map) {
 			if (!game.upgrades.Bounty.allowed && !game.talents.bounty.purchased) {
 				return true;
 			}
+			if (game.mapUnlocks.TheWall.canRunOnce && uniqueMapSetting.The_Wall.enabled && game.global.world >= uniqueMapSetting.The_Wall.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Wall.cell || liquified)) {
+				return true;
+			}
 		} else if (map.name === 'Dimension of Anger') {
 			//Unlock the portal
 			if (!game.talents.portal.purchased && document.getElementById("portalBtn").style.display === "none") {
 				return true;
 			}
-		} else if (map.name === 'Trimple Of Doom') {
-			if (game.portal.Relentlessness.locked) {
-				//Unlock the Relentlessness perk
+			if (game.mapUnlocks.Portal.canRunOnce && uniqueMapSetting.Dimension_of_Anger.enabled && game.global.world >= uniqueMapSetting.Dimension_of_Anger.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Dimension_of_Anger.cell || liquified)) {
 				return true;
 			}
-			//Maybe get the treasure
-			const trimpleZ = Math.abs(getPageSetting('TrimpleZ'));
-			if (trimpleZ >= 33 && game.global.world >= trimpleZ && game.mapUnlocks.AncientTreasure.canRunOnce) {
-				if (getPageSetting('TrimpleZ') < 0) {
-					setPageSetting('TrimpleZ', 0);
-				}
+		} else if (map.name === 'Trimple Of Doom') {
+			//Unlock the Relentlessness perk
+			if (game.portal.Relentlessness.locked) {
+				return true;
+			}
+			if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Trimple_of_Doom.enabled && game.global.world >= uniqueMapSetting.Trimple_of_Doom.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Trimple_of_Doom.cell || liquified)) {
+				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
+				return true;
+			}
+		} else if (map.name === 'The Prison') {
+			if (game.mapUnlocks.ThePrison.canRunOnce && uniqueMapSetting.The_Prison.enabled && game.global.world >= uniqueMapSetting.The_Prison.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Prison.cell || liquified)) {
+				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
+				return true;
+			}
+		} else if (map.name === 'Imploding Star') {
+			if (game.mapUnlocks.ImplodingStar.canRunOnce && uniqueMapSetting.Imploding_Star.enabled && game.global.world >= uniqueMapSetting.Imploding_Star.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Imploding_Star.cell || liquified)) {
+				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
 				return true;
 			}
 		}
@@ -158,14 +174,14 @@ function shouldRunUniqueMap(map) {
 				return true;
 			}
 		} else if (map.name === 'Prismatic Palace') {
-			// we need Shieldblock
+			//100% prismatic shield bonus
 			if (game.mapUnlocks.Prismalicious.canRunOnce && uniqueMapSetting.Prismatic_Palace.enabled && game.global.world >= uniqueMapSetting.Prismatic_Palace.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Prismatic_Palace.cell) {
 				return true;
 			}
 		} else if (map.name === 'Atlantrimp') {
 			// maybe get the treasure
 			if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Atlantrimp.enabled && game.global.world >= uniqueMapSetting.Atlantrimp.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Atlantrimp.cell) {
-				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running Atlantrimp on zone ' + game.global.world + '.')
+				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
 				return true;
 			}
 		} else if (map.name === 'Melting Point') {
@@ -183,8 +199,7 @@ function shouldRunUniqueMap(map) {
 			if (game.mapUnlocks.SmithFree.canRunOnce &&
 				((!isC3 && !isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world >= uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
 					(meltsmithy !== Infinity && meltsmithy <= game.buildings.Smithy.owned))) {
-				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive)
-					debug('Running Melting Point at ' + game.buildings.Smithy.owned + ' smithies on zone ' + game.global.world + '.')
+				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' at ' + game.buildings.Smithy.owned + ' smithies on zone ' + game.global.world + '.');
 				return true;
 			}
 		} else if (map.name === 'Frozen Castle') {
@@ -194,7 +209,7 @@ function shouldRunUniqueMap(map) {
 				game.global.world >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0]) : 200) &&
 				game.global.lastClearedCell + 2 >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1]) : 99);
 			if (frozencastle || hypothermia) {
-				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running Frozen Castle on zone ' + game.global.world + '.')
+				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
 				return true;
 			}
 		}

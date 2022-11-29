@@ -578,7 +578,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	var runningQuest = game.global.challengeActive === 'Quest' && questcheck() == 8;
 	var runningUnlucky = game.global.challengeActive === 'Unlucky'
 	var ourHealth = calcOurHealth(runningQuest, 'map');
-	var dmgType = runningUnlucky ? 'avg' : 'min'
+	var dmgType = runningUnlucky ? 'avg' : 'avg'
 	var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
 	var dailyCrit = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 
