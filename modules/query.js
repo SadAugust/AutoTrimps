@@ -70,7 +70,7 @@ function setScienceNeeded() {
 			if (game.global.world === 1 && 1e3 >= (game.global.universe === 1 ? game.global.totalHeliumEarned : game.global.totalRadonEarned) && a.startsWith("Speed")) continue;
 			scienceNeeded += getScienceCostToUpgrade(a);
 		}
-	if (game.global.universe === 1) needGymystic && (scienceNeeded += getScienceCostToUpgrade("Gymystic"));
+	if (game.global.universe === 1) needGymystic() && (scienceNeeded += getScienceCostToUpgrade("Gymystic"));
 }
 
 function getPotencyMod(howManyMoreGenes) {
