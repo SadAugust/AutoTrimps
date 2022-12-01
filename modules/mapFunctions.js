@@ -2404,7 +2404,7 @@ function Smithless() {
 		const smithyThreshhold = [1, 0.01, 0.000001];
 		const smithyThreshholdIndex = [0.000001, 0.01, 1];
 
-		while (smithyThreshhold.length > 1 && totalDmgTenacity < (enemyHealth * smithyThreshhold[0])) {
+		while (smithyThreshhold.length > 0 && totalDmgTenacity < (enemyHealth * smithyThreshhold[0])) {
 			smithyThreshhold.shift();
 			if (totalDmgTenacity > (enemyHealth * smithyThreshhold[0])) break;
 		}
