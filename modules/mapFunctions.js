@@ -2391,10 +2391,12 @@ function Smithless() {
 			if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
 				ourDmgTenacity /= game.portal.Tenacity.getMult();
 				ourDmgTenacity *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
-				ourDmgTenacity *= 2;
-				if (Rgetequips((game.global.world + rSmithlessMapLevel), false) > 0) ourDmgTenacity *= 1000;
 			}
 		}
+
+		ourDmgTenacity *= 2;
+		if (Rgetequips((game.global.world + rSmithlessMapLevel), false) > 0) ourDmgTenacity *= 1000;
+
 		var totalDmgTenacity = (ourDmgTenacity * 2 + (ourDmgTenacity * gammaDmg * 2))
 
 		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world');
@@ -2404,7 +2406,7 @@ function Smithless() {
 
 		while (smithyThreshhold.length > 1 && totalDmgTenacity < (enemyHealth * smithyThreshhold[0])) {
 			smithyThreshhold.shift();
-			if (totalDmgTenacity < (enemyHealth * smithyThreshhold[0])) break;
+			if (totalDmgTenacity > (enemyHealth * smithyThreshhold[0])) break;
 		}
 
 		if (smithyThreshhold.length === 0) return farmingDetails;
@@ -2413,10 +2415,7 @@ function Smithless() {
 		var damageTarget = (enemyHealth * smithyThreshhold[0]) / totalDmg;
 
 		if (totalDmg < enemyHealth) {
-			if (game.global.mapBonus != 10)
-				rShouldSmithless = true;
-			else if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))))
-				rShouldSmithless = true;
+			rShouldSmithless = true;
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rSmithlessMapLevel || getCurrentMapObject().bonus !== rSmithlessSpecial);
