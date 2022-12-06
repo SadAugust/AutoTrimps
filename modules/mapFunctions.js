@@ -271,7 +271,7 @@ MODULES.mapFunctions.rPortalZone = Infinity;
 MODULES.mapFunctions.hPortalZone = Infinity;
 MODULES.mapFunctions.workerRatio = null;
 
-//Void Maps -- WORKING AS IS
+//Void Maps
 function VoidMaps() {
 
 	var rDoVoids = false;
@@ -353,7 +353,8 @@ function VoidMaps() {
 
 MODULES.mapFunctions.rMBHealthFarm = false;
 var rMBHealthFarm = false;
-//Map Bonus -- WORKING AS IS
+
+//Map Bonus
 function MapBonus() {
 
 	var rShouldMaxMapBonus = false;
@@ -457,7 +458,7 @@ function MapBonus() {
 	return farmingDetails;
 }
 
-//Map Farm -- WORKING AS IS
+//Map Farm
 function MapFarm() {
 
 	var rShouldMapFarm = false;
@@ -579,7 +580,7 @@ function MapFarm() {
 	return farmingDetails;
 }
 
-//Tribute Farm --WORKING AS IS
+//Tribute Farm
 function TributeFarm() {
 
 	var rShouldTributeFarm = false;
@@ -770,7 +771,7 @@ function TributeFarm() {
 	return farmingDetails;
 }
 
-//Smithy Farming -- WORKING AS IS
+//Smithy Farming
 function SmithyFarm() {
 
 	const mapName = 'rSmithyFarm';
@@ -998,7 +999,7 @@ function SmithyFarm() {
 
 var rWFDebug = 0;
 
-//Worshipper Farm -- WORKING AS IS
+//Worshipper Farm
 function WorshipperFarm() {
 	const mapName = 'rWorshipperFarm';
 	const farmingDetails = {
@@ -1094,8 +1095,7 @@ function WorshipperFarm() {
 	return farmingDetails;
 }
 
-//NEEDS REWRITTEN
-//Daily (bloodthirst), Unbalance & Storm Destacking -- WORKING AS IS
+//Daily (bloodthirst), Unbalance & Storm Destacking
 function MapDestacking() {
 
 	const mapName = 'rDestack';
@@ -1184,7 +1184,7 @@ var RAMPfragmappybought = false;
 var RAMPfragfarming = false;
 var runningPrestigeMaps = false;
 
-//Prestige Raiding -- WORKING AS IS
+//Prestige Raiding
 function PrestigeRaiding() {
 
 	const mapName = 'rPrestige'
@@ -1298,7 +1298,7 @@ function PrestigeClimb() {
 	if (getPageSetting('ForcePresZ') !== -1 && (game.global.world) >= getPageSetting(universe + 'ForcePresZ')) {
 		needPrestige = (offlineProgress.countMapItems(game.global.world) !== 0);
 	} else
-		needPrestige = game.mapUnlocks[targetPrestige] && game.mapUnlocks[targetPrestige].last <= (game.global.world) - 5;
+		needPrestige = game.mapUnlocks[targetPrestige] && game.mapUnlocks[targetPrestige].last <= (game.global.world);
 
 	//Figure out how many equips to farm for
 	var prestigeToFarmFor = 0;
@@ -1312,8 +1312,9 @@ function PrestigeClimb() {
 			if (p === targetPrestige) break;
 		}
 	}
-	prestigeToFarmFor -= y;
+	if (getScientistLevel() === 5) prestigeToFarmFor -= y;
 
+	if (prestigeToFarmFor === 0) return farmingDetails;
 
 	//Prestige Skip 1
 	if (needPrestige && getPsString("gems", true) > 0 && (getPageSetting(universe + 'PrestigeSkip1_2') == 1 || getPageSetting(universe + 'PrestigeSkip1_2') == 2)) {
@@ -1488,7 +1489,7 @@ function runBionicRaiding(bionicPool) {
 	}
 }
 
-//Running Prestige Raid Code -- WORKING AS IS
+//Running Prestige Raid Code
 function rRunRaid() {
 	var RAMPfragcheck = true;
 	rPRFragFarm = rMapSettings.fragSetting;
@@ -1675,96 +1676,7 @@ function Wither() {
 	return farmingDetails;
 }
 
-//Glass
-function Glass() {
-
-	var shouldFarm = false;
-	var mapAutoLevel = Infinity;
-
-	const mapName = game.global.challengeActive;
-	const farmingDetails = {
-		shouldRun: false,
-		mapName: mapName
-	};
-
-	if (game.global.challengeActive !== "Glass" || !getPageSetting('rGlass')) return farmingDetails;
-
-	var jobRatio = '0,0,1,0';
-	var special = 'lmc';
-	var glassStacks = getPageSetting('rGlassStacks');
-	if (glassStacks <= 0) glassStacks = Infinity;
-
-	if (game.global.mapRunCounter === 0 && game.global.mapsActive && rSmithlessMapRepeats !== 0) {
-		game.global.mapRunCounter = rSmithlessMapRepeats;
-		rSmithlessMapRepeats = 0;
-	}
-
-	var rAutoLevel_Repeat = rAutoLevel;
-	mapAutoLevel = callAutoMapLevel(rCurrentMap, rAutoLevel, special, 10, null, false);
-	if (mapAutoLevel !== Infinity) {
-		if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) rSmithlessMapRepeats = game.global.mapRunCounter + 1;
-		var mapLevel = mapAutoLevel;
-	}
-
-	//Gamma burst info
-	var gammaMaxStacks = gammaBurstPct === 1 || game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5
-	var gammaToTrigger = gammaMaxStacks - game.heirlooms.Shield.gammaBurst.stacks;
-	var gammaDmg = gammaBurstPct;
-	var canGamma = gammaToTrigger <= 1 ? true : false;
-	var damageGoal = 2;
-
-	var equalityAmt = equalityQuery('Snimp', game.global.world, 20, 'map', 0.75, 'gamma');
-	var ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
-	var enemyHealth = calcEnemyHealthCore('map', game.global.world, 20, 'Snimp') * .75;
-
-	//Destacking
-	if ((ourDmg * damageGoal) > enemyHealth && (game.challenges.Glass.shards >= glassStacks || (game.global.mapsActive && game.challenges.Glass.shards > 2))) {
-		special = 'fa';
-		shouldFarm = true;
-		mapLevel = 0;
-	}
-	//Checking if we can clear next zone or if we need to farm for our optimal level.
-	else if (game.global.lastClearedCell + 2 === 100 || (game.challenges.Glass.shards >= glassStacks)) {
-		equalityAmt = equalityQuery('Snimp', game.global.world + 1, 20, 'map', 0.75, 'gamma');
-		ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
-		enemyHealth = calcEnemyHealthCore('map', game.global.world + 1, 20, 'Snimp') * .75;
-		special = 'lmc';
-		//Checking if we can clear current zone.
-		if ((ourDmg * damageGoal) < enemyHealth) {
-			shouldFarm = true;
-		}
-	}
-
-	var damageTarget = enemyHealth / damageGoal;
-
-	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || getCurrentMapObject().bonus !== special);
-	var status = game.global.challengeActive + ' Farm: Curr&nbsp;Dmg:&nbsp;' + prettify(ourDmg) + " Goal&nbsp;Dmg:&nbsp;" + prettify(damageTarget);
-
-	farmingDetails.shouldRun = shouldFarm;
-	farmingDetails.mapName = mapName;
-	farmingDetails.mapLevel = mapLevel;
-	farmingDetails.autoLevel = true;
-	farmingDetails.special = special;
-	farmingDetails.jobRatio = jobRatio;
-	farmingDetails.damageTarget = damageTarget;
-	farmingDetails.repeat = !repeat;
-	farmingDetails.status = status;
-
-
-	if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
-		if (getPageSetting('rMapRepeatCount')) debug(game.global.challengeActive + " Farming took " + (game.global.mapRunCounter) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + special + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
-		rCurrentMap = undefined;
-		rAutoLevel = Infinity;
-		rSmithlessMapRepeats = 0;
-		currTime = 0;
-		game.global.mapRunCounter = 0;
-		mapAutoLevel = Infinity;
-	}
-
-	return farmingDetails;
-}
-
-//Quagmire - Black Bogs -- WORKING AS IS
+//Quagmire
 function Quagmire() {
 
 	var rShouldQuagFarm = false;
@@ -1827,7 +1739,27 @@ function Quagmire() {
 	return farmingDetails;
 }
 
-//Quest -- WORKING AS IS
+function questcheck() {
+	if (game.global.challengeActive !== 'Quest' || game.global.world < game.challenges.Quest.getQuestStartZone() || !getPageSetting('rQuest'))
+		return 0;
+	var questnotcomplete = game.challenges.Quest.getQuestProgress() != "Quest Complete!";
+	if (game.challenges.Quest.getQuestProgress() == "Failed!") return 0;
+	//Resource multipliers
+	else if (game.challenges.Quest.getQuestDescription().includes("food") && questnotcomplete) return 1;
+	else if (game.challenges.Quest.getQuestDescription().includes("wood") && questnotcomplete) return 2;
+	else if (game.challenges.Quest.getQuestDescription().includes("metal") && questnotcomplete) return 3;
+	else if (game.challenges.Quest.getQuestDescription().includes("gems") && questnotcomplete) return 4;
+	else if (game.challenges.Quest.getQuestDescription().includes("science") && questnotcomplete) return 5;
+	//Everything else
+	else if (game.challenges.Quest.getQuestDescription() == "Complete 5 Maps at Zone level" && questnotcomplete) return 6;
+	else if (game.challenges.Quest.getQuestDescription() == "One-shot 5 world enemies" && questnotcomplete) return 7;
+	else if (game.challenges.Quest.getQuestDescription() == "Don't let your shield break before Cell 100" && questnotcomplete) return 8;
+	else if (game.challenges.Quest.getQuestDescription() == "Don't run a map before Cell 100") return 9;
+	else if (game.challenges.Quest.getQuestDescription() == "Buy a Smithy" && questnotcomplete) return 10;
+	else return 0;
+}
+
+//Quest
 function Quest() {
 
 	var rShouldQuest = 0;
@@ -1896,7 +1828,7 @@ function Quest() {
 
 }
 
-//Mayhem -- WORKING AS IS
+//Mayhem
 function Mayhem() {
 
 	const mapName = 'rMayhem';
@@ -1953,7 +1885,7 @@ function Mayhem() {
 	return farmingDetails;
 }
 
-//Insanity Farm -- WORKING AS IS
+//Insanity Farm
 function Insanity() {
 
 	const mapName = 'rInsanityFarm';
@@ -2034,7 +1966,7 @@ function Insanity() {
 	return farmingDetails;
 }
 
-//Pandemonium -- WORKING AS IS
+//Pandemonium
 function PandemoniumDestack() {
 
 	var rShouldPandemoniumDestack = false;
@@ -2094,7 +2026,7 @@ function PandemoniumDestack() {
 	return farmingDetails;
 }
 
-//Pandemonium Equip Farming -- NEEDS REWRITTEN BUT WORKS AS IS I THINK
+//Pandemonium Equip Farming
 function PandemoniumFarm() {
 
 	const mapName = 'rPandemoniumFarm';
@@ -2254,7 +2186,7 @@ function PandemoniumJestimpScumming() {
 	}
 }
 
-//Alchemy Farm -- WORKING AS IS
+//Alchemy
 function Alchemy() {
 
 	var rShouldAlchFarm = false;
@@ -2410,10 +2342,99 @@ function Alchemy() {
 	return farmingDetails;
 }
 
+//Glass
+function Glass() {
+
+	var shouldFarm = false;
+	var mapAutoLevel = Infinity;
+
+	const mapName = game.global.challengeActive;
+	const farmingDetails = {
+		shouldRun: false,
+		mapName: mapName
+	};
+
+	if (game.global.challengeActive !== "Glass" || !getPageSetting('rGlass')) return farmingDetails;
+
+	var jobRatio = '0,0,1,0';
+	var special = 'lmc';
+	var glassStacks = getPageSetting('rGlassStacks');
+	if (glassStacks <= 0) glassStacks = Infinity;
+
+	if (game.global.mapRunCounter === 0 && game.global.mapsActive && rSmithlessMapRepeats !== 0) {
+		game.global.mapRunCounter = rSmithlessMapRepeats;
+		rSmithlessMapRepeats = 0;
+	}
+
+	var rAutoLevel_Repeat = rAutoLevel;
+	mapAutoLevel = callAutoMapLevel(rCurrentMap, rAutoLevel, special, 10, null, false);
+	if (mapAutoLevel !== Infinity) {
+		if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) rSmithlessMapRepeats = game.global.mapRunCounter + 1;
+		var mapLevel = mapAutoLevel;
+	}
+
+	//Gamma burst info
+	var gammaMaxStacks = gammaBurstPct === 1 || game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5
+	var gammaToTrigger = gammaMaxStacks - game.heirlooms.Shield.gammaBurst.stacks;
+	var gammaDmg = gammaBurstPct;
+	var canGamma = gammaToTrigger <= 1 ? true : false;
+	var damageGoal = 2;
+
+	var equalityAmt = equalityQuery('Snimp', game.global.world, 20, 'map', 0.75, 'gamma');
+	var ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
+	var enemyHealth = calcEnemyHealthCore('map', game.global.world, 20, 'Snimp') * .75;
+
+	//Destacking
+	if ((ourDmg * damageGoal) > enemyHealth && (game.challenges.Glass.shards >= glassStacks || (game.global.mapsActive && game.challenges.Glass.shards > 2))) {
+		special = 'fa';
+		shouldFarm = true;
+		mapLevel = 0;
+	}
+	//Checking if we can clear next zone or if we need to farm for our optimal level.
+	else if (game.global.lastClearedCell + 2 === 100 || (game.challenges.Glass.shards >= glassStacks)) {
+		equalityAmt = equalityQuery('Snimp', game.global.world + 1, 20, 'map', 0.75, 'gamma');
+		ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
+		enemyHealth = calcEnemyHealthCore('map', game.global.world + 1, 20, 'Snimp') * .75;
+		special = 'lmc';
+		//Checking if we can clear current zone.
+		if ((ourDmg * damageGoal) < enemyHealth) {
+			shouldFarm = true;
+		}
+	}
+
+	var damageTarget = enemyHealth / damageGoal;
+
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || getCurrentMapObject().bonus !== special);
+	var status = game.global.challengeActive + ' Farm: Curr&nbsp;Dmg:&nbsp;' + prettify(ourDmg) + " Goal&nbsp;Dmg:&nbsp;" + prettify(damageTarget);
+
+	farmingDetails.shouldRun = shouldFarm;
+	farmingDetails.mapName = mapName;
+	farmingDetails.mapLevel = mapLevel;
+	farmingDetails.autoLevel = true;
+	farmingDetails.special = special;
+	farmingDetails.jobRatio = jobRatio;
+	farmingDetails.damageTarget = damageTarget;
+	farmingDetails.repeat = !repeat;
+	farmingDetails.status = status;
+
+
+	if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
+		if (getPageSetting('rMapRepeatCount')) debug(game.global.challengeActive + " Farming took " + (game.global.mapRunCounter) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + special + ")" + (game.global.mapRunCounter == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ".");
+		rCurrentMap = undefined;
+		rAutoLevel = Infinity;
+		rSmithlessMapRepeats = 0;
+		currTime = 0;
+		game.global.mapRunCounter = 0;
+		mapAutoLevel = Infinity;
+	}
+
+	return farmingDetails;
+}
+
 MODULES.mapFunctions.rHFBuyPackrat = false;
 rHFBuyPackrat = false;
 
-//Hypothermia Farm -- WORKING AS IS
+//Hypothermia
 function Hypothermia() {
 
 	var rShouldHypoFarm = false;
@@ -2520,7 +2541,7 @@ function Hypothermia() {
 	return farmingDetails;
 }
 
-//Smithless -- WORKING AS IS
+//Smithless
 function Smithless() {
 
 	var rShouldSmithless = false;
@@ -2621,7 +2642,7 @@ function Smithless() {
 	return farmingDetails;
 }
 
-//HD Farm -- WORKING AS IS
+//HD Farm
 function HDFarm() {
 
 	const mapName = 'rHDFarm';

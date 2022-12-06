@@ -4,8 +4,8 @@ MODULES["other"].enableRoboTrimpSpam = true;
 function armydeath() {
 	if (game.global.mapsActive) return !1;
 	var e = game.global.lastClearedCell + 1,
-		l = game.global.gridArray[e].attack * dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) * game.portal.Equality.getMult(),
-		a = game.global.soldierHealth + game.global.soldierEnergyShield * (Fluffy.isRewardActive("shieldlayer") ? 1 + Fluffy.isRewardActive("shieldlayer") : 1);
+		l = game.global.gridArray[e].attack * dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks),
+		a = game.global.soldierHealth;
 	"Ice" == getEmpowerment() && (l *= game.empowerments.Ice.getCombatModifier());
 	var g = game.global.soldierCurrentBlock;
 	return (
@@ -226,26 +226,6 @@ function getZoneEmpowerment(zone) {
 }
 
 //Radon
-function questcheck() {
-	if (game.global.challengeActive !== 'Quest' || game.global.world < game.challenges.Quest.getQuestStartZone() || !getPageSetting('rQuest'))
-		return 0;
-	var questnotcomplete = game.challenges.Quest.getQuestProgress() != "Quest Complete!";
-	if (game.challenges.Quest.getQuestProgress() == "Failed!") return 0;
-	//Resource multipliers
-	else if (game.challenges.Quest.getQuestDescription().includes("food") && questnotcomplete) return 1;
-	else if (game.challenges.Quest.getQuestDescription().includes("wood") && questnotcomplete) return 2;
-	else if (game.challenges.Quest.getQuestDescription().includes("metal") && questnotcomplete) return 3;
-	else if (game.challenges.Quest.getQuestDescription().includes("gems") && questnotcomplete) return 4;
-	else if (game.challenges.Quest.getQuestDescription().includes("science") && questnotcomplete) return 5;
-	//Everything else
-	else if (game.challenges.Quest.getQuestDescription() == "Complete 5 Maps at Zone level" && questnotcomplete) return 6;
-	else if (game.challenges.Quest.getQuestDescription() == "One-shot 5 world enemies" && questnotcomplete) return 7;
-	else if (game.challenges.Quest.getQuestDescription() == "Don't let your shield break before Cell 100" && questnotcomplete) return 8;
-	else if (game.challenges.Quest.getQuestDescription() == "Don't run a map before Cell 100") return 9;
-	else if (game.challenges.Quest.getQuestDescription() == "Buy a Smithy" && questnotcomplete) return 10;
-	else return 0;
-}
-
 function archstring() {
 	if (!getPageSetting('Rarchon')) return;
 	if (getPageSetting('Rarchstring1') != "undefined" && getPageSetting('Rarchstring2') != "undefined" && getPageSetting('Rarchstring3') != "undefined") {
@@ -512,7 +492,6 @@ function remainingHealth(forceMax) {
 
 function rManageEquality() {
 	if (!game.global.preMapsActive && game.global.gridArray.length > 0) {
-
 		//Looking to see if the enemy that's currently being fought is fast.
 		var fastEnemy = game.global.preMapsActive ? fastimps.includes(game.global.gridArray[game.global.lastClearedCell + 1].name) : fastimps.includes(getCurrentEnemy().name);
 		//Checking if the map that's active is a Deadly voice map which always has first attack.
@@ -933,10 +912,10 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 
 	if (typeof ssWorkerRatio !== 'undefined' && ssWorkerRatio !== null) {
 		var desiredRatios = Array.from(ssWorkerRatio.split(','))
-		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0,
-		desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0,
-		desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0,
-		desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
+		desiredRatios = [desiredRatios[0] !== undefined ? Number(desiredRatios[0]) : 0,
+		desiredRatios[1] !== undefined ? Number(desiredRatios[1]) : 0,
+		desiredRatios[2] !== undefined ? Number(desiredRatios[2]) : 0,
+		desiredRatios[3] !== undefined ? Number(desiredRatios[3]) : 0]
 		var totalFraction = desiredRatios.reduce((a, b) => { return a + b; });
 	}
 	//Come home to the impossible flavour of balanced resource gain. Come home, to simple seconds.
