@@ -131,11 +131,12 @@ function buyJobs() {
 
 	var jobSettings = game.global.universe === 1 ? autoTrimpSettings.hJobSettingsArray.value : autoTrimpSettings.rJobSettingsArray.value;
 
-	var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed -
+	var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed //-
 		//U1 jobs
-		game.jobs.Geneticist.owned - game.jobs.Trainer.owned - game.jobs.Magmamancer.owned -
+		//game.jobs.Geneticist.owned - game.jobs.Trainer.owned - game.jobs.Magmamancer.owned -
 		//U2 jobs
-		game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
+		//game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned
+	);
 
 	//Enables Firing for Jobs. It's a setting that will save hassle later by forcing it to be enalbed.
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
@@ -227,11 +228,13 @@ function buyJobs() {
 	//Gather up the total number of workers available to be distributed across ratio workers
 	//In the process store how much of each for later.
 	if (game.global.challengeActive === 'Trapper' || game.global.challengeActive === 'Trappapalooza') {
-		freeWorkers = game.resources.trimps.owned - (game.resources.trimps.employed -
+		freeWorkers = game.resources.trimps.owned - (game.resources.trimps.employed
+			//-
 			//U1 jobs
-			game.jobs.Geneticist.owned - game.jobs.Trainer.owned - game.jobs.Magmamancer.owned -
+			//game.jobs.Geneticist.owned - game.jobs.Trainer.owned - game.jobs.Magmamancer.owned -
 			//U2 jobs
-			game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
+			//game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned
+		);
 
 		var metCoordGoal = game.global.challengeActive === 'Trappapalooza' && game.upgrades.Coordination.done >= getPageSetting('rTrappaCoords');
 		if (!metCoordGoal) nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);

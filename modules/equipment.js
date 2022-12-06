@@ -405,8 +405,9 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	if (!skipForLevels) skipForLevels = false;
 	if (!showAllEquips) showAllEquips = false;
 	var rEquipZone = getPageSetting(prefix + 'equipzone');
-	if (!zoneGo) zoneGo = (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+	if (!zoneGo) zoneGo = rCurrentMap === 'Wither' || (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 	if (!resourceMaxPercent) resourceMaxPercent = zoneGo ? 1 : getPageSetting(prefix + 'equippercent') < 0 ? 1 : getPageSetting(prefix + 'equippercent') / 100;
+	var resourceMaxPercentBackup = resourceMaxPercent;
 
 
 	var metalShred = !showAllEquips && game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
@@ -454,8 +455,16 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			i === 'Gym') continue;
 		//Skipping gyms when can buy Gymystic
 		if (game.global.univere === 1 && (i === 'Shield' || i === 'Gym') && needGymystic()) continue;
+		//Setting weapon equips to 100% spending during Smithless farm.
+		if (game.global.challengeActive === 'Smithless' && rCurrentMap === 'rSmithlessFarm') {
+			if (isAttack === 0) {
+				skipForLevels = Infinity;
+				resourceMaxPercent = 1;
+			}
+			if (isAttack === 1) resourceMaxPercent = resourceMaxPercentBackup;
+		}
 		//Skips if we have the required number of that item and below zoneGo
-		if (!zoneGo && !buyPrestigeMaybe(i, resourceMaxPercent) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels && rCurrentMap !== 'rSmithlessFarm') continue;
+		if (!zoneGo && !buyPrestigeMaybe(i, resourceMaxPercent) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
 		//Skips if ignoreShield variable is true.
 		if (game.global.universe === 2 && ignoreShield && i == 'Shield') continue;
 		//Skipping if on reflect daily and our dmg is too high
@@ -559,7 +568,11 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 	return [newStatValue > currentStatValue, statPerResource, levelOnePrestige, !prestigeDone];
 }
 
-function RautoEquip() {
+function autoEquip() {
+
+	//Disabling autoEquip if AT AutoEquip is disabled.
+	if (game.global.universe === 2 ? !getPageSetting('Requipon') : !getPageSetting('Hequipon')) return;
+
 	const prefix = game.global.universe === 1 ? 'H' : 'R';
 
 	if (
@@ -578,7 +591,7 @@ function RautoEquip() {
 		debug('Upgrading Gymystic', "equips", '*upload');
 	}
 	var rEquipZone = getPageSetting(prefix + 'equipzone');
-	var zoneGo = (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+	var zoneGo = rCurrentMap === 'Wither' || (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 
 	if (getPageSetting(prefix + 'equipprestige') == 2 && !zoneGo) {
 		var prestigeLeft = false;
@@ -629,7 +642,6 @@ function RautoEquip() {
 
 	var attackEquipCap = (getPageSetting(prefix + 'equipcapattack') <= 0 || rCurrentMap === 'rSmithlessFarm' ? Infinity : getPageSetting(prefix + 'equipcapattack'));
 	var healthEquipCap = (getPageSetting(prefix + 'equipcaphealth') <= 0 || rCurrentMap === 'rSmithlessFarm' ? Infinity : getPageSetting(prefix + 'equipcaphealth'));
-	var resourceSpendingPct = zoneGo ? 1 : getPageSetting(prefix + 'equippercent') < 0 ? 1 : getPageSetting(prefix + 'equippercent') / 100;
 	var maxCanAfford = 0;
 
 	//Buy as many shields as possible when running Melting Point
@@ -641,6 +653,7 @@ function RautoEquip() {
 	var keepBuying = false;
 	do {
 		keepBuying = false;
+		var resourceSpendingPct = zoneGo ? 1 : getPageSetting(prefix + 'equippercent') < 0 ? 1 : getPageSetting(prefix + 'equippercent') / 100;
 		var bestBuys = mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShields, false, false);
 		// Set up for both Attack and Health depending on which is cheaper to purchase
 		var equipType = (bestBuys[6] < bestBuys[7]) ? 'attack' : 'health';
@@ -652,7 +665,16 @@ function RautoEquip() {
 
 		zoneGo = (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 
+
+
 		for (var i = 0; i < 2; i++) {
+			//Setting weapon equips to 100% spending during Smithless farm.
+			if (game.global.challengeActive === 'Smithless' && rCurrentMap === 'rSmithlessFarm') {
+				if (equipType === 'attack') {
+					resourceSpendingPct = 1;
+					zoneGo = true;
+				}
+			}
 			if (!equipPrestige && canAffordBuilding(equipName, null, null, true, false, 1) || (equipPrestige && game.resources[resourceUsed].owned > equipCost)) {
 				if (game.equipment[equipName].level < equipCap || equipPrestige || zoneGo) {
 					if (!equipPrestige) {
@@ -688,7 +710,6 @@ function RautoEquip() {
 			equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5];
 			resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 			equipCap = (equipType === 'attack') ? attackEquipCap : healthEquipCap;
-
 			zoneGo = (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 		}
 	} while (keepBuying)
@@ -724,8 +745,8 @@ function estimateEquipsForZone(rEFIndex) {
 	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
 	var ourHealth = calcOurHealth(false, 'world');
 	var ourDmg = calcOurDmg('avg', 0, false, 'world', 'maybe', 0, false) * gammaBurstDmg;
-	var enemyHealth = RcalcEnemyHealthMod(game.global.world, 99, 'Turtlimp', 'world', checkMutations);
-	var enemyDamageBeforeEquality = RcalcBadGuyDmg(null, calcEnemyBaseAttack(game.global.world, 99, 'Snimp', 'world', true), 0, 'world', checkMutations) * 1.5
+	var enemyHealth = calcEnemyHealthCore('world', game.global.world, 99, 'Turtlimp');
+	var enemyDamageBeforeEquality = calcEnemyAttackCore('world', game.global.world, 99, 'Snimp', false, false, 0);
 
 	var healthNeededMulti = enemyDamageBeforeEquality / ourHealth; // The multiplier we need to apply to our health to survive
 
@@ -795,4 +816,18 @@ function estimateEquipsForZone(rEFIndex) {
 	}
 
 	return [totalCost, bonusLevels];
+}
+
+function mapLevelHasPrestiges(level) {
+	for (const eq of Object.values(equipmentList)) {
+		if (!eq.Equip) {
+			continue;
+		}
+		const prestigeUnlock = game.mapUnlocks[eq.Upgrade];
+		const pMapLevel = prestigeUnlock.last + 5;
+		if (game.upgrades[eq.Upgrade].allowed && prestigeUnlock && pMapLevel <= level) {
+			return true;
+		}
+	}
+	return false;
 }

@@ -202,17 +202,6 @@ function autoGather() {
 		setGather('buildings');
 		return;
 	}
-	/* 
-		if (game.global.challengeActive != "Transmute" && (getPlayerModifier() < getPerSecBeforeManual('Scientist') && hasTurkimp) || getPageSetting('RManualGather2') == 2)
-			setGather('metal');
-		else if ((game.global.challengeActive == "Transmute" && (getPlayerModifier() < getPerSecBeforeManual('Scientist') && hasTurkimp) || getPageSetting('RManualGather2') == 2))
-			setGather('food');
-		else if (getPageSetting('RManualGather2') != 2)
-			setGather('metal');
-	 */
-
-
-
 
 	var manualResourceList = {
 		'food': 'Farmer',
@@ -245,7 +234,7 @@ function autoGather() {
 			setGather('food');
 		else
 			setGather(lowestResource);
-	} else if (getPageSetting('RManualGather2') != 2 && document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
+	} else if (document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
 		if (game.resources.science.owned < getPsStringLocal('science', true) * MODULES["gather"].minScienceSeconds && game.global.turkimpTimer < 1 && haveWorkers)
 			setGather('science');
 		else if (game.global.challengeActive == "Transmute" && hasTurkimp)

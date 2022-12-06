@@ -125,7 +125,6 @@ var shredTimer = 0;
 //Get Gamma burst % value
 gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 shieldEquipped = game.global.ShieldEquipped.id;
-
 function mainLoop() {
 	//Interval code
 	date = new Date();
@@ -262,7 +261,7 @@ function mainLoop() {
 
 
 		//AutoEquip
-		if (getPageSetting('Hequipon')) RautoEquip();
+		if (getPageSetting('Hequipon')) autoEquip();
 
 		//Bone Upgrades / Settings
 		if (autoTrimpSettings.hBoneShrineDefaultSettings.value.active) BoneShrine();
@@ -350,7 +349,7 @@ function mainLoop() {
 		//Archeology
 		if (getPageSetting('Rarchon') && game.global.challengeActive == "Archaeology") archstring();
 		//AutoEquip
-		if (getPageSetting('Requipon') && (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([2, 3].indexOf(questcheck()) >= 0)))) RautoEquip();
+		if (getPageSetting('Requipon') && (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([2, 3].indexOf(questcheck()) >= 0)))) autoEquip();
 		//Combat
 		if (getPageSetting('BetterAutoFight') == 1) betterAutoFight();
 		if (getPageSetting('BetterAutoFight') == 2) betterAutoFight3();

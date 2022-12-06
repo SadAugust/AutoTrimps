@@ -1232,16 +1232,18 @@ function saveATAutoJobsConfig() {
 
 	//Adding in jobs that are locked so that there won't be any issues later on
 	//Meteorologist
-	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 29) {
-		autoTrimpSettings.rJobSettingsArray.value.Meteorologist = {};
-		autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled = true;
-		autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent = 100;
-	}
-	//Worshipper
-	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 49) {
-		autoTrimpSettings.rJobSettingsArray.value.Worshipper = {};
-		autoTrimpSettings.rJobSettingsArray.value.Worshipper.enabled = true;
-		autoTrimpSettings.rJobSettingsArray.value.Worshipper.percent = 20;
+	if (game.global.universe === 2) {
+		if (game.global.highestRadonLevelCleared < 29) {
+			autoTrimpSettings.rJobSettingsArray.value.Meteorologist = {};
+			autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled = true;
+			autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent = 100;
+		}
+		//Worshipper
+		if (game.global.highestRadonLevelCleared < 49) {
+			autoTrimpSettings.rJobSettingsArray.value.Worshipper = {};
+			autoTrimpSettings.rJobSettingsArray.value.Worshipper.enabled = true;
+			autoTrimpSettings.rJobSettingsArray.value.Worshipper.percent = 20;
+		}
 	}
 
 	cancelTooltip();

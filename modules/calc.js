@@ -29,7 +29,8 @@ function debugCalc() {
 	var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
 	var name = getCurrentEnemy() ? getCurrentEnemy().name : "Chimp";
 	var equality = game.global.universe === 2 ? Math.pow(game.portal.Equality.getModifier(), game.portal.Equality.disabledStackCount) : 1;
-	var attack = RcalcBadGuyDmg(null, calcEnemyBaseAttack(zone, cell, name, mapType, false), 0, mapType, false) * difficulty;
+	var enemyMin = calcEnemyAttackCore(mapType, zone, cell, name, true, false, 0) * difficulty;
+	var enemyMax = calcEnemyAttackCore(mapType, zone, cell, name, false, false, 0) * difficulty;
 	var mapLevel = mapping && game.talents.bionic2.purchased ? zone - game.global.world : 0;
 	var universeSetting = game.global.universe === 2 ? game.portal.Equality.disabledStackCount : false;
 	var universeSetting2 = game.global.universe === 2 ? false : true;
@@ -48,7 +49,7 @@ function debugCalc() {
 
 	//Enemy stats
 	debug("Enemy Stats");
-	debug("Enemy Attack: " + (attack * 0.5 * equality).toExponential(2) + "-" + (attack * 1.5 * equality).toExponential(2));
+	debug("Enemy Attack: " + (enemyMin * equality).toExponential(2) + "-" + (enemyMax * equality).toExponential(2));
 	debug("Enemy Health: " + (RcalcEnemyHealthMod(zone, cell, name, mapType) * difficulty).toExponential(2));
 }
 
@@ -471,7 +472,6 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	//Mutator
 	attack *= game.global.universe === 2 && u2Mutations.tree.Attack.purchased ? 1.5 : 1;
 
-
 	//Challenges
 	if (game.global.challengeActive == "Life") attack *= game.challenges.Life.getHealthMult();
 	if (game.global.challengeActive == "Lead" && (game.global.world % 2) == 1) attack *= 1.5;
@@ -729,7 +729,7 @@ function calcEnemyBaseAttack(zone, cell, name, type, query) {
 	return Math.floor(attack);
 }
 
-function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack) {
+function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equality, checkMutations) {
 	//Pre-Init
 	if (!type) type = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	if (!zone) zone = (type == "world" || !game.global.mapsActive) ? game.global.world : getCurrentMapObject().level;
@@ -738,7 +738,11 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack) {
 
 	//Init
 	var attack = calcEnemyBaseAttack(zone, cell, name, type);
+	var fluctuation = game.global.universe === 2 ? 0.5 : 0.2;
 
+	if (type === 'world' && zone > 200 && checkMutations && getPageSetting('rMutationCalc')) {
+		attack = calcMutationAttack(zone);
+	}
 	//Spire - Overrides the base attack number
 	if (type == "world" && game.global.spireActive) attack = calcSpire("attack");
 
@@ -761,6 +765,26 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack) {
 	else if (game.global.challengeActive == "Scientist" && getScientistLevel() == 5) attack *= 10;
 	else if (game.global.challengeActive === 'Experience') attack *= game.challenges.Experience.getEnemyMult();
 
+	//u2 challenges
+	else if (game.global.challengeActive == 'Unbalance') attack *= 1.5;
+	else if (game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50) attack *= 3;
+	else if (game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0) attack *= game.challenges.Wither.getEnemyAttackMult();
+	else if (game.global.challengeActive == 'Archaeology') attack *= game.challenges.Archaeology.getStatMult('enemyAttack');
+	else if (game.global.challengeActive == 'Mayhem' && mapType === 'world') attack *= game.challenges.Mayhem.getBossMult();
+	else if (game.global.challengeActive == 'Mayhem') attack *= game.challenges.Mayhem.getEnemyMult();
+	//Purposefully don't put Storm in here.
+	else if (game.global.challengeActive == 'Storm' && !game.global.mapsActive) attack *= game.challenges.Storm.getAttackMult();
+	else if (game.global.challengeActive == 'Exterminate') attack *= game.challenges.Exterminate.getSwarmMult();
+	else if (game.global.challengeActive == 'Nurture') attack *= 2;
+	else if (game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0) attack *= game.buildings.Laboratory.getEnemyMult();
+	else if (game.global.challengeActive == 'Pandemonium' && mapType === 'world') attack *= game.challenges.Pandemonium.getBossMult();
+	else if (game.global.challengeActive == 'Pandemonium' && mapType !== 'world') attack *= game.challenges.Pandemonium.getPandMult();
+	else if (game.global.challengeActive == 'Alchemy') attack *= (alchObj.getEnemyStats(false, false)) + 1;
+	else if (game.global.challengeActive == 'Hypothermia') attack *= game.challenges.Hypothermia.getEnemyMult();
+	else if (game.global.challengeActive == 'Glass') attack *= game.challenges.Glass.attackMult();
+
+	if (type === 'world' && game.global.novaMutStacks > 0) attack *= u2Mutations.types.Nova.enemyAttackMult();
+
 	//Coordinate
 	if (game.global.challengeActive == "Coordinate") {
 		var amt = 1;
@@ -771,11 +795,11 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack) {
 	//Dailies
 	if (game.global.challengeActive == "Daily") {
 		//Bad Strength
-		if (typeof game.global.dailyChallenge.badStrength !== "undefined")
+		if (typeof game.global.dailyChallenge.badStrength !== 'undefined')
 			attack *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
 
 		//Bad Map Strength
-		if (typeof game.global.dailyChallenge.badMapStrength !== "undefined" && type != "world")
+		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && mapType !== 'world')
 			attack *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
 
 		//Bloodthirsty
@@ -783,7 +807,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack) {
 			attack *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks);
 
 		//Empower
-		if (typeof game.global.dailyChallenge.empower !== "undefined")
+		if (typeof game.global.dailyChallenge.empower !== 'undefined' && mapType === 'world')
 			attack *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
 	}
 
@@ -795,7 +819,18 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack) {
 		attack *= oblitMult;
 	}
 
-	return minOrMax ? 0.8 * attack : 1.2 * attack;
+	if (equality) {
+		if (!isNaN(parseInt((equality)))) {
+			if (equality > game.portal.Equality.radLevel)
+				debug('You don\'t have this many levels in Equality. - Enemy Dmg')
+			attack *= Math.pow(game.portal.Equality.getModifier(), equality);
+		} else {
+			attack *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
+			attack *= game.portal.Equality.radLevel > 0 && getPageSetting('Rcalcmaxequality') >= 1 && game.portal.Equality.scalingCount > 0 && !equality ? Math.pow(game.portal.Equality.modifier, game.portal.Equality.scalingCount) : 1;
+		}
+	}
+
+	return minOrMax ? (1 - fluctuation) * attack : (1 + fluctuation) * attack;
 }
 
 function calcEnemyAttack(type, zone, cell = 99, name = "Snimp", minOrMax) {
@@ -951,13 +986,9 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	var health = calcEnemyBaseHealth(type, zone, cell, name);
 
 	//Curr zone Mutation HP
-	if (game.global.universe === 2 && zone === game.global.world && type === 'world') {
-		if (game.global.world > 200 && getPageSetting('rMutationCalc')) {
-			health = calcMutationHealth() > health ? calcMutationHealth() : health;
-		} else if (game.global.world > 200) {
-			if (game.global.gridArray[cell - 1].u2Mutation && game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
-				health = u2Mutations.getHealth(game.global.gridArray[cell - 1])
-			}
+	if (game.global.universe === 2 && type === 'world' && game.global.world > 200) {
+		if (game.global.gridArray[cell - 1].u2Mutation && game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
+			health = u2Mutations.getHealth(game.global.gridArray[cell - 1])
 		}
 	}
 
@@ -1090,17 +1121,21 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	return health;
 }
 
-function calcHDRatio(targetZone, type) {
+function calcHDRatio(targetZone, type, ourDamage) {
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = "world"
 	//Init
 	if (type === 'world') {
 		var enemyHealth = calcEnemyHealth(type, targetZone);
-		var universeSetting = game.global.universe === 2 ? equalityQuery('Turtlimp', game.global.world, 99, 'world', 1, 'gamma') : 'X';
+		var universeSetting = game.global.universe === 2 ? equalityQuery('Turtlimp', targetZone, 99, 'world', 1, 'gamma', ourDamage) : 'X';
+	}
+	if (type === 'map') {
+		var enemyHealth = calcEnemyHealth(type, targetZone);
+		var universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, 'void', 4, 'gamma', ourDamage) : 'X';
 	}
 	if (type === 'void') {
 		var enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Cthulimp');
-		var universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', game.global.world, 100, 'void', 4, 'gamma') : 'X';
+		var universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, 'void', 4, 'gamma', ourDamage) : 'X';
 	}
 
 	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
@@ -1152,23 +1187,25 @@ function calcCurrentStance() {
 }
 
 //Radon
-function mutationBaseAttack(cell) {
+function mutationBaseAttack(cell, targetZone) {
 	var baseAttack;
 	var addAttack = 0;
 	if (cell.cs) {
-		baseAttack = calcEnemyBaseAttack(game.global.world, cell.level, cell.name, 'world', true);
+		baseAttack = calcEnemyBaseAttack(targetZone, cell.level, cell.name, 'world', true);
 	}
 	else
-		baseAttack = calcEnemyBaseAttack(game.global.world, cell.level, cell.name, 'world', true);
+		baseAttack = calcEnemyBaseAttack(targetZone, cell.level, cell.name, 'world', true);
 	if (cell.cc) addAttack = u2Mutations.types.Compression.attack(cell, baseAttack);
 	if (cell.u2Mutation.indexOf('NVA') != -1) baseAttack *= 0.01;
 	else if (cell.u2Mutation.indexOf('NVX') != -1) baseAttack *= 10;
 	baseAttack += addAttack;
-	baseAttack *= Math.pow(1.01, (game.global.world - 201));
+	baseAttack *= Math.pow(1.01, (targetZone - 201));
 	return baseAttack;
 }
 
-function calcMutationAttack(muteCell) {
+function calcMutationAttack(targetZone, muteCell) {
+	if (game.global.world < 201) return;
+	if (!targetZone) targetZone = game.global.world;
 	var attack;
 	var highest = 1;
 	var worstCell = 0;
@@ -1185,8 +1222,8 @@ function calcMutationAttack(muteCell) {
 		}
 		var cell = game.global.gridArray[i];
 		if (cell.u2Mutation && cell.u2Mutation.length) {
-			if (mutationBaseAttack(cell) > highest) worstCell = i;
-			highest = Math.max(mutationBaseAttack(cell) * (hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1), highest);
+			if (mutationBaseAttack(cell, targetZone) > highest) worstCell = i;
+			highest = Math.max(mutationBaseAttack(cell, targetZone) * (hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1), highest);
 			attack = highest;
 		}
 	}
@@ -1196,40 +1233,38 @@ function calcMutationAttack(muteCell) {
 	return attack;
 }
 
-function mutationBaseHealth(cell) {
+function mutationBaseHealth(cell, targetZone) {
 	var baseHealth;
 	var addHealth = 0;
 
-	baseHealth = calcEnemyBaseHealth('world', game.global.world, cell.level, cell.name);
+	baseHealth = calcEnemyBaseHealth('world', targetZone, cell.level, cell.name);
 	if (cell.cc) addHealth = u2Mutations.types.Compression.health(cell, baseHealth);
 	if (cell.u2Mutation.indexOf('NVA') != -1) baseHealth *= 0.01;
 	else if (cell.u2Mutation.indexOf('NVX') != -1) baseHealth *= 0.1;
 	baseHealth += addHealth;
 	baseHealth *= 2;
-	baseHealth *= Math.pow(1.02, (game.global.world - 201));
+	baseHealth *= Math.pow(1.02, (targetZone - 201));
 	return baseHealth;
 }
 
-function calcMutationHealth(muteCell) {
-	var health;
+function calcMutationHealth(targetZone, muteCell) {
+	if (game.global.world < 201) return;
+	if (!targetZone) targetZone = game.global.world;
+
 	var highest = 1;
 	var mute = false;
 	var worstCell = 0;
-	if (game.global.world > 200 && getPageSetting('rMutationCalc')) {
-		for (var i = 0; i < game.global.gridArray.length; i++) {
-			var cell = game.global.gridArray[i];
-			if (cell.u2Mutation && cell.u2Mutation.length) {
-				if (mutationBaseHealth(cell) > highest) worstCell = i;
-				highest = Math.max(mutationBaseHealth(cell), highest);
-				mute = true;
-				health = highest;
-			}
+	for (var i = 0; i < game.global.gridArray.length; i++) {
+		var cell = game.global.gridArray[i];
+		if (cell.u2Mutation && cell.u2Mutation.length) {
+			if (mutationBaseHealth(cell, targetZone) > highest) worstCell = i;
+			highest = Math.max(mutationBaseHealth(cell, targetZone), highest);
+			mute = true;
+			var health = highest;
 		}
-		//Showing which cell has the highest health value
-		if (muteCell) debug(worstCell)
 	}
-	if (!mute) health = calcEnemyBaseHealth("world", game.global.world, 99, 'Gorillimp');
-
+	//Showing which cell has the highest health value
+	if (muteCell) debug(worstCell)
 	return health;
 }
 
@@ -1251,9 +1286,8 @@ function RcalcBadGuyDmg(enemy, attack, equality, mapType, checkMutations) { //Wo
 	if (!isNaN(parseInt((equality)))) {
 		if (equality > game.portal.Equality[perkLevel])
 			debug('You don\'t have this many levels in Equality. - Enemy Dmg')
-		attack *= Math.pow(game.portal.Equality.getModifier(), equality)
+		attack *= Math.pow(game.portal.Equality.getModifier(), equality);
 	} else if (isNaN(parseInt((equality)))) {
-		attack *= game.portal.Equality[perkLevel] > 0 && getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
 		attack *= game.portal.Equality[perkLevel] > 0 && getPageSetting('Rcalcmaxequality') == 0 && !equality ? game.portal.Equality.getMult() : 1;
 		attack *= game.portal.Equality[perkLevel] > 0 && getPageSetting('Rcalcmaxequality') >= 1 && game.portal.Equality.scalingCount > 0 && !equality ? Math.pow(game.portal.Equality.modifier, game.portal.Equality.scalingCount) : 1;
 	}
@@ -1291,8 +1325,7 @@ function RcalcBadGuyDmg(enemy, attack, equality, mapType, checkMutations) { //Wo
 	return attack;
 }
 
-//Should be named getTotalDamageMod
-function RcalcBadGuyDmgMod() {
+function totalDamageMod() {
 	dmg = 1;
 	dmg *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
 	dmg *= game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;

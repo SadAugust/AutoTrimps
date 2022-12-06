@@ -704,7 +704,10 @@ function initializeAllSettings() {
 	createSetting('rGlassStacks', 'G: Stacks NYI!', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C3');
 
 	//Smithless
-	createSetting('rSmithless', 'Smithless', 'Turn this on if you want to enable AT farming for damage to kill Ubersmiths on the Smithless challenge. It is not fully implemented currently but it will farm until you either reach max tenacity or can fully kill the Ubersmith on a zone. In the future this will be changed to identify what health breakpoint you can reach and have that as the target but it won\'t be done for a while.', 'boolean', false, null, 'C3');
+	createSetting('rSmithless', 'Smithless', 'Turn this on if you want to enable AT farming for damage to kill Ubersmiths on the Smithless challenge. It will identify breakpoints that can be reached with max tenacity & max map bonus to figure out how many stacks you are able to obtain from the Ubersmith on your current zone and farm till it reached that point if it\'s attainable.', 'boolean', false, null, 'C3');
+
+	//Wither
+	createSetting('rWither', 'Wither', 'Turn this on if you want to enable AT farming until you can 4 shot your current world cell on Wither.', 'boolean', false, null, 'C3');
 
 	//--------------------------------------------------------------
 
@@ -1078,7 +1081,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("rMayhemMapIncrease", radonon_mayhem);
 	modifyParentNode_Initial("rStormStacks", radonon);
 	modifyParentNode_Initial("rPandRespecZone", radonon_panda);
-	//modifyParentNode_Initial("rGlassStacks", radonon);
+	modifyParentNode_Initial("rGlassStacks", radonon);
 
 	//Challenges
 	//Helium Settings
@@ -1632,74 +1635,6 @@ function updateATVersion() {
 					saveSettings();
 				}
 			}
-			var TributeMapType = ['rTributeFarmSettings', 'rdTributeFarmSettings', 'rc3TributeFarmSettings']
-			for (var x = 0; x < TributeMapType.length; x++) {
-				if (typeof (autoTrimpSettings[TributeMapType[x]].value[0]) !== 'undefined' && autoTrimpSettings[TributeMapType[x]].value[0].mapType === undefined) {
-					for (var y = 0; y < autoTrimpSettings[TributeMapType[x]].value.length; y++) {
-						autoTrimpSettings[TributeMapType[x]].value[y].mapType = 'Absolute';
-					}
-					saveSettings();
-				}
-			}
-
-			var settings_autoLevel = ['rTimeFarmSettings', 'rdTimeFarmSettings', 'rc3TimeFarmSettings', 'rTributeFarmSettings', 'rdTributeFarmSettings', 'rc3TributeFarmSettings',
-				'rSmithyFarmSettings', 'rdSmithyFarmSettings', 'rc3SmithyFarmSettings']
-
-			for (var x = 0; x < settings_autoLevel.length; x++) {
-				if (typeof (autoTrimpSettings[settings_autoLevel[x]].value[0]) !== 'undefined' && autoTrimpSettings[settings_autoLevel[x]].value[0].autoLevel === undefined) {
-					for (var y = 0; y < autoTrimpSettings[settings_autoLevel[x]].value.length; y++) {
-						autoTrimpSettings[settings_autoLevel[x]].value[y].autoLevel = true;
-					}
-					saveSettings();
-				}
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.5.0') {
-			if (typeof (autoTrimpSettings.rTributeFarmSettings.value[0]) !== 'undefined' && autoTrimpSettings.rTributeFarmSettings.value[0].done === undefined) {
-				for (var y = 0; y < autoTrimpSettings.rTributeFarmSettings.value.length; y++) {
-					autoTrimpSettings.rTributeFarmSettings.value[y].done = 1;
-				}
-				saveSettings();
-			}
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.6.0') {
-			if (typeof (autoTrimpSettings.rMapBonusSettings.value[0]) !== 'undefined' && autoTrimpSettings.rMapBonusSettings.value[0].done === undefined) {
-				for (var y = 0; y < autoTrimpSettings.rMapBonusSettings.value.length; y++) {
-					autoTrimpSettings.rMapBonusSettings.value[y].done = 1;
-				}
-				saveSettings();
-			}
-		}
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.1') {
-			if (typeof (autoTrimpSettings.rBoneShrineSettings.value[0]) !== 'undefined' && autoTrimpSettings.rBoneShrineSettings.value[0].runType === undefined) {
-				for (var y = 0; y < autoTrimpSettings.rBoneShrineSettings.value.length; y++) {
-					autoTrimpSettings.rBoneShrineSettings.value[y].runType = autoTrimpSettings.rBoneShrineSettings.value[y].boneruntype;
-				}
-				saveSettings();
-			}
-		}
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.2') {
-			if (typeof (autoTrimpSettings.rBoneShrineSettings.value[0]) !== 'undefined' && autoTrimpSettings.rBoneShrineSettings.value[0].shredActive === undefined) {
-				for (var y = 0; y < autoTrimpSettings.rBoneShrineSettings.value.length; y++) {
-					autoTrimpSettings.rBoneShrineSettings.value[y].shredActive = 'All';
-				}
-				saveSettings();
-			}
-		}
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.3') {
-			if (typeof (autoTrimpSettings.rMapBonusDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rMapBonusDefaultSettings.value.healthBonus === undefined) {
-				autoTrimpSettings.rMapBonusDefaultSettings.value.healthBonus = 10;
-				autoTrimpSettings.rMapBonusDefaultSettings.value.healthHDRatio = 10;
-				saveSettings();
-			}
-			if (typeof (autoTrimpSettings.rMapFarmSettings.value) !== 'undefined') {
-				autoTrimpSettings.rMapFarmSettings.value = autoTrimpSettings.rTimeFarmSettings.value
-				autoTrimpSettings.rMapFarmDefaultSettings.value = autoTrimpSettings.rTimeFarmDefaultSettings.value
-				autoTrimpSettings.rMapFarmZone.value = autoTrimpSettings.rTimeFarmZone.value
-				saveSettings();
-			}
 		}
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.4') {
 			if (typeof (autoTrimpSettings.rMapFarmDefaultSettings.value) !== 'undefined' && autoTrimpSettings.rMapFarmDefaultSettings.value.shredMapCap === undefined) {
@@ -1830,6 +1765,7 @@ function updateATVersion() {
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
+		verticalCenterTooltip(false, true);
 		saveSettings();
 	}
 
@@ -2484,11 +2420,14 @@ function updateCustomButtons() {
 	turnOff('rAlchDefaultSettings');
 	turnOff('rAlchZone');
 
-	turnOff('rGlass');
-	turnOff('rGlassStacks');
+	//turnOff('rGlass');
+	radonon ? turnOn('rGlass') : turnOff('rGlass');
+	radonon && getPageSetting('rGlass') ? turnOn('rGlassStacks') : turnOff('rGlassStacks');
+	//turnOff('rGlassStacks');
 
 	//Smithless
 	radonon ? turnOn('rSmithless') : turnOff('rSmithless');
+	radonon ? turnOn('rWither') : turnOff('rWither');
 
 	//Hypothermia 
 	radonon && (displayAllSettings || highestZone >= 174) ? turnOn('rHypoPopup') : turnOff('rHypoPopup');

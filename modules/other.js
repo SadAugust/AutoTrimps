@@ -578,9 +578,11 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	var runningQuest = game.global.challengeActive === 'Quest' && questcheck() == 8;
 	var runningUnlucky = game.global.challengeActive === 'Unlucky'
 	var ourHealth = calcOurHealth(runningQuest, 'map');
-	var dmgType = runningUnlucky ? 'avg' : 'avg'
+	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
 	var dailyCrit = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
+	var critType = 'maybe'
+	if (game.global.challengeActive === 'Wither' || game.global.challengeActive === 'Glass' || game.global.challengeActive === 'Duel') critType = 'never'
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
@@ -588,13 +590,18 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 			continue;
 
 		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot');
-		var ourDmg = calcOurDmg(dmgType, equalityAmt, false, 'map', 'maybe', y, 'force');
+		var ourDmg = calcOurDmg(dmgType, equalityAmt, false, 'map', critType, y, 'force');
 		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
-		var enemyHealth = RcalcEnemyHealthMod(game.global.world + mapLevel, 20, 'Turtlimp', 'map') * difficulty;
-		var enemyDmg = RcalcBadGuyDmg(null, calcEnemyBaseAttack(game.global.world + mapLevel, 20, 'Snimp', 'map', true), equalityAmt, 'map') * 1.5 * difficulty;
+		var enemyHealth = calcEnemyHealthCore('map', game.global.world + mapLevel, 20, 'Turtlimp') * difficulty;
+		var enemyDmg = calcEnemyAttackCore('map', game.global.world + mapLevel, 20, 'Snimp', false, false, equalityAmt) * difficulty;
+
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 		enemyDmg *= dailyEmpowerToggle && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 
+		if (game.global.challengeActive === 'Duel') {
+			enemyDmg *= 10;
+			if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
+		}
 		if (enemyHealth <= ourDmg && enemyDmg <= ourHealth) {
 			return mapLevel;
 		}
@@ -605,7 +612,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	return 0;
 }
 
-function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType) {
+function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, ourDmg) {
 
 	if (!enemyName) enemyName = 'Snimp';
 	if (!zone) zone = game.global.world;
@@ -625,6 +632,9 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var dailyCrit = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var maxEquality = game.portal.Equality.radLevel;
 
+	var critType = 'maybe'
+	if (game.global.challengeActive === 'Wither' || game.global.challengeActive === 'Glass' || game.global.challengeActive === 'Duel') critType = 'never'
+
 	//Challenge conditions
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
 	var runningDuel = game.global.challengeActive == 'Duel';
@@ -633,16 +643,19 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	//Initialising name/health/dmg variables
 	//Enemy stats
 	if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
-	var enemyHealth = RcalcEnemyHealthMod(zone, currentCell, enemyName, mapType, checkMutations) * difficulty;
-	var enemyDmg = RcalcBadGuyDmg(null, calcEnemyBaseAttack(zone, currentCell, enemyName, mapType, false), 0, mapType) * difficulty * 1.5;
+	var enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName) * difficulty;
+	var enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, false, 0) * difficulty;
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 	enemyDmg *= dailyEmpowerToggle && mapType === 'map' && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 
-	enemyDmg *= runningDuel ? 10 : 1;
+	if (game.global.challengeActive === 'Duel') {
+		enemyDmg *= 10;
+		if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
+	}
 	//Our stats
 	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var ourHealth = calcOurHealth(runningQuest, mapType);
-	var ourDmg = calcOurDmg(dmgType, 0, false, mapType, 'maybe', bionicTalent, titimp);
+	if (!ourDmg) var ourDmg = calcOurDmg(dmgType, 0, false, mapType, critType, bionicTalent, titimp);
 
 	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, mapType, 'never', bionicTalent, titimp)) : 2;
 
@@ -650,8 +663,8 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var gammaToTrigger = gammaBurstPct === 1 ? 0 : autoBattle.oneTimers.Burstier.owned ? 4 : 5
 
 	if (checkMutations) {
-		enemyDmg = RcalcBadGuyDmg(null, calcEnemyBaseAttack(game.global.world, currentCell, enemyName, 'world', true), 0, 'world', checkMutations) * 1.5;
-		enemyHealth = RcalcEnemyHealthMod(game.global.world, currentCell, enemyName, 'world', checkMutations);
+		enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, calcMutationAttack(zone), 0);
+		enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName, calcMutationHealth(zone));
 	}
 
 	if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
@@ -739,12 +752,15 @@ function equalityManagement() {
 	var gammaDmg = gammaBurstPct;
 	var fuckGamma = (dailyReflect || (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger));
 
+	var critType = 'maybe'
+	if (game.global.challengeActive === 'Wither' || game.global.challengeActive === 'Glass') critType = 'never'
+
 	//Initialising Stat variables
 	//Our stats
 	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var ourHealth = remainingHealth();
 	var ourHealthMax = calcOurHealth(runningQuest, type)
-	var ourDmg = calcOurDmg(dmgType, 0, false, type, 'maybe', bionicTalent, true);
+	var ourDmg = calcOurDmg(dmgType, 0, false, type, critType, bionicTalent, true);
 
 	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, type, 'never', bionicTalent, true)) : 2;
 
@@ -759,7 +775,7 @@ function equalityManagement() {
 	//Enemy stats
 	var enemyName = game.global[mapGrid][currentCell].name;
 	var enemyHealth = game.global[mapGrid][currentCell].health;
-	var enemyDmg = getCurrentEnemy().attack * RcalcBadGuyDmgMod() * 1.5;
+	var enemyDmg = getCurrentEnemy().attack * totalDamageMod() * 1.5;
 	if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
 	enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
 	enemyDmg *= dailyEmpowerToggle && !mapping && dailyEmpower && dailyCrit ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
@@ -783,6 +799,8 @@ function equalityManagement() {
 	if (runningArchaeology) fastEnemy = true;
 	if (noFrenzy) fastEnemy = true;
 	if (runningTrappa) fastEnemy = true;
+	if (runningDuel && !mapping) fastEnemy = true;
+	if (runningQuest) fastEnemy = true;
 	if (runningExperienced) fastEnemy = false;
 	if (runningGlass) fastEnemy = true;
 	if (runningBerserk) fastEnemy = true;
