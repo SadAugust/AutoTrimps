@@ -1711,7 +1711,7 @@ function Glass() {
 	var gammaToTrigger = gammaMaxStacks - game.heirlooms.Shield.gammaBurst.stacks;
 	var gammaDmg = gammaBurstPct;
 	var canGamma = gammaToTrigger <= 1 ? true : false;
-	var damageGoal = 4;
+	var damageGoal = 2;
 
 	var equalityAmt = equalityQuery('Snimp', game.global.world, 20, 'map', 0.75, 'gamma');
 	var ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
@@ -2576,7 +2576,7 @@ function Smithless() {
 
 		var totalDmgTenacity = (ourDmgTenacity * 2 + (ourDmgTenacity * gammaDmg * 2))
 
-		var enemyHealth = RcalcEnemyHealthMod(game.global.world, 1, name, 'world');
+		var enemyHealth = calcEnemyHealthCore('world', game.global.world, 1, name);
 		enemyHealth *= 3e15;
 		const smithyThreshhold = [1, 0.01, 0.000001];
 		const smithyThreshholdIndex = [0.000001, 0.01, 1];
