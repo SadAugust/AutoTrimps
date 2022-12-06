@@ -258,7 +258,7 @@ function buyJobs() {
 		if (MODULES.mapFunctions.workerRatio !== null) workerRatio = MODULES.mapFunctions.workerRatio;
 		else workerRatio = rMapSettings.jobRatio;
 		desiredRatios = Array.from(workerRatio.split(','))
-		desiredRatios = [desiredRatios[0] !== undefined ? parseInt(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? parseInt(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? parseInt(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? parseInt(desiredRatios[3]) : 0]
+		desiredRatios = [desiredRatios[0] !== undefined ? Number(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? Number(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? Number(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? Number(desiredRatios[3]) : 0]
 	} else {
 		// Weird scientist ratio hack. Based on previous AJ, I don't know why it's like this.
 		var scientistMod = MODULES["jobs"].RscientistRatio;
