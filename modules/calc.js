@@ -344,8 +344,8 @@ function getCritMulti(high, crit) {
 	if (critChance < 0) critDHModifier = (1 + critChance - critChance / 5);
 	else if (critChance < 1) critDHModifier = (1 - critChance + critChance * critD);
 	else if (critChance < 2) critDHModifier = ((critChance - 1) * getMegaCritDamageMult(2) * critD + (2 - critChance) * critD);
-	else if (critChance > 3 && (crit === 'never' || crit === 'force')) critDHModifier = dmgMulti * critD
-	else if (critChance > 3) critDHModifier = ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * critD
+	else if (critChance >= 3 && (crit === 'never' || crit === 'force')) critDHModifier = dmgMulti * critD
+	else if (critChance >= 3) critDHModifier = ((1 - highTierChance) * lowTierMulti + highTierChance * highTierMulti) * critD
 	else critDHModifier = ((critChance - 2) * Math.pow(getMegaCritDamageMult(critChance), 2) * critD + (3 - critChance) * getMegaCritDamageMult(critChance) * critD);
 
 	return critDHModifier;
@@ -426,16 +426,18 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 		attack *= (game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? 1.65 : 1.35) : 1.15;
 		attack *= (game.talents.voidMastery.purchased) ? 5 : 1;
 	}
-	//Scryhard I - MAKE SURE THIS WORKS!
-	var fightingCorrupted = getCurrentEnemy() && getCurrentEnemy().corrupted || !realDamage && (mutations.Healthy.active() || mutations.Corruption.active());
-	if (game.talents.scry.purchased && fightingCorrupted && ((!specificStance && game.global.formation == 4) || (specificStance === 'S' || specificStance === 'W')))
-		attack *= 2;
-	//Magmamancery
-	if (game.talents.magmamancer.purchased) attack *= game.jobs.Magmamancer.getBonusPercent();
-	//Still Rowing 2
-	if (game.talents.stillRowing2.purchased) attack *= ((game.global.spireRows * 0.06) + 1);
-	//Strength in Health
-	if (game.talents.healthStrength.purchased && mutations.Healthy.active()) attack *= ((0.15 * mutations.Healthy.cellCount()) + 1);
+	if (game.global.world === 1) {
+		//Scryhard I - MAKE SURE THIS WORKS!
+		var fightingCorrupted = getCurrentEnemy() && getCurrentEnemy().corrupted || !realDamage && (mutations.Healthy.active() || mutations.Corruption.active());
+		if (game.talents.scry.purchased && fightingCorrupted && ((!specificStance && game.global.formation == 4) || (specificStance === 'S' || specificStance === 'W')))
+			attack *= 2;
+		//Magmamancery
+		if (game.talents.magmamancer.purchased) attack *= game.jobs.Magmamancer.getBonusPercent();
+		//Still Rowing 2
+		if (game.talents.stillRowing2.purchased) attack *= ((game.global.spireRows * 0.06) + 1);
+		//Strength in Health
+		if (game.talents.healthStrength.purchased && mutations.Healthy.active()) attack *= ((0.15 * mutations.Healthy.cellCount()) + 1);
+	}
 	// Bionic Magnet Mastery
 	attack *= mapType !== 'world' && game.talents.bionic2.purchased && mapLevel > 0 ? 1.5 : 1;
 	// Sugar rush event bonus
