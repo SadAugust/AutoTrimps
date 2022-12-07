@@ -1623,13 +1623,13 @@ function Wither() {
 	var gammaDmg = gammaBurstPct;
 	var canGamma = gammaToTrigger <= 1 ? true : false;
 
-	var cell = game.global.lastClearedCell + 1;
+	var cell = game.global.lastClearedCell + 2;
 	var name = game.global.gridArray[cell].name;
 	var damageGoal = game.global.challengeActive === 'Wither' ? 4 : 2;
 
-	var equalityAmt = equalityQuery(name, game.global.world, cell + 1, 'world', 1, 'gamma');
+	var equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma');
 	var ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
-	var enemyHealth = calcEnemyHealthCore('world', game.global.world, cell + 1, name, calcMutationHealth(game.global.world));
+	var enemyHealth = calcEnemyHealthCore('world', game.global.world, cell, name, calcMutationHealth(game.global.world));
 
 	//Checking if we can clear current zone.
 	if (((ourDmg * (canGamma ? gammaDmg : 1)) * damageGoal) < enemyHealth) {
@@ -1637,7 +1637,7 @@ function Wither() {
 	}
 
 	//Checking if we can clear next zone.
-	if (game.global.lastClearedCell + 2 === 100) {
+	if (cell === 100) {
 		equalityAmt = equalityQuery(name, game.global.world + 1, 100, 'world', 1, 'gamma');
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
 		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 100, 'Improbability', calcMutationHealth(game.global.world + 1));

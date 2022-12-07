@@ -755,9 +755,10 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 		}
 	}
 
-	if (game.global.universe === 2) {
-		if (type === 'world' && zone > 200 && checkMutations && getPageSetting('rMutationCalc')) {
-			attack = calcMutationAttack(zone);
+	//Curr zone Mutation Attack
+	if (game.global.universe === 2 && type === 'world' && game.global.world > 200) {
+		if (game.global.gridArray[cell - 1].u2Mutation && game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
+			attack = mutationBaseAttack(cell - 1, zone)
 		}
 	}
 
@@ -995,7 +996,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	//Curr zone Mutation HP
 	if (game.global.universe === 2 && type === 'world' && game.global.world > 200) {
 		if (game.global.gridArray[cell - 1].u2Mutation && game.global.gridArray[cell - 1].u2Mutation.length !== 0) {
-			health = u2Mutations.getHealth(game.global.gridArray[cell - 1])
+			health = mutationBaseHealth(cell - 1, zone)
 		}
 	}
 
@@ -1083,6 +1084,11 @@ function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp") {
 		else if (corrupt) health *= calcCorruptionScale(zone, 10);
 	}
 
+	//Add check for mutator health here!
+	if (type === 'world' && game.global.world > 200 && getPageSetting('rMutationCalc')) {
+		health = calcMutationHealth(zone) > health ? calcMutationHealth(zone) : health;
+	}
+
 	return health;
 }
 
@@ -1134,20 +1140,21 @@ function calcHDRatio(targetZone, type, ourDamage) {
 	//Init
 	if (type === 'world') {
 		var enemyHealth = calcEnemyHealth(type, targetZone);
-		var universeSetting = game.global.universe === 2 ? equalityQuery('Turtlimp', targetZone, 99, 'world', 1, 'gamma', ourDamage) : 'X';
+		var universeSetting = game.global.universe === 2 ? equalityQuery('Turtlimp', targetZone, 99, 'world', 1, 'gamma') : 'X';
 	}
 	if (type === 'map') {
 		var enemyHealth = calcEnemyHealth(type, targetZone);
-		var universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, 'void', 4, 'gamma', ourDamage) : 'X';
+		var universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, 'void', 4, 'gamma') : 'X';
 	}
 	if (type === 'void') {
 		var enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Cthulimp');
-		var universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, 'void', 4, 'gamma', ourDamage) : 'X';
+		var universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, 'void', 4, 'gamma') : 'X';
 	}
 
 	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
 
 	var ourBaseDamage = calcOurDmg("avg", universeSetting, false, type, 'maybe', targetZone - game.global.world);
+	//debug(enemyHealth)
 
 	//Lead Challenge
 	if (game.global.challengeActive == "Lead" && targetZone % 2 == 1 && type != "map") {
@@ -1175,7 +1182,8 @@ function calcHDRatio(targetZone, type, ourDamage) {
 		return Math.max(voidHealth / voidDamage, calcEnemyHealth("world", targetZone) / ourBaseDamage);
 	}
 	//Adding gammaBurstDmg to calc
-	ourBaseDamage *= gammaBurstDmg
+	if ((game.global.universe === 2 && universeSetting < (game.portal.Equality.radLevel - 14)) || game.global.universe === 1)
+		ourBaseDamage *= gammaBurstDmg
 	//Return H:D for a regular, sane, not f-ing Lead zone (sorry, Lead just took a lot of me)
 	return enemyHealth / (ourBaseDamage + addPoison());
 }
@@ -1195,13 +1203,16 @@ function calcCurrentStance() {
 
 //Radon
 function mutationBaseAttack(cell, targetZone) {
+	if (!cell) return;
+
 	var baseAttack;
 	var addAttack = 0;
+	var cell = game.global.gridArray[cell];
 	if (cell.cs) {
+		baseAttack = calcEnemyBaseAttack(targetZone, cell.cs, cell.name, 'world', true);
+	} else {
 		baseAttack = calcEnemyBaseAttack(targetZone, cell.level, cell.name, 'world', true);
 	}
-	else
-		baseAttack = calcEnemyBaseAttack(targetZone, cell.level, cell.name, 'world', true);
 	if (cell.cc) addAttack = u2Mutations.types.Compression.attack(cell, baseAttack);
 	if (cell.u2Mutation.indexOf('NVA') != -1) baseAttack *= 0.01;
 	else if (cell.u2Mutation.indexOf('NVX') != -1) baseAttack *= 10;
@@ -1211,26 +1222,27 @@ function mutationBaseAttack(cell, targetZone) {
 }
 
 function calcMutationAttack(targetZone, muteCell) {
-	if (game.global.world < 201) return;
+	if (targetZone < 201) return;
 	if (!targetZone) targetZone = game.global.world;
 	var attack;
 	var highest = 1;
 	var worstCell = 0;
+	var gridArray = game.global.gridArray
 
-	for (var i = 0; i < game.global.gridArray.length; i++) {
-		var hasRage = game.global.gridArray[i].u2Mutation.includes('RGE');
-		if (game.global.gridArray[i].u2Mutation.includes('CMP') && !game.global.gridArray[i].u2Mutation.includes('RGE')) {
+	for (var i = 0; i < gridArray.length; i++) {
+		var hasRage = gridArray[i].u2Mutation.includes('RGE');
+		if (gridArray[i].u2Mutation.includes('CMP') && !gridArray[i].u2Mutation.includes('RGE')) {
 			for (var y = i + 1; y < i + u2Mutations.types.Compression.cellCount(); y++) {
-				if (game.global.gridArray[y].u2Mutation.includes('RGE')) {
+				if (gridArray[y].u2Mutation.includes('RGE')) {
 					hasRage = true;
 					break;
 				}
 			}
 		}
-		var cell = game.global.gridArray[i];
-		if (cell.u2Mutation && cell.u2Mutation.length) {
-			if (mutationBaseAttack(cell, targetZone) > highest) worstCell = i;
-			highest = Math.max(mutationBaseAttack(cell, targetZone) * (hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1), highest);
+		var cell = i;
+		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
+			if (mutationBaseAttack(cell + 1, targetZone) > highest) worstCell = i;
+			highest = Math.max(mutationBaseAttack(cell + 1, targetZone) * (hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1), highest);
 			attack = highest;
 		}
 	}
@@ -1243,8 +1255,13 @@ function calcMutationAttack(targetZone, muteCell) {
 function mutationBaseHealth(cell, targetZone) {
 	var baseHealth;
 	var addHealth = 0;
-
+	var cell = game.global.gridArray[cell];
+	/* if (cell.cs) {
+		baseHealth = calcEnemyBaseHealth('world', targetZone, cell.cs, cell.name);
+	} else { */
 	baseHealth = calcEnemyBaseHealth('world', targetZone, cell.level, cell.name);
+	/* } */
+
 	if (cell.cc) addHealth = u2Mutations.types.Compression.health(cell, baseHealth);
 	if (cell.u2Mutation.indexOf('NVA') != -1) baseHealth *= 0.01;
 	else if (cell.u2Mutation.indexOf('NVX') != -1) baseHealth *= 0.1;
@@ -1255,17 +1272,17 @@ function mutationBaseHealth(cell, targetZone) {
 }
 
 function calcMutationHealth(targetZone, muteCell) {
-	if (game.global.world < 201) return;
 	if (!targetZone) targetZone = game.global.world;
 
 	var highest = 1;
 	var mute = false;
 	var worstCell = 0;
+	var gridArray = game.global.gridArray
 	for (var i = 0; i < game.global.gridArray.length; i++) {
-		var cell = game.global.gridArray[i];
-		if (cell.u2Mutation && cell.u2Mutation.length) {
-			if (mutationBaseHealth(cell, targetZone) > highest) worstCell = i;
-			highest = Math.max(mutationBaseHealth(cell, targetZone), highest);
+		var cell = i;
+		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
+			if (mutationBaseHealth(cell + 1, targetZone) > highest) worstCell = i;
+			highest = Math.max(mutationBaseHealth(cell + 1, targetZone), highest);
 			mute = true;
 			var health = highest;
 		}

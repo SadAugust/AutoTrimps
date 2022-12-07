@@ -651,6 +651,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var ourDmgEquality = 0;
 	var enemyDmgEquality = 0;
 	var unluckyDmgEquality = 0;
+
 	if (enemyHealth !== 0) {
 		for (var i = 0; i <= maxEquality; i++) {
 			enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i)
