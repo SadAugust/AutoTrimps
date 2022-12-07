@@ -775,7 +775,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	else if (game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50) attack *= 3;
 	else if (game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0) attack *= game.challenges.Wither.getEnemyAttackMult();
 	else if (game.global.challengeActive == 'Archaeology') attack *= game.challenges.Archaeology.getStatMult('enemyAttack');
-	else if (game.global.challengeActive == 'Mayhem' && mapType === 'world') attack *= game.challenges.Mayhem.getBossMult();
+	else if (game.global.challengeActive == 'Mayhem' && type === 'world') attack *= game.challenges.Mayhem.getBossMult();
 	else if (game.global.challengeActive == 'Mayhem') attack *= game.challenges.Mayhem.getEnemyMult();
 	//Purposefully don't put Storm in here.
 	else if (game.global.challengeActive == 'Storm' && !game.global.mapsActive) attack *= game.challenges.Storm.getAttackMult();
@@ -804,7 +804,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 			attack *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
 
 		//Bad Map Strength
-		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && mapType !== 'world')
+		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && type !== 'world')
 			attack *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
 
 		//Bloodthirsty
@@ -812,7 +812,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 			attack *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks);
 
 		//Empower
-		if (typeof game.global.dailyChallenge.empower !== 'undefined' && mapType === 'world')
+		if (typeof game.global.dailyChallenge.empower !== 'undefined' && type === 'world')
 			attack *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
 	}
 
