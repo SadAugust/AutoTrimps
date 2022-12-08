@@ -224,12 +224,6 @@ function doPortal(challenge) {
 		autoMagmiteSpender();
 	}
 	autoheirlooms3();
-	if (game.global.ShieldEquipped.name != getPageSetting('highdmg') || game.global.ShieldEquipped.name != getPageSetting('dhighdmg')) {
-		if (highdmgshield() != undefined) {
-			selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
-			equipHeirloom();
-		}
-	}
 	if (getPageSetting('AutoAllocatePerks') == 2) {
 		viewPortalUpgrades();
 		numTab(6, true)
