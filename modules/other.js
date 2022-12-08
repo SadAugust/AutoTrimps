@@ -1131,7 +1131,7 @@ function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceM
 		if (game.global.maxSplit != 1 && !forceMax && !forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * game.global.maxSplit);
 		else if (forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * forceRatio);
 
-		if (item === 'fragments') resourcesAvailable = autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone !== 0 && game.global.world >= autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone ? resourcesAvailable :
+		if (item === 'fragments' && game.global.universe === 2) resourcesAvailable = autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone !== 0 && game.global.world >= autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone ? resourcesAvailable :
 			autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.enabled && resourcesAvailable > resource.owned - (PerfectMapCost_Actual(10, 'lmc') * autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount) ? resource.owned - (PerfectMapCost_Actual(10, 'lmc') * autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount) :
 				resourcesAvailable;
 		if (!resource || typeof resourcesAvailable === 'undefined') {
