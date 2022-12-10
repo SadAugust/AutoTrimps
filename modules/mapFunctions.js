@@ -561,7 +561,7 @@ function MapFarm() {
 			saveSettings();
 		}
 
-		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMFMapLevel || getCurrentMapObject().bonus !== rMFSpecial || game.global.mapRunCounter + 1 === rMFRepeatCounter);
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMFMapLevel || (getCurrentMapObject().bonus !== rMFSpecial && (getCurrentMapObject().bonus !== undefined && rMFSpecial !== '0')) || game.global.mapRunCounter + 1 === rMFRepeatCounter);
 		var status = 'Map Farm: ' + game.global.mapRunCounter + "/" + rMFRepeatCounter;
 
 		farmingDetails.shouldRun = rShouldMapFarm;
@@ -1105,59 +1105,67 @@ function MapDestacking() {
 	};
 
 	if (
+		!(getPageSetting('balance') && game.global.challengeActive == "Balance") &&
 		!(getPageSetting('rUnbalance') && game.global.challengeActive == "Unbalance") &&
 		!(getPageSetting('Rstormon') && game.global.challengeActive == "Storm") &&
 		!(game.global.challengeActive === 'Daily' && getPageSetting('rBloodthirstDestack') && typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
 	)
 		return farmingDetails;
 
-	var rShouldUnbalance = false;
-	var rShouldStorm = false;
-	var rShouldBloodthirst = false;
 	var rShouldDestack = false;
-	var rDMapLevel = -(game.global.world - 6)
-	var rDSpecial = 'fa';
+	var rDMapLevel = -(game.global.world - 6);
+	var rDSpecial = '0';
 	var rDDestack = 0;
 
-	//Unbalance Destacking
-	var rUnbalanceZone = getPageSetting('rUnbalanceZone') > 0 ? getPageSetting('rUnbalanceZone') : Infinity;
-	var rUnbalanceStacks = getPageSetting('rUnbalanceStacks') > 0 ? getPageSetting('rUnbalanceStacks') : Infinity;
 
+	//Balance Destacking
+	if (game.global.challengeActive == "Balance") {
+		var balanceZone = getPageSetting('balanceZone') > 0 ? getPageSetting('balanceZone') : Infinity;
+		var balanceStacks = getPageSetting('balanceStacks') > 0 ? getPageSetting('balanceStacks') : Infinity;
+		rShouldDestack = (((game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= balanceZone && (game.challenges.Balance.balanceStacks >= balanceStacks || (getPageSetting('balanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Balance.balanceStacks != 0)));
+		rDDestack = game.challenges.Balance.balanceStacks;
+	}
+
+	//Unbalance Destacking
 	if (game.global.challengeActive == "Unbalance") {
-		rShouldUnbalance = (((game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= rUnbalanceZone && (game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks || (getPageSetting('rUnbalanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
+		var rUnbalanceZone = getPageSetting('rUnbalanceZone') > 0 ? getPageSetting('rUnbalanceZone') : Infinity;
+		var rUnbalanceStacks = getPageSetting('rUnbalanceStacks') > 0 ? getPageSetting('rUnbalanceStacks') : Infinity;
+		rShouldDestack = (((game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= rUnbalanceZone && (game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks || (getPageSetting('rUnbalanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
 		rDDestack = game.challenges.Unbalance.balanceStacks;
 	}
 
 	//Bloodthirst Destacking
 	if (game.global.challengeActive === 'Daily' && !game.global.mapsActive && game.global.dailyChallenge.bloodthirst.stacks >= dailyModifiers.bloodthirst.getFreq(game.global.dailyChallenge.bloodthirst.strength) - 1) {
-		rShouldBloodthirst = true;
+		rShouldDestack = true;
 		rDDestack = game.global.dailyChallenge.bloodthirst.stacks;
 	}
 
 	//Storm Destacking
-	var rStormZone = getPageSetting('rStormZone') > 0 ? getPageSetting('rStormZone') : Infinity;
-	var rStormStacks = getPageSetting('rStormStacks') > 0 ? getPageSetting('rStormStacks') : Infinity;
-
 	if (game.global.challengeActive == "Storm") {
-		rShouldStorm = (game.global.world >= rStormZone && (game.challenges.Storm.beta >= rStormStacks && game.challenges.Storm.beta != 0));
+		var rStormZone = getPageSetting('rStormZone') > 0 ? getPageSetting('rStormZone') : Infinity;
+		var rStormStacks = getPageSetting('rStormStacks') > 0 ? getPageSetting('rStormStacks') : Infinity;
+		rShouldDestack = (game.global.world >= rStormZone && (game.challenges.Storm.beta >= rStormStacks && game.challenges.Storm.beta != 0));
 		rDDestack = game.challenges.Storm.beta;
 	}
-	//Recycles the map we're running if you have 0 stacks of balance and the map is level 6 as that's the only time we should be running a map at this level.
-	if (rShouldUnbalance || rShouldStorm || rShouldBloodthirst)
-		rShouldDestack = true;
 
-	if (game.global.mapsActive && getCurrentMapObject().level == 6 &&
+	if (!game.jobs.Explorer.locked && game.global.mapsActive && getCurrentMapObject().level == 6 &&
 		(
-			(game.global.challengeActive === 'Daily' && !rShouldBloodthirst && game.global.dailyChallenge.bloodthirst.stacks === 0) ||
-			(game.global.challengeActive == "Unbalance" && !rShouldUnbalance && game.challenges.Unbalance.balanceStacks == 0) ||
-			(game.global.challengeActive == "Storm" && !rShouldStorm && game.challenges.Storm.beta == 0)
+			(game.global.challengeActive == "Balance" && !rShouldDestack && game.challenges.Balance.balanceStacks == 0) ||
+			(game.global.challengeActive === 'Daily' && !rShouldDestack && game.global.dailyChallenge.bloodthirst.stacks === 0) ||
+			(game.global.challengeActive == "Unbalance" && !rShouldDestack && game.challenges.Unbalance.balanceStacks == 0) ||
+			(game.global.challengeActive == "Storm" && !rShouldDestack && game.challenges.Storm.beta == 0)
 		)
 	) {
 		mapsClicked();
 		recycleMap();
 	}
 
-	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rDMapLevel || getCurrentMapObject().bonus !== rDSpecial || (getCurrentMapObject().size - getCurrentMapCell().level) > rDDestack);
+	if (game.global.universe === 1)
+		rDSpecial = game.global.highestLevelCleared + 1 >= 60 ? 'fa' : '0';
+	if (game.global.universe === 2)
+		rDSpecial = game.global.highestRadonLevelCleared + 1 >= 15 ? 'fa' : '0';
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rDMapLevel || (getCurrentMapObject().bonus !== rDSpecial && (getCurrentMapObject().bonus !== undefined && rDSpecial !== '0')) || (getCurrentMapObject().size - getCurrentMapCell().level) > rDDestack);
+
 	var status = 'Destacking: ' + rDDestack + ' stacks remaining';
 
 	farmingDetails.shouldRun = rShouldDestack;
@@ -1269,7 +1277,6 @@ function PrestigeRaiding() {
 
 //Prestige Climb
 function PrestigeClimb() {
-	if (game.options.menu.mapLoot.enabled != 1) toggleSetting('mapLoot');
 
 	const mapName = 'needPrestige'
 	const farmingDetails = {
@@ -1298,23 +1305,26 @@ function PrestigeClimb() {
 	if (getPageSetting('ForcePresZ') !== -1 && (game.global.world) >= getPageSetting(universe + 'ForcePresZ')) {
 		needPrestige = (offlineProgress.countMapItems(game.global.world) !== 0);
 	} else
-		needPrestige = game.mapUnlocks[targetPrestige] && game.mapUnlocks[targetPrestige].last <= (game.global.world);
+		needPrestige = game.mapUnlocks[targetPrestige] && game.mapUnlocks[targetPrestige].last + 5 <= (game.global.world);
 
 	//Figure out how many equips to farm for
 	var prestigeToFarmFor = 0;
 	y = 0;
 	for (const p of prestigeList) {
+		if (game.equipment[game.upgrades[p].prestiges].locked) continue;
 		const prestigeUnlock = game.mapUnlocks[p];
-		const pMapLevel = prestigeUnlock.last;
-		if (game.upgrades[p].allowed && prestigeUnlock && pMapLevel <= z) {
-			prestigeToFarmFor += Math.floor((z - pMapLevel) / 5)
+		const pMapLevel = prestigeUnlock.last + 5;
+		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && pMapLevel <= z) {
+			needPrestige = true;
+			prestigeToFarmFor += 1;
 			if (prestigeToFarmFor > 2) y++;
-			if (p === targetPrestige) break;
 		}
+		if (p === targetPrestige) break;
 	}
 	if (getScientistLevel() === 5) prestigeToFarmFor -= y;
 
-	if (prestigeToFarmFor === 0) return farmingDetails;
+	//debug(prestigeToFarmFor)
+	//if (prestigeToFarmFor === 0) return farmingDetails;
 
 	//Prestige Skip 1
 	if (needPrestige && getPsString("gems", true) > 0 && (getPageSetting(universe + 'PrestigeSkip1_2') == 1 || getPageSetting(universe + 'PrestigeSkip1_2') == 2)) {
@@ -1341,19 +1351,21 @@ function PrestigeClimb() {
 
 	if (!needPrestige) return farmingDetails;
 
+	if (game.options.menu.mapLoot.enabled != 1) toggleSetting('mapLoot');
 	var status = 'Prestige Climb: ' + prestigeToFarmFor + ' items remaining';
 
-	var repeat = !prestigeArmorList.includes(targetPrestige) ? prestigeToFarmFor > 2 : prestigeToFarmFor > 1;
 	let special;
 	if (game.global.universe === 1)
 		special = game.global.highestLevelCleared + 1 >= 135 ? 'p' : game.global.highestLevelCleared + 1 >= 60 ? 'fa' : '0';
 	if (game.global.universe === 2)
 		special = game.global.highestRadonLevelCleared + 1 >= 55 ? 'p' : game.global.highestRadonLevelCleared + 1 >= 15 ? 'fa' : '0';
 
+	var repeat = (!(!prestigeArmorList.includes(targetPrestige) ? prestigeToFarmFor > 2 : prestigeToFarmFor > 1) || game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || (getCurrentMapObject().bonus !== special && (getCurrentMapObject().bonus !== undefined && special !== '0'))));
+
 	farmingDetails.shouldRun = needPrestige;
 	farmingDetails.mapName = mapName;
 	farmingDetails.status = status;
-	farmingDetails.repeat = repeat;
+	farmingDetails.repeat = !repeat;
 	farmingDetails.mapLevel = mapLevel;
 	farmingDetails.autoLevel = true;
 	farmingDetails.special = special;
@@ -2772,8 +2784,14 @@ function FarmingDecision() {
 	if (game.global.universe === 1 && !autoTrimpSettings.AutoMaps.value) return farmingDetails;
 	if (game.global.universe === 2 && !autoTrimpSettings.RAutoMaps.value) return farmingDetails;
 
-	if (game.global.universe === 1) var mapTypes = [PrestigeClimb(), MapFarm(), PrestigeRaiding(), BionicRaiding(), HDFarm(), VoidMaps(), MapBonus(), Experience()]
-	if (game.global.universe === 2) var mapTypes = [Quest(), PandemoniumDestack(), PrestigeClimb(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), Glass(), MapBonus(), Smithless(), Wither()]
+	//U1 map settings to check for.
+	if (game.global.universe === 1) var mapTypes = [PrestigeClimb(), MapFarm(), PrestigeRaiding(), BionicRaiding(), HDFarm(), VoidMaps(), MapBonus(), Experience(), MapDestacking()];
+
+	//Skipping map farming if in Decay and above stack count user input
+	if (decaySkipMaps()) mapTypes = [PrestigeClimb(), VoidMaps()];
+
+	//U2 map settings to check for.
+	if (game.global.universe === 2) var mapTypes = [Quest(), PandemoniumDestack(), PrestigeClimb(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), Glass(), MapBonus(), Smithless(), Wither()];
 
 	for (const map of mapTypes) {
 		if (map.shouldRun) {
@@ -2948,6 +2966,47 @@ function fragmap() {
 		document.getElementById("advSpecialSelect").value = 0;
 		updateMapCost();
 	}
+}
+
+function mapCost(pluslevel, special, biome, onlyPerfect) {
+	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
+	if (!pluslevel || pluslevel < 0) pluslevel = 0;
+	if (!special) special = '0';
+	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
+	document.getElementById("biomeAdvMapsSelect").value = biome;
+	document.getElementById("advExtraLevelSelect").value = pluslevel;
+	document.getElementById("advSpecialSelect").value = special;
+	document.getElementById("lootAdvMapsRange").value = 9;
+	document.getElementById("difficultyAdvMapsRange").value = 9;
+	document.getElementById("sizeAdvMapsRange").value = 9;
+	document.getElementById("advPerfectCheckbox").dataset.checked = true;
+	document.getElementById("mapLevelInput").value = maplevel;
+	updateMapCost();
+
+	if (!onlyPerfect) {
+		if (updateMapCost(true) > game.resources.fragments.owned) {
+			document.getElementById("biomeAdvMapsSelect").value = "Random";
+			updateMapCost();
+		}
+		if (updateMapCost(true) > game.resources.fragments.owned) {
+			document.getElementById("advPerfectCheckbox").dataset.checked = false;
+			updateMapCost();
+		}
+
+		while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
+			difficultyAdvMapsRange.value -= 1;
+			if (updateMapCost(true) <= game.resources.fragments.owned) break;
+			sizeAdvMapsRange.value -= 1;
+		}
+		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
+
+		if (updateMapCost(true) > game.resources.fragments.owned) {
+			document.getElementById("advSpecialSelect").value = 0;
+			updateMapCost();
+		}
+	}
+
+	return updateMapCost(true);
 }
 
 function fragMapFarmCost() {

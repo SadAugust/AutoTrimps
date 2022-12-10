@@ -15,6 +15,7 @@ function BoneShrine() {
 
 	//Setting up variables
 	const rBoneShrineBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hBoneShrineSettings.value : autoTrimpSettings.rBoneShrineSettings.value;
+	const universePrefix = game.global.universe === 2 ? 'r' : 'h';
 	var rBSIndex = null;
 	const totalPortals = getTotalPortals();
 	for (var y = 0; y < rBoneShrineBaseSettings.length; y++) {
@@ -39,7 +40,7 @@ function BoneShrine() {
 		}
 	}
 	if (rBSIndex !== null) {
-		var rBoneShrineSettings = autoTrimpSettings.rBoneShrineSettings.value[rBSIndex];
+		var rBoneShrineSettings = rBoneShrineBaseSettings[rBSIndex];
 		var rBoneShrineCharges = rBoneShrineSettings.boneamount;
 		var rBoneShrineGather = rBoneShrineSettings.gather;
 		if (game.global.challengeActive === 'Transmute' && rBoneShrineGather === 'metal') rBoneShrineGather = 'food';
@@ -50,13 +51,13 @@ function BoneShrine() {
 			rBoneShrineCharges = game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow;
 
 		setGather(rBoneShrineGather);
-		if (getPageSetting('Rhs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff') !== 'undefined')
-			HeirloomEquipStaff('Rhs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff');
-		else if (getPageSetting('RhsMapStaff') !== 'undefined')
-			HeirloomEquipStaff('RhsMapStaff');
+		if (getPageSetting(universePrefix + 'hs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff') !== 'undefined')
+			HeirloomEquipStaff(universePrefix + 'hs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff');
+		else if (getPageSetting(universePrefix + 'hsMapStaff') !== 'undefined')
+			HeirloomEquipStaff(universePrefix + 'hsMapStaff');
 		if (rBoneShrineAtlantrimp) {
 			if (!rBSRunningAtlantrimp) {
-				runAtlantrimp();
+				runUnique('Atlantrimp', false);
 			}
 			if (shredActive && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineGather) && game.global.mapsActive && game.global.lastClearedMapCell + 1 >= 95 && game.global.hemmTimer < 30 && game.global.lastClearedMapCell !== getCurrentMapObject().size - 2) {
 				mapsClicked();
@@ -67,7 +68,7 @@ function BoneShrine() {
 		if (!rBoneShrineAtlantrimp || (rBoneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === 'Atlantrimp' && game.global.lastClearedMapCell === getCurrentMapObject().size - 2)) {
 			rShouldBoneShrine = true;
 			for (var x = 0; x < rBoneShrineCharges; x++) {
-				if (getPageSetting('RBuyJobsNew') > 0) {
+				if (getPageSetting((game.global.universe === 2 ? 'R' : '') + 'BuyJobsNew') > 0) {
 					MODULES.mapFunctions.workerRatio = rBoneShrineSettings.jobratio;
 					buyJobs();
 				}

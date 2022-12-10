@@ -178,7 +178,7 @@ function fightalways() {
 
 function armormagic() {
 	var armormagicworld = Math.floor((game.global.highestLevelCleared + 1) * 0.8);
-	if (((getPageSetting('carmormagic') == 1 || getPageSetting('darmormagic') == 1) && game.global.world >= armormagicworld && (game.global.soldierHealth <= game.global.soldierHealthMax * 0.4)) || ((getPageSetting('carmormagic') == 2 || getPageSetting('darmormagic') == 2) && calcHDratio() >= MODULES["maps"].enoughDamageCutoff && (game.global.soldierHealth <= game.global.soldierHealthMax * 0.4)) || ((getPageSetting('carmormagic') == 3 || getPageSetting('darmormagic') == 3) && (game.global.soldierHealth <= game.global.soldierHealthMax * 0.4)))
+	if (((getPageSetting('carmormagic') == 1 || getPageSetting('darmormagic') == 1) && game.global.world >= armormagicworld && (game.global.soldierHealth <= game.global.soldierHealthMax * 0.4)) || ((getPageSetting('carmormagic') == 2 || getPageSetting('darmormagic') == 2) && calcHDRatio() >= MODULES["maps"].enoughDamageCutoff && (game.global.soldierHealth <= game.global.soldierHealthMax * 0.4)) || ((getPageSetting('carmormagic') == 3 || getPageSetting('darmormagic') == 3) && (game.global.soldierHealth <= game.global.soldierHealthMax * 0.4)))
 		buyArms();
 }
 
@@ -1063,7 +1063,6 @@ function calculateParityBonus(workerRatio) {
 	return finalWithParity;
 }
 
-
 function calcHeirloomBonusLocal(mod, number) {
 	var mod = mod;
 	if (!mod) return;
@@ -1244,11 +1243,11 @@ function runAtlantrimp(dontRecycle) {
 
 function runUnique(mapName, dontRecycle) {
 	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
-	if (mapName === 'Atlantrimp' && game.global.universe === 1) mapName === 'Trimple of Doom'
+	if (mapName === 'Atlantrimp' && game.global.universe === 1) mapName = 'Trimple Of Doom'
 	var zone = game.global.world;
 	var cell = game.global.lastClearedCell + 2;
 	if (mapName === 'Melting Point' && (!game.mapUnlocks.SmithFree.canRunOnce || zone < 55 || (zone === 55 && cell < 56))) return
-	if (mapName === 'Atlantrimp' && (!game.mapUnlocks.AncientTreasure.canRunOnce || zone < 33 || (zone === 33 && cell < 50))) return
+	if ((mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') && (!game.mapUnlocks.AncientTreasure.canRunOnce || zone < 33 || (zone === 33 && cell < 32))) return
 
 	if (!game.global.preMapsActive && !game.global.mapsActive)
 		mapsClicked();
@@ -1259,11 +1258,11 @@ function runUnique(mapName, dontRecycle) {
 
 	if (game.global.preMapsActive) {
 		for (var map in game.global.mapsOwnedArray) {
-			if (game.global.mapsOwnedArray[map].name == mapName) {
+			if (game.global.mapsOwnedArray[map].name === mapName) {
 				selectMap(game.global.mapsOwnedArray[map].id)
 				rRunMap();
 				debug('Running ' + mapName + ' on zone ' + game.global.world + '.');
-				if (mapName === 'Atlantrimp') rBSRunningAtlantrimp = true;
+				if (mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') rBSRunningAtlantrimp = true;
 			}
 		}
 	}

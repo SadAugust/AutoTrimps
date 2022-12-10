@@ -41,7 +41,7 @@ function autoGather() {
 	var trapsBufferSize = Math.ceil(5 * calcTPS());
 	var minTraps = Math.ceil(calcTPS());
 	var maxTraps = calcMaxTraps();
-	var trapTrimpsOK = (game.global.universe === 1 ? getPageSetting('TrapTrimps') : getPageSetting('RTrapTrimps')) && (trapperTrapUntilFull || game.jobs.Geneticist.owned == 0);
+	var trapTrimpsOK = (!game.upgrades.Battle.done || (game.global.universe === 1 ? getPageSetting('TrapTrimps') : getPageSetting('RTrapTrimps'))) && (trapperTrapUntilFull || game.jobs.Geneticist.owned == 0);
 
 	//Vars
 	var lowOnTraps = game.buildings.Trap.owned < minTraps;

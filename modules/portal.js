@@ -239,7 +239,7 @@ function doPortal(challenge) {
 	if (portalWindowOpen && getPageSetting('AutoAllocatePerks') == 1 && (typeof MODULES["perks"] !== 'undefined' || typeof AutoPerks !== 'undefined')) {
 		AutoPerks.clickAllocate();
 	}
-	if (portalWindowOpen && getPageSetting('c2runnerstart') == true && getPageSetting('c2runnerportal') > 0 && getPageSetting('c2runnerpercent') > 0) {
+	if (portalWindowOpen && game.global.highestLevelCleared > 63 && getPageSetting('c2runnerstart') == true && getPageSetting('c2runnerportal') > 0 && getPageSetting('c2runnerpercent') > 0) {
 		c2runner();
 		if (challengeSquaredMode == true) {
 			c2done = false;
@@ -287,6 +287,30 @@ function doPortal(challenge) {
 	activatePortal();
 	lastHeliumZone = 0;
 	zonePostpone = 0;
+}
+
+function decaySkipMaps() {
+	if (game.global.challengeActive !== "Decay") {
+		return false;
+	}
+	const stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;
+	const stacksToPush = getPageSetting('decayStacksToPush');
+	return stacksToPush > 0 && stacks > stacksToPush;
+}
+
+function decayFinishChallenge() {
+	//Pre-Init
+	if (game.global.challengeActive !== "Decay") return;
+
+	//Init
+	let stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;
+	let stacksToAbandon = getPageSetting('decayStacksToAbandon');
+
+	//Finishes the challenge if above max stacks
+	if (stacksToAbandon > 0 && stacks > stacksToAbandon) {
+		abandonChallenge();
+		debug(`Finished Decay challenge because we had more than ${stacksToAbandon} stacks.`, "general", "oil");
+	}
 }
 
 function finishChallengeSquared() { var a = getPageSetting("FinishC2"); game.global.world >= a && (abandonChallenge(), debug("Finished challenge2 because we are on zone " + game.global.world, "other", "oil")) }

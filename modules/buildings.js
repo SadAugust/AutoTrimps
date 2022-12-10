@@ -342,6 +342,16 @@ function buyBuildings() {
 			}
 		}
 
+		//Wormhole
+		if (!game.buildings.Wormhole.locked && buildingSettings.Wormhole.enabled) {
+			var wormholeAmt = buildingSettings.Wormhole.buyMax === 0 ? Infinity : buildingSettings.Wormhole.buyMax;
+			var wormholePct = buildingSettings.Wormhole.percent / 100;
+			var wormholeCanAfford = calculateMaxAffordLocal(game.buildings.Wormhole, true, false, false, (wormholeAmt - game.buildings.Wormhole.purchased), wormholePct);
+			if (wormholeAmt > game.buildings.Wormhole.purchased && wormholeCanAfford > 0) {
+				safeBuyBuilding('Wormhole', wormholeCanAfford);
+			}
+		}
+
 		//Warpstations
 		if (!game.buildings.Warpstation.locked) {
 			var skipWarp = false;

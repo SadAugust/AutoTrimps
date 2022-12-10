@@ -26,7 +26,7 @@ function automationMenuInit() {
 	newContainer = document.createElement("DIV");
 	newContainer.setAttribute("style", "display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
 	if (game.global.universe == 1) {
-		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDRatio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 	}
 	if (game.global.universe == 2) {
 		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
@@ -337,6 +337,18 @@ function initializeAllSettings() {
 	createSetting('c2runnerportal', 'C2 Runner Portal', 'Automatically portal AFTER clearing this level in C2 Runner. (ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, 'C2');
 	createSetting('c2runnerpercent', 'C2 Runner %', 'What percent Threshhold you want C2s to be over. E.g 85, will only run C2s with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ', 'value', '85', null, 'C2');
 	createSetting('c2table', 'C2 Table', 'Display your C2s and C3s in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this C2/C3 is worth doing. <br><b>Blue</b> = You have not yet done/unlocked this C2/C3 challenge. ', 'infoclick', 'c2table', null, 'C2');
+
+	//Balance
+	createSetting('balance', 'Balance', 'Turn this on if you want to enable Balance destacking feautres.', 'boolean', false, null, 'C2');
+	createSetting('balanceZone', 'B: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C2');
+	createSetting('balanceStacks', 'B: Stacks', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C2');
+	createSetting('balanceImprobDestack', 'B: Improbability Destack', 'Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone', 'boolean', false, null, 'C2');
+
+	//Decay
+	//Challenges
+	createSetting('decay', 'Decay', 'Turn this on if you want to enable Decay feautres.', 'boolean', false, null, 'C2');
+	createSetting('decayStacksToPush', 'D: Stacks to Push', 'During Decay, AT will ignore maps and push to end the zone if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.', 'value', '300', null, 'C2');
+	createSetting('decayStacksToAbandon', 'D: Stacks to Abandon', 'During Decay, AT will abandon the challenge if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.', 'value', '600', null, 'C2');
 
 	//Experience
 	createSetting('experience', 'Experience', 'Turn this on if you want to enable Experience feautres. <b>This setting is dependant on using \'Bionic Raiding\' in conjunction with it.</b><br><br>Will automatically disable repeat within Bionic Wonderland maps if you\'re above z600 and the Bionic map is at or above level 605.', 'boolean', false, null, 'C2');
@@ -1012,7 +1024,20 @@ function initializeAllSettings() {
 initializeAllSettings();
 automationMenuInit();
 updateATVersion();
-modifyParentNodeUniverseSwap();
+modifyParentNodeUniverseSwap();/* 
+changePrestigeClimb();
+
+function changePrestigeClimb() {
+	if (autoTrimpSettings.Prestige.selected === 'Off' && autoTrimpSettings.PrestigeBackup.selected !== 'Off') {
+		debug(autoTrimpSettings.Prestige.selected);
+		autoTrimpSettings.Prestige.selected = autoTrimpSettings.PrestigeBackup.selected;
+		saveSettings();
+	}
+	if (autoTrimpSettings.rPrestige.selected === 'Off' && autoTrimpSettings.rPrestigeBackup.selected !== 'Off') {
+		autoTrimpSettings.rPrestige.selected = autoTrimpSettings.rPrestigeBackup.selected;
+		saveSettings();
+	}
+} */
 
 function modifyParentNodeUniverseSwap() {
 
@@ -1067,6 +1092,8 @@ function modifyParentNodeUniverseSwap() {
 	//Helium Settings
 	modifyParentNode_Initial("novmsc2", radonoff);
 	modifyParentNode_Initial("c2table", radonoff);
+	modifyParentNode_Initial("balanceImprobDestack", radonoff);
+	modifyParentNode_Initial("decayStacksToAbandon", radonoff);
 	//Radon Settings
 	//None!
 
@@ -1470,8 +1497,8 @@ function settingChanged(id) {
 		if (id === 'rPrestige')
 			autoTrimpSettings["rPrestigeBackup"] = {
 				selected: document.getElementById(id).value,
-				name: "PrestigeBackup",
-				id: "PrestigeBackup"
+				name: "rPrestigeBackup",
+				id: "rPrestigeBackup"
 			};
 	}
 
@@ -2088,6 +2115,19 @@ function updateCustomButtons() {
 	!radonon ? turnOn('c2runnerstart') : turnOff('c2runnerstart');
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerportal') : turnOff('c2runnerportal');
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerpercent') : turnOff('c2runnerpercent');
+
+	//Balance
+	!radonon ? turnOn('balance') : turnOff('balance');
+	!radonon && getPageSetting('balance') ? turnOn('balanceZone') : turnOff('balanceZone');
+	!radonon && getPageSetting('balance') ? turnOn('balanceStacks') : turnOff('balanceStacks');
+	!radonon && getPageSetting('balance') ? turnOn('balanceImprobDestack') : turnOff('balanceImprobDestack');
+
+	//Decay
+	!radonon ? turnOn('decay') : turnOff('decay');
+	!radonon && getPageSetting('decay') ? turnOn('decayStacksToPush') : turnOff('decayStacksToPush');
+	!radonon && getPageSetting('decay') ? turnOn('decayStacksToAbandon') : turnOff('decayStacksToAbandon');
+
+	//Experience
 	!radonon ? turnOn('experience') : turnOff('experience');
 	!radonon && getPageSetting('experience') ? turnOn('experienceStartZone') : turnOff('experienceStartZone');
 	!radonon && getPageSetting('experience') ? turnOn('experienceEndZone') : turnOff('experienceEndZone');
@@ -2869,7 +2909,7 @@ function toggleStatus(update) {
 		if (game.global.universe == 2) {
 			turnOn('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDRatio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 		}
 	}
 	saveSettings();
