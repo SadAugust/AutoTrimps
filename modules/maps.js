@@ -72,7 +72,7 @@ function autoMap() {
 		rBSRunningAtlantrimp = false;
 	}
 
-	if (game.global.mapsActive && (getCurrentMapObject().name == 'Trimple of Doom' || getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle')) {
+	if (game.global.mapsActive && (getCurrentMapObject().name == 'Trimple of Doom' || getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle') || rBSRunningAtlantrimp) {
 		if (game.global.repeatMap) repeatClicked();
 		return;
 	}

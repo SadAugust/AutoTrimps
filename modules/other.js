@@ -622,16 +622,15 @@ function autoMapLevelU1(special, maxLevel, minLevel, critType, statCheck) {
 			ratio /= 4;
 		}
 		// Stop increasing map level once HD ratio is too large
-		if ((z <= 40 && ratio > 1.5) || ratio > 1.2) {
-			return mapLevel;
-		}
-		if (mapLevel === 0)
+		if ((z <= 40 && ratio > 1.5) || ratio > 1.2 || mapLevel === 0) {
 			break;
-
+		}
 	}
 
 	// Keep increasing map level while we can overkill
-	if (extraMapLevelsAvailable) {
+	if (!extraMapLevelsAvailable) {
+		return mapLevel;
+	} else {
 		if (extraMapLevelsAvailable && mapLevel >= 0 && maxLevel > 0) {
 			const maxOneShotCells = maxOneShotPower();
 			while (oneShotZone((z + mapLevel) + 1, "map", "S") >= maxOneShotCells && mapLevel !== 10) {
@@ -648,7 +647,6 @@ function autoMapLevelU1(special, maxLevel, minLevel, critType, statCheck) {
 
 		return mapLevel;
 	}
-	return Infinity;
 }
 
 function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, ourDmg) {
