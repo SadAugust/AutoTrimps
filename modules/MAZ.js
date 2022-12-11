@@ -181,9 +181,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var item = mapUnlocks[x];
 			var setting = settingGroup[item];
 			//U1
-			if (item === 'Trimple_of_Doom' && game.global.highestRadonLevelCleared < 33) continue;
-			if (item === 'The_Prison' && game.global.highestRadonLevelCleared < 79) continue;
-			if (item === 'Imploding_Star' && game.global.highestRadonLevelCleared < 169) continue;
+			if (item === 'Trimple_of_Doom' && game.global.highestLevelCleared < 33) continue;
+			if (item === 'The_Prison' && game.global.highestLevelCleared < 79) continue;
+			if (item === 'Imploding_Star' && game.global.highestLevelCleared < 169) continue;
 			//U2
 			if (item === 'Atlantrimp' && game.global.highestRadonLevelCleared < 33) continue;
 			if (item === 'Melting_Point' && game.global.highestRadonLevelCleared < 49) continue;

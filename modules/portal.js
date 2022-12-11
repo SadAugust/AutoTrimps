@@ -78,6 +78,7 @@ function autoPortal() {
 
 function dailyAutoPortal() {
 	if (!game.global.portalActive) return;
+	if (game.global.highestLevelCleared < 100) return;
 	if (getPageSetting('AutoPortalDaily') == 1) {
 		var OKtoPortal = false;
 		if (!game.global.runningChallengeSquared) {
@@ -224,7 +225,7 @@ function doPortal(challenge) {
 		autoMagmiteSpender();
 	}
 	autoheirlooms3();
-	if (getPageSetting('AutoAllocatePerks') == 2) {
+	if (getPageSetting('AutoAllocatePerks') == 2 && !game.portal.Looting_II.locked) {
 		viewPortalUpgrades();
 		numTab(6, true)
 		buyPortalUpgrade('Looting_II');
@@ -290,7 +291,7 @@ function doPortal(challenge) {
 }
 
 function decaySkipMaps() {
-	if (game.global.challengeActive !== "Decay") {
+	if (game.global.challengeActive !== "Decay" && !getPageSetting('decay')) {
 		return false;
 	}
 	const stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;
@@ -300,7 +301,7 @@ function decaySkipMaps() {
 
 function decayFinishChallenge() {
 	//Pre-Init
-	if (game.global.challengeActive !== "Decay") return;
+	if (game.global.challengeActive !== "Decay" && !getPageSetting('decay')) return;
 
 	//Init
 	let stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;

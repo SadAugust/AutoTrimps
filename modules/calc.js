@@ -1134,7 +1134,7 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	return health;
 }
 
-function calcHDRatio(targetZone, type, ourDamage) {
+function calcHDRatio(targetZone, type) {
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = "world"
 	//Init

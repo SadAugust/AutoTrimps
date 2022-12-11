@@ -20,6 +20,17 @@ var rAFMapRepeats = 0;
 var rHFMapRepeats = 0;
 var rSmithlessMapRepeats = 0;
 var rHDFMapRepeats = 0;
+var vanillaMAZ = false;
+
+function runSelectedMap(mapId, madAdjective) {
+	selectMap(mapId);
+	runMap();
+	if (lastMapWeWereIn !== getCurrentMapObject()) {
+		const map = game.global.mapsOwnedArray[getMapIndex(mapId)];
+		debug(`Running ${madAdjective} map ${prettifyMap(map)}`, "maps", 'th-large');
+		lastMapWeWereIn = getCurrentMapObject();
+	}
+}
 
 if (getAutoStructureSetting().enabled) {
 	document.getElementById('autoStructureBtn').classList.add("enabled")
@@ -33,10 +44,7 @@ function updateAutoMapsStatus(get) {
 	//Setting up status
 	else if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
 	else if (vanillaMAZ) status = 'Vanilla MAZ';
-	else if (game.global.mapsActive && getCurrentMapObject().name == 'Trimple of Doom') status = 'Trimple of Doom';
-	else if (game.global.mapsActive && getCurrentMapObject().name == 'Melting Point') status = 'Melting Point';
-	else if (game.global.mapsActive && getCurrentMapObject().name == 'Atlantrimp') status = 'Atlantrimp';
-	else if (game.global.mapsActive && getCurrentMapObject().name == 'Frozen Castle') status = 'Frozen Castle';
+	else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().name !== 'Bionic Wonderland' && getCurrentMapObject().location !== 'Void') status = getCurrentMapObject().name;
 	else if (game.global.challengeActive == "Mapology" && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
 	else if (rCurrentMap !== '') status = rMapSettings.status;
 	else if (getPageSetting('SkipSpires') == 1 && isDoingSpire()) status = 'Skipping Spire';
@@ -252,8 +260,7 @@ function autoMap() {
 			if (rShouldMap) {
 				mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 				if (rCurrentMap !== '') {
-					if (rMapSettings.autoLevel) PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
-					else RShouldFarmMapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
+					mapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
 				}
 			}
 
@@ -262,7 +269,8 @@ function autoMap() {
 			const mapspecial = document.getElementById("advSpecialSelect").value === '0' ? 'No special' : document.getElementById("advSpecialSelect").value;
 			if (highestMap !== null && updateMapCost(true) > game.resources.fragments.owned) {
 				debug("Can't afford the map we designed, #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
-				rFragmentFarm();
+				if (!game.jobs.Explorer.locked) rFragmentFarm();
+				else runSelectedMap(highestMap.id, 'highest');
 				lastMapWeWereIn = getCurrentMapObject();
 			} else {
 				debug("Buying a Map, level: #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
@@ -285,6 +293,9 @@ function autoMap() {
 						else
 							debug("Retrying map buy after recycling lowest level map");
 					}
+				}
+				if (result === 1) {
+					runMap();
 				}
 			}
 		} else {

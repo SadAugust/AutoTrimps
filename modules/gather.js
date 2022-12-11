@@ -108,7 +108,7 @@ function autoGather() {
 
 	if (hasTurkimp && game.global.mapsActive) {
 		//Setting gather to the option selected in farming settings if it exists.
-		if (rMapSettings.gather !== undefined) {
+		if (rMapSettings.gather !== undefined && rMapSettings.gather !== null) {
 			setGather(rMapSettings.gather);
 			return;
 		}

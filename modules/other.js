@@ -541,7 +541,7 @@ function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLe
 }
 
 function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
-	if (game.global.universe === 1) return 0;
+	if (game.global.universe === 1) return autoMapLevelU1(special, maxLevel, minLevel);
 	if (!game.global.mapsUnlocked) return 0;
 	if (maxLevel > 10) maxLevel = 10;
 	if (!statCheck) statCheck = false;
@@ -589,6 +589,59 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 		}
 	}
 	return 0;
+}
+
+function autoMapLevelU1(special, maxLevel, minLevel, critType, statCheck) {
+
+	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
+	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - game.global.world + 6 : minLevel;
+
+	const z = game.global.world;
+	const hze = getHighestLevelCleared();
+	const extraMapLevelsAvailable = hze >= 209;
+
+	const haveMapReducer = game.talents.mapLoot.purchased;
+	const baseLevel = z - (haveMapReducer ? 1 : 0);
+
+	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
+	if (!special) special = (game.global.highestLevelCleared > 183 ? 'lmc' : game.global.highestLevelCleared > 83 ? 'smc' : game.global.highestLevelCleared > 58 ? 'fa' : '0');
+	if (!critType) critType = 'maybe';
+
+	for (y = minLevel; y <= maxLevel; y++) {
+		var mapLevel = y;
+
+		// Calculate optimal map level
+		let ratio = calcHDRatio(z + mapLevel, "map");
+		if (game.unlocks.imps.Titimp) {
+			ratio /= 2;
+		}
+		// Stance priority: Scryer > Dominance > X
+		if (z >= 60 && hze >= 180) {
+			ratio *= 2;
+		} else if (game.upgrades.Dominance.done) {
+			ratio /= 4;
+		}
+		// Stop increasing map level once HD ratio is too large
+		if ((z <= 40 && ratio > 1.5) || ratio > 1.2 || y === maxLevel) {
+			return mapLevel;
+		}
+
+		// Keep increasing map level while we can overkill
+		if (extraMapLevelsAvailable) {
+			if (extraMapLevelsAvailable && mapLevel >= 0 && maxLevel > 0) {
+				const maxOneShotCells = maxOneShotPower();
+				while (oneShotZone((z + mapLevel) + 1, "map", "S") >= maxOneShotCells && mapLevel !== 10) {
+					mapLevel++;
+				}
+			}
+			if (game.global.challengeActive !== "Coordinate" && !mutations.Magma.active()) {
+				// Prefer "Oneshot level" + 1, except on magma or in Coordinated challenge
+				mapLevel++;
+			}
+			return mapLevel;
+		}
+	}
+	return Infinity;
 }
 
 function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, ourDmg) {
