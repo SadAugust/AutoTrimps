@@ -622,24 +622,31 @@ function autoMapLevelU1(special, maxLevel, minLevel, critType, statCheck) {
 			ratio /= 4;
 		}
 		// Stop increasing map level once HD ratio is too large
-		if ((z <= 40 && ratio > 1.5) || ratio > 1.2 || y === maxLevel) {
+		if ((z <= 40 && ratio > 1.5) || ratio > 1.2) {
 			return mapLevel;
 		}
+		if (mapLevel === 0)
+			break;
 
-		// Keep increasing map level while we can overkill
-		if (extraMapLevelsAvailable) {
-			if (extraMapLevelsAvailable && mapLevel >= 0 && maxLevel > 0) {
-				const maxOneShotCells = maxOneShotPower();
-				while (oneShotZone((z + mapLevel) + 1, "map", "S") >= maxOneShotCells && mapLevel !== 10) {
-					mapLevel++;
-				}
-			}
-			if (game.global.challengeActive !== "Coordinate" && !mutations.Magma.active()) {
-				// Prefer "Oneshot level" + 1, except on magma or in Coordinated challenge
+	}
+
+	// Keep increasing map level while we can overkill
+	if (extraMapLevelsAvailable) {
+		if (extraMapLevelsAvailable && mapLevel >= 0 && maxLevel > 0) {
+			const maxOneShotCells = maxOneShotPower();
+			while (oneShotZone((z + mapLevel) + 1, "map", "S") >= maxOneShotCells && mapLevel !== 10) {
 				mapLevel++;
 			}
-			return mapLevel;
 		}
+		if (game.global.challengeActive !== "Coordinate" && !mutations.Magma.active()) {
+			// Prefer "Oneshot level" + 1, except on magma or in Coordinated challenge
+			mapLevel++;
+		}
+
+		if (mapLevel > 10)
+			mapLevel = 10;
+
+		return mapLevel;
 	}
 	return Infinity;
 }
