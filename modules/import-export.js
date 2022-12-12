@@ -885,7 +885,14 @@ function loadAutoTrimps() {
 	debug("Importing new AT settings file...", "profile"), resetAutoTrimps(b)
 	modifyParentNodeUniverseSwap();
 }
-function cleanupAutoTrimps() { for (var a in autoTrimpSettings) { var b = document.getElementById(autoTrimpSettings[a].id); null == b && delete autoTrimpSettings[a] } }
+function cleanupAutoTrimps() {
+	for (var a in autoTrimpSettings) {
+		if (document.getElementById(autoTrimpSettings[a].id) === null) {
+			delete autoTrimpSettings[a]
+		}
+	}
+	saveSettings();
+}
 function exportModuleVars() { return JSON.stringify(compareModuleVars()) }
 
 function compareModuleVars() {
