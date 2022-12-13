@@ -887,13 +887,15 @@ function loadAutoTrimps() {
 }
 function cleanupAutoTrimps() {
 	for (var a in autoTrimpSettings) {
-		if (document.getElementById(autoTrimpSettings[a].id) === null) {
-			delete autoTrimpSettings[a]
-		}
+		if (autoTrimpSettings[a] === autoTrimpSettings.ATversion) continue;
+		if (document.getElementById(autoTrimpSettings[a].id) !== null) continue;
+		else delete autoTrimpSettings[a];
 	}
 	saveSettings();
 }
-function exportModuleVars() { return JSON.stringify(compareModuleVars()) }
+function exportModuleVars() {
+	return JSON.stringify(compareModuleVars())
+}
 
 function compareModuleVars() {
 	var diffs = {};
