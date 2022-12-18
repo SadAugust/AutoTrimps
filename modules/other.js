@@ -1935,62 +1935,60 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 	}
 
 	if (universe === 2) {
-		if (MAZ !== '') {
-			if (runType === 'Cache') {
-				//Specials dropdown with conditions for each unlock to only appear when the user can run them.
-				dropdown += "<option value='0'" + ((MAZ == '0') ? " selected='selected'" : "") + ">No Modifier</option>"
-				if (highestZone >= 15) dropdown += "<option value='fa'" + ((MAZ == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((MAZ == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
-				if (highestZone >= 25) dropdown += "<option value = 'ssc'" + ((MAZ == 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option >\
+		if (runType === 'Cache') {
+			//Specials dropdown with conditions for each unlock to only appear when the user can run them.
+			dropdown += "<option value='0'" + ((MAZ == '0') ? " selected='selected'" : "") + ">No Modifier</option>"
+			if (highestZone >= 15) dropdown += "<option value='fa'" + ((MAZ == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((MAZ == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
+			if (highestZone >= 25) dropdown += "<option value = 'ssc'" + ((MAZ == 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option >\
 				<option value='swc'" + ((MAZ == 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option >\
 				<option value='smc'" + ((MAZ == 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option > "
-				if (game.global.ArchaeologyDone) dropdown += "<option value='src'" + ((MAZ == 'src') ? " selected='selected'" : "") + ">Small Research Cache</option>"
-				if (highestZone >= 55) dropdown += "<option value='p'" + ((MAZ == 'p') ? " selected='selected'" : "") + ">Prestigious</option>"
-				if (highestZone >= 65) dropdown += "<option value='hc'" + ((MAZ == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>"
-				if (highestZone >= 85) dropdown += "<option value='lsc'" + ((MAZ == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\
+			if (game.global.ArchaeologyDone) dropdown += "<option value='src'" + ((MAZ == 'src') ? " selected='selected'" : "") + ">Small Research Cache</option>"
+			if (highestZone >= 55) dropdown += "<option value='p'" + ((MAZ == 'p') ? " selected='selected'" : "") + ">Prestigious</option>"
+			if (highestZone >= 65) dropdown += "<option value='hc'" + ((MAZ == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>"
+			if (highestZone >= 85) dropdown += "<option value='lsc'" + ((MAZ == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\
 				<option value='lwc'" + ((MAZ == 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\
 				<option value='lmc'" + ((MAZ == 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>"
-				if (game.global.ArchaeologyDone) dropdown += "<option value='lrc'" + ((MAZ == 'lrc') ? " selected='selected'" : "") + ">Large Research Cache</option>"
-			}
-			if (runType === 'Filler') {
-				dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
-				if (highestZone >= 40) dropdown += "<option value='Bublé'" + ((MAZ == 'Bublé') ? " selected='selected'" : "") + ">Bublé</option>";
-				if (highestZone >= 55) dropdown += "<option value = 'Melt'" + ((MAZ == 'Melt') ? " selected = 'selected'" : "") + " > Melt</option >";
-				if (highestZone >= 70) dropdown += "<option value='Quagmire'" + ((MAZ == 'Quagmire') ? " selected='selected'" : "") + ">Quagmire</option>";
-				if (highestZone >= 90) dropdown += "<option value='Archaeology'" + ((MAZ == 'Archaeology') ? " selected='selected'" : "") + ">Archaeology</option>";
-				if (highestZone >= 110) dropdown += "<option value='Insanity'" + ((MAZ == 'Insanity') ? " selected='selected'" : "") + ">Insanity</option>";
-				if (highestZone >= 135) dropdown += "<option value='Nurture'" + ((MAZ == 'Nurture') ? " selected='selected'" : "") + ">Nurture</option>";
-				if (highestZone >= 155) dropdown += "<option value='Alchemy'" + ((MAZ == 'Alchemy') ? " selected='selected'" : "") + ">Alchemy</option>";
-				if (highestZone >= 175) dropdown += "<option value='Hypothermia'" + ((MAZ == 'Hypothermia') ? " selected='selected'" : "") + ">Hypothermia</option>";
-			}
-			else if (runType === 'C3') {
-				dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
-				if (highestZone >= 15) dropdown += "<option value='Unlucky'" + ((MAZ == 'Unlucky') ? " selected='selected'" : "") + ">Unlucky</option>";
-				if (highestZone >= 20) dropdown += "<option value='Downsize'" + ((MAZ == 'Downsize') ? " selected='selected'" : "") + ">Downsize</option>";
-				if (highestZone >= 25) dropdown += "<option value='Transmute'" + ((MAZ == 'Transmute') ? " selected='selected'" : "") + ">Transmute</option>";
-				if (highestZone >= 35) dropdown += "<option value = 'Unbalance'" + ((MAZ == 'Unbalance') ? " selected = 'selected'" : "") + " > Unbalance</option >";
-				if (highestZone >= 45) dropdown += "<option value='Duel'" + ((MAZ == 'Duel') ? " selected='selected'" : "") + ">Duel</option>";
-				if (highestZone >= 60) dropdown += "<option value='Trappapalooza'" + ((MAZ == 'Trappapalooza') ? " selected='selected'" : "") + ">Trappa</option>";
-				if (highestZone >= 70) dropdown += "<option value='Wither'" + ((MAZ == 'Wither') ? " selected='selected'" : "") + ">Wither</option>";
-				if (highestZone >= 85) dropdown += "<option value='Quest'" + ((MAZ == 'Quest') ? " selected='selected'" : "") + ">Quest</option>";
-				if (highestZone >= 100) dropdown += "<option value='Mayhem'" + ((MAZ == 'Mayhem') ? " selected='selected'" : "") + ">Mayhem</option>";
-				if (highestZone >= 105) dropdown += "<option value='Storm'" + ((MAZ == 'Storm') ? " selected='selected'" : "") + ">Storm</option>";
-				if (highestZone >= 115) dropdown += "<option value='Berserk'" + ((MAZ == 'Berserk') ? " selected='selected'" : "") + ">Berserk</option>";
-				if (highestZone >= 150) dropdown += "<option value='Pandemonium'" + ((MAZ == 'Pandemonium') ? " selected='selected'" : "") + ">Pandemonium</option>";
-				if (highestZone >= 175) dropdown += "<option value='Glass'" + ((MAZ == 'Glass') ? " selected='selected'" : "") + ">Glass</option>";
-				if (highestZone >= 201) dropdown += "<option value='Smithless'" + ((MAZ == 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
-			}
-			else if (runType === 'runType') {
-				dropdown += "<option value='none'" + ((MAZ == 'none') ? " selected='selected'" : "") + ">None</option>"
-				dropdown += "<option value='Filler'" + ((MAZ == 'Filler') ? " selected = 'selected'" : "") + " > Filler</option >"
-				dropdown += " <option value='Daily'" + ((MAZ == 'Daily') ? " selected='selected'" : "") + ">Daily</option>"
-				dropdown += "<option value='C3'" + ((MAZ == 'C3') ? " selected='selected'" : "") + ">C3</option>"
-				dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>"
-			}
-			else if (runType === 'goldenType') {
-				if (!varPrefix.includes('C3')) dropdown += "<option value='r'" + ((MAZ == 'r') ? " selected='selected'" : "") + ">Radon</option >"
-				dropdown += "<option value='b'" + ((MAZ == 'b') ? " selected = 'selected'" : "") + " >Battle</option >"
-				dropdown += "<option value='v'" + ((MAZ == 'v') ? " selected = 'selected'" : "") + " >Void</option >"
-			}
+			if (game.global.ArchaeologyDone) dropdown += "<option value='lrc'" + ((MAZ == 'lrc') ? " selected='selected'" : "") + ">Large Research Cache</option>"
+		}
+		if (runType === 'Filler') {
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+			if (highestZone >= 40) dropdown += "<option value='Bublé'" + ((MAZ == 'Bublé') ? " selected='selected'" : "") + ">Bublé</option>";
+			if (highestZone >= 55) dropdown += "<option value = 'Melt'" + ((MAZ == 'Melt') ? " selected = 'selected'" : "") + " > Melt</option >";
+			if (highestZone >= 70) dropdown += "<option value='Quagmire'" + ((MAZ == 'Quagmire') ? " selected='selected'" : "") + ">Quagmire</option>";
+			if (highestZone >= 90) dropdown += "<option value='Archaeology'" + ((MAZ == 'Archaeology') ? " selected='selected'" : "") + ">Archaeology</option>";
+			if (highestZone >= 110) dropdown += "<option value='Insanity'" + ((MAZ == 'Insanity') ? " selected='selected'" : "") + ">Insanity</option>";
+			if (highestZone >= 135) dropdown += "<option value='Nurture'" + ((MAZ == 'Nurture') ? " selected='selected'" : "") + ">Nurture</option>";
+			if (highestZone >= 155) dropdown += "<option value='Alchemy'" + ((MAZ == 'Alchemy') ? " selected='selected'" : "") + ">Alchemy</option>";
+			if (highestZone >= 175) dropdown += "<option value='Hypothermia'" + ((MAZ == 'Hypothermia') ? " selected='selected'" : "") + ">Hypothermia</option>";
+		}
+		else if (runType === 'C3') {
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+			if (highestZone >= 15) dropdown += "<option value='Unlucky'" + ((MAZ == 'Unlucky') ? " selected='selected'" : "") + ">Unlucky</option>";
+			if (highestZone >= 20) dropdown += "<option value='Downsize'" + ((MAZ == 'Downsize') ? " selected='selected'" : "") + ">Downsize</option>";
+			if (highestZone >= 25) dropdown += "<option value='Transmute'" + ((MAZ == 'Transmute') ? " selected='selected'" : "") + ">Transmute</option>";
+			if (highestZone >= 35) dropdown += "<option value = 'Unbalance'" + ((MAZ == 'Unbalance') ? " selected = 'selected'" : "") + " > Unbalance</option >";
+			if (highestZone >= 45) dropdown += "<option value='Duel'" + ((MAZ == 'Duel') ? " selected='selected'" : "") + ">Duel</option>";
+			if (highestZone >= 60) dropdown += "<option value='Trappapalooza'" + ((MAZ == 'Trappapalooza') ? " selected='selected'" : "") + ">Trappa</option>";
+			if (highestZone >= 70) dropdown += "<option value='Wither'" + ((MAZ == 'Wither') ? " selected='selected'" : "") + ">Wither</option>";
+			if (highestZone >= 85) dropdown += "<option value='Quest'" + ((MAZ == 'Quest') ? " selected='selected'" : "") + ">Quest</option>";
+			if (highestZone >= 100) dropdown += "<option value='Mayhem'" + ((MAZ == 'Mayhem') ? " selected='selected'" : "") + ">Mayhem</option>";
+			if (highestZone >= 105) dropdown += "<option value='Storm'" + ((MAZ == 'Storm') ? " selected='selected'" : "") + ">Storm</option>";
+			if (highestZone >= 115) dropdown += "<option value='Berserk'" + ((MAZ == 'Berserk') ? " selected='selected'" : "") + ">Berserk</option>";
+			if (highestZone >= 150) dropdown += "<option value='Pandemonium'" + ((MAZ == 'Pandemonium') ? " selected='selected'" : "") + ">Pandemonium</option>";
+			if (highestZone >= 175) dropdown += "<option value='Glass'" + ((MAZ == 'Glass') ? " selected='selected'" : "") + ">Glass</option>";
+			if (highestZone >= 201) dropdown += "<option value='Smithless'" + ((MAZ == 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
+		}
+		else if (runType === 'runType') {
+			dropdown += "<option value='none'" + ((MAZ == 'none') ? " selected='selected'" : "") + ">None</option>"
+			dropdown += "<option value='Filler'" + ((MAZ == 'Filler') ? " selected = 'selected'" : "") + " > Filler</option >"
+			dropdown += " <option value='Daily'" + ((MAZ == 'Daily') ? " selected='selected'" : "") + ">Daily</option>"
+			dropdown += "<option value='C3'" + ((MAZ == 'C3') ? " selected='selected'" : "") + ">C3</option>"
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>"
+		}
+		else if (runType === 'goldenType') {
+			if (!varPrefix.includes('C3')) dropdown += "<option value='r'" + ((MAZ == 'r') ? " selected='selected'" : "") + ">Radon</option >"
+			dropdown += "<option value='b'" + ((MAZ == 'b') ? " selected = 'selected'" : "") + " >Battle</option >"
+			dropdown += "<option value='v'" + ((MAZ == 'v') ? " selected = 'selected'" : "") + " >Void</option >"
 		}
 	}
 
