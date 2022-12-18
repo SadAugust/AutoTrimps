@@ -47,7 +47,7 @@ function updateAutoMapsStatus(get) {
 	//Setting up status
 	if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
 	else if (vanillaMAZ) status = 'Vanilla MAZ';
-	else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().name !== 'Bionic Wonderland' && getCurrentMapObject().location !== 'Void') status = getCurrentMapObject().name;
+	else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void') status = getCurrentMapObject().name;
 	else if (game.global.challengeActive == "Mapology" && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
 	else if (rCurrentMap !== '') status = rMapSettings.status;
 	else if (getPageSetting('SkipSpires') == 1 && isDoingSpire()) status = 'Skipping Spire';

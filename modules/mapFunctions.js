@@ -1451,8 +1451,7 @@ function PrestigeClimb() {
 		special = game.global.highestLevelCleared + 1 >= 135 ? 'p' : game.global.highestLevelCleared + 1 >= 60 ? 'fa' : '0';
 	if (game.global.universe === 2)
 		special = game.global.highestRadonLevelCleared + 1 >= 55 ? 'p' : game.global.highestRadonLevelCleared + 1 >= 15 ? 'fa' : '0';
-
-	var repeat = (!(mapsToRun > 1) || game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || (getCurrentMapObject().bonus !== special && (getCurrentMapObject().bonus !== undefined && special !== '0'))));
+	var repeat = (!(mapsToRun !== (game.global.mapsActive && getCurrentMapObject().bonus === 'p' ? 2 : 1)) || game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || (getCurrentMapObject().bonus !== special && (getCurrentMapObject().bonus !== undefined && special !== '0'))));
 
 	farmingDetails.shouldRun = needPrestige;
 	farmingDetails.mapName = mapName;
@@ -1476,6 +1475,7 @@ function BionicRaiding() {
 
 	if (game.global.universe === 1 && !autoTrimpSettings.hBionicRaidingDefaultSettings.value.active) return farmingDetails;
 	if (game.global.challengeActive === 'Exterminate' && game.global.world > 600) return farmingDetails;
+	if (game.global.challengeActive === 'Mapology' && !getPageSetting('mapology')) return farmingDetails;
 
 	var rShouldBionicRaid = false;
 	const isC3 = game.global.runningChallengeSquared;
@@ -1483,6 +1483,7 @@ function BionicRaiding() {
 	const currChall = game.global.challengeActive;
 	const rBionicRaidingDefaultSetting = autoTrimpSettings.hBionicRaidingDefaultSettings.value;
 	const rBionicRaidingBaseSetting = autoTrimpSettings.hBionicRaidingSettings.value;
+	const targetPrestige = game.global.challengeActive === 'Mapology' ? autoTrimpSettings['mapologyPrestige'].selected : 'GamesOP';
 
 	var index;
 
@@ -1497,7 +1498,7 @@ function BionicRaiding() {
 			var repeats = Math.round((game.global.world - currSetting.world) / times);
 			if (repeats > 0) raidZones += (times * repeats);
 		}
-		if (Rgetequips(raidZones, false) === 0) continue;
+		if (equipsToGet(raidZones, targetPrestige)[0] === 0) continue;
 		if (currSetting.runType !== 'All') {
 			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
 				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
@@ -1516,14 +1517,18 @@ function BionicRaiding() {
 		var rBionicRaidingSetting = rBionicRaidingBaseSetting[index];
 		var raidzonesBW = raidZones;
 
-		if (Rgetequips(raidzonesBW, false) > 0) {
+		if (equipsToGet(raidzonesBW, targetPrestige)[0] > 0) {
 			rShouldBionicRaid = true;
 		}
 
-		var status = 'Raiding to BW' + raidzonesBW + ': ' + Rgetequips(raidzonesBW, false) + ' items remaining';
-		var repeat = game.options.menu.climbBw.enabled && Rgetequips(raidzonesBW, false) <= 2 ? true : false;
-
-		var repeat = (!(!prestigeArmorList.includes(targetPrestige) ? prestigeToFarmFor > 2 : prestigeToFarmFor > 1) || game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || (getCurrentMapObject().bonus !== special && (getCurrentMapObject().bonus !== undefined && special !== '0'))));
+		var status = 'Raiding to BW' + raidzonesBW + ': ' + equipsToGet(raidzonesBW, targetPrestige)[0] + ' items remaining';
+		var repeat = !(
+			(game.global.mapsActive && (
+				equipsToGet(getCurrentMapObject().level, targetPrestige)[1] !== (game.talents.bionic2.purchased ? 2 : 1)
+				||
+				getCurrentMapObject().location !== 'Bionic')
+			)
+		);
 
 		farmingDetails.shouldRun = rShouldBionicRaid;
 		farmingDetails.mapName = mapName;

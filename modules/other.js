@@ -81,13 +81,16 @@ function findLastBionicWithItems(bionicPool) {
 
 	if (game.global.world < 115 || !bionicPool)
 		return;
+	if (game.global.challengeActive === 'Mapology' && !getPageSetting('mapology')) return;
+	const targetPrestige = game.global.challengeActive === 'Mapology' ? autoTrimpSettings['mapologyPrestige'].selected : 'GambesOP';
+
 
 	if (bionicPool.length > 1) {
 		bionicPool.sort(function (bionicA, bionicB) { return bionicA.level - bionicB.level });
-		while (bionicPool.length > 1 && Rgetequips(bionicPool[0].level, false) === 0) {
+		while (bionicPool.length > 1 && equipsToGet(bionicPool[0].level, targetPrestige)[0] === 0) {
 			if (game.global.challengeActive === 'Experience' && game.global.world > 600 && bionicPool[0].level >= getPageSetting('experienceEndBW')) break;
 			bionicPool.shift();
-			if (Rgetequips(bionicPool[0].level, false) !== 0) break;
+			if (equipsToGet(bionicPool[0].level, targetPrestige)[0] !== 0) break;
 		}
 	}
 

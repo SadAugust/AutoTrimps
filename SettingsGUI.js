@@ -325,7 +325,6 @@ function initializeAllSettings() {
 	createSetting('buynojobsc', 'No F/L/M in C2', 'Buys No Farmers, Lumberjacks or Miners in the C2 challenges Watch and Trapper. ', 'boolean', false, null, 'C2');
 	createSetting('cfightforever', 'Tox/Nom Fight Always', 'Sends trimps to fight if they\'re not fighting in the Toxicity and Nom Challenges, regardless of BAF. Essenitally the same as the one in combat, can use either if you wish, except this will only activate in these challenges (duh) ', 'boolean', false, null, 'C2');
 	createSetting('carmormagic', ['C2 Armor Magic Off', 'CAM: Above 80%', 'CAM: H:D', 'CAM: Always'], 'Will buy Armor to try and prevent death on Nom/Tox Challenges under the 3 conditions. <br><b>Above 80%:</b> Will activate at and above 80% of your HZE and when your health is sufficiently low. <br><b>H:D:</b> Will activate at and above the H:D you have defined in maps. <br><b>Always</b> Will activate always. <br>All options will activate at or <b>below 25% of your health.</b> ', 'multitoggle', 0, null, 'C2');
-	createSetting('mapc2hd', 'Mapology H:D', 'Set your H:D ratio for Mapology. Will not go into maps unless your H:D ratio is above this. -1 to use normal behaviour. ', 'value', '-1', null, 'C2');
 	createSetting('novmsc2', 'No VMs', 'Turn off VM running for C2s. Handy for the C2 Runner. ', 'boolean', false, null, 'C2');
 
 	//C2 Runner
@@ -352,10 +351,9 @@ function initializeAllSettings() {
 	createSetting('lifeZone', 'L: Zone', 'During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this zone. <br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 100.', 'value', '100', null, 'C2');
 	createSetting('lifeStacks', 'L: Stacks', 'During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this stack count.<br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 150.', 'value', '150', null, 'C2');
 
-
 	//Mapology
-	createSetting('mapology', 'Mapology', 'Turn this on if you want to enable Mapology prestige climb feautre.', 'boolean', false, null, 'C2');
-	createSetting('mapologyPrestige', 'M: Prestige', 'Acquire prestiges through the selected item (inclusive) as soon as they are available in maps. Forces equip first mode. Automap must be enabled. THIS IS AN IMPORTANT SETTING related to speed climbing and should probably always be on something. If you find the script getting stuck somewhere, particularly where you should easily be able to kill stuff, setting this to an option lower down in the list will help ensure you are more powerful at all times, but will spend more time acquiring the prestiges in maps.', 'dropdown', 'Off', ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'], 'C2');
+	createSetting('mapology', 'Mapology', 'Turn this on if you want to enable Mapology prestige climb feautre. Any BW Raiding settings will climb until the prestige selected in "M: Prestige" has been obtained rather than going for all the available prestiges.', 'boolean', false, null, 'C2');
+	createSetting('mapologyPrestige', 'M: Prestige', 'Acquire prestiges through the selected item (inclusive) as soon as they are available in maps. Automap must be enabled.', 'dropdown', 'Off', ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'], 'C2');
 
 	//Experience
 	createSetting('experience', 'Experience', 'Turn this on if you want to enable Experience feautres. <b>This setting is dependant on using \'Bionic Raiding\' in conjunction with it.</b><br><br>Will automatically disable repeat within Bionic Wonderland maps if you\'re above z600 and the Bionic map is at or above level 605.', 'boolean', false, null, 'C2');
@@ -1779,7 +1777,7 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.7') {
-			changelog.push("Improved early game U1 a ton. Added challenge settings for Balance, Decay, Life, Mapology (not fully implemented yet) which should make the early game challenges a lot easier to play through. <br><br>\
+			changelog.push("Improved early game U1 a ton. Added challenge settings for Balance, Decay, Life, Mapology which should make the early game challenges a lot easier to play through. <br><br>\
 			Changed the way that Golden Upgrades are purchased, has been moved to the MAZ layout with dropdowns for golden type and how many you want to buy to give you more flexibility on what you\'d like to purchase so those will need setup straight away.")
 		}
 
@@ -2100,7 +2098,6 @@ function updateCustomButtons() {
 	!radonon ? turnOn('buynojobsc') : turnOff('buynojobsc');
 	!radonon ? turnOn('cfightforever') : turnOff('cfightforever');
 	!radonon ? turnOn('carmormagic') : turnOff('carmormagic');
-	!radonon ? turnOn('mapc2hd') : turnOff('mapc2hd');
 	!radonon ? turnOn('novmsc2') : turnOff('novmsc2');
 	!radonon ? turnOn('c2runnerstart') : turnOff('c2runnerstart');
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerportal') : turnOff('c2runnerportal');
