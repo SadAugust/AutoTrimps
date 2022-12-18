@@ -738,7 +738,7 @@ function TributeFarm() {
 			game.global.mapRunCounter = 0;
 			rTrFSettings.done = totalPortals + "_" + game.global.world;
 			if (!dontRecycleMaps && game.global.mapsActive) {
-				mapsClicked();
+				mapsClicked(true);
 				recycleMap();
 			}
 			if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
@@ -957,7 +957,7 @@ function SmithyFarm() {
 				else if (mapBonus === 'lwc' || mapBonus === 'swc') rSFMapRepeats[1] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 				else if (mapBonus === 'lmc' || mapBonus === 'smc') rSFMapRepeats[2] = game.global.mapRunCounter + (game.global.mapsActive ? (getCurrentMapCell().level - 1) / getCurrentMapObject().size : 0);
 				if (!dontRecycleMaps) {
-					mapsClicked();
+					mapsClicked(true);
 					recycleMap();
 				}
 			}
@@ -1156,7 +1156,7 @@ function MapDestacking() {
 			(game.global.challengeActive == "Storm" && !rShouldDestack && game.challenges.Storm.beta == 0)
 		)
 	) {
-		mapsClicked();
+		mapsClicked(true);
 		recycleMap();
 	}
 
@@ -1315,7 +1315,7 @@ function rRunRaid() {
 				} else if (RAMPfrag(raidzones, rPRFragFarm) == true) {
 					if (game.global.repeatMap) {
 						repeatClicked();
-						mapsClicked();
+						mapsClicked(true);
 					}
 					if (game.global.preMapsActive && RAMPfragmappybought && RAMPprefragmappy != undefined) {
 						RAMPfragmappybought = false;
@@ -1551,9 +1551,9 @@ function runBionicRaiding(bionicPool) {
 	if (!bionicPool) return false;
 
 	if (!game.global.preMapsActive && !game.global.mapsActive) {
-		mapsClicked();
+		mapsClicked(true);
 		if (!game.global.preMapsActive) {
-			mapsClicked();
+			mapsClicked(true);
 		}
 	}
 
@@ -1837,7 +1837,7 @@ function Quest() {
 	}
 	if (rCurrentMap === mapName && !farmingDetails.shouldRun) {
 		if (getPageSetting('rMapRepeatCount')) debug("Questing took " + (game.global.mapRunCounter) + (game.global.mapRunCounter == 1 ? " map" : " maps") + " to complete on zone " + game.global.world + ".")
-		if (game.global.mapsActive) mapsClicked();
+		if (game.global.mapsActive) mapsClicked(true);
 		if (game.global.preMapsActive && game.global.currentMapId !== '') recycleMap();
 		rCurrentMap = undefined;
 		rAutoLevel = Infinity;
@@ -2640,7 +2640,7 @@ function HDFarm() {
 			game.global.mapRunCounter = 0;
 			rHDFSettings.done = totalPortals + "_" + game.global.world;
 			if (!dontRecycleMaps && game.global.mapsActive) {
-				mapsClicked();
+				mapsClicked(true);
 				recycleMap();
 			}
 		}
