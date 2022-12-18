@@ -1451,7 +1451,15 @@ function PrestigeClimb() {
 		special = game.global.highestLevelCleared + 1 >= 135 ? 'p' : game.global.highestLevelCleared + 1 >= 60 ? 'fa' : '0';
 	if (game.global.universe === 2)
 		special = game.global.highestRadonLevelCleared + 1 >= 55 ? 'p' : game.global.highestRadonLevelCleared + 1 >= 15 ? 'fa' : '0';
-	var repeat = (!(mapsToRun !== (game.global.mapsActive && getCurrentMapObject().bonus === 'p' ? 2 : 1)) || game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || (getCurrentMapObject().bonus !== special && (getCurrentMapObject().bonus !== undefined && special !== '0'))));
+	var repeat = !(
+		game.global.mapsActive && (
+			mapsToRun >= (getCurrentMapObject().bonus === 'p' ? 2 : 1) ||
+			(getCurrentMapObject().level - game.global.world) !== mapLevel ||
+			(
+				getCurrentMapObject().bonus !== special && (getCurrentMapObject().bonus !== undefined && special !== '0')
+			)
+		)
+	);
 
 	farmingDetails.shouldRun = needPrestige;
 	farmingDetails.mapName = mapName;
