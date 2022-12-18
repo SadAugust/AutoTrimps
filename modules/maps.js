@@ -1,6 +1,9 @@
 //Mapping Variables
 MODULES.maps = {};
 MODULES.maps.fragmentFarming = false;
+MODULES.maps.lifeActive = false;
+MODULES.maps.lifeCell = 0;
+
 var currTime = 0;
 var lastMapWeWereIn = null;
 //Prestige
@@ -37,12 +40,12 @@ if (getAutoStructureSetting().enabled) {
 }
 
 function updateAutoMapsStatus(get) {
+	const universeInitial = game.global.universe === 2 ? 'R' : '';
+	if (!getPageSetting(universeInitial + 'showautomapstatus')) return;
 	var status;
 
-	//Fail Safes 
-	if (game.global.universe === 1 ? getPageSetting('AutoMaps') == 0 : getPageSetting('RAutoMaps') == 0) status = 'Off';
 	//Setting up status
-	else if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
+	if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
 	else if (vanillaMAZ) status = 'Vanilla MAZ';
 	else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().name !== 'Bionic Wonderland' && getCurrentMapObject().location !== 'Void') status = getCurrentMapObject().name;
 	else if (game.global.challengeActive == "Mapology" && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
@@ -51,6 +54,8 @@ function updateAutoMapsStatus(get) {
 	//Advancing
 	else status = 'Advancing';
 
+
+	if (getPageSetting(universeInitial + 'AutoMaps') == 0) status = '[Off] ' + status;
 	let resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
 	let resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
 	var getPercent = (game.stats.heliumHour.value() / (game.global['total' + resourceType + 'Earned'] - (game.global[resourceType.toLowerCase() + 'Leftover'] + game.resources[resourceType.toLowerCase()].owned))) * 100;
@@ -66,19 +71,21 @@ function updateAutoMapsStatus(get) {
 }
 
 function autoMap() {
+	const universeInitial = game.global.universe === 2 ? 'R' : '';
+	if (!getPageSetting(universeInitial + 'AutoMaps') > 0 && game.global.mapsUnlocked) return;
 
-	//Stops maps from running while doing Trimple of Doom or Atlantrimp.
+	//Stops maps from running while doing Trimple Of Doom or Atlantrimp.
 	if (!game.mapUnlocks.AncientTreasure.canRunOnce) {
 		rBSRunningAtlantrimp = false;
 	}
 
-	if (game.global.mapsActive && (getCurrentMapObject().name == 'Trimple of Doom' || getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle') || rBSRunningAtlantrimp) {
+	if (game.global.mapsActive && (getCurrentMapObject().name == 'Trimple Of Doom' || getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle') || rBSRunningAtlantrimp) {
 		if (game.global.repeatMap) repeatClicked();
 		return;
 	}
 
 	//Failsafes
-	if (!game.global.mapsUnlocked || calcOurDmg("avg", 0, false, 'world') <= 0 || questcheck() === 8 || questcheck() === 9) {
+	if (!game.global.mapsUnlocked || calcOurDmg("avg", 0, false, 'world') <= 0 || currQuest() === 8 || currQuest() === 9) {
 		if (game.global.preMapsActive)
 			mapsClicked();
 		return;
@@ -86,6 +93,7 @@ function autoMap() {
 
 	//No Mapology Credits
 	if (game.global.challengeActive === "Mapology" && game.challenges.Mapology.credits < 1) {
+		if (game.global.preMapsActive) mapsClicked();
 		return;
 	}
 
@@ -93,6 +101,20 @@ function autoMap() {
 	if (MODULES.maps.fragmentFarming) {
 		rFragmentFarm();
 		return;
+	}
+
+	if (game.global.challengeActive === 'Life' && !game.global.mapsActive) {
+		if (getPageSetting('life') && game.global.world >= getPageSetting('lifeZone') && game.challenges.Life.stacks < getPageSetting('lifeStacks')) {
+			var currCell = game.global.world + "_" + (game.global.lastClearedCell + 1);
+			if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
+			if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {
+				MODULES.maps.livingActive = true;
+				if (game.global.fighting || game.global.preMapsActive)
+					mapsClicked();
+				return;
+			}
+		}
+		MODULES.maps.livingActive = false;
 	}
 
 	//Vanilla Map at Zone

@@ -161,8 +161,9 @@ function HeirloomShieldSwapped() {
 	shieldEquipped = game.global.ShieldEquipped.id;
 }
 
-function HeirloomSwapping() {
+function heirloomSwapping() {
 	const prefix = game.global.universe === 1 ? 'H' : 'R';
+	if (!getPageSetting(prefix + 'hs')) return;
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
 	const isDaily = game.global.challengeActive == "Daily";
 	const rRunningRegular = !isDaily && !isC3

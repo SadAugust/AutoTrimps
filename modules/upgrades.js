@@ -123,7 +123,7 @@ function buyUpgrades() {
 		upgrade = upgradeList[upgrade];
 		var gameUpgrade = game.upgrades[upgrade];
 		var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
-		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") == true && bwRewardUnlocked("DecaBuild") && getPageSetting('BuyBuildingsNew') == 0);
+		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") && bwRewardUnlocked("DecaBuild") && getPageSetting('BuyBuildingsNew') == 0);
 
 		//Coord & Amals
 		if (upgrade == 'Coordination' && (getPageSetting('BuyUpgradesNew') == 2 || !canAffordCoordinationTrimps())) continue;
@@ -167,38 +167,47 @@ function RbuyUpgrades() {
 	}
 }
 
-function RautoGoldenUpgradesAT(setting) {
-	var num = getAvailableGoldenUpgrades();
-	if (num == 0) return;
+function getNextGoldenUpgrade() {
 
-	var setting2;
-	var rRunningC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
-	var rRunningDaily = game.global.challengeActive == "Daily";
-	var rRunningRegular = game.global.challengeActive != "Daily" && game.global.challengeActive != "Mayhem" && game.global.challengeActive != "Pandemonium" && !game.global.runningChallengeSquared;
+	const universe = game.global.universe === 1 ? 'h' : 'r';
+	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
+	const isDaily = game.global.challengeActive === 'Daily';
+	const setting = isC3 ? autoTrimpSettings[universe + 'AutoGoldenC3Settings'].value : isDaily ? autoTrimpSettings[universe + 'AutoGoldenDailySettings'].value : autoTrimpSettings[universe + 'AutoGoldenSettings'].value;
 
-
-	if (setting == "Radon")
-		setting2 = "Helium";
-	if ((rRunningRegular && autoTrimpSettings.RAutoGoldenUpgrades.selected == "Radon" && getPageSetting('Rradonbattle') > 0 && game.goldenUpgrades.Helium.purchasedAt.length >= getPageSetting('Rradonbattle')) || (rRunningDaily && autoTrimpSettings.RdAutoGoldenUpgrades.selected == "Radon" && getPageSetting('Rdradonbattle') > 0 && game.goldenUpgrades.Helium.purchasedAt.length >= getPageSetting('Rdradonbattle')))
-		setting2 = "Battle";
-	if (setting == "Battle")
-		setting2 = "Battle";
-	if ((rRunningRegular && autoTrimpSettings.RAutoGoldenUpgrades.selected == "Battle" && getPageSetting('Rbattleradon') > 0 && game.goldenUpgrades.Battle.purchasedAt.length >= getPageSetting('Rbattleradon')) || (rRunningDaily && autoTrimpSettings.RdAutoGoldenUpgrades.selected == "Battle" && getPageSetting('Rdbattleradon') > 0 && game.goldenUpgrades.Battle.purchasedAt.length >= getPageSetting('Rdbattleradon')))
-		setting2 = "Helium";
-	if (setting == "Void" || setting == "Void + Battle")
-		setting2 = "Void";
-	if (game.global.challengeActive == "Mayhem" || game.global.challengeActive == "Pandemonium")
-		setting2 = "Battle";
-
-	var success = buyGoldenUpgrade(setting2);
-	if (!success && setting2 == "Void") {
-		num = getAvailableGoldenUpgrades();
-		if (num == 0) return;
-
-		if ((rRunningRegular && autoTrimpSettings.RAutoGoldenUpgrades.selected == "Void") || (rRunningDaily && autoTrimpSettings.RdAutoGoldenUpgrades.selected == "Void"))
-			setting2 = "Helium";
-		if (((rRunningRegular && autoTrimpSettings.RAutoGoldenUpgrades.selected == "Void" && getPageSetting('Rvoidheliumbattle') > 0 && game.global.world >= getPageSetting('Rvoidheliumbattle')) || (rRunningDaily && autoTrimpSettings.RdAutoGoldenUpgrades.selected == "Void" && getPageSetting('Rdvoidheliumbattle') > 0 && game.global.world >= getPageSetting('Rdvoidheliumbattle'))) || ((rRunningRegular && autoTrimpSettings.RAutoGoldenUpgrades.selected == "Void + Battle") || (rRunningDaily && autoTrimpSettings.RdAutoGoldenUpgrades.selected == "Void + Battle") || (rRunningC3 && autoTrimpSettings.RcAutoGoldenUpgrades.selected == "Void + Battle")))
-			setting2 = "Battle";
-		buyGoldenUpgrade(setting2);
+	if (setting.length === 0) {
+		return false;
 	}
+
+	var defs = archoGolden.getDefs();
+	var done = {};
+
+	for (var x = 0; x < setting.length; x++) {
+		if (!setting[x].active) continue;
+		if (setting[x].golden === undefined) continue;
+		var rule = setting[x].golden;
+		rule = rule.split(/(\d+)/);
+		var name = defs[rule[0]];
+		var number = parseInt(rule[1], 10);
+		var purchased = game.goldenUpgrades[name].purchasedAt.length;
+		var old = done[name] ? done[name] : 0;
+		if (name == "Void" && (parseFloat((game.goldenUpgrades.Void.currentBonus + game.goldenUpgrades.Void.nextAmt()).toFixed(2)) > 0.72)) {
+			continue;
+		}
+		if (purchased < (number + old)) {
+			return name;
+		}
+		if (done[name]) done[name] += number;
+		else done[name] = number;
+	}
+
+	return false;
+}
+
+function autoGoldUpgrades() {
+	if (!goldenUpgradesShown || getAvailableGoldenUpgrades() <= 0)
+		return;
+	var selected;
+	selected = getNextGoldenUpgrade();
+	if (!selected) return;
+	buyGoldenUpgrade(selected);
 }

@@ -289,11 +289,7 @@ function initializeAllSettings() {
 	createSetting('dWindStackingMin', 'Daily Windstack Min Zone', 'For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set for dailys. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from Daily WS MAX work off this setting. ', 'value', '-1', null, 'Daily');
 	createSetting('dWindStackingMinHD', 'Daily Windstack H:D', 'For use with Windstacking Stance in Dailies, fiddle with this to maximise your stacks in wind zones for Dailies. If H:D is above this setting it will not use W stance. If it is below it will. ', 'value', '-1', null, 'Daily');
 	createSetting('dWindStackingMax', 'Daily Windstack Stacks', 'For use with Windstacking Stance in Dailies. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190. In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment. ', 'value', '200', null, 'Daily');
-	createSetting('dwindcutoff', 'Daily Wind Damage Cutoff', 'Set this value to optimise your windstacking in dailys. Can work without Windstacking Stance, but not recommended. AT normally uses 4 as its cutoff. I.e if the cutoff is above 4 it will buy max equipment. If you set this to 160, it will not get more damage till you are above x160. Essentially, the higher the value, the less damage AT wants to get, this will enable you to windstack to incredibly high amounts. -1 to disable/go back to default. Must set your windstacking min zone to use. ', 'value', '-1', null, 'Daily');
-	createSetting('dwindcutoffmap', 'Daily Wind Map Cutoff', 'Set this value to optimise your windstacking in dailys. Can work without Windstacking Stance, but not recommended. AT normally uses 4 as its cutoff. I.e if the cutoff is above 4 it will do map bonus. If you set this to 160, it will not do maps till you are above x160. Essentially, the higher the value, the less damage AT wants to get, this will enable you to windstack to incredibly high amounts. -1 to disable/go back to default. Must set your windstacking min zone to use. ', 'value', '-1', null, 'Daily');
 	createSetting('liqstack', 'Stack Liquification', 'Stack Wind zones during Wind Enlight during Liquification. ', 'boolean', false, null, 'Daily');
-	createSetting('dwsmax', 'Daily WS MAX', 'For maximising Windstacking an entire Daily. Withholds damage to try and get your max windstacks every wind zone. Not recommended for terrible Dailies. ', 'value', '-1', null, 'Daily');
-	createSetting('dwsmaxhd', 'Daily WSM H:D', 'Fiddle with this to maximise your DWSM settings. Default is 0.00025. ', 'value', '-1', null, 'Daily');
 
 	//Helium Daily Portal
 	createSetting('AutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
@@ -338,6 +334,8 @@ function initializeAllSettings() {
 	createSetting('c2runnerpercent', 'C2 Runner %', 'What percent Threshhold you want C2s to be over. E.g 85, will only run C2s with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ', 'value', '85', null, 'C2');
 	createSetting('c2table', 'C2 Table', 'Display your C2s and C3s in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this C2/C3 is worth doing. <br><b>Blue</b> = You have not yet done/unlocked this C2/C3 challenge. ', 'infoclick', 'c2table', null, 'C2');
 
+	//Challenges
+
 	//Balance
 	createSetting('balance', 'Balance', 'Turn this on if you want to enable Balance destacking feautres.', 'boolean', false, null, 'C2');
 	createSetting('balanceZone', 'B: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C2');
@@ -345,10 +343,19 @@ function initializeAllSettings() {
 	createSetting('balanceImprobDestack', 'B: Improbability Destack', 'Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone', 'boolean', false, null, 'C2');
 
 	//Decay
-	//Challenges
 	createSetting('decay', 'Decay', 'Turn this on if you want to enable Decay feautres.', 'boolean', false, null, 'C2');
 	createSetting('decayStacksToPush', 'D: Stacks to Push', 'During Decay, AT will ignore maps and push to end the zone if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.', 'value', '300', null, 'C2');
 	createSetting('decayStacksToAbandon', 'D: Stacks to Abandon', 'During Decay, AT will abandon the challenge if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.', 'value', '600', null, 'C2');
+
+	//Life
+	createSetting('life', 'Life', 'Turn this on if you want to enable Decay feautres.', 'boolean', false, null, 'C2');
+	createSetting('lifeZone', 'L: Zone', 'During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this zone. <br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 100.', 'value', '100', null, 'C2');
+	createSetting('lifeStacks', 'L: Stacks', 'During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this stack count.<br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 150.', 'value', '150', null, 'C2');
+
+
+	//Mapology
+	createSetting('mapology', 'Mapology', 'Turn this on if you want to enable Mapology prestige climb feautre.', 'boolean', false, null, 'C2');
+	createSetting('mapologyPrestige', 'M: Prestige', 'Acquire prestiges through the selected item (inclusive) as soon as they are available in maps. Forces equip first mode. Automap must be enabled. THIS IS AN IMPORTANT SETTING related to speed climbing and should probably always be on something. If you find the script getting stuck somewhere, particularly where you should easily be able to kill stuff, setting this to an option lower down in the list will help ensure you are more powerful at all times, but will spend more time acquiring the prestiges in maps.', 'dropdown', 'Off', ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'], 'C2');
 
 	//Experience
 	createSetting('experience', 'Experience', 'Turn this on if you want to enable Experience feautres. <b>This setting is dependant on using \'Bionic Raiding\' in conjunction with it.</b><br><br>Will automatically disable repeat within Bionic Wonderland maps if you\'re above z600 and the Bionic map is at or above level 605.', 'boolean', false, null, 'C2');
@@ -632,10 +639,6 @@ function initializeAllSettings() {
 	createSetting('WindStackingMin', 'Windstack Min Zone', 'For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from WS MAX work off this setting. ', 'value', '-1', null, 'Windstacking');
 	createSetting('WindStackingMinHD', 'Windstack H:D', 'For use with Windstacking Stance, fiddle with this to maximise your stacks in wind zones. ', 'value', '-1', null, 'Windstacking');
 	createSetting('WindStackingMax', 'Windstack Stacks', 'For use with Windstacking Stance. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190.  In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment. ', 'value', '200', null, 'Windstacking');
-	createSetting('windcutoff', 'Wind Damage Cutoff', 'Set this value to optimise your windstacking. Can work without AS3, but not recommended. AT normally uses 4 as its cutoff. I.e if the cutoff is above 4 it will buy max equipment. If you set this to 160, it will not get more damage till you are above x160. Essentially, the higher the value, the less damage AT wants to get, this will enable you to windstack to incredibly high amounts. -1 to disable/go back to default. Must set your windstacking min zone to use. ', 'value', '-1', null, 'Windstacking');
-	createSetting('windcutoffmap', 'Wind Map Cutoff', 'Set this value to optimise your windstacking. Can work without AS3, but not recommended. AT normally uses 4 as its cutoff. I.e if the cutoff is above 4 it will get map bonus. If you set this to 160, it will not get more map bonus till you are above x160. Essentially, the higher the value, the less damage AT wants to get, this will enable you to windstack to incredibly high amounts. -1 to disable/go back to default. Must set your windstacking min zone to use. ', 'value', '-1', null, 'Windstacking');
-	createSetting('wsmax', 'WS MAX', 'For maximising Windstacking an entire run. Withholds damage to try and get your max windstacks every wind zone. Not recommended for normal usage. Good for BPs. ', 'value', '-1', null, 'Windstacking');
-	createSetting('wsmaxhd', 'WSM H:D', 'Fiddle with this to maximise your WSM settings. Default is 0.00025. ', 'value', '-1', null, 'Windstacking');
 
 	//--------------------------------------------------------------
 
@@ -699,14 +702,10 @@ function initializeAllSettings() {
 	//Pandemonium
 	createSetting('RPandemoniumOn', 'Pandemonium', 'Turn on Pandemonium settings.', 'boolean', false, null, 'C3');
 	createSetting('RPandemoniumZone', 'P: Destack Zone', 'What zone to start Pandemonium mapping at. Will ignore Pandemonium stacks below this zone.', 'value', '-1', null, 'C3');
-	createSetting('RPandemoniumAutoEquip', ['P: AutoEquip Off', 'P: AutoEquip', 'P AE: LMC', 'P AE: Huge Cache', 'P AE: Jestimp'], '<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.<br><br/><b>P AE: LMC Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache<br/>Will also purchase prestiges when they cost less than a Jestimp proc. Additionally will override worker settings to ensure that you farm as much metal as possible.<br/><br><b>P AE: Huge Cache</b><br>Uses the same settings as \'P: AE LMC\' but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure fast farming speed.<br/><br/><b>P AE: Jestimp</b><br/>Provides a setting for Jestimp farming from a set zone which will change the equipment buying condition from if they cost less than a huge cache to if they cost less than the metal you\'d gain from a Jestimp kill. <br/>Recommended to only use the later part of Pandemonium runs as it will increase farming time by a drastic amount.', 'multitoggle', 0, null, 'C3');
+	createSetting('RPandemoniumAutoEquip', ['P: AutoEquip Off', 'P: AutoEquip', 'P AE: LMC', 'P AE: Huge Cache'], '<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.<br><br/><b>P AE: LMC Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache<br/>Will also purchase prestiges when they cost less than a Jestimp proc. Additionally will override worker settings to ensure that you farm as much metal as possible.<br/><br><b>P AE: Huge Cache</b><br>Uses the same settings as \'P: AE LMC\' but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure fast farming speed.<br/><br/><b>P AE: Jestimp</b><br/>Provides a setting for Jestimp farming from a set zone which will change the equipment buying condition from if they cost less than a huge cache to if they cost less than the metal you\'d gain from a Jestimp kill. <br/>Recommended to only use the later part of Pandemonium runs as it will increase farming time by a drastic amount.', 'multitoggle', 0, null, 'C3');
 	createSetting('RPandemoniumAEZone', 'P AE: Zone', 'Which zone you would like to start farming as much gear as possible from.', 'value', '-1', null, 'C3');
 	createSetting('PandemoniumFarmLevel', 'P AE: Map Level', 'The map level for farming Large Metal & Huge Caches.', 'value', '1', null, 'C3');
-	createSetting('RPandemoniumJestZone', 'P AE: Jest Zone', 'Which zone you would like to start farming Jestimps for equipment instead of caches.', 'value', '140', null, 'C3');
-	createSetting('PandemoniumJestFarmLevel', 'P AE: Jest Map Level', 'The map level to farm Jestimps at.', 'value', '1', null, 'C3');
-	createSetting('PandemoniumJestFarmKills', 'P AE: Jest Kills', 'The amount of consecutive Jestimp kills for a single equip level.', 'value', '3', null, 'C3');
 	createSetting('RhsPandStaff', 'P: Staff', 'The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.', 'textValue', 'undefined', null, 'C3');
-	createSetting('RhsPandJestFarmShield', 'P: Shield', 'The name of the shield you would like to equip while Jestimp farming. Should ideally be a shield that has no nu spent on health as it won\'t be required with Mass Hysteria purchased.', 'textValue', 'undefined', null, 'C3');
 	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'C3');
 	createSetting('rPandRespec', 'P: Respec', 'Turn this on to automate respeccing during Pandemonium. Be warned that this will spend bones to purchase bone portals if one is not available. <br><br>Will only function properly if the Pandemonium AutoEquip and destacking settings are all setup appropriately.<br><br>The respeccing will use the games preset system and will use Preset 2 for your destacking perk spec and Preset 3 for your farming perk spec.', 'boolean', false, null, 'C3');
 	createSetting('rPandRespecZone', 'P: Respec Zone', 'The zone you\'d like to start respeccing from.', 'value', '-1', null, 'C3');
@@ -916,31 +915,20 @@ function initializeAllSettings() {
 
 	//Golden
 	//Helium
-	createSetting('AutoGoldenUpgrades', 'AutoGoldenUpgrades', 'Buys Golden Upgrades in Fillers. Helium buys all Helium golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Helium", "Battle", "Void", "Void + Battle"], 'Golden');
-	createSetting('dAutoGoldenUpgrades', 'Daily AutoGoldenUpgrades', 'Buys Golden Upgrades in Dailies. Helium buys all Helium golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Helium", "Battle", "Void", "Void + Battle"], 'Golden');
-	createSetting('cAutoGoldenUpgrades', 'C2 AutoGoldenUpgrades', 'Buys Golden Upgrades in C2s. Helium buys all Helium golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Battle", "Void", "Void + Battle"], 'Golden');
 
-	//Break
-	createSetting('voidheliumbattle', 'Void Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Helium at this zone and onwards. This option only appears when selecting void. ', 'value', -1, null, 'Golden');
-	createSetting('dvoidheliumbattle', 'Daily Void Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Helium at this zone and onwards in Dailies. This option only appears when selecting void. ', 'value', -1, null, 'Golden');
-	createSetting('radonbattle', 'Helium Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of helium after this many helium goldens have been purchased and onwards. This option only appears when selecting helium. ', 'value', -1, null, 'Golden');
-	createSetting('dradonbattle', 'Daily Helium Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of helium after this many helium goldens have been purchased and onwards in Dailies. This option only appears when selecting helium. ', 'value', -1, null, 'Golden');
-	createSetting('battleradon', 'Battle Helium', '<b>-1 to disable.</b><br> Buys helium goldens instead of Battle after this many Battle goldens have been purchased and onwards. This option only appears when selecting battle. ', 'value', -1, null, 'Golden');
-	createSetting('dbattleradon', 'Daily Battle Helium', '<b>-1 to disable.</b><br> Buys helium goldens instead of Battle after this many battle goldens have been purchased and onwards in Dailies. This option only appears when selecting battle. ', 'value', -1, null, 'Golden');
+	createSetting('hAutoGoldenPopup', 'Auto Gold Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Auto Golden", "hAutoGolden", "MAZ")', null, 'Golden');
+	createSetting('hAutoGoldenSettings', 'C3 AutoGoldenUpgrades', 'Contains arrays for this setting', 'mazArray', [], null, 'Golden');
+	createSetting('hAutoGoldenDailyPopup', 'Daily Auto Gold Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Daily Auto Golden", "hAutoGoldenDaily", "MAZ")', null, 'Golden');
+	createSetting('hAutoGoldenDailySettings', 'C3 AutoGoldenUpgrades', 'Contains arrays for this setting', 'mazArray', [], null, 'Golden');
+	createSetting('hAutoGoldenC3Popup', 'C3 Auto Gold Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("C3 Auto Golden", "hAutoGoldenC3", "MAZ")', null, 'Golden');
+	createSetting('hAutoGoldenC3Settings', 'C3 AutoGoldenUpgrades', 'Contains arrays for this setting', 'mazArray', [], null, 'Golden');
 
-	//Radon
-	createSetting('RAutoGoldenUpgrades', 'AutoGoldenUpgrades', 'Buys Golden Upgrades in Fillers. Radon buys all Radon golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Radon", "Battle", "Void", "Void + Battle"], 'Golden');
-	createSetting('RdAutoGoldenUpgrades', 'Daily AutoGoldenUpgrades', 'Buys Golden Upgrades in Dailies. Radon buys all Radon golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Radon", "Battle", "Void", "Void + Battle"], 'Golden');
-	createSetting('RcAutoGoldenUpgrades', 'C2 AutoGoldenUpgrades', 'Buys Golden Upgrades in C2s. Radon buys all Radon golden upgrades. Battle buys all Battle golden upgrades. Void buys 8 Void golden upgrades (max number you can buy) then buys helium golden upgrades. Void + Battle buys 8 voids then battle. ', 'dropdown', 'Off', ["Off", "Battle", "Void", "Void + Battle"], 'Golden');
-
-	//Break
-	createSetting('Rvoidheliumbattle', 'Void Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Radon at this zone and onwards. This option only appears when selecting void. ', 'value', -1, null, 'Golden');
-	createSetting('Rdvoidheliumbattle', 'Daily Void Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Radon at this zone and onwards in Dailies. This option only appears when selecting void. ', 'value', -1, null, 'Golden');
-	createSetting('Rradonbattle', 'Radon Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Radon after this many Radon goldens have been purchased and onwards. This option only appears when selecting radon. ', 'value', -1, null, 'Golden');
-	createSetting('Rdradonbattle', 'Daily Radon Battle', '<b>-1 to disable.</b><br> Buys Battle goldens instead of Radon after this many Radon goldens have been purchased and onwards in Dailies. This option only appears when selecting radon. ', 'value', -1, null, 'Golden');
-	createSetting('Rbattleradon', 'Battle Radon', '<b>-1 to disable.</b><br> Buys Radon goldens instead of Battle after this many Battle goldens have been purchased and onwards. This option only appears when selecting battle. ', 'value', -1, null, 'Golden');
-	createSetting('Rdbattleradon', 'Daily Battle Radon', '<b>-1 to disable.</b><br> Buys Radon goldens instead of Battle after this many battle goldens have been purchased and onwards in Dailies. This option only appears when selecting battle. ', 'value', -1, null, 'Golden');
-	createSetting('rNonRadonUpgrade', 'Non radon challenges', 'Use C3 golden upgrade setting for regular challenges that aren\'t helium runs.', 'boolean', false, null, 'Golden');
+	createSetting('rAutoGoldenPopup', 'Auto Gold Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Auto Golden", "rAutoGolden", "MAZ")', null, 'Golden');
+	createSetting('rAutoGoldenSettings', 'C3 AutoGoldenUpgrades', 'Contains arrays for this setting', 'mazArray', [], null, 'Golden');
+	createSetting('rAutoGoldenDailyPopup', 'Daily Auto Gold Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Daily Auto Golden", "rAutoGoldenDaily", "MAZ")', null, 'Golden');
+	createSetting('rAutoGoldenDailySettings', 'C3 AutoGoldenUpgrades', 'Contains arrays for this setting', 'mazArray', [], null, 'Golden');
+	createSetting('rAutoGoldenC3Popup', 'C3 Auto Gold Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("C3 Auto Golden", "rAutoGoldenC3", "MAZ")', null, 'Golden');
+	createSetting('rAutoGoldenC3Settings', 'C3 AutoGoldenUpgrades', 'Contains arrays for this setting', 'mazArray', [], null, 'Golden');
 
 	//--------------------------------------------------------------
 
@@ -1058,7 +1046,7 @@ function modifyParentNodeUniverseSwap() {
 	//Helium Settings
 	modifyParentNode_Initial("dscryvoidmaps", radonoff);
 	modifyParentNode_Initial("dPreSpireNurseries", radonoff);
-	modifyParentNode_Initial("dwsmaxhd", radonoff);
+	modifyParentNode_Initial("liqstack", radonoff);
 	//Radon Settings
 	modifyParentNode_Initial("rAutoEqualityEmpower", radonon);
 
@@ -1094,6 +1082,9 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("c2table", radonoff);
 	modifyParentNode_Initial("balanceImprobDestack", radonoff);
 	modifyParentNode_Initial("decayStacksToAbandon", radonoff);
+	modifyParentNode_Initial("lifeStacks", radonoff);
+	modifyParentNode_Initial("mapologyPrestige", radonoff);
+
 	//Radon Settings
 	//None!
 
@@ -1142,9 +1133,7 @@ function modifyParentNodeUniverseSwap() {
 	}
 	//Golden Upgrades
 	//Helium Settings
-	modifyParentNode_Initial("cAutoGoldenUpgrades", radonoff);
 	//Radon Settings
-	modifyParentNode_Initial("RcAutoGoldenUpgrades", radonon);
 
 	//Nature Upgrades
 	//Helium Settings
@@ -1789,6 +1778,11 @@ function updateATVersion() {
 			changelog.push("The Auto Equip swapping settings from U2 have been added to U1, have deleted all of the old U1 settings as they done the same thing but worse. Not 100% tested so if there's any issues let me know.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.7') {
+			changelog.push("Improved early game U1 a ton. Added challenge settings for Balance, Decay, Life, Mapology (not fully implemented yet) which should make the early game challenges a lot easier to play through. <br><br>\
+			Changed the way that Golden Upgrades are purchased, has been moved to the MAZ layout with dropdowns for golden type and how many you want to buy to give you more flexibility on what you\'d like to purchase so those will need setup straight away.")
+		}
+
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
@@ -2075,11 +2069,7 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('use3daily') ? turnOn('dWindStackingMin') : turnOff('dWindStackingMin');
 	!radonon && getPageSetting('use3daily') ? turnOn('dWindStackingMinHD') : turnOff('dWindStackingMinHD');
 	!radonon && getPageSetting('use3daily') ? turnOn('dWindStackingMax') : turnOff('dWindStackingMax');
-	!radonon && getPageSetting('use3daily') ? turnOn('dwindcutoff') : turnOff('dwindcutoff');
-	!radonon && getPageSetting('use3daily') ? turnOn('dwindcutoffmap') : turnOff('dwindcutoffmap');
 	!radonon && getPageSetting('use3daily') ? turnOn('liqstack') : turnOff('liqstack');
-	!radonon && getPageSetting('use3daily') ? turnOn('dwsmax') : turnOff('dwsmax');
-	!radonon && getPageSetting('use3daily') ? turnOn('dwsmaxhd') : turnOff('dwsmaxhd');
 
 	//DPortal
 	!radonon ? turnOn('AutoStartDaily') : turnOff('AutoStartDaily');
@@ -2126,6 +2116,15 @@ function updateCustomButtons() {
 	!radonon ? turnOn('decay') : turnOff('decay');
 	!radonon && getPageSetting('decay') ? turnOn('decayStacksToPush') : turnOff('decayStacksToPush');
 	!radonon && getPageSetting('decay') ? turnOn('decayStacksToAbandon') : turnOff('decayStacksToAbandon');
+
+	//Life
+	!radonon ? turnOn('life') : turnOff('life');
+	!radonon && getPageSetting('life') ? turnOn('lifeZone') : turnOff('lifeZone');
+	!radonon && getPageSetting('life') ? turnOn('lifeStacks') : turnOff('lifeStacks');
+
+	//Mapology
+	!radonon ? turnOn('mapology') : turnOff('mapology');
+	!radonon && getPageSetting('mapology') ? turnOn('mapologyPrestige') : turnOff('mapologyPrestige');
 
 	//Experience
 	!radonon ? turnOn('experience') : turnOff('experience');
@@ -2342,10 +2341,6 @@ function updateCustomButtons() {
 	(!radonon && wson) ? turnOn('WindStackingMin') : turnOff('WindStackingMin');
 	(!radonon && wson) ? turnOn('WindStackingMinHD') : turnOff('WindStackingMinHD');
 	(!radonon && wson) ? turnOn('WindStackingMax') : turnOff('WindStackingMax');
-	(!radonon && wson) ? turnOn('windcutoff') : turnOff('windcutoff');
-	(!radonon && wson) ? turnOn('windcutoffmap') : turnOff('windcutoffmap');
-	(!radonon && wson) ? turnOn('wsmax') : turnOff('wsmax');
-	(!radonon && wson) ? turnOn('wsmaxhd') : turnOff('wsmaxhd');
 
 	//ATGA
 	!radonon ? turnOn('ATGA2') : turnOff('ATGA2');
@@ -2444,9 +2439,6 @@ function updateCustomButtons() {
 	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') ? turnOn('RPandemoniumAutoEquip') : turnOff('RPandemoniumAutoEquip');
 	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RPandemoniumAEZone') : turnOff('RPandemoniumAEZone');
 	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('PandemoniumFarmLevel') : turnOff('PandemoniumFarmLevel');
-	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('RPandemoniumJestZone') : turnOff('RPandemoniumJestZone');
-	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmLevel') : turnOff('PandemoniumJestFarmLevel');
-	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 3 ? turnOn('PandemoniumJestFarmKills') : turnOff('PandemoniumJestFarmKills');
 	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
 	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
 
@@ -2514,28 +2506,20 @@ function updateCustomButtons() {
 	(!radonon && ratiospend) ? turnOn('supratio') : turnOff('supratio');
 	(!radonon && ratiospend) ? turnOn('ocratio') : turnOff('ocratio');
 
-	//Golden
-	!radonon ? turnOn('AutoGoldenUpgrades') : turnOff('AutoGoldenUpgrades');
-	!radonon ? turnOn('dAutoGoldenUpgrades') : turnOff('dAutoGoldenUpgrades');
-	!radonon ? turnOn('cAutoGoldenUpgrades') : turnOff('cAutoGoldenUpgrades');
-	!radonon && getPageSetting('AutoGoldenUpgrades') == 'Void' ? turnOn('voidheliumbattle') : turnOff('voidheliumbattle');
-	!radonon && getPageSetting('dAutoGoldenUpgrades') == 'Void' ? turnOn('dvoidheliumbattle') : turnOff('dvoidheliumbattle');
-	!radonon && getPageSetting('AutoGoldenUpgrades') == 'Helium' ? turnOn('radonbattle') : turnOff('radonbattle');
-	!radonon && getPageSetting('dAutoGoldenUpgrades') == 'Helium' ? turnOn('dradonbattle') : turnOff('dradonbattle');
-	!radonon && getPageSetting('AutoGoldenUpgrades') == 'Battle' ? turnOn('battleradon') : turnOff('battleradon');
-	!radonon && getPageSetting('dAutoGoldenUpgrades') == 'Battle' ? turnOn('dbattleradon') : turnOff('dbattleradon');
+	!radonon ? turnOn('hAutoGoldenPopup') : turnOff('hAutoGoldenPopup');
+	!radonon ? turnOn('hAutoGoldenDailyPopup') : turnOff('hAutoGoldenDailyPopup');
+	!radonon ? turnOn('hAutoGoldenC3Popup') : turnOff('hAutoGoldenC3Popup');
+	turnOff('hAutoGoldenSettings');
+	turnOff('hAutoGoldenDailySettings');
+	turnOff('hAutoGoldenC3Settings');
 
-	//RGolden
-	radonon ? turnOn('RAutoGoldenUpgrades') : turnOff('RAutoGoldenUpgrades');
-	radonon ? turnOn('RdAutoGoldenUpgrades') : turnOff('RdAutoGoldenUpgrades');
-	radonon ? turnOn('RcAutoGoldenUpgrades') : turnOff('RcAutoGoldenUpgrades');
-	radonon && getPageSetting('RAutoGoldenUpgrades') == 'Void' ? turnOn('Rvoidheliumbattle') : turnOff('Rvoidheliumbattle');
-	radonon && getPageSetting('RdAutoGoldenUpgrades') == 'Void' ? turnOn('Rdvoidheliumbattle') : turnOff('Rdvoidheliumbattle');
-	radonon && getPageSetting('RAutoGoldenUpgrades') == 'Radon' ? turnOn('Rradonbattle') : turnOff('Rradonbattle');
-	radonon && getPageSetting('RdAutoGoldenUpgrades') == 'Radon' ? turnOn('Rdradonbattle') : turnOff('Rdradonbattle');
-	radonon && getPageSetting('RAutoGoldenUpgrades') == 'Battle' ? turnOn('Rbattleradon') : turnOff('Rbattleradon');
-	radonon && getPageSetting('RdAutoGoldenUpgrades') == 'Battle' ? turnOn('Rdbattleradon') : turnOff('Rdbattleradon');
-	turnOff('rNonRadonUpgrade');
+
+	radonon ? turnOn('rAutoGoldenPopup') : turnOff('rAutoGoldenPopup');
+	radonon ? turnOn('rAutoGoldenDailyPopup') : turnOff('rAutoGoldenDailyPopup');
+	radonon ? turnOn('rAutoGoldenC3Popup') : turnOff('rAutoGoldenC3Popup');
+	turnOff('rAutoGoldenSettings');
+	turnOff('rAutoGoldenDailySettings');
+	turnOff('rAutoGoldenC3Settings');
 
 	//Nature
 	!radonon ? turnOn('AutoNatureTokens') : turnOff('AutoNatureTokens');
@@ -2675,12 +2659,7 @@ function updateCustomButtons() {
 
 	document.getElementById('Prestige').value = autoTrimpSettings.Prestige.selected;
 	document.getElementById('rPrestige').value = autoTrimpSettings.rPrestige.selected;
-	document.getElementById('AutoGoldenUpgrades').value = autoTrimpSettings.AutoGoldenUpgrades.selected;
-	document.getElementById('dAutoGoldenUpgrades').value = autoTrimpSettings.dAutoGoldenUpgrades.selected;
-	document.getElementById('cAutoGoldenUpgrades').value = autoTrimpSettings.cAutoGoldenUpgrades.selected;
-	document.getElementById('RAutoGoldenUpgrades').value = autoTrimpSettings.RAutoGoldenUpgrades.selected;
-	document.getElementById('RdAutoGoldenUpgrades').value = autoTrimpSettings.RdAutoGoldenUpgrades.selected;
-	document.getElementById('RcAutoGoldenUpgrades').value = autoTrimpSettings.RcAutoGoldenUpgrades.selected;
+	document.getElementById('mapologyPrestige').value = autoTrimpSettings.mapologyPrestige.selected;
 	document.getElementById('AutoPoison').value = autoTrimpSettings.AutoPoison.selected;
 	document.getElementById('AutoWind').value = autoTrimpSettings.AutoWind.selected;
 	document.getElementById('AutoIce').value = autoTrimpSettings.AutoIce.selected;

@@ -106,31 +106,6 @@ function autoGather() {
 		}
 	}
 
-	if (hasTurkimp && game.global.mapsActive) {
-		//Setting gather to the option selected in farming settings if it exists.
-		if (rMapSettings.gather !== undefined && rMapSettings.gather !== null) {
-			setGather(rMapSettings.gather);
-			return;
-		}
-
-		//Setting gather to the setting that corresponds to your current map special.
-		currentBonus = getCurrentMapObject().bonus;
-		if (currentBonus) {
-			if (currentBonus.includes('sc') || currentBonus.includes('hc') || currentBonus.includes('lc'))
-				setGather('food');
-			else if (currentBonus.includes('wc'))
-				setGather('wood');
-			else if (currentBonus.includes('mc'))
-				setGather('metal');
-			else if (manualGather != 3 && currentBonus.includes('rc'))
-				setGather('science');
-			else
-				setGather('metal');
-
-			return;
-		}
-	}
-
 
 	//Build if we don't have foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap
 	if (!bwRewardUnlocked("Foremany") && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier == 0 || (getPlayerModifier() > 100 && game.global.buildingsQueue[0] != 'Trap.1'))) {
@@ -148,6 +123,30 @@ function autoGather() {
 	if (manualGather != 3 && researchAvailable && (needBattle || needScientists || needMiner && game.resources.science.owned < 60)) {
 		setGather('science');
 		return;
+	}
+
+	if (hasTurkimp && game.global.mapsActive) {
+		//Setting gather to the option selected in farming settings if it exists.
+		if (rMapSettings.gather !== undefined && rMapSettings.gather !== null) {
+			setGather(rMapSettings.gather);
+			return;
+		}
+
+		//Setting gather to the setting that corresponds to your current map special.
+		currentBonus = getCurrentMapObject().bonus;
+		if (currentBonus) {
+			if (currentBonus.includes('sc') || currentBonus.includes('hc'))
+				setGather('food');
+			else if (currentBonus.includes('wc'))
+				setGather('wood');
+			else if (currentBonus.includes('mc') || currentBonus.includes('lc'))
+				setGather('metal');
+			else if (manualGather != 3 && currentBonus.includes('rc'))
+				setGather('science');
+			else
+				setGather('metal');
+			return;
+		}
 	}
 
 	//Gather resources for Miner

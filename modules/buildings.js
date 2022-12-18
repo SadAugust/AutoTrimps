@@ -17,6 +17,7 @@ function safeBuyBuilding(building, amt) {
 		return false;
 
 	game.global.firing = false;
+	game.global.buyMax = amt;
 
 	if (!game.buildings[building].locked && canAffordBuilding(building)) {
 		buyBuilding(building, true, true, amt);
@@ -44,7 +45,7 @@ function buyStorage(hypoZone) {
 		//Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
 		var exoticValue = 0;
 		if (game.global.mapsActive) {
-			exoticValue = (getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Trimple of Doom') ? curRes * 2 :
+			exoticValue = (getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Trimple Of Doom') ? curRes * 2 :
 				game.unlocks.imps.Jestimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 45)) :
 					game.unlocks.imps.Chronoimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 5)) :
 						exoticValue
@@ -199,8 +200,6 @@ function mostEfficientHousing() {
 
 	//Housing
 	const HousingTypes = ['Hut', 'House', 'Mansion', 'Hotel', 'Resort', 'Gateway', 'Collector'];
-	/* if (game.global.universe === 1)
-		HousingTypes.push('Warpstation') */
 	// Which houses we actually want to check
 	var housingTargets = [];
 
@@ -235,7 +234,7 @@ function mostEfficientHousing() {
 		//If setting is disabled then don't buy building.
 		if (!buildingSettings[housing].enabled) dontbuy.push(housing);
 		//Stops Collectors being purchased when on Quest gem quests.
-		if (game.global.challengeActive === 'Quest' && questcheck() === 4 && housing === 'Collector') dontbuy.push(housing);
+		if (game.global.challengeActive === 'Quest' && currQuest() === 4 && housing === 'Collector') dontbuy.push(housing);
 		//Stops buildings that cost wood from being pushed if we're running Hypothermia and have enough wood for a bonfire.
 		if (game.global.challengeActive == 'Hypothermia' && (housing !== 'Collector' || housing !== 'Gateway') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
 		//Stops Food buildings being pushed to queue if Tribute Farming with Buy Buildings toggle disabled.
@@ -269,6 +268,11 @@ function mostEfficientHousing() {
 function buyBuildings() {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
+
+	if (game.global.mapsActive && (getCurrentMapObject().name == 'Trimple Of Doom' || getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle') || rBSRunningAtlantrimp) {
+		if (game.global.repeatMap) repeatClicked();
+		return;
+	}
 
 	//Disabling autoBuildings if AT AutoStructure is disabled.
 	if (game.global.universe === 2 ? !getPageSetting('RBuyBuildingsNew') : !getPageSetting('BuyBuildingsNew')) return;
@@ -307,10 +311,10 @@ function buyBuildings() {
 
 	if (game.global.challengeActive === 'Quest' && getPageSetting('rQuest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
 		//Still allows you to buy tributes during gem quests
-		if (([4].indexOf(questcheck()) >= 0))
+		if (([4].indexOf(currQuest()) >= 0))
 			buyTributes();
 		//Return when shouldn't run during quest
-		if ((game.global.lastClearedCell < 90 && ([1, 2, 3, 4].indexOf(questcheck()) >= 0)))
+		if ((game.global.lastClearedCell < 90 && ([1, 2, 3, 4].indexOf(currQuest()) >= 0)))
 			return
 	}
 
@@ -402,11 +406,11 @@ function buyBuildings() {
 			if (game.global.challengeActive === 'Quest' && getPageSetting('rQuest')) {
 				//Resetting smithyCanAfford to avoid any accidental purchases during Quest.
 				smithyCanAfford = 0;
-				if ((MODULES["buildings"].smithiesBoughtThisZone < game.global.world || questcheck() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
+				if ((MODULES["buildings"].smithiesBoughtThisZone < game.global.world || currQuest() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
 					var smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1);
 					var questZones = Math.floor(((!game.global.runningChallengeSquared ? 85 : getPageSetting('rQuestSmithyZone') === -1 ? Infinity : getPageSetting('rQuestSmithyZone') - game.global.world) / 2) - 1);
 					//Buying smithies that won't be needed for quests before user entered end goal or for Smithy quests
-					smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : questcheck() == 10 ? 1 : 0;
+					smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : currQuest() == 10 ? 1 : 0;
 				}
 			}
 			//Don't buy Smithies when you can afford a bonfire on Hypo.
@@ -504,7 +508,7 @@ function buyTributes() {
 		var tributePct = rCurrentMap === 'rTributeFarm' && rMapSettings.tribute > 0 ? 1 : buildingSettings.Tribute.percent > 0 ? buildingSettings.Tribute.percent / 100 : 1;
 
 		var tributeAmt = buildingSettings.Tribute.buyMax === 0 ? Infinity : rCurrentMap === 'rTributeFarm' && rMapSettings.tribute > buildingSettings.Tribute.buyMax ? rMapSettings.tribute : buildingSettings.Tribute.buyMax;
-		if ((rCurrentMap === 'rSmithyFarm' && rMapSettings.gemFarm) || questcheck() === 4) {
+		if ((rCurrentMap === 'rSmithyFarm' && rMapSettings.gemFarm) || currQuest() === 4) {
 			tributeAmt = Infinity;
 			tributePct = 1;
 		}

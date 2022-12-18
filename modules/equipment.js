@@ -269,77 +269,48 @@ var RequipmentList = {
 	}
 };
 
-function Rgetequips(map, special) { //(level, p b or false)
+function equipsToGet(targetZone, targetPrestige) {
+
+	const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
+	if (!targetPrestige) targetPrestige = 'GambesOP';
+
+	//Figure out how many equips to farm for
+	let mapsToRun = 0;
+	let prestigeToFarmFor = 0;
+	let mapLevel = 0;
+
+	const divideBy = (game.global.sLevel <= 3 || game.global.challengeActive === 'Mapology') ? 5 : 10;
+
+	for (const p of prestigeList) {
+		if (game.equipment[game.upgrades[p].prestiges].locked) continue;
+		const prestigeUnlock = game.mapUnlocks[p];
+		const pMapLevel = prestigeUnlock.last + 5;
+		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && pMapLevel <= targetZone) {
+			mapsToRun += Math.max(1, Math.ceil((targetZone - pMapLevel) / divideBy));
+			prestigeToFarmFor += Math.floor((targetZone - (pMapLevel - 5)) / 5);
+		}
+		if (p === targetPrestige) break;
+	}
+
+	return [prestigeToFarmFor, mapsToRun, mapLevel];
+}
+
+function Rgetequips(map, special) {
 	var specialCount = 0;
 	var unlocksObj;
 	var world;
-	var prestigeArray = [];
-	var hasPrestigious = false;
 	unlocksObj = game.mapUnlocks;
-	if (special == 'p') hasPrestigious = true;
-	var Rlocation;
-	if (special == 'p' || special == false) Rlocation = "Plentiful";
+
 	world = map;
-	var canLast = 1;
-	var prestigeItemsAvailable = [];
 	for (var item in unlocksObj) {
 		var special = unlocksObj[item];
 		if (!special.prestige) continue;
 		if (special.locked) continue;
-		if (game.global.universe == 2 && special.blockU2) continue;
-		if (game.global.universe == 1 && special.blockU1) continue;
 		if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(game.upgrades[item].prestiges)) continue;
-		if (special.brokenPlanet && ((special.brokenPlanet == 1 && !game.global.brokenPlanet) || special.brokenPlanet == -1 && game.global.brokenPlanet)) continue;
-		if (special.startAt < 0) continue;
-		if (special.lastAt < game.global.world) continue;
-		if ((special.filterUpgrade)) {
-			var mapConfigLoc = game.mapConfig.locations[Rlocation];
-			if (typeof mapConfigLoc.upgrade === 'object') {
-				var usable = false;
-				for (var x = 0; x < mapConfigLoc.upgrade.length; x++) {
-					if (mapConfigLoc.upgrade[x] != item) continue;
-					usable = true;
-					break;
-				}
-				if (!usable) continue;
-			} else if (mapConfigLoc.upgrade != item) continue;
-		}
-		if ((special.level == "last" && canLast > 0 && special.world <= world && (special.canRunOnce || special.canRunWhenever))) {
-			if (canLast == 2 && !special.prestige) continue;
-			if (typeof special.specialFilter !== 'undefined') {
-				if (!special.specialFilter(world)) continue;
-			}
-			if (special.startAt > world) continue;
-			specialCount++;
-			continue;
-			if (hasPrestigious && canLast == 1 && item == "roboTrimp")
-				canLast = 3;
-			else
-				canLast = 0;
-			continue;
-		}
-
-		if (special.world != world && special.world > 0) continue;
-		if ((special.world == -2) && ((world % 2) !== 0)) continue;
-		if ((special.world == -3) && ((world % 2) != 1)) continue;
-		if ((special.world == -5) && ((world % 5) !== 0)) continue;
-		if ((special.world == -33) && ((world % 3) !== 0)) continue;
-		if ((special.world == -10) && ((world % 10) !== 0)) continue;
-		if ((special.world == -20) && ((world % 20) !== 0)) continue;
-		if ((special.world == -25) && ((world % 25) !== 0)) continue;
-		if (typeof special.specialFilter !== 'undefined') {
-			if (!special.specialFilter(world)) continue;
-		}
-		if ((typeof special.startAt !== 'undefined') && (special.startAt > world)) continue;
-		if (typeof special.canRunOnce === 'undefined' && (special.level == "last") && canLast > 0 && (special.last <= (world - 5))) {
+		if (special.last <= (world - 5)) {
 			specialCount += Math.floor((world - special.last) / 5);
 			continue;
 		}
-		if (special.level == "last") continue;
-		if (special.canRunOnce === true) {
-			specialCount++;
-			continue;
-		} else if (special.addToCount) specialCount++;
 	}
 	return specialCount;
 }
@@ -408,6 +379,10 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	if (!zoneGo) zoneGo = rCurrentMap === 'Wither' || (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 	if (!resourceMaxPercent) resourceMaxPercent = zoneGo ? 1 : getPageSetting(prefix + 'equippercent') < 0 ? 1 : getPageSetting(prefix + 'equippercent') / 100;
 	var resourceMaxPercentBackup = resourceMaxPercent;
+
+	if (game.global.challengeActive === 'Scientist') {
+		skipForLevels = Infinity;
+	}
 
 
 	var metalShred = !showAllEquips && game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
@@ -525,6 +500,7 @@ function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
 function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 
 	if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(equipName)) return false;
+	if (game.global.challengeActive === 'Scientist') return false;
 
 	var prestigeUpgradeName = "";
 	var prestigeDone = false;
@@ -569,18 +545,15 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 }
 
 function autoEquip() {
-
-	//Disabling autoEquip if AT AutoEquip is disabled.
-	if (game.global.universe === 2 ? !getPageSetting('Requipon') : !getPageSetting('Hequipon')) return;
-
 	const prefix = game.global.universe === 1 ? 'H' : 'R';
 
 	if (
 		!getPageSetting(prefix + 'equipon') ||
+		([2, 3].indexOf(currQuest()) >= 0 && game.global.lastClearedCell < 90) ||
 		(rCurrentMap === 'rSmithyFarm') ||
 		(game.mapUnlocks.AncientTreasure.canRunOnce &&
 			(rBSRunningAtlantrimp || rMapSettings.runAtlantrimp ||
-				(game.global.mapsActive && (getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Trimple of Doom'))
+				(game.global.mapsActive && (getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Trimple Of Doom'))
 			)
 		)
 	)
@@ -643,6 +616,11 @@ function autoEquip() {
 	var attackEquipCap = (getPageSetting(prefix + 'equipcapattack') <= 0 || rCurrentMap === 'rSmithlessFarm' ? Infinity : getPageSetting(prefix + 'equipcapattack'));
 	var healthEquipCap = (getPageSetting(prefix + 'equipcaphealth') <= 0 || rCurrentMap === 'rSmithlessFarm' ? Infinity : getPageSetting(prefix + 'equipcaphealth'));
 	var maxCanAfford = 0;
+
+	if (game.global.challengeActive === 'Scientist') {
+		attackEquipCap = Infinity;
+		healthEquipCap = Infinity;
+	}
 
 	//Buy as many shields as possible when running Melting Point
 	if (game.global.universe === 2 && !getPageSetting('rEquipNoShields') && autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')

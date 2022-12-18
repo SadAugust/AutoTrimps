@@ -61,7 +61,6 @@ function buyArms() {
 		postBuy();
 }
 
-
 function isActiveSpireAT() {
 	return game.global.challengeActive != 'Daily' && game.global.spireActive && game.global.world >= getPageSetting('IgnoreSpiresUntil')
 }
@@ -94,37 +93,10 @@ function findLastBionicWithItems(bionicPool) {
 
 	return bionicPool[0];
 }
-function helptrimpsnotdie() { if (!game.global.preMapsActive && !game.global.fighting) buyArms(); }
-function usedaily3() { !0 != getPageSetting('use3daily') || 'Daily' != game.global.challengeActive || daily3 || (daily3 = !0), !1 == getPageSetting('use3daily') && 'Daily' != game.global.challengeActive && daily3 && (daily3 = !1), !0 == getPageSetting('use3daily') && 'Daily' != game.global.challengeActive && daily3 && (daily3 = !1) }
+
 function buyshitspire() { !0 == getPageSetting('spireshitbuy') && game.global.spireActive && game.global.world >= getPageSetting('IgnoreSpiresUntil') && (buyWeps(), buyArms()) }
 
 //Helium
-
-function autoGoldenUpgradesAT(setting) {
-	var num = getAvailableGoldenUpgrades();
-	var setting2;
-	if (num == 0) return;
-	if (setting == "Helium")
-		setting2 = "Helium";
-	if ((!game.global.dailyChallenge.seed && !game.global.runningChallengeSquared && autoTrimpSettings.AutoGoldenUpgrades.selected == "Helium" && getPageSetting('radonbattle') > 0 && game.goldenUpgrades.Helium.purchasedAt.length >= getPageSetting('radonbattle')) || (game.global.dailyChallenge.seed && autoTrimpSettings.dAutoGoldenUpgrades.selected == "Helium" && getPageSetting('dradonbattle') > 0 && game.goldenUpgrades.Helium.purchasedAt.length >= getPageSetting('dradonbattle')))
-		setting2 = "Battle";
-	if (setting == "Battle")
-		setting2 = "Battle";
-	if ((!game.global.dailyChallenge.seed && !game.global.runningChallengeSquared && autoTrimpSettings.AutoGoldenUpgrades.selected == "Battle" && getPageSetting('battleradon') > 0 && game.goldenUpgrades.Battle.purchasedAt.length >= getPageSetting('battleradon')) || (game.global.dailyChallenge.seed && autoTrimpSettings.dAutoGoldenUpgrades.selected == "Battle" && getPageSetting('dbattleradon') > 0 && game.goldenUpgrades.Battle.purchasedAt.length >= getPageSetting('dbattleradon')))
-		setting2 = "Helium";
-	if (setting == "Void" || setting == "Void + Battle")
-		setting2 = "Void";
-	var success = buyGoldenUpgrade(setting2);
-	if (!success && setting2 == "Void") {
-		num = getAvailableGoldenUpgrades();
-		if (num == 0) return;
-		if ((autoTrimpSettings.AutoGoldenUpgrades.selected == "Void" && !game.global.dailyChallenge.seed && !game.global.runningChallengeSquared) || (autoTrimpSettings.dAutoGoldenUpgrades.selected == "Void" && game.global.dailyChallenge.seed))
-			setting2 = "Helium";
-		if (((autoTrimpSettings.AutoGoldenUpgrades.selected == "Void" && getPageSetting('voidheliumbattle') > 0 && game.global.world >= getPageSetting('voidheliumbattle')) || (autoTrimpSettings.dAutoGoldenUpgrades.selected == "Void" && getPageSetting('dvoidheliumbattle') > 0 && game.global.world >= getPageSetting('dvoidheliumbattle'))) || ((autoTrimpSettings.AutoGoldenUpgrades.selected == "Void + Battle" && !game.global.dailyChallenge.seed && !game.global.runningChallengeSquared) || (autoTrimpSettings.dAutoGoldenUpgrades.selected == "Void + Battle" && game.global.dailyChallenge.seed) || (autoTrimpSettings.cAutoGoldenUpgrades.selected == "Void + Battle" && game.global.runningChallengeSquared)))
-			setting2 = "Battle";
-		buyGoldenUpgrade(setting2);
-	}
-}
 
 function trimpcide() {
 	if (game.portal.Anticipation.level > 0) {
@@ -479,11 +451,11 @@ function remainingHealth(forceMax) {
 		shieldHealth = shieldHealth < 0 ? 0 : shieldHealth;
 	}
 	var remainingHealth = shieldHealth + (!forceMax ? soldierHealth * .33 : soldierHealth);
-	if (game.global.challengeActive == 'Quest' && questcheck() == 8)
+	if (game.global.challengeActive == 'Quest' && currQuest() == 8)
 		remainingHealth = shieldHealth;
 	if (shieldHealth + soldierHealth == 0) {
 		remainingHealth = game.global.soldierHealthMax + (game.global.soldierEnergyShieldMax * (maxLayers + 1))
-		if (game.global.challengeActive == 'Quest' && questcheck() == 8)
+		if (game.global.challengeActive == 'Quest' && currQuest() == 8)
 			remainingHealth = game.global.soldierEnergyShieldMax * (maxLayers + 1);
 	}
 
@@ -541,9 +513,9 @@ function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLe
 }
 
 function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
-	if (game.global.universe === 1) return autoMapLevelU1(special, maxLevel, minLevel);
 	if (!game.global.mapsUnlocked) return 0;
 	if (maxLevel > 10) maxLevel = 10;
+	if (game.global.universe === 1) return autoMapLevelU1(special, maxLevel, minLevel);
 	if (!statCheck) statCheck = false;
 	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
 	if (game.global.challengeActive === 'Wither' && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
@@ -554,7 +526,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
 	var biome = !biome ? (game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain") : biome;
 	var difficulty = 0.75;
-	var runningQuest = game.global.challengeActive === 'Quest' && questcheck() == 8;
+	var runningQuest = game.global.challengeActive === 'Quest' && currQuest() == 8;
 	var runningUnlucky = game.global.challengeActive === 'Unlucky'
 	var ourHealth = calcOurHealth(runningQuest, 'map');
 	var dmgType = runningUnlucky ? 'max' : 'avg'
@@ -622,9 +594,12 @@ function autoMapLevelU1(special, maxLevel, minLevel, critType, statCheck) {
 			ratio /= 4;
 		}
 		// Stop increasing map level once HD ratio is too large
-		if ((z <= 40 && ratio > 1.5) || ratio > 1.2 || mapLevel === 0) {
+		if ((z <= 40 && ratio > 1.5) || ratio > 1.2) {
+			if (minLevel !== mapLevel) mapLevel -= 1;
 			break;
 		}
+		if (mapLevel === 0)
+			break;
 	}
 
 	// Keep increasing map level while we can overkill
@@ -675,7 +650,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	//Challenge conditions
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
 	var runningDuel = game.global.challengeActive == 'Duel';
-	var runningQuest = game.global.challengeActive == 'Quest' && questcheck() == 8; //Shield break quest
+	var runningQuest = game.global.challengeActive == 'Quest' && currQuest() == 8; //Shield break quest
 
 	//Initialising name/health/dmg variables
 	//Enemy stats
@@ -773,7 +748,7 @@ function equalityManagement() {
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
 	var runningDuel = game.global.challengeActive == 'Duel';
 	var runningTrappa = game.global.challengeActive === 'Trappapalooza';
-	var runningQuest = ((game.global.challengeActive == 'Quest' && questcheck() == 8)); //Shield break quest
+	var runningQuest = ((game.global.challengeActive == 'Quest' && currQuest() == 8)); //Shield break quest
 	var runningArchaeology = game.global.challengeActive === 'Archaeology';
 	var runningMayhem = game.global.challengeActive === 'Mayhem';
 	var runningBerserk = game.global.challengeActive == 'Berserk';
@@ -1882,14 +1857,15 @@ function displayMostEfficientEquipment() {
 	}
 }
 
-function displayDropdowns(universe, runType, MAZ) {
+function displayDropdowns(universe, runType, MAZ, varPrefix) {
 
 	if (!universe) universe = game.global.universe;
 	if (!MAZ) MAZ = '';
+	let dropdown;
 	var highestZone = universe === 1 ? game.global.highestLevelCleared + 1 : game.global.highestRadonLevelCleared + 1;
 
 	if (runType === 'Gather') {
-		var dropdown = "<option value='food'" + ((MAZ == 'food') ? " selected='selected'" : "") + ">Food</option >\
+		dropdown += "<option value='food'" + ((MAZ == 'food') ? " selected='selected'" : "") + ">Food</option >\
 		<option value='wood'" + ((MAZ == 'wood') ? " selected = 'selected'" : "") + " > Wood</option >\
 		<option value='metal'" + ((MAZ == 'metal') ? " selected = 'selected'" : "") + " > Metal</option >\
 		<option value='science'" + ((MAZ == 'science') ? " selected = 'selected'" : "") + " > Science</option > "
@@ -1898,7 +1874,7 @@ function displayDropdowns(universe, runType, MAZ) {
 	if (universe === 1) {
 		if (runType === 'Cache') {
 			//Specials dropdown with conditions for each unlock to only appear when the user can run them.
-			var dropdown = "<option value='0'" + ((MAZ == '0') ? " selected='selected'" : "") + ">No Modifier</option>"
+			dropdown += "<option value='0'" + ((MAZ == '0') ? " selected='selected'" : "") + ">No Modifier</option>"
 			if (highestZone >= 60) dropdown += "<option value='fa'" + ((MAZ == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((MAZ == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
 			if (highestZone >= 85) dropdown += "<option value = 'ssc'" + ((MAZ == 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option >\
 				<option value='swc'" + ((MAZ == 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option >\
@@ -1910,7 +1886,7 @@ function displayDropdowns(universe, runType, MAZ) {
 				<option value='lmc'" + ((MAZ == 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>"
 		}
 		if (runType === 'Filler') {
-			dropdown = "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
 			if (highestZone >= 40) dropdown += "<option value='Balance'" + ((MAZ == 'Balance') ? " selected='selected'" : "") + ">Balance</option>";
 			if (highestZone >= 55) dropdown += "<option value = 'Decay'" + ((MAZ == 'Decay') ? " selected = 'selected'" : "") + " >Decay</option >";
 			if (game.global.prisonClear >= 1) dropdown += "<option value='Electricity'" + ((MAZ == 'Electricity') ? " selected='selected'" : "") + ">Electricity</option>";
@@ -1925,7 +1901,7 @@ function displayDropdowns(universe, runType, MAZ) {
 			if (highestZone >= 600) dropdown += "<option value='Experience'" + ((MAZ == 'Experience') ? " selected='selected'" : "") + ">Experience</option>";
 		}
 		else if (runType === 'C3') {
-			var dropdown = "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
 			if (getTotalPerkResource(true) >= 30) dropdown += "<option value='Discipline'" + ((MAZ == 'Discipline') ? " selected='selected'" : "") + ">Discipline</option>";
 			if (highestZone >= 25) dropdown += "<option value='Metal'" + ((MAZ == 'Metal') ? " selected='selected'" : "") + ">Metal</option>";
 			if (highestZone >= 35) dropdown += "<option value='Size'" + ((MAZ == 'Size') ? " selected='selected'" : "") + ">Size</option>";
@@ -1945,11 +1921,16 @@ function displayDropdowns(universe, runType, MAZ) {
 			if (game.global.totalSquaredReward >= 4500) dropdown += "<option value='Eradicated'" + ((MAZ == 'Eradicated') ? " selected='selected'" : "") + ">Eradicated</option>";
 		}
 		else if (runType === 'runType') {
-			var dropdown = "<option value='none'" + ((MAZ == 'none') ? " selected='selected'" : "") + ">None</option>"
+			dropdown += "<option value='none'" + ((MAZ == 'none') ? " selected='selected'" : "") + ">None</option>"
 			dropdown += "<option value='Filler'" + ((MAZ == 'Filler') ? " selected = 'selected'" : "") + " > Filler</option >"
 			dropdown += " <option value='Daily'" + ((MAZ == 'Daily') ? " selected='selected'" : "") + ">Daily</option>"
 			dropdown += "<option value='C3'" + ((MAZ == 'C3') ? " selected='selected'" : "") + ">C2</option>"
 			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>"
+		}
+		else if (runType === 'goldenType') {
+			if (!varPrefix.includes('C3')) dropdown += "<option value='h'" + ((MAZ == 'h') ? " selected='selected'" : "") + ">Helium</option >"
+			dropdown += "<option value='b'" + ((MAZ == 'b') ? " selected = 'selected'" : "") + " >Battle</option >"
+			dropdown += "<option value='v'" + ((MAZ == 'v') ? " selected = 'selected'" : "") + " >Void</option >"
 		}
 	}
 
@@ -1957,7 +1938,7 @@ function displayDropdowns(universe, runType, MAZ) {
 		if (MAZ !== '') {
 			if (runType === 'Cache') {
 				//Specials dropdown with conditions for each unlock to only appear when the user can run them.
-				var dropdown = "<option value='0'" + ((MAZ == '0') ? " selected='selected'" : "") + ">No Modifier</option>"
+				dropdown += "<option value='0'" + ((MAZ == '0') ? " selected='selected'" : "") + ">No Modifier</option>"
 				if (highestZone >= 15) dropdown += "<option value='fa'" + ((MAZ == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((MAZ == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
 				if (highestZone >= 25) dropdown += "<option value = 'ssc'" + ((MAZ == 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option >\
 				<option value='swc'" + ((MAZ == 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option >\
@@ -1971,7 +1952,7 @@ function displayDropdowns(universe, runType, MAZ) {
 				if (game.global.ArchaeologyDone) dropdown += "<option value='lrc'" + ((MAZ == 'lrc') ? " selected='selected'" : "") + ">Large Research Cache</option>"
 			}
 			if (runType === 'Filler') {
-				dropdown = "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+				dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
 				if (highestZone >= 40) dropdown += "<option value='Bublé'" + ((MAZ == 'Bublé') ? " selected='selected'" : "") + ">Bublé</option>";
 				if (highestZone >= 55) dropdown += "<option value = 'Melt'" + ((MAZ == 'Melt') ? " selected = 'selected'" : "") + " > Melt</option >";
 				if (highestZone >= 70) dropdown += "<option value='Quagmire'" + ((MAZ == 'Quagmire') ? " selected='selected'" : "") + ">Quagmire</option>";
@@ -1982,7 +1963,7 @@ function displayDropdowns(universe, runType, MAZ) {
 				if (highestZone >= 175) dropdown += "<option value='Hypothermia'" + ((MAZ == 'Hypothermia') ? " selected='selected'" : "") + ">Hypothermia</option>";
 			}
 			else if (runType === 'C3') {
-				var dropdown = "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+				dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
 				if (highestZone >= 15) dropdown += "<option value='Unlucky'" + ((MAZ == 'Unlucky') ? " selected='selected'" : "") + ">Unlucky</option>";
 				if (highestZone >= 20) dropdown += "<option value='Downsize'" + ((MAZ == 'Downsize') ? " selected='selected'" : "") + ">Downsize</option>";
 				if (highestZone >= 25) dropdown += "<option value='Transmute'" + ((MAZ == 'Transmute') ? " selected='selected'" : "") + ">Transmute</option>";
@@ -1999,11 +1980,16 @@ function displayDropdowns(universe, runType, MAZ) {
 				if (highestZone >= 201) dropdown += "<option value='Smithless'" + ((MAZ == 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
 			}
 			else if (runType === 'runType') {
-				var dropdown = "<option value='none'" + ((MAZ == 'none') ? " selected='selected'" : "") + ">None</option>"
+				dropdown += "<option value='none'" + ((MAZ == 'none') ? " selected='selected'" : "") + ">None</option>"
 				dropdown += "<option value='Filler'" + ((MAZ == 'Filler') ? " selected = 'selected'" : "") + " > Filler</option >"
 				dropdown += " <option value='Daily'" + ((MAZ == 'Daily') ? " selected='selected'" : "") + ">Daily</option>"
 				dropdown += "<option value='C3'" + ((MAZ == 'C3') ? " selected='selected'" : "") + ">C3</option>"
 				dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>"
+			}
+			else if (runType === 'goldenType') {
+				if (!varPrefix.includes('C3')) dropdown += "<option value='r'" + ((MAZ == 'r') ? " selected='selected'" : "") + ">Radon</option >"
+				dropdown += "<option value='b'" + ((MAZ == 'b') ? " selected = 'selected'" : "") + " >Battle</option >"
+				dropdown += "<option value='v'" + ((MAZ == 'v') ? " selected = 'selected'" : "") + " >Void</option >"
 			}
 		}
 	}

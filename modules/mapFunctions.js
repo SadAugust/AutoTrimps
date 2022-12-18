@@ -780,7 +780,7 @@ function SmithyFarm() {
 		mapName: mapName
 	};
 
-	if (game.buildings.Smithy.locked || (!autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && questcheck() !== 10) || game.global.challengeActive === 'Transmute') return farmingDetails;
+	if (game.buildings.Smithy.locked || (!autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && currQuest() !== 10) || game.global.challengeActive === 'Transmute') return farmingDetails;
 
 	var rShouldSmithyFarm = false;
 	var rShouldSmithyGemFarm = false;
@@ -818,14 +818,14 @@ function SmithyFarm() {
 		}
 	}
 
-	if (rSFIndex >= 0 || questcheck() === 10) {
+	if (rSFIndex >= 0 || currQuest() === 10) {
 
 		let mapBonus;
 		if (game.global.mapsActive) mapBonus = getCurrentMapObject().bonus;
 
 		//NO IDEA HOW TO IMPLEMENT THIS. HELP PLEASE!
 		// 0 === cache, 1 === job ratio, 2 === farm type, 3 === amount needed to farm for
-		//var rSmithyArray = questcheck() == 1 ? ['lsc', '1', ' gems.'] : questcheck() == 2 ? ['lwc', '0,1', ' wood.'] : questcheck() == 3 ? ['lmc', '0,0,1', ' metal.'] : [0, 0, 0, 0];
+		//var rSmithyArray = currQuest() == 1 ? ['lsc', '1', ' gems.'] : currQuest() == 2 ? ['lwc', '0,1', ' wood.'] : currQuest() == 3 ? ['lmc', '0,0,1', ' metal.'] : [0, 0, 0, 0];
 
 		var rSFSettings = autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
 		var rSFMapLevel = game.global.challengeActive === 'Quest' ? -1 : rSFSettings.level;
@@ -833,7 +833,7 @@ function SmithyFarm() {
 		var rSFJobRatio = '0,0,0,0';
 		var rSFSmithies = game.global.challengeActive === 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
-		if (questcheck() === 10 || rSFSettings.autoLevel) {
+		if (currQuest() === 10 || rSFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && smithyMapCount !== [0, 0, 0] && typeof getCurrentMapObject().bonus !== 'undefined') {
 				if (mapBonus === 'lsc' || mapBonus === 'ssc') game.global.mapRunCounter = smithyMapCount[0];
 				else if (mapBonus === 'lwc' || mapBonus === 'swc') game.global.mapRunCounter = smithyMapCount[1];
@@ -861,7 +861,7 @@ function SmithyFarm() {
 		let metalBase = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 1, true, '0,0,1'), false, true, rSFMapLevel);
 
 		//When mapType is set as Map Count work out how many Smithies we can farm in the amount of maps specified.
-		if (questcheck() !== 10 && rSFSettings.mapType === 'Map Count' && rSFSmithies !== 0) {
+		if (currQuest() !== 10 && rSFSettings.mapType === 'Map Count' && rSFSmithies !== 0) {
 			var smithyCount = 0;
 			//Checking total map count user wants to run
 			var totalMaps = rCurrentMap === mapName ? rSFSmithies - game.global.mapRunCounter : rSFSmithies;
@@ -984,7 +984,7 @@ function SmithyFarm() {
 		farmingDetails.shouldRun = rShouldSmithyFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rSFMapLevel;
-		farmingDetails.autoLevel = questcheck() === 10 ? true : rSFSettings.autoLevel;
+		farmingDetails.autoLevel = currQuest() === 10 ? true : rSFSettings.autoLevel;
 		farmingDetails.jobRatio = rSFJobRatio;
 		farmingDetails.special = rSFSpecial;
 		farmingDetails.smithies = rSFSmithies;
@@ -1095,7 +1095,7 @@ function WorshipperFarm() {
 	return farmingDetails;
 }
 
-//Daily (bloodthirst), Unbalance & Storm Destacking
+//Daily (bloodthirst), Balance, Unbalance & Storm Destacking
 function MapDestacking() {
 
 	const mapName = 'rDestack';
@@ -1275,232 +1275,6 @@ function PrestigeRaiding() {
 	return farmingDetails;
 }
 
-//Prestige Climb
-function PrestigeClimb() {
-
-	const mapName = 'needPrestige'
-	const farmingDetails = {
-		shouldRun: false,
-		mapName: mapName
-	};
-
-	const universe = game.global.universe === 1 ? '' : 'r';
-
-	if (game.global.challengeActive === "Frugal") return farmingDetails;
-	const targetPrestige = autoTrimpSettings[universe + 'Prestige'].selected;
-	if (targetPrestige === "Off") return farmingDetails
-
-	var customVars = MODULES["maps"];
-	var skippedPrestige = false;
-	var needPrestige = false;
-
-	const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
-	const prestigeArmorList = ['Supershield', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
-	const metalPrestigeList = ['Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
-
-	const mapLevel = 0;
-	const z = game.global.world;
-
-	//Prestige
-	if (getPageSetting('ForcePresZ') !== -1 && (game.global.world) >= getPageSetting(universe + 'ForcePresZ')) {
-		needPrestige = (offlineProgress.countMapItems(game.global.world) !== 0);
-	} else
-		needPrestige = game.mapUnlocks[targetPrestige] && game.mapUnlocks[targetPrestige].last + 5 <= (game.global.world);
-
-	//Figure out how many equips to farm for
-	var prestigeToFarmFor = 0;
-	y = 0;
-	for (const p of prestigeList) {
-		if (game.equipment[game.upgrades[p].prestiges].locked) continue;
-		const prestigeUnlock = game.mapUnlocks[p];
-		const pMapLevel = prestigeUnlock.last + 5;
-		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && pMapLevel <= z) {
-			needPrestige = true;
-			prestigeToFarmFor += 1;
-			if (prestigeToFarmFor > 2) y++;
-		}
-		if (p === targetPrestige) break;
-	}
-	if (getScientistLevel() === 5) prestigeToFarmFor -= y;
-
-	//debug(prestigeToFarmFor)
-	//if (prestigeToFarmFor === 0) return farmingDetails;
-
-	//Prestige Skip 1
-	if (needPrestige && getPsString("gems", true) > 0 && (getPageSetting(universe + 'PrestigeSkip1_2') == 1 || getPageSetting(universe + 'PrestigeSkip1_2') == 2)) {
-		var numUnbought = 0;
-		for (const p of metalPrestigeList) {
-			if (game.upgrades[p].allowed - game.upgrades[p].done > 0)
-				numUnbought++;
-		}
-		if (numUnbought >= customVars.SkipNumUnboughtPrestiges) {
-			needPrestige = false;
-			skippedPrestige = true;
-		}
-	}
-
-	//Prestige Skip 2
-	if ((needPrestige || skippedPrestige) && (getPageSetting(universe + 'PrestigeSkip1_2') == 1 || getPageSetting(universe + 'PrestigeSkip1_2') == 3)) {
-		const numLeft = prestigeList.filter(targetPrestige => game.mapUnlocks[targetPrestige].last <= (game.global.world) - 5);
-		const shouldSkip = numLeft <= customVars.UnearnedPrestigesRequired;
-		if (shouldSkip != skippedPrestige) {
-			needPrestige = !needPrestige;
-			skippedPrestige = !skippedPrestige;
-		}
-	}
-
-	if (!needPrestige) return farmingDetails;
-
-	if (game.options.menu.mapLoot.enabled != 1) toggleSetting('mapLoot');
-	var status = 'Prestige Climb: ' + prestigeToFarmFor + ' items remaining';
-
-	let special;
-	if (game.global.universe === 1)
-		special = game.global.highestLevelCleared + 1 >= 135 ? 'p' : game.global.highestLevelCleared + 1 >= 60 ? 'fa' : '0';
-	if (game.global.universe === 2)
-		special = game.global.highestRadonLevelCleared + 1 >= 55 ? 'p' : game.global.highestRadonLevelCleared + 1 >= 15 ? 'fa' : '0';
-
-	var repeat = (!(!prestigeArmorList.includes(targetPrestige) ? prestigeToFarmFor > 2 : prestigeToFarmFor > 1) || game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || (getCurrentMapObject().bonus !== special && (getCurrentMapObject().bonus !== undefined && special !== '0'))));
-
-	farmingDetails.shouldRun = needPrestige;
-	farmingDetails.mapName = mapName;
-	farmingDetails.status = status;
-	farmingDetails.repeat = !repeat;
-	farmingDetails.mapLevel = mapLevel;
-	farmingDetails.autoLevel = true;
-	farmingDetails.special = special;
-
-	return farmingDetails;
-}
-
-//Experience Farm
-function Experience() {
-
-	let mapName = 'Experience'
-	const farmingDetails = {
-		shouldRun: false,
-		mapName: mapName
-	};
-
-	if (game.global.challengeActive !== 'Experience' || !getPageSetting('experience')) return farmingDetails;
-
-	var shouldExperience = false;
-	const wonderStartZone = getPageSetting('experienceStartZone') >= 300 ? getPageSetting('experienceStartZone') : Infinity;
-	const hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	const special = (Math.floor(game.global.highestLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "0" : "fa");
-	const mapLevel = 0;
-
-	if (game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder) {
-		shouldExperience = true;
-		var status = 'Experience: Farming Wonders';
-	}
-	else {
-		shouldExperience = game.global.world > 600 && game.global.world >= getPageSetting('experienceEndZone');
-		if (shouldExperience) mapName = 'BionicRaiding';
-		var status = 'Experience: Ending Challenge';
-	}
-
-	var repeat = game.global.world < game.challenges.Experience.nextWonder;
-
-	if (shouldExperience) farmingDetails.shouldRun = shouldExperience;
-	farmingDetails.mapName = mapName;
-	farmingDetails.mapLevel = mapLevel;
-	farmingDetails.autoLevel = true;
-	farmingDetails.special = special;
-	farmingDetails.repeat = !repeat;
-	farmingDetails.status = status;
-
-	return farmingDetails;
-}
-
-//Bionic Wonderland Raiding
-function BionicRaiding() {
-
-	const mapName = 'BionicRaiding'
-	const farmingDetails = {
-		shouldRun: false,
-		mapName: mapName
-	};
-
-	if (game.global.universe === 1 && !autoTrimpSettings.hBionicRaidingDefaultSettings.value.active) return farmingDetails;
-	if (game.global.challengeActive === 'Exterminate' && game.global.world > 600) return farmingDetails;
-
-	var rShouldBionicRaid = false;
-	const isC3 = game.global.runningChallengeSquared;
-	const isDaily = game.global.challengeActive === 'Daily';
-	const currChall = game.global.challengeActive;
-	const rBionicRaidingDefaultSetting = autoTrimpSettings.hBionicRaidingDefaultSettings.value;
-	const rBionicRaidingBaseSetting = autoTrimpSettings.hBionicRaidingSettings.value;
-
-	var index;
-
-	for (var y = 0; y < rBionicRaidingBaseSetting.length; y++) {
-		const currSetting = rBionicRaidingBaseSetting[y];
-		var raidZones = currSetting.raidingzone
-		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
-			continue;
-		}
-		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
-			var times = currSetting.repeatevery;
-			var repeats = Math.round((game.global.world - currSetting.world) / times);
-			if (repeats > 0) raidZones += (times * repeats);
-		}
-		if (Rgetequips(raidZones, false) === 0) continue;
-		if (currSetting.runType !== 'All') {
-			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
-				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
-			if (isDaily && currSetting.runType !== 'Daily') continue;
-			if (isC3 && (currSetting.runType !== 'C3' ||
-				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
-		}
-		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
-			index = y;
-			break;
-		}
-	}
-
-	if (index >= 0) {
-		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
-		var rBionicRaidingSetting = rBionicRaidingBaseSetting[index];
-		var raidzonesBW = raidZones;
-
-		if (Rgetequips(raidzonesBW, false) > 0) {
-			rShouldBionicRaid = true;
-		}
-
-		var status = 'Raiding to BW' + raidzonesBW + ': ' + Rgetequips(raidzonesBW, false) + ' items remaining';
-		var repeat = game.options.menu.climbBw.enabled && Rgetequips(raidzonesBW, false) <= 2 ? true : false;
-
-		farmingDetails.shouldRun = rShouldBionicRaid;
-		farmingDetails.mapName = mapName;
-		farmingDetails.repeat = !repeat
-		farmingDetails.raidingZone = raidzonesBW;
-		farmingDetails.status = status;
-	}
-	return farmingDetails;
-}
-
-function runBionicRaiding(bionicPool) {
-	if (!bionicPool) return false;
-
-	if (!game.global.preMapsActive && !game.global.mapsActive) {
-		mapsClicked();
-		if (!game.global.preMapsActive) {
-			mapsClicked();
-		}
-	}
-
-	const raidingZone = game.global.challengeActive === 'Experience' && game.global.world > 600 ? getPageSetting('experienceEndBW') : rMapSettings.raidingZone
-	if (game.global.preMapsActive) {
-		selectMap(findLastBionicWithItems(bionicPool).id);
-	}
-	if ((findLastBionicWithItems(bionicPool).level >= raidingZone
-		|| findLastBionicWithItems(bionicPool).level < raidingZone)
-		&& game.global.preMapsActive) {
-		runMap();
-	}
-}
-
 //Running Prestige Raid Code
 function rRunRaid() {
 	var RAMPfragcheck = true;
@@ -1598,6 +1372,227 @@ function rRunRaid() {
 	}
 
 	if (game.global.preMapsActive && runningPrestigeMaps) runMap()
+}
+
+//Prestige Climb
+function PrestigeClimb() {
+
+	const mapName = 'needPrestige'
+	const farmingDetails = {
+		shouldRun: false,
+		mapName: mapName
+	};
+
+	const universe = game.global.universe === 1 ? '' : 'r';
+
+	if (game.global.challengeActive === "Frugal") return farmingDetails;
+	if (game.global.challengeActive === 'Mapology' && !getPageSetting('mapology')) return farmingDetails;
+
+	const targetPrestige = game.global.challengeActive === 'Mapology' ? autoTrimpSettings['mapologyPrestige'].selected : autoTrimpSettings[universe + 'Prestige'].selected;
+	if (targetPrestige === "Off") return farmingDetails;
+
+	var customVars = MODULES["maps"];
+	var skippedPrestige = false;
+	var needPrestige = false;
+
+	const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
+	const metalPrestigeList = ['Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
+
+	let mapLevel = 0;
+	const z = game.global.world;
+
+	const divideBy = (game.global.sLevel < 3 || game.global.challengeActive === 'Mapology') ? 5 : 10;
+
+	//Prestige
+	if (getPageSetting('ForcePresZ') !== -1 && (game.global.world) >= getPageSetting(universe + 'ForcePresZ')) {
+		needPrestige = (offlineProgress.countMapItems(game.global.world) !== 0);
+	} else
+		needPrestige = game.mapUnlocks[targetPrestige] && game.mapUnlocks[targetPrestige].last + 5 <= (game.global.world);
+
+	const prestigeInfo = equipsToGet(z, targetPrestige);
+
+
+	//Figure out how many equips to farm for && maps to run to get to that value
+	var prestigeToFarmFor = prestigeInfo[0];
+	var mapsToRun = prestigeInfo[1];
+
+	if (game.global.challengeActive !== 'Mapology') {
+		//Prestige Skip 1
+		if (needPrestige && getPsString("gems", true) > 0 && (getPageSetting(universe + 'PrestigeSkip1_2') == 1 || getPageSetting(universe + 'PrestigeSkip1_2') == 2)) {
+			var numUnbought = 0;
+			for (const p of metalPrestigeList) {
+				if (game.upgrades[p].allowed - game.upgrades[p].done > 0)
+					numUnbought++;
+			}
+			if (numUnbought >= customVars.SkipNumUnboughtPrestiges) {
+				needPrestige = false;
+				skippedPrestige = true;
+			}
+		}
+
+		//Prestige Skip 2
+		if ((needPrestige || skippedPrestige) && (getPageSetting(universe + 'PrestigeSkip1_2') == 1 || getPageSetting(universe + 'PrestigeSkip1_2') == 3)) {
+			const numLeft = prestigeList.filter(targetPrestige => game.mapUnlocks[targetPrestige].last <= (game.global.world) - 5);
+			const shouldSkip = numLeft <= customVars.UnearnedPrestigesRequired;
+			if (shouldSkip != skippedPrestige) {
+				needPrestige = !needPrestige;
+				skippedPrestige = !skippedPrestige;
+			}
+		}
+	}
+
+	if (!needPrestige) return farmingDetails;
+
+	if (game.options.menu.mapLoot.enabled != 1) toggleSetting('mapLoot');
+	var status = 'Prestige Climb: ' + prestigeToFarmFor + ' items remaining';
+
+	let special;
+	if (game.global.universe === 1)
+		special = game.global.highestLevelCleared + 1 >= 135 ? 'p' : game.global.highestLevelCleared + 1 >= 60 ? 'fa' : '0';
+	if (game.global.universe === 2)
+		special = game.global.highestRadonLevelCleared + 1 >= 55 ? 'p' : game.global.highestRadonLevelCleared + 1 >= 15 ? 'fa' : '0';
+
+	var repeat = (!(mapsToRun > 1) || game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || (getCurrentMapObject().bonus !== special && (getCurrentMapObject().bonus !== undefined && special !== '0'))));
+
+	farmingDetails.shouldRun = needPrestige;
+	farmingDetails.mapName = mapName;
+	farmingDetails.status = status;
+	farmingDetails.repeat = !repeat;
+	farmingDetails.mapLevel = mapLevel;
+	farmingDetails.autoLevel = true;
+	farmingDetails.special = special;
+
+	return farmingDetails;
+}
+
+//Bionic Wonderland Raiding
+function BionicRaiding() {
+
+	const mapName = 'BionicRaiding'
+	const farmingDetails = {
+		shouldRun: false,
+		mapName: mapName
+	};
+
+	if (game.global.universe === 1 && !autoTrimpSettings.hBionicRaidingDefaultSettings.value.active) return farmingDetails;
+	if (game.global.challengeActive === 'Exterminate' && game.global.world > 600) return farmingDetails;
+
+	var rShouldBionicRaid = false;
+	const isC3 = game.global.runningChallengeSquared;
+	const isDaily = game.global.challengeActive === 'Daily';
+	const currChall = game.global.challengeActive;
+	const rBionicRaidingDefaultSetting = autoTrimpSettings.hBionicRaidingDefaultSettings.value;
+	const rBionicRaidingBaseSetting = autoTrimpSettings.hBionicRaidingSettings.value;
+
+	var index;
+
+	for (var y = 0; y < rBionicRaidingBaseSetting.length; y++) {
+		const currSetting = rBionicRaidingBaseSetting[y];
+		var raidZones = currSetting.raidingzone
+		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
+			continue;
+		}
+		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
+			var times = currSetting.repeatevery;
+			var repeats = Math.round((game.global.world - currSetting.world) / times);
+			if (repeats > 0) raidZones += (times * repeats);
+		}
+		if (Rgetequips(raidZones, false) === 0) continue;
+		if (currSetting.runType !== 'All') {
+			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+			if (isDaily && currSetting.runType !== 'Daily') continue;
+			if (isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
+		}
+		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
+			index = y;
+			break;
+		}
+	}
+
+	if (index >= 0) {
+		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
+		var rBionicRaidingSetting = rBionicRaidingBaseSetting[index];
+		var raidzonesBW = raidZones;
+
+		if (Rgetequips(raidzonesBW, false) > 0) {
+			rShouldBionicRaid = true;
+		}
+
+		var status = 'Raiding to BW' + raidzonesBW + ': ' + Rgetequips(raidzonesBW, false) + ' items remaining';
+		var repeat = game.options.menu.climbBw.enabled && Rgetequips(raidzonesBW, false) <= 2 ? true : false;
+
+		var repeat = (!(!prestigeArmorList.includes(targetPrestige) ? prestigeToFarmFor > 2 : prestigeToFarmFor > 1) || game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || (getCurrentMapObject().bonus !== special && (getCurrentMapObject().bonus !== undefined && special !== '0'))));
+
+		farmingDetails.shouldRun = rShouldBionicRaid;
+		farmingDetails.mapName = mapName;
+		farmingDetails.repeat = !repeat
+		farmingDetails.raidingZone = raidzonesBW;
+		farmingDetails.status = status;
+	}
+	return farmingDetails;
+}
+
+function runBionicRaiding(bionicPool) {
+	if (!bionicPool) return false;
+
+	if (!game.global.preMapsActive && !game.global.mapsActive) {
+		mapsClicked();
+		if (!game.global.preMapsActive) {
+			mapsClicked();
+		}
+	}
+
+	const raidingZone = game.global.challengeActive === 'Experience' && game.global.world > 600 ? getPageSetting('experienceEndBW') : rMapSettings.raidingZone
+	if (game.global.preMapsActive) {
+		selectMap(findLastBionicWithItems(bionicPool).id);
+	}
+	if ((findLastBionicWithItems(bionicPool).level >= raidingZone
+		|| findLastBionicWithItems(bionicPool).level < raidingZone)
+		&& game.global.preMapsActive) {
+		runMap();
+	}
+}
+
+//Experience Farm
+function Experience() {
+
+	let mapName = 'Experience'
+	const farmingDetails = {
+		shouldRun: false,
+		mapName: mapName
+	};
+
+	if (game.global.challengeActive !== 'Experience' || !getPageSetting('experience')) return farmingDetails;
+
+	var shouldExperience = false;
+	const wonderStartZone = getPageSetting('experienceStartZone') >= 300 ? getPageSetting('experienceStartZone') : Infinity;
+	const hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
+	const special = (Math.floor(game.global.highestLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "0" : "fa");
+	const mapLevel = 0;
+
+	if (game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder) {
+		shouldExperience = true;
+		var status = 'Experience: Farming Wonders';
+	}
+	else {
+		shouldExperience = game.global.world > 600 && game.global.world >= getPageSetting('experienceEndZone');
+		if (shouldExperience) mapName = 'BionicRaiding';
+		var status = 'Experience: Ending Challenge';
+	}
+
+	var repeat = game.global.world < game.challenges.Experience.nextWonder;
+
+	if (shouldExperience) farmingDetails.shouldRun = shouldExperience;
+	farmingDetails.mapName = mapName;
+	farmingDetails.mapLevel = mapLevel;
+	farmingDetails.autoLevel = true;
+	farmingDetails.special = special;
+	farmingDetails.repeat = !repeat;
+	farmingDetails.status = status;
+
+	return farmingDetails;
 }
 
 //Wither
@@ -1751,7 +1746,7 @@ function Quagmire() {
 	return farmingDetails;
 }
 
-function questcheck() {
+function currQuest() {
 	if (game.global.challengeActive !== 'Quest' || game.global.world < game.challenges.Quest.getQuestStartZone() || !getPageSetting('rQuest'))
 		return 0;
 	var questnotcomplete = game.challenges.Quest.getQuestProgress() != "Quest Complete!";
@@ -1784,15 +1779,15 @@ function Quest() {
 
 	if (game.global.challengeActive !== "Quest" || !getPageSetting('rQuest') || game.global.world < game.challenges.Quest.getQuestStartZone()) return farmingDetails;
 
-	rShouldQuest = questcheck() == 1 ? 1 :
-		questcheck() == 2 ? 2 :
-			questcheck() == 3 ? 3 :
-				questcheck() == 4 ? 4 :
-					questcheck() == 5 ? 5 :
-						questcheck() == 6 ? 6 :
-							questcheck() == 7 && (calcOurDmg('min', 0, false, 'world', 'never') < game.global.gridArray[50].maxHealth) && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))) ? 7 :
-								questcheck() == 8 ? 8 :
-									questcheck() == 9 ? 9 :
+	rShouldQuest = currQuest() == 1 ? 1 :
+		currQuest() == 2 ? 2 :
+			currQuest() == 3 ? 3 :
+				currQuest() == 4 ? 4 :
+					currQuest() == 5 ? 5 :
+						currQuest() == 6 ? 6 :
+							currQuest() == 7 && (calcOurDmg('min', 0, false, 'world', 'never') < game.global.gridArray[50].maxHealth) && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))) ? 7 :
+								currQuest() == 8 ? 8 :
+									currQuest() == 9 ? 9 :
 										0;
 
 	if (rShouldQuest) {
@@ -1837,7 +1832,6 @@ function Quest() {
 	}
 
 	return farmingDetails;
-
 }
 
 //Mayhem
@@ -2083,119 +2077,6 @@ function PandemoniumFarm() {
 	}
 
 	return farmingDetails;
-}
-
-function PandemoniumJestimpFarm() {
-
-	const mapName = 'rPandemoniumJestimpFarm';
-	const farmingDetails = {
-		shouldRun: false,
-		mapName: mapName
-	};
-
-	if (game.global.challengeActive !== 'Pandemonium' || !getPageSetting('RPandemoniumOn') || getPageSetting('RPandemoniumAutoEquip') < 2 || game.global.world === 150 || game.global.lastClearedCell + 2 < 91 || game.challenges.Pandemonium.pandemonium > 0) return farmingDetails;
-
-	var rShouldPandemoniumJestimpFarm = false;
-
-	var rPandemoniumJobRatio = '0.001,0.001,1,0';
-	var equipCost = CheapestEquipmentCost();
-	var nextEquipmentCost = equipCost[1];
-
-	var rPandemoniumMapLevel = getPageSetting('PandemoniumJestFarmLevel');
-	var rPandemoniumSpecial = 0;
-
-	//Identifying how much metal you'd get from the amount of jestimps you want to farm on the map level you've selected for them
-	if (getPageSetting('RPandemoniumAutoEquip') > 3 && game.global.world >= getPageSetting('RPandemoniumJestZone')) {
-
-		var jestDrop = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 45, true, rPandemoniumJobRatio), false, true, rPandemoniumMapLevel);
-		var shred = 1 - (0.75 - (rPandemoniumMapLevel * 0.05));
-		var kills = getPageSetting('PandemoniumJestFarmKills');
-		jestMetalTotal = jestDrop;
-		//For loop for adding the metal from subsequent jestimp kills to the base total
-		for (i = 1; i < kills; i++) {
-			jestMetalTotal += (jestDrop * (Math.pow(shred, i)));
-		}
-		if ((jestMetalTotal != null && (jestMetalTotal > nextEquipmentCost)) || jestFarmMap == true) {
-			rShouldPandemoniumJestimpFarm = true;
-			jestFarmMap = true;
-			if (!game.global.messages.Loot.exotic)
-				game.global.messages.Loot.exotic = true;
-		}
-
-		var repeat = nextEquipmentCost > jestMetalTotal;
-		var status = 'Jestimp Scumming Equips below ' + prettify(jestMetalTotal);
-
-		farmingDetails.shouldRun = rShouldPandemoniumJestimpFarm;
-		farmingDetails.mapName = mapName;
-		farmingDetails.mapLevel = rPandemoniumMapLevel;
-		farmingDetails.autoLevel = true;
-		farmingDetails.gather = 'metal';
-		farmingDetails.special = rPandemoniumSpecial;
-		farmingDetails.jobRatio = rPandemoniumJobRatio;
-		farmingDetails.repeat = !repeat;
-		farmingDetails.status = status;
-	}
-
-	if (rShouldPandemoniumJestimpFarm) {
-		PandemoniumJestimpScumming();
-	}
-
-	return farmingDetails;
-}
-
-function PandemoniumJestimpScumming() {
-	reloadDelay = false;
-	//Saves your savefile to a variable when that variable is null and frenzy is active
-	if (game.global.mapsActive && game.global.mapGridArray[0].name == "Jestimp" && ((savefile == null && game.portal.Frenzy.frenzyStarted != -1) || (autoBattle.oneTimers.Mass_Hysteria.owned && game.global.soldierHealth == game.global.soldierHealthMax && game.global.mapGridArray[0].health > 0)))
-		savefile = save(true);
-	//Makes it take another copy of the save if you lose frenzy before killing the Jestimp.
-	if (autoBattle.oneTimers.Mass_Hysteria.owned == false && game.global.mapsActive && game.global.lastClearedMapCell == -1 && game.global.mapGridArray[0].name == "Jestimp" && savefile != null && game.portal.Frenzy.frenzyStarted == -1)
-		savefile = null;
-
-	//If the last item in the message log doesn't include the word metal it loads your save to reroll for a metal jestimp drop.
-	if (game.global.mapsActive && game.global.lastClearedMapCell != -1) {
-		if (document.getElementById("log").lastChild != null) {
-			if (!document.getElementById("log").lastChild.innerHTML.includes("metal") && savefile != null) {
-				tooltip('Import', null, 'update');
-				document.getElementById('importBox').value = savefile;
-				cancelTooltip();
-				load(true);
-				reloadDelay = true;
-			}
-		}
-	}
-
-	if (!game.global.mapsActive || (game.global.mapsActive && (game.global.mapGridArray[0].name != "Jestimp" || game.global.lastClearedMapCell != -1))) {
-		//Recycles your map if you are past the first cell
-		if (game.global.mapsActive && game.global.lastClearedMapCell != -1) {
-			mapsClicked();
-			recycleMap();
-		}
-	}
-	//Purchases a perfect map with your Jestimp farming level setting, resets savefile variable to null and runs the map
-	if (game.global.preMapsActive) {
-		PerfectMapCost(getPageSetting('PandemoniumJestFarmLevel'), 0);
-		buyMap();
-		savefile = null;
-		runMap();
-	}
-	//Repeats the process of exiting and re-entering maps until the first cell is a Jestimp
-	for (i = 0; i < 10000; i++) {
-		if (game.global.mapsActive) {
-			if (game.global.mapGridArray[game.global.lastClearedMapCell + 1].name != "Jestimp") {
-				mapsClicked();
-				runMap();
-			} else if (game.global.mapGridArray[game.global.lastClearedMapCell + 1].name == "Jestimp")
-				break
-		}
-	}
-
-	//Used to abandon current map once the Jestimp farming on your current zone has finished.
-	if (jestMetalTotal != null && jestMetalTotal < nextEquipmentCost && jestFarmMap == true) {
-		mapsClicked();
-		recycleMap();
-		jestFarmMap = false;
-	}
 }
 
 //Alchemy
@@ -2789,9 +2670,10 @@ function FarmingDecision() {
 
 	//Skipping map farming if in Decay and above stack count user input
 	if (decaySkipMaps()) mapTypes = [PrestigeClimb(), VoidMaps()];
+	if (game.global.challengeActive === 'Mapology') mapTypes = [PrestigeClimb(), BionicRaiding(), VoidMaps()];
 
 	//U2 map settings to check for.
-	if (game.global.universe === 2) var mapTypes = [Quest(), PandemoniumDestack(), PrestigeClimb(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumJestimpFarm(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), Glass(), MapBonus(), Smithless(), Wither()];
+	if (game.global.universe === 2) var mapTypes = [Quest(), PandemoniumDestack(), PrestigeClimb(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), Glass(), MapBonus(), Smithless(), Wither()];
 
 	for (const map of mapTypes) {
 		if (map.shouldRun) {

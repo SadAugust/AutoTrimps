@@ -478,12 +478,12 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	//Challenges
 	if (game.global.challengeActive == "Life") attack *= game.challenges.Life.getHealthMult();
 	if (game.global.challengeActive == "Lead" && (game.global.world % 2) == 1) attack *= 1.5;
-	if (game.challenges.Electricity.stacks > 0) {
+	/* if (game.challenges.Electricity.stacks > 0) {
 		var stacks = game.challenges.Electricity.stacks;
 		if (!realDamage && minMaxAvg.toLowerCase() == "min") stacks = 0;
 		if (!realDamage && minMaxAvg.toLowerCase() == "avg") stacks /= 2;
 		attack *= 1 - (stacks * 0.1);
-	}
+	} */
 
 	//Decay
 	if (game.global.challengeActive == "Decay") {
@@ -1019,7 +1019,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	health *= game.global.challengeActive == 'Balance' ? 2 : 1;
 	health *= game.global.challengeActive == 'Meditate' ? 2 : 1;
 	health *= game.global.challengeActive == 'Toxicity' ? 2 : 1;
-	health *= game.global.challengeActive == 'Life' ? 1 : 1;
+	health *= game.global.challengeActive == 'Life' ? 10 : 1;
 	health *= game.global.challengeActive == 'Experience' ? game.challenges.Experience.getEnemyMult() : 1;
 	if (game.global.challengeActive == "Coordinate") {
 		var amt = 1;

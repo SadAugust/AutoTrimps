@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v5.7.5.7.6',
+var ATversion = 'SadAugust v5.7.5.7.7',
 	atscript = document.getElementById('AutoTrimps-script'),
 	basepath = 'https://SadAugust.github.io/AutoTrimps_Local/',
 	modulepath = 'modules/';
@@ -125,6 +125,7 @@ var shredTimer = 0;
 //Get Gamma burst % value
 gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 shieldEquipped = game.global.ShieldEquipped.id;
+
 function mainLoop() {
 	//Interval code
 	date = new Date();
@@ -132,7 +133,7 @@ function mainLoop() {
 	twoSecondInterval = ((date.getSeconds() % 2) === 0 && (date.getMilliseconds() < 100));
 	sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
 	tenSecondInterval = ((date.getSeconds() % 10) === 0 && (date.getMilliseconds() < 100));
-	var MAZCheck = document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Void Map') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Map Bonus') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Raiding');
+	var MAZCheck = document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Golden') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Void Map') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Map Bonus') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Raiding');
 
 	if (document.getElementById('tooltipDiv').classList[0] !== undefined && document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow') && (MAZCheck) && document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 12) {
 		document.getElementById('tooltipDiv').style.overflowY = 'scroll';
@@ -197,6 +198,43 @@ function mainLoop() {
 
 	//Offline Progress
 	if (!usingRealTimeOffline) setScienceNeeded();
+	const universeInitial = game.global.universe === 2 ? 'R' : '';
+	const universeSecondary = game.global.universe === 2 ? 'R' : 'H';
+
+	//AutoMaps
+	autoMap();
+	//Status
+	updateAutoMapsStatus();
+	//Gather
+	autoGather();
+	//Auto Traps
+	if (getPageSetting(universeInitial + 'TrapTrimps') && game.global.trapBuildAllowed && !game.global.trapBuildToggled) toggleAutoTrap();
+	//Buildings
+	buyBuildings();
+	//Jobs
+	buyJobs();
+	//Upgrades
+	if (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([5].indexOf(currQuest()) >= 0))) {
+		if (getPageSetting(universeInitial + 'BuyUpgradesNew') != 0) game.global.universe === 2 ? RbuyUpgrades() : buyUpgrades();
+	}
+	//Combat
+	if (getPageSetting('BetterAutoFight') == 1) betterAutoFight();
+	if (getPageSetting('BetterAutoFight') == 2) betterAutoFight3();
+	//Bone Shrine
+	boneShrine();
+	//Auto Golden Upgrade
+	autoGoldUpgrades();
+	//Heirloom Management
+	heirloomSwapping();
+	//AutoEquip
+	autoEquip();
+
+	if (getPageSetting(universeSecondary.toLowerCase() + 'EquipEfficientEquipDisplay')) {
+		if (oneSecondInterval) {
+			displayMostEfficientEquipment();
+			if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
+		}
+	}
 
 	//Logic for Universe 1
 	if (game.global.universe == 1) {
@@ -207,10 +245,6 @@ function mainLoop() {
 			addToolTipToArmyCount();
 		}
 		//Core
-		if (getPageSetting('AutoMaps') > 0 && game.global.mapsUnlocked) autoMap();
-		if (getPageSetting('showautomapstatus') == true) updateAutoMapsStatus();
-		if (getPageSetting('ManualGather2') > 0) autoGather();
-		if (getPageSetting('TrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
 		if (getPageSetting('ATGA2') == true) ATGA2();
 		if (aWholeNewWorld && getPageSetting('AutoRoboTrimp')) autoRoboTrimp();
 		if (game.global.challengeActive == "Daily" && getPageSetting('buyheliumy') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
@@ -218,16 +252,8 @@ function mainLoop() {
 		if (getPageSetting('spendmagmite') == 2 && !magmiteSpenderChanged) autoMagmiteSpender();
 		if (getPageSetting('AutoNatureTokens') && game.global.world > 229) autoNatureTokens();
 		if (getPageSetting('autoenlight') && game.global.world > 229 && game.global.uberNature == false) autoEnlight();
-		if (getPageSetting('BuyUpgradesNew') != 0) buyUpgrades();
 
-		//Buildings
-		if (getPageSetting('BuyBuildingsNew') == 1) buyBuildings();
 		if (getPageSetting('UseAutoGen') == true && game.global.world > 229) autoGenerator();
-
-		//Jobs
-		if (getPageSetting('BuyJobsNew') > 0) buyJobs();
-		//Heirloom Management
-		if (getPageSetting('Hhs')) HeirloomSwapping();
 
 		//Portal
 		if (autoTrimpSettings.AutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) autoPortal();
@@ -244,11 +270,6 @@ function mainLoop() {
 			else if (getPageSetting('dfightforever') == 1 && game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.empower == 'undefined' && typeof game.global.dailyChallenge.bloodthirst == 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
 			else if (getPageSetting('dfightforever') == 2 && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
 		}
-		if (getPageSetting('BetterAutoFight') == 1) betterAutoFight();
-		if (getPageSetting('BetterAutoFight') == 2) betterAutoFight3();
-		var forcePrecZ = (getPageSetting('ForcePresZ') < 0) || (game.global.world < getPageSetting('ForcePresZ'));
-		if (getPageSetting('DynamicPrestige2') > 0 && forcePrecZ) prestigeChanging2();
-		else autoTrimpSettings.Prestige.selected = document.getElementById('Prestige').value;
 		if (game.global.mapsUnlocked && game.global.challengeActive == "Daily" && getPageSetting('avoidempower') == true && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidempower();
 		if (getPageSetting('buywepsvoid') == true && ((getPageSetting('VoidMaps') == game.global.world && game.global.challengeActive != "Daily") || (getPageSetting('DailyVoidMod') == game.global.world && game.global.challengeActive == "Daily")) && game.global.mapsActive && getCurrentMapObject().location == "Void") buyWeps();
 		if ((getPageSetting('darmormagic') > 0 && typeof game.global.dailyChallenge.empower == 'undefined' && typeof game.global.dailyChallenge.bloodthirst == 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) || (getPageSetting('carmormagic') > 0 && (game.global.challengeActive == 'Toxicity' || game.global.challengeActive == 'Nom'))) armormagic();
@@ -259,19 +280,10 @@ function mainLoop() {
 		else if (getPageSetting('AutoStance') == 1) autoStance();
 		else if (getPageSetting('AutoStance') == 2) autoStance2();
 
+		//Challenges
+		if (game.global.challengeActive === "Decay") decayFinishChallenge();
 
-		//AutoEquip
-		if (getPageSetting('Hequipon')) autoEquip();
 
-		//Bone Upgrades / Settings
-		if (autoTrimpSettings.hBoneShrineDefaultSettings.value.active) BoneShrine();
-
-		if (getPageSetting('hEquipEfficientEquipDisplay')) {
-			if (oneSecondInterval) {
-				displayMostEfficientEquipment();
-				if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
-			}
-		}
 
 		//Spire
 		if (getPageSetting('ExitSpireCell') > 0 && game.global.challengeActive != "Daily" && getPageSetting('IgnoreSpiresUntil') <= game.global.world && game.global.spireActive) exitSpireCell();
@@ -279,38 +291,15 @@ function mainLoop() {
 		if (getPageSetting('SpireBreedTimer') > 0 && getPageSetting('IgnoreSpiresUntil') <= game.global.world) ATspirebreed();
 		if (getPageSetting('spireshitbuy') && isDoingSpire()) buyshitspire();
 
-		//Golden
-		var agu = game.global.runningChallengeSquared ? getPageSetting('cAutoGoldenUpgrades') :
-			game.global.challengeActive == "Daily" ? getPageSetting('dAutoGoldenUpgrades') :
-				getPageSetting('AutoGoldenUpgrades');
-		if (agu && agu != 'Off') autoGoldenUpgradesAT(agu);
+		//Auto Golden Upgrade
+		autoGoldUpgrades();
+
 	}
 
 	//Logic for Universe 2
 	if (game.global.universe == 2) {
 		//Heirloom Shield Swap Check
-		if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
-		//Initiate Farming Code
-		rMapSettings = FarmingDecision();
-		rCurrentMap = rMapSettings.mapName;
 		//RCore
-		//AutoMaps
-		if (getPageSetting('RAutoMaps') > 0 && game.global.mapsUnlocked) autoMap();
-		//Status - AutoMaps
-		if (getPageSetting('Rshowautomapstatus')) updateAutoMapsStatus();
-		//RBuildings
-		if (getPageSetting('RBuyBuildingsNew')) buyBuildings();
-		//RUpgrades
-		if (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([5].indexOf(questcheck()) >= 0))) {
-			if (getPageSetting('RBuyUpgradesNew') != 0)
-				RbuyUpgrades();
-		}
-		//Gather
-		if (getPageSetting('RManualGather2') > 0) autoGather();
-		//Auto Traps
-		if (getPageSetting('RTrapTrimps') && game.global.trapBuildAllowed && game.global.trapBuildToggled == false) toggleAutoTrap();
-		//RJobs
-		if (getPageSetting('RBuyJobsNew') > 0) buyJobs();
 		if (game.global.runningChallengeSquared && rC3EndZoneSetting != game.stats.zonesCleared.value) {
 			if (getPageSetting('c3finishrun') !== -1) {
 				if ((getPageSetting('c3finishrun') - 1) === game.global.world)
@@ -348,35 +337,14 @@ function mainLoop() {
 
 		//Archeology
 		if (getPageSetting('Rarchon') && game.global.challengeActive == "Archaeology") archstring();
-		//AutoEquip
-		if (getPageSetting('Requipon') && (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([2, 3].indexOf(questcheck()) >= 0)))) autoEquip();
-		//Combat
-		if (getPageSetting('BetterAutoFight') == 1) betterAutoFight();
-		if (getPageSetting('BetterAutoFight') == 2) betterAutoFight3();
 		//Auto Equality Management
 		if (getPageSetting('rManageEquality') == 1) rManageEquality();
 		if (getPageSetting('rManageEquality') == 2) equalityManagement();
-		//Heirloom Management
-		if (getPageSetting('Rhs')) HeirloomSwapping();
-		//Auto Golden Upgrade
-		var rAutoGoldenUpgrade = game.global.runningChallengeSquared || (game.global.challengeActive != '' && game.global.challengeActive != 'Daily' && typeof game.challenges[game.global.challengeActive].heliumThrough === 'undefined' && getPageSetting('rNonRadonUpgrade')) ? getPageSetting('RcAutoGoldenUpgrades') :
-			game.global.challengeActive == "Daily" ? getPageSetting('RdAutoGoldenUpgrades') :
-				getPageSetting('RAutoGoldenUpgrades');
-		if (rAutoGoldenUpgrade && rAutoGoldenUpgrade != 'Off') RautoGoldenUpgradesAT(rAutoGoldenUpgrade);
 
-		//Bone Upgrades / Settings
-		if (autoTrimpSettings.rBoneShrineDefaultSettings.value.active) BoneShrine();
 		if (game.global.challengeActive == "Daily" && getPageSetting('buyradony') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyradony') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
-		if (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') BuySingleRunBonuses()
+		if (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') BuySingleRunBonuses();
 		//Respecing between presets based on Destacking or Farming when running Pandemonium. Uses preset 2 for destacking and preset 3 while farming.
 		if (game.global.challengeActive == "Pandemonium" && getPageSetting('rPandRespec')) PandemoniumPerkRespec();
-
-		if (getPageSetting('rEquipEfficientEquipDisplay')) {
-			if (oneSecondInterval) {
-				displayMostEfficientEquipment();
-				if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
-			}
-		}
 	}
 
 	if (game.global.stringVersion >= '5.8.0' && getPageSetting('automateSpireAssault') && autoBattle.maxEnemyLevel !== 132)

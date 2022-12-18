@@ -58,13 +58,13 @@ function maxOneShotPower(considerEdges) {
 
 function oneShotZone(zone, type, specificStance, maxOrMin) {
 	//Calculates our minimum damage
-	var baseDamage = calcOurDmg(maxOrMin ? "max" : "min", false, 'world', true);
+	var baseDamage = calcOurDmg(maxOrMin ? "max" : "min", specificStance, true, type != "world");
 	var damageLeft = baseDamage + addPoison(false, (type == "world") ? zone : game.global.world);
 
 	//Calculates how many enemies we can one shot + overkill
 	for (var power = 1; power <= maxOneShotPower(); power++) {
 		//Enemy Health: A C99 Dragimp (worstCase)
-		damageLeft -= calcEnemyHealth();
+		damageLeft -= calcEnemyHealth(type, zone, 99 - maxOneShotPower() + power, "Dragimp");
 
 		//Check if we can one-shot the next enemy
 		if (damageLeft < 0) return power - 1;
@@ -78,7 +78,7 @@ function oneShotZone(zone, type, specificStance, maxOrMin) {
 
 function oneShotPower(specificStance, offset = 0, maxOrMin) {
 	//Calculates our minimum damage
-	var baseDamage = calcOurDmg(maxOrMin ? "max" : "min", false, false, true);
+	var baseDamage = calcOurDmg(maxOrMin ? "max" : "min", specificStance, true, game.global.mapsActive);
 	var damageLeft = baseDamage + addPoison(true);
 
 	//Calculates how many enemies we can one shot + overkill
@@ -159,10 +159,10 @@ function challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, 
 
 function directDamage(block, pierce, currentHealth, minDamage, critPower = 2) {
 	//Pre Init
-	if (!block) block = calcOurBlock(false);
+	if (!block) block = calcOurBlock(true, true);
 	if (!pierce) pierce = (game.global.brokenPlanet && !game.global.mapsActive) ? getPierceAmt() : 0;
-	if (!currentHealth) currentHealth = calcOurHealth(true) - (game.global.soldierHealthMax - game.global.soldierHealth);
-	if (!minDamage) minDamage = calcOurDmg("min", false, true) + addPoison(true);
+	if (!currentHealth) currentHealth = calcOurHealth(true, false, true) - (game.global.soldierHealthMax - game.global.soldierHealth);
+	if (!minDamage) minDamage = calcOurDmg("min", true, true, game.global.mapsActive) * (game.global.titimpLeft > 0 ? 2 : 1) + addPoison(true);
 
 	//Enemy
 	var enemy = getCurrentEnemy();
@@ -230,7 +230,7 @@ function survive(formation = "S", critPower = 2, ignoreArmy) {
 	var harm = directDamage(block, pierce, health - missingHealth, minDamage, critPower) + challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, pierce, critPower);
 
 	//Updated Genes and Block
-	var blockier = calcOurBlock(false);
+	var blockier = calcOurBlock(false, false);
 	var healthier = health * Math.pow(1.01, game.jobs.Geneticist.owned - game.global.lastLowGen);
 	var maxHealthier = maxHealth * Math.pow(1.01, game.jobs.Geneticist.owned - game.global.lastLowGen);
 	var harm2 = directDamage(blockier, pierce, healthier, minDamage, critPower) + challengeDamage(maxHealthier, minDamage, maxDamage, 0, blockier, pierce, critPower);

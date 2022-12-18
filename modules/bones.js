@@ -2,7 +2,7 @@
 rShouldBoneShrine = false;
 rBSRunningAtlantrimp = false;
 
-function BoneShrine() {
+function boneShrine() {
 
 	if (game.global.universe === 1 && !autoTrimpSettings.hBoneShrineDefaultSettings.value.active) return;
 	if (game.global.universe === 2 && !autoTrimpSettings.rBoneShrineDefaultSettings.value.active) return;
@@ -46,26 +46,29 @@ function BoneShrine() {
 		if (game.global.challengeActive === 'Transmute' && rBoneShrineGather === 'metal') rBoneShrineGather = 'food';
 		var rBoneShrineSpendBelow = rBoneShrineSettings.bonebelow === -1 ? 0 : rBoneShrineSettings.bonebelow;
 		var rBoneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rBoneShrineSettings.atlantrimp;
+		var rBoneShrineDoubler = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom'
 
 		if (rBoneShrineCharges > game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow)
 			rBoneShrineCharges = game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow;
 
 		setGather(rBoneShrineGather);
-		if (getPageSetting(universePrefix + 'hs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff') !== 'undefined')
-			HeirloomEquipStaff(universePrefix + 'hs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff');
-		else if (getPageSetting(universePrefix + 'hsMapStaff') !== 'undefined')
-			HeirloomEquipStaff(universePrefix + 'hsMapStaff');
+		if (getPageSetting(universePrefix.toUpperCase() + 'hsStaff')) {
+			if (getPageSetting(universePrefix.toUpperCase() + 'hs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff') !== 'undefined')
+				HeirloomEquipStaff(universePrefix.toUpperCase() + 'hs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff');
+			else if (getPageSetting(universePrefix.toUpperCase() + 'hsMapStaff') !== 'undefined')
+				HeirloomEquipStaff(universePrefix.toUpperCase() + 'hsMapStaff');
+		}
 		if (rBoneShrineAtlantrimp) {
 			if (!rBSRunningAtlantrimp) {
-				runUnique('Atlantrimp', false);
+				runUnique(rBoneShrineDoubler, false);
 			}
 			if (shredActive && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineGather) && game.global.mapsActive && game.global.lastClearedMapCell + 1 >= 95 && game.global.hemmTimer < 30 && game.global.lastClearedMapCell !== getCurrentMapObject().size - 2) {
 				mapsClicked();
-				debug('Pausing Atlantrimp until shred timer has reset.');
+				debug('Pausing ' + rBoneShrineDoubler + ' until shred timer has reset.');
 			}
 			if (shredActive && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineGather) && game.global.preMapsActive && game.global.currentMapId !== '' && game.global.hemmTimer >= 140) rRunMap();
 		}
-		if (!rBoneShrineAtlantrimp || (rBoneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === 'Atlantrimp' && game.global.lastClearedMapCell === getCurrentMapObject().size - 2)) {
+		if (!rBoneShrineAtlantrimp || (rBoneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === rBoneShrineDoubler && game.global.lastClearedMapCell === getCurrentMapObject().size - 2)) {
 			rShouldBoneShrine = true;
 			for (var x = 0; x < rBoneShrineCharges; x++) {
 				if (getPageSetting((game.global.universe === 2 ? 'R' : '') + 'BuyJobsNew') > 0) {
