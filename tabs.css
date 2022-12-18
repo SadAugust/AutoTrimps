@@ -201,7 +201,8 @@ ul.tab li a:hover {
 .windowDeleteHDFarm .icomoon,
 .windowDeleteVoidMap .icomoon,
 .windowDeleteRaiding .icomoon,
-.windowDeleteBionicRaiding .icomoon {
+.windowDeleteBionicRaiding .icomoon,
+.windowDeleteAutoGolden .icomoon {
 	position: relative;
 	top: 0.6vw;
 	left: -1vw;
@@ -1194,6 +1195,32 @@ ul.tab li a:hover {
 .windowChallengeOffVoidMap .windowChallengeVoidMap,
 .windowChallenge3OffVoidMap .windowChallenge3VoidMap {
 	display: none;
+}
+
+
+.windowDeleteAutoGolden,
+.windowActiveAutoGolden,
+.windowAmtAutoGolden,
+.windowTypeAutoGolden {
+	padding-left: 1%;
+	display: inline-block;
+}
+
+.windowActiveAutoGolden {
+	width: 19%;
+}
+
+.windowDeleteAutoGolden {
+	width: 0%;
+	cursor: pointer;
+}
+
+.windowAmtAutoGolden {
+	width: 40%;
+}
+
+.windowTypeAutoGolden {
+	width: 40%;
 }
 
 .windowRepeat,
