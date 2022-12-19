@@ -1181,7 +1181,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 	saveSettings();
 	if (!titleText.includes('Auto Golden')) {
-		if (!autoTrimpSettings[varPrefix + "Settings"].value.active)
+		if (!autoTrimpSettings[varPrefix + "DefaultSettings"].value.active)
 			debug(titleText + " has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.")
 	}
 	document.getElementById('tooltipDiv').style.overflowY = '';
