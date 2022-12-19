@@ -1180,7 +1180,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	if (reopen) MAZLookalike(titleText, varPrefix, 'MAZ');
 
 	saveSettings();
-	if (!titleText.includes('Auto Golden')) {
+	if (!reopen && !titleText.includes('Auto Golden')) {
 		if (!autoTrimpSettings[varPrefix + "Settings"].value.active)
 			debug(titleText + " has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.")
 	}
