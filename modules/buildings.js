@@ -453,7 +453,7 @@ function buyBuildings() {
 
 	//Housing 
 	var boughtHousing = false;
-	var runningC3 = (!autoBattle.oneTimers.Expanding_Tauntimp.owned && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildings') && getPageSetting('c3buildingzone') >= game.global.world)
+	var runningC3 = (game.global.universe === 2 && !autoBattle.oneTimers.Expanding_Tauntimp.owned && getPageSetting('c3buildings') && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)
 	do {
 		boughtHousing = false;
 		var housing = mostEfficientHousing();
