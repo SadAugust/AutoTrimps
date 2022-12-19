@@ -78,7 +78,7 @@ function worthOfHeirlooms() {
 	worth3['Core'].sort(valuesort);
 }
 
-function autoheirlooms3() {
+function autoheirlooms() {
 	if (!game.global.heirloomsExtra.length > 0) return;
 	if (!getPageSetting('autoheirlooms') || getPageSetting('typetokeep') === 'None' || getPageSetting('raretokeep') === 'None') return;
 
