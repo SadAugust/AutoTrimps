@@ -330,9 +330,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('Hypothermia Farm')) windowSize = 'tooltipWindow30'
 		if (titleText.includes('Insanity Farm')) windowSize = 'tooltipWindow40'
 		if (titleText.includes('Void Map')) windowSize = 'tooltipWindow50'
-		if (titleText.includes('HD Farm')) windowSize = 'tooltipWindow50'
 		if (titleText.includes('Worshipper Farm')) windowSize = 'tooltipWindow50'
 		if (titleText.includes('Smithy Farm')) windowSize = 'tooltipWindow50'
+		if (titleText.includes('HD Farm')) windowSize = 'tooltipWindow55'
 		if (titleText.includes('Map Bonus')) windowSize = 'tooltipWindow60'
 		if (titleText.includes('Map Farm')) windowSize = 'tooltipWindow75'
 		if (titleText.includes('Tribute Farm')) windowSize = 'tooltipWindow80'
@@ -620,6 +620,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (titleText.includes('HD Farm')) tooltipText += "<div class='windowHDMult'>HD Mult</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Bionic')) tooltipText += "<div class='windowRepeatEvery" + varPrefix_Adjusted + "\'>Repeat<br/>Every</div>"
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm')) tooltipText += "<div class='windowEndZone" + varPrefix_Adjusted + "\'>End<br/>Zone</div>"
+		if (titleText.includes('HD Farm')) tooltipText += "<div class='windowHDType'>HD<br/>Type</div>"
 		if (titleText.includes('Void')) tooltipText += "<div class='windowVoidHDRatio'>HD<br/>Ratio</div>"
 		if (titleText.includes('Void')) tooltipText += "<div class='windowVoidHDRatio'>Void HD<br/>Ratio</div>"
 		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm') && !titleText.includes('Auto Golden')) tooltipText += "<div class='windowJobRatio" + varPrefix_Adjusted + "\'>Job<br/>Ratio</div>"
@@ -677,6 +678,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				hdMult: 1,
 				destack: false,
 				goldenType: 'v',
+				hdType: 'world',
 				goldenNumber: -1
 			}
 			var style = "";
@@ -718,6 +720,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.insanity = autoTrimpSettings[varPrefix + "Settings"].value[x].insanity ? autoTrimpSettings[varPrefix + "Settings"].value[x].insanity : 0;
 				if (titleText.includes('Golden'))
 					vals.goldenType = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].golden) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].golden[0] : 0;
+				if (titleText.includes('HD Farm'))
+					vals.hdType = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].hdType) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].hdType : 'world';
 				if (titleText.includes('Golden'))
 					vals.goldenNumber = typeof (autoTrimpSettings[varPrefix + "Settings"].value[x].golden) !== 'undefined' ? autoTrimpSettings[varPrefix + "Settings"].value[x].golden.toString().replace(/[^\d,:-]/g, '') : 'v';
 				if (titleText.includes('Alchemy Farm'))
@@ -781,6 +785,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var runTypeDropdown = displayDropdowns(universe, 'runType', vals.runType);
 			//RunType
 			var goldenDropdown = displayDropdowns(universe, 'goldenType', vals.goldenType, varPrefix);
+			//RunType
+			var hdTypeDropdown = displayDropdowns(universe, 'hdType', vals.hdType, varPrefix);
 
 			var potionDropdown = "<option value='h'" + ((vals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
 			var raidingDropdown = "<option value='0'" + ((vals.raidingDropdown == '0') ? " selected='selected'" : "") + ">Frag</option>\<option value='1'" + ((vals.raidingDropdown == '1') ? " selected='selected'" : "") + ">Frag Min</option>\<option value='2'" + ((vals.raidingDropdown == '2') ? " selected='selected'" : "") + ">Frag Max</option>"
@@ -846,6 +852,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowAmtAutoGolden'><input value='" + vals.goldenNumber + "' type='number' id='windowWorld" + x + "'/></div>";
 			if (titleText.includes('Golden'))
 				tooltipText += "<div class='windowTypeAutoGolden' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.goldentype + "' id='windowGoldenType" + x + "'>" + goldenDropdown + "</select></div>"
+			if (titleText.includes('HD Farm'))
+				tooltipText += "<div class='windowHDType' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.hdType + "' id='windowHDType" + x + "'>" + hdTypeDropdown + "</select></div>"
 			if (titleText.includes('Alchemy'))
 				tooltipText += "<div class='windowPotionType' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.potionstype + "' id='windowPotionType" + x + "'>" + potionDropdown + "</select></div>"
 			if (titleText.includes('Alchemy Farm'))
@@ -1023,6 +1031,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Quag')) var bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
 		if (titleText.includes('Insanity')) var insanity = parseInt(document.getElementById('windowInsanity' + x).value, 10);
 		if (titleText.includes('Auto Golden')) var golden = document.getElementById('windowGoldenType' + x).value;
+		if (titleText.includes('HD Farm')) var hdType = document.getElementById('windowHDType' + x).value;
 		if (titleText.includes('Auto Golden')) golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
 		if (titleText.includes('Alch')) var potion = document.getElementById('windowPotionType' + x).value;
 		if (titleText.includes('Alch')) potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
@@ -1154,6 +1163,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			shredActive: shredActive,
 			hdBase: hdBase,
 			hdMult: hdMult,
+			hdType: hdType,
 			done: (currSetting && currSetting.done) ? currSetting.done : false
 		};
 		setting.push(thisSetting);
@@ -1600,6 +1610,7 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Quag')) document.getElementById('windowBogs' + index).value = 0;
 	if (titleText.includes('Insanity')) document.getElementById('windowInsanity' + index).value = 0;
 	if (titleText.includes('Auto Golden')) document.getElementById('windowWorld' + index).value = -1;
+	if (titleText.includes('HD Farm')) document.getElementById('windowHDType' + index).value = 'world';
 	if (titleText.includes('Auto Golden')) document.getElementById('windowGoldenType' + index).value = 'h';
 	if (titleText.includes('Hypo')) document.getElementById('windowBonfire' + index).value = 0;
 	if (titleText.includes('Bone')) document.getElementById('windowBoneAmount' + index).value = 0;

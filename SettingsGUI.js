@@ -29,7 +29,10 @@ function automationMenuInit() {
 		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDRatio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
 	}
 	if (game.global.universe == 2) {
-		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
+		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\
+		<b>H:D ratio = </b>\" + prettify(HDRatio) + \"<br>\
+		<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
+		<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
 
 	}
 	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
@@ -322,10 +325,8 @@ function initializeAllSettings() {
 
 	//C2
 	createSetting('FinishC2', 'Finish Challenge2', '<b>DONT USE THIS WITH C2 RUNNER</b><br>Finish / Abandon Challenge2 (any) when this zone is reached, if you are running one. For manual use. Recommended: Zones ending with 0 for most Challenge2. Disable with -1. Does not affect Non-Challenge2 runs.', 'value', -1, null, 'C2');
-	createSetting('buynojobsc', 'No F/L/M in C2', 'Buys No Farmers, Lumberjacks or Miners in the C2 challenges Watch and Trapper. ', 'boolean', false, null, 'C2');
 	createSetting('cfightforever', 'Tox/Nom Fight Always', 'Sends trimps to fight if they\'re not fighting in the Toxicity and Nom Challenges, regardless of BAF. Essenitally the same as the one in combat, can use either if you wish, except this will only activate in these challenges (duh) ', 'boolean', false, null, 'C2');
 	createSetting('carmormagic', ['C2 Armor Magic Off', 'CAM: Above 80%', 'CAM: H:D', 'CAM: Always'], 'Will buy Armor to try and prevent death on Nom/Tox Challenges under the 3 conditions. <br><b>Above 80%:</b> Will activate at and above 80% of your HZE and when your health is sufficiently low. <br><b>H:D:</b> Will activate at and above the H:D you have defined in maps. <br><b>Always</b> Will activate always. <br>All options will activate at or <b>below 25% of your health.</b> ', 'multitoggle', 0, null, 'C2');
-	createSetting('novmsc2', 'No VMs', 'Turn off VM running for C2s. Handy for the C2 Runner. ', 'boolean', false, null, 'C2');
 
 	//C2 Runner
 	createSetting('c2runnerstart', 'C2 Runner', 'Runs the normal C2s in sequence according to difficulty. See C2Table for list. Once zone you have defined has been reached, will portal into next. I will advise you not to touch the challenges (abandoning, doing a different one, etc) if you are running this, it could break it. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
@@ -894,13 +895,13 @@ function initializeAllSettings() {
 
 	//Staff Line
 	createSetting('keepstaffs', 'Staffs', 'Auto Heirlooms. Enables in-depth staff settings. ', 'boolean', false, null, 'Heirlooms');
-	createSetting('slot1modst', 'Staff: Modifier 1', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 1 is worth 6 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
-	createSetting('slot2modst', 'Staff: Modifier 2', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 2 is worth 5 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
-	createSetting('slot3modst', 'Staff: Modifier 3', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 3 is worth 4 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
-	createSetting('slot4modst', 'Staff: Modifier 4', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 4 is worth 3 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
-	createSetting('slot5modst', 'Staff: Modifier 5', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 5 is worth 2 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
-	createSetting('slot6modst', 'Staff: Modifier 6', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 6 is worth 1 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
-	createSetting('slot7modst', 'Staff: Modifier 7', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 7 is worth 1 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "minerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
+	createSetting('slot1modst', 'Staff: Modifier 1', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 1 is worth 6 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
+	createSetting('slot2modst', 'Staff: Modifier 2', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 2 is worth 5 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
+	createSetting('slot3modst', 'Staff: Modifier 3', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 3 is worth 4 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
+	createSetting('slot4modst', 'Staff: Modifier 4', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 4 is worth 3 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
+	createSetting('slot5modst', 'Staff: Modifier 5', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 5 is worth 2 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
+	createSetting('slot6modst', 'Staff: Modifier 6', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 6 is worth 1 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
+	createSetting('slot7modst', 'Staff: Modifier 7', 'Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 7 is worth 1 points. ', 'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms');
 
 	//Core Line
 	createSetting('keepcores', 'Cores', 'Auto Heirlooms. Enables in-depth core settings. ', 'boolean', false, null, 'Heirlooms');
@@ -1076,7 +1077,7 @@ function modifyParentNodeUniverseSwap() {
 
 	//C2
 	//Helium Settings
-	modifyParentNode_Initial("novmsc2", radonoff);
+	modifyParentNode_Initial("carmormagic", radonoff);
 	modifyParentNode_Initial("c2table", radonoff);
 	modifyParentNode_Initial("balanceImprobDestack", radonoff);
 	modifyParentNode_Initial("decayStacksToAbandon", radonoff);
@@ -1781,6 +1782,20 @@ function updateATVersion() {
 			Changed the way that Golden Upgrades are purchased, has been moved to the MAZ layout with dropdowns for golden type and how many you want to buy to give you more flexibility on what you\'d like to purchase so those will need setup straight away.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.8') {
+			var settings_List = ['hHDFarmSettings', 'rHDFarmSettings']
+			for (var x = 0; x < settings_List.length; x++) {
+				if (typeof (autoTrimpSettings[settings_List[x]].value[0]) !== 'undefined') {
+					for (var y = 0; y < autoTrimpSettings[settings_List[x]].value.length; y++) {
+						autoTrimpSettings[settings_List[x]].value[y].hdType = 'world';
+					}
+				}
+				saveSettings();
+			}
+			changelog.push("HD Farm now has a HD Type setting to farm different types of HD Ratio. As normal, the different HD Ratio values can be found by mousing over the status display.<br><br>\
+			Map HD Ratio assumes a 100% difficulty world level map.")
+		}
+
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
@@ -2095,10 +2110,8 @@ function updateCustomButtons() {
 
 	//C2
 	!radonon ? turnOn('FinishC2') : turnOff('FinishC2');
-	!radonon ? turnOn('buynojobsc') : turnOff('buynojobsc');
 	!radonon ? turnOn('cfightforever') : turnOff('cfightforever');
 	!radonon ? turnOn('carmormagic') : turnOff('carmormagic');
-	!radonon ? turnOn('novmsc2') : turnOff('novmsc2');
 	!radonon ? turnOn('c2runnerstart') : turnOff('c2runnerstart');
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerportal') : turnOff('c2runnerportal');
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerpercent') : turnOff('c2runnerpercent');
@@ -2863,10 +2876,12 @@ function toggleStatus(update) {
 			<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br>\
 			<b>shouldFarm: </b>\" + shouldFarm +\"<br>\
 			<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
+			<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
 			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\
 			")');
 			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.\
 			<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
+			<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
 			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\
 			")');
 		} else
@@ -2895,7 +2910,10 @@ function toggleRadonStatus(update) {
 	if (update) {
 		if (getPageSetting('Rshowautomapstatus')) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\
+			<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
+			<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
+			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
 		} else
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
@@ -2907,7 +2925,10 @@ function toggleRadonStatus(update) {
 			turnOff('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\
+			<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
+			<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
+			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
 		}
 	}
 	else {

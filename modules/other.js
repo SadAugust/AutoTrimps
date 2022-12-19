@@ -878,7 +878,7 @@ function equalityManagement() {
 					mapsClicked();
 					mapsClicked();
 				}
-				else if (game.global.mapsUnlocked && mapping && currentCell > 0 && type !== 'void' && game.global.titimpLeft === 0) {
+				else if (game.global.mapsUnlocked && mapping && currentCell > 0 && type !== 'void' && (!runningQuest && game.global.titimpLeft === 0)) {
 					mapsClicked();
 					rRunMap();
 				}
@@ -1874,6 +1874,12 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 		<option value='wood'" + ((MAZ == 'wood') ? " selected = 'selected'" : "") + " > Wood</option >\
 		<option value='metal'" + ((MAZ == 'metal') ? " selected = 'selected'" : "") + " > Metal</option >\
 		<option value='science'" + ((MAZ == 'science') ? " selected = 'selected'" : "") + " > Science</option > "
+	}
+
+	if (runType === 'hdType') {
+		dropdown += "<option value='world'" + ((MAZ == 'world') ? " selected='selected'" : "") + ">World</option >\
+		<option value='map'" + ((MAZ == 'map') ? " selected = 'selected'" : "") + " > Map</option >\
+		<option value='void'" + ((MAZ == 'void') ? " selected = 'selected'" : "") + " > Void</option >"
 	}
 
 	if (universe === 1) {

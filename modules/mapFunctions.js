@@ -2598,8 +2598,9 @@ function HDFarm() {
 		var rHDFMapLevel = rHDFSettings.level;
 		var rHDFSpecial = game.global.highestRadonLevelCleared > 83 ? "lmc" : "smc";
 		var rHDFJobRatio = '0,0,1,0';
-		var rHDFMax = game.global.mapBonus != 10 ? 10 : null;
-		var rHDFMin = game.global.mapBonus != 10 ? 0 : null;
+		var hdType = rHDFSettings.hdType;
+		var rHDFMax = hdType === 'world' && game.global.mapBonus != 10 ? 10 : null;
+		var rHDFMin = hdType === 'world' && game.global.mapBonus != 10 ? 0 : null;
 		var rHDFshredMapCap = autoTrimpSettings.rHDFarmDefaultSettings.value.shredMapCap;
 		var rHDFmapCap = autoTrimpSettings.rHDFarmDefaultSettings.value.mapCap;
 
@@ -2618,18 +2619,20 @@ function HDFarm() {
 				rHDFMapLevel = mapAutoLevel;
 			}
 		}
+		let hdRatio = hdType === 'world' ? HDRatio : hdType === 'void' ? voidHDRatio : hdType === 'map' ? mapHDRatio : null;
+		if (hdRatio === null) return farmingDetails;
 
-		if (HDRatio > equipfarmdynamicHD(rHDFIndex))
+		if (hdRatio > equipfarmdynamicHD(rHDFIndex))
 			rShouldHDFarm = true;
 		//Skipping farm if map repeat value is greater than our max maps value
 		if (rShouldHDFarm && game.global.mapsActive && rCurrentMap === mapName && game.global.mapRunCounter >= rHDFmaxMaps) {
 			rShouldHDFarm = false;
 		}
-		if (rCurrentMap !== mapName && equipfarmdynamicHD(rHDFIndex) > HDRatio)
+		if (rCurrentMap !== mapName && equipfarmdynamicHD(rHDFIndex) > hdRatio)
 			rShouldSkip = true;
 
 		if (((rCurrentMap === mapName && !rShouldHDFarm) || rShouldSkip) && HDRatio !== Infinity) {
-			HDRatio = calcHDRatio(game.global.world, 'world');
+			hdRatio = calcHDRatio(game.global.world, hdType);
 			var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
 			if (getPageSetting('rMapRepeatCount') && !rShouldSkip) debug("Equip Farm took " + (game.global.mapRunCounter + mapProg) + " (" + (rHDFMapLevel >= 0 ? "+" : "") + rHDFMapLevel + " " + rHDFSpecial + ")" + (game.global.mapRunCounter + mapProg == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(currTime > 0 ? currTime : getGameTime())) + " to complete on zone " + game.global.world + ". You ended it with a HD Ratio of " + HDRatio.toFixed(2) + ".");
 			if (getPageSetting('rMapRepeatCount') && rShouldSkip) debug("Equip Farm took was skipped on zone " + game.global.world + ". It wanted a HD Ratio of " + equipfarmdynamicHD(rHDFIndex).toFixed(2) + " but you already had a HD Ratio of " + HDRatio.toFixed(2) + ".");
@@ -2647,7 +2650,7 @@ function HDFarm() {
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHDFMapLevel || getCurrentMapObject().bonus !== rHDFSpecial);
 		var status = 'HD&nbsp;Farm&nbsp;to:&nbsp;' + equipfarmdynamicHD(rHDFIndex).toFixed(2) + '<br>\
-		Current&nbsp;HD:&nbsp;' + HDRatio.toFixed(2) + '<br>\
+		Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2) + '<br>\
 		Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + rHDFmaxMaps;
 
 		farmingDetails.shouldRun = rShouldHDFarm;

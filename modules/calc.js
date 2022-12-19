@@ -1154,7 +1154,6 @@ function calcHDRatio(targetZone, type) {
 	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
 
 	var ourBaseDamage = calcOurDmg("avg", universeSetting, false, type, 'maybe', targetZone - game.global.world);
-	//debug(enemyHealth)
 
 	//Lead Challenge
 	if (game.global.challengeActive == "Lead" && targetZone % 2 == 1 && type != "map") {

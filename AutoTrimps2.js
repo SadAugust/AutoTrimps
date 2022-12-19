@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v5.7.5.7.7',
+var ATversion = 'SadAugust v5.7.5.7.8',
 	atscript = document.getElementById('AutoTrimps-script'),
 	basepath = 'https://SadAugust.github.io/AutoTrimps_Local/',
 	modulepath = 'modules/';
@@ -111,6 +111,7 @@ var lastHeliumZone = 0;
 var lastRadonZone = 0;
 var HDRatio = 0;
 var voidHDRatio = 0;
+var mapHDRatio = 0;
 var autoLevel = 0;
 var autoLevelCurrent = 0;
 var rC3EndZoneSetting = -1;
@@ -193,6 +194,7 @@ function mainLoop() {
 	if (oneSecondInterval) {
 		HDRatio = calcHDRatio(game.global.world, 'world');
 		voidHDRatio = calcHDRatio(game.global.world, 'void');
+		mapHDRatio = calcHDRatio(game.global.world, 'map');
 		autoLevel = autoMapLevel();
 	}
 
@@ -442,4 +444,6 @@ function mainCleanup() {
 		radonChallengesSetting();
 	}
 }
-function throwErrorfromMain() { throw new Error("We have successfully read the thrown error message out of the main file") }
+function throwErrorfromMain() {
+	throw new Error("We have successfully read the thrown error message out of the main file")
+}
