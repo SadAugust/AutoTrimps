@@ -224,7 +224,7 @@ function doPortal(challenge) {
 	if (getPageSetting('spendmagmite') == 1) {
 		autoMagmiteSpender();
 	}
-	autoheirlooms3();
+	autoheirlooms();
 	if (getPageSetting('AutoAllocatePerks') == 2 && !game.portal.Looting_II.locked) {
 		viewPortalUpgrades();
 		numTab(6, true)
@@ -493,7 +493,7 @@ function RdoPortal(challenge, daily, c3) {
 	}
 
 	//Identifying if we need to keep any heirlooms before portaling.
-	if (getPageSetting('autoheirlooms') && getPageSetting('typetokeep') != 'None' && getPageSetting('raretokeep') != 'None') autoheirlooms3();
+	if (getPageSetting('autoheirlooms') && getPageSetting('typetokeep') != 'None' && getPageSetting('raretokeep') != 'None') autoheirlooms();
 
 	//Idk why this exists?
 	portalClicked();

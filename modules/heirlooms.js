@@ -12,32 +12,32 @@ function getHeirloomEff(modName, heirloomType, heirloomMods) {
 	return 0;
 }
 
-function evaluateHeirloomMods2(loom, location) {
+function evaluateHeirloomMods(loom, location) {
 
-	const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-	const raretokeep = heirloomType.indexOf(getPageSetting('raretokeep'));
+	const heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+	const raretokeep = heirloomRarity.indexOf(getPageSetting('raretokeep'));
 	const typeToKeep = getPageSetting('typetokeep');
 	const heirloomEquipType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 3 ? 'Core' : 'All';
+	const onlyPerfect = getPageSetting('autoheirloomsperfect')
 
 	var eff = 0;
-	var name;
-	var type;
+	var modName;
+	var heirloomType;
 	var rarity;
 
 	var heirloomLocation = location.includes('Equipped') ? loom = game.global[location] : loom = game.global[location][loom];
+	heirloomType = heirloomLocation.type;
+	rarity = heirloomLocation.rarity;
+	if (rarity !== raretokeep) return 0;
 
 	for (var m in heirloomLocation.mods) {
-		name = heirloomLocation.mods[m][0];
-		type = heirloomLocation.type;
-		rarity = heirloomLocation.rarity;
+		modName = heirloomLocation.mods[m][0];
+		if ((heirloomType === 'Shield' || heirloomType === 'Staff') && onlyPerfect && modName !== "empty" && getHeirloomEff(modName, heirloomRarity, heirloomLocation.mods.length) === 0) return 0;
 
-		if (rarity !== raretokeep) return 0;
-		if (type === 'Shield' && getPageSetting('autoheirloomsperfect') && name !== "empty" && getHeirloomEff(name, type, heirloomLocation.mods.length) === 0) return 0;
-
-		if (type === heirloomEquipType) {
-			eff += getHeirloomEff(name, type, heirloomLocation.mods.length);
+		if (heirloomType === heirloomEquipType || heirloomEquipType === 'All') {
+			eff += getHeirloomEff(modName, heirloomType, heirloomLocation.mods.length);
 		}
-		if (name === "empty") {
+		if (modName === "empty") {
 			eff *= 4;
 		}
 	}
@@ -45,14 +45,15 @@ function evaluateHeirloomMods2(loom, location) {
 }
 
 var worth3 = { 'Shield': [], 'Staff': [], 'Core': [] };
-function worthOfHeirlooms3() {
+
+function worthOfHeirlooms() {
 	worth3 = { 'Shield': [], 'Staff': [], 'Core': [] };
 
 	//Identify heirlooms to be recycled.
 	var recycle = [];
 	for (var index in game.global.heirloomsExtra) {
 		var theLoom = game.global.heirloomsExtra[index];
-		if (!theLoom.protected && evaluateHeirloomMods2(index, 'heirloomsExtra') === 0) {
+		if (!theLoom.protected && evaluateHeirloomMods(index, 'heirloomsExtra') === 0) {
 			recycle.push(index);
 		}
 	}
@@ -68,7 +69,7 @@ function worthOfHeirlooms3() {
 	//Pushing data for remaining heirlooms
 	for (var index in game.global.heirloomsExtra) {
 		var theLoom = game.global.heirloomsExtra[index];
-		var data = { 'location': 'heirloomsExtra', 'index': index, 'rarity': theLoom.rarity, 'eff': evaluateHeirloomMods2(index, 'heirloomsExtra') };
+		var data = { 'location': 'heirloomsExtra', 'index': index, 'rarity': theLoom.rarity, 'eff': evaluateHeirloomMods(index, 'heirloomsExtra') };
 		worth3[theLoom.type].push(data);
 	}
 	var valuesort = function (a, b) { return b.eff - a.eff; };
@@ -84,12 +85,12 @@ function autoheirlooms3() {
 	const typeToKeep = getPageSetting('typetokeep');
 	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 3 ? 'Core' : 'All';
 
-	worthOfHeirlooms3();
+	worthOfHeirlooms();
 
 	//Looping through the heirloom type set in typetokeep setting and stashing them.
 	if (heirloomType !== 'All') {
 		while ((game.global.heirloomsCarried.length < getMaxCarriedHeirlooms()) && game.global.heirloomsExtra.length > 0) {
-			worthOfHeirlooms3();
+			worthOfHeirlooms();
 			if (worth3[heirloomType].length > 0) {
 				var carriedHeirlooms = worth3[heirloomType].shift();
 				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
@@ -102,9 +103,10 @@ function autoheirlooms3() {
 	else if (getPageSetting('typetokeep') == 4) {
 		const heirloomTypes = ['Shield', 'Staff'];
 		if (game.global.universe === 1) heirloomTypes.push('Core');
+
 		while ((game.global.heirloomsCarried.length < getMaxCarriedHeirlooms()) && game.global.heirloomsExtra.length > 0) {
-			worthOfHeirlooms3();
 			for (var x = 0; x < heirloomTypes.length; x++) {
+				worthOfHeirlooms();
 				if (worth3[heirloomTypes[x]].length > 0) {
 					var carriedHeirlooms = worth3[heirloomTypes[x]].shift();
 					selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
