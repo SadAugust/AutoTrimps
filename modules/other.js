@@ -1924,11 +1924,10 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 			if (game.global.totalSquaredReward >= 4500) dropdown += "<option value='Eradicated'" + ((MAZ == 'Eradicated') ? " selected='selected'" : "") + ">Eradicated</option>";
 		}
 		else if (runType === 'runType') {
-			dropdown += "<option value='none'" + ((MAZ == 'none') ? " selected='selected'" : "") + ">None</option>"
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>"
 			dropdown += "<option value='Filler'" + ((MAZ == 'Filler') ? " selected = 'selected'" : "") + " > Filler</option >"
 			dropdown += " <option value='Daily'" + ((MAZ == 'Daily') ? " selected='selected'" : "") + ">Daily</option>"
 			dropdown += "<option value='C3'" + ((MAZ == 'C3') ? " selected='selected'" : "") + ">C2</option>"
-			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>"
 		}
 		else if (runType === 'goldenType') {
 			if (!varPrefix.includes('C3')) dropdown += "<option value='h'" + ((MAZ == 'h') ? " selected='selected'" : "") + ">Helium</option >"
@@ -1982,11 +1981,10 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 			if (highestZone >= 201) dropdown += "<option value='Smithless'" + ((MAZ == 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
 		}
 		else if (runType === 'runType') {
-			dropdown += "<option value='none'" + ((MAZ == 'none') ? " selected='selected'" : "") + ">None</option>"
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>"
 			dropdown += "<option value='Filler'" + ((MAZ == 'Filler') ? " selected = 'selected'" : "") + " > Filler</option >"
 			dropdown += " <option value='Daily'" + ((MAZ == 'Daily') ? " selected='selected'" : "") + ">Daily</option>"
 			dropdown += "<option value='C3'" + ((MAZ == 'C3') ? " selected='selected'" : "") + ">C3</option>"
-			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>"
 		}
 		else if (runType === 'goldenType') {
 			if (!varPrefix.includes('C3')) dropdown += "<option value='r'" + ((MAZ == 'r') ? " selected='selected'" : "") + ">Radon</option >"
