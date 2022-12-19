@@ -734,7 +734,7 @@ function equalityManagement() {
 	var maxEquality = game.portal.Equality.radLevel;
 	if (type === 'void') {
 		voidPBSwap = getPageSetting('RhsVoidSwap') && game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 && fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) && game.global.voidBuff !== 'doubleAttack';
-		if (getPageSetting('RhsVoidSwap')) HeirloomSwapping();
+		if (getPageSetting('RhsVoidSwap')) heirloomSwapping();
 	}
 
 	//Daily modifiers active
