@@ -454,11 +454,11 @@ function remainingHealth(forceMax) {
 		shieldHealth = shieldHealth < 0 ? 0 : shieldHealth;
 	}
 	var remainingHealth = shieldHealth + (!forceMax ? soldierHealth * .33 : soldierHealth);
-	if (game.global.challengeActive == 'Quest' && currQuest() == 8)
+	if ((game.global.challengeActive == 'Quest' && currQuest() == 8) || game.global.challengeActive == 'Bublé')
 		remainingHealth = shieldHealth;
 	if (shieldHealth + soldierHealth == 0) {
 		remainingHealth = game.global.soldierHealthMax + (game.global.soldierEnergyShieldMax * (maxLayers + 1))
-		if (game.global.challengeActive == 'Quest' && currQuest() == 8)
+		if ((game.global.challengeActive == 'Quest' && currQuest() == 8) || game.global.challengeActive == 'Bublé')
 			remainingHealth = game.global.soldierEnergyShieldMax * (maxLayers + 1);
 	}
 
@@ -525,6 +525,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	if (game.global.challengeActive === 'Insanity' && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
 
 	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
+	if (maxLevel > 0 && game.global.highestRadonLevelCleared + 1 < 50) maxLevel = 0;
 	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - game.global.world + 6 : minLevel;
 	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
 	var biome = !biome ? (game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain") : biome;
@@ -653,7 +654,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	//Challenge conditions
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
 	var runningDuel = game.global.challengeActive == 'Duel';
-	var runningQuest = game.global.challengeActive == 'Quest' && currQuest() == 8; //Shield break quest
+	var runningQuest = ((game.global.challengeActive == 'Quest' && currQuest() == 8) || game.global.challengeActive == 'Bublé'); //Shield break quest
 
 	//Initialising name/health/dmg variables
 	//Enemy stats
@@ -720,6 +721,7 @@ function equalityManagement() {
 
 	//Turning off equality scaling
 	game.portal.Equality.scalingActive = false;
+	game.options.menu.alwaysAbandon.enabled = 1;
 	//Misc vars
 	var debugStats = getPageSetting('debugEqualityStats');
 	var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
@@ -751,7 +753,7 @@ function equalityManagement() {
 	var runningUnlucky = game.global.challengeActive == 'Unlucky';
 	var runningDuel = game.global.challengeActive == 'Duel';
 	var runningTrappa = game.global.challengeActive === 'Trappapalooza';
-	var runningQuest = ((game.global.challengeActive == 'Quest' && currQuest() == 8)); //Shield break quest
+	var runningQuest = (game.global.challengeActive == 'Quest' && currQuest() == 8) || game.global.challengeActive == 'Bublé'; //Shield break quest
 	var runningArchaeology = game.global.challengeActive === 'Archaeology';
 	var runningMayhem = game.global.challengeActive === 'Mayhem';
 	var runningBerserk = game.global.challengeActive == 'Berserk';
@@ -872,12 +874,12 @@ function equalityManagement() {
 				break;
 			}
 			else if ((ourHealth < (ourHealthMax * 0.65) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
-				if (game.global.mapsUnlocked && (runningQuest || (!mapping && !runningMayhem))) {
-					mapsClicked(true);
-					mapsClicked(true);
+				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
+					mapsClicked();
+					mapsClicked();
 				}
 				else if (game.global.mapsUnlocked && mapping && currentCell > 0 && type !== 'void' && game.global.titimpLeft === 0) {
-					mapsClicked(true);
+					mapsClicked();
 					rRunMap();
 				}
 				else
