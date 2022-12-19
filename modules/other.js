@@ -873,11 +873,11 @@ function equalityManagement() {
 			}
 			else if ((ourHealth < (ourHealthMax * 0.65) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
 				if (game.global.mapsUnlocked && (runningQuest || (!mapping && !runningMayhem))) {
-					mapsClicked();
-					mapsClicked();
+					mapsClicked(true);
+					mapsClicked(true);
 				}
 				else if (game.global.mapsUnlocked && mapping && currentCell > 0 && type !== 'void' && game.global.titimpLeft === 0) {
-					mapsClicked();
+					mapsClicked(true);
 					rRunMap();
 				}
 				else
