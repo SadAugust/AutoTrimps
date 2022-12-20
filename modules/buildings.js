@@ -13,15 +13,16 @@ function safeBuyBuilding(building, amt) {
 		return false;
 	if (!canAffordBuilding(building, false, false, false, false, amt))
 		return false;
-	if (!canAffordBuilding(building))
-		return false;
 
+	const currBuyAmt = game.global.buyAmt;
 	game.global.firing = false;
 	game.global.buyAmt = amt;
 
 	if (!game.buildings[building].locked && canAffordBuilding(building)) {
 		buyBuilding(building, true, true, amt);
 	}
+
+	game.global.buyAmt = currBuyAmt;
 	if (building != 'Trap') debug('Building ' + amt + ' ' + building + (amt > 1 ? 's' : ''), "buildings", '*hammer2');
 	return true;
 }
