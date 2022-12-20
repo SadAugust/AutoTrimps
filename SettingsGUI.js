@@ -711,8 +711,8 @@ function initializeAllSettings() {
 	createSetting('rPandRespecZone', 'P: Respec Zone', 'The zone you\'d like to start respeccing from.', 'value', '-1', null, 'C3');
 
 	//Glass
-	createSetting('rGlass', 'Glass NYI!', 'Turn this on if you want to enable Glass destacking feautres.', 'boolean', false, null, 'C3');
-	createSetting('rGlassStacks', 'G: Stacks NYI!', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C3');
+	createSetting('rGlass', 'Glass', 'Turn this on if you want to enable Glass destacking feautres.', 'boolean', false, null, 'C3');
+	createSetting('rGlassStacks', 'G: Stacks', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C3');
 
 	//Smithless
 	createSetting('rSmithless', 'Smithless', 'Turn this on if you want to enable AT farming for damage to kill Ubersmiths on the Smithless challenge. It will identify breakpoints that can be reached with max tenacity & max map bonus to figure out how many stacks you are able to obtain from the Ubersmith on your current zone and farm till it reached that point if it\'s attainable.', 'boolean', false, null, 'C3');
@@ -2466,13 +2466,13 @@ function updateCustomButtons() {
 	turnOff('rAlchZone');
 
 	//turnOff('rGlass');
-	radonon ? turnOn('rGlass') : turnOff('rGlass');
-	radonon && getPageSetting('rGlass') ? turnOn('rGlassStacks') : turnOff('rGlassStacks');
+	radonon && (displayAllSettings || highestZone >= 174) ? turnOn('rGlass') : turnOff('rGlass');
+	radonon && getPageSetting('rGlass') && (displayAllSettings || highestZone >= 174) ? turnOn('rGlassStacks') : turnOff('rGlassStacks');
 	//turnOff('rGlassStacks');
 
 	//Smithless
-	radonon ? turnOn('rSmithless') : turnOff('rSmithless');
-	radonon ? turnOn('rWither') : turnOff('rWither');
+	radonon && (displayAllSettings || highestZone >= 200) ? turnOn('rSmithless') : turnOff('rSmithless');
+	radonon && (displayAllSettings || highestZone >= 69) ? turnOn('rWither') : turnOff('rWither');
 
 	//Hypothermia 
 	radonon && (displayAllSettings || highestZone >= 174) ? turnOn('rHypoPopup') : turnOff('rHypoPopup');
