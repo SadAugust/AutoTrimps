@@ -324,7 +324,8 @@ function initializeAllSettings() {
 	//---------------------------------------------------------------------------------------------------------
 
 	//C2
-	createSetting('FinishC2', 'Finish Challenge2', '<b>DONT USE THIS WITH C2 RUNNER</b><br>Finish / Abandon Challenge2 (any) when this zone is reached, if you are running one. For manual use. Recommended: Zones ending with 0 for most Challenge2. Disable with -1. Does not affect Non-Challenge2 runs.', 'value', -1, null, 'C2');
+	createSetting('FinishC2', 'Finish C2', '<b>DONT USE THIS WITH C2 RUNNER</b><br>Finish / Abandon Challenge2 (any) when this zone is reached, if you are running one. For manual use. Recommended: Zones ending with 0 for most Challenge2. Disable with -1. Does not affect Non-Challenge2 runs.', 'value', -1, null, 'C2');
+	createSetting('c2table', 'C2 Table', 'Display your challenge runs in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this challenge is worthwhile. <br><b>Blue</b> = You have not yet done this challenge. ', 'infoclick', 'c2table', null, 'C2');
 	createSetting('cfightforever', 'Tox/Nom Fight Always', 'Sends trimps to fight if they\'re not fighting in the Toxicity and Nom Challenges, regardless of BAF. Essenitally the same as the one in combat, can use either if you wish, except this will only activate in these challenges (duh) ', 'boolean', false, null, 'C2');
 	createSetting('carmormagic', ['C2 Armor Magic Off', 'CAM: Above 80%', 'CAM: H:D', 'CAM: Always'], 'Will buy Armor to try and prevent death on Nom/Tox Challenges under the 3 conditions. <br><b>Above 80%:</b> Will activate at and above 80% of your HZE and when your health is sufficiently low. <br><b>H:D:</b> Will activate at and above the H:D you have defined in maps. <br><b>Always</b> Will activate always. <br>All options will activate at or <b>below 25% of your health.</b> ', 'multitoggle', 0, null, 'C2');
 
@@ -332,7 +333,6 @@ function initializeAllSettings() {
 	createSetting('c2runnerstart', 'C2 Runner', 'Runs the normal C2s in sequence according to difficulty. See C2Table for list. Once zone you have defined has been reached, will portal into next. I will advise you not to touch the challenges (abandoning, doing a different one, etc) if you are running this, it could break it. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
 	createSetting('c2runnerportal', 'C2 Runner Portal', 'Automatically portal AFTER clearing this level in C2 Runner. (ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, 'C2');
 	createSetting('c2runnerpercent', 'C2 Runner %', 'What percent Threshhold you want C2s to be over. E.g 85, will only run C2s with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ', 'value', '85', null, 'C2');
-	createSetting('c2table', 'C2 Table', 'Display your C2s and C3s in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this C2/C3 is worth doing. <br><b>Blue</b> = You have not yet done/unlocked this C2/C3 challenge. ', 'infoclick', 'c2table', null, 'C2');
 
 	//Challenges
 
@@ -669,6 +669,7 @@ function initializeAllSettings() {
 
 	//C3
 	createSetting('c3finishrun', 'Finish C3', 'Finish / Abandon Challenge3 (any) when this zone is reached, if you are running one. Does not affect Non-C3 runs.', 'value', -1, null, 'C3');
+	createSetting('c3table', 'C∞ Table', 'Display your challenge runs in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this challenge is worthwhile. <br><b>Blue</b> = You have not yet done this challenge. ', 'infoclick', 'c2table', null, 'C3');
 	createSetting('c3buildings', 'Building max purchase', 'When in a C3 or special challenge  (Mayhem, Panda) run will spend 99% of resources on buildings regardless of your other designated caps until the zone you specify in the Buy Buildings Till setting.', 'boolean', false, null, 'C3');
 	createSetting('c3buildingzone', 'Buy buildings till', 'When in a C3 or special challenge  (Mayhem, Panda) will spend 99% of resource on buildings until this zone.', 'value', -1, null, 'C3');
 	createSetting('c3GM_ST', ['c3: GM/ST', 'c3: Golden Maps', 'c3: Sharp Trimps', 'c3: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during C3 or special challenge (Mayhem, Pandemonium) runs.', 'multitoggle', 0, null, 'C3');
@@ -1078,7 +1079,7 @@ function modifyParentNodeUniverseSwap() {
 	//C2
 	//Helium Settings
 	modifyParentNode_Initial("carmormagic", radonoff);
-	modifyParentNode_Initial("c2table", radonoff);
+	modifyParentNode_Initial("c2runnerpercent", radonoff);
 	modifyParentNode_Initial("balanceImprobDestack", radonoff);
 	modifyParentNode_Initial("decayStacksToAbandon", radonoff);
 	modifyParentNode_Initial("lifeStacks", radonoff);
@@ -2110,6 +2111,7 @@ function updateCustomButtons() {
 
 	//C2
 	!radonon ? turnOn('FinishC2') : turnOff('FinishC2');
+	!radonon ? turnOn('c2table') : turnOff('c2table');
 	!radonon ? turnOn('cfightforever') : turnOff('cfightforever');
 	!radonon ? turnOn('carmormagic') : turnOff('carmormagic');
 	!radonon ? turnOn('c2runnerstart') : turnOff('c2runnerstart');
@@ -2142,8 +2144,9 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('experience') ? turnOn('experienceEndZone') : turnOff('experienceEndZone');
 	!radonon && getPageSetting('experience') ? turnOn('experienceEndBW') : turnOff('experienceEndBW');
 
-	//C3
+	//C3 
 	radonon ? turnOn('c3finishrun') : turnOff('c3finishrun');
+	radonon ? turnOn('c3table') : turnOff('c3table');
 	radonon && (displayAllSettings || !autoBattle.oneTimers.Expanding_Tauntimp.owned) ? turnOn('c3buildings') : turnOff('c3buildings');
 	radonon && (displayAllSettings || !autoBattle.oneTimers.Expanding_Tauntimp.owned) && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');

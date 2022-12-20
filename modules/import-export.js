@@ -268,234 +268,90 @@ function ImportExportTooltip(what, event, download) {
 		tooltipText = "<img src='" + basepath + "mi.png'>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Thats all the help you get.</div></div>";
 	} else if (what == 'c2table') {
-		var c2list = {
-			Size: {
-				number: 1,
-				percent: getIndividualSquaredReward('Size') + '%',
-				zone: game.c2.Size,
-				percentzone: (100 * (game.c2.Size / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Slow: {
-				number: 2,
-				percent: getIndividualSquaredReward('Slow') + '%',
-				zone: game.c2.Slow,
-				percentzone: (100 * (game.c2.Slow / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Watch: {
-				number: 3,
-				percent: getIndividualSquaredReward('Watch') + '%',
-				zone: game.c2.Watch,
-				percentzone: (100 * (game.c2.Watch / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Discipline: {
-				number: 4,
-				percent: getIndividualSquaredReward('Discipline') + '%',
-				zone: game.c2.Discipline,
-				percentzone: (100 * (game.c2.Discipline / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Balance: {
-				number: 5,
-				percent: getIndividualSquaredReward('Balance') + '%',
-				zone: game.c2.Balance,
-				percentzone: (100 * (game.c2.Balance / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Meditate: {
-				number: 6,
-				percent: getIndividualSquaredReward('Meditate') + '%',
-				zone: game.c2.Meditate,
-				percentzone: (100 * (game.c2.Meditate / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Metal: {
-				number: 7,
-				percent: getIndividualSquaredReward('Metal') + '%',
-				zone: game.c2.Metal,
-				percentzone: (100 * (game.c2.Metal / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Lead: {
-				number: 8,
-				percent: getIndividualSquaredReward('Lead') + '%',
-				zone: game.c2.Lead,
-				percentzone: (100 * (game.c2.Lead / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Nom: {
-				number: 9,
-				percent: getIndividualSquaredReward('Nom') + '%',
-				zone: game.c2.Nom,
-				percentzone: (100 * (game.c2.Nom / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			}, Toxicity: {
-				number: 10,
-				percent: getIndividualSquaredReward('Toxicity') + '%',
-				zone: game.c2.Toxicity,
-				percentzone: (100 * (game.c2.Toxicity / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Electricity: {
-				number: 11,
-				percent: getIndividualSquaredReward('Electricity') + '%',
-				zone: game.c2.Electricity,
-				percentzone: (100 * (game.c2.Electricity / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
 
-			Coordinate: {
-				number: 12,
-				percent: getIndividualSquaredReward('Coordinate') + '%',
-				zone: game.c2.Coordinate,
-				percentzone: (100 * (game.c2.Coordinate / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+		//Adding U1 challenges
+		var highestZone = game.global.highestLevelCleared + 1;
+		const c2array = [];
+		if (highestZone >= 35) c2array.push('Size');
+		if (highestZone >= 130) c2array.push('Slow');
+		if (highestZone >= 180) c2array.push('Watch');
+		if (getTotalPerkResource(true) >= 30) c2array.push('Discipline');
+		if (highestZone >= 40) c2array.push('Balance');
+		if (highestZone >= 45) c2array.push('Meditate');
+		if (highestZone >= 25) c2array.push('Metal');
+		if (highestZone >= 180) c2array.push('Lead');
+		if (highestZone >= 145) c2array.push('Nom');
+		if (highestZone >= 165) c2array.push('Toxicity');
+		if (game.global.prisonClear >= 1) c2array.push('Electricity');
+		if (highestZone >= 120) c2array.push('Coordinate');
+		if (highestZone >= 60) c2array.push('Trimp');
+		if (highestZone >= 425) c2array.push('Obliterated');
+		if (game.global.totalSquaredReward >= 4500) c2array.push('Eradicated');
+		if (highestZone >= 150) c2array.push('Mapology');
+		if (highestZone >= 70) c2array.push('Trapper');
+
+		//Adding U2 challenges
+		var highestZone = game.global.highestRadonLevelCleared + 1;
+		const c3array = [];
+
+		if (highestZone >= 50) c3array.push('Unlucky');
+		if (highestZone >= 50) c3array.push('Unbalance');
+		if (highestZone >= 85) c3array.push('Quest');
+		if (highestZone >= 105) c3array.push('Storm');
+		if (highestZone >= 50) c3array.push('Downsize');
+		if (highestZone >= 50) c3array.push('Transmute');
+		if (highestZone >= 50) c3array.push('Duel');
+		if (highestZone >= 70) c3array.push('Wither');
+		if (highestZone >= 175) c3array.push('Glass');
+		if (highestZone >= 201) c3array.push('Smithless');
+		if (highestZone >= 60) c3array.push('Trappapalooza');
+		if (highestZone >= 115) c3array.push('Berserk');
+
+		challengeList = {}
+
+		for (var x = 0; x < c2array.length; x++) {
+			challengeList[c2array[x]] = {
+				number: (x + 1),
+				percent: getIndividualSquaredReward(c2array[x]) + '%',
+				zone: game.c2[c2array[x]],
+				percentzone: (100 * (game.c2[c2array[x]] / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
 				color: 0
-			},
-			Trimp: {
-				number: 13,
-				percent: getIndividualSquaredReward('Trimp') + '%',
-				zone: game.c2.Trimp,
-				percentzone: (100 * (game.c2.Trimp / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Obliterated: {
-				number: 14,
-				percent: getIndividualSquaredReward('Obliterated') + '%',
-				zone: game.c2.Obliterated,
-				percentzone: (100 * (game.c2.Obliterated / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Eradicated: {
-				number: 15,
-				percent: getIndividualSquaredReward('Eradicated') + '%',
-				zone: game.c2.Eradicated,
-				percentzone: (100 * (game.c2.Eradicated / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Mapology: {
-				number: 16,
-				percent: getIndividualSquaredReward('Mapology') + '%',
-				zone: game.c2.Mapology,
-				percentzone: (100 * (game.c2.Mapology / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Trapper: {
-				number: 17,
-				percent: getIndividualSquaredReward('Trapper') + '%',
-				zone: game.c2.Trapper,
-				percentzone: (100 * (game.c2.Trapper / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			C3s: {
+			}
+		}
+		if (c3array.length > 0) {
+			challengeList.C3s = {
 				number: 'Difficulty',
-				percent: '%C3',
+				percent: 'C3 %',
 				zone: 'Zone',
 				percentzone: '%HZE',
 				color: 0
-			},
-			Unbalance: {
-				number: 18,
-				percent: getIndividualSquaredReward('Unbalance') + '%',
-				zone: game.c2.Unbalance,
-				percentzone: (100 * (game.c2.Unbalance / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Unlucky: {
-				number: 19,
-				percent: getIndividualSquaredReward('Unlucky') + '%',
-				zone: game.c2.Unlucky,
-				percentzone: (100 * (game.c2.Unlucky / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Duel: {
-				number: 20,
-				percent: getIndividualSquaredReward('Duel') + '%',
-				zone: game.c2.Duel,
-				percentzone: (100 * (game.c2.Duel / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Storm: {
-				number: 21,
-				percent: getIndividualSquaredReward('Storm') + '%',
-				zone: game.c2.Storm,
-				percentzone: (100 * (game.c2.Storm / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Transmute: {
-				number: 22,
-				percent: getIndividualSquaredReward('Transmute') + '%',
-				zone: game.c2.Transmute,
-				percentzone: (100 * (game.c2.Transmute / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Quest: {
-				number: 23,
-				percent: getIndividualSquaredReward('Quest') + '%',
-				zone: game.c2.Quest,
-				percentzone: (100 * (game.c2.Quest / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Downsize: {
-				number: 24,
-				percent: getIndividualSquaredReward('Downsize') + '%',
-				zone: game.c2.Downsize,
-				percentzone: (100 * (game.c2.Downsize / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Trappapalooza: {
-				number: 25,
-				percent: getIndividualSquaredReward('Trappapalooza') + '%',
-				zone: game.c2.Trappapalooza,
-				percentzone: (100 * (game.c2.Trappapalooza / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Berserk: {
-				number: 26,
-				percent: getIndividualSquaredReward('Berserk') + '%',
-				zone: game.c2.Berserk,
-				percentzone: (100 * (game.c2.Berserk / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Wither: {
-				number: 27,
-				percent: getIndividualSquaredReward('Wither') + '%',
-				zone: game.c2.Wither,
-				percentzone: (100 * (game.c2.Wither / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Glass: {
-				number: 28,
-				percent: getIndividualSquaredReward('Glass') + '%',
-				zone: game.c2.Glass,
-				percentzone: (100 * (game.c2.Glass / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
-			},
-			Smithless: {
-				number: 29,
-				percent: getIndividualSquaredReward('Smithless') + '%',
-				zone: game.c2.Smithless,
-				percentzone: (100 * (game.c2.Smithless / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
-				color: 0
 			}
 
-		};
-		function c2listcolor() {
+			for (var x = 0; x < c3array.length; x++) {
+				challengeList[c3array[x]] = {
+					number: (x + 1),
+					percent: getIndividualSquaredReward(c3array[x]) + '%',
+					zone: game.c2[c3array[x]],
+					percentzone: (100 * (game.c2[c3array[x]] / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+					color: 0
+				}
+			}
+		}
+		function challengeListcolor() {
 			function a(b, c, d) {
 				var e = 100 * (game.c2[b] / (game.global.highestLevelCleared + 1));
-				c2list[b].color = e >= c ? "LIMEGREEN" : e < c && e >= d ? "GOLD" : e < d && 1 <= e ? "#de0000" : "DEEPSKYBLUE"
+				challengeList[b].color = e >= c ? "LIMEGREEN" : e < c && e >= d ? "GOLD" : e < d && 1 <= e ? "#de0000" : "DEEPSKYBLUE"
 			}
-			Object.keys(c2list).forEach(function (b) {
+			Object.keys(challengeList).forEach(function (b) {
 				null != game.c2[b] && ("Coordinate" === b ? a(b, 45, 38) : "Trimp" === b ? a(b, 45, 35) : "Obliterated" === b ? a(b, 25, 20) : "Eradicated" === b ? a(b, 14, 10) : "Mapology" === b ? a(b, 90, 80) : "Trapper" === b ? a(b, 85, 75) : a(b, 95, 85))
 			})
 		}
-		function Rc2listcolor() {
+		function c3listcolor() {
 			function a(b, c, d) {
 				var e = 100 * (game.c2[b] / (game.global.highestRadonLevelCleared + 1));
-				c2list[b].color = e >= c ? "LIMEGREEN" : e < c && e >= d ? "GOLD" : e < d && 1 <= e ? "#de0000" : "DEEPSKYBLUE";
+				challengeList[b].color = e >= c ? "LIMEGREEN" : e < c && e >= d ? "GOLD" : e < d && 1 <= e ? "#de0000" : "DEEPSKYBLUE";
 			}
-			Object.keys(c2list).forEach(function (b) {
+			Object.keys(challengeList).forEach(function (b) {
 				if (game.c2[b] != null) {
 					if (b == "Unbalance")
 						a(b, 90, 80);
@@ -524,297 +380,41 @@ function ImportExportTooltip(what, event, download) {
 				}
 			});
 		}
-		c2listcolor();
-		Rc2listcolor();
+		challengeListcolor();
+		c3listcolor();
 		tooltipText = `<div class='litScroll'>
-    <table class='bdTableSm table table-striped'>
-        <tbody>
-            <tr>
-                <td>Name</td>
-                <td>Difficulty</td>
-                <td>%C2</td>
-                <td>Zone</td>
-                <td>%HZE</td>
-            </tr>
-            <tr>
-                <td>Size</td>
-                <td>` + c2list.Size.number + `</td>
-                <td>` + c2list.Size.percent + `</td>
-                <td>` + c2list.Size.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Size.color + `>` + c2list.Size.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Slow</td>
-                <td>` + c2list.Slow.number + `</td>
-                <td>` + c2list.Slow.percent + `</td>
-                <td>` + c2list.Slow.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Slow.color + `>` + c2list.Slow.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Watch</td>
-                <td>` + c2list.Watch.number + `</td>
-                <td>` + c2list.Watch.percent + `</td>
-                <td>` + c2list.Watch.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Watch.color + `>` + c2list.Watch.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Discipline</td>
-                <td>` + c2list.Discipline.number + `</td>
-                <td>` + c2list.Discipline.percent + `</td>
-                <td>` + c2list.Discipline.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Discipline.color + `>` + c2list.Discipline.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Balance</td>
-                <td>` + c2list.Balance.number + `</td>
-                <td>` + c2list.Balance.percent + `</td>
-                <td>` + c2list.Balance.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Balance.color + `>` + c2list.Balance.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Meditate</td>
-                <td>` + c2list.Meditate.number + `</td>
-                <td>` + c2list.Meditate.percent + `</td>
-                <td>` + c2list.Meditate.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Meditate.color + `>` + c2list.Meditate.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Metal</td>
-                <td>` + c2list.Metal.number + `</td>
-                <td>` + c2list.Metal.percent + `</td>
-                <td>` + c2list.Metal.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Metal.color + `>` + c2list.Metal.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Lead</td>
-                <td>` + c2list.Lead.number + `</td>
-                <td>` + c2list.Lead.percent + `</td>
-                <td>` + c2list.Lead.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Lead.color + `>` + c2list.Lead.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Nom</td>
-                <td>` + c2list.Nom.number + `</td>
-                <td>` + c2list.Nom.percent + `</td>
-                <td>` + c2list.Nom.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Nom.color + `>` + c2list.Nom.percentzone + `
-                </td>
-            </tr>
-            <tr>
-				<td>Toxicity</td>
-                <td>` + c2list.Toxicity.number + `</td>
-                <td>` + c2list.Toxicity.percent + `</td>
-                <td>` + c2list.Toxicity.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Toxicity.color + `>` + c2list.Toxicity.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Electricity</td>
-                <td>` + c2list.Electricity.number + `</td>
-                <td>` + c2list.Electricity.percent + `</td>
-                <td>` + c2list.Electricity.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Electricity.color + `>` + c2list.Electricity.percentzone + `
-                </td>
-            </tr>
-            <tr>
-            <tr>
-                <td>Coordinate</td>
-                <td>` + c2list.Coordinate.number + `</td>
-                <td>` + c2list.Coordinate.percent + `</td>
-                <td>` + c2list.Coordinate.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Coordinate.color + `>` + c2list.Coordinate.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Trimp</td>
-                <td>` + c2list.Trimp.number + `</td>
-                <td>` + c2list.Trimp.percent + `</td>
-                <td>` + c2list.Trimp.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Trimp.color + `>` + c2list.Trimp.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Obliterated</td>
-                <td>` + c2list.Obliterated.number + `</td>
-                <td>` + c2list.Obliterated.percent + `</td>
-                <td>` + c2list.Obliterated.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Obliterated.color + `>` + c2list.Obliterated.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Eradicated</td>
-                <td>` + c2list.Eradicated.number + `</td>
-                <td>` + c2list.Eradicated.percent + `</td>
-                <td>` + c2list.Eradicated.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Eradicated.color + `>` + c2list.Eradicated.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Mapology</td>
-                <td>` + c2list.Mapology.number + `</td>
-                <td>` + c2list.Mapology.percent + `</td>
-                <td>` + c2list.Mapology.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Mapology.color + `>` + c2list.Mapology.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Trapper</td>
-                <td>` + c2list.Trapper.number + `</td>
-                <td>` + c2list.Trapper.percent + `</td>
-                <td>` + c2list.Trapper.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Trapper.color + `>` + c2list.Trapper.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>C3s</td>
-                <td>Difficulty</td>
-                <td>%C3</td>
-                <td>Zone</td>
-                <td>%HZE</td>
-            </tr>
-            <tr>
-                <td>Unbalance</td>
-                <td>` + c2list.Unbalance.number + `</td>
-                <td>` + c2list.Unbalance.percent + `</td>
-                <td>` + c2list.Unbalance.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Unbalance.color + `>` + c2list.Unbalance.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Unlucky</td>
-                <td>` + c2list.Unlucky.number + `</td>
-                <td>` + c2list.Unlucky.percent + `</td>
-                <td>` + c2list.Unlucky.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Unlucky.color + `>` + c2list.Unlucky.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Duel</td>
-                <td>` + c2list.Duel.number + `</td>
-                <td>` + c2list.Duel.percent + `</td>
-                <td>` + c2list.Duel.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Duel.color + `>` + c2list.Duel.percentzone + `
-                </td>
-            </tr>
-	    <tr>
-                <td>Storm</td>
-                <td>` + c2list.Storm.number + `</td>
-                <td>` + c2list.Storm.percent + `</td>
-                <td>` + c2list.Storm.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Storm.color + `>` + c2list.Storm.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Transmute</td>
-                <td>` + c2list.Transmute.number + `</td>
-                <td>` + c2list.Transmute.percent + `</td>
-                <td>` + c2list.Transmute.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Transmute.color + `>` + c2list.Transmute.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Quest</td>
-                <td>` + c2list.Quest.number + `</td>
-                <td>` + c2list.Quest.percent + `</td>
-                <td>` + c2list.Quest.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Quest.color + `>` + c2list.Quest.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Downsize</td>
-                <td>` + c2list.Downsize.number + `</td>
-                <td>` + c2list.Downsize.percent + `</td>
-                <td>` + c2list.Downsize.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Downsize.color + `>` + c2list.Downsize.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Trappapalooza</td>
-                <td>` + c2list.Trappapalooza.number + `</td>
-                <td>` + c2list.Trappapalooza.percent + `</td>
-                <td>` + c2list.Trappapalooza.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Trappapalooza.color + `>` + c2list.Trappapalooza.percentzone + `
-                </td>
-            </tr>
-	    	<tr>
-                <td>Berserk</td>
-                <td>` + c2list.Berserk.number + `</td>
-                <td>` + c2list.Berserk.percent + `</td>
-                <td>` + c2list.Berserk.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Berserk.color + `>` + c2list.Berserk.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Wither</td>
-                <td>` + c2list.Wither.number + `</td>
-                <td>` + c2list.Wither.percent + `</td>
-                <td>` + c2list.Wither.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Wither.color + `>` + c2list.Wither.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Glass</td>
-                <td>` + c2list.Glass.number + `</td>
-                <td>` + c2list.Glass.percent + `</td>
-                <td>` + c2list.Glass.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Glass.color + `>` + c2list.Glass.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Smithless</td>
-                <td>` + c2list.Smithless.number + `</td>
-                <td>` + c2list.Smithless.percent + `</td>
-                <td>` + c2list.Smithless.zone + `</td>
-                <td bgcolor='black'>
-                    <font color=` + c2list.Smithless.color + `>` + c2list.Smithless.percentzone + `
-                </td>
-            </tr>
-            <tr>
-                <td>Total</td>
-                <td> </td>
-                <td>` + game.global.totalSquaredReward + `%</td>
-                <td> </td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
-</div>`;
+    	<table class='bdTableSm table table-striped'>
+       		<tbody>
+            	<tr>
+                	<td>Name</td>
+                	<td>Difficulty</td>
+                	<td>C2 %</td>
+                	<td>Zone</td>
+                	<td>%HZE</td>
+            	</tr>
+`
+		for (var x = 0; x < Object.keys(challengeList).length; x++) {
+			if (x === 12) tooltipText += '<tr>'
+			tooltipText += `<tr>
+					<td>` + Object.keys(challengeList)[x] + `</td>
+					<td>` + challengeList[Object.keys(challengeList)[x]].number + `</td>
+					<td>` + challengeList[Object.keys(challengeList)[x]].percent + `</td>
+					<td>` + challengeList[Object.keys(challengeList)[x]].zone + `</td>
+					<td bgcolor='black'>
+						<font color=` + challengeList[Object.keys(challengeList)[x]].color + `>` + challengeList[Object.keys(challengeList)[x]].percentzone + `
+					</td>
+				</tr>`
+		}
+		tooltipText += `<tr>
+					<td>Total</td>
+					<td> </td>
+					<td>` + game.global.totalSquaredReward + `%</td>
+					<td> </td>
+					<td></td>
+            	</tr>
+			</tbody>
+		</table>
+	</div> `;
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
 	} else if (what == 'ReadSettingsProfiles') {
 		titleText = '<b>Loading New AutoTrimps Profile...</b><p>Current Settings will be lost';
