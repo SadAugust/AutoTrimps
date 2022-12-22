@@ -27,11 +27,17 @@ function armydeath() {
 }
 
 function autoRoboTrimp() {
-	if (!(0 < game.global.roboTrimpCooldown) && game.global.roboTrimpLevel) {
-		var a = parseInt(getPageSetting("AutoRoboTrimp")); 0 == a ||
-			game.global.world >= a && !game.global.useShriek && (magnetoShriek(), MODULES.other.enableRoboTrimpSpam &&
-				debug("Activated Robotrimp MagnetoShriek Ability @ z" + game.global.world, "graphs", "*podcast"))
+	if (game.global.roboTrimpLevel === 0) return;
+	if (game.global.roboTrimpCooldown !== 0) return;
+	if (getPageSetting("AutoRoboTrimp") > game.global.world) return;
+
+	var shouldShriek = (game.global.world - parseInt(getPageSetting("AutoRoboTrimp"))) % 5 === 0;
+	if (shouldShriek) {
+		magnetoShriek();
+		debug("Activated Robotrimp MagnetoShriek Ability @ z" + game.global.world, "graphs", "*podcast")
 	}
+	else
+		if (game.global.useShriek) magnetoShriek();
 }
 
 function buyWeps() {
@@ -83,7 +89,6 @@ function findLastBionicWithItems(bionicPool) {
 		return;
 	if (game.global.challengeActive === 'Mapology' && !getPageSetting('mapology')) return;
 	const targetPrestige = game.global.challengeActive === 'Mapology' ? autoTrimpSettings['mapologyPrestige'].selected : 'GambesOP';
-
 
 	if (bionicPool.length > 1) {
 		bionicPool.sort(function (bionicA, bionicB) { return bionicA.level - bionicB.level });
@@ -1677,9 +1682,17 @@ function PresetSwapping(preset) {
 	loadPerkPreset();
 }
 
+function downloadSave() {
+	const universePrefix = game.global.universe === 2 ? 'R' : ''
+	if (!getPageSetting(universePrefix + 'downloadSaves')) return
+
+	tooltip('Export', null, 'update');
+	document.getElementById("downloadLink").click();
+}
+
 function hypoPackratReset(challenge) {
 
-	if (challenge == 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.packrat) {
+	if (challenge === 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.packrat) {
 		toggleRemovePerks();
 		numTab(6, true);
 		buyPortalUpgrade('Packrat');
@@ -1691,10 +1704,11 @@ function hypoPackratReset(challenge) {
 	}
 }
 
-function AllocatePerks() {
+function allocatePerks() {
 	if (!game.global.portalActive) return;
-	if (getPageSetting('RAutoAllocatePerks') === 0) return;
-	var allocatePerk = getPageSetting('RAutoAllocatePerks') == 1 ? 'Looting' : getPageSetting('RAutoAllocatePerks') == 2 ? 'Greed' : getPageSetting('RAutoAllocatePerks') == 3 ? 'Motivation' : null;
+	if (portalUniverse === 1 && getPageSetting('AutoAllocatePerks') !== 2) return;
+	if (portalUniverse === 2 && getPageSetting('RAutoAllocatePerks') === 0) return;
+	var allocatePerk = portalUniverse === 1 ? 'Looting_II' : getPageSetting('RAutoAllocatePerks') == 1 ? 'Looting' : getPageSetting('RAutoAllocatePerks') == 2 ? 'Greed' : getPageSetting('RAutoAllocatePerks') == 3 ? 'Motivation' : null;
 	if (allocatePerk !== null) {
 		numTab(6, true)
 		buyPortalUpgrade(allocatePerk);
@@ -1772,6 +1786,7 @@ function dailyModifiersOutput() {
 
 function dailyModiferReduction() {
 	if (game.global.challengeActive !== 'Daily') return 0;
+	if (game.global.universe === 1) return 0;
 	var dailyMods = dailyModifiersOutput().split('<br>')
 	dailyMods.length = dailyMods.length - 1;
 	var dailyReduction = 0;
