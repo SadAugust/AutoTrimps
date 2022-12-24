@@ -1817,7 +1817,7 @@ function updateATVersion() {
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.9') {
 			changelog.push("Have completely redone the portal code, should work the exact same except to cancel out of a C3 using the 'C3 Finish' setting is now mandatory, AT will no longer autoportal with a c2/c3 active.<br>\
-			Have added C2 runner to U2. An extra column has been added to the C2 Table to show which challenges C2 runner can run in both universes. It can run the easy challenges that don't require much intervention so hopefully that can help when updating C3s!")
+			Have added C2 runner to U2. An extra column has been added to the C2 Table to show which challenges C2 runner can run in each universe. It can run the easy challenges that don't require much intervention so hopefully that can help when updating C3s!")
 		}
 
 
