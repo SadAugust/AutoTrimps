@@ -92,7 +92,7 @@ function firstGiga(forced) {
 	const s = !(getPageSetting('CustomDeltaFactor') > 20);
 	const a = game.buildings.Warpstation.owned >= 2;
 	const b = !canAffordCoordinationTrimps() || game.global.world >= 230 && !canAffordTwoLevel(game.upgrades.Coordination);
-	const c = s || !enoughHealth || !enoughDamage;
+	const c = s || currentMap === 'HD Farm';
 	const d = s || game.global.mapBonus >= 2 || game.global.mapBonus >= getPageSetting('MaxMapBonuslimit') || game.global.mapBonus >= maxHealthMaps;
 	if (!forced && !(a && b && c && d)) return false;
 

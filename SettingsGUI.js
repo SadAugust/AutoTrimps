@@ -25,16 +25,6 @@ function automationMenuInit() {
 
 	newContainer = document.createElement("DIV");
 	newContainer.setAttribute("style", "display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
-	if (game.global.universe == 1) {
-		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDRatio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
-	}
-	if (game.global.universe == 2) {
-		newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\
-		<b>H:D ratio = </b>\" + prettify(HDRatio) + \"<br>\
-		<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
-		<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
-
-	}
 	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
 	abutton = document.createElement("SPAN");
 	abutton.id = 'autoMapStatus';
@@ -100,7 +90,6 @@ function initializeAllTabs() {
 	createTabs("Raiding", "Raiding - Settings for Raiding");
 	createTabs("Daily", "Dailies - Settings for Dailies");
 	createTabs("C2", "C2 - Settings for C2s");
-	createTabs("C3", "C3 - Settings for C3s and special challenges (Mayhem, Pandemonium)");
 	createTabs("Challenges", "Challenges - Settings for Specific Challenges");
 	createTabs("Combat", "Combat & Stance Settings");
 	createTabs("Windstacking", "Windstacking Settings");
@@ -153,8 +142,56 @@ function initializeAllTabs() {
 initializeAllTabs();
 
 function initializeAllSettings() {
+	['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience']
+	var highestZone = game.global.highestLevelCleared + 1;
+	var heliumChallenges = ["Off", "Helium Per Hour"];
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 40) heliumChallenges.push("Balance");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 55) heliumChallenges.push("Decay");
+	if (getPageSetting('rDisplayAllSettings') || game.global.prisonClear >= 1) heliumChallenges.push("Electricity");
+	if (getPageSetting('rDisplayAllSettings') || highestZone > 110) heliumChallenges.push("Life");
+	if (getPageSetting('rDisplayAllSettings') || highestZone > 125) heliumChallenges.push("Crushed");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 145) heliumChallenges.push("Nom");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 165) heliumChallenges.push("Toxicity");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) heliumChallenges.push("Watch");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) heliumChallenges.push("Lead");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 190) heliumChallenges.push("Corrupted");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 215) heliumChallenges.push("Domination");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 600) heliumChallenges.push("Experience");
+	heliumChallenges.push("Custom");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 65) heliumChallenges.push("Challenge 2");
 
-	var highestZone = game.global.highestRadonLevelCleared;
+	var heliumHourChallenges = ["None"];
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 40) heliumHourChallenges.push("Balance");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 55) heliumHourChallenges.push("Decay");
+	if (getPageSetting('rDisplayAllSettings') || game.global.prisonClear >= 1) heliumHourChallenges.push("Electricity");
+	if (getPageSetting('rDisplayAllSettings') || highestZone > 110) heliumHourChallenges.push("Life");
+	if (getPageSetting('rDisplayAllSettings') || highestZone > 125) heliumHourChallenges.push("Crushed");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 145) heliumHourChallenges.push("Nom");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 165) heliumHourChallenges.push("Toxicity");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) heliumHourChallenges.push("Watch");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) heliumHourChallenges.push("Lead");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 190) heliumHourChallenges.push("Corrupted");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 215) heliumHourChallenges.push("Domination");
+
+	var challenge2 = ["None"];
+	if (getPageSetting('rDisplayAllSettings') || getTotalPerkResource(true) >= 30) challenge2.push("Discipline");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 25) challenge2.push("Metal");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 35) challenge2.push("Size");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 40) challenge2.push("Balance");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 45) challenge2.push("Meditate");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 60) challenge2.push("Trimp");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 70) challenge2.push("Trapper");
+	if (getPageSetting('rDisplayAllSettings') || game.global.prisonClear >= 1) challenge2.push("Electricity");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 120) challenge2.push("Coordinate");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 130) challenge2.push("Slow");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 145) challenge2.push("Nom");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 150) challenge2.push("Mapology");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 165) challenge2.push("Toxicity");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) challenge2.push("Watch");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) challenge2.push("Lead");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 425) challenge2.push("Obliterated");
+	if (getPageSetting('rDisplayAllSettings') || game.global.totalSquaredReward >= 4500) challenge2.push("Eradicated");
+
 	//Core
 
 	//Helium Core
@@ -169,14 +206,16 @@ function initializeAllSettings() {
 	createSetting('fastallocate', 'Fast Allocate', 'Turn on if your helium is above 500Qa. Not recommended for low amounts of helium. ', 'boolean', false, null, 'Core');
 	createSetting('TrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core');
 
-	createSetting('AutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Helium Per Hour only <b>portals at cell 1</b> of the first level where your He/Hr went down even slightly compared to the current runs Best He/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting He/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Helium Per Hour', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience', 'Custom'], 'Core');
-	createSetting('HeliumHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience'], 'Core');
+	createSetting('AutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Helium Per Hour only <b>portals at cell 1</b> of the first level where your He/Hr went down even slightly compared to the current runs Best He/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting He/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', heliumChallenges, 'Core');
+	createSetting('HeliumHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', heliumHourChallenges, 'Core');
+	createSetting('HeliumC2Challenge', 'Challenge', 'Automatically portal into this challenge when using \'Challenge 2\' portal option on autoportal. Portals on the zone specified in \'Custom Portal\'. Must end the challenges with the \'Finish C2\' setting in the C2 tab if you want to run the challenge multiple times.', 'dropdown', 'None', challenge2, 'Core');
 	document.getElementById("HeliumHourChallengeLabel").innerHTML = "Portal Challenge:";
 	createSetting('CustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('HeHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Helium per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in helium/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Helium per Hour set)', 'value', '999', null, 'Core');
 	createSetting('HeliumHrBuffer', 'He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
 	createSetting('downloadSaves', 'Download Saves', 'Will automatically download saves whenever AutoTrimps portals.', 'boolean', false, null, 'Core');
 
+	var highestZone = game.global.highestRadonLevelCleared;
 	var radonChallenges = ["Off", "Radon Per Hour"];
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 39) radonChallenges.push("Bublé");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 54) radonChallenges.push("Melt");
@@ -201,41 +240,19 @@ function initializeAllSettings() {
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 154) radonHourChallenges.push("Alchemy");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) radonHourChallenges.push("Hypothermia");
 
-	var radonChallenge3 = ["None"];
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 14) radonChallenge3.push("Unlucky");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 19) radonChallenge3.push("Downsize");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) radonChallenge3.push("Transmute");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 34) radonChallenge3.push("Unbalance");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 44) radonChallenge3.push("Duel");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 59) radonChallenge3.push("Trappapalooza");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 69) radonChallenge3.push("Wither");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 84) radonChallenge3.push("Quest");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 104) radonChallenge3.push("Storm");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 114) radonChallenge3.push("Berserk");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) radonChallenge3.push("Glass");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 200) radonChallenge3.push("Smithless");
-
-	var radonBiome = ["Random"];
-	radonBiome.push("Mountain");
-	radonBiome.push("Forest");
-	radonBiome.push("Sea");
-	radonBiome.push("Depths");
-	if (getPageSetting('rDisplayAllSettings') || game.global.decayDone) radonBiome.push("Gardens");
-	if (getPageSetting('rDisplayAllSettings') || game.global.farmlandsUnlocked) radonBiome.push("Farmlands");
-
-	var radonSpecial = ["0"];
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 14) radonSpecial.push('fa');
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 14) radonSpecial.push("lc");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) radonSpecial.push('ssc');
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) radonSpecial.push('swc');
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) radonSpecial.push('smc');
-	if (getPageSetting('rDisplayAllSettings') || game.global.ArchaeologyDone) radonSpecial.push('src');
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 54) radonSpecial.push('p');
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 64) radonSpecial.push('hc');
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 84) radonSpecial.push('lsc');
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 84) radonSpecial.push('lwc');
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 84) radonSpecial.push('lmc');
-	if (getPageSetting('rDisplayAllSettings') || game.global.ArchaeologyDone) radonSpecial.push('lrc');
+	var challenge3 = ["None"];
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 14) challenge3.push("Unlucky");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 19) challenge3.push("Downsize");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) challenge3.push("Transmute");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 34) challenge3.push("Unbalance");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 44) challenge3.push("Duel");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 59) challenge3.push("Trappapalooza");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 69) challenge3.push("Wither");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 84) challenge3.push("Quest");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 104) challenge3.push("Storm");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 114) challenge3.push("Berserk");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) challenge3.push("Glass");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 200) challenge3.push("Smithless");
 
 
 	//Radon Core
@@ -248,7 +265,7 @@ function initializeAllSettings() {
 	//Radon Portal
 	createSetting('RAutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Radon Per Hour only <b>portals at cell 1</b> of the first level where your Rn/Hr went down even slightly compared to the current runs Best Rn/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting Rn/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', radonChallenges, 'Core');
 	createSetting('RadonHourChallenge', 'Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal. Custom portals on the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', radonHourChallenges, 'Core');
-	createSetting('RadonC3Challenge', 'Challenge', 'Automatically portal into this challenge when using \'Challenge 3\' portal option on autoportal. Custom portals on the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', radonChallenge3, 'Core');
+	createSetting('RadonC3Challenge', 'Challenge', 'Automatically portal into this challenge when using \'Challenge 3\' portal option on autoportal. Portals on the zone specified in \'Custom Portal\'. Must end the challenges with the \'Finish C3\' setting in the C3 tab if you want to run the challenge multiple times.', 'dropdown', 'None', challenge3, 'Core');
 	createSetting('RCustomAutoPortal', 'Custom Portal', 'Automatically portal at this zone. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('rCustomDailyAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone when a daily is available. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Core');
 	createSetting('RnHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Radon per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in radon/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Radon per Hour set)', 'value', '999', null, 'Core');
@@ -328,10 +345,9 @@ function initializeAllSettings() {
 	createSetting('c2table', 'C2 Table', 'Display your challenge runs in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this challenge is worthwhile. <br><b>Blue</b> = You have not yet done this challenge. ', 'infoclick', 'c2table', null, 'C2');
 	createSetting('cfightforever', 'Tox/Nom Fight Always', 'Sends trimps to fight if they\'re not fighting in the Toxicity and Nom Challenges, regardless of BAF. Essenitally the same as the one in combat, can use either if you wish, except this will only activate in these challenges (duh) ', 'boolean', false, null, 'C2');
 	createSetting('carmormagic', ['C2 Armor Magic Off', 'CAM: Above 80%', 'CAM: H:D', 'CAM: Always'], 'Will buy Armor to try and prevent death on Nom/Tox Challenges under the 3 conditions. <br><b>Above 80%:</b> Will activate at and above 80% of your HZE and when your health is sufficiently low. <br><b>H:D:</b> Will activate at and above the H:D you have defined in maps. <br><b>Always</b> Will activate always. <br>All options will activate at or <b>below 25% of your health.</b> ', 'multitoggle', 0, null, 'C2');
-
 	//C2 Runner
 	createSetting('c2runnerstart', 'C2 Runner', 'Runs the normal C2s in sequence according to difficulty. See C2Table for list. Once zone you have defined has been reached, will portal into next. I will advise you not to touch the challenges (abandoning, doing a different one, etc) if you are running this, it could break it. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
-	createSetting('c2runnerportal', 'C2 Runner Portal', 'Automatically portal AFTER clearing this level in C2 Runner. (ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, 'C2');
+	createSetting('c2runnerportal', 'C2 Runner Portal', 'Automatically portal when this level is reached in C2 Runner. Set to 0 or -1 to disable.', 'value', '-1', null, 'C2');
 	createSetting('c2runnerpercent', 'C2 Runner %', 'What percent Threshhold you want C2s to be over. E.g 85, will only run C2s with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ', 'value', '85', null, 'C2');
 
 	//Challenges
@@ -668,57 +684,62 @@ function initializeAllSettings() {
 	//--------------------------------------------------------------
 
 	//C3
-	createSetting('c3finishrun', 'Finish C3', 'Finish / Abandon Challenge3 (any) when this zone is reached, if you are running one. Does not affect Non-C3 runs.', 'value', -1, null, 'C3');
-	createSetting('c3table', 'C∞ Table', 'Display your challenge runs in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this challenge is worthwhile. <br><b>Blue</b> = You have not yet done this challenge. ', 'infoclick', 'c2table', null, 'C3');
-	createSetting('c3buildings', 'Building max purchase', 'When in a C3 or special challenge  (Mayhem, Panda) run will spend 99% of resources on buildings regardless of your other designated caps until the zone you specify in the Buy Buildings Till setting.', 'boolean', false, null, 'C3');
-	createSetting('c3buildingzone', 'Buy buildings till', 'When in a C3 or special challenge  (Mayhem, Panda) will spend 99% of resource on buildings until this zone.', 'value', -1, null, 'C3');
-	createSetting('c3GM_ST', ['c3: GM/ST', 'c3: Golden Maps', 'c3: Sharp Trimps', 'c3: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during C3 or special challenge (Mayhem, Pandemonium) runs.', 'multitoggle', 0, null, 'C3');
+	createSetting('FinishC3', 'Finish C3', 'Finish / Abandon Challenge3 (any) when this zone is reached, if you are running one. Does not affect Non-C3 runs.', 'value', -1, null, 'C2');
+	createSetting('c3table', 'C∞ Table', 'Display your challenge runs in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this challenge is worthwhile. <br><b>Blue</b> = You have not yet done this challenge. ', 'infoclick', 'c2table', null, 'C2');
+	createSetting('c3buildings', 'Building max purchase', 'When in a C3 or special challenge  (Mayhem, Panda) run will spend 99% of resources on buildings regardless of your other designated caps until the zone you specify in the Buy Buildings Till setting.', 'boolean', false, null, 'C2');
+	createSetting('c3buildingzone', 'Buy buildings till', 'When in a C3 or special challenge  (Mayhem, Panda) will spend 99% of resource on buildings until this zone.', 'value', -1, null, 'C2');
+	createSetting('c3GM_ST', ['c3: GM/ST', 'c3: Golden Maps', 'c3: Sharp Trimps', 'c3: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during C3 or special challenge (Mayhem, Pandemonium) runs.', 'multitoggle', 0, null, 'C2');
+
+	//C2 Runner
+	createSetting('c3runnerstart', 'C3 Runner', 'Runs the normal C3s in sequence according to difficulty. See C2Table for list. Once zone you have defined has been reached, will portal into next. I will advise you not to touch the challenges (abandoning, doing a different one, etc) if you are running this, it could break it. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
+	createSetting('c3runnerportal', 'C3 Runner Portal', 'Automatically portal when this level is reached in C3 Runner.', 'value', '-1', null, 'C2');
+	createSetting('c3runnerpercent', 'C3 Runner %', 'What percent Threshhold you want C3s to be over. E.g 85, will only run C3s with HZE% below this number. Default is 85%. Must have a value set for C3 Runner to... well, run. ', 'value', '85', null, 'C2');
 
 	//Unbalance
-	createSetting('rUnbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C3');
-	createSetting('rUnbalanceZone', 'U: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C3');
-	createSetting('rUnbalanceStacks', 'U: Stacks', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C3');
-	createSetting('rUnbalanceImprobDestack', 'U: Improbability Destack', 'Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone', 'boolean', false, null, 'C3');
+	createSetting('rUnbalance', 'Unbalance', 'Turn this on if you want to enable Unbalance destacking feautres.', 'boolean', false, null, 'C2');
+	createSetting('rUnbalanceZone', 'U: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C2');
+	createSetting('rUnbalanceStacks', 'U: Stacks', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C2');
+	createSetting('rUnbalanceImprobDestack', 'U: Improbability Destack', 'Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone', 'boolean', false, null, 'C2');
 
 	//Trappapalooza
-	createSetting('rTrappa', 'Trappa', 'Turn this on if you want to enable Trappa feautres.', 'boolean', false, null, 'C3');
-	createSetting('rTrappaCoords', 'T: Coords', 'The zone you would like to stop buying additional coordinations at.', 'value', -1, null, 'C3');
+	createSetting('rTrappa', 'Trappa', 'Turn this on if you want to enable Trappa feautres.', 'boolean', false, null, 'C2');
+	createSetting('rTrappaCoords', 'T: Coords', 'The zone you would like to stop buying additional coordinations at.', 'value', -1, null, 'C2');
 
 	//Quest
-	createSetting('rQuest', 'Quest', 'Turn this on if you want AT to automate Quests. Will only function properly with AutoMaps enabled.', 'boolean', true, null, 'C3');
-	createSetting('rQuestSmithyZone', 'Q: Smithy Zone', 'The zone you\'ll stop your Quest run at (will assume 85 for non C3 version). Will calculate the smithies required for Quests and purchase spare ones if possible.', 'value', [999], null, 'C3');
+	createSetting('rQuest', 'Quest', 'Turn this on if you want AT to automate Quests. Will only function properly with AutoMaps enabled.', 'boolean', true, null, 'C2');
+	createSetting('rQuestSmithyZone', 'Q: Smithy Zone', 'The zone you\'ll stop your Quest run at (will assume 85 for non C3 version). Will calculate the smithies required for Quests and purchase spare ones if possible.', 'value', [999], null, 'C2');
 
 	//Mayhem
-	createSetting('rMayhem', 'Mayhem', 'Turn on Mayhem settings. ', 'boolean', false, null, 'C3');
-	createSetting('rMayhemDestack', 'M: HD Ratio', 'What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Mayhem stacks remaining to clear. ', 'value', '-1', null, 'C3');
-	createSetting('rMayhemZone', 'M: Zone', 'What zone you\'d like to start destacking from, can be used in conjunction with \'M: HD Ratio\' but will clear stacks until 0 are remaining regardless of the value set in \'M: HD Ratio\'.', 'value', '-1', null, 'C3');
-	createSetting('rMayhemMapIncrease', 'M: Map Increase', 'Will increase the map level of Mayhem farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.<br>This setting will make it so that AT doesn\'t check if you can afford the new map level so beware it could cause some issues.', 'value', '-1', null, 'C3');
+	createSetting('rMayhem', 'Mayhem', 'Turn on Mayhem settings. ', 'boolean', false, null, 'C2');
+	createSetting('rMayhemDestack', 'M: HD Ratio', 'What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Mayhem stacks remaining to clear. ', 'value', '-1', null, 'C2');
+	createSetting('rMayhemZone', 'M: Zone', 'What zone you\'d like to start destacking from, can be used in conjunction with \'M: HD Ratio\' but will clear stacks until 0 are remaining regardless of the value set in \'M: HD Ratio\'.', 'value', '-1', null, 'C2');
+	createSetting('rMayhemMapIncrease', 'M: Map Increase', 'Will increase the map level of Mayhem farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.<br>This setting will make it so that AT doesn\'t check if you can afford the new map level so beware it could cause some issues.', 'value', '-1', null, 'C2');
 
 	//Storm
-	createSetting('Rstormon', 'Storm', 'Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ', 'boolean', false, null, 'C3');
-	createSetting('rStormZone', 'S: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C3');
-	createSetting('rStormStacks', 'S: Stacks', 'The amount of stack you have to reach before clearing all of them.', 'value', -1, null, 'C3');
+	createSetting('Rstormon', 'Storm', 'Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ', 'boolean', false, null, 'C2');
+	createSetting('rStormZone', 'S: Zone', 'Which zone you would like to start destacking from.', 'value', [6], null, 'C2');
+	createSetting('rStormStacks', 'S: Stacks', 'The amount of stack you have to reach before clearing all of them.', 'value', -1, null, 'C2');
 
 	//Pandemonium
-	createSetting('RPandemoniumOn', 'Pandemonium', 'Turn on Pandemonium settings.', 'boolean', false, null, 'C3');
-	createSetting('RPandemoniumZone', 'P: Destack Zone', 'What zone to start Pandemonium mapping at. Will ignore Pandemonium stacks below this zone.', 'value', '-1', null, 'C3');
-	createSetting('RPandemoniumAutoEquip', ['P: AutoEquip Off', 'P: AutoEquip', 'P AE: LMC', 'P AE: Huge Cache'], '<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.<br><br/><b>P AE: LMC Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache<br/>Will also purchase prestiges when they cost less than a Jestimp proc. Additionally will override worker settings to ensure that you farm as much metal as possible.<br/><br><b>P AE: Huge Cache</b><br>Uses the same settings as \'P: AE LMC\' but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure fast farming speed.<br/><br/><b>P AE: Jestimp</b><br/>Provides a setting for Jestimp farming from a set zone which will change the equipment buying condition from if they cost less than a huge cache to if they cost less than the metal you\'d gain from a Jestimp kill. <br/>Recommended to only use the later part of Pandemonium runs as it will increase farming time by a drastic amount.', 'multitoggle', 0, null, 'C3');
-	createSetting('RPandemoniumAEZone', 'P AE: Zone', 'Which zone you would like to start farming as much gear as possible from.', 'value', '-1', null, 'C3');
-	createSetting('PandemoniumFarmLevel', 'P AE: Map Level', 'The map level for farming Large Metal & Huge Caches.', 'value', '1', null, 'C3');
-	createSetting('RhsPandStaff', 'P: Staff', 'The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.', 'textValue', 'undefined', null, 'C3');
-	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'C3');
-	createSetting('rPandRespec', 'P: Respec', 'Turn this on to automate respeccing during Pandemonium. Be warned that this will spend bones to purchase bone portals if one is not available. <br><br>Will only function properly if the Pandemonium AutoEquip and destacking settings are all setup appropriately.<br><br>The respeccing will use the games preset system and will use Preset 2 for your destacking perk spec and Preset 3 for your farming perk spec.', 'boolean', false, null, 'C3');
-	createSetting('rPandRespecZone', 'P: Respec Zone', 'The zone you\'d like to start respeccing from.', 'value', '-1', null, 'C3');
+	createSetting('RPandemoniumOn', 'Pandemonium', 'Turn on Pandemonium settings.', 'boolean', false, null, 'C2');
+	createSetting('RPandemoniumZone', 'P: Destack Zone', 'What zone to start Pandemonium mapping at. Will ignore Pandemonium stacks below this zone.', 'value', '-1', null, 'C2');
+	createSetting('RPandemoniumAutoEquip', ['P: AutoEquip Off', 'P: AutoEquip', 'P AE: LMC', 'P AE: Huge Cache'], '<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.<br><br/><b>P AE: LMC Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache<br/>Will also purchase prestiges when they cost less than a Jestimp proc. Additionally will override worker settings to ensure that you farm as much metal as possible.<br/><br><b>P AE: Huge Cache</b><br>Uses the same settings as \'P: AE LMC\' but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure fast farming speed.', 'multitoggle', 0, null, 'C2');
+	createSetting('RPandemoniumAEZone', 'P AE: Zone', 'Which zone you would like to start farming as much gear as possible from.', 'value', '-1', null, 'C2');
+	createSetting('PandemoniumFarmLevel', 'P AE: Map Level', 'The map level for farming Large Metal & Huge Caches.', 'value', '1', null, 'C2');
+	createSetting('RhsPandStaff', 'P: Staff', 'The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.', 'textValue', 'undefined', null, 'C2');
+	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'C2');
+	createSetting('rPandRespec', 'P: Respec', 'Turn this on to automate respeccing during Pandemonium. Be warned that this will spend bones to purchase bone portals if one is not available. <br><br>Will only function properly if the Pandemonium AutoEquip and destacking settings are all setup appropriately.<br><br>The respeccing will use the games preset system and will use Preset 2 for your destacking perk spec and Preset 3 for your farming perk spec.', 'boolean', false, null, 'C2');
+	createSetting('rPandRespecZone', 'P: Respec Zone', 'The zone you\'d like to start respeccing from.', 'value', '-1', null, 'C2');
 
 	//Glass
-	createSetting('rGlass', 'Glass', 'Turn this on if you want to enable Glass destacking feautres.', 'boolean', false, null, 'C3');
-	createSetting('rGlassStacks', 'G: Stacks', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C3');
+	createSetting('rGlass', 'Glass', 'Turn this on if you want to enable automating Glass damage farming & destacking feautres.', 'boolean', false, null, 'C2');
+	createSetting('rGlassStacks', 'G: Stacks', 'The amount of stack you have to reach before clearing them.', 'value', -1, null, 'C2');
 
 	//Smithless
-	createSetting('rSmithless', 'Smithless', 'Turn this on if you want to enable AT farming for damage to kill Ubersmiths on the Smithless challenge. It will identify breakpoints that can be reached with max tenacity & max map bonus to figure out how many stacks you are able to obtain from the Ubersmith on your current zone and farm till it reached that point if it\'s attainable.', 'boolean', false, null, 'C3');
+	createSetting('rSmithless', 'Smithless', 'Turn this on if you want to enable AT farming for damage to kill Ubersmiths on the Smithless challenge. It will identify breakpoints that can be reached with max tenacity & max map bonus to figure out how many stacks you are able to obtain from the Ubersmith on your current zone and farm till it reached that point if it\'s attainable.', 'boolean', false, null, 'C2');
 
 	//Wither
-	createSetting('rWither', 'Wither', 'Turn this on if you want to enable AT farming until you can 4 shot your current world cell on Wither.', 'boolean', false, null, 'C3');
+	createSetting('rWither', 'Wither', 'Turn this on if you want to enable AT farming until you can 4 shot your current world cell on Wither.', 'boolean', false, null, 'C2');
 
 	//--------------------------------------------------------------
 
@@ -1070,9 +1091,6 @@ function modifyParentNodeUniverseSwap() {
 	//ATGA
 	//Helium Settings
 	modifyParentNode_Initial("ATGA2timer", radonoff);
-	//modifyParentNode_Initial("ATGA2timerzt", radonoff);
-	//modifyParentNode_Initial("dsATGA2timer", radonoff);
-	//modifyParentNode_Initial("dhATGA2timer", radonoff);
 	//Radon Settings
 	//None!
 
@@ -1093,6 +1111,7 @@ function modifyParentNodeUniverseSwap() {
 	//None!
 	//Radon Settings
 	modifyParentNode_Initial("c3GM_ST", radonon);
+	modifyParentNode_Initial("c3runnerpercent", radonon);
 	modifyParentNode_Initial("rUnbalanceImprobDestack", radonon);
 	modifyParentNode_Initial("rTrappaCoords", radonon);
 	modifyParentNode_Initial("rQuestSmithyZone", radonon);
@@ -1493,7 +1512,6 @@ function settingChanged(id) {
 
 	updateCustomButtons();
 	saveSettings();
-	checkPortalSettings();
 }
 
 function updateButtonText() {
@@ -1797,6 +1815,11 @@ function updateATVersion() {
 			Map HD Ratio assumes a 100% difficulty world level map.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.9') {
+			changelog.push("Have completely redone the portal code, should work the exact same except to cancel out of a C3 using the 'C3 Finish' setting is now mandatory, AT will no longer autoportal with a c2/c3 active.<br>\
+			Have added C2 runner to U2. It can run the easy challenges that don't require much intervention (Unlucky, Unbalance, Quest, Storm, Downsize, Duel, Smithless) so hopefully that can help when updating C3s!")
+		}
+
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
@@ -1884,7 +1907,6 @@ function autoSetValue(id, negative, multi) {
 	else
 		document.getElementById(id).innerHTML = ranstring + ': ' + "<span class='icomoon icon-infinity'></span>";
 	saveSettings();
-	checkPortalSettings();
 }
 
 function autoSetText(id) {
@@ -1900,7 +1922,6 @@ function autoSetText(id) {
 		document.getElementById(id).innerHTML = ranstring + ': ' + textVal;
 	}
 	saveSettings();
-	checkPortalSettings();
 }
 
 function autoToggle(what) {
@@ -1979,6 +2000,15 @@ function updateCustomButtons() {
 	var radonon = getPageSetting('radonsettings') == 1;
 	var legacysettings = getPageSetting('radonsettings') == 2;
 
+	//Swapping name and description of C2 tab when Radon is toggled on.
+	if (radonon) {
+		document.getElementById("C2").children[0].children[0].innerHTML = 'C3 - Settings for C3s and special challenges (Mayhem, Pandemonium)'
+		document.getElementById("tabC2").children[0].innerHTML = 'C3'
+	}
+	else {
+		document.getElementById("C2").children[0].children[0].innerHTML = 'Settings for C2s';
+		document.getElementById("tabC2").children[0].innerHTML = 'C2'
+	}
 	//Tabs
 	if (document.getElementById("tabBuildings") != null) {
 		document.getElementById("tabBuildings").style.display = radonon ? "none" : "";
@@ -2010,12 +2040,6 @@ function updateCustomButtons() {
 	if (document.getElementById("tabNature") != null) {
 		document.getElementById("tabNature").style.display = radonon ? "none" : "";
 	}
-	if (document.getElementById("tabC2") != null) {
-		document.getElementById("tabC2").style.display = radonon ? "none" : "";
-	}
-	if (document.getElementById("tabC3") != null) {
-		document.getElementById("tabC3").style.display = !radonon ? "none" : radonon && (!displayAllSettings && highestZone < 49) ? "none" : "";
-	}
 	if (document.getElementById("tabChallenges") != null) {
 		document.getElementById("tabChallenges").style.display = !radonon ? "none" : "";
 	}
@@ -2038,13 +2062,13 @@ function updateCustomButtons() {
 
 	//Portal
 	!radonon ? turnOn('AutoPortal') : turnOff('AutoPortal');
-	var downloadSaves = autoTrimpSettings.AutoPortal.selected != 'Off';
-	(!radonon && autoTrimpSettings.AutoPortal.selected == 'Custom') ? turnOn('CustomAutoPortal') : turnOff('CustomAutoPortal');
+	(!radonon && (autoTrimpSettings.AutoPortal.selected == 'Custom' || autoTrimpSettings.AutoPortal.selected == 'Challenge 2')) ? turnOn('CustomAutoPortal') : turnOff('CustomAutoPortal');
 	var heHr = (autoTrimpSettings.AutoPortal.selected == 'Helium Per Hour');
 	!radonon && (heHr || autoTrimpSettings.AutoPortal.selected == 'Custom') ? turnOn('HeliumHourChallenge') : turnOff('HeliumHourChallenge');
+	!radonon && (autoTrimpSettings.AutoPortal.selected == 'Challenge 2') ? turnOn('HeliumC2Challenge') : turnOff('HeliumC2Challenge');
 	!radonon && (heHr) ? turnOn('HeHrDontPortalBefore') : turnOff('HeHrDontPortalBefore');
 	!radonon && (heHr) ? turnOn('HeliumHrBuffer') : turnOff('HeliumHrBuffer');
-	!radonon && downloadSaves ? turnOn('downloadSaves') : turnOff('downloadSaves');
+	!radonon ? turnOn('downloadSaves') : turnOff('downloadSaves');
 
 	//RCore
 	radonon ? turnOn('RManualGather2') : turnOff('RManualGather2');
@@ -2055,7 +2079,6 @@ function updateCustomButtons() {
 
 	//RPortal
 	radonon ? turnOn('RAutoPortal') : turnOff('RAutoPortal');
-	var RdownloadSaves = autoTrimpSettings.RAutoPortal.selected != 'Off';
 	(radonon && (autoTrimpSettings.RAutoPortal.selected == 'Custom' || autoTrimpSettings.RAutoPortal.selected == 'Challenge 3')) ? turnOn('RCustomAutoPortal') : turnOff('RCustomAutoPortal');
 	radonon && getPageSetting('RAutoStartDaily') && autoTrimpSettings.RAutoPortal.selected == 'Custom' ? turnOn('rCustomDailyAutoPortal') : turnOff('rCustomDailyAutoPortal');
 	var rnHr = (autoTrimpSettings.RAutoPortal.selected == 'Radon Per Hour');
@@ -2064,7 +2087,7 @@ function updateCustomButtons() {
 
 	radonon && (rnHr) ? turnOn('RnHrDontPortalBefore') : turnOff('RnHrDontPortalBefore');
 	radonon && (rnHr) ? turnOn('RadonHrBuffer') : turnOff('RadonHrBuffer');
-	radonon && RdownloadSaves ? turnOn('RdownloadSaves') : turnOff('RdownloadSaves');
+	radonon ? turnOn('RdownloadSaves') : turnOff('RdownloadSaves');
 
 	//Daily
 	!radonon ? turnOn('buyheliumy') : turnOff('buyheliumy');
@@ -2087,7 +2110,7 @@ function updateCustomButtons() {
 
 	//DPortal
 	!radonon ? turnOn('AutoStartDaily') : turnOff('AutoStartDaily');
-	!radonon ? turnOn('u2daily') : turnOff('u2daily');
+	!radonon && highestZone >= 29 ? turnOn('u2daily') : turnOff('u2daily');
 	!radonon ? turnOn('AutoPortalDaily') : turnOff('AutoPortalDaily');
 	!radonon && getPageSetting('AutoPortalDaily') > 0 ? turnOn('dHeliumHourChallenge') : turnOff('dHeliumHourChallenge');
 	!radonon && getPageSetting('AutoPortalDaily') == 2 ? turnOn('dCustomAutoPortal') : turnOff('dCustomAutoPortal');
@@ -2145,11 +2168,15 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('experience') ? turnOn('experienceEndBW') : turnOff('experienceEndBW');
 
 	//C3 
-	radonon ? turnOn('c3finishrun') : turnOff('c3finishrun');
+	radonon ? turnOn('FinishC3') : turnOff('FinishC3');
 	radonon ? turnOn('c3table') : turnOff('c3table');
 	radonon && (displayAllSettings || !autoBattle.oneTimers.Expanding_Tauntimp.owned) ? turnOn('c3buildings') : turnOff('c3buildings');
 	radonon && (displayAllSettings || !autoBattle.oneTimers.Expanding_Tauntimp.owned) && getPageSetting('c3buildings') ? turnOn('c3buildingzone') : turnOff('c3buildingzone');
 	radonon ? turnOn('c3GM_ST') : turnOff('c3GM_ST');
+
+	radonon ? turnOn('c3runnerstart') : turnOff('c3runnerstart');
+	radonon && getPageSetting('c3runnerstart') ? turnOn('c3runnerportal') : turnOff('c3runnerportal');
+	radonon && getPageSetting('c3runnerstart') ? turnOn('c3runnerpercent') : turnOff('c3runnerpercent');
 
 	//Buildings
 	turnOff('BuyBuildingsNew');
@@ -2288,7 +2315,7 @@ function updateCustomButtons() {
 	turnOff('rVoidMapZone');
 
 	radonon ? turnOn('rMapRepeatCount') : turnOff('rMapRepeatCount');
-	radonon ? turnOn('automateSpireAssault') : turnOff('automateSpireAssault');
+	turnOff('automateSpireAssault');
 	radonon ? turnOn('debugStats') : turnOff('debugStats');
 
 	//Tribute Farming
@@ -2453,7 +2480,6 @@ function updateCustomButtons() {
 	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RPandemoniumAEZone') : turnOff('RPandemoniumAEZone');
 	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('PandemoniumFarmLevel') : turnOff('PandemoniumFarmLevel');
 	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('RhsPandStaff') : turnOff('RhsPandStaff');
-	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && autoBattle.oneTimers.Mass_Hysteria.owned ? turnOn('RhsPandJestFarmShield') : turnOff('RhsPandJestFarmShield');
 
 	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 ? turnOn('rPandRespec') : turnOff('rPandRespec');
 	radonon && (displayAllSettings || (highestZone >= 149 && pandCompletions < 25) || currentChallenge === 'Pandemonium') && getPageSetting('RPandemoniumOn') && getPageSetting('RPandemoniumAutoEquip') > 1 && getPageSetting('rPandRespec') ? turnOn('rPandRespecZone') : turnOff('rPandRespecZone');
@@ -2703,9 +2729,6 @@ function updateCustomButtons() {
 	if (game.global.universe == 2)
 		document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings.RAutoMaps.value);
 
-	if (game.global.universe == 1 && getPageSetting('DisableFarm') <= 0)
-		shouldFarm = false;
-
 	if (document.getElementById('Prestige').selectedIndex > 11 && !game.global.slowDone) {
 		document.getElementById('Prestige').selectedIndex = 11;
 		autoTrimpSettings.Prestige.selected = "Bestplate";
@@ -2741,24 +2764,6 @@ function updateCustomButtons() {
 			}
 		}
 	}
-}
-
-function checkPortalSettings() {
-	var result = findOutCurrentPortalLevel();
-	var portalLevel = result.level;
-	var leadCheck = result.lead;
-	if (portalLevel == -1)
-		return portalLevel;
-	var voidmaps = 0;
-	if (game.global.challengeActive != "Daily") {
-		voidmaps = getPageSetting('VoidMaps');
-	}
-	if (game.global.challengeActive == "Daily") {
-		voidmaps = getPageSetting('dVoidMaps');
-	}
-	if (voidmaps >= portalLevel)
-		tooltip('confirm', null, 'update', 'WARNING: Your void maps are set to complete after your autoPortal, and therefore will not be done at all! Please Change Your Settings Now. This Box Will Not Go away Until You do. Remember you can choose \'Custom\' autoPortal along with challenges for complete control over when you portal. <br><br> Estimated autoPortal level: ' + portalLevel, 'cancelTooltip()', 'Void Maps Conflict');
-	return portalLevel;
 }
 
 function settingUniverse(setting) {
@@ -2876,13 +2881,6 @@ function toggleStatus(update) {
 		if (getPageSetting('showautomapstatus')) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.\
-			<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br>\
-			<b>shouldFarm: </b>\" + shouldFarm +\"<br>\
-			<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
-			<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
-			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\
-			")');
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.\
 			<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
 			<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
 			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\
@@ -2903,7 +2901,11 @@ function toggleStatus(update) {
 		if (game.global.universe == 2) {
 			turnOn('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDRatio()  + \"<br>\<b>Free void = </b>\" + (game.permaBoneBonuses.voidMaps.tracker/10) + "/10" + \"<br>\")');
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.\
+			<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
+			<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
+			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\
+			")');
 		}
 	}
 	saveSettings();
@@ -2913,10 +2915,11 @@ function toggleRadonStatus(update) {
 	if (update) {
 		if (getPageSetting('Rshowautomapstatus')) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\
-			<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.\
+			<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
 			<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
-			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
+			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\
+			")');
 		} else
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
@@ -2927,11 +2930,11 @@ function toggleRadonStatus(update) {
 		if (game.global.universe == 2) {
 			turnOff('autoMapStatus')
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in.<br>\'H:D ratio\' means EnemyHealth to YourDamage Ratio.<br>When Auto Equality is toggled to \'Advanced\' it will factor in the equality required for the zone too.<p>\<br>\
-			<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
+			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.\
+			<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
 			<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
-			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\")');
+			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\
+			")');
 		}
 	}
 	else {

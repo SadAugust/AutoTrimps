@@ -22,8 +22,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 	if (event == 'AutoJobs') {
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Job Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>The left side of this window is dedicated to jobs that are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. You can use any number larger than 0.</p><p><b>Farmers Until:</b> Stops buying Farmers from this zone. The Tribute & Worshipper farm settings override this setting and hire farmers during them.</p><p><b>No Lumberjacks Post MP:</b> Stops buying Lumberjacks after Melting Point has been run. The Smithy Farm setting will override this setting.</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 		var percentJobs = ["Explorer"];
-		if (game.global.universe == 1 && game.global.highestLevelCleared > 2) percentJobs.push("Trainer");
-		if (game.global.universe == 1 && game.global.highestLevelCleared > 229) percentJobs.push("Magmamancer");
+		if (game.global.universe == 1) percentJobs.push("Trainer");
+		if (game.global.universe == 1 && game.global.highestLevelCleared >= 229) percentJobs.push("Magmamancer");
 		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 29) percentJobs.push("Meteorologist");
 		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) percentJobs.push("Worshipper");
 		var ratioJobs = ["Farmer", "Lumberjack", "Miner"];
@@ -1273,8 +1273,16 @@ function saveATAutoJobsConfig() {
 	ATsetting.value = setting;
 
 	//Adding in jobs that are locked so that there won't be any issues later on
-	//Meteorologist
+	if (game.global.universe === 1) {
+		//Magmamancer
+		if (game.global.highestLevelCleared < 229) {
+			autoTrimpSettings.hJobSettingsArray.value.Magmamancer = {};
+			autoTrimpSettings.hJobSettingsArray.value.Magmamancer.enabled = true;
+			autoTrimpSettings.hJobSettingsArray.value.Magmamancer.percent = 100;
+		}
+	}
 	if (game.global.universe === 2) {
+		//Meteorologist
 		if (game.global.highestRadonLevelCleared < 29) {
 			autoTrimpSettings.rJobSettingsArray.value.Meteorologist = {};
 			autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled = true;

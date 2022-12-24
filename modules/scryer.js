@@ -1,4 +1,33 @@
 var wantToScry = false;
+var transitionRequired = false;
+
+function scryingCorruption() {
+	//Defines if it should be scrying vs corrupted enemies at this moment
+	var minZoneOK = game.global.world >= getPageSetting('ScryerMinZone');
+	var maxZoneOK = game.global.world < getPageSetting('ScryerMaxZone') || getPageSetting('ScryerMaxZone') < 1;
+	var scryZone = minZoneOK && maxZoneOK || getPageSetting('onlyminmaxworld') >= 2;
+	var scryCorrupt = scryZone && getPageSetting('ScryerSkipCorrupteds2') != 0 || getPageSetting('ScryerSkipCorrupteds2') == 1;
+	var essenceLeft = getPageSetting('screwessence') == false || countRemainingEssenceDrops() >= 1;
+	var die = getPageSetting('ScryerDieZ') != -1 && game.global.world >= getPageSetting('ScryerDieZ')
+	return (die || scryCorrupt) && essenceLeft && getPageSetting('UseScryerStance') == true;
+}
+
+function readyToSwitch(stance = "S") {
+	//Suicide to Scry
+	var essenceLeft = getPageSetting('screwessence') == false || countRemainingEssenceDrops() >= 1;
+	var die = getPageSetting('ScryerDieZ') != -1 && game.global.world >= getPageSetting('ScryerDieZ') && essenceLeft;
+	var willSuicide = getPageSetting('ScryerDieZ');
+
+	//Check if we are allowed to suicide in our current cell and zone
+	if (die && willSuicide >= 0) {
+		var [dieZ, dieC] = willSuicide.toString().split(".");
+		if (dieC && dieC.length == 1) dieC = dieC + "0";
+		die = game.global.world >= dieZ && (!dieC || (game.global.lastClearedCell + 1 >= dieC));
+	}
+
+	return die || survive(stance, 2);
+}
+
 function useScryerStance() {
 	var scry = 4;
 	if (game.global.uberNature == "Wind" && getEmpowerment() != "Wind") {

@@ -10,19 +10,7 @@ var lastMapWeWereIn = null;
 var runningPrestigeMaps = false;
 
 //Map Repeats! - Can prolly be consolidated into 1 setting???????
-var rMFMapRepeats = 0;
-var rTrFMapRepeats = 0;
-var rSFMapRepeats = [0, 0, 0];
-var smithyMapCount = [0, 0, 0];
-var rWFMapRepeats = 0;
-var rMBMapRepeats = 0;
-var rMayhemMapRepeats = 0;
-var rIFMapRepeats = 0;
-var rPandemoniumMapRepeats = 0;
-var rAFMapRepeats = 0;
-var rHFMapRepeats = 0;
-var rSmithlessMapRepeats = 0;
-var rHDFMapRepeats = 0;
+var mapRepeats = 0;
 var vanillaMAZ = false;
 
 function runSelectedMap(mapId, madAdjective) {
@@ -47,9 +35,9 @@ function updateAutoMapsStatus(get) {
 	//Setting up status
 	if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
 	else if (vanillaMAZ) status = 'Vanilla MAZ';
-	else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void') status = getCurrentMapObject().name;
+	else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && (currentMap !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness')) status = getCurrentMapObject().name;
 	else if (game.global.challengeActive == "Mapology" && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
-	else if (rCurrentMap !== '') status = rMapSettings.status;
+	else if (currentMap !== '') status = rMapSettings.status;
 	else if (getPageSetting('SkipSpires') == 1 && isDoingSpire()) status = 'Skipping Spire';
 	//Advancing
 	else status = 'Advancing';
@@ -79,15 +67,14 @@ function autoMap() {
 		rBSRunningAtlantrimp = false;
 	}
 
-	if (game.global.mapsActive && (getCurrentMapObject().name == 'Trimple Of Doom' || getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle') || rBSRunningAtlantrimp) {
+	if (game.global.mapsActive && getCurrentMapObject() !== undefined && (getCurrentMapObject().name === 'Trimple Of Doom' || getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Melting Point' || getCurrentMapObject().name === 'Frozen Castle') || rBSRunningAtlantrimp) {
 		if (game.global.repeatMap) repeatClicked();
 		return;
 	}
 
 	//Failsafes
 	if (!game.global.mapsUnlocked || calcOurDmg("avg", 0, false, 'world') <= 0 || currQuest() === 8 || currQuest() === 9) {
-		if (game.global.preMapsActive)
-			mapsClicked();
+		if (game.global.preMapsActive) mapsClicked();
 		return;
 	}
 
@@ -170,12 +157,12 @@ function autoMap() {
 	}
 
 	//New Mapping Organisation!
-	rShouldMap = rMapSettings.shouldRun;
-	rCurrentMap = rShouldMap ? rMapSettings.mapName : '';
+	const rShouldMap = rMapSettings.shouldRun;
+	currentMap = rShouldMap ? rMapSettings.mapName : '';
 	rAutoLevel = rMapSettings.autoLevel ? rMapSettings.mapLevel : Infinity;
 
 	//Farming & resetting variables.
-	var dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1;
+	var dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
 
 	//Uniques
 	let highestMap = null;
@@ -196,11 +183,12 @@ function autoMap() {
 		} else if (map.noRecycle && game.global.challengeActive != "Insanity") {
 			if (runUniques && shouldRunUniqueMap(map)) {
 				selectedMap = map.id;
+				if (currTime === 0) currTime = getGameTime();
 			}
 			if (map.location === "Bionic") {
 				bionicPool.push(map);
 			}
-			if (map.location === 'Void' && rShouldMap && rCurrentMap === 'rVoidMap') {
+			if (map.location === 'Void' && rShouldMap && currentMap === 'Void Map') {
 				voidMap = selectEasierVoidMap(voidMap, map);
 			}
 		}
@@ -208,11 +196,11 @@ function autoMap() {
 
 	//Telling AT to create a map or setting void map as map to be run.
 	if (selectedMap === 'world' && rShouldMap) {
-		if (rCurrentMap !== '') {
+		if (currentMap !== '') {
 			mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 			if (voidMap) selectedMap = voidMap.id;
-			else if (rCurrentMap === 'rPrestige') selectedMap = "prestigeRaid";
-			else if (rCurrentMap === 'BionicRaiding') selectedMap = "bionicRaid";
+			else if (currentMap === 'rPrestige') selectedMap = "prestigeRaid";
+			else if (currentMap === 'Bionic Raiding') selectedMap = "bionicRaid";
 			else selectedMap = RShouldFarmMapCreation(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
 			if (currTime === 0) currTime = getGameTime();
 		}
@@ -221,7 +209,7 @@ function autoMap() {
 	//Map Repeat -- NEEDS REWRITTEN
 	if (!game.global.preMapsActive && game.global.mapsActive) {
 		//Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
-		if (rShouldMap && rCurrentMap === 'rPrestige' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && Rgetequips(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > PerfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
+		if (rShouldMap && currentMap === 'rPrestige' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && Rgetequips(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > PerfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
 			var maplevel = getCurrentMapObject().level
 			mapsClicked();
 			recycleMap();
@@ -230,12 +218,12 @@ function autoMap() {
 			rRunMap();
 			debug("Running LMC map due to only having 1 equip remaining on this map.")
 		}
-		if ((selectedMap == game.global.currentMapId || (!getCurrentMapObject().noRecycle && rShouldMap) || rCurrentMap === 'BionicRaiding')) {
+		if ((selectedMap == game.global.currentMapId || (!getCurrentMapObject().noRecycle && rShouldMap) || currentMap === 'Bionic Raiding')) {
 			//Starting with repeat on
 			if (!game.global.repeatMap)
 				repeatClicked();
 			//Changing repeat to repeat for items for Presitge & Bionic Raiding
-			if (rShouldMap && ((rCurrentMap === 'rPrestige' && !RAMPfragfarming) || rCurrentMap === 'BionicRaiding')) {
+			if (rShouldMap && ((currentMap === 'rPrestige' && !RAMPfragfarming) || currentMap === 'Bionic Raiding')) {
 				if (game.options.menu.repeatUntil.enabled != 2)
 					game.options.menu.repeatUntil.enabled = 2;
 			} else if (game.options.menu.repeatUntil.enabled != 0) {
@@ -249,7 +237,7 @@ function autoMap() {
 				repeatClicked();
 			}
 			//Disabling repeat if repeat conditions have been met
-			if (game.global.repeatMap && rCurrentMap !== '') {
+			if (game.global.repeatMap && currentMap !== '') {
 				if (!rMapSettings.repeat) repeatClicked();
 			}
 		} else {
@@ -281,7 +269,7 @@ function autoMap() {
 			//Setting sliders appropriately.
 			if (rShouldMap) {
 				mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
-				if (rCurrentMap !== '') {
+				if (currentMap !== '') {
 					mapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
 				}
 			}

@@ -77,15 +77,9 @@ var MODULES = {};
 var MODULESdefault = {};
 var ATMODULES = {};
 var ATmoduleList = [];
-var bestBuilding;
 var scienceNeeded;
 var breedFire = false;
 
-var shouldFarm = false;
-var enoughDamage = true;
-var enoughHealth = true;
-
-var baseDamage = 0;
 var baseBlock = 0;
 var baseHealth = 0;
 
@@ -104,20 +98,19 @@ var aWholeNewHZE = false;
 
 var needGymystic = true;
 var heirloomFlag = false;
-var daily3 = false;
 var heirloomCache = game.global.heirloomsExtra.length;
 var magmiteSpenderChanged = false;
 var lastHeliumZone = 0;
 var lastRadonZone = 0;
 var HDRatio = 0;
-var voidHDRatio = 0;
 var mapHDRatio = 0;
+var voidHDRatio = 0;
 var autoLevel = 0;
 var autoLevelCurrent = 0;
-var rC3EndZoneSetting = -1;
+var challengeCurrentZone = -1;
 var voidPBSwap = false;
 var rBSRunningAtlantrimp = false;
-var rCurrentMap = undefined;
+var currentMap = undefined;
 var rAutoLevel = Infinity;
 var rMapRepeats = 0;
 var freeVoids = 0;
@@ -188,7 +181,7 @@ function mainLoop() {
 	if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
 	//Initiate Farming Code
 	rMapSettings = FarmingDecision();
-	rCurrentMap = rMapSettings.mapName;
+	currentMap = rMapSettings.mapName;
 	//RCore
 	//AutoMaps
 	if (oneSecondInterval) {
@@ -231,6 +224,12 @@ function mainLoop() {
 	//AutoEquip
 	autoEquip();
 
+	//Portal
+	c2runnerportal();
+	finishChallengeSquared();
+	autoPortal();
+	dailyAutoPortal();
+
 	if (getPageSetting(universeSecondary.toLowerCase() + 'EquipEfficientEquipDisplay')) {
 		if (oneSecondInterval) {
 			displayMostEfficientEquipment();
@@ -248,19 +247,13 @@ function mainLoop() {
 		}
 		//Core
 		if (getPageSetting('ATGA2') == true) ATGA2();
-		if (aWholeNewWorld && getPageSetting('AutoRoboTrimp')) autoRoboTrimp();
+		autoRoboTrimp();
 		if (game.global.challengeActive == "Daily" && getPageSetting('buyheliumy') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
-		if (aWholeNewWorld && getPageSetting('FinishC2') > 0 && game.global.runningChallengeSquared) finishChallengeSquared();
 		if (getPageSetting('spendmagmite') == 2 && !magmiteSpenderChanged) autoMagmiteSpender();
 		if (getPageSetting('AutoNatureTokens') && game.global.world > 229) autoNatureTokens();
 		if (getPageSetting('autoenlight') && game.global.world > 229 && game.global.uberNature == false) autoEnlight();
 
 		if (getPageSetting('UseAutoGen') == true && game.global.world > 229) autoGenerator();
-
-		//Portal
-		if (autoTrimpSettings.AutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) autoPortal();
-		if (getPageSetting('AutoPortalDaily') > 0 && game.global.challengeActive == "Daily") dailyAutoPortal();
-		if (getPageSetting('c2runnerstart') == true && getPageSetting('c2runnerportal') > 0 && game.global.runningChallengeSquared && game.global.world >= getPageSetting('c2runnerportal')) c2runnerportal();
 
 		//Combat
 		if (getPageSetting('ForceAbandon') == true || getPageSetting('fuckanti') > 0) trimpcide();
@@ -273,8 +266,6 @@ function mainLoop() {
 			else if (getPageSetting('dfightforever') == 2 && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
 		}
 		if (game.global.mapsUnlocked && game.global.challengeActive == "Daily" && getPageSetting('avoidempower') == true && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidempower();
-		if (getPageSetting('buywepsvoid') == true && ((getPageSetting('VoidMaps') == game.global.world && game.global.challengeActive != "Daily") || (getPageSetting('DailyVoidMod') == game.global.world && game.global.challengeActive == "Daily")) && game.global.mapsActive && getCurrentMapObject().location == "Void") buyWeps();
-		if ((getPageSetting('darmormagic') > 0 && typeof game.global.dailyChallenge.empower == 'undefined' && typeof game.global.dailyChallenge.bloodthirst == 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) || (getPageSetting('carmormagic') > 0 && (game.global.challengeActive == 'Toxicity' || game.global.challengeActive == 'Nom'))) armormagic();
 
 		//Stance
 		if ((getPageSetting('UseScryerStance') == true) || (getPageSetting('scryvoidmaps') == true && game.global.challengeActive != "Daily") || (getPageSetting('dscryvoidmaps') == true && game.global.challengeActive == "Daily")) useScryerStance();
@@ -282,61 +273,14 @@ function mainLoop() {
 		else if (getPageSetting('AutoStance') == 1) autoStance();
 		else if (getPageSetting('AutoStance') == 2) autoStance2();
 
-		//Challenges
-		if (game.global.challengeActive === "Decay") decayFinishChallenge();
-
-
-
 		//Spire
 		if (getPageSetting('ExitSpireCell') > 0 && game.global.challengeActive != "Daily" && getPageSetting('IgnoreSpiresUntil') <= game.global.world && game.global.spireActive) exitSpireCell();
 		if (getPageSetting('dExitSpireCell') >= 1 && game.global.challengeActive == "Daily" && getPageSetting('dIgnoreSpiresUntil') <= game.global.world && game.global.spireActive) dailyexitSpireCell();
 		if (getPageSetting('SpireBreedTimer') > 0 && getPageSetting('IgnoreSpiresUntil') <= game.global.world) ATspirebreed();
-		if (getPageSetting('spireshitbuy') && isDoingSpire()) buyshitspire();
-
-		//Auto Golden Upgrade
-		autoGoldUpgrades();
-
 	}
 
 	//Logic for Universe 2
 	if (game.global.universe == 2) {
-		//Heirloom Shield Swap Check
-		//RCore
-		if (game.global.runningChallengeSquared && rC3EndZoneSetting != game.stats.zonesCleared.value) {
-			if (getPageSetting('c3finishrun') !== -1) {
-				if ((getPageSetting('c3finishrun') - 1) === game.global.world)
-					debug("Warning: AT will " + (getPageSetting('RdownloadSaves') ? 'download your save and ' : '') + "abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish C3' or set it to -1")
-				if (getPageSetting('c3finishrun') <= game.global.world) {
-					debug("Pausing" + (getPageSetting('RdownloadSaves') ? ', downloading save' : '') + " and abandoning challenge as your run has reached your specified end point on " + game.global.world + ".")
-					AbandonChallengeRuns()
-				}
-				if (getPageSetting('c3finishrun') <= game.c2[game.global.challengeActive]) {
-					debug("The zone input in the 'C3 Finish' setting (" + getPageSetting('c3finishrun') + ") is below or equal to your HZE for this challenge " + game.c2[game.global.challengeActive] + ". Increase it or it'll end earlier than you\'d probably like it to.");
-				}
-			}
-			//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
-			if (game.global.challengeActive == "Quest" && getPageSetting('RBuyBuildingsNew')) {
-				if (getAutoStructureSetting().enabled && game.global.autoStructureSettingU2.Smithy.enabled) {
-					debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.")
-				}
-				//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
-				if (game.global.runningChallengeSquared && (getPageSetting('rQuestSmithyZone') === -1 ? Infinity : getPageSetting('rQuestSmithyZone')) <= game.c2.Quest) {
-					debug("The setting 'Q: Smithy Zone' is lower or equal to your current Quest HZE. Increase this or smithies will be bought earlier than they should be.")
-				}
-			}
-			//Downsize -- Warning message when about map settings causing issues later.
-			if (game.global.challengeActive == "Downsize") {
-				if (game.global.world < 10) {
-					debug("Be aware that your usual C3 farming settings will not work properly for this Downsize run and likely cause it to stall out so high chance you will want to amend or disable them.")
-				}
-			}
-			rC3EndZoneSetting = game.stats.zonesCleared.value;
-		}
-
-		//Portal - Daily + Regular
-		if (autoTrimpSettings.RAutoPortal.selected != "Off" && game.global.challengeActive != "Daily" && (!game.global.runningChallengeSquared || autoTrimpSettings.RAutoPortal.selected === 'Challenge 3')) RautoPortal();
-		if (getPageSetting('RAutoPortalDaily') > 0 && game.global.challengeActive == "Daily" && game.global.world >= getPageSetting('RAutoPortalDaily')) RdailyAutoPortal();
-
 		//Archeology
 		if (getPageSetting('Rarchon') && game.global.challengeActive == "Archaeology") archstring();
 		//Auto Equality Management
@@ -345,12 +289,12 @@ function mainLoop() {
 
 		if (game.global.challengeActive == "Daily" && getPageSetting('buyradony') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyradony') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
 		if (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') BuySingleRunBonuses();
-		//Respecing between presets based on Destacking or Farming when running Pandemonium. Uses preset 2 for destacking and preset 3 while farming.
-		if (game.global.challengeActive == "Pandemonium" && getPageSetting('rPandRespec')) PandemoniumPerkRespec();
 	}
 
-	if (game.global.stringVersion >= '5.8.0' && getPageSetting('automateSpireAssault') && autoBattle.maxEnemyLevel !== 132)
+	if (getPageSetting('automateSpireAssault') && autoBattle.maxEnemyLevel !== 132)
 		automateSpireAssault();
+
+	challengeInfo();
 }
 
 function guiLoop() {
@@ -444,6 +388,7 @@ function mainCleanup() {
 		radonChallengesSetting();
 	}
 }
+
 function throwErrorfromMain() {
 	throw new Error("We have successfully read the thrown error message out of the main file")
 }

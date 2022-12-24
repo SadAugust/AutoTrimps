@@ -204,7 +204,7 @@ function mostEfficientHousing() {
 	// Which houses we actually want to check
 	var housingTargets = [];
 
-	if (rCurrentMap === 'rTributeFarm' && rMapSettings.buyBuildings !== 'undefined') {
+	if (currentMap === 'Tribute Farm' && rMapSettings.buyBuildings !== 'undefined') {
 		if (!!rMapSettings.buyBuildings && getAutoStructureSetting().enabled && document.getElementById('autoStructureBtn').classList.contains("enabled"))
 			toggleAutoStructure();
 	}
@@ -239,7 +239,7 @@ function mostEfficientHousing() {
 		//Stops buildings that cost wood from being pushed if we're running Hypothermia and have enough wood for a bonfire.
 		if (game.global.challengeActive == 'Hypothermia' && (housing !== 'Collector' || housing !== 'Gateway') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
 		//Stops Food buildings being pushed to queue if Tribute Farming with Buy Buildings toggle disabled.
-		if (rCurrentMap === 'rTributeFarm' && !rMapSettings.buyBuildings && housing !== 'Collector') dontbuy.push(housing);
+		if (currentMap === 'Tribute Farm' && !rMapSettings.buyBuildings && housing !== 'Collector') dontbuy.push(housing);
 		for (var resource in game.buildings[housing].cost) {
 			// Get production time for that resource
 			var baseCost = game.buildings[housing].cost[resource][0];
@@ -438,7 +438,7 @@ function buyBuildings() {
 			safeBuyBuilding('Microchip', 1);
 		}
 
-		if (rCurrentMap !== 'rTributeFarm') {
+		if (currentMap !== 'Tribute Farm') {
 			if (getAutoStructureSetting().enabled && !document.getElementById('autoStructureBtn').classList.contains("enabled")) {
 				document.getElementById('autoStructureBtn').classList.add("enabled")
 				autoTrimpSettings.rAutoStructureSetting.value = true;
@@ -471,9 +471,9 @@ function buyBuildings() {
 		//var maxCanAfford = housing !== null ? calculateMaxAffordLocal(game.buildings[housing], true, false, false, housingAmt, buildingspending) : 0;
 		var maxCanAfford = calculateMaxAffordLocal(game.buildings[housing], true, false, false, (housingAmt - game.buildings[housing].purchased), buildingspending);
 		if (((housing != null && canAffordBuilding(housing, false, false, false, false, 1)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt) || runningC3))) {
-			if (rCurrentMap === 'rSmithyFarm' && housing !== 'Gateway')
+			if (currentMap === 'Smithy Farm' && housing !== 'Gateway')
 				return;
-			else if (rCurrentMap === 'rTributeFarm' && !rMapSettings.buyBuildings) {
+			else if (currentMap === 'Tribute Farm' && !rMapSettings.buyBuildings) {
 				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && getAutoStructureSetting().enabled)
 					toggleAutoStructure();
 				return;
@@ -493,7 +493,7 @@ function buyTributes() {
 	const buildingSettings = game.global.universe === 1 ? autoTrimpSettings.hBuildingSettingsArray.value : autoTrimpSettings.rBuildingSettingsArray.value;
 	var affordableMets = 0;
 	if (game.global.universe === 2) {
-		if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rMapSettings.shouldTribute || (rCurrentMap === 'rSmithyFarm' && rMapSettings.gemFarm)) {
+		if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rMapSettings.shouldTribute || (currentMap === 'Smithy Farm' && rMapSettings.gemFarm)) {
 			affordableMets = getMaxAffordable(
 				game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
 				game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100),
@@ -504,12 +504,12 @@ function buyTributes() {
 	}
 	//Won't buy Tributes if they're locked or if a meteorologist can be purchased as that should always be the more efficient purchase
 	if (!game.buildings.Tribute.locked && (game.jobs.Meteorologist.locked || !(affordableMets > 0 && !game.jobs.Meteorologist.locked && !rMapSettings.shouldTribute))) {
-		if ((!buildingSettings.Tribute.enabled || rMapSettings.shouldMeteorologist || rCurrentMap === 'rWorshipperFarm') && !rMapSettings.shouldTribute) return;
+		if ((!buildingSettings.Tribute.enabled || rMapSettings.shouldMeteorologist || currentMap === 'Worshipper Farm') && !rMapSettings.shouldTribute) return;
 		//Spend 100% of food on Tributes if Tribute Farming otherwise uses the value in RTributeSpendingPct.
-		var tributePct = rCurrentMap === 'rTributeFarm' && rMapSettings.tribute > 0 ? 1 : buildingSettings.Tribute.percent > 0 ? buildingSettings.Tribute.percent / 100 : 1;
+		var tributePct = currentMap === 'Tribute Farm' && rMapSettings.tribute > 0 ? 1 : buildingSettings.Tribute.percent > 0 ? buildingSettings.Tribute.percent / 100 : 1;
 
-		var tributeAmt = buildingSettings.Tribute.buyMax === 0 ? Infinity : rCurrentMap === 'rTributeFarm' && rMapSettings.tribute > buildingSettings.Tribute.buyMax ? rMapSettings.tribute : buildingSettings.Tribute.buyMax;
-		if ((rCurrentMap === 'rSmithyFarm' && rMapSettings.gemFarm) || currQuest() === 4) {
+		var tributeAmt = buildingSettings.Tribute.buyMax === 0 ? Infinity : currentMap === 'Tribute Farm' && rMapSettings.tribute > buildingSettings.Tribute.buyMax ? rMapSettings.tribute : buildingSettings.Tribute.buyMax;
+		if ((currentMap === 'Smithy Farm' && rMapSettings.gemFarm) || currQuest() === 4) {
 			tributeAmt = Infinity;
 			tributePct = 1;
 		}

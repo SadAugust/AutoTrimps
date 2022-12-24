@@ -77,6 +77,7 @@ function miRatio() {
 }
 
 function autoMagmiteSpender() {
+	if (game.global.universe !== 1) return;
 	if (getPageSetting('ratiospend') == true) {
 		var tospend = miRatio();
 		var upgrader = game.generatorUpgrades[tospend];

@@ -145,7 +145,7 @@ function buyJobs() {
 
 	//Do non-ratio/limited jobs first
 	//Explorers
-	if (jobSettings.Explorer.enabled && rCurrentMap !== 'rTributeFarm') {
+	if (jobSettings.Explorer.enabled && currentMap !== 'Tribute Farm') {
 		if (!game.jobs.Explorer.locked) {
 			var affordableExplorers = getMaxAffordable(
 				game.jobs.Explorer.cost.food[0] * Math.pow(game.jobs.Explorer.cost.food[1], game.jobs.Explorer.owned),
@@ -215,8 +215,8 @@ function buyJobs() {
 		}
 
 		//Ships
-		if ((!game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50 && (jobSettings.Worshipper.enabled || rCurrentMap === 'rWorshipperFarm') && !rBSRunningAtlantrimp)) {
-			var affordableShips = rCurrentMap === 'rWorshipperFarm' ? Math.floor(game.resources.food.owned / game.jobs.Worshipper.getCost()) : Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (jobSettings.Worshipper.percent / 100));
+		if ((!game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50 && (jobSettings.Worshipper.enabled || currentMap === 'Worshipper Farm') && !rBSRunningAtlantrimp)) {
+			var affordableShips = currentMap === 'Worshipper Farm' ? Math.floor(game.resources.food.owned / game.jobs.Worshipper.getCost()) : Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (jobSettings.Worshipper.percent / 100));
 			if (affordableShips > (50 - game.jobs.Worshipper.owned))
 				affordableShips = 50 - game.jobs.Worshipper.owned;
 			if (affordableShips > 0) {

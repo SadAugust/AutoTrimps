@@ -33,38 +33,13 @@ function autoRoboTrimp() {
 
 	var shouldShriek = (game.global.world - parseInt(getPageSetting("AutoRoboTrimp"))) % 5 === 0;
 	if (shouldShriek) {
-		magnetoShriek();
-		debug("Activated Robotrimp MagnetoShriek Ability @ z" + game.global.world, "graphs", "*podcast")
+		if (!game.global.useShriek) {
+			magnetoShriek();
+			debug("Activated Robotrimp MagnetoShriek Ability @ z" + game.global.world, "graphs", "*podcast");
+		}
 	}
 	else
 		if (game.global.useShriek) magnetoShriek();
-}
-
-function buyWeps() {
-	if (!(getPageSetting("BuyWeaponsNew") == 1 || getPageSetting("BuyWeaponsNew") == 3)) return;
-	preBuy(),
-		(game.global.buyAmt = getPageSetting("gearamounttobuy")),
-		game.equipment.Dagger.level < getPageSetting("CapEquip2") && canAffordBuilding("Dagger", null, null, !0) && buyEquipment("Dagger", !0, !0),
-		game.equipment.Mace.level < getPageSetting("CapEquip2") && canAffordBuilding("Mace", null, null, !0) && buyEquipment("Mace", !0, !0),
-		game.equipment.Polearm.level < getPageSetting("CapEquip2") && canAffordBuilding("Polearm", null, null, !0) && buyEquipment("Polearm", !0, !0),
-		game.equipment.Battleaxe.level < getPageSetting("CapEquip2") && canAffordBuilding("Battleaxe", null, null, !0) && buyEquipment("Battleaxe", !0, !0),
-		game.equipment.Greatsword.level < getPageSetting("CapEquip2") && canAffordBuilding("Greatsword", null, null, !0) && buyEquipment("Greatsword", !0, !0),
-		!game.equipment.Arbalest.locked && game.equipment.Arbalest.level < getPageSetting("CapEquip2") && canAffordBuilding("Arbalest", null, null, !0) && buyEquipment("Arbalest", !0, !0),
-		postBuy();
-}
-
-function buyArms() {
-	if (!(getPageSetting("BuyArmorNew") == 1 || getPageSetting("BuyArmorNew") == 3)) return;
-	preBuy(),
-		(game.global.buyAmt = 10),
-		game.equipment.Shield.level < getPageSetting("CapEquiparm") && canAffordBuilding("Shield", null, null, !0) && buyEquipment("Shield", !0, !0),
-		game.equipment.Boots.level < getPageSetting("CapEquiparm") && canAffordBuilding("Boots", null, null, !0) && buyEquipment("Boots", !0, !0),
-		game.equipment.Helmet.level < getPageSetting("CapEquiparm") && canAffordBuilding("Helmet", null, null, !0) && buyEquipment("Helmet", !0, !0),
-		game.equipment.Pants.level < getPageSetting("CapEquiparm") && canAffordBuilding("Pants", null, null, !0) && buyEquipment("Pants", !0, !0),
-		game.equipment.Shoulderguards.level < getPageSetting("CapEquiparm") && canAffordBuilding("Shoulderguards", null, null, !0) && buyEquipment("Shoulderguards", !0, !0),
-		game.equipment.Breastplate.level < getPageSetting("CapEquiparm") && canAffordBuilding("Breastplate", null, null, !0) && buyEquipment("Breastplate", !0, !0),
-		!game.equipment.Gambeson.locked && game.equipment.Gambeson.level < getPageSetting("CapEquiparm") && canAffordBuilding("Gambeson", null, null, !0) && buyEquipment("Gambeson", !0, !0),
-		postBuy();
 }
 
 function isActiveSpireAT() {
@@ -101,8 +76,6 @@ function findLastBionicWithItems(bionicPool) {
 
 	return bionicPool[0];
 }
-
-function buyshitspire() { !0 == getPageSetting('spireshitbuy') && game.global.spireActive && game.global.world >= getPageSetting('IgnoreSpiresUntil') && (buyWeps(), buyArms()) }
 
 //Helium
 
@@ -154,12 +127,6 @@ function fightalways() {
 		return;
 	if (!game.global.fighting)
 		fightManual();
-}
-
-function armormagic() {
-	var armormagicworld = Math.floor((game.global.highestLevelCleared + 1) * 0.8);
-	if (((getPageSetting('carmormagic') == 1 || getPageSetting('darmormagic') == 1) && game.global.world >= armormagicworld && (game.global.soldierHealth <= game.global.soldierHealthMax * 0.4)) || ((getPageSetting('carmormagic') == 2 || getPageSetting('darmormagic') == 2) && calcHDRatio() >= MODULES["maps"].enoughDamageCutoff && (game.global.soldierHealth <= game.global.soldierHealthMax * 0.4)) || ((getPageSetting('carmormagic') == 3 || getPageSetting('darmormagic') == 3) && (game.global.soldierHealth <= game.global.soldierHealthMax * 0.4)))
-		buyArms();
 }
 
 trapIndexs = ["", "Fire", "Frost", "Poison", "Lightning", "Strength", "Condenser", "Knowledge"];
@@ -1000,7 +967,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 	var job = game.jobs[jobName];
 	var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
 	var workers = ssWorkerRatio !== null ? Math.floor(trimpworkers * desiredRatios[pos] / totalFraction) :
-		rCurrentMap === 'rWorshipperFarm' ? trimpworkers :
+		currentMap === 'Worshipper Farm' ? trimpworkers :
 			job.owned;
 
 	var amt_local = workers * job.modifier * seconds;
@@ -1137,20 +1104,92 @@ function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
 }
 
 function formatTimeForDescriptions(number) {
-	var text;
+	var timeTaken = '';
 	var seconds = Math.floor((number) % 60);
 	var minutes = Math.floor((number / 60) % 60);
 	var hours = Math.floor((number / 60 / 60));
-	if (minutes <= 0 && hours <= 0) text = seconds + " second" + ((seconds == 1) ? "" : "s");
-	else if (hours == 0) text = minutes + " minute" + ((minutes == 1) ? " " : "s ") + seconds + " second" + ((seconds == 1) ? "" : "s");
-	else {
-		text = hours + " hour" + ((hours == 1) ? " " : "s ") + minutes + " minute" + ((minutes == 1) ? " " : "s ") + seconds + " second" + ((seconds == 1) ? "" : "s");
-	}
-	return text;
+	if (hours > 0) timeTaken += (hours + "h");
+	if (minutes > 0) timeTaken += (minutes + "m");
+	timeTaken += (seconds + "s");
+
+	return timeTaken;
 }
 
 function timeForFormatting(number) {
 	return Math.floor((getGameTime() - number) / 1000);
+}
+
+function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
+	if (!getPageSetting('rMapRepeatCount')) return;
+	if (!mapName) return;
+
+	//Figuring out exact amount of maps run
+	if (mapName !== 'Smithy Farm') {
+		var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
+		var mappingLength = mapProg > 0 ? (game.global.mapRunCounter + mapProg).toFixed(2) : game.global.mapRunCounter;
+	}
+	//Setting special to current maps special if we're in a map.
+	if (game.global.mapsActive) mapSpecial = getCurrentMapObject().bonus === undefined ? "no special" : getCurrentMapObject().bonus;
+
+	var timeMapping = currTime > 0 ? currTime : getGameTime();
+	var message = '';
+	if (mapName !== 'Void Map' && mapName !== 'Quagmire Farm' && mapName !== 'Smithy Farm') {
+		message += (mapName + " (Z" + game.global.world + ") took " + (mappingLength) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + mapSpecial + ")" + (mappingLength == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+	}
+	else if (mapName === 'Smithy Farm') {
+		message += (mapName + " (Z" + game.global.world + ") took " + mapRepeats[0] + " food, " + mapRepeats[1] + " wood, " + mapRepeats[2] + " metal maps (" + (mapLevel >= 0 ? "+" : "") + mapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+	}
+	else if (mapName === 'Quagmire Farm') {
+		message += (mapName + " (Z" + game.global.world + ") took " + (mappingLength) + (mappingLength == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+	}
+	else {
+		message += (mapName + " (Z" + game.global.world + ") took " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+	}
+
+	if (mapName === 'Void Map') {
+		message += " Started with " + MODULES.mapFunctions.rVoidVHDRatio.toFixed(2) + " and ended with a Void HD Ratio of " + voidHDRatio.toFixed(2) + ".";
+	}
+
+	if (mapName === 'Tribute Farm') {
+		message += " Finished with (" + game.buildings.Tribute.purchased + "/" + extra + ") Tributes and (" + game.jobs.Meteorologist.owned + "/" + extra2 + ") Meteorologists.";
+	}
+
+	if (mapName === 'Smithy Farm') {
+		message += " Finished with (" + game.buildings.Smithy.purchased + "/" + extra + ") Smithies.";
+	}
+
+	if (mapName === 'Insanity Farm') {
+		message += " Finished with (" + game.challenges.Insanity.insanity + "/" + extra + ") stacks.";
+	}
+
+	if (mapName === 'Alchemy Farm') {
+		message += " Finished with (" + extra + "/" + extra2 + ") " + extra3 + ".";
+	}
+
+	if (mapName === 'Hypothermia Farm') {
+		message += " Finished with (" + prettify(game.resources.wood.owned) + "/" + extra.toFixed(2) + ") wood.";
+	}
+
+	if (mapName === 'Smithless Farm') {
+		message += " Finished with enough damage to get (" + extra + "/3) stacks.";
+	}
+
+	if (mapName === 'HD Farm') {
+		message += " Finished with a HD Ratio of (" + extra.toFixed(2) + "/" + extra2.toFixed(2) + ").";
+	}
+
+	debug(message);
+}
+
+function resetMapVars(setting) {
+	const totalPortals = getTotalPortals();
+	currentMap = undefined;
+	rAutoLevel = Infinity;
+	currTime = 0;
+	mapRepeats = 0;
+	game.global.mapRunCounter = 0;
+	if (setting) setting.done = (totalPortals + "_" + game.global.world);
+	saveSettings();
 }
 
 function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) {
@@ -1260,28 +1299,6 @@ function PerfectMapCost_Actual(plusLevel, specialModifier, biome) {
 	baseCost = Math.floor((((baseCost / 150) * (Math.pow(1.14, baseCost - 1))) * mapLevel * 2) * Math.pow((1.03 + (mapLevel / 50000)), mapLevel));
 	baseCost *= biome !== 'Random' ? 2 : 1;
 	return baseCost;
-}
-
-function runAtlantrimp(dontRecycle) {
-	if (game.global.mapsActive && getCurrentMapObject().name === 'Atlantrimp') return;
-
-	if (!game.global.preMapsActive && !game.global.mapsActive)
-		mapsClicked();
-	if (!dontRecycle && game.global.mapsActive && getCurrentMapObject().name !== 'Atlantrimp') {
-		mapsClicked();
-		recycleMap();
-	}
-
-	if (game.global.preMapsActive) {
-		for (var map in game.global.mapsOwnedArray) {
-			if (game.global.mapsOwnedArray[map].name == 'Atlantrimp') {
-				selectMap(game.global.mapsOwnedArray[map].id)
-				rRunMap();
-				debug('Running Atlantrimp on zone ' + game.global.world + '.');
-				rBSRunningAtlantrimp = true;
-			}
-		}
-	}
 }
 
 function runUnique(mapName, dontRecycle) {
@@ -1688,6 +1705,7 @@ function downloadSave() {
 
 	tooltip('Export', null, 'update');
 	document.getElementById("downloadLink").click();
+	cancelTooltip();
 }
 
 function hypoPackratReset(challenge) {
@@ -1740,36 +1758,6 @@ function PerkRespec(preset) {
 		debug("Respecced to preset " + preset);
 	} else
 		debug("No respec available");
-}
-
-function AbandonChallengeRuns(zone) {
-	//Abandons challenge runs when a certain zone has been reached.
-	var zone = !zone ? (getPageSetting('c3finishrun') === -1 ? Infinity : getPageSetting('c3finishrun')) :
-		zone;
-	var hasPaused = false;
-
-	if (zone === null) return
-	if (game.global.world == zone && game.global.runningChallengeSquared) {
-		if (game.options.menu.pauseGame.enabled && !hasPaused) {
-			toggleSetting('pauseGame');
-			hasPaused = true;
-		}
-		if (getPageSetting('RdownloadSaves')) {
-			//Download save
-			tooltip('Export', null, 'update');
-			document.getElementById("downloadLink").click();
-			cancelTooltip();
-		}
-
-		//Cancel out of c3
-		confirmAbandonChallenge();
-		abandonChallenge();
-		cancelTooltip();
-		if (hasPaused) {
-			toggleSetting('pauseGame');
-			hasPaused = false;
-		}
-	}
 }
 
 function dailyModifiersOutput() {

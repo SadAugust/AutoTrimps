@@ -376,7 +376,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	if (!skipForLevels) skipForLevels = false;
 	if (!showAllEquips) showAllEquips = false;
 	var rEquipZone = getPageSetting(prefix + 'equipzone');
-	if (!zoneGo) zoneGo = rCurrentMap === 'Wither' || (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+	if (!zoneGo) zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 	if (!resourceMaxPercent) resourceMaxPercent = zoneGo ? 1 : getPageSetting(prefix + 'equippercent') < 0 ? 1 : getPageSetting(prefix + 'equippercent') / 100;
 	var resourceMaxPercentBackup = resourceMaxPercent;
 
@@ -412,7 +412,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	}
 
 	if (metalShred) {
-		metalTotal = metalShred && (rCurrentMap === 'rMapFarm' || rCurrentMap === 'rMapBonus') ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 16, true, workerRatio), false, true, rMapSettings.mapLevel) : game.resources.metal.owned;
+		metalTotal = metalShred && (currentMap === 'Map Farm' || currentMap === 'Map Bonus') ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 16, true, workerRatio), false, true, rMapSettings.mapLevel) : game.resources.metal.owned;
 		if (game.resources.metal.owned > metalTotal) metalTotal = game.resources.metal.owned;
 	}
 
@@ -431,7 +431,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skipping gyms when can buy Gymystic
 		if (game.global.univere === 1 && (i === 'Shield' || i === 'Gym') && needGymystic()) continue;
 		//Setting weapon equips to 100% spending during Smithless farm.
-		if (game.global.challengeActive === 'Smithless' && rCurrentMap === 'rSmithlessFarm') {
+		if (game.global.challengeActive === 'Smithless' && currentMap === 'Smithless Farm') {
 			if (isAttack === 0) {
 				skipForLevels = Infinity;
 				resourceMaxPercent = 1;
@@ -550,7 +550,7 @@ function autoEquip() {
 	if (
 		!getPageSetting(prefix + 'equipon') ||
 		([2, 3].indexOf(currQuest()) >= 0 && game.global.lastClearedCell < 90) ||
-		(rCurrentMap === 'rSmithyFarm') ||
+		(currentMap === 'Smithy Farm') ||
 		(game.mapUnlocks.AncientTreasure.canRunOnce &&
 			(rBSRunningAtlantrimp || rMapSettings.runAtlantrimp ||
 				(game.global.mapsActive && (getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Trimple Of Doom'))
@@ -564,7 +564,7 @@ function autoEquip() {
 		debug('Upgrading Gymystic', "equips", '*upload');
 	}
 	var rEquipZone = getPageSetting(prefix + 'equipzone');
-	var zoneGo = rCurrentMap === 'Wither' || (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+	var zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 
 	if (getPageSetting(prefix + 'equipprestige') == 2 && !zoneGo) {
 		var prestigeLeft = false;
@@ -613,8 +613,8 @@ function autoEquip() {
 		}
 	}
 
-	var attackEquipCap = (getPageSetting(prefix + 'equipcapattack') <= 0 || rCurrentMap === 'rSmithlessFarm' ? Infinity : getPageSetting(prefix + 'equipcapattack'));
-	var healthEquipCap = (getPageSetting(prefix + 'equipcaphealth') <= 0 || rCurrentMap === 'rSmithlessFarm' ? Infinity : getPageSetting(prefix + 'equipcaphealth'));
+	var attackEquipCap = (getPageSetting(prefix + 'equipcapattack') <= 0 || currentMap === 'Smithless Farm' ? Infinity : getPageSetting(prefix + 'equipcapattack'));
+	var healthEquipCap = (getPageSetting(prefix + 'equipcaphealth') <= 0 || currentMap === 'Smithless Farm' ? Infinity : getPageSetting(prefix + 'equipcaphealth'));
 	var maxCanAfford = 0;
 
 	if (game.global.challengeActive === 'Scientist') {
@@ -647,7 +647,7 @@ function autoEquip() {
 
 		for (var i = 0; i < 2; i++) {
 			//Setting weapon equips to 100% spending during Smithless farm.
-			if (game.global.challengeActive === 'Smithless' && rCurrentMap === 'rSmithlessFarm') {
+			if (game.global.challengeActive === 'Smithless' && currentMap === 'Smithless Farm') {
 				if (equipType === 'attack') {
 					resourceSpendingPct = 1;
 					zoneGo = true;
