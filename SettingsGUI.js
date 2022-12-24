@@ -346,7 +346,7 @@ function initializeAllSettings() {
 	createSetting('cfightforever', 'Tox/Nom Fight Always', 'Sends trimps to fight if they\'re not fighting in the Toxicity and Nom Challenges, regardless of BAF. Essenitally the same as the one in combat, can use either if you wish, except this will only activate in these challenges (duh) ', 'boolean', false, null, 'C2');
 	createSetting('carmormagic', ['C2 Armor Magic Off', 'CAM: Above 80%', 'CAM: H:D', 'CAM: Always'], 'Will buy Armor to try and prevent death on Nom/Tox Challenges under the 3 conditions. <br><b>Above 80%:</b> Will activate at and above 80% of your HZE and when your health is sufficiently low. <br><b>H:D:</b> Will activate at and above the H:D you have defined in maps. <br><b>Always</b> Will activate always. <br>All options will activate at or <b>below 25% of your health.</b> ', 'multitoggle', 0, null, 'C2');
 	//C2 Runner
-	createSetting('c2runnerstart', 'C2 Runner', 'Runs the normal C2s in sequence according to difficulty. See C2Table for list. Once zone you have defined has been reached, will portal into next. I will advise you not to touch the challenges (abandoning, doing a different one, etc) if you are running this, it could break it. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
+	createSetting('c2runnerstart', 'C2 Runner', 'Runs the normal C2s in sequence according to difficulty. See \'C2 Table\' for a list of challenges that this can run. Once zone you have defined has been reached, will portal into next. I will advise you not to touch the challenges (abandoning, doing a different one, etc) if you are running this, it could break it. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
 	createSetting('c2runnerportal', 'C2 Runner Portal', 'Automatically portal when this level is reached in C2 Runner. Set to 0 or -1 to disable.', 'value', '-1', null, 'C2');
 	createSetting('c2runnerpercent', 'C2 Runner %', 'What percent Threshhold you want C2s to be over. E.g 85, will only run C2s with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ', 'value', '85', null, 'C2');
 
@@ -691,7 +691,7 @@ function initializeAllSettings() {
 	createSetting('c3GM_ST', ['c3: GM/ST', 'c3: Golden Maps', 'c3: Sharp Trimps', 'c3: GM & ST'], 'Options to purchase sharp trimps, golden maps or both during C3 or special challenge (Mayhem, Pandemonium) runs.', 'multitoggle', 0, null, 'C2');
 
 	//C2 Runner
-	createSetting('c3runnerstart', 'C3 Runner', 'Runs the normal C3s in sequence according to difficulty. See C2Table for list. Once zone you have defined has been reached, will portal into next. I will advise you not to touch the challenges (abandoning, doing a different one, etc) if you are running this, it could break it. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
+	createSetting('c3runnerstart', 'C3 Runner', 'Runs the normal C3s in sequence according to difficulty. See \'C∞ Table\' for a list of challenges that this can run. Once zone you have defined has been reached, will portal into next. I will advise you not to touch the challenges (abandoning, doing a different one, etc) if you are running this, it could break it. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
 	createSetting('c3runnerportal', 'C3 Runner Portal', 'Automatically portal when this level is reached in C3 Runner.', 'value', '-1', null, 'C2');
 	createSetting('c3runnerpercent', 'C3 Runner %', 'What percent Threshhold you want C3s to be over. E.g 85, will only run C3s with HZE% below this number. Default is 85%. Must have a value set for C3 Runner to... well, run. ', 'value', '85', null, 'C2');
 
@@ -1817,7 +1817,7 @@ function updateATVersion() {
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.9') {
 			changelog.push("Have completely redone the portal code, should work the exact same except to cancel out of a C3 using the 'C3 Finish' setting is now mandatory, AT will no longer autoportal with a c2/c3 active.<br>\
-			Have added C2 runner to U2. It can run the easy challenges that don't require much intervention (Unlucky, Unbalance, Quest, Storm, Downsize, Duel, Smithless) so hopefully that can help when updating C3s!")
+			Have added C2 runner to U2. An extra column has been added to the C2 Table to show which challenges C2 runner can run in both universes. It can run the easy challenges that don't require much intervention so hopefully that can help when updating C3s!")
 		}
 
 

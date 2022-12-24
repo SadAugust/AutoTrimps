@@ -307,7 +307,10 @@ function ImportExportTooltip(what, event, download) {
 		if (highestZone >= 60) c3array.push('Trappapalooza');
 		if (highestZone >= 115) c3array.push('Berserk');
 
-		challengeList = {}
+		challengeList = {};
+
+		const c2runnerArray = ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Mapology'];
+		const c3runnerArray = ['Unlucky', 'Unbalance', 'Quest', 'Storm', 'Downsize', 'Duel', 'Smithless'];
 
 		for (var x = 0; x < c2array.length; x++) {
 			challengeList[c2array[x]] = {
@@ -315,6 +318,7 @@ function ImportExportTooltip(what, event, download) {
 				percent: getIndividualSquaredReward(c2array[x]) + '%',
 				zone: game.c2[c2array[x]],
 				percentzone: (100 * (game.c2[c2array[x]] / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+				c2runner: c2runnerArray.includes(c2array[x]) ? '✅' : '❌',
 				color: 0
 			}
 		}
@@ -324,6 +328,7 @@ function ImportExportTooltip(what, event, download) {
 				percent: 'C3 %',
 				zone: 'Zone',
 				percentzone: '%HZE',
+				c2runner: 'C3 Runner',
 				color: 0
 			}
 
@@ -333,6 +338,7 @@ function ImportExportTooltip(what, event, download) {
 					percent: getIndividualSquaredReward(c3array[x]) + '%',
 					zone: game.c2[c3array[x]],
 					percentzone: (100 * (game.c2[c3array[x]] / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+					c2runner: c3runnerArray.includes(c3array[x]) ? '✅' : '❌',
 					color: 0
 				}
 			}
@@ -391,6 +397,7 @@ function ImportExportTooltip(what, event, download) {
                 	<td>C2 %</td>
                 	<td>Zone</td>
                 	<td>%HZE</td>
+                	<td>C2 Runner</td>
             	</tr>
 		`
 		for (var x = 0; x < Object.keys(challengeList).length; x++) {
@@ -403,6 +410,7 @@ function ImportExportTooltip(what, event, download) {
 					<td bgcolor='black'>
 						<font color=` + challengeList[Object.keys(challengeList)[x]].color + `>` + challengeList[Object.keys(challengeList)[x]].percentzone + `
 					</td>
+					<td>` + challengeList[Object.keys(challengeList)[x]].c2runner + `</td>
 				</tr>`
 		}
 		tooltipText += `<tr>
