@@ -1865,6 +1865,30 @@ function displayMostEfficientEquipment() {
 	}
 }
 
+function getAvailableSpecials(special) {
+
+	var cacheMods = [];
+	var bestMod;
+
+	if (special === 'lsc') cacheMods = ['lsc', 'hc', 'ssc', 'lc'];
+	else if (special === 'lwc') cacheMods = ['lwc', 'hc', 'swc', 'lc'];
+	else if (special === 'lmc') cacheMods = ['lmc', 'hc', 'smc', 'lc'];
+	else if (special === 'p') cacheMods = ['p', 'fa'];
+	else cacheMods = [special];
+
+	var hze = getHighestLevelCleared();
+	var unlocksAt = game.global.universe === 2 ? 'unlocksAt2' : 'unlocksAt';
+
+	for (const mod of cacheMods) {
+		if (mapSpecialModifierConfig[mod][unlocksAt] <= hze) {
+			bestMod = mod;
+			break;
+		}
+	}
+	if (bestMod === undefined) bestMod = '0'
+	return bestMod;
+}
+
 function displayDropdowns(universe, runType, MAZ, varPrefix) {
 
 	if (!universe) universe = game.global.universe;
