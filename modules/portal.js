@@ -118,8 +118,8 @@ function dailyAutoPortal() {
 	var universePrefix = game.global.universe === 2 ? 'R' : ''
 	var universeOpp = game.global.universe === 2 ? '' : 'R'
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
+	const portalPrefix = portalUniverse === 2 ? 'u2' : 'u1';
 	if (getPageSetting(universePrefix + 'AutoPortalDaily') == 1) {
-		const portalPrefix = portalUniverse === 2 ? 'u2' : 'u1';
 		var OKtoPortal = false;
 		var minZone = getPageSetting(universePrefix + 'dHeHrDontPortalBefore');
 		game.stats.bestHeliumHourThisRun.evaluate();
