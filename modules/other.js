@@ -327,14 +327,14 @@ function radonChallengesSetting() {
 	if (radonHZE >= 175) radonHourChallenges.push("Hypothermia");
 
 	document.getElementById('RadonHourChallenge').innerHTML = ''
-	document.getElementById('RdHeliumHourChallenge').innerHTML = ''
+	//document.getElementById('RdHeliumHourChallenge').innerHTML = ''
 
 	for (var item in radonHourChallenges) {
 		var option = document.createElement("option");
 		option.value = radonHourChallenges[item];
 		option.text = radonHourChallenges[item];
 		document.getElementById('RadonHourChallenge').appendChild(option);
-		document.getElementById('RdHeliumHourChallenge').appendChild(option);
+		//document.getElementById('RdHeliumHourChallenge').appendChild(option);
 	}
 
 	var radonChallenge3 = ["None"];
@@ -352,13 +352,13 @@ function radonChallengesSetting() {
 	if (radonHZE >= 201) radonChallenge3.push("Smithless");
 
 	document.getElementById('RadonC3Challenge').innerHTML = '';
-	document.getElementById('RdC3Challenge').innerHTML = '';
+	//document.getElementById('RdC3Challenge').innerHTML = '';
 	for (var item in radonChallenge3) {
 		var option = document.createElement("option");
 		option.value = radonChallenge3[item];
 		option.text = radonChallenge3[item];
 		document.getElementById('RadonC3Challenge').appendChild(option);
-		document.getElementById('RdC3Challenge').appendChild(option);
+		//document.getElementById('RdC3Challenge').appendChild(option);
 	}
 
 	//if (radonHZE === 15) debug("You have unlocked the Unlucky challenge.")

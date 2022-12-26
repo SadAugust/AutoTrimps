@@ -142,7 +142,6 @@ function initializeAllTabs() {
 initializeAllTabs();
 
 function initializeAllSettings() {
-	['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience']
 	var highestZone = game.global.highestLevelCleared + 1;
 	var heliumChallenges = ["Off", "Helium Per Hour"];
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 40) heliumChallenges.push("Balance");
@@ -215,7 +214,7 @@ function initializeAllSettings() {
 	createSetting('HeliumHrBuffer', 'He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
 	createSetting('downloadSaves', 'Download Saves', 'Will automatically download saves whenever AutoTrimps portals.', 'boolean', false, null, 'Core');
 
-	var highestZone = game.global.highestRadonLevelCleared;
+	highestZone = game.global.highestRadonLevelCleared;
 	var radonChallenges = ["Off", "Radon Per Hour"];
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 39) radonChallenges.push("Bublé");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 54) radonChallenges.push("Melt");
@@ -230,17 +229,17 @@ function initializeAllSettings() {
 	radonChallenges.push("Custom");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 49) radonChallenges.push("Challenge 3");
 
-	var radonHourChallenges = ["None"];
+	radonHourChallenges = ["None"];
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 39) radonHourChallenges.push("Bublé");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 54) radonHourChallenges.push("Melt");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 69) radonHourChallenges.push("Quagmire");
-	if (getPageSetting('rDisplayAllSettings') || highestZone > 89) radonHourChallenges.push("Archaeology");
+	if (getPageSetting('rDisplayAllSettings') || highestZone >= 89) radonHourChallenges.push("Archaeology");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 109) radonHourChallenges.push("Insanity");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 134) radonHourChallenges.push("Nurture");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 154) radonHourChallenges.push("Alchemy");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) radonHourChallenges.push("Hypothermia");
 
-	var challenge3 = ["None"];
+	challenge3 = ["None"];
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 14) challenge3.push("Unlucky");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 19) challenge3.push("Downsize");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) challenge3.push("Transmute");
@@ -253,7 +252,6 @@ function initializeAllSettings() {
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 114) challenge3.push("Berserk");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) challenge3.push("Glass");
 	if (getPageSetting('rDisplayAllSettings') || highestZone >= 200) challenge3.push("Smithless");
-
 
 	//Radon Core
 	createSetting('RManualGather2', ['Manual Gather/Build', 'Auto Gather/Build', 'Mining/Building Only'], 'Controls what you gather/build do. Manual does nothing<br>Auto Gathering of Food,Wood,Metal(w/turkimp) & Science. Auto speed-Builds your build queue. <br>Mining/Building only does exactly what it says. Only use if you are passed the early stages of the game and have the mastery foremany unlocked (No longer need to trap, food and wood are useless). ', 'multitoggle', 1, null, 'Core');
@@ -523,11 +521,24 @@ function initializeAllSettings() {
 	}, null, 'Maps');
 	createSetting('hUniqueMapPopup', 'Unique Map Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("Unique Maps", " ", "UniqueMaps")', null, 'Maps');
 
+	//HD Farm
+	createSetting('hHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "hHDFarm", "MAZ")', null, 'Maps');
+	createSetting('hHDFarmSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('hHDFarmDefaultSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+	createSetting('hHDFarmZone', 'HD Farm: Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
+
 	//Void Maps
 	createSetting('hVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Helium Void Map", "hVoidMap", "MAZ")', null, 'Maps');
 	createSetting('hVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
 	createSetting('hVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('hVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
+
+	//Bone Shrine (bone) 
+	createSetting('hBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "hBoneShrine", "MAZ")', null, 'Maps');
+	createSetting('hBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('hBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+	createSetting('hBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
+	createSetting('hBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Maps");
 
 	//Map Bonus
 	createSetting('hMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Map Bonus", "hMapBonus", "MAZ")', null, 'Maps');
@@ -552,21 +563,6 @@ function initializeAllSettings() {
 	createSetting('hBionicRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
 	createSetting('hBionicRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('hBionicRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
-
-	//HD Farm
-	createSetting('hHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "hHDFarm", "MAZ")', null, 'Maps');
-	createSetting('hHDFarmSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('hHDFarmDefaultSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
-	createSetting('hHDFarmZone', 'HD Farm: Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
-
-	//Bone Shrine (bone) 
-	if (game.global.stringVersion >= '5.7.0') {
-		createSetting('hBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "hBoneShrine", "MAZ")', null, 'Maps');
-		createSetting('hBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-		createSetting('hBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
-		createSetting('hBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
-		createSetting('hBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Maps");
-	}
 
 	//Radon
 	//General
@@ -594,26 +590,24 @@ function initializeAllSettings() {
 	createSetting('rHDFarmDefaultSettings', 'HD Farm: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rHDFarmZone', 'HD Farm: Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
 
-	//Worshipper Farm 
-	createSetting('rWorshipperFarmPopup', 'Worshipper Farm Settings', 'Will farm to a specified amount of Worshippers according to this settings value.', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'Maps');
-	createSetting('rWorshipperFarmSettings', 'WF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rWorshipperFarmDefaultSettings', 'WF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
-	createSetting('rWorshipperFarmZone', 'WF: Zone', 'Farms for specified worshippers in WF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
-
-	//Bone Shrine (bone) 
-	if (game.global.stringVersion >= '5.7.0') {
-		createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Maps');
-		createSetting('rBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-		createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
-		createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
-		createSetting('rBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Maps");
-	}
-
 	//Void Maps
 	createSetting('rVoidMapPopup', 'Void Map Settings', 'Will run all of your Void Maps on a specified zone according to this settings value.', 'action', 'MAZLookalike("Void Map", "rVoidMap", "MAZ")', null, 'Maps');
 	createSetting('rVoidMapSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
 	createSetting('rVoidMapDefaultSettings', 'Void Map Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rVoidMapZone', 'Void Zone', 'Map Bonus', 'multiValue', [6], null, 'Maps');
+
+	//Bone Shrine (bone) 
+	createSetting('rBoneShrinePopup', 'Bone Shrine Settings', 'Will use a specified amount of Bone Shrine charges according to this settings value.', 'action', 'MAZLookalike("Bone Shrine", "rBoneShrine", "MAZ")', null, 'Maps');
+	createSetting('rBoneShrineSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rBoneShrineDefaultSettings', 'BS: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+	createSetting('rBoneShrineZone', 'BS: Zone', 'Will use bone shrine charges at the following zone(s). Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
+	createSetting('rBoneShrineRunType', 'BS: RunType', 'Will only use bone charges in the type of run specified in this setting. Will use them in either no run, fillers, dailies, c3s or all runs.', 'textValue', 'undefined', null, "Maps");
+
+	//Worshipper Farm 
+	createSetting('rWorshipperFarmPopup', 'Worshipper Farm Settings', 'Will farm to a specified amount of Worshippers according to this settings value.', 'action', 'MAZLookalike("Worshipper Farm", "rWorshipperFarm", "MAZ")', null, 'Maps');
+	createSetting('rWorshipperFarmSettings', 'WF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rWorshipperFarmDefaultSettings', 'WF: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+	createSetting('rWorshipperFarmZone', 'WF: Zone', 'Farms for specified worshippers in WF: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 
 	//Map Bonus
 	createSetting('rMapBonusPopup', 'Map Bonus Settings', 'Will map stack to a specified amount according to this settings value.', 'action', 'MAZLookalike("Map Bonus", "rMapBonus", "MAZ")', null, 'Maps');
@@ -627,6 +621,12 @@ function initializeAllSettings() {
 	createSetting('rMapFarmDefaultSettings', 'MF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rMapFarmZone', 'MF: Zone', 'Which zones you would like to farm at. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 
+	//Prestige Raiding
+	createSetting('rRaidingPopup', 'Raiding Settings', 'Will raid up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Raiding", "rRaiding", "MAZ")', null, 'Maps');
+	createSetting('rRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
+	createSetting('rRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
+	createSetting('rRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
+
 	//Tribute Farming
 	createSetting('rTributeFarmPopup', 'Tribute Farm Settings', 'Will farm for a specified amount of Tributes/Meteorologists according to this settings value.', 'action', 'MAZLookalike("Tribute Farm", "rTributeFarm", "MAZ")', null, 'Maps');
 	createSetting('rTributeFarmSettings', 'TrF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
@@ -638,12 +638,6 @@ function initializeAllSettings() {
 	createSetting('rSmithyFarmSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
 	createSetting('rSmithyFarmDefaultSettings', 'SF: Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
 	createSetting('rSmithyFarmZone', 'SF: Zone', 'Farms for specified Smithy in SF: Value at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [6], null, 'Maps');
-
-	//Prestige Raiding
-	createSetting('rRaidingPopup', 'Raiding Settings', 'Will raid up to a specified zone according to this settings value.', 'action', 'MAZLookalike("Raiding", "rRaiding", "MAZ")', null, 'Maps');
-	createSetting('rRaidingSettings', 'Raiding: Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Maps');
-	createSetting('rRaidingDefaultSettings', 'Raiding: Default Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Maps');
-	createSetting('rRaidingZone', 'Raiding: Zone', 'Farms for specified worshippers in Raiding: Amount at zone according to this settings value. Can use 59,61,62. ', 'multiValue', [-1], null, 'Maps');
 
 	//Spire
 	//Helium
@@ -1083,10 +1077,11 @@ function modifyParentNodeUniverseSwap() {
 	//Maps
 	//Helium Settings
 	modifyParentNode_Initial("hUniqueMapPopup", radonoff);
+	modifyParentNode_Initial("hBoneShrinePopup", radonoff);
 
 	//Radon Settings
 	modifyParentNode_Initial("rUniqueMapPopup", radonon);
-	modifyParentNode_Initial("rVoidMapPopup", radonon);
+	modifyParentNode_Initial("rWorshipperFarmPopup", radonon);
 
 	//Gear
 	//Helium
@@ -2090,7 +2085,7 @@ function updateCustomButtons() {
 	(radonon && (autoTrimpSettings.RAutoPortal.selected == 'Custom' || autoTrimpSettings.RAutoPortal.selected == 'Challenge 3')) ? turnOn('RCustomAutoPortal') : turnOff('RCustomAutoPortal');
 	radonon && getPageSetting('RAutoStartDaily') && autoTrimpSettings.RAutoPortal.selected == 'Custom' ? turnOn('rCustomDailyAutoPortal') : turnOff('rCustomDailyAutoPortal');
 	var rnHr = (autoTrimpSettings.RAutoPortal.selected == 'Radon Per Hour');
-	radonon && (rnHr || autoTrimpSettings.RAutoPortal.selected == 'Custom') ? turnOn('RadonHourChallenge') : turnOff('RadonHourChallenge');
+	radonon && (rnHr || autoTrimpSettings.RAutoPortal.selected === 'Custom') ? turnOn('RadonHourChallenge') : turnOff('RadonHourChallenge');
 	radonon && (autoTrimpSettings.RAutoPortal.selected == 'Challenge 3') ? turnOn('RadonC3Challenge') : turnOff('RadonC3Challenge');
 
 	radonon && (rnHr) ? turnOn('RnHrDontPortalBefore') : turnOff('RnHrDontPortalBefore');
@@ -2120,8 +2115,9 @@ function updateCustomButtons() {
 	!radonon ? turnOn('AutoStartDaily') : turnOff('AutoStartDaily');
 	!radonon && highestZone >= 29 ? turnOn('u2daily') : turnOff('u2daily');
 	!radonon ? turnOn('AutoPortalDaily') : turnOff('AutoPortalDaily');
-	!radonon && getPageSetting('AutoPortalDaily') > 0 ? turnOn('dHeliumHourChallenge') : turnOff('dHeliumHourChallenge');
-	!radonon && getPageSetting('AutoPortalDaily') == 2 ? turnOn('dCustomAutoPortal') : turnOff('dCustomAutoPortal');
+	!radonon && getPageSetting('AutoPortalDaily') > 0 && getPageSetting('AutoPortalDaily') !== 3 ? turnOn('dHeliumHourChallenge') : turnOff('dHeliumHourChallenge');
+	!radonon && getPageSetting('AutoPortalDaily') === 3 ? turnOn('dC2Challenge') : turnOff('dC2Challenge');
+	!radonon && getPageSetting('AutoPortalDaily') >= 2 ? turnOn('dCustomAutoPortal') : turnOff('dCustomAutoPortal');
 	!radonon && getPageSetting('AutoPortalDaily') == 1 ? turnOn('dHeHrDontPortalBefore') : turnOff('dHeHrDontPortalBefore');
 	!radonon && getPageSetting('AutoPortalDaily') == 1 ? turnOn('dHeliumHrBuffer') : turnOff('dHeliumHrBuffer');
 	//RDaily
