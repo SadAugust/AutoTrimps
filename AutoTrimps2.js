@@ -312,6 +312,11 @@ function mainCleanup() {
 	currentradonhze = game.global.highestRadonLevelCleared + 1;
 	aWholeNewHZE = lastradonhze != currentradonhze;
 
+	if (aWholeNewHZE) {
+		heliumChallengesSetting();
+		radonChallengesSetting();
+	}
+
 	if (game.global.universe == 1 && currentworld == 1 && aWholeNewWorld) {
 		lastHeliumZone = 0;
 		zonePostpone = 0;
@@ -384,9 +389,6 @@ function mainCleanup() {
 	if (getPageSetting('AutoEggs'))
 		easterEggClicked();
 
-	if (aWholeNewHZE) {
-		radonChallengesSetting();
-	}
 }
 
 function throwErrorfromMain() {

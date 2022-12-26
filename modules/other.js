@@ -225,16 +225,23 @@ function heliumChallengesSetting() {
 	if (highestZone >= 215) heliumHourChallenges.push("Domination");
 	if (highestZone >= 215) heliumHourChallenges.push("Experience");
 
-	document.getElementById('HeliumHourChallenge').innerHTML = ''
-	document.getElementById('dHeliumHourChallenge').innerHTML = ''
+	document.getElementById('HeliumHourChallenge').innerHTML = '';
 
 	for (var item in heliumHourChallenges) {
 		var option = document.createElement("option");
 		option.value = heliumHourChallenges[item];
 		option.text = heliumHourChallenges[item];
 		document.getElementById('HeliumHourChallenge').appendChild(option);
-		document.getElementById('dHeliumHourChallenge').appendChild(option);
 	}
+
+	document.getElementById('dHeliumHourChallenge').innerHTML = document.getElementById('HeliumHourChallenge').innerHTML;
+
+	/* if (highestZone >= 65) {
+		var option = document.createElement("option");
+		option.value = 'Challenge 2';
+		option.text = 'Challenge 2';
+		document.getElementById('dHeliumHourChallenge').appendChild(option);
+	} */
 
 	var challenge2 = ["None"];
 	if (getTotalPerkResource(true) >= 30) challenge2.push("Discipline");
@@ -262,34 +269,9 @@ function heliumChallengesSetting() {
 		option.value = challenge2[item];
 		option.text = challenge2[item];
 		document.getElementById('HeliumC2Challenge').appendChild(option);
-		document.getElementById('dC2Challenge').appendChild(option);
 	}
 
-	//if (radonHZE === 15) debug("You have unlocked the Unlucky challenge.")
-	if (radonHZE === 5) debug("You can now use the Smithy Farm setting. This can be found in the AT 'Maps' tab.")
-	if (radonHZE === 25) debug("You have unlocked the Transmute challenge. Any metal related settings will be converted to food instead while running this challenge.")
-	if (radonHZE === 30) debug("You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.")
-	if (radonHZE === 35) debug("You have unlocked the Unbalance challenge. There's setting for it in the AT 'C3' tab.")
-	if (radonHZE === 40) debug("You have unlocked the Bublé challenge. It has now been added to AutoPortal setting.")
-	//if (radonHZE === 45) debug("Duel");
-	if (radonHZE === 50) debug("You can now use the Worshipper Farm setting. This can be found in the AT 'Maps' tab.")
-	if (radonHZE === 50) debug("You can now access the C3 tab within the AT settings. Here you will find a variety of settings that will help optimise your C3 runs.")
-	if (radonHZE === 50) debug("Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them.");
-	if (radonHZE === 50) debug("You have unlocked the Melt challenge. It has now been added to AutoPortal setting.")
-	if (radonHZE === 60) debug("You have unlocked the Trappapalooza challenge. It has now been added to Challenge 3 AutoPortal settings & there's a setting for it in the AT 'C3' tab.")
-	if (radonHZE === 70) debug("You have unlocked the Quagmire challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-	if (radonHZE === 70) debug("You have unlocked the Wither challenge. It has now been added to Challenge 3 AutoPortal settings & any map level settings with the exception of Map Bonus will make the highest level map you run -1 to not obtain additional stacks.")
-	if (radonHZE === 85) debug("You have unlocked the Quest challenge. It has now been added to Challenge 3 AutoPortal settings & AT will automatically complete Quests if AutoMaps is enabled during this challenge.")
-	if (radonHZE === 90) debug("You have unlocked the Archaeology challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-	if (radonHZE === 100) debug("You have unlocked the Mayhem challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
-	if (radonHZE === 105) debug("You have unlocked the Storm challenge. It has now been added to Challenge 3 AutoPortal setting & there's setting for it in the AT 'C3' tab.")
-	if (radonHZE === 110) debug("You have unlocked the Insanity challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-	if (radonHZE === 115) debug("You have unlocked the Berserk challenge. It has now been added to Challenge 3 AutoPortal setting.")
-	if (radonHZE === 135) debug("You have unlocked the Nurture challenge. It has now been added to AutoPortal setting & there is a setting for Laboratory's that has been added to AT's AutoStructure setting.")
-	if (radonHZE === 150) debug("You have unlocked the Pandemonium challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
-	if (radonHZE === 155) debug("You have unlocked the Alchemy challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-	if (radonHZE === 175) debug("You have unlocked the Hypothermia challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-	if (radonHZE === 175) debug("You have unlocked the Glass challenge. It has now been added to Challenge 3 AutoPortal setting.")
+	document.getElementById('dC2Challenge').innerHTML = document.getElementById('HeliumC2Challenge').innerHTML;
 }
 
 function radonChallengesSetting() {
@@ -326,16 +308,22 @@ function radonChallengesSetting() {
 	if (radonHZE >= 155) radonHourChallenges.push("Alchemy");
 	if (radonHZE >= 175) radonHourChallenges.push("Hypothermia");
 
-	document.getElementById('RadonHourChallenge').innerHTML = ''
-	//document.getElementById('RdHeliumHourChallenge').innerHTML = ''
+	document.getElementById('RadonHourChallenge').innerHTML = '';
 
 	for (var item in radonHourChallenges) {
 		var option = document.createElement("option");
 		option.value = radonHourChallenges[item];
 		option.text = radonHourChallenges[item];
 		document.getElementById('RadonHourChallenge').appendChild(option);
-		//document.getElementById('RdHeliumHourChallenge').appendChild(option);
 	}
+	document.getElementById('RdHeliumHourChallenge').innerHTML = document.getElementById('RadonHourChallenge').innerHTML;
+
+	/* if (radonHZE >= 50) {
+		var option = document.createElement("option");
+		option.value = 'Challenge 3';
+		option.text = 'Challenge 3';
+		document.getElementById('RdHeliumHourChallenge').appendChild(option);
+	} */
 
 	var radonChallenge3 = ["None"];
 	if (radonHZE >= 15) radonChallenge3.push("Unlucky");
@@ -352,14 +340,13 @@ function radonChallengesSetting() {
 	if (radonHZE >= 201) radonChallenge3.push("Smithless");
 
 	document.getElementById('RadonC3Challenge').innerHTML = '';
-	//document.getElementById('RdC3Challenge').innerHTML = '';
 	for (var item in radonChallenge3) {
 		var option = document.createElement("option");
 		option.value = radonChallenge3[item];
 		option.text = radonChallenge3[item];
 		document.getElementById('RadonC3Challenge').appendChild(option);
-		//document.getElementById('RdC3Challenge').appendChild(option);
 	}
+	document.getElementById('RdC3Challenge').innerHTML = document.getElementById('RadonC3Challenge').innerHTML;
 
 	//if (radonHZE === 15) debug("You have unlocked the Unlucky challenge.")
 	if (radonHZE === 5) debug("You can now use the Smithy Farm setting. This can be found in the AT 'Maps' tab.")

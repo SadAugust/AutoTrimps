@@ -144,52 +144,10 @@ initializeAllTabs();
 function initializeAllSettings() {
 	var highestZone = game.global.highestLevelCleared + 1;
 	var heliumChallenges = ["Off", "Helium Per Hour"];
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 40) heliumChallenges.push("Balance");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 55) heliumChallenges.push("Decay");
-	if (getPageSetting('rDisplayAllSettings') || game.global.prisonClear >= 1) heliumChallenges.push("Electricity");
-	if (getPageSetting('rDisplayAllSettings') || highestZone > 110) heliumChallenges.push("Life");
-	if (getPageSetting('rDisplayAllSettings') || highestZone > 125) heliumChallenges.push("Crushed");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 145) heliumChallenges.push("Nom");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 165) heliumChallenges.push("Toxicity");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) heliumChallenges.push("Watch");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) heliumChallenges.push("Lead");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 190) heliumChallenges.push("Corrupted");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 215) heliumChallenges.push("Domination");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 600) heliumChallenges.push("Experience");
-	heliumChallenges.push("Custom");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 65) heliumChallenges.push("Challenge 2");
 
 	var heliumHourChallenges = ["None"];
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 40) heliumHourChallenges.push("Balance");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 55) heliumHourChallenges.push("Decay");
-	if (getPageSetting('rDisplayAllSettings') || game.global.prisonClear >= 1) heliumHourChallenges.push("Electricity");
-	if (getPageSetting('rDisplayAllSettings') || highestZone > 110) heliumHourChallenges.push("Life");
-	if (getPageSetting('rDisplayAllSettings') || highestZone > 125) heliumHourChallenges.push("Crushed");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 145) heliumHourChallenges.push("Nom");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 165) heliumHourChallenges.push("Toxicity");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) heliumHourChallenges.push("Watch");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) heliumHourChallenges.push("Lead");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 190) heliumHourChallenges.push("Corrupted");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 215) heliumHourChallenges.push("Domination");
 
 	var challenge2 = ["None"];
-	if (getPageSetting('rDisplayAllSettings') || getTotalPerkResource(true) >= 30) challenge2.push("Discipline");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 25) challenge2.push("Metal");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 35) challenge2.push("Size");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 40) challenge2.push("Balance");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 45) challenge2.push("Meditate");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 60) challenge2.push("Trimp");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 70) challenge2.push("Trapper");
-	if (getPageSetting('rDisplayAllSettings') || game.global.prisonClear >= 1) challenge2.push("Electricity");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 120) challenge2.push("Coordinate");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 130) challenge2.push("Slow");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 145) challenge2.push("Nom");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 150) challenge2.push("Mapology");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 165) challenge2.push("Toxicity");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) challenge2.push("Watch");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 180) challenge2.push("Lead");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 425) challenge2.push("Obliterated");
-	if (getPageSetting('rDisplayAllSettings') || game.global.totalSquaredReward >= 4500) challenge2.push("Eradicated");
 
 	//Core
 
@@ -216,42 +174,10 @@ function initializeAllSettings() {
 
 	highestZone = game.global.highestRadonLevelCleared;
 	var radonChallenges = ["Off", "Radon Per Hour"];
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 39) radonChallenges.push("Bublé");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 54) radonChallenges.push("Melt");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 69) radonChallenges.push("Quagmire");
-	if (getPageSetting('rDisplayAllSettings') || highestZone > 89) radonChallenges.push("Archaeology");
-	if (getPageSetting('rDisplayAllSettings') || highestZone > 99) radonChallenges.push("Mayhem");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 109) radonChallenges.push("Insanity");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 134) radonChallenges.push("Nurture");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 149) radonChallenges.push("Pandemonium");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 154) radonChallenges.push("Alchemy");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) radonChallenges.push("Hypothermia");
-	radonChallenges.push("Custom");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 49) radonChallenges.push("Challenge 3");
 
 	radonHourChallenges = ["None"];
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 39) radonHourChallenges.push("Bublé");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 54) radonHourChallenges.push("Melt");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 69) radonHourChallenges.push("Quagmire");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 89) radonHourChallenges.push("Archaeology");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 109) radonHourChallenges.push("Insanity");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 134) radonHourChallenges.push("Nurture");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 154) radonHourChallenges.push("Alchemy");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) radonHourChallenges.push("Hypothermia");
 
 	challenge3 = ["None"];
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 14) challenge3.push("Unlucky");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 19) challenge3.push("Downsize");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 24) challenge3.push("Transmute");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 34) challenge3.push("Unbalance");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 44) challenge3.push("Duel");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 59) challenge3.push("Trappapalooza");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 69) challenge3.push("Wither");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 84) challenge3.push("Quest");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 104) challenge3.push("Storm");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 114) challenge3.push("Berserk");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 174) challenge3.push("Glass");
-	if (getPageSetting('rDisplayAllSettings') || highestZone >= 200) challenge3.push("Smithless");
 
 	//Radon Core
 	createSetting('RManualGather2', ['Manual Gather/Build', 'Auto Gather/Build', 'Mining/Building Only'], 'Controls what you gather/build do. Manual does nothing<br>Auto Gathering of Food,Wood,Metal(w/turkimp) & Science. Auto speed-Builds your build queue. <br>Mining/Building only does exactly what it says. Only use if you are passed the early stages of the game and have the mastery foremany unlocked (No longer need to trap, food and wood are useless). ', 'multitoggle', 1, null, 'Core');
@@ -312,10 +238,9 @@ function initializeAllSettings() {
 	//Helium Daily Portal
 	createSetting('AutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('u2daily', 'Daily in U2', 'If this is on, you will do your daily in U2. ', 'boolean', false, null, 'Daily');
-	createSetting('AutoPortalDaily', ['Daily Portal Off', 'DP: He/Hr', 'DP: Custom', 'DP: C2'], '\
+	createSetting('AutoPortalDaily', ['Daily Portal Off', 'DP: He/Hr', 'DP: Custom'], '\
 	<b>DP: He/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined.\
-	<br><b>DP: Custom:</b> Portals into this challenge at the zone you have defined in Daily Custom Portal.\
-	<br><b>DP: C2:</b> Portals into this challenge at the zone you have defined in Daily Custom Portal.', 'multitoggle', '0', null, 'Daily');
+	<br><b>DP: Custom:</b> Portals into this challenge at the zone you have defined in Daily Custom Portal.', 'multitoggle', '0', null, 'Daily');
 	createSetting('dHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal in dailies when there are none left. Custom portals on the zone specified in \'Daily Custom Portal\'. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience'], 'Daily');
 	createSetting('dC2Challenge', 'DP: C2', 'Automatically portal into this challenge when using helium per hour or custom autoportal in dailies when there are none left. Custom portals at the zone specified.', 'dropdown', 'None', challenge2, "Daily");
 	createSetting('dCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone during dailies. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Daily');
@@ -331,10 +256,9 @@ function initializeAllSettings() {
 
 	//Radon Daily Portal
 	createSetting('RAutoStartDaily', 'Auto Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
-	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom', 'DP: C3'], '\
+	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '\
 	<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined.\
-	<br><b>DP: Custom:</b> Portals into this challenge at the zone you have defined in Daily Custom Portal.\
-	<br><b>DP: C3:</b> Portals into this challenge at the zone you have defined in Daily Custom Portal.', 'multitoggle', '0', null, 'Daily');
+	<br><b>DP: Custom:</b> Portals into this challenge at the zone you have defined in Daily Custom Portal.', 'multitoggle', '0', null, 'Daily');
 	createSetting('RdHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals at the zone specified.', 'dropdown', 'None', radonHourChallenges, "Daily");
 	createSetting('RdC3Challenge', 'DP: C3', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals at the zone specified.', 'dropdown', 'None', challenge3, "Daily");
 	createSetting('RdCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal AFTER clearing this level in dailies. (ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, "Daily");
@@ -2115,8 +2039,8 @@ function updateCustomButtons() {
 	!radonon ? turnOn('AutoStartDaily') : turnOff('AutoStartDaily');
 	!radonon && highestZone >= 29 ? turnOn('u2daily') : turnOff('u2daily');
 	!radonon ? turnOn('AutoPortalDaily') : turnOff('AutoPortalDaily');
-	!radonon && getPageSetting('AutoPortalDaily') > 0 && getPageSetting('AutoPortalDaily') !== 3 ? turnOn('dHeliumHourChallenge') : turnOff('dHeliumHourChallenge');
-	!radonon && getPageSetting('AutoPortalDaily') === 3 ? turnOn('dC2Challenge') : turnOff('dC2Challenge');
+	!radonon && getPageSetting('AutoPortalDaily') > 0 ? turnOn('dHeliumHourChallenge') : turnOff('dHeliumHourChallenge');
+	!radonon && getPageSetting('AutoPortalDaily') && autoTrimpSettings.dHeliumHourChallenge.selected == 'Challenge 2' ? turnOn('dC2Challenge') : turnOff('dC2Challenge');
 	!radonon && getPageSetting('AutoPortalDaily') >= 2 ? turnOn('dCustomAutoPortal') : turnOff('dCustomAutoPortal');
 	!radonon && getPageSetting('AutoPortalDaily') == 1 ? turnOn('dHeHrDontPortalBefore') : turnOff('dHeHrDontPortalBefore');
 	!radonon && getPageSetting('AutoPortalDaily') == 1 ? turnOn('dHeliumHrBuffer') : turnOff('dHeliumHrBuffer');
@@ -2134,8 +2058,8 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAutoPortalDaily') >= 2 ? turnOn('RdCustomAutoPortal') : turnOff('RdCustomAutoPortal');
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeHrDontPortalBefore') : turnOff('RdHeHrDontPortalBefore');
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeliumHrBuffer') : turnOff('RdHeliumHrBuffer');
-	radonon && getPageSetting('RAutoPortalDaily') > 0 && getPageSetting('RAutoPortalDaily') !== 3 ? turnOn("RdHeliumHourChallenge") : turnOff("RdHeliumHourChallenge");
-	radonon && getPageSetting('RAutoPortalDaily') === 3 ? turnOn("RdC3Challenge") : turnOff("RdC3Challenge");
+	radonon && getPageSetting('RAutoPortalDaily') > 0 ? turnOn("RdHeliumHourChallenge") : turnOff("RdHeliumHourChallenge");
+	radonon && getPageSetting('RAutoPortalDaily') && autoTrimpSettings.RdHeliumHourChallenge.selected == 'Challenge 3' ? turnOn("RdC3Challenge") : turnOff("RdC3Challenge");
 
 	//C2
 	!radonon ? turnOn('FinishC2') : turnOff('FinishC2');
@@ -2701,6 +2625,9 @@ function updateCustomButtons() {
 	document.getElementById('RadonHourChallenge').value = autoTrimpSettings.RadonHourChallenge.selected;
 	document.getElementById('RadonC3Challenge').value = autoTrimpSettings.RadonC3Challenge.selected;
 	document.getElementById('dHeliumHourChallenge').value = autoTrimpSettings.dHeliumHourChallenge.selected;
+	document.getElementById('dC2Challenge').value = autoTrimpSettings.dC2Challenge.selected;
+	document.getElementById('RdHeliumHourChallenge').value = autoTrimpSettings.RdHeliumHourChallenge.selected;
+	document.getElementById('RdC3Challenge').value = autoTrimpSettings.RdC3Challenge.selected;
 
 	document.getElementById('Prestige').value = autoTrimpSettings.Prestige.selected;
 	document.getElementById('rPrestige').value = autoTrimpSettings.rPrestige.selected;
