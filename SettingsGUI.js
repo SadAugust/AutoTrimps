@@ -314,8 +314,12 @@ function initializeAllSettings() {
 	//Helium Daily Portal
 	createSetting('AutoStartDaily', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
 	createSetting('u2daily', 'Daily in U2', 'If this is on, you will do your daily in U2. ', 'boolean', false, null, 'Daily');
-	createSetting('AutoPortalDaily', ['Daily Portal Off', 'DP: He/Hr', 'DP: Custom'], '<b>DP: He/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
-	createSetting('dHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience'], 'Daily');
+	createSetting('AutoPortalDaily', ['Daily Portal Off', 'DP: He/Hr', 'DP: Custom', 'DP: C2'], '\
+	<b>DP: He/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined.\
+	<br><b>DP: Custom:</b> Portals into this challenge at the zone you have defined in Daily Custom Portal.\
+	<br><b>DP: C2:</b> Portals into this challenge at the zone you have defined in Daily Custom Portal.', 'multitoggle', '0', null, 'Daily');
+	createSetting('dHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal in dailies when there are none left. Custom portals on the zone specified in \'Daily Custom Portal\'. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience'], 'Daily');
+	createSetting('dC2Challenge', 'DP: C2', 'Automatically portal into this challenge when using helium per hour or custom autoportal in dailies when there are none left. Custom portals at the zone specified.', 'dropdown', 'None', challenge2, "Daily");
 	createSetting('dCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal at this zone during dailies. (ie: setting to 200 would portal when you reach zone 200)', 'value', '999', null, 'Daily');
 	createSetting('dHeHrDontPortalBefore', 'D: Don\'t Portal Before', 'Do NOT allow Helium per Hour Daily AutoPortal setting to portal BEFORE this level is reached in dailies. It is an additional check that prevents drops in helium/hr from triggering autoportal in dailies. Set to 0 or -1 to completely disable this check. (only shows up with Helium per Hour set in dailies)', 'value', '999', null, 'Daily');
 	createSetting('dHeliumHrBuffer', 'D: He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
@@ -329,8 +333,12 @@ function initializeAllSettings() {
 
 	//Radon Daily Portal
 	createSetting('RAutoStartDaily', 'Auto Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
-	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom'], '<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined. <br><b>DP: Custom:</b> Portals after clearing the zone you have defined in Daily Custom Portal. ', 'multitoggle', '0', null, 'Daily');
-	createSetting('RdHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', radonHourChallenges, "Daily");
+	createSetting('RAutoPortalDaily', ['Daily Portal Off', 'DP: Rn/Hr', 'DP: Custom', 'DP: C3'], '\
+	<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined.\
+	<br><b>DP: Custom:</b> Portals into this challenge at the zone you have defined in Daily Custom Portal.\
+	<br><b>DP: C3:</b> Portals into this challenge at the zone you have defined in Daily Custom Portal.', 'multitoggle', '0', null, 'Daily');
+	createSetting('RdHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals at the zone specified.', 'dropdown', 'None', radonHourChallenges, "Daily");
+	createSetting('RdC3Challenge', 'DP: C3', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals at the zone specified.', 'dropdown', 'None', challenge3, "Daily");
 	createSetting('RdCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal AFTER clearing this level in dailies. (ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, "Daily");
 	createSetting('RdHeliumHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
 	createSetting('RFillerRun', 'Filler run', 'Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.', 'boolean', false, null, 'Daily');
@@ -503,7 +511,7 @@ function initializeAllSettings() {
 	createSetting('automapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice. ', 'boolean', true, null, 'Maps');
 	createSetting('FarmWhenNomStacks7', 'Farm on >7 NOMstacks', 'Optional. If Improbability already has 5 NOMstacks, stack 30 Anticipation. If the Improbability has >7 NOMstacks on it, get +200% dmg from MapBonus. If we still cant kill it, enter Farming mode at 30 stacks, Even with DisableFarming On! (exits when we get under 10x). Farms if we hit 100 stacks in the world. If we ever hit (100) nomstacks in a map (likely a voidmap), farm, (exit the voidmap) and (prevent void from running, until situation is clear). Restarts any voidmaps if we hit 100 stacks. ', 'boolean', false, null, 'Maps');
 	createSetting('scryvoidmaps', 'VM Scryer', 'Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Maps');
-	createSetting('buywepsvoid', 'VM Buy Weps', 'Buys gear in Void maps regardless of your H:D ratio. Useful if you want to overkill as much as possible. ', 'boolean', false, null, 'Maps');
+	createSetting('onlyPerfectMaps', 'Perfect Maps', 'If enabled when AT is trying to map it will only create perfect maps. Be warned this may greatly decrease the map level that AT believes is efficient.', 'boolean', false, null, 'Maps');
 
 	createSetting('hUniqueMapSettingsArray', 'Unqiue Map Settings', 'Click to adjust settings.', 'mazDefaultArray', {
 		The_Wall: { enabled: false, zone: 100, cell: 0 },
@@ -564,6 +572,7 @@ function initializeAllSettings() {
 	//General
 	createSetting('RAutoMaps', ["Auto Maps", "Auto Maps", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of rage. Recommended ON. Do not use window, it will not work.', 'multitoggle', 1, null, "Maps");
 	createSetting('Rautomapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.', 'boolean', true, null, 'Maps');
+	createSetting('ronlyPerfectMaps', 'Perfect Maps', 'If enabled when AT is trying to map it will only create perfect maps. Be warned this may greatly decrease the map level that AT believes is efficient.', 'boolean', false, null, 'Maps');
 
 	createSetting('rUniqueMapSettingsArray', 'Unqiue Map Settings', 'Click to adjust settings.', 'mazDefaultArray', {
 		Dimension_of_Rage: { enabled: false, zone: 100, cell: 0 },
@@ -1820,7 +1829,6 @@ function updateATVersion() {
 			Have added C2 runner to U2. An extra column has been added to the C2 Table to show which challenges C2 runner can run in each universe. It can run the easy challenges that don't require much intervention so hopefully that can help when updating C3s!")
 		}
 
-
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
 		verticalCenterTooltip(false, true);
@@ -2127,10 +2135,11 @@ function updateCustomButtons() {
 	radonon ? turnOn('u1daily') : turnOff('u1daily');
 	radonon ? turnOn('dontCapDailies') : turnOff('dontCapDailies');
 	radonon ? turnOn('RAutoPortalDaily') : turnOff('RAutoPortalDaily');
-	radonon && getPageSetting('RAutoPortalDaily') == 2 ? turnOn('RdCustomAutoPortal') : turnOff('RdCustomAutoPortal');
+	radonon && getPageSetting('RAutoPortalDaily') >= 2 ? turnOn('RdCustomAutoPortal') : turnOff('RdCustomAutoPortal');
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeHrDontPortalBefore') : turnOff('RdHeHrDontPortalBefore');
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeliumHrBuffer') : turnOff('RdHeliumHrBuffer');
-	radonon && getPageSetting('RAutoPortalDaily') > 0 ? turnOn("RdHeliumHourChallenge") : turnOff("RdHeliumHourChallenge");
+	radonon && getPageSetting('RAutoPortalDaily') > 0 && getPageSetting('RAutoPortalDaily') !== 3 ? turnOn("RdHeliumHourChallenge") : turnOff("RdHeliumHourChallenge");
+	radonon && getPageSetting('RAutoPortalDaily') === 3 ? turnOn("RdC3Challenge") : turnOff("RdC3Challenge");
 
 	//C2
 	!radonon ? turnOn('FinishC2') : turnOff('FinishC2');
@@ -2243,9 +2252,9 @@ function updateCustomButtons() {
 	//Maps
 	!radonon ? turnOn('AutoMaps') : turnOff('AutoMaps');
 	!radonon ? turnOn('automapsportal') : turnOff('automapsportal');
+	!radonon ? turnOn('onlyPerfectMaps') : turnOff('onlyPerfectMaps');
 	!radonon ? turnOn('FarmWhenNomStacks7') : turnOff('FarmWhenNomStacks7');
 	!radonon ? turnOn('scryvoidmaps') : turnOff('scryvoidmaps');
-	!radonon ? turnOn('buywepsvoid') : turnOff('buywepsvoid');
 	turnOff('hUniqueMapSettingsArray');
 	!radonon ? turnOn('hUniqueMapPopup') : turnOff('hUniqueMapPopup');
 
@@ -2299,6 +2308,7 @@ function updateCustomButtons() {
 	//RMaps
 	radonon ? turnOn('RAutoMaps') : turnOff('RAutoMaps');
 	radonon ? turnOn('Rautomapsportal') : turnOff('Rautomapsportal');
+	radonon ? turnOn('ronlyPerfectMaps') : turnOff('ronlyPerfectMaps');
 	turnOff('rUniqueMapSettingsArray');
 	radonon ? turnOn('rUniqueMapPopup') : turnOff('rUniqueMapPopup');
 

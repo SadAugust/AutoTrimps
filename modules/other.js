@@ -185,6 +185,113 @@ function archstring() {
 	}
 }
 
+function heliumChallengesSetting() {
+	var highestZone = game.global.highestLevelCleared + 1;
+	var heliumChallenges = ["Off", "Helium Per Hour"];
+	if (highestZone >= 40) heliumChallenges.push("Balance");
+	if (highestZone >= 55) heliumChallenges.push("Decay");
+	if (game.global.prisonClear >= 1) heliumChallenges.push("Electricity");
+	if (highestZone > 110) heliumChallenges.push("Life");
+	if (highestZone > 125) heliumChallenges.push("Crushed");
+	if (highestZone >= 145) heliumChallenges.push("Nom");
+	if (highestZone >= 165) heliumChallenges.push("Toxicity");
+	if (highestZone >= 180) heliumChallenges.push("Watch");
+	if (highestZone >= 180) heliumChallenges.push("Lead");
+	if (highestZone >= 190) heliumChallenges.push("Corrupted");
+	if (highestZone >= 215) heliumChallenges.push("Domination");
+	if (highestZone >= 600) heliumChallenges.push("Experience");
+	heliumChallenges.push("Custom");
+	if (highestZone >= 65) heliumChallenges.push("Challenge 2");
+
+	document.getElementById('AutoPortal').innerHTML = '';
+	for (var item in heliumChallenges) {
+		var option = document.createElement("option");
+		option.value = heliumChallenges[item];
+		option.text = heliumChallenges[item];
+		document.getElementById('AutoPortal').appendChild(option);
+	}
+
+	var heliumHourChallenges = ["None"];
+	if (highestZone >= 40) heliumHourChallenges.push("Balance");
+	if (highestZone >= 55) heliumHourChallenges.push("Decay");
+	if (game.global.prisonClear >= 1) heliumHourChallenges.push("Electricity");
+	if (highestZone > 110) heliumHourChallenges.push("Life");
+	if (highestZone > 125) heliumHourChallenges.push("Crushed");
+	if (highestZone >= 145) heliumHourChallenges.push("Nom");
+	if (highestZone >= 165) heliumHourChallenges.push("Toxicity");
+	if (highestZone >= 180) heliumHourChallenges.push("Watch");
+	if (highestZone >= 180) heliumHourChallenges.push("Lead");
+	if (highestZone >= 190) heliumHourChallenges.push("Corrupted");
+	if (highestZone >= 215) heliumHourChallenges.push("Domination");
+	if (highestZone >= 215) heliumHourChallenges.push("Experience");
+
+	document.getElementById('HeliumHourChallenge').innerHTML = ''
+	document.getElementById('dHeliumHourChallenge').innerHTML = ''
+
+	for (var item in heliumHourChallenges) {
+		var option = document.createElement("option");
+		option.value = heliumHourChallenges[item];
+		option.text = heliumHourChallenges[item];
+		document.getElementById('HeliumHourChallenge').appendChild(option);
+		document.getElementById('dHeliumHourChallenge').appendChild(option);
+	}
+
+	var challenge2 = ["None"];
+	if (getTotalPerkResource(true) >= 30) challenge2.push("Discipline");
+	if (highestZone >= 25) challenge2.push("Metal");
+	if (highestZone >= 35) challenge2.push("Size");
+	if (highestZone >= 40) challenge2.push("Balance");
+	if (highestZone >= 45) challenge2.push("Meditate");
+	if (highestZone >= 60) challenge2.push("Trimp");
+	if (highestZone >= 70) challenge2.push("Trapper");
+	if (game.global.prisonClear >= 1) challenge2.push("Electricity");
+	if (highestZone >= 120) challenge2.push("Coordinate");
+	if (highestZone >= 130) challenge2.push("Slow");
+	if (highestZone >= 145) challenge2.push("Nom");
+	if (highestZone >= 150) challenge2.push("Mapology");
+	if (highestZone >= 165) challenge2.push("Toxicity");
+	if (highestZone >= 180) challenge2.push("Watch");
+	if (highestZone >= 180) challenge2.push("Lead");
+	if (highestZone >= 425) challenge2.push("Obliterated");
+	if (game.global.totalSquaredReward >= 4500) challenge2.push("Eradicated");
+
+	document.getElementById('HeliumC2Challenge').innerHTML = '';
+	document.getElementById('dC2Challenge').innerHTML = '';
+	for (var item in challenge2) {
+		var option = document.createElement("option");
+		option.value = challenge2[item];
+		option.text = challenge2[item];
+		document.getElementById('HeliumC2Challenge').appendChild(option);
+		document.getElementById('dC2Challenge').appendChild(option);
+	}
+
+	//if (radonHZE === 15) debug("You have unlocked the Unlucky challenge.")
+	if (radonHZE === 5) debug("You can now use the Smithy Farm setting. This can be found in the AT 'Maps' tab.")
+	if (radonHZE === 25) debug("You have unlocked the Transmute challenge. Any metal related settings will be converted to food instead while running this challenge.")
+	if (radonHZE === 30) debug("You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.")
+	if (radonHZE === 35) debug("You have unlocked the Unbalance challenge. There's setting for it in the AT 'C3' tab.")
+	if (radonHZE === 40) debug("You have unlocked the Bublé challenge. It has now been added to AutoPortal setting.")
+	//if (radonHZE === 45) debug("Duel");
+	if (radonHZE === 50) debug("You can now use the Worshipper Farm setting. This can be found in the AT 'Maps' tab.")
+	if (radonHZE === 50) debug("You can now access the C3 tab within the AT settings. Here you will find a variety of settings that will help optimise your C3 runs.")
+	if (radonHZE === 50) debug("Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them.");
+	if (radonHZE === 50) debug("You have unlocked the Melt challenge. It has now been added to AutoPortal setting.")
+	if (radonHZE === 60) debug("You have unlocked the Trappapalooza challenge. It has now been added to Challenge 3 AutoPortal settings & there's a setting for it in the AT 'C3' tab.")
+	if (radonHZE === 70) debug("You have unlocked the Quagmire challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (radonHZE === 70) debug("You have unlocked the Wither challenge. It has now been added to Challenge 3 AutoPortal settings & any map level settings with the exception of Map Bonus will make the highest level map you run -1 to not obtain additional stacks.")
+	if (radonHZE === 85) debug("You have unlocked the Quest challenge. It has now been added to Challenge 3 AutoPortal settings & AT will automatically complete Quests if AutoMaps is enabled during this challenge.")
+	if (radonHZE === 90) debug("You have unlocked the Archaeology challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (radonHZE === 100) debug("You have unlocked the Mayhem challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
+	if (radonHZE === 105) debug("You have unlocked the Storm challenge. It has now been added to Challenge 3 AutoPortal setting & there's setting for it in the AT 'C3' tab.")
+	if (radonHZE === 110) debug("You have unlocked the Insanity challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (radonHZE === 115) debug("You have unlocked the Berserk challenge. It has now been added to Challenge 3 AutoPortal setting.")
+	if (radonHZE === 135) debug("You have unlocked the Nurture challenge. It has now been added to AutoPortal setting & there is a setting for Laboratory's that has been added to AT's AutoStructure setting.")
+	if (radonHZE === 150) debug("You have unlocked the Pandemonium challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
+	if (radonHZE === 155) debug("You have unlocked the Alchemy challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (radonHZE === 175) debug("You have unlocked the Hypothermia challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
+	if (radonHZE === 175) debug("You have unlocked the Glass challenge. It has now been added to Challenge 3 AutoPortal setting.")
+}
+
 function radonChallengesSetting() {
 	var radonHZE = game.global.highestRadonLevelCleared + 1;
 	var radonChallenges = ["Off", "Radon Per Hour"];
@@ -201,7 +308,7 @@ function radonChallengesSetting() {
 	radonChallenges.push("Custom");
 	if (radonHZE >= 50) radonChallenges.push("Challenge 3");
 
-	document.getElementById('RAutoPortal').innerHTML = ''
+	document.getElementById('RAutoPortal').innerHTML = '';
 	for (var item in radonChallenges) {
 		var option = document.createElement("option");
 		option.value = radonChallenges[item];
@@ -220,11 +327,14 @@ function radonChallengesSetting() {
 	if (radonHZE >= 175) radonHourChallenges.push("Hypothermia");
 
 	document.getElementById('RadonHourChallenge').innerHTML = ''
+	document.getElementById('RdHeliumHourChallenge').innerHTML = ''
+
 	for (var item in radonHourChallenges) {
 		var option = document.createElement("option");
 		option.value = radonHourChallenges[item];
 		option.text = radonHourChallenges[item];
 		document.getElementById('RadonHourChallenge').appendChild(option);
+		document.getElementById('RdHeliumHourChallenge').appendChild(option);
 	}
 
 	var radonChallenge3 = ["None"];
@@ -239,13 +349,16 @@ function radonChallengesSetting() {
 	if (radonHZE >= 105) radonChallenge3.push("Storm");
 	if (radonHZE >= 115) radonChallenge3.push("Berserk");
 	if (radonHZE >= 175) radonChallenge3.push("Glass");
+	if (radonHZE >= 201) radonChallenge3.push("Smithless");
 
-	document.getElementById('RadonC3Challenge').innerHTML = ''
+	document.getElementById('RadonC3Challenge').innerHTML = '';
+	document.getElementById('RdC3Challenge').innerHTML = '';
 	for (var item in radonChallenge3) {
 		var option = document.createElement("option");
 		option.value = radonChallenge3[item];
 		option.text = radonChallenge3[item];
 		document.getElementById('RadonC3Challenge').appendChild(option);
+		document.getElementById('RdC3Challenge').appendChild(option);
 	}
 
 	//if (radonHZE === 15) debug("You have unlocked the Unlucky challenge.")
@@ -513,7 +626,12 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
-		if (!statCheck && game.resources.fragments.owned < PerfectMapCost_Actual(mapLevel, special, biome))
+		if (y === minLevel) {
+			return minLevel;
+		}
+		if (!statCheck && getPageSetting('ronlyPerfectMaps') && game.resources.fragments.owned < PerfectMapCost_Actual(mapLevel, special, biome))
+			continue;
+		if (!statCheck && !getPageSetting('ronlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
 			continue;
 
 		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot');
@@ -532,9 +650,6 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 		if (enemyHealth <= ourDmg && enemyDmg <= ourHealth) {
 			return mapLevel;
 		}
-		if (y === minLevel) {
-			return minLevel;
-		}
 	}
 	return 0;
 }
@@ -547,16 +662,25 @@ function autoMapLevelU1(special, maxLevel, minLevel, critType, statCheck) {
 	const z = game.global.world;
 	const hze = getHighestLevelCleared();
 	const extraMapLevelsAvailable = hze >= 209;
-
 	const haveMapReducer = game.talents.mapLoot.purchased;
-	const baseLevel = z - (haveMapReducer ? 1 : 0);
+	const biome = (game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain");
 
 	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
-	if (!special) special = (game.global.highestLevelCleared > 183 ? 'lmc' : game.global.highestLevelCleared > 83 ? 'smc' : game.global.highestLevelCleared > 58 ? 'fa' : '0');
+	if (!special) special = getAvailableSpecials('lmc');
 	if (!critType) critType = 'maybe';
 
-	for (y = minLevel; y <= maxLevel; y++) {
+	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
+
+		//Skip plus level maps if they're not available.
+		if (!extraMapLevelsAvailable && y > 0) continue;
+
+		if (y === minLevel) return minLevel;
+
+		if (!statCheck && getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < PerfectMapCost_Actual(mapLevel, special, biome))
+			continue;
+		if (!statCheck && !getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
+			continue;
 
 		// Calculate optimal map level
 		let ratio = calcHDRatio(z + mapLevel, "map");
@@ -571,33 +695,21 @@ function autoMapLevelU1(special, maxLevel, minLevel, critType, statCheck) {
 		}
 		// Stop increasing map level once HD ratio is too large
 		if ((z <= 40 && ratio > 1.5) || ratio > 1.2) {
-			if (minLevel !== mapLevel) mapLevel -= 1;
-			break;
+			continue;
 		}
-		if (mapLevel === 0)
-			break;
-	}
 
-	// Keep increasing map level while we can overkill
-	if (!extraMapLevelsAvailable) {
-		return mapLevel;
-	} else {
-		if (extraMapLevelsAvailable && mapLevel >= 0 && maxLevel > 0) {
+		if (mapLevel > 0) {
 			const maxOneShotCells = maxOneShotPower();
-			while (oneShotZone((z + mapLevel) + 1, "map", "S") >= maxOneShotCells && mapLevel !== 10) {
-				mapLevel++;
+			if (oneShotZone((z + mapLevel), "map", "S") >= maxOneShotCells) {
+				return mapLevel;
 			}
 		}
-		if (game.global.challengeActive !== "Coordinate" && !mutations.Magma.active()) {
-			// Prefer "Oneshot level" + 1, except on magma or in Coordinated challenge
-			mapLevel++;
-		}
 
-		if (mapLevel > 10)
-			mapLevel = 10;
+		if (mapLevel === 0 && minLevel < 0 && haveMapReducer) return (mapLevel - 1);
 
 		return mapLevel;
 	}
+	return mapLevel;
 }
 
 function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, ourDmg) {
@@ -1278,23 +1390,46 @@ function boneShrineOutput(charges) {
 	return text;
 }
 
-function PerfectMapCost_Actual(plusLevel, specialModifier, biome) {
+function minMapFrag(level, specialModifier, biome) {
+
+	var sliders = [9, 9, 9];
+	var perfect = true;
+	if (game.resources.fragments.owned < PerfectMapCost_Actual(level, specialModifier, biome)) {
+		perfect = false;
+
+		while (sliders[0] > 0 && sliders[2] > 0 && PerfectMapCost_Actual(level, specialModifier, biome, sliders, perfect) > game.resources.fragments.owned) {
+			sliders[0] -= 1;
+			if (PerfectMapCost_Actual(level, specialModifier, biome, sliders, perfect) <= game.resources.fragments.owned) break;
+			sliders[2] -= 1;
+		}
+	}
+
+	return PerfectMapCost_Actual(level, specialModifier, biome, sliders, perfect);
+}
+
+function PerfectMapCost_Actual(plusLevel, specialModifier, biome, sliders = [9, 9, 9], perfect = true) {
 	if (!specialModifier) return Infinity
 	if (!plusLevel && plusLevel !== 0) return Infinity
 	var specialModifier = specialModifier;
 	var plusLevel = plusLevel;
-	var baseCost = 27;
+	var baseCost = 0;
+	//All sliders at 9
+	baseCost += sliders[0];
+	baseCost += sliders[1];
+	baseCost += sliders[2];
 	var mapLevel = game.global.world;
 	if (plusLevel < 0)
-		mapLevel = mapLevel - plusLevel;
+		mapLevel = mapLevel + plusLevel;
 	if (mapLevel < 6)
 		mapLevel = 6;
 	baseCost *= (game.global.world >= 60) ? 0.74 : 1;
-	baseCost += 6
+	//Perfect checked
+	if (perfect && sliders.reduce(function (a, b) { return a + b; }, 0) === 27) baseCost += 6;
+	//Adding in plusLevels
 	if (plusLevel > 0)
 		baseCost += (plusLevel * 10)
 	if (specialModifier != "0")
-		baseCost += 18
+		baseCost += mapSpecialModifierConfig[specialModifier].costIncrease;
 	baseCost += mapLevel;
 	baseCost = Math.floor((((baseCost / 150) * (Math.pow(1.14, baseCost - 1))) * mapLevel * 2) * Math.pow((1.03 + (mapLevel / 50000)), mapLevel));
 	baseCost *= biome !== 'Random' ? 2 : 1;
@@ -1885,7 +2020,7 @@ function getAvailableSpecials(special) {
 			break;
 		}
 	}
-	if (bestMod === undefined) bestMod = '0'
+	if (bestMod === undefined) bestMod = '0';
 	return bestMod;
 }
 
