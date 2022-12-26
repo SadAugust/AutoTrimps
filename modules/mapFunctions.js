@@ -446,7 +446,7 @@ function MapBonus() {
 	}
 
 	if (currentMap === mapName && (game.global.mapBonus >= rMBRepeatCounter || !farmingDetails.shouldRun)) {
-		mappingDetails(mapName, rMBMapLevel, rMBSpecial);
+		mappingDetails(mapName, rMapSettings.mapLevel, rMapSettings.special);
 		resetMapVars();
 		rMBHealthFarm = false;
 		mapRepeats = 0;

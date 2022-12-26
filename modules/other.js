@@ -590,7 +590,7 @@ function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLe
 function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	if (!game.global.mapsUnlocked) return 0;
 	if (maxLevel > 10) maxLevel = 10;
-	if (game.global.universe === 1) return autoMapLevelU1(special, maxLevel, minLevel);
+	if (game.global.universe === 1) return autoMapLevelU1(special, maxLevel, minLevel, floorCrit, statCheck);
 	if (!statCheck) statCheck = false;
 	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
 	if (game.global.challengeActive === 'Wither' && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
