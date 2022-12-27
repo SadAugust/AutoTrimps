@@ -253,6 +253,7 @@ function initializeAllSettings() {
 	createSetting('buyradony', 'Buy Radonculous %', 'Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
 	createSetting('rBloodthirstDestack', 'Bloodthirst Destack', 'Will automatically run a level 6 map when you are one stack (death) away from the enemy healing and gaining additional attack. <b>Won\'t function properly without Auto Maps enabled.</b>', 'boolean', true, null, 'Daily');
 	createSetting('rAutoEqualityEmpower', 'AE: Empower', 'Will automatically adjust the enemies stats to factor in either Explosive or Crit modifiers if they\'re active on the current daily.</b>', 'boolean', true, null, 'Daily');
+	createSetting('rBloodthirstVoidMax', 'Voids: Max Bloodthirst', 'Will make your Void HD Ratio assume you have max Bloodthirst stacks active if you\'re in a Bloodthirst daily.</b>', 'boolean', true, null, 'Daily');
 
 	//Radon Daily Portal
 	createSetting('RAutoStartDaily', 'Auto Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily');
@@ -2047,6 +2048,7 @@ function updateCustomButtons() {
 	//RDaily
 	radonon ? turnOn('buyradony') : turnOff('buyradony');
 	radonon ? turnOn('rBloodthirstDestack') : turnOff('rBloodthirstDestack');
+	radonon ? turnOn('rBloodthirstVoidMax') : turnOff('rBloodthirstVoidMax');
 	radonon && getPageSetting('rManageEquality') === 2 ? turnOn('rAutoEqualityEmpower') : turnOff('rAutoEqualityEmpower');
 
 	//RDPortal 

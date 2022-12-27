@@ -717,6 +717,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var titimp = mapType !== 'world' && farmType === 'oneShot' ? 'force' : false;
 	var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
 	var dailyCrit = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
+	var dailyBloodthirst = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
 	var maxEquality = game.portal.Equality.radLevel;
 
 	var critType = 'maybe'
@@ -755,6 +756,12 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	}
 
 	if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
+
+	if (dailyBloodthirst && mapType === 'void' && getPageSetting('rBloodthirstVoidMax')) {
+		var bloodThirstStrength = game.global.dailyChallenge.bloodthirst.strength;
+		enemyDmg /= dailyModifiers.bloodthirst.getMult(bloodThirstStrength, game.global.dailyChallenge.bloodthirst.stacks);
+		enemyDmg *= dailyModifiers.bloodthirst.getMult(bloodThirstStrength, dailyModifiers.bloodthirst.getMaxStacks(bloodThirstStrength));
+	}
 
 	var ourDmgEquality = 0;
 	var enemyDmgEquality = 0;
