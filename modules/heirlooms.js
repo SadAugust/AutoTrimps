@@ -127,6 +127,26 @@ function HeirloomSearch(heirloom) {
 
 //Loops through heirlooms and checks if they have a specified modifier on them, divides by 10 if in u2.
 function HeirloomModSearch(heirloom, modifier) {
+	if (game.global.ShieldEquipped.name === getPageSetting(heirloom)) {
+		var loom = game.global.ShieldEquipped;
+		for (var i = (loom.mods.length - 1); i > -1; i--) {
+			if (loom.mods[i][0] == modifier)
+				if (game.global.universe == 1)
+					return loom.mods[i][1];
+				else
+					return loom.mods[i][1] / 10;
+		}
+	}
+	if (game.global.StaffEquipped.name === getPageSetting(heirloom)) {
+		var loom = game.global.StaffEquipped;
+		for (var i = (loom.mods.length - 1); i > -1; i--) {
+			if (loom.mods[i][0] == modifier)
+				if (game.global.universe == 1)
+					return loom.mods[i][1];
+				else
+					return loom.mods[i][1] / 10;
+		}
+	}
 	for (loom of game.global.heirloomsCarried) {
 		if (loom.name == getPageSetting(heirloom)) {
 			for (var i = (loom.mods.length - 1); i > -1; i--) {

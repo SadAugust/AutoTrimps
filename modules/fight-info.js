@@ -145,7 +145,7 @@
 			}
 
 			//Fast Imp
-			else if (M["fightinfo"].fast.indexOf(cell.name) > -1 && (!cell.corrupted || !cell.corrupted.startsWith("corrupt"))) {
+			else if ((M["fightinfo"].fast.indexOf(cell.name) > -1 && (!cell.corrupted || !cell.corrupted.startsWith("corrupt"))) || (cell.u2Mutation !== undefined && cell.u2Mutation !== [])) {
 				updateCell($cell, cell, M.fightinfo.imp.fast);
 			}
 

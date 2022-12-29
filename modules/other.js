@@ -1035,6 +1035,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		desiredRatios[3] !== undefined ? Number(desiredRatios[3]) : 0]
 		var totalFraction = desiredRatios.reduce((a, b) => { return a + b; });
 	}
+	heirloomPrefix = game.global.universe === 2 ? 'R' : 'H';
 	//Come home to the impossible flavour of balanced resource gain. Come home, to simple seconds.
 	var jobName;
 	var pos;
@@ -1064,11 +1065,11 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 	}
 	var heirloom = !jobName ? null :
 		jobName == "Miner" && game.global.challengeActive == "Pandemonium" && getPageSetting("RhsPandStaff") !== 'undefined' ? "RhsPandStaff" :
-			jobName == "Farmer" && getPageSetting("RhsFoodStaff") != 'undefined' ? "RhsFoodStaff" :
-				jobName == "Lumberjack" && getPageSetting("RhsWoodStaff") != 'undefined' ? "RhsWoodStaff" :
-					jobName == "Miner" && getPageSetting("RhsMetalStaff") != 'undefined' ? "RhsMetalStaff" :
-						getPageSetting("RhsMapStaff") != 'undefined' ? "RhsMapStaff" :
-							getPageSetting("RhsWorldStaff") != 'undefined' ? "RhsWorldStaff" :
+			jobName == "Farmer" && getPageSetting(heirloomPrefix + "hsFoodStaff") != 'undefined' ? (heirloomPrefix + "hsFoodStaff") :
+				jobName == "Lumberjack" && getPageSetting(heirloomPrefix + "hsWoodStaff") != 'undefined' ? (heirloomPrefix + "hsWoodStaff") :
+					jobName == "Miner" && getPageSetting(heirloomPrefix + "hsMetalStaff") != 'undefined' ? (heirloomPrefix + "hsMetalStaff") :
+						getPageSetting(heirloomPrefix + "hsMapStaff") != 'undefined' ? (heirloomPrefix + "hsMapStaff") :
+							getPageSetting(heirloomPrefix + "hsWorldStaff") != 'undefined' ? (heirloomPrefix + "hsWorldStaff") :
 								null;
 	var job = game.jobs[jobName];
 	var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
@@ -1089,7 +1090,9 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt_local *= game.portal.Observation.getMult();
 
 	if (what == "food" || what == "wood" || what == "metal") {
-		if (ssWorkerRatio) amt_local *= calculateParityBonus(desiredRatios);
+		if (ssWorkerRatio) {
+			amt_local *= calculateParityBonus(desiredRatios, HeirloomSearch(heirloom));
+		}
 		else amt_local *= getParityBonus();
 		if (autoBattle.oneTimers.Gathermate.owned)
 			amt_local *= autoBattle.oneTimers.Gathermate.getMult();
@@ -1117,28 +1120,20 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 	if (game.challenges.Nurture.boostsActive())
 		amt_local *= game.challenges.Nurture.getResourceBoost();
 
-	if (!getPageSetting('Rhs') || event == null || heirloom == null || game.global.StaffEquipped.name == autoTrimpSettings[heirloom].value) {
-		amt_local = calcHeirloomBonus("Staff", jobName + "Speed", amt_local);
-	}
-	//Calculating proper value for the staff we should be using instead of equipped
-	else if (event != null && game.global.StaffEquipped != getPageSetting(heirloom)) {
-		if (what == "food" || what == "wood" || what == "metal") {
-			if (ssWorkerRatio) amt_local /= calculateParityBonus(desiredRatios);
-			else amt_local /= getParityBonus();
-			amt_local *= getHazardParityMult(HeirloomSearch(heirloom)) > 0 ? getHazardParityMult(HeirloomSearch(heirloom)) : 1
-		}
-		amt_local = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"), amt_local);
-	}
+	//Calculating heirloom bonus
+	amt_local = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"), amt_local);
+
 	var turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
 
 	if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == "food" || what == "metal" || what == "wood")) {
 		amt_local *= turkimpBonus;
 		amt_local += getPlayerModifier() * seconds;
 	}
+	//debug(amt_local)
 	return amt_local;
 }
 
-function calculateParityBonus(workerRatio) {
+function calculateParityBonus(workerRatio, heirloom) {
 	if (!game.global.StaffEquipped || game.global.StaffEquipped.rarity < 10) {
 		game.global.parityBonus = 1;
 		return;
@@ -1157,7 +1152,6 @@ function calculateParityBonus(workerRatio) {
 			workerRatios.push(numWorkers[x] / totalWorkers);
 		}
 	} else {
-
 		var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
 		var workerRatios = workerRatio;
 		var ratio = workerRatios.reduce((a, b) => a + b, 0)
@@ -1174,7 +1168,7 @@ function calculateParityBonus(workerRatio) {
 	var largestWorker = Math.log(Math.max(...numWorkers)) / Math.log(3);
 	var spreadFactor = resourcePop - largestWorker;
 	var preLoomBonus = (spreadFactor * spreadFactor);
-	var finalWithParity = (1 + preLoomBonus) * getHazardParityMult();
+	var finalWithParity = (1 + preLoomBonus) * getHazardParityMult(heirloom);
 	game.global.parityBonus = finalWithParity;
 	return finalWithParity;
 }
