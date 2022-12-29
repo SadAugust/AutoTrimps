@@ -168,6 +168,13 @@
 			$cell.title = cell.name;
 			if (cell.corrupted && cell.corrupted.startsWith("corrupt"))
 				$cell.title += " - " + mutationEffects[cell.corrupted].title;
+
+			if (cell.u2Mutation !== undefined) {
+				cell.u2Mutation.forEach(mut => {
+					$cell.title += " - " + u2Mutations.getName([mut]);
+					$cell.classList.add(mut);
+				});
+			}
 		}
 	}
 
