@@ -159,7 +159,7 @@ function initializeAllSettings() {
 	createSetting('amalcoordt', 'Amal Target', 'Set the amount of Amals you wish to aim for. Once this target is reached, it will buy coords below your Amal ratio regardless of your H:D, just enough to keep the Amal. -1 to disable and use H:D for entire boost. ', 'value', -1, null, 'Core');
 	createSetting('amalcoordhd', 'Amal Boost H:D', 'Set your H:D for Amal Boost here. The higher it is the less coords AT will buy. 0.0000025 is the default. ', 'value', 0.0000025, null, 'Core');
 	createSetting('amalcoordz', 'Amal Boost End Z', 'Amal Boost End Zone. Set the zone you want to stop Amal Boosting. -1 to do it infinitely. ', 'value', -1, null, 'Core');
-	createSetting('AutoAllocatePerks', ['Auto Allocate Off', 'Auto Allocate On', 'Dump into Looting II'], 'Uses the AutoPerks ratio based preset system to automatically allocate your perks to spend whatever helium you have when you AutoPortal. Does not change Fixed Perks: siphonology, anticipation, meditation, relentlessness, range, agility, bait, trumps, packrat, capable. NEW: Dump into Looting II, dumps all loot gained from previous portal at specified zone', 'multitoggle', 0, null, 'Core');
+	createSetting('AutoAllocatePerks', ['Auto Allocate Off', 'Auto Allocate On', 'Dump into Looting II'], 'Uses a basic version of Perky (if you want more advanced settings import your save there). Dump into Looting II, all helium earned into this perk when auto portaling.', 'multitoggle', 0, null, 'Core');
 	createSetting('fastallocate', 'Fast Allocate', 'Turn on if your helium is above 500Qa. Not recommended for low amounts of helium. ', 'boolean', false, null, 'Core');
 	createSetting('TrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core');
 
@@ -1747,6 +1747,10 @@ function updateATVersion() {
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.7.9') {
 			changelog.push("Have completely redone the portal code, should work the exact same except to cancel out of a C3 using the 'C3 Finish' setting is now mandatory, AT will no longer autoportal with a c2/c3 active.<br>\
 			Have added C2 runner to U2. An extra column has been added to the C2 Table to show which challenges C2 runner can run in each universe. It can run the easy challenges that don't require much intervention so hopefully that can help when updating C3s!")
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.8.0') {
+			changelog.push("Have reworked the Auto Allocate code for Universe 1 which now uses Perky! If you want the more advanced setting (loot mod, prod mod etc) you'll need to export your save to Perky itself but this version should work well for 99.99% of use cases.")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;

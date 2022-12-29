@@ -119,6 +119,8 @@ function dailyAutoPortal() {
 	var universeOpp = game.global.universe === 2 ? '' : 'R'
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
 	const portalPrefix = portalUniverse === 2 ? 'u2' : 'u1';
+	const challengePrefix = portalUniverse === 2 ? 'C3' : 'C2';
+	const challengeOppPrefix = portalUniverse === 2 ? 'C3' : 'C2';
 	if (getPageSetting(universePrefix + 'AutoPortalDaily') == 1) {
 		var OKtoPortal = false;
 		var minZone = getPageSetting(universePrefix + 'dHeHrDontPortalBefore');
@@ -151,9 +153,9 @@ function dailyAutoPortal() {
 						document.getElementById('finishDailyBtnContainer').style.display = 'none';
 					}
 					if (autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected != 'None' && !getPageSetting(portalPrefix + 'daily'))
-						doPortal(autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected);
+						doPortal(autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected, autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected === 'Challenge ' + challengePrefix[1]);
 					else if (autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected != 'None' && getPageSetting(portalPrefix + 'daily'))
-						doPortal(autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected);
+						doPortal(autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected, autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected, autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected === 'Challenge ' + challengeOppPrefix[1]);
 					else
 						doPortal();
 				}, MODULES["portal"].timeout + 100);
@@ -334,8 +336,15 @@ function doPortal(challenge, squared) {
 	if (portalUniverse === 2) hypoPackratReset(challenge);
 	//Auto Allocate Perks
 	allocatePerks();
-	if (portalUniverse === 1 && getPageSetting('AutoAllocatePerks') === 1 && (typeof MODULES["perks"] !== 'undefined' || typeof AutoPerks !== 'undefined')) {
-		AutoPerks.clickAllocate();
+	//Run Perky if in u1.
+	if (portalUniverse === 1 && getPageSetting('AutoAllocatePerks') === 1 &&
+		(typeof AutoPerks !== 'undefined' &&
+			($('#preset').value !== 'undefined' ||
+				($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined')
+			)
+		)
+	) {
+		runPerky();
 	}
 	//Download save file
 	downloadSave();
