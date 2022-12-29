@@ -266,7 +266,7 @@ function selectEasierVoidMap(map1, map2) {
 MODULES.mapFunctions = {};
 MODULES.mapFunctions.rVoidHDRatio = Infinity;
 MODULES.mapFunctions.rVoidVHDRatio = Infinity;
-MODULES.mapFunctions.rVoidHDIndex = Infinity;
+MODULES.mapFunctions.rVoidHDInfo = Infinity;
 MODULES.mapFunctions.portalZone = Infinity;
 MODULES.mapFunctions.workerRatio = null;
 
@@ -283,12 +283,19 @@ function VoidMaps() {
 	if (game.global.universe === 1 && !autoTrimpSettings.hVoidMapDefaultSettings.value.active) return farmingDetails;
 	if (game.global.universe === 2 && !autoTrimpSettings.rVoidMapDefaultSettings.value.active) return farmingDetails;
 	var module = MODULES['mapFunctions'];
+
+	const totalPortals = getTotalPortals();
 	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
 	const isDaily = game.global.challengeActive === 'Daily';
 	const dailyReduction = isDaily && game.global.universe === 2 ? dailyModiferReduction() : 0;
 	const currChall = game.global.challengeActive;
 	const rVMBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hVoidMapSettings.value : autoTrimpSettings.rVoidMapSettings.value;
+
 	var rVMIndex;
+
+	//Reset void HD Index if not on the right portal/zone/cell as it was initially run.
+	if (module.rVoidHDIndex !== Infinity && module.rVoidHDInfo !== (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2))) module.rVoidHDIndex = Infinity;
+
 	for (var y = 0; y < rVMBaseSettings.length; y++) {
 		const currSetting = rVMBaseSettings[y];
 		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell) continue;
@@ -309,6 +316,7 @@ function VoidMaps() {
 			if (module.rVoidHDRatio === Infinity) module.rVoidHDRatio = HDRatio;
 			if (module.rVoidVHDRatio === Infinity) module.rVoidVHDRatio = voidHDRatio;
 			module.rVoidHDIndex = y;
+			module.rVoidHDIndex = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
 			break;
 		}
 		else
@@ -344,6 +352,7 @@ function VoidMaps() {
 		module.rVoidHDIndex = Infinity;
 		module.rVoidHDRatio = Infinity;
 		module.rVoidVHDRatio = Infinity;
+		module.rVoidHDInfo = Infinity;
 		//Setting portal zone to current zone if setting calls for it
 		if (shouldPortal) module.portalZone = game.global.world;
 	}
@@ -1072,6 +1081,7 @@ function WorshipperFarm() {
 		farmingDetails.worshipper = rWFGoal;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
+		farmingDetails.gather = 'food';
 
 	}
 	return farmingDetails;
