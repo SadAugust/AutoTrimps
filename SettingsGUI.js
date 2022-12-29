@@ -432,7 +432,6 @@ function initializeAllSettings() {
 	//Helium
 	createSetting('AutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use window, it will not work. ', 'multitoggle', 1, null, "Maps");
 	createSetting('automapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice. ', 'boolean', true, null, 'Maps');
-	createSetting('FarmWhenNomStacks7', 'Farm on >7 NOMstacks', 'Optional. If Improbability already has 5 NOMstacks, stack 30 Anticipation. If the Improbability has >7 NOMstacks on it, get +200% dmg from MapBonus. If we still cant kill it, enter Farming mode at 30 stacks, Even with DisableFarming On! (exits when we get under 10x). Farms if we hit 100 stacks in the world. If we ever hit (100) nomstacks in a map (likely a voidmap), farm, (exit the voidmap) and (prevent void from running, until situation is clear). Restarts any voidmaps if we hit 100 stacks. ', 'boolean', false, null, 'Maps');
 	createSetting('scryvoidmaps', 'VM Scryer', 'Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Maps');
 	createSetting('onlyPerfectMaps', 'Perfect Maps', 'If enabled when AT is trying to map it will only create perfect maps. Be warned this may greatly decrease the map level that AT believes is efficient.', 'boolean', false, null, 'Maps');
 
@@ -2179,7 +2178,6 @@ function updateCustomButtons() {
 	!radonon ? turnOn('AutoMaps') : turnOff('AutoMaps');
 	!radonon ? turnOn('automapsportal') : turnOff('automapsportal');
 	!radonon ? turnOn('onlyPerfectMaps') : turnOff('onlyPerfectMaps');
-	!radonon ? turnOn('FarmWhenNomStacks7') : turnOff('FarmWhenNomStacks7');
 	!radonon ? turnOn('scryvoidmaps') : turnOff('scryvoidmaps');
 	turnOff('hUniqueMapSettingsArray');
 	!radonon ? turnOn('hUniqueMapPopup') : turnOff('hUniqueMapPopup');
