@@ -1281,6 +1281,56 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	debug(message);
 }
 
+function resetSettingsPortal() {
+
+	const universePrefix = game.global.universe === 2 ? 'R' : '';
+	const universePrefixAlt = game.global.universe === 2 ? 'R' : 'H';
+	const universePrefixAltLower = universePrefixAlt.toLowerCase()
+
+	//Enabling Auto Portal
+	if (getPageSetting(universePrefix + 'automapsportal') && getPageSetting(universePrefix + 'AutoMaps') == 0) {
+		autoTrimpSettings[universePrefix + "AutoMaps"].value = 1;
+		document.getElementById(universePrefix + 'AutoMaps').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'AutoMaps'].enabled);
+		document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'AutoMaps'].value);
+	}
+	//Enabling Auto Equip
+	if (autoTrimpSettings[universePrefixAlt + 'autoequipportal'].enabled) {
+		autoTrimpSettings[universePrefixAlt + 'equipon'].enabled = true;
+		document.getElementById(universePrefixAlt + 'equipon').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefixAlt + 'equipon'].enabled);
+		document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefixAlt + 'equipon'].enabled);
+	}
+	//Setting buildings to off
+	if (typeof (autoTrimpSettings[universePrefixAltLower + 'BuildingSettingsArray'].value.portalOption) !== 'undefined' && autoTrimpSettings[universePrefixAltLower + 'BuildingSettingsArray'].value.portalOption === 'on') {
+		autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled = true;
+		document.getElementById(universePrefix + 'BuyBuildingsNew').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled);
+		document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled);
+	}
+	//Setting buildings to off
+	if (typeof (autoTrimpSettings[universePrefixAltLower + 'BuildingSettingsArray'].value.portalOption) !== 'undefined' && autoTrimpSettings[universePrefixAltLower + 'BuildingSettingsArray'].value.portalOption === 'off') {
+		autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled = false;
+		document.getElementById(universePrefix + 'BuyBuildingsNew').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled);
+		document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled);
+	}
+	//Setting jobs to off
+	if (typeof (autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption) !== 'undefined' && autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption === 'autojobs off') {
+		autoTrimpSettings[universePrefix + 'BuyJobsNew'].value = 0;
+		document.getElementById(universePrefix + 'BuyJobsNew').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
+		document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
+	}
+	if (typeof (autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption) !== 'undefined' && autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption === 'auto ratios') {
+		autoTrimpSettings[universePrefix + 'BuyJobsNew'].value = 1;
+		document.getElementById(universePrefix + 'BuyJobsNew').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
+		document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
+	}
+	if (typeof (autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption) !== 'undefined' && autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption === 'manual ratios') {
+		autoTrimpSettings[universePrefix + 'BuyJobsNew'].value = 2;
+		document.getElementById(universePrefix + 'BuyJobsNew').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
+		document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
+	}
+	updateButtonText()
+	saveSettings();
+}
+
 function resetMapVars(setting) {
 	const totalPortals = getTotalPortals();
 	currentMap = undefined;

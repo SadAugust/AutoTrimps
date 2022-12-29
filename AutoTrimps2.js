@@ -321,10 +321,8 @@ function mainCleanup() {
 		lastHeliumZone = 0;
 		zonePostpone = 0;
 		if (!game.upgrades.Battle.done) {
-			updateButtonText()
-			if (getPageSetting('automapsportal') && getPageSetting('AutoMaps') == 0)
-				autoTrimpSettings["AutoMaps"].value = 1;
-
+			updateButtonText();
+			resetSettingsPortal();
 		}
 		if (getPageSetting('showautomapstatus')) updateAutoMapsStatus();
 		return true;
@@ -332,45 +330,10 @@ function mainCleanup() {
 	if (game.global.universe == 2 && currentworld == 1 && aWholeNewWorld) {
 		lastRadonZone = 0;
 		zonePostpone = 0;
+
 		if (!game.upgrades.Battle.done) {
-			game.global.buyAmt = 1;
-			if (getPageSetting('Rautomapsportal') && getPageSetting('RAutoMaps') == 0) {
-				autoTrimpSettings["RAutoMaps"].value = 1;
-				document.getElementById('RAutoMaps').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.RAutoMaps.enabled);
-				document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings.RAutoMaps.value);
-			}
-			if (autoTrimpSettings.Rautoequipportal.enabled) {
-				autoTrimpSettings.Requipon.enabled = true;
-				document.getElementById('Requipon').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.Requipon.enabled);
-				document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.Requipon.enabled);
-			}
-			if (typeof (autoTrimpSettings.rBuildingSettingsArray.value.portalOption) !== 'undefined' && autoTrimpSettings.rBuildingSettingsArray.value.portalOption === 'on') {
-				autoTrimpSettings.RBuyBuildingsNew.enabled = true;
-				document.getElementById('RBuyBuildingsNew').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.RBuyBuildingsNew.enabled);
-				document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.RBuyBuildingsNew.enabled);
-			}
-			if (typeof (autoTrimpSettings.rBuildingSettingsArray.value.portalOption) !== 'undefined' && autoTrimpSettings.rBuildingSettingsArray.value.portalOption === 'off') {
-				autoTrimpSettings.RBuyBuildingsNew.enabled = false;
-				document.getElementById('RBuyBuildingsNew').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.RBuyBuildingsNew.enabled);
-				document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings.RBuyBuildingsNew.enabled);
-			}
-			if (typeof (autoTrimpSettings.rJobSettingsArray.value.portalOption) !== 'undefined' && autoTrimpSettings.rJobSettingsArray.value.portalOption === 'autojobs off') {
-				autoTrimpSettings.RBuyJobsNew.value = 0;
-				document.getElementById('RBuyJobsNew').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
-				document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
-			}
-			if (typeof (autoTrimpSettings.rJobSettingsArray.value.portalOption) !== 'undefined' && autoTrimpSettings.rJobSettingsArray.value.portalOption === 'auto ratios') {
-				autoTrimpSettings.RBuyJobsNew.value = 1;
-				document.getElementById('RBuyJobsNew').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
-				document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
-			}
-			if (typeof (autoTrimpSettings.rJobSettingsArray.value.portalOption) !== 'undefined' && autoTrimpSettings.rJobSettingsArray.value.portalOption === 'manual ratios') {
-				autoTrimpSettings.RBuyJobsNew.value = 2;
-				document.getElementById('RBuyJobsNew').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
-				document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings.RBuyJobsNew.value == 2 ? 3 : autoTrimpSettings.RBuyJobsNew.value));
-			}
-			updateButtonText()
-			saveSettings();
+			updateButtonText();
+			resetSettingsPortal();
 		}
 		if (getPageSetting('Rshowautomapstatus')) updateAutoMapsStatus();
 		toggleRadonStatus(true);
