@@ -155,13 +155,12 @@ function initializeAllSettings() {
 	createSetting('ManualGather2', ['Manual Gather/Build', 'Auto Gather/Build', 'Mining/Building Only', 'Science Research OFF'], 'Controls what you gather/build do. Manual does nothing<br>Auto Gathering of Food,Wood,Metal(w/turkimp) & Science. Auto speed-Builds your build queue. <br>Mining/Building only does exactly what it says. Only use if you are passed the early stages of the game and have the mastery foremany unlocked (No longer need to trap, food and wood are useless). <br>You can disable science researching for the achievement: Reach Z120 without using manual research.', 'multitoggle', 1, null, 'Core');
 	createSetting('gathermetal', 'Metal Only', 'For use with Mining/Gather Only. Only gathers Metal if you have foremany unlocked. ', 'boolean', false, null, "Core");
 	createSetting('BuyUpgradesNew', ['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords'], 'Autobuys non-equipment upgrades (equipment is controlled in the Gear tab). The second option does NOT buy coordination (use this <b>ONLY</b> if you know what you\'re doing).', 'multitoggle', 1, null, 'Core');
+	createSetting('TrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core');
+	createSetting('AutoAllocatePerks', ['Auto Allocate Off', 'Auto Allocate On', 'Dump into Looting II'], 'Uses a basic version of Perky (if you want more advanced settings import your save there). Dump into Looting II, all helium earned into this perk when auto portaling.', 'multitoggle', 0, null, 'Core');
 	createSetting('amalcoord', 'Amal Boost', 'Boost your Amal count for more Mi. Will not buy coords until your H:D ratio is below a certain value. This means that you will get amals quicker. Will not activate higher than your Amal Boost End Zone Setting! ', 'boolean', false, null, 'Core');
 	createSetting('amalcoordt', 'Amal Target', 'Set the amount of Amals you wish to aim for. Once this target is reached, it will buy coords below your Amal ratio regardless of your H:D, just enough to keep the Amal. -1 to disable and use H:D for entire boost. ', 'value', -1, null, 'Core');
 	createSetting('amalcoordhd', 'Amal Boost H:D', 'Set your H:D for Amal Boost here. The higher it is the less coords AT will buy. 0.0000025 is the default. ', 'value', 0.0000025, null, 'Core');
 	createSetting('amalcoordz', 'Amal Boost End Z', 'Amal Boost End Zone. Set the zone you want to stop Amal Boosting. -1 to do it infinitely. ', 'value', -1, null, 'Core');
-	createSetting('AutoAllocatePerks', ['Auto Allocate Off', 'Auto Allocate On', 'Dump into Looting II'], 'Uses a basic version of Perky (if you want more advanced settings import your save there). Dump into Looting II, all helium earned into this perk when auto portaling.', 'multitoggle', 0, null, 'Core');
-	createSetting('fastallocate', 'Fast Allocate', 'Turn on if your helium is above 500Qa. Not recommended for low amounts of helium. ', 'boolean', false, null, 'Core');
-	createSetting('TrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core');
 
 	createSetting('AutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Helium Per Hour only <b>portals at cell 1</b> of the first level where your He/Hr went down even slightly compared to the current runs Best He/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting He/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', heliumChallenges, 'Core');
 	createSetting('HeliumHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', heliumHourChallenges, 'Core');
@@ -181,8 +180,8 @@ function initializeAllSettings() {
 
 	//Radon Core
 	createSetting('RManualGather2', ['Manual Gather/Build', 'Auto Gather/Build', 'Mining/Building Only'], 'Controls what you gather/build do. Manual does nothing<br>Auto Gathering of Food,Wood,Metal(w/turkimp) & Science. Auto speed-Builds your build queue. <br>Mining/Building only does exactly what it says. Only use if you are passed the early stages of the game and have the mastery foremany unlocked (No longer need to trap, food and wood are useless). ', 'multitoggle', 1, null, 'Core');
-	createSetting('RTrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core');
 	createSetting('RBuyUpgradesNew', ['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords'], 'Autobuys non-equipment upgrades (equipment is controlled in the Gear tab). The second option does NOT buy coordination (use this <b>ONLY</b> if you know what you\'re doing).', 'multitoggle', 1, null, 'Core');
+	createSetting('RTrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core');
 	createSetting('RAutoAllocatePerks', ['Auto Allocate Off', 'Dump into Looting', 'Dump into Greed', 'Dump into Moti'], 'Dumps all excess radon into the selected perk when AutoPortaling.', 'multitoggle', 0, null, 'Core');
 	createSetting('RPerkSwapping', 'Preset Swapping', 'Will automatically load Preset 1 if portaling into a normal run, Preset 2 if portaling into a daily run or Preset 3 if portaling into a C3.<br>Be aware that you need to save your presets when making adjustments or it\'ll revert to the previous one you saved.', 'boolean', false, null, 'Core');
 
@@ -718,7 +717,7 @@ function initializeAllSettings() {
 	//Combat
 	//Helium
 	createSetting('BetterAutoFight', ['Better AutoFight OFF', 'Better Auto Fight', 'Vanilla'], '3-Way Button, Recommended. Will automatically handle fighting.<br>BAF = Old Algo (Fights if dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds<br>BAF3 = Uses vanilla autofight and makes sure you fight on portal. <br> WARNING: If you autoportal with BetterAutoFight disabled, the game may sit there doing nothing until you click FIGHT. (not good for afk) ', 'multitoggle', 1, null, "Combat");
-	createSetting('AutoStance', ['Auto Stance OFF', 'Auto Stance', 'D Stance', 'Windstacking'], '<b>Autostance:</b> Automatically swap stances to avoid death. <br><b>D Stance:</b> Keeps you in D stance regardless of Health. <br><b>Windstacking:</b> For use after nature (z230), and will keep you in D stance unless you are windstacking (Only useful if transfer is maxed out and wind empowerment is high). Manages your Heirloom swapping and stance to obtain wind stacks efficiently. You must set your High Dmg and Low Dmg Heirlooms, Windstack H:D or WSMAX H:D where relevant for this to work. ', 'multitoggle', 1, null, "Combat");
+	createSetting('AutoStance', ['Auto Stance OFF', 'Auto Stance', 'D Stance', 'Windstacking'], '<b>Autostance:</b> Automatically swap stances to avoid death. <br><b>D Stance:</b> Keeps you in D stance regardless of Health. <br><b>Windstacking:</b> For use after nature (z230), and will keep you in D stance unless you are windstacking (Only useful if transfer is maxed out and wind empowerment is high). There\'s settings in the "Windstacking" tab that must be setup for this to function as intended.', 'multitoggle', 1, null, "Combat");
 	createSetting('IgnoreCrits', ['Safety First', 'Ignore Void Strength', 'Ignore All Crits'], 'No longer switches to B against corrupted precision and/or void strength. <b>Basically we now treat \'crit things\' as regular in both autoStance and autoStance2</b>. In fact it no longer takes precision / strength into account and will manage like a normal enemy, thus retaining X / D depending on your needs. If you\'re certain your block is high enough regardless if you\'re fighting a crit guy in a crit daily, use this! Alternatively, manage the stances yourself.', 'multitoggle', 0, null, 'Combat');
 	createSetting('PowerSaving', ['AutoAbandon', 'Don\'t Abandon', 'Only Rush Voids'], '<b>Autoabandon:</b> Considers abandoning trimps for void maps/prestiges.<br><b>Don\'t Abandon:</b> Will not abandon troops, but will still agressively autostance even if it will kill you (WILL NOT ABANDON TRIMPS TO DO VOIDS).<br><b>Only Rush Voids:</b> Considers abandoning trimps for void maps, but not prestiges, still autostances aggressively. <br>Made for Empower daily, and you might find this helpful if you\'re doing Workplace Safety feat. Then again with that I strongly recommend doing it fully manually. Anyway, don\'t blame me whatever happens.<br><b>Note:</b> AT will no longer be able to fix when your scryer gets stuck!', 'multitoggle', 0, null, 'Combat');
 	createSetting('ForceAbandon', 'Trimpicide', 'If a new fight group is available and anticipation stacks aren\'t maxed, Trimpicide and grab a new group. Will not abandon in spire. Recommended ON. ', 'boolean', true, null, 'Combat');
@@ -863,7 +862,6 @@ function initializeAllSettings() {
 
 	//Golden
 	//Helium
-
 	createSetting('hAutoGoldenPopup', 'Auto Gold Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Auto Golden", "hAutoGolden", "MAZ")', null, 'Golden');
 	createSetting('hAutoGoldenSettings', 'C3 AutoGoldenUpgrades', 'Contains arrays for this setting', 'mazArray', [], null, 'Golden');
 	createSetting('hAutoGoldenDailyPopup', 'Daily Auto Gold Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Daily Auto Golden", "hAutoGoldenDaily", "MAZ")', null, 'Golden');
@@ -919,7 +917,6 @@ function initializeAllSettings() {
 	document.getElementById('Rshowautomapstatus').setAttribute('onclick', 'toggleRadonStatus()');
 	document.getElementById('showhehr').setAttribute('onclick', 'toggleHeHr()');
 	document.getElementById('Rshowrnhr').setAttribute('onclick', 'toggleRnHr()');
-
 
 	//Sorting out spacing issues with swapping between Helium & Radon settings.
 	document.getElementById('radonsettings').setAttribute('onclick', 'settingChanged("radonsettings"), modifyParentNodeUniverseSwap()');
@@ -986,7 +983,7 @@ function modifyParentNodeUniverseSwap() {
 
 	//Core
 	//Helium Settings
-	modifyParentNode_Initial("TrapTrimps", radonoff);
+	modifyParentNode_Initial("amalcoordz", radonoff);
 	//Radon Settings
 	modifyParentNode_Initial("RPerkSwapping", radonon);
 
@@ -1988,7 +1985,6 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('amalcoord') ? turnOn('amalcoordhd') : turnOff('amalcoordhd');
 	!radonon && getPageSetting('amalcoord') ? turnOn('amalcoordz') : turnOff('amalcoordz');
 	!radonon ? turnOn('AutoAllocatePerks') : turnOff('AutoAllocatePerks');
-	!radonon && getPageSetting('AutoAllocatePerks') == 1 ? turnOn('fastallocate') : turnOff('fastallocate');
 	!radonon ? turnOn('TrapTrimps') : turnOff('TrapTrimps');
 
 	//Portal
@@ -2153,7 +2149,6 @@ function updateCustomButtons() {
 	!radonon && getPageSetting('Hequipon') && getPageSetting('Hequipprestige') !== 0 ? turnOn('hEquipHighestPrestige') : turnOff('hEquipHighestPrestige');
 	!radonon ? turnOn('hEquipEfficientEquipDisplay') : turnOff('hEquipEfficientEquipDisplay');
 	!radonon && getPageSetting('Hequipon') ? turnOn('Hdmgcuntoff') : turnOff('Hdmgcuntoff');
-
 
 	//RGear AutoEquip
 	radonon ? turnOn('Requipon') : turnOff('Requipon');
