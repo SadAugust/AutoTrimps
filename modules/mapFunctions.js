@@ -733,7 +733,7 @@ function TributeFarm() {
 		}
 		//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
 		if (currentMap === mapName && !rShouldTributeFarm && !rShouldMetFarm) {
-			mappingDetails(mapName, rTrFMapLevel, rTrFSpecial);
+			mappingDetails(mapName, rTrFMapLevel, rTrFSpecial, rTrFTributes, rTrFMeteorologists);
 			resetMapVars(rTrFSettings);
 			if (!dontRecycleMaps && game.global.mapsActive) {
 				mapsClicked(true);
