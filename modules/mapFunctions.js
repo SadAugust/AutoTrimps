@@ -841,9 +841,9 @@ function SmithyFarm() {
 			if (mapAutoLevel !== Infinity) {
 				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) {
 					if (game.global.mapsActive && typeof mapBonus !== 'undefined') {
-						if (mapBonus === 'lsc' || mapBonus === 'ssc') MODULES.mapFunctions.smithyMapCount[0] = game.global.mapRunCounter + 1;
-						else if (mapBonus === 'lwc' || mapBonus === 'swc') MODULES.mapFunctions.smithyMapCount[1] = game.global.mapRunCounter + 1;
-						else if (mapBonus === 'lmc' || mapBonus === 'smc') MODULES.mapFunctions.smithyMapCount[2] = game.global.mapRunCounter + 1;
+						if (mapBonus === 'lsc' || mapBonus === 'ssc') MODULES.mapFunctions.smithyMapCount[0] = (game.global.mapRunCounter + 1);
+						else if (mapBonus === 'lwc' || mapBonus === 'swc') MODULES.mapFunctions.smithyMapCount[1] = (game.global.mapRunCounter + 1);
+						else if (mapBonus === 'lmc' || mapBonus === 'smc') MODULES.mapFunctions.smithyMapCount[2] = (game.global.mapRunCounter + 1);
 					}
 				}
 				rSFMapLevel = mapAutoLevel;
@@ -949,12 +949,11 @@ function SmithyFarm() {
 		//Recycles map if we don't need to finish it for meeting the farm requirements
 		if (currentMap === mapName && !dontRecycleMaps) {
 			if (game.global.mapsActive && typeof mapBonus !== 'undefined' && ((!rShouldSmithyGemFarm && mapBonus.includes('sc')) || (!rShouldSmithyWoodFarm && mapBonus.includes('wc')) || (!rShouldSmithyMetalFarm && mapBonus.includes('mc')))) {
-				if (!Array.isArray(mapRepeats)) mapRepeats = [0, 0, 0];
 				var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
-				var mappingLength = mapProg > 0 ? (game.global.mapRunCounter + mapProg).toFixed(2) : game.global.mapRunCounter;
-				if (mapBonus === 'lsc' || mapBonus === 'ssc') mapRepeats[0] = mappingLength;
-				else if (mapBonus === 'lwc' || mapBonus === 'swc') mapRepeats[1] = mappingLength;
-				else if (mapBonus === 'lmc' || mapBonus === 'smc') mapRepeats[2] = mappingLength;
+				var mappingLength = (mapProg > 0 ? (game.global.mapRunCounter + mapProg).toFixed(2) : game.global.mapRunCounter);
+				if (mapBonus === 'lsc' || mapBonus === 'ssc') MODULES.mapFunctions.smithyMapCount[0] = mappingLength;
+				else if (mapBonus === 'lwc' || mapBonus === 'swc') MODULES.mapFunctions.smithyMapCount[1] = mappingLength;
+				else if (mapBonus === 'lmc' || mapBonus === 'smc') MODULES.mapFunctions.smithyMapCount[2] = mappingLength;
 				if (!dontRecycleMaps) {
 					mapsClicked(true);
 					recycleMap();
