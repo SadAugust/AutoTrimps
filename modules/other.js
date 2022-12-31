@@ -1129,7 +1129,6 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt_local *= turkimpBonus;
 		amt_local += getPlayerModifier() * seconds;
 	}
-	//debug(amt_local)
 	return amt_local;
 }
 
@@ -1181,9 +1180,10 @@ function calcHeirloomBonusLocal(mod, number) {
 }
 
 function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
-	var map = !map && game.global.challengeActive == "Pandemonium" ? game.global.world - 1 :
-		!map ? game.global.world :
-			game.global.world + map;
+	if (!map) map = game.global.mapsActive ? getCurrentMapObject().level :
+		game.global.challengeActive == "Pandemonium" ? game.global.world - 1 :
+			game.global.world;
+	game.global.world + map;
 	var compare = game.global.world;
 	if (map > compare && map.location != "Bionic") {
 		amt_local *= Math.pow(1.1, (map - compare));
@@ -1195,7 +1195,7 @@ function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
 			amt_local *= Math.pow(0.8, (compare - map));
 		}
 	}
-	var maploot = game.global.mapsActive ? getCurrentMapObject().loot : game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
+	var maploot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
 	//Add map loot bonus
 	amt_local = Math.round(amt_local * maploot);
 	if (ignoreBonuses) return amt_local;
