@@ -218,7 +218,6 @@ function initializeAllSettings() {
 	createSetting('buyheliumy', 'Buy Heliumy %', 'Buys the Heliumy bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
 	createSetting('dfightforever', ['DFA: Off', 'DFA: Non-Empowered', 'DFA: All Dailies'], 'Daily Fight Always. Sends trimps to fight if they\'re not fighting in Daily challenges similar to Toxicity/Nom but not on Bloodthirst/Plagued/Bogged Dailies, regardless of BAF. Non-Empowered will only send to fight if the Daily is not Empowered. Essenitally the same as the one in combat, can use either if you wish, except this will only activate in these daily challenges (duh) ', 'multitoggle', '0', null, 'Daily');
 	createSetting('avoidempower', 'Avoid Empower', 'Tries to avoid Empower stacks in Empower Dailies. No harm in this being on, so default is On. ', 'boolean', true, null, 'Daily');
-	createSetting('darmormagic', ['Daily Armor Magic Off', 'DAM: Above 80%', 'DAM: H:D', 'DAM: Always'], 'Will buy Armor to try and prevent death on Bleed/Plague/Bogged Dailies under the 3 conditions. <br><b>Above 80%:</b> Will activate at and above 80% of your HZE. <br><b>H:D:</b> Will activate at and above the H:D you have defined in maps. <br><b>Always</b> Will activate always. <br>All options will activate at or <b>below 25% of your health.</b> ', 'multitoggle', 0, null, "Daily");
 	createSetting('dscryvoidmaps', 'Daily VM Scryer', 'Only use in Dailies if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Daily');
 
 	//Helium Spire
@@ -250,7 +249,7 @@ function initializeAllSettings() {
 	//Radon Daily
 	createSetting('buyradony', 'Buy Radonculous %', 'Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ', 'value', -1, null, 'Daily');
 	createSetting('rBloodthirstDestack', 'Bloodthirst Destack', 'Will automatically run a level 6 map when you are one stack (death) away from the enemy healing and gaining additional attack. <b>Won\'t function properly without Auto Maps enabled.</b>', 'boolean', true, null, 'Daily');
-	createSetting('rBloodthirstVoidMax', 'Voids: Max Bloodthirst', 'Will make your Void HD Ratio assume you have max Bloodthirst stacks active if you\'re in a Bloodthirst daily.</b>', 'boolean', true, null, 'Daily');
+	createSetting('rBloodthirstVoidMax', 'Void: Max Bloodthirst', 'Will make your Void HD Ratio assume you have max Bloodthirst stacks active if you\'re in a Bloodthirst daily.</b>', 'boolean', true, null, 'Daily');
 	createSetting('rAutoEqualityEmpower', 'AE: Empower', 'Will automatically adjust the enemies stats to factor in either Explosive or Crit modifiers if they\'re active on the current daily.</b>', 'boolean', true, null, 'Daily');
 
 	//Radon Daily Portal
@@ -259,7 +258,7 @@ function initializeAllSettings() {
 	<b>DP: Rn/Hr:</b> Portals when your world zone is above the minium you set (if applicable) and the buffer falls below the % you have defined.\
 	<br><b>DP: Custom:</b> Portals into this challenge at the zone you have defined in Daily Custom Portal.', 'multitoggle', '0', null, 'Daily');
 	createSetting('RdHeliumHourChallenge', 'DP: Challenge', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals at the zone specified.', 'dropdown', 'None', radonHourChallenges, "Daily");
-	createSetting('RdC3Challenge', 'DP: C3', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals at the zone specified.', 'dropdown', 'None', challenge3, "Daily");
+	createSetting('RdC2Challenge', 'DP: C3', 'Automatically portal into this challenge when using radon per hour or custom autoportal in dailies when there are none left. Custom portals at the zone specified.', 'dropdown', 'None', challenge3, "Daily");
 	createSetting('RdCustomAutoPortal', 'Daily Custom Portal', 'Automatically portal AFTER clearing this level in dailies. (ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, "Daily");
 	createSetting('RdHeliumHrBuffer', 'Rn/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the Daily Rn/Hr Autoportal, it will portal if your Rn/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Daily');
 	createSetting('RFillerRun', 'Filler run', 'Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.', 'boolean', false, null, 'Daily');
@@ -288,24 +287,24 @@ function initializeAllSettings() {
 	createSetting('balanceImprobDestack', 'B: Improbability Destack', 'Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone', 'boolean', false, null, 'C2');
 
 	//Decay
-	createSetting('decay', 'Decay', 'Turn this on if you want to enable Decay feautres.', 'boolean', false, null, 'C2');
-	createSetting('decayStacksToPush', 'D: Stacks to Push', 'During Decay, AT will ignore maps and push to end the zone if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.', 'value', '300', null, 'C2');
-	createSetting('decayStacksToAbandon', 'D: Stacks to Abandon', 'During Decay, AT will abandon the challenge if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.', 'value', '600', null, 'C2');
+	createSetting('decay', 'Decay', 'Turn this on if you want to enable Decay feautres.', 'boolean', false, null, 'Challenges');
+	createSetting('decayStacksToPush', 'D: Stacks to Push', 'During Decay, AT will ignore maps and push to end the zone if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.', 'value', '300', null, 'Challenges');
+	createSetting('decayStacksToAbandon', 'D: Stacks to Abandon', 'During Decay, AT will abandon the challenge if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.', 'value', '600', null, 'Challenges');
 
 	//Life
-	createSetting('life', 'Life', 'Turn this on if you want to enable Decay feautres.', 'boolean', false, null, 'C2');
-	createSetting('lifeZone', 'L: Zone', 'During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this zone. <br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 100.', 'value', '100', null, 'C2');
-	createSetting('lifeStacks', 'L: Stacks', 'During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this stack count.<br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 150.', 'value', '150', null, 'C2');
+	createSetting('life', 'Life', 'Turn this on if you want to enable Decay feautres.', 'boolean', false, null, 'Challenges');
+	createSetting('lifeZone', 'L: Zone', 'During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this zone. <br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 100.', 'value', '100', null, 'Challenges');
+	createSetting('lifeStacks', 'L: Stacks', 'During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this stack count.<br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 150.', 'value', '150', null, 'Challenges');
 
 	//Mapology
 	createSetting('mapology', 'Mapology', 'Turn this on if you want to enable Mapology prestige climb feautre. Any BW Raiding settings will climb until the prestige selected in \'M: Prestige\' has been obtained rather than going for all the available prestiges.', 'boolean', false, null, 'C2');
 	createSetting('mapologyPrestige', 'M: Prestige', 'Acquire prestiges through the selected item (inclusive) as soon as they are available in maps. Automap must be enabled.', 'dropdown', 'Off', ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'], 'C2');
 
 	//Experience
-	createSetting('experience', 'Experience', 'Turn this on if you want to enable Experience feautres. <b>This setting is dependant on using \'Bionic Raiding\' in conjunction with it.</b><br><br>Will automatically disable repeat within Bionic Wonderland maps if you\'re above z600 and the Bionic map is at or above level 605.', 'boolean', false, null, 'C2');
-	createSetting('experienceStartZone', 'E: Start Zone', 'The zone you would like to start farming for Wonders at.', 'value', -1, null, 'C2');
-	createSetting('experienceEndZone', 'E: End Zone', 'Will run the Bionic Wonderland map level specified in \'E: End BW\' at this zone. <b>This setting will not work if set below z601.</b>', 'value', '605', null, 'C2');
-	createSetting('experienceEndBW', 'E: End BW', 'Will finish the challenge with specified Bionic Wonderland once reaching end zone. If the specified BW is not available, it will run one closest to the setting.', 'value', '605', null, 'C2');
+	createSetting('experience', 'Experience', 'Turn this on if you want to enable Experience feautres. <b>This setting is dependant on using \'Bionic Raiding\' in conjunction with it.</b><br><br>Will automatically disable repeat within Bionic Wonderland maps if you\'re above z600 and the Bionic map is at or above level 605.', 'boolean', false, null, 'Challenges');
+	createSetting('experienceStartZone', 'E: Start Zone', 'The zone you would like to start farming for Wonders at.', 'value', -1, null, 'Challenges');
+	createSetting('experienceEndZone', 'E: End Zone', 'Will run the Bionic Wonderland map level specified in \'E: End BW\' at this zone. <b>This setting will not work if set below z601.</b>', 'value', '605', null, 'Challenges');
+	createSetting('experienceEndBW', 'E: End BW', 'Will finish the challenge with specified Bionic Wonderland once reaching end zone. If the specified BW is not available, it will run one closest to the setting.', 'value', '605', null, 'Challenges');
 
 	//--------------------------------------------------------------------------------------------------------
 
@@ -431,9 +430,7 @@ function initializeAllSettings() {
 	//Helium
 	createSetting('AutoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use window, it will not work. ', 'multitoggle', 1, null, "Maps");
 	createSetting('automapsportal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice. ', 'boolean', true, null, 'Maps');
-	createSetting('scryvoidmaps', 'VM Scryer', 'Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Maps');
 	createSetting('onlyPerfectMaps', 'Perfect Maps', 'If enabled when AT is trying to map it will only create perfect maps. Be warned this may greatly decrease the map level that AT believes is efficient.', 'boolean', false, null, 'Maps');
-
 	createSetting('hUniqueMapSettingsArray', 'Unqiue Map Settings', 'Click to adjust settings.', 'mazDefaultArray', {
 		The_Wall: { enabled: false, zone: 100, cell: 0 },
 		The_Block: { enabled: false, zone: 100, cell: 0 },
@@ -443,6 +440,7 @@ function initializeAllSettings() {
 		Imploding_Star: { enabled: false, zone: 100, cell: 0 }
 	}, null, 'Maps');
 	createSetting('hUniqueMapPopup', 'Unique Map Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("Unique Maps", " ", "UniqueMaps")', null, 'Maps');
+	createSetting('scryvoidmaps', 'VM Scryer', 'Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Maps');
 
 	//HD Farm
 	createSetting('hHDFarmPopup', 'HD Farm Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("HD Farm", "hHDFarm", "MAZ")', null, 'Maps');
@@ -565,13 +563,11 @@ function initializeAllSettings() {
 	//Spire
 	//Helium
 	createSetting('MaxStacksForSpire', 'Max Map Bonus for Spire', 'Get max map bonus before running the Spire.', 'boolean', false, null, 'Spire');
-	createSetting('MinutestoFarmBeforeSpire', 'Farm Before Spire', 'Farm level 200/199(or BW) maps for X minutes before continuing onto attempting Spire.<br><b>NOTE:</b> Set 0 to disable entirely (default). <br>Setting to -1/Infinite does not work here, set a very high number instead.', 'value', '0', null, 'Spire');
 	createSetting('IgnoreSpiresUntil', 'Ignore Spires Until', 'Spire specific settings like end-at-cell are ignored until at least this zone is reached (0 to disable).<br>Does not work with Run Bionic Before Spire.', 'value', '200', null, 'Spire');
 	createSetting('ExitSpireCell', 'Exit Spire After Cell', 'Optional/Rare. Exits the Spire early, after completing cell X. example: 40 for Row 4. (use 0 or -1 to disable)', 'value', '-1', null, 'Spire');
 	createSetting('SpireBreedTimer', 'Spire Breed Timer', '<b>ONLY USE IF YOU USE VANILLA GA</b>Set a time for your GA in spire. Recommend not touching GA during this time. ', 'value', -1, null, 'Spire');
 	createSetting('PreSpireNurseries', 'Nurseries pre-Spire', 'Set the maximum number of Nurseries to build for Spires. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Will build nurseries before z200 for Spire 1, but only on the zone of Spires 2+ to avoid unnecessary burning. Disable with -1.', 'value', -1, null, 'Spire');
-	createSetting('spireshitbuy', 'Buy Gear in Spire', 'Will buy Weapons and Armor in Spire regardless of your H:D ratio. Respects your max gear level and ignore spires setting. ', 'boolean', false, null, 'Spire');
-	createSetting('SkipSpires', 'Skip Spires', 'Will disregard your H:D ratio after Farm Before Spire is done (if set). Useful to die in spires if farming takes too long', 'boolean', false, null, 'Spire');
+	createSetting('SkipSpires', 'Skip Spires', 'Useful to die in spires if farming takes too long', 'boolean', false, null, 'Spire');
 
 	//--------------------------------------------------------------
 
@@ -717,7 +713,7 @@ function initializeAllSettings() {
 	//Combat
 	//Helium
 	createSetting('BetterAutoFight', ['Better AutoFight OFF', 'Better Auto Fight', 'Vanilla'], '3-Way Button, Recommended. Will automatically handle fighting.<br>BAF = Old Algo (Fights if dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds<br>BAF3 = Uses vanilla autofight and makes sure you fight on portal. <br> WARNING: If you autoportal with BetterAutoFight disabled, the game may sit there doing nothing until you click FIGHT. (not good for afk) ', 'multitoggle', 1, null, "Combat");
-	createSetting('AutoStance', ['Auto Stance OFF', 'Auto Stance', 'D Stance', 'Windstacking'], '<b>Autostance:</b> Automatically swap stances to avoid death. <br><b>D Stance:</b> Keeps you in D stance regardless of Health. <br><b>Windstacking:</b> For use after nature (z230), and will keep you in D stance unless you are windstacking (Only useful if transfer is maxed out and wind empowerment is high). There\'s settings in the "Windstacking" tab that must be setup for this to function as intended.', 'multitoggle', 1, null, "Combat");
+	createSetting('AutoStance', ['Auto Stance OFF', 'Auto Stance', 'D Stance', 'Windstacking'], '<b>Autostance:</b> Automatically swap stances to avoid death. <br><b>D Stance:</b> Keeps you in D stance regardless of Health. <br><b>Windstacking:</b> For use after nature (z230), and will keep you in D stance unless you are windstacking (Only useful if transfer is maxed out and wind empowerment is high). There\'s settings in the \"Windstacking\" tab that must be setup for this to function as intended.', 'multitoggle', 1, null, "Combat");
 	createSetting('IgnoreCrits', ['Safety First', 'Ignore Void Strength', 'Ignore All Crits'], 'No longer switches to B against corrupted precision and/or void strength. <b>Basically we now treat \'crit things\' as regular in both autoStance and autoStance2</b>. In fact it no longer takes precision / strength into account and will manage like a normal enemy, thus retaining X / D depending on your needs. If you\'re certain your block is high enough regardless if you\'re fighting a crit guy in a crit daily, use this! Alternatively, manage the stances yourself.', 'multitoggle', 0, null, 'Combat');
 	createSetting('PowerSaving', ['AutoAbandon', 'Don\'t Abandon', 'Only Rush Voids'], '<b>Autoabandon:</b> Considers abandoning trimps for void maps/prestiges.<br><b>Don\'t Abandon:</b> Will not abandon troops, but will still agressively autostance even if it will kill you (WILL NOT ABANDON TRIMPS TO DO VOIDS).<br><b>Only Rush Voids:</b> Considers abandoning trimps for void maps, but not prestiges, still autostances aggressively. <br>Made for Empower daily, and you might find this helpful if you\'re doing Workplace Safety feat. Then again with that I strongly recommend doing it fully manually. Anyway, don\'t blame me whatever happens.<br><b>Note:</b> AT will no longer be able to fix when your scryer gets stuck!', 'multitoggle', 0, null, 'Combat');
 	createSetting('ForceAbandon', 'Trimpicide', 'If a new fight group is available and anticipation stacks aren\'t maxed, Trimpicide and grab a new group. Will not abandon in spire. Recommended ON. ', 'boolean', true, null, 'Combat');
@@ -997,7 +993,7 @@ function modifyParentNodeUniverseSwap() {
 
 	//Maps
 	//Helium Settings
-	modifyParentNode_Initial("hUniqueMapPopup", radonoff);
+	modifyParentNode_Initial("scryvoidmaps", radonoff);
 	modifyParentNode_Initial("hBoneShrinePopup", radonoff);
 
 	//Radon Settings
@@ -2023,7 +2019,6 @@ function updateCustomButtons() {
 	!radonon ? turnOn('buyheliumy') : turnOff('buyheliumy');
 	!radonon ? turnOn('dfightforever') : turnOff('dfightforever');
 	!radonon ? turnOn('avoidempower') : turnOff('avoidempower');
-	!radonon ? turnOn('darmormagic') : turnOff('darmormagic');
 	!radonon ? turnOn('dscryvoidmaps') : turnOff('dscryvoidmaps');
 	!radonon ? turnOn('dIgnoreSpiresUntil') : turnOff('dIgnoreSpiresUntil');
 	!radonon ? turnOn('dExitSpireCell') : turnOff('dExitSpireCell');
@@ -2063,7 +2058,7 @@ function updateCustomButtons() {
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeHrDontPortalBefore') : turnOff('RdHeHrDontPortalBefore');
 	radonon && getPageSetting('RAutoPortalDaily') == 1 ? turnOn('RdHeliumHrBuffer') : turnOff('RdHeliumHrBuffer');
 	radonon && getPageSetting('RAutoPortalDaily') > 0 ? turnOn("RdHeliumHourChallenge") : turnOff("RdHeliumHourChallenge");
-	radonon && getPageSetting('RAutoPortalDaily') && autoTrimpSettings.RdHeliumHourChallenge.selected == 'Challenge 3' ? turnOn("RdC3Challenge") : turnOff("RdC3Challenge");
+	radonon && getPageSetting('RAutoPortalDaily') && autoTrimpSettings.RdHeliumHourChallenge.selected == 'Challenge 3' ? turnOn("RdC2Challenge") : turnOff("RdC2Challenge");
 
 	//C2
 	!radonon ? turnOn('FinishC2') : turnOff('FinishC2');
@@ -2298,12 +2293,10 @@ function updateCustomButtons() {
 
 	//Spire
 	!radonon ? turnOn('MaxStacksForSpire') : turnOff('MaxStacksForSpire');
-	!radonon ? turnOn('MinutestoFarmBeforeSpire') : turnOff('MinutestoFarmBeforeSpire');
 	!radonon ? turnOn('IgnoreSpiresUntil') : turnOff('IgnoreSpiresUntil');
 	!radonon ? turnOn('ExitSpireCell') : turnOff('ExitSpireCell');
 	!radonon ? turnOn('SpireBreedTimer') : turnOff('SpireBreedTimer');
 	!radonon ? turnOn('PreSpireNurseries') : turnOff('PreSpireNurseries');
-	!radonon ? turnOn('spireshitbuy') : turnOff('spireshitbuy');
 	!radonon ? turnOn('SkipSpires') : turnOff('SkipSpires');
 
 	//Windstacking
@@ -2630,7 +2623,7 @@ function updateCustomButtons() {
 	document.getElementById('dHeliumHourChallenge').value = autoTrimpSettings.dHeliumHourChallenge.selected;
 	document.getElementById('dC2Challenge').value = autoTrimpSettings.dC2Challenge.selected;
 	document.getElementById('RdHeliumHourChallenge').value = autoTrimpSettings.RdHeliumHourChallenge.selected;
-	document.getElementById('RdC3Challenge').value = autoTrimpSettings.RdC3Challenge.selected;
+	document.getElementById('RdC2Challenge').value = autoTrimpSettings.RdC2Challenge.selected;
 
 	document.getElementById('Prestige').value = autoTrimpSettings.Prestige.selected;
 	document.getElementById('rPrestige').value = autoTrimpSettings.rPrestige.selected;

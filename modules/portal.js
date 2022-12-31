@@ -153,9 +153,9 @@ function dailyAutoPortal() {
 						document.getElementById('finishDailyBtnContainer').style.display = 'none';
 					}
 					if (autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected != 'None' && !getPageSetting(portalPrefix + 'daily'))
-						doPortal(autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected, autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected === 'Challenge ' + challengePrefix[1]);
+						doPortal(autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected);
 					else if (autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected != 'None' && getPageSetting(portalPrefix + 'daily'))
-						doPortal(autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected, autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected, autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected === 'Challenge ' + challengeOppPrefix[1]);
+						doPortal(autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected, autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected);
 					else
 						doPortal();
 				}, MODULES["portal"].timeout + 100);
@@ -306,13 +306,25 @@ function doPortal(challenge, squared) {
 				(getPageSetting(portalOppPrefix + 'daily') && portalUniverse === portalOppPrefix.charAt(1))) {
 				swapPortalUniverse();
 			}
-			if (squared) toggleChallengeSquared();
-			selectChallenge(challenge || 0);
+			var universe = portalUniverse === 2 ? 'R' : '';
+			if (autoTrimpSettings[universe + 'dHeliumHourChallenge'].selected.includes('Challenge ')) {
+				if (autoTrimpSettings[universe + 'dC2Challenge'].selected !== 'None') {
+					toggleChallengeSquared();
+					selectChallenge(autoTrimpSettings[universe + 'dC2Challenge'].selected);
+				}
+			}
+			else {
+				selectChallenge(challenge || 0);
+			}
 		}
 		//Portaling into a filler to use up scruffy3
 		else if (game.global.challengeActive === 'Daily' && portalUniverse === 2 && getPageSetting('RFillerRun')) {
 			if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None') {
-				selectChallenge(autoTrimpSettings.RdHeliumHourChallenge.selected);
+				if (autoTrimpSettings.RdHeliumHourChallenge.selected === 'Challenge 3') {
+					toggleChallengeSquared();
+					selectChallenge(autoTrimpSettings.RdC3Challenge.selected);
+				}
+				else selectChallenge(autoTrimpSettings.RdHeliumHourChallenge.selected);
 			}
 		}
 		//Portaling into a daily

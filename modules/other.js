@@ -236,12 +236,12 @@ function heliumChallengesSetting() {
 
 	document.getElementById('dHeliumHourChallenge').innerHTML = document.getElementById('HeliumHourChallenge').innerHTML;
 
-	/* if (highestZone >= 65) {
+	if (highestZone >= 65) {
 		var option = document.createElement("option");
 		option.value = 'Challenge 2';
 		option.text = 'Challenge 2';
 		document.getElementById('dHeliumHourChallenge').appendChild(option);
-	} */
+	}
 
 	var challenge2 = ["None"];
 	if (getTotalPerkResource(true) >= 30) challenge2.push("Discipline");
@@ -318,12 +318,12 @@ function radonChallengesSetting() {
 	}
 	document.getElementById('RdHeliumHourChallenge').innerHTML = document.getElementById('RadonHourChallenge').innerHTML;
 
-	/* if (radonHZE >= 50) {
+	if (radonHZE >= 50) {
 		var option = document.createElement("option");
 		option.value = 'Challenge 3';
 		option.text = 'Challenge 3';
 		document.getElementById('RdHeliumHourChallenge').appendChild(option);
-	} */
+	}
 
 	var radonChallenge3 = ["None"];
 	if (radonHZE >= 15) radonChallenge3.push("Unlucky");
@@ -346,7 +346,7 @@ function radonChallengesSetting() {
 		option.text = radonChallenge3[item];
 		document.getElementById('RadonC3Challenge').appendChild(option);
 	}
-	document.getElementById('RdC3Challenge').innerHTML = document.getElementById('RadonC3Challenge').innerHTML;
+	document.getElementById('RdC2Challenge').innerHTML = document.getElementById('RadonC3Challenge').innerHTML;
 
 	//if (radonHZE === 15) debug("You have unlocked the Unlucky challenge.")
 	if (radonHZE === 5) debug("You can now use the Smithy Farm setting. This can be found in the AT 'Maps' tab.")

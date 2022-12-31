@@ -68,7 +68,7 @@ function boneShrine() {
 			}
 			if (shredActive && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineGather) && game.global.preMapsActive && game.global.currentMapId !== '' && game.global.hemmTimer >= 140) rRunMap();
 		}
-		if (!rBoneShrineAtlantrimp || (rBoneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === rBoneShrineDoubler && game.global.lastClearedMapCell === getCurrentMapObject().size - 2)) {
+		if (!rBoneShrineAtlantrimp || (rBoneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === rBoneShrineDoubler && game.global.lastClearedMapCell === getCurrentMapObject().size - 4)) {
 			rShouldBoneShrine = true;
 			for (var x = 0; x < rBoneShrineCharges; x++) {
 				if (getPageSetting((game.global.universe === 2 ? 'R' : '') + 'BuyJobsNew') > 0) {
