@@ -36,7 +36,7 @@ function updateAutoMapsStatus(get) {
 	if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
 	else if (vanillaMAZ) status = 'Vanilla MAZ';
 	else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && (currentMap !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness')) status = getCurrentMapObject().name;
-	else if (game.global.challengeActive == "Mapology" && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
+	else if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
 	else if (currentMap !== '') status = rMapSettings.status;
 	else if (getPageSetting('SkipSpires') == 1 && isDoingSpire()) status = 'Skipping Spire';
 	//Advancing
@@ -79,7 +79,7 @@ function autoMap() {
 	}
 
 	//No Mapology Credits
-	if (game.global.challengeActive === "Mapology" && game.challenges.Mapology.credits < 1) {
+	if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) {
 		if (game.global.preMapsActive) mapsClicked();
 		return;
 	}
@@ -90,7 +90,7 @@ function autoMap() {
 		return;
 	}
 
-	if (game.global.challengeActive === 'Life' && !game.global.mapsActive) {
+	if (challengeActive('Life') && !game.global.mapsActive) {
 		if (getPageSetting('life') && game.global.world >= getPageSetting('lifeZone') && game.challenges.Life.stacks < getPageSetting('lifeStacks')) {
 			var currCell = game.global.world + "_" + (game.global.lastClearedCell + 1);
 			if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
@@ -162,7 +162,7 @@ function autoMap() {
 	rAutoLevel = rMapSettings.autoLevel ? rMapSettings.mapLevel : Infinity;
 
 	//Farming & resetting variables.
-	var dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
+	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
 
 	//Uniques
 	let highestMap = null;
@@ -180,7 +180,7 @@ function autoMap() {
 			if (!lowestMap || map.level < lowestMap.level) {
 				lowestMap = map;
 			}
-		} else if (map.noRecycle && game.global.challengeActive != "Insanity") {
+		} else if (map.noRecycle && !challengeActive('Insanity')) {
 			if (runUniques && shouldRunUniqueMap(map)) {
 				selectedMap = map.id;
 				if (currTime === 0) currTime = getGameTime();
@@ -233,7 +233,7 @@ function autoMap() {
 			if (!rShouldMap)
 				repeatClicked();
 			//Disabling repeat if we'll beat Experience from the BW we're clearing.
-			if (game.global.repeatMap && game.global.challengeActive === 'Experience' && getCurrentMapObject().location === 'Bionic' && game.global.world > 600 && getCurrentMapObject().level >= 605) {
+			if (game.global.repeatMap && challengeActive('Experience') && getCurrentMapObject().location === 'Bionic' && game.global.world > 600 && getCurrentMapObject().level >= 605) {
 				repeatClicked();
 			}
 			//Disabling repeat if repeat conditions have been met

@@ -174,7 +174,7 @@ function getTrimpHealth(realHealth, mapType) {
 	//Desolation Completions
 	if (game.global.stringVersion >= '5.9.0') {
 		health *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
-		health *= game.global.challengeActive == "Desolation" ? game.challenges.Desolation.trimpHealthMult() : 1;
+		health *= challengeActive('Desolation') ? game.challenges.Desolation.trimpHealthMult() : 1;
 		health *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
 	}
 	//AutoBattle
@@ -199,26 +199,26 @@ function getTrimpHealth(realHealth, mapType) {
 
 
 	//Challenges
-	if (game.global.challengeActive == "Life" && !realHealth) health *= game.challenges.Life.getHealthMult();
-	else if (game.global.challengeActive == "Balance" && !realHealth) health *= game.challenges.Balance.getHealthMult();
+	if (challengeActive('Life') && !realHealth) health *= game.challenges.Life.getHealthMult();
+	else if (challengeActive('Balance') && !realHealth) health *= game.challenges.Balance.getHealthMult();
 
 	//Alchemy Mult
-	health *= game.global.challengeActive == 'Alchemy' ? alchObj.getPotionEffect('Potion of Strength') : 1;
+	health *= challengeActive('Alchemy') ? alchObj.getPotionEffect('Potion of Strength') : 1;
 	//Duel Mult
-	//health *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 20 ? game.challenges.Duel.healthMult : 1;
+	//health *= challengeActive('Duel') && game.challenges.Duel.trimpStacks < 20 ? game.challenges.Duel.healthMult : 1;
 	//Revenge Mult
-	health *= game.global.challengeActive == 'Revenge' && game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1;
+	health *= challengeActive('Revenge') && game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1;
 	//Wither Mult
-	health *= game.global.challengeActive == 'Wither' && game.challenges.Wither.trimpStacks > 0 ? game.challenges.Wither.getTrimpHealthMult() : 1;
+	health *= challengeActive('Wither') && game.challenges.Wither.trimpStacks > 0 ? game.challenges.Wither.getTrimpHealthMult() : 1;
 	//Insanity Mult
-	health *= game.global.challengeActive == 'Insanity' ? game.challenges.Insanity.getHealthMult() : 1;
+	health *= challengeActive('Insanity') ? game.challenges.Insanity.getHealthMult() : 1;
 	//Berserk Mult
-	health *= game.global.challengeActive == 'Berserk' && game.challenges.Berserk.frenzyStacks > 0 ? game.challenges.Berserk.getHealthMult() : 1;
-	health *= game.global.challengeActive == 'Berserk' && game.challenges.Berserk.frenzyStacks <= 0 ? game.challenges.Berserk.getHealthMult(true) : 1;
+	health *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks > 0 ? game.challenges.Berserk.getHealthMult() : 1;
+	health *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks <= 0 ? game.challenges.Berserk.getHealthMult(true) : 1;
 	//Nurture Mult
-	health *= game.global.challengeActive == 'Nurture' && game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
+	health *= challengeActive('Nurture') && game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
 	//Smithies (smithless challenge)
-	health *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
+	health *= challengeActive('Smithless') && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 
 	return health;
 }
@@ -267,14 +267,14 @@ function calcHitsSurvived(targetZone, type) {
 	}
 
 	//Lead farms one zone ahead
-	if (game.global.challengeActive === "Lead" && type === "world" && game.global.world % 2 === 1) {
+	if (challengeActive('Lead') && type === "world" && game.global.world % 2 === 1) {
 		targetZone++;
 	}
 
 	//Explosive Daily and Crushed
 	if (health > block && getPageSetting('IgnoreCrits') !== 2) {
-		const dailyExplosive = game.global.challengeActive === "Daily" && typeof game.global.dailyChallenge.explosive !== "undefined";
-		const crushed = game.global.challengeActive === "Crushed";
+		const dailyExplosive = challengeActive('Daily') && typeof game.global.dailyChallenge.explosive !== "undefined";
+		const crushed = challengeActive('Crushed');
 		if (dailyExplosive) {
 			damageMult = dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 		} else if (crushed) {
@@ -418,7 +418,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	//Desolation Completions
 	if (game.global.stringVersion >= '5.9.0') {
 		attack *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
-		attack *= game.global.challengeActive == "Desolation" ? game.challenges.Desolation.trimpAttackMult() : 1;
+		attack *= challengeActive('Desolation') ? game.challenges.Desolation.trimpAttackMult() : 1;
 		attack *= game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased ? 10 : 1;
 	}
 	//AutoBattle
@@ -426,7 +426,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	// Heirloom (Shield)
 	attack *= 1 + calcHeirloomBonus('Shield', 'trimpAttack', 1, true) / 100;
 	// Frenzy perk
-	attack *= game.global.universe === 2 && game.global.challengeActive !== 'Berserk' && (getPageSetting('Rcalcfrenzy') || autoBattle.oneTimers.Mass_Hysteria.owned) ? 1 + (0.5 * game.portal.Frenzy[perkLevel]) : 1;
+	attack *= game.global.universe === 2 && !challengeActive('Berserk') && (getPageSetting('Rcalcfrenzy') || autoBattle.oneTimers.Mass_Hysteria.owned) ? 1 + (0.5 * game.portal.Frenzy[perkLevel]) : 1;
 	//Championism
 	attack *= game.global.universe === 2 ? game.portal.Championism.getMult() : 1;
 	// Golden Upgrade
@@ -488,8 +488,8 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	attack *= game.global.universe === 2 && u2Mutations.tree.Attack.purchased ? 1.5 : 1;
 
 	//Challenges
-	if (game.global.challengeActive == "Life") attack *= game.challenges.Life.getHealthMult();
-	if (game.global.challengeActive == "Lead" && (game.global.world % 2) == 1) attack *= 1.5;
+	if (challengeActive('Life')) attack *= game.challenges.Life.getHealthMult();
+	if (challengeActive('Lead') && (game.global.world % 2) == 1) attack *= 1.5;
 	/* if (game.challenges.Electricity.stacks > 0) {
 		var stacks = game.challenges.Electricity.stacks;
 		if (!realDamage && minMaxAvg.toLowerCase() == "min") stacks = 0;
@@ -498,30 +498,30 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	} */
 
 	//Decay
-	if (game.global.challengeActive == "Decay") {
+	if (challengeActive('Decay')) {
 		attack *= 5;
 		attack *= Math.pow(0.995, game.challenges.Decay.stacks);
 	}
 
 	// Challenges
-	attack *= game.global.challengeActive == 'Unbalance' ? game.challenges.Unbalance.getAttackMult() : 1;
-	attack *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks > 50 ? 3 : 1;
-	attack *= game.global.challengeActive == 'Melt' ? 5 * Math.pow(0.99, game.challenges.Melt.stacks) : 1;
-	attack *= game.global.challengeActive == 'Quagmire' ? game.challenges.Quagmire.getExhaustMult() : 1;
-	attack *= game.global.challengeActive == 'Revenge' ? game.challenges.Revenge.getMult() : 1;
-	attack *= game.global.challengeActive == 'Quest' ? game.challenges.Quest.getAttackMult() : 1;
-	attack *= game.global.challengeActive == 'Archaeology' ? game.challenges.Archaeology.getStatMult('attack') : 1;
-	attack *= game.global.challengeActive == 'Storm' && game.global.mapsActive ? Math.pow(0.9995, game.challenges.Storm.beta) : 1;
-	attack *= game.global.challengeActive == 'Berserk' ? game.challenges.Berserk.getAttackMult() : 1;
-	attack *= game.global.challengeActive == 'Nurture' && game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
-	attack *= game.global.challengeActive == 'Alchemy' ? alchObj.getPotionEffect('Potion of Strength') : 1;
-	attack *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
+	attack *= challengeActive('Unbalance') ? game.challenges.Unbalance.getAttackMult() : 1;
+	attack *= challengeActive('Duel') && game.challenges.Duel.trimpStacks > 50 ? 3 : 1;
+	attack *= challengeActive('Melt') ? 5 * Math.pow(0.99, game.challenges.Melt.stacks) : 1;
+	attack *= challengeActive('Quagmire') ? game.challenges.Quagmire.getExhaustMult() : 1;
+	attack *= challengeActive('Revenge') ? game.challenges.Revenge.getMult() : 1;
+	attack *= challengeActive('Quest') ? game.challenges.Quest.getAttackMult() : 1;
+	attack *= challengeActive('Archaeology') ? game.challenges.Archaeology.getStatMult('attack') : 1;
+	attack *= challengeActive('Storm') && game.global.mapsActive ? Math.pow(0.9995, game.challenges.Storm.beta) : 1;
+	attack *= challengeActive('Berserk') ? game.challenges.Berserk.getAttackMult() : 1;
+	attack *= challengeActive('Nurture') && game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
+	attack *= challengeActive('Alchemy') ? alchObj.getPotionEffect('Potion of Strength') : 1;
+	attack *= challengeActive('Smithless') && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 
 	//Nova mutation
 	attack *= mapType === 'world' && game.global.novaMutStacks > 0 ? u2Mutations.types.Nova.trimpAttackMult() : 1;
 
 	//Discipline / Unlucky
-	if (game.global.challengeActive == "Discipline" || game.global.challengeActive == "Unlucky") {
+	if (challengeActive('Discipline') || challengeActive('Unlucky')) {
 		minFluct = 0.005;
 		maxFluct = 1.995;
 	}
@@ -529,10 +529,10 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	// Dailies
 	var minDailyMod = 1;
 	var maxDailyMod = 1;
-	if (game.global.challengeActive == "Daily") {
-		if (game.global.challengeActive == "Daily" && game.talents.daily.purchased) attack *= 1.5;
+	if (challengeActive('Daily')) {
+		if (challengeActive('Daily') && game.talents.daily.purchased) attack *= 1.5;
 		//Scruffy Level 20 - Dailies
-		attack *= Fluffy.isRewardActive('SADailies') && game.global.challengeActive == "Daily" ? Fluffy.rewardConfig.SADailies.attackMod() : 1;
+		attack *= Fluffy.isRewardActive('SADailies') && challengeActive('Daily') ? Fluffy.rewardConfig.SADailies.attackMod() : 1;
 
 		//Range Dailies
 		if (typeof game.global.dailyChallenge.minDamage !== "undefined") minFluct = dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength);
@@ -611,7 +611,7 @@ function calcSpire(what, cell, name) {
 	base *= Math.pow(mod, cell);
 
 	//Compensations for Domination
-	if (game.global.challengeActive == "Domination" && cell != 100) base /= (what == "attack") ? 25 : 75;
+	if (challengeActive('Domination') && cell != 100) base /= (what == "attack") ? 25 : 75;
 
 	return base;
 }
@@ -621,17 +621,17 @@ function badGuyChallengeMult() {
 
 	//WARNING! Something is afoot!
 	//A few challenges
-	if (game.global.challengeActive == "Meditate") number *= 1.5;
-	else if (game.global.challengeActive == "Watch") number *= 1.25;
-	else if (game.global.challengeActive == "Corrupted") number *= 3;
-	else if (game.global.challengeActive == "Domination") number *= 2.5;
-	else if (game.global.challengeActive == "Coordinate") number *= getBadCoordLevel();
-	else if (game.global.challengeActive == "Scientist" && getScientistLevel() == 5) number *= 10;
-	else if (game.global.challengeActive === 'Experience') number *= game.challenges.Experience.getEnemyMult();
+	if (challengeActive('Meditate')) number *= 1.5;
+	else if (challengeActive('Watch')) number *= 1.25;
+	else if (challengeActive('Corrupted')) number *= 3;
+	else if (challengeActive('Domination')) number *= 2.5;
+	else if (challengeActive('Coordinate')) number *= getBadCoordLevel();
+	else if (challengeActive('Scientist') && getScientistLevel() == 5) number *= 10;
+	else if (challengeActive('Experience')) number *= game.challenges.Experience.getEnemyMult();
 
 	//Obliterated and Eradicated
-	else if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") {
-		var oblitMult = (game.global.challengeActive == "Eradicated") ? game.challenges.Eradicated.scaleModifier : 1e12;
+	else if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
+		var oblitMult = (challengeActive('Eradicated')) ? game.challenges.Eradicated.scaleModifier : 1e12;
 		var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
 		oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
 		number *= oblitMult
@@ -657,8 +657,8 @@ function badGuyCritMult(enemy, critPower = 2, block, health) {
 	else if (game.global.voidBuff == 'getCrit' && getPageSetting('IgnoreCrits') != 1) regular = 5;
 
 	//Challenge crits
-	var crushed = game.global.challengeActive == "Crushed";
-	var critDaily = game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.crits !== 'undefined';
+	var crushed = challengeActive('Crushed');
+	var critDaily = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
 
 	//Challenge multiplier
 	if (critDaily) challenge = dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
@@ -670,7 +670,7 @@ function badGuyCritMult(enemy, critPower = 2, block, health) {
 }
 
 function calcCorruptionScale(zone, base) {
-	var startPoint = (game.global.challengeActive == "Corrupted" || game.global.challengeActive == "Eradicated") ? 1 : 150;
+	var startPoint = (challengeActive('Corrupted') || challengeActive('Eradicated')) ? 1 : 150;
 	var scales = Math.floor((zone - startPoint) / 6);
 	var realValue = base * Math.pow(1.05, scales);
 	return parseFloat(prettify(realValue));
@@ -782,42 +782,42 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 
 	//WARNING! Check every challenge!
 	//A few challenges
-	if (game.global.challengeActive == "Meditate") attack *= 1.5;
-	else if (game.global.challengeActive == "Watch") attack *= 1.25;
-	else if (game.global.challengeActive == "Corrupted") attack *= 3;
-	else if (game.global.challengeActive == "Scientist" && getScientistLevel() == 5) attack *= 10;
-	else if (game.global.challengeActive === 'Experience') attack *= game.challenges.Experience.getEnemyMult();
+	if (challengeActive('Meditate')) attack *= 1.5;
+	else if (challengeActive('Watch')) attack *= 1.25;
+	else if (challengeActive('Corrupted')) attack *= 3;
+	else if (challengeActive('Scientist') && getScientistLevel() == 5) attack *= 10;
+	else if (challengeActive('Experience')) attack *= game.challenges.Experience.getEnemyMult();
 
 	//u2 challenges
-	else if (game.global.challengeActive == 'Unbalance') attack *= 1.5;
-	else if (game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50) attack *= 3;
-	else if (game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0) attack *= game.challenges.Wither.getEnemyAttackMult();
-	else if (game.global.challengeActive == 'Archaeology') attack *= game.challenges.Archaeology.getStatMult('enemyAttack');
-	else if (game.global.challengeActive == 'Mayhem' && type === 'world') attack *= game.challenges.Mayhem.getBossMult();
-	else if (game.global.challengeActive == 'Mayhem') attack *= game.challenges.Mayhem.getEnemyMult();
+	else if (challengeActive('Unbalance')) attack *= 1.5;
+	else if (challengeActive('Duel') && game.challenges.Duel.trimpStacks < 50) attack *= 3;
+	else if (challengeActive('Wither') && game.challenges.Wither.enemyStacks > 0) attack *= game.challenges.Wither.getEnemyAttackMult();
+	else if (challengeActive('Archaeology')) attack *= game.challenges.Archaeology.getStatMult('enemyAttack');
+	else if (challengeActive('Mayhem') && type === 'world') attack *= game.challenges.Mayhem.getBossMult();
+	else if (challengeActive('Mayhem')) attack *= game.challenges.Mayhem.getEnemyMult();
 	//Purposefully don't put Storm in here.
-	else if (game.global.challengeActive == 'Storm' && !game.global.mapsActive) attack *= game.challenges.Storm.getAttackMult();
-	else if (game.global.challengeActive == 'Exterminate') attack *= game.challenges.Exterminate.getSwarmMult();
-	else if (game.global.challengeActive == 'Nurture') attack *= 2;
-	else if (game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0) attack *= game.buildings.Laboratory.getEnemyMult();
-	else if (game.global.challengeActive == 'Pandemonium' && type === 'world') attack *= game.challenges.Pandemonium.getBossMult();
-	else if (game.global.challengeActive == 'Pandemonium' && type !== 'world') attack *= game.challenges.Pandemonium.getPandMult();
-	else if (game.global.stringVersion >= '5.9.0' && game.global.challengeActive == 'Desolation') attack *= game.challenges.Desolation.getEnemyMult();
-	else if (game.global.challengeActive == 'Alchemy') attack *= (alchObj.getEnemyStats(false, false)) + 1;
-	else if (game.global.challengeActive == 'Hypothermia') attack *= game.challenges.Hypothermia.getEnemyMult();
-	else if (game.global.challengeActive == 'Glass') attack *= game.challenges.Glass.attackMult();
+	else if (challengeActive('Storm') && !game.global.mapsActive) attack *= game.challenges.Storm.getAttackMult();
+	else if (challengeActive('Exterminate')) attack *= game.challenges.Exterminate.getSwarmMult();
+	else if (challengeActive('Nurture')) attack *= 2;
+	else if (challengeActive('Nurture') && game.buildings.Laboratory.owned > 0) attack *= game.buildings.Laboratory.getEnemyMult();
+	else if (challengeActive('Pandemonium') && type === 'world') attack *= game.challenges.Pandemonium.getBossMult();
+	else if (challengeActive('Pandemonium') && type !== 'world') attack *= game.challenges.Pandemonium.getPandMult();
+	else if (game.global.stringVersion >= '5.9.0' && challengeActive('Desolation')) attack *= game.challenges.Desolation.getEnemyMult();
+	else if (challengeActive('Alchemy')) attack *= (alchObj.getEnemyStats(false, false)) + 1;
+	else if (challengeActive('Hypothermia')) attack *= game.challenges.Hypothermia.getEnemyMult();
+	else if (challengeActive('Glass')) attack *= game.challenges.Glass.attackMult();
 
 	if (type === 'world' && game.global.novaMutStacks > 0) attack *= u2Mutations.types.Nova.enemyAttackMult();
 
 	//Coordinate
-	if (game.global.challengeActive == "Coordinate") {
+	if (challengeActive('Coordinate')) {
 		var amt = 1;
 		for (var i = 1; i < zone; i++) amt = Math.ceil(amt * 1.25);
 		attack *= amt;
 	}
 
 	//Dailies
-	if (game.global.challengeActive == "Daily") {
+	if (challengeActive('Daily')) {
 		//Bad Strength
 		if (typeof game.global.dailyChallenge.badStrength !== 'undefined')
 			attack *= dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength);
@@ -836,8 +836,8 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	}
 
 	//Obliterated and Eradicated
-	else if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") {
-		var oblitMult = (game.global.challengeActive == "Eradicated") ? game.challenges.Eradicated.scaleModifier : 1e12;
+	else if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
+		var oblitMult = (challengeActive('Eradicated')) ? game.challenges.Eradicated.scaleModifier : 1e12;
 		var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
 		oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
 		attack *= oblitMult;
@@ -864,21 +864,21 @@ function calcEnemyAttack(type, zone, cell = 99, name = "Snimp", minOrMax) {
 	var healthy = mutations.Healthy.active();
 
 	//Challenges
-	if (game.global.challengeActive == "Balance") attack *= (type == "world") ? 1.17 : 2.35;
-	else if (game.global.challengeActive == "Life") attack *= 6;
-	else if (game.global.challengeActive == "Toxicity") attack *= 5;
-	else if (game.global.challengeActive == "Lead") attack *= (zone % 2 == 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
-	else if (game.global.challengeActive == "Domination") attack *= 2.5;
+	if (challengeActive('Balance')) attack *= (type == "world") ? 1.17 : 2.35;
+	else if (challengeActive('Life')) attack *= 6;
+	else if (challengeActive('Toxicity')) attack *= 5;
+	else if (challengeActive('Lead')) attack *= (zone % 2 == 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
+	else if (challengeActive('Domination')) attack *= 2.5;
 
 	//Dailies
-	else if (game.global.challengeActive == "Daily") {
+	else if (challengeActive('Daily')) {
 		//Crits
 		if (typeof game.global.dailyChallenge.crits !== "undefined")
 			attack *= 0.75 + 0.25 * dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 	}
 
 	//Magneto Shriek during Domination
-	if (game.global.challengeActive == "Domination" && game.global.usingShriek)
+	if (challengeActive('Domination') && game.global.usingShriek)
 		attack *= game.mapUnlocks.roboTrimp.getShriekValue();
 
 	//Void Map Difficulty (implicit 100% difficulty on regular maps)
@@ -909,8 +909,8 @@ function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth) {
 	attack *= badGuyCritMult(enemy, critPower, customBlock, customHealth);
 
 	//Challenges - considers the actual scenario for this enemy
-	if (game.global.challengeActive == "Nom" && typeof enemy.nomStacks !== 'undefined') attack *= Math.pow(1.25, enemy.nomStacks)
-	if (game.global.challengeActive == "Lead") attack *= 1 + (0.04 * game.challenges.Lead.stacks);
+	if (challengeActive('Nom') && typeof enemy.nomStacks !== 'undefined') attack *= Math.pow(1.25, enemy.nomStacks)
+	if (challengeActive('Lead')) attack *= 1 + (0.04 * game.challenges.Lead.stacks);
 
 	//Magneto Shriek
 	if (game.global.usingShriek) attack *= game.mapUnlocks.roboTrimp.getShriekValue();
@@ -1035,38 +1035,38 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 
 	//Challenges
 	//U1
-	health *= game.global.challengeActive == 'Balance' ? 2 : 1;
-	health *= game.global.challengeActive == 'Meditate' ? 2 : 1;
-	health *= game.global.challengeActive == 'Toxicity' ? 2 : 1;
-	health *= game.global.challengeActive == 'Life' ? 10 : 1;
-	health *= game.global.challengeActive == 'Experience' ? game.challenges.Experience.getEnemyMult() : 1;
-	if (game.global.challengeActive == "Coordinate") {
+	health *= challengeActive('Balance') ? 2 : 1;
+	health *= challengeActive('Meditate') ? 2 : 1;
+	health *= challengeActive('Toxicity') ? 2 : 1;
+	health *= challengeActive('Life') ? 10 : 1;
+	health *= challengeActive('Experience') ? game.challenges.Experience.getEnemyMult() : 1;
+	if (challengeActive('Coordinate')) {
 		var amt = 1;
 		for (var i = 1; i < zone; i++) amt = Math.ceil(amt * 1.25);
 		health *= amt;
 	}
 	//U2
-	health *= game.global.challengeActive == 'Unbalance' && type !== 'world' ? 2 : game.global.challengeActive == 'Unbalance' ? 3 : 1;
-	//health *= game.global.challengeActive == 'Duel' && game.challenges.Duel.enemyStacks < 20 ? game.challenges.Duel.healthMult : 1;
-	health *= game.global.challengeActive == 'Quest' ? game.challenges.Quest.getHealthMult() : 1;
-	health *= game.global.challengeActive == 'Revenge' && game.global.world % 2 == 0 ? 10 : 1;
-	health *= game.global.challengeActive == 'Mayhem' && type === 'world' ? game.challenges.Mayhem.getBossMult() : 1;
-	health *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult() : 1;
-	health *= game.global.challengeActive == 'Storm' && type === 'world' ? game.challenges.Storm.getHealthMult() : 1;
-	//health *= game.global.challengeActive == 'Berserk' ? 1.5 : 1;
-	health *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
-	if (game.global.challengeActive == 'Nurture') {
+	health *= challengeActive('Unbalance') && type !== 'world' ? 2 : challengeActive('Unbalance') ? 3 : 1;
+	//health *= challengeActive('Duel') && game.challenges.Duel.enemyStacks < 20 ? game.challenges.Duel.healthMult : 1;
+	health *= challengeActive('Quest') ? game.challenges.Quest.getHealthMult() : 1;
+	health *= challengeActive('Revenge') && game.global.world % 2 == 0 ? 10 : 1;
+	health *= challengeActive('Mayhem') && type === 'world' ? game.challenges.Mayhem.getBossMult() : 1;
+	health *= challengeActive('Mayhem') ? game.challenges.Mayhem.getEnemyMult() : 1;
+	health *= challengeActive('Storm') && type === 'world' ? game.challenges.Storm.getHealthMult() : 1;
+	//health *= challengeActive('Berserk') ? 1.5 : 1;
+	health *= challengeActive('Exterminate') ? game.challenges.Exterminate.getSwarmMult() : 1;
+	if (challengeActive('Nurture')) {
 		health *= type === 'world' ? 2 : type !== 'world' ? 10 : 1;
 		health *= game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	}
-	if (game.global.challengeActive == 'Pandemonium') health *= type === 'world' ? game.challenges.Pandemonium.getBossMult() : type !== 'world' ? game.challenges.Pandemonium.getPandMult() : 1;
-	if (game.global.stringVersion >= '5.9.0' && game.global.challengeActive == 'Desolation') health *= game.challenges.Desolation.getEnemyMult();
-	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
-	health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
-	health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
+	if (challengeActive('Pandemonium')) health *= type === 'world' ? game.challenges.Pandemonium.getBossMult() : type !== 'world' ? game.challenges.Pandemonium.getPandMult() : 1;
+	if (game.global.stringVersion >= '5.9.0' && challengeActive('Desolation')) health *= game.challenges.Desolation.getEnemyMult();
+	health *= challengeActive('Alchemy') ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
+	health *= challengeActive('Hypothermia') ? game.challenges.Hypothermia.getEnemyMult() : 1;
+	health *= challengeActive('Glass') ? game.challenges.Glass.healthMult() : 1;
 
 	//Dailies
-	if (game.global.challengeActive == "Daily") {
+	if (challengeActive('Daily')) {
 		//Empower
 		health *= typeof game.global.dailyChallenge.empower !== 'undefined' && type === 'world' ? dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks) : 1;
 		//Bad Health
@@ -1076,8 +1076,8 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	}
 
 	//Obliterated + Eradicated
-	if (game.global.challengeActive == "Obliterated" || game.global.challengeActive == "Eradicated") {
-		var oblitMult = (game.global.challengeActive == "Eradicated") ? game.challenges.Eradicated.scaleModifier : 1e12;
+	if (challengeActive('Obliterated') || challengeActive('Eradicated')) {
+		var oblitMult = (challengeActive('Eradicated')) ? game.challenges.Eradicated.scaleModifier : 1e12;
 		var zoneModifier = Math.floor(game.global.world / game.challenges[game.global.challengeActive].zoneScaleFreq);
 		oblitMult *= Math.pow(game.challenges[game.global.challengeActive].zoneScaling, zoneModifier);
 		health *= oblitMult;
@@ -1093,8 +1093,8 @@ function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp") {
 	var healthy = mutations.Healthy.active();
 
 	//Challenges - worst case for Lead and Domination
-	if (game.global.challengeActive == "Domination") health *= 7.5;
-	if (game.global.challengeActive == "Lead") health *= (zone % 2 == 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
+	if (challengeActive('Domination')) health *= 7.5;
+	if (challengeActive('Lead')) health *= (zone % 2 == 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
 
 	//Void Map Difficulty (implicit 100% difficulty on regular maps)
 	if (type == "void") health *= (game.global.universe === 2 || zone >= 60) ? 4.5 : 2.5;
@@ -1129,8 +1129,8 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	var health = calcEnemyHealthCore(type, zone, cell, name);
 
 	//Challenges - considers the actual scenario for this enemy
-	if (game.global.challengeActive == "Lead") health *= 1 + (0.04 * game.challenges.Lead.stacks);
-	if (game.global.challengeActive == "Domination") {
+	if (challengeActive('Lead')) health *= 1 + (0.04 * game.challenges.Lead.stacks);
+	if (challengeActive('Domination')) {
 		var lastCell = (type == "world") ? 100 : game.global.mapGridArray.length;
 		if (cell < lastCell) health /= 10;
 		else health *= 7.5;
@@ -1176,7 +1176,7 @@ function calcHDRatio(targetZone, type) {
 	var ourBaseDamage = calcOurDmg("avg", universeSetting, false, type, 'maybe', targetZone - game.global.world);
 
 	//Lead Challenge
-	if (game.global.challengeActive == "Lead" && targetZone % 2 == 1 && type != "map") {
+	if (challengeActive('Lead') && targetZone % 2 == 1 && type != "map") {
 		//Stats for void maps
 		var voidDamage = ourBaseDamage;
 		var voidHealth = type == "void" ? calcEnemyHealth("void", targetZone) : 0;
@@ -1210,11 +1210,11 @@ function calcHDRatio(targetZone, type) {
 function calcCurrentStance() {
 	if (game.global.uberNature == "Wind" && getEmpowerment() == "Wind" && !game.global.mapsActive &&
 		(
-			((game.global.challengeActive != "Daily" && HDratio < getPageSetting('WindStackingMinHD'))
-				|| (game.global.challengeActive == "Daily" && HDRatio < getPageSetting('dWindStackingMinHD')))
+			((!challengeActive('Daily') && HDratio < getPageSetting('WindStackingMinHD'))
+				|| (challengeActive('Daily') && HDRatio < getPageSetting('dWindStackingMinHD')))
 			&&
-			((game.global.challengeActive != "Daily" && game.global.world >= getPageSetting('WindStackingMin'))
-				|| (game.global.challengeActive == "Daily" && game.global.world >= getPageSetting('dWindStackingMin')))
+			((!challengeActive('Daily') && game.global.world >= getPageSetting('WindStackingMin'))
+				|| (challengeActive('Daily') && game.global.world >= getPageSetting('dWindStackingMin')))
 		)
 		|| (game.global.uberNature == "Wind" && getEmpowerment() == "Wind" && !game.global.mapsActive && checkIfLiquidZone() && getPageSetting('liqstack') == true))
 		return 15;
@@ -1313,19 +1313,19 @@ function calcMutationHealth(targetZone, muteCell) {
 
 function totalDamageMod() {
 	dmg = 1;
-	dmg *= game.global.challengeActive == 'Duel' && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
-	dmg *= game.global.challengeActive == 'Wither' && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
-	dmg *= game.global.challengeActive == 'Archaeology' ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
-	dmg *= game.global.challengeActive == 'Mayhem' && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Mayhem.getBossMult() : 1;
-	dmg *= game.global.challengeActive == 'Mayhem' ? game.challenges.Mayhem.getEnemyMult() : 1;
-	dmg *= game.global.challengeActive == 'Storm' && !game.global.mapsActive ? game.challenges.Storm.getAttackMult() : 1;
-	dmg *= game.global.challengeActive == 'Exterminate' ? game.challenges.Exterminate.getSwarmMult() : 1;
-	dmg *= game.global.challengeActive == 'Nurture' ? 2 : 1;
-	dmg *= game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
-	dmg *= game.global.challengeActive == 'Pandemonium' && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Pandemonium.getBossMult() : 1;
-	dmg *= game.global.challengeActive == 'Pandemonium' && !(!game.global.mapsActive && game.global.lastClearedCell + 2 == 100) ? game.challenges.Pandemonium.getPandMult() : 1;
-	dmg *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.attackMult() : 1;
-	if (game.global.challengeActive == "Daily") {
+	dmg *= challengeActive('Duel') && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
+	dmg *= challengeActive('Wither') && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
+	dmg *= challengeActive('Archaeology') ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
+	dmg *= challengeActive('Mayhem') && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Mayhem.getBossMult() : 1;
+	dmg *= challengeActive('Mayhem') ? game.challenges.Mayhem.getEnemyMult() : 1;
+	dmg *= challengeActive('Storm') && !game.global.mapsActive ? game.challenges.Storm.getAttackMult() : 1;
+	dmg *= challengeActive('Exterminate') ? game.challenges.Exterminate.getSwarmMult() : 1;
+	dmg *= challengeActive('Nurture') ? 2 : 1;
+	dmg *= challengeActive('Nurture') && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
+	dmg *= challengeActive('Pandemonium') && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Pandemonium.getBossMult() : 1;
+	dmg *= challengeActive('Pandemonium') && !(!game.global.mapsActive && game.global.lastClearedCell + 2 == 100) ? game.challenges.Pandemonium.getPandMult() : 1;
+	dmg *= challengeActive('Glass') ? game.challenges.Glass.attackMult() : 1;
+	if (challengeActive('Daily')) {
 		dmg *= typeof game.global.dailyChallenge.badStrength !== 'undefined' ? dailyModifiers.badStrength.getMult(game.global.dailyChallenge.badStrength.strength) : 1;
 		dmg *= typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && game.global.mapsActive ? dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength) : 1;
 		dmg *= typeof game.global.dailyChallenge.bloodthirst !== 'undefined' ? dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks) : 1;
@@ -1365,7 +1365,7 @@ function getTotalHealthMod() {
 	//Desolation Completions
 	if (game.global.stringVersion >= '5.9.0') {
 		healthMulti *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
-		healthMulti *= game.global.challengeActive == "Desolation" ? game.challenges.Desolation.trimpHealthMult() : 1;
+		healthMulti *= challengeActive('Desolation') ? game.challenges.Desolation.trimpHealthMult() : 1;
 		healthMulti *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
 	}
 	//AutoBattle
@@ -1381,14 +1381,14 @@ function getTotalHealthMod() {
 	//Mutator
 	healthMulti *= game.global.stringVersion >= '5.8.0' && u2Mutations.tree.Health.purchased ? 1.5 : 1;
 	// Challenge Multis
-	healthMulti *= game.global.challengeActive == 'Revenge' && game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1;
-	healthMulti *= game.global.challengeActive == 'Wither' && game.challenges.Wither.trimpStacks > 0 ? game.challenges.Wither.getTrimpHealthMult() : 1;
-	healthMulti *= game.global.challengeActive == 'Insanity' ? game.challenges.Insanity.getHealthMult() : 1;
-	healthMulti *= game.global.challengeActive == 'Berserk' && game.challenges.Berserk.frenzyStacks > 0 ? game.challenges.Berserk.getHealthMult() : 1;
-	healthMulti *= game.global.challengeActive == 'Berserk' && game.challenges.Berserk.frenzyStacks <= 0 ? game.challenges.Berserk.getHealthMult(true) : 1;
+	healthMulti *= challengeActive('Revenge') && game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1;
+	healthMulti *= challengeActive('Wither') && game.challenges.Wither.trimpStacks > 0 ? game.challenges.Wither.getTrimpHealthMult() : 1;
+	healthMulti *= challengeActive('Insanity') ? game.challenges.Insanity.getHealthMult() : 1;
+	healthMulti *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks > 0 ? game.challenges.Berserk.getHealthMult() : 1;
+	healthMulti *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks <= 0 ? game.challenges.Berserk.getHealthMult(true) : 1;
 	healthMulti *= game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
-	healthMulti *= game.global.challengeActive == 'Alchemy' ? alchObj.getPotionEffect("Potion of Strength") : 1;
-	healthMulti *= game.global.challengeActive === 'Smithless' && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
+	healthMulti *= challengeActive('Alchemy') ? alchObj.getPotionEffect("Potion of Strength") : 1;
+	healthMulti *= challengeActive('Smithless') && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 	// Daily mod
 	healthMulti *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
 	// Prismatic

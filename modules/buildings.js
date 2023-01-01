@@ -52,7 +52,7 @@ function buyStorage(hypoZone) {
 						exoticValue
 		}
 		//Skips buying sheds if you're not on one of your specified bonfire zones
-		if (game.global.challengeActive === 'Hypothermia' && hypoZone > game.global.world && resource === 'Shed') continue;
+		if (challengeActive('Hypothermia') && hypoZone > game.global.world && resource === 'Shed') continue;
 		if ((game.global.world == 1 && curRes > maxRes * customVars.storageLowlvlCutoff1) ||
 			(game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * customVars.storageLowlvlCutoff2) ||
 			(curRes + exoticValue > maxRes * customVars.storageMainCutoff)) {
@@ -114,7 +114,7 @@ function getPsStringLocal(what, rawNum) {
 		currentCalc *= 2;
 	}
 	var potionFinding;
-	if (game.global.challengeActive == "Alchemy") potionFinding = alchObj.getPotionEffect("Potion of Finding");
+	if (challengeActive('Alchemy')) potionFinding = alchObj.getPotionEffect("Potion of Finding");
 	if (potionFinding > 1 && what != "fragments" && what != "science") {
 		currentCalc *= potionFinding;
 	}
@@ -122,16 +122,16 @@ function getPsStringLocal(what, rawNum) {
 		var bonus = Math.pow(4, game.upgrades.Speedexplorer.done);
 		currentCalc *= bonus;
 	}
-	if (game.global.challengeActive == "Melt") {
+	if (challengeActive('Melt')) {
 		currentCalc *= 10;
 		var stackStr = Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
 		currentCalc *= stackStr;
 	}
-	if (game.global.challengeActive == "Archaeology" && what != "fragments") {
+	if (challengeActive('Archaeology') && what != "fragments") {
 		var mult = game.challenges.Archaeology.getStatMult("science");
 		currentCalc *= mult;
 	}
-	if (game.global.challengeActive == "Insanity") {
+	if (challengeActive('Insanity')) {
 		var mult = game.challenges.Insanity.getLootMult();
 		currentCalc *= mult;
 	}
@@ -147,7 +147,7 @@ function getPsStringLocal(what, rawNum) {
 		var mult = game.challenges.Desolation.getTrimpMult();
 		currentCalc *= mult;
 	}
-	if (game.global.challengeActive == "Daily") {
+	if (challengeActive('Daily')) {
 		var mult = 0;
 		if (typeof game.global.dailyChallenge.dedication !== 'undefined') {
 			mult = dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
@@ -158,7 +158,7 @@ function getPsStringLocal(what, rawNum) {
 			currentCalc *= mult;
 		}
 	}
-	if (game.global.challengeActive == "Hypothermia" && what == "wood") {
+	if (challengeActive('Hypothermia') && what == "wood") {
 		var mult = game.challenges.Hypothermia.getWoodMult(true);
 		currentCalc *= mult;
 	}
@@ -216,13 +216,13 @@ function mostEfficientHousing() {
 	const resourcefulMod = game.global.universe === 1 ? Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level) : 1;
 
 	for (var house of HousingTypes) {
-		var maxHousing = ((!autoBattle.oneTimers.Expanding_Tauntimp.owned && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildings') && getPageSetting('c3buildingzone') >= game.global.world) ? Infinity :
+		var maxHousing = ((!autoBattle.oneTimers.Expanding_Tauntimp.owned && (game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) && getPageSetting('c3buildings') && getPageSetting('c3buildingzone') >= game.global.world) ? Infinity :
 			buildingSettings[house].buyMax === 0 ? Infinity : buildingSettings[house].buyMax);
 		if (!game.buildings[house].locked && game.buildings[house].owned < maxHousing) {
 			housingTargets.push(house);
 		}
 	}
-	var runningC3 = (!autoBattle.oneTimers.Expanding_Tauntimp.owned && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildings') && getPageSetting('c3buildingzone') >= game.global.world)
+	var runningC3 = (!autoBattle.oneTimers.Expanding_Tauntimp.owned && (game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) && getPageSetting('c3buildings') && getPageSetting('c3buildingzone') >= game.global.world)
 
 	var mostEfficient = {
 		name: "",
@@ -234,14 +234,14 @@ function mostEfficientHousing() {
 		var worstTime = -Infinity;
 		var currentOwned = game.buildings[housing].owned;
 		var buildingspending = buildingSettings[housing].percent / 100
-		if (runningC3 || (!game.global.autoStorage && game.global.challengeActive === 'Hypothermia' && (housing !== 'Collector' && housing !== 'Gateway'))) buildingspending = 1;
+		if (runningC3 || (!game.global.autoStorage && challengeActive('Hypothermia') && (housing !== 'Collector' && housing !== 'Gateway'))) buildingspending = 1;
 		const dontbuy = [];
 		//If setting is disabled then don't buy building.
 		if (!buildingSettings[housing].enabled) dontbuy.push(housing);
 		//Stops Collectors being purchased when on Quest gem quests.
-		if (game.global.challengeActive === 'Quest' && currQuest() === 4 && housing === 'Collector') dontbuy.push(housing);
+		if (challengeActive('Quest') && currQuest() === 4 && housing === 'Collector') dontbuy.push(housing);
 		//Stops buildings that cost wood from being pushed if we're running Hypothermia and have enough wood for a bonfire.
-		if (game.global.challengeActive == 'Hypothermia' && (housing !== 'Collector' || housing !== 'Gateway') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
+		if (challengeActive('Hypothermia') && (housing !== 'Collector' || housing !== 'Gateway') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
 		//Stops Food buildings being pushed to queue if Tribute Farming with Buy Buildings toggle disabled.
 		if (currentMap === 'Tribute Farm' && !rMapSettings.buyBuildings && housing !== 'Collector') dontbuy.push(housing);
 		for (var resource in game.buildings[housing].cost) {
@@ -285,7 +285,7 @@ function buyBuildings() {
 	const buildingSettings = game.global.universe === 1 ? autoTrimpSettings.hBuildingSettingsArray.value : autoTrimpSettings.rBuildingSettingsArray.value;
 
 	var hypoZone = 0;
-	if (game.global.challengeActive === 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.active && autoTrimpSettings.rHypoDefaultSettings.value.autostorage && autoTrimpSettings.rHypoSettings.value.length > 0) {
+	if (challengeActive('Hypothermia') && autoTrimpSettings.rHypoDefaultSettings.value.active && autoTrimpSettings.rHypoDefaultSettings.value.autostorage && autoTrimpSettings.rHypoSettings.value.length > 0) {
 		const rHFBaseSettings = autoTrimpSettings.rHypoSettings.value;
 		for (var y = 0; y < rHFBaseSettings.length; y++) {
 			if (!rHFBaseSettings[y].active) {
@@ -314,7 +314,7 @@ function buyBuildings() {
 	if (typeof rBSRunningAtlantrimp !== 'undefined' && rBSRunningAtlantrimp)
 		return;
 
-	if (game.global.challengeActive === 'Quest' && getPageSetting('rQuest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
+	if (challengeActive('Quest') && getPageSetting('rQuest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
 		//Still allows you to buy tributes during gem quests
 		if (([4].indexOf(currQuest()) >= 0))
 			buyTributes();
@@ -327,7 +327,7 @@ function buyBuildings() {
 		//Nurseries Init
 		if (!game.buildings.Nursery.locked) {
 			var nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
-			const dailyPrefix = game.global.challengeActive === 'Daily' ? 'd' : '';
+			const dailyPrefix = challengeActive('Daily') ? 'd' : '';
 
 			var spireNurseryActive = isDoingSpire() && (getPageSetting(dailyPrefix + 'IgnoreSpiresUntil') === 0 || game.global.world >= getPageSetting(dailyPrefix + 'IgnoreSpiresUntil'));
 			var nurseryPreSpire = spireNurseryActive && game.buildings.Nursery.owned < getPageSetting(dailyPrefix + 'PreSpireNurseries') ? getPageSetting(dailyPrefix + 'PreSpireNurseries') : 0;
@@ -408,7 +408,7 @@ function buyBuildings() {
 			var smithyCanAfford = calculateMaxAffordLocal(game.buildings.Smithy, true, false, false, (smithyAmt - game.buildings.Smithy.purchased), smithyPct);
 
 			//Purchasing a smithy whilst on Quest
-			if (game.global.challengeActive === 'Quest' && getPageSetting('rQuest')) {
+			if (challengeActive('Quest') && getPageSetting('rQuest')) {
 				//Resetting smithyCanAfford to avoid any accidental purchases during Quest.
 				smithyCanAfford = 0;
 				if ((MODULES["buildings"].smithiesBoughtThisZone < game.global.world || currQuest() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
@@ -419,16 +419,16 @@ function buyBuildings() {
 				}
 			}
 			//Don't buy Smithies when you can afford a bonfire on Hypo.
-			if (game.global.challengeActive === 'Hypothermia' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) smithyCanAfford = 0;
+			if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) smithyCanAfford = 0;
 
-			if (((buildingSettings.Smithy.enabled && smithyAmt > game.buildings.Smithy.purchased) || game.global.challengeActive === 'Quest') && smithyCanAfford > 0) {
+			if (((buildingSettings.Smithy.enabled && smithyAmt > game.buildings.Smithy.purchased) || challengeActive('Quest')) && smithyCanAfford > 0) {
 				safeBuyBuilding("Smithy", smithyCanAfford);
 				MODULES["buildings"].smithiesBoughtThisZone = game.global.world;
 			}
 		}
 
 		//Laboratory Purchasing (Nurture)
-		if (game.global.challengeActive === 'Nurture' && !game.buildings.Laboratory.locked && buildingSettings.Laboratory.enabled) {
+		if (challengeActive('Nurture') && !game.buildings.Laboratory.locked && buildingSettings.Laboratory.enabled) {
 			var labAmt = buildingSettings.Laboratory.buyMax === 0 ? Infinity : buildingSettings.Laboratory.buyMax;
 			var labPct = buildingSettings.Laboratory.percent / 100;
 			var labCanAfford = calculateMaxAffordLocal(game.buildings.Laboratory, true, false, false, (labAmt - game.buildings.Laboratory.purchased), labPct);
@@ -458,7 +458,7 @@ function buyBuildings() {
 
 	//Housing 
 	var boughtHousing = false;
-	var runningC3 = (game.global.universe === 2 && !autoBattle.oneTimers.Expanding_Tauntimp.owned && getPageSetting('c3buildings') && (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') && getPageSetting('c3buildingzone') >= game.global.world)
+	var runningC3 = (game.global.universe === 2 && !autoBattle.oneTimers.Expanding_Tauntimp.owned && getPageSetting('c3buildings') && (game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) && getPageSetting('c3buildingzone') >= game.global.world)
 	do {
 		boughtHousing = false;
 		var housing = mostEfficientHousing();
@@ -468,7 +468,7 @@ function buyBuildings() {
 
 		var housingAmt = buildingSettings[housing].buyMax === 0 ? Infinity : buildingSettings[housing].buyMax;
 		var buildingspending = buildingSettings[housing].percent / 100
-		if (runningC3 || (!game.global.autoStorage && game.global.challengeActive === 'Hypothermia' && (housing !== 'Collector' && housing !== 'Gateway'))) {
+		if (runningC3 || (!game.global.autoStorage && challengeActive('Hypothermia') && (housing !== 'Collector' && housing !== 'Gateway'))) {
 			housingAmt = Infinity;
 			buildingspending = 1;
 		}

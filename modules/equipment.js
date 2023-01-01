@@ -122,7 +122,7 @@ function evaluateEquipmentEfficiency(equipName) {
 		var CanAfford = canAffordTwoLevel(game.upgrades[equip.Upgrade]);
 		if (equip.Equip) {
 			var NextEffect = PrestigeValue(equip.Upgrade);
-			if ((game.global.challengeActive == "Scientist" && getScientistLevel() > 2) || (!BuyWeaponUpgrades && !BuyArmorUpgrades))
+			if ((challengeActive('Scientist') && getScientistLevel() > 2) || (!BuyWeaponUpgrades && !BuyArmorUpgrades))
 				var NextCost = Infinity;
 			else
 				var NextCost = Math.ceil(getNextPrestigeCost(equip.Upgrade) * Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level));
@@ -149,7 +149,7 @@ function evaluateEquipmentEfficiency(equipName) {
 			}
 		}
 	}
-	if (game.jobs[mapresourcetojob[equip.Resource]].locked && (game.global.challengeActive != 'Metal')) {
+	if (game.jobs[mapresourcetojob[equip.Resource]].locked && (!challengeActive('Metal'))) {
 		Factor = 0;
 		Wall = true;
 	}
@@ -279,7 +279,7 @@ function equipsToGet(targetZone, targetPrestige) {
 	let prestigeToFarmFor = 0;
 	let mapLevel = 0;
 
-	const divideBy = (game.global.sLevel <= 3 || game.global.challengeActive === 'Mapology') ? 5 : 10;
+	const divideBy = (game.global.sLevel <= 3 || challengeActive('Mapology')) ? 5 : 10;
 
 	for (const p of prestigeList) {
 		if (game.equipment[game.upgrades[p].prestiges].locked) continue;
@@ -306,7 +306,7 @@ function Rgetequips(map, special) {
 		var special = unlocksObj[item];
 		if (!special.prestige) continue;
 		if (special.locked) continue;
-		if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(game.upgrades[item].prestiges)) continue;
+		if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(game.upgrades[item].prestiges)) continue;
 		if (special.last <= (world - 5)) {
 			specialCount += Math.floor((world - special.last) / 5);
 			continue;
@@ -380,12 +380,12 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	if (!resourceMaxPercent) resourceMaxPercent = zoneGo ? 1 : getPageSetting(prefix + 'equippercent') < 0 ? 1 : getPageSetting(prefix + 'equippercent') / 100;
 	var resourceMaxPercentBackup = resourceMaxPercent;
 
-	if (game.global.challengeActive === 'Scientist') {
+	if (challengeActive('Scientist')) {
 		skipForLevels = Infinity;
 	}
 
 
-	var metalShred = !showAllEquips && game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
+	var metalShred = !showAllEquips && challengeActive('Daily') && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 
 	var mostEfficient = [
 		{
@@ -431,7 +431,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skipping gyms when can buy Gymystic
 		if (game.global.univere === 1 && (i === 'Shield' || i === 'Gym') && needGymystic()) continue;
 		//Setting weapon equips to 100% spending during Smithless farm.
-		if (game.global.challengeActive === 'Smithless' && currentMap === 'Smithless Farm') {
+		if (challengeActive('Smithless') && currentMap === 'Smithless Farm') {
 			if (isAttack === 0) {
 				skipForLevels = Infinity;
 				resourceMaxPercent = 1;
@@ -445,9 +445,9 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skipping if on reflect daily and our dmg is too high
 		if (game.global.universe === 2 && reflectShouldBuyEquips() && isAttack === 0 && !showAllEquips) continue;
 		//Skips looping through equips if they're blocked during Pandemonium.
-		if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
+		if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
 		//Skips buying shields when you can afford bonfires on Hypothermia.
-		if (game.global.challengeActive == 'Hypothermia' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i == 'Shield') continue;
+		if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i == 'Shield') continue;
 		//Skips through equips if they cost more than your Requippercent setting value.
 		if (RequipmentList[i].Resource == 'metal' && !zoneGo && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
 		//Skips through equips if they don't cost metal and you don't have enough resources for them.
@@ -499,8 +499,8 @@ function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
 
 function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 
-	if (game.global.challengeActive == "Pandemonium" && game.challenges.Pandemonium.isEquipBlocked(equipName)) return false;
-	if (game.global.challengeActive === 'Scientist') return false;
+	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return false;
+	if (challengeActive('Scientist')) return false;
 
 	var prestigeUpgradeName = "";
 	var prestigeDone = false;
@@ -588,9 +588,9 @@ function autoEquip() {
 	//Initialise settings for later user
 	var alwaysLvl2 = getPageSetting(prefix + 'equip2');
 	var alwaysPandemonium = getPageSetting('RPandemoniumAutoEquip') > 0;
-	var metalShred = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')
+	var metalShred = challengeActive('Daily') && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')
 	// always2 / alwaysPrestige / alwaysPandemonium
-	if (alwaysLvl2 || (alwaysPandemonium && game.global.challengeActive == 'Pandemonium') || metalShred) {
+	if (alwaysLvl2 || (alwaysPandemonium && challengeActive('Pandemonium')) || metalShred) {
 		for (var equip in game.equipment) {
 			if (!game.equipment[equip].locked) {
 				if (alwaysLvl2 && game.equipment[equip].level < 2) {
@@ -604,7 +604,7 @@ function autoEquip() {
 					buyEquipment(equip, null, true, 1);
 					debug('Upgrading ' + '1' + ' ' + equip, "equips", '*upload3');
 				}
-				if (alwaysPandemonium && game.global.challengeActive == 'Pandemonium') {
+				if (alwaysPandemonium && challengeActive('Pandemonium')) {
 					if (game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
 					buyEquipment(equip, null, true, 1);
 					debug('Upgrading ' + '1' + ' ' + equip, "equips", '*upload3');
@@ -617,7 +617,7 @@ function autoEquip() {
 	var healthEquipCap = (getPageSetting(prefix + 'equipcaphealth') <= 0 || currentMap === 'Smithless Farm' ? Infinity : getPageSetting(prefix + 'equipcaphealth'));
 	var maxCanAfford = 0;
 
-	if (game.global.challengeActive === 'Scientist') {
+	if (challengeActive('Scientist')) {
 		attackEquipCap = Infinity;
 		healthEquipCap = Infinity;
 	}
@@ -647,7 +647,7 @@ function autoEquip() {
 
 		for (var i = 0; i < 2; i++) {
 			//Setting weapon equips to 100% spending during Smithless farm.
-			if (game.global.challengeActive === 'Smithless' && currentMap === 'Smithless Farm') {
+			if (challengeActive('Smithless') && currentMap === 'Smithless Farm') {
 				if (equipType === 'attack') {
 					resourceSpendingPct = 1;
 					zoneGo = true;

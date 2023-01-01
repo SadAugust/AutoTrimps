@@ -37,7 +37,7 @@ function autoGather() {
 
 	//Need to check this works in u2!
 	var notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
-	var trapperTrapUntilFull = (game.global.challengeActive === "Trapper" || game.global.challengeActive === "Trappapalooza") && notFullPop;
+	var trapperTrapUntilFull = (challengeActive('Trapper') || challengeActive('Trappapalooza')) && notFullPop;
 	var trapsBufferSize = Math.ceil(5 * calcTPS());
 	var minTraps = Math.ceil(calcTPS());
 	var maxTraps = calcMaxTraps();
@@ -58,10 +58,10 @@ function autoGather() {
 	var scienceAvailable = document.getElementById('science').style.visibility != 'hidden';
 	var needBattle = !game.upgrades.Battle.done && game.resources.science.owned < 10;
 	var needScience = game.resources.science.owned < scienceNeeded;
-	var needScientists = firstFightOK && game.global.challengeActive != 'Scientist' && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
+	var needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
 
 	//Init - Others
-	var needMiner = firstFightOK && (game.global.challengeActive !== "Metal" && game.global.challengeActive !== "Transmute") && !game.upgrades.Miners.done;
+	var needMiner = firstFightOK && (!challengeActive('Metal') && !challengeActive('Transmute')) && !game.upgrades.Miners.done;
 	var breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
 	var hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
 
@@ -156,7 +156,7 @@ function autoGather() {
 	}
 
 	//High Priority Metal gathering for Metal Challenge
-	if (game.global.challengeActive == "Metal" && !game.global.mapsUnlocked) {
+	if (challengeActive('Metal') && !game.global.mapsUnlocked) {
 		setGather('metal');
 		return;
 	}
@@ -183,7 +183,7 @@ function autoGather() {
 
 	//Metal if Turkimp is active
 	if (hasTurkimp) {
-		setGather(game.global.challengeActive !== 'Transmute' ? 'metal' : 'food');
+		setGather(!challengeActive('Transmute') ? 'metal' : 'food');
 		return;
 	}
 
@@ -228,7 +228,7 @@ function autoGather() {
 			}
 		}
 	}
-	if (game.global.challengeActive == "Transmute" && game.global.playerGathering != lowestResource && !haveWorkers && !breedFire) {
+	if (challengeActive('Transmute') && game.global.playerGathering != lowestResource && !haveWorkers && !breedFire) {
 		if (hasTurkimp)
 			setGather('food');
 		else
@@ -236,7 +236,7 @@ function autoGather() {
 	} else if (document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
 		if (game.resources.science.owned < getPsStringLocal('science', true) * MODULES["gather"].minScienceSeconds && game.global.turkimpTimer < 1 && haveWorkers)
 			setGather('science');
-		else if (game.global.challengeActive == "Transmute" && hasTurkimp)
+		else if (challengeActive('Transmute') && hasTurkimp)
 			setGather('food');
 		else
 			setGather(lowestResource);
@@ -250,7 +250,7 @@ function autoGather() {
 //Mining/Building only setting
 function autoGather2() {
 	if ((game.global.buildingsQueue.length <= 1 && getPageSetting('gathermetal') == false) || (getPageSetting('gathermetal') == true)) {
-		setGather(game.global.challengeActive != "Transmute" ? 'metal' : 'food');
+		setGather(!challengeActive('Transmute') ? 'metal' : 'food');
 	}
 	else {
 		setGather('buildings')

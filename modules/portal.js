@@ -4,9 +4,9 @@ MODULES["portal"].bufferExceedFactor = 5;
 var zonePostpone = 0;
 
 function autoPortal() {
-	if (game.global.challengeActive === "Decay") decayFinishChallenge();
+	if (challengeActive('Decay')) decayFinishChallenge();
 	if (!game.global.portalActive) return;
-	if (game.global.challengeActive === 'Daily' || game.global.runningChallengeSquared) return;
+	if (challengeActive('Daily') || game.global.runningChallengeSquared) return;
 
 	var universePrefix = game.global.universe === 2 ? 'R' : ''
 	if (autoTrimpSettings[universePrefix + 'AutoPortal'].selected === "Off") return;
@@ -99,6 +99,7 @@ function autoPortal() {
 		case "Pandemonium":
 		case "Alchemy":
 		case "Hypothermia":
+		case "Desolation":
 			if (!game.global.challengeActive) {
 				doPortal(autoTrimpSettings.RAutoPortal.selected);
 			}
@@ -110,7 +111,7 @@ function autoPortal() {
 
 function dailyAutoPortal() {
 	if (!game.global.portalActive) return;
-	if (game.global.challengeActive !== "Daily") return;
+	if (!challengeActive('Daily')) return;
 	if (game.global.universe === 1 && game.global.highestLevelCleared < 100) return;
 	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 29) return;
 	if (game.global.runningChallengeSquared) return;
@@ -318,7 +319,7 @@ function doPortal(challenge, squared) {
 			}
 		}
 		//Portaling into a filler to use up scruffy3
-		else if (game.global.challengeActive === 'Daily' && portalUniverse === 2 && getPageSetting('RFillerRun')) {
+		else if (challengeActive('Daily') && portalUniverse === 2 && getPageSetting('RFillerRun')) {
 			if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None') {
 				if (autoTrimpSettings.RdHeliumHourChallenge.selected === 'Challenge 3') {
 					toggleChallengeSquared();
@@ -369,7 +370,7 @@ function doPortal(challenge, squared) {
 }
 
 function decaySkipMaps() {
-	if (game.global.challengeActive !== "Decay" && !getPageSetting('decay')) {
+	if (!challengeActive('Decay') && !getPageSetting('decay')) {
 		return false;
 	}
 	const stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;
@@ -379,7 +380,7 @@ function decaySkipMaps() {
 
 function decayFinishChallenge() {
 	//Pre-Init
-	if (game.global.challengeActive !== "Decay" && !getPageSetting('decay')) return;
+	if (!challengeActive('Decay') && !getPageSetting('decay')) return;
 
 	//Init
 	let stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;
@@ -407,7 +408,7 @@ function challengeInfo() {
 	}
 
 	//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
-	if (game.global.challengeActive == "Quest" && getPageSetting('rQuest') && getPageSetting('RBuyBuildingsNew')) {
+	if (challengeActive('Quest') && getPageSetting('rQuest') && getPageSetting('RBuyBuildingsNew')) {
 		if (getAutoStructureSetting().enabled && game.global.autoStructureSettingU2.Smithy.enabled) {
 			debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.")
 		}
@@ -417,7 +418,7 @@ function challengeInfo() {
 		}
 	}
 	//Downsize -- Warning message when about map settings causing issues later.
-	if (game.global.challengeActive == "Downsize") {
+	if (challengeActive('Downsize')) {
 		if (game.global.world < 10) {
 			debug("Be aware that your usual C3 farming settings will not work properly for this Downsize run and likely cause it to stall out so high chance you will want to amend or disable them.")
 		}
@@ -450,7 +451,7 @@ function finishChallengeSquared(ignoreVariables) {
 }
 
 function findOutCurrentPortalLevel() {
-	var a = -1, b = !1, d = getPageSetting("AutoPortal"); switch (d) { case "Off": break; case "Custom": "Daily" != game.global.challengeActive && (a = getPageSetting("CustomAutoPortal") + 1), "Daily" == game.global.challengeActive && (a = getPageSetting("Dailyportal") + 1), b = !("Lead" != getPageSetting("HeliumHourChallenge")); break; default: var e = { Balance: 41, Decay: 56, Electricity: 82, Crushed: 126, Nom: 146, Toxicity: 166, Lead: 181, Watch: 181, Corrupted: 191 }[d]; e && (a = e); }return { level: a, lead: b }
+	var a = -1, b = !1, d = getPageSetting("AutoPortal"); switch (d) { case "Off": break; case "Custom": !challengeActive('Daily') && (a = getPageSetting("CustomAutoPortal") + 1), challengeActive('Daily') && (a = getPageSetting("Dailyportal") + 1), b = !("Lead" != getPageSetting("HeliumHourChallenge")); break; default: var e = { Balance: 41, Decay: 56, Electricity: 82, Crushed: 126, Nom: 146, Toxicity: 166, Lead: 181, Watch: 181, Corrupted: 191 }[d]; e && (a = e); }return { level: a, lead: b }
 }
 
 function resetmapvars() {

@@ -41,7 +41,7 @@ function useScryerStance() {
 
 	var AutoStance = getPageSetting('AutoStance');
 	function autoStanceFunctionScryer() {
-		if ((getPageSetting('AutoStance') == 3) || (getPageSetting('use3daily') == true && game.global.challengeActive == "Daily")) windStance(HDRatio);
+		if ((getPageSetting('AutoStance') == 3) || (getPageSetting('use3daily') == true && challengeActive('Daily'))) windStance(HDRatio);
 		else if (AutoStance == 1) autoStance();
 		else if (AutoStance == 2) autoStance2();
 	}
@@ -66,7 +66,7 @@ function useScryerStance() {
 	never_scry |= USS && !MA && (getEmpowerment() == "Poison" && (getPageSetting('ScryUseinPoison') == 0 || (getPageSetting('ScryUseinPoison') > 0 && game.global.world >= getPageSetting('ScryUseinPoison')))) || (getEmpowerment() == "Wind" && (getPageSetting('ScryUseinWind') == 0 || (getPageSetting('ScryUseinWind') > 0 && game.global.world >= getPageSetting('ScryUseinWind')))) || (getEmpowerment() == "Ice" && (getPageSetting('ScryUseinIce') == 0 || (getPageSetting('ScryUseinIce') > 0 && game.global.world >= getPageSetting('ScryUseinIce'))));
 
 	if (MA && getCurrentMapObject().location == "Void") {
-		if (game.global.challengeActive === 'Daily' && getPageSetting('dscryvoidmaps')) never_scry = 0;
+		if (challengeActive('Daily') && getPageSetting('dscryvoidmaps')) never_scry = 0;
 		else if (!game.global.runningChallengeSquared && getPageSetting('scryvoidmaps')) never_scry = 0;
 	}
 	//Check Corrupted Never
@@ -91,7 +91,7 @@ function useScryerStance() {
 
 	//Force
 	var use_scryer = getPageSetting('UseScryerStance') && game.global.mapsActive && getPageSetting('ScryerUseinMaps2') == 1;
-	use_scryer |= game.global.mapsActive && getCurrentMapObject().location == "Void" && ((getPageSetting('ScryerUseinVoidMaps2') == 1) || (getPageSetting('scryvoidmaps') == true && game.global.challengeActive != "Daily") || (getPageSetting('dscryvoidmaps') == true && game.global.challengeActive == "Daily"));
+	use_scryer |= game.global.mapsActive && getCurrentMapObject().location == "Void" && ((getPageSetting('ScryerUseinVoidMaps2') == 1) || (getPageSetting('scryvoidmaps') == true && !challengeActive('Daily')) || (getPageSetting('dscryvoidmaps') == true && challengeActive('Daily')));
 	use_scryer |= game.global.mapsActive && getCurrentMapObject().location == "Bionic" && getPageSetting('ScryerUseinBW') == 1;
 	use_scryer |= game.global.mapsActive && getCurrentMapObject().level > game.global.world && getPageSetting('ScryerUseinPMaps') == 1 && getCurrentMapObject().location != "Bionic";
 	use_scryer |= !game.global.mapsActive && getPageSetting('UseScryerStance') && (isActiveSpireAT() || disActiveSpireAT()) && getPageSetting('ScryerUseinSpire2') == 1;

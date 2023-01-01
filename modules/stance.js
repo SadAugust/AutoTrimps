@@ -115,13 +115,13 @@ function challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, 
 	var enemyDamage = calcSpecificEnemyAttack(critPower);
 
 	//Active Challenges
-	var leadChallenge = game.global.challengeActive == "Lead";
-	var electricityChallenge = game.global.challengeActive == "Electricity" || game.global.challengeActive == "Mapocalypse";
-	var dailyPlague = game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.plague !== "undefined";
-	var dailyBogged = game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.bogged !== "undefined";
-	var dailyExplosive = game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.explosive !== "undefined";
-	var dailyMirrored = game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.mirrored !== "undefined";
-	var drainChallenge = game.global.challengeActive == "Nom" || game.global.challengeActive == "Toxicity" || dailyPlague || dailyBogged;
+	var leadChallenge = challengeActive('Lead');
+	var electricityChallenge = challengeActive('Electricity') || challengeActive('Mapocalypse');
+	var dailyPlague = challengeActive('Daily') && typeof game.global.dailyChallenge.plague !== "undefined";
+	var dailyBogged = challengeActive('Daily') && typeof game.global.dailyChallenge.bogged !== "undefined";
+	var dailyExplosive = challengeActive('Daily') && typeof game.global.dailyChallenge.explosive !== "undefined";
+	var dailyMirrored = challengeActive('Daily') && typeof game.global.dailyChallenge.mirrored !== "undefined";
+	var drainChallenge = challengeActive('Nom') || challengeActive('Toxicity') || dailyPlague || dailyBogged;
 	var challengeDamage = 0, harm = 0;
 
 	//Electricity Lead - Tox/Nom
@@ -177,7 +177,7 @@ function directDamage(block, pierce, currentHealth, minDamage, critPower = 2) {
 	var enemyFast = isDoubleAttack || game.global.challengeActive == "Slow" || ((game.badGuys[enemy.name].fast || enemy.mutation == "Corruption") && game.global.challengeActive != "Coordinate" && game.global.challengeActive != "Nom");
 
 	//Dodge Dailies
-	if (game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.slippery !== "undefined") {
+	if (challengeActive('Daily') && typeof game.global.dailyChallenge.slippery !== "undefined") {
 		var slipStr = game.global.dailyChallenge.slippery.strength;
 		var dodgeDaily = (slipStr > 15 && game.global.world % 2 == 0) || (slipStr <= 15 && game.global.world % 2 == 1);
 	}

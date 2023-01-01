@@ -69,7 +69,7 @@ function workerRatios(workerRatio) {
 	if (universeSetting == 2) {
 		var jobSettings = game.global.universe === 1 ? autoTrimpSettings.hJobSettingsArray.value : autoTrimpSettings.rJobSettingsArray.value;
 		if (jobSettings[workerRatio].enabled) {
-			if (game.global.challengeActive === 'Transmute' && workerRatio === 'Farmer' && jobSettings.Miner.enabled) return jobSettings[workerRatio].ratio + jobSettings.Miner.ratio;
+			if (challengeActive('Transmute') && workerRatio === 'Farmer' && jobSettings.Miner.enabled) return jobSettings[workerRatio].ratio + jobSettings.Miner.ratio;
 			return jobSettings[workerRatio].ratio;
 		}
 		else
@@ -95,7 +95,7 @@ function workerRatios(workerRatio) {
 		ratioSet = MODULES["jobs"][universe + 'autoRatio3'];
 	} else if (game.resources.trimps.realMax() > 300000) {
 		ratioSet = MODULES["jobs"][universe + 'autoRatio2'];
-	} else if (game.global.challengeActive == 'Metal' || game.global.challengeActive == 'Transmute') {
+	} else if (challengeActive('Metal') || challengeActive('Transmute')) {
 		ratioSet = [4, 5, 0];
 	} else if (game.global.world < 5) {
 		ratioSet = [3, 1, 1];
@@ -229,7 +229,7 @@ function buyJobs() {
 
 	//Gather up the total number of workers available to be distributed across ratio workers
 	//In the process store how much of each for later.
-	if (game.global.challengeActive === 'Trapper' || game.global.challengeActive === 'Trappapalooza') {
+	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) {
 		freeWorkers = game.resources.trimps.owned - (game.resources.trimps.employed
 			//-
 			//U1 jobs
@@ -238,7 +238,7 @@ function buyJobs() {
 			//game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned
 		);
 
-		var metCoordGoal = game.global.challengeActive === 'Trappapalooza' && game.upgrades.Coordination.done >= getPageSetting('rTrappaCoords');
+		var metCoordGoal = challengeActive('Trappapalooza') && game.upgrades.Coordination.done >= getPageSetting('rTrappaCoords');
 		if (!metCoordGoal) nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
 		if (nextCoordCost < freeWorkers) freeWorkers -= nextCoordCost;
 	}
@@ -291,7 +291,7 @@ function buyJobs() {
 
 	if (game.global.universe === 2 && workerRatio === undefined) {
 		//Setting farmers to 0 if past NFF zone & in world.
-		if (game.global.challengeActive !== 'Transmute' && jobSettings.FarmersUntil.enabled && game.global.world >= jobSettings.FarmersUntil.zone)
+		if (!challengeActive('Transmute') && jobSettings.FarmersUntil.enabled && game.global.world >= jobSettings.FarmersUntil.zone)
 			desiredRatios[0] = 0;
 		//Setting lumberjacks to 0 if Melting Point has been run.
 		if (jobSettings.NoLumberjacks.enabled && !game.mapUnlocks.SmithFree.canRunOnce)
@@ -299,7 +299,7 @@ function buyJobs() {
 	}
 
 	//Adding Miners to Farmer ratio if in Transmute or Metal challenges
-	if (game.global.challengeActive === 'Metal' || game.global.challengeActive === 'Transmute') {
+	if (challengeActive('Metal') || challengeActive('Transmute')) {
 		desiredRatios[0] += desiredRatios[2];
 		desiredRatios[2] = 0;
 	}

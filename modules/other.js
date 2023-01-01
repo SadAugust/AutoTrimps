@@ -11,10 +11,10 @@ function armydeath() {
 	return (
 		3 == game.global.formation ? (g /= 4) : "0" != game.global.formation && (g *= 2),
 		g > game.global.gridArray[e].attack ? (l *= getPierceAmt()) : (l -= g * (1 - getPierceAmt())),
-		"Daily" == game.global.challengeActive && void 0 !== game.global.dailyChallenge.crits && (l *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),
+		challengeActive('Daily') && void 0 !== game.global.dailyChallenge.crits && (l *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),
 		void 0 !== game.global.dailyChallenge.bogged && (a -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),
 		void 0 !== game.global.dailyChallenge.plague && (a -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks)),
-		"Electricity" == game.global.challengeActive && (a -= game.global.soldierHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)),
+		challengeActive('Electricity') && (a -= game.global.soldierHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)),
 		"corruptCrit" == game.global.gridArray[e].corrupted
 			? (l *= 5)
 			: "healthyCrit" == game.global.gridArray[e].corrupted
@@ -43,11 +43,11 @@ function autoRoboTrimp() {
 }
 
 function isActiveSpireAT() {
-	return game.global.challengeActive != 'Daily' && game.global.spireActive && game.global.world >= getPageSetting('IgnoreSpiresUntil')
+	return !challengeActive('Daily') && game.global.spireActive && game.global.world >= getPageSetting('IgnoreSpiresUntil')
 }
 
 function disActiveSpireAT() {
-	return game.global.challengeActive == 'Daily' && game.global.spireActive && game.global.world >= getPageSetting('dIgnoreSpiresUntil')
+	return challengeActive('Daily') && game.global.spireActive && game.global.world >= getPageSetting('dIgnoreSpiresUntil')
 }
 
 function exitSpireCell() {
@@ -62,13 +62,13 @@ function findLastBionicWithItems(bionicPool) {
 
 	if (game.global.world < 115 || !bionicPool)
 		return;
-	if (game.global.challengeActive === 'Mapology' && !getPageSetting('mapology')) return;
-	const targetPrestige = game.global.challengeActive === 'Mapology' ? autoTrimpSettings['mapologyPrestige'].selected : 'GambesOP';
+	if (challengeActive('Mapology') && !getPageSetting('mapology')) return;
+	const targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : 'GambesOP';
 
 	if (bionicPool.length > 1) {
 		bionicPool.sort(function (bionicA, bionicB) { return bionicA.level - bionicB.level });
 		while (bionicPool.length > 1 && equipsToGet(bionicPool[0].level, targetPrestige)[0] === 0) {
-			if (game.global.challengeActive === 'Experience' && game.global.world > 600 && bionicPool[0].level >= getPageSetting('experienceEndBW')) break;
+			if (challengeActive('Experience') && game.global.world > 600 && bionicPool[0].level >= getPageSetting('experienceEndBW')) break;
 			bionicPool.shift();
 			if (equipsToGet(bionicPool[0].level, targetPrestige)[0] !== 0) break;
 		}
@@ -338,6 +338,7 @@ function radonChallengesSetting() {
 	if (radonHZE >= 105) radonChallenge3.push("Storm");
 	if (radonHZE >= 115) radonChallenge3.push("Berserk");
 	if (radonHZE >= 175) radonChallenge3.push("Glass");
+	if (game.global.stringVersion >= '5.9.0') radonChallenge3.push('Desolation')
 	if (radonHZE >= 201) radonChallenge3.push("Smithless");
 
 	document.getElementById('RadonC3Challenge').innerHTML = '';
@@ -527,11 +528,11 @@ function remainingHealth(forceMax) {
 		shieldHealth = shieldHealth < 0 ? 0 : shieldHealth;
 	}
 	var remainingHealth = shieldHealth + (!forceMax ? soldierHealth * .33 : soldierHealth);
-	if ((game.global.challengeActive == 'Quest' && currQuest() == 8) || game.global.challengeActive == 'Bublé')
+	if ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'))
 		remainingHealth = shieldHealth;
 	if (shieldHealth + soldierHealth == 0) {
 		remainingHealth = game.global.soldierHealthMax + (game.global.soldierEnergyShieldMax * (maxLayers + 1))
-		if ((game.global.challengeActive == 'Quest' && currQuest() == 8) || game.global.challengeActive == 'Bublé')
+		if ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'))
 			remainingHealth = game.global.soldierEnergyShieldMax * (maxLayers + 1);
 	}
 
@@ -547,9 +548,9 @@ function rManageEquality() {
 		//Checking if the Frenzy buff is active.
 		var noFrenzy = game.portal.Frenzy.frenzyStarted == "-1" && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.radLevel > 0;
 		//Checking if the experience buff is active during Exterminate.
-		var experienced = game.global.challengeActive == 'Exterminate' && game.challenges.Exterminate.experienced;
+		var experienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 		//Checking to see if the Glass challenge is being run where all enemies are fast.
-		var runningGlass = game.global.challengeActive == 'Glass';
+		var runningGlass = challengeActive('Glass');
 
 		//Toggles equality scaling on
 		if ((fastEnemy && !experienced) || voidDoubleAttack || noFrenzy || runningGlass) {
@@ -594,8 +595,8 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	if (game.global.universe === 1) return autoMapLevelU1(special, maxLevel, minLevel, floorCrit, statCheck);
 	if (!statCheck) statCheck = false;
 	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
-	if (game.global.challengeActive === 'Wither' && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
-	if (game.global.challengeActive === 'Insanity' && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
+	if (challengeActive('Wither') && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
+	if (challengeActive('Insanity') && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
 
 	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
 	if (maxLevel > 0 && game.global.highestRadonLevelCleared + 1 < 50) maxLevel = 0;
@@ -603,14 +604,14 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
 	var biome = !biome ? (game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain") : biome;
 	var difficulty = 0.75;
-	var runningQuest = game.global.challengeActive === 'Quest' && currQuest() == 8;
-	var runningUnlucky = game.global.challengeActive === 'Unlucky'
+	var runningQuest = challengeActive('Quest') && currQuest() == 8;
+	var runningUnlucky = challengeActive('Unlucky')
 	var ourHealth = calcOurHealth(runningQuest, 'map');
 	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
-	var dailyCrit = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
+	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var critType = 'maybe'
-	if (game.global.challengeActive === 'Wither' || game.global.challengeActive === 'Glass' || game.global.challengeActive === 'Duel') critType = 'never'
+	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel')) critType = 'never'
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
@@ -624,14 +625,14 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 
 		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot');
 		var ourDmg = calcOurDmg(dmgType, equalityAmt, false, 'map', critType, y, 'force');
-		if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
+		if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = calcEnemyHealthCore('map', game.global.world + mapLevel, 20, 'Turtlimp') * difficulty;
 		var enemyDmg = calcEnemyAttackCore('map', game.global.world + mapLevel, 20, 'Snimp', false, false, equalityAmt) * difficulty;
 
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 		enemyDmg *= dailyEmpowerToggle && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 
-		if (game.global.challengeActive === 'Duel') {
+		if (challengeActive('Duel')) {
 			enemyDmg *= 10;
 			if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
 		}
@@ -717,17 +718,17 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var checkMutations = mapType === 'world' && game.global.world > 200 && getPageSetting('rMutationCalc');
 	var titimp = mapType !== 'world' && farmType === 'oneShot' ? 'force' : false;
 	var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
-	var dailyCrit = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
-	var dailyBloodthirst = game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
+	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
+	var dailyBloodthirst = challengeActive('Daily') && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
 	var maxEquality = game.portal.Equality.radLevel;
 
 	var critType = 'maybe'
-	if (game.global.challengeActive === 'Wither' || game.global.challengeActive === 'Glass' || game.global.challengeActive === 'Duel') critType = 'never'
+	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel')) critType = 'never'
 
 	//Challenge conditions
-	var runningUnlucky = game.global.challengeActive == 'Unlucky';
-	var runningDuel = game.global.challengeActive == 'Duel';
-	var runningQuest = ((game.global.challengeActive == 'Quest' && currQuest() == 8) || game.global.challengeActive == 'Bublé'); //Shield break quest
+	var runningUnlucky = challengeActive('Unlucky');
+	var runningDuel = challengeActive('Duel');
+	var runningQuest = ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé')); //Shield break quest
 
 	//Initialising name/health/dmg variables
 	//Enemy stats
@@ -737,7 +738,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 	enemyDmg *= dailyEmpowerToggle && mapType === 'map' && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 
-	if (game.global.challengeActive === 'Duel') {
+	if (challengeActive('Duel')) {
 		enemyDmg *= 10;
 		if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
 	}
@@ -756,7 +757,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName, calcMutationHealth(zone));
 	}
 
-	if (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
+	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
 
 	if (dailyBloodthirst && mapType === 'void' && getPageSetting('rBloodthirstVoidMax')) {
 		var bloodThirstStrength = game.global.dailyChallenge.bloodthirst.strength;
@@ -819,7 +820,7 @@ function equalityManagement() {
 	}
 
 	//Daily modifiers active
-	var isDaily = game.global.challengeActive === 'Daily'
+	var isDaily = challengeActive('Daily')
 	var dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined' //Empower
 	var dailyReflect = isDaily && typeof game.global.dailyChallenge.mirrored !== 'undefined'; //Reflect
 	var dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
@@ -829,16 +830,16 @@ function equalityManagement() {
 	var dailyRampage = isDaily && typeof game.global.dailyChallenge.rampage !== 'undefined'; //Rampage (trimp attack buff)
 
 	//Challenge conditions
-	var runningUnlucky = game.global.challengeActive == 'Unlucky';
-	var runningDuel = game.global.challengeActive == 'Duel';
-	var runningTrappa = game.global.challengeActive === 'Trappapalooza';
-	var runningQuest = (game.global.challengeActive == 'Quest' && currQuest() == 8) || game.global.challengeActive == 'Bublé'; //Shield break quest
-	var runningArchaeology = game.global.challengeActive === 'Archaeology';
-	var runningMayhem = game.global.challengeActive === 'Mayhem';
-	var runningBerserk = game.global.challengeActive == 'Berserk';
-	var runningExperienced = game.global.challengeActive == 'Exterminate' && game.challenges.Exterminate.experienced;
-	var runningGlass = game.global.challengeActive == 'Glass';
-	var runningSmithless = game.global.challengeActive == "Smithless" && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
+	var runningUnlucky = challengeActive('Unlucky');
+	var runningDuel = challengeActive('Duel');
+	var runningTrappa = challengeActive('Trappapalooza');
+	var runningQuest = (challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'); //Shield break quest
+	var runningArchaeology = challengeActive('Archaeology');
+	var runningMayhem = challengeActive('Mayhem');
+	var runningBerserk = challengeActive('Berserk');
+	var runningExperienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
+	var runningGlass = challengeActive('Glass');
+	var runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
 
 	//Perk conditions
 	var noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
@@ -850,7 +851,7 @@ function equalityManagement() {
 	var fuckGamma = (dailyReflect || (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger));
 
 	var critType = 'maybe'
-	if (game.global.challengeActive === 'Wither' || game.global.challengeActive === 'Glass') critType = 'never'
+	if (challengeActive('Wither') || challengeActive('Glass')) critType = 'never'
 
 	//Initialising Stat variables
 	//Our stats
@@ -1004,7 +1005,7 @@ function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHea
 }
 
 function reflectShouldBuyEquips() {
-	if (game.global.challengeActive === 'Daily') {
+	if (challengeActive('Daily')) {
 		if (typeof (game.global.dailyChallenge.mirrored) !== 'undefined') {
 			var ourHealth = calcOurHealth(false, 'world');
 			var ourDamage = calcOurDmg('max', (game.portal.Equality.radLevel - 15), false, 'world', 'force', 0, false)
@@ -1065,7 +1066,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 			break;
 	}
 	var heirloom = !jobName ? null :
-		jobName == "Miner" && game.global.challengeActive == "Pandemonium" && getPageSetting("RhsPandStaff") !== 'undefined' ? "RhsPandStaff" :
+		jobName == "Miner" && challengeActive('Pandemonium') && getPageSetting("RhsPandStaff") !== 'undefined' ? "RhsPandStaff" :
 			jobName == "Farmer" && getPageSetting(heirloomPrefix + "hsFoodStaff") != 'undefined' ? (heirloomPrefix + "hsFoodStaff") :
 				jobName == "Lumberjack" && getPageSetting(heirloomPrefix + "hsWoodStaff") != 'undefined' ? (heirloomPrefix + "hsWoodStaff") :
 					jobName == "Miner" && getPageSetting(heirloomPrefix + "hsMetalStaff") != 'undefined' ? (heirloomPrefix + "hsMetalStaff") :
@@ -1082,7 +1083,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 	amt_local += (amt_local * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
 	if (what != "gems" && game.permaBoneBonuses.multitasking.owned > 0)
 		amt_local *= (1 + game.permaBoneBonuses.multitasking.mult());
-	if (what != "science" && what != "fragments" && game.global.challengeActive == "Alchemy")
+	if (what != "science" && what != "fragments" && challengeActive('Alchemy'))
 		amt_local *= alchObj.getPotionEffect("Potion of Finding");
 
 	if (game.global.pandCompletions && game.global.universe == 2 && what != "fragments")
@@ -1102,23 +1103,24 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt_local *= game.jobs.Meteorologist.getExtraMult();
 	if (Fluffy.isRewardActive('gatherer'))
 		amt_local *= 2;
-	if (what == "wood" && game.global.challengeActive == "Hypothermia" && game.challenges.Hypothermia.bonfires > 0)
+	if (what == "wood" && challengeActive('Hypothermia') && game.challenges.Hypothermia.bonfires > 0)
 		amt_local *= game.challenges.Hypothermia.getWoodMult();
-	if (game.global.challengeActive == "Unbalance")
+	if (challengeActive('Unbalance'))
 		amt_local *= game.challenges.Unbalance.getGatherMult();
 
-	if (game.global.challengeActive == "Daily") {
+	if (challengeActive('Daily')) {
 		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what != "fragments" && what != "science")
 			amt_local *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
 		if (typeof game.global.dailyChallenge.dedication !== 'undefined')
 			amt_local *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
 	}
-	if (game.global.challengeActive == "Melt") {
+	if (challengeActive('Melt')) {
 		amt_local *= 10;
 		amt_local *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
 	}
 
-	if (game.global.stringVersion >= '5.9.0' && game.global.challengeActive == "Desolation") amt *= game.challenges.Desolation.trimpResourceMult();
+	if (game.global.stringVersion >= '5.9.0' && challengeActive('Desolation'))
+		amt *= game.challenges.Desolation.trimpResourceMult();
 	if (game.challenges.Nurture.boostsActive())
 		amt_local *= game.challenges.Nurture.getResourceBoost();
 
@@ -1177,7 +1179,7 @@ function calculateParityBonus(workerRatio, heirloom) {
 function calcHeirloomBonusLocal(mod, number) {
 	var mod = mod;
 	if (game.global.stringVersion >= '5.9.0') {
-		if (game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.heirlost !== 'undefined')
+		if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined')
 			mod *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
 	}
 	if (!mod) return;
@@ -1187,7 +1189,7 @@ function calcHeirloomBonusLocal(mod, number) {
 
 function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
 	if (!map) map = game.global.mapsActive ? getCurrentMapObject().level :
-		game.global.challengeActive == "Pandemonium" ? game.global.world - 1 :
+		challengeActive('Pandemonium') ? game.global.world - 1 :
 			game.global.world;
 	game.global.world + map;
 	var compare = game.global.world;
@@ -1952,7 +1954,7 @@ function dailyModifiersOutput() {
 }
 
 function dailyModiferReduction() {
-	if (game.global.challengeActive !== 'Daily') return 0;
+	if (!challengeActive('Daily')) return 0;
 	if (game.global.universe === 1) return 0;
 	var dailyMods = dailyModifiersOutput().split('<br>')
 	dailyMods.length = dailyMods.length - 1;
@@ -2192,6 +2194,7 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 			if (highestZone >= 115) dropdown += "<option value='Berserk'" + ((MAZ == 'Berserk') ? " selected='selected'" : "") + ">Berserk</option>";
 			if (highestZone >= 150) dropdown += "<option value='Pandemonium'" + ((MAZ == 'Pandemonium') ? " selected='selected'" : "") + ">Pandemonium</option>";
 			if (highestZone >= 175) dropdown += "<option value='Glass'" + ((MAZ == 'Glass') ? " selected='selected'" : "") + ">Glass</option>";
+			if (game.global.stringVersion >= '5.9.0' && highestZone >= 200) dropdown += "<option value='Desolation'" + ((MAZ == 'Desolation') ? " selected='selected'" : "") + ">Desolation</option>";
 			if (highestZone >= 201) dropdown += "<option value='Smithless'" + ((MAZ == 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
 		}
 		else if (runType === 'runType') {
@@ -2208,4 +2211,10 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 	}
 
 	return dropdown;
+}
+
+function challengeActive(what) {
+	if (game.global.stringVersion >= '5.9.0' && game.global.multiChallenge[what]) return true;
+	else if (game.global.challengeActive == what) return true;
+	else return false;
 }

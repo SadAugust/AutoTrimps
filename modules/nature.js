@@ -67,7 +67,7 @@ function autoEnlight() {
 	var fillernature = [], poison, poisondiff, wind, winddiff, ice, icediff, dailynature = [], dpoison, dpoisondiff, dwind, dwinddiff, dice, dicediff, c2nature = [], cpoison, cpoisondiff, cwind, cwinddiff, cice, cicediff;
 
 	//FILLER
-	if (game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared) {
+	if (!challengeActive('Daily') && !game.global.runningChallengeSquared) {
 		if (getPageSetting('pfillerenlightthresh') >= 0) {
 			poison = (game.empowerments.Poison.nextUberCost <= getPageSetting('pfillerenlightthresh') && game.empowerments.Poison.nextUberCost <= game.empowerments.Poison.tokens);
 			if (poison) {
@@ -102,13 +102,13 @@ function autoEnlight() {
 		}
 		else { nature = "None"; }
 
-		if (fillernature.length > 0 && game.global.challengeActive != "Daily" && !game.global.runningChallengeSquared && nature != "None") {
+		if (fillernature.length > 0 && !challengeActive('Daily') && !game.global.runningChallengeSquared && nature != "None") {
 			purchaseEnlight(nature);
 		}
 	}
 
 	//DAILY
-	if (game.global.challengeActive == "Daily") {
+	if (challengeActive('Daily')) {
 		if (getPageSetting('pdailyenlightthresh') >= 0) {
 			dpoison = (game.empowerments.Poison.nextUberCost <= getPageSetting('pdailyenlightthresh') && game.empowerments.Poison.nextUberCost <= game.empowerments.Poison.tokens);
 			if (dpoison) {
@@ -143,7 +143,7 @@ function autoEnlight() {
 		}
 		else { dnature = "None"; }
 
-		if (dailynature.length > 0 && game.global.challengeActive == "Daily" && dnature != "None") {
+		if (dailynature.length > 0 && challengeActive('Daily') && dnature != "None") {
 			purchaseEnlight(dnature);
 		}
 	}

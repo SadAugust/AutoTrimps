@@ -186,8 +186,8 @@ function HeirloomShieldSwapped() {
 function heirloomSwapping() {
 	const prefix = game.global.universe === 1 ? 'H' : 'R';
 	if (!getPageSetting(prefix + 'hs')) return;
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium';
-	const isDaily = game.global.challengeActive == "Daily";
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
 	const rRunningRegular = !isDaily && !isC3
 	const swapZone = isC3 ? getPageSetting(prefix + 'hsC3SwapZone') : isDaily ? getPageSetting(prefix + 'hsDailySwapZone') : rRunningRegular ? getPageSetting(prefix + 'hsSwapZone') : 0;
 	const rAfterpushShield = isC3 ? prefix + 'hsC3' : prefix + 'hsAfterpush';
@@ -208,7 +208,7 @@ function heirloomSwapping() {
 		if (getPageSetting(prefix + 'hsWorldStaff') != "undefined" && !game.global.mapsActive) {
 			HeirloomEquipStaff(prefix + 'hsWorldStaff');
 		} else if (game.global.mapsActive) {
-			if (game.global.challengeActive == "Pandemonium" && getPageSetting(prefix + 'PandemoniumAutoEquip') > 1 && getPageSetting(prefix + 'hsPandStaff') != "undefined" && getPageSetting(prefix + 'PandemoniumAEZone') > 0 && game.global.world >= getPageSetting(prefix + 'PandemoniumAEZone') && game.global.lastClearedCell > 59)
+			if (challengeActive('Pandemonium') && getPageSetting(prefix + 'PandemoniumAutoEquip') > 1 && getPageSetting(prefix + 'hsPandStaff') != "undefined" && getPageSetting(prefix + 'PandemoniumAEZone') > 0 && game.global.world >= getPageSetting(prefix + 'PandemoniumAEZone') && game.global.lastClearedCell > 59)
 				HeirloomEquipStaff(prefix + 'hsPandStaff');
 			else if (getPageSetting(prefix + 'hsMapStaff') != "undefined" && getCurrentMapObject().bonus === undefined)
 				HeirloomEquipStaff(prefix + 'hsMapStaff');

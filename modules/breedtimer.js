@@ -39,7 +39,7 @@ function potencyMod() {
 	if (game.singleRunBonuses.quickTrimps.owned) potencyMod = potencyMod.mul(2);
 
 	//Dailies
-	if (game.global.challengeActive == "Daily") {
+	if (challengeActive('Daily')) {
 		//Dysfunctional
 		if (typeof game.global.dailyChallenge.dysfunctional !== 'undefined')
 			potencyMod = potencyMod.mul(dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength));
@@ -50,7 +50,7 @@ function potencyMod() {
 	}
 
 	//Toxicity
-	if (game.global.challengeActive == "Toxicity" && game.challenges.Toxicity.stacks > 0)
+	if (challengeActive('Toxicity') && game.challenges.Toxicity.stacks > 0)
 		potencyMod = potencyMod.mul(Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks));
 
 	//Void Maps (Slow Breed)
@@ -93,7 +93,7 @@ function breedTimeRemaining() {
 var DecimalBreed = Decimal.clone({ precision: 30, rounding: 4 });
 var missingTrimps = new DecimalBreed(0);
 function ATGA2() {
-	if (game.jobs.Geneticist.locked == false && getPageSetting('ATGA2') == true && getPageSetting('ATGA2timer') > 0 && game.global.challengeActive != "Trapper") {
+	if (game.jobs.Geneticist.locked == false && getPageSetting('ATGA2') == true && getPageSetting('ATGA2timer') > 0 && !challengeActive('Trapper')) {
 		var trimps = game.resources.trimps;
 		var trimpsMax = trimps.realMax();
 		var maxBreedable = new DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
@@ -104,7 +104,7 @@ function ATGA2() {
 		if (game.global.brokenPlanet) potencyMod = potencyMod.div(10);
 		potencyMod = potencyMod.mul(1 + (game.portal.Pheromones.level * game.portal.Pheromones.modifier));
 		if (game.singleRunBonuses.quickTrimps.owned) potencyMod = potencyMod.mul(2);
-		if (game.global.challengeActive == "Daily") {
+		if (challengeActive('Daily')) {
 			if (typeof game.global.dailyChallenge.dysfunctional !== 'undefined') {
 				potencyMod = potencyMod.mul(dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength));
 			}
@@ -112,7 +112,7 @@ function ATGA2() {
 				potencyMod = potencyMod.mul(dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks));
 			}
 		}
-		if (game.global.challengeActive == "Toxicity" && game.challenges.Toxicity.stacks > 0) {
+		if (challengeActive('Toxicity') && game.challenges.Toxicity.stacks > 0) {
 			potencyMod = potencyMod.mul(Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks));
 		}
 		if (game.global.voidBuff == "slowBreed") {
@@ -135,22 +135,22 @@ function ATGA2() {
 		if (getPageSetting('ATGA2timerz') > 0 && getPageSetting('ATGA2timerzt') > 0 && game.global.world >= getPageSetting('ATGA2timerz'))
 			target = new Decimal(getPageSetting('ATGA2timerzt'));
 
-		if (game.global.runningChallengeSquared && getPageSetting('cATGA2timer') > 0 && game.global.challengeActive != 'Electricity' && game.global.challengeActive != 'Toxicity' && game.global.challengeActive != 'Nom')
+		if (game.global.runningChallengeSquared && getPageSetting('cATGA2timer') > 0 && !challengeActive('Electricity') && !challengeActive('Toxicity') && !challengeActive('Nom'))
 			target = new Decimal(getPageSetting('cATGA2timer'));
-		if (game.global.runningChallengeSquared && getPageSetting('chATGA2timer') > 0 && (game.global.challengeActive == 'Electricity' || game.global.challengeActive == 'Toxicity' || game.global.challengeActive == 'Nom'))
+		if (game.global.runningChallengeSquared && getPageSetting('chATGA2timer') > 0 && (challengeActive('Electricity') || challengeActive('Toxicity') || challengeActive('Nom')))
 			target = new Decimal(getPageSetting('chATGA2timer'));
 
-		if (getPageSetting('dATGA2timer') > 0 && game.global.challengeActive == "Daily")
+		if (getPageSetting('dATGA2timer') > 0 && challengeActive('Daily'))
 			target = new Decimal(getPageSetting('dATGA2timer'));
-		if (getPageSetting('dhATGA2timer') > 0 && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined'))
+		if (getPageSetting('dhATGA2timer') > 0 && challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined'))
 			target = new Decimal(getPageSetting('dhATGA2timer'));
 
-		if (game.global.challengeActive != "Daily" && getPageSetting('sATGA2timer') > 0 && isActiveSpireAT() == true)
+		if (!challengeActive('Daily') && getPageSetting('sATGA2timer') > 0 && isActiveSpireAT() == true)
 			target = new Decimal(getPageSetting('sATGA2timer'));
-		if (game.global.challengeActive == "Daily" && getPageSetting('dsATGA2timer') > 0 && disActiveSpireAT() == true)
+		if (challengeActive('Daily') && getPageSetting('dsATGA2timer') > 0 && disActiveSpireAT() == true)
 			target = new Decimal(getPageSetting('dsATGA2timer'));
 
-		if ((getPageSetting('dATGA2Auto') == 2 || (getPageSetting('dATGA2Auto') == 1 && disActiveSpireAT() && game.global.challengeActive == "Daily")) && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined')) {
+		if ((getPageSetting('dATGA2Auto') == 2 || (getPageSetting('dATGA2Auto') == 1 && disActiveSpireAT() && challengeActive('Daily'))) && challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined')) {
 			plagueDamagePerStack = (game.global.dailyChallenge.plague !== undefined) ? dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, 1) : 0;
 			boggedDamage = (game.global.dailyChallenge.bogged !== undefined) ? dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength) : 0;
 			atl = Math.ceil((Math.sqrt((plagueDamagePerStack / 2 + boggedDamage) ** 2 - 2 * plagueDamagePerStack * (boggedDamage - 1)) - (plagueDamagePerStack / 2 + boggedDamage)) / plagueDamagePerStack);

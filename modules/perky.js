@@ -7,7 +7,7 @@ function runPerky() {
 }
 
 function allocatePerky() {
-	tooltip('Import Perks', null, 'update')
+	tooltip('Import Perks', null, 'update');
 	document.getElementById('perkImportBox').value = ($("#perkstring").value)
 	importPerks();
 	cancelTooltip();
@@ -21,12 +21,12 @@ function read_save() {
 			a.selected = parseInt(a.innerHTML.replace("z", "")) < game.global.highestLevelCleared;
 		}),
 			auto_preset());
-	var b = game.global.heliumLeftover;
+	var b = portalWindowOpen ? game.global.heliumLeftover : 0;
 	for (var c in game.portal) b += game.portal[c].heliumSpent || 0;
 	var d = Object.keys(game.portal).filter(function (a) {
 		return !game.portal[a].locked && void 0 !== game.portal[a].level;
 	});
-	game.global.canRespecPerks ||
+	(game.global.canRespecPerks) ||
 		(d = d.map(function (a) {
 			return a + ">" + (game.portal[a].level || 0);
 		}));
@@ -41,7 +41,7 @@ function read_save() {
 	}
 	jobless ? (f = 0) : (i += (mastery("mapLoot2") ? 5 : 4) * j),
 		update_dg(),
-		($("#helium").value = b + (!game.global.canRespecPerks ? 0 : game.resources.helium.owned)),
+		($("#helium").value = b + (!game.global.canRespecPerks || !portalWindowOpen ? 0 : game.resources.helium.owned)),
 		($("#unlocks").value = d.join(",")),
 		($("#whipimp").checked = game.unlocks.imps.Whipimp),
 		($("#magnimp").checked = game.unlocks.imps.Magnimp),
@@ -101,11 +101,21 @@ function parse_inputs() {
 	var a = $("#preset").value;
 	savePerkySettings();
 	var b = {
-		total_he: game.global.totalHeliumEarned,
+		total_he: game.global.totalHeliumEarned - (!portalWindowOpen ? game.resources.helium.owned : 0),
 		zone: game.global.highestLevelCleared + 1,
 		perks: parse_perks('', $("#unlocks").value),
-		weight: { helium: input("weight-he"), attack: input("weight-atk"), health: input("weight-hp"), xp: input("weight-xp"), trimps: input("weight-trimps"), income: 0 },
-		fluffy: { xp: game.global.fluffyExp, prestige: game.global.fluffyPrestige },
+		weight: {
+			helium: input("weight-he"),
+			attack: input("weight-atk"),
+			health: input("weight-hp"),
+			xp: input("weight-xp"),
+			trimps: input("weight-trimps"),
+			income: 0
+		},
+		fluffy: {
+			xp: game.global.fluffyExp,
+			prestige: game.global.fluffyPrestige
+		},
 		mod: {
 			storage: 0.125,
 			soldiers: 0,
@@ -386,6 +396,10 @@ function display(a) {
 }
 
 function optimize(a) {
+	fluffy = a.fluffy;
+	console.log("Fluffy prestige = " + fluffy.prestige)
+	console.log("Fluffy xp = " + fluffy.xp)
+	console.log(Math.log(0.003 * fluffy.xp / Math.pow(5, fluffy.prestige) + 1) / Math.log(4))
 	function b() {
 		return 1 + +(S.bonus > 0.9) + Math.ceil(10 * S.bonus);
 	}
@@ -436,7 +450,7 @@ function optimize(a) {
 	}
 	function l() {
 		var a = (0.15 + f("attack")) * Math.pow(0.8, h());
-		return (a *= Y.bonus * B.bonus * O.bonus), (a *= K.bonus * R.bonus * L.bonus), (a *= t.attack[D.level]), (a *= game && mastery("amalg") ? Math.Math.pow(1.5, k()) : 1 + 0.5 * k()), j() * a;
+		return (a *= Y.bonus * B.bonus * O.bonus), (a *= K.bonus * R.bonus * L.bonus), (a *= t.attack[D.level]), (a *= game && mastery("amalg") ? Math.pow(1.5, k()) : 1 + 0.5 * k()), j() * a;
 	}
 	function m() {
 		var a = (0.6 + f("health")) * Math.pow(0.8, h());
@@ -598,6 +612,7 @@ function optimize(a) {
 		else for (; Ea.level < Ea.min_level;) x -= Ea.level_up(1);
 	}
 	for (var Fa = 0.25; D.levellable(x * Fa);) (x -= D.level_up(1)), (Fa = D.level <= Math.floor(za) && s > 300 && v.xp > 0 ? 0.25 : 0.01);
+	if (300 >= s || za >= D.level) v.xp = 0;
 	for (
 		var Ga = Object.keys(u)
 			.map(function (a) {

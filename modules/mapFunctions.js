@@ -96,8 +96,8 @@ const uniqueMaps = {
 //Unique Maps
 function shouldRunUniqueMap(map) {
 	const challenge = game.global.challengeActive;
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
-	const isDaily = game.global.challengeActive === 'Daily';
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
 	const mapData = uniqueMaps[map.name];
 	const uniqueMapSetting = game.global.universe === 2 ? autoTrimpSettings.rUniqueMapSettingsArray.value : autoTrimpSettings.hUniqueMapSettingsArray.value;
 
@@ -107,7 +107,7 @@ function shouldRunUniqueMap(map) {
 	if (game.global.universe !== mapData.universe) {
 		return false;
 	}
-	if (!isC3 && mapData.challenges.includes(challenge) && game.global.challengeActive !== '') {
+	if (!isC3 && mapData.challenges.includes(challenge) && !challengeActive('')) {
 		return true;
 	}
 	if (mapData.speedrun && shouldSpeedRun(game.achievements[mapData.speedrun])) {
@@ -190,7 +190,7 @@ function shouldRunUniqueMap(map) {
 			const smithyShred = woodShred || metalShred;
 			// maybe get extra smithiesvar 
 			meltsmithy =
-				game.global.challengeActive == "Pandemonium" && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') :
+				challengeActive('Pandemonium') && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') :
 					isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
 						isDaily && !smithyShred && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
 							isDaily && smithyShred && uniqueMapSetting.MP_Smithy_Daily_Shred.enabled && uniqueMapSetting.MP_Smithy_Daily_Shred.value > 0 ? uniqueMapSetting.MP_Smithy_Daily_Shred.value :
@@ -204,8 +204,8 @@ function shouldRunUniqueMap(map) {
 			}
 		} else if (map.name === 'Frozen Castle') {
 			// maybe get the treasure
-			var frozencastle = game.global.challengeActive !== 'Hypothermia' && uniqueMapSetting.Frozen_Castle.enabled && game.global.world >= uniqueMapSetting.Frozen_Castle.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Frozen_Castle.cell;
-			var hypothermia = game.global.challengeActive === 'Hypothermia' && !VoidMaps().shouldRun &&
+			var frozencastle = !challengeActive('Hypothermia') && uniqueMapSetting.Frozen_Castle.enabled && game.global.world >= uniqueMapSetting.Frozen_Castle.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Frozen_Castle.cell;
+			var hypothermia = challengeActive('Hypothermia') && !VoidMaps().shouldRun &&
 				game.global.world >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0]) : 200) &&
 				game.global.lastClearedCell + 2 >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1]) : 99);
 			if (frozencastle || hypothermia) {
@@ -285,8 +285,8 @@ function VoidMaps() {
 	var module = MODULES['mapFunctions'];
 
 	const totalPortals = getTotalPortals();
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
-	const isDaily = game.global.challengeActive === 'Daily';
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
 	const dailyReduction = isDaily && game.global.universe === 2 ? dailyModiferReduction() : 0;
 	const currChall = game.global.challengeActive;
 	const rVMBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hVoidMapSettings.value : autoTrimpSettings.rVoidMapSettings.value;
@@ -379,8 +379,8 @@ function MapBonus() {
 	if (game.global.universe === 2 && !autoTrimpSettings.rMapBonusDefaultSettings.value.active) return farmingDetails;
 
 	//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
-	const isDaily = game.global.challengeActive === 'Daily';
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
 	const currChall = game.global.challengeActive;
 	const rMBZone = game.global.universe === 1 ? getPageSetting('hMapBonusZone') : getPageSetting('rMapBonusZone');
 	const rMBBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
@@ -415,7 +415,7 @@ function MapBonus() {
 		rMBRepeatCounter = rMBspireMapStack ? 10 : rMBIndex !== null && rMBshouldDoHealthMaps && rMBSettings.repeat !== rMBDefaultSettings.healthBonus ?
 			Math.max(rMBSettings.repeat, rMBDefaultSettings.healthBonus) : rMBIndex === null ? rMBDefaultSettings.healthBonus : rMBSettings.repeat
 		var rMBSpecial = rMBSettings.special;
-		if (game.global.challengeActive === 'Transmute' && rMBSpecial.includes('mc'))
+		if (challengeActive('Transmute') && rMBSpecial.includes('mc'))
 			rMBSpecial = rMBSpecial.charAt(0) + "sc";
 		var rMBMapLevel = rMBIndex !== null ? rMBSettings.level : game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
 		var rMBJobRatio = rMBSettings.jobratio;
@@ -476,8 +476,8 @@ function MapFarm() {
 
 	if (game.global.universe === 1 && !autoTrimpSettings.hMapFarmDefaultSettings.value.active) return farmingDetails;
 	if (game.global.universe === 2 && !autoTrimpSettings.rMapFarmDefaultSettings.value.active) return farmingDetails;
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
-	const isDaily = game.global.challengeActive === 'Daily';
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
 	const totalPortals = getTotalPortals();
 	const shredActive = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined';
 	const shredMods = shredActive ? dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength) : [];
@@ -543,10 +543,10 @@ function MapFarm() {
 		}
 
 		//When running Wither make sure map level is lower than 0 so that we don't accumulate extra stacks.
-		if (game.global.challengeActive === "Wither" && rMFMapLevel >= 0)
+		if (challengeActive('Wither') && rMFMapLevel >= 0)
 			rMFMapLevel = -1;
 		//If you're running Transmute and the rMFSpecial variable is either LMC or SMC it changes it to LSC/SSC.
-		if (game.global.challengeActive === 'Transmute' && rMFSpecial.includes('mc'))
+		if (challengeActive('Transmute') && rMFSpecial.includes('mc'))
 			rMFSpecial = rMFSpecial.charAt(0) + "sc";
 
 		if (rMFRepeatCounter > game.global.mapRunCounter)
@@ -599,10 +599,10 @@ function TributeFarm() {
 	if (!autoTrimpSettings.rTributeFarmDefaultSettings.value.active || (game.buildings.Tribute.locked && game.jobs.Meteorologist.locked)) return farmingDetails;
 	var rShouldTributeFarm = false;
 	var rShouldMetFarm = false;
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
-	const isDaily = game.global.challengeActive === 'Daily';
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
 	const foodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
-	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
+	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
 	const rTrFBaseSetting = autoTrimpSettings.rTributeFarmSettings.value;
@@ -656,7 +656,7 @@ function TributeFarm() {
 			}
 		}
 
-		if (game.global.challengeActive == "Wither" && rTrFMapLevel >= 0)
+		if (challengeActive('Wither') && rTrFMapLevel >= 0)
 			rTrFMapLevel = -1;
 
 		//When mapType is set as Map Count work out how many Tributes/Mets we can farm in the amount of maps specified.
@@ -780,7 +780,7 @@ function SmithyFarm() {
 		mapName: mapName
 	};
 
-	if (game.buildings.Smithy.locked || (!autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && game.global.challengeActive !== 'Quest') || (game.global.challengeActive === 'Quest' && currQuest() !== 10) || game.global.challengeActive === 'Transmute') return farmingDetails;
+	if (game.buildings.Smithy.locked || (!autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && !challengeActive('Quest')) || (challengeActive('Quest') && currQuest() !== 10) || challengeActive('Transmute')) return farmingDetails;
 
 	var rShouldSmithyFarm = false;
 	var rShouldSmithyGemFarm = false;
@@ -788,12 +788,12 @@ function SmithyFarm() {
 	var rShouldSmithyMetalFarm = false;
 	var mapAutoLevel = Infinity;
 
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
-	const isDaily = game.global.challengeActive === 'Daily';
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const woodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
 	const smithyShred = woodShred || metalShred;
-	const dontRecycleMaps = game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
+	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
 	const rSFBaseSetting = autoTrimpSettings.rSmithyFarmSettings.value;
@@ -824,10 +824,10 @@ function SmithyFarm() {
 		if (game.global.mapsActive) mapBonus = getCurrentMapObject().bonus;
 
 		var rSFSettings = autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
-		var rSFMapLevel = game.global.challengeActive === 'Quest' ? -1 : rSFSettings.level;
+		var rSFMapLevel = challengeActive('Quest') ? -1 : rSFSettings.level;
 		var rSFSpecial = getAvailableSpecials('lmc');
 		var rSFJobRatio = '0,0,0,0';
-		var rSFSmithies = game.global.challengeActive === 'Quest' ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
+		var rSFSmithies = challengeActive('Quest') ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
 		if (currQuest() === 10 || rSFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.mapFunctions.smithyMapCount !== [0, 0, 0] && typeof getCurrentMapObject().bonus !== 'undefined') {
@@ -849,7 +849,7 @@ function SmithyFarm() {
 				rSFMapLevel = mapAutoLevel;
 			}
 		}
-		if (game.global.challengeActive == "Wither" && rSFMapLevel >= 0)
+		if (challengeActive('Wither') && rSFMapLevel >= 0)
 			rSFMapLevel = -1;
 
 		//Initialising base food & metal vars for calcs later on
@@ -942,7 +942,7 @@ function SmithyFarm() {
 			rShouldSmithyFarm = true;
 		}
 
-		if ((!autoTrimpSettings.RBuyBuildingsNew.enabled || !autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled || game.global.challengeActive === 'Hypothermia') && rShouldSmithyFarm && rSFSmithies > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, 1)) {
+		if ((!autoTrimpSettings.RBuyBuildingsNew.enabled || !autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled || challengeActive('Hypothermia')) && rShouldSmithyFarm && rSFSmithies > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, 1)) {
 			buyBuilding("Smithy", true, true, 1);
 		}
 
@@ -966,7 +966,7 @@ function SmithyFarm() {
 				toggleAutoStructure();
 			MODULES.mapFunctions.smithyMapCount = [0, 0, 0];
 			HDRatio = calcHDRatio(game.global.world, 'world');
-			if (game.global.challengeActive !== 'Quest' && rSFSettings.meltingPoint) runUnique('Melting Point', false);
+			if (!challengeActive('Quest') && rSFSettings.meltingPoint) runUnique('Melting Point', false);
 			resetMapVars(rSFSettings);
 			return farmingDetails;
 		}
@@ -1000,8 +1000,8 @@ function WorshipperFarm() {
 		mapName: mapName
 	};
 	if (game.jobs.Worshipper.locked || !autoTrimpSettings.rWorshipperFarmDefaultSettings.value.active) return farmingDetails;
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
-	const isDaily = game.global.challengeActive === 'Daily';
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
 	const currChall = game.global.challengeActive;
 	const rWFBaseSetting = autoTrimpSettings.rWorshipperFarmSettings.value
 
@@ -1052,7 +1052,7 @@ function WorshipperFarm() {
 			}
 		}
 
-		if (game.global.challengeActive == "Wither" && rWFMapLevel >= 0) rWFMapLevel = -1;
+		if (challengeActive('Wither') && rWFMapLevel >= 0) rWFMapLevel = -1;
 		if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != rWFDebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip))) {
 			debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip + " or more Worshippers. Evaluate your map settings to correct this");
 			rWFDebug = game.stats.zonesCleared.value;
@@ -1096,10 +1096,10 @@ function MapDestacking() {
 	};
 
 	if (
-		!(getPageSetting('balance') && game.global.challengeActive == "Balance") &&
-		!(getPageSetting('rUnbalance') && game.global.challengeActive == "Unbalance") &&
-		!(getPageSetting('Rstormon') && game.global.challengeActive == "Storm") &&
-		!(game.global.challengeActive === 'Daily' && getPageSetting('rBloodthirstDestack') && typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
+		!(getPageSetting('balance') && challengeActive('Balance')) &&
+		!(getPageSetting('rUnbalance') && challengeActive('Unbalance')) &&
+		!(getPageSetting('Rstormon') && challengeActive('Storm')) &&
+		!(challengeActive('Daily') && getPageSetting('rBloodthirstDestack') && typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
 	)
 		return farmingDetails;
 
@@ -1110,7 +1110,7 @@ function MapDestacking() {
 
 
 	//Balance Destacking
-	if (game.global.challengeActive == "Balance") {
+	if (challengeActive('Balance')) {
 		var balanceZone = getPageSetting('balanceZone') > 0 ? getPageSetting('balanceZone') : Infinity;
 		var balanceStacks = getPageSetting('balanceStacks') > 0 ? getPageSetting('balanceStacks') : Infinity;
 		rShouldDestack = (((game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= balanceZone && (game.challenges.Balance.balanceStacks >= balanceStacks || (getPageSetting('balanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Balance.balanceStacks != 0)));
@@ -1118,7 +1118,7 @@ function MapDestacking() {
 	}
 
 	//Unbalance Destacking
-	if (game.global.challengeActive == "Unbalance") {
+	if (challengeActive('Unbalance')) {
 		var rUnbalanceZone = getPageSetting('rUnbalanceZone') > 0 ? getPageSetting('rUnbalanceZone') : Infinity;
 		var rUnbalanceStacks = getPageSetting('rUnbalanceStacks') > 0 ? getPageSetting('rUnbalanceStacks') : Infinity;
 		rShouldDestack = (((game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= rUnbalanceZone && (game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks || (getPageSetting('rUnbalanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
@@ -1126,13 +1126,13 @@ function MapDestacking() {
 	}
 
 	//Bloodthirst Destacking
-	if (game.global.challengeActive === 'Daily' && !game.global.mapsActive && game.global.dailyChallenge.bloodthirst.stacks >= dailyModifiers.bloodthirst.getFreq(game.global.dailyChallenge.bloodthirst.strength) - 1) {
+	if (challengeActive('Daily') && !game.global.mapsActive && game.global.dailyChallenge.bloodthirst.stacks >= dailyModifiers.bloodthirst.getFreq(game.global.dailyChallenge.bloodthirst.strength) - 1) {
 		rShouldDestack = true;
 		rDDestack = game.global.dailyChallenge.bloodthirst.stacks;
 	}
 
 	//Storm Destacking
-	if (game.global.challengeActive == "Storm") {
+	if (challengeActive('Storm')) {
 		var rStormZone = getPageSetting('rStormZone') > 0 ? getPageSetting('rStormZone') : Infinity;
 		var rStormStacks = getPageSetting('rStormStacks') > 0 ? getPageSetting('rStormStacks') : Infinity;
 		rShouldDestack = (game.global.world >= rStormZone && (game.challenges.Storm.beta >= rStormStacks && game.challenges.Storm.beta != 0));
@@ -1141,10 +1141,10 @@ function MapDestacking() {
 
 	if (!game.jobs.Explorer.locked && game.global.mapsActive && getCurrentMapObject().level == 6 &&
 		(
-			(game.global.challengeActive == "Balance" && !rShouldDestack && game.challenges.Balance.balanceStacks == 0) ||
-			(game.global.challengeActive === 'Daily' && !rShouldDestack && game.global.dailyChallenge.bloodthirst.stacks === 0) ||
-			(game.global.challengeActive == "Unbalance" && !rShouldDestack && game.challenges.Unbalance.balanceStacks == 0) ||
-			(game.global.challengeActive == "Storm" && !rShouldDestack && game.challenges.Storm.beta == 0)
+			(challengeActive('Balance') && !rShouldDestack && game.challenges.Balance.balanceStacks == 0) ||
+			(challengeActive('Daily') && !rShouldDestack && game.global.dailyChallenge.bloodthirst.stacks === 0) ||
+			(challengeActive('Unbalance') && !rShouldDestack && game.challenges.Unbalance.balanceStacks == 0) ||
+			(challengeActive('Storm') && !rShouldDestack && game.challenges.Storm.beta == 0)
 		)
 	) {
 		mapsClicked(true);
@@ -1192,8 +1192,8 @@ function PrestigeRaiding() {
 	if (game.global.universe === 2 && !autoTrimpSettings.rRaidingDefaultSettings.value.active) return farmingDetails;
 
 	var rShouldPrestigeRaid = false;
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
-	const isDaily = game.global.challengeActive === 'Daily';
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
 	const currChall = game.global.challengeActive;
 	const rRaidingDefaultSetting = game.global.universe === 1 ? autoTrimpSettings.hRaidingDefaultSettings.value : autoTrimpSettings.rRaidingDefaultSettings.value;
 	const rRaidingBaseSetting = game.global.universe === 1 ? autoTrimpSettings.hRaidingSettings.value : autoTrimpSettings.rRaidingSettings.value;
@@ -1370,10 +1370,10 @@ function PrestigeClimb() {
 
 	const universe = game.global.universe === 1 ? '' : 'r';
 
-	if (game.global.challengeActive === "Frugal") return farmingDetails;
-	if (game.global.challengeActive === 'Mapology' && !getPageSetting('mapology')) return farmingDetails;
+	if (challengeActive('Frugal')) return farmingDetails;
+	if (challengeActive('Mapology') && !getPageSetting('mapology')) return farmingDetails;
 
-	const targetPrestige = game.global.challengeActive === 'Mapology' ? autoTrimpSettings['mapologyPrestige'].selected : autoTrimpSettings[universe + 'Prestige'].selected;
+	const targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : autoTrimpSettings[universe + 'Prestige'].selected;
 	if (targetPrestige === "Off") return farmingDetails;
 
 	var customVars = MODULES["maps"];
@@ -1399,7 +1399,7 @@ function PrestigeClimb() {
 	var prestigeToFarmFor = prestigeInfo[0];
 	var mapsToRun = prestigeInfo[1];
 
-	if (game.global.challengeActive !== 'Mapology') {
+	if (!challengeActive('Mapology')) {
 		//Prestige Skip 1
 		if (needPrestige && getPsString("gems", true) > 0 && (getPageSetting(universe + 'PrestigeSkip1_2') == 1 || getPageSetting(universe + 'PrestigeSkip1_2') == 2)) {
 			var numUnbought = 0;
@@ -1469,16 +1469,16 @@ function BionicRaiding() {
 	};
 
 	if (game.global.universe === 1 && !autoTrimpSettings.hBionicRaidingDefaultSettings.value.active) return farmingDetails;
-	if (game.global.challengeActive === 'Exterminate' && game.global.world > 600) return farmingDetails;
-	if (game.global.challengeActive === 'Mapology' && !getPageSetting('mapology')) return farmingDetails;
+	if (challengeActive('Experience') && game.global.world > 600) return farmingDetails;
+	if (challengeActive('Mapology') && !getPageSetting('mapology')) return farmingDetails;
 
 	var rShouldBionicRaid = false;
 	const isC3 = game.global.runningChallengeSquared;
-	const isDaily = game.global.challengeActive === 'Daily';
+	const isDaily = challengeActive('Daily');
 	const currChall = game.global.challengeActive;
 	const rBionicRaidingDefaultSetting = autoTrimpSettings.hBionicRaidingDefaultSettings.value;
 	const rBionicRaidingBaseSetting = autoTrimpSettings.hBionicRaidingSettings.value;
-	const targetPrestige = game.global.challengeActive === 'Mapology' ? autoTrimpSettings['mapologyPrestige'].selected : 'GamesOP';
+	const targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : 'GamesOP';
 
 	var index;
 
@@ -1550,7 +1550,7 @@ function runBionicRaiding(bionicPool) {
 		}
 	}
 
-	const raidingZone = game.global.challengeActive === 'Experience' && game.global.world > 600 ? getPageSetting('experienceEndBW') : rMapSettings.raidingZone
+	const raidingZone = challengeActive('Experience') && game.global.world > 600 ? getPageSetting('experienceEndBW') : rMapSettings.raidingZone
 	if (game.global.preMapsActive) {
 		selectMap(findLastBionicWithItems(bionicPool).id);
 	}
@@ -1570,7 +1570,7 @@ function Experience() {
 		mapName: mapName
 	};
 
-	if (game.global.challengeActive !== 'Experience' || !getPageSetting('experience')) return farmingDetails;
+	if (!challengeActive('Experience') || !getPageSetting('experience')) return farmingDetails;
 
 	var shouldExperience = false;
 	const wonderStartZone = getPageSetting('experienceStartZone') >= 300 ? getPageSetting('experienceStartZone') : Infinity;
@@ -1613,7 +1613,7 @@ function Wither() {
 		mapName: mapName
 	};
 
-	if (game.global.challengeActive !== "Wither" || !getPageSetting('rWither')) return farmingDetails;
+	if (!challengeActive('Wither') || !getPageSetting('rWither')) return farmingDetails;
 
 	var jobRatio = '0,0,1,0';
 	var special = 'lmc';
@@ -1638,7 +1638,7 @@ function Wither() {
 
 	var cell = game.global.lastClearedCell + 2;
 	var name = game.global.gridArray[cell].name;
-	var damageGoal = game.global.challengeActive === 'Wither' ? 4 : 2;
+	var damageGoal = challengeActive('Wither') ? 4 : 2;
 
 	var equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma');
 	var ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
@@ -1694,7 +1694,7 @@ function Quagmire() {
 		mapName: mapName
 	};
 
-	if (game.global.challengeActive !== "Quagmire" || !autoTrimpSettings.rQuagDefaultSettings.value.active) return farmingDetails;
+	if (!challengeActive('Quagmire') || !autoTrimpSettings.rQuagDefaultSettings.value.active) return farmingDetails;
 
 	const rQFBaseSettings = autoTrimpSettings.rQuagSettings.value;
 	const totalPortals = getTotalPortals();
@@ -1748,7 +1748,7 @@ function Quagmire() {
 }
 
 function currQuest() {
-	if (game.global.challengeActive !== 'Quest' || game.global.world < game.challenges.Quest.getQuestStartZone() || !getPageSetting('rQuest'))
+	if (!challengeActive('Quest') || game.global.world < game.challenges.Quest.getQuestStartZone() || !getPageSetting('rQuest'))
 		return 0;
 	var questnotcomplete = game.challenges.Quest.getQuestProgress() != "Quest Complete!";
 	if (game.challenges.Quest.getQuestProgress() == "Failed!") return 0;
@@ -1778,7 +1778,7 @@ function Quest() {
 		mapName: mapName
 	};
 
-	if (game.global.challengeActive !== "Quest" || !getPageSetting('rQuest') || game.global.world < game.challenges.Quest.getQuestStartZone()) return farmingDetails;
+	if (!challengeActive('Quest') || !getPageSetting('rQuest') || game.global.world < game.challenges.Quest.getQuestStartZone()) return farmingDetails;
 
 	rShouldQuest = currQuest() == 1 ? 1 :
 		currQuest() == 2 ? 2 :
@@ -1843,7 +1843,7 @@ function Mayhem() {
 		mapName: mapName
 	};
 
-	if (game.global.challengeActive !== "Mayhem" || !getPageSetting('rMayhem')) return farmingDetails;
+	if (!challengeActive('Mayhem') || !getPageSetting('rMayhem')) return farmingDetails;
 
 	var rShouldMayhem = false;
 	var mapAutoLevel = Infinity;
@@ -1894,7 +1894,7 @@ function Insanity() {
 		shouldRun: false,
 		mapName: mapName
 	};
-	if (game.global.challengeActive !== "Insanity" || !autoTrimpSettings.rInsanityDefaultSettings.value.active) return farmingDetails;
+	if (!challengeActive('Insanity') || !autoTrimpSettings.rInsanityDefaultSettings.value.active) return farmingDetails;
 
 	var rShouldInsanityFarm = false;
 	var mapAutoLevel = Infinity;
@@ -1976,7 +1976,7 @@ function PandemoniumDestack() {
 		mapName: mapName
 	};
 
-	if (game.global.challengeActive !== "Pandemonium" || !getPageSetting('RPandemoniumOn') || game.global.world < getPageSetting('RPandemoniumZone')) return farmingDetails;
+	if (!challengeActive('Pandemonium') || !getPageSetting('RPandemoniumOn') || game.global.world < getPageSetting('RPandemoniumZone')) return farmingDetails;
 
 	var rPandemoniumMapLevel = 1;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
@@ -2029,7 +2029,7 @@ function PandemoniumFarm() {
 		mapName: mapName
 	};
 
-	if (game.global.challengeActive !== 'Pandemonium' || !getPageSetting('RPandemoniumOn') || getPageSetting('RPandemoniumAutoEquip') < 2 || game.global.world === 150 || game.global.lastClearedCell + 2 < 91 || game.challenges.Pandemonium.pandemonium > 0) return farmingDetails;
+	if (!challengeActive('Pandemonium') || !getPageSetting('RPandemoniumOn') || getPageSetting('RPandemoniumAutoEquip') < 2 || game.global.world === 150 || game.global.lastClearedCell + 2 < 91 || game.challenges.Pandemonium.pandemonium > 0) return farmingDetails;
 
 	var rShouldPandemoniumFarm = false;
 
@@ -2085,7 +2085,7 @@ function Alchemy() {
 	};
 
 
-	if (game.global.challengeActive !== "Alchemy" || !autoTrimpSettings.rAlchDefaultSettings.value.active) return farmingDetails;
+	if (!challengeActive('Alchemy') || !autoTrimpSettings.rAlchDefaultSettings.value.active) return farmingDetails;
 
 	const totalPortals = getTotalPortals();
 	const rAFBaseSettings = autoTrimpSettings.rAlchSettings.value;
@@ -2160,7 +2160,7 @@ function Alchemy() {
 					var potionsowned = 0;
 					//Calculating total level of potions that aren't being farmed
 					for (var y = 0; y < alchObj.potionsOwned.length; y++) {
-						if (alchObj.potions[y].challenge != (game.global.challengeActive == "Alchemy")) continue;
+						if (alchObj.potions[y].challenge != (challengeActive('Alchemy'))) continue;
 						if (y != alchObj.potionNames.indexOf(alchObj.potionNames[potion]) && !alchObj.potions[y].enemyMult) potionsowned += alchObj.potionsOwned[y];
 					}
 					potioncost *= Math.pow(alchObj.allPotionGrowth, potionsowned);
@@ -2237,7 +2237,7 @@ function Glass() {
 		mapName: mapName
 	};
 
-	if (game.global.challengeActive !== "Glass" || !getPageSetting('rGlass')) return farmingDetails;
+	if (!challengeActive('Glass') || !getPageSetting('rGlass')) return farmingDetails;
 
 	var jobRatio = '0,0,1,0';
 	var special = 'lmc';
@@ -2324,12 +2324,12 @@ function Hypothermia() {
 	};
 
 	if ((!autoTrimpSettings.rHypoDefaultSettings.value.active ||
-		(game.global.challengeActive !== 'Hypothermia' && (!autoTrimpSettings.rHypoDefaultSettings.value.packrat || !rHFBuyPackrat)))) return farmingDetails;
+		(!challengeActive('Hypothermia') && (!autoTrimpSettings.rHypoDefaultSettings.value.packrat || !rHFBuyPackrat)))) return farmingDetails;
 
 	if (autoTrimpSettings.rHypoDefaultSettings.value.packrat) {
-		if (!rHFBuyPackrat && game.global.challengeActive === 'Hypothermia')
+		if (!rHFBuyPackrat && challengeActive('Hypothermia'))
 			rHFBuyPackrat = true;
-		if (rHFBuyPackrat && game.global.challengeActive === '') {
+		if (rHFBuyPackrat && challengeActive('')) {
 			viewPortalUpgrades();
 			numTab(6, true);
 			buyPortalUpgrade('Packrat');
@@ -2339,7 +2339,7 @@ function Hypothermia() {
 	}
 	rHFBonfireCostTotal = 0;
 
-	if (game.global.challengeActive !== 'Hypothermia') return farmingDetails;
+	if (!challengeActive('Hypothermia')) return farmingDetails;
 	const rHFBaseSettings = autoTrimpSettings.rHypoSettings.value;
 	var rHFIndex;
 
@@ -2427,7 +2427,7 @@ function Smithless() {
 		mapName: mapName
 	};
 
-	if (game.global.challengeActive !== "Smithless" || !getPageSetting('rSmithless')) return farmingDetails;
+	if (!challengeActive('Smithless') || !getPageSetting('rSmithless')) return farmingDetails;
 
 	if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
 
@@ -2524,9 +2524,9 @@ function HDFarm() {
 	if (game.global.universe === 1 && !autoTrimpSettings.hHDFarmDefaultSettings.value.active) return farmingDetails;
 	if (game.global.universe === 2 && !autoTrimpSettings.rHDFarmDefaultSettings.value.active) return farmingDetails;
 
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
-	const isDaily = game.global.challengeActive === 'Daily';
-	const dontRecycleMaps = game.global.challengeActive === 'Unbalance' || game.global.challengeActive === 'Trappapalooza' || game.global.challengeActive === 'Archaeology' || game.global.challengeActive === 'Berserk' || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
+	const dontRecycleMaps = challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
 	const totalPortals = getTotalPortals();
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const rHDFBaseSetting = game.global.universe === 1 ? autoTrimpSettings.hHDFarmSettings.value : autoTrimpSettings.rHDFarmSettings.value;
@@ -2637,7 +2637,7 @@ function FarmingDecision() {
 	}
 
 	//Won't map till after cell 90 on Lead on Even zones
-	if (game.global.challengeActive === 'Lead' && !game.global.runningChallengeSquared && (game.global.world % 2 == 0 || game.global.lastClearedCell + 2 <= 90)) {
+	if (challengeActive('Lead') && !game.global.runningChallengeSquared && (game.global.world % 2 == 0 || game.global.lastClearedCell + 2 <= 90)) {
 		return farmingDetails;
 	}
 	if (!game.global.mapsUnlocked) return farmingDetails;
@@ -2649,7 +2649,7 @@ function FarmingDecision() {
 
 	//Skipping map farming if in Decay and above stack count user input
 	if (decaySkipMaps()) mapTypes = [PrestigeClimb(), VoidMaps()];
-	if (game.global.challengeActive === 'Mapology') mapTypes = [PrestigeClimb(), BionicRaiding(), VoidMaps()];
+	if (challengeActive('Mapology')) mapTypes = [PrestigeClimb(), BionicRaiding(), VoidMaps()];
 
 	//U2 map settings to check for.
 	if (game.global.universe === 2) var mapTypes = [Quest(), PandemoniumDestack(), PrestigeClimb(), SmithyFarm(), MapFarm(), TributeFarm(), WorshipperFarm(), MapDestacking(), PrestigeRaiding(), Mayhem(), Insanity(), PandemoniumFarm(), Alchemy(), Hypothermia(), HDFarm(), VoidMaps(), Quagmire(), Glass(), MapBonus(), Smithless(), Wither()];
@@ -3008,7 +3008,7 @@ function rRunMap() {
 		game.achievements.mapless.earnable = false;
 		game.achievements.mapless.lastZone = game.global.world;
 	}
-	if (game.global.challengeActive == "Quest" && game.challenges.Quest.questId == 5 && !game.challenges.Quest.questComplete) {
+	if (challengeActive('Quest') && game.challenges.Quest.questId == 5 && !game.challenges.Quest.questComplete) {
 		game.challenges.Quest.questProgress++;
 		if (game.challenges.Quest.questProgress == 1) game.challenges.Quest.failQuest();
 	}
@@ -3031,6 +3031,6 @@ function rRunMap() {
 			setVoidBuffTooltip();
 		}
 	}
-	if (game.global.challengeActive == "Insanity") game.challenges.Insanity.drawStacks();
-	if (game.global.challengeActive == "Pandemonium") game.challenges.Pandemonium.drawStacks();
+	if (challengeActive('Insanity')) game.challenges.Insanity.drawStacks();
+	if (challengeActive('Pandemonium')) game.challenges.Pandemonium.drawStacks();
 }

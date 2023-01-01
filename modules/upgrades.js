@@ -13,7 +13,7 @@ MODULES["upgrades"].customMetalRatio = 0.5; //Change the Custom Delta factor ins
 function gigaTargetZone() {
 	//Init
 	var targetZone = 59;
-	var daily = game.global.challengeActive == 'Daily';
+	var daily = challengeActive('Daily');
 	var runningC2 = game.global.runningChallengeSquared;
 	var heliumChallengeActive = game.global.challengeActive && game.challenges[game.global.challengeActive].heliumThrough;
 
@@ -88,7 +88,7 @@ function autoGiga(targetZone, metalRatio = 0.5, slowDown = 10, customBase) {
 
 function firstGiga(forced) {
 	//Build our first giga if: A) Has more than 2 Warps & B) Can't afford more Coords & C)* Lacking Health or Damage & D)* Has run at least 1 map stack or if forced to
-	const maxHealthMaps = game.global.challengeActive === "Daily" ? getPageSetting('dMaxMapBonushealth') : getPageSetting('MaxMapBonushealth');
+	const maxHealthMaps = challengeActive('Daily') ? getPageSetting('dMaxMapBonushealth') : getPageSetting('MaxMapBonushealth');
 	const s = !(getPageSetting('CustomDeltaFactor') > 20);
 	const a = game.buildings.Warpstation.owned >= 2;
 	const b = !canAffordCoordinationTrimps() || game.global.world >= 230 && !canAffordTwoLevel(game.upgrades.Coordination);
@@ -157,7 +157,7 @@ function RbuyUpgrades() {
 		var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
 
 		//Coord
-		if (upgrade == 'Coordination' && (getPageSetting('RBuyUpgradesNew') == 2 || !canAffordCoordinationTrimps() || (game.global.challengeActive == 'Trappapalooza' && getPageSetting('rTrappa') && getPageSetting('rTrappaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('rTrappaCoords')))) continue;
+		if (upgrade == 'Coordination' && (getPageSetting('RBuyUpgradesNew') == 2 || !canAffordCoordinationTrimps() || (challengeActive('Trappapalooza') && getPageSetting('rTrappa') && getPageSetting('rTrappaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('rTrappaCoords')))) continue;
 
 		//Other
 		if (!available) continue;
@@ -170,8 +170,8 @@ function RbuyUpgrades() {
 function getNextGoldenUpgrade() {
 
 	const universe = game.global.universe === 1 ? 'h' : 'r';
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
-	const isDaily = game.global.challengeActive === 'Daily';
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
 	const setting = isC3 ? autoTrimpSettings[universe + 'AutoGoldenC3Settings'].value : isDaily ? autoTrimpSettings[universe + 'AutoGoldenDailySettings'].value : autoTrimpSettings[universe + 'AutoGoldenSettings'].value;
 
 	if (setting.length === 0) {

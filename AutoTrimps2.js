@@ -140,7 +140,7 @@ function mainLoop() {
 	if (document.getElementById('tooltipDiv').classList[0] !== undefined && !MAZCheck && document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow')) document.getElementById('tooltipDiv').classList.remove(document.getElementById('tooltipDiv').classList[0])
 
 	if (freeVoids !== game.permaBoneBonuses.voidMaps.tracker || autoLevel !== autoLevelCurrent || shredTimer !== Math.floor(game.global.hemmTimer / 10)) {
-		document.getElementById('freeVoidMap').innerHTML = "Void: " + (game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" + (getPageSetting('rManageEquality') == 2 ? " | Auto Level: " + autoLevel : "") + (game.global.challengeActive === 'Daily' && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' ? " | Shred: " + (Math.max(game.global.hemmTimer / 10).toFixed(0)) + "s" : "");
+		document.getElementById('freeVoidMap').innerHTML = "Void: " + (game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" + (getPageSetting('rManageEquality') == 2 ? " | Auto Level: " + autoLevel : "") + (challengeActive('Daily') && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' ? " | Shred: " + (Math.max(game.global.hemmTimer / 10).toFixed(0)) + "s" : "");
 		freeVoids = game.permaBoneBonuses.voidMaps.tracker
 		autoLevelCurrent = autoLevel;
 		shredTimer = game.global.hemmTimer / 10;
@@ -209,7 +209,7 @@ function mainLoop() {
 	//Jobs
 	buyJobs();
 	//Upgrades
-	if (!(game.global.challengeActive == "Quest" && game.global.world > 5 && game.global.lastClearedCell < 90 && ([5].indexOf(currQuest()) >= 0))) {
+	if (!(challengeActive('Quest') && game.global.world > 5 && game.global.lastClearedCell < 90 && ([5].indexOf(currQuest()) >= 0))) {
 		if (getPageSetting(universeInitial + 'BuyUpgradesNew') != 0) game.global.universe === 2 ? RbuyUpgrades() : buyUpgrades();
 	}
 	//Combat
@@ -248,7 +248,7 @@ function mainLoop() {
 		//Core
 		if (getPageSetting('ATGA2') == true) ATGA2();
 		autoRoboTrimp();
-		if (game.global.challengeActive == "Daily" && getPageSetting('buyheliumy') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
+		if (challengeActive('Daily') && getPageSetting('buyheliumy') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
 		if (getPageSetting('spendmagmite') == 2 && !magmiteSpenderChanged) autoMagmiteSpender();
 		if (getPageSetting('AutoNatureTokens') && game.global.world > 229) autoNatureTokens();
 		if (getPageSetting('autoenlight') && game.global.world > 229 && game.global.uberNature == false) autoEnlight();
@@ -261,34 +261,34 @@ function mainLoop() {
 		if (!game.global.fighting) {
 			if (getPageSetting('fightforever') == 0) fightalways();
 			else if (getPageSetting('fightforever') > 0 && HDRatio <= getPageSetting('fightforever')) fightalways();
-			else if (getPageSetting('cfightforever') == true && (game.global.challengeActive == 'Electricty' || game.global.challengeActive == 'Toxicity' || game.global.challengeActive == 'Nom')) fightalways();
-			else if (getPageSetting('dfightforever') == 1 && game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.empower == 'undefined' && typeof game.global.dailyChallenge.bloodthirst == 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
-			else if (getPageSetting('dfightforever') == 2 && game.global.challengeActive == "Daily" && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
+			else if (getPageSetting('cfightforever') == true && (challengeActive('Electricty') || challengeActive('Toxicity') || challengeActive('Nom'))) fightalways();
+			else if (getPageSetting('dfightforever') == 1 && challengeActive('Daily') && typeof game.global.dailyChallenge.empower == 'undefined' && typeof game.global.dailyChallenge.bloodthirst == 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
+			else if (getPageSetting('dfightforever') == 2 && challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
 		}
-		if (game.global.mapsUnlocked && game.global.challengeActive == "Daily" && getPageSetting('avoidempower') == true && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidempower();
+		if (game.global.mapsUnlocked && challengeActive('Daily') && getPageSetting('avoidempower') == true && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidempower();
 
 		//Stance
-		if ((getPageSetting('UseScryerStance') == true) || (getPageSetting('scryvoidmaps') == true && game.global.challengeActive != "Daily") || (getPageSetting('dscryvoidmaps') == true && game.global.challengeActive == "Daily")) useScryerStance();
-		else if ((getPageSetting('AutoStance') == 3) || (getPageSetting('use3daily') == true && game.global.challengeActive == "Daily")) windStance();
+		if ((getPageSetting('UseScryerStance') == true) || (getPageSetting('scryvoidmaps') == true && !challengeActive('Daily')) || (getPageSetting('dscryvoidmaps') == true && challengeActive('Daily'))) useScryerStance();
+		else if ((getPageSetting('AutoStance') == 3) || (getPageSetting('use3daily') == true && challengeActive('Daily'))) windStance();
 		else if (getPageSetting('AutoStance') == 1) autoStance();
 		else if (getPageSetting('AutoStance') == 2) autoStance2();
 
 		//Spire
-		if (getPageSetting('ExitSpireCell') > 0 && game.global.challengeActive != "Daily" && getPageSetting('IgnoreSpiresUntil') <= game.global.world && game.global.spireActive) exitSpireCell();
-		if (getPageSetting('dExitSpireCell') >= 1 && game.global.challengeActive == "Daily" && getPageSetting('dIgnoreSpiresUntil') <= game.global.world && game.global.spireActive) dailyexitSpireCell();
+		if (getPageSetting('ExitSpireCell') > 0 && !challengeActive('Daily') && getPageSetting('IgnoreSpiresUntil') <= game.global.world && game.global.spireActive) exitSpireCell();
+		if (getPageSetting('dExitSpireCell') >= 1 && challengeActive('Daily') && getPageSetting('dIgnoreSpiresUntil') <= game.global.world && game.global.spireActive) dailyexitSpireCell();
 		if (getPageSetting('SpireBreedTimer') > 0 && getPageSetting('IgnoreSpiresUntil') <= game.global.world) ATspirebreed();
 	}
 
 	//Logic for Universe 2
 	if (game.global.universe == 2) {
 		//Archeology
-		if (getPageSetting('Rarchon') && game.global.challengeActive == "Archaeology") archstring();
+		if (getPageSetting('Rarchon') && challengeActive('Archaeology')) archstring();
 		//Auto Equality Management
 		if (getPageSetting('rManageEquality') == 1) rManageEquality();
 		if (getPageSetting('rManageEquality') == 2) equalityManagement();
 
-		if (game.global.challengeActive == "Daily" && getPageSetting('buyradony') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyradony') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
-		if (game.global.runningChallengeSquared || game.global.challengeActive == 'Mayhem' || game.global.challengeActive == 'Pandemonium') BuySingleRunBonuses();
+		if (challengeActive('Daily') && getPageSetting('buyradony') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyradony') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
+		if (game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) BuySingleRunBonuses();
 	}
 
 	if (getPageSetting('automateSpireAssault') && autoBattle.maxEnemyLevel !== 132)

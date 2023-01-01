@@ -9,19 +9,19 @@ function getPerSecBeforeManual(a) {
 				0 < game.portal.Motivation_II.level && (b *= 1 + game.portal.Motivation_II.level * game.portal.Motivation_II.modifier),
 				0 < game.portal.Meditation.level && (b *= (1 + 0.01 * game.portal.Meditation.getBonusPercent()).toFixed(2)),
 				0 < game.jobs.Magmamancer.owned && "metal" == c && (b *= game.jobs.Magmamancer.getBonusPercent()),
-				"Meditate" == game.global.challengeActive ? (b *= 1.25) : "Size" == game.global.challengeActive && (b *= 1.5),
-				"Toxicity" == game.global.challengeActive)
+				challengeActive('Meditate') ? (b *= 1.25) : challengeActive('Size') && (b *= 1.5),
+				challengeActive('Toxicity'))
 		) {
 			var d = (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
 			b *= 1 + d;
 		}
-		"Balance" == game.global.challengeActive && (b *= game.challenges.Balance.getGatherMult()),
-			"Decay" == game.global.challengeActive && ((b *= 10), (b *= Math.pow(0.995, game.challenges.Decay.stacks))),
-			"Daily" == game.global.challengeActive &&
+		challengeActive('Balance') && (b *= game.challenges.Balance.getGatherMult()),
+			challengeActive('Decay') && ((b *= 10), (b *= Math.pow(0.995, game.challenges.Decay.stacks))),
+			challengeActive('Daily') &&
 			("undefined" != typeof game.global.dailyChallenge.dedication && (b *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength)),
 				"undefined" != typeof game.global.dailyChallenge.famine && "fragments" != c && "science" != c && (b *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength))),
-			"Watch" == game.global.challengeActive && (b /= 2),
-			"Lead" == game.global.challengeActive && 1 == game.global.world % 2 && (b *= 2),
+			challengeActive('Waych') && (b /= 2),
+			challengeActive('Lead') && 1 == game.global.world % 2 && (b *= 2),
 			(b = calcHeirloomBonus("Staff", a + "Speed", b));
 	}
 	return b;
@@ -91,7 +91,7 @@ function getPotencyMod(howManyMoreGenes) {
 	//Quick Trimps
 	if (game.unlocks.quickTrimps) potencyMod *= 2;
 	//Daily mods
-	if (game.global.challengeActive == "Daily") {
+	if (challengeActive('Daily')) {
 		if (typeof game.global.dailyChallenge.dysfunctional !== "undefined") {
 			potencyMod *= dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength);
 		}
@@ -99,7 +99,7 @@ function getPotencyMod(howManyMoreGenes) {
 			potencyMod *= dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks);
 		}
 	}
-	if (game.global.challengeActive == "Toxicity" && game.challenges.Toxicity.stacks > 0) {
+	if (challengeActive('Toxicity') && game.challenges.Toxicity.stacks > 0) {
 		potencyMod *= Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks);
 	}
 	if (game.global.voidBuff == "slowBreed") {
