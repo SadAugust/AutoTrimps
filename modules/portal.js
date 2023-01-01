@@ -438,14 +438,14 @@ function finishChallengeSquared(ignoreVariables) {
 
 	if (game.options.menu.disablePause.enabled && game.options.menu.pauseGame.enabled === 0) {
 		toggleSetting('pauseGame');
+		setTimeout(function pause() {
+			if (game.options.menu.pauseGame.enabled) toggleSetting('pauseGame')
+		}, 100);
 	}
 	downloadSave();
 	//Cancel out of challenge run
 	abandonChallenge();
 	cancelTooltip();
-	if (game.options.menu.pauseGame.enabled === 1) {
-		setTimeout(function pause() { toggleSetting('pauseGame') }, 100);
-	}
 	debug("Finished challenge because we are on zone " + game.global.world, "other", "oil");
 	return;
 }
