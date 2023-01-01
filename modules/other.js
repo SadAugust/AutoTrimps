@@ -96,6 +96,7 @@ function avoidempower() {
 	if (game.global.universe == 1 && armydeath()) {
 		if (typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined') {
 			mapsClicked(true);
+			mapsClicked(true);
 			return;
 		}
 	}
@@ -1117,6 +1118,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt_local *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
 	}
 
+	if (game.global.stringVersion >= '5.9.0' && game.global.challengeActive == "Desolation") amt *= game.challenges.Desolation.trimpResourceMult();
 	if (game.challenges.Nurture.boostsActive())
 		amt_local *= game.challenges.Nurture.getResourceBoost();
 
@@ -1174,6 +1176,10 @@ function calculateParityBonus(workerRatio, heirloom) {
 
 function calcHeirloomBonusLocal(mod, number) {
 	var mod = mod;
+	if (game.global.stringVersion >= '5.9.0') {
+		if (game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.heirlost !== 'undefined')
+			mod *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
+	}
 	if (!mod) return;
 
 	return (number * ((mod / 100) + 1));

@@ -171,6 +171,12 @@ function getTrimpHealth(realHealth, mapType) {
 	health *= game.global.mayhemCompletions > 0 ? game.challenges.Mayhem.getTrimpMult() : 1;
 	//Pandemonium Completions
 	health *= game.global.pandCompletions > 0 ? game.challenges.Pandemonium.getTrimpMult() : 1;
+	//Desolation Completions
+	if (game.global.stringVersion >= '5.9.0') {
+		health *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
+		health *= game.global.challengeActive == "Desolation" ? game.challenges.Desolation.trimpHealthMult() : 1;
+		health *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
+	}
 	//AutoBattle
 	health *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	//Shield (Heirloom)
@@ -409,6 +415,12 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	attack *= game.challenges.Mayhem.getTrimpMult();
 	// Pandemonium Completions
 	attack *= game.challenges.Pandemonium.getTrimpMult();
+	//Desolation Completions
+	if (game.global.stringVersion >= '5.9.0') {
+		attack *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
+		attack *= game.global.challengeActive == "Desolation" ? game.challenges.Desolation.trimpAttackMult() : 1;
+		attack *= game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased ? 10 : 1;
+	}
 	//AutoBattle
 	attack *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	// Heirloom (Shield)
@@ -723,11 +735,14 @@ function calcEnemyBaseAttack(zone, cell, name, type, query) {
 		var part1 = zone > 40 ? 40 : zone;
 		var part2 = zone > 60 ? 20 : zone - 40;
 		var part3 = zone - 60;
+		var part4 = (zone - 300);
 		if (part2 < 0) part2 = 0;
 		if (part3 < 0) part3 = 0;
+		if (part4 < 0) part4 = 0;
 		attack *= Math.pow(1.5, part1);
 		attack *= Math.pow(1.4, part2);
 		attack *= Math.pow(1.32, part3);
+		if (game.global.stringVersion >= '5.9.0') attack *= Math.pow(1.15, part4);
 	}
 	return Math.floor(attack);
 }
@@ -787,6 +802,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	else if (game.global.challengeActive == 'Nurture' && game.buildings.Laboratory.owned > 0) attack *= game.buildings.Laboratory.getEnemyMult();
 	else if (game.global.challengeActive == 'Pandemonium' && type === 'world') attack *= game.challenges.Pandemonium.getBossMult();
 	else if (game.global.challengeActive == 'Pandemonium' && type !== 'world') attack *= game.challenges.Pandemonium.getPandMult();
+	else if (game.global.stringVersion >= '5.9.0' && game.global.challengeActive == 'Desolation') attack *= game.challenges.Desolation.getEnemyMult();
 	else if (game.global.challengeActive == 'Alchemy') attack *= (alchObj.getEnemyStats(false, false)) + 1;
 	else if (game.global.challengeActive == 'Hypothermia') attack *= game.challenges.Hypothermia.getEnemyMult();
 	else if (game.global.challengeActive == 'Glass') attack *= game.challenges.Glass.attackMult();
@@ -973,9 +989,12 @@ function calcEnemyBaseHealth(mapType, zone, cell, name) {
 	if (game.global.universe == 2) {
 		var part1 = (zone > 60) ? 60 : zone;
 		var part2 = (zone - 60);
+		var part3 = (zone - 300);
 		if (part2 < 0) part2 = 0;
+		if (part3 < 0) part3 = 0;
 		health *= Math.pow(1.4, part1);
 		health *= Math.pow(1.32, part2);
+		if (game.global.stringVersion >= '5.9.0') health *= Math.pow(1.15, part3);
 	}
 	//Specific Imp
 	if (name) health *= game.badGuys[name].health;
@@ -1041,6 +1060,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 		health *= game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	}
 	if (game.global.challengeActive == 'Pandemonium') health *= type === 'world' ? game.challenges.Pandemonium.getBossMult() : type !== 'world' ? game.challenges.Pandemonium.getPandMult() : 1;
+	if (game.global.stringVersion >= '5.9.0' && game.global.challengeActive == 'Desolation') health *= game.challenges.Desolation.getEnemyMult();
 	health *= game.global.challengeActive == 'Alchemy' ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	health *= game.global.challengeActive == 'Hypothermia' ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	health *= game.global.challengeActive == 'Glass' ? game.challenges.Glass.healthMult() : 1;
@@ -1342,6 +1362,12 @@ function getTotalHealthMod() {
 	healthMulti *= game.global.mayhemCompletions > 0 ? game.challenges.Mayhem.getTrimpMult() : 1;
 	//Pandemonium Completions
 	healthMulti *= game.global.pandCompletions > 0 ? game.challenges.Pandemonium.getTrimpMult() : 1;
+	//Desolation Completions
+	if (game.global.stringVersion >= '5.9.0') {
+		healthMulti *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
+		healthMulti *= game.global.challengeActive == "Desolation" ? game.challenges.Desolation.trimpHealthMult() : 1;
+		healthMulti *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
+	}
 	//AutoBattle
 	healthMulti *= autoBattle.bonuses.Stats.getMult();
 	// Heirloom Health bonus

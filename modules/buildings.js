@@ -143,6 +143,10 @@ function getPsStringLocal(what, rawNum) {
 		var mult = game.challenges.Pandemonium.getTrimpMult();
 		currentCalc *= mult;
 	}
+	if (game.global.stringVersion >= '5.9.0' && game.global.desoCompletions && what != "fragments") {
+		var mult = game.challenges.Desolation.getTrimpMult();
+		currentCalc *= mult;
+	}
 	if (game.global.challengeActive == "Daily") {
 		var mult = 0;
 		if (typeof game.global.dailyChallenge.dedication !== 'undefined') {
@@ -358,7 +362,7 @@ function buyBuildings() {
 		}
 
 		//Warpstations
-		if (!game.buildings.Warpstation.locked) {
+		if (!game.buildings.Warpstation.locked && getPageSetting('warpstation')) {
 			var skipWarp = false;
 			if (getPageSetting('WarpstationCap')) {
 				var firstGigaOK = MODULES["upgrades"].autoGigas == false || game.upgrades.Gigastation.done > 0;
