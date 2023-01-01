@@ -288,6 +288,7 @@ function radonChallengesSetting() {
 	if (radonHZE >= 150) radonChallenges.push("Pandemonium");
 	if (radonHZE >= 155) radonChallenges.push("Alchemy");
 	if (radonHZE >= 175) radonChallenges.push("Hypothermia");
+	if (game.global.stringVersion >= '5.9.0') radonChallenges.push('Desolation')
 	radonChallenges.push("Custom");
 	if (radonHZE >= 50) radonChallenges.push("Challenge 3");
 
