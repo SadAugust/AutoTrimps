@@ -192,7 +192,7 @@ function c2runnerportal() {
 	if (!game.global.runningChallengeSquared) return;
 	const challengeType = game.global.universe === 2 ? 'RadonHourChallenge' : 'HeliumHourChallenge';
 
-	if (game.global.world >= getPageSetting('c' + portalOppPrefix + 'runnerstart')) {
+	if (game.global.world >= getPageSetting('c' + portalOppPrefix + 'runnerportal')) {
 		if (game.global.runningChallengeSquared)
 			finishChallengeSquared(true);
 		if (autoTrimpSettings[challengeType].selected !== 'None')
@@ -205,7 +205,7 @@ function c2runnerportal() {
 
 function c2runner() {
 	if (!game.global.portalActive) return;
-	if ((portalUniverse === 1 && game.global.highestLevelCleared > 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared > 48)) return;
+	if ((portalUniverse === 1 && game.global.highestLevelCleared < 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared < 48)) return;
 	const portalOppPrefix = game.global.universe === 2 ? 3 : 2;
 	if (!getPageSetting('c' + portalOppPrefix + 'runnerstart')) return;
 	if (getPageSetting('c' + portalOppPrefix + 'runnerportal') <= 0 || getPageSetting('c' + portalOppPrefix + 'runnerpercent') <= 0) return;
