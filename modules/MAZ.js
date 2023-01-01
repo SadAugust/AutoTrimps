@@ -1541,8 +1541,8 @@ function saveATUniqueMapsConfig(setting) {
 			error += " " + name + " can\'t be run below zone 33 cell 50.<br>";
 			errorMessage = true;
 		}
-		if (name.includes('Melting_Point') && (zone < 55 || (zone === 55 && cell < 56))) {
-			error += " Melting Point can\'t be run below zone 55 cell 56.<br>";
+		if (name.includes('Melting_Point') && (zone < 50 || (zone === 50 && cell < 56))) {
+			error += " Melting Point can\'t be run below zone 50 cell 56.<br>";
 			errorMessage = true;
 		}
 		if (name.includes('The_Prison') && zone < 80) {
