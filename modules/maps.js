@@ -167,15 +167,24 @@ function autoMap() {
 	//Uniques
 	let highestMap = null;
 	let lowestMap = null;
+	let optimalMap = null;
 	const runUniques = game.global.universe === 1 ? getPageSetting('AutoMaps') === 1 : getPageSetting('RAutoMaps') === 1;
 	const bionicPool = [];
 	let voidMap = null;
 	let selectedMap = "world";
 
+	var perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
+	var perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
+
 	for (const map of game.global.mapsOwnedArray) {
 		if (!map.noRecycle) {
 			if (!highestMap || map.level > highestMap.level) {
 				highestMap = map;
+			}
+			if (!optimalMap) {
+				if ((rMapSettings.mapLevel + game.global.world) === map.level && rMapSettings.special === map.bonus && map.size === perfSize && map.difficulty === 0.75 && map.loot === perfMapLoot) {
+					optimalMap = map;
+				}
 			}
 			if (!lowestMap || map.level < lowestMap.level) {
 				lowestMap = map;
@@ -199,6 +208,7 @@ function autoMap() {
 		if (currentMap !== '') {
 			mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 			if (voidMap) selectedMap = voidMap.id;
+			else if (optimalMap) selectedMap = optimalMap.id;
 			else if (currentMap === 'rPrestige') selectedMap = "prestigeRaid";
 			else if (currentMap === 'Bionic Raiding') selectedMap = "bionicRaid";
 			else selectedMap = RShouldFarmMapCreation(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
