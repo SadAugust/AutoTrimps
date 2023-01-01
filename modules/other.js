@@ -840,6 +840,7 @@ function equalityManagement() {
 	var runningBerserk = challengeActive('Berserk');
 	var runningExperienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	var runningGlass = challengeActive('Glass');
+	var runningDesolation = challengeActive('Desolation');
 	var runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
 
 	//Perk conditions
@@ -903,6 +904,7 @@ function equalityManagement() {
 	if (runningExperienced) fastEnemy = false;
 	if (runningGlass) fastEnemy = true;
 	if (runningBerserk) fastEnemy = true;
+	if (runningDesolation) fastEnemy = true;
 	if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
 
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality

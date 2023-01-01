@@ -671,7 +671,7 @@ function initializeAllSettings() {
 
 		createSetting('rDesolationStacks', 'D: Stacks', 'Sets the value of stacks that AT will clear until when \'D: HD Ratio\' or \'D: Zone\' are being run. If set to -1 it\'ll act as 0 stacks.', 'value', '-1', null, 'C2');
 
-		createSetting('rDesolationMapIncrease', 'D: Map Increase', 'Will increase the map level of Desolation farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.<br>This setting will make it so that AT doesn\'t check if you can afford the new map level so beware it could cause some issues.', 'value', '-1', null, 'C2');
+		createSetting('rDesolationMapIncrease', 'D: Map Increase', 'Will increase the minimum map level of Desolation farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.', 'value', '-1', null, 'C2');
 	}
 
 	//--------------------------------------------------------------

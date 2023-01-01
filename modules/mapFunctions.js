@@ -2543,10 +2543,10 @@ function Desolation() {
 		mapRepeats = 0;
 	}
 	var rAutoLevel_Repeat = rAutoLevel;
-	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rDesolationSpecial, 10, 0, false);
+	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rDesolationSpecial, 10, (0 + rDesolationMapIncrease), false);
 	if (mapAutoLevel !== Infinity) {
 		if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
-		rDesolationMapLevel = (mapAutoLevel + rDesolationMapIncrease > 10 ? 10 : mapAutoLevel + rDesolationMapIncrease);
+		rDesolationMapLevel = mapAutoLevel;
 	}
 
 	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rDesolationMapLevel || (getCurrentMapObject().bonus !== rDesolationSpecial && (getCurrentMapObject().bonus !== undefined && rDesolationSpecial !== '0')) || game.challenges.Desolation.chilled <= rDesolationMapLevel + 1);
