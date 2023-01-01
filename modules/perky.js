@@ -396,10 +396,6 @@ function display(a) {
 }
 
 function optimize(a) {
-	fluffy = a.fluffy;
-	console.log("Fluffy prestige = " + fluffy.prestige)
-	console.log("Fluffy xp = " + fluffy.xp)
-	console.log(Math.log(0.003 * fluffy.xp / Math.pow(5, fluffy.prestige) + 1) / Math.log(4))
 	function b() {
 		return 1 + +(S.bonus > 0.9) + Math.ceil(10 * S.bonus);
 	}
