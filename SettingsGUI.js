@@ -663,6 +663,17 @@ function initializeAllSettings() {
 	//Wither
 	createSetting('rWither', 'Wither', 'Turn this on if you want to enable AT farming until you can 4 shot your current world cell on Wither.', 'boolean', false, null, 'C2');
 
+	if (game.global.stringVersion >= '5.9.0') {
+		//Mayhem
+		createSetting('rDesolation', 'Desolation', 'Turn on Desolation settings. ', 'boolean', false, null, 'C2');
+		createSetting('rDesolationDestack', 'D: HD Ratio', 'What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Desolation stacks remaining to clear. ', 'value', '-1', null, 'C2');
+		createSetting('rDesolationZone', 'D: Zone', 'What stack you\'d like to start destacking from, can be used in conjunction with \'D: HD Ratio\' but will clear stacks until the value set in \'D: Stacks\'.', 'value', '-1', null, 'C2');
+
+		createSetting('rDesolationStacks', 'D: Stacks', 'Sets the value of stacks that AT will clear until when \'D: HD Ratio\' or \'D: Zone\' are being run. If set to -1 it\'ll act as 0 stacks.', 'value', '-1', null, 'C2');
+
+		createSetting('rDesolationMapIncrease', 'D: Map Increase', 'Will increase the map level of Desolation farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.<br>This setting will make it so that AT doesn\'t check if you can afford the new map level so beware it could cause some issues.', 'value', '-1', null, 'C2');
+	}
+
 	//--------------------------------------------------------------
 
 	//Challenges
@@ -1046,6 +1057,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("rStormStacks", radonon);
 	modifyParentNode_Initial("rPandRespecZone", radonon_panda);
 	modifyParentNode_Initial("rGlassStacks", radonon);
+	if (game.global.stringVersion >= '5.9.0') modifyParentNode_Initial("rWither", radonon);
 
 	//Challenges
 	//Helium Settings
@@ -1922,6 +1934,7 @@ function updateCustomButtons() {
 	var highestZone = game.global.highestRadonLevelCleared;
 	var mayhemCompletions = game.global.mayhemCompletions;
 	var pandCompletions = game.global.pandCompletions;
+	var desolationCompletions = game.global.desoCompletions;
 	var currentChallenge = game.global.challengeActive;
 	var displayAllSettings = getPageSetting('rDisplayAllSettings');
 
@@ -2424,6 +2437,7 @@ function updateCustomButtons() {
 
 	//Smithless
 	radonon && (displayAllSettings || highestZone >= 200) ? turnOn('rSmithless') : turnOff('rSmithless');
+	//Wither
 	radonon && (displayAllSettings || highestZone >= 69) ? turnOn('rWither') : turnOff('rWither');
 
 	//Hypothermia 
@@ -2431,6 +2445,15 @@ function updateCustomButtons() {
 	turnOff('rHypoSettings');
 	turnOff('rHypoDefaultSettings');
 	turnOff('rHypoZone');
+
+	//Mayhem
+	if (game.global.stringVersion >= '5.9.0') {
+		radonon && (displayAllSettings || (highestZone >= 199 && desolationCompletions < 25) || currentChallenge === 'Desolation') ? turnOn('rDesolation') : turnOff('rDesolation');
+		radonon && (displayAllSettings || (highestZone >= 199 && desolationCompletions < 25) || currentChallenge === 'Desolation') && getPageSetting('rDesolation') ? turnOn('rDesolationDestack') : turnOff('rDesolationDestack');
+		radonon && (displayAllSettings || (highestZone >= 199 && desolationCompletions < 25) || currentChallenge === 'Desolation') && getPageSetting('rDesolation') ? turnOn('rDesolationZone') : turnOff('rDesolationZone');
+		radonon && (displayAllSettings || (highestZone >= 199 && desolationCompletions < 25) || currentChallenge === 'Desolation') && getPageSetting('rDesolation') ? turnOn('rDesolationStacks') : turnOff('rDesolationStacks');
+		radonon && (displayAllSettings || (highestZone >= 199 && desolationCompletions < 25) || currentChallenge === 'Desolation') && getPageSetting('rDesolation') ? turnOn('rDesolationMapIncrease') : turnOff('rDesolationMapIncrease');
+	}
 
 	//Scryer
 	!radonon ? turnOn('UseScryerStance') : turnOff('UseScryerStance');
