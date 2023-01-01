@@ -2512,6 +2512,8 @@ function Smithless() {
 	return farmingDetails;
 }
 
+MODULES.mapFunctions.desolationContinueRunning = false;
+
 //Desolation
 function Desolation() {
 
@@ -2520,7 +2522,6 @@ function Desolation() {
 		shouldRun: false,
 		mapName: mapName
 	};
-
 
 	if (game.global.stringVersion < '5.9.0') return farmingDetails;
 	if (!challengeActive('Desolation') || !getPageSetting('rDesolation')) return farmingDetails;
@@ -2535,6 +2536,7 @@ function Desolation() {
 	var rDesolationMapIncrease = getPageSetting('rDesolationMapIncrease') > 0 ? getPageSetting('rDesolationMapIncrease') : 0;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 	var rDesolationSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
+
 	if (game.challenges.Desolation.chilled >= destackStacks && (HDRatio > destackHits || game.global.world >= destackZone))
 		rShouldDesolation = true;
 
@@ -2547,6 +2549,19 @@ function Desolation() {
 	if (mapAutoLevel !== Infinity) {
 		if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 		rDesolationMapLevel = mapAutoLevel;
+	}
+	if (!rShouldDesolation && (MODULES.mapFunctions.desolationContinueRunning || (game.global.mapsActive && rMapSettings.mapName === 'Desolation Destacking'))) {
+		if (game.challenges.Desolation.chilled > 0) {
+			rShouldDesolation = true;
+			MODULES.mapFunctions.desolationContinueRunning = true;
+		}
+		if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) {
+			if (game.global.mapBonus === 10) {
+				mapsClicked(true);
+				recycleMap();
+			}
+			MODULES.mapFunctions.desolationContinueRunning = false;
+		}
 	}
 
 	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rDesolationMapLevel || (getCurrentMapObject().bonus !== rDesolationSpecial && (getCurrentMapObject().bonus !== undefined && rDesolationSpecial !== '0')) || game.challenges.Desolation.chilled <= rDesolationMapLevel + 1);

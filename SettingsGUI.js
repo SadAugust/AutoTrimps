@@ -669,7 +669,7 @@ function initializeAllSettings() {
 		createSetting('rDesolationDestack', 'D: HD Ratio', 'What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Desolation stacks remaining to clear. ', 'value', '-1', null, 'C2');
 		createSetting('rDesolationZone', 'D: Zone', 'What stack you\'d like to start destacking from, can be used in conjunction with \'D: HD Ratio\' but will clear stacks until the value set in \'D: Stacks\'.', 'value', '-1', null, 'C2');
 
-		createSetting('rDesolationStacks', 'D: Stacks', 'Sets the value of stacks that AT will clear until when \'D: HD Ratio\' or \'D: Zone\' are being run. If set to -1 it\'ll act as 0 stacks.', 'value', '-1', null, 'C2');
+		createSetting('rDesolationStacks', 'D: Stacks', 'Sets the minimum stacks that AT will start to clear from when \'D: HD Ratio\' or \'D: Zone\' are being run. If set to -1 it\'ll act as 0 stacks. WILL CLEAR TO 0 STACKS WHEN IT STARTS RUNNING.', 'value', '-1', null, 'C2');
 
 		createSetting('rDesolationMapIncrease', 'D: Map Increase', 'Will increase the minimum map level of Desolation farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.', 'value', '-1', null, 'C2');
 	}
