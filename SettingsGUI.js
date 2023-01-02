@@ -649,7 +649,7 @@ function initializeAllSettings() {
 	createSetting('RPandemoniumAEZone', 'P AE: Zone', 'Which zone you would like to start farming as much gear as possible from.', 'value', '-1', null, 'C2');
 	createSetting('PandemoniumFarmLevel', 'P AE: Map Level', 'The map level for farming Large Metal & Huge Caches.', 'value', '1', null, 'C2');
 	createSetting('RhsPandStaff', 'P: Staff', 'The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.', 'textValue', 'undefined', null, 'C2');
-	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium.', 'value', '-1', null, 'C2');
+	createSetting('RPandemoniumMP', 'P: Melting Point', 'How many smithies to run Melting Point at during Pandemonium. <b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS</b>', 'value', '-1', null, 'C2');
 	createSetting('rPandRespec', 'P: Respec', 'Turn this on to automate respeccing during Pandemonium. Be warned that this will spend bones to purchase bone portals if one is not available. <br><br>Will only function properly if the Pandemonium AutoEquip and destacking settings are all setup appropriately.<br><br>The respeccing will use the games preset system and will use Preset 2 for your destacking perk spec and Preset 3 for your farming perk spec.', 'boolean', false, null, 'C2');
 	createSetting('rPandRespecZone', 'P: Respec Zone', 'The zone you\'d like to start respeccing from.', 'value', '-1', null, 'C2');
 
@@ -668,10 +668,9 @@ function initializeAllSettings() {
 		createSetting('rDesolation', 'Desolation', 'Turn on Desolation settings. ', 'boolean', false, null, 'C2');
 		createSetting('rDesolationDestack', 'D: HD Ratio', 'What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Desolation stacks remaining to clear. ', 'value', '-1', null, 'C2');
 		createSetting('rDesolationZone', 'D: Zone', 'What stack you\'d like to start destacking from, can be used in conjunction with \'D: HD Ratio\' but will clear stacks until the value set in \'D: Stacks\'.', 'value', '-1', null, 'C2');
-
 		createSetting('rDesolationStacks', 'D: Stacks', 'Sets the minimum stacks that AT will start to clear from when \'D: HD Ratio\' or \'D: Zone\' are being run. If set to -1 it\'ll act as 0 stacks. WILL CLEAR TO 0 STACKS WHEN IT STARTS RUNNING.', 'value', '-1', null, 'C2');
-
 		createSetting('rDesolationMapIncrease', 'D: Map Increase', 'Will increase the minimum map level of Desolation farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.', 'value', '-1', null, 'C2');
+		createSetting('rDesolationMP', 'D: Melting Point', 'How many smithies to run Melting Point at during Desolation. <b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS</b>', 'value', '-1', null, 'C2');
 	}
 
 	//--------------------------------------------------------------
