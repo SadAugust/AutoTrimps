@@ -950,6 +950,10 @@ function initializeAllSettings() {
 
 	createSetting('rAutoStructureSetting', '', '', 'textValue', getAutoStructureSetting().enabled, 'Legacy')
 
+	createSetting('sitInMaps', 'Sit in maps', 'Will cause AT to go sit in the map chamber when enabled. The \'Sit In Zone\' setting must be setup for this to work properly.', 'boolean', false, null, 'Display');
+	createSetting('sitInMaps_Zone', 'SIM: Zone', 'AT will go to the map chamber and stop running any maps at this zone.', 'value', -1, null, 'Display');
+	createSetting('sitInMaps_Cell', 'SIM: Cell', 'AT will go to the map chamber and stop running any maps after this cell has been reached.', 'value', -1, null, 'Display');
+
 	//Export/Import/Default
 	createSetting('ImportAutoTrimps', 'Import AutoTrimps', 'Import your AutoTrimps Settings. Asks you to name it as a profile afterwards.', 'infoclick', 'ImportAutoTrimps', null, 'Import Export');
 	createSetting('ExportAutoTrimps', 'Export AutoTrimps', 'Export your AutoTrimps Settings as a output string text formatted in JSON.', 'infoclick', 'ExportAutoTrimps', null, 'Import Export');
@@ -2537,6 +2541,8 @@ function updateCustomButtons() {
 	!radonon ? turnOn("showhehr") : turnOff("showhehr");
 	radonon ? turnOn("Rshowautomapstatus") : turnOff("Rshowautomapstatus");
 	radonon ? turnOn("Rshowrnhr") : turnOff("Rshowrnhr");
+	getPageSetting('sitInMaps') ? turnOn('sitInMaps_Zone') : turnOff('sitInMaps_Zone');
+	getPageSetting('sitInMaps') ? turnOn('sitInMaps_Cell') : turnOff('sitInMaps_Cell');
 
 	//Heirlooms
 

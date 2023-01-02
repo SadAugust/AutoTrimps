@@ -59,6 +59,13 @@ function updateAutoMapsStatus(get) {
 }
 
 function autoMap() {
+
+	if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
+		if (!game.global.preMapsActive) mapsClicked();
+		return;
+
+	}
+
 	const universeInitial = game.global.universe === 2 ? 'R' : '';
 	if (!getPageSetting(universeInitial + 'AutoMaps') > 0 && game.global.mapsUnlocked) return;
 
