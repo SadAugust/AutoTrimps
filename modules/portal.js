@@ -156,7 +156,7 @@ function dailyAutoPortal() {
 					if (autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected != 'None' && !getPageSetting(portalPrefix + 'daily'))
 						doPortal(autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected);
 					else if (autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected != 'None' && getPageSetting(portalPrefix + 'daily'))
-						doPortal(autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected, autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected);
+						doPortal(autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected);
 					else
 						doPortal();
 				}, MODULES["portal"].timeout + 100);
@@ -191,10 +191,7 @@ function c2runnerportal() {
 	if (getPageSetting('c' + portalOppPrefix + 'runnerportal') <= 0) return;
 	if (!game.global.runningChallengeSquared) return;
 	const challengeType = game.global.universe === 2 ? 'RadonHourChallenge' : 'HeliumHourChallenge';
-
 	if (game.global.world >= getPageSetting('c' + portalOppPrefix + 'runnerportal')) {
-		if (game.global.runningChallengeSquared)
-			finishChallengeSquared(true);
 		if (autoTrimpSettings[challengeType].selected !== 'None')
 			doPortal(autoTrimpSettings[challengeType].selected);
 		else
@@ -284,6 +281,7 @@ function doPortal(challenge, squared) {
 		c2runner();
 		if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
 	}
+	var universe = portalUniverse === 2 ? 'R' : '';
 	//Running Dailies
 	if (getPageSetting(universePrefix + 'AutoStartDaily') && !challengeSquaredMode) {
 		//Swapping to other universe if necessary to run daily.
@@ -339,6 +337,13 @@ function doPortal(challenge, squared) {
 		//Swapping to opposite universe if goal is to run a challenge there
 		if (getPageSetting(portalPrefix + 'daily') && portalUniverse === portalPrefix.charAt(1) && challenge === autoTrimpSettings[universeOppPrefix + 'dHeliumHourChallenge'].selected) swapPortalUniverse();
 		if (squared) toggleChallengeSquared();
+
+		if (autoTrimpSettings[universe + 'dHeliumHourChallenge'].selected.includes('Challenge ')) {
+			if (autoTrimpSettings[universe + 'dC2Challenge'].selected !== 'None') {
+				toggleChallengeSquared();
+				challenge = autoTrimpSettings[universe + 'dC2Challenge'].selected;
+			}
+		}
 		selectChallenge(challenge);
 	}
 
@@ -430,8 +435,10 @@ function finishChallengeSquared(ignoreVariables) {
 	if (!game.global.runningChallengeSquared) return;
 	if (ignoreVariables) ignoreVariables = false;
 	if (!ignoreVariables) {
-		const challengeType = game.global.universe === 2 ? 'C3' : 'C2';
-		var finishChallenge = getPageSetting("Finish" + challengeType);
+		const challengeType = game.global.universe === 2 ? '3' : '2';
+		var finishChallenge = getPageSetting("Finish C" + challengeType);
+
+		if (getPageSetting('c' + challengeType + 'runnerstart')) finishChallenge = getPageSetting('c' + challengeType + 'runnerportal');
 		if (finishChallenge === -1) return;
 		if (game.global.world < finishChallenge) return;
 	}
