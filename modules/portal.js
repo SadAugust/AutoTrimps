@@ -431,17 +431,15 @@ function challengeInfo() {
 	challengeCurrentZone = game.stats.zonesCleared.value;
 }
 
-function finishChallengeSquared(ignoreVariables) {
-	if (!game.global.runningChallengeSquared) return;
-	if (ignoreVariables) ignoreVariables = false;
-	if (!ignoreVariables) {
-		const challengeType = game.global.universe === 2 ? '3' : '2';
-		var finishChallenge = getPageSetting("Finish C" + challengeType);
+function finishChallengeSquared() {
 
-		if (getPageSetting('c' + challengeType + 'runnerstart')) finishChallenge = getPageSetting('c' + challengeType + 'runnerportal');
-		if (finishChallenge === -1) return;
-		if (game.global.world < finishChallenge) return;
-	}
+	if (!game.global.runningChallengeSquared) return;
+	const challengeType = game.global.universe === 2 ? '3' : '2';
+	var finishChallenge = getPageSetting("FinishC" + challengeType);
+
+	if (getPageSetting('c' + challengeType + 'runnerstart') && (getPageSetting('c' + challengeType + 'runnerportal') < finishChallenge)) finishChallenge = getPageSetting('c' + challengeType + 'runnerportal');
+	if (finishChallenge === -1 || game.global.world === 1) return;
+	if (game.global.world < finishChallenge) return;
 
 	if (game.options.menu.disablePause.enabled && game.options.menu.pauseGame.enabled === 0) {
 		toggleSetting('pauseGame');
