@@ -191,7 +191,9 @@ function c2runnerportal() {
 	if (getPageSetting('c' + portalOppPrefix + 'runnerportal') <= 0) return;
 	if (!game.global.runningChallengeSquared) return;
 	const challengeType = game.global.universe === 2 ? 'RadonHourChallenge' : 'HeliumHourChallenge';
+
 	if (game.global.world >= getPageSetting('c' + portalOppPrefix + 'runnerportal')) {
+		finishChallengeSquared();
 		if (autoTrimpSettings[challengeType].selected !== 'None')
 			doPortal(autoTrimpSettings[challengeType].selected);
 		else
@@ -242,8 +244,10 @@ function c2runner() {
 	const worldType = game.global.universe === 2 ? 'highestRadonLevelCleared' : 'highestLevelCleared';
 	for (var x = 0; x < challengeArray.length; x++) {
 		if ((100 * (game.c2[challengeArray[x]] / (game.global[worldType] + 1))) < getPageSetting('c' + portalOppPrefix + 'runnerpercent')) {
-			debug(challengeArray[x]);
-			if (!challengeSquaredMode) toggleChallengeSquared();
+			if (challengeActive(challengeArray[x]))
+				continue;
+			if (!challengeSquaredMode)
+				toggleChallengeSquared();
 			selectChallenge(challengeArray[x]);
 			debug(universePrefix + "Runner: Starting " + universePrefix + "Challenge " + challengeArray[x]);
 			return;
@@ -437,7 +441,8 @@ function finishChallengeSquared() {
 	const challengeType = game.global.universe === 2 ? '3' : '2';
 	var finishChallenge = getPageSetting("FinishC" + challengeType);
 
-	if (getPageSetting('c' + challengeType + 'runnerstart') && (getPageSetting('c' + challengeType + 'runnerportal') < finishChallenge)) finishChallenge = getPageSetting('c' + challengeType + 'runnerportal');
+	if (getPageSetting('c' + challengeType + 'runnerstart') && (getPageSetting('c' + challengeType + 'runnerportal') < finishChallenge))
+		finishChallenge = getPageSetting('c' + challengeType + 'runnerportal');
 	if (finishChallenge === -1 || game.global.world === 1) return;
 	if (game.global.world < finishChallenge) return;
 
