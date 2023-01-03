@@ -1792,10 +1792,12 @@ function Quest() {
 									currQuest() == 9 ? 9 :
 										0;
 
+
+	var rQuestJobRatio = '1,1,1';
 	if (rShouldQuest) {
 		var rQuestArray = rShouldQuest == 1 || rShouldQuest == 4 ? ['lsc', '1'] : rShouldQuest == 2 ? ['lwc', '0,1'] : rShouldQuest == 3 || rShouldQuest == 7 ? ['lmc', '0,0,1'] : rShouldQuest === 5 ? ['fa', '0,0,0,1'] : ['fa', '0,0,0,0']
 		var rQuestSpecial = rQuestArray[0]
-		var rQuestJobRatio = rQuestArray[1];
+		rQuestJobRatio = rQuestArray[1];
 		var rQuestMax = rShouldQuest === 6 ? 10 : null;
 		var rQuestMin = rShouldQuest === 6 ? 0 : null;
 
