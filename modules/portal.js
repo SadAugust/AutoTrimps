@@ -338,7 +338,7 @@ function doPortal(challenge, squared) {
 		if (getPageSetting(portalPrefix + 'daily') && portalUniverse === portalPrefix.charAt(1) && challenge === autoTrimpSettings[universeOppPrefix + 'dHeliumHourChallenge'].selected) swapPortalUniverse();
 		if (squared) toggleChallengeSquared();
 
-		if (autoTrimpSettings[universe + 'dHeliumHourChallenge'].selected.includes('Challenge ')) {
+		if (challenge.includes('Challenge ') && autoTrimpSettings[universe + 'dHeliumHourChallenge'].selected.includes('Challenge ')) {
 			if (autoTrimpSettings[universe + 'dC2Challenge'].selected !== 'None') {
 				toggleChallengeSquared();
 				challenge = autoTrimpSettings[universe + 'dC2Challenge'].selected;
