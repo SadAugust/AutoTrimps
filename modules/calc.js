@@ -579,7 +579,6 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	if (minMaxAvg == "max") return Math.ceil(max);
 
 	return avg;
-
 }
 
 function calcSpire(what, cell, name) {
@@ -833,6 +832,10 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 		//Empower
 		if (typeof game.global.dailyChallenge.empower !== 'undefined' && type === 'world')
 			attack *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
+
+		//Empower voids
+		if (game.global.stringVersion >= '5.9.0' && typeof game.global.dailyChallenge.empoweredVoid !== 'undefined' && type === 'void')
+			attack *= dailyModifiers.empoweredVoid.getMult(game.global.dailyChallenge.empoweredVoid.strength);
 	}
 
 	//Obliterated and Eradicated
@@ -1073,6 +1076,9 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 		health *= typeof game.global.dailyChallenge.badHealth !== 'undefined' ? dailyModifiers.badHealth.getMult(game.global.dailyChallenge.badHealth.strength, game.global.dailyChallenge.badHealth.stacks) : 1;
 		//Bad Map Health
 		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && type !== 'world' ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
+		//Empower voids
+		if (game.global.stringVersion >= '5.9.0' && typeof game.global.dailyChallenge.empoweredVoid !== 'undefined' && type === 'void')
+			health *= dailyModifiers.empoweredVoid.getMult(game.global.dailyChallenge.empoweredVoid.strength);
 	}
 
 	//Obliterated + Eradicated
