@@ -223,10 +223,10 @@ function autoMap() {
 		}
 	}
 
-	//Map Repeat -- NEEDS REWRITTEN
+	//Map Repeat
 	if (!game.global.preMapsActive && game.global.mapsActive) {
 		//Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
-		if (rShouldMap && currentMap === 'rPrestige' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && Rgetequips(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > PerfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
+		if (rShouldMap && currentMap === 'rPrestige' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > PerfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
 			var maplevel = getCurrentMapObject().level
 			mapsClicked();
 			recycleMap();
@@ -279,7 +279,7 @@ function autoMap() {
 		if (selectedMap == "world") {
 			mapsClicked();
 		} else if (selectedMap == "prestigeRaid") {
-			rRunRaid();
+			rRunRaid(rMapSettings);
 		} else if (selectedMap == "bionicRaid") {
 			runBionicRaiding(bionicPool);
 		} else if (selectedMap == "create") {

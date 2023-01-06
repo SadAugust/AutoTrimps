@@ -582,8 +582,10 @@ ul.tab li a:hover {
 .windowWorldRaiding,
 .windowCellRaiding,
 .windowRunTypeRaiding,
+.windowPrestigeGoalRaiding,
 .windowRaidingDropdown,
 .windowRaidingZoneRaiding,
+.windowIncrementMaps,
 .windowRecycle {
 	display: inline-block;
 	padding-left: 1%;
@@ -599,11 +601,11 @@ ul.tab li a:hover {
 }
 
 .windowWorldRaiding {
-	width: 14%;
+	width: 8%;
 }
 
 .windowCellRaiding {
-	width: 14%;
+	width: 8%;
 }
 
 .windowRaidingDropdown {
@@ -611,27 +613,35 @@ ul.tab li a:hover {
 }
 
 .windowRaidingZoneRaiding {
-	width: 14%;
+	width: 8%;
 }
 
 .windowRecycle {
-	width: 15%;
+	width: 8%;
+}
+
+.windowIncrementMaps {
+	width: 8%;
+}
+
+.windowPrestigeGoalRaiding {
+	width: 22%;
 }
 
 .windowRunTypeRaiding {
-	width: 34%;
+	width: 30%;
 }
 
 .windowChallengeOnRaiding .windowChallengeRaiding,
 .windowChallenge3OnRaiding .windowChallenge3Raiding {
 	display: inline-block;
-	width: 17%;
+	width: 14%;
 }
 
 .windowChallenge3OnRaiding .windowRunTypeRaiding,
 .windowChallengeOnRaiding .windowRunTypeRaiding {
 	display: inline-block;
-	width: 17%;
+	width: 16%;
 }
 
 .windowChallengeOffRaiding .windowChallengeRaiding,
@@ -645,6 +655,7 @@ ul.tab li a:hover {
 .windowWorldBionicRaiding,
 .windowCellBionicRaiding,
 .windowRepeatEveryBionicRaiding,
+.windowPrestigeGoalBionicRaiding,
 .windowRunTypeBionicRaiding,
 .windowRaidingZoneBionicRaiding {
 	display: inline-block;
@@ -661,35 +672,39 @@ ul.tab li a:hover {
 }
 
 .windowWorldBionicRaiding {
-	width: 14%;
+	width: 9%;
 }
 
 .windowCellBionicRaiding {
-	width: 14%;
+	width: 9%;
 }
 
 .windowRepeatEveryBionicRaiding {
-	width: 14%;
+	width: 9%;
 }
 
 .windowRaidingZoneBionicRaiding {
-	width: 14%;
+	width: 9%;
+}
+
+.windowPrestigeGoalBionicRaiding {
+	width: 21%;
 }
 
 .windowRunTypeBionicRaiding {
-	width: 34%;
+	width: 33%;
 }
 
 .windowChallengeOnBionicRaiding .windowChallengeBionicRaiding,
 .windowChallenge3OnBionicRaiding .windowChallenge3BionicRaiding {
 	display: inline-block;
-	width: 17%;
+	width: 19%;
 }
 
 .windowChallenge3OnBionicRaiding .windowRunTypeBionicRaiding,
 .windowChallengeOnBionicRaiding .windowRunTypeBionicRaiding {
 	display: inline-block;
-	width: 17%;
+	width: 14%;
 }
 
 .windowChallengeOffBionicRaiding .windowChallengeBionicRaiding,

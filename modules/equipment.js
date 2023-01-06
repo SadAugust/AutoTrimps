@@ -277,42 +277,37 @@ function equipsToGet(targetZone, targetPrestige) {
 	//Figure out how many equips to farm for
 	let mapsToRun = 0;
 	let prestigeToFarmFor = 0;
-	let mapLevel = 0;
 
-	const divideBy = (game.global.sLevel <= 3 || challengeActive('Mapology')) ? 5 : 10;
+	const prestigeInterval = (game.global.universe === 2 && game.buildings.Microchip.owned <= 3) ? 5 : (game.global.sLevel <= 3 || challengeActive('Mapology')) ? 5 : 10;
 
+	//Loops through all prestiges
 	for (const p of prestigeList) {
+		//Skip locked equips (Panda)
 		if (game.equipment[game.upgrades[p].prestiges].locked) continue;
 		const prestigeUnlock = game.mapUnlocks[p];
-		const pMapLevel = prestigeUnlock.last + 5;
-		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && pMapLevel <= targetZone) {
-			mapsToRun += Math.max(1, Math.ceil((targetZone - pMapLevel) / divideBy));
-			prestigeToFarmFor += Math.floor((targetZone - (pMapLevel - 5)) / 5);
+		let targetZoneLoop = targetZone;
+
+		if (prestigeInterval === 10 &&
+			((targetZoneLoop % 10) < (game.mapUnlocks[p].last % 10)) &&
+			((targetZoneLoop % 10) >= (game.mapUnlocks[p].last % 10) - 5)
+		) {
+			targetZoneLoop -= targetZoneLoop % 10;
+			targetZoneLoop += game.mapUnlocks[p].last % 10;
+		}
+
+		//Last prestige obtained (maplevel) for this equip
+		var pMapLevel = prestigeUnlock.last + 5;
+		//Running if statement if goal zone is greater than or equal to last prestige unlock
+		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && (pMapLevel - prestigeInterval) <= targetZoneLoop) {
+			//Adding maps to run count
+			mapsToRun += Math.max(1, Math.ceil((targetZoneLoop - pMapLevel) / prestigeInterval));
+			//Figuring out prestiges remaining (currently displays wrong value)
+			prestigeToFarmFor += Math.max(0, (Math.floor((targetZoneLoop - (pMapLevel - 5)) / 5)));
 		}
 		if (p === targetPrestige) break;
 	}
 
-	return [prestigeToFarmFor, mapsToRun, mapLevel];
-}
-
-function Rgetequips(map, special) {
-	var specialCount = 0;
-	var unlocksObj;
-	var world;
-	unlocksObj = game.mapUnlocks;
-
-	world = map;
-	for (var item in unlocksObj) {
-		var special = unlocksObj[item];
-		if (!special.prestige) continue;
-		if (special.locked) continue;
-		if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(game.upgrades[item].prestiges)) continue;
-		if (special.last <= (world - 5)) {
-			specialCount += Math.floor((world - special.last) / 5);
-			continue;
-		}
-	}
-	return specialCount;
+	return [prestigeToFarmFor, mapsToRun];
 }
 
 //Working out cheapestt Equips & Prestiges

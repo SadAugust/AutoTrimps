@@ -317,7 +317,7 @@ function VoidMaps() {
 			if (module.rVoidHDRatio === Infinity) module.rVoidHDRatio = HDRatio;
 			if (module.rVoidVHDRatio === Infinity) module.rVoidVHDRatio = voidHDRatio;
 			module.rVoidHDIndex = y;
-			module.rVoidHDIndex = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
+			module.rVoidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
 			break;
 		}
 		else
@@ -1170,13 +1170,12 @@ function MapDestacking() {
 }
 
 //Prestige variables == TO GET SORTED LATER!
-var RAMPfragmappy = undefined;
-var RAMPprefragmappy = undefined;
+var prestigeFragMapID = undefined;
 var RAMPpMap = new Array(5);
 var RAMPrepMap = new Array(5);
 var RAMPmapbought = [[false], [false], [false], [false], [false]];
 RAMPmapbought.fill(false); //Unsure if necessary - Need to test
-var RAMPfragmappybought = false;
+var prestigeFragMapBought = false;
 var RAMPfragfarming = false;
 var runningPrestigeMaps = false;
 
@@ -1203,9 +1202,12 @@ function PrestigeRaiding() {
 
 	for (var y = 0; y < rRaidingBaseSetting.length; y++) {
 		const currSetting = rRaidingBaseSetting[y];
-		if (!currSetting.active || game.global.world < currSetting.world || game.global.lastClearedCell + 2 < currSetting.cell || Rgetequips(currSetting.raidingzone, false) === 0) {
+		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? RequipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
+		var raidZones = currSetting.raidingzone
+		if (!currSetting.active || game.global.world < currSetting.world || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
+		if (equipsToGet(raidZones, targetPrestige)[0] === 0) continue;
 		if (currSetting.runType !== 'All') {
 			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
 				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
@@ -1222,36 +1224,47 @@ function PrestigeRaiding() {
 	if (rRaidingIndex >= 0) {
 		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
 		var rRaidingSettings = rRaidingBaseSetting[rRaidingIndex];
-		raidzones = rRaidingSettings.raidingzone;
+		var raidzones = rRaidingSettings.raidingzone;
 		var rPRRecycle = rRaidingDefaultSetting.recycle;
 		var rPRFragFarm = rRaidingSettings.raidingDropdown;
+		var incrementMaps = rRaidingDefaultSetting.incrementMaps;
 
-		if (Rgetequips(raidzones, false) > 0) {
+		if (equipsToGet(raidZones, targetPrestige)[0] > 0) {
 			rShouldPrestigeRaid = true;
 		}
 
-		var status = 'Prestige Raiding: ' + Rgetequips(raidzones, false) + ' items remaining';
+		var special = getAvailableSpecials('p');
+		var status = 'Prestige Raiding: ' + equipsToGet(raidZones, targetPrestige)[0] + ' items remaining';
 		var repeat = false;
+
+		var repeat = !(
+			(game.global.mapsActive && (
+				equipsToGet(getCurrentMapObject().level, targetPrestige)[1] >= (getCurrentMapObject().bonus === 'p' ? 2 : 1))
+			)
+		);
 
 		farmingDetails.shouldRun = rShouldPrestigeRaid;
 		farmingDetails.mapName = mapName;
 		farmingDetails.recycle = rPRRecycle;
+		farmingDetails.prestigeGoal = targetPrestige;
 		farmingDetails.fragSetting = rPRFragFarm;
-		farmingDetails.repeat = !repeat
+		farmingDetails.raidzones = raidzones;
+		farmingDetails.special = special;
+		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
+		farmingDetails.incrementMaps = incrementMaps;
 	}
 
 
 	//Resetting variables and recycling the maps used
 	if (!rShouldPrestigeRaid && (currentMap === mapName || (RAMPrepMap[0] != undefined || RAMPrepMap[1] != undefined || RAMPrepMap[2] != undefined || RAMPrepMap[3] != undefined || RAMPrepMap[4] != undefined))) {
-		RAMPfragmappy = undefined;
-		RAMPprefragmappy = undefined;
-		RAMPfragmappybought = false;
+		prestigeFragMapID = undefined;
+		prestigeFragMapBought = false;
 		for (var x = 0; x < 5; x++) {
 			RAMPpMap[x] = undefined;
 			RAMPmapbought[x] = undefined;
 
-			if (RAMPrepMap[x] != undefined) {
+			if (RAMPrepMap[x] != undefined && game.global.preMapsActive) {
 				if (autoTrimpSettings.rRaidingDefaultSettings.value.recycle) {
 					recycleMap(getMapIndex(RAMPrepMap[x]));
 				}
@@ -1264,48 +1277,62 @@ function PrestigeRaiding() {
 }
 
 //Running Prestige Raid Code
-function rRunRaid() {
+function rRunRaid(raidingSettings) {
+	if (!raidingSettings) return;
+	if (raidingSettings.mapName !== 'rPrestige') return;
 	var RAMPfragcheck = true;
-	rPRFragFarm = rMapSettings.fragSetting;
+	var rPRFragFarm = raidingSettings.fragSetting;
+	const targetPrestige = raidingSettings.prestigeGoal
+	var raidzones = raidingSettings.raidzones;
+	var equipsToFarm = equipsToGet(raidzones, targetPrestige)[0];
+	var incrementMaps = raidingSettings.incrementMaps;
+
+	while (equipsToFarm === equipsToGet(raidzones - 1, targetPrestige)[0]) {
+		raidzones--;
+	}
+
+	const special = raidingSettings.special;
+	var RAMPfragfarming = false;
+	const canAffordMaps = prestigeTotalFragCost(raidzones, targetPrestige, raidzones, special);
 	if (rPRFragFarm > 0) {
-		if (RAMPfrag(raidzones, rPRFragFarm) == true) {
+		if (canAffordMaps) {
 			RAMPfragcheck = true;
-			RAMPfragfarming = false;
-		} else if (RAMPfrag(raidzones, rPRFragFarm) == false && !RAMPmapbought[0] && !RAMPmapbought[1] && !RAMPmapbought[2] && !RAMPmapbought[3] && !RAMPmapbought[4]) {
+			//If can't afford cost of maps we want to farm then run a fragment farming map until we can
+		} else if (!canAffordMaps && !RAMPmapbought[0]) {
 			RAMPfragfarming = true;
 			RAMPfragcheck = false;
-			if (!RAMPfragcheck && RAMPfragmappy == undefined && !RAMPfragmappybought && game.global.preMapsActive) {
+			if (!RAMPfragcheck && prestigeFragMapID == undefined && !prestigeFragMapBought && game.global.preMapsActive) {
 				debug("Check complete for frag map");
 				fragmap();
 				if ((updateMapCost(true) <= game.resources.fragments.owned)) {
 					buyMap();
-					RAMPfragmappybought = true;
-					if (RAMPfragmappybought) {
-						RAMPfragmappy = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-						debug("Frag map bought");
+					prestigeFragMapBought = true;
+					if (prestigeFragMapBought) {
+						prestigeFragMapID = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
+						debug("Prestige Raiding fragment farming map bought");
 					}
 				}
 			}
-			if (!RAMPfragcheck && game.global.preMapsActive && !game.global.mapsActive && RAMPfragmappybought && RAMPfragmappy != undefined) {
-				debug("Running frag map");
-				selectedMap = RAMPfragmappy;
-				selectMap(RAMPfragmappy);
+			if (!RAMPfragcheck && game.global.preMapsActive && !game.global.mapsActive && prestigeFragMapBought && prestigeFragMapID != undefined) {
+				debug("Prestige Raiding running fragment farming map");
+				selectedMap = prestigeFragMapID;
+				selectMap(prestigeFragMapID);
 				runMap();
-				RAMPprefragmappy = RAMPfragmappy;
-				RAMPfragmappy = undefined;
+				var RAMPprefragmappy = prestigeFragMapID;
+				prestigeFragMapID = undefined;
 			}
-			if (!RAMPfragcheck && game.global.mapsActive && RAMPfragmappybought && RAMPprefragmappy != undefined) {
-				if (RAMPfrag(raidzones, rPRFragFarm) == false) {
+			if (!RAMPfragcheck && game.global.mapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
+				if (!canAffordMaps) {
 					if (!game.global.repeatMap) {
 						repeatClicked();
 					}
-				} else if (RAMPfrag(raidzones, rPRFragFarm) == true) {
+				} else {
 					if (game.global.repeatMap) {
 						repeatClicked();
 						mapsClicked(true);
 					}
-					if (game.global.preMapsActive && RAMPfragmappybought && RAMPprefragmappy != undefined) {
-						RAMPfragmappybought = false;
+					if (game.global.preMapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
+						prestigeFragMapBought = false;
 					}
 					if (RAMPprefragmappy != undefined) {
 						recycleMap(getMapIndex(RAMPprefragmappy));
@@ -1321,20 +1348,33 @@ function rRunRaid() {
 		}
 	}
 	if (RAMPfragcheck) {
-		raiding = rPRFragFarm == 2 ? RAMPplusPresfragmax : rPRFragFarm == 1 ? RAMPplusPresfragmin : RAMPplusPres;
 		document.getElementById("mapLevelInput").value = game.global.world;
 		incrementMapLevel(1);
-		for (var x = 0; x < 5; x++) {
-			if (RAMPpMap[x] == undefined && !RAMPmapbought[x] && game.global.preMapsActive && RAMPshouldrunmap(x, raidzones)) {
-				raiding(x, raidzones);
-				if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-					buyMap();
-					RAMPmapbought[x] = true;
-					if (RAMPmapbought[x]) {
-						RAMPpMap[x] = (game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
-						RAMPMapsRun = x;
-						debug("Map " + [(x + 1)] + " bought");
+		if (incrementMaps) {
+			for (var x = 0; x < 5; x++) {
+				if (RAMPpMap[x] == undefined && !RAMPmapbought[x] && game.global.preMapsActive && prestigeMapHasEquips(x, raidzones, targetPrestige)) {
+					prestigeRaidingSliders(x, raidzones, special);
+					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
+						buyMap();
+						RAMPmapbought[x] = true;
+						if (RAMPmapbought[x]) {
+							RAMPpMap[x] = (game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
+							RAMPMapsRun = x;
+							debug("Prestige Raiding bought map #" + [(x + 1)]);
+						}
 					}
+				}
+			}
+		}
+		else if (RAMPpMap[0] == undefined && !RAMPmapbought[0] && game.global.preMapsActive && prestigeMapHasEquips(0, raidzones, targetPrestige)) {
+			prestigeRaidingSliders(0, raidzones, special);
+			if ((updateMapCost(true) <= game.resources.fragments.owned)) {
+				buyMap();
+				RAMPmapbought[0] = true;
+				if (RAMPmapbought[0]) {
+					RAMPpMap[0] = (game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
+					RAMPMapsRun = 0;
+					debug("Prestige Raiding map bought");
 				}
 			}
 		}
@@ -1346,7 +1386,7 @@ function rRunRaid() {
 		}
 		for (var x = RAMPMapsRun; x > -1; x--) {
 			if (game.global.preMapsActive && !game.global.mapsActive && RAMPmapbought[x] && RAMPpMap[x] != undefined) {
-				debug("Running map " + [(RAMPMapsRun - x + 1)]);
+				debug("Prestige Raiding running map #" + [(RAMPMapsRun - x + 1)]);
 				selectedMap = RAMPpMap[x];
 				selectMap(RAMPpMap[x]);
 				runMap();
@@ -1357,7 +1397,8 @@ function rRunRaid() {
 		}
 	}
 
-	if (game.global.preMapsActive && runningPrestigeMaps) runMap()
+	if (game.global.preMapsActive && runningPrestigeMaps)
+		runMap();
 }
 
 //Prestige Climb
@@ -1479,12 +1520,12 @@ function BionicRaiding() {
 	const currChall = game.global.challengeActive;
 	const rBionicRaidingDefaultSetting = autoTrimpSettings.hBionicRaidingDefaultSettings.value;
 	const rBionicRaidingBaseSetting = autoTrimpSettings.hBionicRaidingSettings.value;
-	const targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : 'GamesOP';
 
 	var index;
 
 	for (var y = 0; y < rBionicRaidingBaseSetting.length; y++) {
 		const currSetting = rBionicRaidingBaseSetting[y];
+		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? RequipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone
 		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
@@ -1511,6 +1552,7 @@ function BionicRaiding() {
 	if (index >= 0) {
 		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
 		var rBionicRaidingSetting = rBionicRaidingBaseSetting[index];
+		var rBionicRaidingSetting = rBionicRaidingSetting;
 		var raidzonesBW = raidZones;
 
 		if (equipsToGet(raidzonesBW, targetPrestige)[0] > 0) {
@@ -2469,7 +2511,7 @@ function Smithless() {
 		}
 
 		ourDmgTenacity *= 2;
-		if (Rgetequips((game.global.world + rSmithlessMapLevel), false) > 0) ourDmgTenacity *= 1000;
+		if (equipsToGet((game.global.world + rSmithlessMapLevel)) > 0) ourDmgTenacity *= 1000;
 
 		var totalDmgTenacity = (ourDmgTenacity * 2 + (ourDmgTenacity * gammaDmg * 2))
 
@@ -2736,7 +2778,7 @@ function FarmingDecision() {
 }
 
 //RAMP - Prestige Raiding
-function RAMPplusMapToRun(number, raidzones) {
+function prestigeMapLevelToRun(number, raidzones) {
 	var map;
 
 	map = (raidzones - game.global.world - number);
@@ -2749,118 +2791,76 @@ function RAMPplusMapToRun(number, raidzones) {
 	return map;
 }
 
-function RAMPshouldrunmap(number, raidzones) {
-	var go = false;
-	var actualraidzone = (raidzones - number);
-	if (Rgetequips(actualraidzone, false) > 0) go = true;
-
-	return go;
+//Checks if map we want to run has equips
+function prestigeMapHasEquips(number, raidzones, targetPrestige) {
+	if (equipsToGet((raidzones - number), targetPrestige)[0] > 0) return true;
+	return false;
 }
 
-function RAMPplusPres(number, raidzones) {
+//Set sliders for prestige raiding
+function prestigeRaidingSliders(number, raidzones, special) {
+	if (!special) special = getAvailableSpecials('p');
 	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : "Plentiful";
 	document.getElementById("mapLevelInput").value = game.global.world;
-	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number, raidzones);
-	document.getElementById("advSpecialSelect").value = "p";
+	document.getElementById("advExtraLevelSelect").value = prestigeMapLevelToRun(number, raidzones);
+	document.getElementById("advSpecialSelect").value = special;
 	document.getElementById("lootAdvMapsRange").value = 9;
 	document.getElementById("difficultyAdvMapsRange").value = 9;
 	document.getElementById("sizeAdvMapsRange").value = 9;
 	document.getElementById("advPerfectCheckbox").dataset.checked = true;
-	updateMapCost();
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-	document.getElementById("advPerfectCheckbox").dataset.checked = false;
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-	document.getElementById("biomeAdvMapsSelect").value = "Random";
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
 
-	while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-		lootAdvMapsRange.value -= 1;
+	//Set loot slider to 0 and perfect maps off if using frag min setting!
+	if (rMapSettings.fragSetting === '1') {
+		document.getElementById("lootAdvMapsRange").value = 0;
+		document.getElementById("advPerfectCheckbox").dataset.checked = false;
 	}
-	while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-		difficultyAdvMapsRange.value -= 1;
-		if (updateMapCost(true) <= game.resources.fragments.owned) break;
-		sizeAdvMapsRange.value -= 1;
-	}
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-	if (updateMapCost(true) > game.resources.fragments.owned) {
-		document.getElementById("advSpecialSelect").value = "0";
-		updateMapCost();
-	}
-	if (document.getElementById("advSpecialSelect").value == "0") return updateMapCost(true);
-}
 
-function RAMPplusPresfragmax(number, raidzones) {
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
-	document.getElementById("mapLevelInput").value = game.global.world;
-	incrementMapLevel(1);
-	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number, raidzones);
-	document.getElementById("advSpecialSelect").value = "p";
-	document.getElementById("lootAdvMapsRange").value = 9;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
-	document.getElementById("sizeAdvMapsRange").value = 9;
-	document.getElementById("advPerfectCheckbox").dataset.checked = true;
 	updateMapCost();
-	return updateMapCost(true);
-}
 
-function RAMPplusPresfragmin(number, raidzones) {
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
-	document.getElementById("mapLevelInput").value = game.global.world;
-	document.getElementById("advExtraLevelSelect").value = RAMPplusMapToRun(number, raidzones);
-	document.getElementById("advSpecialSelect").value = "p";
-	document.getElementById("lootAdvMapsRange").value = 0;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
-	document.getElementById("sizeAdvMapsRange").value = 9;
-	document.getElementById("advPerfectCheckbox").dataset.checked = false;
-	updateMapCost();
-	if (updateMapCost(true) <= game.resources.fragments.owned) {
-		return updateMapCost(true);
-	}
-	if (updateMapCost(true) > game.resources.fragments.owned) {
+	//Gradually reduce map sliders if not using frag max setting!
+	if (rMapSettings.fragSetting !== '2') {
+		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
+		document.getElementById("advPerfectCheckbox").dataset.checked = false;
+		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
 		document.getElementById("biomeAdvMapsSelect").value = "Random";
-		updateMapCost();
+		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
+
+		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
+			lootAdvMapsRange.value -= 1;
+		}
+		while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
+			difficultyAdvMapsRange.value -= 1;
+			if (updateMapCost(true) <= game.resources.fragments.owned) break;
+			sizeAdvMapsRange.value -= 1;
+		}
+		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
+		if (updateMapCost(true) > game.resources.fragments.owned) {
+			document.getElementById("advSpecialSelect").value = "0";
+			updateMapCost();
+		}
+		if (document.getElementById("advSpecialSelect").value == "0") return updateMapCost(true);
 	}
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-
-	while (difficultyAdvMapsRange.value > 0 && sizeAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
-		difficultyAdvMapsRange.value -= 1;
-		if (updateMapCost(true) <= game.resources.fragments.owned) break;
-		sizeAdvMapsRange.value -= 1;
-	}
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-
-	document.getElementById("advSpecialSelect").value = "fa";
-	updateMapCost();
-
-	if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-
-	document.getElementById("advSpecialSelect").value = "0";
-	updateMapCost();
 	return updateMapCost(true);
 }
 
-function RAMPfrag(raidzones, fragtype) {
+//Identify total cost of prestige raiding maps
+function prestigeTotalFragCost(raidZones, targetPrestige, raidzones, special) {
 	var cost = 0;
 
-	if (Rgetequips(raidzones, false)) {
-		if (fragtype == 1) cost += RAMPplusPresfragmin(0);
-		else if (fragtype == 2) cost += RAMPplusPresfragmax(0);
+	if (equipsToGet(raidZones, targetPrestige)[0]) {
+		cost += prestigeRaidingSliders(0, raidzones, special);
 	}
-	if (Rgetequips((raidzones - 1), false)) {
-		if (fragtype == 1) cost += RAMPplusPresfragmin(1);
-		else if (fragtype == 2) cost += RAMPplusPresfragmax(1);
+	if (equipsToGet((raidZones - 1), targetPrestige)[0]) {
+		cost += prestigeRaidingSliders(1, raidzones, special);
 	}
-	if (Rgetequips((raidzones - 2), false)) {
-		if (fragtype == 1) cost += RAMPplusPresfragmin(2);
-		else if (fragtype == 2) cost += RAMPplusPresfragmax(2);
+	if (equipsToGet((raidZones - 2), targetPrestige)[0]) {
+		cost += prestigeRaidingSliders(2, raidzones, special);
 	}
-	if (Rgetequips((raidzones - 3), false)) {
-		if (fragtype == 1) cost += RAMPplusPresfragmin(3);
-		else if (fragtype == 2) cost += RAMPplusPresfragmax(3);
+	if (equipsToGet((raidZones - 3), targetPrestige)[0]) {
+		cost += prestigeRaidingSliders(3, raidzones, special);
 	}
-	if (Rgetequips((raidzones - 4), false)) {
-		if (fragtype == 1) cost += RAMPplusPresfragmin(4);
-		else if (fragtype == 2) cost += RAMPplusPresfragmax(4);
+	if (equipsToGet((raidZones - 4), targetPrestige)[0]) {
+		cost += prestigeRaidingSliders(4, raidzones, special);
 	}
 
 	if (game.resources.fragments.owned >= cost) return true;
@@ -2981,7 +2981,7 @@ function rFragmentFarm() {
 			selectedMap = rInitialFragmentMapID;
 			selectMap(rInitialFragmentMapID);
 			runMap();
-			rFragmentMapID = rInitialFragmentMapID;
+			var rFragmentMapID = rInitialFragmentMapID;
 			rInitialFragmentMapID = undefined;
 		}
 		if (!rFragCheck && !game.global.repeatMap && game.resources.fragments.owned < PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special)) repeatClicked();

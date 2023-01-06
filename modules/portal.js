@@ -469,21 +469,18 @@ function resetmapvars() {
 	rVanillaMAZ = false;
 	currTime = 0;
 
-	//Fragment Farming
-	rFragmentFarming = false;
-	rFragmentMapID = undefined;
+	//Fragment Farming	
 	rInitialFragmentMapID = undefined;
-	rFragMapBought = false;
 	//Pandemonium
 	savefile = null;
 	//Prestige
-	RAMPfragmappy = undefined;
+	prestigeFragMapID = undefined;
 	RAMPprefragmappy = undefined;
 	RAMPpMap = new Array(5);
 	RAMPrepMap = new Array(5);
 	RAMPmapbought = [[false], [false], [false], [false], [false]];
 	RAMPmapbought.fill(false); //Unsure if necessary - Need to test
-	RAMPfragmappybought = false;
+	prestigeFragMapBought = false;
 	RAMPfragfarming = false;
 	runningPrestigeMaps = false;
 

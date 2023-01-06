@@ -840,7 +840,7 @@ function equalityManagement() {
 	var runningBerserk = challengeActive('Berserk');
 	var runningExperienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	var runningGlass = challengeActive('Glass');
-	var runningDesolation = challengeActive('Desolation');
+	var runningDesolation = challengeActive('Desolation') && mapping;
 	var runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
 
 	//Perk conditions
@@ -2091,6 +2091,23 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 		dropdown += "<option value='world'" + ((MAZ == 'world') ? " selected='selected'" : "") + ">World</option >\
 		<option value='map'" + ((MAZ == 'map') ? " selected = 'selected'" : "") + " > Map</option >\
 		<option value='void'" + ((MAZ == 'void') ? " selected = 'selected'" : "") + " > Void</option >"
+	}
+
+	if (runType === 'prestigeGoal') {
+		dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option >\
+		<option value='Shield'" + ((MAZ == 'Shield') ? " selected='selected'" : "") + ">Shield</option >\
+		<option value='Dagger'" + ((MAZ == 'Dagger') ? " selected='selected'" : "") + ">Dagger</option >\
+		<option value='Boots'" + ((MAZ == 'Boots') ? " selected = 'selected'" : "") + " > Boots</option >\
+		<option value='Mace'" + ((MAZ == 'Mace') ? " selected = 'selected'" : "") + " > Mace</option >\
+		<option value='Helmet'" + ((MAZ == 'Helmet') ? " selected = 'selected'" : "") + " > Helmet</option >\
+		<option value='Polearm'" + ((MAZ == 'Polearm') ? " selected = 'selected'" : "") + " > Polearm</option >\
+		<option value='Pants'" + ((MAZ == 'Pants') ? " selected = 'selected'" : "") + " > Pants</option >\
+		<option value='Battleaxe'" + ((MAZ == 'Battleaxe') ? " selected = 'selected'" : "") + " > Battleaxe</option >\
+		<option value='Shoulderguards'" + ((MAZ == 'Shoulderguards') ? " selected = 'selected'" : "") + " > Shoulderguards</option >\
+		<option value='Greatsword'" + ((MAZ == 'Greatsword') ? " selected = 'selected'" : "") + " > Greatsword</option >\
+		<option value='Breastplate'" + ((MAZ == 'Breastplate') ? " selected = 'selected'" : "") + " > Breastplate</option >"
+		if (game.global.slowDone) dropdown += "<option value='Arbalest'" + ((MAZ == 'Arbalest') ? " selected='selected'" : "") + ">Arbalest</option>"
+		if (game.global.slowDone) dropdown += "<option value='Gambeson'" + ((MAZ == 'Gambeson') ? " selected='selected'" : "") + ">Gambeson</option>"
 	}
 
 	if (universe === 1) {

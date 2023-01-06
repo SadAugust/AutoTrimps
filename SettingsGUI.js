@@ -1766,6 +1766,28 @@ function updateATVersion() {
 			changelog.push("Have reworked the Auto Allocate code for Universe 1 which now uses Perky! If you want the more advanced setting (loot mod, prod mod etc) you'll need to export your save to Perky itself but this version should work well for 99.99% of use cases.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.8.1') {
+			var settings_List = ['hRaidingSettings', 'rRaidingSettings', 'hBionicRaidingSettings']
+			for (var x = 0; x < settings_List.length; x++) {
+				if (typeof (autoTrimpSettings[settings_List[x]].value[0]) !== 'undefined') {
+					for (var y = 0; y < autoTrimpSettings[settings_List[x]].value.length; y++) {
+						autoTrimpSettings[settings_List[x]].value[y].prestigeGoal = 'All';
+					}
+				}
+				saveSettings();
+			}
+			var settings_List = ['hRaidingDefaultSettings', 'rRaidingDefaultSettings'];
+			for (var x = 0; x < settings_List.length; x++) {
+				if (typeof (autoTrimpSettings[settings_List[x]].value.active) !== 'undefined') {
+					autoTrimpSettings[settings_List[x]].value.incrementMaps = true;
+				}
+			}
+			saveSettings();
+			changelog.push("Prestige Raiding has been rewritten and now allows for you to raid only until certain prestiges have been obtained. There's a dropdown window in all of the raiding settings to input what prestige you'd like to raid for.<br>\
+			Additionally the raiding settings will now identify the highest map required to obtain the prestiges you're targetting and reduce the raiding zone accordingly, if this is an issue just let me know and I can change it or make it a toggle!.<br>\
+			Lastly, there's now a toggle in the default sections part of the window for Raiding Settings to toggle between just doing 1 difficult map as many times as needed or incrementing map levels so you are gaining equips as you go and getting stronger for each map.")
+		}
+
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
 		verticalCenterTooltip(false, true);
