@@ -311,8 +311,8 @@ function VoidMaps() {
 		}
 		if (((currSetting.maxvoidzone + dailyReduction) === game.global.world) ||
 			(game.global.world - (currSetting.world + dailyReduction) >= 0 &&
-				//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value
-				(currSetting.voidHDRatio < voidHDRatio || currSetting.hdRatio < HDRatio))) {
+				//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value. Will automatically run voids if HD Ratio on next zone is too high! aka can't gamma burst
+				(currSetting.voidHDRatio < voidHDRatio || currSetting.hdRatio < HDRatio || (voidHDRatio * 100) < calcHDRatio(game.global.world + 1, 'void')))) {
 			rVMIndex = y;
 			if (module.rVoidHDRatio === Infinity) module.rVoidHDRatio = HDRatio;
 			if (module.rVoidVHDRatio === Infinity) module.rVoidVHDRatio = voidHDRatio;
@@ -603,7 +603,7 @@ function TributeFarm() {
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const foodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
-	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
+	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'rPrestige';
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
 	const rTrFBaseSetting = autoTrimpSettings.rTributeFarmSettings.value;
@@ -794,7 +794,7 @@ function SmithyFarm() {
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const woodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
 	const smithyShred = woodShred || metalShred;
-	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
+	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'rPrestige';
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
 	const rSFBaseSetting = autoTrimpSettings.rSmithyFarmSettings.value;
@@ -2640,7 +2640,7 @@ function HDFarm() {
 
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
-	const dontRecycleMaps = challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
+	const dontRecycleMaps = challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'rPrestige';
 	const totalPortals = getTotalPortals();
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const rHDFBaseSetting = game.global.universe === 1 ? autoTrimpSettings.hHDFarmSettings.value : autoTrimpSettings.rHDFarmSettings.value;

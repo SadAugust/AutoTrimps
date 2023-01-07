@@ -169,7 +169,7 @@ function autoMap() {
 	rAutoLevel = rMapSettings.autoLevel ? rMapSettings.mapLevel : Infinity;
 
 	//Farming & resetting variables.
-	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy();
+	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'rPrestige';
 
 	//Uniques
 	let highestMap = null;
