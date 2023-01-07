@@ -1191,6 +1191,7 @@ function calcHeirloomBonusLocal(mod, number) {
 }
 
 function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
+	if (map) map = game.global.world + map;
 	if (!map) map = game.global.mapsActive ? getCurrentMapObject().level :
 		challengeActive('Pandemonium') ? game.global.world - 1 :
 			game.global.world;
