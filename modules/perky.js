@@ -1,6 +1,7 @@
 var AutoPerks = {};
 
 function runPerky() {
+	if (game.global.portalUniverse !== 1) return;
 	read_save();
 	display(optimize(parse_inputs()));
 	allocatePerky();
@@ -679,7 +680,12 @@ function select_preset(a, b) {
 	savePerkySettings();
 }
 
-if (portalUniverse == 1) {
+var showingPerky = false;
+
+function setupPerkyUI() {
+
+	if (portalUniverse !== 1) return;
+
 	var presetListHtml =
 		"<select id=\"preset\" onchange=\"select_preset(this.value)\" data-saved>\
 			\
@@ -740,6 +746,7 @@ if (portalUniverse == 1) {
 				delete $elem;
 			}
 		});
+		showingPerky = false;
 	}
 
 	AutoPerks.displayGUI = function () {
@@ -808,6 +815,7 @@ if (portalUniverse == 1) {
 		var $portalWrapper = document.getElementById("portalWrapper")
 		$portalWrapper.appendChild(apGUI.$customRatios);
 		loadPerkySettings();
+		showingPerky = true;
 	}
 
 	AutoPerks.displayGUI();

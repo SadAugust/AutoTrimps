@@ -1405,3 +1405,12 @@ ul.tab li a:hover {
 	line-height: 1.2em;
 	font-size: 1.1em;
 }
+
+.inPortalBtn {
+	font-size: 1.5vw !important;
+}
+
+.portalThing.detailed {
+	font-size: 0.85vw;
+	line-height: 1vw;
+}

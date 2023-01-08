@@ -91,6 +91,7 @@ var preBuymaxSplit;
 var currentworld = 0;
 var lastrunworld = 0;
 var aWholeNewWorld = false;
+var currPortalUniverse = 0;
 
 var currentradonhze = 0;
 var lastradonhze = 0;
@@ -115,6 +116,11 @@ var rAutoLevel = Infinity;
 var rMapRepeats = 0;
 var freeVoids = 0;
 var shredTimer = 0;
+
+var rMapSettings = {
+	shouldRun: false,
+	mapName: ''
+}
 
 //Get Gamma burst % value
 gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
@@ -144,6 +150,15 @@ function mainLoop() {
 		freeVoids = game.permaBoneBonuses.voidMaps.tracker
 		autoLevelCurrent = autoLevel;
 		shredTimer = game.global.hemmTimer / 10;
+	}
+
+	//Displays Perky UI when changing universe to U1.
+	if (currPortalUniverse !== portalUniverse) {
+		//Removes UI display if currently active
+		if (showingPerky) AutoPerks.removeGUI();
+		//Sets up Perky UI when in U1 or changing universe to U1.
+		if (portalUniverse === 1) setupPerkyUI();
+		currPortalUniverse = portalUniverse;
 	}
 
 	if (ATrunning == false) return;
