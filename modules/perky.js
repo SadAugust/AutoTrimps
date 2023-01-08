@@ -1,7 +1,7 @@
 var AutoPerks = {};
 
 function runPerky() {
-	if (game.global.portalUniverse !== 1) return;
+	if (portalUniverse !== 1) return;
 	read_save();
 	display(optimize(parse_inputs()));
 	allocatePerky();
