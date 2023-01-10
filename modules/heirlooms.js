@@ -4,7 +4,7 @@ function getHeirloomEff(modName, heirloomType, heirloomMods) {
 	if (varAffix === null)
 		return 0;
 
-	for (var x = 1; x < heirloomMods + 1; x++) {
+	for (var x = 1; x < (heirloomMods + 1); x++) {
 		if (getPageSetting('slot' + x + varAffix) === modName || getPageSetting('slot' + x + varAffix) === 'empty') {
 			return 5;
 		}
@@ -32,7 +32,7 @@ function evaluateHeirloomMods(loom, location) {
 
 	for (var m in heirloomLocation.mods) {
 		modName = heirloomLocation.mods[m][0];
-		if ((heirloomType === 'Shield' || heirloomType === 'Staff') && onlyPerfect && modName !== "empty" && getHeirloomEff(modName, heirloomRarity, heirloomLocation.mods.length) === 0) return 0;
+		if ((heirloomType === 'Shield' || heirloomType === 'Staff') && onlyPerfect && modName !== "empty" && getHeirloomEff(modName, heirloomType, heirloomLocation.mods.length) === 0) return 0;
 
 		if (heirloomType === heirloomEquipType || heirloomEquipType === 'All') {
 			eff += getHeirloomEff(modName, heirloomType, heirloomLocation.mods.length);
