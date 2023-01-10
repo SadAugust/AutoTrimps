@@ -2239,3 +2239,73 @@ function challengeActive(what) {
 	else if (game.global.challengeActive == what) return true;
 	else return false;
 }
+
+function getSpecialTime(special, maps, noImports) {
+	if (!special) special = getAvailableSpecials('lmc');
+	if (!maps) maps = 1;
+	var specialTime = 0;
+
+	//Figuring out loot time our selected cache gives us
+	specialTime +=
+		special[0] === 'l' && special.length === 3 ? 20 :
+			special === 'hc' ? 10 :
+				special[0] === 's' ? 10 :
+					special === 'lc' ? 5 :
+						0;
+
+	specialTime *= maps;
+	if (!noImports) {
+		specialTime += game.unlocks.imps.Chronoimp ? (5 * maps) : 0;
+		if (maps >= 4) specialTime += (Math.floor(maps / 4) * 45);
+	}
+
+	return (specialTime);
+}
+
+function getShredHtml() {
+	var html = "";
+	html += "<div class='boneShrineBtn generatorState' id='generatorWindow'>"
+	html += "<div class='col-shred'><div id='shredTickContainer'> <div id='shredRadialContainer' class='radial-progress'> <div class='radial-progress-circle'> <div class='radial-progress-arrow static''></div></div><div " + "id='shredRadial' class='radial-progress-circle'> <div class='radial-progress-arrow mobile'></div> </div> <div id='clockKnob' class='radial-progress-knob'></div></div><span id='shredNextTick' style='pointer-events: none;'>0</span></div></div></div></div>";
+	html += "</div>";
+	return html;
+}
+
+var shredTime = 0;
+function updateNextShredTickTime() {
+	//update tick time
+	var nextTickElem = document.getElementById('shredNextTick');
+	if (!nextTickElem) return;
+
+	/* var innerhtml = getShredHtml();
+	innerhtml += $('#wood').innerHTML;
+	$('#wood').innerHTML = innerhtml;
+	updateNextShredTickTime() */
+
+	var tickTime = game.global.stringVersion >= '5.9.0' ? 30 : 15;
+	var nextTickIn = game.global.hemmTimer;
+	var framesPerVisual = 10;
+	nextTickIn /= 10;
+	nextTickIn = (isNumberBad(nextTickIn)) ? 0 : nextTickIn;
+	nextTickIn = Math.round(nextTickIn * 10) / 10;
+	if (date.getMilliseconds() % 1 === 0) {
+		shredTime = framesPerVisual - 1;
+	}
+
+	if (nextTickElem)
+		nextTickElem.innerHTML = (prettify(Math.floor(nextTickIn)));
+	var countingTick = Math.round((tickTime - nextTickIn) * 10) / 10;
+	countingTick = Math.round(countingTick * 10) / 10;
+	if (shredTime >= framesPerVisual - 1) {
+		shredTime = 0;
+		var timeRemaining = tickTime - countingTick;
+		if (timeRemaining != 0 && timeRemaining <= framesPerVisual / 10) {
+			timeRemaining -= 0.1;
+			timeRemaining = Math.round(timeRemaining * 10) / 10;
+			shredTime = framesPerVisual;
+			framesPerVisual = timeRemaining * 10;
+			shredTime -= framesPerVisual;
+		}
+		goRadial(document.getElementById('shredRadial'), countingTick, tickTime, 10 * framesPerVisual);
+	}
+	else shredTime++;
+}

@@ -679,7 +679,9 @@ function TributeFarm() {
 
 		//Identifying how much food you'd get from the amount of jestimps you want to farm on the map level you've selected for them
 		if (isDaily && foodShred) {
-			var mapDrop = scaleToCurrentMapLocal(simpleSecondsLocal("food", 45, true, rTrFJobRatio), false, true, rTrFMapLevel);
+			var mapDrop = scaleToCurrentMapLocal(simpleSecondsLocal("food", 1, true, rTrFJobRatio), false, true, rTrFMapLevel);
+			var mapsToRun = game.global.stringVersion >= '5.9.0' ? 4 : 2;
+			mapDrop *= getSpecialTime(rTrFSpecial, mapsToRun);
 			var shred = 1 - (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength)[0] / 100);
 			var maps = 10;
 			var foodTotal = mapDrop;
@@ -893,19 +895,19 @@ function SmithyFarm() {
 
 		//Checking for daily resource shred
 		if (typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && smithyShred) {
-			var rSFSpecialTime = rSFSpecial[0] === 'l' && rSFSpecial.length === 3 ? 20 : rSFSpecial[0] === 's' ? 10 : 0;
+			var mapsToRun = game.global.stringVersion >= '5.9.0' ? 4 : 2;
 
 			if (woodShred && metalShred) {
-				var woodGain = woodBase * rSFSpecialTime;
-				var metalGain = metalBase * rSFSpecialTime;
+				var woodGain = woodBase * getSpecialTime(rSFSpecial, (mapsToRun / 2));
+				var metalGain = metalBase * getSpecialTime(rSFSpecial, (mapsToRun / 2));
 			}
 			else if (woodShred) {
-				var woodGain = woodBase * ((rSFSpecialTime * 2) + 45)
+				var woodGain = woodBase * getSpecialTime(rSFSpecial, mapsToRun);
 				var metalGain = Infinity;
 			}
 			else if (metalShred) {
 				var woodGain = Infinity;
-				var metalGain = metalBase * ((rSFSpecialTime * 2) + 45)
+				var metalGain = metalBase * getSpecialTime(rSFSpecial, mapsToRun);
 			}
 			var smithy_Cost_Mult = game.buildings.Smithy.cost.gems[1];
 			var smithy_Max_Affordable = [getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.gems[0], (Infinity), (smithy_Cost_Mult), true),
@@ -1235,7 +1237,6 @@ function PrestigeRaiding() {
 
 		var special = getAvailableSpecials('p');
 		var status = 'Prestige Raiding: ' + equipsToGet(raidZones, targetPrestige)[0] + ' items remaining';
-		var repeat = false;
 
 		var repeat = !(
 			(game.global.mapsActive && (
@@ -1360,7 +1361,7 @@ function rRunRaid(raidingSettings) {
 						if (RAMPmapbought[x]) {
 							RAMPpMap[x] = (game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
 							RAMPMapsRun = x;
-							debug("Prestige Raiding bought map #" + [(x + 1)]);
+							debug("Prestige Raiding" + " (Z" + game.global.world + ") bought map #" + [(x + 1)]);
 						}
 					}
 				}
@@ -1374,19 +1375,19 @@ function rRunRaid(raidingSettings) {
 				if (RAMPmapbought[0]) {
 					RAMPpMap[0] = (game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
 					RAMPMapsRun = 0;
-					debug("Prestige Raiding map bought");
+					debug("Prestige Raiding" + " (Z" + game.global.world + ") map bought");
 				}
 			}
 		}
 
 		if (!RAMPmapbought[0] && !RAMPmapbought[1] && !RAMPmapbought[2] && !RAMPmapbought[3] && !RAMPmapbought[4]) {
 			RAMPpMap.fill(undefined);
-			debug("Failed to Prestige Raid. Looks like you can't afford to or have no equips to get!");
+			debug("Failed to Prestige Raid" + " (Z" + game.global.world + "). Looks like you can't afford to or have no equips to get!");
 			autoTrimpSettings["RAutoMaps"].value = 0;
 		}
 		for (var x = RAMPMapsRun; x > -1; x--) {
 			if (game.global.preMapsActive && !game.global.mapsActive && RAMPmapbought[x] && RAMPpMap[x] != undefined) {
-				debug("Prestige Raiding running map #" + [(RAMPMapsRun - x + 1)]);
+				debug("Prestige Raiding" + " (Z" + game.global.world + ") running map #" + [(RAMPMapsRun - x + 1)]);
 				selectedMap = RAMPpMap[x];
 				selectMap(RAMPpMap[x]);
 				runMap();
@@ -1680,6 +1681,7 @@ function Wither() {
 	var canGamma = gammaToTrigger <= 1 ? true : false;
 
 	var cell = game.global.lastClearedCell + 2;
+	if (cell === 100) cell = 99;
 	var name = game.global.gridArray[cell].name;
 	var damageGoal = challengeActive('Wither') ? 4 : 2;
 
@@ -2801,7 +2803,7 @@ function prestigeMapHasEquips(number, raidzones, targetPrestige) {
 function prestigeRaidingSliders(number, raidzones, special) {
 	if (!special) special = getAvailableSpecials('p');
 	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : "Plentiful";
-	document.getElementById("mapLevelInput").value = game.global.world;
+	document.getElementById("mapLevelInput").value = raidzones >= game.global.world ? game.global.world : raidzones;
 	document.getElementById("advExtraLevelSelect").value = prestigeMapLevelToRun(number, raidzones);
 	document.getElementById("advSpecialSelect").value = special;
 	document.getElementById("lootAdvMapsRange").value = 9;
