@@ -46,8 +46,12 @@ function updateAutoMapsStatus(get) {
 	if (getPageSetting(universeInitial + 'AutoMaps') == 0) status = '[Off] ' + status;
 	let resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
 	let resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
-	var getPercent = (game.stats.heliumHour.value() / (game.global['total' + resourceType + 'Earned'] - (game.global[resourceType.toLowerCase() + 'Leftover'] + game.resources[resourceType.toLowerCase()].owned))) * 100;
-	var lifetime = (game.resources[resourceType.toLowerCase()].owned / (game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)) * 100;
+	var getPercent = (game.stats.heliumHour.value() /
+		(game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)
+	) * 100;
+	var lifetime = (game.resources[resourceType.toLowerCase()].owned /
+		(game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)
+	) * 100;
 	var hiderStatus = resourceShortened + '/hr: ' + (getPercent > 0 ? getPercent.toFixed(3) : 0) + '%<br>&nbsp;&nbsp;&nbsp;' + resourceShortened + ': ' + (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
 
 	if (get) {

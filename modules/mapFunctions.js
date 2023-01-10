@@ -1628,7 +1628,7 @@ function Experience() {
 	}
 	else {
 		shouldExperience = game.global.world > 600 && game.global.world >= getPageSetting('experienceEndZone');
-		if (shouldExperience) mapName = 'BionicRaiding';
+		if (shouldExperience) mapName = 'Bionic Raiding';
 		var status = 'Experience: Ending Challenge';
 	}
 
