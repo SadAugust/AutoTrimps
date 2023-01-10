@@ -1681,8 +1681,7 @@ function Wither() {
 	var canGamma = gammaToTrigger <= 1 ? true : false;
 
 	var cell = game.global.lastClearedCell + 2;
-	if (cell === 100) cell = 99;
-	var name = game.global.gridArray[cell].name;
+	var name = game.global.gridArray[(cell - 1)].name;
 	var damageGoal = challengeActive('Wither') ? 4 : 2;
 
 	var equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma');
