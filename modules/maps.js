@@ -115,6 +115,11 @@ function autoMap() {
 		MODULES.maps.livingActive = false;
 	}
 
+	//Go to map chamber if we should farm on Wither!
+	if (currentMap === 'Wither Farm' && rMapSettings.shouldRun && !game.global.mapsActive && !game.global.preMapsActive) {
+		mapsClicked(true)
+	}
+
 	//Vanilla Map at Zone
 	vanillaMAZ = false;
 	if (game.options.menu.mapAtZone.enabled && game.global.canMapAtZone) {

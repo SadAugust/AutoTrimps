@@ -309,6 +309,7 @@ function radonChallengesSetting() {
 	if (radonHZE >= 135) radonHourChallenges.push("Nurture");
 	if (radonHZE >= 155) radonHourChallenges.push("Alchemy");
 	if (radonHZE >= 175) radonHourChallenges.push("Hypothermia");
+	if (radonHZE >= 200) radonHourChallenges.push("Desolation");
 
 	document.getElementById('RadonHourChallenge').innerHTML = '';
 
@@ -624,10 +625,11 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 		if (!statCheck && !getPageSetting('ronlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
 			continue;
 
-		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot');
+		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot', true);
 		var ourDmg = calcOurDmg(dmgType, equalityAmt, false, 'map', critType, y, 'force');
 		if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = calcEnemyHealthCore('map', game.global.world + mapLevel, 20, 'Turtlimp') * difficulty;
+		enemyHealth *= (1 * maxOneShotPower(true));
 		var enemyDmg = calcEnemyAttackCore('map', game.global.world + mapLevel, 20, 'Snimp', false, false, equalityAmt) * difficulty;
 
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
@@ -702,7 +704,7 @@ function autoMapLevelU1(special, maxLevel, minLevel, critType, statCheck) {
 	return mapLevel;
 }
 
-function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, ourDmg) {
+function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, forceOK) {
 
 	if (!enemyName) enemyName = 'Snimp';
 	if (!zone) zone = game.global.world;
@@ -746,7 +748,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	//Our stats
 	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var ourHealth = calcOurHealth(runningQuest, mapType);
-	if (!ourDmg) var ourDmg = calcOurDmg(dmgType, 0, false, mapType, critType, bionicTalent, titimp);
+	var ourDmg = calcOurDmg(dmgType, 0, false, mapType, critType, bionicTalent, titimp);
 
 	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, mapType, 'never', bionicTalent, titimp)) : 2;
 
@@ -757,6 +759,8 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, calcMutationAttack(zone), 0);
 		enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName, calcMutationHealth(zone));
 	}
+
+	if (forceOK) enemyHealth *= (1 * maxOneShotPower(true));
 
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
 

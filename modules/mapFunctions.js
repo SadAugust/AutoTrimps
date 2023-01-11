@@ -1682,7 +1682,7 @@ function Wither() {
 
 	var cell = game.global.lastClearedCell + 2;
 	var name = game.global.gridArray[(cell - 1)].name;
-	var damageGoal = challengeActive('Wither') ? 4 : 2;
+	var damageGoal = 4;
 
 	var equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma');
 	var ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
