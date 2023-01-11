@@ -67,7 +67,6 @@ function autoMap() {
 	if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
 		if (!game.global.preMapsActive) mapsClicked();
 		return;
-
 	}
 
 	const universeInitial = game.global.universe === 2 ? 'R' : '';
@@ -224,9 +223,9 @@ function autoMap() {
 		if (currentMap !== '') {
 			mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 			if (voidMap) selectedMap = voidMap.id;
+			else if (currentMap === 'rPrestige') selectedMap = "prestigeRaid";
 			else if (currentMap === 'Bionic Raiding') selectedMap = "bionicRaid";
 			else if (optimalMap) selectedMap = optimalMap.id;
-			else if (currentMap === 'rPrestige') selectedMap = "prestigeRaid";
 			else selectedMap = RShouldFarmMapCreation(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
 			if (currTime === 0) currTime = getGameTime();
 		}
