@@ -213,8 +213,19 @@ function c2runner() {
 	const universePrefix = game.global.universe === 2 ? 'C3 ' : 'C2 ';
 
 	if (game.global.universe === 1) {
-		//Adding U1 challenges
 		var highestZone = game.global.highestLevelCleared + 1;
+
+		//Adding Fused challenges to array if setting is toggled
+		if (game.global.stringVersion >= '5.9.0' && getPageSetting('c2fused')) {
+			if (highestZone >= 45) challengeArray.push('Medipline');
+			if (highestZone >= 180) challengeArray.push('Wave');
+			if (highestZone >= 180) challengeArray.push('Toxad');
+			if (game.global.prisonClear >= 1) challengeArray.push('Slowtricity');
+			if (highestZone >= 145) challengeArray.push('Nometal');
+			if (highestZone >= 150) challengeArray.push('Balancology');
+		}
+
+		//Adding U1 challenges
 		if (highestZone >= 35) challengeArray.push('Size');
 		if (highestZone >= 130) challengeArray.push('Slow');
 		if (highestZone >= 180) challengeArray.push('Watch');
@@ -227,6 +238,7 @@ function c2runner() {
 		if (highestZone >= 165) challengeArray.push('Toxicity');
 		if (game.global.prisonClear >= 1) challengeArray.push('Electricity');
 		if (highestZone >= 150) challengeArray.push('Mapology');
+
 	}
 
 	//Adding U2 challenges
@@ -242,8 +254,21 @@ function c2runner() {
 	}
 
 	const worldType = game.global.universe === 2 ? 'highestRadonLevelCleared' : 'highestLevelCleared';
+
+	//Checking regular challenges
 	for (var x = 0; x < challengeArray.length; x++) {
-		if ((100 * (game.c2[challengeArray[x]] / (game.global[worldType] + 1))) < getPageSetting('c' + portalOppPrefix + 'runnerpercent')) {
+		var challenge = game.challenges[challengeArray[x]];
+		var challengeList;
+		var challengeLevel = 0;
+
+		if (challenge.multiChallenge) challengeList = challenge.multiChallenge;
+		else challengeList = [challengeArray[x]];
+		for (var y = 0; y < challengeList.length; y++) {
+			if (challengeLevel > 0) challengeLevel = Math.min(challengeLevel, game.c2[challengeList[y]]);
+			else challengeLevel += game.c2[challengeList[y]];
+		}
+
+		if ((100 * (challengeLevel / (game.global[worldType] + 1))) < getPageSetting('c' + portalOppPrefix + 'runnerpercent')) {
 			if (challengeActive(challengeArray[x]))
 				continue;
 			if (!challengeSquaredMode)

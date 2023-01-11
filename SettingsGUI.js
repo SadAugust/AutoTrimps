@@ -277,6 +277,7 @@ function initializeAllSettings() {
 	createSetting('c2runnerstart', 'C2 Runner', 'Runs the normal C2s in sequence according to difficulty. See \'C2 Table\' for a list of challenges that this can run. Once zone you have defined has been reached, will portal into next. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
 	createSetting('c2runnerportal', 'C2 Runner Portal', 'Automatically portal when this level is reached in C2 Runner. Set to 0 or -1 to disable.', 'value', '-1', null, 'C2');
 	createSetting('c2runnerpercent', 'C2 Runner %', 'What percent Threshhold you want C2s to be over. E.g 85, will only run C2s with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ', 'value', '85', null, 'C2');
+	createSetting('c2fused', 'Fused C2s', 'Will make C2 runner do fused versions of the C2s rather than normal version to reduce time spent running C2s.', 'boolean', false, null, 'C2');
 
 	//Challenges
 
@@ -1038,7 +1039,7 @@ function modifyParentNodeUniverseSwap() {
 	//C2
 	//Helium Settings
 	modifyParentNode_Initial("carmormagic", radonoff);
-	modifyParentNode_Initial("c2runnerpercent", radonoff);
+	modifyParentNode_Initial("c2fused", radonoff);
 	modifyParentNode_Initial("balanceImprobDestack", radonoff);
 	modifyParentNode_Initial("decayStacksToAbandon", radonoff);
 	modifyParentNode_Initial("lifeStacks", radonoff);
@@ -2106,6 +2107,7 @@ function updateCustomButtons() {
 	!radonon ? turnOn('c2runnerstart') : turnOff('c2runnerstart');
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerportal') : turnOff('c2runnerportal');
 	!radonon && getPageSetting('c2runnerstart') ? turnOn('c2runnerpercent') : turnOff('c2runnerpercent');
+	!radonon && getPageSetting('c2runnerstart') && game.global.stringVersion >= '5.9.0' ? turnOn('c2fused') : turnOff('c2fused');
 
 	//Balance
 	!radonon ? turnOn('balance') : turnOff('balance');
