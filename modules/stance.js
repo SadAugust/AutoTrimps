@@ -33,25 +33,39 @@ function debugStance(maxPower, ignoreArmy) {
 	return false;
 }
 
-function maxOneShotPower(considerEdges) {
+function canU2Overkill() {
+	if (!u2Mutations.tree.Overkill1.purchased) return false;
+
+	var allowed = .3;
+	if (u2Mutations.tree.Overkill2.purchased) allowed += 0.1;
+	if (u2Mutations.tree.Overkill3.purchased) allowed += 0.1;
+	if (game.global.stringVersion >= '5.9.0' && u2Mutations.tree.Liq3.purchased) {
+		allowed += 0.1;
+		if (game.global.stringVersion >= '5.9.0' && u2Mutations.tree.Liq2.purchased) allowed += 0.1;
+	}
+	if (game.global.world <= ((game.global.highestRadonLevelCleared + 1) * allowed)) return true;
+	return false;
+}
+
+function maxOneShotPower(planToMap) {
 	var power = 2;
 
-	//No enemy to kill
-	if (considerEdges && !getCurrentEnemy()) return 0;
+	if (game.global.universe === 1) {
+		//No overkill perk
+		if (game.portal.Overkill.level == 0) return 1;
+		//Mastery
+		if (game.talents.overkill.purchased) power++;
+		//Ice
+		if (game.global.uberNature == "Ice") power += 2;
+		if (getEmpowerment() == "Ice" && game.empowerments.Ice.getLevel() >= 50) power++;
+		if (getEmpowerment() == "Ice" && game.empowerments.Ice.getLevel() >= 100) power++;
+	}
+	else if (game.global.universe === 2) {
+		if (!canU2Overkill() && game.global.stringVersion >= '5.9.0' && (game.global.mapsActive || planToMap) && u2Mutations.tree.MadMap.purchased) return power;
+		if (!canU2Overkill()) return 1;
 
-	//No overkill perk
-	if (game.portal.Overkill.level == 0) return 1;
-
-	//Mastery
-	if (game.talents.overkill.purchased) power++;
-
-	//Ice
-	if (game.global.uberNature == "Poison") power += 2;
-	if (getEmpowerment() == "Ice" && game.empowerments.Ice.getLevel() >= 50) power++;
-	if (getEmpowerment() == "Ice" && game.empowerments.Ice.getLevel() >= 100) power++;
-
-	//No enemy to attack
-	if (considerEdges) for (var i = power; i > 1 && !getCurrentEnemy(i); i--);
+		if (u2Mutations.tree.MaxOverkill.purchased) power++;
+	}
 
 	return power;
 }
@@ -174,7 +188,7 @@ function directDamage(block, pierce, currentHealth, minDamage, critPower = 2) {
 
 	//Fast Enemies
 	var isDoubleAttack = game.global.voidBuff == "doubleAttack" || (enemy.corrupted == "corruptDbl") || enemy.corrupted == "healthyDbl";
-	var enemyFast = isDoubleAttack || game.global.challengeActive == "Slow" || ((game.badGuys[enemy.name].fast || enemy.mutation == "Corruption") && game.global.challengeActive != "Coordinate" && game.global.challengeActive != "Nom");
+	var enemyFast = isDoubleAttack || challengeActive('Slow') || ((game.badGuys[enemy.name].fast || enemy.mutation == "Corruption") && !challengeActive('Coordinate') && !challengeActive('Nom'));
 
 	//Dodge Dailies
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.slippery !== "undefined") {
@@ -183,7 +197,8 @@ function directDamage(block, pierce, currentHealth, minDamage, critPower = 2) {
 	}
 
 	//Double Attack and One Shot situations
-	if (isDoubleAttack && minDamage < enemyHealth) harm *= 2;
+	/* if (isTripleAttack && minDamage < enemyHealth) harm *= 3;
+	else  */if (isDoubleAttack && minDamage < enemyHealth) harm *= 2;
 	if (!enemyFast && !dodgeDaily && minDamage > enemyHealth) harm = 0;
 
 	return harm;
@@ -253,7 +268,7 @@ function autoStance() {
 	if (typeof getCurrentEnemy() === 'undefined') return true;
 
 	//Keep on D vs the Domination bosses
-	if (game.global.challengeActive == "Domination" && (game.global.lastClearedCell == 98 || getCurrentEnemy() && getCurrentEnemy().name == "Cthulimp")) {
+	if (challengeActive('Domination') && (game.global.lastClearedCell == 98 || getCurrentEnemy() && getCurrentEnemy().name == "Cthulimp")) {
 		autoStance2();
 		return;
 	}
