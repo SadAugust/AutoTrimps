@@ -2268,10 +2268,27 @@ function getSpecialTime(special, maps, noImports) {
 
 function getShredHtml() {
 	var html = "";
-	html += "<div class='boneShrineBtn generatorState' id='generatorWindow'>"
+	html += "<div class='boneShrineBtn generatorState' id='shredTimer'>"
 	html += "<div class='col-shred'><div id='shredTickContainer'> <div id='shredRadialContainer' class='radial-progress'> <div class='radial-progress-circle'> <div class='radial-progress-arrow static''></div></div><div " + "id='shredRadial' class='radial-progress-circle'> <div class='radial-progress-arrow mobile'></div> </div> <div id='clockKnob' class='radial-progress-knob'></div></div><span id='shredNextTick' style='pointer-events: none;'>0</span></div></div></div></div>";
 	html += "</div>";
 	return html;
+}
+
+function populateShredWindow() {
+	const dailyMods = game.global.dailyChallenge;
+	//Remove shred button if it's there and not on a shred daily
+	if ((typeof dailyMods.hemmorrhage === 'undefined' || portalUniverse !== 2) && $('#wood').firstChild.id === 'shredTimer') {
+		$('#wood').firstElementChild.remove();
+	}
+	//Add shred button if on a shred daily and not visible.
+	else if (typeof dailyMods.hemmorrhage !== 'undefined') {
+		if ($('#wood').firstChild.id !== 'shredTimer') {
+			var innerhtml = getShredHtml();
+			innerhtml += $('#wood').innerHTML;
+			$('#wood').innerHTML = innerhtml;
+		}
+		updateNextShredTickTime()
+	}
 }
 
 var shredTime = 0;
@@ -2279,11 +2296,6 @@ function updateNextShredTickTime() {
 	//update tick time
 	var nextTickElem = document.getElementById('shredNextTick');
 	if (!nextTickElem) return;
-
-	/* var innerhtml = getShredHtml();
-	innerhtml += $('#wood').innerHTML;
-	$('#wood').innerHTML = innerhtml;
-	updateNextShredTickTime() */
 
 	var tickTime = game.global.stringVersion >= '5.9.0' ? 30 : 15;
 	var nextTickIn = game.global.hemmTimer;
