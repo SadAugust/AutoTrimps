@@ -1180,6 +1180,7 @@ RAMPmapbought.fill(false); //Unsure if necessary - Need to test
 var prestigeFragMapBought = false;
 var RAMPfragfarming = false;
 var runningPrestigeMaps = false;
+var RAMPprefragmappy = undefined;
 
 //Prestige Raiding
 function PrestigeRaiding() {
@@ -1295,59 +1296,82 @@ function rRunRaid(raidingSettings) {
 	const special = raidingSettings.special;
 	var RAMPfragfarming = false;
 	const canAffordMaps = prestigeTotalFragCost(raidzones, targetPrestige, raidzones, special);
-	if (rPRFragFarm > 0) {
-		if (canAffordMaps) {
-			RAMPfragcheck = true;
-			//If can't afford cost of maps we want to farm then run a fragment farming map until we can
-		} else if (!canAffordMaps && !RAMPmapbought[0]) {
-			RAMPfragfarming = true;
-			RAMPfragcheck = false;
-			if (!RAMPfragcheck && prestigeFragMapID == undefined && !prestigeFragMapBought && game.global.preMapsActive) {
-				debug("Check complete for frag map");
-				fragmap();
-				if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-					buyMap();
-					prestigeFragMapBought = true;
-					if (prestigeFragMapBought) {
-						prestigeFragMapID = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-						debug("Prestige Raiding fragment farming map bought");
-					}
-				}
+
+	if (canAffordMaps) {
+		RAMPfragcheck = true;
+		if (game.global.mapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
+			if (game.global.repeatMap) {
+				repeatClicked();
+				mapsClicked(true);
 			}
-			if (!RAMPfragcheck && game.global.preMapsActive && !game.global.mapsActive && prestigeFragMapBought && prestigeFragMapID != undefined) {
-				debug("Prestige Raiding running fragment farming map");
-				selectedMap = prestigeFragMapID;
-				selectMap(prestigeFragMapID);
-				runMap();
-				var RAMPprefragmappy = prestigeFragMapID;
-				prestigeFragMapID = undefined;
+			if (game.global.preMapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
+				prestigeFragMapBought = false;
 			}
-			if (!RAMPfragcheck && game.global.mapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
-				if (!canAffordMaps) {
-					if (!game.global.repeatMap) {
-						repeatClicked();
-					}
-				} else {
-					if (game.global.repeatMap) {
-						repeatClicked();
-						mapsClicked(true);
-					}
-					if (game.global.preMapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
-						prestigeFragMapBought = false;
-					}
-					if (RAMPprefragmappy != undefined) {
-						recycleMap(getMapIndex(RAMPprefragmappy));
-						RAMPprefragmappy = undefined;
-					}
-					RAMPfragcheck = true;
-					RAMPfragfarming = false;
-				}
+			if (game.global.preMapsActive && RAMPprefragmappy != undefined) {
+				recycleMap(getMapIndex(RAMPprefragmappy));
+				RAMPprefragmappy = undefined;
 			}
-		} else {
-			RAMPfragcheck = true;
 			RAMPfragfarming = false;
 		}
+
+
+		//If can't afford cost of maps we want to farm then run a fragment farming map until we can
+	} else if (!canAffordMaps && !RAMPmapbought[0]) {
+		RAMPfragfarming = true;
+		RAMPfragcheck = false;
+		if (!RAMPfragcheck && prestigeFragMapID == undefined && !prestigeFragMapBought && game.global.preMapsActive) {
+			debug("Check complete for frag map");
+			fragmap();
+			if ((updateMapCost(true) <= game.resources.fragments.owned)) {
+				buyMap();
+				prestigeFragMapBought = true;
+				if (prestigeFragMapBought) {
+					prestigeFragMapID = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
+					debug("Prestige Raiding fragment farming map bought");
+				}
+			}
+		}
+		if (!RAMPfragcheck && game.global.preMapsActive && !game.global.mapsActive && prestigeFragMapBought && prestigeFragMapID != undefined) {
+			debug("Prestige Raiding running fragment farming map");
+			selectedMap = prestigeFragMapID;
+			selectMap(prestigeFragMapID);
+			runMap();
+			RAMPprefragmappy = prestigeFragMapID;
+			prestigeFragMapID = undefined;
+		}
+		if (!RAMPfragcheck && game.global.mapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
+			if (!canAffordMaps) {
+				if (!game.global.repeatMap) {
+					repeatClicked();
+				}
+			} else {
+				if (game.global.repeatMap) {
+					repeatClicked();
+					mapsClicked(true);
+				}
+				if (game.global.preMapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
+					prestigeFragMapBought = false;
+				}
+				if (game.global.preMapsActive && RAMPprefragmappy != undefined) {
+					recycleMap(getMapIndex(RAMPprefragmappy));
+					RAMPprefragmappy = undefined;
+				}
+				if (!RAMPfragcheck && game.global.mapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
+					if (!canAffordMaps) {
+						if (!game.global.repeatMap) {
+							repeatClicked();
+						}
+					}
+				}
+				RAMPfragcheck = true;
+				RAMPfragfarming = false;
+			}
+		}
+	} else {
+		RAMPfragcheck = true;
+		RAMPfragfarming = false;
 	}
+
 	if (RAMPfragcheck) {
 		document.getElementById("mapLevelInput").value = game.global.world;
 		incrementMapLevel(1);

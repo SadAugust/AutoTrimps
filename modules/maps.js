@@ -248,7 +248,7 @@ function autoMap() {
 			if (!game.global.repeatMap)
 				repeatClicked();
 			//Changing repeat to repeat for items for Presitge & Bionic Raiding
-			if (rShouldMap && ((currentMap === 'rPrestige' && !RAMPfragfarming) || currentMap === 'Bionic Raiding')) {
+			if (rShouldMap && ((currentMap === 'rPrestige' && !prestigeFragMapBought) || currentMap === 'Bionic Raiding')) {
 				if (game.options.menu.repeatUntil.enabled != 2)
 					game.options.menu.repeatUntil.enabled = 2;
 			} else if (game.options.menu.repeatUntil.enabled != 0) {
@@ -261,8 +261,11 @@ function autoMap() {
 			if (game.global.repeatMap && challengeActive('Experience') && getCurrentMapObject().location === 'Bionic' && game.global.world > 600 && getCurrentMapObject().level >= 605) {
 				repeatClicked();
 			}
+			if (prestigeFragMapBought && game.global.repeatMap) {
+				rRunRaid(rMapSettings);
+			}
 			//Disabling repeat if repeat conditions have been met
-			if (game.global.repeatMap && currentMap !== '') {
+			if (game.global.repeatMap && currentMap !== '' && !prestigeFragMapBought) {
 				if (!rMapSettings.repeat) repeatClicked();
 			}
 		} else {
