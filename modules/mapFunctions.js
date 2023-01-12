@@ -1255,14 +1255,12 @@ function PrestigeRaiding() {
 	//Resetting variables and recycling the maps used
 	if (!rShouldPrestigeRaid && (currentMap === mapName || (MODULES.mapFunctions.prestigeMapArray[0] != undefined || MODULES.mapFunctions.prestigeMapArray[1] != undefined || MODULES.mapFunctions.prestigeMapArray[2] != undefined || MODULES.mapFunctions.prestigeMapArray[3] != undefined || MODULES.mapFunctions.prestigeMapArray[4] != undefined))) {
 		debug(mapName + " (Z" + game.global.world + ") took " + formatTimeForDescriptions(timeForFormatting(mappingTime)) + ".");
-
-		for (var x = 0; x < 5; x++) {
-			if (MODULES.mapFunctions.prestigeMapArray[x] != undefined && game.global.preMapsActive) {
-				if (rMapSettings.recycle)
-					recycleMap(getMapIndex(MODULES.mapFunctions.prestigeMapArray[x]));
-				MODULES.mapFunctions.prestigeMapArray[x] = undefined;
+		if (rMapSettings.recycle && game.global.preMapsActive) {
+			for (var x = 0; x < MODULES.mapFunctions.prestigeMapArray.length; x++) {
+				recycleMap(getMapIndex(MODULES.mapFunctions.prestigeMapArray[x]));
 			}
 		}
+		MODULES.mapFunctions.prestigeMapArray = new Array(5);
 	}
 
 	return farmingDetails;
