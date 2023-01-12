@@ -262,7 +262,7 @@ function autoMap() {
 				repeatClicked();
 			}
 			if (MODULES.mapFunctions.prestigeFragMapBought && game.global.repeatMap) {
-				rRunRaid(rMapSettings);
+				runPrestigeRaiding(rMapSettings);
 			}
 			//Disabling repeat if repeat conditions have been met
 			if (game.global.repeatMap && currentMap !== '' && !MODULES.mapFunctions.prestigeFragMapBought) {
@@ -290,7 +290,7 @@ function autoMap() {
 		if (selectedMap == "world") {
 			mapsClicked();
 		} else if (selectedMap == "prestigeRaid") {
-			rRunRaid(rMapSettings);
+			runPrestigeRaiding(rMapSettings);
 		} else if (selectedMap == "bionicRaid") {
 			runBionicRaiding(bionicPool);
 		} else if (selectedMap == "create") {

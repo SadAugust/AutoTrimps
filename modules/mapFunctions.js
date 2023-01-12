@@ -1277,7 +1277,7 @@ function PrestigeRaiding() {
 }
 
 //Running Prestige Raid Code
-function rRunRaid(raidingSettings) {
+function runPrestigeRaiding(raidingSettings) {
 	if (!raidingSettings) return;
 	if (raidingSettings.mapName !== 'Prestige Raiding') return;
 	var raidzones = raidingSettings.raidzones;
