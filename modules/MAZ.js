@@ -1000,10 +1000,6 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			error += " Preset " + (x + 1) + " can\'t have a zone and map combination below zone 6.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Raiding') && world >= raidingzone) {
-			error += " Preset " + (x + 1) + " can\'t have a map level below world level as you won\'t be able to get prestiges there.<br>";
-			errorMessage = true;
-		}
 		if (titleText.includes('Map Bonus') && (level < (game.global.universe === 1 ? 0 - game.portal.Siphonology.level : 0))) {
 			error += " Preset " + (x + 1) + " can\'t have a map level below " + ((game.global.universe === 1 && game.portal.Siphonology.level > 0) ? (0 - game.portal.Siphonology.level) : "world level") + " as you won\'t be able to get any map stacks.<br>";
 			errorMessage = true;
