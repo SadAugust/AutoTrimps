@@ -322,14 +322,14 @@ function initializeAllSettings() {
 	createSetting('CustomDeltaFactor', 'Custom Delta Factor', 'Advanced. To be used with Auto Gigas. <br>This setting is used to calculate a better Delta. Think of this setting as how long your target zone takes to complete divided by the zone you bought your first giga in. <br>Basically, a higher number means a higher delta. Values below 1 will default to 10. <br><b>Recommended: 1-2 for very quick runs. 5-10 for regular runs where you slow down at the end. 20-100+ for very pushy runs.</b>', 'value', '-1', null, "Buildings");
 
 	createSetting('hBuildingSettingsArray', 'Building Settings', 'Click to adjust settings. ', 'mazDefaultArray', {
-		Hut: { enabled: true, percent: 100, buyMax: 0 },
-		House: { enabled: true, percent: 100, buyMax: 0 },
-		Mansion: { enabled: true, percent: 100, buyMax: 0 },
-		Hotel: { enabled: true, percent: 100, buyMax: 0 },
+		Hut: { enabled: true, percent: 100, buyMax: 200 },
+		House: { enabled: true, percent: 100, buyMax: 200 },
+		Mansion: { enabled: true, percent: 100, buyMax: 200 },
+		Hotel: { enabled: true, percent: 100, buyMax: 200 },
 		Wormhole: { enabled: false, percent: 1, buyMax: 1 },
-		Resort: { enabled: true, percent: 100, buyMax: 0 },
-		Gateway: { enabled: true, percent: 100, buyMax: 0 },
-		Collector: { enabled: true, percent: 100, buyMax: 0 },
+		Resort: { enabled: true, percent: 100, buyMax: 200 },
+		Gateway: { enabled: true, percent: 10, buyMax: 200 },
+		Collector: { enabled: true, percent: 100, buyMax: 200 },
 		Gym: { enabled: true, percent: 100, buyMax: 0 },
 		Tribute: { enabled: true, percent: 100, buyMax: 0 },
 		Nursery: { enabled: true, percent: 100, buyMax: 0, fromZ: 999 }
@@ -342,7 +342,7 @@ function initializeAllSettings() {
 		Mansion: { enabled: true, percent: 100, buyMax: 0 },
 		Hotel: { enabled: true, percent: 100, buyMax: 0 },
 		Resort: { enabled: true, percent: 100, buyMax: 0 },
-		Gateway: { enabled: true, percent: 100, buyMax: 0 },
+		Gateway: { enabled: true, percent: 10, buyMax: 0 },
 		Collector: { enabled: true, percent: 100, buyMax: 0 },
 		Smithy: { enabled: true, percent: 100, buyMax: 0 },
 		Tribute: { enabled: true, percent: 100, buyMax: 0 },

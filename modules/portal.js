@@ -212,6 +212,7 @@ function c2runner() {
 	const challengeArray = [];
 	const universePrefix = game.global.universe === 2 ? 'C3 ' : 'C2 ';
 
+	//Adding U1 challenges
 	if (game.global.universe === 1) {
 		var highestZone = game.global.highestLevelCleared + 1;
 
@@ -225,7 +226,6 @@ function c2runner() {
 			if (highestZone >= 150) challengeArray.push('Balancology');
 		}
 
-		//Adding U1 challenges
 		if (highestZone >= 35) challengeArray.push('Size');
 		if (highestZone >= 130) challengeArray.push('Slow');
 		if (highestZone >= 180) challengeArray.push('Watch');
@@ -238,7 +238,6 @@ function c2runner() {
 		if (highestZone >= 165) challengeArray.push('Toxicity');
 		if (game.global.prisonClear >= 1) challengeArray.push('Electricity');
 		if (highestZone >= 150) challengeArray.push('Mapology');
-
 	}
 
 	//Adding U2 challenges
@@ -491,23 +490,17 @@ function findOutCurrentPortalLevel() {
 
 function resetmapvars() {
 	//General
-	rVanillaMAZ = false;
-	currTime = 0;
+	vanillaMAZ = false;
+	mappingTime = 0;
 
 	//Fragment Farming	
 	rInitialFragmentMapID = undefined;
 	//Pandemonium
 	savefile = null;
 	//Prestige
-	prestigeFragMapID = undefined;
-	RAMPprefragmappy = undefined;
-	RAMPpMap = new Array(5);
-	RAMPrepMap = new Array(5);
-	RAMPmapbought = [[false], [false], [false], [false], [false]];
-	RAMPmapbought.fill(false); //Unsure if necessary - Need to test
-	prestigeFragMapBought = false;
-	RAMPfragfarming = false;
-	runningPrestigeMaps = false;
+	MODULES.mapFunctions.prestigeMapArray = new Array(5);
+	MODULES.mapFunctions.prestigeFragMapBought = false;
+	MODULES.mapFunctions.prestigeRunningMaps = false;
 
 	//Auto Level variables
 	mapRepeats = 0;
@@ -517,7 +510,6 @@ function resetmapvars() {
 	MODULES.mapFunctions.rVoidHDRatio = Infinity;
 	MODULES.mapFunctions.rVoidVHDRatio = Infinity;
 	MODULES.mapFunctions.rVoidHDIndex = Infinity;
-	MODULES.mapFunctions.portalZone = Infinity;
 	MODULES.mapFunctions.portalZone = Infinity;
 	HDRatio = calcHDRatio(game.global.world, 'world');
 	mapHDRatio = calcHDRatio(game.global.world, 'map');

@@ -4,12 +4,9 @@ MODULES.maps.fragmentFarming = false;
 MODULES.maps.lifeActive = false;
 MODULES.maps.lifeCell = 0;
 
-var currTime = 0;
+var mappingTime = 0;
 var lastMapWeWereIn = null;
-//Prestige
-var runningPrestigeMaps = false;
 
-//Map Repeats! - Can prolly be consolidated into 1 setting???????
 var mapRepeats = 0;
 var vanillaMAZ = false;
 
@@ -164,11 +161,11 @@ function autoMap() {
 	//Reset to defaults when on world grid
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0;
-		currTime = 0;
+		mappingTime = 0;
 		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
 		if (document.getElementById('advExtraLevelSelect').value > 0)
 			document.getElementById('advExtraLevelSelect').value = "0";
-		runningPrestigeMaps = false;
+		MODULES.mapFunctions.prestigeRunningMaps = false;
 	}
 
 	//New Mapping Organisation!
@@ -177,7 +174,7 @@ function autoMap() {
 	rAutoLevel = rMapSettings.autoLevel ? rMapSettings.mapLevel : Infinity;
 
 	//Farming & resetting variables.
-	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'rPrestige';
+	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 
 	//Uniques
 	let highestMap = null;
@@ -207,7 +204,7 @@ function autoMap() {
 		} else if (map.noRecycle && !challengeActive('Insanity')) {
 			if (runUniques && shouldRunUniqueMap(map)) {
 				selectedMap = map.id;
-				if (currTime === 0) currTime = getGameTime();
+				if (mappingTime === 0) mappingTime = getGameTime();
 			}
 			if (map.location === "Bionic") {
 				bionicPool.push(map);
@@ -223,18 +220,18 @@ function autoMap() {
 		if (currentMap !== '') {
 			mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 			if (voidMap) selectedMap = voidMap.id;
-			else if (currentMap === 'rPrestige') selectedMap = "prestigeRaid";
+			else if (currentMap === 'Prestige Raiding') selectedMap = "prestigeRaid";
 			else if (currentMap === 'Bionic Raiding') selectedMap = "bionicRaid";
 			else if (optimalMap) selectedMap = optimalMap.id;
 			else selectedMap = RShouldFarmMapCreation(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
-			if (currTime === 0) currTime = getGameTime();
+			if (mappingTime === 0) mappingTime = getGameTime();
 		}
 	}
 
 	//Map Repeat
 	if (!game.global.preMapsActive && game.global.mapsActive) {
 		//Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
-		if (rShouldMap && currentMap === 'rPrestige' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > PerfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
+		if (rShouldMap && currentMap === 'Prestige Raiding' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > PerfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
 			var maplevel = getCurrentMapObject().level
 			mapsClicked();
 			recycleMap();
@@ -248,11 +245,14 @@ function autoMap() {
 			if (!game.global.repeatMap)
 				repeatClicked();
 			//Changing repeat to repeat for items for Presitge & Bionic Raiding
-			if (rShouldMap && ((currentMap === 'rPrestige' && !prestigeFragMapBought) || currentMap === 'Bionic Raiding')) {
-				if (game.options.menu.repeatUntil.enabled != 2)
+			if (rShouldMap && ((currentMap === 'Prestige Raiding' && !MODULES.mapFunctions.prestigeFragMapBought) || currentMap === 'Bionic Raiding')) {
+				if (game.options.menu.repeatUntil.enabled != 2) {
 					game.options.menu.repeatUntil.enabled = 2;
+					toggleSetting("repeatUntil", null, false, true);
+				}
 			} else if (game.options.menu.repeatUntil.enabled != 0) {
 				game.options.menu.repeatUntil.enabled = 0;
+				toggleSetting("repeatUntil", null, false, true);
 			}
 			//Disabling repeat if we shouldn't map
 			if (!rShouldMap)
@@ -261,11 +261,11 @@ function autoMap() {
 			if (game.global.repeatMap && challengeActive('Experience') && getCurrentMapObject().location === 'Bionic' && game.global.world > 600 && getCurrentMapObject().level >= 605) {
 				repeatClicked();
 			}
-			if (prestigeFragMapBought && game.global.repeatMap) {
+			if (MODULES.mapFunctions.prestigeFragMapBought && game.global.repeatMap) {
 				rRunRaid(rMapSettings);
 			}
 			//Disabling repeat if repeat conditions have been met
-			if (game.global.repeatMap && currentMap !== '' && !prestigeFragMapBought) {
+			if (game.global.repeatMap && currentMap !== '' && !MODULES.mapFunctions.prestigeFragMapBought) {
 				if (!rMapSettings.repeat) repeatClicked();
 			}
 		} else {

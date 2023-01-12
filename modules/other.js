@@ -1247,7 +1247,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	//Setting special to current maps special if we're in a map.
 	if (game.global.mapsActive) mapSpecial = getCurrentMapObject().bonus === undefined ? "no special" : getCurrentMapObject().bonus;
 
-	var timeMapping = currTime > 0 ? currTime : getGameTime();
+	var timeMapping = mappingTime > 0 ? mappingTime : getGameTime();
 	var message = '';
 	if (mapName !== 'Void Map' && mapName !== 'Quagmire Farm' && mapName !== 'Smithy Farm') {
 		message += (mapName + " (Z" + game.global.world + ") took " + (mappingLength) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + mapSpecial + ")" + (mappingLength == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
@@ -1351,7 +1351,7 @@ function resetMapVars(setting) {
 	const totalPortals = getTotalPortals();
 	currentMap = undefined;
 	rAutoLevel = Infinity;
-	currTime = 0;
+	mappingTime = 0;
 	mapRepeats = 0;
 	game.global.mapRunCounter = 0;
 	if (setting) setting.done = (totalPortals + "_" + game.global.world);

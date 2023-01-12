@@ -348,7 +348,7 @@ function VoidMaps() {
 		resetMapVars();
 		currentMap = undefined;
 		rAutoLevel = Infinity;
-		currTime = 0;
+		mappingTime = 0;
 		game.global.mapRunCounter = 0;
 		module.rVoidHDIndex = Infinity;
 		module.rVoidHDRatio = Infinity;
@@ -562,7 +562,7 @@ function MapFarm() {
 			if (rMFAtlantrimp) runUnique('Atlantrimp', false);
 			game.global.mapRunCounter = 0;
 			mapRepeats = 0;
-			currTime = 0;
+			mappingTime = 0;
 			saveSettings();
 		}
 
@@ -603,7 +603,7 @@ function TributeFarm() {
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const foodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
-	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'rPrestige';
+	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
 	const rTrFBaseSetting = autoTrimpSettings.rTributeFarmSettings.value;
@@ -796,7 +796,7 @@ function SmithyFarm() {
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const woodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
 	const smithyShred = woodShred || metalShred;
-	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'rPrestige';
+	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
 	const rSFBaseSetting = autoTrimpSettings.rSmithyFarmSettings.value;
@@ -1172,20 +1172,14 @@ function MapDestacking() {
 }
 
 //Prestige variables == TO GET SORTED LATER!
-var prestigeFragMapID = undefined;
-var RAMPpMap = new Array(5);
-var RAMPrepMap = new Array(5);
-var RAMPmapbought = [[false], [false], [false], [false], [false]];
-RAMPmapbought.fill(false); //Unsure if necessary - Need to test
-var prestigeFragMapBought = false;
-var RAMPfragfarming = false;
-var runningPrestigeMaps = false;
-var RAMPprefragmappy = undefined;
+MODULES.mapFunctions.prestigeMapArray = new Array(5);
+MODULES.mapFunctions.prestigeFragMapBought = false;
+MODULES.mapFunctions.prestigeRunningMaps = false;
 
 //Prestige Raiding
 function PrestigeRaiding() {
 
-	const mapName = 'rPrestige'
+	const mapName = 'Prestige Raiding'
 	const farmingDetails = {
 		shouldRun: false,
 		mapName: mapName
@@ -1259,18 +1253,14 @@ function PrestigeRaiding() {
 
 
 	//Resetting variables and recycling the maps used
-	if (!rShouldPrestigeRaid && (currentMap === mapName || (RAMPrepMap[0] != undefined || RAMPrepMap[1] != undefined || RAMPrepMap[2] != undefined || RAMPrepMap[3] != undefined || RAMPrepMap[4] != undefined))) {
-		prestigeFragMapID = undefined;
-		prestigeFragMapBought = false;
-		for (var x = 0; x < 5; x++) {
-			RAMPpMap[x] = undefined;
-			RAMPmapbought[x] = undefined;
+	if (!rShouldPrestigeRaid && (currentMap === mapName || (MODULES.mapFunctions.prestigeMapArray[0] != undefined || MODULES.mapFunctions.prestigeMapArray[1] != undefined || MODULES.mapFunctions.prestigeMapArray[2] != undefined || MODULES.mapFunctions.prestigeMapArray[3] != undefined || MODULES.mapFunctions.prestigeMapArray[4] != undefined))) {
+		debug(mapName + " (Z" + game.global.world + ") took " + formatTimeForDescriptions(timeForFormatting(mappingTime)) + ".");
 
-			if (RAMPrepMap[x] != undefined && game.global.preMapsActive) {
-				if (autoTrimpSettings.rRaidingDefaultSettings.value.recycle) {
-					recycleMap(getMapIndex(RAMPrepMap[x]));
-				}
-				RAMPrepMap[x] = undefined;
+		for (var x = 0; x < 5; x++) {
+			if (MODULES.mapFunctions.prestigeMapArray[x] != undefined && game.global.preMapsActive) {
+				if (rMapSettings.recycle)
+					recycleMap(getMapIndex(MODULES.mapFunctions.prestigeMapArray[x]));
+				MODULES.mapFunctions.prestigeMapArray[x] = undefined;
 			}
 		}
 	}
@@ -1281,148 +1271,73 @@ function PrestigeRaiding() {
 //Running Prestige Raid Code
 function rRunRaid(raidingSettings) {
 	if (!raidingSettings) return;
-	if (raidingSettings.mapName !== 'rPrestige') return;
-	var RAMPfragcheck = true;
-	var rPRFragFarm = raidingSettings.fragSetting;
-	const targetPrestige = raidingSettings.prestigeGoal
+	if (raidingSettings.mapName !== 'Prestige Raiding') return;
 	var raidzones = raidingSettings.raidzones;
+	const targetPrestige = raidingSettings.prestigeGoal
+	const special = raidingSettings.special;
+	const incrementMaps = raidingSettings.incrementMaps;
 	var equipsToFarm = equipsToGet(raidzones, targetPrestige)[0];
-	var incrementMaps = raidingSettings.incrementMaps;
 
 	while (equipsToFarm === equipsToGet(raidzones - 1, targetPrestige)[0]) {
 		raidzones--;
 	}
 
-	const special = raidingSettings.special;
-	var RAMPfragfarming = false;
 	const canAffordMaps = prestigeTotalFragCost(raidzones, targetPrestige, raidzones, special);
 
-	if (canAffordMaps) {
-		RAMPfragcheck = true;
-		if (game.global.mapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
-			if (game.global.repeatMap) {
-				repeatClicked();
-				mapsClicked(true);
-			}
-			if (game.global.preMapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
-				prestigeFragMapBought = false;
-			}
-			if (game.global.preMapsActive && RAMPprefragmappy != undefined) {
-				recycleMap(getMapIndex(RAMPprefragmappy));
-				RAMPprefragmappy = undefined;
-			}
-			RAMPfragfarming = false;
-		}
-
-
-		//If can't afford cost of maps we want to farm then run a fragment farming map until we can
-	} else if (!canAffordMaps && !RAMPmapbought[0]) {
-		RAMPfragfarming = true;
-		RAMPfragcheck = false;
-		if (!RAMPfragcheck && prestigeFragMapID == undefined && !prestigeFragMapBought && game.global.preMapsActive) {
-			debug("Check complete for frag map");
-			fragmap();
-			if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-				buyMap();
-				prestigeFragMapBought = true;
-				if (prestigeFragMapBought) {
-					prestigeFragMapID = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-					debug("Prestige Raiding fragment farming map bought");
-				}
-			}
-		}
-		if (!RAMPfragcheck && game.global.preMapsActive && !game.global.mapsActive && prestigeFragMapBought && prestigeFragMapID != undefined) {
-			debug("Prestige Raiding running fragment farming map");
-			selectedMap = prestigeFragMapID;
-			selectMap(prestigeFragMapID);
-			runMap();
-			RAMPprefragmappy = prestigeFragMapID;
-			prestigeFragMapID = undefined;
-		}
-		if (!RAMPfragcheck && game.global.mapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
-			if (!canAffordMaps) {
-				if (!game.global.repeatMap) {
+	if (MODULES.mapFunctions.prestigeMapArray[0] === undefined) {
+		if (canAffordMaps) {
+			if (MODULES.mapFunctions.prestigeFragMapBought) {
+				if (game.global.repeatMap)
 					repeatClicked();
-				}
-			} else {
-				if (game.global.repeatMap) {
-					repeatClicked();
-					mapsClicked(true);
-				}
-				if (game.global.preMapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
-					prestigeFragMapBought = false;
-				}
-				if (game.global.preMapsActive && RAMPprefragmappy != undefined) {
-					recycleMap(getMapIndex(RAMPprefragmappy));
-					RAMPprefragmappy = undefined;
-				}
-				if (!RAMPfragcheck && game.global.mapsActive && prestigeFragMapBought && RAMPprefragmappy != undefined) {
-					if (!canAffordMaps) {
-						if (!game.global.repeatMap) {
-							repeatClicked();
-						}
-					}
-				}
-				RAMPfragcheck = true;
-				RAMPfragfarming = false;
+				if (game.global.preMapsActive)
+					MODULES.mapFunctions.prestigeFragMapBought = false;
 			}
 		}
-	} else {
-		RAMPfragcheck = true;
-		RAMPfragfarming = false;
+		else if (game.global.preMapsActive) {
+			MODULES.mapFunctions.prestigeFragMapBought = false;
+			if (!MODULES.mapFunctions.prestigeFragMapBought) {
+				debug("Check complete for frag map");
+				fragmap();
+				if ((updateMapCost(true) <= game.resources.fragments.owned)) {
+					buyMap();
+					selectMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
+					runMap();
+					debug("Prestige Raiding running fragment farming map");
+					MODULES.mapFunctions.prestigeFragMapBought = true;
+				}
+			}
+		}
 	}
 
-	if (RAMPfragcheck) {
+	if (!MODULES.mapFunctions.prestigeFragMapBought && game.global.preMapsActive) {
 		document.getElementById("mapLevelInput").value = game.global.world;
 		incrementMapLevel(1);
-		if (incrementMaps) {
+		if (MODULES.mapFunctions.prestigeMapArray[0] === undefined) {
 			for (var x = 0; x < 5; x++) {
-				if (RAMPpMap[x] == undefined && !RAMPmapbought[x] && game.global.preMapsActive && prestigeMapHasEquips(x, raidzones, targetPrestige)) {
+				if (!incrementMaps && x > 0) continue;
+				if (prestigeMapHasEquips(x, raidzones, targetPrestige)) {
 					prestigeRaidingSliders(x, raidzones, special);
 					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
 						buyMap();
-						RAMPmapbought[x] = true;
-						if (RAMPmapbought[x]) {
-							RAMPpMap[x] = (game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
-							RAMPMapsRun = x;
-							debug("Prestige Raiding" + " (Z" + game.global.world + ") bought map #" + [(x + 1)]);
-						}
+						MODULES.mapFunctions.prestigeMapArray[x] = (game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
+						debug("Prestige Raiding" + " (Z" + game.global.world + ") bought map #" + [(x + 1)]);
 					}
 				}
 			}
-		}
-		else if (RAMPpMap[0] == undefined && !RAMPmapbought[0] && game.global.preMapsActive && prestigeMapHasEquips(0, raidzones, targetPrestige)) {
-			prestigeRaidingSliders(0, raidzones, special);
-			if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-				buyMap();
-				RAMPmapbought[0] = true;
-				if (RAMPmapbought[0]) {
-					RAMPpMap[0] = (game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
-					RAMPMapsRun = 0;
-					debug("Prestige Raiding" + " (Z" + game.global.world + ") map bought");
-				}
-			}
+			MODULES.mapFunctions.prestigeMapArray = MODULES.mapFunctions.prestigeMapArray.filter(function (e) { return e.replace(/(\r\n|\n|\r)/gm, "") });
 		}
 
-		if (!RAMPmapbought[0] && !RAMPmapbought[1] && !RAMPmapbought[2] && !RAMPmapbought[3] && !RAMPmapbought[4]) {
-			RAMPpMap.fill(undefined);
-			debug("Failed to Prestige Raid" + " (Z" + game.global.world + "). Looks like you can't afford to or have no equips to get!");
-			autoTrimpSettings["RAutoMaps"].value = 0;
-		}
-		for (var x = RAMPMapsRun; x > -1; x--) {
-			if (game.global.preMapsActive && !game.global.mapsActive && RAMPmapbought[x] && RAMPpMap[x] != undefined) {
-				debug("Prestige Raiding" + " (Z" + game.global.world + ") running map #" + [(RAMPMapsRun - x + 1)]);
-				selectedMap = RAMPpMap[x];
-				selectMap(RAMPpMap[x]);
+		for (var x = MODULES.mapFunctions.prestigeMapArray.length; x > -1; x--) {
+			if (game.global.preMapsActive && MODULES.mapFunctions.prestigeMapArray[x] !== undefined && prestigeMapHasEquips(x, raidzones, targetPrestige)) {
+				debug("Prestige Raiding" + " (Z" + game.global.world + ") running map #" + [(MODULES.mapFunctions.prestigeMapArray.length - x)]);
+				selectMap(MODULES.mapFunctions.prestigeMapArray[x]);
 				runMap();
-				RAMPrepMap[x] = RAMPpMap[x];
-				RAMPpMap[x] = undefined;
-				runningPrestigeMaps = true;
+				MODULES.mapFunctions.prestigeRunningMaps = true;
 			}
 		}
 	}
 
-	if (game.global.preMapsActive && runningPrestigeMaps)
+	if (game.global.preMapsActive && MODULES.mapFunctions.prestigeRunningMaps)
 		runMap();
 }
 
@@ -2665,7 +2580,7 @@ function HDFarm() {
 
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
-	const dontRecycleMaps = challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'rPrestige';
+	const dontRecycleMaps = challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const totalPortals = getTotalPortals();
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const rHDFBaseSetting = game.global.universe === 1 ? autoTrimpSettings.hHDFarmSettings.value : autoTrimpSettings.rHDFarmSettings.value;
@@ -3003,7 +2918,6 @@ function rFragmentFarm() {
 		}
 		if (!rFragCheck && game.global.preMapsActive && !game.global.mapsActive && rFragMapBought && rInitialFragmentMapID != undefined) {
 			debug("Fragment farming for a " + (rMapSettings.mapLevel >= 0 ? "+" : "") + rMapSettings.mapLevel + " " + rMapSettings.special + " map.");
-			selectedMap = rInitialFragmentMapID;
 			selectMap(rInitialFragmentMapID);
 			runMap();
 			var rFragmentMapID = rInitialFragmentMapID;
