@@ -581,6 +581,7 @@ ul.tab li a:hover {
 .windowActiveRaiding,
 .windowWorldRaiding,
 .windowCellRaiding,
+.windowRepeatEveryRaiding,
 .windowRunTypeRaiding,
 .windowPrestigeGoalRaiding,
 .windowRaidingDropdown,
@@ -597,23 +598,27 @@ ul.tab li a:hover {
 }
 
 .windowActiveRaiding {
-	width: 8%;
+	width: 7%;
 }
 
 .windowWorldRaiding {
-	width: 8%;
+	width: 7%;
 }
 
 .windowCellRaiding {
-	width: 8%;
+	width: 7%;
+}
+
+.windowRepeatEveryRaiding {
+	width: 7%;
 }
 
 .windowRaidingDropdown {
-	width: 15%;
+	width: 14%;
 }
 
 .windowRaidingZoneRaiding {
-	width: 8%;
+	width: 7%;
 }
 
 .windowRecycle {
@@ -625,7 +630,7 @@ ul.tab li a:hover {
 }
 
 .windowPrestigeGoalRaiding {
-	width: 22%;
+	width: 20%;
 }
 
 .windowRunTypeRaiding {
@@ -1350,8 +1355,6 @@ ul.tab li a:hover {
 	width: 90%;
 }
 
-
-
 .uniqueMapValue {
 	display: inline-block;
 	width: 50%;
@@ -1376,7 +1379,6 @@ ul.tab li a:hover {
 	cursor: pointer;
 	text-align: center;
 }
-
 
 .toggleConfigBtnLocal {
 	overflow: hidden;
@@ -1413,4 +1415,56 @@ ul.tab li a:hover {
 .portalThing.detailed {
 	font-size: 0.85vw;
 	line-height: 1vw;
+}
+
+
+
+.col-shred {
+	position: relative;
+	min-height: 1px;
+	padding-right: 15px;
+	padding-left: 15px;
+}
+
+.col-shred {
+	float: left;
+}
+
+.col-shred {
+	width: 13.33333333%;
+}
+
+#shredTickContainer {
+	height: 2.5vw;
+	width: 2.5vw;
+	display: inline-block;
+	position: relative;
+	margin-top: 3%;
+}
+
+
+#shredNextTick {
+	position: absolute;
+	top: 65%;
+	font-size: 1em;
+	color: black;
+	text-shadow:
+		-1px -1px 0 #FFF,
+		1px -1px 0 #FFF,
+		-1px 1px 0 #FFF,
+		1px 1px 0 #FFF;
+	text-align: center;
+	width: 100%;
+	left: 0;
+}
+
+#shredBtn {
+	position: absolute;
+	width: 30%;
+	top: 0;
+	left: 0;
+	font-size: 0.7em;
+	color: black;
+	background-color: white;
+	cursor: pointer;
 }

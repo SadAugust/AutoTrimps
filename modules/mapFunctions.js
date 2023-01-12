@@ -1201,9 +1201,16 @@ function PrestigeRaiding() {
 		const currSetting = rRaidingBaseSetting[y];
 		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? RequipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone
-		if (!currSetting.active || game.global.world < currSetting.world || game.global.lastClearedCell + 2 < currSetting.cell) {
+
+		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
+		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
+			var times = currSetting.repeatevery;
+			var repeats = Math.round((game.global.world - currSetting.world) / times);
+			if (repeats > 0) raidZones += (times * repeats);
+		}
+
 		if (equipsToGet(raidZones, targetPrestige)[0] === 0) continue;
 		if (currSetting.runType !== 'All') {
 			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
@@ -1212,7 +1219,7 @@ function PrestigeRaiding() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === currSetting.world) {
+		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
 			rRaidingIndex = y;
 			break;
 		}
@@ -1221,7 +1228,6 @@ function PrestigeRaiding() {
 	if (rRaidingIndex >= 0) {
 		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
 		var rRaidingSettings = rRaidingBaseSetting[rRaidingIndex];
-		var raidzones = rRaidingSettings.raidingzone;
 		var rPRRecycle = rRaidingDefaultSetting.recycle;
 		var rPRFragFarm = rRaidingSettings.raidingDropdown;
 		var incrementMaps = rRaidingDefaultSetting.incrementMaps;
@@ -1244,7 +1250,7 @@ function PrestigeRaiding() {
 		farmingDetails.recycle = rPRRecycle;
 		farmingDetails.prestigeGoal = targetPrestige;
 		farmingDetails.fragSetting = rPRFragFarm;
-		farmingDetails.raidzones = raidzones;
+		farmingDetails.raidzones = raidZones;
 		farmingDetails.special = special;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;

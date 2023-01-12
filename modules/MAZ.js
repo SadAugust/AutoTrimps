@@ -342,7 +342,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var windowSize = 'tooltipWindow50';
 		if (golden) windowSize = 'tooltipWindow20'
 		if (quagmire) windowSize = 'tooltipWindow25'
-		if (raiding) windowSize = 'tooltipWindow45'
+		if (raiding) windowSize = 'tooltipWindow50'
 		if (bionic) windowSize = 'tooltipWindow45'
 		if (hypothermia) windowSize = 'tooltipWindow30'
 		if (insanity) windowSize = 'tooltipWindow40'
@@ -532,7 +532,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (smithyFarm) tooltipText += "<div class='windowSmithies'>Smithies</div>"
 		if (hdFarm) tooltipText += "<div class='windowHDBase'>HD Base</div>"
 		if (hdFarm) tooltipText += "<div class='windowHDMult'>HD Mult</div>"
-		if (mapFarm || tributeFarm || worshipperFarm || bionic) tooltipText += "<div class='windowRepeatEvery" + varPrefix_Adjusted + "\'>Repeat<br/>Every</div>"
+		if (mapFarm || tributeFarm || worshipperFarm || raiding) tooltipText += "<div class='windowRepeatEvery" + varPrefix_Adjusted + "\'>Repeat<br/>Every</div>"
 		if (mapFarm || tributeFarm || worshipperFarm || hdFarm) tooltipText += "<div class='windowEndZone" + varPrefix_Adjusted + "\'>End<br/>Zone</div>"
 		if (hdFarm) tooltipText += "<div class='windowHDType'>HD<br/>Type</div>"
 		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>HD<br/>Ratio</div>"
@@ -614,7 +614,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.mapType = autoTrimpSettings[varPrefix + "Settings"].value[x].mapType ? autoTrimpSettings[varPrefix + "Settings"].value[x].mapType : 'Absolute';
 				if (mapFarm || smithyFarm || mapBonus)
 					vals.repeat = autoTrimpSettings[varPrefix + "Settings"].value[x].repeat ? autoTrimpSettings[varPrefix + "Settings"].value[x].repeat : 1;
-				if (mapFarm || tributeFarm || worshipperFarm || bionic)
+				if (mapFarm || tributeFarm || worshipperFarm || raiding)
 					vals.repeatevery = autoTrimpSettings[varPrefix + "Settings"].value[x].repeatevery ? autoTrimpSettings[varPrefix + "Settings"].value[x].repeatevery : 0;
 				if (mapFarm || tributeFarm || worshipperFarm || hdFarm)
 					vals.endzone = autoTrimpSettings[varPrefix + "Settings"].value[x].endzone ? autoTrimpSettings[varPrefix + "Settings"].value[x].endzone : 999;
@@ -760,7 +760,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (tributeFarm)
 				tooltipText += "<div class='windowTributes'><input value='" + vals.tributes + "' type='number' id='windowTributes" + x + "'/></div>";
 			if (tributeFarm) tooltipText += "<div class='windowMets'><input value='" + vals.mets + "' type='number' id='windowMets" + x + "'/></div>";
-			if (mapFarm || tributeFarm || worshipperFarm || bionic)
+			if (mapFarm || tributeFarm || worshipperFarm || raiding)
 				tooltipText += "<div class='windowRepeatEvery" + varPrefix_Adjusted + "\'><input value='" + vals.repeatevery + "' type='number' id='windowRepeatEvery" + x + "'/></div>";
 			if (mapFarm || tributeFarm || worshipperFarm || hdFarm)
 				tooltipText += "<div class='windowEndZone" + varPrefix_Adjusted + "\'><input value='" + vals.endzone + "' type='number' id='windowEndZone" + x + "'/></div>";
@@ -938,7 +938,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('HD Farm')) var hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
 		if (titleText.includes('HD Farm')) var hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
 
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Bionic')) var repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
+		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) var repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm')) var endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
 		if (titleText.includes('Raiding')) var raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
 		if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) var special = document.getElementById('windowSpecial' + x).value;
@@ -1650,7 +1650,7 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowSpecial' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.special
 				if ((!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && !titleText.includes('HD Farm')) && document.getElementById('windowRepeat' + x) !== null)
 					document.getElementById('windowRepeat' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.repeat
-				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Bionic')) && document.getElementById('windowRepeatEvery' + x) !== null)
+				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) && document.getElementById('windowRepeatEvery' + x) !== null)
 					document.getElementById('windowRepeatEvery' + x).value = 0;
 				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm')) && document.getElementById('windowEndZone' + x) !== null)
 					document.getElementById('windowEndZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
@@ -1744,7 +1744,7 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) document.getElementById('windowGather' + index).value = 0;
 	if (titleText.includes('Map Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus') || titleText.includes('HD Farm')) document.getElementById('windowRepeat' + index).value = 0;
 	if (titleText.includes('HD Farm')) document.getElementById('windowHDMult' + index).value = 0;
-	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Bionic')) document.getElementById('windowRepeatEvery' + index).value = 0;
+	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) document.getElementById('windowRepeatEvery' + index).value = 0;
 	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm')) document.getElementById('windowEndZone' + index).value = 0;
 	if (titleText.includes('Tribute Farm')) document.getElementById('windowTributes' + index).value = 0;
 	if (titleText.includes('Tribute Farm')) document.getElementById('windowMets' + index).value = 0;

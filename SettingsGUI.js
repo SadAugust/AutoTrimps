@@ -1789,6 +1789,20 @@ function updateATVersion() {
 			Lastly, there's now a toggle in the default sections part of the window for Raiding Settings to toggle between just doing 1 difficult map as many times as needed or incrementing map levels so you are gaining equips as you go and getting stronger for each map.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '5.7.5.8.2') {
+			var settings_List = ['hRaidingSettings', 'rRaidingSettings']
+			for (var x = 0; x < settings_List.length; x++) {
+				if (typeof (autoTrimpSettings[settings_List[x]].value[0]) !== 'undefined') {
+					for (var y = 0; y < autoTrimpSettings[settings_List[x]].value.length; y++) {
+						autoTrimpSettings[settings_List[x]].value[y].repeatevery = 0;
+					}
+				}
+				saveSettings();
+			}
+			saveSettings();
+			changelog.push("Prestige Raiding now has a 'Repeat Every' input similar to Time Farm, Tribute Farm etc which allows for it to repeat the same raid every X zones.")
+		}
+
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
 		verticalCenterTooltip(false, true);
