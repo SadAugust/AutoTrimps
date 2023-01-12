@@ -15,7 +15,6 @@ function safeBuyBuilding(building, amt) {
 		return false;
 
 	const currBuyAmt = game.global.buyAmt;
-	game.global.firing = false;
 	game.global.buyAmt = amt;
 
 	if (!game.buildings[building].locked && canAffordBuilding(building)) {
