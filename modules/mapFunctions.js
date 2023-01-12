@@ -1175,6 +1175,7 @@ function MapDestacking() {
 MODULES.mapFunctions.prestigeMapArray = new Array(5);
 MODULES.mapFunctions.prestigeFragMapBought = false;
 MODULES.mapFunctions.prestigeRunningMaps = false;
+MODULES.mapFunctions.prestigeRaidZone = 0;
 
 //Prestige Raiding
 function PrestigeRaiding() {
@@ -1202,7 +1203,7 @@ function PrestigeRaiding() {
 		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? RequipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone
 
-		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
+		if (!currSetting.active || game.global.world < currSetting.world || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
@@ -1239,6 +1240,8 @@ function PrestigeRaiding() {
 		var special = getAvailableSpecials('p');
 		var status = 'Prestige Raiding: ' + equipsToGet(raidZones, targetPrestige)[0] + ' items remaining';
 
+		if (MODULES.mapFunctions.prestigeRaidZone > 0 && MODULES.mapFunctions.prestigeFragMapBought) status = 'Prestige frag farm to: ' + prettify(prestigeTotalFragCost(raidZones, targetPrestige, special, incrementMaps, true));
+
 		var repeat = !(
 			(game.global.mapsActive && (
 				equipsToGet(getCurrentMapObject().level, targetPrestige)[1] >= (getCurrentMapObject().bonus === 'p' ? 2 : 1))
@@ -1259,14 +1262,15 @@ function PrestigeRaiding() {
 
 
 	//Resetting variables and recycling the maps used
-	if (!rShouldPrestigeRaid && (currentMap === mapName || (MODULES.mapFunctions.prestigeMapArray[0] != undefined || MODULES.mapFunctions.prestigeMapArray[1] != undefined || MODULES.mapFunctions.prestigeMapArray[2] != undefined || MODULES.mapFunctions.prestigeMapArray[3] != undefined || MODULES.mapFunctions.prestigeMapArray[4] != undefined))) {
-		debug(mapName + " (Z" + game.global.world + ") took " + formatTimeForDescriptions(timeForFormatting(mappingTime)) + ".");
-		if (rMapSettings.recycle && game.global.preMapsActive) {
+	if (!rShouldPrestigeRaid && (currentMap === mapName || MODULES.mapFunctions.prestigeMapArray[0] != undefined)) {
+		if (currentMap === mapName) debug(mapName + " (Z" + game.global.world + ") took " + formatTimeForDescriptions(timeForFormatting(mappingTime)) + ".");
+		if (rRaidingDefaultSetting.recycle && game.global.preMapsActive) {
 			for (var x = 0; x < MODULES.mapFunctions.prestigeMapArray.length; x++) {
 				recycleMap(getMapIndex(MODULES.mapFunctions.prestigeMapArray[x]));
 			}
 		}
 		MODULES.mapFunctions.prestigeMapArray = new Array(5);
+		MODULES.mapFunctions.prestigeRaidZone = 0;
 	}
 
 	return farmingDetails;
@@ -1285,8 +1289,9 @@ function rRunRaid(raidingSettings) {
 	while (equipsToFarm === equipsToGet(raidzones - 1, targetPrestige)[0]) {
 		raidzones--;
 	}
+	MODULES.mapFunctions.prestigeRaidZone = raidzones;
 
-	const canAffordMaps = prestigeTotalFragCost(raidzones, targetPrestige, raidzones, special);
+	const canAffordMaps = prestigeTotalFragCost(raidzones, targetPrestige, special, incrementMaps);
 
 	if (MODULES.mapFunctions.prestigeMapArray[0] === undefined) {
 		if (canAffordMaps) {
@@ -1300,7 +1305,6 @@ function rRunRaid(raidingSettings) {
 		else if (game.global.preMapsActive) {
 			MODULES.mapFunctions.prestigeFragMapBought = false;
 			if (!MODULES.mapFunctions.prestigeFragMapBought) {
-				debug("Check complete for frag map");
 				fragmap();
 				if ((updateMapCost(true) <= game.resources.fragments.owned)) {
 					buyMap();
@@ -2788,25 +2792,28 @@ function prestigeRaidingSliders(number, raidzones, special) {
 }
 
 //Identify total cost of prestige raiding maps
-function prestigeTotalFragCost(raidZones, targetPrestige, raidzones, special) {
+function prestigeTotalFragCost(raidZones, targetPrestige, special, incrementMaps, getCost) {
 	var cost = 0;
 
 	if (equipsToGet(raidZones, targetPrestige)[0]) {
-		cost += prestigeRaidingSliders(0, raidzones, special);
+		cost += prestigeRaidingSliders(0, raidZones, special);
 	}
-	if (equipsToGet((raidZones - 1), targetPrestige)[0]) {
-		cost += prestigeRaidingSliders(1, raidzones, special);
-	}
-	if (equipsToGet((raidZones - 2), targetPrestige)[0]) {
-		cost += prestigeRaidingSliders(2, raidzones, special);
-	}
-	if (equipsToGet((raidZones - 3), targetPrestige)[0]) {
-		cost += prestigeRaidingSliders(3, raidzones, special);
-	}
-	if (equipsToGet((raidZones - 4), targetPrestige)[0]) {
-		cost += prestigeRaidingSliders(4, raidzones, special);
+	if (incrementMaps) {
+		if (equipsToGet((raidZones - 1), targetPrestige)[0]) {
+			cost += prestigeRaidingSliders(1, raidZones, special);
+		}
+		if (equipsToGet((raidZones - 2), targetPrestige)[0]) {
+			cost += prestigeRaidingSliders(2, raidZones, special);
+		}
+		if (equipsToGet((raidZones - 3), targetPrestige)[0]) {
+			cost += prestigeRaidingSliders(3, raidZones, special);
+		}
+		if (equipsToGet((raidZones - 4), targetPrestige)[0]) {
+			cost += prestigeRaidingSliders(4, raidZones, special);
+		}
 	}
 
+	if (getCost) return cost;
 	if (game.resources.fragments.owned >= cost) return true;
 	else return false;
 }

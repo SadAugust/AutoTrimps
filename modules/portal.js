@@ -501,6 +501,7 @@ function resetmapvars() {
 	MODULES.mapFunctions.prestigeMapArray = new Array(5);
 	MODULES.mapFunctions.prestigeFragMapBought = false;
 	MODULES.mapFunctions.prestigeRunningMaps = false;
+	MODULES.mapFunctions.prestigeRaidZone = 0;
 
 	//Auto Level variables
 	mapRepeats = 0;
