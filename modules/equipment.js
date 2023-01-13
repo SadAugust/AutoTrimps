@@ -278,32 +278,27 @@ function equipsToGet(targetZone, targetPrestige) {
 	let mapsToRun = 0;
 	let prestigeToFarmFor = 0;
 
-	const prestigeInterval = (game.global.universe === 2 && game.buildings.Microchip.owned <= 3) ? 5 : (game.global.sLevel <= 3 || challengeActive('Mapology')) ? 5 : 10;
+	const hasSciFour = ((game.global.universe == 1 && game.global.sLevel >= 3) || (game.global.universe == 2 && game.buildings.Microchip.owned >= 3));
+	const prestigeInterval = challengeActive('Mapology') || !hasSciFour ? 5 : 10;
 
 	//Loops through all prestiges
 	for (const p of prestigeList) {
 		//Skip locked equips (Panda)
 		if (game.equipment[game.upgrades[p].prestiges].locked) continue;
 		const prestigeUnlock = game.mapUnlocks[p];
-		let targetZoneLoop = targetZone;
-
-		if (prestigeInterval === 10 &&
-			((targetZoneLoop % 10) < (game.mapUnlocks[p].last % 10)) &&
-			((targetZoneLoop % 10) >= (game.mapUnlocks[p].last % 10) - 5)
-		) {
-			targetZoneLoop -= targetZoneLoop % 10;
-			targetZoneLoop += game.mapUnlocks[p].last % 10;
-		}
 
 		//Last prestige obtained (maplevel) for this equip
 		var pMapLevel = prestigeUnlock.last + 5;
-		//Running if statement if goal zone is greater than or equal to last prestige unlock
-		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && (pMapLevel - prestigeInterval) <= targetZoneLoop) {
-			//Adding maps to run count
-			mapsToRun += Math.max(1, Math.ceil((targetZoneLoop - pMapLevel) / prestigeInterval));
-			//Figuring out prestiges remaining (currently displays wrong value)
-			prestigeToFarmFor += Math.max(0, (Math.floor((targetZoneLoop - (pMapLevel - 5)) / 5)));
+
+		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && pMapLevel <= targetZone) {
+			mapsToRun += Math.max(1, Math.ceil((targetZone - pMapLevel) / prestigeInterval));
+			var prestigeCount = Math.floor((targetZone - prestigeUnlock.last) / 5);
+			if (hasSciFour && prestigeCount % 2 == 1) {
+				prestigeCount++;
+			}
+			prestigeToFarmFor += prestigeCount;
 		}
+
 		if (p === targetPrestige) break;
 	}
 
@@ -314,7 +309,6 @@ function equipsToGet(targetZone, targetPrestige) {
 function CheapestEquipmentCost() {
 	//Looping through each piece of equipment
 
-	var mapAutoLevel = Infinity;
 	var equipmentName = null;
 	var prestigeName = null;
 	//Initialising Variables
