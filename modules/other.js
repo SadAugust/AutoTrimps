@@ -753,7 +753,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, mapType, 'never', bionicTalent, titimp)) : 2;
 
 	//Figuring out gamma to proc value
-	var gammaToTrigger = gammaBurstPct === 1 ? 0 : autoBattle.oneTimers.Burstier.owned ? 4 : 5
+	var gammaToTrigger = gammaMaxStacks();
 
 	if (checkMutations) {
 		enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, calcMutationAttack(zone), 0);
@@ -851,8 +851,8 @@ function equalityManagement() {
 	var noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
 
 	//Gamma burst info
-	var gammaMaxStacks = gammaBurstPct === 1 ? 0 : autoBattle.oneTimers.Burstier.owned ? 4 : 5
-	var gammaToTrigger = gammaMaxStacks - game.heirlooms.Shield.gammaBurst.stacks;
+	var gammaMaxStacksCheck = gammaMaxStacks();
+	var gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
 	var gammaDmg = gammaBurstPct;
 	var fuckGamma = (dailyReflect || (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger));
 
@@ -912,7 +912,7 @@ function equalityManagement() {
 	if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
 
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
-	if (runningDuel && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > remainingHealth(true) && gammaToTrigger === gammaMaxStacks && game.global.armyAttackCount === 0) {
+	if (runningDuel && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > remainingHealth(true) && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {
 		game.portal.Equality.disabledStackCount = 0;
 		if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
 		updateEqualityScaling();
@@ -960,7 +960,7 @@ function equalityManagement() {
 				game.portal.Equality.disabledStackCount = i;
 				break;
 			}
-			else if ((ourHealth < (ourHealthMax * 0.65) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger == gammaMaxStacks && !runningTrappa && !runningArchaeology && !runningBerserk) {
+			else if ((ourHealth < (ourHealthMax * 0.65) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger == gammaMaxStacksCheck && !runningTrappa && !runningArchaeology && !runningBerserk) {
 				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
 					mapsClicked();
 					mapsClicked();
@@ -1100,7 +1100,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 
 	if (what == "food" || what == "wood" || what == "metal") {
 		if (ssWorkerRatio) {
-			amt_local *= calculateParityBonus(desiredRatios, HeirloomSearch(heirloom));
+			amt_local *= calculateParityBonus_Local(desiredRatios, HeirloomSearch(heirloom));
 		}
 		else amt_local *= getParityBonus();
 		if (autoBattle.oneTimers.Gathermate.owned)
@@ -1143,7 +1143,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 	return amt_local;
 }
 
-function calculateParityBonus(workerRatio, heirloom) {
+function calculateParityBonus_Local(workerRatio, heirloom) {
 	if (!game.global.StaffEquipped || game.global.StaffEquipped.rarity < 10) {
 		game.global.parityBonus = 1;
 		return;

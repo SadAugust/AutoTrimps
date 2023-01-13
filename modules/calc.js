@@ -1403,3 +1403,10 @@ function getTotalHealthMod() {
 	healthMulti *= (Fluffy.isRewardActive('shieldlayer') ? 1 + Fluffy.isRewardActive('shieldlayer') : 1);
 	return healthMulti;
 }
+
+function gammaMaxStacks(specialChall) {
+
+	var gammaMaxStacks = gammaBurstPct === 1 || (specialChall && game.global.mapsActive) ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5
+
+	return gammaMaxStacks;
+}

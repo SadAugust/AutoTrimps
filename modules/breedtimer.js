@@ -150,7 +150,12 @@ function ATGA2() {
 		if (challengeActive('Daily') && getPageSetting('dsATGA2timer') > 0 && disActiveSpireAT() == true)
 			target = new Decimal(getPageSetting('dsATGA2timer'));
 
-		if ((getPageSetting('dATGA2Auto') == 2 || (getPageSetting('dATGA2Auto') == 1 && disActiveSpireAT() && challengeActive('Daily'))) && challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined')) {
+		if (
+			(getPageSetting('dATGA2Auto') == 2 ||
+				(getPageSetting('dATGA2Auto') == 1 && disActiveSpireAT() && challengeActive('Daily'))
+			)
+			&& challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined')
+		) {
 			plagueDamagePerStack = (game.global.dailyChallenge.plague !== undefined) ? dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, 1) : 0;
 			boggedDamage = (game.global.dailyChallenge.bogged !== undefined) ? dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength) : 0;
 			atl = Math.ceil((Math.sqrt((plagueDamagePerStack / 2 + boggedDamage) ** 2 - 2 * plagueDamagePerStack * (boggedDamage - 1)) - (plagueDamagePerStack / 2 + boggedDamage)) / plagueDamagePerStack);

@@ -268,7 +268,6 @@ function ImportExportTooltip(what, event, download) {
 		tooltipText = "<img src='" + basepath + "mi.png'>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Thats all the help you get.</div></div>";
 	} else if (what == 'c2table') {
-
 		//Adding U1 challenges
 		var highestZone = game.global.highestLevelCleared + 1;
 		const c2array = [];
@@ -322,6 +321,7 @@ function ImportExportTooltip(what, event, download) {
 				color: 0
 			}
 		}
+
 		if (c3array.length > 0) {
 			challengeList.C3s = {
 				number: 'Difficulty',
@@ -343,6 +343,7 @@ function ImportExportTooltip(what, event, download) {
 				}
 			}
 		}
+
 		function challengeListcolor() {
 			function a(b, c, d) {
 				var e = 100 * (game.c2[b] / (game.global.highestLevelCleared + 1));

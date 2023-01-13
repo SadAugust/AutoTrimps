@@ -1622,8 +1622,7 @@ function Wither() {
 	}
 
 	//Gamma burst info
-	var gammaMaxStacks = gammaBurstPct === 1 || game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5
-	var gammaToTrigger = gammaMaxStacks - game.heirlooms.Shield.gammaBurst.stacks;
+	var gammaToTrigger = gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks;
 	var gammaDmg = gammaBurstPct;
 	var canGamma = gammaToTrigger <= 1 ? true : false;
 

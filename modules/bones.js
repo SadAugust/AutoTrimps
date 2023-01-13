@@ -7,8 +7,8 @@ function boneShrine() {
 	if (game.global.universe === 1 && !autoTrimpSettings.hBoneShrineDefaultSettings.value.active) return;
 	if (game.global.universe === 2 && !autoTrimpSettings.rBoneShrineDefaultSettings.value.active) return;
 
-	const isC3 = game.global.runningChallengeSquared || game.global.challengeActive === 'Mayhem' || game.global.challengeActive === 'Pandemonium';
-	const isDaily = game.global.challengeActive === 'Daily';
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
 	const currChall = game.global.challengeActive;
 	const shredActive = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined';
 	const shredMods = shredActive ? dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength) : [];
@@ -43,7 +43,7 @@ function boneShrine() {
 		var rBoneShrineSettings = rBoneShrineBaseSettings[rBSIndex];
 		var rBoneShrineCharges = rBoneShrineSettings.boneamount;
 		var rBoneShrineGather = rBoneShrineSettings.gather;
-		if (game.global.challengeActive === 'Transmute' && rBoneShrineGather === 'metal') rBoneShrineGather = 'food';
+		if (challengeActive('Transmute') && rBoneShrineGather === 'metal') rBoneShrineGather = 'food';
 		var rBoneShrineSpendBelow = rBoneShrineSettings.bonebelow === -1 ? 0 : rBoneShrineSettings.bonebelow;
 		var rBoneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rBoneShrineSettings.atlantrimp;
 		var rBoneShrineDoubler = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom'
