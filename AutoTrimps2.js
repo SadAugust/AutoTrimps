@@ -115,7 +115,6 @@ var currentMap = undefined;
 var rAutoLevel = Infinity;
 var rMapRepeats = 0;
 var freeVoids = 0;
-var shredTimer = 0;
 
 var rMapSettings = {
 	shouldRun: false,
@@ -149,7 +148,6 @@ function mainLoop() {
 		document.getElementById('freeVoidMap').innerHTML = "Void: " + (game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" + (getPageSetting('rManageEquality') == 2 ? " | Auto Level: " + autoLevel : "");
 		freeVoids = game.permaBoneBonuses.voidMaps.tracker
 		autoLevelCurrent = autoLevel;
-		shredTimer = game.global.hemmTimer / 10;
 	}
 
 	//Displays Perky UI when changing universe to U1.
