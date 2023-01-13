@@ -1405,8 +1405,10 @@ function getTotalHealthMod() {
 }
 
 function gammaMaxStacks(specialChall) {
+	var gammaMaxStacks = 5
+	if (autoBattle.oneTimers.Burstier.owned) gammaMaxStacks--;
+	if (Fluffy.isRewardActive("scruffBurst")) gammaMaxStacks--;
 
-	var gammaMaxStacks = gammaBurstPct === 1 || (specialChall && game.global.mapsActive) ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5
-
+	if (gammaBurstPct === 1 || (specialChall && game.global.mapsActive)) gammaMaxStacks = Infinity;
 	return gammaMaxStacks;
 }
