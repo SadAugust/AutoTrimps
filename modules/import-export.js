@@ -354,36 +354,39 @@ function ImportExportTooltip(what, event, download) {
 			})
 		}
 		function c3listcolor() {
-			function a(b, c, d) {
-				var e = 100 * (game.c2[b] / (game.global.highestRadonLevelCleared + 1));
-				challengeList[b].color = e >= c ? "LIMEGREEN" : e < c && e >= d ? "GOLD" : e < d && 1 <= e ? "#de0000" : "DEEPSKYBLUE";
+			function colorC3(challenge, highPct, midPct) {
+				var challengePercent = 100 * (game.c2[challenge] / (game.global.highestRadonLevelCleared + 1));
+				challengeList[challenge].color = "DEEPSKYBLUE"
+				if (challengePercent >= highPct) challengeList[challenge].color = "LIMEGREEN";
+				else if (challengePercent < highPct && challengePercent >= midPct) challengeList[challenge].color = "GOLD";
+				else if (challengePercent < midPct && 1 <= challengePercent) challengeList[challenge].color = "#de0000";
 			}
-			Object.keys(challengeList).forEach(function (b) {
-				if (game.c2[b] != null) {
-					if (b == "Unbalance")
-						a(b, 90, 80);
-					else if (b == "Unlucky")
-						a(b, 97, 92);
-					else if (b == "Duel")
-						a(b, 90, 80);
-					else if (b == "Transmute")
-						a(b, 90, 80);
-					else if (b == "Quest")
-						a(b, 90, 80);
-					else if (b == "Downsize")
-						a(b, 85, 75);
-					else if (b == "Trappapalooza")
-						a(b, 85, 75);
-					else if (b == "Wither")
-						a(b, 85, 75);
-					else if (b == "Storm")
-						a(b, 90, 80);
-					else if (b == "Berserk")
-						a(b, 85, 75);
-					else if (b == "Glass")
-						a(b, 90, 80);
-					else if (b == "Smithless")
-						a(b, 90, 80);
+			Object.keys(challengeList).forEach(function (challenge) {
+				if (game.c2[challenge] != null) {
+					if (challenge == "Unbalance")
+						colorC3(challenge, 90, 80);
+					else if (challenge == "Unlucky")
+						colorC3(challenge, 97, 92);
+					else if (challenge == "Duel")
+						colorC3(challenge, 90, 80);
+					else if (challenge == "Transmute")
+						colorC3(challenge, 90, 80);
+					else if (challenge == "Quest")
+						colorC3(challenge, 90, 80);
+					else if (challenge == "Downsize")
+						colorC3(challenge, 85, 75);
+					else if (challenge == "Trappapalooza")
+						colorC3(challenge, 75, 60);
+					else if (challenge == "Wither")
+						colorC3(challenge, 85, 75);
+					else if (challenge == "Storm")
+						colorC3(challenge, 90, 80);
+					else if (challenge == "Berserk")
+						colorC3(challenge, 85, 75);
+					else if (challenge == "Glass")
+						colorC3(challenge, 90, 80);
+					else if (challenge == "Smithless")
+						colorC3(challenge, 90, 80);
 				}
 			});
 		}
