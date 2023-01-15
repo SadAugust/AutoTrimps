@@ -464,9 +464,21 @@ function ImportExportTooltip(what, event, download) {
 
 	if (download == true && what == "ExportAutoTrimps") {
 		var pauseGame = 1;
+		var notation = 0;
+		var theme = 2;
 		var paused = false;
 		document.getElementById("downloadLink").click();
 		document.getElementById("confirmTooltipBtn").click();
+
+		//Setting options to ones that make the most sense to me
+		if (game.options.menu.standardNotation.enabled !== 0) {
+			var notation = game.options.menu.standardNotation.enabled;
+			game.options.menu.standardNotation.enabled = 0;
+		}
+		if (game.options.menu.darkTheme.enabled !== 2) {
+			theme = game.options.menu.darkTheme.enabled
+			game.options.menu.darkTheme.enabled = 2;
+		}
 		if (game.options.menu.disablePause.enabled == 0) {
 			pauseGame = 0;
 			game.options.menu.disablePause.enabled = 1;
@@ -480,6 +492,8 @@ function ImportExportTooltip(what, event, download) {
 		document.getElementById("downloadLink").click();
 		document.getElementById("confirmTooltipBtn").click();
 		game.options.menu.disablePause.enabled = pauseGame;
+		game.options.menu.standardNotation.enabled = notation
+		game.options.menu.darkTheme.enabled = theme;
 	}
 }
 
