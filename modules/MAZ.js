@@ -230,6 +230,30 @@ function MAZLookalike(titleText, varPrefix, event) {
 		};
 	}
 
+	if (event == "MessageConfig") {
+		tooltipText = "<div id='messageConfig'>Here you can finely tune your message settings. Mouse over the name of a filter for more info.</div>";
+		var msgs = autoTrimpSettings.spamMessages.value;
+
+		tooltipText += "<div class='row'>";
+		for (var x = 0; x < 1; x++) {
+			tooltipText += "<div class='col-xs-4'></span><br/>";
+			for (var item in msgs) {
+				debug(item)
+				if (item == 'enabled') continue;
+				var realName = item;
+				tooltipText += "<span class='messageConfigContainer'><span class='messageCheckboxHolder'>" + buildNiceCheckbox('at' + item, 'messageConfigCheckbox', (msgs[item].enabled)) + "</span><span onmouseover='messageConfigHoverAT(\"" + item + "\", event)' onmouseout='tooltip(\"hide\")' class='messageNameHolder'> - " + realName.charAt(0).toUpperCase() + realName.substr(1) + "</span></span><br/>";
+			}
+			tooltipText += "</div>";
+		}
+		tooltipText += "</div>";
+		ondisplay = function () { verticalCenterTooltip(); };
+		game.global.lockTooltip = true;
+		elem.style.top = "25%";
+		elem.style.left = "35%";
+		swapClass('tooltipExtra', 'tooltipLg', elem);
+		costText = "<div class='maxCenter'><div class='btn btn-info' id='confirmTooltipBtn' onclick='cancelTooltip();configMessagesAT();'>Confirm</div> <div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>"
+	}
+
 	//Daily Auto Portal
 	if (event == "DailyAutoPortal") {
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose different portal zones depending on specific modifiers that the daily you're running has. For example if your Daily has a resource shred modifier and you have '-3' input in that box then it will set both your void map zone and daily portal zone to 3 zones lower than your settings. Will only ever use the lowest value that is listed so you can't do a combination of -6 for dailies that have both Shred and Reflect by doing a -3 in each box.\
@@ -863,6 +887,64 @@ function buildNiceCheckboxAutoLevel(id, extraClass, enabled, index, varPrefix) {
 	return html;
 }
 
+function messageConfigHoverAT(what, event) {
+	var text = "";
+	var title = "";
+	switch (what) {
+		case 'General':
+			text = "Notification Messages, Auto He/Hr.";
+			title = "General";
+			break;
+		case 'Fragment':
+			text = "Log the amount of fragments each created map cost.";
+			title = "Fragment";
+			break;
+		case 'Upgrades':
+			text = "Log all the upgrades that AT has purchased.";
+			title = "Upgrades";
+			break;
+		case 'Equipment':
+			text = "Log the equipment & prestiges that AT buys.";
+			title = "Equipment";
+			break;
+		case 'Maps':
+			text = "Log the maps that AT decides to pick, buy, run, or recycle.";
+			title = "Maps";
+			break;
+		case 'Other':
+			text = "Log Better Auto Fight, Trimpicide & AutoBreed/Gene Timer changes, etc - a catch all.";
+			title = "Other";
+			break;
+		case 'Buildings':
+			text = "Log the buildings that AT purchases.";
+			title = "Buildings";
+			break;
+		case 'Jobs':
+			text = "Log the jobs that AT purchases.";
+			title = "Jobs";
+			break;
+		case 'Zone':
+			text = "Log when you start a new zone.";
+			title = "Zone";
+			break;
+		default: return;
+	}
+	document.getElementById('messageConfig').innerHTML = "<b>" + title + "</b> - " + text;
+	tooltip(title, 'customText', event, text);
+}
+
+function configMessagesAT() {
+	for (var x = 0; x < 1; x++) {
+		for (var item in autoTrimpSettings.spamMessages.value) {
+			if (item == "enabled") continue;
+			var checkbox = document.getElementById('at' + item);
+			if (checkbox == null) continue;
+			autoTrimpSettings.spamMessages.value[item].enabled = readNiceCheckbox(checkbox);
+		}
+	}
+	saveSettings();
+}
+
 function settingsWindowSave(titleText, varPrefix, reopen) {
 
 	var setting = [];
@@ -1225,9 +1307,9 @@ function mazPopulateHelpWindow(titleText, varPrefix, trimple) {
 	if (raiding) {
 		//Raiding Zone
 		mazHelp += "<li><b>Raiding Zone</b> - The zone you'd like to raid when this line is run. " + (!bionic ? "If your 'Zone' input is 231 then the highest zone you can input is 241." : "") + "</li>";
-		if (!bionic) mazHelp += "<li><b>Frag Type</b> - Frag: Farm for fragments to afford the maps you want to create. <br>\
-	Frag Min: Used for absolute minimum frag costs (which includes no Prestige special, perfect sliders, random map and the difficulty and size options, however it will try to afford those options first!) and prioritises buying the most maps for a smoother sequential raid. \
-	<br>Frag Max: This option will make sure that the map has perfect sliders and uses the prestegious special.</li>";
+		if (!bionic) mazHelp += "<li><b>Frag Type</b> - Frag: General all purpose setting. Will set sliders to max and reduce when necessary to afford the maps you're trying to purchase.<br>\
+	Frag Min: Used for absolute minimum frag costs. Will set everything but the map size to minimum and gradually reduce that if necessary to purchase maps.<br>\
+	Frag Max: This option will make sure that the map has perfect sliders and uses the prestegious special if available.</li>";
 	}
 
 	//HD Farm

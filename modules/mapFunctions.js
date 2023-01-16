@@ -2248,8 +2248,7 @@ function Glass() {
 	}
 
 	//Gamma burst info
-	var gammaMaxStacks = gammaBurstPct === 1 || game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5
-	var gammaToTrigger = gammaMaxStacks - game.heirlooms.Shield.gammaBurst.stacks;
+	var gammaToTrigger = gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks;
 	var gammaDmg = gammaBurstPct;
 	var canGamma = gammaToTrigger <= 1 ? true : false;
 	var damageGoal = 2;
@@ -2759,6 +2758,7 @@ function prestigeRaidingSliders(number, raidzones, special) {
 	//Set loot slider to 0 and perfect maps off if using frag min setting!
 	if (rMapSettings.fragSetting === '1') {
 		document.getElementById("lootAdvMapsRange").value = 0;
+		document.getElementById("difficultyAdvMapsRange").value = 0;
 		document.getElementById("advPerfectCheckbox").dataset.checked = false;
 	}
 

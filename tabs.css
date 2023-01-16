@@ -121,6 +121,11 @@ ul.tab li a:hover {
 	text-shadow: none;
 }
 
+#messageConfig {
+	height: 3vw;
+	font-size: 1vw;
+}
+
 .litScroll {
 	overflow: scroll;
 	height: 500px;
