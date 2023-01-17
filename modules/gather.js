@@ -25,8 +25,6 @@ function calcMaxTraps() {
 function safeSetGather(resource) {
 	if (!resource)
 		return false;
-	if (document.getElementById(resource + 'CollectBtn').style.display === 'none')
-		return false;
 
 	if (game.global.playerGathering !== resource) {
 		setGather(resource);
