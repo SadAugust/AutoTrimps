@@ -65,6 +65,7 @@ function delayStartAgain() {
 	MODULESdefault = JSON.parse(JSON.stringify(MODULES));
 	setInterval(mainLoop, runInterval);
 	setInterval(guiLoop, runInterval * 10);
+	updateCustomButtons();
 }
 
 var ATrunning = true;
@@ -313,8 +314,7 @@ function mainLoop() {
 }
 
 function guiLoop() {
-	updateCustomButtons(),
-		safeSetItems('storedMODULES', JSON.stringify(compareModuleVars())),
+	safeSetItems('storedMODULES', JSON.stringify(compareModuleVars())),
 		getPageSetting('EnhanceGrids') &&
 		MODULES.fightinfo.Update(), 'undefined' != typeof MODULES && 'undefined' != typeof MODULES.performance && MODULES.performance.isAFK && MODULES.performance.UpdateAFKOverlay()
 }
@@ -366,7 +366,6 @@ function mainCleanup() {
 	}
 	if (getPageSetting('AutoEggs'))
 		easterEggClicked();
-
 }
 
 function throwErrorfromMain() {
