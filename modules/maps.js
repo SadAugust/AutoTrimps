@@ -54,8 +54,8 @@ function updateAutoMapsStatus(get) {
 	if (get) {
 		return [status, getPercent, lifetime];
 	} else {
-		document.getElementById('autoMapStatus').innerHTML = status;
-		document.getElementById('hiderStatus').innerHTML = hiderStatus;
+		if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
+		if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
 	}
 }
 
@@ -80,7 +80,7 @@ function autoMap() {
 	}
 
 	//Failsafes
-	if (!game.global.mapsUnlocked || calcOurDmg("avg", 0, false, 'world') <= 0 || currQuest() === 8 || currQuest() === 9) {
+	if (!game.global.mapsUnlocked || game.global.soldierCurrentAttack < 0 || currQuest() === 8 || currQuest() === 9) {
 		if (game.global.preMapsActive) mapsClicked();
 		return;
 	}

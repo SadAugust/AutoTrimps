@@ -279,11 +279,11 @@ function autoStance() {
 		//If even that is not enough, then it ignore Explosive Daily, and finally it ignores Reflect Daily
 		var critPower;
 		for (critPower = 2; critPower >= -2; critPower--) {
-			if (survive("D", critPower)) { setFormation(2); break; }
-			else if (survive("XB", critPower)) { setFormation("0"); break; }
-			else if (survive("B", critPower)) { setFormation(3); break; }
-			else if (survive("X", critPower)) { setFormation("0"); break; }
-			else if (survive("H", critPower)) { setFormation(1); break; }
+			if (survive("D", critPower)) { if (game.global.formation !== 2) setFormation(2); break; }
+			else if (survive("XB", critPower)) { if (game.global.formation !== 0) setFormation("0"); break; }
+			else if (survive("B", critPower)) { if (game.global.formation !== 3) setFormation(3); break; }
+			else if (survive("X", critPower)) { if (game.global.formation !== 0) setFormation("0"); break; }
+			else if (survive("H", critPower)) { if (game.global.formation !== 1) setFormation(1); break; }
 		}
 
 		//If it cannot survive the worst case scenario on any formation, attempt it's luck on H, if available, or X
@@ -327,5 +327,6 @@ function windStance() {
 		stanceToUse = 5;
 	}
 
-	setFormation(stanceToUse);
+	if (game.global.formation !== stanceToUse)
+		setFormation(stanceToUse);
 }

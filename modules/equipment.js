@@ -360,7 +360,6 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			fakeLevels[i] = 0;
 		}
 	}
-	if (!ignorePrestiges) ignorePrestiges = false;
 	if (!ignoreShield) ignoreShield = getPageSetting('rEquipNoShields');
 	if (!skipForLevels) skipForLevels = false;
 	if (!showAllEquips) showAllEquips = false;
@@ -491,13 +490,15 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return false;
 	if (challengeActive('Scientist')) return false;
 
-	var prestigeUpgradeName = "";
+	var prestigeUpgrade = "";
 	var prestigeDone = false;
-	var allUpgradeNames = Object.getOwnPropertyNames(game.upgrades);
+
+	var allUpgradeNames = Object.getOwnPropertyNames(RequipmentList);
+
 	for (var upgrade of allUpgradeNames) {
-		if (game.upgrades[upgrade].prestiges === equipName) {
-			prestigeUpgradeName = upgrade;
-			if (game.upgrades[upgrade].allowed === game.upgrades[upgrade].done) prestigeDone = true;
+		if (upgrade === equipName) {
+			prestigeUpgrade = game.upgrades[RequipmentList[upgrade].Upgrade];
+			if (prestigeUpgrade.allowed === prestigeUpgrade.done) prestigeDone = true;
 			break;
 		}
 	}
@@ -507,19 +508,21 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 	if (!resourceSpendingPct) resourceSpendingPct = 1;
 
 	var equipment = game.equipment[equipName];
+
 	var resource = (equipName == "Shield") ? 'wood' : 'metal'
 	var equipStat = (typeof equipment.attack !== 'undefined') ? 'attack' : 'health';
+	var prestigeUpgradeName = RequipmentList[equipName].Upgrade;
 
-	if (game.upgrades[prestigeUpgradeName].locked || (prestigeUpgradeName == 'Supershield' && getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult() > game.resources.wood.owned * resourceSpendingPct)) return false;
+	if (prestigeUpgrade.locked || (prestigeUpgradeName == 'Supershield' && getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult() > game.resources.wood.owned * resourceSpendingPct)) return false;
 
-	if (game.upgrades[prestigeUpgradeName].cost.resources.science[0] *
-		Math.pow(game.upgrades[prestigeUpgradeName].cost.resources.science[1], game.equipment[equipName].prestige - 1)
+	if (prestigeUpgrade.cost.resources.science[0] *
+		Math.pow(prestigeUpgrade.cost.resources.science[1], equipment.prestige - 1)
 		> game.resources.science.owned) {
 		return false;
 	}
 
-	if (game.upgrades[prestigeUpgradeName].cost.resources.gems[0] *
-		Math.pow(game.upgrades[prestigeUpgradeName].cost.resources.gems[1], game.equipment[equipName].prestige - 1)
+	if (prestigeUpgrade.cost.resources.gems[0] *
+		Math.pow(prestigeUpgrade.cost.resources.gems[1], equipment.prestige - 1)
 		> game.resources.gems.owned) {
 		return false;
 	}

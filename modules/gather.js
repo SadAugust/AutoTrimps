@@ -22,6 +22,18 @@ function calcMaxTraps() {
 	return Math.ceil(calcTPS() * maxZoneDuration / 4);
 }
 
+function safeSetGather(resource) {
+	if (!resource)
+		return false;
+	if (document.getElementById(resource + 'CollectBtn').style.display === 'none')
+		return false;
+
+	if (game.global.playerGathering !== resource) {
+		setGather(resource);
+	}
+	return true;
+}
+
 //Gather selection
 function autoGather() {
 
@@ -31,7 +43,7 @@ function autoGather() {
 
 	//Setting it to use mining/building only!
 	if (manualGather === 2 && document.getElementById('metalCollectBtn').style.display != 'none' && document.getElementById('metal').style.visibility != 'hidden') {
-		autoGather2();
+		autoGatherMetal();
 		return;
 	}
 
@@ -80,11 +92,11 @@ function autoGather() {
 		if (!trapsReady && game.global.buildingsQueue.length == 0 && (game.global.playerGathering != 'trimps' || game.buildings.Trap.owned == 0)) {
 			//Gather food or wood
 			if (game.resources.food.owned < 10) {
-				setGather('food');
+				safeSetGather('food');
 				return;
 			}
 			if (game.triggers.wood.done && game.resources.wood.owned < 10) {
-				setGather('wood');
+				safeSetGather('wood');
 				return;
 			}
 		}
@@ -94,14 +106,14 @@ function autoGather() {
 	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull)) {
 		//Bait trimps if we have traps
 		if (!lowOnTraps && !trapBuffering) {
-			setGather('trimps');
+			safeSetGather('trimps');
 			return;
 		}
 
 		//Or build them, if they are on the queue
 		else if (isBuildingInQueue('Trap') || safeBuyBuilding('Trap', 1)) {
 			trapBuffering = true;
-			setGather('buildings');
+			safeSetGather('buildings');
 			return;
 		}
 	}
@@ -109,26 +121,26 @@ function autoGather() {
 
 	//Build if we don't have foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap
 	if (!bwRewardUnlocked("Foremany") && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier == 0 || (getPlayerModifier() > 100 && game.global.buildingsQueue[0] != 'Trap.1'))) {
-		setGather('buildings');
+		safeSetGather('buildings');
 		return;
 	}
 
 	//Also Build if we have storage buildings on top of the queue
 	if (!bwRewardUnlocked("Foremany") && game.global.buildingsQueue.length && game.global.buildingsQueue[0] == 'Barn.1' || game.global.buildingsQueue[0] == 'Shed.1' || game.global.buildingsQueue[0] == 'Forge.1') {
-		setGather('buildings');
+		safeSetGather('buildings');
 		return;
 	}
 
 	//Highest Priority Research if we have less science than needed to buy Battle, Miner and Scientists
 	if (manualGather != 3 && researchAvailable && (needBattle || needScientists || needMiner && game.resources.science.owned < 60)) {
-		setGather('science');
+		safeSetGather('science');
 		return;
 	}
 
 	if (hasTurkimp && game.global.mapsActive) {
 		//Setting gather to the option selected in farming settings if it exists.
 		if (rMapSettings.gather !== undefined && rMapSettings.gather !== null) {
-			setGather(rMapSettings.gather);
+			safeSetGather(rMapSettings.gather);
 			return;
 		}
 
@@ -136,40 +148,40 @@ function autoGather() {
 		currentBonus = getCurrentMapObject().bonus;
 		if (currentBonus) {
 			if (currentBonus.includes('sc') || currentBonus.includes('hc'))
-				setGather('food');
+				safeSetGather('food');
 			else if (currentBonus.includes('wc'))
-				setGather('wood');
+				safeSetGather('wood');
 			else if (currentBonus.includes('mc') || currentBonus.includes('lc'))
-				setGather('metal');
+				safeSetGather('metal');
 			else if (manualGather != 3 && currentBonus.includes('rc'))
-				setGather('science');
+				safeSetGather('science');
 			else
-				setGather('metal');
+				safeSetGather('metal');
 			return;
 		}
 	}
 
 	//Gather resources for Miner
 	if (needMiner && (game.resources.metal.owned < 100 || game.resources.wood.owned < 300)) {
-		setGather(game.resources.metal.owned < 100 ? "metal" : "wood");
+		safeSetGather(game.resources.metal.owned < 100 ? "metal" : "wood");
 		return;
 	}
 
 	//High Priority Metal gathering for Metal Challenge
 	if (challengeActive('Metal') && !game.global.mapsUnlocked) {
-		setGather('metal');
+		safeSetGather('metal');
 		return;
 	}
 
 	//Mid Priority Trapping
 	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && notFullPop && !lowOnTraps && !trapBuffering) {
-		setGather('trimps');
+		safeSetGather('trimps');
 		return;
 	}
 
 	//High Priority Research - When manual research still has more impact than scientists
 	if (manualGather != 3 && researchAvailable && needScience && getPlayerModifier() > getPerSecBeforeManual('Scientist')) {
-		setGather('science');
+		safeSetGather('science');
 		return;
 	}
 
@@ -177,19 +189,22 @@ function autoGather() {
 	if (trapTrimpsOK && trappingIsRelevant && canAffordBuilding('Trap', false, false, false, false, 1) && (lowOnTraps || trapBuffering)) {
 		trapBuffering = true;
 		safeBuyBuilding('Trap', 1);
-		setGather('buildings');
+		safeSetGather('buildings');
 		return;
 	}
 
 	//Metal if Turkimp is active
 	if (hasTurkimp) {
-		setGather(!challengeActive('Transmute') ? 'metal' : 'food');
+		if (!challengeActive('Transmute'))
+			safeSetGather('metal');
+		else
+			safeSetGather('food');
 		return;
 	}
 
 	//Mid Priority Research
 	if (manualGather != 3 && researchAvailable && needScience) {
-		setGather('science');
+		safeSetGather('science');
 		return;
 	}
 
@@ -198,7 +213,7 @@ function autoGather() {
 		trapBuffering = !fullOfTraps;
 		maxTrapBuffering = true;
 		safeBuyBuilding('Trap', 1);
-		setGather('buildings');
+		safeSetGather('buildings');
 		return;
 	}
 
@@ -230,29 +245,29 @@ function autoGather() {
 	}
 	if (challengeActive('Transmute') && game.global.playerGathering != lowestResource && !haveWorkers && !breedFire) {
 		if (hasTurkimp)
-			setGather('food');
+			safeSetGather('food');
 		else
-			setGather(lowestResource);
+			safeSetGather(lowestResource);
 	} else if (document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
 		if (game.resources.science.owned < getPsStringLocal('science', true) * MODULES["gather"].minScienceSeconds && game.global.turkimpTimer < 1 && haveWorkers)
-			setGather('science');
+			safeSetGather('science');
 		else if (challengeActive('Transmute') && hasTurkimp)
-			setGather('food');
+			safeSetGather('food');
 		else
-			setGather(lowestResource);
+			safeSetGather(lowestResource);
 	}
 	else if (trapTrimpsOK && game.global.trapBuildToggled == true && lowOnTraps)
-		setGather('buildings');
+		safeSetGather('buildings');
 	else
-		setGather(lowestResource);
+		safeSetGather(lowestResource);
 }
 
 //Mining/Building only setting
-function autoGather2() {
+function autoGatherMetal() {
 	if ((game.global.buildingsQueue.length <= 1 && getPageSetting('gathermetal') == false) || (getPageSetting('gathermetal') == true)) {
-		setGather(!challengeActive('Transmute') ? 'metal' : 'food');
+		safeSetGather(!challengeActive('Transmute') ? 'metal' : 'food');
 	}
 	else {
-		setGather('buildings')
+		safeSetGather('buildings')
 	}
 }
