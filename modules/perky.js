@@ -21,7 +21,7 @@ function read_save() {
 		($$("#preset > *").forEach(function (a) {
 			a.selected = parseInt(a.innerHTML.replace("z", "")) < game.global.highestLevelCleared;
 		}),
-			auto_preset());
+			update_preset());
 	var b = portalWindowOpen ? game.global.heliumLeftover : 0;
 	for (var c in game.portal) b += game.portal[c].heliumSpent || 0;
 	var d = Object.keys(game.portal).filter(function (a) {
@@ -337,7 +337,7 @@ presets = {
 	nerfeder: ["0", "1", "0"],
 };
 
-function auto_preset() {
+function update_preset() {
 	var a = presets[$("#preset").value],
 		b = a[0],
 		c = a[1],

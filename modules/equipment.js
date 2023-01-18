@@ -709,7 +709,7 @@ function equipfarmdynamicHD(rEFIndex) {
 
 function estimateEquipsForZone(rEFIndex) {
 	var MAX_EQUIP_DELTA = 1000;
-	var checkMutations = game.global.world > 200 && getPageSetting('rMutationCalc')
+	var checkMutations = game.global.world > 200;
 
 	// calculate stats needed pass zone
 	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;

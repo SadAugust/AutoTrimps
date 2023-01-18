@@ -190,7 +190,7 @@ function shouldRunUniqueMap(map) {
 			const smithyShred = woodShred || metalShred;
 			// maybe get extra smithiesvar 
 			meltsmithy =
-				challengeActive('Desolation') && getPageSetting('rDesolation') && getPageSetting('rDesolationMP') > 0 ? getPageSetting('rDesolationMP') :
+				challengeActive('Desolation') && getPageSetting('desolation') && getPageSetting('desolationMP') > 0 ? getPageSetting('desolationMP') :
 					challengeActive('Pandemonium') && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') :
 						isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
 							isDaily && !smithyShred && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
@@ -2514,18 +2514,18 @@ function Desolation() {
 	};
 
 	if (game.global.stringVersion < '5.9.0') return farmingDetails;
-	if (!challengeActive('Desolation') || !getPageSetting('rDesolation')) return farmingDetails;
+	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
 
 	var rShouldDesolation = false;
 	var mapAutoLevel = Infinity;
 
-	var destackHits = getPageSetting('rDesolationDestack') > 0 ? getPageSetting('rDesolationDestack') : Infinity;
-	var destackZone = getPageSetting('rDesolationZone') > 0 ? getPageSetting('rDesolationZone') : Infinity;
-	var destackStacks = getPageSetting('rDesolationStacks') > 0 ? getPageSetting('rDesolationStacks') : 0;
-	var rDesolationMapLevel = 0;
-	var rDesolationMapIncrease = getPageSetting('rDesolationMapIncrease') > 0 ? getPageSetting('rDesolationMapIncrease') : 0;
+	var destackHits = getPageSetting('desolationDestack') > 0 ? getPageSetting('desolationDestack') : Infinity;
+	var destackZone = getPageSetting('desolationZone') > 0 ? getPageSetting('desolationZone') : Infinity;
+	var destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 0;
+	var desolationMapLevel = 0;
+	var desolationMapIncrease = getPageSetting('desolationMapIncrease') > 0 ? getPageSetting('desolationMapIncrease') : 0;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	var rDesolationSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
+	var desolationSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
 
 	if (game.challenges.Desolation.chilled >= destackStacks && (HDRatio > destackHits || game.global.world >= destackZone))
 		rShouldDesolation = true;
@@ -2535,10 +2535,10 @@ function Desolation() {
 		mapRepeats = 0;
 	}
 	var rAutoLevel_Repeat = rAutoLevel;
-	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rDesolationSpecial, 10, (0 + rDesolationMapIncrease), false);
+	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, desolationSpecial, 10, (0 + desolationMapIncrease), false);
 	if (mapAutoLevel !== Infinity) {
 		if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
-		rDesolationMapLevel = mapAutoLevel;
+		desolationMapLevel = mapAutoLevel;
 	}
 	if (!rShouldDesolation && (MODULES.mapFunctions.desolationContinueRunning || (game.global.mapsActive && rMapSettings.mapName === 'Desolation Destacking'))) {
 		if (game.challenges.Desolation.chilled > 0) {
@@ -2554,19 +2554,19 @@ function Desolation() {
 		}
 	}
 
-	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rDesolationMapLevel || (getCurrentMapObject().bonus !== rDesolationSpecial && (getCurrentMapObject().bonus !== undefined && rDesolationSpecial !== '0')) || game.challenges.Desolation.chilled <= rDesolationMapLevel + 1);
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== desolationMapLevel || (getCurrentMapObject().bonus !== desolationSpecial && (getCurrentMapObject().bonus !== undefined && desolationSpecial !== '0')) || game.challenges.Desolation.chilled <= desolationMapLevel + 1);
 	var status = 'Desolation Destacking: ' + game.challenges.Desolation.chilled + " remaining";
 
 	farmingDetails.shouldRun = rShouldDesolation;
 	farmingDetails.mapName = mapName;
-	farmingDetails.mapLevel = rDesolationMapLevel;
+	farmingDetails.mapLevel = desolationMapLevel;
 	farmingDetails.autoLevel = true;
-	farmingDetails.special = rDesolationSpecial;
+	farmingDetails.special = desolationSpecial;
 	farmingDetails.repeat = !repeat;
 	farmingDetails.status = status;
 
 	if (currentMap === mapName && !farmingDetails.shouldRun) {
-		mappingDetails(mapName, rDesolationMapLevel, rDesolationSpecial);
+		mappingDetails(mapName, desolationMapLevel, desolationSpecial);
 		resetMapVars();
 	}
 	return farmingDetails;

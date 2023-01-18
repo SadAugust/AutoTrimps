@@ -65,7 +65,7 @@ function delayStartAgain() {
 	MODULESdefault = JSON.parse(JSON.stringify(MODULES));
 	setInterval(mainLoop, runInterval);
 	setInterval(guiLoop, runInterval * 10);
-	updateCustomButtons();
+	updateCustomButtons(true);
 }
 
 var ATrunning = true;

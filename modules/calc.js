@@ -1111,7 +1111,7 @@ function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp") {
 	}
 
 	//Add check for mutator health here!
-	if (type === 'world' && game.global.world > 200 && getPageSetting('rMutationCalc')) {
+	if (type === 'world' && game.global.world > 200) {
 		health = calcMutationHealth(zone) > health ? calcMutationHealth(zone) : health;
 	}
 
