@@ -440,17 +440,6 @@ function buyBuildings() {
 		if (!game.buildings.Microchip.locked && canAffordBuilding('Microchip', null, null, false, false, 1)) {
 			safeBuyBuilding('Microchip', 1);
 		}
-
-		if (currentMap !== 'Tribute Farm') {
-			if (getAutoStructureSetting().enabled && !document.getElementById('autoStructureBtn').classList.contains("enabled")) {
-				document.getElementById('autoStructureBtn').classList.add("enabled")
-				autoTrimpSettings.rAutoStructureSetting.value = true;
-			}
-			else if (!getAutoStructureSetting().enabled && document.getElementById('autoStructureBtn').classList.contains("enabled")) {
-				document.getElementById('autoStructureBtn').classList.remove("enabled")
-				autoTrimpSettings.rAutoStructureSetting.value = false;
-			}
-		}
 	}
 
 	buyTributes();
