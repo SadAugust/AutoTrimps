@@ -366,10 +366,10 @@ function getAnticipationBonus(stacks) {
 	var stacks45 = getPageSetting('45stacks') != false && getPageSetting('45stacks') != "false";
 
 	//Regular anticipation
-	if (!stacks45) return 1 + stacks * perkMult;
+	if (!stacks45) return 1 + (stacks * perkMult);
 
 	//45 stacks (??)
-	return 1 + 45 * perkMult;
+	return 1 + (45 * perkMult);
 }
 
 function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, mapLevel, useTitimp) {
@@ -397,8 +397,8 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	//Anticipation
 	attack *= game.global.antiStacks > 0 ? getAnticipationBonus() : 1;
 	//Formation
-	if (specificStance && game.global.formation != 0 && game.global.formation != 5) attack /= (game.global.formation == 2) ? 4 : 0.5;
-	if (specificStance && specificStance != "X" && specificStance != "W") attack *= (specificStance == "D") ? 4 : 0.5;
+	if (specificStance && game.global.formation != 0 && game.global.formation != 5) attack /= (game.global.formation === 2) ? 4 : 0.5;
+	if (specificStance && specificStance != "X" && specificStance != "W") attack *= (specificStance === "D") ? 4 : 0.5;
 	// Map Bonus
 	attack *= mapType !== 'world' ? 1 : game.talents.mapBattery.purchased && game.global.mapBonus == 10 ? 5 : 1 + (game.global.mapBonus * .2);
 	// Tenacity
@@ -438,7 +438,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 		attack *= (game.talents.voidPower2.purchased) ? ((game.talents.voidPower3.purchased) ? 1.65 : 1.35) : 1.15;
 		attack *= (game.talents.voidMastery.purchased) ? 5 : 1;
 	}
-	if (game.global.world === 1) {
+	if (game.global.universe === 1) {
 		//Scryhard I - MAKE SURE THIS WORKS!
 		var fightingCorrupted = getCurrentEnemy() && getCurrentEnemy().corrupted || !realDamage && (mutations.Healthy.active() || mutations.Corruption.active());
 		if (game.talents.scry.purchased && fightingCorrupted && ((!specificStance && game.global.formation == 4) || (specificStance === 'S' || specificStance === 'W')))
@@ -456,6 +456,12 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	attack *= game.global.sugarRush ? sugarRush.getAttackStrength() : 1;
 	// Challenge 2 or 3 reward
 	attack *= 1 + (game.global.totalSquaredReward / 100);
+	//Fluffy
+	if (Fluffy.isActive()) {
+		attack *= Fluffy.getDamageModifier();
+		if (Fluffy.isRewardActive('voidSiphon') && game.stats.totalVoidMaps.value) attack *= (1 + (game.stats.totalVoidMaps.value * 0.05));
+		if (game.global.universe === 1 && game.talents.kerfluffle.purchased) attack *= game.talents.kerfluffle.mult();
+	}
 
 	//Empowerments - Ice (Experimental)
 	if (getEmpowerment() === "Ice") {
@@ -469,12 +475,6 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 			if (Fluffy.isRewardActive('naturesWrath')) mod *= 2;
 			attack *= 1 + mod;
 		}
-	}
-	//Fluffy
-	if (Fluffy.isActive()) {
-		attack *= Fluffy.getDamageModifier();
-		if (Fluffy.isRewardActive('voidSiphon') && game.stats.totalVoidMaps.value) attack *= (1 + (game.stats.totalVoidMaps.value * 0.05));
-		if (game.global.universe === 1 && game.talents.kerfluffle.purchased) attack *= game.talents.kerfluffle.mult();
 	}
 	//Amalgamator
 	attack *= game.jobs.Amalgamator.owned > 0 ? game.jobs.Amalgamator.getDamageMult() : 1;
