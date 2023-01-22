@@ -338,6 +338,10 @@ function mainCleanup() {
 	if (aWholeNewHZE) {
 		if (game.global.universe === 2) radonChallengesSetting(true);
 		else heliumChallengesSetting(true);
+
+		document.getElementById('freeVoidMap').parentNode.style.display = 'block';
+		document.getElementById('freeVoidMap').style.display = 'block';
+
 	}
 
 	if (game.global.universe == 1 && currentworld == 1 && aWholeNewWorld) {
