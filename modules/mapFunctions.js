@@ -385,6 +385,7 @@ function MapBonus() {
 	const currChall = game.global.challengeActive;
 	const rMBZone = game.global.universe === 1 ? getPageSetting('hMapBonusZone') : getPageSetting('rMapBonusZone');
 	const rMBBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
+
 	const rMBDefaultSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusDefaultSettings.value : autoTrimpSettings.rMapBonusDefaultSettings.value;
 	let rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio && game.global.mapBonus !== 10;
 	let rMBspireMapStack = getPageSetting('MaxStacksForSpire') && isDoingSpire() && game.global.mapBonus !== 10;
@@ -796,7 +797,7 @@ function SmithyFarm() {
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const woodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
 	const smithyShred = woodShred || metalShred;
-	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
+	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
 	const rSFBaseSetting = autoTrimpSettings.rSmithyFarmSettings.value;
@@ -825,6 +826,7 @@ function SmithyFarm() {
 
 		let mapBonus;
 		if (game.global.mapsActive) mapBonus = getCurrentMapObject().bonus;
+		dontRecycleMaps = true;
 
 		var rSFSettings = autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
 		var rSFMapLevel = challengeActive('Quest') ? -1 : rSFSettings.level;
@@ -872,8 +874,8 @@ function SmithyFarm() {
 			//Calculating wood & metal earned then using that info to identify how many Smithies you can afford from those values.
 			var woodEarned = woodBase * mapTime;
 			var metalEarned = metalBase * mapTime;
-			var woodSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (game.resources.wood.owned + woodEarned), (smithy_Cost_Mult), true)
-			var metalSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (game.resources.metal.owned + metalEarned), (smithy_Cost_Mult), true)
+			var woodSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (game.resources.wood.owned + woodEarned), (smithy_Cost_Mult), true);
+			var metalSmithies = game.buildings.Smithy.purchased + getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (game.resources.metal.owned + metalEarned), (smithy_Cost_Mult), true);
 
 			if (woodSmithies > 0 && metalSmithies > 0) {
 				//Taking the minimum value of the 2 to see which is more reasonable to aim for
@@ -1508,14 +1510,13 @@ function BionicRaiding() {
 		}
 
 		var status = 'Raiding to BW' + raidzonesBW + ': ' + equipsToGet(raidzonesBW, targetPrestige)[0] + ' items remaining';
-		var repeat = !(
+		var repeat = (!
 			(game.global.mapsActive && (
-				equipsToGet(getCurrentMapObject().level, targetPrestige)[1] !== (game.talents.bionic2.purchased ? 2 : 1)
+				equipsToGet(getCurrentMapObject().level, targetPrestige)[1] >= (game.talents.bionic2.purchased ? 2 : 1)
 				||
 				getCurrentMapObject().location !== 'Bionic')
 			)
 		);
-
 
 		if (currentMap === mapName && !rShouldBionicRaid) {
 			mappingDetails(mapName, 0, special);

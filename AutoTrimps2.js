@@ -117,6 +117,7 @@ var currentMap = undefined;
 var rAutoLevel = Infinity;
 var rMapRepeats = 0;
 var freeVoids = 0;
+var showingPerky = false;
 
 var rMapSettings = {
 	shouldRun: false,

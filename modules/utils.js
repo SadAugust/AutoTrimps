@@ -57,8 +57,42 @@ function getPageSetting(setting) {
 		return parseInt(autoTrimpSettings[setting].value);
 	} else if (autoTrimpSettings[setting].type == 'dropdown') {
 		return autoTrimpSettings[setting].selected;
+	} else if (autoTrimpSettings[setting].type == 'mazArray') {
+		return autoTrimpSettings[setting].value;
 	}
-}
+}/* 
+
+function getPageSetting(setting) {
+	if (autoTrimpSettings.hasOwnProperty(setting) == false) {
+		return false;
+	}
+
+	var value = 'value'
+	var enabled = 'value'
+	var selected = 'value'
+	if (autoTrimpSettings[setting].universe === null) {
+		if (game.global.universe === 2) value += 'U2';
+		if (game.global.universe === 2) enabled += 'U2';
+		if (game.global.universe === 2) selected += 'U2';
+	}
+
+	if (autoTrimpSettings[setting].type == 'boolean') {
+		return autoTrimpSettings[setting][enabled];
+	} else if (autoTrimpSettings[setting].type == 'multiValue') {
+		return Array.from(autoTrimpSettings[setting][value])
+			.map(x => parseInt(x));
+	} else if (autoTrimpSettings[setting].type == 'textValue') {
+		return autoTrimpSettings[setting][value];
+	} else if (autoTrimpSettings[setting].type == 'value' || autoTrimpSettings[setting].type == 'valueNegative') {
+		return parseFloat(autoTrimpSettings[setting][value]);
+	} else if (autoTrimpSettings[setting].type == 'multitoggle') {
+		return parseInt(autoTrimpSettings[setting][value]);
+	} else if (autoTrimpSettings[setting].type == 'dropdown') {
+		return autoTrimpSettings[setting][selected];
+	} else if (autoTrimpSettings[setting].type == 'mazArray') {
+		return autoTrimpSettings[setting][value];
+	}
+} */
 
 function setPageSetting(setting, value) {
 	if (autoTrimpSettings.hasOwnProperty(setting) == false) {
