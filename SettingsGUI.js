@@ -12,46 +12,46 @@ function automationMenuInit() {
 	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
 
 	//AutoMaps
-	var newContainer = document.createElement("DIV");
-	newContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
-	newContainer.setAttribute("id", "autoMapBtn");
-	newContainer.setAttribute("class", "toggleConfigBtn noselect settingsBtn");
-	newContainer.setAttribute("onClick", "toggleAutoMaps()");
-	newContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Automapping\", \"customText\", event, \"Toggle automapping on and off.\")');
-	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	newContainer.innerHTML = 'Auto Maps';
+	var autoMapsContainer = document.createElement("DIV");
+	autoMapsContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
+	autoMapsContainer.setAttribute("id", "autoMapBtn");
+	autoMapsContainer.setAttribute("class", "toggleConfigBtn noselect settingsBtn");
+	autoMapsContainer.setAttribute("onClick", "toggleAutoMaps()");
+	autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Automapping\", \"customText\", event, \"Toggle automapping on and off.\")');
+	autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
+	autoMapsContainer.innerHTML = 'Auto Maps';
 	var fightButtonCol = document.getElementById("battleBtnsColumn");
-	fightButtonCol.appendChild(newContainer);
+	fightButtonCol.appendChild(autoMapsContainer);
 
-	newContainer = document.createElement("DIV");
-	newContainer.setAttribute("style", "display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
-	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	var abutton = document.createElement("SPAN");
-	abutton.id = 'autoMapStatus';
-	newContainer.appendChild(abutton);
-	fightButtonCol.appendChild(newContainer);
+	var autoMapsStatusContainer = document.createElement("DIV");
+	autoMapsStatusContainer.setAttribute("style", "display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
+	autoMapsStatusContainer.setAttribute("onmouseout", 'tooltip("hide")');
+	var autoMapsStatusText = document.createElement("SPAN");
+	autoMapsStatusText.id = 'autoMapStatus';
+	autoMapsStatusContainer.appendChild(autoMapsStatusText);
+	fightButtonCol.appendChild(autoMapsStatusContainer);
 
-	newContainer = document.createElement("DIV");
-	newContainer.setAttribute("style", "display: none; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
+	var resourcePerHourContainer = document.createElement("DIV");
+	resourcePerHourContainer.setAttribute("style", "display: none; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
 	if (game.global.universe == 1)
-		newContainer.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
+		resourcePerHourContainer.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
 	else if (game.global.universe == 2)
-		newContainer.setAttribute("onmouseover", 'tooltip(\"Radon/Hr Info\", \"customText\", event, \"1st is Current Rn/hr % out of Lifetime Rn(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total Rn earned / Lifetime Rn(not including current)<br>\" + getDailyRnHrStats())');
-	newContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	var abutton = document.createElement("SPAN");
-	abutton.id = 'hiderStatus';
-	newContainer.appendChild(abutton);
-	fightButtonCol.appendChild(newContainer);
+		resourcePerHourContainer.setAttribute("onmouseover", 'tooltip(\"Radon/Hr Info\", \"customText\", event, \"1st is Current Rn/hr % out of Lifetime Rn(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total Rn earned / Lifetime Rn(not including current)<br>\" + getDailyRnHrStats())');
+	resourcePerHourContainer.setAttribute("onmouseout", 'tooltip("hide")');
+	var resourcePerHourButton = document.createElement("SPAN");
+	resourcePerHourButton.id = 'hiderStatus';
+	resourcePerHourContainer.appendChild(resourcePerHourButton);
+	fightButtonCol.appendChild(resourcePerHourContainer);
 
 
-	newContainer = document.createElement("DIV");
-	newContainer.setAttribute("style", "display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);");
-	var abutton = document.createElement("SPAN");
-	abutton.id = 'freeVoidMap';
-	newContainer.appendChild(abutton);
-	fightButtonCol.appendChild(newContainer);
-	var fightButtonCol = document.getElementById("trimps");
-	fightButtonCol.appendChild(newContainer);
+	var voidMapContainer = document.createElement("DIV");
+	voidMapContainer.setAttribute("style", "display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);");
+	var voidMapText = document.createElement("SPAN");
+	voidMapText.id = 'freeVoidMap';
+	voidMapContainer.appendChild(voidMapText);
+	fightButtonCol.appendChild(voidMapContainer);
+	var trimpsButtonCol = document.getElementById("trimps");
+	trimpsButtonCol.appendChild(voidMapContainer);
 
 	var $portalTimer = document.getElementById('portalTimer');
 	$portalTimer.setAttribute('onclick', 'toggleSetting(\'pauseGame\')');
@@ -1749,7 +1749,7 @@ function settingChanged(id) {
 		btn.enabled = !btn.enabled;
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn.enabled);
 		if (id == 'rEquipEfficientEquipDisplay') {
-			displayMostEfficientEquipment()
+			displayMostEfficientEquipment();
 		}
 		if (btn === autoTrimpSettings.RAutoStartDaily) {
 			document.getElementById('RAutoStartDaily').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn.enabled);
@@ -2649,6 +2649,128 @@ function updateCustomButtons(initialLoad) {
 		autoTrimpSettings.Prestige.selected = "Bestplate";
 	}
 }
+
+
+
+/* function updateCustomButtons(initialLoad) {
+	if (lastTheme && game.options.menu.darkTheme.enabled != lastTheme) {
+		if (typeof MODULES["graphs"] !== 'undefined')
+			MODULES["graphs"].themeChanged();
+		debug("Theme change - AutoTrimps styles updated.");
+	}
+	lastTheme = game.options.menu.darkTheme.enabled;
+
+	var highestZone = game.global.highestRadonLevelCleared;
+	var displayAllSettings = autoTrimpSettings.rDisplayAllSettings.enabled;
+	//Update portal challenges
+	heliumChallengesSetting();
+	radonChallengesSetting();
+
+	//Hide settings
+	//Radon
+	var radonon = getPageSetting('radonsettings') == 1;
+	var legacysettings = getPageSetting('radonsettings') == 2;
+
+	//Swapping name and description of C2 tab when Radon is toggled on.
+	if (radonon) {
+		if (document.getElementById("C2").children[0].children[0].innerHTML !== 'C3 - Settings for C3s and special challenges (Mayhem, Pandemonium)') document.getElementById("C2").children[0].children[0].innerHTML = 'C3 - Settings for C3s and special challenges (Mayhem, Pandemonium)';
+		if (document.getElementById("tabC2").children[0].innerHTML !== 'C3') document.getElementById("tabC2").children[0].innerHTML = 'C3';
+	}
+	else {
+		if (document.getElementById("C2").children[0].children[0].innerHTML !== 'Settings for C2s') document.getElementById("C2").children[0].children[0].innerHTML = 'Settings for C2s';
+		if (document.getElementById("tabC2").children[0].innerHTML !== 'C2') document.getElementById("tabC2").children[0].innerHTML = 'C2';
+	}
+	//Tabs
+	if (document.getElementById("tabBuildings") != null) {
+		document.getElementById("tabBuildings").style.display = radonon ? "none" : "";
+	}
+	if (document.getElementById("tabJobs") != null) {
+		document.getElementById("tabJobs").style.display = radonon ? "none" : !radonon ? "none" : "";
+	}
+	if (document.getElementById("tabDaily") != null) {
+		document.getElementById("tabDaily").style.display = radonon && (!displayAllSettings && highestZone < 29) ? "none" : "";
+	}
+	if (document.getElementById("tabSpire") != null) {
+		document.getElementById("tabSpire").style.display = radonon ? "none" : "";
+	}
+	if (document.getElementById("tabWindstacking") != null) {
+		document.getElementById("tabWindstacking").style.display = radonon ? "none" : "";
+	}
+	if (document.getElementById("tabATGA") != null) {
+		document.getElementById("tabATGA").style.display = radonon ? "none" : "";
+	}
+	if (document.getElementById("tabScryer") != null) {
+		document.getElementById("tabScryer").style.display = radonon ? "none" : "none";
+	}
+	if (document.getElementById("tabMagma") != null) {
+		document.getElementById("tabMagma").style.display = radonon ? "none" : "";
+	}
+	if (document.getElementById("tabNature") != null) {
+		document.getElementById("tabNature").style.display = radonon ? "none" : "";
+	}
+	if (document.getElementById("tabChallenges") != null) {
+		document.getElementById("tabChallenges").style.display = !radonon ? "" : "";
+	}
+	if (document.getElementById("tabLegacy") != null) {
+		document.getElementById("tabLegacy").style.display = !legacysettings ? "none" : "";
+	}
+
+	for (setting in autoTrimpSettings) {
+		var item = autoTrimpSettings[setting];
+		if (item.type === 'mazArray' || item.type === 'mazDefaultArray') {
+			turnOff(setting);
+		} else if (item.universe === null ||
+			(radonon && item.universe === 2) ||
+			(!radonon && item.universe === 1)
+		) {
+			turnOn(setting, radonon);
+		} else {
+			turnOff(setting)
+		};
+
+		if (initialLoad) {
+			if (item.type == 'value' || item.type == 'valueNegative' || item.type == 'multitoggle' || item.type == 'multiValue' || item.type == 'textValue') {
+				itemValue = item.value;
+				if (item.universe === null && radonon) itemValue = item['value' + 'U2'];
+				var elem = document.getElementById(item.id);
+				if (elem != null) {
+					if (item.type == 'multitoggle')
+						elem.innerHTML = item.name[itemValue];
+					else if (item.type == 'multiValue') {
+						if (Array.isArray(itemValue) && itemValue.length == 1 && itemValue[0] == -1)
+							elem.innerHTML = item.name + ': ' + "<span class='icomoon icon-infinity'></span>";
+						else if (Array.isArray(itemValue))
+							elem.innerHTML = item.name + ': ' + itemValue[0] + '+';
+						else
+							elem.innerHTML = item.name + ': ' + itemValue.toString();
+					}
+					else if (item.type == 'textValue' && itemValue.substring !== undefined) {
+						if (itemValue.length > 18)
+							elem.innerHTML = item.name + ': ' + itemValue.substring(0, 21) + '...';
+						else
+							elem.innerHTML = item.name + ': ' + itemValue.substring(0, 21);
+					}
+					else if (itemValue > -1 || item.type == 'valueNegative') {
+						elem.innerHTML = item.name + ': ' + prettify(itemValue);
+					}
+					else
+						elem.innerHTML = item.name + ': ' + "<span class='icomoon icon-infinity'></span>";
+				}
+			}
+		}
+	}
+
+
+	if (game.global.universe == 1)
+		document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings.AutoMaps.value);
+	if (game.global.universe == 2)
+		document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings.RAutoMaps.value);
+
+	if (document.getElementById('Prestige').selectedIndex > 11 && !game.global.slowDone) {
+		document.getElementById('Prestige').selectedIndex = 11;
+		autoTrimpSettings.Prestige.selected = "Bestplate";
+	}
+} */
 
 function settingUniverse(setting) {
 	if (setting === 'buyBuildings') {
