@@ -51,6 +51,8 @@ function automationMenuInit() {
 	voidMapContainer.appendChild(voidMapText);
 	var trimpsButtonCol = document.getElementById("trimps");
 	trimpsButtonCol.appendChild(voidMapContainer);
+	document.getElementById('freeVoidMap').parentNode.style.display = 'block';
+	document.getElementById('freeVoidMap').style.display = 'block';
 
 	var $portalTimer = document.getElementById('portalTimer');
 	$portalTimer.setAttribute('onclick', 'toggleSetting(\'pauseGame\')');
