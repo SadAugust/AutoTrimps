@@ -157,7 +157,13 @@ function mainLoop() {
 		//Removes UI display if currently active
 		if (showingPerky) AutoPerks.removeGUI();
 		//Sets up Perky UI when in U1 or changing universe to U1.
-		if (portalUniverse === 1) setupPerkyUI();
+		if (portalUniverse === 1) {
+			setupPerkyUI();
+			addBreedingBoxTimers();
+		}
+		else {
+			removeBreedingBoxTimer();
+		}
 		currPortalUniverse = portalUniverse;
 	}
 
@@ -308,7 +314,7 @@ function mainLoop() {
 		if (game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) BuySingleRunBonuses();
 	}
 
-	if (getPageSetting('automateSpireAssault') && autoBattle.maxEnemyLevel !== 132)
+	if (getPageSetting('automateSpireAssault'))
 		automateSpireAssault();
 
 	challengeInfo();
@@ -329,8 +335,8 @@ function mainCleanup() {
 	aWholeNewHZE = lastradonhze != currentradonhze;
 
 	if (aWholeNewHZE) {
-		heliumChallengesSetting();
-		radonChallengesSetting();
+		if (game.global.universe === 2) radonChallengesSetting(true);
+		else heliumChallengesSetting(true);
 	}
 
 	if (game.global.universe == 1 && currentworld == 1 && aWholeNewWorld) {
@@ -367,6 +373,7 @@ function mainCleanup() {
 	}
 	if (getPageSetting('AutoEggs'))
 		easterEggClicked();
+
 }
 
 function throwErrorfromMain() {
