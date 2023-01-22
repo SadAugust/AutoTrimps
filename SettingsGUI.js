@@ -49,6 +49,7 @@ function automationMenuInit() {
 	var voidMapText = document.createElement("SPAN");
 	voidMapText.setAttribute("style", "display: block;");
 	voidMapText.id = 'freeVoidMap';
+	fightButtonCol.appendChild(voidMapContainer);
 	voidMapContainer.appendChild(voidMapText);
 	var trimpsButtonCol = document.getElementById("trimps");
 	trimpsButtonCol.appendChild(voidMapContainer);
