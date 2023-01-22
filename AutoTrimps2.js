@@ -341,7 +341,6 @@ function mainCleanup() {
 
 		document.getElementById('freeVoidMap').parentNode.style.display = 'block';
 		document.getElementById('freeVoidMap').style.display = 'block';
-
 	}
 
 	if (game.global.universe == 1 && currentworld == 1 && aWholeNewWorld) {

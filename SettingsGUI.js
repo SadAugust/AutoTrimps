@@ -45,7 +45,7 @@ function automationMenuInit() {
 
 
 	var voidMapContainer = document.createElement("DIV");
-	voidMapContainer.setAttribute("style", "display: block; font-size: 1vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);");
+	voidMapContainer.setAttribute("style", "display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);");
 	var voidMapText = document.createElement("SPAN");
 	voidMapText.setAttribute("style", "display: block;");
 	voidMapText.id = 'freeVoidMap';
