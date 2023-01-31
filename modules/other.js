@@ -585,6 +585,7 @@ function equalityManagement() {
 	var runningDuel = challengeActive('Duel');
 	var runningTrappa = challengeActive('Trappapalooza');
 	var runningQuest = (challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'); //Shield break quest
+	var runningRevenge = challengeActive('Revenge');
 	var runningArchaeology = challengeActive('Archaeology');
 	var runningMayhem = challengeActive('Mayhem');
 	var runningBerserk = challengeActive('Berserk');
@@ -656,6 +657,7 @@ function equalityManagement() {
 	if (runningBerserk) fastEnemy = true;
 	if (runningDesolation) fastEnemy = true;
 	if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
+	if (runningRevenge) fastEnemy = true;
 
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
 	if (runningDuel && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > remainingHealth(true) && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {
