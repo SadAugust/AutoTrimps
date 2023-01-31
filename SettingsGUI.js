@@ -1191,6 +1191,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("dPreSpireNurseries", radonoff);
 	modifyParentNode_Initial("liqstack", radonoff);
 	modifyParentNode_Initial("empowerAutoEquality", radonon);
+	modifyParentNode_Initial("dailyHeliumHrBuffer", 'show');
 
 	if (getPageSetting('displayAllSettings', currSettingUniverse)) modifyParentNode_Initial("heliumC2Challenge", 'show');
 	else modifyParentNode_Initial("heliumC2Challenge", 'hide');
