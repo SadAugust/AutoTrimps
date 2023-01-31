@@ -6,9 +6,9 @@ function getPerSecBeforeManual(a) {
 		if (
 			((b = game.jobs[a].owned * game.jobs[a].modifier),
 				0 < game.portal.Motivation.level && (b += b * game.portal.Motivation.level * game.portal.Motivation.modifier),
-				0 < game.portal.Motivation_II.level && (b *= 1 + game.portal.Motivation_II.level * game.portal.Motivation_II.modifier),
-				0 < game.portal.Meditation.level && (b *= (1 + 0.01 * game.portal.Meditation.getBonusPercent()).toFixed(2)),
-				0 < game.jobs.Magmamancer.owned && "metal" == c && (b *= game.jobs.Magmamancer.getBonusPercent()),
+				game.global.universe === 1 && 0 < game.portal.Motivation_II.level && (b *= 1 + game.portal.Motivation_II.level * game.portal.Motivation_II.modifier),
+				game.global.universe === 1 && 0 < game.portal.Meditation.level && (b *= (1 + 0.01 * game.portal.Meditation.getBonusPercent()).toFixed(2)),
+				game.global.universe === 1 && 0 < game.jobs.Magmamancer.owned && "metal" == c && (b *= game.jobs.Magmamancer.getBonusPercent()),
 				challengeActive('Meditate') ? (b *= 1.25) : challengeActive('Size') && (b *= 1.5),
 				challengeActive('Toxicity'))
 		) {
@@ -20,7 +20,7 @@ function getPerSecBeforeManual(a) {
 			challengeActive('Daily') &&
 			("undefined" != typeof game.global.dailyChallenge.dedication && (b *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength)),
 				"undefined" != typeof game.global.dailyChallenge.famine && "fragments" != c && "science" != c && (b *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength))),
-			challengeActive('Waych') && (b /= 2),
+			challengeActive('Watch') && (b /= 2),
 			challengeActive('Lead') && 1 == game.global.world % 2 && (b *= 2),
 			(b = calcHeirloomBonus("Staff", a + "Speed", b));
 	}

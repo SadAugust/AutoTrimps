@@ -259,7 +259,7 @@ function forceAbandonTrimps() {
 	if (game.global.mapsActive && getCurrentMapObject().location == "Void") return;
 	if (game.global.preMapsActive) return;
 	if (isActiveSpireAT() && disActiveSpireAT() && !game.global.mapsActive) return;
-	if (getPageSetting('AutoMaps')) {
+	if (getPageSetting('autoMaps')) {
 		mapsClicked();
 		if (game.global.switchToMaps || game.global.switchToWorld)
 			mapsClicked();

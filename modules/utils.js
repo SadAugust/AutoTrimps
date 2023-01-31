@@ -22,96 +22,107 @@ function loadPageVariables() {
 function safeSetItems(a, b) { try { localStorage.setItem(a, b) } catch (c) { 22 == c.code && debug("Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.") } }
 
 function serializeSettings() {
-	return JSON.stringify(Object.keys(autoTrimpSettings).reduce((v, k) => {
-		const el = autoTrimpSettings[k];
-		switch (el.type) {
+	return JSON.stringify(Object.keys(autoTrimpSettings).reduce((v, item) => {
+		const setting = autoTrimpSettings[item];
+		switch (setting.type) {
+			case 'action':
+			case 'infoclick':
+				var newSetting = {};
+				newSetting.id = v[item];
+				return v[item] = newSetting, v;
 			case 'boolean':
-				return v[k] = el.enabled, v;
+				var newSetting = {};
+				newSetting.id = v[item];
+				newSetting.enabled = setting.enabled
+				newSetting.enabledU2 = setting.enabledU2
+				return v[item] = newSetting, v;
 			case 'value':
 			case 'multiValue':
 			case 'textValue':
 			case 'valueNegative':
 			case 'multitoggle':
-				return v[k] = el.value, v;
+			case 'mazArray':
+			case 'mazDefaultArray':
+				var newSetting = {};
+				newSetting.id = v[item];
+				newSetting.value = setting.value
+				newSetting.valueU2 = setting.valueU2
+				return v[item] = newSetting, v;
 			case 'dropdown':
-				return v[k] = el.selected, v;
+				var newSetting = {};
+				newSetting.id = v[item];
+				newSetting.selected = setting.selected
+				newSetting.selectedU2 = setting.selectedU2
+				return v[item] = newSetting, v;
 		}
-		return v[k] = el, v;
+		return v[item] = setting, v;
 	}, {}));
 }
 
-function getPageSetting(setting) {
-	if (autoTrimpSettings.hasOwnProperty(setting) == false) {
+function getPageSetting(setting, universe) {
+	if (autoTrimpSettings.hasOwnProperty(setting) === false) {
 		return false;
 	}
-	if (autoTrimpSettings[setting].type == 'boolean') {
-		return autoTrimpSettings[setting].enabled;
-	} else if (autoTrimpSettings[setting].type == 'multiValue') {
-		return Array.from(autoTrimpSettings[setting].value)
-			.map(x => parseInt(x));
-	} else if (autoTrimpSettings[setting].type == 'textValue') {
-		return autoTrimpSettings[setting].value;
-	} else if (autoTrimpSettings[setting].type == 'value' || autoTrimpSettings[setting].type == 'valueNegative') {
-		return parseFloat(autoTrimpSettings[setting].value);
-	} else if (autoTrimpSettings[setting].type == 'multitoggle') {
-		return parseInt(autoTrimpSettings[setting].value);
-	} else if (autoTrimpSettings[setting].type == 'dropdown') {
-		return autoTrimpSettings[setting].selected;
-	} else if (autoTrimpSettings[setting].type == 'mazArray') {
-		return autoTrimpSettings[setting].value;
-	}
-}/* 
-
-function getPageSetting(setting) {
-	if (autoTrimpSettings.hasOwnProperty(setting) == false) {
-		return false;
-	}
-
+	const settingType = autoTrimpSettings[setting].type;
+	var enabled = 'enabled'
+	var selected = 'selected'
 	var value = 'value'
-	var enabled = 'value'
-	var selected = 'value'
-	if (autoTrimpSettings[setting].universe === null) {
-		if (game.global.universe === 2) value += 'U2';
-		if (game.global.universe === 2) enabled += 'U2';
-		if (game.global.universe === 2) selected += 'U2';
+
+	if (!universe) universe = game.global.universe;
+
+	if (setting !== 'radonsettings' && (universe === 2)) {
+		if (universe === 2) enabled += 'U2';
+		if (universe === 2) selected += 'U2';
+		if (universe === 2) value += 'U2';
 	}
 
-	if (autoTrimpSettings[setting].type == 'boolean') {
+	if (settingType == 'boolean') {
 		return autoTrimpSettings[setting][enabled];
-	} else if (autoTrimpSettings[setting].type == 'multiValue') {
+	} else if (settingType == 'multiValue') {
 		return Array.from(autoTrimpSettings[setting][value])
 			.map(x => parseInt(x));
-	} else if (autoTrimpSettings[setting].type == 'textValue') {
+	} else if (settingType == 'textValue' || settingType == 'mazArray' || settingType == 'mazDefaultArray') {
 		return autoTrimpSettings[setting][value];
-	} else if (autoTrimpSettings[setting].type == 'value' || autoTrimpSettings[setting].type == 'valueNegative') {
+	} else if (settingType == 'value' || autoTrimpSettings[setting].type == 'valueNegative') {
 		return parseFloat(autoTrimpSettings[setting][value]);
-	} else if (autoTrimpSettings[setting].type == 'multitoggle') {
+	} else if (settingType == 'multitoggle') {
 		return parseInt(autoTrimpSettings[setting][value]);
-	} else if (autoTrimpSettings[setting].type == 'dropdown') {
+	} else if (settingType == 'dropdown') {
 		return autoTrimpSettings[setting][selected];
-	} else if (autoTrimpSettings[setting].type == 'mazArray') {
-		return autoTrimpSettings[setting][value];
 	}
-} */
+}
 
-function setPageSetting(setting, value) {
+function setPageSetting(setting, newValue, universe) {
 	if (autoTrimpSettings.hasOwnProperty(setting) == false) {
 		return false;
 	}
-	if (autoTrimpSettings[setting].type == 'boolean') {
-		autoTrimpSettings[setting].enabled = value;
-		document.getElementById(setting).setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[setting].enabled);
-	} else if (autoTrimpSettings[setting].type == 'value' || autoTrimpSettings[setting].type == 'valueNegative') {
-		autoTrimpSettings[setting].value = value;
-	} else if (autoTrimpSettings[setting].type == 'textValue') {
-		autoTrimpSettings[setting].value = value;
-	} else if (autoTrimpSettings[setting].type == 'multiValue' || autoTrimpSettings[setting].type == 'valueNegative') {
-		autoTrimpSettings[setting].value = value;
-	} else if (autoTrimpSettings[setting].type == 'multitoggle') {
-		autoTrimpSettings[setting].value = value;
-		document.getElementById(setting).setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[setting].value);
-	} else if (autoTrimpSettings[setting].type == 'dropdown') {
-		autoTrimpSettings[setting].selected = value;
+
+	const settingType = autoTrimpSettings[setting].type;
+
+	var enabled = 'enabled'
+	var selected = 'selected'
+	var value = 'value'
+
+	if (!universe) universe = portalUniverse;
+
+	if (setting !== 'radonsettings' && (universe === 2)) {
+		if (universe === 2) enabled += 'U2';
+		if (universe === 2) selected += 'U2';
+		if (universe === 2) value += 'U2';
+	}
+
+	var buttonIndex = ['boolean'];
+	var valueIndex = ['value', 'valueNegative', 'textValue', 'mazArray', 'mazDefaultArray', 'multiValue', 'multitoggle'];
+	var selectedIndex = ['dropdown'];
+
+	if (buttonIndex.indexOf(settingType) !== -1) {
+		autoTrimpSettings[setting][enabled] = newValue;
+		document.getElementById(setting).setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[setting][enabled]);
+	} else if (valueIndex.indexOf(settingType) !== -1) {
+		autoTrimpSettings[setting][value] = newValue;
+		if (selectedIndex === 'multitoggle') document.getElementById(setting).setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[setting][value]);
+	} else if (buttonIndex.indexOf(settingType) !== -1) {
+		autoTrimpSettings[setting][selected] = newValue;
 	}
 }
 
@@ -127,34 +138,39 @@ function saveSettings() {
 }
 
 function debug(a, b, c) {
-	var d = getPageSetting('SpamGeneral'),
-		e = getPageSetting('SpamUpgrades'),
-		f = getPageSetting('SpamEquipment'),
-		g = getPageSetting('SpamMaps'),
-		h = getPageSetting('SpamOther'),
-		i = getPageSetting('SpamBuilding'),
-		j = getPageSetting('SpamJobs'),
-		k = getPageSetting('SpamGraphs'),
-		l = getPageSetting('SpamMagmite'),
-		m = getPageSetting('SpamPerks'),
-		n = getPageSetting('SpamProfiles'),
-		o = getPageSetting('SpamNature'),
+	var settingArray = getPageSetting('spamMessages'),
 		p = !0;
 
 	switch (b) {
-		case null: break;
-		case 'general': p = d; break;
-		case 'upgrades': p = e; break;
-		case 'equips': p = f; break;
-		case 'buildings': p = i; break;
-		case 'jobs': p = j; break;
-		case 'maps': p = g; break;
-		case 'other': p = h; break;
-		case 'graphs': p = k; break;
-		case 'magmite': p = l; break;
-		case 'perks': p = m; break;
-		case 'profiles': p = n; break;
-		case 'nature': p = o;
+		case null:
+			break;
+		case 'general':
+			p = settingArray.general;
+			break;
+		case 'upgrades':
+			p = settingArray.upgrades;
+			break;
+		case 'equips':
+			p = settingArray.equipment;
+			break;
+		case 'buildings':
+			p = settingArray.buildings;
+			break;
+		case 'jobs':
+			p = settingArray.jobs;
+			break;
+		case 'maps':
+			p = settingArray.maps;
+			break;
+		case 'mapDetails':
+			p = settingArray.map_Details;
+			break;
+		case 'other':
+			p = settingArray.other;
+			break;
+		case 'zone':
+			p = settingArray.zone;
+			break;
 	}
 	p && (enableDebug && console.log(timeStamp() + ' ' + a), message2(a, 'AutoTrimps', c, b))
 }

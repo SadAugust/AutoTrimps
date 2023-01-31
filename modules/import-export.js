@@ -497,7 +497,29 @@ function ImportExportTooltip(what, event, download) {
 	}
 }
 
-function resetAutoTrimps(a, b) { ATrunning = !1, setTimeout(function (d) { localStorage.removeItem("autoTrimpSettings"), autoTrimpSettings = d ? d : {}; var e = document.getElementById("settingsRow"); e.removeChild(document.getElementById("autoSettings")), e.removeChild(document.getElementById("autoTrimpsTabBarMenu")), automationMenuSettingsInit(), initializeAllTabs(), initializeAllSettings(), initializeSettingsProfiles(), updateCustomButtons(), saveSettings(), ATrunning = !0 }(a), 101), a ? (debug("Successfully imported new AT settings...", "profile"), b ? ImportExportTooltip("message", "Successfully Imported Autotrimps Settings File!: " + b) : ImportExportTooltip("NameSettingsProfiles")) : (debug("Successfully reset AT settings to Defaults...", "profile"), ImportExportTooltip("message", "Autotrimps has been successfully reset to its defaults!")) }
+function resetAutoTrimps(a, b) {
+	(ATrunning = !1),
+		setTimeout(
+			(function (d) {
+				localStorage.removeItem("autoTrimpSettings"), (autoTrimpSettings = d ? d : {});
+				var e = document.getElementById("settingsRow");
+				e.removeChild(document.getElementById("autoSettings")),
+					e.removeChild(document.getElementById("autoTrimpsTabBarMenu")),
+					automationMenuSettingsInit(),
+					initializeAllTabs(),
+					initializeAllSettings(),
+					initializeSettingsProfiles(),
+					updateCustomButtons(true),
+					saveSettings(),
+					(ATrunning = !0);
+			})(a),
+			101
+		),
+		a
+			? (debug("Successfully imported new AT settings...", "profile"), b ? ImportExportTooltip("message", "Successfully Imported Autotrimps Settings File!: " + b) : ImportExportTooltip("NameSettingsProfiles"))
+			: (debug("Successfully reset AT settings to Defaults...", "profile"), ImportExportTooltip("message", "Autotrimps has been successfully reset to its defaults!"));
+}
+
 function loadAutoTrimps() {
 	try {
 		var a = document.getElementById("importBox").value.replace(/[\n\r]/gm, ""),
@@ -508,9 +530,10 @@ function loadAutoTrimps() {
 	catch (c) {
 		return void debug("Error importing AT settings, the string is bad." + c.message, "profile")
 	}
-	debug("Importing new AT settings file...", "profile"), resetAutoTrimps(b)
+	debug("Importing new AT settings file...", "profile"), updateATVersion(), resetAutoTrimps(b)
 	modifyParentNodeUniverseSwap();
 }
+
 function cleanupAutoTrimps() {
 	for (var a in autoTrimpSettings) {
 		if (autoTrimpSettings[a] === autoTrimpSettings.ATversion) continue;
@@ -519,6 +542,7 @@ function cleanupAutoTrimps() {
 	}
 	saveSettings();
 }
+
 function exportModuleVars() {
 	return JSON.stringify(compareModuleVars())
 }

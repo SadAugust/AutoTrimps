@@ -35,7 +35,7 @@ function safeSetGather(resource) {
 //Gather selection
 function autoGather() {
 
-	var manualGather = game.global.universe === 1 ? getPageSetting('ManualGather2') : getPageSetting('RManualGather2');
+	var manualGather = getPageSetting('gatherType');
 
 	if (manualGather === 0) return;
 
@@ -51,7 +51,7 @@ function autoGather() {
 	var trapsBufferSize = Math.ceil(5 * calcTPS());
 	var minTraps = Math.ceil(calcTPS());
 	var maxTraps = calcMaxTraps();
-	var trapTrimpsOK = (!game.upgrades.Battle.done || (game.global.universe === 1 ? getPageSetting('TrapTrimps') : getPageSetting('RTrapTrimps'))) && (trapperTrapUntilFull || game.jobs.Geneticist.owned == 0);
+	var trapTrimpsOK = (!game.upgrades.Battle.done || (getPageSetting('TrapTrimps'))) && (trapperTrapUntilFull || game.jobs.Geneticist.owned == 0);
 
 	//Vars
 	var lowOnTraps = game.buildings.Trap.owned < minTraps;
@@ -135,6 +135,12 @@ function autoGather() {
 		return;
 	}
 
+	//High Priority Research - When manual research still has more impact than scientists
+	if (manualGather != 3 && researchAvailable && needScience && getPlayerModifier() > getPerSecBeforeManual('Scientist')) {
+		safeSetGather('science');
+		return;
+	}
+
 	if (hasTurkimp && game.global.mapsActive) {
 		//Setting gather to the option selected in farming settings if it exists.
 		if (rMapSettings.gather !== undefined && rMapSettings.gather !== null) {
@@ -174,12 +180,6 @@ function autoGather() {
 	//Mid Priority Trapping
 	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && notFullPop && !lowOnTraps && !trapBuffering) {
 		safeSetGather('trimps');
-		return;
-	}
-
-	//High Priority Research - When manual research still has more impact than scientists
-	if (manualGather != 3 && researchAvailable && needScience && getPlayerModifier() > getPerSecBeforeManual('Scientist')) {
-		safeSetGather('science');
 		return;
 	}
 

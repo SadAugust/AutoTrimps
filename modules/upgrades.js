@@ -23,13 +23,13 @@ function gigaTargetZone() {
 
 	//Also consider the zone we configured our portal to be used
 	var portalZone = 0;
-	if (autoTrimpSettings.AutoPortal.selected == "Helium Per Hour") portalZone = (daily) ? getPageSetting('dHeHrDontPortalBefore') : getPageSetting('HeHrDontPortalBefore');
-	else if (autoTrimpSettings.AutoPortal.selected == "Custom") portalZone = (daily) ? getPageSetting('dCustomAutoPortal') : getPageSetting('CustomAutoPortal');
+	if (autoTrimpSettings.autoPortal.selected == "Helium Per Hour") portalZone = (daily) ? getPageSetting('dailyDontPortalBefore') : getPageSetting('HeHrDontPortalBefore');
+	else if (autoTrimpSettings.autoPortal.selected == "Custom") portalZone = (daily) ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone');
 
 	//Finds a target zone for when doing c2
 	var c2zone = 0;
-	if (getPageSetting('c2runnerstart') == true && getPageSetting("c2runnerportal") > 0) c2zone = getPageSetting("c2runnerportal");
-	else if (getPageSetting("FinishC2") > 0) c2zone = getPageSetting("FinishC2");
+	if (getPageSetting('c2RunnerStart') == true && getPageSetting("c2RunnerPortal") > 0) c2zone = getPageSetting("c2RunnerPortal");
+	else if (getPageSetting("c2Finish") > 0) c2zone = getPageSetting("c2Finish");
 
 	//Set targetZone
 	if (!runningC2) targetZone = Math.max(targetZone, voidZone, challengeZone, portalZone - 1);
@@ -123,10 +123,10 @@ function buyUpgrades() {
 		upgrade = upgradeList[upgrade];
 		var gameUpgrade = game.upgrades[upgrade];
 		var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
-		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") && bwRewardUnlocked("DecaBuild") && getPageSetting('BuyBuildingsNew') == 0);
+		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") && bwRewardUnlocked("DecaBuild") && getPageSetting('buildingsType') == 0);
 
 		//Coord & Amals
-		if (upgrade == 'Coordination' && (getPageSetting('BuyUpgradesNew') == 2 || !canAffordCoordinationTrimps())) continue;
+		if (upgrade == 'Coordination' && (getPageSetting('upgradeType') == 2 || !canAffordCoordinationTrimps())) continue;
 		if (upgrade == 'Coordination' && getPageSetting('amalcoord') == true && getPageSetting('amalcoordhd') > 0 && calcHDRatio() < getPageSetting('amalcoordhd') && ((getPageSetting('amalcoordt') < 0 && (game.global.world < getPageSetting('amalcoordz') || getPageSetting('amalcoordz') < 0)) || (getPageSetting('amalcoordt') > 0 && getPageSetting('amalcoordt') > game.jobs.Amalgamator.owned && (game.resources.trimps.realMax() / game.resources.trimps.getCurrentSend()) > 2000))) continue;
 
 		//Gigastations
@@ -136,9 +136,9 @@ function buyUpgrades() {
 		}
 
 		//Other
-		if (upgrade == 'Shieldblock' && !getPageSetting('BuyShieldblock')) continue;
+		if (upgrade == 'Shieldblock' && !getPageSetting('equipShieldBlock')) continue;
 		if (upgrade == 'Gigastation' && !fuckbuildinggiga && (game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('FirstGigastation'))) continue;
-		if (upgrade == 'Bloodlust' && challengeActive('Scientist') && getPageSetting('BetterAutoFight')) continue;
+		if (upgrade == 'Bloodlust' && challengeActive('Scientist') && getPageSetting('autoFight')) continue;
 
 		if (!available) continue;
 		if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade != 'Scientists') continue;
@@ -157,7 +157,7 @@ function RbuyUpgrades() {
 		var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
 
 		//Coord
-		if (upgrade == 'Coordination' && (getPageSetting('RBuyUpgradesNew') == 2 || !canAffordCoordinationTrimps() || (challengeActive('Trappapalooza') && getPageSetting('rTrappa') && getPageSetting('rTrappaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('rTrappaCoords')))) continue;
+		if (upgrade == 'Coordination' && (getPageSetting('upgradeType') == 2 || !canAffordCoordinationTrimps() || (challengeActive('Trappapalooza') && getPageSetting('trappapalooza') && getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords')))) continue;
 
 		//Other
 		if (!available) continue;
@@ -168,11 +168,10 @@ function RbuyUpgrades() {
 }
 
 function getNextGoldenUpgrade() {
-
-	const universe = game.global.universe === 1 ? 'h' : 'r';
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
-	const setting = isC3 ? autoTrimpSettings[universe + 'AutoGoldenC3Settings'].value : isDaily ? autoTrimpSettings[universe + 'AutoGoldenDailySettings'].value : autoTrimpSettings[universe + 'AutoGoldenSettings'].value;
+
+	const setting = isC3 ? getPageSetting('autoGoldenC3Settings') : isDaily ? getPageSetting('autoGoldenDailySettings') : getPageSetting('autoGoldenSettings');
 
 	if (setting.length === 0) {
 		return false;

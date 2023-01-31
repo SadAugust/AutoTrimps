@@ -8,26 +8,24 @@ function autoPortal() {
 	if (!game.global.portalActive) return;
 	if (challengeActive('Daily') || game.global.runningChallengeSquared) return;
 
-	var universePrefix = game.global.universe === 2 ? 'R' : ''
-	if (autoTrimpSettings[universePrefix + 'AutoPortal'].selected === "Off") return;
-	var universeAbbreviation = game.global.universe === 2 ? 'Rn' : 'He'
+	if (getPageSetting('autoPortal') === "Off") return;
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
 
-	var portalZone = getPageSetting(universePrefix + 'CustomAutoPortal');
+	var portalZone = getPageSetting('autoPortalZone');
 	//Set portal zone to current zone!
 	if (MODULES.mapFunctions.portalZone === game.global.world) portalZone = game.global.world;
 
-	switch (autoTrimpSettings[universePrefix + 'AutoPortal'].selected) {
+	switch (getPageSetting('autoPortal')) {
 		case "Helium Per Hour":
 		case "Radon Per Hour":
 			var OKtoPortal = false;
 			if (!game.global.runningChallengeSquared) {
-				var minZone = getPageSetting(universeAbbreviation + 'HrDontPortalBefore');
+				var minZone = getPageSetting('HeHrDontPortalBefore');
 				game.stats.bestHeliumHourThisRun.evaluate();
 				var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
 				var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
 				var myHeliumHr = game.stats.heliumHour.value();
-				var heliumHrBuffer = Math.abs(getPageSetting(resourceType + 'HrBuffer'));
+				var heliumHrBuffer = Math.abs(getPageSetting('HeliumHrBuffer'));
 				if (!aWholeNewWorld)
 					heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
 				var bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
@@ -47,8 +45,8 @@ function autoPortal() {
 					setTimeout(function () {
 						if (zonePostpone >= 2)
 							return;
-						if (autoTrimpSettings[resourceType + 'HourChallenge'].selected != 'None')
-							doPortal(autoTrimpSettings[resourceType + 'HourChallenge'].selected);
+						if (getPageSetting('heliumHourChallenge') != 'None')
+							doPortal(getPageSetting('heliumHourChallenge'));
 						else
 							doPortal();
 					}, MODULES["portal"].timeout + 100);
@@ -57,8 +55,8 @@ function autoPortal() {
 			break;
 		case "Custom":
 			if (game.global.world >= portalZone) {
-				if (autoTrimpSettings[resourceType + 'HourChallenge'].selected != 'None')
-					doPortal(autoTrimpSettings[resourceType + 'HourChallenge'].selected);
+				if (getPageSetting('heliumHourChallenge') != 'None')
+					doPortal(getPageSetting('heliumHourChallenge'));
 				else
 					doPortal();
 			}
@@ -66,9 +64,8 @@ function autoPortal() {
 		case "Challenge 2":
 		case "Challenge 3":
 			if (game.global.world >= portalZone) {
-				var challengeType = game.global.universe === 2 ? 'C3' : 'C2'
-				if (autoTrimpSettings[resourceType + challengeType + 'Challenge'].selected != 'None')
-					doPortal(autoTrimpSettings[resourceType + challengeType + 'Challenge'].selected, true);
+				if (getPageSetting('heliumC2Challenge') != 'None')
+					doPortal(getPageSetting('heliumC2Challenge'), true);
 				else
 					doPortal();
 			}
@@ -85,10 +82,6 @@ function autoPortal() {
 		case "Corrupted":
 		case "Domination":
 		case "Experience":
-			if (!game.global.challengeActive) {
-				doPortal(autoTrimpSettings.AutoPortal.selected);
-			}
-			break;
 		case "Melt":
 		case "Bublé":
 		case "Quagmire":
@@ -101,7 +94,7 @@ function autoPortal() {
 		case "Hypothermia":
 		case "Desolation":
 			if (!game.global.challengeActive) {
-				doPortal(autoTrimpSettings.RAutoPortal.selected);
+				doPortal(getPageSetting('autoPortal'));
 			}
 			break;
 		default:
@@ -116,20 +109,15 @@ function dailyAutoPortal() {
 	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 29) return;
 	if (game.global.runningChallengeSquared) return;
 
-	var universePrefix = game.global.universe === 2 ? 'R' : ''
-	var universeOpp = game.global.universe === 2 ? '' : 'R'
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
-	const portalPrefix = portalUniverse === 2 ? 'u2' : 'u1';
-	const challengePrefix = portalUniverse === 2 ? 'C3' : 'C2';
-	const challengeOppPrefix = portalUniverse === 2 ? 'C3' : 'C2';
-	if (getPageSetting(universePrefix + 'AutoPortalDaily') == 1) {
+	if (getPageSetting('dailyPortal') == 1) {
 		var OKtoPortal = false;
-		var minZone = getPageSetting(universePrefix + 'dHeHrDontPortalBefore');
+		var minZone = getPageSetting('dailyDontPortalBefore');
 		game.stats.bestHeliumHourThisRun.evaluate();
 		var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
 		var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
 		var myHeliumHr = game.stats.heliumHour.value();
-		var heliumHrBuffer = Math.abs(getPageSetting(universePrefix + 'dHeliumHrBuffer'));
+		var heliumHrBuffer = Math.abs(getPageSetting('dailyHeliumHrBuffer'));
 		if (!aWholeNewWorld) {
 			heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
 			var bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
@@ -153,29 +141,21 @@ function dailyAutoPortal() {
 						abandonDaily();
 						document.getElementById('finishDailyBtnContainer').style.display = 'none';
 					}
-					if (autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected != 'None' && !getPageSetting(portalPrefix + 'daily'))
-						doPortal(autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected);
-					else if (autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected != 'None' && getPageSetting(portalPrefix + 'daily'))
-						doPortal(autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected);
+					if (getPageSetting('dailyHeliumHourChallenge') !== 'None')
+						doPortal(getPageSetting('dailyHeliumHourChallenge'));
 					else
 						doPortal();
 				}, MODULES["portal"].timeout + 100);
 			}
 		}
 	}
-	if (getPageSetting(universePrefix + 'AutoPortalDaily') == 2) {
-		var portalZone = getPageSetting(universePrefix + 'dCustomAutoPortal');
+	if (getPageSetting('dailyPortal') == 2) {
+		var portalZone = getPageSetting('dailyPortalZone');
+		if (MODULES.mapFunctions.portalZone === game.global.world) portalZone = game.global.world;
 
-		if (MODULES.mapFunctions.portalZone === game.global.world) {
-			portalZone = game.global.world;
-		}
 		if (game.global.world >= portalZone) {
-			abandonDaily();
-			document.getElementById('finishDailyBtnContainer').style.display = 'none';
-			if (autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected != 'None' && !getPageSetting(portalPrefix + 'daily'))
-				doPortal(autoTrimpSettings[universePrefix + 'dHeliumHourChallenge'].selected);
-			else if (autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected != 'None' && getPageSetting(portalPrefix + 'daily'))
-				doPortal(autoTrimpSettings[universeOpp + 'dHeliumHourChallenge'].selected);
+			if (getPageSetting('dailyHeliumHourChallenge') !== 'None')
+				doPortal(getPageSetting('dailyHeliumHourChallenge'));
 			else
 				doPortal();
 		}
@@ -186,16 +166,14 @@ function dailyAutoPortal() {
 function c2runnerportal() {
 	if (game.global.universe === 1 && game.global.highestLevelCleared < 63) return;
 	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 48) return;
-	const portalOppPrefix = game.global.universe === 2 ? 3 : 2;
-	if (!getPageSetting('c' + portalOppPrefix + 'runnerstart')) return;
-	if (getPageSetting('c' + portalOppPrefix + 'runnerportal') <= 0) return;
+	if (!getPageSetting('c2RunnerStart')) return;
+	if (getPageSetting('c2RunnerPortal') <= 0) return;
 	if (!game.global.runningChallengeSquared) return;
-	const challengeType = game.global.universe === 2 ? 'RadonHourChallenge' : 'HeliumHourChallenge';
 
-	if (game.global.world >= getPageSetting('c' + portalOppPrefix + 'runnerportal')) {
+	if (game.global.world >= getPageSetting('c2RunnerStart')) {
 		finishChallengeSquared();
-		if (autoTrimpSettings[challengeType].selected !== 'None')
-			doPortal(autoTrimpSettings[challengeType].selected);
+		if (getPageSetting('heliumHourChallenge') !== 'None')
+			doPortal(getPageSetting('heliumHourChallenge'));
 		else
 			doPortal();
 	}
@@ -205,9 +183,8 @@ function c2runnerportal() {
 function c2runner() {
 	if (!game.global.portalActive) return;
 	if ((portalUniverse === 1 && game.global.highestLevelCleared < 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared < 48)) return;
-	const portalOppPrefix = game.global.universe === 2 ? 3 : 2;
-	if (!getPageSetting('c' + portalOppPrefix + 'runnerstart')) return;
-	if (getPageSetting('c' + portalOppPrefix + 'runnerportal') <= 0 || getPageSetting('c' + portalOppPrefix + 'runnerpercent') <= 0) return;
+	if (!getPageSetting('c2RunnerStart')) return;
+	if (getPageSetting('c2RunnerPortal') <= 0 || getPageSetting('c2RunnerPercent') <= 0) return;
 
 	const challengeArray = [];
 	const universePrefix = game.global.universe === 2 ? 'C3 ' : 'C2 ';
@@ -217,7 +194,7 @@ function c2runner() {
 		var highestZone = game.global.highestLevelCleared + 1;
 
 		//Adding Fused challenges to array if setting is toggled
-		if (game.global.stringVersion >= '5.9.0' && getPageSetting('c2fused')) {
+		if (game.global.stringVersion >= '5.9.0' && getPageSetting('c2Fused')) {
 			if (highestZone >= 45) challengeArray.push('Medipline');
 			if (highestZone >= 180) challengeArray.push('Wave');
 			if (highestZone >= 180) challengeArray.push('Toxad');
@@ -267,7 +244,7 @@ function c2runner() {
 			else challengeLevel += game.c2[challengeList[y]];
 		}
 
-		if ((100 * (challengeLevel / (game.global[worldType] + 1))) < getPageSetting('c' + portalOppPrefix + 'runnerpercent')) {
+		if ((100 * (challengeLevel / (game.global[worldType] + 1))) < getPageSetting('c2RunnerPercent')) {
 			if (challengeActive(challengeArray[x]))
 				continue;
 			if (!challengeSquaredMode)
@@ -296,24 +273,33 @@ function doPortal(challenge, squared) {
 	if (!portalWindowOpen) return;
 
 	//Initialising variables that will be used later.
-	const portalPrefix = portalUniverse === 2 ? 'u1' : 'u2';
-	const universePrefix = portalUniverse === 2 ? 'R' : '';
 	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
-	const universeOppPrefix = portalUniverse === 2 ? '' : 'R';
+	var currChall = '';
 
 	//Running C∞ runner
 	if (((portalUniverse === 1 && game.global.highestLevelCleared > 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared > 48)) &&
-		getPageSetting('c' + (Number(portalOppPrefix.charAt(1)) + 1) + 'runnerstart') &&
-		getPageSetting('c' + (Number(portalOppPrefix.charAt(1)) + 1) + 'runnerportal') > 0 &&
-		getPageSetting('c' + (Number(portalOppPrefix.charAt(1)) + 1) + 'runnerpercent') > 0) {
+		getPageSetting('c2RunnerStart') &&
+		getPageSetting('c2RunnerPortal') > 0 &&
+		getPageSetting('c2RunnerPercent') > 0) {
 		c2runner();
 		if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
 	}
-	var universe = portalUniverse === 2 ? 'R' : '';
-	//Running Dailies
-	if (getPageSetting(universePrefix + 'AutoStartDaily') && !challengeSquaredMode) {
+
+	if (challengeActive('Daily')) {
+		abandonDaily();
+		document.getElementById('finishDailyBtnContainer').style.display = 'none';
+
 		//Swapping to other universe if necessary to run daily.
-		if (getPageSetting(portalPrefix + 'daily') && portalUniverse !== portalPrefix.charAt(1)) swapPortalUniverse();
+		if (getPageSetting('dailyPortalPreviousUniverse', (currPortalUniverse + 1))) {
+			swapPortalUniverse();
+			currPortalUniverse = portalUniverse;
+			currChall = 'Daily'
+			challenge = getPageSetting('dailyHeliumHourChallenge');
+		}
+	}
+
+	//Running Dailies
+	if (getPageSetting('dailyPortalStart') && !challengeSquaredMode) {
 		selectChallenge('Daily');
 		//Checking to see which dailies can be run
 		checkCompleteDailies();
@@ -324,34 +310,36 @@ function doPortal(challenge, squared) {
 				break;
 		}
 
-		//Will stop it from autoPortaling into dailies when you have dontCapDailies enabled and don't have 7 dailies stored.
-		if (getPageSetting('dontCapDailies') && game.global.recentDailies.length !== 0) lastUndone = 1;
+		//Will stop it from autoPortaling into dailies when you have dailyDontCap enabled and don't have 7 dailies stored.
+		if (getPageSetting('dailyDontCap') && game.global.recentDailies.indexOf(getDailyTimeString(-6)) !== -1 && game.global.recentDailies.length !== 0) lastUndone = 1;
+
+		if (lastUndone !== 1 && getPageSetting('dailyPortalPreviousUniverse', currPortalUniverse)) {
+			swapPortalUniverse();
+			currPortalUniverse = portalUniverse;
+			selectChallenge('Daily');
+			challenge = getPageSetting('dailyHeliumHourChallenge');
+		}
+
 		//Portaling into a filler if all dailies have been run
 		if (lastUndone === 1) {
 			debug("All available Dailies already completed.", "portal");
-			if ((getPageSetting(portalPrefix + 'daily') && portalUniverse === portalPrefix.charAt(1) && challenge === autoTrimpSettings[universeOppPrefix + 'dHeliumHourChallenge'].selected) ||
-				(getPageSetting(portalOppPrefix + 'daily') && portalUniverse === portalOppPrefix.charAt(1))) {
-				swapPortalUniverse();
-			}
-			var universe = portalUniverse === 2 ? 'R' : '';
-			if (autoTrimpSettings[universe + 'dHeliumHourChallenge'].selected.includes('Challenge ')) {
-				if (autoTrimpSettings[universe + 'dC2Challenge'].selected !== 'None') {
-					toggleChallengeSquared();
-					selectChallenge(autoTrimpSettings[universe + 'dC2Challenge'].selected);
-				}
+
+			if (getPageSetting('dailyHeliumHourChallenge').includes('Challenge ') && getPageSetting('dailyC2Challenge') !== 'None') {
+				toggleChallengeSquared();
+				selectChallenge(getPageSetting('dailyC2Challenge'));
 			}
 			else {
 				selectChallenge(challenge || 0);
 			}
 		}
 		//Portaling into a filler to use up scruffy3
-		else if (challengeActive('Daily') && portalUniverse === 2 && getPageSetting('RFillerRun')) {
-			if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None') {
-				if (autoTrimpSettings.RdHeliumHourChallenge.selected === 'Challenge 3') {
+		else if (currChall === 'Daily' && getPageSetting('dailyPortalFiller')) {
+			if (getPageSetting('dailyHeliumHourChallenge') != 'None') {
+				if (getPageSetting('dailyHeliumHourChallenge').includes('Challenge ')) {
 					toggleChallengeSquared();
-					selectChallenge(autoTrimpSettings.RdC3Challenge.selected);
+					selectChallenge(getPageSetting('dailyC2Challenge'));
 				}
-				else selectChallenge(autoTrimpSettings.RdHeliumHourChallenge.selected);
+				else selectChallenge(challenge || 0);
 			}
 		}
 		//Portaling into a daily
@@ -363,15 +351,10 @@ function doPortal(challenge, squared) {
 	//Running Fillers
 	else if (challenge && !challengeSquaredMode) {
 		//Swapping to opposite universe if goal is to run a challenge there
-		if (getPageSetting(portalPrefix + 'daily') && portalUniverse === portalPrefix.charAt(1) && challenge === autoTrimpSettings[universeOppPrefix + 'dHeliumHourChallenge'].selected) swapPortalUniverse();
-		if (squared) toggleChallengeSquared();
+		if (squared || challenge.includes('Challenge ')) toggleChallengeSquared();
 
-		if (challenge.includes('Challenge ') && autoTrimpSettings[universe + 'dHeliumHourChallenge'].selected.includes('Challenge ')) {
-			if (autoTrimpSettings[universe + 'dC2Challenge'].selected !== 'None') {
-				toggleChallengeSquared();
-				challenge = autoTrimpSettings[universe + 'dC2Challenge'].selected;
-			}
-		}
+		if (currChall === 'Daily' && getPageSetting('dailyC2Challenge') !== 'None')
+			challenge = getPageSetting('dailyC2Challenge');
 		selectChallenge(challenge);
 	}
 
@@ -383,7 +366,7 @@ function doPortal(challenge, squared) {
 	//Auto Allocate Perks
 	allocatePerks();
 	//Run Perky if in u1.
-	if (portalUniverse === 1 && getPageSetting('AutoAllocatePerks') === 1 &&
+	if (portalUniverse === 1 && getPageSetting('autoPerks') === 1 &&
 		(typeof AutoPerks !== 'undefined' &&
 			($('#preset').value !== 'undefined' ||
 				($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined')
@@ -431,8 +414,8 @@ function challengeInfo() {
 	if (challengeCurrentZone === game.stats.zonesCleared.value) return;
 
 	const challengeType = game.global.universe === 2 ? 'C3' : 'C2';
-	const finishChallenge = getPageSetting("Finish" + challengeType);
-	const downloadSave = game.global.universe === 2 ? getPageSetting('RdownloadSaves') : getPageSetting('downloadSaves');
+	const finishChallenge = getPageSetting('c2Finish');
+	const downloadSave = getPageSetting('downloadSaves')
 
 	if ((finishChallenge - 1) === game.global.world)
 		debug("Warning: AT will " + (downloadSave ? 'download your save and ' : '') + "abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish " + challengeType + "' or set it to -1")
@@ -441,12 +424,12 @@ function challengeInfo() {
 	}
 
 	//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
-	if (challengeActive('Quest') && getPageSetting('rQuest') && getPageSetting('RBuyBuildingsNew')) {
+	if (challengeActive('Quest') && getPageSetting('quest') && getPageSetting('buildingsType')) {
 		if (getAutoStructureSetting().enabled && game.global.autoStructureSettingU2.Smithy.enabled) {
 			debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.")
 		}
 		//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
-		if (game.global.runningChallengeSquared && (getPageSetting('rQuestSmithyZone') === -1 ? Infinity : getPageSetting('rQuestSmithyZone')) <= game.c2.Quest) {
+		if (game.global.runningChallengeSquared && (getPageSetting('questSmithyZone') === -1 ? Infinity : getPageSetting('questSmithyZone')) <= game.c2.Quest) {
 			debug("The setting 'Q: Smithy Zone' is lower or equal to your current Quest HZE. Increase this or smithies will be bought earlier than they should be.")
 		}
 	}
@@ -462,11 +445,10 @@ function challengeInfo() {
 function finishChallengeSquared() {
 
 	if (!game.global.runningChallengeSquared) return;
-	const challengeType = game.global.universe === 2 ? '3' : '2';
-	var finishChallenge = getPageSetting("FinishC" + challengeType);
+	var finishChallenge = getPageSetting('c2Finish');
 
-	if (getPageSetting('c' + challengeType + 'runnerstart') && (getPageSetting('c' + challengeType + 'runnerportal') < finishChallenge))
-		finishChallenge = getPageSetting('c' + challengeType + 'runnerportal');
+	if (getPageSetting('c2RunnerStart') && (getPageSetting('c2runnerportal') < finishChallenge))
+		finishChallenge = getPageSetting('c2RunnerPortal');
 	if (finishChallenge === -1 || game.global.world === 1) return;
 	if (game.global.world < finishChallenge) return;
 
@@ -485,7 +467,7 @@ function finishChallengeSquared() {
 }
 
 function findOutCurrentPortalLevel() {
-	var a = -1, b = !1, d = getPageSetting("AutoPortal"); switch (d) { case "Off": break; case "Custom": !challengeActive('Daily') && (a = getPageSetting("CustomAutoPortal") + 1), challengeActive('Daily') && (a = getPageSetting("Dailyportal") + 1), b = !("Lead" != getPageSetting("HeliumHourChallenge")); break; default: var e = { Balance: 41, Decay: 56, Electricity: 82, Crushed: 126, Nom: 146, Toxicity: 166, Lead: 181, Watch: 181, Corrupted: 191 }[d]; e && (a = e); }return { level: a, lead: b }
+	var a = -1, b = !1, d = getPageSetting("autoPortal"); switch (d) { case "Off": break; case "Custom": !challengeActive('Daily') && (a = getPageSetting("autoPortalZone") + 1), challengeActive('Daily') && (a = getPageSetting("Dailyportal") + 1), b = !("Lead" != getPageSetting("heliumHourChallenge")); break; default: var e = { Balance: 41, Decay: 56, Electricity: 82, Crushed: 126, Nom: 146, Toxicity: 166, Lead: 181, Watch: 181, Corrupted: 191 }[d]; e && (a = e); }return { level: a, lead: b }
 }
 
 function resetmapvars() {
@@ -502,6 +484,7 @@ function resetmapvars() {
 	MODULES.mapFunctions.prestigeFragMapBought = false;
 	MODULES.mapFunctions.prestigeRunningMaps = false;
 	MODULES.mapFunctions.prestigeRaidZone = 0;
+	MODULES.mapFunctions.desolationContinueRunning = false;
 
 	//Auto Level variables
 	mapRepeats = 0;

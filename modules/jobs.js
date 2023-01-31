@@ -62,12 +62,12 @@ function safeBuyJob(jobTitle, amount) {
 
 function workerRatios(workerRatio) {
 	var workerRatio = !workerRatio ? null : workerRatio
-	if (workerRatio == null) return;
+	if (workerRatio === null) return;
 
-	const universeSetting = game.global.universe === 2 ? getPageSetting('RBuyJobsNew') : getPageSetting('BuyJobsNew');
+	const universeSetting = getPageSetting('jobType');
 
-	if (universeSetting == 2) {
-		var jobSettings = game.global.universe === 1 ? autoTrimpSettings.hJobSettingsArray.value : autoTrimpSettings.rJobSettingsArray.value;
+	if (universeSetting === 2) {
+		var jobSettings = getPageSetting('jobSettingsArray');
 		if (jobSettings[workerRatio].enabled) {
 			if (challengeActive('Transmute') && workerRatio === 'Farmer' && jobSettings.Miner.enabled) return jobSettings[workerRatio].ratio + jobSettings.Miner.ratio;
 			return jobSettings[workerRatio].ratio;
@@ -127,11 +127,11 @@ function buyJobs() {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
 
-	const universeSetting = game.global.universe === 2 ? autoTrimpSettings.RBuyJobsNew : autoTrimpSettings.BuyJobsNew;
+	const universeSetting = getPageSetting('jobType');
 	//Disabling autoJobs if AT AutoJobs is disabled.
-	if (universeSetting.value === 0) return;
+	if (universeSetting === 0) return;
 
-	var jobSettings = game.global.universe === 1 ? autoTrimpSettings.hJobSettingsArray.value : autoTrimpSettings.rJobSettingsArray.value;
+	var jobSettings = getPageSetting('jobSettingsArray');
 
 	var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed //-
 		//U1 jobs
@@ -238,7 +238,7 @@ function buyJobs() {
 			//game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned
 		);
 
-		var metCoordGoal = challengeActive('Trappapalooza') && game.upgrades.Coordination.done >= getPageSetting('rTrappaCoords');
+		var metCoordGoal = challengeActive('Trappapalooza') && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords');
 		if (!metCoordGoal) nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
 		if (nextCoordCost < freeWorkers) freeWorkers -= nextCoordCost;
 	}
@@ -284,7 +284,7 @@ function buyJobs() {
 					continue;
 				}
 				else
-					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(universeSetting.value == 2 ? worker : 'R' + worker + 'Ratio'))
+					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(universeSetting == 2 ? worker : 'R' + worker + 'Ratio'))
 			}
 		}
 	}

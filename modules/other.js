@@ -35,7 +35,7 @@ function autoRoboTrimp() {
 	if (shouldShriek) {
 		if (!game.global.useShriek) {
 			magnetoShriek();
-			debug("Activated Robotrimp MagnetoShriek Ability @ z" + game.global.world, "graphs", "*podcast");
+			debug("Activated Robotrimp MagnetoShriek Ability @ z" + game.global.world, "zone", "*podcast");
 		}
 	}
 	else
@@ -175,9 +175,9 @@ function getZoneEmpowerment(zone) {
 
 //Radon
 function archstring() {
-	if (!getPageSetting('Rarchon')) return;
-	if (getPageSetting('Rarchstring1') != "undefined" && getPageSetting('Rarchstring2') != "undefined" && getPageSetting('Rarchstring3') != "undefined") {
-		var string1 = getPageSetting('Rarchstring1'), string2 = getPageSetting('Rarchstring2'), string3 = getPageSetting('Rarchstring3');
+	if (!getPageSetting('archaeology')) return;
+	if (getPageSetting('archaeologyString1') != "undefined" && getPageSetting('archaeologyString2') != "undefined" && getPageSetting('archaeologyString3') != "undefined") {
+		var string1 = getPageSetting('archaeologyString1'), string2 = getPageSetting('archaeologyString2'), string3 = getPageSetting('archaeologyString3');
 		var string1z = string1.split(',')[0], string2z = string2.split(',')[0];
 		var string1split = string1.split(',').slice(1).toString(), string2split = string2.split(',').slice(1).toString();
 		if (game.global.world <= string1z && game.global.archString != string1split) game.global.archString = string1split;
@@ -187,67 +187,6 @@ function archstring() {
 }
 
 function challengeListSetting() {
-	var highestZone = game.global.highestRadonLevelCleared + 1;
-	var challengeList = ["Off", "Radon Per Hour"];
-	if (highestZone >= 40) challengeList.push("Bublé");
-	if (highestZone >= 55) challengeList.push("Melt");
-	if (highestZone >= 70) challengeList.push("Quagmire");
-	if (highestZone >= 90) challengeList.push("Archaeology");
-	if (highestZone >= 100) challengeList.push("Mayhem");
-	if (highestZone >= 110) challengeList.push("Insanity");
-	if (highestZone >= 135) challengeList.push("Nurture");
-	if (highestZone >= 150) challengeList.push("Pandemonium");
-	if (highestZone >= 155) challengeList.push("Alchemy");
-	if (highestZone >= 175) challengeList.push("Hypothermia");
-	challengeList.push("Custom");
-	if (highestZone >= 50) challengeList.push("Challenge 3");
-
-	document.getElementById('RAutoPortal').innerHTML = ''
-	for (var item in challengeList) {
-		var option = document.createElement("option");
-		option.value = challengeList[item];
-		option.text = challengeList[item];
-		document.getElementById('RAutoPortal').appendChild(option);
-	}
-
-	var radonHourChallenges = ["None"];
-	if (highestZone >= 40) radonHourChallenges.push("Bublé");
-	if (highestZone >= 55) radonHourChallenges.push("Melt");
-	if (highestZone >= 70) radonHourChallenges.push("Quagmire");
-	if (highestZone >= 90) radonHourChallenges.push("Archaeology");
-	if (highestZone >= 110) radonHourChallenges.push("Insanity");
-	if (highestZone >= 135) radonHourChallenges.push("Nurture");
-	if (highestZone >= 155) radonHourChallenges.push("Alchemy");
-	if (highestZone >= 175) radonHourChallenges.push("Hypothermia");
-
-	document.getElementById('RadonHourChallenge').innerHTML = ''
-	for (var item in radonHourChallenges) {
-		var option = document.createElement("option");
-		option.value = radonHourChallenges[item];
-		option.text = radonHourChallenges[item];
-		document.getElementById('RadonHourChallenge').appendChild(option);
-	}
-
-	var challengeList = ["None"];
-	if (highestZone >= 15) challengeList.push("Unlucky");
-	if (highestZone >= 20) challengeList.push("Downsize");
-	if (highestZone >= 25) challengeList.push("Transmute");
-	if (highestZone >= 35) challengeList.push("Unbalance");
-	if (highestZone >= 45) challengeList.push("Duel");
-	if (highestZone >= 60) challengeList.push("Trappapalooza");
-	if (highestZone >= 70) challengeList.push("Wither");
-	if (highestZone >= 85) challengeList.push("Quest");
-	if (highestZone >= 105) challengeList.push("Storm");
-	if (highestZone >= 115) challengeList.push("Berserk");
-	if (highestZone >= 175) challengeList.push("Glass");
-
-	document.getElementById('RadonC3Challenge').innerHTML = ''
-	for (var item in challengeList) {
-		var option = document.createElement("option");
-		option.value = challengeList[item];
-		option.text = challengeList[item];
-		document.getElementById('RadonC3Challenge').appendChild(option);
-	}
 
 	//if (highestZone === 15) debug("You have unlocked the Unlucky challenge.")
 	if (highestZone === 5) debug("You can now use the Smithy Farm setting. This can be found in the AT 'Maps' tab.")
@@ -417,7 +356,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	var runningUnlucky = challengeActive('Unlucky')
 	var ourHealth = calcOurHealth(runningQuest, 'map');
 	var dmgType = runningUnlucky ? 'max' : 'avg'
-	var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
+	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var critType = 'maybe'
 	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel')) critType = 'never'
@@ -427,9 +366,9 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 		if (y === minLevel) {
 			return minLevel;
 		}
-		if (!statCheck && getPageSetting('ronlyPerfectMaps') && game.resources.fragments.owned < PerfectMapCost_Actual(mapLevel, special, biome))
+		if (!statCheck && getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < perfectMapCost_Actual(mapLevel, special, biome))
 			continue;
-		if (!statCheck && !getPageSetting('ronlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
+		if (!statCheck && !getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
 			continue;
 
 		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot', true);
@@ -476,7 +415,7 @@ function autoMapLevelU1(special, maxLevel, minLevel, critType, statCheck) {
 
 		if (y === minLevel) return minLevel;
 
-		if (!statCheck && getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < PerfectMapCost_Actual(mapLevel, special, biome))
+		if (!statCheck && getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < perfectMapCost_Actual(mapLevel, special, biome))
 			continue;
 		if (!statCheck && !getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
 			continue;
@@ -527,7 +466,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var bionicTalent = zone - game.global.world;
 	var checkMutations = mapType === 'world' && game.global.world > 200;
 	var titimp = mapType !== 'world' && farmType === 'oneShot' ? 'force' : false;
-	var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
+	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var dailyBloodthirst = challengeActive('Daily') && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
 	var maxEquality = game.portal.Equality.radLevel;
@@ -571,7 +510,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
 
-	if (dailyBloodthirst && mapType === 'void' && getPageSetting('rBloodthirstVoidMax')) {
+	if (dailyBloodthirst && mapType === 'void' && getPageSetting('bloodthirstVoidMax')) {
 		var bloodThirstStrength = game.global.dailyChallenge.bloodthirst.strength;
 		enemyDmg /= dailyModifiers.bloodthirst.getMult(bloodThirstStrength, game.global.dailyChallenge.bloodthirst.stacks);
 		enemyDmg *= dailyModifiers.bloodthirst.getMult(bloodThirstStrength, dailyModifiers.bloodthirst.getMaxStacks(bloodThirstStrength));
@@ -616,7 +555,7 @@ function equalityManagement() {
 	game.options.menu.alwaysAbandon.enabled = 1;
 	//Misc vars
 	var debugStats = getPageSetting('debugEqualityStats');
-	var dailyEmpowerToggle = getPageSetting('rAutoEqualityEmpower');
+	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	voidPBSwap = false;
 	var mapping = game.global.mapsActive ? true : false;
 	var currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
@@ -627,8 +566,8 @@ function equalityManagement() {
 	var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
 	var maxEquality = game.portal.Equality.radLevel;
 	if (type === 'void') {
-		voidPBSwap = getPageSetting('RhsVoidSwap') && game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 && fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) && game.global.voidBuff !== 'doubleAttack';
-		if (getPageSetting('RhsVoidSwap')) heirloomSwapping();
+		voidPBSwap = getPageSetting('heirloomVoidSwap') && game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 && fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) && game.global.voidBuff !== 'doubleAttack';
+		if (getPageSetting('heirloomVoidSwap')) heirloomSwapping();
 	}
 
 	//Daily modifiers active
@@ -676,8 +615,8 @@ function equalityManagement() {
 	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, type, 'never', bionicTalent, true)) : 2;
 
 	if (noFrenzy) {
-		if (getPageSetting('Rcalcfrenzy') && game.portal.Frenzy.frenzyStarted === -1) ourDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel)
-		if (!getPageSetting('Rcalcfrenzy') && game.portal.Frenzy.frenzyStarted !== -1) ourDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel)
+		if (getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted === -1) ourDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel)
+		if (!getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted !== -1) ourDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel)
 	}
 	ourDmg *= dailyRampage ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 1;
 	var ourDmgEquality = 0;
@@ -851,7 +790,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		desiredRatios[3] !== undefined ? Number(desiredRatios[3]) : 0]
 		var totalFraction = desiredRatios.reduce((a, b) => { return a + b; });
 	}
-	heirloomPrefix = game.global.universe === 2 ? 'R' : 'H';
+
 	//Come home to the impossible flavour of balanced resource gain. Come home, to simple seconds.
 	var jobName;
 	var pos;
@@ -880,12 +819,12 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 			break;
 	}
 	var heirloom = !jobName ? null :
-		jobName == "Miner" && challengeActive('Pandemonium') && getPageSetting("RhsPandStaff") !== 'undefined' ? "RhsPandStaff" :
-			jobName == "Farmer" && getPageSetting(heirloomPrefix + "hsFoodStaff") != 'undefined' ? (heirloomPrefix + "hsFoodStaff") :
-				jobName == "Lumberjack" && getPageSetting(heirloomPrefix + "hsWoodStaff") != 'undefined' ? (heirloomPrefix + "hsWoodStaff") :
-					jobName == "Miner" && getPageSetting(heirloomPrefix + "hsMetalStaff") != 'undefined' ? (heirloomPrefix + "hsMetalStaff") :
-						getPageSetting(heirloomPrefix + "hsMapStaff") != 'undefined' ? (heirloomPrefix + "hsMapStaff") :
-							getPageSetting(heirloomPrefix + "hsWorldStaff") != 'undefined' ? (heirloomPrefix + "hsWorldStaff") :
+		jobName == "Miner" && challengeActive('Pandemonium') && getPageSetting("pandemoniumStaff") !== 'undefined' ? "pandemoniumStaff" :
+			jobName == "Farmer" && getPageSetting('heirloomStaffFood') != 'undefined' ? ('heirloomStaffFood') :
+				jobName == "Lumberjack" && getPageSetting('heirloomStaffWood') != 'undefined' ? ('heirloomStaffWood') :
+					jobName == "Miner" && getPageSetting('heirloomStaffMetal') != 'undefined' ? ('heirloomStaffMetal') :
+						getPageSetting('heirloomStaffMap') != 'undefined' ? ('heirloomStaffMap') :
+							getPageSetting('heirloomStaffWorld') != 'undefined' ? ('heirloomStaffWorld') :
 								null;
 	var job = game.jobs[jobName];
 	var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
@@ -899,9 +838,12 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt_local *= (1 + game.permaBoneBonuses.multitasking.mult());
 	if (what != "science" && what != "fragments" && challengeActive('Alchemy'))
 		amt_local *= alchObj.getPotionEffect("Potion of Finding");
-
+	if (challengeActive("Frigid"))
+		amt_local *= game.challenges.Frigid.getShatteredMult();
 	if (game.global.pandCompletions && game.global.universe == 2 && what != "fragments")
 		amt_local *= game.challenges.Pandemonium.getTrimpMult();
+	if (game.global.stringVersion >= '5.9.0' && game.global.desoCompletions && game.global.universe == 2 && what != "fragments")
+		amt_local *= game.challenges.Desolation.getTrimpMult();
 	if (getPerkLevel("Observation") > 0 && game.portal.Observation.trinkets > 0)
 		amt_local *= game.portal.Observation.getMult();
 
@@ -1043,7 +985,7 @@ function timeForFormatting(number) {
 }
 
 function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
-	if (!getPageSetting('rMapRepeatCount')) return;
+	if (!getPageSetting('spamMessages').map_Details) return;
 	if (!mapName) return;
 
 	//Figuring out exact amount of maps run
@@ -1106,51 +1048,54 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 
 function resetSettingsPortal() {
 
-	const universePrefix = game.global.universe === 2 ? 'R' : '';
-	const universePrefixAlt = game.global.universe === 2 ? 'R' : 'H';
-	const universePrefixAltLower = universePrefixAlt.toLowerCase()
+	var value = 'value';
+	if (game.global.universe === 2) value += 'U2';
+
+	var enabled = 'enabled';
+	if (game.global.universe === 2) enabled += 'U2';
+
 
 	//Enabling Auto Portal
-	if (getPageSetting(universePrefix + 'automapsportal') && getPageSetting(universePrefix + 'AutoMaps') == 0) {
-		autoTrimpSettings[universePrefix + "AutoMaps"].value = 1;
-		document.getElementById(universePrefix + 'AutoMaps').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'AutoMaps'].enabled);
-		document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'AutoMaps'].value);
+	if (getPageSetting('autoMapsPortal')) {
+		autoTrimpSettings["autoMaps"][value] = 1;
+		document.getElementById('autoMaps').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings['autoMaps'][value]);
+		document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings['autoMaps'][value]);
 	}
 	//Enabling Auto Equip
-	if (autoTrimpSettings[universePrefixAlt + 'autoequipportal'].enabled) {
-		autoTrimpSettings[universePrefixAlt + 'equipon'].enabled = true;
-		document.getElementById(universePrefixAlt + 'equipon').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefixAlt + 'equipon'].enabled);
-		document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefixAlt + 'equipon'].enabled);
+	if (getPageSetting('equipPortal')) {
+		autoTrimpSettings["equipOn"][value] = true;
+		const autoEquip = getPageSetting('equipOn');
+		document.getElementById('equipOn').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoEquip);
+		document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoEquip);
 	}
-	//Setting buildings to off
-	if (typeof (autoTrimpSettings[universePrefixAltLower + 'BuildingSettingsArray'].value.portalOption) !== 'undefined' && autoTrimpSettings[universePrefixAltLower + 'BuildingSettingsArray'].value.portalOption === 'on') {
-		autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled = true;
-		document.getElementById(universePrefix + 'BuyBuildingsNew').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled);
-		document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled);
+
+	//Setting buildings button up
+	if (typeof (autoTrimpSettings['buildingSettingsArray'][value].portalOption) !== 'undefined') {
+		if (autoTrimpSettings['buildingSettingsArray'][value].portalOption === 'on')
+			autoTrimpSettings["buildingsType"][enabled] = true;
+		if (autoTrimpSettings['buildingSettingsArray'][value].portalOption === 'off')
+			autoTrimpSettings["buildingsType"][enabled] = false;
+
+		document.getElementById('buildingsType').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings['buildingsType'][enabled]);
+		document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings['buildingsType'][enabled]);
 	}
-	//Setting buildings to off
-	if (typeof (autoTrimpSettings[universePrefixAltLower + 'BuildingSettingsArray'].value.portalOption) !== 'undefined' && autoTrimpSettings[universePrefixAltLower + 'BuildingSettingsArray'].value.portalOption === 'off') {
-		autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled = false;
-		document.getElementById(universePrefix + 'BuyBuildingsNew').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled);
-		document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoTrimpSettings[universePrefix + 'BuyBuildingsNew'].enabled);
+
+	//Setting jobs button up
+	if (typeof (autoTrimpSettings['jobSettingsArray'][value].portalOption) !== 'undefined') {
+		if (autoTrimpSettings['jobSettingsArray'][value].portalOption === 'autojobs off')
+			autoTrimpSettings['jobType'][value] = 0;
+		if (autoTrimpSettings['jobSettingsArray'][value].portalOption === 'auto ratios')
+			autoTrimpSettings['jobType'][value] = 1;
+		if (autoTrimpSettings['jobSettingsArray'][value].portalOption === 'manual ratios')
+			autoTrimpSettings['jobType'][value] = 2;
+
+		const autoJobs = getPageSetting('jobType');
+
+		document.getElementById('jobType').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoJobs === 2 ? 3 : autoJobs));
+		document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoJobs === 2 ? 3 : autoJobs));
 	}
-	//Setting jobs to off
-	if (typeof (autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption) !== 'undefined' && autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption === 'autojobs off') {
-		autoTrimpSettings[universePrefix + 'BuyJobsNew'].value = 0;
-		document.getElementById(universePrefix + 'BuyJobsNew').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
-		document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
-	}
-	if (typeof (autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption) !== 'undefined' && autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption === 'auto ratios') {
-		autoTrimpSettings[universePrefix + 'BuyJobsNew'].value = 1;
-		document.getElementById(universePrefix + 'BuyJobsNew').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
-		document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
-	}
-	if (typeof (autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption) !== 'undefined' && autoTrimpSettings[universePrefixAltLower + 'JobSettingsArray'].value.portalOption === 'manual ratios') {
-		autoTrimpSettings[universePrefix + 'BuyJobsNew'].value = 2;
-		document.getElementById(universePrefix + 'BuyJobsNew').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
-		document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (autoTrimpSettings[universePrefix + 'BuyJobsNew'].value == 2 ? 3 : autoTrimpSettings[universePrefix + 'BuyJobsNew'].value));
-	}
-	updateButtonText()
+
+	updateButtonText();
 	saveSettings();
 }
 
@@ -1185,9 +1130,12 @@ function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceM
 		if (game.global.maxSplit != 1 && !forceMax && !forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * game.global.maxSplit);
 		else if (forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * forceRatio);
 
-		if (item === 'fragments' && game.global.universe === 2) resourcesAvailable = autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone !== 0 && game.global.world >= autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.zone ? resourcesAvailable :
-			autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.enabled && resourcesAvailable > resource.owned - (PerfectMapCost_Actual(10, 'lmc') * autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount) ? resource.owned - (PerfectMapCost_Actual(10, 'lmc') * autoTrimpSettings.rBuildingSettingsArray.value.SafeGateway.mapCount) :
-				resourcesAvailable;
+		if (item === 'fragments' && game.global.universe === 2) {
+			var buildingSetting = getPageSetting('buildingSettingsArray');
+			resourcesAvailable = buildingSetting.SafeGateway.zone !== 0 && game.global.world >= buildingSetting.SafeGateway.zone ? resourcesAvailable :
+				buildingSetting.SafeGateway.enabled && resourcesAvailable > resource.owned - (perfectMapCost_Actual(10, 'lmc') * buildingSetting.SafeGateway.mapCount) ? resource.owned - (perfectMapCost_Actual(10, 'lmc') * buildingSetting.SafeGateway.mapCount) :
+					resourcesAvailable;
+		}
 		if (!resource || typeof resourcesAvailable === 'undefined') {
 			console.log("resource " + item + " not found");
 			return 1;
@@ -1255,46 +1203,17 @@ function minMapFrag(level, specialModifier, biome) {
 
 	var sliders = [9, 9, 9];
 	var perfect = true;
-	if (game.resources.fragments.owned < PerfectMapCost_Actual(level, specialModifier, biome)) {
+	if (game.resources.fragments.owned < perfectMapCost_Actual(level, specialModifier, biome)) {
 		perfect = false;
 
-		while (sliders[0] > 0 && sliders[2] > 0 && PerfectMapCost_Actual(level, specialModifier, biome, sliders, perfect) > game.resources.fragments.owned) {
+		while (sliders[0] > 0 && sliders[2] > 0 && perfectMapCost_Actual(level, specialModifier, biome, sliders, perfect) > game.resources.fragments.owned) {
 			sliders[0] -= 1;
-			if (PerfectMapCost_Actual(level, specialModifier, biome, sliders, perfect) <= game.resources.fragments.owned) break;
+			if (perfectMapCost_Actual(level, specialModifier, biome, sliders, perfect) <= game.resources.fragments.owned) break;
 			sliders[2] -= 1;
 		}
 	}
 
-	return PerfectMapCost_Actual(level, specialModifier, biome, sliders, perfect);
-}
-
-function PerfectMapCost_Actual(plusLevel, specialModifier, biome, sliders = [9, 9, 9], perfect = true) {
-	if (!specialModifier) return Infinity
-	if (!plusLevel && plusLevel !== 0) return Infinity
-	var specialModifier = specialModifier;
-	var plusLevel = plusLevel;
-	var baseCost = 0;
-	//All sliders at 9
-	baseCost += sliders[0];
-	baseCost += sliders[1];
-	baseCost += sliders[2];
-	var mapLevel = game.global.world;
-	if (plusLevel < 0)
-		mapLevel = mapLevel + plusLevel;
-	if (mapLevel < 6)
-		mapLevel = 6;
-	baseCost *= (game.global.world >= 60) ? 0.74 : 1;
-	//Perfect checked
-	if (perfect && sliders.reduce(function (a, b) { return a + b; }, 0) === 27) baseCost += 6;
-	//Adding in plusLevels
-	if (plusLevel > 0)
-		baseCost += (plusLevel * 10)
-	if (specialModifier != "0")
-		baseCost += mapSpecialModifierConfig[specialModifier].costIncrease;
-	baseCost += mapLevel;
-	baseCost = Math.floor((((baseCost / 150) * (Math.pow(1.14, baseCost - 1))) * mapLevel * 2) * Math.pow((1.03 + (mapLevel / 50000)), mapLevel));
-	baseCost *= biome !== 'Random' ? 2 : 1;
-	return baseCost;
+	return perfectMapCost_Actual(level, specialModifier, biome, sliders, perfect);
 }
 
 function runUnique(mapName, dontRecycle) {
@@ -1392,6 +1311,26 @@ function automateSpireAssault() {
 			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Lifegiving_Gem'], ['Spiked_Gloves'], ['Wired_Wristguards'], ['Bloodstained_Gloves'], ['Eelimp_in_a_Bottle'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Grounded_Crown'], ['Fearsome_Piercer'], ['Doppelganger_Signet'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
 			var ring = ['attack', 'lifesteal']
 		}
+		if (autoBattle.enemyLevel == 136) { //Done 2d10h
+			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = ['attack', 'health']
+		}
+		if (autoBattle.enemyLevel == 137) { //Done 18h47m
+			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = ['attack', 'health']
+		}
+		if (autoBattle.enemyLevel == 138) { //Done 1d20h
+			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = ['attack', 'health']
+		}
+		if (autoBattle.enemyLevel == 139) { //Done 1d6h
+			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = ['attack', 'health']
+		}
+		if (autoBattle.enemyLevel == 140) { //Done 3d6h
+			var items = [['Menacing_Mask'], ['Battery_Stick'], ['Spiked_Gloves'], ['Tame_Snimp'], ['Wired_Wristguards'], ['Big_Cleaver'], ['Sacrificial_Shank'], ['Fearsome_Piercer'], ['Bag_of_Nails'], ['Snimp__Fanged_Blade'], ['Doppelganger_Signet'], ['Basket_of_Souls'], ['Omni_Enhancer'], ['Stormbringer'], ['Nullifium_Armor'], ['Haunted_Harpoon']]
+			var ring = ['attack', 'health']
+		}
 	}
 
 	//Swapping Items
@@ -1479,7 +1418,7 @@ function totalSAResources() {
 }
 
 function PresetSwapping(preset) {
-	if (!getPageSetting('RPerkSwapping')) return
+	if (!getPageSetting('presetSwap')) return
 
 	var preset = !preset ? null :
 		(preset != 1 && preset != 2 && preset != 3) ? null :
@@ -1495,8 +1434,7 @@ function PresetSwapping(preset) {
 }
 
 function downloadSave() {
-	const universePrefix = game.global.universe === 2 ? 'R' : ''
-	if (!getPageSetting(universePrefix + 'downloadSaves')) return
+	if (!getPageSetting('downloadSaves')) return
 
 	tooltip('Export', null, 'update');
 	document.getElementById("downloadLink").click();
@@ -1505,7 +1443,7 @@ function downloadSave() {
 
 function hypoPackratReset(challenge) {
 
-	if (challenge === 'Hypothermia' && autoTrimpSettings.rHypoDefaultSettings.value.packrat) {
+	if (challenge === 'Hypothermia' && getPageSetting('hypothermiaDefaultSettings').packrat) {
 		toggleRemovePerks();
 		numTab(6, true);
 		buyPortalUpgrade('Packrat');
@@ -1519,9 +1457,9 @@ function hypoPackratReset(challenge) {
 
 function allocatePerks() {
 	if (!game.global.portalActive) return;
-	if (portalUniverse === 1 && getPageSetting('AutoAllocatePerks') !== 2) return;
-	if (portalUniverse === 2 && getPageSetting('RAutoAllocatePerks') === 0) return;
-	var allocatePerk = portalUniverse === 1 ? 'Looting_II' : getPageSetting('RAutoAllocatePerks') == 1 ? 'Looting' : getPageSetting('RAutoAllocatePerks') == 2 ? 'Greed' : getPageSetting('RAutoAllocatePerks') == 3 ? 'Motivation' : null;
+	if (portalUniverse === 1 && getPageSetting('autoPerks') !== 2) return;
+	if (portalUniverse === 2 && getPageSetting('autoPerks') === 0) return;
+	var allocatePerk = portalUniverse === 1 ? 'Looting_II' : getPageSetting('autoPerks') == 1 ? 'Looting' : getPageSetting('autoPerks') == 2 ? 'Greed' : getPageSetting('autoPerks') == 3 ? 'Motivation' : null;
 	if (allocatePerk !== null) {
 		numTab(6, true)
 		buyPortalUpgrade(allocatePerk);
@@ -1574,7 +1512,7 @@ function dailyModiferReduction() {
 	var dailyMods = dailyModifiersOutput().split('<br>');
 	dailyMods.length = dailyMods.length - 1;
 	var dailyReduction = 0;
-	var settingsArray = autoTrimpSettings.rDailyPortalSettingsArray.value;
+	var settingsArray = getPageSetting('dailyPortalSettingsArray');
 
 	for (var item in settingsArray) {
 		if (item === 'portalZone' || item === 'portalChallenge') continue;
@@ -1604,7 +1542,7 @@ function displayMostEfficientEquipment() {
 	if (usingRealTimeOffline) return;
 	var $eqNamePrestige = null;
 
-	var highlightSetting = game.global.universe === 1 ? getPageSetting('hEquipEfficientEquipDisplay') : getPageSetting('rEquipEfficientEquipDisplay');
+	var highlightSetting = getPageSetting('equipEfficientEquipDisplay');
 
 	if (!highlightSetting) return;
 
@@ -1662,7 +1600,7 @@ function displayMostEfficientEquipment() {
 	}
 }
 
-function getAvailableSpecials(special) {
+function getAvailableSpecials(special, skipCaches) {
 
 	var cacheMods = [];
 	var bestMod;
@@ -1677,6 +1615,7 @@ function getAvailableSpecials(special) {
 	var unlocksAt = game.global.universe === 2 ? 'unlocksAt2' : 'unlocksAt';
 
 	for (const mod of cacheMods) {
+		if (skipCaches && mod === 'hc') continue;
 		if (mapSpecialModifierConfig[mod][unlocksAt] <= hze) {
 			bestMod = mod;
 			break;
@@ -1806,6 +1745,7 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 			if (highestZone >= 40) dropdown += "<option value='Bublé'" + ((MAZ == 'Bublé') ? " selected='selected'" : "") + ">Bublé</option>";
 			if (highestZone >= 55) dropdown += "<option value = 'Melt'" + ((MAZ == 'Melt') ? " selected = 'selected'" : "") + " > Melt</option >";
 			if (highestZone >= 70) dropdown += "<option value='Quagmire'" + ((MAZ == 'Quagmire') ? " selected='selected'" : "") + ">Quagmire</option>";
+			if (highestZone >= 85) dropdown += "<option value='Quest'" + ((MAZ == 'Quest') ? " selected='selected'" : "") + ">Quest</option>";
 			if (highestZone >= 90) dropdown += "<option value='Archaeology'" + ((MAZ == 'Archaeology') ? " selected='selected'" : "") + ">Archaeology</option>";
 			if (highestZone >= 110) dropdown += "<option value='Insanity'" + ((MAZ == 'Insanity') ? " selected='selected'" : "") + ">Insanity</option>";
 			if (highestZone >= 135) dropdown += "<option value='Nurture'" + ((MAZ == 'Nurture') ? " selected='selected'" : "") + ">Nurture</option>";

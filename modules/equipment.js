@@ -352,20 +352,18 @@ function CheapestEquipmentCost() {
 //Shol Territory
 
 function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, showAllEquips, fakeLevels = {}, ignorePrestiges) {
-	const prefix = game.global.universe === 1 ? 'H' : 'R';
-	const prefix_Lower = game.global.universe === 1 ? 'h' : 'r';
 
 	for (var i in RequipmentList) {
 		if (typeof fakeLevels[i] === 'undefined') {
 			fakeLevels[i] = 0;
 		}
 	}
-	if (!ignoreShield) ignoreShield = getPageSetting('rEquipNoShields');
+	if (!ignoreShield) ignoreShield = getPageSetting('equipNoShields');
 	if (!skipForLevels) skipForLevels = false;
 	if (!showAllEquips) showAllEquips = false;
-	var rEquipZone = getPageSetting(prefix + 'equipzone');
-	if (!zoneGo) zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
-	if (!resourceMaxPercent) resourceMaxPercent = zoneGo ? 1 : getPageSetting(prefix + 'equippercent') < 0 ? 1 : getPageSetting(prefix + 'equippercent') / 100;
+	var rEquipZone = getPageSetting('equipZone');
+	if (!zoneGo) zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting('equipCutOff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+	if (!resourceMaxPercent) resourceMaxPercent = zoneGo ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100;
 	var resourceMaxPercentBackup = resourceMaxPercent;
 
 	if (challengeActive('Scientist')) {
@@ -407,8 +405,8 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	for (var i in RequipmentList) {
 		if (game.equipment[i].locked) continue;
 		var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
-		var skipForLevels = !skipForLevels && isAttack == 0 ? getPageSetting(prefix + 'equipcapattack') :
-			!skipForLevels && isAttack == 1 ? getPageSetting(prefix + 'equipcaphealth') :
+		var skipForLevels = !skipForLevels && isAttack == 0 ? getPageSetting('equipCapAttack') :
+			!skipForLevels && isAttack == 1 ? getPageSetting('equipCapHealth') :
 				skipForLevels
 		var nextLevelCost = game.equipment[i].cost[RequipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[RequipmentList[i].Resource][1], game.equipment[i].level + fakeLevels[i]) * getEquipPriceMult();
 		var prestige = false;
@@ -447,8 +445,8 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
 		var safeRatio = nextLevelCost / nextLevelValue;
 
-		if (!ignorePrestiges && getPageSetting(prefix + 'equipprestige') === 0 && game.equipment[i].level < 6 && game.resources.metal.owned * 0.2 < buyPrestigeMaybe(i, resourceMaxPercent)[2]) ignorePrestiges_temp = true;
-		if ((getPageSetting(prefix + 'equipprestige') === 1 && !game.mapUnlocks.AncientTreasure.canRunOnce && game.resources.metal.owned * 0.08 < buyPrestigeMaybe(i, resourceMaxPercent)[2])) ignorePrestiges_temp = true;
+		if (!ignorePrestiges && getPageSetting('equipPrestige') === 0 && game.equipment[i].level < 6 && game.resources.metal.owned * 0.2 < buyPrestigeMaybe(i, resourceMaxPercent)[2]) ignorePrestiges_temp = true;
+		if ((getPageSetting('equipPrestige') === 1 && !game.mapUnlocks.AncientTreasure.canRunOnce && game.resources.metal.owned * 0.08 < buyPrestigeMaybe(i, resourceMaxPercent)[2])) ignorePrestiges_temp = true;
 
 		if (!ignorePrestiges_temp && (buyPrestigeMaybe(i, resourceMaxPercent)[0] && (buyPrestigeMaybe(i, resourceMaxPercent)[1] > mostEfficient[isAttack].statPerResource || buyPrestigeMaybe(i, resourceMaxPercent)[3])) && !(metalShred && metalTotal < buyPrestigeMaybe(i, resourceMaxPercent)[2])) {
 			safeRatio = buyPrestigeMaybe(i, resourceMaxPercent)[1];
@@ -456,7 +454,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			prestige = true;
 		}
 
-		if (!ignorePrestiges_temp && getPageSetting(prefix_Lower + 'EquipHighestPrestige')) {
+		if (!ignorePrestiges_temp && getPageSetting('equipHighestPrestige')) {
 			for (var item in game.equipment) {
 				var equip = game.equipment[item];
 				if (equip.prestige > highestPrestige) highestPrestige = equip.prestige;
@@ -537,10 +535,9 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 }
 
 function autoEquip() {
-	const prefix = game.global.universe === 1 ? 'H' : 'R';
 
 	if (
-		!getPageSetting(prefix + 'equipon') ||
+		!getPageSetting('equipOn') ||
 		([2, 3].indexOf(currQuest()) >= 0 && game.global.lastClearedCell < 90) ||
 		(currentMap === 'Smithy Farm') ||
 		(game.mapUnlocks.AncientTreasure.canRunOnce &&
@@ -555,10 +552,10 @@ function autoEquip() {
 		buyUpgrade('Gymystic', true, true);
 		debug('Upgrading Gymystic', "equips", '*upload');
 	}
-	var rEquipZone = getPageSetting(prefix + 'equipzone');
-	var zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+	var rEquipZone = getPageSetting('equipZone');
+	var zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting('equipCutOff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 
-	if (getPageSetting(prefix + 'equipprestige') == 2 && !zoneGo) {
+	if (getPageSetting('equipPrestige') == 2 && !zoneGo) {
 		var prestigeLeft = false;
 		do {
 			prestigeLeft = false;
@@ -568,8 +565,8 @@ function autoEquip() {
 						var isAttack = (RequipmentList[equipName].Stat === 'attack' ? 0 : 1);
 						//Skipping if on reflect daily and our dmg is too high
 						if (reflectShouldBuyEquips() && isAttack === 0) continue;
-						if (game.global.universe === 2 && getPageSetting('rEquipNoShields') && equipName == 'Shield') continue;
-						if ((getPageSetting(prefix + 'equipprestige') === 2 || mostEfficientEquipment()[isAttack + 4]) && buyUpgrade(RequipmentList[equipName].Upgrade, true, true))
+						if (game.global.universe === 2 && getPageSetting('equipNoShields') && equipName == 'Shield') continue;
+						if ((getPageSetting('equipPrestige') === 2 || mostEfficientEquipment()[isAttack + 4]) && buyUpgrade(RequipmentList[equipName].Upgrade, true, true))
 							prestigeLeft = true;
 					}
 				}
@@ -578,8 +575,8 @@ function autoEquip() {
 	}
 
 	//Initialise settings for later user
-	var alwaysLvl2 = getPageSetting(prefix + 'equip2');
-	var alwaysPandemonium = getPageSetting('RPandemoniumAutoEquip') > 0;
+	var alwaysLvl2 = getPageSetting('equip2');
+	var alwaysPandemonium = getPageSetting('pandemoniumAE') > 0;
 	var metalShred = challengeActive('Daily') && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')
 	// always2 / alwaysPrestige / alwaysPandemonium
 	if (alwaysLvl2 || (alwaysPandemonium && challengeActive('Pandemonium')) || metalShred) {
@@ -605,8 +602,8 @@ function autoEquip() {
 		}
 	}
 
-	var attackEquipCap = (getPageSetting(prefix + 'equipcapattack') <= 0 || currentMap === 'Smithless Farm' ? Infinity : getPageSetting(prefix + 'equipcapattack'));
-	var healthEquipCap = (getPageSetting(prefix + 'equipcaphealth') <= 0 || currentMap === 'Smithless Farm' ? Infinity : getPageSetting(prefix + 'equipcaphealth'));
+	var attackEquipCap = (getPageSetting('equipCapAttack') <= 0 || currentMap === 'Smithless Farm' ? Infinity : getPageSetting('equipCapAttack'));
+	var healthEquipCap = (getPageSetting('equipCapHealth') <= 0 || currentMap === 'Smithless Farm' ? Infinity : getPageSetting('equipCapHealth'));
 	var maxCanAfford = 0;
 
 	if (challengeActive('Scientist')) {
@@ -615,15 +612,15 @@ function autoEquip() {
 	}
 
 	//Buy as many shields as possible when running Melting Point
-	if (game.global.universe === 2 && !getPageSetting('rEquipNoShields') && autoTrimpSettings.rJobSettingsArray.value.NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')
+	if (game.global.universe === 2 && !getPageSetting('equipNoShields') && getPageSetting('jobSettingsArray').NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')
 		buyEquipment('Shield', null, true, 999)
 
-	var ignoreShields = game.global.universe === 2 && getPageSetting('rEquipNoShields');
+	var ignoreShields = game.global.universe === 2 && getPageSetting('equipNoShields');
 	// Loop through actually getting equips
 	var keepBuying = false;
 	do {
 		keepBuying = false;
-		var resourceSpendingPct = zoneGo ? 1 : getPageSetting(prefix + 'equippercent') < 0 ? 1 : getPageSetting(prefix + 'equippercent') / 100;
+		var resourceSpendingPct = zoneGo ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100;
 		var bestBuys = mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShields, false, false);
 		// Set up for both Attack and Health depending on which is cheaper to purchase
 		var equipType = (bestBuys[6] < bestBuys[7]) ? 'attack' : 'health';
@@ -633,7 +630,7 @@ function autoEquip() {
 		var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
 		var resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 
-		zoneGo = (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+		zoneGo = (HDRatio >= getPageSetting('equipCutOff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 
 
 
@@ -680,7 +677,7 @@ function autoEquip() {
 			equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5];
 			resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 			equipCap = (equipType === 'attack') ? attackEquipCap : healthEquipCap;
-			zoneGo = (HDRatio >= getPageSetting(prefix + 'dmgcuntoff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+			zoneGo = (HDRatio >= getPageSetting('equipCutOff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 		}
 	} while (keepBuying)
 }
@@ -695,7 +692,7 @@ function getTotalMultiCost(baseCost, multiBuyCount, costScaling, isCompounding) 
 }
 
 function equipfarmdynamicHD(rEFIndex) {
-	var HDFSettingsBase = game.global.universe === 1 ? autoTrimpSettings.hHDFarmSettings.value : autoTrimpSettings.rHDFarmSettings.value
+	var HDFSettingsBase = getPageSetting('hdFarmSettings');
 	var HDFSettings = HDFSettingsBase[rEFIndex]
 	var equipfarmHD = 0;
 	var equipfarmHDmult = 1;
@@ -712,7 +709,7 @@ function estimateEquipsForZone(rEFIndex) {
 	var checkMutations = game.global.world > 200;
 
 	// calculate stats needed pass zone
-	var gammaBurstDmg = getPageSetting('rCalcGammaBurst') ? gammaBurstPct : 1;
+	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? gammaBurstPct : 1;
 	var ourHealth = calcOurHealth(false, 'world');
 	var ourDmg = calcOurDmg('avg', 0, false, 'world', 'maybe', 0, false) * gammaBurstDmg;
 	var enemyHealth = calcEnemyHealthCore('world', game.global.world, 99, 'Turtlimp');

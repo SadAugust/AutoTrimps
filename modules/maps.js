@@ -25,22 +25,21 @@ if (getAutoStructureSetting().enabled) {
 }
 
 function updateAutoMapsStatus(get) {
-	const universeInitial = game.global.universe === 2 ? 'R' : '';
-	if (!getPageSetting(universeInitial + 'showautomapstatus')) return;
-	var status;
+	var status = '';
 
-	//Setting up status
-	if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
-	else if (vanillaMAZ) status = 'Vanilla MAZ';
-	else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && (currentMap !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness')) status = getCurrentMapObject().name;
-	else if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
-	else if (currentMap !== '') status = rMapSettings.status;
-	else if (getPageSetting('SkipSpires') == 1 && isDoingSpire()) status = 'Skipping Spire';
-	//Advancing
-	else status = 'Advancing';
+	if (getPageSetting('displayAutoMapStatus')) {
+		//Setting up status
+		if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
+		else if (vanillaMAZ) status = 'Vanilla MAZ';
+		else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && (currentMap !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness')) status = getCurrentMapObject().name;
+		else if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
+		else if (currentMap !== '') status = rMapSettings.status;
+		else if (getPageSetting('SkipSpires') == 1 && isDoingSpire()) status = 'Skipping Spire';
+		//Advancing
+		else status = 'Advancing';
+	}
 
-
-	if (getPageSetting(universeInitial + 'AutoMaps') == 0) status = '[Off] ' + status;
+	if (getPageSetting('autoMaps') == 0) status = '[Off] ' + status;
 	let resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
 	let resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
 	var getPercent = (game.stats.heliumHour.value() /
@@ -53,10 +52,10 @@ function updateAutoMapsStatus(get) {
 
 	if (get) {
 		return [status, getPercent, lifetime];
-	} else {
-		if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
-		if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
 	}
+
+	if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
+	if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
 }
 
 function autoMap() {
@@ -66,8 +65,7 @@ function autoMap() {
 		return;
 	}
 
-	const universeInitial = game.global.universe === 2 ? 'R' : '';
-	if (!getPageSetting(universeInitial + 'AutoMaps') > 0 && game.global.mapsUnlocked) return;
+	if (!getPageSetting('autoMaps') > 0 && game.global.mapsUnlocked) return;
 
 	//Stops maps from running while doing Trimple Of Doom or Atlantrimp.
 	if (!game.mapUnlocks.AncientTreasure.canRunOnce) {
@@ -93,7 +91,7 @@ function autoMap() {
 
 	//Stop maps from running if frag farming
 	if (MODULES.maps.fragmentFarming) {
-		rFragmentFarm();
+		fragmentFarm();
 		return;
 	}
 
@@ -180,7 +178,7 @@ function autoMap() {
 	let highestMap = null;
 	let lowestMap = null;
 	let optimalMap = null;
-	const runUniques = game.global.universe === 1 ? getPageSetting('AutoMaps') === 1 : getPageSetting('RAutoMaps') === 1;
+	const runUniques = getPageSetting('autoMaps') === 1;
 	const bionicPool = [];
 	let voidMap = null;
 	let selectedMap = "world";
@@ -223,7 +221,7 @@ function autoMap() {
 			else if (currentMap === 'Prestige Raiding') selectedMap = "prestigeRaid";
 			else if (currentMap === 'Bionic Raiding') selectedMap = "bionicRaid";
 			else if (optimalMap) selectedMap = optimalMap.id;
-			else selectedMap = RShouldFarmMapCreation(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
+			else selectedMap = shouldFarmMapCreation(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
 			if (mappingTime === 0) mappingTime = getGameTime();
 		}
 	}
@@ -231,11 +229,11 @@ function autoMap() {
 	//Map Repeat
 	if (!game.global.preMapsActive && game.global.mapsActive) {
 		//Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
-		if (rShouldMap && currentMap === 'Prestige Raiding' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > PerfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
+		if (rShouldMap && currentMap === 'Prestige Raiding' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > perfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
 			var maplevel = getCurrentMapObject().level
 			mapsClicked();
 			recycleMap();
-			PerfectMapCost(maplevel - game.global.world, "lmc");
+			perfectMapCost(maplevel - game.global.world, "lmc");
 			buyMap();
 			rRunMap();
 			debug("Running LMC map due to only having 1 equip remaining on this map.")
@@ -279,7 +277,7 @@ function autoMap() {
 			if (!game.global.switchToMaps) {
 				mapsClicked();
 			}
-			const autoAbandon = getPageSetting('PowerSaving');
+			const autoAbandon = getPageSetting('autoAbandon');
 			if (game.global.switchToMaps && autoAbandon !== 1) {
 				mapsClicked();
 			}
@@ -307,7 +305,7 @@ function autoMap() {
 			const mapspecial = document.getElementById("advSpecialSelect").value === '0' ? 'No special' : document.getElementById("advSpecialSelect").value;
 			if (highestMap !== null && updateMapCost(true) > game.resources.fragments.owned) {
 				debug("Can't afford the map we designed, #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
-				if (!game.jobs.Explorer.locked) rFragmentFarm();
+				if (!game.jobs.Explorer.locked) fragmentFarm();
 				else runSelectedMap(highestMap.id, 'highest');
 				lastMapWeWereIn = getCurrentMapObject();
 			} else {

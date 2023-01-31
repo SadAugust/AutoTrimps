@@ -99,7 +99,7 @@ function shouldRunUniqueMap(map) {
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const mapData = uniqueMaps[map.name];
-	const uniqueMapSetting = game.global.universe === 2 ? autoTrimpSettings.rUniqueMapSettingsArray.value : autoTrimpSettings.hUniqueMapSettingsArray.value;
+	const uniqueMapSetting = getPageSetting('uniqueMapSettingsArray');
 
 	if (mapData === undefined || game.global.world < mapData.zone) {
 		return false;
@@ -117,7 +117,7 @@ function shouldRunUniqueMap(map) {
 		const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name == "Liquimp";
 		if (map.name === 'The Block') {
 			//We need Shieldblock
-			if (!game.upgrades.Shieldblock.allowed && getPageSetting('BuyShieldblock')) {
+			if (!game.upgrades.Shieldblock.allowed && getPageSetting('equipShieldBlock')) {
 				return true;
 			}
 			if (game.mapUnlocks.TheBlock.canRunOnce && uniqueMapSetting.The_Block.enabled && game.global.world >= uniqueMapSetting.The_Block.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Block.cell || liquified)) {
@@ -145,17 +145,17 @@ function shouldRunUniqueMap(map) {
 				return true;
 			}
 			if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Trimple_of_Doom.enabled && game.global.world >= uniqueMapSetting.Trimple_of_Doom.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Trimple_of_Doom.cell || liquified)) {
-				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
 				return true;
 			}
 		} else if (map.name === 'The Prison') {
 			if (game.mapUnlocks.ThePrison.canRunOnce && uniqueMapSetting.The_Prison.enabled && game.global.world >= uniqueMapSetting.The_Prison.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.The_Prison.cell || liquified)) {
-				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
 				return true;
 			}
 		} else if (map.name === 'Imploding Star') {
 			if (game.mapUnlocks.ImplodingStar.canRunOnce && uniqueMapSetting.Imploding_Star.enabled && game.global.world >= uniqueMapSetting.Imploding_Star.zone && (game.global.lastClearedCell + 2 >= uniqueMapSetting.Imploding_Star.cell || liquified)) {
-				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
 				return true;
 			}
 		}
@@ -181,7 +181,7 @@ function shouldRunUniqueMap(map) {
 		} else if (map.name === 'Atlantrimp') {
 			// maybe get the treasure
 			if (game.mapUnlocks.AncientTreasure.canRunOnce && uniqueMapSetting.Atlantrimp.enabled && game.global.world >= uniqueMapSetting.Atlantrimp.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Atlantrimp.cell) {
-				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
 				return true;
 			}
 		} else if (map.name === 'Melting Point') {
@@ -191,7 +191,7 @@ function shouldRunUniqueMap(map) {
 			// maybe get extra smithiesvar 
 			meltsmithy =
 				challengeActive('Desolation') && getPageSetting('desolation') && getPageSetting('desolationMP') > 0 ? getPageSetting('desolationMP') :
-					challengeActive('Pandemonium') && getPageSetting('RPandemoniumMP') > 0 ? getPageSetting('RPandemoniumMP') :
+					challengeActive('Pandemonium') && getPageSetting('pandemoniumMP') > 0 ? getPageSetting('pandemoniumMP') :
 						isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
 							isDaily && !smithyShred && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
 								isDaily && smithyShred && uniqueMapSetting.MP_Smithy_Daily_Shred.enabled && uniqueMapSetting.MP_Smithy_Daily_Shred.value > 0 ? uniqueMapSetting.MP_Smithy_Daily_Shred.value :
@@ -200,17 +200,17 @@ function shouldRunUniqueMap(map) {
 			if (game.mapUnlocks.SmithFree.canRunOnce &&
 				((!isC3 && !isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world >= uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
 					(meltsmithy !== Infinity && meltsmithy <= game.buildings.Smithy.owned))) {
-				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' at ' + game.buildings.Smithy.owned + ' smithies on zone ' + game.global.world + '.');
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' at ' + game.buildings.Smithy.owned + ' smithies on zone ' + game.global.world + '.');
 				return true;
 			}
 		} else if (map.name === 'Frozen Castle') {
 			// maybe get the treasure
 			var frozencastle = !challengeActive('Hypothermia') && uniqueMapSetting.Frozen_Castle.enabled && game.global.world >= uniqueMapSetting.Frozen_Castle.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Frozen_Castle.cell;
 			var hypothermia = challengeActive('Hypothermia') && !VoidMaps().shouldRun &&
-				game.global.world >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[0]) : 200) &&
-				game.global.lastClearedCell + 2 >= (autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1] !== undefined ? parseInt(autoTrimpSettings.rHypoDefaultSettings.value.frozencastle[1]) : 99);
+				game.global.world >= (getPageSetting('hypothermiaDefaultSettings').frozencastle[0] !== undefined ? parseInt(getPageSetting('hypothermiaDefaultSettings').frozencastle[0]) : 200) &&
+				game.global.lastClearedCell + 2 >= (getPageSetting('hypothermiaDefaultSettings').frozencastle[1] !== undefined ? parseInt(getPageSetting('hypothermiaDefaultSettings').frozencastle[1]) : 99);
 			if (frozencastle || hypothermia) {
-				if (getPageSetting('rMapRepeatCount') && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
+				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.');
 				return true;
 			}
 		}
@@ -281,8 +281,7 @@ function VoidMaps() {
 		mapName: mapName
 	};
 
-	if (game.global.universe === 1 && !autoTrimpSettings.hVoidMapDefaultSettings.value.active) return farmingDetails;
-	if (game.global.universe === 2 && !autoTrimpSettings.rVoidMapDefaultSettings.value.active) return farmingDetails;
+	if (!getPageSetting('voidMapDefaultSettings').active) return farmingDetails;
 	var module = MODULES['mapFunctions'];
 
 	const totalPortals = getTotalPortals();
@@ -290,7 +289,7 @@ function VoidMaps() {
 	const isDaily = challengeActive('Daily');
 	const dailyReduction = isDaily && game.global.universe === 2 ? dailyModiferReduction() : 0;
 	const currChall = game.global.challengeActive;
-	const rVMBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hVoidMapSettings.value : autoTrimpSettings.rVoidMapSettings.value;
+	const rVMBaseSettings = getPageSetting('voidMapSettings');
 
 	var rVMIndex;
 
@@ -376,17 +375,16 @@ function MapBonus() {
 		mapName: mapName
 	};
 
-	if (game.global.universe === 1 && !autoTrimpSettings.hMapBonusDefaultSettings.value.active && !isDoingSpire()) return farmingDetails;
-	if (game.global.universe === 2 && !autoTrimpSettings.rMapBonusDefaultSettings.value.active) return farmingDetails;
+	if (!getPageSetting('mapBonusDefaultSettings').active && !isDoingSpire()) return farmingDetails;
 
 	//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const currChall = game.global.challengeActive;
-	const rMBZone = game.global.universe === 1 ? getPageSetting('hMapBonusZone') : getPageSetting('rMapBonusZone');
-	const rMBBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusSettings.value : autoTrimpSettings.rMapBonusSettings.value;
+	const rMBZone = getPageSetting('mapBonusZone');
+	const rMBBaseSettings = getPageSetting('mapBonusSettings');
 
-	const rMBDefaultSettings = game.global.universe === 1 ? autoTrimpSettings.hMapBonusDefaultSettings.value : autoTrimpSettings.rMapBonusDefaultSettings.value;
+	const rMBDefaultSettings = getPageSetting('mapBonusDefaultSettings');
 	let rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio && game.global.mapBonus !== 10;
 	let rMBspireMapStack = getPageSetting('MaxStacksForSpire') && isDoingSpire() && game.global.mapBonus !== 10;
 	var rMBIndex = null;
@@ -476,8 +474,7 @@ function MapFarm() {
 		mapName: mapName
 	};
 
-	if (game.global.universe === 1 && !autoTrimpSettings.hMapFarmDefaultSettings.value.active) return farmingDetails;
-	if (game.global.universe === 2 && !autoTrimpSettings.rMapFarmDefaultSettings.value.active) return farmingDetails;
+	if (!getPageSetting('mapFarmDefaultSettings').active) return farmingDetails;
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const totalPortals = getTotalPortals();
@@ -488,7 +485,7 @@ function MapFarm() {
 	const woodShred = shredActive && shredMods.includes('wood');
 	const currChall = game.global.challengeActive;
 
-	const rMFBaseSetting = game.global.universe === 1 ? autoTrimpSettings.hMapFarmSettings.value : autoTrimpSettings.rMapFarmSettings.value;
+	const rMFBaseSetting = getPageSetting('mapFarmSettings');
 	var rMFIndex;
 
 	//Checking to see if any lines are to be run.
@@ -522,7 +519,7 @@ function MapFarm() {
 		var rMFJobRatio = rMFSettings.jobratio;
 		var rMFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rMFSettings.atlantrimp;
 		var rMFGather = rMFSettings.gather;
-		var rMFshredMapCap = autoTrimpSettings.rMapFarmDefaultSettings.value.shredMapCap;
+		var rMFshredMapCap = autoTrimpSettings.mapFarmDefaultSettings.valueU2.shredMapCap;
 
 		if (shredActive && (rMFRepeatCounter > rMFshredMapCap || rMFAtlantrimp === true)) {
 			if ((foodShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Savory')) || (woodShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Wooden')) || (metalShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Metal'))) {
@@ -598,7 +595,7 @@ function TributeFarm() {
 		mapName: mapName
 	};
 
-	if (!autoTrimpSettings.rTributeFarmDefaultSettings.value.active || (game.buildings.Tribute.locked && game.jobs.Meteorologist.locked)) return farmingDetails;
+	if (!getPageSetting('tributeFarmDefaultSettings').active || (game.buildings.Tribute.locked && game.jobs.Meteorologist.locked)) return farmingDetails;
 	var rShouldTributeFarm = false;
 	var rShouldMetFarm = false;
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
@@ -607,7 +604,7 @@ function TributeFarm() {
 	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
-	const rTrFBaseSetting = autoTrimpSettings.rTributeFarmSettings.value;
+	const rTrFBaseSetting = getPageSetting('tributeFarmSettings');
 	var rTrFIndex;
 
 	//Identifying which map line to run.
@@ -639,7 +636,7 @@ function TributeFarm() {
 		var rTrFMapLevel = rTrFSettings.level
 		var rTrFTributes = game.buildings.Tribute.locked == 1 ? 0 : rTrFSettings.tributes;
 		var rTrFMeteorologists = game.jobs.Meteorologist.locked == 1 ? 0 : rTrFSettings.mets;
-		var rTrFSpecial = getAvailableSpecials('lsc');
+		var rTrFSpecial = getAvailableSpecials('lsc', true);
 		var rTrFJobRatio = rTrFSettings.jobratio;
 		var rTrFbuyBuildings = rTrFSettings.buildings;
 		var rTrFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce || (isDaily && foodShred) ? false : rTrFSettings.atlantrimp;
@@ -704,7 +701,7 @@ function TributeFarm() {
 				rShouldMetFarm = true;
 		}
 
-		if (rShouldTributeFarm && !getPageSetting('RBuyBuildingsNew')) buyTributes();
+		if (rShouldTributeFarm && !getPageSetting('buildingsType')) buyTributes();
 
 		//Figuring out if we have enough resources to run Atlantrimp when setting is enabled.
 		if (rTrFAtlantrimp && (rShouldTributeFarm || rShouldMetFarm) && (game.global.world > 33 || (game.global.world === 33 && game.global.lastClearedCell + 2 > 50))) {
@@ -784,7 +781,7 @@ function SmithyFarm() {
 		mapName: mapName
 	};
 
-	if (game.buildings.Smithy.locked || (!autoTrimpSettings.rSmithyFarmDefaultSettings.value.active && !challengeActive('Quest')) || (challengeActive('Quest') && currQuest() !== 10) || challengeActive('Transmute')) return farmingDetails;
+	if (game.buildings.Smithy.locked || (!getPageSetting('smithyFarmDefaultSettings').active && !challengeActive('Quest')) || (challengeActive('Quest') && currQuest() !== 10) || challengeActive('Transmute')) return farmingDetails;
 
 	var rShouldSmithyFarm = false;
 	var rShouldSmithyGemFarm = false;
@@ -800,7 +797,7 @@ function SmithyFarm() {
 	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
-	const rSFBaseSetting = autoTrimpSettings.rSmithyFarmSettings.value;
+	const rSFBaseSetting = getPageSetting('smithyFarmSettings');
 
 	var rSFIndex;
 
@@ -828,9 +825,9 @@ function SmithyFarm() {
 		if (game.global.mapsActive) mapBonus = getCurrentMapObject().bonus;
 		dontRecycleMaps = true;
 
-		var rSFSettings = autoTrimpSettings.rSmithyFarmSettings.value[rSFIndex];
+		var rSFSettings = rSFBaseSetting[rSFIndex];
 		var rSFMapLevel = challengeActive('Quest') ? -1 : rSFSettings.level;
-		var rSFSpecial = getAvailableSpecials('lmc');
+		var rSFSpecial = getAvailableSpecials('lmc', true);
 		var rSFJobRatio = '0,0,0,0';
 		var rSFSmithies = challengeActive('Quest') ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
 
@@ -928,26 +925,26 @@ function SmithyFarm() {
 		if (rSFSmithies > game.buildings.Smithy.purchased) {
 			if (smithyGemCost > game.resources.gems.owned) {
 				rShouldSmithyGemFarm = true;
-				rSFSpecial = getAvailableSpecials('lsc');
+				rSFSpecial = getAvailableSpecials('lsc', true);
 				rSFJobRatio = '1,0,0,0';
-				rSFGoal = smithyGemCost.toExponential(2) + ' gems.';
+				rSFGoal = prettify(smithyGemCost) + ' gems.';
 			}
 			else if (smithyWoodCost > game.resources.wood.owned) {
 				rShouldSmithyWoodFarm = true;
-				rSFSpecial = getAvailableSpecials('lwc');
+				rSFSpecial = getAvailableSpecials('lwc', true);
 				rSFJobRatio = '0,1,0,0';
-				rSFGoal = smithyWoodCost.toExponential(2) + ' wood.';
+				rSFGoal = prettify(smithyWoodCost) + ' wood.';
 			}
 			else if (smithyMetalCost > game.resources.metal.owned) {
 				rShouldSmithyMetalFarm = true;
-				rSFSpecial = getAvailableSpecials('lmc');
+				rSFSpecial = getAvailableSpecials('lmc', true);
 				rSFJobRatio = '0,0,1,0';
-				rSFGoal = smithyMetalCost.toExponential(2) + ' metal.';
+				rSFGoal = prettify(smithyMetalCost) + ' metal.';
 			}
 			rShouldSmithyFarm = true;
 		}
 
-		if ((!autoTrimpSettings.RBuyBuildingsNew.enabled || !autoTrimpSettings.rBuildingSettingsArray.value.Smithy.enabled || challengeActive('Hypothermia')) && rShouldSmithyFarm && rSFSmithies > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, 1)) {
+		if ((!getPageSetting('buildingsType') || !getPageSetting('buildingSettingsArray').Smithy.enabled || challengeActive('Hypothermia')) && rShouldSmithyFarm && rSFSmithies > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, 1)) {
 			buyBuilding("Smithy", true, true, 1);
 		}
 
@@ -1004,11 +1001,12 @@ function WorshipperFarm() {
 		shouldRun: false,
 		mapName: mapName
 	};
-	if (game.jobs.Worshipper.locked || !autoTrimpSettings.rWorshipperFarmDefaultSettings.value.active) return farmingDetails;
+	if (game.jobs.Worshipper.locked || !getPageSetting('worshipperFarmDefaultSettings').active) return farmingDetails;
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const currChall = game.global.challengeActive;
-	const rWFBaseSetting = autoTrimpSettings.rWorshipperFarmSettings.value
+	const rWFBaseSetting = getPageSetting('worshipperFarmSettings');
+	const rWFDefaultSetting = getPageSetting('worshipperFarmDefaultSettings');
 
 	var rShouldWorshipperFarm = false;
 	var rShouldSkip = false;
@@ -1042,7 +1040,7 @@ function WorshipperFarm() {
 		rWFGoal = rWFSettings.worshipper;
 		var rWFMapLevel = rWFSettings.level;
 		var rWFJobRatio = rWFSettings.jobratio;
-		var rWFSpecial = getAvailableSpecials('lsc');
+		var rWFSpecial = getAvailableSpecials('lsc', true);
 
 		if (rWFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
@@ -1058,18 +1056,18 @@ function WorshipperFarm() {
 		}
 
 		if (challengeActive('Wither') && rWFMapLevel >= 0) rWFMapLevel = -1;
-		if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != rWFDebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip))) {
-			debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip + " or more Worshippers. Evaluate your map settings to correct this");
+		if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != rWFDebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * rWFDefaultSetting.shipskip))) {
+			debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + rWFDefaultSetting.shipskip + " or more Worshippers. Evaluate your map settings to correct this");
 			rWFDebug = game.stats.zonesCleared.value;
 		}
-		if (game.jobs.Worshipper.owned != 50 && rWFGoal > game.jobs.Worshipper.owned && scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) >= (game.jobs.Worshipper.getCost() * autoTrimpSettings.rWorshipperFarmDefaultSettings.value.shipskip))
+		if (game.jobs.Worshipper.owned != 50 && rWFGoal > game.jobs.Worshipper.owned && scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) >= (game.jobs.Worshipper.getCost() * rWFDefaultSetting.shipskip))
 			rShouldWorshipperFarm = true;
 		if (currentMap !== mapName && game.jobs.Worshipper.owned >= rWFGoal)
 			rShouldSkip = true;
 
 		if (currentMap === mapName && !rShouldWorshipperFarm) {
 			mappingDetails(mapName, rWFMapLevel, rWFSpecial);
-			if (getPageSetting('rMapRepeatCount') && rShouldSkip) debug("Worshipper Farm (Z" + game.global.world + ") skipped as Worshipper goal has been met (" + game.jobs.Worshipper.owned + "/" + rWFGoal + ").");
+			if (getPageSetting('spamMessages').map_Details && rShouldSkip) debug("Worshipper Farm (Z" + game.global.world + ") skipped as Worshipper goal has been met (" + game.jobs.Worshipper.owned + "/" + rWFGoal + ").");
 			resetMapVars(rWFSettings);
 		}
 
@@ -1102,9 +1100,9 @@ function MapDestacking() {
 
 	if (
 		!(getPageSetting('balance') && challengeActive('Balance')) &&
-		!(getPageSetting('rUnbalance') && challengeActive('Unbalance')) &&
-		!(getPageSetting('Rstormon') && challengeActive('Storm')) &&
-		!(challengeActive('Daily') && getPageSetting('rBloodthirstDestack') && typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
+		!(getPageSetting('unbalance') && challengeActive('Unbalance')) &&
+		!(getPageSetting('storm') && challengeActive('Storm')) &&
+		!(challengeActive('Daily') && getPageSetting('bloodthirstDestack') && typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
 	)
 		return farmingDetails;
 
@@ -1124,9 +1122,9 @@ function MapDestacking() {
 
 	//Unbalance Destacking
 	if (challengeActive('Unbalance')) {
-		var rUnbalanceZone = getPageSetting('rUnbalanceZone') > 0 ? getPageSetting('rUnbalanceZone') : Infinity;
-		var rUnbalanceStacks = getPageSetting('rUnbalanceStacks') > 0 ? getPageSetting('rUnbalanceStacks') : Infinity;
-		rShouldDestack = (((game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= rUnbalanceZone && (game.challenges.Unbalance.balanceStacks >= rUnbalanceStacks || (getPageSetting('rUnbalanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
+		var unbalanceZone = getPageSetting('unbalanceZone') > 0 ? getPageSetting('unbalanceZone') : Infinity;
+		var unbalanceStacks = getPageSetting('unbalanceStacks') > 0 ? getPageSetting('unbalanceStacks') : Infinity;
+		rShouldDestack = (((game.global.mapsActive ? Infinity : autoBattle.oneTimers.Burstier.owned ? 4 : 5) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= unbalanceZone && (game.challenges.Unbalance.balanceStacks >= unbalanceStacks || (getPageSetting('unbalanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
 		rDDestack = game.challenges.Unbalance.balanceStacks;
 	}
 
@@ -1138,9 +1136,9 @@ function MapDestacking() {
 
 	//Storm Destacking
 	if (challengeActive('Storm')) {
-		var rStormZone = getPageSetting('rStormZone') > 0 ? getPageSetting('rStormZone') : Infinity;
-		var rStormStacks = getPageSetting('rStormStacks') > 0 ? getPageSetting('rStormStacks') : Infinity;
-		rShouldDestack = (game.global.world >= rStormZone && (game.challenges.Storm.beta >= rStormStacks && game.challenges.Storm.beta != 0));
+		var stormZone = getPageSetting('stormZone') > 0 ? getPageSetting('stormZone') : Infinity;
+		var stormStacks = getPageSetting('stormStacks') > 0 ? getPageSetting('stormStacks') : Infinity;
+		rShouldDestack = (game.global.world >= stormZone && (game.challenges.Storm.beta >= stormStacks && game.challenges.Storm.beta != 0));
 		rDDestack = game.challenges.Storm.beta;
 	}
 
@@ -1188,15 +1186,14 @@ function PrestigeRaiding() {
 		mapName: mapName
 	};
 
-	if (game.global.universe === 1 && !autoTrimpSettings.hRaidingDefaultSettings.value.active) return farmingDetails;
-	if (game.global.universe === 2 && !autoTrimpSettings.rRaidingDefaultSettings.value.active) return farmingDetails;
+	if (!getPageSetting('raidingDefaultSettings').active) return farmingDetails;
 
 	var rShouldPrestigeRaid = false;
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const currChall = game.global.challengeActive;
-	const rRaidingDefaultSetting = game.global.universe === 1 ? autoTrimpSettings.hRaidingDefaultSettings.value : autoTrimpSettings.rRaidingDefaultSettings.value;
-	const rRaidingBaseSetting = game.global.universe === 1 ? autoTrimpSettings.hRaidingSettings.value : autoTrimpSettings.rRaidingSettings.value;
+	const rRaidingDefaultSetting = getPageSetting('raidingDefaultSettings');
+	const rRaidingBaseSetting = getPageSetting('raidingSettings');
 
 	var rRaidingIndex;
 
@@ -1360,12 +1357,10 @@ function PrestigeClimb() {
 		mapName: mapName
 	};
 
-	const universe = game.global.universe === 1 ? '' : 'r';
-
 	if (challengeActive('Frugal')) return farmingDetails;
 	if (challengeActive('Mapology') && !getPageSetting('mapology')) return farmingDetails;
 
-	const targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : autoTrimpSettings[universe + 'Prestige'].selected;
+	const targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : autoTrimpSettings['Prestige'].selected;
 	if (targetPrestige === "Off") return farmingDetails;
 
 	var customVars = MODULES["maps"];
@@ -1379,7 +1374,7 @@ function PrestigeClimb() {
 	const z = game.global.world;
 
 	//Prestige
-	if (getPageSetting('ForcePresZ') !== -1 && (game.global.world) >= getPageSetting(universe + 'ForcePresZ')) {
+	if (getPageSetting('ForcePresZ') !== -1 && (game.global.world) >= getPageSetting('ForcePresZ')) {
 		needPrestige = (offlineProgress.countMapItems(game.global.world) !== 0);
 	} else
 		needPrestige = game.mapUnlocks[targetPrestige] && game.mapUnlocks[targetPrestige].last + 5 <= (game.global.world);
@@ -1393,7 +1388,7 @@ function PrestigeClimb() {
 
 	if (!challengeActive('Mapology')) {
 		//Prestige Skip 1
-		if (needPrestige && getPsString("gems", true) > 0 && (getPageSetting(universe + 'PrestigeSkip1_2') == 1 || getPageSetting(universe + 'PrestigeSkip1_2') == 2)) {
+		if (needPrestige && getPsString("gems", true) > 0 && (getPageSetting('PrestigeSkip1_2') == 1 || getPageSetting('PrestigeSkip1_2') == 2)) {
 			var numUnbought = 0;
 			for (const p of metalPrestigeList) {
 				if (game.upgrades[p].allowed - game.upgrades[p].done > 0)
@@ -1406,7 +1401,7 @@ function PrestigeClimb() {
 		}
 
 		//Prestige Skip 2
-		if ((needPrestige || skippedPrestige) && (getPageSetting(universe + 'PrestigeSkip1_2') == 1 || getPageSetting(universe + 'PrestigeSkip1_2') == 3)) {
+		if ((needPrestige || skippedPrestige) && (getPageSetting('PrestigeSkip1_2') == 1 || getPageSetting('PrestigeSkip1_2') == 3)) {
 			const numLeft = prestigeList.filter(targetPrestige => game.mapUnlocks[targetPrestige].last <= (game.global.world) - 5);
 			const shouldSkip = numLeft <= customVars.UnearnedPrestigesRequired;
 			if (shouldSkip != skippedPrestige) {
@@ -1460,7 +1455,7 @@ function BionicRaiding() {
 		mapName: mapName
 	};
 
-	if (game.global.universe === 1 && !autoTrimpSettings.hBionicRaidingDefaultSettings.value.active) return farmingDetails;
+	if (!getPageSetting('bionicRaidingDefaultSettings').active) return farmingDetails;
 	if (challengeActive('Experience') && game.global.world > 600) return farmingDetails;
 	if (challengeActive('Mapology') && !getPageSetting('mapology')) return farmingDetails;
 
@@ -1468,8 +1463,8 @@ function BionicRaiding() {
 	const isC3 = game.global.runningChallengeSquared;
 	const isDaily = challengeActive('Daily');
 	const currChall = game.global.challengeActive;
-	const rBionicRaidingDefaultSetting = autoTrimpSettings.hBionicRaidingDefaultSettings.value;
-	const rBionicRaidingBaseSetting = autoTrimpSettings.hBionicRaidingSettings.value;
+	const rBionicRaidingDefaultSetting = getPageSetting('bionicRaidingDefaultSettings');
+	const rBionicRaidingBaseSetting = getPageSetting('bionicRaidingSettings');
 
 	var index;
 
@@ -1579,8 +1574,12 @@ function Experience() {
 		if (shouldExperience) mapName = 'Bionic Raiding';
 		var status = 'Experience: Ending Challenge';
 	}
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || (getCurrentMapObject().bonus !== special && (getCurrentMapObject().bonus !== undefined && special !== '0')) || game.global.world < game.challenges.Experience.nextWonder);
 
-	var repeat = game.global.world < game.challenges.Experience.nextWonder;
+	if (currentMap === mapName && !shouldExperience) {
+		mappingDetails(mapName, mapLevel, special);
+		resetMapVars();
+	}
 
 	if (shouldExperience) farmingDetails.shouldRun = shouldExperience;
 	farmingDetails.mapName = mapName;
@@ -1605,7 +1604,7 @@ function Wither() {
 		mapName: mapName
 	};
 
-	if (!challengeActive('Wither') || !getPageSetting('rWither')) return farmingDetails;
+	if (!challengeActive('Wither') || !getPageSetting('wither')) return farmingDetails;
 
 	var jobRatio = '0,0,1,0';
 	var special = 'lmc';
@@ -1685,9 +1684,9 @@ function Quagmire() {
 		mapName: mapName
 	};
 
-	if (!challengeActive('Quagmire') || !autoTrimpSettings.rQuagDefaultSettings.value.active) return farmingDetails;
+	if (!challengeActive('Quagmire') || !getPageSetting('quagmireDefaultSettings').active) return farmingDetails;
 
-	const rQFBaseSettings = autoTrimpSettings.rQuagSettings.value;
+	const rQFBaseSettings = getPageSetting('quagmireSettings');
 	const totalPortals = getTotalPortals();
 	var rQFIndex;
 	//Checking to see if any lines are to be run.
@@ -1710,8 +1709,8 @@ function Quagmire() {
 		stacksum = 0;
 
 		for (var i = 0; i < (rQFIndex + 1); i++) {
-			if (!autoTrimpSettings.rQuagSettings.value[i].active) continue;
-			stacksum += parseInt(autoTrimpSettings.rQuagSettings.value[i].bogs);
+			if (!rQFBaseSettings[i].active) continue;
+			stacksum += parseInt(rQFBaseSettings[i].bogs);
 		}
 
 		totalstacks = 100 - stacksum;
@@ -1739,7 +1738,7 @@ function Quagmire() {
 }
 
 function currQuest() {
-	if (!challengeActive('Quest') || game.global.world < game.challenges.Quest.getQuestStartZone() || !getPageSetting('rQuest'))
+	if (!challengeActive('Quest') || game.global.world < game.challenges.Quest.getQuestStartZone() || !getPageSetting('quest'))
 		return 0;
 	var questnotcomplete = game.challenges.Quest.getQuestProgress() != "Quest Complete!";
 	if (game.challenges.Quest.getQuestProgress() == "Failed!") return 0;
@@ -1769,7 +1768,7 @@ function Quest() {
 		mapName: mapName
 	};
 
-	if (!challengeActive('Quest') || !getPageSetting('rQuest') || game.global.world < game.challenges.Quest.getQuestStartZone()) return farmingDetails;
+	if (!challengeActive('Quest') || !getPageSetting('quest') || game.global.world < game.challenges.Quest.getQuestStartZone()) return farmingDetails;
 
 	rShouldQuest = currQuest() == 1 ? 1 :
 		currQuest() == 2 ? 2 :
@@ -1784,33 +1783,33 @@ function Quest() {
 
 
 	if (rShouldQuest && rShouldQuest !== 8) {
-		var rQuestArray = rShouldQuest == 1 || rShouldQuest == 4 ? ['lsc', '1'] : rShouldQuest == 2 ? ['lwc', '0,1'] : rShouldQuest == 3 || rShouldQuest == 7 ? ['lmc', '0,0,1'] : rShouldQuest === 5 ? ['fa', '0,0,0,1'] : ['fa', '1,1,1,0']
-		var rQuestSpecial = rQuestArray[0]
-		var rQuestJobRatio = rQuestArray[1];
-		var rQuestMax = rShouldQuest === 6 ? 10 : null;
-		var rQuestMin = rShouldQuest === 6 ? 0 : null;
+		var questArray = rShouldQuest == 1 || rShouldQuest == 4 ? ['lsc', '1'] : rShouldQuest == 2 ? ['lwc', '0,1'] : rShouldQuest == 3 || rShouldQuest == 7 ? ['lmc', '0,0,1'] : rShouldQuest === 5 ? ['fa', '0,0,0,1'] : ['fa', '1,1,1,0']
+		var questSpecial = questArray[0]
+		var questJobRatio = questArray[1];
+		var questMax = rShouldQuest === 6 ? 10 : null;
+		var questMin = rShouldQuest === 6 ? 0 : null;
 
 		if (game.global.mapRunCounter === 0 && game.global.mapsActive && rMapRepeats !== 0) {
 			game.global.mapRunCounter = rMapRepeats;
 			rMapRepeats = 0;
 		}
 		var rAutoLevel_Repeat = rAutoLevel;
-		mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rQuestSpecial, rQuestMax, rQuestMin, false);
+		mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, questSpecial, questMax, questMin, false);
 		if (mapAutoLevel !== Infinity) {
 			if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) rMapRepeats = game.global.mapRunCounter + 1;
-			rQuestMapLevel = mapAutoLevel;
+			questMapLevel = mapAutoLevel;
 		}
 
-		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rQuestMapLevel || (getCurrentMapObject().bonus !== rQuestSpecial && (getCurrentMapObject().bonus !== undefined && rQuestSpecial !== '0')) || (rShouldQuest == 6 && (game.global.mapBonus >= 4 || getCurrentMapObject().level - game.global.world < 0)));
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== questMapLevel || (getCurrentMapObject().bonus !== questSpecial && (getCurrentMapObject().bonus !== undefined && questSpecial !== '0')) || (rShouldQuest == 6 && (game.global.mapBonus >= 4 || getCurrentMapObject().level - game.global.world < 0)));
 
 		var status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
 
 		farmingDetails.shouldRun = rShouldQuest;
 		farmingDetails.mapName = mapName;
-		farmingDetails.mapLevel = rQuestMapLevel;
+		farmingDetails.mapLevel = questMapLevel;
 		farmingDetails.autoLevel = true;
-		farmingDetails.special = rQuestSpecial;
-		farmingDetails.jobRatio = rQuestJobRatio;
+		farmingDetails.special = questSpecial;
+		farmingDetails.jobRatio = questJobRatio;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 
@@ -1835,17 +1834,17 @@ function Mayhem() {
 		mapName: mapName
 	};
 
-	if (!challengeActive('Mayhem') || !getPageSetting('rMayhem')) return farmingDetails;
+	if (!challengeActive('Mayhem') || !getPageSetting('mayhem')) return farmingDetails;
 
 	var rShouldMayhem = false;
 	var mapAutoLevel = Infinity;
 
-	var destackHits = getPageSetting('rMayhemDestack') > 0 ? getPageSetting('rMayhemDestack') : Infinity;
-	var destackZone = getPageSetting('rMayhemZone') > 0 ? getPageSetting('rMayhemZone') : Infinity;
-	var rMayhemMapLevel = 0;
-	var rMayhemMapIncrease = getPageSetting('rMayhemMapIncrease') > 0 ? getPageSetting('rMayhemMapIncrease') : 0;
+	var destackHits = getPageSetting('mayhemDestack') > 0 ? getPageSetting('mayhemDestack') : Infinity;
+	var destackZone = getPageSetting('mayhemZone') > 0 ? getPageSetting('mayhemZone') : Infinity;
+	var mayhemMapLevel = 0;
+	var mayhemMapIncrease = getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	var rMayhemSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
+	var mayhemSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
 	if (game.challenges.Mayhem.stacks > 0 && (HDRatio > destackHits || game.global.world >= destackZone))
 		rShouldMayhem = true;
 
@@ -1854,25 +1853,25 @@ function Mayhem() {
 		mapRepeats = 0;
 	}
 	var rAutoLevel_Repeat = rAutoLevel;
-	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rMayhemSpecial, 10, 0, false);
+	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, mayhemSpecial, 10, 0, false);
 	if (mapAutoLevel !== Infinity) {
 		if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
-		rMayhemMapLevel = (mapAutoLevel + rMayhemMapIncrease > 10 ? 10 : mapAutoLevel + rMayhemMapIncrease);
+		mayhemMapLevel = (mapAutoLevel + mayhemMapIncrease > 10 ? 10 : mapAutoLevel + mayhemMapIncrease);
 	}
 
-	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMayhemMapLevel || (getCurrentMapObject().bonus !== rMayhemSpecial && (getCurrentMapObject().bonus !== undefined && rMayhemSpecial !== '0')) || game.challenges.Mayhem.stacks <= rMayhemMapLevel + 1);
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mayhemMapLevel || (getCurrentMapObject().bonus !== mayhemSpecial && (getCurrentMapObject().bonus !== undefined && mayhemSpecial !== '0')) || game.challenges.Mayhem.stacks <= mayhemMapLevel + 1);
 	var status = 'Mayhem Destacking: ' + game.challenges.Mayhem.stacks + " remaining";
 
 	farmingDetails.shouldRun = rShouldMayhem;
 	farmingDetails.mapName = mapName;
-	farmingDetails.mapLevel = rMayhemMapLevel;
+	farmingDetails.mapLevel = mayhemMapLevel;
 	farmingDetails.autoLevel = true;
-	farmingDetails.special = rMayhemSpecial;
+	farmingDetails.special = mayhemSpecial;
 	farmingDetails.repeat = !repeat;
 	farmingDetails.status = status;
 
 	if (currentMap === mapName && !farmingDetails.shouldRun) {
-		mappingDetails(mapName, rMayhemMapLevel, rMayhemSpecial);
+		mappingDetails(mapName, mayhemMapLevel, mayhemSpecial);
 		resetMapVars();
 	}
 	return farmingDetails;
@@ -1886,12 +1885,12 @@ function Insanity() {
 		shouldRun: false,
 		mapName: mapName
 	};
-	if (!challengeActive('Insanity') || !autoTrimpSettings.rInsanityDefaultSettings.value.active) return farmingDetails;
+	if (!challengeActive('Insanity') || !getPageSetting('insanityDefaultSettings').active) return farmingDetails;
 
 	var rShouldInsanityFarm = false;
 	var mapAutoLevel = Infinity;
 	const totalPortals = getTotalPortals();
-	const rIFBaseSettings = autoTrimpSettings.rInsanitySettings.value;
+	const rIFBaseSettings = getPageSetting('insanitySettings');
 
 	var rIFIndex;
 	//Checking to see if any lines are to be run.
@@ -1959,7 +1958,7 @@ function Insanity() {
 //Pandemonium
 function PandemoniumDestack() {
 
-	var rShouldPandemoniumDestack = false;
+	var shouldPandemoniumDestack = false;
 	var mapAutoLevel = Infinity;
 
 	const mapName = 'Pandemonium Destacking';
@@ -1968,12 +1967,12 @@ function PandemoniumDestack() {
 		mapName: mapName
 	};
 
-	if (!challengeActive('Pandemonium') || !getPageSetting('RPandemoniumOn') || game.global.world < getPageSetting('RPandemoniumZone')) return farmingDetails;
+	if (!challengeActive('Pandemonium') || !getPageSetting('pandemonium') || game.global.world < getPageSetting('pandemoniumZone')) return farmingDetails;
 
-	var rPandemoniumMapLevel = 1;
+	var pandemoniumMapLevel = 1;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	var rPandemoniumSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc");
-	var rPandemoniumJobRatio = '0.001,0.001,1,0';
+	var pandemoniumSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc");
+	var pandemoniumJobRatio = '0.001,0.001,1,0';
 
 
 	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
@@ -1981,31 +1980,31 @@ function PandemoniumDestack() {
 		mapRepeats = 0;
 	}
 	var rAutoLevel_Repeat = rAutoLevel;
-	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rPandemoniumSpecial, 10, 1, false);
+	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, pandemoniumSpecial, 10, 1, false);
 	if (mapAutoLevel !== Infinity) {
 		if (rAutoLevel_Repeat !== Infinity && rAutoLevel_Repeat !== mapAutoLevel) mapRepeats = game.global.mapRunCounter + 1;
-		rPandemoniumMapLevel = mapAutoLevel;
+		pandemoniumMapLevel = mapAutoLevel;
 	}
 
 	if (game.challenges.Pandemonium.pandemonium !== 0) {
-		rShouldPandemoniumDestack = true;
+		shouldPandemoniumDestack = true;
 	}
 
-	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rPandemoniumMapLevel || (getCurrentMapObject().bonus !== rPandemoniumSpecial && (getCurrentMapObject().bonus !== undefined && rPandemoniumSpecial !== '0')) || ((game.challenges.Pandemonium.pandemonium - rPandemoniumMapLevel) < rPandemoniumMapLevel));
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== pandemoniumMapLevel || (getCurrentMapObject().bonus !== pandemoniumSpecial && (getCurrentMapObject().bonus !== undefined && pandemoniumSpecial !== '0')) || ((game.challenges.Pandemonium.pandemonium - pandemoniumMapLevel) < pandemoniumMapLevel));
 	var status = 'Pandemonium Destacking: ' + game.challenges.Pandemonium.pandemonium + " remaining";
 
-	farmingDetails.shouldRun = rShouldPandemoniumDestack;
+	farmingDetails.shouldRun = shouldPandemoniumDestack;
 	farmingDetails.mapName = mapName;
-	farmingDetails.mapLevel = rPandemoniumMapLevel;
+	farmingDetails.mapLevel = pandemoniumMapLevel;
 	farmingDetails.autoLevel = true;
-	farmingDetails.special = rPandemoniumSpecial;
-	farmingDetails.jobRatio = rPandemoniumJobRatio;
+	farmingDetails.special = pandemoniumSpecial;
+	farmingDetails.jobRatio = pandemoniumJobRatio;
 	farmingDetails.pandemonium = game.challenges.Pandemonium.pandemonium;
 	farmingDetails.repeat = !repeat;
 	farmingDetails.status = status;
 
 	if (currentMap === mapName && !rShouldPandemoniumDestack) {
-		mappingDetails(mapName, rPandemoniumMapLevel, rPandemoniumSpecial);
+		mappingDetails(mapName, pandemoniumMapLevel, pandemoniumSpecial);
 		resetMapVars();
 	}
 
@@ -2021,43 +2020,43 @@ function PandemoniumFarm() {
 		mapName: mapName
 	};
 
-	if (!challengeActive('Pandemonium') || !getPageSetting('RPandemoniumOn') || getPageSetting('RPandemoniumAutoEquip') < 2 || game.global.world === 150 || game.global.lastClearedCell + 2 < 91 || game.challenges.Pandemonium.pandemonium > 0) return farmingDetails;
+	if (!challengeActive('Pandemonium') || !getPageSetting('pandemonium') || getPageSetting('pandemoniumAE') < 2 || game.global.world === 150 || game.global.lastClearedCell + 2 < 91 || game.challenges.Pandemonium.pandemonium > 0) return farmingDetails;
 
-	var rShouldPandemoniumFarm = false;
+	var shouldPandemoniumFarm = false;
 
-	var rPandemoniumJobRatio = '1,1,100,0';
+	var pandemoniumJobRatio = '1,1,100,0';
 	var equipCost = CheapestEquipmentCost();
 	var nextEquipmentCost = equipCost[1];
 
-	var rPandemoniumMapLevel = getPageSetting('PandemoniumFarmLevel');
-	var rPandemonium_LMC = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20, true, rPandemoniumJobRatio), false, true, getPageSetting('PandemoniumFarmLevel'));
-	var rPandemonium_HC = rPandemonium_LMC * 2;
-	var rPandemoniumSpecial = nextEquipmentCost > rPandemonium_LMC ? 'hc' : 'lmc'
+	var pandemoniumMapLevel = getPageSetting('pandemoniumFarmLevel');
+	var pandemonium_LMC = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20, true, pandemoniumJobRatio), false, true, getPageSetting('pandemoniumFarmLevel'));
+	var pandemonium_HC = pandemonium_LMC * 2;
+	var pandemoniumSpecial = nextEquipmentCost > pandemonium_LMC ? 'hc' : 'lmc'
 
-	var rPandemonium_Resource_Gain = rPandemoniumSpecial === 'hc' ? rPandemonium_HC : rPandemonium_LMC;
+	var pandemonium_Resource_Gain = pandemoniumSpecial === 'hc' ? pandemonium_HC : pandemonium_LMC;
 
 	//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
-	if (getPageSetting('RPandemoniumAutoEquip') > 2 && game.global.world >= getPageSetting('RPandemoniumAEZone') && nextEquipmentCost < rPandemonium_Resource_Gain)
-		rShouldPandemoniumFarm = true;
+	if (getPageSetting('pandemoniumAE') > 2 && game.global.world >= getPageSetting('pandemoniumAEZone') && nextEquipmentCost < pandemonium_Resource_Gain)
+		shouldPandemoniumFarm = true;
 
-	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rPandemoniumMapLevel || getCurrentMapObject().bonus != rPandemoniumSpecial || nextEquipmentCost >= rPandemonium_Resource_Gain);
-	var status = 'Pandemonium Farming Equips below ' + prettify(rPandemonium_Resource_Gain);
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== pandemoniumMapLevel || getCurrentMapObject().bonus != pandemoniumSpecial || nextEquipmentCost >= pandemonium_Resource_Gain);
+	var status = 'Pandemonium Farming Equips below ' + prettify(pandemonium_Resource_Gain);
 
 	if (rShouldPandemoniumFarm) {
-		farmingDetails.shouldRun = rShouldPandemoniumFarm;
+		farmingDetails.shouldRun = shouldPandemoniumFarm;
 		farmingDetails.mapName = mapName;
-		farmingDetails.mapLevel = rPandemoniumMapLevel;
+		farmingDetails.mapLevel = pandemoniumMapLevel;
 		farmingDetails.autoLevel = true;
-		farmingDetails.special = rPandemoniumSpecial;
-		farmingDetails.jobRatio = rPandemoniumJobRatio;
+		farmingDetails.special = pandemoniumSpecial;
+		farmingDetails.jobRatio = pandemoniumJobRatio;
 		farmingDetails.gather = 'metal';
 		farmingDetails.pandemonium = game.challenges.Pandemonium.pandemonium;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 	}
 
-	if (currentMap === mapName && !rShouldPandemoniumFarm) {
-		mappingDetails(mapName, rPandemoniumMapLevel, rPandemoniumSpecial);
+	if (currentMap === mapName && !shouldPandemoniumFarm) {
+		mappingDetails(mapName, pandemoniumMapLevel, pandemoniumSpecial);
 		resetMapVars();
 	}
 
@@ -2077,10 +2076,10 @@ function Alchemy() {
 	};
 
 
-	if (!challengeActive('Alchemy') || !autoTrimpSettings.rAlchDefaultSettings.value.active) return farmingDetails;
+	if (!challengeActive('Alchemy') || !getPageSetting('alchemyDefaultSettings').active) return farmingDetails;
 
 	const totalPortals = getTotalPortals();
-	const rAFBaseSettings = autoTrimpSettings.rAlchSettings.value;
+	const rAFBaseSettings = getPageSetting('alchemySettings');
 	var rAFIndex;
 
 	//Checking to see if any lines are to be run.
@@ -2117,7 +2116,7 @@ function Alchemy() {
 		}
 
 		rMFMapLevel = mapAutoLevel;
-		if (rAFSpecial.includes('l') && rAFSpecial.length === 3 && PerfectMapCost(rAFMapLevel, rAFSpecial) >= game.resources.fragments.owned) rAFSpecial = rAFSpecial.charAt(0) + "sc";
+		if (rAFSpecial.includes('l') && rAFSpecial.length === 3 && perfectMapCost(rAFMapLevel, rAFSpecial) >= game.resources.fragments.owned) rAFSpecial = rAFSpecial.charAt(0) + "sc";
 
 		if (rAFPotions != undefined) {
 			//Working out which potion the input corresponds to.
@@ -2207,7 +2206,7 @@ function Alchemy() {
 	}
 
 
-	if ((typeof (autoTrimpSettings.rAlchDefaultSettings.value.voidPurchase) === 'undefined' ? true : autoTrimpSettings.rAlchDefaultSettings.value.voidPurchase) && currentMap === 'Void Map' && game.global.mapsActive) {
+	if ((typeof (getPageSetting('alchemyDefaultSettings').voidPurchase) === 'undefined' ? true : getPageSetting('alchemyDefaultSettings').voidPurchase) && currentMap === 'Void Map' && game.global.mapsActive) {
 		if (getCurrentMapObject().location == "Void" && (alchObj.canAffordPotion('Potion of the Void') || alchObj.canAffordPotion('Potion of Strength'))) {
 			alchObj.craftPotion('Potion of the Void');
 			alchObj.craftPotion('Potion of Strength');
@@ -2229,11 +2228,11 @@ function Glass() {
 		mapName: mapName
 	};
 
-	if (!challengeActive('Glass') || !getPageSetting('rGlass')) return farmingDetails;
+	if (!challengeActive('Glass') || !getPageSetting('glass')) return farmingDetails;
 
 	var jobRatio = '0,0,1,0';
 	var special = 'lmc';
-	var glassStacks = getPageSetting('rGlassStacks');
+	var glassStacks = getPageSetting('glassStacks');
 	if (glassStacks <= 0) glassStacks = Infinity;
 
 	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
@@ -2314,10 +2313,10 @@ function Hypothermia() {
 		mapName: mapName
 	};
 
-	if ((!autoTrimpSettings.rHypoDefaultSettings.value.active ||
-		(!challengeActive('Hypothermia') && (!autoTrimpSettings.rHypoDefaultSettings.value.packrat || !rHFBuyPackrat)))) return farmingDetails;
+	if ((!getPageSetting('hypothermiaDefaultSettings').active ||
+		(!challengeActive('Hypothermia') && (!getPageSetting('hypothermiaDefaultSettings').packrat || !rHFBuyPackrat)))) return farmingDetails;
 
-	if (autoTrimpSettings.rHypoDefaultSettings.value.packrat) {
+	if (getPageSetting('hypothermiaDefaultSettings').packrat) {
 		if (!rHFBuyPackrat && challengeActive('Hypothermia'))
 			rHFBuyPackrat = true;
 		if (rHFBuyPackrat && challengeActive('')) {
@@ -2331,7 +2330,7 @@ function Hypothermia() {
 	rHFBonfireCostTotal = 0;
 
 	if (!challengeActive('Hypothermia')) return farmingDetails;
-	const rHFBaseSettings = autoTrimpSettings.rHypoSettings.value;
+	const rHFBaseSettings = getPageSetting('hypothermiaSettings');
 	var rHFIndex;
 
 	//Checking to see if any lines are to be run.
@@ -2409,7 +2408,7 @@ function Hypothermia() {
 //Smithless
 function Smithless() {
 
-	var rShouldSmithless = false;
+	var shouldSmithless = false;
 	var mapAutoLevel = Infinity;
 
 	const mapName = 'Smithless Farm';
@@ -2418,24 +2417,24 @@ function Smithless() {
 		mapName: mapName
 	};
 
-	if (!challengeActive('Smithless') || !getPageSetting('rSmithless')) return farmingDetails;
+	if (!challengeActive('Smithless') || !getPageSetting('smithless')) return farmingDetails;
 
 	if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
 
-		var rSmithlessJobRatio = '0,0,1,0';
-		var rSmithlessSpecial = 'lmc';
-		var rSmithlessMax = game.global.mapBonus != 10 ? 10 : null;
-		var rSmithlessMin = game.global.mapBonus != 10 ? 0 : null;
+		var smithlessJobRatio = '0,0,1,0';
+		var smithlessSpecial = 'lmc';
+		var smithlessMax = game.global.mapBonus != 10 ? 10 : null;
+		var smithlessMin = game.global.mapBonus != 10 ? 0 : null;
 
 		if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
 			game.global.mapRunCounter = mapRepeats;
 			mapRepeats = 0;
 		}
 		var rAutoLevel_Repeat = rAutoLevel;
-		mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rSmithlessSpecial, rSmithlessMax, rSmithlessMin, false);
+		mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, smithlessSpecial, smithlessMax, smithlessMin, false);
 		if (mapAutoLevel !== Infinity) {
 			if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
-			rSmithlessMapLevel = mapAutoLevel;
+			smithlessMapLevel = mapAutoLevel;
 		}
 
 		var name = game.global.gridArray[0].name
@@ -2458,7 +2457,7 @@ function Smithless() {
 		}
 
 		ourDmgTenacity *= 2;
-		if (equipsToGet((game.global.world + rSmithlessMapLevel)) > 0) ourDmgTenacity *= 1000;
+		if (equipsToGet((game.global.world + smithlessMapLevel)) > 0) ourDmgTenacity *= 1000;
 
 		var totalDmgTenacity = (ourDmgTenacity * 2 + (ourDmgTenacity * gammaDmg * 2))
 
@@ -2477,24 +2476,24 @@ function Smithless() {
 		var damageTarget = (enemyHealth * smithyThreshhold[0]) / totalDmg;
 
 		if (totalDmg < enemyHealth) {
-			rShouldSmithless = true;
+			shouldSmithless = true;
 		}
 
-		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rSmithlessMapLevel || (getCurrentMapObject().bonus !== rSmithlessSpecial && (getCurrentMapObject().bonus !== undefined && rSmithlessSpecial !== '0')));
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== smithlessMapLevel || (getCurrentMapObject().bonus !== smithlessSpecial && (getCurrentMapObject().bonus !== undefined && smithlessSpecial !== '0')));
 		var status = 'Smithless: Want ' + damageTarget.toFixed(2) + 'x more damage for ' + (smithyThreshholdIndex.indexOf(smithyThreshhold[0]) + 1) + '/3';
 
-		farmingDetails.shouldRun = rShouldSmithless;
+		farmingDetails.shouldRun = shouldSmithless;
 		farmingDetails.mapName = mapName;
-		farmingDetails.mapLevel = rSmithlessMapLevel;
+		farmingDetails.mapLevel = smithlessMapLevel;
 		farmingDetails.autoLevel = true;
-		farmingDetails.special = rSmithlessSpecial;
-		farmingDetails.jobRatio = rSmithlessJobRatio;
+		farmingDetails.special = smithlessSpecial;
+		farmingDetails.jobRatio = smithlessJobRatio;
 		farmingDetails.damageTarget = damageTarget;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 
 		if (currentMap === mapName && !farmingDetails.shouldRun) {
-			mappingDetails(mapName, rSmithlessMapLevel, rSmithlessSpecial, (smithyThreshholdIndex.indexOf(smithyThreshhold[0]) + 1));
+			mappingDetails(mapName, smithlessMapLevel, smithlessSpecial, (smithyThreshholdIndex.indexOf(smithyThreshhold[0]) + 1));
 			resetMapVars();
 		}
 
@@ -2582,16 +2581,15 @@ function HDFarm() {
 		mapName: mapName
 	};
 
-	if (game.global.universe === 1 && !autoTrimpSettings.hHDFarmDefaultSettings.value.active) return farmingDetails;
-	if (game.global.universe === 2 && !autoTrimpSettings.rHDFarmDefaultSettings.value.active) return farmingDetails;
+	if (!getPageSetting('hdFarmDefaultSettings').active) return farmingDetails;
 
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const dontRecycleMaps = challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const totalPortals = getTotalPortals();
 	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
-	const rHDFBaseSetting = game.global.universe === 1 ? autoTrimpSettings.hHDFarmSettings.value : autoTrimpSettings.rHDFarmSettings.value;
-	const rHDFDefaultSetting = game.global.universe === 1 ? autoTrimpSettings.hHDFarmDefaultSettings.value : autoTrimpSettings.rHDFarmDefaultSettings.value;
+	const rHDFBaseSetting = getPageSetting('hdFarmSettings');
+	const rHDFDefaultSetting = getPageSetting('hdFarmDefaultSettings');
 	const currChall = game.global.challengeActive;
 	var rShouldHDFarm = false;
 	var rShouldSkip = false;
@@ -2621,12 +2619,12 @@ function HDFarm() {
 	if (rHDFIndex >= 0) {
 		var rHDFSettings = rHDFBaseSetting[rHDFIndex];
 		var rHDFMapLevel = rHDFSettings.level;
-		var rHDFSpecial = getAvailableSpecials('lmc');
+		var rHDFSpecial = getAvailableSpecials('lmc', true);
 		var rHDFJobRatio = '0,0,1,0';
 		var hdType = rHDFSettings.hdType;
 		var rHDFMax = hdType === 'world' && game.global.mapBonus != 10 ? 10 : null;
 		var rHDFMin = hdType === 'world' && game.global.mapBonus != 10 ? 0 : null;
-		var rHDFshredMapCap = autoTrimpSettings.rHDFarmDefaultSettings.value.shredMapCap;
+		var rHDFshredMapCap = autoTrimpSettings.hdFarmSettings.valueU2.shredMapCap;
 		var rHDFmapCap = rHDFDefaultSetting.mapCap;
 
 		var rHDFmaxMaps = metalShred ? rHDFshredMapCap : rHDFmapCap;
@@ -2659,7 +2657,7 @@ function HDFarm() {
 		if (((currentMap === mapName && !rShouldHDFarm) || rShouldSkip) && HDRatio !== Infinity) {
 			hdRatio = calcHDRatio(game.global.world, hdType);
 			if (!rShouldSkip) mappingDetails(mapName, rHDFMapLevel, rHDFSpecial, hdRatio, equipfarmdynamicHD(rHDFIndex));
-			if (getPageSetting('rMapRepeatCount') && rShouldSkip) debug("HD Farm (Z" + game.global.world + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(rHDFIndex).toFixed(2) + ").");
+			if (getPageSetting('spamMessages').map_Details && rShouldSkip) debug("HD Farm (Z" + game.global.world + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(rHDFIndex).toFixed(2) + ").");
 			resetMapVars(rHDFSettings);
 			if (!dontRecycleMaps && game.global.mapsActive) {
 				mapsClicked(true);
@@ -2702,8 +2700,7 @@ function FarmingDecision() {
 		return farmingDetails;
 	}
 	if (!game.global.mapsUnlocked) return farmingDetails;
-	if (game.global.universe === 1 && !autoTrimpSettings.AutoMaps.value) return farmingDetails;
-	if (game.global.universe === 2 && !autoTrimpSettings.RAutoMaps.value) return farmingDetails;
+	if (!getPageSetting('autoMaps')) return farmingDetails;
 
 	//U1 map settings to check for.
 	if (game.global.universe === 1) var mapTypes = [PrestigeClimb(), MapFarm(), PrestigeRaiding(), BionicRaiding(), HDFarm(), VoidMaps(), MapBonus(), Experience(), MapDestacking()];
@@ -2896,7 +2893,7 @@ function mapCost(pluslevel, special, biome, onlyPerfect) {
 function fragMapFarmCost() {
 	var cost = 0;
 
-	cost = PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special);
+	cost = perfectMapCost(rMapSettings.mapLevel, rMapSettings.special);
 
 	if (game.resources.fragments.owned >= cost)
 		return true;
@@ -2904,7 +2901,7 @@ function fragMapFarmCost() {
 		return false;
 }
 
-function rFragmentFarm() {
+function fragmentFarm() {
 
 	var rFragMapBought = false;
 	//Worshipper farming
@@ -2934,8 +2931,8 @@ function rFragmentFarm() {
 			var rFragmentMapID = rInitialFragmentMapID;
 			rInitialFragmentMapID = undefined;
 		}
-		if (!rFragCheck && !game.global.repeatMap && game.resources.fragments.owned < PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special)) repeatClicked();
-		if (!rFragCheck && game.resources.fragments.owned >= PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special) && game.global.mapsActive && rFragMapBought && rFragmentMapID != undefined) {
+		if (!rFragCheck && !game.global.repeatMap && game.resources.fragments.owned < perfectMapCost(rMapSettings.mapLevel, rMapSettings.special)) repeatClicked();
+		if (!rFragCheck && game.resources.fragments.owned >= perfectMapCost(rMapSettings.mapLevel, rMapSettings.special) && game.global.mapsActive && rFragMapBought && rFragmentMapID != undefined) {
 			if (fragMapFarmCost() == false) {
 				if (!game.global.repeatMap) {
 					repeatClicked();
@@ -2959,13 +2956,13 @@ function rFragmentFarm() {
 	}
 
 	if (rFragCheck) {
-		PerfectMapCost(rMapSettings.mapLevel, rMapSettings.special)
+		perfectMapCost(rMapSettings.mapLevel, rMapSettings.special)
 	}
 
 	updateMapCost();
 }
 
-function PerfectMapCost(pluslevel, special, biome) {
+function perfectMapCost(pluslevel, special, biome) {
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (!special) special = '0';
@@ -2983,23 +2980,36 @@ function PerfectMapCost(pluslevel, special, biome) {
 	return updateMapCost(true);
 }
 
-function RShouldFarmMapCost(pluslevel, special, biome) {
-	//Pre-init
-	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
-	if (!pluslevel || pluslevel < 0) pluslevel = 0;
-	if (!special) special = getAvailableSpecials('lmc');
-	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
-
-	//Working out appropriate map settings
-	document.getElementById("mapLevelInput").value = maplevel;
-	document.getElementById("advExtraLevelSelect").value = pluslevel;
-	document.getElementById("biomeAdvMapsSelect").value = biome;
-	document.getElementById("advSpecialSelect").value = special;
-	updateMapCost();
-	return updateMapCost(true);
+function perfectMapCost_Actual(plusLevel, specialModifier, biome, sliders = [9, 9, 9], perfect = true) {
+	if (!specialModifier) return Infinity
+	if (!plusLevel && plusLevel !== 0) return Infinity
+	var specialModifier = specialModifier;
+	var plusLevel = plusLevel;
+	var baseCost = 0;
+	//All sliders at 9
+	baseCost += sliders[0];
+	baseCost += sliders[1];
+	baseCost += sliders[2];
+	var mapLevel = game.global.world;
+	if (plusLevel < 0)
+		mapLevel = mapLevel + plusLevel;
+	if (mapLevel < 6)
+		mapLevel = 6;
+	baseCost *= (game.global.world >= 60) ? 0.74 : 1;
+	//Perfect checked
+	if (perfect && sliders.reduce(function (a, b) { return a + b; }, 0) === 27) baseCost += 6;
+	//Adding in plusLevels
+	if (plusLevel > 0)
+		baseCost += (plusLevel * 10)
+	if (specialModifier != "0")
+		baseCost += mapSpecialModifierConfig[specialModifier].costIncrease;
+	baseCost += mapLevel;
+	baseCost = Math.floor((((baseCost / 150) * (Math.pow(1.14, baseCost - 1))) * mapLevel * 2) * Math.pow((1.03 + (mapLevel / 50000)), mapLevel));
+	baseCost *= biome !== 'Random' ? 2 : 1;
+	return baseCost;
 }
 
-function RShouldFarmMapCreation(pluslevel, special, biome, difficulty, loot, size) {
+function shouldFarmMapCreation(pluslevel, special, biome, difficulty, loot, size) {
 	//Pre-Init
 	if (!pluslevel) pluslevel = 0;
 	if (!special) special = getAvailableSpecials('lmc');

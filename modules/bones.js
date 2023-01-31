@@ -4,8 +4,7 @@ rBSRunningAtlantrimp = false;
 
 function boneShrine() {
 
-	if (game.global.universe === 1 && !autoTrimpSettings.hBoneShrineDefaultSettings.value.active) return;
-	if (game.global.universe === 2 && !autoTrimpSettings.rBoneShrineDefaultSettings.value.active) return;
+	if (!getPageSetting('boneShrineDefaultSettings').active) return;
 
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
@@ -14,8 +13,7 @@ function boneShrine() {
 	const shredMods = shredActive ? dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength) : [];
 
 	//Setting up variables
-	const rBoneShrineBaseSettings = game.global.universe === 1 ? autoTrimpSettings.hBoneShrineSettings.value : autoTrimpSettings.rBoneShrineSettings.value;
-	const universePrefix = game.global.universe === 2 ? 'r' : 'h';
+	const rBoneShrineBaseSettings = getPageSetting('boneShrineSettings');
 	var rBSIndex = null;
 	const totalPortals = getTotalPortals();
 	for (var y = 0; y < rBoneShrineBaseSettings.length; y++) {
@@ -52,11 +50,11 @@ function boneShrine() {
 			rBoneShrineCharges = game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow;
 
 		setGather(rBoneShrineGather);
-		if (getPageSetting(universePrefix.toUpperCase() + 'hsStaff')) {
-			if (getPageSetting(universePrefix.toUpperCase() + 'hs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff') !== 'undefined')
-				HeirloomEquipStaff(universePrefix.toUpperCase() + 'hs' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1) + 'Staff');
-			else if (getPageSetting(universePrefix.toUpperCase() + 'hsMapStaff') !== 'undefined')
-				HeirloomEquipStaff(universePrefix.toUpperCase() + 'hsMapStaff');
+		if (getPageSetting('heirloomStaff')) {
+			if (getPageSetting('heirloomStaff' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1)) !== 'undefined')
+				HeirloomEquipStaff('heirloomStaff' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1));
+			else if (getPageSetting('heirloomStaffMap') !== 'undefined')
+				HeirloomEquipStaff('heirloomStaffMap');
 		}
 		if (rBoneShrineAtlantrimp) {
 			if (!rBSRunningAtlantrimp) {
@@ -71,7 +69,7 @@ function boneShrine() {
 		if (!rBoneShrineAtlantrimp || (rBoneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === rBoneShrineDoubler && game.global.lastClearedMapCell === getCurrentMapObject().size - 4)) {
 			rShouldBoneShrine = true;
 			for (var x = 0; x < rBoneShrineCharges; x++) {
-				if (getPageSetting((game.global.universe === 2 ? 'R' : '') + 'BuyJobsNew') > 0) {
+				if (getPageSetting('jobType') > 0) {
 					MODULES.mapFunctions.workerRatio = rBoneShrineSettings.jobratio;
 					buyJobs();
 				}
@@ -88,9 +86,10 @@ function boneShrine() {
 }
 
 function BuySingleRunBonuses() {
-	if (!game.singleRunBonuses.goldMaps.owned && game.global.b >= 20 && (getPageSetting('c3GM_ST') == 1 || getPageSetting('c3GM_ST') == 3))
+
+	if (!game.singleRunBonuses.goldMaps.owned && game.global.b >= 20 && getPageSetting('c2GoldenMaps'))
 		purchaseSingleRunBonus('goldMaps');
-	if (!game.singleRunBonuses.sharpTrimps.owned && game.global.b >= 25 && (getPageSetting('c3GM_ST') == 2 || getPageSetting('c3GM_ST') == 3))
+	if (!game.singleRunBonuses.sharpTrimps.owned && game.global.b >= 25 && getPageSetting('c2SharpTrimps'))
 		purchaseSingleRunBonus('sharpTrimps');
 }
 
@@ -113,10 +112,10 @@ function PandemoniumPerkRespec() {
 					typeof (pandGoal) == 'undefined' ? 0 :
 						pandGoal;
 
-	if (getPageSetting('rPandRespecZone') != -1 && getPageSetting('rPandRespecZone') <= game.global.world && getPageSetting('RPandemoniumAutoEquip') > 1 &&
-		getPageSetting('RhsPandStaff') != "undefined" && (game.global.StaffEquipped.name == getPageSetting('RhsPandStaff') || HeirloomSearch('RhsPandStaff') != undefined) &&
-		(getPageSetting('RPandemoniumAEZone') > 5 && game.global.world >= getPageSetting('RPandemoniumAEZone')) &&
-		(getPageSetting('RPandemoniumZone') > 5 && game.global.world >= getPageSetting('RPandemoniumZone'))) {
+	if (getPageSetting('rPandRespecZone') != -1 && getPageSetting('rPandRespecZone') <= game.global.world && getPageSetting('pandemoniumAE') > 1 &&
+		getPageSetting('pandemoniumStaff') != "undefined" && (game.global.StaffEquipped.name == getPageSetting('pandemoniumStaff') || HeirloomSearch('pandemoniumStaff') != undefined) &&
+		(getPageSetting('pandemoniumAEZone') > 5 && game.global.world >= getPageSetting('pandemoniumAEZone')) &&
+		(getPageSetting('pandemoniumZone') > 5 && game.global.world >= getPageSetting('pandemoniumZone'))) {
 		//Purchases a respec if one isn't currently available.
 		if (!game.global.canRespecPerks && game.global.world < 150) {
 			PurchasePerkRespec();

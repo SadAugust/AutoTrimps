@@ -211,7 +211,7 @@ function mostEfficientHousing() {
 		if (!!rMapSettings.buyBuildings && getAutoStructureSetting().enabled && document.getElementById('autoStructureBtn').classList.contains("enabled"))
 			toggleAutoStructure();
 	}
-	const buildingSettings = game.global.universe === 1 ? autoTrimpSettings.hBuildingSettingsArray.value : autoTrimpSettings.rBuildingSettingsArray.value;
+	const buildingSettings = getPageSetting('buildingSettingsArray');
 	const resourcefulMod = game.global.universe === 1 ? Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level) : 1;
 
 	for (var house of HousingTypes) {
@@ -253,7 +253,7 @@ function mostEfficientHousing() {
 			if (!game.buildings.Hub.locked) housingBonus += 500;
 			if (Math.max(baseCost * Math.pow(costScaling, currentOwned) * resourcefulMod) > game.resources[resource].owned * buildingspending) dontbuy.push(housing);
 			if (game.global.universe === 2 && housing == 'Gateway' && resource == 'fragments' && buildingSettings.SafeGateway.enabled && (buildingSettings.SafeGateway.zone === 0 || buildingSettings.SafeGateway.zone > game.global.world)) {
-				if (game.resources[resource].owned < ((PerfectMapCost_Actual(10, 'lmc') * buildingSettings.SafeGateway.mapCount) + Math.max(baseCost * Math.pow(costScaling, currentOwned)))) dontbuy.push(housing);
+				if (game.resources[resource].owned < ((perfectMapCost_Actual(10, 'lmc') * buildingSettings.SafeGateway.mapCount) + Math.max(baseCost * Math.pow(costScaling, currentOwned)))) dontbuy.push(housing);
 			}
 			// Only keep the slowest producer, aka the one that would take the longest to generate resources for
 			worstTime = Math.max((baseCost * Math.pow(costScaling, currentOwned - 1) * resourcefulMod) / (avgProduction * housingBonus), worstTime);
@@ -279,13 +279,13 @@ function buyBuildings() {
 	}
 
 	//Disabling autoBuildings if AT AutoStructure is disabled.
-	if (game.global.universe === 2 ? !getPageSetting('RBuyBuildingsNew') : !getPageSetting('BuyBuildingsNew')) return;
+	if (!getPageSetting('buildingsType')) return;
 
-	const buildingSettings = game.global.universe === 1 ? autoTrimpSettings.hBuildingSettingsArray.value : autoTrimpSettings.rBuildingSettingsArray.value;
+	const buildingSettings = getPageSetting('buildingSettingsArray');
 
 	var hypoZone = 0;
-	if (challengeActive('Hypothermia') && autoTrimpSettings.rHypoDefaultSettings.value.active && autoTrimpSettings.rHypoDefaultSettings.value.autostorage && autoTrimpSettings.rHypoSettings.value.length > 0) {
-		const rHFBaseSettings = autoTrimpSettings.rHypoSettings.value;
+	if (challengeActive('Hypothermia') && getPageSetting('hypothermiaDefaultSettings').active && getPageSetting('hypothermiaDefaultSettings').autostorage && getPageSetting('hypothermiaSettings').length > 0) {
+		const rHFBaseSettings = getPageSetting('hypothermiaSettings');
 		for (var y = 0; y < rHFBaseSettings.length; y++) {
 			if (!rHFBaseSettings[y].active) {
 				continue;
@@ -313,7 +313,7 @@ function buyBuildings() {
 	if (typeof rBSRunningAtlantrimp !== 'undefined' && rBSRunningAtlantrimp)
 		return;
 
-	if (challengeActive('Quest') && getPageSetting('rQuest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
+	if (challengeActive('Quest') && getPageSetting('quest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
 		//Still allows you to buy tributes during gem quests
 		if (([4].indexOf(currQuest()) >= 0))
 			buyTributes();
@@ -407,12 +407,13 @@ function buyBuildings() {
 			var smithyCanAfford = calculateMaxAffordLocal(game.buildings.Smithy, true, false, false, (smithyAmt - game.buildings.Smithy.purchased), smithyPct);
 
 			//Purchasing a smithy whilst on Quest
-			if (challengeActive('Quest') && getPageSetting('rQuest')) {
+			if (challengeActive('Quest') && getPageSetting('quest')) {
 				//Resetting smithyCanAfford to avoid any accidental purchases during Quest.
 				smithyCanAfford = 0;
 				if ((MODULES["buildings"].smithiesBoughtThisZone < game.global.world || currQuest() === 10) && canAffordBuilding('Smithy', null, null, false, false, 1)) {
 					var smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1);
-					var questZones = Math.floor(((!game.global.runningChallengeSquared ? 85 : getPageSetting('rQuestSmithyZone') === -1 ? Infinity : getPageSetting('rQuestSmithyZone') - game.global.world) / 2) - 1);
+					var questEndZone = !game.global.runningChallengeSquared ? 85 : getPageSetting('questSmithyZone') === -1 ? Infinity : getPageSetting('questSmithyZone')
+					var questZones = Math.floor(((questEndZone - game.global.world) / 2) - 1);
 					//Buying smithies that won't be needed for quests before user entered end goal or for Smithy quests
 					smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : currQuest() == 10 ? 1 : 0;
 				}
@@ -482,13 +483,14 @@ function buyBuildings() {
 }
 
 function buyTributes() {
-	const buildingSettings = game.global.universe === 1 ? autoTrimpSettings.hBuildingSettingsArray.value : autoTrimpSettings.rBuildingSettingsArray.value;
+	const buildingSettings = getPageSetting('buildingSettingsArray');
 	var affordableMets = 0;
 	if (game.global.universe === 2) {
-		if (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.enabled || rMapSettings.shouldTribute || (currentMap === 'Smithy Farm' && rMapSettings.gemFarm)) {
+		const jobSettings = getPageSetting('jobSettingsArray');
+		if (jobSettings.Meteorologist.enabled || rMapSettings.shouldTribute || (currentMap === 'Smithy Farm' && rMapSettings.gemFarm)) {
 			affordableMets = getMaxAffordable(
 				game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
-				game.resources.food.owned * (autoTrimpSettings.rJobSettingsArray.value.Meteorologist.percent / 100),
+				game.resources.food.owned * (jobSettings.Meteorologist.percent / 100),
 				game.jobs.Meteorologist.cost.food[1],
 				true
 			);
