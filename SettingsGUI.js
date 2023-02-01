@@ -2104,10 +2104,10 @@ function settingChanged(id) {
 			document.getElementById('dailyPortalStart').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn[enabled]);
 		}
 		if (btn.id === 'equipOn') {
-			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn[enabled]);
+			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
 		}
 		if (btn === autoTrimpSettings.buildingsType) {
-			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn[enabled]);
+			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
 		}
 	}
 	if (btn.type == 'multitoggle') {
@@ -2125,7 +2125,7 @@ function settingChanged(id) {
 		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value]);
 		document.getElementById(id).innerHTML = btn.name[btn[value]]
 		if (btn.id === 'jobType') {
-			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn[value] == 2 ? 3 : btn[value]));
+			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btn[value] == 2 ? 3 : btn[value]));
 			document.getElementById('autoJobLabel').innerHTML = btn.name[btn[value]];
 		}
 		if (btn.id === 'dailyPortal') {
@@ -2148,13 +2148,13 @@ function updateButtonText() {
 	var btn = autoTrimpSettings[id];
 	var btnValue = getPageSetting(id);
 
-	document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btnValue == 2 ? 3 : btnValue));
+	document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btnValue == 2 ? 3 : btnValue));
 	document.getElementById('autoJobLabel').innerHTML = btn.name[btnValue];
 
 	var id = 'equipOn'
 	var btnValue = getPageSetting(id);
 
-	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btnValue);
+	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btnValue);
 }
 
 function modifyParentNode_Initial(id, style) {
@@ -2773,9 +2773,11 @@ function setupATButtons() {
 	//AutoJobs button.
 	//Creating button
 	var jobSetting = getPageSetting('jobType')
+	var atJobInitial = document.createElement("DIV");
+	atJobInitial.setAttribute("class", "col-xs-3 lowPad");
 	var atJobContainer = document.createElement("DIV");
-	atJobContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
-	atJobContainer.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + (jobSetting === 2 ? 3 : jobSetting));
+	atJobContainer.setAttribute("style", "display: block; font-size: 0.9vw; border-color: #5D5D5D;");
+	atJobContainer.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (jobSetting === 2 ? 3 : jobSetting));
 	atJobContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, \"Toggle between the AutoJob settings.\")');
 	atJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
@@ -2795,13 +2797,16 @@ function setupATButtons() {
 	atJobContainer.appendChild(atJobText);
 	atJobContainer.appendChild(atJobSettings);
 	atJobSettings.appendChild(atJobSettingsButton);
-	atJobColumn.insertBefore(atJobContainer, document.getElementById('jobsTitleDiv').children[0].children[2]);
+	atJobInitial.appendChild(atJobContainer);
+	atJobColumn.insertBefore(atJobInitial, document.getElementById('jobsTitleDiv').children[0].children[2]);
 
 	//AutoStructure Button.
 	//Creating button
+	var atStructureInitial = document.createElement("DIV");
+	atStructureInitial.setAttribute("class", "col-xs-3 lowPad");
 	var atStructureContainer = document.createElement("DIV");
-	atStructureContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
-	atStructureContainer.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + settingUniverse('buyBuildings'));
+	atStructureContainer.setAttribute("style", "display: block; font-size: 0.9vw; border-color: #5D5D5D;");
+	atStructureContainer.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + settingUniverse('buyBuildings'));
 	atStructureContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoStructure\", \"customText\", event, \"Toggle between the AutoStructure settings.\")');
 	atStructureContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
@@ -2822,13 +2827,16 @@ function setupATButtons() {
 	atStructureContainer.appendChild(atStructureText);
 	atStructureContainer.appendChild(atStructureSettings);
 	atStructureSettings.appendChild(atStructureSettingsButton);
-	atStructureColumn.replaceChild(atStructureContainer, document.getElementById('buildingsTitleDiv').children[0].children[1]);
+	atStructureInitial.appendChild(atStructureContainer);
+	atStructureColumn.replaceChild(atStructureInitial, document.getElementById('buildingsTitleDiv').children[0].children[1]);
 
 	//AutoEquip Button
 	//Creating button
+	var atEquipInitial = document.createElement("DIV");
+	atEquipInitial.setAttribute("class", "col-xs-3 lowPad");
 	var atEquipContainer = document.createElement("DIV");
-	atEquipContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; float: left; width: 25%; font-size: 0.9vw; height: auto;");
-	atEquipContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + settingUniverse('equipOn'));
+	atEquipContainer.setAttribute("style", "display: block; font-size: 0.9vw;");
+	atEquipContainer.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + settingUniverse('equipOn'));
 	atEquipContainer.setAttribute("onmouseover", 'tooltip(\"Toggle atEquip\", \"customText\", event, \"Toggle between the atEquip settings.\")');
 	atEquipContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
@@ -2841,12 +2849,13 @@ function setupATButtons() {
 	//Setting up positioning
 	var atEquipColumn = document.getElementById("equipmentTitleDiv").children[0];
 	atEquipContainer.appendChild(atEquipText);
-	atEquipColumn.replaceChild(atEquipContainer, document.getElementById('equipmentTitleDiv').children[0].children[2]);
+	atEquipInitial.appendChild(atEquipContainer);
+	atEquipColumn.replaceChild(atEquipInitial, document.getElementById('equipmentTitleDiv').children[0].children[2]);
 
 	//autoTrimps Button.
 	//Creating button
 	var atBtnContainer = document.createElement("DIV");
-	atBtnContainer.setAttribute('class', 'btn-group toggleConfigBtnLocal noselect settingsBtn');
+	atBtnContainer.setAttribute('class', 'btn-group');
 	atBtnContainer.setAttribute('role', 'group');
 	atBtnContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoTrimps Messages\", \"customText\", event, \"Will enable/disable the AutoTrimps messages that you have enabled from appearing in the log window.\")');
 	atBtnContainer.setAttribute("onmouseout", 'tooltip("hide")');
