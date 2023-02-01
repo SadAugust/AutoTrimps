@@ -512,25 +512,25 @@ function initializeAllSettings() {
 			function () { return (autoTrimpSettings.archaeology.enabledU2) });
 
 		//Quagmire
-		createSetting('quagmirePopup', 'Quagmire Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Quagmire Farm", "rQuag", "MAZ")', null, 'Challenges', [2],
+		createSetting('quagmirePopup', 'Quagmire Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Quagmire Farm", "Quagmire", "MAZ")', null, 'Challenges', [2],
 			function () { return (game.global.highestRadonLevelCleared + 1 >= 70) });
 		createSetting('quagmireSettings', 'Quagmire Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges', [2]);
 		createSetting('quagmireDefaultSettings', 'Quagmire Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Challenges', [2]);
 
 		//Insanity
-		createSetting('insanityPopup', 'Insanity Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Insanity Farm", "rInsanity", "MAZ")', null, 'Challenges', [2],
+		createSetting('insanityPopup', 'Insanity Settings', 'Click to adjust settings. ', 'action', 'MAZLookalike("Insanity Farm", "Insanity", "MAZ")', null, 'Challenges', [2],
 			function () { return (game.global.highestRadonLevelCleared + 1 >= 110) });
 		createSetting('insanitySettings', 'Insanity Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges', [2]);
 		createSetting('insanityDefaultSettings', 'Insanity Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Challenges', [2]);
 
 		//Alchemy
-		createSetting('alchemyPopup', 'Alchemy Settings', 'Click to adjust settings.', 'action', 'MAZLookalike("Alchemy Farm", "rAlch", "MAZ")', null, 'Challenges', [2],
+		createSetting('alchemyPopup', 'Alchemy Settings', 'Click to adjust settings.', 'action', 'MAZLookalike("Alchemy Farm", "Alchemy", "MAZ")', null, 'Challenges', [2],
 			function () { return (game.global.highestRadonLevelCleared + 1 >= 155) });
 		createSetting('alchemySettings', 'Alchemy Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges', [2]);
 		createSetting('alchemyDefaultSettings', 'Alchemy Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Challenges', [2]);
 
 		//Hypothermia
-		createSetting('hypothermiaPopup', 'Hypothermia Settings', 'Click to adjust settings.', 'action', 'MAZLookalike("Hypothermia Farm", "rHypo", "MAZ")', null, 'Challenges', [2],
+		createSetting('hypothermiaPopup', 'Hypothermia Settings', 'Click to adjust settings.', 'action', 'MAZLookalike("Hypothermia Farm", "Hypothermia", "MAZ")', null, 'Challenges', [2],
 			function () { return (game.global.highestRadonLevelCleared + 1 >= 175) });
 		createSetting('hypothermiaSettings', 'Hypothermia Settings', 'Contains arrays for this setting', 'mazArray', [], null, 'Challenges', [2]);
 		createSetting('hypothermiaDefaultSettings', 'Hypothermia Settings', 'Contains arrays for this setting', 'mazDefaultArray', { active: false }, null, 'Challenges', [2]);
@@ -2104,7 +2104,7 @@ function settingChanged(id) {
 			document.getElementById('dailyPortalStart').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn[enabled]);
 		}
 		if (btn.id === 'equipOn') {
-			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
+			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
 		}
 		if (btn === autoTrimpSettings.buildingsType) {
 			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
@@ -2154,7 +2154,7 @@ function updateButtonText() {
 	var id = 'equipOn'
 	var btnValue = getPageSetting(id);
 
-	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btnValue);
+	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btnValue);
 }
 
 function modifyParentNode_Initial(id, style) {
@@ -2836,7 +2836,7 @@ function setupATButtons() {
 	atEquipInitial.setAttribute("class", "col-xs-3 lowPad");
 	var atEquipContainer = document.createElement("DIV");
 	atEquipContainer.setAttribute("style", "display: block; font-size: 0.9vw;");
-	atEquipContainer.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + settingUniverse('equipOn'));
+	atEquipContainer.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + settingUniverse('equipOn'));
 	atEquipContainer.setAttribute("onmouseover", 'tooltip(\"Toggle atEquip\", \"customText\", event, \"Toggle between the atEquip settings.\")');
 	atEquipContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
