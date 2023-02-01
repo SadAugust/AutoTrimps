@@ -203,10 +203,10 @@ ul.tab li a:hover {
 .windowDeleteWorshipperFarm .icomoon,
 .windowDeleteMapBonus .icomoon,
 .windowDeleteBoneShrine .icomoon,
-.windowDeleteQuag .icomoon,
+.windowDeleteQuagmire .icomoon,
 .windowDeleteInsanity .icomoon,
-.windowDeleteAlch .icomoon,
-.windowDeleteHypo .icomoon,
+.windowDeleteAlchemy .icomoon,
+.windowDeleteHypothermia .icomoon,
 .windowDeleteHDFarm .icomoon,
 .windowDeleteVoidMap .icomoon,
 .windowDeleteRaiding .icomoon,
@@ -226,10 +226,10 @@ ul.tab li a:hover {
 .windowLevelOff .windowLevelSmithyFarm,
 .windowLevelOff .windowLevelWorshipperFarm,
 .windowLevelOff .windowLevelMapBonus,
-.windowLevelOff .windowLevelQuag,
+.windowLevelOff .windowLevelQuagmire,
 .windowLevelOff .windowLevelInsanity,
-.windowLevelOff .windowLevelAlch,
-.windowLevelOff .windowLevelHypo,
+.windowLevelOff .windowLevelAlchemy,
+.windowLevelOff .windowLevelHypothermia,
 .windowLevelOff .windowLevelHDFarm {
 	opacity: 0.3;
 	cursor: not-allowed;
@@ -242,10 +242,10 @@ ul.tab li a:hover {
 .windowLevelOn .windowLevelSmithyFarm,
 .windowLevelOn .windowLevelWorshipperFarm,
 .windowLevelOn .windowLevelMapBonus,
-.windowLevelOn .windowLevelQuag,
+.windowLevelOn .windowLevelQuagmire,
 .windowLevelOn .windowLevelInsanity,
-.windowLevelOn .windowLevelAlch,
-.windowLevelOn .windowLevelHypo,
+.windowLevelOn .windowLevelAlchemy,
+.windowLevelOn .windowLevelHypothermia,
 .windowLevelOn .windowLevelHDFarm {
 	opacity: 1;
 	padding-left: 1%;
@@ -956,34 +956,34 @@ ul.tab li a:hover {
 }
 
 /* Quagmire */
-.windowDeleteQuag,
-.windowActiveQuag,
-.windowWorldQuag,
-.windowCellQuag,
-.windowJobRatioQuag,
+.windowDeleteQuagmire,
+.windowActiveQuagmire,
+.windowWorldQuagmire,
+.windowCellQuagmire,
+.windowJobRatioQuagmire,
 .windowBogs {
 	display: inline-block;
 	padding-left: 1%;
 }
 
-.windowDeleteQuag {
+.windowDeleteQuagmire {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiveQuag {
+.windowActiveQuagmire {
 	width: 11%;
 }
 
-.windowWorldQuag {
+.windowWorldQuagmire {
 	width: 21%;
 }
 
-.windowCellQuag {
+.windowCellQuagmire {
 	width: 21%;
 }
 
-.windowJobRatioQuag {
+.windowJobRatioQuagmire {
 	width: 24%;
 }
 
@@ -1042,51 +1042,51 @@ ul.tab li a:hover {
 }
 
 /* Alchemy */
-.windowDeleteAlch,
-.windowActiveAlch,
-.windowWorldAlch,
-.windowCellAlch,
-.windowAutoLevelAlch,
-.windowLevelAlch,
-.windowJobRatioAlch,
-.windowSpecialAlch,
+.windowDeleteAlchemy,
+.windowActiveAlchemy,
+.windowWorldAlchemy,
+.windowCellAlchemy,
+.windowAutoLevelAlchemy,
+.windowLevelAlchemy,
+.windowJobRatioAlchemy,
+.windowSpecialAlchemy,
 .windowPotionNumber,
 .windowPotionType {
 	display: inline-block;
 	padding-left: 1%;
 }
 
-.windowDeleteAlch {
+.windowDeleteAlchemy {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiveAlch {
+.windowActiveAlchemy {
 	width: 7%;
 }
 
 
-.windowWorldAlch {
+.windowWorldAlchemy {
 	width: 7%;
 }
 
-.windowCellAlch {
+.windowCellAlchemy {
 	width: 7%;
 }
 
-.windowAutoLevelAlch {
+.windowAutoLevelAlchemy {
 	width: 6%;
 }
 
-.windowLevelAlch {
+.windowLevelAlchemy {
 	width: 7%;
 }
 
-.windowJobRatioAlch {
+.windowJobRatioAlchemy {
 	width: 11%;
 }
 
-.windowSpecialAlch {
+.windowSpecialAlchemy {
 	width: 26%;
 }
 
@@ -1098,18 +1098,18 @@ ul.tab li a:hover {
 	width: 20%;
 }
 
-.windowGatherOn .windowSpecialAlch {
+.windowGatherOn .windowSpecialAlchemy {
 	width: 18%;
 }
 
 /* Hypothermia */
-.windowDeleteHypo,
-.windowActiveHypo,
-.windowWorldHypo,
-.windowCellHypo,
-.windowAutoLevelHypo,
-.windowLevelHypo,
-.windowJobRatioHypo,
+.windowDeleteHypothermia,
+.windowActiveHypothermia,
+.windowWorldHypothermia,
+.windowCellHypothermia,
+.windowAutoLevelHypothermia,
+.windowLevelHypothermia,
+.windowJobRatioHypothermia,
 .windowBonfire,
 .windowFrozenCastle,
 .windowStorage,
@@ -1118,32 +1118,32 @@ ul.tab li a:hover {
 	padding-left: 1%;
 }
 
-.windowDeleteHypo {
+.windowDeleteHypothermia {
 	width: 0%;
 	cursor: pointer;
 }
 
-.windowActiveHypo {
+.windowActiveHypothermia {
 	width: 10%;
 }
 
-.windowWorldHypo {
+.windowWorldHypothermia {
 	width: 16%;
 }
 
-.windowCellHypo {
+.windowCellHypothermia {
 	width: 16%;
 }
 
-.windowAutoLevelHypo {
+.windowAutoLevelHypothermia {
 	width: 8%;
 }
 
-.windowLevelHypo {
+.windowLevelHypothermia {
 	width: 16%;
 }
 
-.windowJobRatioHypo {
+.windowJobRatioHypothermia {
 	width: 21%;
 }
 
