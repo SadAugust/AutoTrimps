@@ -274,7 +274,7 @@ function doPortal(challenge, squared) {
 
 	//Initialising variables that will be used later.
 	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
-	var currChall = '';
+	var currChall = game.global.challengeActive;
 
 	//Running C∞ runner
 	if (((portalUniverse === 1 && game.global.highestLevelCleared > 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared > 48)) &&
@@ -285,15 +285,13 @@ function doPortal(challenge, squared) {
 		if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
 	}
 
-	if (challengeActive('Daily')) {
+	if (currChall === 'Daily') {
 		abandonDaily();
 		document.getElementById('finishDailyBtnContainer').style.display = 'none';
-
 		//Swapping to other universe if necessary to run daily.
 		if (getPageSetting('dailyPortalPreviousUniverse', (currPortalUniverse + 1))) {
 			swapPortalUniverse();
 			currPortalUniverse = portalUniverse;
-			currChall = 'Daily'
 			challenge = getPageSetting('dailyHeliumHourChallenge');
 		}
 	}
