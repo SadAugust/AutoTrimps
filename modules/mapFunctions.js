@@ -2624,7 +2624,7 @@ function HDFarm() {
 		var hdType = rHDFSettings.hdType;
 		var rHDFMax = hdType === 'world' && game.global.mapBonus != 10 ? 10 : null;
 		var rHDFMin = hdType === 'world' && game.global.mapBonus != 10 ? 0 : null;
-		var rHDFshredMapCap = autoTrimpSettings.hdFarmSettings.valueU2.shredMapCap;
+		var rHDFshredMapCap = game.global.universe === 2 ? autoTrimpSettings.hdFarmDefaultSettings.valueU2.shredMapCap : 0;
 		var rHDFmapCap = rHDFDefaultSetting.mapCap;
 
 		var rHDFmaxMaps = metalShred ? rHDFshredMapCap : rHDFmapCap;
