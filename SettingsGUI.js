@@ -495,12 +495,6 @@ function initializeAllSettings() {
 		createSetting('experienceEndBW', 'E: End BW', 'Will finish the challenge with specified Bionic Wonderland once reaching end zone. If the specified BW is not available, it will run one closest to the setting.', 'value', '605', null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.experience.enabled) });
 
-		//Radon
-		//Hide Challenges
-		//createSetting('hideChallenge', 'Hide Challenges', 'Enable seeing the hide challenges buttons. Feel free to turn this off once you are done. ', 'boolean', false, null, 'Challenges', [2]);
-		//createSetting('hideArchaeology', 'Arch', 'Enable to hide Archaeology challenge settings. ', 'boolean', false, null, 'Challenges', 2,
-		//	function () { return (autoTrimpSettings.hideChallenge.enabledU2 && game.global.highestRadonLevelCleared + 1 >= 90) });
-
 		//Arch
 		createSetting('archaeology', 'Archaeology', 'Turn on Archaeology settings. ', 'boolean', false, null, 'Challenges', [2],
 			function () { return (game.global.highestRadonLevelCleared + 1 >= 90) });
@@ -1813,6 +1807,23 @@ function updateATVersion() {
 			changelog.push("I've completely reworked all of the setting implementation for AT to allow for easier setting implementation, changes and additional universes. I'd highly recommend looking over your settings and making sure I converted them all properly and if anything at all has broken or has inconsistencies let me know and I'll try to fix it asap.<br>\
 			The settings name/text will be incorrect for setting that include C2/C3 or Helium/Radon just now. I will be working on correcting that over the next few days but wanted to get this patch out before the test server closes so I can push updates if necessary.<br>\
 			Also I've reworked where the spam message settings are displayed. Similarly to the games way of doing it there is now a cogwheel at the very top right that once clicked will allow you to adjust those settings.")
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.001') {
+			var settings_List = ['raidingSettings', 'bionicRaidingSettings']
+			var values = ['value', 'valueU2'];
+			for (var x = 0; x < settings_List.length; x++) {
+				for (var z = 0; z < values.length; z++) {
+					if (typeof (autoTrimpSettings[settings_List[x]][values[z]][0]) !== 'undefined') {
+						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
+							autoTrimpSettings[settings_List[x]][values[z]][y].endzone = 999;
+						}
+					}
+					saveSettings();
+				}
+			}
+			saveSettings();
+			changelog.push("Prestige Raiding & Bionic Raiding now have an added option for end zone so you can choose when to stop running specific lines.")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;

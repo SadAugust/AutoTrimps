@@ -65,7 +65,7 @@ function autoMap() {
 		return;
 	}
 
-	if (!getPageSetting('autoMaps') > 0 && game.global.mapsUnlocked) return;
+	if (getPageSetting('autoMaps') === 0 || !game.global.mapsUnlocked) return;
 
 	//Stops maps from running while doing Trimple Of Doom or Atlantrimp.
 	if (!game.mapUnlocks.AncientTreasure.canRunOnce) {

@@ -529,7 +529,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (hdFarm) tooltipText += "<div class='windowHDBase'>HD Base</div>"
 		if (hdFarm) tooltipText += "<div class='windowHDMult'>HD Mult</div>"
 		if (mapFarm || tributeFarm || worshipperFarm || raiding) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'>Repeat<br/>Every</div>"
-		if (mapFarm || tributeFarm || worshipperFarm || hdFarm) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>"
+		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>"
 		if (hdFarm) tooltipText += "<div class='windowHDType'>HD<br/>Type</div>"
 		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>HD<br/>Ratio</div>"
 		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>Void HD<br/>Ratio</div>"
@@ -613,7 +613,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.repeat = currSetting[x].repeat ? currSetting[x].repeat : 1;
 				if (mapFarm || tributeFarm || worshipperFarm || raiding)
 					vals.repeatevery = currSetting[x].repeatevery ? currSetting[x].repeatevery : 0;
-				if (mapFarm || tributeFarm || worshipperFarm || hdFarm)
+				if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding)
 					vals.endzone = currSetting[x].endzone ? currSetting[x].endzone : 999;
 				if (tributeFarm)
 					vals.tributes = currSetting[x].tributes ? currSetting[x].tributes : 0;
@@ -759,7 +759,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (tributeFarm) tooltipText += "<div class='windowMets'><input value='" + vals.mets + "' type='number' id='windowMets" + x + "'/></div>";
 			if (mapFarm || tributeFarm || worshipperFarm || raiding)
 				tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'><input value='" + vals.repeatevery + "' type='number' id='windowRepeatEvery" + x + "'/></div>";
-			if (mapFarm || tributeFarm || worshipperFarm || hdFarm)
+			if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding)
 				tooltipText += "<div class='windowEndZone" + varPrefix + "\'><input value='" + vals.endzone + "' type='number' id='windowEndZone" + x + "'/></div>";
 			if (quagmire)
 				tooltipText += "<div class='windowBogs'><input value='" + vals.bogs + "' type='number' id='windowBogs" + x + "'/></div>";
@@ -930,58 +930,40 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	var error = "";
 	var errorMessage = false;
 	var maxSettings = 30;
+
+	var defaultSetting = {
+	}
+
 	if (!titleText.includes('Auto Golden')) {
-		var defaultActive = readNiceCheckbox(document.getElementById('windowActiveDefault'));
-		var defaultCell = parseInt(document.getElementById('windowCellDefault').value, 10);
-		if (titleText.includes('Map Farm') || titleText.includes('Map Bonus')) var defaultRepeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
-		if (titleText.includes('Worshipper Farm')) var defaultShipSkip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
-		if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) var defaultSpecial = document.getElementById('windowSpecialDefault').value;
-		if (titleText.includes('Bone')) var defaultBonebelow = parseInt(document.getElementById('windowBoneBelowDefault').value, 10);
-		if (titleText.includes('Worshipper Farm')) var defaultWorshipper = parseInt(document.getElementById('windowWorshipperDefault').value, 10);
-		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm')) var defaultJobratio = document.getElementById('windowJobRatioDefault').value;
-		if (titleText.includes('Bone')) var defaultBonegather = document.getElementById('windowBoneGatherDefault').value;
-		if (titleText.includes('Alchemy Farm')) var defaultVoidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
-		if (titleText.includes('Hypo')) var defaultFrozenCastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
-		if (titleText.includes('Hypo')) var defaultAutoStorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
-		if (titleText.includes('Hypo')) var defaultPackrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
-		if (titleText.includes('Raiding') && !titleText.includes('Bionic')) var defaultRecycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
-		if (titleText.includes('Raiding') && !titleText.includes('Bionic')) var defaultIncrementMaps = readNiceCheckbox(document.getElementById('windowIncrementMapsDefault'));
-		if (titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm')) var mapType = document.getElementById('windowMapTypeDropdownDefault').value;
-		if (titleText.includes('Map Bonus')) var healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
-		if (titleText.includes('Map Bonus')) var healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10);
-		if (titleText.includes('HD Farm')) var mapCap = parseFloat(document.getElementById('mapCap').value, 10);
-		if (currSettingUniverse === 2 && (titleText.includes('Map Farm') || titleText.includes('HD Farm'))) var shredMapCap = parseFloat(document.getElementById('shredMapCap').value, 10);
+		defaultSetting.active = readNiceCheckbox(document.getElementById('windowActiveDefault'));
+		defaultSetting.cell = parseInt(document.getElementById('windowCellDefault').value, 10);
+		if (titleText.includes('Map Farm') || titleText.includes('Map Bonus')) defaultSetting.repeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
+		if (titleText.includes('Worshipper Farm')) defaultSetting.shipskip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
+		if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) defaultSetting.defaultSspecialpecial = document.getElementById('windowSpecialDefault').value;
+		if (titleText.includes('Bone')) defaultSetting.bonebelow = parseInt(document.getElementById('windowBoneBelowDefault').value, 10);
+		if (titleText.includes('Worshipper Farm')) defaultSetting.worshipper = parseInt(document.getElementById('windowWorshipperDefault').value, 10);
+		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm')) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
+		if (titleText.includes('Bone')) defaultSetting.gather = document.getElementById('windowBoneGatherDefault').value;
+		if (titleText.includes('Alchemy Farm')) defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
+		if (titleText.includes('Hypo')) defaultSetting.frozencastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
+		if (titleText.includes('Hypo')) defaultSetting.autostorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
+		if (titleText.includes('Hypo')) defaultSetting.packrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
+		if (titleText.includes('Raiding') && !titleText.includes('Bionic')) defaultSetting.recycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
+		if (titleText.includes('Raiding') && !titleText.includes('Bionic')) defaultSetting.incrementMaps = readNiceCheckbox(document.getElementById('windowIncrementMapsDefault'));
+		if (titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm')) defaultSetting.mapType = document.getElementById('windowMapTypeDropdownDefault').value;
+		if (titleText.includes('Map Bonus')) defaultSetting.healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
+		if (titleText.includes('Map Bonus')) defaultSetting.healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10);
+		if (titleText.includes('HD Farm')) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
+		if (currSettingUniverse === 2 && (titleText.includes('Map Farm') || titleText.includes('HD Farm'))) defaultSetting.shredMapCap = parseFloat(document.getElementById('shredMapCap').value, 10);
 
-		if (defaultCell < 1) defaultCell = 1;
-		if (defaultCell > 100) defaultCell = 100;
-		if (healthBonus > 10) healthBonus = 10;
-		if (healthBonus < 0) healthBonus = 0;
+		if (defaultSetting.cell < 1) defaultSetting.cell = 1;
+		if (defaultSetting.cell > 100) defaultSetting.cell = 100;
+		if (defaultSetting.healthBonus > 10) defaultSetting.healthBonus = 10;
+		if (defaultSetting.healthBonus < 0) defaultSetting.healthBonus = 0;
 
-		if (defaultRepeat < 0) defaultRepeat = 0;
+		if (defaultSetting.repeat < 0) defaultSetting.repeat = 0;
 
-		var thisDefaultSetting = {
-			active: defaultActive,
-			cell: defaultCell,
-			repeat: defaultRepeat,
-			special: defaultSpecial,
-			bonebelow: defaultBonebelow,
-			worshipper: defaultWorshipper,
-			gather: defaultBonegather,
-			jobratio: defaultJobratio,
-			autostorage: defaultAutoStorage,
-			packrat: defaultPackrat,
-			recycle: defaultRecycle,
-			incrementMaps: defaultIncrementMaps,
-			mapType: mapType,
-			shipskip: defaultShipSkip,
-			voidPurchase: defaultVoidPurchase,
-			frozencastle: defaultFrozenCastle,
-			healthBonus: healthBonus,
-			healthHDRatio: healthHDRatio,
-			mapCap: mapCap,
-			shredMapCap: shredMapCap
-		};
-		setPageSetting(varPrefix + 'DefaultSettings', thisDefaultSetting, currSettingUniverse);
+		setPageSetting(varPrefix + 'DefaultSettings', defaultSetting, currSettingUniverse);
 	}
 
 	for (var x = 0; x < maxSettings; x++) {
@@ -1000,7 +982,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('HD Farm')) var hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
 
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) var repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm')) var endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
+		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding')) var endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
 		if (titleText.includes('Raiding')) var raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
 		if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) var special = document.getElementById('windowSpecial' + x).value;
 		if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) {
@@ -1160,9 +1142,10 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	}
 
 	if (titleText.includes('Map Bonus')) {
-		const value = currSettingUniverse === 2 ? 'valueU2' : 'value'
+		let value = currSettingUniverse === 2 ? 'valueU2' : 'value'
+		autoTrimpSettings['mapBonusZone'][value] = [];
 		for (var x = 0; x < setting.length; x++) {
-			autoTrimpSettings[varPrefix + "Zone"][value][x] = setting[x].world
+			autoTrimpSettings['mapBonusZone'][value][x] = setting[x].world
 		}
 	}
 
@@ -1376,7 +1359,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	if (mapFarm || tributeFarm || worshipperFarm)
 		mazHelp += "<li><b>Repeat Every</b> - Line can be repeated every Zone, or set to a custom number depending on need.</li>";
 	//End Zone
-	if (mapFarm || tributeFarm || worshipperFarm || hdFarm)
+	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding)
 		mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this MaZ line repeat. If so, the line will stop repeating at this Zone. Must be between 6 and 1000.</li>";
 	//Run Type
 	if (boneShrine || voidMap || hdFarm)
@@ -1715,7 +1698,7 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowRepeat' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.repeat
 				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) && document.getElementById('windowRepeatEvery' + x) !== null)
 					document.getElementById('windowRepeatEvery' + x).value = 0;
-				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm')) && document.getElementById('windowEndZone' + x) !== null)
+				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding')) && document.getElementById('windowEndZone' + x) !== null)
 					document.getElementById('windowEndZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
 				if (titleText.includes('Void Map') && document.getElementById('windowMaxVoidZone' + x) !== null)
 					document.getElementById('windowMaxVoidZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
@@ -1808,7 +1791,7 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Map Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus') || titleText.includes('HD Farm')) document.getElementById('windowRepeat' + index).value = 0;
 	if (titleText.includes('HD Farm')) document.getElementById('windowHDMult' + index).value = 0;
 	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) document.getElementById('windowRepeatEvery' + index).value = 0;
-	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm')) document.getElementById('windowEndZone' + index).value = 0;
+	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding')) document.getElementById('windowEndZone' + index).value = 0;
 	if (titleText.includes('Tribute Farm')) document.getElementById('windowTributes' + index).value = 0;
 	if (titleText.includes('Tribute Farm')) document.getElementById('windowMets' + index).value = 0;
 	if (titleText.includes('Quag')) document.getElementById('windowBogs' + index).value = 0;

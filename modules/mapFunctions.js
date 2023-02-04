@@ -1202,7 +1202,7 @@ function PrestigeRaiding() {
 		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? RequipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone
 
-		if (!currSetting.active || game.global.world < currSetting.world || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
+		if (!currSetting.active || game.global.world < currSetting.world || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.world > currSetting.endzone || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
@@ -1463,7 +1463,6 @@ function BionicRaiding() {
 	const isC3 = game.global.runningChallengeSquared;
 	const isDaily = challengeActive('Daily');
 	const currChall = game.global.challengeActive;
-	const rBionicRaidingDefaultSetting = getPageSetting('bionicRaidingDefaultSettings');
 	const rBionicRaidingBaseSetting = getPageSetting('bionicRaidingSettings');
 
 	var index;
@@ -1472,7 +1471,7 @@ function BionicRaiding() {
 		const currSetting = rBionicRaidingBaseSetting[y];
 		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? RequipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone
-		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
+		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.world > currSetting.endzone || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
@@ -2700,7 +2699,6 @@ function FarmingDecision() {
 		return farmingDetails;
 	}
 	if (!game.global.mapsUnlocked) return farmingDetails;
-	if (!getPageSetting('autoMaps')) return farmingDetails;
 
 	//U1 map settings to check for.
 	if (game.global.universe === 1) var mapTypes = [PrestigeClimb(), MapFarm(), PrestigeRaiding(), BionicRaiding(), HDFarm(), VoidMaps(), MapBonus(), Experience(), MapDestacking()];

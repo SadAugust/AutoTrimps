@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v6.00',
+var ATversion = 'SadAugust v6.001',
 	atscript = document.getElementById('AutoTrimps-script'),
 	basepath = 'https://SadAugust.github.io/AutoTrimps_Local/',
 	modulepath = 'modules/';
