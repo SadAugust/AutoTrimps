@@ -118,16 +118,17 @@ function needGymystic() {
 }
 
 function buyUpgrades() {
-
 	for (var upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
 		var gameUpgrade = game.upgrades[upgrade];
 		var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
+		if (!available) continue;
 		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") && bwRewardUnlocked("DecaBuild") && getPageSetting('buildingsType') == 0);
 
 		//Coord & Amals
 		if (upgrade == 'Coordination' && (getPageSetting('upgradeType') == 2 || !canAffordCoordinationTrimps())) continue;
-		if (upgrade == 'Coordination' && getPageSetting('amalcoord') == true && getPageSetting('amalcoordhd') > 0 && calcHDRatio() < getPageSetting('amalcoordhd') && ((getPageSetting('amalcoordt') < 0 && (game.global.world < getPageSetting('amalcoordz') || getPageSetting('amalcoordz') < 0)) || (getPageSetting('amalcoordt') > 0 && getPageSetting('amalcoordt') > game.jobs.Amalgamator.owned && (game.resources.trimps.realMax() / game.resources.trimps.getCurrentSend()) > 2000))) continue;
+		if (upgrade === 'Coordination' && challengeActive('Trappapalooza') && getPageSetting('trappapalooza') && getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords')) continue;
+		if (upgrade == 'Coordination' && getPageSetting('amalcoord') && getPageSetting('amalcoordhd') > 0 && calcHDRatio() < getPageSetting('amalcoordhd') && ((getPageSetting('amalcoordt') < 0 && (game.global.world < getPageSetting('amalcoordz') || getPageSetting('amalcoordz') < 0)) || (getPageSetting('amalcoordt') > 0 && getPageSetting('amalcoordt') > game.jobs.Amalgamator.owned && (game.resources.trimps.realMax() / game.resources.trimps.getCurrentSend()) > 2000))) continue;
 
 		//Gigastations
 		if (upgrade == 'Gigastation' && !fuckbuildinggiga) {
@@ -140,28 +141,9 @@ function buyUpgrades() {
 		if (upgrade == 'Gigastation' && !fuckbuildinggiga && (game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('FirstGigastation'))) continue;
 		if (upgrade == 'Bloodlust' && challengeActive('Scientist') && getPageSetting('autoFight')) continue;
 
-		if (!available) continue;
-		if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade != 'Scientists') continue;
-		buyUpgrade(upgrade, true, true);
-		debug('Upgraded ' + upgrade, "upgrades", "*upload2");
-	}
-}
-
-//Radon
-
-function RbuyUpgrades() {
-
-	for (var upgrade in upgradeList) {
-		upgrade = upgradeList[upgrade];
-		var gameUpgrade = game.upgrades[upgrade];
-		var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
-
-		//Coord
-		if (upgrade == 'Coordination' && (getPageSetting('upgradeType') == 2 || !canAffordCoordinationTrimps() || (challengeActive('Trappapalooza') && getPageSetting('trappapalooza') && getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords')))) continue;
-
-		//Other
-		if (!available) continue;
-		if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade != 'Scientists') continue;
+		if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade !== 'Scientists') continue;
+		if (game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;
+		if (game.upgrades.Megascience.done < game.upgrades.Megascience.allowed && upgrade !== 'Megascience') continue;
 		buyUpgrade(upgrade, true, true);
 		debug('Upgraded ' + upgrade, "upgrades", "*upload2");
 	}

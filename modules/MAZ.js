@@ -336,13 +336,14 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var windowSize = 'tooltipWindow50';
 		if (golden) windowSize = 'tooltipWindow20'
 		if (quagmire) windowSize = 'tooltipWindow25'
-		if (raiding) windowSize = 'tooltipWindow50'
-		if (bionic) windowSize = 'tooltipWindow45'
+		if (raiding) windowSize = 'tooltipWindow55'
+		if (bionic) windowSize = 'tooltipWindow50'
 		if (hypothermia) windowSize = 'tooltipWindow30'
 		if (insanity) windowSize = 'tooltipWindow40'
 		if (voidMap) windowSize = 'tooltipWindow50'
 		if (worshipperFarm) windowSize = 'tooltipWindow50'
 		if (smithyFarm) windowSize = 'tooltipWindow50'
+		if (boneShrine) windowSize = 'tooltipWindow55'
 		if (hdFarm) windowSize = 'tooltipWindow55'
 		if (mapBonus) windowSize = 'tooltipWindow60'
 		if (mapFarm) windowSize = 'tooltipWindow75'
@@ -502,6 +503,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		<div id='windowContainer' style='display: block'><div id='windowError'></div>\
 		<div class='row windowRow titles'>"
 		if (!golden) tooltipText += "<div class='windowActive" + varPrefix + "\'>Active?</div>"
+		if (!golden) tooltipText += "<div class='windowPriority" + varPrefix + "\'>Priority</div>"
 		if (golden) tooltipText += "<div class='windowActiveAutoGolden'>Active?</div>"
 		if (!voidMap && !golden) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Zone</div>"
 		if (golden) tooltipText += "<div class='windowAmtAutoGolden'>Amount</div>"
@@ -552,6 +554,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		for (var x = 0; x < maxSettings; x++) {
 			var vals = {
 				active: true,
+				priority: (x + 1),
 				check: true,
 				world: -1,
 				cell: -1,
@@ -597,6 +600,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var style = "";
 			if (current.length - 1 >= x) {
 				vals.active = currSetting[x].active;
+				vals.priority = currSetting[x].priority ? currSetting[x].priority : (x + 1);
 				vals.world = currSetting[x].world;
 				if (voidMap)
 					vals.maxvoidzone = currSetting[x].maxvoidzone ? currSetting[x].maxvoidzone : 1;
@@ -682,7 +686,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			else style = " style='display: none' ";
 
 			var backgroundStyle = "";
-			if (varPrefix[0] === 'h') {
+			if (currSettingUniverse === 1) {
 				var natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
 				var natureList = ['None', 'Poison', 'Wind', 'Ice'];
 				var index = natureList.indexOf(getZoneEmpowerment(vals.world));
@@ -723,6 +727,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
 			if (!golden) tooltipText += "<div class='windowDelete" + varPrefix + "\' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
 			if (!golden) tooltipText += "<div class='windowActive" + varPrefix + "\' style='text-align: center;'>" + buildNiceCheckbox("windowActive" + x, null, vals.active) + "</div>";
+			if (!golden)
+				tooltipText += "<div class='windowPriority" + varPrefix + "\'><input value='" + vals.priority + "' type='number' id='windowPriority" + x + "'/></div>";
 
 			if (golden) tooltipText += "<div class='windowDeleteAutoGolden' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
 			if (golden) tooltipText += "<div class='windowActiveAutoGolden' style='text-align: center;'>" + buildNiceCheckbox("windowActive" + x, null, vals.active) + "</div>";
@@ -967,173 +973,133 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	}
 
 	for (var x = 0; x < maxSettings; x++) {
+
+		var thisSetting = {
+		};
+
 		var world = document.getElementById('windowWorld' + x);
 		if (titleText.includes('Auto Golden')) world = document.getElementById('windowWorld' + x);
 		if (!world || world.value == "-1") {
 			continue;
 		};
 
-		active = readNiceCheckbox(document.getElementById('windowActive' + x));
-		if (!titleText.includes('Auto Golden')) var world = parseInt(document.getElementById('windowWorld' + x).value, 10);
-		if (!titleText.includes('Auto Golden')) var cell = parseInt(document.getElementById('windowCell' + x).value, 10);
-		if (!titleText.includes('Quag') && !titleText.includes('Bone') && !titleText.includes('Raiding') && !titleText.includes('Void') && !titleText.includes('Auto Golden')) var level = parseInt(document.getElementById('windowLevel' + x).value, 10);
-		if (titleText.includes('Map Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus')) var repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
-		if (titleText.includes('HD Farm')) var hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
-		if (titleText.includes('HD Farm')) var hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
+		thisSetting.active = readNiceCheckbox(document.getElementById('windowActive' + x));
+		if (!titleText.includes('Auto Golden')) thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
+		if (!titleText.includes('Auto Golden')) thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
+		if (!titleText.includes('Auto Golden')) thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
+		if (!titleText.includes('Quag') && !titleText.includes('Bone') && !titleText.includes('Raiding') && !titleText.includes('Void') && !titleText.includes('Auto Golden')) thisSetting.level = parseInt(document.getElementById('windowLevel' + x).value, 10);
+		if (titleText.includes('Map Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus')) thisSetting.repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
+		if (titleText.includes('HD Farm')) thisSetting.hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
+		if (titleText.includes('HD Farm')) thisSetting.hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
 
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) var repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding')) var endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
-		if (titleText.includes('Raiding')) var raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
-		if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) var special = document.getElementById('windowSpecial' + x).value;
+		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
+		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding')) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
+		if (titleText.includes('Raiding')) thisSetting.raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
+		if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) thisSetting.special = document.getElementById('windowSpecial' + x).value;
 		if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) {
-			if (special == 'hc' || special == 'lc')
-				var gather = document.getElementById('windowGather' + x).value;
+			if (thisSetting.special == 'hc' || thisSetting.special == 'lc')
+				thisSetting.gather = document.getElementById('windowGather' + x).value;
 			else
-				var gather = null;
+				thisSetting.gather = null;
 		}
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Insanity Farm') || titleText.includes('Alchemy Farm') || titleText.includes('Hypothermia Farm') || titleText.includes('HD Farm')) var autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
-		if (titleText.includes('Tribute') || titleText.includes('Smithy Farm')) var mapType = document.getElementById('windowMapTypeDropdown' + x).value;
-		if (titleText.includes('Tribute')) var tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
-		if (titleText.includes('Tribute')) var mets = parseInt(document.getElementById('windowMets' + x).value, 10);
-		if (titleText.includes('Quag')) var bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
-		if (titleText.includes('Insanity')) var insanity = parseInt(document.getElementById('windowInsanity' + x).value, 10);
-		if (titleText.includes('Auto Golden')) var golden = document.getElementById('windowGoldenType' + x).value;
-		if (titleText.includes('HD Farm')) var hdType = document.getElementById('windowHDType' + x).value;
+		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Insanity Farm') || titleText.includes('Alchemy Farm') || titleText.includes('Hypothermia Farm') || titleText.includes('HD Farm')) thisSetting.autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
+		if (titleText.includes('Tribute') || titleText.includes('Smithy Farm')) thisSetting.mapType = document.getElementById('windowMapTypeDropdown' + x).value;
+		if (titleText.includes('Tribute')) thisSetting.tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
+		if (titleText.includes('Tribute')) thisSetting.mets = parseInt(document.getElementById('windowMets' + x).value, 10);
+		if (titleText.includes('Quag')) thisSetting.bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
+		if (titleText.includes('Insanity')) thisSetting.insanity = parseInt(document.getElementById('windowInsanity' + x).value, 10);
+		if (titleText.includes('Auto Golden')) thisSetting.golden = document.getElementById('windowGoldenType' + x).value;
+		if (titleText.includes('HD Farm')) thisSetting.hdType = document.getElementById('windowHDType' + x).value;
 		if (titleText.includes('Auto Golden')) golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
-		if (titleText.includes('Alch')) var potion = document.getElementById('windowPotionType' + x).value;
+		if (titleText.includes('Alch')) thisSetting.potion = document.getElementById('windowPotionType' + x).value;
 		if (titleText.includes('Alch')) potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
-		if (titleText.includes('Hypo')) var bonfire = parseInt(document.getElementById('windowBonfire' + x).value, 10);
-		if (titleText.includes('Bone')) var boneamount = parseInt(document.getElementById('windowBoneAmount' + x).value, 10);
-		if (titleText.includes('Bone')) var bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);
-		if (titleText.includes('Worshipper Farm')) var worshipper = parseInt(document.getElementById('windowWorshipper' + x).value, 10);
-		if (titleText.includes('Void')) var maxvoidzone = parseInt(document.getElementById('windowMaxVoidZone' + x).value, 10);
-		if (titleText.includes('Void')) var hdRatio = parseInt(document.getElementById('windowHDRatio' + x).value, 10);
-		if (titleText.includes('Void')) var voidHDRatio = parseInt(document.getElementById('windowVoidHDRatio' + x).value, 10);
-		if (titleText.includes('Tribute')) var buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute') || titleText.includes('Bone Shrine')) var atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
-		if (titleText.includes('Smithy Farm')) var meltingPoint = readNiceCheckbox(document.getElementById('windowMeltingPoint' + x));
-		if (titleText.includes('Void Map')) var portalAfter = readNiceCheckbox(document.getElementById('windowPortalAfter' + x));
-		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm') && !titleText.includes('Golden')) var jobratio = document.getElementById('windowJobRatio' + x).value;
-		if (titleText.includes('Bone')) var gather = document.getElementById('windowBoneGather' + x).value;
-		if (titleText.includes('Raiding')) var prestigeGoal = document.getElementById('windowPrestigeGoal' + x).value;
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) var runType = document.getElementById('windowRunType' + x).value;
-		if (titleText.includes('Raiding') && !titleText.includes('Bionic')) var raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
-		if (titleText.includes('Insanity')) var destack = readNiceCheckbox(document.getElementById('windowBuildings' + x));
+		if (titleText.includes('Hypo')) thisSetting.bonfire = parseInt(document.getElementById('windowBonfire' + x).value, 10);
+		if (titleText.includes('Bone')) thisSetting.boneamount = parseInt(document.getElementById('windowBoneAmount' + x).value, 10);
+		if (titleText.includes('Bone')) thisSetting.bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);
+		if (titleText.includes('Worshipper Farm')) thisSetting.worshipper = parseInt(document.getElementById('windowWorshipper' + x).value, 10);
+		if (titleText.includes('Void')) thisSetting.maxvoidzone = parseInt(document.getElementById('windowMaxVoidZone' + x).value, 10);
+		if (titleText.includes('Void')) thisSetting.hdRatio = parseInt(document.getElementById('windowHDRatio' + x).value, 10);
+		if (titleText.includes('Void')) thisSetting.voidHDRatio = parseInt(document.getElementById('windowVoidHDRatio' + x).value, 10);
+		if (titleText.includes('Tribute')) thisSetting.buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
+		if (titleText.includes('Map Farm') || titleText.includes('Tribute') || titleText.includes('Bone Shrine')) thisSetting.atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
+		if (titleText.includes('Smithy Farm')) thisSetting.meltingPoint = readNiceCheckbox(document.getElementById('windowMeltingPoint' + x));
+		if (titleText.includes('Void Map')) thisSetting.portalAfter = readNiceCheckbox(document.getElementById('windowPortalAfter' + x));
+		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('HD Farm') && !titleText.includes('Golden')) thisSetting.jobratio = document.getElementById('windowJobRatio' + x).value;
+		if (titleText.includes('Bone')) thisSetting.gather = document.getElementById('windowBoneGather' + x).value;
+		if (titleText.includes('Raiding')) thisSetting.prestigeGoal = document.getElementById('windowPrestigeGoal' + x).value;
+		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) thisSetting.runType = document.getElementById('windowRunType' + x).value;
+		if (titleText.includes('Raiding') && !titleText.includes('Bionic')) thisSetting.raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
+		if (titleText.includes('Insanity')) thisSetting.destack = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) {
-			var challenge = runType === 'Filler' ? document.getElementById('windowChallenge' + x).value : null;
-			var challenge3 = runType === 'C3' ? document.getElementById('windowChallenge3' + x).value : null;
+			thisSetting.challenge = thisSetting.runType === 'Filler' ? document.getElementById('windowChallenge' + x).value : null;
+			thisSetting.challenge3 = thisSetting.runType === 'C3' ? document.getElementById('windowChallenge3' + x).value : null;
 		}
 		if (currSettingUniverse === 2 && titleText.includes('Bone Shrine')) {
-			if (runType == 'Daily' || runType == 'All')
-				var shredActive = document.getElementById('windowShred' + x).value;
+			if (thisSetting.runType == 'Daily' || thisSetting.runType == 'All')
+				thisSetting.shredActive = document.getElementById('windowShred' + x).value;
 			else
-				var shredActive = false;
+				thisSetting.shredActive = false;
 		}
 
-		if (!titleText.includes('Auto Golden') && (isNaN(world) || world < 6)) {
+		if (!titleText.includes('Auto Golden') && (isNaN(thisSetting.world) || thisSetting.world < 6)) {
 			error += " Preset " + (x + 1) + " needs a value for Start Zone that's greater than 5.<br>";
 			errorMessage = true;
 		}
-		else if (!titleText.includes('Auto Golden') && world > 1000) {
+		else if (!titleText.includes('Auto Golden') && thisSetting.world > 1000) {
 			error += " Preset " + (x + 1) + " needs a value for Start Zone that's less than 1000.<br>";
 			errorMessage = true;
 		}
-		if (!titleText.includes('Auto Golden') && (world + level < 6)) {
+		if (!titleText.includes('Auto Golden') && (thisSetting.world + thisSetting.level < 6)) {
 			error += " Preset " + (x + 1) + " can\'t have a zone and map combination below zone 6.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Map Bonus') && (level < (game.global.universe === 1 ? 0 - game.portal.Siphonology.level : 0))) {
+		if (titleText.includes('Map Bonus') && (thisSetting.level < (currSettingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0))) {
 			error += " Preset " + (x + 1) + " can\'t have a map level below " + ((game.global.universe === 1 && game.portal.Siphonology.level > 0) ? (0 - game.portal.Siphonology.level) : "world level") + " as you won\'t be able to get any map stacks.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Map Bonus') && repeat < 1) {
+		if (titleText.includes('Map Bonus') && thisSetting.repeat < 1) {
 			error += " Preset " + (x + 1) + " can\'t have a map bonus value lower than 1 as you won\'t be able to get any map stacks.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Map Farm') && repeat < 1) {
+		if (titleText.includes('Map Farm') && thisSetting.repeat < 1) {
 			error += " Preset " + (x + 1) + " can\'t have a repeat value lower than 1 as you won\'t run any maps when this line runs.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Insanity') && level === 0) {
+		if (titleText.includes('Insanity') && thisSetting.level === 0) {
 			error += " Preset " + (x + 1) + " can\'t have a map level of 0 as you won\'t gain any Insanity stacks running this map.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Insanity') && level < 0 && destack === false) {
+		if (titleText.includes('Insanity') && thisSetting.level < 0 && destack === false) {
 			error += " Preset " + (x + 1) + " can\'t have a map level below world level as you will lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Insanity') && level >= 0 && destack === true) {
+		if (titleText.includes('Insanity') && thisSetting.level >= 0 && destack === true) {
 			error += " Preset " + (x + 1) + " can\'t have a map level at or above world level as you won't be able to lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Insanity') && insanity < 0) {
+		if (titleText.includes('Insanity') && thisSetting.insanity < 0) {
 			error += " Preset " + (x + 1) + " can\'t have a insanity value below 0.<br>";
 			errorMessage = true;
 		}
 		if (errorMessage === true)
 			continue;
-		if (level > 10) level = 10;
-		if (endzone < world) endzone = world;
-		if (cell < 1) cell = 1;
-		if (cell > 100) cell = 100;
-		if (worshipper > game.jobs.Worshipper.max) worshipper = game.jobs.Worshipper.max;
-		if (voidHDRatio < 0) voidHDRatio = 0;
-		if (hdRatio < 0) hdRatio = 0;
-		if (maxvoidzone < world) maxvoidzone = world;
+		if (thisSetting.level > 10) thisSetting.level = 10;
+		if (thisSetting.endzone < thisSetting.world) thisSetting.endzone = thisSetting.world;
+		if (thisSetting.cell < 1) thisSetting.cell = 1;
+		if (thisSetting.cell > 100) thisSetting.cell = 100;
+		if (thisSetting.worshipper > game.jobs.Worshipper.max) worshipper = game.jobs.Worshipper.max;
+		if (thisSetting.voidHDRatio < 0) thisSetting.voidHDRatio = 0;
+		if (thisSetting.hdRatio < 0) thisSetting.hdRatio = 0;
+		if (thisSetting.maxvoidzone < thisSetting.world) thisSetting.maxvoidzone = thisSetting.world;
 
-		if (repeat < 0) repeat = 0;
-		if (titleText.includes('Raiding') && !titleText.includes('Bionic') && (raidingzone - world > 10)) raidingzone = world + 10;
+		if (thisSetting.repeat < 0) thisSetting.repeat = 0;
+		if (titleText.includes('Raiding') && !titleText.includes('Bionic') && (thisSetting.raidingzone - thisSetting.world > 10)) thisSetting.raidingzone = thisSetting.world + 10;
 
-		currSetting = getPageSetting(varPrefix + 'Settings', currSettingUniverse)
-		if (currSetting) currSetting = currSetting[x];
-
-		var thisSetting = {
-			active: active,
-			world: world,
-			cell: cell,
-			level: level,
-			repeat: repeat,
-			special: special,
-			gather: gather,
-			tributes: tributes,
-			mets: mets,
-			bogs: bogs,
-			insanity: insanity,
-			potion: potion,
-			golden: golden,
-			bonfire: bonfire,
-			boneamount: boneamount,
-			bonebelow: bonebelow,
-			worshipper: worshipper,
-			maxvoidzone: maxvoidzone,
-			hdRatio: hdRatio,
-			voidHDRatio: voidHDRatio,
-			runType: runType,
-			prestigeGoal: prestigeGoal,
-			portalAfter: portalAfter,
-			challenge: challenge,
-			challenge3: challenge3,
-			raidingDropdown: raidingDropdown,
-			buildings: buildings,
-			jobratio: jobratio,
-			atlantrimp: atlantrimp,
-			meltingPoint: meltingPoint,
-			raidingzone: raidingzone,
-			mapType: mapType,
-			autoLevel: autoLevel,
-			endzone: endzone,
-			repeatevery: repeatevery,
-			destack: destack,
-			shredActive: shredActive,
-			hdBase: hdBase,
-			hdMult: hdMult,
-			hdType: hdType,
-			done: (currSetting && currSetting.done) ? currSetting.done : false
-		};
 		setting.push(thisSetting);
 	}
-	if (!titleText.includes('Golden')) setting.sort(function (a, b) { if (a.world == b.world) return (a.cell > b.cell) ? 1 : -1; return (a.world > b.world) ? 1 : -1 });
+	if (!titleText.includes('Golden'))
+		setting.sort(function (a, b) { if (a.prio == b.prio) return (a.world == b.world) ? ((a.cell > b.cell) ? 1 : -1) : ((a.world > b.world) ? 1 : -1); return (a.prio > b.prio) ? 1 : -1 });
 
 	if (error) {
 		var elem = document.getElementById('windowError');
@@ -1186,7 +1152,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	let boneShrine = titleText.includes('Bone Shrine');
 	let golden = titleText.includes('Golden');
 
-	let radonSetting = currSettingUniverse === 2
+	let radonSetting = currSettingUniverse === 2;
 
 	let tributeFarm = titleText.includes('Tribute Farm');
 	let smithyFarm = titleText.includes('Smithy Farm');
@@ -1200,6 +1166,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	if (!golden) {
 		mazHelp += "<br><br>The default values section are values which will automatically be input when a new row has been added. There's a few exception to this such as:<br></br><ul>"
 		mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable the entire setting.</li>"
+		mazHelp += "<li><b>Priority</b> - If there are two or more MaZ lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>"
 		if (worshipperFarm) mazHelp += "<li><b>Skip Value</b> - How many worshippers a map must provide for you to run your Worshipper Farming.</li>";
 		if (raiding && !bionic) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after raiding has finished.</li>"
 		if (raiding && !bionic) mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>"
@@ -1675,16 +1642,21 @@ function saveATDailyAutoPortalConfig() {
 }
 
 function addRow(varPrefix, titleText) {
+	var settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
+	if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
 	for (var x = 0; x < 30; x++) {
 		var elem = document.getElementById('windowWorld' + x);
 		if (!elem) continue;
+
+		let value = currSettingUniverse === 2 ? 'valueU2' : 'value'
+
 		if (elem.value == -1) {
 			var parent = document.getElementById('windowRow' + x);
 			if (parent) {
 				parent.style.display = 'block';
 				if (!titleText.includes('Golden')) elem.value = game.global.world < 6 ? 6 : game.global.world;
 
-				if (varPrefix[0] === 'h') {
+				if (currSettingUniverse === 1) {
 					//Changing rows to use the colour of the Nature type that the world input will be run on.
 					var natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];
 					var natureList = ['None', 'Poison', 'Wind', 'Ice'];
@@ -1693,9 +1665,9 @@ function addRow(varPrefix, titleText) {
 				}
 
 				if (document.getElementById('windowSpecial' + x) !== null)
-					document.getElementById('windowSpecial' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.special
+					document.getElementById('windowSpecial' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].special
 				if ((!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && !titleText.includes('HD Farm')) && document.getElementById('windowRepeat' + x) !== null)
-					document.getElementById('windowRepeat' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.repeat
+					document.getElementById('windowRepeat' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].repeat
 				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) && document.getElementById('windowRepeatEvery' + x) !== null)
 					document.getElementById('windowRepeatEvery' + x).value = 0;
 				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding')) && document.getElementById('windowEndZone' + x) !== null)
@@ -1705,13 +1677,13 @@ function addRow(varPrefix, titleText) {
 				if (document.getElementById('windowRaidingZone' + x) !== null)
 					document.getElementById('windowRaidingZone' + x).value = elem.value
 				if (document.getElementById('windowMapTypeDropdown' + x) !== null)
-					document.getElementById('windowMapTypeDropdown' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.mapType
+					document.getElementById('windowMapTypeDropdown' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].mapType
 				if (document.getElementById('windowBoneBelow' + x) !== null)
-					document.getElementById('windowBoneBelow' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.bonebelow
+					document.getElementById('windowBoneBelow' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].bonebelow
 				if (document.getElementById('windowWorshipper' + x) !== null)
-					document.getElementById('windowWorshipper' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.worshipper
+					document.getElementById('windowWorshipper' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].worshipper
 				if (document.getElementById('windowBoneGather' + x) !== null)
-					document.getElementById('windowBoneGather' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.gather
+					document.getElementById('windowBoneGather' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].gather
 				if (document.getElementById('windowBuildings' + x) !== null)
 					document.getElementById('windowBuildings' + x).value = true;
 				if (document.getElementById('windowShred' + x) !== null)
@@ -1728,8 +1700,8 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowPortalAfter' + x).value = false;
 				if (document.getElementById('windowAutoLevel' + x) !== null)
 					document.getElementById('windowAutoLevel' + x).value = true;
-				if (document.getElementById('windowJobRatio' + x) !== null && typeof (getPageSetting(varPrefix + 'DefaultSettings', currSettingUniverse).jobratio) !== 'undefined')
-					document.getElementById('windowJobRatio' + x).value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.jobratio
+				if (document.getElementById('windowJobRatio' + x) !== null && typeof (getPageSetting(settingName + 'DefaultSettings', currSettingUniverse).jobratio) !== 'undefined')
+					document.getElementById('windowJobRatio' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].jobratio
 				if (titleText.includes('Map Bonus') && document.getElementById('windowLevel' + x) !== null)
 					document.getElementById('windowLevel' + x).value = 0;
 				updateWindowPreset(x, varPrefix);
@@ -1757,8 +1729,8 @@ function addRow(varPrefix, titleText) {
 			var parent2 = document.getElementById('windowRow' + x);
 			if (parent2) {
 				parent2.style.display = 'block';
-				if (typeof (getPageSetting(varPrefix + 'DefaultSettings', currSettingUniverse).cell) !== 'undefined')
-					elemCell.value = autoTrimpSettings[varPrefix + 'DefaultSettings'].value.cell
+				if (typeof (getPageSetting(settingName + 'DefaultSettings', currSettingUniverse).cell) !== 'undefined')
+					elemCell.value = autoTrimpSettings[settingName + 'DefaultSettings'][value].cell
 				updateWindowPreset(x, varPrefix);
 				break;
 			}
@@ -1887,7 +1859,7 @@ function updateWindowPreset(index, varPrefix) {
 		newClass = runType === 'Daily' || runType === 'All' ? 'windowShredOn' : 'windowShredOff';
 		swapClass('windowShred', newClass, row);
 	}
-	if (varPrefix[0] === 'h') {
+	if (currSettingUniverse === 1) {
 		//Changing rows to use the colour of the Nature type that the world input will be run on.
 		var world = document.getElementById('windowWorld' + index);
 		var natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];

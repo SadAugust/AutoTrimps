@@ -254,6 +254,7 @@ ul.tab li a:hover {
 /* Map Farm */
 .windowDeleteMapFarm,
 .windowActiveMapFarm,
+.windowPriorityMapFarm,
 .windowWorldMapFarm,
 .windowCellMapFarm,
 .windowAutoLevelMapFarm,
@@ -272,6 +273,10 @@ ul.tab li a:hover {
 }
 
 .windowActiveMapFarm {
+	width: 5%;
+}
+
+.windowPriorityMapFarm {
 	width: 6%;
 }
 
@@ -292,7 +297,7 @@ ul.tab li a:hover {
 }
 
 .windowJobRatioMapFarm {
-	width: 9%;
+	width: 8%;
 }
 
 .windowRepeatEveryMapFarm {
@@ -304,17 +309,17 @@ ul.tab li a:hover {
 }
 
 .windowSpecialMapFarm {
-	width: 18%;
+	width: 16%;
 }
 
 .windowRunTypeMapFarm {
-	width: 24%;
+	width: 22%;
 }
 
 .windowChallengeOnMapFarm .windowChallengeMapFarm,
 .windowChallenge3OnMapFarm .windowChallenge3MapFarm {
 	display: inline-block;
-	width: 12%;
+	width: 10%;
 }
 
 .windowChallenge3OnMapFarm .windowRunTypeMapFarm,
@@ -329,13 +334,14 @@ ul.tab li a:hover {
 }
 
 .windowGatherOn .windowSpecialMapFarm {
-	width: 10%;
+	width: 8%;
 	padding-left: 1%;
 }
 
 /* Tribute Farm */
 .windowDeleteTributeFarm,
 .windowActiveTributeFarm,
+.windowPriorityTributeFarm,
 .windowWorldTributeFarm,
 .windowCellTributeFarm,
 .windowAutoLevelTributeFarm,
@@ -359,7 +365,11 @@ ul.tab li a:hover {
 }
 
 .windowActiveTributeFarm {
-	width: 6%;
+	width: 5%;
+}
+
+.windowPriorityTributeFarm {
+	width: 5%;
 }
 
 .windowWorldTributeFarm {
@@ -379,7 +389,7 @@ ul.tab li a:hover {
 }
 
 .windowJobRatioTributeFarm {
-	width: 7%;
+	width: 6%;
 }
 
 .windowRepeatEveryTributeFarm {
@@ -391,7 +401,7 @@ ul.tab li a:hover {
 }
 
 .windowMapTypeDropdownTributeFarm {
-	width: 10%;
+	width: 9%;
 }
 
 .windowMapTypeDropdownDefaultTributeFarm {
@@ -400,7 +410,7 @@ ul.tab li a:hover {
 
 .windowTributes,
 .windowMets {
-	width: 7%;
+	width: 6%;
 }
 
 .windowBuildings {
@@ -431,6 +441,7 @@ ul.tab li a:hover {
 /* Smithy Farm */
 .windowDeleteSmithyFarm,
 .windowActiveSmithyFarm,
+.windowPrioritySmithyFarm,
 .windowWorldSmithyFarm,
 .windowCellSmithyFarm,
 .windowAutoLevelSmithyFarm,
@@ -450,15 +461,19 @@ ul.tab li a:hover {
 }
 
 .windowActiveSmithyFarm {
-	width: 8%;
+	width: 7%;
+}
+
+.windowPrioritySmithyFarm {
+	width: 7%;
 }
 
 .windowWorldSmithyFarm {
-	width: 9%;
+	width: 7%;
 }
 
 .windowCellSmithyFarm {
-	width: 9%;
+	width: 7%;
 }
 
 .windowAutoLevelSmithyFarm {
@@ -466,7 +481,7 @@ ul.tab li a:hover {
 }
 
 .windowLevelSmithyFarm {
-	width: 9%;
+	width: 7%;
 }
 
 .windowMapTypeDropdownSmithyFarm,
@@ -506,6 +521,7 @@ ul.tab li a:hover {
 /* Map Bonus */
 .windowDeleteMapBonus,
 .windowActiveMapBonus,
+.windowPriorityMapBonus,
 .windowWorldMapBonus,
 .windowCellMapBonus,
 .windowAutoLevelMapBonus,
@@ -524,23 +540,27 @@ ul.tab li a:hover {
 }
 
 .windowActiveMapBonus {
-	width: 8%;
+	width: 7%;
+}
+
+.windowPriorityMapBonus {
+	width: 7%;
 }
 
 .windowWorldMapBonus {
-	width: 8%;
+	width: 7%;
 }
 
 .windowCellMapBonus {
-	width: 8%;
+	width: 7%;
 }
 
 .windowAutoLevelMapBonus {
-	width: 6%;
+	width: 5%;
 }
 
 .windowLevelMapBonus {
-	width: 6%;
+	width: 5%;
 }
 
 .windowJobRatioMapBonus {
@@ -548,7 +568,7 @@ ul.tab li a:hover {
 }
 
 .windowSpecialMapBonus {
-	width: 22%;
+	width: 20%;
 }
 
 .windowMapStacks {
@@ -582,12 +602,13 @@ ul.tab li a:hover {
 }
 
 .windowGatherOn .windowSpecialMapBonus {
-	width: 14%;
+	width: 12%;
 }
 
 /* Raiding */
 .windowDeleteRaiding,
 .windowActiveRaiding,
+.windowPriorityRaiding,
 .windowWorldRaiding,
 .windowCellRaiding,
 .windowRepeatEveryRaiding,
@@ -608,15 +629,19 @@ ul.tab li a:hover {
 }
 
 .windowActiveRaiding {
-	width: 7%;
+	width: 6%;
+}
+
+.windowPriorityRaiding {
+	width: 6%;
 }
 
 .windowWorldRaiding {
-	width: 6%;
+	width: 5%;
 }
 
 .windowCellRaiding {
-	width: 6%;
+	width: 5%;
 }
 
 .windowEndZoneRaiding {
@@ -628,7 +653,7 @@ ul.tab li a:hover {
 }
 
 .windowRaidingDropdown {
-	width: 13%;
+	width: 10%;
 }
 
 .windowRaidingZoneRaiding {
@@ -671,6 +696,7 @@ ul.tab li a:hover {
 /* Bionic Raiding */
 .windowDeleteBionicRaiding,
 .windowActiveBionicRaiding,
+.windowPriorityBionicRaiding,
 .windowWorldBionicRaiding,
 .windowCellBionicRaiding,
 .windowRepeatEveryBionicRaiding,
@@ -688,31 +714,35 @@ ul.tab li a:hover {
 }
 
 .windowActiveBionicRaiding {
-	width: 8%;
+	width: 7%;
+}
+
+.windowPriorityBionicRaiding {
+	width: 7%;
 }
 
 .windowWorldBionicRaiding {
-	width: 8%;
+	width: 7%;
 }
 
 .windowCellBionicRaiding {
-	width: 8%;
+	width: 7%;
 }
 
 .windowRepeatEveryBionicRaiding {
-	width: 8%;
+	width: 7%;
 }
 
 .windowEndZoneBionicRaiding {
-	width: 8%;
+	width: 7%;
 }
 
 .windowRaidingZoneBionicRaiding {
-	width: 8%;
+	width: 7%;
 }
 
 .windowPrestigeGoalBionicRaiding {
-	width: 20%;
+	width: 19%;
 }
 
 .windowRunTypeBionicRaiding {
@@ -739,6 +769,7 @@ ul.tab li a:hover {
 /* HD Farm */
 .windowDeleteHDFarm,
 .windowActiveHDFarm,
+.windowPriorityHDFarm,
 .windowWorldHDFarm,
 .windowCellHDFarm,
 .windowAutoLevelHDFarm,
@@ -760,15 +791,19 @@ ul.tab li a:hover {
 }
 
 .windowActiveHDFarm {
-	width: 7%;
+	width: 6%;
+}
+
+.windowPriorityHDFarm {
+	width: 6%;
 }
 
 .windowWorldHDFarm {
-	width: 8%;
+	width: 7%;
 }
 
 .windowCellHDFarm {
-	width: 8%;
+	width: 7%;
 }
 
 .windowAutoLevelHDFarm {
@@ -776,11 +811,11 @@ ul.tab li a:hover {
 }
 
 .windowLevelHDFarm {
-	width: 8%;
+	width: 7%;
 }
 
 .windowEndZoneHDFarm {
-	width: 8%;
+	width: 7%;
 }
 
 .windowHDMult,
@@ -789,7 +824,7 @@ ul.tab li a:hover {
 }
 
 .windowHDType {
-	width: 12%;
+	width: 11%;
 }
 
 .windowRunTypeHDFarm {
@@ -816,6 +851,7 @@ ul.tab li a:hover {
 /* Worshipper Farm */
 .windowDeleteWorshipperFarm,
 .windowActiveWorshipperFarm,
+.windowPriorityWorshipperFarm,
 .windowWorldWorshipperFarm,
 .windowAutoLevelWorshipperFarm,
 .windowLevelWorshipperFarm,
@@ -839,12 +875,16 @@ ul.tab li a:hover {
 	width: 6%;
 }
 
+.windowPriorityWorshipperFarm {
+	width: 6%;
+}
+
 .windowWorldWorshipperFarm {
-	width: 9%;
+	width: 8%;
 }
 
 .windowCellWorshipperFarm {
-	width: 9%;
+	width: 8%;
 }
 
 .windowAutoLevelWorshipperFarm {
@@ -852,7 +892,7 @@ ul.tab li a:hover {
 }
 
 .windowLevelWorshipperFarm {
-	width: 9%;
+	width: 8%;
 }
 
 .windowJobRatioWorshipperFarm {
@@ -860,15 +900,15 @@ ul.tab li a:hover {
 }
 
 .windowRepeatEveryWorshipperFarm {
-	width: 9%;
+	width: 8%;
 }
 
 .windowEndZoneWorshipperFarm {
-	width: 9%;
+	width: 8%;
 }
 
 .windowWorshipper {
-	width: 9%;
+	width: 8%;
 }
 
 .windowRunTypeWorshipperFarm {
@@ -895,6 +935,7 @@ ul.tab li a:hover {
 /* Bone Shrine */
 .windowDeleteBoneShrine,
 .windowActiveBoneShrine,
+.windowPriorityBoneShrine,
 .windowWorldBoneShrine,
 .windowCellBoneShrine,
 .windowJobRatioBoneShrine,
@@ -913,28 +954,32 @@ ul.tab li a:hover {
 }
 
 .windowActiveBoneShrine {
-	width: 7%;
+	width: 6%;
+}
+
+.windowPriorityBoneShrine {
+	width: 6%;
 }
 
 .windowWorldBoneShrine {
-	width: 10%;
+	width: 9%;
 }
 
 .windowCellBoneShrine {
-	width: 10%;
+	width: 9%;
 }
 
 .windowJobRatioBoneShrine {
-	width: 11%;
+	width: 10%;
 }
 
 .windowSpecialBoneShrine {
-	width: 24%;
+	width: 22%;
 }
 
 .windowBoneBelow,
 .windowBoneAmount {
-	width: 10%;
+	width: 9%;
 }
 
 .windowBoneGather {
@@ -1176,6 +1221,7 @@ ul.tab li a:hover {
 /* Void Map */
 .windowDeleteVoidMap,
 .windowActiveVoidMap,
+.windowPriorityVoidMap,
 .windowWorldVoidMap,
 .windowMaxVoidZone,
 .windowCellVoidMap,
@@ -1193,31 +1239,35 @@ ul.tab li a:hover {
 }
 
 .windowActiveVoidMap {
+	width: 7%;
+}
+
+.windowPriorityVoidMap {
 	width: 8%;
 }
 
 .windowWorldVoidMap {
-	width: 10%;
+	width: 9%;
 }
 
 .windowMaxVoidZone {
-	width: 10%;
+	width: 9%;
 }
 
 .windowVoidHDRatio {
-	width: 10%;
+	width: 9%;
 }
 
 .windowCellVoidMap {
-	width: 10%;
+	width: 9%;
 }
 
 .windowPortalAfter {
-	width: 7%;
+	width: 6%;
 }
 
 .windowJobRatioVoidMap {
-	width: 10%;
+	width: 9%;
 }
 
 .windowRunTypeVoidMap {

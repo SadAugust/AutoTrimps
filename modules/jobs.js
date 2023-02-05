@@ -277,6 +277,7 @@ function buyJobs() {
 		if (game.global.world >= 150)
 			scientistMod = MODULES["jobs"].RscientistRatio7;
 
+		if (scienceNeeded > 0 && scienceNeeded > game.resources.science.owned) scientistMod = 1;
 		for (var worker of ratioWorkers) {
 			if (!game.jobs[worker].locked) {
 				if (worker == "Scientist") {

@@ -1826,6 +1826,10 @@ function updateATVersion() {
 			changelog.push("Prestige Raiding & Bionic Raiding now have an added option for end zone so you can choose when to stop running specific lines.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.002') {
+			changelog.push("Have added a Priority input for every farming setting to allow you to properly allow certain lines to run before others without having to save the window multiple times to make it work.")
+		}
+
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
 		verticalCenterTooltip(false, true);
