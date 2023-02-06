@@ -234,7 +234,7 @@ function mainLoop() {
 	buyJobs();
 	//Upgrades
 	if (!(challengeActive('Quest') && game.global.world > 5 && game.global.lastClearedCell < 90 && ([5].indexOf(currQuest()) >= 0))) {
-		if (getPageSetting('upgradeType') != 0) game.global.universe === 2 ? RbuyUpgrades() : buyUpgrades();
+		if (getPageSetting('upgradeType') != 0) buyUpgrades();
 	}
 	//Combat
 	if (getPageSetting('autoFight') === 1) betterAutoFight();

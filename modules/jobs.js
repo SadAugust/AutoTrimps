@@ -256,7 +256,7 @@ function buyJobs() {
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs * reserveMod : 0;
 
 	let workerRatio;
-	if ((MODULES.mapFunctions.workerRatio !== null && rShouldBoneShrine) || rMapSettings.jobRatio !== undefined) {
+	if ((MODULES.mapFunctions.workerRatio !== null && rShouldBoneShrine) || (getPageSetting('autoMaps') !== 0 && rMapSettings.jobRatio !== undefined)) {
 		if (MODULES.mapFunctions.workerRatio !== null) workerRatio = MODULES.mapFunctions.workerRatio;
 		else workerRatio = rMapSettings.jobRatio;
 		desiredRatios = Array.from(workerRatio.split(','))
