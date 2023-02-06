@@ -142,8 +142,8 @@ function buyUpgrades() {
 		if (upgrade == 'Bloodlust' && challengeActive('Scientist') && getPageSetting('autoFight')) continue;
 
 		if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade !== 'Scientists') continue;
-		if (game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;
-		if (game.upgrades.Megascience.done < game.upgrades.Megascience.allowed && upgrade !== 'Megascience') continue;
+		if (upgrade !== 'Scientists' && game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;
+		if (upgrade !== 'Scientists' && game.upgrades.Megascience.done < game.upgrades.Megascience.allowed && upgrade !== 'Megascience') continue;
 		buyUpgrade(upgrade, true, true);
 		debug('Upgraded ' + upgrade, "upgrades", "*upload2");
 	}
