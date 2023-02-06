@@ -2002,7 +2002,7 @@ function PandemoniumDestack() {
 	farmingDetails.repeat = !repeat;
 	farmingDetails.status = status;
 
-	if (currentMap === mapName && !rShouldPandemoniumDestack) {
+	if (currentMap === mapName && !shouldPandemoniumDestack) {
 		mappingDetails(mapName, pandemoniumMapLevel, pandemoniumSpecial);
 		resetMapVars();
 	}
