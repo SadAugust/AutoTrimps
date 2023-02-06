@@ -1010,7 +1010,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Insanity')) thisSetting.insanity = parseInt(document.getElementById('windowInsanity' + x).value, 10);
 		if (titleText.includes('Auto Golden')) thisSetting.golden = document.getElementById('windowGoldenType' + x).value;
 		if (titleText.includes('HD Farm')) thisSetting.hdType = document.getElementById('windowHDType' + x).value;
-		if (titleText.includes('Auto Golden')) golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
+		if (titleText.includes('Auto Golden')) thisSetting.golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
 		if (titleText.includes('Alch')) thisSetting.potion = document.getElementById('windowPotionType' + x).value;
 		if (titleText.includes('Alch')) potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
 		if (titleText.includes('Hypo')) thisSetting.bonfire = parseInt(document.getElementById('windowBonfire' + x).value, 10);
