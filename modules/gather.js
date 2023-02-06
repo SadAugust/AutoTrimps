@@ -9,7 +9,9 @@ var maxZoneDuration = 0;
 
 //Traps per second
 function calcTPS() {
-	return Math.min(10, game.global.playerModifier / 5);
+	let tps = Math.min(10, game.global.playerModifier / 5);
+	if (game.global.universe === 2 && Fluffy.isRewardActive("trapper")) tps *= 10;
+	return tps;
 }
 
 function calcMaxTraps() {
@@ -51,7 +53,7 @@ function autoGather() {
 	var trapsBufferSize = Math.ceil(5 * calcTPS());
 	var minTraps = Math.ceil(calcTPS());
 	var maxTraps = calcMaxTraps();
-	var trapTrimpsOK = (!game.upgrades.Battle.done || (getPageSetting('TrapTrimps'))) && (trapperTrapUntilFull || game.jobs.Geneticist.owned == 0);
+	var trapTrimpsOK = (!game.upgrades.Battle.done || (getPageSetting('TrapTrimps'))) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
 
 	//Vars
 	var lowOnTraps = game.buildings.Trap.owned < minTraps;
