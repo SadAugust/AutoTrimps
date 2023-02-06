@@ -2041,7 +2041,7 @@ function PandemoniumFarm() {
 	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== pandemoniumMapLevel || getCurrentMapObject().bonus != pandemoniumSpecial || nextEquipmentCost >= pandemonium_Resource_Gain);
 	var status = 'Pandemonium Farming Equips below ' + prettify(pandemonium_Resource_Gain);
 
-	if (rShouldPandemoniumFarm) {
+	if (shouldPandemoniumFarm) {
 		farmingDetails.shouldRun = shouldPandemoniumFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = pandemoniumMapLevel;
