@@ -65,12 +65,17 @@ function getScienceCostToUpgrade(a) {
 }
 
 function setScienceNeeded() {
-	for (var a in ((scienceNeeded = 0), upgradeList))
-		if (((a = upgradeList[a]), game.upgrades[a].allowed > game.upgrades[a].done)) {
-			if (game.global.world === 1 && 1e3 >= (game.global.universe === 1 ? game.global.totalHeliumEarned : game.global.totalRadonEarned) && a.startsWith("Speed")) continue;
-			scienceNeeded += getScienceCostToUpgrade(a);
+	scienceNeeded = 0;
+
+	for (var upgrade in upgradeList) {
+		upgrade = upgradeList[upgrade];
+		if (game.upgrades[upgrade].allowed > game.upgrades[upgrade].done) {
+			scienceNeeded += getScienceCostToUpgrade(upgrade);
 		}
-	if (game.global.universe === 1) needGymystic() && (scienceNeeded += getScienceCostToUpgrade("Gymystic"));
+	}
+	if (game.global.universe === 1 && needGymystic()) {
+		scienceNeeded += getScienceCostToUpgrade("Gymystic")
+	}
 }
 
 function getPotencyMod(howManyMoreGenes) {
