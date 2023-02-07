@@ -288,6 +288,7 @@ function VoidMaps() {
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const dailyReduction = isDaily && game.global.universe === 2 ? dailyModiferReduction() : 0;
+	const dailyAddition = dailyOddOrEven();
 	const currChall = game.global.challengeActive;
 	const rVMBaseSettings = getPageSetting('voidMapSettings');
 
@@ -297,9 +298,10 @@ function VoidMaps() {
 	if (module.rVoidHDIndex !== Infinity && module.rVoidHDInfo !== (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2))) module.rVoidHDIndex = Infinity;
 
 	for (var y = 0; y < rVMBaseSettings.length; y++) {
-		const currSetting = rVMBaseSettings[y];
+		let currSetting = rVMBaseSettings[y];
+		let world = currSetting.world + dailyReduction + dailyAddition;
 		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell) continue;
-		if (game.global.world < (currSetting.world + dailyReduction)) continue;
+		if (game.global.world < world) continue;
 		if (game.global.world > (currSetting.maxvoidzone + dailyReduction)) continue;
 		if (currSetting.runType !== 'All') {
 			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
@@ -309,7 +311,7 @@ function VoidMaps() {
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
 		if (((currSetting.maxvoidzone + dailyReduction) === game.global.world) ||
-			(game.global.world - (currSetting.world + dailyReduction) >= 0 &&
+			(game.global.world - world >= 0 &&
 				//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value. Will automatically run voids if HD Ratio on next zone is too high! aka can't gamma burst
 				(currSetting.voidHDRatio < voidHDRatio || currSetting.hdRatio < HDRatio || (voidHDRatio * 100) < calcHDRatio(game.global.world + 1, 'void')))) {
 			rVMIndex = y;
@@ -391,7 +393,7 @@ function MapBonus() {
 	for (var y = 0; y < rMBBaseSettings.length; y++) {
 		//Skip iterating lines if map bonus is capped.
 		if (game.global.mapBonus === 10) continue;
-		const currSetting = rMBBaseSettings[y];
+		let currSetting = rMBBaseSettings[y];
 		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell) continue;
 		if (currSetting.runType !== 'All') {
 			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
@@ -484,14 +486,17 @@ function MapFarm() {
 	const metalShred = shredActive && shredMods.includes('metal');
 	const woodShred = shredActive && shredMods.includes('wood');
 	const currChall = game.global.challengeActive;
+	const dailyAddition = dailyOddOrEven();
 
 	const rMFBaseSetting = getPageSetting('mapFarmSettings');
 	var rMFIndex;
 
 	//Checking to see if any lines are to be run.
 	for (var y = 0; y < rMFBaseSetting.length; y++) {
-		const currSetting = rMFBaseSetting[y];
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.world && currSetting.repeatevery === 0)) {
+		let currSetting = rMFBaseSetting[y];
+		let world = currSetting.world + dailyAddition.skipNextZone;
+		if (dailyAddition.skipZone) continue;
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition) || (game.global.world > world && currSetting.repeatevery === 0)) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
@@ -501,11 +506,11 @@ function MapFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === currSetting.world) {
+		if (game.global.world === world) {
 			rMFIndex = y;
 			break;
 		}
-		if ((game.global.world - currSetting.world) % currSetting.repeatevery === 0) {
+		if ((game.global.world - world) % currSetting.repeatevery === 0) {
 			rMFIndex = y;
 			break;
 		}
@@ -605,12 +610,15 @@ function TributeFarm() {
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
 	const rTrFBaseSetting = getPageSetting('tributeFarmSettings');
+	const dailyAddition = dailyOddOrEven();
 	var rTrFIndex;
 
 	//Identifying which map line to run.
 	for (var y = 0; y < rTrFBaseSetting.length; y++) {
-		const currSetting = rTrFBaseSetting[y];
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
+		let currSetting = rTrFBaseSetting[y];
+		let world = currSetting.world + dailyAddition.skipNextZone;
+		if (dailyAddition.skipZone) continue;
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition) || (game.global.world > world && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
@@ -620,11 +628,11 @@ function TributeFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === currSetting.world) {
+		if (game.global.world === world) {
 			rTrFIndex = y;
 			break;
 		}
-		if ((game.global.world - currSetting.world) % currSetting.repeatevery === 0) {
+		if ((game.global.world - world) % currSetting.repeatevery === 0) {
 			rTrFIndex = y;
 			break;
 		}
@@ -798,12 +806,15 @@ function SmithyFarm() {
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
 	const rSFBaseSetting = getPageSetting('smithyFarmSettings');
+	const dailyAddition = dailyOddOrEven();
 
 	var rSFIndex;
 
 	for (var y = 0; y < rSFBaseSetting.length; y++) {
-		const currSetting = rSFBaseSetting[y];
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world !== currSetting.world || game.global.lastClearedCell + 2 < currSetting.cell) {
+		let currSetting = rSFBaseSetting[y];
+		let world = currSetting.world + dailyAddition.skipNextZone;
+		if (dailyAddition.skipZone) continue;
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world !== world || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
@@ -813,7 +824,7 @@ function SmithyFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === currSetting.world) {
+		if (game.global.world === world) {
 			rSFIndex = y;
 			break;
 		}
@@ -1007,6 +1018,7 @@ function WorshipperFarm() {
 	const currChall = game.global.challengeActive;
 	const rWFBaseSetting = getPageSetting('worshipperFarmSettings');
 	const rWFDefaultSetting = getPageSetting('worshipperFarmDefaultSettings');
+	const dailyAddition = dailyOddOrEven();
 
 	var rShouldWorshipperFarm = false;
 	var rShouldSkip = false;
@@ -1014,8 +1026,10 @@ function WorshipperFarm() {
 
 	var rWFIndex;
 	for (var y = 0; y < rWFBaseSetting.length; y++) {
-		const currSetting = rWFBaseSetting[y];
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0)) {
+		let currSetting = rWFBaseSetting[y];
+		let world = currSetting.world + dailyAddition.skipNextZone;
+		if (dailyAddition.skipZone) continue;
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition) || (game.global.world > world && currSetting.repeatevery === 0)) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
@@ -1025,11 +1039,11 @@ function WorshipperFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === currSetting.world && game.global.lastClearedCell + 2 >= currSetting.cell) {
+		if (game.global.world === world && game.global.lastClearedCell + 2 >= currSetting.cell) {
 			rWFIndex = y;
 			break;
 		}
-		if ((game.global.world - currSetting.world) % currSetting.repeatevery === 0 && game.global.lastClearedCell + 2 >= currSetting.cell) {
+		if ((game.global.world - world) % currSetting.repeatevery === 0 && game.global.lastClearedCell + 2 >= currSetting.cell) {
 			rWFIndex = y;
 			break;
 		}
@@ -1202,7 +1216,7 @@ function PrestigeRaiding() {
 		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? RequipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone
 
-		if (!currSetting.active || game.global.world < currSetting.world || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.world > currSetting.endzone || game.global.lastClearedCell + 2 < currSetting.cell) {
+		if (!currSetting.active || game.global.world < currSetting.world || (game.global.world > currSetting.world && currSetting.repeatevery === 0) || game.global.world > currSetting.endzone || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
@@ -1471,7 +1485,7 @@ function BionicRaiding() {
 		const currSetting = rBionicRaidingBaseSetting[y];
 		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? RequipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone
-		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.zone && currSetting.repeatevery === 0) || game.global.world > currSetting.endzone || game.global.lastClearedCell + 2 < currSetting.cell) {
+		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.world && currSetting.repeatevery === 0) || game.global.world > currSetting.endzone || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
@@ -2593,11 +2607,14 @@ function HDFarm() {
 	var rShouldHDFarm = false;
 	var rShouldSkip = false;
 	var mapAutoLevel = Infinity;
+	const dailyAddition = dailyOddOrEven();
 
 	var rHDFIndex;
 	for (var y = 0; y < rHDFBaseSetting.length; y++) {
 		const currSetting = rHDFBaseSetting[y];
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || currSetting.world > game.global.world || game.global.world > currSetting.endzone) {
+		let world = currSetting.world + dailyAddition.skipNextZone;
+		if (dailyAddition.skipZone) continue;
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || world > game.global.world || game.global.world > (currSetting.endzone + dailyAddition)) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
@@ -2607,7 +2624,7 @@ function HDFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world >= currSetting.world && game.global.lastClearedCell + 2 >= currSetting.cell) {
+		if (game.global.world >= world && game.global.lastClearedCell + 2 >= currSetting.cell) {
 			rHDFIndex = y;
 			break;
 		}

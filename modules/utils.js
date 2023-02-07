@@ -210,7 +210,7 @@ function message2(a, b, c, d) {
 function filterMessage2(a) {
 	var b = document.getElementById("log"); displayed = !ATmessageLogTabVisible, ATmessageLogTabVisible = displayed;
 	var c = document.getElementsByClassName(a + "Message"),
-		d = displayed ? a : a + " off", e = document.getElementById(a + "Filter");
+		d = displayed ? a : a, e = document.getElementById(a + "Filter");
 	e.innerHTML = d,
 		e.className = "", e.className = getTabClass(displayed),
 		displayed = displayed ? "block" : "none";

@@ -1539,6 +1539,47 @@ function dailyModiferReduction() {
 	return dailyReduction
 }
 
+function dailyOddOrEven() {
+	var result = {
+		odd: false,
+		even: false,
+		oddMult: 0,
+		evenMult: 0,
+		skipZone: false,
+		skipNextZone: 0
+	}
+	if (!challengeActive('Daily')) return result;
+	if (!getPageSetting('mapOddEvenIncrement')) return result;
+
+	if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined') {
+		result.oddMult += dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
+	}
+
+	//Dodge Dailies
+	if (typeof game.global.dailyChallenge.slippery !== "undefined") {
+		var slipStr = game.global.dailyChallenge.slippery.strength / 100;
+		if (slipStr > 0.15) result.evenMult += slipStr;
+		else result.oddMult += slipStr
+	}
+
+	if (result.oddMult === 0 && result.evenMult === 0) return result;
+	else if (result.oddMult !== 0 && result.evenMult !== 0) {
+		if (Math.max(result.oddMult, result.evenMult) === result.oddMult) result.evenMult = 0;
+		else result.oddMult = 0;
+	}
+
+	if (result.evenMult !== 0) {
+		if (game.global.world % 2 === 0) result.skipZone = true;
+		else result.skipNextZone = 1;
+	}
+	else if (result.oddMult !== 0) {
+		if (game.global.world % 2 === 1) result.skipZone = true;
+		else result.skipNextZone = 1;
+	}
+
+	return result;
+}
+
 function displayMostEfficientEquipment() {
 
 	if (usingRealTimeOffline) return;

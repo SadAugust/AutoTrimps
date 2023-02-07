@@ -293,7 +293,8 @@ function initializeAllSettings() {
 		createSetting('bloodthirstVoidMax', 'Void: Max Bloodthirst', 'Will make your Void HD Ratio assume you have max Bloodthirst stacks active if you\'re in a Bloodthirst daily.</b>', 'boolean', true, null, 'Daily', [2]);
 		createSetting('empowerAutoEquality', 'AE: Empower', 'Will automatically adjust the enemies stats to factor in either Explosive or Crit modifiers if they\'re active on the current daily.</b>', 'boolean', true, null, 'Daily', [2],
 			function () { return (getPageSetting('equalityManagement') === 2) });
-
+		createSetting('mapOddEvenIncrement', 'Odd/Even Increment', 'Will automatically increment your farming settings world input by 1 if the current zone has a negative even or odd related buff. If the daily has both types of mods it\'ll continue running them as normal.<br>\
+		Won\'t do anything to Prestige Raiding inputs.', 'boolean', false, null, 'Daily', [2]);
 
 		//Helium Daily Portal
 		createSetting('dailyPortalStart', 'Auto Start Daily', 'Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ', 'boolean', false, null, 'Daily', [1, 2]);
@@ -1184,7 +1185,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("dscryvoidmaps", radonoff);
 	modifyParentNode_Initial("dPreSpireNurseries", radonoff);
 	modifyParentNode_Initial("liqstack", radonoff);
-	modifyParentNode_Initial("empowerAutoEquality", radonon);
+	modifyParentNode_Initial("mapOddEvenIncrement", radonon);
 	modifyParentNode_Initial("dailyHeliumHrBuffer", 'show');
 
 	if (getPageSetting('displayAllSettings', currSettingUniverse)) modifyParentNode_Initial("heliumC2Challenge", 'show');
@@ -2877,7 +2878,7 @@ function setupATButtons() {
 
 	//Text
 	var atBtnText = document.createElement("button");
-	atBtnText.innerHTML = 'AutoTrimps';
+	atBtnText.innerHTML = 'AT Messages';
 	atBtnText.setAttribute("id", "AutoTrimpsFilter");
 	atBtnText.setAttribute('type', 'button');
 	atBtnText.setAttribute("onClick", "filterMessage2(\'AutoTrimps\')");
