@@ -857,7 +857,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		if (autoBattle.oneTimers.Gathermate.owned)
 			amt_local *= autoBattle.oneTimers.Gathermate.getMult();
 	}
-	if ((what == "food" && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15))
+	if (((what == "food" || (game.global.stringVersion >= '5.9.0' && what == "wood")) && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15))
 		amt_local *= game.jobs.Meteorologist.getExtraMult();
 	if (Fluffy.isRewardActive('gatherer'))
 		amt_local *= 2;

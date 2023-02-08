@@ -161,7 +161,7 @@ function getPsStringLocal(what, rawNum) {
 		var mult = game.challenges.Hypothermia.getWoodMult(true);
 		currentCalc *= mult;
 	}
-	if ((what == "food" && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15)) {
+	if (((what == "food" || (game.global.stringVersion >= '5.9.0' && what == "wood")) && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15)) {
 		var mult = game.jobs.Meteorologist.getExtraMult();
 		currentCalc *= mult;
 	}
