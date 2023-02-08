@@ -299,7 +299,7 @@ function VoidMaps() {
 
 	for (var y = 0; y < rVMBaseSettings.length; y++) {
 		let currSetting = rVMBaseSettings[y];
-		let world = currSetting.world + dailyReduction + dailyAddition;
+		let world = currSetting.world + dailyReduction + dailyAddition.skipNextZone;
 		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell) continue;
 		if (game.global.world < world) continue;
 		if (game.global.world > (currSetting.maxvoidzone + dailyReduction)) continue;
@@ -496,7 +496,7 @@ function MapFarm() {
 		let currSetting = rMFBaseSetting[y];
 		let world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition) || (game.global.world > world && currSetting.repeatevery === 0)) {
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone) || (game.global.world > world && currSetting.repeatevery === 0)) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
@@ -618,7 +618,7 @@ function TributeFarm() {
 		let currSetting = rTrFBaseSetting[y];
 		let world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition) || (game.global.world > world && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone) || (game.global.world > world && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
@@ -1029,7 +1029,7 @@ function WorshipperFarm() {
 		let currSetting = rWFBaseSetting[y];
 		let world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition) || (game.global.world > world && currSetting.repeatevery === 0)) {
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone) || (game.global.world > world && currSetting.repeatevery === 0)) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
@@ -2614,7 +2614,7 @@ function HDFarm() {
 		const currSetting = rHDFBaseSetting[y];
 		let world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || world > game.global.world || game.global.world > (currSetting.endzone + dailyAddition)) {
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || world > game.global.world || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone)) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
