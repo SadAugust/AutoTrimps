@@ -58,7 +58,7 @@ function boneShrine() {
 		}
 		if (rBoneShrineAtlantrimp) {
 			if (!rBSRunningAtlantrimp) {
-				runUnique(rBoneShrineDoubler, false);
+				runUniqueMap(rBoneShrineDoubler, false);
 			}
 			if (shredActive && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineGather) && game.global.mapsActive && game.global.lastClearedMapCell + 1 >= 95 && game.global.hemmTimer < 30 && game.global.lastClearedMapCell !== getCurrentMapObject().size - 2) {
 				mapsClicked();

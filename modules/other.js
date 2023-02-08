@@ -186,35 +186,6 @@ function archstring() {
 	}
 }
 
-function challengeListSetting() {
-
-	//if (highestZone === 15) debug("You have unlocked the Unlucky challenge.")
-	if (highestZone === 5) debug("You can now use the Smithy Farm setting. This can be found in the AT 'Maps' tab.")
-	if (highestZone === 25) debug("You have unlocked the Transmute challenge. Any metal related settings will be converted to food instead while running this challenge.")
-	if (highestZone === 30) debug("You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.")
-	if (highestZone === 35) debug("You have unlocked the Unbalance challenge. There's setting for it in the AT 'C3' tab.")
-	if (highestZone === 40) debug("You have unlocked the Bublé challenge. It has now been added to AutoPortal setting.")
-	//if (highestZone === 45) debug("Duel");
-	if (highestZone === 50) debug("You can now use the Worshipper Farm setting. This can be found in the AT 'Maps' tab.")
-	if (highestZone === 50) debug("You can now access the C3 tab within the AT settings. Here you will find a variety of settings that will help optimise your C3 runs.")
-	if (highestZone === 50) debug("Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them.");
-	if (highestZone === 50) debug("You have unlocked the Melt challenge. It has now been added to AutoPortal setting.")
-	if (highestZone === 60) debug("You have unlocked the Trappapalooza challenge. It has now been added to Challenge 3 AutoPortal settings & there's a setting for it in the AT 'C3' tab.")
-	if (highestZone === 70) debug("You have unlocked the Quagmire challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-	if (highestZone === 70) debug("You have unlocked the Wither challenge. It has now been added to Challenge 3 AutoPortal settings & any map level settings with the exception of Map Bonus will make the highest level map you run -1 to not obtain additional stacks.")
-	if (highestZone === 85) debug("You have unlocked the Quest challenge. It has now been added to Challenge 3 AutoPortal settings & AT will automatically complete Quests if AutoMaps is enabled during this challenge.")
-	if (highestZone === 90) debug("You have unlocked the Archaeology challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-	if (highestZone === 100) debug("You have unlocked the Mayhem challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
-	if (highestZone === 105) debug("You have unlocked the Storm challenge. It has now been added to Challenge 3 AutoPortal setting & there's setting for it in the AT 'C3' tab.")
-	if (highestZone === 110) debug("You have unlocked the Insanity challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-	if (highestZone === 115) debug("You have unlocked the Berserk challenge. It has now been added to Challenge 3 AutoPortal setting.")
-	if (highestZone === 135) debug("You have unlocked the Nurture challenge. It has now been added to AutoPortal setting & there is a setting for Laboratory's that has been added to AT's AutoStructure setting.")
-	if (highestZone === 150) debug("You have unlocked the Pandemonium challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
-	if (highestZone === 155) debug("You have unlocked the Alchemy challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-	if (highestZone === 175) debug("You have unlocked the Hypothermia challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-	if (highestZone === 175) debug("You have unlocked the Glass challenge. It has now been added to Challenge 3 AutoPortal setting.")
-}
-
 var fastimps =
 	[
 		"Snimp",
@@ -599,8 +570,9 @@ function equalityManagement() {
 
 	//Gamma burst info
 	var gammaMaxStacksCheck = gammaMaxStacks();
-	var gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
 	var gammaDmg = gammaBurstPct;
+	if (gammaDmg === 1) gammaMaxStacksCheck = 0;
+	var gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
 	var fuckGamma = (dailyReflect || (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger));
 
 	var critType = 'maybe'
@@ -708,7 +680,7 @@ function equalityManagement() {
 				game.portal.Equality.disabledStackCount = i;
 				break;
 			}
-			else if ((ourHealth < (ourHealthMax * 0.65) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger == gammaMaxStacksCheck && !runningTrappa && !runningArchaeology && !runningBerserk) {
+			else if ((ourHealth < (ourHealthMax * 0.65) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
 				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
 					mapsClicked();
 					mapsClicked();
@@ -1218,33 +1190,6 @@ function minMapFrag(level, specialModifier, biome) {
 	return perfectMapCost_Actual(level, specialModifier, biome, sliders, perfect);
 }
 
-function runUnique(mapName, dontRecycle) {
-	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
-	if (mapName === 'Atlantrimp' && game.global.universe === 1) mapName = 'Trimple Of Doom'
-	var zone = game.global.world;
-	var cell = game.global.lastClearedCell + 2;
-	if (mapName === 'Melting Point' && (!game.mapUnlocks.SmithFree.canRunOnce || zone < 55 || (zone === 55 && cell < 56))) return
-	if ((mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') && (!game.mapUnlocks.AncientTreasure.canRunOnce || zone < 33 || (zone === 33 && cell < 32))) return
-
-	if (!game.global.preMapsActive && !game.global.mapsActive)
-		mapsClicked();
-	if (!dontRecycle && game.global.mapsActive && getCurrentMapObject().name !== mapName) {
-		mapsClicked();
-		recycleMap();
-	}
-
-	if (game.global.preMapsActive) {
-		for (var map in game.global.mapsOwnedArray) {
-			if (game.global.mapsOwnedArray[map].name === mapName) {
-				selectMap(game.global.mapsOwnedArray[map].id)
-				rRunMap();
-				debug('Running ' + mapName + ' on zone ' + game.global.world + '.');
-				if (mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') rBSRunningAtlantrimp = true;
-			}
-		}
-	}
-}
-
 function ABItemSwap(items, ring) {
 	items = !items ? false : items;
 	ring = !ring ? false : ring;
@@ -1469,32 +1414,6 @@ function allocatePerks() {
 	}
 }
 
-function PerkRespec(preset) {
-	//Swaps between presets depending on the input provided. Will only function if the input is between 1 and 3.
-	var preset = !preset ? null :
-		(preset != 1 && preset != 2 && preset != 3) ? null :
-			preset;
-
-	if (preset == null) {
-		debug("Invalid input. Needs to be a value between 1 and 3.");
-		return;
-	}
-
-	//Respecs to a different preset and fires all workers to ensure that decreases in carp levels won't impact its ability to respec
-	if (game.global.canRespecPerks) {
-		viewPortalUpgrades();
-		respecPerks();
-		presetTab(preset);
-		loadPerkPreset();
-		game.jobs.Miner.owned = 0;
-		game.jobs.Farmer.owned = 0;
-		game.jobs.Lumberjack.owned = 0;
-		activateClicked();
-		debug("Respecced to preset " + preset);
-	} else
-		debug("No respec available");
-}
-
 function dailyModifiersOutput() {
 	var daily = game.global.dailyChallenge;
 	var dailyMods = dailyModifiers;
@@ -1578,69 +1497,6 @@ function dailyOddOrEven() {
 	}
 
 	return result;
-}
-
-function displayMostEfficientEquipment() {
-
-	if (usingRealTimeOffline) return;
-	var $eqNamePrestige = null;
-
-	var highlightSetting = getPageSetting('equipEfficientEquipDisplay');
-
-	if (!highlightSetting) return;
-
-	if (!highlightSetting) {
-		for (var item in game.equipment) {
-			if (game.upgrades[RequipmentList[item].Upgrade].locked == 0) {
-				$eqNamePrestige = document.getElementById(RequipmentList[item].Upgrade);
-				if (document.getElementsByClassName(item).length == 0) {
-					document.getElementById(RequipmentList[item].Upgrade).classList.add("efficient");
-					document.getElementById(RequipmentList[item].Upgrade).classList.add(item);
-				}
-			}
-
-			var $eqName = document.getElementById(item);
-			if (!$eqName)
-				continue;
-
-			swapClass('efficient', 'efficientNo', $eqName)
-			if ($eqNamePrestige != null)
-				swapClass('efficient', 'efficientNo', $eqNamePrestige)
-		}
-
-	}
-
-	for (var item in game.equipment) {
-		if (game.equipment[item].locked) continue;
-		if (item == "Shield") continue;
-		var bestBuys = mostEfficientEquipment(1, true, true, false, true);
-		var isAttack = (RequipmentList[item].Stat === 'attack' ? 0 : 1);
-		var $eqNamePrestige = null;
-		if (game.upgrades[RequipmentList[item].Upgrade].locked == 0) {
-			$eqNamePrestige = document.getElementById(RequipmentList[item].Upgrade);
-			if (document.getElementsByClassName(item).length == 0) {
-				document.getElementById(RequipmentList[item].Upgrade).classList.add("efficient");
-				document.getElementById(RequipmentList[item].Upgrade).classList.add(item);
-			}
-			if (document.getElementById(RequipmentList[item].Upgrade).classList.contains('efficientYes') && (item != bestBuys[isAttack] || (item == bestBuys[isAttack] && bestBuys[isAttack + 4] !== true)))
-				swapClass('efficient', 'efficientNo', $eqNamePrestige)
-		}
-		if (item == bestBuys[isAttack] && bestBuys[isAttack + 4] === true) {
-			bestBuys[isAttack] = RequipmentList[item].Upgrade;
-			if (document.getElementById(item).classList.contains('efficientYes'))
-				swapClass('efficient', 'efficientNo', document.getElementById(item))
-			item = RequipmentList[item].Upgrade;
-		}
-
-		var $eqName = document.getElementById(item);
-		if (!$eqName)
-			continue;
-		if (item == bestBuys[isAttack])
-			swapClass('efficient', 'efficientYes', $eqName)
-		else {
-			swapClass('efficient', 'efficientNo', $eqName)
-		}
-	}
 }
 
 function getAvailableSpecials(special, skipCaches) {
@@ -1866,6 +1722,7 @@ function getShredHtml() {
 }
 
 function populateShredWindow() {
+	if (game.global.stringVersion >= '5.9.0') return;
 	const dailyMods = game.global.dailyChallenge;
 	//Remove shred button if it's there and not on a shred daily
 	if ((typeof dailyMods.hemmorrhage === 'undefined' || portalUniverse !== 2) && $('#wood').firstChild.id === 'shredTimer') {

@@ -218,6 +218,33 @@ function shouldRunUniqueMap(map) {
 	return false;
 }
 
+function runUniqueMap(mapName, dontRecycle) {
+	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
+	if (mapName === 'Atlantrimp' && game.global.universe === 1) mapName = 'Trimple Of Doom'
+	var zone = game.global.world;
+	var cell = game.global.lastClearedCell + 2;
+	if (mapName === 'Melting Point' && (!game.mapUnlocks.SmithFree.canRunOnce || zone < 55 || (zone === 55 && cell < 56))) return
+	if ((mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') && (!game.mapUnlocks.AncientTreasure.canRunOnce || zone < 33 || (zone === 33 && cell < 32))) return
+
+	if (!game.global.preMapsActive && !game.global.mapsActive)
+		mapsClicked();
+	if (!dontRecycle && game.global.mapsActive && getCurrentMapObject().name !== mapName) {
+		mapsClicked();
+		recycleMap();
+	}
+
+	if (game.global.preMapsActive) {
+		for (var map in game.global.mapsOwnedArray) {
+			if (game.global.mapsOwnedArray[map].name === mapName) {
+				selectMap(game.global.mapsOwnedArray[map].id)
+				rRunMap();
+				debug('Running ' + mapName + ' on zone ' + game.global.world + '.');
+				if (mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') rBSRunningAtlantrimp = true;
+			}
+		}
+	}
+}
+
 //Void Maps
 const voidPrefixes = Object.freeze({
 	'Poisonous': 10,
@@ -562,7 +589,7 @@ function MapFarm() {
 			resetMapVars(rMFSettings);
 			rShouldMapFarm = false;
 			rMFSettings.done = totalPortals + "_" + game.global.world;
-			if (rMFAtlantrimp) runUnique('Atlantrimp', false);
+			if (rMFAtlantrimp) runUniqueMap('Atlantrimp', false);
 			game.global.mapRunCounter = 0;
 			mapRepeats = 0;
 			mappingTime = 0;
@@ -737,7 +764,7 @@ function TributeFarm() {
 			var resourceFarmed = scaleToCurrentMapLocal(simpleSecondsLocal("food", 165, true, rTrFJobRatio), false, true, rTrFMapLevel);
 
 			if ((totalTrFCost > game.resources.food.owned - barnCost + resourceFarmed) && game.resources.food.owned > totalTrFCost / 2) {
-				runUnique("Atlantrimp", dontRecycleMaps);
+				runUniqueMap("Atlantrimp", dontRecycleMaps);
 			}
 		}
 		//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
@@ -979,7 +1006,7 @@ function SmithyFarm() {
 				toggleAutoStructure();
 			MODULES.mapFunctions.smithyMapCount = [0, 0, 0];
 			HDRatio = calcHDRatio(game.global.world, 'world');
-			if (!challengeActive('Quest') && rSFSettings.meltingPoint) runUnique('Melting Point', false);
+			if (!challengeActive('Quest') && rSFSettings.meltingPoint) runUniqueMap('Melting Point', false);
 			resetMapVars(rSFSettings);
 			return farmingDetails;
 		}
@@ -1213,7 +1240,7 @@ function PrestigeRaiding() {
 
 	for (var y = 0; y < rRaidingBaseSetting.length; y++) {
 		const currSetting = rRaidingBaseSetting[y];
-		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? RequipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
+		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? equipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone
 
 		if (!currSetting.active || game.global.world < currSetting.world || (game.global.world > currSetting.world && currSetting.repeatevery === 0) || game.global.world > currSetting.endzone || game.global.lastClearedCell + 2 < currSetting.cell) {
@@ -1483,7 +1510,7 @@ function BionicRaiding() {
 
 	for (var y = 0; y < rBionicRaidingBaseSetting.length; y++) {
 		const currSetting = rBionicRaidingBaseSetting[y];
-		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? RequipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
+		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? equipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone
 		if (!currSetting.active || game.global.world < currSetting.world || game.global.world > currSetting.endzone || (game.global.world > currSetting.world && currSetting.repeatevery === 0) || game.global.world > currSetting.endzone || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
@@ -2038,7 +2065,7 @@ function PandemoniumFarm() {
 	var shouldPandemoniumFarm = false;
 
 	var pandemoniumJobRatio = '1,1,100,0';
-	var equipCost = CheapestEquipmentCost();
+	var equipCost = cheapestEquipmentCost();
 	var nextEquipmentCost = equipCost[1];
 
 	var pandemoniumMapLevel = getPageSetting('pandemoniumFarmLevel');

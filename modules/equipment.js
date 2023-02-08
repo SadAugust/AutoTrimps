@@ -1,194 +1,8 @@
 //Helium
 
 MODULES["equipment"] = {};
-MODULES["equipment"].numHitsSurvived = 10;
-MODULES["equipment"].numHitsSurvivedScry = 80;
-MODULES["equipment"].capDivisor = 10;
-MODULES["equipment"].alwaysLvl2 = getPageSetting('always2');
-MODULES["equipment"].waitTill60 = true;
-MODULES["equipment"].equipHealthDebugMessage = false;
+
 var equipmentList = {
-	'Dagger': {
-		Upgrade: 'Dagadder',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Mace': {
-		Upgrade: 'Megamace',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Polearm': {
-		Upgrade: 'Polierarm',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Battleaxe': {
-		Upgrade: 'Axeidic',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Greatsword': {
-		Upgrade: 'Greatersword',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Boots': {
-		Upgrade: 'Bootboost',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Helmet': {
-		Upgrade: 'Hellishmet',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Pants': {
-		Upgrade: 'Pantastic',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Shoulderguards': {
-		Upgrade: 'Smoldershoulder',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Breastplate': {
-		Upgrade: 'Bestplate',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Arbalest': {
-		Upgrade: 'Harmbalest',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Gambeson': {
-		Upgrade: 'GambesOP',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
-	},
-	'Shield': {
-		Upgrade: 'Supershield',
-		Stat: 'health',
-		Resource: 'wood',
-		Equip: true
-	}
-};
-var mapresourcetojob = { "food": "Farmer", "wood": "Lumberjack", "metal": "Miner", "science": "Scientist" };
-function equipEffect(a, b) {
-
-	if (b.Equip) return a[b.Stat + 'Calculated'];
-
-	var c = a.increase.by * a.owned, d = game.upgrades.Gymystic.done ?
-		game.upgrades.Gymystic.modifier + 0.01 * (game.upgrades.Gymystic.done - 1) :
-		1, e = a.increase.by * (a.owned + 1) * d;
-	return e - c
-}
-function equipCost(a, b) {
-	var c = parseFloat(getBuildingItemPrice(a, b.Resource, b.Equip, 1));
-	return c = b.Equip ?
-		Math.ceil(c * Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)) :
-		Math.ceil(c * Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level)), c
-}
-
-function evaluateEquipmentEfficiency(equipName) {
-	var equip = equipmentList[equipName];
-	var gameResource = equip.Equip ? game.equipment[equipName] : game.buildings[equipName];
-	if (equipName == 'Shield')
-		equip.Stat = gameResource.blockNow ? "block" : "health";
-
-	var Effect = equipEffect(gameResource, equip);
-	var Cost = equipCost(gameResource, equip);
-	var Factor = Effect / Cost;
-	var StatusBorder = 'white';
-	var Wall = false;
-
-	var BuyWeaponUpgrades = ((getPageSetting('BuyWeaponsNew') == 1) || (getPageSetting('BuyWeaponsNew') == 2));
-	var BuyArmorUpgrades = ((getPageSetting('BuyArmorNew') == 1) || (getPageSetting('BuyArmorNew') == 2));
-	if (!game.upgrades[equip.Upgrade].locked) {
-		var CanAfford = canAffordTwoLevel(game.upgrades[equip.Upgrade]);
-		if (equip.Equip) {
-			var NextEffect = PrestigeValue(equip.Upgrade);
-			if ((challengeActive('Scientist') && getScientistLevel() > 2) || (!BuyWeaponUpgrades && !BuyArmorUpgrades))
-				var NextCost = Infinity;
-			else
-				var NextCost = Math.ceil(getNextPrestigeCost(equip.Upgrade) * Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level));
-			Wall = (NextEffect / NextCost > Factor);
-		}
-
-
-		if (!CanAfford) {
-			StatusBorder = 'yellow';
-		} else {
-			if (!equip.Equip) {
-
-				StatusBorder = 'red';
-			} else {
-				var CurrEffect = gameResource.level * Effect;
-				var NeedLevel = Math.ceil(CurrEffect / NextEffect);
-				var Ratio = gameResource.cost[equip.Resource][1];
-				var NeedResource = NextCost * (Math.pow(Ratio, NeedLevel) - 1) / (Ratio - 1);
-				if (game.resources[equip.Resource].owned > NeedResource) {
-					StatusBorder = 'red';
-				} else {
-					StatusBorder = 'orange';
-				}
-			}
-		}
-	}
-	if (game.jobs[mapresourcetojob[equip.Resource]].locked && (!challengeActive('Metal'))) {
-		Factor = 0;
-		Wall = true;
-	}
-
-	var isLiquified = (game.options.menu.liquification.enabled && game.talents.liquification.purchased && !game.global.mapsActive && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name == "Liquimp");
-	var cap = 100;
-	if (equipmentList[equipName].Stat == 'health') cap = getPageSetting('CapEquiparm');
-	if (equipmentList[equipName].Stat == 'attack') cap = getPageSetting('CapEquip2');
-	if ((isLiquified) && cap > 0 && gameResource.level >= (cap / MODULES["equipment"].capDivisor)) {
-		Factor = 0;
-		Wall = true;
-	} else if (cap > 0 && gameResource.level >= cap) {
-		Factor = 0;
-		Wall = true;
-	}
-	if (equipName != 'Gym' && game.global.world < 60 && game.global.world >= 58 && MODULES["equipment"].waitTill60) {
-		Wall = true;
-	}
-	if (gameResource.level < 2 && getPageSetting('always2') == true) {
-		Factor = 999 - gameResource.prestige;
-	}
-	if (equipName == 'Shield' && gameResource.blockNow &&
-		game.upgrades['Gymystic'].allowed - game.upgrades['Gymystic'].done > 0) {
-		needGymystic = true;
-		Factor = 0;
-		Wall = true;
-		StatusBorder = 'orange';
-	}
-	return {
-		Stat: equip.Stat,
-		Factor: Factor,
-		StatusBorder: StatusBorder,
-		Wall: Wall,
-		Cost: Cost
-	};
-}
-
-//Radon
-var RequipmentList = {
 	'Dagger': {
 		Upgrade: 'Dagadder',
 		Stat: 'attack',
@@ -306,7 +120,7 @@ function equipsToGet(targetZone, targetPrestige) {
 }
 
 //Working out cheapestt Equips & Prestiges
-function CheapestEquipmentCost() {
+function cheapestEquipmentCost() {
 	//Looping through each piece of equipment
 
 	var equipmentName = null;
@@ -323,8 +137,8 @@ function CheapestEquipmentCost() {
 	for (var equipName in game.equipment) {
 		if (!game.equipment[equipName].locked) {
 			//Checking cost of next equipment level. Blocks unavailable ones.
-			if (game.challenges.Pandemonium.isEquipBlocked(equipName) || RequipmentList[equipName].Resource == 'wood') continue;
-			nextLevelEquipmentCost = game.equipment[equipName].cost[RequipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[RequipmentList[equipName].Resource][1], game.equipment[equipName].level) * getEquipPriceMult();
+			if (game.challenges.Pandemonium.isEquipBlocked(equipName) || equipmentList[equipName].Resource == 'wood') continue;
+			nextLevelEquipmentCost = game.equipment[equipName].cost[equipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[equipmentList[equipName].Resource][1], game.equipment[equipName].level) * getEquipPriceMult();
 			//Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
 			if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost == null) {
 				equipmentName = equipName;
@@ -349,11 +163,9 @@ function CheapestEquipmentCost() {
 	return [equipmentName, nextEquipmentCost, prestigeName, nextLevelPrestigeCost]
 }
 
-//Shol Territory
-
 function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, showAllEquips, fakeLevels = {}, ignorePrestiges) {
 
-	for (var i in RequipmentList) {
+	for (var i in equipmentList) {
 		if (typeof fakeLevels[i] === 'undefined') {
 			fakeLevels[i] = 0;
 		}
@@ -402,13 +214,13 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		if (game.resources.metal.owned > metalTotal) metalTotal = game.resources.metal.owned;
 	}
 
-	for (var i in RequipmentList) {
+	for (var i in equipmentList) {
 		if (game.equipment[i].locked) continue;
-		var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
+		var isAttack = (equipmentList[i].Stat === 'attack' ? 0 : 1);
 		var skipForLevels = !skipForLevels && isAttack == 0 ? getPageSetting('equipCapAttack') :
 			!skipForLevels && isAttack == 1 ? getPageSetting('equipCapHealth') :
 				skipForLevels
-		var nextLevelCost = game.equipment[i].cost[RequipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[RequipmentList[i].Resource][1], game.equipment[i].level + fakeLevels[i]) * getEquipPriceMult();
+		var nextLevelCost = game.equipment[i].cost[equipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[equipmentList[i].Resource][1], game.equipment[i].level + fakeLevels[i]) * getEquipPriceMult();
 		var prestige = false;
 		var ignorePrestiges_temp = ignorePrestiges;
 		//Skipping gyms when not in u1
@@ -435,14 +247,14 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skips buying shields when you can afford bonfires on Hypothermia.
 		if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i == 'Shield') continue;
 		//Skips through equips if they cost more than your Requippercent setting value.
-		if (RequipmentList[i].Resource == 'metal' && !zoneGo && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
+		if (equipmentList[i].Resource == 'metal' && !zoneGo && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
 		//Skips through equips if they don't cost metal and you don't have enough resources for them.
-		if (RequipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
+		if (equipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
 		//Skips through equips if you're on a metal shred daily and you don't have enough resources for them.
-		if (!showAllEquips && RequipmentList[i].Resource === 'metal' && metalShred && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
+		if (!showAllEquips && equipmentList[i].Resource === 'metal' && metalShred && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
 
-		var nextLevelValue = game.equipment[i][RequipmentList[i].Stat + "Calculated"];
-		var isAttack = (RequipmentList[i].Stat === 'attack' ? 0 : 1);
+		var nextLevelValue = game.equipment[i][equipmentList[i].Stat + "Calculated"];
+		var isAttack = (equipmentList[i].Stat === 'attack' ? 0 : 1);
 		var safeRatio = nextLevelCost / nextLevelValue;
 
 		if (!ignorePrestiges && getPageSetting('equipPrestige') === 0 && game.equipment[i].level < 6 && game.resources.metal.owned * 0.2 < buyPrestigeMaybe(i, resourceMaxPercent)[2]) ignorePrestiges_temp = true;
@@ -491,11 +303,11 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 	var prestigeUpgrade = "";
 	var prestigeDone = false;
 
-	var allUpgradeNames = Object.getOwnPropertyNames(RequipmentList);
+	var allUpgradeNames = Object.getOwnPropertyNames(equipmentList);
 
 	for (var upgrade of allUpgradeNames) {
 		if (upgrade === equipName) {
-			prestigeUpgrade = game.upgrades[RequipmentList[upgrade].Upgrade];
+			prestigeUpgrade = game.upgrades[equipmentList[upgrade].Upgrade];
 			if (prestigeUpgrade.allowed === prestigeUpgrade.done) prestigeDone = true;
 			break;
 		}
@@ -509,7 +321,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 
 	var resource = (equipName == "Shield") ? 'wood' : 'metal'
 	var equipStat = (typeof equipment.attack !== 'undefined') ? 'attack' : 'health';
-	var prestigeUpgradeName = RequipmentList[equipName].Upgrade;
+	var prestigeUpgradeName = equipmentList[equipName].Upgrade;
 
 	if (prestigeUpgrade.locked || (prestigeUpgradeName == 'Supershield' && getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult() > game.resources.wood.owned * resourceSpendingPct)) return false;
 
@@ -562,11 +374,11 @@ function autoEquip() {
 			for (var equipName in game.equipment) {
 				if (buyPrestigeMaybe(equipName)[0]) {
 					if (!game.equipment[equipName].locked) {
-						var isAttack = (RequipmentList[equipName].Stat === 'attack' ? 0 : 1);
+						var isAttack = (equipmentList[equipName].Stat === 'attack' ? 0 : 1);
 						//Skipping if on reflect daily and our dmg is too high
 						if (reflectShouldBuyEquips() && isAttack === 0) continue;
 						if (game.global.universe === 2 && getPageSetting('equipNoShields') && equipName == 'Shield') continue;
-						if ((getPageSetting('equipPrestige') === 2 || mostEfficientEquipment()[isAttack + 4]) && buyUpgrade(RequipmentList[equipName].Upgrade, true, true))
+						if ((getPageSetting('equipPrestige') === 2 || mostEfficientEquipment()[isAttack + 4]) && buyUpgrade(equipmentList[equipName].Upgrade, true, true))
 							prestigeLeft = true;
 					}
 				}
@@ -656,7 +468,7 @@ function autoEquip() {
 					if (equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned) {
 						if (!game.equipment[equipName].locked) {
 							if (equipPrestige) {
-								buyUpgrade(RequipmentList[equipName].Upgrade, true, true)
+								buyUpgrade(equipmentList[equipName].Upgrade, true, true)
 								debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, "equips", '*upload');
 							}
 							else if (maxCanAfford > 0) {
@@ -741,7 +553,7 @@ function estimateEquipsForZone(rEFIndex) {
 	if (healthNeededMulti < 1 && attackNeededMulti < 1 || ((healthNeededMulti + attackNeededMulti) / 2 < 1)) { return [0, {}] };
 
 	var ourAttack = 6;
-	for (var i in RequipmentList) {
+	for (var i in equipmentList) {
 		if (game.equipment[i].locked !== 0) continue;
 		var attackBonus = game.equipment[i].attackCalculated;
 		var level = game.equipment[i].level;
@@ -757,7 +569,7 @@ function estimateEquipsForZone(rEFIndex) {
 
 	while (healthNeeded > 0) {
 		var bestArmor = mostEfficientEquipment(1, true, true, false, true, bonusLevels, true)[1];
-		healthNeeded -= game.equipment[bestArmor][RequipmentList[bestArmor].Stat + "Calculated"];
+		healthNeeded -= game.equipment[bestArmor][equipmentList[bestArmor].Stat + "Calculated"];
 		if (typeof bonusLevels[bestArmor] === 'undefined') {
 			bonusLevels[bestArmor] = 0;
 		}
@@ -767,7 +579,7 @@ function estimateEquipsForZone(rEFIndex) {
 	}
 	while (attackNeeded > 0) {
 		var bestWeapon = mostEfficientEquipment(1, true, true, false, true, bonusLevels, true)[0];
-		attackNeeded -= game.equipment[bestWeapon][RequipmentList[bestWeapon].Stat + "Calculated"];
+		attackNeeded -= game.equipment[bestWeapon][equipmentList[bestWeapon].Stat + "Calculated"];
 		if (typeof bonusLevels[bestWeapon] === 'undefined') {
 			bonusLevels[bestWeapon] = 0;
 		}
@@ -778,23 +590,72 @@ function estimateEquipsForZone(rEFIndex) {
 
 	var totalCost = 0;
 	for (var equip in bonusLevels) {
-		var equipCost = game.equipment[equip].cost[RequipmentList[equip].Resource];
+		var equipCost = game.equipment[equip].cost[equipmentList[equip].Resource];
 		totalCost += getTotalMultiCost((equipCost[0]), bonusLevels[equip], equipCost[1], true) * getEquipPriceMult();
 	}
 
 	return [totalCost, bonusLevels];
 }
 
-function mapLevelHasPrestiges(level) {
-	for (const eq of Object.values(equipmentList)) {
-		if (!eq.Equip) {
-			continue;
+function displayMostEfficientEquipment() {
+
+	if (usingRealTimeOffline) return;
+	var $eqNamePrestige = null;
+
+	var highlightSetting = getPageSetting('equipEfficientEquipDisplay');
+
+	if (!highlightSetting) return;
+
+	if (!highlightSetting) {
+		for (var item in game.equipment) {
+			if (game.upgrades[equipmentList[item].Upgrade].locked == 0) {
+				$eqNamePrestige = document.getElementById(equipmentList[item].Upgrade);
+				if (document.getElementsByClassName(item).length == 0) {
+					document.getElementById(equipmentList[item].Upgrade).classList.add("efficient");
+					document.getElementById(equipmentList[item].Upgrade).classList.add(item);
+				}
+			}
+
+			var $eqName = document.getElementById(item);
+			if (!$eqName)
+				continue;
+
+			swapClass('efficient', 'efficientNo', $eqName)
+			if ($eqNamePrestige != null)
+				swapClass('efficient', 'efficientNo', $eqNamePrestige)
 		}
-		const prestigeUnlock = game.mapUnlocks[eq.Upgrade];
-		const pMapLevel = prestigeUnlock.last + 5;
-		if (game.upgrades[eq.Upgrade].allowed && prestigeUnlock && pMapLevel <= level) {
-			return true;
+
+	}
+
+	for (var item in game.equipment) {
+		if (game.equipment[item].locked) continue;
+		if (item == "Shield") continue;
+		var bestBuys = mostEfficientEquipment(1, true, true, false, true);
+		var isAttack = (equipmentList[item].Stat === 'attack' ? 0 : 1);
+		var $eqNamePrestige = null;
+		if (game.upgrades[equipmentList[item].Upgrade].locked == 0) {
+			$eqNamePrestige = document.getElementById(equipmentList[item].Upgrade);
+			if (document.getElementsByClassName(item).length == 0) {
+				document.getElementById(equipmentList[item].Upgrade).classList.add("efficient");
+				document.getElementById(equipmentList[item].Upgrade).classList.add(item);
+			}
+			if (document.getElementById(equipmentList[item].Upgrade).classList.contains('efficientYes') && (item != bestBuys[isAttack] || (item == bestBuys[isAttack] && bestBuys[isAttack + 4] !== true)))
+				swapClass('efficient', 'efficientNo', $eqNamePrestige)
+		}
+		if (item == bestBuys[isAttack] && bestBuys[isAttack + 4] === true) {
+			bestBuys[isAttack] = equipmentList[item].Upgrade;
+			if (document.getElementById(item).classList.contains('efficientYes'))
+				swapClass('efficient', 'efficientNo', document.getElementById(item))
+			item = equipmentList[item].Upgrade;
+		}
+
+		var $eqName = document.getElementById(item);
+		if (!$eqName)
+			continue;
+		if (item == bestBuys[isAttack])
+			swapClass('efficient', 'efficientYes', $eqName)
+		else {
+			swapClass('efficient', 'efficientNo', $eqName)
 		}
 	}
-	return false;
 }
