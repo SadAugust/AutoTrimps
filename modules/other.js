@@ -829,7 +829,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		if (autoBattle.oneTimers.Gathermate.owned)
 			amt_local *= autoBattle.oneTimers.Gathermate.getMult();
 	}
-	if (((what == "food" || (game.global.stringVersion >= '5.9.0' && what == "wood")) && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15))
+	if (((what == "food" || (what == "wood" && game.global.stringVersion >= '5.9.0')) && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15))
 		amt_local *= game.jobs.Meteorologist.getExtraMult();
 	if (Fluffy.isRewardActive('gatherer'))
 		amt_local *= 2;
@@ -869,7 +869,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 function calculateParityBonus_Local(workerRatio, heirloom) {
 	if (!game.global.StaffEquipped || game.global.StaffEquipped.rarity < 10) {
 		game.global.parityBonus = 1;
-		return;
+		return 1;
 	}
 	var allowed = ["Farmer", "Lumberjack", "Miner"];
 	var totalWorkers = 0;
