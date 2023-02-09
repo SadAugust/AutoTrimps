@@ -773,6 +773,7 @@ ul.tab li a:hover {
 .windowWorldHDFarm,
 .windowCellHDFarm,
 .windowAutoLevelHDFarm,
+.windowJobRatioHDFarm,
 .windowLevelHDFarm,
 .windowEndZoneHDFarm,
 .windowHDMult,
@@ -795,7 +796,7 @@ ul.tab li a:hover {
 }
 
 .windowPriorityHDFarm {
-	width: 6%;
+	width: 7%;
 }
 
 .windowWorldHDFarm {
@@ -818,29 +819,33 @@ ul.tab li a:hover {
 	width: 7%;
 }
 
+.windowJobRatioHDFarm {
+	width: 7%;
+}
+
 .windowHDMult,
 .windowHDBase {
-	width: 8%;
+	width: 7%;
 }
 
 .windowHDType {
-	width: 11%;
+	width: 10%;
 }
 
 .windowRunTypeHDFarm {
-	width: 26%;
+	width: 20%;
 }
 
 .windowChallengeOnHDFarm .windowChallengeHDFarm,
 .windowChallenge3OnHDFarm .windowChallenge3HDFarm {
 	display: inline-block;
-	width: 13%;
+	width: 10%;
 }
 
 .windowChallenge3OnHDFarm .windowRunTypeHDFarm,
 .windowChallengeOnHDFarm .windowRunTypeHDFarm {
 	display: inline-block;
-	width: 13%;
+	width: 10%;
 }
 
 .windowChallengeOffHDFarm .windowChallengeHDFarm,

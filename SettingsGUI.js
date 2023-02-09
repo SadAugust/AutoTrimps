@@ -1831,6 +1831,10 @@ function updateATVersion() {
 			changelog.push("Have added a Priority input for every farming setting to allow you to properly allow certain lines to run before others without having to save the window multiple times to make it work.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.003') {
+			changelog.push("With Antennas/Meteorologists increasing wood gain in 5.9.0 I've added a job ratio input for the HD Farm setting to allow for more user control of equip farming. Was previously Set to '0,0,1' if you want to use the same setting as before.")
+		}
+
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
 		verticalCenterTooltip(false, true);

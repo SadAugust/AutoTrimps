@@ -2663,7 +2663,7 @@ function HDFarm() {
 		var rHDFSettings = rHDFBaseSetting[rHDFIndex];
 		var rHDFMapLevel = rHDFSettings.level;
 		var rHDFSpecial = getAvailableSpecials('lmc', true);
-		var rHDFJobRatio = '0,0,1,0';
+		var rHDFJobRatio = rHDFSettings.jobratio === undefined ? '0,0,1' : rHDFSettings.jobratio;
 		var hdType = rHDFSettings.hdType;
 		var rHDFMax = hdType === 'world' && game.global.mapBonus != 10 ? 10 : null;
 		var rHDFMin = hdType === 'world' && game.global.mapBonus != 10 ? 0 : null;
