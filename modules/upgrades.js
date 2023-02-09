@@ -123,6 +123,7 @@ function buyUpgrades() {
 	for (var upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
 		var gameUpgrade = game.upgrades[upgrade];
+		if (gameUpgrade.prestiges) continue;
 		var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
 		if (!available) continue;
 		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") && bwRewardUnlocked("DecaBuild") && getPageSetting('buildingsType') == 0);
