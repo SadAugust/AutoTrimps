@@ -195,12 +195,12 @@ function c2runner() {
 
 		//Adding Fused challenges to array if setting is toggled
 		if (game.global.stringVersion >= '5.9.0' && getPageSetting('c2Fused')) {
-			if (highestZone >= 45) challengeArray.push('Medipline');
-			if (highestZone >= 180) challengeArray.push('Wave');
+			if (highestZone >= 45) challengeArray.push('Enlightened');
+			if (highestZone >= 180) challengeArray.push('Waze');
 			if (highestZone >= 180) challengeArray.push('Toxad');
-			if (game.global.prisonClear >= 1) challengeArray.push('Slowtricity');
+			if (highestZone >= 130) challengeArray.push('Paralysis');
 			if (highestZone >= 145) challengeArray.push('Nometal');
-			if (highestZone >= 150) challengeArray.push('Balancology');
+			if (highestZone >= 150) challengeArray.push('Topology');
 		}
 
 		if (highestZone >= 35) challengeArray.push('Size');
