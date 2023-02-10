@@ -81,6 +81,7 @@ function autoPortal() {
 		case "Lead":
 		case "Corrupted":
 		case "Domination":
+		case "Frigid":
 		case "Experience":
 		case "Melt":
 		case "Bublé":
