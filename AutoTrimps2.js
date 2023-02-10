@@ -171,8 +171,6 @@ function mainLoop() {
 		currPortalUniverse = portalUniverse;
 	}
 
-	populateShredWindow();
-
 	if (ATrunning == false) return;
 	if (reloadDelay) {
 		if (!game.options.menu.pauseGame.enabled) {
