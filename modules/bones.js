@@ -9,8 +9,6 @@ function boneShrine() {
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const currChall = game.global.challengeActive;
-	const shredActive = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined';
-	const shredMods = shredActive ? dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength) : [];
 
 	//Setting up variables
 	const rBoneShrineBaseSettings = getPageSetting('boneShrineSettings');
@@ -25,10 +23,6 @@ function boneShrine() {
 			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
 				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
 			if (isDaily && currSetting.runType !== 'Daily') continue;
-			if (isDaily && (currSetting.runType !== 'Daily' ||
-				currSetting.shredActive === 'Shred' && (!shredActive || (shredActive && !shredMods.includes(currSetting.gather))) ||
-				currSetting.shredActive === 'No Shred' && shredActive && shredMods.includes(currSetting.gather))
-			) continue;
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
@@ -60,11 +54,6 @@ function boneShrine() {
 			if (!rBSRunningAtlantrimp) {
 				runUniqueMap(rBoneShrineDoubler, false);
 			}
-			if (shredActive && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineGather) && game.global.mapsActive && game.global.lastClearedMapCell + 1 >= 95 && game.global.hemmTimer < 30 && game.global.lastClearedMapCell !== getCurrentMapObject().size - 2) {
-				mapsClicked();
-				debug('Pausing ' + rBoneShrineDoubler + ' until shred timer has reset.');
-			}
-			if (shredActive && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes(rBoneShrineGather) && game.global.preMapsActive && game.global.currentMapId !== '' && game.global.hemmTimer >= 140) rRunMap();
 		}
 		if (!rBoneShrineAtlantrimp || (rBoneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === rBoneShrineDoubler && game.global.lastClearedMapCell === getCurrentMapObject().size - 4)) {
 			rShouldBoneShrine = true;

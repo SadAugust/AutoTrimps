@@ -544,7 +544,6 @@ function equalityManagement() {
 	//Daily modifiers active
 	var isDaily = challengeActive('Daily')
 	var dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined' //Empower
-	var dailyReflect = isDaily && typeof game.global.dailyChallenge.mirrored !== 'undefined'; //Reflect
 	var dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
 	var dailyWeakness = isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
@@ -573,7 +572,7 @@ function equalityManagement() {
 	var gammaDmg = gammaBurstPct;
 	if (gammaDmg === 1) gammaMaxStacksCheck = 0;
 	var gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
-	var fuckGamma = (dailyReflect || (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger));
+	var fuckGamma = (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger);
 
 	var critType = 'maybe'
 	if (challengeActive('Wither') || challengeActive('Glass')) critType = 'never'
@@ -729,27 +728,6 @@ function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHea
 	debug("Our dmg (min) = " + ourDamage.toFixed(4) + " | " + "Our health = " + ourHealth.toFixed(4))
 	debug("Enemy dmg = " + enemyDmgEquality.toFixed(4) + " | " + "Enemy health = " + enemyHealth.toFixed(4))
 	if (dmgMult) debug("Mult = " + dmgMult)
-}
-
-function reflectShouldBuyEquips() {
-	if (challengeActive('Daily')) {
-		if (typeof (game.global.dailyChallenge.mirrored) !== 'undefined') {
-			var ourHealth = calcOurHealth(false, 'world');
-			var ourDamage = calcOurDmg('max', (game.portal.Equality.radLevel - 15), false, 'world', 'force', 0, false)
-			var gammaToTrigger = autoBattle.oneTimers.Burstier.owned ? 4 : 5;
-			var reflectPct = dailyModifiers.mirrored.getMult(game.global.dailyChallenge.mirrored.strength);
-			var critChance = (getPlayerCritChance() - Math.floor(getPlayerCritChance())) * 100
-			if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
-				ourDamage /= game.portal.Tenacity.getMult();
-				ourDamage *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
-			}
-			if (ourDamage * (1 + (reflectPct * gammaToTrigger)) > ourHealth) {
-				return true
-			}
-
-		}
-	}
-	return false;
 }
 
 function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
@@ -1440,17 +1418,13 @@ function dailyModiferReduction() {
 		if (!settingsArray[item].enabled) continue;
 		var dailyReductionTemp = 0;
 		var modifier = item;
-		if (modifier.includes('Shred')) modifier = 'Every 15';
 		if (modifier.includes('Weakness')) modifier = 'Enemies stack a debuff with each attack, reducing Trimp attack by';
 		if (modifier.includes('Famine')) modifier = 'less Metal, Food, Wood, and Gems from all sources';
 		if (modifier.includes('Large')) modifier = 'All housing can store';
 
 		for (var x = 0; x < dailyMods.length; x++) {
 			if (dailyMods[x].includes(modifier)) {
-				if (modifier.includes('Every 15') && dailyMods[x].includes(item.split('Shred')[1]))
-					dailyReductionTemp = settingsArray[item].zone
-				else
-					dailyReductionTemp = settingsArray[item].zone
+				dailyReductionTemp = settingsArray[item].zone
 			}
 			if (dailyReduction > dailyReductionTemp) dailyReduction = dailyReductionTemp;
 		}
@@ -1711,64 +1685,4 @@ function getSpecialTime(special, maps, noImports) {
 	}
 
 	return (specialTime);
-}
-
-function getShredHtml() {
-	var html = "";
-	html += "<div class='boneShrineBtn generatorState' id='shredTimer'>"
-	html += "<div class='col-shred'><div id='shredTickContainer'> <div id='shredRadialContainer' class='radial-progress'> <div class='radial-progress-circle'> <div class='radial-progress-arrow static''></div></div><div " + "id='shredRadial' class='radial-progress-circle'> <div class='radial-progress-arrow mobile'></div> </div> <div id='clockKnob' class='radial-progress-knob'></div></div><span id='shredNextTick' style='pointer-events: none;'>0</span></div></div></div></div>";
-	html += "</div>";
-	return html;
-}
-
-function populateShredWindow() {
-	if (game.global.stringVersion >= '5.9.0') return;
-	const dailyMods = game.global.dailyChallenge;
-	//Remove shred button if it's there and not on a shred daily
-	if ((typeof dailyMods.hemmorrhage === 'undefined' || portalUniverse !== 2) && $('#wood').firstChild.id === 'shredTimer') {
-		$('#wood').firstElementChild.remove();
-	}
-	//Add shred button if on a shred daily and not visible.
-	else if (typeof dailyMods.hemmorrhage !== 'undefined') {
-		if ($('#wood').firstChild.id !== 'shredTimer') {
-			var innerhtml = getShredHtml();
-			innerhtml += $('#wood').innerHTML;
-			$('#wood').innerHTML = innerhtml;
-		}
-		updateNextShredTickTime()
-	}
-}
-
-var shredTime = 0;
-function updateNextShredTickTime() {
-	//update tick time
-	var nextTickElem = document.getElementById('shredNextTick');
-	if (!nextTickElem) return;
-
-	var tickTime = game.global.stringVersion >= '5.9.0' ? 30 : 15;
-	var nextTickIn = game.global.hemmTimer / 10;
-	var framesPerVisual = 10;
-	nextTickIn = (isNumberBad(nextTickIn)) ? 0 : nextTickIn;
-	nextTickIn = Math.round(nextTickIn * 10) / 10;
-	if (date.getMilliseconds() % 1 === 0) {
-		shredTime = framesPerVisual - 1;
-	}
-
-	if (nextTickElem)
-		nextTickElem.innerHTML = (prettify(Math.floor(nextTickIn)));
-	var countingTick = Math.round((tickTime - nextTickIn) * 10) / 10;
-	countingTick = Math.round(countingTick * 10) / 10;
-	if (shredTime >= framesPerVisual - 1) {
-		shredTime = 0;
-		var timeRemaining = tickTime - countingTick;
-		if (timeRemaining != 0 && timeRemaining <= framesPerVisual / 10) {
-			timeRemaining -= 0.1;
-			timeRemaining = Math.round(timeRemaining * 10) / 10;
-			shredTime = framesPerVisual;
-			framesPerVisual = timeRemaining * 10;
-			shredTime -= framesPerVisual;
-		}
-		goRadial(document.getElementById('shredRadial'), countingTick, tickTime, 10 * framesPerVisual);
-	}
-	else shredTime++;
 }

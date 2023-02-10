@@ -182,9 +182,6 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		skipForLevels = Infinity;
 	}
 
-
-	var metalShred = !showAllEquips && challengeActive('Daily') && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
-
 	var mostEfficient = [
 		{
 			name: "",
@@ -207,11 +204,6 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	if ((MODULES.mapFunctions.workerRatio !== null && rShouldBoneShrine) || rMapSettings.jobRatio !== undefined) {
 		if (MODULES.mapFunctions.workerRatio !== null) workerRatio = MODULES.mapFunctions.workerRatio;
 		else workerRatio = rMapSettings.jobRatio;
-	}
-
-	if (metalShred) {
-		metalTotal = metalShred && (currentMap === 'Map Farm' || currentMap === 'Map Bonus') ? scaleToCurrentMapLocal(simpleSecondsLocal("metal", 16, true, workerRatio), false, true, rMapSettings.mapLevel) : game.resources.metal.owned;
-		if (game.resources.metal.owned > metalTotal) metalTotal = game.resources.metal.owned;
 	}
 
 	for (var i in equipmentList) {
@@ -240,8 +232,6 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		if (!buyPrestigeMaybe(i, resourceMaxPercent) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
 		//Skips if ignoreShield variable is true.
 		if (game.global.universe === 2 && ignoreShield && i == 'Shield') continue;
-		//Skipping if on reflect daily and our dmg is too high
-		if (game.global.universe === 2 && reflectShouldBuyEquips() && isAttack === 0 && !showAllEquips) continue;
 		//Skips looping through equips if they're blocked during Pandemonium.
 		if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
 		//Skips buying shields when you can afford bonfires on Hypothermia.
@@ -250,8 +240,6 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		if (equipmentList[i].Resource == 'metal' && !zoneGo && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
 		//Skips through equips if they don't cost metal and you don't have enough resources for them.
 		if (equipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
-		//Skips through equips if you're on a metal shred daily and you don't have enough resources for them.
-		if (!showAllEquips && equipmentList[i].Resource === 'metal' && metalShred && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
 
 		var nextLevelValue = game.equipment[i][equipmentList[i].Stat + "Calculated"];
 		var isAttack = (equipmentList[i].Stat === 'attack' ? 0 : 1);
@@ -260,7 +248,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		if (!ignorePrestiges && getPageSetting('equipPrestige') === 0 && game.equipment[i].level < 6 && game.resources.metal.owned * 0.2 < buyPrestigeMaybe(i, resourceMaxPercent)[2]) ignorePrestiges_temp = true;
 		if ((getPageSetting('equipPrestige') === 1 && !game.mapUnlocks.AncientTreasure.canRunOnce && game.resources.metal.owned * 0.08 < buyPrestigeMaybe(i, resourceMaxPercent)[2])) ignorePrestiges_temp = true;
 
-		if (!ignorePrestiges_temp && (buyPrestigeMaybe(i, resourceMaxPercent)[0] && (buyPrestigeMaybe(i, resourceMaxPercent)[1] > mostEfficient[isAttack].statPerResource || buyPrestigeMaybe(i, resourceMaxPercent)[3])) && !(metalShred && metalTotal < buyPrestigeMaybe(i, resourceMaxPercent)[2])) {
+		if (!ignorePrestiges_temp && (buyPrestigeMaybe(i, resourceMaxPercent)[0] && (buyPrestigeMaybe(i, resourceMaxPercent)[1] > mostEfficient[isAttack].statPerResource || buyPrestigeMaybe(i, resourceMaxPercent)[3]))) {
 			safeRatio = buyPrestigeMaybe(i, resourceMaxPercent)[1];
 			nextLevelCost = buyPrestigeMaybe(i, resourceMaxPercent)[2]
 			prestige = true;
@@ -375,8 +363,6 @@ function autoEquip() {
 				if (buyPrestigeMaybe(equipName)[0]) {
 					if (!game.equipment[equipName].locked) {
 						var isAttack = (equipmentList[equipName].Stat === 'attack' ? 0 : 1);
-						//Skipping if on reflect daily and our dmg is too high
-						if (reflectShouldBuyEquips() && isAttack === 0) continue;
 						if (game.global.universe === 2 && getPageSetting('equipNoShields') && equipName == 'Shield') continue;
 						if ((getPageSetting('equipPrestige') === 2 || mostEfficientEquipment()[isAttack + 4]) && buyUpgrade(equipmentList[equipName].Upgrade, true, true))
 							prestigeLeft = true;
@@ -389,19 +375,11 @@ function autoEquip() {
 	//Initialise settings for later user
 	var alwaysLvl2 = getPageSetting('equip2');
 	var alwaysPandemonium = getPageSetting('pandemoniumAE') > 0;
-	var metalShred = challengeActive('Daily') && typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal')
 	// always2 / alwaysPrestige / alwaysPandemonium
-	if (alwaysLvl2 || (alwaysPandemonium && challengeActive('Pandemonium')) || metalShred) {
+	if (alwaysLvl2 || (alwaysPandemonium && challengeActive('Pandemonium'))) {
 		for (var equip in game.equipment) {
 			if (!game.equipment[equip].locked) {
 				if (alwaysLvl2 && game.equipment[equip].level < 2) {
-					if (game.global.universe === 2 && reflectShouldBuyEquips() && typeof (item.attack) === 'undefined') continue;
-					buyEquipment(equip, null, true, 1);
-					debug('Upgrading ' + '1' + ' ' + equip, "equips", '*upload3');
-				}
-				if (metalShred && game.global.hemmTimer <= 3) {
-					if (equip === 'Shield') continue;
-					if (reflectShouldBuyEquips() && typeof (item.attack) === 'undefined') continue;
 					buyEquipment(equip, null, true, 1);
 					debug('Upgrading ' + '1' + ' ' + equip, "equips", '*upload3');
 				}

@@ -135,7 +135,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 	if (event == "UniqueMaps") {
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>\
 		<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input.\
-		</p><p>The MP Smithy settings will run the Melting Point map once you've reached the value of Smithies in this setting. Each run type has it's own setting and the daily shred setting will override the regular daily setting if either wood or metal shred is active.\
 		</p></div><table id='autoPurchaseConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
@@ -167,7 +166,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 			//Adding in Smithy Settings if in u2
 			if (game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy");
 			if (game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_Daily");
-			if (game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_Daily_Shred");
 			if (game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_C3");
 		}
 
@@ -255,9 +253,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//Daily Auto Portal
 	if (event == "DailyAutoPortal") {
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose different portal zones depending on specific modifiers that the daily you're running has. For example if your Daily has a resource shred modifier and you have '-3' input in that box then it will set both your void map zone and daily portal zone to 3 zones lower than your settings. Will only ever use the lowest value that is listed so you can't do a combination of -6 for dailies that have both Shred and Reflect by doing a -3 in each box.\
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose different portal zones depending on specific modifiers that the daily you're running has. For example if your Daily has a resource empower modifier and you have '-3' input in that box then it will set both your void map zone and daily portal zone to 3 zones lower than your settings. Will only ever use the lowest value that is listed so you can't do a combination of -6 for dailies that have both Empower and Famine by doing a -3 in each box.\
 		</p><p><b>Reflect:</b> % damage reflect damage modifier\
-		</p><p><b>Shred:</b> % resource loss every 15s modifier\
 		</p><p><b>Empower:</b> Empower modifier.\
 		</p><p><b>Mutimp:</b> % chance to turn enemies into Mutimps.\
 		</p><p><b>Bloodthirst:</b> Enemies gaining the bloodthirst buff on kills.\
@@ -284,10 +281,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 			setting = settingGroup[item];
 			checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', (setting && setting.enabled));
 			var itemName = item;
-			if (itemName.includes('Shred')) {
-				itemName = item.replace("Shred", "Shred (");
-				itemName += (")");
-			}
 			//Start
 			tooltipText += "<td><div class='row'>"
 			//Checkbox & name
@@ -341,7 +334,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (hypothermia) windowSize = 'tooltipWindow30'
 		if (insanity) windowSize = 'tooltipWindow40'
 		if (voidMap) windowSize = 'tooltipWindow50'
-		if (worshipperFarm) windowSize = 'tooltipWindow50'
+		if (worshipperFarm) windowSize = 'tooltipWindow55'
 		if (smithyFarm) windowSize = 'tooltipWindow50'
 		if (boneShrine) windowSize = 'tooltipWindow55'
 		if (hdFarm) windowSize = 'tooltipWindow55'
@@ -382,7 +375,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (mapBonus) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Health<br>Bonus</div>"
 			if (mapBonus) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Health<br>HD Ratio</div>"
 			if (hdFarm) tooltipText += "<div class='windowCell" + varPrefix + "\'>Map<br>Cap</div>"
-			if (universe === 2 && (mapFarm || hdFarm)) tooltipText += "<div class='windowCell" + varPrefix + "\'>Shred<br>Map Cap</div>"
 
 			tooltipText += "</div>";
 
@@ -405,8 +397,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				recycle: false,
 				incrementMaps: false,
 				voidPurchase: true,
-				mapCap: 900,
-				shredMapCap: 100
+				mapCap: 900
 			}
 			var style = "";
 
@@ -448,8 +439,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.healthHDRatio = defaultSetting.healthHDRatio ? defaultSetting.healthHDRatio : 10;
 			if (hdFarm)
 				defaultVals.mapCap = typeof (defaultSetting.mapCap) === 'undefined' ? 900 : defaultSetting.mapCap ? defaultSetting.mapCap : 900;
-			if (currSettingUniverse === 2 && (mapFarm || hdFarm))
-				defaultVals.shredMapCap = typeof (defaultSetting.shredMapCap) === 'undefined' ? 100 : defaultSetting.shredMapCap ? defaultSetting.shredMapCap : 100;
 
 			var defaultGatherDropdown = displayDropdowns(universe, 'Gather', defaultVals.gather);
 			var defaultSpecialsDropdown = displayDropdowns(universe, 'Cache', defaultVals.special);
@@ -492,8 +481,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowVoidPurchase", null, defaultVals.voidPurchase) + "</div>";
 			if (hdFarm)
 				tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.mapCap + "' type='number' id='mapCap'/></div>";
-			if (currSettingUniverse === 2 && (mapFarm || hdFarm))
-				tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.shredMapCap + "' type='number' id='shredMapCap'/></div>";
 
 			tooltipText += "</div>"
 
@@ -588,7 +575,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 				autoLevel: true,
 				endzone: 999,
 				repeatevery: 0,
-				shredActive: 'All',
 				challenge: 'All',
 				challenge3: 'All',
 				hdBase: 1,
@@ -676,8 +662,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.raidingDropdown = currSetting[x].raidingDropdown ? currSetting[x].raidingDropdown : 1;
 				if (insanity)
 					vals.destack = typeof (currSetting[x].destack) !== 'undefined' ? currSetting[x].destack : false;
-				if (currSettingUniverse === 2 && boneShrine)
-					vals.shredActive = typeof (currSetting[x].shredActive) !== 'undefined' ? currSetting[x].shredActive : 'All';
 				if (hdFarm)
 					vals.hdBase = currSetting[x].hdBase ? currSetting[x].hdBase : 1;
 				if (hdFarm)
@@ -713,11 +697,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var potionDropdown = "<option value='h'" + ((vals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
 			var raidingDropdown = "<option value='0'" + ((vals.raidingDropdown == '0') ? " selected='selected'" : "") + ">Frag</option>\<option value='1'" + ((vals.raidingDropdown == '1') ? " selected='selected'" : "") + ">Frag Min</option>\<option value='2'" + ((vals.raidingDropdown == '2') ? " selected='selected'" : "") + ">Frag Max</option>"
 			var mapTypeDropdown = "<option value='Absolute'" + ((vals.mapType == 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>\<option value='Map Count'" + ((vals.mapType == 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>\</option>"
-			var shredDropdown = "<option value='All'" + ((vals.shredActive == 'All') ? " selected='selected'" : "") + ">All</option>\<option value='Shred'" + ((vals.shredActive == 'Shred') ? " selected='selected'" : "") + ">Shred</option>\<option value='No Shred'" + ((vals.shredActive == 'No Shred') ? " selected='selected'" : "") + ">No Shred</option>\</option>"
 
 			var className = (vals.special == 'hc' || vals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
 			className += (!vals.autoLevel) ? " windowLevelOn" : " windowLevelOff";
-			if (currSettingUniverse === 2 && boneShrine) className += (vals.runType === 'Daily' || vals.runType === 'All') ? " windowShredOn" : " windowShredOff";
 			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
 				className += (vals.runType === 'C3') ?
 					" windowChallenge3On" + varPrefix + "" : " windowChallenge3Off" + varPrefix + "";
@@ -819,8 +801,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowChallenge" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge</div>\<select value='" + vals.challenge + "' id='windowChallenge" + x + "'>" + challengeDropdown + "</select>\</div>"
 			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
 				tooltipText += "<div class='windowChallenge3" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge" + (universe + 1) + "</div>\<select value='" + vals.challenge3 + "' id='windowChallenge3" + x + "'>" + challenge3Dropdown + "</select>\</div>"
-			if (currSettingUniverse === 2 && boneShrine)
-				tooltipText += "<div class='windowShred'>\<div style='text-align: center; font-size: 0.6vw;'>Shred</div>\<select value='" + vals.shredActive + "' id='windowShred" + x + "'>" + shredDropdown + "</select>\</div>"
 			if (voidMap)
 				tooltipText += "<div class='windowPortalAfter' style='text-align: center;'>" + buildNiceCheckbox("windowPortalAfter" + x, null, vals.portalAfter) + "</div>";
 
@@ -961,7 +941,6 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Map Bonus')) defaultSetting.healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
 		if (titleText.includes('Map Bonus')) defaultSetting.healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10);
 		if (titleText.includes('HD Farm')) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
-		if (currSettingUniverse === 2 && (titleText.includes('Map Farm') || titleText.includes('HD Farm'))) defaultSetting.shredMapCap = parseFloat(document.getElementById('shredMapCap').value, 10);
 
 		if (defaultSetting.cell < 1) defaultSetting.cell = 1;
 		if (defaultSetting.cell > 100) defaultSetting.cell = 100;
@@ -1035,12 +1014,6 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) {
 			thisSetting.challenge = thisSetting.runType === 'Filler' ? document.getElementById('windowChallenge' + x).value : null;
 			thisSetting.challenge3 = thisSetting.runType === 'C3' ? document.getElementById('windowChallenge3' + x).value : null;
-		}
-		if (currSettingUniverse === 2 && titleText.includes('Bone Shrine')) {
-			if (thisSetting.runType == 'Daily' || thisSetting.runType == 'All')
-				thisSetting.shredActive = document.getElementById('windowShred' + x).value;
-			else
-				thisSetting.shredActive = false;
 		}
 
 		if (!titleText.includes('Auto Golden') && (isNaN(thisSetting.world) || thisSetting.world < 6)) {
@@ -1178,8 +1151,6 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		if (hypothermia) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>"
 		if (hypothermia) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>"
 		if (hypothermia) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>"
-		if (radonSetting && hdFarm) mazHelp += "<li><b>Shred Map Cap</b> - Will cap the amount of maps being run to this value when in a metal shred daily.</li>"
-		if (radonSetting && mapFarm) mazHelp += "<li><b>Shred Map Cap</b> - Will cap the amount of maps being run to this value when in a shred daily that matches your cache option.</li>"
 	}
 
 	//Row Settings
@@ -1231,7 +1202,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	if (mapFarm) {
 		mazHelp += "<li><b>Map Repeat</b> - How many maps you'd like to run during this line.</li>";
 		//Trimple Map Farm
-		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources. " + ((radonSetting) ? "<b>Won't run on shred dailies that would be impacted by your farming choices.</b>" : "") + "</li>";
+		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources." + "</li>";
 	}
 	//Map Bonus
 	if (mapBonus) {
@@ -1262,11 +1233,9 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		//Use Below
 		mazHelp += "<li><b>Use below</b> - This value will stop bone charges being spent when you're at or below this value.</li>";
 		//Trimple Bone Shrine
-		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. After using the bone shrine charges specified for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources. <b>Will run " + trimple + " and use the charges after cell 95. Will pause " + trimple + " if necessary in a shred daily to ensure you don't waste resources.</b></li>";
+		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. After using the bone shrine charges specified for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources. <b>Will run " + trimple + " and use the charges after cell 95.</b></li>";
 		//Gather setting
 		mazHelp += "<li><b>Gather</b> - Which resource you'd like to gather when popping a Bone Shrine charge to make use of Turkimp resource bonus.</li>";
-		//Shred Dailies
-		if (radonSetting) mazHelp += "<li><b>Shred</b> - This dropdown will only appear when the Run Type dropdown has All or Daily selected. Will allow you to decide if you'd like that line to be run on dailies with or without the shred that matches your gather type or on both.</li>";
 	}
 
 	//TRIBUTE FARM
@@ -1280,7 +1249,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		//Buy Buildings
 		mazHelp += "<li><b>Buy Buildings</b> - If you'd like to buy buildings during this farming line to reduce the amount of maps it takes to farm your specified Tribute or Meteorologist inputs. When unselected it will automatically disable vanilla AutoStructure if it's enabled to remove the possibility of resources being spent there too.</li>";
 		//Trimple Tribute Farm
-		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Autoamtically calculates when it would be more efficient to run " + trimple + " or continue farming Savory Cache maps to reach your target in the fastest time possible. <b>Won't run on food shred dailies.</b></li>";
+		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Autoamtically calculates when it would be more efficient to run " + trimple + " or continue farming Savory Cache maps to reach your target in the fastest time possible.</b></li>";
 	}
 
 	//Smithy
@@ -1687,8 +1656,6 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowBoneGather' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].gather
 				if (document.getElementById('windowBuildings' + x) !== null)
 					document.getElementById('windowBuildings' + x).value = true;
-				if (document.getElementById('windowShred' + x) !== null)
-					document.getElementById('windowShred' + x).value = 'All';
 				if (document.getElementById('windowChallenge' + x) !== null)
 					document.getElementById('windowChallenge' + x).value = 'All';
 				if (document.getElementById('windowChallenge3' + x) !== null)
@@ -1808,7 +1775,6 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) document.getElementById('windowRunType' + index).value = 0;
 	if (titleText.includes('Raiding') && !titleText.includes('Bionic')) document.getElementById('windowRaidingDropdown' + index).value = 0;
 	if (titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm')) document.getElementById('windowMapTypeDropdown' + index).value = 'Absolute';
-	if (!titleText.includes('Helium') && titleText.includes('Bone')) document.getElementById('windowShred' + index).value = 'All';
 	if (titleText.includes('Bone')) document.getElementById('windowBoneGather' + index).value = 'Metal';
 
 	elem.style.display = 'none';
@@ -1856,9 +1822,6 @@ function updateWindowPreset(index, varPrefix) {
 
 	if (currSettingUniverse === 2 && varPrefix.includes('BoneShrine')) {
 		var runType = document.getElementById('windowRunType' + index).value;
-
-		newClass = runType === 'Daily' || runType === 'All' ? 'windowShredOn' : 'windowShredOff';
-		swapClass('windowShred', newClass, row);
 	}
 	if (currSettingUniverse === 1) {
 		//Changing rows to use the colour of the Nature type that the world input will be run on.

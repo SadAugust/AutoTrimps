@@ -185,18 +185,14 @@ function shouldRunUniqueMap(map) {
 				return true;
 			}
 		} else if (map.name === 'Melting Point') {
-			const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
-			const woodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
-			const smithyShred = woodShred || metalShred;
 			// maybe get extra smithiesvar 
 			meltsmithy =
 				challengeActive('Desolation') && getPageSetting('desolation') && getPageSetting('desolationMP') > 0 ? getPageSetting('desolationMP') :
 					challengeActive('Pandemonium') && getPageSetting('pandemoniumMP') > 0 ? getPageSetting('pandemoniumMP') :
 						isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
-							isDaily && !smithyShred && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
-								isDaily && smithyShred && uniqueMapSetting.MP_Smithy_Daily_Shred.enabled && uniqueMapSetting.MP_Smithy_Daily_Shred.value > 0 ? uniqueMapSetting.MP_Smithy_Daily_Shred.value :
-									!isC3 && !isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
-										Infinity;
+							isDaily && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
+								!isC3 && !isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
+									Infinity;
 			if (game.mapUnlocks.SmithFree.canRunOnce &&
 				((!isC3 && !isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world >= uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
 					(meltsmithy !== Infinity && meltsmithy <= game.buildings.Smithy.owned))) {
@@ -507,11 +503,6 @@ function MapFarm() {
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const totalPortals = getTotalPortals();
-	const shredActive = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined';
-	const shredMods = shredActive ? dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength) : [];
-	const foodShred = shredActive && shredMods.includes('food');
-	const metalShred = shredActive && shredMods.includes('metal');
-	const woodShred = shredActive && shredMods.includes('wood');
 	const currChall = game.global.challengeActive;
 	const dailyAddition = dailyOddOrEven();
 
@@ -551,14 +542,7 @@ function MapFarm() {
 		var rMFJobRatio = rMFSettings.jobratio;
 		var rMFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rMFSettings.atlantrimp;
 		var rMFGather = rMFSettings.gather;
-		var rMFshredMapCap = autoTrimpSettings.mapFarmDefaultSettings.valueU2.shredMapCap;
 
-		if (shredActive && (rMFRepeatCounter > rMFshredMapCap || rMFAtlantrimp === true)) {
-			if ((foodShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Savory')) || (woodShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Wooden')) || (metalShred && mapSpecialModifierConfig[rMFSpecial].name.includes('Metal'))) {
-				if (rMFRepeatCounter > rMFshredMapCap) rMFRepeatCounter = rMFshredMapCap;
-				rMFAtlantrimp = false;
-			}
-		}
 		if (rMFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
 				game.global.mapRunCounter = mapRepeats;
@@ -632,7 +616,6 @@ function TributeFarm() {
 	var rShouldMetFarm = false;
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
-	const foodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('food');
 	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
@@ -674,7 +657,7 @@ function TributeFarm() {
 		var rTrFSpecial = getAvailableSpecials('lsc', true);
 		var rTrFJobRatio = rTrFSettings.jobratio;
 		var rTrFbuyBuildings = rTrFSettings.buildings;
-		var rTrFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce || (isDaily && foodShred) ? false : rTrFSettings.atlantrimp;
+		var rTrFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rTrFSettings.atlantrimp;
 
 		//AutoLevel code.
 		if (rTrFSettings.autoLevel) {
@@ -708,25 +691,6 @@ function TributeFarm() {
 				var foodEarnedMets = game.resources.food.owned + scaleToCurrentMapLocal(simpleSecondsLocal("food", meteorologistTime, true, rTrFJobRatio), false, true, rTrFMapLevel);
 				rTrFMeteorologists = game.jobs.Meteorologist.owned + calculateMaxAffordLocal(game.jobs.Meteorologist, false, false, true, false, 1, foodEarnedMets);
 			}
-		}
-
-		//Identifying how much food you'd get from the amount of jestimps you want to farm on the map level you've selected for them
-		if (isDaily && foodShred) {
-			var mapDrop = scaleToCurrentMapLocal(simpleSecondsLocal("food", 1, true, rTrFJobRatio), false, true, rTrFMapLevel);
-			var mapsToRun = game.global.stringVersion >= '5.9.0' ? 4 : 2;
-			mapDrop *= getSpecialTime(rTrFSpecial, mapsToRun);
-			var shred = 1 - (dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength)[0] / 100);
-			var maps = 10;
-			var foodTotal = mapDrop;
-			//For loop for adding the food from subsequent map runs to the base total
-			for (i = 1; i < maps; i++) {
-				foodTotal += (mapDrop * (Math.pow(shred, i)));
-			}
-			tributeShredAmt = game.buildings.Tribute.purchased + calculateMaxAffordLocal(game.buildings.Tribute, true, false, false, false, 1, foodTotal);
-			metShredAmt = game.jobs.Meteorologist.owned + calculateMaxAffordLocal(game.jobs.Meteorologist, false, false, true, false, 1, foodTotal);
-
-			if (rTrFMeteorologists > metShredAmt) rTrFMeteorologists = metShredAmt;
-			if (rTrFTributes > tributeShredAmt) rTrFTributes = tributeShredAmt;
 		}
 
 		if (rTrFTributes > game.buildings.Tribute.purchased || rTrFMeteorologists > game.jobs.Meteorologist.owned) {
@@ -826,9 +790,6 @@ function SmithyFarm() {
 
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
-	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
-	const woodShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('wood');
-	const smithyShred = woodShred || metalShred;
 	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
@@ -928,30 +889,6 @@ function SmithyFarm() {
 				else rSFSmithies = smithyCount;
 			}
 			else rSFSmithies = 1;
-		}
-
-		//Checking for daily resource shred
-		if (typeof game.global.dailyChallenge.hemmorrhage !== 'undefined' && smithyShred) {
-			var mapsToRun = game.global.stringVersion >= '5.9.0' ? 4 : 2;
-
-			if (woodShred && metalShred) {
-				var woodGain = woodBase * getSpecialTime(rSFSpecial, (mapsToRun / 2));
-				var metalGain = metalBase * getSpecialTime(rSFSpecial, (mapsToRun / 2));
-			}
-			else if (woodShred) {
-				var woodGain = woodBase * getSpecialTime(rSFSpecial, mapsToRun);
-				var metalGain = Infinity;
-			}
-			else if (metalShred) {
-				var woodGain = Infinity;
-				var metalGain = metalBase * getSpecialTime(rSFSpecial, mapsToRun);
-			}
-			var smithy_Cost_Mult = game.buildings.Smithy.cost.gems[1];
-			var smithy_Max_Affordable = [getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.gems[0], (Infinity), (smithy_Cost_Mult), true),
-			getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.metal[0], (woodGain), (smithy_Cost_Mult), true),
-			getMaxAffordable(Math.pow((smithy_Cost_Mult), game.buildings.Smithy.owned) * game.buildings.Smithy.cost.wood[0], (metalGain), (smithy_Cost_Mult), true)];
-			var smithy_Can_Afford = game.buildings.Smithy.purchased + Math.min(smithy_Max_Affordable[0], smithy_Max_Affordable[1], smithy_Max_Affordable[2]);
-			rSFSmithies = smithy_Can_Afford > 0 && rSFSmithies > smithy_Can_Afford ? smithy_Can_Afford : rSFSmithies;
 		}
 
 		rSFGoal = 0;
@@ -2627,7 +2564,6 @@ function HDFarm() {
 	const isDaily = challengeActive('Daily');
 	const dontRecycleMaps = challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const totalPortals = getTotalPortals();
-	const metalShred = isDaily && typeof (game.global.dailyChallenge.hemmorrhage) !== 'undefined' && dailyModifiers.hemmorrhage.getResources(game.global.dailyChallenge.hemmorrhage.strength).includes('metal');
 	const rHDFBaseSetting = getPageSetting('hdFarmSettings');
 	const rHDFDefaultSetting = getPageSetting('hdFarmDefaultSettings');
 	const currChall = game.global.challengeActive;
@@ -2667,10 +2603,9 @@ function HDFarm() {
 		var hdType = rHDFSettings.hdType;
 		var rHDFMax = hdType === 'world' && game.global.mapBonus != 10 ? 10 : null;
 		var rHDFMin = hdType === 'world' && game.global.mapBonus != 10 ? 0 : null;
-		var rHDFshredMapCap = game.global.universe === 2 ? autoTrimpSettings.hdFarmDefaultSettings.valueU2.shredMapCap : 0;
 		var rHDFmapCap = rHDFDefaultSetting.mapCap;
 
-		var rHDFmaxMaps = metalShred ? rHDFshredMapCap : rHDFmapCap;
+		var rHDFmaxMaps = rHDFmapCap;
 
 		if (rHDFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
