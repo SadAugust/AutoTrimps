@@ -33,7 +33,7 @@ function debugStance(maxPower, ignoreArmy) {
 	return false;
 }
 
-function canU2Overkill() {
+function canU2OverkillAT() {
 	if (!u2Mutations.tree.Overkill1.purchased) return false;
 
 	var allowed = .3;
@@ -61,8 +61,8 @@ function maxOneShotPower(planToMap) {
 		if (getEmpowerment() == "Ice" && game.empowerments.Ice.getLevel() >= 100) power++;
 	}
 	else if (game.global.universe === 2) {
-		if (!canU2Overkill() && game.global.stringVersion >= '5.9.0' && (game.global.mapsActive || planToMap) && u2Mutations.tree.MadMap.purchased) return power;
-		if (!canU2Overkill()) return 1;
+		if (!canU2OverkillAT() && game.global.stringVersion >= '5.9.0' && (game.global.mapsActive || planToMap) && u2Mutations.tree.MadMap.purchased) return power;
+		if (!canU2OverkillAT()) return 1;
 
 		if (u2Mutations.tree.MaxOverkill.purchased) power++;
 	}
