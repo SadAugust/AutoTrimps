@@ -172,12 +172,10 @@ function getTrimpHealth(realHealth, mapType) {
 	//Pandemonium Completions
 	health *= game.global.pandCompletions > 0 ? game.challenges.Pandemonium.getTrimpMult() : 1;
 	//Desolation Completions
-	if (game.global.stringVersion >= '5.9.0') {
-		health *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
-		health *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
-		health *= challengeActive('Desolation') ? game.challenges.Desolation.trimpHealthMult() : 1;
-		health *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
-	}
+	health *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
+	health *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
+	health *= challengeActive('Desolation') ? game.challenges.Desolation.trimpHealthMult() : 1;
+	health *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
 	//AutoBattle
 	health *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	//Shield (Heirloom)
@@ -417,12 +415,10 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	// Pandemonium Completions
 	attack *= game.challenges.Pandemonium.getTrimpMult();
 	//Desolation Completions
-	if (game.global.stringVersion >= '5.9.0') {
-		attack *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
-		attack *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
-		attack *= challengeActive('Desolation') ? game.challenges.Desolation.trimpAttackMult() : 1;
-		attack *= game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased ? 10 : 1;
-	}
+	attack *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
+	attack *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
+	attack *= challengeActive('Desolation') ? game.challenges.Desolation.trimpAttackMult() : 1;
+	attack *= game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased ? 10 : 1;
 	//AutoBattle
 	attack *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	// Heirloom (Shield)
@@ -743,7 +739,7 @@ function calcEnemyBaseAttack(zone, cell, name, type, query) {
 		attack *= Math.pow(1.5, part1);
 		attack *= Math.pow(1.4, part2);
 		attack *= Math.pow(1.32, part3);
-		if (game.global.stringVersion >= '5.9.0') attack *= Math.pow(1.15, part4);
+		attack *= Math.pow(1.15, part4);
 	}
 	return Math.floor(attack);
 }
@@ -1001,7 +997,7 @@ function calcEnemyBaseHealth(mapType, zone, cell, name) {
 		if (part3 < 0) part3 = 0;
 		health *= Math.pow(1.4, part1);
 		health *= Math.pow(1.32, part2);
-		if (game.global.stringVersion >= '5.9.0') health *= Math.pow(1.15, part3);
+		health *= Math.pow(1.15, part3);
 	}
 	//Specific Imp
 	if (name) health *= game.badGuys[name].health;
