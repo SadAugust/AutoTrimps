@@ -195,7 +195,7 @@ function c2runner() {
 		var highestZone = game.global.highestLevelCleared + 1;
 
 		//Adding Fused challenges to array if setting is toggled
-		if (game.global.stringVersion >= '5.9.0' && getPageSetting('c2Fused')) {
+		if (getPageSetting('c2Fused')) {
 			if (highestZone >= 45) challengeArray.push('Enlightened');
 			if (highestZone >= 180) challengeArray.push('Waze');
 			if (highestZone >= 180) challengeArray.push('Toxad');

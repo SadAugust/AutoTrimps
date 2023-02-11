@@ -330,7 +330,7 @@ function initializeAllSettings() {
 
 		createSetting('dailyDontCap', 'Use when capped', 'If this is on, you will only do the oldest daily when you have 7 dailies available. ', 'boolean', false, null, 'Daily', [1, 2]);
 
-		createSetting('dailyPortalSettingsArray', 'Daily Portal Settings', 'Click to adjust settings. ', 'mazDefaultArray', { portalZone: 0, portalChallenge: "None", Reflect: { enabled: true, zone: 0 }, ShredFood: { enabled: true, zone: 0 }, ShredWood: { enabled: true, zone: 0 }, ShredMetal: { enabled: true, zone: 0 }, Empower: { enabled: true, zone: 0 }, Mutimp: { enabled: true, zone: 0 }, Bloodthirst: { enabled: true, zone: 0 }, Famine: { enabled: true, zone: 0 }, Large: { enabled: true, zone: 0 }, Weakness: { enabled: true, zone: 0 } }, null, 'Jobs', [2]);
+		createSetting('dailyPortalSettingsArray', 'Daily Portal Settings', 'Click to adjust settings. ', 'mazDefaultArray', { portalZone: 0, portalChallenge: "None", Empower: { enabled: true, zone: 0 }, Mutimp: { enabled: true, zone: 0 }, Bloodthirst: { enabled: true, zone: 0 }, Famine: { enabled: true, zone: 0 }, Large: { enabled: true, zone: 0 }, Weakness: { enabled: true, zone: 0 } }, null, 'Jobs', [2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -358,7 +358,7 @@ function initializeAllSettings() {
 		createSetting('c2RunnerPercent', 'C2 Runner %', 'What percent Threshhold you want C2s to be over. E.g 85, will only run C2s with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ', 'value', '85', null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
 		createSetting('c2Fused', 'Fused C2s', 'Will make C2 runner do fused versions of the C2s rather than normal version to reduce time spent running C2s.', 'boolean', false, null, 'C2', [1],
-			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && game.global.stringVersion >= '5.9.0') });
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
 
 		//Balance
 		createSetting('balance', 'Balance', 'Turn this on if you want to enable Balance destacking feautres.', 'boolean', false, null, 'C2', [1]);
@@ -451,21 +451,19 @@ function initializeAllSettings() {
 		createSetting('wither', 'Wither', 'Turn this on if you want to enable AT farming until you can 4 shot your current world cell on Wither.', 'boolean', false, null, 'C2', [2],
 			function () { return (game.global.highestRadonLevelCleared + 1 >= 70) });
 
-		if (game.global.stringVersion >= '5.9.0') {
-			//Mayhem
-			createSetting('desolation', 'Desolation', 'Turn on Desolation settings. ', 'boolean', false, null, 'C2', [2],
-				function () { return ((game.global.highestRadonLevelCleared + 1 >= 200 && game.global.desoCompletions !== 25) || getPageSetting('desolation', currSettingUniverse) || game.global.currentChallenge === 'Desolation') });
-			createSetting('desolationDestack', 'D: HD Ratio', 'What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Desolation stacks remaining to clear. ', 'value', '-1', null, 'C2', [2],
-				function () { return (getPageSetting('desolation', currSettingUniverse)) });
-			createSetting('desolationZone', 'D: Zone', 'What stack you\'d like to start destacking from, can be used in conjunction with \'D: HD Ratio\' but will clear stacks until the value set in \'D: Stacks\'.', 'value', '-1', null, 'C2', [2],
-				function () { return (getPageSetting('desolation', currSettingUniverse)) });
-			createSetting('desolationStacks', 'D: Stacks', 'Sets the minimum stacks that AT will start to clear from when \'D: HD Ratio\' or \'D: Zone\' are being run. If set to -1 it\'ll act as 0 stacks. WILL CLEAR TO 0 STACKS WHEN IT STARTS RUNNING.', 'value', '-1', null, 'C2', [2],
-				function () { return (getPageSetting('desolation', currSettingUniverse)) });
-			createSetting('desolationMapIncrease', 'D: Map Increase', 'Will increase the minimum map level of Desolation farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.', 'value', '-1', null, 'C2', [2],
-				function () { return (getPageSetting('desolation', currSettingUniverse)) });
-			createSetting('desolationMP', 'D: Melting Point', 'How many smithies to run Melting Point at during Desolation. <b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS</b>', 'value', '-1', null, 'C2', [2],
-				function () { return (getPageSetting('desolation', currSettingUniverse)) });
-		}
+		//Desolation
+		createSetting('desolation', 'Desolation', 'Turn on Desolation settings. ', 'boolean', false, null, 'C2', [2],
+			function () { return ((game.global.highestRadonLevelCleared + 1 >= 200 && game.global.desoCompletions !== 25) || getPageSetting('desolation', currSettingUniverse) || game.global.currentChallenge === 'Desolation') });
+		createSetting('desolationDestack', 'D: HD Ratio', 'What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Desolation stacks remaining to clear. ', 'value', '-1', null, 'C2', [2],
+			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+		createSetting('desolationZone', 'D: Zone', 'What stack you\'d like to start destacking from, can be used in conjunction with \'D: HD Ratio\' but will clear stacks until the value set in \'D: Stacks\'.', 'value', '-1', null, 'C2', [2],
+			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+		createSetting('desolationStacks', 'D: Stacks', 'Sets the minimum stacks that AT will start to clear from when \'D: HD Ratio\' or \'D: Zone\' are being run. If set to -1 it\'ll act as 0 stacks. WILL CLEAR TO 0 STACKS WHEN IT STARTS RUNNING.', 'value', '-1', null, 'C2', [2],
+			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+		createSetting('desolationMapIncrease', 'D: Map Increase', 'Will increase the minimum map level of Desolation farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.', 'value', '-1', null, 'C2', [2],
+			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+		createSetting('desolationMP', 'D: Melting Point', 'How many smithies to run Melting Point at during Desolation. <b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS</b>', 'value', '-1', null, 'C2', [2],
+			function () { return (getPageSetting('desolation', currSettingUniverse)) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -658,7 +656,6 @@ function initializeAllSettings() {
 
 			MP_Smithy: { enabled: false, value: 100 },
 			MP_Smithy_Daily: { enabled: false, value: 100 },
-			MP_Smithy_Daily_Shred: { enabled: false, value: 100 },
 			MP_Smithy_C3: { enabled: false, value: 100 },
 		}, null, 'Maps', [1, 2]);
 
@@ -1221,7 +1218,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode_Initial("stormStacks", radonon);
 	modifyParentNode_Initial("pandemoniumMP", radonon_panda);
 	modifyParentNode_Initial("glassStacks", radonon);
-	if (game.global.stringVersion >= '5.9.0') modifyParentNode_Initial("wither", radonon);
+	modifyParentNode_Initial("wither", radonon);
 
 	//Challenges
 	modifyParentNode_Initial("decayStacksToAbandon", radonoff);
@@ -2239,7 +2236,7 @@ function heliumChallengesSetting() {
 	if (highestZone >= 180) heliumChallenges.push("Lead");
 	if (highestZone >= 190) heliumChallenges.push("Corrupted");
 	if (highestZone >= 215) heliumChallenges.push("Domination");
-	if (game.global.stringVersion >= '5.9.0' && highestZone >= 510) heliumChallenges.push('Frigid');
+	if (highestZone >= 510) heliumChallenges.push('Frigid');
 	if (highestZone >= 600) heliumChallenges.push("Experience");
 	heliumChallenges.push("Custom");
 	if (highestZone >= 65) heliumChallenges.push("Challenge 2");
@@ -2336,7 +2333,7 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 	if (radonHZE >= 150) radonChallenges.push("Pandemonium");
 	if (radonHZE >= 155) radonChallenges.push("Alchemy");
 	if (radonHZE >= 175) radonChallenges.push("Hypothermia");
-	if (game.global.stringVersion >= '5.9.0' && radonHZE >= 200) radonChallenges.push('Desolation');
+	if (radonHZE >= 200) radonChallenges.push('Desolation');
 	radonChallenges.push("Custom");
 	if (radonHZE >= 50) radonChallenges.push("Challenge 3");
 
@@ -2359,7 +2356,7 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 	if (radonHZE >= 135) radonHourChallenges.push("Nurture");
 	if (radonHZE >= 155) radonHourChallenges.push("Alchemy");
 	if (radonHZE >= 175) radonHourChallenges.push("Hypothermia");
-	if (game.global.stringVersion >= '5.9.0' && radonHZE >= 200) radonHourChallenges.push("Desolation");
+	if (radonHZE >= 200) radonHourChallenges.push("Desolation");
 
 	if (
 		((document.getElementById('heliumHourChallenge').children.length || document.getElementById('heliumHourChallenge').children.length)

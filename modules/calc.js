@@ -789,7 +789,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	else if (challengeActive('Corrupted')) attack *= 3;
 	else if (challengeActive('Scientist') && getScientistLevel() == 5) attack *= 10;
 	else if (challengeActive('Experience')) attack *= game.challenges.Experience.getEnemyMult();
-	else if (game.global.stringVersion >= '5.9.0' && challengeActive('Frigid')) attack *= game.challenges.Frigid.getEnemyMult();
+	else if (challengeActive('Frigid')) attack *= game.challenges.Frigid.getEnemyMult();
 
 	//u2 challenges
 	else if (challengeActive('Unbalance')) attack *= 1.5;
@@ -805,7 +805,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	else if (challengeActive('Nurture') && game.buildings.Laboratory.owned > 0) attack *= game.buildings.Laboratory.getEnemyMult();
 	else if (challengeActive('Pandemonium') && type === 'world') attack *= game.challenges.Pandemonium.getBossMult();
 	else if (challengeActive('Pandemonium') && type !== 'world') attack *= game.challenges.Pandemonium.getPandMult();
-	else if (game.global.stringVersion >= '5.9.0' && challengeActive('Desolation')) attack *= game.challenges.Desolation.getEnemyMult();
+	else if (challengeActive('Desolation')) attack *= game.challenges.Desolation.getEnemyMult();
 	else if (challengeActive('Alchemy')) attack *= (alchObj.getEnemyStats(false, false)) + 1;
 	else if (challengeActive('Hypothermia')) attack *= game.challenges.Hypothermia.getEnemyMult();
 	else if (challengeActive('Glass')) attack *= game.challenges.Glass.attackMult();
@@ -838,7 +838,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 			attack *= dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks);
 
 		//Empower voids
-		if (game.global.stringVersion >= '5.9.0' && typeof game.global.dailyChallenge.empoweredVoid !== 'undefined' && type === 'void')
+		if (typeof game.global.dailyChallenge.empoweredVoid !== 'undefined' && type === 'void')
 			attack *= dailyModifiers.empoweredVoid.getMult(game.global.dailyChallenge.empoweredVoid.strength);
 	}
 
@@ -1047,7 +1047,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	health *= challengeActive('Toxicity') ? 2 : 1;
 	health *= challengeActive('Life') ? 10 : 1;
 	health *= challengeActive('Experience') ? game.challenges.Experience.getEnemyMult() : 1;
-	if (game.global.stringVersion >= '5.9.0' && challengeActive('Frigid')) health *= game.challenges.Frigid.getEnemyMult();
+	if (challengeActive('Frigid')) health *= game.challenges.Frigid.getEnemyMult();
 	if (challengeActive('Coordinate')) {
 		var amt = 1;
 		for (var i = 1; i < zone; i++) amt = Math.ceil(amt * 1.25);
@@ -1069,7 +1069,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 		health *= game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	}
 	if (challengeActive('Pandemonium')) health *= type === 'world' ? game.challenges.Pandemonium.getBossMult() : type !== 'world' ? game.challenges.Pandemonium.getPandMult() : 1;
-	if (game.global.stringVersion >= '5.9.0' && challengeActive('Desolation')) health *= game.challenges.Desolation.getEnemyMult();
+	if (challengeActive('Desolation')) health *= game.challenges.Desolation.getEnemyMult();
 	health *= challengeActive('Alchemy') ? ((alchObj.getEnemyStats(false, false)) + 1) : 1;
 	health *= challengeActive('Hypothermia') ? game.challenges.Hypothermia.getEnemyMult() : 1;
 	health *= challengeActive('Glass') ? game.challenges.Glass.healthMult() : 1;
@@ -1083,7 +1083,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 		//Bad Map Health
 		health *= typeof game.global.dailyChallenge.badMapHealth !== 'undefined' && type !== 'world' ? dailyModifiers.badMapHealth.getMult(game.global.dailyChallenge.badMapHealth.strength, game.global.dailyChallenge.badMapHealth.stacks) : 1;
 		//Empower voids
-		if (game.global.stringVersion >= '5.9.0' && typeof game.global.dailyChallenge.empoweredVoid !== 'undefined' && type === 'void')
+		if (typeof game.global.dailyChallenge.empoweredVoid !== 'undefined' && type === 'void')
 			health *= dailyModifiers.empoweredVoid.getMult(game.global.dailyChallenge.empoweredVoid.strength);
 	}
 
@@ -1368,12 +1368,10 @@ function getTotalHealthMod() {
 	//Pandemonium Completions
 	healthMulti *= game.global.pandCompletions > 0 ? game.challenges.Pandemonium.getTrimpMult() : 1;
 	//Desolation Completions
-	if (game.global.stringVersion >= '5.9.0') {
-		healthMulti *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
-		healthMulti *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
-		healthMulti *= challengeActive('Desolation') ? game.challenges.Desolation.trimpHealthMult() : 1;
-		healthMulti *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
-	}
+	healthMulti *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
+	healthMulti *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
+	healthMulti *= challengeActive('Desolation') ? game.challenges.Desolation.trimpHealthMult() : 1;
+	healthMulti *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
 	//AutoBattle
 	healthMulti *= autoBattle.bonuses.Stats.getMult();
 	// Heirloom Health bonus

@@ -39,9 +39,9 @@ function canU2OverkillAT() {
 	var allowed = .3;
 	if (u2Mutations.tree.Overkill2.purchased) allowed += 0.1;
 	if (u2Mutations.tree.Overkill3.purchased) allowed += 0.1;
-	if (game.global.stringVersion >= '5.9.0' && u2Mutations.tree.Liq3.purchased) {
+	if (u2Mutations.tree.Liq3.purchased) {
 		allowed += 0.1;
-		if (game.global.stringVersion >= '5.9.0' && u2Mutations.tree.Liq2.purchased) allowed += 0.1;
+		if (u2Mutations.tree.Liq2.purchased) allowed += 0.1;
 	}
 	if (game.global.world <= ((game.global.highestRadonLevelCleared + 1) * allowed)) return true;
 	return false;
@@ -61,7 +61,7 @@ function maxOneShotPower(planToMap) {
 		if (getEmpowerment() == "Ice" && game.empowerments.Ice.getLevel() >= 100) power++;
 	}
 	else if (game.global.universe === 2) {
-		if (!canU2OverkillAT() && game.global.stringVersion >= '5.9.0' && (game.global.mapsActive || planToMap) && u2Mutations.tree.MadMap.purchased) return power;
+		if (!canU2OverkillAT() && (game.global.mapsActive || planToMap) && u2Mutations.tree.MadMap.purchased) return power;
 		if (!canU2OverkillAT()) return 1;
 
 		if (u2Mutations.tree.MaxOverkill.purchased) power++;

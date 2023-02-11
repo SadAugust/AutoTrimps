@@ -794,7 +794,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt *= game.challenges.Frigid.getShatteredMult();
 	if (game.global.pandCompletions && game.global.universe == 2 && what != "fragments")
 		amt *= game.challenges.Pandemonium.getTrimpMult();
-	if (game.global.stringVersion >= '5.9.0' && game.global.desoCompletions && game.global.universe == 2 && what != "fragments")
+	if (game.global.desoCompletions && game.global.universe == 2 && what != "fragments")
 		amt *= game.challenges.Desolation.getTrimpMult();
 	if (getPerkLevel("Observation") > 0 && game.portal.Observation.trinkets > 0)
 		amt *= game.portal.Observation.getMult();
@@ -807,7 +807,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		if (autoBattle.oneTimers.Gathermate.owned)
 			amt *= autoBattle.oneTimers.Gathermate.getMult();
 	}
-	if (((what == "food" || (what == "wood" && game.global.stringVersion >= '5.9.0')) && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15))
+	if (((what == "food" || (what == "wood")) && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15))
 		amt *= game.jobs.Meteorologist.getExtraMult();
 	if (Fluffy.isRewardActive('gatherer'))
 		amt *= 2;
@@ -827,7 +827,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		amt *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
 	}
 
-	if (game.global.stringVersion >= '5.9.0' && challengeActive('Desolation'))
+	if (challengeActive('Desolation'))
 		amt *= game.challenges.Desolation.trimpResourceMult();
 	if (game.challenges.Nurture.boostsActive())
 		amt *= game.challenges.Nurture.getResourceBoost();
@@ -886,10 +886,8 @@ function calculateParityBonus_Local(workerRatio, heirloom) {
 
 function calcHeirloomBonusLocal(mod, number) {
 	var mod = mod;
-	if (game.global.stringVersion >= '5.9.0') {
-		if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined')
-			mod *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
-	}
+	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined')
+		mod *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
 	if (!mod) return;
 
 	return (number * ((mod / 100) + 1));
@@ -1640,7 +1638,7 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 			if (highestZone >= 115) dropdown += "<option value='Berserk'" + ((MAZ == 'Berserk') ? " selected='selected'" : "") + ">Berserk</option>";
 			if (highestZone >= 150) dropdown += "<option value='Pandemonium'" + ((MAZ == 'Pandemonium') ? " selected='selected'" : "") + ">Pandemonium</option>";
 			if (highestZone >= 175) dropdown += "<option value='Glass'" + ((MAZ == 'Glass') ? " selected='selected'" : "") + ">Glass</option>";
-			if (game.global.stringVersion >= '5.9.0' && highestZone >= 200) dropdown += "<option value='Desolation'" + ((MAZ == 'Desolation') ? " selected='selected'" : "") + ">Desolation</option>";
+			if (highestZone >= 200) dropdown += "<option value='Desolation'" + ((MAZ == 'Desolation') ? " selected='selected'" : "") + ">Desolation</option>";
 			if (highestZone >= 201) dropdown += "<option value='Smithless'" + ((MAZ == 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
 		}
 		else if (runType === 'runType') {
@@ -1657,12 +1655,6 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 	}
 
 	return dropdown;
-}
-
-function challengeActive(what) {
-	if (game.global.stringVersion >= '5.9.0' && game.global.multiChallenge[what]) return true;
-	else if (game.global.challengeActive == what) return true;
-	else return false;
 }
 
 function getSpecialTime(special, maps, noImports) {

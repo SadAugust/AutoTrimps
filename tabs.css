@@ -995,21 +995,18 @@ ul.tab li a:hover {
 	width: 25%;
 }
 
-.windowShredOn .windowShred,
 .windowChallengeOnBoneShrine .windowChallengeBoneShrine,
 .windowChallenge3OnBoneShrine .windowChallenge3BoneShrine {
 	display: inline-block;
 	width: 12%;
 }
 
-.windowShredOn .windowRunTypeBoneShrine,
 .windowChallenge3OnBoneShrine .windowRunTypeBoneShrine,
 .windowChallengeOnBoneShrine .windowRunTypeBoneShrine {
 	display: inline-block;
 	width: 13%;
 }
 
-.windowShredOff .windowShred,
 .windowChallengeOffBoneShrine .windowChallengeBoneShrine,
 .windowChallenge3OffBoneShrine .windowChallenge3BoneShrine {
 	display: none;
@@ -1489,55 +1486,4 @@ ul.tab li a:hover {
 .portalThing.detailed {
 	font-size: 0.85vw;
 	line-height: 1vw;
-}
-
-
-
-.col-shred {
-	position: relative;
-	min-height: 1px;
-	padding-right: 15px;
-	padding-left: 15px;
-}
-
-.col-shred {
-	float: left;
-}
-
-.col-shred {
-	width: 13.33333333%;
-}
-
-#shredTickContainer {
-	height: 2.5vw;
-	width: 2.5vw;
-	display: inline-block;
-	position: relative;
-	margin-top: 3%;
-}
-
-#shredNextTick {
-	position: absolute;
-	top: 65%;
-	font-size: 1em;
-	color: black;
-	text-shadow:
-		-1px -1px 0 #FFF,
-		1px -1px 0 #FFF,
-		-1px 1px 0 #FFF,
-		1px 1px 0 #FFF;
-	text-align: center;
-	width: 100%;
-	left: 0;
-}
-
-#shredBtn {
-	position: absolute;
-	width: 30%;
-	top: 0;
-	left: 0;
-	font-size: 0.7em;
-	color: black;
-	background-color: white;
-	cursor: pointer;
 }

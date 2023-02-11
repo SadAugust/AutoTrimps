@@ -142,7 +142,7 @@ function getPsStringLocal(what, rawNum) {
 		var mult = game.challenges.Pandemonium.getTrimpMult();
 		currentCalc *= mult;
 	}
-	if (game.global.stringVersion >= '5.9.0' && game.global.desoCompletions && what != "fragments") {
+	if (game.global.desoCompletions && what != "fragments") {
 		var mult = game.challenges.Desolation.getTrimpMult();
 		currentCalc *= mult;
 	}
@@ -161,7 +161,7 @@ function getPsStringLocal(what, rawNum) {
 		var mult = game.challenges.Hypothermia.getWoodMult(true);
 		currentCalc *= mult;
 	}
-	if (((what == "food" || (what == "wood" && game.global.stringVersion >= '5.9.0')) && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15)) {
+	if (((what == "food" || (what == "wood")) && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15)) {
 		var mult = game.jobs.Meteorologist.getExtraMult();
 		currentCalc *= mult;
 	}
