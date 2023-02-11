@@ -97,21 +97,22 @@ function loadGraphData() {
 }
 
 function clearData(keepN, clrall = false) {
+	// TODO it is awkward as fuck that this works on portal number, when IDs are universe + portal number.  
+	// Fixing that would remove a lot of ugliness here and in deleteSpecific.
 	let changed = false;
 	let currentPortalNumber = getTotalPortals();
-	if (clrall) {
+	if (clrall) { // delete all but current
 		for (const [portalID, portalData] of Object.entries(portalSaveData)) {
 			if (portalData.totalPortals != currentPortalNumber) {
 				delete portalSaveData[portalID];
 				changed = true;
 			}
 		}
-	} else {
-		let totalSaved = Object.keys(portalSaveData).length;
-		for (const [portalID, portalData] of Object.entries(portalSaveData)) {
-			if (totalSaved > keepN && portalData.totalPortals <= currentPortalNumber - keepN) {
+	} else { // keep keepN portals, delete the rest
+		let keep = Object.keys(portalSaveData).splice(Object.keys(portalSaveData).length - keepN);
+		for (const portalID of Object.keys(portalSaveData)) {
+			if (!keep.includes(portalID)) {
 				delete portalSaveData[portalID];
-				totalSaved--;
 				changed = true;
 			}
 		}
@@ -124,7 +125,7 @@ function clearData(keepN, clrall = false) {
 
 function deleteSpecific() {
 	let portalNum = Number(document.getElementById("deleteSpecificTextBox").value);
-	if (parseInt(portalNum) < 0) { clearData(Math.abs(portalNum)); }
+	if (parseInt(portalNum) < 0) { clearData(Math.abs(portalNum)); } // keep X portals, delete the rest
 	else {
 		for (const [portalID, portalData] of Object.entries(portalSaveData)) {
 			if (portalData.totalPortals === portalNum) delete portalSaveData[portalID];
