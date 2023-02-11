@@ -108,7 +108,8 @@ function clearData(keepN, clrall = false) {
 				changed = true;
 			}
 		}
-	} else { // keep keepN portals, delete the rest
+	}
+	else { // keep keepN portals, delete the rest
 		let keep = Object.keys(portalSaveData).splice(Object.keys(portalSaveData).length - keepN);
 		for (const portalID of Object.keys(portalSaveData)) {
 			if (!keep.includes(portalID)) {
@@ -811,7 +812,17 @@ const getGameData = {
 	u2hze: () => { return game.global.highestRadonLevelCleared },
 	c23increase: () => {
 		if (game.global.challengeActive !== "" && game.global.runningChallengeSquared) {
-			return Math.max(0, getIndividualSquaredReward(game.global.challengeActive, game.global.world) - getIndividualSquaredReward(game.global.challengeActive));
+			// (mostly) Trimps code
+			var challenge = game.global.challengeActive;
+			var challengeList = game.challenges[challenge].multiChallenge || [challenge];
+			var totalDif = 0;
+			for (var x = 0; x < challengeList.length; x++) {
+				var challengeName = challengeList[x];
+				challenge = game.challenges[challengeName];
+				var dif = getIndividualSquaredReward(challengeName, game.global.world) - getIndividualSquaredReward(challengeName);
+				totalDif += dif;
+			}
+			return Math.max(0, totalDif);
 		}
 		else { return 0; }
 	},
@@ -1050,7 +1061,7 @@ var GRAPHSETTINGS = {
 	toggles: {},
 	darkTheme: true,
 	maxGraphs: 20, // Highcharts gets a bit angry rendering more graphs, 30 is the maximum you can fit on the legend before it splits into pages.
-	portalsDisplayed: 30
+	portalsDisplayed: 20
 }
 var portalSaveData = {}
 
