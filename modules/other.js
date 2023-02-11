@@ -828,7 +828,7 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 	}
 
 	if (game.global.stringVersion >= '5.9.0' && challengeActive('Desolation'))
-		amt *= game.challenges.Desolation.trimpResourceMult();
+		amt_local *= game.challenges.Desolation.trimpResourceMult();
 	if (game.challenges.Nurture.boostsActive())
 		amt_local *= game.challenges.Nurture.getResourceBoost();
 
