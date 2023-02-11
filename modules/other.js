@@ -784,64 +784,64 @@ function simpleSecondsLocal(what, seconds, event, ssWorkerRatio) {
 		currentMap === 'Worshipper Farm' ? trimpworkers :
 			job.owned;
 
-	var amt_local = workers * job.modifier * seconds;
-	amt_local += (amt_local * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
+	var amt = workers * job.modifier * seconds;
+	amt += (amt * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
 	if (what != "gems" && game.permaBoneBonuses.multitasking.owned > 0)
-		amt_local *= (1 + game.permaBoneBonuses.multitasking.mult());
+		amt *= (1 + game.permaBoneBonuses.multitasking.mult());
 	if (what != "science" && what != "fragments" && challengeActive('Alchemy'))
-		amt_local *= alchObj.getPotionEffect("Potion of Finding");
+		amt *= alchObj.getPotionEffect("Potion of Finding");
 	if (challengeActive("Frigid"))
-		amt_local *= game.challenges.Frigid.getShatteredMult();
+		amt *= game.challenges.Frigid.getShatteredMult();
 	if (game.global.pandCompletions && game.global.universe == 2 && what != "fragments")
-		amt_local *= game.challenges.Pandemonium.getTrimpMult();
+		amt *= game.challenges.Pandemonium.getTrimpMult();
 	if (game.global.stringVersion >= '5.9.0' && game.global.desoCompletions && game.global.universe == 2 && what != "fragments")
-		amt_local *= game.challenges.Desolation.getTrimpMult();
+		amt *= game.challenges.Desolation.getTrimpMult();
 	if (getPerkLevel("Observation") > 0 && game.portal.Observation.trinkets > 0)
-		amt_local *= game.portal.Observation.getMult();
+		amt *= game.portal.Observation.getMult();
 
 	if (what == "food" || what == "wood" || what == "metal") {
 		if (ssWorkerRatio) {
-			amt_local *= calculateParityBonus_Local(desiredRatios, HeirloomSearch(heirloom));
+			amt *= calculateParityBonus_Local(desiredRatios, HeirloomSearch(heirloom));
 		}
-		else amt_local *= getParityBonus();
+		else amt *= getParityBonus();
 		if (autoBattle.oneTimers.Gathermate.owned)
-			amt_local *= autoBattle.oneTimers.Gathermate.getMult();
+			amt *= autoBattle.oneTimers.Gathermate.getMult();
 	}
 	if (((what == "food" || (what == "wood" && game.global.stringVersion >= '5.9.0')) && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15))
-		amt_local *= game.jobs.Meteorologist.getExtraMult();
+		amt *= game.jobs.Meteorologist.getExtraMult();
 	if (Fluffy.isRewardActive('gatherer'))
-		amt_local *= 2;
+		amt *= 2;
 	if (what == "wood" && challengeActive('Hypothermia') && game.challenges.Hypothermia.bonfires > 0)
-		amt_local *= game.challenges.Hypothermia.getWoodMult();
+		amt *= game.challenges.Hypothermia.getWoodMult();
 	if (challengeActive('Unbalance'))
-		amt_local *= game.challenges.Unbalance.getGatherMult();
+		amt *= game.challenges.Unbalance.getGatherMult();
 
 	if (challengeActive('Daily')) {
 		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what != "fragments" && what != "science")
-			amt_local *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
+			amt *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
 		if (typeof game.global.dailyChallenge.dedication !== 'undefined')
-			amt_local *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
+			amt *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
 	}
 	if (challengeActive('Melt')) {
-		amt_local *= 10;
-		amt_local *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
+		amt *= 10;
+		amt *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
 	}
 
 	if (game.global.stringVersion >= '5.9.0' && challengeActive('Desolation'))
-		amt_local *= game.challenges.Desolation.trimpResourceMult();
+		amt *= game.challenges.Desolation.trimpResourceMult();
 	if (game.challenges.Nurture.boostsActive())
-		amt_local *= game.challenges.Nurture.getResourceBoost();
+		amt *= game.challenges.Nurture.getResourceBoost();
 
 	//Calculating heirloom bonus
-	amt_local = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"), amt_local);
+	amt = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"), amt);
 
 	var turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
 
 	if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == "food" || what == "metal" || what == "wood")) {
-		amt_local *= turkimpBonus;
-		amt_local += getPlayerModifier() * seconds;
+		amt *= turkimpBonus;
+		amt += getPlayerModifier() * seconds;
 	}
-	return amt_local;
+	return amt;
 }
 
 function calculateParityBonus_Local(workerRatio, heirloom) {
@@ -895,7 +895,7 @@ function calcHeirloomBonusLocal(mod, number) {
 	return (number * ((mod / 100) + 1));
 }
 
-function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
+function scaleToCurrentMapLocal(amt, ignoreBonuses, ignoreScry, map) {
 	if (map) map = game.global.world + map;
 	if (!map) map = game.global.mapsActive ? getCurrentMapObject().level :
 		challengeActive('Pandemonium') ? game.global.world - 1 :
@@ -903,21 +903,21 @@ function scaleToCurrentMapLocal(amt_local, ignoreBonuses, ignoreScry, map) {
 	game.global.world + map;
 	var compare = game.global.world;
 	if (map > compare && map.location != "Bionic") {
-		amt_local *= Math.pow(1.1, (map - compare));
+		amt *= Math.pow(1.1, (map - compare));
 	} else {
 		if (game.talents.mapLoot.purchased)
 			compare--;
 		if (map < compare) {
 			//-20% loot compounding for each level below world
-			amt_local *= Math.pow(0.8, (compare - map));
+			amt *= Math.pow(0.8, (compare - map));
 		}
 	}
 	var maploot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
 	//Add map loot bonus
-	amt_local = Math.round(amt_local * maploot);
-	if (ignoreBonuses) return amt_local;
-	amt_local = scaleLootBonuses(amt_local, ignoreScry);
-	return amt_local;
+	amt = Math.round(amt * maploot);
+	if (ignoreBonuses) return amt;
+	amt = scaleLootBonuses(amt, ignoreScry);
+	return amt;
 }
 
 function formatTimeForDescriptions(number) {
