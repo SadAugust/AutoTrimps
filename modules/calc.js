@@ -174,7 +174,7 @@ function getTrimpHealth(realHealth, mapType) {
 	//Desolation Completions
 	if (game.global.stringVersion >= '5.9.0') {
 		health *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
-		health *= game.global.frigidCompletions > 0 ? game.challenges.Frigid.getTrimpMult() : 1;
+		health *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
 		health *= challengeActive('Desolation') ? game.challenges.Desolation.trimpHealthMult() : 1;
 		health *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
 	}
@@ -419,7 +419,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	//Desolation Completions
 	if (game.global.stringVersion >= '5.9.0') {
 		attack *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
-		attack *= game.global.frigidCompletions > 0 ? game.challenges.Frigid.getTrimpMult() : 1;
+		attack *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
 		attack *= challengeActive('Desolation') ? game.challenges.Desolation.trimpAttackMult() : 1;
 		attack *= game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased ? 10 : 1;
 	}
@@ -1369,7 +1369,7 @@ function getTotalHealthMod() {
 	healthMulti *= game.global.pandCompletions > 0 ? game.challenges.Pandemonium.getTrimpMult() : 1;
 	//Desolation Completions
 	if (game.global.stringVersion >= '5.9.0') {
-		healthMulti *= game.global.frigidCompletions > 0 ? game.challenges.Frigid.getTrimpMult() : 1;
+		healthMulti *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
 		healthMulti *= game.global.desoCompletions > 0 ? game.challenges.Desolation.getTrimpMult() : 1;
 		healthMulti *= challengeActive('Desolation') ? game.challenges.Desolation.trimpHealthMult() : 1;
 		healthMulti *= game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased ? 10 : 1;
