@@ -180,7 +180,7 @@ function createUI() {
 	var graphsButton = document.createElement("TD");
 	graphsButton.appendChild(document.createTextNode("Graphs"))
 	graphsButton.setAttribute("class", "btn btn-default")
-	graphsButton.setAttribute("onclick", "autoToggleGraph(); drawGraph(); swapGraphUniverse();");
+	graphsButton.setAttribute("onclick", "escapeATWindows(false); drawGraph(); swapGraphUniverse();");
 
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
 	settingbarRow.insertBefore(graphsButton, settingbarRow.childNodes[10])
@@ -206,7 +206,7 @@ function createUI() {
 			opt.text = textMod + item;
 			selector.appendChild(opt);
 		}
-		selector.value = GRAPHSETTINGS[selector.id]
+		//selector.value = GRAPHSETTINGS[selector.id]
 		return selector;
 	}
 
@@ -232,9 +232,10 @@ function createUI() {
 	  <div style="float:right; margin-right: 1vw;"><button onclick="toggleAllGraphs()">All Off/On</button></div>`
 
 	// AAAAAAAAAAAAAAAAAAAAAAAAAAAA (Setting the inner HTML of the parent element resets the value of these? what the fuck)
-	document.querySelector("#universeSelection").value = GRAPHSETTINGS.universeSelection
-	document.querySelector("#u1graphSelection").value = GRAPHSETTINGS.u1graphSelection
-	document.querySelector("#u2graphSelection").value = GRAPHSETTINGS.u2graphSelection
+	// default to Current Universe + Clear Time if no user data exists
+	document.querySelector("#universeSelection").value = GRAPHSETTINGS.universeSelection || "Universe " + getGameData.universe();
+	document.querySelector("#u1graphSelection").value = GRAPHSETTINGS.u1graphSelection || "Clear Time";
+	document.querySelector("#u2graphSelection").value = GRAPHSETTINGS.u2graphSelection || "Clear Time";
 
 	let tipsText = "You can zoom by dragging a box around an area. You can turn portals off by clicking them on the legend. Quickly view the last portal by clicking it off, then Invert Selection. Or by clicking All Off, then clicking the portal on. To delete a portal, Type its portal number in the box and press Delete Specific. Using negative numbers in the Delete Specific box will KEEP that many portals (starting counting backwards from the current one), ie: if you have Portals 1000-1015, typing -10 will keep 1005-1015."
 	document.getElementById("graphFooterLine2").innerHTML += `
@@ -253,7 +254,7 @@ function createUI() {
 	document.querySelector("#graphParent").appendChild(toggleDiv);
 
 
-	// Handle Dark Graphs?  Old code
+	// Adjust UI elements for Trimps Theme changes
 	MODULES.graphs.themeChanged = function () {
 		if (game && game.options.menu.darkTheme.enabled != lastTheme) {
 			function f(h) {
@@ -274,8 +275,9 @@ function createUI() {
 		game && (lastTheme = game.options.menu.darkTheme.enabled);
 	}
 
-	MODULES.graphs.themeChanged();
 	document.querySelector("#blackCB").checked = GRAPHSETTINGS.darkTheme;
+	MODULES.graphs.themeChanged();
+
 	document.querySelector("#portalCountTextBox").value = GRAPHSETTINGS.portalsDisplayed;
 }
 
@@ -293,70 +295,45 @@ function toggleClearButton() {
 }
 
 function toggleDarkGraphs() {
-	function removeDarkGraphs() {
-		var darkcss = document.getElementById("dark-graph.css");
-		darkcss && (document.head.removeChild(darkcss), debug("Removing dark-graph.css file", "graphs"));
-	}
-	function addDarkGraphs() {
-		var darkcss = document.getElementById("dark-graph.css");
-		if (!darkcss) {
-			var b = document.createElement("link");
-			(b.rel = "stylesheet"), (b.type = "text/css"), (b.id = "dark-graph.css"), (b.href = basepath + "dark-graph.css"), document.head.appendChild(b), debug("Adding dark-graph.css file", "graphs");
-		}
-	}
 	if (game) {
 		var darkcss = document.getElementById("dark-graph.css")
 		var dark = document.getElementById("blackCB").checked;
-		saveSetting("darkTheme", !dark)
-		if ((!darkcss && (0 == game.options.menu.darkTheme.enabled || 2 == game.options.menu.darkTheme.enabled)) || MODULES.graphs.useDarkAlways || dark) {
-			addDarkGraphs()
+		saveSetting("darkTheme", dark)
+		if (!darkcss && dark) {
+			var b = document.createElement("link");
+			b.rel = "stylesheet";
+			b.type = "text/css";
+			b.id = "dark-graph.css";
+			b.href = basepath + "dark-graph.css";
+			document.head.appendChild(b);
+			debug("Adding dark-graph.css file", "graphs");
 		}
-		else {
-			if (darkcss && (1 == game.options.menu.darkTheme.enabled || 3 == game.options.menu.darkTheme.enabled || !dark)) {
-				removeDarkGraphs();
-			}
+		else if (darkcss && !dark) {
+			document.head.removeChild(darkcss)
+			debug("Removing dark-graph.css file", "graphs")
 		}
 	}
 }
 
-// show/hide graph window
-function autoToggleGraph() {
-	if (game.options.displayed) {
-		toggleSettingsMenu();
-	}
-	var autoSettings = document.getElementById("autoSettings");
-	if (autoSettings && autoSettings.style.display === "block") {
-		autoSettings.style.display = "none";
-	}
-	var ATMenu = document.getElementById("autoTrimpsTabBarMenu");
-	if (ATMenu && ATMenu.style.display === "block") {
-		ATMenu.style.display = "none";
-	}
-	var graphParent = document.getElementById("graphParent");
-	if ("block" === graphParent.style.display) {
-		graphParent.style.display = "none";
-		GRAPHSETTINGS.open = false;
-		trimpStatsDisplayed = false // HACKS disable hotkeys without touching Trimps settings
-	}
-	else {
-		graphParent.style.display = "block";
-		GRAPHSETTINGS.open = true;
-		trimpStatsDisplayed = true // HACKS disable hotkeys without touching Trimps settings
-	}
-}
-
-// close Graphs windows with ESC
-function escapeATWindows() {
+// Toggle AT windows with UI, or force close with Esc
+function escapeATWindows(escPressed = true) {
 	var a = document.getElementById("tooltipDiv");
-	if ("none" != a.style.display) return void cancelTooltip();
-	var b = document.getElementById("autoSettings");
-	if (b) "block" === b.style.display && (b.style.display = "none");
-	var b = document.getElementById("autoTrimpsTabBarMenu");
-	if (b) "block" === b.style.display && (b.style.display = "none");
-	var c = document.getElementById("graphParent");
-	if (c) "block" === c.style.display && (c.style.display = "none");
+	if (a.style.display != "none") return void cancelTooltip(); // old code, uncertain what it's for or why it's here.
+	for (elemId of ["autoSettings", "autoTrimpsTabBarMenu", "graphParent"]) {
+		var elem = document.getElementById(elemId);
+		if (!elem) continue;
+		if (elemId === "graphParent") { // toggle Graphs window
+			var open = elem.style.display === "block";
+			if (escPressed) open = true; // override to always close
+			elem.style.display = open ? "none" : "block";
+			GRAPHSETTINGS.open = !open;
+			trimpStatsDisplayed = !open; // HACKS disable hotkeys without touching Trimps settings
+		}
+		else { elem.style.display = "none"; } // close other windows
+	}
 }
 
+// Listen for Esc key presses, somehow.  This is ancient eldritch mess, but it works?  
 document.addEventListener(
 	"keydown",
 	function (a) {
@@ -1071,7 +1048,7 @@ var GRAPHSETTINGS = {
 	rememberSelected: [],
 	toggles: {},
 	darkTheme: true,
-	maxGraphs: 60, // Highcharts gets a bit angry rendering more graphs, 30 is the maximum you can fit on the legend before it splits into pages.
+	maxGraphs: 20, // Highcharts gets a bit angry rendering more graphs, 30 is the maximum you can fit on the legend before it splits into pages.
 	portalsDisplayed: 30
 }
 var portalSaveData = {}
