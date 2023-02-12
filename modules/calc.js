@@ -419,6 +419,8 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	attack *= game.global.frigidCompletions > 0 && game.global.universe === 1 ? game.challenges.Frigid.getTrimpMult() : 1;
 	attack *= challengeActive('Desolation') ? game.challenges.Desolation.trimpAttackMult() : 1;
 	attack *= game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased ? 10 : 1;
+	attack *= game.global.universe === 2 && u2Mutations.tree.Brains.purchased ? u2Mutations.tree.Brains.getBonus() : 1;
+
 	//AutoBattle
 	attack *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	// Heirloom (Shield)

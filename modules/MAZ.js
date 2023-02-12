@@ -1212,7 +1212,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	//Raiding & Bionic Raiding
 	if (raiding) {
 		//Raiding Zone
-		mazHelp += "<li><b>Raiding Zone</b> - The zone you'd like to raid when this line is run. " + (!bionic ? "If your 'Zone' input is 231 then the highest zone you can input is 241." : "") + "</li>";
+		mazHelp += "<li><b>Raiding Zone</b> - The zone you'd like to raid when this line is run. If \"Repeat Every X\" is set, it will also raise the Raiding zone by X every time. " + (!bionic ? "If your 'Zone' input is 231 then the highest zone you can input is 241." : "") + "</li>";
 		if (!bionic) mazHelp += "<li><b>Frag Type</b> - Frag: General all purpose setting. Will set sliders to max and reduce when necessary to afford the maps you're trying to purchase.<br>\
 	Frag Min: Used for absolute minimum frag costs. Will set everything but the map size to minimum and gradually reduce that if necessary to purchase maps.<br>\
 	Frag Max: This option will make sure that the map has perfect sliders and uses the prestegious special if available.</li>";

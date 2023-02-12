@@ -346,7 +346,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 		var ourDmg = calcOurDmg(dmgType, equalityAmt, false, 'map', critType, y, 'force');
 		if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = calcEnemyHealthCore('map', game.global.world + mapLevel, 20, 'Turtlimp') * difficulty;
-		enemyHealth *= (1 * maxOneShotPower(true));
+		enemyHealth *= (maxOneShotPower(true));
 		var enemyDmg = calcEnemyAttackCore('map', game.global.world + mapLevel, 20, 'Snimp', false, false, equalityAmt) * difficulty;
 
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
@@ -945,20 +945,22 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	}
 	//Setting special to current maps special if we're in a map.
 	if (game.global.mapsActive) mapSpecial = getCurrentMapObject().bonus === undefined ? "no special" : getCurrentMapObject().bonus;
+	if (mapName === 'Bionic Raiding') mapSpecial = game.talents.bionic2.purchased ? 'fa' : 'no special';
 
 	var timeMapping = mappingTime > 0 ? mappingTime : getGameTime();
+	var currCell = game.global.lastClearedCell + 2;
 	var message = '';
-	if (mapName !== 'Void Map' && mapName !== 'Quagmire Farm' && mapName !== 'Smithy Farm') {
-		message += (mapName + " (Z" + game.global.world + ") took " + (mappingLength) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + mapSpecial + ")" + (mappingLength == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+	if (mapName !== 'Void Map' && mapName !== 'Quagmire Farm' && mapName !== 'Smithy Farm' && mapName !== 'Bionic Raiding') {
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + mapSpecial + ")" + (mappingLength == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
 	}
 	else if (mapName === 'Smithy Farm') {
-		message += (mapName + " (Z" + game.global.world + ") took " + MODULES.mapFunctions.smithyMapCount[0] + " food, " + MODULES.mapFunctions.smithyMapCount[1] + " wood, " + MODULES.mapFunctions.smithyMapCount[2] + " metal maps (" + (mapLevel >= 0 ? "+" : "") + mapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + MODULES.mapFunctions.smithyMapCount[0] + " food, " + MODULES.mapFunctions.smithyMapCount[1] + " wood, " + MODULES.mapFunctions.smithyMapCount[2] + " metal maps (" + (mapLevel >= 0 ? "+" : "") + mapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
 	}
 	else if (mapName === 'Quagmire Farm') {
-		message += (mapName + " (Z" + game.global.world + ") took " + (mappingLength) + (mappingLength == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + (mappingLength == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
 	}
 	else {
-		message += (mapName + " (Z" + game.global.world + ") took " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
 	}
 
 	if (mapName === 'Void Map') {
@@ -966,19 +968,19 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	}
 
 	if (mapName === 'Tribute Farm') {
-		message += " Finished with (" + game.buildings.Tribute.purchased + "/" + extra + ") Tributes and (" + game.jobs.Meteorologist.owned + "/" + extra2 + ") Meteorologists.";
+		message += " Finished with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.";
 	}
 
 	if (mapName === 'Smithy Farm') {
-		message += " Finished with (" + game.buildings.Smithy.purchased + "/" + extra + ") Smithies.";
+		message += " Finished with " + game.buildings.Smithy.purchased + " smithies.";
 	}
 
 	if (mapName === 'Insanity Farm') {
-		message += " Finished with (" + game.challenges.Insanity.insanity + "/" + extra + ") stacks.";
+		message += " Finished with " + game.challenges.Insanity.insanity + " stacks.";
 	}
 
 	if (mapName === 'Alchemy Farm') {
-		message += " Finished with (" + extra + "/" + extra2 + ") " + extra3 + ".";
+		message += " Finished with " + extra + " " + extra3 + ".";
 	}
 
 	if (mapName === 'Hypothermia Farm') {
@@ -986,11 +988,11 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	}
 
 	if (mapName === 'Smithless Farm') {
-		message += " Finished with enough damage to get (" + extra + "/3) stacks.";
+		message += " Finished with enough damage to get " + extra + "/3 stacks.";
 	}
 
 	if (mapName === 'HD Farm') {
-		message += " Finished with a HD Ratio of (" + extra.toFixed(2) + "/" + extra2.toFixed(2) + ").";
+		message += " Finished with a HD Ratio of " + extra.toFixed(2) + "/" + extra2.toFixed(2) + ".";
 	}
 
 	debug(message);
