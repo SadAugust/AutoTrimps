@@ -94,7 +94,7 @@ function update_dg() {
 		m *= 1.009;
 	}
 	for (; n >= h;) a(1);
-	return prettify(Number(m));
+	return Number(m);
 }
 
 function parse_inputs() {

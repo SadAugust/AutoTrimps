@@ -40,8 +40,9 @@ function useScryerStance() {
 	}
 
 	var AutoStance = getPageSetting('AutoStance');
+
 	function autoStanceFunctionScryer() {
-		if ((getPageSetting('AutoStance') == 3) || (getPageSetting('use3daily') == true && challengeActive('Daily'))) windStance(HDRatio);
+		if ((getPageSetting('AutoStance') == 3) || (getPageSetting('use3daily') && challengeActive('Daily'))) windStance(HDRatio);
 		else if (AutoStance == 1) autoStance();
 		else if (AutoStance == 2) autoStance2();
 	}
@@ -83,7 +84,7 @@ function useScryerStance() {
 	//check Healthy never -- TODO
 	var curEnemyHealth = getCurrentEnemy(1);
 	var isHealthy = curEnemyHealth && curEnemyHealth.mutation == "Healthy";
-	if (never_scry || getPageSetting('UseScryerStance') == true && !game.global.mapsActive && (isHealthy && getPageSetting('ScryerSkipHealthy') == 0)) {
+	if (never_scry || getPageSetting('UseScryerStance') && !game.global.mapsActive && (isHealthy && getPageSetting('ScryerSkipHealthy') == 0)) {
 		autoStanceFunctionScryer();
 		wantToScry = false;
 		return;
