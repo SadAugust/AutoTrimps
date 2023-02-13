@@ -452,15 +452,15 @@ function initializeAllSettings() {
 			function () { return (game.global.highestRadonLevelCleared + 1 >= 70) });
 
 		//Desolation
-		createSetting('desolation', 'Desolation', 'Turn on Desolation settings. ', 'boolean', false, null, 'C2', [2],
+		createSetting('desolation', 'Desolation', 'Turn on Desolation settings.', 'boolean', false, null, 'C2', [2],
 			function () { return ((game.global.highestRadonLevelCleared + 1 >= 200 && game.global.desoCompletions !== 25) || getPageSetting('desolation', currSettingUniverse) || game.global.currentChallenge === 'Desolation') });
-		createSetting('desolationDestack', 'D: HD Ratio', 'What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Desolation stacks remaining to clear. ', 'value', '-1', null, 'C2', [2],
+		createSetting('desolationDestack', 'D: HD Ratio', 'At what HD ratio destacking should be considered. Must be used in conjunction with \'D: Stacks\'.', 'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse)) });
-		createSetting('desolationZone', 'D: Zone', 'What stack you\'d like to start destacking from, can be used in conjunction with \'D: HD Ratio\' but will clear stacks until the value set in \'D: Stacks\'.', 'value', '-1', null, 'C2', [2],
+		createSetting('desolationZone', 'D: Zone', 'From which zone destacking should be considered. Must be used in conjunction with \'D: Stacks\'.', 'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse)) });
-		createSetting('desolationStacks', 'D: Stacks', 'Sets the minimum stacks that AT will start to clear from when \'D: HD Ratio\' or \'D: Zone\' are being run. If set to -1 it\'ll act as 0 stacks. WILL CLEAR TO 0 STACKS WHEN IT STARTS RUNNING.', 'value', '-1', null, 'C2', [2],
+		createSetting('desolationStacks', 'D: Stacks', 'Minimal amount of stacks to reach before starting destacking. <b>WILL CLEAR TO 0 STACKS WHEN IT STARTS RUNNING.</b>', 'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse)) });
-		createSetting('desolationMapIncrease', 'D: Map Increase', 'Will increase the minimum map level of Desolation farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.', 'value', '-1', null, 'C2', [2],
+		createSetting('desolationMapIncrease', 'D: Map Increase', 'Increases the minimum map level of Desolation farming by this value. Negative values will be automatically set to 0.', 'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse)) });
 		createSetting('desolationMP', 'D: Melting Point', 'How many smithies to run Melting Point at during Desolation. <b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS</b>', 'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse)) });
@@ -2106,9 +2106,9 @@ function createInput(id, name, description) {
 	document.getElementById("autoSettings").appendChild($btnParent);
 }
 
-function settingChanged(id) {
+function settingChanged(id, currUniverse) {
 	var btn = autoTrimpSettings[id];
-	var radonon = autoTrimpSettings.radonsettings.value == 1;
+	var radonon = currUniverse ? game.global.universe === 2 : autoTrimpSettings.radonsettings.value == 1;
 	if (btn.type == 'boolean') {
 		var enabled = 'enabled'
 		if (radonon) enabled += 'U2';
@@ -2802,7 +2802,7 @@ function setupATButtons() {
 	var atJobText = document.createElement("DIV");
 	atJobText.innerHTML = autoTrimpSettings.jobType.name[jobSetting];
 	atJobText.setAttribute("id", "autoJobLabel");
-	atJobText.setAttribute("onClick", "settingChanged('jobType')");
+	atJobText.setAttribute("onClick", "settingChanged('jobType', true)");
 
 	//Creating cogwheel & linking onclick
 	var atJobSettings = document.createElement("DIV");
@@ -2831,7 +2831,7 @@ function setupATButtons() {
 	var atStructureText = document.createElement("DIV");
 	atStructureText.innerHTML = 'AT AutoStructure';
 	atStructureText.setAttribute("id", "autoStructureLabel");
-	atStructureText.setAttribute("onClick", "settingChanged('buildingsType')");
+	atStructureText.setAttribute("onClick", "settingChanged('buildingsType', true)");
 
 	//Creating cogwheel & linking onclick
 	var atStructureSettings = document.createElement("DIV");
@@ -2861,7 +2861,7 @@ function setupATButtons() {
 	var atEquipText = document.createElement("DIV");
 	atEquipText.innerHTML = 'AT AutoEquip';
 	atEquipText.setAttribute("id", "autoEquipLabel");
-	atEquipText.setAttribute("onClick", "settingChanged('equipOn')");
+	atEquipText.setAttribute("onClick", "settingChanged('equipOn', true)");
 
 	//Setting up positioning
 	var atEquipColumn = document.getElementById("equipmentTitleDiv").children[0];
