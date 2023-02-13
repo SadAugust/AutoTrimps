@@ -185,22 +185,44 @@ function HeirloomShieldSwapped() {
 
 function heirloomSwapping() {
 	if (!getPageSetting('heirloom')) return;
-	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-	const isDaily = challengeActive('Daily');
-	const rRunningRegular = !isDaily && !isC3
-	var swapZone = isC3 ? getPageSetting('heirloomSwapZoneC3') : isDaily ? getPageSetting('heirloomSwapZoneDaily') : rRunningRegular ? getPageSetting('heirloomSwapZone') : 0;
-	if (swapZone === -1) swapZone = 999;
-	const afterpushShield = isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 
 	//Swapping Shields
 	if (getPageSetting('heirloomShield')) {
-		if (game.global.universe === 2 && game.global.mapsActive && getCurrentMapObject().location == "Void" && getPageSetting(heirloomVoidSwap) && game.global.voidBuff !== 'doubleAttack' && getPageSetting('heirloomInitial') !== "undefined" && !voidPBSwap)
+
+		//Initial vars for swapping heirlooms
+		let isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+		let isDaily = challengeActive('Daily');
+		let isFiller = !isDaily && !isC3
+		let swapZone = isC3 ? getPageSetting('heirloomSwapZoneC3') : isDaily ? getPageSetting('heirloomSwapZoneDaily') : isFiller ? getPageSetting('heirloomSwapZone') : 999;
+		if (swapZone === -1) swapZone = 999;
+		let afterpushShield = isC3 ? 'heirloomC3' : 'heirloomAfterpush';
+		voidPBSwap = false;
+		let voidActive = game.global.mapsActive && getCurrentMapObject().location == "Void";
+		if (voidActive) {
+			voidPBSwap =
+				game.global.universe === 2 && getPageSetting('heirloomVoidSwap') &&
+				//Not at final map cell
+				game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
+				//Current enemy is slow
+				!fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
+				//Next cell is fast
+				fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&
+				//Not in double attack voids
+				game.global.voidBuff !== 'doubleAttack';
+		}
+
+		if (voidActive && (getPageSetting('heirloomVoid') !== "undefined" || (voidPBSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined"))) {
+			if (voidPBSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined")
+				HeirloomEquipShield('heirloomVoidPlaguebringer');
+			else
+				HeirloomEquipShield('heirloomVoid');
+		}
+		else if (voidActive && voidPBSwap && getPageSetting('heirloomInitial') !== "undefined")
 			HeirloomEquipShield('heirloomInitial');
 		else if (getPageSetting(afterpushShield) !== "undefined" && (game.global.world >= swapZone || ((game.global.preMapsActive || game.global.mapsActive) && getPageSetting('heirloomMapSwap'))))
 			HeirloomEquipShield(afterpushShield);
-		else if (getPageSetting('heirloomInitial') !== "undefined") {
+		else if (getPageSetting('heirloomInitial') !== "undefined")
 			HeirloomEquipShield('heirloomInitial');
-		}
 	}
 
 	//Swapping Staffs

@@ -443,9 +443,11 @@ ul.tab li a:hover {
 .windowActiveSmithyFarm,
 .windowPrioritySmithyFarm,
 .windowWorldSmithyFarm,
+.windowEndZoneSmithyFarm,
 .windowCellSmithyFarm,
 .windowAutoLevelSmithyFarm,
 .windowLevelSmithyFarm,
+.windowRepeatEverySmithyFarm,
 .windowMapTypeDropdownSmithyFarm,
 .windowMapTypeDropdownDefaultSmithyFarm,
 .windowRunTypeSmithyFarm,
@@ -461,27 +463,31 @@ ul.tab li a:hover {
 }
 
 .windowActiveSmithyFarm {
-	width: 7%;
+	width: 6%;
 }
 
 .windowPrioritySmithyFarm {
-	width: 7%;
+	width: 6%;
 }
 
 .windowWorldSmithyFarm {
 	width: 7%;
 }
 
-.windowCellSmithyFarm {
+.windowEndZoneSmithyFarm {
 	width: 7%;
+}
+
+.windowCellSmithyFarm {
+	width: 6%;
 }
 
 .windowAutoLevelSmithyFarm {
-	width: 7%;
+	width: 6%;
 }
 
 .windowLevelSmithyFarm {
-	width: 7%;
+	width: 6%;
 }
 
 .windowMapTypeDropdownSmithyFarm,
@@ -490,27 +496,31 @@ ul.tab li a:hover {
 }
 
 .windowSmithies {
-	width: 9%;
-}
-
-.windowMeltingPoint {
 	width: 7%;
 }
 
+.windowRepeatEverySmithyFarm {
+	width: 8%;
+}
+
+.windowMeltingPoint {
+	width: 5%;
+}
+
 .windowRunTypeSmithyFarm {
-	width: 28%;
+	width: 22%;
 }
 
 .windowChallengeOnSmithyFarm .windowChallengeSmithyFarm,
 .windowChallenge3OnSmithyFarm .windowChallenge3SmithyFarm {
 	display: inline-block;
-	width: 14%;
+	width: 10%;
 }
 
 .windowChallenge3OnSmithyFarm .windowRunTypeSmithyFarm,
 .windowChallengeOnSmithyFarm .windowRunTypeSmithyFarm {
 	display: inline-block;
-	width: 14%;
+	width: 12%;
 }
 
 .windowChallengeOffSmithyFarm .windowChallengeSmithyFarm,
@@ -523,6 +533,7 @@ ul.tab li a:hover {
 .windowActiveMapBonus,
 .windowPriorityMapBonus,
 .windowWorldMapBonus,
+.windowEndZoneMapBonus,
 .windowCellMapBonus,
 .windowAutoLevelMapBonus,
 .windowLevelMapBonus,
@@ -548,11 +559,15 @@ ul.tab li a:hover {
 }
 
 .windowWorldMapBonus {
-	width: 7%;
+	width: 6%;
+}
+
+.windowEndZoneMapBonus {
+	width: 6%;
 }
 
 .windowCellMapBonus {
-	width: 7%;
+	width: 6%;
 }
 
 .windowAutoLevelMapBonus {
@@ -568,11 +583,11 @@ ul.tab li a:hover {
 }
 
 .windowSpecialMapBonus {
-	width: 20%;
+	width: 18%;
 }
 
 .windowMapStacks {
-	width: 8%;
+	width: 6%;
 }
 
 .windowRunTypeMapBonus {
@@ -1015,6 +1030,7 @@ ul.tab li a:hover {
 /* Quagmire */
 .windowDeleteQuagmire,
 .windowActiveQuagmire,
+.windowPriorityQuagmire,
 .windowWorldQuagmire,
 .windowCellQuagmire,
 .windowJobRatioQuagmire,
@@ -1029,28 +1045,33 @@ ul.tab li a:hover {
 }
 
 .windowActiveQuagmire {
-	width: 11%;
+	width: 16%;
+}
+
+.windowPriorityQuagmire {
+	width: 16%;
 }
 
 .windowWorldQuagmire {
-	width: 21%;
+	width: 16%;
 }
 
 .windowCellQuagmire {
-	width: 21%;
+	width: 16%;
 }
 
 .windowJobRatioQuagmire {
-	width: 24%;
+	width: 16%;
 }
 
 .windowBogs {
-	width: 21%;
+	width: 18%;
 }
 
 /* Insanity */
 .windowDeleteInsanity,
 .windowActiveInsanity,
+.windowPriorityInsanity,
 .windowWorldInsanity,
 .windowCellInsanity,
 .windowAutoLevelInsanity,
@@ -1070,12 +1091,16 @@ ul.tab li a:hover {
 	width: 8%;
 }
 
+.windowPriorityInsanity {
+	width: 9%;
+}
+
 .windowWorldInsanity {
-	width: 10%;
+	width: 9%;
 }
 
 .windowCellInsanity {
-	width: 10%;
+	width: 9%;
 }
 
 .windowAutoLevelInsanity {
@@ -1083,24 +1108,25 @@ ul.tab li a:hover {
 }
 
 .windowLevelInsanity {
-	width: 10%;
+	width: 9%;
 }
 
 .windowJobRatioInsanity {
-	width: 12%;
+	width: 9%;
 }
 
 .windowSpecialInsanity {
-	width: 28%;
+	width: 26%;
 }
 
 .windowInsanity {
-	width: 10%;
+	width: 9%;
 }
 
 /* Alchemy */
 .windowDeleteAlchemy,
 .windowActiveAlchemy,
+.windowPriorityAlchemy,
 .windowWorldAlchemy,
 .windowCellAlchemy,
 .windowAutoLevelAlchemy,
@@ -1122,6 +1148,9 @@ ul.tab li a:hover {
 	width: 7%;
 }
 
+.windowPriorityAlchemy {
+	width: 7%;
+}
 
 .windowWorldAlchemy {
 	width: 7%;
@@ -1132,7 +1161,7 @@ ul.tab li a:hover {
 }
 
 .windowAutoLevelAlchemy {
-	width: 6%;
+	width: 7%;
 }
 
 .windowLevelAlchemy {
@@ -1140,11 +1169,11 @@ ul.tab li a:hover {
 }
 
 .windowJobRatioAlchemy {
-	width: 11%;
+	width: 10%;
 }
 
 .windowSpecialAlchemy {
-	width: 26%;
+	width: 22%;
 }
 
 .windowPotionNumber {
@@ -1152,7 +1181,7 @@ ul.tab li a:hover {
 }
 
 .windowPotionType {
-	width: 20%;
+	width: 18%;
 }
 
 .windowGatherOn .windowSpecialAlchemy {
@@ -1162,6 +1191,7 @@ ul.tab li a:hover {
 /* Hypothermia */
 .windowDeleteHypothermia,
 .windowActiveHypothermia,
+.windowPriorityHypothermia,
 .windowWorldHypothermia,
 .windowCellHypothermia,
 .windowAutoLevelHypothermia,
@@ -1181,27 +1211,31 @@ ul.tab li a:hover {
 }
 
 .windowActiveHypothermia {
-	width: 10%;
+	width: 12%;
+}
+
+.windowPriorityHypothermia {
+	width: 12%;
 }
 
 .windowWorldHypothermia {
-	width: 16%;
+	width: 12%;
 }
 
 .windowCellHypothermia {
-	width: 16%;
+	width: 12%;
 }
 
 .windowAutoLevelHypothermia {
-	width: 8%;
+	width: 9%;
 }
 
 .windowLevelHypothermia {
-	width: 16%;
+	width: 12%;
 }
 
 .windowJobRatioHypothermia {
-	width: 21%;
+	width: 18%;
 }
 
 .windowBonfire {

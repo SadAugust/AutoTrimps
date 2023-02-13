@@ -18,7 +18,7 @@ function initializeAutoTrimps() {
 	loadPageVariables();
 	ATscriptLoad('', 'SettingsGUI');
 	ATscriptLoad('', 'Graphs');
-	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions'];
+	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
 	for (var m in ATmoduleList) {
 		ATscriptLoad(modulepath, ATmoduleList[m]);
 	}
@@ -118,6 +118,8 @@ var currentMap = undefined;
 var rAutoLevel = Infinity;
 var rMapRepeats = 0;
 var freeVoids = 0;
+var tenacityTime = '0m';
+var tenacityTimeNew = '0m';
 var showingPerky = false;
 
 var rMapSettings = {
@@ -148,10 +150,12 @@ function mainLoop() {
 
 	if (document.getElementById('tooltipDiv').classList[0] !== undefined && !MAZCheck && document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow')) document.getElementById('tooltipDiv').classList.remove(document.getElementById('tooltipDiv').classList[0])
 
-	if (freeVoids !== game.permaBoneBonuses.voidMaps.tracker || autoLevel !== autoLevelCurrent) {
-		document.getElementById('freeVoidMap').innerHTML = "Void: " + (game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" + (getPageSetting('equalityManagement') === 2 ? " | Auto Level: " + autoLevel : "");
+	tenacityTimeNew = game.global.universe === 2 ? Math.floor(game.portal.Tenacity.getTime()) + "m" : '0m';
+	if (freeVoids !== game.permaBoneBonuses.voidMaps.tracker || autoLevel !== autoLevelCurrent || tenacityTimeNew !== tenacityTime) {
+		document.getElementById('freeVoidMap').innerHTML = "Void: " + (game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" + (game.global.universe === 2 && getPageSetting('equalityManagement') === 2 ? " | Auto Level: " + autoLevel : game.global.universe === 1 ? " | Auto Level: " + autoLevel : "") + (game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 ? " | T: " + tenacityTimeNew : "");
 		freeVoids = game.permaBoneBonuses.voidMaps.tracker
 		autoLevelCurrent = autoLevel;
+		tenacityTime = tenacityTimeNew;
 		document.getElementById('freeVoidMap').parentNode.style.display = 'block';
 		document.getElementById('freeVoidMap').style.display = 'block';
 	}
@@ -306,7 +310,7 @@ function mainLoop() {
 		//Archeology
 		if (getPageSetting('archaeology') && challengeActive('Archaeology')) archstring();
 		//Auto Equality Management
-		if (getPageSetting('equalityManagement') === 1) rManageEquality();
+		if (getPageSetting('equalityManagement') === 1) equalityManagementBasic();
 		if (getPageSetting('equalityManagement') === 2) equalityManagement();
 
 		if (challengeActive('Daily') && getPageSetting('buyradony') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyradony') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');

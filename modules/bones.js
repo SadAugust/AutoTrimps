@@ -74,6 +74,38 @@ function boneShrine() {
 	}
 }
 
+function boneShrineOutput(charges) {
+
+	charges = !charges ? 0 : charges;
+
+	var eligible = ["food", "wood", "metal"];
+	var storage = ["Barn", "Shed", "Forge"];
+	var rewarded = [0, 0, 0];
+	var hasNeg = false;
+	for (var x = 0; x < eligible.length; x++) {
+		var resName = eligible[x];
+		var resObj = game.resources[resName];
+		var amt = simpleSeconds(resName, (game.permaBoneBonuses.boosts.timeGranted() * 60));
+		amt = scaleLootBonuses(amt, true);
+		amt *= charges
+		var tempMax = resObj.max;
+		var packMod = getPerkLevel("Packrat") * game.portal.Packrat.modifier;
+		var newTotal = resObj.owned + amt;
+		while (newTotal > calcHeirloomBonus("Shield", "storageSize", tempMax + (tempMax * packMod))) {
+			var nextCost = calculatePercentageBuildingCost(storage[x], resName, 0.25, tempMax);
+			if (newTotal < nextCost) break;
+			newTotal -= nextCost;
+			amt -= nextCost;
+			tempMax *= 2;
+		}
+		rewarded[x] = amt;
+		if (amt < 0) hasNeg = true;
+	}
+	var text = prettify(rewarded[0]) + " Food, " + prettify(rewarded[1]) + " Wood, and " + prettify(rewarded[2]) + " Metal."
+
+	return text;
+}
+
 function BuySingleRunBonuses() {
 
 	if (!game.singleRunBonuses.goldMaps.owned && game.global.b >= 20 && getPageSetting('c2GoldenMaps'))

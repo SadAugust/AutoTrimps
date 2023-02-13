@@ -1408,3 +1408,249 @@ function gammaMaxStacks(specialChall) {
 	if (gammaBurstPct === 1 || (specialChall && game.global.mapsActive)) gammaMaxStacks = Infinity;
 	return gammaMaxStacks;
 }
+
+
+function simpleSecondsLocal(what, seconds, event, workerRatio) {
+	var event = !event ? null : event;
+	var workerRatio = !workerRatio ? null : workerRatio;
+
+	if (typeof workerRatio !== 'undefined' && workerRatio !== null) {
+		var desiredRatios = Array.from(workerRatio.split(','))
+		desiredRatios = [desiredRatios[0] !== undefined ? Number(desiredRatios[0]) : 0,
+		desiredRatios[1] !== undefined ? Number(desiredRatios[1]) : 0,
+		desiredRatios[2] !== undefined ? Number(desiredRatios[2]) : 0,
+		desiredRatios[3] !== undefined ? Number(desiredRatios[3]) : 0]
+		var totalFraction = desiredRatios.reduce((a, b) => { return a + b; });
+	}
+
+	//Come home to the impossible flavour of balanced resource gain. Come home, to simple seconds.
+	var jobName;
+	var pos;
+	switch (what) {
+		case "food":
+			jobName = "Farmer";
+			pos = 0
+			break;
+		case "wood":
+			jobName = "Lumberjack";
+			pos = 1
+			break;
+		case "metal":
+			jobName = "Miner";
+			pos = 2
+			break;
+		case "gems":
+			jobName = "Dragimp";
+			break;
+		case "fragments":
+			jobName = "Explorer";
+			break;
+		case "science":
+			jobName = "Scientist";
+			pos = 3
+			break;
+	}
+	var heirloom = !jobName ? null :
+		jobName == "Miner" && challengeActive('Pandemonium') && getPageSetting("pandemoniumStaff") !== 'undefined' ? "pandemoniumStaff" :
+			jobName == "Farmer" && getPageSetting('heirloomStaffFood') != 'undefined' ? ('heirloomStaffFood') :
+				jobName == "Lumberjack" && getPageSetting('heirloomStaffWood') != 'undefined' ? ('heirloomStaffWood') :
+					jobName == "Miner" && getPageSetting('heirloomStaffMetal') != 'undefined' ? ('heirloomStaffMetal') :
+						getPageSetting('heirloomStaffMap') != 'undefined' ? ('heirloomStaffMap') :
+							getPageSetting('heirloomStaffWorld') != 'undefined' ? ('heirloomStaffWorld') :
+								null;
+	var job = game.jobs[jobName];
+	var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
+	var workers = workerRatio !== null ? Math.floor(trimpworkers * desiredRatios[pos] / totalFraction) :
+		currentMap === 'Worshipper Farm' ? trimpworkers :
+			job.owned;
+
+	var amt = workers * job.modifier * seconds;
+	amt += (amt * getPerkLevel("Motivation") * game.portal.Motivation.modifier);
+	if (what != "gems" && game.permaBoneBonuses.multitasking.owned > 0)
+		amt *= (1 + game.permaBoneBonuses.multitasking.mult());
+	if (what != "science" && what != "fragments" && challengeActive('Alchemy'))
+		amt *= alchObj.getPotionEffect("Potion of Finding");
+	if (challengeActive("Frigid"))
+		amt *= game.challenges.Frigid.getShatteredMult();
+	if (game.global.pandCompletions && game.global.universe == 2 && what != "fragments")
+		amt *= game.challenges.Pandemonium.getTrimpMult();
+	if (game.global.desoCompletions && game.global.universe == 2 && what != "fragments")
+		amt *= game.challenges.Desolation.getTrimpMult();
+	if (getPerkLevel("Observation") > 0 && game.portal.Observation.trinkets > 0)
+		amt *= game.portal.Observation.getMult();
+
+	if (what == "food" || what == "wood" || what == "metal") {
+		if (workerRatio) {
+			amt *= calculateParityBonusAT(desiredRatios, HeirloomSearch(heirloom));
+		}
+		else amt *= getParityBonus();
+		if (autoBattle.oneTimers.Gathermate.owned)
+			amt *= autoBattle.oneTimers.Gathermate.getMult();
+	}
+	if (((what == "food" || (what == "wood")) && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15))
+		amt *= game.jobs.Meteorologist.getExtraMult();
+	if (Fluffy.isRewardActive('gatherer'))
+		amt *= 2;
+	if (what == "wood" && challengeActive('Hypothermia') && game.challenges.Hypothermia.bonfires > 0)
+		amt *= game.challenges.Hypothermia.getWoodMult();
+	if (challengeActive('Unbalance'))
+		amt *= game.challenges.Unbalance.getGatherMult();
+
+	if (challengeActive('Daily')) {
+		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what != "fragments" && what != "science")
+			amt *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
+		if (typeof game.global.dailyChallenge.dedication !== 'undefined')
+			amt *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
+	}
+	if (challengeActive('Melt')) {
+		amt *= 10;
+		amt *= Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
+	}
+
+	if (challengeActive('Desolation'))
+		amt *= game.challenges.Desolation.trimpResourceMult();
+	if (game.challenges.Nurture.boostsActive())
+		amt *= game.challenges.Nurture.getResourceBoost();
+
+	//Calculating heirloom bonus
+	amt = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"), amt);
+
+	var turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
+
+	if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == "food" || what == "metal" || what == "wood")) {
+		amt *= turkimpBonus;
+		amt += getPlayerModifier() * seconds;
+	}
+	return amt;
+}
+
+function scaleToCurrentMapLocal(amt, ignoreBonuses, ignoreScry, map) {
+	if (map) map = game.global.world + map;
+	if (!map) map = game.global.mapsActive ? getCurrentMapObject().level :
+		challengeActive('Pandemonium') ? game.global.world - 1 :
+			game.global.world;
+	game.global.world + map;
+	var compare = game.global.world;
+	if (map > compare && map.location != "Bionic") {
+		amt *= Math.pow(1.1, (map - compare));
+	} else {
+		if (game.talents.mapLoot.purchased)
+			compare--;
+		if (map < compare) {
+			//-20% loot compounding for each level below world
+			amt *= Math.pow(0.8, (compare - map));
+		}
+	}
+	var maploot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
+	//Add map loot bonus
+	amt = Math.round(amt * maploot);
+	if (ignoreBonuses) return amt;
+	amt = scaleLootBonuses(amt, ignoreScry);
+	return amt;
+}
+
+function calculateParityBonusAT(workerRatio, heirloom) {
+	if (!game.global.StaffEquipped || game.global.StaffEquipped.rarity < 10) {
+		game.global.parityBonus = 1;
+		return 1;
+	}
+	var allowed = ["Farmer", "Lumberjack", "Miner"];
+	var totalWorkers = 0;
+	var numWorkers = [];
+	if (!workerRatio) {
+		for (var x = 0; x < allowed.length; x++) {
+			var thisWorkers = game.jobs[allowed[x]].owned;
+			totalWorkers += thisWorkers;
+			numWorkers[x] = thisWorkers;
+		}
+		var workerRatios = [];
+		for (var x = 0; x < numWorkers.length; x++) {
+			workerRatios.push(numWorkers[x] / totalWorkers);
+		}
+	} else {
+		var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
+		var workerRatios = workerRatio;
+		var ratio = workerRatios.reduce((a, b) => a + b, 0)
+		var freeWorkerDivided = freeWorkers / ratio;
+
+		for (var x = 0; x < allowed.length; x++) {
+			var thisWorkers = freeWorkerDivided * workerRatios[x];
+			totalWorkers += thisWorkers;
+			numWorkers[x] = thisWorkers;
+		}
+	}
+	var resourcePop = totalWorkers;
+	resourcePop = Math.log(resourcePop) / Math.log(3);
+	var largestWorker = Math.log(Math.max(...numWorkers)) / Math.log(3);
+	var spreadFactor = resourcePop - largestWorker;
+	var preLoomBonus = (spreadFactor * spreadFactor);
+	var finalWithParity = (1 + preLoomBonus) * getHazardParityMult(heirloom);
+	game.global.parityBonus = finalWithParity;
+	return finalWithParity;
+}
+
+function calcHeirloomBonusLocal(mod, number) {
+	var mod = mod;
+	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined')
+		mod *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
+	if (!mod) return;
+
+	return (number * ((mod / 100) + 1));
+}
+
+function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) {
+	if (!itemObj.cost) return 1;
+	var forcedMax = 0;
+	var mostAfford = -1;
+	if (Number.isInteger(forceMax)) forcedMax = forceMax;
+	//if (!forceMax) var forceMax = false;
+	var forceMax = Number.isInteger(forceMax) ? forceMax : false;
+	var currentOwned = (itemObj.purchased) ? itemObj.purchased : ((itemObj.level) ? itemObj.level : itemObj.owned);
+	if (!currentOwned) currentOwned = 0;
+	if (isJob && game.global.firing && !forceRatio) return Math.floor(currentOwned * game.global.maxSplit);
+	//if (itemObj == game.equipment.Shield) console.log(currentOwned);
+	for (var item in itemObj.cost) {
+		var price = itemObj.cost[item];
+		var toBuy;
+		var resource = game.resources[item];
+		var resourcesAvailable = !resources ? resource.owned : resources;
+		if (resourcesAvailable < 0) resourcesAvailable = 0;
+		if (game.global.maxSplit != 1 && !forceMax && !forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * game.global.maxSplit);
+		else if (forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * forceRatio);
+
+		if (item === 'fragments' && game.global.universe === 2) {
+			var buildingSetting = getPageSetting('buildingSettingsArray');
+			resourcesAvailable = buildingSetting.SafeGateway.zone !== 0 && game.global.world >= buildingSetting.SafeGateway.zone ? resourcesAvailable :
+				buildingSetting.SafeGateway.enabled && resourcesAvailable > resource.owned - (perfectMapCost_Actual(10, 'lmc') * buildingSetting.SafeGateway.mapCount) ? resource.owned - (perfectMapCost_Actual(10, 'lmc') * buildingSetting.SafeGateway.mapCount) :
+					resourcesAvailable;
+		}
+		if (!resource || typeof resourcesAvailable === 'undefined') {
+			console.log("resource " + item + " not found");
+			return 1;
+		}
+		if (typeof price[1] !== 'undefined') {
+			var start = price[0];
+			if (isEquipment) {
+				var artMult = getEquipPriceMult();
+				start = Math.ceil(start * artMult);
+			}
+			if (isBuilding && getPerkLevel("Resourceful")) start = start * (Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel("Resourceful")));
+			toBuy = Math.floor(log10(((resourcesAvailable / (start * Math.pow(price[1], currentOwned))) * (price[1] - 1)) + 1) / log10(price[1]));
+
+		}
+		else if (typeof price === 'function') {
+			return 1;
+		}
+		else {
+			if (isBuilding && getPerkLevel("Resourceful")) price = Math.ceil(price * (Math.pow(1 - game.portal.Resourceful.modifier, getPerkLevel("Resourceful"))));
+			toBuy = Math.floor(resourcesAvailable / price);
+		}
+		if (mostAfford == -1 || mostAfford > toBuy) mostAfford = toBuy;
+	}
+	if (forceRatio && (mostAfford <= 0 || isNaN(mostAfford))) return 0;
+	if (isBuilding && mostAfford > 1000000000) return 1000000000;
+	if (mostAfford <= 0) return 1;
+	if (forceMax !== false && mostAfford > forceMax) return forceMax;
+	if (isJob && itemObj.max && itemObj.owned + mostAfford > itemObj.max) return (itemObj.max - itemObj.owned);
+	return mostAfford;
+}

@@ -417,7 +417,7 @@ function MapBonus() {
 		//Skip iterating lines if map bonus is capped.
 		if (game.global.mapBonus === 10) continue;
 		let currSetting = rMBBaseSettings[y];
-		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell) continue;
+		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world > currSetting.endzone) continue;
 		if (currSetting.runType !== 'All') {
 			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
 				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
@@ -524,11 +524,7 @@ function MapFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === world) {
-			rMFIndex = y;
-			break;
-		}
-		if ((game.global.world - world) % currSetting.repeatevery === 0) {
+		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
 			rMFIndex = y;
 			break;
 		}
@@ -638,11 +634,7 @@ function TributeFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === world) {
-			rTrFIndex = y;
-			break;
-		}
-		if ((game.global.world - world) % currSetting.repeatevery === 0) {
+		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
 			rTrFIndex = y;
 			break;
 		}
@@ -802,7 +794,7 @@ function SmithyFarm() {
 		let currSetting = rSFBaseSetting[y];
 		let world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world !== world || game.global.lastClearedCell + 2 < currSetting.cell) {
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world !== world || game.global.lastClearedCell + 2 < currSetting.cell || (game.global.world > world && currSetting.repeatevery === 0) || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone)) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
@@ -812,7 +804,7 @@ function SmithyFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === world) {
+		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
 			rSFIndex = y;
 			break;
 		}
@@ -892,7 +884,6 @@ function SmithyFarm() {
 		}
 
 		rSFGoal = 0;
-
 		var smithyGemCost = getBuildingItemPrice(game.buildings.Smithy, 'gems', false, rSFSmithies - game.buildings.Smithy.purchased);
 		var smithyWoodCost = getBuildingItemPrice(game.buildings.Smithy, 'wood', false, rSFSmithies - game.buildings.Smithy.purchased);
 		var smithyMetalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, rSFSmithies - game.buildings.Smithy.purchased);
@@ -993,7 +984,7 @@ function WorshipperFarm() {
 		let currSetting = rWFBaseSetting[y];
 		let world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone) || (game.global.world > world && currSetting.repeatevery === 0)) {
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone) || (game.global.world > world && currSetting.repeatevery === 0)) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
@@ -1003,11 +994,7 @@ function WorshipperFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === world && game.global.lastClearedCell + 2 >= currSetting.cell) {
-			rWFIndex = y;
-			break;
-		}
-		if ((game.global.world - world) % currSetting.repeatevery === 0 && game.global.lastClearedCell + 2 >= currSetting.cell) {
+		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
 			rWFIndex = y;
 			break;
 		}
@@ -1490,17 +1477,18 @@ function BionicRaiding() {
 			)
 		);
 
-		if (currentMap === mapName && !rShouldBionicRaid) {
-			mappingDetails(mapName, 0, special);
-			resetMapVars();
-		}
-
 		farmingDetails.shouldRun = rShouldBionicRaid;
 		farmingDetails.mapName = mapName;
 		farmingDetails.repeat = !repeat
 		farmingDetails.raidingZone = raidzonesBW;
 		farmingDetails.status = status;
 	}
+
+	if (currentMap === mapName && !rShouldBionicRaid) {
+		mappingDetails(mapName, 0);
+		resetMapVars();
+	}
+
 	return farmingDetails;
 }
 
@@ -2493,7 +2481,7 @@ function Desolation() {
 	if (game.global.stringVersion < '5.9.0') return farmingDetails;
 	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
 
-	var rShouldDesolation = false;
+	var shouldDesolation = false;
 	var mapAutoLevel = Infinity;
 
 	var destackHits = getPageSetting('desolationDestack') > 0 ? getPageSetting('desolationDestack') : Infinity;
@@ -2504,8 +2492,9 @@ function Desolation() {
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 	var desolationSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
 
+
 	if (game.challenges.Desolation.chilled >= destackStacks && (HDRatio > destackHits || game.global.world >= destackZone))
-		rShouldDesolation = true;
+		shouldDesolation = true;
 
 	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
 		game.global.mapRunCounter = mapRepeats;
@@ -2517,9 +2506,9 @@ function Desolation() {
 		if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 		desolationMapLevel = mapAutoLevel;
 	}
-	if (!rShouldDesolation && (MODULES.mapFunctions.desolationContinueRunning || (game.global.mapsActive && rMapSettings.mapName === 'Desolation Destacking'))) {
+	if (!shouldDesolation && (MODULES.mapFunctions.desolationContinueRunning || (game.global.mapsActive && rMapSettings.mapName === 'Desolation Destacking'))) {
 		if (game.challenges.Desolation.chilled > 0) {
-			rShouldDesolation = true;
+			shouldDesolation = true;
 			MODULES.mapFunctions.desolationContinueRunning = true;
 		}
 		if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) {
@@ -2534,7 +2523,7 @@ function Desolation() {
 	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== desolationMapLevel || (getCurrentMapObject().bonus !== desolationSpecial && (getCurrentMapObject().bonus !== undefined && desolationSpecial !== '0')) || game.challenges.Desolation.chilled <= desolationMapLevel + 1);
 	var status = 'Desolation Destacking: ' + game.challenges.Desolation.chilled + " remaining";
 
-	farmingDetails.shouldRun = rShouldDesolation;
+	farmingDetails.shouldRun = shouldDesolation;
 	farmingDetails.mapName = mapName;
 	farmingDetails.mapLevel = desolationMapLevel;
 	farmingDetails.autoLevel = true;
@@ -2635,7 +2624,7 @@ function HDFarm() {
 		if (((currentMap === mapName && !rShouldHDFarm) || rShouldSkip) && HDRatio !== Infinity) {
 			hdRatio = calcHDRatio(game.global.world, hdType);
 			if (!rShouldSkip) mappingDetails(mapName, rHDFMapLevel, rHDFSpecial, hdRatio, equipfarmdynamicHD(rHDFIndex));
-			if (getPageSetting('spamMessages').map_Details && rShouldSkip) debug("HD Farm (Z" + game.global.world + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(rHDFIndex).toFixed(2) + ").");
+			if (getPageSetting('spamMessages').map_Details && rShouldSkip) debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(rHDFIndex).toFixed(2) + ").");
 			resetMapVars(rHDFSettings);
 			if (!dontRecycleMaps && game.global.mapsActive) {
 				mapsClicked(true);
@@ -2939,6 +2928,23 @@ function fragmentFarm() {
 	updateMapCost();
 }
 
+function minMapFrag(level, specialModifier, biome) {
+
+	var sliders = [9, 9, 9];
+	var perfect = true;
+	if (game.resources.fragments.owned < perfectMapCost_Actual(level, specialModifier, biome)) {
+		perfect = false;
+
+		while (sliders[0] > 0 && sliders[2] > 0 && perfectMapCost_Actual(level, specialModifier, biome, sliders, perfect) > game.resources.fragments.owned) {
+			sliders[0] -= 1;
+			if (perfectMapCost_Actual(level, specialModifier, biome, sliders, perfect) <= game.resources.fragments.owned) break;
+			sliders[2] -= 1;
+		}
+	}
+
+	return perfectMapCost_Actual(level, specialModifier, biome, sliders, perfect);
+}
+
 function perfectMapCost(pluslevel, special, biome) {
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
@@ -3042,4 +3048,194 @@ function rRunMap() {
 	}
 	if (challengeActive('Insanity')) game.challenges.Insanity.drawStacks();
 	if (challengeActive('Pandemonium')) game.challenges.Pandemonium.drawStacks();
+}
+
+function dailyModiferReduction() {
+	if (!challengeActive('Daily')) return 0;
+	if (game.global.universe === 1) return 0;
+	var dailyMods = dailyModifiersOutput().split('<br>');
+	dailyMods.length = dailyMods.length - 1;
+	var dailyReduction = 0;
+	var settingsArray = getPageSetting('dailyPortalSettingsArray');
+
+	for (var item in settingsArray) {
+		if (item === 'portalZone' || item === 'portalChallenge') continue;
+		if (!settingsArray[item].enabled) continue;
+		var dailyReductionTemp = 0;
+		var modifier = item;
+		if (modifier.includes('Weakness')) modifier = 'Enemies stack a debuff with each attack, reducing Trimp attack by';
+		if (modifier.includes('Famine')) modifier = 'less Metal, Food, Wood, and Gems from all sources';
+		if (modifier.includes('Large')) modifier = 'All housing can store';
+
+		for (var x = 0; x < dailyMods.length; x++) {
+			if (dailyMods[x].includes(modifier)) {
+				dailyReductionTemp = settingsArray[item].zone
+			}
+			if (dailyReduction > dailyReductionTemp) dailyReduction = dailyReductionTemp;
+		}
+	}
+	return dailyReduction
+}
+
+function dailyOddOrEven() {
+	var result = {
+		odd: false,
+		even: false,
+		oddMult: 0,
+		evenMult: 0,
+		skipZone: false,
+		skipNextZone: 0
+	}
+	if (!challengeActive('Daily')) return result;
+	if (!getPageSetting('mapOddEvenIncrement')) return result;
+
+	if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined') {
+		result.oddMult += dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
+	}
+
+	//Dodge Dailies
+	if (typeof game.global.dailyChallenge.slippery !== "undefined") {
+		var slipStr = game.global.dailyChallenge.slippery.strength / 100;
+		if (slipStr > 0.15) result.evenMult += slipStr;
+		else result.oddMult += slipStr
+	}
+
+	if (result.oddMult === 0 && result.evenMult === 0) return result;
+	else if (result.oddMult !== 0 && result.evenMult !== 0) {
+		if (Math.max(result.oddMult, result.evenMult) === result.oddMult) result.evenMult = 0;
+		else result.oddMult = 0;
+	}
+
+	if (result.evenMult !== 0) {
+		if (game.global.world % 2 === 0) result.skipZone = true;
+		else result.skipNextZone = 1;
+	}
+	else if (result.oddMult !== 0) {
+		if (game.global.world % 2 === 1) result.skipZone = true;
+		else result.skipNextZone = 1;
+	}
+
+	return result;
+}
+
+function getAvailableSpecials(special, skipCaches) {
+
+	var cacheMods = [];
+	var bestMod;
+
+	if (special === 'lsc') cacheMods = ['lsc', 'hc', 'ssc', 'lc'];
+	else if (special === 'lwc') cacheMods = ['lwc', 'hc', 'swc', 'lc'];
+	else if (special === 'lmc') cacheMods = ['lmc', 'hc', 'smc', 'lc'];
+	else if (special === 'p') cacheMods = ['p', 'fa'];
+	else cacheMods = [special];
+
+	var hze = getHighestLevelCleared();
+	var unlocksAt = game.global.universe === 2 ? 'unlocksAt2' : 'unlocksAt';
+
+	for (const mod of cacheMods) {
+		if (skipCaches && mod === 'hc') continue;
+		if (mapSpecialModifierConfig[mod][unlocksAt] <= hze) {
+			bestMod = mod;
+			break;
+		}
+	}
+	if (bestMod === undefined) bestMod = '0';
+	return bestMod;
+}
+
+function getSpecialTime(special, maps, noImports) {
+	if (!special) special = getAvailableSpecials('lmc');
+	if (!maps) maps = 1;
+	var specialTime = 0;
+
+	//Figuring out loot time our selected cache gives us
+	specialTime +=
+		special[0] === 'l' && special.length === 3 ? 20 :
+			special === 'hc' ? 10 :
+				special[0] === 's' ? 10 :
+					special === 'lc' ? 5 :
+						0;
+
+	specialTime *= maps;
+	if (!noImports) {
+		specialTime += game.unlocks.imps.Chronoimp ? (5 * maps) : 0;
+		if (maps >= 4) specialTime += (Math.floor(maps / 4) * 45);
+	}
+
+	return (specialTime);
+}
+
+function resetMapVars(setting) {
+	const totalPortals = getTotalPortals();
+	currentMap = undefined;
+	rAutoLevel = Infinity;
+	mappingTime = 0;
+	mapRepeats = 0;
+	game.global.mapRunCounter = 0;
+	if (setting) setting.done = (totalPortals + "_" + game.global.world);
+	saveSettings();
+}
+
+function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
+	if (!getPageSetting('spamMessages').map_Details) return;
+	if (!mapName) return;
+
+	//Figuring out exact amount of maps run
+	if (mapName !== 'Smithy Farm') {
+		var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
+		var mappingLength = mapProg > 0 ? (game.global.mapRunCounter + mapProg).toFixed(2) : game.global.mapRunCounter;
+	}
+	//Setting special to current maps special if we're in a map.
+	if (game.global.mapsActive) mapSpecial = getCurrentMapObject().bonus === undefined ? "no special" : getCurrentMapObject().bonus;
+	if (mapName === 'Bionic Raiding') mapSpecial = game.talents.bionic2.purchased ? 'fa' : 'no special';
+
+	var timeMapping = mappingTime > 0 ? mappingTime : getGameTime();
+	var currCell = game.global.lastClearedCell + 2;
+	var message = '';
+	if (mapName !== 'Void Map' && mapName !== 'Quagmire Farm' && mapName !== 'Smithy Farm' && mapName !== 'Bionic Raiding') {
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + mapSpecial + ")" + (mappingLength == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+	}
+	else if (mapName === 'Smithy Farm') {
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + MODULES.mapFunctions.smithyMapCount[0] + " food, " + MODULES.mapFunctions.smithyMapCount[1] + " wood, " + MODULES.mapFunctions.smithyMapCount[2] + " metal maps (" + (mapLevel >= 0 ? "+" : "") + mapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+	}
+	else if (mapName === 'Quagmire Farm') {
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + (mappingLength == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+	}
+	else {
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+	}
+
+	if (mapName === 'Void Map') {
+		message += " Started with " + MODULES.mapFunctions.rVoidVHDRatio.toFixed(2) + " and ended with a Void HD Ratio of " + voidHDRatio.toFixed(2) + ".";
+	}
+
+	if (mapName === 'Tribute Farm') {
+		message += " Finished with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.";
+	}
+
+	if (mapName === 'Smithy Farm') {
+		message += " Finished with " + game.buildings.Smithy.purchased + " smithies.";
+	}
+
+	if (mapName === 'Insanity Farm') {
+		message += " Finished with " + game.challenges.Insanity.insanity + " stacks.";
+	}
+
+	if (mapName === 'Alchemy Farm') {
+		message += " Finished with " + extra + " " + extra3 + ".";
+	}
+
+	if (mapName === 'Hypothermia Farm') {
+		message += " Finished with (" + prettify(game.resources.wood.owned) + "/" + extra.toFixed(2) + ") wood.";
+	}
+
+	if (mapName === 'Smithless Farm') {
+		message += " Finished with enough damage to get " + extra + "/3 stacks.";
+	}
+
+	if (mapName === 'HD Farm') {
+		message += " Finished with a HD Ratio of " + extra.toFixed(2) + "/" + extra2.toFixed(2) + ".";
+	}
+
+	debug(message);
 }

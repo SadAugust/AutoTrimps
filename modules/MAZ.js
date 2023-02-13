@@ -328,19 +328,20 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 		var windowSize = 'tooltipWindow50';
 		if (golden) windowSize = 'tooltipWindow20'
-		if (quagmire) windowSize = 'tooltipWindow25'
-		if (raiding) windowSize = 'tooltipWindow55'
-		if (bionic) windowSize = 'tooltipWindow50'
-		if (hypothermia) windowSize = 'tooltipWindow30'
-		if (insanity) windowSize = 'tooltipWindow40'
-		if (voidMap) windowSize = 'tooltipWindow50'
-		if (worshipperFarm) windowSize = 'tooltipWindow55'
-		if (smithyFarm) windowSize = 'tooltipWindow50'
-		if (boneShrine) windowSize = 'tooltipWindow55'
-		if (hdFarm) windowSize = 'tooltipWindow55'
-		if (mapBonus) windowSize = 'tooltipWindow60'
-		if (mapFarm) windowSize = 'tooltipWindow75'
-		if (tributeFarm) windowSize = 'tooltipWindow80'
+		else if (quagmire) windowSize = 'tooltipWindow35'
+		else if (raiding) windowSize = 'tooltipWindow60'
+		else if (bionic) windowSize = 'tooltipWindow60'
+		else if (insanity) windowSize = 'tooltipWindow45'
+		else if (alchemy) windowSize = 'tooltipWindow60'
+		else if (hypothermia) windowSize = 'tooltipWindow35'
+		else if (voidMap) windowSize = 'tooltipWindow50'
+		else if (worshipperFarm) windowSize = 'tooltipWindow60'
+		else if (smithyFarm) windowSize = 'tooltipWindow60'
+		else if (boneShrine) windowSize = 'tooltipWindow55'
+		else if (hdFarm) windowSize = 'tooltipWindow55'
+		else if (mapBonus) windowSize = 'tooltipWindow65'
+		else if (mapFarm) windowSize = 'tooltipWindow75'
+		else if (tributeFarm) windowSize = 'tooltipWindow80'
 
 		var maxSettings = 30;
 
@@ -493,7 +494,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (!golden) tooltipText += "<div class='windowActive" + varPrefix + "\'>Active?</div>"
 		if (!golden) tooltipText += "<div class='windowPriority" + varPrefix + "\'>Priority</div>"
 		if (golden) tooltipText += "<div class='windowActiveAutoGolden'>Active?</div>"
-		if (!voidMap && !golden) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Zone</div>"
+		if (!voidMap && !golden) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Start<br/>Zone</div>"
+		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>"
 		if (golden) tooltipText += "<div class='windowAmtAutoGolden'>Amount</div>"
 		if (voidMap) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Min Zone</div>"
 		if (voidMap) tooltipText += "<div class='windowMaxVoidZone'>Max Zone</div>"
@@ -518,12 +520,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (smithyFarm) tooltipText += "<div class='windowSmithies'>Smithies</div>"
 		if (hdFarm) tooltipText += "<div class='windowHDBase'>HD Base</div>"
 		if (hdFarm) tooltipText += "<div class='windowHDMult'>HD Mult</div>"
-		if (mapFarm || tributeFarm || worshipperFarm || raiding) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'>Repeat<br/>Every</div>"
-		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>"
 		if (hdFarm) tooltipText += "<div class='windowHDType'>HD<br/>Type</div>"
 		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>HD<br/>Ratio</div>"
 		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>Void HD<br/>Ratio</div>"
 		if (!raiding && !smithyFarm && !golden) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br/>Ratio</div>"
+		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'>Repeat<br/>Every</div>"
 		if (tributeFarm) tooltipText += "<div class='windowBuildings'>Buy<br/>Buildings</div>"
 		if (boneShrine) tooltipText += "<div class='windowBoneGather'>Gather</div>"
 		if (mapFarm || alchemy || mapBonus || insanity) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>"
@@ -602,9 +603,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.mapType = currSetting[x].mapType ? currSetting[x].mapType : 'Absolute';
 				if (mapFarm || smithyFarm || mapBonus)
 					vals.repeat = currSetting[x].repeat ? currSetting[x].repeat : 1;
-				if (mapFarm || tributeFarm || worshipperFarm || raiding)
+				if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm)
 					vals.repeatevery = currSetting[x].repeatevery ? currSetting[x].repeatevery : 0;
-				if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding)
+				if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
 					vals.endzone = currSetting[x].endzone ? currSetting[x].endzone : 999;
 				if (tributeFarm)
 					vals.tributes = currSetting[x].tributes ? currSetting[x].tributes : 0;
@@ -718,7 +719,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			if (!golden)
 				tooltipText += "<div class='windowWorld" + varPrefix + "\' style = " + backgroundStyle + "\' oninput='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
-
+			if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
+				tooltipText += "<div class='windowEndZone" + varPrefix + "\'><input value='" + vals.endzone + "' type='number' id='windowEndZone" + x + "'/></div>";
 			if (voidMap)
 				tooltipText += "<div class='windowMaxVoidZone'><input value='" + vals.maxvoidzone + "' type='number' id='windowMaxVoidZone" + x + "'/></div>";
 			if (raiding)
@@ -745,11 +747,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowHDMult'><input value='" + vals.hdMult + "' type='number' id='windowHDMult" + x + "'/></div>";
 			if (tributeFarm)
 				tooltipText += "<div class='windowTributes'><input value='" + vals.tributes + "' type='number' id='windowTributes" + x + "'/></div>";
-			if (tributeFarm) tooltipText += "<div class='windowMets'><input value='" + vals.mets + "' type='number' id='windowMets" + x + "'/></div>";
-			if (mapFarm || tributeFarm || worshipperFarm || raiding)
-				tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'><input value='" + vals.repeatevery + "' type='number' id='windowRepeatEvery" + x + "'/></div>";
-			if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding)
-				tooltipText += "<div class='windowEndZone" + varPrefix + "\'><input value='" + vals.endzone + "' type='number' id='windowEndZone" + x + "'/></div>";
+			if (tributeFarm)
+				tooltipText += "<div class='windowMets'><input value='" + vals.mets + "' type='number' id='windowMets" + x + "'/></div>";
 			if (quagmire)
 				tooltipText += "<div class='windowBogs'><input value='" + vals.bogs + "' type='number' id='windowBogs" + x + "'/></div>";
 			if (insanity)
@@ -776,6 +775,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowVoidHDRatio'><input value='" + vals.voidHDRatio + "' type='number' id='windowVoidHDRatio" + x + "'/></div>";
 			if (!raiding && !smithyFarm && !golden)
 				tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
+			if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm)
+				tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'><input value='" + vals.repeatevery + "' type='number' id='windowRepeatEvery" + x + "'/></div>";
 			if (tributeFarm)
 				tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.buildings) + "</div>";
 			if (boneShrine)
@@ -918,29 +919,45 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	var errorMessage = false;
 	var maxSettings = 30;
 
+	let mapFarm = titleText.includes('Map Farm');
+	let mapBonus = titleText.includes('Map Bonus');
+	let voidMap = titleText.includes('Void Map');
+	let hdFarm = titleText.includes('HD Farm');
+	let raiding = titleText.includes('Raiding');
+	let bionic = titleText.includes('Bionic');
+	let quagmire = titleText.includes('Quagmire');
+	let insanity = titleText.includes('Insanity Farm');
+	let alchemy = titleText.includes('Alchemy Farm');
+	let hypothermia = titleText.includes('Hypothermia Farm');
+	let boneShrine = titleText.includes('Bone Shrine');
+	let golden = titleText.includes('Golden');
+	let tributeFarm = titleText.includes('Tribute Farm');
+	let smithyFarm = titleText.includes('Smithy Farm');
+	let worshipperFarm = titleText.includes('Worshipper Farm');
+
 	var defaultSetting = {
 	}
 
-	if (!titleText.includes('Auto Golden')) {
+	if (!golden) {
 		defaultSetting.active = readNiceCheckbox(document.getElementById('windowActiveDefault'));
 		defaultSetting.cell = parseInt(document.getElementById('windowCellDefault').value, 10);
-		if (titleText.includes('Map Farm') || titleText.includes('Map Bonus')) defaultSetting.repeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
-		if (titleText.includes('Worshipper Farm')) defaultSetting.shipskip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
-		if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) defaultSetting.special = document.getElementById('windowSpecialDefault').value;
-		if (titleText.includes('Bone')) defaultSetting.bonebelow = parseInt(document.getElementById('windowBoneBelowDefault').value, 10);
-		if (titleText.includes('Worshipper Farm')) defaultSetting.worshipper = parseInt(document.getElementById('windowWorshipperDefault').value, 10);
-		if (!titleText.includes('Raiding') && !titleText.includes('Smithy')) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
-		if (titleText.includes('Bone')) defaultSetting.gather = document.getElementById('windowBoneGatherDefault').value;
-		if (titleText.includes('Alchemy Farm')) defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
-		if (titleText.includes('Hypo')) defaultSetting.frozencastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
-		if (titleText.includes('Hypo')) defaultSetting.autostorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
-		if (titleText.includes('Hypo')) defaultSetting.packrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
-		if (titleText.includes('Raiding') && !titleText.includes('Bionic')) defaultSetting.recycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
-		if (titleText.includes('Raiding') && !titleText.includes('Bionic')) defaultSetting.incrementMaps = readNiceCheckbox(document.getElementById('windowIncrementMapsDefault'));
-		if (titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm')) defaultSetting.mapType = document.getElementById('windowMapTypeDropdownDefault').value;
-		if (titleText.includes('Map Bonus')) defaultSetting.healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
-		if (titleText.includes('Map Bonus')) defaultSetting.healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10);
-		if (titleText.includes('HD Farm')) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
+		if (mapFarm || mapBonus) defaultSetting.repeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
+		if (worshipperFarm) defaultSetting.shipskip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
+		if (mapFarm || alchemy || mapBonus || titleText.includes('Insanity')) defaultSetting.special = document.getElementById('windowSpecialDefault').value;
+		if (boneShrine) defaultSetting.bonebelow = parseInt(document.getElementById('windowBoneBelowDefault').value, 10);
+		if (worshipperFarm) defaultSetting.worshipper = parseInt(document.getElementById('windowWorshipperDefault').value, 10);
+		if (!raiding && !smithyFarm) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
+		if (boneShrine) defaultSetting.gather = document.getElementById('windowBoneGatherDefault').value;
+		if (alchemy) defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
+		if (hypothermia) defaultSetting.frozencastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
+		if (hypothermia) defaultSetting.autostorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
+		if (hypothermia) defaultSetting.packrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
+		if (raiding && !bionic) defaultSetting.recycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
+		if (raiding && !bionic) defaultSetting.incrementMaps = readNiceCheckbox(document.getElementById('windowIncrementMapsDefault'));
+		if (tributeFarm || smithyFarm) defaultSetting.mapType = document.getElementById('windowMapTypeDropdownDefault').value;
+		if (mapBonus) defaultSetting.healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
+		if (mapBonus) defaultSetting.healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10);
+		if (hdFarm) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
 
 		if (defaultSetting.cell < 1) defaultSetting.cell = 1;
 		if (defaultSetting.cell > 100) defaultSetting.cell = 100;
@@ -958,101 +975,101 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		};
 
 		var world = document.getElementById('windowWorld' + x);
-		if (titleText.includes('Auto Golden')) world = document.getElementById('windowWorld' + x);
+		if (golden) world = document.getElementById('windowWorld' + x);
 		if (!world || world.value == "-1") {
 			continue;
 		};
 
 		thisSetting.active = readNiceCheckbox(document.getElementById('windowActive' + x));
-		if (!titleText.includes('Auto Golden')) thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
-		if (!titleText.includes('Auto Golden')) thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
-		if (!titleText.includes('Auto Golden')) thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
-		if (!titleText.includes('Quag') && !titleText.includes('Bone') && !titleText.includes('Raiding') && !titleText.includes('Void') && !titleText.includes('Auto Golden')) thisSetting.level = parseInt(document.getElementById('windowLevel' + x).value, 10);
-		if (titleText.includes('Map Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus')) thisSetting.repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
-		if (titleText.includes('HD Farm')) thisSetting.hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
-		if (titleText.includes('HD Farm')) thisSetting.hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
+		if (!golden) thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
+		if (!golden) thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
+		if (!golden) thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
+		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden) thisSetting.level = parseInt(document.getElementById('windowLevel' + x).value, 10);
+		if (mapFarm || smithyFarm || mapBonus) thisSetting.repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
+		if (hdFarm) thisSetting.hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
+		if (hdFarm) thisSetting.hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
 
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding')) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
-		if (titleText.includes('Raiding')) thisSetting.raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
-		if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) thisSetting.special = document.getElementById('windowSpecial' + x).value;
-		if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) {
+		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
+		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
+		if (raiding) thisSetting.raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
+		if (mapFarm || alchemy || mapBonus || insanity) thisSetting.special = document.getElementById('windowSpecial' + x).value;
+		if (mapFarm || alchemy || mapBonus || insanity) {
 			if (thisSetting.special == 'hc' || thisSetting.special == 'lc')
 				thisSetting.gather = document.getElementById('windowGather' + x).value;
 			else
 				thisSetting.gather = null;
 		}
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Insanity Farm') || titleText.includes('Alchemy Farm') || titleText.includes('Hypothermia Farm') || titleText.includes('HD Farm')) thisSetting.autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
-		if (titleText.includes('Tribute') || titleText.includes('Smithy Farm')) thisSetting.mapType = document.getElementById('windowMapTypeDropdown' + x).value;
-		if (titleText.includes('Tribute')) thisSetting.tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
-		if (titleText.includes('Tribute')) thisSetting.mets = parseInt(document.getElementById('windowMets' + x).value, 10);
-		if (titleText.includes('Quag')) thisSetting.bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
-		if (titleText.includes('Insanity')) thisSetting.insanity = parseInt(document.getElementById('windowInsanity' + x).value, 10);
-		if (titleText.includes('Auto Golden')) thisSetting.golden = document.getElementById('windowGoldenType' + x).value;
-		if (titleText.includes('HD Farm')) thisSetting.hdType = document.getElementById('windowHDType' + x).value;
-		if (titleText.includes('Auto Golden')) thisSetting.golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
-		if (titleText.includes('Alch')) thisSetting.potion = document.getElementById('windowPotionType' + x).value;
-		if (titleText.includes('Alch')) potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
-		if (titleText.includes('Hypo')) thisSetting.bonfire = parseInt(document.getElementById('windowBonfire' + x).value, 10);
-		if (titleText.includes('Bone')) thisSetting.boneamount = parseInt(document.getElementById('windowBoneAmount' + x).value, 10);
-		if (titleText.includes('Bone')) thisSetting.bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);
-		if (titleText.includes('Worshipper Farm')) thisSetting.worshipper = parseInt(document.getElementById('windowWorshipper' + x).value, 10);
-		if (titleText.includes('Void')) thisSetting.maxvoidzone = parseInt(document.getElementById('windowMaxVoidZone' + x).value, 10);
-		if (titleText.includes('Void')) thisSetting.hdRatio = parseInt(document.getElementById('windowHDRatio' + x).value, 10);
-		if (titleText.includes('Void')) thisSetting.voidHDRatio = parseInt(document.getElementById('windowVoidHDRatio' + x).value, 10);
-		if (titleText.includes('Tribute')) thisSetting.buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute') || titleText.includes('Bone Shrine')) thisSetting.atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
-		if (titleText.includes('Smithy Farm')) thisSetting.meltingPoint = readNiceCheckbox(document.getElementById('windowMeltingPoint' + x));
-		if (titleText.includes('Void Map')) thisSetting.portalAfter = readNiceCheckbox(document.getElementById('windowPortalAfter' + x));
-		if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('Golden')) thisSetting.jobratio = document.getElementById('windowJobRatio' + x).value;
-		if (titleText.includes('Bone')) thisSetting.gather = document.getElementById('windowBoneGather' + x).value;
-		if (titleText.includes('Raiding')) thisSetting.prestigeGoal = document.getElementById('windowPrestigeGoal' + x).value;
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) thisSetting.runType = document.getElementById('windowRunType' + x).value;
-		if (titleText.includes('Raiding') && !titleText.includes('Bionic')) thisSetting.raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
-		if (titleText.includes('Insanity')) thisSetting.destack = readNiceCheckbox(document.getElementById('windowBuildings' + x));
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm) thisSetting.autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
+		if (tributeFarm || smithyFarm) thisSetting.mapType = document.getElementById('windowMapTypeDropdown' + x).value;
+		if (tributeFarm) thisSetting.tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
+		if (tributeFarm) thisSetting.mets = parseInt(document.getElementById('windowMets' + x).value, 10);
+		if (quagmire) thisSetting.bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
+		if (insanity) thisSetting.insanity = parseInt(document.getElementById('windowInsanity' + x).value, 10);
+		if (golden) thisSetting.golden = document.getElementById('windowGoldenType' + x).value;
+		if (hdFarm) thisSetting.hdType = document.getElementById('windowHDType' + x).value;
+		if (golden) thisSetting.golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
+		if (alchemy) thisSetting.potion = document.getElementById('windowPotionType' + x).value;
+		if (alchemy) potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
+		if (hypothermia) thisSetting.bonfire = parseInt(document.getElementById('windowBonfire' + x).value, 10);
+		if (boneShrine) thisSetting.boneamount = parseInt(document.getElementById('windowBoneAmount' + x).value, 10);
+		if (boneShrine) thisSetting.bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);
+		if (worshipperFarm) thisSetting.worshipper = parseInt(document.getElementById('windowWorshipper' + x).value, 10);
+		if (voidMap) thisSetting.maxvoidzone = parseInt(document.getElementById('windowMaxVoidZone' + x).value, 10);
+		if (voidMap) thisSetting.hdRatio = parseInt(document.getElementById('windowHDRatio' + x).value, 10);
+		if (voidMap) thisSetting.voidHDRatio = parseInt(document.getElementById('windowVoidHDRatio' + x).value, 10);
+		if (tributeFarm) thisSetting.buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
+		if (mapFarm || tributeFarm || boneShrine) thisSetting.atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
+		if (smithyFarm) thisSetting.meltingPoint = readNiceCheckbox(document.getElementById('windowMeltingPoint' + x));
+		if (voidMap) thisSetting.portalAfter = readNiceCheckbox(document.getElementById('windowPortalAfter' + x));
+		if (!raiding && !smithyFarm && !golden) thisSetting.jobratio = document.getElementById('windowJobRatio' + x).value;
+		if (boneShrine) thisSetting.gather = document.getElementById('windowBoneGather' + x).value;
+		if (raiding) thisSetting.prestigeGoal = document.getElementById('windowPrestigeGoal' + x).value;
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) thisSetting.runType = document.getElementById('windowRunType' + x).value;
+		if (raiding && !bionic) thisSetting.raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
+		if (insanity) thisSetting.destack = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 
-		if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) {
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) {
 			thisSetting.challenge = thisSetting.runType === 'Filler' ? document.getElementById('windowChallenge' + x).value : null;
 			thisSetting.challenge3 = thisSetting.runType === 'C3' ? document.getElementById('windowChallenge3' + x).value : null;
 		}
 
-		if (!titleText.includes('Auto Golden') && (isNaN(thisSetting.world) || thisSetting.world < 6)) {
+		if (!golden && (isNaN(thisSetting.world) || thisSetting.world < 6)) {
 			error += " Preset " + (x + 1) + " needs a value for Start Zone that's greater than 5.<br>";
 			errorMessage = true;
 		}
-		else if (!titleText.includes('Auto Golden') && thisSetting.world > 1000) {
+		else if (!golden && thisSetting.world > 1000) {
 			error += " Preset " + (x + 1) + " needs a value for Start Zone that's less than 1000.<br>";
 			errorMessage = true;
 		}
-		if (!titleText.includes('Auto Golden') && (thisSetting.world + thisSetting.level < 6)) {
+		if (!golden && (thisSetting.world + thisSetting.level < 6)) {
 			error += " Preset " + (x + 1) + " can\'t have a zone and map combination below zone 6.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Map Bonus') && (thisSetting.level < (currSettingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0))) {
+		if (mapBonus && (thisSetting.level < (currSettingUniverse === 1 ? 0 - game.portal.Siphonology.level : 0))) {
 			error += " Preset " + (x + 1) + " can\'t have a map level below " + ((game.global.universe === 1 && game.portal.Siphonology.level > 0) ? (0 - game.portal.Siphonology.level) : "world level") + " as you won\'t be able to get any map stacks.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Map Bonus') && thisSetting.repeat < 1) {
+		if (mapBonus && thisSetting.repeat < 1) {
 			error += " Preset " + (x + 1) + " can\'t have a map bonus value lower than 1 as you won\'t be able to get any map stacks.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Map Farm') && thisSetting.repeat < 1) {
+		if (mapFarm && thisSetting.repeat < 1) {
 			error += " Preset " + (x + 1) + " can\'t have a repeat value lower than 1 as you won\'t run any maps when this line runs.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Insanity') && thisSetting.level === 0) {
+		if (insanity && thisSetting.level === 0) {
 			error += " Preset " + (x + 1) + " can\'t have a map level of 0 as you won\'t gain any Insanity stacks running this map.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Insanity') && thisSetting.level < 0 && destack === false) {
+		if (insanity && thisSetting.level < 0 && destack === false) {
 			error += " Preset " + (x + 1) + " can\'t have a map level below world level as you will lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Insanity') && thisSetting.level >= 0 && destack === true) {
+		if (insanity && thisSetting.level >= 0 && destack === true) {
 			error += " Preset " + (x + 1) + " can\'t have a map level at or above world level as you won't be able to lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
 			errorMessage = true;
 		}
-		if (titleText.includes('Insanity') && thisSetting.insanity < 0) {
+		if (insanity && thisSetting.insanity < 0) {
 			error += " Preset " + (x + 1) + " can\'t have a insanity value below 0.<br>";
 			errorMessage = true;
 		}
@@ -1068,11 +1085,11 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (thisSetting.maxvoidzone < thisSetting.world) thisSetting.maxvoidzone = thisSetting.world;
 
 		if (thisSetting.repeat < 0) thisSetting.repeat = 0;
-		if (titleText.includes('Raiding') && !titleText.includes('Bionic') && (thisSetting.raidingzone - thisSetting.world > 10)) thisSetting.raidingzone = thisSetting.world + 10;
+		if (raiding && !bionic && (thisSetting.raidingzone - thisSetting.world > 10)) thisSetting.raidingzone = thisSetting.world + 10;
 
 		setting.push(thisSetting);
 	}
-	if (!titleText.includes('Golden'))
+	if (!golden)
 		setting.sort(function (a, b) { if (a.prio == b.prio) return (a.world == b.world) ? ((a.cell > b.cell) ? 1 : -1) : ((a.world > b.world) ? 1 : -1); return (a.prio > b.prio) ? 1 : -1 });
 
 	if (error) {
@@ -1081,7 +1098,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		return;
 	}
 
-	if (titleText.includes('Map Bonus')) {
+	if (mapBonus) {
 		let value = currSettingUniverse === 2 ? 'valueU2' : 'value'
 		autoTrimpSettings['mapBonusZone'][value] = [];
 		for (var x = 0; x < setting.length; x++) {
@@ -1101,7 +1118,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	}
 
 	saveSettings();
-	if (!titleText.includes('Auto Golden')) {
+	if (!golden) {
 		if (!getPageSetting(varPrefix + 'DefaultSettings', currSettingUniverse).active)
 			debug(titleText + " has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.")
 	}
@@ -1293,10 +1310,10 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Bonfires</b> - How many Bonfires should be farmed on this zone. Uses max bonfires built rather than a specific amount to farm for so if you have already built 14 so far during your run and want another 8 then you'd input 22.</li>";
 
 	//Repeat Every
-	if (mapFarm || tributeFarm || worshipperFarm)
+	if (mapFarm || tributeFarm || worshipperFarm || smithyFarm)
 		mazHelp += "<li><b>Repeat Every</b> - Line can be repeated every Zone, or set to a custom number depending on need.</li>";
 	//End Zone
-	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding)
+	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
 		mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this MaZ line repeat. If so, the line will stop repeating at this Zone. Must be between 6 and 1000.</li>";
 	//Run Type
 	if (boneShrine || voidMap || hdFarm)
@@ -1638,10 +1655,10 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowSpecial' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].special
 				if ((!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && !titleText.includes('HD Farm')) && document.getElementById('windowRepeat' + x) !== null)
 					document.getElementById('windowRepeat' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].repeat
-				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) && document.getElementById('windowRepeatEvery' + x) !== null)
+				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding') || titleText.includes('Smithy Farm')) && document.getElementById('windowRepeatEvery' + x) !== null)
 					document.getElementById('windowRepeatEvery' + x).value = 0;
-				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding')) && document.getElementById('windowEndZone' + x) !== null)
-					document.getElementById('windowEndZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
+				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding') || titleText.includes('Map Bonus') || titleText.includes('Smithy Farm')) && document.getElementById('windowEndZone' + x) !== null)
+					document.getElementById('windowEndZone' + x).value = 999;
 				if (titleText.includes('Void Map') && document.getElementById('windowMaxVoidZone' + x) !== null)
 					document.getElementById('windowMaxVoidZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
 				if (document.getElementById('windowRaidingZone' + x) !== null)
@@ -1730,8 +1747,8 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) document.getElementById('windowGather' + index).value = 0;
 	if (titleText.includes('Map Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus') || titleText.includes('HD Farm')) document.getElementById('windowRepeat' + index).value = 0;
 	if (titleText.includes('HD Farm')) document.getElementById('windowHDMult' + index).value = 0;
-	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding')) document.getElementById('windowRepeatEvery' + index).value = 0;
-	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding')) document.getElementById('windowEndZone' + index).value = 0;
+	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding') || titleText.includes('Smithy Farm')) document.getElementById('windowRepeatEvery' + index).value = 0;
+	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding') || titleText.includes('Map Bonus') || titleText.includes('Smithy Farm')) document.getElementById('windowEndZone' + index).value = 0;
 	if (titleText.includes('Tribute Farm')) document.getElementById('windowTributes' + index).value = 0;
 	if (titleText.includes('Tribute Farm')) document.getElementById('windowMets' + index).value = 0;
 	if (titleText.includes('Quag')) document.getElementById('windowBogs' + index).value = 0;
@@ -1832,4 +1849,181 @@ function updateWindowPreset(index, varPrefix) {
 		world.parentNode.style.background = natureStyle[index];
 	}
 
+}
+
+
+
+function dailyModifiersOutput() {
+	var daily = game.global.dailyChallenge;
+	var dailyMods = dailyModifiers;
+	if (!daily) return "";
+	//var returnText = ''
+	var returnText = "";
+	for (var item in daily) {
+		if (item === 'seed') continue;
+		returnText += dailyMods[item].description(daily[item].strength) + "<br>";
+	}
+	return returnText
+}
+
+
+function displayDropdowns(universe, runType, MAZ, varPrefix) {
+
+	if (!universe) universe = game.global.universe;
+	if (!MAZ) MAZ = '';
+	let dropdown;
+	var highestZone = universe === 1 ? game.global.highestLevelCleared + 1 : game.global.highestRadonLevelCleared + 1;
+
+	if (runType === 'Gather') {
+		dropdown += "<option value='food'" + ((MAZ == 'food') ? " selected='selected'" : "") + ">Food</option >\
+		<option value='wood'" + ((MAZ == 'wood') ? " selected = 'selected'" : "") + " > Wood</option >\
+		<option value='metal'" + ((MAZ == 'metal') ? " selected = 'selected'" : "") + " > Metal</option >\
+		<option value='science'" + ((MAZ == 'science') ? " selected = 'selected'" : "") + " > Science</option > "
+	}
+
+	if (runType === 'hdType') {
+		dropdown += "<option value='world'" + ((MAZ == 'world') ? " selected='selected'" : "") + ">World</option >\
+		<option value='map'" + ((MAZ == 'map') ? " selected = 'selected'" : "") + " > Map</option >\
+		<option value='void'" + ((MAZ == 'void') ? " selected = 'selected'" : "") + " > Void</option >"
+	}
+
+	if (runType === 'prestigeGoal') {
+		dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option >\
+		<option value='Shield'" + ((MAZ == 'Shield') ? " selected='selected'" : "") + ">Shield</option >\
+		<option value='Dagger'" + ((MAZ == 'Dagger') ? " selected='selected'" : "") + ">Dagger</option >\
+		<option value='Boots'" + ((MAZ == 'Boots') ? " selected = 'selected'" : "") + " > Boots</option >\
+		<option value='Mace'" + ((MAZ == 'Mace') ? " selected = 'selected'" : "") + " > Mace</option >\
+		<option value='Helmet'" + ((MAZ == 'Helmet') ? " selected = 'selected'" : "") + " > Helmet</option >\
+		<option value='Polearm'" + ((MAZ == 'Polearm') ? " selected = 'selected'" : "") + " > Polearm</option >\
+		<option value='Pants'" + ((MAZ == 'Pants') ? " selected = 'selected'" : "") + " > Pants</option >\
+		<option value='Battleaxe'" + ((MAZ == 'Battleaxe') ? " selected = 'selected'" : "") + " > Battleaxe</option >\
+		<option value='Shoulderguards'" + ((MAZ == 'Shoulderguards') ? " selected = 'selected'" : "") + " > Shoulderguards</option >\
+		<option value='Greatsword'" + ((MAZ == 'Greatsword') ? " selected = 'selected'" : "") + " > Greatsword</option >\
+		<option value='Breastplate'" + ((MAZ == 'Breastplate') ? " selected = 'selected'" : "") + " > Breastplate</option >"
+		if (game.global.slowDone) dropdown += "<option value='Arbalest'" + ((MAZ == 'Arbalest') ? " selected='selected'" : "") + ">Arbalest</option>"
+		if (game.global.slowDone) dropdown += "<option value='Gambeson'" + ((MAZ == 'Gambeson') ? " selected='selected'" : "") + ">Gambeson</option>"
+	}
+
+	if (universe === 1) {
+		if (runType === 'Cache') {
+			//Specials dropdown with conditions for each unlock to only appear when the user can run them.
+			dropdown += "<option value='0'" + ((MAZ == '0') ? " selected='selected'" : "") + ">No Modifier</option>"
+			if (highestZone >= 60) dropdown += "<option value='fa'" + ((MAZ == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((MAZ == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
+			if (highestZone >= 85) dropdown += "<option value = 'ssc'" + ((MAZ == 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option >\
+				<option value='swc'" + ((MAZ == 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option >\
+				<option value='smc'" + ((MAZ == 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option > "
+			if (highestZone >= 135) dropdown += "<option value='p'" + ((MAZ == 'p') ? " selected='selected'" : "") + ">Prestigious</option>"
+			if (highestZone >= 160) dropdown += "<option value='hc'" + ((MAZ == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>"
+			if (highestZone >= 185) dropdown += "<option value='lsc'" + ((MAZ == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\
+				<option value='lwc'" + ((MAZ == 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\
+				<option value='lmc'" + ((MAZ == 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>"
+		}
+		if (runType === 'Filler') {
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+			if (highestZone >= 40) dropdown += "<option value='Balance'" + ((MAZ == 'Balance') ? " selected='selected'" : "") + ">Balance</option>";
+			if (highestZone >= 55) dropdown += "<option value = 'Decay'" + ((MAZ == 'Decay') ? " selected = 'selected'" : "") + " >Decay</option >";
+			if (game.global.prisonClear >= 1) dropdown += "<option value='Electricity'" + ((MAZ == 'Electricity') ? " selected='selected'" : "") + ">Electricity</option>";
+			if (highestZone >= 110) dropdown += "<option value='Life'" + ((MAZ == 'Life') ? " selected='selected'" : "") + ">Life</option>";
+			if (highestZone >= 125) dropdown += "<option value='Crushed'" + ((MAZ == 'Crushed') ? " selected='selected'" : "") + ">Crushed</option>";
+			if (highestZone >= 145) dropdown += "<option value='Nom'" + ((MAZ == 'Nom') ? " selected='selected'" : "") + ">Nom</option>";
+			if (highestZone >= 165) dropdown += "<option value='Toxicity'" + ((MAZ == 'Toxicity') ? " selected='selected'" : "") + ">Toxicity</option>";
+			if (highestZone >= 180) dropdown += "<option value='Watch'" + ((MAZ == 'Watch') ? " selected='selected'" : "") + ">Watch</option>";
+			if (highestZone >= 180) dropdown += "<option value='Lead'" + ((MAZ == 'Lead') ? " selected='selected'" : "") + ">Lead</option>";
+			if (highestZone >= 190) dropdown += "<option value='Corrupted'" + ((MAZ == 'Corrupted') ? " selected='selected'" : "") + ">Corrupted</option>";
+			if (highestZone >= 215) dropdown += "<option value='Domination'" + ((MAZ == 'Domination') ? " selected='selected'" : "") + ">Domination</option>";
+			if (highestZone >= 600) dropdown += "<option value='Experience'" + ((MAZ == 'Experience') ? " selected='selected'" : "") + ">Experience</option>";
+		}
+		else if (runType === 'C3') {
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+			if (getTotalPerkResource(true) >= 30) dropdown += "<option value='Discipline'" + ((MAZ == 'Discipline') ? " selected='selected'" : "") + ">Discipline</option>";
+			if (highestZone >= 25) dropdown += "<option value='Metal'" + ((MAZ == 'Metal') ? " selected='selected'" : "") + ">Metal</option>";
+			if (highestZone >= 35) dropdown += "<option value='Size'" + ((MAZ == 'Size') ? " selected='selected'" : "") + ">Size</option>";
+			if (highestZone >= 40) dropdown += "<option value = 'Balance'" + ((MAZ == 'Balance') ? " selected = 'selected'" : "") + " > Balance</option >";
+			if (highestZone >= 45) dropdown += "<option value='Meditate'" + ((MAZ == 'Meditate') ? " selected='selected'" : "") + ">Meditate</option>";
+			if (highestZone >= 60) dropdown += "<option value='Trimp'" + ((MAZ == 'Trimp') ? " selected='selected'" : "") + ">Trimp</option>";
+			if (highestZone >= 70) dropdown += "<option value='Trapper'" + ((MAZ == 'Trapper') ? " selected='selected'" : "") + ">Trapper</option>";
+			if (game.global.prisonClear >= 1) dropdown += "<option value='Electricity'" + ((MAZ == 'Electricity') ? " selected='selected'" : "") + ">Electricity</option>";
+			if (highestZone >= 120) dropdown += "<option value='Coordinate'" + ((MAZ == 'Coordinate') ? " selected='selected'" : "") + ">Coordinate</option>";
+			if (highestZone >= 130) dropdown += "<option value='Slow'" + ((MAZ == 'Slow') ? " selected='selected'" : "") + ">Slow</option>";
+			if (highestZone >= 145) dropdown += "<option value='Nom'" + ((MAZ == 'Nom') ? " selected='selected'" : "") + ">Nom</option>";
+			if (highestZone >= 150) dropdown += "<option value='Mapology'" + ((MAZ == 'Mapology') ? " selected='selected'" : "") + ">Mapology</option>";
+			if (highestZone >= 165) dropdown += "<option value='Toxicity'" + ((MAZ == 'Toxicity') ? " selected='selected'" : "") + ">Toxicity</option>";
+			if (highestZone >= 180) dropdown += "<option value='Watch'" + ((MAZ == 'Watch') ? " selected='selected'" : "") + ">Watch</option>";
+			if (highestZone >= 180) dropdown += "<option value='Lead'" + ((MAZ == 'Lead') ? " selected='selected'" : "") + ">Lead</option>";
+			if (highestZone >= 425) dropdown += "<option value='Obliterated'" + ((MAZ == 'Obliterated') ? " selected='selected'" : "") + ">Obliterated</option>";
+			if (game.global.totalSquaredReward >= 4500) dropdown += "<option value='Eradicated'" + ((MAZ == 'Eradicated') ? " selected='selected'" : "") + ">Eradicated</option>";
+		}
+		else if (runType === 'runType') {
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>"
+			dropdown += "<option value='Filler'" + ((MAZ == 'Filler') ? " selected = 'selected'" : "") + " > Filler</option >"
+			dropdown += " <option value='Daily'" + ((MAZ == 'Daily') ? " selected='selected'" : "") + ">Daily</option>"
+			dropdown += "<option value='C3'" + ((MAZ == 'C3') ? " selected='selected'" : "") + ">C2</option>"
+		}
+		else if (runType === 'goldenType') {
+			if (!varPrefix.includes('C3')) dropdown += "<option value='h'" + ((MAZ == 'h') ? " selected='selected'" : "") + ">Helium</option >"
+			dropdown += "<option value='b'" + ((MAZ == 'b') ? " selected = 'selected'" : "") + " >Battle</option >"
+			dropdown += "<option value='v'" + ((MAZ == 'v') ? " selected = 'selected'" : "") + " >Void</option >"
+		}
+	}
+
+	if (universe === 2) {
+		if (runType === 'Cache') {
+			//Specials dropdown with conditions for each unlock to only appear when the user can run them.
+			dropdown += "<option value='0'" + ((MAZ == '0') ? " selected='selected'" : "") + ">No Modifier</option>"
+			if (highestZone >= 15) dropdown += "<option value='fa'" + ((MAZ == 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((MAZ == 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
+			if (highestZone >= 25) dropdown += "<option value = 'ssc'" + ((MAZ == 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option >\
+				<option value='swc'" + ((MAZ == 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option >\
+				<option value='smc'" + ((MAZ == 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option > "
+			if (game.global.ArchaeologyDone) dropdown += "<option value='src'" + ((MAZ == 'src') ? " selected='selected'" : "") + ">Small Research Cache</option>"
+			if (highestZone >= 55) dropdown += "<option value='p'" + ((MAZ == 'p') ? " selected='selected'" : "") + ">Prestigious</option>"
+			if (highestZone >= 65) dropdown += "<option value='hc'" + ((MAZ == 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>"
+			if (highestZone >= 85) dropdown += "<option value='lsc'" + ((MAZ == 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\
+				<option value='lwc'" + ((MAZ == 'lwc') ? " selected='selected'" : "") + ">Large Wooden Cache</option>\
+				<option value='lmc'" + ((MAZ == 'lmc') ? " selected='selected'" : "") + ">Large Metal Cache</option>"
+			if (game.global.ArchaeologyDone) dropdown += "<option value='lrc'" + ((MAZ == 'lrc') ? " selected='selected'" : "") + ">Large Research Cache</option>"
+		}
+		if (runType === 'Filler') {
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+			if (highestZone >= 40) dropdown += "<option value='Bublé'" + ((MAZ == 'Bublé') ? " selected='selected'" : "") + ">Bublé</option>";
+			if (highestZone >= 55) dropdown += "<option value = 'Melt'" + ((MAZ == 'Melt') ? " selected = 'selected'" : "") + " > Melt</option >";
+			if (highestZone >= 70) dropdown += "<option value='Quagmire'" + ((MAZ == 'Quagmire') ? " selected='selected'" : "") + ">Quagmire</option>";
+			if (highestZone >= 85) dropdown += "<option value='Quest'" + ((MAZ == 'Quest') ? " selected='selected'" : "") + ">Quest</option>";
+			if (highestZone >= 90) dropdown += "<option value='Archaeology'" + ((MAZ == 'Archaeology') ? " selected='selected'" : "") + ">Archaeology</option>";
+			if (highestZone >= 110) dropdown += "<option value='Insanity'" + ((MAZ == 'Insanity') ? " selected='selected'" : "") + ">Insanity</option>";
+			if (highestZone >= 135) dropdown += "<option value='Nurture'" + ((MAZ == 'Nurture') ? " selected='selected'" : "") + ">Nurture</option>";
+			if (highestZone >= 155) dropdown += "<option value='Alchemy'" + ((MAZ == 'Alchemy') ? " selected='selected'" : "") + ">Alchemy</option>";
+			if (highestZone >= 175) dropdown += "<option value='Hypothermia'" + ((MAZ == 'Hypothermia') ? " selected='selected'" : "") + ">Hypothermia</option>";
+		}
+		else if (runType === 'C3') {
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
+			if (highestZone >= 15) dropdown += "<option value='Unlucky'" + ((MAZ == 'Unlucky') ? " selected='selected'" : "") + ">Unlucky</option>";
+			if (highestZone >= 20) dropdown += "<option value='Downsize'" + ((MAZ == 'Downsize') ? " selected='selected'" : "") + ">Downsize</option>";
+			if (highestZone >= 25) dropdown += "<option value='Transmute'" + ((MAZ == 'Transmute') ? " selected='selected'" : "") + ">Transmute</option>";
+			if (highestZone >= 35) dropdown += "<option value = 'Unbalance'" + ((MAZ == 'Unbalance') ? " selected = 'selected'" : "") + " > Unbalance</option >";
+			if (highestZone >= 45) dropdown += "<option value='Duel'" + ((MAZ == 'Duel') ? " selected='selected'" : "") + ">Duel</option>";
+			if (highestZone >= 60) dropdown += "<option value='Trappapalooza'" + ((MAZ == 'Trappapalooza') ? " selected='selected'" : "") + ">Trappa</option>";
+			if (highestZone >= 70) dropdown += "<option value='Wither'" + ((MAZ == 'Wither') ? " selected='selected'" : "") + ">Wither</option>";
+			if (highestZone >= 85) dropdown += "<option value='Quest'" + ((MAZ == 'Quest') ? " selected='selected'" : "") + ">Quest</option>";
+			if (highestZone >= 100) dropdown += "<option value='Mayhem'" + ((MAZ == 'Mayhem') ? " selected='selected'" : "") + ">Mayhem</option>";
+			if (highestZone >= 105) dropdown += "<option value='Storm'" + ((MAZ == 'Storm') ? " selected='selected'" : "") + ">Storm</option>";
+			if (highestZone >= 115) dropdown += "<option value='Berserk'" + ((MAZ == 'Berserk') ? " selected='selected'" : "") + ">Berserk</option>";
+			if (highestZone >= 150) dropdown += "<option value='Pandemonium'" + ((MAZ == 'Pandemonium') ? " selected='selected'" : "") + ">Pandemonium</option>";
+			if (highestZone >= 175) dropdown += "<option value='Glass'" + ((MAZ == 'Glass') ? " selected='selected'" : "") + ">Glass</option>";
+			if (highestZone >= 200) dropdown += "<option value='Desolation'" + ((MAZ == 'Desolation') ? " selected='selected'" : "") + ">Desolation</option>";
+			if (highestZone >= 201) dropdown += "<option value='Smithless'" + ((MAZ == 'Smithless') ? " selected='selected'" : "") + ">Smithless</option>";
+		}
+		else if (runType === 'runType') {
+			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>"
+			dropdown += "<option value='Filler'" + ((MAZ == 'Filler') ? " selected = 'selected'" : "") + " > Filler</option >"
+			dropdown += " <option value='Daily'" + ((MAZ == 'Daily') ? " selected='selected'" : "") + ">Daily</option>"
+			dropdown += "<option value='C3'" + ((MAZ == 'C3') ? " selected='selected'" : "") + ">C3</option>"
+		}
+		else if (runType === 'goldenType') {
+			if (!varPrefix.includes('C3')) dropdown += "<option value='r'" + ((MAZ == 'r') ? " selected='selected'" : "") + ">Radon</option >"
+			dropdown += "<option value='b'" + ((MAZ == 'b') ? " selected = 'selected'" : "") + " >Battle</option >"
+			dropdown += "<option value='v'" + ((MAZ == 'v') ? " selected = 'selected'" : "") + " >Void</option >"
+		}
+	}
+
+	return dropdown;
 }

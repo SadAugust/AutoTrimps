@@ -46,7 +46,10 @@ function automationMenuInit() {
 	var voidMapContainer = document.createElement("DIV");
 	voidMapContainer.setAttribute("style", "display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);");
 	var voidMapText = document.createElement("SPAN");
-	voidMapText.setAttribute("style", "display: block;");
+	voidMapContainer.setAttribute("onmouseover", 'tooltip(\"Additional AT Info\", \"customText\", event, \"<b>Void</b>: The progress you have towards a free void map from the \'Void Maps\' permanent bone upgrade.<br>\
+	<b>Auto Level</b>: The level that AT recommends using whilst farming.<br>\
+	<b>T</b>: Your current tenacity time\")');
+	voidMapText.setAttribute("onmouseout", 'tooltip("hide")');
 	voidMapText.id = 'freeVoidMap';
 	fightButtonCol.appendChild(voidMapContainer);
 	voidMapContainer.appendChild(voidMapText);
@@ -887,40 +890,60 @@ function initializeAllSettings() {
 	if (displayHeirlooms) {
 		//Heirloom Swapping
 		createSetting('heirloom', 'Heirloom Swapping', 'Heirloom swapping master button. Turn this on to allow heirloom swapping and its associated settings. ', 'boolean', false, null, 'Heirlooms', [1, 2]);
+
 		createSetting('heirloomMapSwap', 'Map Swap', 'Toggle to swap to your afterpush shield when inside maps', 'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
-		createSetting('heirloomVoidSwap', 'Void PB Swap', 'Toggle to swap to your initial shield when your current enemy is slow and the next enemy is fast to maximise plaguebringer damage.<br><br>Will only run during Void Maps that aren\'t double attack and won\'t function properly if your Initial Shield has PlagueBringer or your Afterpush shield doesn\'t have PlagueBringer.', 'boolean', false, null, 'Heirlooms', [2],
+
+		createSetting('heirloomVoidSwap', 'Void PB Swap', 'If current enemy is slow and next enemy is fast swaps to your \'Void PB\' shield so that you can maximise PlagueBringer damage going into the next enemy.<br><br>Will only run during Void Maps that aren\'t double attack and won\'t function properly if your Void Shield doesn\'t have PlagueBringer and your Void PB shield has PlagueBringer.', 'boolean', false, null, 'Heirlooms', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
 
 		//Shield swapping
 		createSetting('heirloomShield', 'Shields', 'Toggle to swap Shields', 'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
+
 		createSetting('heirloomInitial', 'Initial', '<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+
 		createSetting('heirloomAfterpush', 'Afterpush', '<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone. ', 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+
 		createSetting('heirloomC3', 'C3', '<b>C3 heirloom to use</b><br><br>Enter the name of the heirloom you would like to use during C3\s and special challenges (Mayhem, Pandemonium).', 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+
+		createSetting('heirloomVoid', 'Void', '<b>Void heirloom to use</b><br>Enter the name of the heirloom you would like to use during Void Maps.', 'textValue', 'undefined', null, 'Heirlooms', [2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+
+		createSetting('heirloomVoidPlaguebringer', 'Void PB', 'Heirloom to use inside of Void Maps when fighting a slow enemy and the next enemy is fast. Either a max damage no health shield or plaguebringer shield should be used.', 'textValue', 'undefined', null, 'Heirlooms', [2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && getPageSetting('heirloomVoidSwap', currSettingUniverse)) });
+
 		createSetting('heirloomSwapZone', 'Swap Zone', 'Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>', 'value', '-1', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+
 		createSetting('heirloomSwapZoneDaily', 'Daily Swap Zone', 'Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>', 'value', '-1', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+
 		createSetting('heirloomSwapZoneC3', 'C3 Swap Zone', 'Which zone to swap from your first heirloom you have defined to the C3 heirloom you have defined. I.e if this value is 75 it will switch to the C3 heirloom <b>on z75</b>', 'value', -1, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		//Staff swapping
 		createSetting('heirloomStaff', 'Staffs', 'Toggle to swap Staffs', 'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
+
 		createSetting('heirloomStaffWorld', 'World', '<b>World Staff</b><br><br>Enter the name of your world staff.', 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
+
 		createSetting('heirloomStaffMap', 'Map', '<b>General Map Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside maps, will be overwritten by the proceeding 3 heirloom settings if they\'re being used otherwise will work in every maptype.', 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
+
 		createSetting('heirloomStaffFood', 'Savory Cache', '<b>Savory Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Savory Cache maps. Will use this staff for Tribute farming if it\'s enabled.', 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
+
 		createSetting('heirloomStaffWood', 'Wooden Cache', '<b>Wooden Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Wooden Cache maps.', 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
+
 		createSetting('heirloomStaffMetal', 'Metal Cache', '<b>Metal Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Metal Cache maps.', 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
+
 		createSetting('heirloomResourceStaff', 'Resource Cache', '<b>Resource Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Resource (Science) Cache maps.', 'textValue', 'undefined', null, 'Heirlooms', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
@@ -1232,6 +1255,7 @@ function modifyParentNodeUniverseSwap() {
 	//Heirlooms
 	//Helium Settings
 	modifyParentNode_Initial("heirloomVoidSwap", 'show');
+	modifyParentNode_Initial("heirloomVoidPlaguebringer", 'show');
 	modifyParentNode_Initial("heirloomSwapZoneC3", 'show');
 	modifyParentNode_Initial("heirloomResourceStaff", 'show');
 	if (getPageSetting('radonsettings') === 0) {

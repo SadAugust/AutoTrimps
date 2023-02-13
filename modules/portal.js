@@ -359,7 +359,7 @@ function doPortal(challenge, squared) {
 
 	//Identifying which challenge type we're running to setup for the preset swapping function
 	var preset = challengeSquaredMode ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
-	if (portalUniverse === 2) PresetSwapping(preset);
+	if (portalUniverse === 2) presetSwapping(preset);
 	//Reset packrat to 3 on Hypothermia
 	if (portalUniverse === 2) hypoPackratReset(challenge);
 	//Auto Allocate Perks
@@ -503,4 +503,54 @@ function resetmapvars() {
 		document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 	}
 
+}
+
+function presetSwapping(preset) {
+	if (!getPageSetting('presetSwap')) return
+
+	var preset = !preset ? null :
+		(preset != 1 && preset != 2 && preset != 3) ? null :
+			preset;
+
+	if (preset == null) {
+		debug("Invalid input. Needs to be a value between 1 and 3.");
+		return;
+	}
+
+	presetTab(preset);
+	loadPerkPreset();
+}
+
+function downloadSave() {
+	if (!getPageSetting('downloadSaves')) return
+
+	tooltip('Export', null, 'update');
+	document.getElementById("downloadLink").click();
+	cancelTooltip();
+}
+
+function hypoPackratReset(challenge) {
+
+	if (challenge === 'Hypothermia' && getPageSetting('hypothermiaDefaultSettings').packrat) {
+		toggleRemovePerks();
+		numTab(6, true);
+		buyPortalUpgrade('Packrat');
+		toggleRemovePerks();
+		tooltip('Custom', null, 'update', true);
+		document.getElementById('customNumberBox').value = 3;
+		numTab(5, true)
+		buyPortalUpgrade('Packrat');
+	}
+}
+
+function allocatePerks() {
+	if (!game.global.portalActive) return;
+	if (portalUniverse === 1 && getPageSetting('autoPerks') !== 2) return;
+	if (portalUniverse === 2 && getPageSetting('autoPerks') === 0) return;
+	var allocatePerk = portalUniverse === 1 ? 'Looting_II' : getPageSetting('autoPerks') == 1 ? 'Looting' : getPageSetting('autoPerks') == 2 ? 'Greed' : getPageSetting('autoPerks') == 3 ? 'Motivation' : null;
+	if (allocatePerk !== null) {
+		numTab(6, true)
+		buyPortalUpgrade(allocatePerk);
+		debug('Bought Max ' + allocatePerk);
+	}
 }
