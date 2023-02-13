@@ -2918,7 +2918,7 @@ function toggleAutoMaps() {
 	else
 		setPageSetting('autoMaps', 1)
 
-	document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + getPageSetting('autoMaps', currSettingUniverse));
+	document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + getPageSetting('autoMaps'));
 
 	saveSettings();
 }
