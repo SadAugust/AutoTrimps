@@ -2759,7 +2759,7 @@ function updateCustomButtons(initialLoad) {
 		}
 	}
 
-	document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + getPageSetting('autoMaps', currSettingUniverse));
+	document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + getPageSetting('autoMaps'));
 
 	if (document.getElementById('Prestige').selectedIndex > 11 && !game.global.slowDone) {
 		document.getElementById('Prestige').selectedIndex = 11;
