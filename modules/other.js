@@ -505,6 +505,7 @@ function equalityManagement() {
 	var bionicTalent = mapping && game.talents.bionic2.purchased && (zone > game.global.world) ? zone : 0;
 	var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
 	var maxEquality = game.portal.Equality.radLevel;
+	var armyReady = newArmyRdy();
 
 	if (type === 'void' && getPageSetting('heirloomVoidSwap')) heirloomSwapping();
 
@@ -646,7 +647,7 @@ function equalityManagement() {
 				game.portal.Equality.disabledStackCount = i;
 				break;
 			}
-			else if ((ourHealth < (ourHealthMax * 0.65) || runningDuel && game.global.armyAttackCount !== 0) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
+			else if (armyReady && (ourHealth < (ourHealthMax * 0.65)) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
 				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
 					mapsClicked();
 					mapsClicked();
