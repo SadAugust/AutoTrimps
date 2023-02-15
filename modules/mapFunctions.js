@@ -74,7 +74,7 @@ const uniqueMaps = {
 		universe: 2
 	},
 	'Melting Point': {
-		zone: 55,
+		zone: 50,
 		challenges: [""],
 		speedrun: 'meltingTimed',
 		universe: 2
@@ -3178,6 +3178,7 @@ function resetMapVars(setting) {
 
 function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	if (!getPageSetting('spamMessages').map_Details) return;
+	if (!getPageSetting('autoMaps')) return;
 	if (!mapName) return;
 
 	//Figuring out exact amount of maps run
