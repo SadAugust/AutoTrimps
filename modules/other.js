@@ -731,7 +731,7 @@ function resetSettingsPortal() {
 	}
 	//Enabling Auto Equip
 	if (getPageSetting('equipPortal')) {
-		autoTrimpSettings["equipOn"][value] = true;
+		autoTrimpSettings["equipOn"][enabled] = true;
 		const autoEquip = getPageSetting('equipOn');
 		document.getElementById('equipOn').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoEquip);
 		document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + autoEquip);
