@@ -915,7 +915,7 @@ function SmithyFarm() {
 		}
 
 		//Recycles map if we don't need to finish it for meeting the farm requirements
-		if (currentMap === mapName && !dontRecycleMaps) {
+		if (currentMap === mapName) {
 			if (game.global.mapsActive && typeof mapBonus !== 'undefined' && ((!rShouldSmithyGemFarm && mapBonus.includes('sc')) || (!rShouldSmithyWoodFarm && mapBonus.includes('wc')) || (!rShouldSmithyMetalFarm && mapBonus.includes('mc')))) {
 				var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
 				var mappingLength = (mapProg > 0 ? Number(((game.global.mapRunCounter + mapProg)).toFixed(2)) : game.global.mapRunCounter);
@@ -927,16 +927,16 @@ function SmithyFarm() {
 					recycleMap();
 				}
 			}
-		}
-		if (currentMap === mapName && !rShouldSmithyFarm) {
-			mappingDetails(mapName, rSFMapLevel, rSFSpecial, rSFSmithies);
-			if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
-				toggleAutoStructure();
-			MODULES.mapFunctions.smithyMapCount = [0, 0, 0];
-			HDRatio = calcHDRatio(game.global.world, 'world');
-			if (!challengeActive('Quest') && rSFSettings.meltingPoint) runUniqueMap('Melting Point', false);
-			resetMapVars(rSFSettings);
-			return farmingDetails;
+			if (!rShouldSmithyFarm) {
+				mappingDetails(mapName, rSFMapLevel, rSFSpecial, rSFSmithies);
+				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
+					toggleAutoStructure();
+				MODULES.mapFunctions.smithyMapCount = [0, 0, 0];
+				HDRatio = calcHDRatio(game.global.world, 'world');
+				if (!challengeActive('Quest') && rSFSettings.meltingPoint) runUniqueMap('Melting Point', false);
+				resetMapVars(rSFSettings);
+				return farmingDetails;
+			}
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rSFMapLevel || mapBonus !== rSFSpecial);
