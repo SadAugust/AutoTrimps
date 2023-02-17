@@ -524,7 +524,7 @@ function MapFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
+		if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
 			rMFIndex = y;
 			break;
 		}
@@ -634,7 +634,7 @@ function TributeFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
+		if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
 			rTrFIndex = y;
 			break;
 		}
@@ -794,7 +794,7 @@ function SmithyFarm() {
 		let currSetting = rSFBaseSetting[y];
 		let world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
-		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world !== world || game.global.lastClearedCell + 2 < currSetting.cell || (game.global.world > world && currSetting.repeatevery === 0) || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone)) {
+		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone) || (game.global.world > world && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
@@ -804,7 +804,7 @@ function SmithyFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
+		if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
 			rSFIndex = y;
 			break;
 		}
@@ -994,7 +994,7 @@ function WorshipperFarm() {
 			if (isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
 		}
-		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
+		if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
 			rWFIndex = y;
 			break;
 		}
