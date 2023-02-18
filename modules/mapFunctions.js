@@ -1572,7 +1572,7 @@ function Wither() {
 	if (!challengeActive('Wither') || !getPageSetting('wither')) return farmingDetails;
 
 	var jobRatio = '0,0,1,0';
-	var special = 'lmc';
+	var special = getAvailableSpecials('lmc', true);
 
 	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
 		game.global.mapRunCounter = mapRepeats;
@@ -2196,7 +2196,7 @@ function Glass() {
 	if (!challengeActive('Glass') || !getPageSetting('glass')) return farmingDetails;
 
 	var jobRatio = '0,0,1,0';
-	var special = 'lmc';
+	var special = getAvailableSpecials('lmc', true);
 	var glassStacks = getPageSetting('glassStacks');
 	if (glassStacks <= 0) glassStacks = Infinity;
 
@@ -2387,7 +2387,7 @@ function Smithless() {
 	if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
 
 		var smithlessJobRatio = '0,0,1,0';
-		var smithlessSpecial = 'lmc';
+		var smithlessSpecial = getAvailableSpecials('lmc', true);
 		var smithlessMax = game.global.mapBonus != 10 ? 10 : null;
 		var smithlessMin = game.global.mapBonus != 10 ? 0 : null;
 
