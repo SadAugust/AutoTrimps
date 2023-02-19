@@ -1570,6 +1570,7 @@ function Wither() {
 	};
 
 	if (!challengeActive('Wither') || !getPageSetting('wither')) return farmingDetails;
+	if (game.challenges.Wither.healImmunity > 0) return farmingDetails;
 
 	var jobRatio = '0,0,1,0';
 	var special = getAvailableSpecials('lmc', true);
@@ -3193,7 +3194,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	var timeMapping = mappingTime > 0 ? mappingTime : getGameTime();
 	var currCell = game.global.lastClearedCell + 2;
 	var message = '';
-	if (mapName !== 'Void Map' && mapName !== 'Quagmire Farm' && mapName !== 'Smithy Farm' && mapName !== 'Bionic Raiding') {
+	if (mapName !== 'Void Map' && mapName !== 'Quagmire Farm' && mapName !== 'Smithy Farm' && mapName !== 'Bionic Raiding' && mapName !== 'Quest') {
 		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + mapSpecial + ")" + (mappingLength == 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
 	}
 	else if (mapName === 'Smithy Farm') {
