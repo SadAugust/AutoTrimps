@@ -1090,7 +1090,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		setting.push(thisSetting);
 	}
 	if (!golden)
-		setting.sort(function (a, b) { if (a.prio == b.prio) return (a.world == b.world) ? ((a.cell > b.cell) ? 1 : -1) : ((a.world > b.world) ? 1 : -1); return (a.prio > b.prio) ? 1 : -1 });
+		setting.sort(function (a, b) { if (a.priority == b.priority) return (a.world == b.world) ? ((a.cell > b.cell) ? 1 : -1) : ((a.world > b.world) ? 1 : -1); return (a.priority > b.priority) ? 1 : -1 });
 
 	if (error) {
 		var elem = document.getElementById('windowError');
