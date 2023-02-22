@@ -370,10 +370,6 @@ function VoidMaps() {
 	if (currentMap === mapName && !rDoVoids) {
 		mappingDetails(mapName);
 		resetMapVars();
-		currentMap = undefined;
-		rAutoLevel = Infinity;
-		mappingTime = 0;
-		game.global.mapRunCounter = 0;
 		module.rVoidHDIndex = Infinity;
 		module.rVoidHDRatio = Infinity;
 		module.rVoidVHDRatio = Infinity;
@@ -439,7 +435,7 @@ function MapBonus() {
 		}
 		rMBRepeatCounter = rMBspireMapStack ? 10 : rMBIndex !== null && rMBshouldDoHealthMaps && rMBSettings.repeat !== rMBDefaultSettings.healthBonus ?
 			Math.max(rMBSettings.repeat, rMBDefaultSettings.healthBonus) : rMBIndex === null ? rMBDefaultSettings.healthBonus : rMBSettings.repeat
-		var rMBSpecial = rMBSettings.special;
+		var rMBSpecial = rMBSettings.special !== '0' ? rMBSettings.special : '0';
 		if (challengeActive('Transmute') && rMBSpecial.includes('mc'))
 			rMBSpecial = rMBSpecial.charAt(0) + "sc";
 		var rMBMapLevel = rMBIndex !== null ? rMBSettings.level : game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
@@ -568,11 +564,7 @@ function MapFarm() {
 			mappingDetails(mapName, rMFMapLevel, rMFSpecial);
 			resetMapVars(rMFSettings);
 			rShouldMapFarm = false;
-			rMFSettings.done = totalPortals + "_" + game.global.world;
 			if (rMFAtlantrimp) runUniqueMap('Atlantrimp', false);
-			game.global.mapRunCounter = 0;
-			mapRepeats = 0;
-			mappingTime = 0;
 			saveSettings();
 		}
 
@@ -3006,10 +2998,7 @@ function shouldFarmMapCreation(pluslevel, special, biome, difficulty, loot, size
 		if (!game.global.mapsOwnedArray[mapping].noRecycle && (
 			(game.global.world + pluslevel) == game.global.mapsOwnedArray[mapping].level) &&
 			(game.global.mapsOwnedArray[mapping].bonus == special || game.global.mapsOwnedArray[mapping].bonus === undefined && special === '0') &&
-			game.global.mapsOwnedArray[mapping].location == biome/*  &&
-			game.global.mapsOwnedArray[mapping].difficulty == difficulty &&
-			game.global.mapsOwnedArray[mapping].loot == loot &&
-			game.global.mapsOwnedArray[mapping].size == size */) {
+			game.global.mapsOwnedArray[mapping].location == biome) {
 
 			return (game.global.mapsOwnedArray[mapping].id);
 		}
@@ -3211,31 +3200,31 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 		message += " Started with " + MODULES.mapFunctions.rVoidVHDRatio.toFixed(2) + " and ended with a Void HD Ratio of " + voidHDRatio.toFixed(2) + ".";
 	}
 
-	if (mapName === 'Tribute Farm') {
+	else if (mapName === 'Tribute Farm') {
 		message += " Finished with " + game.buildings.Tribute.purchased + " tributes and " + game.jobs.Meteorologist.owned + " meteorologists.";
 	}
 
-	if (mapName === 'Smithy Farm') {
+	else if (mapName === 'Smithy Farm') {
 		message += " Finished with " + game.buildings.Smithy.purchased + " smithies.";
 	}
 
-	if (mapName === 'Insanity Farm') {
+	else if (mapName === 'Insanity Farm') {
 		message += " Finished with " + game.challenges.Insanity.insanity + " stacks.";
 	}
 
-	if (mapName === 'Alchemy Farm') {
+	else if (mapName === 'Alchemy Farm') {
 		message += " Finished with " + extra + " " + extra3 + ".";
 	}
 
-	if (mapName === 'Hypothermia Farm') {
+	else if (mapName === 'Hypothermia Farm') {
 		message += " Finished with (" + prettify(game.resources.wood.owned) + "/" + extra.toFixed(2) + ") wood.";
 	}
 
-	if (mapName === 'Smithless Farm') {
+	else if (mapName === 'Smithless Farm') {
 		message += " Finished with enough damage to get " + extra + "/3 stacks.";
 	}
 
-	if (mapName === 'HD Farm') {
+	else if (mapName === 'HD Farm') {
 		message += " Finished with a HD Ratio of " + extra.toFixed(2) + "/" + extra2.toFixed(2) + ".";
 	}
 

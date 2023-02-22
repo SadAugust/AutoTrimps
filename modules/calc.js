@@ -490,12 +490,6 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	//Challenges
 	if (challengeActive('Life')) attack *= game.challenges.Life.getHealthMult();
 	if (challengeActive('Lead') && (game.global.world % 2) == 1) attack *= 1.5;
-	/* if (game.challenges.Electricity.stacks > 0) {
-		var stacks = game.challenges.Electricity.stacks;
-		if (!realDamage && minMaxAvg.toLowerCase() == "min") stacks = 0;
-		if (!realDamage && minMaxAvg.toLowerCase() == "avg") stacks /= 2;
-		attack *= 1 - (stacks * 0.1);
-	} */
 
 	//Decay
 	if (challengeActive('Decay')) {

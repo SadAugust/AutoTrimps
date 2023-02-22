@@ -1179,6 +1179,7 @@ function initializeAllSettings() {
 		createSetting('ExportAutoTrimps', 'Export AutoTrimps', 'Export your AutoTrimps Settings as a output string text formatted in JSON.', 'infoclick', 'ExportAutoTrimps', null, 'Import Export', [1, 2]);
 		createSetting('DefaultAutoTrimps', 'Reset to Default', 'Reset everything to the way it was when you first installed the script. ', 'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export', [1, 2]);
 		createSetting('DownloadDebug', 'Download for debug', 'Will download both your save and AT settings so that they can be debugged easier.', 'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [1, 2]);
+		createSetting('spreadsheet', 'Spreadsheet Output', 'Will print a list of your current C3, SA and other relevant settings to paste into a spreadsheet. Only relevant to a select few.', 'action', 'ImportExportTooltip("Spreadsheet","update")', null, 'Import Export', [1, 2]);
 		createSetting('CleanupAutoTrimps', 'Cleanup Saved Settings ', 'Deletes old values from previous versions of the script from your AutoTrimps Settings file.', 'infoclick', 'CleanupAutoTrimps', null, 'Import Export', [1, 2]);
 	}
 }

@@ -59,6 +59,29 @@ function serializeSettings() {
 	}, {}));
 }
 
+function spreadsheetDownload() {
+	var spreadsheet = '';
+	//C3s
+	for (var chall in game.c2) {
+		if (!game.challenges[chall].allowU2) continue;
+		spreadsheet += ((getIndividualSquaredReward(chall)) + "\n")
+	}
+	//Radon, Scruffy, HZE, Achieve bonus, Antenna count
+	spreadsheet += (game.global.totalRadonEarned + "\n");
+	spreadsheet += ((Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3) + "\n");
+	spreadsheet += (game.global.highestRadonLevelCleared + 1 + "\n");
+	spreadsheet += (game.global.achievementBonus + "\n");
+	spreadsheet += (game.buildings.Antenna.purchased + "\n");
+	//Spire Assault
+	spreadsheet += (autoBattle.maxEnemyLevel + "\n");
+	spreadsheet += (autoBattle.bonuses.Radon.level + "\n");
+	spreadsheet += (autoBattle.bonuses.Stats.level + "\n");
+	spreadsheet += (autoBattle.bonuses.Scaffolding.level + "\n");
+	//Mayhem Style Challenges
+	spreadsheet += (game.global.desoCompletions + "\n");
+	return (spreadsheet);
+}
+
 function getPageSetting(setting, universe) {
 	if (autoTrimpSettings.hasOwnProperty(setting) === false) {
 		return false;
