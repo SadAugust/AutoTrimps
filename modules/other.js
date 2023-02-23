@@ -635,7 +635,6 @@ function equalityManagement() {
 				if (unluckyDmgEquality.toString()[0] % 2 == 1 && i !== maxEquality) continue;
 			}
 
-
 			if (voidPBSwap && !fastEnemy && calcOurDmg('max', i, false, 'void', 'force', 0, true) > enemyHealth && (typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' || game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) && (getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
 				game.portal.Equality.disabledStackCount = maxEquality;
 				while (calcOurDmg('max', i, false, 'void', 'force', 0, true) > getCurrentEnemy().health && i < maxEquality) {
@@ -652,7 +651,7 @@ function equalityManagement() {
 					mapsClicked();
 					mapsClicked();
 				}
-				else if (game.global.mapsUnlocked && mapping && currentCell > 0 && type !== 'void' && (!runningQuest && game.global.titimpLeft === 0)) {
+				else if (game.global.mapsUnlocked && mapping && currentCell > 0 && type !== 'void' && getCurrentMapObject().location !== 'Darkness' && (!runningQuest && game.global.titimpLeft === 0)) {
 					mapsClicked();
 					rRunMap();
 				}
