@@ -777,3 +777,16 @@ function prettifySubAT(number) {
 
 	return number.toFixed(5 - floor.toString().length);
 }
+
+function saveToSteam(saveData) {
+	if (typeof greenworks == 'undefined') return;
+	greenworks.saveTextToFile('TrimpsSave.sav', saveData, cloudSaveCallback, cloudSaveErrorCallback);
+}
+
+function loadFromSteam() {
+	if (typeof greenworks == 'undefined') return;
+	greenworks.readTextFromFile('TrimpsSave.sav', loadFromSteamCallback, loadFromSteamErrorCallback);
+}
+
+function cloudSaveCallback(data) {
+}
