@@ -231,11 +231,13 @@ function message2(a, b, c, d) {
 }
 
 function filterMessage2(a) {
-	var b = document.getElementById("log"); displayed = !ATmessageLogTabVisible, ATmessageLogTabVisible = displayed;
-	var c = document.getElementsByClassName(a + "Message"),
-		d = displayed ? a : a, e = document.getElementById(a + "Filter");
-	e.innerHTML = d,
-		e.className = "", e.className = getTabClass(displayed),
+	var b = document.getElementById("log");
+	displayed = !ATmessageLogTabVisible;
+	ATmessageLogTabVisible = displayed;
+	var c = document.getElementsByClassName(a + "Message")
+	var e = document.getElementById(a + "Filter");
+
+	e.className = "", e.className = getTabClass(displayed),
 		displayed = displayed ? "block" : "none";
 	for (var f = 0; f < c.length; f++) {
 		c[f].style.display = displayed; b.scrollTop = b.scrollHeight
