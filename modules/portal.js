@@ -304,6 +304,7 @@ function doPortal(challenge, squared) {
 		checkCompleteDailies();
 		var lastUndone = -7;
 		while (++lastUndone <= 0) {
+			if (getDailyTimeString(lastUndone) === parseInt(getPageSetting('dailySkip'))) continue;
 			var dailyCompleted = (game.global.recentDailies.indexOf(getDailyTimeString(lastUndone)) !== -1);
 			if (!dailyCompleted)
 				break;

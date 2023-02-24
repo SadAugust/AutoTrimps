@@ -333,6 +333,8 @@ function initializeAllSettings() {
 
 		createSetting('dailyDontCap', 'Use when capped', 'If this is on, you will only do the oldest daily when you have 7 dailies available. ', 'boolean', false, null, 'Daily', [1, 2]);
 
+		createSetting('dailySkip', 'Skip this daily', 'Input the date of a daily you\'d like AT not to run when automatically starting dailies. Must be input with the following format \'YEAR-MONTH-DAY\' without any hyphens.', 'textValue', false, null, 'Daily', [1, 2]);
+
 		createSetting('dailyPortalSettingsArray', 'Daily Portal Settings', 'Click to adjust settings. ', 'mazDefaultArray', { portalZone: 0, portalChallenge: "None", Empower: { enabled: true, zone: 0 }, Mutimp: { enabled: true, zone: 0 }, Bloodthirst: { enabled: true, zone: 0 }, Famine: { enabled: true, zone: 0 }, Large: { enabled: true, zone: 0 }, Weakness: { enabled: true, zone: 0 } }, null, 'Jobs', [2]);
 	}
 
