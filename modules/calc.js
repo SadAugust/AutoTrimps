@@ -501,7 +501,13 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	attack *= challengeActive('Unbalance') ? game.challenges.Unbalance.getAttackMult() : 1;
 	attack *= challengeActive('Duel') && game.challenges.Duel.trimpStacks > 50 ? 3 : 1;
 	attack *= challengeActive('Melt') ? 5 * Math.pow(0.99, game.challenges.Melt.stacks) : 1;
-	attack *= challengeActive('Quagmire') ? game.challenges.Quagmire.getExhaustMult() : 1;
+	if (challengeActive('Quagmire')) {
+		let exhaustedStacks = game.challenges.Quagmire.exhaustedStacks;
+		let mod = mapType !== 'world' ? 0.1 : mapType === 'world' ? 0.05 : (game.global.mapsActive) ? 0.05 : 0.1;
+		if (exhaustedStacks == 0) attack *= 1;
+		else if (exhaustedStacks < 0) attack *= Math.pow((1 + mod), Math.abs(exhaustedStacks));
+		else attack *= Math.pow((1 - mod), exhaustedStacks);
+	}
 	attack *= challengeActive('Revenge') ? game.challenges.Revenge.getMult() : 1;
 	attack *= challengeActive('Quest') ? game.challenges.Quest.getAttackMult() : 1;
 	attack *= challengeActive('Archaeology') ? game.challenges.Archaeology.getStatMult('attack') : 1;
