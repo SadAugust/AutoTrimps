@@ -503,7 +503,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	attack *= challengeActive('Melt') ? 5 * Math.pow(0.99, game.challenges.Melt.stacks) : 1;
 	if (challengeActive('Quagmire')) {
 		let exhaustedStacks = game.challenges.Quagmire.exhaustedStacks;
-		let mod = mapType !== 'world' ? 0.1 : mapType === 'world' ? 0.05 : (game.global.mapsActive) ? 0.05 : 0.1;
+		let mod = mapType !== 'world' ? 0.05 : mapType === 'world' ? 0.1 : (game.global.mapsActive) ? 0.05 : 0.1;
 		if (exhaustedStacks == 0) attack *= 1;
 		else if (exhaustedStacks < 0) attack *= Math.pow((1 + mod), Math.abs(exhaustedStacks));
 		else attack *= Math.pow((1 - mod), exhaustedStacks);
