@@ -185,7 +185,7 @@ function c2runner() {
 	if (!game.global.portalActive) return;
 	if ((portalUniverse === 1 && game.global.highestLevelCleared < 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared < 48)) return;
 	if (!getPageSetting('c2RunnerStart')) return;
-	if (getPageSetting('c2RunnerPortal') <= 0 || getPageSetting('c2RunnerPercent') <= 0 || getPageSetting('c2RunnerPortal') > game.global.world) return;
+	if (getPageSetting('c2RunnerPortal') <= 0 || getPageSetting('c2RunnerPercent') <= 0) return;
 
 	const challengeArray = [];
 	const universePrefix = game.global.universe === 2 ? 'C3 ' : 'C2 ';
