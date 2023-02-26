@@ -140,6 +140,7 @@ function dailyAutoPortal() {
 						return;
 					if (OKtoPortal) {
 						abandonDaily();
+						abandonChallenge();
 						document.getElementById('finishDailyBtnContainer').style.display = 'none';
 					}
 					if (getPageSetting('dailyHeliumHourChallenge') !== 'None')
@@ -288,6 +289,7 @@ function doPortal(challenge, squared) {
 
 	if (currChall === 'Daily') {
 		abandonDaily();
+		abandonChallenge();
 		document.getElementById('finishDailyBtnContainer').style.display = 'none';
 		//Swapping to other universe if necessary to run daily.
 		if (getPageSetting('dailyPortalPreviousUniverse', (currPortalUniverse + 1))) {
