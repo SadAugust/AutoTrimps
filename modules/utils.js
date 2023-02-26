@@ -195,7 +195,7 @@ function debug(a, b, c) {
 			p = settingArray.zone;
 			break;
 	}
-	p && (enableDebug && console.log(timeStamp() + ' ' + a), message2(a, 'AutoTrimps', c, b))
+	p && (console.log(timeStamp() + ' ' + a), message2(a, 'AutoTrimps', c, b))
 }
 
 function timeStamp() {
@@ -275,7 +275,7 @@ function prettifyMap(map) {
 	if (!map) {
 		return 'none'
 	}
-	let descriptor;
+	var descriptor;
 	if (!map.noRecycle) {
 		// a crafted map
 		const bonus = (map.hasOwnProperty('bonus') ? mapSpecialModifierConfig[map.bonus].name : 'no bonus');
@@ -295,7 +295,7 @@ function debugPrettifyMap(map) {
 	if (['world', 'create'].includes(map)) {
 		return map;
 	}
-	let descriptor;
+	var descriptor;
 	if (!map.noRecycle) {
 		// a crafted map
 		const bonus = (map.hasOwnProperty('bonus') ? `+${map.bonus}` : '');

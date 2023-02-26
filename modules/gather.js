@@ -9,7 +9,7 @@ var maxZoneDuration = 0;
 
 //Traps per second
 function calcTPS() {
-	let tps = Math.min(10, game.global.playerModifier / 5);
+	var tps = Math.min(10, game.global.playerModifier / 5);
 	if (game.global.universe === 2 && Fluffy.isRewardActive("trapper")) tps *= 10;
 	return tps;
 }

@@ -399,8 +399,8 @@ function decayFinishChallenge() {
 	if (!challengeActive('Decay') && !getPageSetting('decay')) return;
 
 	//Init
-	let stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;
-	let stacksToAbandon = getPageSetting('decayStacksToAbandon');
+	var stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;
+	var stacksToAbandon = getPageSetting('decayStacksToAbandon');
 
 	//Finishes the challenge if above max stacks
 	if (stacksToAbandon > 0 && stacks > stacksToAbandon) {

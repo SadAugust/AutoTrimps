@@ -190,14 +190,14 @@ function heirloomSwapping() {
 	if (getPageSetting('heirloomShield')) {
 
 		//Initial vars for swapping heirlooms
-		let isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-		let isDaily = challengeActive('Daily');
-		let isFiller = !isDaily && !isC3
-		let swapZone = isC3 ? getPageSetting('heirloomSwapZoneC3') : isDaily ? getPageSetting('heirloomSwapZoneDaily') : isFiller ? getPageSetting('heirloomSwapZone') : 999;
+		var isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+		var isDaily = challengeActive('Daily');
+		var isFiller = !isDaily && !isC3
+		var swapZone = isC3 ? getPageSetting('heirloomSwapZoneC3') : isDaily ? getPageSetting('heirloomSwapZoneDaily') : isFiller ? getPageSetting('heirloomSwapZone') : 999;
 		if (swapZone === -1) swapZone = 999;
-		let afterpushShield = isC3 ? 'heirloomC3' : 'heirloomAfterpush';
+		var afterpushShield = isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 		voidPBSwap = false;
-		let voidActive = game.global.mapsActive && getCurrentMapObject().location == "Void";
+		var voidActive = game.global.mapsActive && getCurrentMapObject().location == "Void";
 		if (voidActive) {
 			voidPBSwap =
 				game.global.universe === 2 && getPageSetting('heirloomVoidSwap') &&

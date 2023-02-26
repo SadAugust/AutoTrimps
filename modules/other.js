@@ -294,7 +294,8 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	var runningQuest = challengeActive('Quest') && currQuest() == 8;
 	var runningUnlucky = challengeActive('Unlucky')
 	var ourHealth = calcOurHealth(runningQuest, 'map');
-	var dmgType = runningUnlucky ? 'max' : 'avg'
+	var overkillCount = maxOneShotPower(true);
+	var dmgType = runningUnlucky ? 'max' : overkillCount > 1 ? 'min' : 'avg'
 	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var critType = 'maybe'
@@ -362,7 +363,7 @@ function autoMapLevelU1(special, maxLevel, minLevel, critType, statCheck) {
 			continue;
 
 		// Calculate optimal map level
-		let ratio = calcHDRatio(z + mapLevel, "map");
+		var ratio = calcHDRatio(z + mapLevel, "map");
 		if (game.unlocks.imps.Titimp) {
 			ratio /= 2;
 		}
@@ -411,6 +412,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var dailyBloodthirst = challengeActive('Daily') && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
 	var maxEquality = game.portal.Equality.radLevel;
+	var overkillCount = maxOneShotPower(true);
 
 	var critType = 'maybe'
 	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel')) critType = 'never'
@@ -433,7 +435,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
 	}
 	//Our stats
-	var dmgType = runningUnlucky ? 'max' : 'avg'
+	var dmgType = runningUnlucky ? 'max' : mapType !== 'world' && overkillCount > 1 ? 'min' : 'avg';
 	var ourHealth = calcOurHealth(runningQuest, mapType);
 	var ourDmg = calcOurDmg(dmgType, 0, false, mapType, critType, bionicTalent, titimp);
 
@@ -447,7 +449,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName, calcMutationHealth(zone));
 	}
 
-	if (forceOK) enemyHealth *= (1 * maxOneShotPower(true));
+	if (forceOK) enemyHealth *= (1 * overkillCount);
 
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
 

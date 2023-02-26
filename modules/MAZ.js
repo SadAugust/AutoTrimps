@@ -306,21 +306,21 @@ function MAZLookalike(titleText, varPrefix, event) {
 	//Farming Settings
 	if (event == 'MAZ') {
 
-		let mapFarm = titleText.includes('Map Farm');
-		let mapBonus = titleText.includes('Map Bonus');
-		let voidMap = titleText.includes('Void Map');
-		let hdFarm = titleText.includes('HD Farm');
-		let raiding = titleText.includes('Raiding');
-		let bionic = titleText.includes('Bionic');
-		let quagmire = titleText.includes('Quagmire');
-		let insanity = titleText.includes('Insanity Farm');
-		let alchemy = titleText.includes('Alchemy Farm');
-		let hypothermia = titleText.includes('Hypothermia Farm');
-		let boneShrine = titleText.includes('Bone Shrine');
-		let golden = titleText.includes('Golden');
-		let tributeFarm = titleText.includes('Tribute Farm');
-		let smithyFarm = titleText.includes('Smithy Farm');
-		let worshipperFarm = titleText.includes('Worshipper Farm');
+		var mapFarm = titleText.includes('Map Farm');
+		var mapBonus = titleText.includes('Map Bonus');
+		var voidMap = titleText.includes('Void Map');
+		var hdFarm = titleText.includes('HD Farm');
+		var raiding = titleText.includes('Raiding');
+		var bionic = titleText.includes('Bionic');
+		var quagmire = titleText.includes('Quagmire');
+		var insanity = titleText.includes('Insanity Farm');
+		var alchemy = titleText.includes('Alchemy Farm');
+		var hypothermia = titleText.includes('Hypothermia Farm');
+		var boneShrine = titleText.includes('Bone Shrine');
+		var golden = titleText.includes('Golden');
+		var tributeFarm = titleText.includes('Tribute Farm');
+		var smithyFarm = titleText.includes('Smithy Farm');
+		var worshipperFarm = titleText.includes('Worshipper Farm');
 
 		var universe = currSettingUniverse;
 		var settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
@@ -919,21 +919,21 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	var errorMessage = false;
 	var maxSettings = 30;
 
-	let mapFarm = titleText.includes('Map Farm');
-	let mapBonus = titleText.includes('Map Bonus');
-	let voidMap = titleText.includes('Void Map');
-	let hdFarm = titleText.includes('HD Farm');
-	let raiding = titleText.includes('Raiding');
-	let bionic = titleText.includes('Bionic');
-	let quagmire = titleText.includes('Quagmire');
-	let insanity = titleText.includes('Insanity Farm');
-	let alchemy = titleText.includes('Alchemy Farm');
-	let hypothermia = titleText.includes('Hypothermia Farm');
-	let boneShrine = titleText.includes('Bone Shrine');
-	let golden = titleText.includes('Golden');
-	let tributeFarm = titleText.includes('Tribute Farm');
-	let smithyFarm = titleText.includes('Smithy Farm');
-	let worshipperFarm = titleText.includes('Worshipper Farm');
+	var mapFarm = titleText.includes('Map Farm');
+	var mapBonus = titleText.includes('Map Bonus');
+	var voidMap = titleText.includes('Void Map');
+	var hdFarm = titleText.includes('HD Farm');
+	var raiding = titleText.includes('Raiding');
+	var bionic = titleText.includes('Bionic');
+	var quagmire = titleText.includes('Quagmire');
+	var insanity = titleText.includes('Insanity Farm');
+	var alchemy = titleText.includes('Alchemy Farm');
+	var hypothermia = titleText.includes('Hypothermia Farm');
+	var boneShrine = titleText.includes('Bone Shrine');
+	var golden = titleText.includes('Golden');
+	var tributeFarm = titleText.includes('Tribute Farm');
+	var smithyFarm = titleText.includes('Smithy Farm');
+	var worshipperFarm = titleText.includes('Worshipper Farm');
 
 	var defaultSetting = {
 	}
@@ -1099,7 +1099,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	}
 
 	if (mapBonus) {
-		let value = currSettingUniverse === 2 ? 'valueU2' : 'value'
+		var value = currSettingUniverse === 2 ? 'valueU2' : 'value'
 		autoTrimpSettings['mapBonusZone'][value] = [];
 		for (var x = 0; x < setting.length; x++) {
 			autoTrimpSettings['mapBonusZone'][value][x] = setting[x].world
@@ -1130,24 +1130,24 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	var mazHelp = "Welcome to '" + titleText + "' settings! This is a powerful automation tool that allows you to set when maps should be automatically run, and allows for a high amount of customization. Here's a quick overview of what everything does:"
 
 
-	let mapFarm = titleText.includes('Map Farm');
-	let mapBonus = titleText.includes('Map Bonus');
-	let voidMap = titleText.includes('Void Map');
-	let hdFarm = titleText.includes('HD Farm');
-	let raiding = titleText.includes('Raiding');
-	let bionic = titleText.includes('Bionic');
-	let quagmire = titleText.includes('Quagmire');
-	let insanity = titleText.includes('Insanity Farm');
-	let alchemy = titleText.includes('Alchemy Farm');
-	let hypothermia = titleText.includes('Hypothermia Farm');
-	let boneShrine = titleText.includes('Bone Shrine');
-	let golden = titleText.includes('Golden');
+	var mapFarm = titleText.includes('Map Farm');
+	var mapBonus = titleText.includes('Map Bonus');
+	var voidMap = titleText.includes('Void Map');
+	var hdFarm = titleText.includes('HD Farm');
+	var raiding = titleText.includes('Raiding');
+	var bionic = titleText.includes('Bionic');
+	var quagmire = titleText.includes('Quagmire');
+	var insanity = titleText.includes('Insanity Farm');
+	var alchemy = titleText.includes('Alchemy Farm');
+	var hypothermia = titleText.includes('Hypothermia Farm');
+	var boneShrine = titleText.includes('Bone Shrine');
+	var golden = titleText.includes('Golden');
 
-	let radonSetting = currSettingUniverse === 2;
+	var radonSetting = currSettingUniverse === 2;
 
-	let tributeFarm = titleText.includes('Tribute Farm');
-	let smithyFarm = titleText.includes('Smithy Farm');
-	let worshipperFarm = titleText.includes('Worshipper Farm');
+	var tributeFarm = titleText.includes('Tribute Farm');
+	var smithyFarm = titleText.includes('Smithy Farm');
+	var worshipperFarm = titleText.includes('Worshipper Farm');
 
 	//Map Bonus Information to detail how it functions since it's unclear compared to every other setting
 	if (mapBonus) mazHelp += "<br><br><b>Map Bonus works by using the last line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.</b>"
@@ -1635,7 +1635,7 @@ function addRow(varPrefix, titleText) {
 		var elem = document.getElementById('windowWorld' + x);
 		if (!elem) continue;
 
-		let value = currSettingUniverse === 2 ? 'valueU2' : 'value'
+		var value = currSettingUniverse === 2 ? 'valueU2' : 'value'
 
 		if (elem.value == -1) {
 			var parent = document.getElementById('windowRow' + x);
@@ -1871,7 +1871,7 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 
 	if (!universe) universe = game.global.universe;
 	if (!MAZ) MAZ = '';
-	let dropdown;
+	var dropdown;
 	var highestZone = universe === 1 ? game.global.highestLevelCleared + 1 : game.global.highestRadonLevelCleared + 1;
 
 	if (runType === 'Gather') {

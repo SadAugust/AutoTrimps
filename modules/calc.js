@@ -252,13 +252,13 @@ function calcOurHealth(stance, mapType, realHealth, fullGeneticist) {
 
 function calcHitsSurvived(targetZone, type) {
 	//Init
-	let damageMult = 1;
-	let voidDamage = 0;
+	var damageMult = 1;
+	var voidDamage = 0;
 	const formationMod = (game.upgrades.Dominance.done) ? 2 : 1;
 
 	//Our Health and Block
-	let health = calcOurHealth(false, type, false, true) / formationMod;
-	let block = calcOurBlock(false) / formationMod;
+	var health = calcOurHealth(false, type, false, true) / formationMod;
+	var block = calcOurBlock(false) / formationMod;
 
 	//Calc for maps
 	if (type === "map") {
@@ -301,7 +301,7 @@ function calcHitsSurvived(targetZone, type) {
 	}
 
 	//Pierce & Voids
-	let pierce = (game.global.brokenPlanet) ? getPierceAmt() : 0;
+	var pierce = (game.global.brokenPlanet) ? getPierceAmt() : 0;
 
 	//Cancel the influence of the Barrier Formation
 	if (game.global.formation === 3) {
@@ -502,8 +502,8 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	attack *= challengeActive('Duel') && game.challenges.Duel.trimpStacks > 50 ? 3 : 1;
 	attack *= challengeActive('Melt') ? 5 * Math.pow(0.99, game.challenges.Melt.stacks) : 1;
 	if (challengeActive('Quagmire')) {
-		let exhaustedStacks = game.challenges.Quagmire.exhaustedStacks;
-		let mod = mapType !== 'world' ? 0.05 : mapType === 'world' ? 0.1 : (game.global.mapsActive) ? 0.05 : 0.1;
+		var exhaustedStacks = game.challenges.Quagmire.exhaustedStacks;
+		var mod = mapType !== 'world' ? 0.05 : mapType === 'world' ? 0.1 : (game.global.mapsActive) ? 0.05 : 0.1;
 		if (exhaustedStacks == 0) attack *= 1;
 		else if (exhaustedStacks < 0) attack *= Math.pow((1 + mod), Math.abs(exhaustedStacks));
 		else attack *= Math.pow((1 - mod), exhaustedStacks);
@@ -1174,7 +1174,7 @@ function calcHDRatio(targetZone, type) {
 	}
 	if (type === 'map') {
 		var enemyHealth = calcEnemyHealth(type, targetZone);
-		var universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, 'void', 4, 'gamma') : 'X';
+		var universeSetting = game.global.universe === 2 ? equalityQuery('Snimp', targetZone, 20, 'map', 0.75, 'gamma', true) : 'X';
 	}
 	if (type === 'void') {
 		var enemyHealth = calcEnemyHealth(type, targetZone, 100, 'Cthulimp');
@@ -1211,7 +1211,7 @@ function calcHDRatio(targetZone, type) {
 		return Math.max(voidHealth / voidDamage, calcEnemyHealth("world", targetZone) / ourBaseDamage);
 	}
 	//Adding gammaBurstDmg to calc
-	if ((game.global.universe === 2 && universeSetting < (game.portal.Equality.radLevel - 14)) || game.global.universe === 1)
+	if (type !== 'map' && (game.global.universe === 2 && universeSetting < (game.portal.Equality.radLevel - 14)) || game.global.universe === 1)
 		ourBaseDamage *= gammaBurstDmg
 
 	//Return H:D for a regular, sane, not f-ing Lead zone (sorry, Lead just took a lot of me)

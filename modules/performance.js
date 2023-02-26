@@ -131,7 +131,6 @@
 		M["performance"].$wrapper.style.display = 'none';
 		//This is the whole meat - replaces the update function with nothing (means save resources)
 		W.updateLabels = function () { };
-		enableDebug = false;
 	}
 
 	M["performance"].DisableAFKMode = function DisableAFKMode() {

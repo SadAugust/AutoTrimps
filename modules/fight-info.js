@@ -134,13 +134,13 @@
 
 			//Exotic cell
 			else if (cell.name.toLowerCase() in M["fightinfo"].exotics) {
-				let icon = M.fightinfo.allExoticIcons ? M.fightinfo.exotics[cell.name.toLowerCase()].icon : undefined;
+				var icon = M.fightinfo.allExoticIcons ? M.fightinfo.exotics[cell.name.toLowerCase()].icon : undefined;
 				updateCell($cell, cell, M.fightinfo.imp.exotic, icon, true);
 			}
 
 			//Powerful Imp
 			else if (cell.name.toLowerCase() in M["fightinfo"].powerful) {
-				let icon = M.fightinfo.allPowerfulIcons ? M.fightinfo.powerful[cell.name.toLowerCase()].icon : undefined;
+				var icon = M.fightinfo.allPowerfulIcons ? M.fightinfo.powerful[cell.name.toLowerCase()].icon : undefined;
 				updateCell($cell, cell, M.fightinfo.imp.powerful, icon, M.fightinfo.allPowerfulIcons, true);
 			}
 

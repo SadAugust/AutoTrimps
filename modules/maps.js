@@ -40,8 +40,8 @@ function updateAutoMapsStatus(get) {
 	}
 
 	if (getPageSetting('autoMaps') == 0) status = '[Off] ' + status;
-	let resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
-	let resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
+	var resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
+	var resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
 	var getPercent = (game.stats.heliumHour.value() /
 		(game.global['total' + resourceType + 'Earned'] - game.resources[resourceType.toLowerCase()].owned)
 	) * 100;
@@ -121,7 +121,7 @@ function autoMap() {
 		if (nextCell == -1) nextCell = 1;
 		else nextCell += 2;
 		var totalPortals = getTotalPortals();
-		let setZone = game.options.menu.mapAtZone.getSetZone();
+		var setZone = game.options.menu.mapAtZone.getSetZone();
 		for (var x = 0; x < setZone.length; x++) {
 			if (!setZone[x].on) continue;
 			if (game.global.world < setZone[x].world || game.global.world > setZone[x].through) continue;
@@ -175,13 +175,13 @@ function autoMap() {
 	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 
 	//Uniques
-	let highestMap = null;
-	let lowestMap = null;
-	let optimalMap = null;
+	var highestMap = null;
+	var lowestMap = null;
+	var optimalMap = null;
 	const runUniques = getPageSetting('autoMaps') === 1;
 	const bionicPool = [];
-	let voidMap = null;
-	let selectedMap = "world";
+	var voidMap = null;
+	var selectedMap = "world";
 
 	var perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
 	var perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;

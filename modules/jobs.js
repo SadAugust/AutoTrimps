@@ -225,7 +225,7 @@ function buyJobs() {
 			}
 		}
 	}
-	let nextCoordCost = 0;
+	var nextCoordCost = 0;
 
 	//Gather up the total number of workers available to be distributed across ratio workers
 	//In the process store how much of each for later.
@@ -255,7 +255,7 @@ function buyJobs() {
 
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs * reserveMod : 0;
 
-	let workerRatio;
+	var workerRatio;
 	if ((MODULES.mapFunctions.workerRatio !== null && rShouldBoneShrine) || (getPageSetting('autoMaps') !== 0 && rMapSettings.jobRatio !== undefined)) {
 		if (MODULES.mapFunctions.workerRatio !== null) workerRatio = MODULES.mapFunctions.workerRatio;
 		else workerRatio = rMapSettings.jobRatio;
@@ -317,7 +317,7 @@ function buyJobs() {
 	}
 
 	if (totalWorkerCost > game.resources.food.owned) {
-		// Buy max on food and then let the next frame take care of the rest.
+		// Buy max on food and then var the next frame take care of the rest.
 		var buyAmountStore = game.global.buyAmt;
 		game.global.buyAmt = "Max";
 

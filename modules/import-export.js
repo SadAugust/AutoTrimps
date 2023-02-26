@@ -45,7 +45,7 @@ function initializeSettingsProfiles() {
 	var oldpresets = loadLastProfiles ? JSON.parse(loadLastProfiles) : new Array(); //load the import.
 	oldpresets.forEach(function (elem) {
 		//Populate dropdown menu to reflect new name:
-		let optionElementReference = new Option(elem.name);
+		var optionElementReference = new Option(elem.name);
 		optionElementReference.id = 'customProfileRead';
 		$settingsProfiles.add(optionElementReference);
 	});
@@ -124,7 +124,7 @@ function nameAndSaveNewProfile() {
 	debug("Successfully created new profile: " + profile.name, "profile");
 	ImportExportTooltip('message', 'Successfully created new profile: ' + profile.name);
 	//Update dropdown menu to reflect new name:
-	let optionElementReference = new Option(profile.name);
+	var optionElementReference = new Option(profile.name);
 	optionElementReference.id = 'customProfileRead';
 	if ($settingsProfiles == null) return;
 	$settingsProfiles.add(optionElementReference);

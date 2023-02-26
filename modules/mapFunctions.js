@@ -262,7 +262,7 @@ function getVoidMapDifficulty(map) {
 	if (!map) {
 		return 99999;
 	}
-	let score = 0;
+	var score = 0;
 	for (const [prefix, weight] of Object.entries(voidPrefixes)) {
 		if (map.name.includes(prefix)) {
 			score += weight;
@@ -321,8 +321,8 @@ function VoidMaps() {
 	if (module.rVoidHDIndex !== Infinity && module.rVoidHDInfo !== (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2))) module.rVoidHDIndex = Infinity;
 
 	for (var y = 0; y < rVMBaseSettings.length; y++) {
-		let currSetting = rVMBaseSettings[y];
-		let world = currSetting.world + dailyReduction + dailyAddition.skipNextZone;
+		var currSetting = rVMBaseSettings[y];
+		var world = currSetting.world + dailyReduction + dailyAddition.skipNextZone;
 		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell) continue;
 		if (game.global.world < world) continue;
 		if (game.global.world > (currSetting.maxvoidzone + dailyReduction)) continue;
@@ -406,13 +406,13 @@ function MapBonus() {
 	const rMBBaseSettings = getPageSetting('mapBonusSettings');
 
 	const rMBDefaultSettings = getPageSetting('mapBonusDefaultSettings');
-	let rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio && game.global.mapBonus !== 10;
-	let rMBspireMapStack = getPageSetting('MaxStacksForSpire') && isDoingSpire() && game.global.mapBonus !== 10;
+	var rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio && game.global.mapBonus !== 10;
+	var rMBspireMapStack = getPageSetting('MaxStacksForSpire') && isDoingSpire() && game.global.mapBonus !== 10;
 	var rMBIndex = null;
 	for (var y = 0; y < rMBBaseSettings.length; y++) {
 		//Skip iterating lines if map bonus is capped.
 		if (game.global.mapBonus === 10) continue;
-		let currSetting = rMBBaseSettings[y];
+		var currSetting = rMBBaseSettings[y];
 		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world > currSetting.endzone) continue;
 		if (currSetting.runType !== 'All') {
 			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
@@ -507,8 +507,8 @@ function MapFarm() {
 
 	//Checking to see if any lines are to be run.
 	for (var y = 0; y < rMFBaseSetting.length; y++) {
-		let currSetting = rMFBaseSetting[y];
-		let world = currSetting.world + dailyAddition.skipNextZone;
+		var currSetting = rMFBaseSetting[y];
+		var world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
 		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone) || (game.global.world > world && currSetting.repeatevery === 0)) {
 			continue;
@@ -613,8 +613,8 @@ function TributeFarm() {
 
 	//Identifying which map line to run.
 	for (var y = 0; y < rTrFBaseSetting.length; y++) {
-		let currSetting = rTrFBaseSetting[y];
-		let world = currSetting.world + dailyAddition.skipNextZone;
+		var currSetting = rTrFBaseSetting[y];
+		var world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
 		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone) || (game.global.world > world && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
@@ -783,8 +783,8 @@ function SmithyFarm() {
 	var rSFIndex;
 
 	for (var y = 0; y < rSFBaseSetting.length; y++) {
-		let currSetting = rSFBaseSetting[y];
-		let world = currSetting.world + dailyAddition.skipNextZone;
+		var currSetting = rSFBaseSetting[y];
+		var world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
 		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone) || (game.global.world > world && currSetting.repeatevery === 0) || game.global.lastClearedCell + 2 < currSetting.cell) {
 			continue;
@@ -804,7 +804,7 @@ function SmithyFarm() {
 
 	if (rSFIndex >= 0 || currQuest() === 10) {
 
-		let mapBonus;
+		var mapBonus;
 		if (game.global.mapsActive) mapBonus = getCurrentMapObject().bonus;
 		dontRecycleMaps = true;
 
@@ -838,8 +838,8 @@ function SmithyFarm() {
 			rSFMapLevel = -1;
 
 		//Initialising base food & metal vars for calcs later on
-		let woodBase = scaleToCurrentMapLocal(simpleSecondsLocal("wood", 1, true, '0,1,0'), false, true, rSFMapLevel);
-		let metalBase = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 1, true, '0,0,1'), false, true, rSFMapLevel);
+		var woodBase = scaleToCurrentMapLocal(simpleSecondsLocal("wood", 1, true, '0,1,0'), false, true, rSFMapLevel);
+		var metalBase = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 1, true, '0,0,1'), false, true, rSFMapLevel);
 
 		//When mapType is set as Map Count work out how many Smithies we can farm in the amount of maps specified.
 		if (currQuest() !== 10 && rSFSettings.mapType === 'Map Count' && rSFSmithies !== 0) {
@@ -973,8 +973,8 @@ function WorshipperFarm() {
 
 	var rWFIndex;
 	for (var y = 0; y < rWFBaseSetting.length; y++) {
-		let currSetting = rWFBaseSetting[y];
-		let world = currSetting.world + dailyAddition.skipNextZone;
+		var currSetting = rWFBaseSetting[y];
+		var world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
 		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || game.global.world < world || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone) || (game.global.world > world && currSetting.repeatevery === 0)) {
 			continue;
@@ -1327,7 +1327,7 @@ function PrestigeClimb() {
 	const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
 	const metalPrestigeList = ['Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
 
-	let mapLevel = 0;
+	var mapLevel = 0;
 	const z = game.global.world;
 
 	//Prestige
@@ -1508,7 +1508,7 @@ function runBionicRaiding(bionicPool) {
 //Experience Farm
 function Experience() {
 
-	let mapName = 'Experience'
+	var mapName = 'Experience'
 	const farmingDetails = {
 		shouldRun: false,
 		mapName: mapName
@@ -1709,7 +1709,7 @@ function currQuest() {
 	//Everything else
 	else if (game.challenges.Quest.getQuestDescription() == "Complete 5 Maps at Zone level" && questnotcomplete) return 6;
 	else if (game.challenges.Quest.getQuestDescription() == "One-shot 5 world enemies" && questnotcomplete) return 7;
-	else if (game.challenges.Quest.getQuestDescription() == "Don't let your shield break before Cell 100" && questnotcomplete) return 8;
+	else if (game.challenges.Quest.getQuestDescription() == "Don't var your shield break before Cell 100" && questnotcomplete) return 8;
 	else if (game.challenges.Quest.getQuestDescription() == "Don't run a map before Cell 100") return 9;
 	else if (game.challenges.Quest.getQuestDescription() == "Buy a Smithy" && questnotcomplete) return 10;
 	else return 0;
@@ -2557,7 +2557,7 @@ function HDFarm() {
 	var rHDFIndex;
 	for (var y = 0; y < rHDFBaseSetting.length; y++) {
 		const currSetting = rHDFBaseSetting[y];
-		let world = currSetting.world + dailyAddition.skipNextZone;
+		var world = currSetting.world + dailyAddition.skipNextZone;
 		if (dailyAddition.skipZone) continue;
 		if (!currSetting.active || currSetting.done === totalPortals + "_" + game.global.world || world > game.global.world || game.global.world > (currSetting.endzone + dailyAddition.skipNextZone)) {
 			continue;
@@ -2602,7 +2602,7 @@ function HDFarm() {
 				rHDFMapLevel = mapAutoLevel;
 			}
 		}
-		let hdRatio = hdType === 'world' ? HDRatio : hdType === 'void' ? voidHDRatio : hdType === 'map' ? mapHDRatio : null;
+		var hdRatio = hdType === 'world' ? HDRatio : hdType === 'void' ? voidHDRatio : hdType === 'map' ? mapHDRatio : null;
 		if (hdRatio === null) return farmingDetails;
 
 		if (hdRatio > equipfarmdynamicHD(rHDFIndex))

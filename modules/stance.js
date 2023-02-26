@@ -33,9 +33,10 @@ function debugStance(maxPower, ignoreArmy) {
 	return false;
 }
 
-function canU2OverkillAT() {
+function canU2OverkillAT(targetZone) {
 	if (!u2Mutations.tree.Overkill1.purchased) return false;
 
+	if (!targetZone) targetZone = game.global.world;
 	var allowed = .3;
 	if (u2Mutations.tree.Overkill2.purchased) allowed += 0.1;
 	if (u2Mutations.tree.Overkill3.purchased) allowed += 0.1;
@@ -43,12 +44,13 @@ function canU2OverkillAT() {
 		allowed += 0.1;
 		if (u2Mutations.tree.Liq2.purchased) allowed += 0.1;
 	}
-	if (game.global.world <= ((game.global.highestRadonLevelCleared + 1) * allowed)) return true;
+	if (targetZone <= ((game.global.highestRadonLevelCleared + 1) * allowed)) return true;
 	return false;
 }
 
-function maxOneShotPower(planToMap) {
+function maxOneShotPower(planToMap, targetZone) {
 	var power = 2;
+	if (!targetZone) targetZone = game.global.world;
 
 	if (game.global.universe === 1) {
 		//No overkill perk
@@ -61,8 +63,8 @@ function maxOneShotPower(planToMap) {
 		if (getEmpowerment() == "Ice" && game.empowerments.Ice.getLevel() >= 100) power++;
 	}
 	else if (game.global.universe === 2) {
-		if (!canU2OverkillAT() && (game.global.mapsActive || planToMap) && u2Mutations.tree.MadMap.purchased) return power;
-		if (!canU2OverkillAT()) return 1;
+		if (!canU2OverkillAT(targetZone) && planToMap && u2Mutations.tree.MadMap.purchased) return power;
+		if (!canU2OverkillAT(targetZone)) return 1;
 
 		if (u2Mutations.tree.MaxOverkill.purchased) power++;
 	}

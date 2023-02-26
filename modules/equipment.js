@@ -89,8 +89,8 @@ function equipsToGet(targetZone, targetPrestige) {
 	if (!targetPrestige) targetPrestige = 'GambesOP';
 
 	//Figure out how many equips to farm for
-	let mapsToRun = 0;
-	let prestigeToFarmFor = 0;
+	var mapsToRun = 0;
+	var prestigeToFarmFor = 0;
 
 	const hasSciFour = ((game.global.universe == 1 && game.global.sLevel >= 3) || (game.global.universe == 2 && game.buildings.Microchip.owned >= 3));
 	const prestigeInterval = challengeActive('Mapology') || !hasSciFour ? 5 : 10;

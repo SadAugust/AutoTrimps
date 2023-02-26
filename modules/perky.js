@@ -750,7 +750,7 @@ function setupPerkyUI() {
 	}
 
 	AutoPerks.displayGUI = function () {
-		let apGUI = AutoPerks.GUI;
+		var apGUI = AutoPerks.GUI;
 		var $buttonbar = document.getElementById("portalBtnContainer");
 		apGUI.$allocatorBtn1 = document.createElement("DIV");
 		apGUI.$allocatorBtn1.id = 'allocatorBtn1';
