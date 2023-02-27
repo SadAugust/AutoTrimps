@@ -530,12 +530,15 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	var minDailyMod = 1;
 	var maxDailyMod = 1;
 	if (challengeActive('Daily')) {
-		if (challengeActive('Daily') && game.talents.daily.purchased) attack *= 1.5;
+		if (game.talents.daily.purchased) attack *= 1.5;
 		//Scruffy Level 20 - Dailies
-		attack *= Fluffy.isRewardActive('SADailies') && challengeActive('Daily') ? Fluffy.rewardConfig.SADailies.attackMod() : 1;
+		attack *= Fluffy.isRewardActive('SADailies') ? Fluffy.rewardConfig.SADailies.attackMod() : 1;
+
+		//Rampage in maps only
+		if (typeof game.global.dailyChallenge.rampage !== 'undefined' && mapType === 'map') attack *= dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, dailyModifiers.rampage.getMaxStacks(game.global.dailyChallenge.rampage.strength));
 
 		//Range Dailies
-		if (typeof game.global.dailyChallenge.minDamage !== "undefined") minFluct = dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength);
+		if (typeof game.global.dailyChallenge.minDamage !== "undefined") minFluct = (1 - dailyModifiers.minDamage.getMult(game.global.dailyChallenge.minDamage.strength));
 		if (typeof game.global.dailyChallenge.maxDamage !== "undefined") maxFluct = dailyModifiers.maxDamage.getMult(game.global.dailyChallenge.maxDamage.strength);
 
 		// Min damage reduced (additive)
@@ -546,6 +549,9 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 		//Even-Odd Dailies
 		attack *= typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined' && ((game.global.world % 2) == 1) ? dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength) : 1;
 		attack *= typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined' && ((game.global.world % 2) == 0) ? dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength) : 1;
+
+		attack *= maxDailyMod;
+		attack *= minDailyMod;
 	}
 
 	// Equality

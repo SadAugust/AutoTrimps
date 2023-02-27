@@ -295,7 +295,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	var runningUnlucky = challengeActive('Unlucky')
 	var ourHealth = calcOurHealth(runningQuest, 'map');
 	var overkillCount = maxOneShotPower(true);
-	var dmgType = runningUnlucky ? 'max' : overkillCount > 1 ? 'min' : 'avg'
+	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var critType = 'maybe'
@@ -435,7 +435,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
 	}
 	//Our stats
-	var dmgType = runningUnlucky ? 'max' : mapType !== 'world' && overkillCount > 1 ? 'min' : 'avg';
+	var dmgType = runningUnlucky ? 'max' : 'avg';
 	var ourHealth = calcOurHealth(runningQuest, mapType);
 	var ourDmg = calcOurDmg(dmgType, 0, false, mapType, critType, bionicTalent, titimp);
 
