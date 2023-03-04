@@ -1709,7 +1709,7 @@ function currQuest() {
 	//Everything else
 	else if (game.challenges.Quest.getQuestDescription() == "Complete 5 Maps at Zone level" && questnotcomplete) return 6;
 	else if (game.challenges.Quest.getQuestDescription() == "One-shot 5 world enemies" && questnotcomplete) return 7;
-	else if (game.challenges.Quest.getQuestDescription() == "Don't var your shield break before Cell 100" && questnotcomplete) return 8;
+	else if (game.challenges.Quest.getQuestDescription() == "Don't let your shield break before Cell 100" && questnotcomplete) return 8;
 	else if (game.challenges.Quest.getQuestDescription() == "Don't run a map before Cell 100") return 9;
 	else if (game.challenges.Quest.getQuestDescription() == "Buy a Smithy" && questnotcomplete) return 10;
 	else return 0;
