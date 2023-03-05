@@ -139,9 +139,9 @@ function dailyAutoPortal() {
 					if (zonePostpone >= 2)
 						return;
 					if (OKtoPortal) {
-						abandonDaily();
+						confirmAbandonChallenge();
 						abandonChallenge();
-						document.getElementById('finishDailyBtnContainer').style.display = 'none';
+						cancelTooltip();
 					}
 					if (getPageSetting('dailyHeliumHourChallenge') !== 'None')
 						doPortal(getPageSetting('dailyHeliumHourChallenge'));
@@ -258,9 +258,11 @@ function c2runner() {
 	}
 	return;
 }
+var shouldPortal = false;
 
 function doPortal(challenge, squared) {
 	if (!game.global.portalActive) return;
+	if (shouldPortal) return;
 
 	//Spending Magmite
 	if (getPageSetting('spendmagmite') === 1) autoMagmiteSpender();
@@ -288,9 +290,9 @@ function doPortal(challenge, squared) {
 	}
 
 	if (currChall === 'Daily') {
-		abandonDaily();
+		confirmAbandonChallenge();
 		abandonChallenge();
-		document.getElementById('finishDailyBtnContainer').style.display = 'none';
+		cancelTooltip();
 		//Swapping to other universe if necessary to run daily.
 		if (getPageSetting('dailyPortalPreviousUniverse', (currPortalUniverse + 1))) {
 			swapPortalUniverse();
@@ -359,32 +361,36 @@ function doPortal(challenge, squared) {
 			challenge = getPageSetting('dailyC2Challenge');
 		selectChallenge(challenge);
 	}
+	shouldPortal = true;
 
-	//Identifying which challenge type we're running to setup for the preset swapping function
-	var preset = challengeSquaredMode ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
-	if (portalUniverse === 2) presetSwapping(preset);
-	//Reset packrat to 3 on Hypothermia
-	if (portalUniverse === 2) hypoPackratReset(challenge);
-	//Auto Allocate Perks
-	allocatePerks();
-	//Run Perky if in u1.
-	if (portalUniverse === 1 && getPageSetting('autoPerks') === 1 &&
-		(typeof AutoPerks !== 'undefined' &&
-			($('#preset').value !== 'undefined' ||
-				($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined')
+	setTimeout(function () {
+		//Identifying which challenge type we're running to setup for the preset swapping function
+		var preset = challengeSquaredMode ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
+		if (portalUniverse === 2) presetSwapping(preset);
+		//Reset packrat to 3 on Hypothermia
+		if (portalUniverse === 2) hypoPackratReset(challenge);
+		//Auto Allocate Perks
+		allocatePerks();
+		//Run Perky if in u1.
+		if (portalUniverse === 1 && getPageSetting('autoPerks') === 1 &&
+			(typeof AutoPerks !== 'undefined' &&
+				($('#preset').value !== 'undefined' ||
+					($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined')
+				)
 			)
-		)
-	) {
-		runPerky();
-	}
-	//Download save file
-	downloadSave();
+		) {
+			runPerky();
+		}
+		//Download save file
+		downloadSave();
 
-	pushData();
-	activatePortal();
-	lastHeliumZone = 0;
-	zonePostpone = 0;
-	resetmapvars();
+		pushData();
+		activatePortal();
+		lastHeliumZone = 0;
+		zonePostpone = 0;
+		resetmapvars();
+		shouldPortal = false;
+	}, 100);
 }
 
 function decaySkipMaps() {
