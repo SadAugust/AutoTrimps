@@ -366,7 +366,7 @@ function ImportExportTooltip(what, event, download) {
 					if (challenge == "Unbalance")
 						colorC3(challenge, 90, 80);
 					else if (challenge == "Unlucky")
-						colorC3(challenge, 97, 92);
+						colorC3(challenge, 90, 80);
 					else if (challenge == "Duel")
 						colorC3(challenge, 90, 80);
 					else if (challenge == "Transmute")
