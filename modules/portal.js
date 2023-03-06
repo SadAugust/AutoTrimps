@@ -262,6 +262,7 @@ var shouldPortal = false;
 
 function doPortal(challenge, squared) {
 	if (!game.global.portalActive) return;
+	if (shouldPortal && portalWindowOpen) return;
 
 	//Spending Magmite
 	if (getPageSetting('spendmagmite') === 1) autoMagmiteSpender();
@@ -274,7 +275,6 @@ function doPortal(challenge, squared) {
 	}
 	//If for some reason portal window isn't open stop running
 	if (!portalWindowOpen) return;
-	if (shouldPortal) return;
 
 	//Initialising variables that will be used later.
 	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
