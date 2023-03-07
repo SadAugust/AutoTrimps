@@ -350,19 +350,26 @@ function update_preset() {
 }
 
 function savePerkySettings() {
-	localStorage.setItem('preset', $('#preset').value);
-	localStorage.setItem('weight-he', $('#weight-he').value);
-	localStorage.setItem('weight-atk', $('#weight-atk').value);
-	localStorage.setItem('weight-hp', $('#weight-hp').value);
-	localStorage.setItem('weight-xp', $('#weight-xp').value);
+
+	const perkyInputs = {
+		preset: $('#preset').value,
+		weight_he: $('#weight-he').value,
+		weight_atk: $('#weight-atk').value,
+		weight_hp: $('#weight-hp').value,
+		weight_xp: $('#weight-xp').value
+	}
+	localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
 }
 
 function loadPerkySettings() {
-	$('#preset').value = localStorage.getItem('preset');
-	$('#weight-he').value = localStorage.getItem('weight-he');
-	$('#weight-atk').value = localStorage.getItem('weight-atk');
-	$('#weight-hp').value = localStorage.getItem('weight-hp');
-	$('#weight-xp').value = localStorage.getItem('weight-xp');
+
+	let perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
+	if (perkyInputs === null) return;
+	$('#preset').value = perkyInputs.preset;
+	$('#weight-he').value = perkyInputs.weight_he;
+	$('#weight-atk').value = perkyInputs.weight_atk
+	$('#weight-hp').value = perkyInputs.weight_hp;
+	$('#weight-xp').value = perkyInputs.weight_xp;
 }
 
 function display(a) {
@@ -667,6 +674,7 @@ var notations = [
 
 function select_preset(a, b) {
 	void 0 === b && (b = !0),
+		delete localStorage["preset"],
 		delete localStorage["weight-he"],
 		delete localStorage["weight-atk"],
 		delete localStorage["weight-hp"],
@@ -796,7 +804,7 @@ function setupPerkyUI() {
 		if (game.options.menu.darkTheme.enabled != 2) apGUI.$preset.setAttribute("style", oldstyle + " color: black;");
 		else apGUI.$preset.setAttribute('style', oldstyle);
 		apGUI.$preset.innerHTML = presetListHtml;
-		var loadLastPreset = localStorage.getItem('preset');
+		var loadLastPreset = (JSON.parse(localStorage.getItem("perkyInputs")) !== null) ? JSON.parse(localStorage.getItem("perkyInputs")).preset : null;
 		var setID;
 		if (loadLastPreset != null) {
 			if (loadLastPreset == 15 && !localStorage.getItem('preset'))

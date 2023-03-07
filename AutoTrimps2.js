@@ -18,7 +18,7 @@ function initializeAutoTrimps() {
 	loadPageVariables();
 	ATscriptLoad('', 'SettingsGUI');
 	ATscriptLoad('', 'Graphs');
-	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
+	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perky', 'surky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
 	for (var m in ATmoduleList) {
 		ATscriptLoad(modulepath, ATmoduleList[m]);
 	}
@@ -121,6 +121,7 @@ var freeVoids = 0;
 var tenacityTime = '0m';
 var tenacityTimeNew = '0m';
 var showingPerky = false;
+var showingSurky = false;
 
 var rMapSettings = {
 	shouldRun: false,
@@ -164,12 +165,14 @@ function mainLoop() {
 	if (currPortalUniverse !== portalUniverse) {
 		//Removes UI display if currently active
 		if (showingPerky) AutoPerks.removeGUI();
+		if (showingSurky) AutoPerks.removeGUI();
 		//Sets up Perky UI when in U1 or changing universe to U1.
 		if (portalUniverse === 1) {
 			setupPerkyUI();
 			addBreedingBoxTimers();
 		}
-		else {
+		if (portalUniverse === 2) {
+			setupSurkyUI();
 			removeBreedingBoxTimer();
 		}
 		currPortalUniverse = portalUniverse;

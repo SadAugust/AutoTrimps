@@ -64,6 +64,19 @@ function potencyMod() {
 	if (game.jobs.Geneticist.owned > 0)
 		potencyMod = potencyMod.mul(Math.pow(.98, game.jobs.Geneticist.owned));
 
+	//Arch
+	if (challengeActive('Archaeology'))
+		potencyMod = potencyMod.mul(game.challenges.Archaeology.getStatMult('breed'));
+
+	if (game.global.challengeActive == "Quagmire") {
+		potencyMod = potencyMod.mul(game.challenges.Quagmire.getExhaustMult());
+	}
+	//Mutators
+	//Gene Attack
+	if (game.global.universe == 2 && u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
+	//Gene Health
+	if (game.global.universe == 2 && u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
+
 	return potencyMod.div(10).add(1);
 }
 

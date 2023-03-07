@@ -1859,6 +1859,11 @@ function updateATVersion() {
 			changelog.push("With Antennas/Meteorologists increasing wood gain in 5.9.0 I've added a job ratio input for the HD Farm setting to allow for more user control of equip farming. Was previously Set to '0,0,1' if you want to use the same setting as before.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1') {
+			changelog.push("Surky has now been implemented for U2. Enable Auto Allocate and it'll respec perks just like Perky currently does for U1, make sure to set the inputs up properly or you'll get odd respecs.<br>\
+			As usual, report any bugs and I'll aim to fix them ASAP.")
+		}
+
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
 		verticalCenterTooltip(false, true);

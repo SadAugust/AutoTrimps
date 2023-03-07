@@ -294,7 +294,6 @@ function doPortal(challenge, squared) {
 		abandonChallenge();
 		cancelTooltip();
 		portalClicked();
-		game.global.challengeActive = '';
 		//Swapping to other universe if necessary to run daily.
 		if (getPageSetting('dailyPortalPreviousUniverse', (currPortalUniverse + 1))) {
 			swapPortalUniverse();
@@ -373,15 +372,18 @@ function doPortal(challenge, squared) {
 	if (portalUniverse === 2) hypoPackratReset(challenge);
 	//Auto Allocate Perks
 	allocatePerks();
-	//Run Perky if in u1.
-	if (portalUniverse === 1 && getPageSetting('autoPerks') === 1 &&
-		(typeof AutoPerks !== 'undefined' &&
-			($('#preset').value !== 'undefined' ||
-				($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined')
-			)
-		)
-	) {
-		runPerky();
+
+	//Run Perky/Surky.
+	if (typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', currPortalUniverse) === 1) {
+		if (portalUniverse === 1 && ($('#preset').value !== 'undefined' ||
+			($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined'))
+		) {
+			runPerky();
+		}
+		if (portalUniverse === 2 && ($('#presetElem').value !== 'undefined' ||
+			($('#radonWeight').value !== 'undefined' && $('#clearWeight').value !== 'undefined' && $('#survivalWeight').value !== 'undefined'))) {
+			runSurky();
+		}
 	}
 	//Download save file
 	downloadSave();
