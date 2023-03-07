@@ -293,6 +293,8 @@ function doPortal(challenge, squared) {
 		confirmAbandonChallenge();
 		abandonChallenge();
 		cancelTooltip();
+		portalClicked();
+		game.global.challengeActive = '';
 		//Swapping to other universe if necessary to run daily.
 		if (getPageSetting('dailyPortalPreviousUniverse', (currPortalUniverse + 1))) {
 			swapPortalUniverse();
@@ -364,34 +366,32 @@ function doPortal(challenge, squared) {
 
 	shouldPortal = true;
 
-	setTimeout(function () {
-		//Identifying which challenge type we're running to setup for the preset swapping function
-		var preset = challengeSquaredMode ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
-		if (portalUniverse === 2) presetSwapping(preset);
-		//Reset packrat to 3 on Hypothermia
-		if (portalUniverse === 2) hypoPackratReset(challenge);
-		//Auto Allocate Perks
-		allocatePerks();
-		//Run Perky if in u1.
-		if (portalUniverse === 1 && getPageSetting('autoPerks') === 1 &&
-			(typeof AutoPerks !== 'undefined' &&
-				($('#preset').value !== 'undefined' ||
-					($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined')
-				)
+	//Identifying which challenge type we're running to setup for the preset swapping function
+	var preset = challengeSquaredMode ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
+	if (portalUniverse === 2) presetSwapping(preset);
+	//Reset packrat to 3 on Hypothermia
+	if (portalUniverse === 2) hypoPackratReset(challenge);
+	//Auto Allocate Perks
+	allocatePerks();
+	//Run Perky if in u1.
+	if (portalUniverse === 1 && getPageSetting('autoPerks') === 1 &&
+		(typeof AutoPerks !== 'undefined' &&
+			($('#preset').value !== 'undefined' ||
+				($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined')
 			)
-		) {
-			runPerky();
-		}
-		//Download save file
-		downloadSave();
+		)
+	) {
+		runPerky();
+	}
+	//Download save file
+	downloadSave();
 
-		pushData();
-		activatePortal();
-		lastHeliumZone = 0;
-		zonePostpone = 0;
-		resetmapvars();
-		shouldPortal = false;
-	}, 100);
+	pushData();
+	activatePortal();
+	lastHeliumZone = 0;
+	zonePostpone = 0;
+	resetmapvars();
+	shouldPortal = false;
 }
 
 function decaySkipMaps() {
