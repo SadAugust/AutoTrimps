@@ -1671,7 +1671,7 @@ function efficiencyFlag(eList = [], pList = []) {
 }
 
 var switchTotalRadon = function () {
-	if (game.global.canRespecPerks) {
+	if (game.global.canRespecPerks && portalWindowOpen) {
 		props.perksRadonFromSave = props.earnedRadon;
 	} else {
 		props.perksRadonFromSave = props.portalRadon;
@@ -2009,7 +2009,7 @@ function autobuyPerks() {
 	efficiencyFlag(eList, pList);
 	evaluatePerks();
 	// this function is not used for max pop starting spec for trappa
-	if (props.specialChallenge == 'trappacarp') {
+	if (props.specialChallenge == 'trappacarp' && game.global.canRespecPerks) {
 		clearAndAutobuyPerks();
 		return;
 	}
