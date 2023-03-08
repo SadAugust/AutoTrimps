@@ -264,7 +264,7 @@ function initPerks() {
 		// inequality makes raw health boosts less useful, so we derate health weight by this factor (based on inequality from equipped shield)
 		smithyScaling: 50,
 		tributes: 0,
-		trinkets: 0,
+		trinkets: game.portal.Observation.trinkets,
 		imperzone: 0,
 		expanding: false,
 		actualTaunts: 0,
