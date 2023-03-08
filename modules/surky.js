@@ -86,8 +86,8 @@ function setupSurkyUI() {
 		apGUI.$ratiosLine1 = document.createElement("DIV");
 		apGUI.$ratiosLine1.setAttribute('style', 'display: inline-block; text-align: center; width: 100%');
 		apGUI.$ratiosLine1.setAttribute('onchange', 'saveSurkySettings()');
-		var listratiosTitle1 = ["Weight: Radon", "Weight: Attack", "Weight: Health/Equality", "Target Zone"];
-		var listratiosLine1 = ["radonWeight", "clearWeight", "survivalWeight", "targetZone"];
+		var listratiosTitle1 = ["Weight: Attack", "Weight: Health", "Weight: Radon"];
+		var listratiosLine1 = ["clearWeight", "survivalWeight", "radonWeight"];
 		for (var i in listratiosLine1)
 			AutoPerks.createInput(listratiosLine1[i], apGUI.$ratiosLine1, listratiosTitle1[i]);
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine1);
@@ -96,8 +96,8 @@ function setupSurkyUI() {
 		apGUI.$ratiosLine2 = document.createElement("DIV");
 		apGUI.$ratiosLine2.setAttribute('style', 'display: inline-block; text-align: center; width: 100%');
 		apGUI.$ratiosLine2.setAttribute('onchange', 'saveSurkySettings()');
-		var listratiosTitle2 = [" Rn Gain per Farming Run", "Coord Limited (0-1)", "Weapon Levels", "Armor Levels"];
-		var listratiosLine2 = ["radonPerRun", "coordLimited", "weaponLevels", "armorLevels"];
+		var listratiosTitle2 = ["Target Zone", "Coord Limited (0-1)", "Weapon Levels", "Armor Levels"];
+		var listratiosLine2 = ["targetZone", "coordLimited", "weaponLevels", "armorLevels"];
 		for (var i in listratiosLine2)
 			AutoPerks.createInput(listratiosLine2[i], apGUI.$ratiosLine2, listratiosTitle2[i]);
 
@@ -105,8 +105,8 @@ function setupSurkyUI() {
 		apGUI.$ratiosLine3 = document.createElement("DIV");
 		apGUI.$ratiosLine3.setAttribute('style', 'display: inline-block; text-align: center; width: 100%');
 		apGUI.$ratiosLine3.setAttribute('onchange', 'saveSurkySettings()');
-		var listratiosTitle3 = ["Tributes purchased", "Meteorologists", "Collector count", "Smithy count"];
-		var listratiosLine3 = ['tributes', "meteorologists", "housingCount", "smithyCount"];
+		var listratiosTitle3 = ["Tributes purchased", "Meteorologists", "Collector count", "Smithy count", "Rn Gain per Farming Run"];
+		var listratiosLine3 = ['tributes', "meteorologists", "housingCount", "smithyCount", "radonPerRun"];
 		for (var i in listratiosLine3)
 			AutoPerks.createInput(listratiosLine3[i], apGUI.$ratiosLine3, listratiosTitle3[i]);
 
@@ -760,36 +760,44 @@ function initialLoad() {
 		let surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 		// target zone to CLEAR is 1 zone before the portal zone by default
 		var currentZone = Math.max(1, game.global.world - 1);
-		currentZone = Math.max(currentZone, surkyInputs.targetZone)
-		$('#targetZone').value = currentZone;
-		props.targetZone = currentZone;
+		$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
+		props.targetZone = Number($('#targetZone').value);
 
 		// weapon/armor levels taken from dagger/boots (most likely to be leveled highest)
 		var weaponLevels = (game.equipment.Dagger.level || 1);
-		$('#weaponLevels').value = Math.max(weaponLevels, surkyInputs.weaponLevels)
-		props.weaponLevels = weaponLevels;
+		$('#weaponLevels').value = Math.min(weaponLevels, surkyInputs.weaponLevels);
+		props.weaponLevels = Number($('#weaponLevels').value);
+
 		var armorLevels = (game.equipment.Boots.level || 1);
-		$('#armorLevels').value = Math.max(armorLevels, surkyInputs.armorLevels)
-		props.armorLevels = armorLevels;
+		$('#armorLevels').value = Math.min(armorLevels, surkyInputs.armorLevels);
+		props.armorLevels = Number($('#armorLevels').value);
 
 		// get current purchased tributes, mets, etc
 		var tributeCount = (game.buildings.Tribute.owned || 0);
-		$('#tributes').value = Math.max(tributeCount, surkyInputs.tributes)
-		props.tributes = tributeCount;
+		$('#tributes').value = Math.max(tributeCount, surkyInputs.tributes);
+		props.tributes = Number($('#tributes').value);
+
 		var metCount = (game.jobs.Meteorologist.owned || 0);
-		$('#meteorologists').value = Math.max(metCount, surkyInputs.meteorologists)
-		props.meteorologists = metCount
+		$('#meteorologists').value = Math.max(metCount, surkyInputs.meteorologists);
+		props.meteorologists = Number($('#meteorologists').value);
+
 		var smithyCount = (game.buildings.Smithy.owned || 0);
-		$('#smithyCount').value = Math.max(smithyCount, surkyInputs.smithyCount)
-		props.smithyCount = smithyCount
+		$('#smithyCount').value = Math.max(smithyCount, surkyInputs.smithyCount);
+		props.smithyCount = Number($('#smithyCount').value);
+
+		var rnPerRun = (game.resources.radon.owned || 0);
+		$('#radonPerRun').value = Math.max(rnPerRun, surkyInputs.radonPerRun);
+		props.radonPerRun = Number($('#radonPerRun').value);
+
 		// get count of best housing building (don't bother optimizing lower than gateways, the 2nd-order adjustments won't matter enough to bother)
 		var housingCount = (game.buildings.Collector.owned || 0);
 		$('#housingCount').value = Math.max(housingCount, surkyInputs.housingCount)
-		props.housingCount = housingCount
+		props.housingCount = Number($('#housingCount').value);
 	} else {
 		$('#targetZone').value = (Math.max(1, game.global.lastRadonPortal - 1));
 	}
 
+	props.vmZone = Math.max(15, (props.targetZone - 1));
 	var rawRnRun = game.resources.radon.owned;
 	props.radonPerRun = Number($('#radonPerRun').value);
 	// if Rn/run is locked, believe it, and force the old history (lets the user manually correct an error)
@@ -1081,7 +1089,7 @@ function readInputs() {
 	perks.Tenacity.effect = getTenacityEffect(props.tenacityTime);
 
 	// triple-checking that coordlimited is not less than 0
-	props.coordLimited = $('#coordLimited').value
+	props.coordLimited = Number($('#coordLimited').value);
 	if (props.coordLimited < 0)
 		props.coordLimited = 0;
 	// let the user set coordLimited > 1 if they like to give extra population weight, despite saying they can't ;p
@@ -1329,7 +1337,11 @@ function getObservationGains(levels) {
 //   important mechanic other than equipment, there would need to be a separate gear discount input.
 // NOTE: metal/food are MUTLIPLICATIVE gain over and above the unified F/M/L gain.
 function iterateValueFeedback(valueArray) {
-	var [Va, Vh, Vm, Vf, Vres, Vrad, Vp, Ve, tribs, collectors, hubEnabled, mets, trinketRate, trinkets, obsLevel, Vpushed = 1, VmDone = 1, VfDone = 1, VresDone = 1, VpDone = 1] = valueArray;
+	var [Va, Vh, Vm, Vf, Vres, Vrad, Vp, Ve,
+		tribs, collectors, hubEnabled, mets,
+		trinketRate, trinkets, obsLevel,
+		Vpushed = 1, VmDone = 1, VfDone = 1, VresDone = 1, VpDone = 1] = valueArray;
+
 
 	// when tribute count is < 1250, resource->resource/radon feedback is strong via Greed
 	if (tribs < 1250) {
@@ -1341,24 +1353,20 @@ function iterateValueFeedback(valueArray) {
 	// more resources buy more housing, which feeds back to more resources and population
 	//  -> Don't bother with this small correction below Collectors, especially since Gateways don't scale with F/M/L.
 	//     Frags do scale with "some" resource boosts, but approximating them as non-scaling as a general rule is pretty close to correct.
-	var moreHousing = Math.log(Vf * Vres / (VfDone * VresDone)) / Math.log(1.12);
-	// Collectors scale with food (no other basic resources needed)
+	var moreHousing = Math.log(Vf * Vres / (VfDone * VresDone)) / Math.log(1.12); // Collectors scale with food (no other basic resources needed)
 	var baseHousing = collectors;
 	// for downsize we make the same adjustments as for hubs, just saying "all housing buildings have the same value"
 	if (hubEnabled || props.specialChallenge == 'downsize') {
 		moreHousing *= props.collectHubs;
-		moreHousing += 5 * Math.log(Vres / VresDone) / Math.log(1.2);
-		// 5 housing types below Gateway need wood, roughly 1.2 avg scaling (Gateway doesn't scale)
-		baseHousing *= 6 + props.collectHubs;
-		// estimate all housing types have the same number as Collectors (close enough for gain factor w.r.t. the small feedback effects here)
+		moreHousing += 5 * Math.log(Vres / VresDone) / Math.log(1.2); // 5 housing types below Gateway need wood, roughly 1.2 avg scaling (Gateway doesn't scale)
+		baseHousing *= 6 + props.collectHubs; // estimate all housing types have the same number as Collectors (close enough for gain factor w.r.t. the small feedback effects here)
 	}
 	// if the user doesn't have collectors yet, don't bother with housing corrections (yes this will exclude O.G. downsize, tough)
 	//   (tauntimp correction uses coefC & termR calculated in readInput(), based on target zone)
 	var tauntCorrectedHousingBase = baseHousing * props.coefC - props.termR;
 	var tauntCorrectedHousingNext = (baseHousing + moreHousing) * props.coefC - props.termR;
 	var housingGain = tauntCorrectedHousingNext / tauntCorrectedHousingBase;
-	if (!(housingGain > 1) || tauntCorrectedHousingBase <= 0)
-		housingGain = 1;
+	if (!(housingGain > 1) || tauntCorrectedHousingBase <= 0) housingGain = 1;
 	if (props.specialChallenge == 'downsize') {
 		// 2 territory bonuses per zone, each bonus is 5 + trumps level
 		var trumPop = 2 * props.targetZone * (5 + perks.Trumps.level);
@@ -1366,8 +1374,8 @@ function iterateValueFeedback(valueArray) {
 		housingGain = 1 + (housingGain - 1) * baseHousing / (baseHousing + trumPop);
 	}
 	Vres *= housingGain;
-	Vp *= ((props.specialChallenge == 'trappa') || (props.specialChallenge == 'combat')) ? 1 : housingGain;
-	// Trappa housing doesn't help buy more coords. Combat respec assumes we're done buying housing.
+	Vp *= ((props.specialChallenge == 'trappa') || (props.specialChallenge == 'combat'))
+		? 1 : housingGain; // Trappa housing doesn't help buy more coords. Combat respec assumes we're done buying housing.
 	collectors += housingGain;
 
 	// use equip scaling to convert resource value to atk/hp value
@@ -1414,8 +1422,7 @@ function iterateValueFeedback(valueArray) {
 	var metMineGain = props.antennae >= 15 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
 	Vrad *= metRadGain;
 	Vf *= metFoodGain;
-	if (!(props.specialChallenge == 'combat'))
-		Vh *= metHPGain;
+	if (!(props.specialChallenge == 'combat')) Vh *= metHPGain;
 	Vm *= metMineGain;
 	mets += moreMets;
 
@@ -1454,10 +1461,8 @@ function iterateValueFeedback(valueArray) {
 	//   a sensible value and we're only optimizing at the margins of a fractional zone (or maybe 1-2 zones)
 	moreTrinkets = pushZones * trinketRate;
 	var trinketMax = 1000 * obsLevel;
-	if (moreTrinkets + trinkets > trinketMax)
-		moreTrinkets = trinketMax - trinkets;
-	if (moreTrinkets < 0)
-		throw ("Unexpectedly tried to value more trinkets than our trinket max!: " + trinkets);
+	if (moreTrinkets + trinkets > trinketMax) moreTrinkets = trinketMax - trinkets;
+	if (moreTrinkets < 0) throw ("Unexpectedly tried to value more trinkets than our trinket max!: " + trinkets);
 	trinketGain = 1 + moreTrinkets * obsLevel / (100 + trinkets * obsLevel);
 	Va *= trinketGain;
 	Vh *= trinketGain;
@@ -1493,15 +1498,11 @@ const iterateValueLoops = 3;
 //         moreTrinkets: increased count of trinkets on next run from Obs droprate increase
 function getLogWeightedValue(Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrinkets = 0, extraObs = 0) {
 
-	var Wa = props.clearWeight;
-	// attack weight
+	var Wa = props.clearWeight; // attack weight
 	// health is useless in final trappa respec after sending last army, since new perks won't be applied to current army's health
-	var Wh = (props.specialChallenge == 'combat' && props.isTrappa) ? 0 : props.clearWeight * props.healthDerate + props.survivalWeight;
-	// health weight
-	var We = Math.max(1e-100, props.survivalWeight);
-	// equality weight: force >0 to use equality as a dump perk if the user sets 0 weight
-	var Wr = props.radonWeight;
-	// radon weight
+	var Wh = (props.specialChallenge == 'combat' && props.isTrappa) ? 0 : props.clearWeight * props.healthDerate + props.survivalWeight; // health weight
+	var We = Math.max(1e-100, props.survivalWeight); // equality weight: force >0 to use equality as a dump perk if the user sets 0 weight
+	var Wr = props.radonWeight; // radon weight
 
 	// from iterateValueFeedback:
 	//   [Va,Vh,Vm,Vf,Vres,Vrad,Vp,Ve,
@@ -1512,10 +1513,13 @@ function getLogWeightedValue(Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrin
 	// add Obs levels if we're evaluating Observation
 	var obsLevel = 1 + perks.Observation.level + extraObs;
 
-	var valueArray = [Va, Vh, Vgear, 1, Vres, Vrad, Vp, Ve, props.tributes, props.housingCount, props.hubEnabled, props.meteorologists, obsDropRate(obsLevel, props.targetZone) / 100, props.baselineTrinketsNext, obsLevel, 1, 1, 1, 1, 1,];
+	var valueArray = [Va, Vh, Vgear, 1, Vres, Vrad, Vp, Ve,
+		props.tributes, props.housingCount, props.hubEnabled, props.meteorologists,
+		obsDropRate(obsLevel, props.targetZone) / 100, props.baselineTrinketsNext, obsLevel,
+		1, 1, 1, 1, 1,
+	];
 
-	for (var i = 0; i < iterateValueLoops; i++)
-		iterateValueFeedback(valueArray);
+	for (var i = 0; i < iterateValueLoops; i++) iterateValueFeedback(valueArray);
 
 	Va = valueArray[0];
 	Vh = valueArray[1];
@@ -1529,11 +1533,11 @@ function getLogWeightedValue(Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrin
 	moreTrinkets += Math.max(0, Vtrink - Math.max(props.baselineTrinketsNext, props.trinkets));
 
 	// calculate unified Rn-like growth gain:
-	var Vgrowth = (Vrad * props.radonPerRun + props.trinketRadonPerRun + props.radonPerTrinket * moreTrinkets) / (props.radonPerRun + props.trinketRadonPerRun);
+	var Vgrowth = (Vrad * props.radonPerRun + props.trinketRadonPerRun
+		+ props.radonPerTrinket * moreTrinkets
+	) / (props.radonPerRun + props.trinketRadonPerRun);
 
-	if (props.specialChallenge == 'combat')
-		Vgrowth = 1;
-	// ignore radon weight for combat spec
+	if (props.specialChallenge == 'combat') Vgrowth = 1; // ignore radon weight for combat spec
 
 	// A perk's total weighted value is:
 	//   Va^Wa * Vh^Wh * Ve^We * Vrad^Wr.
@@ -1542,12 +1546,10 @@ function getLogWeightedValue(Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrin
 
 	var res = Wa * Math.log(Va) + Wh * Math.log(Vh) + We * Math.log(Ve) + Wr * Math.log(Vgrowth);
 	if (props.specialChallenge == 'resplus' || props.specialChallenge == 'resminus') {
-		res = Math.log(Vres) + (1e-100) * Math.log(Ve);
-		// hack to still use equality as a primary dump perk
+		res = Math.log(Vres) + (1e-100) * Math.log(Ve); // hack to still use equality as a primary dump perk
 	}
 	if (props.specialChallenge == 'equip') {
-		res = Math.log(Vres * Vm) + (1e-100) * Math.log(Ve);
-		// for equip farming, Artisanistry also counts
+		res = Math.log(Vres * Vm) + (1e-100) * Math.log(Ve); // for equip farming, Artisanistry also counts
 	}
 	if (isNaN(res)) {
 		console.log("ERROR: NaN result!")
