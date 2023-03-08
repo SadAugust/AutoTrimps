@@ -1061,11 +1061,11 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			error += " Preset " + (x + 1) + " can\'t have a map level of 0 as you won\'t gain any Insanity stacks running this map.<br>";
 			errorMessage = true;
 		}
-		if (insanity && thisSetting.level < 0 && destack === false) {
+		if (insanity && thisSetting.level < 0 && thisSetting.destack === false) {
 			error += " Preset " + (x + 1) + " can\'t have a map level below world level as you will lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
 			errorMessage = true;
 		}
-		if (insanity && thisSetting.level >= 0 && destack === true) {
+		if (insanity && thisSetting.level >= 0 && thisSetting.destack === true) {
 			error += " Preset " + (x + 1) + " can\'t have a map level at or above world level as you won't be able to lose Insanity stacks running this map. To change this toggle the 'Destack' option.<br>";
 			errorMessage = true;
 		}
