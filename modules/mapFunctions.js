@@ -216,6 +216,7 @@ function shouldRunUniqueMap(map) {
 
 function runUniqueMap(mapName, dontRecycle) {
 	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
+	if (challengeActive('Insanity')) return;
 	if (mapName === 'Atlantrimp' && game.global.universe === 1) mapName = 'Trimple Of Doom'
 	var zone = game.global.world;
 	var cell = game.global.lastClearedCell + 2;

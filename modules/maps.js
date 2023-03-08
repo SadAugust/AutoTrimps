@@ -199,8 +199,8 @@ function autoMap() {
 			if (!lowestMap || map.level < lowestMap.level) {
 				lowestMap = map;
 			}
-		} else if (map.noRecycle && !challengeActive('Insanity')) {
-			if (runUniques && shouldRunUniqueMap(map)) {
+		} else if (map.noRecycle) {
+			if (runUniques && shouldRunUniqueMap(map) && !challengeActive('Insanity')) {
 				selectedMap = map.id;
 				if (mappingTime === 0) mappingTime = getGameTime();
 			}
