@@ -1,6 +1,6 @@
 var ATversion = 'SadAugust v6.1.1',
 	atscript = document.getElementById('AutoTrimps-script'),
-	basepath = 'https://SadAugust.github.io/AutoTrimps_Local/',
+	basepath = 'https://SadAugust.github.io/AutoTrimps/',
 	modulepath = 'modules/';
 null !== atscript && (basepath = atscript.src.replace(/AutoTrimps2\.js$/, ''));
 function ATscriptLoad(a, b) {
