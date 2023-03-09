@@ -1738,7 +1738,7 @@ function Quest() {
 				currQuest() == 4 ? 4 :
 					currQuest() == 5 ? 5 :
 						currQuest() == 6 ? 6 :
-							currQuest() == 7 && (calcOurDmg('min', 0, false, 'world', 'never') < game.global.gridArray[50].maxHealth) && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))) ? 7 :
+							currQuest() == 7 && (calcOurDmg('min', 0, false, 'world', 'never') < calcEnemyHealthCore('world', game.global.world, 50, 'Turtlimp')) && !(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"))) ? 7 :
 								currQuest() == 8 ? 8 :
 									currQuest() == 9 ? 9 :
 										0;
