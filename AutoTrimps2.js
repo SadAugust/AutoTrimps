@@ -1,8 +1,20 @@
 var ATversion = 'SadAugust v6.1.1',
-	atscript = document.getElementById('AutoTrimps-script'),
-	basepath = 'https://SadAugust.github.io/AutoTrimps/',
+	atscript = document.getElementsByTagName("script"),
+	basepath = '',
 	modulepath = 'modules/';
-null !== atscript && (basepath = atscript.src.replace(/AutoTrimps2\.js$/, ''));
+
+//Searches html for where the AT script is being loaded from
+for (var y = 0; y < atscript.length; y++) {
+	if (atscript[y].src.includes('AutoTrimps2')) {
+		basepath = atscript[y].src.replace(/AutoTrimps2\.js$/, '')
+		break;
+	}
+	y++;
+}
+
+//Backup on the off chance the script hasn't been found
+if (basepath === '') basepath = 'https://SadAugust.github.io/AutoTrimps/';
+
 function ATscriptLoad(a, b) {
 	null == b && debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(modulepath, \'example.js\'); ');
 	var c = document.createElement('script');
@@ -12,62 +24,7 @@ function ATscriptUnload(a) {
 	var b = document.getElementById(a + "_MODULE");
 	b && (document.head.removeChild(b), debug("Removing " + a + "_MODULE", "other"))
 }
-ATscriptLoad(modulepath, 'utils');
 
-function initializeAutoTrimps() {
-	loadPageVariables();
-	ATscriptLoad('', 'SettingsGUI');
-	ATscriptLoad('', 'Graphs');
-	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perky', 'surky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
-	for (var m in ATmoduleList) {
-		ATscriptLoad(modulepath, ATmoduleList[m]);
-	}
-	debug('AutoTrimps Loaded!');
-}
-
-function printChangelog(changes) {
-	var body = "";
-	for (var i in changes) {
-		var $item = changes[i];
-		var result = assembleChangelog($item);
-		body += result;
-	}
-	var footer =
-		'<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!\
-        <br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
-        <br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).',
-		action = 'cancelTooltip()',
-		title = 'Script Update Notice<br>' + ATversion,
-		acceptBtnText = "Thank you for playing AutoTrimps. Accept and Continue.",
-		hideCancel = true;
-	tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
-}
-
-function assembleChangelog(c) {
-	return `${c}<br><br>`
-}
-
-var runInterval = 100;
-var startupDelay = 1500;
-
-setTimeout(delayStart, 2500);
-
-function delayStart() {
-	initializeAutoTrimps();
-	game.global.addonUser = true;
-	game.global.autotrimps = true;
-	setTimeout(delayStartAgain, startupDelay);
-}
-
-function delayStartAgain() {
-	game.global.addonUser = true;
-	game.global.autotrimps = true;
-	MODULESdefault = JSON.parse(JSON.stringify(MODULES));
-	setInterval(mainLoop, runInterval);
-	setInterval(guiLoop, runInterval * 10);
-	setupATButtons();
-	updateCustomButtons(true);
-}
 
 var ATrunning = true;
 var ATmessageLogTabVisible = true;
@@ -126,6 +83,63 @@ var showingSurky = false;
 var rMapSettings = {
 	shouldRun: false,
 	mapName: ''
+}
+
+ATscriptLoad(modulepath, 'utils');
+
+function initializeAutoTrimps() {
+	loadPageVariables();
+	ATscriptLoad('', 'SettingsGUI');
+	ATscriptLoad('', 'Graphs');
+	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perky', 'surky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
+	for (var m in ATmoduleList) {
+		ATscriptLoad(modulepath, ATmoduleList[m]);
+	}
+	debug('AutoTrimps Loaded!');
+}
+
+function printChangelog(changes) {
+	var body = "";
+	for (var i in changes) {
+		var $item = changes[i];
+		var result = assembleChangelog($item);
+		body += result;
+	}
+	var footer =
+		'<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!\
+        <br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
+        <br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).',
+		action = 'cancelTooltip()',
+		title = 'Script Update Notice<br>' + ATversion,
+		acceptBtnText = "Thank you for playing AutoTrimps. Accept and Continue.",
+		hideCancel = true;
+	tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
+}
+
+function assembleChangelog(c) {
+	return `${c}<br><br>`
+}
+
+var runInterval = 100;
+var startupDelay = 500;
+
+setTimeout(delayStart, 1500);
+
+function delayStart() {
+	initializeAutoTrimps();
+	game.global.addonUser = true;
+	game.global.autotrimps = true;
+	setTimeout(delayStartAgain, startupDelay);
+}
+
+function delayStartAgain() {
+	game.global.addonUser = true;
+	game.global.autotrimps = true;
+	MODULESdefault = JSON.parse(JSON.stringify(MODULES));
+	setInterval(mainLoop, runInterval);
+	setInterval(guiLoop, runInterval * 10);
+	setupATButtons();
+	updateCustomButtons(true);
 }
 
 //Get Gamma burst % value
