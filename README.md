@@ -13,7 +13,7 @@ https://www.tampermonkey.net/
 
 Step 2: 
 
-Click this link: https://github.com/SadAugust/AutoTrimps_Local/blob/main/.user.js
+Click this link: https://github.com/SadAugust/AutoTrimps/blob/main/.user.js
 
 If clicking the link does not work, copy the contents of user.js into a new script inside tampermonkey. 
 
@@ -21,7 +21,7 @@ If you are unsure how to do that, copy this:
 
 ```var script = document.createElement('script');
 script.id = 'AutoTrimps-SadAugust';
-script.src = 'https://SadAugust.github.io/AutoTrimps_Local/AutoTrimps2.js';
+script.src = 'https://SadAugust.github.io/AutoTrimps/AutoTrimps2.js';
 script.setAttribute('crossorigin',"anonymous");
 document.head.appendChild(script);
 ```
@@ -36,7 +36,7 @@ Configure settings. Will NOT work as intended with default settings.
 
 Step 1: 
 
-Download <a href="https://github.com/SadAugust/AutoTrimps_Local/blob/main/mods.js">mods.js</a> from this directory (right click raw and save link as...), or copy it and make your own mods.js in a text file.
+Download <a href="https://github.com/SadAugust/AutoTrimps/blob/main/mods.js">mods.js</a> from this directory (right click raw and save link as...), or copy it and make your own mods.js in a text file.
 
 Step 2: 
 
@@ -56,7 +56,7 @@ https://www.tampermonkey.net/
 
 Step 2: 
 
-Click this link: https://github.com/SadAugust/AutoTrimps_Local/blob/main/GraphsOnly.user.js
+Click this link: https://github.com/SadAugust/AutoTrimps/blob/main/GraphsOnly.user.js
 
 If clicking the link does not work, copy the contents of GraphsOnly.user.js into a new script inside tampermonkey. 
 
@@ -64,7 +64,7 @@ If you are unsure how to do that, copy this:
 
 ```var script = document.createElement('script');
 script.id = 'AutoTrimps-Graphs';
-script.src = 'https://SadAugust.github.io/AutoTrimps_Local/GraphsOnly.js';
+script.src = 'https://SadAugust.github.io/AutoTrimps/GraphsOnly.js';
 script.setAttribute('crossorigin',"anonymous");
 document.head.appendChild(script);
 ```
@@ -79,7 +79,7 @@ Enjoy your Graphs!
 
 Step 1: 
 
-Download <a href="https://github.com/SadAugust/AutoTrimps_Local/blob/main/modsGraphOnly.js">modsGRAPH.js</a> from this directory (right click raw and save link as...), or copy it and make your own modsGRAPH.js in a text file.
+Download <a href="https://github.com/SadAugust/AutoTrimps/blob/main/modsGraphOnly.js">modsGRAPH.js</a> from this directory (right click raw and save link as...), or copy it and make your own modsGRAPH.js in a text file.
 
 Step 2: 
 
