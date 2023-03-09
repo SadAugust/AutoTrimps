@@ -642,7 +642,7 @@ function initializeAllSettings() {
 	const displayMaps = true;
 	if (displayMaps) {
 		//Helium
-		createSetting('autoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use window, it will not work. ', 'multitoggle', null, null, "Maps", [1, 2]);
+		createSetting('autoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use window, it will not work. ', 'multitoggle', 0, null, "Maps", [1, 2]);
 		createSetting('autoMapsPortal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice. ', 'boolean', true, null, 'Maps', [1, 2]);
 		createSetting('onlyPerfectMaps', 'Perfect Maps', 'If enabled when AT is trying to map it will only create perfect maps. Be warned this may greatly decrease the map level that AT believes is efficient.', 'boolean', false, null, 'Maps', [1, 2]);
 
