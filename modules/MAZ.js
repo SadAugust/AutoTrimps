@@ -385,7 +385,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				cell: 1,
 				special: '0',
 				repeat: 1,
-				shipSkipEnabled: true,
+				shipSkipEnabled: false,
 				shipskip: 10,
 				gather: 0,
 				bonebelow: 0,
@@ -405,6 +405,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var style = "";
 
 			const defaultSetting = getPageSetting(settingName + 'DefaultSettings', currSettingUniverse);
+			setting123 = defaultSetting;
 
 			//Reading info from each setting
 			defaultVals.active = typeof (defaultSetting.active) === 'undefined' ? false : defaultSetting.active ? defaultSetting.active : false;
@@ -421,7 +422,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.special = defaultSetting.special ? defaultSetting.special : '0';
 			if (mapFarm || mapBonus) defaultVals.repeat = defaultSetting.repeat ? defaultSetting.repeat : '0';
 			if (worshipperFarm)
-				defaultVals.shipskip = defaultSetting.shipSkipEnabled ? defaultSetting.shipSkipEnabled : true;
+				defaultVals.shipSkipEnabled = typeof (defaultSetting.shipSkipEnabled) === 'undefined' ? false : defaultSetting.shipSkipEnabled ? defaultSetting.shipSkipEnabled : false;
 			if (worshipperFarm)
 				defaultVals.shipskip = defaultSetting.shipskip ? defaultSetting.shipskip : '10';
 			if (alchemy)
