@@ -370,7 +370,7 @@ function doPortal(challenge, squared) {
 	if (portalUniverse === 2) presetSwapping(preset);
 
 	//Run Perky/Surky.
-	if (typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', currPortalUniverse) === 1) {
+	if (typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', currPortalUniverse)) {
 		if (portalUniverse === 1 && ($('#preset').value !== 'undefined' ||
 			($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined'))
 		) {
@@ -552,17 +552,5 @@ function hypoPackratReset(challenge) {
 		document.getElementById('customNumberBox').value = 3;
 		numTab(5, true)
 		buyPortalUpgrade('Packrat');
-	}
-}
-
-function allocatePerks() {
-	if (!game.global.portalActive) return;
-	if (portalUniverse === 1 && getPageSetting('autoPerks') !== 2) return;
-	if (portalUniverse === 2 && getPageSetting('autoPerks') === 0) return;
-	var allocatePerk = portalUniverse === 1 ? 'Looting_II' : getPageSetting('autoPerks') == 1 ? 'Looting' : getPageSetting('autoPerks') == 2 ? 'Greed' : getPageSetting('autoPerks') == 3 ? 'Motivation' : null;
-	if (allocatePerk !== null) {
-		numTab(6, true)
-		buyPortalUpgrade(allocatePerk);
-		debug('Bought Max ' + allocatePerk);
 	}
 }
