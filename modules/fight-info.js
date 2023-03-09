@@ -46,12 +46,12 @@
 
 	//Fast imps
 	M["fightinfo"].fast = [
-		"Squimp",
 		"Snimp",
+		"Kittimp",
 		"Gorillimp",
+		"Squimp",
 		"Shrimp",
 		"Chickimp",
-		"Kittimp",
 		"Frimp",
 		"Slagimp",
 		"Lavimp",
@@ -59,33 +59,32 @@
 		"Entimp",
 		"Fusimp",
 		"Carbimp",
+		"Ubersmith",
 		"Shadimp",
 		"Voidsnimp",
-		"Prisimp",
+		"Prismimp",
 		"Sweltimp",
+		"Indianimp",
+		"Improbability",
+		"Neutrimp",
+		"Cthulimp",
+		"Omnipotrimp",
+		"Mutimp",
+		"Hulking_Mutimp",
+		"Liquimp",
+		"Poseidimp",
+		"Darknimp",
 		"Horrimp",
+		"Arachnimp",
+		"Beetlimp",
+		"Mantimp",
+		"Butterflimp",
+		"Frosnimp"
 	];
 
 	//Last processed
 	M["fightinfo"].lastProcessedWorld = null;
 	M["fightinfo"].lastProcessedMap = null;
-
-	function identifyCell(cell) {//TODO What was this for anyway? I forgot. I think it was needed to fix nature icons?
-		//Init
-		var tags = [];
-		var name = cell.name.toLowerCase();
-
-		//Skeletimp
-		if (name.includes("skeletimp")) tags.push("skeletimp");
-
-		//Exotics
-		if (name in M.fightinfo.exotics) tags.push("exotic")
-
-		//Nature
-		if (name.startsWith("poison")) tags.push("poison");
-		if (name.startsWith("wind")) tags.push("wind");
-		if (name.startsWith("ice")) tags.push("ice");
-	}
 
 	function updateCell($cell, cell, pallet, customIcon, overrideSpecial, overrideCoords) {
 		//Cell Color
@@ -145,7 +144,7 @@
 			}
 
 			//Fast Imp
-			else if ((M["fightinfo"].fast.indexOf(cell.name) > -1 && (!cell.corrupted || !cell.corrupted.startsWith("corrupt"))) || (cell.u2Mutation !== undefined && cell.u2Mutation !== [])) {
+			else if ((M["fightinfo"].fast.indexOf(cell.name) > -1 && (!cell.corrupted || !cell.corrupted.startsWith("corrupt"))) || (cell.u2Mutation !== undefined && Object.keys(cell.u2Mutation).length !== 0)) {
 				updateCell($cell, cell, M.fightinfo.imp.fast);
 			}
 
