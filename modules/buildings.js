@@ -414,6 +414,7 @@ function buyBuildings() {
 					var smithycanBuy = calculateMaxAfford(game.buildings.Smithy, true, false, false, true, 1);
 					var questEndZone = !game.global.runningChallengeSquared ? 85 : getPageSetting('questSmithyZone') === -1 ? Infinity : getPageSetting('questSmithyZone')
 					var questZones = Math.floor(((questEndZone - game.global.world) / 2) - 1);
+					if (questZones < 0) questZones = 0;
 					//Buying smithies that won't be needed for quests before user entered end goal or for Smithy quests
 					smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : currQuest() == 10 ? 1 : 0;
 				}
