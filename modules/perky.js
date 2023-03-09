@@ -693,6 +693,7 @@ var showingPerky = false;
 function setupPerkyUI() {
 
 	if (portalUniverse !== 1) return;
+	AutoPerks = {};
 
 	var presetListHtml =
 		"<select id=\"preset\" onchange=\"select_preset(this.value)\" data-saved>\

@@ -103,7 +103,7 @@ function setupSurkyUI() {
 
 		//Hide these elements - Line 3
 		apGUI.$ratiosLine3 = document.createElement("DIV");
-		apGUI.$ratiosLine3.setAttribute('style', 'display: inline-block; text-align: center; width: 100%');
+		apGUI.$ratiosLine3.setAttribute('style', 'display: none; text-align: center; width: 100%');
 		apGUI.$ratiosLine3.setAttribute('onchange', 'saveSurkySettings()');
 		var listratiosTitle3 = ["Tributes purchased", "Meteorologists", "Collector count", "Smithy count", "Rn Gain per Farming Run"];
 		var listratiosLine3 = ['tributes', "meteorologists", "housingCount", "smithyCount", "radonPerRun"];

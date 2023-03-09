@@ -359,6 +359,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				<div class='windowActive" + varPrefix + "\'>Active</div>\
 				<div class='windowCell" + varPrefix + "\'>Cell</div>"
 			if (mapFarm) tooltipText += "<div class='windowRepeat'>Repeat<br />Count</div>"
+			if (worshipperFarm) tooltipText += "<div class='windowWorshipperSkip'>Enable<br />Skip</div>"
 			if (worshipperFarm) tooltipText += "<div class='windowWorshipper'>Skip<br />Value</div>"
 			if (mapBonus) tooltipText += "<div class='windowRepeat'>Map<br />Stacks</div>"
 			if (boneShrine) tooltipText += "<div class='windowBoneBelow'>Use below</div>"
@@ -373,8 +374,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (hypothermia) tooltipText += "<div class='windowFrozenCastle'>Frozen<br>Castle</div>"
 			if (hypothermia) tooltipText += "<div class='windowStorage'>Auto<br>Storage</div>"
 			if (hypothermia) tooltipText += "<div class='windowPackrat'>Packrat</div>"
-			if (mapBonus) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Health<br>Bonus</div>"
-			if (mapBonus) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Health<br>HD Ratio</div>"
+			/* if (mapBonus) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Health<br>Bonus</div>"
+			if (mapBonus) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Health<br>HD Ratio</div>" */
 			if (hdFarm) tooltipText += "<div class='windowCell" + varPrefix + "\'>Map<br>Cap</div>"
 
 			tooltipText += "</div>";
@@ -384,6 +385,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				cell: 1,
 				special: '0',
 				repeat: 1,
+				shipSkipEnabled: true,
 				shipskip: 10,
 				gather: 0,
 				bonebelow: 0,
@@ -393,8 +395,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				packrat: false,
 				frozencastle: [200, 99],
 				mapType: 'Absolute',
-				healthBonus: 10,
-				healthHDRatio: 10,
+				/* healthBonus: 10,
+				healthHDRatio: 10, */
 				recycle: false,
 				incrementMaps: false,
 				voidPurchase: true,
@@ -419,6 +421,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.special = defaultSetting.special ? defaultSetting.special : '0';
 			if (mapFarm || mapBonus) defaultVals.repeat = defaultSetting.repeat ? defaultSetting.repeat : '0';
 			if (worshipperFarm)
+				defaultVals.shipskip = defaultSetting.shipSkipEnabled ? defaultSetting.shipSkipEnabled : true;
+			if (worshipperFarm)
 				defaultVals.shipskip = defaultSetting.shipskip ? defaultSetting.shipskip : '10';
 			if (alchemy)
 				defaultVals.voidPurchase = typeof (defaultSetting.voidPurchase) === 'undefined' ? true : defaultSetting.voidPurchase ? defaultSetting.voidPurchase : false;
@@ -434,10 +438,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.recycle = typeof (defaultSetting.recycle) === 'undefined' ? false : defaultSetting.recycle ? defaultSetting.recycle : false;
 			if (raiding && !bionic)
 				defaultVals.incrementMaps = typeof (defaultSetting.incrementMaps) === 'undefined' ? false : defaultSetting.incrementMaps ? defaultSetting.incrementMaps : false;
-			if (mapBonus)
+			/* if (mapBonus)
 				defaultVals.healthBonus = defaultSetting.healthBonus ? defaultSetting.healthBonus : 10;
 			if (mapBonus)
-				defaultVals.healthHDRatio = defaultSetting.healthHDRatio ? defaultSetting.healthHDRatio : 10;
+				defaultVals.healthHDRatio = defaultSetting.healthHDRatio ? defaultSetting.healthHDRatio : 10; */
 			if (hdFarm)
 				defaultVals.mapCap = typeof (defaultSetting.mapCap) === 'undefined' ? 900 : defaultSetting.mapCap ? defaultSetting.mapCap : 900;
 
@@ -450,6 +454,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.cell + "' type='number' id='windowCellDefault'/></div>";
 			if (mapFarm || mapBonus)
 				tooltipText += "<div class='windowRepeat'><input value='" + defaultVals.repeat + "' type='number' id='windowRepeatDefault'/></div>";
+			if (worshipperFarm)
+				tooltipText += "<div class='windowWorshipperSkip' style='text-align: center;'>" + buildNiceCheckbox("windowSkipShipEnabled", null, defaultVals.shipSkipEnabled) + "</div>";
 			if (worshipperFarm)
 				tooltipText += "<div class='windowWorshipper'><input value='" + defaultVals.shipskip + "' type='number' id='windowRepeatDefault'/></div>";
 			if (boneShrine)
@@ -470,10 +476,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowPackrat' style='text-align: center;'>" + buildNiceCheckbox("windowPackratDefault", null, defaultVals.packrat) + "</div>";
 			if (tributeFarm || smithyFarm)
 				tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'><select value='" + defaultVals.mapType + "' id='windowMapTypeDropdownDefault'>" + defaultmapTypeDropdown + "</select></div>"
-			if (mapBonus)
+			/* if (mapBonus)
 				tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + defaultVals.healthBonus + "' type='number' id='healthBonus'/></div>";
 			if (mapBonus)
-				tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + defaultVals.healthHDRatio + "' type='number' id='healthHDRatio'/></div>";
+				tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + defaultVals.healthHDRatio + "' type='number' id='healthHDRatio'/></div>"; */
 			if (raiding && !bionic)
 				tooltipText += "<div class='windowRecycle' style='text-align: center;'>" + buildNiceCheckbox("windowRecycleDefault", null, defaultVals.recycle) + "</div>";
 			if (raiding && !bionic)
@@ -942,6 +948,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		defaultSetting.active = readNiceCheckbox(document.getElementById('windowActiveDefault'));
 		defaultSetting.cell = parseInt(document.getElementById('windowCellDefault').value, 10);
 		if (mapFarm || mapBonus) defaultSetting.repeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
+		if (worshipperFarm) defaultSetting.shipSkipEnabled = readNiceCheckbox(document.getElementById('windowSkipShipEnabled'));
 		if (worshipperFarm) defaultSetting.shipskip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
 		if (mapFarm || alchemy || mapBonus || titleText.includes('Insanity')) defaultSetting.special = document.getElementById('windowSpecialDefault').value;
 		if (boneShrine) defaultSetting.bonebelow = parseInt(document.getElementById('windowBoneBelowDefault').value, 10);
@@ -955,14 +962,14 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (raiding && !bionic) defaultSetting.recycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
 		if (raiding && !bionic) defaultSetting.incrementMaps = readNiceCheckbox(document.getElementById('windowIncrementMapsDefault'));
 		if (tributeFarm || smithyFarm) defaultSetting.mapType = document.getElementById('windowMapTypeDropdownDefault').value;
-		if (mapBonus) defaultSetting.healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
-		if (mapBonus) defaultSetting.healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10);
+		/* if (mapBonus) defaultSetting.healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
+		if (mapBonus) defaultSetting.healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10); */
 		if (hdFarm) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
 
 		if (defaultSetting.cell < 1) defaultSetting.cell = 1;
 		if (defaultSetting.cell > 100) defaultSetting.cell = 100;
-		if (defaultSetting.healthBonus > 10) defaultSetting.healthBonus = 10;
-		if (defaultSetting.healthBonus < 0) defaultSetting.healthBonus = 0;
+		/* if (defaultSetting.healthBonus > 10) defaultSetting.healthBonus = 10;
+		if (defaultSetting.healthBonus < 0) defaultSetting.healthBonus = 0; */
 
 		if (defaultSetting.repeat < 0) defaultSetting.repeat = 0;
 
@@ -1162,8 +1169,8 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		if (raiding && !bionic) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after raiding has finished.</li>"
 		if (raiding && !bionic) mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>"
 		if (raiding) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after BW raiding has finished.</li>"
-		if (mapBonus) mazHelp += "<li><b>Health Bonus</b> - The amount of map stacks to farm when your HD Ratio is below that of the <b>Health HDRatio</b> field. Default is 10.</li>"
-		if (mapBonus) mazHelp += "<li><b>Health HD Ratio</b> - Decides when to start getting the map stack bonus value in the <b>Health Bonus</b> field. 10 is default, this means it\'d go for it when your HDRatio is above 10.</li>"
+		/* if (mapBonus) mazHelp += "<li><b>Health Bonus</b> - The amount of map stacks to farm when your HD Ratio is below that of the <b>Health HDRatio</b> field. Default is 10.</li>"
+		if (mapBonus) mazHelp += "<li><b>Health HD Ratio</b> - Decides when to start getting the map stack bonus value in the <b>Health Bonus</b> field. 10 is default, this means it\'d go for it when your HDRatio is above 10.</li>" */
 		if (alchemy) mazHelp += "<li><b>Void Purchase</b> - Will purchase as many void and strength potions as you can currently afford when you go into a void map. Would recommend only disabling this setting when going for the Alchemy achievement.</li>"
 		if (hypothermia) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>"
 		if (hypothermia) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>"

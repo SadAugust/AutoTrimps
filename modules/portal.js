@@ -368,10 +368,6 @@ function doPortal(challenge, squared) {
 	//Identifying which challenge type we're running to setup for the preset swapping function
 	var preset = challengeSquaredMode ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
 	if (portalUniverse === 2) presetSwapping(preset);
-	//Reset packrat to 3 on Hypothermia
-	if (portalUniverse === 2) hypoPackratReset(challenge);
-	//Auto Allocate Perks
-	allocatePerks();
 
 	//Run Perky/Surky.
 	if (typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', currPortalUniverse) === 1) {
@@ -385,6 +381,10 @@ function doPortal(challenge, squared) {
 			runSurky();
 		}
 	}
+
+	//Reset packrat to 3 on Hypothermia
+	if (portalUniverse === 2) hypoPackratReset(challenge);
+
 	//Download save file
 	downloadSave();
 

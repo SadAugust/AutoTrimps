@@ -397,7 +397,7 @@ function MapBonus() {
 		mapName: mapName
 	};
 
-	if (!getPageSetting('mapBonusDefaultSettings').active && !isDoingSpire()) return farmingDetails;
+	//if (!getPageSetting('mapBonusDefaultSettings').active && !isDoingSpire()) return farmingDetails;
 
 	//Setting up variables and checking if we should use daily settings instead of regular Map Bonus settings
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation') || challengeActive('Desolation');
@@ -407,25 +407,27 @@ function MapBonus() {
 	const rMBBaseSettings = getPageSetting('mapBonusSettings');
 
 	const rMBDefaultSettings = getPageSetting('mapBonusDefaultSettings');
-	var rMBshouldDoHealthMaps = rMBDefaultSettings.healthBonus > game.global.mapBonus && HDRatio > rMBDefaultSettings.healthHDRatio && game.global.mapBonus !== 10;
+	var rMBshouldDoHealthMaps = getPageSetting('mapBonusStacks') > game.global.mapBonus && HDRatio > getPageSetting('mapBonusRatio') && game.global.mapBonus !== 10;
 	var rMBspireMapStack = getPageSetting('MaxStacksForSpire') && isDoingSpire() && game.global.mapBonus !== 10;
 	var rMBIndex = null;
-	for (var y = 0; y < rMBBaseSettings.length; y++) {
-		//Skip iterating lines if map bonus is capped.
-		if (game.global.mapBonus === 10) continue;
-		var currSetting = rMBBaseSettings[y];
-		if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world > currSetting.endzone) continue;
-		if (currSetting.runType !== 'All') {
-			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
-				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
-			if (isDaily && currSetting.runType !== 'Daily') continue;
-			if (isC3 && (currSetting.runType !== 'C3' ||
-				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
+	if (getPageSetting('mapBonusDefaultSettings').active) {
+		for (var y = 0; y < rMBBaseSettings.length; y++) {
+			//Skip iterating lines if map bonus is capped.
+			if (game.global.mapBonus === 10) continue;
+			var currSetting = rMBBaseSettings[y];
+			if (!currSetting.active || game.global.lastClearedCell + 2 < currSetting.cell || game.global.world > currSetting.endzone) continue;
+			if (currSetting.runType !== 'All') {
+				if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
+					(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
+				if (isDaily && currSetting.runType !== 'Daily') continue;
+				if (isC3 && (currSetting.runType !== 'C3' ||
+					(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
+			}
+			if (game.global.world - rMBZone[y] >= 0)
+				rMBIndex = rMBZone.indexOf(rMBZone[y]);
+			else
+				continue;
 		}
-		if (game.global.world - rMBZone[y] >= 0)
-			rMBIndex = rMBZone.indexOf(rMBZone[y]);
-		else
-			continue;
 	}
 
 	if ((rMBIndex !== null && rMBIndex >= 0) || rMBshouldDoHealthMaps || rMBspireMapStack) {
@@ -434,8 +436,8 @@ function MapBonus() {
 		if (rMBIndex !== null) {
 			rMBRepeatCounter = 1
 		}
-		rMBRepeatCounter = rMBspireMapStack ? 10 : rMBIndex !== null && rMBshouldDoHealthMaps && rMBSettings.repeat !== rMBDefaultSettings.healthBonus ?
-			Math.max(rMBSettings.repeat, rMBDefaultSettings.healthBonus) : rMBIndex === null ? rMBDefaultSettings.healthBonus : rMBSettings.repeat
+		rMBRepeatCounter = rMBspireMapStack ? 10 : rMBIndex !== null && rMBshouldDoHealthMaps && rMBSettings.repeat !== getPageSetting('mapBonusStacks') ?
+			Math.max(rMBSettings.repeat, getPageSetting('mapBonusStacks')) : rMBIndex === null ? getPageSetting('mapBonusStacks') : rMBSettings.repeat
 		var rMBSpecial = rMBSettings.special !== '0' ? rMBSettings.special : '0';
 		if (challengeActive('Transmute') && rMBSpecial.includes('mc'))
 			rMBSpecial = rMBSpecial.charAt(0) + "sc";
@@ -1014,12 +1016,13 @@ function WorshipperFarm() {
 		}
 
 		if (challengeActive('Wither') && rWFMapLevel >= 0) rWFMapLevel = -1;
-		if (game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != rWFDebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * rWFDefaultSetting.shipskip))) {
+		if (rWFDefaultSetting.shipSkipEnabled && game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != rWFDebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * rWFDefaultSetting.shipskip))) {
 			debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + rWFDefaultSetting.shipskip + " or more Worshippers. Evaluate your map settings to correct this");
 			rWFDebug = game.stats.zonesCleared.value;
 		}
-		if (game.jobs.Worshipper.owned != 50 && rWFGoal > game.jobs.Worshipper.owned && scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, true, rWFJobRatio), false, true, rWFMapLevel) >= (game.jobs.Worshipper.getCost() * rWFDefaultSetting.shipskip))
+		if (game.jobs.Worshipper.owned !== 50 && rWFGoal > game.jobs.Worshipper.owned && game.stats.zonesCleared.value !== rWFDebug)
 			rShouldWorshipperFarm = true;
+
 		if (currentMap !== mapName && game.jobs.Worshipper.owned >= rWFGoal)
 			rShouldSkip = true;
 

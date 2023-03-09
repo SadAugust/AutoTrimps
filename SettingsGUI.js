@@ -194,7 +194,7 @@ function initializeAllSettings() {
 		createSetting('gatherType', ['Manual Gather/Build', 'Auto Gather/Build', 'Mining/Building Only', 'Science Research OFF'], 'Controls what you gather/build do. Manual does nothing<br>Auto Gathering of Food,Wood,Metal(w/turkimp) & Science. Auto speed-Builds your build queue. <br>Mining/Building only does exactly what it says. Only use if you are passed the early stages of the game and have the mastery foremany unlocked (No longer need to trap, food and wood are useless). <br>You can disable science researching for the achievement: Reach Z120 without using manual research.', 'multitoggle', 1, null, 'Core', [1, 2]);
 		createSetting('upgradeType', ['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords'], 'Autobuys non-equipment upgrades (equipment is controlled in the Gear tab). The second option does NOT buy coordination (use this <b>ONLY</b> if you know what you\'re doing).', 'multitoggle', 1, null, 'Core', [1, 2]);
 		createSetting('TrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, 'Core', [1, 2]);
-		createSetting('autoPerks', ['Auto Allocate Off', 'Auto Allocate On', 'Dump into Looting II'], 'Uses a basic version of Perky (if you want more advanced settings import your save there). Dump into Looting II, all helium earned into this perk when auto portaling.', 'multitoggle', 0, null, 'Core', [1, 2]);
+		createSetting('autoPerks', 'Auto Allocate Perks', 'Uses a basic version of Perky/Surky (if you want more advanced settings import your save into the desired tool).', 'boolean', false, null, 'Core', [1, 2]);
 		createSetting('downloadSaves', 'Download Saves', 'Will automatically download saves whenever AutoTrimps portals.', 'boolean', false, null, 'Core', [1, 2]);
 		createSetting('presetSwap', 'Preset Swapping', 'Will automatically load Preset 1 if portaling into a normal run, Preset 2 if portaling into a daily run or Preset 3 if portaling into a C3.<br>Be aware that you need to save your presets when making adjustments or it\'ll revert to the previous one you saved.', 'boolean', false, null, 'Core', [2]);
 
@@ -645,6 +645,7 @@ function initializeAllSettings() {
 		createSetting('autoMaps', ["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"], 'Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use window, it will not work. ', 'multitoggle', null, null, "Maps", [1, 2]);
 		createSetting('autoMapsPortal', 'AM Portal', 'Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice. ', 'boolean', true, null, 'Maps', [1, 2]);
 		createSetting('onlyPerfectMaps', 'Perfect Maps', 'If enabled when AT is trying to map it will only create perfect maps. Be warned this may greatly decrease the map level that AT believes is efficient.', 'boolean', false, null, 'Maps', [1, 2]);
+
 		createSetting('uniqueMapSettingsArray', 'Unqiue Map Settings', 'Click to adjust settings.', 'mazDefaultArray', {
 			The_Wall: { enabled: false, zone: 100, cell: 0 },
 			The_Block: { enabled: false, zone: 100, cell: 0 },
@@ -665,6 +666,9 @@ function initializeAllSettings() {
 		}, null, 'Maps', [1, 2]);
 
 		createSetting('uniqueMapPopup', 'Unique Map Settings', 'Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.', 'action', 'MAZLookalike("Unique Maps", " ", "UniqueMaps")', null, 'Maps', [1, 2]);
+
+		createSetting('mapBonusRatio', 'Map Bonus Ratio', 'Map Bonus will be run when above this HD Ratio value.', 'value', 4, null, "Maps", [1, 2]);
+		createSetting('mapBonusStacks', 'Map Bonus Stacks', 'The map bonus limit that will be used when above your \'Map Bonus Ratio\' threshold.', 'value', 10, null, "Maps", [1, 2]);
 
 		createSetting('scryvoidmaps', 'VM Scryer', 'Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Maps', [1]);
 
@@ -1361,8 +1365,8 @@ function updateATVersion() {
 
 				autoTrimpSettings['TrapTrimps'].enabledU2 = tempSettings.RTrapTrimps;
 
-				autoTrimpSettings['autoPerks'].value = tempSettings.AutoAllocatePerks;
-				autoTrimpSettings['autoPerks'].valueU2 = tempSettings.RAutoAllocatePerks;
+				autoTrimpSettings['autoPerks'].enabled = tempSettings.AutoAllocatePerks;
+				autoTrimpSettings['autoPerks'].enabledU2 = tempSettings.RAutoAllocatePerks;
 
 				autoTrimpSettings['downloadSaves'].enabledU2 = tempSettings.RdownloadSaves;
 
@@ -1861,7 +1865,24 @@ function updateATVersion() {
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1') {
 			changelog.push("Surky has now been implemented for U2. Enable Auto Allocate and it'll respec perks just like Perky currently does for U1, make sure to set the inputs up properly or you'll get odd respecs.<br>\
-			As usual, report any bugs and I'll aim to fix them ASAP.")
+			As usual, report any bugs and I'll aim to fix them ASAP. You will need to enable Auto Allocate again for both universes if you want to use them as the setting has been autoset to off after this implementation.")
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.1') {
+			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
+			if (tempSettings.mapBonusDefaultSettings.value.healthHDRatio !== undefined)
+				autoTrimpSettings['mapBonusRatio'].value = tempSettings.mapBonusDefaultSettings.value.healthHDRatio;
+			if (tempSettings.mapBonusDefaultSettings.valueU2.healthHDRatio !== undefined)
+				autoTrimpSettings['mapBonusRatio'].valueU2 = tempSettings.mapBonusDefaultSettings.valueU2.healthHDRatio
+			if (tempSettings.mapBonusDefaultSettings.value.mapBonusStacks !== undefined)
+				autoTrimpSettings['mapBonusStacks'].value = tempSettings.tempSettings.mapBonusDefaultSettings.value.healthBonus
+			if (tempSettings.mapBonusDefaultSettings.valueU2.mapBonusStacks !== undefined)
+				autoTrimpSettings['mapBonusStacks'].valueU2 = tempSettings.tempSettings.mapBonusDefaultSettings.valueU2.healthBonus
+			if (tempSettings.autoPerks.value > 0) autoTrimpSettings['autoPerks'].enabled = true;
+			else autoTrimpSettings['autoPerks'].enabled = false;
+			if (tempSettings.autoPerks.valueU2 > 0) autoTrimpSettings['autoPerks'].enabledU2 = true;
+			else autoTrimpSettings['autoPerks'].enabledU2 = false;
+			changelog.push("Map Bonus HD related settings have been moved to 2 inputs in the Maps tab rather than in the Map Bonus setting.")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;
