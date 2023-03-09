@@ -837,7 +837,7 @@ function initialLoad() {
 	}
 
 	// scaffolding increases population (relevant for Combat Respec and Trappa)
-	var scaffolds = game.global.autoBattleData.bonuses.Scaffolding || 0;
+	var scaffolds = autoBattle.bonuses.Scaffolding.level;
 	props.scaffoldingBonus = 1 + (scaffolds * Math.pow(1.1, scaffolds - 1));
 
 	// Expanding Tauntimps are a flat multiplier to pop instead of adding one by one to trimps.max
@@ -863,7 +863,7 @@ function initialLoad() {
 	props.glassDone = game.global.glassDone || false;
 
 	// Mass Hysteria grants permanent Frenzy
-	props.permaFrenzy = game.global.autoBattleData.oneTimers.hasOwnProperty("Mass_Hysteria") && game.global.autoBattleData.oneTimers.Mass_Hysteria;
+	props.permaFrenzy = autoBattle.oneTimers.Mass_Hysteria.owned;
 
 	// used for combat respec to apply special optimizations for trappa (no gain from health, full gain from equality)
 	props.isTrappa = game.global.challengeActive == "Trappapalooza";
@@ -872,13 +872,13 @@ function initialLoad() {
 	props.isDownsize = game.global.challengeActive == "Downsize";
 
 	// SA cleared level
-	var SAlevel = (game.global.autoBattleData.maxEnemyLevel - 1) || 0;
+	var SAlevel = (autoBattle.maxEnemyLevel - 1) || 0;
 
 	// Championism effect is 1% plus 0.5% per SA level cleared
 	perks.Championism.effect = 1.01 + 0.005 * SAlevel;
 
 	// property will not be defined in the save if not owned, convert undefined to false
-	var haveCollectology = game.global.autoBattleData.oneTimers.Collectology || false;
+	var haveCollectology = autoBattle.oneTimers.Collectology.owned || false;
 	props.collectHubs = !haveCollectology ? 1 : (2 + Math.floor(SAlevel / 30));
 
 	// calculate Scruffy level (adapted from Fluffy.getLevel() in the game source code)
@@ -926,7 +926,7 @@ function initialLoad() {
 	}
 
 	// Suprism gives 3% prismal shield per SA level
-	var haveSuprism = game.global.autoBattleData.oneTimers.Suprism || false;
+	var haveSuprism = autoBattle.oneTimers.Suprism.owned;
 	if (haveSuprism)
 		props.shieldPrismal += 3 * SAlevel;
 
@@ -1848,7 +1848,7 @@ function getPerkEfficiencies() {
 		var breedSpeed = 1 + props.potency * (1 + perks.Pheromones.level * perks.Pheromones.effect);
 		var breedUptime = 3 / Math.max(3, Math.log(2) / Math.log(breedSpeed));
 		var breedSpeedNext = 1 + props.potency * (1 + (perks.Pheromones.level + 1) * perks.Pheromones.effect);
-		var breedUptimeNext = 3 / Math.max(3, Math.log(2) / Math.log(breedSpeedNext));
+		var breedUptimeNext = 3.001 / Math.max(3, Math.log(2) / Math.log(breedSpeedNext));
 		var breedGain = breedUptimeNext / breedUptime;
 		perks.Pheromones.efficiency = getLogWeightedValue(breedGain, 1, 1, 1, 1, 1) / getPerkCost("Pheromones", 1);
 	}
