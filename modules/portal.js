@@ -280,15 +280,6 @@ function doPortal(challenge, squared) {
 	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
 	var currChall = game.global.challengeActive;
 
-	//Running C∞ runner
-	if (((portalUniverse === 1 && game.global.highestLevelCleared > 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared > 48)) &&
-		getPageSetting('c2RunnerStart') &&
-		getPageSetting('c2RunnerPortal') > 0 &&
-		getPageSetting('c2RunnerPercent') > 0) {
-		c2runner();
-		if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
-	}
-
 	if (currChall === 'Daily') {
 		confirmAbandonChallenge();
 		abandonChallenge();
@@ -300,6 +291,15 @@ function doPortal(challenge, squared) {
 			currPortalUniverse = portalUniverse;
 			challenge = getPageSetting('dailyHeliumHourChallenge');
 		}
+	}
+
+	//Running C∞ runner
+	if (((portalUniverse === 1 && game.global.highestLevelCleared > 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared > 48)) &&
+		getPageSetting('c2RunnerStart') &&
+		getPageSetting('c2RunnerPortal') > 0 &&
+		getPageSetting('c2RunnerPercent') > 0) {
+		c2runner();
+		if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
 	}
 
 	//Running Dailies
