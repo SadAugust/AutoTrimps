@@ -3262,7 +3262,6 @@ function updateCustomButtons(initialLoad) {
 			else {
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
 			}
-
 		}
 	}
 
@@ -3307,7 +3306,7 @@ function setupATButtons() {
 
 	//Text
 	var atJobText = document.createElement("DIV");
-	atJobText.innerHTML = autoTrimpSettings.jobType.name[jobSetting];
+	atJobText.innerHTML = autoTrimpSettings.jobType.name()[jobSetting];
 	atJobText.setAttribute("id", "autoJobLabel");
 	atJobText.setAttribute("onClick", "settingChanged('jobType', true)");
 
