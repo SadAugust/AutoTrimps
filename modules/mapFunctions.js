@@ -1202,10 +1202,10 @@ function PrestigeRaiding() {
 
 		if (MODULES.mapFunctions.prestigeRaidZone > 0 && MODULES.mapFunctions.prestigeFragMapBought) status = 'Prestige frag farm to: ' + prettify(prestigeTotalFragCost(raidZones, targetPrestige, special, incrementMaps, true));
 
-		var repeat = !(
-			(game.global.mapsActive && (
-				equipsToGet(getCurrentMapObject().level, targetPrestige)[1] >= (getCurrentMapObject().bonus === 'p' ? 2 : 1))
-			)
+		var mapsToRun = game.global.mapsActive ? equipsToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
+		var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
+		var repeat = (game.global.mapsActive &&
+			(mapsToRun === 1 || (specialInMap && mapsToRun === 2))
 		);
 
 		farmingDetails.shouldRun = rShouldPrestigeRaid;
@@ -1464,13 +1464,11 @@ function BionicRaiding() {
 			rShouldBionicRaid = true;
 		}
 
-		var status = 'Raiding to BW' + raidzonesBW + ': ' + equipsToGet(raidzonesBW, targetPrestige)[0] + ' items remaining';
-		var repeat = (!
-			(game.global.mapsActive && (
-				equipsToGet(getCurrentMapObject().level, targetPrestige)[1] >= (game.talents.bionic2.purchased ? 2 : 1)
-				||
+		var mapsToRun = game.global.mapsActive ? equipsToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
+		var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
+		var repeat = (game.global.mapsActive &&
+			(mapsToRun === 1 || (specialInMap && mapsToRun === 2) ||
 				getCurrentMapObject().location !== 'Bionic')
-			)
 		);
 
 		farmingDetails.shouldRun = rShouldBionicRaid;
