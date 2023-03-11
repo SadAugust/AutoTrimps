@@ -1017,7 +1017,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (hdFarm) thisSetting.hdType = document.getElementById('windowHDType' + x).value;
 		if (golden) thisSetting.golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
 		if (alchemy) thisSetting.potion = document.getElementById('windowPotionType' + x).value;
-		if (alchemy) potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
+		if (alchemy) thisSetting.potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
 		if (hypothermia) thisSetting.bonfire = parseInt(document.getElementById('windowBonfire' + x).value, 10);
 		if (boneShrine) thisSetting.boneamount = parseInt(document.getElementById('windowBoneAmount' + x).value, 10);
 		if (boneShrine) thisSetting.bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);

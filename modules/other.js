@@ -404,7 +404,6 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (game.portal.Equality.radLevel === 0)
 		return 0;
 
-	var mapping = mapType === 'world' ? false : true;
 	var bionicTalent = zone - game.global.world;
 	var checkMutations = mapType === 'world' && game.global.world > 200;
 	var titimp = mapType !== 'world' && farmType === 'oneShot' ? 'force' : false;
@@ -419,7 +418,6 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 
 	//Challenge conditions
 	var runningUnlucky = challengeActive('Unlucky');
-	var runningDuel = challengeActive('Duel');
 	var runningQuest = ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé')); //Shield break quest
 
 	//Initialising name/health/dmg variables
@@ -577,7 +575,6 @@ function equalityManagement() {
 	enemyDmg *= runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
 	enemyDmg *= dailyEmpowerToggle && type === 'map' && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 	var enemyDmgEquality = 0;
-
 	//Misc dmg mult
 	if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100)
 

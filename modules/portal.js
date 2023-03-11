@@ -258,6 +258,7 @@ function c2runner() {
 	}
 	return;
 }
+
 var shouldPortal = false;
 
 function doPortal(challenge, squared) {

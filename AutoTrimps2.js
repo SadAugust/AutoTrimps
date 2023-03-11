@@ -25,7 +25,6 @@ function ATscriptUnload(a) {
 	b && (document.head.removeChild(b), debug("Removing " + a + "_MODULE", "other"))
 }
 
-
 var ATrunning = true;
 var ATmessageLogTabVisible = true;
 var enableDebug = true;

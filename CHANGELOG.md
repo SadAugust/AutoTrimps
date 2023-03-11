@@ -14,13 +14,11 @@ Jobs tab has been removed. Instead it has been worked into an AutoJobs setting o
 	
 	Now has a 'No Lumberjacks Post MP' setting which will fire Lumberjacks after Melting Point has been run when not running one of AT's farming settings.
 
-Info for void map tracker, recommended map level for autoLevel & shred counter displayed in trimps column.
+Info for void map tracker, recommended map level for autoLevel displayed in trimps column.
 
 Settings won't display for challenges until they've been unlocked in your save. Messages will be put in the chat tab when you've unlocked a different setting.
 
 The status setting will now actually display relevant information for the farming that AT is currently doing.
-
-
 
 **Core**
 
@@ -81,8 +79,6 @@ HD Farm Settings
 	Farming HD settings into this button and now allows you to dynamically update your input with a HD Mult setting.
 	
 	Has an end zone setting to allow you to run it until a set zone.
-	
-	Has a shred map cap setting which allows you to cap your maps run on metal shred dailies to this value.
 
 Worshipper Farm Settings
 
@@ -93,8 +89,6 @@ Worshipper Farm Settings
 Bone Shrine Settings
 
 	Dedicated tab for what zone to use X amount of Bone Charges on. Has Gather settings which will make it automatically switch to that Gather setting when run and will equip the right heirloom for the setting if it has been defined in the heirlooms tab.
-	
-	Has run type options for when to run the setting and shred/no shred options for if it should be run in shred dailies that contain the gather option selected.
 
 Void Map Settings
 

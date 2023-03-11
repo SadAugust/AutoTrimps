@@ -800,8 +800,10 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	else if (challengeActive('Duel') && game.challenges.Duel.trimpStacks < 50) attack *= 3;
 	else if (challengeActive('Wither') && game.challenges.Wither.enemyStacks > 0) attack *= game.challenges.Wither.getEnemyAttackMult();
 	else if (challengeActive('Archaeology')) attack *= game.challenges.Archaeology.getStatMult('enemyAttack');
-	else if (challengeActive('Mayhem') && type === 'world') attack *= game.challenges.Mayhem.getBossMult();
-	else if (challengeActive('Mayhem')) attack *= game.challenges.Mayhem.getEnemyMult();
+	else if (challengeActive('Mayhem')) {
+		if (type === 'world') attack *= game.challenges.Mayhem.getBossMult();
+		attack *= game.challenges.Mayhem.getEnemyMult();
+	}
 	//Purposefully don't put Storm in here.
 	else if (challengeActive('Storm') && !game.global.mapsActive) attack *= game.challenges.Storm.getAttackMult();
 	else if (challengeActive('Exterminate')) attack *= game.challenges.Exterminate.getSwarmMult();
@@ -1063,8 +1065,11 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	//health *= challengeActive('Duel') && game.challenges.Duel.enemyStacks < 20 ? game.challenges.Duel.healthMult : 1;
 	health *= challengeActive('Quest') ? game.challenges.Quest.getHealthMult() : 1;
 	health *= challengeActive('Revenge') && game.global.world % 2 == 0 ? 10 : 1;
-	health *= challengeActive('Mayhem') && type === 'world' ? game.challenges.Mayhem.getBossMult() : 1;
-	health *= challengeActive('Mayhem') ? game.challenges.Mayhem.getEnemyMult() : 1;
+
+	if (challengeActive('Mayhem')) {
+		if (type === 'world') health *= game.challenges.Mayhem.getBossMult();
+		health *= game.challenges.Mayhem.getEnemyMult();
+	}
 	health *= challengeActive('Storm') && type === 'world' ? game.challenges.Storm.getHealthMult() : 1;
 	//health *= challengeActive('Berserk') ? 1.5 : 1;
 	health *= challengeActive('Exterminate') ? game.challenges.Exterminate.getSwarmMult() : 1;
@@ -1325,10 +1330,9 @@ function totalDamageMod() {
 	dmg *= challengeActive('Duel') && game.challenges.Duel.trimpStacks < 50 ? 3 : 1;
 	dmg *= challengeActive('Wither') && game.challenges.Wither.enemyStacks > 0 ? game.challenges.Wither.getEnemyAttackMult() : 1;
 	dmg *= challengeActive('Archaeology') ? game.challenges.Archaeology.getStatMult('enemyAttack') : 1;
-	dmg *= challengeActive('Mayhem') && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Mayhem.getBossMult() : 1;
+	dmg *= challengeActive('Mayhem') && !game.global.mapsActive && !game.global.preMapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Mayhem.getBossMult() : 1;
 	dmg *= challengeActive('Mayhem') ? game.challenges.Mayhem.getEnemyMult() : 1;
 	dmg *= challengeActive('Storm') && !game.global.mapsActive ? game.challenges.Storm.getAttackMult() : 1;
-	dmg *= challengeActive('Exterminate') ? game.challenges.Exterminate.getSwarmMult() : 1;
 	dmg *= challengeActive('Nurture') ? 2 : 1;
 	dmg *= challengeActive('Nurture') && game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	dmg *= challengeActive('Pandemonium') && !game.global.mapsActive && game.global.lastClearedCell + 2 == 100 ? game.challenges.Pandemonium.getBossMult() : 1;
