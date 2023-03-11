@@ -497,7 +497,7 @@ function initializeAllSettings() {
 		//Helium
 		createSetting('c2Finish',
 			function () { return ('Finish ' + cinf()) },
-			function () { return ('<b>DONT USE THIS WITH ' + cinf() + ' RUNNER. ITS FINISH ZONE WILL OVERRIDE THIS</b><br>Finish / Abandon ' + cinf() + 's (any) when this zone is reached, if you are running one. For manual use. Recommended: Zones ending with 0 for most ' + cinf() + ' runs. Disable with -1. Does not affect Non-Challenge2 runs.') },
+			function () { return ('<b>DONT USE THIS WITH ' + cinf() + ' RUNNER. ITS FINISH ZONE WILL OVERRIDE THIS</b><br>Finish / Abandon ' + cinf() + 's (any) when this zone is reached, if you are running one. For manual use. Recommended: Zones ending with 0 for most ' + cinf() + ' runs. Disable with -1. Does not affect Non-' + cinf() + ' runs.') },
 			'value', -1, null, 'C2', [1, 2]);
 		createSetting('c2Table',
 			function () { return (cinf() + ' Table') },
