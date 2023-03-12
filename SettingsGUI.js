@@ -328,7 +328,6 @@ function initializeAllSettings() {
 	//Daily
 	const displayDaily = true
 	if (displayDaily) {
-		//Helium Daily
 		createSetting('buyheliumy',
 			function () { return ('Buy Heliumy %') },
 			function () { return ('Buys the Heliumy bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ') },
@@ -346,7 +345,6 @@ function initializeAllSettings() {
 			function () { return ('Only use in Dailies if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ') },
 			'boolean', false, null, 'Daily', [1]);
 
-		//Helium Spire
 		createSetting('dIgnoreSpiresUntil',
 			function () { return ('Daily Ignore Spires Until') },
 			function () { return ('Spire specific settings like end-at-cell are ignored until at least this zone is reached in Dailies (0 to disable). ') },
@@ -360,7 +358,6 @@ function initializeAllSettings() {
 			function () { return ('Set the maximum number of Nurseries to build for Spires in Dailies. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Disable with -1.') },
 			'value', -1, null, 'Daily', [1]);
 
-		//Helium Windstacking
 		createSetting('use3daily',
 			function () { return ('Daily Windstacking') },
 			function () { return ('<b> This must be on for Daily windstacking settings to appear!</b> Overrides your Autostance settings to use the WS stance on Dailies. ') },
@@ -412,7 +409,7 @@ function initializeAllSettings() {
 			}
 			, 'boolean', false, null, 'Daily', [2]);
 
-		//Helium Daily Portal
+		//Daily Portal
 		createSetting('dailyPortalStart',
 			function () { return ('Auto Start Daily') },
 			function () { return ('Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ') },
@@ -456,11 +453,6 @@ function initializeAllSettings() {
 			'value', '0', null, 'Daily', [1, 2],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1) });
 
-		//--------------------------------------------------------------------------------------------------------
-
-		//Radon Daily
-
-		//Radon Daily Portal
 		createSetting('dailyPortalFiller',
 			function () { return ('Filler run') },
 			function () { return ('Will automatically run a filler (challenge selected in DP: Challenge) if you\'re already in a daily and have this enabled.') },
@@ -494,7 +486,6 @@ function initializeAllSettings() {
 	//C2
 	const displayC2 = true;
 	if (displayC2) {
-		//Helium
 		createSetting('c2Finish',
 			function () { return ('Finish ' + cinf()) },
 			function () { return ('<b>DONT USE THIS WITH ' + cinf() + ' RUNNER. ITS FINISH ZONE WILL OVERRIDE THIS</b><br>Finish / Abandon ' + cinf() + 's (any) when this zone is reached, if you are running one. For manual use. Recommended: Zones ending with 0 for most ' + cinf() + ' runs. Disable with -1. Does not affect Non-' + cinf() + ' runs.') },
@@ -531,7 +522,7 @@ function initializeAllSettings() {
 			function () { return (cinf() + ' Golden Maps') },
 			function () { return ('Will purchase Golden Maps during ' + cinf() + ' or special challenge (Mayhem, Pandemonium) runs when enabled.') },
 			'boolean', false, null, 'C2', [1, 2]);
-		//C2 Runner
+
 		createSetting('c2RunnerStart',
 			function () { return (cinf() + ' Runner') },
 			function () { return ('Runs the normal ' + cinf() + 's in sequence according to difficulty. See \'' + cinf() + ' Table\' for a list of challenges that this can run. Once zone you have defined has been reached, will portal into next. Only runs challenges that need updating, will not run ones close-ish to your HZE. ') },
@@ -2580,7 +2571,7 @@ function updateButtonText() {
 	var btnValue = getPageSetting(id);
 
 	document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btnValue == 2 ? 3 : btnValue));
-	document.getElementById('autoJobLabel').innerHTML = btn.name[btnValue];
+	document.getElementById('autoJobLabel').innerHTML = btn.name()[btnValue];
 
 	var id = 'equipOn'
 	var btnValue = getPageSetting(id);
