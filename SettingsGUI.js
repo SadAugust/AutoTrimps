@@ -114,6 +114,25 @@ function maximizeAllTabs() {
 var addTabsDiv;
 var addtabsUL;
 
+
+
+function checkLiqZoneCount() {
+	if (game.options.menu.liquification.enabled == 0) return 0;
+	/* if (game.global.universe == 2) {
+		if (!u2Mutations.tree.Liq1.purchased) return 0;
+		var amt = 0.1;
+		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
+		return ((getHighestLevelCleared(false, true) + 1) * amt);
+	} */
+	var spireCount = game.global.spiresCompleted;
+	if (game.talents.liquification.purchased) spireCount++;
+	if (game.talents.liquification2.purchased) spireCount++;
+	if (game.talents.liquification3.purchased) spireCount += 2;
+	spireCount += (Fluffy.isRewardActive("liquid") * 0.5);
+	var liquidAmount = ((spireCount) / 20);
+	return (((game.global.highestLevelCleared + 1) * liquidAmount));
+}
+
 function initializeAllTabs() {
 	addTabsDiv = document.createElement('div');
 	addtabsUL = document.createElement('ul');
@@ -300,6 +319,11 @@ function initializeAllSettings() {
 				return (
 					getPageSetting('autoPortal', currSettingUniverse) === 'Helium Per Hour' || getPageSetting('autoPortal', currSettingUniverse) === 'Radon Per Hour')
 			});
+		createSetting('portalVoidIncrement',
+			function () { return ('Liq for free Void') },
+			function () { return ('Delays auto portaling into your preferred run and repeatedly does U1 portals until your bone void counter is 1 drop away from a guaranteed extra void map.') },
+			'boolean', false, null, 'Core', [1, 2],
+			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount() >= 20) });
 
 
 		//Pause + Switch
@@ -2516,7 +2540,7 @@ function settingChanged(id, currUniverse) {
 	var radonon = currUniverse ? game.global.universe === 2 : autoTrimpSettings.radonsettings.value == 1;
 	if (btn.type == 'boolean') {
 		var enabled = 'enabled'
-		if (radonon) enabled += 'U2';
+		if (radonon && id !== 'portalVoidIncrement') enabled += 'U2';
 		btn[enabled] = !btn[enabled];
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		if (id == 'equipEfficientEquipDisplay') {
@@ -3208,7 +3232,7 @@ function updateCustomButtons(initialLoad) {
 
 			if (item.type === 'boolean') {
 				itemEnabled = item.enabled;
-				if (radonon) itemEnabled = item['enabled' + 'U2'];
+				if (radonon && item.id !== 'portalVoidIncrement') itemEnabled = item['enabled' + 'U2'];
 				elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemEnabled);
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
 

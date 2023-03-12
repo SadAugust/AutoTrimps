@@ -141,6 +141,25 @@ function delayStartAgain() {
 	updateCustomButtons(true);
 }
 
+function universeSwapped() {
+	//Displays Perky UI when changing universe to U1.
+	if (currPortalUniverse !== portalUniverse) {
+		//Removes UI display if currently active
+		if (showingPerky) AutoPerks.removeGUI();
+		if (showingSurky) AutoPerks.removeGUI();
+		//Sets up Perky UI when in U1 or changing universe to U1.
+		if (portalUniverse === 1) {
+			setupPerkyUI();
+			addBreedingBoxTimers();
+		}
+		if (portalUniverse === 2) {
+			setupSurkyUI();
+			removeBreedingBoxTimer();
+		}
+		currPortalUniverse = portalUniverse;
+	}
+}
+
 //Get Gamma burst % value
 gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 shieldEquipped = game.global.ShieldEquipped.id;
@@ -174,22 +193,7 @@ function mainLoop() {
 		document.getElementById('freeVoidMap').style.display = 'block';
 	}
 
-	//Displays Perky UI when changing universe to U1.
-	if (currPortalUniverse !== portalUniverse) {
-		//Removes UI display if currently active
-		if (showingPerky) AutoPerks.removeGUI();
-		if (showingSurky) AutoPerks.removeGUI();
-		//Sets up Perky UI when in U1 or changing universe to U1.
-		if (portalUniverse === 1) {
-			setupPerkyUI();
-			addBreedingBoxTimers();
-		}
-		if (portalUniverse === 2) {
-			setupSurkyUI();
-			removeBreedingBoxTimer();
-		}
-		currPortalUniverse = portalUniverse;
-	}
+	universeSwapped();
 
 	if (ATrunning == false) return;
 	if (reloadDelay) {

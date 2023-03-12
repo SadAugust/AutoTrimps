@@ -755,47 +755,44 @@ function initialLoad() {
 
 	// set aux inputs from game variables, unless any given field is locked (handled by setAuxInput function)
 
-	// "red" fields should only be overwritten if loading a U2 save (values will be garbage in U1)
-	if (game.global.universe == 2) {
-		let surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
-		// target zone to CLEAR is 1 zone before the portal zone by default
-		var currentZone = Math.max(1, game.global.world - 1);
-		$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
-		props.targetZone = Number($('#targetZone').value);
+	// "red" fields should only be overwritten if loading a U2 save (values will be garbage in U1) -- Surky is gonna break if portal Universe isn't set to 2 here!
+	let surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
+	// target zone to CLEAR is 1 zone before the portal zone by default
+	var currentZone = Math.max(1, game.global.world - 1);
+	$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
+	props.targetZone = Number($('#targetZone').value);
 
-		// weapon/armor levels taken from dagger/boots (most likely to be leveled highest)
-		var weaponLevels = (game.equipment.Dagger.level || 1);
-		$('#weaponLevels').value = Math.min(weaponLevels, surkyInputs.weaponLevels);
-		props.weaponLevels = Number($('#weaponLevels').value);
+	// weapon/armor levels taken from dagger/boots (most likely to be leveled highest)
+	var weaponLevels = (game.equipment.Dagger.level || 1);
+	$('#weaponLevels').value = Math.min(weaponLevels, surkyInputs.weaponLevels);
+	props.weaponLevels = Number($('#weaponLevels').value);
 
-		var armorLevels = (game.equipment.Boots.level || 1);
-		$('#armorLevels').value = Math.min(armorLevels, surkyInputs.armorLevels);
-		props.armorLevels = Number($('#armorLevels').value);
+	var armorLevels = (game.equipment.Boots.level || 1);
+	$('#armorLevels').value = Math.min(armorLevels, surkyInputs.armorLevels);
+	props.armorLevels = Number($('#armorLevels').value);
 
-		// get current purchased tributes, mets, etc
-		var tributeCount = (game.buildings.Tribute.owned || 0);
-		$('#tributes').value = Math.max(tributeCount, surkyInputs.tributes);
-		props.tributes = Number($('#tributes').value);
+	// get current purchased tributes, mets, etc
+	var tributeCount = (game.buildings.Tribute.owned || 0);
+	$('#tributes').value = Math.max(tributeCount, surkyInputs.tributes);
+	props.tributes = Number($('#tributes').value);
 
-		var metCount = (game.jobs.Meteorologist.owned || 0);
-		$('#meteorologists').value = Math.max(metCount, surkyInputs.meteorologists);
-		props.meteorologists = Number($('#meteorologists').value);
+	var metCount = (game.jobs.Meteorologist.owned || 0);
+	$('#meteorologists').value = Math.max(metCount, surkyInputs.meteorologists);
+	props.meteorologists = Number($('#meteorologists').value);
 
-		var smithyCount = (game.buildings.Smithy.owned || 0);
-		$('#smithyCount').value = Math.max(smithyCount, surkyInputs.smithyCount);
-		props.smithyCount = Number($('#smithyCount').value);
+	var smithyCount = (game.buildings.Smithy.owned || 0);
+	$('#smithyCount').value = Math.max(smithyCount, surkyInputs.smithyCount);
+	props.smithyCount = Number($('#smithyCount').value);
 
-		var rnPerRun = (game.resources.radon.owned || 0);
-		$('#radonPerRun').value = Math.max(rnPerRun, surkyInputs.radonPerRun);
-		props.radonPerRun = Number($('#radonPerRun').value);
+	var rnPerRun = (game.resources.radon.owned || 0);
+	$('#radonPerRun').value = Math.max(rnPerRun, surkyInputs.radonPerRun);
+	props.radonPerRun = Number($('#radonPerRun').value);
 
-		// get count of best housing building (don't bother optimizing lower than gateways, the 2nd-order adjustments won't matter enough to bother)
-		var housingCount = (game.buildings.Collector.owned || 0);
-		$('#housingCount').value = Math.max(housingCount, surkyInputs.housingCount)
-		props.housingCount = Number($('#housingCount').value);
-	} else {
-		$('#targetZone').value = (Math.max(1, game.global.lastRadonPortal - 1));
-	}
+	// get count of best housing building (don't bother optimizing lower than gateways, the 2nd-order adjustments won't matter enough to bother)
+	var housingCount = (game.buildings.Collector.owned || 0);
+	$('#housingCount').value = Math.max(housingCount, surkyInputs.housingCount)
+	props.housingCount = Number($('#housingCount').value);
+
 
 	props.vmZone = Math.max(15, (props.targetZone - 1));
 	var rawRnRun = game.resources.radon.owned;
@@ -885,9 +882,9 @@ function initialLoad() {
 	props.scruffyLevel = Math.floor(Math.log(((game.global.fluffyExp2 / 1000) * 3) + 1) / Math.log(4));
 
 	var shield = null;
-	if (game.global.universe == 2)
+	if (game.global.universe == 2 && Object.keys(game.global.ShieldEquipped).length !== 0)
 		shield = game.global.ShieldEquipped;
-	if (game.global.universe == 1 && game.global.lastHeirlooms.u2 && game.global.lastHeirlooms.u2.Shield) {
+	else if (game.global.lastHeirlooms.u2 && game.global.lastHeirlooms.u2.Shield) {
 		if (game.global.lastHeirlooms.u2.Shield == game.global.ShieldEquipped.id) {
 			shield = game.global.ShieldEquipped;
 		} else {

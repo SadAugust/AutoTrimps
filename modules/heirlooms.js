@@ -189,6 +189,11 @@ function heirloomSwapping() {
 	//Swapping Shields
 	if (getPageSetting('heirloomShield')) {
 
+		if (MODULES.portal.portalForVoid) {
+			if (Object.keys(game.global.ShieldEquipped).length !== 0 && game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) unequipHeirloom(game.global.ShieldEquipped);
+			if (Object.keys(game.global.ShieldEquipped).length === 0 && game.permaBoneBonuses.voidMaps.tracker < (100 - game.permaBoneBonuses.voidMaps.owned)) HeirloomEquipShield('heirloomInitial');
+			return;
+		}
 		//Initial vars for swapping heirlooms
 		var isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 		var isDaily = challengeActive('Daily');
