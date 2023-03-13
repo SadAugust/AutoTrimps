@@ -8,11 +8,12 @@ var zonePostpone = 0;
 function autoPortal() {
 	if (challengeActive('Decay')) decayFinishChallenge();
 	if (!game.global.portalActive) return;
-	if (!MODULES.mapFunctions.portalForVoid) {
+	if (!MODULES.portal.portalForVoid) {
 		if (challengeActive('Daily') || game.global.runningChallengeSquared) return;
 		if (getPageSetting('autoPortal') === "Off") return;
 	}
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
+	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
 
 	var portalZone = getPageSetting('autoPortalZone');
 	//Set portal zone to current zone!
@@ -22,17 +23,17 @@ function autoPortal() {
 		if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) portalZone = game.global.world;
 	}
 
-	switch (getPageSetting('autoPortal')) {
+	switch (getPageSetting('autoPortal', universe)) {
 		case "Helium Per Hour":
 		case "Radon Per Hour":
 			var OKtoPortal = false;
 			if (!game.global.runningChallengeSquared) {
-				var minZone = getPageSetting('HeHrDontPortalBefore');
+				var minZone = getPageSetting('HeHrDontPortalBefore', universe);
 				game.stats.bestHeliumHourThisRun.evaluate();
 				var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
 				var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
 				var myHeliumHr = game.stats.heliumHour.value();
-				var heliumHrBuffer = Math.abs(getPageSetting('HeliumHrBuffer'));
+				var heliumHrBuffer = Math.abs(getPageSetting('HeliumHrBuffer', universe));
 				if (!aWholeNewWorld)
 					heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
 				var bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
@@ -52,8 +53,8 @@ function autoPortal() {
 					setTimeout(function () {
 						if (zonePostpone >= 2)
 							return;
-						if (getPageSetting('heliumHourChallenge') != 'None')
-							doPortal(getPageSetting('heliumHourChallenge'));
+						if (getPageSetting('heliumHourChallenge', universe) != 'None')
+							doPortal(getPageSetting('heliumHourChallenge', universe));
 						else
 							doPortal();
 					}, MODULES["portal"].timeout + 100);
@@ -62,8 +63,8 @@ function autoPortal() {
 			break;
 		case "Custom":
 			if (game.global.world >= portalZone) {
-				if (getPageSetting('heliumHourChallenge') != 'None')
-					doPortal(getPageSetting('heliumHourChallenge'));
+				if (getPageSetting('heliumHourChallenge', universe) != 'None')
+					doPortal(getPageSetting('heliumHourChallenge', universe));
 				else
 					doPortal();
 			}
@@ -71,8 +72,8 @@ function autoPortal() {
 		case "Challenge 2":
 		case "Challenge 3":
 			if (game.global.world >= portalZone) {
-				if (getPageSetting('heliumC2Challenge') != 'None')
-					doPortal(getPageSetting('heliumC2Challenge'), true);
+				if (getPageSetting('heliumC2Challenge', universe) != 'None')
+					doPortal(getPageSetting('heliumC2Challenge', universe), true);
 				else
 					doPortal();
 			}
@@ -102,7 +103,13 @@ function autoPortal() {
 		case "Hypothermia":
 		case "Desolation":
 			if (!game.global.challengeActive || MODULES.mapFunctions.portalZone === game.global.world) {
-				doPortal(getPageSetting('autoPortal'));
+				doPortal(getPageSetting('autoPortal', universe));
+			}
+			break;
+		case "Off":
+			if (game.global.world >= portalZone && (MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity)) {
+				portalClicked();
+				doPortal();
 			}
 			break;
 		default:
@@ -202,18 +209,18 @@ function c2runnerportal() {
 function c2runner() {
 	if (!game.global.portalActive) return;
 	if ((portalUniverse === 1 && game.global.highestLevelCleared < 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared < 48)) return;
-	if (!getPageSetting('c2RunnerStart')) return;
-	if (getPageSetting('c2RunnerPortal') <= 0 || getPageSetting('c2RunnerPercent') <= 0) return;
+	if (!getPageSetting('c2RunnerStart', portalUniverse)) return;
+	if (getPageSetting('c2RunnerPortal', portalUniverse) <= 0 || getPageSetting('c2RunnerPercent', portalUniverse) <= 0) return;
 
 	const challengeArray = [];
 	const universePrefix = game.global.universe === 2 ? 'C3 ' : 'C2 ';
 
 	//Adding U1 challenges
-	if (game.global.universe === 1) {
+	if (portalUniverse === 1) {
 		var highestZone = game.global.highestLevelCleared + 1;
 
 		//Adding Fused challenges to array if setting is toggled
-		if (getPageSetting('c2Fused')) {
+		if (getPageSetting('c2Fused', portalUniverse)) {
 			if (highestZone >= 45) challengeArray.push('Enlightened');
 			if (highestZone >= 180) challengeArray.push('Waze');
 			if (highestZone >= 180) challengeArray.push('Toxad');
@@ -237,7 +244,7 @@ function c2runner() {
 	}
 
 	//Adding U2 challenges
-	if (game.global.universe === 2) {
+	if (portalUniverse === 2) {
 		var highestZone = game.global.highestRadonLevelCleared + 1;
 		if (highestZone >= 50) challengeArray.push('Unlucky');
 		if (highestZone >= 50) challengeArray.push('Unbalance');
@@ -248,7 +255,7 @@ function c2runner() {
 		if (highestZone >= 201) challengeArray.push('Smithless');
 	}
 
-	const worldType = game.global.universe === 2 ? 'highestRadonLevelCleared' : 'highestLevelCleared';
+	const worldType = portalUniverse === 2 ? 'highestRadonLevelCleared' : 'highestLevelCleared';
 
 	//Checking regular challenges
 	for (var x = 0; x < challengeArray.length; x++) {
@@ -263,7 +270,7 @@ function c2runner() {
 			else challengeLevel += game.c2[challengeList[y]];
 		}
 
-		if ((100 * (challengeLevel / (game.global[worldType] + 1))) < getPageSetting('c2RunnerPercent')) {
+		if ((100 * (challengeLevel / (game.global[worldType] + 1))) < getPageSetting('c2RunnerPercent', portalUniverse)) {
 			if (challengeActive(challengeArray[x]))
 				continue;
 			if (!challengeSquaredMode)
