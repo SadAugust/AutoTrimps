@@ -17,7 +17,7 @@ function allocatePerky() {
 function read_save() {
 	//localStorage.zone || ($("#zone").value = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared);
 	var a = input("zone");
-	localStorage.preset ||
+	JSON.parse(localStorage.getItem("perkyInputs")).preset ||
 		($$("#preset > *").forEach(function (a) {
 			a.selected = parseInt(a.innerHTML.replace("z", "")) < game.global.highestLevelCleared;
 		}),
@@ -338,15 +338,17 @@ presets = {
 };
 
 function update_preset() {
+	let perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
+
 	var a = presets[$("#preset").value],
 		b = a[0],
 		c = a[1],
 		d = a[2],
 		e = Math.floor((+b + +c + +d) / 5).toString();
-	($("#weight-he").value = localStorage["weight-he"] || b),
-		($("#weight-atk").value = localStorage["weight-atk"] || c),
-		($("#weight-hp").value = localStorage["weight-hp"] || d),
-		($("#weight-xp").value = localStorage["weight-xp"] || e);
+	($("#weight-he").value = perkyInputs["weight-he"] || b),
+		($("#weight-atk").value = perkyInputs["weight-atk"] || c),
+		($("#weight-hp").value = perkyInputs["weight-hp"] || d),
+		($("#weight-xp").value = perkyInputs["weight-xp"] || e);
 }
 
 function savePerkySettings() {
