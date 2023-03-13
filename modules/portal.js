@@ -102,13 +102,12 @@ function autoPortal() {
 		case "Alchemy":
 		case "Hypothermia":
 		case "Desolation":
-			if (!game.global.challengeActive || MODULES.mapFunctions.portalZone === game.global.world) {
+			if (!game.global.challengeActive || (game.global.world >= portalZone && (MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity))) {
 				doPortal(getPageSetting('autoPortal', universe));
 			}
 			break;
 		case "Off":
 			if (game.global.world >= portalZone && (MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity)) {
-				portalClicked();
 				doPortal();
 			}
 			break;

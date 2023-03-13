@@ -2,6 +2,7 @@ var AutoPerks = {};
 
 function runPerky() {
 	if (portalUniverse !== 1) return;
+	if (JSON.parse(localStorage.getItem("perkyInputs")) === null) return;
 	read_save();
 	display(optimize(parse_inputs()));
 	allocatePerky();
