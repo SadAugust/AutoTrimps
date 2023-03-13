@@ -2605,21 +2605,24 @@ function HDFarm() {
 			}
 		}
 		var hdRatio = hdType === 'world' ? HDRatio : hdType === 'void' ? voidHDRatio : hdType === 'map' ? mapHDRatio : null;
-		if (hdRatio === null) return farmingDetails;
+		if (hdType !== 'maplevel' && hdRatio === null) return farmingDetails;
 
-		if (hdRatio > equipfarmdynamicHD(rHDFIndex))
+		if (hdType !== 'maplevel' ? hdRatio > equipfarmdynamicHD(rHDFIndex) : rHDFSettings.hdBase > autoLevel)
 			rShouldHDFarm = true;
 		//Skipping farm if map repeat value is greater than our max maps value
 		if (rShouldHDFarm && game.global.mapsActive && currentMap === mapName && game.global.mapRunCounter >= rHDFmaxMaps) {
 			rShouldHDFarm = false;
 		}
-		if (currentMap !== mapName && equipfarmdynamicHD(rHDFIndex) > hdRatio)
+		if (currentMap !== mapName && (hdType !== 'maplevel' ? equipfarmdynamicHD(rHDFIndex) > hdRatio : autoLevel > rHDFSettings.hdBase))
 			rShouldSkip = true;
 
 		if (((currentMap === mapName && !rShouldHDFarm) || rShouldSkip) && HDRatio !== Infinity) {
-			hdRatio = calcHDRatio(game.global.world, hdType);
+			if (hdType !== 'maplevel') hdRatio = calcHDRatio(game.global.world, hdType);
 			if (!rShouldSkip) mappingDetails(mapName, rHDFMapLevel, rHDFSpecial, hdRatio, equipfarmdynamicHD(rHDFIndex));
-			if (getPageSetting('spamMessages').map_Details && rShouldSkip) debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(rHDFIndex).toFixed(2) + ").");
+			if (getPageSetting('spamMessages').map_Details && rShouldSkip) {
+				if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(rHDFIndex).toFixed(2) + ").");
+				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel - " + rHDFSettings.hdBase + "/" + autoLevel + ").");
+			}
 			resetMapVars(rHDFSettings);
 			if (!dontRecycleMaps && game.global.mapsActive) {
 				mapsClicked(true);
@@ -2628,9 +2631,10 @@ function HDFarm() {
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHDFMapLevel || (getCurrentMapObject().bonus !== rHDFSpecial && (getCurrentMapObject().bonus !== undefined && rHDFSpecial !== '0')));
-		var status = 'HD&nbsp;Farm&nbsp;to:&nbsp;' + equipfarmdynamicHD(rHDFIndex).toFixed(2) + '<br>\
+		var status = hdType !== 'maplevel' ? 'HD&nbsp;Farm&nbsp;to:&nbsp;' + equipfarmdynamicHD(rHDFIndex).toFixed(2) + '<br>\
 		Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2) + '<br>\
-		Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + rHDFmaxMaps;
+		Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + rHDFmaxMaps :
+			'HD&nbsp;Farm&nbsp;to:&nbsp;' + (rHDFSettings.hdBase > 0 ? "+" : "") + rHDFSettings.hdBase + ' auto level';
 
 		farmingDetails.shouldRun = rShouldHDFarm;
 		farmingDetails.mapName = mapName;
@@ -3075,9 +3079,10 @@ function dailyOddOrEven() {
 		even: false,
 		oddMult: 0,
 		evenMult: 0,
-		skipZone: false,
+		skipZone: 0,
 		skipNextZone: 0
 	}
+	return result;
 	if (!challengeActive('Daily')) return result;
 	if (!getPageSetting('mapOddEvenIncrement')) return result;
 
@@ -3100,11 +3105,11 @@ function dailyOddOrEven() {
 
 	if (result.evenMult !== 0) {
 		if (game.global.world % 2 === 0) result.skipZone = true;
-		else result.skipNextZone = 1;
+		else result.skipNextZone = true;
 	}
 	else if (result.oddMult !== 0) {
 		if (game.global.world % 2 === 1) result.skipZone = true;
-		else result.skipNextZone = 1;
+		else result.skipNextZone = true;
 	}
 
 	return result;
@@ -3226,8 +3231,12 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 		message += " Finished with enough damage to get " + extra + "/3 stacks.";
 	}
 
-	else if (mapName === 'HD Farm') {
+	else if (mapName === 'HD Farm' && extra !== null) {
 		message += " Finished with a HD Ratio of " + extra.toFixed(2) + "/" + extra2.toFixed(2) + ".";
+	}
+
+	else if (mapName === 'HD Farm') {
+		message += " Finished with an auto level of " + (autoLevel > 0 ? "+" : "") + autoLevel + ".";
 	}
 
 	debug(message);

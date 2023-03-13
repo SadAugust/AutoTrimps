@@ -1994,8 +1994,9 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 
 	if (runType === 'hdType') {
 		dropdown += "<option value='world'" + ((MAZ == 'world') ? " selected='selected'" : "") + ">World</option >\
-		<option value='map'" + ((MAZ == 'map') ? " selected = 'selected'" : "") + " > Map</option >\
-		<option value='void'" + ((MAZ == 'void') ? " selected = 'selected'" : "") + " > Void</option >"
+		<option value='map'" + ((MAZ == 'map') ? " selected = 'selected'" : "") + " >Map</option >\
+		<option value='void'" + ((MAZ == 'void') ? " selected = 'selected'" : "") + " >Void</option >\
+		<option value='maplevel'" + ((MAZ == 'maplevel') ? " selected = 'selected'" : "") + " >Map Level</option >"
 	}
 
 	if (runType === 'prestigeGoal') {

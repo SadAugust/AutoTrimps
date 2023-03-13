@@ -407,7 +407,6 @@ function initializeAllSettings() {
 			'boolean', false, null, 'Daily', [1],
 			function () { return (autoTrimpSettings.use3daily.enabled) });
 
-
 		createSetting('buyradony',
 			function () { return ('Buy Radonculous %') },
 			function () { return ('Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ') },
@@ -431,7 +430,8 @@ function initializeAllSettings() {
 				return ('Will automatically increment your farming settings world input by 1 if the current zone has a negative even or odd related buff. If the daily has both types of mods it\'ll continue running them as normal.<br>\
 		Won\'t do anything to Prestige Raiding inputs.')
 			}
-			, 'boolean', false, null, 'Daily', [2]);
+			, 'boolean', false, null, 'Daily', [2],
+			function () { return (false) });
 
 		//Daily Portal
 		createSetting('dailyPortalStart',
@@ -551,26 +551,35 @@ function initializeAllSettings() {
 			function () { return (cinf() + ' Runner') },
 			function () { return ('Runs the normal ' + cinf() + 's in sequence according to difficulty. See \'' + cinf() + ' Table\' for a list of challenges that this can run. Once zone you have defined has been reached, will portal into next. Only runs challenges that need updating, will not run ones close-ish to your HZE. ') },
 			'boolean', false, null, 'C2', [1, 2]);
-		/* createSetting('c2RunnerSettings',
-			function () { return (cinf() + ' Settings') },
+		/* createSetting('c2RunnerMode',
+			function () { return ([cinf() + ' Runner %', cinf() + ' Runner Set Values']) },
+			function () {
+				return ('Toggles between the two types of modes that ' + cinf() + ' Runner can use. It\'s only recommended to use  \'' + cinf() + ' Runner Set Values\' at endgame. <br>\
+			<b>' + cinf() + ' Runner %</b> Will run ' + cinf() + 's when they are below a set percentage of your HZE. <br>\
+			<b>'+ cinf() + ' Runner Set Values</b> Uses the \'' + cinf() + ' Runner Settings\' popup and will run enabled ' + cinf() + 's when they are below the designated end zone. <br>')
+			},
+			'multitoggle', 0, null, 'C2', [1, 2],
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
+		createSetting('c2RunnerSettings',
+			function () { return (cinf() + ' Runner Settings') },
 			function () { return ('Click to adjust settings.') },
 			'mazArray', [], 'MAZLookalike("C2 Runner", "c2Runner", "c2Runner")', 'C2', [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) }); */
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1) }); */
 		createSetting('c2RunnerPortal',
 			function () { return (cinf() + ' Runner Portal') },
 			function () { return ('Automatically portal when this level is reached in ' + cinf() + ' Runner. Set to 0 or -1 to disable.') },
 			'value', '-1', null, 'C2', [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) /* && getPageSetting('c2RunnerMode', currSettingUniverse) === 0 */) });
 		createSetting('c2RunnerPercent',
 			function () { return (cinf() + ' Runner %') },
 			function () { return ('What percent Threshhold you want ' + cinf() + 's to be over. E.g 85, will only run ' + cinf() + 's with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ') },
 			'value', '85', null, 'C2', [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) /* && getPageSetting('c2RunnerMode', currSettingUniverse) === 0 */) });
 		createSetting('c2Fused',
 			function () { return ('Fused ' + cinf() + 's') },
 			function () { return ('Will make ' + cinf() + ' runner do fused versions of the ' + cinf() + 's rather than normal version to reduce time spent running ' + cinf() + 's.') },
 			'boolean', false, null, 'C2', [1],
-			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) /* && getPageSetting('c2RunnerMode', currSettingUniverse) === 0 */) });
 
 		//Balance
 		createSetting('balance',
