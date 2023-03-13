@@ -196,7 +196,6 @@ function getTrimpHealth(realHealth, mapType) {
 	//Pressure (Dailies)
 	health *= typeof game.global.dailyChallenge.pressure !== 'undefined' ? dailyModifiers.pressure.getMult(game.global.dailyChallenge.pressure.strength, game.global.dailyChallenge.pressure.stacks) : 1;
 
-
 	//Challenges
 	if (challengeActive('Life') && !realHealth) health *= game.challenges.Life.getHealthMult();
 	else if (challengeActive('Balance') && !realHealth) health *= game.challenges.Balance.getHealthMult();
@@ -205,18 +204,12 @@ function getTrimpHealth(realHealth, mapType) {
 	health *= challengeActive('Alchemy') ? alchObj.getPotionEffect('Potion of Strength') : 1;
 	//Duel Mult
 	//health *= challengeActive('Duel') && game.challenges.Duel.trimpStacks < 20 ? game.challenges.Duel.healthMult : 1;
-	//Revenge Mult
 	health *= challengeActive('Revenge') && game.challenges.Revenge.stacks > 0 ? game.challenges.Revenge.getMult() : 1;
-	//Wither Mult
 	health *= challengeActive('Wither') && game.challenges.Wither.trimpStacks > 0 ? game.challenges.Wither.getTrimpHealthMult() : 1;
-	//Insanity Mult
 	health *= challengeActive('Insanity') ? game.challenges.Insanity.getHealthMult() : 1;
-	//Berserk Mult
 	health *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks > 0 ? game.challenges.Berserk.getHealthMult() : 1;
 	health *= challengeActive('Berserk') && game.challenges.Berserk.frenzyStacks <= 0 ? game.challenges.Berserk.getHealthMult(true) : 1;
-	//Nurture Mult
-	health *= challengeActive('Nurture') && game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
-	//Smithies (smithless challenge)
+	health *= game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
 	health *= challengeActive('Smithless') && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 
 	return health;
@@ -513,7 +506,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	attack *= challengeActive('Archaeology') ? game.challenges.Archaeology.getStatMult('attack') : 1;
 	attack *= challengeActive('Storm') && game.global.mapsActive ? Math.pow(0.9995, game.challenges.Storm.beta) : 1;
 	attack *= challengeActive('Berserk') ? game.challenges.Berserk.getAttackMult() : 1;
-	attack *= challengeActive('Nurture') && game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
+	attack *= game.challenges.Nurture.boostsActive() ? game.challenges.Nurture.getStatBoost() : 1;
 	attack *= challengeActive('Alchemy') ? alchObj.getPotionEffect('Potion of Strength') : 1;
 	attack *= challengeActive('Smithless') && game.challenges.Smithless.fakeSmithies > 0 ? Math.pow(1.25, game.challenges.Smithless.fakeSmithies) : 1;
 
@@ -807,8 +800,10 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	//Purposefully don't put Storm in here.
 	else if (challengeActive('Storm') && !game.global.mapsActive) attack *= game.challenges.Storm.getAttackMult();
 	else if (challengeActive('Exterminate')) attack *= game.challenges.Exterminate.getSwarmMult();
-	else if (challengeActive('Nurture')) attack *= 2;
-	else if (challengeActive('Nurture') && game.buildings.Laboratory.owned > 0) attack *= game.buildings.Laboratory.getEnemyMult();
+	else if (challengeActive('Nurture')) {
+		attack *= 2;
+		attack *= game.buildings.Laboratory.getEnemyMult();
+	}
 	else if (challengeActive('Pandemonium') && type === 'world') attack *= game.challenges.Pandemonium.getBossMult();
 	else if (challengeActive('Pandemonium') && type !== 'world') attack *= game.challenges.Pandemonium.getPandMult();
 	else if (challengeActive('Desolation')) attack *= game.challenges.Desolation.getEnemyMult();
@@ -1074,7 +1069,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	//health *= challengeActive('Berserk') ? 1.5 : 1;
 	health *= challengeActive('Exterminate') ? game.challenges.Exterminate.getSwarmMult() : 1;
 	if (challengeActive('Nurture')) {
-		health *= type === 'world' ? 2 : type !== 'world' ? 10 : 1;
+		health *= type === 'world' ? 2 : 10;
 		health *= game.buildings.Laboratory.owned > 0 ? game.buildings.Laboratory.getEnemyMult() : 1;
 	}
 	if (challengeActive('Pandemonium')) health *= type === 'world' ? game.challenges.Pandemonium.getBossMult() : type !== 'world' ? game.challenges.Pandemonium.getPandMult() : 1;

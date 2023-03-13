@@ -551,6 +551,11 @@ function initializeAllSettings() {
 			function () { return (cinf() + ' Runner') },
 			function () { return ('Runs the normal ' + cinf() + 's in sequence according to difficulty. See \'' + cinf() + ' Table\' for a list of challenges that this can run. Once zone you have defined has been reached, will portal into next. Only runs challenges that need updating, will not run ones close-ish to your HZE. ') },
 			'boolean', false, null, 'C2', [1, 2]);
+		/* createSetting('c2RunnerSettings',
+			function () { return (cinf() + ' Settings') },
+			function () { return ('Click to adjust settings.') },
+			'mazArray', [], 'MAZLookalike("C2 Runner", "c2Runner", "c2Runner")', 'C2', [1, 2],
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) }); */
 		createSetting('c2RunnerPortal',
 			function () { return (cinf() + ' Runner Portal') },
 			function () { return ('Automatically portal when this level is reached in ' + cinf() + ' Runner. Set to 0 or -1 to disable.') },
@@ -868,60 +873,44 @@ function initializeAllSettings() {
 			function () { return (autoTrimpSettings.archaeology.enabledU2) });
 
 		//Quagmire
-		createSetting('quagmirePopup',
-			function () { return ('Quagmire Settings') },
-			function () { return ('Click to adjust settings. ') },
-			'action', 'MAZLookalike("Quagmire Farm", "Quagmire", "MAZ")', null, 'Challenges', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 70) });
 		createSetting('quagmireSettings',
 			function () { return ('Quagmire Settings') },
 			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Challenges', [2]);
+			'mazArray', [], 'MAZLookalike("Quagmire Farm", "Quagmire", "MAZ")', 'Challenges', [2],
+			function () { return (game.global.highestRadonLevelCleared + 1 >= 70) });
 		createSetting('quagmireDefaultSettings',
-			function () { return ('Quagmire Settings') },
+			function () { return ('Quagmire Default Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Challenges', [2]);
 
 		//Insanity
-		createSetting('insanityPopup',
-			function () { return ('Insanity Settings') },
-			function () { return ('Click to adjust settings. ') },
-			'action', 'MAZLookalike("Insanity Farm", "Insanity", "MAZ")', null, 'Challenges', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 110) });
 		createSetting('insanitySettings',
 			function () { return ('Insanity Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Challenges', [2]);
+			function () { return ('Click to adjust settings. ') },
+			'mazArray', [], 'MAZLookalike("Insanity Farm", "Insanity", "MAZ")', 'Challenges', [2],
+			function () { return (game.global.highestRadonLevelCleared + 1 >= 110) });
 		createSetting('insanityDefaultSettings',
 			function () { return ('Insanity Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Challenges', [2]);
 
 		//Alchemy
-		createSetting('alchemyPopup',
-			function () { return ('Alchemy Settings') },
-			function () { return ('Click to adjust settings.') },
-			'action', 'MAZLookalike("Alchemy Farm", "Alchemy", "MAZ")', null, 'Challenges', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 155) });
 		createSetting('alchemySettings',
 			function () { return ('Alchemy Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Challenges', [2]);
+			function () { return ('Click to adjust settings.') },
+			'mazArray', [], 'MAZLookalike("Alchemy Farm", "Alchemy", "MAZ")', 'Challenges', [2],
+			function () { return (game.global.highestRadonLevelCleared + 1 >= 155) });
 		createSetting('alchemyDefaultSettings',
 			function () { return ('Alchemy Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Challenges', [2]);
 
 		//Hypothermia
-		createSetting('hypothermiaPopup',
-			function () { return ('Hypothermia Settings') },
-			function () { return ('Click to adjust settings.') },
-			'action', 'MAZLookalike("Hypothermia Farm", "Hypothermia", "MAZ")', null, 'Challenges', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 175) });
 		createSetting('hypothermiaSettings',
 			function () { return ('Hypothermia Settings') },
 			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Challenges', [2]);
+			'mazArray', [], 'MAZLookalike("Hypothermia Farm", "Hypothermia", "MAZ")', 'Challenges', [2],
+			function () { return (game.global.highestRadonLevelCleared + 1 >= 175) });
 		createSetting('hypothermiaDefaultSettings',
 			function () { return ('Hypothermia Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1139,9 +1128,9 @@ function initializeAllSettings() {
 			'boolean', false, null, 'Maps', [1, 2]);
 
 		createSetting('uniqueMapSettingsArray',
-			function () { return ('Unqiue Map Settings') },
+			function () { return ('Unique Map Settings') },
 			function () { return ('Click to adjust settings.') },
-			'mazDefaultArray', {
+			'mazArray', {
 			The_Wall: { enabled: false, zone: 100, cell: 0 },
 			The_Block: { enabled: false, zone: 100, cell: 0 },
 			Dimension_of_Anger: { enabled: false, zone: 100, cell: 0 },
@@ -1158,12 +1147,7 @@ function initializeAllSettings() {
 			MP_Smithy: { enabled: false, value: 100 },
 			MP_Smithy_Daily: { enabled: false, value: 100 },
 			MP_Smithy_C3: { enabled: false, value: 100 },
-		}, null, 'Maps', [1, 2]);
-
-		createSetting('uniqueMapPopup',
-			function () { return ('Unique Map Settings') },
-			function () { return ('Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.') },
-			'action', 'MAZLookalike("Unique Maps", " ", "UniqueMaps")', null, 'Maps', [1, 2]);
+		}, 'MAZLookalike("Unique Maps", " ", "UniqueMaps")', 'Maps', [1, 2]);
 
 		createSetting('mapBonusRatio',
 			function () { return ('Map Bonus Ratio') },
@@ -1180,71 +1164,50 @@ function initializeAllSettings() {
 			'boolean', false, null, 'Maps', [1]);
 
 		//HD Farm
-		createSetting('hdFarmPopup',
-			function () { return ('HD Farm Settings') },
-			function () { return ('Click to adjust settings. Not fully implemented yet, still need to add in an Atlantrimp setting.') },
-			'action', 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', null, 'Maps', [1, 2]);
 		createSetting('hdFarmSettings',
-			function () { return ('HD Farm: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Maps', [1, 2]);
+			function () { return ('HD Farm Settings') },
+			function () { return ('Click to adjust settings.') },
+			'mazArray', [], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
 		createSetting('hdFarmDefaultSettings',
 			function () { return ('HD Farm: Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Maps', [1, 2]);
 
-		//Void Maps
-		createSetting('voidMapPopup',
-			function () { return ('Void Map Settings') },
-			function () { return ('Will run all of your Void Maps on a specified zone according to this settings value.') },
-			'action', 'MAZLookalike("Void Map", "VoidMap", "MAZ")', null, 'Maps', [1, 2]);
 		createSetting('voidMapSettings',
 			function () { return ('Void Map Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Maps', [1, 2]);
+			function () { return ('Will run all of your Void Maps on a specified zone according to this settings value.') },
+			'mazArray', [], 'MAZLookalike("Void Map", "VoidMap", "MAZ")', 'Maps', [1, 2]);
 		createSetting('voidMapDefaultSettings',
 			function () { return ('Void Map Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Maps', [1, 2]);
 
 		//Bone Shrine (bone) 
-		createSetting('boneShrinePopup',
+		createSetting('boneShrineSettings',
 			function () { return ('Bone Shrine Settings') },
 			function () { return ('Will use a specified amount of Bone Shrine charges according to this settings value.') },
-			'action', 'MAZLookalike("Bone Shrine", "BoneShrine", "MAZ")', null, 'Maps', [1, 2]);
-		createSetting('boneShrineSettings',
-			function () { return ('BS: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Maps', [1, 2]);
+			'mazArray', [], 'MAZLookalike("Bone Shrine", "BoneShrine", "MAZ")', 'Maps', [1, 2]);
 		createSetting('boneShrineDefaultSettings',
 			function () { return ('BS: Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Maps', [1, 2]);
 
 		//Worshipper Farm 
-		createSetting('worshipperFarmPopup',
+		createSetting('worshipperFarmSettings',
 			function () { return ('Worshipper Farm Settings') },
 			function () { return ('Will farm to a specified amount of Worshippers according to this settings value.') },
-			'action', 'MAZLookalike("Worshipper Farm", "WorshipperFarm", "MAZ")', null, 'Maps', [2],
+			'mazArray', [], 'MAZLookalike("Worshipper Farm", "WorshipperFarm", "MAZ")', 'Maps', [2],
 			function () { return game.global.highestRadonLevelCleared + 1 >= 50 });
-		createSetting('worshipperFarmSettings',
-			function () { return ('WF: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Maps', [2]);
 		createSetting('worshipperFarmDefaultSettings',
 			function () { return ('WF: Default Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Maps', [2]);
 
 		//Map Bonus
-		createSetting('mapBonusPopup',
+		createSetting('mapBonusSettings',
 			function () { return ('Map Bonus Settings') },
 			function () { return ('Will map stack to a specified amount according to this settings value.') },
-			'action', 'MAZLookalike("Map Bonus", "MapBonus", "MAZ")', null, 'Maps', [1, 2]);
-		createSetting('mapBonusSettings',
-			function () { return ('Map Bonus: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Maps', [1, 2]);
+			'mazArray', [], 'MAZLookalike("Map Bonus", "MapBonus", "MAZ")', 'Maps', [1, 2]);
 		createSetting('mapBonusDefaultSettings',
 			function () { return ('Map Bonus: Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1255,70 +1218,50 @@ function initializeAllSettings() {
 			'multiValue', [6], null, 'Legacy', [1, 2]);
 
 		//Map Farm
-		createSetting('mapFarmPopup',
+		createSetting('mapFarmSettings',
 			function () { return ('Map Farm Settings') },
 			function () { return ('Will farm a specified amount of maps according to this settings value.') },
-			'action', 'MAZLookalike("Map Farm", "MapFarm", "MAZ")', null, 'Maps', [1, 2]);
-		createSetting('mapFarmSettings',
-			function () { return ('MF: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Maps', [1, 2]);
+			'mazArray', [], 'MAZLookalike("Map Farm", "MapFarm", "MAZ")', 'Maps', [1, 2]);
 		createSetting('mapFarmDefaultSettings',
 			function () { return ('MF: Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Maps', [1, 2]);
 
 		//Prestige Raiding
-		createSetting('raidingPopup',
+		createSetting('raidingSettings',
 			function () { return ('Raiding Settings') },
 			function () { return ('Will raid up to a specified zone according to this settings value.') },
-			'action', 'MAZLookalike("Raiding", "Raiding", "MAZ")', null, 'Maps', [1, 2]);
-		createSetting('raidingSettings',
-			function () { return ('Raiding: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Maps', [1, 2]);
+			'mazArray', [], 'MAZLookalike("Raiding", "Raiding", "MAZ")', 'Maps', [1, 2]);
 		createSetting('raidingDefaultSettings',
 			function () { return ('Raiding: Default Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Maps', [1, 2]);
 
 		//Bionic Raiding
-		createSetting('bionicRaidingPopup',
-			function () { return ('BW Raiding Settings') },
-			function () { return ('Will Bionic Wonderlands up to a specified zone according to this settings value.') },
-			'action', 'MAZLookalike("Bionic Raiding", "BionicRaiding", "MAZ")', null, 'Maps', [1]);
 		createSetting('bionicRaidingSettings',
-			function () { return ('Raiding: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Maps', [1]);
+			function () { return ('BW Raiding Settings') },
+			function () { return ('Will run Bionic Wonderlands up to a specified zone according to this settings value.') },
+			'mazArray', [], 'MAZLookalike("Bionic Raiding", "BionicRaiding", "MAZ")', 'Maps', [1]);
 		createSetting('bionicRaidingDefaultSettings',
 			function () { return ('Raiding: Default Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Maps', [1]);
 
 		//Tribute Farming
-		createSetting('tributeFarmPopup',
-			function () { return ('Tribute Farm Settings') },
-			function () { return ('Will farm for a specified amount of Tributes/Meteorologists according to this settings value.') },
-			'action', 'MAZLookalike("Tribute Farm", "TributeFarm", "MAZ")', null, 'Maps', [2]);
 		createSetting('tributeFarmSettings',
-			function () { return ('TrF: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Maps', [2]);
+			function () { return ('Tribute Farm Settings') },
+			function () { return ('Will farm for a specified amount of Tributes or Meteorologists according to this settings value.') },
+			'mazArray', [], 'MAZLookalike("Tribute Farm", "TributeFarm", "MAZ")', 'Maps', [2]);
 		createSetting('tributeFarmDefaultSettings',
 			function () { return ('TrF: Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Maps', [2]);
 
 		//Smithy Farming
-		createSetting('smithyFarmPopup',
+		createSetting('smithyFarmSettings',
 			function () { return ('Smithy Farm Settings') },
 			function () { return ('Will farm for a specified amount of Smithies according to this settings value.') },
-			'action', 'MAZLookalike("Smithy Farm", "SmithyFarm", "MAZ")', null, 'Maps', [2]);
-		createSetting('smithyFarmSettings',
-			function () { return ('SF: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Maps', [2]);
+			'mazArray', [], 'MAZLookalike("Smithy Farm", "SmithyFarm", "MAZ")', 'Maps', [2]);
 		createSetting('smithyFarmDefaultSettings',
 			function () { return ('SF: Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -2022,31 +1965,18 @@ function initializeAllSettings() {
 	//Golden //Done
 	const displayGolden = true;
 	if (displayGolden) {
-		//Helium
-		createSetting('autoGoldenPopup',
-			function () { return ('Auto Gold Settings') },
-			function () { return ('Click to adjust settings. ') },
-			'action', 'MAZLookalike("Auto Golden", "AutoGolden", "MAZ")', null, 'Golden', [1, 2]);
 		createSetting('autoGoldenSettings',
-			function () { return ('AutoGoldenUpgrades') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Golden', [1, 2]);
-		createSetting('autoGoldenDailyPopup',
-			function () { return ('Daily Auto Gold Settings') },
-			function () { return ('Click to adjust settings. ') },
-			'action', 'MAZLookalike("Daily Auto Golden", "AutoGoldenDaily", "MAZ")', null, 'Golden', [1, 2]);
+			function () { return ('Auto Gold Settings') },
+			function () { return ('Click to adjust settings.') },
+			'mazArray', [], 'MAZLookalike("Auto Golden", "AutoGolden", "MAZ")', 'Golden', [1, 2]);
 		createSetting('autoGoldenDailySettings',
-			function () { return ('Daily AutoGoldenUpgrades') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Golden', [1, 2]);
-		createSetting('autoGoldenC3Popup',
-			function () { return (cinf() + ' Auto Gold Settings') },
-			function () { return ('Click to adjust settings. ') },
-			'action', 'MAZLookalike("C3 Auto Golden", "AutoGoldenC3", "MAZ")', null, 'Golden', [1, 2]);
+			function () { return ('Daily Auto Gold Settings') },
+			function () { return ('Click to adjust settings.') },
+			'mazArray', [], 'MAZLookalike("Daily Auto Golden", "AutoGoldenDaily", "MAZ")', 'Golden', [1, 2]);
 		createSetting('autoGoldenC3Settings',
-			function () { return (cinf() + ' AutoGoldenUpgrades') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], null, 'Golden', [1, 2]);
+			function () { return (cinf() + 'Auto Gold Settings') },
+			function () { return ('Click to adjust settings.') },
+			'mazArray', [], 'MAZLookalike("C3 Auto Golden", "AutoGoldenC3", "MAZ")', 'Golden', [1, 2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -2302,7 +2232,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
 
-	} else if (type == 'value' || type == 'valueNegative' || type == 'mazArray' || type == 'mazDefaultArray') {
+	} else if (type == 'value' || type == 'valueNegative' || type == 'mazDefaultArray') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
 				id: id,
@@ -2489,6 +2419,29 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			autoPortalContainer.appendChild(autoPortalSettings);
 			autoPortalSettings.appendChild(autoPortalSettingsButton);
 		}
+	} else if (type === 'mazArray') {
+		if (!(loaded && id == loaded.id && loaded.type === type))
+			autoTrimpSettings[id] = {
+				id: id,
+				name: name,
+				description: description,
+				type: type,
+				value: loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value,
+				valueU2: loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2,
+				universe: universe
+			};
+		//btn.setAttribute("style", "font-size: 1.1vw;");
+		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
+		btn.setAttribute('onclick', list);
+		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
+		btn.setAttribute("onmouseout", 'tooltip("hide")');
+		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
+		btn.innerHTML = name();
+		btnParent.appendChild(btn);
+		if (require) autoTrimpSettings[id].require = require
+		if (container) document.getElementById(container).appendChild(btnParent);
+		else document.getElementById("autoSettings").appendChild(btnParent);
+		return;
 	} else if (type === 'action') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
@@ -2651,7 +2604,7 @@ function modifyParentNodeUniverseSwap() {
 	//Maps
 	//Helium Settings
 	modifyParentNode("scryvoidmaps", 'show');
-	modifyParentNode("worshipperFarmPopup", 'show');
+	modifyParentNode("worshipperFarmSettings", 'show');
 
 	//Gear equipNoShields
 	modifyParentNode("equipNoShields", 'show');
@@ -3215,7 +3168,7 @@ function updateCustomButtons(initialLoad) {
 		if (item === null || typeof item.id === 'undefined') continue;
 		const settingUniverse = item.universe;
 		if (!Array.isArray(settingUniverse)) continue;
-		if (item.type === 'mazArray' || item.type === 'mazDefaultArray') {
+		if (item.type === 'mazDefaultArray') {
 			turnOff(setting);
 		} else if (settingUniverse.indexOf(currSettingUniverse) !== -1) {
 			turnOn(setting, radonon);

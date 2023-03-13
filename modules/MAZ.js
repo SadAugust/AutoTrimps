@@ -68,7 +68,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 	}
 
 	//AutoStructure
-	if (event == "AutoStructure") {
+	else if (event == "AutoStructure") {
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, the 'Perc:' box specifies the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the 'Perc:' box to 10 and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses.</p><p><b>Safe Gateway:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a Perfect +10 LMC map would cost up to the zone specified in 'Till Z:', if that values is 0 it'll assume you want them capped forever.</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
@@ -132,7 +132,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 	}
 
 	//Map tab - Special Maps!
-	if (event == "UniqueMaps") {
+	else if (event == "UniqueMaps") {
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>\
 		<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input.\
 		</p></div><table id='autoPurchaseConfigTable' style='font-size: 1.1vw;'><tbody>";
@@ -225,7 +225,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		};
 	}
 
-	if (event == "MessageConfig") {
+	else if (event == "MessageConfig") {
 		tooltipText = "<div id='messageConfig'>Here you can finely tune your message settings. Mouse over the name of a filter for more info.</div>";
 		var value = 'value';
 		if (game.global.universe === 2) value += 'U2';
@@ -252,7 +252,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 	}
 
 	//Daily Auto Portal
-	if (event == "DailyAutoPortal") {
+	else if (event == "DailyAutoPortal") {
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose different portal zones depending on specific modifiers that the daily you're running has. For example if your Daily has a resource empower modifier and you have '-3' input in that box then it will set both your void map zone and daily portal zone to 3 zones lower than your settings. Will only ever use the lowest value that is listed so you can't do a combination of -6 for dailies that have both Empower and Famine by doing a -3 in each box.\
 		</p><p><b>Reflect:</b> % damage reflect damage modifier\
 		</p><p><b>Empower:</b> Empower modifier.\
@@ -303,8 +303,87 @@ function MAZLookalike(titleText, varPrefix, event) {
 		};
 	}
 
+	//C2/C3 Runner settings
+	else if (event == "c2Runner") {
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to C2 Runner Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can select which challenges you would like C2 runner to complete and the zone you'd like for the respective challenge to finish at.\
+		</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+
+		var count = 0;
+		var setting, checkbox;
+		//var settingGroup = game.global.universe === 1 ? 1 : 1;
+		settingGroup = {};
+
+		if (currSettingUniverse === 1) {
+			var highestZone = game.global.highestLevelCleared + 1;
+			if (getTotalPerkResource(true) >= 30) settingGroup.Discipline = {};
+			if (highestZone >= 25) settingGroup.Metal = {};
+			if (highestZone >= 35) settingGroup.Size = {};
+			if (highestZone >= 40) settingGroup.Balance = {};
+			if (highestZone >= 45) settingGroup.Meditate = {};
+			if (highestZone >= 60) settingGroup.Trimp = {};
+			if (highestZone >= 70) settingGroup.Trapper = {};
+			if (game.global.prisonClear >= 1) settingGroup.Electricity = {};
+			if (highestZone >= 120) settingGroup.Coordinate = {};
+			if (highestZone >= 130) settingGroup.Slow = {};
+			if (highestZone >= 145) settingGroup.Nom = {};
+			if (highestZone >= 150) settingGroup.Mapology = {};
+			if (highestZone >= 165) settingGroup.Toxicity = {};
+			if (highestZone >= 180) settingGroup.Watch = {};
+			if (highestZone >= 180) settingGroup.Lead = {};
+			if (highestZone >= 425) settingGroup.Obliterated = {};
+			if (game.global.totalSquaredReward >= 4500) settingGroup.Eradicated = {};
+		}
+		else if (currSettingUniverse === 2) {
+			var radonHZE = game.global.highestRadonLevelCleared + 1;
+			if (radonHZE >= 15) settingGroup.Unlucky = {};
+			if (radonHZE >= 20) settingGroup.Downsize = {};
+			if (radonHZE >= 25) settingGroup.Transmute = {};
+			if (radonHZE >= 35) settingGroup.Unbalance = {};
+			if (radonHZE >= 45) settingGroup.Duel = {};
+			if (radonHZE >= 60) settingGroup.Trappapalooza = {};
+			if (radonHZE >= 70) settingGroup.Wither = {};
+			if (radonHZE >= 85) settingGroup.Quest = {};
+			if (radonHZE >= 105) settingGroup.Storm = {};
+			if (radonHZE >= 115) settingGroup.Berserk = {};
+			if (radonHZE >= 175) settingGroup.Glass = {};
+			if (radonHZE >= 201) settingGroup.Smithless = {};
+		}
+
+		//Skip Lines to seperate
+		tooltipText += "</td></tr><tr>";
+
+		//Plus&Minus Portal&Void zone settings.
+		for (var item in settingGroup) {
+			if (count != 0 && count % 2 == 0) tooltipText += "</tr><tr>";
+			setting = getPageSetting('c2RunnerSettings', currSettingUniverse)[item] !== 'undefined' ?
+				getPageSetting('c2RunnerSettings', currSettingUniverse)[item] :
+				setting = (item = { enabled: false, zone: 0 });
+			checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', (setting && setting.enabled));
+			var itemName = item;
+			//Start
+			tooltipText += "<td><div class='row'>"
+			//Checkbox & name
+			tooltipText += "<div class='col-xs-6' style='width: 40%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + itemName + "</span></div>"
+			//Zone options
+			tooltipText += "<div class='col-xs-6' style='width: 60%; text-align: right'>End Zone: <input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 0) + "'/></div>";
+			//Finish
+			tooltipText += "</div></td>";
+			count++;
+		}
+		tooltipText += "</tr>";
+		tooltipText += "</div></td></tr>";
+		tooltipText += "</tbody></table>";
+		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='saveC2RunnerSettings()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
+		game.global.lockTooltip = true;
+		elem.style.left = "33.75%";
+		elem.style.top = "25%";
+		ondisplay = function () {
+			verticalCenterTooltip(true);
+		};
+	}
+
 	//Farming Settings
-	if (event == 'MAZ') {
+	else if (event == 'MAZ') {
 
 		var mapFarm = titleText.includes('Map Farm');
 		var mapBonus = titleText.includes('Map Bonus');
@@ -1632,6 +1711,30 @@ function saveATDailyAutoPortalConfig() {
 	}
 
 	setPageSetting('dailyPortalSettingsArray', setting, currSettingUniverse);
+	cancelTooltip();
+	saveSettings();
+}
+
+function saveC2RunnerSettings() {
+
+	var setting = getPageSetting('c2RunnerSettings', currSettingUniverse);
+	var checkboxes = document.getElementsByClassName('autoCheckbox');
+	var percentboxes = document.getElementsByClassName('structConfigPercent');
+
+	for (var x = 0; x < checkboxes.length; x++) {
+		var name = checkboxes[x].id.split('structConfig')[1];
+		var checked = (checkboxes[x].dataset.checked == 'true');
+		//if (!checked && !setting[name]) continue;
+		if (!setting[name]) setting[name] = {};
+		setting[name].enabled = checked;
+
+		var zone = parseInt(percentboxes[x].value, 10);
+		if (zone > 100) zone = 100;
+		zone = (Number.isInteger(zone)) ? zone : 0;
+		setting[name].zone = zone;
+	}
+
+	setPageSetting('c2RunnerSettings', setting, currSettingUniverse);
 	cancelTooltip();
 	saveSettings();
 }
