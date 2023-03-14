@@ -793,6 +793,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
 				className += (vals.runType === 'Filler') ?
 					" windowChallengeOn" + varPrefix + "" : " windowChallengeOff" + varPrefix + "";
+			if (hdFarm)
+				className += (vals.hdType === 'maplevel') ?
+					" windowMapLevelOff" + "" : " windowMapLevelOn" + "";
 			className += (x <= current.length - 1) ? " active" : "  disabled";
 			tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
 			if (!golden) tooltipText += "<div class='windowDelete" + varPrefix + "\' onclick='removeRow(\"" + x + "\",\"" + titleText + "\", true)'><span class='icomoon icon-cross'></span></div>";
@@ -828,7 +831,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (smithyFarm)
 				tooltipText += "<div class='windowSmithies'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
 			if (hdFarm)
-				tooltipText += "<div class='windowHDBase'><input value='" + vals.hdBase + "' type='number' id='windowRepeat" + x + "'/></div>";
+				tooltipText += "<div class='windowHDBase'>\<div style='text-align: center; font-size: 0.6vw;'>" + (vals.hdType === 'maplevel' ? "Map Level" : "") + "</div>\<input value='" + vals.hdBase + "' type='number' id='windowRepeat" + x + "'/></div>";
 			if (hdFarm)
 				tooltipText += "<div class='windowHDMult'><input value='" + vals.hdMult + "' type='number' id='windowHDMult" + x + "'/></div>";
 			if (tributeFarm)
@@ -844,7 +847,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (golden)
 				tooltipText += "<div class='windowTypeAutoGolden' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.goldentype + "' id='windowGoldenType" + x + "'>" + goldenDropdown + "</select></div>"
 			if (hdFarm)
-				tooltipText += "<div class='windowHDType' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.hdType + "' id='windowHDType" + x + "'>" + hdTypeDropdown + "</select></div>"
+				tooltipText += "<div class='windowHDType' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.hdType + "' id='windowHDType" + x + "'>" + hdTypeDropdown + "</select></div>"
 			if (alchemy)
 				tooltipText += "<div class='windowPotionType' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.potionstype + "' id='windowPotionType" + x + "'>" + potionDropdown + "</select></div>"
 			if (alchemy)
@@ -1948,6 +1951,18 @@ function updateWindowPreset(index, varPrefix) {
 		swapClass('windowGather', newClass, row);
 	}
 
+	if (varPrefix.includes('HDFarm')) {
+		var special = document.getElementById('windowHDType' + index).value;
+
+		newClass = (special === 'maplevel') ? 'windowMapLevelOff' : 'windowMapLevelOn';
+		swapClass('windowMapLevel', newClass, row);
+		if (special === 'maplevel') {
+			document.getElementById('windowRepeat' + index).parentNode.children[0].innerHTML = 'Map Level'
+		} else {
+			document.getElementById('windowRepeat' + index).parentNode.children[0].innerHTML = ''
+		}
+	}
+
 	if (currSettingUniverse === 2 && varPrefix.includes('BoneShrine')) {
 		var runType = document.getElementById('windowRunType' + index).value;
 	}
@@ -1959,10 +1974,7 @@ function updateWindowPreset(index, varPrefix) {
 		var index = natureList.indexOf(getZoneEmpowerment(world.value));
 		world.parentNode.style.background = natureStyle[index];
 	}
-
 }
-
-
 
 function dailyModifiersOutput() {
 	var daily = game.global.dailyChallenge;

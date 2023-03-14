@@ -796,7 +796,8 @@ ul.tab li a:hover {
 .windowHDType,
 .windowRunTypeHDFarm,
 .windowChallengeOn .windowChallengeHDFarm,
-.windowChallenge3On .windowChallenge3HDFarm {
+.windowChallenge3On .windowChallenge3HDFarm,
+.windowMapLevelOn .windowHDMult {
 	display: inline-block;
 	padding-left: 1%;
 }
@@ -838,9 +839,17 @@ ul.tab li a:hover {
 	width: 7%;
 }
 
-.windowHDMult,
-.windowHDBase {
+.windowMapLevelOn .windowHDMult,
+.windowMapLevelOn .windowHDBase {
 	width: 7%;
+}
+
+.windowMapLevelOff .windowHDBase {
+	width: 14%;
+}
+
+.windowMapLevelOff .windowHDMult {
+	display: none;
 }
 
 .windowHDType {
