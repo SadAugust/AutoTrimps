@@ -179,13 +179,27 @@ function dailyAutoPortal() {
 }
 
 function freeVoidPortal() {
-	if (!getPageSetting('portalVoidIncrement', 1)) return false;
-	if (game.permaBoneBonuses.voidMaps.owned < 5) return false;
-	if (game.options.menu.liquification.enabled === 0) return false;
-	if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) return false;
+	MODULES.portal.portalForVoid = true;
+	if (!getPageSetting('portalVoidIncrement', 1)) MODULES.portal.portalForVoid = false;
+	if (game.permaBoneBonuses.voidMaps.owned < 5) MODULES.portal.portalForVoid = false;
+	if (game.options.menu.liquification.enabled === 0) MODULES.portal.portalForVoid = false;
+	if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) MODULES.portal.portalForVoid = false;
 
-	if (checkLiqZoneCount() >= 20) return true;
-	else return false;
+	if (MODULES.portal.portalForVoid === false) return;
+	if (checkLiqZoneCount() >= 20) {
+		debug('Portaling to increment void tracker with liquification.', "portal");
+		debug('Portaling with void tracker at ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10.'), "portal");
+		if (MODULES.portal.portalUniverse === Infinity) {
+			if (portalUniverse !== 1) swapPortalUniverse();
+			MODULES.portal.portalUniverse = game.global.universe;
+			universeSwapped();
+		}
+		downloadSave();
+		pushData();
+		activatePortal();
+		return;
+	}
+	else return;;
 }
 
 //Last part to fix!
@@ -304,11 +318,26 @@ function doPortal(challenge, squared) {
 	if (MODULES["portal"].currentChallenge === 'None') MODULES["portal"].currentChallenge = game.global.challengeActive;
 	var currChall = MODULES["portal"].currentChallenge;
 
-	if (currChall === 'Daily') {
+	if (game.global.challengeActive === 'Daily') {
 		confirmAbandonChallenge();
 		abandonChallenge();
 		cancelTooltip();
 		portalClicked();
+	}
+	//Initialising variables that will be used later.
+	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
+	freeVoidPortal();
+	if (MODULES.portal.portalForVoid) return;
+
+	while (MODULES.portal.portalUniverse !== Infinity) {
+		if (portalUniverse === MODULES.portal.portalUniverse) {
+			MODULES.portal.portalUniverse = Infinity;
+			break
+		}
+		swapPortalUniverse();
+	}
+
+	if (currChall === 'Daily') {
 		//Swapping to other universe if necessary to run daily.
 		if (getPageSetting('dailyPortalPreviousUniverse', (currPortalUniverse + 1))) {
 			swapPortalUniverse();
@@ -316,94 +345,77 @@ function doPortal(challenge, squared) {
 			challenge = getPageSetting('dailyHeliumHourChallenge');
 		}
 	}
-	//Initialising variables that will be used later.
-	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
-	MODULES.portal.portalForVoid = freeVoidPortal();
-	if (MODULES.portal.portalUniverse === Infinity && MODULES.portal.portalForVoid) {
-		if (portalUniverse !== 1) swapPortalUniverse();
-		MODULES.portal.portalUniverse = game.global.universe;
+
+	//Running C∞ runner
+	if (((portalUniverse === 1 && game.global.highestLevelCleared > 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared > 48)) &&
+		getPageSetting('c2RunnerStart') &&
+		getPageSetting('c2RunnerPortal') > 0 &&
+		getPageSetting('c2RunnerPercent') > 0) {
+		c2runner();
+		if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
 	}
-	if (!MODULES.portal.portalForVoid) {
 
-		while (MODULES.portal.portalUniverse !== Infinity) {
-			if (portalUniverse === MODULES.portal.portalUniverse) {
-				MODULES.portal.portalUniverse = Infinity;
-				break
-			}
+	//Running Dailies
+	if (getPageSetting('dailyPortalStart') && !challengeSquaredMode) {
+		selectChallenge('Daily');
+		//Checking to see which dailies can be run
+		checkCompleteDailies();
+		var lastUndone = -7;
+		while (++lastUndone <= 0) {
+			if (getDailyTimeString(lastUndone) === parseInt(getPageSetting('dailySkip'))) continue;
+			var dailyCompleted = (game.global.recentDailies.indexOf(getDailyTimeString(lastUndone)) !== -1);
+			if (!dailyCompleted)
+				break;
+		}
+
+		//Will stop it from autoPortaling into dailies when you have dailyDontCap enabled and don't have 7 dailies stored.
+		if (getPageSetting('dailyDontCap') && game.global.recentDailies.indexOf(getDailyTimeString(-6)) !== -1 && game.global.recentDailies.length !== 0) lastUndone = 1;
+
+		if (lastUndone !== 1 && getPageSetting('dailyPortalPreviousUniverse', currPortalUniverse)) {
 			swapPortalUniverse();
-		}
-
-		//Running C∞ runner
-		if (((portalUniverse === 1 && game.global.highestLevelCleared > 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared > 48)) &&
-			getPageSetting('c2RunnerStart') &&
-			getPageSetting('c2RunnerPortal') > 0 &&
-			getPageSetting('c2RunnerPercent') > 0) {
-			c2runner();
-			if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
-		}
-
-		//Running Dailies
-		if (getPageSetting('dailyPortalStart') && !challengeSquaredMode) {
+			currPortalUniverse = portalUniverse;
 			selectChallenge('Daily');
-			//Checking to see which dailies can be run
-			checkCompleteDailies();
-			var lastUndone = -7;
-			while (++lastUndone <= 0) {
-				if (getDailyTimeString(lastUndone) === parseInt(getPageSetting('dailySkip'))) continue;
-				var dailyCompleted = (game.global.recentDailies.indexOf(getDailyTimeString(lastUndone)) !== -1);
-				if (!dailyCompleted)
-					break;
+			challenge = getPageSetting('dailyHeliumHourChallenge');
+		}
+
+		//Portaling into a filler if all dailies have been run
+		if (lastUndone === 1) {
+			debug("All available Dailies already completed.", "portal");
+
+			if (getPageSetting('dailyHeliumHourChallenge').includes('Challenge ') && getPageSetting('dailyC2Challenge') !== 'None') {
+				toggleChallengeSquared();
+				selectChallenge(getPageSetting('dailyC2Challenge'));
 			}
-
-			//Will stop it from autoPortaling into dailies when you have dailyDontCap enabled and don't have 7 dailies stored.
-			if (getPageSetting('dailyDontCap') && game.global.recentDailies.indexOf(getDailyTimeString(-6)) !== -1 && game.global.recentDailies.length !== 0) lastUndone = 1;
-
-			if (lastUndone !== 1 && getPageSetting('dailyPortalPreviousUniverse', currPortalUniverse)) {
-				swapPortalUniverse();
-				currPortalUniverse = portalUniverse;
-				selectChallenge('Daily');
-				challenge = getPageSetting('dailyHeliumHourChallenge');
+			else {
+				selectChallenge(challenge || 0);
 			}
-
-			//Portaling into a filler if all dailies have been run
-			if (lastUndone === 1) {
-				debug("All available Dailies already completed.", "portal");
-
-				if (getPageSetting('dailyHeliumHourChallenge').includes('Challenge ') && getPageSetting('dailyC2Challenge') !== 'None') {
+		}
+		//Portaling into a filler to use up scruffy3
+		else if (currChall === 'Daily' && getPageSetting('dailyPortalFiller')) {
+			if (getPageSetting('dailyHeliumHourChallenge') != 'None') {
+				if (getPageSetting('dailyHeliumHourChallenge').includes('Challenge ')) {
 					toggleChallengeSquared();
 					selectChallenge(getPageSetting('dailyC2Challenge'));
 				}
-				else {
-					selectChallenge(challenge || 0);
-				}
-			}
-			//Portaling into a filler to use up scruffy3
-			else if (currChall === 'Daily' && getPageSetting('dailyPortalFiller')) {
-				if (getPageSetting('dailyHeliumHourChallenge') != 'None') {
-					if (getPageSetting('dailyHeliumHourChallenge').includes('Challenge ')) {
-						toggleChallengeSquared();
-						selectChallenge(getPageSetting('dailyC2Challenge'));
-					}
-					else selectChallenge(challenge || 0);
-				}
-			}
-			//Portaling into a daily
-			else {
-				getDailyChallenge(lastUndone);
-				debug("Portaling into Daily for: " + getDailyTimeString(lastUndone, true) + " now!", "portal");
+				else selectChallenge(challenge || 0);
 			}
 		}
-		//Running Fillers
-		else if (challenge && !challengeSquaredMode) {
-			//Swapping to opposite universe if goal is to run a challenge there
-			if (squared || challenge.includes('Challenge ')) toggleChallengeSquared();
-
-			if (currChall === 'Daily' && getPageSetting('dailyC2Challenge') !== 'None')
-				challenge = getPageSetting('dailyC2Challenge');
-			selectChallenge(challenge);
+		//Portaling into a daily
+		else {
+			getDailyChallenge(lastUndone);
+			debug("Portaling into Daily for: " + getDailyTimeString(lastUndone, true) + " now!", "portal");
 		}
 	}
-	if (MODULES.portal.portalForVoid) debug('Portaling to increment void tracker with liquification.', "portal");
+	//Running Fillers
+	else if (challenge && !challengeSquaredMode) {
+		//Swapping to opposite universe if goal is to run a challenge there
+		if (squared || challenge.includes('Challenge ')) toggleChallengeSquared();
+
+		if (currChall === 'Daily' && getPageSetting('dailyC2Challenge') !== 'None')
+			challenge = getPageSetting('dailyC2Challenge');
+		selectChallenge(challenge);
+	}
+
 	debug('Portaling with void tracker at ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10.'), "portal");
 	shouldPortal = true;
 	universeSwapped();
@@ -427,9 +439,7 @@ function doPortal(challenge, squared) {
 	//Reset packrat to 3 on Hypothermia
 	if (portalUniverse === 2) hypoPackratReset(challenge);
 
-	//Download save file
 	downloadSave();
-
 	pushData();
 	activatePortal();
 	MODULES["portal"].currentChallenge = 'None';
