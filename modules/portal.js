@@ -3,6 +3,7 @@ MODULES["portal"].timeout = 5000;
 MODULES["portal"].bufferExceedFactor = 5;
 MODULES["portal"].portalForVoid = false;
 MODULES["portal"].portalUniverse = Infinity;
+MODULES["portal"].currentChallenge = 'None';
 var zonePostpone = 0;
 
 function autoPortal() {
@@ -300,9 +301,23 @@ function doPortal(challenge, squared) {
 	//If for some reason portal window isn't open stop running
 	if (!portalWindowOpen) return;
 
+	if (MODULES["portal"].currentChallenge === 'None') MODULES["portal"].currentChallenge = game.global.challengeActive;
+	var currChall = MODULES["portal"].currentChallenge;
+
+	if (currChall === 'Daily') {
+		confirmAbandonChallenge();
+		abandonChallenge();
+		cancelTooltip();
+		portalClicked();
+		//Swapping to other universe if necessary to run daily.
+		if (getPageSetting('dailyPortalPreviousUniverse', (currPortalUniverse + 1))) {
+			swapPortalUniverse();
+			currPortalUniverse = portalUniverse;
+			challenge = getPageSetting('dailyHeliumHourChallenge');
+		}
+	}
 	//Initialising variables that will be used later.
 	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
-	var currChall = game.global.challengeActive;
 	MODULES.portal.portalForVoid = freeVoidPortal();
 	if (MODULES.portal.portalUniverse === Infinity && MODULES.portal.portalForVoid) {
 		if (portalUniverse !== 1) swapPortalUniverse();
@@ -316,19 +331,6 @@ function doPortal(challenge, squared) {
 				break
 			}
 			swapPortalUniverse();
-		}
-
-		if (currChall === 'Daily') {
-			confirmAbandonChallenge();
-			abandonChallenge();
-			cancelTooltip();
-			portalClicked();
-			//Swapping to other universe if necessary to run daily.
-			if (getPageSetting('dailyPortalPreviousUniverse', (currPortalUniverse + 1))) {
-				swapPortalUniverse();
-				currPortalUniverse = portalUniverse;
-				challenge = getPageSetting('dailyHeliumHourChallenge');
-			}
 		}
 
 		//Running C∞ runner
@@ -428,6 +430,7 @@ function doPortal(challenge, squared) {
 
 	pushData();
 	activatePortal();
+	MODULES["portal"].currentChallenge = 'None';
 	lastHeliumZone = 0;
 	zonePostpone = 0;
 	resetmapvars();
