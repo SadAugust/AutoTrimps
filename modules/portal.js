@@ -103,14 +103,12 @@ function autoPortal() {
 		case "Alchemy":
 		case "Hypothermia":
 		case "Desolation":
-			if (!game.global.challengeActive || (game.global.world >= portalZone && (MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity))) {
+			if (!game.global.challengeActive || (game.global.world >= portalZone && (MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity)))
 				doPortal(getPageSetting('autoPortal', universe));
-			}
 			break;
 		case "Off":
-			if (game.global.world >= portalZone && (MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity)) {
+			if (game.global.world >= portalZone && (MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity))
 				doPortal();
-			}
 			break;
 		default:
 			break;
@@ -184,6 +182,7 @@ function freeVoidPortal() {
 	if (game.permaBoneBonuses.voidMaps.owned < 5) MODULES.portal.portalForVoid = false;
 	if (game.options.menu.liquification.enabled === 0) MODULES.portal.portalForVoid = false;
 	if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) MODULES.portal.portalForVoid = false;
+	if (usingRealTimeOffline) MODULES.portal.portalForVoid = false;
 
 	if (MODULES.portal.portalForVoid === false) return;
 	if (checkLiqZoneCount() >= 20) {
