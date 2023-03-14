@@ -402,6 +402,8 @@ function doPortal(challenge, squared) {
 				challenge = getPageSetting('dailyC2Challenge');
 			selectChallenge(challenge);
 		}
+
+		debug('Portaling into run with void tracker of ' + game.permaBoneBonuses.voidMaps.tracker + '/100', "portal");
 	}
 	shouldPortal = true;
 	universeSwapped();
