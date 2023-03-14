@@ -3194,7 +3194,7 @@ function updateCustomButtons(initialLoad) {
 
 			if (item.type === 'boolean') {
 				itemEnabled = item.enabled;
-				if (radonon && item.id !== 'portalVoidIncrement' && id !== 'PauseScript') itemEnabled = item['enabled' + 'U2'];
+				if (radonon && item.id !== 'portalVoidIncrement' && item.id !== 'PauseScript') itemEnabled = item['enabled' + 'U2'];
 				elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemEnabled);
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
 
