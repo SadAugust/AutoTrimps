@@ -324,7 +324,6 @@ function doPortal(challenge, squared) {
 		portalClicked();
 	}
 	//Initialising variables that will be used later.
-	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
 	freeVoidPortal();
 	if (MODULES.portal.portalForVoid) return;
 
@@ -345,56 +344,57 @@ function doPortal(challenge, squared) {
 		}
 	}
 
+	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
 	//Running C∞ runner
 	if (((portalUniverse === 1 && game.global.highestLevelCleared > 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared > 48)) &&
-		getPageSetting('c2RunnerStart') &&
-		getPageSetting('c2RunnerPortal') > 0 &&
-		getPageSetting('c2RunnerPercent') > 0) {
+		getPageSetting('c2RunnerStart', portalUniverse) &&
+		getPageSetting('c2RunnerPortal', portalUniverse) > 0 &&
+		getPageSetting('c2RunnerPercent', portalUniverse) > 0) {
 		c2runner();
 		if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
 	}
 
 	//Running Dailies
-	if (getPageSetting('dailyPortalStart') && !challengeSquaredMode) {
+	if (getPageSetting('dailyPortalStart', portalUniverse) && !challengeSquaredMode) {
 		selectChallenge('Daily');
 		//Checking to see which dailies can be run
 		checkCompleteDailies();
 		var lastUndone = -7;
 		while (++lastUndone <= 0) {
-			if (getDailyTimeString(lastUndone) === parseInt(getPageSetting('dailySkip'))) continue;
+			if (getDailyTimeString(lastUndone) === parseInt(getPageSetting('dailySkip', portalUniverse))) continue;
 			var dailyCompleted = (game.global.recentDailies.indexOf(getDailyTimeString(lastUndone)) !== -1);
 			if (!dailyCompleted)
 				break;
 		}
 
 		//Will stop it from autoPortaling into dailies when you have dailyDontCap enabled and don't have 7 dailies stored.
-		if (getPageSetting('dailyDontCap') && game.global.recentDailies.indexOf(getDailyTimeString(-6)) !== -1 && game.global.recentDailies.length !== 0) lastUndone = 1;
+		if (getPageSetting('dailyDontCap', portalUniverse) && game.global.recentDailies.indexOf(getDailyTimeString(-6)) !== -1 && game.global.recentDailies.length !== 0) lastUndone = 1;
 
 		if (lastUndone !== 1 && getPageSetting('dailyPortalPreviousUniverse', currPortalUniverse)) {
 			swapPortalUniverse();
 			currPortalUniverse = portalUniverse;
 			selectChallenge('Daily');
-			challenge = getPageSetting('dailyHeliumHourChallenge');
+			challenge = getPageSetting('dailyHeliumHourChallenge', portalUniverse);
 		}
 
 		//Portaling into a filler if all dailies have been run
 		if (lastUndone === 1) {
 			debug("All available Dailies already completed.", "portal");
 
-			if (getPageSetting('dailyHeliumHourChallenge').includes('Challenge ') && getPageSetting('dailyC2Challenge') !== 'None') {
+			if (getPageSetting('dailyHeliumHourChallenge', portalUniverse).includes('Challenge ') && getPageSetting('dailyC2Challenge', portalUniverse) !== 'None') {
 				toggleChallengeSquared();
-				selectChallenge(getPageSetting('dailyC2Challenge'));
+				selectChallenge(getPageSetting('dailyC2Challenge', portalUniverse));
 			}
 			else {
 				selectChallenge(challenge || 0);
 			}
 		}
 		//Portaling into a filler to use up scruffy3
-		else if (currChall === 'Daily' && getPageSetting('dailyPortalFiller')) {
-			if (getPageSetting('dailyHeliumHourChallenge') != 'None') {
-				if (getPageSetting('dailyHeliumHourChallenge').includes('Challenge ')) {
+		else if (currChall === 'Daily' && getPageSetting('dailyPortalFiller', portalUniverse)) {
+			if (getPageSetting('dailyHeliumHourChallenge', portalUniverse) != 'None') {
+				if (getPageSetting('dailyHeliumHourChallenge', portalUniverse).includes('Challenge ')) {
 					toggleChallengeSquared();
-					selectChallenge(getPageSetting('dailyC2Challenge'));
+					selectChallenge(getPageSetting('dailyC2Challenge', portalUniverse));
 				}
 				else selectChallenge(challenge || 0);
 			}
@@ -423,7 +423,7 @@ function doPortal(challenge, squared) {
 	if (portalUniverse === 2) presetSwapping(preset);
 
 	//Run Perky/Surky.
-	if (typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', currPortalUniverse)) {
+	if (typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {
 		if (portalUniverse === 1 && ($('#preset').value !== 'undefined' ||
 			($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined'))
 		) {
