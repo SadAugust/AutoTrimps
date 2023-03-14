@@ -15,6 +15,13 @@ for (var y = 0; y < atscript.length; y++) {
 //Backup on the off chance the script hasn't been found
 if (basepath === '') basepath = 'https://SadAugust.github.io/AutoTrimps/';
 
+function loadPageVariables() {
+	var tmp = JSON.parse(localStorage.getItem('autoTrimpSettings'));
+	if (tmp !== null && tmp['ATversion'] != undefined) {
+		autoTrimpSettings = tmp;
+	}
+}
+
 function ATscriptLoad(a, b) {
 	null == b && debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(modulepath, \'example.js\'); ');
 	var c = document.createElement('script');

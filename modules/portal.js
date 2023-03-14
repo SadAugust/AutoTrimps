@@ -9,8 +9,8 @@ var zonePostpone = 0;
 function autoPortal() {
 	if (challengeActive('Decay')) decayFinishChallenge();
 	if (!game.global.portalActive) return;
+	if (challengeActive('Daily') || game.global.runningChallengeSquared) return;
 	if (!MODULES.portal.portalForVoid) {
-		if (challengeActive('Daily') || game.global.runningChallengeSquared) return;
 		if (getPageSetting('autoPortal') === "Off") return;
 	}
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
