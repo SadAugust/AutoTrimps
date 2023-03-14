@@ -185,7 +185,14 @@ function mainLoop() {
 
 	tenacityTimeNew = game.global.universe === 2 ? Math.floor(game.portal.Tenacity.getTime()) + "m" : '0m';
 	if (freeVoids !== game.permaBoneBonuses.voidMaps.tracker || autoLevel !== autoLevelCurrent || tenacityTimeNew !== tenacityTime) {
-		document.getElementById('freeVoidMap').innerHTML = "Void: " + (game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + "/10" + (game.global.universe === 2 && getPageSetting('equalityManagement') === 2 ? " | Auto Level: " + autoLevel : game.global.universe === 1 ? " | Auto Level: " + autoLevel : "") + (game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 ? " | T: " + tenacityTimeNew : "");
+
+		var freeVoidsText = 'Void: ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10');
+
+		var autoLevelText = game.global.universe === 2 && getPageSetting('equalityManagement') === 2 ? " | Auto Level: " + autoLevel : game.global.universe === 1 ? " | Auto Level: " + autoLevel : "";
+
+		var tenacityText = game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 ? " | T: " + tenacityTimeNew : "";
+
+		document.getElementById('freeVoidMap').innerHTML = freeVoidsText + autoLevelText + tenacityText;
 		freeVoids = game.permaBoneBonuses.voidMaps.tracker
 		autoLevelCurrent = autoLevel;
 		tenacityTime = tenacityTimeNew;

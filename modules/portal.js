@@ -402,9 +402,9 @@ function doPortal(challenge, squared) {
 				challenge = getPageSetting('dailyC2Challenge');
 			selectChallenge(challenge);
 		}
-
-		debug('Portaling into run with void tracker of ' + game.permaBoneBonuses.voidMaps.tracker + '/100', "portal");
 	}
+	if (MODULES.portal.portalForVoid) debug('Portaling to increment void tracker with liquification.', "portal");
+	debug('Portaling with void tracker at ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10.'), "portal");
 	shouldPortal = true;
 	universeSwapped();
 	//Identifying which challenge type we're running to setup for the preset swapping function
