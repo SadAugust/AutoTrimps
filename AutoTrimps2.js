@@ -32,8 +32,6 @@ var reloadDelay = false;
 
 var autoTrimpSettings = {};
 var MODULES = {};
-var MODULESdefault = {};
-var ATMODULES = {};
 var ATmoduleList = [];
 var scienceNeeded;
 var breedFire = false;
@@ -62,6 +60,7 @@ var heirloomCache = game.global.heirloomsExtra.length;
 var magmiteSpenderChanged = false;
 var lastHeliumZone = 0;
 var lastRadonZone = 0;
+
 var HDRatio = 0;
 var mapHDRatio = 0;
 var voidHDRatio = 0;
@@ -76,6 +75,7 @@ var rMapRepeats = 0;
 var freeVoids = 0;
 var tenacityTime = '0m';
 var tenacityTimeNew = '0m';
+
 var showingPerky = false;
 var showingSurky = false;
 
@@ -134,7 +134,6 @@ function delayStart() {
 function delayStartAgain() {
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
-	MODULESdefault = JSON.parse(JSON.stringify(MODULES));
 	setInterval(mainLoop, runInterval);
 	setInterval(guiLoop, runInterval * 10);
 	setupATButtons();
@@ -351,8 +350,7 @@ function mainLoop() {
 }
 
 function guiLoop() {
-	safeSetItems('storedMODULES', JSON.stringify(compareModuleVars())),
-		getPageSetting('displayEnhancedGrid') &&
+	getPageSetting('displayEnhancedGrid') &&
 		MODULES.fightinfo.Update(), 'undefined' != typeof MODULES && 'undefined' != typeof MODULES.performance && MODULES.performance.isAFK && MODULES.performance.UpdateAFKOverlay()
 }
 
