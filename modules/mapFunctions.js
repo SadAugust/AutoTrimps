@@ -2631,10 +2631,9 @@ function HDFarm() {
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHDFMapLevel || (getCurrentMapObject().bonus !== rHDFSpecial && (getCurrentMapObject().bonus !== undefined && rHDFSpecial !== '0')));
-		var status = hdType !== 'maplevel' ? 'HD&nbsp;Farm&nbsp;to:&nbsp;' + equipfarmdynamicHD(rHDFIndex).toFixed(2) + '<br>\
-		Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2) + '<br>\
-		Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + rHDFmaxMaps :
-			'HD&nbsp;Farm&nbsp;to:&nbsp;' + (rHDFSettings.hdBase > 0 ? "+" : "") + rHDFSettings.hdBase + ' auto level';
+		var status = 'HD&nbsp;Farm&nbsp;to:&nbsp;' + (hdType !== 'maplevel' ? (equipfarmdynamicHD(rHDFIndex).toFixed(2) + '<br>\
+		Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2)) : ((rHDFSettings.hdBase > 0 ? "+" : "") + rHDFSettings.hdBase + ' auto level')) + '<br>\
+		Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + rHDFmaxMaps;
 
 		farmingDetails.shouldRun = rShouldHDFarm;
 		farmingDetails.mapName = mapName;

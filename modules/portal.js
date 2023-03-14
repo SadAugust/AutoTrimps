@@ -10,11 +10,10 @@ function autoPortal() {
 	if (challengeActive('Decay')) decayFinishChallenge();
 	if (!game.global.portalActive) return;
 	if (challengeActive('Daily') || game.global.runningChallengeSquared) return;
-	if (!MODULES.portal.portalForVoid) {
-		if (getPageSetting('autoPortal') === "Off") return;
-	}
+	if (!MODULES.portal.portalForVoid && getPageSetting('autoPortal') === "Off") return;
+
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
-	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
+	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : portalUniverse;
 
 	var portalZone = getPageSetting('autoPortalZone');
 	//Set portal zone to current zone!
