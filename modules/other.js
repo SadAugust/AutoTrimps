@@ -555,8 +555,14 @@ function equalityManagement() {
 	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, type, 'never', bionicTalent, true)) : 2;
 
 	if (noFrenzy) {
-		if (getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted === -1) ourDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel)
-		if (!getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted !== -1) ourDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel)
+		if (getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted === -1) {
+			ourDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel)
+			unluckyDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel)
+		}
+		if (!getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted !== -1) {
+			ourDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel)
+			unluckyDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel)
+		}
 	}
 	ourDmg *= dailyRampage ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 1;
 	var ourDmgEquality = 0;
@@ -586,7 +592,7 @@ function equalityManagement() {
 	if (type === 'world' && dailyExplosive) fastEnemy = true;
 	if (game.global.voidBuff === 'doubleAttack') fastEnemy = true
 	if (runningArchaeology) fastEnemy = true;
-	if (noFrenzy) fastEnemy = true;
+	if (noFrenzy && game.portal.Frenzy.frenzyActive()) fastEnemy = true;
 	if (runningTrappa) fastEnemy = true;
 	if (runningDuel && !mapping) fastEnemy = true;
 	if (runningQuest) fastEnemy = true;

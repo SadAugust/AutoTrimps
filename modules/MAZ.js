@@ -407,19 +407,19 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 		var windowSize = 'tooltipWindow50';
 		if (golden) windowSize = 'tooltipWindow20'
-		else if (quagmire) windowSize = 'tooltipWindow35'
-		else if (raiding) windowSize = 'tooltipWindow60'
-		else if (bionic) windowSize = 'tooltipWindow60'
-		else if (insanity) windowSize = 'tooltipWindow45'
-		else if (alchemy) windowSize = 'tooltipWindow60'
-		else if (hypothermia) windowSize = 'tooltipWindow35'
-		else if (voidMap) windowSize = 'tooltipWindow50'
-		else if (worshipperFarm) windowSize = 'tooltipWindow60'
-		else if (smithyFarm) windowSize = 'tooltipWindow60'
-		else if (boneShrine) windowSize = 'tooltipWindow55'
-		else if (hdFarm) windowSize = 'tooltipWindow55'
-		else if (mapBonus) windowSize = 'tooltipWindow65'
-		else if (mapFarm) windowSize = 'tooltipWindow75'
+		else if (quagmire) windowSize = 'tooltipWindow45'
+		else if (raiding) windowSize = 'tooltipWindow70'
+		else if (bionic) windowSize = 'tooltipWindow70'
+		else if (insanity) windowSize = 'tooltipWindow55'
+		else if (alchemy) windowSize = 'tooltipWindow70'
+		else if (hypothermia) windowSize = 'tooltipWindow45'
+		else if (voidMap) windowSize = 'tooltipWindow60'
+		else if (worshipperFarm) windowSize = 'tooltipWindow70'
+		else if (smithyFarm) windowSize = 'tooltipWindow70'
+		else if (boneShrine) windowSize = 'tooltipWindow65'
+		else if (hdFarm) windowSize = 'tooltipWindow70'
+		else if (mapBonus) windowSize = 'tooltipWindow70'
+		else if (mapFarm) windowSize = 'tooltipWindow80'
 		else if (tributeFarm) windowSize = 'tooltipWindow80'
 
 		var maxSettings = 30;
@@ -1291,7 +1291,6 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	//Row Settings
 	mazHelp += "</ul></br><b>These inputs are specific to this setting and can be quite important for how you try to set this up:</b><ul><br>"
 
-	//Void Map
 	if (voidMap) {
 		//Min Run Zone
 		mazHelp += "<li><b>Min Zone</b> - The lower bound zone to run voids maps on.</li>"
@@ -1305,18 +1304,16 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Portal After</b> - Will run AutoPortal immediately after this line has run. Won't do anything if AutoPortal is disabled!</b></li>";
 	}
 
-	//Map Farm
 	if (mapFarm) {
 		mazHelp += "<li><b>Map Repeat</b> - How many maps you'd like to run during this line.</li>";
 		//Trimple Map Farm
 		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources." + "</li>";
 	}
-	//Map Bonus
+
 	if (mapBonus) {
 		mazHelp += "<li><b>Map Stacks</b> - How many stacks AT should obtain when running this line.</li>";
 	}
 
-	//Raiding & Bionic Raiding
 	if (raiding) {
 		//Raiding Zone
 		mazHelp += "<li><b>Raiding Zone</b> - The zone you'd like to raid when this line is run. If \"Repeat Every X\" is set, it will also raise the Raiding zone by X every time. " + (!bionic ? "If your 'Zone' input is 231 then the highest zone you can input is 241." : "") + "</li>";
@@ -1325,7 +1322,6 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	Frag Max: This option will make sure that the map has perfect sliders and uses the prestegious special if available.</li>";
 	}
 
-	//HD Farm
 	if (hdFarm) {
 		//HD Base
 		mazHelp += "<li><b>HD Base</b> - What H:D you'd like to reach.</li>";
@@ -1333,7 +1329,6 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>HD Mult</b> - Starting from the zone above the lines initial zone, this setting will multiply the H:D you have set in HD Base. So if your initial zone was 100, HD Base was 10, HD Mult was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste Map Farming for a really low H:D.'</li>";
 	}
 
-	//Bone Shrine
 	if (boneShrine) {
 		//To use
 		mazHelp += "<li><b>To use</b> - How many bone charges to use on this line.</li>";
@@ -1345,7 +1340,6 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Gather</b> - Which resource you'd like to gather when popping a Bone Shrine charge to make use of Turkimp resource bonus.</li>";
 	}
 
-	//TRIBUTE FARM
 	if (tributeFarm) {
 		//Farm Type
 		mazHelp += "<li><b>Farm Type</b> - The way in which Tribute Farming will operate. Either by using absolute values for what you'd like to farm e.g. 2700 Tributes and 37 Meteorologists or by having AT identify how many of each you can farm in X maps and then using that count to identify the amount based off expected mapping gains.</li>"
@@ -1359,7 +1353,6 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Autoamtically calculates when it would be more efficient to run " + trimple + " or continue farming Savory Cache maps to reach your target in the fastest time possible.</b></li>";
 	}
 
-	//Smithy
 	if (smithyFarm) {
 		//Smithy Count
 		mazHelp += "<li><b>Smithies</b> - Smithy count you'd like to reach during this line. If you currently own 18 and want to reach 21 you'd enter 21 into this field.</li>";
@@ -1369,14 +1362,11 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Run MP</b> - Will run Melting Point after this line has been run.</b></li>";
 	}
 
-	//Worshipper
-
 	if (worshipperFarm) {
 		//Worshipper Count
 		mazHelp += "<li><b>Ship</b> - How many worshippers you'd like to farm up to during this line. Max input is 50 and it'll default to that value if you input anything higher.</li>";
 	}
 
-	//Quagmire
 	if (quagmire) {
 		//Black Bogs
 		mazHelp += "<li><b>Bogs</b> - How many Black Bog maps you'd like to run during this line.</li>";
@@ -1388,14 +1378,14 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		//Destack toggle setting
 		mazHelp += "<li><b>Destack</b> - Toggle to allow you to run maps that are lower than world level during Insanity. When using this setting Insanity Farm will assume you're destacking and it will aim to reduce your max Insanity to the value in the Insanity field.</li>";
 	}
-	//Alchemy
+
 	if (alchemy) {
 		//Potion Type
 		mazHelp += "<li><b>Potion Type</b> - The type of potion you want to farm during this line.</li>";
 		//Potion Number
 		mazHelp += "<li><b>Potion Number</b> - How many of the potion specified in 'Potion Type' you'd like to farm for.</li>";
 	}
-	//Hypothermia
+
 	if (hypothermia)
 		mazHelp += "<li><b>Bonfires</b> - How many Bonfires should be farmed on this zone. Uses max bonfires built rather than a specific amount to farm for so if you have already built 14 so far during your run and want another 8 then you'd input 22.</li>";
 
