@@ -218,7 +218,7 @@ function mainLoop() {
 			reloadDelay = false;
 		}
 	}
-	if (getPageSetting('PauseScript') || game.options.menu.pauseGame.enabled) return;
+	if (getPageSetting('PauseScript', 1) || game.options.menu.pauseGame.enabled) return;
 	ATrunning = true;
 	if (mainCleanup() || portalWindowOpen || (!heirloomsShown && heirloomFlag) || (heirloomCache != game.global.heirloomsExtra.length)) {
 		heirloomCache = game.global.heirloomsExtra.length;

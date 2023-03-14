@@ -619,7 +619,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (smithyFarm) tooltipText += "<div class='windowMeltingPoint'>Run<br/>MP</div>"
 		if (insanity) tooltipText += "<div class='windowBuildings'>Destack</div>"
 		if (raiding) tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\'>Prestige<br/>Goal</div>"
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) tooltipText += "<div class='windowRunType" + varPrefix + "\'>Run<br/>Type</div>"
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) tooltipText += "<div class='windowRunType" + varPrefix + "\'>Run&nbsp;Type</div>"
 		if (voidMap) tooltipText += "<div class='windowPortalAfter'>Portal<br/>After</div>"
 		tooltipText += "</div>";
 

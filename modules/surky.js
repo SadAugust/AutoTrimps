@@ -2058,5 +2058,5 @@ function autobuyPerks() {
 
 	evaluatePerks();
 	allocateSurky();
-	console.log("Total Radon for perks: " + props.perksRadon + ", Total Radon Spent: " + props.radonSpent);
+	debug("Surky - Total Radon for perks: " + prettify(props.perksRadon) + ", Total Radon Spent: " + prettify(props.radonSpent), 'portal');
 }

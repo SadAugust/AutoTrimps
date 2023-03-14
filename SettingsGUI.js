@@ -2502,7 +2502,7 @@ function settingChanged(id, currUniverse) {
 	var radonon = currUniverse ? game.global.universe === 2 : autoTrimpSettings.radonsettings.value == 1;
 	if (btn.type == 'boolean') {
 		var enabled = 'enabled'
-		if (radonon && id !== 'portalVoidIncrement') enabled += 'U2';
+		if (radonon && id !== 'portalVoidIncrement' && id !== 'PauseScript') enabled += 'U2';
 		btn[enabled] = !btn[enabled];
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		if (id == 'equipEfficientEquipDisplay') {
@@ -3194,7 +3194,7 @@ function updateCustomButtons(initialLoad) {
 
 			if (item.type === 'boolean') {
 				itemEnabled = item.enabled;
-				if (radonon && item.id !== 'portalVoidIncrement') itemEnabled = item['enabled' + 'U2'];
+				if (radonon && item.id !== 'portalVoidIncrement' && id !== 'PauseScript') itemEnabled = item['enabled' + 'U2'];
 				elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemEnabled);
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
 
