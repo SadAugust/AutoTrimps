@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v6.1.1',
+var ATversion = 'SadAugust v6.1.2',
 	atscript = document.getElementsByTagName("script"),
 	basepath = '',
 	modulepath = 'modules/';

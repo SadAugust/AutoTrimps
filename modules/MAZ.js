@@ -1248,6 +1248,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<br><br>The default values section are values which will automatically be input when a new row has been added. There's a few exception to this such as:<br></br><ul>"
 		mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable the entire setting.</li>"
 		mazHelp += "<li><b>Priority</b> - If there are two or more MaZ lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>"
+		if (worshipperFarm) mazHelp += "<li><b>Enabled Skip</b> - A toggle to enable the skip value setting.</li>";
 		if (worshipperFarm) mazHelp += "<li><b>Skip Value</b> - How many worshippers a map must provide for you to run your Worshipper Farming.</li>";
 		if (raiding && !bionic) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after raiding has finished.</li>"
 		if (raiding && !bionic) mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>"
@@ -1323,10 +1324,10 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	}
 
 	if (hdFarm) {
-		//HD Base
 		mazHelp += "<li><b>HD Base</b> - What H:D you'd like to reach.</li>";
-		//HD Mult
 		mazHelp += "<li><b>HD Mult</b> - Starting from the zone above the lines initial zone, this setting will multiply the H:D you have set in HD Base. So if your initial zone was 100, HD Base was 10, HD Mult was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste Map Farming for a really low H:D.'</li>";
+
+		mazHelp += "<li><b>HD Type</b> - The type of HD you'd like to target. If 'Map Level' has been selected it will farm until auto level reaches that level.</li>";
 	}
 
 	if (boneShrine) {

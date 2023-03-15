@@ -845,7 +845,7 @@ function SmithyFarm() {
 		var metalBase = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 1, true, '0,0,1'), false, true, rSFMapLevel);
 
 		//When mapType is set as Map Count work out how many Smithies we can farm in the amount of maps specified.
-		if (currQuest() === 10 || rSFSettings.mapType === 'Map Count' && rSFSmithies !== 0) {
+		if ((currQuest() === 10 || rSFSettings.mapType === 'Map Count') && rSFSmithies !== 0) {
 			var smithyCount = 0;
 			//Checking total map count user wants to run
 			var totalMaps = currentMap === mapName ? rSFSmithies - game.global.mapRunCounter : rSFSmithies;
