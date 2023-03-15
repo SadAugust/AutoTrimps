@@ -4060,7 +4060,7 @@ function updateATVersion() {
 			changelog.push("Quest now has an additional setting for the max amount of maps you'd like to run while on Smithy quests.<br>\
 			HD Farm now has an additional dropdown for targetting map levels. When using this feature it will cause AT to farm until auto level is at or above the designated level.<br>\
 			Worshipper Farm has a new setting in default row to enable the ship skip map limit setting.<br>\
-			There's a brand new setting in the 'Core' tab which will portal into a run (goes to U1 if not in it) and use liquification to ensure your next void map drop gives a bonus drop then portals into your actual run.")
+			There's a brand new setting in the 'Core' tab which when auto portaling (goes to U1 if not in it) uses liquification to ensure your next void map drop gives a bonus drop then portals into your actual run.")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;
