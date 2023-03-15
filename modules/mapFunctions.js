@@ -1,3 +1,11 @@
+MODULES.mapFunctions = {};
+MODULES.mapFunctions.rVoidHDRatio = Infinity;
+MODULES.mapFunctions.rVoidVHDRatio = Infinity;
+MODULES.mapFunctions.rVoidHDInfo = Infinity;
+MODULES.mapFunctions.portalZone = Infinity;
+MODULES.mapFunctions.workerRatio = null;
+MODULES.mapFunctions.runUniqueMap = '';
+
 function isDoingSpire() {
 	return isActiveSpireAT() || disActiveSpireAT();
 }
@@ -113,6 +121,12 @@ function shouldRunUniqueMap(map) {
 	if (mapData.speedrun && shouldSpeedRun(game.achievements[mapData.speedrun])) {
 		return true;
 	}
+
+	if (MODULES.mapFunctions.runUniqueMap === map.name) {
+		if (game.global.mapsActive && getCurrentMapObject().location === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
+		return true;
+	}
+
 	if (game.global.universe === 1) {
 		const liquified = game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name == "Liquimp";
 		if (map.name === 'The Block') {
@@ -229,6 +243,7 @@ function runUniqueMap(mapName, dontRecycle) {
 		mapsClicked();
 		recycleMap();
 	}
+	MODULES.mapFunctions.runUniqueMap = mapName;
 
 	if (game.global.preMapsActive) {
 		for (var map in game.global.mapsOwnedArray) {
@@ -287,13 +302,6 @@ function selectEasierVoidMap(map1, map2) {
 		return map2;
 	}
 }
-
-MODULES.mapFunctions = {};
-MODULES.mapFunctions.rVoidHDRatio = Infinity;
-MODULES.mapFunctions.rVoidVHDRatio = Infinity;
-MODULES.mapFunctions.rVoidHDInfo = Infinity;
-MODULES.mapFunctions.portalZone = Infinity;
-MODULES.mapFunctions.workerRatio = null;
 
 //Void Maps
 function VoidMaps() {
@@ -499,6 +507,7 @@ function MapFarm() {
 	};
 
 	if (!getPageSetting('mapFarmDefaultSettings').active) return farmingDetails;
+	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const totalPortals = getTotalPortals();
@@ -567,7 +576,7 @@ function MapFarm() {
 			mappingDetails(mapName, rMFMapLevel, rMFSpecial);
 			resetMapVars(rMFSettings);
 			rShouldMapFarm = false;
-			if (rMFAtlantrimp) runUniqueMap('Atlantrimp', false);
+			if (rMFAtlantrimp) runUniqueMap('Atlantrimp', dontRecycleMaps);
 			saveSettings();
 		}
 
@@ -777,7 +786,7 @@ function SmithyFarm() {
 
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
-	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
+	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const totalPortals = getTotalPortals();
 	const currChall = game.global.challengeActive;
 	const rSFBaseSetting = getPageSetting('smithyFarmSettings');
@@ -809,7 +818,6 @@ function SmithyFarm() {
 
 		var mapBonus;
 		if (game.global.mapsActive) mapBonus = getCurrentMapObject().bonus;
-		dontRecycleMaps = true;
 
 		var rSFSettings = rSFBaseSetting[rSFIndex];
 		var rSFMapLevel = challengeActive('Quest') ? -1 : rSFSettings.level;
@@ -928,7 +936,7 @@ function SmithyFarm() {
 					toggleAutoStructure();
 				MODULES.mapFunctions.smithyMapCount = [0, 0, 0];
 				HDRatio = calcHDRatio(game.global.world, 'world');
-				if (!challengeActive('Quest') && rSFSettings.meltingPoint) runUniqueMap('Melting Point', false);
+				if (!challengeActive('Quest') && rSFSettings.meltingPoint) runUniqueMap('Melting Point', dontRecycleMaps);
 				resetMapVars(rSFSettings);
 				return farmingDetails;
 			}
@@ -1071,7 +1079,6 @@ function MapDestacking() {
 	var rDMapLevel = -(game.global.world - 6);
 	var rDSpecial = getAvailableSpecials('fa');
 	var rDDestack = 0;
-
 
 	//Balance Destacking
 	if (challengeActive('Balance')) {
