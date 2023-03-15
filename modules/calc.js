@@ -1175,8 +1175,14 @@ function calcHDRatio(targetZone, type) {
 	if (!type) type = "world"
 	//Init
 	if (type === 'world') {
-		var enemyHealth = calcEnemyHealth(type, targetZone);
-		var universeSetting = game.global.universe === 2 ? equalityQuery('Turtlimp', targetZone, 99, 'world', 1, 'gamma') : 'X';
+		var enemyName = 'Turtlimp';
+		var cell = 99;
+		if (challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) {
+			enemyName = 'Improbability';
+			cell = 100;
+		}
+		var enemyHealth = calcEnemyHealth(type, targetZone, cell, enemyName);
+		var universeSetting = game.global.universe === 2 ? equalityQuery(enemyName, targetZone, cell, 'world', 1, 'gamma') : 'X';
 	}
 	if (type === 'map') {
 		var enemyHealth = calcEnemyHealth(type, targetZone);
@@ -1216,6 +1222,7 @@ function calcHDRatio(targetZone, type) {
 		//Return whatever gives the worst H:D ratio, an odd zone void map or farming for the next even zone
 		return Math.max(voidHealth / voidDamage, calcEnemyHealth("world", targetZone) / ourBaseDamage);
 	}
+
 	//Adding gammaBurstDmg to calc
 	if (type !== 'map' && (game.global.universe === 2 && universeSetting < (game.portal.Equality.radLevel - 14)) || game.global.universe === 1)
 		ourBaseDamage *= gammaBurstDmg
