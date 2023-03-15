@@ -717,9 +717,15 @@ function initializeAllSettings() {
 			'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse)) });
 
+		createSetting('pandemoniumDestack',
+			function () { return ('P: HD Ratio') },
+			function () { return ('What HD ratio cut-off to use when farming for the boss. If this setting is 10, the script will destack until you can kill the boss in 10 average hits or there are no Pademonium stacks remaining to clear. ') },
+			'value', '10', null, 'C2', [2],
+			function () { return (getPageSetting('pandemonium', currSettingUniverse)) });
+
 		createSetting('pandemoniumAE',
 			function () { return (['P: AutoEquip Off', 'P: AutoEquip', 'P AE: LMC', 'P AE: Huge Cache']) },
-			function () { return ('<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.<br><br/><b>P AE: LMC Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache<br/>Will also purchase prestiges when they cost less than a Jestimp proc. Additionally will override worker settings to ensure that you farm as much metal as possible.<br/><br><b>P AE: Huge Cache</b><br>Uses the same settings as \'P: AE LMC\' but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure fast farming speed.') },
+			function () { return ('<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency. Uses either \'P: HD Ratio\' or \'P: AE Zone\' to decide when to activate.<br><br/><b>P AE: LMC Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache<br/>Will also purchase prestiges when they cost less than a Jestimp proc. Additionally will override worker settings to ensure that you farm as much metal as possible.<br/><br><b>P AE: Huge Cache</b><br>Uses the same settings as \'P: AE LMC\' but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure fast farming speed.') },
 			'multitoggle', 0, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse)) });
 
@@ -729,11 +735,11 @@ function initializeAllSettings() {
 			'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) });
 
-		createSetting('pandemoniumFarmLevel',
+		/* createSetting('pandemoniumFarmLevel',
 			function () { return ('P AE: Map Level') },
 			function () { return ('The map level for farming Large Metal & Huge Caches.') },
 			'value', '1', null, 'C2', [2],
-			function () { return (getPageSetting('pandemonium', currSettingUniverse) && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) });
+			function () { return (getPageSetting('pandemonium', currSettingUniverse) && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) }); */
 
 		createSetting('pandemoniumStaff',
 			function () { return ('P: Staff') },

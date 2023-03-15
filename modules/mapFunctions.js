@@ -454,10 +454,10 @@ function MapBonus() {
 				mapRepeats = 0;
 			}
 
-			var rAutoLevel_Repeat = rAutoLevel;
+			var autoLevel_Repeat = rAutoLevel;
 			mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rMBSpecial, 10, rMBminZone, true);
 			if (mapAutoLevel !== Infinity) {
-				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 				rMBMapLevel = mapAutoLevel;
 			}
 		}
@@ -547,10 +547,10 @@ function MapFarm() {
 				mapRepeats = 0;
 			}
 
-			var rAutoLevel_Repeat = rAutoLevel;
+			var autoLevel_Repeat = rAutoLevel;
 			mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rMFSpecial, null, null, false);
 			if (mapAutoLevel !== Infinity) {
-				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 				rMFMapLevel = mapAutoLevel;
 			}
 		}
@@ -654,10 +654,10 @@ function TributeFarm() {
 				game.global.mapRunCounter = mapRepeats;
 				mapRepeats = 0;
 			}
-			var rAutoLevel_Repeat = rAutoLevel;
+			var autoLevel_Repeat = rAutoLevel;
 			mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rTrFSpecial, null, null, false);
 			if (mapAutoLevel !== Infinity) {
-				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 				rTrFMapLevel = mapAutoLevel;
 			}
 		}
@@ -824,10 +824,10 @@ function SmithyFarm() {
 				else if (mapBonus === 'lmc' || mapBonus === 'smc') game.global.mapRunCounter = MODULES.mapFunctions.smithyMapCount[2];
 			}
 
-			var rAutoLevel_Repeat = rAutoLevel;
+			var autoLevel_Repeat = rAutoLevel;
 			mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rSFSpecial, null, null, false);
 			if (mapAutoLevel !== Infinity) {
-				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) {
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) {
 					if (game.global.mapsActive && typeof mapBonus !== 'undefined') {
 						if (mapBonus === 'lsc' || mapBonus === 'ssc') MODULES.mapFunctions.smithyMapCount[0] = (game.global.mapRunCounter + 1);
 						else if (mapBonus === 'lwc' || mapBonus === 'swc') MODULES.mapFunctions.smithyMapCount[1] = (game.global.mapRunCounter + 1);
@@ -1006,10 +1006,10 @@ function WorshipperFarm() {
 				game.global.mapRunCounter = mapRepeats;
 				mapRepeats = 0;
 			}
-			var rAutoLevel_Repeat = rAutoLevel;
+			var autoLevel_Repeat = rAutoLevel;
 			mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rWFSpecial, null, null, false);
 			if (mapAutoLevel !== Infinity) {
-				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 				rWFMapLevel = mapAutoLevel;
 			}
 		}
@@ -1567,10 +1567,10 @@ function Wither() {
 		mapRepeats = 0;
 	}
 
-	var rAutoLevel_Repeat = rAutoLevel;
+	var autoLevel_Repeat = rAutoLevel;
 	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, special, -1, null, false);
 	if (mapAutoLevel !== Infinity) {
-		if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 		var mapLevel = mapAutoLevel;
 	}
 
@@ -1744,10 +1744,10 @@ function Quest() {
 			game.global.mapRunCounter = rMapRepeats;
 			rMapRepeats = 0;
 		}
-		var rAutoLevel_Repeat = rAutoLevel;
+		var autoLevel_Repeat = rAutoLevel;
 		mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, questSpecial, questMax, questMin, false);
 		if (mapAutoLevel !== Infinity) {
-			if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) rMapRepeats = game.global.mapRunCounter + 1;
+			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) rMapRepeats = game.global.mapRunCounter + 1;
 			questMapLevel = mapAutoLevel;
 		}
 
@@ -1802,10 +1802,10 @@ function Mayhem() {
 		game.global.mapRunCounter = mapRepeats;
 		mapRepeats = 0;
 	}
-	var rAutoLevel_Repeat = rAutoLevel;
+	var autoLevel_Repeat = rAutoLevel;
 	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, mayhemSpecial, 10, 0, false);
 	if (mapAutoLevel !== Infinity) {
-		if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 		mayhemMapLevel = (mapAutoLevel + mayhemMapIncrease > 10 ? 10 : mapAutoLevel + mayhemMapIncrease);
 	}
 
@@ -1868,10 +1868,10 @@ function Insanity() {
 				game.global.mapRunCounter = mapRepeats;
 				mapRepeats = 0;
 			}
-			var rAutoLevel_Repeat = rAutoLevel;
+			var autoLevel_Repeat = rAutoLevel;
 			mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rIFSpecial, null, null, false);
 			if (mapAutoLevel !== Infinity) {
-				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 				rIFMapLevel = mapAutoLevel;
 			}
 		}
@@ -1917,6 +1917,11 @@ function PandemoniumDestack() {
 
 	if (!challengeActive('Pandemonium') || !getPageSetting('pandemonium') || game.global.world < getPageSetting('pandemoniumZone')) return farmingDetails;
 
+	var destackHits = getPageSetting('pandemoniumDestack') > 0 ? getPageSetting('pandemoniumDestack') : Infinity;
+	var destackZone = getPageSetting('pandemoniumZone') > 0 ? getPageSetting('pandemoniumZone') : Infinity;
+
+	if (destackHits === Infinity && destackZone === Infinity) return farmingDetails;
+
 	var pandemoniumMapLevel = 1;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 	var pandemoniumSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc");
@@ -1927,16 +1932,15 @@ function PandemoniumDestack() {
 		game.global.mapRunCounter = mapRepeats;
 		mapRepeats = 0;
 	}
-	var rAutoLevel_Repeat = rAutoLevel;
+	var autoLevel_Repeat = rAutoLevel;
 	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, pandemoniumSpecial, 10, 1, false);
 	if (mapAutoLevel !== Infinity) {
-		if (rAutoLevel_Repeat !== Infinity && rAutoLevel_Repeat !== mapAutoLevel) mapRepeats = game.global.mapRunCounter + 1;
+		if (autoLevel_Repeat !== Infinity && autoLevel_Repeat !== mapAutoLevel) mapRepeats = game.global.mapRunCounter + 1;
 		pandemoniumMapLevel = mapAutoLevel;
 	}
 
-	if (game.challenges.Pandemonium.pandemonium !== 0) {
+	if (game.challenges.Pandemonium.pandemonium > 0 && (HDRatio > destackHits || game.global.world >= destackZone))
 		shouldPandemoniumDestack = true;
-	}
 
 	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== pandemoniumMapLevel || (getCurrentMapObject().bonus !== pandemoniumSpecial && (getCurrentMapObject().bonus !== undefined && pandemoniumSpecial !== '0')) || ((game.challenges.Pandemonium.pandemonium - pandemoniumMapLevel) < pandemoniumMapLevel));
 	var status = 'Pandemonium Destacking: ' + game.challenges.Pandemonium.pandemonium + " remaining";
@@ -1976,19 +1980,27 @@ function PandemoniumFarm() {
 	var equipCost = cheapestEquipmentCost();
 	var nextEquipmentCost = equipCost[1];
 
-	var pandemoniumMapLevel = getPageSetting('pandemoniumFarmLevel');
-	var pandemonium_LMC = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20, true, pandemoniumJobRatio), false, true, getPageSetting('pandemoniumFarmLevel'));
-	var pandemonium_HC = pandemonium_LMC * 2;
-	var pandemoniumSpecial = nextEquipmentCost > pandemonium_LMC ? 'hc' : 'lmc'
+	var destackHits = getPageSetting('pandemoniumDestack') > 0 ? getPageSetting('pandemoniumDestack') : Infinity;
+	var pandemoniumMapLevel = 1;
+	var destackZone = getPageSetting('pandemoniumAEZone') > 0 ? getPageSetting('pandemoniumAEZone') : Infinity;
 
-	var pandemonium_Resource_Gain = pandemoniumSpecial === 'hc' ? pandemonium_HC : pandemonium_LMC;
+	var autoLevel_Repeat = rAutoLevel;
+	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, pandemoniumSpecial, 10, 1, false);
+	if (mapAutoLevel !== Infinity) {
+		if (autoLevel_Repeat !== Infinity && autoLevel_Repeat !== mapAutoLevel) mapRepeats = game.global.mapRunCounter + 1;
+		pandemoniumMapLevel = mapAutoLevel;
+	}
+
+	var pandemonium_LMC = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20, true, pandemoniumJobRatio), false, true, pandemoniumMapLevel);
+	var pandemoniumSpecial = nextEquipmentCost > pandemonium_LMC ? 'hc' : 'lmc'
+	var pandemoniumResourceGain = pandemoniumSpecial === 'hc' ? pandemonium_LMC * 2 : pandemonium_LMC;
 
 	//Checking if an equipment level costs less than a cache or a prestige level costs less than a jestimp and if so starts farming.
-	if (getPageSetting('pandemoniumAE') > 2 && game.global.world >= getPageSetting('pandemoniumAEZone') && nextEquipmentCost < pandemonium_Resource_Gain)
+	if (destackZone >= 2 && nextEquipmentCost < pandemoniumResourceGain && (HDRatio > destackHits || game.global.world >= destackZone))
 		shouldPandemoniumFarm = true;
 
-	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== pandemoniumMapLevel || getCurrentMapObject().bonus != pandemoniumSpecial || nextEquipmentCost >= pandemonium_Resource_Gain);
-	var status = 'Pandemonium Farming Equips below ' + prettify(pandemonium_Resource_Gain);
+	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== pandemoniumMapLevel || getCurrentMapObject().bonus != pandemoniumSpecial || nextEquipmentCost >= pandemoniumResourceGain);
+	var status = 'Pandemonium Farming Equips below ' + prettify(pandemoniumResourceGain);
 
 	if (shouldPandemoniumFarm) {
 		farmingDetails.shouldRun = shouldPandemoniumFarm;
@@ -2054,10 +2066,10 @@ function Alchemy() {
 				game.global.mapRunCounter = mapRepeats;
 				mapRepeats = 0;
 			}
-			var rAutoLevel_Repeat = rAutoLevel;
+			var autoLevel_Repeat = rAutoLevel;
 			mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rAFSpecial, 10, 1, false);
 			if (mapAutoLevel !== Infinity) {
-				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 				rAFMapLevel = mapAutoLevel;
 			}
 		}
@@ -2186,10 +2198,10 @@ function Glass() {
 		mapRepeats = 0;
 	}
 
-	var rAutoLevel_Repeat = rAutoLevel;
+	var autoLevel_Repeat = rAutoLevel;
 	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, special, 10, null, false);
 	if (mapAutoLevel !== Infinity) {
-		if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 		var mapLevel = mapAutoLevel;
 	}
 
@@ -2315,10 +2327,10 @@ function Hypothermia() {
 				mapRepeats = 0;
 			}
 
-			var rAutoLevel_Repeat = rAutoLevel;
+			var autoLevel_Repeat = rAutoLevel;
 			mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rHFSpecial, null, null, false);
 			if (mapAutoLevel !== Infinity) {
-				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 				rHFMapLevel = mapAutoLevel;
 			}
 		}
@@ -2374,10 +2386,10 @@ function Smithless() {
 			game.global.mapRunCounter = mapRepeats;
 			mapRepeats = 0;
 		}
-		var rAutoLevel_Repeat = rAutoLevel;
+		var autoLevel_Repeat = rAutoLevel;
 		mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, smithlessSpecial, smithlessMax, smithlessMin, false);
 		if (mapAutoLevel !== Infinity) {
-			if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 			smithlessMapLevel = mapAutoLevel;
 		}
 
@@ -2478,10 +2490,10 @@ function Desolation() {
 		game.global.mapRunCounter = mapRepeats;
 		mapRepeats = 0;
 	}
-	var rAutoLevel_Repeat = rAutoLevel;
+	var autoLevel_Repeat = rAutoLevel;
 	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, desolationSpecial, 10, (0 + desolationMapIncrease), false);
 	if (mapAutoLevel !== Infinity) {
-		if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 		desolationMapLevel = mapAutoLevel;
 	}
 	if (!shouldDesolation && (MODULES.mapFunctions.desolationContinueRunning || (game.global.mapsActive && rMapSettings.mapName === 'Desolation Destacking'))) {
@@ -2579,10 +2591,10 @@ function HDFarm() {
 				mapRepeats = 0;
 			}
 
-			var rAutoLevel_Repeat = rAutoLevel;
+			var autoLevel_Repeat = rAutoLevel;
 			mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, rHDFSpecial, rHDFMax, rHDFMin, false);
 			if (mapAutoLevel !== Infinity) {
-				if (rAutoLevel_Repeat !== Infinity && mapAutoLevel !== rAutoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 				rHDFMapLevel = mapAutoLevel;
 			}
 		}

@@ -226,33 +226,33 @@ function remainingHealth(forceMax) {
 }
 
 function equalityManagementBasic() {
-	if (!game.global.preMapsActive && game.global.gridArray.length > 0) {
-		//Looking to see if the enemy that's currently being fought is fast.
-		var fastEnemy = game.global.preMapsActive ? fastimps.includes(game.global.gridArray[game.global.lastClearedCell + 1].name) : fastimps.includes(getCurrentEnemy().name);
-		//Checking if the map that's active is a Deadly voice map which always has first attack.
-		var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location == "Void" && getCurrentMapObject().voidBuff == 'doubleAttack';
-		//Checking if the Frenzy buff is active.
-		var noFrenzy = game.portal.Frenzy.frenzyStarted == "-1" && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.radLevel > 0;
-		//Checking if the experience buff is active during Exterminate.
-		var experienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
-		//Checking to see if the Glass challenge is being run where all enemies are fast.
-		var runningGlass = challengeActive('Glass');
+	if (game.global.preMapsActive) return;
+	//Looking to see if the enemy that's currently being fought is fast.
+	var fastEnemy = fastimps.includes(getCurrentEnemy().name);
+	//Checking if the map that's active is a Deadly voice map which always has first attack.
+	var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location == "Void" && getCurrentMapObject().voidBuff == 'doubleAttack';
+	//Checking if the Frenzy buff is active.
+	var noFrenzy = game.portal.Frenzy.frenzyStarted == "-1" && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.radLevel > 0;
+	//Checking if the experience buff is active during Exterminate.
+	var experienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
+	//Checking to see if the Glass challenge is being run where all enemies are fast.
+	var runningGlass = challengeActive('Glass');
+	var runningDesolation = challengeActive('Desolation');
 
-		//Toggles equality scaling on
-		if ((fastEnemy && !experienced) || voidDoubleAttack || noFrenzy || runningGlass) {
-			if (!game.portal.Equality.scalingActive) {
-				game.portal.Equality.scalingActive = true;
-				manageEqualityStacks();
-				updateEqualityScaling();
-			}
-			//Toggles equality scaling off and sets equality stacks to 0
-		} else {
-			if (game.portal.Equality.scalingActive) {
-				game.portal.Equality.scalingActive = false;
-				game.portal.Equality.disabledStackCount = "0";
-				manageEqualityStacks();
-				updateEqualityScaling();
-			}
+	//Toggles equality scaling on
+	if ((fastEnemy && !experienced) || voidDoubleAttack || noFrenzy || runningGlass || runningDesolation) {
+		if (!game.portal.Equality.scalingActive) {
+			game.portal.Equality.scalingActive = true;
+			manageEqualityStacks();
+			updateEqualityScaling();
+		}
+		//Toggles equality scaling off and sets equality stacks to 0
+	} else {
+		if (game.portal.Equality.scalingActive) {
+			game.portal.Equality.scalingActive = false;
+			game.portal.Equality.disabledStackCount = "0";
+			manageEqualityStacks();
+			updateEqualityScaling();
 		}
 	}
 }
@@ -485,6 +485,10 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 //Auto Equality
 function equalityManagement() {
 
+	if (usingRealTimeOffline) {
+		equalityManagementBasic();
+		return;
+	}
 	if (game.global.preMapsActive || game.global.gridArray.length <= 0)
 		return;
 
