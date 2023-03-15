@@ -4056,7 +4056,7 @@ function updateATVersion() {
 			changelog.push("Map Bonus HD related settings have been moved to 2 inputs in the Maps tab rather than in the Map Bonus setting.")
 		}
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1') {
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.2') {
 			changelog.push("Quest now has an additional setting for the max amount of maps you'd like to run while on Smithy quests.<br>\
 			HD Farm now has an additional dropdown for targetting map levels. When using this feature it will cause AT to farm until auto level is at or above the designated level.<br>\
 			Worshipper Farm has a new setting in default row to enable the ship skip map limit setting.<br>\
