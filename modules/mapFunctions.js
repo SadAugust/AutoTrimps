@@ -265,7 +265,6 @@ const voidPrefixes = Object.freeze({
 	'Deadly': 30
 });
 
-//Void Maps
 var voidSuffixes = Object.freeze({
 	'Descent': 7.077,
 	'Void': 8.822,
@@ -273,7 +272,6 @@ var voidSuffixes = Object.freeze({
 	'Pit': 10.6
 });
 
-//Void Maps
 function getVoidMapDifficulty(map) {
 	if (!map) {
 		return 99999;
@@ -294,7 +292,6 @@ function getVoidMapDifficulty(map) {
 	return score;
 }
 
-//Void Maps
 function selectEasierVoidMap(map1, map2) {
 	if (getVoidMapDifficulty(map2) > getVoidMapDifficulty(map1)) {
 		return map1;
@@ -303,7 +300,6 @@ function selectEasierVoidMap(map1, map2) {
 	}
 }
 
-//Void Maps
 function VoidMaps() {
 
 	var rDoVoids = false;
@@ -393,7 +389,6 @@ function VoidMaps() {
 MODULES.mapFunctions.rMBHealthFarm = false;
 var rMBHealthFarm = false;
 
-//Map Bonus
 function MapBonus() {
 
 	var rShouldMaxMapBonus = false;
@@ -495,7 +490,6 @@ function MapBonus() {
 	return farmingDetails;
 }
 
-//Map Farm
 function MapFarm() {
 
 	var rShouldMapFarm = false;
@@ -599,7 +593,6 @@ function MapFarm() {
 	return farmingDetails;
 }
 
-//Tribute Farm
 function TributeFarm() {
 
 	var rShouldTributeFarm = false;
@@ -767,7 +760,6 @@ function TributeFarm() {
 
 MODULES.mapFunctions.smithyMapCount = [0, 0, 0];
 
-//Smithy Farming
 function SmithyFarm() {
 
 	const mapName = 'Smithy Farm';
@@ -823,7 +815,7 @@ function SmithyFarm() {
 		var rSFMapLevel = challengeActive('Quest') ? -1 : rSFSettings.level;
 		var rSFSpecial = getAvailableSpecials('lmc', true);
 		var rSFJobRatio = '0,0,0,0';
-		var rSFSmithies = challengeActive('Quest') ? game.buildings.Smithy.purchased + 1 : rSFSettings.repeat;
+		var rSFSmithies = challengeActive('Quest') ? getPageSetting('questSmithyMaps') : rSFSettings.repeat;
 
 		if (currQuest() === 10 || rSFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.mapFunctions.smithyMapCount !== [0, 0, 0] && typeof getCurrentMapObject().bonus !== 'undefined') {
@@ -853,7 +845,7 @@ function SmithyFarm() {
 		var metalBase = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 1, true, '0,0,1'), false, true, rSFMapLevel);
 
 		//When mapType is set as Map Count work out how many Smithies we can farm in the amount of maps specified.
-		if (currQuest() !== 10 && rSFSettings.mapType === 'Map Count' && rSFSmithies !== 0) {
+		if (currQuest() === 10 || rSFSettings.mapType === 'Map Count' && rSFSmithies !== 0) {
 			var smithyCount = 0;
 			//Checking total map count user wants to run
 			var totalMaps = currentMap === mapName ? rSFSmithies - game.global.mapRunCounter : rSFSmithies;
@@ -963,7 +955,6 @@ function SmithyFarm() {
 
 var rWFDebug = 0;
 
-//Worshipper Farm
 function WorshipperFarm() {
 	const mapName = 'Worshipper Farm';
 	const farmingDetails = {
@@ -1145,7 +1136,6 @@ MODULES.mapFunctions.prestigeFragMapBought = false;
 MODULES.mapFunctions.prestigeRunningMaps = false;
 MODULES.mapFunctions.prestigeRaidZone = 0;
 
-//Prestige Raiding
 function PrestigeRaiding() {
 
 	const mapName = 'Prestige Raiding'
@@ -1316,7 +1306,6 @@ function runPrestigeRaiding(raidingSettings) {
 		runMap();
 }
 
-//Prestige Climb
 function PrestigeClimb() {
 
 	const mapName = 'Prestige Climb'
@@ -1414,7 +1403,6 @@ function PrestigeClimb() {
 	return farmingDetails;
 }
 
-//Bionic Wonderland Raiding
 function BionicRaiding() {
 
 	const mapName = 'Bionic Raiding'
@@ -1514,7 +1502,6 @@ function runBionicRaiding(bionicPool) {
 	}
 }
 
-//Experience Farm
 function Experience() {
 
 	var mapName = 'Experience'
@@ -1558,7 +1545,6 @@ function Experience() {
 	return farmingDetails;
 }
 
-//Wither
 function Wither() {
 
 	var shouldFarm = false;
@@ -1640,7 +1626,6 @@ function Wither() {
 	return farmingDetails;
 }
 
-//Quagmire
 function Quagmire() {
 
 	var rShouldQuagFarm = false;
@@ -1724,7 +1709,6 @@ function currQuest() {
 	else return 0;
 }
 
-//Quest
 function Quest() {
 
 	var rShouldQuest = 0;
@@ -1792,7 +1776,6 @@ function Quest() {
 	return farmingDetails;
 }
 
-//Mayhem
 function Mayhem() {
 
 	const mapName = 'Mayhem Destacking';
@@ -1844,7 +1827,6 @@ function Mayhem() {
 	return farmingDetails;
 }
 
-//Insanity Farm
 function Insanity() {
 
 	const mapName = 'Insanity Farm';
@@ -1922,7 +1904,6 @@ function Insanity() {
 	return farmingDetails;
 }
 
-//Pandemonium
 function PandemoniumDestack() {
 
 	var shouldPandemoniumDestack = false;
@@ -2030,7 +2011,6 @@ function PandemoniumFarm() {
 	return farmingDetails;
 }
 
-//Alchemy
 function Alchemy() {
 
 	var rShouldAlchFarm = false;
@@ -2183,7 +2163,6 @@ function Alchemy() {
 	return farmingDetails;
 }
 
-//Glass
 function Glass() {
 
 	var shouldFarm = false;
@@ -2268,7 +2247,6 @@ function Glass() {
 MODULES.mapFunctions.rHFBuyPackrat = false;
 rHFBuyPackrat = false;
 
-//Hypothermia
 function Hypothermia() {
 
 	var rShouldHypoFarm = false;
@@ -2372,7 +2350,6 @@ function Hypothermia() {
 	return farmingDetails;
 }
 
-//Smithless
 function Smithless() {
 
 	var shouldSmithless = false;
@@ -2471,7 +2448,6 @@ function Smithless() {
 
 MODULES.mapFunctions.desolationContinueRunning = false;
 
-//Desolation
 function Desolation() {
 
 	const mapName = 'Desolation Destacking';
@@ -2540,7 +2516,6 @@ function Desolation() {
 	return farmingDetails;
 }
 
-//HD Farm
 function HDFarm() {
 
 	const mapName = 'HD Farm';

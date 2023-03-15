@@ -262,8 +262,9 @@ function c2runner() {
 		if (highestZone >= 50) challengeArray.push('Unbalance');
 		if (highestZone >= 85) challengeArray.push('Quest');
 		if (highestZone >= 105) challengeArray.push('Storm');
+		if (highestZone >= 25) challengeArray.push('Transmute');
 		if (highestZone >= 50) challengeArray.push('Duel');
-		if (highestZone >= 50) challengeArray.push('Downsize');
+		//if (highestZone >= 50) challengeArray.push('Downsize');
 		if (highestZone >= 201) challengeArray.push('Smithless');
 	}
 

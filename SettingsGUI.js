@@ -657,7 +657,12 @@ function initializeAllSettings() {
 		createSetting('questSmithyZone',
 			function () { return ('Q: Smithy Zone') },
 			function () { return ('The zone you\'ll stop your Quest run at (will assume 85 for non C3 version). Will calculate the smithies required for Quests and purchase spare ones if possible.') },
-			'value', [999], null, 'C2', [2],
+			'value', 999, null, 'C2', [2],
+			function () { return (getPageSetting('quest', currSettingUniverse)) });
+		createSetting('questSmithyMaps',
+			function () { return ('Q: Smithy Maps') },
+			function () { return ('The maximum amount of maps you\'d like to spend on a Smithy quest.') },
+			'value', 100, null, 'C2', [2],
 			function () { return (getPageSetting('quest', currSettingUniverse)) });
 
 		//Mayhem
@@ -2635,7 +2640,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("c2RunnerPercent", radonon);
 	modifyParentNode("unbalanceImprobDestack", radonon);
 	modifyParentNode("trappapaloozaCoords", radonon);
-	modifyParentNode("questSmithyZone", radonon);
+	modifyParentNode("questSmithyMaps", radonon);
 	modifyParentNode("mayhemMapIncrease", radonon_mayhem);
 	modifyParentNode("stormStacks", radonon);
 	modifyParentNode("pandemoniumMP", radonon_panda);
