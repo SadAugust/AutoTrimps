@@ -1985,7 +1985,7 @@ function PandemoniumFarm() {
 	var destackZone = getPageSetting('pandemoniumAEZone') > 0 ? getPageSetting('pandemoniumAEZone') : Infinity;
 
 	var autoLevel_Repeat = rAutoLevel;
-	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, pandemoniumSpecial, 10, 1, false);
+	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, pandemoniumSpecial, null, null, false);
 	if (mapAutoLevel !== Infinity) {
 		if (autoLevel_Repeat !== Infinity && autoLevel_Repeat !== mapAutoLevel) mapRepeats = game.global.mapRunCounter + 1;
 		pandemoniumMapLevel = mapAutoLevel;

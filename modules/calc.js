@@ -1177,7 +1177,7 @@ function calcHDRatio(targetZone, type) {
 	if (type === 'world') {
 		var enemyName = 'Turtlimp';
 		var cell = 99;
-		if (challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) {
+		if (challengeActive('Mayhem') || challengeActive('Pandemonium')) {
 			enemyName = 'Improbability';
 			cell = 100;
 		}
