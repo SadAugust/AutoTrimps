@@ -102,7 +102,7 @@ function autoPortal() {
 		case "Alchemy":
 		case "Hypothermia":
 		case "Desolation":
-			if (!game.global.challengeActive || (game.global.world >= portalZone && (MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity)))
+			if ((!game.global.challengeActive && !MODULES.portal.portalForVoid) || (game.global.world >= portalZone && (MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity)))
 				doPortal(getPageSetting('autoPortal', universe));
 			break;
 		case "Off":
@@ -419,8 +419,10 @@ function doPortal(challenge, squared) {
 	shouldPortal = true;
 	universeSwapped();
 	//Identifying which challenge type we're running to setup for the preset swapping function
-	var preset = challengeSquaredMode ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
-	if (portalUniverse === 2) presetSwapping(preset);
+	if (portalUniverse === 2 && getPageSetting('presetSwap', 2)) {
+		var preset = challengeSquaredMode || challenge === 'Mayhem' || challenge === 'Pandemonium' || challenge === 'Desolation' ? 'push' : game.global.selectedChallenge === 'Daily' ? 'tufarm' : 'ezfarm';
+		fillPreset(preset);
+	}
 
 	//Run Perky/Surky.
 	if (typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {

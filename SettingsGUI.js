@@ -114,8 +114,6 @@ function maximizeAllTabs() {
 var addTabsDiv;
 var addtabsUL;
 
-
-
 function checkLiqZoneCount() {
 	if (game.options.menu.liquification.enabled == 0) return 0;
 	/* if (game.global.universe == 2) {
@@ -232,8 +230,9 @@ function initializeAllSettings() {
 			'boolean', false, null, 'Core', [1, 2]);
 		createSetting('presetSwap',
 			function () { return ('Preset Swapping') },
-			function () { return ('Will automatically load Preset 1 if portaling into a normal run, Preset 2 if portaling into a daily run or Preset 3 if portaling into a C3.<br>Be aware that you need to save your presets when making adjustments or it\'ll revert to the previous one you saved.') },
-			'boolean', false, null, 'Core', [2]);
+			function () { return ('Will automatically swap Surky presets when portaling into runs. Fillers will load \"Easy Radon Challenge\", Dailies will load \"Difficult Radon Challenge\", and \"Push/C3/Mayhem\" when portaling into any C3s or Mayhem-like challenges.') },
+			'boolean', false, null, 'Core', [2],
+			function () { return (getPageSetting('autoPerks')) });
 
 		createSetting('radonsettings',
 			function () { return (['Helium', 'Radon']) },
@@ -3561,6 +3560,10 @@ function updateATVersion() {
 			changelog.push("Added a new Mayhem setting which will run melting point at X smithies like the Panda & Deso settings.<br>\
 			Added a new Pandemonium setting for HD Ratio destacking like Mayhem & Deso have. Equipment farming will also use this if the equip farm zone hasn't been setup or you're below that value.<br>\
 			Surky now saves inputs when swapping between presets so you don't have to set them back up every time!")
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.4') {
+			changelog.push("The U2 Preset Swapping setting has been modified and it will adjust the Surky preset that is selected depending on the type of challenge that you're about to run.")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;

@@ -624,7 +624,8 @@ function setAuxInput(key, value) {
 }
 
 // fill preset weights from the dropdown menu and set special challenge
-function fillPreset() {
+function fillPreset(specificPreset) {
+	if (specificPreset) $('#presetElem').value = specificPreset
 	initPerks();
 	var preset = $('#presetElem').value;
 	var weights = [0, 0, 0];
