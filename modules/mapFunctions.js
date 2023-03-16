@@ -1317,7 +1317,7 @@ function PrestigeClimb() {
 	if (challengeActive('Frugal')) return farmingDetails;
 	if (challengeActive('Mapology') && !getPageSetting('mapology')) return farmingDetails;
 
-	const targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : autoTrimpSettings['Prestige'].selected;
+	const targetPrestige = challengeActive('Mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
 	if (targetPrestige === "Off") return farmingDetails;
 
 	var customVars = MODULES["maps"];
@@ -1337,7 +1337,6 @@ function PrestigeClimb() {
 		needPrestige = game.mapUnlocks[targetPrestige] && game.mapUnlocks[targetPrestige].last + 5 <= (game.global.world);
 
 	const prestigeInfo = equipsToGet(z, targetPrestige);
-
 
 	//Figure out how many equips to farm for && maps to run to get to that value
 	var prestigeToFarmFor = prestigeInfo[0];
@@ -1367,6 +1366,7 @@ function PrestigeClimb() {
 			}
 		}
 	}
+	if (prestigeToFarmFor === 0) needPrestige = false;
 
 	var special = getAvailableSpecials('p');
 
