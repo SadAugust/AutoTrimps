@@ -1,4 +1,6 @@
 var AutoPerks = {};
+var perks = {};
+var props = {};
 
 var showingSurky = false;
 
@@ -145,7 +147,11 @@ function setupSurkyUI() {
 	AutoPerks.displayGUI();
 }
 
-function saveSurkySettings() {
+function saveSurkySettings(initial) {
+	if (!initial) {
+		initPerks();
+		readInputs();
+	}
 	const surkyInputs = {
 		preset: $('#presetElem').value,
 		radonWeight: $('#radonWeight').value === '' ? 1 : $('#radonWeight').value,
@@ -160,14 +166,19 @@ function saveSurkySettings() {
 		meteorologists: $('#meteorologists').value,
 		housingCount: $('#housingCount').value,
 		smithyCount: $('#smithyCount').value,
+		ezWeights: props.ezWeights,
+		tuWeights: props.tuWeights,
+		pushWeights: props.pushWeights,
+		alchWeights: props.alchWeights,
 	}
+
 	localStorage.setItem("surkyInputs", JSON.stringify(surkyInputs));
 }
 
 function loadSurkySettings() {
 	let surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 	if (surkyInputs === null) {
-		saveSurkySettings();
+		saveSurkySettings(true);
 		loadSurkySettings();
 		return;
 	}
@@ -231,12 +242,9 @@ for (var i = 0; i < rnTerms; i++) {
 	rnMAWeights[i] /= rnMAWeightSum;
 }
 
-var perks = {};
-var props = {};
-
 // initialize perks object to default values
 function initPerks() {
-	let surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
+	var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 	//if (surkyInputs === null) return;
 
 	props = {
@@ -282,9 +290,9 @@ function initPerks() {
 		// finding potions purchased in alchemy
 		shinyTable: [0],
 		// memoization table for trinket drops
-		clearWeight: (surkyInputs !== null) ? Number(surkyInputs.clearWeight) : 1,
-		survivalWeight: (surkyInputs !== null) ? Number(surkyInputs.survivalWeight) : 1,
-		radonWeight: (surkyInputs !== null) ? Number(surkyInputs.radonWeight) : 1,
+		clearWeight: $('#clearWeight').value !== '' ? $('#clearWeight').value : (surkyInputs !== null) ? Number(surkyInputs.clearWeight) : 1,
+		survivalWeight: $('#survivalWeight').value !== '' ? $('#survivalWeight').value : (surkyInputs !== null) ? Number(surkyInputs.survivalWeight) : 1,
+		radonWeight: $('#radonWeight').value !== '' ? $('#radonWeight').value : (surkyInputs !== null) ? Number(surkyInputs.radonWeight) : 1,
 		scruffyLevel: 0,
 		weaponLevels: 1,
 		armorLevels: 1,
@@ -300,10 +308,10 @@ function initPerks() {
 		hideLocked: true,
 		showLevelLocks: false,
 		darkMode: false,
-		ezWeights: null,
-		tuWeights: null,
-		alchWeights: null,
-		pushWeights: null,
+		ezWeights: (surkyInputs !== null && surkyInputs.ezWeights !== undefined && surkyInputs.ezWeights !== null) ? (surkyInputs.ezWeights) : null,
+		tuWeights: (surkyInputs !== null && surkyInputs.tuWeights !== undefined && surkyInputs.tuWeights !== null) ? (surkyInputs.tuWeights) : null,
+		alchWeights: (surkyInputs !== null && surkyInputs.tuWeights !== undefined && surkyInputs.alchWeights !== null) ? (surkyInputs.alchWeights) : null,
+		pushWeights: (surkyInputs !== null && surkyInputs.tuWeights !== undefined && surkyInputs.pushWeights !== null) ? (surkyInputs.pushWeights) : null,
 		gbAfterpush: false,
 		// is GB used in the afterpush?
 		s3Rn: true,
@@ -615,30 +623,20 @@ function setAuxInput(key, value) {
 	$('#' + key).value = value;
 }
 
-// reset stored weights to defaults
-var defaultWeights = function () {
-	props.ezWeights = [0, 0, 1];
-	props.tuWeights = [1, 0.5, 15];
-	props.pushWeights = [1, 1, 0];
-	props.alchWeights = [1, 0.01, 10];
-	fillPreset();
-	evaluatePerks();
-}
-
 // fill preset weights from the dropdown menu and set special challenge
 function fillPreset() {
 	initPerks();
 	var preset = $('#presetElem').value;
 	var weights = [0, 0, 0];
 	if (preset == 'ezfarm') {
-		weights = (props.ezWeights == null) ? [0, 0, 1] : props.ezWeights;
+		weights = (props.ezWeights === null) ? [0, 0, 1] : props.ezWeights;
 	} else if (preset == 'tufarm') {
-		weights = (props.tuWeights == null) ? [1, 0.5, 15] : props.tuWeights;
+		weights = (props.tuWeights === null) ? [1, 0.5, 15] : props.tuWeights;
 		// with GU recommendations, we want a big Rn weight
 	} else if (preset == 'push') {
-		weights = (props.pushWeights == null) ? [1, 1, 0] : props.pushWeights;
+		weights = (props.pushWeights === null) ? [1, 1, 0] : props.pushWeights;
 	} else if (preset == 'alchemy') {
-		weights = (props.alchWeights == null) ? [1, 0.01, 10] : props.alchWeights;
+		weights = (props.alchWeights === null) ? [1, 0.01, 10] : props.alchWeights;
 	} else if (preset == 'trappa') {
 		weights = [1, 1.5, 0];
 	} else if (preset == 'downsize') {

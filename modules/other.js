@@ -227,6 +227,7 @@ function remainingHealth(forceMax) {
 
 function equalityManagementBasic() {
 	if (game.global.preMapsActive) return;
+	if (game.global.gridArray.length <= 0) return;
 	//Looking to see if the enemy that's currently being fought is fast.
 	var fastEnemy = fastimps.includes(getCurrentEnemy().name);
 	//Checking if the map that's active is a Deadly voice map which always has first attack.

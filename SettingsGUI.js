@@ -3423,7 +3423,7 @@ function toggleStatus(update) {
 		if (getPageSetting('displayAutoMapStatus')) {
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.\
-			<p>\<br>\<b>H:D ratio = </b>\" + prettify(HDRatio)  + \"<br>\
+			<p>\<br>\<b>World H:D Ratio = </b>\" + prettify(HDRatio)  + \"<br>\
 			<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
 			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\
 			")');
