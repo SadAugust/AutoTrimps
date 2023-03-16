@@ -200,13 +200,13 @@ function shouldRunUniqueMap(map) {
 			}
 		} else if (map.name === 'Melting Point') {
 			// maybe get extra smithiesvar 
+			var currChallenge = game.global.challengeActive.toLowerCase()
 			meltsmithy =
-				challengeActive('Desolation') && getPageSetting('desolation') && getPageSetting('desolationMP') > 0 ? getPageSetting('desolationMP') :
-					challengeActive('Pandemonium') && getPageSetting('pandemoniumMP') > 0 ? getPageSetting('pandemoniumMP') :
-						isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
-							isDaily && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
-								!isC3 && !isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
-									Infinity;
+				(challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0 ? getPageSetting(currChallenge + 'MP') :
+					isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
+						isDaily && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
+							!isC3 && !isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
+								Infinity;
 			if (game.mapUnlocks.SmithFree.canRunOnce &&
 				((!isC3 && !isDaily && uniqueMapSetting.Melting_Point.enabled && game.global.world >= uniqueMapSetting.Melting_Point.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Melting_Point.cell) ||
 					(meltsmithy !== Infinity && meltsmithy <= game.buildings.Smithy.owned))) {
