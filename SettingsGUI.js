@@ -3267,13 +3267,13 @@ function updateCustomButtons(initialLoad) {
 
 function settingUniverse(setting) {
 	if (setting === 'buyBuildings') {
-		return getPageSetting('buildingsType');
+		return getPageSetting('buildingsType', currPortalUniverse);
 	}
 	if (setting === 'equipOn') {
-		return getPageSetting('equipOn');
+		return getPageSetting('equipOn', currPortalUniverse);
 	}
 	if (setting === 'autoJobs') {
-		return getPageSetting('jobType');
+		return getPageSetting('jobType', currPortalUniverse);
 	}
 }
 

@@ -290,9 +290,9 @@ function initPerks() {
 		// finding potions purchased in alchemy
 		shinyTable: [0],
 		// memoization table for trinket drops
-		clearWeight: $('#clearWeight').value !== '' ? $('#clearWeight').value : (surkyInputs !== null) ? Number(surkyInputs.clearWeight) : 1,
-		survivalWeight: $('#survivalWeight').value !== '' ? $('#survivalWeight').value : (surkyInputs !== null) ? Number(surkyInputs.survivalWeight) : 1,
-		radonWeight: $('#radonWeight').value !== '' ? $('#radonWeight').value : (surkyInputs !== null) ? Number(surkyInputs.radonWeight) : 1,
+		clearWeight: $('#clearWeight').value !== '' ? Number($('#clearWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.clearWeight) : 1,
+		survivalWeight: $('#survivalWeight').value !== '' ? Number($('#survivalWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.survivalWeight) : 1,
+		radonWeight: $('#radonWeight').value !== '' ? Number($('#radonWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.radonWeight) : 1,
 		scruffyLevel: 0,
 		weaponLevels: 1,
 		armorLevels: 1,
