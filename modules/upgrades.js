@@ -120,6 +120,7 @@ function needGymystic() {
 }
 
 function buyUpgrades() {
+	if (getPageSetting('upgradeType') === 0) return;
 	for (var upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
 		var gameUpgrade = game.upgrades[upgrade];

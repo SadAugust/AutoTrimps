@@ -578,9 +578,12 @@ function estimateEquipsForZone(rEFIndex) {
 function displayMostEfficientEquipment() {
 
 	if (usingRealTimeOffline) return;
+	var highlightSetting = getPageSetting('equipEfficientEquipDisplay');
+	if (!highlightSetting) return;
+	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
+	if (!oneSecondInterval) return;
 	var $eqNamePrestige = null;
 
-	var highlightSetting = getPageSetting('equipEfficientEquipDisplay');
 
 	if (!highlightSetting) return;
 

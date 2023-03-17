@@ -1488,12 +1488,12 @@ function initializeAllSettings() {
 			function () { return (['Equality Calc Off', 'EC: On', 'EC: Health']) },
 			function () { return ('<b>Experimental. </b><br>Adds Equality Scaling levels to the battlecalc. Will always calculate equality based on actual scaling levels when its turned off by other settings. Assumes you use Equality Scaling. Turning this on allows in-game Equality Scaling to adjust your Health accordingly. EC: Health only decreases enemies attack in the calculation which may improve speed. ') },
 			'multitoggle', 0, null, 'Combat', [2],
-			function () { return (getPageSetting('equalityManagement') < 2) });
+			function () { return (getPageSetting('equalityManagement', 2) < 2) });
 		createSetting('gammaBurstCalc',
 			function () { return ('Gamma Burst Calc') },
 			function () { return ('<b>Experimental.</b><br>Adds Gamma Burst to your HD Ratio. Be warned, it will assume that you have a gamma burst ready to trigger for every attack so your HD Ratio might be 1 but you\'d need to attack 4-5 times to reach that damage theshold.') },
 			'boolean', true, null, 'Combat', [1, 2],
-			function () { return (getPageSetting('equalityManagement') === 2) });
+			function () { return (game.global.highestRadonLevelCleared > 10) });
 		createSetting('frenzyCalc',
 			function () { return ('Frenzy Calc') },
 			function () { return ('<b>Experimental.</b><br>Adds frenzy to the calc. Be warned, it will not farm as much with this on as it expects 100% frenzy uptime.') },
@@ -2256,7 +2256,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
 
-	} else if (type == 'value' || type == 'valueNegative' || type == 'mazDefaultArray') {
+	} else if (type == 'value' || type == 'valueNegative' || type == 'multiValue') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
 				id: id,
@@ -2265,28 +2265,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				type: type,
 				value: loaded === undefined || loaded === null ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value,
 				valueU2: loaded === undefined || loaded === null ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2,
-				universe: universe
-			};
-		if (require) autoTrimpSettings[id].require = require
-		btn.setAttribute("style", "font-size: 1.1vw;");
-		btn.setAttribute('class', 'noselect settingsBtn btn-info');
-		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name()}", ${type == 'valueNegative'}, ${type == 'multiValue'})`);
-		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
-		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.innerHTML = name();
-		btnParent.appendChild(btn);
-		if (container) document.getElementById(container).appendChild(btnParent);
-		else document.getElementById("autoSettings").appendChild(btnParent);
-
-	} else if (type == 'multiValue' || type == 'valueNegative') {
-		if (!(loaded && id == loaded.id && loaded.type === type))
-			autoTrimpSettings[id] = {
-				id: id,
-				name: name,
-				description: description,
-				type: type,
-				value: loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value,
-				valueU2: loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2,
 				universe: universe
 			};
 		if (require) autoTrimpSettings[id].require = require
@@ -2300,7 +2278,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
-
 	} else if (type == 'textValue') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
@@ -2322,29 +2299,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
-
-	} else if (type == 'textArea') {
-		if (!(loaded && id == loaded.id && loaded.type === type))
-			autoTrimpSettings[id] = {
-				id: id,
-				name: name,
-				description: description,
-				type: type,
-				value: loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value,
-				valueU2: loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2,
-				universe: universe
-			};
-		if (require) autoTrimpSettings[id].require = require
-		btn.setAttribute("style", "font-size: 1.1vw;");
-		btn.setAttribute('class', 'noselect settingsBtn btn-info');
-		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name()}", ${type == 'textarea'})`);
-		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
-		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.innerHTML = name();
-		btnParent.appendChild(btn);
-		if (container) document.getElementById(container).appendChild(btnParent);
-		else document.getElementById("autoSettings").appendChild(btnParent);
-
 	} else if (type == 'dropdown') {
 		if (!(loaded && id == loaded.id && loaded.type === type))
 			autoTrimpSettings[id] = {
@@ -2486,6 +2440,19 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (require) autoTrimpSettings[id].require = require
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
+		return;
+	} else if (type === 'mazDefaultArray') {
+		if (!(loaded && id == loaded.id && loaded.type === type))
+			autoTrimpSettings[id] = {
+				id: id,
+				name: name,
+				description: description,
+				type: type,
+				value: loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value,
+				valueU2: loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2,
+				universe: universe
+			};
+		if (require) autoTrimpSettings[id].require = require
 		return;
 	}
 	if (autoTrimpSettings[id].name != name)
@@ -3192,9 +3159,8 @@ function updateCustomButtons(initialLoad) {
 		if (item === null || typeof item.id === 'undefined') continue;
 		const settingUniverse = item.universe;
 		if (!Array.isArray(settingUniverse)) continue;
-		if (item.type === 'mazDefaultArray') {
-			turnOff(setting);
-		} else if (settingUniverse.indexOf(currSettingUniverse) !== -1) {
+		if (item.type === 'mazDefaultArray') continue;
+		else if (settingUniverse.indexOf(currSettingUniverse) !== -1) {
 			turnOn(setting, radonon);
 		} else {
 			turnOff(setting)
@@ -3223,6 +3189,12 @@ function updateCustomButtons(initialLoad) {
 						elem.innerHTML = item.name()[itemValue];
 						elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemValue);
 					}
+					else if (item.type == 'textValue' && typeof itemValue !== 'undefined' && itemValue.substring !== undefined) {
+						if (itemValue.length > 18)
+							elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21) + '...';
+						else
+							elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21);
+					}
 					else if (item.type == 'multiValue') {
 						if (Array.isArray(itemValue) && itemValue.length == 1 && itemValue[0] == -1)
 							elem.innerHTML = item.name() + ': ' + "<span class='icomoon icon-infinity'></span>";
@@ -3230,12 +3202,6 @@ function updateCustomButtons(initialLoad) {
 							elem.innerHTML = item.name() + ': ' + itemValue[0] + '+';
 						else
 							elem.innerHTML = item.name() + ': ' + itemValue;
-					}
-					else if (item.type == 'textValue' && typeof itemValue !== 'undefined' && itemValue.substring !== undefined) {
-						if (itemValue.length > 18)
-							elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21) + '...';
-						else
-							elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21);
 					}
 					else if (itemValue > -1 || item.type == 'valueNegative') {
 						elem.innerHTML = item.name() + ': ' + prettify(itemValue);
@@ -3253,6 +3219,9 @@ function updateCustomButtons(initialLoad) {
 			}
 			else {
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
+				//Updating input box & text that will be displayed upon saving!
+				if (item.type === 'value' || item.type === 'multiValue' || item.type === 'valueNegative') elem.setAttribute("onclick", `autoSetValueToolTip("${item.id}", "${item.name()}", ${item.type == 'valueNegative'}, ${item.type == 'multiValue'})`);
+				if (item.type === 'textValue') elem.setAttribute("onclick", `autoSetTextToolTip("${item.id}", "${item.name()}", ${item.type == 'textValue'})`);
 			}
 		}
 	}
