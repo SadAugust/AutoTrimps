@@ -63,6 +63,7 @@ function purchaseEnlight(nature) {
 }
 
 function autoEnlight() {
+	if (!getPageSetting('autoenlight') || game.global.world < 230 || game.global.uberNature) return;
 	var nature = "None", dnature = "None", cnature = "None";
 	var fillernature = [], poison, poisondiff, wind, winddiff, ice, icediff, dailynature = [], dpoison, dpoisondiff, dwind, dwinddiff, dice, dicediff, c2nature = [], cpoison, cpoisondiff, cwind, cwinddiff, cice, cicediff;
 

@@ -170,9 +170,10 @@ function autoMagmiteSpender() {
 }
 
 function autoGenerator() {
+	if (!getPageSetting('UseAutoGen')) return;
+	if (game.global.world < 230) return;
 	var defaultgenstate = getPageSetting('defaultgen');
 	var beforefuelstate = getPageSetting('beforegen');
-	if (game.global.world < 230) return;
 	if (game.global.dailyChallenge.seed && getPageSetting('AutoGenDC') == 1 && game.global.generatorMode != 1)
 		changeGeneratorState(1);
 	if (game.global.dailyChallenge.seed && getPageSetting('AutoGenDC') == 1 && game.global.generatorMode == 1)

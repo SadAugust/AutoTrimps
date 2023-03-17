@@ -230,7 +230,7 @@ function initializeAllSettings() {
 			'boolean', false, null, 'Core', [1, 2]);
 		createSetting('presetSwap',
 			function () { return ('Preset Swapping') },
-			function () { return ('Will automatically swap Surky presets when portaling into runs. Fillers will load \"Easy Radon Challenge\", Dailies will load \"Difficult Radon Challenge\", and \"Push/C3/Mayhem\" when portaling into any C3s or Mayhem-like challenges.') },
+			function () { return ('Will automatically swap Surky presets when portaling into runs. Fillers will load \'Easy Radon Challenge\', Dailies will load \'Difficult Radon Challenge\', and \'Push/C3/Mayhem\' when portaling into any C3s or Mayhem-like challenges.') },
 			'boolean', false, null, 'Core', [2],
 			function () { return (getPageSetting('autoPerks')) });
 

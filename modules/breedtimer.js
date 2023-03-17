@@ -106,6 +106,7 @@ function breedTimeRemaining() {
 var DecimalBreed = Decimal.clone({ precision: 30, rounding: 4 });
 var missingTrimps = new DecimalBreed(0);
 function ATGA2() {
+	if (!getPageSetting('ATGA2')) return;
 	if (game.jobs.Geneticist.locked == false && getPageSetting('ATGA2') == true && getPageSetting('ATGA2timer') > 0 && !challengeActive('Trapper')) {
 		var trimps = game.resources.trimps;
 		var trimpsMax = trimps.realMax();

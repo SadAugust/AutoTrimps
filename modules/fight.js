@@ -3,6 +3,12 @@ MODULES["fight"].breedTimerCutoff1 = 2;
 MODULES["fight"].breedTimerCutoff2 = 0.5;
 MODULES["fight"].enableDebug = true;
 
+function callBetterAutoFight() {
+	if (getPageSetting('autoFight') === 0) return;
+	else if (getPageSetting('autoFight') === 1) betterAutoFight();
+	else if (getPageSetting('autoFight') === 2) betterAutoFight3();
+}
+
 function betterAutoFight() {
 	var customVars = MODULES["fight"];
 	if (game.global.autoBattle && !game.global.pauseFight)

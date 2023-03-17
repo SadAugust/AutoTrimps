@@ -1458,6 +1458,7 @@ function BionicRaiding() {
 		if (equipsToGet(raidzonesBW, targetPrestige)[0] > 0) {
 			rShouldBionicRaid = true;
 		}
+		var status = 'Raiding to BW' + raidzonesBW + ': ' + equipsToGet(raidzonesBW, targetPrestige)[0] + ' items remaining';
 
 		var mapsToRun = game.global.mapsActive ? equipsToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
 		var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
