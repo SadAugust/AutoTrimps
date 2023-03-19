@@ -809,7 +809,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	else if (challengeActive('Pandemonium') && type === 'world') attack *= game.challenges.Pandemonium.getBossMult();
 	else if (challengeActive('Pandemonium') && type !== 'world') attack *= game.challenges.Pandemonium.getPandMult();
 	else if (challengeActive('Desolation')) attack *= game.challenges.Desolation.getEnemyMult();
-	else if (challengeActive('Alchemy')) attack *= (alchObj.getEnemyStats(false, false)) + 1;
+	else if (challengeActive('Alchemy')) attack *= (alchObj.getEnemyStats(type !== 'world', type === 'void')) + 1;
 	else if (challengeActive('Hypothermia')) attack *= game.challenges.Hypothermia.getEnemyMult();
 	else if (challengeActive('Glass')) attack *= game.challenges.Glass.attackMult();
 
