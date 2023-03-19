@@ -442,8 +442,7 @@ function MapBonus() {
 		rMBRepeatCounter = rMBspireMapStack ? 10 : rMBIndex !== null && rMBshouldDoHealthMaps && rMBSettings.repeat !== getPageSetting('mapBonusStacks') ?
 			Math.max(rMBSettings.repeat, getPageSetting('mapBonusStacks')) : rMBIndex === null ? getPageSetting('mapBonusStacks') : rMBSettings.repeat
 		var rMBSpecial = rMBSettings.special !== '0' ? rMBSettings.special : '0';
-		if (challengeActive('Transmute') && rMBSpecial.includes('mc'))
-			rMBSpecial = rMBSpecial.charAt(0) + "sc";
+		rMBSpecial = (getAvailableSpecials(rMBSpecial))
 		var rMBMapLevel = rMBIndex !== null ? rMBSettings.level : game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
 		var rMBJobRatio = rMBSettings.jobratio;
 		var rMBautoLevel = game.global.universe === 2 && (rMBSettings.autoLevel || rMBIndex === null);
@@ -559,8 +558,7 @@ function MapFarm() {
 		if (challengeActive('Wither') && rMFMapLevel >= 0)
 			rMFMapLevel = -1;
 		//If you're running Transmute and the rMFSpecial variable is either LMC or SMC it changes it to LSC/SSC.
-		if (challengeActive('Transmute') && rMFSpecial.includes('mc'))
-			rMFSpecial = rMFSpecial.charAt(0) + "sc";
+		rMFSpecial = (getAvailableSpecials(rMFSpecial))
 
 		if (rMFRepeatCounter > game.global.mapRunCounter)
 			rShouldMapFarm = true;
@@ -3113,6 +3111,7 @@ function getAvailableSpecials(special, skipCaches) {
 
 	var cacheMods = [];
 	var bestMod;
+	if (special === undefined) return '0';
 
 	if (special === 'lsc') cacheMods = ['lsc', 'hc', 'ssc', 'lc'];
 	else if (special === 'lwc') cacheMods = ['lwc', 'hc', 'swc', 'lc'];
@@ -3123,7 +3122,8 @@ function getAvailableSpecials(special, skipCaches) {
 	var hze = getHighestLevelCleared();
 	var unlocksAt = game.global.universe === 2 ? 'unlocksAt2' : 'unlocksAt';
 
-	for (const mod of cacheMods) {
+	for (var mod of cacheMods) {
+		if ((mod === 'lmc' || mod === 'smc') && challengeActive('Transmute')) mod = mod.charAt(0) + "wc";
 		if (skipCaches && mod === 'hc') continue;
 		if (mapSpecialModifierConfig[mod][unlocksAt] <= hze) {
 			bestMod = mod;

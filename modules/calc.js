@@ -245,6 +245,8 @@ function calcOurHealth(stance, mapType, realHealth, fullGeneticist) {
 
 function calcHitsSurvived(targetZone, type) {
 	//Init
+	if (!targetZone) targetZone = game.global.world;
+	if (!type) type = 'world';
 	var damageMult = 1;
 	var voidDamage = 0;
 	const formationMod = (game.upgrades.Dominance.done) ? 2 : 1;

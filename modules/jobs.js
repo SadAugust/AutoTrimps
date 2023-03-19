@@ -69,7 +69,7 @@ function workerRatios(workerRatio) {
 	if (universeSetting === 2) {
 		var jobSettings = getPageSetting('jobSettingsArray');
 		if (jobSettings[workerRatio].enabled) {
-			if (challengeActive('Transmute') && workerRatio === 'Farmer' && jobSettings.Miner.enabled) return jobSettings[workerRatio].ratio + jobSettings.Miner.ratio;
+			if (challengeActive('Transmute') && workerRatio === 'Lumberjack' && jobSettings.Miner.enabled) return jobSettings[workerRatio].ratio + jobSettings.Miner.ratio;
 			return jobSettings[workerRatio].ratio;
 		}
 		else
@@ -294,7 +294,7 @@ function buyJobs() {
 
 	if (game.global.universe === 2 && workerRatio === undefined) {
 		//Setting farmers to 0 if past NFF zone & in world.
-		if (!challengeActive('Transmute') && jobSettings.FarmersUntil.enabled && game.global.world >= jobSettings.FarmersUntil.zone)
+		if (jobSettings.FarmersUntil.enabled && game.global.world >= jobSettings.FarmersUntil.zone)
 			desiredRatios[0] = 0;
 		//Setting lumberjacks to 0 if Melting Point has been run.
 		if (jobSettings.NoLumberjacks.enabled && !game.mapUnlocks.SmithFree.canRunOnce)
@@ -303,7 +303,7 @@ function buyJobs() {
 
 	//Adding Miners to Farmer ratio if in Transmute or Metal challenges
 	if (challengeActive('Metal') || challengeActive('Transmute')) {
-		desiredRatios[0] += desiredRatios[2];
+		desiredRatios[1] += desiredRatios[2];
 		desiredRatios[2] = 0;
 	}
 

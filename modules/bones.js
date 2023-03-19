@@ -36,7 +36,7 @@ function boneShrine() {
 		var rBoneShrineSettings = rBoneShrineBaseSettings[rBSIndex];
 		var rBoneShrineCharges = rBoneShrineSettings.boneamount;
 		var rBoneShrineGather = rBoneShrineSettings.gather;
-		if (challengeActive('Transmute') && rBoneShrineGather === 'metal') rBoneShrineGather = 'food';
+		if (challengeActive('Transmute') && rBoneShrineGather === 'metal') rBoneShrineGather = 'wood';
 		var rBoneShrineSpendBelow = rBoneShrineSettings.bonebelow === -1 ? 0 : rBoneShrineSettings.bonebelow;
 		var rBoneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rBoneShrineSettings.atlantrimp;
 		var rBoneShrineDoubler = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom'

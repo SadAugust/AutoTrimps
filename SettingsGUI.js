@@ -2856,7 +2856,7 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 	if (hzeCheck) {
 		//if (radonHZE === 15) debug("You have unlocked the Unlucky challenge.")
 		if (radonHZE === 5) debug("You can now use the Smithy Farm setting. This can be found in the AT 'Maps' tab.")
-		if (radonHZE === 25) debug("You have unlocked the Transmute challenge. Any metal related settings will be converted to food instead while running this challenge.")
+		if (radonHZE === 25) debug("You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.")
 		if (radonHZE === 30) debug("You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.")
 		if (radonHZE === 35) debug("You have unlocked the Unbalance challenge. There's setting for it in the AT 'C3' tab.")
 		if (radonHZE === 40) debug("You have unlocked the Bublé challenge. It has now been added to AutoPortal setting.")

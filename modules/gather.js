@@ -198,7 +198,7 @@ function autoGather() {
 		if (!challengeActive('Transmute'))
 			safeSetGather('metal');
 		else
-			safeSetGather('food');
+			safeSetGather('wood');
 		return;
 	}
 
@@ -245,14 +245,14 @@ function autoGather() {
 	}
 	if (challengeActive('Transmute') && game.global.playerGathering != lowestResource && !haveWorkers && !breedFire) {
 		if (hasTurkimp)
-			safeSetGather('food');
+			safeSetGather('wood');
 		else
 			safeSetGather(lowestResource);
 	} else if (document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
 		if (game.resources.science.owned < getPsStringLocal('science', true) * MODULES["gather"].minScienceSeconds && game.global.turkimpTimer < 1 && haveWorkers)
 			safeSetGather('science');
 		else if (challengeActive('Transmute') && hasTurkimp)
-			safeSetGather('food');
+			safeSetGather('wood');
 		else
 			safeSetGather(lowestResource);
 	}
@@ -265,7 +265,7 @@ function autoGather() {
 //Mining/Building only setting
 function autoGatherMetal() {
 	if (game.global.buildingsQueue.length <= 1) {
-		safeSetGather(!challengeActive('Transmute') ? 'metal' : 'food');
+		safeSetGather(!challengeActive('Transmute') ? 'wood' : 'food');
 	}
 	else {
 		safeSetGather('buildings')
