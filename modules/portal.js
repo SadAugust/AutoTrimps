@@ -185,8 +185,7 @@ function freeVoidPortal() {
 
 	if (MODULES.portal.portalForVoid === false) return;
 	if (checkLiqZoneCount() >= 20) {
-		debug('Portaling to increment void tracker with liquification.', "portal");
-		debug('Portaling with void tracker at ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10.'), "portal");
+		debug('Portaling to increment void tracker (' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10) with liquification.'), "portal");
 		if (MODULES.portal.portalUniverse === Infinity) {
 			if (portalUniverse !== 1) swapPortalUniverse();
 			MODULES.portal.portalUniverse = game.global.universe;

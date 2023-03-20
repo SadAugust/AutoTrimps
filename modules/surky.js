@@ -701,7 +701,7 @@ function presetSpecialOpt() {
 	if (preset == 'combat') {
 		props.specialChallenge = 'combat';
 		if (props.isTrappa) {
-			perks.Bait.optimize = true;
+			perks.Bait.optimize = false;
 			perks.Pheromones.optimize = false;
 		}
 	}
@@ -1740,7 +1740,7 @@ function getPerkEfficiencies() {
 
 	// Bait:
 	//   population in Trappa, but derate resource gains like for Motivation
-	if ((props.specialChallenge == 'trappa' || props.specialChallenge == 'combat' && props.isTrappa) && !perks.Bait.levLocked) {
+	if ((props.specialChallenge == 'trappa' && props.isTrappa) && !perks.Bait.levLocked) {
 		// 3600 seconds per hr, 10 ticks per second, 10x base trimps per tick (S0 ability)
 		var baitTime = 3600 * 10 * 10 * props.trapHrs;
 		var totalBaitPopBase = baitTime * (1 + perks.Bait.level);

@@ -1179,7 +1179,7 @@ function initializeAllSettings() {
 			'value', 4, null, "Maps", [1, 2]);
 		createSetting('mapBonusStacks',
 			function () { return ('Map Bonus Stacks') },
-			function () { return ('The map bonus limit that will be used when above your \'Map Bonus Ratio\' threshold.') },
+			function () { return ('The map bonus limit that will be used when above your \'Map Bonus Ratio\' threshold. Settings to adjust the cache it will run and the job ratio that it uses can be found in the "Map Bonus" setting.') },
 			'value', 10, null, "Maps", [1, 2]);
 
 		createSetting('scryvoidmaps',

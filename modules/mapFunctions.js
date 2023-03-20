@@ -442,7 +442,8 @@ function MapBonus() {
 		rMBRepeatCounter = rMBspireMapStack ? 10 : rMBIndex !== null && rMBshouldDoHealthMaps && rMBSettings.repeat !== getPageSetting('mapBonusStacks') ?
 			Math.max(rMBSettings.repeat, getPageSetting('mapBonusStacks')) : rMBIndex === null ? getPageSetting('mapBonusStacks') : rMBSettings.repeat
 		var rMBSpecial = rMBSettings.special !== '0' ? rMBSettings.special : '0';
-		rMBSpecial = (getAvailableSpecials(rMBSpecial))
+		if (rMBSpecial === undefined || rMBSpecial === 'undefined') rMBSpecial = 'lmc';
+		rMBSpecial = getAvailableSpecials(rMBSpecial);
 		var rMBMapLevel = rMBIndex !== null ? rMBSettings.level : game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0;
 		var rMBJobRatio = rMBSettings.jobratio;
 		var rMBautoLevel = game.global.universe === 2 && (rMBSettings.autoLevel || rMBIndex === null);
@@ -3108,7 +3109,7 @@ function getAvailableSpecials(special, skipCaches) {
 
 	var cacheMods = [];
 	var bestMod;
-	if (special === undefined) return '0';
+	if (special === undefined || special === 'undefined') return '0';
 
 	if (special === 'lsc') cacheMods = ['lsc', 'hc', 'ssc', 'lc'];
 	else if (special === 'lwc') cacheMods = ['lwc', 'hc', 'swc', 'lc'];
@@ -3120,6 +3121,7 @@ function getAvailableSpecials(special, skipCaches) {
 	var unlocksAt = game.global.universe === 2 ? 'unlocksAt2' : 'unlocksAt';
 
 	for (var mod of cacheMods) {
+		if (typeof mapSpecialModifierConfig[mod] === 'undefined') continue;
 		if ((mod === 'lmc' || mod === 'smc') && challengeActive('Transmute')) mod = mod.charAt(0) + "wc";
 		if (skipCaches && mod === 'hc') continue;
 		if (mapSpecialModifierConfig[mod][unlocksAt] <= hze) {

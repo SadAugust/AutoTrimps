@@ -1474,6 +1474,7 @@ function simpleSecondsLocal(what, seconds, event, workerRatio) {
 								null;
 	var job = game.jobs[jobName];
 	var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
+	if (challengeActive('Trappapalooza')) trimpworkers = game.resources.trimps.owned;
 	var workers = workerRatio !== null ? Math.floor(trimpworkers * desiredRatios[pos] / totalFraction) :
 		currentMap === 'Worshipper Farm' ? trimpworkers :
 			job.owned;
