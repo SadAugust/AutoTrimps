@@ -1030,7 +1030,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	if (!golden) {
 		defaultSetting.active = readNiceCheckbox(document.getElementById('windowActiveDefault'));
 		defaultSetting.cell = parseInt(document.getElementById('windowCellDefault').value, 10);
-		if (mapFarm || mapBonus) defaultSetting.repeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
+		if (mapBonus) defaultSetting.repeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
+		if (mapFarm) defaultSetting.repeat = parseFloat(document.getElementById('windowRepeatDefault').value, 10);
 		if (worshipperFarm) defaultSetting.shipSkipEnabled = readNiceCheckbox(document.getElementById('windowSkipShipEnabled'));
 		if (worshipperFarm) defaultSetting.shipskip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
 		if (mapFarm || alchemy || mapBonus || titleText.includes('Insanity')) defaultSetting.special = document.getElementById('windowSpecialDefault').value;
@@ -1075,7 +1076,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (!golden) thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
 		if (!golden) thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
 		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden) thisSetting.level = parseInt(document.getElementById('windowLevel' + x).value, 10);
-		if (mapFarm || smithyFarm || mapBonus) thisSetting.repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
+		if (smithyFarm || mapBonus) thisSetting.repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
+		if (mapFarm) thisSetting.repeat = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
 		if (hdFarm) thisSetting.hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
 		if (hdFarm) thisSetting.hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
 
@@ -1143,7 +1145,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			error += " Preset " + (x + 1) + " can\'t have a map bonus value lower than 1 as you won\'t be able to get any map stacks.<br>";
 			errorMessage = true;
 		}
-		if (mapFarm && thisSetting.repeat < 1) {
+		if (mapFarm && thisSetting.repeat < 1 && thisSetting.repeat !== -1) {
 			error += " Preset " + (x + 1) + " can\'t have a repeat value lower than 1 as you won\'t run any maps when this line runs.<br>";
 			errorMessage = true;
 		}
@@ -1174,7 +1176,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (thisSetting.hdRatio < 0) thisSetting.hdRatio = 0;
 		if (thisSetting.maxvoidzone < thisSetting.world) thisSetting.maxvoidzone = thisSetting.world;
 
-		if (thisSetting.repeat < 0) thisSetting.repeat = 0;
+		if (thisSetting.repeat < 0 && thisSetting.repeat !== -1) thisSetting.repeat = 0;
 		if (raiding && !bionic && (thisSetting.raidingzone - thisSetting.world > 10)) thisSetting.raidingzone = thisSetting.world + 10;
 
 		setting.push(thisSetting);
@@ -1306,7 +1308,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	}
 
 	if (mapFarm) {
-		mazHelp += "<li><b>Map Repeat</b> - How many maps you'd like to run during this line.</li>";
+		mazHelp += "<li><b>Map Repeat</b> - How many maps you'd like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be back to manually take over the run.</li>";
 		//Trimple Map Farm
 		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources." + "</li>";
 	}

@@ -604,7 +604,7 @@ function equalityManagement() {
 	if (runningExperienced) fastEnemy = false;
 	if (runningGlass) fastEnemy = true;
 	if (runningBerserk) fastEnemy = true;
-	//if (runningDesolation) fastEnemy = true;
+	if (runningDesolation) fastEnemy = true;
 	if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
 	if (runningRevenge) fastEnemy = true;
 

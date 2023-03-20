@@ -536,6 +536,7 @@ function MapFarm() {
 		var rMFMapLevel = rMFSettings.level;
 		var rMFSpecial = rMFSettings.special;
 		var rMFRepeatCounter = rMFSettings.repeat;
+		if (rMFRepeatCounter === -1) rMFRepeatCounter = Infinity;
 		var rMFJobRatio = rMFSettings.jobratio;
 		var rMFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rMFSettings.atlantrimp;
 		var rMFGather = rMFSettings.gather;

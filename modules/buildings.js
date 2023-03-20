@@ -207,10 +207,6 @@ function mostEfficientHousing() {
 	// Which houses we actually want to check
 	var housingTargets = [];
 
-	if (currentMap === 'Tribute Farm' && rMapSettings.buyBuildings !== 'undefined') {
-		if (!!rMapSettings.buyBuildings && getAutoStructureSetting().enabled && document.getElementById('autoStructureBtn').classList.contains("enabled"))
-			toggleAutoStructure();
-	}
 	const buildingSettings = getPageSetting('buildingSettingsArray');
 	const resourcefulMod = game.global.universe === 1 ? Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level) : 1;
 
@@ -467,11 +463,8 @@ function buyBuildings() {
 		if (((housing != null && canAffordBuilding(housing, false, false, false, false, 1)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt) || runningC3))) {
 			if (currentMap === 'Smithy Farm' && housing !== 'Gateway')
 				return;
-			else if (currentMap === 'Tribute Farm' && !rMapSettings.buyBuildings) {
-				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && getAutoStructureSetting().enabled)
-					toggleAutoStructure();
+			else if (currentMap === 'Tribute Farm' && !rMapSettings.buyBuildings)
 				return;
-			}
 			else if (maxCanAfford > 0) {
 				if (!canAffordBuilding(housing)) continue;
 				safeBuyBuilding(housing, maxCanAfford);
