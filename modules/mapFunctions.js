@@ -572,9 +572,9 @@ function MapFarm() {
 			if (rMFAtlantrimp) runUniqueMap('Atlantrimp', dontRecycleMaps);
 			saveSettings();
 		}
-
+		var repeatNumber = rMFRepeatCounter === Infinity ? '∞' : rMFRepeatCounter;
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMFMapLevel || (getCurrentMapObject().bonus !== rMFSpecial && (getCurrentMapObject().bonus !== undefined && rMFSpecial !== '0')) || game.global.mapRunCounter + 1 === rMFRepeatCounter);
-		var status = 'Map Farm: ' + game.global.mapRunCounter + "/" + rMFRepeatCounter;
+		var status = 'Map Farm: ' + game.global.mapRunCounter + "/" + repeatNumber;
 
 		farmingDetails.shouldRun = rShouldMapFarm;
 		farmingDetails.mapName = mapName;
@@ -727,8 +727,6 @@ function TributeFarm() {
 				mapsClicked(true);
 				recycleMap();
 			}
-			if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
-				toggleAutoStructure();
 			rTrFbuyBuildings = false;
 			return farmingDetails;
 		}
@@ -923,8 +921,6 @@ function SmithyFarm() {
 			}
 			if (!rShouldSmithyFarm) {
 				mappingDetails(mapName, rSFMapLevel, rSFSpecial, rSFSmithies);
-				if (document.getElementById('autoStructureBtn').classList.contains("enabled") && !getAutoStructureSetting().enabled)
-					toggleAutoStructure();
 				MODULES.mapFunctions.smithyMapCount = [0, 0, 0];
 				HDRatio = calcHDRatio(game.global.world, 'world');
 				if (!challengeActive('Quest') && rSFSettings.meltingPoint) runUniqueMap('Melting Point', dontRecycleMaps);
