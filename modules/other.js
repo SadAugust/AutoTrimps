@@ -295,7 +295,6 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 	var runningQuest = challengeActive('Quest') && currQuest() == 8;
 	var runningUnlucky = challengeActive('Unlucky')
 	var ourHealth = calcOurHealth(runningQuest, 'map');
-	var overkillCount = maxOneShotPower(true);
 	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
@@ -304,6 +303,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
+		if (!runningUnlucky && mapLevel > 0) dmgType = 'min';
 		if (y === minLevel) {
 			return minLevel;
 		}
@@ -448,7 +448,10 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName, calcMutationHealth(zone));
 	}
 
-	if (forceOK) enemyHealth *= (1 * overkillCount);
+	if (forceOK) {
+		if (!runningUnlucky && (zone - game.global.world) > 0) dmgType = 'min';
+		enemyHealth *= (1 * overkillCount);
+	}
 
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
 
