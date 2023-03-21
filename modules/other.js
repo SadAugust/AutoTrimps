@@ -534,6 +534,7 @@ function equalityManagement() {
 	var runningRevenge = challengeActive('Revenge');
 	var runningArchaeology = challengeActive('Archaeology');
 	var runningMayhem = challengeActive('Mayhem');
+	var enemyCanPoison = runningMayhem && (mapping || currentCell === 99)
 	var runningBerserk = challengeActive('Berserk');
 	var runningExperienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	var runningGlass = challengeActive('Glass');
@@ -690,13 +691,13 @@ function equalityManagement() {
 			} else if (ourHealth > enemyDmgEquality && ourDmgEquality > enemyHealth) {
 				game.portal.Equality.disabledStackCount = i;
 				break;
-			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaDmg > enemyHealth && !fuckGamma) {
+			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaDmg > enemyHealth && !fuckGamma && !enemyCanPoison) {
 				game.portal.Equality.disabledStackCount = i;
 				break;
-			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaToTrigger > enemyHealth && !fuckGamma) {
+			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && ourDmgEquality * gammaToTrigger > enemyHealth && !fuckGamma && !enemyCanPoison) {
 				game.portal.Equality.disabledStackCount = i;
 				break;
-			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && !fuckGamma) {
+			} else if (ourHealth > (enemyDmgEquality * gammaToTrigger) && !fuckGamma && !enemyCanPoison) {
 				game.portal.Equality.disabledStackCount = i;
 				break;
 			} else {

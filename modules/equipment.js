@@ -198,13 +198,6 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	];
 
 	var highestPrestige = 0;
-	var metalTotal = 0;
-
-	var workerRatio = '0,0,1';
-	if ((MODULES.mapFunctions.workerRatio !== null && rShouldBoneShrine) || rMapSettings.jobRatio !== undefined) {
-		if (MODULES.mapFunctions.workerRatio !== null) workerRatio = MODULES.mapFunctions.workerRatio;
-		else workerRatio = rMapSettings.jobRatio;
-	}
 
 	for (var i in equipmentList) {
 		if (game.equipment[i].locked) continue;
@@ -228,8 +221,10 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			}
 			if (isAttack === 1) resourceMaxPercent = resourceMaxPercentBackup;
 		}
+		//Load buyPrestigeMaybe into variable so it's not called 500 times
+		var maybeBuyPrestige = buyPrestigeMaybe(i, resourceMaxPercent);
 		//Skips if we have the required number of that item and below zoneGo
-		if (!buyPrestigeMaybe(i, resourceMaxPercent) && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
+		if (!maybeBuyPrestige && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
 		//Skips if ignoreShield variable is true.
 		if (game.global.universe === 2 && ignoreShield && i == 'Shield') continue;
 		//Skips looping through equips if they're blocked during Pandemonium.
@@ -237,20 +232,20 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skips buying shields when you can afford bonfires on Hypothermia.
 		if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i == 'Shield') continue;
 		//Skips through equips if they cost more than your Requippercent setting value.
-		if (equipmentList[i].Resource == 'metal' && !zoneGo && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
+		if (equipmentList[i].Resource == 'metal' && !zoneGo && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
 		//Skips through equips if they don't cost metal and you don't have enough resources for them.
-		if (equipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !buyPrestigeMaybe(i, resourceMaxPercent)[0]) continue;
+		if (equipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
 
 		var nextLevelValue = game.equipment[i][equipmentList[i].Stat + "Calculated"];
 		var isAttack = (equipmentList[i].Stat === 'attack' ? 0 : 1);
 		var safeRatio = nextLevelCost / nextLevelValue;
 
-		if (!ignorePrestiges && getPageSetting('equipPrestige') === 0 && game.equipment[i].level < 6 && game.resources.metal.owned * 0.2 < buyPrestigeMaybe(i, resourceMaxPercent)[2]) ignorePrestiges_temp = true;
-		if ((getPageSetting('equipPrestige') === 1 && !game.mapUnlocks.AncientTreasure.canRunOnce && game.resources.metal.owned * 0.08 < buyPrestigeMaybe(i, resourceMaxPercent)[2])) ignorePrestiges_temp = true;
+		if (!ignorePrestiges && getPageSetting('equipPrestige') === 0 && game.equipment[i].level < 6 && game.resources.metal.owned * 0.2 < maybeBuyPrestige[2]) ignorePrestiges_temp = true;
+		if ((getPageSetting('equipPrestige') === 1 && !game.mapUnlocks.AncientTreasure.canRunOnce && game.resources.metal.owned * 0.08 < maybeBuyPrestige[2])) ignorePrestiges_temp = true;
 
-		if (!ignorePrestiges_temp && (buyPrestigeMaybe(i, resourceMaxPercent)[0] && (buyPrestigeMaybe(i, resourceMaxPercent)[1] > mostEfficient[isAttack].statPerResource || buyPrestigeMaybe(i, resourceMaxPercent)[3]))) {
-			safeRatio = buyPrestigeMaybe(i, resourceMaxPercent)[1];
-			nextLevelCost = buyPrestigeMaybe(i, resourceMaxPercent)[2]
+		if (!ignorePrestiges_temp && (maybeBuyPrestige[0] && (maybeBuyPrestige[1] > mostEfficient[isAttack].statPerResource || maybeBuyPrestige[3]))) {
+			safeRatio = maybeBuyPrestige[1];
+			nextLevelCost = maybeBuyPrestige[2]
 			prestige = true;
 		}
 
@@ -326,7 +321,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 	}
 
 	var levelOnePrestige = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
-	var newLevel = Math.floor(getMaxAffordable(levelOnePrestige * 1.2, (game.resources[resource].owned * resourceSpendingPct), 1.2, true)) + 1;
+	var newLevel = Math.floor(getMaxAffordable((levelOnePrestige + (levelOnePrestige * 1.2)), (game.resources[resource].owned * resourceSpendingPct), 1.2, true)) + 1;
 	var newStatValue = (newLevel) * Math.round(equipment[equipStat] * Math.pow(1.19, ((equipment.prestige) * game.global.prestige[equipStat]) + 1));
 	var currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
 	var statPerResource = levelOnePrestige / newStatValue;
@@ -352,6 +347,7 @@ function autoEquip() {
 		buyUpgrade('Gymystic', true, true);
 		debug('Upgrading Gymystic', "equips", '*upload');
 	}
+
 	var rEquipZone = getPageSetting('equipZone');
 	var zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting('equipCutOff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
 
@@ -583,7 +579,6 @@ function displayMostEfficientEquipment() {
 	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
 	if (!oneSecondInterval) return;
 	var $eqNamePrestige = null;
-
 
 	if (!highlightSetting) return;
 
