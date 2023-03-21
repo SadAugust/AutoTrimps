@@ -801,7 +801,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('desolation', currSettingUniverse)) });
 		createSetting('desolationStacks',
 			function () { return ('D: Stacks') },
-			function () { return ('Minimal amount of stacks to reach before starting destacking. <b>WILL CLEAR TO 0 STACKS WHEN IT STARTS RUNNING.</b>') },
+			function () { return ('Minimal amount of stacks to reach before starting destacking. If set to 0 or -1 it will destack at 300 stacks. <b>WILL CLEAR TO 0 STACKS WHEN IT STARTS RUNNING.</b>') },
 			'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse)) });
 		createSetting('desolationOnlyDestackZone',

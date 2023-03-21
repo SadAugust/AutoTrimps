@@ -2475,7 +2475,7 @@ function Desolation() {
 
 	var destackHits = getPageSetting('desolationDestack') > 0 ? getPageSetting('desolationDestack') : Infinity;
 	var destackZone = getPageSetting('desolationZone') > 0 ? getPageSetting('desolationZone') : Infinity;
-	var destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 0;
+	var destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 300;
 	var destackOnlyZone = getPageSetting('desolationOnlyDestackZone') > 0 ? getPageSetting('desolationOnlyDestackZone') : 0;
 	var desolationMapLevel = 0;
 	var desolationMapIncrease = getPageSetting('desolationMapIncrease') > 0 ? getPageSetting('desolationMapIncrease') : 0;
