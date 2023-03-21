@@ -132,7 +132,6 @@ function buyJobs() {
 	if (universeSetting === 0) return;
 
 	var jobSettings = getPageSetting('jobSettingsArray');
-
 	var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed //-
 		//U1 jobs
 		//game.jobs.Geneticist.owned - game.jobs.Trainer.owned - game.jobs.Magmamancer.owned -
@@ -230,14 +229,7 @@ function buyJobs() {
 	//Gather up the total number of workers available to be distributed across ratio workers
 	//In the process store how much of each for later.
 	if (challengeActive('Trapper') || challengeActive('Trappapalooza')) {
-		freeWorkers = game.resources.trimps.owned - (game.resources.trimps.employed
-			//-
-			//U1 jobs
-			//game.jobs.Geneticist.owned - game.jobs.Trainer.owned - game.jobs.Magmamancer.owned -
-			//U2 jobs
-			//game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned
-		);
-
+		freeWorkers = game.resources.trimps.owned - game.resources.trimps.employed;
 		var metCoordGoal = challengeActive('Trappapalooza') && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords');
 		if (!metCoordGoal) nextCoordCost = Math.ceil(1.25 * game.resources.trimps.maxSoldiers);
 		if (nextCoordCost < freeWorkers) freeWorkers -= nextCoordCost;

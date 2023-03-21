@@ -766,7 +766,7 @@ function SmithyFarm() {
 		mapName: mapName
 	};
 
-	if (game.buildings.Smithy.locked || (!getPageSetting('smithyFarmDefaultSettings').active && !challengeActive('Quest')) || (challengeActive('Quest') && currQuest() !== 10) || challengeActive('Transmute')) return farmingDetails;
+	if (game.buildings.Smithy.locked || (!getPageSetting('smithyFarmDefaultSettings').active && !challengeActive('Quest')) || (challengeActive('Quest') && currQuest() !== 10) || challengeActive('Transmute') || challengeActive('Pandemonium')) return farmingDetails;
 
 	var rShouldSmithyFarm = false;
 	var rShouldSmithyGemFarm = false;
@@ -1203,6 +1203,8 @@ function PrestigeRaiding() {
 
 		farmingDetails.shouldRun = rShouldPrestigeRaid;
 		farmingDetails.mapName = mapName;
+		farmingDetails.autoLevel = false;
+		farmingDetails.mapLevel = raidZones;
 		farmingDetails.recycle = rPRRecycle;
 		farmingDetails.prestigeGoal = targetPrestige;
 		farmingDetails.fragSetting = rPRFragFarm;
@@ -1800,10 +1802,10 @@ function Mayhem() {
 		mapRepeats = 0;
 	}
 	var autoLevel_Repeat = rAutoLevel;
-	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, mayhemSpecial, 10, 0, false);
+	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, mayhemSpecial, 10, (0 + mayhemMapIncrease), false);
 	if (mapAutoLevel !== Infinity) {
 		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
-		mayhemMapLevel = (mapAutoLevel + mayhemMapIncrease > 10 ? 10 : mapAutoLevel + mayhemMapIncrease);
+		mayhemMapLevel = mapAutoLevel;
 	}
 
 	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mayhemMapLevel || (getCurrentMapObject().bonus !== mayhemSpecial && (getCurrentMapObject().bonus !== undefined && mayhemSpecial !== '0')) || game.challenges.Mayhem.stacks <= mayhemMapLevel + 1);
@@ -2474,25 +2476,49 @@ function Desolation() {
 	var destackHits = getPageSetting('desolationDestack') > 0 ? getPageSetting('desolationDestack') : Infinity;
 	var destackZone = getPageSetting('desolationZone') > 0 ? getPageSetting('desolationZone') : Infinity;
 	var destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 0;
+	var destackOnlyZone = getPageSetting('desolationOnlyDestackZone') > 0 ? getPageSetting('desolationOnlyDestackZone') : 0;
 	var desolationMapLevel = 0;
 	var desolationMapIncrease = getPageSetting('desolationMapIncrease') > 0 ? getPageSetting('desolationMapIncrease') : 0;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 	var desolationSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
+	var sliders = [9, 9, 9];
+	var biome = 'Farmlands';
+	var equality = false;
 
-
-	if (game.challenges.Desolation.chilled >= destackStacks && (HDRatio > destackHits || game.global.world >= destackZone))
+	if (game.challenges.Desolation.chilled >= destackStacks && (HDRatio > destackHits || game.global.world >= destackZone || game.global.world >= destackOnlyZone))
 		shouldDesolation = true;
 
 	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
 		game.global.mapRunCounter = mapRepeats;
 		mapRepeats = 0;
 	}
-	var autoLevel_Repeat = rAutoLevel;
-	mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, desolationSpecial, 10, (0 + desolationMapIncrease), false);
-	if (mapAutoLevel !== Infinity) {
-		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
-		desolationMapLevel = mapAutoLevel;
+	if (game.global.world < destackOnlyZone) {
+		var autoLevel_Repeat = rAutoLevel;
+		mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, desolationSpecial, 10, (0 + desolationMapIncrease), false);
+		if (mapAutoLevel !== Infinity) {
+			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+			desolationMapLevel = mapAutoLevel;
+		}
+	} else {
+		sliders = [0, 0, 9];
+		desolationSpecial = 'fa';
+		biome = 'Random';
+		var trimpHealth = calcOurHealth(false, 'map');
+		for (y = 10; y >= 0; y--) {
+			desolationMapLevel = y;
+			if (desolationMapLevel === 0) break;
+			if (game.resources.fragments.owned < minMapFrag(desolationMapLevel, '0', 'Random', sliders)) continue;
+			var enemyDmg = calcEnemyAttackCore('map', game.global.world + y, 1, 'Snimp', false, false, game.portal.Equality.radLevel) * 0.84 * 4;
+			if (enemyDmg > trimpHealth) continue;
+			break;
+		}
+		if (game.global.mapsActive && getCurrentMapObject().level !== game.global.world + desolationMapLevel) {
+			mapsClicked(true);
+			recycleMap();
+		}
+		equality = true;
 	}
+
 	if (!shouldDesolation && (MODULES.mapFunctions.desolationContinueRunning || (game.global.mapsActive && rMapSettings.mapName === 'Desolation Destacking'))) {
 		if (game.challenges.Desolation.chilled > 0) {
 			shouldDesolation = true;
@@ -2515,8 +2541,11 @@ function Desolation() {
 	farmingDetails.mapLevel = desolationMapLevel;
 	farmingDetails.autoLevel = true;
 	farmingDetails.special = desolationSpecial;
+	farmingDetails.mapSliders = sliders;
+	farmingDetails.biome = biome;
 	farmingDetails.repeat = !repeat;
 	farmingDetails.status = status;
+	farmingDetails.equality = equality;
 
 	if (currentMap === mapName && !farmingDetails.shouldRun) {
 		mappingDetails(mapName, desolationMapLevel, desolationSpecial);
@@ -2704,8 +2733,8 @@ function prestigeRaidingSliders(number, raidzones, special) {
 	document.getElementById("advExtraLevelSelect").value = prestigeMapLevelToRun(number, raidzones);
 	document.getElementById("advSpecialSelect").value = special;
 	document.getElementById("lootAdvMapsRange").value = 9;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
 	document.getElementById("sizeAdvMapsRange").value = 9;
+	document.getElementById("difficultyAdvMapsRange").value = 9;
 	document.getElementById("advPerfectCheckbox").dataset.checked = true;
 
 	//Set loot slider to 0 and perfect maps off if using frag min setting!
@@ -2776,8 +2805,8 @@ function fragmap() {
 	document.getElementById("advExtraLevelSelect").value = 0;
 	document.getElementById("advSpecialSelect").value = "fa";
 	document.getElementById("lootAdvMapsRange").value = 9;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
 	document.getElementById("sizeAdvMapsRange").value = 9;
+	document.getElementById("difficultyAdvMapsRange").value = 9;
 	document.getElementById("advPerfectCheckbox").dataset.checked = true;
 	document.getElementById("mapLevelInput").value = game.talents.mapLoot.purchased ? game.global.world - 1 : game.global.world;
 	updateMapCost();
@@ -2804,17 +2833,19 @@ function fragmap() {
 	}
 }
 
-function mapCost(pluslevel, special, biome, onlyPerfect) {
+function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (!special) special = '0';
 	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
+	if (!mapSliders) mapSliders = [9, 9, 9];
+	if (mapSliders !== [9, 9, 9]) onlyPerfect = false;
 	document.getElementById("biomeAdvMapsSelect").value = biome;
 	document.getElementById("advExtraLevelSelect").value = pluslevel;
 	document.getElementById("advSpecialSelect").value = special;
-	document.getElementById("lootAdvMapsRange").value = 9;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
-	document.getElementById("sizeAdvMapsRange").value = 9;
+	document.getElementById("lootAdvMapsRange").value = mapSliders[0];
+	document.getElementById("sizeAdvMapsRange").value = mapSliders[1];
+	document.getElementById("difficultyAdvMapsRange").value = mapSliders[2];
 	document.getElementById("advPerfectCheckbox").dataset.checked = true;
 	document.getElementById("mapLevelInput").value = maplevel;
 	updateMapCost();
@@ -2917,9 +2948,9 @@ function fragmentFarm() {
 	updateMapCost();
 }
 
-function minMapFrag(level, specialModifier, biome) {
+function minMapFrag(level, specialModifier, biome, sliders) {
 
-	var sliders = [9, 9, 9];
+	if (!sliders) sliders = [9, 9, 9];
 	var perfect = true;
 	if (game.resources.fragments.owned < perfectMapCost_Actual(level, specialModifier, biome)) {
 		perfect = false;
@@ -2943,8 +2974,8 @@ function perfectMapCost(pluslevel, special, biome) {
 	document.getElementById("advExtraLevelSelect").value = pluslevel;
 	document.getElementById("advSpecialSelect").value = special;
 	document.getElementById("lootAdvMapsRange").value = 9;
-	document.getElementById("difficultyAdvMapsRange").value = 9;
 	document.getElementById("sizeAdvMapsRange").value = 9;
+	document.getElementById("difficultyAdvMapsRange").value = 9;
 	document.getElementById("advPerfectCheckbox").dataset.checked = true;
 	document.getElementById("mapLevelInput").value = maplevel;
 	updateMapCost();

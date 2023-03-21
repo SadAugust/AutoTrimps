@@ -682,7 +682,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('mayhem', currSettingUniverse)) });
 		createSetting('mayhemMapIncrease',
 			function () { return ('M: Map Increase') },
-			function () { return ('Will increase the map level of Mayhem farming by this value for if you find the map level AT is selecting is too low. Negative values will be automatically set to 0.<br>This setting will make it so that AT doesn\'t check if you can afford the new map level so beware it could cause some issues.') },
+			function () { return ('Increases the minimum map level of Mayhem farming by this value. Negative values will be automatically set to 0.') },
 			'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('mayhem', currSettingUniverse)) });
 		createSetting('mayhemMP',
@@ -802,6 +802,11 @@ function initializeAllSettings() {
 		createSetting('desolationStacks',
 			function () { return ('D: Stacks') },
 			function () { return ('Minimal amount of stacks to reach before starting destacking. <b>WILL CLEAR TO 0 STACKS WHEN IT STARTS RUNNING.</b>') },
+			'value', '-1', null, 'C2', [2],
+			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+		createSetting('desolationOnlyDestackZone',
+			function () { return ('D: Destack Only From') },
+			function () { return ('Will start only destacking from this zone onwards. Purchases the highest level of map that you can afford to reduce stacks of chilled faster.</b>') },
 			'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse)) });
 		createSetting('desolationMapIncrease',
@@ -2800,8 +2805,10 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 	if (radonHZE >= 70) radonHourChallenges.push("Quagmire");
 	if (radonHZE >= 85) radonHourChallenges.push("Quest");
 	if (radonHZE >= 90) radonHourChallenges.push("Archaeology");
+	if (radonHZE >= 100) radonHourChallenges.push("Mayhem");
 	if (radonHZE >= 110) radonHourChallenges.push("Insanity");
 	if (radonHZE >= 135) radonHourChallenges.push("Nurture");
+	if (radonHZE >= 150) radonHourChallenges.push("Pandemonium");
 	if (radonHZE >= 155) radonHourChallenges.push("Alchemy");
 	if (radonHZE >= 175) radonHourChallenges.push("Hypothermia");
 	if (radonHZE >= 200) radonHourChallenges.push("Desolation");
@@ -3391,16 +3398,10 @@ function toggleAutoMaps() {
 }
 
 function toggleStatus(update) {
-
 	if (update) {
-		if (getPageSetting('displayAutoMapStatus')) {
+		if (getPageSetting('displayAutoMapStatus'))
 			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.\
-			<p>\<br>\<b>World H:D Ratio = </b>\" + prettify(HDRatio)  + \"<br>\
-			<b>Map H:D Ratio = </b>\" + prettify(mapHDRatio) + \"<br>\
-			<b>Void H:D Ratio = </b>\" + prettify(voidHDRatio) + \"<br>\
-			")');
-		} else
+		else
 			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
 	}
@@ -3423,14 +3424,10 @@ function toggleStatus(update) {
 }
 
 function toggleHeHr(update) {
-	const resource = game.global.universe === 2 ? 'Radon' : 'Helium';
-	const resourceHr = game.global.universe === 2 ? 'Rn' : 'He';
 	if (update) {
-		if (getPageSetting('displayHeHr')) {
+		if (getPageSetting('displayHeHr'))
 			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('hiderStatus').parentNode.setAttribute("onmouseover", 'tooltip(\
-				"' + resource + '\/Hr Info\", \"customText\", event, \"1st is Current ' + resourceHr + '\//hr % out of Lifetime ' + resourceHr + '\/(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total ' + resourceHr + '\/ earned / Lifetime ' + resourceHr + '\/(not including current)<br>\" + getDailyHeHrStats())');
-		} else
+		else
 			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
 		return
 	}

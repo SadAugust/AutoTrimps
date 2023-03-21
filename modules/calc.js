@@ -1196,8 +1196,8 @@ function calcHDRatio(targetZone, type) {
 	}
 
 	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? gammaBurstPct : 1;
-
-	var ourBaseDamage = calcOurDmg("avg", universeSetting, false, type, 'maybe', targetZone - game.global.world);
+	var runningUnlucky = challengeActive('Unlucky');
+	var ourBaseDamage = calcOurDmg(runningUnlucky ? 'max' : 'avg', universeSetting, false, type, 'maybe', targetZone - game.global.world);
 
 	//Lead Challenge
 	if (challengeActive('Lead') && targetZone % 2 == 1 && type != "map") {

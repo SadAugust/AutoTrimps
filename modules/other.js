@@ -540,6 +540,11 @@ function equalityManagement() {
 	var runningDesolation = challengeActive('Desolation') && mapping;
 	var runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
 
+	if (runningDesolation && rMapSettings.equality) {
+		game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
+		return;
+	}
+
 	//Perk conditions
 	var noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
 

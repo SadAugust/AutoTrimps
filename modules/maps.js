@@ -55,7 +55,68 @@ function updateAutoMapsStatus(get) {
 	}
 
 	if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
+	document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", makeAutomapStatusTooltip());
 	if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
+	document.getElementById('hiderStatus').parentNode.setAttribute("onmouseover", makeResourceTooltip());
+}
+
+function makeAutomapStatusTooltip() {
+	const farmingSetting = FarmingDecision();
+	const mapStacksText = (`Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`);
+	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy.';
+	let tooltip = 'tooltip(' +
+		'\"Automaps Status\", ' +
+		'\"customText\", ' +
+		'event, ' +
+		'\"Variables that control the current state and target of Automaps.<br>' +
+		'Values in <b>bold</b> are dynamically calculated based on current zone and activity.<br>' +
+		'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>'  /* +
+		`<br>` +
+		`<b>Hits survived: ${prettify(hitsSurvived)}</b><br>`*/
+
+	tooltip += `<br>` +
+		`<b>Mapping info</b><br>`;
+	if (farmingSetting.shouldRun) {
+		tooltip +=
+			`Farming Setting: <b>${farmingSetting.mapName}</b><br>` +
+			`Map level: <b>${farmingSetting.mapLevel}</b><br>` +
+			`Auto level: <b>${farmingSetting.autoLevel}</b><br>` +
+			`Special: <b>${farmingSetting.special !== '0' ? mapSpecialModifierConfig[farmingSetting.special].name : 'None'}</b><br>` +
+			`Wants to run: ${farmingSetting.shouldRun}<br>` +
+			`Repeat: ${farmingSetting.repeat}<br>`;
+	}
+	else {
+		tooltip += `Not running<br>`;
+	}
+	tooltip += '<br>' +
+		`<b>HD Ratio Info</b><br>` +
+		`${hdRatioText}<br>` +
+		`World HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(HDRatio)}</b><br>` +
+		`Map HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(mapHDRatio)}</b><br>` +
+		`Void HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(voidHDRatio)}</b><br>` +
+		`${mapStacksText}<br>`
+	tooltip += '\")';
+	return tooltip;
+}
+
+function makeResourceTooltip() {
+	const resource = game.global.universe === 2 ? 'Radon' : 'Helium';
+	const resourceHr = game.global.universe === 2 ? 'Rn' : 'He';
+	let tooltip = 'tooltip(' +
+		`\"${resource} /Hr Info\",` +
+		'\"customText\", ' +
+		'event, ' +
+		'\"';
+
+	tooltip +=
+		`<b>${resourceHr}/hr</b><br>` +
+		`Current ${resourceHr} /hr % out of Lifetime ${(resourceHr)} (not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>` +
+		`<b>${resourceHr}</b><br>` +
+		`Current run Total ${resourceHr} / earned / Lifetime ${(resourceHr)} (not including current)<br>`
+	tooltip += getDailyHeHrStats();
+
+	tooltip += '\")';
+	return tooltip;
 }
 
 function autoMap() {
@@ -297,7 +358,7 @@ function autoMap() {
 			if (rShouldMap) {
 				var mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe === 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 				if (currentMap !== '') {
-					mapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
+					mapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome, rMapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
 				}
 			}
 
