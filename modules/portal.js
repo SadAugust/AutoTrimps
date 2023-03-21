@@ -597,7 +597,7 @@ function downloadSave() {
 
 function hypoPackratReset(challenge) {
 
-	if (challenge === 'Hypothermia' && getPageSetting('hypothermiaDefaultSettings').packrat) {
+	if (challenge === 'Hypothermia' && getPageSetting('hypothermiaDefaultSettings', portalUniverse).packrat) {
 		toggleRemovePerks();
 		numTab(6, true);
 		buyPortalUpgrade('Packrat');
