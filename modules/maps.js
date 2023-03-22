@@ -81,7 +81,7 @@ function makeAutomapStatusTooltip() {
 			`Farming Setting: <b>${farmingSetting.mapName}</b><br>` +
 			`Map level: <b>${farmingSetting.mapLevel}</b><br>` +
 			`Auto level: <b>${farmingSetting.autoLevel}</b><br>` +
-			`Special: <b>${farmingSetting.special !== '0' ? mapSpecialModifierConfig[farmingSetting.special].name : 'None'}</b><br>` +
+			`Special: <b>${farmingSetting.special !== '0' && farmingSetting.special !== undefined ? mapSpecialModifierConfig[farmingSetting.special].name : 'None'}</b><br>` +
 			`Wants to run: ${farmingSetting.shouldRun}<br>` +
 			`Repeat: ${farmingSetting.repeat}<br>`;
 	}

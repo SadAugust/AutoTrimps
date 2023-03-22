@@ -141,7 +141,6 @@ function initializeAllTabs() {
 	sh.insertBefore(addtabsUL, sh.childNodes[2]);
 	createTabs("Core", "Core - Main Controls for the script");
 	createTabs("Buildings", "Building Settings");
-	createTabs("Jobs", "Jobs - Worker Settings");
 	createTabs("Gear", "Gear - Equipment Settings");
 	createTabs("Maps", "Maps - AutoMaps & VoidMaps Settings");
 	createTabs("Spire", "Spire - Settings for Spires");
@@ -151,7 +150,6 @@ function initializeAllTabs() {
 	createTabs("Combat", "Combat & Stance Settings");
 	createTabs("Windstacking", "Windstacking Settings");
 	createTabs("ATGA", "Geneticassist Settings");
-	createTabs("Scryer", "Scryer Settings");
 	createTabs("Magma", "Dimensional Generator & Magmite Settings");
 	createTabs("Heirlooms", "Heirloom Settings");
 	createTabs("Golden", "Golden Upgrade Settings");
@@ -501,7 +499,7 @@ function initializeAllSettings() {
 		createSetting('dailyPortalSettingsArray',
 			function () { return ('Daily Portal Settings') },
 			function () { return ('Click to adjust settings. ') },
-			'mazDefaultArray', { portalZone: 0, portalChallenge: "None", Empower: { enabled: true, zone: 0 }, Mutimp: { enabled: true, zone: 0 }, Bloodthirst: { enabled: true, zone: 0 }, Famine: { enabled: true, zone: 0 }, Large: { enabled: true, zone: 0 }, Weakness: { enabled: true, zone: 0 } }, null, 'Jobs', [2]);
+			'mazDefaultArray', { portalZone: 0, portalChallenge: "None", Empower: { enabled: true, zone: 0 }, Mutimp: { enabled: true, zone: 0 }, Bloodthirst: { enabled: true, zone: 0 }, Famine: { enabled: true, zone: 0 }, Large: { enabled: true, zone: 0 }, Weakness: { enabled: true, zone: 0 } }, null, 'Legacy', [2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -831,7 +829,8 @@ function initializeAllSettings() {
 		createSetting('decay',
 			function () { return ('Decay') },
 			function () { return ('Turn this on if you want to enable Decay feautres.') },
-			'boolean', false, null, 'Challenges', [1]);
+			'boolean', false, null, 'Challenges', [1],
+			function () { return (game.global.highestLevelCleared + 1 >= 55) });
 		createSetting('decayStacksToPush',
 			function () { return ('D: Stacks to Push') },
 			function () { return ('During Decay, AT will ignore maps and push to end the zone if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.') },
@@ -847,7 +846,8 @@ function initializeAllSettings() {
 		createSetting('life',
 			function () { return ('Life') },
 			function () { return ('Turn this on if you want to enable Decay feautres.') },
-			'boolean', false, null, 'Challenges', [1]);
+			'boolean', false, null, 'Challenges', [1],
+			function () { return (game.global.highestLevelCleared + 1 >= 110) });
 		createSetting('lifeZone',
 			function () { return ('L: Zone') },
 			function () { return ('During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this zone. <br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 100.') },
@@ -862,7 +862,8 @@ function initializeAllSettings() {
 		createSetting('experience',
 			function () { return ('Experience') },
 			function () { return ('Turn this on if you want to enable Experience feautres. <b>This setting is dependant on using \'Bionic Raiding\' in conjunction with it.</b><br><br>Will automatically disable repeat within Bionic Wonderland maps if you\'re above z600 and the Bionic map is at or above level 605.') },
-			'boolean', false, null, 'Challenges', [1]);
+			'boolean', false, null, 'Challenges', [1],
+			function () { return (game.global.highestLevelCleared + 1 >= 600) });
 		createSetting('experienceStartZone',
 			function () { return ('E: Start Zone') },
 			function () { return ('The zone you would like to start farming for Wonders at.') },
@@ -974,7 +975,7 @@ function initializeAllSettings() {
 			Tribute: { enabled: true, percent: 100, buyMax: 0 },
 			Laboratory: { enabled: true, percent: 100, buyMax: 0 },
 			SafeGateway: { enabled: true, mapCount: 3, zone: 0 }
-		}, null, 'Jobs', [1]);
+		}, null, 'Legacy', [1]);
 
 		//Helium
 		createSetting('warpstation',
@@ -1027,7 +1028,7 @@ function initializeAllSettings() {
 		createSetting('jobType',
 			function () { return (['Don\'t Buy Jobs', 'Auto Ratios', 'Manual Ratios']) },
 			function () { return ('Manual Ratios buys jobs for your trimps according to the ratios below, <b>Make sure they are all different values, if two of them are the same it might causing an infinite loop of hiring and firing!</b> Auto Worker ratios automatically changes these ratios based on current progress, <u>overriding your ratio settings</u>.<br>AutoRatios: 1/1/1 up to 300k trimps, 3/3/5 up to 3mil trimps, then 3/1/4 above 3 mil trimps, then 1/1/10 above 1000 tributes, then 1/2/22 above 1500 tributes, then 1/12/12 above 3000 tributes.<br>CAUTION: You cannot manually assign jobs with this, turn it off if you have to') },
-			'multitoggle', 1, null, 'Jobs', [1]);
+			'multitoggle', 1, null, 'Legacy', [1]);
 		createSetting('jobSettingsArray',
 			function () { return ('Job Settings') },
 			function () { return ('Click to adjust settings. ') },
@@ -1042,7 +1043,7 @@ function initializeAllSettings() {
 			Worshipper: { enabled: true, percent: 5 },
 			FarmersUntil: { enabled: false, zone: 999 },
 			NoLumberjacks: { enabled: false }
-		}, null, 'Jobs', [1]);
+		}, null, 'Legacy', [1]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -3105,11 +3106,12 @@ function updateCustomButtons(initialLoad) {
 	}
 	lastTheme = game.options.menu.darkTheme.enabled;
 
-	var highestZone = game.global.highestRadonLevelCleared;
 
 	//Hide settings
 	//Radon
 	var radonon = autoTrimpSettings.radonsettings.value == 1;
+	var highestZone = game.global.highestLevelCleared + 1;
+	var highestRadonZone = game.global.highestRadonLevelCleared + 1;
 	var legacysettings = autoTrimpSettings.radonsettings.value == 2;
 	currSettingUniverse = (autoTrimpSettings.radonsettings.value + 1);
 	var displayAllSettings = getPageSetting('displayAllSettings', currSettingUniverse);
@@ -3128,34 +3130,31 @@ function updateCustomButtons(initialLoad) {
 	}
 	//Tabs
 	if (document.getElementById("tabBuildings") != null) {
-		document.getElementById("tabBuildings").style.display = radonon ? "none" : "";
-	}
-	if (document.getElementById("tabJobs") != null) {
-		document.getElementById("tabJobs").style.display = radonon ? "none" : !radonon ? "none" : "";
+		document.getElementById("tabBuildings").style.display = !displayAllSettings && (radonon || (!radonon && highestZone < 60)) ? "none" : "";
 	}
 	if (document.getElementById("tabDaily") != null) {
-		document.getElementById("tabDaily").style.display = radonon && (!displayAllSettings && highestZone < 29) ? "none" : "";
+		document.getElementById("tabDaily").style.display = !displayAllSettings && ((radonon && highestRadonZone < 30) || (!radonon && highestZone < 99)) ? "none" : "";
+	}
+	if (document.getElementById("tabC2") != null) {
+		document.getElementById("tabC2").style.display = !displayAllSettings && ((radonon && highestRadonZone < 50) || (!radonon && highestZone < 65)) ? "none" : "";
 	}
 	if (document.getElementById("tabSpire") != null) {
-		document.getElementById("tabSpire").style.display = radonon ? "none" : "";
+		document.getElementById("tabSpire").style.display = radonon || (!displayAllSettings && highestZone < 190) ? "none" : "";
 	}
 	if (document.getElementById("tabWindstacking") != null) {
-		document.getElementById("tabWindstacking").style.display = radonon ? "none" : "";
+		document.getElementById("tabWindstacking").style.display = radonon || (!displayAllSettings && game.empowerments.Wind.getLevel() < 50) ? "none" : "";
 	}
 	if (document.getElementById("tabATGA") != null) {
-		document.getElementById("tabATGA").style.display = radonon ? "none" : "";
-	}
-	if (document.getElementById("tabScryer") != null) {
-		document.getElementById("tabScryer").style.display = radonon ? "none" : "none";
+		document.getElementById("tabATGA").style.display = radonon || (!displayAllSettings && highestZone < 70) ? "none" : "";
 	}
 	if (document.getElementById("tabMagma") != null) {
-		document.getElementById("tabMagma").style.display = radonon ? "none" : "";
+		document.getElementById("tabMagma").style.display = radonon || (!displayAllSettings && highestZone < 230) ? "none" : "";
 	}
 	if (document.getElementById("tabNature") != null) {
-		document.getElementById("tabNature").style.display = radonon ? "none" : "";
+		document.getElementById("tabNature").style.display = radonon || (!displayAllSettings && highestZone < 236) ? "none" : "";
 	}
 	if (document.getElementById("tabChallenges") != null) {
-		document.getElementById("tabChallenges").style.display = !radonon ? "" : "";
+		document.getElementById("tabChallenges").style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && highestZone < 55)) ? "none" : "";
 	}
 	if (document.getElementById("tabLegacy") != null) {
 		document.getElementById("tabLegacy").style.display = !legacysettings ? "none" : "";

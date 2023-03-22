@@ -1966,7 +1966,7 @@ function clearAndAutobuyPerks() {
 			perks.Expansion.level = origExpand;
 			inputs['Expansion'].level = perks.Expansion.level;
 			// must have enough carp to sustain current coordination - or very conservatively for trappa, 10 more coords after final army send (should still be negligible Rn spent on carp)
-			var wantedArmySize = (props.isTrappa ? Math.pow(1.25, 10) : 1) * props.armySize
+			var wantedArmySize = (props.isTrappa ? Math.pow(1.25, 10) : 1) * props.armySize;
 			var tauntBase = 1.003 + 0.0001 * perks.Expansion.level;
 			var tauntMult = props.expanding ? Math.pow(tauntBase, props.actualTaunts) : 1;
 			perks.Carpentry.level = Math.max(0, Math.ceil(Math.log(2.4 * wantedArmySize / (tauntMult * props.maxTrimps)) / Math.log(1.1)));

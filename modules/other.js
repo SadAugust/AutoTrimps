@@ -606,7 +606,7 @@ function equalityManagement() {
 	if (type === 'world' && dailyExplosive) fastEnemy = true;
 	if (game.global.voidBuff === 'doubleAttack') fastEnemy = true
 	if (runningArchaeology) fastEnemy = true;
-	if (noFrenzy && game.portal.Frenzy.frenzyActive()) fastEnemy = true;
+	if (noFrenzy && game.portal.Frenzy.frenzyActive() || (enemyHealth / ourDmg) > 10) fastEnemy = true;
 	if (runningTrappa) fastEnemy = true;
 	if (runningDuel && !mapping) fastEnemy = true;
 	if (runningQuest) fastEnemy = true;

@@ -701,6 +701,7 @@ function setupPerkyUI() {
 	var presetListHtml =
 		"<select id=\"preset\" onchange=\"select_preset(this.value)\" data-saved>\
 			\
+			<option disabled>— Select a Preset —</option>\
 			<option value=\"early\">z1–59</option>\
 			<option value=\"broken\">z60–99</option>\
 			<option value=\"mid\">z100–180</option>\
