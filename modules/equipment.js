@@ -321,7 +321,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 	}
 
 	var levelOnePrestige = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
-	var newLevel = Math.floor(getMaxAffordable((levelOnePrestige * 1.2), ((game.resources[resource].owned - levelOnePrestige) * resourceSpendingPct), 1.2, true)) + 1;
+	var newLevel = 1 + Math.max(0, Math.floor(getMaxAffordable((levelOnePrestige * 1.2), ((game.resources[resource].owned - levelOnePrestige) * resourceSpendingPct), 1.2, true)));
 	var newStatValue = (newLevel) * Math.round(equipment[equipStat] * Math.pow(1.19, ((equipment.prestige) * game.global.prestige[equipStat]) + 1));
 	var currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
 	var statPerResource = levelOnePrestige / newStatValue;
