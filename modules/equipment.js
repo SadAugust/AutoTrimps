@@ -222,7 +222,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			if (isAttack === 1) resourceMaxPercent = resourceMaxPercentBackup;
 		}
 		//Load buyPrestigeMaybe into variable so it's not called 500 times
-		var maybeBuyPrestige = buyPrestigeMaybe(i, resourceMaxPercent);
+		var maybeBuyPrestige = buyPrestigeMaybe(i, resourceMaxPercent, game.equipment[i].level);
 		//Skips if we have the required number of that item and below zoneGo
 		if (!maybeBuyPrestige && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
 		//Skips if ignoreShield variable is true.
@@ -245,7 +245,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 
 		if (!ignorePrestiges_temp && (maybeBuyPrestige[0] && (maybeBuyPrestige[1] > mostEfficient[isAttack].statPerResource || maybeBuyPrestige[3]))) {
 			safeRatio = maybeBuyPrestige[1];
-			nextLevelCost = maybeBuyPrestige[2]
+			nextLevelCost = maybeBuyPrestige[2];
 			prestige = true;
 		}
 
@@ -278,10 +278,11 @@ function getMaxAffordable(baseCost, totalResource, costScaling, isCompounding) {
 	}
 }
 
-function buyPrestigeMaybe(equipName, resourceSpendingPct) {
+function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return false;
 	if (challengeActive('Scientist')) return false;
+	if (!maxLevel) maxLevel = Infinity;
 
 	var prestigeUpgrade = "";
 	var prestigeDone = false;
@@ -322,6 +323,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct) {
 
 	var levelOnePrestige = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
 	var newLevel = 1 + Math.max(0, Math.floor(getMaxAffordable((levelOnePrestige * 1.2), ((game.resources[resource].owned - levelOnePrestige) * resourceSpendingPct), 1.2, true)));
+	newLevel = Math.max(1, Math.min(maxLevel, newLevel));
 	var newStatValue = (newLevel) * Math.round(equipment[equipStat] * Math.pow(1.19, ((equipment.prestige) * game.global.prestige[equipStat]) + 1));
 	var currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
 	var statPerResource = levelOnePrestige / newStatValue;

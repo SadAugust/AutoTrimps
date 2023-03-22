@@ -1737,7 +1737,7 @@ function Quest() {
 		var questSpecial = questArray[0]
 		var questJobRatio = questArray[1];
 		var questMax = rShouldQuest === 6 ? 10 : null;
-		var questMin = rShouldQuest === 6 ? 0 : null;
+		var questMin = rShouldQuest === 6 || (rShouldQuest === 7 && game.global.mapBonus !== 10) ? 0 : null;
 
 		if (game.global.mapRunCounter === 0 && game.global.mapsActive && rMapRepeats !== 0) {
 			game.global.mapRunCounter = rMapRepeats;
