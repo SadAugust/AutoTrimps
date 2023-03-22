@@ -163,7 +163,7 @@ function dailyAutoPortal() {
 		}
 	}
 	if (getPageSetting('dailyPortal') == 2) {
-		var portalZone = getPageSetting('dailyPortalZone');
+		var portalZone = getPageSetting('dailyPortalZone') > 0 ? getPageSetting('dailyPortalZone') : 999;
 		if (MODULES.mapFunctions.portalZone === game.global.world) portalZone = game.global.world;
 
 		if (game.global.world >= portalZone) {
