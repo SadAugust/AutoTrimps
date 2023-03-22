@@ -15,7 +15,7 @@ function autoPortal() {
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
 	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : portalUniverse;
 
-	var portalZone = getPageSetting('autoPortalZone');
+	var portalZone = getPageSetting('autoPortalZone') > 0 ? getPageSetting('autoPortalZone') : 999;
 	//Set portal zone to current zone!
 	if (MODULES.mapFunctions.portalZone === game.global.world) portalZone = game.global.world;
 	if (MODULES.portal.portalForVoid) {
