@@ -1104,9 +1104,9 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	return health;
 }
 
-function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp") {
+function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp", customHealth) {
 	//Init
-	var health = calcEnemyHealthCore(type, zone, cell, name);
+	var health = calcEnemyHealthCore(type, zone, cell, name, customHealth);
 	var corrupt = zone >= mutations.Corruption.start();
 	var healthy = mutations.Healthy.active();
 
@@ -1120,11 +1120,6 @@ function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp") {
 	if (type == "world" && corrupt && !game.global.spireActive) {
 		if (healthy) health *= calcCorruptionScale(zone, 14);
 		else if (corrupt) health *= calcCorruptionScale(zone, 10);
-	}
-
-	//Add check for mutator health here!
-	if (type === 'world' && game.global.world > 200) {
-		health = calcMutationHealth(zone) > health ? calcMutationHealth(zone) : health;
 	}
 
 	return health;
@@ -1183,7 +1178,8 @@ function calcHDRatio(targetZone, type) {
 			enemyName = 'Improbability';
 			cell = 100;
 		}
-		var enemyHealth = calcEnemyHealth(type, targetZone, cell, enemyName);
+		var mutationsActive = game.global.universe === 2 && game.global.world > 200;
+		var enemyHealth = calcEnemyHealth(type, targetZone, cell, enemyName, (mutationsActive ? calcMutationHealth(game.global.world) : null));
 		var universeSetting = game.global.universe === 2 ? equalityQuery(enemyName, targetZone, cell, 'world', 1, 'gamma') : 'X';
 	}
 	if (type === 'map') {
