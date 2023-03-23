@@ -3531,6 +3531,15 @@ function updateATVersion() {
 			changelog.push("The U2 Preset Swapping setting has been modified and it will adjust the Surky preset that is selected depending on the type of challenge that you're about to run.")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.5') {
+			changelog.push("Integrated checks for heirloom swapping into hp/dmg calcs so HD Ratios will now account for your world/map/void heirlooms and not cause issues with map stacking and the like.<br>\
+			Fixed some issues with equip purchasing, setting for daily in previous universe & challenge calc bugfixes.<br>\
+			Adjusted the 'Repeat Count' setting for Map Farm to allow for an input of '-1' which will set the repeat count to Infinity for the times you want to run maps until you get back to your PC.<br>\
+			Added a new setting for Desolation which will ignore farming caches and purely go for the max map level you can survive several hits on to speed up the destacking process in later zones.<br>\
+			Implemented a new status tooltip that is very similar to Psycho-Rays as it seemed beneficial to allow the user to see more information rather than keeping it all stored in the background.<br>\
+			")
+		}
+
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
 		verticalCenterTooltip(false, true);

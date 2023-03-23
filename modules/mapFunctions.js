@@ -2074,6 +2074,7 @@ function Alchemy() {
 		}
 
 		rMFMapLevel = mapAutoLevel;
+
 		if (rAFSpecial.includes('l') && rAFSpecial.length === 3 && perfectMapCost(rAFMapLevel, rAFSpecial) >= game.resources.fragments.owned) rAFSpecial = rAFSpecial.charAt(0) + "sc";
 
 		if (rAFPotions != undefined) {
@@ -2101,6 +2102,14 @@ function Alchemy() {
 			var potionscurrent = alchObj.potionsOwned[potion];
 			//Identifying current herbs + ones that we'll get from the map we should run
 			herbtotal = game.herbs[alchObj.potions[potion].cost[0][0]].cowned + (alchObj.getDropRate(game.global.world + rAFMapLevel) * alchmult);
+
+			/* //When mapType is set as Map Count work out how many of each Potion/Brew we can farm in the amount of maps specified.
+			if (rAFSettings.mapType === 'Map Count') {
+				var potion = Number(rAFPotions.toString().replace(/[^\d,:-]/g, ''))
+				if (potion !== 0) {
+				}
+			} */
+
 			//Looping through each potion level and working out their cost to calc total cost
 			for (x = potionscurrent; x < (rAFPotions.toString().replace(/[^\d,:-]/g, '')); x++) {
 				var potioncost = Math.pow(alchObj.potions[potion].cost[0][2], x) * alchObj.potions[potion].cost[0][1];
