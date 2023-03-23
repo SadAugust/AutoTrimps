@@ -189,7 +189,7 @@ function heirloomShieldToEquip(mapType, query) {
 
 	if (MODULES.portal.portalForVoid) {
 		if (Object.keys(game.global.ShieldEquipped).length !== 0 && game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) unequipHeirloom(game.global.ShieldEquipped);
-		if (Object.keys(game.global.ShieldEquipped).length === 0 && game.permaBoneBonuses.voidMaps.tracker < (100 - game.permaBoneBonuses.voidMaps.owned)) HeirloomEquipShield('heirloomInitial');
+		if (Object.keys(game.global.ShieldEquipped).length === 0 && game.permaBoneBonuses.voidMaps.tracker < (100 - game.permaBoneBonuses.voidMaps.owned)) return ('heirloomInitial');
 		return;
 	}
 	//Initial vars for swapping heirlooms
@@ -264,11 +264,13 @@ function heirloomSwapping() {
 	if (game.global.mapsActive && getCurrentMapObject().location == "Void") mapType = 'void';
 	//Swapping Shields
 	if (getPageSetting('heirloomShield')) {
-		HeirloomEquipShield(heirloomShieldToEquip(mapType, true));
+		var shield = heirloomShieldToEquip(mapType, true);
+		if (shield !== undefined) HeirloomEquipShield(shield);
 	}
 
 	//Swapping Staffs
 	if (getPageSetting('heirloomStaff')) {
-		HeirloomEquipStaff(heirloomStaffToEquip());
+		var staff = heirloomStaffToEquip(mapType, true);
+		if (staff !== undefined) HeirloomEquipStaff(staff);
 	}
 }
