@@ -338,8 +338,9 @@ function doPortal(challenge, squared) {
 		//Swapping to other universe if necessary to run daily.
 		if (getPageSetting('dailyPortalPreviousUniverse', (currPortalUniverse + 1))) {
 			swapPortalUniverse();
-			currPortalUniverse = portalUniverse;
-			challenge = getPageSetting('dailyHeliumHourChallenge');
+			universeSwapped();
+			if (getPageSetting('dailyHeliumHourChallenge', portalUniverse) !== 'None') challenge = getPageSetting('dailyHeliumHourChallenge', portalUniverse);
+			else challenge = 0;
 		}
 	}
 
@@ -369,13 +370,6 @@ function doPortal(challenge, squared) {
 		//Will stop it from autoPortaling into dailies when you have dailyDontCap enabled and don't have 7 dailies stored.
 		if (getPageSetting('dailyDontCap', portalUniverse) && game.global.recentDailies.indexOf(getDailyTimeString(-6)) !== -1 && game.global.recentDailies.length !== 0) lastUndone = 1;
 
-		if (lastUndone !== 1 && getPageSetting('dailyPortalPreviousUniverse', currPortalUniverse)) {
-			swapPortalUniverse();
-			currPortalUniverse = portalUniverse;
-			selectChallenge('Daily');
-			challenge = getPageSetting('dailyHeliumHourChallenge', portalUniverse);
-		}
-
 		//Portaling into a filler if all dailies have been run
 		if (lastUndone === 1) {
 			debug("All available Dailies already completed.", "portal");
@@ -400,17 +394,23 @@ function doPortal(challenge, squared) {
 		}
 		//Portaling into a daily
 		else {
+			if (getPageSetting('dailyPortalPreviousUniverse', portalUniverse)) {
+				swapPortalUniverse();
+				universeSwapped();
+				selectChallenge('Daily');
+				checkCompleteDailies();
+			}
 			getDailyChallenge(lastUndone);
 			debug("Portaling into Daily for: " + getDailyTimeString(lastUndone, true) + " now!", "portal");
 		}
 	}
-	//Running Fillers
+	//Selecting challenge that AT has chosen to run.
 	else if (challenge && !challengeSquaredMode) {
 		//Swapping to opposite universe if goal is to run a challenge there
 		if (squared || challenge.includes('Challenge ')) toggleChallengeSquared();
 
-		if (currChall === 'Daily' && getPageSetting('dailyC2Challenge') !== 'None')
-			challenge = getPageSetting('dailyC2Challenge');
+		if (currChall === 'Daily' && challengeSquaredMode && getPageSetting('dailyC2Challenge', portalUniverse) !== 'None')
+			challenge = getPageSetting('dailyC2Challenge', portalUniverse);
 		selectChallenge(challenge);
 	}
 
@@ -425,12 +425,12 @@ function doPortal(challenge, squared) {
 
 	//Run Perky/Surky.
 	if (typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {
-		if (portalUniverse === 1 && ($('#preset').value !== 'undefined' ||
+		if (portalUniverse === 1 && ($('#preset').value !== null || $('#preset').value !== 'undefined' ||
 			($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined'))
 		) {
 			runPerky();
 		}
-		if (portalUniverse === 2 && ($('#presetElem').value !== 'undefined' ||
+		if (portalUniverse === 2 && ($('#presetElem').value !== null || $('#presetElem').value !== 'undefined' ||
 			($('#radonWeight').value !== 'undefined' && $('#clearWeight').value !== 'undefined' && $('#survivalWeight').value !== 'undefined'))) {
 			runSurky();
 		}

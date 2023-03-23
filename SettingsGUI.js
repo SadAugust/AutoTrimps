@@ -482,7 +482,7 @@ function initializeAllSettings() {
 
 		createSetting('dailyPortalPreviousUniverse',
 			function () { return ('Daily prev universe') },
-			function () { return ('If this is on, you will do your daily in U2. ') },
+			function () { return ('If this is on, you will do your daily in the previous universe. Takes you back to this universe after it has finished running and does runs as normal. <br><b>MUST HAVE DAILY PORTAL IN PREVIOUS UNIVERSE ENABLED AND SETUP</b>') },
 			'boolean', false, null, 'Daily', [2],
 			function () { return game.global.highestRadonLevelCleared + 1 >= 30 });
 
