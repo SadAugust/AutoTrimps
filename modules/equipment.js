@@ -269,12 +269,14 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		if (!ignorePrestiges_temp && (maybeBuyPrestige[0] && (maybeBuyPrestige[1] > mostEfficient[isAttack].statPerResource || maybeBuyPrestige[3]))) {
 			safeRatio = maybeBuyPrestige[1];
 			nextLevelCost = maybeBuyPrestige[2];
+			nextLevelValue = maybeBuyPrestige[4];
 			prestige = true;
 		}
 
 		//Skips items if they aren't at the highest prestige level we own and we have that setting enabled
 		if (getPageSetting('equipHighestPrestige') && game.equipment[i].prestige < highestPrestige && prestige === false) continue;
 
+		safeRatio = Math.log(nextLevelValue + 1) / Math.log(nextLevelCost + 1);
 		if (mostEfficient[isAttack].statPerResource > safeRatio && mostEfficient[isAttack].statPerResource != '') {
 
 			mostEfficient[isAttack].name = i;
@@ -348,7 +350,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 	var currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
 	var statPerResource = levelOnePrestige / newStatValue;
 
-	return [newStatValue > currentStatValue, statPerResource, levelOnePrestige, !prestigeDone];
+	return [newStatValue > currentStatValue, statPerResource, levelOnePrestige, !prestigeDone, newStatValue];
 }
 
 function autoEquip() {

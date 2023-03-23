@@ -183,75 +183,92 @@ function HeirloomShieldSwapped() {
 	shieldEquipped = game.global.ShieldEquipped.id;
 }
 
+function heirloomShieldToEquip(mapType, query) {
+	if (!getPageSetting('heirloom')) return;
+	if (!getPageSetting('heirloomShield')) return;
+
+	if (MODULES.portal.portalForVoid) {
+		if (Object.keys(game.global.ShieldEquipped).length !== 0 && game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) unequipHeirloom(game.global.ShieldEquipped);
+		if (Object.keys(game.global.ShieldEquipped).length === 0 && game.permaBoneBonuses.voidMaps.tracker < (100 - game.permaBoneBonuses.voidMaps.owned)) HeirloomEquipShield('heirloomInitial');
+		return;
+	}
+	//Initial vars for swapping heirlooms
+	var isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	var isDaily = challengeActive('Daily');
+	var isFiller = !isDaily && !isC3
+	var swapZone = isC3 ? getPageSetting('heirloomSwapZoneC3') : isDaily ? getPageSetting('heirloomSwapZoneDaily') : isFiller ? getPageSetting('heirloomSwapZone') : 999;
+	if (swapZone === -1) swapZone = 999;
+	var afterpushShield = isC3 ? 'heirloomC3' : 'heirloomAfterpush';
+	voidPBSwap = false;
+	var voidActive = mapType === 'void';
+	if (voidActive) {
+		voidPBSwap =
+			query && game.global.universe === 2 && getPageSetting('heirloomVoidSwap') &&
+			//Not at final map cell
+			game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
+			//Current enemy is slow
+			!fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
+			//Next cell is fast
+			fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&
+			//Not in double attack voids
+			game.global.voidBuff !== 'doubleAttack';
+	}
+
+	if (voidActive && (getPageSetting('heirloomVoid') !== "undefined" || (voidPBSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined"))) {
+		if (voidPBSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined")
+			return ('heirloomVoidPlaguebringer');
+		else
+			return ('heirloomVoid');
+	}
+	else if (voidActive && voidPBSwap && getPageSetting('heirloomInitial') !== "undefined")
+		return ('heirloomInitial');
+	else if (getPageSetting(afterpushShield) !== "undefined" && (game.global.world >= swapZone || (mapType !== 'world' && getPageSetting('heirloomMapSwap'))))
+		return (afterpushShield);
+	else if (getPageSetting('heirloomInitial') !== "undefined")
+		return ('heirloomInitial');
+}
+
+function heirloomStaffToEquip(mapType) {
+	if (!getPageSetting('heirloom')) return;
+	if (!getPageSetting('heirloomStaff')) return;
+
+	if (getPageSetting('heirloomStaffWorld') != "undefined" && !game.global.mapsActive) {
+		return ('heirloomStaffWorld');
+	} else if (game.global.mapsActive) {
+		const mapBonus = getCurrentMapObject().bonus;
+		if (challengeActive('Pandemonium') && getPageSetting('pandemoniumAE') > 1 && getPageSetting('pandemoniumStaff') != "undefined" && getPageSetting('pandemoniumAEZone') > 0 && game.global.world >= getPageSetting('pandemoniumAEZone') && game.global.lastClearedCell > 59)
+			return ('pandemoniumStaff');
+		else if (getPageSetting('heirloomStaffMap') != "undefined" && mapBonus === undefined)
+			return ('heirloomStaffMap');
+		else if (getCurrentMapObject().bonus != undefined) {
+			if (getPageSetting('heirloomStaffFood') != "undefined" && mapBonus.includes("sc"))
+				return ('heirloomStaffFood');
+			else if (getPageSetting('heirloomStaffWood') != "undefined" && mapBonus.includes("wc"))
+				return ('heirloomStaffWood');
+			else if (getPageSetting('heirloomStaffMetal') != "undefined" && mapBonus.includes("mc"))
+				return ('heirloomStaffMetal');
+			else if (game.global.universe === 2 && getPageSetting('heirloomResourceStaff') != "undefined" && mapBonus.includes("rc"))
+				return ('heirloomResourceStaff');
+			else if (getPageSetting('heirloomStaffMap') != "undefined")
+				return ('heirloomStaffMap');
+		}
+	}
+
+}
+
 function heirloomSwapping() {
 	if (!getPageSetting('heirloom')) return;
 
+	var mapType = 'world';
+	if (game.global.mapsActive) mapType = 'map';
+	if (game.global.mapsActive && getCurrentMapObject().location == "Void") mapType = 'void';
 	//Swapping Shields
 	if (getPageSetting('heirloomShield')) {
-
-		if (MODULES.portal.portalForVoid) {
-			if (Object.keys(game.global.ShieldEquipped).length !== 0 && game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) unequipHeirloom(game.global.ShieldEquipped);
-			if (Object.keys(game.global.ShieldEquipped).length === 0 && game.permaBoneBonuses.voidMaps.tracker < (100 - game.permaBoneBonuses.voidMaps.owned)) HeirloomEquipShield('heirloomInitial');
-			return;
-		}
-		//Initial vars for swapping heirlooms
-		var isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-		var isDaily = challengeActive('Daily');
-		var isFiller = !isDaily && !isC3
-		var swapZone = isC3 ? getPageSetting('heirloomSwapZoneC3') : isDaily ? getPageSetting('heirloomSwapZoneDaily') : isFiller ? getPageSetting('heirloomSwapZone') : 999;
-		if (swapZone === -1) swapZone = 999;
-		var afterpushShield = isC3 ? 'heirloomC3' : 'heirloomAfterpush';
-		voidPBSwap = false;
-		var voidActive = game.global.mapsActive && getCurrentMapObject().location == "Void";
-		if (voidActive) {
-			voidPBSwap =
-				game.global.universe === 2 && getPageSetting('heirloomVoidSwap') &&
-				//Not at final map cell
-				game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
-				//Current enemy is slow
-				!fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
-				//Next cell is fast
-				fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&
-				//Not in double attack voids
-				game.global.voidBuff !== 'doubleAttack';
-		}
-
-		if (voidActive && (getPageSetting('heirloomVoid') !== "undefined" || (voidPBSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined"))) {
-			if (voidPBSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined")
-				HeirloomEquipShield('heirloomVoidPlaguebringer');
-			else
-				HeirloomEquipShield('heirloomVoid');
-		}
-		else if (voidActive && voidPBSwap && getPageSetting('heirloomInitial') !== "undefined")
-			HeirloomEquipShield('heirloomInitial');
-		else if (getPageSetting(afterpushShield) !== "undefined" && (game.global.world >= swapZone || ((game.global.preMapsActive || game.global.mapsActive) && getPageSetting('heirloomMapSwap'))))
-			HeirloomEquipShield(afterpushShield);
-		else if (getPageSetting('heirloomInitial') !== "undefined")
-			HeirloomEquipShield('heirloomInitial');
+		HeirloomEquipShield(heirloomShieldToEquip(mapType, true));
 	}
 
 	//Swapping Staffs
 	if (getPageSetting('heirloomStaff')) {
-		if (getPageSetting('heirloomStaffWorld') != "undefined" && !game.global.mapsActive) {
-			HeirloomEquipStaff('heirloomStaffWorld');
-		} else if (game.global.mapsActive) {
-			const mapBonus = getCurrentMapObject().bonus;
-			if (challengeActive('Pandemonium') && getPageSetting('pandemoniumAE') > 1 && getPageSetting('pandemoniumStaff') != "undefined" && getPageSetting('pandemoniumAEZone') > 0 && game.global.world >= getPageSetting('pandemoniumAEZone') && game.global.lastClearedCell > 59)
-				HeirloomEquipStaff('pandemoniumStaff');
-			else if (getPageSetting('heirloomStaffMap') != "undefined" && mapBonus === undefined)
-				HeirloomEquipStaff('heirloomStaffMap');
-			else if (getCurrentMapObject().bonus != undefined) {
-				if (getPageSetting('heirloomStaffFood') != "undefined" && mapBonus.includes("sc"))
-					HeirloomEquipStaff('heirloomStaffFood');
-				else if (getPageSetting('heirloomStaffWood') != "undefined" && mapBonus.includes("wc"))
-					HeirloomEquipStaff('heirloomStaffWood');
-				else if (getPageSetting('heirloomStaffMetal') != "undefined" && mapBonus.includes("mc"))
-					HeirloomEquipStaff('heirloomStaffMetal');
-				else if (game.global.universe === 2 && getPageSetting('heirloomResourceStaff') != "undefined" && mapBonus.includes("rc"))
-					HeirloomEquipStaff('heirloomResourceStaff');
-				else if (getPageSetting('heirloomStaffMap') != "undefined")
-					HeirloomEquipStaff('heirloomStaffMap');
-			}
-		}
+		HeirloomEquipStaff(heirloomStaffToEquip());
 	}
 }

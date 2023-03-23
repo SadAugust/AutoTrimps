@@ -199,7 +199,6 @@ function freeVoidPortal() {
 	else return;;
 }
 
-//Last part to fix!
 function c2runnerportal() {
 	if (game.global.universe === 1 && game.global.highestLevelCleared < 63) return;
 	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 48) return;

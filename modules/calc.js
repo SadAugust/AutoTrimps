@@ -2,8 +2,6 @@ var critCC = 1;
 var critDD = 1;
 var trimpAA = 1;
 
-//Helium
-
 class HDStats {
 	constructor(vmStatus) {
 		this.hdRatio = undefined;
@@ -42,7 +40,7 @@ function debugCalc() {
 	//Trimp Stats
 	debug("Our Stats");
 	debug("Our attack: " + displayedMin.toExponential(2) + "-" + displayedMax.toExponential(2));
-	debug("Our crit: " + 100 * getPlayerCritChance() + "% for " + getPlayerCritDamageMult().toFixed(1) + "x Damage. Average of " + getCritMulti(false, "maybe").toFixed(2) + "x");
+	debug("Our crit: " + 100 * getPlayerCritChance() + "% for " + getPlayerCritDamageMult().toFixed(1) + "x Damage. Average of " + getCritMulti("maybe").toFixed(2) + "x");
 	if (game.global.universe === 1) debug("Our block: " + calcOurBlock(true, true).toExponential(2));
 	if (game.global.universe === 2) debug("Our equality: " + game.portal.Equality.disabledStackCount);
 	debug("Our Health: " + (calcOurHealth(universeSetting2, mapType)).toExponential(2));
@@ -179,7 +177,7 @@ function getTrimpHealth(realHealth, mapType) {
 	//AutoBattle
 	health *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	//Shield (Heirloom)
-	health = calcHeirloomBonus('Shield', 'trimpHealth', health);
+	health *= 1 + calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100;
 	//Void Map Talents
 	health *= (game.talents.voidPower.purchased && mapType === 'void') ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
 	//Championism
@@ -329,9 +327,9 @@ function addPoison(realDamage, zone) {
 	return 0;
 }
 
-function getCritMulti(high, crit) {
-	var critChance = getPlayerCritChance();
-	var critD = getPlayerCritDamageMult();
+function getCritMulti(crit, customShield) {
+	var critChance = getPlayerCritChance_AT(customShield);
+	var critD = getPlayerCritDamageMult_AT(customShield);
 	var critDHModifier;
 
 	if (crit == "never") critChance = Math.floor(critChance);
@@ -349,6 +347,64 @@ function getCritMulti(high, crit) {
 	else critDHModifier = ((critChance - 2) * Math.pow(getMegaCritDamageMult(critChance), 2) * critD + (3 - critChance) * getMegaCritDamageMult(critChance) * critD);
 
 	return critDHModifier;
+}
+
+function calcHeirloomBonus_AT(type, name, number, getValueOnly, customShield) {
+	var mod = getHeirloomBonus_AT(type, name, customShield);
+	if (!mod) return number;
+	if (getValueOnly) return mod;
+	if (mod <= 0) return number;
+	return (number * ((mod / 100) + 1));
+}
+
+function getHeirloomBonus_AT(type, mod, customShield) {
+	if (!game.heirlooms[type] || !game.heirlooms[type][mod]) {
+		console.log('oh noes', type, mod)
+	}
+	var bonus = game.heirlooms[type][mod].currentBonus;
+	//Override bonus if needed
+	if (customShield) bonus = HeirloomModSearch(customShield, mod);
+	if (mod == "gammaBurst" && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
+		bonus = gammaBurstPct;
+	}
+	if (game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.heirlost !== 'undefined') {
+		if (type != "FluffyExp" && type != "VoidMaps") bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
+	}
+	if (!customShield) return scaleHeirloomModUniverse(type, mod, bonus);
+	return bonus;
+}
+
+function getPlayerCritChance_AT(customShield) { //returns decimal: 1 = 100%
+	if (game.global.challengeActive == "Frigid" && game.challenges.Frigid.warmth <= 0) return 0;
+	if (game.global.challengeActive == "Duel") return (game.challenges.Duel.enemyStacks / 100);
+	var critChance = 0;
+	critChance += (game.portal.Relentlessness.modifier * getPerkLevel("Relentlessness"));
+	critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) * (customShield && game.global.universe === 2 ? 0.1 : 0.01));
+	if (game.talents.crit.purchased && getHeirloomBonus_AT("Shield", "critChance", customShield)) critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) * (0.005 * (customShield && game.global.universe === 2 ? 10 : 1)));
+	if (Fluffy.isRewardActive("critChance")) critChance += (0.5 * Fluffy.isRewardActive("critChance"));
+	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critChance += 0.35;
+	if (game.global.universe == 2 && u2Mutations.tree.CritChance.purchased) critChance += 0.25;
+	if (game.global.challengeActive == "Daily") {
+		if (typeof game.global.dailyChallenge.trimpCritChanceUp !== 'undefined') {
+			critChance += dailyModifiers.trimpCritChanceUp.getMult(game.global.dailyChallenge.trimpCritChanceUp.strength);
+		}
+		if (typeof game.global.dailyChallenge.trimpCritChanceDown !== 'undefined') {
+			critChance -= dailyModifiers.trimpCritChanceDown.getMult(game.global.dailyChallenge.trimpCritChanceDown.strength);
+		}
+		if (Fluffy.isRewardActive('SADailies')) critChance += Fluffy.rewardConfig.SADailies.critChance();
+	}
+	if (critChance > 7) critChance = 7;
+	return critChance;
+}
+
+function getPlayerCritDamageMult_AT(customShield) {
+	var relentLevel = getPerkLevel("Relentlessness");
+	var critMult = (((game.portal.Relentlessness.otherModifier * relentLevel) + (getHeirloomBonus_AT("Shield", "critDamage", customShield) / 100)) + 1);
+	critMult += (getPerkLevel("Criticality") * game.portal.Criticality.modifier);
+	if (relentLevel > 0) critMult += 1;
+	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critMult += 0.5;
+	critMult += alchObj.getPotionEffect("Elixir of Accuracy");
+	return critMult;
 }
 
 function getAnticipationBonus(stacks) {
@@ -419,7 +475,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	//AutoBattle
 	attack *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	// Heirloom (Shield)
-	attack *= 1 + calcHeirloomBonus('Shield', 'trimpAttack', 1, true) / 100;
+	attack *= 1 + calcHeirloomBonus_AT('Shield', 'trimpAttack', 1, true, heirloomShieldToEquip(mapType)) / 100;
 	// Frenzy perk
 	attack *= game.global.universe === 2 && !challengeActive('Berserk') && (getPageSetting('frenzyCalc') || autoBattle.oneTimers.Mass_Hysteria.owned) ? 1 + (0.5 * game.portal.Frenzy[perkLevel]) : 1;
 	//Championism
@@ -566,9 +622,9 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	}
 
 	//Init Damage Variation (Crit)
-	var min = attack * getCritMulti(false, (critMode) ? critMode : "never");
-	var avg = attack * getCritMulti(false, (critMode) ? critMode : "maybe");
-	var max = attack * getCritMulti(false, (critMode) ? critMode : "force");
+	var min = attack * getCritMulti((critMode) ? critMode : "never", heirloomShieldToEquip(mapType));
+	var avg = attack * getCritMulti((critMode) ? critMode : "maybe", heirloomShieldToEquip(mapType));
+	var max = attack * getCritMulti((critMode) ? critMode : "force", heirloomShieldToEquip(mapType));
 
 	//Damage Fluctuation
 	min *= minFluct;
