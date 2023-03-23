@@ -173,8 +173,8 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	if (!ignoreShield) ignoreShield = getPageSetting('equipNoShields');
 	if (!skipForLevels) skipForLevels = false;
 	if (!showAllEquips) showAllEquips = false;
-	var rEquipZone = getPageSetting('equipZone');
-	if (!zoneGo) zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting('equipCutOff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+	var equipZone = getPageSetting('equipZone');
+	if (!zoneGo) zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting('equipCutOff')) || (equipZone.length > 0 && ((equipZone.includes(game.global.world)) || (game.global.world >= equipZone[equipZone.length - 1])));
 	if (!resourceMaxPercent) resourceMaxPercent = zoneGo ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100;
 	var resourceMaxPercentBackup = resourceMaxPercent;
 
@@ -198,19 +198,39 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	];
 
 	var highestPrestige = 0;
+	var prestigesAvailable = false;
+
+
+	//Checks what our highest prestige level is && if there are any prestiges available to purchase
+	for (var i in equipmentList) {
+		if (game.equipment[i].prestige > highestPrestige) highestPrestige = game.equipment[i].prestige;
+		if (prestigesAvailable) continue;
+		if (ignorePrestiges) continue;
+		if (getPageSetting('equipPrestige') === 0) continue;
+		if (getPageSetting('equipPrestige') === 1 && !game.mapUnlocks.AncientTreasure.canRunOnce) continue;
+		if (i === 'Shield') continue;
+		if (game.upgrades[equipmentList[i].Upgrade].done !== game.upgrades[equipmentList[i].Upgrade].allowed) {
+			prestigesAvailable = true;
+		}
+	}
 
 	for (var i in equipmentList) {
 		if (game.equipment[i].locked) continue;
+
 		var isAttack = (equipmentList[i].Stat === 'attack' ? 0 : 1);
+		var nextLevelValue = 1;
+		var safeRatio = 1;
+
 		var skipForLevels = !skipForLevels && isAttack == 0 ? getPageSetting('equipCapAttack') :
 			!skipForLevels && isAttack == 1 ? getPageSetting('equipCapHealth') :
 				skipForLevels
+
 		var nextLevelCost = game.equipment[i].cost[equipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[equipmentList[i].Resource][1], game.equipment[i].level + fakeLevels[i]) * getEquipPriceMult();
+
 		var prestige = false;
 		var ignorePrestiges_temp = ignorePrestiges;
 		//Skipping gyms when not in u1
-		if (//game.global.universe !== 1 &&
-			i === 'Gym') continue;
+		if (i === 'Gym') continue;
 		//Skipping gyms when can buy Gymystic
 		if (game.global.univere === 1 && (i === 'Shield' || i === 'Gym') && needGymystic()) continue;
 		//Setting weapon equips to 100% spending during Smithless farm.
@@ -231,14 +251,17 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
 		//Skips buying shields when you can afford bonfires on Hypothermia.
 		if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i == 'Shield') continue;
-		//Skips through equips if they cost more than your Requippercent setting value.
+		//Skips through equips if they cost more than your equip purchasing percent setting value.
 		if (equipmentList[i].Resource == 'metal' && !zoneGo && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
 		//Skips through equips if they don't cost metal and you don't have enough resources for them.
 		if (equipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
-
-		var nextLevelValue = game.equipment[i][equipmentList[i].Stat + "Calculated"];
-		var isAttack = (equipmentList[i].Stat === 'attack' ? 0 : 1);
-		var safeRatio = nextLevelCost / nextLevelValue;
+		//Skips equips if we have prestiges available & no prestiges to get for this
+		if (prestigesAvailable && game.upgrades[equipmentList[i].Upgrade].done === game.upgrades[equipmentList[i].Upgrade].allowed) continue;
+		//If prestiges available & running certain settings skips looking at non-prestige item stats.
+		if (!prestigesAvailable) {
+			nextLevelValue = game.equipment[i][equipmentList[i].Stat + "Calculated"];
+			safeRatio = nextLevelCost / nextLevelValue;
+		}
 
 		if (!ignorePrestiges && getPageSetting('equipPrestige') === 0 && game.equipment[i].level < 6 && game.resources.metal.owned * 0.2 < maybeBuyPrestige[2]) ignorePrestiges_temp = true;
 		if ((getPageSetting('equipPrestige') === 1 && !game.mapUnlocks.AncientTreasure.canRunOnce && game.resources.metal.owned * 0.08 < maybeBuyPrestige[2])) ignorePrestiges_temp = true;
@@ -249,19 +272,16 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			prestige = true;
 		}
 
-		if (!ignorePrestiges_temp && getPageSetting('equipHighestPrestige')) {
-			for (var item in game.equipment) {
-				var equip = game.equipment[item];
-				if (equip.prestige > highestPrestige) highestPrestige = equip.prestige;
-			}
-			if (game.equipment[i].prestige < highestPrestige && prestige == false) continue;
-		}
+		//Skips items if they aren't at the highest prestige level we own and we have that setting enabled
+		if (getPageSetting('equipHighestPrestige') && game.equipment[i].prestige < highestPrestige && prestige === false) continue;
 
 		if (mostEfficient[isAttack].statPerResource > safeRatio && mostEfficient[isAttack].statPerResource != '') {
+
 			mostEfficient[isAttack].name = i;
 			mostEfficient[isAttack].statPerResource = safeRatio;
 			mostEfficient[isAttack].prestige = prestige;
 			mostEfficient[isAttack].cost = nextLevelCost;
+
 		}
 	}
 
@@ -350,8 +370,8 @@ function autoEquip() {
 		debug('Upgrading Gymystic', "equips", '*upload');
 	}
 
-	var rEquipZone = getPageSetting('equipZone');
-	var zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting('equipCutOff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+	var equipZone = getPageSetting('equipZone');
+	var zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting('equipCutOff')) || (equipZone.length > 0 && ((equipZone.includes(game.global.world)) || (game.global.world >= equipZone[equipZone.length - 1])));
 
 	if (getPageSetting('equipPrestige') == 2 && !zoneGo) {
 		var prestigeLeft = false;
@@ -418,7 +438,7 @@ function autoEquip() {
 		var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
 		var resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 
-		zoneGo = (HDRatio >= getPageSetting('equipCutOff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+		zoneGo = (HDRatio >= getPageSetting('equipCutOff')) || (equipZone.length > 0 && ((equipZone.includes(game.global.world)) || (game.global.world >= equipZone[equipZone.length - 1])));
 
 
 
@@ -465,7 +485,7 @@ function autoEquip() {
 			equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5];
 			resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
 			equipCap = (equipType === 'attack') ? attackEquipCap : healthEquipCap;
-			zoneGo = (HDRatio >= getPageSetting('equipCutOff')) || (rEquipZone.length > 0 && ((rEquipZone.includes(game.global.world)) || (game.global.world >= rEquipZone[rEquipZone.length - 1])));
+			zoneGo = (HDRatio >= getPageSetting('equipCutOff')) || (equipZone.length > 0 && ((equipZone.includes(game.global.world)) || (game.global.world >= equipZone[equipZone.length - 1])));
 		}
 	} while (keepBuying)
 }
