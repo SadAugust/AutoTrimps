@@ -314,6 +314,7 @@ function autoMapLevel(special, maxLevel, minLevel, floorCrit, statCheck) {
 
 		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot', true);
 		var ourDmg = calcOurDmg(dmgType, equalityAmt, false, 'map', critType, y, 'force');
+		if (challengeActive('Duel')) ourDmg *= gammaBurstPct;
 		if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = calcEnemyHealthCore('map', game.global.world + mapLevel, 20, 'Turtlimp') * difficulty;
 		enemyHealth *= (maxOneShotPower(true));
@@ -452,6 +453,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		if (!runningUnlucky && (zone - game.global.world) > 0) dmgType = 'min';
 		enemyHealth *= (1 * overkillCount);
 	}
+	if (challengeActive('Duel')) ourDmg *= gammaBurstPct;
 
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
 
