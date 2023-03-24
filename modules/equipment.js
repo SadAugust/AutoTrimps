@@ -200,14 +200,16 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	var highestPrestige = 0;
 	var prestigesAvailable = false;
 
+	var canAtlantrimp = game.mapUnlocks.AncientTreasure.canRunOnce;
+	var prestigeSetting = getPageSetting('equipPrestige');
 
 	//Checks what our highest prestige level is && if there are any prestiges available to purchase
 	for (var i in equipmentList) {
 		if (game.equipment[i].prestige > highestPrestige) highestPrestige = game.equipment[i].prestige;
 		if (prestigesAvailable) continue;
 		if (ignorePrestiges) continue;
-		if (getPageSetting('equipPrestige') === 0) continue;
-		if (getPageSetting('equipPrestige') === 1 && !game.mapUnlocks.AncientTreasure.canRunOnce) continue;
+		if (prestigeSetting === 0) continue;
+		if (prestigeSetting === 1 && !canAtlantrimp) continue;
 		if (i === 'Shield') continue;
 		if (game.upgrades[equipmentList[i].Upgrade].done !== game.upgrades[equipmentList[i].Upgrade].allowed) {
 			prestigesAvailable = true;
@@ -256,15 +258,15 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skips through equips if they don't cost metal and you don't have enough resources for them.
 		if (equipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
 		//Skips equips if we have prestiges available & no prestiges to get for this
-		if (prestigesAvailable && game.upgrades[equipmentList[i].Upgrade].done === game.upgrades[equipmentList[i].Upgrade].allowed) continue;
+		if (prestigesAvailable && ((prestigeSetting === 1 && canAtlantrimp) || prestigeSetting === 2) && game.upgrades[equipmentList[i].Upgrade].done === game.upgrades[equipmentList[i].Upgrade].allowed) continue;
 		//If prestiges available & running certain settings skips looking at non-prestige item stats.
 		if (!prestigesAvailable) {
 			nextLevelValue = game.equipment[i][equipmentList[i].Stat + "Calculated"];
 			safeRatio = nextLevelCost / nextLevelValue;
 		}
 
-		if (!ignorePrestiges && getPageSetting('equipPrestige') === 0 && game.equipment[i].level < 6 && game.resources.metal.owned * 0.2 < maybeBuyPrestige[2]) ignorePrestiges_temp = true;
-		if ((getPageSetting('equipPrestige') === 1 && !game.mapUnlocks.AncientTreasure.canRunOnce && game.resources.metal.owned * 0.08 < maybeBuyPrestige[2])) ignorePrestiges_temp = true;
+		if (prestigeSetting === 0 && !ignorePrestiges && game.equipment[i].level < 6 && game.resources.metal.owned * 0.2 < maybeBuyPrestige[2]) ignorePrestiges_temp = true;
+		if (prestigeSetting === 1 && !canAtlantrimp && game.resources.metal.owned * 0.08 < maybeBuyPrestige[2]) ignorePrestiges_temp = true;
 
 		if (!ignorePrestiges_temp && (maybeBuyPrestige[0] && (maybeBuyPrestige[1] > mostEfficient[isAttack].statPerResource || maybeBuyPrestige[3]))) {
 			safeRatio = maybeBuyPrestige[1];
@@ -272,10 +274,11 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			nextLevelValue = maybeBuyPrestige[4];
 			prestige = true;
 		}
-		if (!showAllEquips && getPageSetting('equipPrestige') === 1 && !game.mapUnlocks.AncientTreasure.canRunOnce && nextLevelCost > game.resources.metal.owned) continue;
+
+		if (!showAllEquips && prestigeSetting === 1 && !canAtlantrimp && nextLevelCost > game.resources.metal.owned) continue;
 
 		//Skips items if they aren't at the highest prestige level we own and we have that setting enabled
-		if (getPageSetting('equipHighestPrestige') && game.equipment[i].prestige < highestPrestige && prestige === false) continue;
+		if (getPageSetting('equipHighestPrestige') && !prestige && game.equipment[i].prestige < highestPrestige) continue;
 		if (safeRatio === 1) continue;
 
 		if (mostEfficient[isAttack].statPerResource > safeRatio && mostEfficient[isAttack].statPerResource != '') {
