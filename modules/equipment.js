@@ -228,7 +228,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		var nextLevelCost = game.equipment[i].cost[equipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[equipmentList[i].Resource][1], game.equipment[i].level + fakeLevels[i]) * getEquipPriceMult();
 
 		var prestige = false;
-		var ignorePrestiges_temp = ignorePrestiges;
+		var ignorePrestiges_temp = ignorePrestiges || false;
 		//Skipping gyms when not in u1
 		if (i === 'Gym') continue;
 		//Skipping gyms when can buy Gymystic
@@ -272,13 +272,13 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			nextLevelValue = maybeBuyPrestige[4];
 			prestige = true;
 		}
+		if (!showAllEquips && getPageSetting('equipPrestige') === 1 && !game.mapUnlocks.AncientTreasure.canRunOnce && nextLevelCost > game.resources.metal.owned) continue;
 
 		//Skips items if they aren't at the highest prestige level we own and we have that setting enabled
 		if (getPageSetting('equipHighestPrestige') && game.equipment[i].prestige < highestPrestige && prestige === false) continue;
+		if (safeRatio === 1) continue;
 
-		safeRatio = Math.log(nextLevelValue + 1) / Math.log(nextLevelCost + 1);
 		if (mostEfficient[isAttack].statPerResource > safeRatio && mostEfficient[isAttack].statPerResource != '') {
-
 			mostEfficient[isAttack].name = i;
 			mostEfficient[isAttack].statPerResource = safeRatio;
 			mostEfficient[isAttack].prestige = prestige;
