@@ -1276,6 +1276,9 @@ function calcHDRatio(targetZone, type) {
 		//Return whatever gives the worst H:D ratio, an odd zone void map or farming for the next even zone
 		return Math.max(voidHealth / voidDamage, calcEnemyHealth("world", targetZone) / ourBaseDamage);
 	}
+	if (challengeActive('Daily')) {
+		if (typeof game.global.dailyChallenge.weakness !== 'undefined') ourBaseDamage *= (1 - ((Math.max(1, gammaMaxStacks(false, true) - 1)) * game.global.dailyChallenge.weakness.strength) / 100)
+	}
 
 	//Adding gammaBurstDmg to calc
 	if (type !== 'map' && (game.global.universe === 2 && universeSetting < (game.portal.Equality.radLevel - 14)) || game.global.universe === 1)
@@ -1466,11 +1469,11 @@ function getTotalHealthMod() {
 	return healthMulti;
 }
 
-function gammaMaxStacks(specialChall) {
+function gammaMaxStacks(specialChall, actualCheck) {
 	var gammaMaxStacks = 5
 	if (autoBattle.oneTimers.Burstier.owned) gammaMaxStacks--;
 	if (Fluffy.isRewardActive("scruffBurst")) gammaMaxStacks--;
-
+	if (actualCheck && gammaBurstPct === 1) return 1;
 	if (gammaBurstPct === 1 || (specialChall && game.global.mapsActive)) gammaMaxStacks = Infinity;
 	return gammaMaxStacks;
 }
