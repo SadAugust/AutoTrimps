@@ -450,7 +450,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (raiding && !bionic) tooltipText += "<div class='windowRecycle'>Recycle</div>"
 			if (raiding && !bionic) tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>"
 			if (alchemy) tooltipText += "<div class='windowStorage'>Void<br>Purchase</div>"
-			if (voidMap && universe === 2 && game.portal.Tenacity.radLevel > 0) tooltipText += "<div class='windowStorage'>Max<br>Tenacity</div>"
+			if (voidMap && universe === 2 && !game.portal.Tenacity.radLocked) tooltipText += "<div class='windowStorage'>Max<br>Tenacity</div>"
 			if (hypothermia) tooltipText += "<div class='windowFrozenCastle'>Frozen<br>Castle</div>"
 			if (hypothermia) tooltipText += "<div class='windowStorage'>Auto<br>Storage</div>"
 			if (hypothermia) tooltipText += "<div class='windowPackrat'>Packrat</div>"
@@ -508,7 +508,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.shipskip = defaultSetting.shipskip ? defaultSetting.shipskip : '10';
 			if (alchemy)
 				defaultVals.voidPurchase = typeof (defaultSetting.voidPurchase) === 'undefined' ? true : defaultSetting.voidPurchase ? defaultSetting.voidPurchase : false;
-			if (voidMap && universe === 2 && game.portal.Tenacity.radLevel > 0)
+			if (voidMap && universe === 2 && !game.portal.Tenacity.radLocked)
 				defaultVals.maxTenacity = typeof (defaultSetting.maxTenacity) === 'undefined' ? false : defaultSetting.maxTenacity ? defaultSetting.maxTenacity : false;
 			if (hypothermia)
 				defaultVals.frozencastle = typeof (defaultSetting.frozencastle) === 'undefined' ? [200, 99] : defaultSetting.frozencastle ? defaultSetting.frozencastle : [200, 99];
@@ -570,7 +570,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowIncrementMaps' style='text-align: center;'>" + buildNiceCheckbox("windowIncrementMapsDefault", null, defaultVals.incrementMaps) + "</div>";
 			if (alchemy)
 				tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowVoidPurchase", null, defaultVals.voidPurchase) + "</div>";
-			if (voidMap && universe === 2 && game.portal.Tenacity.radLevel > 0)
+			if (voidMap && universe === 2 && !game.portal.Tenacity.radLocked)
 				tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowMaxTenacity", null, defaultVals.maxTenacity) + "</div>";
 			if (hdFarm)
 				tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.mapCap + "' type='number' id='mapCap'/></div>";
@@ -1046,7 +1046,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (!raiding && !smithyFarm) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
 		if (boneShrine) defaultSetting.gather = document.getElementById('windowBoneGatherDefault').value;
 		if (alchemy) defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
-		if (voidMap && currSettingUniverse === 2 && game.portal.Tenacity.radLevel > 0) defaultSetting.maxTenacity = readNiceCheckbox(document.getElementById('windowMaxTenacity'));
+		if (voidMap && currSettingUniverse === 2 && !game.portal.Tenacity.radLocked) defaultSetting.maxTenacity = readNiceCheckbox(document.getElementById('windowMaxTenacity'));
 		if (hypothermia) defaultSetting.frozencastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
 		if (hypothermia) defaultSetting.autostorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
 		if (hypothermia) defaultSetting.packrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
