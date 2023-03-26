@@ -319,6 +319,7 @@ function VoidMaps() {
 	const dailyAddition = dailyOddOrEven();
 	const currChall = game.global.challengeActive;
 	const rVMBaseSettings = getPageSetting('voidMapSettings');
+	const rVMDefaultSettings = getPageSetting('voidMapDefaultSettings');
 
 	var rVMIndex;
 
@@ -341,7 +342,7 @@ function VoidMaps() {
 		if (((currSetting.maxvoidzone + dailyReduction) === game.global.world) ||
 			(game.global.world - world >= 0 &&
 				//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value. Will automatically run voids if HD Ratio on next zone is too high! aka can't gamma burst
-				(currSetting.voidHDRatio < voidHDRatio || currSetting.hdRatio < HDRatio || (voidHDRatio * 100) < calcHDRatio(game.global.world + 1, 'void')))) {
+				(currSetting.voidHDRatio < calcHDRatio(game.global.world, 'void', rVMDefaultSettings.maxTenacity) || currSetting.hdRatio < calcHDRatio(game.global.world, 'world', rVMDefaultSettings.maxTenacity) || (voidHDRatio * 100) < calcHDRatio(game.global.world + 1, 'void', rVMDefaultSettings.maxTenacity)))) {
 			rVMIndex = y;
 			if (module.rVoidHDRatio === Infinity) module.rVoidHDRatio = HDRatio;
 			if (module.rVoidVHDRatio === Infinity) module.rVoidVHDRatio = voidHDRatio;

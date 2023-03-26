@@ -201,9 +201,9 @@ function heirloomShieldToEquip(mapType, query) {
 	var afterpushShield = isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 	voidPBSwap = false;
 	var voidActive = mapType === 'void';
-	if (voidActive) {
+	if (voidActive && query) {
 		voidPBSwap =
-			query && game.global.universe === 2 && getPageSetting('heirloomVoidSwap') &&
+			game.global.universe === 2 && getPageSetting('heirloomVoidSwap') &&
 			//Not at final map cell
 			game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
 			//Current enemy is slow

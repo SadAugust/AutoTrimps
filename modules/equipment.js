@@ -275,7 +275,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			prestige = true;
 		}
 
-		if (!showAllEquips && prestigeSetting === 1 && !canAtlantrimp && nextLevelCost > game.resources.metal.owned) continue;
+		//if (!showAllEquips && prestigeSetting === 1 && !canAtlantrimp && nextLevelCost > game.resources.metal.owned) continue;
 
 		//Skips items if they aren't at the highest prestige level we own and we have that setting enabled
 		if (getPageSetting('equipHighestPrestige') && !prestige && game.equipment[i].prestige < highestPrestige) continue;

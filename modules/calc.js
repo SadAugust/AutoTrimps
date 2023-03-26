@@ -1223,9 +1223,11 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	return health;
 }
 
-function calcHDRatio(targetZone, type) {
+function calcHDRatio(targetZone, type, maxTenacity) {
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = "world"
+	if (!maxTenacity) maxTenacity = false;
+
 	//Init
 	if (type === 'world') {
 		var enemyName = 'Turtlimp';
@@ -1251,6 +1253,13 @@ function calcHDRatio(targetZone, type) {
 	var runningUnlucky = challengeActive('Unlucky');
 	var ourBaseDamage = calcOurDmg(runningUnlucky ? 'max' : 'avg', universeSetting, false, type, 'maybe', targetZone - game.global.world);
 
+	//Checking ratio at max tenacity for Void Maps.
+	if (maxTenacity && game.global.universe === 2 && game.portal.Tenacity.radLevel > 0) {
+		if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
+			ourBaseDamage /= game.portal.Tenacity.getMult();
+			ourBaseDamage *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
+		}
+	}
 	//Lead Challenge
 	if (challengeActive('Lead') && targetZone % 2 == 1 && type != "map") {
 		//Stats for void maps
