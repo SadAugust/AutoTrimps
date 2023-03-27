@@ -1463,7 +1463,7 @@ function initializeAllSettings() {
 		createSetting('ForceAbandon',
 			function () { return ('Trimpicide') },
 			function () { return ('If a new fight group is available and anticipation stacks aren\'t maxed, Trimpicide and grab a new group. Will not abandon in spire. Recommended ON. ') },
-			'boolean', true, null, 'Combat', [1]);
+			'boolean', false, null, 'Combat', [1]);
 		createSetting('AutoRoboTrimp',
 			function () { return ('AutoRoboTrimp') },
 			function () { return ('Use RoboTrimps ability starting at this level, and every 5 levels thereafter. (set to 0 to disable. default 60.) 60 is a good choice for mostly everybody.') },

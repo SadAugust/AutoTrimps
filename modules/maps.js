@@ -229,8 +229,8 @@ function autoMap() {
 	}
 
 	//New Mapping Organisation!
-	const rShouldMap = rMapSettings.shouldRun;
-	currentMap = rShouldMap ? rMapSettings.mapName : '';
+	const shouldMap = rMapSettings.shouldRun;
+	currentMap = shouldMap ? rMapSettings.mapName : '';
 	rAutoLevel = rMapSettings.autoLevel ? rMapSettings.mapLevel : Infinity;
 
 	//Farming & resetting variables.
@@ -269,14 +269,14 @@ function autoMap() {
 			if (map.location === "Bionic") {
 				bionicPool.push(map);
 			}
-			if (map.location === 'Void' && rShouldMap && currentMap === 'Void Map') {
+			if (map.location === 'Void' && shouldMap && currentMap === 'Void Map') {
 				voidMap = selectEasierVoidMap(voidMap, map);
 			}
 		}
 	}
 
 	//Telling AT to create a map or setting void map as map to be run.
-	if (selectedMap === 'world' && rShouldMap) {
+	if (selectedMap === 'world' && shouldMap) {
 		if (currentMap !== '') {
 			var mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe === 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 			if (voidMap) selectedMap = voidMap.id;
@@ -289,9 +289,9 @@ function autoMap() {
 	}
 
 	//Map Repeat
-	if (!game.global.preMapsActive && game.global.mapsActive) {
+	if (game.global.mapsActive) {
 		//Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
-		if (rShouldMap && currentMap === 'Prestige Raiding' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > perfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
+		if (shouldMap && currentMap === 'Prestige Raiding' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > perfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
 			var maplevel = getCurrentMapObject().level
 			mapsClicked();
 			recycleMap();
@@ -300,12 +300,12 @@ function autoMap() {
 			rRunMap();
 			debug("Running LMC map due to only having 1 equip remaining on this map.")
 		}
-		if ((selectedMap == game.global.currentMapId || (!getCurrentMapObject().noRecycle && rShouldMap) || currentMap === 'Bionic Raiding')) {
+		if ((selectedMap == game.global.currentMapId || (!getCurrentMapObject().noRecycle && shouldMap) || currentMap === 'Bionic Raiding')) {
 			//Starting with repeat on
 			if (!game.global.repeatMap)
 				repeatClicked();
 			//Changing repeat to repeat for items for Presitge & Bionic Raiding
-			if (rShouldMap && ((currentMap === 'Prestige Raiding' && !MODULES.mapFunctions.prestigeFragMapBought) || currentMap === 'Bionic Raiding')) {
+			if (shouldMap && ((currentMap === 'Prestige Raiding' && !MODULES.mapFunctions.prestigeFragMapBought) || currentMap === 'Bionic Raiding')) {
 				if (game.options.menu.repeatUntil.enabled != 2) {
 					game.options.menu.repeatUntil.enabled = 2;
 					toggleSetting("repeatUntil", null, false, true);
@@ -315,7 +315,7 @@ function autoMap() {
 				toggleSetting("repeatUntil", null, false, true);
 			}
 			//Disabling repeat if we shouldn't map
-			if (!rShouldMap)
+			if (!shouldMap)
 				repeatClicked();
 			//Disabling repeat if we'll beat Experience from the BW we're clearing.
 			if (game.global.repeatMap && challengeActive('Experience') && getCurrentMapObject().location === 'Bionic' && game.global.world > 600 && getCurrentMapObject().level >= 605) {
@@ -355,7 +355,7 @@ function autoMap() {
 			runBionicRaiding(bionicPool);
 		} else if (selectedMap == "create") {
 			//Setting sliders appropriately.
-			if (rShouldMap) {
+			if (shouldMap) {
 				var mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe === 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 				if (currentMap !== '') {
 					mapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome, rMapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));

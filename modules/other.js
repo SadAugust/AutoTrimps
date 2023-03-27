@@ -688,7 +688,6 @@ function equalityManagement() {
 				break;
 			} else if (ourHealth > enemyDmgEquality && gammaToTrigger <= 1) {
 				game.portal.Equality.disabledStackCount = i;
-				if (debugStats) queryAutoEqualityStats(ourDmgEquality, ourHealth, enemyDmgEquality, enemyHealth, i)
 				break;
 			} else if (ourHealth > enemyDmgEquality && ourDmgEquality > enemyHealth) {
 				game.portal.Equality.disabledStackCount = i;
@@ -708,13 +707,15 @@ function equalityManagement() {
 		}
 		if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
 		updateEqualityScaling();
+		if (debugStats) queryAutoEqualityStats(ourDmgEquality, ourHealth, enemyDmgEquality, enemyHealth, i);
 	}
 }
 
 function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHealth, equalityStacks, dmgMult) {
-	debug("Equality = " + equalityStacks)
-	debug("Our dmg (min) = " + ourDamage.toFixed(4) + " | " + "Our health = " + ourHealth.toFixed(4))
-	debug("Enemy dmg = " + enemyDmgEquality.toFixed(4) + " | " + "Enemy health = " + enemyHealth.toFixed(4))
+	debug("Equality = " + equalityStacks);
+	debug("Our dmg (min) = " + ourDamage.toFixed(3) + " | " + "Our health = " + ourHealth.toFixed(3));
+	debug("Enemy dmg = " + enemyDmgEquality.toFixed(3) + " | " + "Enemy health = " + enemyHealth.toFixed(3));
+	debug("Gamma Burst = " + game.heirlooms.Shield.gammaBurst.stacks + " / " + gammaMaxStacks());
 	if (dmgMult) debug("Mult = " + dmgMult)
 }
 
@@ -785,17 +786,6 @@ function resetSettingsPortal() {
 
 	updateButtonText();
 	saveSettings();
-}
-
-function prettifySubAT(number) {
-	number = parseFloat(number);
-	var floor = Math.floor(number);
-	if (number === floor) // number is an integer, just show it as-is
-		return number;
-
-	var precision = 5 - floor.toString().length; // use the right number of digits
-
-	return number.toFixed(5 - floor.toString().length);
 }
 
 function saveToSteam(saveData) {

@@ -1,5 +1,5 @@
 //Resetting variables
-rShouldBoneShrine = false;
+shouldBoneShrine = false;
 rBSRunningAtlantrimp = false;
 
 function boneShrine() {
@@ -57,7 +57,7 @@ function boneShrine() {
 			}
 		}
 		if (!rBoneShrineAtlantrimp || (rBoneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === rBoneShrineDoubler && game.global.lastClearedMapCell === getCurrentMapObject().size - 4)) {
-			rShouldBoneShrine = true;
+			shouldBoneShrine = true;
 			for (var x = 0; x < rBoneShrineCharges; x++) {
 				if (getPageSetting('jobType') > 0) {
 					MODULES.mapFunctions.workerRatio = rBoneShrineSettings.jobratio;
@@ -68,7 +68,7 @@ function boneShrine() {
 			debug('Consumed ' + rBoneShrineCharges + " bone shrine " + (rBoneShrineCharges == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(rBoneShrineCharges));
 			rBoneShrineSettings.done = totalPortals + "_" + game.global.world;
 			rBSRunningAtlantrimp = false;
-			rShouldBoneShrine = false;
+			shouldBoneShrine = false;
 			MODULES.mapFunctions.workerRatio = null;
 			saveSettings();
 		}

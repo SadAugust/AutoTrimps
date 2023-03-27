@@ -79,6 +79,10 @@ var showingPerky = false;
 var showingSurky = false;
 var atFinishedLoading = false;
 
+var isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+var isDaily = challengeActive('Daily');
+var currChall = game.global.challengeActive;
+
 //Get Gamma burst % value
 var gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 var shieldEquipped = game.global.ShieldEquipped.id;
@@ -203,6 +207,15 @@ function mainLoop() {
 	}
 
 	universeSwapped();
+	if (oneSecondInterval) {
+		HDRatio = calcHDRatio(game.global.world, 'world');
+		voidHDRatio = calcHDRatio(game.global.world, 'void');
+		mapHDRatio = calcHDRatio(game.global.world, 'map');
+		autoLevel = autoMapLevel();
+		isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+		isDaily = challengeActive('Daily');
+		currChall = game.global.challengeActive;
+	}
 
 	if (ATrunning == false) return;
 	if (getPageSetting('PauseScript', 1) || game.options.menu.pauseGame.enabled) return;
@@ -231,13 +244,6 @@ function mainLoop() {
 	//Initiate Farming Code
 	rMapSettings = FarmingDecision();
 	currentMap = rMapSettings.mapName;
-	//RCore
-	if (oneSecondInterval) {
-		HDRatio = calcHDRatio(game.global.world, 'world');
-		voidHDRatio = calcHDRatio(game.global.world, 'void');
-		mapHDRatio = calcHDRatio(game.global.world, 'map');
-		autoLevel = autoMapLevel();
-	}
 
 	//Offline Progress
 	if (!usingRealTimeOffline) setScienceNeeded();
