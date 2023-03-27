@@ -82,6 +82,7 @@ function findLastBionicWithItems(bionicPool) {
 function trimpcide() {
 	if (game.portal.Anticipation.level === 0) return;
 
+	const mapsActive = game.global.mapsActive;
 	var antistacklimit = (game.talents.patience.purchased) ? 45 : 30;
 	if (game.global.fighting && ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) >= antistacklimit && (game.global.antiStacks < antistacklimit || antistacklimit == 0 && game.global.antiStacks >= 1) && !game.global.spireActive)
 		forceAbandonTrimps();

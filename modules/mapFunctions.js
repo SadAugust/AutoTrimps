@@ -2616,7 +2616,7 @@ function settingShouldRun(currSetting, world, zoneReduction) {
 	//Skips if repeat every is set to 0 and the world is greater than the current world.
 	if (game.global.world > currSetting.world && currSetting.repeatevery === 0) return false;
 	//Skips if repeat every is set to 0 and the world is greater than the current world.
-	if (typeof currSetting.repeatevery === 'undefined' && typeof currSetting.repeat === 'undefined' && typeof currSetting.hdType === 'undefined' && game.global.world > currSetting.world) return false;
+	if (typeof currSetting.repeatevery === 'undefined' && typeof currSetting.repeat === 'undefined' && typeof currSetting.hdType === 'undefined' && typeof currSetting.voidHDRatio === 'undefined' && game.global.world > currSetting.world) return false;
 	//If the setting is marked as done then skips.
 	const totalPortals = getTotalPortals();
 	if (currSetting.done === totalPortals + "_" + game.global.world) return false;
