@@ -502,7 +502,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 		if (game.talents.healthStrength.purchased && mutations.Healthy.active()) attack *= ((0.15 * mutations.Healthy.cellCount()) + 1);
 	}
 	// Bionic Magnet Mastery
-	attack *= mapType !== 'world' && game.talents.bionic2.purchased && mapLevel > 0 ? 1.5 : 1;
+	attack *= mapType === 'map' && game.talents.bionic2.purchased && mapLevel > 0 ? 1.5 : 1;
 	// Sugar rush event bonus
 	attack *= game.global.sugarRush ? sugarRush.getAttackStrength() : 1;
 	// Challenge 2 or 3 reward
@@ -1487,7 +1487,6 @@ function gammaMaxStacks(specialChall, actualCheck) {
 	return gammaMaxStacks;
 }
 
-
 function simpleSecondsLocal(what, seconds, event, workerRatio) {
 	var event = !event ? null : event;
 	var workerRatio = !workerRatio ? null : workerRatio;
@@ -1536,6 +1535,7 @@ function simpleSecondsLocal(what, seconds, event, workerRatio) {
 						getPageSetting('heirloomStaffMap') != 'undefined' ? ('heirloomStaffMap') :
 							getPageSetting('heirloomStaffWorld') != 'undefined' ? ('heirloomStaffWorld') :
 								null;
+	if (game.global.StaffEquipped.name !== heirloom && HeirloomSearch(heirloom) === undefined) heirloom = null;
 	var job = game.jobs[jobName];
 	var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
 	if (challengeActive('Trappapalooza')) trimpworkers = game.resources.trimps.owned;
@@ -1590,9 +1590,9 @@ function simpleSecondsLocal(what, seconds, event, workerRatio) {
 		amt *= game.challenges.Desolation.trimpResourceMult();
 	if (game.challenges.Nurture.boostsActive())
 		amt *= game.challenges.Nurture.getResourceBoost();
-
 	//Calculating heirloom bonus
-	amt = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"), amt);
+	if (heirloom === null) amt = calcHeirloomBonus("Staff", jobName + "Speed", amt);
+	else amt = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"), amt);
 
 	var turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
 
