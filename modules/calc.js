@@ -213,6 +213,21 @@ function getTrimpHealth(realHealth, mapType) {
 	return health;
 }
 
+function getEnergyShieldMult_AT(mapType) {
+	if (game.global.universe != 2) return 0;
+	var total = 0;
+	if (game.upgrades.Prismatic.done) total += 0.5; //Prismatic: Drops Z2
+	if (game.upgrades.Prismalicious.done) total += 0.5; //Prismalicious: Drops from Prismatic Palace at Z20
+	if (getPerkLevel("Prismal") > 0) total += (getPerkLevel("Prismal") * game.portal.Prismal.modifier); //Prismal perk, total possible is 100%
+	total += (Fluffy.isRewardActive("prism") * 0.25); //Fluffy Prism reward, 25% each, total of 25% available
+	if (game.global.challengeActive == "Bublé") total += 2.5; //Bublé challenge - 100%
+	if (autoBattle.oneTimers.Suprism.owned) total += autoBattle.oneTimers.Suprism.getMult();
+
+	if (getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) > 0) total +=
+		(getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 10);
+	return total;
+}
+
 function calcOurHealth(stance, mapType, realHealth, fullGeneticist) {
 	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	if (!realHealth) realHealth = false;
@@ -231,7 +246,7 @@ function calcOurHealth(stance, mapType, realHealth, fullGeneticist) {
 		var shield = 0;
 		var onlyShield = stance;
 		//Prismatic Shield and Shield Layer, scales with multiple Scruffy shield layers
-		shield = (health * (Fluffy.isRewardActive('shieldlayer') ? 1 + (getEnergyShieldMult() * (1 + Fluffy.isRewardActive('shieldlayer'))) : 1 + getEnergyShieldMult())) - health;
+		shield = (health * (Fluffy.isRewardActive('shieldlayer') ? 1 + (getEnergyShieldMult_AT(mapType) * (1 + Fluffy.isRewardActive('shieldlayer'))) : 1 + getEnergyShieldMult_AT(mapType))) - health;
 		if (onlyShield)
 			return shield;
 		else
