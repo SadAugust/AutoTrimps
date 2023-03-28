@@ -1648,7 +1648,7 @@ function quest() {
 
 
 	if (shouldQuest && shouldQuest !== 8) {
-		var questArray = shoulduest == 1 || shouldQuest == 4 ? ['lsc', '1'] : shouldQuest == 2 ? ['lwc', '0,1'] : shouldQuest == 3 || shouldQuest == 7 ? ['lmc', '0,0,1'] : shouldQuest === 5 ? ['fa', '0,0,0,1'] : ['fa', '1,1,1,0']
+		var questArray = shouldQuest == 1 || shouldQuest == 4 ? ['lsc', '1'] : shouldQuest == 2 ? ['lwc', '0,1'] : shouldQuest == 3 || shouldQuest == 7 ? ['lmc', '0,0,1'] : shouldQuest === 5 ? ['fa', '0,0,0,1'] : ['fa', '1,1,1,0']
 		var questSpecial = questArray[0]
 		var questJobRatio = questArray[1];
 		var questMax = shouldQuest === 6 ? 10 : null;
