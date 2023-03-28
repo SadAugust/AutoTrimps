@@ -18,14 +18,10 @@ function allocatePerky() {
 function read_save() {
 	//localStorage.zone || ($("#zone").value = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared);
 	var a = input("zone");
-	if (JSON.parse(localStorage.getItem("perkyInputs")).preset !== null) {
-		update_preset();
-	}
-	else {
+	if (JSON.parse(localStorage.getItem("perkyInputs")).preset === null) {
 		($$("#preset > *").forEach(function (a) {
 			a.selected = parseInt(a.innerHTML.replace("z", "")) < game.global.highestLevelCleared;
 		}),
-
 			update_preset());
 	}
 	var b = portalWindowOpen ? game.global.heliumLeftover : 0;

@@ -446,7 +446,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (!raiding && !smithyFarm) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br />Ratio</div>"
 			if (boneShrine) tooltipText += "<div class='windowBoneGather'>Gather</div>"
 			if (mapFarm || alchemy || mapBonus || insanity) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>"
-			if (tributeFarm || smithyFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>"
+			if (tributeFarm || smithyFarm || mapFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>"
 			if (raiding && !bionic) tooltipText += "<div class='windowRecycle'>Recycle</div>"
 			if (raiding && !bionic) tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>"
 			if (alchemy) tooltipText += "<div class='windowStorage'>Void<br>Purchase</div>"
@@ -518,6 +518,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.packrat = typeof (defaultSetting.packrat) === 'undefined' ? false : defaultSetting.packrat ? defaultSetting.packrat : false;
 			if (tributeFarm || smithyFarm)
 				defaultVals.mapType = typeof (defaultSetting.mapType) === 'undefined' ? 'Absolute' : defaultSetting.mapType ? defaultSetting.mapType : 'Absolute';
+			if (mapFarm)
+				defaultVals.mapType = typeof (defaultSetting.mapType) === 'undefined' ? 'Map Count' : defaultSetting.mapType ? defaultSetting.mapType : 'Map Count';
 			if (raiding && !bionic)
 				defaultVals.recycle = typeof (defaultSetting.recycle) === 'undefined' ? false : defaultSetting.recycle ? defaultSetting.recycle : false;
 			if (raiding && !bionic)
@@ -531,7 +533,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			var defaultGatherDropdown = displayDropdowns(universe, 'Gather', defaultVals.gather);
 			var defaultSpecialsDropdown = displayDropdowns(universe, 'Cache', defaultVals.special);
-			var defaultmapTypeDropdown = "<option value='Absolute'" + ((defaultVals.mapType == 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>\<option value='Map Count'" + ((defaultVals.mapType === 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>"
+			var defaultmapTypeDropdown = displayDropdowns(universe, 'mapType', defaultVals.mapType, varPrefix);
 
 			tooltipText += "<div id='windowRow' class='row windowRow'>";
 			tooltipText += "<div class='windowActive" + varPrefix + "\' style='text-align: center;'>" + buildNiceCheckbox("windowActiveDefault", null, defaultVals.active) + "</div>";
@@ -559,6 +561,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (hypothermia)
 				tooltipText += "<div class='windowPackrat' style='text-align: center;'>" + buildNiceCheckbox("windowPackratDefault", null, defaultVals.packrat) + "</div>";
 			if (tributeFarm || smithyFarm)
+				tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'><select value='" + defaultVals.mapType + "' id='windowMapTypeDropdownDefault'>" + defaultmapTypeDropdown + "</select></div>"
+			if (mapFarm)
 				tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'><select value='" + defaultVals.mapType + "' id='windowMapTypeDropdownDefault'>" + defaultmapTypeDropdown + "</select></div>"
 			/* if (mapBonus)
 				tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + defaultVals.healthBonus + "' type='number' id='healthBonus'/></div>";
@@ -595,7 +599,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (!golden) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>"
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm) tooltipText += "<div class='windowAutoLevel" + varPrefix + "\'>Auto<br/>Level</div>"
 		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden) tooltipText += "<div class='windowLevel" + varPrefix + "\'>Map<br/>Level</div>"
-		if (tributeFarm || smithyFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>"
+		if (tributeFarm || smithyFarm || mapFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>"
 		if (tributeFarm) tooltipText += "<div class='windowTributes'>Tributes</div>"
 		if (tributeFarm) tooltipText += "<div class='windowMets'>Mets</div>"
 		if (mapFarm) tooltipText += "<div class='windowRepeat'>Repeat<br/>Count</div>"
@@ -651,7 +655,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				bonfires: 5,
 				boneamount: 1,
 				bonebelow: 0,
-				runType: 10,
+				runType: 'All',
 				prestigeGoal: 'All',
 				raidingDropdown: 0,
 				jobratio: '1,1,1,1',
@@ -693,6 +697,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.autoLevel = typeof (currSetting[x].autoLevel) !== 'undefined' ? currSetting[x].autoLevel : true;
 				if (tributeFarm || smithyFarm)
 					vals.mapType = currSetting[x].mapType ? currSetting[x].mapType : 'Absolute';
+				if (mapFarm)
+					vals.mapType = currSetting[x].mapType ? currSetting[x].mapType : 'Map Count';
 				if (mapFarm || smithyFarm || mapBonus)
 					vals.repeat = currSetting[x].repeat ? currSetting[x].repeat : 1;
 				if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm)
@@ -778,18 +784,19 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var challengeDropdown = displayDropdowns(universe, 'Filler', vals.challenge);
 			//C3 Challenges
 			var challenge3Dropdown = displayDropdowns(universe, 'C3', vals.challenge3);
-			//RunType
+			//PrestigeGoal
 			var prestigeGoalDropdown = displayDropdowns(universe, 'prestigeGoal', vals.prestigeGoal);
 			//RunType
 			var runTypeDropdown = displayDropdowns(universe, 'runType', vals.runType);
-			//RunType
+			//Golden
 			var goldenDropdown = displayDropdowns(universe, 'goldenType', vals.goldenType, varPrefix);
-			//RunType
+			//HDType
 			var hdTypeDropdown = displayDropdowns(universe, 'hdType', vals.hdType, varPrefix);
+			//MapType
+			var mapTypeDropdown = displayDropdowns(universe, 'mapType', vals.mapType, varPrefix);
 
 			var potionDropdown = "<option value='h'" + ((vals.potionstype == 'h') ? " selected='selected'" : "") + ">Herby Brew</option>\<option value='g'" + ((vals.potionstype == 'g') ? " selected='selected'" : "") + ">Gaseous Brew</option>\<option value='f'" + ((vals.potionstype == 'f') ? " selected='selected'" : "") + ">Potion of Finding</option>\<option value='v'" + ((vals.potionstype == 'v') ? " selected='selected'" : "") + ">Potion of the Void</option>\<option value='s'" + ((vals.potionstype == 's') ? " selected='selected'" : "") + ">Potion of Strength</option>"
 			var raidingDropdown = "<option value='0'" + ((vals.raidingDropdown == '0') ? " selected='selected'" : "") + ">Frag</option>\<option value='1'" + ((vals.raidingDropdown == '1') ? " selected='selected'" : "") + ">Frag Min</option>\<option value='2'" + ((vals.raidingDropdown == '2') ? " selected='selected'" : "") + ">Frag Max</option>"
-			var mapTypeDropdown = "<option value='Absolute'" + ((vals.mapType == 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>\<option value='Map Count'" + ((vals.mapType == 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>\</option>"
 
 			var className = (vals.special == 'hc' || vals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
 			className += (!vals.autoLevel) ? " windowLevelOn" : " windowLevelOff";
@@ -828,10 +835,12 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowLevel" + varPrefix + "\'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
 			if (tributeFarm || smithyFarm)
 				tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.mapType + "' id='windowMapTypeDropdown" + x + "'>" + mapTypeDropdown + "</select></div>"
+			if (mapFarm)
+				tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.mapType + "' id='windowMapTypeDropdown" + x + "'>" + mapTypeDropdown + "</select></div>"
 			if (worshipperFarm)
 				tooltipText += "<div class='windowWorshipper'><input value='" + vals.worshipper + "' type='number' id='windowWorshipper" + x + "'/></div>";
 			if (mapFarm)
-				tooltipText += "<div class='windowRepeat'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
+				tooltipText += "<div class='windowRepeat'><input value='" + vals.repeat + "' type='value' id='windowRepeat" + x + "'/></div>";
 			if (mapBonus)
 				tooltipText += "<div class='windowMapStacks'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
 			if (smithyFarm)
@@ -916,7 +925,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		elem.style.left = "1%";
 		elem.style.height = 'auto';
 		elem.style.maxHeight = window.innerHeight * .85 + 'px';
-		if (document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 12) elem.style.overflowY = 'scroll';
+		if (document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 10) elem.style.overflowY = 'scroll';
 	}
 
 	titleText = (titleText) ? titleText : titleText;
@@ -1052,7 +1061,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (hypothermia) defaultSetting.packrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
 		if (raiding && !bionic) defaultSetting.recycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
 		if (raiding && !bionic) defaultSetting.incrementMaps = readNiceCheckbox(document.getElementById('windowIncrementMapsDefault'));
-		if (tributeFarm || smithyFarm) defaultSetting.mapType = document.getElementById('windowMapTypeDropdownDefault').value;
+		if (tributeFarm || smithyFarm || mapFarm) defaultSetting.mapType = document.getElementById('windowMapTypeDropdownDefault').value;
 		/* if (mapBonus) defaultSetting.healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
 		if (mapBonus) defaultSetting.healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10); */
 		if (hdFarm) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
@@ -1084,7 +1093,6 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (!golden) thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
 		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden) thisSetting.level = parseInt(document.getElementById('windowLevel' + x).value, 10);
 		if (smithyFarm || mapBonus) thisSetting.repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
-		if (mapFarm) thisSetting.repeat = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
 		if (hdFarm) thisSetting.hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
 		if (hdFarm) thisSetting.hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
 
@@ -1099,7 +1107,9 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 				thisSetting.gather = null;
 		}
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm) thisSetting.autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
-		if (tributeFarm || smithyFarm) thisSetting.mapType = document.getElementById('windowMapTypeDropdown' + x).value;
+		if (tributeFarm || smithyFarm || mapFarm) thisSetting.mapType = document.getElementById('windowMapTypeDropdown' + x).value;
+		if (mapFarm && thisSetting.mapType === 'Map Count') thisSetting.repeat = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
+		if (mapFarm && thisSetting.mapType !== 'Map Count') thisSetting.repeat = document.getElementById('windowRepeat' + x).value;
 		if (tributeFarm) thisSetting.tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
 		if (tributeFarm) thisSetting.mets = parseInt(document.getElementById('windowMets' + x).value, 10);
 		if (quagmire) thisSetting.bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
@@ -1269,6 +1279,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		if (hypothermia) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>"
 		if (hypothermia) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>"
 		if (hypothermia) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>"
+		if (voidMap) mazHelp += "<li><b>Max Tenacity</b> - Will make world & void HD Ratio calcs assume you have max tenacity when void maps are being run.</li>"
 	}
 
 	//Row Settings
@@ -1316,6 +1327,10 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	}
 
 	if (mapFarm) {
+		mazHelp += "<li><b>Farm Type</b> Map Count - Will run maps until it has reached the specified repeat counter.\
+		Portal Time - Uses DD:HH:MM:SS format and will run maps until the portal time surpasses the time set in repeat counter.\
+		Daily Reset - Uses DD:HH:MM:SS format and will run maps until the daily reset time is below the time set in repeat counter.</li>";
+
 		mazHelp += "<li><b>Map Repeat</b> - How many maps you'd like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be back to manually take over the run.</li>";
 		//Trimple Map Farm
 		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources." + "</li>";
@@ -1407,7 +1422,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
 		mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this MaZ line repeat. If so, the line will stop repeating at this Zone. Must be between 6 and 1000.</li>";
 	//Run Type
-	if (boneShrine || voidMap || hdFarm)
+	if (boneShrine || voidMap || mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
 		mazHelp += "<li><b>Run Type</b> - What type of run you'd like this line to be run.</li>";
 
 	if (golden) {
@@ -1746,6 +1761,7 @@ function saveC2RunnerSettings() {
 function addRow(varPrefix, titleText) {
 	var settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
 	if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
+
 	for (var x = 0; x < 30; x++) {
 		var elem = document.getElementById('windowWorld' + x);
 		if (!elem) continue;
@@ -1779,7 +1795,7 @@ function addRow(varPrefix, titleText) {
 				if (document.getElementById('windowRaidingZone' + x) !== null)
 					document.getElementById('windowRaidingZone' + x).value = elem.value
 				if (document.getElementById('windowMapTypeDropdown' + x) !== null)
-					document.getElementById('windowMapTypeDropdown' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].mapType
+					document.getElementById('windowMapTypeDropdown' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].mapType || 'world';
 				if (document.getElementById('windowBoneBelow' + x) !== null)
 					document.getElementById('windowBoneBelow' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].bonebelow
 				if (document.getElementById('windowWorshipper' + x) !== null)
@@ -1836,6 +1852,15 @@ function addRow(varPrefix, titleText) {
 			}
 		}
 	}
+
+	var elem = document.getElementById("tooltipDiv");
+	elem.style.top = "10%";
+	elem.style.left = "1%";
+	elem.style.height = 'auto';
+	elem.style.maxHeight = window.innerHeight * .85 + 'px';
+	if (document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 10) elem.style.overflowY = 'scroll';
+	else elem.style.overflowY = 'none';
+
 	var btnElem = document.getElementById('windowAddRowBtn');
 	for (var y = 0; y < 30; y++) {
 		var elem = document.getElementById('windowWorld' + y);
@@ -1904,15 +1929,24 @@ function removeRow(index, titleText) {
 	}
 	if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('Golden')) document.getElementById('windowJobRatio' + index).value = 0;
 	if (titleText.includes('Raiding')) document.getElementById('windowPrestigeGoal' + index).value = 'All';
-	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) document.getElementById('windowRunType' + index).value = 0;
+	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) document.getElementById('windowRunType' + index).value = 'All';
 	if (titleText.includes('Raiding') && !titleText.includes('Bionic')) document.getElementById('windowRaidingDropdown' + index).value = 0;
 	if (titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm')) document.getElementById('windowMapTypeDropdown' + index).value = 'Absolute';
+	if (titleText.includes('Map Farm')) document.getElementById('windowMapTypeDropdown' + index).value = 'Map Count';
 	if (titleText.includes('Bone')) document.getElementById('windowBoneGather' + index).value = 'Metal';
 
 	elem.style.display = 'none';
 	var btnElem = document.getElementById('windowAddRowBtn');
 	btnElem.style.display = 'inline-block';
 	swapClass('active', 'disabled', elem);
+
+	var elem = document.getElementById("tooltipDiv");
+	elem.style.top = "10%";
+	elem.style.left = "1%";
+	elem.style.height = 'auto';
+	elem.style.maxHeight = window.innerHeight * .85 + 'px';
+	if (document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 10) elem.style.overflowY = 'scroll';
+	else elem.style.overflowY = 'none';
 }
 
 function updateWindowPreset(index, varPrefix) {
@@ -1990,7 +2024,6 @@ function dailyModifiersOutput() {
 	return returnText
 }
 
-
 function displayDropdowns(universe, runType, MAZ, varPrefix) {
 
 	if (!universe) universe = game.global.universe;
@@ -2010,6 +2043,15 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 		<option value='map'" + ((MAZ == 'map') ? " selected = 'selected'" : "") + " >Map</option >\
 		<option value='void'" + ((MAZ == 'void') ? " selected = 'selected'" : "") + " >Void</option >\
 		<option value='maplevel'" + ((MAZ == 'maplevel') ? " selected = 'selected'" : "") + " >Map Level</option >"
+	}
+	if (runType === 'mapType') {
+		if (varPrefix !== 'MapFarm')
+			dropdown += "<option value='Absolute'" + ((MAZ == 'Absolute') ? " selected='selected'" : "") + ">Absolute</option>"
+		dropdown += "<option value='Map Count'" + ((MAZ == 'Map Count') ? " selected='selected'" : "") + ">Map Count</option>"
+		if (varPrefix === 'MapFarm')
+			dropdown += "<option value='Portal Time'" + ((MAZ === 'Portal Time') ? " selected='selected'" : "") + ">Portal Time</option>"
+		if (varPrefix === 'MapFarm')
+			dropdown += "<option value='Daily Reset'" + ((MAZ == 'Daily Reset') ? " selected='selected'" : "") + ">Daily Reset</option>"
 	}
 
 	if (runType === 'prestigeGoal') {

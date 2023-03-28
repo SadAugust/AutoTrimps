@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v6.1.5',
+var ATversion = 'SadAugust v6.1.6',
 	atscript = document.getElementsByTagName("script"),
 	basepath = '',
 	modulepath = 'modules/';
@@ -178,7 +178,7 @@ function mainLoop() {
 	if (!usingRealTimeOffline) {
 		var MAZCheck = document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Golden') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Void Map') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Map Bonus') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Raiding');
 
-		if (document.getElementById('tooltipDiv').classList[0] !== undefined && document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow') && (MAZCheck) && document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 12) {
+		if (document.getElementById('tooltipDiv').classList[0] !== undefined && (document.getElementById('mazHelpContainer') !== null && document.getElementById('mazHelpContainer').style.display === 'block') || (document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow') && (MAZCheck) && document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 10)) {
 			document.getElementById('tooltipDiv').style.overflowY = 'scroll';
 		}
 		else {

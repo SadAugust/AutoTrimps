@@ -350,8 +350,8 @@ function voidMaps() {
 
 	if (index >= 0 || module.rVoidHDIndex !== Infinity) {
 		var rVMSettings = baseSettings[index >= 0 ? index : module.rVoidHDIndex];
-		var rVMJobRatio = rVMSettings.jobratio
-		var shouldPortal = rVMSettings.portalAfter
+		var rVMJobRatio = baseSettings[index] !== undefined ? rVMSettings.jobratio : rVMDefaultSettings.jobRatio;
+		var shouldPortal = baseSettings[index] !== undefined ? rVMSettings.portalAfter : false;
 
 		if (game.global.totalVoidMaps > 0) {
 			rDoVoids = true;
@@ -515,6 +515,11 @@ function mapFarm() {
 		var rMFJobRatio = rMFSettings.jobratio;
 		var rMFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rMFSettings.atlantrimp;
 		var rMFGather = rMFSettings.gather;
+		var rMFMapType = rMFSettings.mapType;
+		var rMFRepeatCheck =
+			rMFMapType === 'Daily Reset' ? updateDailyClock(true).split(':').reduce((acc, time) => (60 * acc) + +time) :
+				rMFMapType === 'Portal Time' ? (getGameTime() - game.global.portalTime) / 1000 :
+					game.global.mapRunCounter;
 
 		if (rMFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
@@ -530,26 +535,33 @@ function mapFarm() {
 			}
 		}
 
+		var repeatNumber = rMFRepeatCounter === Infinity ? '∞' : rMFRepeatCounter;
+		if (rMFMapType === 'Portal Time' || rMFMapType === 'Daily Reset') {
+			rMFRepeatCounter = rMFRepeatCounter.split(':').reduce((acc, time) => (60 * acc) + +time);
+		}
+
 		//When running Wither make sure map level is lower than 0 so that we don't accumulate extra stacks.
 		if (challengeActive('Wither') && rMFMapLevel >= 0)
 			rMFMapLevel = -1;
 		//If you're running Transmute and the rMFSpecial variable is either LMC or SMC it changes it to LSC/SSC.
 		rMFSpecial = (getAvailableSpecials(rMFSpecial))
 
-		if (rMFRepeatCounter > game.global.mapRunCounter)
+		if (rMFMapType === 'Daily Reset' ? rMFRepeatCounter < rMFRepeatCheck : rMFRepeatCounter > rMFRepeatCheck)
 			shouldMapFarm = true;
 
 		//Marking setting as complete if we've run enough maps.
-		if (currentMap === mapName && game.global.mapRunCounter >= rMFRepeatCounter) {
+		if (currentMap === mapName && (rMFMapType === 'Daily Reset' ? rMFRepeatCheck <= rMFRepeatCounter : rMFRepeatCheck >= rMFRepeatCounter)) {
 			mappingDetails(mapName, rMFMapLevel, rMFSpecial);
 			resetMapVars(rMFSettings);
 			shouldMapFarm = false;
 			if (rMFAtlantrimp) runUniqueMap('Atlantrimp', dontRecycleMaps);
 			saveSettings();
 		}
-		var repeatNumber = rMFRepeatCounter === Infinity ? '∞' : rMFRepeatCounter;
-		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMFMapLevel || (getCurrentMapObject().bonus !== rMFSpecial && (getCurrentMapObject().bonus !== undefined && rMFSpecial !== '0')) || game.global.mapRunCounter + 1 === rMFRepeatCounter);
-		var status = 'Map Farm: ' + game.global.mapRunCounter + "/" + repeatNumber;
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMFMapLevel || (getCurrentMapObject().bonus !== rMFSpecial && (getCurrentMapObject().bonus !== undefined && rMFSpecial !== '0')) || rMFRepeatCheck + 1 === rMFRepeatCounter);
+		var status = 'Map Farm: ' +
+			(rMFMapType === 'Daily Reset' ? (rMFSettings.repeat + ' / ' + updateDailyClock(true)) :
+				rMFMapType === 'Portal Time' ? (formatSecondsAsClock((getGameTime() - game.global.portalTime) / 1000, 4 - rMFSettings.repeat.split(':').length) + ' / ' + rMFSettings.repeat) :
+					(rMFRepeatCheck + "/" + repeatNumber));
 
 		farmingDetails.shouldRun = shouldMapFarm;
 		farmingDetails.mapName = mapName;
@@ -557,6 +569,7 @@ function mapFarm() {
 		farmingDetails.autoLevel = rMFSettings.autoLevel;
 		farmingDetails.jobRatio = rMFJobRatio;
 		farmingDetails.special = rMFSpecial;
+		farmingDetails.mapType = rMFMapType;
 		farmingDetails.mapRepeats = rMFRepeatCounter;
 		farmingDetails.gather = rMFGather;
 		farmingDetails.runAtlantrimp = rMFAtlantrimp;

@@ -3540,6 +3540,14 @@ function updateATVersion() {
 			")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.6') {
+			changelog.push("Changed the way setting lines are being picked so if there's any issues let me know!<br>\
+			Map Farm now has farm type options for Portal Time & Daily Reset time! For more info click the Help button at the bottom of the setting window.<br>\
+			Void Map settings now has a 'Max Tenacity' toggle once the perk has been unlocked which makes the World & Void HD Ratio inputs  assume max tenacity.<br>\
+			HD Ratio values will now factor in the type of shield that will be equipped when heirloom swapping is enabled so the value won't change when going between world/maps/voids.<br>\
+			Quest, Void Map, Desolation, calc and perky bugfixes.")
+		}
+
 		autoTrimpSettings["ATversion"] = ATversion;
 		printChangelog(changelog);
 		verticalCenterTooltip(false, true);
