@@ -1969,7 +1969,6 @@ function alchemy() {
 		const currSetting = baseSettings[y];
 		const world = currSetting.world;
 		if (!settingShouldRun(currSetting, world, 0)) continue;
-		debug("Alchemy: Found a line to run. Line #" + y);
 		if (game.global.world === currSetting.world) {
 			index = y;
 			break;

@@ -1447,6 +1447,14 @@ function initializeAllSettings() {
 			function () { return (['Better AutoFight OFF', 'Better Auto Fight', 'Vanilla']) },
 			function () { return ('3-Way Button, Recommended. Will automatically handle fighting.<br>BAF = Old Algo (Fights if dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds<br>BAF3 = Uses vanilla autofight and makes sure you fight on portal. <br> WARNING: If you autoportal with BetterAutoFight disabled, the game may sit there doing nothing until you click FIGHT. (not good for afk) ') },
 			'multitoggle', 1, null, "Combat", [1, 2]);
+		createSetting('autoAbandon',
+			function () { return (['AutoAbandon', 'Don\'t Abandon', 'Only Rush Voids']) },
+			function () { return ('<b>Autoabandon:</b> Considers abandoning trimps for void maps/prestiges.<br><b>Don\'t Abandon:</b> Will not abandon troops, but will still agressively autostance even if it will kill you (WILL NOT ABANDON TRIMPS TO DO VOIDS).<br><b>Only Rush Voids:</b> Considers abandoning trimps for void maps, but not prestiges, still autostances aggressively. <br>Made for Empower daily, and you might find this helpful if you\'re doing Workplace Safety feat. Then again with that I strongly recommend doing it fully manually. Anyway, don\'t blame me whatever happens.<br><b>Note:</b> AT will no longer be able to fix when your scryer gets stuck!') },
+			'multitoggle', 0, null, 'Combat', [1, 2]);
+		createSetting('floorCritCalc',
+			function () { return ('Never Crit Calc') },
+			function () { return ('Will floor your crit chance to make AT assume you are never gonna crit when calculating trimp damage.') },
+			'boolean', false, null, 'Combat', [1, 2]);
 		createSetting('AutoStance',
 			function () { return (['Auto Stance OFF', 'Auto Stance', 'D Stance', 'Windstacking']) },
 			function () { return ('<b>Autostance:</b> Automatically swap stances to avoid death. <br><b>D Stance:</b> Keeps you in D stance regardless of Health. <br><b>Windstacking:</b> For use after nature (z230), and will keep you in D stance unless you are windstacking (Only useful if transfer is maxed out and wind empowerment is high). There\'s settings in the Windstacking tab that must be setup for this to function as intended.') },
@@ -1456,10 +1464,6 @@ function initializeAllSettings() {
 			function () { return ('No longer switches to B against corrupted precision and/or void strength. <b>Basically we now treat \'crit things\' as regular in both autoStance and autoStance2</b>. In fact it no longer takes precision / strength into account and will manage like a normal enemy, thus retaining X / D depending on your needs. If you\'re certain your block is high enough regardless if you\'re fighting a crit guy in a crit daily, use this! Alternatively, manage the stances yourself.') },
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStance.value !== 3) });
-		createSetting('autoAbandon',
-			function () { return (['AutoAbandon', 'Don\'t Abandon', 'Only Rush Voids']) },
-			function () { return ('<b>Autoabandon:</b> Considers abandoning trimps for void maps/prestiges.<br><b>Don\'t Abandon:</b> Will not abandon troops, but will still agressively autostance even if it will kill you (WILL NOT ABANDON TRIMPS TO DO VOIDS).<br><b>Only Rush Voids:</b> Considers abandoning trimps for void maps, but not prestiges, still autostances aggressively. <br>Made for Empower daily, and you might find this helpful if you\'re doing Workplace Safety feat. Then again with that I strongly recommend doing it fully manually. Anyway, don\'t blame me whatever happens.<br><b>Note:</b> AT will no longer be able to fix when your scryer gets stuck!') },
-			'multitoggle', 0, null, 'Combat', [1, 2]);
 		createSetting('ForceAbandon',
 			function () { return ('Trimpicide') },
 			function () { return ('If a new fight group is available and anticipation stacks aren\'t maxed, Trimpicide and grab a new group. Will not abandon in spire. Recommended ON. ') },

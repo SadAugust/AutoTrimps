@@ -442,7 +442,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	if (!mapLevel) mapLevel = 0;
 	if (!useTitimp) useTitimp = false;
-	if (!critMode) floorCrit = false;
+	if (!critMode) critMode = 'maybe';
 	if (!realDamage) realDamage = false;
 	var specificStance = game.global.universe === 1 ? equality : false;
 
@@ -636,6 +636,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 		}
 	}
 
+	if (getPageSetting('floorCritCalc')) critMode = 'never';
 	//Init Damage Variation (Crit)
 	var min = attack * getCritMulti((critMode) ? critMode : "never", heirloomShieldToEquip(mapType));
 	var avg = attack * getCritMulti((critMode) ? critMode : "maybe", heirloomShieldToEquip(mapType));
