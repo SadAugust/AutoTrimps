@@ -229,16 +229,30 @@ function MAZLookalike(titleText, varPrefix, event) {
 		tooltipText = "<div id='messageConfig'>Here you can finely tune your message settings. Mouse over the name of a filter for more info.</div>";
 		var value = 'value';
 		if (game.global.universe === 2) value += 'U2';
+
+		settingGroup = {
+			general: false,
+			fragment: false,
+			upgrades: false,
+			equipment: false,
+			maps: false,
+			map_Details: false,
+			other: false,
+			buildings: false,
+			jobs: false,
+			zone: false,
+		};
+
 		var msgs = autoTrimpSettings.spamMessages[value];
 
 		tooltipText += "<div class='row'>";
 		for (var x = 0; x < 1; x++) {
 			tooltipText += "<div class='col-xs-4'></span><br/>";
-			for (var item in msgs) {
+			for (var item in settingGroup) {
 				if (item == 'enabled') continue;
 				var realName = item.charAt(0).toUpperCase() + item.substr(1);
 				realName = realName.replace(/_/g, ' ');
-				tooltipText += "<span class='messageConfigContainer'><span class='messageCheckboxHolder'>" + buildNiceCheckbox('at' + item, 'messageConfigCheckbox', (msgs[item])) + "</span><span onmouseover='messageConfigHoverAT(\"" + item + "\", event)' onmouseout='tooltip(\"hide\")' class='messageNameHolderAT'> - " + realName + "</span></span><br/>";
+				tooltipText += "<span class='messageConfigContainer'><span class='messageCheckboxHolder'>" + buildNiceCheckbox(item, 'messageConfigCheckbox', (msgs[item])) + "</span><span onmouseover='messageConfigHoverAT(\"" + item + "\", event)' onmouseout='tooltip(\"hide\")' class='messageNameHolderAT'> - " + realName + "</span></span><br/>";
 			}
 			tooltipText += "</div>";
 		}
@@ -310,7 +324,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		var count = 0;
 		var setting, checkbox;
-		//var settingGroup = game.global.universe === 1 ? 1 : 1;
 		settingGroup = {};
 
 		if (currSettingUniverse === 1) {
@@ -1003,16 +1016,18 @@ function messageConfigHoverAT(what, event) {
 }
 
 function configMessagesAT() {
-	var value = 'value';
-	if (game.global.universe === 2) value += 'U2';
-	for (var x = 0; x < 1; x++) {
-		for (var item in autoTrimpSettings.spamMessages[value]) {
-			if (item == "enabled") continue;
-			var checkbox = document.getElementById('at' + item);
-			if (checkbox == null) continue;
-			autoTrimpSettings.spamMessages[value][item] = readNiceCheckbox(checkbox);
-		}
+
+	var setting = getPageSetting('spamMessages', currPortalUniverse);
+	var checkboxes = document.getElementsByClassName('messageConfigCheckbox');
+
+	for (var x = 0; x < checkboxes.length; x++) {
+		var name = checkboxes[x].id;
+		var checked = (checkboxes[x].dataset.checked == 'true');
+		setting[name] = checked;
 	}
+
+	setPageSetting('spamMessages', setting);
+	cancelTooltip();
 	saveSettings();
 }
 
@@ -1538,9 +1553,7 @@ function saveATAutoJobsConfig() {
 }
 
 function saveATAutoStructureConfig() {
-	var ATsetting = getPageSetting('buildingSettingsArray');
 	setPageSetting('buildingSettingsArray', {});
-	ATsetting = {};
 	var setting = {};
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var percentboxes = document.getElementsByClassName('structConfigPercent');
