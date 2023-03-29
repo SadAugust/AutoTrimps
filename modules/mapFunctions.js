@@ -3198,7 +3198,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	}
 
 	else if (mapName === 'Hypothermia Farm') {
-		message += " Finished with (" + prettify(game.resources.wood.owned) + "/" + extra.toFixed(2) + ") wood.";
+		message += " Finished with (" + prettify(game.resources.wood.owned) + "/" + prettify(extra.toFixed(2)) + ") wood.";
 	}
 
 	else if (mapName === 'Smithless Farm') {
