@@ -379,6 +379,7 @@ function getHeirloomBonus_AT(type, mod, customShield) {
 	var bonus = game.heirlooms[type][mod].currentBonus;
 	//Override bonus if needed
 	if (customShield) bonus = HeirloomModSearch(customShield, mod);
+	if (bonus === undefined) bonus = 0;
 	if (mod == "gammaBurst" && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
 		bonus = gammaBurstPct;
 	}
