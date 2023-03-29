@@ -653,7 +653,7 @@ function initializeAllSettings() {
 			function () { return (game.global.highestRadonLevelCleared + 1 >= 85) });
 		createSetting('questSmithyZone',
 			function () { return ('Q: Smithy Zone') },
-			function () { return ('The zone you\'ll stop your Quest run at (will assume 85 for non C3 version). Will calculate the smithies required for Quests and purchase spare ones if possible.') },
+			function () { return ('The zone you\'ll stop your Quest run at (will assume 85 for non C3 version). Will calculate the smithies required for Quests and purchase spare ones if possible. Will disable Smithy Farm whilst your world zone is below this value.') },
 			'value', 999, null, 'C2', [2],
 			function () { return (getPageSetting('quest', currSettingUniverse)) });
 		createSetting('questSmithyMaps',

@@ -741,7 +741,10 @@ function smithyFarm() {
 		mapName: mapName
 	};
 
-	if (game.buildings.Smithy.locked || (!getPageSetting('smithyFarmDefaultSettings').active && !challengeActive('Quest')) || (challengeActive('Quest') && currQuest() !== 10) || challengeActive('Transmute') || challengeActive('Pandemonium')) return farmingDetails;
+	if (game.buildings.Smithy.locked) return farmingDetails;
+	if (challengeActive('Transmute') || challengeActive('Pandemonium')) return farmingDetails;
+	if (!getPageSetting('smithyFarmDefaultSettings').active && !challengeActive('Quest')) return farmingDetails;
+	if (challengeActive('Quest') && (currQuest() !== 10 && !(game.global.world >= getPageSetting('questSmithyZone') && getPageSetting('smithyFarmDefaultSettings').active))) return farmingDetails;
 
 	var shouldSmithyFarm = false;
 	var shouldSmithyGemFarm = false;
@@ -775,7 +778,7 @@ function smithyFarm() {
 		var rSFMapLevel = challengeActive('Quest') ? -1 : rSFSettings.level;
 		var rSFSpecial = getAvailableSpecials('lmc', true);
 		var rSFJobRatio = '0,0,0,0';
-		var rSFSmithies = challengeActive('Quest') ? getPageSetting('questSmithyMaps') : rSFSettings.repeat;
+		var rSFSmithies = challengeActive('Quest') && currQuest() === 10 ? getPageSetting('questSmithyMaps') : rSFSettings.repeat;
 
 		if (currQuest() === 10 || rSFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.mapFunctions.smithyMapCount !== [0, 0, 0] && typeof getCurrentMapObject().bonus !== 'undefined') {
