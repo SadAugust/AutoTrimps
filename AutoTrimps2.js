@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v6.1.6',
+var ATversion = 'SadAugust v6.1.7',
 	atscript = document.getElementsByTagName("script"),
 	basepath = '',
 	modulepath = 'modules/';
@@ -193,7 +193,7 @@ function mainLoop() {
 
 			var freeVoidsText = 'Void: ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10');
 
-			var autoLevelText = game.global.universe === 2 && getPageSetting('equalityManagement') === 2 ? " | Auto Level: " + autoLevel : game.global.universe === 1 ? " | Auto Level: " + autoLevel : "";
+			var autoLevelText = " | Auto Level: " + autoLevel;
 
 			var tenacityText = game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 ? " | T: " + tenacityTimeNew : "";
 

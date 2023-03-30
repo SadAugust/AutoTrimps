@@ -375,6 +375,8 @@ function autoEquip() {
 		debug('Upgrading Gymystic', "equips", '*upload');
 	}
 
+	if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
+
 	var equipZone = getPageSetting('equipZone');
 	var zoneGo = currentMap === 'Wither' || (HDRatio >= getPageSetting('equipCutOff')) || (equipZone.length > 0 && ((equipZone.includes(game.global.world)) || (game.global.world >= equipZone[equipZone.length - 1])));
 
@@ -504,9 +506,7 @@ function getTotalMultiCost(baseCost, multiBuyCount, costScaling, isCompounding) 
 	}
 }
 
-function equipfarmdynamicHD(rEFIndex) {
-	var HDFSettingsBase = getPageSetting('hdFarmSettings');
-	var HDFSettings = HDFSettingsBase[rEFIndex]
+function equipfarmdynamicHD(HDFSettings) {
 	var equipfarmHD = 0;
 	var equipfarmHDmult = 1;
 	var HDFMult = HDFSettings.hdMult;

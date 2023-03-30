@@ -56,6 +56,8 @@ function autoGather() {
 	var trapTrimpsOK = (!game.upgrades.Battle.done || (getPageSetting('TrapTrimps'))) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
 
 	//Vars
+	var scientistsAvailable = game.upgrades.Scientists.allowed && !game.upgrades.Scientists.done
+	var minersAvailable = game.upgrades.Miners.allowed && !game.upgrades.Miners.done
 	var lowOnTraps = game.buildings.Trap.owned < minTraps;
 	var trapsReady = game.buildings.Trap.owned >= minTraps + trapsBufferSize;
 	var fullOfTraps = game.buildings.Trap.owned >= maxTraps;
@@ -103,7 +105,7 @@ function autoGather() {
 	}
 
 	//High Priority Trapping (doing Trapper or without breeding trimps)
-	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull)) {
+	if (!scientistsAvailable && !minersAvailable && trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull)) {
 		//Bait trimps if we have traps
 		if (!lowOnTraps && !trapBuffering) {
 			safeSetGather('trimps');

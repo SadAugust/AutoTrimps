@@ -127,37 +127,42 @@ function HeirloomSearch(heirloom) {
 
 //Loops through heirlooms and checks if they have a specified modifier on them, divides by 10 if in u2.
 function HeirloomModSearch(heirloom, modifier) {
+	if (heirloom === undefined || getPageSetting(heirloom) === undefined || getPageSetting(heirloom) === false || HeirloomSearch(heirloom) === undefined) {
+		var type = ['ShieldEquipped', 'StaffEquipped'];
+		for (var y = (type.length - 1); y > -1; y--) {
+			var loom = game.global[type[y]];
+			for (var i = (loom.mods.length - 1); i > -1; i--) {
+				if (loom.mods[i][0] === modifier)
+					return loom.mods[i][1];
+			}
+		}
+		return undefined;
+	}
 	if (game.global.ShieldEquipped.name === getPageSetting(heirloom)) {
 		var loom = game.global.ShieldEquipped;
 		for (var i = (loom.mods.length - 1); i > -1; i--) {
 			if (loom.mods[i][0] == modifier)
-				if (game.global.universe == 1)
-					return loom.mods[i][1];
-				else
-					return loom.mods[i][1] / 10;
+				return loom.mods[i][1];
 		}
+		return undefined;
 	}
 	if (game.global.StaffEquipped.name === getPageSetting(heirloom)) {
 		var loom = game.global.StaffEquipped;
 		for (var i = (loom.mods.length - 1); i > -1; i--) {
 			if (loom.mods[i][0] == modifier)
-				if (game.global.universe == 1)
-					return loom.mods[i][1];
-				else
-					return loom.mods[i][1] / 10;
+				return loom.mods[i][1];
 		}
+		return undefined;
 	}
 	for (loom of game.global.heirloomsCarried) {
 		if (loom.name == getPageSetting(heirloom)) {
 			for (var i = (loom.mods.length - 1); i > -1; i--) {
 				if (loom.mods[i][0] == modifier)
-					if (game.global.universe == 1)
-						return loom.mods[i][1];
-					else
-						return loom.mods[i][1] / 10;
+					return loom.mods[i][1];
 			}
 		}
 	}
+	return undefined;
 }
 
 function HeirloomEquipShield(heirloom) {
@@ -235,9 +240,12 @@ function heirloomStaffToEquip(mapType) {
 	if (getPageSetting('heirloomStaffWorld') != "undefined" && !game.global.mapsActive) {
 		return ('heirloomStaffWorld');
 	} else if (game.global.mapsActive) {
-		const mapBonus = getCurrentMapObject().bonus;
+		const mapObject = getCurrentMapObject();
+		const mapBonus = mapObject.bonus;
 		if (challengeActive('Pandemonium') && getPageSetting('pandemoniumAE') > 1 && getPageSetting('pandemoniumStaff') != "undefined" && getPageSetting('pandemoniumAEZone') > 0 && game.global.world >= getPageSetting('pandemoniumAEZone') && game.global.lastClearedCell > 59)
 			return ('pandemoniumStaff');
+		else if (getPageSetting('heirloomStaffVoid') != "undefined" && mapObject.location === 'Void')
+			return ('heirloomStaffVoid');
 		else if (getPageSetting('heirloomStaffMap') != "undefined" && mapBonus === undefined)
 			return ('heirloomStaffMap');
 		else if (getCurrentMapObject().bonus != undefined) {
@@ -247,8 +255,8 @@ function heirloomStaffToEquip(mapType) {
 				return ('heirloomStaffWood');
 			else if (getPageSetting('heirloomStaffMetal') != "undefined" && mapBonus.includes("mc"))
 				return ('heirloomStaffMetal');
-			else if (game.global.universe === 2 && getPageSetting('heirloomResourceStaff') != "undefined" && mapBonus.includes("rc"))
-				return ('heirloomResourceStaff');
+			else if (game.global.universe === 2 && getPageSetting('heirloomStaffResource') != "undefined" && mapBonus.includes("rc"))
+				return ('heirloomStaffResource');
 			else if (getPageSetting('heirloomStaffMap') != "undefined")
 				return ('heirloomStaffMap');
 		}

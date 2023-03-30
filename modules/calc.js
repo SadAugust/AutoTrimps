@@ -55,6 +55,7 @@ function debugCalc() {
 function calcOurBlock(stance, realBlock) {
 	var block = 0;
 
+	if (game.global.universe === 2) return 0;
 	//Ignores block gyms/shield that have been brought, but not yet deployed
 	if (realBlock) {
 		block = game.global.soldierCurrentBlock;
@@ -224,7 +225,7 @@ function getEnergyShieldMult_AT(mapType) {
 	if (autoBattle.oneTimers.Suprism.owned) total += autoBattle.oneTimers.Suprism.getMult();
 
 	if (getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) > 0) total +=
-		(getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 10);
+		(getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 100);
 	return total;
 }
 
@@ -265,12 +266,14 @@ function calcHitsSurvived(targetZone, type) {
 	const formationMod = (game.upgrades.Dominance.done) ? 2 : 1;
 
 	//Our Health and Block
+	var customAttack = type === 'world' && targetZone > 200 && game.global.universe === 2 ? calcMutationAttack(targetZone) : undefined;
+	var hitsToSurvive = getPageSetting('hitsSurvived')
 	var health = calcOurHealth(false, type, false, true) / formationMod;
 	var block = calcOurBlock(false) / formationMod;
-
+	var equality = equalityQuery('Snimp', targetZone, null, type, null, 'gamma', null, hitsToSurvive);
 	//Calc for maps
 	if (type === "map") {
-		return health / Math.max(calcEnemyAttack("map", targetZone) - block, 0);
+		return health / Math.max(calcEnemyAttack("map", targetZone, undefined, undefined, undefined, customAttack, equality) - block, 0);
 	}
 
 	//Lead farms one zone ahead
@@ -290,12 +293,12 @@ function calcHitsSurvived(targetZone, type) {
 	}
 
 	//Enemy Damage
-	const worldDamage = calcEnemyAttack("world", targetZone);
+	const worldDamage = calcEnemyAttack("world", targetZone, undefined, undefined, undefined, customAttack, equality);
 
 	//Enemy Damage on Void Maps
 	if (type === "void") {
 		//Void Damage may actually be lower than world damage, so it needs to be calculated here to be compared later
-		voidDamage = damageMult * calcEnemyAttack("void", targetZone) - block;
+		voidDamage = damageMult * calcEnemyAttack("void", targetZone, undefined, undefined, undefined, customAttack, equality) - block;
 		//Void Power compensation (it affects our health, so apply multipliers after block)
 		if (!game.global.mapsActive || getCurrentMapObject().location !== "Void") {
 			if (game.talents.voidPower3.purchased) voidDamage /= 1.15;
@@ -309,16 +312,11 @@ function calcHitsSurvived(targetZone, type) {
 	}
 
 	//Pierce & Voids
-	var pierce = (game.global.brokenPlanet) ? getPierceAmt() : 0;
+	var pierce = (game.global.universe === 1 && game.global.brokenPlanet) ? getPierceAmt() : 0;
 
 	//Cancel the influence of the Barrier Formation
 	if (game.global.formation === 3) {
 		pierce *= 2;
-	}
-
-	//Cancel Map Health influence, even for void maps (they are set above)
-	if (game.talents.mapHealth.purchased && game.global.mapsActive && type !== "map") {
-		health /= 2;
 	}
 
 	//The Resulting Ratio
@@ -364,39 +362,13 @@ function getCritMulti(crit, customShield) {
 	return critDHModifier;
 }
 
-function calcHeirloomBonus_AT(type, name, number, getValueOnly, customShield) {
-	var mod = getHeirloomBonus_AT(type, name, customShield);
-	if (!mod) return number;
-	if (getValueOnly) return mod;
-	if (mod <= 0) return number;
-	return (number * ((mod / 100) + 1));
-}
-
-function getHeirloomBonus_AT(type, mod, customShield) {
-	if (!game.heirlooms[type] || !game.heirlooms[type][mod]) {
-		console.log('oh noes', type, mod)
-	}
-	var bonus = game.heirlooms[type][mod].currentBonus;
-	//Override bonus if needed
-	if (customShield) bonus = HeirloomModSearch(customShield, mod);
-	if (bonus === undefined) bonus = 0;
-	if (mod == "gammaBurst" && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
-		bonus = gammaBurstPct;
-	}
-	if (game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.heirlost !== 'undefined') {
-		if (type != "FluffyExp" && type != "VoidMaps") bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
-	}
-	if (!customShield) return scaleHeirloomModUniverse(type, mod, bonus);
-	return bonus;
-}
-
 function getPlayerCritChance_AT(customShield) { //returns decimal: 1 = 100%
 	if (game.global.challengeActive == "Frigid" && game.challenges.Frigid.warmth <= 0) return 0;
 	if (game.global.challengeActive == "Duel") return (game.challenges.Duel.enemyStacks / 100);
 	var critChance = 0;
 	critChance += (game.portal.Relentlessness.modifier * getPerkLevel("Relentlessness"));
-	critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) * (customShield && game.global.universe === 2 ? 0.1 : 0.01));
-	if (game.talents.crit.purchased && getHeirloomBonus_AT("Shield", "critChance", customShield)) critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) * (0.005 * (customShield && game.global.universe === 2 ? 10 : 1)));
+	critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) / 100);
+	if (game.talents.crit.purchased && getHeirloomBonus_AT("Shield", "critChance", customShield)) critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) * 0.005);
 	if (Fluffy.isRewardActive("critChance")) critChance += (0.5 * Fluffy.isRewardActive("critChance"));
 	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critChance += 0.35;
 	if (game.global.universe == 2 && u2Mutations.tree.CritChance.purchased) critChance += 0.25;
@@ -820,7 +792,7 @@ function calcEnemyBaseAttack(zone, cell, name, type, query) {
 	return Math.floor(attack);
 }
 
-function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equality, checkMutations) {
+function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equality) {
 	//Pre-Init
 	if (!type) type = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	if (!zone) zone = (type == "world" || !game.global.mapsActive) ? game.global.world : getCurrentMapObject().level;
@@ -928,8 +900,10 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 
 	if (game.global.universe === 2 && equality) {
 		if (!isNaN(parseInt((equality)))) {
-			if (equality > game.portal.Equality.radLevel)
+			if (equality > game.portal.Equality.radLevel) {
+				debug(equality)
 				debug('You don\'t have this many levels in Equality. - Enemy Dmg')
+			}
 			attack *= Math.pow(game.portal.Equality.getModifier(), equality);
 		} else {
 			attack *= game.portal.Equality.radLevel > 0 && getPageSetting('equalityCalc') == 0 && !equality ? game.portal.Equality.getMult() : 1;
@@ -940,9 +914,9 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	return minOrMax ? (1 - fluctuation) * attack : (1 + fluctuation) * attack;
 }
 
-function calcEnemyAttack(type, zone, cell = 99, name = "Snimp", minOrMax) {
+function calcEnemyAttack(type, zone, cell = 99, name = "Snimp", minOrMax, customAttack, equality) {
 	//Init
-	var attack = calcEnemyAttackCore(type, zone, cell, name, minOrMax);
+	var attack = calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equality);
 	var corrupt = zone >= mutations.Corruption.start();
 	var healthy = mutations.Healthy.active();
 
@@ -1504,8 +1478,7 @@ function gammaMaxStacks(specialChall, actualCheck) {
 	return gammaMaxStacks;
 }
 
-function simpleSecondsLocal(what, seconds, event, workerRatio) {
-	var event = !event ? null : event;
+function simpleSecondsLocal(what, seconds, workerRatio) {
 	var workerRatio = !workerRatio ? null : workerRatio;
 
 	if (typeof workerRatio !== 'undefined' && workerRatio !== null) {
@@ -1609,7 +1582,7 @@ function simpleSecondsLocal(what, seconds, event, workerRatio) {
 		amt *= game.challenges.Nurture.getResourceBoost();
 	//Calculating heirloom bonus
 	if (heirloom === null) amt = calcHeirloomBonus("Staff", jobName + "Speed", amt);
-	else amt = calcHeirloomBonusLocal(HeirloomModSearch(heirloom, jobName + "Speed"), amt);
+	else amt = calcHeirloomBonus_AT('Staff', jobName + "Speed", amt, false, heirloom);
 
 	var turkimpBonus = game.talents.turkimp2.purchased ? 2 : game.talents.turkimp2.purchased ? 1.75 : 1.5;
 
@@ -1685,6 +1658,14 @@ function calculateParityBonusAT(workerRatio, heirloom) {
 	return finalWithParity;
 }
 
+function calcHeirloomBonus_AT(type, mod, number, getValueOnly, customShield) {
+	var mod = getHeirloomBonus_AT(type, mod, customShield);
+	if (!mod) return number;
+	if (getValueOnly) return mod;
+	if (mod <= 0) return number;
+	return (number * ((mod / 100) + 1));
+}
+
 function calcHeirloomBonusLocal(mod, number) {
 	var mod = mod;
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined')
@@ -1692,6 +1673,31 @@ function calcHeirloomBonusLocal(mod, number) {
 	if (!mod) return;
 
 	return (number * ((mod / 100) + 1));
+}
+
+function calcHeirloomBonus_AT(type, name, number, getValueOnly, customShield) {
+	var mod = getHeirloomBonus_AT(type, name, customShield);
+	if (!mod) return number;
+	if (getValueOnly) return mod;
+	if (mod <= 0) return number;
+	return (number * ((mod / 100) + 1));
+}
+
+function getHeirloomBonus_AT(type, mod, customShield) {
+	if (!game.heirlooms[type] || !game.heirlooms[type][mod]) {
+		console.log('oh noes', type, mod)
+	}
+	var bonus = game.heirlooms[type][mod].currentBonus;
+	//Override bonus if needed
+	if (customShield) bonus = HeirloomModSearch(customShield, mod);
+	if (bonus === undefined) bonus = 0;
+	if (mod == "gammaBurst" && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
+		bonus = gammaBurstPct;
+	}
+	if (game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.heirlost !== 'undefined') {
+		if (type != "FluffyExp" && type != "VoidMaps") bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
+	}
+	return scaleHeirloomModUniverse(type, mod, bonus);
 }
 
 function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) {

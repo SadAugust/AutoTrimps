@@ -395,7 +395,7 @@ function autoMapLevelU1(special, maxLevel, minLevel, critType, statCheck) {
 	return mapLevel;
 }
 
-function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, forceOK) {
+function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, forceOK, hits) {
 
 	if (!enemyName) enemyName = 'Snimp';
 	if (!zone) zone = game.global.world;
@@ -403,12 +403,13 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (!currentCell) mapType === 'world' ? 98 : 20;
 	if (!difficulty) difficulty = 1;
 	if (!farmType) farmType = 'gamma';
+	if (!hits) hits = 1;
 
-	if (game.portal.Equality.radLevel === 0)
+	if (game.portal.Equality.radLevel === 0 || game.global.universe === 1)
 		return 0;
 
 	var bionicTalent = zone - game.global.world;
-	var checkMutations = mapType === 'world' && game.global.world > 200;
+	var checkMutations = mapType === 'world' && zone > 200;
 	var titimp = mapType !== 'world' && farmType === 'oneShot' ? 'force' : false;
 	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
@@ -430,7 +431,6 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, false, 0) * difficulty;
 	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 	enemyDmg *= dailyEmpowerToggle && mapType === 'map' && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
-
 	if (challengeActive('Duel')) {
 		enemyDmg *= 10;
 		if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
@@ -449,6 +449,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, calcMutationAttack(zone), 0);
 		enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName, calcMutationHealth(zone));
 	}
+	enemyDmg *= hits;
 
 	if (forceOK) {
 		if (!runningUnlucky && (zone - game.global.world) > 0) dmgType = 'min';

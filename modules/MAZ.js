@@ -464,6 +464,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (raiding && !bionic) tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>"
 			if (alchemy) tooltipText += "<div class='windowStorage'>Void<br>Purchase</div>"
 			if (voidMap && universe === 2 && !game.portal.Tenacity.radLocked) tooltipText += "<div class='windowStorage'>Max<br>Tenacity</div>"
+			if (voidMap && game.permaBoneBonuses.boosts.owned > 0) tooltipText += "<div class='windowStorage'>Use Bone<br>Charge</div>"
 			if (hypothermia) tooltipText += "<div class='windowFrozenCastle'>Frozen<br>Castle</div>"
 			if (hypothermia) tooltipText += "<div class='windowStorage'>Auto<br>Storage</div>"
 			if (hypothermia) tooltipText += "<div class='windowPackrat'>Packrat</div>"
@@ -493,7 +494,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				recycle: false,
 				incrementMaps: false,
 				voidPurchase: true,
-				maxTenacity: true,
+				maxTenacity: false,
+				boneCharge: false,
 				mapCap: 900
 			}
 			var style = "";
@@ -523,6 +525,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.voidPurchase = typeof (defaultSetting.voidPurchase) === 'undefined' ? true : defaultSetting.voidPurchase ? defaultSetting.voidPurchase : false;
 			if (voidMap && universe === 2 && !game.portal.Tenacity.radLocked)
 				defaultVals.maxTenacity = typeof (defaultSetting.maxTenacity) === 'undefined' ? false : defaultSetting.maxTenacity ? defaultSetting.maxTenacity : false;
+			if (voidMap && game.permaBoneBonuses.boosts.owned > 0)
+				defaultVals.boneCharge = typeof (defaultSetting.boneCharge) === 'undefined' ? false : defaultSetting.boneCharge ? defaultSetting.boneCharge : false;
 			if (hypothermia)
 				defaultVals.frozencastle = typeof (defaultSetting.frozencastle) === 'undefined' ? [200, 99] : defaultSetting.frozencastle ? defaultSetting.frozencastle : [200, 99];
 			if (hypothermia)
@@ -589,6 +593,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowVoidPurchase", null, defaultVals.voidPurchase) + "</div>";
 			if (voidMap && universe === 2 && !game.portal.Tenacity.radLocked)
 				tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowMaxTenacity", null, defaultVals.maxTenacity) + "</div>";
+			if (voidMap && game.permaBoneBonuses.boosts.owned > 0)
+				tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowBoneCharge", null, defaultVals.boneCharge) + "</div>";
 			if (hdFarm)
 				tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.mapCap + "' type='number' id='mapCap'/></div>";
 
@@ -1071,6 +1077,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (boneShrine) defaultSetting.gather = document.getElementById('windowBoneGatherDefault').value;
 		if (alchemy) defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
 		if (voidMap && currSettingUniverse === 2 && !game.portal.Tenacity.radLocked) defaultSetting.maxTenacity = readNiceCheckbox(document.getElementById('windowMaxTenacity'));
+		if (voidMap && game.permaBoneBonuses.boosts.owned > 0) defaultSetting.boneCharge = readNiceCheckbox(document.getElementById('windowBoneCharge'));
 		if (hypothermia) defaultSetting.frozencastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
 		if (hypothermia) defaultSetting.autostorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
 		if (hypothermia) defaultSetting.packrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
@@ -1282,7 +1289,6 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<br><br>The default values section are values which will automatically be input when a new row has been added. There's a few exception to this such as:<br></br><ul>"
 		mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable the entire setting.</li>"
 		mazHelp += "<li><b>Priority</b> - If there are two or more MaZ lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>"
-		if (radonSetting && voidMap) mazHelp += "<li><b>Max Tenacity</b> - Will assume that Tenacity is at max mult when looking at both world & void HD ratios.</li>";
 		if (worshipperFarm) mazHelp += "<li><b>Enabled Skip</b> - A toggle to enable the skip value setting.</li>";
 		if (worshipperFarm) mazHelp += "<li><b>Skip Value</b> - How many worshippers a map must provide for you to run your Worshipper Farming.</li>";
 		if (raiding && !bionic) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after raiding has finished.</li>"
@@ -1294,7 +1300,8 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		if (hypothermia) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>"
 		if (hypothermia) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>"
 		if (hypothermia) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>"
-		if (voidMap) mazHelp += "<li><b>Max Tenacity</b> - Will make world & void HD Ratio calcs assume you have max tenacity when void maps are being run.</li>"
+		if (voidMap && radonSetting && !game.portal.Tenacity.radLocked) mazHelp += "<li><b>Max Tenacity</b> - Will make world & void HD Ratio calcs assume you have max tenacity when void maps are being run.</li>"
+		if (voidMap && game.permaBoneBonuses.boosts.owned > 0) mazHelp += "<li><b>Bone Charge</b> - When Void Maps start running will use a single Bone Charge.</li>"
 	}
 
 	//Row Settings

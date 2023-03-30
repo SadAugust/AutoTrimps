@@ -1157,27 +1157,13 @@ function initializeAllSettings() {
 			function () { return ('If enabled when AT is trying to map it will only create perfect maps. Be warned this may greatly decrease the map level that AT believes is efficient.') },
 			'boolean', false, null, 'Maps', [1, 2]);
 
-		createSetting('uniqueMapSettingsArray',
-			function () { return ('Unique Map Settings') },
-			function () { return ('Click to adjust settings.') },
-			'mazArray', {
-			The_Wall: { enabled: false, zone: 100, cell: 0 },
-			The_Block: { enabled: false, zone: 100, cell: 0 },
-			Dimension_of_Anger: { enabled: false, zone: 100, cell: 0 },
-			Trimple_of_Doom: { enabled: false, zone: 100, cell: 0 },
-			The_Prison: { enabled: false, zone: 100, cell: 0 },
-			Imploding_Star: { enabled: false, zone: 100, cell: 0 },
-
-			Dimension_of_Rage: { enabled: false, zone: 100, cell: 0 },
-			Prismatic_Palace: { enabled: false, zone: 100, cell: 0 },
-			Atlantrimp: { enabled: false, zone: 100, cell: 0 },
-			Melting_Point: { enabled: false, zone: 100, cell: 0 },
-			Frozen_Castle: { enabled: false, zone: 100, cell: 0 },
-
-			MP_Smithy: { enabled: false, value: 100 },
-			MP_Smithy_Daily: { enabled: false, value: 100 },
-			MP_Smithy_C3: { enabled: false, value: 100 },
-		}, 'MAZLookalike("Unique Maps", " ", "UniqueMaps")', 'Maps', [1, 2]);
+		createSetting('hitsSurvived',
+			function () { return ('Hits Survived') },
+			function () {
+				return ('Will farm until you can survive this amount of attacks. Above cell 81 it will check the values against your next zone to ensure that your farm is slightly faster overall. Be careful as the higher you set this the more chance AT will overfarm.<br>\
+			<b>Must be set above 0 to run</b>')
+			},
+			'value', 5, null, "Maps", [1, 2]);
 
 		createSetting('mapBonusRatio',
 			function () { return ('Map Bonus Ratio') },
@@ -1232,6 +1218,29 @@ function initializeAllSettings() {
 			function () { return ('WF: Default Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Maps', [2]);
+
+		//Unique Maps
+		createSetting('uniqueMapSettingsArray',
+			function () { return ('Unique Map Settings') },
+			function () { return ('Click to adjust settings.') },
+			'mazArray', {
+			The_Wall: { enabled: false, zone: 100, cell: 0 },
+			The_Block: { enabled: false, zone: 100, cell: 0 },
+			Dimension_of_Anger: { enabled: false, zone: 100, cell: 0 },
+			Trimple_of_Doom: { enabled: false, zone: 100, cell: 0 },
+			The_Prison: { enabled: false, zone: 100, cell: 0 },
+			Imploding_Star: { enabled: false, zone: 100, cell: 0 },
+
+			Dimension_of_Rage: { enabled: false, zone: 100, cell: 0 },
+			Prismatic_Palace: { enabled: false, zone: 100, cell: 0 },
+			Atlantrimp: { enabled: false, zone: 100, cell: 0 },
+			Melting_Point: { enabled: false, zone: 100, cell: 0 },
+			Frozen_Castle: { enabled: false, zone: 100, cell: 0 },
+
+			MP_Smithy: { enabled: false, value: 100 },
+			MP_Smithy_Daily: { enabled: false, value: 100 },
+			MP_Smithy_C3: { enabled: false, value: 100 },
+		}, 'MAZLookalike("Unique Maps", " ", "UniqueMaps")', 'Maps', [1, 2]);
 
 		//Map Bonus
 		createSetting('mapBonusSettings',
@@ -1797,10 +1806,16 @@ function initializeAllSettings() {
 			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
-		createSetting('heirloomResourceStaff',
+		createSetting('heirloomStaffResource',
 			function () { return ('Resource Cache') },
 			function () { return ('<b>Resource Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Resource (Science) Cache maps.') },
 			'textValue', 'undefined', null, 'Heirlooms', [2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
+
+		createSetting('heirloomStaffVoid',
+			function () { return ('Void') },
+			function () { return ('<b>Void Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside void maps.') },
+			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		//Heirloom Line
@@ -2605,7 +2620,7 @@ function modifyParentNodeUniverseSwap() {
 	//Maps
 	//Helium Settings
 	modifyParentNode("scryvoidmaps", 'show');
-	modifyParentNode("worshipperFarmSettings", 'show');
+	modifyParentNode("uniqueMapSettingsArray", 'show');
 
 	//Gear equipNoShields
 	modifyParentNode("equipNoShields", 'show');
@@ -2648,7 +2663,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("heirloomVoidSwap", 'show');
 	modifyParentNode("heirloomVoidPlaguebringer", 'show');
 	modifyParentNode("heirloomSwapZoneC3", 'show');
-	modifyParentNode("heirloomResourceStaff", 'show');
+	modifyParentNode("heirloomStaffVoid", 'show');
 	if (getPageSetting('radonsettings') === 0) {
 		modifyParentNode("heirloomAutoOnlyPefect", radonoff_heirloom);
 		modifyParentNode("heirloomAutoShieldMod7", radonoff_heirloom);
@@ -3550,6 +3565,20 @@ function updateATVersion() {
 			Void Map settings now has a 'Max Tenacity' toggle once the perk has been unlocked which makes the World & Void HD Ratio inputs  assume max tenacity.<br>\
 			HD Ratio values will now factor in the type of shield that will be equipped when heirloom swapping is enabled so the value won't change when going between world/maps/voids.<br>\
 			Quest, Void Map, Desolation, calc and perky bugfixes.")
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.7') {
+			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
+			if (tempSettings.heirloomResourceStaff.valueU2 !== undefined)
+				autoTrimpSettings['heirloomStaffResource'].valueU2 = tempSettings.heirloomResourceStaff.valueU2;
+			autoTrimpSettings['hitsSurvived'].value = 0;
+			autoTrimpSettings['hitsSurvived'].valueU2 = 0;
+
+			changelog.push("Have added the 'Hits Survived' setting back into AT. Should properly work in both universes but it hasn't been fully tested in U2 so I've disabled it for everybody but if you want to use it set the value to anything higher than 0.<br>\
+				Further changed how auto heirlooms interacts with HD Ratios so if there's any bugs let me know.<br>\
+				Added a new setting for which staff you'd like to run whilst in void maps.<br>\
+				Void Maps setting now has a toggle that will use a bone charge when you enter your first void map.<br>\
+				Minor early U1 & U2 optimisations.")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;

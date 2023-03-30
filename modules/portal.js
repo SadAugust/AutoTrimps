@@ -548,9 +548,10 @@ function resetmapvars() {
 	rAutoLevel = Infinity;
 
 	//Resetting variables that would cause issues if they were left as is
-	MODULES.mapFunctions.rVoidHDRatio = Infinity;
-	MODULES.mapFunctions.rVoidVHDRatio = Infinity;
-	MODULES.mapFunctions.rVoidHDIndex = Infinity;
+	MODULES.mapFunctions.voidHDRatio = Infinity;
+	MODULES.mapFunctions.voidVHDRatio = Infinity;
+	MODULES.mapFunctions.voidHDIndex = Infinity;
+	MODULES.mapFunctions.boneCharge = false;
 	MODULES.mapFunctions.portalZone = Infinity;
 	HDRatio = calcHDRatio(game.global.world, 'world');
 	mapHDRatio = calcHDRatio(game.global.world, 'map');
