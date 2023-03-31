@@ -48,7 +48,8 @@ function automationMenuInit() {
 	var voidMapText = document.createElement("SPAN");
 	voidMapContainer.setAttribute("onmouseover", 'tooltip(\"Additional AT Info\", \"customText\", event, \"<b>Void</b>: The progress you have towards a free void map from the \'Void Maps\' permanent bone upgrade.<br>\
 	<b>Auto Level</b>: The level that AT recommends using whilst farming.<br>\
-	<b>T</b>: Your current tenacity time\")');
+	<b>B</b>: The amount of time your trimps have been breeding.<br>\
+	<b>T</b>: Your current tenacity time.\")');
 	voidMapText.setAttribute("onmouseout", 'tooltip("hide")');
 	voidMapText.id = 'freeVoidMap';
 	fightButtonCol.appendChild(voidMapContainer);
@@ -240,27 +241,6 @@ function initializeAllSettings() {
 		$radonsettings.parentNode.style.setProperty('float', 'right');
 		$radonsettings.parentNode.style.setProperty('margin-right', '1vw');
 		$radonsettings.parentNode.style.setProperty('margin-left', '0');
-
-		//Gator settings
-		createSetting('amalcoord',
-			function () { return ('Amal Boost') },
-			function () { return ('Boost your Amal count for more Mi. Will not buy coords until your H:D ratio is below a certain value. This means that you will get amals quicker. Will not activate higher than your Amal Boost End Zone Setting! ') },
-			'boolean', false, null, 'Core', [1]);
-		createSetting('amalcoordt',
-			function () { return ('Amal Target') },
-			function () { return ('Set the amount of Amals you wish to aim for. Once this target is reached, it will buy coords below your Amal ratio regardless of your H:D, just enough to keep the Amal. -1 to disable and use H:D for entire boost. ') },
-			'value', -1, null, 'Core', [1],
-			function () { return (autoTrimpSettings.amalcoord.enabled) });
-		createSetting('amalcoordhd',
-			function () { return ('Amal Boost H:D') },
-			function () { return ('Set your H:D for Amal Boost here. The higher it is the less coords AT will buy. 0.0000025 is the default. ') },
-			'value', 0.0000025, null, 'Core', [1],
-			function () { return (autoTrimpSettings.amalcoord.enabled) });
-		createSetting('amalcoordz',
-			function () { return ('Amal Boost End Z') },
-			function () { return ('Amal Boost End Zone. Set the zone you want to stop Amal Boosting. -1 to do it infinitely. ') },
-			'value', -1, null, 'Core', [1],
-			function () { return (autoTrimpSettings.amalcoord.enabled) });
 
 		//Auto Portal
 		createSetting('autoPortal',
@@ -1011,13 +991,19 @@ function initializeAllSettings() {
 		createSetting('CustomTargetZone',
 			function () { return ('Custom Target Zone') },
 			function () { return ('To be used with Auto Gigas. <br>The zone to be used as a the target zone when calculating the Auto Gigas delta. <br>Values below 60 will be discarded.') },
-			'value', '-1', null, "Buildings", [1],
+			'value', '-1', null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.AutoGigas.enabled) });
 		createSetting('CustomDeltaFactor',
 			function () { return ('Custom Delta Factor') },
 			function () { return ('Advanced. To be used with Auto Gigas. <br>This setting is used to calculate a better Delta. Think of this setting as how long your target zone takes to complete divided by the zone you bought your first giga in. <br>Basically, a higher number means a higher delta. Values below 1 will default to 10. <br><b>Recommended: 1-2 for very quick runs. 5-10 for regular runs where you slow down at the end. 20-100+ for very pushy runs.</b>') },
-			'value', '-1', null, "Buildings", [1],
+			'value', '-1', null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.AutoGigas.enabled) });
+
+		/* createSetting('AdvancedNurseries',
+			function () { return ('Advanced Nurseries') },
+			function () { return ("If enabled AND your HZE is higher than 230 (it acts as if disabled otherwise), AT will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway), AND you have more map stacks than the <b>Map MapBonus Health</b> setting, which becomes a very important setting. Also, it won't buy nurseries while farming for the spire. Please refer to The Spire options to know more about that. <b>Recommended: Always On.</b>)") },
+			'boolean', false, null, 'Buildings', [1],
+			function () { return (game.global.highestLevelCleared > 229) }); */
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -1160,10 +1146,10 @@ function initializeAllSettings() {
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },
 			function () {
-				return ('Will farm until you can survive this amount of attacks. Above cell 81 it will check the values against your next zone to ensure that your farm is slightly faster overall. Be careful as the higher you set this the more chance AT will overfarm.<br>\
+				return ('Will farm until you can survive this amount of attacks. After unlocking Explorers when above cell 81 on each zone it will also check the values against your next zone to ensure that your farm is slightly faster overall. Be careful as the higher you set this the more chance AT will overfarm.<br>\
 			<b>Must be set above 0 to run</b>')
 			},
-			'value', 5, null, "Maps", [1, 2]);
+			'value', 3, null, "Maps", [1, 2]);
 
 		createSetting('mapBonusRatio',
 			function () { return ('Map Bonus Ratio') },
@@ -2170,6 +2156,7 @@ function initializeAllSettings() {
 			buildings: false,
 			jobs: false,
 			zone: false,
+			exotic: false,
 		}, null, 'Display', [1, 2]);
 
 		createSetting('sitInMaps',
@@ -2605,7 +2592,6 @@ function modifyParentNodeUniverseSwap() {
 
 	//Core
 	modifyParentNode("radonsettings", 'show');
-	modifyParentNode("amalcoordz", radonoff);
 
 	//Dailies
 	modifyParentNode("dscryvoidmaps", radonoff);

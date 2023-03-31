@@ -71,7 +71,7 @@ var rBSRunningAtlantrimp = false;
 var currentMap = undefined;
 var rAutoLevel = Infinity;
 var rMapRepeats = 0;
-var freeVoids = 0;
+var freeVoids = -1;
 var tenacityTime = '0m';
 var tenacityTimeNew = '0m';
 
@@ -87,7 +87,7 @@ var currChall = game.global.challengeActive;
 var gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 var shieldEquipped = game.global.ShieldEquipped.id;
 
-var rMapSettings = {
+var mapSettings = {
 	shouldRun: false,
 	mapName: ''
 }
@@ -157,11 +157,9 @@ function universeSwapped() {
 		//Sets up Perky UI when in U1 or changing universe to U1.
 		if (portalUniverse === 1) {
 			setupPerkyUI();
-			addBreedingBoxTimers();
 		}
 		if (portalUniverse === 2) {
 			setupSurkyUI();
-			removeBreedingBoxTimer();
 		}
 		currPortalUniverse = portalUniverse;
 	}
@@ -189,15 +187,17 @@ function mainLoop() {
 		if (document.getElementById('tooltipDiv').classList[0] !== undefined && !MAZCheck && document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow')) document.getElementById('tooltipDiv').classList.remove(document.getElementById('tooltipDiv').classList[0])
 
 		tenacityTimeNew = game.global.universe === 2 ? Math.floor(game.portal.Tenacity.getTime()) + "m" : '0m';
-		if (freeVoids !== game.permaBoneBonuses.voidMaps.tracker || autoLevel !== autoLevelCurrent || tenacityTimeNew !== tenacityTime) {
+		if (freeVoids !== game.permaBoneBonuses.voidMaps.tracker || autoLevel !== autoLevelCurrent || tenacityTimeNew !== tenacityTime || (game.global.universe === 1 && oneSecondInterval)) {
 
 			var freeVoidsText = 'Void: ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10');
 
 			var autoLevelText = " | Auto Level: " + autoLevel;
 
+			var breedTimerText = game.global.universe === 1 ? " | B: " + ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) + 's' : "";
+
 			var tenacityText = game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 ? " | T: " + tenacityTimeNew : "";
 
-			document.getElementById('freeVoidMap').innerHTML = freeVoidsText + autoLevelText + tenacityText;
+			document.getElementById('freeVoidMap').innerHTML = freeVoidsText + autoLevelText + breedTimerText + tenacityText;
 			freeVoids = game.permaBoneBonuses.voidMaps.tracker
 			autoLevelCurrent = autoLevel;
 			tenacityTime = tenacityTimeNew;
@@ -242,8 +242,8 @@ function mainLoop() {
 	//Heirloom Shield Swap Check
 	if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
 	//Initiate Farming Code
-	rMapSettings = FarmingDecision();
-	currentMap = rMapSettings.mapName;
+	mapSettings = FarmingDecision();
+	currentMap = mapSettings.mapName;
 
 	//Offline Progress
 	if (!usingRealTimeOffline) setScienceNeeded();
@@ -300,11 +300,6 @@ function mainLoop() {
 function mainLoopU1() {
 	if (game.global.universe !== 1) return;
 
-	if (getPageSetting('showbreedtimer')) {
-		if (game.options.menu.showFullBreed.enabled !== 1) toggleSetting("showFullBreed");
-		addbreedTimerInsideText.innerHTML = ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) + 's'; //add breed time for next army;
-		addToolTipToArmyCount();
-	}
 	//Core
 	if (getPageSetting('ATGA2')) ATGA2();
 	autoRoboTrimp();
@@ -387,6 +382,7 @@ function mainCleanup() {
 
 	if (aWholeNewWorld) {
 		debug("Starting Zone " + game.global.world, "zone");
+		debug("Zone #" + game.global.world + ": Tauntimp (" + game.unlocks.impCount.Tauntimp + "), Magnimp (" + game.unlocks.impCount.Magnimp + "), Whipimp (" + game.unlocks.impCount.Whipimp + "), Venimp (" + game.unlocks.impCount.Venimp + ")", "exotic");
 	}
 
 	if (aWholeNewWorld || currentworld === 1) {

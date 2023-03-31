@@ -33,7 +33,7 @@ function updateAutoMapsStatus(get) {
 		else if (vanillaMAZ) status = 'Vanilla MAZ';
 		else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && (currentMap !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness')) status = getCurrentMapObject().name;
 		else if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
-		else if (currentMap !== '') status = rMapSettings.status;
+		else if (currentMap !== '') status = mapSettings.status;
 		else if (getPageSetting('SkipSpires') == 1 && isDoingSpire()) status = 'Skipping Spire';
 		//Advancing
 		else status = 'Advancing';
@@ -173,7 +173,7 @@ function autoMap() {
 	}
 
 	//Go to map chamber if we should farm on Wither!
-	if (currentMap === 'Wither Farm' && rMapSettings.shouldRun && !game.global.mapsActive && !game.global.preMapsActive) {
+	if (currentMap === 'Wither Farm' && mapSettings.shouldRun && !game.global.mapsActive && !game.global.preMapsActive) {
 		mapsClicked(true)
 	}
 
@@ -230,9 +230,9 @@ function autoMap() {
 	}
 
 	//New Mapping Organisation!
-	const shouldMap = rMapSettings.shouldRun;
-	currentMap = shouldMap ? rMapSettings.mapName : '';
-	rAutoLevel = rMapSettings.autoLevel ? rMapSettings.mapLevel : Infinity;
+	const shouldMap = mapSettings.shouldRun;
+	currentMap = shouldMap ? mapSettings.mapName : '';
+	rAutoLevel = mapSettings.autoLevel ? mapSettings.mapLevel : Infinity;
 
 	//Farming & resetting variables.
 	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
@@ -255,7 +255,7 @@ function autoMap() {
 				highestMap = map;
 			}
 			if (!optimalMap) {
-				if ((rMapSettings.mapLevel + game.global.world) === map.level && rMapSettings.special === map.bonus && map.size === perfSize && map.difficulty === 0.75 && map.loot === perfMapLoot) {
+				if ((mapSettings.mapLevel + game.global.world) === map.level && mapSettings.special === map.bonus && map.size === perfSize && map.difficulty === 0.75 && map.loot === perfMapLoot) {
 					optimalMap = map;
 				}
 			}
@@ -279,12 +279,12 @@ function autoMap() {
 	//Telling AT to create a map or setting void map as map to be run.
 	if (selectedMap === 'world' && shouldMap) {
 		if (currentMap !== '') {
-			var mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe === 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
+			var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : game.global.farmlandsUnlocked && game.global.universe === 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 			if (voidMap) selectedMap = voidMap.id;
 			else if (currentMap === 'Prestige Raiding') selectedMap = "prestigeRaid";
 			else if (currentMap === 'Bionic Raiding') selectedMap = "bionicRaid";
 			else if (optimalMap) selectedMap = optimalMap.id;
-			else selectedMap = shouldFarmMapCreation(rMapSettings.mapLevel, rMapSettings.special, mapBiome);
+			else selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
 			if (mappingTime === 0) mappingTime = getGameTime();
 		}
 	}
@@ -323,11 +323,11 @@ function autoMap() {
 				repeatClicked();
 			}
 			if (MODULES.mapFunctions.prestigeFragMapBought && game.global.repeatMap) {
-				runPrestigeRaiding(rMapSettings);
+				runPrestigeRaiding(mapSettings);
 			}
 			//Disabling repeat if repeat conditions have been met
 			if (game.global.repeatMap && currentMap !== '' && !MODULES.mapFunctions.prestigeFragMapBought) {
-				if (!rMapSettings.repeat) repeatClicked();
+				if (!mapSettings.repeat) repeatClicked();
 			}
 		} else {
 			if (game.global.repeatMap) {
@@ -351,15 +351,15 @@ function autoMap() {
 		if (selectedMap == "world") {
 			mapsClicked();
 		} else if (selectedMap == "prestigeRaid") {
-			runPrestigeRaiding(rMapSettings);
+			runPrestigeRaiding(mapSettings);
 		} else if (selectedMap == "bionicRaid") {
 			runBionicRaiding(bionicPool);
 		} else if (selectedMap == "create") {
 			//Setting sliders appropriately.
 			if (shouldMap) {
-				var mapBiome = rMapSettings.biome !== undefined ? rMapSettings.biome : game.global.farmlandsUnlocked && game.global.universe === 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
+				var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : game.global.farmlandsUnlocked && game.global.universe === 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 				if (currentMap !== '') {
-					mapCost(rMapSettings.mapLevel, rMapSettings.special, mapBiome, rMapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
+					mapCost(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
 				}
 			}
 

@@ -1,6 +1,6 @@
 MODULES["jobs"] = {};
 
-//Helium Modules
+MODULES["jobs"].autoRatioHaz = [1, 1, 1];
 MODULES["jobs"].autoRatio7 = [1, 1, 98];
 MODULES["jobs"].autoRatio6 = [1, 7, 12];
 MODULES["jobs"].autoRatio5 = [1, 2, 22];
@@ -10,22 +10,13 @@ MODULES["jobs"].autoRatio2 = [3, 3.1, 5];
 MODULES["jobs"].autoRatio1 = [1.1, 1.15, 1.2];
 MODULES["jobs"].customRatio;
 
-//Radon Modules
-MODULES["jobs"].RscientistRatio = 8;
-MODULES["jobs"].RscientistRatio2 = 4;
-MODULES["jobs"].RscientistRatio3 = 16;
-MODULES["jobs"].RscientistRatio4 = 64;
-MODULES["jobs"].RscientistRatio5 = 256;
-MODULES["jobs"].RscientistRatio6 = 1024;
-MODULES["jobs"].RscientistRatio7 = 4098;
-MODULES["jobs"].RautoRatioHaz = [1, 1, 1];
-MODULES["jobs"].RautoRatio7 = [1, 1, 98];
-MODULES["jobs"].RautoRatio5 = [1, 2, 22];
-MODULES["jobs"].RautoRatio4 = [1, 1.1, 10];
-MODULES["jobs"].RautoRatio3 = [3, 1, 4];
-MODULES["jobs"].RautoRatio2 = [3, 3.1, 5];
-MODULES["jobs"].RautoRatio1 = [1.1, 1.15, 1.2];
-MODULES["jobs"].RcustomRatio;
+MODULES["jobs"].scientistRatio = 8;
+MODULES["jobs"].scientistRatio2 = 4;
+MODULES["jobs"].scientistRatio3 = 16;
+MODULES["jobs"].scientistRatio4 = 64;
+MODULES["jobs"].scientistRatio5 = 256;
+MODULES["jobs"].scientistRatio6 = 1024;
+MODULES["jobs"].scientistRatio7 = 4098;
 
 function safeBuyJob(jobTitle, amount) {
 	if (!Number.isFinite(amount) || amount === 0 || typeof amount === 'undefined' || Number.isNaN(amount)) {
@@ -77,31 +68,30 @@ function workerRatios(workerRatio) {
 	}
 
 	var ratioSet;
-	var universe = game.global.universe === 1 ? '' : 'R';
 
-	if (MODULES["jobs"].RcustomRatio) {
-		ratioSet = MODULES["jobs"][universe + 'customRatio'];
+	if (MODULES["jobs"].customRatio) {
+		ratioSet = MODULES["jobs"]['customRatio'];
 	} else if (game.global.universe === 2 && game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10) {
-		ratioSet = MODULES["jobs"][universe + 'autoRatioHaz'];
+		ratioSet = MODULES["jobs"]['autoRatioHaz'];
 	} else if (game.global.world >= 300) {
-		ratioSet = MODULES["jobs"][universe + 'autoRatio7'];
+		ratioSet = MODULES["jobs"]['autoRatio7'];
 	} else if (game.buildings.Tribute.owned > 3000 && mutations.Magma.active()) {
-		ratioSet = MODULES["jobs"][universe + 'autoRatio6'];
+		ratioSet = MODULES["jobs"]['autoRatio6'];
 	} else if (game.buildings.Tribute.owned > 1500) {
-		ratioSet = MODULES["jobs"][universe + 'autoRatio5'];
+		ratioSet = MODULES["jobs"]['autoRatio5'];
 	} else if (game.buildings.Tribute.owned > 1000) {
-		ratioSet = MODULES["jobs"][universe + 'autoRatio4'];
+		ratioSet = MODULES["jobs"]['autoRatio4'];
 	} else if (game.resources.trimps.realMax() > 3000000) {
-		ratioSet = MODULES["jobs"][universe + 'autoRatio3'];
+		ratioSet = MODULES["jobs"]['autoRatio3'];
 	} else if (game.resources.trimps.realMax() > 300000) {
-		ratioSet = MODULES["jobs"][universe + 'autoRatio2'];
+		ratioSet = MODULES["jobs"]['autoRatio2'];
 	} else if (challengeActive('Metal') || challengeActive('Transmute')) {
 		ratioSet = [4, 5, 0];
 	} else if (game.global.world < 5) {
 		ratioSet = [3, 1, 1];
 	}
 	else {
-		ratioSet = MODULES["jobs"][universe + 'autoRatio1'];
+		ratioSet = MODULES["jobs"]['autoRatio1'];
 	}
 
 	if (workerRatio.includes('Farmer')) return ratioSet[0]
@@ -199,15 +189,15 @@ function buyJobs() {
 	}
 	if (game.global.universe === 2) {
 		//Meteorologists
-		if (!game.jobs.Meteorologist.locked && (jobSettings.Meteorologist.enabled || rMapSettings.shouldMeteorologist) && !rBSRunningAtlantrimp) {
+		if (!game.jobs.Meteorologist.locked && (jobSettings.Meteorologist.enabled || mapSettings.shouldMeteorologist) && !rBSRunningAtlantrimp) {
 			var affordableMets = getMaxAffordable(
 				game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
-				game.resources.food.owned * (rMapSettings.shouldMeteorologist ? 1 : (jobSettings.Meteorologist.percent / 100)),
+				game.resources.food.owned * (mapSettings.shouldMeteorologist ? 1 : (jobSettings.Meteorologist.percent / 100)),
 				game.jobs.Meteorologist.cost.food[1],
 				true
 			);
-			affordableMets = rMapSettings.shouldMeteorologist && rMapSettings.runAtlantrimp && game.mapUnlocks.AncientTreasure.canRunOnce && !(game.resources.food.owned > (typeof (totalTrFCost) === 'undefined' ? 0 : totalTrFCost)) ? 0 : affordableMets;
-			if (affordableMets > 0 && !rMapSettings.shouldTribute) {
+			affordableMets = mapSettings.shouldMeteorologist && mapSettings.runAtlantrimp && game.mapUnlocks.AncientTreasure.canRunOnce && !(game.resources.food.owned > (typeof (totalTrFCost) === 'undefined' ? 0 : totalTrFCost)) ? 0 : affordableMets;
+			if (affordableMets > 0 && !mapSettings.shouldTribute) {
 				safeBuyJob('Meteorologist', affordableMets);
 				freeWorkers -= affordableMets;
 			}
@@ -248,28 +238,28 @@ function buyJobs() {
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs * reserveMod : 0;
 
 	var workerRatio;
-	if ((MODULES.mapFunctions.workerRatio !== null && shouldBoneShrine) || (getPageSetting('autoMaps') !== 0 && rMapSettings.jobRatio !== undefined)) {
+	if ((MODULES.mapFunctions.workerRatio !== null && shouldBoneShrine) || (getPageSetting('autoMaps') !== 0 && mapSettings.jobRatio !== undefined)) {
 		if (MODULES.mapFunctions.workerRatio !== null) workerRatio = MODULES.mapFunctions.workerRatio;
-		else workerRatio = rMapSettings.jobRatio;
+		else workerRatio = mapSettings.jobRatio;
 		desiredRatios = Array.from(workerRatio.split(','))
 		desiredRatios = [desiredRatios[0] !== undefined ? Number(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? Number(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? Number(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? Number(desiredRatios[3]) : 0]
 
 		if (scienceNeeded > 0 && scienceNeeded > game.resources.science.owned && desiredRatios[3] < 1) desiredRatios[3] = 1;
 	} else {
 		// Weird scientist ratio hack. Based on previous AJ, I don't know why it's like this.
-		var scientistMod = MODULES["jobs"].RscientistRatio;
+		var scientistMod = MODULES["jobs"].scientistRatio;
 		if (game.jobs.Farmer.owned < 100)
-			scientistMod = MODULES["jobs"].RscientistRatio2;
+			scientistMod = MODULES["jobs"].scientistRatio2;
 		if (game.global.world >= 50)
-			scientistMod = MODULES["jobs"].RscientistRatio3;
+			scientistMod = MODULES["jobs"].scientistRatio3;
 		if (game.global.world >= 65)
-			scientistMod = MODULES["jobs"].RscientistRatio4;
+			scientistMod = MODULES["jobs"].scientistRatio4;
 		if (game.global.world >= 90)
-			scientistMod = MODULES["jobs"].RscientistRatio5;
+			scientistMod = MODULES["jobs"].scientistRatio5;
 		if (game.global.world >= 120)
-			scientistMod = MODULES["jobs"].RscientistRatio6;
+			scientistMod = MODULES["jobs"].scientistRatio6;
 		if (game.global.world >= 150)
-			scientistMod = MODULES["jobs"].RscientistRatio7;
+			scientistMod = MODULES["jobs"].scientistRatio7;
 
 		if (scienceNeeded > 0 && scienceNeeded > game.resources.science.owned) scientistMod = 1;
 		for (var worker of ratioWorkers) {

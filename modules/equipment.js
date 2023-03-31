@@ -235,6 +235,8 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		if (i === 'Gym') continue;
 		//Skipping gyms when can buy Gymystic
 		if (game.global.univere === 1 && (i === 'Shield' || i === 'Gym') && needGymystic()) continue;
+		if (mapSettings.shouldHealthFarm && isAttack === 1) resourceMaxPercent
+			= 1;
 		//Setting weapon equips to 100% spending during Smithless farm.
 		if (challengeActive('Smithless') && currentMap === 'Smithless Farm') {
 			if (isAttack === 0) {
@@ -278,7 +280,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//if (!showAllEquips && prestigeSetting === 1 && !canAtlantrimp && nextLevelCost > game.resources.metal.owned) continue;
 
 		//Skips items if they aren't at the highest prestige level we own and we have that setting enabled
-		if (getPageSetting('equipHighestPrestige') && !prestige && game.equipment[i].prestige < highestPrestige) continue;
+		if (getPageSetting('equipPrestige') > 0 && getPageSetting('equipHighestPrestige') && !prestige && game.equipment[i].prestige < highestPrestige) continue;
 		if (safeRatio === 1) continue;
 
 		if (mostEfficient[isAttack].statPerResource > safeRatio && mostEfficient[isAttack].statPerResource != '') {
@@ -363,7 +365,7 @@ function autoEquip() {
 		([2, 3].indexOf(currQuest()) >= 0 && game.global.lastClearedCell < 90) ||
 		(currentMap === 'Smithy Farm') ||
 		(game.mapUnlocks.AncientTreasure.canRunOnce &&
-			(rBSRunningAtlantrimp || rMapSettings.runAtlantrimp ||
+			(rBSRunningAtlantrimp || mapSettings.runAtlantrimp ||
 				(game.global.mapsActive && (getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Trimple Of Doom'))
 			)
 		)
@@ -418,7 +420,7 @@ function autoEquip() {
 	}
 
 	var attackEquipCap = (getPageSetting('equipCapAttack') <= 0 || currentMap === 'Smithless Farm' ? Infinity : getPageSetting('equipCapAttack'));
-	var healthEquipCap = (getPageSetting('equipCapHealth') <= 0 || currentMap === 'Smithless Farm' ? Infinity : getPageSetting('equipCapHealth'));
+	var healthEquipCap = (getPageSetting('equipCapHealth') <= 0 || currentMap === 'Smithless Farm' ? Infinity : getPageSetting('equipCapHealth') || mapSettings.shouldHealthFarm);
 	var maxCanAfford = 0;
 
 	if (challengeActive('Scientist')) {
@@ -451,8 +453,14 @@ function autoEquip() {
 
 		for (var i = 0; i < 2; i++) {
 			//Setting weapon equips to 100% spending during Smithless farm.
-			if (challengeActive('Smithless') && currentMap === 'Smithless Farm') {
-				if (equipType === 'attack') {
+			if (equipType === 'attack') {
+				if (challengeActive('Smithless') && currentMap === 'Smithless Farm') {
+					resourceSpendingPct = 1;
+					zoneGo = true;
+				}
+			}
+			if (equipType === 'health') {
+				if (mapSettings.shouldHealthFarm) {
 					resourceSpendingPct = 1;
 					zoneGo = true;
 				}

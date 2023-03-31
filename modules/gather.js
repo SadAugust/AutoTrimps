@@ -56,8 +56,8 @@ function autoGather() {
 	var trapTrimpsOK = (!game.upgrades.Battle.done || (getPageSetting('TrapTrimps'))) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
 
 	//Vars
-	var scientistsAvailable = game.upgrades.Scientists.allowed && !game.upgrades.Scientists.done
-	var minersAvailable = game.upgrades.Miners.allowed && !game.upgrades.Miners.done
+	var scientistsAvailable = game.upgrades.Scientists.allowed && !game.upgrades.Scientists.done;
+	var minersAvailable = game.upgrades.Miners.allowed && !game.upgrades.Miners.done;
 	var lowOnTraps = game.buildings.Trap.owned < minTraps;
 	var trapsReady = game.buildings.Trap.owned >= minTraps + trapsBufferSize;
 	var fullOfTraps = game.buildings.Trap.owned >= maxTraps;
@@ -147,8 +147,8 @@ function autoGather() {
 
 	if (hasTurkimp && game.global.mapsActive) {
 		//Setting gather to the option selected in farming settings if it exists.
-		if (rMapSettings.gather !== undefined && rMapSettings.gather !== null) {
-			safeSetGather(rMapSettings.gather);
+		if (mapSettings.gather !== undefined && mapSettings.gather !== null) {
+			safeSetGather(mapSettings.gather);
 			return;
 		}
 

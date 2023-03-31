@@ -194,6 +194,9 @@ function debug(a, b, c) {
 		case 'zone':
 			p = settingArray.zone;
 			break;
+		case 'exotic':
+			p = settingArray.exotic;
+			break;
 	}
 	p && (console.log(timeStamp() + ' ' + a), message2(a, 'AutoTrimps', c, b))
 }
