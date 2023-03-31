@@ -402,7 +402,6 @@ function autoMapLevelU1(special, maxLevel, minLevel, statCheck) {
 
 	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
 	if (!special) special = getAvailableSpecials('lmc');
-	if (!critType) critType = 'maybe';
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
