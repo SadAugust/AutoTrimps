@@ -64,15 +64,16 @@ function makeAutomapStatusTooltip() {
 	const farmingSetting = FarmingDecision();
 	const mapStacksText = (`Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`);
 	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy.';
+	const hitsSurvived = getPageSetting('hitsSurvived') > 0 ? prettify(getPageSetting('hitsSurvived')) : 'Disabled';
 	let tooltip = 'tooltip(' +
 		'\"Automaps Status\", ' +
 		'\"customText\", ' +
 		'event, ' +
 		'\"Variables that control the current state and target of Automaps.<br>' +
 		'Values in <b>bold</b> are dynamically calculated based on current zone and activity.<br>' +
-		'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>'  /* +
+		'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>' +
 		`<br>` +
-		`<b>Hits survived: ${prettify(hitsSurvived)}</b><br>`*/
+		`<b>Hits survived: ${hitsSurvived}</b><br>`
 
 	tooltip += `<br>` +
 		`<b>Mapping info</b><br>`;
