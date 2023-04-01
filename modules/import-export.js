@@ -436,6 +436,13 @@ function ImportExportTooltip(what, event, download) {
 		titleText = '<b>Loading AutoTrimps Default Profile...</b><p>Current Settings will be lost!';
 		tooltipText = '<b>NOTICE:</b> Switching to Default AutoTrimps settings profile!!!! <br>All current settings <b>WILL</b> be lost after this point. <br>You might want to cancel, to go back and save your existing settings first.... <br>This will <b><u>Reset</u></b> the script to factory settings.';
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); resetAutoTrimps(); settingsProfiles.selectedIndex = 1;'>Reset to Default Profile</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
+	} else if (what == 'SetCustomChallenge') {
+		titleText = "Enter Challenge To Run";
+		tooltipText = "What challenge would you like to be switched to?<br/><br/><textarea id='setSettingsNameTooltip' style='width: 100%' rows='1'></textarea>";
+		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); cheatChallenge();'>Import</div><div class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
+		ondisplay = function () {
+			document.getElementById('setSettingsNameTooltip').focus();
+		};
 	} else if (what == 'NameSettingsProfiles') {
 		titleText = "Enter New Settings Profile Name";
 		tooltipText = "What would you like the name of the Settings Profile to be?<br/><br/><textarea id='setSettingsNameTooltip' style='width: 100%' rows='1'></textarea>";

@@ -325,12 +325,41 @@ function cheatSpeedNormal() {
 	clearTimeout(runIntervalGame);
 }
 
+//called by ImportExportTooltip('NameSettingsProfiles')
+function cheatChallenge() {
+	//read the name in from tooltip
+	try {
+		var challengeName = document.getElementById("setSettingsNameTooltip").value.replace(/[\n\r]/gm, "");
+		if (challengeName == null || game.challenges[challengeName] === undefined) {
+			debug("Challenge name didn't match one ingame..", "test");
+			return;
+		}
+	} catch (err) {
+		debug("Challenge name didn't match one ingame..", "test");
+		return;
+	}
+	debug("Setting challenge to " + challengeName, "test");
+	game.global.challengeActive = challengeName;
+}
+
+function cheatRunningCinf() {
+	game.global.runningChallengeSquared = !game.global.runningChallengeSquared;
+}
+
 function cheatMaxMapBonus() {
 	game.global.mapBonus = 10;
 }
 
 function cheatMaxTenacity() {
-	game.global.zoneStarted -= 7.2e+6
+	game.global.zoneStarted -= 7.2e+6;
+}
+
+function cheatWorldCell() {
+	if (!game.global.mapsActive && !game.global.preMapsActive) {
+		game.global.lastClearedCell = game.global.gridArray[game.global.gridArray.length - 1];
+		game.global.gridArray[game.global.lastClearedCell + 1].health = 0;
+		game.global.gridArray[game.global.gridArray.length - 1].health = 0;
+	}
 }
 
 function cheatMapCell() {

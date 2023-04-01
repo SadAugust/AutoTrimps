@@ -163,7 +163,7 @@ function initializeAllTabs() {
 	createTabs("Golden", "Golden Upgrade Settings");
 	createTabs("Nature", "Nature Settings");
 	createTabs("Display", "Display & Spam Settings");
-	createTabs("Test", "Should never be seen by users");
+	createTabs("Test", "Basic testing functions - Should never be seen by users");
 	createTabs("Import Export", "Import & Export Settings");
 	createTabs("Legacy", "Legacy Settings. Will be removed every major patch cycle.");
 	var li_0 = document.createElement('li');
@@ -2126,7 +2126,7 @@ function initializeAllSettings() {
 		createSetting('displayAllSettings',
 			function () { return ('Display all settings') },
 			function () { return ('Will display all of the locked settings that have HZE or other requirements to be displayed.') },
-			'boolean', false, null, 'Display', [1, 2]);
+			'boolean', false, null, 'Display', [0]);
 
 		createSetting('EnableAFK',
 			function () { return ('Go AFK Mode') },
@@ -2233,15 +2233,16 @@ function initializeAllSettings() {
 			'infoclick', 'CleanupAutoTrimps', null, 'Import Export', [1, 2]);
 	}
 
-	//Automation - Hidden Features for testing purposes!
-	const displayAutomation = true;
-	if (displayAutomation) {
+	//Testing - Hidden Features for testing purposes! Please never seek these out!
+	const displayTesting = true;
+	if (displayTesting) {
 
 		createSetting('gameUser',
 			function () { return ('User') },
 			function () { return ('<b>Not gonna be seen</b>') },
 			'textValue', 'undefined', null, 'Test', [0],
 			function () { return (false) });
+
 		createSetting('gameSpeed50',
 			function () { return ('Game Speed 50x') },
 			function () { return ('Set gamespeed to 50x the regular value.') },
@@ -2252,30 +2253,41 @@ function initializeAllSettings() {
 			function () { return ('Set gamespeed to the regular value.') },
 			'action', 'cheatSpeedNormal()', null, 'Test', [0]);
 
-		createSetting('gameMaxTenacity',
-			function () { return ('Tenacity Max Mult') },
-			function () { return ('Sets Tenacity to max mult.') },
-			'action', 'cheatMaxTenacity()', null, 'Test', [0]);
+		createSetting('gameSetChallenge',
+			function () { return ('Custom Challenge') },
+			function () { return ('Will set the challenge that Trimps is running to your input.') },
+			'action', 'ImportExportTooltip("SetCustomChallenge")', null, 'Test', [0]);
 
-		createSetting('gameMaxMapBonus',
-			function () { return ('Max Map Bonus') },
-			function () { return ('Sets map bonus to 10.') },
-			'action', 'cheatMaxMapBonus()', null, 'Test', [0]);
+		createSetting('gameSetC2',
+			function () { return ('Toggle ' + cinf()) },
+			function () { return ('Will toggle on the setting for if you\'re running a ' + cinf() + '.') },
+			'action', 'cheatRunningCinf()', null, 'Test', [0]);
+
+		createSetting('gameLastWorldCell',
+			function () { return ('Last World Cell') },
+			function () { return ('Sets your current cell to the last world cell in the world.') },
+			'action', 'cheatWorldCell()', null, 'Test', [0]);
 
 		createSetting('gameLastMapCell',
 			function () { return ('Last Map Cell') },
 			function () { return ('Sets your current cell to the last map cell if currently mapping.') },
 			'action', 'cheatMapCell()', null, 'Test', [0]);
 
+		createSetting('gameMaxMapBonus',
+			function () { return ('Max Map Bonus') },
+			function () { return ('Sets map bonus to 10.') },
+			'action', 'cheatMaxMapBonus()', null, 'Test', [0]);
+
+		createSetting('gameMaxTenacity',
+			function () { return ('Tenacity Max Mult') },
+			function () { return ('Sets Tenacity to max mult.') },
+			'action', 'cheatMaxTenacity()', null, 'Test', [0]);
+
 		createSetting('gameStatMult',
 			function () { return ('1e100x stats') },
 			function () { return ('Multiplies soldier health & damage by 1e100.') },
 			'action', 'cheatTrimpStats()', null, 'Test', [0]);
-
 	}
-
-
-
 }
 
 function resource() {
@@ -2733,6 +2745,8 @@ function modifyParentNodeUniverseSwap() {
 
 	modifyParentNode("automateSpireAssault", radonon);
 	modifyParentNode("showbreedtimer", radonoff);
+
+	modifyParentNode("gameSetC2", 'show');
 
 	updateCustomButtons(true);
 }
