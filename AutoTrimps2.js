@@ -129,6 +129,7 @@ function assembleChangelog(c) {
 
 var runInterval = 100;
 var startupDelay = 1500;
+var runIntervalGame;
 
 setTimeout(delayStart, 2500);
 

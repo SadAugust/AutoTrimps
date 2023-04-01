@@ -310,3 +310,39 @@ function debugPrettifyMap(map) {
 	}
 	return `[${map.id}]${descriptor}`;
 }
+
+//DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
+function cheatSpeedX(interval) {
+	//Game uses 1000ms for 1 second, so 50ms is 20x speed;
+	var tick = 1000 / game.settings.speed;
+	game.global.time += tick;
+	mainLoop();
+	runGameLoop(null, new Date().getTime());
+	runIntervalGame = setTimeout(cheatSpeedX, interval, interval);
+}
+
+function cheatSpeedNormal() {
+	clearTimeout(runIntervalGame);
+}
+
+function cheatMaxMapBonus() {
+	game.global.mapBonus = 10;
+}
+
+function cheatMaxTenacity() {
+	game.global.zoneStarted -= 7.2e+6
+}
+
+function cheatMapCell() {
+	if (game.global.mapsActive) {
+		game.global.lastClearedMapCell = getCurrentMapObject().size - 2;
+		game.global.mapGridArray[game.global.lastClearedMapCell + 1].health = 0;
+		game.global.mapGridArray[getCurrentMapObject().size - 2].health = 0;
+	}
+}
+
+function cheatTrimpStats() {
+	game.global.soldierCurrentAttack *= 1e100;
+	game.global.soldierHealth *= 1e100;
+	game.global.soldierHealthMax *= 1e100;
+}
