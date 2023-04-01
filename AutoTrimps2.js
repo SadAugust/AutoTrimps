@@ -219,6 +219,7 @@ function mainLoop() {
 
 	if (ATrunning == false) return;
 	if (getPageSetting('PauseScript', 1) || game.options.menu.pauseGame.enabled) return;
+	if (getPageSetting('disableForTW') && usingRealTimeOffline) return;
 	ATrunning = true;
 	if (mainCleanup() || portalWindowOpen || (!heirloomsShown && heirloomFlag) || (heirloomCache != game.global.heirloomsExtra.length)) {
 		heirloomCache = game.global.heirloomsExtra.length;

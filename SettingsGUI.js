@@ -2137,6 +2137,26 @@ function initializeAllSettings() {
 			function () { return ('Enable Breed Timer') },
 			function () { return ('Enables the display of the hidden breedtimer. Turn this off to reduce memory. ') },
 			'boolean', true, null, 'Display', [1]);
+
+		createSetting('sitInMaps',
+			function () { return ('Sit in maps') },
+			function () { return ('Will cause AT to go sit in the map chamber when enabled. The \'Sit In Zone\' setting must be setup for this to work properly.') },
+			'boolean', false, null, 'Display', [1, 2]);
+		createSetting('sitInMaps_Zone',
+			function () { return ('SIM: Zone') },
+			function () { return ('AT will go to the map chamber and stop running any maps at this zone.') },
+			'value', -1, null, 'Display', [1, 2],
+			function () { return (getPageSetting('sitInMaps', currSettingUniverse)) });
+		createSetting('sitInMaps_Cell',
+			function () { return ('SIM: Cell') },
+			function () { return ('AT will go to the map chamber and stop running any maps after this cell has been reached.') },
+			'value', -1, null, 'Display', [1, 2],
+			function () { return (getPageSetting('sitInMaps', currSettingUniverse)) });
+
+		createSetting('disableForTW',
+			function () { return ('Disable AT in TW') },
+			function () { return ('Will disable all of AT\'s features during time warp.') },
+			'boolean', false, null, 'Display', [0]);
 	}
 
 	//Spam
@@ -2158,21 +2178,6 @@ function initializeAllSettings() {
 			zone: false,
 			exotic: false,
 		}, null, 'Display', [1, 2]);
-
-		createSetting('sitInMaps',
-			function () { return ('Sit in maps') },
-			function () { return ('Will cause AT to go sit in the map chamber when enabled. The \'Sit In Zone\' setting must be setup for this to work properly.') },
-			'boolean', false, null, 'Display', [1, 2]);
-		createSetting('sitInMaps_Zone',
-			function () { return ('SIM: Zone') },
-			function () { return ('AT will go to the map chamber and stop running any maps at this zone.') },
-			'value', -1, null, 'Display', [1, 2],
-			function () { return (getPageSetting('sitInMaps', currSettingUniverse)) });
-		createSetting('sitInMaps_Cell',
-			function () { return ('SIM: Cell') },
-			function () { return ('AT will go to the map chamber and stop running any maps after this cell has been reached.') },
-			'value', -1, null, 'Display', [1, 2],
-			function () { return (getPageSetting('sitInMaps', currSettingUniverse)) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
