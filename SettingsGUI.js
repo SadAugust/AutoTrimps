@@ -108,8 +108,15 @@ function minimizeAllTabs() {
 }
 
 function maximizeAllTabs() {
-	for (var a = document.getElementsByClassName("tabcontent"), b = 0, c = a.length; b < c; b++) a[b].style.display = "block";
-	for (var d = document.getElementsByClassName("tablinks"), b = 0, c = d.length; b < c; b++) (d[b].style.display = "block"), d[b].className.includes(" active") || (d[b].className += " active");
+	for (var a = document.getElementsByClassName("tabcontent"), b = 0, c = a.length; b < c; b++) {
+		debug(a[b].innerHTML);
+		if (a[b].id === 'Test') continue;
+		a[b].style.display = "block";
+	}
+	for (var d = document.getElementsByClassName("tablinks"), b = 0, c = d.length; b < c; b++) {
+		if (d[b].id === 'Test') continue;
+		(d[b].style.display = "block"), d[b].className.includes(" active") || (d[b].className += " active");
+	}
 }
 
 var addTabsDiv;
@@ -156,8 +163,8 @@ function initializeAllTabs() {
 	createTabs("Golden", "Golden Upgrade Settings");
 	createTabs("Nature", "Nature Settings");
 	createTabs("Display", "Display & Spam Settings");
+	createTabs("Test", "Should never be seen by users");
 	createTabs("Import Export", "Import & Export Settings");
-	createTabs("Cheat", "Should never be seen by users");
 	createTabs("Legacy", "Legacy Settings. Will be removed every major patch cycle.");
 	var li_0 = document.createElement('li');
 	var a_0 = document.createElement('a');
@@ -2233,37 +2240,37 @@ function initializeAllSettings() {
 		createSetting('gameUser',
 			function () { return ('User') },
 			function () { return ('<b>Not gonna be seen</b>') },
-			'textValue', 'undefined', null, 'Cheat', [0],
+			'textValue', 'undefined', null, 'Test', [0],
 			function () { return (false) });
 		createSetting('gameSpeed50',
 			function () { return ('Game Speed 50x') },
 			function () { return ('Set gamespeed to 50x the regular value.') },
-			'action', 'cheatSpeedX(20)', null, 'Cheat', [0]);
+			'action', 'cheatSpeedX(20)', null, 'Test', [0]);
 
 		createSetting('gameSpeedNormal',
 			function () { return ('Game Speed Normal') },
 			function () { return ('Set gamespeed to the regular value.') },
-			'action', 'cheatSpeedNormal()', null, 'Cheat', [0]);
+			'action', 'cheatSpeedNormal()', null, 'Test', [0]);
 
 		createSetting('gameMaxTenacity',
 			function () { return ('Tenacity Max Mult') },
 			function () { return ('Sets Tenacity to max mult.') },
-			'action', 'cheatMaxTenacity()', null, 'Cheat', [0]);
+			'action', 'cheatMaxTenacity()', null, 'Test', [0]);
 
 		createSetting('gameMaxMapBonus',
 			function () { return ('Max Map Bonus') },
 			function () { return ('Sets map bonus to 10.') },
-			'action', 'cheatMaxMapBonus()', null, 'Cheat', [0]);
+			'action', 'cheatMaxMapBonus()', null, 'Test', [0]);
 
 		createSetting('gameLastMapCell',
 			function () { return ('Last Map Cell') },
 			function () { return ('Sets your current cell to the last map cell if currently mapping.') },
-			'action', 'cheatMapCell()', null, 'Cheat', [0]);
+			'action', 'cheatMapCell()', null, 'Test', [0]);
 
 		createSetting('gameStatMult',
 			function () { return ('1e100x stats') },
 			function () { return ('Multiplies soldier health & damage by 1e100.') },
-			'action', 'cheatTrimpStats()', null, 'Cheat', [0]);
+			'action', 'cheatTrimpStats()', null, 'Test', [0]);
 
 	}
 
@@ -3214,8 +3221,8 @@ function updateCustomButtons(initialLoad) {
 	if (document.getElementById("tabLegacy") != null) {
 		document.getElementById("tabLegacy").style.display = !legacysettings ? "none" : "";
 	}
-	if (document.getElementById("tabCheat") != null) {
-		document.getElementById("tabCheat").style.display = getPageSetting('gameUser') !== 'SadAugust' ? "none" : "";
+	if (document.getElementById("tabTest") != null) {
+		document.getElementById("tabTest").style.display = getPageSetting('gameUser') !== 'SadAugust' ? "none" : "";
 	}
 
 	for (setting in autoTrimpSettings) {
