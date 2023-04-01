@@ -236,7 +236,7 @@ function initializeAllSettings() {
 		createSetting('radonsettings',
 			function () { return (['Helium', 'Radon']) },
 			function () { return ('Switch between Helium (U1) and Radon (U2) settings. ') },
-			'multitoggle', 0, null, 'Core', [1, 2]);
+			'multitoggle', 0, null, 'Core', [0]);
 		var $radonsettings = document.getElementById('radonsettings');
 		$radonsettings.parentNode.style.setProperty('float', 'right');
 		$radonsettings.parentNode.style.setProperty('margin-right', '1vw');
@@ -299,7 +299,7 @@ function initializeAllSettings() {
 		createSetting('portalVoidIncrement',
 			function () { return ('Liq for free Void') },
 			function () { return ('Delays auto portaling into your preferred run and repeatedly does U1 portals until your bone void counter is 1 drop away from a guaranteed extra void map.') },
-			'boolean', false, null, 'Core', [1, 2],
+			'boolean', false, null, 'Core', [0],
 			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount() >= 20) });
 
 
@@ -307,7 +307,7 @@ function initializeAllSettings() {
 		createSetting('PauseScript',
 			function () { return ('Pause AutoTrimps') },
 			function () { return ('Pause AutoTrimps Script (not including the graphs module)') },
-			'boolean', null, null, 'Core', [1, 2]);
+			'boolean', null, null, 'Core', [0]);
 		var $pauseScript = document.getElementById('PauseScript');
 		$pauseScript.parentNode.style.setProperty('float', 'right');
 		$pauseScript.parentNode.style.setProperty('margin-right', '1vw');
@@ -316,7 +316,7 @@ function initializeAllSettings() {
 		createSetting('AutoEggs',
 			function () { return ('AutoEggs') },
 			function () { return ('Click easter egg if it exists, upon entering a new zone. Warning: Quite overpowered. Please solemnly swear that you are up to no good.') },
-			'boolean', false, null, 'Core', [1, 2],
+			'boolean', false, null, 'Core', [0],
 			function () { return (!game.worldUnlocks.easterEgg.locked) });
 		var $eggSettings = document.getElementById('AutoEggs');
 		$eggSettings.parentNode.style.setProperty('float', 'right');
@@ -2177,7 +2177,7 @@ function initializeAllSettings() {
 			jobs: false,
 			zone: false,
 			exotic: false,
-		}, null, 'Display', [1, 2]);
+		}, null, 'Display', [0]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -2501,7 +2501,7 @@ function settingChanged(id, currUniverse) {
 	var radonon = currUniverse ? game.global.universe === 2 : autoTrimpSettings.radonsettings.value == 1;
 	if (btn.type == 'boolean') {
 		var enabled = 'enabled'
-		if (radonon && id !== 'portalVoidIncrement' && id !== 'PauseScript') enabled += 'U2';
+		if (radonon && btn.universe.indexOf(0) === -1) enabled += 'U2';
 		btn[enabled] = !btn[enabled];
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		if (id == 'equipEfficientEquipDisplay') {
@@ -2519,7 +2519,7 @@ function settingChanged(id, currUniverse) {
 	}
 	if (btn.type == 'multitoggle') {
 		var value = 'value'
-		if (radonon && id !== 'radonsettings') value += 'U2';
+		if (radonon && btn.universe.indexOf(0) === -1) value += 'U2';
 		if (id == 'AutoMagmiteSpender2' && btn[value] == 1) {
 			magmiteSpenderChanged = true;
 			setTimeout(function () {
@@ -2541,7 +2541,7 @@ function settingChanged(id, currUniverse) {
 	}
 	if (btn.type == 'dropdown') {
 		var selected = 'selected'
-		if (radonon) selected += 'U2';
+		if (radonon && btn.universe.indexOf(0) === -1) selected += 'U2';
 		btn[selected] = document.getElementById(id).value;
 	}
 
@@ -2903,7 +2903,7 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 function autoSetValueToolTip(id, text, negative, multi) {
 	ranstring = text;
 	var value = 'value'
-	if (autoTrimpSettings.radonsettings.value === 1) value += 'U2';
+	if (autoTrimpSettings.radonsettings.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
 	var elem = document.getElementById("tooltipDiv");
 	var tooltipText = 'Type a number below. You can also use shorthand such as 2e5 or 200k.';
 	if (negative)
@@ -2932,7 +2932,7 @@ function autoSetTextToolTip(id, text) {
 	ranstring = text;
 	var elem = document.getElementById("tooltipDiv");
 	var value = 'value'
-	if (autoTrimpSettings.radonsettings.value === 1) value += 'U2';
+	if (autoTrimpSettings.radonsettings.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
 	var tooltipText = 'Type your input below';
 	tooltipText += `<br/><br/><input id="customTextBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}')" value="${autoTrimpSettings[id][value]}"></input>`;
 	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetText(\'' + id + '\')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
@@ -2985,7 +2985,7 @@ function parseNum(num) {
 
 function autoSetValue(id, negative, multi) {
 	var value = 'value'
-	if (autoTrimpSettings.radonsettings.value === 1) value += 'U2';
+	if (autoTrimpSettings.radonsettings.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
 	var num = 0;
 	unlockTooltip();
 	tooltip('hide');
@@ -3014,7 +3014,7 @@ function autoSetValue(id, negative, multi) {
 function autoSetText(id) {
 	var textVal = 'empty';
 	var value = 'value'
-	if (autoTrimpSettings.radonsettings.value === 1) value += 'U2';
+	if (autoTrimpSettings.radonsettings.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
 	unlockTooltip();
 	tooltip('hide');
 	var textBox = document.getElementById('customTextBox');
@@ -3085,7 +3085,7 @@ function toggleElem(elem, showHide) {
 	if (settingToCheck !== undefined)
 		if (settingToCheck.type === 'dropdown') {
 			var selected = 'selected';
-			if (currSettingUniverse === 2) selected += 'U2';
+			if (currSettingUniverse === 2 && settingToCheck.universe.indexOf(0) === -1) selected += 'U2';
 			if (document.getElementById(elem).value !== settingToCheck[selected]) {
 				document.getElementById(elem).value = settingToCheck[selected];
 			}
@@ -3176,14 +3176,14 @@ function updateCustomButtons(initialLoad) {
 		const settingUniverse = item.universe;
 		if (!Array.isArray(settingUniverse)) continue;
 		if (item.type === 'mazDefaultArray') continue;
-		else if (settingUniverse.indexOf(currSettingUniverse) !== -1) {
+		else if (settingUniverse.indexOf(currSettingUniverse) !== -1 || settingUniverse.indexOf(0) !== -1) {
 			turnOn(setting, radonon);
 		} else {
 			turnOff(setting)
 		};
 
 		//Skips items not from the universe settings we're looking at. Has to be here so that they're disabled when swapping universe settings.
-		if (settingUniverse.indexOf(currSettingUniverse) === -1)
+		if (settingUniverse.indexOf(currSettingUniverse) === -1 && settingUniverse.indexOf(0) === -1)
 			continue;
 
 		if (initialLoad) {
@@ -3191,7 +3191,7 @@ function updateCustomButtons(initialLoad) {
 
 			if (item.type === 'boolean') {
 				itemEnabled = item.enabled;
-				if (radonon && item.id !== 'portalVoidIncrement' && item.id !== 'PauseScript') itemEnabled = item['enabled' + 'U2'];
+				if (radonon && settingUniverse.indexOf(0) === -1) itemEnabled = item['enabled' + 'U2'];
 				elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemEnabled);
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
 
@@ -3199,7 +3199,7 @@ function updateCustomButtons(initialLoad) {
 			}
 			else if (item.type == 'value' || item.type == 'valueNegative' || item.type == 'multitoggle' || item.type == 'multiValue' || item.type == 'textValue') {
 				itemValue = item.value;
-				if (radonon && item.id !== 'radonsettings') itemValue = item['value' + 'U2'];
+				if (radonon && settingUniverse.indexOf(0) === -1) itemValue = item['value' + 'U2'];
 				if (elem != null) {
 					if (item.type == 'multitoggle') {
 						elem.innerHTML = item.name()[itemValue];

@@ -93,7 +93,7 @@ function getPageSetting(setting, universe) {
 
 	if (!universe) universe = game.global.universe;
 
-	if (setting !== 'radonsettings' && (universe === 2)) {
+	if (autoTrimpSettings[setting].universe.indexOf(0) === -1 && universe === 2) {
 		if (universe === 2) enabled += 'U2';
 		if (universe === 2) selected += 'U2';
 		if (universe === 2) value += 'U2';
@@ -161,7 +161,7 @@ function saveSettings() {
 }
 
 function debug(a, b, c) {
-	var settingArray = getPageSetting('spamMessages'),
+	var settingArray = atFinishedLoading && getPageSetting('spamMessages'),
 		p = !0;
 
 	switch (b) {
