@@ -313,16 +313,26 @@ function debugPrettifyMap(map) {
 
 //DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
 function cheatSpeedX(interval) {
-	//Game uses 1000ms for 1 second, so 50ms is 20x speed;
-	var tick = 1000 / game.settings.speed;
+	//Game uses 100ms for 1 second, so 5ms is 20x speed;
+	var date = new Date();
+	var now = date.getTime();
+	game.global.lastOnline = now;
+
+	var tick = 100;
 	game.global.time += tick;
+
 	mainLoop();
-	runGameLoop(null, new Date().getTime());
+	gameLoop(null, now);
 	runIntervalGame = setTimeout(cheatSpeedX, interval, interval);
+
+	if ((date.getSeconds() % 1) === 0) updateLabels();
 }
 
 function cheatSpeedNormal() {
 	clearTimeout(runIntervalGame);
+	var now = new Date().getTime();
+	game.global.time = 0;
+	game.global.start = now;
 }
 
 //called by ImportExportTooltip('NameSettingsProfiles')

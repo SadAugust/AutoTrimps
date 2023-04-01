@@ -2246,7 +2246,7 @@ function initializeAllSettings() {
 		createSetting('gameSpeed50',
 			function () { return ('Game Speed 50x') },
 			function () { return ('Set gamespeed to 50x the regular value.') },
-			'action', 'cheatSpeedX(20)', null, 'Test', [0]);
+			'action', 'cheatSpeedX(2)', null, 'Test', [0]);
 
 		createSetting('gameSpeedNormal',
 			function () { return ('Game Speed Normal') },

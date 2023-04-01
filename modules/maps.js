@@ -61,7 +61,7 @@ function updateAutoMapsStatus(get) {
 }
 
 function makeAutomapStatusTooltip() {
-	const farmingSetting = FarmingDecision();
+	const farmingSetting = mapSettings;
 	const mapStacksText = (`Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`);
 	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy.';
 	const hitsSurvived = getPageSetting('hitsSurvived') > 0 ? prettify(getPageSetting('hitsSurvived')) : 'Disabled';
