@@ -313,8 +313,7 @@ function mainLoopU1() {
 
 
 	//Combat
-	if (getPageSetting('ForceAbandon') || getPageSetting('fuckanti') > 0) trimpcide();
-	if (getPageSetting('trimpsnotdie') && game.global.world > 1) helptrimpsnotdie();
+	if (getPageSetting('ForceAbandon')) trimpcide();
 	if (!game.global.fighting) {
 		if (getPageSetting('fightforever') === 0) fightalways();
 		else if (getPageSetting('fightforever') > 0 && HDRatio <= getPageSetting('fightforever')) fightalways();

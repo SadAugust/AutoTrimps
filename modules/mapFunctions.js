@@ -2353,7 +2353,7 @@ function smithless() {
 			}
 		}
 
-		ourDmgTenacity *= getZoneMinutes() > 90 ? 1 : 1.5;
+		ourDmgTenacity *= getZoneMinutes() > 100 ? 1 : 1.5;
 		if (equipsToGet((game.global.world + smithlessMapLevel)) > 0) ourDmgTenacity *= 1000;
 
 		var totalDmgTenacity = (ourDmgTenacity * 2 + (ourDmgTenacity * gammaDmg * 2))
