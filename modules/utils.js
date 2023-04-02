@@ -185,6 +185,9 @@ function debug(a, b, c) {
 		case 'maps':
 			p = settingArray.maps;
 			break;
+		case 'fragment':
+			p = settingArray.fragment;
+			break;
 		case 'mapDetails':
 			p = settingArray.map_Details;
 			break;
