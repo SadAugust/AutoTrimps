@@ -204,15 +204,12 @@ function getPsStringLocal(what, rawNum) {
 function advancedNurseries() {
 	//Only build nurseries if: A) Lacking Health & B) Not lacking Damage & C&D) Has max Map Stacks E) Has at least 1 Map Stack F) Not farming Spire or advN is off
 	//Also, it requires less health during spire
-	const maxHealthMaps = game.global.challengeActive === "Daily" ? getPageSetting('dMaxMapBonushealth') : getPageSetting('MaxMapBonushealth');
 	const a = hdStats.hitsSurvived < getMapHealthCutOff(vmStatus);
 	const b = hdStats.hdRatio < getFarmCutOff(vmStatus) || weaponCapped();
 	const c = game.global.mapBonus >= maxHealthMaps;
-	const d = game.global.mapBonus >= getPageSetting('MaxMapBonuslimit') || hdStats.hdRatio < getMapCutOff(vmStatus);
-	const e = game.global.mapBonus >= 1 || getPageSetting('MaxMapBonuslimit') == 0 || maxHealthMaps == 0;
 	const f = !preSpireFarming || !getPageSetting('AdvancedNurseries');
 	const off = !getPageSetting('AdvancedNurseries') || game.stats.highestLevel.valueTotal() < 230;
-	return off || (a && b && c && d && e && f);
+	return off || (a && b && c && f);
 }
 
 function mostEfficientHousing() {

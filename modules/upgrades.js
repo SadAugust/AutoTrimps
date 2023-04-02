@@ -90,12 +90,11 @@ function autoGiga(targetZone, metalRatio = 0.5, slowDown = 10, customBase) {
 
 function firstGiga(forced) {
 	//Build our first giga if: A) Has more than 2 Warps & B) Can't afford more Coords & C)* Lacking Health or Damage & D)* Has run at least 1 map stack or if forced to
-	const maxHealthMaps = challengeActive('Daily') ? getPageSetting('dMaxMapBonushealth') : getPageSetting('MaxMapBonushealth');
 	const s = !(getPageSetting('CustomDeltaFactor') > 20);
 	const a = game.buildings.Warpstation.owned >= 2;
 	const b = !canAffordCoordinationTrimps() || game.global.world >= 230 && !canAffordTwoLevel(game.upgrades.Coordination);
 	const c = s || currentMap === 'HD Farm';
-	const d = s || game.global.mapBonus >= 2 || game.global.mapBonus >= getPageSetting('MaxMapBonuslimit') || game.global.mapBonus >= maxHealthMaps;
+	const d = s || game.global.mapBonus >= 2;
 	if (!forced && !(a && b && c && d)) return false;
 
 	//Define Base and Delta for this run
