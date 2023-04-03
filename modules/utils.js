@@ -317,15 +317,22 @@ function debugPrettifyMap(map) {
 //DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
 function cheatSpeedX(interval) {
 	//Game uses 100ms for 1 second, so 5ms is 20x speed;
+	if (game.options.menu.pauseGame.enabled) {
+		runIntervalGame = setTimeout(cheatSpeedX, interval, interval);
+		return;
+	}
 	var date = new Date();
 	var now = date.getTime();
 	game.global.lastOnline = now;
+	game.global.start = now;
 
 	var tick = 100;
 	game.global.time += tick;
 
 	mainLoop();
 	gameLoop(null, now);
+	if (game.global.time > runPortalTime) runPortalTime = game.global.time;
+	if (runPortalTime > game.global.time) game.global.time = runPortalTime;
 	runIntervalGame = setTimeout(cheatSpeedX, interval, interval);
 
 	if ((date.getSeconds() % 1) === 0) updateLabels();

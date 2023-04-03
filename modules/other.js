@@ -281,23 +281,30 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	if (!game.global.mapsUnlocked) return 0;
 	if (maxLevel > 10) maxLevel = 10;
 	if (!statCheck) statCheck = false;
-	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
-
-	if (game.global.universe === 1) return autoMapLevelU1(special, maxLevel, minLevel, statCheck);
+	const z = game.global.world;
+	if (z + maxLevel < 6) maxLevel = 0 - (z + 6);
 
 	if (challengeActive('Wither') && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
 	if (challengeActive('Insanity') && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
 
-	var query = !special ? true : false;
+
+	const hze = getHighestLevelCleared();
+	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 49 : hze >= 209;
+	const haveMapReducer = game.talents.mapLoot.purchased;
+
+	const biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
+	const query = !special ? true : false;
+	var universeSetting = (z >= 60 && hze >= 180) ? 'S' : game.upgrades.Dominance.done ? 'D' : 'X';
+	const cell = game.talents.mapLoot2.purchased ? 20 : 25;
+	if (!special) special = getAvailableSpecials('lmc');
+
 	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
-	if (maxLevel > 0 && game.global.highestRadonLevelCleared + 1 < 50) maxLevel = 0;
-	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - game.global.world + 6 : minLevel;
-	var special = !special ? (game.global.highestRadonLevelCleared > 83 ? 'lmc' : 'smc') : special;
-	var biome = !biome ? (game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain") : biome;
-	var difficulty = 0.75;
+	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
+	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - z + 6 : minLevel;
+	const difficulty = game.global.universe === 2 ? (hze >= 29 ? 0.75 : 1) : (hze > 209 ? 0.75 : hze > 120 ? 0.84 : 1.2);
 	var runningQuest = challengeActive('Quest') && currQuest() == 8;
 	var runningUnlucky = challengeActive('Unlucky')
-	var ourHealth = calcOurHealth(runningQuest, 'map');
+	var ourHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : universeSetting), 'map');
 	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
@@ -315,13 +322,13 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		if (!statCheck && !getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
 			continue;
 
-		var equalityAmt = equalityQuery('Snimp', game.global.world + mapLevel, 20, 'map', difficulty, 'oneShot', true);
-		var ourDmg = calcOurDmg(dmgType, equalityAmt, false, 'map', critType, y, 'force');
+		if (game.global.universe === 2) universeSetting = equalityQuery('Snimp', z + mapLevel, cell, 'map', difficulty, 'oneShot', true);
+		var ourDmg = calcOurDmg(dmgType, universeSetting, false, 'map', critType, y, 'force');
 		if (challengeActive('Duel')) ourDmg *= gammaBurstPct;
 		if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
-		var enemyHealth = calcEnemyHealthCore('map', game.global.world + mapLevel, 20, 'Turtlimp') * difficulty;
+		var enemyHealth = calcEnemyHealthCore('map', z + mapLevel, cell, 'Turtlimp') * difficulty;
 		enemyHealth *= (maxOneShotPower(true));
-		var enemyDmg = calcEnemyAttackCore('map', game.global.world + mapLevel, 20, 'Snimp', false, false, equalityAmt) * difficulty;
+		var enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, 'Snimp', false, false, universeSetting) * difficulty;
 
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 		enemyDmg *= dailyEmpowerToggle && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
@@ -332,7 +339,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		}
 
 		if (enemyHealth <= ourDmg && enemyDmg <= ourHealth) {
-			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && game.talents.mapLoot.purchased && !challengeActive('Glass') && !challengeActive('Insanity') && !challengeActive('Mayhem'))
+			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && haveMapReducer && !challengeActive('Glass') && !challengeActive('Insanity') && !challengeActive('Mayhem'))
 				mapLevel = -1;
 			return mapLevel;
 		}
@@ -340,57 +347,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	return 0;
 }
 
-//Potential U1 auto map level rewrite. Untested atm and prolly gonna need a lot of work!
 /* function autoMapLevelU1(special, maxLevel, minLevel, statCheck) {
-	if (game.global.world + maxLevel < 6) maxLevel = 0 - (game.global.world + 6);
-
-	const z = game.global.world;
-	const hze = getHighestLevelCleared();
-	const extraMapLevelsAvailable = hze >= 209;
-	var query = !special ? true : false;
-	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
-	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
-	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - game.global.world + 6 : minLevel;
-	var special = !special ? (hze > 184 ? 'lmc' : 'smc') : special;
-	var biome = game.global.decayDone ? "Plentiful" : "Mountain";
-	var cell = game.talents.mapLoot2.purchased ? 20 : 25;
-	var difficulty = hze > 250 ? 0.75 : hze > 120 ? 0.84 : 1.2;
-	var stance = (z >= 60 && hze >= 180) ? 'S' : game.upgrades.Dominance.done ? 'D' : 'X';
-	var ourHealth = calcOurHealth(stance, 'map');
-	var dmgType = 'avg';
-	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
-	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
-	var critType = 'maybe';
-
-	for (y = maxLevel; y >= minLevel; y--) {
-		var mapLevel = y;
-		if (mapLevel > 0) dmgType = 'min';
-		if (y === minLevel) {
-			return minLevel;
-		}
-		if (!statCheck && getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < perfectMapCost_Actual(mapLevel, special, biome))
-			continue;
-		if (!statCheck && !getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
-			continue;
-
-		var ourDmg = calcOurDmg(dmgType, stance, false, 'map', critType, y, 'force');
-		var enemyHealth = calcEnemyHealthCore('map', game.global.world + mapLevel, cell, 'Turtlimp') * difficulty;
-		enemyHealth *= maxOneShotPower(true);
-		var enemyDmg = calcEnemyAttackCore('map', game.global.world + mapLevel, cell, 'Snimp', false) * difficulty;
-
-		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
-		enemyDmg *= dailyEmpowerToggle && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
-
-		if (enemyHealth <= ourDmg && enemyDmg <= ourHealth) {
-			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && game.talents.mapLoot.purchased)
-				mapLevel -= 1;
-			return mapLevel;
-		}
-	}
-	return 0;
-} */
-
-function autoMapLevelU1(special, maxLevel, minLevel, statCheck) {
 
 	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
 	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - game.global.world + 6 : minLevel;
@@ -445,7 +402,7 @@ function autoMapLevelU1(special, maxLevel, minLevel, statCheck) {
 		return mapLevel;
 	}
 	return mapLevel;
-}
+} */
 
 function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, forceOK, hits) {
 
