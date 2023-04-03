@@ -306,7 +306,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
-		if (!runningUnlucky && mapLevel > 0) dmgType = 'min';
+		if (!runningUnlucky) dmgType = mapLevel > 0 ? 'min' : 'avg';
 		if (y === minLevel) {
 			return minLevel;
 		}
@@ -330,6 +330,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 			enemyDmg *= 10;
 			if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
 		}
+
 		if (enemyHealth <= ourDmg && enemyDmg <= ourHealth) {
 			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && game.talents.mapLoot.purchased && !challengeActive('Glass') && !challengeActive('Insanity') && !challengeActive('Mayhem'))
 				mapLevel = -1;
