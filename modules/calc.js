@@ -1370,7 +1370,6 @@ function calcMutationHealth(targetZone) {
 	if (!targetZone) targetZone = game.global.world;
 
 	var highest = 1;
-	var worstCell = 0;
 	var gridArray = game.global.gridArray
 	for (var i = 0; i < game.global.gridArray.length; i++) {
 		var cell = i;
