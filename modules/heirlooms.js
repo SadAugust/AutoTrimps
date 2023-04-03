@@ -262,7 +262,6 @@ function heirloomStaffToEquip(mapType) {
 				return ('heirloomStaffMap');
 		}
 	}
-
 }
 
 function heirloomSwapping() {

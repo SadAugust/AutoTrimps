@@ -302,12 +302,13 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
 	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - z + 6 : minLevel;
 	const difficulty = game.global.universe === 2 ? (hze >= 29 ? 0.75 : 1) : (hze > 209 ? 0.75 : hze > 120 ? 0.84 : 1.2);
-	var runningQuest = challengeActive('Quest') && currQuest() == 8;
-	var runningUnlucky = challengeActive('Unlucky')
-	var ourHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : universeSetting), 'map');
+	const runningQuest = challengeActive('Quest') && currQuest() == 8;
+	const runningUnlucky = challengeActive('Unlucky')
+	const ourHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : universeSetting), 'map');
+	const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
+	const dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
+	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
 	var dmgType = runningUnlucky ? 'max' : 'avg'
-	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
-	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var critType = 'maybe'
 	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel')) critType = 'never'
 
@@ -327,9 +328,12 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		if (challengeActive('Duel')) ourDmg *= gammaBurstPct;
 		if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = calcEnemyHealthCore('map', z + mapLevel, cell, 'Turtlimp') * difficulty;
-		enemyHealth *= (maxOneShotPower(true));
-		var enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, 'Snimp', false, false, universeSetting) * difficulty;
 
+		if (maxOneShotPower(true) > 1) {
+			enemyHealth *= (maxOneShotPower(true));
+			if (game.global.universe === 1) ourDmg *= (0.005 * game.portal.Overkill.level);
+		}
+		var enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, 'Snimp', false, false, universeSetting) * difficulty;
 		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
 		enemyDmg *= dailyEmpowerToggle && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 
@@ -338,7 +342,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 			if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
 		}
 
-		if (enemyHealth <= ourDmg && enemyDmg <= ourHealth) {
+		if (enemyHealth <= ourDmg && enemyDmg <= (ourHealth + ourBlock)) {
 			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && haveMapReducer && !challengeActive('Glass') && !challengeActive('Insanity') && !challengeActive('Mayhem'))
 				mapLevel = -1;
 			return mapLevel;
