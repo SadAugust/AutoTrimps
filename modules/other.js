@@ -310,7 +310,10 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
 	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var critType = 'maybe'
-	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel')) critType = 'never'
+
+	var critChance = getPlayerCritChance_AT('map');
+	critChance = critChance - Math.floor(critChance);
+	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel') || critChance < 0.2) critType = 'never';
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
