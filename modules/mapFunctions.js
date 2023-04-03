@@ -357,8 +357,10 @@ function voidMaps() {
 		var rVMJobRatio = baseSettings[index] !== undefined ? rVMSettings.jobratio : rVMDefaultSettings.jobRatio;
 		var shouldPortal = baseSettings[index] !== undefined ? rVMSettings.portalAfter : false;
 
-		if (module.boneCharge && game.global.mapsActive && getCurrentMapObject.location === 'Void') {
+		if (module.boneCharge && game.global.mapsActive && getCurrentMapObject().location === 'Void') {
 			module.boneCharge = false;
+			if (game.permaBoneBonuses.boosts.charges > 0)
+				debug('Consumed 1 bone shrine charge on zone ' + game.global.world + " and gained " + boneShrineOutput(1));
 			game.permaBoneBonuses.boosts.consume();
 		}
 
