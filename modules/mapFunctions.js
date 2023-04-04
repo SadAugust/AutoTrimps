@@ -2509,10 +2509,10 @@ function hdFarm() {
 	if (getPageSetting('hitsSurvived') > 0) {
 		var hitsSurvived = calcHitsSurvived(game.global.world);
 		if (hitsSurvived < getPageSetting('hitsSurvived')) shouldHealthFarm = true;
-		else if (game.upgrades.Explorers.done && game.global.lastClearedCell + 2 >= 81 && calcHitsSurvived(game.global.world + 1) < getPageSetting('hitsSurvived')) {
+		/* else if (game.upgrades.Explorers.done && game.global.lastClearedCell + 2 >= 81 && calcHitsSurvived(game.global.world + 1) < getPageSetting('hitsSurvived')) {
 			hitsSurvived = calcHitsSurvived(game.global.world + 1);
 			if (hitsSurvived !== Infinity) shouldHealthFarm = true;
-		}
+		} */
 	}
 	if (!getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm) return farmingDetails;
 

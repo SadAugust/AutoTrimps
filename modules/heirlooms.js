@@ -130,6 +130,7 @@ function HeirloomModSearch(heirloom, modifier) {
 	if (heirloom === undefined || getPageSetting(heirloom) === undefined || getPageSetting(heirloom) === false || HeirloomSearch(heirloom) === undefined) {
 		var type = ['ShieldEquipped', 'StaffEquipped'];
 		for (var y = (type.length - 1); y > -1; y--) {
+			if (Object.keys(game.global[type[y]]).length === 0) continue;
 			var loom = game.global[type[y]];
 			for (var i = (loom.mods.length - 1); i > -1; i--) {
 				if (loom.mods[i][0] === modifier)

@@ -88,7 +88,7 @@ function workerRatios(workerRatio) {
 	} else if (challengeActive('Metal') || challengeActive('Transmute')) {
 		ratioSet = [4, 5, 0];
 	} else if (game.global.world < 5) {
-		ratioSet = [3, 1, 1];
+		ratioSet = [1.5, 0.7, 1];
 	}
 	else {
 		ratioSet = MODULES["jobs"]['autoRatio1'];
