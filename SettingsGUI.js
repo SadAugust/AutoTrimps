@@ -3452,7 +3452,13 @@ function setupATButtons() {
 
 function getDailyHeHrStats() {
 	const resourceHr = game.global.universe === 2 ? 'Rn' : 'He';
-	var a = ""; if (challengeActive('Daily')) { var b = game.stats.heliumHour.value() / (game.global.totalHeliumEarned - (game.global.heliumLeftover + game.resources.helium.owned)); b *= 100 + getDailyHeliumValue(countDailyWeight()), a = "<b>After Daily '" + resourceHr + "\/Hr: " + b.toFixed(3) + "%" } return a
+	const resource = game.global.universe === 2 ? 'Radon' : 'Helium';
+	var a = "";
+	if (challengeActive('Daily')) {
+		var b = game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - (game.global[resource.toLowerCase() + 'Leftover'] + game.resources[resource.toLowerCase()].owned));
+		b *= 100 + getDailyHeliumValue(countDailyWeight()),
+			a = "<b>After Daily '" + resourceHr + "\/Hr: " + b.toFixed(3) + "%"
+	} return a
 }
 
 function toggleAutoMaps() {
