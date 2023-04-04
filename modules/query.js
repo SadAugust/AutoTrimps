@@ -85,7 +85,7 @@ function setResourceNeeded() {
 		}
 	}
 	if (game.global.universe === 1 && needGymystic()) {
-		resourceNeeded.science += getScienceCostToUpgrade("Gymystic")
+		resourceNeeded.science += getCostToUpgrade('Gymystic', 'science')
 	}
 }
 
