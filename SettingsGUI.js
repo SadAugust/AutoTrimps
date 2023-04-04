@@ -156,7 +156,6 @@ function initializeAllTabs() {
 	createTabs("C2", "C2 - Settings for C2s");
 	createTabs("Challenges", "Challenges - Settings for Specific Challenges");
 	createTabs("Combat", "Combat & Stance Settings");
-	createTabs("Windstacking", "Windstacking Settings");
 	createTabs("ATGA", "Geneticassist Settings");
 	createTabs("Magma", "Dimensional Generator & Magmite Settings");
 	createTabs("Heirlooms", "Heirloom Settings");
@@ -1331,33 +1330,6 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Windstacking
-	const displayWindstacking = true;
-	if (displayWindstacking) {
-		createSetting('turnwson',
-			function () { return ('Turn WS On!') },
-			function () { return ('Turn on Windstacking Stance in Combat to see the settings! ') },
-			'boolean', false, null, 'Windstacking', [1],
-			function () { return (autoTrimpSettings.AutoStance.value !== 3) });
-		createSetting('WindStackingMin',
-			function () { return ('Windstack Min Zone') },
-			function () { return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from WS MAX work off this setting. ') },
-			'value', '-1', null, 'Windstacking', [1],
-			function () { return (autoTrimpSettings.AutoStance.value === 3) });
-		createSetting('WindStackingMinHD',
-			function () { return ('Windstack H:D') },
-			function () { return ('For use with Windstacking Stance, fiddle with this to maximise your stacks in wind zones. ') },
-			'value', '-1', null, 'Windstacking', [1],
-			function () { return (autoTrimpSettings.AutoStance.value === 3) });
-		createSetting('WindStackingMax',
-			function () { return ('Windstack Stacks') },
-			function () { return ('For use with Windstacking Stance. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190.  In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment. ') },
-			'value', '200', null, 'Windstacking', [1],
-			function () { return (autoTrimpSettings.AutoStance.value === 3) });
-	}
-
-	//----------------------------------------------------------------------------------------------------------------------
-
 	//ATGA
 	const displayATGA = true;
 	if (displayATGA) {
@@ -1482,11 +1454,13 @@ function initializeAllSettings() {
 		createSetting('addpoison',
 			function () { return ('Poison Calc') },
 			function () { return ('<b>Experimental. </b><br>Adds poison to the battlecalc. May improve your poison zone speed. ') },
-			'boolean', false, null, 'Combat', [1]);
+			'boolean', false, null, 'Combat', [1],
+			function () { return (game.global.highestRadonLevelCleared > 10) });
 		createSetting('fullice',
 			function () { return ('Ice Calc') },
-			function () { return ('<b>Experimental. </b><br>Always calculates your ice to be a consistent level instead of going by the enemy debuff. Stops H:D spazzing out. ') },
-			'boolean', false, null, 'Combat', [1]);
+			function () { return ('Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use it to ensure your H:D ratios aren\'t all over the place. ') },
+			'boolean', true, null, 'Combat', [1],
+			function () { return (game.global.highestRadonLevelCleared > 10) });
 		createSetting('45stacks',
 			function () { return ('Antistack Calc') },
 			function () { return ('<b>Experimental. </b><br>Always calcs your damage as having full antistacks. Useful for windstacking. ') },
@@ -1603,6 +1577,26 @@ function initializeAllSettings() {
 			function () { return ('Why scry when theres no essence? Turns off scrying when the remaining enemies with essence drops to 0. ') },
 			'boolean', false, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
+
+
+		//----------------------------------------------------------------------------------------------------------------------
+
+		//Windstacking
+		createSetting('WindStackingMin',
+			function () { return ('Windstack Min Zone') },
+			function () { return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from WS MAX work off this setting. ') },
+			'value', '-1', null, 'Combat', [1],
+			function () { return (autoTrimpSettings.AutoStance.value === 3) });
+		createSetting('WindStackingMinHD',
+			function () { return ('Windstack H:D') },
+			function () { return ('For use with Windstacking Stance, fiddle with this to maximise your stacks in wind zones. ') },
+			'value', '-1', null, 'Combat', [1],
+			function () { return (autoTrimpSettings.AutoStance.value === 3) });
+		createSetting('WindStackingMax',
+			function () { return ('Windstack Stacks') },
+			function () { return ('For use with Windstacking Stance. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190.  In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment. ') },
+			'value', '200', null, 'Combat', [1],
+			function () { return (autoTrimpSettings.AutoStance.value === 3) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -2017,7 +2011,7 @@ function initializeAllSettings() {
 			function () { return ('Click to adjust settings.') },
 			'mazArray', [], 'MAZLookalike("Daily Auto Golden", "AutoGoldenDaily", "MAZ")', 'Golden', [1, 2]);
 		createSetting('autoGoldenC3Settings',
-			function () { return (cinf() + 'Auto Gold Settings') },
+			function () { return (cinf() + ' Auto Gold Settings') },
 			function () { return ('Click to adjust settings.') },
 			'mazArray', [], 'MAZLookalike("C3 Auto Golden", "AutoGoldenC3", "MAZ")', 'Golden', [1, 2]);
 	}
@@ -2246,7 +2240,7 @@ function initializeAllSettings() {
 		createSetting('gameSpeed50',
 			function () { return ('Game Speed 50x') },
 			function () { return ('Set gamespeed to 50x the regular value.') },
-			'action', 'cheatSpeedX(1)', null, 'Test', [0]);
+			'action', 'cheatSpeedX(0.1)', null, 'Test', [0]);
 
 		createSetting('gameSpeedNormal',
 			function () { return ('Game Speed Normal') },
@@ -2685,6 +2679,7 @@ function modifyParentNodeUniverseSwap() {
 
 	//Combat
 	modifyParentNode("gammaBurstCalc", radonoff);
+	modifyParentNode("screwessence", radonoff);
 
 	//ATGA
 	modifyParentNode("ATGA2timer", radonoff);
@@ -3216,9 +3211,6 @@ function updateCustomButtons(initialLoad) {
 	}
 	if (document.getElementById("tabSpire") != null) {
 		document.getElementById("tabSpire").style.display = radonon || (!displayAllSettings && highestZone < 190) ? "none" : "";
-	}
-	if (document.getElementById("tabWindstacking") != null) {
-		document.getElementById("tabWindstacking").style.display = radonon || (!displayAllSettings && game.empowerments.Wind.getLevel() < 50) ? "none" : "";
 	}
 	if (document.getElementById("tabATGA") != null) {
 		document.getElementById("tabATGA").style.display = radonon || (!displayAllSettings && highestZone < 70) ? "none" : "";

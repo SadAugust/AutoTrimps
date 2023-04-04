@@ -948,9 +948,16 @@ function calcEnemyAttack(type, zone, cell = 99, name = "Snimp", minOrMax, custom
 	}
 
 	//Ice - Experimental
-	if (getEmpowerment() == "Ice" && getPageSetting('fullice')) {
-		var afterTransfer = 1 + Math.ceil(game.empowerments["Ice"].currentDebuffPower * getRetainModifier("Ice"));
-		attack *= Math.pow(game.empowerments.Ice.getModifier(), afterTransfer);
+	if (getEmpowerment() == "Ice") {
+		//Uses the actual number in some places like Stances
+		if (!getPageSetting('fullice') || realDamage) number *= 1 + game.empowerments.Ice.getDamageModifier();
+		//Otherwise, use the number we would have after a transfer
+		else {
+			var afterTransfer = 1 + Math.ceil(game.empowerments["Ice"].currentDebuffPower * getRetainModifier("Ice"));
+			var mod = 1 - Math.pow(game.empowerments.Ice.getModifier(), afterTransfer);
+			if (Fluffy.isRewardActive('naturesWrath')) mod *= 2;
+			number *= 1 + mod;
+		}
 	}
 
 	return minOrMax ? Math.floor(attack) : Math.ceil(attack);
@@ -1610,9 +1617,9 @@ function scaleToCurrentMapLocal(amt, ignoreBonuses, ignoreScry, map) {
 		}
 	}
 	var maploot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
+	if (ignoreBonuses) return amt;
 	//Add map loot bonus
 	amt = Math.round(amt * maploot);
-	if (ignoreBonuses) return amt;
 	amt = scaleLootBonuses(amt, ignoreScry);
 	return amt;
 }

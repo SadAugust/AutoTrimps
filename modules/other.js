@@ -287,7 +287,6 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	if (challengeActive('Wither') && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
 	if (challengeActive('Insanity') && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
 
-
 	const hze = getHighestLevelCleared();
 	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 49 : hze >= 209;
 	const haveMapReducer = game.talents.mapLoot.purchased;
@@ -297,20 +296,20 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	var universeSetting = (z >= 60 && hze >= 180) ? 'S' : game.upgrades.Dominance.done ? 'D' : 'X';
 	const cell = game.talents.mapLoot2.purchased ? 20 : 25;
 	if (!special) special = getAvailableSpecials('lmc');
+	const difficulty = game.global.universe === 2 ? (hze >= 29 ? 0.75 : 1) : (hze > 209 ? 0.75 : hze > 120 ? 0.84 : 1.2);
 
 	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
 	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
 	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - z + 6 : minLevel;
-	const difficulty = game.global.universe === 2 ? (hze >= 29 ? 0.75 : 1) : (hze > 209 ? 0.75 : hze > 120 ? 0.84 : 1.2);
 	const runningQuest = challengeActive('Quest') && currQuest() == 8;
 	const runningUnlucky = challengeActive('Unlucky')
 	const ourHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : universeSetting), 'map');
 	const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
 	const dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
+
 	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var critType = 'maybe'
-
 	var critChance = getPlayerCritChance_AT('map');
 	critChance = critChance - Math.floor(critChance);
 	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel') || critChance < 0.2) critType = 'never';
@@ -353,63 +352,6 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	}
 	return 0;
 }
-
-/* function autoMapLevelU1(special, maxLevel, minLevel, statCheck) {
-
-	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
-	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - game.global.world + 6 : minLevel;
-
-	const z = game.global.world;
-	const hze = getHighestLevelCleared();
-	const extraMapLevelsAvailable = hze >= 209;
-	const haveMapReducer = game.talents.mapLoot.purchased;
-	const biome = (game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain");
-
-	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
-	if (!special) special = getAvailableSpecials('lmc');
-
-	for (y = maxLevel; y >= minLevel; y--) {
-		var mapLevel = y;
-
-		//Skip plus level maps if they're not available.
-		if (!extraMapLevelsAvailable && y > 0) continue;
-
-		if (y === minLevel) return minLevel;
-
-		if (!statCheck && getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < perfectMapCost_Actual(mapLevel, special, biome))
-			continue;
-		if (!statCheck && !getPageSetting('onlyPerfectMaps') && game.resources.fragments.owned < minMapFrag(mapLevel, special, biome))
-			continue;
-
-		// Calculate optimal map level
-		var ratio = calcHDRatio(z + mapLevel, "map");
-		if (game.unlocks.imps.Titimp) {
-			ratio /= 2;
-		}
-		// Stance priority: Scryer > Dominance > X
-		if (z >= 60 && hze >= 180) {
-			ratio *= 2;
-		} else if (game.upgrades.Dominance.done) {
-			ratio /= 4;
-		}
-		// Stop increasing map level once HD ratio is too large
-		if ((z <= 40 && ratio > 1.5) || ratio > 1.2) {
-			continue;
-		}
-
-		if (mapLevel > 0) {
-			const maxOneShotCells = maxOneShotPower();
-			if (oneShotZone((z + mapLevel), "map", "S") >= maxOneShotCells) {
-				return mapLevel;
-			}
-		}
-
-		if (mapLevel === 0 && minLevel < 0 && haveMapReducer) return (mapLevel - 1);
-
-		return mapLevel;
-	}
-	return mapLevel;
-} */
 
 function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmType, forceOK, hits) {
 
