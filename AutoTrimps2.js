@@ -148,13 +148,11 @@ function swapBaseSettings() {
 	if (autoTrimpSettings.gameUser.value !== 'SadAugust') return;
 	if (navigator.oscpu === 'Linux armv7l') {
 		game.options.menu.hotkeys.enabled = 0;
-		game.options.menu.disablePause.enabled = 0;
 		game.options.menu.progressBars.enabled = 0;
 		game.options.menu.showHeirloomAnimations.enabled = 0;
 	}
 	else {
 		game.options.menu.hotkeys.enabled = 1;
-		game.options.menu.disablePause.enabled = 1;
 		game.options.menu.progressBars.enabled = 2;
 		game.options.menu.showHeirloomAnimations.enabled = 1;
 	}
