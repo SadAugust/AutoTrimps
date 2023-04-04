@@ -74,11 +74,12 @@ function setResourceNeeded() {
 
 	for (var upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
-		if (game.upgrades[upgrade].allowed > game.upgrades[upgrade].done) {
+		var gameUpgrade = game.upgrades[upgrade];
+		if (gameUpgrade.allowed > gameUpgrade.done) {
 			resourceNeeded.science += getCostToUpgrade(upgrade, 'science');
 			if (upgrade === 'Trapstorm') continue;
 			resourceNeeded.food += getCostToUpgrade(upgrade, 'food');
-			if (upgrade.prestiges) continue;
+			if (gameUpgrade.prestiges) continue;
 			resourceNeeded.wood += getCostToUpgrade(upgrade, 'wood');
 			resourceNeeded.metal += getCostToUpgrade(upgrade, 'metal');
 		}
