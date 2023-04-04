@@ -3228,7 +3228,7 @@ function updateCustomButtons(initialLoad) {
 		document.getElementById("tabLegacy").style.display = !legacysettings ? "none" : "";
 	}
 	if (document.getElementById("tabTest") != null) {
-		document.getElementById("tabTest").style.display = getPageSetting('gameUser') !== 'SadAugust' ? "none" : "";
+		document.getElementById("tabTest").style.display = getPageSetting('gameUser') !== 'SadAugust' || getPageSetting('gameUser') !== 'Test' ? "none" : "";
 	}
 
 	for (setting in autoTrimpSettings) {

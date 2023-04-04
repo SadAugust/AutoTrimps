@@ -141,7 +141,28 @@ function delayStart() {
 	setTimeout(delayStartAgain, startupDelay);
 }
 
+function swapBaseSettings() {
+	//raspberry pi related setting changes
+	//Swaps base settings to improve performance & so that I can't accidentally pause. 
+	//Shouldn't impact anybody else that uses AT as they'll never set the gameUser setting to SadAugust.
+	if (autoTrimpSettings.gameUser.value !== 'SadAugust') return;
+	if (navigator.oscpu === 'Linux armv7l') {
+		game.options.menu.hotkeys.enabled = 0;
+		game.options.menu.disablePause.enabled = 0;
+		game.options.menu.progressBars.enabled = 0;
+		game.options.menu.showHeirloomAnimations.enabled = 0;
+	}
+	else {
+		game.options.menu.hotkeys.enabled = 1;
+		game.options.menu.disablePause.enabled = 1;
+		game.options.menu.progressBars.enabled = 2;
+		game.options.menu.showHeirloomAnimations.enabled = 1;
+	}
+}
+
 function delayStartAgain() {
+
+	swapBaseSettings();
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
 	setInterval(mainLoop, runInterval);
@@ -311,7 +332,6 @@ function mainLoopU1() {
 	if (getPageSetting('AutoNatureTokens') && game.global.world > 229) autoNatureTokens();
 	autoEnlight();
 	autoGenerator();
-
 
 	//Combat
 	if (getPageSetting('ForceAbandon')) trimpcide();
