@@ -55,26 +55,36 @@ function isBuildingInQueue(a) {
 	for (var c in game.global.buildingsQueue) if (game.global.buildingsQueue[c].includes(a)) return !0;
 }
 
-function getScienceCostToUpgrade(a) {
-	var b = game.upgrades[a];
-	return void 0 !== b.cost.resources.science && void 0 !== b.cost.resources.science[0]
-		? Math.floor(b.cost.resources.science[0] * Math.pow(b.cost.resources.science[1], b.done))
-		: void 0 !== b.cost.resources.science && void 0 == b.cost.resources.science[0]
-			? b.cost.resources.science
+function getCostToUpgrade(upgradeName, resource) {
+	var upgrade = game.upgrades[upgradeName];
+	return void 0 !== upgrade.cost.resources[resource] && void 0 !== upgrade.cost.resources[resource][0]
+		? Math.floor(upgrade.cost.resources[resource][0] * Math.pow(upgrade.cost.resources[resource][1], upgrade.done))
+		: void 0 !== upgrade.cost.resources[resource] && void 0 == upgrade.cost.resources[resource][0]
+			? upgrade.cost.resources[resource]
 			: 0;
 }
 
-function setScienceNeeded() {
-	scienceNeeded = 0;
+function setResourceNeeded() {
+	resourceNeeded = {
+		food: 0,
+		wood: 0,
+		metal: 0,
+		science: 0
+	};
 
 	for (var upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
 		if (game.upgrades[upgrade].allowed > game.upgrades[upgrade].done) {
-			scienceNeeded += getScienceCostToUpgrade(upgrade);
+			resourceNeeded.science += getCostToUpgrade(upgrade, 'science');
+			if (upgrade === 'Trapstorm') continue;
+			resourceNeeded.food += getCostToUpgrade(upgrade, 'food');
+			if (upgrade.prestiges) continue;
+			resourceNeeded.wood += getCostToUpgrade(upgrade, 'wood');
+			resourceNeeded.metal += getCostToUpgrade(upgrade, 'metal');
 		}
 	}
 	if (game.global.universe === 1 && needGymystic()) {
-		scienceNeeded += getScienceCostToUpgrade("Gymystic")
+		resourceNeeded.science += getScienceCostToUpgrade("Gymystic")
 	}
 }
 

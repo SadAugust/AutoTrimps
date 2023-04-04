@@ -259,7 +259,7 @@ function mostEfficientHousing() {
 			if (avgProduction <= 0) avgProduction = 1;
 			var housingBonus = game.buildings[housing].increase.by;
 			if (!game.buildings.Hub.locked) housingBonus += 500;
-			if (Math.max(baseCost * Math.pow(costScaling, currentOwned) * resourcefulMod) > game.resources[resource].owned * buildingspending) dontbuy.push(housing);
+			if (Math.max(baseCost * Math.pow(costScaling, currentOwned) * resourcefulMod) > (game.resources[resource].owned - resourceNeeded[resource]) * buildingspending) dontbuy.push(housing);
 			if (game.global.universe === 2 && housing == 'Gateway' && resource == 'fragments' && buildingSettings.SafeGateway.enabled && (buildingSettings.SafeGateway.zone === 0 || buildingSettings.SafeGateway.zone > game.global.world)) {
 				if (game.resources[resource].owned < ((perfectMapCost_Actual(10, 'lmc') * buildingSettings.SafeGateway.mapCount) + Math.max(baseCost * Math.pow(costScaling, currentOwned)))) dontbuy.push(housing);
 			}
@@ -470,7 +470,6 @@ function buyBuildings() {
 			housingAmt = Infinity;
 			buildingspending = 1;
 		}
-		//var maxCanAfford = housing !== null ? calculateMaxAffordLocal(game.buildings[housing], true, false, false, housingAmt, buildingspending) : 0;
 		var maxCanAfford = calculateMaxAffordLocal(game.buildings[housing], true, false, false, (housingAmt - game.buildings[housing].purchased), buildingspending);
 		if (((housing != null && canAffordBuilding(housing, false, false, false, false, 1)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt) || runningC3))) {
 			if (currentMap === 'Smithy Farm' && housing !== 'Gateway')

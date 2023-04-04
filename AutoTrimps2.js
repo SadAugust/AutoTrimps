@@ -32,7 +32,12 @@ var enableDebug = true;
 var autoTrimpSettings = {};
 var MODULES = {};
 var ATmoduleList = [];
-var scienceNeeded;
+var resourceNeeded = {
+	food: 0,
+	wood: 0,
+	metal: 0,
+	science: 0
+};
 var breedFire = false;
 
 var baseBlock = 0;
@@ -268,7 +273,7 @@ function mainLoop() {
 	currentMap = mapSettings.mapName;
 
 	//Offline Progress
-	if (!usingRealTimeOffline) setScienceNeeded();
+	if (!usingRealTimeOffline) setResourceNeeded();
 
 	//AutoMaps
 	autoMap();

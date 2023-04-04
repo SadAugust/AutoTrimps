@@ -71,7 +71,7 @@ function autoGather() {
 	var researchAvailable = document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden';
 	var scienceAvailable = document.getElementById('science').style.visibility != 'hidden';
 	var needBattle = !game.upgrades.Battle.done && game.resources.science.owned < 10;
-	var needScience = game.resources.science.owned < scienceNeeded;
+	var needScience = game.resources.science.owned < resourceNeeded.science;
 	var needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
 
 	//Init - Others

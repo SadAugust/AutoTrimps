@@ -465,7 +465,7 @@ function autoEquip() {
 					zoneGo = true;
 				}
 			}
-			if (!equipPrestige && canAffordBuilding(equipName, null, null, true, false, 1) || (equipPrestige && game.resources[resourceUsed].owned > equipCost)) {
+			if ((game.resources[resourceUsed].owned - resourceNeeded[resourceUsed]) > equipCost) {
 				if (game.equipment[equipName].level < equipCap || equipPrestige || zoneGo) {
 					if (!equipPrestige) {
 						maxCanAfford = getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.001), 1.2, true);

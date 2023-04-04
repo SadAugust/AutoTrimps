@@ -244,7 +244,7 @@ function buyJobs() {
 		desiredRatios = Array.from(workerRatio.split(','))
 		desiredRatios = [desiredRatios[0] !== undefined ? Number(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? Number(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? Number(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? Number(desiredRatios[3]) : 0]
 
-		if (scienceNeeded > 0 && scienceNeeded > game.resources.science.owned && desiredRatios[3] < 1) desiredRatios[3] = 1;
+		if (resourceNeeded.science > 0 && resourceNeeded.science > game.resources.science.owned && desiredRatios[3] < 1) desiredRatios[3] = 1;
 	} else {
 		// Weird scientist ratio hack. Based on previous AJ, I don't know why it's like this.
 		var scientistMod = MODULES["jobs"].scientistRatio;
@@ -261,7 +261,7 @@ function buyJobs() {
 		if (game.global.world >= 150)
 			scientistMod = MODULES["jobs"].scientistRatio7;
 
-		if (scienceNeeded > 0 && scienceNeeded > game.resources.science.owned) scientistMod = 1;
+		if (resourceNeeded.science > 0 && resourceNeeded.science > game.resources.science.owned) scientistMod = 1;
 		for (var worker of ratioWorkers) {
 			if (!game.jobs[worker].locked) {
 				if (worker == "Scientist") {
