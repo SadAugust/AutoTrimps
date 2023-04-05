@@ -48,16 +48,18 @@ function autoGather() {
 	}
 
 	//Need to check this works in u2!
+	var needBattle = !game.upgrades.Battle.done && game.resources.science.owned < 10;
 	var notFullPop = game.resources.trimps.owned < game.resources.trimps.realMax();
 	var trapperTrapUntilFull = (challengeActive('Trapper') || challengeActive('Trappapalooza')) && notFullPop;
 	var trapsBufferSize = Math.ceil(5 * calcTPS());
-	var minTraps = Math.ceil(calcTPS());
+	var minTraps = needBattle ? 0 : Math.ceil(calcTPS());
 	var maxTraps = calcMaxTraps();
 	var trapTrimpsOK = (!game.upgrades.Battle.done || (getPageSetting('TrapTrimps'))) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
 
 	//Vars
 	var scientistsAvailable = game.upgrades.Scientists.allowed && !game.upgrades.Scientists.done;
 	var minersAvailable = game.upgrades.Miners.allowed && !game.upgrades.Miners.done;
+
 	var lowOnTraps = game.buildings.Trap.owned < minTraps;
 	var trapsReady = game.buildings.Trap.owned >= minTraps + trapsBufferSize;
 	var fullOfTraps = game.buildings.Trap.owned >= maxTraps;
@@ -70,12 +72,11 @@ function autoGather() {
 	var firstFightOK = game.global.world > 1 || game.global.lastClearedCell >= 0;
 	var researchAvailable = document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden';
 	var scienceAvailable = document.getElementById('science').style.visibility != 'hidden';
-	var needBattle = !game.upgrades.Battle.done && game.resources.science.owned < 10;
 	var needScience = game.resources.science.owned < resourceNeeded.science;
 	var needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
 
 	//Init - Others
-	var needMiner = firstFightOK && (!challengeActive('Metal') && !challengeActive('Transmute')) && !game.upgrades.Miners.done;
+	var needMiner = firstFightOK && (!challengeActive('Metal') && !challengeActive('Transmute')) && minersAvailable;
 	var breedingTrimps = game.resources.trimps.owned - trimpsEffectivelyEmployed();
 	var hasTurkimp = game.talents.turkimp2.purchased || game.global.turkimpTimer > 0;
 
@@ -173,6 +174,23 @@ function autoGather() {
 	if (needMiner && (game.resources.metal.owned < 100 || game.resources.wood.owned < 300)) {
 		safeSetGather(game.resources.metal.owned < 100 ? "metal" : "wood");
 		return;
+	}
+
+
+	//High Priority Research - When manual research still has more impact than workers
+	if (researchAvailable) {
+		if (resourceNeeded.food > game.resources.food.owned && getPlayerModifier() > getPerSecBeforeManual('Farmer')) {
+			safeSetGather('food');
+			return;
+		}
+		if (resourceNeeded.wood > game.resources.wood.owned && getPlayerModifier() > getPerSecBeforeManual('Lumberjack')) {
+			safeSetGather('wood');
+			return;
+		}
+		if (resourceNeeded.metal > game.resources.metal.owned && getPlayerModifier() > getPerSecBeforeManual('Miner')) {
+			safeSetGather('metal');
+			return;
+		}
 	}
 
 	//High Priority Metal gathering for Metal Challenge

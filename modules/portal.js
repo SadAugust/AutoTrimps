@@ -388,7 +388,10 @@ function doPortal(challenge, squared) {
 					toggleChallengeSquared();
 					selectChallenge(getPageSetting('dailyC2Challenge', portalUniverse));
 				}
-				else selectChallenge(challenge || 0);
+				else {
+					challenge = getPageSetting('dailyHeliumHourChallenge', portalUniverse);
+					selectChallenge(challenge || 0);
+				}
 			}
 		}
 		//Portaling into a daily
@@ -400,6 +403,7 @@ function doPortal(challenge, squared) {
 				checkCompleteDailies();
 			}
 			getDailyChallenge(lastUndone);
+			challenge = 'Daily';
 			debug("Portaling into Daily for: " + getDailyTimeString(lastUndone, true) + " now!", "portal");
 		}
 	}

@@ -285,7 +285,7 @@ function initializeAllSettings() {
 			'value', '999', null, 'Core', [1, 2],
 			function () {
 				return (
-					getPageSetting('autoPortal', currSettingUniverse) === ('Hour'))
+					getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
 			});
 		createSetting('HeliumHrBuffer',
 			function () { return (resourceHour() + '/Hr Portal Buffer %') },
@@ -308,7 +308,6 @@ function initializeAllSettings() {
 			function () { return ('Delays auto portaling into your preferred run and repeatedly does U1 portals until your bone void counter is 1 drop away from a guaranteed extra void map.') },
 			'boolean', false, null, 'Core', [0],
 			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount() >= 20) });
-
 
 		//Pause + Switch
 		createSetting('PauseScript',
@@ -3457,7 +3456,7 @@ function getDailyHeHrStats() {
 	if (challengeActive('Daily')) {
 		var b = game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - (game.global[resource.toLowerCase() + 'Leftover'] + game.resources[resource.toLowerCase()].owned));
 		b *= 100 + getDailyHeliumValue(countDailyWeight()),
-			a = "<b>After Daily '" + resourceHr + "\/Hr: " + b.toFixed(3) + "%"
+			a = "<b>After Daily " + resourceHr + "\/Hr: " + b.toFixed(3) + "%"
 	} return a
 }
 
