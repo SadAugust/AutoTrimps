@@ -294,13 +294,13 @@ function initializeAllSettings() {
 			function () {
 				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
 			});
-		createSetting('HeliumHrPortal',
+		/* createSetting('HeliumHrPortal',
 			function () { return (['Auto Portal Immediately', 'Portal after voids', 'Push Poison for voids']) },
 			function () { return ('Autobuys non-equipment upgrades (equipment is controlled in the Gear tab). The second option does NOT buy coordination (use this <b>ONLY</b> if you know what you\'re doing).') },
 			'multitoggle', 1, null, 'Core', [1],
 			function () {
 				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
-			});
+			}); */
 		createSetting('portalVoidIncrement',
 			function () { return ('Liq for free Void') },
 			function () { return ('Delays auto portaling into your preferred run and repeatedly does U1 portals until your bone void counter is 1 drop away from a guaranteed extra void map.') },
