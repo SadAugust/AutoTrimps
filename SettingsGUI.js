@@ -484,15 +484,15 @@ function initializeAllSettings() {
 			function () { return ('Daily Portal Settings') },
 			function () { return ('Click to adjust settings. ') },
 			'mazDefaultArray', {
-			Reflect: { enabled: true, zone: 0 },
-			Empower: { enabled: true, zone: 0 },
-			Mutimp: { enabled: true, zone: 0 },
-			Bloodthirst: { enabled: true, zone: 0 },
-			Famine: { enabled: true, zone: 0 },
-			Large: { enabled: true, zone: 0 },
-			Weakness: { enabled: true, zone: 0 },
-			Empowered_Void: { enabled: true, zone: 0 },
-			Heirlost: { enabled: true, zone: 0 },
+			Reflect: { enabled: false, zone: 0 },
+			Empower: { enabled: false, zone: 0 },
+			Mutimp: { enabled: false, zone: 0 },
+			Bloodthirst: { enabled: false, zone: 0 },
+			Famine: { enabled: false, zone: 0 },
+			Large: { enabled: false, zone: 0 },
+			Weakness: { enabled: false, zone: 0 },
+			Empowered_Void: { enabled: false, zone: 0 },
+			Heirlost: { enabled: false, zone: 0 },
 		}, null, 'Legacy', [1, 2]);
 	}
 
