@@ -1,7 +1,7 @@
 MODULES.mapFunctions = {};
 MODULES.mapFunctions.voidHDRatio = Infinity;
 MODULES.mapFunctions.voidVHDRatio = Infinity;
-MODULES.mapFunctions.rVoidHDInfo = Infinity;
+MODULES.mapFunctions.rVoidHDInfo = '0_0_0';
 MODULES.mapFunctions.boneCharge = false;
 MODULES.mapFunctions.portalZone = Infinity;
 MODULES.mapFunctions.workerRatio = null;
@@ -342,8 +342,8 @@ function voidMaps() {
 			if (module.voidHDRatio === Infinity && getPageSetting('autoMaps')) {
 				module.voidHDRatio = HDRatio;
 				module.voidVHDRatio = voidHDRatio;
-				module.rVoidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
 				if (rVMDefaultSettings.boneCharge && Number(module.rVoidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
+				module.rVoidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
 			}
 			module.voidHDIndex = y;
 			break;
@@ -384,7 +384,7 @@ function voidMaps() {
 		module.voidHDIndex = Infinity;
 		module.voidHDRatio = Infinity;
 		module.voidVHDRatio = Infinity;
-		module.rVoidHDInfo = Infinity;
+		module.rVoidHDInfo = '0_0_0';
 		//Setting portal zone to current zone if setting calls for it
 		if (shouldPortal) module.portalZone = game.global.world;
 	}
@@ -885,7 +885,7 @@ function smithyFarm() {
 
 		//Recycles map if we don't need to finish it for meeting the farm requirements
 		if (currentMap === mapName) {
-			if (game.global.mapsActive && typeof mapBonus !== 'undefined' && ((!shouldSmithyGemFarm && mapBonus.includes('sc')) || (!shouldSmithyWoodFarm && mapBonus.includes('wc')) || (!shouldSmithyMetalFarm && mapBonus.includes('mc')))) {
+			if (getPageSetting('autoMaps') && game.global.mapsActive && typeof mapBonus !== 'undefined' && ((!shouldSmithyGemFarm && mapBonus.includes('sc')) || (!shouldSmithyWoodFarm && mapBonus.includes('wc')) || (!shouldSmithyMetalFarm && mapBonus.includes('mc')))) {
 				var mapProg = game.global.mapsActive ? ((getCurrentMapCell().level - 1) / getCurrentMapObject().size) : 0;
 				var mappingLength = (mapProg > 0 ? Number(((game.global.mapRunCounter + mapProg)).toFixed(2)) : game.global.mapRunCounter);
 				if (mapBonus === 'lsc' || mapBonus === 'ssc') MODULES.mapFunctions.smithyMapCount[0] = mappingLength;

@@ -327,7 +327,14 @@ function cheatSpeedX(interval) {
 	game.global.start = now;
 
 	var tick = 100;
-	game.global.time += tick;
+	//game.global.time += tick;
+	game.global.zoneStarted -= tick;
+	game.global.portalTime -= tick;
+	game.global.lastSoldierSentAt -= tick;
+	game.global.lastSkeletimp -= tick;
+	game.permaBoneBonuses.boosts.lastChargeAt -= tick;
+	if (game.global.mapsActive) game.global.mapStarted -= tick;
+	if (mappingTime !== 0) mappingTime -= tick;
 
 	mainLoop();
 	gameLoop(null, now);

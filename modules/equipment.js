@@ -449,8 +449,6 @@ function autoEquip() {
 
 		zoneGo = (HDRatio >= getPageSetting('equipCutOff')) || (equipZone.length > 0 && ((equipZone.includes(game.global.world)) || (game.global.world >= equipZone[equipZone.length - 1])));
 
-
-
 		for (var i = 0; i < 2; i++) {
 			//Setting weapon equips to 100% spending during Smithless farm.
 			if (equipType === 'attack') {
