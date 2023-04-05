@@ -5,6 +5,8 @@ var trimpAA = 1;
 class HDStats {
 	constructor(vmStatus) {
 		this.hdRatio = undefined;
+		this.hdRatioMap = undefined;
+		this.hdRatioVoid = undefined;
 		this.hitsSurvived = undefined;
 		this.ourDamage = undefined;
 		this.targetZoneType = undefined;
@@ -12,8 +14,10 @@ class HDStats {
 		const z = game.global.world;
 
 		this.targetZoneType = (vmStatus.prepareForVoids ? "void" : "world");
-		this.hdRatio = calcHDRatio(z, this.targetZoneType);
-		this.hitsSurvived = calcHitsSurvived(z, this.targetZoneType);
+		this.hdRatio = calcHDRatio(z, 'world');
+		this.hdRatioMap = calcHDRatio(z, 'map');
+		this.hdRatioVoid = calcHDRatio(z, 'void');
+		this.hitsSurvived = calcHitsSurvived(z, 'world');
 		this.ourDamage = calcOurDmg();
 	}
 }
