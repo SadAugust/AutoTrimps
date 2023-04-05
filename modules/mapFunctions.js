@@ -2456,7 +2456,7 @@ function desolation() {
 			if (enemyDmg > trimpHealth) continue;
 			break;
 		}
-		if (game.global.mapsActive && getCurrentMapObject().level !== game.global.world + desolationMapLevel) {
+		if (getPageSetting('autoMaps') && game.global.mapsActive && getCurrentMapObject().level !== game.global.world + desolationMapLevel) {
 			mapsClicked(true);
 			recycleMap();
 		}
@@ -2469,8 +2469,10 @@ function desolation() {
 			MODULES.mapFunctions.desolationContinueRunning = true;
 		}
 		if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) {
-			mapsClicked(true);
-			recycleMap();
+			if (getPageSetting('autoMaps')) {
+				mapsClicked(true);
+				recycleMap();
+			}
 			MODULES.mapFunctions.desolationContinueRunning = false;
 		}
 	}
