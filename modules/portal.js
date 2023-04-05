@@ -16,6 +16,8 @@ function autoPortal() {
 	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : portalUniverse;
 
 	var portalZone = getPageSetting('autoPortalZone') > 0 ? getPageSetting('autoPortalZone') : 999;
+	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
+	if (getPageSetting('autoPortal', currSettingUniverse).includes('Hour')) portalZone = Infinity;
 	//Set portal zone to current zone!
 	if (MODULES.mapFunctions.portalZone === game.global.world) portalZone = game.global.world;
 	if (MODULES.portal.portalForVoid) {
@@ -27,38 +29,42 @@ function autoPortal() {
 		case "Helium Per Hour":
 		case "Radon Per Hour":
 			var OKtoPortal = false;
-			if (!game.global.runningChallengeSquared) {
-				var minZone = getPageSetting('HeHrDontPortalBefore', universe);
-				game.stats.bestHeliumHourThisRun.evaluate();
-				var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
-				var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
-				var myHeliumHr = game.stats.heliumHour.value();
-				var heliumHrBuffer = Math.abs(getPageSetting('HeliumHrBuffer', universe));
-				if (!aWholeNewWorld)
-					heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
-				var bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
-				if (bufferExceeded && game.global.world >= minZone) {
-					OKtoPortal = true;
-					if (aWholeNewWorld)
-						zonePostpone = 0;
-				}
-				if (heliumHrBuffer == 0 && !aWholeNewWorld)
-					OKtoPortal = false;
-				if (OKtoPortal && zonePostpone == 0) {
-					zonePostpone += 1;
-					debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
-					cancelTooltip();
-					tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1', '<b>NOTICE: Auto-Portaling in 5 seconds....</b>', 'Delay Portal');
-					setTimeout(cancelTooltip, MODULES["portal"].timeout);
-					setTimeout(function () {
-						if (zonePostpone >= 2)
-							return;
-						if (getPageSetting('heliumHourChallenge', universe) != 'None')
-							doPortal(getPageSetting('heliumHourChallenge', universe));
-						else
-							doPortal();
-					}, MODULES["portal"].timeout + 100);
-				}
+			var minZone = getPageSetting('HeHrDontPortalBefore', universe);
+			game.stats.bestHeliumHourThisRun.evaluate();
+			var bestHeHr = game.stats.bestHeliumHourThisRun.storedValue;
+			var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
+			var myHeliumHr = game.stats.heliumHour.value();
+			var heliumHrBuffer = Math.abs(getPageSetting('HeliumHrBuffer', universe));
+			if (!aWholeNewWorld)
+				heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
+			var bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
+			if (bufferExceeded && game.global.world >= minZone) {
+				OKtoPortal = true;
+				if (aWholeNewWorld)
+					zonePostpone = 0;
+			}
+			if (heliumHrBuffer == 0 && !aWholeNewWorld)
+				OKtoPortal = false;
+			if (OKtoPortal && zonePostpone == 0) {
+				zonePostpone += 1;
+				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
+				cancelTooltip();
+				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1', '<b>NOTICE: Auto-Portaling in 5 seconds....</b>', 'Delay Portal');
+				setTimeout(cancelTooltip, MODULES["portal"].timeout);
+				setTimeout(function () {
+					if (zonePostpone >= 2)
+						return;
+					if (getPageSetting('heliumHourChallenge', universe) != 'None')
+						doPortal(getPageSetting('heliumHourChallenge', universe));
+					else
+						doPortal();
+				}, MODULES["portal"].timeout + 100);
+			}
+			if (game.global.world >= portalZone) {
+				if (getPageSetting('heliumHourChallenge', universe) != 'None')
+					doPortal(getPageSetting('heliumHourChallenge', universe));
+				else
+					doPortal();
 			}
 			break;
 		case "Custom":
@@ -122,6 +128,13 @@ function dailyAutoPortal() {
 	if (game.global.runningChallengeSquared) return;
 
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
+
+	var portalZone = getPageSetting('dailyPortalZone') > 0 ? getPageSetting('dailyPortalZone') : 999;
+	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
+	if (getPageSetting('dailyPortal', currSettingUniverse) === 1) portalZone = Infinity;
+	//Set portal zone to current zone after void map line if setting enabled!
+	if (MODULES.mapFunctions.portalZone === game.global.world) portalZone = game.global.world;
+
 	if (getPageSetting('dailyPortal') == 1) {
 		var OKtoPortal = false;
 		var minZone = getPageSetting('dailyDontPortalBefore');
@@ -160,6 +173,12 @@ function dailyAutoPortal() {
 						doPortal();
 				}, MODULES["portal"].timeout + 100);
 			}
+		}
+		if (game.global.world >= portalZone) {
+			if (getPageSetting('dailyHeliumHourChallenge', universe) != 'None')
+				doPortal(getPageSetting('dailyHeliumHourChallenge', universe));
+			else
+				doPortal();
 		}
 	}
 	if (getPageSetting('dailyPortal') == 2) {

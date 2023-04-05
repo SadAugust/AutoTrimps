@@ -261,7 +261,7 @@ function initializeAllSettings() {
 			'dropdown', 'None', heliumHourChallenges, 'Core', [1, 2],
 			function () {
 				return (
-					getPageSetting('autoPortal', currSettingUniverse) === 'Helium Per Hour' || getPageSetting('autoPortal', currSettingUniverse) === 'Radon Per Hour' || getPageSetting('autoPortal', currSettingUniverse) === 'Custom')
+					getPageSetting('autoPortal', currSettingUniverse).includes('Hour') || getPageSetting('autoPortal', currSettingUniverse) === 'Custom')
 			});
 		createSetting('heliumC2Challenge',
 			function () { return ('Challenge') },
@@ -292,16 +292,14 @@ function initializeAllSettings() {
 			function () { return ('IMPORTANT SETTING. When using the ' + resourceHour() + '/Hr Autoportal, it will portal if your ' + resourceHour() + '/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).') },
 			'value', '0', null, 'Core', [1, 2],
 			function () {
-				return (
-					getPageSetting('autoPortal', currSettingUniverse) === 'Helium Per Hour' || getPageSetting('autoPortal', currSettingUniverse) === 'Radon Per Hour')
+				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
 			});
 		createSetting('HeliumHrPortal',
 			function () { return (['Auto Portal Immediately', 'Portal after voids', 'Push Poison for voids']) },
 			function () { return ('Autobuys non-equipment upgrades (equipment is controlled in the Gear tab). The second option does NOT buy coordination (use this <b>ONLY</b> if you know what you\'re doing).') },
 			'multitoggle', 1, null, 'Core', [1],
 			function () {
-				return (
-					getPageSetting('autoPortal', currSettingUniverse) === 'Helium Per Hour' || getPageSetting('autoPortal', currSettingUniverse) === 'Radon Per Hour')
+				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
 			});
 		createSetting('portalVoidIncrement',
 			function () { return ('Liq for free Void') },

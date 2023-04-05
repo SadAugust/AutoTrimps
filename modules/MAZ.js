@@ -1306,7 +1306,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		if (hypothermia) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>"
 		if (hypothermia) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>"
 		if (voidMap && radonSetting && !game.portal.Tenacity.radLocked) mazHelp += "<li><b>Max Tenacity</b> - Will make world & void HD Ratio calcs assume you have max tenacity when void maps are being run.</li>"
-		if (voidMap && game.permaBoneBonuses.boosts.owned > 0) mazHelp += "<li><b>Bone Charge</b> - When Void Maps start running will use a single Bone Charge.</li>"
+		if (voidMap && game.permaBoneBonuses.boosts.owned > 0) mazHelp += "<li><b>Bone Charge</b> - The first time a line starts running Void Maps in each portal it will use a single Bone Charge.</li>"
 	}
 
 	//Row Settings

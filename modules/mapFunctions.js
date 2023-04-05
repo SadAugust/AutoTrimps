@@ -343,7 +343,7 @@ function voidMaps() {
 				module.voidHDRatio = HDRatio;
 				module.voidVHDRatio = voidHDRatio;
 				module.rVoidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
-				if (rVMDefaultSettings.boneCharge) module.boneCharge = true;
+				if (rVMDefaultSettings.boneCharge && Number(module.rVoidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
 			}
 			module.voidHDIndex = y;
 			break;
