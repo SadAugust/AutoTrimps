@@ -20,7 +20,21 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//AutoJobs
 	if (event == 'AutoJobs') {
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Job Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>The left side of this window is dedicated to jobs that are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. You can use any number larger than 0.</p><p><b>Farmers Until:</b> Stops buying Farmers from this zone. The Tribute & Worshipper farm settings override this setting and hire farmers during them.</p><p><b>No Lumberjacks Post MP:</b> Stops buying Lumberjacks after Melting Point has been run. The Smithy Farm setting will override this setting.</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+
+		const ratio = "<p>The left side of this window is dedicated to jobs that are limited more by workspaces than resources. 1:1:1 will purchase all 3 of these ratio-based jobs evenly, and the ratio refers to the amount of workspaces you wish to dedicate to each job. Any number that's 0 or below will stop AT hiring any workers for that job.</p>";
+		const percent = "<p>The right side of this window is dedicated to jobs limited more by resources than workspaces. Set the percentage of resources that you'd like to be spent on each job.</p>";
+		const magmamancer = "<p><b>Magmamancers:</b> These will only be hired when they'll do something! So once the time spent on the zone is enough to activate the first metal boost.</p>";
+		const farmersUntil = "<p><b>Farmers Until:</b> Stops buying Farmers from this zone. The Tribute & Worshipper farm settings override this setting and hire farmers during them.</p>";
+		const lumberjackMP = "<p><b>No Lumberjacks Post MP:</b> Stops buying Lumberjacks after Melting Point has been run. The Smithy Farm setting will override this setting.</p>";
+
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Job Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>\ ";
+
+		tooltipText += `${ratio}`
+		tooltipText += `${percent}`
+		if (game.global.universe === 1 && game.global.highestLevelCleared >= 229) tooltipText += `${magmamancer}`
+		if (game.global.universe === 2) tooltipText += `${farmersUntil}`
+		if (game.global.universe === 2) tooltipText += `${lumberjackMP}`
+		tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 		var percentJobs = ["Explorer"];
 		if (game.global.universe == 1) percentJobs.push("Trainer");
 		if (game.global.universe == 1 && game.global.highestLevelCleared >= 229) percentJobs.push("Magmamancer");
@@ -69,7 +83,18 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//AutoStructure
 	else if (event == "AutoStructure") {
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, the 'Perc:' box specifies the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the 'Perc:' box to 10 and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses.</p><p><b>Safe Gateway:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a Perfect +10 LMC map would cost up to the zone specified in 'Till Z:', if that values is 0 it'll assume you want them capped forever.</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+
+		const baseText = "<p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, the 'Perc:' box specifies the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the 'Perc:' box to 10 and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses.</p>";
+		const nursery = "<p><b>Nursery:</b> Acts the same as the other settings but also has a 'From' input which will cause nurseries to only be built from that zone onwards. Other nursery settings within AT will ignore this start zone if needed for them to work.</p>";
+		const warpstation = "<p><b>Warpstation:</b> Settings for this type of building can be found in the AutoTrimp settings building tab!</p>";
+		const safeGateway = "<p><b>Safe Gateway:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a Perfect +10 LMC map would cost up to the zone specified in 'Till Z:', if that values is 0 it'll assume you want them capped forever.</p>";
+
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
+		tooltipText += `${baseText}`
+		if (game.global.universe === 1) tooltipText += `${nursery}`
+		if (game.global.universe === 1 && game.global.highestLevelCleared >= 59) tooltipText += `${warpstation}`
+		if (game.global.universe === 2) tooltipText += `${safeGateway}`
+		tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
 		var setting, checkbox;
@@ -133,9 +158,14 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//Map tab - Special Maps!
 	else if (event == "UniqueMaps") {
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>\
-		<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input.\
-		</p></div><table id='autoPurchaseConfigTable' style='font-size: 1.1vw;'><tbody>";
+
+		const baseText = "<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input.</p>";
+		const smithy = "<p>The right side of this window is dedicated to running Melting Point when you've reached a certain Smithy value. As each runtype of vastly different there's different inputs for each type of run that you can do! Certain challenges have overrides for this, once unlocked they can be found in the C3 tab.</p>";
+
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>"
+		tooltipText += `${baseText}`
+		if (currSettingUniverse === 2 && game.global.highestRadonLevelCleared > 49) tooltipText += `${smithy}`
+		tooltipText += "</div><table id='autoPurchaseConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
 		var setting, checkbox;
@@ -268,34 +298,64 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//Daily Auto Portal
 	else if (event == "DailyAutoPortal") {
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can choose different portal zones depending on specific modifiers that the daily you're running has. For example if your Daily has a resource empower modifier and you have '-3' input in that box then it will set both your void map zone and daily portal zone to 3 zones lower than your settings. Will only ever use the lowest value that is listed so you can't do a combination of -6 for dailies that have both Empower and Famine by doing a -3 in each box.\
-		</p><p><b>Reflect:</b> % damage reflect damage modifier\
-		</p><p><b>Empower:</b> Empower modifier.\
-		</p><p><b>Mutimp:</b> % chance to turn enemies into Mutimps.\
-		</p><p><b>Bloodthirst:</b> Enemies gaining the bloodthirst buff on kills.\
-		</p><p><b>Famine:</b> Gives % less resources.\
-		</p><p><b>Large:</b> Gives % less housing.\
-		</p><p><b>Weakness:</b> Gives % less attack when .\
-		</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+
+		const baseText = "<p>Here you can choose different portal zones depending on specific modifiers that the daily you're running has. For example if your Daily has a resource empower modifier and you have '-3' input in that box then it will set both your void map zone and daily portal zone to 3 zones lower than your settings. Will only ever use the lowest value that is listed so you can't do a combination of -6 for dailies that have both Empower and Famine by doing a -3 in each box.</p>";
+
+		const reflect = "<p><b>Reflect:</b> % damage reflect damage modifier</p>";
+		const empower = "<p><b>Empower:</b> Empower modifier</p>";
+		const mutimp = "<p><b>Mutimp:</b> % chance to turn enemies into Mutimps</p>";
+		const bloodthirst = "<p><b>Bloodthirst:</b> Enemies gaining the bloodthirst buff on kills</p>";
+		const famine = "<p><b>Famine:</b> Gives % less resources</p>";
+		const large = "<p><b>Large:</b> Gives % less housing</p>";
+		const weakness = "<p><b>Weakness:</b> Gives % less attack when trimps attack</p>";
+		const empoweredVoid = "<p><b>Empowered Void:</b> Enemies gain a % health & damage increase inside void maps</p>";
+		const heirlost = "<p><b>Heirlost:</b> % bonus reduction on your heirlooms</p>";
+
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>"
+		tooltipText += `${baseText}`
+
+		if (currSettingUniverse === 1) tooltipText += `${reflect}`
+		tooltipText += `${empower}`
+		tooltipText += `${mutimp}`
+		tooltipText += `${bloodthirst}`
+		tooltipText += `${famine}`
+		tooltipText += `${large}`
+		tooltipText += `${weakness}`
+		if (currSettingUniverse === 2) tooltipText += `${empoweredVoid}`
+		if (currSettingUniverse === 2) tooltipText += `${heirlost}`
+
+		tooltipText += "</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
 		var setting, checkbox;
-		var settingGroup = getPageSetting('dailyPortalSettingsArray');
+		var setting_AT = getPageSetting('dailyPortalSettingsArray', currSettingUniverse);
+
+		settingGroup = {
+			Reflect: {},
+			Empower: {},
+			Mutimp: {},
+			Bloodthirst: {},
+			Famine: {},
+			Large: {},
+			Weakness: {},
+			Empowered_Void: {},
+			Heirlost: {},
+		};
 
 		//Skip Lines to seperate
 		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 100%; padding-right: 5px'>" + "" + "&nbsp;&nbsp;<span>" + "<u>Modifier ± Zones</u>" + "</span></div></div>"
 		tooltipText += "</td></tr><tr>";
 
-
 		//Plus&Minus Portal&Void zone settings.
 		for (var item in settingGroup) {
-			var building = game.buildings[item];
-			if (item === 'portalChallenge') continue;
-			if (item === 'portalZone') continue;
+			if (currSettingUniverse === 1 && item === 'Empowered_Void') continue;
+			if (currSettingUniverse === 1 && item === 'Heirlost') continue;
+			if (currSettingUniverse === 2 && item === 'Reflect') continue;
 			if (count != 0 && count % 2 == 0) tooltipText += "</tr><tr>";
-			setting = settingGroup[item];
+			setting = setting_AT[item];
 			checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', (setting && setting.enabled));
-			var itemName = item;
+			var itemName = item.charAt(0).toUpperCase() + item.substr(1);
+			itemName = itemName.replace(/_/g, ' ');
 			//Start
 			tooltipText += "<td><div class='row'>"
 			//Checkbox & name
@@ -320,8 +380,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//C2/C3 Runner settings
 	else if (event == "c2Runner") {
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to C2 Runner Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'><p>Here you can select which challenges you would like C2 runner to complete and the zone you'd like for the respective challenge to finish at.\
-		</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
+		const baseText = "<p>Here you can select which challenges you would like C2 runner to complete and the zone you'd like for the respective challenge to finish at</p>";
+
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to C2 Runner Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>"
+		tooltipText += `${baseText}`
+		tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
 		var setting, checkbox;
@@ -1722,29 +1785,13 @@ function saveATUniqueMapsConfig(setting) {
 }
 
 function saveATDailyAutoPortalConfig() {
-	var setting = getPageSetting('dailyPortalSettingsArray');
+	var setting = getPageSetting('dailyPortalSettingsArray', currSettingUniverse);
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var percentboxes = document.getElementsByClassName('structConfigPercent');
-	/* var portalZoneBox = document.getElementsByClassName('dailyAutoPortalZone')[0];
-
-	var portalZone = parseInt(portalZoneBox.value, 10);
-	if (portalZone > 999) portalZone = 999;
-	if (portalZone < 0) portalZone = 0;
-	portalZone = (Number.isInteger(portalZone)) ? portalZone : 0;
-	portalZone = (isNumberBad(portalZone)) ? 0 : portalZone;
-	if (!setting.portalZone) setting.portalZone = {};
-	setting.portalZone = portalZone;
-
-	var challengeElem = document.getElementById('autoDailyPortalChallenge');
-	if (challengeElem) {
-		if (challengeElem.value) setting.portalChallenge = challengeElem.value;
-		else delete setting.portalChallenge;
-	} */
 
 	for (var x = 0; x < checkboxes.length; x++) {
 		var name = checkboxes[x].id.split('structConfig')[1];
 		var checked = (checkboxes[x].dataset.checked == 'true');
-		//if (!checked && !setting[name]) continue;
 		if (!setting[name]) setting[name] = {};
 		setting[name].enabled = checked;
 

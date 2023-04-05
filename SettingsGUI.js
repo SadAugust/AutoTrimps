@@ -483,7 +483,17 @@ function initializeAllSettings() {
 		createSetting('dailyPortalSettingsArray',
 			function () { return ('Daily Portal Settings') },
 			function () { return ('Click to adjust settings. ') },
-			'mazDefaultArray', { portalZone: 0, portalChallenge: "None", Empower: { enabled: true, zone: 0 }, Mutimp: { enabled: true, zone: 0 }, Bloodthirst: { enabled: true, zone: 0 }, Famine: { enabled: true, zone: 0 }, Large: { enabled: true, zone: 0 }, Weakness: { enabled: true, zone: 0 } }, null, 'Legacy', [2]);
+			'mazDefaultArray', {
+			Reflect: { enabled: true, zone: 0 },
+			Empower: { enabled: true, zone: 0 },
+			Mutimp: { enabled: true, zone: 0 },
+			Bloodthirst: { enabled: true, zone: 0 },
+			Famine: { enabled: true, zone: 0 },
+			Large: { enabled: true, zone: 0 },
+			Weakness: { enabled: true, zone: 0 },
+			Empowered_Void: { enabled: true, zone: 0 },
+			Heirlost: { enabled: true, zone: 0 },
+		}, null, 'Legacy', [1, 2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -3347,7 +3357,7 @@ function setupATButtons() {
 
 	//Creating cogwheel & linking onclick
 	var atJobSettings = document.createElement("DIV");
-	atJobSettings.setAttribute('onclick', 'MAZLookalike("AT AutoJobs", "a", "AutoJobs")');
+	atJobSettings.setAttribute('onclick', 'MAZLookalike("Configure AT AutoJobs", "a", "AutoJobs")');
 	var atJobSettingsButton = document.createElement("SPAN");
 	atJobSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
 
@@ -3376,7 +3386,7 @@ function setupATButtons() {
 
 	//Creating cogwheel & linking onclick
 	var atStructureSettings = document.createElement("DIV");
-	atStructureSettings.setAttribute('onclick', 'MAZLookalike("AT AutoStructure", "a", "AutoStructure")');
+	atStructureSettings.setAttribute('onclick', 'MAZLookalike("Configure AT AutoStructure", "a", "AutoStructure")');
 	var atStructureSettingsButton = document.createElement("SPAN");
 	atStructureSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
 
@@ -3634,6 +3644,15 @@ function updateATVersion() {
 				Added a new setting for which staff you'd like to run whilst in void maps.<br>\
 				Void Maps setting now has a toggle that will use a bone charge when you enter your first void map.<br>\
 				Minor early U1 & U2 optimisations.")
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.8') {
+			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
+			if (tempSettings.dailyPortalSettingsArray.valueU2 !== undefined)
+				delete autoTrimpSettings.dailyPortalSettingsArray.valueU2.value;
+
+			changelog.push("Have rewritten all of the AutoJobs, AutoStructure, Daily Portal Modifier help windows.<br>\
+			Rewrote how the daily portal modifier settings are stored to make it usable in U1 and to implement the new U2 mods so there's a good chance any U2 settings will be lost. Sorry about that!")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;

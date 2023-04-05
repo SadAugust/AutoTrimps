@@ -3069,20 +3069,21 @@ function rRunMap() {
 
 function dailyModiferReduction() {
 	if (!challengeActive('Daily')) return 0;
-	if (game.global.universe === 1) return 0;
+
 	var dailyMods = dailyModifiersOutput().split('<br>');
 	dailyMods.length = dailyMods.length - 1;
 	var dailyReduction = 0;
 	var settingsArray = getPageSetting('dailyPortalSettingsArray');
 
 	for (var item in settingsArray) {
-		if (item === 'portalZone' || item === 'portalChallenge') continue;
 		if (!settingsArray[item].enabled) continue;
 		var dailyReductionTemp = 0;
 		var modifier = item;
 		if (modifier.includes('Weakness')) modifier = 'Enemies stack a debuff with each attack, reducing Trimp attack by';
-		if (modifier.includes('Famine')) modifier = 'less Metal, Food, Wood, and Gems from all sources';
-		if (modifier.includes('Large')) modifier = 'All housing can store';
+		else if (modifier.includes('Famine')) modifier = 'less Metal, Food, Wood, and Gems from all sources';
+		else if (modifier.includes('Large')) modifier = 'All housing can store';
+		else if (modifier.includes('Void')) modifier = 'Enemies in Void Maps have';
+		else if (modifier.includes('Heirlost')) modifier = 'Heirloom combat and resource bonuses are reduced by';
 
 		for (var x = 0; x < dailyMods.length; x++) {
 			if (dailyMods[x].includes(modifier)) {
