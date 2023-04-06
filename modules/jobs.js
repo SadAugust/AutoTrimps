@@ -298,22 +298,17 @@ function buyJobs() {
 		if (desiredWorkers[i] > 0) totalWorkerCost += game.jobs[ratioWorkers[i]].cost.food * desiredWorkers[i];
 	}
 
+	//If we can't afford all the workers we want, buy Farmers until they can be afforded.
 	if (totalWorkerCost > game.resources.food.owned) {
-		// Buy max on food and then var the next frame take care of the rest.
-		var buyAmountStore = game.global.buyAmt;
-		game.global.buyAmt = "Max";
-
-		buyJob('Farmer', true, true);
-
-		game.global.buyAmt = buyAmountStore;
+		safeBuyJob('Farmer', freeWorkers);
 	} else {
-		// Fire anything that we need to fire to free up workers
+		//Fire anything that we need to fire to free up workers
 		for (var i = 0; i < desiredWorkers.length; i++) {
 			if (desiredWorkers[i] > 0) continue;
 			if (Math.abs(desiredWorkers[i]) <= 0) continue;
 			safeBuyJob(ratioWorkers[i], -Math.abs(desiredWorkers[i]))
 		}
-		// Buy up workers that we need to
+		//Buy up workers that we need to
 		for (var i = 0; i < desiredWorkers.length; i++) {
 			if (desiredWorkers[i] <= 0) continue;
 			safeBuyJob(ratioWorkers[i], Math.abs(desiredWorkers[i]))
