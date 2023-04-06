@@ -46,6 +46,11 @@ function autoPortal() {
 			if (heliumHrBuffer == 0 && !aWholeNewWorld)
 				OKtoPortal = false;
 			if (OKtoPortal && zonePostpone == 0) {
+				if (getPageSetting('HeliumHrPortal') > 0 && (game.stats.totalVoidMaps.value === 0 || mapSettings.mapname === 'Void Map')) {
+					if (!MODULES.mapFunctions.portalAfterVoids) debug("Portaling after voids have been run.", "portal");
+					MODULES.mapFunctions.portalAfterVoids = true;
+				}
+				if (MODULES.mapFunctions.portalAfterVoids) return;
 				zonePostpone += 1;
 				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
 				cancelTooltip();
@@ -154,6 +159,11 @@ function dailyAutoPortal() {
 			if (heliumHrBuffer == 0 && !aWholeNewWorld)
 				OKtoPortal = false;
 			if (OKtoPortal && zonePostpone == 0) {
+				if (getPageSetting('dailyHeliumHrPortal') > 0 && (game.stats.totalVoidMaps.value === 0 || mapSettings.mapname === 'Void Map')) {
+					if (!MODULES.mapFunctions.portalAfterVoids) debug("Portaling after voids have been run.", "portal");
+					MODULES.mapFunctions.portalAfterVoids = true;
+				}
+				if (MODULES.mapFunctions.portalAfterVoids) return;
 				zonePostpone += 1;
 				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
 				cancelTooltip();
@@ -573,6 +583,7 @@ function resetmapvars() {
 	//Resetting variables that would cause issues if they were left as is
 	MODULES.mapFunctions.voidHDRatio = Infinity;
 	MODULES.mapFunctions.voidVHDRatio = Infinity;
+	MODULES.mapFunctions.portalAfterVoids = false;
 	MODULES.mapFunctions.voidHDIndex = Infinity;
 	MODULES.mapFunctions.boneCharge = false;
 	MODULES.mapFunctions.portalZone = Infinity;

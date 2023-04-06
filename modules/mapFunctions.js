@@ -3,6 +3,7 @@ MODULES.mapFunctions.voidHDRatio = Infinity;
 MODULES.mapFunctions.voidVHDRatio = Infinity;
 MODULES.mapFunctions.rVoidHDInfo = '0_0_0';
 MODULES.mapFunctions.boneCharge = false;
+MODULES.mapFunctions.portalAfterVoids = false;
 MODULES.mapFunctions.portalZone = Infinity;
 MODULES.mapFunctions.workerRatio = null;
 MODULES.mapFunctions.runUniqueMap = '';
@@ -314,7 +315,7 @@ function voidMaps() {
 		mapName: mapName
 	};
 
-	if (!getPageSetting('voidMapDefaultSettings').active) return farmingDetails;
+	if (!getPageSetting('voidMapDefaultSettings').active && !MODULES.mapFunctions.portalAfterVoids) return farmingDetails;
 	var module = MODULES['mapFunctions'];
 
 	const totalPortals = getTotalPortals();
@@ -324,7 +325,7 @@ function voidMaps() {
 	const baseSettings = getPageSetting('voidMapSettings');
 	const rVMDefaultSettings = getPageSetting('voidMapDefaultSettings');
 
-	var index;
+	var index = null;
 
 	//Reset void HD Index if not on the right portal/zone/cell as it was initially run.
 	if (module.voidHDIndex !== Infinity && module.rVoidHDInfo !== (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2))) module.voidHDIndex = Infinity;
@@ -352,10 +353,24 @@ function voidMaps() {
 			continue;
 	}
 
-	if (index >= 0 || module.voidHDIndex !== Infinity) {
-		var rVMSettings = baseSettings[index >= 0 ? index : module.voidHDIndex];
-		var rVMJobRatio = baseSettings[index] !== undefined ? rVMSettings.jobratio : rVMDefaultSettings.jobRatio;
-		var shouldPortal = baseSettings[index] !== undefined ? rVMSettings.portalAfter : false;
+	if (index !== null || module.voidHDIndex !== Infinity || module.portalAfterVoids) {
+
+		var rVMSettings;
+		if (index === null && module.voidHDIndex === Infinity) {
+			rVMSettings = {
+				cell: 1,
+				jobratio: "0,0,1",
+				world: game.global.world,
+				portalAfter: true,
+			}
+			module.portalAfterVoids = true;
+			if (rVMDefaultSettings.boneCharge && Number(module.rVoidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
+			module.rVoidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
+		} else {
+			rVMSettings = baseSettings[index >= 0 ? index : module.voidHDIndex];
+		}
+		var rVMJobRatio = module.portalAfterVoids || baseSettings[index] !== undefined ? rVMSettings.jobratio : rVMDefaultSettings.jobRatio;
+		var shouldPortal = module.portalAfterVoids || baseSettings[index] !== undefined ? rVMSettings.portalAfter : false;
 
 		if (module.boneCharge && game.global.mapsActive && getCurrentMapObject().location === 'Void') {
 			module.boneCharge = false;
@@ -385,6 +400,7 @@ function voidMaps() {
 		module.voidHDRatio = Infinity;
 		module.voidVHDRatio = Infinity;
 		module.rVoidHDInfo = '0_0_0';
+		module.portalAfterVoids = false;
 		//Setting portal zone to current zone if setting calls for it
 		if (shouldPortal) module.portalZone = game.global.world;
 	}
@@ -2429,7 +2445,7 @@ function desolation() {
 	var biome = 'Farmlands';
 	var equality = false;
 
-	if (game.challenges.Desolation.chilled >= destackStacks && (HDRatio > destackHits || game.global.world >= destackZone || game.global.world >= destackOnlyZone))
+	if (MODULES.mapFunctions.desolationContinueRunning || (game.challenges.Desolation.chilled >= destackStacks && (HDRatio > destackHits || game.global.world >= destackZone || game.global.world >= destackOnlyZone)))
 		shouldDesolation = true;
 
 	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
@@ -2463,17 +2479,20 @@ function desolation() {
 		equality = true;
 	}
 
-	if (!shouldDesolation && (MODULES.mapFunctions.desolationContinueRunning || (game.global.mapsActive && mapSettings.mapName === 'Desolation Destacking'))) {
+	if (MODULES.mapFunctions.desolationContinueRunning || (game.global.mapsActive && mapSettings.mapName === 'Desolation Destacking')) {
 		if (game.challenges.Desolation.chilled > 0) {
 			shouldDesolation = true;
 			MODULES.mapFunctions.desolationContinueRunning = true;
 		}
-		if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) {
-			if (getPageSetting('autoMaps')) {
-				mapsClicked(true);
-				recycleMap();
+		else {
+			if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) {
+				if (getPageSetting('autoMaps')) {
+					mapsClicked(true);
+					recycleMap();
+				}
 			}
 			MODULES.mapFunctions.desolationContinueRunning = false;
+			shouldDesolation = false;
 		}
 	}
 

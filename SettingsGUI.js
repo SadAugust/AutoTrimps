@@ -294,13 +294,16 @@ function initializeAllSettings() {
 			function () {
 				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
 			});
-		/* createSetting('HeliumHrPortal',
-			function () { return (['Auto Portal Immediately', 'Portal after voids', 'Push Poison for voids']) },
-			function () { return ('Autobuys non-equipment upgrades (equipment is controlled in the Gear tab). The second option does NOT buy coordination (use this <b>ONLY</b> if you know what you\'re doing).') },
-			'multitoggle', 1, null, 'Core', [1],
+		createSetting('HeliumHrPortal',
+			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
+			function () {
+				return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs void maps.<br>\
+			If "Portal After Voids" is selected it will only run voids if none have been completed this portal.')
+			},
+			'multitoggle', 0, null, 'Core', [1, 2],
 			function () {
 				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
-			}); */
+			});
 		createSetting('portalVoidIncrement',
 			function () { return ('Liq for free Void') },
 			function () { return ('Delays auto portaling into your preferred run and repeatedly does U1 portals until your bone void counter is 1 drop away from a guaranteed extra void map.') },
@@ -457,6 +460,17 @@ function initializeAllSettings() {
 			function () { return ('IMPORTANT SETTING. When using the Daily ' + resourceHour() + '/Hr Autoportal, it will portal if your ' + resourceHour() + '/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).') },
 			'value', '0', null, 'Daily', [1, 2],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1) });
+
+		createSetting('dailyHeliumHrPortal',
+			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
+			function () {
+				return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs void maps.<br>\
+			If "Portal After Voids" is selected it will only run voids if none have been completed this portal.')
+			},
+			'multitoggle', 0, null, 'Core', [1, 2],
+			function () {
+				return (getPageSetting('dailyPortal', currSettingUniverse).includes('Hour'))
+			});
 
 		createSetting('dailyPortalFiller',
 			function () { return ('Filler run') },
@@ -3634,7 +3648,7 @@ function updateATVersion() {
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.7') {
 			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
-			if (tempSettings.heirloomResourceStaff.valueU2 !== undefined)
+			if (tempSettings.heirloomResourceStaff !== undefined)
 				autoTrimpSettings['heirloomStaffResource'].valueU2 = tempSettings.heirloomResourceStaff.valueU2;
 			autoTrimpSettings['hitsSurvived'].value = 0;
 			autoTrimpSettings['hitsSurvived'].valueU2 = 0;
