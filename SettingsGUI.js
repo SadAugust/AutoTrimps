@@ -296,10 +296,7 @@ function initializeAllSettings() {
 			});
 		createSetting('HeliumHrPortal',
 			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
-			function () {
-				return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs void maps.<br>\
-			If "Portal After Voids" is selected it will only run voids if none have been completed this portal.')
-			},
+			function () { return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.') },
 			'multitoggle', 0, null, 'Core', [1, 2],
 			function () {
 				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
@@ -463,13 +460,10 @@ function initializeAllSettings() {
 
 		createSetting('dailyHeliumHrPortal',
 			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
-			function () {
-				return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs void maps.<br>\
-			If "Portal After Voids" is selected it will only run voids if none have been completed this portal.')
-			},
+			function () { return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.') },
 			'multitoggle', 0, null, 'Core', [1, 2],
 			function () {
-				return (getPageSetting('dailyPortal', currSettingUniverse).includes('Hour'))
+				return (getPageSetting('dailyPortal', currSettingUniverse) === 1)
 			});
 
 		createSetting('dailyPortalFiller',

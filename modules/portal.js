@@ -46,7 +46,7 @@ function autoPortal() {
 			if (heliumHrBuffer == 0 && !aWholeNewWorld)
 				OKtoPortal = false;
 			if (OKtoPortal && zonePostpone == 0) {
-				if (getPageSetting('HeliumHrPortal') > 0 && (game.stats.totalVoidMaps.value === 0 || mapSettings.mapname === 'Void Map')) {
+				if (getPageSetting('HeliumHrPortal') > 0 && (game.global.totalVoidMaps > 0 || mapSettings.mapname === 'Void Map')) {
 					if (!MODULES.mapFunctions.portalAfterVoids) debug("Portaling after voids have been run.", "portal");
 					MODULES.mapFunctions.portalAfterVoids = true;
 				}
@@ -159,7 +159,7 @@ function dailyAutoPortal() {
 			if (heliumHrBuffer == 0 && !aWholeNewWorld)
 				OKtoPortal = false;
 			if (OKtoPortal && zonePostpone == 0) {
-				if (getPageSetting('dailyHeliumHrPortal') > 0 && (game.stats.totalVoidMaps.value === 0 || mapSettings.mapname === 'Void Map')) {
+				if (getPageSetting('dailyHeliumHrPortal') > 0 && (game.global.totalVoidMaps > 0 || mapSettings.mapname === 'Void Map')) {
 					if (!MODULES.mapFunctions.portalAfterVoids) debug("Portaling after voids have been run.", "portal");
 					MODULES.mapFunctions.portalAfterVoids = true;
 				}
