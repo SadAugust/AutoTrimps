@@ -360,6 +360,11 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 
 function autoEquip() {
 
+	if (game.global.universe === 1 && needGymystic() && canAffordTwoLevel('Gymystic')) {
+		buyUpgrade('Gymystic', true, true);
+		debug('Upgrading Gymystic', "equips", '*upload');
+	}
+
 	if (
 		!getPageSetting('equipOn') ||
 		([2, 3].indexOf(currQuest()) >= 0 && game.global.lastClearedCell < 90) ||
@@ -371,11 +376,6 @@ function autoEquip() {
 		)
 	)
 		return;
-
-	if (game.global.universe === 1 && needGymystic() && canAffordTwoLevel('Gymystic')) {
-		buyUpgrade('Gymystic', true, true);
-		debug('Upgrading Gymystic', "equips", '*upload');
-	}
 
 	if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
 
