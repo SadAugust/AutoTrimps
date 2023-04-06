@@ -2440,7 +2440,6 @@ function desolation() {
 	var destackZone = getPageSetting('desolationZone') > 0 ? getPageSetting('desolationZone') : Infinity;
 	var destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 300;
 	var destackOnlyZone = getPageSetting('desolationOnlyDestackZone') > 0 ? getPageSetting('desolationOnlyDestackZone') : Infinity;
-	if (game.jobs.Explorer.locked) destackOnlyZone = game.global.world;
 	var desolationMapLevel = 0;
 	var desolationMapIncrease = getPageSetting('desolationMapIncrease') > 0 ? getPageSetting('desolationMapIncrease') : 0;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
@@ -2456,7 +2455,7 @@ function desolation() {
 		game.global.mapRunCounter = mapRepeats;
 		mapRepeats = 0;
 	}
-	if (game.global.world < destackOnlyZone) {
+	if (game.global.world < destackOnlyZone && !game.jobs.Explorer.locked) {
 		var autoLevel_Repeat = rAutoLevel;
 		mapAutoLevel = callAutoMapLevel(currentMap, rAutoLevel, desolationSpecial, 10, (0 + desolationMapIncrease));
 		if (mapAutoLevel !== Infinity) {
@@ -2471,6 +2470,7 @@ function desolation() {
 		var trimpHealth = calcOurHealth(false, 'map');
 		for (y = 10; y >= 0; y--) {
 			desolationMapLevel = y;
+			if (game.global.mapsActive && mapSettings.mapName === mapName && (getCurrentMapObject().bonus === undefined ? '0' : getCurrentMapObject().bonus) === desolationSpecial && (getCurrentMapObject().level - game.global.world) === desolationMapLevel) break;
 			if (desolationMapLevel === 0) break;
 			if (game.resources.fragments.owned < minMapFrag(desolationMapLevel, desolationSpecial, 'Random', sliders)) continue;
 			var enemyDmg = calcEnemyAttackCore('map', game.global.world + y, 1, 'Snimp', false, false, game.portal.Equality.radLevel) * 0.84 * 4;

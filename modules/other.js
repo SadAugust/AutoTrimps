@@ -505,6 +505,8 @@ function equalityManagement() {
 
 	if (runningDesolation && mapSettings.equality) {
 		game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
+		manageEqualityStacks();
+		updateEqualityScaling();
 		return;
 	}
 
