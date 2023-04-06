@@ -461,7 +461,7 @@ function initializeAllSettings() {
 		createSetting('dailyHeliumHrPortal',
 			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
 			function () { return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.') },
-			'multitoggle', 0, null, 'Core', [1, 2],
+			'multitoggle', 0, null, 'Daily', [1, 2],
 			function () {
 				return (getPageSetting('dailyPortal', currSettingUniverse) === 1)
 			});
@@ -2676,7 +2676,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("dPreSpireNurseries", radonoff);
 	modifyParentNode("liqstack", radonoff);
 	modifyParentNode("mapOddEvenIncrement", radonon);
-	modifyParentNode("dailyHeliumHrBuffer", 'show');
+	modifyParentNode("dailyHeliumHrPortal", 'show');
 
 	if (getPageSetting('displayAllSettings', currSettingUniverse)) modifyParentNode("heliumC2Challenge", 'show');
 	else modifyParentNode("heliumC2Challenge", 'hide');
