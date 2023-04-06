@@ -2154,7 +2154,7 @@ function initializeAllSettings() {
 		createSetting('automateSpireAssault',
 			function () { return ('Automate Spire Assault') },
 			function () { return ('Automates Spire Assault gear swaps from level 92 up to level 128. HIGHLY RECOMMENDED THAT YOU DO NOT USE THIS SETTING.') },
-			'boolean', false, null, 'Display', [0]);
+			'boolean', false, null, 'Display', [11]);
 		createSetting('showbreedtimer',
 			function () { return ('Enable Breed Timer') },
 			function () { return ('Enables the display of the hidden breedtimer. Turn this off to reduce memory. ') },

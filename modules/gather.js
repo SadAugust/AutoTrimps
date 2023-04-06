@@ -30,6 +30,7 @@ function safeSetGather(resource) {
 
 	if (game.global.playerGathering !== resource) {
 		setGather(resource);
+		debug("Setting gather to " + resource, "gather");
 	}
 	return true;
 }
@@ -108,7 +109,7 @@ function autoGather() {
 	//High Priority Trapping (doing Trapper or without breeding trimps)
 	if (!scientistsAvailable && !minersAvailable && trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull)) {
 		//Bait trimps if we have traps
-		if (!lowOnTraps && !trapBuffering) {
+		if (!lowOnTraps && !trapBuffering && game.buildings.Trap.owned > 0) {
 			safeSetGather('trimps');
 			return;
 		}

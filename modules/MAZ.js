@@ -272,6 +272,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			jobs: false,
 			zone: false,
 			exotic: false,
+			gather: false,
 		};
 
 		var msgs = autoTrimpSettings.spamMessages[value];
@@ -1082,6 +1083,10 @@ function messageConfigHoverAT(what, event) {
 		case 'exotic':
 			text = "Log the amount of world exotics you start a zone with.";
 			title = "Exotic";
+			break;
+		case 'gather':
+			text = "Log the action that AT tries to gather.";
+			title = "Gather";
 			break;
 		default: return;
 	}

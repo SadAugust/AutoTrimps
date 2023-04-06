@@ -1,31 +1,6 @@
 MODULES["other"] = {};
 MODULES["other"].enableRoboTrimpSpam = true;
 
-function armydeath() {
-	if (game.global.mapsActive) return !1;
-	var e = game.global.lastClearedCell + 1,
-		l = game.global.gridArray[e].attack * dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks),
-		a = game.global.soldierHealth;
-	"Ice" == getEmpowerment() && (l *= game.empowerments.Ice.getCombatModifier());
-	var g = game.global.soldierCurrentBlock;
-	return (
-		3 == game.global.formation ? (g /= 4) : "0" != game.global.formation && (g *= 2),
-		g > game.global.gridArray[e].attack ? (l *= getPierceAmt()) : (l -= g * (1 - getPierceAmt())),
-		challengeActive('Daily') && void 0 !== game.global.dailyChallenge.crits && (l *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),
-		void 0 !== game.global.dailyChallenge.bogged && (a -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),
-		void 0 !== game.global.dailyChallenge.plague && (a -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks)),
-		challengeActive('Electricity') && (a -= game.global.soldierHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)),
-		"corruptCrit" == game.global.gridArray[e].corrupted
-			? (l *= 5)
-			: "healthyCrit" == game.global.gridArray[e].corrupted
-				? (l *= 7)
-				: "corruptBleed" == game.global.gridArray[e].corrupted
-					? (a *= 0.8)
-					: "healthyBleed" == game.global.gridArray[e].corrupted && (a *= 0.7),
-		(a -= l) <= 1e3
-	);
-}
-
 function autoRoboTrimp() {
 	if (game.global.roboTrimpLevel === 0) return;
 	if (game.global.roboTrimpCooldown !== 0) return;
@@ -81,26 +56,61 @@ function findLastBionicWithItems(bionicPool) {
 
 function trimpcide() {
 	if (game.portal.Anticipation.level === 0) return;
-
+	if (!game.global.fighting) return;
 	const mapsActive = game.global.mapsActive;
+	if (!mapsActive && game.global.spireActive) return;
+
 	var antistacklimit = (game.talents.patience.purchased) ? 45 : 30;
-	if (game.global.fighting && ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) >= antistacklimit && (game.global.antiStacks < antistacklimit || antistacklimit == 0 && game.global.antiStacks >= 1) && !game.global.spireActive)
-		forceAbandonTrimps();
-	if (game.global.fighting && ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) >= antistacklimit && game.global.antiStacks < antistacklimit && game.global.mapsActive) {
-		if (getCurrentMapObject().location == "Void") {
+	if (game.global.antiStacks >= antistacklimit) return;
+	//Calculates Anticipation stacks based on time since last breed.
+	var baseCheck = ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) >= antistacklimit
+
+	if (baseCheck) {
+		if (mapsActive && getCurrentMapObject().location == "Void") {
 			abandonVoidMap();
+			runMap()
+		} else {
+			forceAbandonTrimps();
 		}
+		debug("Abandoning Trimps to resend army with max Anticipation stacks.", "other");
 	}
 }
 
+function armydeath() {
+	if (game.global.mapsActive) return !1;
+	var cell = game.global.lastClearedCell + 1,
+		enemyAttack = game.global.gridArray[cell].attack * dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks),
+		ourHealth = game.global.soldierHealth;
+	"Ice" == getEmpowerment() && (enemyAttack *= game.empowerments.Ice.getCombatModifier());
+	var block = game.global.soldierCurrentBlock;
+	return (
+		3 == game.global.formation ? (block /= 4) : "0" != game.global.formation && (block *= 2),
+		block > game.global.gridArray[cell].attack ? (enemyAttack *= getPierceAmt()) : (enemyAttack -= block * (1 - getPierceAmt())),
+		challengeActive('Daily') && void 0 !== game.global.dailyChallenge.crits && (enemyAttack *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),
+		void 0 !== game.global.dailyChallenge.bogged && (ourHealth -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),
+		void 0 !== game.global.dailyChallenge.plague && (ourHealth -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks)),
+		challengeActive('Electricity') && (ourHealth -= game.global.soldierHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)),
+		"corruptCrit" == game.global.gridArray[cell].corrupted
+			? (enemyAttack *= 5)
+			: "healthyCrit" == game.global.gridArray[cell].corrupted
+				? (enemyAttack *= 7)
+				: "corruptBleed" == game.global.gridArray[cell].corrupted
+					? (ourHealth *= 0.8)
+					: "healthyBleed" == game.global.gridArray[cell].corrupted && (ourHealth *= 0.7),
+		(ourHealth -= enemyAttack) <= 1e3
+	);
+}
+
 function avoidempower() {
-	if (game.global.universe == 1 && armydeath()) {
-		if (typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined') {
-			mapsClicked(true);
-			mapsClicked(true);
-			return;
-		}
-	}
+	if (!(typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined')) return;
+	if (!armydeath()) return;
+	if (game.global.universe !== 1) return;
+
+	mapsClicked(true);
+	mapsClicked(true);
+	debug("Abandoning Trimps to avoid Empower stacks.", "other");
+	return;
+
 }
 
 var spirebreeding = false;
@@ -143,14 +153,15 @@ function getZoneEmpowerment(zone) {
 
 //Radon
 function archstring() {
+	if (!challengeActive('Archaeology')) return;
 	if (!getPageSetting('archaeology')) return;
-	if (getPageSetting('archaeologyString1') != "undefined" && getPageSetting('archaeologyString2') != "undefined" && getPageSetting('archaeologyString3') != "undefined") {
+	if (getPageSetting('archaeologyString1') !== "undefined" && getPageSetting('archaeologyString2') !== "undefined" && getPageSetting('archaeologyString3') !== "undefined") {
 		var string1 = getPageSetting('archaeologyString1'), string2 = getPageSetting('archaeologyString2'), string3 = getPageSetting('archaeologyString3');
 		var string1z = string1.split(',')[0], string2z = string2.split(',')[0];
 		var string1split = string1.split(',').slice(1).toString(), string2split = string2.split(',').slice(1).toString();
 		if (game.global.world <= string1z && game.global.archString != string1split) game.global.archString = string1split;
-		if (game.global.world > string1z && game.global.world <= string2z && game.global.archString != string2split) game.global.archString = string2split;
-		if (game.global.world > string2z && game.global.archString != string3) game.global.archString = string3;
+		else if (game.global.world > string1z && game.global.world <= string2z && game.global.archString != string2split) game.global.archString = string2split;
+		else if (game.global.world > string2z && game.global.archString != string3) game.global.archString = string3;
 	}
 }
 
@@ -194,10 +205,10 @@ var fastimps =
 
 function remainingHealth(forceMax) {
 	var soldierHealth = game.global.soldierHealth
+	var shieldHealth = 0;
 	if (game.global.universe == 2) {
 		var maxLayers = Fluffy.isRewardActive('shieldlayer');
 		var layers = maxLayers - game.global.shieldLayersUsed;
-		var shieldHealth = 0;
 		if (maxLayers > 0) {
 			for (var i = 0; i <= maxLayers; i++) {
 				if (layers != maxLayers && i > layers)

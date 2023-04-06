@@ -200,6 +200,9 @@ function debug(a, b, c) {
 		case 'exotic':
 			p = settingArray.exotic;
 			break;
+		case 'gather':
+			p = settingArray.gather;
+			break;
 	}
 	p && (console.log(timeStamp() + ' ' + a), message2(a, 'AutoTrimps', c, b))
 }

@@ -1725,7 +1725,7 @@ function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceM
 		var price = itemObj.cost[item];
 		var toBuy;
 		var resource = game.resources[item];
-		var resourcesAvailable = !resources ? resource.owned : resources;
+		var resourcesAvailable = !resources ? resource.owned - resourceNeeded[item] : resources;
 		if (resourcesAvailable < 0) resourcesAvailable = 0;
 		if (game.global.maxSplit != 1 && !forceMax && !forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * game.global.maxSplit);
 		else if (forceRatio) resourcesAvailable = Math.floor(resourcesAvailable * forceRatio);
