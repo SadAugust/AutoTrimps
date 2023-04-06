@@ -383,7 +383,7 @@ function cheatMaxTenacity() {
 
 function cheatWorldCell() {
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
-		game.global.lastClearedCell = game.global.gridArray[game.global.gridArray.length - 1];
+		game.global.lastClearedCell = game.global.gridArray.length - 2;
 		game.global.gridArray[game.global.lastClearedCell + 1].health = 0;
 		game.global.gridArray[game.global.gridArray.length - 1].health = 0;
 	}

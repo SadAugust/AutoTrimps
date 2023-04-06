@@ -357,6 +357,9 @@ function voidMaps() {
 
 		var rVMSettings;
 		if (index === null && module.voidHDIndex === Infinity) {
+			var portalSetting = challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('HeliumHrPortal');
+			if (portalSetting === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') return farmingDetails;
+
 			rVMSettings = {
 				cell: 1,
 				jobratio: "0,0,1",

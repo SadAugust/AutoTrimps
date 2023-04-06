@@ -296,7 +296,9 @@ function initializeAllSettings() {
 			});
 		createSetting('HeliumHrPortal',
 			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
-			function () { return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.') },
+			function () {
+				return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.' + heHourPortal())
+			},
 			'multitoggle', 0, null, 'Core', [1, 2],
 			function () {
 				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
@@ -460,7 +462,10 @@ function initializeAllSettings() {
 
 		createSetting('dailyHeliumHrPortal',
 			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
-			function () { return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.') },
+			function () {
+				return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.' +
+					(currSettingUniverse === 1 && game.global.highestLevelCleared > 230) ? '<br>If "Portal after poison voids" is selected it will run until you reach the next poison band and run voids there.' : 'Whyarentyourunning')
+			},
 			'multitoggle', 0, null, 'Daily', [1, 2],
 			function () {
 				return (getPageSetting('dailyPortal', currSettingUniverse) === 1)
@@ -2305,6 +2310,11 @@ function resource() {
 function resourceHour() {
 	return currSettingUniverse === 2 ? 'Rn' : 'He';
 }
+function heHourPortal() {
+	var text = '';
+	if (currSettingUniverse === 1 && game.global.highestLevelCleared > 230) text += '<br>If \'Portal after voids (poison)\' is selected it will run until you reach the next poison band and run voids there.'
+	return text;
+}
 
 function cinf() {
 	return currSettingUniverse === 2 ? 'C3' : 'C2';
@@ -2761,6 +2771,15 @@ function modifyParentNodeUniverseSwap() {
 	updateCustomButtons(true);
 }
 
+function HeHrPortalOptions() {
+	var highestZone = game.global.highestLevelCleared + 1;
+	var portalOptions = ['Auto Portal Immediately', 'Portal after voids'];
+	if (currSettingUniverse === 1 && highestZone >= 230) portalOptions.push("Portal after voids (poison)");
+
+	autoTrimpSettings.HeliumHrPortal.name = function () { return (portalOptions) }
+	autoTrimpSettings.dailyHeliumHrPortal.name = function () { return (portalOptions) }
+}
+
 function heliumChallengesSetting() {
 	var highestZone = game.global.highestLevelCleared + 1;
 	var heliumChallenges = ["Off", "Helium Per Hour"];
@@ -3204,6 +3223,7 @@ function updateCustomButtons(initialLoad) {
 	//Update portal challenges
 	if (radonon) radonChallengesSetting(false, true);
 	else heliumChallengesSetting();
+	HeHrPortalOptions();
 
 	//Swapping name and description of C2 tab when Radon is toggled on.
 	if (radonon) {

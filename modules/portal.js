@@ -46,8 +46,11 @@ function autoPortal() {
 			if (heliumHrBuffer == 0 && !aWholeNewWorld)
 				OKtoPortal = false;
 			if (OKtoPortal && zonePostpone == 0) {
-				if (getPageSetting('HeliumHrPortal') > 0 && (game.global.totalVoidMaps > 0 || mapSettings.mapname === 'Void Map')) {
-					if (!MODULES.mapFunctions.portalAfterVoids) debug("Portaling after voids have been run.", "portal");
+				if (getPageSetting('HeliumHrPortal') > 0 && game.global.totalVoidMaps > 0) {
+					if (!MODULES.mapFunctions.portalAfterVoids) {
+						if (getPageSetting('HeliumHrPortal') === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Pushing to next Poison zone then portaling after void maps have been run.", "portal");
+						else debug("Portaling after void maps have been run.", "portal");
+					}
 					MODULES.mapFunctions.portalAfterVoids = true;
 				}
 				if (MODULES.mapFunctions.portalAfterVoids) return;
@@ -159,8 +162,11 @@ function dailyAutoPortal() {
 			if (heliumHrBuffer == 0 && !aWholeNewWorld)
 				OKtoPortal = false;
 			if (OKtoPortal && zonePostpone == 0) {
-				if (getPageSetting('dailyHeliumHrPortal') > 0 && (game.global.totalVoidMaps > 0 || mapSettings.mapname === 'Void Map')) {
-					if (!MODULES.mapFunctions.portalAfterVoids) debug("Portaling after voids have been run.", "portal");
+				if (getPageSetting('dailyHeliumHrPortal') > 0 && game.global.totalVoidMaps > 0) {
+					if (!MODULES.mapFunctions.portalAfterVoids) {
+						if (getPageSetting('HeliumHrPortal') === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Pushing to next Poison zone then portaling after void maps have been run.", "portal");
+						else debug("Portaling after void maps have been run.", "portal");
+					}
 					MODULES.mapFunctions.portalAfterVoids = true;
 				}
 				if (MODULES.mapFunctions.portalAfterVoids) return;
@@ -583,7 +589,6 @@ function resetmapvars() {
 	//Resetting variables that would cause issues if they were left as is
 	MODULES.mapFunctions.voidHDRatio = Infinity;
 	MODULES.mapFunctions.voidVHDRatio = Infinity;
-	MODULES.mapFunctions.portalAfterVoids = false;
 	MODULES.mapFunctions.voidHDIndex = Infinity;
 	MODULES.mapFunctions.boneCharge = false;
 	MODULES.mapFunctions.portalZone = Infinity;

@@ -388,6 +388,7 @@ function mainCleanup() {
 	if (aWholeNewHZE) {
 		if (game.global.universe === 2) radonChallengesSetting(true);
 		else heliumChallengesSetting(true);
+		HeHrPortalOptions();
 
 		document.getElementById('freeVoidMap').parentNode.style.display = 'block';
 		document.getElementById('freeVoidMap').style.display = 'block';
