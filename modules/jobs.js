@@ -307,39 +307,16 @@ function buyJobs() {
 
 		game.global.buyAmt = buyAmountStore;
 	} else {
-
 		// Fire anything that we need to fire to free up workers
 		for (var i = 0; i < desiredWorkers.length; i++) {
-
 			if (desiredWorkers[i] > 0) continue;
 			if (Math.abs(desiredWorkers[i]) <= 0) continue;
-
-			var buyAmountStore = game.global.buyAmt;
-			var fireState = game.global.firing;
-
-			game.global.firing = (desiredWorkers[i] < 0);
-			game.global.buyAmt = Math.abs(desiredWorkers[i]);
-			buyJob(ratioWorkers[i], true, true);
-
-			game.global.firing = fireState;
-			game.global.buyAmt = buyAmountStore;
+			safeBuyJob(ratioWorkers[i], -Math.abs(desiredWorkers[i]))
 		}
-
 		// Buy up workers that we need to
 		for (var i = 0; i < desiredWorkers.length; i++) {
-
 			if (desiredWorkers[i] <= 0) continue;
-
-			var buyAmountStore = game.global.buyAmt;
-			var fireState = game.global.firing;
-
-			game.global.firing = (desiredWorkers[i] < 0);
-			game.global.buyAmt = Math.abs(desiredWorkers[i]);
-
-			buyJob(ratioWorkers[i], true, true);
-
-			game.global.firing = fireState;
-			game.global.buyAmt = buyAmountStore;
+			safeBuyJob(ratioWorkers[i], Math.abs(desiredWorkers[i]))
 		}
 	}
 }
