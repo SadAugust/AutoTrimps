@@ -356,11 +356,11 @@ function update_preset() {
 function savePerkySettings() {
 
 	const perkyInputs = {
-		preset: $('#preset').value,
-		weight_he: $('#weight-he').value,
-		weight_atk: $('#weight-atk').value,
-		weight_hp: $('#weight-hp').value,
-		weight_xp: $('#weight-xp').value
+		preset: $$('#preset').value,
+		weight_he: $$('#weight-he').value,
+		weight_atk: $$('#weight-atk').value,
+		weight_hp: $$('#weight-hp').value,
+		weight_xp: $$('#weight-xp').value
 	}
 	localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
 }
@@ -369,11 +369,11 @@ function loadPerkySettings() {
 
 	let perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
 	if (perkyInputs === null) return;
-	$('#preset').value = perkyInputs.preset;
-	$('#weight-he').value = perkyInputs.weight_he;
-	$('#weight-atk').value = perkyInputs.weight_atk
-	$('#weight-hp').value = perkyInputs.weight_hp;
-	$('#weight-xp').value = perkyInputs.weight_xp;
+	$$('#preset').value = perkyInputs.preset;
+	$$('#weight-he').value = perkyInputs.weight_he;
+	$$('#weight-atk').value = perkyInputs.weight_atk
+	$$('#weight-hp').value = perkyInputs.weight_hp;
+	$$('#weight-xp').value = perkyInputs.weight_xp;
 }
 
 function display(a) {

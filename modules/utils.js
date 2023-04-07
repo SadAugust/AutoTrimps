@@ -90,45 +90,38 @@ function pushSpreadsheetData(portaling) {
 	const graphData = JSON.parse(localStorage.getItem("portalDataCurrent"));
 
 	const obj = {
+		User: autoTrimpSettings.gameUser.value,
 		Portals: game.global.totalPortals,
-		Portals_U2: game.global.totalRadonPortals,
-		Challenge: 1,
-		PortalZone: portaling ? game.global.world : null,
-		RunTime: portaling ? game.global.world : null,
+		Portals_U2: game.global.totalRadPortals,
 		Helium: game.global.totalHeliumEarned,
 		Radon: game.global.totalRadonEarned,
 		HZE: game.global.highestLevelCleared + 1,
 		HZE_U2: game.global.highestRadonLevelCleared + 1,
 		Fluffy: (Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3),
-		Scruffy: (Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3),
+		Scruffy: Number((Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3)),
 		Achievement: game.global.achievementBonus,
 		Antenna: game.buildings.Antenna.purchased,
-		Spire_Assault: {
-			Level: autoBattle.maxEnemyLevel,
-			Radon: autoBattle.bonuses.Radon.level,
-			Stats: autoBattle.bonuses.Stats.level,
-			Scaffolding: autoBattle.bonuses.Scaffolding.level,
-		},
-		Special_Challenge: {
-			Frigid: game.global.frigidCompletions,
-			Mayhem: game.global.mayhemCompletions,
-			Pandemonium: game.global.pandCompletions,
-			Desolation: game.global.desoCompletions,
-		},
-		C2: {},
-		C3: {},
+		Spire_Assault_Level: autoBattle.maxEnemyLevel,
+		Spire_Assault_Radon: autoBattle.bonuses.Radon.level,
+		Spire_Assault_Stats: autoBattle.bonuses.Stats.level,
+		Spire_Assault_Scaffolding: autoBattle.bonuses.Scaffolding.level,
+		Frigid: game.global.frigidCompletions,
+		Mayhem: game.global.mayhemCompletions,
+		Pandemonium: game.global.pandCompletions,
+		Desolation: game.global.desoCompletions,
+		c2: countChallengeSquaredReward(false, false, true)[0],
+		c3: countChallengeSquaredReward(false, false, true)[1],
+		cinf: game.global.totalSquaredReward,
 	}
 
 	for (var chall in game.c2) {
 		if (!game.challenges[chall].allowU2) {
-			obj.C2[chall] = {};
-			obj.C2[chall].zone = game.c2[chall];
-			obj.C2[chall].bonus = (getIndividualSquaredReward(chall));
+			obj[chall + "_zone"] = game.c2[chall];
+			obj[chall + "_bonus"] = (getIndividualSquaredReward(chall));
 		}
 		else {
-			obj.C3[chall] = {};
-			obj.C3[chall].zone = game.c2[chall];
-			obj.C3[chall].bonus = (getIndividualSquaredReward(chall));
+			obj[chall + "_zone"] = game.c2[chall];
+			obj[chall + "_bonus"] = (getIndividualSquaredReward(chall));
 		}
 	}
 
@@ -137,40 +130,40 @@ function pushSpreadsheetData(portaling) {
 		//Haven't found a way to get it from the form itself or a way to automate it.
 		var data = {
 			'entry.513355507': user,
-			'entry.362514228': obj.C3.Unlucky,
-			'entry.1317706316': obj.C3.Downsize,
-			'entry.1972422126': obj.C3.Transmute,
-			'entry.2030524252': obj.C3.Unbalance,
-			'entry.1954525187': obj.C3.Duel,
-			'entry.1944374621': obj.C3.Trappapalooza,
-			'entry.165845024': obj.C3.Wither,
-			'entry.763261370': obj.C3.Quest,
-			'entry.1625286575': obj.C3.Storm,
-			'entry.1593743817': obj.C3.Berserk,
-			'entry.717439860': obj.C3.Glass,
-			'entry.445778011': obj.C3.Smithless,
+			'entry.362514228': obj.Unlucky_bonus,
+			'entry.1317706316': obj.Downsize_bonus,
+			'entry.1972422126': obj.Transmute_bonus,
+			'entry.2030524252': obj.Unbalance_bonus,
+			'entry.1954525187': obj.Duel_bonus,
+			'entry.1944374621': obj.Trappapalooza_bonus,
+			'entry.165845024': obj.Wither_bonus,
+			'entry.763261370': obj.Quest_bonus,
+			'entry.1625286575': obj.Storm_bonus,
+			'entry.1593743817': obj.Berserk_bonus,
+			'entry.717439860': obj.Glass_bonus,
+			'entry.445778011': obj.Smithless_bonus,
 			'entry.471643340': obj.Radon,
 			'entry.201807110': obj.Scruffy,
 			'entry.2020521597': obj.HZE_U2,
 			'entry.1185527150': obj.Achievement,
 			'entry.329389990': obj.Antenna,
-			'entry.185675923': obj.Spire_Assault.Level,
-			'entry.2057181336': obj.Spire_Assault.Radon,
-			'entry.1603904637': obj.Spire_Assault.Stats,
-			'entry.957771179': obj.Spire_Assault.Scaffolding,
-			'entry.1627925460': obj.Special_Challenge.Desolation,
+			'entry.185675923': obj.Spire_Assault_Level,
+			'entry.2057181336': obj.Spire_Assault_Radon,
+			'entry.1603904637': obj.Spire_Assault_Stats,
+			'entry.957771179': obj.Spire_Assault_Scaffolding,
+			'entry.1627925460': obj.Desolation,
 		};
 
 		// Validate form
 		var formSuccess = true;
-		/* Object.keys(data).forEach(function (key, index) {
+		Object.keys(data).forEach(function (key, index) {
 			if (data[key] === 0) return;
 			if (!data[key]) {
 				formSuccess = false;
 				console.log("Issue with form")
 				return;
 			}
-		}); */
+		});
 
 		var formId = '1FAIpQLSfh5DddKTYj4tf0tRL5oWb03oPzTQdglFMLAB8bMXKxUAWnTQ'
 		var queryString = '/formResponse'
