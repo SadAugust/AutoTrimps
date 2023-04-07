@@ -83,7 +83,7 @@ function spreadsheetDownload() {
 }
 
 // Process data to google forms to update stats spreadsheet
-function pushSpreadsheetData(portaling) {
+/* function pushSpreadsheetData(portaling) {
 
 	var user = autoTrimpSettings.gameUser.value;
 	if (user === 'undefined' || user === 'Test') return;
@@ -185,10 +185,10 @@ function pushSpreadsheetData(portaling) {
 		}
 	}, 300);
 	debug("Spreadsheet update complete.")
-};
+}; */
 
 // Process data to google forms to update stats spreadsheet
-function pushSpreadsheetData_New(portaling) {
+function pushSpreadsheetData(portaling) {
 
 	var user = autoTrimpSettings.gameUser.value;
 	if (user === 'undefined' || user === 'Test') return;
