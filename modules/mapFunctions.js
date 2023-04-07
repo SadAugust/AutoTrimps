@@ -1291,6 +1291,7 @@ function prestigeClimb() {
 
 	if (challengeActive('Frugal')) return farmingDetails;
 	if (challengeActive('Mapology') && !getPageSetting('mapology')) return farmingDetails;
+	if (game.jobs.Explorer.locked) return farmingDetails;
 
 	const targetPrestige = challengeActive('Mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
 	if (targetPrestige === "Off") return farmingDetails;
@@ -1364,6 +1365,7 @@ function prestigeClimb() {
 			)
 		)
 	);
+	if (game.global.mapsActive && getCurrentMapObject().level - game.global.world !== mapLevel) repeat = true;
 
 	farmingDetails.shouldRun = needPrestige;
 	farmingDetails.mapName = mapName;
