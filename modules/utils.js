@@ -83,11 +83,18 @@ function spreadsheetDownload() {
 }
 
 // Process data to google forms to update stats spreadsheet
-function pushSpreadsheetData() {
+function pushSpreadsheetData(portaling) {
 
 	var user = autoTrimpSettings.gameUser.value;
 	if (user === 'undefined' || user === 'Test') return;
+	const graphData = JSON.parse(localStorage.getItem("portalDataCurrent"));
+
 	const obj = {
+		Portals: game.global.totalPortals,
+		Portals_U2: game.global.totalRadonPortals,
+		Challenge: 1,
+		PortalZone: portaling ? game.global.world : null,
+		RunTime: portaling ? game.global.world : null,
 		Helium: game.global.totalHeliumEarned,
 		Radon: game.global.totalRadonEarned,
 		HZE: game.global.highestLevelCleared + 1,
@@ -113,15 +120,23 @@ function pushSpreadsheetData() {
 	}
 
 	for (var chall in game.c2) {
-		if (!game.challenges[chall].allowU2) obj.C2[chall] = (getIndividualSquaredReward(chall));
-		else obj.C3[chall] = (getIndividualSquaredReward(chall));
+		if (!game.challenges[chall].allowU2) {
+			obj.C2[chall] = {};
+			obj.C2[chall].zone = game.c2[chall];
+			obj.C2[chall].bonus = (getIndividualSquaredReward(chall));
+		}
+		else {
+			obj.C3[chall] = {};
+			obj.C3[chall].zone = game.c2[chall];
+			obj.C3[chall].bonus = (getIndividualSquaredReward(chall));
+		}
 	}
 
 	setTimeout(function () {
 		//Data entry ID can easily be found in the URL of the form after setting up a pre-filled link.
 		//Haven't found a way to get it from the form itself or a way to automate it.
 		var data = {
-			'entry.513355507': user, //Username
+			'entry.513355507': user,
 			'entry.362514228': obj.C3.Unlucky,
 			'entry.1317706316': obj.C3.Downsize,
 			'entry.1972422126': obj.C3.Transmute,
@@ -148,14 +163,14 @@ function pushSpreadsheetData() {
 
 		// Validate form
 		var formSuccess = true;
-		Object.keys(data).forEach(function (key, index) {
+		/* Object.keys(data).forEach(function (key, index) {
 			if (data[key] === 0) return;
 			if (!data[key]) {
 				formSuccess = false;
 				console.log("Issue with form")
 				return;
 			}
-		});
+		}); */
 
 		var formId = '1FAIpQLSfh5DddKTYj4tf0tRL5oWb03oPzTQdglFMLAB8bMXKxUAWnTQ'
 		var queryString = '/formResponse'
@@ -169,6 +184,7 @@ function pushSpreadsheetData() {
 				url: url,
 				type: 'POST',
 				crossDomain: true,
+				header: { 'Content-Type': 'text/javascript' },
 				data: data,
 				dataType: "jsonp",
 			});
