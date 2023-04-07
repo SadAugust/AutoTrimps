@@ -82,6 +82,101 @@ function spreadsheetDownload() {
 	return (spreadsheet);
 }
 
+// Process data to google forms to update stats spreadsheet
+function pushSpreadsheetData() {
+
+	var user = autoTrimpSettings.gameUser.value;
+	if (user === 'undefined' || user === 'Test') return;
+	const obj = {
+		Helium: game.global.totalHeliumEarned,
+		Radon: game.global.totalRadonEarned,
+		HZE: game.global.highestLevelCleared,
+		HZE_U2: game.global.highestRadonLevelCleared,
+		Fluffy: (Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3),
+		Scruffy: (Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3),
+		Achievement: game.global.achievementBonus,
+		Antenna: game.buildings.Antenna.purchased,
+		Spire_Assault: {
+			Level: autoBattle.maxEnemyLevel,
+			Radon: autoBattle.bonuses.Radon.level,
+			Stats: autoBattle.bonuses.Stats.level,
+			Scaffolding: autoBattle.bonuses.Scaffolding.level,
+		},
+		Special_Challenge: {
+			Frigid: game.global.frigidCompletions,
+			Mayhem: game.global.mayhemCompletions,
+			Pandemonium: game.global.pandCompletions,
+			Desolation: game.global.desoCompletions,
+		},
+		C2: {},
+		C3: {},
+	}
+
+	for (var chall in game.c2) {
+		if (!game.challenges[chall].allowU2) obj.C2[chall] = (getIndividualSquaredReward(chall));
+		else obj.C3[chall] = (getIndividualSquaredReward(chall));
+	}
+
+	setTimeout(function () {
+		//Data entry ID can easily be found in the URL of the form after setting up a pre-filled link.
+		//Haven't found a way to get it from the form itself or a way to automate it.
+		var data = {
+			'entry.513355507': user, //Username
+			'entry.362514228': obj.C3.Unlucky,
+			'entry.1317706316': obj.C3.Downsize,
+			'entry.1972422126': obj.C3.Transmute,
+			'entry.2030524252': obj.C3.Unbalance,
+			'entry.1954525187': obj.C3.Duel,
+			'entry.1944374621': obj.C3.Trappapalooza,
+			'entry.165845024': obj.C3.Wither,
+			'entry.763261370': obj.C3.Quest,
+			'entry.1625286575': obj.C3.Storm,
+			'entry.1593743817': obj.C3.Berserk,
+			'entry.717439860': obj.C3.Glass,
+			'entry.445778011': obj.C3.Smithless,
+			'entry.471643340': obj.Radon,
+			'entry.201807110': obj.Scruffy,
+			'entry.2020521597': obj.HZE_U2,
+			'entry.1185527150': obj.Achievement,
+			'entry.329389990': obj.Antenna,
+			'entry.185675923': obj.Spire_Assault.Level,
+			'entry.2057181336': obj.Spire_Assault.Radon,
+			'entry.1603904637': obj.Spire_Assault.Stats,
+			'entry.957771179': obj.Spire_Assault.Scaffolding,
+			'entry.1627925460': obj.Special_Challenge.Desolation,
+		};
+
+		// Validate form
+		var formSuccess = true;
+		Object.keys(data).forEach(function (key, index) {
+			if (data[key] === 0) return;
+			if (!data[key]) {
+				formSuccess = false;
+				console.log("Issue with form")
+				return;
+			}
+		});
+
+		var formId = '1FAIpQLSfh5DddKTYj4tf0tRL5oWb03oPzTQdglFMLAB8bMXKxUAWnTQ'
+		var queryString = '/formResponse'
+		var url = 'https://docs.google.com/forms/d/e/' + formId + queryString
+		//Can't use the form's action URL because it's not a valid URL for CORS requests.
+		//Google doesn't allow CORS requests to their forms by the looks of it
+		//Using dataType "jsonp" instead of "json" to get around this issue.
+		if (formSuccess) {
+			// Send request
+			$.ajax({
+				url: url,
+				type: 'POST',
+				crossDomain: true,
+				data: data,
+				dataType: "jsonp",
+			});
+		}
+	}, 300);
+	debug("Spreadsheet update complete.")
+};
+
 function getPageSetting(setting, universe) {
 	if (autoTrimpSettings.hasOwnProperty(setting) === false) {
 		return false;

@@ -228,6 +228,7 @@ function freeVoidPortal() {
 		}
 		downloadSave();
 		pushData();
+		pushSpreadsheetData();
 		activatePortal();
 		return;
 	}
@@ -479,6 +480,7 @@ function doPortal(challenge, squared) {
 
 	downloadSave();
 	pushData();
+	pushSpreadsheetData();
 	activatePortal();
 	MODULES["portal"].currentChallenge = 'None';
 	lastHeliumZone = 0;

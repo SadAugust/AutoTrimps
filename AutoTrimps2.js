@@ -166,6 +166,21 @@ function swapBaseSettings() {
 function delayStartAgain() {
 
 	swapBaseSettings();
+
+	// Load jQuery
+	// Immediately-invoked function expression
+	(function () {
+		// Load the script
+		const script = document.createElement("script");
+		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+		script.type = 'text/javascript';
+		script.addEventListener('load', () => {
+			console.log(`jQuery ${$.fn.jquery} has been loaded successfully!`);
+			// use jQuery below
+		});
+		document.head.appendChild(script);
+	})();
+
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
 	setInterval(mainLoop, runInterval);
@@ -194,11 +209,13 @@ function universeSwapped() {
 function mainLoop() {
 	//Interval code
 	var date = new Date();
+	oneDayInterval = (date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0 && date.getMilliseconds() < 100);
 	oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
 	twoSecondInterval = ((date.getSeconds() % 2) === 0 && (date.getMilliseconds() < 100));
 	sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
 	tenSecondInterval = ((date.getSeconds() % 10) === 0 && (date.getMilliseconds() < 100));
 
+	if (oneDayInterval) pushSpreadsheetData();
 	if (!usingRealTimeOffline) {
 		var MAZCheck = document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Golden') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Void Map') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Map Bonus') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Raiding');
 
