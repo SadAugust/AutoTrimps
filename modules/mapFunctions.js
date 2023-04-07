@@ -238,7 +238,7 @@ function recycleMap_AT() {
 	if (!getPageSetting('autoMaps')) return;
 	if (game.jobs.Explorer.locked) return;
 	if (game.global.mapsActive)
-		mapsClicked();
+		mapsClicked(true);
 	recycleMap();
 }
 
@@ -737,7 +737,6 @@ function tributeFarm() {
 			mappingDetails(mapName, rTrFMapLevel, rTrFSpecial, rTrFTributes, rTrFMeteorologists);
 			resetMapVars(rTrFSettings);
 			if (!dontRecycleMaps && game.global.mapsActive) {
-				mapsClicked(true);
 				recycleMap_AT();
 			}
 			rTrFbuyBuildings = false;
@@ -918,7 +917,6 @@ function smithyFarm() {
 				else if (mapBonus === 'lwc' || mapBonus === 'swc') MODULES.mapFunctions.smithyMapCount[1] = mappingLength;
 				else if (mapBonus === 'lmc' || mapBonus === 'smc') MODULES.mapFunctions.smithyMapCount[2] = mappingLength;
 				if (!dontRecycleMaps) {
-					mapsClicked(true);
 					recycleMap_AT();
 				}
 			}
@@ -1095,7 +1093,6 @@ function mapDestacking() {
 			(challengeActive('Storm') && !shouldDestack && game.challenges.Storm.beta == 0)
 		)
 	) {
-		mapsClicked(true);
 		recycleMap_AT();
 	}
 
@@ -2484,8 +2481,7 @@ function desolation() {
 			if (enemyDmg > trimpHealth) continue;
 			break;
 		}
-		if (getPageSetting('autoMaps') && game.global.mapsActive && getCurrentMapObject().level !== game.global.world + desolationMapLevel) {
-			mapsClicked(true);
+		if (game.global.mapsActive && getCurrentMapObject().level !== game.global.world + desolationMapLevel) {
 			recycleMap_AT();
 		}
 		equality = true;
@@ -2497,12 +2493,7 @@ function desolation() {
 			MODULES.mapFunctions.desolationContinueRunning = true;
 		}
 		else {
-			if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) {
-				if (getPageSetting('autoMaps')) {
-					mapsClicked(true);
-					recycleMap_AT();
-				}
-			}
+			if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) recycleMap_AT();
 			MODULES.mapFunctions.desolationContinueRunning = false;
 			shouldDesolation = false;
 		}
@@ -2633,7 +2624,6 @@ function hdFarm() {
 			}
 			resetMapVars(rHDFSettings);
 			if (!dontRecycleMaps && game.global.mapsActive) {
-				mapsClicked(true);
 				recycleMap_AT();
 			}
 		}

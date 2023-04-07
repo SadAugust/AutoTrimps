@@ -294,7 +294,6 @@ function autoMap() {
 		//Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
 		if (shouldMap && currentMap === 'Prestige Raiding' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > perfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
 			var maplevel = getCurrentMapObject().level
-			mapsClicked();
 			recycleMap_AT();
 			perfectMapCost(maplevel - game.global.world, "lmc");
 			buyMap();
