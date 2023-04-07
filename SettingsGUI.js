@@ -981,7 +981,7 @@ function initializeAllSettings() {
 			Smithy: { enabled: true, percent: 100, buyMax: 0 },
 			Tribute: { enabled: true, percent: 100, buyMax: 0 },
 			Laboratory: { enabled: true, percent: 100, buyMax: 0 },
-			SafeGateway: { enabled: true, mapCount: 3, zone: 0 }
+			SafeGateway: { enabled: true, mapCount: 1, zone: 0 }
 		}, null, 'Legacy', [1]);
 
 		//Helium
