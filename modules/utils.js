@@ -90,8 +90,8 @@ function pushSpreadsheetData() {
 	const obj = {
 		Helium: game.global.totalHeliumEarned,
 		Radon: game.global.totalRadonEarned,
-		HZE: game.global.highestLevelCleared,
-		HZE_U2: game.global.highestRadonLevelCleared,
+		HZE: game.global.highestLevelCleared + 1,
+		HZE_U2: game.global.highestRadonLevelCleared + 1,
 		Fluffy: (Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3),
 		Scruffy: (Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3),
 		Achievement: game.global.achievementBonus,
