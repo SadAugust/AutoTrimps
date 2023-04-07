@@ -169,7 +169,7 @@ function delayStartAgain() {
 
 	// Load jQuery
 	// Immediately-invoked function expression
-	(function () {
+	/* (function () {
 		// Load the script
 		const script = document.createElement("script");
 		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
@@ -179,7 +179,7 @@ function delayStartAgain() {
 			// use jQuery below
 		});
 		document.head.appendChild(script);
-	})();
+	})(); */
 
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
