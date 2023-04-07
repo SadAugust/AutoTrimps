@@ -234,6 +234,14 @@ function shouldRunUniqueMap(map) {
 	return false;
 }
 
+function recycleMap_AT() {
+	if (!getPageSetting('autoMaps')) return;
+	if (game.jobs.Explorer.locked) return;
+	if (game.global.mapsActive)
+		mapsClicked();
+	recycleMap();
+}
+
 function runUniqueMap(mapName, dontRecycle) {
 	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
 	if (challengeActive('Insanity')) return;
@@ -246,8 +254,7 @@ function runUniqueMap(mapName, dontRecycle) {
 	if (!game.global.preMapsActive && !game.global.mapsActive)
 		mapsClicked();
 	if (!dontRecycle && game.global.mapsActive && getCurrentMapObject().name !== mapName) {
-		mapsClicked();
-		recycleMap();
+		recycleMap_AT()
 	}
 	MODULES.mapFunctions.runUniqueMap = mapName;
 
@@ -731,7 +738,7 @@ function tributeFarm() {
 			resetMapVars(rTrFSettings);
 			if (!dontRecycleMaps && game.global.mapsActive) {
 				mapsClicked(true);
-				recycleMap();
+				recycleMap_AT();
 			}
 			rTrFbuyBuildings = false;
 			return farmingDetails;
@@ -912,7 +919,7 @@ function smithyFarm() {
 				else if (mapBonus === 'lmc' || mapBonus === 'smc') MODULES.mapFunctions.smithyMapCount[2] = mappingLength;
 				if (!dontRecycleMaps) {
 					mapsClicked(true);
-					recycleMap();
+					recycleMap_AT();
 				}
 			}
 			if (!shouldSmithyFarm) {
@@ -1089,7 +1096,7 @@ function mapDestacking() {
 		)
 	) {
 		mapsClicked(true);
-		recycleMap();
+		recycleMap_AT();
 	}
 
 	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rDMapLevel || (getCurrentMapObject().bonus !== rDSpecial && (getCurrentMapObject().bonus !== undefined && rDSpecial !== '0')) || (getCurrentMapObject().size - getCurrentMapCell().level) > rDDestack);
@@ -1729,7 +1736,7 @@ function quest() {
 		mappingDetails(mapName);
 		resetMapVars();
 		if (game.global.mapsActive) mapsClicked(true);
-		if (game.global.preMapsActive && game.global.currentMapId !== '') recycleMap();
+		if (game.global.preMapsActive && game.global.currentMapId !== '') recycleMap_AT();
 		rMapRepeats = 0;
 	}
 
@@ -2479,7 +2486,7 @@ function desolation() {
 		}
 		if (getPageSetting('autoMaps') && game.global.mapsActive && getCurrentMapObject().level !== game.global.world + desolationMapLevel) {
 			mapsClicked(true);
-			recycleMap();
+			recycleMap_AT();
 		}
 		equality = true;
 	}
@@ -2493,7 +2500,7 @@ function desolation() {
 			if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) {
 				if (getPageSetting('autoMaps')) {
 					mapsClicked(true);
-					recycleMap();
+					recycleMap_AT();
 				}
 			}
 			MODULES.mapFunctions.desolationContinueRunning = false;
@@ -2627,7 +2634,7 @@ function hdFarm() {
 			resetMapVars(rHDFSettings);
 			if (!dontRecycleMaps && game.global.mapsActive) {
 				mapsClicked(true);
-				recycleMap();
+				recycleMap_AT();
 			}
 		}
 

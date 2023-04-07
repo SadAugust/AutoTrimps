@@ -295,7 +295,7 @@ function autoMap() {
 		if (shouldMap && currentMap === 'Prestige Raiding' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > perfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
 			var maplevel = getCurrentMapObject().level
 			mapsClicked();
-			recycleMap();
+			recycleMap_AT();
 			perfectMapCost(maplevel - game.global.world, "lmc");
 			buyMap();
 			rRunMap();

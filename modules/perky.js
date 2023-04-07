@@ -54,6 +54,8 @@ function read_save() {
 		($$("#prod").value = prettify(f)),
 		($$("#loot").value = prettify(g)),
 		($$("#breed-timer").value = prettify(mastery("patience") ? 45 : 30));
+
+	debug($$("#helium").value);
 }
 
 function input(a) {
@@ -108,11 +110,11 @@ function parse_inputs() {
 		zone: game.global.highestLevelCleared + 1,
 		perks: parse_perks('', $$("#unlocks").value),
 		weight: {
-			helium: input("weight-he"),
-			attack: input("weight-atk"),
-			health: input("weight-hp"),
-			xp: input("weight-xp"),
-			trimps: input("weight-trimps"),
+			helium: Number(input("weight-he")),
+			attack: Number(input("weight-atk")),
+			health: Number(input("weight-hp")),
+			xp: Number(input("weight-xp")),
+			trimps: Number(input("weight-trimps")),
 			income: 0
 		},
 		fluffy: {
@@ -370,10 +372,10 @@ function loadPerkySettings() {
 	let perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
 	if (perkyInputs === null) return;
 	$$('#preset').value = perkyInputs.preset;
-	$$('#weight-he').value = perkyInputs.weight_he;
-	$$('#weight-atk').value = perkyInputs.weight_atk
-	$$('#weight-hp').value = perkyInputs.weight_hp;
-	$$('#weight-xp').value = perkyInputs.weight_xp;
+	$$('#weight-he').value = Number(perkyInputs.weight_he);
+	$$('#weight-atk').value = Number(perkyInputs.weight_atk);
+	$$('#weight-hp').value = Number(perkyInputs.weight_hp);
+	$$('#weight-xp').value = Number(perkyInputs.weight_xp);
 }
 
 function display(a) {
@@ -750,13 +752,13 @@ function setupPerkyUI() {
 
 	AutoPerks.removeGUI = function () {
 		Object.keys(AutoPerks.GUI).forEach(function (key) {
-			var $elem = AutoPerks.GUI[key];
-			if (!$elem) {
+			var $$elem = AutoPerks.GUI[key];
+			if (!$$elem) {
 				console.log("error in: " + key);
 				return;
 			}
-			if ($elem.parentNode) {
-				$elem.parentNode.removeChild($elem);
+			if ($$elem.parentNode) {
+				$$elem.parentNode.removeChild($$elem);
 				delete $elem;
 			}
 		});
