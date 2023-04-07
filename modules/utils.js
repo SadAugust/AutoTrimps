@@ -227,7 +227,7 @@ function pushSpreadsheetData(portaling) {
 			!game.mapUnlocks.SmithFree.canRunOnce && autoBattle.oneTimers.Smithriffic.owned ?
 				(game.buildings.Smithy.owned - 2 + " + 2") : !game.mapUnlocks.SmithFree.canRunOnce ?
 					(game.buildings.Smithy.owned - 1 + " + 1") : (game.buildings.Smithy.owned)),
-		meteorologist: (game.global.universe == 1 ? "N/A" : game.jobs.meteorologist.owned),
+		meteorologist: (game.global.universe == 1 ? "N/A" : game.jobs.Meteorologist.owned),
 		heliumGained: graphData.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned,
 		fluffyXP: game.stats.bestFluffyExp2.value,
 		universe: graphData.universe,
