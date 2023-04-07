@@ -153,19 +153,19 @@ function saveSurkySettings(initial) {
 		readInputs();
 	}
 	const surkyInputs = {
-		preset: $('#presetElem').value,
-		radonWeight: $('#radonWeight').value === '' ? 1 : $('#radonWeight').value,
-		clearWeight: $('#clearWeight').value === '' ? 1 : $('#clearWeight').value,
-		survivalWeight: $('#survivalWeight').value === '' ? 1 : $('#survivalWeight').value,
-		targetZone: $('#targetZone').value,
-		radonPerRun: $('#radonPerRun').value,
-		coordLimited: $('#coordLimited').value === '' ? 0 : $('#coordLimited').value,
-		weaponLevels: $('#weaponLevels').value,
-		armorLevels: $('#armorLevels').value,
-		tributes: $('#tributes').value,
-		meteorologists: $('#meteorologists').value,
-		housingCount: $('#housingCount').value,
-		smithyCount: $('#smithyCount').value,
+		preset: $$('#presetElem').value,
+		radonWeight: $$('#radonWeight').value === '' ? 1 : $$('#radonWeight').value,
+		clearWeight: $$('#clearWeight').value === '' ? 1 : $$('#clearWeight').value,
+		survivalWeight: $$('#survivalWeight').value === '' ? 1 : $$('#survivalWeight').value,
+		targetZone: $$('#targetZone').value,
+		radonPerRun: $$('#radonPerRun').value,
+		coordLimited: $$('#coordLimited').value === '' ? 0 : $$('#coordLimited').value,
+		weaponLevels: $$('#weaponLevels').value,
+		armorLevels: $$('#armorLevels').value,
+		tributes: $$('#tributes').value,
+		meteorologists: $$('#meteorologists').value,
+		housingCount: $$('#housingCount').value,
+		smithyCount: $$('#smithyCount').value,
 		ezWeights: props.ezWeights,
 		tuWeights: props.tuWeights,
 		pushWeights: props.pushWeights,
@@ -184,33 +184,33 @@ function loadSurkySettings() {
 	}
 	//Top Row
 	if (surkyInputs.preset !== null && surkyInputs.preset !== undefined)
-		$('#presetElem').value = surkyInputs.preset
+		$$('#presetElem').value = surkyInputs.preset
 	if (surkyInputs.radonWeight !== null && surkyInputs.radonWeight !== undefined)
-		$('#radonWeight').value = surkyInputs.radonWeight
+		$$('#radonWeight').value = surkyInputs.radonWeight
 	if (surkyInputs.clearWeight !== null && surkyInputs.clearWeight !== undefined)
-		$('#clearWeight').value = surkyInputs.clearWeight
+		$$('#clearWeight').value = surkyInputs.clearWeight
 	if (surkyInputs.survivalWeight !== null && surkyInputs.survivalWeight !== undefined)
-		$('#survivalWeight').value = surkyInputs.survivalWeight
+		$$('#survivalWeight').value = surkyInputs.survivalWeight
 	if (surkyInputs.targetZone !== null && surkyInputs.targetZone !== undefined)
-		$('#targetZone').value = surkyInputs.targetZone
+		$$('#targetZone').value = surkyInputs.targetZone
 	//Second Row
 	if (surkyInputs.radonPerRun !== null && surkyInputs.radonPerRun !== undefined)
-		$('#radonPerRun').value = surkyInputs.radonPerRun
+		$$('#radonPerRun').value = surkyInputs.radonPerRun
 	if (surkyInputs.coordLimited !== null && surkyInputs.coordLimited !== undefined)
-		$('#coordLimited').value = surkyInputs.coordLimited
+		$$('#coordLimited').value = surkyInputs.coordLimited
 	if (surkyInputs.weaponLevels !== null && surkyInputs.weaponLevels !== undefined)
-		$('#weaponLevels').value = surkyInputs.weaponLevels
+		$$('#weaponLevels').value = surkyInputs.weaponLevels
 	if (surkyInputs.armorLevels !== null && surkyInputs.armorLevels !== undefined)
-		$('#armorLevels').value = surkyInputs.armorLevels
+		$$('#armorLevels').value = surkyInputs.armorLevels
 	//Third Row
 	if (surkyInputs.tributes !== null && surkyInputs.tributes !== undefined)
-		$('#tributes').value = surkyInputs.tributes
+		$$('#tributes').value = surkyInputs.tributes
 	if (surkyInputs.meteorologists !== null && surkyInputs.meteorologists !== undefined)
-		$('#meteorologists').value = surkyInputs.meteorologists
+		$$('#meteorologists').value = surkyInputs.meteorologists
 	if (surkyInputs.housingCount !== null && surkyInputs.housingCount !== undefined)
-		$('#housingCount').value = surkyInputs.housingCount
+		$$('#housingCount').value = surkyInputs.housingCount
 	if (surkyInputs.smithyCount !== null && surkyInputs.smithyCount !== undefined)
-		$('#smithyCount').value = surkyInputs.smithyCount
+		$$('#smithyCount').value = surkyInputs.smithyCount
 }
 
 const equipScalingPrestige = {
@@ -290,9 +290,9 @@ function initPerks() {
 		// finding potions purchased in alchemy
 		shinyTable: [0],
 		// memoization table for trinket drops
-		clearWeight: $('#clearWeight').value !== '' ? Number($('#clearWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.clearWeight) : 1,
-		survivalWeight: $('#survivalWeight').value !== '' ? Number($('#survivalWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.survivalWeight) : 1,
-		radonWeight: $('#radonWeight').value !== '' ? Number($('#radonWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.radonWeight) : 1,
+		clearWeight: $$('#clearWeight').value !== '' ? Number($$('#clearWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.clearWeight) : 1,
+		survivalWeight: $$('#survivalWeight').value !== '' ? Number($$('#survivalWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.survivalWeight) : 1,
+		radonWeight: $$('#radonWeight').value !== '' ? Number($$('#radonWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.radonWeight) : 1,
 		scruffyLevel: 0,
 		weaponLevels: 1,
 		armorLevels: 1,
@@ -620,14 +620,14 @@ var auxInputs = {};
 
 // set aux input only if not locked
 function setAuxInput(key, value) {
-	$('#' + key).value = value;
+	$$('#' + key).value = value;
 }
 
 // fill preset weights from the dropdown menu and set special challenge
 function fillPreset(specificPreset) {
-	if (specificPreset) $('#presetElem').value = specificPreset
+	if (specificPreset) $$('#presetElem').value = specificPreset
 	initPerks();
-	var preset = $('#presetElem').value;
+	var preset = $$('#presetElem').value;
 	var weights = [0, 0, 0];
 	if (preset == 'ezfarm') {
 		weights = (props.ezWeights === null) ? [0, 0, 1] : props.ezWeights;
@@ -653,9 +653,9 @@ function fillPreset(specificPreset) {
 	}
 	presetSpecialOpt();
 	// set special optimizations
-	$('#clearWeight').value = weights[0];
-	$('#survivalWeight').value = weights[1];
-	$('#radonWeight').value = weights[2];
+	$$('#clearWeight').value = weights[0];
+	$$('#survivalWeight').value = weights[1];
+	$$('#radonWeight').value = weights[2];
 	saveSurkySettings();
 	//evaluatePerks();
 }
@@ -758,47 +758,47 @@ function initialLoad() {
 	let surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 	// target zone to CLEAR is 1 zone before the portal zone by default
 	var currentZone = Math.max(1, game.global.world - 1);
-	$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
-	props.targetZone = Number($('#targetZone').value);
+	$$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
+	props.targetZone = Number($$('#targetZone').value);
 
 	// weapon/armor levels taken from dagger/boots (most likely to be leveled highest)
 	var weaponLevels = (game.equipment.Dagger.level || 1);
-	$('#weaponLevels').value = Math.min(weaponLevels, surkyInputs.weaponLevels);
-	props.weaponLevels = Number($('#weaponLevels').value);
+	$$('#weaponLevels').value = Math.min(weaponLevels, surkyInputs.weaponLevels);
+	props.weaponLevels = Number($$('#weaponLevels').value);
 
 	var armorLevels = (game.equipment.Boots.level || 1);
-	$('#armorLevels').value = Math.min(armorLevels, surkyInputs.armorLevels);
-	props.armorLevels = Number($('#armorLevels').value);
+	$$('#armorLevels').value = Math.min(armorLevels, surkyInputs.armorLevels);
+	props.armorLevels = Number($$('#armorLevels').value);
 
 	// get current purchased tributes, mets, etc
 	var tributeCount = (game.buildings.Tribute.owned || 0);
-	$('#tributes').value = Math.max(tributeCount, surkyInputs.tributes);
-	props.tributes = Number($('#tributes').value);
+	$$('#tributes').value = Math.max(tributeCount, surkyInputs.tributes);
+	props.tributes = Number($$('#tributes').value);
 
 	var metCount = (game.jobs.Meteorologist.owned || 0);
-	$('#meteorologists').value = Math.max(metCount, surkyInputs.meteorologists);
-	props.meteorologists = Number($('#meteorologists').value);
+	$$('#meteorologists').value = Math.max(metCount, surkyInputs.meteorologists);
+	props.meteorologists = Number($$('#meteorologists').value);
 
 	var smithyCount = (game.buildings.Smithy.owned || 0);
-	$('#smithyCount').value = Math.max(smithyCount, surkyInputs.smithyCount);
-	props.smithyCount = Number($('#smithyCount').value);
+	$$('#smithyCount').value = Math.max(smithyCount, surkyInputs.smithyCount);
+	props.smithyCount = Number($$('#smithyCount').value);
 
 	var rnPerRun = (game.resources.radon.owned || 0);
-	$('#radonPerRun').value = Math.max(rnPerRun, surkyInputs.radonPerRun);
-	props.radonPerRun = Number($('#radonPerRun').value);
+	$$('#radonPerRun').value = Math.max(rnPerRun, surkyInputs.radonPerRun);
+	props.radonPerRun = Number($$('#radonPerRun').value);
 
 	// get count of best housing building (don't bother optimizing lower than gateways, the 2nd-order adjustments won't matter enough to bother)
 	var housingCount = (game.buildings.Collector.owned || 0);
-	$('#housingCount').value = Math.max(housingCount, surkyInputs.housingCount)
-	props.housingCount = Number($('#housingCount').value);
+	$$('#housingCount').value = Math.max(housingCount, surkyInputs.housingCount)
+	props.housingCount = Number($$('#housingCount').value);
 
 
 	props.vmZone = Math.max(15, (props.targetZone - 1));
 	var rawRnRun = game.resources.radon.owned;
-	props.radonPerRun = Number($('#radonPerRun').value);
+	props.radonPerRun = Number($$('#radonPerRun').value);
 	// if Rn/run is locked, believe it, and force the old history (lets the user manually correct an error)
 	// also for easier testing (and to prevent long term problems with bad user input), assume an input greater than lifetime radon is not something the user wants semi-permanently locked 
-	if (rawRnRun > parseFloat($('#radonPerRun').value) / 20 || parseFloat($('#radonPerRun').value) >= game.global.totalRadonEarned && rawRnRun > game.global.totalRadonEarned / 1e6) {
+	if (rawRnRun > parseFloat($$('#radonPerRun').value) / 20 || parseFloat($$('#radonPerRun').value) >= game.global.totalRadonEarned && rawRnRun > game.global.totalRadonEarned / 1e6) {
 		var history = new Array(rnTerms);
 		// maintain a history of the last 10 farming runs' Rn gain, and evaluate an exponentially weighted moving average over this history
 		if (window.localStorage.getItem("rPrHistory")) {
@@ -819,17 +819,17 @@ function initialLoad() {
 			ewma += history[i] * rnMAWeights[i];
 		}
 		window.localStorage.setItem("rPrHistory", JSON.stringify(history));
-		$('#radonPerRun').value = ewma;
-		props.radonPerRun = Number($('#radonPerRun').value);
+		$$('#radonPerRun').value = ewma;
+		props.radonPerRun = Number($$('#radonPerRun').value);
 	}
-	if (parseFloat($('#radonPerRun').value) < game.global.totalRadonEarned / 1e6) {
+	if (parseFloat($$('#radonPerRun').value) < game.global.totalRadonEarned / 1e6) {
 		// if a new user of the calculator happens to be starting from a battle spec or U1 save, give them a not completely stupid Rn/run value
 		//  -> This is likely to be inaccurate and give shitty results for a few runs, but it's better than accepting some comparatively minuscule value incorrectly.
 		rawRnRun = game.global.bestRadon / 5;
 		if (!(rawRnRun > 30))
 			rawRnRun = 30;
-		$('#radonPerRun').value = rawRnRun;
-		props.radonPerRun = Number($('#radonPerRun').value);
+		$$('#radonPerRun').value = rawRnRun;
+		props.radonPerRun = Number($$('#radonPerRun').value);
 	}
 
 	// scaffolding increases population (relevant for Combat Respec and Trappa)
@@ -1085,7 +1085,7 @@ function readInputs() {
 	perks.Tenacity.effect = getTenacityEffect(props.tenacityTime);
 
 	// triple-checking that coordlimited is not less than 0
-	props.coordLimited = Number($('#coordLimited').value);
+	props.coordLimited = Number($$('#coordLimited').value);
 	if (props.coordLimited < 0)
 		props.coordLimited = 0;
 	// let the user set coordLimited > 1 if they like to give extra population weight, despite saying they can't ;p

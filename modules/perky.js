@@ -10,16 +10,16 @@ function runPerky() {
 
 function allocatePerky() {
 	tooltip('Import Perks', null, 'update');
-	document.getElementById('perkImportBox').value = ($("#perkstring").value)
+	document.getElementById('perkImportBox').value = ($$("#perkstring").value)
 	importPerks();
 	cancelTooltip();
 }
 
 function read_save() {
-	//localStorage.zone || ($("#zone").value = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared);
+	//localStorage.zone || ($$("#zone").value = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared);
 	var a = input("zone");
 	if (JSON.parse(localStorage.getItem("perkyInputs")).preset === null) {
-		($$("#preset > *").forEach(function (a) {
+		($$$("#preset > *").forEach(function (a) {
 			a.selected = parseInt(a.innerHTML.replace("z", "")) < game.global.highestLevelCleared;
 		}),
 			update_preset());
@@ -44,20 +44,20 @@ function read_save() {
 	}
 	jobless ? (f = 0) : (i += (mastery("mapLoot2") ? 5 : 4) * j),
 		update_dg(),
-		($("#helium").value = b + (!game.global.canRespecPerks || !portalWindowOpen ? 0 : game.resources.helium.owned)),
-		($("#unlocks").value = d.join(",")),
-		($("#whipimp").checked = game.unlocks.imps.Whipimp),
-		($("#magnimp").checked = game.unlocks.imps.Magnimp),
-		($("#tauntimp").checked = game.unlocks.imps.Tauntimp),
-		($("#venimp").checked = game.unlocks.imps.Venimp),
-		($("#chronojest").value = prettify(i)),
-		($("#prod").value = prettify(f)),
-		($("#loot").value = prettify(g)),
-		($("#breed-timer").value = prettify(mastery("patience") ? 45 : 30));
+		($$("#helium").value = b + (!game.global.canRespecPerks || !portalWindowOpen ? 0 : game.resources.helium.owned)),
+		($$("#unlocks").value = d.join(",")),
+		($$("#whipimp").checked = game.unlocks.imps.Whipimp),
+		($$("#magnimp").checked = game.unlocks.imps.Magnimp),
+		($$("#tauntimp").checked = game.unlocks.imps.Tauntimp),
+		($$("#venimp").checked = game.unlocks.imps.Venimp),
+		($$("#chronojest").value = prettify(i)),
+		($$("#prod").value = prettify(f)),
+		($$("#loot").value = prettify(g)),
+		($$("#breed-timer").value = prettify(mastery("patience") ? 45 : 30));
 }
 
 function input(a) {
-	return parse_suffixes($("#" + a).value);
+	return parse_suffixes($$("#" + a).value);
 }
 
 function parse_suffixes(a) {
@@ -101,12 +101,12 @@ function update_dg() {
 
 function parse_inputs() {
 	read_save();
-	var a = $("#preset").value;
+	var a = $$("#preset").value;
 	savePerkySettings();
 	var b = {
 		total_he: game.global.totalHeliumEarned - (!portalWindowOpen ? game.resources.helium.owned : 0),
 		zone: game.global.highestLevelCleared + 1,
-		perks: parse_perks('', $("#unlocks").value),
+		perks: parse_perks('', $$("#unlocks").value),
 		weight: {
 			helium: input("weight-he"),
 			attack: input("weight-atk"),
@@ -342,15 +342,15 @@ presets = {
 function update_preset() {
 	let perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
 
-	var a = presets[$("#preset").value],
+	var a = presets[$$("#preset").value],
 		b = a[0],
 		c = a[1],
 		d = a[2],
 		e = Math.floor((+b + +c + +d) / 5).toString();
-	($("#weight-he").value = perkyInputs["weight-he"] || b),
-		($("#weight-atk").value = perkyInputs["weight-atk"] || c),
-		($("#weight-hp").value = perkyInputs["weight-hp"] || d),
-		($("#weight-xp").value = perkyInputs["weight-xp"] || e);
+	($$("#weight-he").value = perkyInputs["weight-he"] || b),
+		($$("#weight-atk").value = perkyInputs["weight-atk"] || c),
+		($$("#weight-hp").value = perkyInputs["weight-hp"] || d),
+		($$("#weight-xp").value = perkyInputs["weight-xp"] || e);
 }
 
 function savePerkySettings() {
@@ -380,9 +380,9 @@ function display(a) {
 	var b = a[0],
 		c = a[1],
 		d = game ? game.options.menu.smallPerks.enabled : 0,
-		e = $("#perks");
-	var f = e > $("#test-text") ? "Level: " : "";
-	($("#perks").innerHTML = Object.keys(c)
+		e = $$("#perks");
+	var f = e > $$("#test-text") ? "Level: " : "";
+	($$("#perks").innerHTML = Object.keys(c)
 		.filter(function (a) {
 			return !c[a].locked;
 		})
@@ -404,7 +404,7 @@ function display(a) {
 		})
 		.join(""));
 	for (var g in c) c[g] = c[g].level;
-	$("#perkstring").value = LZString.compressToBase64(JSON.stringify(c));
+	$$("#perkstring").value = LZString.compressToBase64(JSON.stringify(c));
 }
 
 function optimize(a) {
@@ -655,10 +655,10 @@ function optimize(a) {
 }
 
 var jobless = !1,
-	$ = function (a) {
+	$$ = function (a) {
 		return document.querySelector(a);
 	},
-	$$ = function (a) {
+	$$$ = function (a) {
 		return [].slice.apply(document.querySelectorAll(a));
 	};
 
@@ -684,10 +684,10 @@ function select_preset(a, b) {
 		delete localStorage["weight-hp"],
 		delete localStorage["weight-xp"],
 		(c = presets[a]),
-		($("#weight-he").value = c[0]),
-		($("#weight-atk").value = c[1]),
-		($("#weight-hp").value = c[2]),
-		($("#weight-xp").value = Math.floor((+presets[a][0] + +presets[a][1] + +presets[a][2]) / 5).toString());
+		($$("#weight-he").value = c[0]),
+		($$("#weight-atk").value = c[1]),
+		($$("#weight-hp").value = c[2]),
+		($$("#weight-xp").value = Math.floor((+presets[a][0] + +presets[a][1] + +presets[a][2]) / 5).toString());
 	var c;
 	savePerkySettings();
 }
