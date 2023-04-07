@@ -192,32 +192,49 @@ function pushSpreadsheetData(portaling) {
 
 	var user = autoTrimpSettings.gameUser.value;
 	if (user === 'undefined' || user === 'Test') return;
-	const graphData = JSON.parse(localStorage.getItem("portalDataCurrent"));
+	const graphData = JSON.parse(localStorage.getItem("portalDataCurrent"))[getportalID()];
 
 	const obj = {
-		User: autoTrimpSettings.gameUser.value,
-		Date: new Date().toUTCString(),
-		Portals: game.global.totalPortals,
-		Portals_U2: game.global.totalRadPortals,
-		Helium: game.global.totalHeliumEarned,
-		Radon: game.global.totalRadonEarned,
-		HZE: game.global.highestLevelCleared + 1,
-		HZE_U2: game.global.highestRadonLevelCleared + 1,
-		Fluffy: (Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3),
-		Scruffy: Number((Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3)),
-		Achievement: game.global.achievementBonus,
-		Antenna: game.buildings.Antenna.purchased,
-		Spire_Assault_Level: autoBattle.maxEnemyLevel,
-		Spire_Assault_Radon: autoBattle.bonuses.Radon.level,
-		Spire_Assault_Stats: autoBattle.bonuses.Stats.level,
-		Spire_Assault_Scaffolding: autoBattle.bonuses.Scaffolding.level,
-		Frigid: game.global.frigidCompletions,
-		Mayhem: game.global.mayhemCompletions,
-		Pandemonium: game.global.pandCompletions,
-		Desolation: game.global.desoCompletions,
+		user: autoTrimpSettings.gameUser.value,
+		date: new Date().toUTCString(),
+		portals: game.global.totalPortals,
+		portals_U2: game.global.totalRadPortals,
+		helium: game.global.totalHeliumEarned,
+		radon: game.global.totalRadonEarned,
+		hZE: game.global.highestLevelCleared + 1,
+		hZE_U2: game.global.highestRadonLevelCleared + 1,
+		fluffy: (Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3),
+		scruffy: Number((Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3)),
+		achievement: game.global.achievementBonus,
+		antenna: game.buildings.Antenna.purchased,
+		spire_Assault_Level: autoBattle.maxEnemyLevel,
+		spire_Assault_Radon: autoBattle.bonuses.Radon.level,
+		spire_Assault_Stats: autoBattle.bonuses.Stats.level,
+		spire_Assault_Scaffolding: autoBattle.bonuses.Scaffolding.level,
+		frigid: game.global.frigidCompletions,
+		mayhem: game.global.mayhemCompletions,
+		pandemonium: game.global.pandCompletions,
+		desolation: game.global.desoCompletions,
 		c2: countChallengeSquaredReward(false, false, true)[0],
 		c3: countChallengeSquaredReward(false, false, true)[1],
 		cinf: game.global.totalSquaredReward,
+		challenge: graphData.challenge,
+		runtime: updatePortalTimer(true),
+		zone: game.global.world,
+		voidZone: graphData.universe === 2 ? game.stats.highestVoidMap2.value : game.stats.highestVoidMap.value,
+		voidsCompleted: game.global.totalVoidMaps,
+		smithy: (game.global.universe == 1 ? "N/A" :
+			!game.mapUnlocks.SmithFree.canRunOnce && autoBattle.oneTimers.Smithriffic.owned ?
+				(game.buildings.Smithy.owned - 2 + " + 2") : !game.mapUnlocks.SmithFree.canRunOnce ?
+					(game.buildings.Smithy.owned - 1 + " + 1") : (game.buildings.Smithy.owned)),
+		meteorologist: (game.global.universe == 1 ? "N/A" : game.jobs.meteorologist.owned),
+		heliumGained: graphData.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned,
+		fluffyXP: game.stats.bestFluffyExp2.value,
+		universe: graphData.universe,
+		sharpTrimps: (game.singleRunBonuses.sharpTrimps.owned ? "TRUE" : "FALSE"),
+		goldenMaps: (game.singleRunBonuses.goldMaps.owned ? "TRUE" : "FALSE"),
+		heliumy: (game.singleRunBonuses.heliumy.owned ? "TRUE" : "FALSE"),
+		patch: game.global.stringVersion,
 	}
 
 	for (var chall in game.c2) {
@@ -235,7 +252,7 @@ function pushSpreadsheetData(portaling) {
 		//Data entry ID can easily be found in the URL of the form after setting up a pre-filled link.
 		//Haven't found a way to get it from the form itself or a way to automate it.
 		var data = {
-			'entry.1850071841': obj.User,
+			'entry.1850071841': obj.user,
 			'entry.815135863': JSON.stringify(obj),
 		};
 
