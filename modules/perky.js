@@ -55,7 +55,6 @@ function read_save() {
 		($$("#loot").value = prettify(g)),
 		($$("#breed-timer").value = prettify(mastery("patience") ? 45 : 30));
 
-	debug($$("#helium").value);
 }
 
 function input(a) {

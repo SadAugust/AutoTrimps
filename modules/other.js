@@ -696,7 +696,11 @@ function formatTimeForDescriptions(number) {
 	var timeTaken = '';
 	var seconds = Math.floor((number) % 60);
 	var minutes = Math.floor((number / 60) % 60);
-	var hours = Math.floor((number / 60 / 60));
+	var hours = Math.floor((number / 60 / 60) % 24);
+	var days = Math.floor((number / 60 / 60 / 24) % 365);
+	var years = Math.floor((number / 60 / 60 / 24 / 365));
+	if (years > 0) timeTaken += (years + "y");
+	if (days > 0) timeTaken += (days + "d");
 	if (hours > 0) timeTaken += (hours + "h");
 	if (minutes > 0) timeTaken += (minutes + "m");
 	timeTaken += (seconds + "s");

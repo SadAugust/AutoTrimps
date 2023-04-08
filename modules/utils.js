@@ -188,7 +188,7 @@ function spreadsheetDownload() {
 }; */
 
 // Process data to google forms to update stats spreadsheet
-function pushSpreadsheetData(portaling) {
+function pushSpreadsheetData() {
 
 	var user = autoTrimpSettings.gameUser.value;
 	if (user === 'undefined' || user === 'Test') return;
@@ -218,19 +218,19 @@ function pushSpreadsheetData(portaling) {
 		c2: countChallengeSquaredReward(false, false, true)[0],
 		c3: countChallengeSquaredReward(false, false, true)[1],
 		cinf: game.global.totalSquaredReward,
-		challenge: graphData.challenge,
-		runtime: updatePortalTimer(true),
+		challenge: graphData !== null ? graphData.challenge : 'None',
+		runtime: formatTimeForDescriptions((getGameTime() - game.global.portalTime) / 1000),
 		zone: game.global.world,
-		voidZone: graphData.universe === 2 ? game.stats.highestVoidMap2.value : game.stats.highestVoidMap.value,
-		voidsCompleted: game.global.totalVoidMaps,
+		voidZone: game.global.universe === 2 ? game.stats.highestVoidMap2.value : game.stats.highestVoidMap.value,
+		voidsCompleted: game.stats.totalVoidMaps.value,
 		smithy: (game.global.universe == 1 ? "N/A" :
 			!game.mapUnlocks.SmithFree.canRunOnce && autoBattle.oneTimers.Smithriffic.owned ?
 				(game.buildings.Smithy.owned - 2 + " + 2") : !game.mapUnlocks.SmithFree.canRunOnce ?
 					(game.buildings.Smithy.owned - 1 + " + 1") : (game.buildings.Smithy.owned)),
 		meteorologist: (game.global.universe == 1 ? "N/A" : game.jobs.Meteorologist.owned),
-		heliumGained: graphData.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned,
+		heliumGained: game.global.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned,
 		fluffyXP: game.stats.bestFluffyExp2.value,
-		universe: graphData.universe,
+		universe: game.global.universe,
 		sharpTrimps: (game.singleRunBonuses.sharpTrimps.owned ? "TRUE" : "FALSE"),
 		goldenMaps: (game.singleRunBonuses.goldMaps.owned ? "TRUE" : "FALSE"),
 		heliumy: (game.singleRunBonuses.heliumy.owned ? "TRUE" : "FALSE"),
