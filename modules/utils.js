@@ -132,6 +132,7 @@ function pushSpreadsheetData() {
 		sharpTrimps: (game.singleRunBonuses.sharpTrimps.owned ? "TRUE" : "FALSE"),
 		goldenMaps: (game.singleRunBonuses.goldMaps.owned ? "TRUE" : "FALSE"),
 		heliumy: (game.singleRunBonuses.heliumy.owned ? "TRUE" : "FALSE"),
+		runningChallengeSquared: game.global.runningChallengeSquared,
 		patch: game.global.stringVersion,
 	}
 
