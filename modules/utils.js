@@ -162,7 +162,7 @@ function pushSpreadsheetData() {
 		c3: countChallengeSquaredReward(false, false, true)[1],
 		cinf: game.global.totalSquaredReward,
 		challenge: graphData !== null ? graphData.challenge : 'None',
-		runtime: formatTimeForDescriptions((getGameTime() - game.global.portalTime) / 1000),
+		runtime: (getGameTime() - game.global.portalTime),
 		zone: game.global.world,
 		voidZone: game.global.universe === 2 ? game.stats.highestVoidMap2.value : game.stats.highestVoidMap.value,
 		voidsCompleted: game.stats.totalVoidMaps.value,
