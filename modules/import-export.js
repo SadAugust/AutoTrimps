@@ -539,7 +539,7 @@ function resetAutoTrimps(a, b) {
 	(ATrunning = !1),
 		setTimeout(
 			(function (d) {
-				localStorage.removeItem("autoTrimpSettings"), (autoTrimpSettings = d ? d : {});
+				localStorage.removeItem("atSettings"), (autoTrimpSettings = d ? d : {});
 				var e = document.getElementById("settingsRow");
 				e.removeChild(document.getElementById("autoSettings")),
 					e.removeChild(document.getElementById("autoTrimpsTabBarMenu")),

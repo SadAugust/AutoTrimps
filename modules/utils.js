@@ -13,7 +13,10 @@ if (!String.prototype.includes) {
 }
 
 function loadPageVariables() {
-	var tmp = JSON.parse(localStorage.getItem('autoTrimpSettings'));
+	var tmp = JSON.parse(localStorage.getItem('atSettings'));
+	if (tmp === null)
+		tmp = JSON.parse(localStorage.getItem('autoTrimpSettings'));
+
 	if (tmp !== null && tmp['ATversion'] != undefined) {
 		autoTrimpSettings = tmp;
 	}
@@ -258,7 +261,8 @@ function shouldSpeedRun(achievement) {
 }
 
 function saveSettings() {
-	safeSetItems('autoTrimpSettings', serializeSettings())
+	var storageName = 'atSettings';
+	safeSetItems(storageName, serializeSettings())
 }
 
 function debug(a, b, c) {

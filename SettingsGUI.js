@@ -3685,9 +3685,32 @@ function updateATVersion() {
 			Rewrote how the daily portal modifier settings are stored to make it usable in U1 and to implement the new U2 mods so there's a good chance any U2 settings will be lost. Sorry about that!")
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.8') {
+			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
+			if (tempSettings.dailyPortalSettingsArray.valueU2 !== undefined)
+				delete autoTrimpSettings.dailyPortalSettingsArray.valueU2.value;
+
+			changelog.push("Have rewritten all of the AutoJobs, AutoStructure, Daily Portal Modifier help windows.<br>\
+			Rewrote how the daily portal modifier settings are stored to make it usable in U1 and to implement the new U2 mods so there's a good chance any U2 settings will be lost. Sorry about that!")
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.0') {
+			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
+			if (tempSettings !== null) {
+				safeSetItems('atSettings', serializeSettings());
+				if (localStorage.atSettings !== null) {
+					delete localStorage.autoTrimpSettings;
+					console.log("Deleted old localStorage file so different forks can be used alongside this one!");
+				}
+				else return "Error with localStorage conversion. Please inform me asap!";
+			}
+		}
+
 		autoTrimpSettings["ATversion"] = ATversion;
-		printChangelog(changelog);
-		verticalCenterTooltip(false, true);
+		if (changelog.length !== 0) {
+			printChangelog(changelog);
+			verticalCenterTooltip(false, true);
+		}
 		saveSettings();
 	}
 
