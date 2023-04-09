@@ -2212,9 +2212,9 @@ function initializeAllSettings() {
 	document.getElementById('displayHeHr').setAttribute('onclick', 'toggleHeHr()');
 
 	//Sorting out spacing issues with swapping between Helium & Radon settings.
-	document.getElementById('radonsettings').setAttribute('onclick', 'settingChanged("radonsettings"), modifyParentNodeUniverseSwap()');
-	document.getElementById('heirloomAuto').setAttribute('onclick', 'settingChanged("heirloomAuto"), modifyParentNodeUniverseSwap()');
-	document.getElementById('displayAllSettings').setAttribute('onclick', 'settingChanged("displayAllSettings"), modifyParentNodeUniverseSwap()');
+	document.getElementById('radonsettings').setAttribute('onclick', 'settingChanged("radonsettings")');
+	document.getElementById('heirloomAuto').setAttribute('onclick', 'settingChanged("heirloomAuto")');
+	document.getElementById('displayAllSettings').setAttribute('onclick', 'settingChanged("displayAllSettings")');
 
 	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
 
@@ -2690,7 +2690,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("mapOddEvenIncrement", radonon);
 	modifyParentNode("dailyHeliumHrPortal", 'show');
 
-	if (getPageSetting('displayAllSettings', currSettingUniverse)) modifyParentNode("heliumC2Challenge", 'show');
+	if (getPageSetting('displayAllSettings', currSettingUniverse) || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && holidayObj.holiday === 'Eggy') && autoTrimpSettings.liqstack.require()) modifyParentNode("heliumC2Challenge", 'show');
 	else modifyParentNode("heliumC2Challenge", 'hide');
 
 	//Maps
@@ -3341,6 +3341,7 @@ function updateCustomButtons(initialLoad) {
 	}
 
 	document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + getPageSetting('autoMaps'));
+	if (!initialLoad) modifyParentNodeUniverseSwap();
 
 	if (document.getElementById('Prestige').selectedIndex > 11 && !game.global.slowDone) {
 		document.getElementById('Prestige').selectedIndex = 11;
