@@ -2753,7 +2753,7 @@ function prestigeMapHasEquips(number, raidzones, targetPrestige) {
 //Set sliders for prestige raiding
 function prestigeRaidingSliders(number, raidzones, special) {
 	if (!special) special = getAvailableSpecials('p');
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : "Plentiful";
+	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountains' : game.global.decayDone ? "Plentiful" : "Random";
 	document.getElementById("mapLevelInput").value = raidzones >= game.global.world ? game.global.world : raidzones;
 	document.getElementById("advExtraLevelSelect").value = prestigeMapLevelToRun(number, raidzones);
 	document.getElementById("advSpecialSelect").value = special;
@@ -2826,7 +2826,7 @@ function prestigeTotalFragCost(raidZones, targetPrestige, special, incrementMaps
 
 function fragmap() {
 	var fragmentsOwned = game.resources.fragments.owned
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
+	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountains' : game.global.decayDone ? "Plentiful" : "Random";
 	document.getElementById("advExtraLevelSelect").value = 0;
 	document.getElementById("advSpecialSelect").value = "fa";
 	document.getElementById("lootAdvMapsRange").value = 9;
@@ -2862,7 +2862,7 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (!special) special = '0';
-	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
+	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountains' : game.global.decayDone ? "Plentiful" : "Random";
 	if (!mapSliders) mapSliders = [9, 9, 9];
 	if (mapSliders !== [9, 9, 9]) onlyPerfect = false;
 	document.getElementById("biomeAdvMapsSelect").value = biome;
@@ -2876,7 +2876,7 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
 	updateMapCost();
 
 	if (!onlyPerfect) {
-		if (updateMapCost(true) > game.resources.fragments.owned) {
+		if (updateMapCost(true) > game.resources.fragments.owned && !challengeActive('Metal')) {
 			document.getElementById("biomeAdvMapsSelect").value = "Random";
 			updateMapCost();
 		}
@@ -2994,7 +2994,7 @@ function perfectMapCost(pluslevel, special, biome) {
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (!special) special = '0';
-	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Random";
+	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountains' : game.global.decayDone ? "Plentiful" : "Random";
 	document.getElementById("biomeAdvMapsSelect").value = biome;
 	document.getElementById("advExtraLevelSelect").value = pluslevel;
 	document.getElementById("advSpecialSelect").value = special;
@@ -3041,7 +3041,7 @@ function shouldFarmMapCreation(pluslevel, special, biome, difficulty, loot, size
 	//Pre-Init
 	if (!pluslevel) pluslevel = 0;
 	if (!special) special = getAvailableSpecials('lmc');
-	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountains";
+	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountains' : game.global.decayDone ? "Plentiful" : "Random";
 	if (!difficulty) difficulty = 0.75;
 	if (!loot) loot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.farmlandsUnlocked ? 2.6 : game.singleRunBonuses.goldMaps.owned ? 2.85 : 1.85;
 	if (!size) size = 20;
