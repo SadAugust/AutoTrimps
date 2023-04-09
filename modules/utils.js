@@ -92,6 +92,23 @@ function pushSpreadsheetData() {
 	if (user === 'undefined' || user === 'Test') return;
 	const graphData = JSON.parse(localStorage.getItem("portalDataCurrent"))[getportalID()];
 
+	const fluffy_EvoLevel = {
+		cap: game.portal.Capable.level,
+		prestige: Number(game.global.fluffyPrestige),
+		potential: function () {
+			return Number(Math.log(0.003 * game.global.fluffyExp / Math.pow(5, this.prestige) + 1) / Math.log(4));
+		},
+		level: function () {
+			return Number(Math.min(Math.floor(this.potential()), this.cap));
+		},
+		progress: function () {
+			return this.level() == this.cap ? 0 : Number((4 ** (this.potential() - this.level()) - 1) / 3).toFixed(2)
+		},
+		fluffy: function () {
+			return "E" + this.prestige + "L" + (this.level() + this.progress())
+		}
+	}
+
 	const obj = {
 		user: autoTrimpSettings.gameUser.value,
 		date: new Date().toUTCString(),
@@ -101,8 +118,8 @@ function pushSpreadsheetData() {
 		radon: game.global.totalRadonEarned,
 		hZE: game.global.highestLevelCleared + 1,
 		hZE_U2: game.global.highestRadonLevelCleared + 1,
-		fluffy: (Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3),
-		scruffy: Number((Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3)),
+		fluffy: fluffy_EvoLevel.fluffy(),
+		scruffy: Number(Math.log(((game.global.fluffyExp2 / 1000) * 3) + 1) / Math.log(4)).toFixed(2),
 		achievement: game.global.achievementBonus,
 		antenna: game.buildings.Antenna.purchased,
 		spire_Assault_Level: autoBattle.maxEnemyLevel,
@@ -129,9 +146,9 @@ function pushSpreadsheetData() {
 		heliumGained: game.global.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned,
 		fluffyXP: game.stats.bestFluffyExp2.value,
 		universe: game.global.universe,
-		sharpTrimps: (game.singleRunBonuses.sharpTrimps.owned ? "TRUE" : "FALSE"),
-		goldenMaps: (game.singleRunBonuses.goldMaps.owned ? "TRUE" : "FALSE"),
-		heliumy: (game.singleRunBonuses.heliumy.owned ? "TRUE" : "FALSE"),
+		sharpTrimps: game.singleRunBonuses.sharpTrimps.owned,
+		goldenMaps: game.singleRunBonuses.goldMaps.owned,
+		heliumy: game.singleRunBonuses.heliumy.owned,
 		runningChallengeSquared: game.global.runningChallengeSquared,
 		patch: game.global.stringVersion,
 	}
