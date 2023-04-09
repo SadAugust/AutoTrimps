@@ -1255,8 +1255,12 @@ function calcHDRatio(targetZone, type, maxTenacity) {
 	var runningUnlucky = challengeActive('Unlucky');
 	var ourBaseDamage = calcOurDmg(runningUnlucky ? 'max' : 'avg', universeSetting, false, type, 'maybe', targetZone - game.global.world);
 
-	//Checking ratio at max tenacity for Void Maps.
+	//Checking ratio at max mapbonus/tenacity for Void Maps.
 	if (maxTenacity && game.global.universe === 2 && game.portal.Tenacity.radLevel > 0) {
+		if (type === 'world' && game.global.mapBonus !== 10) {
+			ourBaseDamage /= 1 + 0.2 * game.global.mapBonus;
+			ourBaseDamage *= game.talents.mapBattery.purchased ? 5 : 3;
+		}
 		if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
 			ourBaseDamage /= game.portal.Tenacity.getMult();
 			ourBaseDamage *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));

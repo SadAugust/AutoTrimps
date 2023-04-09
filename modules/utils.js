@@ -196,22 +196,13 @@ function pushSpreadsheetData() {
 
 	setTimeout(function () {
 		//Data entry ID can easily be found in the URL of the form after setting up a pre-filled link.
-		//Haven't found a way to get it from the form itself or a way to automate it.
+		//Haven't found a way to get it from the form itself or a way to automate it so pushing the data as an object instead.
 		var data = {
 			'entry.1850071841': obj.user,
 			'entry.815135863': JSON.stringify(obj),
 		};
 
-		// Validate form
 		var formSuccess = true;
-		/* Object.keys(data).forEach(function (key, index) {
-			if (data[key] === 0) return;
-			if (!data[key]) {
-				formSuccess = false;
-				console.log("Issue with form")
-				return;
-			}
-		}); */
 
 		var formId = '1FAIpQLScTqY2ti8WUwIKK_WOh_X_Oky704HOs_Lt07sCTG2sHCc3quA'
 		var queryString = '/formResponse'
