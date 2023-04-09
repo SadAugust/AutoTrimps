@@ -390,7 +390,7 @@ function doPortal(challenge, squared) {
 	}
 
 	//Running Dailies
-	if (getPageSetting('dailyPortalStart', portalUniverse) && !challengeSquaredMode) {
+	if ((getPageSetting('dailyPortalStart', portalUniverse) || currChall === 'Daily') && !challengeSquaredMode) {
 		selectChallenge('Daily');
 		//Checking to see which dailies can be run
 		checkCompleteDailies();
