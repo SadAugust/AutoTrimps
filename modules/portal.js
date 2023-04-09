@@ -4,6 +4,7 @@ MODULES["portal"].bufferExceedFactor = 5;
 MODULES["portal"].portalForVoid = false;
 MODULES["portal"].portalUniverse = Infinity;
 MODULES["portal"].currentChallenge = 'None';
+MODULES["portal"].dontPushData = false;
 var zonePostpone = 0;
 
 function autoPortal() {
@@ -228,7 +229,7 @@ function freeVoidPortal() {
 		}
 		downloadSave();
 		pushData();
-		pushSpreadsheetData();
+		if (!MODULES["portal"].dontPushData) pushSpreadsheetData();
 		activatePortal();
 		return;
 	}
@@ -359,7 +360,10 @@ function doPortal(challenge, squared) {
 	}
 	//Initialising variables that will be used later.
 	freeVoidPortal();
-	if (MODULES.portal.portalForVoid) return;
+	if (MODULES.portal.portalForVoid) {
+		MODULES["portal"].dontPushData = true;
+		return;
+	}
 
 	while (MODULES.portal.portalUniverse !== Infinity) {
 		if (portalUniverse === MODULES.portal.portalUniverse) {
@@ -480,9 +484,10 @@ function doPortal(challenge, squared) {
 
 	downloadSave();
 	pushData();
-	pushSpreadsheetData();
+	if (!MODULES["portal"].dontPushData) pushSpreadsheetData();
 	activatePortal();
 	MODULES["portal"].currentChallenge = 'None';
+	MODULES["portal"].dontPushData = false;
 	lastHeliumZone = 0;
 	zonePostpone = 0;
 	resetmapvars();
