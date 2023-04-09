@@ -109,6 +109,34 @@ function pushSpreadsheetData() {
 		}
 	}
 
+	const scruffy_Level = {
+		firstLevel: 1000,
+		growth: 4,
+		currentExp: [],
+		getExp: function () {
+			this.calculateExp()
+			return this.currentExp;
+		},
+		getCurrentExp: function () {
+			return game.global.fluffyExp2;
+		},
+		currentLevel: function () {
+			return Math.floor(log10(((this.getCurrentExp() / this.firstLevel) * (this.growth - 1)) + 1) / log10(this.growth));
+		},
+		calculateExp: function () {
+			var level = this.currentLevel();
+			var experience = this.getCurrentExp();
+			var removeExp = 0;
+			if (level > 0) {
+				removeExp = Math.floor(this.firstLevel * ((Math.pow(this.growth, level) - 1) / (this.growth - 1)));
+			}
+			var totalNeeded = Math.floor(this.firstLevel * ((Math.pow(this.growth, level + 1) - 1) / (this.growth - 1)));
+			experience -= removeExp;
+			totalNeeded -= removeExp;
+			this.currentExp = [level, experience, totalNeeded];
+		}
+	}
+
 	const obj = {
 		user: autoTrimpSettings.gameUser.value,
 		date: new Date().toUTCString(),
@@ -119,7 +147,7 @@ function pushSpreadsheetData() {
 		hZE: game.global.highestLevelCleared + 1,
 		hZE_U2: game.global.highestRadonLevelCleared + 1,
 		fluffy: fluffy_EvoLevel.fluffy(),
-		scruffy: Number(Math.log(((game.global.fluffyExp2 / 1000) * 3) + 1) / Math.log(4)).toFixed(2),
+		scruffy: Number((scruffy_Level.currentLevel() + scruffy_Level.getExp()[1] / scruffy_Level.getExp()[2]).toFixed(3)),
 		achievement: game.global.achievementBonus,
 		antenna: game.buildings.Antenna.purchased,
 		spire_Assault_Level: autoBattle.maxEnemyLevel,
