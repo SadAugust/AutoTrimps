@@ -15,48 +15,6 @@ function allocatePerky() {
 	cancelTooltip();
 }
 
-function read_save() {
-	//localStorage.zone || ($$("#zone").value = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared);
-	var a = input("zone");
-	if (JSON.parse(localStorage.getItem("perkyInputs")).preset === null) {
-		($$$("#preset > *").forEach(function (a) {
-			a.selected = parseInt(a.innerHTML.replace("z", "")) < game.global.highestLevelCleared;
-		}),
-			update_preset());
-	}
-	var b = portalWindowOpen ? game.global.heliumLeftover : 0;
-	for (var c in game.portal) b += game.portal[c].heliumSpent || 0;
-	var d = Object.keys(game.portal).filter(function (a) {
-		return !game.portal[a].locked && void 0 !== game.portal[a].level;
-	});
-	(game.global.canRespecPerks) ||
-		(d = d.map(function (a) {
-			return a + ">" + (game.portal[a].level || 0);
-		}));
-	var e = mastery("turkimp2") ? 1 : mastery("turkimp") ? 0.4 : 0.25,
-		f = 1 + e,
-		g = 1 + 0.333 * e,
-		h = Math.min(Math.floor((a - 101) / 100), game.global.spiresCompleted);
-	g *= 100 > a ? 0.7 : 1 + (mastery("stillRowing") ? 0.3 : 0.2) * h;
-	for (var i = 27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp, j = 60 > a ? 0 : 85 > a ? 7 : 160 > a ? 10 : 185 > a ? 14 : 20, k = 0, l = game.global.StaffEquipped.mods || []; k < l.length; k++) {
-		var m = l[k];
-		"MinerSpeed" === m[0] ? (f *= 1 + 0.01 * m[1]) : "metalDrop" === m[0] && (g *= 1 + 0.01 * m[1]);
-	}
-	jobless ? (f = 0) : (i += (mastery("mapLoot2") ? 5 : 4) * j),
-		update_dg(),
-		($$("#helium").value = b + (!game.global.canRespecPerks || !portalWindowOpen ? 0 : game.resources.helium.owned)),
-		($$("#unlocks").value = d.join(",")),
-		($$("#whipimp").checked = game.unlocks.imps.Whipimp),
-		($$("#magnimp").checked = game.unlocks.imps.Magnimp),
-		($$("#tauntimp").checked = game.unlocks.imps.Tauntimp),
-		($$("#venimp").checked = game.unlocks.imps.Venimp),
-		($$("#chronojest").value = prettify(i)),
-		($$("#prod").value = prettify(f)),
-		($$("#loot").value = prettify(g)),
-		($$("#breed-timer").value = prettify(mastery("patience") ? 45 : 30));
-
-}
-
 function input(a) {
 	return parse_suffixes($$("#" + a).value);
 }
@@ -72,48 +30,218 @@ function mastery(a) {
 	return game.talents[a].purchased;
 }
 
+var Perk = /** @class */ (function () {
+	function Perk(base_cost, cost_increment, scaling, max_level, cost_exponent) {
+		if (max_level === void 0) { max_level = Infinity; }
+		if (cost_exponent === void 0) { cost_exponent = 1.3; }
+		this.base_cost = base_cost;
+		this.cost_increment = cost_increment;
+		this.scaling = scaling;
+		this.max_level = max_level;
+		this.cost_exponent = cost_exponent;
+		this.locked = true;
+		this.level = 0;
+		this.min_level = 0;
+		this.cost = 0;
+		this.gain = 0;
+		this.bonus = 1;
+		this.cost = this.base_cost;
+	}
+	Perk.prototype.levellable = function (he_left) {
+		return !this.locked &&
+			this.level < this.max_level &&
+			this.cost * Math.max(1, Math.floor(this.level / 1e12)) <= he_left;
+	};
+	Perk.prototype.level_up = function (amount) {
+		this.level += amount;
+		this.bonus = this.scaling(this.level);
+		if (this.cost_increment) {
+			var spent = amount * (this.cost + this.cost_increment * (amount - 1) / 2);
+			this.cost += amount * this.cost_increment;
+			return spent;
+		}
+		else {
+			var spent = this.cost;
+			this.cost = Math.ceil(this.level / 2 + this.base_cost * Math.pow(this.cost_exponent, this.level));
+			return spent;
+		}
+	};
+	Perk.prototype.spent = function (log) {
+		if (log === void 0) { log = false; }
+		if (this.cost_increment)
+			return this.level * (this.base_cost + this.cost - this.cost_increment) / 2;
+		var total = 0;
+		for (var x = 0; x < this.level; ++x)
+			total += Math.ceil(x / 2 + this.base_cost * Math.pow(this.cost_exponent, x));
+		return total;
+	};
+	Perk.prototype.log_ratio = function () {
+		return this.cost_increment ? (this.scaling(1) - this.scaling(0)) / this.bonus
+			: Math.log(this.scaling(this.level + 1) / this.bonus);
+	};
+	return Perk;
+}());
+
+var presets = {
+	early: ['5', '4', '3'],
+	broken: ['7', '3', '1'],
+	mid: ['16', '5', '1'],
+	corruption: ['25', '7', '1'],
+	magma: ['35', '4', '3'],
+	z280: ['42', '6', '1'],
+	z400: ['88', '10', '1'],
+	z450: ['500', '50', '1'],
+	spire: ['0', '1', '1'],
+	nerfed: ['0', '4', '3'],
+	tent: ['5', '4', '3'],
+	scientist: ['0', '1', '3'],
+	carp: ['0', '0', '0'],
+	trapper: ['0', '7', '1'],
+	coord: ['0', '40', '1'],
+	trimp: ['0', '99', '1'],
+	metal: ['0', '7', '1'],
+	c2: ['0', '7', '1'],
+	income: ['0', '0', '0'],
+	unesscented: ['0', '1', '0'],
+	nerfeder: ['0', '1', '0'],
+};
+
+function select_preset(name, manually) {
+	var _a;
+	if (manually === void 0) { manually = true; }
+	delete localStorage['weight-he'];
+	delete localStorage['weight-atk'];
+	delete localStorage['weight-hp'];
+	delete localStorage['weight-xp'];
+	_a = presets[name],
+		$$('#weight-he').value = _a[0],
+		$$('#weight-atk').value = _a[1],
+		$$('#weight-hp').value = _a[2];
+	$$('#weight-xp').value = Math.floor((+presets[name][0] + +presets[name][1] + +presets[name][2]) / 5).toString();
+	savePerkySettings();
+}
+
+function auto_preset() {
+	let perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
+
+	var _a = presets[$$('#preset').value], he = _a[0], atk = _a[1], hp = _a[2];
+	var xp = floor((+he + +atk + +hp) / 5).toString();
+	$$('#weight-he').value = perkyInputs['weight-he'] || he;
+	$$('#weight-atk').value = perkyInputs['weight-atk'] || atk;
+	$$('#weight-hp').value = perkyInputs['weight-hp'] || hp;
+	$$('#weight-xp').value = perkyInputs['weight-xp'] || xp;
+}
+
 function update_dg() {
-	function a(a) {
-		(m += a * c * Math.sqrt(Math.min(d, n))), (n = Math.max(0, n - h));
+	let max_zone = (game.global.highestLevelCleared + 1) / 2 + 115;
+	let eff = 500e6 + 50e6 * game.generatorUpgrades.Efficiency.upgrades;
+	let capa = 3 + 0.4 * game.generatorUpgrades.Capacity.upgrades;
+	let max_fuel = game.permanentGeneratorUpgrades.Storage.owned ? capa * 1.5 : capa;
+	let supply = 230 + 2 * game.generatorUpgrades.Supply.upgrades;
+	let overclock = game.generatorUpgrades.Overclocker.upgrades;
+	overclock = overclock && (1 - 0.5 * Math.pow(0.99, overclock - 1));
+	let burn = game.permanentGeneratorUpgrades.Slowburn.owned ? 0.4 : 0.5;
+	let cells = mastery('magmaFlow') ? 18 : 16;
+	let accel = mastery('quickGen') ? 1.03 : 1.02;
+	let hs2 = mastery('hyperspeed2') ? (game.global.highestLevelCleared + 1) / 2 : 0;
+	let bs = 0.5 * mastery('blacksmith') + 0.25 * mastery('blacksmith2') + 0.15 * mastery('blacksmith3');
+	bs *= game.global.highestLevelCleared + 1;
+	let housing = 0;
+	let fuel = 0;
+	let time = 0;
+
+	function tick(mult) {
+		housing += mult * eff * Math.sqrt(Math.min(capa, fuel));
+		fuel = Math.max(0, fuel - burn);
 	}
-	var b = (game.global.highestLevelCleared + 1) / 2 + 115,
-		c = 5e8 + 5e7 * game.generatorUpgrades.Efficiency.upgrades,
-		d = 3 + 0.4 * game.generatorUpgrades.Capacity.upgrades,
-		e = game.permanentGeneratorUpgrades.Storage.owned ? 1.5 * d : d,
-		f = 230 + 2 * game.generatorUpgrades.Supply.upgrades,
-		g = game.generatorUpgrades.Overclocker.upgrades;
-	g = g && 1 - 0.5 * Math.pow(0.99, g - 1);
-	var h = game.permanentGeneratorUpgrades.Slowburn.owned ? 0.4 : 0.5,
-		i = mastery("magmaFlow") ? 18 : 16,
-		j = mastery("quickGen") ? 1.03 : 1.02,
-		k = mastery("hyperspeed2") ? (game.global.highestLevelCleared + 1) / 2 : 0,
-		l = 0.5 * mastery("blacksmith") + 0.25 * mastery("blacksmith2") + 0.15 * mastery("blacksmith3");
-	l *= game.global.highestLevelCleared + 1;
-	for (var m = 0, n = 0, o = 0, p = 230; b >= p; ++p) {
-		n += i * (0.01 * Math.min(p, f) - 2.1);
-		var q = Math.ceil(60 / Math.pow(j, Math.floor((p - 230) / 3)));
-		for (o += p > l ? 28 : p > k ? 20 : 15; o >= q;) (o -= q), a(1);
-		for (; n > e;) a(g);
-		m *= 1.009;
+
+	for (let zone = 230; zone <= max_zone; ++zone) {
+		fuel += cells * (0.01 * Math.min(zone, supply) - 2.1);
+
+		let tick_time = Math.ceil(60 / Math.pow(accel, Math.floor((zone - 230) / 3)));
+		time += zone > bs ? 28 : zone > hs2 ? 20 : 15;
+		while (time >= tick_time) {
+			time -= tick_time;
+			tick(1);
+		}
+
+		while (fuel > max_fuel)
+			tick(overclock)
+
+		housing *= 1.009;
 	}
-	for (; n >= h;) a(1);
-	return Number(m);
+
+	while (fuel >= burn)
+		tick(1);
+
+	return housing;
+}
+
+function read_save() {
+	let settings = JSON.parse(localStorage.getItem("perkyInputs"));
+	let zone = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared;
+
+	if (!settings.preset) {
+		$$$('#preset > *').forEach(function (option) {
+			option.selected = parseInt(option.innerHTML.replace('z', '')) < game.global.highestLevelCleared;
+		});
+		auto_preset();
+	}
+
+	// He / unlocks
+	let helium = game.global.heliumLeftover;
+	for (let perk in game.portal)
+		helium += (game.portal[perk].heliumSpent || 0);
+
+	let unlocks = Object.keys(game.portal).filter(perk => !game.portal[perk].locked && game.portal[perk].level !== undefined);
+	if (!game.global.canRespecPerks)
+		unlocks = unlocks.map(perk => perk + '>' + (game.portal[perk].level || 0));
+
+	// Income
+	let tt = mastery('turkimp2') ? 1 : mastery('turkimp') ? 0.4 : 0.25;
+	let prod = 1 + tt;
+	let loot = 1 + 0.333 * tt;
+	let spires = Math.min(Math.floor((zone - 101) / 100), game.global.spiresCompleted);
+	loot *= zone < 100 ? 0.7 : 1 + (mastery('stillRowing') ? 0.3 : 0.2) * spires;
+	loot *= zone < 100 ? 0.7 : 1 + (mastery('stillRowing') ? 0.3 : 0.2) * spires;
+
+	let chronojest = 27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp;
+	let cache = zone < 60 ? 0 : zone < 85 ? 7 : zone < 160 ? 10 : zone < 185 ? 14 : 20;
+
+	for (let mod of (game.global.StaffEquipped.mods || [])) {
+		if (mod[0] === 'MinerSpeed')
+			prod *= 1 + 0.01 * mod[1];
+		else if (mod[0] === 'metalDrop')
+			loot *= 1 + 0.01 * mod[1];
+	}
+
+	chronojest += (mastery('mapLoot2') ? 5 : 4) * cache;
+
+	// Fill the fields
+	update_dg();
+	$$('#unlocks').value = unlocks.join(',');
+	$$('#chronojest').value = chronojest;
+	$$('#prod').value = prod;
+	$$('#loot').value = loot;
 }
 
 function parse_inputs() {
+
 	read_save();
-	var a = $$("#preset").value;
+	var preset = $$('#preset').value;
 	savePerkySettings();
-	var b = {
+	if (preset == 'trapper' && (!game || game.global.challengeActive != 'Trapper'))
+		throw 'This preset requires a save currently running Trapper². Start a new run using “Trapper² (initial)”, export, and try again.';
+	var result = {
 		total_he: game.global.totalHeliumEarned - (!portalWindowOpen ? game.resources.helium.owned : 0),
 		zone: game.global.highestLevelCleared + 1,
-		perks: parse_perks('', $$("#unlocks").value),
+		perks: parse_perks('', $$('#unlocks').value),
 		weight: {
 			helium: Number(input("weight-he")),
 			attack: Number(input("weight-atk")),
 			health: Number(input("weight-hp")),
 			xp: Number(input("weight-xp")),
-			trimps: Number(input("weight-trimps")),
+			trimps: 0,
 			income: 0
 		},
 		fluffy: {
@@ -123,247 +251,124 @@ function parse_inputs() {
 		mod: {
 			storage: 0.125,
 			soldiers: 0,
-			dg: "nerfed" == a ? 0 : Number(update_dg()),
-			tent_city: "tent" == a,
+			dg: preset == 'nerfed' ? 0 : Number(update_dg()),
+			tent_city: preset == 'tent',
 			whip: game.unlocks.imps.Whipimp,
 			magn: game.unlocks.imps.Magnimp,
 			taunt: game.unlocks.imps.Tauntimp,
 			ven: game.unlocks.imps.Venimp,
-			chronojest: input("chronojest"),
-			prod: input("prod"),
-			loot: input("loot"),
-			breed_timer: input("breed-timer"),
-		},
+			chronojest: input('chronojest'),
+			prod: input('prod'),
+			loot: input('loot'),
+			breed_timer: (mastery('patience') ? 45 : 30),
+		}
 	};
-	"nerfed" == a && ((b.total_he = 9999e4), (b.zone = 200), (b.mod.dg = 0)),
-		"trapper" == a && ((b.mod.soldiers = game.resources.trimps.owned), (b.mod.prod = 0), (b.perks.Pheromones.max_level = 0), (b.perks.Anticipation.max_level = 0)),
-		"spire" == a && ((b.mod.prod = b.mod.loot = 0), (b.perks.Overkill.max_level = 0), game && (b.zone = game.global.world)),
-		"carp" == a && ((b.mod.prod = b.mod.loot = 0), (b.weight.trimps = 1e6)),
-		"metal" == a && (b.mod.prod = 0),
-		"trimp" == a && (b.mod.soldiers = 1),
-		"nerfed" == a && (b.perks.Overkill.max_level = 1),
-		"scientist" == a && (b.perks.Coordinated.max_level = 0),
-		"income" == a && (b.weight = { income: 3, trimps: 3, attack: 1, helium: 0, health: 0, xp: 0 }),
-		"unesscented" == a && ((b.total_he = 0), (b.zone = 181)),
-		"nerfeder" == a && ((b.total_he = 9999e5), (b.zone = 300));
-	return (
-		b
-	);
-}
-
-function parse_perks(a, b) {
-	var c = function (a) {
-		return function (b) {
-			return 1 + 0.01 * a * b;
-		};
-	},
-		d = function (a) {
-			return function (b) {
-				return Math.pow(1 + 0.01 * a, b);
-			};
-		},
-		e = {
-			Looting_II: new Perk(1e5, 1e4, c(0.25)),
-			Carpentry_II: new Perk(1e5, 1e4, c(0.25)),
-			Motivation_II: new Perk(5e4, 1e3, c(1)),
-			Power_II: new Perk(2e4, 500, c(1)),
-			Toughness_II: new Perk(2e4, 500, c(1)),
-			Capable: new Perk(
-				1e8,
-				0,
-				function (a) {
-					return 1;
-				},
-				10,
-				10
-			),
-			Cunning: new Perk(1e11, 0, c(25)),
-			Curious: new Perk(1e14, 0, c(160)),
-			Classy: new Perk(1e17, 0, d(4.5678375), 75),
-			Overkill: new Perk(1e6, 0, c(500), 30),
-			Resourceful: new Perk(5e4, 0, d(-5)),
-			Coordinated: new Perk(15e4, 0, d(-2)),
-			Siphonology: new Perk(
-				1e5,
-				0,
-				function (a) {
-					return Math.pow(1 + a, 0.1);
-				},
-				3
-			),
-			Anticipation: new Perk(1e3, 0, c(6), 10),
-			Resilience: new Perk(100, 0, d(10)),
-			Meditation: new Perk(75, 0, c(1), 7),
-			Relentlessness: new Perk(
-				75,
-				0,
-				function (a) {
-					return 1 + 0.05 * a * (1 + 0.3 * a);
-				},
-				10
-			),
-			Carpentry: new Perk(25, 0, d(10)),
-			Artisanistry: new Perk(15, 0, d(-5)),
-			Range: new Perk(1, 0, c(1), 10),
-			Agility: new Perk(4, 0, d(-5), 20),
-			Bait: new Perk(4, 0, c(100)),
-			Trumps: new Perk(3, 0, c(20)),
-			Pheromones: new Perk(3, 0, c(10)),
-			Packrat: new Perk(3, 0, c(20)),
-			Motivation: new Perk(2, 0, c(5)),
-			Power: new Perk(1, 0, c(5)),
-			Toughness: new Perk(1, 0, c(5)),
-			Looting: new Perk(1, 0, c(5)),
-		};
-	"*" == b && (b = Object.keys(e).join(",")), b.match(/>/) || (b = b.replace(/(?=,|$)/g, ">0"));
-	for (
-		var f = function (a) {
-			var b = a.match(/(\S+) *([<=>])=?(.*)/);
-			if (!b) throw "Enter a list of perk levels, such as “power=42, toughness=51”.";
-			var c = b[1].match(/2$|II$/i),
-				d = b[1]
-					.replace(/[ _]?(2|II)/i, "")
-					.replace(/^OK/i, "O")
-					.replace(/^Looty/i, "L"),
-				f = new RegExp("^" + d + "[a-z]*" + (c ? "_II" : "") + "$", "i"),
-				g = Object.keys(e).filter(function (a) {
-					return a.match(f);
-				});
-			if (g.length > 1) throw "Ambiguous perk abbreviation: " + b[1] + ".";
-			if (g.length < 1) throw "Unknown perk: " + b[1] + ".";
-			var h = parse_suffixes(b[3]);
-			if (!isFinite(h)) throw "Invalid number: " + b[3] + ".";
-			(e[g[0]].locked = !1), ">" != b[2] && (e[g[0]].max_level = h), "<" != b[2] && (e[g[0]].min_level = h);
-		},
-		g = 0,
-		h = (b + "," + a).split(/,/).filter(function (a) {
-			return a;
-		});
-		g < h.length;
-		g++
-	) {
-		var i = h[g];
-		f(i);
+	if (preset == 'nerfed') {
+		result.total_he = 99990000;
+		result.zone = 200;
+		result.mod.dg = 0;
 	}
-	return e;
-}
-
-function set_hze(a) {
-	+localStorage.hze > a || (localStorage.hze = a);
-}
-
-var Perk = (function () {
-	function a(a, b, c, d, e) {
-		void 0 === d && (d = 1 / 0),
-			void 0 === e && (e = 1.3),
-			(this.base_cost = a),
-			(this.cost_increment = b),
-			(this.scaling = c),
-			(this.max_level = d),
-			(this.cost_exponent = e),
-			(this.locked = !0),
-			(this.level = 0),
-			(this.min_level = 0),
-			(this.cost = 0),
-			(this.gain = 0),
-			(this.bonus = 1),
-			(this.cost = this.base_cost);
+	if (preset == 'trapper') {
+		result.mod.soldiers = game.resources.trimps.owned;
+		result.mod.prod = 0;
+		result.perks.Pheromones.max_level = 0;
+		result.perks.Anticipation.max_level = 0;
 	}
-	return (
-		(a.prototype.levellable = function (a) {
-			return !this.locked && this.level < this.max_level && this.cost * Math.max(1, Math.floor(this.level / 1e12)) <= a;
-		}),
-		(a.prototype.level_up = function (a) {
-			if (((this.level += a), (this.bonus = this.scaling(this.level)), this.cost_increment)) {
-				var b = a * (this.cost + (this.cost_increment * (a - 1)) / 2);
-				return (this.cost += a * this.cost_increment), b;
-			}
-			var b = this.cost;
-			return (this.cost = Math.ceil(this.level / 2 + this.base_cost * Math.pow(this.cost_exponent, this.level))), b;
-		}),
-		(a.prototype.spent = function (a) {
-			if ((void 0 === a && (a = !1), this.cost_increment)) return (this.level * (this.base_cost + this.cost - this.cost_increment)) / 2;
-			for (var b = 0, c = 0; c < this.level; ++c) b += Math.ceil(c / 2 + this.base_cost * Math.pow(this.cost_exponent, c));
-			return b;
-		}),
-		(a.prototype.log_ratio = function () {
-			return this.cost_increment ? (this.scaling(1) - this.scaling(0)) / this.bonus : Math.log(this.scaling(this.level + 1) / this.bonus);
-		}),
-		a
-	);
-})(),
-	presets = {
-		early: ["5", "4", "3"],
-		broken: ["7", "3", "1"],
-		mid: ["16", "5", "1"],
-		corruption: ["25", "7", "1"],
-		magma: ["35", "4", "3"],
-		z280: ["42", "6", "1"],
-		z400: ["88", "10", "1"],
-		z450: ["500", "50", "1"],
-		spire: ["0", "1", "1"],
-		nerfed: ["0", "4", "3"],
-		tent: ["5", "4", "3"],
-		scientist: ["0", "1", "3"],
-		carp: ["0", "0", "0"],
-		trapper: ["0", "7", "1"],
-		coord: ["0", "40", "1"],
-		trimp: ["0", "99", "1"],
-		metal: ["0", "7", "1"],
-		c2: ["0", "7", "1"],
-		income: ["0", "0", "0"],
-		unesscented: ["0", "1", "0"],
-		nerfeder: ["0", "1", "0"],
+	if (preset == 'spire') {
+		result.mod.prod = result.mod.loot = 0;
+		result.perks.Overkill.max_level = 0;
+		if (game)
+			result.zone = game.global.world;
+	}
+	if (preset == 'carp') {
+		result.mod.prod = result.mod.loot = 0;
+		result.weight.trimps = 1e6;
+	}
+	if (preset == 'metal')
+		result.mod.prod = 0;
+	if (preset == 'trimp')
+		result.mod.soldiers = 1;
+	if (preset == 'nerfed')
+		result.perks.Overkill.max_level = 1;
+	if (preset == 'scientist')
+		result.perks.Coordinated.max_level = 0;
+	if (preset == 'income')
+		result.weight = { income: 3, trimps: 3, attack: 1, helium: 0, health: 0, xp: 0 };
+	if (preset == 'unesscented') {
+		result.total_he = 0;
+		result.zone = 181;
+	}
+	if (preset == 'nerfeder') {
+		result.total_he = 999900000;
+		result.zone = 300;
+	}
+	return result;
+}
+
+function parse_perks(fixed, unlocks) {
+	var add = function (x) { return function (level) { return 1 + x * 0.01 * level; }; };
+	var mult = function (x) { return function (level) { return Math.pow(1 + x * 0.01, level); }; };
+	var perks = {
+		Looting_II: new Perk(100e3, 10e3, add(0.25)),
+		Carpentry_II: new Perk(100e3, 10e3, add(0.25)),
+		Motivation_II: new Perk(50e3, 1e3, add(1)),
+		Power_II: new Perk(20e3, 500, add(1)),
+		Toughness_II: new Perk(20e3, 500, add(1)),
+		Capable: new Perk(1e8, 0, function (l) { return 1; }, 10, 10),
+		Cunning: new Perk(1e11, 0, add(25)),
+		Curious: new Perk(1e14, 0, add(160)),
+		Classy: new Perk(1e17, 0, mult(4.5678375), 75),
+		Overkill: new Perk(1e6, 0, add(500), 30),
+		Resourceful: new Perk(50e3, 0, mult(-5)),
+		Coordinated: new Perk(150e3, 0, mult(-2)),
+		Siphonology: new Perk(100e3, 0, function (l) { return Math.pow(1 + l, 0.1); }, 3),
+		Anticipation: new Perk(1000, 0, add(6), 10),
+		Resilience: new Perk(100, 0, mult(10)),
+		Meditation: new Perk(75, 0, add(1), 7),
+		Relentlessness: new Perk(75, 0, function (l) { return 1 + 0.05 * l * (1 + 0.3 * l); }, 10),
+		Carpentry: new Perk(25, 0, mult(10)),
+		Artisanistry: new Perk(15, 0, mult(-5)),
+		Range: new Perk(1, 0, add(1), 10),
+		Agility: new Perk(4, 0, mult(-5), 20),
+		Bait: new Perk(4, 0, add(100)),
+		Trumps: new Perk(3, 0, add(20)),
+		Pheromones: new Perk(3, 0, add(10)),
+		Packrat: new Perk(3, 0, add(20)),
+		Motivation: new Perk(2, 0, add(5)),
+		Power: new Perk(1, 0, add(5)),
+		Toughness: new Perk(1, 0, add(5)),
+		Looting: new Perk(1, 0, add(5)),
 	};
-
-presets = {
-	early: ["5", "4", "3"],
-	broken: ["7", "3", "1"],
-	mid: ["16", "5", "1"],
-	corruption: ["25", "7", "1"],
-	magma: ["35", "4", "3"],
-	z280: ["42", "6", "1"],
-	z400: ["88", "10", "1"],
-	z450: ["500", "50", "1"],
-	spire: ["0", "1", "1"],
-	nerfed: ["0", "4", "3"],
-	tent: ["5", "4", "3"],
-	scientist: ["0", "1", "3"],
-	carp: ["0", "0", "0"],
-	trapper: ["0", "7", "1"],
-	coord: ["0", "40", "1"],
-	trimp: ["0", "99", "1"],
-	metal: ["0", "7", "1"],
-	c2: ["0", "7", "1"],
-	income: ["0", "0", "0"],
-	unesscented: ["0", "1", "0"],
-	nerfeder: ["0", "1", "0"],
-};
-
-function update_preset() {
-	let perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
-
-	var a = presets[$$("#preset").value],
-		b = a[0],
-		c = a[1],
-		d = a[2],
-		e = Math.floor((+b + +c + +d) / 5).toString();
-	($$("#weight-he").value = perkyInputs["weight-he"] || b),
-		($$("#weight-atk").value = perkyInputs["weight-atk"] || c),
-		($$("#weight-hp").value = perkyInputs["weight-hp"] || d),
-		($$("#weight-xp").value = perkyInputs["weight-xp"] || e);
-}
-
-function savePerkySettings() {
-
-	const perkyInputs = {
-		preset: $$('#preset').value,
-		weight_he: $$('#weight-he').value,
-		weight_atk: $$('#weight-atk').value,
-		weight_hp: $$('#weight-hp').value,
-		weight_xp: $$('#weight-xp').value
+	if (unlocks == '*')
+		unlocks = Object.keys(perks).join(',');
+	if (!unlocks.match(/>/))
+		unlocks = unlocks.replace(/(?=,|$)/g, '>0');
+	var _loop_1 = function (item) {
+		var m = item.match(/(\S+) *([<=>])=?(.*)/);
+		if (!m)
+			throw 'Enter a list of perk levels, such as “power=42, toughness=51”.';
+		var tier2 = m[1].match(/2$|II$/i);
+		var name = m[1].replace(/[ _]?(2|II)/i, '').replace(/^OK/i, 'O').replace(/^Looty/i, 'L');
+		var regex = new RegExp("^".concat(name, "[a-z]*").concat(tier2 ? '_II' : '', "$"), 'i');
+		var matches = Object.keys(perks).filter(function (p) { return p.match(regex); });
+		if (matches.length > 1)
+			throw "Ambiguous perk abbreviation: ".concat(m[1], ".");
+		if (matches.length < 1)
+			throw "Unknown perk: ".concat(m[1], ".");
+		var level = parse_suffixes(m[3]);
+		if (!isFinite(level))
+			throw "Invalid number: ".concat(m[3], ".");
+		perks[matches[0]].locked = false;
+		if (m[2] != '>')
+			perks[matches[0]].max_level = level;
+		if (m[2] != '<')
+			perks[matches[0]].min_level = level;
+	};
+	for (var _i = 0, _a = (unlocks + ',' + fixed).split(/,/).filter(function (x) { return x; }); _i < _a.length; _i++) {
+		var item = _a[_i];
+		_loop_1(item);
 	}
-	localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
+	return perks;
 }
 
 function loadPerkySettings() {
@@ -371,297 +376,301 @@ function loadPerkySettings() {
 	let perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
 	if (perkyInputs === null) return;
 	$$('#preset').value = perkyInputs.preset;
-	$$('#weight-he').value = Number(perkyInputs.weight_he);
-	$$('#weight-atk').value = Number(perkyInputs.weight_atk);
-	$$('#weight-hp').value = Number(perkyInputs.weight_hp);
-	$$('#weight-xp').value = Number(perkyInputs.weight_xp);
+	$$('#weight-he').value = Number(perkyInputs['weight-he']);
+	$$('#weight-atk').value = Number(perkyInputs['weight-atk']);
+	$$('#weight-hp').value = Number(perkyInputs['weight-hp']);
+	$$('#weight-xp').value = Number(perkyInputs['weight-xp']);
 }
 
-function display(a) {
-	var b = a[0],
-		c = a[1],
-		d = game ? game.options.menu.smallPerks.enabled : 0,
-		e = $$("#perks");
-	var f = e > $$("#test-text") ? "Level: " : "";
-	($$("#perks").innerHTML = Object.keys(c)
-		.filter(function (a) {
-			return !c[a].locked;
-		})
-		.map(function (a) {
-			var b = c[a],
-				e = b.level,
-				g = b.max_level,
-				h = game ? e - game.portal[a].level : 0,
-				i = h ? " (" + (h > 0 ? "+" : "-") + prettify(Math.abs(h)) + ")" : "",
-				j = h > 0 ? "adding" : 0 > h ? "remove" : e >= g ? "capped" : "";
-			return (
-				(j += [" large", " small", " tiny"][d]),
-				"<div class='perk " +
-				" " +
-				"'>" +
-				("<b>" + a.replace("_", " ") + "</b>") +
-				("<b>" + prettify(e) + i + "</b>") + "</span></div>"
-			);
-		})
-		.join(""));
-	for (var g in c) c[g] = c[g].level;
-	$$("#perkstring").value = LZString.compressToBase64(JSON.stringify(c));
+function savePerkySettings() {
+
+	const perkyInputs = {
+		preset: $$('#preset').value,
+		'weight-he': $$('#weight-he').value,
+		'weight-atk': $$('#weight-atk').value,
+		'weight-hp': $$('#weight-hp').value,
+		'weight-xp': $$('#weight-xp').value
+	}
+	localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
 }
 
-function optimize(a) {
-	function b() {
-		return 1 + +(S.bonus > 0.9) + Math.ceil(10 * S.bonus);
-	}
-	function c() {
-		return X.bonus * A.bonus * N.bonus;
-	}
-	function d() {
-		var a = c() * w.whip,
-			b = ma() * w.magn * 0.75 * 0.8,
-			d = (w.chronojest * a * b) / 30;
-		return a + b + d;
-	}
-	function e(a) {
-		var d = (w.storage * I.bonus) / W.bonus,
-			e = (ma() * w.magn) / b(),
-			f = a ? 0 : c() * w.prod,
-			g = 0.1 * w.chronojest * f * e;
-		return ha * (f + e * w.loot + g) * (1 - d) * na();
-	}
-	function f(a) {
-		var b = la[a] * Q.bonus,
-			c = 1.136,
-			d = Math.log(1 + e() / b) / Math.log(ka.cost);
-		return d > ja + 0.45 && ((c = Math.log(1 + 0.2 * Math.pow(ka.cost, d - ja)) / Math.log(1.2)), (d = ja)), c * Math.pow(ka[a], d);
-	}
-	function g(a, b) {
-		return (a *= 4 * I.bonus), Math.log(1 + (e(!0) * (b - 1)) / a) / Math.log(b);
-	}
-	function h() {
-		return Math.max(s - 229, 0);
-	}
-	function i() {
-		var a = g(2e6, 1.06) / (1 + 0.1 * Math.min(h(), 20)),
-			b = 0.0085 * (s >= 60 ? 0.1 : 1) * Math.pow(1.1, Math.floor(s / 5));
-		return b * Math.pow(1.01, a) * V.bonus * w.ven;
-	}
-	function j() {
-		var a = 1 + 0.25 * J.bonus,
-			b = (w.soldiers || na()) / 3;
-		w.soldiers > 1 && (b += 36e3 * T.bonus);
-		var c = Math.max(0, Math.log(oa[J.level] / b) / Math.log(a));
-		return oa[0] * Math.pow(1.25, -c);
-	}
-	function k() {
-		if (230 > s || w.soldiers > 1 || jobless) return 0;
-		var a = Math.log(na() / oa[J.level]) / Math.log(10);
-		return Math.max(0, (a - 7 + Math.floor((s - 215) / 100)) / 3);
-	}
-	function l() {
-		var a = (0.15 + f("attack")) * Math.pow(0.8, h());
-		return (a *= Y.bonus * B.bonus * O.bonus), (a *= K.bonus * R.bonus * L.bonus), (a *= t.attack[D.level]), (a *= game && mastery("amalg") ? Math.pow(1.5, k()) : 1 + 0.5 * k()), j() * a;
-	}
-	function m() {
-		var a = (0.6 + f("health")) * Math.pow(0.8, h());
-		a *= Z.bonus * C.bonus * M.bonus;
-		var c = g(400, 1.185),
-			d = jobless ? 0 : (c * Math.log(1.185) - Math.log(1 + c)) / Math.log(1.1) + 25 - fa,
-			e = 0.04 * c * Math.pow(1 + fa / 100, c) * (1 + ga * d),
-			l = 60;
-		if (70 > s || jobless) {
-			var m = Math.log(1 + (j() * i()) / T.bonus) / Math.log(1 + i());
-			l = m / b();
-		} else {
-			var n = Math.min(oa[J.level] / na(), 1 / 3),
-				o = n > 1e-9 ? 10 * (Math.pow(0.5 / (0.5 - n), 0.1 / w.breed_timer) - 1) : n / w.breed_timer,
-				p = Math.log(i() / o) / -Math.log(0.98);
-			(a *= Math.pow(1.01, p)), (a *= Math.pow(1.332, k()));
-		}
-		return (a /= l), 60 > s ? (e += f("block")) : (e = Math.min(e, 4 * a)), j() * (e + a);
-	}
-	function n() {
-		var a = 0;
-		for (var b in v)
-			if (v[b]) {
-				var c = ya[b]();
-				if (!isFinite(c)) throw Error(b + " is " + c);
-				a += v[b] * Math.log(c);
-			}
-		return a;
-	}
-	function o() {
-		var a = n();
-		for (var b in u) {
-			var c = u[b];
-			!c.cost_increment && c.levellable(x) && (c.level_up(1), (c.gain = n() - a), c.level_up(-1));
-		}
-		for (var d = 0, e = ["Looting", "Carpentry", "Motivation", "Power", "Toughness"]; d < e.length; d++) {
-			var f = e[d];
-			u[f + "_II"].gain = (u[f].gain * u[f + "_II"].log_ratio()) / u[f].log_ratio();
-		}
-	}
-	function p(a, b, c) {
-		var d = b * b - 4 * a * c;
-		return (-b + Math.sqrt(d)) / (2 * a);
-	}
-	function q(a, b) {
-		if (((a.gain /= a.log_ratio()), a.cost_increment)) {
-			var c = (1 + a.level) / (1e3 + y.level + z.level + A.level + B.level + C.level);
-			b *= 0.5 * Math.pow(c, 2);
-			var d = p(a.cost_increment / 2, a.cost - a.cost_increment / 2, -b);
-			x -= a.level_up(Math.floor(Math.max(Math.min(d, a.max_level - a.level), 1, a.level / 1e12)));
-		} else {
-			b = Math.pow(b, 0.5);
-			do x -= a.level_up(1);
-			while (a.cost < b && a.level < a.max_level);
-		}
-		a.gain *= a.log_ratio();
-	}
-	for (
-		var r = a.total_he,
-		s = a.zone,
-		t = a.fluffy,
-		u = a.perks,
-		v = a.weight,
-		w = a.mod,
-		x = r,
-		y = u.Looting_II,
-		z = u.Carpentry_II,
-		A = u.Motivation_II,
-		B = u.Power_II,
-		C = u.Toughness_II,
-		D = u.Capable,
-		E = u.Cunning,
-		F = u.Curious,
-		G = u.Classy,
-		H = u.Overkill,
-		I = u.Resourceful,
-		J = u.Coordinated,
-		K = u.Siphonology,
-		L = u.Anticipation,
-		M = u.Resilience,
-		N = u.Meditation,
-		O = u.Relentlessness,
-		P = u.Carpentry,
-		Q = u.Artisanistry,
-		R = u.Range,
-		S = u.Agility,
-		T = u.Bait,
-		U = u.Trumps,
-		V = u.Pheromones,
-		W = u.Packrat,
-		X = u.Motivation,
-		Y = u.Power,
-		Z = u.Toughness,
-		$ = u.Looting,
-		_ = 0,
-		aa = [game.unlocks.imps.Whipimp, game.unlocks.imps.Magnimp, game.unlocks.imps.Tauntimp, game.unlocks.imps.Venimp];
-		_ < aa.length;
-		_++
-	) {
-		var ba = aa[_];
-		w[ba] = Math.pow(1.003, 99 * s * 0.03 * w[ba]);
-	}
-	for (
-		var ca = Math.pow(1.25, s) * Math.pow(s > 100 ? 1.28 : 1.2, Math.max(s - 59, 0)),
-		da = Math.max(0, Math.min(s - 60, s / 2 - 25, s / 3 - 12, s / 5, s / 10 + 17, 39)),
-		ea = Math.pow(1.25, 5 + Math.min(s / 2, 30) + da),
-		fa = s >= 25 ? Math.floor(Math.min(s / 5, 9 + s / 25, 15)) : 0,
-		ga = (20 + s - (s % 5)) / 100,
-		ha = 600 * w.whip * ca,
-		ia = Math.pow(s - 19, 2),
-		ja = s / 5 + +(5 > (s - 1) % 10),
-		ka = { cost: Math.pow(1.069, 0.85 * (60 > s ? 57 : 53)), attack: Math.pow(1.19, 13), health: Math.pow(1.19, 14), block: Math.pow(1.19, 10) },
-		la = { attack: (211 * (v.attack + v.health)) / v.attack, health: (248 * (v.attack + v.health)) / v.health, block: (5 * (v.attack + v.health)) / v.health },
-		ma = function () {
-			return $.bonus * y.bonus;
-		},
-		na = w.tent_city
-			? function () {
-				var a = P.bonus * z.bonus,
-					b = U.bonus;
-				return 10 * (w.taunt + b * (w.taunt - 1) * 111) * a;
-			}
-			: function () {
-				var a = P.bonus * z.bonus,
-					b = 3 + Math.log((ea * d()) / I.bonus) / Math.log(1.4),
-					c = U.bonus * s;
-				return 10 * (ea * b + c) * a * w.taunt + w.dg * a;
-			},
-		oa = [],
-		pa = 0;
-		pa <= Math.log(1 + x / 5e5) / Math.log(1.3);
-		++pa
-	) {
-		for (var qa = 1 + 0.25 * Math.pow(0.98, pa), ra = s - 1 + (h() ? 100 : 0), sa = 1, ta = 0; ra > ta; ++ta) sa = Math.ceil(sa * qa);
-		oa[pa] = sa;
-	}
-	var ua = function () {
-		return E.bonus * F.bonus * G.bonus;
-	},
-		va = function () {
-			return 1 / S.bonus;
-		},
-		wa = function () {
-			return ia * ma() + 45;
-		},
-		xa = function () {
-			return H.bonus;
-		},
-		ya = { agility: va, helium: wa, xp: ua, attack: l, health: m, overkill: xa, trimps: na, income: e };
-	(w.loot *= 20.8), (v.agility = (v.helium + v.attack) / 2), (v.overkill = 0.25 * v.attack * (2 - Math.pow(0.9, v.helium / v.attack))), s > 90 && w.soldiers <= 1 && 0 == T.min_level && (T.max_level = 0), (t.attack = []);
-	for (var za = Math.log((0.003 * t.xp) / Math.pow(5, t.prestige) + 1) / Math.log(4), Aa = 0; 10 >= Aa; ++Aa) {
-		var Ba = Math.min(Math.floor(za), Aa),
-			Ca = Ba == Aa ? 0 : (Math.pow(4, za - Ba) - 1) / 3;
-		t.attack[Aa] = 1 + 0.1 * Math.pow(5, t.prestige) * (Ba / 2 + Ca) * (Ba + 1);
-	}
-	for (var Da in u) {
-		var Ea = u[Da];
-		if (Ea.cost_increment) x -= Ea.level_up(Ea.min_level);
-		else for (; Ea.level < Ea.min_level;) x -= Ea.level_up(1);
-	}
-	for (var Fa = 0.25; D.levellable(x * Fa);) (x -= D.level_up(1)), (Fa = D.level <= Math.floor(za) && s > 300 && v.xp > 0 ? 0.25 : 0.01);
-	if (300 >= s || za >= D.level) v.xp = 0;
-	for (
-		var Ga = Object.keys(u)
-			.map(function (a) {
-				return u[a];
-			})
-			.filter(function (a) {
-				return a.levellable(x);
-			}),
-		Ha = x,
-		Ia = 0.999;
-		Ia > 1e-12;
-		Ia *= Ia
-	) {
-		var Ja = Ha * Ia;
-		for (
-			o(),
-			Ga.sort(function (a, b) {
-				return b.gain / b.cost - a.gain / a.cost;
-			});
-			x > Ja && Ga.length;
-
-		) {
-			var Ka = Ga.shift();
-			if (Ka.levellable(x)) {
-				q(Ka, x - Ja);
-				for (var ta = 0; Ga[ta] && Ga[ta].gain / Ga[ta].cost > Ka.gain / Ka.cost;) ta++;
-				Ga.splice(ta, 0, Ka);
-			}
-		}
-	}
-	return r / 1e12 > x + 1 && C.level > 0 && (--C.level, (x += C.cost)), [x, u];
+function display(results) {
+	var perks = results[1];
+	for (var name in perks)
+		perks[name] = perks[name].level;
+	$$('#perkstring').value = LZString.compressToBase64(JSON.stringify(perks));
 }
 
-var jobless = !1,
-	$$ = function (a) {
-		return document.querySelector(a);
-	},
-	$$$ = function (a) {
-		return [].slice.apply(document.querySelectorAll(a));
+function optimize(params) {
+	var total_he = params.total_he, zone = params.zone, fluffy = params.fluffy, perks = params.perks, weight = params.weight, mod = params.mod;
+	var he_left = total_he;
+	var Looting_II = perks.Looting_II, Carpentry_II = perks.Carpentry_II, Motivation_II = perks.Motivation_II, Power_II = perks.Power_II, Toughness_II = perks.Toughness_II, Capable = perks.Capable, Cunning = perks.Cunning, Curious = perks.Curious, Classy = perks.Classy, Overkill = perks.Overkill, Resourceful = perks.Resourceful, Coordinated = perks.Coordinated, Siphonology = perks.Siphonology, Anticipation = perks.Anticipation, Resilience = perks.Resilience, Meditation = perks.Meditation, Relentlessness = perks.Relentlessness, Carpentry = perks.Carpentry, Artisanistry = perks.Artisanistry, Range = perks.Range, Agility = perks.Agility, Bait = perks.Bait, Trumps = perks.Trumps, Pheromones = perks.Pheromones, Packrat = perks.Packrat, Motivation = perks.Motivation, Power = perks.Power, Toughness = perks.Toughness, Looting = perks.Looting;
+	for (var _i = 0, _a = ['whip', 'magn', 'taunt', 'ven']; _i < _a.length; _i++) {
+		var name = _a[_i];
+		mod[name] = Math.pow(1.003, zone * 99 * 0.03 * mod[name]);
+	}
+	var books = Math.pow(1.25, zone) * Math.pow(zone > 100 ? 1.28 : 1.2, Math.max(zone - 59, 0));
+	var gigas = Math.max(0, Math.min(zone - 60, zone / 2 - 25, zone / 3 - 12, zone / 5, zone / 10 + 17, 39));
+	var base_housing = Math.pow(1.25, 5 + Math.min(zone / 2, 30) + gigas);
+	var mystic = zone >= 25 ? Math.floor(Math.min(zone / 5, 9 + zone / 25, 15)) : 0;
+	var tacular = (20 + zone - zone % 5) / 100;
+	var base_income = 600 * mod.whip * books;
+	var base_helium = Math.pow(zone - 19, 2);
+	var max_tiers = zone / 5 + +((zone - 1) % 10 < 5);
+	var exponents = {
+		cost: Math.pow(1.069, 0.85 * (zone < 60 ? 57 : 53)),
+		attack: Math.pow(1.19, 13),
+		health: Math.pow(1.19, 14),
+		block: Math.pow(1.19, 10),
 	};
+	var equip_cost = {
+		attack: 211 * (weight.attack + weight.health) / weight.attack,
+		health: 248 * (weight.attack + weight.health) / weight.health,
+		block: 5 * (weight.attack + weight.health) / weight.health,
+	};
+	// Number of ticks it takes to one-shot an enemy.
+	function ticks() {
+		return 1 + +(Agility.bonus > 0.9) + Math.ceil(10 * Agility.bonus);
+	}
+	function moti() {
+		return Motivation.bonus * Motivation_II.bonus * Meditation.bonus;
+	}
+	var looting = function () { return Looting.bonus * Looting_II.bonus; };
+	function gem_income() {
+		var drag = moti() * mod.whip;
+		var loot = looting() * mod.magn * 0.75 * 0.8;
+		var chronojest = mod.chronojest * drag * loot / 30;
+		return drag + loot + chronojest;
+	}
+	// Max population
+	var trimps = mod.tent_city ? function () {
+		var carp = Carpentry.bonus * Carpentry_II.bonus;
+		var territory = Trumps.bonus;
+		return 10 * (mod.taunt + territory * (mod.taunt - 1) * 111) * carp;
+	} : function () {
+		var carp = Carpentry.bonus * Carpentry_II.bonus;
+		var bonus = 3 + Math.log(base_housing * gem_income() / Resourceful.bonus) / Math.log(1.4);
+		var territory = Trumps.bonus * zone;
+		return 10 * (base_housing * bonus + territory) * carp * mod.taunt + mod.dg * carp;
+	};
+	function income(ignore_prod) {
+		var storage = mod.storage * Resourceful.bonus / Packrat.bonus;
+		var loot = looting() * mod.magn / ticks();
+		var prod = ignore_prod ? 0 : moti() * mod.prod;
+		var chronojest = mod.chronojest * 0.1 * prod * loot;
+		return base_income * (prod + loot * mod.loot + chronojest) * (1 - storage) * trimps();
+	}
+	function equip(stat) {
+		var cost = equip_cost[stat] * Artisanistry.bonus;
+		var levels = 1.136;
+		var tiers = Math.log(1 + income() / cost) / Math.log(exponents.cost);
+		if (tiers > max_tiers + 0.45) {
+			levels = Math.log(1 + Math.pow(exponents.cost, tiers - max_tiers) * 0.2) / Math.log(1.2);
+			tiers = max_tiers;
+		}
+		return levels * Math.pow(exponents[stat], tiers);
+	}
+	// Number of buildings of a given kind that can be built with the current income.
+	// cost: base cost of the buildings
+	// exp: cost increase for each new level of the building
+	function building(cost, exp) {
+		cost *= 4 * Resourceful.bonus;
+		return Math.log(1 + income(true) * (exp - 1) / cost) / Math.log(exp);
+	}
+	// Number of zones spent in the Magma
+	function magma() {
+		return Math.max(zone - 229, 0);
+	}
+	// Breed speed
+	function breed() {
+		var nurseries = building(2e6, 1.06) / (1 + 0.1 * Math.min(magma(), 20));
+		var potency = 0.0085 * (zone >= 60 ? 0.1 : 1) * Math.pow(1.1, Math.floor(zone / 5));
+		return potency * Math.pow(1.01, nurseries) * Pheromones.bonus * mod.ven;
+	}
+	// Number of Trimps sent at a time, pre-gators
+	var group_size = [];
+	for (var coord = 0; coord <= Math.log(1 + he_left / 500e3) / Math.log(1.3); ++coord) {
+		var ratio_1 = 1 + 0.25 * Math.pow(0.98, coord);
+		var available_coords = zone - 1 + (magma() ? 100 : 0);
+		var result = 1;
+		for (var i = 0; i < available_coords; ++i)
+			result = Math.ceil(result * ratio_1);
+		group_size[coord] = result;
+	}
+	// Strength multiplier from coordinations
+	function soldiers() {
+		var ratio = 1 + 0.25 * Coordinated.bonus;
+		var pop = (mod.soldiers || trimps()) / 3;
+		if (mod.soldiers > 1)
+			pop += 36000 * Bait.bonus;
+		var unbought_coords = Math.max(0, Math.log(group_size[Coordinated.level] / pop) / Math.log(ratio));
+		return group_size[0] * Math.pow(1.25, -unbought_coords);
+	}
+	// Fracional number of Amalgamators expected
+	function gators() {
+		if (zone < 230 || mod.soldiers > 1)
+			return 0;
+		var ooms = Math.log(trimps() / group_size[Coordinated.level]) / Math.log(10);
+		return Math.max(0, (ooms - 7 + Math.floor((zone - 215) / 100)) / 3);
+	}
+	// Total attack
+	function attack() {
+		var attack = (0.15 + equip('attack')) * Math.pow(0.8, magma());
+		attack *= Power.bonus * Power_II.bonus * Relentlessness.bonus;
+		attack *= Siphonology.bonus * Range.bonus * Anticipation.bonus;
+		attack *= fluffy.attack[Capable.level];
+		attack *= (game && mastery('amalg')) ? Math.pow(1.5, gators()) : 1 + 0.5 * gators();
+		return soldiers() * attack;
+	}
+	// Total survivability (accounts for health and block)
+	function health() {
+		var health = (0.6 + equip('health')) * Math.pow(0.8, magma());
+		health *= Toughness.bonus * Toughness_II.bonus * Resilience.bonus;
+		// block
+		var gyms = building(400, 1.185);
+		var trainers = (gyms * Math.log(1.185) - Math.log(1 + gyms)) / Math.log(1.1) + 25 - mystic;
+		var block = 0.04 * gyms * Math.pow(1 + mystic / 100, gyms) * (1 + tacular * trainers);
+		// target number of attacks to survive
+		var attacks = 60;
+		if (zone < 70) { // no geneticists
+			// number of ticks needed to repopulate an army
+			var timer = Math.log(1 + soldiers() * breed() / Bait.bonus) / Math.log(1 + breed());
+			attacks = timer / ticks();
+		}
+		else { // geneticists
+			var fighting = Math.min(group_size[Coordinated.level] / trimps(), 1 / 3);
+			var target_speed = fighting > 1e-9 ?
+				(Math.pow(0.5 / (0.5 - fighting), 0.1 / mod.breed_timer) - 1) * 10 :
+				fighting / mod.breed_timer;
+			var geneticists = Math.log(breed() / target_speed) / -Math.log(0.98);
+			health *= Math.pow(1.01, geneticists);
+			health *= Math.pow(1.332, gators());
+		}
+		health /= attacks;
+		if (zone < 60)
+			block += equip('block');
+		else
+			block = Math.min(block, 4 * health);
+		return soldiers() * (block + health);
+	}
+	var xp = function () { return Cunning.bonus * Curious.bonus * Classy.bonus; };
+	var agility = function () { return 1 / Agility.bonus; };
+	var helium = function () { return base_helium * looting() + 45; };
+	var overkill = function () { return Overkill.bonus; };
+	var stats = { agility: agility, helium: helium, xp: xp, attack: attack, health: health, overkill: overkill, trimps: trimps, income: income };
+	function score() {
+		var result = 0;
+		for (var i in weight) {
+			if (!weight[i])
+				continue;
+			var stat = stats[i]();
+			if (!isFinite(stat))
+				throw Error(i + ' is ' + stat);
+			result += weight[i] * Math.log(stat);
+		}
+		return result;
+	}
+	function recompute_marginal_efficiencies() {
+		var baseline = score();
+		for (var name in perks) {
+			var perk = perks[name];
+			if (perk.cost_increment || !perk.levellable(he_left))
+				continue;
+			perk.level_up(1);
+			perk.gain = score() - baseline;
+			perk.level_up(-1);
+		}
+		for (var _i = 0, _a = ['Looting', 'Carpentry', 'Motivation', 'Power', 'Toughness']; _i < _a.length; _i++) {
+			var name = _a[_i];
+			perks[name + '_II'].gain = perks[name].gain * perks[name + '_II'].log_ratio() / perks[name].log_ratio();
+		}
+	}
+	function solve_quadratic_equation(a, b, c) {
+		var delta = b * b - 4 * a * c;
+		return (-b + Math.sqrt(delta)) / (2 * a);
+	}
+	function spend_he(perk, budget) {
+		perk.gain /= perk.log_ratio();
+		if (perk.cost_increment) {
+			var ratio_2 = (1 + perk.level) / (1000 + Looting_II.level + Carpentry_II.level + Motivation_II.level + Power_II.level + Toughness_II.level);
+			budget *= 0.5 * Math.pow(ratio_2, 2);
+			var x = solve_quadratic_equation(perk.cost_increment / 2, perk.cost - perk.cost_increment / 2, -budget);
+			he_left -= perk.level_up(Math.floor(Math.max(Math.min(x, perk.max_level - perk.level), 1, perk.level / 1e12)));
+		}
+		else {
+			budget = Math.pow(budget, 0.5);
+			do
+				he_left -= perk.level_up(1);
+			while (perk.cost < budget && perk.level < perk.max_level);
+		}
+		perk.gain *= perk.log_ratio();
+	}
+	mod.loot *= 20.8; // TODO: check that this is correct
+	weight.agility = (weight.helium + weight.attack) / 2;
+	weight.overkill = 0.25 * weight.attack * (2 - Math.pow(0.9, weight.helium / weight.attack));
+	if (zone > 90 && mod.soldiers <= 1 && Bait.min_level == 0)
+		Bait.max_level = 0;
+	// Fluffy
+	fluffy.attack = [];
+	var potential = Math.log(0.003 * fluffy.xp / Math.pow(5, fluffy.prestige) + 1) / Math.log(4);
+	for (var cap = 0; cap <= 10; ++cap) {
+		var level = Math.min(Math.floor(potential), cap);
+		var progress = level == cap ? 0 : (Math.pow(4, potential - level) - 1) / 3;
+		fluffy.attack[cap] = 1 + Math.pow(5, fluffy.prestige) * 0.1 * (level / 2 + progress) * (level + 1);
+	}
+	// Minimum levels on perks
+	for (var name in perks) {
+		var perk = perks[name];
+		if (perk.cost_increment)
+			he_left -= perk.level_up(perk.min_level);
+		else
+			while (perk.level < perk.min_level)
+				he_left -= perk.level_up(1);
+	}
+	var ratio = 0.25;
+	while (Capable.levellable(he_left * ratio)) {
+		he_left -= Capable.level_up(1);
+		ratio = Capable.level <= Math.floor(potential) && zone > 300 && weight.xp > 0 ? 0.25 : 0.01;
+	}
+	if (zone <= 300 || potential >= Capable.level)
+		weight.xp = 0;
+	if (he_left < 0)
+		throw (game && game.global.canRespecPerks) ?
+			"You don’t have enough Helium to afford your Fixed Perks." :
+			"You don’t have a respec available.";
+	// Main loop
+	var sorted_perks = Object.keys(perks).map(function (name) { return perks[name]; }).filter(function (perk) { return perk.levellable(he_left); });
+	var reference_he = he_left;
+	for (var x = 0.999; x > 1e-12; x *= x) {
+		var he_target = reference_he * x;
+		recompute_marginal_efficiencies();
+		sorted_perks.sort(function (a, b) { return b.gain / b.cost - a.gain / a.cost; });
+		while (he_left > he_target && sorted_perks.length) {
+			var best = sorted_perks.shift();
+			if (!best.levellable(he_left))
+				continue;
+			spend_he(best, he_left - he_target);
+			// sorted_perks.splice(sorted_perks.findIndex(p => p.gain / p.cost > best.gain / best.cost), 0, best);
+			var i = 0;
+			while (sorted_perks[i] && sorted_perks[i].gain / sorted_perks[i].cost > best.gain / best.cost)
+				i++;
+			sorted_perks.splice(i, 0, best);
+		}
+	}
+	if (he_left + 1 < total_he / 1e12 && Toughness_II.level > 0) {
+		--Toughness_II.level;
+		he_left += Toughness_II.cost;
+	}
+	return [he_left, perks];
+}
+
+
+$$ = function (a) {
+	return document.querySelector(a);
+}
+$$$ = function (a) {
+	return [].slice.apply(document.querySelectorAll(a));
+};
 
 
 var notations = [
@@ -676,22 +685,6 @@ var notations = [
 	"KMBTQaQiSxSpOcNoDcUdDdTdQadQidSxdSpdOdNdVUvDvTvQavQivSxvSpvOvNvTg".split(/(?=[A-Z])/),
 	[],
 ];
-
-function select_preset(a, b) {
-	void 0 === b && (b = !0),
-		delete localStorage["preset"],
-		delete localStorage["weight-he"],
-		delete localStorage["weight-atk"],
-		delete localStorage["weight-hp"],
-		delete localStorage["weight-xp"],
-		(c = presets[a]),
-		($$("#weight-he").value = c[0]),
-		($$("#weight-atk").value = c[1]),
-		($$("#weight-hp").value = c[2]),
-		($$("#weight-xp").value = Math.floor((+presets[a][0] + +presets[a][1] + +presets[a][2]) / 5).toString());
-	var c;
-	savePerkySettings();
-}
 
 var showingPerky = false;
 
@@ -788,17 +781,10 @@ function setupPerkyUI() {
 		//Hide these elements - Line 2
 		apGUI.$ratiosLine2 = document.createElement("DIV");
 		apGUI.$ratiosLine2.setAttribute('style', 'display: none; text-align: left; width: 100%');
-		var listratiosTitle2 = ["Weight: Population", "Production Mod", "Loot Mod", "Breed Timer"];
-		var listratiosLine2 = ["weight-trimps", "prod", "loot", "breed-timer"];
+		var listratiosTitle2 = ["Production Mod", "Loot Mod"];
+		var listratiosLine2 = ["prod", "loot", "unlocks", "chronojest", 'perkstring'];
 		for (var i in listratiosLine2)
 			AutoPerks.createInput(listratiosLine2[i], apGUI.$ratiosLine2, listratiosTitle2[i]);
-
-		//Hide these elements - Line 3
-		apGUI.$ratiosLine3 = document.createElement("DIV");
-		apGUI.$ratiosLine3.setAttribute('style', 'display: none; text-align: left; width: 100%');
-		var listratiosLine3 = ['zone', "fixed", "helium", "unlocks", "whipimp", "magnimp", "tauntimp", "venimp", "chronojest", 'test-text', 'results', 'info', 'he-left', 'perks', 'perkstring'];
-		for (var i in listratiosLine3)
-			AutoPerks.createInput(listratiosLine3[i], apGUI.$ratiosLine3, false);
 
 		apGUI.$presetLabel = document.createElement("Label");
 		apGUI.$presetLabel.id = 'Ratio Preset Label';
@@ -813,20 +799,14 @@ function setupPerkyUI() {
 		apGUI.$preset.innerHTML = presetListHtml;
 		var loadLastPreset = (JSON.parse(localStorage.getItem("perkyInputs")) !== null) ? JSON.parse(localStorage.getItem("perkyInputs")).preset : null;
 		var setID;
-		if (loadLastPreset != null) {
-			if (loadLastPreset == 15 && !localStorage.getItem('preset'))
-				loadLastPreset = 11;
-			if (localStorage.getItem('AutoperkSelectedpresetName') == "customPreset")
-				loadLastPreset = 11;
-			setID = loadLastPreset;
-		}
-		else
-			setID = 0;
+
+		if (loadLastPreset != null) setID = loadLastPreset;
+		else setID = 0;
+
 		apGUI.$preset.selectedIndex = setID;
 		apGUI.$ratiosLine1.appendChild(apGUI.$presetLabel);
 		apGUI.$ratiosLine1.appendChild(apGUI.$preset);
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine2);
-		apGUI.$customRatios.appendChild(apGUI.$ratiosLine3);
 		var $portalWrapper = document.getElementById("portalWrapper")
 		$portalWrapper.appendChild(apGUI.$customRatios);
 		loadPerkySettings();
