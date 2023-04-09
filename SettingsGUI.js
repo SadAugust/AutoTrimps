@@ -2690,7 +2690,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("mapOddEvenIncrement", radonon);
 	modifyParentNode("dailyHeliumHrPortal", 'show');
 
-	if (getPageSetting('displayAllSettings', currSettingUniverse) || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && holidayObj.holiday === 'Eggy') && autoTrimpSettings.liqstack.require()) modifyParentNode("heliumC2Challenge", 'show');
+	if (getPageSetting('displayAllSettings', currSettingUniverse) || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && holidayObj.holiday === 'Eggy')) modifyParentNode("heliumC2Challenge", 'show');
 	else modifyParentNode("heliumC2Challenge", 'hide');
 
 	//Maps
