@@ -356,7 +356,7 @@ function autoMap() {
 		} else if (selectedMap == "create") {
 			//Setting sliders appropriately.
 			if (shouldMap) {
-				var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Random";
+				var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Mountain";
 				if (currentMap !== '') {
 					mapCost(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
 				}
