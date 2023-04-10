@@ -3174,7 +3174,7 @@ function getAvailableSpecials(special, skipCaches) {
 	else if (special === 'p') cacheMods = ['p', 'fa'];
 	else cacheMods = [special];
 
-	var hze = getHighestLevelCleared();
+	var hze = getHighestLevelCleared() + 1;
 	var unlocksAt = game.global.universe === 2 ? 'unlocksAt2' : 'unlocksAt';
 
 	for (var mod of cacheMods) {

@@ -528,7 +528,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (raiding && !bionic) tooltipText += "<div class='windowRecycle'>Recycle</div>"
 			if (raiding && !bionic) tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>"
 			if (alchemy) tooltipText += "<div class='windowStorage'>Void<br>Purchase</div>"
-			if (voidMap && universe === 2 && !game.portal.Tenacity.radLocked) tooltipText += "<div class='windowStorage'>Max<br>Tenacity</div>"
+			if (voidMap) tooltipText += "<div class='windowStorage'>Max<br>Map Bonus</div>"
 			if (voidMap && game.permaBoneBonuses.boosts.owned > 0) tooltipText += "<div class='windowStorage'>Use Bone<br>Charge</div>"
 			if (hypothermia) tooltipText += "<div class='windowFrozenCastle'>Frozen<br>Castle</div>"
 			if (hypothermia) tooltipText += "<div class='windowStorage'>Auto<br>Storage</div>"
@@ -588,7 +588,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.shipskip = defaultSetting.shipskip ? defaultSetting.shipskip : '10';
 			if (alchemy)
 				defaultVals.voidPurchase = typeof (defaultSetting.voidPurchase) === 'undefined' ? true : defaultSetting.voidPurchase ? defaultSetting.voidPurchase : false;
-			if (voidMap && universe === 2 && !game.portal.Tenacity.radLocked)
+			if (voidMap)
 				defaultVals.maxTenacity = typeof (defaultSetting.maxTenacity) === 'undefined' ? false : defaultSetting.maxTenacity ? defaultSetting.maxTenacity : false;
 			if (voidMap && game.permaBoneBonuses.boosts.owned > 0)
 				defaultVals.boneCharge = typeof (defaultSetting.boneCharge) === 'undefined' ? false : defaultSetting.boneCharge ? defaultSetting.boneCharge : false;
@@ -656,7 +656,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowIncrementMaps' style='text-align: center;'>" + buildNiceCheckbox("windowIncrementMapsDefault", null, defaultVals.incrementMaps) + "</div>";
 			if (alchemy)
 				tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowVoidPurchase", null, defaultVals.voidPurchase) + "</div>";
-			if (voidMap && universe === 2 && !game.portal.Tenacity.radLocked)
+			if (voidMap)
 				tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowMaxTenacity", null, defaultVals.maxTenacity) + "</div>";
 			if (voidMap && game.permaBoneBonuses.boosts.owned > 0)
 				tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowBoneCharge", null, defaultVals.boneCharge) + "</div>";
@@ -1149,7 +1149,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (!raiding && !smithyFarm) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
 		if (boneShrine) defaultSetting.gather = document.getElementById('windowBoneGatherDefault').value;
 		if (alchemy) defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
-		if (voidMap && currSettingUniverse === 2 && !game.portal.Tenacity.radLocked) defaultSetting.maxTenacity = readNiceCheckbox(document.getElementById('windowMaxTenacity'));
+		if (voidMap) defaultSetting.maxTenacity = readNiceCheckbox(document.getElementById('windowMaxTenacity'));
 		if (voidMap && game.permaBoneBonuses.boosts.owned > 0) defaultSetting.boneCharge = readNiceCheckbox(document.getElementById('windowBoneCharge'));
 		if (hypothermia) defaultSetting.frozencastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
 		if (hypothermia) defaultSetting.autostorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
@@ -1373,7 +1373,11 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		if (hypothermia) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>"
 		if (hypothermia) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>"
 		if (hypothermia) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>"
-		if (voidMap && radonSetting && !game.portal.Tenacity.radLocked) mazHelp += "<li><b>Max Tenacity</b> - Will make world & void HD Ratio calcs assume you have max tenacity when void maps are being run.</li>"
+		if (voidMap) {
+			mazHelp += "<li><b>Max Map Bonus</b> - Will assume you have 10 map bonus stacks"
+			if (radonSetting && !game.portal.Tenacity.radLocked) mazHelp += " and max tenacity"
+			mazHelp += " when void maps HD Ratio calcs are being set.</li>"
+		}
 		if (voidMap && game.permaBoneBonuses.boosts.owned > 0) mazHelp += "<li><b>Bone Charge</b> - The first time a line starts running Void Maps in each portal it will use a single Bone Charge.</li>"
 	}
 

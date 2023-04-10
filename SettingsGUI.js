@@ -2321,6 +2321,8 @@ function heHourPortal() {
 function cinf() {
 	return currSettingUniverse === 2 ? 'C3' : 'C2';
 }
+MODULES.u1unlocks = [];
+MODULES.u2unlocks = [];
 
 initializeAllSettings();
 automationMenuInit();
@@ -2774,60 +2776,71 @@ function modifyParentNodeUniverseSwap() {
 }
 
 function HeHrPortalOptions() {
-	var highestZone = game.global.highestLevelCleared + 1;
+	var hze = game.global.highestLevelCleared + 1;
 	var portalOptions = ['Auto Portal Immediately', 'Portal after voids'];
-	if (currSettingUniverse === 1 && highestZone >= 230) portalOptions.push("Portal after voids (poison)");
+	if (currSettingUniverse === 1 && hze >= 230) portalOptions.push("Portal after voids (poison)");
 
 	autoTrimpSettings.HeliumHrPortal.name = function () { return (portalOptions) }
 	autoTrimpSettings.dailyHeliumHrPortal.name = function () { return (portalOptions) }
 }
 
-function heliumChallengesSetting() {
-	var highestZone = game.global.highestLevelCleared + 1;
-	var heliumChallenges = ["Off", "Helium Per Hour"];
-	if (highestZone >= 40) heliumChallenges.push("Balance");
-	if (highestZone >= 55) heliumChallenges.push("Decay");
-	if (game.global.prisonClear >= 1) heliumChallenges.push("Electricity");
-	if (highestZone > 110) heliumChallenges.push("Life");
-	if (highestZone > 125) heliumChallenges.push("Crushed");
-	if (highestZone >= 145) heliumChallenges.push("Nom");
-	if (highestZone >= 165) heliumChallenges.push("Toxicity");
-	if (highestZone >= 180) heliumChallenges.push("Watch");
-	if (highestZone >= 180) heliumChallenges.push("Lead");
-	if (highestZone >= 190) heliumChallenges.push("Corrupted");
-	if (highestZone >= 215) heliumChallenges.push("Domination");
-	if (highestZone >= 510) heliumChallenges.push('Frigid');
-	if (highestZone >= 600) heliumChallenges.push("Experience");
-	heliumChallenges.push("Custom");
-	if (highestZone >= 65) heliumChallenges.push("Challenge 2");
+function challengeUnlock(challenge, setting, c2) {
+	var c2Msg = game.global.universe === 2 ? '3' : '2';
+	var msg = "You have unlocked the " + challenge + " challenge.";
+	msg += " It has now been added to " + (c2 ? "Challenge " + c2Msg + " AutoPortal setting" : "AutoPortal");
+	msg += (setting ? " & there's setting for it in the AT " + (c2 ? '"C' + c2Msg + '"' : '"Challenges"') + " tab." : '.');
+	return msg;
+}
 
-	if (document.getElementById('autoPortal').children.length !== heliumChallenges.length) {
+MODULES.u1unlocks = [];
+MODULES.u2unlocks = [];
+
+function heliumChallengesSetting(hzeCheck, forceUpdate) {
+	var hze = game.global.highestLevelCleared + 1;
+
+	var challenge = ["Off", "Helium Per Hour"];
+	if (hze >= 40) challenge.push("Balance");
+	if (hze >= 55) challenge.push("Decay");
+	if (game.global.prisonClear >= 1) challenge.push("Electricity");
+	if (hze > 110) challenge.push("Life");
+	if (hze > 125) challenge.push("Crushed");
+	if (hze >= 145) challenge.push("Nom");
+	if (hze >= 165) challenge.push("Toxicity");
+	if (hze >= 180) challenge.push("Watch");
+	if (hze >= 180) challenge.push("Lead");
+	if (hze >= 190) challenge.push("Corrupted");
+	if (hze >= 215) challenge.push("Domination");
+	if (hze >= 510) challenge.push('Frigid');
+	if (hze >= 600) challenge.push("Experience");
+	challenge.push("Custom");
+	if (hze >= 65) challenge.push("Challenge 2");
+
+	if (document.getElementById('autoPortal').children.length !== challenge.length || forceUpdate) {
 		document.getElementById('autoPortal').innerHTML = '';
-		for (var item in heliumChallenges) {
+		for (var item in challenge) {
 			var option = document.createElement("option");
-			option.value = heliumChallenges[item];
-			option.text = heliumChallenges[item];
+			option.value = challenge[item];
+			option.text = challenge[item];
 			document.getElementById('autoPortal').appendChild(option);
 		}
 	}
 
 	var heliumHourChallenges = ["None"];
-	if (highestZone >= 40) heliumHourChallenges.push("Balance");
-	if (highestZone >= 55) heliumHourChallenges.push("Decay");
+	if (hze >= 40) heliumHourChallenges.push("Balance");
+	if (hze >= 55) heliumHourChallenges.push("Decay");
 	if (game.global.prisonClear >= 1) heliumHourChallenges.push("Electricity");
-	if (highestZone > 110) heliumHourChallenges.push("Life");
-	if (highestZone > 125) heliumHourChallenges.push("Crushed");
-	if (highestZone >= 145) heliumHourChallenges.push("Nom");
-	if (highestZone >= 165) heliumHourChallenges.push("Toxicity");
-	if (highestZone >= 180) heliumHourChallenges.push("Watch");
-	if (highestZone >= 180) heliumHourChallenges.push("Lead");
-	if (highestZone >= 190) heliumHourChallenges.push("Corrupted");
-	if (highestZone >= 215) heliumHourChallenges.push("Domination");
-	if (highestZone >= 600) heliumHourChallenges.push("Experience");
+	if (hze > 110) heliumHourChallenges.push("Life");
+	if (hze > 125) heliumHourChallenges.push("Crushed");
+	if (hze >= 145) heliumHourChallenges.push("Nom");
+	if (hze >= 165) heliumHourChallenges.push("Toxicity");
+	if (hze >= 180) heliumHourChallenges.push("Watch");
+	if (hze >= 180) heliumHourChallenges.push("Lead");
+	if (hze >= 190) heliumHourChallenges.push("Corrupted");
+	if (hze >= 215) heliumHourChallenges.push("Domination");
+	if (hze >= 600) heliumHourChallenges.push("Experience");
 
-	if (
-		(document.getElementById('heliumHourChallenge').children.length || document.getElementById('dailyHeliumHourChallenge').children.length)
-		< heliumHourChallenges.length) {
+	if (((document.getElementById('heliumHourChallenge').children.length || document.getElementById('heliumHourChallenge').children.length)
+		< heliumHourChallenges.length) || forceUpdate) {
 
 		document.getElementById('heliumHourChallenge').innerHTML = '';
 		for (var item in heliumHourChallenges) {
@@ -2838,7 +2851,7 @@ function heliumChallengesSetting() {
 		}
 		document.getElementById('dailyHeliumHourChallenge').innerHTML = document.getElementById('heliumHourChallenge').innerHTML;
 
-		if (highestZone >= 65) {
+		if (hze >= 65) {
 			var option = document.createElement("option");
 			option.value = 'Challenge 2';
 			option.text = 'Challenge 2';
@@ -2848,24 +2861,25 @@ function heliumChallengesSetting() {
 
 	var challenge2 = ["None"];
 	if (getTotalPerkResource(true) >= 30) challenge2.push("Discipline");
-	if (highestZone >= 25) challenge2.push("Metal");
-	if (highestZone >= 35) challenge2.push("Size");
-	if (highestZone >= 40) challenge2.push("Balance");
-	if (highestZone >= 45) challenge2.push("Meditate");
-	if (highestZone >= 60) challenge2.push("Trimp");
-	if (highestZone >= 70) challenge2.push("Trapper");
+	if (hze >= 25) challenge2.push("Metal");
+	if (hze >= 35) challenge2.push("Size");
+	if (hze >= 40) challenge2.push("Balance");
+	if (hze >= 45) challenge2.push("Meditate");
+	if (hze >= 60) challenge2.push("Trimp");
+	if (hze >= 70) challenge2.push("Trapper");
 	if (game.global.prisonClear >= 1) challenge2.push("Electricity");
-	if (highestZone >= 120) challenge2.push("Coordinate");
-	if (highestZone >= 130) challenge2.push("Slow");
-	if (highestZone >= 145) challenge2.push("Nom");
-	if (highestZone >= 150) challenge2.push("Mapology");
-	if (highestZone >= 165) challenge2.push("Toxicity");
-	if (highestZone >= 180) challenge2.push("Watch");
-	if (highestZone >= 180) challenge2.push("Lead");
-	if (highestZone >= 425) challenge2.push("Obliterated");
+	if (hze >= 120) challenge2.push("Coordinate");
+	if (hze >= 130) challenge2.push("Slow");
+	if (hze >= 145) challenge2.push("Nom");
+	if (hze >= 150) challenge2.push("Mapology");
+	if (hze >= 165) challenge2.push("Toxicity");
+	if (hze >= 180) challenge2.push("Watch");
+	if (hze >= 180) challenge2.push("Lead");
+	if (hze >= 425) challenge2.push("Obliterated");
 	if (game.global.totalSquaredReward >= 4500) challenge2.push("Eradicated");
 
-	if (document.getElementById('heliumC2Challenge').children.length !== challenge2.length) {
+	if (((document.getElementById('heliumC2Challenge').children.length || document.getElementById('dailyC2Challenge').children.length)
+		< challenge2.length) || forceUpdate) {
 		document.getElementById('heliumC2Challenge').innerHTML = '';
 		document.getElementById('dailyC2Challenge').innerHTML = '';
 		for (var item in challenge2) {
@@ -2877,53 +2891,112 @@ function heliumChallengesSetting() {
 
 		document.getElementById('dailyC2Challenge').innerHTML = document.getElementById('heliumC2Challenge').innerHTML;
 	}
+
+	if (Object.keys(MODULES.u1unlocks).length === 0) {
+		MODULES.u1unlocks.challenge = challenge;
+		MODULES.u1unlocks.heliumHourChallenges = heliumHourChallenges;
+		MODULES.u1unlocks.challenge2 = challenge2;
+	}
+
+	if (hzeCheck) {
+		if (hze === 40) {
+			debug(challengeUnlock('Balance', false, false));
+		} else if (hze === 55) {
+			debug(challengeUnlock('Decay', true, false));
+		} else if (hze === 65) {
+			debug("Due to unlocking Challenge 2's there is now a Challenge 2 option under AutoPortal to be able to auto portal into them. Also you can now access the C2 tab within the AT settings.")
+		} else if (hze === 70) {
+			debug(challengeUnlock('Trapper', false, true));
+		} else if (game.global.prisonClear >= 1 && !MODULES.u1unlocks.challenge2.includes('Electricity')) {
+			debug(challengeUnlock('Electricity', false, true));
+		} else if (hze === 110) {
+			debug("You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.");
+		} else if (hze === 110) {
+			debug(challengeUnlock('Life', true, false));
+		} else if (hze === 120) {
+			debug(challengeUnlock('Coordinate', false, true));
+		} else if (hze === 125) {
+			debug(challengeUnlock('Crushed'));
+		} else if (hze === 130) {
+			debug(challengeUnlock('Slow', false, true));
+		} else if (hze === 145) {
+			debug(challengeUnlock('Nom', false, true));
+		} else if (hze === 150) {
+			debug(challengeUnlock('Mapology', true, true));
+		} else if (hze === 165) {
+			debug(challengeUnlock('Toxicity', false, true));
+		} else if (hze === 180) {
+			debug(challengeUnlock('Watch', false, true));
+		} else if (hze === 180) {
+			debug(challengeUnlock('Lead', false, true));
+		} else if (hze === 190) {
+			debug(challengeUnlock('Corrupted', false, true));
+		} else if (hze === 215) {
+			debug(challengeUnlock('Domination', false, true));
+		} else if (hze === 230) {
+			debug("Upon unlocking the Dimensional Generator building AT hasa new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator.");
+		} else if (hze === 236) {
+			debug("Upon unlocking Nature AT has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.");
+		} else if (hze === 425) {
+			debug(challengeUnlock('Obliterated', false, true));
+		} else if (game.global.totalSquaredReward >= 4500 && !MODULES.u1unlocks.challenge2.includes('Eradicated')) {
+			debug(challengeUnlock('Eradicated', false, true));
+		} else if (hze === 510) {
+			debug(challengeUnlock('Frigid', false, true));
+		} else if (hze === 600) {
+			debug(challengeUnlock('Experience', true, false));
+		}
+	}
+
+	MODULES.u1unlocks.challenge = challenge;
+	MODULES.u1unlocks.heliumHourChallenges = heliumHourChallenges;
+	MODULES.u1unlocks.challenge2 = challenge2;
 }
 
 function radonChallengesSetting(hzeCheck, forceUpdate) {
-	var radonHZE = game.global.highestRadonLevelCleared + 1;
-	var radonChallenges = ["Off", "Radon Per Hour"];
-	if (radonHZE >= 40) radonChallenges.push("Bublé");
-	if (radonHZE >= 55) radonChallenges.push("Melt");
-	if (radonHZE >= 70) radonChallenges.push("Quagmire");
-	if (radonHZE >= 85) radonChallenges.push("Quest");
-	if (radonHZE >= 90) radonChallenges.push("Archaeology");
-	if (radonHZE >= 100) radonChallenges.push("Mayhem");
-	if (radonHZE >= 110) radonChallenges.push("Insanity");
-	if (radonHZE >= 135) radonChallenges.push("Nurture");
-	if (radonHZE >= 150) radonChallenges.push("Pandemonium");
-	if (radonHZE >= 155) radonChallenges.push("Alchemy");
-	if (radonHZE >= 175) radonChallenges.push("Hypothermia");
-	if (radonHZE >= 200) radonChallenges.push('Desolation');
-	radonChallenges.push("Custom");
-	if (radonHZE >= 50) radonChallenges.push("Challenge 3");
+	var hze = game.global.highestRadonLevelCleared + 1;
+	var challenge = ["Off", "Radon Per Hour"];
+	if (hze >= 40) challenge.push("Bublé");
+	if (hze >= 55) challenge.push("Melt");
+	if (hze >= 70) challenge.push("Quagmire");
+	if (hze >= 85) challenge.push("Quest");
+	if (hze >= 90) challenge.push("Archaeology");
+	if (hze >= 100) challenge.push("Mayhem");
+	if (hze >= 110) challenge.push("Insanity");
+	if (hze >= 135) challenge.push("Nurture");
+	if (hze >= 150) challenge.push("Pandemonium");
+	if (hze >= 155) challenge.push("Alchemy");
+	if (hze >= 175) challenge.push("Hypothermia");
+	if (hze >= 200) challenge.push('Desolation');
+	challenge.push("Custom");
+	if (hze >= 50) challenge.push("Challenge 3");
 
-	if (document.getElementById('autoPortal').children.length !== radonChallenges.length || forceUpdate) {
+	if (document.getElementById('autoPortal').children.length !== challenge.length || forceUpdate) {
 		document.getElementById('autoPortal').innerHTML = '';
-		for (var item in radonChallenges) {
+		for (var item in challenge) {
 			var option = document.createElement("option");
-			option.value = radonChallenges[item];
-			option.text = radonChallenges[item];
+			option.value = challenge[item];
+			option.text = challenge[item];
 			document.getElementById('autoPortal').appendChild(option);
 		}
 	}
 
 	var radonHourChallenges = ["None"];
-	if (radonHZE >= 40) radonHourChallenges.push("Bublé");
-	if (radonHZE >= 55) radonHourChallenges.push("Melt");
-	if (radonHZE >= 70) radonHourChallenges.push("Quagmire");
-	if (radonHZE >= 85) radonHourChallenges.push("Quest");
-	if (radonHZE >= 90) radonHourChallenges.push("Archaeology");
-	if (radonHZE >= 100) radonHourChallenges.push("Mayhem");
-	if (radonHZE >= 110) radonHourChallenges.push("Insanity");
-	if (radonHZE >= 135) radonHourChallenges.push("Nurture");
-	if (radonHZE >= 150) radonHourChallenges.push("Pandemonium");
-	if (radonHZE >= 155) radonHourChallenges.push("Alchemy");
-	if (radonHZE >= 175) radonHourChallenges.push("Hypothermia");
-	if (radonHZE >= 200) radonHourChallenges.push("Desolation");
+	if (hze >= 40) radonHourChallenges.push("Bublé");
+	if (hze >= 55) radonHourChallenges.push("Melt");
+	if (hze >= 70) radonHourChallenges.push("Quagmire");
+	if (hze >= 85) radonHourChallenges.push("Quest");
+	if (hze >= 90) radonHourChallenges.push("Archaeology");
+	if (hze >= 100) radonHourChallenges.push("Mayhem");
+	if (hze >= 110) radonHourChallenges.push("Insanity");
+	if (hze >= 135) radonHourChallenges.push("Nurture");
+	if (hze >= 150) radonHourChallenges.push("Pandemonium");
+	if (hze >= 155) radonHourChallenges.push("Alchemy");
+	if (hze >= 175) radonHourChallenges.push("Hypothermia");
+	if (hze >= 200) radonHourChallenges.push("Desolation");
 
-	if (
-		((document.getElementById('heliumHourChallenge').children.length || document.getElementById('heliumHourChallenge').children.length)
-			< radonHourChallenges.length) || forceUpdate) {
+	if (((document.getElementById('heliumHourChallenge').children.length || document.getElementById('heliumHourChallenge').children.length)
+		< radonHourChallenges.length) || forceUpdate) {
 		document.getElementById('heliumHourChallenge').innerHTML = '';
 
 		for (var item in radonHourChallenges) {
@@ -2934,7 +3007,7 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 		}
 		document.getElementById('dailyHeliumHourChallenge').innerHTML = document.getElementById('heliumHourChallenge').innerHTML;
 
-		if (radonHZE >= 50) {
+		if (hze >= 50) {
 			var option = document.createElement("option");
 			option.value = 'Challenge 3';
 			option.text = 'Challenge 3';
@@ -2942,59 +3015,111 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 		}
 	}
 
-	var radonChallenge3 = ["None"];
-	if (radonHZE >= 15) radonChallenge3.push("Unlucky");
-	if (radonHZE >= 20) radonChallenge3.push("Downsize");
-	if (radonHZE >= 25) radonChallenge3.push("Transmute");
-	if (radonHZE >= 35) radonChallenge3.push("Unbalance");
-	if (radonHZE >= 45) radonChallenge3.push("Duel");
-	if (radonHZE >= 60) radonChallenge3.push("Trappapalooza");
-	if (radonHZE >= 70) radonChallenge3.push("Wither");
-	if (radonHZE >= 85) radonChallenge3.push("Quest");
-	if (radonHZE >= 105) radonChallenge3.push("Storm");
-	if (radonHZE >= 115) radonChallenge3.push("Berserk");
-	if (radonHZE >= 175) radonChallenge3.push("Glass");
-	if (radonHZE >= 201) radonChallenge3.push("Smithless");
+	var challenge3 = ["None"];
+	if (hze >= 15) challenge3.push("Unlucky");
+	if (hze >= 20) challenge3.push("Downsize");
+	if (hze >= 25) challenge3.push("Transmute");
+	if (hze >= 35) challenge3.push("Unbalance");
+	if (hze >= 45) challenge3.push("Duel");
+	if (hze >= 60) challenge3.push("Trappapalooza");
+	if (hze >= 70) challenge3.push("Wither");
+	if (hze >= 85) challenge3.push("Quest");
+	if (hze >= 105) challenge3.push("Storm");
+	if (hze >= 115) challenge3.push("Berserk");
+	if (hze >= 175) challenge3.push("Glass");
+	if (hze >= 201) challenge3.push("Smithless");
 
 	if (
 		((document.getElementById('heliumC2Challenge').children.length || document.getElementById('dailyC2Challenge').children.length)
-			< radonChallenge3.length) || forceUpdate) {
+			< challenge3.length) || forceUpdate) {
 		document.getElementById('heliumC2Challenge').innerHTML = '';
-		for (var item in radonChallenge3) {
+		for (var item in challenge3) {
 			var option = document.createElement("option");
-			option.value = radonChallenge3[item];
-			option.text = radonChallenge3[item];
+			option.value = challenge3[item];
+			option.text = challenge3[item];
 			document.getElementById('heliumC2Challenge').appendChild(option);
 		}
 		document.getElementById('dailyC2Challenge').innerHTML = document.getElementById('heliumC2Challenge').innerHTML;
 	}
-	if (hzeCheck) {
-		//if (radonHZE === 15) debug("You have unlocked the Unlucky challenge.")
-		if (radonHZE === 5) debug("You can now use the Smithy Farm setting. This can be found in the AT 'Maps' tab.")
-		if (radonHZE === 25) debug("You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.")
-		if (radonHZE === 30) debug("You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.")
-		if (radonHZE === 35) debug("You have unlocked the Unbalance challenge. There's setting for it in the AT 'C3' tab.")
-		if (radonHZE === 40) debug("You have unlocked the Bublé challenge. It has now been added to AutoPortal setting.")
-		//if (radonHZE === 45) debug("Duel");
-		if (radonHZE === 50) debug("You can now use the Worshipper Farm setting. This can be found in the AT 'Maps' tab.")
-		if (radonHZE === 50) debug("You can now access the C3 tab within the AT settings. Here you will find a variety of settings that will help optimise your C3 runs.")
-		if (radonHZE === 50) debug("Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them.");
-		if (radonHZE === 50) debug("You have unlocked the Melt challenge. It has now been added to AutoPortal setting.")
-		if (radonHZE === 60) debug("You have unlocked the Trappapalooza challenge. It has now been added to Challenge 3 AutoPortal settings & there's a setting for it in the AT 'C3' tab.")
-		if (radonHZE === 70) debug("You have unlocked the Quagmire challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-		if (radonHZE === 70) debug("You have unlocked the Wither challenge. It has now been added to Challenge 3 AutoPortal settings & any map level settings with the exception of Map Bonus will make the highest level map you run -1 to not obtain additional stacks.")
-		if (radonHZE === 85) debug("You have unlocked the Quest challenge. It has now been added to Challenge 3 AutoPortal settings & AT will automatically complete Quests if AutoMaps is enabled during this challenge.")
-		if (radonHZE === 90) debug("You have unlocked the Archaeology challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-		if (radonHZE === 100) debug("You have unlocked the Mayhem challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
-		if (radonHZE === 105) debug("You have unlocked the Storm challenge. It has now been added to Challenge 3 AutoPortal setting & there's setting for it in the AT 'C3' tab.")
-		if (radonHZE === 110) debug("You have unlocked the Insanity challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-		if (radonHZE === 115) debug("You have unlocked the Berserk challenge. It has now been added to Challenge 3 AutoPortal setting.")
-		if (radonHZE === 135) debug("You have unlocked the Nurture challenge. It has now been added to AutoPortal setting & there is a setting for Laboratory's that has been added to AT's AutoStructure setting.")
-		if (radonHZE === 150) debug("You have unlocked the Pandemonium challenge. It has now been added to AutoPortal setting & there's setting for it in the AT 'C3' tab.")
-		if (radonHZE === 155) debug("You have unlocked the Alchemy challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-		if (radonHZE === 175) debug("You have unlocked the Hypothermia challenge. It has now been added to AutoPortal setting & there are settings for it in the AT 'Challenges' tab.")
-		if (radonHZE === 175) debug("You have unlocked the Glass challenge. It has now been added to Challenge 3 AutoPortal setting.")
+
+	if (Object.keys(MODULES.u2unlocks).length === 0) {
+		MODULES.u2unlocks.challenge = challenge;
+		MODULES.u2unlocks.radonHourChallenges = radonHourChallenges;
+		MODULES.u2unlocks.challenge3 = challenge3;
 	}
+
+	if (hzeCheck) {
+
+		//Transmute
+		if (hze === 25) {
+			debug("You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.");
+		} //Dailies
+		else if (hze === 30) {
+			debug("You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.");
+		} //Unblance
+		else if (hze === 35) {
+			debug(challengeUnlock('Unbalance', true, true));
+		} //Bublé
+		else if (hze === 40) {
+			debug(challengeUnlock('Bublé'));
+		} //C3, Melt, Worshippers
+		else if (hze === 50) {
+			//C3
+			debug("Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them. Also you can now access the C3 tab within the AT settings.")
+			//Melt
+			debug(challengeUnlock('Melt'));
+			//Worshippers
+			debug("You can now use the Worshipper Farm setting. This can be found in the AT 'Maps' tab.");
+		} //Trappapalooza
+		else if (hze === 60) {
+			debug(challengeUnlock('Trappapalooza', true, true));
+		} //Quagmire
+		else if (hze === 70) {
+			debug(challengeUnlock('Quagmire', true, false));
+		} //Wither
+		else if (hze === 70) {
+			debug(challengeUnlock('Wither', true, true));
+		} //Quest
+		else if (hze === 85) {
+			debug(challengeUnlock('Quest', true, true));
+		} //Archaeology
+		else if (hze === 90) {
+			debug(challengeUnlock('Archaeology', true, false));
+		} //Mayhem
+		else if (hze === 100) {
+			debug(challengeUnlock('Mayhem', true, true));
+		} //Storm
+		else if (hze === 105) {
+			debug(challengeUnlock('Storm', true, true));
+		} //Insanity
+		else if (hze === 110) {
+			debug(challengeUnlock('Insanity', true, false));
+		} //Berserk
+		else if (hze === 115) {
+			debug(challengeUnlock('Berserk'));
+		} //Nurture
+		else if (hze === 135) {
+			debug(challengeUnlock('Nurture', false, false) + " There is also setting for Laboratory's that has been added to AT's AutoStructure setting.");
+		} //Pandemonium
+		else if (hze === 150) {
+			debug(challengeUnlock('Pandemonium', true, true));
+		} //Alchemy
+		else if (hze === 155) {
+			debug(challengeUnlock('Alchemy', true, false));
+		} //Hypothermia
+		else if (hze === 175) {
+			debug(challengeUnlock('Hypothermia', true, false));
+		} //Glass
+		else if (hze === 175) {
+			debug(challengeUnlock('Glass', true, true));
+		} //Smithless
+		else if (hze === 200) {
+			debug(challengeUnlock('Smithless', true, true));
+		}
+	}
+	MODULES.u2unlocks.challenge = challenge;
+	MODULES.u2unlocks.radonHourChallenges = radonHourChallenges;
+	MODULES.u2unlocks.challenge3 = challenge3;
 }
 
 function autoSetValueToolTip(id, text, negative, multi) {
@@ -3217,14 +3342,14 @@ function updateCustomButtons(initialLoad) {
 	//Hide settings
 	//Radon
 	var radonon = autoTrimpSettings.radonsettings.value == 1;
-	var highestZone = game.global.highestLevelCleared + 1;
+	var hze = game.global.highestLevelCleared + 1;
 	var highestRadonZone = game.global.highestRadonLevelCleared + 1;
 	var legacysettings = autoTrimpSettings.radonsettings.value == 2;
 	currSettingUniverse = (autoTrimpSettings.radonsettings.value + 1);
 	var displayAllSettings = getPageSetting('displayAllSettings', currSettingUniverse);
 	//Update portal challenges
 	if (radonon) radonChallengesSetting(false, true);
-	else heliumChallengesSetting();
+	else heliumChallengesSetting(false, true);
 	HeHrPortalOptions();
 
 	//Swapping name and description of C2 tab when Radon is toggled on.
@@ -3238,28 +3363,28 @@ function updateCustomButtons(initialLoad) {
 	}
 	//Tabs
 	if (document.getElementById("tabBuildings") != null) {
-		document.getElementById("tabBuildings").style.display = !displayAllSettings && (radonon || (!radonon && highestZone < 60)) ? "none" : "";
+		document.getElementById("tabBuildings").style.display = !displayAllSettings && (radonon || (!radonon && hze < 60)) ? "none" : "";
 	}
 	if (document.getElementById("tabDaily") != null) {
-		document.getElementById("tabDaily").style.display = !displayAllSettings && ((radonon && highestRadonZone < 30) || (!radonon && highestZone < 99)) ? "none" : "";
+		document.getElementById("tabDaily").style.display = !displayAllSettings && ((radonon && highestRadonZone < 30) || (!radonon && hze < 99)) ? "none" : "";
 	}
 	if (document.getElementById("tabC2") != null) {
-		document.getElementById("tabC2").style.display = !displayAllSettings && ((radonon && highestRadonZone < 50) || (!radonon && highestZone < 65)) ? "none" : "";
+		document.getElementById("tabC2").style.display = !displayAllSettings && ((radonon && highestRadonZone < 50) || (!radonon && hze < 65)) ? "none" : "";
 	}
 	if (document.getElementById("tabSpire") != null) {
-		document.getElementById("tabSpire").style.display = radonon || (!displayAllSettings && highestZone < 190) ? "none" : "";
+		document.getElementById("tabSpire").style.display = radonon || (!displayAllSettings && hze < 190) ? "none" : "";
 	}
 	if (document.getElementById("tabATGA") != null) {
-		document.getElementById("tabATGA").style.display = radonon || (!displayAllSettings && highestZone < 70) ? "none" : "";
+		document.getElementById("tabATGA").style.display = radonon || (!displayAllSettings && hze < 70) ? "none" : "";
 	}
 	if (document.getElementById("tabMagma") != null) {
-		document.getElementById("tabMagma").style.display = radonon || (!displayAllSettings && highestZone < 230) ? "none" : "";
+		document.getElementById("tabMagma").style.display = radonon || (!displayAllSettings && hze < 230) ? "none" : "";
 	}
 	if (document.getElementById("tabNature") != null) {
-		document.getElementById("tabNature").style.display = radonon || (!displayAllSettings && highestZone < 236) ? "none" : "";
+		document.getElementById("tabNature").style.display = radonon || (!displayAllSettings && hze < 236) ? "none" : "";
 	}
 	if (document.getElementById("tabChallenges") != null) {
-		document.getElementById("tabChallenges").style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && highestZone < 55)) ? "none" : "";
+		document.getElementById("tabChallenges").style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && hze < 55)) ? "none" : "";
 	}
 	if (document.getElementById("tabLegacy") != null) {
 		document.getElementById("tabLegacy").style.display = !legacysettings ? "none" : "";
@@ -3604,7 +3729,7 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.003') {
-			changelog.push("With Antennas/Meteorologists increasing wood gain in 5.9.0 I've added a job ratio input for the HD Farm setting to allow for more user control of equip farming. Was previously Set to '0,0,1' if you want to use the same setting as before.")
+			changelog.push("With Antennas/Meteorologists increasing wood gain in 5.9.0 I've added a job ratio input for the HD Farm setting to allow for more user control of equip farming. Was previously Set to '0,0,1' if you want to use the same setting as before.");
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1') {
