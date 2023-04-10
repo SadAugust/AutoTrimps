@@ -2531,8 +2531,8 @@ function hdFarm() {
 
 	var shouldHealthFarm = false;
 	if (getPageSetting('hitsSurvived') > 0) {
-		var hitsSurvived = calcHitsSurvived(game.global.world);
-		if (hitsSurvived < getPageSetting('hitsSurvived')) shouldHealthFarm = true;
+		var hdFarmHitsSurvived = calcHitsSurvived(game.global.world);
+		if (hdFarmHitsSurvived < getPageSetting('hitsSurvived')) shouldHealthFarm = true;
 		/* else if (game.upgrades.Explorers.done && game.global.lastClearedCell + 2 >= 81 && calcHitsSurvived(game.global.world + 1) < getPageSetting('hitsSurvived')) {
 			hitsSurvived = calcHitsSurvived(game.global.world + 1);
 			if (hitsSurvived !== Infinity) shouldHealthFarm = true;
@@ -2618,7 +2618,7 @@ function hdFarm() {
 			if (hdType !== 'maplevel') hdRatio = calcHDRatio(game.global.world, hdType);
 			if (!shouldSkip) mappingDetails(mapName, rHDFMapLevel, rHDFSpecial, hdRatio, equipfarmdynamicHD(rHDFSettings));
 			if (getPageSetting('spamMessages').map_Details && shouldSkip) {
-				if (hdType === null) debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(rHDFSettings).toFixed(2) + ").");
+				if (hdType === null) debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hdFarmHitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(rHDFSettings).toFixed(2) + ").");
 				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(rHDFSettings).toFixed(2) + ").");
 				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + rHDFSettings.hdBase + "/" + autoLevel + ").");
 			}
@@ -2632,7 +2632,7 @@ function hdFarm() {
 
 		if (shouldHealthFarm) {
 			status = 'Hits Survived&nbsp;to:&nbsp;' + equipfarmdynamicHD(rHDFSettings).toFixed(2) + '<br>\
-		Current:&nbsp;' + hitsSurvived.toFixed(2)
+		Current:&nbsp;' + hdFarmHitsSurvived.toFixed(2)
 		} else {
 			status = 'HD&nbsp;Farm&nbsp;to:&nbsp;';
 			if (hdType !== 'maplevel') status += equipfarmdynamicHD(rHDFSettings).toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);
