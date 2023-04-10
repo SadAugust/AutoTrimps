@@ -237,6 +237,8 @@ function shouldRunUniqueMap(map) {
 function recycleMap_AT() {
 	if (!getPageSetting('autoMaps')) return;
 	if (game.jobs.Explorer.locked) return;
+	if (challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding' || currentMap === 'Prestige Climb') return;
+
 	if (game.global.mapsActive)
 		mapsClicked(true);
 	recycleMap();
@@ -525,7 +527,7 @@ function mapFarm() {
 	};
 
 	if (!getPageSetting('mapFarmDefaultSettings').active) return farmingDetails;
-	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
+	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding' || currentMap === 'Prestige Climb';
 	const dailyAddition = dailyOddOrEven();
 
 	const baseSettings = getPageSetting('mapFarmSettings');
@@ -632,7 +634,7 @@ function tributeFarm() {
 	var shouldTributeFarm = false;
 	var shouldMetFarm = false;
 
-	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
+	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding' || currentMap === 'Prestige Climb';
 	const baseSettings = getPageSetting('tributeFarmSettings');
 	const dailyAddition = dailyOddOrEven();
 	var index;
@@ -736,9 +738,7 @@ function tributeFarm() {
 		if (currentMap === mapName && !shouldTributeFarm && !shouldMetFarm) {
 			mappingDetails(mapName, rTrFMapLevel, rTrFSpecial, rTrFTributes, rTrFMeteorologists);
 			resetMapVars(rTrFSettings);
-			if (!dontRecycleMaps && game.global.mapsActive) {
-				recycleMap_AT();
-			}
+			if (game.global.mapsActive) recycleMap_AT();
 			rTrFbuyBuildings = false;
 			return farmingDetails;
 		}
@@ -788,7 +788,7 @@ function smithyFarm() {
 	var shouldSmithyMetalFarm = false;
 	var mapAutoLevel = Infinity;
 
-	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
+	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding' || currentMap === 'Prestige Climb';
 	const baseSettings = getPageSetting('smithyFarmSettings');
 	const dailyAddition = dailyOddOrEven();
 
@@ -916,9 +916,7 @@ function smithyFarm() {
 				if (mapBonus === 'lsc' || mapBonus === 'ssc') MODULES.mapFunctions.smithyMapCount[0] = mappingLength;
 				else if (mapBonus === 'lwc' || mapBonus === 'swc') MODULES.mapFunctions.smithyMapCount[1] = mappingLength;
 				else if (mapBonus === 'lmc' || mapBonus === 'smc') MODULES.mapFunctions.smithyMapCount[2] = mappingLength;
-				if (!dontRecycleMaps) {
-					recycleMap_AT();
-				}
+				recycleMap_AT();
 			}
 			if (!shouldSmithyFarm) {
 				mappingDetails(mapName, rSFMapLevel, rSFSpecial, rSFSmithies);
@@ -2542,7 +2540,6 @@ function hdFarm() {
 	}
 	if (!getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm) return farmingDetails;
 
-	const dontRecycleMaps = challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
 	const baseSettings = getPageSetting('hdFarmSettings');
 	const rHDFDefaultSetting = getPageSetting('hdFarmDefaultSettings');
 	var shouldHDFarm = false;
@@ -2625,9 +2622,7 @@ function hdFarm() {
 				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + rHDFSettings.hdBase + "/" + autoLevel + ").");
 			}
 			resetMapVars(rHDFSettings);
-			if (!dontRecycleMaps && game.global.mapsActive) {
-				recycleMap_AT();
-			}
+			if (game.global.mapsActive) recycleMap_AT();
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHDFMapLevel || (getCurrentMapObject().bonus !== rHDFSpecial && (getCurrentMapObject().bonus !== undefined && rHDFSpecial !== '0')));
@@ -2826,7 +2821,7 @@ function prestigeTotalFragCost(raidZones, targetPrestige, special, incrementMaps
 
 function fragmap() {
 	var fragmentsOwned = game.resources.fragments.owned
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Mountain";
+	document.getElementById("biomeAdvMapsSelect").value = "Depths";
 	document.getElementById("advExtraLevelSelect").value = 0;
 	document.getElementById("advSpecialSelect").value = "fa";
 	document.getElementById("lootAdvMapsRange").value = 9;
@@ -3188,6 +3183,28 @@ function getAvailableSpecials(special, skipCaches) {
 	}
 	if (bestMod === undefined) bestMod = '0';
 	return bestMod;
+}
+
+function getAvailableBiomes(preferredBiome, goal) {
+
+	const biomes = ['Farmlands', 'Plentiful', 'Mountain', 'Forest', 'Sea', 'Depths', 'Random'];
+
+	//Setup prefferedBiome to work with Metal, Trappa, and Trappapalooza;;;;;
+	for (var biome of biomes) {
+		if (preferredBiome) biome = preferredBiome;
+		if (biome === 'Farmlands' && (game.global.universe === 1 || !game.global.farmlandsUnlocked)) continue;
+		if (biome === 'Plentiful' && !game.global.decayDone) continue;
+		if (challengeActive('Metal') && biome !== 'Mountain') continue;
+		//Need to figure out the conversion point for caches beating drops for these 2 challenges
+		if (challengeActive('Trapper') && biome !== 'Mountain' && game.global.highestLevelCleared + 1 < 800) continue;
+		if (challengeActive('Trappapalooza') && biome !== 'Mountain' && game.global.highestRadonLevelCleared + 1 < 300) continue;
+
+		bestBiome = biome;
+		break;
+	}
+
+	if (bestBiome === undefined) biome = 'Random';
+	return bestBiome;
 }
 
 function getSpecialTime(special, maps, noImports) {
