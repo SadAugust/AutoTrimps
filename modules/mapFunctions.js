@@ -2753,7 +2753,7 @@ function prestigeMapHasEquips(number, raidzones, targetPrestige) {
 //Set sliders for prestige raiding
 function prestigeRaidingSliders(number, raidzones, special) {
 	if (!special) special = getAvailableSpecials('p');
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Random";
+	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Mountain";
 	document.getElementById("mapLevelInput").value = raidzones >= game.global.world ? game.global.world : raidzones;
 	document.getElementById("advExtraLevelSelect").value = prestigeMapLevelToRun(number, raidzones);
 	document.getElementById("advSpecialSelect").value = special;
@@ -3041,7 +3041,7 @@ function shouldFarmMapCreation(pluslevel, special, biome, difficulty, loot, size
 	//Pre-Init
 	if (!pluslevel) pluslevel = 0;
 	if (!special) special = getAvailableSpecials('lmc');
-	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Random";
+	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Mountain";
 	if (!difficulty) difficulty = 0.75;
 	if (!loot) loot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.farmlandsUnlocked ? 2.6 : game.singleRunBonuses.goldMaps.owned ? 2.85 : 1.85;
 	if (!size) size = 20;
