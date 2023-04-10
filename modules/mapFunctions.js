@@ -2576,6 +2576,7 @@ function hdFarm() {
 			}
 			rHDFmapCap = Infinity;
 		} else {
+			shouldHealthFarm = false;
 			rHDFSettings = baseSettings[index];
 			rHDFmapCap = rHDFDefaultSetting.mapCap;
 		}
@@ -2610,7 +2611,7 @@ function hdFarm() {
 		if (shouldHDFarm && game.global.mapsActive && currentMap === mapName && game.global.mapRunCounter >= rHDFmaxMaps) {
 			shouldHDFarm = false;
 		}
-		if (currentMap !== mapName && (hdType !== 'maplevel' ? equipfarmdynamicHD(rHDFSettings) > hdRatio : autoLevel > rHDFSettings.hdBase))
+		if (currentMap !== mapName && !shouldHealthFarm && (hdType !== 'maplevel' ? equipfarmdynamicHD(rHDFSettings) > hdRatio : autoLevel > rHDFSettings.hdBase))
 			shouldSkip = true;
 
 		if (((currentMap === mapName && !shouldHDFarm) || shouldSkip) && HDRatio !== Infinity) {

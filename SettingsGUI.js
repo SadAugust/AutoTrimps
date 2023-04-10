@@ -1175,7 +1175,7 @@ function initializeAllSettings() {
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },
 			function () {
-				return ('Will farm until you can survive this amount of attacks. ' + /* After unlocking Explorers when above cell 81 on each zone it will also check the values against your next zone to ensure that your farm is slightly faster overall. Be careful as the higher you set this the more chance AT will overfarm */ + '.<br>\
+				return ('Will farm until you can survive this amount of attacks.<br>\
 			<b>Must be set above 0 to run</b>')
 			},
 			'value', 2, null, "Maps", [1, 2]);
