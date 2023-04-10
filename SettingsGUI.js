@@ -149,6 +149,7 @@ function initializeAllTabs() {
 	sh.insertBefore(addtabsUL, sh.childNodes[2]);
 	createTabs("Core", "Core - Main Controls for the script");
 	createTabs("Buildings", "Building Settings");
+	createTabs("Jobs", "Geneticassist Settings");
 	createTabs("Gear", "Gear - Equipment Settings");
 	createTabs("Maps", "Maps - AutoMaps & VoidMaps Settings");
 	createTabs("Spire", "Spire - Settings for Spires");
@@ -156,7 +157,6 @@ function initializeAllTabs() {
 	createTabs("C2", "C2 - Settings for C2s");
 	createTabs("Challenges", "Challenges - Settings for Specific Challenges");
 	createTabs("Combat", "Combat & Stance Settings");
-	createTabs("ATGA", "Geneticassist Settings");
 	createTabs("Magma", "Dimensional Generator & Magmite Settings");
 	createTabs("Heirlooms", "Heirloom Settings");
 	createTabs("Golden", "Golden Upgrade Settings");
@@ -1358,79 +1358,79 @@ function initializeAllSettings() {
 		createSetting('ATGA2',
 			function () { return ('ATGA') },
 			function () { return ('<b>ATGA MASTER BUTTON</b><br>AT Geneticassist. Do not use vanilla GA, as it will conflict otherwise. May get fucky with super high values. ') },
-			'boolean', false, null, 'ATGA', [1]);
+			'boolean', false, null, 'Jobs', [1]);
 		createSetting('ATGA2gen',
 			function () { return ('ATGA: Gen %') },
 			function () { return ('<b>ATGA: Geneassist %</b><br>ATGA will only hire geneticists if they cost less than this value. E.g if this setting is 1 it will only buy geneticists if they cost less than 1% of your food. Default is 1%. ') },
-			'value', '1', null, 'ATGA', [1],
+			'value', '1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled) });
 		createSetting('ATGA2timer',
 			function () { return ('ATGA: Timer') },
 			function () { return ('<b>ATGA Timer</b><br>This is the default time your ATGA will use. ') },
-			'value', '-1', null, 'ATGA', [1],
+			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled) });
 
 		//Zone Timers
 		createSetting('zATGA2timer',
 			function () { return ('ATGA: T: Before Z') },
 			function () { return ('<b>ATGA Timer: Before Z</b><br>ATGA will use the value you define in ATGA: T: BZT before the zone you have defined in this setting, overwriting your default timer. Useful for Liq or whatever. ') },
-			'value', '-1', null, 'ATGA', [1],
+			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('ztATGA2timer',
 			function () { return ('ATGA: T: BZT') },
 			function () { return ('<b>ATGA Timer: Before Z Timer</b><br>ATGA will use this value before the zone you have defined in ATGA: T: Before Z, overwriting your default timer. Useful for Liq or whatever. Does not work on challenges. ') },
-			'value', '-1', null, 'ATGA', [1],
+			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0 && autoTrimpSettings.zATGA2timer.value > 0) });
 		createSetting('ATGA2timerz',
 			function () { return ('ATGA: T: After Z') },
 			function () { return ('<b>ATGA Timer: After Z</b><br>ATGA will use the value you define in ATGA: T: AZT after the zone you have defined in this setting, overwriting your default timer. Useful for super push runs or whatever. Does not work on challenges. ') },
-			'value', '-1', null, 'ATGA', [1],
+			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('ATGA2timerzt',
 			function () { return ('ATGA: T: AZT') },
 			function () { return ('<b>ATGA Timer: After Z Timer</b><br>ATGA will use this value after the zone that has been defined in ATGA: T: After Z, overwriting your default timer. Useful for super push runs or whatever. ') },
-			'value', '-1', null, 'ATGA', [1],
+			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0 && autoTrimpSettings.ATGA2timerz.value > 0) });
 
 		//Spire Timers
 		createSetting('sATGA2timer',
 			function () { return ('ATGA: T: Spire') },
 			function () { return ('<b>ATGA Timer: Spire</b><br>ATGA will use this value in Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this except Daily Spire. ') },
-			'value', '-1', null, 'ATGA', [1],
+			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('dsATGA2timer',
 			function () { return ('ATGA: T: Daily Spire') },
 			function () { return ('<b>ATGA Timer: Daily Spire</b><br>ATGA will use this value in Daily Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this. ') },
-			'value', '-1', null, 'ATGA', [1],
+			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 
 		//Daily Timers
 		createSetting('dATGA2Auto',
 			function () { return (['ATGA: Manual', 'ATGA: Auto No Spire', 'ATGA: Auto Dailies']) },
 			function () { return ('<b>EXPERIMENTAL</b><br><b>ATGA Timer: Auto Dailies</b><br>ATGA will use automatically set breed timers in plague and bogged, overwriting your default timer.<br/>Set No Spire to not override in spire, respecting ignore spire settings.') },
-			'multitoggle', 2, null, 'ATGA', [1],
+			'multitoggle', 2, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('dATGA2timer',
 			function () { return ('ATGA: T: Dailies') },
 			function () { return ('<b>ATGA Timer: Normal Dailies</b><br>ATGA will use this value for normal Dailies such as ones without plague etc, overwriting your default timer. Useful for pushing your dailies that extra bit at the end. Overwrites Default, Before Z and After Z. ') },
-			'value', '-1', null, 'ATGA', [1],
+			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('dhATGA2timer',
 			function () { return ('ATGA: T: D: Hard') },
 			function () { return ('<b>ATGA Timer: Hard Dailies</b><br>ATGA will use this value in Dailies that are considered Hard. Such Dailies include plaged, bloodthirst and Dailies with a lot of negative mods. Overwrites Default, Before Z and After Z and normal Daily ATGA Timer. ') },
-			'value', '-1', null, 'ATGA', [1],
+			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 
 		//C2 Timers
 		createSetting('cATGA2timer',
 			function () { return ('ATGA: T: ' + cinf()) },
 			function () { return ('<b>ATGA Timer: ' + cinf() + 's</b><br>ATGA will use this value in ' + cinf() + 's. Overwrites Default, Before Z and After Z. ') },
-			'value', '-1', null, 'ATGA', [1],
+			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('chATGA2timer',
 			function () { return ('ATGA: T: C: Hard') },
 			function () { return ('<b>ATGA Timer: Hard ' + cinf() + 's</b><br>ATGA will use this value in ' + cinf() + 's that are considered Hard. Electricity, Nom, Toxicity. Overwrites Default, Before Z and After Z and ' + cinf() + ' ATGA') },
-			'value', '-1', null, 'ATGA', [1],
+			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 	}
 
@@ -2903,10 +2903,13 @@ function heliumChallengesSetting(hzeCheck, forceUpdate) {
 			debug(challengeUnlock('Balance', false, false));
 		} else if (hze === 55) {
 			debug(challengeUnlock('Decay', true, false));
+		} else if (hze === 60) {
+			debug("Upon unlocking Warpstations's AT has a new settings tab available called 'Buildings'. Here you will find a variety of settings that will help with this new feature.");
 		} else if (hze === 65) {
 			debug("Due to unlocking Challenge 2's there is now a Challenge 2 option under AutoPortal to be able to auto portal into them. Also you can now access the C2 tab within the AT settings.")
 		} else if (hze === 70) {
 			debug(challengeUnlock('Trapper', false, true));
+			debug("Upon unlocking Geneticist's AT has a new settings tab available called 'Jobs'. Here you will find a variety of settings that will help with this new feature.");
 		} else if (game.global.prisonClear >= 1 && !MODULES.u1unlocks.challenge2.includes('Electricity')) {
 			debug(challengeUnlock('Electricity', false, true));
 		} else if (hze === 110) {
@@ -3374,8 +3377,8 @@ function updateCustomButtons(initialLoad) {
 	if (document.getElementById("tabSpire") != null) {
 		document.getElementById("tabSpire").style.display = radonon || (!displayAllSettings && hze < 190) ? "none" : "";
 	}
-	if (document.getElementById("tabATGA") != null) {
-		document.getElementById("tabATGA").style.display = radonon || (!displayAllSettings && hze < 70) ? "none" : "";
+	if (document.getElementById("tabJobs") != null) {
+		document.getElementById("tabJobs").style.display = radonon || (!displayAllSettings && hze < 70) ? "none" : "";
 	}
 	if (document.getElementById("tabMagma") != null) {
 		document.getElementById("tabMagma").style.display = radonon || (!displayAllSettings && hze < 230) ? "none" : "";
