@@ -954,13 +954,13 @@ function calcEnemyAttack(type, zone, cell = 99, name = "Snimp", minOrMax, custom
 	//Ice - Experimental
 	if (getEmpowerment() == "Ice") {
 		//Uses the actual number in some places like Stances
-		if (!getPageSetting('fullice') || realDamage) number *= 1 + game.empowerments.Ice.getDamageModifier();
+		if (!getPageSetting('fullice') || realDamage) attack *= 1 + game.empowerments.Ice.getDamageModifier();
 		//Otherwise, use the number we would have after a transfer
 		else {
 			var afterTransfer = 1 + Math.ceil(game.empowerments["Ice"].currentDebuffPower * getRetainModifier("Ice"));
 			var mod = 1 - Math.pow(game.empowerments.Ice.getModifier(), afterTransfer);
 			if (Fluffy.isRewardActive('naturesWrath')) mod *= 2;
-			number *= 1 + mod;
+			attack *= 1 + mod;
 		}
 	}
 
