@@ -139,7 +139,7 @@ function pushSpreadsheetData() {
 
 	const obj = {
 		user: autoTrimpSettings.gameUser.value,
-		date: new Date().toUTCString(),
+		date: new Date().toISOString(),
 		portals: game.global.totalPortals,
 		portals_U2: game.global.totalRadPortals,
 		helium: game.global.totalHeliumEarned,
@@ -149,6 +149,7 @@ function pushSpreadsheetData() {
 		fluffy: fluffy_EvoLevel.fluffy(),
 		scruffy: Number((scruffy_Level.currentLevel() + scruffy_Level.getExp()[1] / scruffy_Level.getExp()[2]).toFixed(3)),
 		achievement: game.global.achievementBonus,
+		nullifium: game.global.nullifium,
 		antenna: game.buildings.Antenna.purchased,
 		spire_Assault_Level: autoBattle.maxEnemyLevel,
 		spire_Assault_Radon: autoBattle.bonuses.Radon.level,
@@ -162,7 +163,8 @@ function pushSpreadsheetData() {
 		c3: countChallengeSquaredReward(false, false, true)[1],
 		cinf: game.global.totalSquaredReward,
 		challenge: graphData !== null ? graphData.challenge : 'None',
-		runtime: (getGameTime() - game.global.portalTime),
+		runtime: formatTimeForDescriptions((getGameTime() - game.global.portalTime) / 1000),
+		runtimeMilliseconds: (getGameTime() - game.global.portalTime),
 		zone: game.global.world,
 		voidZone: game.global.universe === 2 ? game.stats.highestVoidMap2.value : game.stats.highestVoidMap.value,
 		voidsCompleted: game.stats.totalVoidMaps.value,
@@ -198,8 +200,9 @@ function pushSpreadsheetData() {
 		//Data entry ID can easily be found in the URL of the form after setting up a pre-filled link.
 		//Haven't found a way to get it from the form itself or a way to automate it so pushing the data as an object instead.
 		var data = {
-			'entry.1850071841': obj.user,
-			'entry.815135863': JSON.stringify(obj),
+			'entry.1850071841': obj.user, //User
+			'entry.815135863': JSON.stringify(obj), //Object
+			//'entry.1864995783': new Date().toISOString(), //Timestamp
 		};
 
 		var formSuccess = true;

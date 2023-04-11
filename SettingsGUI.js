@@ -3341,7 +3341,6 @@ function updateCustomButtons(initialLoad) {
 	}
 	lastTheme = game.options.menu.darkTheme.enabled;
 
-
 	//Hide settings
 	//Radon
 	var radonon = autoTrimpSettings.radonsettings.value == 1;
