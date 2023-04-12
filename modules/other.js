@@ -393,8 +393,8 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	const maxEquality = game.portal.Equality.radLevel;
 	const overkillCount = maxOneShotPower(true);
 
-	var critType = 'maybe'
-	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel')) critType = 'never'
+	var critType = 'maybe';
+	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel')) critType = 'never';
 
 	//Challenge conditions
 	var runningUnlucky = challengeActive('Unlucky');
@@ -507,7 +507,7 @@ function equalityManagement() {
 
 	//Daily modifiers active
 	var isDaily = challengeActive('Daily')
-	var dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined' //Empower
+	var dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined'; //Empower
 	var dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
 	var dailyWeakness = isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
@@ -522,7 +522,7 @@ function equalityManagement() {
 	var runningRevenge = challengeActive('Revenge');
 	var runningArchaeology = challengeActive('Archaeology');
 	var runningMayhem = challengeActive('Mayhem');
-	var enemyCanPoison = runningMayhem && (mapping || currentCell === 99)
+	var enemyCanPoison = runningMayhem && (mapping || currentCell === 99);
 	var runningBerserk = challengeActive('Berserk');
 	var runningExperienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	var runningGlass = challengeActive('Glass');
@@ -546,26 +546,27 @@ function equalityManagement() {
 	var gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
 	var fuckGamma = (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger);
 
-	var critType = 'maybe'
-	if (challengeActive('Wither') || challengeActive('Glass')) critType = 'never'
+	var critType = 'maybe';
+	if (challengeActive('Wither') || challengeActive('Glass')) critType = 'never';
 
 	//Initialising Stat variables
 	//Our stats
-	var dmgType = runningUnlucky ? 'max' : 'avg'
+	var dmgType = runningUnlucky ? 'max' : 'avg';
 	var ourHealth = remainingHealth();
-	var ourHealthMax = calcOurHealth(runningQuest, type)
+	var ourHealthMax = calcOurHealth(runningQuest, type);
 	var ourDmg = calcOurDmg(dmgType, 0, false, type, critType, bionicTalent, true);
+	var ourDmgMax = 0;
 
 	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, type, 'never', bionicTalent, true)) : 2;
 
 	if (noFrenzy) {
 		if (getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted === -1) {
-			ourDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel)
-			unluckyDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel)
+			ourDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel);
+			unluckyDmg /= 1 + (0.5 * game.portal.Frenzy.radLevel);
 		}
 		if (!getPageSetting('frenzyCalc') && game.portal.Frenzy.frenzyStarted !== -1) {
-			ourDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel)
-			unluckyDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel)
+			ourDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel);
+			unluckyDmg *= 1 + (0.5 * game.portal.Frenzy.radLevel);
 		}
 	}
 	ourDmg *= dailyRampage ? dailyModifiers.rampage.getMult(game.global.dailyChallenge.rampage.strength, game.global.dailyChallenge.rampage.stacks) : 1;
@@ -581,12 +582,12 @@ function equalityManagement() {
 
 	//Empower related modifiers in world
 	if (dailyEmpowerToggle && !mapping && dailyEmpower) {
-		if (dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)
-		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+		if (dailyExplosive) ourDmgMax = calcOurDmg('max', 0, false, 'world', 'force') * gammaDmg;
 	}
 	//Empower modifiers in maps.
 	if (type === 'map' && (dailyExplosive || dailyCrit)) {
-		if (dailyEmpowerToggle && dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)
+		if (dailyEmpowerToggle && dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 	}
 	enemyDmg *= !dailyEmpower && (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
@@ -595,7 +596,7 @@ function equalityManagement() {
 	enemyDmg *= runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
 	var enemyDmgEquality = 0;
 	//Misc dmg mult
-	if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100)
+	if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100);
 
 	//Fast Enemy conditions
 	var fastEnemy = !game.global.preMapsActive && fastimps.includes(enemyName);
@@ -603,7 +604,7 @@ function equalityManagement() {
 	if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
 	if (type === 'map' && dailyExplosive) fastEnemy = true;
 	if (type === 'world' && dailyExplosive) fastEnemy = true;
-	if (game.global.voidBuff === 'doubleAttack') fastEnemy = true
+	if (game.global.voidBuff === 'doubleAttack') fastEnemy = true;
 	if (runningArchaeology) fastEnemy = true;
 	if (noFrenzy && game.portal.Frenzy.frenzyActive() || (enemyHealth / ourDmg) > 10) fastEnemy = true;
 	if (runningTrappa) fastEnemy = true;
@@ -630,7 +631,7 @@ function equalityManagement() {
 		var currStacks = game.global.dailyChallenge.bloodthirst.stacks;
 		var stacksToProc = dailyModifiers.bloodthirst.getFreq(game.global.dailyChallenge.bloodthirst.strength) - (game.global.dailyChallenge.bloodthirst.stacks % dailyModifiers.bloodthirst.getFreq(game.global.dailyChallenge.bloodthirst.strength));
 		var avgTrimpAttack = (ourDmg * Math.pow(game.portal.Equality.getModifier(1),
-			equalityQuery(enemyName, zone, currentCell, type, difficulty, 'gamma')) * gammaDmg)
+			equalityQuery(enemyName, zone, currentCell, type, difficulty, 'gamma')) * gammaDmg);
 		var timeToKill = enemyHealth / avgTrimpAttack;
 
 		if (currStacks !== maxStacks && stacksToProc < timeToKill) {
@@ -641,18 +642,28 @@ function equalityManagement() {
 		}
 	}
 
+	var ourEqualityModifier = game.portal.Equality.getModifier(1);
+	var enemyEqualityModifier = game.portal.Equality.getModifier();
+
 	if (enemyHealth > 0) {
 		for (var i = 0; i <= maxEquality; i++) {
-			enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i);
-			ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
+			enemyDmgEquality = enemyDmg * Math.pow(enemyEqualityModifier, i);
+			ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
 
 			if (runningMayhem) enemyDmgEquality += game.challenges.Mayhem.poison;
 
+			//Skips if we are running unlucky and our damage is odd.
 			if (runningUnlucky) {
-				unluckyDmgEquality = unluckyDmg * Math.pow(game.portal.Equality.getModifier(1), i);
+				unluckyDmgEquality = unluckyDmg * Math.pow(ourEqualityModifier, i);
 				if (unluckyDmgEquality.toString()[0] % 2 == 1 && i !== maxEquality) continue;
 			}
-
+			//Check to see if we kill the enemy with our max damage on empower dailies with explosive mod. If we can then mult enemy dmg by explosive mod value to stop us gaining empower stacks.
+			if (ourDmgMax > 0) {
+				var ourMaxDmg = ourDmgMax * Math.pow(ourEqualityModifier, i);
+				if (ourMaxDmg > enemyHealth && (enemyDmgEquality * (1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength)) > ourHealth))
+					enemyDmgEquality *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+			}
+			//Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
 			if (voidPBSwap && !fastEnemy && calcOurDmg('max', i, false, 'void', 'force', 0, true) > enemyHealth && (typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' || game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) && (getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
 				game.portal.Equality.disabledStackCount = maxEquality;
 				while (calcOurDmg('max', i, false, 'void', 'force', 0, true) > getCurrentEnemy().health && i < maxEquality) {
@@ -664,7 +675,7 @@ function equalityManagement() {
 				game.portal.Equality.disabledStackCount = i;
 				break;
 			}
-			else if (armyReady && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.9 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
+			else if (armyReady && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.95 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
 				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
 					mapsClicked();
 					mapsClicked();

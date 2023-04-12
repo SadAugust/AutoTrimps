@@ -2711,7 +2711,7 @@ function FarmingDecision() {
 	}
 
 	//Won't map till after cell 90 on Lead on Even zones
-	if (challengeActive('Lead') && !game.global.runningChallengeSquared && (game.global.world % 2 == 0 || game.global.lastClearedCell + 2 <= 90)) {
+	if (challengeActive('Lead') && !game.global.runningChallengeSquared && game.global.world !== 180 && (game.global.world % 2 == 0 || game.global.lastClearedCell + 2 <= 90)) {
 		return farmingDetails;
 	}
 	if (!game.global.mapsUnlocked) return farmingDetails;
