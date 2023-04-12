@@ -293,10 +293,11 @@ function createUI() {
 	}
 
 	document.querySelector("#blackCB").checked = GRAPHSETTINGS.darkTheme;
-	MODULES.graphs.themeChanged();
-
 	document.querySelector("#portalCountTextBox").value = GRAPHSETTINGS.portalsDisplayed;
 	document.querySelector("#portalsSavedTextBox").value = GRAPHSETTINGS.maxGraphs;
+	document.querySelector("#liveCheckbox").checked = GRAPHSETTINGS.live;
+	MODULES.graphs.themeChanged();
+
 }
 
 // Show/hide the universe-specific graph selectors
@@ -525,7 +526,7 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 	this.columnGraph = function () {
 		var highChartsObj = this.createHighChartsObj() // make default object, to be customized as needed
 		highChartsObj.xAxis.title.text = "Portal"
-		highChartsObj.plotOptions.series = { groupPadding: .2, pointPadding: 0, animation: false, }
+		highChartsObj.plotOptions.series = { groupPadding: .2, pointPadding: 0, animation: false, borderColor: "black" }
 		// set up axes for each column so they scale independently
 		var activeColumns = this.columns.filter(column => !(column.universe && column.universe != GRAPHSETTINGS.universeSelection));
 		if (GRAPHSETTINGS.toggles[this.id].perHr) { // disable time when comparing things over time.  x/x is not interesting data.
@@ -539,8 +540,9 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 		var yAxis = 0;
 		for (const column of activeColumns) {
 			var cleanData = []
-			for (const portal of Object.values(portalSaveData)) {
-				if (portal.universe != GRAPHSETTINGS.universeSelection) continue;
+			var currUniPortals = Object.values(portalSaveData).filter(portal => portal.universe == GRAPHSETTINGS.universeSelection);
+			for (const portal of Object.values(currUniPortals).slice(Math.max(Object.values(currUniPortals).length - GRAPHSETTINGS.portalsDisplayed, 0))) {
+				//if (portal.universe != GRAPHSETTINGS.universeSelection) continue;
 				var data = undefined;
 				if (portal[column.dataVar]) { data = portal[column.dataVar]; }
 				if (portal.perZoneData[column.dataVar]) {
@@ -566,6 +568,11 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 			}
 			this.graphData.push(series);
 			yAxis += 1;
+		}
+		// reduce padding between portals as portals increase
+		highChartsObj.plotOptions.series["groupPadding"] = .5 / this.graphData[0].data.length ** .6;
+		if (this.graphData[0].data.length > 15) {
+			highChartsObj.plotOptions.series["borderWidth"] = 0.1;
 		}
 
 		highChartsObj.yAxis = axes;
@@ -1082,7 +1089,8 @@ const toggledGraphs = {
 // --------- Runtime ---------
 
 var chart1;
-var lastSave = new Date()
+if (!MODULES) MODULES = {}; // don't overwrite if AT has already created this
+var lastSave = new Date();
 var GRAPHSETTINGS = {
 	universeSelection: 1,
 	u1graphSelection: null,
