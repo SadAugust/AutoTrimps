@@ -340,10 +340,6 @@ function voidMaps() {
 	//Reset void HD Index if not on the right portal/zone/cell as it was initially run.
 	if (module.voidHDIndex !== Infinity && module.rVoidHDInfo !== (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2))) module.voidHDIndex = Infinity;
 
-	const vmVHDRatio = calcHDRatio(game.global.world, 'void', defaultSettings.maxTenacity);
-	const vmVHDRatioPlus = calcHDRatio(game.global.world + 1, 'void', defaultSettings.maxTenacity)
-	const vmWHDRatio = calcHDRatio(game.global.world, 'world', defaultSettings.maxTenacity);
-
 	for (var y = 0; y < baseSettings.length; y++) {
 		const currSetting = baseSettings[y];
 		var world = currSetting.world + voidReduction;

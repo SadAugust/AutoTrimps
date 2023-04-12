@@ -68,6 +68,10 @@ var lastRadonZone = 0;
 var HDRatio = 0;
 var mapHDRatio = 0;
 var voidHDRatio = 0;
+var vmVHDRatio = 0;
+var vmVHDRatioPlus = 0;
+var vmWHDRatio = 0;
+
 var autoLevel = 0;
 var autoLevelCurrent = 0;
 var challengeCurrentZone = -1;
@@ -256,6 +260,11 @@ function mainLoop() {
 		HDRatio = calcHDRatio(game.global.world, 'world');
 		voidHDRatio = calcHDRatio(game.global.world, 'void');
 		mapHDRatio = calcHDRatio(game.global.world, 'map');
+
+		vmVHDRatio = calcHDRatio(game.global.world, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity);
+		vmVHDRatioPlus = calcHDRatio(game.global.world + 1, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity)
+		vmWHDRatio = calcHDRatio(game.global.world, 'world', getPageSetting('voidMapDefaultSettings').maxTenacity);
+
 		autoLevel = autoMapLevel();
 		isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 		isDaily = challengeActive('Daily');
