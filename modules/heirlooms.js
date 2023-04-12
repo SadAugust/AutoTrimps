@@ -204,6 +204,9 @@ function heirloomShieldToEquip(mapType, query) {
 	var isFiller = !isDaily && !isC3
 	var swapZone = isC3 ? getPageSetting('heirloomSwapZoneC3') : isDaily ? getPageSetting('heirloomSwapZoneDaily') : isFiller ? getPageSetting('heirloomSwapZone') : 999;
 	if (swapZone === -1) swapZone = 999;
+	if (isDaily && dailyOddOrEven().active) {
+		if (swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;
+	}
 	//if (game.global.world >= 366 && (getPageSetting('gameUser') === 'SadAugust' || getPageSetting('gameUser') === 'Test') && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) swapZone = 999;
 	var afterpushShield = isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 	voidPBSwap = false;

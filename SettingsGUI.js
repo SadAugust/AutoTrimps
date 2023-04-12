@@ -410,11 +410,9 @@ function initializeAllSettings() {
 		createSetting('mapOddEvenIncrement',
 			function () { return ('Odd/Even Increment') },
 			function () {
-				return ('Will automatically increment your farming settings world input by 1 if the current zone has a negative even or odd related buff. If the daily has both types of mods it\'ll continue running them as normal.<br>\
-		Won\'t do anything to Prestige Raiding inputs.')
-			}
-			, 'boolean', false, null, 'Daily', [2],
-			function () { return (false) });
+				return ('Will automatically increment your farming settings world input by 1 if the current zone has a negative even or odd related buff. If the daily has both types of mods it will try to identify which one is worse and skip farming on the zone with worse debuffs.<br>\
+		Will only impact the following settings: Heirloom swap zone, Void Maps, Map Farm' + (currSettingUniverse === 2 ? ', Tribute Farm, Worshipper Farm, Smithy Farm.' : '.'))
+			}, 'boolean', false, null, 'Daily', [1, 2]);
 
 		//Daily Portal
 		createSetting('dailyPortalStart',
@@ -652,6 +650,13 @@ function initializeAllSettings() {
 			'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('trappapalooza', currSettingUniverse)) });
 
+		//Wither
+		createSetting('wither',
+			function () { return ('Wither') },
+			function () { return ('Turn this on if you want to enable AT farming until you can 4 shot your current world cell on Wither.') },
+			'boolean', false, null, 'C2', [2],
+			function () { return (game.global.highestRadonLevelCleared + 1 >= 70) });
+
 		//Quest
 		createSetting('quest',
 			function () { return ('Quest') },
@@ -744,12 +749,6 @@ function initializeAllSettings() {
 			'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) });
 
-		/* createSetting('pandemoniumFarmLevel',
-			function () { return ('P AE: Map Level') },
-			function () { return ('The map level for farming Large Metal & Huge Caches.') },
-			'value', '1', null, 'C2', [2],
-			function () { return (getPageSetting('pandemonium', currSettingUniverse) && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) }); */
-
 		createSetting('pandemoniumStaff',
 			function () { return ('P: Staff') },
 			function () { return ('The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.') },
@@ -780,13 +779,6 @@ function initializeAllSettings() {
 			function () { return ('Turn this on if you want to enable AT farming for damage to kill Ubersmiths on the Smithless challenge. It will identify breakpoints that can be reached with max tenacity & max map bonus to figure out how many stacks you are able to obtain from the Ubersmith on your current zone and farm till it reached that point if it\'s attainable.') },
 			'boolean', false, null, 'C2', [2],
 			function () { return (game.global.highestRadonLevelCleared + 1 >= 201) });
-
-		//Wither
-		createSetting('wither',
-			function () { return ('Wither') },
-			function () { return ('Turn this on if you want to enable AT farming until you can 4 shot your current world cell on Wither.') },
-			'boolean', false, null, 'C2', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 70) });
 
 		//Desolation
 		createSetting('desolation',
@@ -2712,6 +2704,8 @@ function modifyParentNodeUniverseSwap() {
 
 	//ATGA
 	modifyParentNode("ATGA2timer", radonoff);
+	modifyParentNode("sATGA2timer", radonoff);
+	modifyParentNode("dhATGA2timer", radonoff);
 
 	//C2
 	modifyParentNode("c2GoldenMaps", 'show');
@@ -2721,12 +2715,13 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("c2RunnerPercent", radonon);
 	modifyParentNode("unbalanceImprobDestack", radonon);
 	modifyParentNode("trappapaloozaCoords", radonon);
+	modifyParentNode("wither", radonon);
 	modifyParentNode("questSmithyMaps", radonon);
 	modifyParentNode("mayhemMP", radonon_mayhem);
 	modifyParentNode("stormStacks", radonon);
 	modifyParentNode("pandemoniumMP", radonon_panda);
 	modifyParentNode("glassStacks", radonon);
-	modifyParentNode("wither", radonon);
+	modifyParentNode("smithless", radonon);
 
 	//Challenges
 	modifyParentNode("decayStacksToAbandon", radonoff);

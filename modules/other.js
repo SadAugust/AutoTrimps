@@ -318,6 +318,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
 	const dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
+	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined' //Explosive
 
 	var dmgType = runningUnlucky ? 'max' : 'avg'
 	var critType = 'maybe'
@@ -347,8 +348,11 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 			if (game.global.universe === 1) ourDmg *= (0.005 * game.portal.Overkill.level);
 		}
 		var enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, 'Snimp', false, false, universeSetting) * difficulty;
-		enemyDmg *= typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
-		enemyDmg *= dailyEmpowerToggle && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
+
+		if (dailyCrit || dailyExplosive) {
+			if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+			if (dailyEmpowerToggle && dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+		}
 
 		if (challengeActive('Duel')) {
 			enemyDmg *= 10;
@@ -377,14 +381,17 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (game.portal.Equality.radLevel === 0 || game.global.universe === 1)
 		return 0;
 
-	var bionicTalent = zone - game.global.world;
-	var checkMutations = mapType === 'world' && zone > 200;
-	var titimp = mapType !== 'world' && farmType === 'oneShot' ? 'force' : false;
-	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
-	var dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
-	var dailyBloodthirst = challengeActive('Daily') && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
-	var maxEquality = game.portal.Equality.radLevel;
-	var overkillCount = maxOneShotPower(true);
+	const bionicTalent = zone - game.global.world;
+	const checkMutations = mapType === 'world' && zone > 200;
+	const titimp = mapType !== 'world' && farmType === 'oneShot' ? 'force' : false;
+	const dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
+	const isDaily = challengeActive('Daily');
+	const dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined'; //Empower
+	const dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
+	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined' //Explosive
+	const dailyBloodthirst = isDaily && typeof game.global.dailyChallenge.bloodthirst !== 'undefined'; //Bloodthirst (enemy heal + atk)
+	const maxEquality = game.portal.Equality.radLevel;
+	const overkillCount = maxOneShotPower(true);
 
 	var critType = 'maybe'
 	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel')) critType = 'never'
@@ -398,8 +405,16 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (enemyName === 'Improbability' && zone <= 58) enemyName = 'Blimp';
 	var enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName) * difficulty;
 	var enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, false, 0) * difficulty;
-	enemyDmg *= mapType === 'map' && typeof game.global.dailyChallenge.explosive !== 'undefined' ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
-	enemyDmg *= dailyEmpowerToggle && mapType === 'map' && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
+
+	if (mapType === 'map' && dailyCrit || dailyExplosive) {
+		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyEmpowerToggle && dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+	}
+	if (mapType === 'world' && dailyEmpower && (dailyCrit || dailyExplosive)) {
+		//if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+	}
+
 	if (challengeActive('Duel')) {
 		enemyDmg *= 10;
 		if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
@@ -426,7 +441,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	}
 	if (challengeActive('Duel')) ourDmg *= gammaBurstPct;
 
-	if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
+	if (isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
 
 	if (dailyBloodthirst && mapType === 'void' && getPageSetting('bloodthirstVoidMax')) {
 		var bloodThirstStrength = game.global.dailyChallenge.bloodthirst.strength;
@@ -563,12 +578,21 @@ function equalityManagement() {
 	var enemyDmg = getCurrentEnemy().attack * totalDamageMod() * 1.5;
 	if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
 	enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
-	enemyDmg *= dailyEmpowerToggle && !mapping && dailyEmpower && dailyCrit ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
-	enemyDmg *= dailyEmpowerToggle && !mapping && dailyEmpower && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1;
-	enemyDmg *= type === 'map' && mapping && dailyExplosive ? 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength) : 1
-	enemyDmg *= (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
+
+	//Empower related modifiers in world
+	if (dailyEmpowerToggle && !mapping && dailyEmpower) {
+		if (dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)
+		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+	}
+	//Empower modifiers in maps.
+	if (type === 'map' && (dailyExplosive || dailyCrit)) {
+		if (dailyEmpowerToggle && dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)
+		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+	}
+	enemyDmg *= !dailyEmpower && (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
+
+
 	enemyDmg *= runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
-	enemyDmg *= dailyEmpowerToggle && type === 'map' && dailyCrit ? dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
 	var enemyDmgEquality = 0;
 	//Misc dmg mult
 	if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100)

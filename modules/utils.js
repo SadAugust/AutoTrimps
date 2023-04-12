@@ -229,7 +229,7 @@ function pushSpreadsheetData() {
 };
 
 function getPageSetting(setting, universe) {
-	if (autoTrimpSettings.hasOwnProperty(setting) === false) {
+	if (!autoTrimpSettings.hasOwnProperty(setting)) {
 		return false;
 	}
 	const settingType = autoTrimpSettings[setting].type;
