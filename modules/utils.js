@@ -137,6 +137,12 @@ function pushSpreadsheetData() {
 		}
 	}
 
+	const mapCount = Object.keys(graphData.perZoneData.mapCount)
+		.filter((k) => graphData.perZoneData.mapCount[k] != null)
+		.reduce((a, k) => ({ ...a, [k]: graphData.perZoneData.mapCount[k] }), {});
+	const mapTotal = Object.keys(mapCount).reduce(function (m, k) { return mapCount[k] > m ? mapCount[k] : m }, -Infinity);
+	const mapZone = Number(Object.keys(mapCount).find(key => mapCount[key] === mapTotal));
+
 	const obj = {
 		user: autoTrimpSettings.gameUser.value,
 		date: new Date().toISOString(),
@@ -166,7 +172,10 @@ function pushSpreadsheetData() {
 		runtime: formatTimeForDescriptions((getGameTime() - game.global.portalTime) / 1000),
 		runtimeMilliseconds: (getGameTime() - game.global.portalTime),
 		zone: game.global.world,
+		dailyMods: dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1),
 		voidZone: game.global.universe === 2 ? game.stats.highestVoidMap2.value : game.stats.highestVoidMap.value,
+		mapZone: mapZone,
+		mapCount: mapTotal,
 		voidsCompleted: game.stats.totalVoidMaps.value,
 		smithy: (game.global.universe == 1 ? "N/A" :
 			!game.mapUnlocks.SmithFree.canRunOnce && autoBattle.oneTimers.Smithriffic.owned ?
