@@ -492,8 +492,17 @@ function cheatSpeedX(interval) {
 	if (runPortalTime > game.global.time) game.global.time = runPortalTime;
 	runIntervalGame = setTimeout(cheatSpeedX, interval, interval);
 
-	if ((date.getSeconds() % 1) === 0) updateLabels();
+	if ((date.getSeconds() % 3) === 0) updateLabels();
 }
+
+/* function checkAndDisplayEquipment() {
+	for (var itemD in game.equipment) {
+		var toUpdate = game.equipment[itemD];
+		if (toUpdate.locked == 1) continue;
+		if (document.getElementById(itemD) === null) drawAllEquipment();
+		if (document.getElementById(itemD + "Owned").innerHTML !== toUpdate.level) document.getElementById(itemD + "Owned").innerHTML = toUpdate.level;
+	}
+} */
 
 function cheatSpeedNormal() {
 	clearTimeout(runIntervalGame);

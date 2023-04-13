@@ -2,13 +2,9 @@
 shouldBoneShrine = false;
 rBSRunningAtlantrimp = false;
 
-function boneShrine() {
+function boneShrine(hdStats) {
 
 	if (!getPageSetting('boneShrineDefaultSettings').active) return;
-
-	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-	const isDaily = challengeActive('Daily');
-	const currChall = game.global.challengeActive;
 
 	//Setting up variables
 	const rBoneShrineBaseSettings = getPageSetting('boneShrineSettings');
@@ -21,11 +17,11 @@ function boneShrine() {
 			continue;
 		}
 		if (currSetting.runType !== 'All') {
-			if (!isC3 && !isDaily && (currSetting.runType !== 'Filler' ||
-				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== currChall)))) continue;
-			if (isDaily && currSetting.runType !== 'Daily') continue;
-			if (isC3 && (currSetting.runType !== 'C3' ||
-				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== currChall)))) continue;
+			if (!hdStats.isC3 && !hdStats.isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== hdStats.currChallenge)))) continue;
+			if (hdStats.isDaily && currSetting.runType !== 'Daily') continue;
+			if (hdStats.isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== hdStats.currChallenge)))) continue;
 		}
 		if (game.global.lastClearedCell + 2 >= currSetting.cell && game.permaBoneBonuses.boosts.charges > currSetting.bonebelow) {
 			rBSIndex = y;
@@ -107,7 +103,7 @@ function boneShrineOutput(charges) {
 	return text;
 }
 
-function BuySingleRunBonuses() {
+function buySingleRunBonuses() {
 
 	if (!game.singleRunBonuses.goldMaps.owned && game.global.b >= 20 && getPageSetting('c2GoldenMaps'))
 		purchaseSingleRunBonus('goldMaps');

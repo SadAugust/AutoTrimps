@@ -28,7 +28,7 @@ function readyToSwitch(stance = "S") {
 	return die || survive(stance, 2);
 }
 
-function useScryerStance() {
+function useScryerStance(hdStats) {
 	var scry = 4;
 	var scryF = 'S';
 	var x = 0;
@@ -41,8 +41,8 @@ function useScryerStance() {
 
 	var AutoStance = getPageSetting('AutoStance');
 
-	function autoStanceFunctionScryer() {
-		if ((getPageSetting('AutoStance') == 3) || (getPageSetting('use3daily') && challengeActive('Daily'))) windStance(HDRatio);
+	function autoStanceFunctionScryer(hdStats) {
+		if ((getPageSetting('AutoStance') == 3) || (getPageSetting('use3daily') && challengeActive('Daily'))) windStance(hdStats);
 		else if (AutoStance == 1) autoStance();
 		else if (AutoStance == 2) autoStance2();
 	}
@@ -85,7 +85,7 @@ function useScryerStance() {
 	var curEnemyHealth = getCurrentEnemy(1);
 	var isHealthy = curEnemyHealth && curEnemyHealth.mutation == "Healthy";
 	if (never_scry || getPageSetting('UseScryerStance') && !game.global.mapsActive && (isHealthy && getPageSetting('ScryerSkipHealthy') == 0)) {
-		autoStanceFunctionScryer();
+		autoStanceFunctionScryer(hdStats);
 		wantToScry = false;
 		return;
 	}
@@ -106,13 +106,13 @@ function useScryerStance() {
 
 	//check Corrupted Force
 	if ((isCorrupt && getPageSetting('ScryerSkipCorrupteds2') == 1 && getPageSetting('UseScryerStance') == true) || (use_scryer)) {
-		setFormation(scry);
+		if (game.global.formation !== scry) setFormation(scry);
 		wantToScry = true;
 		return;
 	}
 	//check healthy force
 	if ((isHealthy && getPageSetting('ScryerSkipHealthy') == 1 && getPageSetting('UseScryerStance') == true) || (use_scryer)) {
-		setFormation(scry);
+		if (game.global.formation !== scry) setFormation(scry);
 		wantToScry = true;
 		return;
 	}
@@ -132,14 +132,14 @@ function useScryerStance() {
 		var HS_next = oneShotPower(scryF, 1);
 		var HSD_next = oneShotPower("D", 1, true);
 		if (readyToSwitch() && HS > 0 && HS >= HSD && (HS > 1 || HS_next > 0 && HS_next >= HSD_next)) {
-			setFormation(scry);
+			if (game.global.formation !== scry) setFormation(scry);
 			return;
 		}
 	}
 
 	//No Essence
 	if (USS && !MA && getPageSetting('screwessence') == true && countRemainingEssenceDrops() < 1) {
-		autoStanceFunctionScryer();
+		autoStanceFunctionScryer(hdStats);
 		wantToScry = false;
 		return;
 	}
@@ -154,21 +154,31 @@ function useScryerStance() {
 		//Smooth transition to S before killing the target
 		if (transitionRequired) {
 			for (var cp = 2; cp >= -2; cp--) {
-				if (survive("D", cp) && !oneShotPower("D", 0, true)) { setFormation(2); return; }
-				else if (survive("XB", cp) && !oneShotPower("X", 0, true)) { setFormation(x); return; }
-				else if (survive("B", cp) && !oneShotPower("B", 0, true)) { setFormation(3); return; }
-				else if (survive("X", cp) && !oneShotPower("X", 0, true)) { setFormation(x); return; }
-				else if (survive("H", cp) && !oneShotPower("H", 0, true)) { setFormation(1); return; }
+				if (survive("D", cp) && !oneShotPower("D", 0, true)) {
+					if (game.global.formation !== 2) setFormation(2); return;
+				}
+				else if (survive("XB", cp) && !oneShotPower("X", 0, true)) {
+					if (game.global.formation !== x) setFormation(x); return;
+				}
+				else if (survive("B", cp) && !oneShotPower("B", 0, true)) {
+					if (game.global.formation !== 3) setFormation(3); return;
+				}
+				else if (survive("X", cp) && !oneShotPower("X", 0, true)) {
+					if (game.global.formation !== x) setFormation(x); return;
+				}
+				else if (survive("H", cp) && !oneShotPower("H", 0, true)) {
+					if (game.global.formation !== 1) setFormation(1); return;
+				}
 			}
 		}
 
 		//Set to scry if it won't kill us, or we are willing to die for it
-		setFormation(scry);
+		if (game.global.formation !== scry) setFormation(scry);
 		wantToScry = true;
 		return;
 	}
 
 	//No reason to Scry
-	autoStanceFunctionScryer();
+	autoStanceFunctionScryer(hdStats);
 	wantToScry = false;
 }

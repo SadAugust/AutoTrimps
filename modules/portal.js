@@ -591,7 +591,7 @@ function resetmapvars() {
 
 	//Auto Level variables
 	mapRepeats = 0;
-	rAutoLevel = Infinity;
+	mapSettings.levelCheck = Infinity;
 
 	//Resetting variables that would cause issues if they were left as is
 	MODULES.mapFunctions.voidHDRatio = Infinity;
@@ -599,15 +599,9 @@ function resetmapvars() {
 	MODULES.mapFunctions.voidHDIndex = Infinity;
 	MODULES.mapFunctions.boneCharge = false;
 	MODULES.mapFunctions.portalZone = Infinity;
-	HDRatio = calcHDRatio(game.global.world, 'world');
-	mapHDRatio = calcHDRatio(game.global.world, 'map');
-	voidHDRatio = calcHDRatio(game.global.world, 'void');
 
-	if (document.getElementById('hiderStatus').style.display == 'None' && getPageSetting('Rshowrnhr') && !game.global.runningChallengeSquared) {
-		turnOn("hiderStatus")
-		document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-	}
-
+	hdStats = new HDStats();
+	mapSettings = FarmingDecision(hdStats);
 }
 
 function presetSwapping(preset) {

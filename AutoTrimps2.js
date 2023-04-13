@@ -54,8 +54,8 @@ var aWholeNewWorld = false;
 var currPortalUniverse = 0;
 var currSettingUniverse = 0;
 
-var currentradonhze = 0;
-var lastradonhze = 0;
+var currentHZE = 0;
+var lastHZE = 0;
 var aWholeNewHZE = false;
 
 var needGymystic = true;
@@ -65,20 +65,10 @@ var magmiteSpenderChanged = false;
 var lastHeliumZone = 0;
 var lastRadonZone = 0;
 
-var HDRatio = 0;
-var mapHDRatio = 0;
-var voidHDRatio = 0;
-var vmVHDRatio = 0;
-var vmVHDRatioPlus = 0;
-var vmWHDRatio = 0;
-
-var autoLevel = 0;
 var autoLevelCurrent = 0;
 var challengeCurrentZone = -1;
 var voidPBSwap = false;
 var rBSRunningAtlantrimp = false;
-var currentMap = undefined;
-var rAutoLevel = Infinity;
 var rMapRepeats = 0;
 var freeVoids = -1;
 var tenacityTime = '0m';
@@ -88,18 +78,18 @@ var showingPerky = false;
 var showingSurky = false;
 var atFinishedLoading = false;
 
-var isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-var isDaily = challengeActive('Daily');
-var currChall = game.global.challengeActive;
+var mapSettings = {
+	shouldRun: false,
+	mapName: '',
+	levelCheck: Infinity,
+}
+twoSecondInterval = false;
+sixSecondInterval = false;
 
 //Get Gamma burst % value
 var gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 var shieldEquipped = game.global.ShieldEquipped.id;
 
-var mapSettings = {
-	shouldRun: false,
-	mapName: ''
-}
 
 ATscriptLoad(modulepath, 'utils');
 
@@ -185,6 +175,9 @@ function delayStartAgain() {
 		document.head.appendChild(script);
 	})();
 
+	hdStats = new HDStats();
+	mapSettings = FarmingDecision(hdStats);
+
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
 	setInterval(mainLoop, runInterval);
@@ -219,6 +212,11 @@ function mainLoop() {
 	sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
 	tenSecondInterval = ((date.getSeconds() % 10) === 0 && (date.getMilliseconds() < 100));
 
+	if (oneSecondInterval) {
+		hdStats = new HDStats();
+	}
+	mapSettings = FarmingDecision(hdStats);
+
 	//if (oneDayInterval) pushSpreadsheetData();
 	if (!usingRealTimeOffline) {
 		var MAZCheck = document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Golden') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Void Map') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Map Bonus') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Raiding');
@@ -235,11 +233,11 @@ function mainLoop() {
 
 		if (document.getElementById('freeVoidMap') !== null) {
 			tenacityTimeNew = game.global.universe === 2 ? Math.floor(game.portal.Tenacity.getTime()) + "m" : '0m';
-			if (freeVoids !== game.permaBoneBonuses.voidMaps.tracker || autoLevel !== autoLevelCurrent || tenacityTimeNew !== tenacityTime || (game.global.universe === 1 && oneSecondInterval)) {
+			if (freeVoids !== game.permaBoneBonuses.voidMaps.tracker || hdStats.autoLevel !== autoLevelCurrent || tenacityTimeNew !== tenacityTime || (game.global.universe === 1 && oneSecondInterval)) {
 
 				var freeVoidsText = 'Void: ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10');
 
-				var autoLevelText = " | Auto Level: " + autoLevel;
+				var autoLevelText = " | Auto Level: " + hdStats.autoLevel;
 
 				var breedTimerText = game.global.universe === 1 ? " | B: " + ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) + 's' : "";
 
@@ -247,7 +245,7 @@ function mainLoop() {
 
 				document.getElementById('freeVoidMap').innerHTML = freeVoidsText + autoLevelText + breedTimerText + tenacityText;
 				freeVoids = game.permaBoneBonuses.voidMaps.tracker
-				autoLevelCurrent = autoLevel;
+				autoLevelCurrent = hdStats.autoLevel;
 				tenacityTime = tenacityTimeNew;
 				document.getElementById('freeVoidMap').parentNode.style.display = 'block';
 				document.getElementById('freeVoidMap').style.display = 'block';
@@ -256,20 +254,6 @@ function mainLoop() {
 	}
 
 	universeSwapped();
-	if (oneSecondInterval) {
-		HDRatio = calcHDRatio(game.global.world, 'world');
-		voidHDRatio = calcHDRatio(game.global.world, 'void');
-		mapHDRatio = calcHDRatio(game.global.world, 'map');
-
-		vmVHDRatio = calcHDRatio(game.global.world, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity);
-		vmVHDRatioPlus = calcHDRatio(game.global.world + 1, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity)
-		vmWHDRatio = calcHDRatio(game.global.world, 'world', getPageSetting('voidMapDefaultSettings').maxTenacity);
-
-		autoLevel = autoMapLevel();
-		isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-		isDaily = challengeActive('Daily');
-		currChall = game.global.challengeActive;
-	}
 
 	if (ATrunning == false) return;
 	if (getPageSetting('PauseScript', 1) || game.options.menu.pauseGame.enabled) return;
@@ -287,7 +271,7 @@ function mainLoop() {
 			case 'The Magma':
 				cancelTooltip();
 		}
-		resetmapvars()
+		resetmapvars();
 		if (getPageSetting('AutoEggs'))
 			easterEggClicked();
 		setTitle();
@@ -296,67 +280,64 @@ function mainLoop() {
 
 	//Heirloom Shield Swap Check
 	if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
-	//Initiate Farming Code
-	mapSettings = FarmingDecision();
-	currentMap = mapSettings.mapName;
 
 	//Offline Progress
 	if (!usingRealTimeOffline) setResourceNeeded();
 
 	//AutoMaps
-	autoMap();
+	autoMap(hdStats);
 	//Status
-	updateAutoMapsStatus();
+	updateAutoMapsStatus(false, hdStats);
 	//Gather
 	autoGather();
 	//Auto Traps
 	if (getPageSetting('TrapTrimps') && game.global.trapBuildAllowed && !game.global.trapBuildToggled) toggleAutoTrap();
 	//Buildings
-	buyBuildings();
+	buyBuildings(hdStats);
 	//Jobs
-	buyJobs();
+	buyJobs(hdStats);
 	//Upgrades
 	buyUpgrades();
 	//Combat
-	callBetterAutoFight()
+	callBetterAutoFight(hdStats)
 	//Bone Shrine
-	boneShrine();
+	boneShrine(hdStats);
 	//Auto Golden Upgrade
-	autoGoldUpgrades();
+	autoGoldUpgrades(hdStats);
 	//Heirloom Management
-	heirloomSwapping();
+	heirloomSwapping(hdStats);
 	//AutoEquip
-	autoEquip();
+	autoEquip(hdStats);
 
 	//Portal
-	c2runnerportal();
-	finishChallengeSquared();
-	autoPortal();
-	dailyAutoPortal();
+	c2runnerportal(hdStats);
+	finishChallengeSquared(hdStats);
+	autoPortal(hdStats);
+	dailyAutoPortal(hdStats);
 	//Equip highlighting
-	displayMostEfficientEquipment();
+	displayMostEfficientEquipment(hdStats);
 
 	//Logic for Universe 1
-	mainLoopU1()
+	mainLoopU1(hdStats);
 
 	//Logic for Universe 2
-	mainLoopU2()
+	mainLoopU2(hdStats);
 
-	if (game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation') || challengeActive('Frigid')) BuySingleRunBonuses();
+	if (hdStats.isC3) buySingleRunBonuses();
 
 	//Auto SA -- Currently disabled
-	automateSpireAssault();
+	automateSpireAssault(hdStats);
 
-	challengeInfo();
+	challengeInfo(hdStats);
 	atFinishedLoading = true;
 }
 
 //U1 functions
-function mainLoopU1() {
+function mainLoopU1(hdStats) {
 	if (game.global.universe !== 1) return;
 
 	//Core
-	if (getPageSetting('ATGA2')) ATGA2();
+	if (getPageSetting('ATGA2')) ATGA2(hdStats);
 	autoRoboTrimp();
 	if (challengeActive('Daily') && getPageSetting('buyheliumy') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
 	if (getPageSetting('spendmagmite') === 2 && !magmiteSpenderChanged) autoMagmiteSpender();
@@ -368,7 +349,7 @@ function mainLoopU1() {
 	if (getPageSetting('ForceAbandon')) trimpcide();
 	if (!game.global.fighting) {
 		if (getPageSetting('fightforever') === 0) fightalways();
-		else if (getPageSetting('fightforever') > 0 && HDRatio <= getPageSetting('fightforever')) fightalways();
+		else if (getPageSetting('fightforever') > 0 && hdStats.hdRatio <= getPageSetting('fightforever')) fightalways();
 		else if (getPageSetting('cfightforever') && (challengeActive('Electricty') || challengeActive('Toxicity') || challengeActive('Nom'))) fightalways();
 		else if (getPageSetting('dfightforever') === 1 && challengeActive('Daily') && typeof game.global.dailyChallenge.empower === 'undefined' && typeof game.global.dailyChallenge.bloodthirst === 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
 		else if (getPageSetting('dfightforever') === 2 && challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
@@ -376,10 +357,10 @@ function mainLoopU1() {
 	if (game.global.mapsUnlocked && challengeActive('Daily') && getPageSetting('avoidempower') && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidempower();
 
 	//Stance
-	if ((getPageSetting('UseScryerStance')) || (getPageSetting('scryvoidmaps') && !challengeActive('Daily')) || (getPageSetting('dscryvoidmaps') && challengeActive('Daily'))) useScryerStance();
-	else if ((getPageSetting('AutoStance') === 3) || (getPageSetting('use3daily') && challengeActive('Daily'))) windStance();
-	else if (getPageSetting('AutoStance') === 1) autoStance();
-	else if (getPageSetting('AutoStance') === 2) autoStance2();
+	if ((getPageSetting('UseScryerStance')) || (getPageSetting('scryvoidmaps') && !challengeActive('Daily')) || (getPageSetting('dscryvoidmaps') && challengeActive('Daily'))) useScryerStance(hdStats);
+	else if ((getPageSetting('AutoStance') === 3) || (getPageSetting('use3daily') && challengeActive('Daily'))) windStance(hdStats);
+	else if (getPageSetting('AutoStance') === 1) autoStance(hdStats);
+	else if (getPageSetting('AutoStance') === 2) autoStance2(hdStats);
 
 	//Spire
 	if (getPageSetting('ExitSpireCell') > 0 && !challengeActive('Daily') && getPageSetting('IgnoreSpiresUntil') <= game.global.world && game.global.spireActive) exitSpireCell();
@@ -388,7 +369,7 @@ function mainLoopU1() {
 }
 
 //U2 functions
-function mainLoopU2() {
+function mainLoopU2(hdStats) {
 	if (game.global.universe !== 2) return;
 	//Archeology
 	if (getPageSetting('archaeology') && challengeActive('Archaeology')) archstring();
@@ -409,9 +390,9 @@ function mainCleanup() {
 	currentworld = game.global.world;
 	aWholeNewWorld = lastrunworld != currentworld;
 
-	lastradonhze = currentradonhze;
-	currentradonhze = game.global.highestRadonLevelCleared + 1;
-	aWholeNewHZE = lastradonhze != currentradonhze;
+	lastHZE = currentHZE;
+	currentHZE = game.global.universe === 2 ? game.global.highestRadonLevelCleared + 1 : game.global.highestLevelCleared + 1;
+	aWholeNewHZE = lastHZE != currentHZE;
 
 	if (aWholeNewHZE) {
 		if (game.global.universe === 2) radonChallengesSetting(true);
@@ -430,7 +411,6 @@ function mainCleanup() {
 			updateButtonText();
 			resetSettingsPortal();
 		}
-		if (getPageSetting('displayAutoMapStatus')) updateAutoMapsStatus();
 		return true;
 	}
 

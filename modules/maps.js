@@ -24,16 +24,16 @@ if (getAutoStructureSetting().enabled) {
 	document.getElementById('autoStructureBtn').classList.add("enabled")
 }
 
-function updateAutoMapsStatus(get) {
+function updateAutoMapsStatus(get, hdStats) {
 	var status = '';
 
 	if (getPageSetting('displayAutoMapStatus')) {
 		//Setting up status
 		if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
 		else if (vanillaMAZ) status = 'Vanilla MAZ';
-		else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && (currentMap !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness')) status = getCurrentMapObject().name;
+		else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && (mapSettings.mapName !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness')) status = getCurrentMapObject().name;
 		else if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
-		else if (currentMap !== '') status = mapSettings.status;
+		else if (mapSettings.mapName !== '') status = mapSettings.status;
 		else if (getPageSetting('SkipSpires') == 1 && isDoingSpire()) status = 'Skipping Spire';
 		//Advancing
 		else status = 'Advancing';
@@ -55,16 +55,16 @@ function updateAutoMapsStatus(get) {
 	}
 
 	if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
-	document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", makeAutomapStatusTooltip());
+	document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", makeAutomapStatusTooltip(hdStats));
 	if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
 	document.getElementById('hiderStatus').parentNode.setAttribute("onmouseover", makeResourceTooltip());
 }
 
-function makeAutomapStatusTooltip() {
-	const farmingSetting = mapSettings;
+function makeAutomapStatusTooltip(hdStats) {
 	const mapStacksText = (`Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`);
 	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy.';
-	const hitsSurvived = getPageSetting('hitsSurvived') > 0 ? prettify(calcHitsSurvived(game.global.world, 'world')) + "/" + prettify(getPageSetting('hitsSurvived')) : 'Disabled';
+	const hitsSurvived = prettify(hdStats.hitsSurvived);
+	const hitsSurvivedValue = getPageSetting('hitsSurvived') > 0 ? getPageSetting('hitsSurvived') : '∞';
 	let tooltip = 'tooltip(' +
 		'\"Automaps Status\", ' +
 		'\"customText\", ' +
@@ -73,18 +73,18 @@ function makeAutomapStatusTooltip() {
 		'Values in <b>bold</b> are dynamically calculated based on current zone and activity.<br>' +
 		'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>' +
 		`<br>` +
-		`<b>Hits survived: ${hitsSurvived}</b><br>`
+		`<b>Hits survived: ${hitsSurvived}</b> / <i>${hitsSurvivedValue}</i><br>`
 
 	tooltip += `<br>` +
 		`<b>Mapping info</b><br>`;
-	if (farmingSetting.shouldRun) {
+	if (mapSettings.shouldRun) {
 		tooltip +=
-			`Farming Setting: <b>${farmingSetting.mapName}</b><br>` +
-			`Map level: <b>${farmingSetting.mapLevel}</b><br>` +
-			`Auto level: <b>${farmingSetting.autoLevel}</b><br>` +
-			`Special: <b>${farmingSetting.special !== undefined && farmingSetting.special !== '0' ? mapSpecialModifierConfig[farmingSetting.special].name : 'None'}</b><br>` +
-			`Wants to run: ${farmingSetting.shouldRun}<br>` +
-			`Repeat: ${farmingSetting.repeat}<br>`;
+			`Farming Setting: <b>${mapSettings.mapName}</b><br>` +
+			`Map level: <b>${mapSettings.mapLevel}</b><br>` +
+			`Auto level: <b>${mapSettings.autoLevel}</b><br>` +
+			`Special: <b>${mapSettings.special !== undefined && mapSettings.special !== '0' ? mapSpecialModifierConfig[mapSettings.special].name : 'None'}</b><br>` +
+			`Wants to run: ${mapSettings.shouldRun}<br>` +
+			`Repeat: ${mapSettings.repeat}<br>`;
 	}
 	else {
 		tooltip += `Not running<br>`;
@@ -92,9 +92,9 @@ function makeAutomapStatusTooltip() {
 	tooltip += '<br>' +
 		`<b>HD Ratio Info</b><br>` +
 		`${hdRatioText}<br>` +
-		`World HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(HDRatio)}</b><br>` +
-		`Map HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(mapHDRatio)}</b><br>` +
-		`Void HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(voidHDRatio)}</b><br>` +
+		`World HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(hdStats.hdRatio)}</b><br>` +
+		`Map HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(hdStats.hdRatioMap)}</b><br>` +
+		`Void HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(hdStats.hdRatioVoid)}</b><br>` +
 		`${mapStacksText}<br>`
 	tooltip += '\")';
 	return tooltip;
@@ -120,7 +120,7 @@ function makeResourceTooltip() {
 	return tooltip;
 }
 
-function autoMap() {
+function autoMap(hdStats) {
 
 	if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
 		if (!game.global.preMapsActive) mapsClicked();
@@ -173,7 +173,7 @@ function autoMap() {
 	}
 
 	//Go to map chamber if we should farm on Wither!
-	if (currentMap === 'Wither Farm' && mapSettings.shouldRun && !game.global.mapsActive && !game.global.preMapsActive) {
+	if (mapSettings.mapName === 'Wither Farm' && mapSettings.shouldRun && !game.global.mapsActive && !game.global.preMapsActive) {
 		mapsClicked(true)
 	}
 
@@ -231,11 +231,9 @@ function autoMap() {
 
 	//New Mapping Organisation!
 	const shouldMap = mapSettings.shouldRun;
-	currentMap = shouldMap ? mapSettings.mapName : '';
-	rAutoLevel = mapSettings.autoLevel ? mapSettings.mapLevel : Infinity;
 
 	//Farming & resetting variables.
-	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || currentMap === 'Prestige Raiding';
+	var dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding';
 
 	//Uniques
 	var highestMap = null;
@@ -263,14 +261,14 @@ function autoMap() {
 				lowestMap = map;
 			}
 		} else if (map.noRecycle) {
-			if (runUniques && shouldRunUniqueMap(map) && !challengeActive('Insanity')) {
+			if (runUniques && shouldRunUniqueMap(map, hdStats) && !challengeActive('Insanity')) {
 				selectedMap = map.id;
 				if (mappingTime === 0) mappingTime = getGameTime();
 			}
 			if (map.location === "Bionic") {
 				bionicPool.push(map);
 			}
-			if (map.location === 'Void' && shouldMap && currentMap === 'Void Map') {
+			if (map.location === 'Void' && shouldMap && mapSettings.mapName === 'Void Map') {
 				voidMap = selectEasierVoidMap(voidMap, map);
 			}
 		}
@@ -278,11 +276,11 @@ function autoMap() {
 
 	//Telling AT to create a map or setting void map as map to be run.
 	if (selectedMap === 'world' && shouldMap) {
-		if (currentMap !== '') {
+		if (mapSettings.mapName !== '') {
 			var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : game.global.farmlandsUnlocked && game.global.universe === 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
 			if (voidMap) selectedMap = voidMap.id;
-			else if (currentMap === 'Prestige Raiding') selectedMap = "prestigeRaid";
-			else if (currentMap === 'Bionic Raiding') selectedMap = "bionicRaid";
+			else if (mapSettings.mapName === 'Prestige Raiding') selectedMap = "prestigeRaid";
+			else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = "bionicRaid";
 			else if (optimalMap) selectedMap = optimalMap.id;
 			else selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
 			if (mappingTime === 0) mappingTime = getGameTime();
@@ -292,7 +290,7 @@ function autoMap() {
 	//Map Repeat
 	if (game.global.mapsActive) {
 		//Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
-		if (shouldMap && currentMap === 'Prestige Raiding' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > perfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
+		if (shouldMap && mapSettings.mapName === 'Prestige Raiding' && !dontRecycleMaps && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > perfectMapCost(getCurrentMapObject().level - game.global.world, 'lmc')) {
 			var maplevel = getCurrentMapObject().level
 			recycleMap_AT();
 			perfectMapCost(maplevel - game.global.world, "lmc");
@@ -300,12 +298,12 @@ function autoMap() {
 			rRunMap();
 			debug("Running LMC map due to only having 1 equip remaining on this map.")
 		}
-		if ((selectedMap == game.global.currentMapId || (!getCurrentMapObject().noRecycle && shouldMap) || currentMap === 'Bionic Raiding')) {
+		if ((selectedMap == game.global.currentMapId || (!getCurrentMapObject().noRecycle && shouldMap) || mapSettings.mapName === 'Bionic Raiding')) {
 			//Starting with repeat on
 			if (!game.global.repeatMap)
 				repeatClicked();
 			//Changing repeat to repeat for items for Presitge & Bionic Raiding
-			if (shouldMap && ((currentMap === 'Prestige Raiding' && !MODULES.mapFunctions.prestigeFragMapBought) || currentMap === 'Bionic Raiding')) {
+			if (shouldMap && ((mapSettings.mapName === 'Prestige Raiding' && !MODULES.mapFunctions.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
 				if (game.options.menu.repeatUntil.enabled != 2) {
 					game.options.menu.repeatUntil.enabled = 2;
 					toggleSetting("repeatUntil", null, false, true);
@@ -322,10 +320,10 @@ function autoMap() {
 				repeatClicked();
 			}
 			if (MODULES.mapFunctions.prestigeFragMapBought && game.global.repeatMap) {
-				runPrestigeRaiding(mapSettings);
+				runPrestigeRaiding();
 			}
 			//Disabling repeat if repeat conditions have been met
-			if (game.global.repeatMap && currentMap !== '' && !MODULES.mapFunctions.prestigeFragMapBought) {
+			if (game.global.repeatMap && mapSettings.mapName !== '' && !MODULES.mapFunctions.prestigeFragMapBought) {
 				if (!mapSettings.repeat) repeatClicked();
 			}
 		} else {
@@ -350,14 +348,14 @@ function autoMap() {
 		if (selectedMap == "world") {
 			mapsClicked();
 		} else if (selectedMap == "prestigeRaid") {
-			runPrestigeRaiding(mapSettings);
+			runPrestigeRaiding();
 		} else if (selectedMap == "bionicRaid") {
 			runBionicRaiding(bionicPool);
 		} else if (selectedMap == "create") {
 			//Setting sliders appropriately.
 			if (shouldMap) {
 				var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Mountain";
-				if (currentMap !== '') {
+				if (mapSettings.mapName !== '') {
 					mapCost(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
 				}
 			}

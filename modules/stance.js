@@ -14,9 +14,15 @@ function autoStanceNew() {
 	if (game.global.soldierHealth <= 0) return;
 	if (!game.upgrades.Formations.done) return;
 
-	if (game.global.formation == 2 && game.global.soldierHealth <= game.global.soldierHealthMax * 0.25) setFormation('0');
-	else if (game.global.formation == 0 && game.global.soldierHealth <= game.global.soldierHealthMax * 0.25) setFormation('1')
-	else if (game.global.formation == 1 && game.global.soldierHealth == game.global.soldierHealthMax) setFormation('2');
+	if (game.global.formation == 2 && game.global.soldierHealth <= game.global.soldierHealthMax * 0.25) {
+		if (game.global.formation !== '0') setFormation('0');
+	}
+	else if (game.global.formation == 0 && game.global.soldierHealth <= game.global.soldierHealthMax * 0.25) {
+		if (game.global.formation !== '1') setFormation('1')
+	}
+	else if (game.global.formation == 1 && game.global.soldierHealth == game.global.soldierHealthMax) {
+		if (game.global.formation !== '2') setFormation('2');
+	}
 }
 
 function debugStance(maxPower, ignoreArmy) {
@@ -281,17 +287,31 @@ function autoStance() {
 		//If even that is not enough, then it ignore Explosive Daily, and finally it ignores Reflect Daily
 		var critPower;
 		for (critPower = 2; critPower >= -2; critPower--) {
-			if (survive("D", critPower)) { if (game.global.formation !== 2) setFormation(2); break; }
-			else if (survive("XB", critPower)) { if (game.global.formation !== 0) setFormation("0"); break; }
-			else if (survive("B", critPower)) { if (game.global.formation !== 3) setFormation(3); break; }
-			else if (survive("X", critPower)) { if (game.global.formation !== 0) setFormation("0"); break; }
-			else if (survive("H", critPower)) { if (game.global.formation !== 1) setFormation(1); break; }
+			if (survive("D", critPower)) {
+				if (game.global.formation !== 2) setFormation(2); break;
+			}
+			else if (survive("XB", critPower)) {
+				if (game.global.formation !== 0) setFormation("0"); break;
+			}
+			else if (survive("B", critPower)) {
+				if (game.global.formation !== 3) setFormation(3); break;
+			}
+			else if (survive("X", critPower)) {
+				if (game.global.formation !== 0) setFormation("0"); break;
+			}
+			else if (survive("H", critPower)) {
+				if (game.global.formation !== 1) setFormation(1); break;
+			}
 		}
 
 		//If it cannot survive the worst case scenario on any formation, attempt it's luck on H, if available, or X
 		if (critPower < -2) {
-			if (game.upgrades.Formations.done) setFormation(1);
-			else setFormation("0");
+			if (game.upgrades.Formations.done) {
+				if (game.global.formation !== 1) setFormation(1);
+			}
+			else {
+				if (game.global.formation !== "0") setFormation("0");
+			}
 		}
 	}
 
@@ -308,14 +328,14 @@ function autoStance2() {
 		setFormation(2);
 }
 
-function windStance() {
+function windStance(hdStats) {
 	//Fail safes
 	if (game.global.gridArray.length === 0) return;
 	if (game.global.soldierHealth <= 0) return;
 	if (!game.upgrades.Formations.done) return;
 	if (game.global.world <= 70) return;
 	var stanceToUse = 2;
-	var currentStance = calcCurrentStance();
+	var currentStance = calcCurrentStance(hdStats);
 	if (currentStance == 0 || currentStance == 10) {
 		stanceToUse = 0;
 	}

@@ -93,7 +93,7 @@ function firstGiga(forced) {
 	const s = !(getPageSetting('CustomDeltaFactor') > 20);
 	const a = game.buildings.Warpstation.owned >= 2;
 	const b = !canAffordCoordinationTrimps() || game.global.world >= 230 && !canAffordTwoLevel(game.upgrades.Coordination);
-	const c = s || currentMap === 'HD Farm';
+	const c = s || mapSettings.mapName === 'HD Farm';
 	const d = s || game.global.mapBonus >= 2;
 	if (!forced && !(a && b && c && d)) return false;
 
@@ -152,11 +152,9 @@ function buyUpgrades() {
 	}
 }
 
-function getNextGoldenUpgrade() {
-	const isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-	const isDaily = challengeActive('Daily');
+function getNextGoldenUpgrade(hdStats) {
 
-	const setting = isC3 ? getPageSetting('autoGoldenC3Settings') : isDaily ? getPageSetting('autoGoldenDailySettings') : getPageSetting('autoGoldenSettings');
+	const setting = hdStats.isC3 ? getPageSetting('autoGoldenC3Settings') : hdStats.isDaily ? getPageSetting('autoGoldenDailySettings') : getPageSetting('autoGoldenSettings');
 
 	if (setting.length === 0) {
 		return false;
@@ -187,11 +185,11 @@ function getNextGoldenUpgrade() {
 	return false;
 }
 
-function autoGoldUpgrades() {
+function autoGoldUpgrades(hdStats) {
 	if (!goldenUpgradesShown || getAvailableGoldenUpgrades() <= 0)
 		return;
 	var selected;
-	selected = getNextGoldenUpgrade();
+	selected = getNextGoldenUpgrade(hdStats);
 	if (!selected) return;
 	buyGoldenUpgrade(selected);
 }

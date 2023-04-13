@@ -240,6 +240,15 @@ function remainingHealth(forceMax) {
 function equalityManagementBasic() {
 	if (game.global.preMapsActive) return;
 	if (game.global.gridArray.length <= 0) return;
+
+	if (challengeActive('Desolation') && mapSettings.equality && getPageSetting('autoMaps')) {
+		game.portal.Equality.scalingActive = false;
+		game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
+		manageEqualityStacks();
+		updateEqualityScaling();
+		return;
+	}
+
 	//Looking to see if the enemy that's currently being fought is fast.
 	var fastEnemy = fastimps.includes(getCurrentEnemy().name);
 	//Checking if the map that's active is a Deadly voice map which always has first attack.
@@ -271,18 +280,18 @@ function equalityManagementBasic() {
 }
 
 function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLevel) {
-	if (currentMap === undefined || currentAutoLevel === Infinity) {
+	if (currentMap === '' || currentAutoLevel === Infinity) {
 		if (currentAutoLevel === Infinity) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
 		if (currentAutoLevel !== Infinity && twoSecondInterval) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
 	}
 
 	//Increasing Map Level
-	if (sixSecondInterval && currentMap !== undefined && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
+	if (sixSecondInterval && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
 		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
 	}
 
 	//Decreasing Map Level
-	if (sixSecondInterval && currentMap !== undefined && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
+	if (sixSecondInterval && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
 		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel, true);
 	}
 	return currentAutoLevel
@@ -298,6 +307,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	if (challengeActive('Wither') && maxLevel >= 0 && minLevel !== 0) maxLevel = -1;
 	if (challengeActive('Insanity') && maxLevel >= 0 && minLevel !== 0) minLevel = 0;
 
+	const isDaily = challengeActive('Daily');
 	const hze = getHighestLevelCleared();
 	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 49 : hze >= 209;
 	const haveMapReducer = game.talents.mapLoot.purchased;
@@ -320,11 +330,11 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
 	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined' //Explosive
 
-	var dmgType = runningUnlucky ? 'max' : 'avg'
-	var critType = 'maybe'
+	var dmgType = runningUnlucky ? 'max' : 'avg';
+	var critType = 'maybe';
 	var critChance = getPlayerCritChance_AT('map');
 	critChance = critChance - Math.floor(critChance);
-	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel') || critChance < 0.2) critType = 'never';
+	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel') || critChance < 0.1) critType = 'never';
 
 	for (y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
@@ -346,6 +356,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		if (maxOneShotPower(true) > 1) {
 			enemyHealth *= (maxOneShotPower(true));
 			if (game.global.universe === 1) ourDmg *= (0.005 * game.portal.Overkill.level);
+			if (game.global.universe === 2 && !u2Mutations.tree.MadMap.purchased) ourDmg *= (0.005 * game.portal.Overkill.level);
 		}
 		var enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, 'Snimp', false, false, universeSetting) * difficulty;
 
@@ -359,6 +370,11 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 			if (game.challenges.Duel.trimpStacks >= 50) enemyDmg *= 3;
 		}
 
+		/* if (y === -6) {
+			console.log("universeSetting = " + universeSetting + " y = " + y + " difficulty = " + difficulty + " cell = " + cell + " dmgType = " + dmgType + " critType = " + critType);
+			console.log("trimpHP = " + ourHealth + " trimpDmg = " + ourDmg + " trimpBlock = " + ourBlock);
+			console.log("enemyHP = " + enemyHealth + " enemyDmg = " + enemyDmg);
+		} */
 		if (enemyHealth <= ourDmg && enemyDmg <= (ourHealth + ourBlock)) {
 			if (!query && mapLevel === 0 && minLevel < 0 && game.global.mapBonus === 10 && haveMapReducer && !challengeActive('Glass') && !challengeActive('Insanity') && !challengeActive('Mayhem'))
 				mapLevel = -1;
@@ -378,6 +394,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (!farmType) farmType = 'gamma';
 	if (!hits) hits = 1;
 
+	if (Object.keys(game.global.gridArray).length === 0) return;
 	if (game.portal.Equality.radLevel === 0 || game.global.universe === 1)
 		return 0;
 
@@ -529,7 +546,7 @@ function equalityManagement() {
 	var runningDesolation = challengeActive('Desolation') && mapping;
 	var runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
 
-	if (runningDesolation && mapSettings.equality) {
+	if (runningDesolation && mapSettings.equality && getPageSetting('autoMaps')) {
 		game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
 		manageEqualityStacks();
 		updateEqualityScaling();
@@ -677,11 +694,11 @@ function equalityManagement() {
 			}
 			else if (armyReady && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.95 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
 				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
-					mapsClicked();
-					mapsClicked();
+					suicideTrimps(true);
+					suicideTrimps(true);
 				}
 				else if (game.global.mapsUnlocked && mapping && currentCell > 0 && type !== 'void' && getCurrentMapObject().location !== 'Darkness' && (!runningQuest && game.global.titimpLeft === 0)) {
-					mapsClicked();
+					suicideTrimps(true);
 					rRunMap();
 				}
 				else
@@ -717,6 +734,42 @@ function equalityManagement() {
 		updateEqualityScaling();
 		if (debugStats) queryAutoEqualityStats(ourDmgEquality, ourHealth, enemyDmgEquality, enemyHealth, i);
 	}
+}
+
+function suicideTrimps() {
+	//Throw this in so that if GS updates anything in there it won't cause AT to fuck with it till I can check it out
+	//Check out mapsClicked(confirmed) && mapsSwitch(updateOnly, fromRecycle) patch notes for any changes to this section!
+	if (game.global.stringVersion > '5.9.5') {
+		mapsClicked();
+		return;
+	}
+
+	if (game.resources.trimps.soldiers > 0) {
+		game.global.soldierHealth = 0;
+		game.stats.trimpsKilled.value += game.resources.trimps.soldiers;
+		game.stats.battlesLost.value++;
+		game.resources.trimps.soldiers = 0;
+	}
+
+
+	if (game.global.challengeActive == "Berserk") game.challenges.Berserk.trimpDied();
+	if (game.global.challengeActive == "Exterminate") game.challenges.Exterminate.trimpDied();
+	if (getPerkLevel("Frenzy")) game.portal.Frenzy.trimpDied();
+	if (game.global.challengeActive == "Storm") {
+		game.challenges.Storm.alpha = 0;
+		game.challenges.Storm.drawStacks();
+	}
+	if (game.global.novaMutStacks > 0) u2Mutations.types.Nova.drawStacks();
+	if (game.global.challengeActive == "Smithless") game.challenges.Smithless.drawStacks();
+
+	game.global.mapCounterGoal = 0;
+	game.global.titimpLeft = 0;
+	game.global.fighting = false;
+	game.global.switchToMaps = false;
+	game.global.switchToWorld = false;
+	game.global.mapsActive = false;
+	updateGammaStacks(true);
+	resetEmpowerStacks();
 }
 
 function queryAutoEqualityStats(ourDamage, ourHealth, enemyDmgEquality, enemyHealth, equalityStacks, dmgMult) {

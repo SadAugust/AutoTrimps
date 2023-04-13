@@ -2932,7 +2932,7 @@ function heliumChallengesSetting(hzeCheck, forceUpdate) {
 		} else if (hze === 215) {
 			debug(challengeUnlock('Domination', false, true));
 		} else if (hze === 230) {
-			debug("Upon unlocking the Dimensional Generator building AT hasa new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator.");
+			debug("Upon unlocking the Dimensional Generator building AT has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator.");
 		} else if (hze === 236) {
 			debug("Upon unlocking Nature AT has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.");
 		} else if (hze === 425) {

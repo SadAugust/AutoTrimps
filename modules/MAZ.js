@@ -104,7 +104,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (building.blockU2 && game.global.universe == 2) continue;
 			if (building.blockU1 && game.global.universe == 1) continue;
 			if (item === 'Warpstation') continue;
-			if (item == "Laboratory" && game.global.highestRadonLevelCleared < 129) continue;
+			if (item === 'Laboratory' && game.global.highestRadonLevelCleared < 129) continue;
 			if (!building.AP) continue;
 			if (count != 0 && count % 2 == 0) tooltipText += "</tr><tr>";
 			setting = settingGroup[item];

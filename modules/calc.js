@@ -3,22 +3,34 @@ var critDD = 1;
 var trimpAA = 1;
 
 class HDStats {
-	constructor(vmStatus) {
+	constructor() {
 		this.hdRatio = undefined;
 		this.hdRatioMap = undefined;
 		this.hdRatioVoid = undefined;
 		this.hitsSurvived = undefined;
 		this.ourDamage = undefined;
 		this.targetZoneType = undefined;
+		this.isDaily = undefined;
+		this.isC3 = undefined;
+		this.isFiller = undefined;
+		this.currChallenge = undefined;
+		this.autoLevel = 0;
 
 		const z = game.global.world;
 
-		this.targetZoneType = (vmStatus.prepareForVoids ? "void" : "world");
+		this.isDaily = challengeActive('Daily');
+		this.isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+		this.isFiller = !this.isDaily && !this.isC3;
+		this.currChallenge = game.global.challengeActive;
+
 		this.hdRatio = calcHDRatio(z, 'world');
 		this.hdRatioMap = calcHDRatio(z, 'map');
-		this.hdRatioVoid = calcHDRatio(z, 'void');
+		this.hdRatioVoid = calcHDRatio(z, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity);
+		this.hdRatioVoidPlus = calcHDRatio(z + 1, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity);
+
 		this.hitsSurvived = calcHitsSurvived(z, 'world');
 		this.ourDamage = calcOurDmg();
+		this.autoLevel = autoMapLevel();
 	}
 }
 
@@ -952,16 +964,9 @@ function calcEnemyAttack(type, zone, cell = 99, name = "Snimp", minOrMax, custom
 	}
 
 	//Ice - Experimental
-	if (getEmpowerment() == "Ice") {
-		//Uses the actual number in some places like Stances
-		if (!getPageSetting('fullice') || realDamage) attack *= 1 + game.empowerments.Ice.getDamageModifier();
-		//Otherwise, use the number we would have after a transfer
-		else {
-			var afterTransfer = 1 + Math.ceil(game.empowerments["Ice"].currentDebuffPower * getRetainModifier("Ice"));
-			var mod = 1 - Math.pow(game.empowerments.Ice.getModifier(), afterTransfer);
-			if (Fluffy.isRewardActive('naturesWrath')) mod *= 2;
-			attack *= 1 + mod;
-		}
+	if (getEmpowerment() == "Ice" && getPageSetting('fullice')) {
+		var afterTransfer = 1 + Math.ceil(game.empowerments["Ice"].currentDebuffPower * getRetainModifier("Ice"));
+		attack *= Math.pow(game.empowerments.Ice.getModifier(), afterTransfer);
 	}
 
 	return minOrMax ? Math.floor(attack) : Math.ceil(attack);
@@ -1303,11 +1308,11 @@ function calcHDRatio(targetZone, type, maxTenacity) {
 	return enemyHealth / (ourBaseDamage + addPoison());
 }
 
-function calcCurrentStance() {
+function calcCurrentStance(hdStats) {
 	if (game.global.uberNature == "Wind" && getEmpowerment() == "Wind" && !game.global.mapsActive &&
 		(
-			((!challengeActive('Daily') && HDratio < getPageSetting('WindStackingMinHD'))
-				|| (challengeActive('Daily') && HDRatio < getPageSetting('dWindStackingMinHD')))
+			((!challengeActive('Daily') && hdStats.hdRatio < getPageSetting('WindStackingMinHD'))
+				|| (challengeActive('Daily') && hdStats.hdRatio < getPageSetting('dWindStackingMinHD')))
 			&&
 			((!challengeActive('Daily') && game.global.world >= getPageSetting('WindStackingMin'))
 				|| (challengeActive('Daily') && game.global.world >= getPageSetting('dWindStackingMin')))
@@ -1544,7 +1549,7 @@ function simpleSecondsLocal(what, seconds, workerRatio) {
 	var trimpworkers = ((game.resources.trimps.realMax() / 2) - game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned);
 	if (challengeActive('Trappapalooza')) trimpworkers = game.resources.trimps.owned;
 	var workers = workerRatio !== null ? Math.floor(trimpworkers * desiredRatios[pos] / totalFraction) :
-		currentMap === 'Worshipper Farm' ? trimpworkers :
+		mapSettings.mapName === 'Worshipper Farm' ? trimpworkers :
 			job.owned;
 
 	var amt = workers * job.modifier * seconds;

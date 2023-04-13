@@ -199,9 +199,9 @@ function heirloomShieldToEquip(mapType, query) {
 		return;
 	}
 	//Initial vars for swapping heirlooms
-	var isC3 = game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-	var isDaily = challengeActive('Daily');
-	var isFiller = !isDaily && !isC3
+	const isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+	const isDaily = challengeActive('Daily');
+	const isFiller = !isDaily && !isC3
 	var swapZone = isC3 ? getPageSetting('heirloomSwapZoneC3') : isDaily ? getPageSetting('heirloomSwapZoneDaily') : isFiller ? getPageSetting('heirloomSwapZone') : 999;
 	if (swapZone === -1) swapZone = 999;
 	if (isDaily && dailyOddOrEven().active) {
