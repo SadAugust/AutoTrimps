@@ -137,6 +137,11 @@ function pushSpreadsheetData() {
 		}
 	}
 
+	var dailyMods = " ";
+	if (challengeActive("Daily")) {
+		dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
+	}
+
 	const mapCount = Object.keys(graphData.perZoneData.mapCount)
 		.filter((k) => graphData.perZoneData.mapCount[k] != null)
 		.reduce((a, k) => ({ ...a, [k]: graphData.perZoneData.mapCount[k] }), {});
@@ -172,7 +177,7 @@ function pushSpreadsheetData() {
 		runtime: formatTimeForDescriptions((getGameTime() - game.global.portalTime) / 1000),
 		runtimeMilliseconds: (getGameTime() - game.global.portalTime),
 		zone: game.global.world,
-		dailyMods: dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1),
+		dailyMods: dailyMods,
 		voidZone: game.global.universe === 2 ? game.stats.highestVoidMap2.value : game.stats.highestVoidMap.value,
 		mapZone: mapZone,
 		mapCount: mapTotal,
@@ -228,7 +233,7 @@ function pushSpreadsheetData() {
 				url: url,
 				type: 'POST',
 				crossDomain: true,
-				header: { 'Content-Type': 'text/javascript' },
+				header: { 'Content-Type': 'application/javascript' },
 				data: data,
 				dataType: "jsonp",
 			});

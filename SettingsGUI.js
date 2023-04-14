@@ -3808,15 +3808,6 @@ function updateATVersion() {
 			Rewrote how the daily portal modifier settings are stored to make it usable in U1 and to implement the new U2 mods so there's a good chance any U2 settings will be lost. Sorry about that!")
 		}
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.8') {
-			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
-			if (tempSettings.dailyPortalSettingsArray.valueU2 !== undefined)
-				delete autoTrimpSettings.dailyPortalSettingsArray.valueU2.value;
-
-			changelog.push("Have rewritten all of the AutoJobs, AutoStructure, Daily Portal Modifier help windows.<br>\
-			Rewrote how the daily portal modifier settings are stored to make it usable in U1 and to implement the new U2 mods so there's a good chance any U2 settings will be lost. Sorry about that!")
-		}
-
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.0') {
 			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
 			if (tempSettings !== null) {
