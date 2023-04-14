@@ -227,13 +227,14 @@ function pushSpreadsheetData() {
 		//Can't use the form's action URL because it's not a valid URL for CORS requests.
 		//Google doesn't allow CORS requests to their forms by the looks of it
 		//Using dataType "jsonp" instead of "json" to get around this issue.
+
 		if (formSuccess) {
 			// Send request
 			$.ajax({
 				url: url,
 				type: 'POST',
 				crossDomain: true,
-				header: { 'Content-Type': 'application/javascript' },
+				header: { 'Content-type': 'application/javascript; charset=utf-8' },
 				data: data,
 				dataType: "jsonp",
 			});

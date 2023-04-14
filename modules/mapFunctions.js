@@ -2650,7 +2650,7 @@ function hdFarm(hdStats) {
 			shouldSkip = true;
 
 		if (((mapSettings.mapName === mapName && !shouldHDFarm) || shouldSkip) && hdStats.hdRatio !== Infinity) {
-			if (!shouldSkip) mappingDetails(mapName, rHDFMapLevel, rHDFSpecial, hdRatio, equipfarmdynamicHD(rHDFSettings), hdType);
+			if (!shouldSkip) mappingDetails(mapName, rHDFMapLevel, rHDFSpecial, hdRatio, equipfarmdynamicHD(rHDFSettings), hdType, hdStats);
 			if (getPageSetting('spamMessages').map_Details && shouldSkip) {
 				if (hdType === null) debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(rHDFSettings).toFixed(2) + ").");
 				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(rHDFSettings).toFixed(2) + ").");
