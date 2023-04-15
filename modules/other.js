@@ -204,7 +204,7 @@ var fastimps =
 	];
 
 function remainingHealth(forceMax) {
-	var soldierHealth = game.global.soldierHealth
+	var soldierHealth = game.global.soldierHealth;
 	var shieldHealth = 0;
 	if (game.global.universe == 2) {
 		var maxLayers = Fluffy.isRewardActive('shieldlayer');
@@ -509,7 +509,6 @@ function equalityManagement() {
 	game.options.menu.alwaysAbandon.enabled = 1;
 	//Misc vars
 	var debugStats = getPageSetting('debugEqualityStats');
-	var dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	var mapping = game.global.mapsActive ? true : false;
 	var currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
 	var mapGrid = mapping ? 'mapGridArray' : 'gridArray';
@@ -525,6 +524,7 @@ function equalityManagement() {
 	//Daily modifiers active
 	var isDaily = challengeActive('Daily')
 	var dailyEmpower = isDaily && typeof game.global.dailyChallenge.empower !== 'undefined'; //Empower
+	var dailyEmpowerToggle = (dailyEmpower && getPageSetting('empowerAutoEquality'));
 	var dailyCrit = isDaily && typeof game.global.dailyChallenge.crits !== 'undefined'; //Crit
 	var dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined'; //Dmg on death
 	var dailyWeakness = isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined'; //% dmg reduction on hit
@@ -569,7 +569,7 @@ function equalityManagement() {
 	//Initialising Stat variables
 	//Our stats
 	var dmgType = runningUnlucky ? 'max' : 'avg';
-	var ourHealth = remainingHealth();
+	var ourHealth = remainingHealth((dailyEmpower && (dailyCrit || dailyExplosive)));
 	var ourHealthMax = calcOurHealth(runningQuest, type);
 	var ourDmg = calcOurDmg(dmgType, 0, false, type, critType, bionicTalent, true);
 	var ourDmgMax = 0;
@@ -608,7 +608,6 @@ function equalityManagement() {
 		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 	}
 	enemyDmg *= !dailyEmpower && (type === 'world' || type === 'void') && dailyCrit && gammaToTrigger > 1 ? 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength) : 1;
-
 
 	enemyDmg *= runningMayhem && ((!mapping && currentCell === 99) || mapping) ? 1.2 : 1
 	var enemyDmgEquality = 0;
@@ -702,7 +701,7 @@ function equalityManagement() {
 					rRunMap();
 				}
 				else
-					game.portal.Equality.disabledStackCount = 0;
+					game.portal.Equality.disabledStackCount = game.portal.Equality.disabledStackCount;
 				break;
 			} else if (fastEnemy && enemyDmgEquality > ourHealth) {
 				game.portal.Equality.disabledStackCount = maxEquality;
