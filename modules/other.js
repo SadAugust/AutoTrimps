@@ -469,13 +469,15 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var ourDmgEquality = 0;
 	var enemyDmgEquality = 0;
 	var unluckyDmgEquality = 0;
+	const ourEqualityModifier = game.portal.Equality.getModifier(1);
+	const enemyEqualityModifier = game.portal.Equality.getModifier();
 
 	if (enemyHealth !== 0) {
 		for (var i = 0; i <= maxEquality; i++) {
-			enemyDmgEquality = enemyDmg * Math.pow(game.portal.Equality.getModifier(), i)
-			ourDmgEquality = ourDmg * Math.pow(game.portal.Equality.getModifier(1), i);
+			enemyDmgEquality = enemyDmg * Math.pow(enemyEqualityModifier, i)
+			ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
 			if (runningUnlucky) {
-				unluckyDmgEquality = unluckyDmg * Math.pow(game.portal.Equality.getModifier(1), i);
+				unluckyDmgEquality = unluckyDmg * Math.pow(ourEqualityModifier, i);
 				if (unluckyDmgEquality.toString()[0] % 2 == 1 && i !== maxEquality) continue;
 			}
 			if (farmType === 'gamma' && ourHealth >= enemyDmgEquality) {
@@ -658,8 +660,8 @@ function equalityManagement() {
 		}
 	}
 
-	var ourEqualityModifier = game.portal.Equality.getModifier(1);
-	var enemyEqualityModifier = game.portal.Equality.getModifier();
+	const ourEqualityModifier = game.portal.Equality.getModifier(1);
+	const enemyEqualityModifier = game.portal.Equality.getModifier();
 
 	if (enemyHealth > 0) {
 		for (var i = 0; i <= maxEquality; i++) {
