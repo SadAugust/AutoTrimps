@@ -777,19 +777,12 @@ function initializeAllSettings() {
 			'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('glass', currSettingUniverse)) });
 
-		//Smithless
-		createSetting('smithless',
-			function () { return ('Smithless') },
-			function () { return ('Turn this on if you want to enable AT farming for damage to kill Ubersmiths on the Smithless challenge. It will identify breakpoints that can be reached with max tenacity & max map bonus to figure out how many stacks you are able to obtain from the Ubersmith on your current zone and farm till it reached that point if it\'s attainable.') },
-			'boolean', false, null, 'C2', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 201) });
-
 		//Desolation
 		createSetting('desolation',
 			function () { return ('Desolation') },
 			function () { return ('Turn on Desolation settings.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return ((game.global.highestRadonLevelCleared + 1 >= 200 && game.global.desoCompletions !== 25) || getPageSetting('desolation', currSettingUniverse) || game.global.currentChallenge === 'Desolation') });
+			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 200) || getPageSetting('desolation', currSettingUniverse) || game.global.currentChallenge === 'Desolation') });
 		createSetting('desolationDestack',
 			function () { return ('D: HD Ratio') },
 			function () { return ('At what HD ratio destacking should be considered. Must be used in conjunction with \'D: Stacks\'.') },
@@ -820,6 +813,13 @@ function initializeAllSettings() {
 			function () { return ('How many smithies to run Melting Point at during Desolation. <b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS WHEN SET ABOVE 0</b>') },
 			'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+
+		//Smithless
+		createSetting('smithless',
+			function () { return ('Smithless') },
+			function () { return ('Turn this on if you want to enable AT farming for damage to kill Ubersmiths on the Smithless challenge. It will identify breakpoints that can be reached with max tenacity & max map bonus to figure out how many stacks you are able to obtain from the Ubersmith on your current zone and farm till it reached that point if it\'s attainable.') },
+			'boolean', false, null, 'C2', [2],
+			function () { return (game.global.highestRadonLevelCleared + 1 >= 201) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -2675,9 +2675,9 @@ function modifyParentNodeUniverseSwap() {
 
 
 	radonon_mayhem = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.mayhem.require()) ? 'show' : 'hide';
-
 	radonon_pandemonium = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.pandemonium.require()) ? 'show' : 'hide';
 	radonon_desolation = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.desolation.require()) ? 'show' : 'hide';
+
 	radonon_heirloom = getPageSetting('radonsettings') === 1 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
 	radonoff = getPageSetting('radonsettings') === 0 ? 'show' : 'hide';
 	radonoff_heirloom = getPageSetting('radonsettings') === 0 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
@@ -2728,8 +2728,8 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("mayhemMP", radonon_mayhem);
 	modifyParentNode("stormStacks", radonon);
 	modifyParentNode("pandemoniumMP", radonon_pandemonium);
-	modifyParentNode("glassStacks", radonon);
-	modifyParentNode("smithless", radonon);
+	modifyParentNode("glassStacks", radonon_desolation);
+	modifyParentNode("desolationMP", radonon);
 
 	//Challenges
 	modifyParentNode("decayStacksToAbandon", radonoff);
