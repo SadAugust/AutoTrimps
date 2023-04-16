@@ -621,7 +621,8 @@ function initializeAllSettings() {
 		createSetting('mapology',
 			function () { return ('Mapology') },
 			function () { return ('Turn this on if you want to enable Mapology prestige climb feautre. Any BW Raiding settings will climb until the prestige selected in \'M: Prestige\' has been obtained rather than going for all the available prestiges.') },
-			'boolean', false, null, 'C2', [1]);
+			'boolean', false, null, 'C2', [1],
+			function () { return (game.global.highestLevelCleared + 1 >= 150) });
 		createSetting('mapologyPrestige',
 			function () { return ('M: Prestige') },
 			function () { return ('Acquire prestiges through the selected item (inclusive) as soon as they are available in maps. Automap must be enabled.') },
