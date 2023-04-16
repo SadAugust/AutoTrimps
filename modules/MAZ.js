@@ -484,21 +484,21 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
 		var trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 		var windowSize = 'tooltipWindow50';
-		if (golden) windowSize = 'tooltipWindow20'
-		else if (quagmire) windowSize = 'tooltipWindow45'
-		else if (raiding) windowSize = 'tooltipWindow70'
-		else if (bionic) windowSize = 'tooltipWindow70'
-		else if (insanity) windowSize = 'tooltipWindow55'
-		else if (alchemy) windowSize = 'tooltipWindow70'
-		else if (hypothermia) windowSize = 'tooltipWindow45'
-		else if (voidMap) windowSize = 'tooltipWindow60'
-		else if (worshipperFarm) windowSize = 'tooltipWindow70'
-		else if (smithyFarm) windowSize = 'tooltipWindow70'
-		else if (boneShrine) windowSize = 'tooltipWindow65'
-		else if (hdFarm) windowSize = 'tooltipWindow70'
-		else if (mapBonus) windowSize = 'tooltipWindow70'
-		else if (mapFarm) windowSize = 'tooltipWindow80'
-		else if (tributeFarm) windowSize = 'tooltipWindow80'
+		if (golden) windowSize = 'tooltipWindow20';
+		else if (quagmire) windowSize = 'tooltipWindow45';
+		else if (raiding) windowSize = 'tooltipWindow70';
+		else if (bionic) windowSize = 'tooltipWindow70';
+		else if (insanity) windowSize = 'tooltipWindow55';
+		else if (alchemy) windowSize = 'tooltipWindow70';
+		else if (hypothermia) windowSize = 'tooltipWindow45';
+		else if (voidMap) windowSize = 'tooltipWindow60';
+		else if (worshipperFarm) windowSize = 'tooltipWindow70';
+		else if (smithyFarm) windowSize = 'tooltipWindow70';
+		else if (boneShrine) windowSize = 'tooltipWindow65';
+		else if (hdFarm) windowSize = 'tooltipWindow70';
+		else if (mapBonus) windowSize = 'tooltipWindow70';
+		else if (mapFarm) windowSize = 'tooltipWindow80';
+		else if (tributeFarm) windowSize = 'tooltipWindow80';
 
 		var maxSettings = 30;
 

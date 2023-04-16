@@ -1468,6 +1468,22 @@ ul.tab li a:hover {
 	width: 80%;
 }
 
+#tooltipDiv.tooltipWindow85 {
+	width: 85%;
+}
+
+#tooltipDiv.tooltipWindow90 {
+	width: 90%;
+}
+
+#tooltipDiv.tooltipWindow95 {
+	width: 95%;
+}
+
+#tooltipDiv.tooltipWindow100 {
+	width: 100%;
+}
+
 #tooltipDiv.tooltipExtraLg {
 	width: 50%;
 }

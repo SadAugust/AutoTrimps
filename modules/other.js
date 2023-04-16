@@ -703,7 +703,7 @@ function equalityManagement() {
 					rRunMap();
 				}
 				else
-					game.portal.Equality.disabledStackCount = game.portal.Equality.disabledStackCount;
+					game.portal.Equality.disabledStackCount = 0;
 				break;
 			} else if (fastEnemy && enemyDmgEquality > ourHealth) {
 				game.portal.Equality.disabledStackCount = maxEquality;
