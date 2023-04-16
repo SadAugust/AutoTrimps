@@ -381,15 +381,17 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//C2/C3 Runner settings
 	else if (event == "c2Runner") {
-		const baseText = "<p>Here you can select which challenges you would like C2 runner to complete and the zone you'd like for the respective challenge to finish at</p>";
+		const baseText = "Here you can enable the challenges you would like " + cinf() + " runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.";
+		const fusedText = autoTrimpSettings['c2Fused'].universe.indexOf(currSettingUniverse) !== -1 ? " If the 'Fused " + cinf() + "s' setting is enabled it will show Fused challenges and prioritise running them over their regular counterparts." : "";
 
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to C2 Runner Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>"
-		tooltipText += `${baseText}`
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to " + cinf() + " Runner Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>"
+		tooltipText += `<p>${baseText}${fusedText}</p>`
 		tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
 		var setting, checkbox;
 		settingGroup = {};
+		fusedChallenges = {}
 
 		if (currSettingUniverse === 1) {
 			var highestZone = game.global.highestLevelCleared + 1;
@@ -410,6 +412,15 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (highestZone >= 180) settingGroup.Lead = {};
 			if (highestZone >= 425) settingGroup.Obliterated = {};
 			if (game.global.totalSquaredReward >= 4500) settingGroup.Eradicated = {};
+
+			if (getPageSetting('c2Fused', currSettingUniverse)) {
+				if (highestZone >= 45) fusedChallenges.Enlightened = {};
+				if (highestZone >= 180) fusedChallenges.Waze = {};
+				if (highestZone >= 180) fusedChallenges.Toxad = {};
+				if (highestZone >= 130) fusedChallenges.Paralysis = {};
+				if (highestZone >= 145) fusedChallenges.Nometal = {};
+				if (highestZone >= 150) fusedChallenges.Topology = {};
+			}
 		}
 		else if (currSettingUniverse === 2) {
 			var radonHZE = game.global.highestRadonLevelCleared + 1;
@@ -427,6 +438,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (radonHZE >= 201) settingGroup.Smithless = {};
 		}
 
+
 		//Skip Lines to seperate
 		tooltipText += "</td></tr><tr>";
 
@@ -441,14 +453,58 @@ function MAZLookalike(titleText, varPrefix, event) {
 			//Start
 			tooltipText += "<td><div class='row'>"
 			//Checkbox & name
-			tooltipText += "<div class='col-xs-6' style='width: 40%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + itemName + "</span></div>"
-			//Zone options
-			tooltipText += "<div class='col-xs-6' style='width: 60%; text-align: right'>End Zone: <input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 0) + "'/></div>";
+
+
+			//Checkbox & name
+			tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + itemName + "</span></div>"
+			//Challenges current zone
+			tooltipText += "<div class='col-xs-3' style='width: 25%; padding-right: 5px'> Current Z:" + game.c2[itemName] + "</span></div>"
+			//Zone input
+			tooltipText += "<div class='col-xs-5' style='width: 41%; padding-left: 5px; text-align: right'>End Z: <input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 0) + "'/></div>";
 			//Finish
 			tooltipText += "</div></td>";
 			count++;
 		}
 		tooltipText += "</tr>";
+
+		if (Object.keys(fusedChallenges).length !== 0) {
+			count = 0;
+			tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 100%; padding-right: 5px'>" + "" + "&nbsp;&nbsp;<span>" + "<u>Fused " + cinf() + "s</u>" + "</span></div></div>"
+			tooltipText += "</td></tr><tr>";
+			//Plus&Minus Portal&Void zone settings.
+			for (var item in fusedChallenges) {
+				if (count != 0 && count % 2 == 0) tooltipText += "</tr><tr>";
+				setting = getPageSetting('c2RunnerSettings', currSettingUniverse)[item] !== 'undefined' ?
+					getPageSetting('c2RunnerSettings', currSettingUniverse)[item] :
+					setting = (item = { enabled: false, zone: 0 });
+				checkbox = buildNiceCheckbox('structConfig' + item, 'autoCheckbox', (setting && setting.enabled));
+
+				var challenge = game.challenges[item];
+				var challengeLevel = 0;
+				var challengeList = challenge.multiChallenge;
+
+				for (var y = 0; y < challengeList.length; y++) {
+					if (challengeLevel > 0) challengeLevel = Math.min(challengeLevel, game.c2[challengeList[y]]);
+					else challengeLevel += game.c2[challengeList[y]];
+				}
+
+				var itemName = item;
+				//Start
+				tooltipText += "<td><div class='row'>"
+				//Checkbox & name
+				tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + itemName + "</span></div>"
+				//Challenges current zone
+				tooltipText += "<div class='col-xs-3' style='width: 25%; padding-right: 5px'> Current Z:" + challengeLevel + "</span></div>"
+				//Zone input
+				tooltipText += "<div class='col-xs-5' style='width: 41%; padding-left: 5px; text-align: right'>End Z: <input class='structConfigPercent' id='structZone" + item + "' type='number'  value='" + ((setting && setting.zone) ? setting.zone : 0) + "'/></div>";
+				//Finish
+				tooltipText += "</div></td>";
+				count++;
+			}
+			tooltipText += "</tr>";
+		}
+
+
 		tooltipText += "</div></td></tr>";
 		tooltipText += "</tbody></table>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn-lg btn btn-info' onclick='saveC2RunnerSettings()'>Apply</div><div class='btn btn-lg btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
@@ -456,7 +512,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		elem.style.left = "33.75%";
 		elem.style.top = "25%";
 		ondisplay = function () {
-			verticalCenterTooltip(true);
+			verticalCenterTooltip(false, true);
 		};
 	}
 
@@ -1014,6 +1070,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	titleText = (titleText) ? titleText : titleText;
 
+	if (titleText === 'C2 Runner' && currSettingUniverse === 2) titleText = cinf() + ' Runner';
 	document.getElementById("tipTitle").innerHTML = titleText;
 	document.getElementById("tipText").innerHTML = tooltipText;
 	document.getElementById("tipCost").innerHTML = costText;
@@ -1829,7 +1886,7 @@ function saveC2RunnerSettings() {
 		setting[name].enabled = checked;
 
 		var zone = parseInt(percentboxes[x].value, 10);
-		if (zone > 100) zone = 100;
+		if (zone > 810) zone = 810;
 		zone = (Number.isInteger(zone)) ? zone : 0;
 		setting[name].zone = zone;
 	}

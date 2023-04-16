@@ -237,13 +237,14 @@ function freeVoidPortal() {
 }
 
 function c2runnerportal() {
-	if (game.global.universe === 1 && game.global.highestLevelCleared < 63) return;
-	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 48) return;
-	if (!getPageSetting('c2RunnerStart')) return;
-	if (getPageSetting('c2RunnerPortal') <= 0) return;
 	if (!game.global.runningChallengeSquared) return;
+	if (!getPageSetting('c2RunnerStart')) return;
+	var portalZone = getPageSetting('c2RunnerPortal', portalUniverse)
+	if (getPageSetting('c2RunnerMode') === 1 && typeof getPageSetting('c2RunnerSettings')[game.global.currentChallenge] !== 'undefined') portalZone = getPageSetting('c2RunnerSettings')[game.global.currentChallenge].zone;
+	else return;
+	if (portalZone <= 0) return;
 
-	if (game.global.world >= getPageSetting('c2RunnerPortal')) {
+	if (game.global.world >= portalZone) {
 		finishChallengeSquared();
 		if (getPageSetting('heliumHourChallenge') !== 'None')
 			doPortal(getPageSetting('heliumHourChallenge'));
@@ -257,7 +258,7 @@ function c2runner() {
 	if (!game.global.portalActive) return;
 	if ((portalUniverse === 1 && game.global.highestLevelCleared < 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared < 48)) return;
 	if (!getPageSetting('c2RunnerStart', portalUniverse)) return;
-	if (getPageSetting('c2RunnerPortal', portalUniverse) <= 0 || getPageSetting('c2RunnerPercent', portalUniverse) <= 0) return;
+	if (getPageSetting('c2RunnerMode', portalUniverse) === 0 && getPageSetting('c2RunnerPortal', portalUniverse) <= 0 || getPageSetting('c2RunnerPercent', portalUniverse) <= 0) return;
 
 	const challengeArray = [];
 	const universePrefix = game.global.universe === 2 ? 'C3 ' : 'C2 ';
@@ -304,12 +305,16 @@ function c2runner() {
 	}
 
 	const worldType = portalUniverse === 2 ? 'highestRadonLevelCleared' : 'highestLevelCleared';
+	const runType = getPageSetting('c2RunnerMode', portalUniverse);
+	const c2Setting = getPageSetting('c2RunnerSettings', portalUniverse);
 
 	//Checking regular challenges
 	for (var x = 0; x < challengeArray.length; x++) {
+		if (runType === 1 && typeof c2Setting[challengeArray[x]] === 'undefined') continue;
 		var challenge = game.challenges[challengeArray[x]];
 		var challengeList;
 		var challengeLevel = 0;
+		var check = false;
 
 		if (challenge.multiChallenge) challengeList = challenge.multiChallenge;
 		else challengeList = [challengeArray[x]];
@@ -317,8 +322,10 @@ function c2runner() {
 			if (challengeLevel > 0) challengeLevel = Math.min(challengeLevel, game.c2[challengeList[y]]);
 			else challengeLevel += game.c2[challengeList[y]];
 		}
+		if (runType === 0) check = (100 * (challengeLevel / (game.global[worldType] + 1))) < getPageSetting('c2RunnerPercent', portalUniverse);
+		else check = challengeLevel < c2Setting[challengeArray[x]].zone;
 
-		if ((100 * (challengeLevel / (game.global[worldType] + 1))) < getPageSetting('c2RunnerPercent', portalUniverse)) {
+		if (check) {
 			if (challengeActive(challengeArray[x]))
 				continue;
 			if (!challengeSquaredMode)
@@ -385,13 +392,8 @@ function doPortal(challenge, squared) {
 
 	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
 	//Running C∞ runner
-	if (((portalUniverse === 1 && game.global.highestLevelCleared > 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared > 48)) &&
-		getPageSetting('c2RunnerStart', portalUniverse) &&
-		getPageSetting('c2RunnerPortal', portalUniverse) > 0 &&
-		getPageSetting('c2RunnerPercent', portalUniverse) > 0) {
-		c2runner();
-		if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
-	}
+	c2runner();
+	if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
 
 	//Running Dailies
 	if ((getPageSetting('dailyPortalStart', portalUniverse) || currChall === 'Daily') && !challengeSquaredMode) {

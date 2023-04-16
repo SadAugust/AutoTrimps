@@ -559,9 +559,7 @@ function initializeAllSettings() {
 			function () { return ('Runs the normal ' + cinf() + 's in sequence according to difficulty. See \'' + cinf() + ' Table\' for a list of challenges that this can run. Once zone you have defined has been reached, will portal into next. Only runs challenges that need updating, will not run ones close-ish to your HZE. ') },
 			'boolean', false, null, 'C2', [1, 2]);
 
-
-
-		/* createSetting('c2RunnerMode',
+		createSetting('c2RunnerMode',
 			function () { return ([cinf() + ' Runner %', cinf() + ' Runner Set Values']) },
 			function () {
 				return ('Toggles between the two types of modes that ' + cinf() + ' Runner can use. It\'s only recommended to use  \'' + cinf() + ' Runner Set Values\' at endgame. <br>\
@@ -574,26 +572,23 @@ function initializeAllSettings() {
 			function () { return (cinf() + ' Runner Settings') },
 			function () { return ('Click to adjust settings.') },
 			'mazArray', [], 'MAZLookalike("C2 Runner", "c2Runner", "c2Runner")', 'C2', [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1) }); */
-
-
-
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1) });
 
 		createSetting('c2RunnerPortal',
 			function () { return (cinf() + ' Runner Portal') },
 			function () { return ('Automatically portal when this level is reached in ' + cinf() + ' Runner. Set to 0 or -1 to disable.') },
 			'value', '-1', null, 'C2', [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) /* && getPageSetting('c2RunnerMode', currSettingUniverse) === 0 */) });
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
 		createSetting('c2RunnerPercent',
 			function () { return (cinf() + ' Runner %') },
 			function () { return ('What percent Threshhold you want ' + cinf() + 's to be over. E.g 85, will only run ' + cinf() + 's with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ') },
 			'value', '85', null, 'C2', [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) /* && getPageSetting('c2RunnerMode', currSettingUniverse) === 0 */) });
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
 		createSetting('c2Fused',
 			function () { return ('Fused ' + cinf() + 's') },
 			function () { return ('Will make ' + cinf() + ' runner do fused versions of the ' + cinf() + 's rather than normal version to reduce time spent running ' + cinf() + 's.') },
 			'boolean', false, null, 'C2', [1],
-			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) /* && getPageSetting('c2RunnerMode', currSettingUniverse) === 0 */) });
+			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
 
 		//Balance
 		createSetting('balance',
@@ -3845,6 +3840,12 @@ function updateATVersion() {
 				}
 				else return "Error with localStorage conversion. Please inform me asap!";
 			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.0') {
+			changelog.push("Added an alternative to C2/C3 Runner % input, there's now a toggle to swap it to set end zone values where it'll start a run when beneath that value.<br>\
+			Added heirloom swapping settings for Mayhem, Pandemonium, and Desolation.<br>\
+			Void Map 'Max Tenacity' setting has been renamed 'Max Map Bonus' and now factors in both max map bonus & max tenacity.")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;
