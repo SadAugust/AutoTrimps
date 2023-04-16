@@ -2668,8 +2668,8 @@ function modifyParentNode(id, style) {
 function modifyParentNodeUniverseSwap() {
 
 	radonon = getPageSetting('radonsettings') === 1 ? 'show' : 'hide'
-	radonon_mayhem = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || game.global.mayhemCompletions < 25) ? 'show' : 'hide'
-	radonon_panda = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || game.global.pandCompletions < 25) ? 'show' : 'hide'
+	radonon_mayhem = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || game.global.mayhemCompletions < 25 || getPageSetting('mayhem') || challengeActive('Mayhem')) ? 'show' : 'hide'
+	radonon_panda = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || game.global.pandCompletions < 25 || getPageSetting('pandemonium') || challengeActive('Pandemonium')) ? 'show' : 'hide'
 	radonon_heirloom = getPageSetting('radonsettings') === 1 && getPageSetting('heirloomAuto') ? 'show' : 'hide'
 	radonoff = getPageSetting('radonsettings') === 0 ? 'show' : 'hide'
 	radonoff_heirloom = getPageSetting('radonsettings') === 0 && getPageSetting('heirloomAuto') ? 'show' : 'hide'

@@ -25,8 +25,12 @@ class HDStats {
 
 		this.hdRatio = calcHDRatio(z, 'world');
 		this.hdRatioMap = calcHDRatio(z, 'map');
-		this.hdRatioVoid = calcHDRatio(z, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity);
-		this.hdRatioVoidPlus = calcHDRatio(z + 1, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity);
+		this.hdRatioVoid = calcHDRatio(z, 'void');
+
+		//Calculating void HD values so that we don't need to generate them everytime when looking at VoidMaps function.
+		this.vhdRatio = calcHDRatio(z, 'world', getPageSetting('voidMapDefaultSettings').maxTenacity);
+		this.vhdRatioVoid = calcHDRatio(z, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity);
+		this.vhdRatioVoidPlus = calcHDRatio(z + 1, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity);
 
 		this.hitsSurvived = calcHitsSurvived(z, 'world');
 		this.ourDamage = calcOurDmg();

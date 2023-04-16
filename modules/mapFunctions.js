@@ -1,4 +1,5 @@
 MODULES.mapFunctions = {};
+MODULES.mapFunctions.voidTrigger = 'None';
 MODULES.mapFunctions.voidHDRatio = Infinity;
 MODULES.mapFunctions.voidVHDRatio = Infinity;
 MODULES.mapFunctions.rVoidHDInfo = '0_0_0';
@@ -349,7 +350,7 @@ function voidMaps(hdStats) {
 		for (var x = 0; x < zoneAddition + 1; x++) {
 			//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value. Will automatically run voids if HD Ratio on next zone is too high! aka can't gamma burst
 			if ((maxVoidZone === game.global.world) || (game.global.world - world >= 0 &&
-				(currSetting.voidHDRatio < hdStats.hdRatioVoid || currSetting.hdRatio < hdStats.hdRatio || (hdStats.hdRatioVoid * 50) < hdStats.hdRatioVoidPlus))) {
+				(currSetting.hdRatio < hdStats.vhdRatio || currSetting.voidHDRatio < hdStats.hdRatioVoid || (hdStats.vhdRatioVoid * 50) < hdStats.vhdRatioVoidPlus))) {
 				settingIndex = y;
 				break;
 			}
@@ -359,6 +360,7 @@ function voidMaps(hdStats) {
 
 		if (settingIndex !== null) {
 			if (module.voidHDRatio === Infinity && getPageSetting('autoMaps')) {
+				module.voidTrigger = currSetting.hdRatio < hdStats.vhdRatio ? 'World HD Ratio' : (currSetting.voidHDRatio < hdStats.hdRatioVoid || (hdStats.vhdRatioVoid * 50) < hdStats.vhdRatioVoidPlus) ? 'Void HD Ratio' : 'Zone';
 				module.voidHDRatio = hdStats.hdRatio;
 				module.voidVHDRatio = hdStats.hdRatioVoid;
 				if (defaultSettings.boneCharge && Number(module.rVoidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
@@ -383,6 +385,7 @@ function voidMaps(hdStats) {
 				portalAfter: true,
 			}
 			module.portalAfterVoids = true;
+			module.voidTrigger = autoTrimpSettings.HeliumHrPortal.name()[portalSetting];
 			if (defaultSettings.boneCharge && Number(module.rVoidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
 			module.rVoidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
 		} else {
@@ -3358,7 +3361,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3, hd
 	}
 
 	if (mapName === 'Void Map') {
-		message += " Started with " + MODULES.mapFunctions.voidVHDRatio.toFixed(2) + " and ended with a Void HD Ratio of " + hdStats.hdRatioVoid.toFixed(2) + ".";
+		message += " Void maps were triggered by " + MODULES.mapFunctions.voidTrigger + ".<br>\nWorld HD Ratio (Start:" + prettify(MODULES.mapFunctions.voidHDRatio) + ", End:" + prettify(hdStats.hdRatio) + ", Max Bonuses:" + prettify(calcHDRatio(game.global.world, 'world', true)) + ")<br>\nVoid HD Ratio (Start:" + prettify(MODULES.mapFunctions.voidVHDRatio) + ", End:" + prettify(hdStats.hdRatioVoid) + ", Max Bonuses:" + prettify(calcHDRatio(game.global.world, 'void', true)) + ").";
 	}
 
 	else if (mapName === 'Hits Survived') {
