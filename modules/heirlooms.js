@@ -202,7 +202,9 @@ function heirloomShieldToEquip(mapType, query) {
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');
 	const isFiller = !isDaily && !isC3
-	var swapZone = isC3 ? getPageSetting('heirloomSwapZoneC3') : isDaily ? getPageSetting('heirloomSwapZoneDaily') : isFiller ? getPageSetting('heirloomSwapZone') : 999;
+	const currChallenge = game.global.challengeActive.toLowerCase()
+
+	var swapZone = isC3 && (currChallenge === 'Mayhem' || currChallenge === 'Pandemonium' || currChallenge === 'Desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0 ? getPageSetting(currChallenge + 'SwapZone') : isC3 ? getPageSetting('heirloomSwapZoneC3') : isDaily ? getPageSetting('heirloomSwapZoneDaily') : isFiller ? getPageSetting('heirloomSwapZone') : 999;
 	if (swapZone === -1) swapZone = 999;
 	if (isDaily && dailyOddOrEven().active) {
 		if (swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;

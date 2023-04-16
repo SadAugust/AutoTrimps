@@ -8,8 +8,6 @@ class HDStats {
 		this.hdRatioMap = undefined;
 		this.hdRatioVoid = undefined;
 		this.hitsSurvived = undefined;
-		this.ourDamage = undefined;
-		this.targetZoneType = undefined;
 		this.isDaily = undefined;
 		this.isC3 = undefined;
 		this.isFiller = undefined;
@@ -33,7 +31,6 @@ class HDStats {
 		this.vhdRatioVoidPlus = calcHDRatio(z + 1, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity);
 
 		this.hitsSurvived = calcHitsSurvived(z, 'world');
-		this.ourDamage = calcOurDmg();
 		this.autoLevel = autoMapLevel();
 	}
 }

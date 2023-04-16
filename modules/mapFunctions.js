@@ -206,7 +206,7 @@ function shouldRunUniqueMap(map, hdStats) {
 			// maybe get extra smithies
 			var currChallenge = hdStats.currChallenge.toLowerCase()
 			meltsmithy =
-				(challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0 ? getPageSetting(currChallenge + 'MP') :
+				(currChallenge === 'Mayhem' || currChallenge === 'Pandemonium' || currChallenge === 'Desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'MP') > 0 ? getPageSetting(currChallenge + 'MP') :
 					hdStats.isC3 && uniqueMapSetting.MP_Smithy_C3.enabled && uniqueMapSetting.MP_Smithy_C3.value > 0 ? uniqueMapSetting.MP_Smithy_C3.value :
 						hdStats.isDaily && uniqueMapSetting.MP_Smithy_Daily.enabled && uniqueMapSetting.MP_Smithy_Daily.value > 0 ? uniqueMapSetting.MP_Smithy_Daily.value :
 							!hdStats.isC3 && !hdStats.isDaily && uniqueMapSetting.MP_Smithy.enabled && uniqueMapSetting.MP_Smithy.value > 0 ? uniqueMapSetting.MP_Smithy.value :
@@ -2489,7 +2489,6 @@ function desolation(hdStats) {
 	var destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 300;
 	var destackOnlyZone = getPageSetting('desolationOnlyDestackZone') > 0 ? getPageSetting('desolationOnlyDestackZone') : Infinity;
 	var desolationMapLevel = 0;
-	var desolationMapIncrease = getPageSetting('desolationMapIncrease') > 0 ? getPageSetting('desolationMapIncrease') : 0;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 	var desolationSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
 	var sliders = [9, 9, 9];
@@ -2505,7 +2504,7 @@ function desolation(hdStats) {
 	}
 	if (game.global.world < destackOnlyZone && !game.jobs.Explorer.locked) {
 		var autoLevel_Repeat = mapSettings.levelCheck;
-		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, desolationSpecial, 10, (0 + desolationMapIncrease));
+		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, desolationSpecial, 10, 0);
 		if (mapAutoLevel !== Infinity) {
 			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 			desolationMapLevel = mapAutoLevel;

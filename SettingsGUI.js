@@ -550,13 +550,17 @@ function initializeAllSettings() {
 			'boolean', false, null, 'C2', [1, 2]);
 		createSetting('c2disableFinished',
 			function () { return ('Hide Finished Challenges') },
-			function () { return ('Will hide challenges that have a maximum completion count when they\'ve been finished.') },
-			'boolean', false, null, 'C2', [2]);
+			function () { return ('Will hide challenges that have a maximum completion count when they\'ve been finished. If you\'re running one of the challenges the settings will appear for the duration of that run.') },
+			'boolean', false, null, 'C2', [2],
+			function () { return (game.global.highestRadonLevelCleared + 1 >= 100) });
 
 		createSetting('c2RunnerStart',
 			function () { return (cinf() + ' Runner') },
 			function () { return ('Runs the normal ' + cinf() + 's in sequence according to difficulty. See \'' + cinf() + ' Table\' for a list of challenges that this can run. Once zone you have defined has been reached, will portal into next. Only runs challenges that need updating, will not run ones close-ish to your HZE. ') },
 			'boolean', false, null, 'C2', [1, 2]);
+
+
+
 		/* createSetting('c2RunnerMode',
 			function () { return ([cinf() + ' Runner %', cinf() + ' Runner Set Values']) },
 			function () {
@@ -571,6 +575,10 @@ function initializeAllSettings() {
 			function () { return ('Click to adjust settings.') },
 			'mazArray', [], 'MAZLookalike("C2 Runner", "c2Runner", "c2Runner")', 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1) }); */
+
+
+
+
 		createSetting('c2RunnerPortal',
 			function () { return (cinf() + ' Runner Portal') },
 			function () { return ('Automatically portal when this level is reached in ' + cinf() + ' Runner. Set to 0 or -1 to disable.') },
@@ -591,22 +599,23 @@ function initializeAllSettings() {
 		createSetting('balance',
 			function () { return ('Balance') },
 			function () { return ('Turn this on if you want to enable Balance destacking feautres.') },
-			'boolean', false, null, 'C2', [1]);
+			'boolean', false, null, 'C2', [1],
+			function () { return (game.global.highestLevelCleared + 1 >= 40) });
 		createSetting('balanceZone',
 			function () { return ('B: Zone') },
 			function () { return ('Which zone you would like to start destacking from.') },
 			'value', [6], null, 'C2', [1],
-			function () { return (getPageSetting('balance', currSettingUniverse)) });
+			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
 		createSetting('balanceStacks',
 			function () { return ('B: Stacks') },
 			function () { return ('The amount of stack you have to reach before clearing them.') },
 			'value', -1, null, 'C2', [1],
-			function () { return (getPageSetting('balance', currSettingUniverse)) });
+			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
 		createSetting('balanceImprobDestack',
 			function () { return ('B: Improbability Destack') },
 			function () { return ('Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone') },
 			'boolean', false, null, 'C2', [1],
-			function () { return (getPageSetting('balance', currSettingUniverse)) });
+			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
 
 		//Mapology
 		createSetting('mapology',
@@ -617,30 +626,29 @@ function initializeAllSettings() {
 			function () { return ('M: Prestige') },
 			function () { return ('Acquire prestiges through the selected item (inclusive) as soon as they are available in maps. Automap must be enabled.') },
 			'dropdown', 'Off', ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'], 'C2', [1],
-			function () { return (autoTrimpSettings.mapology.enabled) });
-
-		//Radon
+			function () { return (getPageSetting('mapology', currSettingUniverse) && autoTrimpSettings.mapology.require()) });
 
 		//Unbalance
 		createSetting('unbalance',
 			function () { return ('Unbalance') },
 			function () { return ('Turn this on if you want to enable Unbalance destacking feautres.') },
-			'boolean', false, null, 'C2', [2]);
+			'boolean', false, null, 'C2', [2],
+			function () { return (game.global.highestRadonLevelCleared + 1 >= 35) });
 		createSetting('unbalanceZone',
 			function () { return ('U: Zone') },
 			function () { return ('Which zone you would like to start destacking from.') },
 			'value', [6], null, 'C2', [2],
-			function () { return (getPageSetting('unbalance', currSettingUniverse)) });
+			function () { return (getPageSetting('unbalance', currSettingUniverse) && autoTrimpSettings.unbalance.require()) });
 		createSetting('unbalanceStacks',
 			function () { return ('U: Stacks') },
 			function () { return ('The amount of stack you have to reach before clearing them.') },
 			'value', -1, null, 'C2', [2],
-			function () { return (getPageSetting('unbalance', currSettingUniverse)) });
+			function () { return (getPageSetting('unbalance', currSettingUniverse) && autoTrimpSettings.unbalance.require()) });
 		createSetting('unbalanceImprobDestack',
 			function () { return ('U: Improbability Destack') },
 			function () { return ('Turn this on to always go down to 0 Balance on Improbabilities after you reach your specified destacking zone') },
 			'boolean', false, null, 'C2', [2],
-			function () { return (getPageSetting('unbalance', currSettingUniverse)) });
+			function () { return (getPageSetting('unbalance', currSettingUniverse) && autoTrimpSettings.unbalance.require()) });
 
 		//Trappapalooza
 		createSetting('trappapalooza',
@@ -652,7 +660,7 @@ function initializeAllSettings() {
 			function () { return ('T: Coords') },
 			function () { return ('The zone you would like to stop buying additional coordinations at.') },
 			'value', -1, null, 'C2', [2],
-			function () { return (getPageSetting('trappapalooza', currSettingUniverse)) });
+			function () { return (getPageSetting('trappapalooza', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
 
 		//Wither
 		createSetting('wither',
@@ -671,39 +679,44 @@ function initializeAllSettings() {
 			function () { return ('Q: Smithy Zone') },
 			function () { return ('The zone you\'ll stop your Quest run at (will assume 85 for non C3 version). Will calculate the smithies required for Quests and purchase spare ones if possible. Will disable Smithy Farm whilst your world zone is below this value.') },
 			'value', 999, null, 'C2', [2],
-			function () { return (getPageSetting('quest', currSettingUniverse)) });
+			function () { return (getPageSetting('quest', currSettingUniverse) && autoTrimpSettings.quest.require()) });
 		createSetting('questSmithyMaps',
 			function () { return ('Q: Smithy Maps') },
 			function () { return ('The maximum amount of maps you\'d like to spend on a Smithy quest.') },
 			'value', 100, null, 'C2', [2],
-			function () { return (getPageSetting('quest', currSettingUniverse)) });
+			function () { return (getPageSetting('quest', currSettingUniverse) && autoTrimpSettings.quest.require()) });
 
 		//Mayhem
 		createSetting('mayhem',
 			function () { return ('Mayhem') },
 			function () { return ('Turn on Mayhem settings. ') },
 			'boolean', false, null, 'C2', [2],
-			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 100) || getPageSetting('mayhem', currSettingUniverse) || challengeActive('Mayhem')) });
+			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 100) || challengeActive('Mayhem')) });
 		createSetting('mayhemDestack',
 			function () { return ('M: HD Ratio') },
 			function () { return ('What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Mayhem stacks remaining to clear. ') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('mayhem', currSettingUniverse)) });
+			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
 		createSetting('mayhemZone',
 			function () { return ('M: Zone') },
 			function () { return ('What zone you\'d like to start destacking from, can be used in conjunction with \'M: HD Ratio\' but will clear stacks until 0 are remaining regardless of the value set in \'M: HD Ratio\'.') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('mayhem', currSettingUniverse)) });
+			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
 		createSetting('mayhemMapIncrease',
 			function () { return ('M: Map Increase') },
 			function () { return ('Increases the minimum map level of Mayhem farming by this value. Negative values will be automatically set to 0.') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('mayhem', currSettingUniverse)) });
+			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
 		createSetting('mayhemMP',
 			function () { return ('M: Melting Point') },
 			function () { return ('How many smithies to run Melting Point at during Mayhem. <b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS WHEN SET ABOVE 0</b>') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('mayhem', currSettingUniverse)) });
+			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
+		createSetting('mayhemSwapZone',
+			function () { return ('M: Heirloom Swap Zone') },
+			function () { return ('At which zone you\'d like to swap to your afterpush heirloom on Mayhem. <b>THIS OVERRIDES C3 HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b>') },
+			'value', '-1', null, 'C2', [2],
+			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
 
 		//Storm
 		createSetting('storm',
@@ -715,55 +728,60 @@ function initializeAllSettings() {
 			function () { return ('S: Zone') },
 			function () { return ('Which zone you would like to start destacking from.') },
 			'value', [6], null, 'C2', [2],
-			function () { return (getPageSetting('storm', currSettingUniverse)) });
+			function () { return (getPageSetting('storm', currSettingUniverse) && autoTrimpSettings.storm.require()) });
 		createSetting('stormStacks',
 			function () { return ('S: Stacks') },
 			function () { return ('The amount of stack you have to reach before clearing all of them.') },
 			'value', -1, null, 'C2', [2],
-			function () { return (getPageSetting('storm', currSettingUniverse)) });
+			function () { return (getPageSetting('storm', currSettingUniverse) && autoTrimpSettings.storm.require()) });
 
 		//Pandemonium
 		createSetting('pandemonium',
 			function () { return ('Pandemonium') },
 			function () { return ('Turn on Pandemonium settings.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 150) || getPageSetting('pandemonium', currSettingUniverse) || game.global.currentChallenge === 'Pandemonium') });
+			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 150) || challengeActive('Pandemonium')) });
 
 		createSetting('pandemoniumZone',
 			function () { return ('P: Destack Zone') },
 			function () { return ('What zone to start Pandemonium mapping at. Will ignore Pandemonium stacks below this zone.') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('pandemonium', currSettingUniverse)) });
+			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
 		createSetting('pandemoniumDestack',
 			function () { return ('P: HD Ratio') },
 			function () { return ('What HD ratio cut-off to use when farming for the boss. If this setting is 10, the script will destack until you can kill the boss in 10 average hits or there are no Pademonium stacks remaining to clear. ') },
 			'value', '10', null, 'C2', [2],
-			function () { return (getPageSetting('pandemonium', currSettingUniverse)) });
+			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
 		createSetting('pandemoniumAE',
 			function () { return (['P: AutoEquip Off', 'P: AutoEquip', 'P AE: LMC', 'P AE: Huge Cache']) },
 			function () { return ('<b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency. Uses either \'P: HD Ratio\' or \'P: AE Zone\' to decide when to activate.<br><br/><b>P AE: LMC Cache</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache<br/>Will also purchase prestiges when they cost less than a Jestimp proc. Additionally will override worker settings to ensure that you farm as much metal as possible.<br/><br><b>P AE: Huge Cache</b><br>Uses the same settings as \'P: AE LMC\' but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure fast farming speed.') },
 			'multitoggle', 0, null, 'C2', [2],
-			function () { return (getPageSetting('pandemonium', currSettingUniverse)) });
+			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
 		createSetting('pandemoniumAEZone',
 			function () { return ('P AE: Zone') },
 			function () { return ('Which zone you would like to start farming as much gear as possible from.') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('pandemonium', currSettingUniverse) && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) });
+			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require() && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) });
 
 		createSetting('pandemoniumStaff',
 			function () { return ('P: Staff') },
 			function () { return ('The name of the staff you would like to equip while equip farming, should ideally be a full metal efficiency staff.') },
 			'textValue', 'undefined', null, 'C2', [2],
-			function () { return (getPageSetting('pandemonium', currSettingUniverse) && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) });
+			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require() && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) });
 
 		createSetting('pandemoniumMP',
 			function () { return ('P: Melting Point') },
 			function () { return ('How many smithies to run Melting Point at during Pandemonium. <b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS WHEN SET ABOVE 0</b>') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('pandemonium', currSettingUniverse)) });
+			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
+		createSetting('pandemoniumSwapZone',
+			function () { return ('P: Heirloom Swap Zone') },
+			function () { return ('At which zone you\'d like to swap to your afterpush heirloom on Pandemonium. <b>THIS OVERRIDES C3 HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b>') },
+			'value', '-1', null, 'C2', [2],
+			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
 		//Glass
 		createSetting('glass',
@@ -775,44 +793,44 @@ function initializeAllSettings() {
 			function () { return ('G: Stacks') },
 			function () { return ('The amount of stack you have to reach before clearing them.') },
 			'value', -1, null, 'C2', [2],
-			function () { return (getPageSetting('glass', currSettingUniverse)) });
+			function () { return (getPageSetting('glass', currSettingUniverse) && autoTrimpSettings.glass.require()) });
 
 		//Desolation
 		createSetting('desolation',
 			function () { return ('Desolation') },
 			function () { return ('Turn on Desolation settings.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 200) || getPageSetting('desolation', currSettingUniverse) || game.global.currentChallenge === 'Desolation') });
+			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 200) || challengeActive('Desolation')) });
 		createSetting('desolationDestack',
 			function () { return ('D: HD Ratio') },
 			function () { return ('At what HD ratio destacking should be considered. Must be used in conjunction with \'D: Stacks\'.') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationZone',
 			function () { return ('D: Zone') },
 			function () { return ('From which zone destacking should be considered. Must be used in conjunction with \'D: Stacks\'.') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationStacks',
 			function () { return ('D: Stacks') },
 			function () { return ('Minimal amount of stacks to reach before starting destacking. If set to 0 or -1 it will destack at 300 stacks. <b>WILL CLEAR TO 0 STACKS WHEN IT STARTS RUNNING.</b>') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationOnlyDestackZone',
 			function () { return ('D: Destack Only From') },
-			function () { return ('Will start only destacking from this zone onwards. Purchases the highest level of map that you can afford to reduce stacks of chilled faster.</b>') },
+			function () { return ('Will start only destacking from this zone onwards and not care about farming LMC maps for metal. Purchases the highest level of map that you can afford and survive to reduce stacks of chilled faster.</b>') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('desolation', currSettingUniverse)) });
-		createSetting('desolationMapIncrease',
-			function () { return ('D: Map Increase') },
-			function () { return ('Increases the minimum map level of Desolation farming by this value. Negative values will be automatically set to 0.') },
-			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationMP',
 			function () { return ('D: Melting Point') },
 			function () { return ('How many smithies to run Melting Point at during Desolation. <b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS WHEN SET ABOVE 0</b>') },
 			'value', '-1', null, 'C2', [2],
-			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
+		createSetting('desolationSwapZone',
+			function () { return ('D: Heirloom Swap') },
+			function () { return ('At which zone you\'d like to swap to your afterpush heirloom on Desolation. <b>THIS OVERRIDES C3 HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b>') },
+			'value', '-1', null, 'C2', [2],
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 
 		//Smithless
 		createSetting('smithless',
@@ -2725,11 +2743,11 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("trappapaloozaCoords", radonon);
 	modifyParentNode("wither", radonon);
 	modifyParentNode("questSmithyMaps", radonon);
-	modifyParentNode("mayhemMP", radonon_mayhem);
+	modifyParentNode("mayhemSwapZone", radonon_mayhem);
 	modifyParentNode("stormStacks", radonon);
-	modifyParentNode("pandemoniumMP", radonon_pandemonium);
+	modifyParentNode("pandemoniumSwapZone", radonon_pandemonium);
 	modifyParentNode("glassStacks", radonon_desolation);
-	modifyParentNode("desolationMP", radonon);
+	modifyParentNode("desolationSwapZone", radonon);
 
 	//Challenges
 	modifyParentNode("decayStacksToAbandon", radonoff);
