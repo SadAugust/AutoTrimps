@@ -548,6 +548,10 @@ function initializeAllSettings() {
 			function () { return (cinf() + ' Golden Maps') },
 			function () { return ('Will purchase Golden Maps during ' + cinf() + ' or special challenge (Mayhem, Pandemonium) runs when enabled.') },
 			'boolean', false, null, 'C2', [1, 2]);
+		createSetting('c2disableFinished',
+			function () { return ('Hide Finished Challenges') },
+			function () { return ('Will hide challenges that have a maximum completion count when they\'ve been finished.') },
+			'boolean', false, null, 'C2', [2]);
 
 		createSetting('c2RunnerStart',
 			function () { return (cinf() + ' Runner') },
@@ -679,7 +683,7 @@ function initializeAllSettings() {
 			function () { return ('Mayhem') },
 			function () { return ('Turn on Mayhem settings. ') },
 			'boolean', false, null, 'C2', [2],
-			function () { return ((game.global.highestRadonLevelCleared + 1 >= 100 && game.global.mayhemCompletions !== 25) || getPageSetting('mayhem', currSettingUniverse) || game.global.currentChallenge === 'Mayhem') });
+			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 100) || getPageSetting('mayhem', currSettingUniverse) || challengeActive('Mayhem')) });
 		createSetting('mayhemDestack',
 			function () { return ('M: HD Ratio') },
 			function () { return ('What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Mayhem stacks remaining to clear. ') },
@@ -723,7 +727,7 @@ function initializeAllSettings() {
 			function () { return ('Pandemonium') },
 			function () { return ('Turn on Pandemonium settings.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return ((game.global.highestRadonLevelCleared + 1 >= 150 && game.global.pandCompletions !== 25) || getPageSetting('pandemonium', currSettingUniverse) || game.global.currentChallenge === 'Pandemonium') });
+			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 150) || getPageSetting('pandemonium', currSettingUniverse) || game.global.currentChallenge === 'Pandemonium') });
 
 		createSetting('pandemoniumZone',
 			function () { return ('P: Destack Zone') },
@@ -2667,12 +2671,16 @@ function modifyParentNode(id, style) {
 
 function modifyParentNodeUniverseSwap() {
 
-	radonon = getPageSetting('radonsettings') === 1 ? 'show' : 'hide'
-	radonon_mayhem = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || game.global.mayhemCompletions < 25 || getPageSetting('mayhem') || challengeActive('Mayhem')) ? 'show' : 'hide'
-	radonon_panda = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || game.global.pandCompletions < 25 || getPageSetting('pandemonium') || challengeActive('Pandemonium')) ? 'show' : 'hide'
-	radonon_heirloom = getPageSetting('radonsettings') === 1 && getPageSetting('heirloomAuto') ? 'show' : 'hide'
-	radonoff = getPageSetting('radonsettings') === 0 ? 'show' : 'hide'
-	radonoff_heirloom = getPageSetting('radonsettings') === 0 && getPageSetting('heirloomAuto') ? 'show' : 'hide'
+	radonon = getPageSetting('radonsettings') === 1 ? 'show' : 'hide';
+
+
+	radonon_mayhem = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.mayhem.require()) ? 'show' : 'hide';
+
+	radonon_pandemonium = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.pandemonium.require()) ? 'show' : 'hide';
+	radonon_desolation = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.desolation.require()) ? 'show' : 'hide';
+	radonon_heirloom = getPageSetting('radonsettings') === 1 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
+	radonoff = getPageSetting('radonsettings') === 0 ? 'show' : 'hide';
+	radonoff_heirloom = getPageSetting('radonsettings') === 0 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
 
 	//Core
 	modifyParentNode("radonsettings", 'show');
@@ -2708,7 +2716,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("dhATGA2timer", radonoff);
 
 	//C2
-	modifyParentNode("c2GoldenMaps", 'show');
+	modifyParentNode("c2disableFinished", 'show');
 	modifyParentNode("c2Fused", radonoff);
 	modifyParentNode("balanceImprobDestack", radonoff);
 
@@ -2719,7 +2727,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("questSmithyMaps", radonon);
 	modifyParentNode("mayhemMP", radonon_mayhem);
 	modifyParentNode("stormStacks", radonon);
-	modifyParentNode("pandemoniumMP", radonon_panda);
+	modifyParentNode("pandemoniumMP", radonon_pandemonium);
 	modifyParentNode("glassStacks", radonon);
 	modifyParentNode("smithless", radonon);
 
