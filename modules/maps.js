@@ -64,7 +64,8 @@ function makeAutomapStatusTooltip(hdStats) {
 	const mapStacksText = (`Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`);
 	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy.';
 	const hitsSurvived = prettify(hdStats.hitsSurvived);
-	const hitsSurvivedValue = getPageSetting('hitsSurvived') > 0 ? getPageSetting('hitsSurvived') : '∞';
+	const hitsSurvivedSetting = isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
+	const hitsSurvivedValue = hitsSurvivedSetting > 0 ? hitsSurvivedSetting : '∞';
 	let tooltip = 'tooltip(' +
 		'\"Automaps Status\", ' +
 		'\"customText\", ' +

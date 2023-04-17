@@ -2572,10 +2572,11 @@ function hdFarm(hdStats, skipHealthCheck) {
 	};
 
 	var shouldHealthFarm = false;
+	const hitsSurvivedSetting = isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
 	var hitsSurvived = Infinity;
-	if (getPageSetting('hitsSurvived') > 0) {
+	if (hitsSurvivedSetting > 0) {
 		var hitsSurvived = hdStats.hitsSurvived;
-		if (hitsSurvived < getPageSetting('hitsSurvived')) shouldHealthFarm = true;
+		if (hitsSurvived < hitsSurvivedSetting) shouldHealthFarm = true;
 		if (skipHealthCheck) shouldHealthFarm = false;
 	}
 	if (!getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm) return farmingDetails;
@@ -2609,7 +2610,7 @@ function hdFarm(hdStats, skipHealthCheck) {
 			rHDFSettings = {
 				autoLevel: true,
 				cell: 61,
-				hdBase: getPageSetting('hitsSurvived'),
+				hdBase: hitsSurvivedSetting,
 				hdMult: 1,
 				hdType: "hitsSurvived",
 				jobratio: "0,0.5,1",

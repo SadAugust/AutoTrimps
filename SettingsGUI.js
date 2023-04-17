@@ -687,7 +687,7 @@ function initializeAllSettings() {
 			function () { return ('Mayhem') },
 			function () { return ('Turn on Mayhem settings. ') },
 			'boolean', false, null, 'C2', [2],
-			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 100) || challengeActive('Mayhem')) });
+			function () { return (((!getPageSetting('c2disableFinished') || game.global.mayhemCompletions < 25) && game.global.highestRadonLevelCleared + 1 >= 100) || challengeActive('Mayhem')) });
 		createSetting('mayhemDestack',
 			function () { return ('M: HD Ratio') },
 			function () { return ('What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Mayhem stacks remaining to clear. ') },
@@ -736,7 +736,7 @@ function initializeAllSettings() {
 			function () { return ('Pandemonium') },
 			function () { return ('Turn on Pandemonium settings.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 150) || challengeActive('Pandemonium')) });
+			function () { return (((!getPageSetting('c2disableFinished') || game.global.pandCompletions < 25) && game.global.highestRadonLevelCleared + 1 >= 150) || challengeActive('Pandemonium')) });
 
 		createSetting('pandemoniumZone',
 			function () { return ('P: Destack Zone') },
@@ -796,7 +796,7 @@ function initializeAllSettings() {
 			function () { return ('Desolation') },
 			function () { return ('Turn on Desolation settings.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return ((!getPageSetting('c2disableFinished') && game.global.highestRadonLevelCleared + 1 >= 200) || challengeActive('Desolation')) });
+			function () { return (((!getPageSetting('c2disableFinished') || game.global.desoCompletions < 25) && game.global.highestRadonLevelCleared + 1 >= 200) || challengeActive('Desolation')) });
 		createSetting('desolationDestack',
 			function () { return ('D: HD Ratio') },
 			function () { return ('At what HD ratio destacking should be considered. Must be used in conjunction with \'D: Stacks\'.') },
@@ -1355,6 +1355,13 @@ function initializeAllSettings() {
 			function () { return ('Nurseries pre-Spire') },
 			function () { return ('Set the maximum number of Nurseries to build for Spires. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Will build nurseries before z200 for Spire 1, but only on the zone of Spires 2+ to avoid unnecessary burning. Disable with -1.') },
 			'value', -1, null, 'Spire', [1]);
+		createSetting('hitsSurvivedSpire',
+			function () { return ('Hits Survived') },
+			function () {
+				return ('Will farm until you can survive this amount of attacks while in Spires.<br>\
+				<b>Must be set above 0 to run</b>')
+			},
+			'value', 0, null, 'Spire', [1, 2]);
 		createSetting('SkipSpires',
 			function () { return ('Skip Spires') },
 			function () { return ('Useful to die in spires if farming takes too long') },
