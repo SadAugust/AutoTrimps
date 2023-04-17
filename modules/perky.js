@@ -133,7 +133,7 @@ function auto_preset() {
 }
 
 function update_dg() {
-	let max_zone = (game.global.highestLevelCleared + 1) / 2 + 115;
+	let max_zone = (game.stats.highestLevel.valueTotal()) / 2 + 115;
 	let eff = 500e6 + 50e6 * game.generatorUpgrades.Efficiency.upgrades;
 	let capa = 3 + 0.4 * game.generatorUpgrades.Capacity.upgrades;
 	let max_fuel = game.permanentGeneratorUpgrades.Storage.owned ? capa * 1.5 : capa;
@@ -143,9 +143,9 @@ function update_dg() {
 	let burn = game.permanentGeneratorUpgrades.Slowburn.owned ? 0.4 : 0.5;
 	let cells = mastery('magmaFlow') ? 18 : 16;
 	let accel = mastery('quickGen') ? 1.03 : 1.02;
-	let hs2 = mastery('hyperspeed2') ? (game.global.highestLevelCleared + 1) / 2 : 0;
+	let hs2 = mastery('hyperspeed2') ? (game.stats.highestLevel.valueTotal()) / 2 : 0;
 	let bs = 0.5 * mastery('blacksmith') + 0.25 * mastery('blacksmith2') + 0.15 * mastery('blacksmith3');
-	bs *= game.global.highestLevelCleared + 1;
+	bs *= game.stats.highestLevel.valueTotal();
 	let housing = 0;
 	let fuel = 0;
 	let time = 0;
@@ -234,7 +234,7 @@ function parse_inputs() {
 		throw 'This preset requires a save currently running Trapper². Start a new run using “Trapper² (initial)”, export, and try again.';
 	var result = {
 		total_he: game.global.totalHeliumEarned - (!portalWindowOpen ? game.resources.helium.owned : 0),
-		zone: game.global.highestLevelCleared + 1,
+		zone: game.stats.highestLevel.valueTotal(),
 		perks: parse_perks('', $$('#unlocks').value),
 		weight: {
 			helium: Number(input("weight-he")),

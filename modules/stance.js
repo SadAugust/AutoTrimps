@@ -50,7 +50,7 @@ function canU2OverkillAT(targetZone) {
 		allowed += 0.1;
 		if (u2Mutations.tree.Liq2.purchased) allowed += 0.1;
 	}
-	if (targetZone <= ((game.global.highestRadonLevelCleared + 1) * allowed)) return true;
+	if (targetZone <= ((game.stats.highestRadLevel.valueTotal()) * allowed)) return true;
 	return false;
 }
 
@@ -222,7 +222,7 @@ function survive(formation = "S", critPower = 2, ignoreArmy) {
 	if (formation == "XB" && !game.upgrades.Barrier.done) return false;
 	if (formation == "B" && !game.upgrades.Barrier.done) return false;
 	if (formation == "H" && !game.upgrades.Formations.done) return false;
-	if (formation == "S" && (game.global.world < 60 || game.global.highestLevelCleared < 180)) return false;
+	if (formation == "S" && (game.global.world < 60 || game.stats.highestLevel.valueTotal() < 180)) return false;
 
 	//Base stats
 	var health = baseHealth;

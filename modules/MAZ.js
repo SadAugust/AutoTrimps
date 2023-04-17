@@ -31,15 +31,15 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		tooltipText += `${ratio}`
 		tooltipText += `${percent}`
-		if (game.global.universe === 1 && game.global.highestLevelCleared >= 229) tooltipText += `${magmamancer}`
+		if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 230) tooltipText += `${magmamancer}`
 		if (game.global.universe === 2) tooltipText += `${farmersUntil}`
 		if (game.global.universe === 2) tooltipText += `${lumberjackMP}`
 		tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 		var percentJobs = ["Explorer"];
 		if (game.global.universe == 1) percentJobs.push("Trainer");
-		if (game.global.universe == 1 && game.global.highestLevelCleared >= 229) percentJobs.push("Magmamancer");
-		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 29) percentJobs.push("Meteorologist");
-		if (game.global.universe == 2 && game.global.highestRadonLevelCleared > 49) percentJobs.push("Worshipper");
+		if (game.global.universe == 1 && game.stats.highestLevel.valueTotal() >= 230) percentJobs.push("Magmamancer");
+		if (game.global.universe == 2 && game.stats.highestRadLevel.valueTotal() >= 30) percentJobs.push("Meteorologist");
+		if (game.global.universe == 2 && game.stats.highestRadLevel.valueTotal() >= 50) percentJobs.push("Worshipper");
 		var ratioJobs = ["Farmer", "Lumberjack", "Miner"];
 		var settingGroup = getPageSetting('jobSettingsArray');
 		for (var x = 0; x < ratioJobs.length; x++) {
@@ -92,7 +92,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
 		tooltipText += `${baseText}`
 		if (game.global.universe === 1) tooltipText += `${nursery}`
-		if (game.global.universe === 1 && game.global.highestLevelCleared >= 59) tooltipText += `${warpstation}`
+		if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 60) tooltipText += `${warpstation}`
 		if (game.global.universe === 2) tooltipText += `${safeGateway}`
 		tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
@@ -104,7 +104,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (building.blockU2 && game.global.universe == 2) continue;
 			if (building.blockU1 && game.global.universe == 1) continue;
 			if (item === 'Warpstation') continue;
-			if (item === 'Laboratory' && game.global.highestRadonLevelCleared < 129) continue;
+			if (item === 'Laboratory' && game.stats.highestRadLevel.valueTotal() < 130) continue;
 			if (!building.AP) continue;
 			if (count != 0 && count % 2 == 0) tooltipText += "</tr><tr>";
 			setting = settingGroup[item];
@@ -164,7 +164,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>"
 		tooltipText += `${baseText}`
-		if (currSettingUniverse === 2 && game.global.highestRadonLevelCleared > 49) tooltipText += `${smithy}`
+		if (currSettingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 50) tooltipText += `${smithy}`
 		tooltipText += "</div><table id='autoPurchaseConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
@@ -177,9 +177,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var mapUnlocks = [
 				'The_Block', 'The_Wall', 'Dimension_of_Anger'
 			]
-			if (game.global.highestLevelCleared > 32) mapUnlocks.push("Trimple_of_Doom");
-			if (game.global.highestLevelCleared > 79) mapUnlocks.push("The_Prison");
-			if (game.global.highestLevelCleared > 169) mapUnlocks.push("Imploding_Star");
+			if (game.stats.highestLevel.valueTotal() >= 33) mapUnlocks.push("Trimple_of_Doom");
+			if (game.stats.highestLevel.valueTotal() >= 80) mapUnlocks.push("The_Prison");
+			if (game.stats.highestLevel.valueTotal() >= 170) mapUnlocks.push("Imploding_Star");
 		}
 
 		if (currSettingUniverse === 2) {
@@ -188,15 +188,15 @@ function MAZLookalike(titleText, varPrefix, event) {
 				'Dimension_of_Rage', 'Prismatic_Palace'
 			]
 
-			if (game.global.highestRadonLevelCleared > 32) mapUnlocks.push("Atlantrimp");
-			if (game.global.highestRadonLevelCleared > 49) mapUnlocks.push("Melting_Point");
-			if (game.global.highestRadonLevelCleared > 174) mapUnlocks.push("Frozen_Castle");
+			if (game.stats.highestRadLevel.valueTotal() >= 33) mapUnlocks.push("Atlantrimp");
+			if (game.stats.highestRadLevel.valueTotal() >= 50) mapUnlocks.push("Melting_Point");
+			if (game.stats.highestRadLevel.valueTotal() >= 175) mapUnlocks.push("Frozen_Castle");
 
 
 			//Adding in Smithy Settings if in u2
-			if (game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy");
-			if (game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_Daily");
-			if (game.global.highestRadonLevelCleared > 49) smithySettings.push("MP_Smithy_C3");
+			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP_Smithy");
+			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP_Smithy_Daily");
+			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP_Smithy_C3");
 		}
 
 		for (var x = 0; x < mapUnlocks.length; x++)
@@ -206,13 +206,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var item = mapUnlocks[x];
 			var setting = settingGroup[item];
 			//U1
-			if (item === 'Trimple_of_Doom' && game.global.highestLevelCleared < 33) continue;
-			if (item === 'The_Prison' && game.global.highestLevelCleared < 79) continue;
-			if (item === 'Imploding_Star' && game.global.highestLevelCleared < 169) continue;
+			if (item === 'Trimple_of_Doom' && game.stats.highestLevel.valueTotal() < 33) continue;
+			if (item === 'The_Prison' && game.stats.highestLevel.valueTotal() < 80) continue;
+			if (item === 'Imploding_Star' && game.stats.highestLevel.valueTotal() < 170) continue;
 			//U2
-			if (item === 'Atlantrimp' && game.global.highestRadonLevelCleared < 33) continue;
-			if (item === 'Melting_Point' && game.global.highestRadonLevelCleared < 49) continue;
-			if (item.includes('Smithy') && game.global.highestRadonLevelCleared < 49) continue;
+			if (item === 'Atlantrimp' && game.stats.highestRadLevel.valueTotal() < 33) continue;
+			if (item === 'Melting_Point' && game.stats.highestRadLevel.valueTotal() < 50) continue;
+			if (item.includes('Smithy') && game.stats.highestRadLevel.valueTotal() < 50) continue;
 			var max;
 			var checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
 
@@ -395,7 +395,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		fusedChallenges = {}
 
 		if (currSettingUniverse === 1) {
-			var highestZone = game.global.highestLevelCleared + 1;
+			var highestZone = game.stats.highestLevel.valueTotal();
 			if (getTotalPerkResource(true) >= 30) settingGroup.Discipline = {};
 			if (highestZone >= 25) settingGroup.Metal = {};
 			if (highestZone >= 35) settingGroup.Size = {};
@@ -424,7 +424,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			}
 		}
 		else if (currSettingUniverse === 2) {
-			var radonHZE = game.global.highestRadonLevelCleared + 1;
+			var radonHZE = game.stats.highestRadLevel.valueTotal();
 			if (radonHZE >= 15) settingGroup.Unlucky = {};
 			if (radonHZE >= 20) settingGroup.Downsize = {};
 			if (radonHZE >= 25) settingGroup.Transmute = {};
@@ -1673,7 +1673,7 @@ function saveATAutoJobsConfig() {
 	//Adding in jobs that are locked so that there won't be any issues later on
 	if (game.global.universe === 1) {
 		//Magmamancer
-		if (game.global.highestLevelCleared < 229) {
+		if (game.stats.highestLevel.valueTotal() < 230) {
 			autoTrimpSettings.jobSettingsArray.value.Magmamancer = {};
 			autoTrimpSettings.jobSettingsArray.value.Magmamancer.enabled = true;
 			autoTrimpSettings.jobSettingsArray.value.Magmamancer.percent = 100;
@@ -1681,13 +1681,13 @@ function saveATAutoJobsConfig() {
 	}
 	if (game.global.universe === 2) {
 		//Meteorologist
-		if (game.global.highestRadonLevelCleared < 29) {
+		if (game.stats.highestRadLevel.valueTotal() < 30) {
 			autoTrimpSettings.jobSettingsArray.valueU2.Meteorologist = {};
 			autoTrimpSettings.jobSettingsArray.valueU2.Meteorologist.enabled = true;
 			autoTrimpSettings.jobSettingsArray.valueU2.Meteorologist.percent = 100;
 		}
 		//Worshipper
-		if (game.global.highestRadonLevelCleared < 49) {
+		if (game.stats.highestRadLevel.valueTotal() < 50) {
 			autoTrimpSettings.jobSettingsArray.valueU2.Worshipper = {};
 			autoTrimpSettings.jobSettingsArray.valueU2.Worshipper.enabled = true;
 			autoTrimpSettings.jobSettingsArray.valueU2.Worshipper.percent = 20;
@@ -1749,7 +1749,7 @@ function saveATAutoStructureConfig() {
 	setPageSetting('buildingSettingsArray', setting);
 
 	//Adding in buildings that are locked so that there won't be any issues later on
-	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 129) {
+	if (game.global.universe === 2 && game.stats.highestRadLevel.valueTotal() < 130) {
 		autoTrimpSettings.buildingSettingsArray.valueU2.Laboratory = {};
 		autoTrimpSettings.buildingSettingsArray.valueU2.Laboratory.enabled = true;
 		autoTrimpSettings.buildingSettingsArray.valueU2.Laboratory.percent = 100;
@@ -2172,7 +2172,7 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 	if (!universe) universe = game.global.universe;
 	if (!MAZ) MAZ = '';
 	var dropdown;
-	var highestZone = universe === 1 ? game.global.highestLevelCleared + 1 : game.global.highestRadonLevelCleared + 1;
+	var highestZone = universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
 
 	if (runType === 'Gather') {
 		dropdown += "<option value='food'" + ((MAZ == 'food') ? " selected='selected'" : "") + ">Food</option >\

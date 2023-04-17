@@ -154,6 +154,7 @@ function onDeleteProfile() {
 }
 
 function ImportExportTooltip(what, event, download) {
+	cancelTooltip();
 	if (game.global.lockTooltip)
 		return;
 	var $elem = document.getElementById("tooltipDiv");
@@ -193,6 +194,7 @@ function ImportExportTooltip(what, event, download) {
 		costText += "</div>";
 
 	} else if (what == "ImportAutoTrimps") {
+
 		tooltipText = "Import your AUTOTRIMPS save string! It'll be fine, I promise.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); loadAutoTrimps();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
 		ondisplay = function () {
@@ -269,7 +271,7 @@ function ImportExportTooltip(what, event, download) {
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Thats all the help you get.</div></div>";
 	} else if (what == 'c2table') {
 		//Adding U1 challenges
-		var highestZone = game.global.highestLevelCleared + 1;
+		var highestZone = game.stats.highestLevel.valueTotal();
 		const c2array = [];
 		if (highestZone >= 35) c2array.push('Size');
 		if (highestZone >= 130) c2array.push('Slow');
@@ -290,7 +292,7 @@ function ImportExportTooltip(what, event, download) {
 		if (highestZone >= 70) c2array.push('Trapper');
 
 		//Adding U2 challenges
-		var highestZone = game.global.highestRadonLevelCleared + 1;
+		var highestZone = game.stats.highestRadLevel.valueTotal();
 		const c3array = [];
 
 		if (highestZone >= 50) c3array.push('Unlucky');
@@ -316,7 +318,7 @@ function ImportExportTooltip(what, event, download) {
 				number: (x + 1),
 				percent: getIndividualSquaredReward(c2array[x]) + '%',
 				zone: game.c2[c2array[x]],
-				percentzone: (100 * (game.c2[c2array[x]] / (game.global.highestLevelCleared + 1))).toFixed(2) + '%',
+				percentzone: (100 * (game.c2[c2array[x]] / (game.stats.highestLevel.valueTotal()))).toFixed(2) + '%',
 				c2runner: c2runnerArray.includes(c2array[x]) ? '✅' : '❌',
 				color: 0
 			}
@@ -337,7 +339,7 @@ function ImportExportTooltip(what, event, download) {
 					number: (x + 1),
 					percent: getIndividualSquaredReward(c3array[x]) + '%',
 					zone: game.c2[c3array[x]],
-					percentzone: (100 * (game.c2[c3array[x]] / (game.global.highestRadonLevelCleared + 1))).toFixed(2) + '%',
+					percentzone: (100 * (game.c2[c3array[x]] / (game.stats.highestRadLevel.valueTotal()))).toFixed(2) + '%',
 					c2runner: c3runnerArray.includes(c3array[x]) ? '✅' : '❌',
 					color: 0
 				}
@@ -346,7 +348,7 @@ function ImportExportTooltip(what, event, download) {
 
 		function challengeListcolor() {
 			function a(b, c, d) {
-				var e = 100 * (game.c2[b] / (game.global.highestLevelCleared + 1));
+				var e = 100 * (game.c2[b] / (game.stats.highestLevel.valueTotal()));
 				challengeList[b].color = e >= c ? "LIMEGREEN" : e < c && e >= d ? "GOLD" : e < d && 1 <= e ? "#de0000" : "DEEPSKYBLUE"
 			}
 			Object.keys(challengeList).forEach(function (b) {
@@ -355,7 +357,7 @@ function ImportExportTooltip(what, event, download) {
 		}
 		function c3listcolor() {
 			function colorC3(challenge, highPct, midPct) {
-				var challengePercent = 100 * (game.c2[challenge] / (game.global.highestRadonLevelCleared + 1));
+				var challengePercent = 100 * (game.c2[challenge] / (game.stats.highestRadLevel.valueTotal()));
 				challengeList[challenge].color = "DEEPSKYBLUE"
 				if (challengePercent >= highPct) challengeList[challenge].color = "LIMEGREEN";
 				else if (challengePercent < highPct && challengePercent >= midPct) challengeList[challenge].color = "GOLD";

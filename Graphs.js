@@ -839,8 +839,8 @@ const getGameData = {
 	cruffys: () => { return game.challenges.Nurture.level },
 	universe: () => { return game.global.universe },
 	s3: () => { return game.global.lastRadonPortal },
-	u1hze: () => { return game.global.highestLevelCleared },
-	u2hze: () => { return game.global.highestRadonLevelCleared },
+	u1hze: () => { return game.stats.highestLevel.valueTotal() },
+	u2hze: () => { return game.stats.highestRadLevel.valueTotal() },
 	c23increase: () => {
 		if (game.global.challengeActive !== "" && game.global.runningChallengeSquared) {
 			// (mostly) Trimps code

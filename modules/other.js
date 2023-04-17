@@ -312,7 +312,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	const extraMapLevelsAvailable = game.global.universe === 2 ? hze >= 49 : hze >= 209;
 	const haveMapReducer = game.talents.mapLoot.purchased;
 
-	const biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
+	const biome = getBiome();
 	const query = !special ? true : false;
 	var universeSetting = (z >= 60 && hze >= 180) ? 'S' : game.upgrades.Dominance.done ? 'D' : 'X';
 	const cell = game.talents.mapLoot2.purchased ? 20 : 25;

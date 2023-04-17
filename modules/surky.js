@@ -674,7 +674,7 @@ function presetSpecialOpt() {
 		perks.Pheromones.optimize = false;
 	} else {
 		perks.Bait.optimize = false;
-		if (game != null && game.global.highestRadonLevelCleared >= 59)
+		if (game != null && game.stats.highestRadLevel.valueTotal() >= 60)
 			perks.Pheromones.optimize = true;
 	}
 	if (preset == 'downsize') {
@@ -1946,7 +1946,7 @@ function clearAndAutobuyPerks() {
 	var pList = [];
 	efficiencyFlag(eList, pList);
 	if (props.perksRadon > 0) {
-		perks.Pheromones.optimize = (game.global.highestRadonLevelCleared >= 59) && (props.specialChallenge != 'trappa');
+		perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (props.specialChallenge != 'trappa');
 		var origCarp = perks.Carpentry.level;
 		var origExpand = perks.Expansion.level;
 		for (var [key, value] of Object.entries(perks)) {
@@ -1973,9 +1973,9 @@ function clearAndAutobuyPerks() {
 			inputs['Carpentry'].level = perks.Carpentry.level;
 		}
 		// zero out bait after Trappa unlock, unless in trappa preset
-		if (game.global.highestRadonLevelCleared >= 59 && !perks.Bait.levLocked)
+		if (game.stats.highestRadLevel.valueTotal() >= 60 && !perks.Bait.levLocked)
 			inputs["Bait"].level = 0;
-		if (game.global.highestRadonLevelCleared >= 59 && !perks.Pheromones.levLocked)
+		if (game.stats.highestRadLevel.valueTotal() >= 60 && !perks.Pheromones.levLocked)
 			inputs["Pheromones"].level = 0;
 		if (!perks.Trumps.levLocked)
 			inputs['Trumps'].level = 0;
@@ -2013,7 +2013,7 @@ function autobuyPerks() {
 	}
 	// optimize Bait for Trappa
 	perks.Bait.optimize = (props.specialChallenge == 'trappa' || props.specialChallenge == 'combat' && props.isTrappa);
-	perks.Pheromones.optimize = (game.global.highestRadonLevelCleared >= 59) && (props.specialChallenge != 'trappa') && !(props.specialChallenge == 'combat' && props.isTrappa);
+	perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (props.specialChallenge != 'trappa') && !(props.specialChallenge == 'combat' && props.isTrappa);
 	if (!perks.Carpentry.levLocked && (props.specialChallenge == 'trappa' || props.specialChallenge == 'combat' && props.isTrappa)) {
 		var maxCarpLevels = Math.log(props.perksRadon / perks.Carpentry.priceBase * (perks.Carpentry.priceFact - 1) + 1) / Math.log(perks.Carpentry.priceFact);
 		props.trappaStartPop = 10 * Math.pow(1.1, maxCarpLevels) * props.scaffoldingBonus;
@@ -2043,7 +2043,7 @@ function autobuyPerks() {
 		inputs['Trumps'].level = perks.Trumps.level;
 	}
 	// and Pheromones! (but not in Trappa, for minimum confusion, and not before Trappa unlock)
-	if (!perks.Pheromones.levLocked && props.specialChallenge != 'trappa' && !(props.specialChallenge == 'combat' && props.isTrappa) && game.global.highestRadonLevelCleared >= 59) {
+	if (!perks.Pheromones.levLocked && props.specialChallenge != 'trappa' && !(props.specialChallenge == 'combat' && props.isTrappa) && game.stats.highestRadLevel.valueTotal() >= 60) {
 		while (buyPerk("Pheromones", 1))
 			;
 		inputs['Pheromones'].level = perks.Pheromones.level;

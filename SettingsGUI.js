@@ -136,7 +136,7 @@ function checkLiqZoneCount() {
 	if (game.talents.liquification3.purchased) spireCount += 2;
 	spireCount += (Fluffy.isRewardActive("liquid") * 0.5);
 	var liquidAmount = ((spireCount) / 20);
-	return (((game.global.highestLevelCleared + 1) * liquidAmount));
+	return (((game.stats.highestLevel.valueTotal()) * liquidAmount));
 }
 
 function initializeAllTabs() {
@@ -462,7 +462,7 @@ function initializeAllSettings() {
 			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
 			function () {
 				return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.' +
-					(currSettingUniverse === 1 && game.global.highestLevelCleared > 230) ? '<br>If "Portal after poison voids" is selected it will run until you reach the next poison band and run voids there.' : 'Whyarentyourunning')
+					(currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) ? '<br>If "Portal after poison voids" is selected it will run until you reach the next poison band and run voids there.' : 'Whyarentyourunning')
 			},
 			'multitoggle', 0, null, 'Daily', [1, 2],
 			function () {
@@ -479,7 +479,7 @@ function initializeAllSettings() {
 			function () { return ('Daily prev universe') },
 			function () { return ('If this is on, you will do your daily in the previous universe. Takes you back to this universe after it has finished running and does runs as normal. <br><b>MUST HAVE DAILY PORTAL IN PREVIOUS UNIVERSE ENABLED AND SETUP</b>') },
 			'boolean', false, null, 'Daily', [2],
-			function () { return game.global.highestRadonLevelCleared + 1 >= 30 });
+			function () { return game.stats.highestRadLevel.valueTotal() >= 30 });
 
 		createSetting('dailyDontCap',
 			function () { return ('Use when capped') },
@@ -552,7 +552,7 @@ function initializeAllSettings() {
 			function () { return ('Hide Finished Challenges') },
 			function () { return ('Will hide challenges that have a maximum completion count when they\'ve been finished. If you\'re running one of the challenges the settings will appear for the duration of that run.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 100) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 100) });
 
 		createSetting('c2RunnerStart',
 			function () { return (cinf() + ' Runner') },
@@ -595,7 +595,7 @@ function initializeAllSettings() {
 			function () { return ('Balance') },
 			function () { return ('Turn this on if you want to enable Balance destacking feautres.') },
 			'boolean', false, null, 'C2', [1],
-			function () { return (game.global.highestLevelCleared + 1 >= 40) });
+			function () { return (game.stats.highestLevel.valueTotal() >= 40) });
 		createSetting('balanceZone',
 			function () { return ('B: Zone') },
 			function () { return ('Which zone you would like to start destacking from.') },
@@ -617,7 +617,7 @@ function initializeAllSettings() {
 			function () { return ('Mapology') },
 			function () { return ('Turn this on if you want to enable Mapology prestige climb feautre. Any BW Raiding settings will climb until the prestige selected in \'M: Prestige\' has been obtained rather than going for all the available prestiges.') },
 			'boolean', false, null, 'C2', [1],
-			function () { return (game.global.highestLevelCleared + 1 >= 150) });
+			function () { return (game.stats.highestLevel.valueTotal() >= 150) });
 		createSetting('mapologyPrestige',
 			function () { return ('M: Prestige') },
 			function () { return ('Acquire prestiges through the selected item (inclusive) as soon as they are available in maps. Automap must be enabled.') },
@@ -629,7 +629,7 @@ function initializeAllSettings() {
 			function () { return ('Unbalance') },
 			function () { return ('Turn this on if you want to enable Unbalance destacking feautres.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 35) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 35) });
 		createSetting('unbalanceZone',
 			function () { return ('U: Zone') },
 			function () { return ('Which zone you would like to start destacking from.') },
@@ -651,7 +651,7 @@ function initializeAllSettings() {
 			function () { return ('Trappa') },
 			function () { return ('Turn this on if you want to enable Trappa feautres.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 60) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 60) });
 		createSetting('trappapaloozaCoords',
 			function () { return ('T: Coords') },
 			function () { return ('The zone you would like to stop buying additional coordinations at.') },
@@ -663,14 +663,14 @@ function initializeAllSettings() {
 			function () { return ('Wither') },
 			function () { return ('Turn this on if you want to enable AT farming until you can 4 shot your current world cell on Wither.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 70) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 70) });
 
 		//Quest
 		createSetting('quest',
 			function () { return ('Quest') },
 			function () { return ('Turn this on if you want AT to automate Quests. Will only function properly with AutoMaps enabled.') },
 			'boolean', true, null, 'C2', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 85) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 85) });
 		createSetting('questSmithyZone',
 			function () { return ('Q: Smithy Zone') },
 			function () { return ('The zone you\'ll stop your Quest run at (will assume 85 for non C3 version). Will calculate the smithies required for Quests and purchase spare ones if possible. Will disable Smithy Farm whilst your world zone is below this value.') },
@@ -687,7 +687,7 @@ function initializeAllSettings() {
 			function () { return ('Mayhem') },
 			function () { return ('Turn on Mayhem settings. ') },
 			'boolean', false, null, 'C2', [2],
-			function () { return (((!getPageSetting('c2disableFinished') || game.global.mayhemCompletions < 25) && game.global.highestRadonLevelCleared + 1 >= 100) || challengeActive('Mayhem')) });
+			function () { return (((!getPageSetting('c2disableFinished') || game.global.mayhemCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 100) || challengeActive('Mayhem')) });
 		createSetting('mayhemDestack',
 			function () { return ('M: HD Ratio') },
 			function () { return ('What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Mayhem stacks remaining to clear. ') },
@@ -719,7 +719,7 @@ function initializeAllSettings() {
 			function () { return ('Storm') },
 			function () { return ('Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ') },
 			'boolean', false, null, 'C2', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 105) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 105) });
 		createSetting('stormZone',
 			function () { return ('S: Zone') },
 			function () { return ('Which zone you would like to start destacking from.') },
@@ -736,7 +736,7 @@ function initializeAllSettings() {
 			function () { return ('Pandemonium') },
 			function () { return ('Turn on Pandemonium settings.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return (((!getPageSetting('c2disableFinished') || game.global.pandCompletions < 25) && game.global.highestRadonLevelCleared + 1 >= 150) || challengeActive('Pandemonium')) });
+			function () { return (((!getPageSetting('c2disableFinished') || game.global.pandCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 150) || challengeActive('Pandemonium')) });
 
 		createSetting('pandemoniumZone',
 			function () { return ('P: Destack Zone') },
@@ -784,7 +784,7 @@ function initializeAllSettings() {
 			function () { return ('Glass') },
 			function () { return ('Turn this on if you want to enable automating Glass damage farming & destacking feautres.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 175) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 175) });
 		createSetting('glassStacks',
 			function () { return ('G: Stacks') },
 			function () { return ('The amount of stack you have to reach before clearing them.') },
@@ -796,7 +796,7 @@ function initializeAllSettings() {
 			function () { return ('Desolation') },
 			function () { return ('Turn on Desolation settings.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return (((!getPageSetting('c2disableFinished') || game.global.desoCompletions < 25) && game.global.highestRadonLevelCleared + 1 >= 200) || challengeActive('Desolation')) });
+			function () { return (((!getPageSetting('c2disableFinished') || game.global.desoCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 200) || challengeActive('Desolation')) });
 		createSetting('desolationDestack',
 			function () { return ('D: HD Ratio') },
 			function () { return ('At what HD ratio destacking should be considered. Must be used in conjunction with \'D: Stacks\'.') },
@@ -833,7 +833,7 @@ function initializeAllSettings() {
 			function () { return ('Smithless') },
 			function () { return ('Turn this on if you want to enable AT farming for damage to kill Ubersmiths on the Smithless challenge. It will identify breakpoints that can be reached with max tenacity & max map bonus to figure out how many stacks you are able to obtain from the Ubersmith on your current zone and farm till it reached that point if it\'s attainable.') },
 			'boolean', false, null, 'C2', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 201) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 201) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -847,7 +847,7 @@ function initializeAllSettings() {
 			function () { return ('Decay') },
 			function () { return ('Turn this on if you want to enable Decay feautres.') },
 			'boolean', false, null, 'Challenges', [1],
-			function () { return (game.global.highestLevelCleared + 1 >= 55) });
+			function () { return (game.stats.highestLevel.valueTotal() >= 55) });
 		createSetting('decayStacksToPush',
 			function () { return ('D: Stacks to Push') },
 			function () { return ('During Decay, AT will ignore maps and push to end the zone if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.') },
@@ -864,7 +864,7 @@ function initializeAllSettings() {
 			function () { return ('Life') },
 			function () { return ('Turn this on if you want to enable Decay feautres.') },
 			'boolean', false, null, 'Challenges', [1],
-			function () { return (game.global.highestLevelCleared + 1 >= 110) });
+			function () { return (game.stats.highestLevel.valueTotal() >= 110) });
 		createSetting('lifeZone',
 			function () { return ('L: Zone') },
 			function () { return ('During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this zone. <br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 100.') },
@@ -880,7 +880,7 @@ function initializeAllSettings() {
 			function () { return ('Experience') },
 			function () { return ('Turn this on if you want to enable Experience feautres. <b>This setting is dependant on using \'Bionic Raiding\' in conjunction with it.</b><br><br>Will automatically disable repeat within Bionic Wonderland maps if you\'re above z600 and the Bionic map is at or above level 605.') },
 			'boolean', false, null, 'Challenges', [1],
-			function () { return (game.global.highestLevelCleared + 1 >= 600) });
+			function () { return (game.stats.highestLevel.valueTotal() >= 600) });
 		createSetting('experienceStartZone',
 			function () { return ('E: Start Zone') },
 			function () { return ('The zone you would like to start farming for Wonders at.') },
@@ -902,7 +902,7 @@ function initializeAllSettings() {
 			function () { return ('Archaeology') },
 			function () { return ('Turn on Archaeology settings. ') },
 			'boolean', false, null, 'Challenges', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 90) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 90) });
 		createSetting('archaeologyString1',
 			function () { return ('First String') },
 			function () { return ('First string to use in Archaeology. Put the zone you want to stop using this string and start using the second string (Make sure the second string has a value) at the start. I.e: 70,10a,10e ') },
@@ -924,7 +924,7 @@ function initializeAllSettings() {
 			function () { return ('Quagmire Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazArray', [], 'MAZLookalike("Quagmire Farm", "Quagmire", "MAZ")', 'Challenges', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 70) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 70) });
 		createSetting('quagmireDefaultSettings',
 			function () { return ('Quagmire Default Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -935,7 +935,7 @@ function initializeAllSettings() {
 			function () { return ('Insanity Settings') },
 			function () { return ('Click to adjust settings. ') },
 			'mazArray', [], 'MAZLookalike("Insanity Farm", "Insanity", "MAZ")', 'Challenges', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 110) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 110) });
 		createSetting('insanityDefaultSettings',
 			function () { return ('Insanity Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -946,7 +946,7 @@ function initializeAllSettings() {
 			function () { return ('Alchemy Settings') },
 			function () { return ('Click to adjust settings.') },
 			'mazArray', [], 'MAZLookalike("Alchemy Farm", "Alchemy", "MAZ")', 'Challenges', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 155) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 155) });
 		createSetting('alchemyDefaultSettings',
 			function () { return ('Alchemy Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -957,7 +957,7 @@ function initializeAllSettings() {
 			function () { return ('Hypothermia Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazArray', [], 'MAZLookalike("Hypothermia Farm", "Hypothermia", "MAZ")', 'Challenges', [2],
-			function () { return (game.global.highestRadonLevelCleared + 1 >= 175) });
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 175) });
 		createSetting('hypothermiaDefaultSettings',
 			function () { return ('Hypothermia Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1035,7 +1035,7 @@ function initializeAllSettings() {
 			function () { return ('Advanced Nurseries') },
 			function () { return ("If enabled AND your HZE is higher than 230 (it acts as if disabled otherwise), AT will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway), AND you have more map stacks than the <b>Map MapBonus Health</b> setting, which becomes a very important setting. <b>Recommended: Always On.</b>)") },
 			'boolean', false, null, 'Buildings', [1],
-			function () { return (game.global.highestLevelCleared > 229) });
+			function () { return (game.stats.highestLevel.valueTotal() >= 230) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -1239,7 +1239,7 @@ function initializeAllSettings() {
 			function () { return ('Worshipper Farm Settings') },
 			function () { return ('Will farm to a specified amount of Worshippers according to this settings value.') },
 			'mazArray', [], 'MAZLookalike("Worshipper Farm", "WorshipperFarm", "MAZ")', 'Maps', [2],
-			function () { return game.global.highestRadonLevelCleared + 1 >= 50 });
+			function () { return game.stats.highestRadLevel.valueTotal() >= 50 });
 		createSetting('worshipperFarmDefaultSettings',
 			function () { return ('WF: Default Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1494,13 +1494,11 @@ function initializeAllSettings() {
 		createSetting('addpoison',
 			function () { return ('Poison Calc') },
 			function () { return ('<b>Experimental. </b><br>Adds poison to the battlecalc. May improve your poison zone speed. ') },
-			'boolean', false, null, 'Combat', [1],
-			function () { return (game.global.highestRadonLevelCleared > 10) });
+			'boolean', false, null, 'Combat', [1]);
 		createSetting('fullice',
 			function () { return ('Ice Calc') },
 			function () { return ('Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use it to ensure your H:D ratios aren\'t all over the place. ') },
-			'boolean', true, null, 'Combat', [1],
-			function () { return (game.global.highestRadonLevelCleared > 10) });
+			'boolean', false, null, 'Combat', [1]);
 		createSetting('45stacks',
 			function () { return ('Antistack Calc') },
 			function () { return ('<b>Experimental. </b><br>Always calcs your damage as having full antistacks. Useful for windstacking. ') },
@@ -1520,7 +1518,7 @@ function initializeAllSettings() {
 			function () { return ('Gamma Burst Calc') },
 			function () { return ('<b>Experimental.</b><br>Adds Gamma Burst to your HD Ratio. Be warned, it will assume that you have a gamma burst ready to trigger for every attack so your HD Ratio might be 1 but you\'d need to attack 4-5 times to reach that damage theshold.') },
 			'boolean', true, null, 'Combat', [1, 2],
-			function () { return (game.global.highestRadonLevelCleared > 10) });
+			function () { return (game.stats.highestRadLevel.valueTotal() > 10) });
 		createSetting('frenzyCalc',
 			function () { return ('Frenzy Calc') },
 			function () { return ('<b>Experimental.</b><br>Adds frenzy to the calc. Be warned, it will not farm as much with this on as it expects 100% frenzy uptime.') },
@@ -2333,7 +2331,7 @@ function resourceHour() {
 }
 function heHourPortal() {
 	var text = '';
-	if (currSettingUniverse === 1 && game.global.highestLevelCleared > 230) text += '<br>If \'Portal after voids (poison)\' is selected it will run until you reach the next poison band and run voids there.'
+	if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) text += '<br>If \'Portal after voids (poison)\' is selected it will run until you reach the next poison band and run voids there.'
 	return text;
 }
 
@@ -2802,7 +2800,7 @@ function modifyParentNodeUniverseSwap() {
 }
 
 function HeHrPortalOptions() {
-	var hze = game.global.highestLevelCleared + 1;
+	var hze = game.stats.highestLevel.valueTotal();
 	var portalOptions = ['Auto Portal Immediately', 'Portal after voids'];
 	if (currSettingUniverse === 1 && hze >= 230) portalOptions.push("Portal after voids (poison)");
 
@@ -2822,7 +2820,7 @@ MODULES.u1unlocks = [];
 MODULES.u2unlocks = [];
 
 function heliumChallengesSetting(hzeCheck, forceUpdate) {
-	var hze = game.global.highestLevelCleared + 1;
+	var hze = game.stats.highestLevel.valueTotal();
 
 	var challenge = ["Off", "Helium Per Hour"];
 	if (hze >= 40) challenge.push("Balance");
@@ -2983,7 +2981,7 @@ function heliumChallengesSetting(hzeCheck, forceUpdate) {
 }
 
 function radonChallengesSetting(hzeCheck, forceUpdate) {
-	var hze = game.global.highestRadonLevelCleared + 1;
+	var hze = game.stats.highestRadLevel.valueTotal();
 	var challenge = ["Off", "Radon Per Hour"];
 	if (hze >= 40) challenge.push("Bublé");
 	if (hze >= 55) challenge.push("Melt");
@@ -3370,8 +3368,8 @@ function updateCustomButtons(initialLoad) {
 	//Hide settings
 	//Radon
 	var radonon = autoTrimpSettings.radonsettings.value == 1;
-	var hze = game.global.highestLevelCleared + 1;
-	var highestRadonZone = game.global.highestRadonLevelCleared + 1;
+	var hze = game.stats.highestLevel.valueTotal();
+	var highestRadonZone = game.stats.highestRadLevel.valueTotal();
 	var legacysettings = autoTrimpSettings.radonsettings.value == 2;
 	currSettingUniverse = (autoTrimpSettings.radonsettings.value + 1);
 	var displayAllSettings = getPageSetting('displayAllSettings', currSettingUniverse);

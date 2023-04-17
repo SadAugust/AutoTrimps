@@ -278,7 +278,7 @@ function autoMap(hdStats) {
 	//Telling AT to create a map or setting void map as map to be run.
 	if (selectedMap === 'world' && shouldMap) {
 		if (mapSettings.mapName !== '') {
-			var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : game.global.farmlandsUnlocked && game.global.universe === 2 ? "Farmlands" : game.global.decayDone ? "Plentiful" : "Mountain";
+			var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
 			if (voidMap) selectedMap = voidMap.id;
 			else if (mapSettings.mapName === 'Prestige Raiding') selectedMap = "prestigeRaid";
 			else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = "bionicRaid";
@@ -355,7 +355,7 @@ function autoMap(hdStats) {
 		} else if (selectedMap == "create") {
 			//Setting sliders appropriately.
 			if (shouldMap) {
-				var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Mountain";
+				var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
 				if (mapSettings.mapName !== '') {
 					mapCost(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
 				}

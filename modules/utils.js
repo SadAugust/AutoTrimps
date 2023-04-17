@@ -72,7 +72,7 @@ function spreadsheetDownload() {
 	//Radon, Scruffy, HZE, Achieve bonus, Antenna count
 	spreadsheet += (game.global.totalRadonEarned + "\n");
 	spreadsheet += ((Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3) + "\n");
-	spreadsheet += (game.global.highestRadonLevelCleared + 1 + "\n");
+	spreadsheet += (game.stats.highestRadLevel.valueTotal() + "\n");
 	spreadsheet += (game.global.achievementBonus + "\n");
 	spreadsheet += (game.buildings.Antenna.purchased + "\n");
 	//Spire Assault
@@ -155,8 +155,8 @@ function pushSpreadsheetData() {
 		portals_U2: game.global.totalRadPortals,
 		helium: game.global.totalHeliumEarned,
 		radon: game.global.totalRadonEarned,
-		hZE: game.global.highestLevelCleared + 1,
-		hZE_U2: game.global.highestRadonLevelCleared + 1,
+		hZE: game.stats.highestLevel.valueTotal(),
+		hZE_U2: game.stats.highestRadLevel.valueTotal(),
 		fluffy: fluffy_EvoLevel.fluffy(),
 		scruffy: Number((scruffy_Level.currentLevel() + scruffy_Level.getExp()[1] / scruffy_Level.getExp()[2]).toFixed(3)),
 		achievement: game.global.achievementBonus,

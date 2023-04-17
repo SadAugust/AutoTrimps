@@ -685,6 +685,7 @@ function tributeFarm(hdStats) {
 		var rTrFTributes = game.buildings.Tribute.locked == 1 ? 0 : rTrFSettings.tributes;
 		var rTrFMeteorologists = game.jobs.Meteorologist.locked == 1 ? 0 : rTrFSettings.mets;
 		var rTrFSpecial = getAvailableSpecials('lsc', true);
+		var rTrFBiome = getBiome(null, 'Sea');
 		var rTrFJobRatio = rTrFSettings.jobratio;
 		var rTrFbuyBuildings = rTrFSettings.buildings;
 		var rTrFAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rTrFSettings.atlantrimp;
@@ -781,6 +782,7 @@ function tributeFarm(hdStats) {
 		farmingDetails.autoLevel = rTrFSettings.autoLevel;
 		farmingDetails.jobRatio = rTrFJobRatio;
 		farmingDetails.special = rTrFSpecial;
+		farmingDetails.biome = rTrFBiome;
 		farmingDetails.shouldTribute = shouldTributeFarm;
 		farmingDetails.tribute = rTrFTributes;
 		farmingDetails.shouldMeteorologist = shouldMetFarm;
@@ -849,6 +851,7 @@ function smithyFarm(hdStats) {
 		var rSFSettings = baseSettings[settingIndex];
 		var rSFMapLevel = challengeActive('Quest') ? -1 : rSFSettings.level;
 		var rSFSpecial = getAvailableSpecials('lmc', true);
+		var rSFBiome = getBiome();
 		var rSFJobRatio = '0,0,0,0';
 		var rSFSmithies = challengeActive('Quest') && currQuest() === 10 ? getPageSetting('questSmithyMaps') : rSFSettings.repeat;
 
@@ -922,18 +925,21 @@ function smithyFarm(hdStats) {
 			if (smithyGemCost > game.resources.gems.owned) {
 				shouldSmithyGemFarm = true;
 				rSFSpecial = getAvailableSpecials('lsc', true);
+				rSFBiome = getBiome(null, 'Sea');
 				rSFJobRatio = '1,0,0,0';
 				rSFGoal = prettify(smithyGemCost) + ' gems.';
 			}
 			else if (smithyWoodCost > game.resources.wood.owned) {
 				shouldSmithyWoodFarm = true;
 				rSFSpecial = getAvailableSpecials('lwc', true);
+				rSFBiome = getBiome(null, 'Forest');
 				rSFJobRatio = '0,1,0,0';
 				rSFGoal = prettify(smithyWoodCost) + ' wood.';
 			}
 			else if (smithyMetalCost > game.resources.metal.owned) {
 				shouldSmithyMetalFarm = true;
 				rSFSpecial = getAvailableSpecials('lmc', true);
+				rSFBiome = getBiome(null, 'Mountain');
 				rSFJobRatio = '0,0,1,0';
 				rSFGoal = prettify(smithyMetalCost) + ' metal.';
 			}
@@ -972,6 +978,7 @@ function smithyFarm(hdStats) {
 		farmingDetails.autoLevel = currQuest() === 10 ? true : rSFSettings.autoLevel;
 		farmingDetails.jobRatio = rSFJobRatio;
 		farmingDetails.special = rSFSpecial;
+		farmingDetails.biome = rSFBiome;
 		farmingDetails.smithies = rSFSmithies;
 		farmingDetails.farmGoal = rSFGoal;
 		farmingDetails.gemFarm = shouldSmithyGemFarm;
@@ -1027,6 +1034,7 @@ function worshipperFarm(hdStats) {
 		var rWFMapLevel = rWFSettings.level;
 		var rWFJobRatio = rWFSettings.jobratio;
 		var rWFSpecial = getAvailableSpecials('lsc', true);
+		var rWFBiome = getBiome(null, 'Sea');
 
 		if (rWFSettings.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
@@ -1067,6 +1075,7 @@ function worshipperFarm(hdStats) {
 		farmingDetails.autoLevel = rWFSettings.autoLevel;
 		farmingDetails.jobRatio = rWFJobRatio;
 		farmingDetails.special = rWFSpecial;
+		farmingDetails.biome = rWFBiome;
 		farmingDetails.worshipper = rWFGoal;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
@@ -1525,7 +1534,7 @@ function experience() {
 	var shouldExperience = false;
 	const wonderStartZone = getPageSetting('experienceStartZone') >= 300 ? getPageSetting('experienceStartZone') : Infinity;
 	const hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	const special = (Math.floor(game.global.highestLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "0" : "fa");
+	const special = (Math.floor(game.stats.highestLevel.valueTotal()) * (hyperspeed2 / 100) >= game.global.world ? "0" : "fa");
 	const mapLevel = 0;
 
 	if (game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder) {
@@ -1802,7 +1811,7 @@ function mayhem(hdStats) {
 	var mayhemMapLevel = 0;
 	var mayhemMapIncrease = getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	var mayhemSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
+	var mayhemSpecial = (Math.floor(game.stats.highestRadLevel.valueTotal()) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
 	if (game.challenges.Mayhem.stacks > 0 && (hdStats.hdRatio > destackHits || game.global.world >= destackZone))
 		shouldMayhem = true;
 
@@ -1930,7 +1939,7 @@ function pandemoniumDestack(hdStats) {
 
 	var pandemoniumMapLevel = 1;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	var pandemoniumSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc");
+	var pandemoniumSpecial = (Math.floor(game.stats.highestRadLevel.valueTotal()) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc");
 	var pandemoniumJobRatio = '0.001,0.001,1,0';
 
 
@@ -2490,9 +2499,9 @@ function desolation(hdStats) {
 	var destackOnlyZone = getPageSetting('desolationOnlyDestackZone') > 0 ? getPageSetting('desolationOnlyDestackZone') : Infinity;
 	var desolationMapLevel = 0;
 	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	var desolationSpecial = (Math.floor(game.global.highestRadonLevelCleared + 1) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
+	var desolationSpecial = (Math.floor(game.stats.highestRadLevel.valueTotal()) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
 	var sliders = [9, 9, 9];
-	var biome = 'Farmlands';
+	var biome = getBiome();
 	var equality = false;
 
 	if (MODULES.mapFunctions.desolationContinueRunning || (game.challenges.Desolation.chilled >= destackStacks && (hdStats.hdRatio > destackHits || game.global.world >= destackZone || game.global.world >= destackOnlyZone)))
@@ -2513,7 +2522,7 @@ function desolation(hdStats) {
 		sliders = [0, 0, 9];
 		desolationSpecial = 'fa';
 		if (game.jobs.Explorer.locked) desolationSpecial = '0';
-		biome = 'Random';
+		biome = getBiome('fragConservation');
 		var trimpHealth = calcOurHealth(false, 'map');
 		for (y = 10; y >= 0; y--) {
 			desolationMapLevel = y;
@@ -2837,7 +2846,7 @@ function prestigeMapHasEquips(number, raidzones, targetPrestige) {
 //Set sliders for prestige raiding
 function prestigeRaidingSliders(number, raidzones, special) {
 	if (!special) special = getAvailableSpecials('p');
-	document.getElementById("biomeAdvMapsSelect").value = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Mountain";
+	document.getElementById("biomeAdvMapsSelect").value = getBiome('fragConservation');
 	document.getElementById("mapLevelInput").value = raidzones >= game.global.world ? game.global.world : raidzones;
 	document.getElementById("advExtraLevelSelect").value = prestigeMapLevelToRun(number, raidzones);
 	document.getElementById("advSpecialSelect").value = special;
@@ -2859,8 +2868,6 @@ function prestigeRaidingSliders(number, raidzones, special) {
 	if (mapSettings.fragSetting !== '2') {
 		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
 		document.getElementById("advPerfectCheckbox").dataset.checked = false;
-		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
-		document.getElementById("biomeAdvMapsSelect").value = "Random";
 		if (updateMapCost(true) <= game.resources.fragments.owned) return updateMapCost(true);
 
 		while (lootAdvMapsRange.value > 0 && updateMapCost(true) > game.resources.fragments.owned) {
@@ -2910,7 +2917,7 @@ function prestigeTotalFragCost(raidZones, targetPrestige, special, incrementMaps
 
 function fragmap() {
 	var fragmentsOwned = game.resources.fragments.owned
-	document.getElementById("biomeAdvMapsSelect").value = "Depths";
+	document.getElementById("biomeAdvMapsSelect").value = getBiome('fragments');
 	document.getElementById("advExtraLevelSelect").value = 0;
 	document.getElementById("advSpecialSelect").value = "fa";
 	document.getElementById("lootAdvMapsRange").value = 9;
@@ -2920,10 +2927,6 @@ function fragmap() {
 	document.getElementById("mapLevelInput").value = game.talents.mapLoot.purchased ? game.global.world - 1 : game.global.world;
 	updateMapCost();
 
-	if (updateMapCost(true) > fragmentsOwned) {
-		document.getElementById("biomeAdvMapsSelect").value = "Random";
-		updateMapCost();
-	}
 	if (updateMapCost(true) > fragmentsOwned) {
 		document.getElementById("advPerfectCheckbox").dataset.checked = false;
 		updateMapCost();
@@ -2946,7 +2949,7 @@ function mapCost(pluslevel, special, biome, mapSliders, onlyPerfect) {
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (!special) special = '0';
-	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Mountain";
+	if (!biome) biome = getBiome();
 	if (!mapSliders) mapSliders = [9, 9, 9];
 	if (mapSliders !== [9, 9, 9]) onlyPerfect = false;
 	document.getElementById("biomeAdvMapsSelect").value = biome;
@@ -3078,7 +3081,7 @@ function perfectMapCost(pluslevel, special, biome) {
 	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (!special) special = '0';
-	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Mountain";
+	if (!biome) biome = getBiome();
 	document.getElementById("biomeAdvMapsSelect").value = biome;
 	document.getElementById("advExtraLevelSelect").value = pluslevel;
 	document.getElementById("advSpecialSelect").value = special;
@@ -3125,7 +3128,7 @@ function shouldFarmMapCreation(pluslevel, special, biome, difficulty, loot, size
 	//Pre-Init
 	if (!pluslevel) pluslevel = 0;
 	if (!special) special = getAvailableSpecials('lmc');
-	if (!biome) biome = game.global.farmlandsUnlocked && game.global.universe == 2 ? "Farmlands" : challengeActive('Metal') ? 'Mountain' : game.global.decayDone ? "Plentiful" : "Mountain";
+	if (!biome) biome = getBiome();
 	if (!difficulty) difficulty = 0.75;
 	if (!loot) loot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.farmlandsUnlocked ? 2.6 : game.singleRunBonuses.goldMaps.owned ? 2.85 : 1.85;
 	if (!size) size = 20;
@@ -3284,26 +3287,33 @@ function getAvailableSpecials(special, skipCaches) {
 	return bestMod;
 }
 
-function getAvailableBiomes(preferredBiome, goal) {
-
-	const biomes = ['Farmlands', 'Plentiful', 'Mountain', 'Forest', 'Sea', 'Depths', 'Random'];
-
-	//Setup prefferedBiome to work with Metal, Trappa, and Trappapalooza;;;;;
-	for (var biome of biomes) {
-		if (preferredBiome) biome = preferredBiome;
-		if (biome === 'Farmlands' && (game.global.universe === 1 || !game.global.farmlandsUnlocked)) continue;
-		if (biome === 'Plentiful' && !game.global.decayDone) continue;
-		if (challengeActive('Metal') && biome !== 'Mountain') continue;
-		//Need to figure out the conversion point for caches beating drops for these 2 challenges
-		if (challengeActive('Trapper') && biome !== 'Mountain' && game.global.highestLevelCleared + 1 < 800) continue;
-		if (challengeActive('Trappapalooza') && biome !== 'Mountain' && game.global.highestRadonLevelCleared + 1 < 300) continue;
-
-		bestBiome = biome;
-		break;
+//I have no idea where loot > drops, hopefully somebody can tell me one day :)
+function getBiome(mapGoal, resourceGoal) {
+	var biome;
+	var dropBased = (challengeActive('Trapper') && game.stats.highestLevel.valueTotal() < 800) || (challengeActive('Trappapalooza') && game.stats.highestRadLevel.valueTotal() < 220);
+	if (!dropBased && challengeActive('Metal')) {
+		dropBased = true;
+		if (!resourceGoal) resourceGoal = 'Mountain';
 	}
 
-	if (bestBiome === undefined) biome = 'Random';
-	return bestBiome;
+	if (resourceGoal && dropBased) {
+		if (game.global.farmlandsUnlocked && getFarmlandsResType() === game.mapConfig.locations[resourceGoal].resourceType)
+			biome = 'Farmlands';
+		else
+			biome = resourceGoal;
+	}
+	else if (mapGoal === 'fragments')
+		biome = 'Depths';
+	else if (mapGoal === 'fragConservation')
+		biome = 'Random';
+	else if ((game.global.universe === 2 && game.global.farmlandsUnlocked))
+		biome = 'Farmlands';
+	else if (game.global.decayDone)
+		biome = 'Plentiful';
+	else
+		biome = 'Mountain';
+
+	return biome;
 }
 
 function getSpecialTime(special, maps, noImports) {

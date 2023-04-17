@@ -132,8 +132,8 @@ function autoPortal() {
 function dailyAutoPortal() {
 	if (!game.global.portalActive) return;
 	if (!challengeActive('Daily')) return;
-	if (game.global.universe === 1 && game.global.highestLevelCleared < 100) return;
-	if (game.global.universe === 2 && game.global.highestRadonLevelCleared < 29) return;
+	if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() < 100) return;
+	if (game.global.universe === 2 && game.stats.highestRadLevel.valueTotal() < 30) return;
 	if (game.global.runningChallengeSquared) return;
 
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
@@ -256,7 +256,7 @@ function c2runnerportal() {
 
 function c2runner() {
 	if (!game.global.portalActive) return;
-	if ((portalUniverse === 1 && game.global.highestLevelCleared < 63) || (portalUniverse === 2 && game.global.highestRadonLevelCleared < 48)) return;
+	if ((portalUniverse === 1 && game.stats.highestLevel.valueTotal() < 65) || (portalUniverse === 2 && game.stats.highestRadLevel.valueTotal() < 50)) return;
 	if (!getPageSetting('c2RunnerStart', portalUniverse)) return;
 	if (getPageSetting('c2RunnerMode', portalUniverse) === 0 && getPageSetting('c2RunnerPortal', portalUniverse) <= 0 || getPageSetting('c2RunnerPercent', portalUniverse) <= 0) return;
 
@@ -265,7 +265,7 @@ function c2runner() {
 
 	//Adding U1 challenges
 	if (portalUniverse === 1) {
-		var highestZone = game.global.highestLevelCleared + 1;
+		var highestZone = game.stats.highestLevel.valueTotal();
 
 		//Adding Fused challenges to array if setting is toggled
 		if (getPageSetting('c2Fused', portalUniverse)) {
@@ -293,7 +293,7 @@ function c2runner() {
 
 	//Adding U2 challenges
 	if (portalUniverse === 2) {
-		var highestZone = game.global.highestRadonLevelCleared + 1;
+		var highestZone = game.stats.highestRadLevel.valueTotal();
 		if (highestZone >= 50) challengeArray.push('Unlucky');
 		if (highestZone >= 50) challengeArray.push('Unbalance');
 		if (highestZone >= 85) challengeArray.push('Quest');

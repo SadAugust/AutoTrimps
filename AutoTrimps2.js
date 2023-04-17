@@ -391,7 +391,7 @@ function mainCleanup() {
 	aWholeNewWorld = lastrunworld != currentworld;
 
 	lastHZE = currentHZE;
-	currentHZE = game.global.universe === 2 ? game.global.highestRadonLevelCleared + 1 : game.global.highestLevelCleared + 1;
+	currentHZE = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 	aWholeNewHZE = lastHZE != currentHZE;
 
 	if (aWholeNewHZE) {
