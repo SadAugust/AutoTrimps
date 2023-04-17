@@ -2628,7 +2628,7 @@ function hdFarm(hdStats, skipHealthCheck) {
 			}
 			rHDFmapCap = Infinity;
 			rHDFMax = game.global.mapBonus < getPageSetting('mapBonusHealth') ? 10 : null;
-			rHDFMin = game.global.mapBonus < getPageSetting('mapBonusHealth') ? 0 : null;
+			rHDFMin = game.global.mapBonus < getPageSetting('mapBonusHealth') ? (game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0) : null;
 		} else {
 			shouldHealthFarm = false;
 			rHDFSettings = baseSettings[settingIndex];
