@@ -3263,6 +3263,7 @@ function getAvailableSpecials(special, skipCaches) {
 	if (special === 'lsc') cacheMods = ['lsc', 'hc', 'ssc', 'lc'];
 	else if (special === 'lwc') cacheMods = ['lwc', 'hc', 'swc', 'lc'];
 	else if (special === 'lmc') cacheMods = ['lmc', 'hc', 'smc', 'lc'];
+	else if (special === 'lrc') cacheMods = ['lrc', 'hc', 'src', 'lc'];
 	else if (special === 'p') cacheMods = ['p', 'fa'];
 	else cacheMods = [special];
 
