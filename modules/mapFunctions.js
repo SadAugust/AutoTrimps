@@ -2563,7 +2563,7 @@ function desolation(hdStats) {
 	return farmingDetails;
 }
 
-function hdFarm(hdStats) {
+function hdFarm(hdStats, skipHealthCheck) {
 
 	const mapName = 'HD Farm';
 	const farmingDetails = {
@@ -2576,6 +2576,7 @@ function hdFarm(hdStats) {
 	if (getPageSetting('hitsSurvived') > 0) {
 		var hitsSurvived = hdStats.hitsSurvived;
 		if (hitsSurvived < getPageSetting('hitsSurvived')) shouldHealthFarm = true;
+		if (skipHealthCheck) shouldHealthFarm = false;
 	}
 	if (!getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm) return farmingDetails;
 
@@ -2601,6 +2602,9 @@ function hdFarm(hdStats) {
 
 		var rHDFSettings;
 		var rHDFmapCap;
+		var rHDFMax;
+		var rHDFMin;
+
 		if (settingIndex === null) {
 			rHDFSettings = {
 				autoLevel: true,
@@ -2613,17 +2617,20 @@ function hdFarm(hdStats) {
 				world: game.global.world
 			}
 			rHDFmapCap = Infinity;
+			rHDFMax = game.global.mapBonus < getPageSetting('mapBonusHealth') ? 10 : null;
+			rHDFMin = game.global.mapBonus < getPageSetting('mapBonusHealth') ? 0 : null;
 		} else {
 			shouldHealthFarm = false;
 			rHDFSettings = baseSettings[settingIndex];
 			rHDFmapCap = rHDFDefaultSetting.mapCap;
+			rHDFMax = hdType === 'world' && game.global.mapBonus != 10 ? 10 : null;
+			rHDFMin = hdType === 'world' && game.global.mapBonus != 10 ? 0 : null;
 		}
+
 		var rHDFMapLevel = rHDFSettings.level;
 		var rHDFSpecial = getAvailableSpecials('lmc', true);
 		var rHDFJobRatio = rHDFSettings.jobratio;
 		var hdType = rHDFSettings.hdType;
-		var rHDFMax = hdType === 'world' && game.global.mapBonus != 10 ? 10 : null;
-		var rHDFMin = hdType === 'world' && game.global.mapBonus != 10 ? 0 : null;
 
 		var rHDFmaxMaps = rHDFmapCap;
 

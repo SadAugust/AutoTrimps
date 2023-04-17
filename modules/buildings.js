@@ -200,16 +200,16 @@ function getPsStringLocal(what, rawNum) {
 	game.global.lockTooltip = false;
 }
 
-//REWRITE AND TEST THIS!
 function advancedNurseries(hdStats) {
-	//Only build nurseries if: A) Lacking Health & B) Not lacking Damage & C&D) Has max Map Stacks E) Has at least 1 Map Stack F) Not farming Spire or advN is off
+	if (!getPageSetting('advancedNurseries')) return false;
+	if (game.stats.highestLevel.valueTotal() < 230) return false;
+	//Builds nurseries if lacking health & shouldn't HD farm.
+	//Only build nurseries if: A) Lacking Health & B) Doesn't need to HD farm & C) Has max health map stacks
 	//Also, it requires less health during spire
-	const a = hdStats.hitsSurvived < getMapHealthCutOff(vmStatus);
-	const b = hdStats.hdRatio < getFarmCutOff(vmStatus) || weaponCapped();
-	const c = game.global.mapBonus >= maxHealthMaps;
-	const f = !preSpireFarming || !getPageSetting('AdvancedNurseries');
-	const off = !getPageSetting('AdvancedNurseries') || game.stats.highestLevel.valueTotal() < 230;
-	return off || (a && b && c && f);
+	const a = hdStats.hitsSurvived < getPageSetting('hitsSurvived');
+	const b = !hdFarm(hdStats, true).shouldRun;
+	const c = game.global.mapBonus >= getPageSetting('mapBonusHealth');
+	return (a && b && c);
 }
 
 function mostEfficientHousing() {
@@ -333,18 +333,20 @@ function buyBuildings(hdStats) {
 	if (game.global.universe === 1) {
 		//Nurseries Init
 		if (!game.buildings.Nursery.locked) {
-			var nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
+			const nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
 			const dailyPrefix = challengeActive('Daily') ? 'd' : '';
 
 			var spireNurseryActive = isDoingSpire() && (getPageSetting(dailyPrefix + 'IgnoreSpiresUntil') === 0 || game.global.world >= getPageSetting(dailyPrefix + 'IgnoreSpiresUntil'));
 			var nurseryPreSpire = spireNurseryActive && game.buildings.Nursery.owned < getPageSetting(dailyPrefix + 'PreSpireNurseries') ? getPageSetting(dailyPrefix + 'PreSpireNurseries') : 0;
 
-			var nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : buildingSettings.Nursery.buyMax === 0 ? Infinity : Math.max(nurseryPreSpire, buildingSettings.Nursery.buyMax);
+			var nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, buildingSettings.Nursery.buyMax);
 			var nurseryPct = buildingSettings.Nursery.percent / 100;
 			var nurseryCanAfford = calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, (nurseryAmt - game.buildings.Nursery.owned), nurseryPct);
-
-			if ((nurseryZoneOk || nurseryPreSpire > 0) && nurseryCanAfford > 0)
-				safeBuyBuilding('Nursery', nurseryCanAfford);
+			if ((nurseryZoneOk || nurseryPreSpire > 0) && nurseryAmt > 0) {
+				if (nurseryPreSpire > 0) safeBuyBuilding('Nursery', nurseryCanAfford);
+				else if (advancedNurseries(hdStats)) safeBuyBuilding('Nursery', 1);
+				else if (nurseryCanAfford > 0) safeBuyBuilding('Nursery', nurseryCanAfford);
+			}
 		}
 
 		//Gyms
@@ -370,40 +372,15 @@ function buyBuildings(hdStats) {
 
 		//Warpstations
 		if (!game.buildings.Warpstation.locked && getPageSetting('warpstation')) {
-			var skipWarp = false;
 			if (getPageSetting('WarpstationCap')) {
 				var firstGigaOK = MODULES["upgrades"].autoGigas == false || game.upgrades.Gigastation.done > 0;
 				var warpstationAmt = Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation');
 				var gigaCapped = game.buildings.Warpstation.owned >= warpstationAmt;
 				var warpstationCanAfford = calculateMaxAffordLocal(game.buildings.Warpstation, true, false, false, (warpstationAmt - game.buildings.Warpstation.owned), 1)
 
-				if (firstGigaOK && gigaCapped)
-					skipWarp = true;
-				else if (warpstationCanAfford > 0)
+				if (!(firstGigaOK && gigaCapped) && warpstationCanAfford > 0)
 					safeBuyBuilding('Warpstation', warpstationCanAfford);
 			}
-
-			//No idea if this code even works? Need to get a test save to check!
-			if (skipWarp)
-				bestGemBuilding = null;
-			var getcoord = getPageSetting('WarpstationCoordBuy');
-			if (getcoord && skipWarp) {
-				var toTip = game.buildings.Warpstation;
-				if (canAffordBuilding("Warpstation")) {
-					var howMany = calculateMaxAfford(game.buildings["Warpstation"], true);
-					var needCoord = game.upgrades.Coordination.allowed - game.upgrades.Coordination.done > 0;
-					if (needCoord && !canAffordCoordinationTrimps()) {
-						var nextCount = (game.portal.Coordinated.level) ? game.portal.Coordinated.currentSend : game.resources.trimps.maxSoldiers;
-						var amtToGo = ((nextCount * 3) - game.resources.trimps.realMax());
-						var increase = toTip.increase.by;
-						if (game.portal.Carpentry.level && toTip.increase.what == "trimps.max") increase *= Math.pow(1.1, game.portal.Carpentry.level);
-						if (game.portal.Carpentry_II.level && toTip.increase.what == "trimps.max") increase *= (1 + (game.portal.Carpentry_II.modifier * game.portal.Carpentry_II.level));
-						if (amtToGo < increase * howMany)
-							safeBuyBuilding('Warpstation', 1);
-					}
-				}
-			}
-
 		}
 	}
 

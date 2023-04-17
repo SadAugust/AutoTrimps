@@ -288,7 +288,7 @@ function initializeAllSettings() {
 					getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
 			});
 		createSetting('HeliumHrBuffer',
-			function () { return (resourceHour() + '/Hr Portal Buffer %') },
+			function () { return (resourceHour() + '/Hr Buffer %') },
 			function () { return ('IMPORTANT SETTING. When using the ' + resourceHour() + '/Hr Autoportal, it will portal if your ' + resourceHour() + '/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).') },
 			'value', '0', null, 'Core', [1, 2],
 			function () {
@@ -453,7 +453,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1) });
 
 		createSetting('dailyHeliumHrBuffer',
-			function () { return ('D: ' + resourceHour() + '/Hr Portal Buffer %') },
+			function () { return ('D: ' + resourceHour() + '/Hr Buffer %') },
 			function () { return ('IMPORTANT SETTING. When using the Daily ' + resourceHour() + '/Hr Autoportal, it will portal if your ' + resourceHour() + '/Hr drops by this amount of % lower than your best for current run in dailies, default is 0% (ie: set to 5 to portal at 95% of your best in dailies). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).') },
 			'value', '0', null, 'Daily', [1, 2],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1) });
@@ -1004,11 +1004,6 @@ function initializeAllSettings() {
 			function () { return ('Do not level Warpstations past Basewarp+DeltaGiga **. Without this, if a Giga wasnt available, it would level infinitely (wastes metal better spent on prestiges instead.) **The script bypasses this cap each time a new giga is bought, when it insta-buys as many as it can afford (since AT keeps available metal/gems to a low, overbuying beyond the cap to what is affordable at that first moment is not a bad thing). ') },
 			'boolean', true, null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled) });
-		createSetting('WarpstationCoordBuy',
-			function () { return ('Buy Warp to Hit Coord') },
-			function () { return ('If we are very close to hitting the next coordination, and we can afford the warpstations it takes to do it, Do it! (even if we are over the Cap/Wall). Recommended with WarpCap/WarpWall. (has no point otherwise) ') },
-			'boolean', true, null, 'Buildings', [1],
-			function () { return (autoTrimpSettings.warpstation.enabled) });
 		createSetting('FirstGigastation',
 			function () { return ('First Gigastation') },
 			function () { return ('How many warpstations to buy before your first gigastation') },
@@ -1036,11 +1031,11 @@ function initializeAllSettings() {
 			'value', '-1', null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.AutoGigas.enabled) });
 
-		/* createSetting('AdvancedNurseries',
+		createSetting('advancedNurseries',
 			function () { return ('Advanced Nurseries') },
-			function () { return ("If enabled AND your HZE is higher than 230 (it acts as if disabled otherwise), AT will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway), AND you have more map stacks than the <b>Map MapBonus Health</b> setting, which becomes a very important setting. Also, it won't buy nurseries while farming for the spire. Please refer to The Spire options to know more about that. <b>Recommended: Always On.</b>)") },
+			function () { return ("If enabled AND your HZE is higher than 230 (it acts as if disabled otherwise), AT will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway), AND you have more map stacks than the <b>Map MapBonus Health</b> setting, which becomes a very important setting. <b>Recommended: Always On.</b>)") },
 			'boolean', false, null, 'Buildings', [1],
-			function () { return (game.global.highestLevelCleared > 229) }); */
+			function () { return (game.global.highestLevelCleared > 229) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -1190,10 +1185,16 @@ function initializeAllSettings() {
 			},
 			'value', 2, null, "Maps", [1, 2]);
 
+		createSetting('mapBonusHealth',
+			function () { return ('Map Bonus Health') },
+			function () { return ('Map Bonus stacks will be obtained to this amount when Hits Survived is below the threshold set.' + currSettingUniverse === 1 ? '<br><br>This is a very important setting to be used with Advanced Nurseries after Magma. Basically, if you are running out of nurseries too soon, increase this value, otherwise lower it.' : '') },
+			'value', 10, null, "Maps", [1, 2]);
+
 		createSetting('mapBonusRatio',
 			function () { return ('Map Bonus Ratio') },
 			function () { return ('Map Bonus will be run when above this HD Ratio value.') },
 			'value', 4, null, "Maps", [1, 2]);
+
 		createSetting('mapBonusStacks',
 			function () { return ('Map Bonus Stacks') },
 			function () { return ('The map bonus limit that will be used when above your \'Map Bonus Ratio\' threshold. Settings to adjust the cache it will run and the job ratio that it uses can be found in the \'Map Bonus\' setting.') },
@@ -2954,7 +2955,7 @@ function heliumChallengesSetting(hzeCheck, forceUpdate) {
 		} else if (hze === 215) {
 			debug(challengeUnlock('Domination', false, true));
 		} else if (hze === 230) {
-			debug("Upon unlocking the Dimensional Generator building AT has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator.");
+			debug("Upon unlocking the Dimensional Generator building AT has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic.");
 		} else if (hze === 236) {
 			debug("Upon unlocking Nature AT has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.");
 		} else if (hze === 425) {
