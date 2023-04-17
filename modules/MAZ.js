@@ -267,6 +267,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			equipment: false,
 			maps: false,
 			map_Details: false,
+			map_Destacking: false,
 			other: false,
 			buildings: false,
 			jobs: false,
@@ -1120,6 +1121,10 @@ function messageConfigHoverAT(what, event) {
 		case 'map_Details':
 			text = "Logs run time & map count when AT decides to farm.";
 			title = "Map Details";
+			break;
+		case 'map_Destacking':
+			text = "Logs run time & map count when AT does any map based destacking.";
+			title = "Map Destacking";
 			break;
 		case 'other':
 			text = "Log Better Auto Fight, Trimpicide & AutoBreed/Gene Timer changes, etc - a catch all.";

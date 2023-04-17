@@ -1079,7 +1079,7 @@ function worshipperFarm(hdStats) {
 //Daily (bloodthirst), Balance, Unbalance & Storm Destacking
 function mapDestacking() {
 
-	const mapName = 'rDestack';
+	const mapName = 'Destacking';
 	const farmingDetails = {
 		shouldRun: false,
 		mapName: mapName
@@ -3339,7 +3339,8 @@ function resetMapVars(setting) {
 }
 
 function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3, hdStats) {
-	if (!getPageSetting('spamMessages').map_Details) return;
+	const mapType = mapName.includes('Destack') ? 'map_Destacking' : 'map_Details';
+	if (!getPageSetting('spamMessages')[mapType]) return;
 	if (!getPageSetting('autoMaps')) return;
 	if (!mapName) return;
 	if (mapName === 'HD Farm' && extra3 === 'hitsSurvived') mapName = 'Hits Survived';
@@ -3408,5 +3409,5 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3, hd
 		message += " Finished with enough damage to get " + extra + "/3 stacks.";
 	}
 
-	debug(message);
+	debug(message, mapType);
 }

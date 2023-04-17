@@ -330,40 +330,43 @@ function debug(a, b, c) {
 		case null:
 			break;
 		case 'general':
-			p = settingArray.general;
+			p = settingArray[b];
 			break;
 		case 'upgrades':
-			p = settingArray.upgrades;
+			p = settingArray[b];
 			break;
 		case 'equips':
-			p = settingArray.equipment;
+			p = settingArray[b];
 			break;
 		case 'buildings':
-			p = settingArray.buildings;
+			p = settingArray[b];
 			break;
 		case 'jobs':
-			p = settingArray.jobs;
+			p = settingArray[b];
 			break;
 		case 'maps':
-			p = settingArray.maps;
+			p = settingArray[b];
 			break;
 		case 'fragment':
-			p = settingArray.fragment;
+			p = settingArray[b];
 			break;
-		case 'mapDetails':
-			p = settingArray.map_Details;
+		case 'map_Details':
+			p = settingArray[b];
+			break;
+		case 'map_Destacking':
+			p = settingArray[b];
 			break;
 		case 'other':
-			p = settingArray.other;
+			p = settingArray[b];
 			break;
 		case 'zone':
-			p = settingArray.zone;
+			p = settingArray[b];
 			break;
 		case 'exotic':
-			p = settingArray.exotic;
+			p = settingArray[b];
 			break;
 		case 'gather':
-			p = settingArray.gather;
+			p = settingArray[b];
 			break;
 	}
 	p && (console.log(timeStamp() + ' ' + a), message2(a, 'AutoTrimps', c, b))

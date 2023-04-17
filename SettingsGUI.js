@@ -2214,6 +2214,7 @@ function initializeAllSettings() {
 			equipment: false,
 			maps: false,
 			map_Details: false,
+			map_Destacking: false,
 			other: false,
 			buildings: false,
 			jobs: false,
@@ -3854,6 +3855,12 @@ function updateATVersion() {
 			changelog.push("Added an alternative to C2/C3 Runner % input, there's now a toggle to swap it to set end zone values where it'll start a run when beneath that value.<br>\
 			Added heirloom swapping settings for Mayhem, Pandemonium, and Desolation.<br>\
 			Void Map 'Max Tenacity' setting has been renamed 'Max Map Bonus' and now factors in both max map bonus & max tenacity.")
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.1') {
+			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (tempSettings.spamMessages !== undefined)
+				autoTrimpSettings['spamMessages'].value.map_Destacking = tempSettings.spamMessages.value.map_Details;
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;

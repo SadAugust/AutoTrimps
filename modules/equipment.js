@@ -362,7 +362,7 @@ function autoEquip(hdStats) {
 
 	if (game.global.universe === 1 && needGymystic() && canAffordTwoLevel('Gymystic')) {
 		buyUpgrade('Gymystic', true, true);
-		debug('Upgrading Gymystic', "equips", '*upload');
+		debug('Upgrading Gymystic', 'equipment', '*upload');
 	}
 
 	if (
@@ -408,12 +408,12 @@ function autoEquip(hdStats) {
 			if (!game.equipment[equip].locked) {
 				if (alwaysLvl2 && game.equipment[equip].level < 2) {
 					buyEquipment(equip, null, true, 1);
-					debug('Upgrading ' + '1' + ' ' + equip, "equips", '*upload3');
+					debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
 				}
 				if (alwaysPandemonium && challengeActive('Pandemonium')) {
 					if (game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
 					buyEquipment(equip, null, true, 1);
-					debug('Upgrading ' + '1' + ' ' + equip, "equips", '*upload3');
+					debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
 				}
 			}
 		}
@@ -478,11 +478,11 @@ function autoEquip(hdStats) {
 						if (!game.equipment[equipName].locked) {
 							if (equipPrestige) {
 								buyUpgrade(equipmentList[equipName].Upgrade, true, true)
-								debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, "equips", '*upload');
+								debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
 							}
 							else if (maxCanAfford > 0) {
 								buyEquipment(equipName, null, true, maxCanAfford)
-								debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), "equips", '*upload3');
+								debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), 'equipment', '*upload3');
 								keepBuying = true;
 							}
 							hdStats.hdRatio = calcHDRatio(game.global.world, 'world');
