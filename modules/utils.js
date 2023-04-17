@@ -335,7 +335,7 @@ function debug(a, b, c) {
 		case 'upgrades':
 			p = settingArray[b];
 			break;
-		case 'equips':
+		case 'equipment':
 			p = settingArray[b];
 			break;
 		case 'buildings':
