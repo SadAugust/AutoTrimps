@@ -545,10 +545,10 @@ function equalityManagement() {
 	var runningBerserk = challengeActive('Berserk');
 	var runningExperienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	var runningGlass = challengeActive('Glass');
-	var runningDesolation = challengeActive('Desolation') && mapping;
+	var runningDesolation = challengeActive('Desolation');
 	var runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
 
-	if (runningDesolation && mapSettings.equality && getPageSetting('autoMaps')) {
+	if (runningDesolation && mapping && mapSettings.equality && getPageSetting('autoMaps')) {
 		game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
 		manageEqualityStacks();
 		updateEqualityScaling();
@@ -631,10 +631,8 @@ function equalityManagement() {
 	if (runningExperienced) fastEnemy = false;
 	if (runningGlass) fastEnemy = true;
 	if (runningBerserk) fastEnemy = true;
-	if (runningDesolation) fastEnemy = true;
 	if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
 	if (runningRevenge) fastEnemy = true;
-
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
 	if (runningDuel && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > remainingHealth(true) && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {
 		game.portal.Equality.disabledStackCount = 0;
@@ -698,7 +696,7 @@ function equalityManagement() {
 					suicideTrimps(true);
 					suicideTrimps(true);
 				}
-				else if (game.global.mapsUnlocked && mapping && currentCell > 0 && type !== 'void' && getCurrentMapObject().location !== 'Darkness' && (!runningQuest && game.global.titimpLeft === 0)) {
+				else if (mapping && currentCell > 0 && type !== 'void' && getCurrentMapObject().location !== 'Darkness' && (!runningQuest && game.global.titimpLeft === 0)) {
 					suicideTrimps(true);
 					rRunMap();
 				}
