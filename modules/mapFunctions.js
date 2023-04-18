@@ -2409,102 +2409,6 @@ function hypothermia(hdStats) {
 	return farmingDetails;
 }
 
-function smithless() {
-
-	var shouldSmithless = false;
-	var mapAutoLevel = Infinity;
-
-	const mapName = 'Smithless Farm';
-	const farmingDetails = {
-		shouldRun: false,
-		mapName: mapName
-	};
-
-	if (!challengeActive('Smithless') || !getPageSetting('smithless')) return farmingDetails;
-
-	if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
-
-		var smithlessJobRatio = '0,0,1,0';
-		var smithlessSpecial = getAvailableSpecials('lmc', true);
-		var smithlessMax = game.global.mapBonus != 10 ? 10 : null;
-		var smithlessMin = game.global.mapBonus != 10 ? 0 : null;
-
-		if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-			game.global.mapRunCounter = mapRepeats;
-			mapRepeats = 0;
-		}
-		var autoLevel_Repeat = mapSettings.levelCheck;
-		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, smithlessSpecial, smithlessMax, smithlessMin);
-		if (mapAutoLevel !== Infinity) {
-			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
-			smithlessMapLevel = mapAutoLevel;
-		}
-
-		var name = game.global.gridArray[0].name
-		var gammaDmg = gammaBurstPct;
-		var equalityAmt = equalityQuery(name, game.global.world, 1, 'world', 1, 'gamma')
-		var ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
-		var ourDmgTenacity = ourDmg;
-
-		//Map Bonus
-		if (game.global.mapBonus > 0 && game.global.mapBonus !== 10) {
-			ourDmgTenacity /= 1 + 0.2 * game.global.mapBonus;
-			ourDmgTenacity *= 5;
-		}
-		//Tenacity
-		if (game.portal.Tenacity.radLevel > 0) {
-			if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
-				ourDmgTenacity /= game.portal.Tenacity.getMult();
-				ourDmgTenacity *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
-			}
-		}
-
-		ourDmgTenacity *= getZoneMinutes() > 100 ? 1 : 1.5;
-		if (equipsToGet((game.global.world + smithlessMapLevel)) > 0) ourDmgTenacity *= 1000;
-
-		var totalDmgTenacity = (ourDmgTenacity * 2 + (ourDmgTenacity * gammaDmg * 2))
-
-		var enemyHealth = calcEnemyHealthCore('world', game.global.world, 1, name);
-		enemyHealth *= 3e15;
-		const smithyThreshhold = [1, 0.01, 0.000001];
-		const smithyThreshholdIndex = [0.000001, 0.01, 1];
-
-		while (smithyThreshhold.length > 0 && totalDmgTenacity < (enemyHealth * smithyThreshhold[0])) {
-			smithyThreshhold.shift();
-		}
-
-		if (smithyThreshhold.length === 0) return farmingDetails;
-
-		var totalDmg = (ourDmg * 2 + (ourDmg * gammaDmg * 2))
-		var damageTarget = (enemyHealth * smithyThreshhold[0]) / totalDmg;
-
-		if (totalDmg < enemyHealth) {
-			shouldSmithless = true;
-		}
-
-		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== smithlessMapLevel || (getCurrentMapObject().bonus !== smithlessSpecial && (getCurrentMapObject().bonus !== undefined && smithlessSpecial !== '0')));
-		var status = 'Smithless: Want ' + damageTarget.toFixed(2) + 'x more damage for ' + (smithyThreshholdIndex.indexOf(smithyThreshhold[0]) + 1) + '/3';
-
-		farmingDetails.shouldRun = shouldSmithless;
-		farmingDetails.mapName = mapName;
-		farmingDetails.mapLevel = smithlessMapLevel;
-		farmingDetails.autoLevel = true;
-		farmingDetails.special = smithlessSpecial;
-		farmingDetails.jobRatio = smithlessJobRatio;
-		farmingDetails.damageTarget = damageTarget;
-		farmingDetails.repeat = !repeat;
-		farmingDetails.status = status;
-
-		if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
-			mappingDetails(mapName, smithlessMapLevel, smithlessSpecial, (smithyThreshholdIndex.indexOf(smithyThreshhold[0]) + 1));
-			resetMapVars();
-		}
-
-	}
-
-	return farmingDetails;
-}
-
 MODULES.mapFunctions.challengeContinueRunning = false;
 
 function desolation(hdStats, forceDestack) {
@@ -2603,6 +2507,102 @@ function desolation(hdStats, forceDestack) {
 		mappingDetails(mapName, desolationMapLevel, desolationSpecial);
 		resetMapVars();
 	}
+	return farmingDetails;
+}
+
+function smithless() {
+
+	var shouldSmithless = false;
+	var mapAutoLevel = Infinity;
+
+	const mapName = 'Smithless Farm';
+	const farmingDetails = {
+		shouldRun: false,
+		mapName: mapName
+	};
+
+	if (!challengeActive('Smithless') || !getPageSetting('smithless')) return farmingDetails;
+
+	if (game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith) {
+
+		var smithlessJobRatio = '0,0,1,0';
+		var smithlessSpecial = getAvailableSpecials('lmc', true);
+		var smithlessMax = game.global.mapBonus != 10 ? 10 : null;
+		var smithlessMin = game.global.mapBonus != 10 ? 0 : null;
+
+		if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
+			game.global.mapRunCounter = mapRepeats;
+			mapRepeats = 0;
+		}
+		var autoLevel_Repeat = mapSettings.levelCheck;
+		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, smithlessSpecial, smithlessMax, smithlessMin);
+		if (mapAutoLevel !== Infinity) {
+			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+			smithlessMapLevel = mapAutoLevel;
+		}
+
+		var name = game.global.gridArray[0].name
+		var gammaDmg = gammaBurstPct;
+		var equalityAmt = equalityQuery(name, game.global.world, 1, 'world', 1, 'gamma')
+		var ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
+		var ourDmgTenacity = ourDmg;
+
+		//Map Bonus
+		if (game.global.mapBonus > 0 && game.global.mapBonus !== 10) {
+			ourDmgTenacity /= 1 + 0.2 * game.global.mapBonus;
+			ourDmgTenacity *= 5;
+		}
+		//Tenacity
+		if (game.portal.Tenacity.radLevel > 0) {
+			if (!(game.portal.Tenacity.getMult() === Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness")))) {
+				ourDmgTenacity /= game.portal.Tenacity.getMult();
+				ourDmgTenacity *= Math.pow(1.4000000000000001, getPerkLevel("Tenacity") + getPerkLevel("Masterfulness"));
+			}
+		}
+
+		ourDmgTenacity *= getZoneMinutes() > 100 ? 1 : 1.5;
+		if (equipsToGet((game.global.world + smithlessMapLevel)) > 0) ourDmgTenacity *= 1000;
+
+		var totalDmgTenacity = (ourDmgTenacity * 2 + (ourDmgTenacity * gammaDmg * 2))
+
+		var enemyHealth = calcEnemyHealthCore('world', game.global.world, 1, name);
+		enemyHealth *= 3e15;
+		const smithyThreshhold = [1, 0.01, 0.000001];
+		const smithyThreshholdIndex = [0.000001, 0.01, 1];
+
+		while (smithyThreshhold.length > 0 && totalDmgTenacity < (enemyHealth * smithyThreshhold[0])) {
+			smithyThreshhold.shift();
+		}
+
+		if (smithyThreshhold.length === 0) return farmingDetails;
+
+		var totalDmg = (ourDmg * 2 + (ourDmg * gammaDmg * 2))
+		var damageTarget = (enemyHealth * smithyThreshhold[0]) / totalDmg;
+
+		if (totalDmg < enemyHealth) {
+			shouldSmithless = true;
+		}
+
+		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== smithlessMapLevel || (getCurrentMapObject().bonus !== smithlessSpecial && (getCurrentMapObject().bonus !== undefined && smithlessSpecial !== '0')));
+		var status = 'Smithless: Want ' + damageTarget.toFixed(2) + 'x more damage for ' + (smithyThreshholdIndex.indexOf(smithyThreshhold[0]) + 1) + '/3';
+
+		farmingDetails.shouldRun = shouldSmithless;
+		farmingDetails.mapName = mapName;
+		farmingDetails.mapLevel = smithlessMapLevel;
+		farmingDetails.autoLevel = true;
+		farmingDetails.special = smithlessSpecial;
+		farmingDetails.jobRatio = smithlessJobRatio;
+		farmingDetails.damageTarget = damageTarget;
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
+
+		if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
+			mappingDetails(mapName, smithlessMapLevel, smithlessSpecial, (smithyThreshholdIndex.indexOf(smithyThreshhold[0]) + 1));
+			resetMapVars();
+		}
+
+	}
+
 	return farmingDetails;
 }
 
@@ -2819,7 +2819,7 @@ function FarmingDecision(hdStats) {
 	}
 
 	//If in desolation then check if we should destack before farming.
-	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation'))
+	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && getPageSetting('desolation') && game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation'))
 		farmingDetails = desolation(hdStats, true);
 
 	return farmingDetails;
