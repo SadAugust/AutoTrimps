@@ -2229,8 +2229,9 @@ function glass() {
 	}
 
 	//Gamma burst info
-	var gammaTriggerStacks = gammaMaxStacks(true);
+	var gammaTriggerStacks = gammaMaxStacks();
 	var gammaToTrigger = gammaTriggerStacks - game.heirlooms.Shield.gammaBurst.stacks;
+	if (game.global.mapsActive) gammaToTrigger = Infinity;
 	var gammaDmg = gammaBurstPct;
 	var canGamma = gammaToTrigger <= 1 ? true : false;
 	var damageGoal = 2;
@@ -2251,17 +2252,18 @@ function glass() {
 	else if (!canGamma && (ourDmg * damageGoal) < enemyHealth) {
 		mapName += 'Farming'
 		shouldFarm = true;
+		MODULES.mapFunctions.challengeContinueRunning = false;
 	}
-	//Checking if we can clear next zone.
+	//Checking if we can clear +0 maps on the next zone.
 	else if (game.global.lastClearedCell + 2 === 100) {
 		equalityAmt = equalityQuery('Snimp', game.global.world + 1, 20, 'map', 0.75, 'gamma');
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
-		if (glassStacks <= gammaTriggerStacks) ourDmg *= gammaDmg;
 		enemyHealth = calcEnemyHealthCore('map', game.global.world + 1, 20, 'Snimp') * .75;
 		mapName += 'Farming'
 		//Checking if we can clear current zone.
 		if ((ourDmg * damageGoal) < enemyHealth) {
 			shouldFarm = true;
+			MODULES.mapFunctions.challengeContinueRunning = false;
 		}
 	}
 
@@ -2505,7 +2507,7 @@ function smithless() {
 
 MODULES.mapFunctions.challengeContinueRunning = false;
 
-function desolation(hdStats) {
+function desolation(hdStats, forceDestack) {
 
 	const mapName = 'Desolation Destacking';
 	const farmingDetails = {
@@ -2529,6 +2531,12 @@ function desolation(hdStats) {
 	var sliders = [9, 9, 9];
 	var biome = getBiome();
 	var equality = false;
+
+	//Forcing destack before doing any farmings.
+	if (forceDestack) {
+		destackOnlyZone = game.global.world;
+		destackStacks = 0;
+	}
 
 	if (MODULES.mapFunctions.challengeContinueRunning || (game.challenges.Desolation.chilled >= destackStacks && (hdStats.hdRatio > destackHits || game.global.world >= destackZone || game.global.world >= destackOnlyZone)))
 		shouldDesolation = true;
@@ -2802,13 +2810,17 @@ function FarmingDecision(hdStats) {
 		smithless(),
 		wither()
 	];
-
 	for (const map of mapTypes) {
 		if (map.shouldRun) {
 			map.levelCheck = map.autoLevel ? map.mapLevel : Infinity;
-			return map;
+			farmingDetails = map;
+			break;
 		}
 	}
+
+	//If in desolation then check if we should destack before farming.
+	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation'))
+		farmingDetails = desolation(hdStats, true);
 
 	return farmingDetails;
 }

@@ -109,7 +109,7 @@ function firstGiga(forced) {
 	setPageSetting('DeltaGigastation', delta);
 
 	//Log
-	debug("Auto Gigastation: Setting pattern to " + base + "+" + delta, "general", "*rocket");
+	debug("Auto Gigastation: Setting pattern to " + base + "+" + delta, "buildings", "*rocket");
 
 	return true;
 }
@@ -139,6 +139,7 @@ function buyUpgrades() {
 			else if (game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation'))) continue;
 		}
 
+		if (upgrade === 'Gigastation' && !getPageSetting('buildingsType')) continue;
 		//Other
 		if (upgrade == 'Shieldblock' && !getPageSetting('equipShieldBlock')) continue;
 		if (upgrade == 'Gigastation' && !fuckbuildinggiga && (game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('FirstGigastation'))) continue;
