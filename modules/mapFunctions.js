@@ -3278,7 +3278,8 @@ function getAvailableSpecials(special, skipCaches) {
 		if (typeof mapSpecialModifierConfig[mod] === 'undefined') continue;
 		if ((mod === 'lmc' || mod === 'smc') && challengeActive('Transmute')) mod = mod.charAt(0) + "wc";
 		if (skipCaches && mod === 'hc') continue;
-		if (mapSpecialModifierConfig[mod][unlocksAt] <= hze) {
+		let unlock = mapSpecialModifierConfig[mod].name.includes('Research') ? mapSpecialModifierConfig[mod].unlocksAt2() : mapSpecialModifierConfig[mod][unlocksAt];
+		if (unlock <= hze) {
 			bestMod = mod;
 			break;
 		}

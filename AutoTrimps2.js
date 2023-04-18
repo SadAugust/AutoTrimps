@@ -38,15 +38,9 @@ var resourceNeeded = {
 	metal: 0,
 	science: 0
 };
-var breedFire = false;
 
 var baseBlock = 0;
 var baseHealth = 0;
-
-var preBuyAmt;
-var preBuyFiring;
-var preBuyTooltip;
-var preBuymaxSplit;
 
 var currentworld = 0;
 var lastrunworld = 0;
@@ -58,12 +52,9 @@ var currentHZE = 0;
 var lastHZE = 0;
 var aWholeNewHZE = false;
 
-var needGymystic = true;
 var heirloomFlag = false;
 var heirloomCache = game.global.heirloomsExtra.length;
 var magmiteSpenderChanged = false;
-var lastHeliumZone = 0;
-var lastRadonZone = 0;
 
 var autoLevelCurrent = 0;
 var challengeCurrentZone = -1;
@@ -404,9 +395,7 @@ function mainCleanup() {
 	}
 
 	if (currentworld == 1 && aWholeNewWorld) {
-		lastHeliumZone = 0;
 		zonePostpone = 0;
-		lastRadonZone = 0;
 		if (!game.upgrades.Battle.done) {
 			updateButtonText();
 			resetSettingsPortal();
