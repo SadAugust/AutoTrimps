@@ -216,8 +216,10 @@ function heirloomShieldToEquip(mapType, query) {
 	if (voidActive && query) {
 		voidPBSwap =
 			game.global.universe === 2 && getPageSetting('heirloomVoidSwap') &&
-			//Not at final map cell
-			game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
+			//Not running fast challenge
+			!challengeActive('Glass') && !challengeActive('Berserk') && !challengeActive('Archaeology') && (!challengeActive('Quest') && currQuest() !== 8)
+		//Not at final map cell
+		game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
 			//Current enemy is slow
 			!fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
 			//Next cell is fast

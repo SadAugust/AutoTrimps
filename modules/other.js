@@ -633,6 +633,7 @@ function equalityManagement() {
 	if (runningBerserk) fastEnemy = true;
 	if (runningDuel && game.challenges.Duel.enemyStacks < 10) fastEnemy = true;
 	if (runningRevenge) fastEnemy = true;
+
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
 	if (runningDuel && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > remainingHealth(true) && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {
 		game.portal.Equality.disabledStackCount = 0;
@@ -680,14 +681,14 @@ function equalityManagement() {
 					enemyDmgEquality *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 			}
 			//Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
-			if (voidPBSwap && !fastEnemy && calcOurDmg('max', i, false, 'void', 'force', 0, true) > enemyHealth && (typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' || game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) && (getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
+			if (voidPBSwap && !runningGlass && !fastEnemy && calcOurDmg('max', i, false, 'void', 'force', 0, true) > enemyHealth && (typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' || game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) && (getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
 				game.portal.Equality.disabledStackCount = maxEquality;
 				while (calcOurDmg('max', i, false, 'void', 'force', 0, true) > getCurrentEnemy().health && i < maxEquality) {
 					i++;
 				}
 				continue;
 			}
-			if (!fastEnemy && !runningGlass && !runningBerserk && !runningArchaeology && !runningQuest) {
+			if (!fastEnemy) {
 				game.portal.Equality.disabledStackCount = i;
 				break;
 			}

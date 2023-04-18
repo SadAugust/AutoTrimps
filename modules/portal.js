@@ -54,7 +54,13 @@ function autoPortal() {
 					}
 					MODULES.mapFunctions.portalAfterVoids = true;
 				}
-				if (MODULES.mapFunctions.portalAfterVoids) return;
+				if (MODULES.mapFunctions.portalAfterVoids) {
+					if (game.global.spireActive) {
+						debug("Exiting Spire to run voids faster.");
+						endSpire();
+					}
+					return;
+				}
 				zonePostpone += 1;
 				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
 				cancelTooltip();
@@ -170,7 +176,13 @@ function dailyAutoPortal() {
 					}
 					MODULES.mapFunctions.portalAfterVoids = true;
 				}
-				if (MODULES.mapFunctions.portalAfterVoids) return;
+				if (MODULES.mapFunctions.portalAfterVoids) {
+					if (game.global.spireActive) {
+						debug("Exiting Spire to run voids faster.");
+						endSpire();
+					}
+					return;
+				}
 				zonePostpone += 1;
 				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
 				cancelTooltip();
@@ -589,7 +601,7 @@ function resetmapvars() {
 	MODULES.mapFunctions.prestigeFragMapBought = false;
 	MODULES.mapFunctions.prestigeRunningMaps = false;
 	MODULES.mapFunctions.prestigeRaidZone = 0;
-	MODULES.mapFunctions.desolationContinueRunning = false;
+	MODULES.mapFunctions.challengeContinueRunning = false;
 
 	//Auto Level variables
 	mapRepeats = 0;

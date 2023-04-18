@@ -6,6 +6,7 @@ MODULES.mapFunctions.rVoidHDInfo = '0_0_0';
 MODULES.mapFunctions.boneCharge = false;
 MODULES.mapFunctions.portalAfterVoids = false;
 MODULES.mapFunctions.portalZone = Infinity;
+MODULES.mapFunctions.hasHealthFarmed = '';
 MODULES.mapFunctions.workerRatio = null;
 MODULES.mapFunctions.runUniqueMap = '';
 
@@ -423,6 +424,7 @@ function voidMaps(hdStats) {
 		module.voidVHDRatio = Infinity;
 		module.rVoidHDInfo = '0_0_0';
 		module.portalAfterVoids = false;
+		module.voidTrigger = 'None';
 		//Setting portal zone to current zone if setting calls for it
 		if (shouldPortal) module.portalZone = game.global.world;
 	}
@@ -2200,7 +2202,7 @@ function glass() {
 	var shouldFarm = false;
 	var mapAutoLevel = Infinity;
 
-	const mapName = "Glass Destacking";
+	var mapName = 'Glass ';
 	const farmingDetails = {
 		shouldRun: false,
 		mapName: mapName
@@ -2213,6 +2215,7 @@ function glass() {
 	var glassStacks = getPageSetting('glassStacks');
 	if (glassStacks <= 0) glassStacks = Infinity;
 
+	//Auto level junk - Maybe pop this into its own function?
 	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
 		game.global.mapRunCounter = mapRepeats;
 		mapRepeats = 0;
@@ -2226,7 +2229,8 @@ function glass() {
 	}
 
 	//Gamma burst info
-	var gammaToTrigger = gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks;
+	var gammaTriggerStacks = gammaMaxStacks(true);
+	var gammaToTrigger = gammaTriggerStacks - game.heirlooms.Shield.gammaBurst.stacks;
 	var gammaDmg = gammaBurstPct;
 	var canGamma = gammaToTrigger <= 1 ? true : false;
 	var damageGoal = 2;
@@ -2234,29 +2238,51 @@ function glass() {
 	var equalityAmt = equalityQuery('Snimp', game.global.world, 20, 'map', 0.75, 'gamma');
 	var ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
 	var enemyHealth = calcEnemyHealthCore('map', game.global.world, 20, 'Snimp') * .75;
+	if (glassStacks <= gammaTriggerStacks) ourDmg *= gammaDmg;
 
 	//Destacking
-	if ((ourDmg * damageGoal) > enemyHealth && (game.challenges.Glass.shards >= glassStacks || (game.global.mapsActive && game.challenges.Glass.shards > 2))) {
-		special = 'fa';
+	if (!canGamma && MODULES.mapFunctions.challengeContinueRunning || ((ourDmg * damageGoal) > enemyHealth && game.challenges.Glass.shards >= glassStacks)) {
+		special = getAvailableSpecials('fa');
 		shouldFarm = true;
 		mapLevel = 0;
+		mapName += 'Destacking'
 	}
-	//Checking if we can clear next zone or if we need to farm for our optimal level.
-	else if (game.global.lastClearedCell + 2 === 100 || (game.challenges.Glass.shards >= glassStacks)) {
+	//Farming if we don't have enough damage to clear stacks!
+	else if (!canGamma && (ourDmg * damageGoal) < enemyHealth) {
+		mapName += 'Farming'
+		shouldFarm = true;
+	}
+	//Checking if we can clear next zone.
+	else if (game.global.lastClearedCell + 2 === 100) {
 		equalityAmt = equalityQuery('Snimp', game.global.world + 1, 20, 'map', 0.75, 'gamma');
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
+		if (glassStacks <= gammaTriggerStacks) ourDmg *= gammaDmg;
 		enemyHealth = calcEnemyHealthCore('map', game.global.world + 1, 20, 'Snimp') * .75;
-		special = 'lmc';
+		mapName += 'Farming'
 		//Checking if we can clear current zone.
 		if ((ourDmg * damageGoal) < enemyHealth) {
 			shouldFarm = true;
 		}
 	}
 
+	if (MODULES.mapFunctions.challengeContinueRunning || (game.global.mapsActive && mapSettings.mapName === 'Glass Destacking')) {
+		if (game.challenges.Glass.shards > 0) {
+			shouldFarm = true;
+			MODULES.mapFunctions.challengeContinueRunning = true;
+		}
+		else {
+			if (!game.jobs.Explorer.locked && game.challenges.Glass.shards === 0) recycleMap_AT();
+			MODULES.mapFunctions.challengeContinueRunning = false;
+			shouldFarm = false;
+		}
+	}
+
 	var damageTarget = enemyHealth / damageGoal;
 
 	var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== mapLevel || (getCurrentMapObject().bonus !== special && (getCurrentMapObject().bonus !== undefined && special !== '0')));
-	var status = game.global.challengeActive + ' Farm: Curr&nbsp;Dmg:&nbsp;' + prettify(ourDmg) + " Goal&nbsp;Dmg:&nbsp;" + prettify(damageTarget);
+	var status;
+	if (mapName.includes('Destack')) status = mapName + " " + game.challenges.Glass.shards + " stacks remaining";
+	else status = game.global.challengeActive + ' Farm: Curr&nbsp;Dmg:&nbsp;' + prettify(ourDmg) + " Goal&nbsp;Dmg:&nbsp;" + prettify(damageTarget);
 
 	farmingDetails.shouldRun = shouldFarm;
 	farmingDetails.mapName = mapName;
@@ -2477,7 +2503,7 @@ function smithless() {
 	return farmingDetails;
 }
 
-MODULES.mapFunctions.desolationContinueRunning = false;
+MODULES.mapFunctions.challengeContinueRunning = false;
 
 function desolation(hdStats) {
 
@@ -2504,7 +2530,7 @@ function desolation(hdStats) {
 	var biome = getBiome();
 	var equality = false;
 
-	if (MODULES.mapFunctions.desolationContinueRunning || (game.challenges.Desolation.chilled >= destackStacks && (hdStats.hdRatio > destackHits || game.global.world >= destackZone || game.global.world >= destackOnlyZone)))
+	if (MODULES.mapFunctions.challengeContinueRunning || (game.challenges.Desolation.chilled >= destackStacks && (hdStats.hdRatio > destackHits || game.global.world >= destackZone || game.global.world >= destackOnlyZone)))
 		shouldDesolation = true;
 
 	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
@@ -2539,14 +2565,14 @@ function desolation(hdStats) {
 		equality = true;
 	}
 
-	if (MODULES.mapFunctions.desolationContinueRunning || (game.global.mapsActive && mapSettings.mapName === 'Desolation Destacking')) {
+	if (MODULES.mapFunctions.challengeContinueRunning || (game.global.mapsActive && mapSettings.mapName === 'Desolation Destacking')) {
 		if (game.challenges.Desolation.chilled > 0) {
 			shouldDesolation = true;
-			MODULES.mapFunctions.desolationContinueRunning = true;
+			MODULES.mapFunctions.challengeContinueRunning = true;
 		}
 		else {
 			if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) recycleMap_AT();
-			MODULES.mapFunctions.desolationContinueRunning = false;
+			MODULES.mapFunctions.challengeContinueRunning = false;
 			shouldDesolation = false;
 		}
 	}
@@ -2583,10 +2609,9 @@ function hdFarm(hdStats, skipHealthCheck) {
 	var shouldHealthFarm = false;
 	const hitsSurvivedSetting = isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
 	var hitsSurvived = Infinity;
-	if (hitsSurvivedSetting > 0) {
+	if (hitsSurvivedSetting > 0 && !skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== (getTotalPortals() + "_" + game.global.world)) {
 		var hitsSurvived = hdStats.hitsSurvived;
 		if (hitsSurvived < hitsSurvivedSetting) shouldHealthFarm = true;
-		if (skipHealthCheck) shouldHealthFarm = false;
 	}
 	if (!getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm) return farmingDetails;
 
@@ -2626,7 +2651,7 @@ function hdFarm(hdStats, skipHealthCheck) {
 				level: -1,
 				world: game.global.world
 			}
-			rHDFmapCap = Infinity;
+			rHDFmapCap = 500;
 			rHDFMax = game.global.mapBonus < getPageSetting('mapBonusHealth') ? 10 : null;
 			rHDFMin = game.global.mapBonus < getPageSetting('mapBonusHealth') ? (game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0) : null;
 		} else {
@@ -2690,8 +2715,9 @@ function hdFarm(hdStats, skipHealthCheck) {
 			status = 'HD&nbsp;Farm&nbsp;to:&nbsp;';
 			if (hdType !== 'maplevel') status += equipfarmdynamicHD(rHDFSettings).toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);
 			else status += '<br>' + (rHDFSettings.hdBase > 0 ? "+" : "") + rHDFSettings.hdBase + ' auto level';
-			status += '<br>\ Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + rHDFmaxMaps;
 		}
+		status += '<br>\ Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + rHDFmaxMaps;
+
 		farmingDetails.shouldRun = shouldHDFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rHDFMapLevel;
@@ -2771,8 +2797,8 @@ function FarmingDecision(hdStats) {
 		hdFarm(hdStats),
 		voidMaps(hdStats),
 		quagmire(hdStats),
-		glass(),
 		mapBonus(hdStats),
+		glass(),
 		smithless(),
 		wither()
 	];
@@ -3345,7 +3371,11 @@ function resetMapVars(setting) {
 	mappingTime = 0;
 	mapRepeats = 0;
 	game.global.mapRunCounter = 0;
-	if (setting) setting.done = (totalPortals + "_" + game.global.world);
+
+	if (setting) {
+		if (setting.hdType === 'hitsSurvived') MODULES.mapFunctions.hasHealthFarmed = (totalPortals + "_" + game.global.world);
+		setting.done = (totalPortals + "_" + game.global.world);
+	}
 	saveSettings();
 }
 
