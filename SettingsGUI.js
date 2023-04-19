@@ -230,15 +230,16 @@ function initializeAllSettings() {
 			function () { return ('Auto Allocate Perks') },
 			function () { return ('Uses a basic version of Perky/Surky (if you want more advanced settings import your save into the desired tool).') },
 			'boolean', false, null, 'Core', [1, 2]);
-		createSetting('downloadSaves',
-			function () { return ('Download Saves') },
-			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
-			'boolean', false, null, 'Core', [1, 2]);
 		createSetting('presetSwap',
 			function () { return ('Preset Swapping') },
 			function () { return ('Will automatically swap Surky presets when portaling into runs. Fillers will load \'Easy Radon Challenge\', Dailies will load \'Difficult Radon Challenge\', and \'Push/C3/Mayhem\' when portaling into any C3s or Mayhem-like challenges.') },
 			'boolean', false, null, 'Core', [2],
 			function () { return (getPageSetting('autoPerks')) });
+		createSetting('presetSwapMutators',
+			function () { return ('Preset Swap Mutators') },
+			function () { return ('Will automatically load the preset that corresponds to your run type after auto portaling.') },
+			'boolean', false, null, 'Core', [2],
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 201) });
 
 		createSetting('radonsettings',
 			function () { return (['Helium', 'Radon']) },
@@ -2256,14 +2257,30 @@ function initializeAllSettings() {
 			function () { return ('Download for debug') },
 			function () { return ('Will download both your save and AT settings so that they can be debugged easier.') },
 			'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [1, 2]);
-		createSetting('spreadsheet',
+		createSetting('downloadSaves',
+			function () { return ('Download Saves') },
+			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
+			'boolean', false, null, 'Import Export', [1, 2]);
+		/* createSetting('spreadsheet',
 			function () { return ('Spreadsheet Output') },
 			function () { return ('Will print a list of your current C3, SA and other relevant settings to paste into a spreadsheet. Only relevant to a select few.') },
-			'action', 'ImportExportTooltip("Spreadsheet","update")', null, 'Import Export', [1, 2]);
+			'action', 'ImportExportTooltip("Spreadsheet","update")', null, 'Import Export', [1, 2]); */
 		createSetting('CleanupAutoTrimps',
 			function () { return ('Cleanup Saved Settings') },
 			function () { return ('Deletes old values from previous versions of the script from your AutoTrimps Settings file.') },
 			'infoclick', 'CleanupAutoTrimps', null, 'Import Export', [1, 2]);
+
+
+		if (displaySpam) {
+			createSetting('presetMutations',
+				function () { return ('Spam Message Settings') },
+				function () { return ('Click to adjust settings.') },
+				'mazDefaultArray', {
+				preset1: '',
+				preset2: '',
+				preset3: '',
+			}, null, 'Import Export', [0]);
+		}
 	}
 
 	//Testing - Hidden Features for testing purposes! Please never seek these out!
@@ -3859,6 +3876,10 @@ function updateATVersion() {
 			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (tempSettings.spamMessages !== undefined)
 				autoTrimpSettings['spamMessages'].value.map_Destacking = tempSettings.spamMessages.value.map_Details;
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.2') {
+			changelog.push("Have introduced a mutator preset saving & respeccing system. There's a new setting in the 'Core' tab that will to each preset when portaling.")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;

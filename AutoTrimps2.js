@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v6.2.1',
+var ATversion = 'SadAugust v6.2.2',
 	atscript = document.getElementsByTagName("script"),
 	basepath = '',
 	modulepath = 'modules/';
@@ -245,6 +245,7 @@ function mainLoop() {
 	}
 
 	universeSwapped();
+	presetMutations();
 
 	if (ATrunning == false) return;
 	if (getPageSetting('PauseScript', 1) || game.options.menu.pauseGame.enabled) return;

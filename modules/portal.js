@@ -493,8 +493,16 @@ function doPortal(challenge, squared) {
 		}
 	}
 
-	//Reset packrat to 3 on Hypothermia
-	if (portalUniverse === 2) hypoPackratReset(challenge);
+	var preset = 0;
+
+	//Reset packrat to 3 on Hypothermia - Setup mutator respec
+	if (portalUniverse === 2) {
+		hypoPackratReset(challenge);
+		var preset = challengeSquaredMode || challenge === 'Mayhem' || challenge === 'Pandemonium' || challenge === 'Desolation' ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
+		if (getPageSetting('presetSwapMutators', 2) && autoTrimpSettings['presetMutations'].value['preset' + preset] !== '') {
+			u2Mutations.toggleRespec();
+		}
+	}
 
 	downloadSave();
 	pushData();
@@ -506,6 +514,10 @@ function doPortal(challenge, squared) {
 	zonePostpone = 0;
 	resetmapvars();
 	shouldPortal = false;
+	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
+		loadMutations(preset);
+		u2Mutations.closeTree();
+	}
 }
 
 function decaySkipMaps() {

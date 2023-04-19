@@ -2819,7 +2819,7 @@ function FarmingDecision(hdStats) {
 	}
 
 	//If in desolation then check if we should destack before farming.
-	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && getPageSetting('desolation') && game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation'))
+	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && getPageSetting('desolation') && (MODULES.mapFunctions.challengeContinueRunning || (game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation'))))
 		farmingDetails = desolation(hdStats, true);
 
 	return farmingDetails;
