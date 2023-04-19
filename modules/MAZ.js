@@ -199,9 +199,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (game.stats.highestRadLevel.valueTotal() >= 50) smithySettings.push("MP_Smithy_C3");
 		}
 
-		for (var x = 0; x < mapUnlocks.length; x++)
-		//for (var item in game.buildings) 
-		{
+		for (var x = 0; x < mapUnlocks.length; x++) {
 			tooltipText += "<tr>";
 			var item = mapUnlocks[x];
 			var setting = settingGroup[item];

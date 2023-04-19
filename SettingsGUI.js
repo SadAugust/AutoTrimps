@@ -2146,7 +2146,7 @@ function initializeAllSettings() {
 		createSetting('displayEnhancedGrid',
 			function () { return ('Enhance Grids') },
 			function () { return ('Apply slight visual enhancements to world and map grids that highlights with drop shadow all the exotic, powerful, skeletimps and other special imps.') },
-			'boolean', false, null, 'Display', [1, 2]);
+			'boolean', false, null, 'Display', [0]);
 		createSetting('displayAutoMapStatus',
 			function () { return ('AutoMap Status') },
 			function () { return ('Enables the display of the map status. Turn this off to reduce memory. ') },
@@ -2688,7 +2688,7 @@ function updateButtonText() {
 function modifyParentNode(id, style) {
 	var style = !style ? 'show' : style;
 	var elem = document.getElementById(id).parentNode.parentNode.children;
-	for (i = 0; i < elem.length; i++) {
+	for (var i = 0; i < elem.length; i++) {
 		if (document.getElementById(id).parentNode.parentNode.children[i].children[0] === undefined) {
 			continue
 		}
@@ -3436,7 +3436,7 @@ function updateCustomButtons(initialLoad) {
 		document.getElementById("tabTest").style.display = getPageSetting('gameUser') !== 'SadAugust' && getPageSetting('gameUser') !== 'Kyotie' && getPageSetting('gameUser') !== 'Test' ? "none" : "";
 	}
 
-	for (setting in autoTrimpSettings) {
+	for (var setting in autoTrimpSettings) {
 		var item = autoTrimpSettings[setting];
 		if (item === null || typeof item.id === 'undefined') continue;
 		const settingUniverse = item.universe;

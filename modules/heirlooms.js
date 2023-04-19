@@ -60,7 +60,7 @@ function worthOfHeirlooms() {
 
 	//Recycle heirlooms
 	if (recycle.length > 0) {
-		for (x = recycle.length; x !== 0; x--) {
+		for (var x = recycle.length; x !== 0; x--) {
 			selectHeirloom(recycle[x - 1], 'heirloomsExtra');
 			recycleHeirloom(true);
 		}
@@ -120,7 +120,7 @@ function autoheirlooms() {
 
 //Heirloom Swapping
 function HeirloomSearch(heirloom) {
-	for (loom of game.global.heirloomsCarried)
+	for (var loom of game.global.heirloomsCarried)
 		if (loom.name == getPageSetting(heirloom))
 			return loom;
 }
@@ -155,7 +155,7 @@ function HeirloomModSearch(heirloom, modifier) {
 		}
 		return undefined;
 	}
-	for (loom of game.global.heirloomsCarried) {
+	for (var loom of game.global.heirloomsCarried) {
 		if (loom.name == getPageSetting(heirloom)) {
 			for (var i = (loom.mods.length - 1); i > -1; i--) {
 				if (loom.mods[i][0] == modifier)

@@ -338,7 +338,7 @@ function toggleDarkGraphs() {
 function escapeATWindows(escPressed = true) {
 	var a = document.getElementById("tooltipDiv");
 	if (a.style.display != "none") return void cancelTooltip(); // old code, uncertain what it's for or why it's here.
-	for (elemId of ["autoSettings", "autoTrimpsTabBarMenu", "graphParent"]) {
+	for (var elemId of ["autoSettings", "autoTrimpsTabBarMenu", "graphParent"]) {
 		var elem = document.getElementById(elemId);
 		if (!elem) continue;
 		if (elemId === "graphParent") { // toggle Graphs window
@@ -497,7 +497,7 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 				if (activeToggles.includes("perZone")) {  // must always be first 
 					[x, time] = toggledGraphs.perZone.customFunction(portal, item, index, x);
 				}
-				for (toggle of activeToggles.filter(x => x != "perZone")) {
+				for (var toggle of activeToggles.filter(x => x != "perZone")) {
 					try { x = toggledGraphs[toggle].customFunction(portal, item, index, x, time, maxS3); }
 					catch (e) {
 						x = 0;
@@ -654,7 +654,7 @@ function showHideUnusedGraphs() {
 		const universes = graph.universe ? [graph.universe] : [1, 2]
 		for (const universe of universes) {
 			var style = "none"
-			for (portal of Object.values(portalSaveData)) {
+			for (var portal of Object.values(portalSaveData)) {
 				if (portal.perZoneData[graph.dataVar] && portal.universe === universe  // has collected data, in the right universe
 					&& new Set(portal.perZoneData[graph.dataVar].filter(x => x)).size > 1) { // and there is nonzero, variable data
 					style = ""

@@ -203,6 +203,20 @@ var fastimps =
 		"Frosnimp"
 	];
 
+var exoticImps =
+	[
+		"Chronoimp",
+		"Feyimp",
+		"Flutimp",
+		"Goblimp",
+		"Jestimp",
+		"Magnimp",
+		"Tauntimp",
+		"Titimp",
+		"Venimp",
+		"Whipimp",
+	];
+
 function remainingHealth(forceMax) {
 	var soldierHealth = game.global.soldierHealth;
 	var shieldHealth = 0;
@@ -336,7 +350,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	critChance = critChance - Math.floor(critChance);
 	if (challengeActive('Wither') || challengeActive('Glass') || challengeActive('Duel') || critChance < 0.1) critType = 'never';
 
-	for (y = maxLevel; y >= minLevel; y--) {
+	for (var y = maxLevel; y >= minLevel; y--) {
 		var mapLevel = y;
 		if (!runningUnlucky) dmgType = mapLevel > 0 ? 'min' : 'avg';
 		if (y === minLevel) {
@@ -617,7 +631,7 @@ function equalityManagement() {
 	if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100);
 
 	//Fast Enemy conditions
-	var fastEnemy = !game.global.preMapsActive && fastimps.includes(enemyName);
+	var fastEnemy = !game.global.preMapsActive && (runningDesolation && mapping ? !exoticImps.includes(enemyName) : fastimps.includes(enemyName));
 	if (type === 'world' && game.global.world > 200 && game.global.gridArray[currentCell].u2Mutation.length > 0) fastEnemy = true;
 	if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
 	if (type === 'map' && dailyExplosive) fastEnemy = true;
@@ -661,6 +675,7 @@ function equalityManagement() {
 
 	const ourEqualityModifier = game.portal.Equality.getModifier(1);
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
+	const wearingPlagueShield = game.global.ShieldEquipped.name === getPageSetting('heirloomVoidPlaguebringer');
 
 	if (enemyHealth > 0) {
 		for (var i = 0; i <= maxEquality; i++) {
@@ -692,7 +707,7 @@ function equalityManagement() {
 				game.portal.Equality.disabledStackCount = i;
 				break;
 			}
-			else if (armyReady && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.95 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
+			else if (!wearingPlagueShield && armyReady && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.95 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
 				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
 					suicideTrimps(true);
 					suicideTrimps(true);

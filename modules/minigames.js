@@ -122,7 +122,7 @@ function saveMutations() {
 	if (selectedMutPreset === 0) return;
 	var saveData = {};
 	saveData.purchaseCount = u2Mutations.purchaseCount;
-	for (item in u2Mutations.tree) {
+	for (var item in u2Mutations.tree) {
 		saveData[item] = u2Mutations.tree[item].purchased;
 	}
 	autoTrimpSettings['presetMutations'].value['preset' + selectedMutPreset] = JSON.stringify(saveData);
@@ -138,7 +138,7 @@ function loadMutations(preset) {
 
 	var saveData = JSON.parse(autoTrimpSettings['presetMutations'].value['preset' + preset]);
 	delete saveData.purchaseCount;
-	for (item in u2Mutations.tree) {
+	for (var item in u2Mutations.tree) {
 		if (item.purchased) continue;
 		if (saveData[item] === true) {
 			if (!u2Mutations.checkRequirements(item)) outerRing.push(item);
@@ -160,38 +160,40 @@ function loadMutations(preset) {
 }
 
 function presetMutations() {
+
+	if (!u2Mutations.open) return;
+	if (document.getElementById('u2MutPresetBtn1') !== null) return;
+
+	//Setting up initial variables that will be called later during for loop
 	const containerID = ['u2MutPresetBtn1', 'u2MutPresetBtn2', 'u2MutPresetBtn3', 'u2MutSave', 'u2MutLoad'];
 	const containerText = ['Filler Preset', 'Daily Preset', 'C3 Preset', 'Save', 'Load'];
-	const textID = ['u2MutPresetLabel1', 'u2MutPresetLabel2', 'u2MutPresetLabel3', 'u2MutPresetLabelSave', 'u2MutPresetLabelLoad'];
 	const onClick = ['presetMutTab(1)', 'presetMutTab(2)', 'presetMutTab(3)', 'saveMutations()', 'loadMutations(selectedMutPreset)'];
-	while (u2Mutations.open && document.getElementById('u2MutPresetBtn1') === null) {
+
+	document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
+	for (var x = 5; x > 0; x--) {
+		//Insert break to replace later
 		document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
-		for (var x = 5; x > 0; x--) {
-			//Insert break to replace later
-			document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
 
-			var u2MutContainer = document.createElement("SPAN");
-			u2MutContainer.setAttribute("style", "font-size: 1.1em; margin-top: 0.25em;");
-			u2MutContainer.setAttribute("id", containerID[x - 1]);
-			if (x > 3 && selectedMutPreset === 0) u2MutContainer.setAttribute('class', 'btn btn-lg btn-default disabled');
-			else if (x === selectedMutPreset) u2MutContainer.setAttribute('class', 'btn btn-lg btn-success');
-			else u2MutContainer.setAttribute('class', 'btn btn-lg btn-info');
-			u2MutContainer.setAttribute("onmouseover", 'tooltipAT("Perk Preset", null, event, ' + x + ', "' + containerText[x - 1] + '\")');
-			u2MutContainer.setAttribute("onmouseout", 'tooltip("hide")');
+		var u2MutContainer = document.createElement("SPAN");
+		u2MutContainer.setAttribute("style", "font-size: 1.1em; margin-top: 0.25em;");
+		u2MutContainer.setAttribute("id", containerID[x - 1]);
+		//Disable save/load buttons if no preset is selected
+		if (x > 3 && selectedMutPreset === 0)
+			u2MutContainer.setAttribute('class', 'btn btn-lg btn-default disabled');
+		//Set button class based on selected preset
+		else if (x === selectedMutPreset)
+			u2MutContainer.setAttribute('class', 'btn btn-lg btn-success');
+		else
+			u2MutContainer.setAttribute('class', 'btn btn-lg btn-info');
+		u2MutContainer.setAttribute("onmouseover", 'tooltipAT("Perk Preset", null, event, ' + x + ', "' + containerText[x - 1] + '\")');
+		u2MutContainer.setAttribute("onmouseout", 'tooltip("hide")');
+		u2MutContainer.innerHTML = containerText[x - 1];
+		u2MutContainer.setAttribute("onClick", onClick[x - 1]);
 
-			//Text
-			var u2MutText = document.createElement("DIV");
-			u2MutText.innerHTML = containerText[x - 1];
-			u2MutText.setAttribute("onClick", onClick[x - 1]);
-			u2MutText.setAttribute("id", textID[x - 1]);
-
-			//Setting up positioning
-			u2MutContainer.appendChild(u2MutText);
-
-			var u2MutColumn = document.getElementById("swapToMasteryBtn").parentNode;
-			u2MutColumn.replaceChild(u2MutContainer, document.getElementById("swapToMasteryBtn").parentNode.children[3]);
-			document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
-		}
+		var u2MutColumn = document.getElementById("swapToMasteryBtn").parentNode;
+		//Replace earlier line break with setup element & then inserting another one
+		u2MutColumn.replaceChild(u2MutContainer, document.getElementById("swapToMasteryBtn").parentNode.children[3]);
+		document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
 	}
 }
 

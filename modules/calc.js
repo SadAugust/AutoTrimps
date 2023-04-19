@@ -1014,7 +1014,7 @@ function calcEnemyBaseHealth(mapType, zone, cell, name) {
 			var row = 0;
 			var currRow = Number(String(cell)[0]) * 10;
 			if (!go && game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1) {
-				for (i = 5; 9 >= i; i++) {
+				for (var i = 5; 9 >= i; i++) {
 					if (grid[i * 10].u2Mutation.indexOf('CSP') != -1) {
 						row = (i * 10);
 						go = true;
@@ -1023,7 +1023,7 @@ function calcEnemyBaseHealth(mapType, zone, cell, name) {
 				cell += (row - currRow);
 			}
 			if (!go && game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1) {
-				for (i = 0; 5 >= i; i++) {
+				for (var i = 0; 5 >= i; i++) {
 					if (grid[i * 10].u2Mutation.indexOf('CSX') != -1) {
 						row = (i * 10);
 						go = true;

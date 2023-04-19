@@ -741,12 +741,12 @@ function tributeFarm(hdStats) {
 			var metCost = 0;
 
 			if (rTrFTributes > game.buildings.Tribute.purchased) {
-				for (x = 0; x < rTrFTributes - game.buildings.Tribute.purchased; x++) {
+				for (var x = 0; x < rTrFTributes - game.buildings.Tribute.purchased; x++) {
 					tributeCost += Math.pow(1.05, game.buildings.Tribute.purchased) * 10000;
 				}
 			}
 			if (rTrFMeteorologists > game.jobs.Meteorologist.owned) {
-				for (x = 0; x < rTrFMeteorologists - game.jobs.Meteorologist.owned; x++) {
+				for (var x = 0; x < rTrFMeteorologists - game.jobs.Meteorologist.owned; x++) {
 					metCost += Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned + x) * game.jobs.Meteorologist.cost.food[0];
 				}
 			}
@@ -2125,7 +2125,7 @@ function alchemy(hdStats) {
 			} */
 
 			//Looping through each potion level and working out their cost to calc total cost
-			for (x = potionscurrent; x < (rAFPotions.toString().replace(/[^\d,:-]/g, '')); x++) {
+			for (var x = potionscurrent; x < (rAFPotions.toString().replace(/[^\d,:-]/g, '')); x++) {
 				var potioncost = Math.pow(alchObj.potions[potion].cost[0][2], x) * alchObj.potions[potion].cost[0][1];
 				//Checking if the potion being farmed is a Potion and if so factors in compounding cost scaling from other potions owned
 				if (!alchObj.potions[potion].enemyMult) {
@@ -2145,7 +2145,7 @@ function alchemy(hdStats) {
 			else {
 				if (rAFPotions.toString().replace(/[^\d:-]/g, '') > potionscurrent) {
 					if (alchObj.canAffordPotion(alchObj.potionNames[potion])) {
-						for (z = potionscurrent; z < rAFPotions.toString().replace(/[^\d:-]/g, ''); z++) {
+						for (var z = potionscurrent; z < rAFPotions.toString().replace(/[^\d:-]/g, ''); z++) {
 							if (potion === 1) {
 								if (game.herbs[alchObj.potions[potion].cost[0][0]].cowned > potioncosttotal)
 									for (var x = potionscurrent; x < rAFPotions.toString().replace(/[^\d,:-]/g, ''); x++) {
@@ -2360,7 +2360,7 @@ function hypothermia(hdStats) {
 		var rHFBonfiresBuilt = game.challenges.Hypothermia.totalBonfires;
 		var rHFShedCost = 0;
 		//Looping through each bonfire level and working out their cost to calc total cost
-		for (x = rHFBonfiresBuilt; x < rHFBonfire; x++) {
+		for (var x = rHFBonfiresBuilt; x < rHFBonfire; x++) {
 			rHFBonfireCost = 1e10 * Math.pow(100, x);
 			rHFBonfireCostTotal += rHFBonfireCost;
 		}
@@ -2462,7 +2462,7 @@ function desolation(hdStats, forceDestack) {
 		if (game.jobs.Explorer.locked) desolationSpecial = '0';
 		biome = getBiome('fragConservation');
 		var trimpHealth = calcOurHealth(false, 'map');
-		for (y = 10; y >= 0; y--) {
+		for (var y = 10; y >= 0; y--) {
 			desolationMapLevel = y;
 			if (game.global.mapsActive && mapSettings.mapName === mapName && (getCurrentMapObject().bonus === undefined ? '0' : getCurrentMapObject().bonus) === desolationSpecial && (getCurrentMapObject().level - game.global.world) === desolationMapLevel) break;
 			if (desolationMapLevel === 0) break;
@@ -3463,4 +3463,41 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3, hd
 	}
 
 	debug(message, mapType);
+}
+
+//I hope I never use this again. Scumming for slow map enemies!
+function mapScumming() {
+
+	if (!game.global.mapsActive) return;
+	if (!getPageSetting('autoMaps')) return;
+	if (game.global.lastClearedMapCell > -1) return;
+	var slowCellTarget = 7 //getPageSetting('desolationScumTarget');
+	if (slowCellTarget > 9) slowCellTarget = 10;
+
+	//Repeats the process of exiting and re-entering maps until the first cell is slow!
+	for (var i = 0; i < 10000; i++) {
+		if (game.global.mapsActive) {
+			let mapGrid = game.global.mapGridArray;
+			let slowCount = 0;
+
+			for (var item in mapGrid) {
+				if (mapGrid[item].level % 2 === 0) continue;
+				if (hdStats.currChallenge === 'Desolation') {
+					if (exoticImps.includes(mapGrid[item].name)) slowCount++;
+				}
+				else if (!fastimps.includes(mapGrid[item].name)) slowCount++;
+			}
+
+			console.log(i + " " + slowCount);
+			let enemyName = mapGrid[game.global.lastClearedMapCell + 1].name;
+			if (slowCount > slowCellTarget || fastimps.includes(enemyName)) {
+				mapsClicked();
+				runMap();
+			}
+			else {
+				console.log(slowCount);
+				break
+			}
+		}
+	}
 }

@@ -241,7 +241,7 @@ function ImportExportTooltip(what, event, download) {
 	} else if (what == "ATModuleLoad") {
 		var mods = document.getElementById('ATModuleListDropdown');
 		var modnames = "";
-		for (script in mods.selectedOptions) {
+		for (var script in mods.selectedOptions) {
 			var $item = mods.selectedOptions[script];
 			if ($item.value != null) {
 				ATscriptLoad(modulepath, $item.value);
@@ -253,7 +253,7 @@ function ImportExportTooltip(what, event, download) {
 	} else if (what == "ATModuleUnload") {
 		var mods = document.getElementById('ATModuleListDropdown');
 		var modnames = "";
-		for (script in mods.selectedOptions) {
+		for (var script in mods.selectedOptions) {
 			var $item = mods.selectedOptions[script];
 			if ($item.value != null) {
 				ATscriptUnload($item.value);
