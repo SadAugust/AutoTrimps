@@ -3879,7 +3879,7 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.2') {
-			changelog.push("Have introduced a mutator preset saving & respeccing system. There's a new setting in the 'Core' tab that will to each preset when portaling.")
+			changelog.push("Have introduced a mutator preset saving & respeccing system. There's a new setting in the 'Core' tab that will swap your preset when portaling.")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;
