@@ -120,7 +120,7 @@ function autoheirlooms() {
 
 //Heirloom Swapping
 function HeirloomSearch(heirloom) {
-	for (var loom of game.global.heirloomsCarried)
+	for (loom of game.global.heirloomsCarried)
 		if (loom.name == getPageSetting(heirloom))
 			return loom;
 }
@@ -155,7 +155,7 @@ function HeirloomModSearch(heirloom, modifier) {
 		}
 		return undefined;
 	}
-	for (var loom of game.global.heirloomsCarried) {
+	for (loom of game.global.heirloomsCarried) {
 		if (loom.name == getPageSetting(heirloom)) {
 			for (var i = (loom.mods.length - 1); i > -1; i--) {
 				if (loom.mods[i][0] == modifier)
