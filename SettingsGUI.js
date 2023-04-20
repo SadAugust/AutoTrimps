@@ -572,7 +572,7 @@ function initializeAllSettings() {
 		createSetting('c2RunnerSettings',
 			function () { return (cinf() + ' Runner Settings') },
 			function () { return ('Click to adjust settings.') },
-			'mazArray', [], 'MAZLookalike("C2 Runner", "c2Runner", "c2Runner")', 'C2', [1, 2],
+			'mazArray', {}, 'MAZLookalike("C2 Runner", "c2Runner", "c2Runner")', 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1) });
 
 		createSetting('c2RunnerPortal',
@@ -3880,6 +3880,14 @@ function updateATVersion() {
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.2') {
 			changelog.push("Have introduced a mutator preset saving & respeccing system. There's a new setting in the 'Core' tab that will swap your preset when portaling.")
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.3') {
+			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (tempSettings.c2RunnerSettings !== undefined) {
+				autoTrimpSettings['c2RunnerSettings'].value = {};
+				autoTrimpSettings['c2RunnerSettings'].valueU2 = {};
+			}
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;

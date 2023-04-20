@@ -308,6 +308,7 @@ function setPageSetting(setting, newValue, universe) {
 	} else if (buttonIndex.indexOf(settingType) !== -1) {
 		autoTrimpSettings[setting][selected] = newValue;
 	}
+	saveSettings();
 }
 
 function shouldSpeedRun(achievement) {
