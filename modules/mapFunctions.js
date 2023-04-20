@@ -3466,16 +3466,17 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3, hd
 }
 
 //I hope I never use this again. Scumming for slow map enemies!
-function mapScumming() {
+function mapScumming(slowTarget) {
 
 	if (!game.global.mapsActive) return;
 	if (!getPageSetting('autoMaps')) return;
 	if (game.global.lastClearedMapCell > -1) return;
-	var slowCellTarget = 7 //getPageSetting('desolationScumTarget');
+	var slowCellTarget = !slowTarget ? 7 : slowTarget //getPageSetting('desolationScumTarget');
 	if (slowCellTarget > 9) slowCellTarget = 10;
 
 	//Repeats the process of exiting and re-entering maps until the first cell is slow!
 	for (var i = 0; i < 10000; i++) {
+		slowCells = {};
 		if (game.global.mapsActive) {
 			let mapGrid = game.global.mapGridArray;
 			let slowCount = 0;
@@ -3488,14 +3489,13 @@ function mapScumming() {
 				else if (!fastimps.includes(mapGrid[item].name)) slowCount++;
 			}
 
-			console.log(i + " " + slowCount);
 			let enemyName = mapGrid[game.global.lastClearedMapCell + 1].name;
-			if (slowCount > slowCellTarget || fastimps.includes(enemyName)) {
-				mapsClicked();
-				runMap();
+			if (slowCount < slowCellTarget || fastimps.includes(enemyName)) {
+				buildMapGrid(game.global.currentMapId);
+				drawGrid(true);
 			}
 			else {
-				console.log(slowCount);
+				console.log("Rerolls = " + i + " slowCount = " + slowCount);
 				break
 			}
 		}

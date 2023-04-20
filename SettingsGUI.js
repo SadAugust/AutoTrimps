@@ -1034,7 +1034,7 @@ function initializeAllSettings() {
 
 		createSetting('advancedNurseries',
 			function () { return ('Advanced Nurseries') },
-			function () { return ("If enabled AND your HZE is higher than 230 (it acts as if disabled otherwise), AT will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway), AND you have more map stacks than the <b>Map MapBonus Health</b> setting, which becomes a very important setting. <b>Recommended: Always On.</b>)") },
+			function () { return ("AT will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway), AND you have more map stacks than the <b>Map Bonus Health</b> setting, which becomes a very important setting. <b>Recommended: Always On.</b>)") },
 			'boolean', false, null, 'Buildings', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 230) });
 	}
