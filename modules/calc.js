@@ -195,7 +195,7 @@ function getTrimpHealth(realHealth, mapType) {
 	//AutoBattle
 	health *= game.global.universe === 2 ? autoBattle.bonuses.Stats.getMult() : 1;
 	//Shield (Heirloom)
-	health *= 1 + calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100;
+	health *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100);
 	//Void Map Talents
 	health *= (game.talents.voidPower.purchased && mapType === 'void') ? (1 + (game.talents.voidPower.getTotalVP() / 100)) : 1;
 	//Championism
@@ -231,7 +231,7 @@ function getTrimpHealth(realHealth, mapType) {
 	return health;
 }
 
-function getEnergyShieldMult_AT(mapType) {
+function getEnergyShieldMult_AT(mapType, noHeirloom) {
 	if (game.global.universe != 2) return 0;
 	var total = 0;
 	if (game.upgrades.Prismatic.done) total += 0.5; //Prismatic: Drops Z2
@@ -241,8 +241,10 @@ function getEnergyShieldMult_AT(mapType) {
 	if (game.global.challengeActive == "Bublé") total += 2.5; //Bublé challenge - 100%
 	if (autoBattle.oneTimers.Suprism.owned) total += autoBattle.oneTimers.Suprism.getMult();
 
-	if (getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) > 0) total +=
-		(getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 100);
+	if (!noHeirloom) {
+		if (getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) > 0) total +=
+			(getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 100);
+	}
 	return total;
 }
 

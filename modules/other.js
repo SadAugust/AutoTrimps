@@ -217,25 +217,52 @@ var exoticImps =
 		"Whipimp",
 	];
 
-function remainingHealth(forceAngelic) {
+function remainingHealth(forceAngelic, mapType) {
+	const correctHeirloom = getPageSetting(heirloomShieldToEquip(mapType)) === game.global.ShieldEquipped.name;
 	var soldierHealth = game.global.soldierHealth;
+	var soldierHealthMax = game.global.soldierHealthMax;
 	var shieldHealth = 0;
+
+	if (!correctHeirloom) {
+		soldierHealth /= 1 + (calcHeirloomBonus('Shield', 'trimpHealth', 1, true) / 100);
+		soldierHealth *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100);
+		soldierHealthMax /= 1 + (calcHeirloomBonus('Shield', 'trimpHealth', 1, true) / 100);
+		soldierHealthMax *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100);
+	}
+
+
 	if (game.global.universe == 2) {
+
+
 		var maxLayers = Fluffy.isRewardActive('shieldlayer');
 		var layers = maxLayers - game.global.shieldLayersUsed;
+
+		var shieldMax = soldierHealthMax;
+		var shieldCurr = game.global.soldierEnergyShield;
+		if (!correctHeirloom) {
+			const shieldPrismatic = getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) > 0 ? getEnergyShieldMult_AT(mapType, true) + (getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 100) : getEnergyShieldMult_AT(mapType, true);
+			const currShieldPrismatic = getEnergyShieldMult_AT(mapType, true) + (getHeirloomBonus("Shield", "prismatic") / 100);
+			if (currShieldPrismatic > 0) shieldMax /= currShieldPrismatic;
+			shieldMax *= shieldPrismatic;
+			if (currShieldPrismatic > 0) shieldCurr /= currShieldPrismatic;
+			shieldCurr *= shieldPrismatic;
+			shieldCurr /= 1 + (calcHeirloomBonus('Shield', 'trimpHealth', 1, true) / 100);
+			shieldCurr *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100);
+		}
+
 		if (maxLayers > 0) {
 			for (var i = 0; i <= maxLayers; i++) {
 				if (layers != maxLayers && i > layers)
 					continue;
 				if (i == maxLayers - layers) {
-					shieldHealth += game.global.soldierEnergyShieldMax;
+					shieldHealth += shieldMax;
 				}
 				else
-					shieldHealth += game.global.soldierEnergyShield;
+					shieldHealth += shieldCurr;
 			}
 		}
 		else {
-			shieldHealth = game.global.soldierEnergyShield;
+			shieldHealth = shieldCurr;
 		}
 		shieldHealth = shieldHealth < 0 ? 0 : shieldHealth;
 	}
@@ -243,9 +270,9 @@ function remainingHealth(forceAngelic) {
 	if ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'))
 		remainingHealth = shieldHealth;
 	if (shieldHealth + soldierHealth == 0) {
-		remainingHealth = game.global.soldierHealthMax + (game.global.soldierEnergyShieldMax * (maxLayers + 1))
+		remainingHealth = soldierHealthMax + (shieldMax * (maxLayers + 1))
 		if ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'))
-			remainingHealth = game.global.soldierEnergyShieldMax * (maxLayers + 1);
+			remainingHealth = shieldMax * (maxLayers + 1);
 	}
 
 	return (remainingHealth)
@@ -653,7 +680,7 @@ function equalityManagement() {
 	if (runningRevenge) fastEnemy = true;
 
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
-	if (runningDuel && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > remainingHealth(false, type) && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {
+	if (runningDuel && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > ourHealth && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {
 		game.portal.Equality.disabledStackCount = 0;
 		if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
 		updateEqualityScaling();
@@ -679,7 +706,6 @@ function equalityManagement() {
 
 	const ourEqualityModifier = game.portal.Equality.getModifier(1);
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
-	const wearingPlagueShield = game.global.ShieldEquipped.name === getPageSetting('heirloomVoidPlaguebringer');
 
 	if (enemyHealth > 0) {
 		for (var i = 0; i <= maxEquality; i++) {
@@ -711,7 +737,7 @@ function equalityManagement() {
 				game.portal.Equality.disabledStackCount = i;
 				break;
 			}
-			else if (!wearingPlagueShield && armyReady && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.95 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
+			else if (armyReady && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.95 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
 				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
 					suicideTrimps(true);
 					suicideTrimps(true);
