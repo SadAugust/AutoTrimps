@@ -5,6 +5,8 @@ MODULES["portal"].portalForVoid = false;
 MODULES["portal"].portalUniverse = Infinity;
 MODULES["portal"].currentChallenge = 'None';
 MODULES["portal"].dontPushData = false;
+MODULES["portal"].dailyMods = '';
+
 var zonePostpone = 0;
 
 function autoPortal() {
@@ -384,6 +386,7 @@ function doPortal(challenge, squared) {
 	var currChall = MODULES["portal"].currentChallenge;
 
 	if (game.global.challengeActive === 'Daily') {
+		MODULES.portal.dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
 		confirmAbandonChallenge();
 		abandonChallenge();
 		cancelTooltip();
@@ -522,6 +525,7 @@ function doPortal(challenge, squared) {
 	activatePortal();
 	MODULES["portal"].currentChallenge = 'None';
 	MODULES["portal"].dontPushData = false;
+	MODULES["portal"].dailyMods = '';
 	lastHeliumZone = 0;
 	zonePostpone = 0;
 	resetmapvars();

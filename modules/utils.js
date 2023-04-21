@@ -138,8 +138,8 @@ function pushSpreadsheetData() {
 	}
 
 	var dailyMods = " ";
-	if (challengeActive("Daily")) {
-		dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
+	if (MODULES["portal"].currentChallenge === 'Daily') {
+		dailyMods = MODULES.portal.dailyMods;
 	}
 
 	const mapCount = Object.keys(graphData.perZoneData.mapCount)
