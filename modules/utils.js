@@ -151,6 +151,7 @@ function pushSpreadsheetData() {
 	const obj = {
 		user: autoTrimpSettings.gameUser.value,
 		date: new Date().toISOString(),
+		dailyMods: dailyMods,
 		portals: game.global.totalPortals,
 		portals_U2: game.global.totalRadPortals,
 		helium: game.global.totalHeliumEarned,
@@ -177,7 +178,6 @@ function pushSpreadsheetData() {
 		runtime: formatTimeForDescriptions((getGameTime() - game.global.portalTime) / 1000),
 		runtimeMilliseconds: (getGameTime() - game.global.portalTime),
 		zone: game.global.world,
-		dailyMods: dailyMods,
 		voidZone: game.global.universe === 2 ? game.stats.highestVoidMap2.value : game.stats.highestVoidMap.value,
 		mapZone: mapZone,
 		mapCount: mapTotal,
