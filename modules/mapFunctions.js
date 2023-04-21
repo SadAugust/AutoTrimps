@@ -3427,7 +3427,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3, hd
 	}
 
 	else if (mapName === 'Hits Survived') {
-		message += " Finished with hits survived at  " + extra.toFixed(2) + "/" + extra2.toFixed(2) + "."
+		message += " Finished with hits survived at  " + prettify(hdStats.hitsSurvived) + "/" + prettify(getPageSetting('hitsSurvived')) + "."
 	}
 
 	else if (mapName === 'HD Farm' && extra !== null) {
