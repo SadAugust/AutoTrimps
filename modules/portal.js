@@ -277,55 +277,64 @@ function c2runner() {
 
 	const challengeArray = [];
 	const universePrefix = game.global.universe === 2 ? 'C3 ' : 'C2 ';
-
-	//Adding U1 challenges
-	if (portalUniverse === 1) {
-		var highestZone = game.stats.highestLevel.valueTotal();
-
-		//Adding Fused challenges to array if setting is toggled
-		if (getPageSetting('c2Fused', portalUniverse)) {
-			if (highestZone >= 45) challengeArray.push('Enlightened');
-			if (highestZone >= 180) challengeArray.push('Waze');
-			if (highestZone >= 180) challengeArray.push('Toxad');
-			if (highestZone >= 130) challengeArray.push('Paralysis');
-			if (highestZone >= 145) challengeArray.push('Nometal');
-			if (highestZone >= 150) challengeArray.push('Topology');
-		}
-
-		if (highestZone >= 35) challengeArray.push('Size');
-		if (highestZone >= 130) challengeArray.push('Slow');
-		if (highestZone >= 180) challengeArray.push('Watch');
-		if (getTotalPerkResource(true) >= 30) challengeArray.push('Discipline');
-		if (highestZone >= 40) challengeArray.push('Balance');
-		if (highestZone >= 45) challengeArray.push('Meditate');
-		if (highestZone >= 25) challengeArray.push('Metal');
-		if (highestZone >= 180) challengeArray.push('Lead');
-		if (highestZone >= 145) challengeArray.push('Nom');
-		if (highestZone >= 165) challengeArray.push('Toxicity');
-		if (game.global.prisonClear >= 1) challengeArray.push('Electricity');
-		if (highestZone >= 150) challengeArray.push('Mapology');
-	}
-
-	//Adding U2 challenges
-	if (portalUniverse === 2) {
-		var highestZone = game.stats.highestRadLevel.valueTotal();
-		if (highestZone >= 50) challengeArray.push('Unlucky');
-		if (highestZone >= 50) challengeArray.push('Unbalance');
-		if (highestZone >= 85) challengeArray.push('Quest');
-		if (highestZone >= 105) challengeArray.push('Storm');
-		if (highestZone >= 25) challengeArray.push('Transmute');
-		if (highestZone >= 50) challengeArray.push('Duel');
-		//if (highestZone >= 50) challengeArray.push('Downsize');
-		if (highestZone >= 201) challengeArray.push('Smithless');
-	}
-
 	const worldType = portalUniverse === 2 ? 'highestRadonLevelCleared' : 'highestLevelCleared';
 	const runType = getPageSetting('c2RunnerMode', portalUniverse);
 	const c2Setting = getPageSetting('c2RunnerSettings', portalUniverse);
+	if (runType === 0) {
+		//Building challenge array with percent value challenges
+		if (portalUniverse === 1) {
+			var highestZone = game.stats.highestLevel.valueTotal();
 
-	//Checking regular challenges
+			//Adding Fused challenges to array if setting is toggled
+			if (getPageSetting('c2Fused', portalUniverse)) {
+				if (highestZone >= 45) challengeArray.push('Enlightened');
+				if (highestZone >= 180) challengeArray.push('Waze');
+				if (highestZone >= 180) challengeArray.push('Toxad');
+				if (highestZone >= 130) challengeArray.push('Paralysis');
+				if (highestZone >= 145) challengeArray.push('Nometal');
+				if (highestZone >= 150) challengeArray.push('Topology');
+			}
+
+			if (highestZone >= 35) challengeArray.push('Size');
+			if (highestZone >= 130) challengeArray.push('Slow');
+			if (highestZone >= 180) challengeArray.push('Watch');
+			if (getTotalPerkResource(true) >= 30) challengeArray.push('Discipline');
+			if (highestZone >= 40) challengeArray.push('Balance');
+			if (highestZone >= 45) challengeArray.push('Meditate');
+			if (highestZone >= 25) challengeArray.push('Metal');
+			if (highestZone >= 180) challengeArray.push('Lead');
+			if (highestZone >= 145) challengeArray.push('Nom');
+			if (highestZone >= 165) challengeArray.push('Toxicity');
+			if (game.global.prisonClear >= 1) challengeArray.push('Electricity');
+			if (highestZone >= 150) challengeArray.push('Mapology');
+		}
+
+		//Adding U2 challenges
+		if (portalUniverse === 2) {
+			var highestZone = game.stats.highestRadLevel.valueTotal();
+			if (highestZone >= 50) challengeArray.push('Unlucky');
+			if (highestZone >= 50) challengeArray.push('Unbalance');
+			if (highestZone >= 85) challengeArray.push('Quest');
+			if (highestZone >= 105) challengeArray.push('Storm');
+			if (highestZone >= 25) challengeArray.push('Transmute');
+			if (highestZone >= 50) challengeArray.push('Duel');
+			//if (highestZone >= 50) challengeArray.push('Downsize');
+			if (highestZone >= 201) challengeArray.push('Smithless');
+		}
+
+	} else if (runType === 1) {
+		//Building challenge array with set value challenges
+		for (var x in c2Setting) {
+			if (typeof c2Setting[x] === 'undefined') continue;
+			if (!c2Setting[x].enabled) continue;
+			if (c2Setting[x].zone <= 0) continue;
+			challengeArray.push(x);
+		}
+	}
+
+	//Looping through challenge array to figure out if things should be run.
 	for (var x = 0; x < challengeArray.length; x++) {
-		if (runType === 1 && typeof c2Setting[challengeArray[x]] === 'undefined') continue;
+
 		var challenge = game.challenges[challengeArray[x]];
 		var challengeList;
 		var challengeLevel = 0;

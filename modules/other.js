@@ -217,7 +217,7 @@ var exoticImps =
 		"Whipimp",
 	];
 
-function remainingHealth(forceMax) {
+function remainingHealth(forceAngelic) {
 	var soldierHealth = game.global.soldierHealth;
 	var shieldHealth = 0;
 	if (game.global.universe == 2) {
@@ -239,7 +239,7 @@ function remainingHealth(forceMax) {
 		}
 		shieldHealth = shieldHealth < 0 ? 0 : shieldHealth;
 	}
-	var remainingHealth = shieldHealth + (!forceMax ? soldierHealth * .33 : soldierHealth);
+	var remainingHealth = shieldHealth + (forceAngelic ? soldierHealth * .33 : soldierHealth);
 	if ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'))
 		remainingHealth = shieldHealth;
 	if (shieldHealth + soldierHealth == 0) {
@@ -562,6 +562,12 @@ function equalityManagement() {
 	var runningDesolation = challengeActive('Desolation');
 	var runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
 
+
+	//Perk/Talent conditions
+	var noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
+	var angelicOwned = game.talents.angelic.purchased;
+	var angelicDance = angelicOwned && (runningTrappa || runningQuest || runningArchaeology || runningBerserk || noFrenzy || dailyEmpower);
+
 	if (runningDesolation && mapping && mapSettings.equality && getPageSetting('autoMaps')) {
 		game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
 		manageEqualityStacks();
@@ -569,8 +575,6 @@ function equalityManagement() {
 		return;
 	}
 
-	//Perk conditions
-	var noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;
 
 	//Gamma burst info
 	var gammaMaxStacksCheck = gammaMaxStacks();
@@ -585,7 +589,7 @@ function equalityManagement() {
 	//Initialising Stat variables
 	//Our stats
 	var dmgType = runningUnlucky ? 'max' : 'avg';
-	var ourHealth = remainingHealth((dailyEmpower && (dailyCrit || dailyExplosive)));
+	var ourHealth = remainingHealth(angelicDance, type);
 	var ourHealthMax = calcOurHealth(runningQuest, type);
 	var ourDmg = calcOurDmg(dmgType, 0, false, type, critType, bionicTalent, true);
 	var ourDmgMax = 0;
@@ -649,7 +653,7 @@ function equalityManagement() {
 	if (runningRevenge) fastEnemy = true;
 
 	//Making sure we get the Duel health bonus by suiciding trimps with 0 equality
-	if (runningDuel && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > remainingHealth(true) && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {
+	if (runningDuel && fastEnemy && (calcOurHealth(false, type) * 10 * 0.9) > remainingHealth(false, type) && gammaToTrigger === gammaMaxStacksCheck && game.global.armyAttackCount === 0) {
 		game.portal.Equality.disabledStackCount = 0;
 		if (parseNum(document.getElementById('equalityStacks').children[0].innerHTML.replace(/\D/g, '')) !== game.portal.Equality.disabledStackCount) manageEqualityStacks();
 		updateEqualityScaling();
