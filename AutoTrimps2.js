@@ -128,6 +128,7 @@ function delayStart() {
 	initializeAutoTrimps();
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
+	document.getElementById('activatePortalBtn').setAttribute("onClick", 'activateClicked(); pushSpreadsheetData()');
 	setTimeout(delayStartAgain, startupDelay);
 }
 
