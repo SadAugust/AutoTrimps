@@ -247,6 +247,7 @@ function autoMap(hdStats) {
 
 	var perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
 	var perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
+	var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
 
 	for (const map of game.global.mapsOwnedArray) {
 		if (!map.noRecycle) {
@@ -254,7 +255,7 @@ function autoMap(hdStats) {
 				highestMap = map;
 			}
 			if (!optimalMap) {
-				if ((mapSettings.mapLevel + game.global.world) === map.level && mapSettings.special === map.bonus && map.size === perfSize && map.difficulty === 0.75 && map.loot === perfMapLoot) {
+				if ((mapSettings.mapLevel + game.global.world) === map.level && mapSettings.special === map.bonus && map.size === perfSize && map.difficulty === 0.75 && map.loot === perfMapLoot && map.location === mapBiome) {
 					optimalMap = map;
 				}
 			}
@@ -278,7 +279,6 @@ function autoMap(hdStats) {
 	//Telling AT to create a map or setting void map as map to be run.
 	if (selectedMap === 'world' && shouldMap) {
 		if (mapSettings.mapName !== '') {
-			var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
 			if (voidMap) selectedMap = voidMap.id;
 			else if (mapSettings.mapName === 'Prestige Raiding') selectedMap = "prestigeRaid";
 			else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = "bionicRaid";
@@ -355,7 +355,6 @@ function autoMap(hdStats) {
 		} else if (selectedMap == "create") {
 			//Setting sliders appropriately.
 			if (shouldMap) {
-				var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
 				if (mapSettings.mapName !== '') {
 					mapCost(mapSettings.mapLevel, mapSettings.special, mapBiome, mapSettings.mapSliders, getPageSetting('onlyPerfectMaps'));
 				}

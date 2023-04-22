@@ -2709,16 +2709,16 @@ function modifyParentNode(id, style) {
 
 function modifyParentNodeUniverseSwap() {
 
-	radonon = getPageSetting('radonsettings') === 1 ? 'show' : 'hide';
+	const radonon = getPageSetting('radonsettings') === 1 ? 'show' : 'hide';
 
 
-	radonon_mayhem = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.mayhem.require()) ? 'show' : 'hide';
-	radonon_pandemonium = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.pandemonium.require()) ? 'show' : 'hide';
-	radonon_desolation = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.desolation.require()) ? 'show' : 'hide';
+	const radonon_mayhem = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.mayhem.require()) ? 'show' : 'hide';
+	const radonon_pandemonium = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.pandemonium.require()) ? 'show' : 'hide';
+	const radonon_desolation = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.desolation.require()) ? 'show' : 'hide';
 
-	radonon_heirloom = getPageSetting('radonsettings') === 1 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
-	radonoff = getPageSetting('radonsettings') === 0 ? 'show' : 'hide';
-	radonoff_heirloom = getPageSetting('radonsettings') === 0 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
+	const radonon_heirloom = getPageSetting('radonsettings') === 1 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
+	const radonoff = getPageSetting('radonsettings') === 0 ? 'show' : 'hide';
+	const radonoff_heirloom = getPageSetting('radonsettings') === 0 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
 
 	//Core
 	modifyParentNode("radonsettings", 'show');

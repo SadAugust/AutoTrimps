@@ -432,8 +432,7 @@ function voidMaps(hdStats) {
 	return farmingDetails;
 }
 
-MODULES.mapFunctions.rMBHealthFarm = false;
-var rMBHealthFarm = false;
+MODULES.mapFunctions.mapBonusHealthFarm = false;
 
 function mapBonus(hdStats) {
 
@@ -502,13 +501,13 @@ function mapBonus(hdStats) {
 
 		if (rMBRepeatCounter > game.global.mapBonus) {
 			shouldMaxMapBonus = true;
-			if (rMBshouldDoHealthMaps) rMBHealthFarm = true;
-			else rMBHealthFarm = false;
+			if (rMBshouldDoHealthMaps) MODULES.mapFunctions.mapBonusHealthFarm = true;
+			else MODULES.mapFunctions.mapBonusHealthFarm = false;
 		}
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rMBMapLevel || (getCurrentMapObject().bonus !== rMBSpecial && (getCurrentMapObject().bonus !== undefined && rMBSpecial !== '0')) || game.global.mapBonus >= (rMBRepeatCounter - 1));
 		var status = (rMBspireMapStack ? 'Spire ' : '') + 'Map Bonus: ' + game.global.mapBonus + "/" + rMBRepeatCounter;
 
-		if (shouldMaxMapBonus) farmingDetails.shouldRun = shouldMaxMapBonus || rMBHealthFarm;
+		if (shouldMaxMapBonus) farmingDetails.shouldRun = shouldMaxMapBonus || MODULES.mapFunctions.mapBonusHealthFarm;
 		farmingDetails.mapName = mapName;
 		farmingDetails.mapLevel = rMBMapLevel;
 		farmingDetails.autoLevel = rMBautoLevel;
@@ -522,7 +521,7 @@ function mapBonus(hdStats) {
 	if (mapSettings.mapName === mapName && (game.global.mapBonus >= rMBRepeatCounter || !farmingDetails.shouldRun)) {
 		mappingDetails(mapName, mapSettings.mapLevel, mapSettings.special);
 		resetMapVars();
-		rMBHealthFarm = false;
+		MODULES.mapFunctions.mapBonusHealthFarm = false;
 		mapRepeats = 0;
 	}
 	return farmingDetails;
@@ -2101,7 +2100,7 @@ function alchemy(hdStats) {
 								undefined;
 
 			//Alchemy biome selection, will select Farmlands if it's unlocked and appropriate otherwise it'll use the default map type for that herb.
-			rAFBiome = alchObj.potionNames[potion] == alchObj.potionNames[0] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Metal" ? "Farmlands" : "Mountain" :
+			const rAFBiome = alchObj.potionNames[potion] == alchObj.potionNames[0] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Metal" ? "Farmlands" : "Mountain" :
 				alchObj.potionNames[potion] == alchObj.potionNames[1] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Wood" ? "Farmlands" : "Forest" :
 					alchObj.potionNames[potion] == alchObj.potionNames[2] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Food" ? "Farmlands" : "Sea" :
 						alchObj.potionNames[potion] == alchObj.potionNames[3] ? game.global.farmlandsUnlocked && getFarmlandsResType() == "Gems" ? "Farmlands" : "Depths" :
@@ -2160,7 +2159,7 @@ function alchemy(hdStats) {
 					shouldAlchFarm = true;
 			}
 
-			var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rAFMapLevel || (getCurrentMapObject().bonus !== rAFSpecial && (getCurrentMapObject().bonus !== undefined && rAFSpecial !== '0')) || herbtotal >= potioncosttotal);
+			var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rAFMapLevel || getCurrentMapObject().location !== rAFBiome || (getCurrentMapObject().bonus !== rAFSpecial && (getCurrentMapObject().bonus !== undefined && rAFSpecial !== '0')) || herbtotal >= potioncosttotal);
 			var status = 'Alchemy Farming ' + alchObj.potionNames[potion] + " (" + alchObj.potionsOwned[potion] + "/" + rAFPotions.toString().replace(/[^\d,:-]/g, '') + ")";
 
 			farmingDetails.shouldRun = shouldAlchFarm;
@@ -2304,8 +2303,7 @@ function glass() {
 	return farmingDetails;
 }
 
-MODULES.mapFunctions.rHFBuyPackrat = false;
-rHFBuyPackrat = false;
+MODULES.mapFunctions.hypothermiaBuyPackrat = false;
 
 function hypothermia(hdStats) {
 
@@ -2319,16 +2317,16 @@ function hypothermia(hdStats) {
 	};
 
 	if ((!getPageSetting('hypothermiaDefaultSettings').active ||
-		(!challengeActive('Hypothermia') && (!getPageSetting('hypothermiaDefaultSettings').packrat || !rHFBuyPackrat)))) return farmingDetails;
+		(!challengeActive('Hypothermia') && (!getPageSetting('hypothermiaDefaultSettings').packrat || !MODULES.mapFunctions.hypothermiaBuyPackrat)))) return farmingDetails;
 
 	if (getPageSetting('hypothermiaDefaultSettings').packrat) {
-		if (!rHFBuyPackrat && challengeActive('Hypothermia'))
-			rHFBuyPackrat = true;
-		if (rHFBuyPackrat && challengeActive('')) {
+		if (!MODULES.mapFunctions.hypothermiaBuyPackrat && challengeActive('Hypothermia'))
+			MODULES.mapFunctions.hypothermiaBuyPackrat = true;
+		if (MODULES.mapFunctions.hypothermiaBuyPackrat && challengeActive('')) {
 			viewPortalUpgrades();
 			numTab(6, true);
 			buyPortalUpgrade('Packrat');
-			rHFBuyPackrat = null;
+			MODULES.mapFunctions.hypothermiaBuyPackrat = null;
 			activateClicked();
 		}
 	}
@@ -3473,24 +3471,28 @@ function mapScumming(slowTarget) {
 	if (game.global.lastClearedMapCell > -1) return;
 	var slowCellTarget = !slowTarget ? 7 : slowTarget //getPageSetting('desolationScumTarget');
 	if (slowCellTarget > 9) slowCellTarget = 10;
+	var firstCellSlow = false;
 
-	//Repeats the process of exiting and re-entering maps until the first cell is slow!
+	//Repeats the process of exiting and re-entering maps until the first cell is slow and you have desired slow cell count on odd cells!
 	for (var i = 0; i < 10000; i++) {
 		slowCells = {};
 		if (game.global.mapsActive) {
 			let mapGrid = game.global.mapGridArray;
 			let slowCount = 0;
 
+			//Looping to figure out if we have enough slow enemies on odd cells
 			for (var item in mapGrid) {
 				if (mapGrid[item].level % 2 === 0) continue;
-				if (hdStats.currChallenge === 'Desolation') {
-					if (exoticImps.includes(mapGrid[item].name)) slowCount++;
-				}
-				else if (!fastimps.includes(mapGrid[item].name)) slowCount++;
+				if (hdStats.currChallenge === 'Desolation' && exoticImps.includes(mapGrid[item].name)) slowCount++;
+				else if (!fastCells.includes(mapGrid[item].name)) slowCount++;
 			}
 
-			let enemyName = mapGrid[game.global.lastClearedMapCell + 1].name;
-			if (slowCount < slowCellTarget || fastimps.includes(enemyName)) {
+			//Checking if the first enemy is slow
+			let enemyName = mapGrid[0].name;
+			if (hdStats.currChallenge === 'Desolation' && exoticImps.includes(enemyName)) firstCellSlow = true;
+			else if (fastimps.includes(enemyName)) firstCellSlow = true;
+
+			if (slowCount < slowCellTarget && !firstCellSlow) {
 				buildMapGrid(game.global.currentMapId);
 				drawGrid(true);
 			}
