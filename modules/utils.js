@@ -318,8 +318,8 @@ function setPageSetting(setting, newValue, universe) {
 		document.getElementById(setting).setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[setting][enabled]);
 	} else if (valueIndex.indexOf(settingType) !== -1) {
 		autoTrimpSettings[setting][value] = newValue;
-		if (selectedIndex === 'multitoggle') document.getElementById(setting).setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[setting][value]);
-	} else if (buttonIndex.indexOf(settingType) !== -1) {
+		if (settingType === 'multitoggle') document.getElementById(setting).setAttribute('class', 'noselect settingsBtn settingBtn' + autoTrimpSettings[setting][value]);
+	} else if (selectedIndex.indexOf(settingType) !== -1) {
 		autoTrimpSettings[setting][selected] = newValue;
 	}
 	saveSettings();

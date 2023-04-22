@@ -1,15 +1,43 @@
-function getHeirloomEff(modName, heirloomType, heirloomMods) {
-
-	var varAffix = heirloomType === 'Staff' ? 'heirloomAutoStaffMod' : heirloomType === 'Shield' ? 'heirloomAutoShieldMod' : heirloomType === 'core' ? 'heirloomAutoCoreMod' : null;
-	if (varAffix === null)
-		return 0;
-
-	for (var x = 1; x < (heirloomMods + 1); x++) {
-		if (getPageSetting(varAffix + x) === modName || getPageSetting(varAffix + x) === 'empty') {
-			return 5;
-		}
+const heirloomMods = {
+	Shield: {
+		playerEfficiency: "Player Efficiency",
+		trainerEfficiency: "Trainer Efficiency",
+		storageSize: "Storage Size",
+		breedSpeed: "Breed Speed",
+		trimpHealth: "Trimp Health",
+		trimpAttack: "Trimp Attack",
+		trimpBlock: "Trimp Block",
+		critDamage: "Crit Damage",
+		critChance: "Crit Chance",
+		voidMaps: "Void Map Drop Chance",
+		plaguebringer: "Plaguebringer",
+		prismatic: "Prismatic Shield",
+		gammaBurst: "Gamma Burst",
+		inequality: "Inequality",
+	},
+	Staff: {
+		metalDrop: "Metal Drop Rate",
+		foodDrop: "Food Drop Rate",
+		woodDrop: "Wood Drop Rate",
+		gemsDrop: "Gem Drop Rate",
+		fragmentsDrop: "Fragment Drop Rate",
+		FarmerSpeed: "Farmer Efficiency",
+		LumberjackSpeed: "Lumberjack Efficiency",
+		MinerSpeed: "Miner Efficiency",
+		DragimpSpeed: "Dragimp Efficiency",
+		ExplorerSpeed: "Explorer Efficiency",
+		ScientistSpeed: "Scientist Efficiency",
+		FluffyExp: "Pet Exp",
+		ParityPower: "Parity Power",
+	},
+	Core: {
+		fireTrap: "Fire Trap Damage",
+		poisonTrap: "Poison Trap Damage",
+		lightningTrap: "Lightning Trap Power",
+		runestones: "Runestone Drop Rate",
+		strengthEffect: "Strength Tower Effect",
+		condenserEffect: "Condenser Effect",
 	}
-	return 0;
 }
 
 function evaluateHeirloomMods(loom, location) {
@@ -18,50 +46,42 @@ function evaluateHeirloomMods(loom, location) {
 	const raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep'));
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomEquipType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 3 ? 'Core' : 'All';
-	const onlyPerfect = getPageSetting('heirloomAutoOnlyPefect');
 
-	var eff = 0;
 	var modName;
 	var heirloomType;
 	var rarity;
 
-	heirloomLocation = location.includes('Equipped') ? loom = game.global[location] : loom = game.global[location][loom];
+	var heirloomLocation = location.includes('Equipped') ? loom = game.global[location] : loom = game.global[location][loom];
 	heirloomType = heirloomLocation.type;
+	if (heirloomType !== heirloomEquipType && heirloomEquipType !== 'All') return 0;
 	rarity = heirloomLocation.rarity;
 	if (rarity !== raretokeep) return 0;
 
-	if (onlyPerfect) {
-		const varAffix = heirloomType === 'Staff' ? 'heirloomAutoStaffMod' : heirloomType === 'Shield' ? 'heirloomAutoShieldMod' : heirloomType === 'core' ? 'heirloomAutoCoreMod' : null;
-		targetMods = [];
-		emptyMods = 0;
-		for (var x = 1; x < (heirloomLocation.mods.length + 1); x++) {
-			if (getPageSetting(varAffix + x) === 'empty') continue;
-			targetMods.push(getPageSetting(varAffix + x));
-		}
-		for (var m in heirloomLocation.mods) {
-			modName = heirloomLocation.mods[m][0];
-			if (modName === 'empty') {
-				emptyMods++;
-				continue;
-			}
-			targetMods = targetMods.filter(e => e !== modName);
-		}
-		if (targetMods.length <= emptyMods) return Infinity;
-		else return 0;
+	//Will check if the heirloom is perfect and if it is, we will return infinity to make sure it is not recycled.
+	//If it is not perfect, we will return 0 to make sure it is recycled.
+	//Identify the setting prefix for the heirloom type
+	const varAffix = heirloomType === 'Staff' ? 'heirloomAutoStaffMod' : heirloomType === 'Shield' ? 'heirloomAutoShieldMod' : heirloomType === 'core' ? 'heirloomAutoCoreMod' : null;
+	var targetMods = [];
+	var emptyMods = 0;
+	//Increment through the setting inputs and push them to the targetMods array if not set to empty.
+	for (var x = 1; x < (heirloomLocation.mods.length + 1); x++) {
+		if (getPageSetting(varAffix + x) === 'empty') continue;
+		targetMods.push(getPageSetting(varAffix + x));
 	}
-	else {
-		for (var m in heirloomLocation.mods) {
-			modName = heirloomLocation.mods[m][0];
-
-			if (heirloomType === heirloomEquipType || heirloomEquipType === 'All') {
-				eff += getHeirloomEff(modName, heirloomType, heirloomLocation.mods.length);
-			}
-			if (modName === "empty") {
-				eff *= 4;
-			}
+	//Loop through the heirloom mods and check if they are empty or not. If they are empty, increment emptyMods. If they are not empty, remove them from the targetMods array.
+	for (var m in heirloomLocation.mods) {
+		modName = heirloomLocation.mods[m][0];
+		if (modName === 'empty') {
+			emptyMods++;
+			continue;
 		}
-		return eff;
+		modName = heirloomMods[heirloomType][modName];
+		targetMods = targetMods.filter(e => e !== modName);
 	}
+	if (targetMods.length <= emptyMods)
+		return Infinity;
+	else
+		return 0;
 }
 
 var worth3 = { 'Shield': [], 'Staff': [], 'Core': [] };
@@ -213,7 +233,6 @@ function heirloomShieldToEquip(mapType, query) {
 	if (!getPageSetting('heirloomShield')) return;
 
 	if (MODULES.portal.portalForVoid) {
-		if (Object.keys(game.global.ShieldEquipped).length !== 0 && game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) unequipHeirloom(game.global.ShieldEquipped);
 		if (Object.keys(game.global.ShieldEquipped).length === 0 && game.permaBoneBonuses.voidMaps.tracker < (100 - game.permaBoneBonuses.voidMaps.owned)) return ('heirloomInitial');
 		return;
 	}

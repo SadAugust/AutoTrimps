@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v6.2.3',
+var ATversion = 'SadAugust v6.2.4',
 	atscript = document.getElementsByTagName("script"),
 	basepath = '',
 	modulepath = 'modules/';
@@ -26,6 +26,7 @@ function ATscriptUnload(a) {
 }
 
 var ATrunning = true;
+var atFinishedLoading = false;
 var ATmessageLogTabVisible = true;
 var enableDebug = true;
 
@@ -67,7 +68,6 @@ var tenacityTimeNew = '0m';
 
 var showingPerky = false;
 var showingSurky = false;
-var atFinishedLoading = false;
 
 var mapSettings = {
 	shouldRun: false,
@@ -153,6 +153,7 @@ function delayStartAgain() {
 
 	swapBaseSettings();
 
+	atFinishedLoading = true;
 	// Load jQuery
 	// Immediately-invoked function expression
 	(function () {
@@ -391,6 +392,7 @@ function mainCleanup() {
 		if (game.global.universe === 2) radonChallengesSetting(true);
 		else heliumChallengesSetting(true);
 		HeHrPortalOptions();
+		autoHeirloomOptions();
 
 		document.getElementById('freeVoidMap').parentNode.style.display = 'block';
 		document.getElementById('freeVoidMap').style.display = 'block';

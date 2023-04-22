@@ -243,7 +243,7 @@ function initializeAllSettings() {
 
 		createSetting('radonsettings',
 			function () { return (['Helium', 'Radon']) },
-			function () { return ('Switch between Helium (U1) and Radon (U2) settings. ') },
+			function () { return ('Switch between Helium (U1) and Radon (U2) settings.') },
 			'multitoggle', 0, null, 'Core', [0]);
 		var $radonsettings = document.getElementById('radonsettings');
 		$radonsettings.parentNode.style.setProperty('float', 'right');
@@ -258,7 +258,7 @@ function initializeAllSettings() {
 
 		createSetting('heliumHourChallenge',
 			function () { return ('Challenge') },
-			function () { return ('Automatically portal into this challenge when using ' + resource().toLowerCase() + ' per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ') },
+			function () { return ('Automatically portal into this challenge when using ' + resource().toLowerCase() + ' per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it.') },
 			'dropdown', 'None', heliumHourChallenges, 'Core', [1, 2],
 			function () {
 				return (
@@ -338,7 +338,7 @@ function initializeAllSettings() {
 	if (displayDaily) {
 		createSetting('buyheliumy',
 			function () { return ('Buy Heliumy %') },
-			function () { return ('Buys the Heliumy bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ') },
+			function () { return ('Buys the Heliumy bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1.') },
 			'value', -1, null, 'Daily', [1]);
 		createSetting('dfightforever',
 			function () { return (['DFA: Off', 'DFA: Non-Empowered', 'DFA: All Dailies']) },
@@ -346,20 +346,20 @@ function initializeAllSettings() {
 			'multitoggle', '0', null, 'Daily', [1]);
 		createSetting('avoidempower',
 			function () { return ('Avoid Empower') },
-			function () { return ('Tries to avoid Empower stacks in Empower Dailies. No harm in this being on, so default is On. ') },
+			function () { return ('Tries to avoid Empower stacks in Empower Dailies. No harm in this being on, so default is On.') },
 			'boolean', true, null, 'Daily', [1]);
 		createSetting('dscryvoidmaps',
 			function () { return ('Daily VM Scryer') },
-			function () { return ('Only use in Dailies if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ') },
+			function () { return ('Only use in Dailies if you have Scryhard II, for er, obvious reasons. Works without the scryer options.') },
 			'boolean', false, null, 'Daily', [1]);
 
 		createSetting('dIgnoreSpiresUntil',
 			function () { return ('Daily Ignore Spires Until') },
-			function () { return ('Spire specific settings like end-at-cell are ignored until at least this zone is reached in Dailies (0 to disable). ') },
+			function () { return ('Spire specific settings like end-at-cell are ignored until at least this zone is reached in Dailies (0 to disable).') },
 			'value', '200', null, 'Daily', [1]);
 		createSetting('dExitSpireCell',
 			function () { return ('Daily Exit Spire Cell') },
-			function () { return ('What cell to exit spire in dailys. ') },
+			function () { return ('What cell to exit spire in dailys.') },
 			'value', -1, null, 'Daily', [1]);
 		createSetting('dPreSpireNurseries',
 			function () { return ('Daily Nurseries pre-Spire') },
@@ -368,32 +368,32 @@ function initializeAllSettings() {
 
 		createSetting('use3daily',
 			function () { return ('Daily Windstacking') },
-			function () { return ('<b> This must be on for Daily windstacking settings to appear!</b> Overrides your Autostance settings to use the WS stance on Dailies. ') },
+			function () { return ('<b> This must be on for Daily windstacking settings to appear!</b> Overrides your Autostance settings to use the WS stance on Dailies.') },
 			'boolean', false, null, 'Daily', [1]);
 		createSetting('dWindStackingMin',
 			function () { return ('Daily Windstack Min Zone') },
-			function () { return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set for dailys. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from Daily WS MAX work off this setting. ') },
+			function () { return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set for dailys. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from Daily WS MAX work off this setting.') },
 			'value', '-1', null, 'Daily', [1],
 			function () { return (autoTrimpSettings.use3daily.enabled) });
 		createSetting('dWindStackingMinHD',
 			function () { return ('Daily Windstack H:D') },
-			function () { return ('For use with Windstacking Stance in Dailies, fiddle with this to maximise your stacks in wind zones for Dailies. If H:D is above this setting it will not use W stance. If it is below it will. ') },
+			function () { return ('For use with Windstacking Stance in Dailies, fiddle with this to maximise your stacks in wind zones for Dailies. If H:D is above this setting it will not use W stance. If it is below it will.') },
 			'value', '-1', null, 'Daily', [1],
 			function () { return (autoTrimpSettings.use3daily.enabled) });
 		createSetting('dWindStackingMax',
 			function () { return ('Daily Windstack Stacks') },
-			function () { return ('For use with Windstacking Stance in Dailies. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190. In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment. ') },
+			function () { return ('For use with Windstacking Stance in Dailies. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190. In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment.') },
 			'value', '200', null, 'Daily', [1],
 			function () { return (autoTrimpSettings.use3daily.enabled) });
 		createSetting('liqstack',
 			function () { return ('Stack Liquification') },
-			function () { return ('Stack Wind zones during Wind Enlight during Liquification. ') },
+			function () { return ('Stack Wind zones during Wind Enlight during Liquification.') },
 			'boolean', false, null, 'Daily', [1],
 			function () { return (autoTrimpSettings.use3daily.enabled) });
 
 		createSetting('buyradony',
 			function () { return ('Buy Radonculous %') },
-			function () { return ('Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1. ') },
+			function () { return ('Buys the Radonculous bonus for <b>100 bones</b> when Daily bonus is above the value set in this setting. Recommend anything above 475. Will not buy if you cant afford to, or value is -1.') },
 			'value', -1, null, 'Daily', [2]);
 		createSetting('bloodthirstDestack',
 			function () { return ('Bloodthirst Destack') },
@@ -418,7 +418,7 @@ function initializeAllSettings() {
 		//Daily Portal
 		createSetting('dailyPortalStart',
 			function () { return ('Auto Start Daily') },
-			function () { return ('Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next. ') },
+			function () { return ('Starts Dailies for you. When you portal with this on, it will select the oldest Daily and run it. Use the settings in this tab to decide whats next.') },
 			'boolean', false, null, 'Daily', [1, 2]);
 		createSetting('dailyPortal',
 			function () { return (['Daily Portal Off', 'DP: ' + resourceHour() + '/Hr', 'DP: Custom']) },
@@ -431,7 +431,7 @@ function initializeAllSettings() {
 
 		createSetting('dailyHeliumHourChallenge',
 			function () { return ('DP: Challenge') },
-			function () { return ('Automatically portal into this challenge when using ' + resource().toLowerCase() + ' per hour or custom autoportal in dailies when there are none left. Custom portals on the zone specified in \'Daily Custom Portal\'. Do not choose a challenge if you havent unlocked it. ') },
+			function () { return ('Automatically portal into this challenge when using ' + resource().toLowerCase() + ' per hour or custom autoportal in dailies when there are none left. Custom portals on the zone specified in \'Daily Custom Portal\'. Do not choose a challenge if you havent unlocked it.') },
 			'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience'], 'Daily', [1, 2],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) > 0) });
 
@@ -484,7 +484,7 @@ function initializeAllSettings() {
 
 		createSetting('dailyDontCap',
 			function () { return ('Use when capped') },
-			function () { return ('If this is on, you will only do the oldest daily when you have 7 dailies available. ') },
+			function () { return ('If this is on, you will only do the oldest daily when you have 7 dailies available.') },
 			'boolean', false, null, 'Daily', [1, 2]);
 
 		createSetting('dailySkip',
@@ -494,7 +494,7 @@ function initializeAllSettings() {
 
 		createSetting('dailyPortalSettingsArray',
 			function () { return ('Daily Portal Settings') },
-			function () { return ('Click to adjust settings. ') },
+			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', {
 			Reflect: { enabled: false, zone: 0 },
 			Empower: { enabled: false, zone: 0 },
@@ -519,7 +519,7 @@ function initializeAllSettings() {
 			'value', -1, null, 'C2', [1, 2]);
 		createSetting('c2Table',
 			function () { return (cinf() + ' Table') },
-			function () { return ('Display your challenge runs in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this challenge is worthwhile. <br><b>Blue</b> = You have not yet done this challenge. ') },
+			function () { return ('Display your challenge runs in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this challenge is worthwhile. <br><b>Blue</b> = You have not yet done this challenge.') },
 			'infoclick', 'c2table', null, 'C2', [1, 2]);
 
 		createSetting('cfightforever',
@@ -557,7 +557,7 @@ function initializeAllSettings() {
 
 		createSetting('c2RunnerStart',
 			function () { return (cinf() + ' Runner') },
-			function () { return ('Runs the normal ' + cinf() + 's in sequence according to difficulty. See \'' + cinf() + ' Table\' for a list of challenges that this can run. Once zone you have defined has been reached, will portal into next. Only runs challenges that need updating, will not run ones close-ish to your HZE. ') },
+			function () { return ('Runs the normal ' + cinf() + 's in sequence according to difficulty. See \'' + cinf() + ' Table\' for a list of challenges that this can run. Once zone you have defined has been reached, will portal into next. Only runs challenges that need updating, will not run ones close-ish to your HZE.') },
 			'boolean', false, null, 'C2', [1, 2]);
 
 		createSetting('c2RunnerMode',
@@ -582,7 +582,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
 		createSetting('c2RunnerPercent',
 			function () { return (cinf() + ' Runner %') },
-			function () { return ('What percent Threshhold you want ' + cinf() + 's to be over. E.g 85, will only run ' + cinf() + 's with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ') },
+			function () { return ('What percent Threshhold you want ' + cinf() + 's to be over. E.g 85, will only run ' + cinf() + 's with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run.') },
 			'value', '85', null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
 		createSetting('c2Fused',
@@ -686,12 +686,12 @@ function initializeAllSettings() {
 		//Mayhem
 		createSetting('mayhem',
 			function () { return ('Mayhem') },
-			function () { return ('Turn on Mayhem settings. ') },
+			function () { return ('Turn on Mayhem settings.') },
 			'boolean', false, null, 'C2', [2],
 			function () { return (((!getPageSetting('c2disableFinished') || game.global.mayhemCompletions < 25) && game.stats.highestRadLevel.valueTotal() >= 100) || challengeActive('Mayhem')) });
 		createSetting('mayhemDestack',
 			function () { return ('M: HD Ratio') },
-			function () { return ('What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Mayhem stacks remaining to clear. ') },
+			function () { return ('What HD ratio cut-off to use when farming for the boss. If this setting is 100, the script will destack until you can kill the boss in 100 average hits or there are no Mayhem stacks remaining to clear.') },
 			'value', '-1', null, 'C2', [2],
 			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
 		createSetting('mayhemZone',
@@ -718,7 +718,7 @@ function initializeAllSettings() {
 		//Storm
 		createSetting('storm',
 			function () { return ('Storm') },
-			function () { return ('Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ') },
+			function () { return ('Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm.') },
 			'boolean', false, null, 'C2', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 105) });
 		createSetting('stormZone',
@@ -747,7 +747,7 @@ function initializeAllSettings() {
 
 		createSetting('pandemoniumDestack',
 			function () { return ('P: HD Ratio') },
-			function () { return ('What HD ratio cut-off to use when farming for the boss. If this setting is 10, the script will destack until you can kill the boss in 10 average hits or there are no Pademonium stacks remaining to clear. ') },
+			function () { return ('What HD ratio cut-off to use when farming for the boss. If this setting is 10, the script will destack until you can kill the boss in 10 average hits or there are no Pademonium stacks remaining to clear.') },
 			'value', '10', null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
@@ -901,7 +901,7 @@ function initializeAllSettings() {
 		//Arch
 		createSetting('archaeology',
 			function () { return ('Archaeology') },
-			function () { return ('Turn on Archaeology settings. ') },
+			function () { return ('Turn on Archaeology settings.') },
 			'boolean', false, null, 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 90) });
 		createSetting('archaeologyString1',
@@ -934,7 +934,7 @@ function initializeAllSettings() {
 		//Insanity
 		createSetting('insanitySettings',
 			function () { return ('Insanity Settings') },
-			function () { return ('Click to adjust settings. ') },
+			function () { return ('Click to adjust settings.') },
 			'mazArray', [], 'MAZLookalike("Insanity Farm", "Insanity", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 110) });
 		createSetting('insanityDefaultSettings',
@@ -972,11 +972,11 @@ function initializeAllSettings() {
 	if (displayBuildings) {
 		createSetting('buildingsType',
 			function () { return ('AutoBuildings') },
-			function () { return ('Buys buildings in an efficient way. Also enables Vanilla AutoStorage if its off. ') },
+			function () { return ('Buys buildings in an efficient way. Also enables Vanilla AutoStorage if its off.') },
 			'boolean', 'true', null, 'Legacy', [1]);
 		createSetting('buildingSettingsArray',
 			function () { return ('Building Settings') },
-			function () { return ('Click to adjust settings. ') },
+			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', {
 			Hut: { enabled: true, percent: 100, buyMax: 200 },
 			House: { enabled: true, percent: 100, buyMax: 200 },
@@ -1002,7 +1002,7 @@ function initializeAllSettings() {
 			'boolean', true, null, 'Buildings', [1]);
 		createSetting('WarpstationCap',
 			function () { return ('Warpstation Cap') },
-			function () { return ('Do not level Warpstations past Basewarp+DeltaGiga **. Without this, if a Giga wasnt available, it would level infinitely (wastes metal better spent on prestiges instead.) **The script bypasses this cap each time a new giga is bought, when it insta-buys as many as it can afford (since AT keeps available metal/gems to a low, overbuying beyond the cap to what is affordable at that first moment is not a bad thing). ') },
+			function () { return ('Do not level Warpstations past Basewarp+DeltaGiga **. Without this, if a Giga wasnt available, it would level infinitely (wastes metal better spent on prestiges instead.) **The script bypasses this cap each time a new giga is bought, when it insta-buys as many as it can afford (since AT keeps available metal/gems to a low, overbuying beyond the cap to what is affordable at that first moment is not a bad thing).') },
 			'boolean', true, null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled) });
 		createSetting('FirstGigastation',
@@ -1050,7 +1050,7 @@ function initializeAllSettings() {
 			'multitoggle', 1, null, 'Legacy', [1]);
 		createSetting('jobSettingsArray',
 			function () { return ('Job Settings') },
-			function () { return ('Click to adjust settings. ') },
+			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', {
 			Farmer: { enabled: true, ratio: 1 },
 			Lumberjack: { enabled: true, ratio: 1 },
@@ -1096,7 +1096,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipZone',
 			function () { return ('AE: Zone') },
-			function () { return ('What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input. ') },
+			function () { return ('What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input.') },
 			'multiValue', -1, null, "Gear", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipPercent',
@@ -1167,11 +1167,11 @@ function initializeAllSettings() {
 		//Helium
 		createSetting('autoMaps',
 			function () { return (["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"]) },
-			function () { return ('Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use window, it will not work. ') },
+			function () { return ('Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use window, it will not work.') },
 			'multitoggle', 0, null, "Maps", [1, 2]);
 		createSetting('autoMapsPortal',
 			function () { return ('AM Portal') },
-			function () { return ('Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice. ') },
+			function () { return ('Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.') },
 			'boolean', true, null, 'Maps', [1, 2]);
 		createSetting('onlyPerfectMaps',
 			function () { return ('Perfect Maps') },
@@ -1203,7 +1203,7 @@ function initializeAllSettings() {
 
 		createSetting('scryvoidmaps',
 			function () { return ('VM Scryer') },
-			function () { return ('Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ') },
+			function () { return ('Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options.') },
 			'boolean', false, null, 'Maps', [1]);
 
 		//HD Farm
@@ -1350,7 +1350,7 @@ function initializeAllSettings() {
 			'value', '-1', null, 'Spire', [1]);
 		createSetting('SpireBreedTimer',
 			function () { return ('Spire Breed Timer') },
-			function () { return ('<b>ONLY USE IF YOU USE VANILLA GA</b>Set a time for your GA in spire. Recommend not touching GA during this time. ') },
+			function () { return ('<b>ONLY USE IF YOU USE VANILLA GA</b>Set a time for your GA in spire. Recommend not touching GA during this time.') },
 			'value', -1, null, 'Spire', [1]);
 		createSetting('PreSpireNurseries',
 			function () { return ('Nurseries pre-Spire') },
@@ -1376,50 +1376,50 @@ function initializeAllSettings() {
 	if (displayATGA) {
 		createSetting('ATGA2',
 			function () { return ('ATGA') },
-			function () { return ('<b>ATGA MASTER BUTTON</b><br>AT Geneticassist. Do not use vanilla GA, as it will conflict otherwise. May get fucky with super high values. ') },
+			function () { return ('<b>ATGA MASTER BUTTON</b><br>AT Geneticassist. Do not use vanilla GA, as it will conflict otherwise. May get fucky with super high values.') },
 			'boolean', false, null, 'Jobs', [1]);
 		createSetting('ATGA2gen',
 			function () { return ('ATGA: Gen %') },
-			function () { return ('<b>ATGA: Geneassist %</b><br>ATGA will only hire geneticists if they cost less than this value. E.g if this setting is 1 it will only buy geneticists if they cost less than 1% of your food. Default is 1%. ') },
+			function () { return ('<b>ATGA: Geneassist %</b><br>ATGA will only hire geneticists if they cost less than this value. E.g if this setting is 1 it will only buy geneticists if they cost less than 1% of your food. Default is 1%.') },
 			'value', '1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled) });
 		createSetting('ATGA2timer',
 			function () { return ('ATGA: Timer') },
-			function () { return ('<b>ATGA Timer</b><br>This is the default time your ATGA will use. ') },
+			function () { return ('<b>ATGA Timer</b><br>This is the default time your ATGA will use.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled) });
 
 		//Zone Timers
 		createSetting('zATGA2timer',
 			function () { return ('ATGA: T: Before Z') },
-			function () { return ('<b>ATGA Timer: Before Z</b><br>ATGA will use the value you define in ATGA: T: BZT before the zone you have defined in this setting, overwriting your default timer. Useful for Liq or whatever. ') },
+			function () { return ('<b>ATGA Timer: Before Z</b><br>ATGA will use the value you define in ATGA: T: BZT before the zone you have defined in this setting, overwriting your default timer. Useful for Liq or whatever.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('ztATGA2timer',
 			function () { return ('ATGA: T: BZT') },
-			function () { return ('<b>ATGA Timer: Before Z Timer</b><br>ATGA will use this value before the zone you have defined in ATGA: T: Before Z, overwriting your default timer. Useful for Liq or whatever. Does not work on challenges. ') },
+			function () { return ('<b>ATGA Timer: Before Z Timer</b><br>ATGA will use this value before the zone you have defined in ATGA: T: Before Z, overwriting your default timer. Useful for Liq or whatever. Does not work on challenges.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0 && autoTrimpSettings.zATGA2timer.value > 0) });
 		createSetting('ATGA2timerz',
 			function () { return ('ATGA: T: After Z') },
-			function () { return ('<b>ATGA Timer: After Z</b><br>ATGA will use the value you define in ATGA: T: AZT after the zone you have defined in this setting, overwriting your default timer. Useful for super push runs or whatever. Does not work on challenges. ') },
+			function () { return ('<b>ATGA Timer: After Z</b><br>ATGA will use the value you define in ATGA: T: AZT after the zone you have defined in this setting, overwriting your default timer. Useful for super push runs or whatever. Does not work on challenges.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('ATGA2timerzt',
 			function () { return ('ATGA: T: AZT') },
-			function () { return ('<b>ATGA Timer: After Z Timer</b><br>ATGA will use this value after the zone that has been defined in ATGA: T: After Z, overwriting your default timer. Useful for super push runs or whatever. ') },
+			function () { return ('<b>ATGA Timer: After Z Timer</b><br>ATGA will use this value after the zone that has been defined in ATGA: T: After Z, overwriting your default timer. Useful for super push runs or whatever.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0 && autoTrimpSettings.ATGA2timerz.value > 0) });
 
 		//Spire Timers
 		createSetting('sATGA2timer',
 			function () { return ('ATGA: T: Spire') },
-			function () { return ('<b>ATGA Timer: Spire</b><br>ATGA will use this value in Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this except Daily Spire. ') },
+			function () { return ('<b>ATGA Timer: Spire</b><br>ATGA will use this value in Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this except Daily Spire.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('dsATGA2timer',
 			function () { return ('ATGA: T: Daily Spire') },
-			function () { return ('<b>ATGA Timer: Daily Spire</b><br>ATGA will use this value in Daily Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this. ') },
+			function () { return ('<b>ATGA Timer: Daily Spire</b><br>ATGA will use this value in Daily Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 
@@ -1431,19 +1431,19 @@ function initializeAllSettings() {
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('dATGA2timer',
 			function () { return ('ATGA: T: Dailies') },
-			function () { return ('<b>ATGA Timer: Normal Dailies</b><br>ATGA will use this value for normal Dailies such as ones without plague etc, overwriting your default timer. Useful for pushing your dailies that extra bit at the end. Overwrites Default, Before Z and After Z. ') },
+			function () { return ('<b>ATGA Timer: Normal Dailies</b><br>ATGA will use this value for normal Dailies such as ones without plague etc, overwriting your default timer. Useful for pushing your dailies that extra bit at the end. Overwrites Default, Before Z and After Z.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('dhATGA2timer',
 			function () { return ('ATGA: T: D: Hard') },
-			function () { return ('<b>ATGA Timer: Hard Dailies</b><br>ATGA will use this value in Dailies that are considered Hard. Such Dailies include plaged, bloodthirst and Dailies with a lot of negative mods. Overwrites Default, Before Z and After Z and normal Daily ATGA Timer. ') },
+			function () { return ('<b>ATGA Timer: Hard Dailies</b><br>ATGA will use this value in Dailies that are considered Hard. Such Dailies include plaged, bloodthirst and Dailies with a lot of negative mods. Overwrites Default, Before Z and After Z and normal Daily ATGA Timer.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 
 		//C2 Timers
 		createSetting('cATGA2timer',
 			function () { return ('ATGA: T: ' + cinf()) },
-			function () { return ('<b>ATGA Timer: ' + cinf() + 's</b><br>ATGA will use this value in ' + cinf() + 's. Overwrites Default, Before Z and After Z. ') },
+			function () { return ('<b>ATGA Timer: ' + cinf() + 's</b><br>ATGA will use this value in ' + cinf() + 's. Overwrites Default, Before Z and After Z.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('chATGA2timer',
@@ -1482,7 +1482,7 @@ function initializeAllSettings() {
 			function () { return (autoTrimpSettings.AutoStance.value !== 3) });
 		createSetting('ForceAbandon',
 			function () { return ('Trimpicide') },
-			function () { return ('If a new fight group is available and anticipation stacks aren\'t maxed, Trimpicide and grab a new group. Will not abandon in spire. Recommended ON. ') },
+			function () { return ('If a new fight group is available and anticipation stacks aren\'t maxed, Trimpicide and grab a new group. Will not abandon in spire. Recommended ON.') },
 			'boolean', false, null, 'Combat', [1]);
 		createSetting('AutoRoboTrimp',
 			function () { return ('AutoRoboTrimp') },
@@ -1490,19 +1490,19 @@ function initializeAllSettings() {
 			'value', '60', null, 'Combat', [1]);
 		createSetting('fightforever',
 			function () { return ('Fight Always') },
-			function () { return ('U1: -1 to disable. Sends trimps to fight if they\'re not fighting, regardless of BAF. Has 2 uses. Set to 0 to always send out trimps. Or set a number higher than 0 to enable the H:D function. If the H:D ratio is below this number it will send them out. I.e, this is set to 1, it will send out trimps regardless with the H:D ratio is below 1. ') },
+			function () { return ('U1: -1 to disable. Sends trimps to fight if they\'re not fighting, regardless of BAF. Has 2 uses. Set to 0 to always send out trimps. Or set a number higher than 0 to enable the H:D function. If the H:D ratio is below this number it will send them out. I.e, this is set to 1, it will send out trimps regardless with the H:D ratio is below 1.') },
 			'value', '-1', null, 'Combat', [1]);
 		createSetting('addpoison',
 			function () { return ('Poison Calc') },
-			function () { return ('<b>Experimental. </b><br>Adds poison to the battlecalc. May improve your poison zone speed. ') },
+			function () { return ('<b>Experimental. </b><br>Adds poison to the battlecalc. May improve your poison zone speed.') },
 			'boolean', false, null, 'Combat', [1]);
 		createSetting('fullice',
 			function () { return ('Ice Calc') },
-			function () { return ('Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use it to ensure your H:D ratios aren\'t all over the place. ') },
+			function () { return ('Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use it to ensure your H:D ratios aren\'t all over the place.') },
 			'boolean', false, null, 'Combat', [1]);
 		createSetting('45stacks',
 			function () { return ('Antistack Calc') },
-			function () { return ('<b>Experimental. </b><br>Always calcs your damage as having full antistacks. Useful for windstacking. ') },
+			function () { return ('<b>Experimental. </b><br>Always calcs your damage as having full antistacks. Useful for windstacking.') },
 			'boolean', false, null, 'Combat', [1]);
 
 		//Radon
@@ -1512,7 +1512,7 @@ function initializeAllSettings() {
 			'multitoggle', 0, null, 'Combat', [2]);
 		createSetting('equalityCalc',
 			function () { return (['Equality Calc Off', 'EC: On', 'EC: Health']) },
-			function () { return ('<b>Experimental. </b><br>Adds Equality Scaling levels to the battlecalc. Will always calculate equality based on actual scaling levels when its turned off by other settings. Assumes you use Equality Scaling. Turning this on allows in-game Equality Scaling to adjust your Health accordingly. EC: Health only decreases enemies attack in the calculation which may improve speed. ') },
+			function () { return ('<b>Experimental. </b><br>Adds Equality Scaling levels to the battlecalc. Will always calculate equality based on actual scaling levels when its turned off by other settings. Assumes you use Equality Scaling. Turning this on allows in-game Equality Scaling to adjust your Health accordingly. EC: Health only decreases enemies attack in the calculation which may improve speed.') },
 			'multitoggle', 0, null, 'Combat', [2],
 			function () { return (getPageSetting('equalityManagement', 2) < 2) });
 		createSetting('gammaBurstCalc',
@@ -1533,7 +1533,7 @@ function initializeAllSettings() {
 			'boolean', true, null, 'Combat', [1]);
 		createSetting('ScryerUseWhenOverkill',
 			function () { return ('Use When Overkill') },
-			function () { return ('Overrides everything! Toggles stance when we can Overkill in S, giving us double loot with no speed penalty (minimum one overkill, if you have more than 1, it will lose speed) <b>NOTE:</b> This being on, and being able to overkill in S will override ALL other settings <u>(Except never use in spire)</u>. This is a boolean logic shortcut that disregards all the other settings including Min and Max Zone. If you ONLY want to use S during Overkill, as a workaround: turn this on and Min zone: to 9999 and everything else off(red). ') },
+			function () { return ('Overrides everything! Toggles stance when we can Overkill in S, giving us double loot with no speed penalty (minimum one overkill, if you have more than 1, it will lose speed) <b>NOTE:</b> This being on, and being able to overkill in S will override ALL other settings <u>(Except never use in spire)</u>. This is a boolean logic shortcut that disregards all the other settings including Min and Max Zone. If you ONLY want to use S during Overkill, as a workaround: turn this on and Min zone: to 9999 and everything else off(red).') },
 			'boolean', true, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerMinZone',
@@ -1548,7 +1548,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('onlyminmaxworld',
 			function () { return ('World Min & Max Only') },
-			function () { return ('Forces Scryer to only work in world regardless of other settings. ') },
+			function () { return ('Forces Scryer to only work in world regardless of other settings.') },
 			'boolean', false, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinMaps2',
@@ -1558,7 +1558,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinVoidMaps2',
 			function () { return (['VoidMaps: NEVER', 'VoidMaps: FORCE', 'VoidMaps: MAYBE']) },
-			function () { return ('<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate in Void Maps<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed. ') },
+			function () { return ('<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate in Void Maps<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.') },
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinPMaps',
@@ -1613,7 +1613,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('screwessence',
 			function () { return ('Remaining Essence Only') },
-			function () { return ('Why scry when theres no essence? Turns off scrying when the remaining enemies with essence drops to 0. ') },
+			function () { return ('Why scry when theres no essence? Turns off scrying when the remaining enemies with essence drops to 0.') },
 			'boolean', false, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 
@@ -1623,17 +1623,17 @@ function initializeAllSettings() {
 		//Windstacking
 		createSetting('WindStackingMin',
 			function () { return ('Windstack Min Zone') },
-			function () { return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from WS MAX work off this setting. ') },
+			function () { return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from WS MAX work off this setting.') },
 			'value', '-1', null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStance.value === 3) });
 		createSetting('WindStackingMinHD',
 			function () { return ('Windstack H:D') },
-			function () { return ('For use with Windstacking Stance, fiddle with this to maximise your stacks in wind zones. ') },
+			function () { return ('For use with Windstacking Stance, fiddle with this to maximise your stacks in wind zones.') },
 			'value', '-1', null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStance.value === 3) });
 		createSetting('WindStackingMax',
 			function () { return ('Windstack Stacks') },
-			function () { return ('For use with Windstacking Stance. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190.  In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment. ') },
+			function () { return ('For use with Windstacking Stance. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190.  In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment.') },
 			'value', '200', null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStance.value === 3) });
 	}
@@ -1645,60 +1645,60 @@ function initializeAllSettings() {
 	if (displayMagma) {
 		createSetting('UseAutoGen',
 			function () { return ('Auto Generator') },
-			function () { return ('Turn this on to use these settings. ') },
+			function () { return ('Turn this on to use these settings.') },
 			'boolean', false, null, 'Magma', [1]);
 		createSetting('beforegen',
 			function () { return (['Gain Mi', 'Gain Fuel', 'Hybrid']) },
-			function () { return ('<b>MODE BEFORE FUELING: </b>Which mode to use before fueling. This is the mode which the generator will use if you fuel after z230. ') },
+			function () { return ('<b>MODE BEFORE FUELING: </b>Which mode to use before fueling. This is the mode which the generator will use if you fuel after z230.') },
 			'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('fuellater',
 			function () { return ('Start Fuel Z') },
-			function () { return ('Start fueling at this zone instead of 230. I would suggest you have a value lower than your max, for obvious reasons. Recommend starting at a value close-ish to your max supply. Use 230 to use your <b>BEFORE FUEL</b> setting. ') },
+			function () { return ('Start fueling at this zone instead of 230. I would suggest you have a value lower than your max, for obvious reasons. Recommend starting at a value close-ish to your max supply. Use 230 to use your <b>BEFORE FUEL</b> setting.') },
 			'value', -1, null, 'Magma', [1]);
 		createSetting('fuelend',
 			function () { return ('End Fuel Z') },
-			function () { return ('End fueling at this zone. After this zone is reached, will follow your preference. -1 to fuel infinitely. ') },
+			function () { return ('End fueling at this zone. After this zone is reached, will follow your preference. -1 to fuel infinitely.') },
 			'value', -1, null, 'Magma', [1]);
 		createSetting('defaultgen',
 			function () { return (['Gain Mi', 'Gain Fuel', 'Hybrid']) },
-			function () { return ('<b>MODE AFTER FUELING: </b>Which mode to use after fueling. ') },
+			function () { return ('<b>MODE AFTER FUELING: </b>Which mode to use after fueling.') },
 			'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('AutoGenDC',
 			function () { return (['Daily: Normal', 'Daily: Fuel', 'Daily: Hybrid']) },
-			function () { return ('<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire Daily. <br><b>Hybrid:</b> Uses Hybrid for the entire Daily. ') },
+			function () { return ('<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire Daily. <br><b>Hybrid:</b> Uses Hybrid for the entire Daily.') },
 			'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('AutoGenC2',
 			function () { return (['' + cinf() + ': Normal', '' + cinf() + ': Fuel', '' + cinf() + ': Hybrid']) },
-			function () { return ('<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire ' + cinf() + '. <br><b>Hybrid:</b> Uses Hybrid for the entire ' + cinf() + '. ') },
+			function () { return ('<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire ' + cinf() + '. <br><b>Hybrid:</b> Uses Hybrid for the entire ' + cinf() + '.') },
 			'multitoggle', 1, null, 'Magma', [1]);
 
 		//Spend Mi
 		createSetting('spendmagmite',
 			function () { return (['Spend Magmite OFF', 'Spend Magmite (Portal)', 'Spend Magmite Always']) },
-			function () { return ('Auto Spends any unspent Magmite immediately before portaling. (Or Always, if toggled). Part 1 buys any permanent one-and-done upgrades in order from most expensive to least. Part 2 then analyzes Efficiency vs Capacity for cost/benefit, and buys Efficiency if its BETTER than Capacity. If not, if the PRICE of Capacity is less than the price of Supply, it buys Capacity. If not, it buys Supply. And then it repeats itself until you run out of Magmite and cant buy anymore. ') },
+			function () { return ('Auto Spends any unspent Magmite immediately before portaling. (Or Always, if toggled). Part 1 buys any permanent one-and-done upgrades in order from most expensive to least. Part 2 then analyzes Efficiency vs Capacity for cost/benefit, and buys Efficiency if its BETTER than Capacity. If not, if the PRICE of Capacity is less than the price of Supply, it buys Capacity. If not, it buys Supply. And then it repeats itself until you run out of Magmite and cant buy anymore.') },
 			'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('ratiospend',
 			function () { return ('Ratio Spending') },
-			function () { return ('Spends Magmite in a Ratio you define. ') },
+			function () { return ('Spends Magmite in a Ratio you define.') },
 			'boolean', false, null, 'Magma', [1]);
 		createSetting('effratio',
 			function () { return ('Efficiency') },
-			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend. ') },
+			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.') },
 			'value', -1, null, 'Magma', [1],
 			function () { return (autoTrimpSettings.ratiospend.enabled) });
 		createSetting('capratio',
 			function () { return ('Capacity') },
-			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend. ') },
+			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.') },
 			'value', -1, null, 'Magma', [1],
 			function () { return (autoTrimpSettings.ratiospend.enabled) });
 		createSetting('supratio',
 			function () { return ('Supply') },
-			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend. ') },
+			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.') },
 			'value', -1, null, 'Magma', [1],
 			function () { return (autoTrimpSettings.ratiospend.enabled) });
 		createSetting('ocratio',
 			function () { return ('Overclocker') },
-			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend. ') },
+			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.') },
 			'value', -1, null, 'Magma', [1],
 			function () { return (autoTrimpSettings.ratiospend.enabled) });
 		createSetting('SupplyWall',
@@ -1708,7 +1708,7 @@ function initializeAllSettings() {
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
 		createSetting('spendmagmitesetting',
 			function () { return (['Normal', 'Normal & No OC', 'OneTime Only', 'OneTime & OC']) },
-			function () { return ('<b>Normal:</b> Spends Magmite Normally as Explained in Magmite spending behaviour. <br><b>Normal & No OC:</b> Same as normal, except skips OC afterbuying 1 OC upgrade. <br><b>OneTime Only:</b> Only Buys the One off upgrades except skips OC afterbuying 1 OC upgrade. <br><b>OneTime & OC:</b> Buys all One off upgrades, then buys OC only. ') },
+			function () { return ('<b>Normal:</b> Spends Magmite Normally as Explained in Magmite spending behaviour. <br><b>Normal & No OC:</b> Same as normal, except skips OC afterbuying 1 OC upgrade. <br><b>OneTime Only:</b> Only Buys the One off upgrades except skips OC afterbuying 1 OC upgrade. <br><b>OneTime & OC:</b> Buys all One off upgrades, then buys OC only.') },
 			'multitoggle', 0, null, 'Magma', [1],
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
 		createSetting('MagmiteExplain',
@@ -1726,7 +1726,7 @@ function initializeAllSettings() {
 		//Heirloom Swapping
 		createSetting('heirloom',
 			function () { return ('Heirloom Swapping') },
-			function () { return ('Heirloom swapping master button. Turn this on to allow heirloom swapping and its associated settings. ') },
+			function () { return ('Heirloom swapping master button. Turn this on to allow heirloom swapping and its associated settings.') },
 			'boolean', false, null, 'Heirlooms', [1, 2]);
 
 		createSetting('heirloomMapSwap',
@@ -1750,13 +1750,13 @@ function initializeAllSettings() {
 
 		createSetting('heirloomInitial',
 			function () { return ('Initial') },
-			function () { return ('<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone. ') },
+			function () { return ('<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone.') },
 			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomAfterpush',
 			function () { return ('Afterpush') },
-			function () { return ('<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone. ') },
+			function () { return ('<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone.') },
 			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
@@ -1845,40 +1845,35 @@ function initializeAllSettings() {
 			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
-		//Heirloom Line
+		//Auto Heirlooms
 
 		createSetting('heirloomAuto',
 			function () { return ('Auto Heirlooms') },
-			function () { return ('Auto Heirlooms master button. Turn this on to enable all Auto Heirloom settings. <br><br><b>The Modifier points will be explained here.</b> The more points an heirloom has, the better chance it has of being kept. If empty is selected, it will muliplty the score by 4. If any is selected, it will multiply the score of the heirloom by 2. <br><br>E.g Mod 1 = CC (+6 if dropped, 1st modifier) <br>Mod 2 = CD (+5 if dropped, 2nd modifier) <br>Mod 3 = PB (+4 if dropped, 3rd modifier) <br>Mod 4 = Empty (x4 if dropped, +0 if not) <br>Mod 5 = Empty (x4 if dropped, +0 if not) <br><br>If an heirloom dropped with these exact modifiers, it would get a score of 192 (6+5+4*4*4=240). The highest point heirlooms will be kept. ') },
+			function () { return ('Auto Heirlooms master button. Turn this on to enable all heirloom retention settings. <br><br> When portaling will check if the heirlooms in your temporary section for the type(s) you have selected to keep have the possibility to have all of the selected mods and if any do they will be stashed otherwise will be recycled.') },
 			'boolean', false, null, 'Heirlooms', [1, 2]);
 
 		createSetting('heirloomAutoTypeToKeep',
-			function () { return (['None', 'Shields', 'Staffs', 'Cores', 'All']) },
-			function () { return ('<b>Shields: </b>Keeps Shields and nothing else.<br><b>Staffs: </b>Keeps Staffs and nothing else.<br><b>Cores: </b>Keeps Cores and nothing else.<br><b>All: </b>Keeps 4 Shields and 3 Staffs and 3 Cores. If you have protected heirlooms in your inventory it will overrite one slot. E.g if one heirloom is protected, you will keep 4 Shields and 3 Staffs and 2 Cores. ') },
+			function () { return (['None', 'Shields', 'Staffs', 'All']) },
+			function () { return ('<b>Shields: </b>Keeps Shields and nothing else.<br><b>Staffs: </b>Keeps Staffs and nothing else.<br><b>Cores: </b>Keeps Cores and nothing else.<br><b>All: Will keep all heirlooms.') },
 			'multitoggle', 0, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 		createSetting('heirloomAutoRareToKeep',
 			function () { return ('Rarity to Keep') },
-			function () { return ('Auto Heirlooms. Keeps the selected rarity of heirloom, recycles all others. ') },
+			function () { return ('Auto Heirlooms. Keeps the selected rarity of heirloom, recycles all others. Will only display tiers that can currently be obtained based on your highest zone reached and when changed the heirloom mods sections will only display the mods available for that heirloom tier.') },
 			'dropdown', 'Any', ["None", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Magnificent", "Ethereal", "Magmatic", "Plagued", "Radiating", "Hazardous", "Enigmatic"], 'Heirlooms', [1, 2],
-			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
-		createSetting('heirloomAutoOnlyPefect',
-			function () { return ('Only Perfect') },
-			function () { return ('Will make sure that Auto Heirlooms will only keep heirlooms that have the mods you selected on them. Be warned you have to ensure that all modifier slots have been selected when using this setting or it won\'t function properly.') },
-			'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		//Shield Line
 		createSetting('heirloomAutoShield',
 			function () { return ('Shields') },
-			function () { return ('Auto Heirlooms. Enables in-depth shield settings. ') },
+			function () { return ('Auto Heirlooms. Enables in-depth shield settings.') },
 			'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		createSetting('heirloomAutoShieldMod1',
 			function () { return ('Shield: Modifier 1') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected Mod. Modifier 1 is worth 6 points. ') },
-			'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 0)
@@ -1886,8 +1881,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod2',
 			function () { return ('Shield: Modifier 2') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected Mod. Modifier 2 is worth 5 points. ') },
-			'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 1)
@@ -1895,8 +1890,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod3',
 			function () { return ('Shield: Modifier 3') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected Mod. Modifier 3 is worth 4 points. ') },
-			'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 2)
@@ -1904,8 +1899,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod4',
 			function () { return ('Shield: Modifier 4') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected Mod. Modifier 4 is worth 3 points. ') },
-			'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 5)
@@ -1913,8 +1908,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod5',
 			function () { return ('Shield: Modifier 5') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected Mod. Modifier 5 is worth 2 points. ') },
-			'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 8)
@@ -1922,8 +1917,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod6',
 			function () { return ('Shield: Modifier 6') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected Mod. Modifier 6 is worth 1 points. ') },
-			'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 9)
@@ -1931,8 +1926,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod7',
 			function () { return ('Shield: Modifier 7') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected Mod. Modifier 7 is worth 1 points. ') },
-			'dropdown', 'empty', ["empty", "playerEfficiency", "trainerEfficiency", "storageSize", "breedSpeed", "trimpHealth", "trimpAttack", "trimpBlock", "critDamage", "critChance", "voidMaps", "plaguebringer", "prismatic", "gammaBurst", "inequality"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 11)
@@ -1941,14 +1936,14 @@ function initializeAllSettings() {
 		//Staff Line
 		createSetting('heirloomAutoStaff',
 			function () { return ('Staffs') },
-			function () { return ('Auto Heirlooms. Enables in-depth staff settings. ') },
+			function () { return ('Auto Heirlooms. Enables in-depth staff settings.') },
 			'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		createSetting('heirloomAutoStaffMod1',
 			function () { return ('Staff: Modifier 1') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 1 is worth 6 points. ') },
-			'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 0)
@@ -1956,8 +1951,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod2',
 			function () { return ('Staff: Modifier 2') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 2 is worth 5 points. ') },
-			'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 1)
@@ -1965,8 +1960,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod3',
 			function () { return ('Staff: Modifier 3') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 3 is worth 4 points. ') },
-			'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 2)
@@ -1974,8 +1969,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod4',
 			function () { return ('Staff: Modifier 4') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 4 is worth 3 points. ') },
-			'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 5)
@@ -1983,8 +1978,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod5',
 			function () { return ('Staff: Modifier 5') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 5 is worth 2 points. ') },
-			'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 7)
@@ -1992,8 +1987,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod6',
 			function () { return ('Staff: Modifier 6') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 6 is worth 1 points. ') },
-			'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 9)
@@ -2001,8 +1996,8 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod7',
 			function () { return ('Staff: Modifier 7') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected Mod. Modifier 7 is worth 1 points. ') },
-			'dropdown', 'empty', ["empty", "metalDrop", "foodDrop", "woodDrop", "gemsDrop", "fragmentsDrop", "MinerSpeed", "FarmerSpeed", "LumberjackSpeed", "DragimpSpeed", "ExplorerSpeed", "ScientistSpeed", "FluffyExp", "ParityPower"], 'Heirlooms', [1, 2],
+			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 11)
@@ -2011,28 +2006,28 @@ function initializeAllSettings() {
 		//Core Line
 		createSetting('heirloomAutoCore',
 			function () { return ('Cores') },
-			function () { return ('Auto Heirlooms. Enables in-depth core settings. ') },
+			function () { return ('Auto Heirlooms. Enables in-depth core settings.') },
 			'boolean', false, null, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod1',
 			function () { return ('Cores: Modifier 1') },
-			function () { return ('Auto Heirlooms. Keeps Cores with selected Mod. Modifier 1 is worth 5 points. ') },
-			'dropdown', 'empty', ["empty", "fireTrap", "poisonTrap", "lightningTrap", "runestones", "strengthEffect", "condenserEffect"], 'Heirlooms', [1],
+			function () { return ('Auto Heirlooms. Keeps Cores with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod2',
 			function () { return ('Cores: Modifier 2') },
-			function () { return ('Auto Heirlooms. Keeps Cores with selected Mod. Modifier 2 is worth 4 points. ') },
-			'dropdown', 'empty', ["empty", "fireTrap", "poisonTrap", "lightningTrap", "runestones", "strengthEffect", "condenserEffect"], 'Heirlooms', [1],
+			function () { return ('Auto Heirlooms. Keeps Cores with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod3',
 			function () { return ('Cores: Modifier 3') },
-			function () { return ('Auto Heirlooms. Keeps Cores with selected Mod. Modifier 3 is worth 3 points. ') },
-			'dropdown', 'empty', ["empty", "fireTrap", "poisonTrap", "lightningTrap", "runestones", "strengthEffect", "condenserEffect"], 'Heirlooms', [1],
+			function () { return ('Auto Heirlooms. Keeps Cores with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod4',
 			function () { return ('Cores: Modifier 4') },
-			function () { return ('Auto Heirlooms. Keeps Cores with selected Mod. Modifier 4 is worth 2 points. ') },
-			'dropdown', 'empty', ["empty", "fireTrap", "poisonTrap", "lightningTrap", "runestones", "strengthEffect", "condenserEffect"], 'Heirlooms', [1],
+			function () { return ('Auto Heirlooms. Keeps Cores with selected mod.') },
+			'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 	}
 
@@ -2067,7 +2062,7 @@ function initializeAllSettings() {
 			'boolean', false, null, 'Nature', [1]);
 		createSetting('tokenthresh',
 			function () { return ('Token Threshold') },
-			function () { return ('If Tokens would go below this value it will not convert tokens. ') },
+			function () { return ('If Tokens would go below this value it will not convert tokens.') },
 			'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 		createSetting('AutoPoison',
@@ -2089,51 +2084,51 @@ function initializeAllSettings() {
 		//Enlights
 		createSetting('autoenlight',
 			function () { return ('Enlight: Auto') },
-			function () { return ('Enables Automatic Enlightenment. Use the settings to define how it works. ') },
+			function () { return ('Enables Automatic Enlightenment. Use the settings to define how it works.') },
 			'boolean', false, null, 'Nature', [1]);
 		createSetting('pfillerenlightthresh',
 			function () { return ('E: F: Poison') },
-			function () { return ('Activate Poison Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable. ') },
+			function () { return ('Activate Poison Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable.') },
 			'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
 		createSetting('wfillerenlightthresh',
 			function () { return ('E: F: Wind') },
-			function () { return ('Activate Wind Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable. ') },
+			function () { return ('Activate Wind Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable.') },
 			'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
 		createSetting('ifillerenlightthresh',
 			function () { return ('E: F: Ice') },
-			function () { return ('Activate Ice Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable. ') },
+			function () { return ('Activate Ice Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable.') },
 			'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
 		createSetting('pdailyenlightthresh',
 			function () { return ('E: D: Poison') },
-			function () { return ('Activate Poison Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable. ') },
+			function () { return ('Activate Poison Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable.') },
 			'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
 		createSetting('wdailyenlightthresh',
 			function () { return ('E: D: Wind') },
-			function () { return ('Activate Wind Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable. ') },
+			function () { return ('Activate Wind Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable.') },
 			'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
 		createSetting('idailyenlightthresh',
 			function () { return ('E: D: Ice') },
-			function () { return ('Activate Ice Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable. ') },
+			function () { return ('Activate Ice Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable.') },
 			'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
 		createSetting('pc2enlightthresh',
 			function () { return ('E: C: Poison') },
-			function () { return ('Activate Poison Enlight when Enlight cost is below this Thresh in ' + cinf() + 's. Consumes Tokens. -1 to disable. ') },
+			function () { return ('Activate Poison Enlight when Enlight cost is below this Thresh in ' + cinf() + 's. Consumes Tokens. -1 to disable.') },
 			'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
 		createSetting('wc2enlightthresh',
 			function () { return ('E: C: Wind') },
-			function () { return ('Activate Wind Enlight when Enlight cost is below this Thresh in ' + cinf() + 's. Consumes Tokens. -1 to disable. ') },
+			function () { return ('Activate Wind Enlight when Enlight cost is below this Thresh in ' + cinf() + 's. Consumes Tokens. -1 to disable.') },
 			'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
 		createSetting('ic2enlightthresh',
 			function () { return ('E: C: Ice') },
-			function () { return ('Activate Ice Enlight when Enlight cost is below this Thresh in ' + cinf() + 's. Consumes Tokens. -1 to disable. ') },
+			function () { return ('Activate Ice Enlight when Enlight cost is below this Thresh in ' + cinf() + 's. Consumes Tokens. -1 to disable.') },
 			'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
 	}
@@ -2149,11 +2144,11 @@ function initializeAllSettings() {
 			'boolean', false, null, 'Display', [0]);
 		createSetting('displayAutoMapStatus',
 			function () { return ('AutoMap Status') },
-			function () { return ('Enables the display of the map status. Turn this off to reduce memory. ') },
+			function () { return ('Enables the display of the map status. Turn this off to reduce memory.') },
 			'boolean', true, null, 'Display', [1, 2]);
 		createSetting('displayHeHr',
 			function () { return (resourceHour() + '/hr status') },
-			function () { return ('Enables the display of your ' + resource().toLowerCase() + ' per hour. Turn this off to reduce memory. ') },
+			function () { return ('Enables the display of your ' + resource().toLowerCase() + ' per hour. Turn this off to reduce memory.') },
 			'boolean', true, null, 'Display', [1, 2]);
 
 		createSetting('displayAllSettings',
@@ -2176,7 +2171,7 @@ function initializeAllSettings() {
 			'boolean', false, null, 'Display', [11]);
 		createSetting('showbreedtimer',
 			function () { return ('Enable Breed Timer') },
-			function () { return ('Enables the display of the hidden breedtimer. Turn this off to reduce memory. ') },
+			function () { return ('Enables the display of the hidden breedtimer. Turn this off to reduce memory.') },
 			'boolean', true, null, 'Display', [1]);
 
 		createSetting('sitInMaps',
@@ -2251,7 +2246,7 @@ function initializeAllSettings() {
 			'infoclick', 'ExportAutoTrimps', null, 'Import Export', [1, 2]);
 		createSetting('DefaultAutoTrimps',
 			function () { return ('Reset to Default') },
-			function () { return ('Reset everything to the way it was when you first installed the script. ') },
+			function () { return ('Reset everything to the way it was when you first installed the script.') },
 			'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export', [1, 2]);
 		createSetting('DownloadDebug',
 			function () { return ('Download for debug') },
@@ -2296,7 +2291,7 @@ function initializeAllSettings() {
 		createSetting('gameSpeed50',
 			function () { return ('Game Speed 50x') },
 			function () { return ('Set gamespeed to 50x the regular value.') },
-			'action', 'cheatSpeedX(0.1)', null, 'Test', [0]);
+			'action', 'cheatSpeedX()', null, 'Test', [0]);
 
 		createSetting('gameSpeedNormal',
 			function () { return ('Game Speed Normal') },
@@ -2785,13 +2780,13 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("heirloomSwapZoneC3", 'show');
 	modifyParentNode("heirloomStaffVoid", 'show');
 	if (getPageSetting('radonsettings') === 0) {
-		modifyParentNode("heirloomAutoOnlyPefect", radonoff_heirloom);
+		modifyParentNode("heirloomAutoRareToKeep", radonoff_heirloom);
 		modifyParentNode("heirloomAutoShieldMod7", radonoff_heirloom);
 		modifyParentNode("heirloomAutoStaffMod7", radonoff_heirloom);
 	}
 	//Radon Settings
 	if (getPageSetting('radonsettings') === 1) {
-		modifyParentNode("heirloomAutoOnlyPefect", radonon_heirloom);
+		modifyParentNode("heirloomAutoRareToKeep", radonon_heirloom);
 		modifyParentNode("heirloomAutoShieldMod7", radonon_heirloom);
 	}
 	//Golden Upgrades
@@ -2819,7 +2814,7 @@ function modifyParentNodeUniverseSwap() {
 function HeHrPortalOptions() {
 	var hze = game.stats.highestLevel.valueTotal();
 	var portalOptions = ['Auto Portal Immediately', 'Portal after voids'];
-	if (currSettingUniverse === 1 && hze >= 230) portalOptions.push("Portal after voids (poison)");
+	if (currSettingUniverse === 1 && hze >= 230) portalOptions.push('Portal after voids (poison)');
 
 	autoTrimpSettings.HeliumHrPortal.name = function () { return (portalOptions) }
 	autoTrimpSettings.dailyHeliumHrPortal.name = function () { return (portalOptions) }
@@ -3166,6 +3161,100 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 	MODULES.u2unlocks.challenge3 = challenge3;
 }
 
+function autoHeirloomOptions() {
+	var hze = game.stats.highestLevel.valueTotal();
+	var heirloomOptions = ['None', 'Shields', 'Staffs', 'All'];
+	if (currSettingUniverse === 1 && hze >= 200) heirloomOptions.splice(3, 0, 'Cores');
+
+	var heirloomText = '<b>Shields: </b>Keeps Shields and nothing else.'
+	heirloomText += '<br><b>Staffs: </b>Keeps Staffs and nothing else.'
+	if (currSettingUniverse === 1 && hze >= 200) heirloomText += '<br><b>Cores: </b>Keeps Cores and nothing else.'
+	heirloomText += '<br><b>All: Will keep all heirlooms.'
+
+	autoTrimpSettings.heirloomAutoTypeToKeep.name = function () { return (heirloomOptions) }
+	autoTrimpSettings.heirloomAutoTypeToKeep.description = function () { return (heirloomText) }
+
+	if (currSettingUniverse === 2) {
+		var hze = game.stats.highestLevel.valueTotal();
+		var heirloomTiersAvailable = ['Plagued', 'Radiating'];
+		if (hze >= 100) heirloomTiersAvailable.push('Hazardous');
+		if (hze >= 200) heirloomTiersAvailable.push('Enigmatic');
+	}
+	else {
+		var hze = game.stats.highestLevel.valueTotal();
+		var heirloomTiersAvailable = ['Common', 'Rare'];
+		if (hze >= 60) heirloomTiersAvailable.push('Epic');
+		if (hze >= 100) heirloomTiersAvailable.push('Legendary');
+		if (hze >= 125) heirloomTiersAvailable.push('Magnificent');
+		if (hze >= 146) heirloomTiersAvailable.push('Ethereal');
+		if (hze >= 230) heirloomTiersAvailable.push('Magmatic');
+		if (hze >= 500) heirloomTiersAvailable.push('Plagued');
+	}
+
+	if (document.getElementById('heirloomAutoRareToKeep').children.length !== heirloomTiersAvailable.length) {
+		document.getElementById('heirloomAutoRareToKeep').innerHTML = '';
+		for (var item in heirloomTiersAvailable) {
+			var option = document.createElement("option");
+			option.value = heirloomTiersAvailable[item];
+			option.text = heirloomTiersAvailable[item];
+			document.getElementById('heirloomAutoRareToKeep').appendChild(option);
+		}
+	}
+
+	var heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
+	var heirloomSlots = [1, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7];
+	var raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep'), currSettingUniverse);
+	var settingsToChange = heirloomSlots[raretokeep];
+
+	shieldMods = ["Empty"];
+
+	for (var item in game.heirlooms['Shield']) {
+		var heirloom = game.heirlooms['Shield'][item];
+		if (item == "empty") continue;
+		if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
+		if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
+		shieldMods.push(heirloomMods['Shield'][item]);
+	}
+
+	document.getElementById('heirloomAutoShieldMod1').innerHTML = '';
+	for (var item in shieldMods) {
+		var option = document.createElement("option");
+		option.value = shieldMods[item];
+		option.text = shieldMods[item];
+		document.getElementById('heirloomAutoShieldMod1').appendChild(option);
+	}
+
+	for (var x = 1; x <= settingsToChange; x++) {
+		if (x > 1) document.getElementById('heirloomAutoShieldMod' + x).innerHTML = document.getElementById('heirloomAutoShieldMod1').innerHTML;
+		if (getPageSetting('heirloomAutoShieldMod' + x, currSettingUniverse) !== "Empty" && shieldMods.indexOf(getPageSetting('heirloomAutoShieldMod' + x, currSettingUniverse)) === -1)
+			setPageSetting('heirloomAutoShieldMod' + x, 'Empty', currSettingUniverse);
+	}
+
+	staffMods = ["Empty"];
+
+	for (var item in game.heirlooms['Staff']) {
+		var heirloom = game.heirlooms['Staff'][item];
+		if (item == "empty") continue;
+		if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
+		if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
+		staffMods.push(heirloomMods['Staff'][item]);
+	}
+
+	document.getElementById('heirloomAutoStaffMod1').innerHTML = '';
+	for (var item in staffMods) {
+		var option = document.createElement("option");
+		option.value = staffMods[item];
+		option.text = staffMods[item];
+		document.getElementById('heirloomAutoStaffMod1').appendChild(option);
+	}
+
+	for (var x = 1; x <= settingsToChange; x++) {
+		if (x > 1) document.getElementById('heirloomAutoStaffMod' + x).innerHTML = document.getElementById('heirloomAutoStaffMod1').innerHTML;
+		if (getPageSetting('heirloomAutoStaffMod' + x, currSettingUniverse) !== "Empty" && staffMods.indexOf(getPageSetting('heirloomAutoStaffMod' + x, currSettingUniverse)) === -1)
+			setPageSetting('heirloomAutoStaffMod' + x, 'Empty', currSettingUniverse);
+	}
+}
+
 function autoSetValueToolTip(id, text, negative, multi) {
 	ranstring = text;
 	var value = 'value'
@@ -3394,6 +3483,7 @@ function updateCustomButtons(initialLoad) {
 	if (radonon) radonChallengesSetting(false, true);
 	else heliumChallengesSetting(false, true);
 	HeHrPortalOptions();
+	if (atFinishedLoading) autoHeirloomOptions();
 
 	//Swapping name and description of C2 tab when Radon is toggled on.
 	if (radonon) {
@@ -3888,6 +3978,23 @@ function updateATVersion() {
 				autoTrimpSettings['c2RunnerSettings'].value = {};
 				autoTrimpSettings['c2RunnerSettings'].valueU2 = {};
 			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.4') {
+			for (var x = 1; x < 8; x++) {
+				autoTrimpSettings['heirloomAutoStaffMod' + x].selected = 'Empty';
+				autoTrimpSettings['heirloomAutoStaffMod' + x].selectedU2 = 'Empty';
+				autoTrimpSettings['heirloomAutoShieldMod' + x].selected = 'Empty';
+				autoTrimpSettings['heirloomAutoShieldMod' + x].selectedU2 = 'Empty';
+			}
+			for (var x = 1; x < 5; x++) {
+				autoTrimpSettings['heirloomAutoCoreMod' + x].selected = 'Empty';
+			}
+
+			changelog.push("Have rewritten the auto heirlooms code to work as it should have to begin with. Will check if the heirloom can have all the mods you have selected and if it does then store it in your heirloom inventory.<br>\
+			'Rarity to Keep' setting now only shows the heirlooms available for your current HZE & settings universe.<br>\
+			The heirloom mods section has been reworked to display the actual modifier names rather than the internal names and also only display the mods available for that heirloom tier so I've had to reset everybodys settings for auto heirlooms back to their defaults.<br>\
+			The Core heirloom type is now hidden in U2 and until you hit a HZE of 200 in U1")
 		}
 
 		autoTrimpSettings["ATversion"] = ATversion;
