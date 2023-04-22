@@ -137,9 +137,21 @@ function pushSpreadsheetData() {
 		}
 	}
 
+
+	heliumGained = game.global.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned;
+	heliumHr = game.stats.heliumHour.value();
+
 	var dailyMods = " ";
-	if (MODULES["portal"].currentChallenge === 'Daily') {
+	var dailyPercent = 0;
+	if (MODULES["portal"].currentChallenge === 'Daily' && !challengeActive('Daily')) {
 		dailyMods = MODULES.portal.dailyMods;
+		dailyPercent = MODULES.portal.dailyPercent;
+	}
+	else if (challengeActive('Daily')) {
+		dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
+		dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(getDailyChallenge(readingDaily, true)))));
+		heliumGained *= dailyPercent;
+		heliumHr *= dailyPercent;
 	}
 
 	const mapCount = Object.keys(graphData.perZoneData.mapCount)
@@ -148,10 +160,10 @@ function pushSpreadsheetData() {
 	const mapTotal = Object.keys(mapCount).reduce(function (m, k) { return mapCount[k] > m ? mapCount[k] : m }, -Infinity);
 	const mapZone = Number(Object.keys(mapCount).find(key => mapCount[key] === mapTotal));
 
+
 	const obj = {
 		user: autoTrimpSettings.gameUser.value,
 		date: new Date().toISOString(),
-		dailyMods: dailyMods,
 		portals: game.global.totalPortals,
 		portals_U2: game.global.totalRadPortals,
 		helium: game.global.totalHeliumEarned,
@@ -187,10 +199,12 @@ function pushSpreadsheetData() {
 				(game.buildings.Smithy.owned - 2 + " + 2") : !game.mapUnlocks.SmithFree.canRunOnce ?
 					(game.buildings.Smithy.owned - 1 + " + 1") : (game.buildings.Smithy.owned)),
 		meteorologist: (game.global.universe == 1 ? "N/A" : game.jobs.Meteorologist.owned),
-		heliumGained: game.global.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned,
-		heliumHr: game.stats.heliumHour.value(),
+		heliumGained: heliumGained,
+		heliumHr: heliumHr,
 		fluffyXP: game.stats.bestFluffyExp2.value,
 		fluffyHr: game.stats.fluffyExpHour.value(),
+		dailyMods: dailyMods,
+		dailyPercent: dailyPercent,
 		universe: game.global.universe,
 		sharpTrimps: game.singleRunBonuses.sharpTrimps.owned,
 		goldenMaps: game.singleRunBonuses.goldMaps.owned,

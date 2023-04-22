@@ -6,6 +6,7 @@ MODULES["portal"].portalUniverse = Infinity;
 MODULES["portal"].currentChallenge = 'None';
 MODULES["portal"].dontPushData = false;
 MODULES["portal"].dailyMods = '';
+MODULES["portal"].dailyPercent = 0;
 
 var zonePostpone = 0;
 
@@ -382,11 +383,12 @@ function doPortal(challenge, squared) {
 	//If for some reason portal window isn't open stop running
 	if (!portalWindowOpen) return;
 
-	if (MODULES["portal"].currentChallenge === 'None') MODULES["portal"].currentChallenge = game.global.challengeActive;
-	var currChall = MODULES["portal"].currentChallenge;
+	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
+	var currChall = MODULES.portal.currentChallenge;
 
 	if (game.global.challengeActive === 'Daily') {
 		MODULES.portal.dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
+		MODULES.portal.dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(getDailyChallenge(readingDaily, true)))));
 		confirmAbandonChallenge();
 		abandonChallenge();
 		cancelTooltip();
@@ -395,7 +397,7 @@ function doPortal(challenge, squared) {
 	//Initialising variables that will be used later.
 	freeVoidPortal();
 	if (MODULES.portal.portalForVoid) {
-		MODULES["portal"].dontPushData = true;
+		MODULES.portal.dontPushData = true;
 		return;
 	}
 
@@ -526,6 +528,7 @@ function doPortal(challenge, squared) {
 	MODULES["portal"].currentChallenge = 'None';
 	MODULES["portal"].dontPushData = false;
 	MODULES["portal"].dailyMods = '';
+	MODULES["portal"].dailyPercent = 0;
 	lastHeliumZone = 0;
 	zonePostpone = 0;
 	resetmapvars();
