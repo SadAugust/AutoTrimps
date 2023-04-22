@@ -18,30 +18,50 @@ function evaluateHeirloomMods(loom, location) {
 	const raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep'));
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomEquipType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 3 ? 'Core' : 'All';
-	const onlyPerfect = getPageSetting('heirloomAutoOnlyPefect')
+	const onlyPerfect = getPageSetting('heirloomAutoOnlyPefect');
 
 	var eff = 0;
 	var modName;
 	var heirloomType;
 	var rarity;
 
-	var heirloomLocation = location.includes('Equipped') ? loom = game.global[location] : loom = game.global[location][loom];
+	heirloomLocation = location.includes('Equipped') ? loom = game.global[location] : loom = game.global[location][loom];
 	heirloomType = heirloomLocation.type;
 	rarity = heirloomLocation.rarity;
 	if (rarity !== raretokeep) return 0;
 
-	for (var m in heirloomLocation.mods) {
-		modName = heirloomLocation.mods[m][0];
-		if ((heirloomType === 'Shield' || heirloomType === 'Staff') && onlyPerfect && modName !== "empty" && getHeirloomEff(modName, heirloomType, heirloomLocation.mods.length) === 0) return 0;
-
-		if (heirloomType === heirloomEquipType || heirloomEquipType === 'All') {
-			eff += getHeirloomEff(modName, heirloomType, heirloomLocation.mods.length);
+	if (onlyPerfect) {
+		const varAffix = heirloomType === 'Staff' ? 'heirloomAutoStaffMod' : heirloomType === 'Shield' ? 'heirloomAutoShieldMod' : heirloomType === 'core' ? 'heirloomAutoCoreMod' : null;
+		targetMods = [];
+		emptyMods = 0;
+		for (var x = 1; x < (heirloomLocation.mods.length + 1); x++) {
+			if (getPageSetting(varAffix + x) === 'empty') continue;
+			targetMods.push(getPageSetting(varAffix + x));
 		}
-		if (modName === "empty") {
-			eff *= 4;
+		for (var m in heirloomLocation.mods) {
+			modName = heirloomLocation.mods[m][0];
+			if (modName === 'empty') {
+				emptyMods++;
+				continue;
+			}
+			targetMods = targetMods.filter(e => e !== modName);
 		}
+		if (targetMods.length <= emptyMods) return Infinity;
+		else return 0;
 	}
-	return eff;
+	else {
+		for (var m in heirloomLocation.mods) {
+			modName = heirloomLocation.mods[m][0];
+
+			if (heirloomType === heirloomEquipType || heirloomEquipType === 'All') {
+				eff += getHeirloomEff(modName, heirloomType, heirloomLocation.mods.length);
+			}
+			if (modName === "empty") {
+				eff *= 4;
+			}
+		}
+		return eff;
+	}
 }
 
 var worth3 = { 'Shield': [], 'Staff': [], 'Core': [] };
@@ -52,8 +72,7 @@ function worthOfHeirlooms() {
 	//Identify heirlooms to be recycled.
 	var recycle = [];
 	for (var index in game.global.heirloomsExtra) {
-		var theLoom = game.global.heirloomsExtra[index];
-		if (!theLoom.protected && evaluateHeirloomMods(index, 'heirloomsExtra') === 0) {
+		if (evaluateHeirloomMods(index, 'heirloomsExtra') === 0) {
 			recycle.push(index);
 		}
 	}
