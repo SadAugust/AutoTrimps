@@ -185,7 +185,7 @@ function renameMutations(needTooltip, name) {
 	presetGroup.name = htmlEncode(elem.value.substring(0, 25));
 	cancelTooltip();
 
-	document.getElementById('u2MutPresetBtn' + selectedMutPreset).innerHTML = (presetGroup.name) ? presetGroup.name : ("Preset " + selectedMutPreset);
+	document.getElementById('u2MutPresetBtn' + selectedMutPreset).innerHTML = (presetGroup.name) ? ("Preset: " + presetGroup.name) : ("Preset: " + selectedMutPreset);
 	mutatorObj['preset' + selectedMutPreset] = presetGroup;
 	if (typeof (autoTrimpSettings) !== 'undefined') {
 		autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
