@@ -3518,5 +3518,5 @@ function mapScumming(slowTarget) {
 	msg += i + " Rerolls. Current roll = " + slowCount + " odd slow enemies. First cell is " + (firstCellSlow ? "slow" : "fast") + ".";
 	console.timeEnd();
 	ATrunning = true;
-	return msg;
+	console.log(msg);
 }

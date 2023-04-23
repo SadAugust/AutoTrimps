@@ -257,6 +257,7 @@ function mostEfficientHousing() {
 			var costScaling = game.buildings[housing].cost[resource][1];
 			var avgProduction = getPsStringLocal(resource, true);
 			if (avgProduction <= 0) avgProduction = 1;
+			if (challengeActive('Transmute') && resource === 'metal') avgProduction = getPsStringLocal('wood', true);
 			var housingBonus = game.buildings[housing].increase.by;
 			if (!game.buildings.Hub.locked) housingBonus += 500;
 			if (Math.max(baseCost * Math.pow(costScaling, currentOwned) * resourcefulMod) > (game.resources[resource].owned - resourceNeeded[resource]) * buildingspending) dontbuy.push(housing);

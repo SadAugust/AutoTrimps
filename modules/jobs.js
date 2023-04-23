@@ -59,8 +59,10 @@ function workerRatios(workerRatio) {
 
 	if (universeSetting === 2) {
 		var jobSettings = getPageSetting('jobSettingsArray');
-		if (jobSettings[workerRatio].enabled) {
-			if (challengeActive('Transmute') && workerRatio === 'Lumberjack' && jobSettings.Miner.enabled) return jobSettings[workerRatio].ratio + jobSettings.Miner.ratio;
+		if (workerRatio === 'Lumberjack' && (challengeActive('Metal') || challengeActive('Transmute')) && jobSettings.Miner.enabled) {
+			return jobSettings[workerRatio].ratio + jobSettings.Miner.ratio;
+		}
+		else if (jobSettings[workerRatio].enabled) {
 			return jobSettings[workerRatio].ratio;
 		}
 		else
