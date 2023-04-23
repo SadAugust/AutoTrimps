@@ -182,13 +182,13 @@ function autoGenerator() {
 		changeGeneratorState(2);
 	if (game.global.dailyChallenge.seed && getPageSetting('AutoGenDC') == 2 && game.global.generatorMode == 2)
 		return;
-	if (game.global.runningChallengeSquared && getPageSetting('AutoGenC2') == 1 && game.global.generatorMode != 1)
+	if (hdStats.isC3 && getPageSetting('AutoGenC2') == 1 && game.global.generatorMode != 1)
 		changeGeneratorState(1);
-	if (game.global.runningChallengeSquared && getPageSetting('AutoGenC2') == 1 && game.global.generatorMode == 1)
+	if (hdStats.isC3 && getPageSetting('AutoGenC2') == 1 && game.global.generatorMode == 1)
 		return;
-	if (game.global.runningChallengeSquared && getPageSetting('AutoGenC2') == 2 && game.global.generatorMode != 2)
+	if (hdStats.isC3 && getPageSetting('AutoGenC2') == 2 && game.global.generatorMode != 2)
 		changeGeneratorState(2);
-	if (game.global.runningChallengeSquared && getPageSetting('AutoGenC2') == 2 && game.global.generatorMode == 2)
+	if (hdStats.isC3 && getPageSetting('AutoGenC2') == 2 && game.global.generatorMode == 2)
 		return;
 	if (getPageSetting('fuellater') < 1 && game.global.generatorMode != beforefuelstate)
 		changeGeneratorState(beforefuelstate);

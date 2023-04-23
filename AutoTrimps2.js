@@ -29,6 +29,7 @@ var ATrunning = true;
 var atFinishedLoading = false;
 var ATmessageLogTabVisible = true;
 var enableDebug = true;
+var slowScumming = false;
 
 var autoTrimpSettings = {};
 var MODULES = {};
@@ -271,6 +272,13 @@ function mainLoop() {
 		setTitle();
 	}
 
+	if (slowScumming && game.global.mapRunCounter !== 0) {
+		if (game.global.mapBonus === 10) slowScumming = false;
+		else {
+			mapScumming(9);
+			return;
+		}
+	}
 
 	//Heirloom Shield Swap Check
 	if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();

@@ -3465,41 +3465,58 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3, hd
 
 //I hope I never use this again. Scumming for slow map enemies!
 function mapScumming(slowTarget) {
+	console.time();
 
 	if (!game.global.mapsActive) return;
-	if (!getPageSetting('autoMaps')) return;
 	if (game.global.lastClearedMapCell > -1) return;
-	var slowCellTarget = !slowTarget ? 7 : slowTarget //getPageSetting('desolationScumTarget');
+	buildMapGrid(game.global.currentMapId);
+	ATrunning = false;
+	//if (!getPageSetting('autoMaps')) return;
+	var slowCellTarget = !slowTarget ? 8 : slowTarget //getPageSetting('desolationScumTarget');
 	if (slowCellTarget > 9) slowCellTarget = 10;
 	var firstCellSlow = false;
+	var slowCount = 0;
+	game.global.fighting = false;
+	var i = 0;
+
+	//Setting up variables for heirloom swapping!
+	game.global.mapRunCounter = 0;
+	slowScumming = true;
 
 	//Repeats the process of exiting and re-entering maps until the first cell is slow and you have desired slow cell count on odd cells!
-	for (var i = 0; i < 10000; i++) {
-		slowCells = {};
-		if (game.global.mapsActive) {
-			let mapGrid = game.global.mapGridArray;
-			let slowCount = 0;
+	while (slowCount < slowCellTarget || !firstCellSlow) {
+		let mapGrid = game.global.mapGridArray;
+		firstCellSlow = false;
+		slowCount = 0;
 
-			//Looping to figure out if we have enough slow enemies on odd cells
-			for (var item in mapGrid) {
-				if (mapGrid[item].level % 2 === 0) continue;
-				if (hdStats.currChallenge === 'Desolation' && exoticImps.includes(mapGrid[item].name)) slowCount++;
-				else if (!fastCells.includes(mapGrid[item].name)) slowCount++;
+		//Looping to figure out if we have enough slow enemies on odd cells
+		for (var item in mapGrid) {
+			if (mapGrid[item].level % 2 === 0) continue;
+			if (hdStats.currChallenge === 'Desolation') {
+				if (exoticImps.includes(mapGrid[item].name)) slowCount++;
 			}
-
-			//Checking if the first enemy is slow
-			let enemyName = mapGrid[0].name;
-			if (hdStats.currChallenge === 'Desolation' && exoticImps.includes(enemyName)) firstCellSlow = true;
-			else if (fastimps.includes(enemyName)) firstCellSlow = true;
-
-			if (slowCount < slowCellTarget && !firstCellSlow) {
-				buildMapGrid(game.global.currentMapId);
-				drawGrid(true);
-			}
-			else {
-				console.log("Rerolls = " + i + " slowCount = " + slowCount);
-				break
+			else if (!fastimps.includes(mapGrid[item].name)) {
+				slowCount++;
 			}
 		}
+
+		//Checking if the first enemy is slow
+		let enemyName = mapGrid[0].name;
+		if (hdStats.currChallenge === 'Desolation') {
+			if (exoticImps.includes(enemyName)) firstCellSlow = true;
+		}
+		else if (!fastimps.includes(enemyName)) firstCellSlow = true;
+
+		if (slowCount < slowCellTarget || !firstCellSlow)
+			buildMapGrid(game.global.currentMapId);
+		else
+			break
+		i++;
 	}
+	var msg = '';
+	if (slowCount < slowCellTarget || !firstCellSlow) msg = "Failed. ";
+	msg += i + " Rerolls. Current roll = " + slowCount + " odd slow enemies. First cell is " + (firstCellSlow ? "slow" : "fast") + ".";
+	console.timeEnd();
+	ATrunning = true;
+	return msg;
 }

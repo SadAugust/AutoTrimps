@@ -236,6 +236,15 @@ function heirloomShieldToEquip(mapType, query) {
 		if (Object.keys(game.global.ShieldEquipped).length === 0 && game.permaBoneBonuses.voidMaps.tracker < (100 - game.permaBoneBonuses.voidMaps.owned)) return ('heirloomInitial');
 		return;
 	}
+
+	if (slowScumming && game.global.mapsActive) {
+		let oddCell = false;
+		if ((game.global.lastClearedMapCell + 1) % 2 === 0) oddCell = true;
+
+		if (oddCell) return ('heirloomAfterpush');
+		else return ('heirloomInitial');
+	}
+
 	//Initial vars for swapping heirlooms
 	const isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 	const isDaily = challengeActive('Daily');

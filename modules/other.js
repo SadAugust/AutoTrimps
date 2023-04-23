@@ -669,7 +669,7 @@ function equalityManagement() {
 	if (type === 'world' && dailyExplosive) fastEnemy = true;
 	if (game.global.voidBuff === 'doubleAttack') fastEnemy = true;
 	if (runningArchaeology) fastEnemy = true;
-	if (noFrenzy && game.portal.Frenzy.frenzyActive() || (enemyHealth / ourDmg) > 10) fastEnemy = true;
+	if (noFrenzy && (game.portal.Frenzy.frenzyActive() || (enemyHealth / ourDmg) > 10)) fastEnemy = true;
 	if (runningTrappa) fastEnemy = true;
 	if (runningDuel && !mapping) fastEnemy = true;
 	if (runningQuest) fastEnemy = true;
@@ -726,9 +726,9 @@ function equalityManagement() {
 					enemyDmgEquality *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 			}
 			//Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
-			if (voidPBSwap && !runningGlass && !fastEnemy && calcOurDmg('max', i, false, 'void', 'force', 0, true) > enemyHealth && (typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' || game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) && (getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
+			if ((voidPBSwap || slowScumming) && !runningGlass && !fastEnemy && calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth && (typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' || game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) && (getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
 				game.portal.Equality.disabledStackCount = maxEquality;
-				while (calcOurDmg('max', i, false, 'void', 'force', 0, true) > getCurrentEnemy().health && i < maxEquality) {
+				while (calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > getCurrentEnemy().health && i < maxEquality) {
 					i++;
 				}
 				continue;
