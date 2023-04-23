@@ -1190,7 +1190,7 @@ function prestigeRaiding(hdStats) {
 
 	for (var y = 0; y < baseSettings.length; y++) {
 		const currSetting = baseSettings[y];
-		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? equipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
+		var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? equipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone;
 
 		var world = currSetting.world;
@@ -1342,10 +1342,9 @@ function prestigeClimb() {
 	};
 
 	if (challengeActive('Frugal')) return farmingDetails;
-	if (challengeActive('Mapology') && !getPageSetting('mapology')) return farmingDetails;
 	if (game.jobs.Explorer.locked) return farmingDetails;
 
-	const targetPrestige = challengeActive('Mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
+	const targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
 	if (targetPrestige === "Off") return farmingDetails;
 
 	var customVars = MODULES["maps"];
@@ -1370,7 +1369,7 @@ function prestigeClimb() {
 	var prestigeToFarmFor = prestigeInfo[0];
 	var mapsToRun = prestigeInfo[1];
 
-	if (!challengeActive('Mapology')) {
+	if (!(challengeActive('Mapology') && getPageSetting('mapology'))) {
 		//Prestige Skip 1
 		if (needPrestige && getPsString("gems", true) > 0 && (getPageSetting('PrestigeSkip1_2') == 1 || getPageSetting('PrestigeSkip1_2') == 2)) {
 			var numUnbought = 0;
@@ -1442,7 +1441,6 @@ function bionicRaiding(hdStats) {
 
 	if (!getPageSetting('bionicRaidingDefaultSettings').active) return farmingDetails;
 	if (challengeActive('Experience') && game.global.world > 600) return farmingDetails;
-	if (challengeActive('Mapology') && !getPageSetting('mapology')) return farmingDetails;
 
 	var shouldBionicRaid = false;
 	const baseSettings = getPageSetting('bionicRaidingSettings');
@@ -1451,7 +1449,7 @@ function bionicRaiding(hdStats) {
 
 	for (var y = 0; y < baseSettings.length; y++) {
 		const currSetting = baseSettings[y];
-		var targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? equipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
+		var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? equipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone
 
 		var world = currSetting.world;
@@ -2776,7 +2774,7 @@ function FarmingDecision(hdStats) {
 		prestigeClimb(),
 		voidMaps(hdStats)];
 
-	if (challengeActive('Mapology')) mapTypes = [
+	if (challengeActive('Mapology') && getPageSetting('mapology')) mapTypes = [
 		prestigeClimb(),
 		prestigeRaiding(hdStats),
 		bionicRaiding(hdStats),

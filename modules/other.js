@@ -219,7 +219,7 @@ var exoticImps =
 	];
 
 function remainingHealth(forceAngelic, mapType) {
-	const correctHeirloom = getPageSetting(heirloomShieldToEquip(mapType)) === game.global.ShieldEquipped.name;
+	const correctHeirloom = heirloomShieldToEquip(mapType) !== undefined ? getPageSetting(heirloomShieldToEquip(mapType)) === game.global.ShieldEquipped.name : true;
 	var soldierHealth = game.global.soldierHealth;
 	var soldierHealthMax = game.global.soldierHealthMax;
 	var shieldHealth = 0;
@@ -238,7 +238,7 @@ function remainingHealth(forceAngelic, mapType) {
 		var maxLayers = Fluffy.isRewardActive('shieldlayer');
 		var layers = maxLayers - game.global.shieldLayersUsed;
 
-		var shieldMax = soldierHealthMax;
+		var shieldMax = game.global.soldierEnergyShieldMax;
 		var shieldCurr = game.global.soldierEnergyShield;
 		if (!correctHeirloom) {
 			const shieldPrismatic = getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) > 0 ? getEnergyShieldMult_AT(mapType, true) + (getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 100) : getEnergyShieldMult_AT(mapType, true);
@@ -253,8 +253,9 @@ function remainingHealth(forceAngelic, mapType) {
 
 		if (maxLayers > 0) {
 			for (var i = 0; i <= maxLayers; i++) {
-				if (layers != maxLayers && i > layers)
+				if (layers != maxLayers && i > layers) {
 					continue;
+				}
 				if (i == maxLayers - layers) {
 					shieldHealth += shieldMax;
 				}

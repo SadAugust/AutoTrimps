@@ -109,7 +109,6 @@ function minimizeAllTabs() {
 
 function maximizeAllTabs() {
 	for (var a = document.getElementsByClassName("tabcontent"), b = 0, c = a.length; b < c; b++) {
-		debug(a[b].innerHTML);
 		if (a[b].id === 'Test') continue;
 		a[b].style.display = "block";
 	}
@@ -237,7 +236,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('autoPerks')) });
 		createSetting('presetSwapMutators',
 			function () { return ('Preset Swap Mutators') },
-			function () { return ('Will automatically load the preset that corresponds to your run type after auto portaling.') },
+			function () { return ('Will automatically load the preset that corresponds to your run type after auto portaling. For info on which preset is loaded and when, mouseover the presets in the mutator window.') },
 			'boolean', false, null, 'Core', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 201) });
 
@@ -298,7 +297,9 @@ function initializeAllSettings() {
 		createSetting('HeliumHrPortal',
 			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
 			function () {
-				return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.' + heHourPortal())
+				var text = 'How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.';
+				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) text += "\<br>If 'Portal after poison voids' is selected it will run until you reach the next poison band and run voids there.";
+				return text;
 			},
 			'multitoggle', 0, null, 'Core', [1, 2],
 			function () {
@@ -462,8 +463,10 @@ function initializeAllSettings() {
 		createSetting('dailyHeliumHrPortal',
 			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
 			function () {
-				return ('How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.' +
-					(currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) ? '<br>If "Portal after poison voids" is selected it will run until you reach the next poison band and run voids there.' : 'Whyarentyourunning')
+				var text = 'How you would like AT to portal when below your ' + resourceHour() + ' threshold. Either immediately or after it runs any remaining void maps.';
+				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) text += "\<br>If 'Portal after poison voids' is selected it will run until you reach the next poison band and run voids there.";
+
+				return text;
 			},
 			'multitoggle', 0, null, 'Daily', [1, 2],
 			function () {
@@ -616,7 +619,7 @@ function initializeAllSettings() {
 		//Mapology
 		createSetting('mapology',
 			function () { return ('Mapology') },
-			function () { return ('Turn this on if you want to enable Mapology prestige climb feautre. Any BW Raiding settings will climb until the prestige selected in \'M: Prestige\' has been obtained rather than going for all the available prestiges.') },
+			function () { return ('If this is enabled it will disable all farming with the exception of Prestige Climb, Prestige Raiding, BW Raiding & Void Maps. Any Raiding settings will climb until the prestige selected in \'M: Prestige\' has been obtained rather than going for all the available prestiges.') },
 			'boolean', false, null, 'C2', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 150) });
 		createSetting('mapologyPrestige',
@@ -2265,16 +2268,15 @@ function initializeAllSettings() {
 			function () { return ('Deletes old values from previous versions of the script from your AutoTrimps Settings file.') },
 			'infoclick', 'CleanupAutoTrimps', null, 'Import Export', [1, 2]);
 
-
 		if (displaySpam) {
-			createSetting('presetMutations',
+			createSetting('mutatorPresets',
 				function () { return ('Spam Message Settings') },
 				function () { return ('Click to adjust settings.') },
-				'mazDefaultArray', {
-				preset1: '',
-				preset2: '',
-				preset3: '',
-			}, null, 'Import Export', [0]);
+				'mazDefaultArray', JSON.stringify({
+					preset1: {},
+					preset2: {},
+					preset3: {},
+				}), null, 'Import Export', [0]);
 		}
 	}
 
@@ -3996,6 +3998,24 @@ function updateATVersion() {
 			The heirloom mods section has been reworked to display the actual modifier names rather than the internal names and also only display the mods available for that heirloom tier so I've had to reset everybodys settings for auto heirlooms back to their defaults.<br>\
 			The Core heirloom type is now hidden in U2 and until you hit a HZE of 200 in U1")
 		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.5') {
+			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (tempSettings.presetMutations !== undefined) {
+				var mutatorObj = {
+					preset1: {},
+					preset2: {},
+					preset3: {},
+				};
+				if (tempSettings.presetMutations.value.preset1 !== '') mutatorObj.preset1 = JSON.parse(tempSettings.presetMutations.value.preset1);
+				if (tempSettings.presetMutations.value.preset2 !== '') mutatorObj.preset2 = JSON.parse(tempSettings.presetMutations.value.preset2);
+				if (tempSettings.presetMutations.value.preset3 !== '') mutatorObj.preset3 = JSON.parse(tempSettings.presetMutations.value.preset3);
+
+				autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
+				localStorage['mutatorPresets'] = JSON.stringify(mutatorObj);
+			}
+		}
+
 
 		autoTrimpSettings["ATversion"] = ATversion;
 		if (changelog.length !== 0) {

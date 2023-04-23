@@ -1,4 +1,4 @@
-var ATversion = 'SadAugust v6.2.4',
+var ATversion = 'SadAugust v6.2.5',
 	atscript = document.getElementsByTagName("script"),
 	basepath = '',
 	modulepath = 'modules/';
@@ -89,6 +89,7 @@ function initializeAutoTrimps() {
 	loadPageVariables();
 	ATscriptLoad('', 'SettingsGUI');
 	ATscriptLoad('', 'Graphs');
+	ATscriptLoad('', 'mutatorPreset');
 	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perky', 'surky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
 	for (var m in ATmoduleList) {
 		ATscriptLoad(modulepath, ATmoduleList[m]);
@@ -178,6 +179,7 @@ function delayStartAgain() {
 	setInterval(guiLoop, runInterval * 10);
 	setupATButtons();
 	updateCustomButtons(true);
+	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
 }
 
 function universeSwapped() {
@@ -211,7 +213,6 @@ function mainLoop() {
 	}
 	mapSettings = FarmingDecision(hdStats);
 
-	//if (oneDayInterval) pushSpreadsheetData();
 	if (!usingRealTimeOffline) {
 		var MAZCheck = document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Golden') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Void Map') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Map Bonus') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Raiding');
 

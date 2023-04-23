@@ -577,6 +577,9 @@ function challengeInfo() {
 		debug("The zone input in the '" + challengeType + " Finish' setting (" + finishChallenge + ") is below or equal to your HZE for this challenge (" + game.c2[game.global.challengeActive] + "). Increase it or it'll end earlier than you\'d probably like it to.");
 	}
 
+	if (challengeActive('Mapology') && !getPageSetting('mapology') && game.global.world % 5 === 0 && game.global.world < (checkLiqZoneCount() + 10)) {
+		debug("You have the AT setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.")
+	}
 	//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
 	if (challengeActive('Quest') && getPageSetting('quest') && getPageSetting('buildingsType')) {
 		if (getAutoStructureSetting().enabled && game.global.autoStructureSettingU2.Smithy.enabled) {
