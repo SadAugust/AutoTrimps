@@ -425,7 +425,7 @@ function doPortal(challenge, squared) {
 	if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
 
 	//Running Dailies
-	if ((getPageSetting('dailyPortalStart', portalUniverse) && currChall === 'Daily') && !challengeSquaredMode) {
+	if (currChall === 'Daily' && !challengeSquaredMode) {
 		selectChallenge('Daily');
 		//Checking to see which dailies can be run
 		checkCompleteDailies();
@@ -439,21 +439,13 @@ function doPortal(challenge, squared) {
 
 		//Will stop it from autoPortaling into dailies when you have dailyDontCap enabled and don't have 7 dailies stored.
 		if (getPageSetting('dailyDontCap', portalUniverse) && game.global.recentDailies.indexOf(getDailyTimeString(-6)) !== -1 && game.global.recentDailies.length !== 0) lastUndone = 1;
+		if (!getPageSetting('dailyPortalStart', portalUniverse)) lastUndone = 1;
 
-		//Portaling into a filler if all dailies have been run
-		if (lastUndone === 1) {
-			debug("All available Dailies already completed.", "portal");
+		//Printing msg to state all dailies have been compelted
+		if (lastUndone === 1) debug("All dailies have been completed.", "portal");
 
-			if (getPageSetting('dailyHeliumHourChallenge', portalUniverse).includes('Challenge ') && getPageSetting('dailyC2Challenge', portalUniverse) !== 'None') {
-				toggleChallengeSquared();
-				selectChallenge(getPageSetting('dailyC2Challenge', portalUniverse));
-			}
-			else {
-				selectChallenge(challenge || 0);
-			}
-		}
-		//Portaling into a filler to use up scruffy3
-		else if (currChall === 'Daily' && getPageSetting('dailyPortalFiller', portalUniverse)) {
+		//Portaling into a filler/c3 if dailyPortalFiller is enabled OR all dailies completed or dailyPortalStart is disabled.
+		if (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse) || lastUndone === 1) {
 			if (getPageSetting('dailyHeliumHourChallenge', portalUniverse) != 'None') {
 				if (getPageSetting('dailyHeliumHourChallenge', portalUniverse).includes('Challenge ')) {
 					toggleChallengeSquared();
