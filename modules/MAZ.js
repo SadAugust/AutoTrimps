@@ -85,13 +85,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 	else if (event == "AutoStructure") {
 
 		const baseText = "<p>Here you can choose which structures will be automatically purchased when AutoStructure is toggled on. Check a box to enable the automatic purchasing of that structure, the 'Perc:' box specifies the cost-to-resource % that the structure should be purchased below, and set the 'Up To:' box to the maximum number of that structure you'd like purchased <b>(0&nbsp;for&nbsp;no&nbsp;limit)</b>. For example, setting the 'Perc:' box to 10 and the 'Up To:' box to 50 for 'House' will cause a House to be automatically purchased whenever the costs of the next house are less than 10% of your Food, Metal, and Wood, as long as you have less than 50 houses.</p>";
-		const nursery = "<p><b>Nursery:</b> Acts the same as the other settings but also has a 'From' input which will cause nurseries to only be built from that zone onwards. Other nursery settings within AT will ignore this start zone if needed for them to work.</p>";
+		const nursery = "<p><b>Nursery:</b> Acts the same as the other settings but also has a 'From' input which will cause nurseries to only be built from that zone onwards. Spire nursery settings within AT will ignore this start zone if needed for them to work. If 'Avanced Nurseries' is enabled and 'Up To' is set to 0 it will override buying max available and instead respect the input.</p>";
 		const warpstation = "<p><b>Warpstation:</b> Settings for this type of building can be found in the AutoTrimp settings building tab!</p>";
 		const safeGateway = "<p><b>Safe Gateway:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a Perfect +10 LMC map would cost up to the zone specified in 'Till Z:', if that value is 0 it'll assume z999.</p>";
 
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
 		tooltipText += `${baseText}`
-		if (game.global.universe === 1) tooltipText += `${nursery}`
+		if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 230) tooltipText += `${nursery}`
 		if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 60) tooltipText += `${warpstation}`
 		if (game.global.universe === 2) tooltipText += `${safeGateway}`
 		tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
@@ -123,8 +123,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 			count++;
 		}
 		tooltipText += "</tr><tr>";
-		//Nursery Start Zone setting
-		if (game.global.universe === 1) {
+
+		//Nursery Start Zone setting after reaching Magma
+		if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 230) {
 			//Start
 			tooltipText += "<td><div class='row'>"
 			//Checkbox & name
@@ -266,6 +267,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			maps: false,
 			map_Details: false,
 			map_Destacking: false,
+			map_Skip: false,
 			other: false,
 			buildings: false,
 			jobs: false,
@@ -1124,6 +1126,10 @@ function messageConfigHoverAT(what, event) {
 			text = "Logs run time & map count when AT does any map based destacking.";
 			title = "Map Destacking";
 			break;
+		case 'map_Skip':
+			text = "Logs when AT skips Worshipper Farm, HD Farm & Hits Survived.";
+			title = "Map Skip";
+			break;
 		case 'other':
 			text = "Log Better Auto Fight, Trimpicide & AutoBreed/Gene Timer changes, etc - a catch all.";
 			title = "Other";
@@ -1732,10 +1738,15 @@ function saveATAutoStructureConfig() {
 		max = (isNumberBad(max)) ? 0 : max;
 		setting[name].buyMax = max;
 		if (name === 'Nursery') {
-			var fromZ = parseInt(document.getElementById('nurseryFromZ').value, 10);
-			if (fromZ > 999) fromZ = 999;
-			fromZ = (isNumberBad(fromZ)) ? 999 : fromZ;
-			setting[name].fromZ = fromZ;
+			if (game.stats.highestLevel.valueTotal() < 230) {
+				setting[name].fromZ = 0;
+			}
+			else {
+				var fromZ = parseInt(document.getElementById('nurseryFromZ').value, 10);
+				if (fromZ > 999) fromZ = 999;
+				fromZ = (isNumberBad(fromZ)) ? 999 : fromZ;
+				setting[name].fromZ = fromZ;
+			}
 		}
 	}
 
@@ -2259,6 +2270,7 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 			if (highestZone >= 180) dropdown += "<option value='Watch'" + ((MAZ == 'Watch') ? " selected='selected'" : "") + ">Watch</option>";
 			if (highestZone >= 180) dropdown += "<option value='Lead'" + ((MAZ == 'Lead') ? " selected='selected'" : "") + ">Lead</option>";
 			if (highestZone >= 425) dropdown += "<option value='Obliterated'" + ((MAZ == 'Obliterated') ? " selected='selected'" : "") + ">Obliterated</option>";
+			if (highestZone >= 460) dropdown += "<option value='Frigid'" + ((MAZ == 'Frigid') ? " selected='selected'" : "") + ">Frigid</option>";
 			if (game.global.totalSquaredReward >= 4500) dropdown += "<option value='Eradicated'" + ((MAZ == 'Eradicated') ? " selected='selected'" : "") + ">Eradicated</option>";
 		}
 		else if (runType === 'runType') {

@@ -341,6 +341,8 @@ function buyBuildings(hdStats) {
 			var nurseryPreSpire = spireNurseryActive && game.buildings.Nursery.owned < getPageSetting(dailyPrefix + 'PreSpireNurseries') ? getPageSetting(dailyPrefix + 'PreSpireNurseries') : 0;
 
 			var nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, buildingSettings.Nursery.buyMax);
+			if (nurseryAmt === 0 && !getPageSetting('advancedNurseries')) nurseryAmt = Infinity;
+
 			var nurseryPct = buildingSettings.Nursery.percent / 100;
 			var nurseryCanAfford = calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, (nurseryAmt - game.buildings.Nursery.owned), nurseryPct);
 			if (nurseryZoneOk || nurseryPreSpire > 0) {
@@ -373,15 +375,13 @@ function buyBuildings(hdStats) {
 
 		//Warpstations
 		if (!game.buildings.Warpstation.locked && getPageSetting('warpstation')) {
-			if (getPageSetting('WarpstationCap')) {
-				var firstGigaOK = MODULES["upgrades"].autoGigas == false || game.upgrades.Gigastation.done > 0;
-				var warpstationAmt = Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation');
-				var gigaCapped = game.buildings.Warpstation.owned >= warpstationAmt;
-				var warpstationCanAfford = calculateMaxAffordLocal(game.buildings.Warpstation, true, false, false, (warpstationAmt - game.buildings.Warpstation.owned), 1)
+			var firstGigaOK = MODULES["upgrades"].autoGigas == false || game.upgrades.Gigastation.done > 0;
+			var warpstationAmt = Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation');
+			var gigaCapped = game.buildings.Warpstation.owned >= warpstationAmt;
+			var warpstationCanAfford = calculateMaxAffordLocal(game.buildings.Warpstation, true, false, false, (warpstationAmt - game.buildings.Warpstation.owned), 1)
 
-				if (!(firstGigaOK && gigaCapped) && warpstationCanAfford > 0)
-					safeBuyBuilding('Warpstation', warpstationCanAfford);
-			}
+			if (!(firstGigaOK && gigaCapped) && warpstationCanAfford > 0)
+				safeBuyBuilding('Warpstation', warpstationCanAfford);
 		}
 	}
 

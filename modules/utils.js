@@ -371,6 +371,9 @@ function debug(a, b, c) {
 		case 'map_Destacking':
 			p = settingArray[b];
 			break;
+		case 'map_Skip':
+			p = settingArray[b];
+			break;
 		case 'other':
 			p = settingArray[b];
 			break;

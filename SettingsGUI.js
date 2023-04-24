@@ -991,7 +991,7 @@ function initializeAllSettings() {
 			Collector: { enabled: true, percent: 100, buyMax: 200 },
 			Gym: { enabled: true, percent: 100, buyMax: 0 },
 			Tribute: { enabled: true, percent: 100, buyMax: 0 },
-			Nursery: { enabled: true, percent: 100, buyMax: 0, fromZ: 999 },
+			Nursery: { enabled: true, percent: 100, buyMax: 0, fromZ: 0 },
 			Smithy: { enabled: true, percent: 100, buyMax: 0 },
 			Tribute: { enabled: true, percent: 100, buyMax: 0 },
 			Laboratory: { enabled: true, percent: 100, buyMax: 0 },
@@ -1003,11 +1003,6 @@ function initializeAllSettings() {
 			function () { return ('Warpstations') },
 			function () { return ('Enabling this will let AT purchase Warpstations. AT AutoStructure must be enabled for this to work.') },
 			'boolean', true, null, 'Buildings', [1]);
-		createSetting('WarpstationCap',
-			function () { return ('Warpstation Cap') },
-			function () { return ('Do not level Warpstations past Basewarp+DeltaGiga **. Without this, if a Giga wasnt available, it would level infinitely (wastes metal better spent on prestiges instead.) **The script bypasses this cap each time a new giga is bought, when it insta-buys as many as it can afford (since AT keeps available metal/gems to a low, overbuying beyond the cap to what is affordable at that first moment is not a bad thing).') },
-			'boolean', true, null, 'Buildings', [1],
-			function () { return (autoTrimpSettings.warpstation.enabled) });
 		createSetting('FirstGigastation',
 			function () { return ('First Gigastation') },
 			function () { return ('How many warpstations to buy before your first gigastation') },
@@ -1037,7 +1032,14 @@ function initializeAllSettings() {
 
 		createSetting('advancedNurseries',
 			function () { return ('Advanced Nurseries') },
-			function () { return ("AT will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway), AND you have more map stacks than the <b>Map Bonus Health</b> setting, which becomes a very important setting. <b>Recommended: Always On.</b>)") },
+			function () {
+				var text = ""
+				text += "AT will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway),"
+				text += "AND you have more map stacks than the <b>Map Bonus Health</b> setting, which becomes a very important setting."
+				text += "<br><br>Requires Nurseries to be setup in the AT AutoStructure setting and will only buy Nurseries if past the 'From' input. Overrides the 'Up To' input and allows you to set 0 without it buying as many as possible."
+				text += "<br><br><b>Recommended: Always On. Nurseries set to 'Up To: 0' & 'From: 230'</b>"
+				return (text)
+			},
 			'boolean', false, null, 'Buildings', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 230) });
 	}
@@ -2212,6 +2214,7 @@ function initializeAllSettings() {
 			maps: false,
 			map_Details: false,
 			map_Destacking: false,
+			map_Skip: false,
 			other: false,
 			buildings: false,
 			jobs: false,
@@ -2765,6 +2768,9 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("pandemoniumSwapZone", radonon_pandemonium);
 	modifyParentNode("glassStacks", radonon_desolation);
 	modifyParentNode("desolationSwapZone", radonon);
+
+	//Buildings
+	modifyParentNode("CustomDeltaFactor", radonoff);
 
 	//Challenges
 	modifyParentNode("decayStacksToAbandon", radonoff);

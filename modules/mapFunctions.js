@@ -1005,7 +1005,6 @@ function worshipperFarm(hdStats) {
 	const zoneAddition = dailyAddition.active ? 1 : 0;
 
 	var shouldWorshipperFarm = false;
-	var shouldSkip = false;
 	var mapAutoLevel = Infinity;
 
 	var settingIndex;
@@ -1052,18 +1051,14 @@ function worshipperFarm(hdStats) {
 
 		if (challengeActive('Wither') && rWFMapLevel >= 0) rWFMapLevel = -1;
 		if (rWFDefaultSetting.shipSkipEnabled && game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != rWFDebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * rWFDefaultSetting.shipskip))) {
-			debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + rWFDefaultSetting.shipskip + " or more Worshippers. Evaluate your map settings to correct this");
+			debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + rWFDefaultSetting.shipskip + " or more Worshippers. Evaluate your map settings to correct this", 'map_Skip');
 			rWFDebug = game.stats.zonesCleared.value;
 		}
 		if (game.jobs.Worshipper.owned !== 50 && rWFGoal > game.jobs.Worshipper.owned && game.stats.zonesCleared.value !== rWFDebug)
 			shouldWorshipperFarm = true;
 
-		if (mapSettings.mapName !== mapName && game.jobs.Worshipper.owned >= rWFGoal)
-			shouldSkip = true;
-
 		if (mapSettings.mapName === mapName && !shouldWorshipperFarm) {
 			mappingDetails(mapName, rWFMapLevel, rWFSpecial);
-			if (getPageSetting('spamMessages').map_Details && shouldSkip) debug("Worshipper Farm (Z" + game.global.world + ") skipped as Worshipper goal has been met (" + game.jobs.Worshipper.owned + "/" + rWFGoal + ").");
 			resetMapVars(rWFSettings);
 		}
 
@@ -2415,8 +2410,8 @@ function desolation(hdStats, forceDestack) {
 		mapName: mapName
 	};
 
-	if (game.global.stringVersion < '5.9.0') return farmingDetails;
 	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
+	if (!MODULES.mapFunctions.challengeContinueRunning && game.challenges.Desolation.chilled === 0) return farmingDetails;
 
 	var shouldDesolation = false;
 	var mapAutoLevel = Infinity;
@@ -2445,6 +2440,7 @@ function desolation(hdStats, forceDestack) {
 		game.global.mapRunCounter = mapRepeats;
 		mapRepeats = 0;
 	}
+	debug("1st " + desolationMapLevel);
 	if (game.global.world < destackOnlyZone && !game.jobs.Explorer.locked) {
 		var autoLevel_Repeat = mapSettings.levelCheck;
 		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, desolationSpecial, 10, 0);
@@ -2454,10 +2450,12 @@ function desolation(hdStats, forceDestack) {
 		}
 	} else if (shouldDesolation) {
 		sliders = [0, 0, 9];
-		desolationSpecial = 'fa';
-		if (game.jobs.Explorer.locked) desolationSpecial = '0';
+		if (desolationSpecial === 'lmc' || game.jobs.Explorer.locked) desolationSpecial = '0';
+		else desolationSpecial = 'fa';
+
 		biome = getBiome('fragConservation');
 		var trimpHealth = calcOurHealth(false, 'map');
+		debug("2 " + desolationMapLevel);
 		for (var y = 10; y >= 0; y--) {
 			desolationMapLevel = y;
 			if (game.global.mapsActive && mapSettings.mapName === mapName && (getCurrentMapObject().bonus === undefined ? '0' : getCurrentMapObject().bonus) === desolationSpecial && (getCurrentMapObject().level - game.global.world) === desolationMapLevel) break;
@@ -2467,6 +2465,7 @@ function desolation(hdStats, forceDestack) {
 			if (enemyDmg > trimpHealth) continue;
 			break;
 		}
+		debug("3 " + desolationMapLevel);
 		if (game.global.mapsActive && getCurrentMapObject().level !== game.global.world + desolationMapLevel) {
 			recycleMap_AT();
 		}
@@ -2482,6 +2481,7 @@ function desolation(hdStats, forceDestack) {
 			if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) recycleMap_AT();
 			MODULES.mapFunctions.challengeContinueRunning = false;
 			shouldDesolation = false;
+			"4 " + debug(desolationMapLevel)
 		}
 	}
 
@@ -2699,10 +2699,10 @@ function hdFarm(hdStats, skipHealthCheck) {
 
 		if (((mapSettings.mapName === mapName && !shouldHDFarm) || shouldSkip) && hdStats.hdRatio !== Infinity) {
 			if (!shouldSkip) mappingDetails(mapName, rHDFMapLevel, rHDFSpecial, hdRatio, equipfarmdynamicHD(rHDFSettings), hdType, hdStats);
-			if (getPageSetting('spamMessages').map_Details && shouldSkip) {
-				if (hdType === null) debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(rHDFSettings).toFixed(2) + ").");
-				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(rHDFSettings).toFixed(2) + ").");
-				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + rHDFSettings.hdBase + "/" + hdStats.autoLevel + ").");
+			if (getPageSetting('spamMessages').map_Skip && shouldSkip) {
+				if (hdType === null) debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(rHDFSettings).toFixed(2) + ").", 'map_Skip');
+				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(rHDFSettings).toFixed(2) + ").", 'map_Skip');
+				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + rHDFSettings.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
 			}
 			resetMapVars(rHDFSettings);
 			if (game.global.mapsActive) recycleMap_AT();
@@ -2815,8 +2815,9 @@ function FarmingDecision(hdStats) {
 	}
 
 	//If in desolation then check if we should destack before farming.
-	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && getPageSetting('desolation') && (MODULES.mapFunctions.challengeContinueRunning || (game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation'))))
-		farmingDetails = desolation(hdStats, true);
+	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && getPageSetting('desolation') && (MODULES.mapFunctions.challengeContinueRunning || (game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation')))) {
+		if (desolation(hdStats, true).shouldRun) farmingDetails = desolation(hdStats, true);
+	}
 
 	return farmingDetails;
 }
