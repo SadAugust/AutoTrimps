@@ -70,7 +70,7 @@ function tooltipAT(what, isItIn, event, textString, headingName) {
 					if (item == "name") continue;
 					if (item === 'purchaseCount') continue;
 					if (preset[item] === false) continue;
-					let mutName = item;
+					var mutName = item;
 					if (u2Mutations.tree[item].dn) mutName = u2Mutations.tree[item].dn;
 
 					if (count > 0 && mutName === 'Scruffy' || mutName === 'Overkill' || mutName === 'Health' || mutName === 'Mazzy') tooltipText += "<br><br>";
@@ -160,7 +160,7 @@ function loadMutations(preset) {
 
 	while (outerRing.length > 0 && game.global.mutatedSeeds > u2Mutations.nextCost()) {
 		if (!u2Mutations.checkRequirements(outerRing[0])) outerRing.push(outerRing.shift());
-		let mutName = outerRing[0];
+		var mutName = outerRing[0];
 		if (u2Mutations.checkRequirements(mutName)) {
 			u2Mutations.purchase(mutName);
 			outerRing.shift();

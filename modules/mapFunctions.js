@@ -2440,7 +2440,6 @@ function desolation(hdStats, forceDestack) {
 		game.global.mapRunCounter = mapRepeats;
 		mapRepeats = 0;
 	}
-	debug("1st " + desolationMapLevel);
 	if (game.global.world < destackOnlyZone && !game.jobs.Explorer.locked) {
 		var autoLevel_Repeat = mapSettings.levelCheck;
 		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, desolationSpecial, 10, 0);
@@ -2455,7 +2454,6 @@ function desolation(hdStats, forceDestack) {
 
 		biome = getBiome('fragConservation');
 		var trimpHealth = calcOurHealth(false, 'map');
-		debug("2 " + desolationMapLevel);
 		for (var y = 10; y >= 0; y--) {
 			desolationMapLevel = y;
 			if (game.global.mapsActive && mapSettings.mapName === mapName && (getCurrentMapObject().bonus === undefined ? '0' : getCurrentMapObject().bonus) === desolationSpecial && (getCurrentMapObject().level - game.global.world) === desolationMapLevel) break;
@@ -2465,7 +2463,6 @@ function desolation(hdStats, forceDestack) {
 			if (enemyDmg > trimpHealth) continue;
 			break;
 		}
-		debug("3 " + desolationMapLevel);
 		if (game.global.mapsActive && getCurrentMapObject().level !== game.global.world + desolationMapLevel) {
 			recycleMap_AT();
 		}
@@ -2481,7 +2478,6 @@ function desolation(hdStats, forceDestack) {
 			if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) recycleMap_AT();
 			MODULES.mapFunctions.challengeContinueRunning = false;
 			shouldDesolation = false;
-			"4 " + debug(desolationMapLevel)
 		}
 	}
 
@@ -2780,6 +2776,11 @@ function FarmingDecision(hdStats) {
 		bionicRaiding(hdStats),
 		voidMaps(hdStats)
 	];
+
+	//If in desolation then check if we should destack before farming.
+	if (mapSettings.mapName.includes('Desolation') && MODULES.mapFunctions.challengeContinueRunning && game.challenges.Desolation.chilled === 0) {
+		(desolation(hdStats, true).shouldRun);
+	}
 
 	//U2 map settings to check for.
 	if (game.global.universe === 2) mapTypes = [
@@ -3313,7 +3314,7 @@ function getAvailableSpecials(special, skipCaches) {
 		if (typeof mapSpecialModifierConfig[mod] === 'undefined') continue;
 		if ((mod === 'lmc' || mod === 'smc') && challengeActive('Transmute')) mod = mod.charAt(0) + "wc";
 		if (skipCaches && mod === 'hc') continue;
-		let unlock = mapSpecialModifierConfig[mod].name.includes('Research') ? mapSpecialModifierConfig[mod].unlocksAt2() : mapSpecialModifierConfig[mod][unlocksAt];
+		var unlock = mapSpecialModifierConfig[mod].name.includes('Research') ? mapSpecialModifierConfig[mod].unlocksAt2() : mapSpecialModifierConfig[mod][unlocksAt];
 		if (unlock <= hze) {
 			bestMod = mod;
 			break;
@@ -3484,7 +3485,7 @@ function mapScumming(slowTarget) {
 
 	//Repeats the process of exiting and re-entering maps until the first cell is slow and you have desired slow cell count on odd cells!
 	while (slowCount < slowCellTarget || !firstCellSlow) {
-		let mapGrid = game.global.mapGridArray;
+		var mapGrid = game.global.mapGridArray;
 		firstCellSlow = false;
 		slowCount = 0;
 
@@ -3500,7 +3501,7 @@ function mapScumming(slowTarget) {
 		}
 
 		//Checking if the first enemy is slow
-		let enemyName = mapGrid[0].name;
+		var enemyName = mapGrid[0].name;
 		if (hdStats.currChallenge === 'Desolation') {
 			if (exoticImps.includes(enemyName)) firstCellSlow = true;
 		}

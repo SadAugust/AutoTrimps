@@ -66,7 +66,7 @@ function makeAutomapStatusTooltip(hdStats) {
 	const hitsSurvived = prettify(hdStats.hitsSurvived);
 	const hitsSurvivedSetting = isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
 	const hitsSurvivedValue = hitsSurvivedSetting > 0 ? hitsSurvivedSetting : '∞';
-	let tooltip = 'tooltip(' +
+	var tooltip = 'tooltip(' +
 		'\"Automaps Status\", ' +
 		'\"customText\", ' +
 		'event, ' +
@@ -104,7 +104,7 @@ function makeAutomapStatusTooltip(hdStats) {
 function makeResourceTooltip() {
 	const resource = game.global.universe === 2 ? 'Radon' : 'Helium';
 	const resourceHr = game.global.universe === 2 ? 'Rn' : 'He';
-	let tooltip = 'tooltip(' +
+	var tooltip = 'tooltip(' +
 		`\"${resource} /Hr Info\",` +
 		'\"customText\", ' +
 		'event, ' +

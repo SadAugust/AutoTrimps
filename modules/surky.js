@@ -176,7 +176,7 @@ function saveSurkySettings(initial) {
 }
 
 function loadSurkySettings() {
-	let surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
+	var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 	if (surkyInputs === null) {
 		saveSurkySettings(true);
 		loadSurkySettings();
@@ -755,7 +755,7 @@ function initialLoad() {
 	// set aux inputs from game variables, unless any given field is locked (handled by setAuxInput function)
 
 	// "red" fields should only be overwritten if loading a U2 save (values will be garbage in U1) -- Surky is gonna break if portal Universe isn't set to 2 here!
-	let surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
+	var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 	// target zone to CLEAR is 1 zone before the portal zone by default
 	var currentZone = Math.max(1, game.global.world - 1);
 	$$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);

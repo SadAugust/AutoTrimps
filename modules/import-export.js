@@ -552,7 +552,8 @@ function resetAutoTrimps(a, b) {
 					updateCustomButtons(true),
 					resetSettingsPortal(),
 					saveSettings(),
-					(ATrunning = !0);
+					(ATrunning = !0)
+				//localStorage.mutatorPresets = JSON.parse(autoTrimpSettings.presetMutations.valueU2);
 			})(a),
 			101
 		),
@@ -573,6 +574,7 @@ function loadAutoTrimps() {
 	}
 	debug("Importing new AT settings file...", "profile"), updateATVersion(), resetSettingsPortal(), resetAutoTrimps(b)
 	modifyParentNodeUniverseSwap();
+	//localStorage.mutatorPresets = JSON.parse(autoTrimpSettings.presetMutations.valueU2);
 }
 
 function cleanupAutoTrimps() {

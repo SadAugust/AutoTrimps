@@ -122,7 +122,7 @@ function select_preset(name, manually) {
 }
 
 function auto_preset() {
-	let perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
+	var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
 
 	var _a = presets[$$('#preset').value], he = _a[0], atk = _a[1], hp = _a[2];
 	var xp = floor((+he + +atk + +hp) / 5).toString();
@@ -133,32 +133,32 @@ function auto_preset() {
 }
 
 function update_dg() {
-	let max_zone = (game.stats.highestLevel.valueTotal()) / 2 + 115;
-	let eff = 500e6 + 50e6 * game.generatorUpgrades.Efficiency.upgrades;
-	let capa = 3 + 0.4 * game.generatorUpgrades.Capacity.upgrades;
-	let max_fuel = game.permanentGeneratorUpgrades.Storage.owned ? capa * 1.5 : capa;
-	let supply = 230 + 2 * game.generatorUpgrades.Supply.upgrades;
-	let overclock = game.generatorUpgrades.Overclocker.upgrades;
+	var max_zone = (game.stats.highestLevel.valueTotal()) / 2 + 115;
+	var eff = 500e6 + 50e6 * game.generatorUpgrades.Efficiency.upgrades;
+	var capa = 3 + 0.4 * game.generatorUpgrades.Capacity.upgrades;
+	var max_fuel = game.permanentGeneratorUpgrades.Storage.owned ? capa * 1.5 : capa;
+	var supply = 230 + 2 * game.generatorUpgrades.Supply.upgrades;
+	var overclock = game.generatorUpgrades.Overclocker.upgrades;
 	overclock = overclock && (1 - 0.5 * Math.pow(0.99, overclock - 1));
-	let burn = game.permanentGeneratorUpgrades.Slowburn.owned ? 0.4 : 0.5;
-	let cells = mastery('magmaFlow') ? 18 : 16;
-	let accel = mastery('quickGen') ? 1.03 : 1.02;
-	let hs2 = mastery('hyperspeed2') ? (game.stats.highestLevel.valueTotal()) / 2 : 0;
-	let bs = 0.5 * mastery('blacksmith') + 0.25 * mastery('blacksmith2') + 0.15 * mastery('blacksmith3');
+	var burn = game.permanentGeneratorUpgrades.Slowburn.owned ? 0.4 : 0.5;
+	var cells = mastery('magmaFlow') ? 18 : 16;
+	var accel = mastery('quickGen') ? 1.03 : 1.02;
+	var hs2 = mastery('hyperspeed2') ? (game.stats.highestLevel.valueTotal()) / 2 : 0;
+	var bs = 0.5 * mastery('blacksmith') + 0.25 * mastery('blacksmith2') + 0.15 * mastery('blacksmith3');
 	bs *= game.stats.highestLevel.valueTotal();
-	let housing = 0;
-	let fuel = 0;
-	let time = 0;
+	var housing = 0;
+	var fuel = 0;
+	var time = 0;
 
 	function tick(mult) {
 		housing += mult * eff * Math.sqrt(Math.min(capa, fuel));
 		fuel = Math.max(0, fuel - burn);
 	}
 
-	for (let zone = 230; zone <= max_zone; ++zone) {
+	for (var zone = 230; zone <= max_zone; ++zone) {
 		fuel += cells * (0.01 * Math.min(zone, supply) - 2.1);
 
-		let tick_time = Math.ceil(60 / Math.pow(accel, Math.floor((zone - 230) / 3)));
+		var tick_time = Math.ceil(60 / Math.pow(accel, Math.floor((zone - 230) / 3)));
 		time += zone > bs ? 28 : zone > hs2 ? 20 : 15;
 		while (time >= tick_time) {
 			time -= tick_time;
@@ -178,8 +178,8 @@ function update_dg() {
 }
 
 function read_save() {
-	let settings = JSON.parse(localStorage.getItem("perkyInputs"));
-	let zone = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared;
+	var settings = JSON.parse(localStorage.getItem("perkyInputs"));
+	var zone = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared;
 
 	if (!settings.preset) {
 		$$$('#preset > *').forEach(function (option) {
@@ -189,26 +189,26 @@ function read_save() {
 	}
 
 	// He / unlocks
-	let helium = game.global.heliumLeftover;
-	for (let perk in game.portal)
+	var helium = game.global.heliumLeftover;
+	for (var perk in game.portal)
 		helium += (game.portal[perk].heliumSpent || 0);
 
-	let unlocks = Object.keys(game.portal).filter(perk => !game.portal[perk].locked && game.portal[perk].level !== undefined);
+	var unlocks = Object.keys(game.portal).filter(perk => !game.portal[perk].locked && game.portal[perk].level !== undefined);
 	if (!game.global.canRespecPerks)
 		unlocks = unlocks.map(perk => perk + '>' + (game.portal[perk].level || 0));
 
 	// Income
-	let tt = mastery('turkimp2') ? 1 : mastery('turkimp') ? 0.4 : 0.25;
-	let prod = 1 + tt;
-	let loot = 1 + 0.333 * tt;
-	let spires = Math.min(Math.floor((zone - 101) / 100), game.global.spiresCompleted);
+	var tt = mastery('turkimp2') ? 1 : mastery('turkimp') ? 0.4 : 0.25;
+	var prod = 1 + tt;
+	var loot = 1 + 0.333 * tt;
+	var spires = Math.min(Math.floor((zone - 101) / 100), game.global.spiresCompleted);
 	loot *= zone < 100 ? 0.7 : 1 + (mastery('stillRowing') ? 0.3 : 0.2) * spires;
 	loot *= zone < 100 ? 0.7 : 1 + (mastery('stillRowing') ? 0.3 : 0.2) * spires;
 
-	let chronojest = 27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp;
-	let cache = zone < 60 ? 0 : zone < 85 ? 7 : zone < 160 ? 10 : zone < 185 ? 14 : 20;
+	var chronojest = 27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp;
+	var cache = zone < 60 ? 0 : zone < 85 ? 7 : zone < 160 ? 10 : zone < 185 ? 14 : 20;
 
-	for (let mod of (game.global.StaffEquipped.mods || [])) {
+	for (var mod of (game.global.StaffEquipped.mods || [])) {
 		if (mod[0] === 'MinerSpeed')
 			prod *= 1 + 0.01 * mod[1];
 		else if (mod[0] === 'metalDrop')
@@ -373,7 +373,7 @@ function parse_perks(fixed, unlocks) {
 
 function loadPerkySettings() {
 
-	let perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
+	var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
 	if (perkyInputs === null) return;
 	$$('#preset').value = perkyInputs.preset;
 	$$('#weight-he').value = Number(perkyInputs['weight-he']);

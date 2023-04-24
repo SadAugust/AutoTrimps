@@ -238,7 +238,7 @@ function heirloomShieldToEquip(mapType, query) {
 	}
 
 	if (slowScumming && game.global.mapsActive) {
-		let oddCell = false;
+		var oddCell = false;
 		if ((game.global.lastClearedMapCell + 1) % 2 === 0) oddCell = true;
 
 		if (oddCell) return ('heirloomAfterpush');
