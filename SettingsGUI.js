@@ -3185,12 +3185,12 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 function autoHeirloomOptions() {
 	var hze = game.stats.highestLevel.valueTotal();
 	var heirloomOptions = ['None', 'Shields', 'Staffs', 'All'];
-	if (currSettingUniverse === 1 && hze >= 200) heirloomOptions.splice(3, 0, 'Cores');
+	if (currSettingUniverse === 1 && hze >= 200) heirloomOptions.push('Cores');
 
 	var heirloomText = '<b>Shields: </b>Keeps Shields and nothing else.'
 	heirloomText += '<br><b>Staffs: </b>Keeps Staffs and nothing else.'
-	if (currSettingUniverse === 1 && hze >= 200) heirloomText += '<br><b>Cores: </b>Keeps Cores and nothing else.'
 	heirloomText += '<br><b>All: Will keep all heirlooms.'
+	if (currSettingUniverse === 1 && hze >= 200) heirloomText += '<br><b>Cores: </b>Keeps Cores and nothing else.'
 
 	autoTrimpSettings.heirloomAutoTypeToKeep.name = function () { return (heirloomOptions) }
 	autoTrimpSettings.heirloomAutoTypeToKeep.description = function () { return (heirloomText) }
