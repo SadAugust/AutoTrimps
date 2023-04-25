@@ -43,8 +43,8 @@ const heirloomMods = {
 function evaluateHeirloomMods(loom, location) {
 
 	const heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-	const raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep', currPortalUniverse));
-	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep', currPortalUniverse);
+	const raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep'));
+	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomEquipType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 3 ? 'All' : 'Core';
 
 	var modName;
