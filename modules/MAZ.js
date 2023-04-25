@@ -274,6 +274,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			zone: false,
 			exotic: false,
 			gather: false,
+			stance: false,
 		};
 
 		var msgs = autoTrimpSettings.spamMessages[value];
@@ -1153,6 +1154,10 @@ function messageConfigHoverAT(what, event) {
 		case 'gather':
 			text = "Log the action that AT tries to gather.";
 			title = "Gather";
+			break;
+		case 'stance':
+			text = "Logs when AT decides to change stance and what it changes to.";
+			title = "Stance";
 			break;
 		default: return;
 	}

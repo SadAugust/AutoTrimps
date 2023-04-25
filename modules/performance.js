@@ -138,7 +138,6 @@
 		M["performance"].$wrapper.style.display = 'block';
 		M["performance"].AFKOverlay.classList.add('at-afk-overlay-disabled');
 		W.updateLabels = M["performance"].updateLabels;
-		enableDebug = true;
 	}
 
 	M["performance"].UpdateAFKOverlay = function UpdateAFKOverlay() {

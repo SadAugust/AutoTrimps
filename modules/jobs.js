@@ -102,8 +102,6 @@ function workerRatios(workerRatio) {
 	else if (workerRatio.includes('Miner')) return ratioSet[2]
 }
 
-var reservedJobs = 100;
-
 function fireModeLocal() {
 	game.global.firing = !game.global.firing;
 	var elem = document.getElementById("fireBtn");
@@ -238,7 +236,7 @@ function buyJobs() {
 	// Explicit firefox handling because Ff specifically reduces free workers to 0.
 	var reserveMod = 1 + (game.resources.trimps.owned / 1e14) + nextCoordCost;
 
-	freeWorkers -= (game.resources.trimps.owned > 1e6) ? reservedJobs * reserveMod : 0;
+	freeWorkers -= (game.resources.trimps.owned > 1e6) ? 100 * reserveMod : 0;
 
 	var workerRatio;
 	if ((MODULES.mapFunctions.workerRatio !== null && shouldBoneShrine) || (getPageSetting('autoMaps') !== 0 && mapSettings.jobRatio !== undefined)) {

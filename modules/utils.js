@@ -337,7 +337,7 @@ function saveSettings() {
 	safeSetItems(storageName, serializeSettings())
 }
 
-function debug(a, b, c) {
+function debug(message, b, icon) {
 	var settingArray = atFinishedLoading && getPageSetting('spamMessages'),
 		p = !0;
 
@@ -386,8 +386,11 @@ function debug(a, b, c) {
 		case 'gather':
 			p = settingArray[b];
 			break;
+		case 'stance':
+			p = settingArray[b];
+			break;
 	}
-	p && (console.log(timeStamp() + ' ' + a), message2(a, 'AutoTrimps', c, b))
+	p && (console.log(timeStamp() + ' ' + message), message2(message, 'AutoTrimps', icon, b))
 }
 
 function timeStamp() {
@@ -405,26 +408,33 @@ function timeStamp() {
 }
 
 function setTitle() { aWholeNewWorld && (document.title = '(' + game.global.world + ') Trimps ' + document.getElementById('versionNumber').innerHTML) }
+
 var lastmessagecount = 1;
 
-function message2(a, b, c, d) {
+function message2(message, b, icon, d) {
 	var e = document.getElementById("log"),
 		f = e.scrollTop + 10 > e.scrollHeight - e.clientHeight,
 		g = ATmessageLogTabVisible ? "block" : "none",
-		h = ""; c && "*" == c.charAt(0) ?
-			(c = c.replace("*", ""), h = "icomoon icon-") :
-			h = "glyphicon glyphicon-", game.options.menu.timestamps.enabled && (a = (1 == game.options.menu.timestamps.enabled ? getCurrentTime() : updatePortalTimer(!0)) + " " + a), c && (a = "<span class=\"" + h + c + "\"></span> " + a), a = "<span class=\"glyphicon glyphicon-superscript\"></span> " + a,
-			a = "<span class=\"icomoon icon-text-color\"></span>" + a;
-	var i = "<span class='" + b + "Message message " + d + "' style='display: " + g + "'>" + a + "</span>",
-		j = document.getElementsByClassName(b + "Message"); if (1 < j.length && -1 < j[j.length - 1].innerHTML.indexOf(a)) {
-			var k = j[j.length - 1].innerHTML; lastmessagecount++;
-			var l = k.lastIndexOf(" x"); -1 != l && (j[j.length - 1].innerHTML = k.slice(0, l)), j[j.length - 1].innerHTML += " x" + lastmessagecount
-		} else lastmessagecount = 1, e.innerHTML += i; f && (e.scrollTop = e.scrollHeight), trimMessages(b)
+		h = "";
+	icon && "*" == icon.charAt(0) ? ((icon = icon.replace("*", "")), (h = "icomoon icon-")) : (h = "glyphicon glyphicon-"),
+		game.options.menu.timestamps.enabled && (message = (1 == game.options.menu.timestamps.enabled ? getCurrentTime() : updatePortalTimer(!0)) + " " + message),
+		icon && (message = '<span class="' + h + icon + '"></span> ' + message),
+		(message = '<span class="glyphicon glyphicon-superscript"></span> ' + message),
+		(message = '<span class="icomoon icon-text-color"></span>' + message);
+	var i = "<span class='" + b + "Message message " + d + "' style='display: " + g + "'>" + message + "</span>",
+		j = document.getElementsByClassName(b + "Message");
+	if (1 < j.length && -1 < j[j.length - 1].innerHTML.indexOf(message)) {
+		var k = j[j.length - 1].innerHTML;
+		lastmessagecount++;
+		var l = k.lastIndexOf(" x");
+		-1 != l && (j[j.length - 1].innerHTML = k.slice(0, l)), (j[j.length - 1].innerHTML += " x" + lastmessagecount);
+	} else (lastmessagecount = 1), (e.innerHTML += i);
+	f && (e.scrollTop = e.scrollHeight), trimMessages(b);
 }
 
 function filterMessage2(a) {
 	var b = document.getElementById("log");
-	displayed = !ATmessageLogTabVisible;
+	var displayed = !ATmessageLogTabVisible;
 	ATmessageLogTabVisible = displayed;
 	var c = document.getElementsByClassName(a + "Message")
 	var e = document.getElementById(a + "Filter");
@@ -504,7 +514,7 @@ function debugPrettifyMap(map) {
 function cheatSpeedX(interval) {
 	//Game uses 100ms for 1 second, so 5ms is 20x speed;
 	if (game.options.menu.pauseGame.enabled) {
-		runIntervalGame = setTimeout(cheatSpeedX, interval, interval);
+		setTimeout(cheatSpeedX, interval, interval);
 		return;
 	}
 	var date = new Date();
@@ -524,18 +534,9 @@ function cheatSpeedX(interval) {
 
 	mainLoop();
 	gameLoop(null, now);
-	if (game.global.time > runPortalTime) runPortalTime = game.global.time;
-	if (runPortalTime > game.global.time) game.global.time = runPortalTime;
-	runIntervalGame = setTimeout(cheatSpeedX, interval, interval);
+	setTimeout(cheatSpeedX, interval, interval);
 
 	if ((date.getSeconds() % 3) === 0) updateLabels();
-}
-
-function cheatSpeedNormal() {
-	clearTimeout(runIntervalGame);
-	var now = new Date().getTime();
-	game.global.time = 0;
-	game.global.start = now;
 }
 
 //called by ImportExportTooltip('NameSettingsProfiles')

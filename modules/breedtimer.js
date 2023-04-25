@@ -158,15 +158,13 @@ function ATGA2() {
 			target = new Decimal(getPageSetting('dATGA2timer'));
 		if (getPageSetting('dhATGA2timer') > 0 && challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined'))
 			target = new Decimal(getPageSetting('dhATGA2timer'));
-
-		if (!challengeActive('Daily') && getPageSetting('sATGA2timer') > 0 && isActiveSpireAT() == true)
-			target = new Decimal(getPageSetting('sATGA2timer'));
-		if (challengeActive('Daily') && getPageSetting('dsATGA2timer') > 0 && disActiveSpireAT() == true)
-			target = new Decimal(getPageSetting('dsATGA2timer'));
+		var settingPrefix = challengeActive('Daily') ? 'd' : 's';
+		if (getPageSetting(settingPrefix + 'ATGA2timer') > 0 && isDoingSpire() == true)
+			target = new Decimal(getPageSetting(settingPrefix + 'ATGA2timer'));
 
 		if (
 			(getPageSetting('dATGA2Auto') == 2 ||
-				(getPageSetting('dATGA2Auto') == 1 && disActiveSpireAT() && challengeActive('Daily'))
+				(getPageSetting('dATGA2Auto') == 1 && isDoingSpire() && challengeActive('Daily'))
 			)
 			&& challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined')
 		) {
@@ -233,7 +231,7 @@ function forceAbandonTrimps() {
 	if (!game.global.mapsUnlocked) return;
 	if (game.global.mapsActive && getCurrentMapObject().location == "Void") return;
 	if (game.global.preMapsActive) return;
-	if (isActiveSpireAT() && disActiveSpireAT() && !game.global.mapsActive) return;
+	if (isDoingSpire() && !game.global.mapsActive) return;
 	if (getPageSetting('autoMaps')) {
 		mapsClicked();
 		if (game.global.switchToMaps || game.global.switchToWorld)

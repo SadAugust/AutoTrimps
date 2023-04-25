@@ -65,7 +65,7 @@ function evaluateHeirloomMods(loom, location) {
 	var emptyMods = 0;
 	//Increment through the setting inputs and push them to the targetMods array if not set to empty.
 	for (var x = 1; x < (heirloomLocation.mods.length + 1); x++) {
-		if (getPageSetting(varAffix + x) === 'empty') continue;
+		if (getPageSetting(varAffix + x) === 'Empty') continue;
 		targetMods.push(getPageSetting(varAffix + x));
 	}
 	//Loop through the heirloom mods and check if they are empty or not. If they are empty, increment emptyMods. If they are not empty, remove them from the targetMods array.
@@ -84,10 +84,8 @@ function evaluateHeirloomMods(loom, location) {
 		return 0;
 }
 
-var worth3 = { 'Shield': [], 'Staff': [], 'Core': [] };
-
 function worthOfHeirlooms() {
-	worth3 = { 'Shield': [], 'Staff': [], 'Core': [] };
+	var heirloomWorth = { 'Shield': [], 'Staff': [], 'Core': [] };
 
 	//Identify heirlooms to be recycled.
 	var recycle = [];
@@ -109,12 +107,14 @@ function worthOfHeirlooms() {
 	for (var index in game.global.heirloomsExtra) {
 		var theLoom = game.global.heirloomsExtra[index];
 		var data = { 'location': 'heirloomsExtra', 'index': index, 'rarity': theLoom.rarity, 'eff': evaluateHeirloomMods(index, 'heirloomsExtra') };
-		worth3[theLoom.type].push(data);
+		heirloomWorth[theLoom.type].push(data);
 	}
 	var valuesort = function (a, b) { return b.eff - a.eff; };
-	worth3['Shield'].sort(valuesort);
-	worth3['Staff'].sort(valuesort);
-	worth3['Core'].sort(valuesort);
+	heirloomWorth['Shield'].sort(valuesort);
+	heirloomWorth['Staff'].sort(valuesort);
+	heirloomWorth['Core'].sort(valuesort);
+
+	return heirloomWorth;
 }
 
 function autoheirlooms() {
@@ -123,15 +123,14 @@ function autoheirlooms() {
 
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 3 ? 'Core' : 'All';
-
-	worthOfHeirlooms();
+	var heirloomWorth;
 
 	//Looping through the heirloom type set in typetokeep setting and stashing them.
 	if (heirloomType !== 'All') {
 		while ((game.global.heirloomsCarried.length < getMaxCarriedHeirlooms()) && game.global.heirloomsExtra.length > 0) {
-			worthOfHeirlooms();
-			if (worth3[heirloomType].length > 0) {
-				var carriedHeirlooms = worth3[heirloomType].shift();
+			heirloomWorth = worthOfHeirlooms();
+			if (heirloomWorth[heirloomType].length > 0) {
+				var carriedHeirlooms = heirloomWorth[heirloomType].shift();
 				selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
 				carryHeirloom();
 			}
@@ -145,9 +144,9 @@ function autoheirlooms() {
 
 		while ((game.global.heirloomsCarried.length < getMaxCarriedHeirlooms()) && game.global.heirloomsExtra.length > 0) {
 			for (var x = 0; x < heirloomTypes.length; x++) {
-				worthOfHeirlooms();
-				if (worth3[heirloomTypes[x]].length > 0) {
-					var carriedHeirlooms = worth3[heirloomTypes[x]].shift();
+				heirloomWorth = worthOfHeirlooms();
+				if (heirloomWorth[heirloomTypes[x]].length > 0) {
+					var carriedHeirlooms = heirloomWorth[heirloomTypes[x]].shift();
 					selectHeirloom(carriedHeirlooms.index, 'heirloomsExtra');
 					carryHeirloom();
 				}
@@ -159,7 +158,7 @@ function autoheirlooms() {
 
 //Heirloom Swapping
 function HeirloomSearch(heirloom) {
-	for (loom of game.global.heirloomsCarried)
+	for (var loom of game.global.heirloomsCarried)
 		if (loom.name == getPageSetting(heirloom))
 			return loom;
 }
@@ -194,7 +193,7 @@ function HeirloomModSearch(heirloom, modifier) {
 		}
 		return undefined;
 	}
-	for (loom of game.global.heirloomsCarried) {
+	for (var loom of game.global.heirloomsCarried) {
 		if (loom.name == getPageSetting(heirloom)) {
 			for (var i = (loom.mods.length - 1); i > -1; i--) {
 				if (loom.mods[i][0] == modifier)
@@ -207,7 +206,7 @@ function HeirloomModSearch(heirloom, modifier) {
 
 function HeirloomEquipShield(heirloom) {
 	if (HeirloomSearch(heirloom) !== undefined && game.global.ShieldEquipped.name !== getPageSetting(heirloom)) {
-		selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
+		selectHeirloom(game.global.heirloomsCarried.indexOf(HeirloomSearch(heirloom)), "heirloomsCarried", true);
 		equipHeirloom(true);
 		gammaBurstPct = getPageSetting('gammaBurstCalc') && (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 	} else if (HeirloomSearch(heirloom) === undefined && game.global.ShieldEquipped.name !== getPageSetting(heirloom))
@@ -216,7 +215,7 @@ function HeirloomEquipShield(heirloom) {
 
 function HeirloomEquipStaff(heirloom) {
 	if (HeirloomSearch(heirloom) !== undefined && game.global.StaffEquipped.name !== getPageSetting(heirloom)) {
-		selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
+		selectHeirloom(game.global.heirloomsCarried.indexOf(HeirloomSearch(heirloom)), "heirloomsCarried", true);
 		equipHeirloom(true);
 	} else if (HeirloomSearch(heirloom) === undefined && game.global.StaffEquipped.name !== getPageSetting(heirloom))
 		if (tenSecondInterval) debug("The heirloom named \"" + getPageSetting(heirloom) + "\" doesn\'t exist. Rename an heirloom or adjust the input for your " + autoTrimpSettings[heirloom].name() + " staff. This will be causing any loot related calcs to be incorrect.");
@@ -246,18 +245,14 @@ function heirloomShieldToEquip(mapType, query) {
 	}
 
 	//Initial vars for swapping heirlooms
-	const isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
-	const isDaily = challengeActive('Daily');
-	const isFiller = !isDaily && !isC3
-	const currChallenge = game.global.challengeActive.toLowerCase()
+	var currChallenge = game.global.challengeActive.toLowerCase()
 
-	var swapZone = isC3 && (currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0 ? getPageSetting(currChallenge + 'SwapZone') : isC3 ? getPageSetting('heirloomSwapZoneC3') : isDaily ? getPageSetting('heirloomSwapZoneDaily') : isFiller ? getPageSetting('heirloomSwapZone') : 999;
+	var swapZone = hdStats.isC3 && (currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0 ? getPageSetting(currChallenge + 'SwapZone') : hdStats.isC3 ? getPageSetting('heirloomSwapZoneC3') : hdStats.isDaily ? getPageSetting('heirloomSwapZoneDaily') : hdStats.isFiller ? getPageSetting('heirloomSwapZone') : 999;
 	if (swapZone === -1) swapZone = 999;
-	if (isDaily && dailyOddOrEven().active) {
+	if (hdStats.isDaily && dailyOddOrEven().active) {
 		if (swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;
 	}
-	//if (game.global.world >= 366 && (getPageSetting('gameUser') === 'SadAugust' || getPageSetting('gameUser') === 'Test') && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) swapZone = 999;
-	var afterpushShield = isC3 ? 'heirloomC3' : 'heirloomAfterpush';
+	var afterpushShield = hdStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 	voidPBSwap = false;
 	var voidActive = mapType === 'void';
 	if (voidActive && query) {
@@ -284,7 +279,11 @@ function heirloomShieldToEquip(mapType, query) {
 	}
 	else if (voidActive && voidPBSwap && getPageSetting('heirloomInitial') !== "undefined")
 		return ('heirloomInitial');
-	else if (getPageSetting(afterpushShield) !== "undefined" && (game.global.world >= swapZone || (mapType !== 'world' && getPageSetting('heirloomMapSwap'))))
+	else if (getPageSetting(afterpushShield) !== "undefined" && (mapType === 'map' || mapType === 'void') && getPageSetting('heirloomMapSwap'))
+		return (afterpushShield);
+	else if (getPageSetting('heirloomSpire') !== "undefined" && isDoingSpire())
+		return ('heirloomSpire');
+	else if (getPageSetting(afterpushShield) !== "undefined" && game.global.world >= swapZone)
 		return (afterpushShield);
 	else if (getPageSetting('heirloomInitial') !== "undefined")
 		return ('heirloomInitial');

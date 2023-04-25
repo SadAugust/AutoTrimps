@@ -1,5 +1,4 @@
 MODULES["other"] = {};
-MODULES["other"].enableRoboTrimpSpam = true;
 
 function autoRoboTrimp() {
 	if (game.global.roboTrimpLevel === 0) return;
@@ -15,41 +14,6 @@ function autoRoboTrimp() {
 	}
 	else
 		if (game.global.useShriek) magnetoShriek();
-}
-
-function isActiveSpireAT() {
-	return !challengeActive('Daily') && game.global.spireActive && game.global.world >= getPageSetting('IgnoreSpiresUntil')
-}
-
-function disActiveSpireAT() {
-	return challengeActive('Daily') && game.global.spireActive && game.global.world >= getPageSetting('dIgnoreSpiresUntil')
-}
-
-function exitSpireCell() {
-	isActiveSpireAT() && game.global.lastClearedCell >= getPageSetting('ExitSpireCell') - 1 && endSpire()
-}
-
-function dailyexitSpireCell() {
-	disActiveSpireAT() && game.global.lastClearedCell >= getPageSetting('dExitSpireCell') - 1 && endSpire()
-}
-
-function findLastBionicWithItems(bionicPool) {
-
-	if (game.global.world < 115 || !bionicPool)
-		return;
-	if (challengeActive('Mapology') && !getPageSetting('mapology')) return;
-	const targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : 'GambesOP';
-
-	if (bionicPool.length > 1) {
-		bionicPool.sort(function (bionicA, bionicB) { return bionicA.level - bionicB.level });
-		while (bionicPool.length > 1 && equipsToGet(bionicPool[0].level, targetPrestige)[0] === 0) {
-			if (challengeActive('Experience') && game.global.world > 600 && bionicPool[0].level >= getPageSetting('experienceEndBW')) break;
-			bionicPool.shift();
-			if (equipsToGet(bionicPool[0].level, targetPrestige)[0] !== 0) break;
-		}
-	}
-
-	return bionicPool[0];
 }
 
 //Helium
@@ -159,9 +123,12 @@ function archstring() {
 		var string1 = getPageSetting('archaeologyString1'), string2 = getPageSetting('archaeologyString2'), string3 = getPageSetting('archaeologyString3');
 		var string1z = string1.split(',')[0], string2z = string2.split(',')[0];
 		var string1split = string1.split(',').slice(1).toString(), string2split = string2.split(',').slice(1).toString();
-		if (game.global.world <= string1z && game.global.archString != string1split) game.global.archString = string1split;
-		else if (game.global.world > string1z && game.global.world <= string2z && game.global.archString != string2split) game.global.archString = string2split;
-		else if (game.global.world > string2z && game.global.archString != string3) game.global.archString = string3;
+		if (game.global.world <= string1z && game.global.archString != string1split)
+			game.global.archString = string1split;
+		else if (game.global.world > string1z && game.global.world <= string2z && game.global.archString != string2split)
+			game.global.archString = string2split;
+		else if (game.global.world > string2z && game.global.archString != string3)
+			game.global.archString = string3;
 	}
 }
 

@@ -465,7 +465,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	// Observation
 	attack *= game.global.universe === 2 ? game.portal.Observation.getMult() : 1;
 	//Titimp
-	attack *= mapType !== 'world' && useTitimp === 'force' ? 2 : mapType !== 'world' && useTitimp && game.global.titimpLeft > 0 ? 2 : 1;
+	attack *= mapType !== 'world' && useTitimp === 'force' ? 2 : mapType !== 'world' && mapType !== '' && useTitimp && game.global.titimpLeft > 0 ? 2 : 1;
 	// Robotrimp
 	attack *= 1 + (0.2 * game.global.roboTrimpLevel);
 	// Mayhem Completions
@@ -649,10 +649,9 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 function calcSpire(what, cell, name) {
 	//Target Cell
 	if (!cell) {
-		if (isActiveSpireAT() && getPageSetting('ExitSpireCell') > 0 && getPageSetting('ExitSpireCell') <= 100)
-			cell = getPageSetting('ExitSpireCell');
-		else if (disActiveSpireAT() && getPageSetting('dExitSpireCell') > 0 && getPageSetting('dExitSpireCell') <= 100)
-			cell = getPageSetting('dExitSpireCell');
+		const exitCell = getPageSetting((challengeActive('Daily') ? 'd' : '') + 'ExitSpireCell')
+		if (isDoingSpire() && exitCell > 0 && exitCell <= 100)
+			cell = exitCell;
 		else cell = 100;
 	}
 

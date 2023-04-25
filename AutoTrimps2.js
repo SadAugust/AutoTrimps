@@ -1,24 +1,30 @@
-var ATversion = 'SadAugust v6.2.5',
-	atscript = document.getElementsByTagName("script"),
-	basepath = '',
-	modulepath = 'modules/';
+var MODULES_AT = {
+	ATversion: 'SadAugust v6.2.6',
+	atscript: document.getElementsByTagName("script"),
+	basepath: '',
+	modulepath: 'modules/'
+};
 
 //Searches html for where the AT script is being loaded from
-for (var y = 0; y < atscript.length; y++) {
-	if (atscript[y].src.includes('AutoTrimps2')) {
-		basepath = atscript[y].src.replace(/AutoTrimps2\.js$/, '')
-		break;
+function loadAT() {
+	for (var y = 0; y < MODULES_AT.atscript.length; y++) {
+		if (MODULES_AT.atscript[y].src.includes('AutoTrimps2')) {
+			MODULES_AT.basepath = MODULES_AT.atscript[y].src.replace(/AutoTrimps2\.js$/, '')
+			break;
+		}
+		y++;
 	}
-	y++;
 }
+loadAT()
 
 //Backup on the off chance the script hasn't been found
-if (basepath === '') basepath = 'https://SadAugust.github.io/AutoTrimps/';
+if (MODULES_AT.basepath === '') MODULES_AT.basepath = 'https://SadAugust.github.io/AutoTrimps/';
+basepath = MODULES_AT.basepath;
 
 function ATscriptLoad(a, b) {
-	null == b && debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(modulepath, \'example.js\'); ');
+	null == b && debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(MODULES_AT.modulepath, \'example.js\'); ');
 	var c = document.createElement('script');
-	null == a && (a = ''), c.src = basepath + a + b + '.js', c.id = b + '_MODULE', document.head.appendChild(c)
+	null == a && (a = ''), c.src = MODULES_AT.basepath + a + b + '.js', c.id = b + '_MODULE', document.head.appendChild(c)
 }
 function ATscriptUnload(a) {
 	var b = document.getElementById(a + "_MODULE");
@@ -28,7 +34,6 @@ function ATscriptUnload(a) {
 var ATrunning = true;
 var atFinishedLoading = false;
 var ATmessageLogTabVisible = true;
-var enableDebug = true;
 var slowScumming = false;
 
 var autoTrimpSettings = {};
@@ -41,8 +46,11 @@ var resourceNeeded = {
 	science: 0
 };
 
-var baseBlock = 0;
+var baseMinDamage = 0;
+var baseMaxDamage = 0;
+var baseDamage = 0;
 var baseHealth = 0;
+var baseBlock = 0;
 
 var currentworld = 0;
 var lastrunworld = 0;
@@ -54,18 +62,12 @@ var currentHZE = 0;
 var lastHZE = 0;
 var aWholeNewHZE = false;
 
-var heirloomFlag = false;
-var heirloomCache = game.global.heirloomsExtra.length;
 var magmiteSpenderChanged = false;
 
-var autoLevelCurrent = 0;
 var challengeCurrentZone = -1;
 var voidPBSwap = false;
 var rBSRunningAtlantrimp = false;
-var rMapRepeats = 0;
-var freeVoids = -1;
-var tenacityTime = '0m';
-var tenacityTimeNew = '0m';
+var mapRepeats = 0;
 
 var showingPerky = false;
 var showingSurky = false;
@@ -75,15 +77,22 @@ var mapSettings = {
 	mapName: '',
 	levelCheck: Infinity,
 }
-twoSecondInterval = false;
-sixSecondInterval = false;
+
+var hdStats = {
+	isC3: false,
+	isDaily: false,
+	isFiller: false
+}
+var mappingTIme = 0;
+var twoSecondInterval = false;
+var sixSecondInterval = false;
 
 //Get Gamma burst % value
 var gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 var shieldEquipped = game.global.ShieldEquipped.id;
 
 
-ATscriptLoad(modulepath, 'utils');
+ATscriptLoad(MODULES_AT.modulepath, 'utils');
 
 function initializeAutoTrimps() {
 	loadPageVariables();
@@ -92,7 +101,7 @@ function initializeAutoTrimps() {
 	ATscriptLoad('', 'mutatorPreset');
 	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perky', 'surky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
 	for (var m in ATmoduleList) {
-		ATscriptLoad(modulepath, ATmoduleList[m]);
+		ATscriptLoad(MODULES_AT.modulepath, ATmoduleList[m]);
 	}
 	debug('AutoTrimps Loaded!');
 }
@@ -109,7 +118,7 @@ function printChangelog(changes) {
         <br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
         <br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).',
 		action = 'cancelTooltip()',
-		title = 'Script Update Notice<br>' + ATversion,
+		title = 'Script Update Notice<br>' + MODULES_AT.ATversion,
 		acceptBtnText = "Thank you for playing AutoTrimps. Accept and Continue.",
 		hideCancel = true;
 	tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
@@ -119,11 +128,6 @@ function assembleChangelog(c) {
 	return `${c}<br><br>`
 }
 
-var runInterval = 100;
-var startupDelay = 1500;
-var runIntervalGame;
-var runPortalTime = 1;
-
 setTimeout(delayStart, 2500);
 
 function delayStart() {
@@ -131,7 +135,7 @@ function delayStart() {
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
 	document.getElementById('activatePortalBtn').setAttribute("onClick", 'activateClicked(); pushSpreadsheetData()');
-	setTimeout(delayStartAgain, startupDelay);
+	setTimeout(delayStartAgain, 1500);
 }
 
 function swapBaseSettings() {
@@ -171,12 +175,12 @@ function delayStartAgain() {
 	})();
 
 	hdStats = new HDStats();
-	mapSettings = FarmingDecision(hdStats);
+	mapSettings = new FarmingDecision(hdStats);
 
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
-	setInterval(mainLoop, runInterval);
-	setInterval(guiLoop, runInterval * 10);
+	setInterval(mainLoop, 100);
+	setInterval(guiLoop, 100 * 10);
 	setupATButtons();
 	updateCustomButtons(true);
 	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
@@ -211,7 +215,7 @@ function mainLoop() {
 	if (oneSecondInterval) {
 		hdStats = new HDStats();
 	}
-	mapSettings = FarmingDecision(hdStats);
+	mapSettings = new FarmingDecision(hdStats);
 
 	if (!usingRealTimeOffline) {
 		var MAZCheck = document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Golden') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Void Map') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Map Bonus') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Raiding');
@@ -227,24 +231,14 @@ function mainLoop() {
 		if (document.getElementById('tooltipDiv').classList[0] !== undefined && !MAZCheck && document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow')) document.getElementById('tooltipDiv').classList.remove(document.getElementById('tooltipDiv').classList[0])
 
 		if (document.getElementById('freeVoidMap') !== null) {
-			tenacityTimeNew = game.global.universe === 2 ? Math.floor(game.portal.Tenacity.getTime()) + "m" : '0m';
-			if (freeVoids !== game.permaBoneBonuses.voidMaps.tracker || hdStats.autoLevel !== autoLevelCurrent || tenacityTimeNew !== tenacityTime || (game.global.universe === 1 && oneSecondInterval)) {
+			var freeVoidsText = 'Void: ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10');
+			var autoLevelText = " | Auto Level: " + hdStats.autoLevel;
+			var breedTimerText = game.global.universe === 1 ? " | B: " + ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) + 's' : "";
+			var tenacityText = game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 ? " | T: " + (Math.floor(game.portal.Tenacity.getTime()) + "m") : "";
 
-				var freeVoidsText = 'Void: ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10');
-
-				var autoLevelText = " | Auto Level: " + hdStats.autoLevel;
-
-				var breedTimerText = game.global.universe === 1 ? " | B: " + ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) + 's' : "";
-
-				var tenacityText = game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 ? " | T: " + tenacityTimeNew : "";
-
-				document.getElementById('freeVoidMap').innerHTML = freeVoidsText + autoLevelText + breedTimerText + tenacityText;
-				freeVoids = game.permaBoneBonuses.voidMaps.tracker
-				autoLevelCurrent = hdStats.autoLevel;
-				tenacityTime = tenacityTimeNew;
-				document.getElementById('freeVoidMap').parentNode.style.display = 'block';
-				document.getElementById('freeVoidMap').style.display = 'block';
-			}
+			document.getElementById('freeVoidMap').innerHTML = freeVoidsText + autoLevelText + breedTimerText + tenacityText;
+			document.getElementById('freeVoidMap').parentNode.style.display = 'block';
+			document.getElementById('freeVoidMap').style.display = 'block';
 		}
 	}
 
@@ -255,10 +249,8 @@ function mainLoop() {
 	if (getPageSetting('PauseScript', 1) || game.options.menu.pauseGame.enabled) return;
 	if (getPageSetting('disableForTW') && usingRealTimeOffline) return;
 	ATrunning = true;
-	if (mainCleanup() || portalWindowOpen || (!heirloomsShown && heirloomFlag) || (heirloomCache != game.global.heirloomsExtra.length)) {
-		heirloomCache = game.global.heirloomsExtra.length;
-	}
-	heirloomFlag = heirloomsShown;
+	mainCleanup()
+
 	if (aWholeNewWorld) {
 		switch (document.getElementById('tipTitle').innerHTML) {
 			case 'The Improbability':
@@ -360,14 +352,16 @@ function mainLoopU1(hdStats) {
 	if (game.global.mapsUnlocked && challengeActive('Daily') && getPageSetting('avoidempower') && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidempower();
 
 	//Stance
-	if ((getPageSetting('UseScryerStance')) || (getPageSetting('scryvoidmaps') && !challengeActive('Daily')) || (getPageSetting('dscryvoidmaps') && challengeActive('Daily'))) useScryerStance(hdStats);
-	else if ((getPageSetting('AutoStance') === 3) || (getPageSetting('use3daily') && challengeActive('Daily'))) windStance(hdStats);
-	else if (getPageSetting('AutoStance') === 1) autoStance(hdStats);
-	else if (getPageSetting('AutoStance') === 2) autoStance2(hdStats);
+	var settingPrefix = challengeActive('Daily') ? 'd' : '';
+	if ((getPageSetting('UseScryerStance')) || (game.global.mapsActive && getCurrentMapObject().location === 'Void' && getPageSetting(settingPrefix + 'scryvoidmaps'))) useScryerStance(hdStats);
+	else {
+		windStance(hdStats);
+		autoStance();
+		autoStanceD();
+	}
 
 	//Spire
-	if (getPageSetting('ExitSpireCell') > 0 && !challengeActive('Daily') && getPageSetting('IgnoreSpiresUntil') <= game.global.world && game.global.spireActive) exitSpireCell();
-	if (getPageSetting('dExitSpireCell') >= 1 && challengeActive('Daily') && getPageSetting('dIgnoreSpiresUntil') <= game.global.world && game.global.spireActive) dailyexitSpireCell();
+	exitSpireCell();
 	if (getPageSetting('SpireBreedTimer') > 0 && getPageSetting('IgnoreSpiresUntil') <= game.global.world) ATspirebreed();
 }
 
@@ -402,9 +396,6 @@ function mainCleanup() {
 		else heliumChallengesSetting(true);
 		HeHrPortalOptions();
 		autoHeirloomOptions();
-
-		document.getElementById('freeVoidMap').parentNode.style.display = 'block';
-		document.getElementById('freeVoidMap').style.display = 'block';
 	}
 
 	if (currentworld == 1 && aWholeNewWorld) {

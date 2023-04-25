@@ -793,7 +793,7 @@ function setupPerkyUI() {
 		apGUI.$preset = document.createElement("select");
 		apGUI.$preset.id = 'preset';
 		apGUI.$preset.setAttribute('onchange', 'select_preset(this.value)');
-		oldstyle = 'text-align: center; width: 8vw; font-size: 0.8vw; font-weight: lighter; ';
+		var oldstyle = 'text-align: center; width: 8vw; font-size: 0.8vw; font-weight: lighter; ';
 		if (game.options.menu.darkTheme.enabled != 2) apGUI.$preset.setAttribute("style", oldstyle + " color: black;");
 		else apGUI.$preset.setAttribute('style', oldstyle);
 		apGUI.$preset.innerHTML = presetListHtml;

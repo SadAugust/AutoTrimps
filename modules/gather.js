@@ -4,7 +4,8 @@ MODULES["gather"] = {};
 MODULES["gather"].minScienceSeconds = 60;
 
 //Global flags
-var trapBuffering = false, maxTrapBuffering = false;
+var trapBuffering = false;
+var maxTrapBuffering = false;
 var maxZoneDuration = 0;
 
 //Traps per second
@@ -155,7 +156,7 @@ function autoGather() {
 		}
 
 		//Setting gather to the setting that corresponds to your current map special.
-		currentBonus = getCurrentMapObject().bonus;
+		var currentBonus = getCurrentMapObject().bonus;
 		if (currentBonus) {
 			if (currentBonus.includes('sc') || currentBonus.includes('hc'))
 				safeSetGather('food');

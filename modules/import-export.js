@@ -39,7 +39,7 @@ function settingsProfileMakeGUI() {
 
 //Populate dropdown menu with list of AT SettingsProfiles
 function initializeSettingsProfiles() {
-	if ($settingsProfiles == null) return;
+	if ($settingsProfiles === null) return;
 	//load the old data in:
 	var loadLastProfiles = localStorage.getItem('ATSelectedSettingsProfile');
 	var oldpresets = loadLastProfiles ? JSON.parse(loadLastProfiles) : new Array(); //load the import.
@@ -244,7 +244,7 @@ function ImportExportTooltip(what, event, download) {
 		for (var script in mods.selectedOptions) {
 			var $item = mods.selectedOptions[script];
 			if ($item.value != null) {
-				ATscriptLoad(modulepath, $item.value);
+				ATscriptLoad(MODULES_AT.modulepath, $item.value);
 				modnames += $item.value + " ";
 			}
 		}
@@ -267,7 +267,7 @@ function ImportExportTooltip(what, event, download) {
 		tooltipText = "Autotrimps MODULE variable settings have been successfully reset to its defaults!";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>OK</div></div>";
 	} else if (what == 'MagmiteExplain') {
-		tooltipText = "<img src='" + basepath + "mi.png'>";
+		tooltipText = "<img src='" + MODULES_AT.basepath + "mi.png'>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Thats all the help you get.</div></div>";
 	} else if (what == 'c2table') {
 		//Adding U1 challenges

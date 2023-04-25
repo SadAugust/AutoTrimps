@@ -11,7 +11,15 @@ MODULES.mapFunctions.workerRatio = null;
 MODULES.mapFunctions.runUniqueMap = '';
 
 function isDoingSpire() {
-	return isActiveSpireAT() || disActiveSpireAT();
+	return game.global.spireActive && game.global.world > getPageSetting((challengeActive('Daily') ? 'd' : '') + 'IgnoreSpiresUntil')
+}
+
+function exitSpireCell() {
+	if (!game.global.spireActive) return;
+	var settingPrefix = challengeActive('Daily') ? 'd' : '';
+	if (getPageSetting(settingPrefix + 'ExitSpireCell') <= 0) return;
+
+	isDoingSpire() && game.global.lastClearedCell >= getPageSetting(settingPrefix + 'ExitSpireCell') - 1 && endSpire()
 }
 
 //Unique Maps
@@ -238,8 +246,9 @@ function recycleMap_AT() {
 	if (game.jobs.Explorer.locked) return;
 	if (challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb') return;
 
-	if (game.global.mapsActive)
+	if (game.global.mapsActive) {
 		mapsClicked(true);
+	}
 	recycleMap();
 }
 
@@ -393,7 +402,7 @@ function voidMaps(hdStats) {
 			rVMSettings = baseSettings[settingIndex >= 0 ? settingIndex : module.voidHDIndex];
 		}
 		var rVMJobRatio = module.portalAfterVoids || baseSettings[settingIndex] !== undefined ? rVMSettings.jobratio : defaultSettings.jobRatio;
-		var shouldPortal = module.portalAfterVoids || baseSettings[settingIndex] !== undefined ? rVMSettings.portalAfter : false;
+		var portalAfter = module.portalAfterVoids || baseSettings[settingIndex] !== undefined ? rVMSettings.portalAfter : false;
 
 		if (module.boneCharge && game.global.mapsActive && getCurrentMapObject().location === 'Void') {
 			module.boneCharge = false;
@@ -426,7 +435,7 @@ function voidMaps(hdStats) {
 		module.portalAfterVoids = false;
 		module.voidTrigger = 'None';
 		//Setting portal zone to current zone if setting calls for it
-		if (shouldPortal) module.portalZone = game.global.world;
+		if (portalAfter) module.portalZone = game.global.world;
 	}
 
 	return farmingDetails;
@@ -990,8 +999,6 @@ function smithyFarm(hdStats) {
 	return farmingDetails;
 }
 
-var rWFDebug = 0;
-
 function worshipperFarm(hdStats) {
 	const mapName = 'Worshipper Farm';
 	const farmingDetails = {
@@ -1006,6 +1013,7 @@ function worshipperFarm(hdStats) {
 
 	var shouldWorshipperFarm = false;
 	var mapAutoLevel = Infinity;
+	var shouldSkip = false;
 
 	var settingIndex;
 
@@ -1050,12 +1058,22 @@ function worshipperFarm(hdStats) {
 		}
 
 		if (challengeActive('Wither') && rWFMapLevel >= 0) rWFMapLevel = -1;
-		if (rWFDefaultSetting.shipSkipEnabled && game.jobs.Worshipper.owned != 50 && game.stats.zonesCleared.value != rWFDebug && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * rWFDefaultSetting.shipskip))) {
-			debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + rWFDefaultSetting.shipskip + " or more Worshippers. Evaluate your map settings to correct this", 'map_Skip');
-			rWFDebug = game.stats.zonesCleared.value;
+		if (rWFDefaultSetting.shipSkipEnabled && game.jobs.Worshipper.owned != 50 && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, rWFJobRatio), false, true, rWFMapLevel) < (game.jobs.Worshipper.getCost() * rWFDefaultSetting.shipskip))) {
+			shouldSkip = true;
 		}
-		if (game.jobs.Worshipper.owned !== 50 && rWFGoal > game.jobs.Worshipper.owned && game.stats.zonesCleared.value !== rWFDebug)
+
+		if (game.jobs.Worshipper.owned !== 50 && rWFGoal > game.jobs.Worshipper.ownedg)
 			shouldWorshipperFarm = true;
+
+
+
+		if (((mapSettings.mapName === mapName && !shouldWorshipperFarm) || shouldSkip)) {
+			if (!shouldSkip) mappingDetails(mapName, rWFMapLevel, rWFSpecial);
+			if (getPageSetting('spamMessages').map_Skip && shouldSkip) {
+				debug("Skipping Worshipper farming on zone " + game.global.world + " as 1 " + rWFSpecial + " map doesn't provide " + rWFDefaultSetting.shipskip + " or more Worshippers. Evaluate your map settings to correct this", 'map_Skip');
+			}
+			resetMapVars(rWFSettings);
+		}
 
 		if (mapSettings.mapName === mapName && !shouldWorshipperFarm) {
 			mappingDetails(mapName, rWFMapLevel, rWFSpecial);
@@ -1426,6 +1444,25 @@ function prestigeClimb() {
 	return farmingDetails;
 }
 
+function findLastBionicWithItems(bionicPool) {
+
+	if (game.global.world < 115 || !bionicPool)
+		return;
+	if (challengeActive('Mapology') && !getPageSetting('mapology')) return;
+	const targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : 'GambesOP';
+
+	if (bionicPool.length > 1) {
+		bionicPool.sort(function (bionicA, bionicB) { return bionicA.level - bionicB.level });
+		while (bionicPool.length > 1 && equipsToGet(bionicPool[0].level, targetPrestige)[0] === 0) {
+			if (challengeActive('Experience') && game.global.world > 600 && bionicPool[0].level >= getPageSetting('experienceEndBW')) break;
+			bionicPool.shift();
+			if (equipsToGet(bionicPool[0].level, targetPrestige)[0] !== 0) break;
+		}
+	}
+
+	return bionicPool[0];
+}
+
 function bionicRaiding(hdStats) {
 
 	const mapName = 'Bionic Raiding'
@@ -1751,14 +1788,14 @@ function quest() {
 		var questMax = shouldQuest === 6 ? 10 : null;
 		var questMin = shouldQuest === 6 || (shouldQuest === 7 && game.global.mapBonus !== 10) ? 0 : null;
 
-		if (game.global.mapRunCounter === 0 && game.global.mapsActive && rMapRepeats !== 0) {
-			game.global.mapRunCounter = rMapRepeats;
-			rMapRepeats = 0;
+		if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
+			game.global.mapRunCounter = mapRepeats;
+			mapRepeats = 0;
 		}
 		var autoLevel_Repeat = mapSettings.levelCheck;
 		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, questSpecial, questMax, questMin);
 		if (mapAutoLevel !== Infinity) {
-			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) rMapRepeats = game.global.mapRunCounter + 1;
+			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 			questMapLevel = mapAutoLevel;
 		}
 
@@ -1781,7 +1818,7 @@ function quest() {
 		resetMapVars();
 		if (game.global.mapsActive) mapsClicked(true);
 		if (game.global.preMapsActive && game.global.currentMapId !== '') recycleMap_AT();
-		rMapRepeats = 0;
+		mapRepeats = 0;
 	}
 
 	return farmingDetails;
@@ -3114,7 +3151,7 @@ function minMapFrag(level, specialModifier, biome, sliders) {
 }
 
 function perfectMapCost(pluslevel, special, biome) {
-	maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
+	var maplevel = pluslevel < 0 ? game.global.world + pluslevel : game.global.world;
 	if (!pluslevel || pluslevel < 0) pluslevel = 0;
 	if (!special) special = '0';
 	if (!biome) biome = getBiome();

@@ -1,7 +1,6 @@
 MODULES["fight"] = {};
 MODULES["fight"].breedTimerCutoff1 = 2;
 MODULES["fight"].breedTimerCutoff2 = 0.5;
-MODULES["fight"].enableDebug = true;
 
 function callBetterAutoFight() {
 	if (getPageSetting('autoFight') === 0) return;

@@ -1,28 +1,25 @@
 var baseMinDamage = 0;
 var baseMaxDamage = 0;
 
-function calcBaseDamageInX() {
-	baseMinDamage = calcOurDmg("min", false, false, true);
-	baseMaxDamage = calcOurDmg("max", false, false, true);
-	baseDamage = calcOurDmg("avg", false, false, true);
-	baseHealth = calcOurHealth(false);
-	baseBlock = calcOurBlock(false);
+function safeSetStance(stance) {
+	if (!stance) return;
+	if (game.global.formation === stance) return;
+	const currFormation = game.global.formation;
+	const formationLetter = currFormation === 5 ? 'W' : currFormation === 4 ? 'S' : currFormation === 3 ? 'B' : currFormation === 2 ? 'D' : currFormation === 1 ? 'H' : 'X';
+	const stanceLetter = stance === 5 ? 'W' : stance === 4 ? 'S' : stance === 3 ? 'B' : stance === 2 ? 'D' : stance === 1 ? 'H' : 'X';
+	if (game.global.formation !== stance) {
+		setFormation(stance);
+		debug("Setting stance from " + formationLetter + " to " + stanceLetter + ".", "stance");
+	}
+	return true;
 }
 
-function autoStanceNew() {
-	if (game.global.gridArray.length === 0) return;
-	if (game.global.soldierHealth <= 0) return;
-	if (!game.upgrades.Formations.done) return;
-
-	if (game.global.formation == 2 && game.global.soldierHealth <= game.global.soldierHealthMax * 0.25) {
-		if (game.global.formation !== '0') setFormation('0');
-	}
-	else if (game.global.formation == 0 && game.global.soldierHealth <= game.global.soldierHealthMax * 0.25) {
-		if (game.global.formation !== '1') setFormation('1')
-	}
-	else if (game.global.formation == 1 && game.global.soldierHealth == game.global.soldierHealthMax) {
-		if (game.global.formation !== '2') setFormation('2');
-	}
+function calcBaseDamageInX() {
+	baseMinDamage = calcOurDmg("min", false, false, '');
+	baseMaxDamage = calcOurDmg("max", false, false, '');
+	baseDamage = calcOurDmg("avg", false, false, '');
+	baseHealth = calcOurHealth(false);
+	baseBlock = calcOurBlock(false);
 }
 
 function debugStance(maxPower, ignoreArmy) {
@@ -267,7 +264,7 @@ function survive(formation = "S", critPower = 2, ignoreArmy) {
 
 function autoStance() {
 	calcBaseDamageInX();
-
+	if (getPageSetting('AutoStance') !== 1) return;
 	//Invalid Map - Dead Soldiers - Auto Stance Disabled - Formations Unavailable - No Enemy
 	if (game.global.soldierHealth <= 0) return;
 	if (game.global.gridArray.length === 0) return true;
@@ -277,7 +274,7 @@ function autoStance() {
 
 	//Keep on D vs the Domination bosses
 	if (challengeActive('Domination') && (game.global.lastClearedCell == 98 || getCurrentEnemy() && getCurrentEnemy().name == "Cthulimp")) {
-		autoStance2();
+		autoStanceD();
 		return;
 	}
 
@@ -288,29 +285,29 @@ function autoStance() {
 		var critPower;
 		for (critPower = 2; critPower >= -2; critPower--) {
 			if (survive("D", critPower)) {
-				if (game.global.formation !== 2) setFormation(2); break;
+				safeSetStance(2); break;
 			}
 			else if (survive("XB", critPower)) {
-				if (game.global.formation !== 0) setFormation("0"); break;
+				safeSetStance("0"); break;
 			}
 			else if (survive("B", critPower)) {
-				if (game.global.formation !== 3) setFormation(3); break;
+				safeSetStance(3); break;
 			}
 			else if (survive("X", critPower)) {
-				if (game.global.formation !== 0) setFormation("0"); break;
+				safeSetStance("0"); break;
 			}
 			else if (survive("H", critPower)) {
-				if (game.global.formation !== 1) setFormation(1); break;
+				safeSetStance(1); break;
 			}
 		}
 
 		//If it cannot survive the worst case scenario on any formation, attempt it's luck on H, if available, or X
 		if (critPower < -2) {
 			if (game.upgrades.Formations.done) {
-				if (game.global.formation !== 1) setFormation(1);
+				safeSetStance(1);
 			}
 			else {
-				if (game.global.formation !== "0") setFormation("0");
+				safeSetStance("0");
 			}
 		}
 	}
@@ -318,17 +315,18 @@ function autoStance() {
 	return true;
 }
 
-function autoStance2() {
+function autoStanceD() {
+	if (getPageSetting('AutoStance') !== 2) return;
 	if (game.global.gridArray.length === 0) return;
 	if (game.global.soldierHealth <= 0) return;
-	if (getPageSetting('AutoStance') == 0) return;
 	if (!game.upgrades.Formations.done) return;
 	if (game.global.world <= 70) return;
-	if (game.global.formation != 2)
-		setFormation(2);
+	safeSetStance(2);
 }
 
 function windStance(hdStats) {
+
+	if (getPageSetting('AutoStance') !== 3 && !(getPageSetting('use3daily') && challengeActive('Daily'))) return;
 	//Fail safes
 	if (game.global.gridArray.length === 0) return;
 	if (game.global.soldierHealth <= 0) return;
@@ -349,6 +347,5 @@ function windStance(hdStats) {
 		stanceToUse = 5;
 	}
 
-	if (game.global.formation !== stanceToUse)
-		setFormation(stanceToUse);
+	safeSetStance(stanceToUse);
 }

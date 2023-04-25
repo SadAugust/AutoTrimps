@@ -78,7 +78,7 @@ automationMenuSettingsInit();
 var link1 = document.createElement("link");
 (link1.rel = "stylesheet"),
 	(link1.type = "text/css"),
-	(link1.href = basepath + "tabs.css"),
+	(link1.href = MODULES_AT.basepath + "tabs.css"),
 	document.head.appendChild(link1);
 
 function createTabs(a, b) {
@@ -1367,11 +1367,7 @@ function initializeAllSettings() {
 				return ('Will farm until you can survive this amount of attacks while in Spires.<br>\
 				<b>Must be set above 0 to run</b>')
 			},
-			'value', 0, null, 'Spire', [1, 2]);
-		createSetting('SkipSpires',
-			function () { return ('Skip Spires') },
-			function () { return ('Useful to die in spires if farming takes too long') },
-			'boolean', false, null, 'Spire', [1]);
+			'value', 0, null, 'Spire', [1]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -1552,53 +1548,88 @@ function initializeAllSettings() {
 			'value', '230', null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('onlyminmaxworld',
-			function () { return ('World Min & Max Only') },
-			function () { return ('Forces Scryer to only work in world regardless of other settings.') },
-			'boolean', false, null, 'Combat', [1],
+			function () { return (['Min & Max: Everywhere', 'Min & Max: World', 'Min & Max: Corrupted Only', 'Min & Max: Healthy Only']) },
+			function () { return ('Further restricts scrying usage based on the current world zone.<br><br><b>Everywhere:</b> Places set as MAYBE are affected by Min & Max Range.<br><b>World:</b> Only the World is affected by Min & Max zones.<br><b>Corrupted:</b> Only Corrupted and Healthy enemies in the World are affected.<br><b>Healthy:</b> Only Healthy enemies in the World are affected.') },
+			'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinMaps2',
 			function () { return (['Maps: NEVER', 'Maps: FORCE', 'Maps: MAYBE']) },
-			function () { return ('<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate in Maps<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use on Corrupteds to be on after corruption/magma.<br><br>Recommend MAYBE.') },
+			function () {
+				return ('<b>NEVER</b> Means what it says!!!<br>\
+						<b>FORCE</b> means Scryer will ALWAYS activate in Maps<br>\
+						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use on Corrupteds to be on after corruption/magma.<br><br>Recommend MAYBE.')
+			},
 			'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinVoidMaps2',
 			function () { return (['VoidMaps: NEVER', 'VoidMaps: FORCE', 'VoidMaps: MAYBE']) },
-			function () { return ('<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate in Void Maps<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.') },
+			function () {
+				return ('<b>NEVER</b> Means what it says!!!<br>\
+						<b>FORCE</b> means Scryer will ALWAYS activate in Void Maps<br>\
+						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.')
+			},
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinPMaps',
 			function () { return (['P Maps: NEVER', 'P Maps: FORCE', 'P Maps: MAYBE']) },
-			function () { return ('<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate in maps higher than your zone<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>Recommend NEVER.') },
+			function () {
+				return ('<b>NEVER</b> Means what it says!!!<br>\
+						<b>FORCE</b> means Scryer will ALWAYS activate in maps higher than your zone<br>\
+						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>Recommend NEVER.')
+			},
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinBW',
 			function () { return (['BW: NEVER', 'BW: FORCE', 'BW: MAYBE']) },
-			function () { return ('<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate in BW Maps<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use in Maps to be on. <br><br>Recommend NEVER.') },
+			function () {
+				return ('<b>NEVER</b> Means what it says!!!<br>\
+						<b>FORCE</b> means Scryer will ALWAYS activate in BW Maps<br>\
+						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use in Maps to be on. <br><br>Recommend NEVER.')
+			},
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinSpire2',
 			function () { return (['Spire: NEVER', 'Spire: FORCE', 'Spire: MAYBE']) },
-			function () { return ('<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate in the Spire<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use on Corrupteds to be on for corrupted enemies.<br><br>Recommend NEVER.') },
+			function () {
+				return ('<b>NEVER</b> Means what it says!!!<br>\
+						<b>FORCE</b> means Scryer will ALWAYS activate in the Spire<br>\
+						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use on Corrupteds to be on for corrupted enemies.<br><br>Recommend NEVER.')
+			},
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerSkipBoss2',
-			function () { return (['Boss: NEVER (All Levels)', 'Boss: NEVER (Above VoidLevel)', 'Boss: MAYBE']) },
-			function () { return ('<b>NEVER (All Levels)</b> will NEVER use S in cell 100 of the world!!!<br><b>NEVER (Above VoidLevel)</b> will NEVER use S in cell 100 of the world ABOVE the zone that your void maps are set to run at (Maps).<br><b>MAYBE</b> treats the cell no differently to any other, Overkill and Min/Max Scryer is allowed.<br><br>Recommend NEVER (There is little benefit to double NON-' + resource() + ' resources and a small chance of DE).') },
+			function () { return (['Boss: NEVER (All Levels)', 'Boss: MAYBE']) },
+			function () {
+				return ('<b>NEVER (All Levels)</b> will NEVER use S in cell 100 of the world!!!<br>\
+						<b>MAYBE</b> treats the cell no differently to any other, Overkill and Min/Max Scryer is allowed.<br><br>Recommend NEVER (There is little benefit to double NON-' + resource() + ' resources and a small chance of DE).')
+			},
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerSkipCorrupteds2',
 			function () { return (['Corrupted: NEVER', 'Corrupted: FORCE', 'Corrupted: MAYBE']) },
-			function () { return ('<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate against Corrupted enemies<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br><b>Magma maps and Corrupted Voidmaps are currently classified as corrupted</b> and NEVER here will override Maps and Voidmaps use of Scryer<br><br>Recommend MAYBE.') },
+			function () {
+				return ('<b>NEVER</b> Means what it says!!!<br>\
+						<b>FORCE</b> means Scryer will ALWAYS activate against Corrupted enemies<br>\
+						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br><b>Magma maps and Corrupted Voidmaps are currently classified as corrupted</b> and NEVER here will override Maps and Voidmaps use of Scryer<br><br>Recommend MAYBE.')
+			},
 			'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerSkipHealthy',
 			function () { return (['Healthy: NEVER', 'Healthy: FORCE', 'Healthy: MAYBE']) },
-			function () { return ('<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate against Healthy enemies<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br><b>Corrupted Voidmaps are currently classified as Healthy (same as corrupted)</b> and NEVER here will override Maps and Voidmaps use of Scryer<br><br>Recommend MAYBE.') },
+			function () {
+				return ('<b>NEVER</b> Means what it says!!!<br>\
+						<b>FORCE</b> means Scryer will ALWAYS activate against Healthy enemies<br>\
+						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br><b>Corrupted Voidmaps are currently classified as Healthy (same as corrupted)</b> and NEVER here will override Maps and Voidmaps use of Scryer<br><br>Recommend MAYBE.')
+			},
 			'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryUseinPoison',
 			function () { return ('Scry in Poison') },
-			function () { return ('Decides what you do in Poison. <br><b>-1</b> = Maybe <br><b>0</b> = Never <br><b>Above 0</b> = Max Zone you want it scrying ') },
+			function () {
+				return ('Decides what you do in Poison. <br>\
+						<b>-1</b> = Maybe <br><b>0</b> = Never <br>\
+						<b>Above 0</b> = Max Zone you want it scrying ')
+			},
 			'value', -1, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryUseinWind',
@@ -1774,7 +1805,7 @@ function initializeAllSettings() {
 		createSetting('heirloomVoid',
 			function () { return ('Void') },
 			function () { return ('<b>Void heirloom to use</b><br>Enter the name of the heirloom you would like to use during Void Maps.') },
-			'textValue', 'undefined', null, 'Heirlooms', [2],
+			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomVoidPlaguebringer',
@@ -1782,6 +1813,12 @@ function initializeAllSettings() {
 			function () { return ('Heirloom to use inside of Void Maps when fighting a slow enemy and the next enemy is fast. Either a max damage no health shield or plaguebringer shield should be used.') },
 			'textValue', 'undefined', null, 'Heirlooms', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && getPageSetting('heirloomVoidSwap', currSettingUniverse)) });
+
+		createSetting('heirloomSpire',
+			function () { return ('Spire') },
+			function () { return ('<b>Spire heirloom to use</b><br>Enter the name of the heirloom you would like to use during Spires. The Map Swap setting will override this whilst in maps.') },
+			'textValue', 'undefined', null, 'Heirlooms', [1],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestLevel.valueTotal() >= 200) });
 
 		createSetting('heirloomSwapZone',
 			function () { return ('Swap Zone') },
@@ -2230,11 +2267,6 @@ function initializeAllSettings() {
 	document.getElementById('displayAutoMapStatus').setAttribute('onclick', 'toggleStatus()');
 	document.getElementById('displayHeHr').setAttribute('onclick', 'toggleHeHr()');
 
-	//Sorting out spacing issues with swapping between Helium & Radon settings.
-	document.getElementById('radonsettings').setAttribute('onclick', 'settingChanged("radonsettings")');
-	document.getElementById('heirloomAuto').setAttribute('onclick', 'settingChanged("heirloomAuto")');
-	document.getElementById('displayAllSettings').setAttribute('onclick', 'settingChanged("displayAllSettings")');
-
 	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -2262,10 +2294,6 @@ function initializeAllSettings() {
 			function () { return ('Download Saves') },
 			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
 			'boolean', false, null, 'Import Export', [1, 2]);
-		/* createSetting('spreadsheet',
-			function () { return ('Spreadsheet Output') },
-			function () { return ('Will print a list of your current C3, SA and other relevant settings to paste into a spreadsheet. Only relevant to a select few.') },
-			'action', 'ImportExportTooltip("Spreadsheet","update")', null, 'Import Export', [1, 2]); */
 		createSetting('CleanupAutoTrimps',
 			function () { return ('Cleanup Saved Settings') },
 			function () { return ('Deletes old values from previous versions of the script from your AutoTrimps Settings file.') },
@@ -2296,7 +2324,7 @@ function initializeAllSettings() {
 		createSetting('gameSpeed50',
 			function () { return ('Game Speed 50x') },
 			function () { return ('Set gamespeed to 50x the regular value.') },
-			'action', 'cheatSpeedX()', null, 'Test', [0]);
+			'action', 'cheatSpeedX(0.00001)', null, 'Test', [0]);
 
 		createSetting('gameSpeedNormal',
 			function () { return ('Game Speed Normal') },
@@ -2343,9 +2371,11 @@ function initializeAllSettings() {
 function resource() {
 	return currSettingUniverse === 2 ? 'Radon' : 'Helium';
 }
+
 function resourceHour() {
 	return currSettingUniverse === 2 ? 'Rn' : 'He';
 }
+
 function heHourPortal() {
 	var text = '';
 	if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) text += '<br>If \'Portal after voids (poison)\' is selected it will run until you reach the next poison band and run voids there.'
@@ -2355,6 +2385,7 @@ function heHourPortal() {
 function cinf() {
 	return currSettingUniverse === 2 ? 'C3' : 'C2';
 }
+
 MODULES.u1unlocks = [];
 MODULES.u2unlocks = [];
 
@@ -2597,24 +2628,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		autoTrimpSettings[id].name = name;
 	if (autoTrimpSettings[id].description != description)
 		autoTrimpSettings[id].description = description;
-
-}
-
-function createInput(id, name, description) {
-	var $btnParent = document.createElement("DIV");
-	$btnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-bottom: 0.5vw; width: 6.5vw;');
-	$btnParent.setAttribute("onmouseover", 'tooltip(\"' + name + '\", \"customText\", event, \"' + description + '\")');
-	$btnParent.setAttribute("onmouseout", 'tooltip("hide")');
-	var $input = document.createElement("input");
-	$input.type = 'checkbox';
-	$input.setAttribute('id', id);
-	$input.setAttribute('style', 'text-align: left; width: 0.8vw; ');
-	$btnParent.appendChild($input);
-	var $label = document.createElement("label");
-	$label.setAttribute('style', 'text-align: left; margin-left: 0.2vw; font-size: 0.6vw');
-	$label.innerHTML = name;
-	$btnParent.appendChild($label);
-	document.getElementById("autoSettings").appendChild($btnParent);
 }
 
 function settingChanged(id, currUniverse) {
@@ -2627,6 +2640,9 @@ function settingChanged(id, currUniverse) {
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		if (id == 'equipEfficientEquipDisplay') {
 			displayMostEfficientEquipment();
+		}
+		if (id == 'radonsettings') {
+			modifyParentNodeUniverseSwap(true);
 		}
 		if (btn === autoTrimpSettings.dailyPortalStart) {
 			document.getElementById('dailyPortalStart').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn[enabled]);
@@ -2709,16 +2725,15 @@ function modifyParentNode(id, style) {
 
 function modifyParentNodeUniverseSwap() {
 
-	const radonon = getPageSetting('radonsettings') === 1 ? 'show' : 'hide';
+	var radonon = getPageSetting('radonsettings') === 1 ? 'show' : 'hide';
 
+	var radonon_mayhem = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.mayhem.require()) ? 'show' : 'hide';
+	var radonon_pandemonium = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.pandemonium.require()) ? 'show' : 'hide';
+	var radonon_desolation = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.desolation.require()) ? 'show' : 'hide';
 
-	const radonon_mayhem = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.mayhem.require()) ? 'show' : 'hide';
-	const radonon_pandemonium = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.pandemonium.require()) ? 'show' : 'hide';
-	const radonon_desolation = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.desolation.require()) ? 'show' : 'hide';
-
-	const radonon_heirloom = getPageSetting('radonsettings') === 1 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
-	const radonoff = getPageSetting('radonsettings') === 0 ? 'show' : 'hide';
-	const radonoff_heirloom = getPageSetting('radonsettings') === 0 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
+	var radonon_heirloom = getPageSetting('radonsettings') === 1 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
+	var radonoff = getPageSetting('radonsettings') === 0 ? 'show' : 'hide';
+	var radonoff_heirloom = getPageSetting('radonsettings') === 0 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
 
 	//Core
 	modifyParentNode("radonsettings", 'show');
@@ -2784,7 +2799,7 @@ function modifyParentNodeUniverseSwap() {
 	//Heirlooms
 	//Helium Settings
 	modifyParentNode("heirloomVoidSwap", 'show');
-	modifyParentNode("heirloomVoidPlaguebringer", 'show');
+	modifyParentNode("heirloomSpire", 'show');
 	modifyParentNode("heirloomSwapZoneC3", 'show');
 	modifyParentNode("heirloomStaffVoid", 'show');
 	if (getPageSetting('radonsettings') === 0) {
@@ -2810,13 +2825,11 @@ function modifyParentNodeUniverseSwap() {
 	//Radon Settings
 	//None!
 
-
 	modifyParentNode("automateSpireAssault", radonon);
 	modifyParentNode("showbreedtimer", radonoff);
 
 	modifyParentNode("gameSetC2", 'show');
 
-	updateCustomButtons(true);
 }
 
 function HeHrPortalOptions() {
@@ -2832,7 +2845,7 @@ function challengeUnlock(challenge, setting, c2) {
 	var c2Msg = game.global.universe === 2 ? '3' : '2';
 	var msg = "You have unlocked the " + challenge + " challenge.";
 	msg += " It has now been added to " + (c2 ? "Challenge " + c2Msg + " AutoPortal setting" : "AutoPortal");
-	msg += (setting ? " & there's setting for it in the AT " + (c2 ? '"C' + c2Msg + '"' : '"Challenges"') + " tab." : '.');
+	msg += (setting ? " & there's a setting for it in the AT " + (c2 ? '"C' + c2Msg + '"' : '"Challenges"') + " tab." : '.');
 	return msg;
 }
 
@@ -3214,7 +3227,7 @@ function autoHeirloomOptions() {
 	var raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep'), currSettingUniverse);
 	var settingsToChange = heirloomSlots[raretokeep];
 
-	shieldMods = ["Empty"];
+	var shieldMods = ["Empty"];
 
 	for (var item in game.heirlooms['Shield']) {
 		var heirloom = game.heirlooms['Shield'][item];
@@ -3238,7 +3251,7 @@ function autoHeirloomOptions() {
 			setPageSetting('heirloomAutoShieldMod' + x, 'Empty', currSettingUniverse);
 	}
 
-	staffMods = ["Empty"];
+	var staffMods = ["Empty"];
 
 	for (var item in game.heirlooms['Staff']) {
 		var heirloom = game.heirlooms['Staff'][item];
@@ -3554,7 +3567,7 @@ function updateCustomButtons(initialLoad) {
 			var elem = document.getElementById(item.id);
 
 			if (item.type === 'boolean') {
-				itemEnabled = item.enabled;
+				var itemEnabled = item.enabled;
 				if (radonon && settingUniverse.indexOf(0) === -1) itemEnabled = item['enabled' + 'U2'];
 				elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemEnabled);
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
@@ -3562,7 +3575,7 @@ function updateCustomButtons(initialLoad) {
 				elem.innerHTML = item.name();
 			}
 			else if (item.type == 'value' || item.type == 'valueNegative' || item.type == 'multitoggle' || item.type == 'multiValue' || item.type == 'textValue') {
-				itemValue = item.value;
+				var itemValue = item.value;
 				if (radonon && settingUniverse.indexOf(0) === -1) itemValue = item['value' + 'U2'];
 				if (elem != null) {
 					if (item.type == 'multitoggle') {
@@ -3831,7 +3844,7 @@ function toggleHeHr(update) {
 
 function updateATVersion() {
 	//Setting Conversion!
-	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === ATversion) return;
+	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === MODULES_AT.ATversion) return;
 
 	if (autoTrimpSettings["ATversion"] === undefined || !autoTrimpSettings["ATversion"].includes('SadAugust')) {
 		var changelog = [];
@@ -3843,7 +3856,7 @@ function updateATVersion() {
 	}
 
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust')
-		&& autoTrimpSettings["ATversion"] !== ATversion
+		&& autoTrimpSettings["ATversion"] !== MODULES_AT.ATversion
 	) {
 
 		var changelog = [];
@@ -4022,8 +4035,17 @@ function updateATVersion() {
 			}
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.6') {
+			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (tempSettings.c2RunnerSettings !== undefined) {
+				autoTrimpSettings['onlyminmaxworld'].value = 2;
+			}
+			autoTrimpSettings['spamMessages'].value.map_Skip = false;
+			autoTrimpSettings['spamMessages'].value.stance = false;
+		}
 
-		autoTrimpSettings["ATversion"] = ATversion;
+
+		autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
 		if (changelog.length !== 0) {
 			printChangelog(changelog);
 			verticalCenterTooltip(false, true);
@@ -4031,6 +4053,6 @@ function updateATVersion() {
 		saveSettings();
 	}
 
-	autoTrimpSettings["ATversion"] = ATversion;
+	autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
 	saveSettings();
 }

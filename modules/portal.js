@@ -248,7 +248,8 @@ function freeVoidPortal() {
 		activatePortal();
 		return;
 	}
-	else return;;
+	else
+		return;
 }
 
 function c2runnerportal() {
@@ -365,11 +366,8 @@ function c2runner() {
 	return;
 }
 
-var shouldPortal = false;
-
 function doPortal(challenge, squared) {
 	if (!game.global.portalActive) return;
-	if (shouldPortal && portalWindowOpen) return;
 
 	//Spending Magmite
 	if (getPageSetting('spendmagmite') === 1) autoMagmiteSpender();
@@ -481,7 +479,6 @@ function doPortal(challenge, squared) {
 	}
 
 	debug('Portaling with void tracker at ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10.'), "portal");
-	shouldPortal = true;
 	universeSwapped();
 	//Identifying which challenge type we're running to setup for the preset swapping function
 	if (portalUniverse === 2 && getPageSetting('presetSwap', 2)) {
@@ -524,7 +521,6 @@ function doPortal(challenge, squared) {
 	lastHeliumZone = 0;
 	zonePostpone = 0;
 	resetmapvars();
-	shouldPortal = false;
 	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
 		loadMutations(preset);
 		u2Mutations.closeTree();
@@ -615,13 +611,10 @@ function findOutCurrentPortalLevel() {
 
 function resetmapvars() {
 	//General
-	vanillaMAZ = false;
 	mappingTime = 0;
 
 	//Fragment Farming	
 	rInitialFragmentMapID = undefined;
-	//Pandemonium
-	savefile = null;
 	//Prestige
 	MODULES.mapFunctions.prestigeMapArray = new Array(5);
 	MODULES.mapFunctions.prestigeFragMapBought = false;
@@ -641,7 +634,7 @@ function resetmapvars() {
 	MODULES.mapFunctions.portalZone = Infinity;
 
 	hdStats = new HDStats();
-	mapSettings = FarmingDecision(hdStats);
+	mapSettings = new FarmingDecision(hdStats);
 }
 
 function presetSwapping(preset) {

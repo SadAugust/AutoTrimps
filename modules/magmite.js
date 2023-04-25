@@ -1,7 +1,7 @@
 MODULES["magmite"] = {};
 MODULES["magmite"].algorithm = 2;
 
-var priceIncreases = {
+const dgPriceIncreases = {
 	Efficiency: 8,
 	Capacity: 32,
 	Supply: 64,
@@ -12,7 +12,7 @@ function calcMiSpent(upgrade) {
 	var total = 0;
 	if (game.generatorUpgrades[upgrade].cost() <= game.generatorUpgrades[upgrade].baseCost || game.generatorUpgrades[upgrade].upgrades <= 0) return 0;
 	else {
-		total = game.generatorUpgrades[upgrade].upgrades * (game.generatorUpgrades[upgrade].baseCost + (priceIncreases[upgrade] / 2) * (game.generatorUpgrades[upgrade].upgrades - 1));
+		total = game.generatorUpgrades[upgrade].upgrades * (game.generatorUpgrades[upgrade].baseCost + (dgPriceIncreases[upgrade] / 2) * (game.generatorUpgrades[upgrade].upgrades - 1));
 		return total;
 	}
 }
