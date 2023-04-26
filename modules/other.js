@@ -65,7 +65,7 @@ function armydeath() {
 	);
 }
 
-function avoidempower() {
+function avoidEmpower() {
 	if (!(typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined')) return;
 	if (!armydeath()) return;
 	if (game.global.universe !== 1) return;

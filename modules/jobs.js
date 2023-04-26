@@ -239,7 +239,7 @@ function buyJobs() {
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? 100 * reserveMod : 0;
 
 	var workerRatio;
-	if ((MODULES.mapFunctions.workerRatio !== null && shouldBoneShrine) || (getPageSetting('autoMaps') !== 0 && mapSettings.jobRatio !== undefined)) {
+	if (MODULES.mapFunctions.workerRatio !== null || (getPageSetting('autoMaps') !== 0 && mapSettings.jobRatio !== undefined)) {
 		if (MODULES.mapFunctions.workerRatio !== null) workerRatio = MODULES.mapFunctions.workerRatio;
 		else workerRatio = mapSettings.jobRatio;
 		desiredRatios = Array.from(workerRatio.split(','))

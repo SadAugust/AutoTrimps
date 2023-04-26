@@ -127,7 +127,7 @@ function saveMutations() {
 
 	saveData = game.global.u2MutationData;
 	saveData.purchaseCount = u2Mutations.purchaseCount;
-	saveData.name = document.getElementById('u2MutPresetBtn' + selectedMutPreset).innerHTML;
+	saveData.name = document.getElementById('u2MutPresetBtn' + selectedMutPreset).innerHTML.split('Preset: ')[1];
 	mutatorObj['preset' + selectedMutPreset] = saveData;
 
 	if (typeof (autoTrimpSettings) !== 'undefined') {

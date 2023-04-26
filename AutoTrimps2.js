@@ -246,7 +246,7 @@ function mainLoop() {
 	presetMutations();
 
 	if (ATrunning == false) return;
-	if (getPageSetting('PauseScript', 1) || game.options.menu.pauseGame.enabled) return;
+	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
 	if (getPageSetting('disableForTW') && usingRealTimeOffline) return;
 	ATrunning = true;
 	mainCleanup()
@@ -260,7 +260,7 @@ function mainLoop() {
 				cancelTooltip();
 		}
 		resetmapvars();
-		if (getPageSetting('AutoEggs'))
+		if (getPageSetting('autoEggs', 1))
 			easterEggClicked();
 		setTitle();
 	}
@@ -312,6 +312,9 @@ function mainLoop() {
 	//Equip highlighting
 	displayMostEfficientEquipment(hdStats);
 
+
+	if (challengeActive('Daily') && getPageSetting('buyheliumy', portalUniverse) >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
+
 	//Logic for Universe 1
 	mainLoopU1(hdStats);
 
@@ -330,11 +333,9 @@ function mainLoop() {
 //U1 functions
 function mainLoopU1(hdStats) {
 	if (game.global.universe !== 1) return;
-
 	//Core
 	if (getPageSetting('ATGA2')) ATGA2(hdStats);
 	autoRoboTrimp();
-	if (challengeActive('Daily') && getPageSetting('buyheliumy') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
 	if (getPageSetting('spendmagmite') === 2 && !magmiteSpenderChanged) autoMagmiteSpender();
 	if (getPageSetting('AutoNatureTokens') && game.global.world > 229) autoNatureTokens();
 	autoEnlight();
@@ -349,7 +350,7 @@ function mainLoopU1(hdStats) {
 		else if (getPageSetting('dfightforever') === 1 && challengeActive('Daily') && typeof game.global.dailyChallenge.empower === 'undefined' && typeof game.global.dailyChallenge.bloodthirst === 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
 		else if (getPageSetting('dfightforever') === 2 && challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
 	}
-	if (game.global.mapsUnlocked && challengeActive('Daily') && getPageSetting('avoidempower') && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidempower();
+	if (game.global.mapsUnlocked && challengeActive('Daily') && getPageSetting('avoidEmpower') && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidEmpower();
 
 	//Stance
 	var settingPrefix = challengeActive('Daily') ? 'd' : '';
@@ -374,7 +375,6 @@ function mainLoopU2(hdStats) {
 	if (getPageSetting('equalityManagement') === 1) equalityManagementBasic();
 	if (getPageSetting('equalityManagement') === 2) equalityManagement();
 
-	if (challengeActive('Daily') && getPageSetting('buyradony') >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyradony') && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
 }
 
 function guiLoop() {
@@ -417,7 +417,7 @@ function mainCleanup() {
 		toggleHeHr(true);
 	}
 
-	if (getPageSetting('AutoEggs'))
+	if (getPageSetting('autoEggs', 1))
 		easterEggClicked();
 
 }

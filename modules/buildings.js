@@ -223,13 +223,11 @@ function mostEfficientHousing() {
 	const resourcefulMod = game.global.universe === 1 ? Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level) : 1;
 
 	for (var house of HousingTypes) {
-		var maxHousing = ((!autoBattle.oneTimers.Expanding_Tauntimp.owned && (game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) && getPageSetting('c3buildings') && getPageSetting('c3buildingzone') >= game.global.world) ? Infinity :
-			buildingSettings[house].buyMax === 0 ? Infinity : buildingSettings[house].buyMax);
+		var maxHousing = buildingSettings[house].buyMax === 0 ? Infinity : buildingSettings[house].buyMax;
 		if (!game.buildings[house].locked && game.buildings[house].owned < maxHousing) {
 			housingTargets.push(house);
 		}
 	}
-	var runningC3 = (!autoBattle.oneTimers.Expanding_Tauntimp.owned && (game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) && getPageSetting('c3buildings') && getPageSetting('c3buildingzone') >= game.global.world)
 
 	var mostEfficient = {
 		name: "",
@@ -241,7 +239,6 @@ function mostEfficientHousing() {
 		var worstTime = -Infinity;
 		var currentOwned = game.buildings[housing].owned;
 		var buildingspending = buildingSettings[housing].percent / 100
-		if (runningC3 || (!game.global.autoStorage && challengeActive('Hypothermia') && (housing !== 'Collector' && housing !== 'Gateway'))) buildingspending = 1;
 		const dontbuy = [];
 		//If setting is disabled then don't buy building.
 		if (!buildingSettings[housing].enabled) dontbuy.push(housing);
@@ -434,7 +431,6 @@ function buyBuildings(hdStats) {
 
 	//Housing 
 	var boughtHousing = false;
-	var runningC3 = (game.global.universe === 2 && !autoBattle.oneTimers.Expanding_Tauntimp.owned && getPageSetting('c3buildings') && (game.global.runningChallengeSquared || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation')) && getPageSetting('c3buildingzone') >= game.global.world)
 	do {
 		boughtHousing = false;
 		var housing = mostEfficientHousing();
@@ -443,13 +439,9 @@ function buyBuildings(hdStats) {
 		if (!canAffordBuilding(housing)) continue;
 
 		var housingAmt = buildingSettings[housing].buyMax === 0 ? Infinity : buildingSettings[housing].buyMax;
-		var buildingspending = buildingSettings[housing].percent / 100
-		if (runningC3 || (!game.global.autoStorage && challengeActive('Hypothermia') && (housing !== 'Collector' && housing !== 'Gateway'))) {
-			housingAmt = Infinity;
-			buildingspending = 1;
-		}
+		var buildingspending = buildingSettings[housing].percent / 100;
 		var maxCanAfford = calculateMaxAffordLocal(game.buildings[housing], true, false, false, (housingAmt - game.buildings[housing].purchased), buildingspending);
-		if (((housing != null && canAffordBuilding(housing, false, false, false, false, 1)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt) || runningC3))) {
+		if (((housing != null && canAffordBuilding(housing, false, false, false, false, 1)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt)))) {
 			if (mapSettings.mapName === 'Smithy Farm' && housing !== 'Gateway')
 				return;
 			else if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings)

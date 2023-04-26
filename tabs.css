@@ -71,8 +71,8 @@ ul.tab li a:hover {
 	}
 }
 
-#tipText .AutoEggs,
-#AutoEggs.settingBtntrue {
+#tipText .autoEggs,
+#autoEggs.settingBtntrue {
 	-webkit-animation: eggGradient 3s infinite;
 	animation: eggGradient 3s infinite;
 	color: black;

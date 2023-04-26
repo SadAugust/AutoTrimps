@@ -25,7 +25,7 @@ function gigaTargetZone() {
 
 	//Also consider the zone we configured our portal to be used
 	var portalZone = 0;
-	if (autoTrimpSettings.autoPortal.selected == "Helium Per Hour") portalZone = (daily) ? getPageSetting('dailyDontPortalBefore') : getPageSetting('HeHrDontPortalBefore');
+	if (autoTrimpSettings.autoPortal.selected === "Helium Per Hour") portalZone = (daily) ? getPageSetting('dailyDontPortalBefore') : getPageSetting('heHrDontPortalBefore');
 	else if (autoTrimpSettings.autoPortal.selected == "Custom") portalZone = (daily) ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone');
 
 	//Finds a target zone for when doing c2

@@ -27,13 +27,24 @@ function MAZLookalike(titleText, varPrefix, event) {
 		const farmersUntil = "<p><b>Farmers Until:</b> Stops buying Farmers from this zone. The Tribute & Worshipper farm settings override this setting and hire farmers during them.</p>";
 		const lumberjackMP = "<p><b>No Lumberjacks Post MP:</b> Stops buying Lumberjacks after Melting Point has been run. The Smithy Farm setting will override this setting.</p>";
 
+		const autoRatios = "<p><b>AutoRatios\</b>\
+		<br><b>Running " + (portalUniverse === 2 ? "Transmute" : "Metal") + " will override these values and use 4/5/0.</b>\
+		<br><b>1/1/1</b> Up until 300k trimps.\
+		<br><b>3/3/5</b> Up until 3mil trimps. \
+		<br><b>3/1/4</b> When above 3 mil trimps. \
+		<br><b>1/1/10</b> When above 1000 tributes. \
+		<br><b>1/2/22</b> When above 1500 tributes. \
+		<br><b>1/7/12</b> When above 3000 tributes and at or above z230.\
+		<br><b>1/1/98</b> When at or above z300.</p>";
+
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Job Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>\ ";
 
-		tooltipText += `${ratio}`
-		tooltipText += `${percent}`
-		if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 230) tooltipText += `${magmamancer}`
-		if (game.global.universe === 2) tooltipText += `${farmersUntil}`
-		if (game.global.universe === 2) tooltipText += `${lumberjackMP}`
+		tooltipText += `${ratio}`;
+		tooltipText += `${percent}`;
+		if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 230) tooltipText += `${magmamancer}`;
+		if (game.global.universe === 2) tooltipText += `${farmersUntil}`;
+		if (game.global.universe === 2) tooltipText += `${lumberjackMP}`;
+		tooltipText += `${autoRatios}`;
 		tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 		var percentJobs = ["Explorer"];
 		if (game.global.universe == 1) percentJobs.push("Trainer");
@@ -48,7 +59,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var setting = settingGroup[item];
 			var max;
 			var checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
-			tooltipText += "<td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Ratio: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number'  value='" + ((setting && setting.ratio >= 0) ? setting.ratio : 0) + "'/></div></div>"
+			tooltipText += "<td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Ratio: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number' value='" + ((setting && setting.ratio >= 0) ? setting.ratio : 0) + "' /></div></div>"
 			tooltipText += "</td>";
 			if (percentJobs.length > x) {
 				item = percentJobs[x];
@@ -56,10 +67,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 				max = ((setting && setting.buyMax) ? setting.buyMax : 0);
 				if (max > 1e4) max = max.toExponential().replace('+', '');
 				checkbox = buildNiceCheckbox('autoJobCheckbox' + item, 'autoCheckbox', (setting && setting.enabled));
-				tooltipText += "<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Percent: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number'  value='" + ((setting && setting.percent) ? setting.percent : 100) + "'/></div></div>"
+				tooltipText += "<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Percent: <input class='jobConfigQuantity' id='autoJobQuant" + item + "' type='number' value='" + ((setting && setting.percent) ? setting.percent : 100) + "' /></div></div>"
 			}
 			if (game.global.universe === 2) {
-				if (x == ratioJobs.length - 1) tooltipText += "<tr><td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + buildNiceCheckbox('autoJobCheckboxFarmersUntil', 'autoCheckbox', (settingGroup.FarmersUntil.enabled)) + "&nbsp;&nbsp;<span>" + "Farmers Until</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Zone: <input class='jobConfigQuantity' id='FarmersUntilZone' type='number'  value='" + ((settingGroup.FarmersUntil.zone) ? settingGroup.FarmersUntil.zone : 999) + "'/></div></div></td>";
+				if (x == ratioJobs.length - 1) tooltipText += "<tr><td style='width: 40%'><div class='row'><div class='col-xs-6' style='padding-right: 5px'>" + buildNiceCheckbox('autoJobCheckboxFarmersUntil', 'autoCheckbox', (settingGroup.FarmersUntil.enabled)) + "&nbsp;&nbsp;<span>" + "Farmers Until</span></div><div class='col-xs-6 lowPad' style='text-align: right'>Zone: <input class='jobConfigQuantity' id='FarmersUntilZone' type='number' value='" + ((settingGroup.FarmersUntil.zone) ? settingGroup.FarmersUntil.zone : 999) + "' /></div></div></td>";
 				if (x == ratioJobs.length - 1) tooltipText += "<td style='width: 60%'><div class='row'><div class='col-xs-6' style='padding-right: 1px'>" + buildNiceCheckbox('autoJobCheckboxNoLumberjacks', 'autoCheckbox', (settingGroup.NoLumberjacks.enabled)) + "&nbsp;&nbsp;<span>" + "No Lumberjacks Post MP</span></div></td></tr>";
 			}
 		}
@@ -90,10 +101,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 		const safeGateway = "<p><b>Safe Gateway:</b> Will stop purchasing Gateways when your owned fragments are lower than the cost of the amount of maps you input in the 'Maps' field times by what a Perfect +10 LMC map would cost up to the zone specified in 'Till Z:', if that value is 0 it'll assume z999.</p>";
 
 		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Auto Structure Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
-		tooltipText += `${baseText}`
-		if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 230) tooltipText += `${nursery}`
-		if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 60) tooltipText += `${warpstation}`
-		if (game.global.universe === 2) tooltipText += `${safeGateway}`
+		tooltipText += `${baseText}`;
+		if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 230) tooltipText += `${nursery}`;
+		if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() >= 60) tooltipText += `${warpstation}`;
+		if (game.global.universe === 2) tooltipText += `${safeGateway}`;
 		tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
@@ -115,9 +126,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 			//Checkbox & name
 			tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + checkbox + "&nbsp;&nbsp;<span>" + item + "</span></div>"
 			//Percent options
-			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Perc: <input class='structConfigPercent' id='structPercent" + item + "' type='number'  value='" + ((setting && setting.percent) ? setting.percent : 100) + "'/></div>";
+			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Perc: <input class='structConfigPercent' id='structPercent" + item + "' type='number' value='" + ((setting && setting.percent) ? setting.percent : 100) + "' /></div>";
 			//Max options
-			tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Up to: <input class='structConfigQuantity' id='structMax" + item + "' type='number'  value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "'/></div>";
+			tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Up to: <input class='structConfigQuantity' id='structMax" + item + "' type='number' value='" + ((setting && setting.buyMax) ? setting.buyMax : 0) + "' /></div>";
 			//Finish
 			tooltipText += "</div></td>";
 			count++;
@@ -130,26 +141,26 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "<td><div class='row'>"
 			//Checkbox & name
 			tooltipText += "<div class='col-xs-3' style='width: 34%; padding-right: 5px'>" + "&nbsp;&nbsp;<span>" + 'Nursery (cont)' + "</span></div>"
-			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>From: <input class='structConfigQuantity' id='nurseryFromZ" + "' type='number'  value='" + ((settingGroup.Nursery && settingGroup.Nursery.fromZ) ? settingGroup.Nursery.fromZ : 0) + "'/></div>";
+			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>From: <input class='structConfigQuantity' id='nurseryFromZ" + "' type='number' value='" + ((settingGroup.Nursery && settingGroup.Nursery.fromZ) ? settingGroup.Nursery.fromZ : 0) + "' /></div>";
 
 		}
 		//Safe Gateway setting for u2
 		if (game.global.universe === 2) {
 			tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style='padding-right: 5px'>" + buildNiceCheckbox('structConfigSafeGateway', 'autoCheckbox', (typeof (settingGroup.SafeGateway) === 'undefined' ? false : settingGroup.SafeGateway.enabled)) + "&nbsp;&nbsp;<span>" + "Safe Gateway" + "</span></div>";
-			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Maps: <input class='structConfigQuantity' id='structMapCountSafeGateway" + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.mapCount) ? settingGroup.SafeGateway.mapCount : 0) + "'/></div>";
-			tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Till Z: <input class='structConfigPercent' id='structMax" + item + "' type='number'  value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.zone) ? settingGroup.SafeGateway.zone : 0) + "'/></div>";
+			tooltipText += "<div class='col-xs-5' style='width: 33%; text-align: right'>Maps: <input class='structConfigQuantity' id='structMapCountSafeGateway" + "' type='number' value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.mapCount) ? settingGroup.SafeGateway.mapCount : 0) + "' /></div>";
+			tooltipText += "<div class='col-xs-5' style='width: 33%; padding-left: 5px; text-align: right'>Till Z: <input class='structConfigPercent' id='structMax" + item + "' type='number' value='" + ((settingGroup.SafeGateway && settingGroup.SafeGateway.zone) ? settingGroup.SafeGateway.zone : 0) + "' /></div>";
 			tooltipText += "</div></td>";
 		}
 		//On Portal Settings
 		var values = ['Off', 'On'];
-		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style='padding-right: 5px'> Setting on Portal:" + "</span></div>";
-		tooltipText += "<div class='col-xs-5 style='width: 33%; padding-left: 5px; text-align: right'><select style='width: 70%' id='autoJobSelfGather'><option value='0'>No change</option>";
+		tooltipText += "<td><div class='row'><div class='col-xs-3' style='width: 34%; style=' padding-right: 5px'> Setting on Portal:" + "</span></div>";
+		tooltipText += "<div class='col-xs-5 style=' width: 33%; padding-left: 5px; text-align: right'><select style='width: 70%' id='autoJobSelfGather'><option value='0'>No change</option>";
 		for (var x = 0; x < values.length; x++) {
 			tooltipText += "<option" + ((settingGroup.portalOption && settingGroup.portalOption == values[x].toLowerCase()) ? " selected='selected'" : "") + " value='" + values[x].toLowerCase() + "'>" + values[x] + "</option>";
 		}
 
 		tooltipText += "</tr><tr>";
-		tooltipText += "</tr></tbody></table>";
+		tooltipText += "</tr></tbody></table > ";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info btn-lg' onclick='saveATAutoStructureConfig()'>Apply</div><div class='btn-lg btn btn-danger' onclick='cancelTooltip()'>Cancel</div></div>";
 		game.global.lockTooltip = true;
 		ondisplay = function () {
@@ -163,9 +174,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 		const baseText = "<p>Here you can choose which special maps you'd like to run throughout your runs. Each special map will have a Zone & Cell box to identify where you would like to run the map on the specified zone. If the map isn't run on your specified zone it will be run on any zone after the one you input.</p>";
 		const smithy = "<p>The right side of this window is dedicated to running Melting Point when you've reached a certain Smithy value. As each runtype of vastly different there's different inputs for each type of run that you can do! Certain challenges have overrides for this, once unlocked they can be found in the C3 tab.</p>";
 
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>"
-		tooltipText += `${baseText}`
-		if (currSettingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 50) tooltipText += `${smithy}`
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Unique Map Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
+		tooltipText += `${baseText}`;
+		if (currSettingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 50) tooltipText += `${smithy}`;
 		tooltipText += "</div><table id='autoPurchaseConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
@@ -314,18 +325,18 @@ function MAZLookalike(titleText, varPrefix, event) {
 		const empoweredVoid = "<p><b>Empowered Void:</b> Enemies gain a % health & damage increase inside void maps</p>";
 		const heirlost = "<p><b>Heirlost:</b> % bonus reduction on your heirlooms</p>";
 
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>"
-		tooltipText += `${baseText}`
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to AT's Daily Auto Portal Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
+		tooltipText += `${baseText}`;
 
-		if (currSettingUniverse === 1) tooltipText += `${reflect}`
-		tooltipText += `${empower}`
-		tooltipText += `${mutimp}`
-		tooltipText += `${bloodthirst}`
-		tooltipText += `${famine}`
-		tooltipText += `${large}`
-		tooltipText += `${weakness}`
-		if (currSettingUniverse === 2) tooltipText += `${empoweredVoid}`
-		if (currSettingUniverse === 2) tooltipText += `${heirlost}`
+		if (currSettingUniverse === 1) tooltipText += `${reflect}`;
+		tooltipText += `${empower}`;
+		tooltipText += `${mutimp}`;
+		tooltipText += `${bloodthirst}`;
+		tooltipText += `${famine}`;
+		tooltipText += `${large}`;
+		tooltipText += `${weakness}`;
+		if (currSettingUniverse === 2) tooltipText += `${empoweredVoid}`;
+		if (currSettingUniverse === 2) tooltipText += `${heirlost}`;
 
 		tooltipText += "</p></div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
@@ -386,8 +397,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 		const baseText = "Here you can enable the challenges you would like " + cinf() + " runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.";
 		const fusedText = autoTrimpSettings['c2Fused'].universe.indexOf(currSettingUniverse) !== -1 ? " If the 'Fused " + cinf() + "s' setting is enabled it will show Fused challenges and prioritise running them over their regular counterparts." : "";
 
-		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to " + cinf() + " Runner Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>"
-		tooltipText += `<p>${baseText}${fusedText}</p>`
+		tooltipText = "<div style='color: red; font-size: 1.1em; text-align: center;' id='autoJobsError'></div><p>Welcome to " + cinf() + " Runner Settings! <span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp()'>Help</span></p><div id='autoTooltipHelpDiv' style='display: none'>";
+		tooltipText += `<p>${baseText}${fusedText}</p>`;
 		tooltipText += "</div><table id='autoStructureConfigTable' style='font-size: 1.1vw;'><tbody>";
 
 		var count = 0;
@@ -904,7 +915,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (insanity)
 					vals.destack = typeof (currSetting[x].destack) !== 'undefined' ? currSetting[x].destack : false;
 				if (hdFarm)
-					vals.hdBase = currSetting[x].hdBase ? currSetting[x].hdBase : 1;
+					vals.hdBase = (currSetting[x].hdBase || currSetting[x].hdBase === 0) ? currSetting[x].hdBase : 1;
 				if (hdFarm)
 					vals.hdMult = currSetting[x].hdMult ? currSetting[x].hdMult : 1;
 			}
