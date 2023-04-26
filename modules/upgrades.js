@@ -19,14 +19,14 @@ function gigaTargetZone() {
 	var runningC2 = game.global.runningChallengeSquared;
 	var heliumChallengeActive = game.global.challengeActive && game.challenges[game.global.challengeActive].heliumThrough;
 
-	//Try setting target zone to the zone we finish our current challenge or do our void maps
-	var voidZone = (daily) ? getPageSetting('DailyVoidMod') : getPageSetting('VoidMaps');
+	//Try setting target zone to the zone we finished last portal on
+	var lastPortalZone = game.global.lastPortal;
 	var challengeZone = (heliumChallengeActive) ? game.challenges[game.global.challengeActive].heliumThrough : 0;
 
 	//Also consider the zone we configured our portal to be used
 	var portalZone = 0;
-	if (autoTrimpSettings.autoPortal.selected === "Helium Per Hour") portalZone = (daily) ? getPageSetting('dailyDontPortalBefore') : getPageSetting('heHrDontPortalBefore');
-	else if (autoTrimpSettings.autoPortal.selected == "Custom") portalZone = (daily) ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone');
+	if (autoTrimpSettings.autoPortal.selected === "Helium Per Hour") portalZone = (daily) ? getPageSetting('dailyDontPortalBefore', 1) : getPageSetting('heHrDontPortalBefore', 1);
+	else if (autoTrimpSettings.autoPortal.selected == "Custom") portalZone = (daily) ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone', 1);
 
 	//Finds a target zone for when doing c2
 	var c2zone = 0;
@@ -34,7 +34,7 @@ function gigaTargetZone() {
 	else if (getPageSetting("c2Finish") > 0) c2zone = getPageSetting("c2Finish");
 
 	//Set targetZone
-	if (!runningC2) targetZone = Math.max(targetZone, voidZone, challengeZone, portalZone - 1);
+	if (!runningC2) targetZone = Math.max(targetZone, lastPortalZone, challengeZone, portalZone - 1);
 	else targetZone = Math.max(targetZone, c2zone - 1);
 
 	//Target Fuel Zone
@@ -56,7 +56,7 @@ function autoGiga(targetZone, metalRatio = 0.5, slowDown = 10, customBase) {
 	if (!targetZone || targetZone < 60) targetZone = gigaTargetZone();
 
 	//Init
-	var base = (customBase) ? customBase : getPageSetting('FirstGigastation');
+	var base = (customBase) ? customBase : getPageSetting('firstGigastation');
 	var baseZone = game.global.world;
 	var rawPop = game.resources.trimps.max - game.unlocks.impCount.TauntimpAdded;
 	var gemsPS = getPerSecBeforeManual("Dragimp");
@@ -90,23 +90,23 @@ function autoGiga(targetZone, metalRatio = 0.5, slowDown = 10, customBase) {
 
 function firstGiga(forced) {
 	//Build our first giga if: A) Has more than 2 Warps & B) Can't afford more Coords & C)* Lacking Health or Damage & D)* Has run at least 1 map stack or if forced to
-	const s = !(getPageSetting('CustomDeltaFactor') > 20);
+	const s = !(getPageSetting('autGigaDeltaFactor') > 20);
 	const a = game.buildings.Warpstation.owned >= 2;
-	const b = !canAffordCoordinationTrimps() || game.global.world >= 230 && !canAffordTwoLevel(game.upgrades.Coordination);
+	const b = !canAffordCoordinationTrimps() || game.global.spireActive || game.global.world >= 230 && !canAffordTwoLevel(game.upgrades.Coordination);
 	const c = s || mapSettings.mapName === 'HD Farm';
-	const d = s || game.global.mapBonus >= 2;
+	const d = s || game.global.mapBonus >= 1;
 	if (!forced && !(a && b && c && d)) return false;
 
 	//Define Base and Delta for this run
 	const base = game.buildings.Warpstation.owned;
-	const deltaZ = (getPageSetting('CustomTargetZone') >= 60) ? getPageSetting('CustomTargetZone') : undefined;
+	const deltaZ = (getPageSetting('autoGigaTargetZone') >= 60) ? getPageSetting('autoGigaTargetZone') : undefined;
 	const deltaM = (MODULES["upgrades"].customMetalRatio > 0) ? MODULES["upgrades"].customMetalRatio : undefined;
-	const deltaS = (getPageSetting('CustomDeltaFactor') >= 1) ? getPageSetting('CustomDeltaFactor') : undefined;
+	const deltaS = (getPageSetting('autGigaDeltaFactor') >= 1) ? getPageSetting('autGigaDeltaFactor') : undefined;
 	const delta = autoGiga(deltaZ, deltaM, deltaS);
 
 	//Save settings
-	setPageSetting('FirstGigastation', base);
-	setPageSetting('DeltaGigastation', delta);
+	setPageSetting('firstGigastation', base);
+	setPageSetting('deltaGigastation', delta);
 
 	//Log
 	debug("Auto Gigastation: Setting pattern to " + base + "+" + delta, "buildings", "*rocket");
@@ -135,14 +135,14 @@ function buyUpgrades() {
 
 		//Gigastations
 		if (upgrade == 'Gigastation' && !fuckbuildinggiga) {
-			if (getPageSetting("AutoGigas") && game.upgrades.Gigastation.done == 0 && !firstGiga()) continue;
-			else if (game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation'))) continue;
+			if (getPageSetting("autoGigas") && game.upgrades.Gigastation.done == 0 && !firstGiga()) continue;
+			else if (game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation'))) continue;
 		}
 
 		if (upgrade === 'Gigastation' && !getPageSetting('buildingsType')) continue;
 		//Other
 		if (upgrade == 'Shieldblock' && !getPageSetting('equipShieldBlock')) continue;
-		if (upgrade == 'Gigastation' && !fuckbuildinggiga && (game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('DeltaGigastation')) + getPageSetting('FirstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('FirstGigastation'))) continue;
+		if (upgrade == 'Gigastation' && !fuckbuildinggiga && (game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('firstGigastation'))) continue;
 		if (upgrade == 'Bloodlust' && challengeActive('Scientist') && getPageSetting('autoFight')) continue;
 
 		if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade !== 'Scientists') continue;

@@ -157,7 +157,7 @@ function autoMap(hdStats) {
 	}
 
 	if (challengeActive('Life') && !game.global.mapsActive) {
-		if (getPageSetting('life') && game.global.world >= getPageSetting('lifeZone') && game.challenges.Life.stacks < getPageSetting('lifeStacks')) {
+		if (getPageSetting('life') && getPageSetting('lifeZone') > 0 && game.global.world >= getPageSetting('lifeZone') && getPageSetting('lifeStacks') > 0 && game.challenges.Life.stacks < getPageSetting('lifeStacks')) {
 			var currCell = game.global.world + "_" + (game.global.lastClearedCell + 1);
 			if (!game.global.fighting && timeForFormatting(game.global.lastSoldierSentAt) >= 40) MODULES.maps.lifeCell = currCell;
 			if (MODULES.maps.lifeCell !== currCell && game.global.gridArray[game.global.lastClearedCell + 1].health !== 0 && game.global.gridArray[game.global.lastClearedCell + 1].mutation === 'Living') {

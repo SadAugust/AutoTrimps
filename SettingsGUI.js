@@ -345,7 +345,7 @@ function initializeAllSettings() {
 				var description = "<p>When using the " + resourceHour() + " Per Hour AutoPortal setting, it will portal if your " + resourceHour().toLowerCase() + "/hr drops by this settings % input lower than your best for current run.</p>";
 				description += "<p>Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).</p>";
 				description += "<p><b>Set to 0 to disable this setting.</b></p>";
-				description += "<p><b>Recommended:</b> 1.25</p>";
+				description += "<p><b>Recommended:</b> 4</p>";
 				return description;
 			}, 'value', '0', null, 'Core', [1, 2],
 			function () {
@@ -403,7 +403,7 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Daily -- U2+Portal descriptions done! Still need to finish U1 settings
+	//Daily -- U2+Portal descriptions done! Still need to finish U1 settings for Windstacking/Spire.
 	const displayDaily = true
 	if (displayDaily) {
 		createSetting('buyheliumy',
@@ -980,7 +980,7 @@ function initializeAllSettings() {
 		createSetting('storm',
 			function () { return ('Storm') },
 			function () {
-				var description = "<p>Enable this if you want to automate quest completion when running Quest.</p>";
+				var description = "<p>Enable this if you want to use Storm destacking features.</p>";
 				description += "<p><b>Will only function properly with AutoMaps enabled.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -1183,92 +1183,141 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Challenges
+	//Challenges -- Descriptions done! Need to do Arch but idk what to do with it
 	const displayChallenges = true;
 	if (displayChallenges) {
 		//Helium
 		//Decay
 		createSetting('decay',
 			function () { return ('Decay') },
-			function () { return ('Turn this on if you want to enable Decay features.') },
-			'boolean', false, null, 'Challenges', [1],
+			function () {
+				var description = "<p>Enable this if you want to use Decay features.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Challenges', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 55) });
 		createSetting('decayStacksToPush',
 			function () { return ('D: Stacks to Push') },
-			function () { return ('During Decay, AT will ignore maps and push to end the zone if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.') },
-			'value', '300', null, 'Challenges', [1],
+			function () {
+				var description = "<p>Will ignore maps and push to end the zone if we go above this amount of stacks.</p>";
+				description += "<p>If set to 0 or -1 it will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> 150</p>";
+				return description;
+			}, 'value', '-1', null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.decay.enabled) });
 		createSetting('decayStacksToAbandon',
 			function () { return ('D: Stacks to Abandon') },
-			function () { return ('During Decay, AT will abandon the challenge if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.') },
-			'value', '600', null, 'Challenges', [1],
+			function () {
+				var description = "<p>Will abandon the challenge if we go above this amount of stacks.</p>";
+				description += "<p>If set to 0 or -1 it will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> 400</p>";
+				return description;
+			}, 'value', '-1', null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.decay.enabled) });
 
 		//Life
 		createSetting('life',
 			function () { return ('Life') },
-			function () { return ('Turn this on if you want to enable Decay features.') },
-			'boolean', false, null, 'Challenges', [1],
+			function () {
+				var description = "<p>Enable this if you want to use Life features.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Challenges', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 110) });
 		createSetting('lifeZone',
 			function () { return ('L: Zone') },
-			function () { return ('During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this zone. <br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 100.') },
-			'value', '100', null, 'Challenges', [1],
+			function () {
+				var description = "<p>Will take you to the map chamber when the current enemy is Living and when you are at or below this zone.</p>";
+				description += "<p>If set to 0 or -1 it will disable this setting.</p>";
+				description += "<p><b>Must be used in conjunction with L: Stacks</b></p>";
+				description += "<p><b>Recommended:</b> 100</p>";
+				return description;
+			}, 'value', '-1', null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.life.enabled) });
 		createSetting('lifeStacks',
 			function () { return ('L: Stacks') },
-			function () { return ('During Life, AT will only take you to the map chamber when the current enemy is Living when you are at or below this stack count.<br><br>Must be used in conjunction with L: Stacks.<br><br>Defaults to 150.') },
-			'value', '150', null, 'Challenges', [1],
+			function () {
+				var description = "<p>Will take you to the map chamber when the current enemy is Living and when you are at or below this stack count.</p>";
+				description += "<p>If set to 0 or -1 it will disable this setting.</p>";
+				description += "<p><b>Must be used in conjunction with L: Zone</b></p>";
+				description += "<p><b>Recommended:</b> 100</p>";
+			}, 'value', '-1', null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.life.enabled) });
+
 		//Experience
 		createSetting('experience',
 			function () { return ('Experience') },
-			function () { return ('Turn this on if you want to enable Experience features. <b>This setting is dependant on using \'Bionic Raiding\' in conjunction with it.</b><br><br>Will automatically disable repeat within Bionic Wonderland maps if you\'re above z600 and the Bionic map is at or above level 605.') },
+			function () {
+				var description = "<p>Enable this if you want to use Experience wonder farming features.</p>";
+				description += "<p>This setting is dependant on using <b>Bionic Raiding</b> in conjunction with it if you want your ending Bionic Wonderland to be higher than 605. If you do you'll need to raid past bw 605 before z601.</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
 			'boolean', false, null, 'Challenges', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 600) });
 		createSetting('experienceStartZone',
 			function () { return ('E: Start Zone') },
-			function () { return ('The zone you would like to start farming for Wonders at.') },
+			function () {
+				var description = "<p>The zone you would like to start mapping for wonders at.</p>";
+				description += "<p>If set below 300 it will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> 500 to start and lower over time</p>";
+				return description;
+			},
 			'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.experience.enabled) });
 		createSetting('experienceEndZone',
 			function () { return ('E: End Zone') },
-			function () { return ('Will run the Bionic Wonderland map level specified in \'E: End BW\' at this zone. <b>This setting will not work if set below z601.</b>') },
-			'value', '605', null, 'Challenges', [1],
+			function () {
+				var description = "<p>'Will run the Bionic Wonderland map level specified in <b>E: End BW</b> at this zone.</p>";
+				description += "<p>If set below 601 it will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
+				return description;
+			}, 'value', '-1', null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.experience.enabled) });
 		createSetting('experienceEndBW',
 			function () { return ('E: End BW') },
-			function () { return ('Will finish the challenge with specified Bionic Wonderland once reaching end zone. If the specified BW is not available, it will run one closest to the setting.') },
-			'value', '605', null, 'Challenges', [1],
+			function () {
+				var description = "<p>'Will finish the challenge with this Bionic Wonderland level once reaching the end zone specified in <b>E: End Zone</b>.</p>";
+				description += "<p><b>If the specified BW is not available, it will run one closest to the setting.</b></p>";
+				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
+			}, 'value', '-1', null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.experience.enabled) });
 
-		//Arch
+		//Archaeology -- I don't know what to do with these. Think this needs to be reworked.
 		createSetting('archaeology',
 			function () { return ('Archaeology') },
-			function () { return ('Turn on Archaeology settings.') },
+			function () {
+				var description = "<p>Enable this if you want to use Archaeology relic switching features.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
 			'boolean', false, null, 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 90) });
 		createSetting('archaeologyString1',
 			function () { return ('First String') },
-			function () { return ('First string to use in Archaeology. Put the zone you want to stop using this string and start using the second string (Make sure the second string has a value) at the start. I.e: 70,10a,10e ') },
+			function () { return ('Put the zone you want to stop using this string and start using the second string (Make sure the second string has a value) at the start. I.e: 70,10a,10e ') },
 			'textValue', 'undefined', null, 'Challenges', [2],
 			function () { return (autoTrimpSettings.archaeology.enabledU2) });
 		createSetting('archaeologyString2',
 			function () { return ('Second String') },
-			function () { return ('Second string to use in Archaeology. Put the zone you want to stop using this string and start using the third string (Make sure the third string has a value) at the start. I.e: 94,10a,10e ') },
+			function () { return ('Put the zone you want to stop using this string and start using the third string (Make sure the third string has a value) at the start. I.e: 94,10a,10e ') },
 			'textValue', 'undefined', null, 'Challenges', [2],
 			function () { return (autoTrimpSettings.archaeology.enabledU2) });
 		createSetting('archaeologyString3',
 			function () { return ('Third String') },
-			function () { return ('Third string to use in Archaeology. Make sure this is just your Archaeology string and nothing else. I.e: 10a,10e ') },
+			function () { return ('Make sure this is just your Archaeology string and nothing else. I.e: 10a,10e ') },
 			'textValue', 'undefined', null, 'Challenges', [2],
 			function () { return (autoTrimpSettings.archaeology.enabledU2) });
 
 		//Quagmire
 		createSetting('quagmireSettings',
 			function () { return ('Quagmire Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazArray', [], 'MAZLookalike("Quagmire Farm", "Quagmire", "MAZ")', 'Challenges', [2],
+			function () {
+				var description = "<p>Here you can select how and when you would like farming to be done during Quagmire.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Quagmire Farm", "Quagmire", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 70) });
 		createSetting('quagmireDefaultSettings',
 			function () { return ('Quagmire Default Settings') },
@@ -1278,8 +1327,12 @@ function initializeAllSettings() {
 		//Insanity
 		createSetting('insanitySettings',
 			function () { return ('Insanity Settings') },
-			function () { return ('Click to adjust settings.') },
-			'mazArray', [], 'MAZLookalike("Insanity Farm", "Insanity", "MAZ")', 'Challenges', [2],
+			function () {
+				var description = "<p>Here you can select how and when you would like farming to be done during Insanity.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Insanity Farm", "Insanity", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 110) });
 		createSetting('insanityDefaultSettings',
 			function () { return ('Insanity Settings') },
@@ -1289,8 +1342,12 @@ function initializeAllSettings() {
 		//Alchemy
 		createSetting('alchemySettings',
 			function () { return ('Alchemy Settings') },
-			function () { return ('Click to adjust settings.') },
-			'mazArray', [], 'MAZLookalike("Alchemy Farm", "Alchemy", "MAZ")', 'Challenges', [2],
+			function () {
+				var description = "<p>Here you can select how and when you would like farming to be done during Alchemy.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Alchemy Farm", "Alchemy", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 155) });
 		createSetting('alchemyDefaultSettings',
 			function () { return ('Alchemy Settings') },
@@ -1300,7 +1357,12 @@ function initializeAllSettings() {
 		//Hypothermia
 		createSetting('hypothermiaSettings',
 			function () { return ('Hypothermia Settings') },
-			function () { return ('Contains arrays for this setting') },
+			function () {
+				var description = "<p>Here you can select how and when you would like farming to be done during Hypothermia.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			},
 			'mazArray', [], 'MAZLookalike("Hypothermia Farm", "Hypothermia", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 175) });
 		createSetting('hypothermiaDefaultSettings',
@@ -1311,7 +1373,7 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Buildings
+	//Buildings -- Descriptions done!
 	const displayBuildings = true;
 	if (displayBuildings) {
 		createSetting('buildingsType',
@@ -1348,43 +1410,68 @@ function initializeAllSettings() {
 		//Helium
 		createSetting('warpstation',
 			function () { return ('Warpstations') },
-			function () { return ('Enabling this will let AT purchase Warpstations. AT AutoStructure must be enabled for this to work.') },
-			'boolean', true, null, 'Buildings', [1]);
-		createSetting('FirstGigastation',
+			function () {
+				var description = "<p>Enable this to allow Warpstation purchasing.</p>";
+				description += "<p><b>Will only function properly with AT AutoStructure enabled.</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Buildings', [1]);
+		createSetting('firstGigastation',
 			function () { return ('First Gigastation') },
-			function () { return ('How many warpstations to buy before your first gigastation') },
-			'value', '20', null, 'Buildings', [1],
+			function () {
+				var description = "<p>The amount of warpstations to purchase before your first gigastation.</p>";
+				description += "<p><b>Recommended:</b> 20</p>";
+				return description;
+			}, 'value', '20', null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled) });
-		createSetting('DeltaGigastation',
+		createSetting('deltaGigastation',
 			function () { return ('Delta Gigastation') },
-			function () { return ('<b>YOU MUST HAVE BUY UPGRADES ENABLED!</b><br> How many extra warpstations to buy for each gigastation. Supports decimal values. For example 2.5 will buy +2/+3/+2/+3...') },
-			'value', '2', null, 'Buildings', [1],
+			function () {
+				var description = "<p>How many extra warpstations to buy for each gigastation.</p>";
+				description += "<pSupports decimal values. For example 2.5 will buy +2/+3/+2/+3...</p>";
+				description += "<p><b>YOU MUST HAVE BUY UPGRADES ENABLED!</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'value', '2', null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled) }
 		);
-		createSetting('AutoGigas',
+		createSetting('autoGigas',
 			function () { return ('Auto Gigas') },
-			function () { return ('Advanced. <br>If enabled, AT will buy its first Gigastation if: <br>A) Has more than 2 Warps & <br>B) Can\'t afford more Coords & <br>C) (Only if Custom Delta Factor > 20) Lacking Health or Damage & <br>D) (Only if Custom Delta Factor > 20) Has run at least 1 map stack or <br>E) If forced to by using the firstGiga(true) command in the console. <br>Then, it\'ll calculate the delta based on your Custom Delta Factor and your Auto Portal/VM zone (whichever is higher), or Daily Auto Portal/VM zone, or ' + cinf() + ' zone, or Custom AutoGiga Zone.') },
+			function () {
+				var description = "<p>If enabled, AT will buy its first Gigastation if: <br>A) Has more than 2 Warps & <br>B) Can\'t afford more Coords & <br>C) (Only if Custom Delta Factor > 20) Lacking Health or Damage & <br>D) (Only if Custom Delta Factor > 20) Has run at least 1 map stack.</p>";
+				description += "<p>Then, it'll calculate the delta based on your Custom Delta Factor and your Auto Portal/VM zone (whichever is higher), or Daily Auto Portal/VM zone, or " + cinf() + " zone, or Custom AutoGiga Zone.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
 			'boolean', 'true', null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled) });
-		createSetting('CustomTargetZone',
+		createSetting('autoGigaTargetZone',
 			function () { return ('Custom Target Zone') },
-			function () { return ('To be used with Auto Gigas. <br>The zone to be used as a the target zone when calculating the Auto Gigas delta. <br>Values below 60 will be discarded.') },
-			'value', '-1', null, 'Buildings', [1],
-			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.AutoGigas.enabled) });
-		createSetting('CustomDeltaFactor',
+			function () {
+				var description = "<p>The zone to be used as a the target zone when calculating the Auto Gigas delta.</p>";
+				description += "<pValues below 60 will be discarded.</p>";
+				description += "<p><b>Recommended:</b> Current challenge end zone</p>";
+				return description;
+			}, 'value', '-1', null, 'Buildings', [1],
+			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.autoGigas.enabled) });
+		createSetting('autGigaDeltaFactor',
 			function () { return ('Custom Delta Factor') },
-			function () { return ('Advanced. To be used with Auto Gigas. <br>This setting is used to calculate a better Delta. Think of this setting as how long your target zone takes to complete divided by the zone you bought your first giga in. <br>Basically, a higher number means a higher delta. Values below 1 will default to 10. <br><b>Recommended: 1-2 for very quick runs. 5-10 for regular runs where you slow down at the end. 20-100+ for very pushy runs.</b>') },
-			'value', '-1', null, 'Buildings', [1],
-			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.AutoGigas.enabled) });
+			function () {
+				var description = "<p>This setting is used to calculate a better Delta. Think of this setting as how long your target zone takes to complete divided by the zone you bought your first giga in.</p>";
+				description += "<pBasically, a higher number means a higher delta.</p>";
+				description += "<pValues below 1 will default to 10.</p>";
+				description += "<pValues below 1 will default to 10.</p>";
+				description += "<p><b>Recommended:</b> 1-2 for very quick runs. 5-10 for regular runs where you slow down at the end. 20-100+ for very pushy runs</p>";
+				return description;
+			}, 'value', '-1', null, 'Buildings', [1],
+			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.autoGigas.enabled) });
 
 		createSetting('advancedNurseries',
 			function () { return ('Advanced Nurseries') },
 			function () {
-				var description = ""
-				description += "AT will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway),"
-				description += "AND you have more map stacks than the <b>Map Bonus Health</b> setting, which becomes a very important setting."
-				description += "<br><br>Requires Nurseries to be setup in the AT AutoStructure setting and will only buy Nurseries if past the 'From' input. Overrides the 'Up To' input and allows you to set 0 without it buying as many as possible."
-				description += "<br><br><b>Recommended: Always On. Nurseries set to 'Up To: 0' & 'From: 230'</b>"
+				var description = "<p>Will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway), AND you have more map stacks than the <b>Map Bonus Health</b> setting, which becomes a very important setting.</p>"
+				description += "<p>Requires Nurseries to be setup in the AT AutoStructure setting and will only buy Nurseries if past the 'From' input. Overrides the 'Up To' input and allows you to set 0 without it buying as many as possible.</p>"
+				description += "<p><b>Recommended:</b> On. Nurseries set to 'Up To: 0' & 'From: 230'</p>";
 				return description;
 			},
 			'boolean', false, null, 'Buildings', [1],
@@ -1522,56 +1609,91 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Maps
+	//Maps -- Descriptions done!
 	const displayMaps = true;
 	if (displayMaps) {
 		//Helium
 		createSetting('autoMaps',
 			function () { return (["Auto Maps Off", "Auto Maps On", "Auto Maps No Unique"]) },
-			function () { return ('Automaps. The no unique setting will not run unique maps such as dimensions of anger. Recommended ON. Do not use window, it will not work.') },
+			function () {
+				var description = "<p>Master switch for whether the script will do any form of mapping.</p>";
+				description += "<p><b>The mapping that is done is decided by how you setup any mapping related settings.</b><br></p>";
+				description += "<p><b>Auto Maps Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Auto Maps On</b><br>Enables mapping and will run all types of maps.</p>";
+				description += "<p><b>Auto Maps No Unique</b><br>The same as <b>Auto Maps On</b> but won't run unique maps such as <b>The Block</b> or <b>Dimension of Rage</b>.</p>";
+				description += "<p><b>Recommended:</b> Auto Maps On</p>";
+				return description;
+			},
 			'multitoggle', 0, null, "Maps", [1, 2]);
 		createSetting('autoMapsPortal',
-			function () { return ('AM Portal') },
-			function () { return ('Makes sure Auto Maps is on after portalling. Turn this off to disable this and remember your choice.') },
-			'boolean', true, null, 'Maps', [1, 2]);
+			function () { return ('Auto Maps Portal') },
+			function () {
+				var description = "<p>Will ensure Auto Maps is enabled after portalling.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Maps', [1, 2]);
 		createSetting('onlyPerfectMaps',
 			function () { return ('Perfect Maps') },
-			function () { return ('If enabled when AT is trying to map it will only create perfect maps. Be warned this may greatly decrease the map level that AT believes is efficient.') },
-			'boolean', false, null, 'Maps', [1, 2]);
+			function () {
+				var description = "<p>When trying to map it will only create perfect maps.</p>";
+				description += "<b>Be warned this may greatly decrease the map level that AT believes is efficient.</b></p>";
+				description += "<p><b>Recommended:</b> Off unless at end game</p>";
+				return description;
+			}, 'boolean', false, null, 'Maps', [1, 2]);
 
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },
 			function () {
-				return ('Will farm until you can survive this amount of attacks.<br>\
-			<b>Must be set above 0 to run</b>')
-			},
-			'value', 2, null, "Maps", [1, 2]);
+				var description = "<p>Will farm until you can survive this amount of attacks.</p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 2 for earlygame, gradually increase the further you progress</p>";
+				if (currSettingUniverse === 2) description += "<p><b>Recommended:</b> 2 for earlygame, gradually increase the further you progress.<br><b>DO NOT SET ABOVE 1 WHEN USING AUTO EQUALITY: ADVANCED</b></p>";
+				return description;
+			}, 'value', -1, null, "Maps", [1, 2]);
 
 		createSetting('mapBonusHealth',
 			function () { return ('Map Bonus Health') },
-			function () { return ('Map Bonus stacks will be obtained to this amount when Hits Survived is below the threshold set.' + currSettingUniverse === 1 ? '<br><br>This is a very important setting to be used with Advanced Nurseries after Magma. Basically, if you are running out of nurseries too soon, increase this value, otherwise lower it.' : '') },
-			'value', 10, null, "Maps", [1, 2]);
+			function () {
+				var description = "<p>Map Bonus stacks will be obtained to this amount when <b>Hits Survived</b> is below the threshold set.</p>";
+				if (currSettingUniverse === 1) description += "<p>This is a very important setting to be used with <b>Advanced Nurseries</b> after Magma. Basically, if you are running out of nurseries too soon, increase this value, otherwise lower it.</p>";
+				description += "<p><b>Recommended:</b> 10</p>";
+				return description;
+			}, 'value', 10, null, "Maps", [1, 2]);
 
 		createSetting('mapBonusRatio',
 			function () { return ('Map Bonus Ratio') },
-			function () { return ('Map Bonus will be run when above this HD Ratio value.') },
-			'value', 4, null, "Maps", [1, 2]);
+			function () {
+				var description = "<p>Map Bonus stacks will be obtained when above this HD (enemyHealth:trimpDamage) Ratio value.</p>";
+				description += "<p><b>Recommended:</b> 4</p>";
+				return description;
+			}, 'value', 4, null, "Maps", [1, 2]);
 
 		createSetting('mapBonusStacks',
 			function () { return ('Map Bonus Stacks') },
-			function () { return ('The map bonus limit that will be used when above your \'Map Bonus Ratio\' threshold. Settings to adjust the cache it will run and the job ratio that it uses can be found in the \'Map Bonus\' setting.') },
-			'value', 10, null, "Maps", [1, 2]);
+			function () {
+				var description = "<p>The map bonus limit that will be used when above your <b>Map Bonus Ratio</b> threshold.</p>"
+				description += "<p>Settings to adjust the cache it will run and the job ratio that it uses can be found in the <b>Map Bonus</b> setting.</p>";
+				description += "<p><b>Recommended:</b> 10</p>";
+				return description;
+			}, 'value', 10, null, "Maps", [1, 2]);
 
 		createSetting('scryvoidmaps',
 			function () { return ('VM Scryer') },
-			function () { return ('Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options.') },
-			'boolean', false, null, 'Maps', [1]);
+			function () {
+				var description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the Scryhard II talent.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Maps', [1]);
 
 		//HD Farm
 		createSetting('hdFarmSettings',
 			function () { return ('HD Farm Settings') },
-			function () { return ('Click to adjust settings.') },
-			'mazArray', [], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
+			function () {
+				var description = "<p>Here you can select how and when you would like HD (enemyHealth:trimpDamage) Ratio farming to be run.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
 		createSetting('hdFarmDefaultSettings',
 			function () { return ('HD Farm: Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1579,8 +1701,12 @@ function initializeAllSettings() {
 
 		createSetting('voidMapSettings',
 			function () { return ('Void Map Settings') },
-			function () { return ('Will run all of your Void Maps on a specified zone according to this settings value.') },
-			'mazArray', [], 'MAZLookalike("Void Map", "VoidMap", "MAZ")', 'Maps', [1, 2]);
+			function () {
+				var description = "<p>Here you can select how and when you would like Void Maps to be run.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Void Map", "VoidMap", "MAZ")', 'Maps', [1, 2]);
 		createSetting('voidMapDefaultSettings',
 			function () { return ('Void Map Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1589,8 +1715,12 @@ function initializeAllSettings() {
 		//Bone Shrine (bone) 
 		createSetting('boneShrineSettings',
 			function () { return ('Bone Shrine Settings') },
-			function () { return ('Will use a specified amount of Bone Shrine charges according to this settings value.') },
-			'mazArray', [], 'MAZLookalike("Bone Shrine", "BoneShrine", "MAZ")', 'Maps', [1, 2]);
+			function () {
+				var description = "<p>Here you can select how and when you would like Bone Shrine charges to be used.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Bone Shrine", "BoneShrine", "MAZ")', 'Maps', [1, 2]);
 		createSetting('boneShrineDefaultSettings',
 			function () { return ('BS: Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1599,8 +1729,12 @@ function initializeAllSettings() {
 		//Worshipper Farm 
 		createSetting('worshipperFarmSettings',
 			function () { return ('Worshipper Farm Settings') },
-			function () { return ('Will farm to a specified amount of Worshippers according to this settings value.') },
-			'mazArray', [], 'MAZLookalike("Worshipper Farm", "WorshipperFarm", "MAZ")', 'Maps', [2],
+			function () {
+				var description = "<p>Here you can select how and when you would like Worshippers to be farmed.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Worshipper Farm", "WorshipperFarm", "MAZ")', 'Maps', [2],
 			function () { return game.stats.highestRadLevel.valueTotal() >= 50 });
 		createSetting('worshipperFarmDefaultSettings',
 			function () { return ('WF: Default Settings') },
@@ -1610,8 +1744,12 @@ function initializeAllSettings() {
 		//Unique Maps
 		createSetting('uniqueMapSettingsArray',
 			function () { return ('Unique Map Settings') },
-			function () { return ('Click to adjust settings.') },
-			'mazArray', {
+			function () {
+				var description = "<p>Here you can select how and when you would like Unique Maps to be run.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', {
 			The_Wall: { enabled: false, zone: 100, cell: 0 },
 			The_Block: { enabled: false, zone: 100, cell: 0 },
 			Dimension_of_Anger: { enabled: false, zone: 100, cell: 0 },
@@ -1633,8 +1771,12 @@ function initializeAllSettings() {
 		//Map Bonus
 		createSetting('mapBonusSettings',
 			function () { return ('Map Bonus Settings') },
-			function () { return ('Will map stack to a specified amount according to this settings value.') },
-			'mazArray', [], 'MAZLookalike("Map Bonus", "MapBonus", "MAZ")', 'Maps', [1, 2]);
+			function () {
+				var description = "<p>Here you can select how and when you would like map bonus stacks to be obtained.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Map Bonus", "MapBonus", "MAZ")', 'Maps', [1, 2]);
 		createSetting('mapBonusDefaultSettings',
 			function () { return ('Map Bonus: Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1647,8 +1789,12 @@ function initializeAllSettings() {
 		//Map Farm
 		createSetting('mapFarmSettings',
 			function () { return ('Map Farm Settings') },
-			function () { return ('Will farm a specified amount of maps according to this settings value.') },
-			'mazArray', [], 'MAZLookalike("Map Farm", "MapFarm", "MAZ")', 'Maps', [1, 2]);
+			function () {
+				var description = "<p>Here you can select how and when you would like to farm a specific amount of maps.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Map Farm", "MapFarm", "MAZ")', 'Maps', [1, 2]);
 		createSetting('mapFarmDefaultSettings',
 			function () { return ('MF: Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1657,8 +1803,12 @@ function initializeAllSettings() {
 		//Prestige Raiding
 		createSetting('raidingSettings',
 			function () { return ('Raiding Settings') },
-			function () { return ('Will raid up to a specified zone according to this settings value.') },
-			'mazArray', [], 'MAZLookalike("Raiding", "Raiding", "MAZ")', 'Maps', [1, 2]);
+			function () {
+				var description = "<p>Here you can select how and when you would like to raid maps for prestiges.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Raiding", "Raiding", "MAZ")', 'Maps', [1, 2]);
 		createSetting('raidingDefaultSettings',
 			function () { return ('Raiding: Default Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1667,8 +1817,12 @@ function initializeAllSettings() {
 		//Bionic Raiding
 		createSetting('bionicRaidingSettings',
 			function () { return ('BW Raiding Settings') },
-			function () { return ('Will run Bionic Wonderlands up to a specified zone according to this settings value.') },
-			'mazArray', [], 'MAZLookalike("Bionic Raiding", "BionicRaiding", "MAZ")', 'Maps', [1]);
+			function () {
+				var description = "<p>Here you can select how and when you would like to raid Bionic Wonderland maps for prestiges.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Bionic Raiding", "BionicRaiding", "MAZ")', 'Maps', [1]);
 		createSetting('bionicRaidingDefaultSettings',
 			function () { return ('Raiding: Default Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1677,8 +1831,12 @@ function initializeAllSettings() {
 		//Tribute Farming
 		createSetting('tributeFarmSettings',
 			function () { return ('Tribute Farm Settings') },
-			function () { return ('Will farm for a specified amount of Tributes or Meteorologists according to this settings value.') },
-			'mazArray', [], 'MAZLookalike("Tribute Farm", "TributeFarm", "MAZ")', 'Maps', [2]);
+			function () {
+				var description = "<p>Here you can select how and when you would like Tributes & Meteorologists to be farmed.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Tribute Farm", "TributeFarm", "MAZ")', 'Maps', [2]);
 		createSetting('tributeFarmDefaultSettings',
 			function () { return ('TrF: Settings') },
 			function () { return ('Contains arrays for this setting') },
@@ -1687,16 +1845,22 @@ function initializeAllSettings() {
 		//Smithy Farming
 		createSetting('smithyFarmSettings',
 			function () { return ('Smithy Farm Settings') },
-			function () { return ('Will farm for a specified amount of Smithies according to this settings value.') },
-			'mazArray', [], 'MAZLookalike("Smithy Farm", "SmithyFarm", "MAZ")', 'Maps', [2]);
+			function () {
+				var description = "<p>Here you can select how and when you would like Smithies to be farmed.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Smithy Farm", "SmithyFarm", "MAZ")', 'Maps', [2]);
 		createSetting('smithyFarmDefaultSettings',
 			function () { return ('SF: Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'Maps', [2]);
 
+	}
 
-		//Spire
-		//Helium
+	//Spire
+	const displaySpire = true;
+	if (displaySpire) {
 		createSetting('MaxStacksForSpire',
 			function () { return ('Max Map Bonus for Spire') },
 			function () { return ('Get max map bonus before running the Spire.') },
@@ -2112,7 +2276,7 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Heirloom //Done
+	//Heirloom
 	const displayHeirlooms = true;
 	if (displayHeirlooms) {
 		//Heirloom Swapping
@@ -2431,21 +2595,33 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Golden //Done
+	//Golden -- Descriptions done!
 	const displayGolden = true;
 	if (displayGolden) {
 		createSetting('autoGoldenSettings',
 			function () { return ('Auto Gold Settings') },
-			function () { return ('Click to adjust settings.') },
-			'mazArray', [], 'MAZLookalike("Auto Golden", "AutoGolden", "MAZ")', 'Golden', [1, 2]);
+			function () {
+				var description = "<p>Here you can select the golden upgrades you would like to have purchased during filler runs.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Auto Golden", "AutoGolden", "MAZ")', 'Golden', [1, 2]);
 		createSetting('autoGoldenDailySettings',
 			function () { return ('Daily Auto Gold Settings') },
-			function () { return ('Click to adjust settings.') },
-			'mazArray', [], 'MAZLookalike("Daily Auto Golden", "AutoGoldenDaily", "MAZ")', 'Golden', [1, 2]);
+			function () {
+				var description = "<p>Here you can select the golden upgrades you would like to have purchased during daily runs.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Daily Auto Golden", "AutoGoldenDaily", "MAZ")', 'Golden', [1, 2]);
 		createSetting('autoGoldenC3Settings',
 			function () { return (cinf() + ' Auto Gold Settings') },
-			function () { return ('Click to adjust settings.') },
-			'mazArray', [], 'MAZLookalike("C3 Auto Golden", "AutoGoldenC3", "MAZ")', 'Golden', [1, 2]);
+			function () {
+				var description = "<p>Here you can select the golden upgrades you would like to have purchased during " + cinf() + " runs.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("C3 Auto Golden", "AutoGoldenC3", "MAZ")', 'Golden', [1, 2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -2650,18 +2826,18 @@ function initializeAllSettings() {
 			function () { return ('Download for debug') },
 			function () { return ('Will download both your save and AT settings so that they can be debugged easier.') },
 			'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [1, 2]);
+		createSetting('CleanupAutoTrimps',
+			function () { return ('Cleanup Saved Settings') },
+			function () { return ('Deletes old values from previous versions of the script from your AutoTrimps settings file.') },
+			'infoclick', 'CleanupAutoTrimps', null, 'Import Export', [1, 2]);
 		createSetting('downloadSaves',
 			function () { return ('Download Saves') },
 			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
 			'boolean', false, null, 'Import Export', [1, 2]);
-		createSetting('CleanupAutoTrimps',
-			function () { return ('Cleanup Saved Settings') },
-			function () { return ('Deletes old values from previous versions of the script from your AutoTrimps Settings file.') },
-			'infoclick', 'CleanupAutoTrimps', null, 'Import Export', [1, 2]);
 
 		if (displaySpam) {
 			createSetting('mutatorPresets',
-				function () { return ('Spam Message Settings') },
+				function () { return ('Mutator Preset Settings') },
 				function () { return ('Click to adjust settings.') },
 				'mazDefaultArray', JSON.stringify({
 					preset1: {},
@@ -3145,7 +3321,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("desolationSwapZone", radonon);
 
 	//Buildings
-	modifyParentNode("CustomDeltaFactor", radonoff);
+	modifyParentNode("autGigaDeltaFactor", radonoff);
 
 	//Challenges
 	modifyParentNode("decayStacksToAbandon", radonoff);
@@ -4423,6 +4599,16 @@ function updateATVersion() {
 			autoTrimpSettings['heliumHrPortal'].valueU2 = tempSettings.HeliumHrPortal.valueU2;
 			autoTrimpSettings['pauseScript'].value = tempSettings.PauseScript.value;
 			autoTrimpSettings['autoEggs'].value = tempSettings.AutoEggs.value;
+
+			autoTrimpSettings['avoidEmpower'].value = tempSettings.avoidempower.value;
+			autoTrimpSettings['buyheliumy'].valueU2 = tempSettings.buyradony.valueU2;
+
+
+			autoTrimpSettings['firstGigastation'].value = tempSettings.FirstGigastation.value;
+			autoTrimpSettings['deltaGigastation'].value = tempSettings.DeltaGigastation.value;
+			autoTrimpSettings['autoGigas'].value = tempSettings.AutoGigas.value;
+			autoTrimpSettings['pauseScript'].value = tempSettings.CustomTargetZone.value;
+			autoTrimpSettings['autoEggs'].value = tempSettings.CustomDeltaFactor.value;
 		}
 
 
