@@ -420,6 +420,7 @@ function initializeAllSettings() {
 				var description = "<p>Will control how combat is handled in dailies. If enabled will override settings in the <b>Combat</b> tab.</p>";
 				description += "<p><b>DFA: Off</b><br>Disables this setting.</p>";
 				description += "<p><b>DFA: Non-Empowered</b><br>Will only send trimps to fight if the daily doesn't have the empowered mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				description += "<p><b>DFA: All Dailies</b><br>Sends trimps to fight if they're not fighting in daily challenges, Won't do anything on Bloodthirst/Plagued/Bogged dailies.</p>";
 
 				description += "<p><b>Recommended:</b> DFA: Off</p>";
@@ -2279,7 +2280,7 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Heirloom
+	//Heirloom -- Descriptions done!
 	const displayHeirlooms = true;
 	if (displayHeirlooms) {
 		//Heirloom Swapping
@@ -2300,16 +2301,16 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirlooms', [1, 2],
-			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomPostVoidSwap',
-			function () { return ('Void PB Swap') },
+			function () { return ('Post Void Swap') },
 			function () {
 				var description = "<p>If you have completed any void maps on your run this will set your swap zone to 0 to maximise damage in your afterpush.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirlooms', [1, 2],
-			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomVoidSwap',
 			function () { return ('Void PB Swap') },
@@ -2320,7 +2321,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> Off unless you know what you're doing</p>";
 				return description;
 			}, 'boolean', false, null, 'Heirlooms', [2],
-			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		//Shield swapping
 		createSetting('heirloomShield',
@@ -2336,60 +2337,98 @@ function initializeAllSettings() {
 		createSetting('heirloomInitial',
 			function () { return ('Initial') },
 			function () {
-				var description = "<p>Master switch for whether the script will Shield related heirloom swapping.</p>";
-				description += "<p>Additional settings appear when enabled.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return ('<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone.')
-			},
-			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+				var description = "<p>Heirloom to use before your designated swap zone.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> a shield with void map drop chance</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomAfterpush',
 			function () { return ('Afterpush') },
-			function () { return ('<b>Second Heirloom to use</b><br><br>Enter the name of your second heirloom. This is the heirloom that you will use after swapping from the first heirloom at the zone you have defined in the HS: Zone.') },
-			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Heirloom to use after your designated swap zone.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomC3',
 			function () { return (cinf()) },
-			function () { return ('<b>C3 heirloom to use</b><br><br>Enter the name of the heirloom you would like to use during C3\s and special challenges (Mayhem, Pandemonium).') },
+			function () {
+				var description = "<p>Heirloom to use after your designated swap zone during " + cinf() + " or special challenge (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid") + ") runs.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
+				return description;
+			},
 			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomVoid',
 			function () { return ('Void') },
-			function () { return ('<b>Void heirloom to use</b><br>Enter the name of the heirloom you would like to use during Void Maps.') },
-			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Heirloom to use inside of Void Maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> damage heirloom</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomVoidPlaguebringer',
 			function () { return ('Void PB') },
-			function () { return ('Heirloom to use inside of Void Maps when fighting a slow enemy and the next enemy is fast. Either a max damage no health shield or plaguebringer shield should be used.') },
+			function () {
+				var description = "<p>Heirloom to use inside of Void Maps when fighting a slow enemy and the next enemy is fast.</p>";
+				description += "<p><b>Ignore Spires Until</b> settings will stop this swap from happening if the value is above your current world zone.</p>";
+				description += "<p>A shield with <b>Plaguebringer MUST</b> be used.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> <b>Plaguebringer</b> heirloom</p>";
+				return description;
+			},
 			'textValue', 'undefined', null, 'Heirlooms', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && getPageSetting('heirloomVoidSwap', currSettingUniverse)) });
 
 		createSetting('heirloomSpire',
 			function () { return ('Spire') },
-			function () { return ('<b>Spire heirloom to use</b><br>Enter the name of the heirloom you would like to use during Spires. The Map Swap setting will override this whilst in maps.') },
-			'textValue', 'undefined', null, 'Heirlooms', [1],
+			function () {
+				var description = "<p>The name of the heirloom you would like to use during active Spires.</p>";
+				description += "<p><b>Ignore Spires Until</b> settings will stop this swap from happening if the value is above your current world zone.</p>";
+				description += "<p>The Map Swap setting will override this whilst in maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> Damage+Health heirloom</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestLevel.valueTotal() >= 200) });
 
 		createSetting('heirloomSwapZone',
 			function () { return ('Swap Zone') },
-			function () { return ('Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>') },
-			'value', '-1', null, 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during filler (non daily/" + cinf() + " runs.</p>";
+				description += "<p>If set to -1 it will disable this setting.</p>";
+				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
+				return description;
+			}, 'value', '-1', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomSwapZoneDaily',
 			function () { return ('Daily Swap Zone') },
-			function () { return ('Which zone to swap from your first heirloom you have defined to your second heirloom you have defined. I.e if this value is 75 it will switch to the second heirloom <b>on z75</b>') },
+			function () {
+				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during daily runs.</p>";
+				description += "<p>If set to -1 it will disable this setting.</p>";
+				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
+				return description;
+			},
 			'value', '-1', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomSwapZoneC3',
 			function () { return (cinf() + ' Swap Zone') },
-			function () { return ('Which zone to swap from your first heirloom you have defined to the ' + cinf() + ' heirloom you have defined. I.e if this value is 75 it will switch to the ' + cinf() + ' heirloom <b>on z75</b>') },
-			'value', -1, null, 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during daily runs.</p>";
+				description += "<p>If set to -1 it will disable this setting.</p>";
+				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
+				return description;
+			}, 'value', -1, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		//Staff swapping
@@ -2405,75 +2444,130 @@ function initializeAllSettings() {
 
 		createSetting('heirloomStaffWorld',
 			function () { return ('World') },
-			function () { return ('<b>World Staff</b><br><br>Enter the name of your world staff.') },
-			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>The staff that you would like to use when in world zones.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> High pet XP staff</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		createSetting('heirloomStaffMap',
 			function () { return ('Map') },
-			function () { return ('<b>General Map Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside maps, will be overwritten by the proceeding 3 heirloom settings if they\'re being used otherwise will work in every maptype.') },
-			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
-			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
-
-		createSetting('heirloomStaffFood',
-			function () { return ('Savory Cache') },
-			function () { return ('<b>Savory Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Savory Cache maps. Will use this staff for Tribute farming if it\'s enabled.') },
-			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
-			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
-
-		createSetting('heirloomStaffWood',
-			function () { return ('Wooden Cache') },
-			function () { return ('<b>Wooden Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Wooden Cache maps.') },
-			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
-			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
-
-		createSetting('heirloomStaffMetal',
-			function () { return ('Metal Cache') },
-			function () { return ('<b>Metal Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Metal Cache maps.') },
-			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
-			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
-
-		createSetting('heirloomStaffResource',
-			function () { return ('Resource Cache') },
-			function () { return ('<b>Resource Cache Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside Small or Large Resource (Science) Cache maps.') },
-			'textValue', 'undefined', null, 'Heirlooms', [2],
+			function () {
+				var description = "<p>The staff that you would like to use when running maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p>Will be overridden by the proceeding heirloom settings if they've been assigned otherwise will use this in every map available.</p>";
+				description += "<p><b>Recommended:</b> Resource efficiency heavy staff</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		createSetting('heirloomStaffVoid',
 			function () { return ('Void') },
-			function () { return ('<b>Void Staff</b><br><br>Enter the name of the staff you would like to equip whilst inside void maps.') },
-			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>The staff that you would like to use when running <b>Void</b> maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
+
+		createSetting('heirloomStaffFood',
+			function () { return ('Savory Cache') },
+			function () {
+				var description = "<p>The staff that you would like to use when running <b>Savory Cache</b> maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> Dedicated food efficiency staff</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
+
+		createSetting('heirloomStaffWood',
+			function () { return ('Wooden Cache') },
+			function () {
+				var description = "<p>The staff that you would like to use when running <b>Wooden Cache</b> maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> Dedicated wood efficiency staff</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
+
+		createSetting('heirloomStaffMetal',
+			function () { return ('Metal Cache') },
+			function () {
+				var description = "<p>The staff that you would like to use when running <b>Metal Cache</b> maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
+
+		createSetting('heirloomStaffResource',
+			function () { return ('Resource Cache') },
+			function () {
+				var description = "<p>The staff that you would like to use when running <b>Resource Cache</b> maps.</p>";
+				description += "<p>Set to <b>undefined</b> to disable.</p>";
+				description += "<p><b>Recommended:</b> Dedicated science efficiency staff</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		//Auto Heirlooms
-
 		createSetting('heirloomAuto',
 			function () { return ('Auto Heirlooms') },
-			function () { return ('Auto Heirlooms master button. Turn this on to enable all heirloom retention settings. <br><br> When portaling will check if the heirlooms in your temporary section for the type(s) you have selected to keep have the possibility to have all of the selected mods and if any do they will be stashed otherwise will be recycled.') },
-			'boolean', false, null, 'Heirlooms', [1, 2]);
+			function () {
+				var description = "<p>Master switch for whether the script will try to keep any of the heirlooms in your temporary section when portaling.</p>";
+				description += "<p>When portaling will create a list of mods you want heirlooms to have and checks if the heirlooms in your temporary section for the type(s) you have selected to keep have the possibility to have all of the selected mods and if any do they will be stashed otherwise will be recycled.</p>";
+				description += "<p>Additional settings appear when enabled.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Heirlooms', [1, 2]);
 
 		createSetting('heirloomAutoTypeToKeep',
-			function () { return (['None', 'Shields', 'Staffs', 'All']) },
-			function () { return ('<b>Shields: </b>Keeps Shields and nothing else.<br><b>Staffs: </b>Keeps Staffs and nothing else.<br><b>Cores: </b>Keeps Cores and nothing else.<br><b>All: Will keep all heirlooms.') },
+			function () {
+				var heirloomOptions = ['None', 'Shields', 'Staffs', 'All'];
+				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 200) heirloomOptions.push('Cores');
+				return (heirloomOptions)
+			},
+			function () {
+				var description = "<p>Controls the heirloom types that the script will try to keep.</p>";
+				description += "<p><b>Shields</b><br>Will check to see if any <b>Shield</b> heirlooms should be kept when portaling.</p>";
+				description += "<p><b>Staffs</b><br>Will check to see if any <b>Staff</b> heirlooms should be kept when portaling.</p>";
+				description += "<p><b>All</b><br>Will check to see if <b>ANY</b> heirlooms should be kept when portaling.</p>";
+				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 200) description += "<p><b>Cores</b><br>Will check to see if any <b>Core</b> heirlooms should be kept when portaling.</p>";
+				description += "<p><b>Recommended:</b> The type of heirlooms you need</p>";
+				return description;
+			},
 			'multitoggle', 0, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 		createSetting('heirloomAutoRareToKeep',
 			function () { return ('Rarity to Keep') },
-			function () { return ('Auto Heirlooms. Keeps the selected rarity of heirloom, recycles all others. Will only display tiers that can currently be obtained based on your highest zone reached and when changed the heirloom mods sections will only display the mods available for that heirloom tier.') },
-			'dropdown', 'Any', ["None", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Magnificent", "Ethereal", "Magmatic", "Plagued", "Radiating", "Hazardous", "Enigmatic"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom, recycles all others.</p>";
+				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
+				description += "<p>When changed the heirloom mods sections will only display the mods available for that heirloom tier.</p>";
+				description += "<p><b>Recommended:</b> Highest tier available</p>";
+				return description;
+			}, 'dropdown', 'Any', ["None"], 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		//Shield Line
 		createSetting('heirloomAutoShield',
 			function () { return ('Shields') },
-			function () { return ('Auto Heirlooms. Enables in-depth shield settings.') },
-			'boolean', false, null, 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Enable to allow you to select the shield modifiers you would like to target.</p>";
+				return description;
+			}, 'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		createSetting('heirloomAutoShieldMod1',
 			function () { return ('Shield: Modifier 1') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Shields with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 0)
@@ -2481,8 +2575,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod2',
 			function () { return ('Shield: Modifier 2') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Shields with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 1)
@@ -2490,8 +2587,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod3',
 			function () { return ('Shield: Modifier 3') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Shields with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 2)
@@ -2499,8 +2599,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod4',
 			function () { return ('Shield: Modifier 4') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Shields with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 5)
@@ -2508,8 +2611,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod5',
 			function () { return ('Shield: Modifier 5') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Shields with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 8)
@@ -2517,8 +2623,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod6',
 			function () { return ('Shield: Modifier 6') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Shields with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 9)
@@ -2526,8 +2635,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoShieldMod7',
 			function () { return ('Shield: Modifier 7') },
-			function () { return ('Auto Heirlooms. Keeps Shields with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Player Efficiency", "Trainer Efficiency", "Storage Size", "Breed Speed", "Trimp Health", "Trimp Attack", "Trimp Block", "Crit Damage", "Crit Chance", "Void Map Drop Chance", "Plaguebringer", "Prismatic Shield", "Gamma Burst", "Inequality"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Shields with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 11)
@@ -2536,14 +2648,19 @@ function initializeAllSettings() {
 		//Staff Line
 		createSetting('heirloomAutoStaff',
 			function () { return ('Staffs') },
-			function () { return ('Auto Heirlooms. Enables in-depth staff settings.') },
-			'boolean', false, null, 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Enable to allow you to select the staff modifiers you would like to target.</p>";
+				return description;
+			}, 'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		createSetting('heirloomAutoStaffMod1',
 			function () { return ('Staff: Modifier 1') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Staffs with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 0)
@@ -2551,8 +2668,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod2',
 			function () { return ('Staff: Modifier 2') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Staffs with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 1)
@@ -2560,8 +2680,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod3',
 			function () { return ('Staff: Modifier 3') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Staffs with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 2)
@@ -2569,8 +2692,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod4',
 			function () { return ('Staff: Modifier 4') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Staffs with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 5)
@@ -2578,8 +2704,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod5',
 			function () { return ('Staff: Modifier 5') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Staffs with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 7)
@@ -2587,8 +2716,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod6',
 			function () { return ('Staff: Modifier 6') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Staffs with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 9)
@@ -2596,8 +2728,11 @@ function initializeAllSettings() {
 
 		createSetting('heirloomAutoStaffMod7',
 			function () { return ('Staff: Modifier 7') },
-			function () { return ('Auto Heirlooms. Keeps Staffs with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Food Drop Rate", "Wood Drop Rate", "Metal Drop Rate", "Gem Drop Rate", "Fragment Drop Rate", "Farmer Efficiency", "Lumberjack Efficiency", "Miner Efficiency", "Dragimp Efficiency", "Explorer Efficiency", "Scientist Efficiency", "Pet Exp", "Parity Power"], 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>Keeps Staffs with selected mod.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 11)
@@ -2606,28 +2741,36 @@ function initializeAllSettings() {
 		//Core Line
 		createSetting('heirloomAutoCore',
 			function () { return ('Cores') },
-			function () { return ('Auto Heirlooms. Enables in-depth core settings.') },
+			function () { return ('Enables in-depth core settings.') },
 			'boolean', false, null, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod1',
 			function () { return ('Cores: Modifier 1') },
-			function () { return ('Auto Heirlooms. Keeps Cores with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
+			function () {
+				var description = "<p>Keeps Cores with selected mod.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod2',
 			function () { return ('Cores: Modifier 2') },
-			function () { return ('Auto Heirlooms. Keeps Cores with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
+			function () {
+				var description = "<p>Keeps Cores with selected mod.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod3',
 			function () { return ('Cores: Modifier 3') },
-			function () { return ('Auto Heirlooms. Keeps Cores with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
+			function () {
+				var description = "<p>Keeps Cores with selected mod.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod4',
 			function () { return ('Cores: Modifier 4') },
-			function () { return ('Auto Heirlooms. Keeps Cores with selected mod.') },
-			'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
+			function () {
+				var description = "<p>Keeps Cores with selected mod.</p>";
+				return description;
+			}, 'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 	}
 
@@ -2805,11 +2948,7 @@ function initializeAllSettings() {
 			function () { return ('Disable AT in TW') },
 			function () { return ('Will disable all of AT\'s features during time warp.') },
 			'boolean', false, null, 'Display', [0]);
-	}
 
-	//Spam
-	const displaySpam = true;
-	if (displaySpam) {
 		createSetting('spamMessages',
 			function () { return ('Spam Message Settings') },
 			function () { return ('Click to adjust settings.') },
@@ -3299,9 +3438,8 @@ function modifyParentNodeUniverseSwap() {
 	var radonon_pandemonium = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.pandemonium.require()) ? 'show' : 'hide';
 	var radonon_desolation = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.desolation.require()) ? 'show' : 'hide';
 
-	var radonon_heirloom = getPageSetting('radonsettings') === 1 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
 	var radonoff = getPageSetting('radonsettings') === 0 ? 'show' : 'hide';
-	var radonoff_heirloom = getPageSetting('radonsettings') === 0 && getPageSetting('heirloomAuto') ? 'show' : 'hide';
+	var heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
 
 	//Core
 	modifyParentNode("radonsettings", 'show');
@@ -3370,16 +3508,11 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("heirloomSpire", 'show');
 	modifyParentNode("heirloomSwapZoneC3", 'show');
 	modifyParentNode("heirloomStaffVoid", 'show');
-	if (getPageSetting('radonsettings') === 0) {
-		modifyParentNode("heirloomAutoRareToKeep", radonoff_heirloom);
-		modifyParentNode("heirloomAutoShieldMod7", radonoff_heirloom);
-		modifyParentNode("heirloomAutoStaffMod7", radonoff_heirloom);
-	}
-	//Radon Settings
-	if (getPageSetting('radonsettings') === 1) {
-		modifyParentNode("heirloomAutoRareToKeep", radonon_heirloom);
-		modifyParentNode("heirloomAutoShieldMod7", radonon_heirloom);
-	}
+	modifyParentNode("heirloomStaffResource", 'show');
+
+	modifyParentNode("heirloomAutoRareToKeep", heirloom);
+	modifyParentNode("heirloomAutoShieldMod7", heirloom);
+	modifyParentNode("heirloomAutoStaffMod7", heirloom);
 	//Golden Upgrades
 	//Helium Settings
 	//Radon Settings
@@ -3752,16 +3885,6 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 
 function autoHeirloomOptions() {
 	var hze = game.stats.highestLevel.valueTotal();
-	var heirloomOptions = ['None', 'Shields', 'Staffs', 'All'];
-	if (currSettingUniverse === 1 && hze >= 200) heirloomOptions.push('Cores');
-
-	var heirloomText = '<b>Shields: </b>Keeps Shields and nothing else.'
-	heirloomText += '<br><b>Staffs: </b>Keeps Staffs and nothing else.'
-	heirloomText += '<br><b>All: Will keep all heirlooms.'
-	if (currSettingUniverse === 1 && hze >= 200) heirloomText += '<br><b>Cores: </b>Keeps Cores and nothing else.'
-
-	autoTrimpSettings.heirloomAutoTypeToKeep.name = function () { return (heirloomOptions) }
-	autoTrimpSettings.heirloomAutoTypeToKeep.description = function () { return (heirloomText) }
 
 	if (currSettingUniverse === 2) {
 		var hze = game.stats.highestLevel.valueTotal();

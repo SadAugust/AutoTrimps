@@ -505,7 +505,7 @@ function doPortal(challenge, squared) {
 	if (portalUniverse === 2) {
 		hypoPackratReset(challenge);
 		var preset = challengeSquaredMode || challenge === 'Mayhem' || challenge === 'Pandemonium' || challenge === 'Desolation' ? 3 : game.global.selectedChallenge === 'Daily' ? 2 : 1;
-		if (getPageSetting('presetSwapMutators', 2) && autoTrimpSettings['presetMutations'].value['preset' + preset] !== '') {
+		if (getPageSetting('presetSwapMutators', 2) && JSON.parse(localStorage.getItem("mutatorPresets"))['preset' + preset] !== '') {
 			u2Mutations.toggleRespec();
 		}
 	}
