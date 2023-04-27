@@ -233,7 +233,7 @@ function parse_inputs() {
 	if (preset == 'trapper' && (!game || game.global.challengeActive != 'Trapper'))
 		throw 'This preset requires a save currently running Trapper². Start a new run using “Trapper² (initial)”, export, and try again.';
 	var result = {
-		total_he: (countHeliumSpent() + game.global.heliumLeftover) - (!portalWindowOpen ? game.resources.helium.owned : 0),
+		total_he: game.global.totalHeliumEarned - (!portalWindowOpen ? game.resources.helium.owned : 0),
 		zone: game.stats.highestLevel.valueTotal(),
 		perks: parse_perks('', $$('#unlocks').value),
 		weight: {

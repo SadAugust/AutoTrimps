@@ -2549,7 +2549,7 @@ function initializeAllSettings() {
 				description += "<p>When changed the heirloom mods sections will only display the mods available for that heirloom tier.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
-			}, 'dropdown', 'Any', ["None"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'None', ["None"], 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		//Shield Line
@@ -3350,6 +3350,9 @@ function settingChanged(id, currUniverse) {
 		if (id === 'radonsettings') {
 			modifyParentNodeUniverseSwap(true);
 		}
+		if (id === 'heirloomAutoRareToKeep') {
+			autoHeirloomOptions(true);
+		}
 		if (btn === autoTrimpSettings.dailyPortalStart) {
 			document.getElementById('dailyPortalStart').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn[enabled]);
 		}
@@ -3883,10 +3886,11 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 }
 
 function autoHeirloomOptions() {
-	var hze = game.stats.highestLevel.valueTotal();
+
+	var heirloomOptions = ['None', 'Shields', 'Staffs', 'All'];
 
 	if (currSettingUniverse === 2) {
-		var hze = game.stats.highestLevel.valueTotal();
+		var hze = game.stats.highestRadLevel.valueTotal();
 		var heirloomTiersAvailable = ['Plagued', 'Radiating'];
 		if (hze >= 100) heirloomTiersAvailable.push('Hazardous');
 		if (hze >= 200) heirloomTiersAvailable.push('Enigmatic');
@@ -3914,7 +3918,7 @@ function autoHeirloomOptions() {
 
 	var heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 	var heirloomSlots = [1, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7];
-	var raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep'), currSettingUniverse);
+	var raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse));
 	var settingsToChange = heirloomSlots[raretokeep];
 
 	var shieldMods = ["Empty"];
