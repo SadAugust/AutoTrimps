@@ -1548,77 +1548,134 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipCapAttack',
 			function () { return ('AE: Weapon Cap') },
-			function () { return ('What level to stop buying Weapons at.') },
-			'value', 50, null, "Equipment", [1, 2],
+			function () {
+				var description = "<p>The value you want weapon equipment to stop being purchased at.</p>";
+				description += "<p><b>Recommended:</b> 250</p>";
+				return description;
+			}, 'value', 250, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipCapHealth',
 			function () { return ('AE: Armour Cap') },
-			function () { return ('What level to stop buying Armour at.') },
-			'value', 50, null, "Equipment", [1, 2],
+			function () {
+				var description = "<p>The value you want armor equipment to stop being purchased at.</p>";
+				description += "<p><b>Recommended:</b> 250</p>";
+				return description;
+			}, 'value', 50, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipZone',
 			function () { return ('AE: Zone') },
-			function () { return ('What zone to stop caring about H:D and buy as much prestiges and equipment as possible. <br><br>Can input multiple zones such as \'200\,231\,251\', doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input.') },
-			'multiValue', -1, null, "Equipment", [1, 2],
+			function () {
+				var description = "<p>What zone to stop caring about what percentage of resources you're spending and buy as many prestiges and equipment as possible. It will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available.</p>";
+				description += "<p>Can input multiple zones such as <b>200,231,251</b>, doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input.</p>";
+				description += "<p><b>Recommended:</b> 999</p>";
+				return description;
+			}, 'multiValue', -1, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipPercent',
 			function () { return ('AE: Percent') },
-			function () { return ('What percent of resources to spend on equipment before the zone you have set in AE: Zone.') },
-			'value', 1, null, "Equipment", [1, 2],
+			function () {
+				var description = "<p>What percent of resources you'd like to spend on equipment.</p>";
+				description += "<p>Both <b>AE: HD Cut-off</b> and <AE: Zone</b> will override this input when they are active and set it to 100.</p>";
+				description += "<p><b>Recommended:</b> 10</p>";
+				return description;
+			}, 'value', 1, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipPortal',
 			function () { return ('AE: Portal') },
-			function () { return ('Makes sure Auto Equip is on after portalling. Turn this off to disable this and remember your choice.') },
-			'boolean', false, null, "Equipment", [1, 2]);
+			function () {
+				var description = "<p>Will ensure Auto Equip is enabled after portalling.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, "Equipment", [1, 2]);
 		createSetting('equip2',
 			function () { return ('AE: 2') },
-			function () { return ('Always buys level 2 of weapons and armor regardless of efficiency.') },
-			'boolean', true, null, "Equipment", [1, 2],
+			function () {
+				var description = "<p>Will also purchase a second level of weapons and armor regardless of efficiency.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipPrestige',
 			function () { return (['AE: Prestige Off', 'AE: Prestige', 'AE: Always Prestige']) },
 			function () {
-				return ('\
-	<b>AE: Prestige Off</b><br>Will go for a new prestige when you have 6 or more levels in your equipment.<br><br>\
-	<b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run Atlantrimp (will buy any prestiges that cost less than 8% of your current metal).<br><br>\
-	<b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.')
-			},
-			'multitoggle', 0, null, "Equipment", [1, 2],
+				var description = "<p>Will control how prestiges are purchased.</p>";
+				description += "<p><b>AE: Prestige Off</b><br>Will only purchase prestiges when you have 6 or more levels in your that piece of equipment.</p>";
+				description += "<p><b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run Atlantrimp.";
+				description += "<br><b>If Atlantrimp has been run it will buy any prestiges that cost less than 8% of your current resources then spend your remaining resources on equipment levels.</b></p>"
+				description += "<p><b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.</p>";
+				description += "<p><b>Recommended:</b> AE: Prestige</p>";
+				return description;
+			}, 'multitoggle', 0, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipHighestPrestige',
 			function () { return ('AE: Highest Prestige') },
-			function () { return ('Will only buy equips for the highest prestige currently owned.') },
-			'boolean', true, null, "Equipment", [1, 2],
+			function () {
+				var description = "<p>Will only buy equips for the highest prestige currently owned.</p>";
+				description += "<p><b>This setting can cause some inefficient purchases if you have a single prestiged item and the rest at a lower prestige level.</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse) && getPageSetting('equipPrestige', currSettingUniverse) !== 0) });
 		createSetting('equipEfficientEquipDisplay',
 			function () { return ('AE: Highlight Equips') },
-			function () { return ('Will highlight the most efficient equipment or prestige to buy. <b>This setting will disable the default game setting.') },
-			'boolean', true, null, "Equipment", [1, 2]);
+			function () {
+				var description = "<p>Will highlight the most efficient equipment or prestige to buy.</p>";
+				description += "<p><b>This setting will disable the default game setting.</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, "Equipment", [1, 2]);
 		createSetting('equipShieldBlock',
 			function () { return ('Buy Shield Block') },
-			function () { return ('Will buy the shield block upgrade. CAUTION: If you are progressing past zone 60, you probably don\'t want this.') },
-			'boolean', false, null, "Equipment", [1],
+			function () {
+				var description = "<p>Will allow the purchase of the shield block upgrade.</p>";
+				description += "<p><b>If you are progressing past zone 50, you probably don\'t want this.</b></p>";
+				description += "<p><b>Recommended:</b> On until you can reach z50</p>";
+				return description;
+			}, 'boolean', false, null, "Equipment", [1],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipNoShields',
 			function () { return ('AE: No Shields') },
-			function () { return ('Will stop AT from buying Shield prestiges or upgrades when they\'re available.') },
-			'boolean', false, null, "Equipment", [2],
+			function () {
+				var description = "<p>Will stop the purchase of Shield equipment levels & prestiges.</p>";
+				description += "<p><b>This is only ever useful in very niche scenarios.</b></p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, "Equipment", [2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 
 		createSetting('Prestige',
 			function () { return ('Prestige') },
 			function () {
-				return ('Acquire prestiges through the selected item (inclusive) as soon as they are available in maps. Forces equip first mode. Automap must be enabled. THIS IS AN IMPORTANT SETTING related to speed climbing and should probably always be on something. If you find the script getting stuck somewhere, particularly where you should easily be able to kill stuff, setting this to an option lower down in the list will help ensure you are more powerful at all times, but will spend more time acquiring the prestiges in maps.<br> <b>DISABLED UNTIL EXPLORERS ARE UNLOCKED</b>')
+				var description = "<p>Acquire prestiges through the selected item (inclusive) as soon as they are available in maps.</p>";
+				description += "<p><b>Forces equip first mode.<br>Auto Maps must be enabled.</b></p>";
+				description += "<p><b>DISABLED UNTIL EXPLORERS ARE UNLOCKED</b></p>";
+				description += "<p>This is important for speed climbing while climbing through the world. If you find the script getting stuck somewhere, particularly where you should easily be able to kill stuff, setting this to an option lower down in the list will help ensure you are more powerful at all times, but will spend more time acquiring the prestiges in maps.</p>";
+				description += "<p><b>Recommended:</b> Dagadder</p>";
+				return description;
 			},
 			'dropdown', 'Off', ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'], "Equipment", [1, 2]);
 		createSetting('ForcePresZ',
 			function () { return ('Force Prestige Z') },
-			function () { return ('On and after this zone is reached, always try to prestige for everything immediately, ignoring Dynamic Prestige settings and overriding that of Linear Prestige. Prestige Skip mode will exit this. Disable with -1.') },
-			'value', -1, null, "Equipment", [1, 2]);
+			function () {
+				var description = "<p>On and after this zone is reached, always try to prestige for everything immediately, ignoring Dynamic Prestige settings and overriding that of Linear Prestige. </p>";
+				description += "<p><b>Prestige Skip mode will exit this.</b></p>";
+				description += "<p><b>Disable with -1.</b></p>";
+				description += "<p><b>Recommended:</b> The zone you start heavily slowing down</p>";
+				return description;
+			}, 'value', -1, null, "Equipment", [1, 2]);
 		createSetting('PrestigeSkip1_2',
 			function () { return (['Prestige Skip Off', 'Prestige Skip 1 & 2', 'Prestige Skip 1', 'Prestige Skip 2']) },
-			function () { return ('<b>Prestige Skip 1:</b> If there are more than 2 Unbought Prestiges (besides Shield), ie: sitting in your upgrades window but you cant afford them, AutoMaps will not enter Prestige Mode, and/or will exit from it. The amount of unboughts can be configured with this variable MODULES[\\"maps\\"].SkipNumUnboughtPrestiges = 2; <br><b>Prestige Skip 2:</b> If there are 2 or fewer <b>Unobtained Weapon Prestiges in maps</b>, ie: there are less than 2 types to run for, AutoMaps will not enter Prestige Mode, and/or will exit from it. For users who tends to not need the last few prestiges due to resource gain not keeping up. The amount of unboughts can be configured with MODULES.maps.UnearnedPrestigesRequired. If PrestigeSkipMode is enabled, both conditions need to be reached before exiting.') },
-			'multitoggle', 0, null, "Equipment", [1, 2]);
+			function () {
+				var description = "<p>Master switch for whether the script will do any form of mapping.</p>";
+
+				description += "<p><b>Prestige Skip Off</b><br>Disables this setting.</p>";
+
+				description += "<p><b>Prestige Skip 1</b><br>If there are more than 2 Unbought Prestiges (besides Shield), ie: sitting in your upgrades window but you cant afford them, Auto Maps will not enter Prestige Mode, and/or will exit from it.</p>";
+
+				description += "<p><b>Prestige Skip 2</b><br>If there are 2 or fewer <b>Unobtained Weapon Prestiges in maps</b>, ie: there are less than 2 types to run for, AutoMaps will not enter Prestige Mode, and/or will exit from it. For users who tends to not need the last few prestiges due to resource gain not keeping up.</p>";
+				description += "<p><b>Recommended:</b> Prestige Skip Off</p>";
+				return description;
+			}, 'multitoggle', 0, null, "Equipment", [1, 2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
