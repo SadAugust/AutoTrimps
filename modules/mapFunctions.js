@@ -395,7 +395,7 @@ function voidMaps(hdStats) {
 				portalAfter: true,
 			}
 			module.portalAfterVoids = true;
-			module.voidTrigger = autoTrimpSettings.HeliumHrPortal.name()[portalSetting];
+			module.voidTrigger = autoTrimpSettings.heliumHrPortal.name()[portalSetting];
 			if (defaultSettings.boneCharge && Number(module.rVoidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
 			module.rVoidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
 		} else {
