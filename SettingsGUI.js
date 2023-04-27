@@ -2326,7 +2326,7 @@ function initializeAllSettings() {
 		createSetting('heirloomShield',
 			function () { return ('Shields') },
 			function () {
-				"<p>Master switch for whether the script will Shield related heirloom swapping.</p>";
+				var description = "<p>Master switch for whether the script will Shield related heirloom swapping.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -2336,10 +2336,9 @@ function initializeAllSettings() {
 		createSetting('heirloomInitial',
 			function () { return ('Initial') },
 			function () {
-				"<p>Master switch for whether the script will Shield related heirloom swapping.</p>";
+				var description = "<p>Master switch for whether the script will Shield related heirloom swapping.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
-				return description;
 				return ('<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone.')
 			},
 			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
@@ -2397,7 +2396,7 @@ function initializeAllSettings() {
 		createSetting('heirloomStaff',
 			function () { return ('Staffs') },
 			function () {
-				"<p>Master switch for whether the script will Staff related heirloom swapping.</p>";
+				var description = "<p>Master switch for whether the script will Staff related heirloom swapping.</p>";
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
