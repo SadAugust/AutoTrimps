@@ -413,7 +413,6 @@ function mainCleanup() {
 	}
 
 	if (aWholeNewWorld || currentworld === 1) {
-		toggleStatus(true);
 		toggleHeHr(true);
 	}
 

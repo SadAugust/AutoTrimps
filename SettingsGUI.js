@@ -24,7 +24,7 @@ function automationMenuInit() {
 	fightButtonCol.appendChild(autoMapsContainer);
 
 	var autoMapsStatusContainer = document.createElement("DIV");
-	autoMapsStatusContainer.setAttribute("style", "display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
+	autoMapsStatusContainer.setAttribute("style", "display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
 	autoMapsStatusContainer.setAttribute("onmouseout", 'tooltip("hide")');
 	var autoMapsStatusText = document.createElement("SPAN");
 	autoMapsStatusText.id = 'autoMapStatus';
@@ -673,7 +673,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Abandons " + cinf() + "s when this zone is reached.</p>";
 				description += "<p><b>It's recommended to only use <b>" + cinf() + " Runner Set Values</b> at endgame or if you're active.</b></p>";
-				description += "<p><b>IF ENABLED " + cinf() + " RUNNERS FINISH ZONE WILL OVERRIDE THIS</b></p>";
+				description += "<p><b>IF ENABLED " + cinf() + " RUNNERS PORTAL ZONE WILL OVERRIDE THIS</b></p>";
 				description += "<p>If set to -1 it will disable this setting.</p>";
 				description += "<p>Recommended: Zones ending with 0 for most " + cinf() + " runs.</p>";
 				return description;
@@ -1645,6 +1645,7 @@ function initializeAllSettings() {
 			function () { return ('Hits Survived') },
 			function () {
 				var description = "<p>Will farm until you can survive this amount of attacks.</p>";
+				description += "<p><b>Your Hits Survived can be seen in the Auto Maps status tooltip.</b></p>";
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
 				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 2 for earlygame, gradually increase the further you progress</p>";
 				if (currSettingUniverse === 2) description += "<p><b>Recommended:</b> 2 for earlygame, gradually increase the further you progress.<br><b>DO NOT SET ABOVE 1 WHEN USING AUTO EQUALITY: ADVANCED</b></p>";
@@ -1664,6 +1665,7 @@ function initializeAllSettings() {
 			function () { return ('Map Bonus Ratio') },
 			function () {
 				var description = "<p>Map Bonus stacks will be obtained when above this HD (enemyHealth:trimpDamage) Ratio value.</p>";
+				description += "<p><b>Your HD Ratio can be seen in the Auto Maps status tooltip.</b></p>";
 				description += "<p><b>Recommended:</b> 4</p>";
 				return description;
 			}, 'value', 4, null, "Maps", [1, 2]);
@@ -1690,6 +1692,7 @@ function initializeAllSettings() {
 			function () { return ('HD Farm Settings') },
 			function () {
 				var description = "<p>Here you can select how and when you would like HD (enemyHealth:trimpDamage) Ratio farming to be run.</p>";
+				description += "<p><b>Your HD Ratio can be seen in the Auto Maps status tooltip.</b></p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
 				return description;
@@ -2716,10 +2719,6 @@ function initializeAllSettings() {
 			function () { return ('Enhance Grids') },
 			function () { return ('Apply slight visual enhancements to world and map grids that highlights with drop shadow all the exotic, powerful, skeletimps and other special imps.') },
 			'boolean', false, null, 'Display', [0]);
-		createSetting('displayAutoMapStatus',
-			function () { return ('AutoMap Status') },
-			function () { return ('Enables the display of the map status. Turn this off to reduce memory.') },
-			'boolean', true, null, 'Display', [1, 2]);
 		createSetting('displayHeHr',
 			function () { return (resourceHour() + '/hr status') },
 			function () { return ('Enables the display of your ' + resource().toLowerCase() + ' per hour. Turn this off to reduce memory.') },
@@ -2799,8 +2798,6 @@ function initializeAllSettings() {
 	//----------------------------------------------------------------------------------------------------------------------
 
 	document.getElementById('battleSideTitle').setAttribute('onclick', 'MODULES["performance"].EnableAFKMode()');
-
-	document.getElementById('displayAutoMapStatus').setAttribute('onclick', 'toggleStatus()');
 	document.getElementById('displayHeHr').setAttribute('onclick', 'toggleHeHr()');
 
 	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
@@ -4328,32 +4325,6 @@ function toggleAutoMaps() {
 
 	document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + getPageSetting('autoMaps'));
 
-	saveSettings();
-}
-
-function toggleStatus(update) {
-	if (update) {
-		if (getPageSetting('displayAutoMapStatus'))
-			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		else
-			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		return
-	}
-
-	if (getPageSetting('displayAutoMapStatus', currSettingUniverse)) {
-		setPageSetting('displayAutoMapStatus', 0, currSettingUniverse);
-		if (game.global.universe === currSettingUniverse) {
-			turnOff('autoMapStatus')
-			document.getElementById('autoMapStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		}
-	}
-	else {
-		setPageSetting('displayAutoMapStatus', 1, currSettingUniverse);
-		if (game.global.universe === currSettingUniverse) {
-			turnOn('autoMapStatus', true)
-			document.getElementById('autoMapStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		}
-	}
 	saveSettings();
 }
 

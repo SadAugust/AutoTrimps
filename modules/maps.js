@@ -26,15 +26,13 @@ if (getAutoStructureSetting().enabled) {
 function updateAutoMapsStatus(get, hdStats) {
 	var status = '';
 
-	if (getPageSetting('displayAutoMapStatus')) {
-		//Setting up status
-		if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
-		else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && (mapSettings.mapName !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness')) status = getCurrentMapObject().name;
-		else if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
-		else if (mapSettings.mapName !== '') status = mapSettings.status;
-		//Advancing
-		else status = 'Advancing';
-	}
+	//Setting up status
+	if (!game.global.mapsUnlocked) status = 'Maps not unlocked!';
+	else if (game.global.mapsActive && getCurrentMapObject().noRecycle && getCurrentMapObject().location !== 'Bionic' && getCurrentMapObject().location !== 'Void' && (mapSettings.mapName !== 'Quagmire Farm' && getCurrentMapObject().location !== 'Darkness')) status = getCurrentMapObject().name;
+	else if (challengeActive('Mapology') && game.challenges.Mapology.credits < 1) status = 'Out of Map Credits';
+	else if (mapSettings.mapName !== '') status = mapSettings.status;
+	//Advancing
+	else status = 'Advancing';
 
 	if (getPageSetting('autoMaps') == 0) status = '[Off] ' + status;
 	var resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';

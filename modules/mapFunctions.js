@@ -2751,7 +2751,7 @@ function hdFarm(hdStats, skipHealthCheck) {
 		} else {
 			status = 'HD&nbsp;Farm&nbsp;to:&nbsp;';
 			if (hdType !== 'maplevel') status += equipfarmdynamicHD(rHDFSettings).toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);
-			else status += '<br>' + (rHDFSettings.hdBase > 0 ? "+" : "") + rHDFSettings.hdBase + ' auto level';
+			else status += '<br>' + (rHDFSettings.hdBase >= 0 ? "+" : "") + rHDFSettings.hdBase + ' Auto Level';
 		}
 		status += '<br>\ Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + rHDFmaxMaps;
 
