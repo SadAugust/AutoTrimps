@@ -153,6 +153,7 @@ function pushSpreadsheetData() {
 		heliumGained *= dailyPercent;
 		heliumHr *= dailyPercent;
 	}
+	dailyMods.replaceAll(',', ';');
 
 	const mapCount = Object.keys(graphData.perZoneData.mapCount)
 		.filter((k) => graphData.perZoneData.mapCount[k] != null)
