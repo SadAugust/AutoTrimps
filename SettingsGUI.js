@@ -318,7 +318,7 @@ function initializeAllSettings() {
 			function () { return ('Portal Zone') },
 			function () {
 				var description = "<p>Will automatically portal once this zone is reached when using the <b>Custom</b> AutoPortal setting.</p>";
-				description += "<p><b>Setting this to 200 would portal when you reach zone 200</b></p>";
+				description += "<p><b>Setting this to 200 would portal when you reach zone 200.</b></p>";
 				description += "<p><b>Recommended:</b> The zone you would like your run to end</p>";
 				return description;
 			}, 'value', '999', null, 'Core', [1, 2],
@@ -565,7 +565,7 @@ function initializeAllSettings() {
 			function () { return ('Daily Portal Zone') },
 			function () {
 				var description = "<p>Will automatically portal once this zone is reached when using the <b>DP: Custom</b> Daily AutoPortal setting.</p>";
-				description += "<p><b>Setting this to 200 would portal when you reach zone 200</b></p>";
+				description += "<p><b>Setting this to 200 would portal when you reach zone 200.</b></p>";
 				description += "<p><b>Recommended:</b> The zone you would like your run to end</p>";
 				return description;
 			}, 'value', '999', null, 'Daily', [1, 2],
@@ -2285,31 +2285,63 @@ function initializeAllSettings() {
 		//Heirloom Swapping
 		createSetting('heirloom',
 			function () { return ('Heirloom Swapping') },
-			function () { return ('Heirloom swapping master button. Turn this on to allow heirloom swapping and its associated settings.') },
-			'boolean', false, null, 'Heirlooms', [1, 2]);
+			function () {
+				var description = "<p>Master switch for whether the script will do any form of heirloom swapping.</p>";
+				description += "<p>Additional settings appear when enabled.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Heirlooms', [1, 2]);
 
 		createSetting('heirloomMapSwap',
 			function () { return ('Map Swap') },
-			function () { return ('Toggle to swap to your afterpush shield when inside maps') },
-			'boolean', false, null, 'Heirlooms', [1, 2],
+			function () {
+				var description = "<p>If below your assigned swap zone this will automatically swap from your <b>Initial</b> shield to your <b>Afterpush</b> (or <b>" + cinf() + "</b> depending on your run) shield when inside of maps.</p>";
+				description += "<p><b>Void shield settings will override this.</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Heirlooms', [1, 2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
+
+		createSetting('heirloomPostVoidSwap',
+			function () { return ('Void PB Swap') },
+			function () {
+				var description = "<p>If you have completed any void maps on your run this will set your swap zone to 0 to maximise damage in your afterpush.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
 
 		createSetting('heirloomVoidSwap',
 			function () { return ('Void PB Swap') },
-			function () { return ('If current enemy is slow and next enemy is fast swaps to your \'Void PB\' shield so that you can maximise PlagueBringer damage going into the next enemy.<br><br>Will only run during Void Maps that aren\'t double attack and won\'t function properly if your Void Shield doesn\'t have PlagueBringer and your Void PB shield has PlagueBringer.') },
-			'boolean', false, null, 'Heirlooms', [2],
+			function () {
+				var description = "<p>When inside Void Maps and your current enemy is slow with your next enemy being fast this will automatically swap to your <b>Void PB</b> shield so that you can maximise PlagueBringer damage going into the next enemy.</p>";
+				description += "<p><b>Won't do anything during double attack voids.</b></p>";
+				description += "<p>Will only work if your <b>Void</b> Shield doesn't have <b>PlagueBringer</b> and your <b>Void PB</b> shield has <b>PlagueBringer</b>.</p>";
+				description += "<p><b>Recommended:</b> Off unless you know what you're doing</p>";
+				return description;
+			}, 'boolean', false, null, 'Heirlooms', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
 
 		//Shield swapping
 		createSetting('heirloomShield',
 			function () { return ('Shields') },
-			function () { return ('Toggle to swap Shields') },
-			'boolean', false, null, 'Heirlooms', [1, 2],
+			function () {
+				"<p>Master switch for whether the script will Shield related heirloom swapping.</p>";
+				description += "<p>Additional settings appear when enabled.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
 
 		createSetting('heirloomInitial',
 			function () { return ('Initial') },
-			function () { return ('<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone.') },
+			function () {
+				"<p>Master switch for whether the script will Shield related heirloom swapping.</p>";
+				description += "<p>Additional settings appear when enabled.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+				return ('<b>First Heirloom to use</b><br><br>Enter the name of your first heirloom. This is the heirloom that you will use before swapping to the second heirloom at the zone you have defined in the HS: Zone.')
+			},
 			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
@@ -2364,8 +2396,12 @@ function initializeAllSettings() {
 		//Staff swapping
 		createSetting('heirloomStaff',
 			function () { return ('Staffs') },
-			function () { return ('Toggle to swap Staffs') },
-			'boolean', false, null, 'Heirlooms', [1, 2],
+			function () {
+				"<p>Master switch for whether the script will Staff related heirloom swapping.</p>";
+				description += "<p>Additional settings appear when enabled.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
 
 		createSetting('heirloomStaffWorld',

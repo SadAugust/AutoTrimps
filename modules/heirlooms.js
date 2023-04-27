@@ -249,6 +249,7 @@ function heirloomShieldToEquip(mapType, query) {
 
 	var swapZone = hdStats.isC3 && (currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0 ? getPageSetting(currChallenge + 'SwapZone') : hdStats.isC3 ? getPageSetting('heirloomSwapZoneC3') : hdStats.isDaily ? getPageSetting('heirloomSwapZoneDaily') : hdStats.isFiller ? getPageSetting('heirloomSwapZone') : 999;
 	if (swapZone === -1) swapZone = 999;
+	if (getPageSetting('heirloomPostVoidSwap') && game.stats.totalVoidMaps.value > 0) swapZone = 0;
 	if (hdStats.isDaily && dailyOddOrEven().active) {
 		if (swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;
 	}
