@@ -3006,17 +3006,16 @@ function initializeAllSettings() {
 			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
 			'boolean', false, null, 'Import Export', [1, 2]);
 
-		if (displaySpam) {
-			createSetting('mutatorPresets',
-				function () { return ('Mutator Preset Settings') },
-				function () { return ('Click to adjust settings.') },
-				'mazDefaultArray', JSON.stringify({
-					preset1: {},
-					preset2: {},
-					preset3: {},
-				}), null, 'Import Export', [0]);
-		}
+		createSetting('mutatorPresets',
+			function () { return ('Mutator Preset Settings') },
+			function () { return ('Click to adjust settings.') },
+			'mazDefaultArray', JSON.stringify({
+				preset1: {},
+				preset2: {},
+				preset3: {},
+			}), null, 'Import Export', [0]);
 	}
+
 
 	//Testing - Hidden Features for testing purposes! Please never seek these out!
 	const displayTesting = true;
