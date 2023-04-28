@@ -410,7 +410,7 @@ function mainCleanup() {
 	if (aWholeNewWorld) {
 		debug("Starting Zone " + game.global.world, "zone");
 		debug("Zone #" + game.global.world + ": Tauntimp (" + game.unlocks.impCount.Tauntimp + "), Magnimp (" + game.unlocks.impCount.Magnimp + "), Whipimp (" + game.unlocks.impCount.Whipimp + "), Venimp (" + game.unlocks.impCount.Venimp + ")", "exotic");
-		debug("Zone # " + game.global.world + ": Total pop (" + prettify(game.resources.trimps.owned) + "), Bone Charge resources (" + boneShrineOutput(1).slice(0, -1) + ")", "run_Stats");
+		debug("Zone # " + game.global.world + ": Total pop (" + prettify(game.resources.trimps.owned) + "), Bone Charge resources (" + boneShrineOutput(1).slice(0, -1).toLowerCase() + ")", "run_Stats");
 	}
 
 	if (aWholeNewWorld || currentworld === 1) {

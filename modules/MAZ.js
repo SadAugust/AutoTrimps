@@ -286,6 +286,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			exotic: false,
 			gather: false,
 			stance: false,
+			run_Stats: false,
 		};
 
 		var msgs = autoTrimpSettings.spamMessages[value];
