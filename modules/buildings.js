@@ -334,7 +334,7 @@ function buyBuildings(hdStats) {
 			const nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
 			const dailyPrefix = challengeActive('Daily') ? 'd' : '';
 
-			var spireNurseryActive = isDoingSpire() && (getPageSetting(dailyPrefix + 'IgnoreSpiresUntil') === 0 || game.global.world >= getPageSetting(dailyPrefix + 'IgnoreSpiresUntil'));
+			var spireNurseryActive = isDoingSpire();
 			var nurseryPreSpire = spireNurseryActive && game.buildings.Nursery.owned < getPageSetting(dailyPrefix + 'PreSpireNurseries') ? getPageSetting(dailyPrefix + 'PreSpireNurseries') : 0;
 
 			var nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, buildingSettings.Nursery.buyMax);

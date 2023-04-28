@@ -11,7 +11,12 @@ MODULES.mapFunctions.workerRatio = null;
 MODULES.mapFunctions.runUniqueMap = '';
 
 function isDoingSpire() {
-	return game.global.spireActive && game.global.world > getPageSetting((challengeActive('Daily') ? 'd' : '') + 'IgnoreSpiresUntil')
+	if (!game.global.spireActive) return false;
+	var settingPrefix = challengeActive('Daily') ? 'd' : '';
+	var spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
+	if (spireNo === -1 || spireNo === 0) return false;
+	var spireZone = (1 + spireNo) * 100;
+	return game.global.world >= spireZone;
 }
 
 function exitSpireCell() {

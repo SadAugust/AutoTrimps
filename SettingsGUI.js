@@ -219,7 +219,7 @@ function initializeAllSettings() {
 				description += "<p><b>Science Research OFF</b><br>Works the same as 'Auto Gather' but stops Science from being gathered.</p>";
 				description += "<p><b>Recommended:</b> Auto Gather</p>";
 				return description;
-			}, 'multitoggle', 1, null, 'Core', [1, 2]);
+			}, 'multitoggle', 0, null, 'Core', [1, 2]);
 		createSetting('upgradeType',
 			function () { return (['Manual Upgrades', 'Buy All Upgrades', 'Upgrades no Coords']) },
 			function () {
@@ -229,14 +229,14 @@ function initializeAllSettings() {
 				description += "<p><b>Upgrades no Coords</b><br>Works the same as 'Buy All Upgrades' but stops Coordination upgrades from being purchased.</p>";
 				description += "<p><b>Recommended:</b> Buy All Upgrades</p>";
 				return description;
-			}, 'multitoggle', 1, null, 'Core', [1, 2]);
+			}, 'multitoggle', 0, null, 'Core', [1, 2]);
 		createSetting('TrapTrimps',
 			function () { return ('Trap Trimps') },
 			function () {
 				var description = "<p>Automatically builds traps and traps trimps when needed. <b>Upgrade setting must be set to 'Buy All Upgrades' for this to work!</b></p>";
 				description += "<p><b>Recommended:</b> On whilst highest zone is below 30 otherwise off</p>";
 				return description;
-			}, 'boolean', true, null, 'Core', [1, 2]);
+			}, 'boolean', false, null, 'Core', [1, 2]);
 		createSetting('autoPerks',
 			function () { return ('Auto Allocate Perks') },
 			function () {
@@ -901,7 +901,7 @@ function initializeAllSettings() {
 				description += "<p><b>Will only function properly with AutoMaps enabled.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, 'C2', [2],
+			}, 'boolean', false, null, 'C2', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 85) });
 		createSetting('questSmithyZone',
 			function () { return ('Q: Smithy Zone') },
@@ -1615,7 +1615,7 @@ function initializeAllSettings() {
 				description += "<p><b>This setting will disable the default game setting.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, "Equipment", [1, 2]);
+			}, 'boolean', false, null, "Equipment", [1, 2]);
 		createSetting('equipShieldBlock',
 			function () { return ('Buy Shield Block') },
 			function () {
@@ -1694,7 +1694,7 @@ function initializeAllSettings() {
 				var description = "<p>Will ensure Auto Maps is enabled after portalling.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, 'Maps', [1, 2]);
+			}, 'boolean', false, null, 'Maps', [1, 2]);
 		createSetting('onlyPerfectMaps',
 			function () { return ('Perfect Maps') },
 			function () {
@@ -1927,31 +1927,50 @@ function initializeAllSettings() {
 	//Spire -- TO DO
 	const displaySpire = true;
 	if (displaySpire) {
-		createSetting('MaxStacksForSpire',
-			function () { return ('Max Map Bonus for Spire') },
-			function () { return ('Get max map bonus before running the Spire.') },
-			'boolean', false, null, 'Spire', [1]);
 		createSetting('IgnoreSpiresUntil',
 			function () { return ('Ignore Spires Until') },
-			function () { return ('Spire specific settings like end-at-cell are ignored until at least this zone is reached (0 to disable).<br>Does not work with Run Bionic Before Spire.') },
-			'value', '200', null, 'Spire', [1]);
+			function () {
+				var description = "<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>";
+				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
+				return description;
+			},
+			'value', '-1', null, 'Spire', [1]);
+
+		createSetting('MaxStacksForSpire',
+			function () { return ('Max Map Bonus for Spire') },
+			function () {
+				var description = "<p>Will get max map bonus stacks when inside of active Spires.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Spire', [1]);
+
 		createSetting('ExitSpireCell',
 			function () { return ('Exit Spire After Cell') },
-			function () { return ('Optional/Rare. Exits the Spire early, after completing cell X. example: 40 for Row 4. (use 0 or -1 to disable)') },
+			function () {
+				var description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
+				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
+				return description;
+			},
 			'value', '-1', null, 'Spire', [1]);
-		createSetting('SpireBreedTimer',
-			function () { return ('Spire Breed Timer') },
-			function () { return ('<b>ONLY USE IF YOU USE VANILLA GA</b>Set a time for your GA in spire. Recommend not touching GA during this time.') },
-			'value', -1, null, 'Spire', [1]);
+
 		createSetting('PreSpireNurseries',
 			function () { return ('Nurseries pre-Spire') },
 			function () { return ('Set the maximum number of Nurseries to build for Spires. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Will build nurseries before z200 for Spire 1, but only on the zone of Spires 2+ to avoid unnecessary burning. Disable with -1.') },
 			'value', -1, null, 'Spire', [1]);
+
+
 		createSetting('hitsSurvivedSpire',
 			function () { return ('Hits Survived') },
 			function () {
-				return ('Will farm until you can survive this amount of attacks while in Spires.<br>\
-				<b>Must be set above 0 to run</b>')
+				var description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
+				description += "<p><b>Your Hits Survived can be seen in the Auto Maps status tooltip.</b></p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 2 for earlygame, gradually increase the further you progress</p>";
+				return description;
 			},
 			'value', 0, null, 'Spire', [1]);
 	}
@@ -2053,7 +2072,7 @@ function initializeAllSettings() {
 		createSetting('autoFight',
 			function () { return (['Better AutoFight OFF', 'Better Auto Fight', 'Vanilla']) },
 			function () { return ('3-Way Button, Recommended. Will automatically handle fighting.<br>BAF = Old Algo (Fights if dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds<br>BAF3 = Uses vanilla autofight and makes sure you fight on portal. <br> WARNING: If you autoportal with BetterAutoFight disabled, the game may sit there doing nothing until you click FIGHT. (not good for afk) ') },
-			'multitoggle', 1, null, "Combat", [1, 2]);
+			'multitoggle', 0, null, "Combat", [1, 2]);
 		createSetting('autoAbandon',
 			function () { return (['AutoAbandon', 'Don\'t Abandon', 'Only Rush Voids']) },
 			function () { return ('<b>Autoabandon:</b> Considers abandoning trimps for void maps/prestiges.<br><b>Don\'t Abandon:</b> Will not abandon troops, but will still agressively autostance even if it will kill you (WILL NOT ABANDON TRIMPS TO DO VOIDS).<br><b>Only Rush Voids:</b> Considers abandoning trimps for void maps, but not prestiges, still autostances aggressively. <br>Made for Empower daily, and you might find this helpful if you\'re doing Workplace Safety feat. Then again with that I strongly recommend doing it fully manually. Anyway, don\'t blame me whatever happens.<br><b>Note:</b> AT will no longer be able to fix when your scryer gets stuck!') },
@@ -2121,7 +2140,7 @@ function initializeAllSettings() {
 		createSetting('UseScryerStance',
 			function () { return ('Enable Scryer Stance') },
 			function () { return ('<b>MASTER BUTTON</b> Activates all other scrying settings, and overrides AutoStance when scryer conditions are met. Leave regular Autostance on while this is active. Scryer gives 2x Resources (Non-' + resource() + '/Nullifium) and a chance for Dark Essence. Once this is on, priority for Scryer decisions goes as such:<br>NEVER USE, FORCE USE, OVERKILL, MIN/MAX ZONE<br><br><b>NO OTHER BUTTONS WILL DO ANYTHING IF THIS IS OFF.</b>') },
-			'boolean', true, null, 'Combat', [1]);
+			'boolean', false, null, 'Combat', [1]);
 		createSetting('ScryerUseWhenOverkill',
 			function () { return ('Use When Overkill') },
 			function () { return ('Overrides everything! Toggles stance when we can Overkill in S, giving us double loot with no speed penalty (minimum one overkill, if you have more than 1, it will lose speed) <b>NOTE:</b> This being on, and being able to overkill in S will override ALL other settings <u>(Except never use in spire)</u>. This is a boolean logic shortcut that disregards all the other settings including Min and Max Zone. If you ONLY want to use S during Overkill, as a workaround: turn this on and Min zone: to 9999 and everything else off(red).') },

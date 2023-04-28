@@ -363,7 +363,6 @@ function mainLoopU1(hdStats) {
 
 	//Spire
 	exitSpireCell();
-	if (getPageSetting('SpireBreedTimer') > 0 && getPageSetting('IgnoreSpiresUntil') <= game.global.world) ATspirebreed();
 }
 
 //U2 functions

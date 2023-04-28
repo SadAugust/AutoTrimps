@@ -77,27 +77,6 @@ function avoidEmpower() {
 
 }
 
-var spirebreeding = false;
-function ATspirebreed() {
-	if (!spirebreeding && getPageSetting('SpireBreedTimer') > 0 && getPageSetting('IgnoreSpiresUntil') <= game.global.world && game.global.spireActive)
-		var prespiretimer = game.global.GeneticistassistSetting;
-	if (getPageSetting('SpireBreedTimer') > 0 && getPageSetting('IgnoreSpiresUntil') <= game.global.world && game.global.spireActive && game.global.GeneticistassistSetting != getPageSetting('SpireBreedTimer')) {
-		spirebreeding = true;
-		if (game.global.GeneticistassistSetting != getPageSetting('SpireBreedTimer'))
-			game.global.GeneticistassistSetting = getPageSetting('SpireBreedTimer');
-	}
-	if (getPageSetting('SpireBreedTimer') > 0 && getPageSetting('IgnoreSpiresUntil') <= game.global.world && !game.global.spireActive && game.global.GeneticistassistSetting == getPageSetting('SpireBreedTimer')) {
-		spirebreeding = false;
-		if (game.global.GeneticistassistSetting == getPageSetting('SpireBreedTimer')) {
-			game.global.GeneticistassistSetting = prespiretimer;
-			toggleGeneticistassist();
-			toggleGeneticistassist();
-			toggleGeneticistassist();
-			toggleGeneticistassist();
-		}
-	}
-}
-
 function fightalways() {
 	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || (game.global.spireActive && game.global.world >= getPageSetting('IgnoreSpiresUntil')))
 		return;
