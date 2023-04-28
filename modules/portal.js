@@ -257,9 +257,10 @@ function c2runnerportal() {
 	if (!getPageSetting('c2RunnerStart')) return;
 	var portalZone = getPageSetting('c2RunnerPortal', portalUniverse)
 	if (getPageSetting('c2RunnerMode') === 1) {
-		if (typeof getPageSetting('c2RunnerSettings')[game.global.challengeActive] !== 'undefined')
+		if (typeof getPageSetting('c2RunnerSettings')[game.global.challengeActive] !== 'undefined') {
+			if (!getPageSetting('c2RunnerSettings')[game.global.challengeActive].enabled) return;
 			portalZone = getPageSetting('c2RunnerSettings')[game.global.challengeActive].zone;
-		else
+		} else
 			return;
 	}
 
