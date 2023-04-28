@@ -459,7 +459,7 @@ function autoEquip(hdStats) {
 				}
 			}
 			if (equipType === 'health') {
-				if (mapSettings.shouldHealthFarm) {
+				if (mapSettings.shouldHealthFarm || (challengeActive('Smithless') && mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0)) {
 					resourceSpendingPct = 1;
 					zoneGo = true;
 				}

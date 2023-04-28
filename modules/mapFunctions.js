@@ -2570,11 +2570,14 @@ function smithless() {
 			smithlessMapLevel = mapAutoLevel;
 		}
 
-		var name = game.global.gridArray[0].name
+		var name = game.global.gridArray[0].name;
 		var gammaDmg = gammaBurstPct;
-		var equalityAmt = equalityQuery(name, game.global.world, 1, 'world', 1, 'gamma')
+		var equalityAmt = equalityQuery(name, game.global.world, 1, 'world', 1, 'gamma');
 		var ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
 		var ourDmgTenacity = ourDmg;
+
+		var gammas = 10 % gammaMaxStacks();
+		var regularHits = 10 - (gammas * gammaMaxStacks());
 
 		//Map Bonus
 		if (game.global.mapBonus > 0 && game.global.mapBonus !== 10) {
@@ -2592,21 +2595,21 @@ function smithless() {
 		ourDmgTenacity *= getZoneMinutes() > 100 ? 1 : 1.5;
 		if (equipsToGet((game.global.world + smithlessMapLevel)) > 0) ourDmgTenacity *= 1000;
 
-		var totalDmgTenacity = (ourDmgTenacity * 2 + (ourDmgTenacity * gammaDmg * 2))
+		var totalDmgTenacity = ((ourDmgTenacity * regularHits) + (ourDmgTenacity * gammaDmg * gammas))
 
 		var enemyHealth = calcEnemyHealthCore('world', game.global.world, 1, name);
 		enemyHealth *= 3e15;
 		const smithyThreshhold = [1, 0.01, 0.000001];
 		const smithyThreshholdIndex = [0.000001, 0.01, 1];
-
 		while (smithyThreshhold.length > 0 && totalDmgTenacity < (enemyHealth * smithyThreshhold[0])) {
 			smithyThreshhold.shift();
 		}
+		enemyHealth *= smithyThreshhold[0];
 
 		if (smithyThreshhold.length === 0) return farmingDetails;
 
-		var totalDmg = (ourDmg * 2 + (ourDmg * gammaDmg * 2))
-		var damageTarget = (enemyHealth * smithyThreshhold[0]) / totalDmg;
+		var totalDmg = ((ourDmg * regularHits) + (ourDmg * gammaDmg * gammas))
+		var damageTarget = enemyHealth / totalDmg;
 
 		if (totalDmg < enemyHealth) {
 			shouldSmithless = true;
@@ -2622,6 +2625,7 @@ function smithless() {
 		farmingDetails.special = smithlessSpecial;
 		farmingDetails.jobRatio = smithlessJobRatio;
 		farmingDetails.damageTarget = damageTarget;
+		farmingDetails.equality = equalityAmt;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 
