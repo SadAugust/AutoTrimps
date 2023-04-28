@@ -1170,6 +1170,10 @@ function messageConfigHoverAT(what, event) {
 			text = "Logs when AT decides to change stance and what it changes to.";
 			title = "Stance";
 			break;
+		case 'run_Stats':
+			text = "Logs the total trimps you have and how many resources you'd gain from a bone charge when entering a new zone.";
+			title = "Run Stats";
+			break;
 		default: return;
 	}
 	document.getElementById('messageConfig').innerHTML = "<b>" + title + "</b> - " + text;

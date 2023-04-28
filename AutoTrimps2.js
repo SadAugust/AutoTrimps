@@ -1,5 +1,5 @@
 var MODULES_AT = {
-	ATversion: 'SadAugust v6.2.7',
+	ATversion: 'SadAugust v6.2.8',
 	atscript: document.getElementsByTagName("script"),
 	basepath: '',
 	modulepath: 'modules/'
@@ -410,6 +410,7 @@ function mainCleanup() {
 	if (aWholeNewWorld) {
 		debug("Starting Zone " + game.global.world, "zone");
 		debug("Zone #" + game.global.world + ": Tauntimp (" + game.unlocks.impCount.Tauntimp + "), Magnimp (" + game.unlocks.impCount.Magnimp + "), Whipimp (" + game.unlocks.impCount.Whipimp + "), Venimp (" + game.unlocks.impCount.Venimp + ")", "exotic");
+		debug("Zone # " + game.global.world + ": Total pop (" + prettify(game.resources.trimps.owned) + "), Bone Charge resources (" + boneShrineOutput(1).slice(0, -1) + ")", "run_Stats");
 	}
 
 	if (aWholeNewWorld || currentworld === 1) {
@@ -418,7 +419,6 @@ function mainCleanup() {
 
 	if (getPageSetting('autoEggs', 1))
 		easterEggClicked();
-
 }
 
 function throwErrorfromMain() {

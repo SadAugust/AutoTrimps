@@ -390,6 +390,9 @@ function debug(message, b, icon) {
 		case 'stance':
 			p = settingArray[b];
 			break;
+		case 'run_Stats':
+			p = settingArray[b];
+			break;
 	}
 	p && (console.log(timeStamp() + ' ' + message), message2(message, 'AutoTrimps', icon, b))
 }

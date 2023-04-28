@@ -4804,8 +4804,12 @@ function updateATVersion() {
 			autoTrimpSettings['firstGigastation'].value = tempSettings.FirstGigastation.value;
 			autoTrimpSettings['deltaGigastation'].value = tempSettings.DeltaGigastation.value;
 			autoTrimpSettings['autoGigas'].value = tempSettings.AutoGigas.enabled;
-			autoTrimpSettings['customTargetZone'].enabled = tempSettings.CustomTargetZone.value;
-			autoTrimpSettings['customDeltaFactor'].enabled = tempSettings.CustomDeltaFactor.value;
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.8') {
+			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (tempSettings.spamMessages !== undefined)
+				autoTrimpSettings['spamMessages'].value.run_Stats = false;
 		}
 
 		autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
