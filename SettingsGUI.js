@@ -321,7 +321,7 @@ function initializeAllSettings() {
 				description += "<p><b>Setting this to 200 would portal when you reach zone 200.</b></p>";
 				description += "<p><b>Recommended:</b> The zone you would like your run to end</p>";
 				return description;
-			}, 'value', '999', null, 'Core', [1, 2],
+			}, 'value', 999, null, 'Core', [1, 2],
 			function () {
 				return (
 					getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 3' || getPageSetting('autoPortal', currSettingUniverse) === 'Custom')
@@ -334,7 +334,7 @@ function initializeAllSettings() {
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> The minimum zone you would like your run to reach</p>";
 				return description;
-			}, 'value', '-1', null, 'Core', [1, 2],
+			}, 'value', -1, null, 'Core', [1, 2],
 			function () {
 				return (
 					getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
@@ -347,7 +347,7 @@ function initializeAllSettings() {
 				description += "<p><b>Set to 0 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> 4</p>";
 				return description;
-			}, 'value', '0', null, 'Core', [1, 2],
+			}, 'value', 0, null, 'Core', [1, 2],
 			function () {
 				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
 			});
@@ -403,7 +403,7 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Daily -- U2+Portal descriptions done! Still need to finish U1 settings for Windstacking/Spire.
+	//Daily -- U2+Portal descriptions done! Still need to finish U1 settings for Windstacking.
 	const displayDaily = true
 	if (displayDaily) {
 		createSetting('buyheliumy',
@@ -426,7 +426,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> DFA: Off</p>";
 				return description;
 			},
-			'multitoggle', '0', null, 'Daily', [1]);
+			'multitoggle', 0, null, 'Daily', [1]);
 		createSetting('avoidEmpower',
 			function () { return ('Avoid Empower') },
 			function () {
@@ -446,16 +446,32 @@ function initializeAllSettings() {
 
 		createSetting('dIgnoreSpiresUntil',
 			function () { return ('Daily Ignore Spires Until') },
-			function () { return ('Spire specific settings like end-at-cell are ignored until at least this zone is reached in Dailies (0 to disable).') },
-			'value', '200', null, 'Daily', [1]);
+			function () {
+				var description = "<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>";
+				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
+				return description;
+			}, 'value', -1, null, 'Daily', [1]);
 		createSetting('dExitSpireCell',
 			function () { return ('Daily Exit Spire Cell') },
-			function () { return ('What cell to exit spire in dailys.') },
-			'value', -1, null, 'Daily', [1]);
+			function () {
+				var description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
+				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
+				description += "<p>Any health or damage calculations for the Spire will be based off this if set.</p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b>-1</p>";
+				return description;
+			}, 'value', -1, null, 'Daily', [1]);
 		createSetting('dPreSpireNurseries',
 			function () { return ('Daily Nurseries pre-Spire') },
-			function () { return ('Set the maximum number of Nurseries to build for Spires in Dailies. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Disable with -1.') },
-			'value', -1, null, 'Daily', [1]);
+			function () {
+				var description = "<p>Set the number of <b>Nurseries</b> to build during active Spires.</p>";
+				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT AutoStructure</b> setting.</b></p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> -1</p>";
+				return description;
+			}, 'value', -1, null, 'Daily', [1]);
 
 		createSetting('use3daily',
 			function () { return ('Daily Windstacking') },
@@ -464,17 +480,17 @@ function initializeAllSettings() {
 		createSetting('dWindStackingMin',
 			function () { return ('Daily Windstack Min Zone') },
 			function () { return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set for dailys. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from Daily WS MAX work off this setting.') },
-			'value', '-1', null, 'Daily', [1],
+			'value', -1, null, 'Daily', [1],
 			function () { return (autoTrimpSettings.use3daily.enabled) });
 		createSetting('dWindStackingMinHD',
 			function () { return ('Daily Windstack H:D') },
 			function () { return ('For use with Windstacking Stance in Dailies, fiddle with this to maximise your stacks in wind zones for Dailies. If H:D is above this setting it will not use W stance. If it is below it will.') },
-			'value', '-1', null, 'Daily', [1],
+			'value', -1, null, 'Daily', [1],
 			function () { return (autoTrimpSettings.use3daily.enabled) });
 		createSetting('dWindStackingMax',
 			function () { return ('Daily Windstack Stacks') },
 			function () { return ('For use with Windstacking Stance in Dailies. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190. In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment.') },
-			'value', '200', null, 'Daily', [1],
+			'value', 200, null, 'Daily', [1],
 			function () { return (autoTrimpSettings.use3daily.enabled) });
 		createSetting('liqstack',
 			function () { return ('Stack Liquification') },
@@ -539,7 +555,7 @@ function initializeAllSettings() {
 				description += "<p><b>DP: Custom</b><br>Will portal into the challenge selected in the <b>DP: Challenge</b> setting at the zone specified in the <b>Daily Portal Zone</b> setting.</p>";
 				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "DP: Custom with a specified endzone to make use of the Scruffy level 3 ability" : ("DP: " + resourceHour() + "/Hr")) + "</p>";
 				return description;
-			}, 'multitoggle', '0', null, 'Daily', [1, 2]);
+			}, 'multitoggle', 0, null, 'Daily', [1, 2]);
 
 		createSetting('dailyHeliumHourChallenge',
 			function () { return ('DP: Challenge') },
@@ -569,7 +585,7 @@ function initializeAllSettings() {
 				description += "<p><b>Setting this to 200 would portal when you reach zone 200.</b></p>";
 				description += "<p><b>Recommended:</b> The zone you would like your run to end</p>";
 				return description;
-			}, 'value', '999', null, 'Daily', [1, 2],
+			}, 'value', 999, null, 'Daily', [1, 2],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) >= 2) });
 
 		createSetting('dailyDontPortalBefore',
@@ -580,7 +596,7 @@ function initializeAllSettings() {
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> The minimum zone you would like your run to reach</p>";
 				return description;
-			}, 'value', '999', null, 'Daily', [1, 2],
+			}, 'value', 999, null, 'Daily', [1, 2],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1) });
 
 		createSetting('dailyHeliumHrBuffer',
@@ -591,7 +607,7 @@ function initializeAllSettings() {
 				description += "<p><b>Set to 0 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> 1.25</p>";
 				return description;
-			}, 'value', '0', null, 'Daily', [1, 2],
+			}, 'value', 0, null, 'Daily', [1, 2],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1) });
 
 		createSetting('dailyHeliumHrPortal',
@@ -760,7 +776,7 @@ function initializeAllSettings() {
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> Desired challenge end goal</p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [1, 2],
+			}, 'value', -1, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
 		createSetting('c2RunnerPercent',
 			function () { return (cinf() + ' Runner %') },
@@ -770,7 +786,7 @@ function initializeAllSettings() {
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> 85</p>";
 				return description;
-			}, 'value', '0', null, 'C2', [1, 2],
+			}, 'value', 0, null, 'C2', [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 0) });
 		createSetting('c2Fused',
 			function () { return ('Fused ' + cinf() + 's') },
@@ -941,7 +957,7 @@ function initializeAllSettings() {
 				var description = "<p>What HD ratio cut-off to use when farming for the Improbability. If this setting is 100, the script will destack until you can kill the Improbability in 100 average hits or there are no Mayhem stacks remaining to clear.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
 		createSetting('mayhemZone',
 			function () { return ('M: Zone') },
@@ -949,7 +965,7 @@ function initializeAllSettings() {
 				var description = "<p>The zone you'd like to start destacking from, can be used in conjunction with <b>M: HD Ratio</b> but will clear stacks until 0 are remaining regardless of the value set in <b>M: HD Ratio</b>.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
 		createSetting('mayhemMapIncrease',
 			function () { return ('M: Map Increase') },
@@ -958,7 +974,7 @@ function initializeAllSettings() {
 				description += "<p><b>Negative values will be automatically set to 0.</b></p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
 		createSetting('mayhemMP',
 			function () { return ('M: Melting Point') },
@@ -966,7 +982,7 @@ function initializeAllSettings() {
 				var description = "<p>The amount of smithies you'd like to run Melting Point at during Mayhem.</p>";
 				description += "<p><b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS WHEN SET ABOVE 0</b></p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
 		createSetting('mayhemSwapZone',
 			function () { return ('M: Heirloom Swap Zone') },
@@ -974,7 +990,7 @@ function initializeAllSettings() {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Mayhem.</p>";
 				description += "<p><b>THIS OVERRIDES C3 HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b></p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
 
 		//Storm
@@ -994,7 +1010,7 @@ function initializeAllSettings() {
 				description += "<p>Must be used in conjunction with <b>S: Stacks</b></p>";
 				description += "<p><b>Recommended:</b> 6</p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('storm', currSettingUniverse) && autoTrimpSettings.storm.require()) });
 		createSetting('stormStacks',
 			function () { return ('S: Stacks') },
@@ -1025,7 +1041,7 @@ function initializeAllSettings() {
 				var description = "<p>What HD ratio cut-off to use when farming for the Improbability. If this setting is 100, the script will destack until you can kill the Improbability in 100 average hits or there are no Pademonium stacks remaining to clear.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', '10', null, 'C2', [2],
+			}, 'value', 10, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
 		createSetting('pandemoniumZone',
@@ -1034,7 +1050,7 @@ function initializeAllSettings() {
 				var description = "<p>The zone you'd like to start destacking from, can be used in conjunction with <b>P: HD Ratio</b> but will clear stacks until 0 are remaining regardless of the value set in <b>P: HD Ratio</b>.</p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
 		createSetting('pandemoniumAE',
@@ -1058,7 +1074,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The zone you would like to start farming LMC/HC maps from.</p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require() && getPageSetting('pandemoniumAE', currSettingUniverse) > 1) });
 
 		createSetting('pandemoniumStaff',
@@ -1076,7 +1092,7 @@ function initializeAllSettings() {
 				var description = "<p>The amount of smithies you'd like to run Melting Point at during Pandemonium.</p>";
 				description += "<p><b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS WHEN SET ABOVE 0</b></p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
 		createSetting('pandemoniumSwapZone',
 			function () { return ('P: Heirloom Swap Zone') },
@@ -1084,7 +1100,7 @@ function initializeAllSettings() {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Pandemonium.</p>";
 				description += "<p><b>THIS OVERRIDES C3 HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b></p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
 		//Glass
@@ -1123,7 +1139,7 @@ function initializeAllSettings() {
 				description += "<p>Must be used in conjunction with <b>D: Stacks</b></p>";
 				description += "<p><b>Recommended:</b> 0.0001</p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationZone',
 			function () { return ('D: Zone') },
@@ -1132,7 +1148,7 @@ function initializeAllSettings() {
 				description += "<p>Must be used in conjunction with <b>D: Stacks</b></p>";
 				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationStacks',
 			function () { return ('D: Stacks') },
@@ -1142,7 +1158,7 @@ function initializeAllSettings() {
 				description += "<p><b>WILL CLEAR TO 0 STACKS WHEN IT STARTS RUNNING.</b></p>";
 				description += "<p><b>Recommended:</b> 300</p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationOnlyDestackZone',
 			function () { return ('D: Destack Only From') },
@@ -1151,7 +1167,7 @@ function initializeAllSettings() {
 				description += "<p>Purchases the highest level of map that you can afford and survive to reduce chilled stacks faster.</p>";
 				description += "<p><b>Recommended:</b> 20 below Desolation end zone</p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationMP',
 			function () { return ('D: Melting Point') },
@@ -1159,7 +1175,7 @@ function initializeAllSettings() {
 				var description = "<p>The amount of smithies you'd like to run Melting Point at during Desolation.</p>";
 				description += "<p><b>THIS OVERRIDES UNIQUE MAP SETTINGS INPUTS WHEN SET ABOVE 0</b></p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationSwapZone',
 			function () { return ('D: Heirloom Swap') },
@@ -1167,7 +1183,7 @@ function initializeAllSettings() {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Desolation.</p>";
 				description += "<p><b>THIS OVERRIDES C3 HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b></p>";
 				return description;
-			}, 'value', '-1', null, 'C2', [2],
+			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 
 		//Smithless
@@ -1204,7 +1220,7 @@ function initializeAllSettings() {
 				description += "<p>If set to 0 or -1 it will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 150</p>";
 				return description;
-			}, 'value', '-1', null, 'Challenges', [1],
+			}, 'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.decay.enabled) });
 		createSetting('decayStacksToAbandon',
 			function () { return ('D: Stacks to Abandon') },
@@ -1213,7 +1229,7 @@ function initializeAllSettings() {
 				description += "<p>If set to 0 or -1 it will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 400</p>";
 				return description;
-			}, 'value', '-1', null, 'Challenges', [1],
+			}, 'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.decay.enabled) });
 
 		//Life
@@ -1233,7 +1249,7 @@ function initializeAllSettings() {
 				description += "<p><b>Must be used in conjunction with L: Stacks</b></p>";
 				description += "<p><b>Recommended:</b> 100</p>";
 				return description;
-			}, 'value', '-1', null, 'Challenges', [1],
+			}, 'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.life.enabled) });
 		createSetting('lifeStacks',
 			function () { return ('L: Stacks') },
@@ -1242,7 +1258,7 @@ function initializeAllSettings() {
 				description += "<p>If set to 0 or -1 it will disable this setting.</p>";
 				description += "<p><b>Must be used in conjunction with L: Zone</b></p>";
 				description += "<p><b>Recommended:</b> 100</p>";
-			}, 'value', '-1', null, 'Challenges', [1],
+			}, 'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.life.enabled) });
 
 		//Experience
@@ -1273,7 +1289,7 @@ function initializeAllSettings() {
 				description += "<p>If set below 601 it will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
 				return description;
-			}, 'value', '-1', null, 'Challenges', [1],
+			}, 'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.experience.enabled) });
 		createSetting('experienceEndBW',
 			function () { return ('E: End BW') },
@@ -1281,7 +1297,7 @@ function initializeAllSettings() {
 				var description = "<p>'Will finish the challenge with this Bionic Wonderland level once reaching the end zone specified in <b>E: End Zone</b>.</p>";
 				description += "<p><b>If the specified BW is not available, it will run one closest to the setting.</b></p>";
 				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
-			}, 'value', '-1', null, 'Challenges', [1],
+			}, 'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.experience.enabled) });
 
 		//Archaeology -- I don't know what to do with these. Think this needs to be reworked.
@@ -1423,7 +1439,7 @@ function initializeAllSettings() {
 				var description = "<p>The amount of warpstations to purchase before your first gigastation.</p>";
 				description += "<p><b>Recommended:</b> 20</p>";
 				return description;
-			}, 'value', '20', null, 'Buildings', [1],
+			}, 'value', 20, null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled) });
 		createSetting('deltaGigastation',
 			function () { return ('Delta Gigastation') },
@@ -1433,7 +1449,7 @@ function initializeAllSettings() {
 				description += "<p><b>YOU MUST HAVE BUY UPGRADES ENABLED!</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'value', '2', null, 'Buildings', [1],
+			}, 'value', 2, null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled) }
 		);
 		createSetting('autoGigas',
@@ -1453,7 +1469,7 @@ function initializeAllSettings() {
 				description += "<pValues below 60 will be discarded.</p>";
 				description += "<p><b>Recommended:</b> Current challenge end zone</p>";
 				return description;
-			}, 'value', '-1', null, 'Buildings', [1],
+			}, 'value', -1, null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.autoGigas.enabled) });
 		createSetting('autGigaDeltaFactor',
 			function () { return ('Custom Delta Factor') },
@@ -1464,7 +1480,7 @@ function initializeAllSettings() {
 				description += "<pValues below 1 will default to 10.</p>";
 				description += "<p><b>Recommended:</b> 1-2 for very quick runs. 5-10 for regular runs where you slow down at the end. 20-100+ for very pushy runs</p>";
 				return description;
-			}, 'value', '-1', null, 'Buildings', [1],
+			}, 'value', -1, null, 'Buildings', [1],
 			function () { return (autoTrimpSettings.warpstation.enabled && autoTrimpSettings.autoGigas.enabled) });
 
 		createSetting('advancedNurseries',
@@ -1535,7 +1551,7 @@ function initializeAllSettings() {
 				description += "<p><b>Your HD Ratio can be seen in the Auto Maps status tooltip.</b></p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', '1', null, "Equipment", [1, 2],
+			}, 'value', 1, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipAmount',
 			function () { return ('AE: Amount') },
@@ -1924,7 +1940,7 @@ function initializeAllSettings() {
 
 	}
 
-	//Spire -- TO DO
+	//Spire -- Descriptions done!
 	const displaySpire = true;
 	if (displaySpire) {
 		createSetting('IgnoreSpiresUntil',
@@ -1935,9 +1951,7 @@ function initializeAllSettings() {
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
 				return description;
-			},
-			'value', '-1', null, 'Spire', [1]);
-
+			}, 'value', -1, null, 'Spire', [1]);
 		createSetting('MaxStacksForSpire',
 			function () { return ('Max Map Bonus for Spire') },
 			function () {
@@ -1945,34 +1959,43 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);
-
 		createSetting('ExitSpireCell',
 			function () { return ('Exit Spire After Cell') },
 			function () {
 				var description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
+				description += "<p>Any health or damage calculations for the Spire will be based off this if set.</p>";
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
-				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
+				description += "<p><b>Recommended:</b>-1</p>";
 				return description;
-			},
-			'value', '-1', null, 'Spire', [1]);
-
+			}, 'value', -1, null, 'Spire', [1]);
 		createSetting('PreSpireNurseries',
 			function () { return ('Nurseries pre-Spire') },
-			function () { return ('Set the maximum number of Nurseries to build for Spires. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Will build nurseries before z200 for Spire 1, but only on the zone of Spires 2+ to avoid unnecessary burning. Disable with -1.') },
-			'value', -1, null, 'Spire', [1]);
-
-
+			function () {
+				var description = "<p>Set the number of <b>Nurseries</b> to build during active Spires.</p>";
+				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT AutoStructure</b> setting.</b></p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> -1</p>";
+				return description;
+			}, 'value', -1, null, 'Spire', [1]);
 		createSetting('hitsSurvivedSpire',
 			function () { return ('Hits Survived') },
 			function () {
 				var description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
 				description += "<p><b>Your Hits Survived can be seen in the Auto Maps status tooltip.</b></p>";
+				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab.</b></p>";
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
-				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 2 for earlygame, gradually increase the further you progress</p>";
+				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 1.5</p>";
 				return description;
-			},
-			'value', 0, null, 'Spire', [1]);
+			}, 'value', 0, null, 'Spire', [1]);
+		createSetting('skipSpires',
+			function () { return ('Skip Spires') },
+			function () {
+				var description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks..</p>";
+				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Spire', [1]);
+
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -1991,46 +2014,46 @@ function initializeAllSettings() {
 				description += "<p>If this setting is 1 it will only buy geneticists if they cost less than 1% of your food.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
-			}, 'value', '1', null, 'Jobs', [1],
+			}, 'value', 1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled) });
 		createSetting('ATGA2timer',
 			function () { return ('GA: Timer') },
 			function () { return ('<b>ATGA Timer</b><br>This is the default time your ATGA will use.') },
-			'value', '-1', null, 'Jobs', [1],
+			'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled) });
 
 		//Zone Timers
 		createSetting('zATGA2timer',
 			function () { return ('GA: T: Before Z') },
 			function () { return ('<b>ATGA Timer: Before Z</b><br>ATGA will use the value you define in GA: T: BZT before the zone you have defined in this setting, overwriting your default timer. Useful for Liq or whatever.') },
-			'value', '-1', null, 'Jobs', [1],
+			'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('ztATGA2timer',
 			function () { return ('GA: T: BZT') },
 			function () { return ('<b>ATGA Timer: Before Z Timer</b><br>ATGA will use this value before the zone you have defined in GA: T: Before Z, overwriting your default timer. Useful for Liq or whatever. Does not work on challenges.') },
-			'value', '-1', null, 'Jobs', [1],
+			'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0 && autoTrimpSettings.zATGA2timer.value > 0) });
 		createSetting('ATGA2timerz',
 			function () { return ('GA: T: After Z') },
 			function () { return ('<b>ATGA Timer: After Z</b><br>ATGA will use the value you define in GA: T: AZT after the zone you have defined in this setting, overwriting your default timer. Useful for super push runs or whatever. Does not work on challenges.') },
-			'value', '-1', null, 'Jobs', [1],
+			'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('ATGA2timerzt',
 			function () { return ('GA: T: AZT') },
 			function () { return ('<b>ATGA Timer: After Z Timer</b><br>ATGA will use this value after the zone that has been defined in GA: T: After Z, overwriting your default timer. Useful for super push runs or whatever.') },
-			'value', '-1', null, 'Jobs', [1],
+			'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0 && autoTrimpSettings.ATGA2timerz.value > 0) });
 
 		//Spire Timers
 		createSetting('sATGA2timer',
 			function () { return ('GA: T: Spire') },
 			function () { return ('<b>ATGA Timer: Spire</b><br>ATGA will use this value in Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this except Daily Spire.') },
-			'value', '-1', null, 'Jobs', [1],
+			'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('dsATGA2timer',
 			function () { return ('GA: T: Daily Spire') },
 			function () { return ('<b>ATGA Timer: Daily Spire</b><br>ATGA will use this value in Daily Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this.') },
-			'value', '-1', null, 'Jobs', [1],
+			'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 
 		//Daily Timers
@@ -2042,24 +2065,24 @@ function initializeAllSettings() {
 		createSetting('dATGA2timer',
 			function () { return ('GA: T: Dailies') },
 			function () { return ('<b>ATGA Timer: Normal Dailies</b><br>ATGA will use this value for normal Dailies such as ones without plague etc, overwriting your default timer. Useful for pushing your dailies that extra bit at the end. Overwrites Default, Before Z and After Z.') },
-			'value', '-1', null, 'Jobs', [1],
+			'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('dhATGA2timer',
 			function () { return ('GA: T: D: Hard') },
 			function () { return ('<b>ATGA Timer: Hard Dailies</b><br>ATGA will use this value in Dailies that are considered Hard. Such Dailies include plaged, bloodthirst and Dailies with a lot of negative mods. Overwrites Default, Before Z and After Z and normal Daily ATGA Timer.') },
-			'value', '-1', null, 'Jobs', [1],
+			'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 
 		//C2 Timers
 		createSetting('cATGA2timer',
 			function () { return ('GA: T: ' + cinf()) },
 			function () { return ('<b>ATGA Timer: ' + cinf() + 's</b><br>ATGA will use this value in ' + cinf() + 's. Overwrites Default, Before Z and After Z.') },
-			'value', '-1', null, 'Jobs', [1],
+			'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('chATGA2timer',
 			function () { return ('GA: T: C: Hard') },
 			function () { return ('<b>ATGA Timer: Hard ' + cinf() + 's</b><br>ATGA will use this value in ' + cinf() + 's that are considered Hard. Electricity, Nom, Toxicity. Overwrites Default, Before Z and After Z and ' + cinf() + ' ATGA') },
-			'value', '-1', null, 'Jobs', [1],
+			'value', -1, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 	}
 
@@ -2084,7 +2107,7 @@ function initializeAllSettings() {
 		createSetting('AutoStance',
 			function () { return (['Auto Stance OFF', 'Auto Stance', 'D Stance', 'Windstacking']) },
 			function () { return ('<b>Autostance:</b> Automatically swap stances to avoid death. <br><b>D Stance:</b> Keeps you in D stance regardless of Health. <br><b>Windstacking:</b> For use after nature (z230), and will keep you in D stance unless you are windstacking (Only useful if transfer is maxed out and wind empowerment is high). There\'s settings in the Windstacking tab that must be setup for this to function as intended.') },
-			'multitoggle', 1, null, "Combat", [1]);
+			'multitoggle', 0, null, "Combat", [1]);
 		createSetting('IgnoreCrits',
 			function () { return (['Safety First', 'Ignore Void Strength', 'Ignore All Crits']) },
 			function () { return ('No longer switches to B against corrupted precision and/or void strength. <b>Basically we now treat \'crit things\' as regular in both autoStance and autoStance2</b>. In fact it no longer takes precision / strength into account and will manage like a normal enemy, thus retaining X / D depending on your needs. If you\'re certain your block is high enough regardless if you\'re fighting a crit guy in a crit daily, use this! Alternatively, manage the stances yourself.') },
@@ -2097,11 +2120,11 @@ function initializeAllSettings() {
 		createSetting('AutoRoboTrimp',
 			function () { return ('AutoRoboTrimp') },
 			function () { return ('Use RoboTrimps ability starting at this level, and every 5 levels thereafter. (set to 0 to disable. default 60.) 60 is a good choice for mostly everybody.') },
-			'value', '60', null, 'Combat', [1]);
+			'value', 60, null, 'Combat', [1]);
 		createSetting('fightforever',
 			function () { return ('Fight Always') },
 			function () { return ('U1: -1 to disable. Sends trimps to fight if they\'re not fighting, regardless of BAF. Has 2 uses. Set to 0 to always send out trimps. Or set a number higher than 0 to enable the H:D function. If the H:D ratio is below this number it will send them out. I.e, this is set to 1, it will send out trimps regardless with the H:D ratio is below 1.') },
-			'value', '-1', null, 'Combat', [1]);
+			'value', -1, null, 'Combat', [1]);
 		createSetting('addpoison',
 			function () { return ('Poison Calc') },
 			function () { return ('<b>Experimental. </b><br>Adds poison to the battlecalc. May improve your poison zone speed.') },
@@ -2149,12 +2172,12 @@ function initializeAllSettings() {
 		createSetting('ScryerMinZone',
 			function () { return ('Min Zone') },
 			function () { return ('Minimum zone to start using scryer in.(inclusive) Recommend:(60 or 181). Overkill ignores this. This needs to be On & Valid for the <i>MAYBE</i> option on all other Scryer settings to do anything if Overkill is off. Tip: Use 9999 to disable all Non-Overkill, Non-Force, scryer usage.') },
-			'value', '181', null, 'Combat', [1],
+			'value', 181, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerMaxZone',
 			function () { return ('Max Zone') },
 			function () { return ('<b>0 or -1 to disable (Recommended)</b><br>Overkill ignores this. Zone to STOP using scryer at (not inclusive). Turning this ON with a positive number stops <i>MAYBE</i> use of all other Scryer settings.') },
-			'value', '230', null, 'Combat', [1],
+			'value', 230, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('onlyminmaxworld',
 			function () { return (['Min & Max: Everywhere', 'Min & Max: World', 'Min & Max: Corrupted Only', 'Min & Max: Healthy Only']) },
@@ -2269,17 +2292,17 @@ function initializeAllSettings() {
 		createSetting('WindStackingMin',
 			function () { return ('Windstack Min Zone') },
 			function () { return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from WS MAX work off this setting.') },
-			'value', '-1', null, 'Combat', [1],
+			'value', -1, null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStance.value === 3) });
 		createSetting('WindStackingMinHD',
 			function () { return ('Windstack H:D') },
 			function () { return ('For use with Windstacking Stance, fiddle with this to maximise your stacks in wind zones.') },
-			'value', '-1', null, 'Combat', [1],
+			'value', -1, null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStance.value === 3) });
 		createSetting('WindStackingMax',
 			function () { return ('Windstack Stacks') },
 			function () { return ('For use with Windstacking Stance. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190.  In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment.') },
-			'value', '200', null, 'Combat', [1],
+			'value', 200, null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStance.value === 3) });
 	}
 
@@ -2492,7 +2515,7 @@ function initializeAllSettings() {
 				description += "<p>If set to -1 it will disable this setting.</p>";
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
-			}, 'value', '-1', null, 'Heirlooms', [1, 2],
+			}, 'value', -1, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomSwapZoneDaily',
@@ -2503,7 +2526,7 @@ function initializeAllSettings() {
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
 			},
-			'value', '-1', null, 'Heirlooms', [1, 2],
+			'value', -1, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomSwapZoneC3',
@@ -4603,21 +4626,29 @@ function toggleHeHr(update) {
 function updateATVersion() {
 	//Setting Conversion!
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === MODULES_AT.ATversion) return;
+	var changelog = [];
 
 	if (autoTrimpSettings["ATversion"] === undefined || !autoTrimpSettings["ATversion"].includes('SadAugust')) {
-		var changelog = [];
-		changelog.push('Welcome to SadAugust fork! <br><br>\
-		I highly recommend you check the <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">list of changes from Zeks fork</a> (if you haven\'t already).<br><br>\
-		If you\'re unsure on what a setting does then I highly recommend checking the "Help" toggle on the popups that have been introduced as it should explain almost everything!<br><br>\
-		You\'ll need to redo all of your farming settings as everything is drastically different :(')
+
+		var description = "<p>Welcome to the SadAugust fork of AutoTrimps!</p>";
+
+		description += "<p><b>For those who are new to this fork here's some useful information on how to set it up.</b></p><br>";
+
+		description += "<p>One of the most important things is where the settings are stored. The vast majority of settings can be accessed by pressing the <b>AutoTrimps</b> button at the bottom of your Trimps window.</p><br>";
+		description += "<p>There are some setting that aren't located in the <b>AutoTrimps settings menu</b>, 2 of which are in the Trimps buy container (<b>AT AutoStructure & AutoJobs</b>), I recommend mousing over their tooltips and looking at what they do.</p>";
+		description += "<p>The last one placed elsewhere is the <b>AT Messages</b> button at the top right of your Trimps window. This will enabling this will allow the script to output messages into the message log window. You can control what gets printed to it by pressing the cogwheel to the right of it.</p>";
+
+		description += "<br><p>By default everything should be disabled but every setting has a detailed description and recommendation of how it should be setup. To start with I'd highly recommend looking through the settings in the <b>Core</b>, <b>Maps</b> and <b>Combat</b> tabs to identify which parts of the script you would like to use and go through the other tabs afterwards.</p>";
+
+		description += "<br><p>If you've previously used somebody elses AutoTrimps version you'll need to set everything up again as this isn't compatible with other forks. The settings are stored differently so you can easily go back and forth between other forks.</p>";
+
+		changelog.push(description);
 		printChangelog(changelog);
 	}
 
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust')
 		&& autoTrimpSettings["ATversion"] !== MODULES_AT.ATversion
 	) {
-
-		var changelog = [];
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.001') {
 			var settings_List = ['raidingSettings', 'bionicRaidingSettings']

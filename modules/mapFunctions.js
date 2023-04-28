@@ -24,7 +24,7 @@ function exitSpireCell() {
 	var settingPrefix = challengeActive('Daily') ? 'd' : '';
 	if (getPageSetting(settingPrefix + 'ExitSpireCell') <= 0) return;
 
-	isDoingSpire() && game.global.lastClearedCell >= getPageSetting(settingPrefix + 'ExitSpireCell') - 1 && endSpire()
+	isDoingSpire() && game.global.lastClearedCell > getPageSetting(settingPrefix + 'ExitSpireCell') - 1 && endSpire()
 }
 
 //Unique Maps
@@ -2799,60 +2799,67 @@ function FarmingDecision(hdStats) {
 
 	var mapTypes;
 	//U1 map settings to check for.
-	if (game.global.universe === 1) mapTypes = [
-		prestigeClimb(),
-		mapFarm(hdStats),
-		prestigeRaiding(hdStats),
-		bionicRaiding(hdStats),
-		hdFarm(hdStats),
-		voidMaps(hdStats),
-		mapBonus(hdStats),
-		experience(),
-		mapDestacking()
-	];
+	if (game.global.universe === 1) {
+		mapTypes = [
+			prestigeClimb(),
+			mapFarm(hdStats),
+			prestigeRaiding(hdStats),
+			bionicRaiding(hdStats),
+			hdFarm(hdStats),
+			voidMaps(hdStats),
+			mapBonus(hdStats),
+			experience(),
+			mapDestacking()
+		];
 
-	//Skipping map farming if in Decay and above stack count user input
-	if (decaySkipMaps()) mapTypes = [
-		prestigeClimb(),
-		voidMaps(hdStats)];
+		//Skipping map farming if in Decay and above stack count user input
+		if (decaySkipMaps()) mapTypes = [
+			prestigeClimb(),
+			voidMaps(hdStats)];
 
-	if (challengeActive('Mapology') && getPageSetting('mapology')) mapTypes = [
-		prestigeClimb(),
-		prestigeRaiding(hdStats),
-		bionicRaiding(hdStats),
-		voidMaps(hdStats)
-	];
+		if (challengeActive('Mapology') && getPageSetting('mapology')) mapTypes = [
+			prestigeClimb(),
+			prestigeRaiding(hdStats),
+			bionicRaiding(hdStats),
+			voidMaps(hdStats)
+		];
 
-	//If in desolation then check if we should destack before farming.
-	if (mapSettings.mapName.includes('Desolation') && MODULES.mapFunctions.challengeContinueRunning && game.challenges.Desolation.chilled === 0) {
-		(desolation(hdStats, true).shouldRun);
+		if (isDoingSpire() && getPageSetting('skipSpires') && game.global.mapBonus === 10) return farmingDetails;
 	}
 
-	//U2 map settings to check for.
-	if (game.global.universe === 2) mapTypes = [
-		desolation(hdStats),
-		quest(),
-		pandemoniumDestack(hdStats),
-		prestigeClimb(),
-		smithyFarm(hdStats),
-		mapFarm(hdStats),
-		tributeFarm(hdStats),
-		worshipperFarm(hdStats),
-		mapDestacking(),
-		prestigeRaiding(hdStats),
-		mayhem(hdStats),
-		insanity(hdStats),
-		pandemoniumFarm(hdStats),
-		alchemy(hdStats),
-		hypothermia(hdStats),
-		hdFarm(hdStats),
-		voidMaps(hdStats),
-		quagmire(hdStats),
-		mapBonus(hdStats),
-		glass(),
-		smithless(),
-		wither()
-	];
+	if (game.global.universe === 2) {
+		//If in desolation then check if we should destack before farming.
+		if (mapSettings.mapName.includes('Desolation') && MODULES.mapFunctions.challengeContinueRunning && game.challenges.Desolation.chilled === 0) {
+			(desolation(hdStats, true).shouldRun);
+		}
+
+		//U2 map settings to check for.
+		mapTypes = [
+			desolation(hdStats),
+			quest(),
+			pandemoniumDestack(hdStats),
+			prestigeClimb(),
+			smithyFarm(hdStats),
+			mapFarm(hdStats),
+			tributeFarm(hdStats),
+			worshipperFarm(hdStats),
+			mapDestacking(),
+			prestigeRaiding(hdStats),
+			mayhem(hdStats),
+			insanity(hdStats),
+			pandemoniumFarm(hdStats),
+			alchemy(hdStats),
+			hypothermia(hdStats),
+			hdFarm(hdStats),
+			voidMaps(hdStats),
+			quagmire(hdStats),
+			mapBonus(hdStats),
+			glass(),
+			smithless(),
+			wither()
+		];
+	}
+
 	for (const map of mapTypes) {
 		if (map.shouldRun) {
 			map.levelCheck = map.autoLevel ? map.mapLevel : Infinity;

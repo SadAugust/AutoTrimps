@@ -119,13 +119,15 @@ function printChangelog(changes) {
         <br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).',
 		action = 'cancelTooltip()',
 		title = 'Script Update Notice<br>' + MODULES_AT.ATversion,
-		acceptBtnText = "Thank you for playing AutoTrimps. Accept and Continue.",
+		acceptBtnText = "Thank you for playing with AutoTrimps.",
 		hideCancel = true;
+
 	tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
+	verticalCenterTooltip(true);
 }
 
 function assembleChangelog(c) {
-	return `${c}<br><br>`
+	return `${c}<br>`
 }
 
 setTimeout(delayStart, 2500);
