@@ -442,17 +442,14 @@ function doPortal(challenge, squared) {
 		//Printing msg to state all dailies have been compelted
 		if (lastUndone === 1) debug("All dailies have been completed.", "portal");
 
-		//Portaling into a filler/c3 if dailyPortalFiller is enabled OR all dailies completed or dailyPortalStart is disabled.
+		//Portaling into a filler/c2/c3 if dailyPortalFiller is enabled OR all dailies completed or dailyPortalStart is disabled.
 		if (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse) || lastUndone === 1) {
-			if (getPageSetting('dailyHeliumHourChallenge', portalUniverse) != 'None') {
-				if (getPageSetting('dailyHeliumHourChallenge', portalUniverse).includes('Challenge ')) {
-					toggleChallengeSquared();
-					selectChallenge(getPageSetting('dailyC2Challenge', portalUniverse));
-				}
-				else {
-					challenge = getPageSetting('dailyHeliumHourChallenge', portalUniverse);
-					selectChallenge(challenge || 0);
-				}
+			challenge = getPageSetting('dailyHeliumHourChallenge', portalUniverse);
+			selectChallenge(challenge === 'None' ? 0 : challenge);
+			//Portaling into a C2/C3 if necessary.
+			if (getPageSetting('dailyHeliumHourChallenge', portalUniverse).includes('Challenge ')) {
+				toggleChallengeSquared();
+				selectChallenge(getPageSetting('dailyC2Challenge', portalUniverse) === 'None' ? 0 : challenge);
 			}
 		}
 		//Portaling into a daily

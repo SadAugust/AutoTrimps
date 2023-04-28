@@ -1516,9 +1516,9 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Gear -- TO DO
-	const displayGear = true;
-	if (displayGear) {
+	//Equipment -- Descriptions done!
+	const displayEquipment = true;
+	if (displayEquipment) {
 		createSetting('equipOn',
 			function () { return ('AutoEquip') },
 			function () {
@@ -1598,24 +1598,16 @@ function initializeAllSettings() {
 		createSetting('equipPrestige',
 			function () { return (['AE: Prestige Off', 'AE: Prestige', 'AE: Always Prestige']) },
 			function () {
-				var description = "<p>Will control how prestiges are purchased.</p>";
+				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
+				var description = "<p>Will control how equipment levels & prestiges are purchased.</p>";
 				description += "<p><b>AE: Prestige Off</b><br>Will only purchase prestiges when you have 6 or more levels in your that piece of equipment.</p>";
-				description += "<p><b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run Atlantrimp.";
-				description += "<br><b>If Atlantrimp has been run it will buy any prestiges that cost less than 8% of your current resources then spend your remaining resources on equipment levels.</b></p>"
+				description += "<p><b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run " + trimple + ".";
+				description += "<br><b>If " + trimple + " has been run it will buy any prestiges that cost less than 8% of your current resources then spend your remaining resources on equipment levels.</b></p>"
 				description += "<p><b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.</p>";
 				description += "<p><b>Recommended:</b> AE: Prestige</p>";
 				return description;
 			}, 'multitoggle', 0, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
-		createSetting('equipHighestPrestige',
-			function () { return ('AE: Highest Prestige') },
-			function () {
-				var description = "<p>Will only buy equips for the highest prestige currently owned.</p>";
-				description += "<p><b>This setting can cause some inefficient purchases if you have a single prestiged item and the rest at a lower prestige level.</b></p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', true, null, "Equipment", [1, 2],
-			function () { return (getPageSetting('equipOn', currSettingUniverse) && getPageSetting('equipPrestige', currSettingUniverse) !== 0) });
 		createSetting('equipEfficientEquipDisplay',
 			function () { return ('AE: Highlight Equips') },
 			function () {
@@ -1707,7 +1699,7 @@ function initializeAllSettings() {
 			function () { return ('Perfect Maps') },
 			function () {
 				var description = "<p>When trying to map it will only create perfect maps.</p>";
-				description += "<b>Be warned this may greatly decrease the map level that AT believes is efficient.</b></p>";
+				description += "<p><b>Be warned this may greatly decrease the map level that AT believes is efficient.</b></p>";
 				description += "<p><b>Recommended:</b> Off unless at end game</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
@@ -1970,79 +1962,83 @@ function initializeAllSettings() {
 	const displayATGA = true;
 	if (displayATGA) {
 		createSetting('ATGA2',
-			function () { return ('ATGA') },
+			function () { return ('Gene Assist') },
 			function () { return ('<b>ATGA MASTER BUTTON</b><br>AT Geneticassist. Do not use vanilla GA, as it will conflict otherwise. May get fucky with super high values.') },
 			'boolean', false, null, 'Jobs', [1]);
 		createSetting('ATGA2gen',
-			function () { return ('ATGA: Gen %') },
-			function () { return ('<b>ATGA: Geneassist %</b><br>ATGA will only hire geneticists if they cost less than this value. E.g if this setting is 1 it will only buy geneticists if they cost less than 1% of your food. Default is 1%.') },
-			'value', '1', null, 'Jobs', [1],
+			function () { return ('GA: Gene Assist %') },
+			function () {
+				var description = "<p>Gene Assist will only hire geneticists if they cost less than this value.</p>";
+				description += "<p>If this setting is 1 it will only buy geneticists if they cost less than 1% of your food.</p>";
+				description += "<p><b>Recommended:</b> 1</p>";
+				return description;
+			}, 'value', '1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled) });
 		createSetting('ATGA2timer',
-			function () { return ('ATGA: Timer') },
+			function () { return ('GA: Timer') },
 			function () { return ('<b>ATGA Timer</b><br>This is the default time your ATGA will use.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled) });
 
 		//Zone Timers
 		createSetting('zATGA2timer',
-			function () { return ('ATGA: T: Before Z') },
-			function () { return ('<b>ATGA Timer: Before Z</b><br>ATGA will use the value you define in ATGA: T: BZT before the zone you have defined in this setting, overwriting your default timer. Useful for Liq or whatever.') },
+			function () { return ('GA: T: Before Z') },
+			function () { return ('<b>ATGA Timer: Before Z</b><br>ATGA will use the value you define in GA: T: BZT before the zone you have defined in this setting, overwriting your default timer. Useful for Liq or whatever.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('ztATGA2timer',
-			function () { return ('ATGA: T: BZT') },
-			function () { return ('<b>ATGA Timer: Before Z Timer</b><br>ATGA will use this value before the zone you have defined in ATGA: T: Before Z, overwriting your default timer. Useful for Liq or whatever. Does not work on challenges.') },
+			function () { return ('GA: T: BZT') },
+			function () { return ('<b>ATGA Timer: Before Z Timer</b><br>ATGA will use this value before the zone you have defined in GA: T: Before Z, overwriting your default timer. Useful for Liq or whatever. Does not work on challenges.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0 && autoTrimpSettings.zATGA2timer.value > 0) });
 		createSetting('ATGA2timerz',
-			function () { return ('ATGA: T: After Z') },
-			function () { return ('<b>ATGA Timer: After Z</b><br>ATGA will use the value you define in ATGA: T: AZT after the zone you have defined in this setting, overwriting your default timer. Useful for super push runs or whatever. Does not work on challenges.') },
+			function () { return ('GA: T: After Z') },
+			function () { return ('<b>ATGA Timer: After Z</b><br>ATGA will use the value you define in GA: T: AZT after the zone you have defined in this setting, overwriting your default timer. Useful for super push runs or whatever. Does not work on challenges.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('ATGA2timerzt',
-			function () { return ('ATGA: T: AZT') },
-			function () { return ('<b>ATGA Timer: After Z Timer</b><br>ATGA will use this value after the zone that has been defined in ATGA: T: After Z, overwriting your default timer. Useful for super push runs or whatever.') },
+			function () { return ('GA: T: AZT') },
+			function () { return ('<b>ATGA Timer: After Z Timer</b><br>ATGA will use this value after the zone that has been defined in GA: T: After Z, overwriting your default timer. Useful for super push runs or whatever.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0 && autoTrimpSettings.ATGA2timerz.value > 0) });
 
 		//Spire Timers
 		createSetting('sATGA2timer',
-			function () { return ('ATGA: T: Spire') },
+			function () { return ('GA: T: Spire') },
 			function () { return ('<b>ATGA Timer: Spire</b><br>ATGA will use this value in Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this except Daily Spire.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('dsATGA2timer',
-			function () { return ('ATGA: T: Daily Spire') },
+			function () { return ('GA: T: Daily Spire') },
 			function () { return ('<b>ATGA Timer: Daily Spire</b><br>ATGA will use this value in Daily Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 
 		//Daily Timers
 		createSetting('dATGA2Auto',
-			function () { return (['ATGA: Manual', 'ATGA: Auto No Spire', 'ATGA: Auto Dailies']) },
+			function () { return (['GA: Manual', 'GA: Auto No Spire', 'GA: Auto Dailies']) },
 			function () { return ('<b>EXPERIMENTAL</b><br><b>ATGA Timer: Auto Dailies</b><br>ATGA will use automatically set breed timers in plague and bogged, overwriting your default timer.<br/>Set No Spire to not override in spire, respecting ignore spire settings.') },
 			'multitoggle', 2, null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('dATGA2timer',
-			function () { return ('ATGA: T: Dailies') },
+			function () { return ('GA: T: Dailies') },
 			function () { return ('<b>ATGA Timer: Normal Dailies</b><br>ATGA will use this value for normal Dailies such as ones without plague etc, overwriting your default timer. Useful for pushing your dailies that extra bit at the end. Overwrites Default, Before Z and After Z.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('dhATGA2timer',
-			function () { return ('ATGA: T: D: Hard') },
+			function () { return ('GA: T: D: Hard') },
 			function () { return ('<b>ATGA Timer: Hard Dailies</b><br>ATGA will use this value in Dailies that are considered Hard. Such Dailies include plaged, bloodthirst and Dailies with a lot of negative mods. Overwrites Default, Before Z and After Z and normal Daily ATGA Timer.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 
 		//C2 Timers
 		createSetting('cATGA2timer',
-			function () { return ('ATGA: T: ' + cinf()) },
+			function () { return ('GA: T: ' + cinf()) },
 			function () { return ('<b>ATGA Timer: ' + cinf() + 's</b><br>ATGA will use this value in ' + cinf() + 's. Overwrites Default, Before Z and After Z.') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
 		createSetting('chATGA2timer',
-			function () { return ('ATGA: T: C: Hard') },
+			function () { return ('GA: T: C: Hard') },
 			function () { return ('<b>ATGA Timer: Hard ' + cinf() + 's</b><br>ATGA will use this value in ' + cinf() + 's that are considered Hard. Electricity, Nom, Toxicity. Overwrites Default, Before Z and After Z and ' + cinf() + ' ATGA') },
 			'value', '-1', null, 'Jobs', [1],
 			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
@@ -4799,20 +4795,18 @@ function updateATVersion() {
 			autoTrimpSettings['heliumHrBuffer'].valueU2 = tempSettings.HeliumHrBuffer.valueU2;
 			autoTrimpSettings['heliumHrPortal'].value = tempSettings.HeliumHrPortal.value;
 			autoTrimpSettings['heliumHrPortal'].valueU2 = tempSettings.HeliumHrPortal.valueU2;
-			autoTrimpSettings['pauseScript'].value = tempSettings.PauseScript.value;
-			autoTrimpSettings['autoEggs'].value = tempSettings.AutoEggs.value;
+			autoTrimpSettings['pauseScript'].enabled = tempSettings.PauseScript.enabled;
+			autoTrimpSettings['autoEggs'].enabled = tempSettings.AutoEggs.enabled;
 
-			autoTrimpSettings['avoidEmpower'].value = tempSettings.avoidempower.value;
+			autoTrimpSettings['avoidEmpower'].enabled = tempSettings.avoidempower.enabled;
 			autoTrimpSettings['buyheliumy'].valueU2 = tempSettings.buyradony.valueU2;
-
 
 			autoTrimpSettings['firstGigastation'].value = tempSettings.FirstGigastation.value;
 			autoTrimpSettings['deltaGigastation'].value = tempSettings.DeltaGigastation.value;
-			autoTrimpSettings['autoGigas'].value = tempSettings.AutoGigas.value;
-			autoTrimpSettings['pauseScript'].value = tempSettings.CustomTargetZone.value;
-			autoTrimpSettings['autoEggs'].value = tempSettings.CustomDeltaFactor.value;
+			autoTrimpSettings['autoGigas'].value = tempSettings.AutoGigas.enabled;
+			autoTrimpSettings['customTargetZone'].enabled = tempSettings.CustomTargetZone.value;
+			autoTrimpSettings['customDeltaFactor'].enabled = tempSettings.CustomDeltaFactor.value;
 		}
-
 
 		autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
 		if (changelog.length !== 0) {
