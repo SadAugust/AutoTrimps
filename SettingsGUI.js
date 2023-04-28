@@ -403,7 +403,7 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Daily -- U2+Portal descriptions done! Still need to finish U1 settings for Windstacking.
+	//Daily -- General+U2+Portal+Spire descriptions done! Still need to finish U1 settings for Windstacking.
 	const displayDaily = true
 	if (displayDaily) {
 		createSetting('buyheliumy',
@@ -450,7 +450,7 @@ function initializeAllSettings() {
 				var description = "<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>";
 				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
-				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
+				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs</p>";
 				return description;
 			}, 'value', -1, null, 'Daily', [1]);
 		createSetting('dExitSpireCell',
@@ -460,7 +460,7 @@ function initializeAllSettings() {
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
 				description += "<p>Any health or damage calculations for the Spire will be based off this if set.</p>";
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
-				description += "<p><b>Recommended:</b>-1</p>";
+				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
 			}, 'value', -1, null, 'Daily', [1]);
 		createSetting('dPreSpireNurseries',
@@ -1546,7 +1546,7 @@ function initializeAllSettings() {
 		createSetting('equipCutOff',
 			function () { return ('AE: HD Cut-off') },
 			function () {
-				var description = "<p>If your HD (enemyHealth:trimpDamage) Ratio is below this value it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available.</p>";
+				var description = "<p>If your H:D (enemyHealth:trimpDamage) Ratio is below this value it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase gear whenever you slow down in world.<br></p>";
 				description += "<p><b>Your HD Ratio can be seen in the Auto Maps status tooltip.</b></p>";
 				description += "<p><b>Recommended:</b> 1</p>";
@@ -1770,7 +1770,7 @@ function initializeAllSettings() {
 		createSetting('hdFarmSettings',
 			function () { return ('HD Farm Settings') },
 			function () {
-				var description = "<p>Here you can select how and when you would like HD (enemyHealth:trimpDamage) Ratio farming to be run.</p>";
+				var description = "<p>Here you can select how and when you would like H:D (enemyHealth:trimpDamage) Ratio farming to be run.</p>";
 				description += "<p><b>Your HD Ratio can be seen in the Auto Maps status tooltip.</b></p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
@@ -2097,45 +2097,85 @@ function initializeAllSettings() {
 			function () { return ('3-Way Button, Recommended. Will automatically handle fighting.<br>BAF = Old Algo (Fights if dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds<br>BAF3 = Uses vanilla autofight and makes sure you fight on portal. <br> WARNING: If you autoportal with BetterAutoFight disabled, the game may sit there doing nothing until you click FIGHT. (not good for afk) ') },
 			'multitoggle', 0, null, "Combat", [1, 2]);
 		createSetting('autoAbandon',
-			function () { return (['AutoAbandon', 'Don\'t Abandon', 'Only Rush Voids']) },
-			function () { return ('<b>Autoabandon:</b> Considers abandoning trimps for void maps/prestiges.<br><b>Don\'t Abandon:</b> Will not abandon troops, but will still agressively autostance even if it will kill you (WILL NOT ABANDON TRIMPS TO DO VOIDS).<br><b>Only Rush Voids:</b> Considers abandoning trimps for void maps, but not prestiges, still autostances aggressively. <br>Made for Empower daily, and you might find this helpful if you\'re doing Workplace Safety feat. Then again with that I strongly recommend doing it fully manually. Anyway, don\'t blame me whatever happens.<br><b>Note:</b> AT will no longer be able to fix when your scryer gets stuck!') },
-			'multitoggle', 0, null, 'Combat', [1, 2]);
+			function () { return ('Auto Abandon') },
+			function () {
+				var description = "<p>Enabling this will force abandon trimps if necessary for mapping.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Combat', [1, 2]);
 		createSetting('floorCritCalc',
 			function () { return ('Never Crit Calc') },
-			function () { return ('Will floor your crit chance to make AT assume you are never gonna crit when calculating trimp damage.') },
-			'boolean', false, null, 'Combat', [1, 2]);
+			function () {
+				var description = "<p>When doing trimp damage calculations this will floor your crit chance to make the script assume you will never crit.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Combat', [1, 2]);
 		createSetting('AutoStance',
 			function () { return (['Auto Stance OFF', 'Auto Stance', 'D Stance', 'Windstacking']) },
 			function () { return ('<b>Autostance:</b> Automatically swap stances to avoid death. <br><b>D Stance:</b> Keeps you in D stance regardless of Health. <br><b>Windstacking:</b> For use after nature (z230), and will keep you in D stance unless you are windstacking (Only useful if transfer is maxed out and wind empowerment is high). There\'s settings in the Windstacking tab that must be setup for this to function as intended.') },
 			'multitoggle', 0, null, "Combat", [1]);
 		createSetting('IgnoreCrits',
 			function () { return (['Safety First', 'Ignore Void Strength', 'Ignore All Crits']) },
-			function () { return ('No longer switches to B against corrupted precision and/or void strength. <b>Basically we now treat \'crit things\' as regular in both autoStance and autoStance2</b>. In fact it no longer takes precision / strength into account and will manage like a normal enemy, thus retaining X / D depending on your needs. If you\'re certain your block is high enough regardless if you\'re fighting a crit guy in a crit daily, use this! Alternatively, manage the stances yourself.') },
+			function () {
+				var description = "<p>Enabling this setting will force any enemy damage calculations to ignore enemy crits.</p>";
+				description += "<p><b>Safety First</b><br>Disables this setting.";
+				description += "<p><b>Ignore Void Strength</b><br>Will ignore crits from enemies in Void maps.";
+				description += "<p><b>Ignore All Crits</b><br>Will ignore crits from enemies in challenges, daily mods or void maps.";
+				description += "<p><b>Recommended:</b> Safety First</p>";
+				return description;
+			},
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStance.value !== 3) });
 		createSetting('ForceAbandon',
 			function () { return ('Trimpicide') },
-			function () { return ('If a new fight group is available and anticipation stacks aren\'t maxed, Trimpicide and grab a new group. Will not abandon in spire. Recommended ON.') },
+			function () {
+				var description = "<p>If a new army is available to send and anticipation stacks aren't maxed this will suicide your current army and send a new one.</p>";
+				description += "<p><b>Will not abandon in Spires.</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
 			'boolean', false, null, 'Combat', [1]);
 		createSetting('AutoRoboTrimp',
 			function () { return ('AutoRoboTrimp') },
-			function () { return ('Use RoboTrimps ability starting at this level, and every 5 levels thereafter. (set to 0 to disable. default 60.) 60 is a good choice for mostly everybody.') },
-			'value', 60, null, 'Combat', [1]);
+			function () {
+				var description = "<p>Use the RoboTrimp ability starting at this level, and every 5 levels thereafter.</p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> 60</p>";
+				return description;
+			}, 'value', -1, null, 'Combat', [1]);
 		createSetting('fightforever',
 			function () { return ('Fight Always') },
-			function () { return ('U1: -1 to disable. Sends trimps to fight if they\'re not fighting, regardless of BAF. Has 2 uses. Set to 0 to always send out trimps. Or set a number higher than 0 to enable the H:D function. If the H:D ratio is below this number it will send them out. I.e, this is set to 1, it will send out trimps regardless with the H:D ratio is below 1.') },
-			'value', -1, null, 'Combat', [1]);
+			function () {
+				var description = "<p>Sends trimps to fight if they're not fighting, regardless of BAF.</p>";
+				description += "<p>Set to 0 to always send out trimps.</p>";
+				description += "<p>Set a number higher than 0 to enable the H:D function. If the H:D ratio is below this number it will send them out.</p>";
+				description += "<p>If set to -1 it will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> -1</p>";
+				return description;
+			}, 'value', -1, null, 'Combat', [1]);
 		createSetting('addpoison',
 			function () { return ('Poison Calc') },
-			function () { return ('<b>Experimental. </b><br>Adds poison to the battlecalc. May improve your poison zone speed.') },
+			function () {
+				var description = "<p>Adds poison stack damage to any trimp damage calculations.</p>";
+				description += "<p>May improve your poison zone speed.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
 			'boolean', false, null, 'Combat', [1]);
 		createSetting('fullice',
 			function () { return ('Ice Calc') },
-			function () { return ('Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use it to ensure your H:D ratios aren\'t all over the place.') },
-			'boolean', false, null, 'Combat', [1]);
+			function () {
+				var description = "<p>Always calculates your ice to be a consistent level instead of going by the enemy debuff. Primary use is to ensure your H:D (enemyHealth:trimpDamage) ratios aren't all over the place.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Combat', [1]);
 		createSetting('45stacks',
 			function () { return ('Antistack Calc') },
-			function () { return ('<b>Experimental. </b><br>Always calcs your damage as having full antistacks. Useful for windstacking.') },
+			function () {
+				var description = "<p>Will force any damage calculations to assume you have max anticipation stacks.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
 			'boolean', false, null, 'Combat', [1]);
 
 		//Radon
@@ -4861,6 +4901,15 @@ function updateATVersion() {
 			if (tempSettings.spamMessages !== undefined)
 				autoTrimpSettings['spamMessages'].value.run_Stats = false;
 		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.9') {
+			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (tempSettings.autoAbandon !== undefined) {
+				autoTrimpSettings['autoAbandon'].enabled = tempSettings.autoAbandon.value !== 1;
+				autoTrimpSettings['autoAbandon'].enabledU2 = tempSettings.autoAbandon.valueU2 !== 1;
+			}
+		}
+
 
 		autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
 		if (changelog.length !== 0) {

@@ -3,7 +3,7 @@ MODULES["other"] = {};
 function autoRoboTrimp() {
 	if (game.global.roboTrimpLevel === 0) return;
 	if (game.global.roboTrimpCooldown !== 0) return;
-	if (getPageSetting("AutoRoboTrimp") > game.global.world) return;
+	if (getPageSetting("AutoRoboTrimp") > game.global.world || getPageSetting("AutoRoboTrimp") <= 0) return;
 
 	var shouldShriek = (game.global.world - parseInt(getPageSetting("AutoRoboTrimp"))) % 5 === 0;
 	if (shouldShriek) {

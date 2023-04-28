@@ -1823,7 +1823,6 @@ function quest() {
 		resetMapVars();
 		if (game.global.mapsActive) mapsClicked(true);
 		if (game.global.preMapsActive && game.global.currentMapId !== '') recycleMap_AT();
-		mapRepeats = 0;
 	}
 
 	return farmingDetails;
@@ -2748,6 +2747,7 @@ function hdFarm(hdStats, skipHealthCheck) {
 			}
 			resetMapVars(rHDFSettings);
 			if (game.global.mapsActive) recycleMap_AT();
+
 		}
 
 		var repeat = game.global.mapsActive && ((getCurrentMapObject().level - game.global.world) !== rHDFMapLevel || (getCurrentMapObject().bonus !== rHDFSpecial && (getCurrentMapObject().bonus !== undefined && rHDFSpecial !== '0')));
@@ -3512,7 +3512,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3, hd
 	else if (mapName === 'Smithless Farm') {
 		message += " Finished with enough damage to get " + extra + "/3 stacks.";
 	}
-
+	mapRepeats = 0;
 	debug(message, mapType);
 }
 

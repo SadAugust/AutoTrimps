@@ -5,7 +5,6 @@ function graphsDebug(message) {
 		console.debug(...arguments);
 }
 
-
 function safeLocalStorage(name, data) {
 	try {
 		if (name === "portalDataCurrent") {

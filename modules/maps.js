@@ -7,8 +7,6 @@ MODULES.maps.lifeCell = 0;
 var mappingTime = 0;
 var lastMapWeWereIn = null;
 
-var mapRepeats = 0;
-
 function runSelectedMap(mapId, madAdjective) {
 	selectMap(mapId);
 	runMap();
