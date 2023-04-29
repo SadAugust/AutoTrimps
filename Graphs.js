@@ -5,6 +5,7 @@ function graphsDebug(message) {
 		console.debug(...arguments);
 }
 
+
 function safeLocalStorage(name, data) {
 	try {
 		if (name === "portalDataCurrent") {
@@ -337,7 +338,7 @@ function toggleDarkGraphs() {
 function escapeATWindows(escPressed = true) {
 	var a = document.getElementById("tooltipDiv");
 	if (a.style.display != "none") return void cancelTooltip(); // old code, uncertain what it's for or why it's here.
-	for (var elemId of ["autoSettings", "autoTrimpsTabBarMenu", "graphParent"]) {
+	for (elemId of ["autoSettings", "autoTrimpsTabBarMenu", "graphParent"]) {
 		var elem = document.getElementById(elemId);
 		if (!elem) continue;
 		if (elemId === "graphParent") { // toggle Graphs window
@@ -408,6 +409,9 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 			title: {
 				text: this.graphTitle,
 				x: -20,
+				style: {
+					fontSize: '2rem'
+				}
 			},
 			plotOptions: {
 				series: {
@@ -422,12 +426,23 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 				floor: this.xminFloor,
 				title: {
 					text: this.xTitle,
+					style: {
+						fontSize: "1.5rem"
+					},
+				},
+				labels: {
+					style: {
+						fontSize: "1.2rem"
+					},
 				},
 			},
 			yAxis: {
 				floor: this.yminFloor,
 				title: {
 					text: this.yTitle,
+					style: {
+						fontSize: "1.5rem"
+					},
 				},
 				plotLines: [
 					{
@@ -438,7 +453,10 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 				],
 				type: this.yType,
 				labels: {
-					formatter: formatters.defaultAxis
+					formatter: formatters.defaultAxis,
+					style: {
+						fontSize: "1.2rem"
+					},
 				},
 				endOnTick: false,
 				maxPadding: .05,
@@ -451,6 +469,9 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 				align: "right",
 				verticalAlign: "middle",
 				borderWidth: 0,
+				itemStyle: {
+					fontSize: "1rem"
+				},
 			},
 			series: this.graphData,
 			additionalParams: {},
@@ -496,7 +517,7 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 				if (activeToggles.includes("perZone")) {  // must always be first 
 					[x, time] = toggledGraphs.perZone.customFunction(portal, item, index, x);
 				}
-				for (var toggle of activeToggles.filter(x => x != "perZone")) {
+				for (toggle of activeToggles.filter(x => x != "perZone")) {
 					try { x = toggledGraphs[toggle].customFunction(portal, item, index, x, time, maxS3); }
 					catch (e) {
 						x = 0;
@@ -653,7 +674,7 @@ function showHideUnusedGraphs() {
 		const universes = graph.universe ? [graph.universe] : [1, 2]
 		for (const universe of universes) {
 			var style = "none"
-			for (var portal of Object.values(portalSaveData)) {
+			for (portal of Object.values(portalSaveData)) {
 				if (portal.perZoneData[graph.dataVar] && portal.universe === universe  // has collected data, in the right universe
 					&& new Set(portal.perZoneData[graph.dataVar].filter(x => x)).size > 1) { // and there is nonzero, variable data
 					style = ""
@@ -838,8 +859,8 @@ const getGameData = {
 	cruffys: () => { return game.challenges.Nurture.level },
 	universe: () => { return game.global.universe },
 	s3: () => { return game.global.lastRadonPortal },
-	u1hze: () => { return game.stats.highestLevel.valueTotal() },
-	u2hze: () => { return game.stats.highestRadLevel.valueTotal() },
+	u1hze: () => { return game.global.highestLevelCleared },
+	u2hze: () => { return game.global.highestRadonLevelCleared },
 	c23increase: () => {
 		if (game.global.challengeActive !== "" && game.global.runningChallengeSquared) {
 			// (mostly) Trimps code
@@ -1088,7 +1109,7 @@ const toggledGraphs = {
 // --------- Runtime ---------
 
 var chart1;
-if (!MODULES) MODULES = {}; // don't overwrite if AT has already created this
+if (typeof MODULES === 'undefined') MODULES = {}; // don't overwrite if AT has already created this
 var lastSave = new Date();
 var GRAPHSETTINGS = {
 	universeSelection: 1,

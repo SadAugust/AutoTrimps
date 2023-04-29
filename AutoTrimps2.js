@@ -9,13 +9,13 @@ var MODULES_AT = {
 function loadAT() {
 	for (var y = 0; y < MODULES_AT.atscript.length; y++) {
 		if (MODULES_AT.atscript[y].src.includes('AutoTrimps2')) {
-			MODULES_AT.basepath = MODULES_AT.atscript[y].src.replace(/AutoTrimps2\.js$/, '')
+			MODULES_AT.basepath = MODULES_AT.atscript[y].src.replace(/AutoTrimps2\.js$/, '');
 			break;
 		}
 		y++;
 	}
 }
-loadAT()
+loadAT();
 
 //Backup on the off chance the script hasn't been found
 if (MODULES_AT.basepath === '') MODULES_AT.basepath = 'https://SadAugust.github.io/AutoTrimps/';
@@ -24,11 +24,11 @@ basepath = MODULES_AT.basepath;
 function ATscriptLoad(a, b) {
 	null == b && debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(MODULES_AT.modulepath, \'example.js\'); ');
 	var c = document.createElement('script');
-	null == a && (a = ''), c.src = MODULES_AT.basepath + a + b + '.js', c.id = b + '_MODULE', document.head.appendChild(c)
+	null == a && (a = ''), c.src = MODULES_AT.basepath + a + b + '.js', c.id = b + '_MODULE', document.head.appendChild(c);
 }
 function ATscriptUnload(a) {
 	var b = document.getElementById(a + "_MODULE");
-	b && (document.head.removeChild(b), debug("Removing " + a + "_MODULE", "other"))
+	b && (document.head.removeChild(b), debug("Removing " + a + "_MODULE", "other"));
 }
 
 var ATrunning = true;
@@ -97,6 +97,9 @@ ATscriptLoad(MODULES_AT.modulepath, 'utils');
 function initializeAutoTrimps() {
 	loadPageVariables();
 	ATscriptLoad('', 'SettingsGUI');
+	/* var script = document.createElement('script');
+	script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
+	document.head.appendChild(script); */
 	ATscriptLoad('', 'Graphs');
 	ATscriptLoad('', 'mutatorPreset');
 	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perky', 'surky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];

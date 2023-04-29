@@ -246,10 +246,10 @@ function shouldRunUniqueMap(map, hdStats) {
 	return false;
 }
 
-function recycleMap_AT() {
+function recycleMap_AT(forceAbandon) {
 	if (!getPageSetting('autoMaps')) return;
 	if (game.jobs.Explorer.locked) return;
-	if (challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb') return;
+	if (!forceAbandon && (challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb')) return;
 
 	if (game.global.mapsActive) {
 		mapsClicked(true);
@@ -2517,7 +2517,7 @@ function desolation(hdStats, forceDestack) {
 			MODULES.mapFunctions.challengeContinueRunning = true;
 		}
 		else {
-			if (!game.jobs.Explorer.locked && game.challenges.Desolation.chilled === 0) recycleMap_AT();
+			if (game.challenges.Desolation.chilled === 0) recycleMap_AT(true);
 			MODULES.mapFunctions.challengeContinueRunning = false;
 			shouldDesolation = false;
 		}

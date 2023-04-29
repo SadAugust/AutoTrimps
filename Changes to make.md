@@ -35,6 +35,9 @@
    - Change AE: Zone to only work if input is above 0.
    - Change AE: Highest Prestige to a multitoggle. Will add in a disable after running Trimple/Atlantrimp section to it.~~
 
+# Calc
+   - Remove Gamma Burst setting?
+     - Currently going to cause some issues in late game scenarios if people don't have it on. 
 # Outside of coding
    - Potentially setup a discord server? 
         - Pros would be a commit channel that can allow users to see if they should refresh.

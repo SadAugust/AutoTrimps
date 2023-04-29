@@ -704,7 +704,7 @@ function initializeAllSettings() {
 				description += "<p><b>Red</b><br>Updating red challenges is typically worthwhile.</p>";
 				description += "<p><b>Blue</b><br>This challenge hasn't been run yet and should be done as soon as possible.</p>";
 				return description;
-			}, 'infoclick', 'c2table', null, 'C2', [1, 2]);
+			}, 'infoclick', 'c2table', null, 'C2', [0]);
 
 		createSetting('cfightforever',
 			function () { return ('Tox/Nom Fight Always') },
@@ -743,7 +743,6 @@ function initializeAllSettings() {
 				var description = "<p>Enable this if you want to use " + cinf() + " running features.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-				return ('See \'' + cinf() + ' Table\' for a list of challenges that this can run.')
 			},
 			'boolean', false, null, 'C2', [1, 2]);
 
@@ -811,7 +810,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The zone you would like to start destacking from.</p>";
 				return description;
-			}, 'value', [6], null, 'C2', [1],
+			}, 'value', 6, null, 'C2', [1],
 			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
 		createSetting('balanceStacks',
 			function () { return ('B: Stacks') },
@@ -863,7 +862,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The zone you would like to start destacking from.</p>";
 				return description;
-			}, 'value', [6], null, 'C2', [2],
+			}, 'value', 6, null, 'C2', [2],
 			function () { return (getPageSetting('unbalance', currSettingUniverse) && autoTrimpSettings.unbalance.require()) });
 		createSetting('unbalanceStacks',
 			function () { return ('U: Stacks') },
@@ -1402,7 +1401,7 @@ function initializeAllSettings() {
 				description += "<p>Click the cog icon on the right side of this button to tell your Foremen what you want and when you want it.</p>";
 				description += "For more detailed information for this setting check out its Help section.";
 				return description;
-			}, 'boolean', 'true', null, 'Legacy', [1]);
+			}, 'boolean', 'true', null, 'Legacy', [1, 2]);
 		createSetting('buildingSettingsArray',
 			function () { return ('Building Settings') },
 			function () { return ('Click to adjust settings.') },
@@ -1422,7 +1421,7 @@ function initializeAllSettings() {
 			Tribute: { enabled: true, percent: 100, buyMax: 0 },
 			Laboratory: { enabled: true, percent: 100, buyMax: 0 },
 			SafeGateway: { enabled: true, mapCount: 1, zone: 0 }
-		}, null, 'Legacy', [1]);
+		}, null, 'Legacy', [1, 2]);
 
 		//Helium
 		createSetting('warpstation',
@@ -1512,7 +1511,7 @@ function initializeAllSettings() {
 				//Override info
 				description += "<p><b>Map setting job ratios always override both 'Auto Ratios' & 'Manual Ratios'.</b></p>";
 				return description;
-			}, 'multitoggle', 1, null, 'Legacy', [1]);
+			}, 'multitoggle', 1, null, 'Legacy', [1, 2]);
 		createSetting('jobSettingsArray',
 			function () { return ('Job Settings') },
 			function () { return ('Click to adjust settings.') },
@@ -1527,7 +1526,7 @@ function initializeAllSettings() {
 			Worshipper: { enabled: true, percent: 5 },
 			FarmersUntil: { enabled: false, zone: 999 },
 			NoLumberjacks: { enabled: false }
-		}, null, 'Legacy', [1]);
+		}, null, 'Legacy', [1, 2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -2101,8 +2100,7 @@ function initializeAllSettings() {
 				description += "<p><b>Vanilla</b><br>Will make sure the ingames AutoFight is enabled at all times and ensures you start fighting on portal.";
 				description += "<p><b>Recommended:</b> Better Auto Fight</p>";
 				return description;
-			},
-			'multitoggle', 0, null, "Combat", [1, 2]);
+			}, 'multitoggle', 0, null, "Combat", [1, 2]);
 		createSetting('autoAbandon',
 			function () { return ('Auto Abandon') },
 			function () {
@@ -2118,9 +2116,16 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Combat', [1, 2]);
 		createSetting('AutoStance',
-			function () { return (['Auto Stance OFF', 'Auto Stance', 'D Stance', 'Windstacking']) },
-			function () { return ('<b>Autostance:</b> Automatically swap stances to avoid death. <br><b>D Stance:</b> Keeps you in D stance regardless of Health. <br><b>Windstacking:</b> For use after nature (z230), and will keep you in D stance unless you are windstacking (Only useful if transfer is maxed out and wind empowerment is high). There\'s settings in the Windstacking tab that must be setup for this to function as intended.') },
-			'multitoggle', 0, null, "Combat", [1]);
+			function () { return (['Auto Stance Off', 'Auto Stance', 'D Stance', 'Windstacking']) },
+			function () {
+				var description = "<p>Enabling this setting will force any enemy damage calculations to ignore enemy crits.</p>";
+				description += "<p><b>Autostance Off</b><br>Disables this setting.";
+				description += "<p><b>Autostance</b><br>Automatically swap stances to avoid death.";
+				description += "<p><b>D stance</b><br>Keeps you in D stance regardless of Health.";
+				description += "<p><b>Windstacking</b><br>For use after nature (z230), and will keep you in D stance unless you are windstacking (Only useful if transfer is maxed out and wind empowerment is high). There's settings that will appear at the bottom of this tab if selected that must be setup for this to function as intended.";
+				description += "<p><b>Recommended:</b> Autostance</p>";
+				return description;
+			}, 'multitoggle', 0, null, "Combat", [1]);
 		createSetting('IgnoreCrits',
 			function () { return (['Safety First', 'Ignore Void Strength', 'Ignore All Crits']) },
 			function () {
@@ -2130,8 +2135,7 @@ function initializeAllSettings() {
 				description += "<p><b>Ignore All Crits</b><br>Will ignore crits from enemies in challenges, daily mods or void maps.";
 				description += "<p><b>Recommended:</b> Safety First</p>";
 				return description;
-			},
-			'multitoggle', 0, null, 'Combat', [1],
+			}, 'multitoggle', 0, null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStance.value !== 3) });
 		createSetting('ForceAbandon',
 			function () { return ('Trimpicide') },
@@ -2140,8 +2144,7 @@ function initializeAllSettings() {
 				description += "<p><b>Will not abandon in Spires.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			},
-			'boolean', false, null, 'Combat', [1]);
+			}, 'boolean', false, null, 'Combat', [1]);
 		createSetting('AutoRoboTrimp',
 			function () { return ('AutoRoboTrimp') },
 			function () {
@@ -2167,8 +2170,7 @@ function initializeAllSettings() {
 				description += "<p>May improve your poison zone speed.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			},
-			'boolean', false, null, 'Combat', [1]);
+			}, 'boolean', false, null, 'Combat', [1]);
 		createSetting('fullice',
 			function () { return ('Ice Calc') },
 			function () {
@@ -2195,11 +2197,6 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> Auto Equality: Advanced</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Combat', [2]);
-		createSetting('equalityCalc',
-			function () { return (['Equality Calc Off', 'EC: On', 'EC: Health']) },
-			function () { return ('<b>Experimental. </b><br>Adds Equality Scaling levels to the battlecalc. Will always calculate equality based on actual scaling levels when its turned off by other settings. Assumes you use Equality Scaling. Turning this on allows in-game Equality Scaling to adjust your Health accordingly. EC: Health only decreases enemies attack in the calculation which may improve speed.') },
-			'multitoggle', 0, null, 'Combat', [2],
-			function () { return (getPageSetting('equalityManagement', 2) < 2) });
 		createSetting('gammaBurstCalc',
 			function () { return ('Gamma Burst Calc') },
 			function () {
@@ -2351,7 +2348,12 @@ function initializeAllSettings() {
 		//Windstacking
 		createSetting('WindStackingMin',
 			function () { return ('Windstack Min Zone') },
-			function () { return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from WS MAX work off this setting.') },
+			function () {
+				/* var description = "<p>When Wind Enlightenment </b></p>";
+				description += "<p><b>Recommended:</b> On whilst highest zone is below 30 otherwise off</p>";
+				return description; */
+				return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from WS MAX work off this setting.')
+			},
 			'value', -1, null, 'Combat', [1],
 			function () { return (autoTrimpSettings.AutoStance.value === 3) });
 		createSetting('WindStackingMinHD',
@@ -3068,7 +3070,7 @@ function initializeAllSettings() {
 		createSetting('displayHeHr',
 			function () { return (resourceHour() + '/hr status') },
 			function () { return ('Enables the display of your ' + resource().toLowerCase() + ' per hour. Turn this off to reduce memory.') },
-			'boolean', true, null, 'Display', [1, 2]);
+			'boolean', true, null, 'Display', [0]);
 
 		createSetting('displayAllSettings',
 			function () { return ('Display all settings') },
@@ -3080,10 +3082,6 @@ function initializeAllSettings() {
 			function () { return ('(Action Button). Go AFK uses a Black Screen, and suspends ALL the Trimps GUI visual update functions (updateLabels) to improve performance by not doing unnecessary stuff. This feature is primarily just a CPU and RAM saving mode. Everything will resume when you come back and press the Back button. Console debug output is also disabled. The blue color means this is not a settable setting, just a button. You can now also click the Zone # (World Info) area to go AFK now.') },
 			'action', 'MODULES["performance"].EnableAFKMode()', null, 'Display', [1, 2]);
 
-		createSetting('debugEqualityStats',
-			function () { return ('debugEqualityStats') },
-			function () { return ('Will display details of trimp/enemy stats when you gamma burst.') },
-			'boolean', false, null, 'Display', [2]);
 		createSetting('automateSpireAssault',
 			function () { return ('Automate Spire Assault') },
 			function () { return ('Automates Spire Assault gear swaps from level 92 up to level 128. HIGHLY RECOMMENDED THAT YOU DO NOT USE THIS SETTING.') },
@@ -3152,23 +3150,23 @@ function initializeAllSettings() {
 		createSetting('ImportAutoTrimps',
 			function () { return ('Import AutoTrimps') },
 			function () { return ('Import your AutoTrimps Settings. Asks you to name it as a profile afterwards.') },
-			'infoclick', 'ImportAutoTrimps', null, 'Import Export', [1, 2]);
+			'infoclick', 'ImportAutoTrimps', null, 'Import Export', [0]);
 		createSetting('ExportAutoTrimps',
 			function () { return ('Export AutoTrimps') },
 			function () { return ('Export your AutoTrimps Settings as a output string text formatted in JSON.') },
-			'infoclick', 'ExportAutoTrimps', null, 'Import Export', [1, 2]);
+			'infoclick', 'ExportAutoTrimps', null, 'Import Export', [0]);
 		createSetting('DefaultAutoTrimps',
 			function () { return ('Reset to Default') },
 			function () { return ('Reset everything to the way it was when you first installed the script.') },
-			'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export', [1, 2]);
+			'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export', [0]);
 		createSetting('DownloadDebug',
 			function () { return ('Download for debug') },
 			function () { return ('Will download both your save and AT settings so that they can be debugged easier.') },
-			'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [1, 2]);
-		createSetting('CleanupAutoTrimps',
+			'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [0]);
+		/* createSetting('CleanupAutoTrimps',
 			function () { return ('Cleanup Saved Settings') },
 			function () { return ('Deletes old values from previous versions of the script from your AutoTrimps settings file.') },
-			'infoclick', 'CleanupAutoTrimps', null, 'Import Export', [1, 2]);
+			'infoclick', 'CleanupAutoTrimps', null, 'Import Export', [0]); */
 		createSetting('downloadSaves',
 			function () { return ('Download Saves') },
 			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
@@ -3181,64 +3179,73 @@ function initializeAllSettings() {
 				preset1: {},
 				preset2: {},
 				preset3: {},
-			}), null, 'Import Export', [0]);
+			}), null, 'Import Export', [2]);
 	}
 
 
 	//Testing - Hidden Features for testing purposes! Please never seek these out!
 	const displayTesting = true;
 	if (displayTesting) {
-
 		createSetting('gameUser',
 			function () { return ('User') },
 			function () { return ('<b>Not gonna be seen</b>') },
 			'textValue', 'undefined', null, 'Test', [0],
 			function () { return (false) });
 
-		createSetting('gameSpeed50',
+		createSetting('testSpeed50',
 			function () { return ('Game Speed 50x') },
 			function () { return ('Set gamespeed to 50x the regular value.') },
-			'action', 'cheatSpeedX(0.00001)', null, 'Test', [0]);
+			'action', 'testSpeedX(0.00001)', null, 'Test', [0]);
 
-		createSetting('gameSpeedNormal',
-			function () { return ('Game Speed Normal') },
-			function () { return ('Set gamespeed to the regular value.') },
-			'action', 'cheatSpeedNormal()', null, 'Test', [0]);
-
-		createSetting('gameSetChallenge',
+		createSetting('testSetChallenge',
 			function () { return ('Custom Challenge') },
 			function () { return ('Will set the challenge that Trimps is running to your input.') },
 			'action', 'ImportExportTooltip("SetCustomChallenge")', null, 'Test', [0]);
 
-		createSetting('gameSetC2',
+		createSetting('testSetC2',
 			function () { return ('Toggle ' + cinf()) },
 			function () { return ('Will toggle on the setting for if you\'re running a ' + cinf() + '.') },
-			'action', 'cheatRunningCinf()', null, 'Test', [0]);
+			'action', 'testRunningCinf()', null, 'Test', [0]);
 
-		createSetting('gameLastWorldCell',
+		createSetting('testMetalOneDay',
+			function () { return ('1 day of metal') },
+			function () { return ('Will tell you how much metal you\'d gain from 1 day of metal farming.<br>If in a map if will use your map level otherwise it\'ll assume world level maps.<br>Assumes killing at max speed and factors overkill into the calculations.') },
+			'action', 'testMetalIncome()', null, 'Test', [0]);
+
+		createSetting('testLastWorldCell',
 			function () { return ('Last World Cell') },
 			function () { return ('Sets your current cell to the last world cell in the world.') },
-			'action', 'cheatWorldCell()', null, 'Test', [0]);
+			'action', 'testWorldCell()', null, 'Test', [0]);
 
-		createSetting('gameLastMapCell',
+		createSetting('testLastMapCell',
 			function () { return ('Last Map Cell') },
 			function () { return ('Sets your current cell to the last map cell if currently mapping.') },
-			'action', 'cheatMapCell()', null, 'Test', [0]);
+			'action', 'testMapCell()', null, 'Test', [0]);
 
-		createSetting('gameMaxMapBonus',
+		createSetting('testMaxMapBonus',
 			function () { return ('Max Map Bonus') },
 			function () { return ('Sets map bonus to 10.') },
-			'action', 'cheatMaxMapBonus()', null, 'Test', [0]);
+			'action', 'testMaxMapBonus()', null, 'Test', [0]);
 
-		createSetting('gameMaxTenacity',
+		createSetting('testMaxTenacity',
 			function () { return ('Tenacity Max Mult') },
 			function () { return ('Sets Tenacity to max mult.') },
 			'action', 'cheatMaxTenacity()', null, 'Test', [0]);
 
-		createSetting('gameStatMult',
+		createSetting('testStatMult',
 			function () { return ('1e100x stats') },
 			function () { return ('Multiplies soldier health & damage by 1e100.') },
-			'action', 'cheatTrimpStats()', null, 'Test', [0]);
+			'action', 'testTrimpStats()', null, 'Test', [0]);
+
+		createSetting('testBoneCharges',
+			function () { return ('Max Bone Charges') },
+			function () { return ('Sets bone charges to 10.') },
+			'action', 'game.permaBoneBonuses.boosts.charges=10', null, 'Test', [0]);
+
+		createSetting('debugEqualityStats',
+			function () { return ('Debug Equality Stats') },
+			function () { return ('Will display details of trimp/enemy stats when you gamma burst.') },
+			'boolean', false, null, 'Test', [2]);
 	}
 }
 
@@ -3276,18 +3283,21 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 	btn.id = id;
 	var loaded = autoTrimpSettings[id];
 
+	var u1Setting = (universe.indexOf(0) !== -1 || universe.indexOf(1) !== -1);
+	var u2Setting = (universe.indexOf(2) !== -1);
 	if (type == 'boolean') {
-		if (!(loaded && id == loaded.id && loaded.type === type))
+		if (!(loaded && id == loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
 				description: description,
 				type: type,
-				enabled: loaded === undefined ? (defaultValue || false) : typeof loaded.enabled === 'undefined' ? loaded : loaded.enabled,
-				enabledU2: loaded === undefined ? (defaultValue || false) : typeof loaded.enabledU2 === 'undefined' ? loaded : loaded.enabledU2,
 				universe: universe
 			};
-		if (require) autoTrimpSettings[id].require = require
+			if (u1Setting) autoTrimpSettings[id].enabled = loaded === undefined ? (defaultValue || false) : typeof loaded.enabled === 'undefined' ? loaded : loaded.enabled;
+			if (u2Setting) autoTrimpSettings[id].enabledU2 = loaded === undefined ? (defaultValue || false) : typeof loaded.enabledU2 === 'undefined' ? loaded : loaded.enabledU2;
+			if (require) autoTrimpSettings[id].require = require;
+		}
 		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
 		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].enabled);
@@ -3300,17 +3310,18 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		else document.getElementById("autoSettings").appendChild(btnParent);
 
 	} else if (type == 'value' || type == 'valueNegative' || type == 'multiValue') {
-		if (!(loaded && id == loaded.id && loaded.type === type))
+		if (!(loaded && id == loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
 				description: description,
 				type: type,
-				value: loaded === undefined || loaded === null ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value,
-				valueU2: loaded === undefined || loaded === null ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2,
 				universe: universe
 			};
-		if (require) autoTrimpSettings[id].require = require
+			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined || loaded === null ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
+			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined || loaded === null ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
+			if (require) autoTrimpSettings[id].require = require;
+		}
 		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
@@ -3322,17 +3333,18 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
 	} else if (type == 'textValue') {
-		if (!(loaded && id == loaded.id && loaded.type === type))
+		if (!(loaded && id == loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
 				description: description,
 				type: type,
-				value: loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value,
-				valueU2: loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2,
 				universe: universe
 			};
-		if (require) autoTrimpSettings[id].require = require
+			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
+			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
+			if (require) autoTrimpSettings[id].require = require;
+		}
 		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
 		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name()}", ${type == 'textValue'})`);
@@ -3343,18 +3355,19 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
 	} else if (type == 'dropdown') {
-		if (!(loaded && id == loaded.id && loaded.type === type))
+		if (!(loaded && id == loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
 				description: description,
 				type: type,
-				selected: loaded === undefined ? defaultValue : typeof loaded.selected === 'undefined' ? loaded : loaded.selected,
-				selectedU2: loaded === undefined ? defaultValue : typeof loaded.selectedU2 === 'undefined' ? loaded : loaded.selectedU2,
 				universe: universe,
 				list: list
 			};
-		if (require) autoTrimpSettings[id].require = require;
+			if (u1Setting) autoTrimpSettings[id].selected = loaded === undefined ? defaultValue : typeof loaded.selected === 'undefined' ? loaded : loaded.selected;
+			if (u2Setting) autoTrimpSettings[id].selectedU2 = loaded === undefined ? defaultValue : typeof loaded.selectedU2 === 'undefined' ? loaded : loaded.selectedU2;
+			if (require) autoTrimpSettings[id].require = require;
+		}
 		var btn = document.createElement("select");
 		btn.id = id;
 		if (game.options.menu.darkTheme.enabled == 2) btn.setAttribute("style", "color: #C8C8C8; font-size: 1.0vw;");
@@ -3379,7 +3392,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
 	} else if (type == 'infoclick') {
-		if (!(loaded && id == loaded.id && loaded.type === type))
+		if (!(loaded && id == loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
@@ -3387,13 +3400,14 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				type: type,
 				universe: universe
 			};
+		}
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute("onclick", 'ImportExportTooltip(\'' + defaultValue + '\', \'update\')');
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
 		btn.innerHTML = name();
-		if (require) autoTrimpSettings[id].require = require
+		if (require) autoTrimpSettings[id].require = require;
 		//btnParent.style.width = '';
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
@@ -3401,16 +3415,17 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		return;
 
 	} else if (type == 'multitoggle') {
-		if (!(loaded && id == loaded.id && loaded.type === type))
+		if (!(loaded && id == loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
 				description: description,
 				type: type,
-				value: loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value,
-				valueU2: loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2,
 				universe: universe
 			};
+			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
+			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
+		}
 		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
 		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].value);
@@ -3419,7 +3434,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.innerHTML = autoTrimpSettings[id].name()[autoTrimpSettings[id]["value"]];
 		btnParent.appendChild(btn);
-		if (require) autoTrimpSettings[id].require = require
+		if (require) autoTrimpSettings[id].require = require;
 		if (id === 'dailyPortal') {
 			btnParent.setAttribute('class', 'toggleConfigBtnLocal settingsBtnLocal settingsBtnfalse')
 			btnParent.setAttribute('style', 'max-height: 3.1vh; display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;border-bottom: 1px solid black !important;')
@@ -3441,16 +3456,18 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			autoPortalSettings.appendChild(autoPortalSettingsButton);
 		}
 	} else if (type === 'mazArray') {
-		if (!(loaded && id == loaded.id && loaded.type === type))
+		if (!(loaded && id == loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
 				description: description,
 				type: type,
-				value: loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value,
-				valueU2: loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2,
 				universe: universe
 			};
+			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
+			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
+			if (require) autoTrimpSettings[id].require = require;
+		}
 		//btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute('onclick', list);
@@ -3459,12 +3476,11 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
 		btn.innerHTML = name();
 		btnParent.appendChild(btn);
-		if (require) autoTrimpSettings[id].require = require
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
 		return;
 	} else if (type === 'action') {
-		if (!(loaded && id == loaded.id && loaded.type === type))
+		if (!(loaded && id == loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
@@ -3472,6 +3488,8 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				type: type,
 				universe: universe
 			};
+			if (require) autoTrimpSettings[id].require = require;
+		}
 		//btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute('onclick', defaultValue);
@@ -3480,22 +3498,22 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
 		btn.innerHTML = name();
 		btnParent.appendChild(btn);
-		if (require) autoTrimpSettings[id].require = require
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
 		return;
 	} else if (type === 'mazDefaultArray') {
-		if (!(loaded && id == loaded.id && loaded.type === type))
+		if (!(loaded && id == loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
 				description: description,
 				type: type,
-				value: loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value,
-				valueU2: loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2,
 				universe: universe
 			};
-		if (require) autoTrimpSettings[id].require = require
+			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
+			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
+			if (require) autoTrimpSettings[id].require = require;
+		}
 		return;
 	}
 	if (autoTrimpSettings[id].name != name)
@@ -3699,7 +3717,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("automateSpireAssault", radonon);
 	modifyParentNode("showbreedtimer", radonoff);
 
-	modifyParentNode("gameSetC2", 'show');
+	modifyParentNode("testMetalOneDay", 'show');
 
 }
 
@@ -4411,7 +4429,11 @@ function updateCustomButtons(initialLoad) {
 
 	for (var setting in autoTrimpSettings) {
 		var item = autoTrimpSettings[setting];
-		if (item === null || typeof item.id === 'undefined') continue;
+
+		if (item === null || typeof item.id === 'undefined') {
+			if (setting !== 'ATversion') delete autoTrimpSettings[setting];
+			continue;
+		}
 		const settingUniverse = item.universe;
 		if (!Array.isArray(settingUniverse)) continue;
 		if (item.type === 'mazDefaultArray') continue;

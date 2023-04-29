@@ -3,7 +3,7 @@ var $settingsProfiles;
 function settingsProfileMakeGUI() {
 	var $settingsProfilesLabel = document.createElement("Label");
 	$settingsProfilesLabel.id = 'settingsProfiles Label';
-	$settingsProfilesLabel.innerHTML = "Settings Profile: ";
+	$settingsProfilesLabel.innerHTML = "Profile: ";
 	if (game.options.menu.darkTheme.enabled == 2) $settingsProfilesLabel.setAttribute("style", "margin-left: 1.2vw; margin-right: 0.8vw; font-size: 0.8vw;");
 	else $settingsProfilesLabel.setAttribute("style", "margin-left: 1.2vw; margin-right: 0.8vw; font-size: 0.8vw;");
 	$settingsProfiles = document.createElement("select");
@@ -17,7 +17,7 @@ function settingsProfileMakeGUI() {
 	var $settingsProfilesButton = document.createElement("Button");
 	$settingsProfilesButton.id = 'settingsProfiles Button';
 	$settingsProfilesButton.setAttribute('class', 'btn btn-info');
-	$settingsProfilesButton.innerHTML = "&lt;Delete Profile";
+	$settingsProfilesButton.innerHTML = "Delete Profile";
 	$settingsProfilesButton.setAttribute('style', 'margin-left: 0.5vw; margin-right: 0.5vw; font-size: 0.8vw;');
 	$settingsProfilesButton.setAttribute('onclick', 'onDeleteProfileHandler()');
 	//populate with a Default (read default settings):
@@ -441,7 +441,7 @@ function ImportExportTooltip(what, event, download) {
 	} else if (what == 'SetCustomChallenge') {
 		titleText = "Enter Challenge To Run";
 		tooltipText = "What challenge would you like to be switched to?<br/><br/><textarea id='setSettingsNameTooltip' style='width: 100%' rows='1'></textarea>";
-		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); cheatChallenge();'>Import</div><div class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
+		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); testChallenge();'>Import</div><div class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
 		ondisplay = function () {
 			document.getElementById('setSettingsNameTooltip').focus();
 		};

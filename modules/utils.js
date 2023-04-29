@@ -515,10 +515,10 @@ function debugPrettifyMap(map) {
 }
 
 //DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
-function cheatSpeedX(interval) {
+function testSpeedX(interval) {
 	//Game uses 100ms for 1 second, so 5ms is 20x speed;
 	if (game.options.menu.pauseGame.enabled) {
-		setTimeout(cheatSpeedX, interval, interval);
+		setTimeout(testSpeedX, interval, interval);
 		return;
 	}
 	var date = new Date();
@@ -538,13 +538,13 @@ function cheatSpeedX(interval) {
 
 	mainLoop();
 	gameLoop(null, now);
-	setTimeout(cheatSpeedX, interval, interval);
+	setTimeout(testSpeedX, interval, interval);
 
 	if ((date.getSeconds() % 3) === 0) updateLabels();
 }
 
 //called by ImportExportTooltip('NameSettingsProfiles')
-function cheatChallenge() {
+function testChallenge() {
 	//read the name in from tooltip
 	try {
 		var challengeName = document.getElementById("setSettingsNameTooltip").value.replace(/[\n\r]/gm, "");
@@ -560,11 +560,24 @@ function cheatChallenge() {
 	game.global.challengeActive = challengeName;
 }
 
-function cheatRunningCinf() {
+function testRunningCinf() {
 	game.global.runningChallengeSquared = !game.global.runningChallengeSquared;
 }
 
-function cheatMaxMapBonus() {
+function testMetalIncome() {
+	var secondsPerMap = 8 / maxOneShotPower(true);
+	var mapsPerHour = 3600 / secondsPerMap;
+	var mapsPerDay = mapsPerHour * 24;
+	//Factors in large cache + chronoimp
+	var mappingTime = mapsPerDay * 25;
+	//Adding avg jestimps into mappingTime calculation
+	if (mapsPerDay > 4) mappingTime += (Math.floor(mapsPerDay / 5) * 45);
+	var mapLevel = game.global.mapsActive ? getCurrentMapObject().level - game.global.world : 0;
+	var resourcesGained = scaleToCurrentMapLocal(simpleSecondsLocal("metal", mappingTime, '0,0,1'), false, true, mapLevel);
+	debug("Metal gained from 1 day " + prettify(resourcesGained));
+}
+
+function testMaxMapBonus() {
 	game.global.mapBonus = 10;
 }
 
@@ -572,7 +585,7 @@ function cheatMaxTenacity() {
 	game.global.zoneStarted -= 7.2e+6;
 }
 
-function cheatWorldCell() {
+function testWorldCell() {
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.lastClearedCell = game.global.gridArray.length - 2;
 		game.global.gridArray[game.global.lastClearedCell + 1].health = 0;
@@ -580,7 +593,7 @@ function cheatWorldCell() {
 	}
 }
 
-function cheatMapCell() {
+function testMapCell() {
 	if (game.global.mapsActive) {
 		game.global.lastClearedMapCell = getCurrentMapObject().size - 2;
 		game.global.mapGridArray[game.global.lastClearedMapCell + 1].health = 0;
@@ -588,7 +601,7 @@ function cheatMapCell() {
 	}
 }
 
-function cheatTrimpStats() {
+function testTrimpStats() {
 	game.global.soldierCurrentAttack *= 1e100;
 	game.global.soldierHealth *= 1e100;
 	game.global.soldierHealthMax *= 1e100;

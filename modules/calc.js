@@ -616,15 +616,10 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	if (game.global.universe === 2 && game.portal.Equality[perkLevel] > 0) {
 		if (!isNaN(parseInt((equality)))) {
 			if (equality > game.portal.Equality[perkLevel])
-				debug('You don\'t have this many levels in Equality. - Player Dmg. ' + equality + " equality used.")
-			attack *= Math.pow(game.portal.Equality.getModifier(1), equality)
+				debug('You don\'t have this many levels in Equality. - Player Dmg. ' + equality + "/" + game.portal.Equality[perkLevel] + " equality used.");
+			attack *= Math.pow(game.portal.Equality.getModifier(1), equality);
 		} else if (isNaN(parseInt((equality)))) {
-			if (getPageSetting('equalityCalc') == 1 && getPageSetting('equalityManagement') === 1 && !equality)
-				attack *= Math.pow(game.portal.Equality.getModifier(1), game.portal.Equality.scalingCount);
-			else if (getPageSetting('equalityCalc') == 0 && !equality)
-				attack *= game.portal.Equality.getMult(1);
-			else
-				attack *= game.portal.Equality.getMult(1);
+			if (tenSecondInterval) debug("Equality is not a number. - Player Dmg. " + equality + " equality used.");
 		}
 	}
 
@@ -919,13 +914,11 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	if (game.global.universe === 2 && equality) {
 		if (!isNaN(parseInt((equality)))) {
 			if (equality > game.portal.Equality.radLevel) {
-				debug(equality)
-				debug('You don\'t have this many levels in Equality. - Enemy Dmg')
+				debug('You don\'t have this many levels in Equality. - Enemy Dmg. ' + equality + "/" + game.portal.Equality.radLevel + " equality used.");
 			}
 			attack *= Math.pow(game.portal.Equality.getModifier(), equality);
-		} else {
-			attack *= game.portal.Equality.radLevel > 0 && getPageSetting('equalityCalc') == 0 && !equality ? game.portal.Equality.getMult() : 1;
-			attack *= game.portal.Equality.radLevel > 0 && getPageSetting('equalityCalc') >= 1 && game.portal.Equality.scalingCount > 0 && !equality ? Math.pow(game.portal.Equality.modifier, game.portal.Equality.scalingCount) : 1;
+		} else if (isNaN(parseInt((equality)))) {
+			if (tenSecondInterval) debug("Equality is not a number. - Enemy Dmg. " + equality + " equality used.");
 		}
 	}
 
