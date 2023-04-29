@@ -248,7 +248,7 @@ function initializeAllSettings() {
 			function () { return ('Preset Swapping') },
 			function () {
 				var description = "<p>Will automatically swap Surky presets when portaling into runs.</p>";
-				description += "<p>Fillers will load <b>'Easy Radon Challenge</b>'</p>";
+				description += "<p>Fillers (non daily/" + cinf() + " runs) will load <b>'Easy Radon Challenge</b>'</p>";
 				description += "<p>Dailies will load <b>'Difficult Radon Challenge</b>'</p>";
 				description += "C3s or Mayhem-like challenges will load <b>'Push/C3/Mayhem</b>'.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
@@ -627,7 +627,7 @@ function initializeAllSettings() {
 		createSetting('dailyPortalFiller',
 			function () { return ('Filler run') },
 			function () {
-				var description = "<p>Will run a filler challenge (selected in DP: Challenge) inbetween dailies.</p>";
+				var description = "<p>Will run a filler (non daily/" + cinf() + " runs) challenge (selected in DP: Challenge) inbetween dailies.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			},
@@ -2573,7 +2573,7 @@ function initializeAllSettings() {
 		createSetting('heirloomSwapZone',
 			function () { return ('Swap Zone') },
 			function () {
-				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during filler (non daily/" + cinf() + " runs.</p>";
+				var description = "<p>From which zone to swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield during filler (non daily/" + cinf() + " runs).</p>";
 				description += "<p>If set to -1 it will disable this setting.</p>";
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
@@ -2952,7 +2952,7 @@ function initializeAllSettings() {
 		createSetting('autoGoldenSettings',
 			function () { return ('Auto Gold Settings') },
 			function () {
-				var description = "<p>Here you can select the golden upgrades you would like to have purchased during filler runs.</p>";
+				var description = "<p>Here you can select the golden upgrades you would like to have purchased during filler (non daily/" + cinf() + " runs) runs.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
 				return description;
@@ -2977,84 +2977,146 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Nature -- TO DO
+	//Nature -- Descriptions done!
 	const displayNature = true;
 	if (displayNature) {
 		//Tokens
 		createSetting('AutoNatureTokens',
 			function () { return ('Spend Nature Tokens') },
-			function () { return ('<b>MASTER BUTTON</b> Automatically spend or convert nature tokens.') },
-			'boolean', false, null, 'Nature', [1]);
+			function () {
+				var description = "<p>Controls how Nature tokens are handled by the script.</p>";
+				description += "<p>Additional settings appear when enabled for token transfer & automatically spending tokens on enlightenments.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Nature', [1]);
 		createSetting('tokenthresh',
 			function () { return ('Token Threshold') },
-			function () { return ('If Tokens would go below this value it will not convert tokens.') },
-			'value', -1, null, 'Nature', [1],
+			function () {
+				var description = "<p>If tokens would go below this value it will disable token conversion.</p>";
+				description += "<p><b>Set to 0 or -1 to completely disable token conversion.</b></p>";
+				return description;
+			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 		createSetting('AutoPoison',
 			function () { return ('Poison') },
-			function () { return ('Spend/convert Poison tokens') },
-			'dropdown', 'Off', ['Off', 'Empowerment', 'Transfer', 'Convert to Wind', 'Convert to Ice', 'Convert to Both'], 'Nature', [1],
+			function () {
+				var description = "<p>Decides what to do with Poison tokens.</p>";
+				description += "<p>Will only spend tokens if the action costs less than your current total + the value in <b>Token Threshold</b><br></p>";
+				description += "<p><b>Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Empowerment</b><br>Will upgrade your Poison level.</p>";
+				description += "<p><b>Transfer</b><br>Will purchase levels in your Poison transfer rate.</p>";
+				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
+				return description;
+			},
+			'dropdown', 'Off', ['Off', 'Empowerment', 'Transfer', 'Convert to Wind', 'Convert to Ice'], 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 		createSetting('AutoWind',
 			function () { return ('Wind') },
-			function () { return ('Spend/convert Wind tokens') },
-			'dropdown', 'Off', ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Ice', 'Convert to Both'], 'Nature', [1],
+			function () {
+				var description = "<p>Decides what to do with Wind tokens.</p>";
+				description += "<p>Will only spend tokens if the action costs less than your current total + the value in <b>Token Threshold</b><br></p>";
+				description += "<p><b>Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Empowerment</b><br>Will upgrade your Wind level.</p>";
+				description += "<p><b>Transfer</b><br>Will purchase levels in your Wind transfer rate.</p>";
+				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
+				return description;
+			}, 'dropdown', 'Off', ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Ice'], 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 		createSetting('AutoIce',
 			function () { return ('Ice') },
-			function () { return ('Spend/convert Ice tokens') },
-			'dropdown', 'Off', ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Wind', 'Convert to Both'], 'Nature', [1],
+			function () {
+				var description = "<p>Decides what to do with Ice tokens.</p>";
+				description += "<p>Will only spend tokens if the action costs less than your current total + the value in <b>Token Threshold</b><br></p>";
+				description += "<p><b>Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Empowerment</b><br>Will upgrade your Ice level.</p>";
+				description += "<p><b>Transfer</b><br>Will purchase levels in your Ice transfer rate.</p>";
+				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
+				return description;
+			}, 'dropdown', 'Off', ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Wind'], 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 
-		//Enlights
+		//Enlightenments
 		createSetting('autoenlight',
 			function () { return ('Enlight: Auto') },
-			function () { return ('Enables Automatic Enlightenment. Use the settings to define how it works.') },
+			function () {
+				var description = "<p>Controls when the script will purchase nature enlightenments.</p>";
+				description += "<p>Priority system for the purchases is <b>Nature > Wind > Ice</b>.</p>";
+				description += "<p>Englightenment purchases ignore the <b>Token Threshold</b> setting value.</p>";
+				return description;
+			},
 			'boolean', false, null, 'Nature', [1]);
-		createSetting('pfillerenlightthresh',
+		createSetting('poisonEnlight',
 			function () { return ('E: F: Poison') },
-			function () { return ('Activate Poison Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable.') },
-			'value', -1, null, 'Nature', [1],
+			function () {
+				var description = "<p>Will activate Poison enlightenment when below this token threshold when running fillers (non daily/" + cinf() + " runs).</p>";
+				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
+				return description;
+			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
-		createSetting('wfillerenlightthresh',
+		createSetting('windEnlight',
 			function () { return ('E: F: Wind') },
-			function () { return ('Activate Wind Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable.') },
-			'value', -1, null, 'Nature', [1],
+			function () {
+				var description = "<p>Will activate Wind enlightenment when below this token threshold when running fillers (non daily/" + cinf() + " runs).</p>";
+				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
+				return description;
+			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
-		createSetting('ifillerenlightthresh',
+		createSetting('iceEnlight',
 			function () { return ('E: F: Ice') },
-			function () { return ('Activate Ice Enlight when Enlight cost is below this Thresh in Fillers. Consumes Tokens. -1 to disable.') },
-			'value', -1, null, 'Nature', [1],
+			function () {
+				var description = "<p>Will activate Ice enlightenment when below this token threshold when running fillers (non daily/" + cinf() + " runs).</p>";
+				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
+				return description;
+			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
-		createSetting('pdailyenlightthresh',
+		createSetting('poisonEnlightDaily',
 			function () { return ('E: D: Poison') },
-			function () { return ('Activate Poison Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable.') },
-			'value', -1, null, 'Nature', [1],
+			function () {
+				var description = "<p>Will activate Poison enlightenment when below this token threshold when running dailies.</p>";
+				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
+				return description;
+			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
-		createSetting('wdailyenlightthresh',
+		createSetting('windEnlightDaily',
 			function () { return ('E: D: Wind') },
-			function () { return ('Activate Wind Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable.') },
-			'value', -1, null, 'Nature', [1],
+			function () {
+				var description = "<p>Will activate Wind enlightenment when below this token threshold when running dailies.</p>";
+				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
+				return description;
+			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
-		createSetting('idailyenlightthresh',
+		createSetting('iceEnlightDaily',
 			function () { return ('E: D: Ice') },
-			function () { return ('Activate Ice Enlight when Enlight cost is below this Thresh in Dailies. Consumes Tokens. -1 to disable.') },
-			'value', -1, null, 'Nature', [1],
+			function () {
+				var description = "<p>Will activate Ice enlightenment when below this token threshold when running dailies.</p>";
+				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
+				return description;
+			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
-		createSetting('pc2enlightthresh',
+		createSetting('poisonEnlightC2',
 			function () { return ('E: C: Poison') },
-			function () { return ('Activate Poison Enlight when Enlight cost is below this Thresh in ' + cinf() + 's. Consumes Tokens. -1 to disable.') },
+			function () {
+				var description = "<p>Will activate Poison enlightenment when below this token threshold when running " + cinf() + "s.</p>";
+				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
+				return description;
+			},
 			'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
-		createSetting('wc2enlightthresh',
+		createSetting('windEnlightC2',
 			function () { return ('E: C: Wind') },
-			function () { return ('Activate Wind Enlight when Enlight cost is below this Thresh in ' + cinf() + 's. Consumes Tokens. -1 to disable.') },
-			'value', -1, null, 'Nature', [1],
+			function () {
+				var description = "<p>Will activate Wind enlightenment when below this token threshold when running " + cinf() + "s.</p>";
+				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
+				return description;
+			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
-		createSetting('ic2enlightthresh',
+		createSetting('iceEnlightC2',
 			function () { return ('E: C: Ice') },
-			function () { return ('Activate Ice Enlight when Enlight cost is below this Thresh in ' + cinf() + 's. Consumes Tokens. -1 to disable.') },
-			'value', -1, null, 'Nature', [1],
+			function () {
+				var description = "<p>Will activate Ice enlightenment when below this token threshold when running " + cinf() + "s.</p>";
+				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
+				return description;
+			}, 'value', -1, null, 'Nature', [1],
 			function () { return (autoTrimpSettings.autoenlight.enabled) });
 	}
 
@@ -3195,52 +3257,57 @@ function initializeAllSettings() {
 		createSetting('testSpeed50',
 			function () { return ('Game Speed 50x') },
 			function () { return ('Set gamespeed to 50x the regular value.') },
-			'action', 'testSpeedX(0.00001)', null, 'Test', [0]);
+			'action', 'testSpeedX(0.00001);', null, 'Test', [0]);
 
 		createSetting('testSetChallenge',
 			function () { return ('Custom Challenge') },
 			function () { return ('Will set the challenge that Trimps is running to your input.') },
-			'action', 'ImportExportTooltip("SetCustomChallenge")', null, 'Test', [0]);
+			'action', 'ImportExportTooltip("SetCustomChallenge");', null, 'Test', [0]);
 
 		createSetting('testSetC2',
 			function () { return ('Toggle ' + cinf()) },
 			function () { return ('Will toggle on the setting for if you\'re running a ' + cinf() + '.') },
-			'action', 'testRunningCinf()', null, 'Test', [0]);
-
-		createSetting('testMetalOneDay',
-			function () { return ('1 day of metal') },
-			function () { return ('Will tell you how much metal you\'d gain from 1 day of metal farming.<br>If in a map if will use your map level otherwise it\'ll assume world level maps.<br>Assumes killing at max speed and factors overkill into the calculations.') },
-			'action', 'testMetalIncome()', null, 'Test', [0]);
-
-		createSetting('testLastWorldCell',
-			function () { return ('Last World Cell') },
-			function () { return ('Sets your current cell to the last world cell in the world.') },
-			'action', 'testWorldCell()', null, 'Test', [0]);
-
-		createSetting('testLastMapCell',
-			function () { return ('Last Map Cell') },
-			function () { return ('Sets your current cell to the last map cell if currently mapping.') },
-			'action', 'testMapCell()', null, 'Test', [0]);
-
-		createSetting('testMaxMapBonus',
-			function () { return ('Max Map Bonus') },
-			function () { return ('Sets map bonus to 10.') },
-			'action', 'testMaxMapBonus()', null, 'Test', [0]);
-
-		createSetting('testMaxTenacity',
-			function () { return ('Tenacity Max Mult') },
-			function () { return ('Sets Tenacity to max mult.') },
-			'action', 'cheatMaxTenacity()', null, 'Test', [0]);
-
-		createSetting('testStatMult',
-			function () { return ('1e100x stats') },
-			function () { return ('Multiplies soldier health & damage by 1e100.') },
-			'action', 'testTrimpStats()', null, 'Test', [0]);
+			'action', 'testRunningCinf();', null, 'Test', [0]);
 
 		createSetting('testBoneCharges',
 			function () { return ('Max Bone Charges') },
 			function () { return ('Sets bone charges to 10.') },
-			'action', 'game.permaBoneBonuses.boosts.charges=10', null, 'Test', [0]);
+			'action', 'game.permaBoneBonuses.boosts.charges=10; game.permaBoneBonuses.boosts.updateBtn();', null, 'Test', [0]);
+
+		createSetting('testMetalOneDay',
+			function () { return ('1 day of metal') },
+			function () { return ('Will tell you how much metal you\'d gain from 1 day of metal farming.<br>If in a map if will use your map level otherwise it\'ll assume world level maps.<br>Assumes killing at max speed and factors overkill into the calculations.') },
+			'action', 'testMetalIncome();', null, 'Test', [0]);
+
+		createSetting('testLastWorldCell',
+			function () { return ('Last World Cell') },
+			function () { return ('Sets your current cell to the last world cell in the world.') },
+			'action', 'testWorldCell();', null, 'Test', [0]);
+
+		createSetting('testLastMapCell',
+			function () { return ('Last Map Cell') },
+			function () { return ('Sets your current cell to the last map cell if currently mapping.') },
+			'action', 'testMapCell();', null, 'Test', [0]);
+
+		createSetting('testMaxMapBonus',
+			function () { return ('Max Map Bonus') },
+			function () { return ('Sets map bonus to 10.') },
+			'action', 'testMaxMapBonus();', null, 'Test', [0]);
+
+		createSetting('testMaxTenacity',
+			function () { return ('Tenacity Max Mult') },
+			function () { return ('Sets Tenacity to max mult.') },
+			'action', 'cheatMaxTenacity();', null, 'Test', [0]);
+
+		createSetting('testStatMult',
+			function () { return ('1e100x stats') },
+			function () { return ('Multiplies soldier health & damage by 1e100.') },
+			'action', 'testTrimpStats();', null, 'Test', [0]);
+
+		createSetting('testMapScumming',
+			function () { return ('Slow Map Scum') },
+			function () { return ('Will remake maps until you have 9+ slow enemies on Odd cells. Will only work if you\'re in maps and on cell 1.') },
+			'action', 'mapScumming(9);', null, 'Test', [0]);
 
 		createSetting('debugEqualityStats',
 			function () { return ('Debug Equality Stats') },
@@ -3272,6 +3339,7 @@ MODULES.u2unlocks = [];
 
 initializeAllSettings();
 automationMenuInit();
+tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 updateATVersion();
 modifyParentNodeUniverseSwap();
 
@@ -3709,8 +3777,8 @@ function modifyParentNodeUniverseSwap() {
 	//Helium Settings
 	modifyParentNode("AutoIce", radonoff);
 	modifyParentNode("autoenlight", radonoff);
-	modifyParentNode("ifillerenlightthresh", radonoff);
-	modifyParentNode("idailyenlightthresh", radonoff);
+	modifyParentNode("iceEnlight", radonoff);
+	modifyParentNode("iceEnlightDaily", radonoff);
 	//Radon Settings
 	//None!
 
@@ -4431,7 +4499,7 @@ function updateCustomButtons(initialLoad) {
 		var item = autoTrimpSettings[setting];
 
 		if (item === null || typeof item.id === 'undefined') {
-			if (setting !== 'ATversion') delete autoTrimpSettings[setting];
+			if (setting !== 'ATversion' && atFinishedLoading) delete autoTrimpSettings[setting];
 			continue;
 		}
 		const settingUniverse = item.universe;
@@ -4745,7 +4813,6 @@ function updateATVersion() {
 					saveSettings();
 				}
 			}
-			saveSettings();
 			changelog.push("Prestige Raiding & Bionic Raiding now have an added option for end zone so you can choose when to stop running specific lines.")
 		}
 
@@ -4950,6 +5017,21 @@ function updateATVersion() {
 				autoTrimpSettings['autoAbandon'].enabled = tempSettings.autoAbandon.value !== 1;
 				autoTrimpSettings['autoAbandon'].enabledU2 = tempSettings.autoAbandon.valueU2 !== 1;
 			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.91') {
+			tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (tempSettings.pfillerenlightthresh !== undefined) autoTrimpSettings['poisonEnlight'].value = tempSettings.pfillerenlightthresh.value;
+			if (tempSettings.pdailyenlightthresh !== undefined) autoTrimpSettings['poisonEnlightDaily'].value = tempSettings.pdailyenlightthresh.value;
+			if (tempSettings.pc2enlightthresh !== undefined) autoTrimpSettings['poisonEnlightC2'].value = tempSettings.pc2enlightthresh.value;
+
+			if (tempSettings.wfillerenlightthresh !== undefined) autoTrimpSettings['windEnlight'].value = tempSettings.wfillerenlightthresh.value;
+			if (tempSettings.wdailyenlightthresh !== undefined) autoTrimpSettings['windEnlightDaily'].value = tempSettings.wdailyenlightthresh.value;
+			if (tempSettings.wc2enlightthresh !== undefined) autoTrimpSettings['windEnlightC2'].value = tempSettings.wc2enlightthresh.value;
+
+			if (tempSettings.ifillerenlightthresh !== undefined) autoTrimpSettings['iceEnlight'].value = tempSettings.ifillerenlightthresh.value;
+			if (tempSettings.idailyenlightthresh !== undefined) autoTrimpSettings['iceEnlightDaily'].value = tempSettings.idailyenlightthresh.value;
+			if (tempSettings.ic2enlightthresh !== undefined) autoTrimpSettings['iceEnlightC2'].value = tempSettings.ic2enlightthresh.value;
 		}
 
 

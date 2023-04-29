@@ -287,9 +287,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 			gather: false,
 			stance: false,
 			run_Stats: false,
+			nature: false,
 		};
 
-		var msgs = autoTrimpSettings.spamMessages[value];
+		var msgs = autoTrimpSettings.spamMessages.value;
 
 		tooltipText += "<div class='row'>";
 		for (var x = 0; x < 1; x++) {
@@ -1170,6 +1171,10 @@ function messageConfigHoverAT(what, event) {
 		case 'stance':
 			text = "Logs when AT decides to change stance and what it changes to.";
 			title = "Stance";
+			break;
+		case 'nature':
+			text = "Logs when the script spends nature tokens.";
+			title = "Nature";
 			break;
 		case 'run_Stats':
 			text = "Logs the total trimps you have and how many resources you'd gain from a bone charge when entering a new zone.";
