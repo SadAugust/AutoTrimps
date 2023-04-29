@@ -2093,8 +2093,15 @@ function initializeAllSettings() {
 	if (displayCombat) {
 		//Helium
 		createSetting('autoFight',
-			function () { return (['Better AutoFight OFF', 'Better Auto Fight', 'Vanilla']) },
-			function () { return ('3-Way Button, Recommended. Will automatically handle fighting.<br>BAF = Old Algo (Fights if dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds<br>BAF3 = Uses vanilla autofight and makes sure you fight on portal. <br> WARNING: If you autoportal with BetterAutoFight disabled, the game may sit there doing nothing until you click FIGHT. (not good for afk) ') },
+			function () { return (['Better AutoFight Off', 'Better Auto Fight', 'Vanilla']) },
+			function () {
+				var description = "<p>Controls how combat is handled by the script.</p>";
+				description += "<p><b>Better Auto Fight Off</b><br>Disables this setting.";
+				description += "<p><b>Better Auto Fight</b><br>Sends a new army to fight if : current army is dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds.";
+				description += "<p><b>Vanilla</b><br>Will make sure the ingames AutoFight is enabled at all times and ensures you start fighting on portal.";
+				description += "<p><b>Recommended:</b> Better Auto Fight</p>";
+				return description;
+			},
 			'multitoggle', 0, null, "Combat", [1, 2]);
 		createSetting('autoAbandon',
 			function () { return ('Auto Abandon') },
@@ -2146,7 +2153,7 @@ function initializeAllSettings() {
 		createSetting('fightforever',
 			function () { return ('Fight Always') },
 			function () {
-				var description = "<p>Sends trimps to fight if they're not fighting, regardless of BAF.</p>";
+				var description = "<p>Sends trimps to fight if they're not fighting, regardless of <b>Better Auto Fight</b>.</p>";
 				description += "<p>Set to 0 to always send out trimps.</p>";
 				description += "<p>Set a number higher than 0 to enable the H:D function. If the H:D ratio is below this number it will send them out.</p>";
 				description += "<p>If set to -1 it will disable this setting.</p>";
@@ -2175,14 +2182,19 @@ function initializeAllSettings() {
 				var description = "<p>Will force any damage calculations to assume you have max anticipation stacks.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			},
-			'boolean', false, null, 'Combat', [1]);
+			}, 'boolean', false, null, 'Combat', [1]);
 
 		//Radon
 		createSetting('equalityManagement',
 			function () { return (['Auto Equality Off', 'Auto Equality: Basic', 'Auto Equality: Advanced']) },
-			function () { return ('Manages Equality settings for you. <br><br><b>Auto Equality: Basic</b><br>Sets Equality to 0 on Slow enemies, and Autoscaling on for Fast enemies.<br><br><b>Auto Equality: Advanced</b><br>Will automatically identify the best equality levels to kill the current enemy and change it when necessary.') },
-			'multitoggle', 0, null, 'Combat', [2]);
+			function () {
+				var description = "<p>Controls how the script handles interactions with the Equality perk.</p>";
+				description += "<p><b>Auto Equality Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Auto Equality: Basic</b><br>Sets equality to 0 on slow enemies, and autoscaling on for fast enemies.<br><b>If using this you must setup the scaling & reversing settings in the equality menu!</p>";
+				description += "<p><b>Auto Equality: Advanced</b><br>Will disable scaling and use the equality slider. Uses the slider to set your equality to the ideal amount to kill the current enemy in the least amount of hits necessary.</p>";
+				description += "<p><b>Recommended:</b> Auto Equality: Advanced</p>";
+				return description;
+			}, 'multitoggle', 0, null, 'Combat', [2]);
 		createSetting('equalityCalc',
 			function () { return (['Equality Calc Off', 'EC: On', 'EC: Health']) },
 			function () { return ('<b>Experimental. </b><br>Adds Equality Scaling levels to the battlecalc. Will always calculate equality based on actual scaling levels when its turned off by other settings. Assumes you use Equality Scaling. Turning this on allows in-game Equality Scaling to adjust your Health accordingly. EC: Health only decreases enemies attack in the calculation which may improve speed.') },
@@ -2190,13 +2202,21 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('equalityManagement', 2) < 2) });
 		createSetting('gammaBurstCalc',
 			function () { return ('Gamma Burst Calc') },
-			function () { return ('<b>Experimental.</b><br>Adds Gamma Burst to your HD Ratio. Be warned, it will assume that you have a gamma burst ready to trigger for every attack so your HD Ratio might be 1 but you\'d need to attack 4-5 times to reach that damage theshold.') },
-			'boolean', true, null, 'Combat', [1, 2],
+			function () {
+				var description = "<p>Factors Gamma Burst damage into your H:D (enemyHealth:trimpDamage) Ratio.</p>";
+				description += "<p>Be warned, the script will assume that you have a gamma burst ready to trigger for every attack if enabled so your H:D Ratio might be 1 but you'd need to multiply that value by your gamma burst proc count to get the actual value.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Combat', [1, 2],
 			function () { return (game.stats.highestRadLevel.valueTotal() > 10) });
 		createSetting('frenzyCalc',
 			function () { return ('Frenzy Calc') },
-			function () { return ('<b>Experimental.</b><br>Adds frenzy to the calc. Be warned, it will not farm as much with this on as it expects 100% frenzy uptime.') },
-			'boolean', false, null, 'Combat', [2],
+			function () {
+				var description = "<p>Adds the Frenzy perk to trimp damage calculations.</p>";
+				description += "<p>Be warned, the script will not farm as much with this on as it assumes 100% frenzy uptime.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', true, null, 'Combat', [2],
 			function () { return (!game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned) });
 
 		//Scryer settings -- Need a rework!
@@ -2326,7 +2346,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 
 
-		//----------------------------------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------------------------------
 
 		//Windstacking
 		createSetting('WindStackingMin',

@@ -1000,6 +1000,7 @@ function smithyFarm(hdStats) {
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
 
+		if (!shouldSmithyFarm) resetMapVars(rSFSettings);
 	}
 	return farmingDetails;
 }
