@@ -177,7 +177,7 @@ function delayStartAgain() {
 	})();
 
 	hdStats = new HDStats();
-	mapSettings = new FarmingDecision(hdStats);
+	mapSettings = new farmingDecision(hdStats);
 
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
@@ -217,7 +217,7 @@ function mainLoop() {
 	if (oneSecondInterval) {
 		hdStats = new HDStats();
 	}
-	mapSettings = new FarmingDecision(hdStats);
+	mapSettings = new farmingDecision(hdStats);
 
 	if (!usingRealTimeOffline) {
 		var MAZCheck = document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Golden') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Void Map') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Map Bonus') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Raiding');

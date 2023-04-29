@@ -2510,7 +2510,7 @@ function desolation(hdStats, forceDestack) {
 		equality = true;
 	}
 
-	if (MODULES.mapFunctions.challengeContinueRunning || (game.global.mapsActive && mapSettings.mapName === 'Desolation Destacking')) {
+	if (MODULES.mapFunctions.challengeContinueRunning || (forceDestack && game.challenges.Desolation.chilled > 0) || (game.global.mapsActive && mapSettings.mapName === 'Desolation Destacking')) {
 		if (game.challenges.Desolation.chilled > 0) {
 			shouldDesolation = true;
 			MODULES.mapFunctions.challengeContinueRunning = true;
@@ -2779,7 +2779,7 @@ function hdFarm(hdStats, skipHealthCheck) {
 	return farmingDetails;
 }
 
-function FarmingDecision(hdStats) {
+function farmingDecision(hdStats) {
 	var farmingDetails = {
 		shouldRun: false,
 		mapName: '',
@@ -2828,14 +2828,14 @@ function FarmingDecision(hdStats) {
 	}
 
 	if (game.global.universe === 2) {
-		//If in desolation then check if we should destack before farming.
+		//Will push the mappingDetails message to indicate farming is finished before moving onto next stage. If destacking it will also recycle the map!
 		if (mapSettings.mapName.includes('Desolation') && MODULES.mapFunctions.challengeContinueRunning && game.challenges.Desolation.chilled === 0) {
-			(desolation(hdStats, true).shouldRun);
+			desolation(hdStats, true);
 		}
 
 		//U2 map settings to check for.
 		mapTypes = [
-			desolation(hdStats),
+			desolation(hdStats, MODULES.mapFunctions.challengeContinueRunning),
 			quest(),
 			pandemoniumDestack(hdStats),
 			prestigeClimb(),
@@ -2870,7 +2870,8 @@ function FarmingDecision(hdStats) {
 
 	//If in desolation then check if we should destack before farming.
 	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && getPageSetting('desolation') && (MODULES.mapFunctions.challengeContinueRunning || (game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation')))) {
-		if (desolation(hdStats, true).shouldRun) farmingDetails = desolation(hdStats, true);
+		let desolationCheck = desolation(hdStats, true);
+		if (desolationCheck.shouldRun) farmingDetails = desolationCheck;
 	}
 
 	return farmingDetails;

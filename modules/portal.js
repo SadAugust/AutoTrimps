@@ -632,7 +632,7 @@ function resetmapvars() {
 	MODULES.mapFunctions.portalZone = Infinity;
 
 	hdStats = new HDStats();
-	mapSettings = new FarmingDecision(hdStats);
+	mapSettings = new farmingDecision(hdStats);
 }
 
 function presetSwapping(preset) {
