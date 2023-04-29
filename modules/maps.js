@@ -327,8 +327,7 @@ function autoMap(hdStats) {
 			if (!game.global.switchToMaps) {
 				mapsClicked();
 			}
-			const autoAbandon = getPageSetting('autoAbandon');
-			if (game.global.switchToMaps && autoAbandon !== 1) {
+			if (game.global.switchToMaps && getPageSetting('autoAbandon')) {
 				mapsClicked();
 			}
 		}
