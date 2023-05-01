@@ -362,7 +362,7 @@ function autoMap(hdStats) {
 				debug(("Spent " + prettify(updateMapCost(true)) + "/" + prettify(game.resources.fragments.owned) + " (" + ((updateMapCost(true) / game.resources.fragments.owned * 100).toFixed(2)) + "%) fragments on a " + (advExtraLevelSelect.value >= 0 ? "+" : "") + advExtraLevelSelect.value + " " + (advPerfectCheckbox.dataset.checked === 'true' ? "Perfect " : ("(" + lootAdvMapsRange.value + "," + sizeAdvMapsRange.value + "," + difficultyAdvMapsRange.value + ") ")) + advSpecialSelect.value + " map."), 'fragment');
 
 				var result = buyMap();
-				if (result == -2) {
+				if (result === -2) {
 					debug("Too many maps, recycling now: ", "maps", 'th-large');
 					recycleBelow(true);
 					debug("Retrying, Buying a Map, level: #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
@@ -395,5 +395,9 @@ function autoMap(hdStats) {
 			runMap();
 			lastMapWeWereIn = getCurrentMapObject();
 		}
+	}
+
+	if (game.global.mapsActive && game.global.universe === 2 && hdStats.hdRatioMap > getPageSetting('testMapScummingValue')) {
+		mapScumming(challengeActive('Desolation') ? 9 : 10);
 	}
 }

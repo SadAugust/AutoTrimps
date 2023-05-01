@@ -11,6 +11,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		swapClass("tooltipExtra", "tooltipExtraNone", elem);
 	}
 	document.getElementById('tipText').className = "";
+	mazWindowOpen = true;
 
 	var tooltipText;
 	var costText = "";
@@ -533,7 +534,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//Farming Settings
 	else if (event == 'MAZ') {
-
 		var mapFarm = titleText.includes('Map Farm');
 		var mapBonus = titleText.includes('Map Bonus');
 		var voidMap = titleText.includes('Void Map');
@@ -1634,7 +1634,7 @@ function windowToggleHelp(windowSize) {
 	if (document.getElementById('tooltipDiv').classList[0] === 'tooltipExtraGigantic') swapClass(document.getElementById('tooltipDiv').classList[0], windowSize, parentWindow);
 	else swapClass(document.getElementById('tooltipDiv').classList[0], 'tooltipExtraGigantic', parentWindow);
 	if (!mazContainer || !helpContainer) return;
-	if (mazContainer.style.display == 'block') {
+	if (mazContainer.style.display === 'block') {
 		mazContainer.style.display = 'none';
 		helpContainer.style.display = 'block';
 		parentWindow.style.overflowY = '';
@@ -1649,6 +1649,10 @@ function windowToggleHelp(windowSize) {
 	parentWindow.style.left = "1%";
 	parentWindow.style.height = 'auto';
 	parentWindow.style.maxHeight = window.innerHeight * .85 + 'px';
+
+	if (document.querySelectorAll('#mazHelpContainer li').length > 14) {
+		parentWindow.style.overflowY = 'scroll';
+	}
 }
 
 function saveATAutoJobsConfig() {

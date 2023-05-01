@@ -3520,14 +3520,13 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3, hd
 
 //I hope I never use this again. Scumming for slow map enemies!
 function mapScumming(slowTarget) {
-	console.time();
 
 	if (!game.global.mapsActive) return;
 	if (game.global.lastClearedMapCell > -1) return;
-	buildMapGrid(game.global.currentMapId);
+	if (slowScumming) return;
+	console.time();
 	ATrunning = false;
-	//if (!getPageSetting('autoMaps')) return;
-	var slowCellTarget = !slowTarget ? 8 : slowTarget //getPageSetting('desolationScumTarget');
+	var slowCellTarget = !slowTarget ? 8 : slowTarget
 	if (slowCellTarget > 9) slowCellTarget = 10;
 	var firstCellSlow = false;
 	var slowCount = 0;

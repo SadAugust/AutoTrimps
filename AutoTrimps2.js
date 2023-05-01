@@ -71,6 +71,7 @@ var mapRepeats = 0;
 
 var showingPerky = false;
 var showingSurky = false;
+var mazWindowOpen = false;
 
 var mapSettings = {
 	shouldRun: false,
@@ -208,6 +209,35 @@ function universeSwapped() {
 }
 
 function mainLoop() {
+	var date = new Date();
+	//oneDayInterval = (date.getUTCHours() === 0 && date.getUTCMinutes() === 0 && date.getUTCSeconds() === 0 && date.getUTCMilliseconds() < 100);
+	oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
+
+	//Adjust tooltip when mazWindow is open OR clear our adjustments if it's not.
+	if (mazWindowOpen && !usingRealTimeOffline) {
+		var mazSettings = ["Map Farm", "Map Bonus", "Void Map", "HD Farm", "Raiding", "Bionic Raiding", "Quagmire Farm", "Insanity Farm", "Alchemy Farm", "Hypothermia Farm", "Bone Shrine", "Golden", "Tribute Farm", "Smithy Farm", "Worshipper Farm"];
+		var mazCheck = mazSettings.indexOf(document.getElementById('tooltipDiv').children.tipTitle.innerText);
+
+		if (mazCheck === -1) {
+			mazWindowOpen = false;
+			if (document.getElementById('tooltipDiv').style.overflowY !== '')
+				document.getElementById('tooltipDiv').style.overflowY = '';
+			if (document.getElementById('tooltipDiv').style.maxHeight !== '')
+				document.getElementById('tooltipDiv').style.maxHeight = '';
+
+			if (document.getElementById('tooltipDiv').classList[0] !== undefined && document.getElementById('tooltipDiv').classList[0].includes('Window'))
+				document.getElementById('tooltipDiv').classList.remove(document.getElementById('tooltipDiv').classList[0]);
+		}
+	}
+
+	universeSwapped();
+	presetMutations();
+
+	if (ATrunning == false) return;
+	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
+	if (getPageSetting('disableForTW') && usingRealTimeOffline) return;
+	ATrunning = true;
+
 	//Interval code
 	var date = new Date();
 	//oneDayInterval = (date.getUTCHours() === 0 && date.getUTCMinutes() === 0 && date.getUTCSeconds() === 0 && date.getUTCMilliseconds() < 100);
@@ -222,18 +252,6 @@ function mainLoop() {
 	mapSettings = new farmingDecision(hdStats);
 
 	if (!usingRealTimeOffline) {
-		var MAZCheck = document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Golden') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Bone Shrine') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Void Map') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Map Bonus') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Raiding');
-
-		if (document.getElementById('tooltipDiv').classList[0] !== undefined && (document.getElementById('mazHelpContainer') !== null && document.getElementById('mazHelpContainer').style.display === 'block') || (document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow') && (MAZCheck) && document.getElementById('windowContainer') !== null && document.getElementById('windowContainer').style.display === 'block' && document.querySelectorAll('#windowContainer .active').length > 10)) {
-			document.getElementById('tooltipDiv').style.overflowY = 'scroll';
-		}
-		else {
-			document.getElementById('tooltipDiv').style.overflowY = '';
-			document.getElementById('tooltipDiv').style.maxHeight = '';
-		}
-
-		if (document.getElementById('tooltipDiv').classList[0] !== undefined && !MAZCheck && document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow')) document.getElementById('tooltipDiv').classList.remove(document.getElementById('tooltipDiv').classList[0])
-
 		if (document.getElementById('freeVoidMap') !== null) {
 			var freeVoidsText = 'Void: ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10');
 			var autoLevelText = " | Auto Level: " + hdStats.autoLevel;
@@ -246,13 +264,6 @@ function mainLoop() {
 		}
 	}
 
-	universeSwapped();
-	presetMutations();
-
-	if (ATrunning == false) return;
-	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
-	if (getPageSetting('disableForTW') && usingRealTimeOffline) return;
-	ATrunning = true;
 	mainCleanup()
 
 	if (aWholeNewWorld) {
@@ -272,7 +283,7 @@ function mainLoop() {
 	if (slowScumming && game.global.mapRunCounter !== 0) {
 		if (game.global.mapBonus === 10) slowScumming = false;
 		else {
-			mapScumming(9);
+			mapScumming(challengeActive('Desolation') ? 9 : 10);
 			return;
 		}
 	}

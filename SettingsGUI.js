@@ -3501,13 +3501,23 @@ function initializeAllSettings() {
 				description += "<p><b>Due to the map remaking process your game will hang for roughly 60s while this finds an ideal map.</b></p>";
 				return description;
 			}, 'action', 'mapScumming(9);', null, 'Test', [0]);
+
+		createSetting('testMapScummingValue',
+			function () { return ('Slow Map Value') },
+			function () {
+				var description = "<p>Will reroll for slow cells on maps when your <b>Map HD Ratio</b> is at or below this value.</p>";
+				description += "<p>If running <b>Desolation</b> will roll for <b>9</b> slow enemies, otherwise will go for <b>10</b>.</p>";
+				description += "<p><b>Due to the map remaking process your game will hang for a while till this finds an ideal map.</b></p>";
+				return description;
+			}, 'value', 1e10, null, 'Test', [2]);
+
 		createSetting('debugEqualityStats',
 			function () { return ('Debug Equality Stats') },
 			function () {
 				var description = "<p>Will display details of trimp/enemy stats when you gamma burst.</p>";
 				description += "<p>Requires your auto equality setting to be set to <b>Auto Equality: Advanced</b></p>";
 				return description;
-			}, 'boolean', false, null, 'Test', [2]);
+			}, 'boolean', false, null, 'Legacy', [2]);
 	}
 }
 
@@ -4510,7 +4520,7 @@ function autoSetValue(id, negative, multiValue) {
 	tooltip('hide');
 	var numBox = document.getElementById('customNumberBox');
 	if (numBox) {
-		num = numBox.value.toLowerCase();
+		num = numBox.value;
 		if (multiValue) {
 			num = num.split(',').map(parseNum);
 		} else {

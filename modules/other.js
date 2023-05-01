@@ -588,12 +588,12 @@ function equalityManagement() {
 	enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
 
 	//Empower related modifiers in world
-	if (dailyEmpowerToggle && !mapping && dailyEmpower) {
+	if ((dailyEmpowerToggle && !mapping && dailyEmpower) || slowScumming) {
 		if (dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
-		if (dailyExplosive) ourDmgMax = calcOurDmg('max', 0, false, 'world', 'force') * gammaDmg;
+		if (dailyExplosive || slowScumming) ourDmgMax = calcOurDmg('max', 0, false, 'world', 'force') * gammaDmg;
 	}
 	//Empower modifiers in maps.
-	if (type === 'map' && (dailyExplosive || dailyCrit)) {
+	if (type === 'map' && (dailyExplosive || dailyCrit) && !slowScumming) {
 		if (dailyEmpowerToggle && dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 	}
@@ -608,7 +608,7 @@ function equalityManagement() {
 	var fastEnemy = !game.global.preMapsActive && (runningDesolation && mapping ? !exoticImps.includes(enemyName) : fastimps.includes(enemyName));
 	if (type === 'world' && game.global.world > 200 && game.global.gridArray[currentCell].u2Mutation.length > 0) fastEnemy = true;
 	if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
-	if (type === 'map' && dailyExplosive) fastEnemy = true;
+	if (type === 'map' && dailyExplosive && !slowScumming) fastEnemy = true;
 	if (type === 'world' && dailyExplosive) fastEnemy = true;
 	if (game.global.voidBuff === 'doubleAttack') fastEnemy = true;
 	if (runningArchaeology) fastEnemy = true;
@@ -665,11 +665,21 @@ function equalityManagement() {
 			//Check to see if we kill the enemy with our max damage on empower dailies with explosive mod. If we can then mult enemy dmg by explosive mod value to stop us gaining empower stacks.
 			if (ourDmgMax > 0) {
 				var ourMaxDmg = ourDmgMax * Math.pow(ourEqualityModifier, i);
-				if (ourMaxDmg > enemyHealth && (enemyDmgEquality * (1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength)) > ourHealth))
+				if (ourMaxDmg > enemyHealth && !slowScumming && (enemyDmgEquality * (1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength)) > ourHealth))
 					enemyDmgEquality *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+
+				if (slowScumming && mapping && currentCell % 2 !== 0) {
+					if (ourMaxDmg * Math.pow(ourEqualityModifier, i + 1) > enemyHealth) {
+						continue;
+					}
+				}
 			}
 			//Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
-			if ((voidPBSwap || slowScumming) && !fastEnemy && calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth && ATrunning && (typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' || game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) && (getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
+			if ((voidPBSwap || slowScumming) &&
+				!fastEnemy && calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth && ATrunning &&
+				(typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' ||
+					game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) &&
+				(getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
 				game.portal.Equality.disabledStackCount = maxEquality;
 				while (calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > getCurrentEnemy().health && i < maxEquality) {
 					i++;
