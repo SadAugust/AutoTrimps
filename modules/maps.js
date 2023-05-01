@@ -397,7 +397,7 @@ function autoMap(hdStats) {
 		}
 	}
 
-	if (game.global.mapsActive && game.global.universe === 2 && hdStats.hdRatioMap > getPageSetting('testMapScummingValue')) {
+	if (game.global.mapsActive && game.global.universe === 2 && !getCurrentMapObject().noRecycle && hdStats.hdRatioMap > getPageSetting('testMapScummingValue')) {
 		mapScumming(challengeActive('Desolation') ? 9 : 10);
 	}
 }
