@@ -73,6 +73,16 @@ function setupSurkyUI() {
 	}
 
 	AutoPerks.displayGUI = function () {
+
+		var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
+		if (surkyInputs === null && typeof (autoTrimpSettings) !== 'undefined') {
+			var atSetting = JSON.parse(autoTrimpSettings['autoAllocatePresets'].valueU2);
+			if (atSetting !== '{"":""}') {
+				surkyInputs = atSetting;
+				localStorage.setItem("surkyInputs", JSON.stringify(surkyInputs));
+			}
+		}
+
 		var apGUI = AutoPerks.GUI;
 		var $buttonbar = document.getElementById("portalBtnContainer");
 		apGUI.$allocatorBtn1 = document.createElement("DIV");
@@ -123,16 +133,6 @@ function setupSurkyUI() {
 		if (game.options.menu.darkTheme.enabled != 2) apGUI.$preset.setAttribute("style", oldstyle + " color: black;");
 		else apGUI.$preset.setAttribute('style', oldstyle);
 		apGUI.$preset.innerHTML = presetListHtml;
-		var loadLastPreset = (JSON.parse(localStorage.getItem("surkyInputs")) !== null) ? JSON.parse(localStorage.getItem("surkyInputs")).preset : null;
-		var setID;
-		if (loadLastPreset != null) {
-			if (loadLastPreset == 15 && !JSON.parse(localStorage.getItem("surkyInputs")).preset)
-				loadLastPreset = 11;
-			setID = loadLastPreset;
-		}
-		else
-			setID = 0;
-		apGUI.$preset.selectedIndex = setID;
 		apGUI.$ratiosLine1.appendChild(apGUI.$presetLabel);
 		apGUI.$ratiosLine1.appendChild(apGUI.$preset);
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine2);
@@ -173,14 +173,27 @@ function saveSurkySettings(initial) {
 	}
 
 	localStorage.setItem("surkyInputs", JSON.stringify(surkyInputs));
+	if (typeof (autoTrimpSettings) !== 'undefined') {
+		autoTrimpSettings['autoAllocatePresets'].valueU2 = JSON.stringify(surkyInputs);
+		saveSettings();
+	}
 }
 
 function loadSurkySettings() {
 	var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 	if (surkyInputs === null) {
-		saveSurkySettings(true);
-		loadSurkySettings();
-		return;
+		if (typeof (autoTrimpSettings) !== 'undefined') {
+			var atSetting = JSON.parse(autoTrimpSettings['autoAllocatePresets'].valueU2);
+			if (atSetting !== '{"":""}') {
+				surkyInputs = atSetting;
+				localStorage.setItem("surkyInputs", JSON.stringify(surkyInputs));
+			}
+		}
+		if (surkyInputs === null) {
+			saveSurkySettings(true);
+			loadSurkySettings();
+			return;
+		}
 	}
 	//Top Row
 	if (surkyInputs.preset !== null && surkyInputs.preset !== undefined)
@@ -862,10 +875,10 @@ function initialLoad() {
 	props.permaFrenzy = autoBattle.oneTimers.Mass_Hysteria.owned;
 
 	// used for combat respec to apply special optimizations for trappa (no gain from health, full gain from equality)
-	props.isTrappa = game.global.challengeActive == "Trappapalooza";
+	props.isTrappa = challengeActive('Trappapalooza');
 
 	// used for combat reset to avoid reducing Carp, as the game uses a special calculation for Downsize population not accessible in the save object
-	props.isDownsize = game.global.challengeActive == "Downsize";
+	props.isDownsize = challengeActive('Downsize');
 
 	// SA cleared level
 	var SAlevel = (autoBattle.maxEnemyLevel - 1) || 0;

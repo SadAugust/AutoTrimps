@@ -374,7 +374,18 @@ function parse_perks(fixed, unlocks) {
 function loadPerkySettings() {
 
 	var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
-	if (perkyInputs === null) return;
+	if (perkyInputs === null) {
+		if (typeof (autoTrimpSettings) !== 'undefined') {
+			var atSetting = JSON.parse(autoTrimpSettings['autoAllocatePresets'].value);
+			if (atSetting !== '{"":""}') {
+				perkyInputs = atSetting;
+				localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
+			}
+		}
+		if (surkyInputs === null) {
+			return;
+		}
+	}
 	$$('#preset').value = perkyInputs.preset;
 	$$('#weight-he').value = Number(perkyInputs['weight-he']);
 	$$('#weight-atk').value = Number(perkyInputs['weight-atk']);
@@ -392,6 +403,10 @@ function savePerkySettings() {
 		'weight-xp': $$('#weight-xp').value
 	}
 	localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
+	if (typeof (autoTrimpSettings) !== 'undefined') {
+		autoTrimpSettings['autoAllocatePresets'].valueU2 = JSON.stringify(perkyInputs);
+		saveSettings();
+	}
 }
 
 function display(results) {
@@ -758,6 +773,16 @@ function setupPerkyUI() {
 	}
 
 	AutoPerks.displayGUI = function () {
+
+		var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
+		if (perkyInputs === null && typeof (autoTrimpSettings) !== 'undefined') {
+			var atSetting = JSON.parse(autoTrimpSettings['autoAllocatePresets'].value);
+			if (atSetting !== '{"":""}') {
+				perkyInputs = atSetting;
+				localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
+			}
+		}
+
 		var apGUI = AutoPerks.GUI;
 		var $buttonbar = document.getElementById("portalBtnContainer");
 		apGUI.$allocatorBtn1 = document.createElement("DIV");
@@ -797,13 +822,7 @@ function setupPerkyUI() {
 		if (game.options.menu.darkTheme.enabled != 2) apGUI.$preset.setAttribute("style", oldstyle + " color: black;");
 		else apGUI.$preset.setAttribute('style', oldstyle);
 		apGUI.$preset.innerHTML = presetListHtml;
-		var loadLastPreset = (JSON.parse(localStorage.getItem("perkyInputs")) !== null) ? JSON.parse(localStorage.getItem("perkyInputs")).preset : null;
-		var setID;
 
-		if (loadLastPreset != null) setID = loadLastPreset;
-		else setID = 0;
-
-		apGUI.$preset.selectedIndex = setID;
 		apGUI.$ratiosLine1.appendChild(apGUI.$presetLabel);
 		apGUI.$ratiosLine1.appendChild(apGUI.$preset);
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine2);

@@ -1160,7 +1160,7 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationOnlyDestackZone',
-			function () { return ('D: Destack Only From') },
+			function () { return ('D: Destack From') },
 			function () {
 				var description = "<p>From which zone only destacking should be considered. This will stop it caring about farming for metal to improve gear.</p>";
 				description += "<p>Purchases the highest level of map that you can afford and survive to reduce chilled stacks faster.</p>";
@@ -2002,92 +2002,142 @@ function initializeAllSettings() {
 	//ATGA -- TO DO
 	const displayATGA = true;
 	if (displayATGA) {
-		createSetting('ATGA2',
+		createSetting('geneAssist',
 			function () { return ('Gene Assist') },
-			function () { return ('<b>ATGA MASTER BUTTON</b><br>AT Geneticassist. Do not use vanilla GA, as it will conflict otherwise. May get fucky with super high values.') },
-			'boolean', false, null, 'Jobs', [1]);
-		createSetting('ATGA2gen',
+			function () {
+				var description = "<p>Master switch for whether the script will do any form of Geneticist purchasing.</p>";
+				description += "<p>Additional settings appear when enabled.</p>";
+				description += "<p><b>If enabled will disable the ingame version.</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Jobs', [1]);
+		createSetting('geneAssistPercent',
 			function () { return ('GA: Gene Assist %') },
 			function () {
 				var description = "<p>Gene Assist will only hire geneticists if they cost less than this value.</p>";
 				description += "<p>If this setting is 1 it will only buy geneticists if they cost less than 1% of your food.</p>";
+				description += "<p>Setting this to 0 or -1 will disable all of the <b>Gene Assist</b> settings.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
 			}, 'value', 1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled) });
-		createSetting('ATGA2timer',
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+		createSetting('geneAssistTimer',
 			function () { return ('GA: Timer') },
-			function () { return ('<b>ATGA Timer</b><br>This is the default time your ATGA will use.') },
-			'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled) });
-
-		//Zone Timers
-		createSetting('zATGA2timer',
-			function () { return ('GA: T: Before Z') },
-			function () { return ('<b>ATGA Timer: Before Z</b><br>ATGA will use the value you define in GA: T: BZT before the zone you have defined in this setting, overwriting your default timer. Useful for Liq or whatever.') },
-			'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
-		createSetting('ztATGA2timer',
-			function () { return ('GA: T: BZT') },
-			function () { return ('<b>ATGA Timer: Before Z Timer</b><br>ATGA will use this value before the zone you have defined in GA: T: Before Z, overwriting your default timer. Useful for Liq or whatever. Does not work on challenges.') },
-			'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0 && autoTrimpSettings.zATGA2timer.value > 0) });
-		createSetting('ATGA2timerz',
-			function () { return ('GA: T: After Z') },
-			function () { return ('<b>ATGA Timer: After Z</b><br>ATGA will use the value you define in GA: T: AZT after the zone you have defined in this setting, overwriting your default timer. Useful for super push runs or whatever. Does not work on challenges.') },
-			'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
-		createSetting('ATGA2timerzt',
-			function () { return ('GA: T: AZT') },
-			function () { return ('<b>ATGA Timer: After Z Timer</b><br>ATGA will use this value after the zone that has been defined in GA: T: After Z, overwriting your default timer. Useful for super push runs or whatever.') },
-			'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0 && autoTrimpSettings.ATGA2timerz.value > 0) });
+			function () {
+				var description = "<p>This is the default time your gene assist settings will use.</p>";
+				description += "<p>Setting this to 0 or -1 will disable all of the <b>Gene Assist</b> settings.</p>";
+				description += "<p><b>Recommended:</b> 10</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
 
 		//Spire Timers
-		createSetting('sATGA2timer',
-			function () { return ('GA: T: Spire') },
-			function () { return ('<b>ATGA Timer: Spire</b><br>ATGA will use this value in Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this except Daily Spire.') },
-			'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
-		createSetting('dsATGA2timer',
-			function () { return ('GA: T: Daily Spire') },
-			function () { return ('<b>ATGA Timer: Daily Spire</b><br>ATGA will use this value in Daily Spires. Respects your ignore Spires setting. Do not use this if you use the setting in the Spire tab! (As that uses vanilla GA) Nothing overwrites this.') },
-			'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
+		createSetting('geneAssistTimerSpire',
+			function () { return ('GA: Spire Timer') },
+			function () {
+				var description = "<p>Gene Assist will use the value set here when inside of active Spires.</p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+
+		//Zone Timers
+		createSetting('geneAssistZoneBefore',
+			function () { return ('GA: Before Z') },
+			function () {
+				var description = "<p>Gene Assist will use the value set in <bGA: Before Z Timer</b> when below this zone.</p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> The zone where you stop 1 shotting in a new portal</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+		createSetting('geneAssistTimerBefore',
+			function () { return ('GA: Before Z Timer') },
+			function () {
+				var description = "<p>Gene Assist will use the value set here when below the zone in <bGA: Before Z Timer</b>.</p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> 1</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+		createSetting('geneAssistZoneAfter',
+			function () { return ('GA: After Z') },
+			function () {
+				var description = "<p>Gene Assist will use the value set in <bGA: After Z Timer</b> when below this zone.</p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> The zone where you stop 1 shotting after using your <b>GA: Timer</b> setting in a new portal</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+		createSetting('geneAssistTimerAfter',
+			function () { return ('GA: After Z Timer') },
+			function () {
+				var description = "<p>Gene Assist will use the value set here when below the zone in <bGA: After Z Timer</b>.</p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> Your <b>Anticipation</b> perk timer</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
 
 		//Daily Timers
-		createSetting('dATGA2Auto',
-			function () { return (['GA: Manual', 'GA: Auto No Spire', 'GA: Auto Dailies']) },
-			function () { return ('<b>EXPERIMENTAL</b><br><b>ATGA Timer: Auto Dailies</b><br>ATGA will use automatically set breed timers in plague and bogged, overwriting your default timer.<br/>Set No Spire to not override in spire, respecting ignore spire settings.') },
-			'multitoggle', 2, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
-		createSetting('dATGA2timer',
-			function () { return ('GA: T: Dailies') },
-			function () { return ('<b>ATGA Timer: Normal Dailies</b><br>ATGA will use this value for normal Dailies such as ones without plague etc, overwriting your default timer. Useful for pushing your dailies that extra bit at the end. Overwrites Default, Before Z and After Z.') },
-			'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
-		createSetting('dhATGA2timer',
-			function () { return ('GA: T: D: Hard') },
-			function () { return ('<b>ATGA Timer: Hard Dailies</b><br>ATGA will use this value in Dailies that are considered Hard. Such Dailies include plaged, bloodthirst and Dailies with a lot of negative mods. Overwrites Default, Before Z and After Z and normal Daily ATGA Timer.') },
-			'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
+		createSetting('geneAssistTimerDaily',
+			function () { return ('GA: Daily Timer') },
+			function () {
+				var description = "<p>Gene Assist will use the value set here when running dailies. </p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
+				description += "<p><b>Recommended:</b> 2</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+		createSetting('geneAssistTimerDailyHard',
+			function () { return ('GA: Daily Timer Hard') },
+			function () {
+				var description = "<p>Gene Assist will use the value set here when running dailies that are considered hard (Plagued, Bloodthirst). </p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
+				description += "<p><b>Recommended:</b> 2</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+		createSetting('geneAssistTimerSpireDaily',
+			function () { return ('GA: Daily Spire Timer') },
+			function () {
+				var description = "<p>Gene Assist will use the value set here when inside of active Spires in dailies.</p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
+				description += "<p><b>Recommended:</b> Your <b>Anticipation</b> perk timer</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
 
 		//C2 Timers
-		createSetting('cATGA2timer',
-			function () { return ('GA: T: ' + cinf()) },
-			function () { return ('<b>ATGA Timer: ' + cinf() + 's</b><br>ATGA will use this value in ' + cinf() + 's. Overwrites Default, Before Z and After Z.') },
-			'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
-		createSetting('chATGA2timer',
-			function () { return ('GA: T: C: Hard') },
-			function () { return ('<b>ATGA Timer: Hard ' + cinf() + 's</b><br>ATGA will use this value in ' + cinf() + 's that are considered Hard. Electricity, Nom, Toxicity. Overwrites Default, Before Z and After Z and ' + cinf() + ' ATGA') },
-			'value', -1, null, 'Jobs', [1],
-			function () { return (autoTrimpSettings.ATGA2.enabled && autoTrimpSettings.ATGA2timer.value > 0) });
+		createSetting('geneAssistTimerC2',
+			function () { return ('GA: ' + cinf() + ' Timer') },
+			function () {
+				var description = "<p>Gene Assist will use the value set here when running " + cinf() + "s.</p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
+				description += "<p><b>Recommended:</b> Use regular Gene Assist settings instead of this</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
+		createSetting('geneAssistTimerC2Hard',
+			function () { return ('GA: ' + cinf() + ' Timer Hard') },
+			function () {
+				var description = "<p>Gene Assist will use the value set here when running " + cinf() + "s that are considered hard (Electricity, Nom, Toxicity). </p>";
+				description += "<p>Setting this to 0 or -1 will disable this setting.</p>";
+				description += "<p>Overwrites <b>GA: Timer</b>, <b>GA: Before Z</b> and <b>GA: After Z</b> settings.</p>";
+				description += "<p><b>Recommended:</b> 2</p>";
+				return description;
+			}, 'value', -1, null, 'Jobs', [1],
+			function () { return (autoTrimpSettings.geneAssist.enabled) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//Combat -- TO DO
+	//Combat -- TO DO Scryer+Windstacking
 	const displayCombat = true;
 	if (displayCombat) {
 		//Helium
@@ -3234,8 +3284,15 @@ function initializeAllSettings() {
 			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
 			'boolean', false, null, 'Import Export', [1, 2]);
 
+		createSetting('autoAllocatePresets',
+			function () { return ('Auto Allocate Presets') },
+			function () { return ('Click to adjust settings.') },
+			'mazDefaultArray', JSON.stringify({
+				'': '',
+			}), null, 'Import Export', [1, 2]);
+
 		createSetting('mutatorPresets',
-			function () { return ('Mutator Preset Settings') },
+			function () { return ('Mutator Presets') },
 			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', JSON.stringify({
 				preset1: {},
@@ -3278,6 +3335,11 @@ function initializeAllSettings() {
 			function () { return ('1 day of metal') },
 			function () { return ('Will tell you how much metal you\'d gain from 1 day of metal farming.<br>If in a map if will use your map level otherwise it\'ll assume world level maps.<br>Assumes killing at max speed and factors overkill into the calculations.') },
 			'action', 'testMetalIncome();', null, 'Test', [0]);
+
+		createSetting('testTotalEquipmentCost',
+			function () { return ('Total Equipment Cost') },
+			function () { return ('Will calculate the total cost of your gear. Outputs in total prestige cost, total equip cost & total overall.') },
+			'action', 'testEquipmentMetalSpent();', null, 'Test', [0]);
 
 		createSetting('testLastWorldCell',
 			function () { return ('Last World Cell') },
@@ -3345,7 +3407,7 @@ modifyParentNodeUniverseSwap();
 
 function createSetting(id, name, description, type, defaultValue, list, container, universe, require) {
 	var btnParent = document.createElement("DIV");
-	btnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;');
+	btnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.75vw; margin-bottom: 1vw; width: 13.382vw;');
 	btnParent.setAttribute("id", id + 'Parent');
 	var btn = document.createElement("DIV");
 	btn.id = id;
@@ -3601,9 +3663,6 @@ function settingChanged(id, currUniverse) {
 		if (id === 'equipEfficientEquipDisplay') {
 			displayMostEfficientEquipment();
 		}
-		if (id === 'radonsettings') {
-			modifyParentNodeUniverseSwap(true);
-		}
 		if (id === 'heirloomAutoRareToKeep') {
 			autoHeirloomOptions(true);
 		}
@@ -3637,6 +3696,9 @@ function settingChanged(id, currUniverse) {
 		}
 		if (btn.id === 'dailyPortal') {
 			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn[value] == 2 ? 3 : btn[value]));
+		}
+		if (id === 'radonsettings') {
+			modifyParentNodeUniverseSwap();
 		}
 	}
 	if (btn.type == 'dropdown') {
@@ -3726,9 +3788,9 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("screwessence", radonoff);
 
 	//ATGA
-	modifyParentNode("ATGA2timer", radonoff);
-	modifyParentNode("sATGA2timer", radonoff);
-	modifyParentNode("dhATGA2timer", radonoff);
+	modifyParentNode("geneAssistTimerSpire", radonoff);
+	modifyParentNode("geneAssistTimerAfter", radonoff);
+	modifyParentNode("geneAssistTimerSpireDaily", radonoff);
 
 	//C2
 	modifyParentNode("c2disableFinished", 'show');
@@ -3785,7 +3847,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("automateSpireAssault", radonon);
 	modifyParentNode("showbreedtimer", radonoff);
 
-	modifyParentNode("testMetalOneDay", 'show');
+	modifyParentNode("testTotalEquipmentCost", 'show');
 
 }
 
@@ -5021,6 +5083,9 @@ function updateATVersion() {
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.91') {
 			tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+			if (tempSettings.spamMessages !== undefined)
+				autoTrimpSettings['spamMessages'].value.nature = false;
+
 			if (tempSettings.pfillerenlightthresh !== undefined) autoTrimpSettings['poisonEnlight'].value = tempSettings.pfillerenlightthresh.value;
 			if (tempSettings.pdailyenlightthresh !== undefined) autoTrimpSettings['poisonEnlightDaily'].value = tempSettings.pdailyenlightthresh.value;
 			if (tempSettings.pc2enlightthresh !== undefined) autoTrimpSettings['poisonEnlightC2'].value = tempSettings.pc2enlightthresh.value;
@@ -5032,6 +5097,32 @@ function updateATVersion() {
 			if (tempSettings.ifillerenlightthresh !== undefined) autoTrimpSettings['iceEnlight'].value = tempSettings.ifillerenlightthresh.value;
 			if (tempSettings.idailyenlightthresh !== undefined) autoTrimpSettings['iceEnlightDaily'].value = tempSettings.idailyenlightthresh.value;
 			if (tempSettings.ic2enlightthresh !== undefined) autoTrimpSettings['iceEnlightC2'].value = tempSettings.ic2enlightthresh.value;
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.92') {
+			tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
+			if (tempSettings.ATGA2 !== undefined) autoTrimpSettings['geneAssist'].enabled = tempSettings.ATGA2.enabled;
+			if (tempSettings.ATGA2gen !== undefined) autoTrimpSettings['geneAssistPercent'].value = tempSettings.ATGA2gen.value;
+			if (tempSettings.ATGA2timer !== undefined) autoTrimpSettings['geneAssistTimer'].value = tempSettings.ATGA2timer.value;
+
+			if (tempSettings.zATGA2timer !== undefined) autoTrimpSettings['geneAssistZoneBefore'].value = tempSettings.zATGA2timer.value;
+			if (tempSettings.ztATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerBefore'].value = tempSettings.ztATGA2timer.value;
+			if (tempSettings.ATGA2timerz !== undefined) autoTrimpSettings['geneAssistZoneAfter'].value = tempSettings.ATGA2timerz.value;
+			if (tempSettings.ATGA2timerzt !== undefined) autoTrimpSettings['geneAssistTimerAfter'].value = tempSettings.ATGA2timerzt.value;
+			if (tempSettings.sATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerSpire'].value = tempSettings.sATGA2timer.value;
+
+			if (tempSettings.dATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerDaily'].value = tempSettings.dATGA2timer.value;
+			if (tempSettings.dhATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerDailyHard'].value = tempSettings.dhATGA2timer.value;
+			if (tempSettings.dsATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerSpireDaily'].value = tempSettings.dsATGA2timer.value;
+
+			if (tempSettings.cATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerC2'].value = tempSettings.cATGA2timer.value;
+			if (tempSettings.chATGA2timer !== undefined) autoTrimpSettings['geneAssistTimerC2Hard'].value = tempSettings.chATGA2timer.value;
+
+			var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
+			if (perkyInputs !== null) autoTrimpSettings['autoAllocatePresets'].value = perkyInputs;
+			var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
+			if (surkyInputs !== null) autoTrimpSettings['autoAllocatePresets'].valueU2 = surkyInputs;
 		}
 
 

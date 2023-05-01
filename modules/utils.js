@@ -580,6 +580,45 @@ function testMetalIncome() {
 	debug("Metal gained from 1 day " + prettify(resourcesGained));
 }
 
+function testEquipmentMetalSpent() {
+	var equipMult = getEquipPriceMult();
+	var levelCost = 0;
+	var prestigeCost = 0;
+
+	function getTotalPrestigeCost(what, prestigeCount) {
+		var actualCost = 0;
+		for (var i = 1; i <= prestigeCount; i++) {
+			let equipment = game.equipment[what];
+			let prestigeMod;
+			let nextPrestigeCount = i + 1;
+			if (nextPrestigeCount >= 4) prestigeMod = (((nextPrestigeCount - 3) * 0.85) + 2);
+			else prestigeMod = (nextPrestigeCount - 1);
+			let prestigeCost = Math.round(equipment.oc * Math.pow(1.069, ((prestigeMod) * game.global.prestige.cost) + 1)) * equipMult;
+			actualCost += prestigeCost;
+
+			//Calculate cost of current equip levels
+			if (prestigeCount === i && equipment.level > 1) {
+				finalCost = prestigeCost;
+
+				for (var j = 2; j <= equipment.level; j++) {
+					levelCost += finalCost * Math.pow(1.2, (j - 1));
+				}
+			}
+		}
+
+		return actualCost;
+	}
+
+	for (var i in equipmentList) {
+		if (game.equipment[i].locked) continue;
+		prestigeCost += getTotalPrestigeCost(i, game.equipment[i].prestige - 1);
+	}
+
+	debug("Cost of all prestiges: " + prettify(prestigeCost));
+	debug("Cost of all equip levels: " + prettify(levelCost));
+	debug("Cost of all equipment: " + prettify(prestigeCost + levelCost));
+}
+
 function testMaxMapBonus() {
 	game.global.mapBonus = 10;
 }

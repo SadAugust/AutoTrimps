@@ -30,12 +30,7 @@ function trimpcide() {
 	var baseCheck = ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) >= antistacklimit
 
 	if (baseCheck) {
-		if (mapsActive && getCurrentMapObject().location == "Void") {
-			abandonVoidMap();
-			runMap()
-		} else {
-			forceAbandonTrimps();
-		}
+		forceAbandonTrimps();
 		debug("Abandoning Trimps to resend army with max Anticipation stacks.", "other");
 	}
 }
@@ -745,15 +740,15 @@ function suicideTrimps() {
 	}
 
 
-	if (game.global.challengeActive == "Berserk") game.challenges.Berserk.trimpDied();
-	if (game.global.challengeActive == "Exterminate") game.challenges.Exterminate.trimpDied();
+	if (challengeActive('Berserk')) game.challenges.Berserk.trimpDied();
+	if (challengeActive('Exterminate')) game.challenges.Exterminate.trimpDied();
 	if (getPerkLevel("Frenzy")) game.portal.Frenzy.trimpDied();
-	if (game.global.challengeActive == "Storm") {
+	if (challengeActive('Storm')) {
 		game.challenges.Storm.alpha = 0;
 		game.challenges.Storm.drawStacks();
 	}
 	if (game.global.novaMutStacks > 0) u2Mutations.types.Nova.drawStacks();
-	if (game.global.challengeActive == "Smithless") game.challenges.Smithless.drawStacks();
+	if (challengeActive('Smithless')) game.challenges.Smithless.drawStacks();
 
 	game.global.mapCounterGoal = 0;
 	game.global.titimpLeft = 0;

@@ -385,7 +385,7 @@ function doPortal(challenge, squared) {
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
 	var currChall = MODULES.portal.currentChallenge;
 
-	if (game.global.challengeActive === 'Daily') {
+	if (challengeActive('Daily')) {
 		MODULES.portal.dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
 		MODULES.portal.dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(getDailyChallenge(readingDaily, true)))));
 		confirmAbandonChallenge();

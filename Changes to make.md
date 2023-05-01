@@ -1,9 +1,8 @@
 # General
    - Finish adjusting tooltip descriptions. Tabs left to do:
-	1. ATGA
-	2. Combat
-	3. Magma
-	4. Nature
+	1. Combat
+      	1. Just Scryer & Windstacking to go!
+	2. Magma
    - Convert dropdown settings to functions. 
         - Will allow me to easily show/hide things that change throughout the game. Main things are Prestiges that are shown & heirloom mods.
    - Disable mapSettings & hdStats from being recreated if AT is paused.

@@ -1,5 +1,5 @@
 var MODULES_AT = {
-	ATversion: 'SadAugust v6.2.91',
+	ATversion: 'SadAugust v6.2.92',
 	atscript: document.getElementsByTagName("script"),
 	basepath: '',
 	modulepath: 'modules/'
@@ -339,7 +339,7 @@ function mainLoop() {
 function mainLoopU1(hdStats) {
 	if (game.global.universe !== 1) return;
 	//Core
-	if (getPageSetting('ATGA2')) ATGA2(hdStats);
+	geneAssist();
 	autoRoboTrimp();
 	if (getPageSetting('spendmagmite') === 2 && !magmiteSpenderChanged) autoMagmiteSpender();
 	autoNatureTokens();
