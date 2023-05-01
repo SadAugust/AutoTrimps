@@ -2972,7 +2972,8 @@ function initializeAllSettings() {
 			function () { return ('Staff: Blacklist') },
 			function () {
 				var description = "<p>Will automatically recycle any Staff heirlooms with the mods you input into this setting.</p>";
-				description += "<p>Can add partial names. For example if you enter 'Metal' it will recycle all heirlooms with Metal Drop & Metal Efficiency.</p>";
+				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
+				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse)) });
@@ -3015,6 +3016,8 @@ function initializeAllSettings() {
 			function () { return ('Cores: Blacklist') },
 			function () {
 				var description = "<p>Will automatically recycle any Core heirlooms with the mods you input into this setting.</p>";
+				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
+				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
 				return description;
 			}, 'textValue', 'undefined', null, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
