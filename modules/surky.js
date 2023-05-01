@@ -266,8 +266,6 @@ function initPerks() {
 		earnedRadon: 0,
 		// total radon, including that earned this run
 		perksRadon: 0,
-		// total radon available for perks in this optimization run
-		perksRadonFromSave: 0,
 		radonSpent: 0,
 		// radon spent on perks so far
 		radonPerRun: 0,
@@ -322,7 +320,6 @@ function initPerks() {
 		hideUnused: false,
 		hideLocked: true,
 		showLevelLocks: false,
-		darkMode: false,
 		ezWeights: (surkyInputs !== null && surkyInputs.ezWeights !== undefined && surkyInputs.ezWeights !== null) ? (surkyInputs.ezWeights) : null,
 		tuWeights: (surkyInputs !== null && surkyInputs.tuWeights !== undefined && surkyInputs.tuWeights !== null) ? (surkyInputs.tuWeights) : null,
 		alchWeights: (surkyInputs !== null && surkyInputs.tuWeights !== undefined && surkyInputs.alchWeights !== null) ? (surkyInputs.alchWeights) : null,
@@ -638,15 +635,6 @@ function initPerks() {
 	};
 }
 
-// the key is a value name from the props object used to hold various optimization properties
-//  under each key is an object with "input" and "checkbox" properties holding references to the DOM objects for the input box and it's locking checkbox
-var auxInputs = {};
-
-// set aux input only if not locked
-function setAuxInput(key, value) {
-	$$('#' + key).value = value;
-}
-
 // fill preset weights from the dropdown menu and set special challenge
 function fillPreset(specificPreset) {
 	if (specificPreset) $$('#presetElem').value = specificPreset
@@ -755,7 +743,6 @@ function initialLoad() {
 	props.tuWeights = tuTmp;
 	props.alchWeights = alTmp;
 	props.pushWeights = puTmp;
-	props.darkMode = false;
 
 	// read save into input perk fields
 	// enable perks (in input fields and perks object) based on locked status from save
@@ -775,8 +762,6 @@ function initialLoad() {
 
 	// needs to be after perks since it looks at perk values
 	presetSpecialOpt();
-
-	// set aux inputs from game variables, unless any given field is locked (handled by setAuxInput function)
 
 	// "red" fields should only be overwritten if loading a U2 save (values will be garbage in U1) -- Surky is gonna break if portal Universe isn't set to 2 here!
 	var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
@@ -959,7 +944,6 @@ function initialLoad() {
 		props.shieldPrismal += 3 * SAlevel;
 
 	// read and process all input fields
-	inputs = perks;
 	readInputs();
 
 	props.portalRadon = game.global.totalRadonEarned - game.resources.radon.owned;
@@ -1061,12 +1045,9 @@ function readInputs() {
 		if (typeof (perkObj) !== "object" || !perkObj.hasOwnProperty("optimize"))
 			continue;
 		// iterating over the perks, ignoring aux values
-		//perkObj.locked = !inputs[perkName + "-enabled"].checked;
-		//perkObj.levLocked = inputs[perkName + "-noopt"].checked;
-		perkObj.level = parseInt(inputs[perkName].level) || 0;
+		perkObj.level = parseInt(perks[perkName].level) || 0;
 		if (perkObj.hasOwnProperty("max") && perkObj.level > perkObj.max) {
 			perkObj.level = perkObj.max;
-			inputs[perkName].level = perkObj.max;
 		}
 	}
 	props.radonSpent = getTotalPerksCost();
@@ -1076,12 +1057,10 @@ function readInputs() {
 	// 0 obs = 0 trinkets (won't occur when obs is unlocked since there's 1 free level)
 
 	// is GB used in the afterpush from farming?
-	//props.gbAfterpush = inputs['gb-afterpush'].checked;
 
 	// should S3 & VS1 be counted for Rn gains? (i.e. are we chain farming?)
 	// -> note at Obs 0 this will be assumed by the value calculation regardless of checked or not if clear weight is 0, else
 	//      pushing perks would get no value whatsoever.
-	//props.s3Rn = inputs['s3-rn'].checked;
 
 	// Accuracy doesn't matter prior to Obs, but 0 will give no value to radon gains so >0 is needed.
 	props.radonPerRun = Math.max(1, props.radonPerRun);
@@ -1702,12 +1681,10 @@ function efficiencyFlag(eList = [], pList = []) {
 
 var switchTotalRadon = function () {
 	if (game.global.canRespecPerks && portalWindowOpen) {
-		props.perksRadonFromSave = props.earnedRadon;
+		props.perksRadon = props.earnedRadon;
 	} else {
-		props.perksRadonFromSave = props.portalRadon;
+		props.perksRadon = props.portalRadon;
 	}
-
-	props.perksRadon = props.perksRadonFromSave;
 
 	evaluatePerks();
 }
@@ -1945,10 +1922,7 @@ function getPerkEfficiencies() {
 	perks.Range.efficiency = getLogWeightedValue(1.01, 1, 1, 1, 1, 1) / getPerkCost("Range", 1);
 	// Hunger: 3% atk per level. Not accurate, don't care.
 	perks.Hunger.efficiency = getLogWeightedValue(1.03, 1, 1, 1, 1, 1) / getPerkCost("Hunger", 1);
-
 }
-
-var inputs = [];
 
 function exportPerkString() {
 	var exportedPerks = {};
@@ -1956,7 +1930,6 @@ function exportPerkString() {
 	for (var [key, value] of Object.entries(perks)) {
 		if (typeof (value) !== "object" || !value.hasOwnProperty("optimize"))
 			continue;
-		// iterating over the perks, ignoring aux values
 		exportedPerks[key] = value.level;
 	}
 
@@ -1979,61 +1952,42 @@ function clearAndAutobuyPerks() {
 	efficiencyFlag(eList, pList);
 	if (props.perksRadon > 0) {
 		perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (props.specialChallenge != 'trappa');
-		var origCarp = perks.Carpentry.level;
-		var origExpand = perks.Expansion.level;
-		for (var [key, value] of Object.entries(perks)) {
-			if (typeof (value) !== "object" || !value.hasOwnProperty("optimize") || !value.optimize || value.levLocked)
-				continue;
-			// iterating over the perks, ignoring aux values and non-optimized perks
-			inputs[key].value = 0;
-		}
+		origCarp = game.portal.Carpentry.radLevel;
+		origExpand = game.portal.Expansion.radLevel;
+
 		if (props.isDownsize && props.specialChallenge == 'combat') {
 			// impractical to know actual housing in downsize, just don't reduce Carp or Expansion level
 			perks.Carpentry.level = origCarp;
-			inputs['Carpentry'].level = perks.Carpentry.level;
 			perks.Expansion.level = origExpand;
-			inputs['Expansion'].level = perks.Expansion.level;
-		} else if (!perks.Carpentry.levLocked && props.specialChallenge == 'combat') {
-			// keep expansion level, all else is madness (TODO: or could consider dropping it by 1 and "somehow" making a smart decision on +1 expand vs +X carp)
-			perks.Expansion.level = origExpand;
-			inputs['Expansion'].level = perks.Expansion.level;
+		} else if (props.specialChallenge == 'combat') {
 			// must have enough carp to sustain current coordination - or very conservatively for trappa, 10 more coords after final army send (should still be negligible Rn spent on carp)
-			var wantedArmySize = (props.isTrappa ? Math.pow(1.25, 10) : 1) * props.armySize;
-			var tauntBase = 1.003 + 0.0001 * perks.Expansion.level;
+			wantedArmySize = (props.isTrappa ? Math.pow(1.25, 10) : 1) * props.armySize;
+			var tauntBase = 1.003 + 0.0001 * origExpand;
 			var tauntMult = props.expanding ? Math.pow(tauntBase, props.actualTaunts) : 1;
 			perks.Carpentry.level = Math.max(0, Math.ceil(Math.log(2.4 * wantedArmySize / (tauntMult * props.maxTrimps)) / Math.log(1.1)));
-			inputs['Carpentry'].level = perks.Carpentry.level;
 		}
-		// zero out bait after Trappa unlock, unless in trappa preset
-		if (game.stats.highestRadLevel.valueTotal() >= 60 && !perks.Bait.levLocked)
-			inputs["Bait"].level = 0;
 		if (game.stats.highestRadLevel.valueTotal() >= 60 && !perks.Pheromones.levLocked)
-			inputs["Pheromones"].level = 0;
-		if (!perks.Trumps.levLocked)
-			inputs['Trumps'].level = 0;
-		// zero out trumps, it will be used as a dump perk even outside of downsize
-		if (props.specialChallenge == 'berserk' && !perks.Frenzy.levLocked)
-			inputs["Frenzy"].level = 0;
-		if (props.specialChallenge == 'smithless' && !perks.Smithology.levLocked)
-			inputs["Smithology"].level = 0;
-		readInputs();
+			if (!perks.Trumps.levLocked)
+				// zero out trumps, it will be used as a dump perk even outside of downsize
+				if (props.specialChallenge == 'berserk' && !perks.Frenzy.levLocked)
+					if (props.specialChallenge == 'smithless' && !perks.Smithology.levLocked)
+						initialLoad();
 		// get correct available radon for cleared perks
 		// for max carp, just max out carp!
 		if (props.specialChallenge == 'trappacarp') {
 			while (buyPerk('Carpentry', 1))
 				;
-			inputs['Carpentry'].level = perks.Carpentry.level;
 			evaluatePerks();
 			allocateSurky();
 		} else {
-			autobuyPerks();
+			autobuyPerks(origExpand);
 		}
 	}
 }
 
 // autobuy from current input perk levels
 
-function autobuyPerks() {
+function autobuyPerks(origExpand) {
 	var eList = [];
 	var pList = [];
 	efficiencyFlag(eList, pList);
@@ -2052,6 +2006,10 @@ function autobuyPerks() {
 	}
 	// optimize Trumps for Downsize
 	perks.Trumps.optimize = (props.specialChallenge == 'downsize');
+	//Override Expansion level for combat respec
+	if (props.specialChallenge == 'combat' && origExpand) perks.Expansion.max = origExpand - 2;
+	else delete perks.Expansion.max;
+
 	while (props.bestPerk !== "") {
 		var bestName = props.bestPerk;
 		var bestObj = perks[bestName];
@@ -2064,7 +2022,7 @@ function autobuyPerks() {
 			throw ("ERROR: a maxed, unaffordable, or inefficient perk was flagged as best: " + bestName);
 			return;
 		}
-		inputs[bestName].level = bestObj.level;
+		perks[bestName].level = bestObj.level;
 		getPerkEfficiencies();
 		efficiencyFlag();
 	}
@@ -2072,19 +2030,16 @@ function autobuyPerks() {
 	if (!perks.Trumps.levLocked && !(props.specialChallenge == 'combat')) {
 		while (buyPerk("Trumps", 1))
 			;
-		inputs['Trumps'].level = perks.Trumps.level;
 	}
 	// and Pheromones! (but not in Trappa, for minimum confusion, and not before Trappa unlock)
 	if (!perks.Pheromones.levLocked && props.specialChallenge != 'trappa' && !(props.specialChallenge == 'combat' && props.isTrappa) && game.stats.highestRadLevel.valueTotal() >= 60) {
 		while (buyPerk("Pheromones", 1))
 			;
-		inputs['Pheromones'].level = perks.Pheromones.level;
 	}
 	// secret setting to dump remaining Rn into bait for feeeeeee
 	if (props.baitDump) {
 		while (buyPerk("Bait", 1))
 			;
-		inputs['Bait'].level = perks.Bait.level;
 	}
 
 	evaluatePerks();
