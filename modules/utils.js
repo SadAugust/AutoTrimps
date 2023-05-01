@@ -88,7 +88,7 @@ function spreadsheetDownload() {
 
 // Process data to google forms to update stats spreadsheet
 function pushSpreadsheetData() {
-
+	if (!portalWindowOpen) return;
 	var user = autoTrimpSettings.gameUser.value;
 	if (user === 'undefined' || user === 'Test') return;
 	const graphData = JSON.parse(localStorage.getItem("portalDataCurrent"))[getportalID()];

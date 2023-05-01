@@ -1602,25 +1602,6 @@ function shinyCollect(level) {
 	return props.shinyTable[level];
 }
 
-// deprecated, used prior to alchemy and finding potions
-/*
-function shinyCollectOld(level,zone) {
-var shinies = 0;
-if (zone < 100) return 0;
-var excess = 0;
-if (zone > 199) {
-excess = zone - 199;
-scalingZones = 100;
-} else {
-scalingZones = zone+1-100;
-}
-var scalingShinies = (1 + (level - 1)/2) * ((Math.pow(1.03,scalingZones+1) - 1)/0.03 - 1) / 100;
-var excessShinies = (1 + (level - 1)/2) * Math.pow(1.03,100) / 100 * excess;
-var freeShinies = Math.floor((zone+1-100)/25) * Math.floor(level/2);
-return scalingShinies + excessShinies + freeShinies;
-}
-*/
-
 // Calculate avg atk with frenzy, accounting for uptime.
 //   Optimizing for a given hit count (in practice maybe just 5 and 100, where 100 gives a pretty good approximation of deathless)
 function getFrenzyAvgAtk(level, frenzyHits) {
@@ -1980,14 +1961,14 @@ function clearAndAutobuyPerks() {
 			evaluatePerks();
 			allocateSurky();
 		} else {
-			autobuyPerks(origExpand);
+			autobuyPerks();
 		}
 	}
 }
 
 // autobuy from current input perk levels
 
-function autobuyPerks(origExpand) {
+function autobuyPerks() {
 	var eList = [];
 	var pList = [];
 	efficiencyFlag(eList, pList);
@@ -2006,9 +1987,6 @@ function autobuyPerks(origExpand) {
 	}
 	// optimize Trumps for Downsize
 	perks.Trumps.optimize = (props.specialChallenge == 'downsize');
-	//Override Expansion level for combat respec
-	if (props.specialChallenge == 'combat' && origExpand) perks.Expansion.max = origExpand - 2;
-	else delete perks.Expansion.max;
 
 	while (props.bestPerk !== "") {
 		var bestName = props.bestPerk;
