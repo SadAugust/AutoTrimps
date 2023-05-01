@@ -191,7 +191,7 @@ function autoGenerator() {
 	}
 
 	//Before Fuel
-	if (getPageSetting("fuellater") < 0 || game.global.world < getPageSetting("fuellater")) {
+	if (getPageSetting("fuellater") <= 0 || game.global.world < getPageSetting("fuellater")) {
 		//Pseudo-Hybrid. It fuels until full, then goes into Mi mode
 		if (getPageSetting("beforegen") == 2 && !game.permanentGeneratorUpgrades.Hybridization.owned) {
 			beforeFuelState = game.global.generatorMode;
@@ -202,7 +202,7 @@ function autoGenerator() {
 	}
 
 	//Fuel
-	else if (getPageSetting("fuelend") < 0 || game.global.world < getPageSetting("fuelend"))
+	else if (getPageSetting("fuelend") > 0 && game.global.world < getPageSetting("fuelend"))
 		changeGeneratorState(1);
 
 	//After Fuel

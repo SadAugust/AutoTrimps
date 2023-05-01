@@ -2436,40 +2436,73 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The mode you would like your dimensional generator to be on before your <b>Start Fuel Z</b> zone.</p>";
 				description += "<p><b>Gain Mi</b><br>Will set the generator to collect Mi.</p>";
-				description += "<p><b>Gain Fuel</b><brWill set the generator to collect fuel.</p>";
+				description += "<p><b>Gain Fuel</b><br>Will set the generator to collect fuel.</p>";
 				description += "<p><b>Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
-				description += "<p><b>Recommended:</b> Gain Mi/p>";
+				description += "<p><b>Recommended:</b> Gain Mi</p>";
 				return description;
-			},
-			'multitoggle', 1, null, 'Magma', [1]);
+			}, 'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('fuellater',
 			function () { return ('Start Fuel Z') },
-			function () { return ('Start fueling at this zone instead of 230. I would suggest you have a value lower than your max, for obvious reasons. Recommend starting at a value close-ish to your max supply. Use 230 to use your <b>BEFORE FUEL</b> setting.') }, 'value', -1, null, 'Magma', [1]);
+			function () {
+				var description = "<p>Will automatically set the generator to gather <b>Fuel</b> when this zone is reached.</p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> Use Gatorcalc website to find ideal zone</p>";
+				return description;
+			}, 'value', -1, null, 'Magma', [1]);
 		createSetting('fuelend',
 			function () { return ('End Fuel Z') },
-			function () { return ('End fueling at this zone. After this zone is reached, will follow your preference. -1 to fuel infinitely.') }, 'value', -1, null, 'Magma', [1]);
+			function () {
+				var description = "<p>Will automatically set the generator to gather <b>Fuel</b> until this zone is reached.</p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> Use Gatorcalc website to find ideal zone</p>";
+				return description;
+			}, 'value', -1, null, 'Magma', [1]);
 		createSetting('defaultgen',
 			function () { return (['Gain Mi', 'Gain Fuel', 'Hybrid']) },
 			function () {
 				var description = "<p>The mode you would like your dimensional generator to be on after your <b>End Fuel Z</b> zone.</p>";
 				description += "<p><b>Gain Mi</b><br>Will set the generator to collect Mi.</p>";
-				description += "<p><b>Gain Fuel</b><brWill set the generator to collect fuel.</p>";
+				description += "<p><b>Gain Fuel</b><br>Will set the generator to collect fuel.</p>";
 				description += "<p><b>Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
-				description += "<p><b>Recommended:</b> Gain Mi/p>";
+				description += "<p><b>Recommended:</b> Gain Mi</p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('AutoGenDC',
 			function () { return (['Daily: Normal', 'Daily: Fuel', 'Daily: Hybrid']) },
-			function () { return ('<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire Daily. <br><b>Hybrid:</b> Uses Hybrid for the entire Daily.') }, 'multitoggle', 1, null, 'Magma', [1]);
+			function () {
+				var description = "<p>The mode that the script will use for the entire daily run.</p>";
+				description += "<p><b>Daily Normal</b><br>Disables this setting and uses the normal script auto generator settings.</p>";
+				description += "<p><b>Daily Fuel</b><br>Will set the generator to collect fuel.</p>";
+				description += "<p><b>Daily Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
+				description += "<p><b>Recommended:</b> Daily Normal</p>";
+				return description;
+			}, 'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('AutoGenC2',
 			function () { return (['' + cinf() + ': Normal', '' + cinf() + ': Fuel', '' + cinf() + ': Hybrid']) },
-			function () { return ('<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire ' + cinf() + '. <br><b>Hybrid:</b> Uses Hybrid for the entire ' + cinf() + '.') }, 'multitoggle', 1, null, 'Magma', [1]);
+			function () {
+				var description = "<p>The mode that the script will use for the entire " + cinf() + " run.</p>";
+				description += "<p><b>" + cinf() + " Normal</b><br>Disables this setting and uses the normal script auto generator settings.</p>";
+				description += "<p><b>" + cinf() + " Fuel</b><br>Will set the generator to collect fuel.</p>";
+				description += "<p><b>" + cinf() + " Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
+				description += "<p><b>Recommended:</b> " + cinf() + " Fuel</p>";
+				return description;
+			}, 'multitoggle', 1, null, 'Magma', [1]);
 
 		//Spend Mi
 		createSetting('spendmagmite',
-			function () { return (['Spend Magmite OFF', 'Spend Magmite (Portal)', 'Spend Magmite Always']) },
-			function () { return ('Auto Spends any unspent Magmite immediately before portaling. (Or Always, if toggled). Part 1 buys any permanent one-and-done upgrades in order from most expensive to least. Part 2 then analyzes Efficiency vs Capacity for cost/benefit, and buys Efficiency if its BETTER than Capacity. If not, if the PRICE of Capacity is less than the price of Supply, it buys Capacity. If not, it buys Supply. And then it repeats itself until you run out of Magmite and cant buy anymore.') },
-			'multitoggle', 1, null, 'Magma', [1]);
+			function () { return (['Spend Magmite Off', 'Spend Magmite (Portal)', 'Spend Magmite Always']) },
+			function () {
+				var description = "<p>Controls when the script will spend the Magmite that you obtain throughout your runs.</p>";
+				description += "<p><b>Spend Magmite Of</b><br>Disables this setting.</p>";
+				description += "<p><b>Spend Magmite (Portal)</b><br>Auto Spends any unspent Magmite immediately before portaling.</p>";
+				description += "<p><b>Spend Magmite Always</b><br>Will spend any Magmite that you acquire straight away. Typically means you'll purchase the cheapest upgrades possible.</p>";
+				description += "<p><b>Recommended:</b> Spend Magmite (Portal)</p>";
+				return description;
+
+				description += "<p>Part 1 buys any permanent one-and-done upgrades in order from most expensive to least.</p>";
+				description += "<p>Part 2 then analyzes Efficiency vs Capacity for cost/benefit, and buys Efficiency if its BETTER than Capacity.</p>";
+				description += "<p>If not, if the PRICE of Capacity is less than the price of Supply, it buys Capacity. If not, it buys Supply. And then it repeats itself until you run out of Magmite and cant buy anymore.</p>";
+			}, 'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('ratiospend',
 			function () { return ('Ratio Spending') },
 			function () { return ('Spends Magmite in a Ratio you define.') },
@@ -2506,8 +2539,15 @@ function initializeAllSettings() {
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
 		createSetting('MagmiteExplain',
 			function () { return ('Magmite spending behaviour') },
-			function () { return ('1. Buy one-and-done upgrades, expensive first, then consider 1st level of Overclocker;<br>2. Buy Overclocker IF AND ONLY IF we can afford it;<br>2.5. Exit if OneTimeOnly<br>3. Buy Efficiency if it is better than capacity;<br>4. Buy Capacity or Supply depending on which is cheaper, or based on SupplyWall') },
-			'infoclick', 'MagmiteExplain', null, 'Magma', [1],
+			function () {
+				var description = "<p>Infographic on how the magmite spending process works.</p>";
+				description += "<p><b>1.</b><br>Buy one-and-done upgrades, expensive first, then consider 1st level of Overclocker.</p>";
+				description += "<p><b>2.</b><br>Buy Overclocker IF AND ONLY IF we can afford it.</p>";
+				description += "<p><b>2.5.</b><br>Exit if one time only upgrade.</p>";
+				description += "<p><b>3.</b><br>Buy Efficiency if it is better than capacity.</p>";
+				description += "<p><b>4.</b><br>Buy Capacity or Supply depending on which is cheaper, or based on SupplyWall.</p>";
+				return description;
+			}, 'infoclick', 'MagmiteExplain', null, 'Magma', [1],
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
 	}
 
