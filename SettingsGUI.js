@@ -2548,7 +2548,8 @@ function initializeAllSettings() {
 		createSetting('heirloomCompressedSwap',
 			function () { return ('Compressed Swap') },
 			function () {
-				var description = "<p>If you are currently past your swap zone this will set the swap zone to 999 when the cell after next is compressed to maximise plaguebringer damage on it.</p>";
+				var description = "<p>When the cell after next is compressed and you are past your heirloom swap zone this will equip your <b>Initial</b> shield so that the next enemy spawns with max health to maximise plaguebringer damage on it.</p>";
+				description += "<p>Will ensure you start the compressed cell at the lowest health it can be from plaguebringer which reduces initial rage stack if the enemy has it and the clear time.</p>";
 				description += "<p>Will only work if your <b>Initial</b> Shield doesn't have <b>PlagueBringer</b> and your <b>Afterpush</b> shield has <b>PlagueBringer</b>.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
