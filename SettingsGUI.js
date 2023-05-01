@@ -2545,6 +2545,16 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
+		createSetting('heirloomCompressedSwap',
+			function () { return ('Compressed Swap') },
+			function () {
+				var description = "<p>If you are currently past your swap zone this will set the swap zone to 999 when the cell after next is compressed to maximise plaguebringer damage on it.</p>";
+				description += "<p>Will only work if your <b>Initial</b> Shield doesn't have <b>PlagueBringer</b> and your <b>Afterpush</b> shield has <b>PlagueBringer</b>.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Heirlooms', [2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestRadLevel.valueTotal() >= 203) });
+
 		createSetting('heirloomVoidSwap',
 			function () { return ('Void PB Swap') },
 			function () {

@@ -255,6 +255,8 @@ function heirloomShieldToEquip(mapType, query) {
 	if (hdStats.isDaily && dailyOddOrEven().active) {
 		if (swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;
 	}
+	//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage
+	if (game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && game.global.world >= swapZone && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) swapZone = 999;
 	var afterpushShield = hdStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 	voidPBSwap = false;
 	var voidActive = mapType === 'void';
