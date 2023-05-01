@@ -91,16 +91,15 @@ var sixSecondInterval = false;
 var gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 var shieldEquipped = game.global.ShieldEquipped.id;
 
-
 ATscriptLoad(MODULES_AT.modulepath, 'utils');
 
 function initializeAutoTrimps() {
 	loadPageVariables();
 	ATscriptLoad('', 'SettingsGUI');
-	/* var script = document.createElement('script');
+	var script = document.createElement('script');
 	script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
-	document.head.appendChild(script); */
-	ATscriptLoad('', 'Graphs');
+	document.head.appendChild(script);
+	/* ATscriptLoad('', 'Graphs'); */
 	ATscriptLoad('', 'mutatorPreset');
 	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perky', 'surky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
 	for (var m in ATmoduleList) {

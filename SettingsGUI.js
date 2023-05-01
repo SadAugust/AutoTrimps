@@ -1999,7 +1999,7 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
-	//ATGA -- TO DO
+	//ATGA -- Descriptions done!
 	const displayATGA = true;
 	if (displayATGA) {
 		createSetting('geneAssist',
@@ -2865,6 +2865,16 @@ function initializeAllSettings() {
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 11)
 			});
 
+		createSetting('heirloomAutoShieldBlacklist',
+			function () { return ('Shield: Blacklist') },
+			function () {
+				var description = "<p>Will automatically recycle any Shield heirlooms with the mods you input into this setting.</p>";
+				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
+				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
+				return description;
+			}, 'multiTextValue', 'undefined', null, 'Heirlooms', [1, 2],
+			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse)) });
+
 		//Staff Line
 		createSetting('heirloomAutoStaff',
 			function () { return ('Staffs') },
@@ -2958,6 +2968,15 @@ function initializeAllSettings() {
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 11)
 			});
 
+		createSetting('heirloomAutoStaffBlacklist',
+			function () { return ('Staff: Blacklist') },
+			function () {
+				var description = "<p>Will automatically recycle any Staff heirlooms with the mods you input into this setting.</p>";
+				description += "<p>Can add partial names. For example if you enter 'Metal' it will recycle all heirlooms with Metal Drop & Metal Efficiency.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse)) });
+
 		//Core Line
 		createSetting('heirloomAutoCore',
 			function () { return ('Cores') },
@@ -2991,6 +3010,13 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
 			}, 'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
+			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
+		createSetting('heirloomAutoCoreBlacklist',
+			function () { return ('Cores: Blacklist') },
+			function () {
+				var description = "<p>Will automatically recycle any Core heirlooms with the mods you input into this setting.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 	}
 
@@ -3462,7 +3488,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
-	} else if (type == 'textValue') {
+	} else if (type == 'textValue' || type == 'multiTextValue') {
 		if (!(loaded && id == loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
@@ -3477,7 +3503,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		}
 		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
-		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name()}", ${type == 'textValue'})`);
+		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name()}", ${type == 'multiTextValue'})`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.innerHTML = name();
@@ -3829,8 +3855,8 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("heirloomStaffResource", 'show');
 
 	modifyParentNode("heirloomAutoRareToKeep", heirloom);
-	modifyParentNode("heirloomAutoShieldMod7", heirloom);
-	modifyParentNode("heirloomAutoStaffMod7", heirloom);
+	modifyParentNode("heirloomAutoShieldBlacklist", heirloom);
+	modifyParentNode("heirloomAutoStaffBlacklist", heirloom);
 	//Golden Upgrades
 	//Helium Settings
 	//Radon Settings
@@ -4286,7 +4312,7 @@ function autoHeirloomOptions() {
 	}
 }
 
-function autoSetValueToolTip(id, text, negative, multi) {
+function autoSetValueToolTip(id, text, multi, negative) {
 	ranstring = text;
 	var value = 'value'
 	if (autoTrimpSettings.radonsettings.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
@@ -4296,8 +4322,8 @@ function autoSetValueToolTip(id, text, negative, multi) {
 		tooltipText += ' Accepts negative numbers as validated inputs.';
 	else
 		tooltipText += ' Put -1 for Infinite.';
-	tooltipText += `<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${negative}, ${multi})" value="${autoTrimpSettings[id][value]}"></input>`;
-	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetValue(\'' + id + '\',' + negative + ',' + multi + ')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
+	tooltipText += `<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${multi}, ${negative})" value="${autoTrimpSettings[id][value]}"></input>`;
+	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetValue(\'' + id + '\',' + multi + ',' + negative + ')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
 	game.global.lockTooltip = true;
 	elem.style.left = '32.5%';
 	elem.style.top = '25%';
@@ -4314,14 +4340,14 @@ function autoSetValueToolTip(id, text, negative, multi) {
 	box.focus();
 }
 
-function autoSetTextToolTip(id, text) {
+function autoSetTextToolTip(id, text, multiValue) {
 	ranstring = text;
 	var elem = document.getElementById("tooltipDiv");
 	var value = 'value'
 	if (autoTrimpSettings.radonsettings.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
 	var tooltipText = 'Type your input below';
-	tooltipText += `<br/><br/><input id="customTextBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}')" value="${autoTrimpSettings[id][value]}"></input>`;
-	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetText(\'' + id + '\')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
+	tooltipText += `<br/><br/><input id="customTextBox" style="width: 100%" onkeypress="onKeyPressSetting(event, '${id}', ${multiValue})" value="${autoTrimpSettings[id][value]}"></input>`;
+	var costText = '<div class="maxCenter"><div class="btn btn-info" onclick="autoSetText(\'' + id + '\',' + multiValue + ')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>';
 	game.global.lockTooltip = true;
 	elem.style.left = '32.5%';
 	elem.style.top = '25%';
@@ -4338,12 +4364,12 @@ function autoSetTextToolTip(id, text) {
 	box.focus();
 }
 
-function onKeyPressSetting(event, id, negative, multi) {
+function onKeyPressSetting(event, id, multi, negative) {
 	if (event.which == 13 || event.keyCode == 13) {
 		if (negative !== undefined && multi !== undefined)
 			autoSetValue(id, negative, multi);
 		else
-			autoSetText(id);
+			autoSetText(id, multi);
 	}
 }
 
@@ -4369,7 +4395,7 @@ function parseNum(num) {
 	return num;
 }
 
-function autoSetValue(id, negative, multi) {
+function autoSetValue(id, negative, multiValue) {
 	var value = 'value'
 	if (autoTrimpSettings.radonsettings.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
 	var num = 0;
@@ -4378,7 +4404,7 @@ function autoSetValue(id, negative, multi) {
 	var numBox = document.getElementById('customNumberBox');
 	if (numBox) {
 		num = numBox.value.toLowerCase();
-		if (multi) {
+		if (multiValue) {
 			num = num.split(',').map(parseNum);
 		} else {
 			num = parseNum(num);
@@ -4397,7 +4423,7 @@ function autoSetValue(id, negative, multi) {
 	saveSettings();
 }
 
-function autoSetText(id) {
+function autoSetText(id, multiValue) {
 	var textVal = 'empty';
 	var value = 'value'
 	if (autoTrimpSettings.radonsettings.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
@@ -4405,11 +4431,25 @@ function autoSetText(id) {
 	tooltip('hide');
 	var textBox = document.getElementById('customTextBox');
 	if (textBox) {
-		textVal = textBox.value
-	} else return;
+		if (multiValue) {
+			textVal = textBox.value.replace(/, /g, ",");
+			textVal = textVal.split(',').map(String);
+		} else {
+			textVal = textBox.value
+		}
+	} else return
+
 	autoTrimpSettings[id][value] = textVal;
 	if (textVal != undefined) {
-		document.getElementById(id).innerHTML = ranstring + ': ' + textVal;
+
+		if (Array.isArray(textVal) && textVal.length == 1 && textVal[0] === -1)
+			document.getElementById(id).innerHTML = ranstring + ': ' + "<span class='icomoon icon-infinity'></span>";
+		else if (Array.isArray(textVal))
+			document.getElementById(id).innerHTML = ranstring + ': ' + textVal[0] + '+';
+		else if (textVal.length > 18)
+			document.getElementById(id).innerHTML = ranstring + ': ' + textVal.substring(0, 21) + '...';
+		else
+			document.getElementById(id).innerHTML = ranstring + ': ' + textVal.substring(0, 21);
 	}
 	updateCustomButtons();
 	saveSettings();
@@ -4593,17 +4633,17 @@ function updateCustomButtons(initialLoad) {
 				var itemValue = item.value;
 				if (radonon && settingUniverse.indexOf(0) === -1) itemValue = item['value' + 'U2'];
 				if (elem != null) {
-					if (item.type == 'multitoggle') {
+					if (item.type === 'multitoggle') {
 						elem.innerHTML = item.name()[itemValue];
 						elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemValue);
 					}
-					else if (item.type == 'textValue' && typeof itemValue !== 'undefined' && itemValue.substring !== undefined) {
+					else if (item.type === 'textValue' && typeof itemValue !== 'undefined' && itemValue.substring !== undefined) {
 						if (itemValue.length > 18)
 							elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21) + '...';
 						else
 							elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21);
 					}
-					else if (item.type == 'multiValue') {
+					else if (item.type === 'multiValue' || item.type === 'multiTextValue') {
 						if (Array.isArray(itemValue) && itemValue.length == 1 && itemValue[0] == -1)
 							elem.innerHTML = item.name() + ': ' + "<span class='icomoon icon-infinity'></span>";
 						else if (Array.isArray(itemValue))
@@ -4629,7 +4669,7 @@ function updateCustomButtons(initialLoad) {
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
 				//Updating input box & text that will be displayed upon saving!
 				if (item.type === 'value' || item.type === 'multiValue' || item.type === 'valueNegative') elem.setAttribute("onclick", `autoSetValueToolTip("${item.id}", "${item.name()}", ${item.type == 'valueNegative'}, ${item.type == 'multiValue'})`);
-				if (item.type === 'textValue') elem.setAttribute("onclick", `autoSetTextToolTip("${item.id}", "${item.name()}", ${item.type == 'textValue'})`);
+				if (item.type === 'textValue') elem.setAttribute("onclick", `autoSetTextToolTip("${item.id}", "${item.name()}", ${item.type == 'multiTextValue'})`);
 			}
 		}
 	}

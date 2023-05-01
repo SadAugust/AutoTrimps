@@ -42,6 +42,7 @@ function serializeSettings() {
 			case 'value':
 			case 'multiValue':
 			case 'textValue':
+			case 'multiTextValue':
 			case 'valueNegative':
 			case 'multitoggle':
 			case 'mazArray':
@@ -280,6 +281,9 @@ function getPageSetting(setting, universe) {
 	} else if (settingType == 'multiValue') {
 		return Array.from(autoTrimpSettings[setting][value])
 			.map(x => parseInt(x));
+	} else if (settingType == 'multiTextValue') {
+		return Array.from(autoTrimpSettings[setting][value])
+			.map(x => String(x));
 	} else if (settingType == 'textValue' || settingType == 'mazArray' || settingType == 'mazDefaultArray') {
 		return autoTrimpSettings[setting][value];
 	} else if (settingType == 'value' || autoTrimpSettings[setting].type == 'valueNegative') {
@@ -311,7 +315,7 @@ function setPageSetting(setting, newValue, universe) {
 	}
 
 	var buttonIndex = ['boolean'];
-	var valueIndex = ['value', 'valueNegative', 'textValue', 'mazArray', 'mazDefaultArray', 'multiValue', 'multitoggle'];
+	var valueIndex = ['value', 'valueNegative', 'textValue', 'multiTextValue', 'mazArray', 'mazDefaultArray', 'multiValue', 'multitoggle'];
 	var selectedIndex = ['dropdown'];
 
 	if (buttonIndex.indexOf(settingType) !== -1) {

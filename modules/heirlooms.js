@@ -60,7 +60,8 @@ function evaluateHeirloomMods(loom, location) {
 	//Will check if the heirloom is perfect and if it is, we will return infinity to make sure it is not recycled.
 	//If it is not perfect, we will return 0 to make sure it is recycled.
 	//Identify the setting prefix for the heirloom type
-	const varAffix = heirloomType === 'Staff' ? 'heirloomAutoStaffMod' : heirloomType === 'Shield' ? 'heirloomAutoShieldMod' : heirloomType === 'core' ? 'heirloomAutoCoreMod' : null;
+	const varAffix = heirloomType === 'Staff' ? 'heirloomAutoStaffMod' : heirloomType === 'Shield' ? 'heirloomAutoShieldMod' : heirloomType === 'Core' ? 'heirloomAutoCoreMod' : null;
+	const blacklist = getPageSetting("heirloomAuto" + heirloomType + "Blacklist");
 	var targetMods = [];
 	var emptyMods = 0;
 	//Increment through the setting inputs and push them to the targetMods array if not set to empty.
@@ -76,6 +77,7 @@ function evaluateHeirloomMods(loom, location) {
 			continue;
 		}
 		modName = heirloomMods[heirloomType][modName];
+		if (blacklist.includes(modName)) return 0;
 		targetMods = targetMods.filter(e => e !== modName);
 	}
 	if (targetMods.length <= emptyMods)
