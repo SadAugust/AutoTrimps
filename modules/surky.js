@@ -303,9 +303,11 @@ function initPerks() {
 		// finding potions purchased in alchemy
 		shinyTable: [0],
 		// memoization table for trinket drops
-		clearWeight: $$('#clearWeight').value !== '' ? Number($$('#clearWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.clearWeight) : 1,
-		survivalWeight: $$('#survivalWeight').value !== '' ? Number($$('#survivalWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.survivalWeight) : 1,
-		radonWeight: $$('#radonWeight').value !== '' ? Number($$('#radonWeight').value) : (surkyInputs !== null) ? Number(surkyInputs.radonWeight) : 1,
+		clearWeight: $$('#clearWeight').value !== '' && !isNaN($$('#clearWeight').value) ? Number($$('#clearWeight').value) : (surkyInputs !== null && !isNaN(surkyInputs.clearWeight)) ? Number(surkyInputs.clearWeight) : 1,
+
+		survivalWeight: $$('#survivalWeight').value !== '' && !isNaN($$('#survivalWeight').value) ? Number($$('#survivalWeight').value) : (surkyInputs !== null && !isNaN(surkyInputs.survivalWeight)) ? Number(surkyInputs.survivalWeight) : 1,
+
+		radonWeight: $$('#radonWeight').value !== '' && !isNaN($$('#radonWeight').value) ? Number($$('#radonWeight').value) : (surkyInputs !== null && !isNaN(surkyInputs.radonWeight)) ? Number(surkyInputs.radonWeight) : 1,
 		scruffyLevel: 0,
 		weaponLevels: 1,
 		armorLevels: 1,
@@ -368,6 +370,15 @@ function initPerks() {
 		},
 		logEnemyScaling: (logEnemyAttackScaling + logEnemyHealthScaling),
 	};
+
+	if (isNaN(surkyInputs.radonWeight)) {
+		surkyInputs.radonWeight = 1;
+	} if (isNaN(surkyInputs.clearWeight)) {
+		surkyInputs.clearWeight = 1;
+	} if (isNaN(surkyInputs.survivalWeight)) {
+		surkyInputs.survivalWeight = 1;
+	}
+
 	perks = {
 		Agility: {
 			optimize: true,
@@ -772,37 +783,45 @@ function initialLoad() {
 	// target zone to CLEAR is 1 zone before the portal zone by default
 	var currentZone = Math.max(1, game.global.world - 1);
 	$$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
+	if (isNaN($$('#targetZone').value)) $$('#targetZone').value = targetZone;
 	props.targetZone = Number($$('#targetZone').value);
 
 	// weapon/armor levels taken from dagger/boots (most likely to be leveled highest)
 	var weaponLevels = (game.equipment.Dagger.level || 1);
 	$$('#weaponLevels').value = Math.min(weaponLevels, surkyInputs.weaponLevels);
+	if (isNaN($$('#weaponLevels').value)) $$('#weaponLevels').value = weaponLevels;
 	props.weaponLevels = Number($$('#weaponLevels').value);
 
 	var armorLevels = (game.equipment.Boots.level || 1);
 	$$('#armorLevels').value = Math.min(armorLevels, surkyInputs.armorLevels);
+	if (isNaN($$('#armorLevels').value)) $$('#armorLevels').value = armorLevels;
 	props.armorLevels = Number($$('#armorLevels').value);
 
 	// get current purchased tributes, mets, etc
 	var tributeCount = (game.buildings.Tribute.owned || 0);
 	$$('#tributes').value = Math.max(tributeCount, surkyInputs.tributes);
+	if (isNaN($$('#tributes').value)) $$('#tributes').value = tributeCount;
 	props.tributes = Number($$('#tributes').value);
 
 	var metCount = (game.jobs.Meteorologist.owned || 0);
 	$$('#meteorologists').value = Math.max(metCount, surkyInputs.meteorologists);
+	if (isNaN($$('#meteorologists').value)) $$('#meteorologists').value = metCount;
 	props.meteorologists = Number($$('#meteorologists').value);
 
 	var smithyCount = (game.buildings.Smithy.owned || 0);
 	$$('#smithyCount').value = Math.max(smithyCount, surkyInputs.smithyCount);
+	if (isNaN($$('#smithyCount').value)) $$('#smithyCount').value = smithyCount;
 	props.smithyCount = Number($$('#smithyCount').value);
 
 	var rnPerRun = (game.resources.radon.owned || 0);
 	$$('#radonPerRun').value = Math.max(rnPerRun, surkyInputs.radonPerRun);
+	if (isNaN($$('#radonPerRun').value)) $$('#radonPerRun').value = rnPerRun;
 	props.radonPerRun = Number($$('#radonPerRun').value);
 
 	// get count of best housing building (don't bother optimizing lower than gateways, the 2nd-order adjustments won't matter enough to bother)
 	var housingCount = (game.buildings.Collector.owned || 0);
 	$$('#housingCount').value = Math.max(housingCount, surkyInputs.housingCount)
+	if (isNaN($$('#housingCount').value)) $$('#housingCount').value = housingCount;
 	props.housingCount = Number($$('#housingCount').value);
 
 

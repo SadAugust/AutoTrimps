@@ -161,8 +161,8 @@ function initializeAllTabs() {
 	createTabs("Golden", "Golden Upgrade Settings");
 	createTabs("Nature", "Nature Settings");
 	createTabs("Display", "Display & Spam Settings");
-	createTabs("Test", "Basic testing functions - Should never be seen by users");
 	createTabs("Import Export", "Import & Export Settings");
+	createTabs("Test", "Basic testing functions - Should never be seen by users");
 	createTabs("Legacy", "Legacy Settings. Will be removed every major patch cycle.");
 	var li_0 = document.createElement('li');
 	var a_0 = document.createElement('a');
@@ -2425,32 +2425,45 @@ function initializeAllSettings() {
 	if (displayMagma) {
 		createSetting('UseAutoGen',
 			function () { return ('Auto Generator') },
-			function () { return ('Turn this on to use these settings.') },
-			'boolean', false, null, 'Magma', [1]);
+			function () {
+				var description = "<p>Master switch for whether the script will do any form of dimensional generator mode switching or Mi purchasing.</p>";
+				description += "<p>Additional settings appear when enabled.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Magma', [1]);
 		createSetting('beforegen',
 			function () { return (['Gain Mi', 'Gain Fuel', 'Hybrid']) },
-			function () { return ('<b>MODE BEFORE FUELING: </b>Which mode to use before fueling. This is the mode which the generator will use if you fuel after z230.') },
+			function () {
+				var description = "<p>The mode you would like your dimensional generator to be on before your <b>Start Fuel Z</b> zone.</p>";
+				description += "<p><b>Gain Mi</b><br>Will set the generator to collect Mi.</p>";
+				description += "<p><b>Gain Fuel</b><brWill set the generator to collect fuel.</p>";
+				description += "<p><b>Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
+				description += "<p><b>Recommended:</b> Gain Mi/p>";
+				return description;
+			},
 			'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('fuellater',
 			function () { return ('Start Fuel Z') },
-			function () { return ('Start fueling at this zone instead of 230. I would suggest you have a value lower than your max, for obvious reasons. Recommend starting at a value close-ish to your max supply. Use 230 to use your <b>BEFORE FUEL</b> setting.') },
-			'value', -1, null, 'Magma', [1]);
+			function () { return ('Start fueling at this zone instead of 230. I would suggest you have a value lower than your max, for obvious reasons. Recommend starting at a value close-ish to your max supply. Use 230 to use your <b>BEFORE FUEL</b> setting.') }, 'value', -1, null, 'Magma', [1]);
 		createSetting('fuelend',
 			function () { return ('End Fuel Z') },
-			function () { return ('End fueling at this zone. After this zone is reached, will follow your preference. -1 to fuel infinitely.') },
-			'value', -1, null, 'Magma', [1]);
+			function () { return ('End fueling at this zone. After this zone is reached, will follow your preference. -1 to fuel infinitely.') }, 'value', -1, null, 'Magma', [1]);
 		createSetting('defaultgen',
 			function () { return (['Gain Mi', 'Gain Fuel', 'Hybrid']) },
-			function () { return ('<b>MODE AFTER FUELING: </b>Which mode to use after fueling.') },
-			'multitoggle', 1, null, 'Magma', [1]);
+			function () {
+				var description = "<p>The mode you would like your dimensional generator to be on after your <b>End Fuel Z</b> zone.</p>";
+				description += "<p><b>Gain Mi</b><br>Will set the generator to collect Mi.</p>";
+				description += "<p><b>Gain Fuel</b><brWill set the generator to collect fuel.</p>";
+				description += "<p><b>Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
+				description += "<p><b>Recommended:</b> Gain Mi/p>";
+				return description;
+			}, 'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('AutoGenDC',
 			function () { return (['Daily: Normal', 'Daily: Fuel', 'Daily: Hybrid']) },
-			function () { return ('<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire Daily. <br><b>Hybrid:</b> Uses Hybrid for the entire Daily.') },
-			'multitoggle', 1, null, 'Magma', [1]);
+			function () { return ('<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire Daily. <br><b>Hybrid:</b> Uses Hybrid for the entire Daily.') }, 'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('AutoGenC2',
 			function () { return (['' + cinf() + ': Normal', '' + cinf() + ': Fuel', '' + cinf() + ': Hybrid']) },
-			function () { return ('<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire ' + cinf() + '. <br><b>Hybrid:</b> Uses Hybrid for the entire ' + cinf() + '.') },
-			'multitoggle', 1, null, 'Magma', [1]);
+			function () { return ('<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire ' + cinf() + '. <br><b>Hybrid:</b> Uses Hybrid for the entire ' + cinf() + '.') }, 'multitoggle', 1, null, 'Magma', [1]);
 
 		//Spend Mi
 		createSetting('spendmagmite',
@@ -3336,74 +3349,114 @@ function initializeAllSettings() {
 	if (displayTesting) {
 		createSetting('gameUser',
 			function () { return ('User') },
-			function () { return ('<b>Not gonna be seen</b>') },
-			'textValue', 'undefined', null, 'Test', [0],
+			function () {
+				var description = "<p>Not gonna be seen by anybody.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'Test', [0],
 			function () { return (false) });
 
-		createSetting('testSpeed50',
-			function () { return ('Game Speed 50x') },
-			function () { return ('Set gamespeed to 50x the regular value.') },
-			'action', 'testSpeedX(0.00001);', null, 'Test', [0]);
+		createSetting('testSpeed20',
+			function () { return ('Game Speed 12x') },
+			function () {
+				var description = "<p>Increases the game run speed. Runs both the entire script & main trimps loop on every tick.</p>";
+				description += "<p><b>There's no way to clear this without refreshing your page.</b></p>";
+				description += "<p><b>Speed increase is variable depending on your machine.</b></p>";
+				return description;
+			}, 'action', 'testSpeedX(0.00001);', null, 'Test', [0]);
 
 		createSetting('testSetChallenge',
 			function () { return ('Custom Challenge') },
-			function () { return ('Will set the challenge that Trimps is running to your input.') },
-			'action', 'ImportExportTooltip("SetCustomChallenge");', null, 'Test', [0]);
+			function () {
+				var description = "<p>Will set the challenge that Trimps is running to your input.</p>";
+				return description;
+			}, 'action', 'ImportExportTooltip("SetCustomChallenge");', null, 'Test', [0]);
 
 		createSetting('testSetC2',
 			function () { return ('Toggle ' + cinf()) },
-			function () { return ('Will toggle on the setting for if you\'re running a ' + cinf() + '.') },
-			'action', 'testRunningCinf();', null, 'Test', [0]);
+			function () {
+				var description = "<p>Will toggle on the setting for if you\'re running a " + cinf() + ".</p>";
+				return description;
+			}, 'action', 'testRunningCinf();', null, 'Test', [0]);
 
 		createSetting('testBoneCharges',
 			function () { return ('Max Bone Charges') },
-			function () { return ('Sets bone charges to 10.') },
-			'action', 'game.permaBoneBonuses.boosts.charges=10; game.permaBoneBonuses.boosts.updateBtn();', null, 'Test', [0]);
+			function () {
+				var description = "<p>Sets your bone charge counter to 10.</p>";
+				return description;
+			}, 'action', 'game.permaBoneBonuses.boosts.charges=10; game.permaBoneBonuses.boosts.updateBtn();', null, 'Test', [0]);
 
 		createSetting('testMetalOneDay',
 			function () { return ('1 day of metal') },
-			function () { return ('Will tell you how much metal you\'d gain from 1 day of metal farming.<br>If in a map if will use your map level otherwise it\'ll assume world level maps.<br>Assumes killing at max speed and factors overkill into the calculations.') },
-			'action', 'testMetalIncome();', null, 'Test', [0]);
+			function () {
+				var description = "<p>Will tell you how much metal you'd gain from 1 day of metal farming.</p>";
+				description += "<p>If in a map if will use your map level otherwise it'll assume world level maps.</p>";
+				description += "<p>Assumes killing at max speed and factors overkill into the calculations.</p>";
+				return description;
+			}, 'action', 'testMetalIncome();', null, 'Test', [0]);
 
 		createSetting('testTotalEquipmentCost',
 			function () { return ('Total Equipment Cost') },
-			function () { return ('Will calculate the total cost of your gear. Outputs in total prestige cost, total equip cost & total overall.') },
+			function () {
+				var description = "<p>Will calculate the total metal cost of your equipment.</p>";
+				description += "<p>Outputs in total prestige cost, total equip cost & total overall.</p>";
+				description += "<p>Assumes killing at max speed and factors overkill into the calculations.</p>";
+				return description;
+			},
 			'action', 'testEquipmentMetalSpent();', null, 'Test', [0]);
 
 		createSetting('testLastWorldCell',
 			function () { return ('Last World Cell') },
-			function () { return ('Sets your current cell to the last world cell in the world.') },
-			'action', 'testWorldCell();', null, 'Test', [0]);
+			function () {
+				var description = "<p>Sets your current cell to the last world cell in the world.</p>";
+				description += "<p>Will also set the last enemy cells health to 0.</p>";
+				return description;
+			}, 'action', 'testWorldCell();', null, 'Test', [0]);
 
 		createSetting('testLastMapCell',
 			function () { return ('Last Map Cell') },
-			function () { return ('Sets your current cell to the last map cell if currently mapping.') },
-			'action', 'testMapCell();', null, 'Test', [0]);
+			function () {
+				var description = "<p>Sets your current cell to the last world cell in maps.</p>";
+				description += "<p>Will also set the last enemy cells health to 0.</p>";
+				return description;
+			}, 'action', 'testMapCell();', null, 'Test', [0]);
 
 		createSetting('testMaxMapBonus',
 			function () { return ('Max Map Bonus') },
-			function () { return ('Sets map bonus to 10.') },
-			'action', 'testMaxMapBonus();', null, 'Test', [0]);
-
+			function () {
+				var description = "<p>Sets your map bonus stacks to 10.</p>";
+				return description;
+			}, 'action', 'testMaxMapBonus();', null, 'Test', [0]);
 		createSetting('testMaxTenacity',
 			function () { return ('Tenacity Max Mult') },
-			function () { return ('Sets Tenacity to max mult.') },
-			'action', 'cheatMaxTenacity();', null, 'Test', [0]);
+			function () {
+				var description = "<p>Sets your current cell to the last world cell in maps.</p>";
+				description += "<p>Will also set the last enemy cells health to 0.</p>";
+				return description;
+			}, 'action', 'cheatMaxTenacity();', null, 'Test', [0]);
 
 		createSetting('testStatMult',
 			function () { return ('1e100x stats') },
-			function () { return ('Multiplies soldier health & damage by 1e100.') },
-			'action', 'testTrimpStats();', null, 'Test', [0]);
+			function () {
+				var description = "<p>Multiplies soldier health & damage by 1e100.</p>";
+				description += "<p>Doesn't have any protecion to ensure you stay below infinity health.</p>";
+				return description;
+			}, 'action', 'testTrimpStats();', null, 'Test', [0]);
 
 		createSetting('testMapScumming',
 			function () { return ('Slow Map Scum') },
-			function () { return ('Will remake maps until you have 9+ slow enemies on Odd cells. Will only work if you\'re in maps and on cell 1.') },
-			'action', 'mapScumming(9);', null, 'Test', [0]);
-
+			function () {
+				var description = "<p>Will remake maps until you have 9+ slow enemies on odd cells.</p>";
+				description += "<p>Will only work if you\'re in maps and on cell 1.</p>";
+				description += "<p><b>Due to the map remaking process your game will hang for roughly 60s while this finds an ideal map.</b></p>";
+				return description;
+			}, 'action', 'mapScumming(9);', null, 'Test', [0]);
 		createSetting('debugEqualityStats',
 			function () { return ('Debug Equality Stats') },
-			function () { return ('Will display details of trimp/enemy stats when you gamma burst.') },
-			'boolean', false, null, 'Test', [2]);
+			function () {
+				var description = "<p>Will display details of trimp/enemy stats when you gamma burst.</p>";
+				description += "<p>Requires your auto equality setting to be set to <b>Auto Equality: Advanced</b></p>";
+				return description;
+			}, 'boolean', false, null, 'Test', [2]);
 	}
 }
 
