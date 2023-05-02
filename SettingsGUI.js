@@ -2493,7 +2493,7 @@ function initializeAllSettings() {
 			function () { return (['Spend Magmite Off', 'Spend Magmite (Portal)', 'Spend Magmite Always']) },
 			function () {
 				var description = "<p>Controls when the script will spend the Magmite that you obtain throughout your runs.</p>";
-				description += "<p><b>Spend Magmite Of</b><br>Disables this setting.</p>";
+				description += "<p><b>Spend Magmite Off</b><br>Disables this setting.</p>";
 				description += "<p><b>Spend Magmite (Portal)</b><br>Auto Spends any unspent Magmite immediately before portaling.</p>";
 				description += "<p><b>Spend Magmite Always</b><br>Will spend any Magmite that you acquire straight away. Typically means you'll purchase the cheapest upgrades possible.</p>";
 				description += "<p><b>Recommended:</b> Spend Magmite (Portal)</p>";
@@ -2505,7 +2505,13 @@ function initializeAllSettings() {
 			}, 'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('ratiospend',
 			function () { return ('Ratio Spending') },
-			function () { return ('Spends Magmite in a Ratio you define.') },
+			function () {
+				var description = "<p>If enabled will spend all your magmite in a ratio that you define.</p>";
+				description += "<p><b>Additional settings will appear if enabled.</b></p>";
+				description += "<p>For more accurate ratio values to use for these settings check out the Gatorcalc website!</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
 			'boolean', false, null, 'Magma', [1]);
 		createSetting('effratio',
 			function () { return ('Efficiency') },

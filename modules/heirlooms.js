@@ -240,7 +240,7 @@ function heirloomShieldToEquip(mapType, query) {
 
 	if (slowScumming && game.global.mapsActive) {
 		var oddCell = false;
-		if ((game.global.lastClearedMapCell + 1) % 2 === 0) oddCell = true;
+		if ((game.global.lastClearedMapCell + 1) % 2 === 0 || game.global.lastClearedMapCell === getCurrentMapObject().size - 2) oddCell = true;
 
 		if (oddCell) return ('heirloomAfterpush');
 		else return ('heirloomInitial');

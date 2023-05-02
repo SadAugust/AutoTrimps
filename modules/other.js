@@ -496,12 +496,13 @@ function equalityManagement() {
 	//Misc vars
 	var debugStats = getPageSetting('debugEqualityStats');
 	var mapping = game.global.mapsActive ? true : false;
+	var mapObject = mapping ? getCurrentMapObject() : null;
 	var currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
 	var mapGrid = mapping ? 'mapGridArray' : 'gridArray';
-	var type = (!mapping) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
-	var zone = (type == "world" || !mapping) ? game.global.world : getCurrentMapObject().level;
+	var type = (!mapping) ? "world" : (mapObject.location == "Void" ? "void" : "map");
+	var zone = (type == "world" || !mapping) ? game.global.world : mapObject.level;
 	var bionicTalent = mapping && game.talents.bionic2.purchased && (zone > game.global.world) ? zone : 0;
-	var difficulty = mapping ? getCurrentMapObject().difficulty : 1;
+	var difficulty = mapping ? mapObject.difficulty : 1;
 	var maxEquality = game.portal.Equality.radLevel;
 	var armyReady = newArmyRdy();
 
@@ -676,7 +677,9 @@ function equalityManagement() {
 			}
 			//Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
 			if ((voidPBSwap || slowScumming) &&
-				!fastEnemy && calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth && ATrunning &&
+				!fastEnemy && calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth &&
+				game.global.lastClearedMapCell !== mapObject.size - 2 &&
+				ATrunning &&
 				(typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' ||
 					game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) &&
 				(getCurrentEnemy().maxHealth * .05 < enemyHealth)) {

@@ -3523,7 +3523,7 @@ function mapScumming(slowTarget) {
 
 	if (!game.global.mapsActive) return;
 	if (game.global.lastClearedMapCell > -1) return;
-	if (slowScumming) return;
+	if (!ATrunning) return;
 	console.time();
 	ATrunning = false;
 	var slowCellTarget = !slowTarget ? 8 : slowTarget
@@ -3561,8 +3561,10 @@ function mapScumming(slowTarget) {
 		}
 		else if (!fastimps.includes(enemyName)) firstCellSlow = true;
 
-		if (slowCount < slowCellTarget || !firstCellSlow)
+		if (slowCount < slowCellTarget || !firstCellSlow) {
 			buildMapGrid(game.global.currentMapId);
+			game.global.mapRunCounter = 0;
+		}
 		else
 			break
 		i++;
@@ -3572,5 +3574,5 @@ function mapScumming(slowTarget) {
 	msg += i + " Rerolls. Current roll = " + slowCount + " odd slow enemies. First cell is " + (firstCellSlow ? "slow" : "fast") + ".";
 	console.timeEnd();
 	ATrunning = true;
-	console.log(msg);
+	debug(msg);
 }
