@@ -29,7 +29,7 @@ function readyToSwitch(stance = "S") {
 	return die || survive(stance, 2);
 }
 
-function useScryerStance(hdStats) {
+function useScryerStance() {
 	var scry = 4;
 	var scryF = 'S';
 	var x = 0;
@@ -43,7 +43,7 @@ function useScryerStance(hdStats) {
 	var AutoStance = getPageSetting('AutoStance');
 
 	function autoStanceFunctionScryer() {
-		if (AutoStance === 3 || (getPageSetting('use3daily') && challengeActive('Daily'))) windStance(hdStats);
+		if (AutoStance === 3 || (getPageSetting('use3daily') && challengeActive('Daily'))) windStance();
 		else if (AutoStance === 1) autoStance();
 		else if (AutoStance === 2) autoStanceD();
 	}
@@ -168,7 +168,7 @@ function useScryerStance(hdStats) {
 
 	//No Essence
 	if (useScryer && !mapsActive && getPageSetting('screwessence') && countRemainingEssenceDrops() < 1) {
-		autoStanceFunctionScryer(hdStats);
+		autoStanceFunctionScryer();
 		wantToScry = false;
 		return;
 	}
@@ -208,6 +208,6 @@ function useScryerStance(hdStats) {
 	}
 
 	//No reason to Scry
-	autoStanceFunctionScryer(hdStats);
+	autoStanceFunctionScryer();
 	wantToScry = false;
 }

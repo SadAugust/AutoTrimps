@@ -324,7 +324,7 @@ function autoStanceD() {
 	safeSetStance(2);
 }
 
-function windStance(hdStats) {
+function windStance() {
 
 	if (getPageSetting('AutoStance') !== 3 && !(getPageSetting('use3daily') && challengeActive('Daily'))) return;
 	//Fail safes
@@ -333,7 +333,7 @@ function windStance(hdStats) {
 	if (!game.upgrades.Formations.done) return;
 	if (game.global.world <= 70) return;
 	var stanceToUse = 2;
-	var currentStance = calcCurrentStance(hdStats);
+	var currentStance = calcCurrentStance();
 	if (currentStance == 0 || currentStance == 10) {
 		stanceToUse = 0;
 	}

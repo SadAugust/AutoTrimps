@@ -1,13 +1,14 @@
 //Resetting variables
 rBSRunningAtlantrimp = false;
 
-function boneShrine(hdStats) {
+function boneShrine() {
 
 	if (!getPageSetting('boneShrineDefaultSettings').active) return;
 
 	//Setting up variables
 	const rBoneShrineBaseSettings = getPageSetting('boneShrineSettings');
 	var rBSIndex = null;
+	var trimple = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
 	const totalPortals = getTotalPortals();
 	for (var y = 0; y < rBoneShrineBaseSettings.length; y++) {
 		const currSetting = rBoneShrineBaseSettings[y];
@@ -59,7 +60,7 @@ function boneShrine(hdStats) {
 				}
 				game.permaBoneBonuses.boosts.consume();
 			}
-			debug('Consumed ' + rBoneShrineCharges + " bone shrine " + (rBoneShrineCharges == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(rBoneShrineCharges));
+			debug('Consumed ' + rBoneShrineCharges + " bone shrine " + (rBoneShrineCharges == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(rBoneShrineCharges), "other");
 			rBoneShrineSettings.done = totalPortals + "_" + game.global.world;
 			rBSRunningAtlantrimp = false;
 			MODULES.mapFunctions.workerRatio = null;

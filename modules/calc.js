@@ -4,20 +4,26 @@ var trimpAA = 1;
 
 class HDStats {
 	constructor() {
-		this.hdRatio = undefined;
-		this.hdRatioMap = undefined;
-		this.hdRatioVoid = undefined;
-		this.hitsSurvived = undefined;
 		this.isDaily = undefined;
 		this.isC3 = undefined;
 		this.isFiller = undefined;
 		this.currChallenge = undefined;
-		this.autoLevel = 0;
+
+		this.hdRatio = undefined;
+		this.hdRatioMap = undefined;
+		this.hdRatioVoid = undefined;
+
+		this.vhdRatio = undefined;
+		this.vhdRatioVoid = undefined;
+		this.vhdRatioVoidPlus = undefined;
+
+		this.hitsSurvived = undefined;
+		this.autoLevel = undefined;
 
 		const z = game.global.world;
 
 		this.isDaily = challengeActive('Daily');
-		this.isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
+		this.isC3 = game.global.runningChallengeSquared || challengeActive('Frigid') || challengeActive('Experience') || challengeActive('Mayhem') || challengeActive('Pandemonium') || challengeActive('Desolation');
 		this.isFiller = !this.isDaily && !this.isC3;
 		this.currChallenge = game.global.challengeActive;
 
@@ -55,17 +61,17 @@ function debugCalc() {
 	var displayedMax = calcOurDmg("max", universeSetting, true, mapType, 'never', mapLevel, true);
 
 	//Trimp Stats
-	debug("Our Stats");
-	debug("Our attack: " + displayedMin.toExponential(2) + "-" + displayedMax.toExponential(2));
-	debug("Our crit: " + 100 * getPlayerCritChance() + "% for " + getPlayerCritDamageMult().toFixed(1) + "x Damage. Average of " + getCritMulti("maybe").toFixed(2) + "x");
-	if (game.global.universe === 1) debug("Our block: " + calcOurBlock(true, true).toExponential(2));
-	if (game.global.universe === 2) debug("Our equality: " + game.portal.Equality.disabledStackCount);
-	debug("Our Health: " + (calcOurHealth(universeSetting2, mapType)).toExponential(2));
+	debug("Our Stats", "other");
+	debug("Our attack: " + displayedMin.toExponential(2) + "-" + displayedMax.toExponential(2), "other");
+	debug("Our crit: " + 100 * getPlayerCritChance() + "% for " + getPlayerCritDamageMult().toFixed(1) + "x Damage. Average of " + getCritMulti("maybe").toFixed(2) + "x", "other");
+	if (game.global.universe === 1) debug("Our block: " + calcOurBlock(true, true).toExponential(2), "other");
+	if (game.global.universe === 2) debug("Our equality: " + game.portal.Equality.disabledStackCount, "other");
+	debug("Our Health: " + (calcOurHealth(universeSetting2, mapType)).toExponential(2), "other");
 
 	//Enemy stats
-	debug("Enemy Stats");
-	debug("Enemy Attack: " + (enemyMin * equality).toExponential(2) + "-" + (enemyMax * equality).toExponential(2));
-	debug("Enemy Health: " + (calcEnemyHealthCore(mapType, zone, cell, name) * difficulty).toExponential(2));
+	debug("Enemy Stats", "other");
+	debug("Enemy Attack: " + (enemyMin * equality).toExponential(2) + "-" + (enemyMax * equality).toExponential(2), "other");
+	debug("Enemy Health: " + (calcEnemyHealthCore(mapType, zone, cell, name) * difficulty).toExponential(2), "other");
 
 }
 
@@ -616,10 +622,10 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 	if (game.global.universe === 2 && game.portal.Equality[perkLevel] > 0) {
 		if (!isNaN(parseInt((equality)))) {
 			if (equality > game.portal.Equality[perkLevel])
-				debug('You don\'t have this many levels in Equality. - Player Dmg. ' + equality + "/" + game.portal.Equality[perkLevel] + " equality used.");
+				debug('You don\'t have this many levels in Equality. - Player Dmg. ' + equality + "/" + game.portal.Equality[perkLevel] + " equality used.", "other");
 			attack *= Math.pow(game.portal.Equality.getModifier(1), equality);
 		} else if (isNaN(parseInt((equality)))) {
-			if (tenSecondInterval) debug("Equality is not a number. - Player Dmg. " + equality + " equality used.");
+			if (tenSecondInterval) debug("Equality is not a number. - Player Dmg. " + equality + " equality used.", "other");
 		}
 	}
 
@@ -914,11 +920,11 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	if (game.global.universe === 2 && equality) {
 		if (!isNaN(parseInt((equality)))) {
 			if (equality > game.portal.Equality.radLevel) {
-				debug('You don\'t have this many levels in Equality. - Enemy Dmg. ' + equality + "/" + game.portal.Equality.radLevel + " equality used.");
+				debug('You don\'t have this many levels in Equality. - Enemy Dmg. ' + equality + "/" + game.portal.Equality.radLevel + " equality used.", "other");
 			}
 			attack *= Math.pow(game.portal.Equality.getModifier(), equality);
 		} else if (isNaN(parseInt((equality)))) {
-			if (tenSecondInterval) debug("Equality is not a number. - Enemy Dmg. " + equality + " equality used.");
+			if (tenSecondInterval) debug("Equality is not a number. - Enemy Dmg. " + equality + " equality used.", "other");
 		}
 	}
 
@@ -1303,7 +1309,7 @@ function calcHDRatio(targetZone, type, maxTenacity) {
 	return enemyHealth / (ourBaseDamage + addPoison());
 }
 
-function calcCurrentStance(hdStats) {
+function calcCurrentStance() {
 	if (game.global.uberNature == "Wind" && getEmpowerment() == "Wind" && !game.global.mapsActive &&
 		(
 			((!challengeActive('Daily') && hdStats.hdRatio < getPageSetting('WindStackingMinHD'))

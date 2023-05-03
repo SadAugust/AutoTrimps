@@ -637,7 +637,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var style = "";
 
 			const defaultSetting = getPageSetting(settingName + 'DefaultSettings', currSettingUniverse);
-			setting123 = defaultSetting;
 
 			//Reading info from each setting
 			defaultVals.active = typeof (defaultSetting.active) === 'undefined' ? false : defaultSetting.active ? defaultSetting.active : false;
@@ -1100,8 +1099,7 @@ function buildNiceCheckboxAutoLevel(id, extraClass, enabled, index, varPrefix) {
 	var title = enabled ? "Checked" : "Not Checked";
 	extraClass = (extraClass) ? extraClass + defaultClasses : defaultClasses;
 	html = "class='" + extraClass + " " + html;
-	extraFunction = "";
-	html = "<span title='" + title + "' id='" + id + "' " + html + onchange + " onclick='swapNiceCheckbox(this); updateWindowPreset(\"" + index + "\",\"" + varPrefix + "\");" + extraFunction + "'></span>";
+	html = "<span title='" + title + "' id='" + id + "' " + html + onchange + " onclick='swapNiceCheckbox(this); updateWindowPreset(\"" + index + "\",\"" + varPrefix + "\");'></span>";
 	if (document.getElementById('tooltipDiv').classList.contains('tooltipExtraLg') === true && (document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Farm') || document.getElementById('tooltipDiv').children.tipTitle.innerText.includes('Map Bonus'))) {
 		updateWindowPreset(index, varPrefix)
 	}
@@ -1416,7 +1414,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	saveSettings();
 	if (!golden) {
 		if (!getPageSetting(varPrefix + 'DefaultSettings', currSettingUniverse).active)
-			debug(titleText + " has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.")
+			debug(titleText + " has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.", "mazSettings");
 	}
 	document.getElementById('tooltipDiv').style.overflowY = '';
 }
@@ -1679,7 +1677,7 @@ function saveATAutoJobsConfig() {
 			}
 		}
 
-		if (ratios.indexOf(name) != -1) {
+		if (ratios.indexOf(name) !== -1) {
 			setting[name].ratio = parseFloat(quantboxes[x].value);
 			//Error checking
 			if (setting[name].ratio < 0) {
@@ -1688,7 +1686,7 @@ function saveATAutoJobsConfig() {
 			}
 			continue;
 		}
-		jobquant = document.getElementById('autoJobQuant' + name).value;
+		var jobquant = document.getElementById('autoJobQuant' + name).value;
 		setting[name].percent = parseFloat(jobquant);
 	}
 	var portalElem = document.getElementById('autoJobSelfGather');
@@ -1741,7 +1739,6 @@ function saveATAutoStructureConfig() {
 	for (var x = 0; x < checkboxes.length; x++) {
 		var name = checkboxes[x].id.split('structConfig')[1];
 		var checked = (checkboxes[x].dataset.checked == 'true');
-		//if (!checked && !setting[name]) continue;
 		if (!setting[name]) setting[name] = {};
 		setting[name].enabled = checked;
 		if (game.global.universe === 2 && name === 'SafeGateway') {
@@ -1780,9 +1777,9 @@ function saveATAutoStructureConfig() {
 		}
 	}
 
-	var gatherElem = document.getElementById('autoJobSelfGather');
-	if (gatherElem) {
-		if (gatherElem.value) setting.portalOption = gatherElem.value;
+	var portalElem = document.getElementById('autoJobSelfGather');
+	if (portalElem) {
+		if (portalElem.value) setting.portalOption = portalElem.value;
 	}
 
 	setPageSetting('buildingSettingsArray', setting);
@@ -2061,6 +2058,7 @@ function addRow(varPrefix, titleText) {
 
 function removeRow(index, titleText) {
 	var elem = document.getElementById('windowRow' + index);
+	var checkBox;
 	if (!elem) return;
 	document.getElementById('windowWorld' + index).value = -1;
 	if (!titleText.includes('Golden')) document.getElementById('windowCell' + index).value = -1;
@@ -2085,22 +2083,22 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Void')) document.getElementById('windowHDRatio' + index).value = 0;
 	if (titleText.includes('Void')) document.getElementById('windowVoidHDRatio' + index).value = 0;
 	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) {
-		var checkBox = document.getElementById('windowAtlantrimp' + index);
+		checkBox = document.getElementById('windowAtlantrimp' + index);
 		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
 	if (titleText.includes('Smithy Farm')) {
-		var checkBox = document.getElementById('windowMeltingPoint' + index);
+		checkBox = document.getElementById('windowMeltingPoint' + index);
 		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
 	if (titleText.includes('Void Map')) {
-		var checkBox = document.getElementById('windowPortalAfter' + index);
+		checkBox = document.getElementById('windowPortalAfter' + index);
 		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
 	if (titleText.includes('Tribute Farm')) {
-		var checkBox = document.getElementById('windowBuildings' + index);
+		checkBox = document.getElementById('windowBuildings' + index);
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', true);
 	}
@@ -2197,7 +2195,6 @@ function dailyModifiersOutput() {
 	var daily = game.global.dailyChallenge;
 	var dailyMods = dailyModifiers;
 	if (!daily) return "";
-	//var returnText = ''
 	var returnText = "";
 	for (var item in daily) {
 		if (item === 'seed') continue;
@@ -2280,7 +2277,6 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 			if (highestZone >= 180) dropdown += "<option value='Lead'" + ((MAZ == 'Lead') ? " selected='selected'" : "") + ">Lead</option>";
 			if (highestZone >= 190) dropdown += "<option value='Corrupted'" + ((MAZ == 'Corrupted') ? " selected='selected'" : "") + ">Corrupted</option>";
 			if (highestZone >= 215) dropdown += "<option value='Domination'" + ((MAZ == 'Domination') ? " selected='selected'" : "") + ">Domination</option>";
-			if (highestZone >= 600) dropdown += "<option value='Experience'" + ((MAZ == 'Experience') ? " selected='selected'" : "") + ">Experience</option>";
 		}
 		else if (runType === 'C3') {
 			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>";
@@ -2302,6 +2298,7 @@ function displayDropdowns(universe, runType, MAZ, varPrefix) {
 			if (highestZone >= 425) dropdown += "<option value='Obliterated'" + ((MAZ == 'Obliterated') ? " selected='selected'" : "") + ">Obliterated</option>";
 			if (highestZone >= 460) dropdown += "<option value='Frigid'" + ((MAZ == 'Frigid') ? " selected='selected'" : "") + ">Frigid</option>";
 			if (game.global.totalSquaredReward >= 4500) dropdown += "<option value='Eradicated'" + ((MAZ == 'Eradicated') ? " selected='selected'" : "") + ">Eradicated</option>";
+			if (highestZone >= 600) dropdown += "<option value='Experience'" + ((MAZ == 'Experience') ? " selected='selected'" : "") + ">Experience</option>";
 		}
 		else if (runType === 'runType') {
 			dropdown += "<option value='All'" + ((MAZ == 'All') ? " selected='selected'" : "") + ">All</option>"

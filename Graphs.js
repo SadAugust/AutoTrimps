@@ -843,7 +843,7 @@ const getGameData = {
 		var exp = Math.min(game.global.fluffyExp, maxExp);
 		//sum of all previous evo costs + current exp, because Trimps doesn't store this
 		for (var evo = 0; evo < Fluffy.getCurrentPrestige(); evo++) {
-			exp += Math.floor((1000 * Math.pow(5, evo)) * ((Math.pow(4, 10) - 1) / (4 - 1)));;
+			exp += Math.floor((1000 * Math.pow(5, evo)) * ((Math.pow(4, 10) - 1) / (4 - 1)));
 		}
 		return exp
 	},

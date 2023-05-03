@@ -163,7 +163,7 @@ function cheapestEquipmentCost() {
 	return [equipmentName, nextEquipmentCost, prestigeName, nextLevelPrestigeCost]
 }
 
-function mostEfficientEquipment(hdStats, resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, showAllEquips, fakeLevels = {}, ignorePrestiges) {
+function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, showAllEquips, fakeLevels = {}, ignorePrestiges) {
 
 	for (var i in equipmentList) {
 		if (typeof fakeLevels[i] === 'undefined') {
@@ -359,7 +359,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 	return [newStatValue > currentStatValue, statPerResource, levelOnePrestige, !prestigeDone, newStatValue];
 }
 
-function autoEquip(hdStats) {
+function autoEquip() {
 
 	if (game.global.universe === 1 && needGymystic() && canAffordTwoLevel('Gymystic')) {
 		buyUpgrade('Gymystic', true, true);
@@ -392,7 +392,7 @@ function autoEquip(hdStats) {
 					if (!game.equipment[equipName].locked) {
 						var isAttack = (equipmentList[equipName].Stat === 'attack' ? 0 : 1);
 						if (game.global.universe === 2 && getPageSetting('equipNoShields') && equipName == 'Shield') continue;
-						if ((getPageSetting('equipPrestige') === 2 || mostEfficientEquipment(hdStats)[isAttack + 4]) && buyUpgrade(equipmentList[equipName].Upgrade, true, true))
+						if ((getPageSetting('equipPrestige') === 2 || mostEfficientEquipment()[isAttack + 4]) && buyUpgrade(equipmentList[equipName].Upgrade, true, true))
 							prestigeLeft = true;
 					}
 				}
@@ -439,7 +439,7 @@ function autoEquip(hdStats) {
 	do {
 		keepBuying = false;
 		var resourceSpendingPct = zoneGo ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100;
-		var bestBuys = mostEfficientEquipment(hdStats, resourceSpendingPct, zoneGo, ignoreShields, false, false);
+		var bestBuys = mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShields, false, false);
 		// Set up for both Attack and Health depending on which is cheaper to purchase
 		var equipType = (bestBuys[6] < bestBuys[7]) ? 'attack' : 'health';
 		var equipName = (equipType == 'attack') ? bestBuys[0] : bestBuys[1];
@@ -524,7 +524,7 @@ function equipfarmdynamicHD(HDFSettings) {
 	return equipfarmHDmult;
 }
 
-function estimateEquipsForZone(hdStats, rEFIndex) {
+function estimateEquipsForZone(rEFIndex) {
 	var MAX_EQUIP_DELTA = 1000;
 	var checkMutations = game.global.world > 200;
 
@@ -556,8 +556,6 @@ function estimateEquipsForZone(hdStats, rEFIndex) {
 		enemyDamageBeforeEquality *= game.portal.Equality.getModifier();
 	}
 
-	//debug("E = " + tempEqualityUse + " HPmult = " + healthNeededMulti + " Atkmult = " + attackNeededMulti)
-
 	if (healthNeededMulti < 1 && attackNeededMulti < 1 || ((healthNeededMulti + attackNeededMulti) / 2 < 1)) { return [0, {}] };
 
 	var ourAttack = 6;
@@ -576,7 +574,7 @@ function estimateEquipsForZone(hdStats, rEFIndex) {
 
 
 	while (healthNeeded > 0) {
-		var bestArmor = mostEfficientEquipment(hdStats, 1, true, true, false, true, bonusLevels, true)[1];
+		var bestArmor = mostEfficientEquipment(1, true, true, false, true, bonusLevels, true)[1];
 		healthNeeded -= game.equipment[bestArmor][equipmentList[bestArmor].Stat + "Calculated"];
 		if (typeof bonusLevels[bestArmor] === 'undefined') {
 			bonusLevels[bestArmor] = 0;
@@ -586,7 +584,7 @@ function estimateEquipsForZone(hdStats, rEFIndex) {
 		}
 	}
 	while (attackNeeded > 0) {
-		var bestWeapon = mostEfficientEquipment(hdStats, 1, true, true, false, true, bonusLevels, true)[0];
+		var bestWeapon = mostEfficientEquipment(1, true, true, false, true, bonusLevels, true)[0];
 		attackNeeded -= game.equipment[bestWeapon][equipmentList[bestWeapon].Stat + "Calculated"];
 		if (typeof bonusLevels[bestWeapon] === 'undefined') {
 			bonusLevels[bestWeapon] = 0;
@@ -605,7 +603,7 @@ function estimateEquipsForZone(hdStats, rEFIndex) {
 	return [totalCost, bonusLevels];
 }
 
-function displayMostEfficientEquipment(hdStats) {
+function displayMostEfficientEquipment() {
 
 	if (usingRealTimeOffline) return;
 	var highlightSetting = getPageSetting('equipEfficientEquipDisplay');
@@ -640,7 +638,7 @@ function displayMostEfficientEquipment(hdStats) {
 	for (var item in game.equipment) {
 		if (game.equipment[item].locked) continue;
 		if (item == "Shield") continue;
-		var bestBuys = mostEfficientEquipment(hdStats, 1, true, true, false, true);
+		var bestBuys = mostEfficientEquipment(1, true, true, false, true);
 		var isAttack = (equipmentList[item].Stat === 'attack' ? 0 : 1);
 		var $eqNamePrestige = null;
 		if (game.upgrades[equipmentList[item].Upgrade].locked == 0) {

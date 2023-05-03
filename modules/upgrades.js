@@ -153,7 +153,7 @@ function buyUpgrades() {
 	}
 }
 
-function getNextGoldenUpgrade(hdStats) {
+function getNextGoldenUpgrade() {
 
 	const setting = hdStats.isC3 ? getPageSetting('autoGoldenC3Settings') : hdStats.isDaily ? getPageSetting('autoGoldenDailySettings') : getPageSetting('autoGoldenSettings');
 
@@ -186,11 +186,11 @@ function getNextGoldenUpgrade(hdStats) {
 	return false;
 }
 
-function autoGoldUpgrades(hdStats) {
+function autoGoldUpgrades() {
 	if (!goldenUpgradesShown || getAvailableGoldenUpgrades() <= 0)
 		return;
 	var selected;
-	selected = getNextGoldenUpgrade(hdStats);
+	selected = getNextGoldenUpgrade();
 	if (!selected) return;
 	buyGoldenUpgrade(selected);
 }

@@ -22,7 +22,7 @@ function loadPageVariables() {
 	}
 }
 
-function safeSetItems(a, b) { try { localStorage.setItem(a, b) } catch (c) { 22 == c.code && debug("Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.") } }
+function safeSetItems(a, b) { try { localStorage.setItem(a, b) } catch (c) { 22 == c.code && debug("Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.", "other") } }
 
 function serializeSettings() {
 	return JSON.stringify(Object.keys(autoTrimpSettings).reduce((v, item) => {
@@ -256,7 +256,7 @@ function pushSpreadsheetData() {
 			});
 		}
 	}, 300);
-	debug("Spreadsheet update complete.")
+	debug("Spreadsheet update complete.", "other");
 };
 
 function getPageSetting(setting, universe) {
@@ -344,10 +344,21 @@ function saveSettings() {
 
 function debug(message, b, icon) {
 	var settingArray = atFinishedLoading && getPageSetting('spamMessages'),
-		p = !0;
+		p = true;
 
 	switch (b) {
 		case null:
+		case 'other':
+		case "bones":
+		case "maps":
+		case "mazSettings":
+		case "debugStats":
+		case "portal":
+		case "challenge":
+		case "test":
+		case "graphs":
+		case "heirlooms":
+		case "perks":
 			break;
 		case 'general':
 			p = settingArray[b];
@@ -581,7 +592,7 @@ function testMetalIncome() {
 	if (mapsPerDay > 4) mappingTime += (Math.floor(mapsPerDay / 5) * 45);
 	var mapLevel = game.global.mapsActive ? getCurrentMapObject().level - game.global.world : 0;
 	var resourcesGained = scaleToCurrentMapLocal(simpleSecondsLocal("metal", mappingTime, '0,0,1'), false, true, mapLevel);
-	debug("Metal gained from 1 day " + prettify(resourcesGained));
+	debug("Metal gained from 1 day " + prettify(resourcesGained), "test");
 }
 
 function testEquipmentMetalSpent() {
@@ -618,9 +629,9 @@ function testEquipmentMetalSpent() {
 		prestigeCost += getTotalPrestigeCost(i, game.equipment[i].prestige - 1);
 	}
 
-	debug("Cost of all prestiges: " + prettify(prestigeCost));
-	debug("Cost of all equip levels: " + prettify(levelCost));
-	debug("Cost of all equipment: " + prettify(prestigeCost + levelCost));
+	debug("Cost of all prestiges: " + prettify(prestigeCost), "test");
+	debug("Cost of all equip levels: " + prettify(levelCost), "test");
+	debug("Cost of all equipment: " + prettify(prestigeCost + levelCost), "test");
 }
 
 function testMaxMapBonus() {

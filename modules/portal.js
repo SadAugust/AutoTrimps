@@ -59,7 +59,7 @@ function autoPortal() {
 				}
 				if (MODULES.mapFunctions.portalAfterVoids) {
 					if (game.global.spireActive) {
-						debug("Exiting Spire to run voids faster.");
+						debug("Exiting Spire to run voids faster.", "portal");
 						endSpire();
 					}
 					return;
@@ -181,7 +181,7 @@ function dailyAutoPortal() {
 				}
 				if (MODULES.mapFunctions.portalAfterVoids) {
 					if (game.global.spireActive) {
-						debug("Exiting Spire to run voids faster.");
+						debug("Exiting Spire to run voids faster.", "portal");
 						endSpire();
 					}
 					return;
@@ -360,7 +360,7 @@ function c2runner() {
 			if (!challengeSquaredMode)
 				toggleChallengeSquared();
 			selectChallenge(challengeArray[x]);
-			debug(universePrefix + "Runner: Starting " + universePrefix + "Challenge " + challengeArray[x]);
+			debug(universePrefix + "Runner: Starting " + universePrefix + "Challenge " + challengeArray[x], "portal");
 			return;
 		}
 	}
@@ -421,7 +421,7 @@ function doPortal(challenge, squared) {
 	const portalOppPrefix = portalUniverse === 2 ? 'u2' : 'u1';
 	//Running C∞ runner
 	c2runner();
-	if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!");
+	if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!", "portal");
 
 	//Running Dailies
 	if ((currChall === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse)) && !challengeSquaredMode) {
@@ -446,11 +446,17 @@ function doPortal(challenge, squared) {
 		//Portaling into a filler/c2/c3 if dailyPortalFiller is enabled OR all dailies completed or dailyPortalStart is disabled.
 		if (!getPageSetting('dailyPortalStart', portalUniverse) || getPageSetting('dailyPortalFiller', portalUniverse) || lastUndone === 1) {
 			challenge = getPageSetting('dailyHeliumHourChallenge', portalUniverse);
-			selectChallenge(challenge === 'None' ? 0 : challenge);
 			//Portaling into a C2/C3 if necessary.
 			if (getPageSetting('dailyHeliumHourChallenge', portalUniverse).includes('Challenge ')) {
 				toggleChallengeSquared();
-				selectChallenge(getPageSetting('dailyC2Challenge', portalUniverse) === 'None' ? 0 : challenge);
+				challenge = getPageSetting('dailyC2Challenge', portalUniverse) === 'None' ? 0 : getPageSetting('dailyC2Challenge', portalUniverse);
+				//Disable challengeSquaredMode if dailyC2Challenge is set to 'None' or a special challenge.
+				if (challengeSquaredMode && (challenge === 0 || !game.challenges[challenge].allowSquared)) toggleChallengeSquared();
+
+				selectChallenge(getPageSetting('dailyC2Challenge', portalUniverse) === 'None' ? 0 : getPageSetting('dailyC2Challenge', portalUniverse));
+			}
+			else {
+				selectChallenge(challenge === 'None' ? 0 : challenge);
 			}
 		}
 		//Portaling into a daily
@@ -473,6 +479,7 @@ function doPortal(challenge, squared) {
 
 		if (currChall === 'Daily' && challengeSquaredMode && getPageSetting('dailyC2Challenge', portalUniverse) !== 'None')
 			challenge = getPageSetting('dailyC2Challenge', portalUniverse);
+		if (challengeSquaredMode && !game.challenges[challenge].allowSquared) toggleChallengeSquared();
 		selectChallenge(challenge);
 	}
 
@@ -558,28 +565,28 @@ function challengeInfo() {
 	const downloadSave = getPageSetting('downloadSaves')
 
 	if ((finishChallenge - 1) === game.global.world)
-		debug("Warning: AT will " + (downloadSave ? 'download your save and ' : '') + "abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish " + challengeType + "' or set it to -1")
+		debug("Warning: AT will " + (downloadSave ? 'download your save and ' : '') + "abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish " + challengeType + "' or set it to -1", "challenge");
 	if (finishChallenge !== -1 && finishChallenge <= game.c2[game.global.challengeActive] && game.global.world < 3) {
-		debug("The zone input in the '" + challengeType + " Finish' setting (" + finishChallenge + ") is below or equal to your HZE for this challenge (" + game.c2[game.global.challengeActive] + "). Increase it or it'll end earlier than you\'d probably like it to.");
+		debug("The zone input in the '" + challengeType + " Finish' setting (" + finishChallenge + ") is below or equal to your HZE for this challenge (" + game.c2[game.global.challengeActive] + "). Increase it or it'll end earlier than you\'d probably like it to.", "challenge");
 	}
 
 	if (challengeActive('Mapology') && !getPageSetting('mapology') && game.global.world % 5 === 0 && game.global.world < (checkLiqZoneCount() + 10)) {
-		debug("You have the AT setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.")
+		debug("You have the AT setting for Mapology disabled which would be helpful with limiting the amount of map credits spent on mapping & raiding.", "challenge");
 	}
 	//Quest -- Warning message when AutoStructure Smithy purchasing is enabled.
 	if (challengeActive('Quest') && getPageSetting('quest') && getPageSetting('buildingsType')) {
 		if (getAutoStructureSetting().enabled && game.global.autoStructureSettingU2.Smithy.enabled) {
-			debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.")
+			debug("You have the setting for Smithy autopurchase enabled in the AutoStructure settings. This setting has the chance to cause issues later in the run.", "challenge");
 		}
 		//Quest -- Warning message when C3 Finish Run setting isn't greater than your quest HZE.
 		if (game.global.runningChallengeSquared && (getPageSetting('questSmithyZone') === -1 ? Infinity : getPageSetting('questSmithyZone')) <= game.c2.Quest) {
-			debug("The setting 'Q: Smithy Zone' is lower or equal to your current Quest HZE. Increase this or smithies will be bought earlier than they should be.")
+			debug("The setting 'Q: Smithy Zone' is lower or equal to your current Quest HZE. Increase this or smithies will be bought earlier than they should be.", "challenge");
 		}
 	}
 	//Downsize -- Warning message when about map settings causing issues later.
 	if (challengeActive('Downsize')) {
 		if (game.global.world < 10) {
-			debug("Be aware that your usual C3 farming settings will not work properly for this Downsize run and likely cause it to stall out so high chance you will want to amend or disable them.")
+			debug("Be aware that your usual C3 farming settings will not work properly for this Downsize run and likely cause it to stall out so high chance you will want to amend or disable them.", "challenge");
 		}
 	}
 	challengeCurrentZone = game.stats.zonesCleared.value;
@@ -599,7 +606,7 @@ function finishChallengeSquared() {
 	//Cancel out of challenge run
 	abandonChallenge();
 	cancelTooltip();
-	debug("Finished challenge because we are on zone " + game.global.world, "other", "oil");
+	debug("Finished challenge because we are on zone " + game.global.world, "challenge", "oil");
 	return;
 }
 
@@ -632,18 +639,18 @@ function resetmapvars() {
 	MODULES.mapFunctions.portalZone = Infinity;
 
 	hdStats = new HDStats();
-	mapSettings = new farmingDecision(hdStats);
+	mapSettings = new farmingDecision();
 }
 
 function presetSwapping(preset) {
-	if (!getPageSetting('presetSwap')) return
+	if (!getPageSetting('presetSwap')) return;
 
 	var preset = !preset ? null :
-		(preset != 1 && preset != 2 && preset != 3) ? null :
+		(preset !== 1 && preset !== 2 && preset !== 3) ? null :
 			preset;
 
-	if (preset == null) {
-		debug("Invalid input. Needs to be a value between 1 and 3.");
+	if (preset === null) {
+		debug("Invalid input. Needs to be a value between 1 and 3.", "challenge");
 		return;
 	}
 

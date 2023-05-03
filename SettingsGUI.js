@@ -81,13 +81,13 @@ var link1 = document.createElement("link");
 	(link1.href = MODULES_AT.basepath + "tabs.css"),
 	document.head.appendChild(link1);
 
-function createTabs(a, b) {
+function createTabs(a, b, addTabsDiv, addtabsUL) {
 	var c = document.createElement("li"),
 		d = document.createElement("a");
-	(d.className = "tablinks"), d.setAttribute("onclick", "toggleTab(event, '" + a + "')"), (d.href = "#"), d.appendChild(document.createTextNode(a)), (c.id = "tab" + a), c.appendChild(d), addtabsUL.appendChild(c), createTabContents(a, b);
+	(d.className = "tablinks"), d.setAttribute("onclick", "toggleTab(event, '" + a + "')"), (d.href = "#"), d.appendChild(document.createTextNode(a)), (c.id = "tab" + a), c.appendChild(d), addtabsUL.appendChild(c), createTabContents(a, b, addTabsDiv);
 }
 
-function createTabContents(a, b) {
+function createTabContents(a, b, addTabsDiv) {
 	var c = document.createElement("div");
 	(c.className = "tabcontent"), (c.id = a);
 	var d = document.createElement("div");
@@ -118,9 +118,6 @@ function maximizeAllTabs() {
 	}
 }
 
-var addTabsDiv;
-var addtabsUL;
-
 function checkLiqZoneCount() {
 	if (game.options.menu.liquification.enabled == 0) return 0;
 	/* if (game.global.universe == 2) {
@@ -139,6 +136,9 @@ function checkLiqZoneCount() {
 }
 
 function initializeAllTabs() {
+	var addTabsDiv;
+	var addtabsUL;
+
 	addTabsDiv = document.createElement('div');
 	addtabsUL = document.createElement('ul');
 	addtabsUL.className = "tab";
@@ -146,24 +146,24 @@ function initializeAllTabs() {
 	addtabsUL.style.display = "none";
 	var sh = document.getElementById("settingsRow")
 	sh.insertBefore(addtabsUL, sh.childNodes[2]);
-	createTabs("Core", "Core - Main Controls for the script");
-	createTabs("Buildings", "Building Settings");
-	createTabs("Jobs", "Geneticassist Settings");
-	createTabs("Equipment", "Equipment Settings");
-	createTabs("Maps", "Maps - AutoMaps & VoidMaps Settings");
-	createTabs("Spire", "Spire - Settings for Spires");
-	createTabs("Daily", "Dailies - Settings for Dailies");
-	createTabs("C2", "C2 - Settings for C2s");
-	createTabs("Challenges", "Challenges - Settings for Specific Challenges");
-	createTabs("Combat", "Combat & Stance Settings");
-	createTabs("Magma", "Dimensional Generator & Magmite Settings");
-	createTabs("Heirlooms", "Heirloom Settings");
-	createTabs("Golden", "Golden Upgrade Settings");
-	createTabs("Nature", "Nature Settings");
-	createTabs("Display", "Display & Spam Settings");
-	createTabs("Import Export", "Import & Export Settings");
-	createTabs("Test", "Basic testing functions - Should never be seen by users");
-	createTabs("Legacy", "Legacy Settings. Will be removed every major patch cycle.");
+	createTabs("Core", "Core - Main Controls for the script", addTabsDiv, addtabsUL);
+	createTabs("Buildings", "Building Settings", addTabsDiv, addtabsUL);
+	createTabs("Jobs", "Geneticassist Settings", addTabsDiv, addtabsUL);
+	createTabs("Equipment", "Equipment Settings", addTabsDiv, addtabsUL);
+	createTabs("Maps", "Maps - AutoMaps & VoidMaps Settings", addTabsDiv, addtabsUL);
+	createTabs("Spire", "Spire - Settings for Spires", addTabsDiv, addtabsUL);
+	createTabs("Daily", "Dailies - Settings for Dailies", addTabsDiv, addtabsUL);
+	createTabs("C2", "C2 - Settings for C2s", addTabsDiv, addtabsUL);
+	createTabs("Challenges", "Challenges - Settings for Specific Challenges", addTabsDiv, addtabsUL);
+	createTabs("Combat", "Combat & Stance Settings", addTabsDiv, addtabsUL);
+	createTabs("Magma", "Dimensional Generator & Magmite Settings", addTabsDiv, addtabsUL);
+	createTabs("Heirlooms", "Heirloom Settings", addTabsDiv, addtabsUL);
+	createTabs("Golden", "Golden Upgrade Settings", addTabsDiv, addtabsUL);
+	createTabs("Nature", "Nature Settings", addTabsDiv, addtabsUL);
+	createTabs("Display", "Display & Spam Settings", addTabsDiv, addtabsUL);
+	createTabs("Import Export", "Import & Export Settings", addTabsDiv, addtabsUL);
+	createTabs("Test", "Basic testing functions - Should never be seen by users", addTabsDiv, addtabsUL);
+	createTabs("Legacy", "Legacy Settings. Will be removed every major patch cycle.", addTabsDiv, addtabsUL);
 	var li_0 = document.createElement('li');
 	var a_0 = document.createElement('a');
 	a_0.className = "tablinks minimize";
@@ -717,14 +717,14 @@ function initializeAllSettings() {
 		createSetting('c2SharpTrimps',
 			function () { return (cinf() + ' Sharp Trimps') },
 			function () {
-				var description = "<p>Buys the Sharp Trimps bonus for <b>25 bones</b> during " + cinf() + " or special challenge (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid") + ") runs.</p>";
+				var description = "<p>Buys the Sharp Trimps bonus for <b>25 bones</b> during " + c2Description() + " runs.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2]);
 		createSetting('c2GoldenMaps',
 			function () { return (cinf() + ' Golden Maps') },
 			function () {
-				var description = "<p>Buys the Golden Maps bonus for <b>20 bones</b> during " + cinf() + " or special challenge (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid") + ") runs.</p>";
+				var description = "<p>Buys the Golden Maps bonus for <b>20 bones</b> during " + c2Description() + " runs.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'C2', [1, 2]);
@@ -847,6 +847,45 @@ function initializeAllSettings() {
 				return description;
 			}, 'dropdown', 'Bootboost', ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'], 'C2', [1],
 			function () { return (getPageSetting('mapology', currSettingUniverse) && autoTrimpSettings.mapology.require()) });
+
+		//Experience
+		createSetting('experience',
+			function () { return ('Experience') },
+			function () {
+				var description = "<p>Enable this if you want to use Experience wonder farming features.</p>";
+				description += "<p>This setting is dependant on using <b>Bionic Raiding</b> in conjunction with it if you want your ending Bionic Wonderland to be higher than 605. If you do you'll need to raid past bw 605 before z601.</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
+			'boolean', false, null, 'C2', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 600) });
+		createSetting('experienceStartZone',
+			function () { return ('E: Start Zone') },
+			function () {
+				var description = "<p>The zone you would like to start mapping for wonders at.</p>";
+				description += "<p>If set below 300 it will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> 500 to start and lower over time</p>";
+				return description;
+			},
+			'value', -1, null, 'C2', [1],
+			function () { return (autoTrimpSettings.experience.enabled) });
+		createSetting('experienceEndZone',
+			function () { return ('E: End Zone') },
+			function () {
+				var description = "<p>'Will run the Bionic Wonderland map level specified in <b>E: End BW</b> at this zone.</p>";
+				description += "<p>If set below 601 it will disable this setting.</p>";
+				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [1],
+			function () { return (autoTrimpSettings.experience.enabled) });
+		createSetting('experienceEndBW',
+			function () { return ('E: End BW') },
+			function () {
+				var description = "<p>'Will finish the challenge with this Bionic Wonderland level once reaching the end zone specified in <b>E: End Zone</b>.</p>";
+				description += "<p><b>If the specified BW is not available, it will run one closest to the setting.</b></p>";
+				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
+			}, 'value', -1, null, 'C2', [1],
+			function () { return (autoTrimpSettings.experience.enabled) });
 
 		//Unbalance
 		createSetting('unbalance',
@@ -1259,45 +1298,6 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> 100</p>";
 			}, 'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.life.enabled) });
-
-		//Experience
-		createSetting('experience',
-			function () { return ('Experience') },
-			function () {
-				var description = "<p>Enable this if you want to use Experience wonder farming features.</p>";
-				description += "<p>This setting is dependant on using <b>Bionic Raiding</b> in conjunction with it if you want your ending Bionic Wonderland to be higher than 605. If you do you'll need to raid past bw 605 before z601.</b></p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			},
-			'boolean', false, null, 'Challenges', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 600) });
-		createSetting('experienceStartZone',
-			function () { return ('E: Start Zone') },
-			function () {
-				var description = "<p>The zone you would like to start mapping for wonders at.</p>";
-				description += "<p>If set below 300 it will disable this setting.</p>";
-				description += "<p><b>Recommended:</b> 500 to start and lower over time</p>";
-				return description;
-			},
-			'value', -1, null, 'Challenges', [1],
-			function () { return (autoTrimpSettings.experience.enabled) });
-		createSetting('experienceEndZone',
-			function () { return ('E: End Zone') },
-			function () {
-				var description = "<p>'Will run the Bionic Wonderland map level specified in <b>E: End BW</b> at this zone.</p>";
-				description += "<p>If set below 601 it will disable this setting.</p>";
-				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
-				return description;
-			}, 'value', -1, null, 'Challenges', [1],
-			function () { return (autoTrimpSettings.experience.enabled) });
-		createSetting('experienceEndBW',
-			function () { return ('E: End BW') },
-			function () {
-				var description = "<p>'Will finish the challenge with this Bionic Wonderland level once reaching the end zone specified in <b>E: End Zone</b>.</p>";
-				description += "<p><b>If the specified BW is not available, it will run one closest to the setting.</b></p>";
-				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
-			}, 'value', -1, null, 'Challenges', [1],
-			function () { return (autoTrimpSettings.experience.enabled) });
 
 		//Archaeology -- I don't know what to do with these. Think this needs to be reworked.
 		createSetting('archaeology',
@@ -2480,7 +2480,7 @@ function initializeAllSettings() {
 		createSetting('AutoGenC2',
 			function () { return (['' + cinf() + ': Normal', '' + cinf() + ': Fuel', '' + cinf() + ': Hybrid']) },
 			function () {
-				var description = "<p>The mode that the script will use for the entire " + cinf() + " run.</p>";
+				var description = "<p>The mode that the script will use for the entire " + c2Description() + " run.</p>";
 				description += "<p><b>" + cinf() + " Normal</b><br>Disables this setting and uses the normal script auto generator settings.</p>";
 				description += "<p><b>" + cinf() + " Fuel</b><br>Will set the generator to collect fuel.</p>";
 				description += "<p><b>" + cinf() + " Hybrid</b><br>Pseudo-Hybrid. This will collect fuel until full, then goes into Mi mode.</p>";
@@ -2513,35 +2513,43 @@ function initializeAllSettings() {
 				return description;
 			},
 			'boolean', false, null, 'Magma', [1]);
+
 		createSetting('effratio',
 			function () { return ('Efficiency') },
-			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.') },
-			'value', -1, null, 'Magma', [1],
+			function () {
+				return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.')
+			}, 'value', -1, null, 'Magma', [1],
 			function () { return (autoTrimpSettings.ratiospend.enabled) });
 		createSetting('capratio',
 			function () { return ('Capacity') },
-			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.') },
-			'value', -1, null, 'Magma', [1],
+			function () {
+				return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.')
+			}, 'value', -1, null, 'Magma', [1],
 			function () { return (autoTrimpSettings.ratiospend.enabled) });
 		createSetting('supratio',
 			function () { return ('Supply') },
-			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.') },
-			'value', -1, null, 'Magma', [1],
+			function () {
+				return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.')
+			}, 'value', -1, null, 'Magma', [1],
 			function () { return (autoTrimpSettings.ratiospend.enabled) });
 		createSetting('ocratio',
 			function () { return ('Overclocker') },
-			function () { return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.') },
-			'value', -1, null, 'Magma', [1],
+			function () {
+				return ('Use -1 or 0 to not spend on this. Any value above 0 will spend.')
+			}, 'value', -1, null, 'Magma', [1],
 			function () { return (autoTrimpSettings.ratiospend.enabled) });
+
 		createSetting('SupplyWall',
 			function () { return ('Throttle Supply (or Capacity)') },
-			function () { return ('Positive number NOT 1 e.g. 2.5: Consider Supply when its cost * 2.5 is < Capacity, instead of immediately when < Cap. Effectively throttles supply for when you don\'t need too many.<br><br>Negative number (-1 is ok) e.g. -2.5: Consider Supply if it costs < Capacity * 2.5, buy more supplys! Effectively throttling capacity instead.<br><br><b>Set to 1: DISABLE SUPPLY only spend magmite on Efficiency, Capacity and Overclocker. Always try to get supply close to your HZE. <br>Set to 0: IGNORE SETTING and use old behaviour (will still try to buy overclocker)</b>') },
-			'valueNegative', 0.4, null, 'Magma', [1],
+			function () {
+				return ('Positive number NOT 1 e.g. 2.5: Consider Supply when its cost * 2.5 is < Capacity, instead of immediately when < Cap. Effectively throttles supply for when you don\'t need too many.<br><br>Negative number (-1 is ok) e.g. -2.5: Consider Supply if it costs < Capacity * 2.5, buy more supplys! Effectively throttling capacity instead.<br><br><b>Set to 1: DISABLE SUPPLY only spend magmite on Efficiency, Capacity and Overclocker. Always try to get supply close to your HZE. <br>Set to 0: IGNORE SETTING and use old behaviour (will still try to buy overclocker)</b>')
+			}, 'valueNegative', 0.4, null, 'Magma', [1],
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
 		createSetting('spendmagmitesetting',
 			function () { return (['Normal', 'Normal & No OC', 'OneTime Only', 'OneTime & OC']) },
-			function () { return ('<b>Normal:</b> Spends Magmite Normally as Explained in Magmite spending behaviour. <br><b>Normal & No OC:</b> Same as normal, except skips OC afterbuying 1 OC upgrade. <br><b>OneTime Only:</b> Only Buys the One off upgrades except skips OC afterbuying 1 OC upgrade. <br><b>OneTime & OC:</b> Buys all One off upgrades, then buys OC only.') },
-			'multitoggle', 0, null, 'Magma', [1],
+			function () {
+				return ('<b>Normal:</b> Spends Magmite Normally as Explained in Magmite spending behaviour. <br><b>Normal & No OC:</b> Same as normal, except skips OC afterbuying 1 OC upgrade. <br><b>OneTime Only:</b> Only Buys the One off upgrades except skips OC afterbuying 1 OC upgrade. <br><b>OneTime & OC:</b> Buys all One off upgrades, then buys OC only.')
+			}, 'multitoggle', 0, null, 'Magma', [1],
 			function () { return (!autoTrimpSettings.ratiospend.enabled) });
 		createSetting('MagmiteExplain',
 			function () { return ('Magmite spending behaviour') },
@@ -2647,7 +2655,7 @@ function initializeAllSettings() {
 		createSetting('heirloomC3',
 			function () { return (cinf()) },
 			function () {
-				var description = "<p>Heirloom to use after your designated swap zone during " + cinf() + " or special challenge (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid") + ") runs.</p>";
+				var description = "<p>Heirloom to use after your designated swap zone during " + c2Description() + " runs.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
 				return description;
@@ -3297,10 +3305,6 @@ function initializeAllSettings() {
 			function () { return ('Automate Spire Assault') },
 			function () { return ('Automates Spire Assault gear swaps from level 92 up to level 128. HIGHLY RECOMMENDED THAT YOU DO NOT USE THIS SETTING.') },
 			'boolean', false, null, 'Display', [11]);
-		createSetting('showbreedtimer',
-			function () { return ('Enable Breed Timer') },
-			function () { return ('Enables the display of the hidden breedtimer. Turn this off to reduce memory.') },
-			'boolean', true, null, 'Display', [1]);
 
 		createSetting('sitInMaps',
 			function () { return ('Sit in maps') },
@@ -3350,8 +3354,6 @@ function initializeAllSettings() {
 
 	document.getElementById('battleSideTitle').setAttribute('onclick', 'MODULES["performance"].EnableAFKMode()');
 	document.getElementById('displayHeHr').setAttribute('onclick', 'toggleHeHr()');
-
-	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
 
 	//----------------------------------------------------------------------------------------------------------------------
 
@@ -3535,14 +3537,12 @@ function resourceHour() {
 	return currSettingUniverse === 2 ? 'Rn' : 'He';
 }
 
-function heHourPortal() {
-	var description = '';
-	if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += '<br>If \'Portal after voids (poison)\' is selected it will run until you reach the next poison band and run voids there.'
-	return description;
-}
-
 function cinf() {
 	return currSettingUniverse === 2 ? 'C3' : 'C2';
+}
+
+function c2Description() {
+	return cinf() + "'s or special challenge (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ")";
 }
 
 MODULES.u1unlocks = [];
@@ -3550,7 +3550,6 @@ MODULES.u2unlocks = [];
 
 initializeAllSettings();
 automationMenuInit();
-tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 updateATVersion();
 modifyParentNodeUniverseSwap();
 
@@ -3815,15 +3814,16 @@ function settingChanged(id, currUniverse) {
 		if (id === 'heirloomAutoRareToKeep') {
 			autoHeirloomOptions(true);
 		}
-		if (btn === autoTrimpSettings.dailyPortalStart) {
+		if (id === dailyPortalStart) {
 			document.getElementById('dailyPortalStart').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn[enabled]);
 		}
-		if (btn.id === 'equipOn') {
+		if (id === 'equipOn') {
 			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
 		}
-		if (btn === autoTrimpSettings.buildingsType) {
+		if (id === buildingsType) {
 			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
 		}
+		if (id === "c2disableFinished") modifyParentNodeUniverseSwap();
 	}
 	if (btn.type === 'multitoggle') {
 		var value = 'value'
@@ -3918,7 +3918,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("mapOddEvenIncrement", radonon);
 	modifyParentNode("dailyHeliumHrPortal", 'show');
 
-	if (getPageSetting('displayAllSettings', currSettingUniverse) || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && holidayObj.holiday === 'Eggy')) modifyParentNode("heliumC2Challenge", 'show');
+	if (getPageSetting('displayAllSettings') || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && holidayObj.holiday === 'Eggy')) modifyParentNode("heliumC2Challenge", 'show');
 	else modifyParentNode("heliumC2Challenge", 'hide');
 
 	//Maps
@@ -3994,10 +3994,9 @@ function modifyParentNodeUniverseSwap() {
 	//None!
 
 	modifyParentNode("automateSpireAssault", radonon);
-	modifyParentNode("showbreedtimer", radonoff);
+	modifyParentNode("EnableAFK", radonoff);
 
 	modifyParentNode("testTotalEquipmentCost", 'show');
-
 }
 
 function HeHrPortalOptions() {
@@ -4013,7 +4012,8 @@ function challengeUnlock(challenge, setting, c2) {
 	var c2Msg = game.global.universe === 2 ? '3' : '2';
 	var msg = "You have unlocked the " + challenge + " challenge.";
 	msg += " It has now been added to " + (c2 ? "Challenge " + c2Msg + " AutoPortal setting" : "AutoPortal");
-	msg += (setting ? " & there's a setting for it in the AT " + (c2 ? '"C' + c2Msg + '"' : '"Challenges"') + " tab." : '.');
+	msg += (setting ? " & there's settings for it in the AT " + (c2 ? '"C' + c2Msg + '"' : '"Challenges"') + " tab." : '.');
+	if (challenge === "Frigid" || challenge === "Experience" || challenge === "Mayhem" || challenge === "Pandemonium" || challenge === "Desolation") msg += "<br><br><b>This is a special challenge and will use " + cinf() + " settings when run.</b>";
 	return msg;
 }
 
@@ -4124,61 +4124,79 @@ function heliumChallengesSetting(hzeCheck, forceUpdate) {
 	}
 
 	if (hzeCheck) {
+		var message = '';
 		if (hze === 40) {
-			debug(challengeUnlock('Balance', false, false));
+			message = challengeUnlock('Balance', false, false);
 		} else if (hze === 55) {
-			debug(challengeUnlock('Decay', true, false));
+			message = challengeUnlock('Decay', true, false);
 		} else if (hze === 60) {
-			debug("Upon unlocking Warpstations's AT has a new settings tab available called 'Buildings'. Here you will find a variety of settings that will help with this new feature.");
+			message = "Upon unlocking Warpstations's AT has a new settings tab available called 'Buildings'. Here you will find a variety of settings that will help with this new feature.";
 		} else if (hze === 65) {
-			debug("Due to unlocking Challenge 2's there is now a Challenge 2 option under AutoPortal to be able to auto portal into them. Also you can now access the C2 tab within the AT settings.")
+			message = "Due to unlocking Challenge 2's there is now a Challenge 2 option under AutoPortal to be able to auto portal into them. Also you can now access the C2 tab within the AT settings.";
 		} else if (hze === 70) {
-			debug(challengeUnlock('Trapper', false, true));
-			debug("Upon unlocking Geneticist's AT has a new settings tab available called 'Jobs'. Here you will find a variety of settings that will help with this new feature.");
+			message = challengeUnlock('Trapper', false, true);
+			message += "<br><br>"
+			message = "Upon unlocking Geneticist's AT has a new settings tab available called 'Jobs'. Here you will find a variety of settings that will help with this new feature.";
 		} else if (game.global.prisonClear >= 1 && !MODULES.u1unlocks.challenge2.includes('Electricity')) {
-			debug(challengeUnlock('Electricity', false, true));
+			message = challengeUnlock('Electricity', false, true);
+		} else if (hze === 100) {
+			message = "You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.";
 		} else if (hze === 110) {
-			debug("You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.");
-		} else if (hze === 110) {
-			debug(challengeUnlock('Life', true, false));
+			message = challengeUnlock('Life', true, false);
 		} else if (hze === 120) {
-			debug(challengeUnlock('Coordinate', false, true));
+			message = challengeUnlock('Coordinate', false, true);
 		} else if (hze === 125) {
-			debug(challengeUnlock('Crushed'));
+			message = challengeUnlock('Crushed');
 		} else if (hze === 130) {
-			debug(challengeUnlock('Slow', false, true));
+			message = challengeUnlock('Slow', false, true);
 		} else if (hze === 145) {
-			debug(challengeUnlock('Nom', false, true));
+			message = challengeUnlock('Nom', false, true);
 		} else if (hze === 150) {
-			debug(challengeUnlock('Mapology', true, true));
+			message = challengeUnlock('Mapology', true, true);
 		} else if (hze === 165) {
-			debug(challengeUnlock('Toxicity', false, true));
+			message = challengeUnlock('Toxicity', false, true);
 		} else if (hze === 180) {
-			debug(challengeUnlock('Watch', false, true));
+			message = challengeUnlock('Watch', false, true);
 		} else if (hze === 180) {
-			debug(challengeUnlock('Lead', false, true));
+			message = challengeUnlock('Lead', false, true);
 		} else if (hze === 190) {
-			debug(challengeUnlock('Corrupted', false, true));
+			message = challengeUnlock('Corrupted', false, true);
 		} else if (hze === 215) {
-			debug(challengeUnlock('Domination', false, true));
+			message = challengeUnlock('Domination', false, true);
 		} else if (hze === 230) {
-			debug("Upon unlocking the Dimensional Generator building AT has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic.");
+			message = "Upon unlocking the Dimensional Generator building AT has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic.";
 		} else if (hze === 236) {
-			debug("Upon unlocking Nature AT has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.");
+			message = "Upon unlocking Nature AT has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.";
 		} else if (hze === 425) {
-			debug(challengeUnlock('Obliterated', false, true));
+			message = challengeUnlock('Obliterated', false, true);
 		} else if (game.global.totalSquaredReward >= 4500 && !MODULES.u1unlocks.challenge2.includes('Eradicated')) {
-			debug(challengeUnlock('Eradicated', false, true));
+			message = challengeUnlock('Eradicated', false, true);
 		} else if (hze === 510) {
-			debug(challengeUnlock('Frigid', false, true));
+			message = challengeUnlock('Frigid', false, true);
 		} else if (hze === 600) {
-			debug(challengeUnlock('Experience', true, false));
+			message = challengeUnlock('Experience', true, true);
+		}
+		if (message !== '') {
+			message += "<br><br><b>To disable this popup, click confirm!<b>";
+			hzeMessage = message;
+			challengePopup = true;
+			tooltip('confirm', null, 'update', hzeMessage, ('challengePopup = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 		}
 	}
 
 	MODULES.u1unlocks.challenge = challenge;
 	MODULES.u1unlocks.heliumHourChallenges = heliumHourChallenges;
 	MODULES.u1unlocks.challenge2 = challenge2;
+}
+
+function remakeTooltip() {
+	if (!challengePopup) {
+		delete hzeMessage
+		return;
+	}
+	if (!game.global.lockTooltip) {
+		tooltip('confirm', null, 'update', hzeMessage, ('challengePopup = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+	}
 }
 
 function radonChallengesSetting(hzeCheck, forceUpdate) {
@@ -4189,13 +4207,10 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 	if (hze >= 70) challenge.push("Quagmire");
 	if (hze >= 85) challenge.push("Quest");
 	if (hze >= 90) challenge.push("Archaeology");
-	if (hze >= 100) challenge.push("Mayhem");
 	if (hze >= 110) challenge.push("Insanity");
-	if (hze >= 135) challenge.push("Nurture");
-	if (hze >= 150) challenge.push("Pandemonium");
+	if (hze >= 135) challenge.push("Nurture");;
 	if (hze >= 155) challenge.push("Alchemy");
 	if (hze >= 175) challenge.push("Hypothermia");
-	if (hze >= 200) challenge.push('Desolation');
 	challenge.push("Custom");
 	if (hze >= 50) challenge.push("Challenge 3");
 
@@ -4215,13 +4230,10 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 	if (hze >= 70) radonHourChallenges.push("Quagmire");
 	if (hze >= 85) radonHourChallenges.push("Quest");
 	if (hze >= 90) radonHourChallenges.push("Archaeology");
-	if (hze >= 100) radonHourChallenges.push("Mayhem");
 	if (hze >= 110) radonHourChallenges.push("Insanity");
 	if (hze >= 135) radonHourChallenges.push("Nurture");
-	if (hze >= 150) radonHourChallenges.push("Pandemonium");
 	if (hze >= 155) radonHourChallenges.push("Alchemy");
 	if (hze >= 175) radonHourChallenges.push("Hypothermia");
-	if (hze >= 200) radonHourChallenges.push("Desolation");
 
 	if (((document.getElementById('heliumHourChallenge').children.length || document.getElementById('heliumHourChallenge').children.length)
 		< radonHourChallenges.length) || forceUpdate) {
@@ -4252,9 +4264,12 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 	if (hze >= 60) challenge3.push("Trappapalooza");
 	if (hze >= 70) challenge3.push("Wither");
 	if (hze >= 85) challenge3.push("Quest");
+	if (hze >= 100) challenge3.push("Mayhem");
 	if (hze >= 105) challenge3.push("Storm");
 	if (hze >= 115) challenge3.push("Berserk");
+	if (hze >= 150) challenge3.push("Pandemonium");
 	if (hze >= 175) challenge3.push("Glass");
+	if (hze >= 200) challenge3.push('Desolation');
 	if (hze >= 201) challenge3.push("Smithless");
 
 	if (
@@ -4277,72 +4292,82 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 	}
 
 	if (hzeCheck) {
-
+		var message = '';
 		//Transmute
 		if (hze === 25) {
-			debug("You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.");
+			message = "You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.";
 		} //Dailies
 		else if (hze === 30) {
-			debug("You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.");
+			message = "You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.";
 		} //Unblance
 		else if (hze === 35) {
-			debug(challengeUnlock('Unbalance', true, true));
+			message = challengeUnlock('Unbalance', true, true);
 		} //Bublé
 		else if (hze === 40) {
-			debug(challengeUnlock('Bublé'));
+			message = challengeUnlock('Bublé');
 		} //C3, Melt, Worshippers
 		else if (hze === 50) {
 			//C3
-			debug("Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them. Also you can now access the C3 tab within the AT settings.")
+			message = "Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them. Also you can now access the C3 tab within the AT settings.";
 			//Melt
-			debug(challengeUnlock('Melt'));
+			message += "<br><br>"
+			message += challengeUnlock('Melt');
 			//Worshippers
-			debug("You can now use the Worshipper Farm setting. This can be found in the AT 'Maps' tab.");
+			message += "<br><br>"
+			message += "You can now use the Worshipper Farm setting. This can be found in the AT 'Maps' tab.";
 		} //Trappapalooza
 		else if (hze === 60) {
-			debug(challengeUnlock('Trappapalooza', true, true));
+			message = challengeUnlock('Trappapalooza', true, true);
 		} //Quagmire
 		else if (hze === 70) {
-			debug(challengeUnlock('Quagmire', true, false));
-		} //Wither
-		else if (hze === 70) {
-			debug(challengeUnlock('Wither', true, true));
+			message = challengeUnlock('Quagmire', true, false);
+			//Wither
+			message += challengeUnlock('Wither', true, true);
 		} //Quest
 		else if (hze === 85) {
-			debug(challengeUnlock('Quest', true, true));
+			message = challengeUnlock('Quest', true, true);
 		} //Archaeology
 		else if (hze === 90) {
-			debug(challengeUnlock('Archaeology', true, false));
+			message = challengeUnlock('Archaeology', true, false);
 		} //Mayhem
 		else if (hze === 100) {
-			debug(challengeUnlock('Mayhem', true, true));
+			message = challengeUnlock('Mayhem', true, true);
 		} //Storm
 		else if (hze === 105) {
-			debug(challengeUnlock('Storm', true, true));
+			message = challengeUnlock('Storm', true, true);
 		} //Insanity
 		else if (hze === 110) {
-			debug(challengeUnlock('Insanity', true, false));
+			message = challengeUnlock('Insanity', true, false);
 		} //Berserk
 		else if (hze === 115) {
-			debug(challengeUnlock('Berserk'));
+			message = challengeUnlock('Berserk');
 		} //Nurture
 		else if (hze === 135) {
-			debug(challengeUnlock('Nurture', false, false) + " There is also setting for Laboratory's that has been added to AT's AutoStructure setting.");
+			message = challengeUnlock('Nurture', false, false) + " There is also setting for Laboratory's that has been added to AT's AutoStructure setting.";
 		} //Pandemonium
 		else if (hze === 150) {
-			debug(challengeUnlock('Pandemonium', true, true));
+			message = challengeUnlock('Pandemonium', true, true);
 		} //Alchemy
 		else if (hze === 155) {
-			debug(challengeUnlock('Alchemy', true, false));
+			message = challengeUnlock('Alchemy', true, false);
 		} //Hypothermia
 		else if (hze === 175) {
-			debug(challengeUnlock('Hypothermia', true, false));
-		} //Glass
-		else if (hze === 175) {
-			debug(challengeUnlock('Glass', true, true));
-		} //Smithless
+			message = challengeUnlock('Hypothermia', true, false);
+			//Glass
+			message += "<br><br>"
+			message += challengeUnlock('Glass', true, true);
+		} //Desolation
 		else if (hze === 200) {
-			debug(challengeUnlock('Smithless', true, true));
+			message = challengeUnlock('Desolation', true, true);
+		} //Smithless
+		else if (hze === 201) {
+			message = challengeUnlock('Smithless', true, true);
+		}
+		if (message !== '') {
+			message += "<br><br><b>To disable this popup, click confirm!<b>";
+			hzeMessage = message;
+			challengePopup = true;
+			tooltip('confirm', null, 'update', hzeMessage, ('challengePopup = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 		}
 	}
 	MODULES.u2unlocks.challenge = challenge;
@@ -4350,19 +4375,19 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 	MODULES.u2unlocks.challenge3 = challenge3;
 }
 
+//It sets the options for the heirloom auto selecter based on the highest zone ever reached, and the current universe.
 function autoHeirloomOptions() {
-
-	var heirloomOptions = ['None', 'Shields', 'Staffs', 'All'];
-
+	var hze;
+	var heirloomTiersAvailable;
 	if (currSettingUniverse === 2) {
-		var hze = game.stats.highestRadLevel.valueTotal();
-		var heirloomTiersAvailable = ['Plagued', 'Radiating'];
+		hze = game.stats.highestRadLevel.valueTotal();
+		heirloomTiersAvailable = ['Plagued', 'Radiating'];
 		if (hze >= 100) heirloomTiersAvailable.push('Hazardous');
 		if (hze >= 200) heirloomTiersAvailable.push('Enigmatic');
 	}
 	else {
-		var hze = game.stats.highestLevel.valueTotal();
-		var heirloomTiersAvailable = ['Common', 'Rare'];
+		hze = game.stats.highestLevel.valueTotal();
+		heirloomTiersAvailable = ['Common', 'Rare'];
 		if (hze >= 60) heirloomTiersAvailable.push('Epic');
 		if (hze >= 100) heirloomTiersAvailable.push('Legendary');
 		if (hze >= 125) heirloomTiersAvailable.push('Magnificent');
@@ -4610,10 +4635,10 @@ function autoPlusSettingsMenu() {
 	var $item = document.getElementById('autoSettings');
 	if ($item.style.display === 'block')
 		$item.style.display = 'none';
-	var $item = document.getElementById('graphParent');
+	$item = document.getElementById('graphParent');
 	if ($item.style.display === 'block')
 		$item.style.display = 'none';
-	var $item = document.getElementById('autoTrimpsTabBarMenu');
+	$item = document.getElementById('autoTrimpsTabBarMenu');
 	if ($item.style.display === 'block')
 		$item.style.display = 'none';
 	toggleSettingsMenu();
@@ -4647,7 +4672,7 @@ function turnOff(elem) {
 
 function turnOn(elem) {
 	if (typeof autoTrimpSettings[elem] !== 'undefined' && typeof (autoTrimpSettings[elem].require) !== 'undefined') {
-		if (getPageSetting('displayAllSettings', currSettingUniverse) || autoTrimpSettings[elem].require()) {
+		if (getPageSetting('displayAllSettings') || autoTrimpSettings[elem].require()) {
 			toggleElem(elem, true);
 		}
 		else
@@ -4661,75 +4686,28 @@ function updateCustomButtons(initialLoad) {
 	if (typeof lastTheme !== 'undefined' && lastTheme && game.options.menu.darkTheme.enabled != lastTheme) {
 		if (typeof MODULES["graphs"] !== 'undefined')
 			MODULES["graphs"].themeChanged();
-		debug("Theme change - AutoTrimps styles updated.");
+		debug("Theme change - AutoTrimps styles updated.", "other");
+		lastTheme = game.options.menu.darkTheme.enabled;
 	}
-	lastTheme = game.options.menu.darkTheme.enabled;
 
 	//Hide settings
 	//Radon
 	var radonon = autoTrimpSettings.radonsettings.value == 1;
-	var hze = game.stats.highestLevel.valueTotal();
-	var highestRadonZone = game.stats.highestRadLevel.valueTotal();
-	var legacysettings = autoTrimpSettings.radonsettings.value == 2;
 	currSettingUniverse = (autoTrimpSettings.radonsettings.value + 1);
-	var displayAllSettings = getPageSetting('displayAllSettings', currSettingUniverse);
-	//Update portal challenges
-	if (radonon) radonChallengesSetting(false, true);
-	else heliumChallengesSetting(false, true);
-	HeHrPortalOptions();
-	if (atFinishedLoading) autoHeirloomOptions();
 
-	//Swapping name and description of C2 tab when Radon is toggled on.
-	if (radonon) {
-		if (document.getElementById("C2").children[0].children[0].innerHTML !== 'C3 - Settings for C3s and special challenges (Mayhem, Pandemonium)') document.getElementById("C2").children[0].children[0].innerHTML = 'C3 - Settings for C3s and special challenges (Mayhem, Pandemonium)';
-		if (document.getElementById("tabC2").children[0].innerHTML !== 'C3') document.getElementById("tabC2").children[0].innerHTML = 'C3';
-	}
-	else {
-		if (document.getElementById("C2").children[0].children[0].innerHTML !== 'Settings for C2s') document.getElementById("C2").children[0].children[0].innerHTML = 'Settings for C2s';
-		if (document.getElementById("tabC2").children[0].innerHTML !== 'C2') document.getElementById("tabC2").children[0].innerHTML = 'C2';
-	}
-	//Tabs
-	if (document.getElementById("tabBuildings") != null) {
-		document.getElementById("tabBuildings").style.display = !displayAllSettings && (radonon || (!radonon && hze < 60)) ? "none" : "";
-	}
-	if (document.getElementById("tabDaily") != null) {
-		document.getElementById("tabDaily").style.display = !displayAllSettings && ((radonon && highestRadonZone < 30) || (!radonon && hze < 99)) ? "none" : "";
-	}
-	if (document.getElementById("tabC2") != null) {
-		document.getElementById("tabC2").style.display = !displayAllSettings && ((radonon && highestRadonZone < 50) || (!radonon && hze < 65)) ? "none" : "";
-	}
-	if (document.getElementById("tabSpire") != null) {
-		document.getElementById("tabSpire").style.display = radonon || (!displayAllSettings && hze < 190) ? "none" : "";
-	}
-	if (document.getElementById("tabJobs") != null) {
-		document.getElementById("tabJobs").style.display = radonon || (!displayAllSettings && hze < 70) ? "none" : "";
-	}
-	if (document.getElementById("tabMagma") != null) {
-		document.getElementById("tabMagma").style.display = radonon || (!displayAllSettings && hze < 230) ? "none" : "";
-	}
-	if (document.getElementById("tabNature") != null) {
-		document.getElementById("tabNature").style.display = radonon || (!displayAllSettings && hze < 236) ? "none" : "";
-	}
-	if (document.getElementById("tabChallenges") != null) {
-		document.getElementById("tabChallenges").style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && hze < 55)) ? "none" : "";
-	}
-	if (document.getElementById("tabLegacy") != null) {
-		document.getElementById("tabLegacy").style.display = !legacysettings ? "none" : "";
-	}
-	if (document.getElementById("tabTest") != null) {
-		document.getElementById("tabTest").style.display = getPageSetting('gameUser') !== 'SadAugust' && getPageSetting('gameUser') !== 'Kyotie' && getPageSetting('gameUser') !== 'Test' ? "none" : "";
-	}
-
+	//Loops through all the AT settings so we can properly setup the UI.
 	for (var setting in autoTrimpSettings) {
 		var item = autoTrimpSettings[setting];
-
+		//Looks for the settings that don't exist anymore and deletes them.
 		if (item === null || typeof item.id === 'undefined') {
+			//Skip ATversion. Deletes old settings.
 			if (setting !== 'ATversion' && atFinishedLoading) delete autoTrimpSettings[setting];
 			continue;
 		}
-		const settingUniverse = item.universe;
-		if (!Array.isArray(settingUniverse)) continue;
+		var settingUniverse = item.universe;
+		//Skips ever looking at settings with the mazDefaultArray type.
 		if (item.type === 'mazDefaultArray') continue;
+		//Skip if it's not a setting from the current universe.
 		else if (settingUniverse.indexOf(currSettingUniverse) !== -1 || settingUniverse.indexOf(0) !== -1) {
 			turnOn(setting, radonon);
 		} else {
@@ -4740,10 +4718,18 @@ function updateCustomButtons(initialLoad) {
 		if (settingUniverse.indexOf(currSettingUniverse) === -1 && settingUniverse.indexOf(0) === -1)
 			continue;
 
+		//Looks at all the settings that are from the current universe and sets them up. Will set text, tooltips.	
+		//Only happens when initialLoad is called which should only happen the 1st time AT loads or radonsettings is toggled.
 		if (initialLoad) {
+			//Update portal challenges
+			if (radonon) radonChallengesSetting(false, true);
+			else heliumChallengesSetting(false, true);
+			//Adjust which heirloom tiers are showing for auto heirlooms
+			autoHeirloomOptions();
+			//Update autoPortal options
+			HeHrPortalOptions();
+
 			var elem = document.getElementById(item.id);
-
-
 			if (item.type === 'boolean') {
 				var itemEnabled = item.enabled;
 				if (radonon && settingUniverse.indexOf(0) === -1) itemEnabled = item['enabled' + 'U2'];
@@ -4798,11 +4784,57 @@ function updateCustomButtons(initialLoad) {
 	}
 
 	document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + getPageSetting('autoMaps'));
-	if (!initialLoad) modifyParentNodeUniverseSwap();
 
 	if (document.getElementById('Prestige').selectedIndex > 11 && !game.global.slowDone) {
 		document.getElementById('Prestige').selectedIndex = 11;
 		autoTrimpSettings.Prestige.selected = "Bestplate";
+	}
+
+	//Sets up if the tabs will be visible or not.
+	//Only happens when initialLoad is called which should only happen the 1st time AT loads or radonsettings is toggled.
+	if (initialLoad) {
+		var hze = game.stats.highestLevel.valueTotal();
+		var highestRadonZone = game.stats.highestRadLevel.valueTotal();
+		var displayAllSettings = getPageSetting('displayAllSettings');
+		//Swapping name and description of C2 tab when Radon is toggled on.
+		if (document.getElementById("C2").children[0].children[0].innerHTML !==
+			(cinf() + ' - Settings for ' + c2Description())
+		) document.getElementById("C2").children[0].children[0].innerHTML =
+			(cinf() + ' - Settings for ' + c2Description());
+
+		if (document.getElementById("tabC2").children[0].innerHTML !== cinf()) document.getElementById("tabC2").children[0].innerHTML = cinf();
+
+		//Tabs
+		if (document.getElementById("tabBuildings") !== null) {
+			document.getElementById("tabBuildings").style.display = !displayAllSettings && (radonon || (!radonon && hze < 60)) ? "none" : "";
+		}
+		if (document.getElementById("tabDaily") !== null) {
+			document.getElementById("tabDaily").style.display = !displayAllSettings && ((radonon && highestRadonZone < 30) || (!radonon && hze < 99)) ? "none" : "";
+		}
+		if (document.getElementById("tabC2") !== null) {
+			document.getElementById("tabC2").style.display = !displayAllSettings && ((radonon && highestRadonZone < 50) || (!radonon && hze < 65)) ? "none" : "";
+		}
+		if (document.getElementById("tabSpire") !== null) {
+			document.getElementById("tabSpire").style.display = radonon || (!displayAllSettings && hze < 190) ? "none" : "";
+		}
+		if (document.getElementById("tabJobs") !== null) {
+			document.getElementById("tabJobs").style.display = radonon || (!displayAllSettings && hze < 70) ? "none" : "";
+		}
+		if (document.getElementById("tabMagma") !== null) {
+			document.getElementById("tabMagma").style.display = radonon || (!displayAllSettings && hze < 230) ? "none" : "";
+		}
+		if (document.getElementById("tabNature") !== null) {
+			document.getElementById("tabNature").style.display = radonon || (!displayAllSettings && hze < 236) ? "none" : "";
+		}
+		if (document.getElementById("tabChallenges") !== null) {
+			document.getElementById("tabChallenges").style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && hze < 55)) ? "none" : "";
+		}
+		if (document.getElementById("tabLegacy") != null) {
+			document.getElementById("tabLegacy").style.display = "none";
+		}
+		if (document.getElementById("tabTest") != null) {
+			document.getElementById("tabTest").style.display = getPageSetting('gameUser') !== 'SadAugust' && getPageSetting('gameUser') !== 'Kyotie' && getPageSetting('gameUser') !== 'Test' ? "none" : "";
+		}
 	}
 }
 
@@ -4952,12 +4984,13 @@ function setupATButtons() {
 function getDailyHeHrStats() {
 	const resourceHr = game.global.universe === 2 ? 'Rn' : 'He';
 	const resource = game.global.universe === 2 ? 'Radon' : 'Helium';
-	var a = "";
+	var tooltip = "";
 	if (challengeActive('Daily')) {
-		var b = game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - (game.global[resource.toLowerCase() + 'Leftover'] + game.resources[resource.toLowerCase()].owned));
-		b *= 100 + getDailyHeliumValue(countDailyWeight()),
-			a = "<b>After Daily " + resourceHr + "\/Hr: " + b.toFixed(3) + "%"
-	} return a
+		var helium = game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - (game.global[resource.toLowerCase() + 'Leftover'] + game.resources[resource.toLowerCase()].owned));
+		helium *= 100 + getDailyHeliumValue(countDailyWeight()),
+			tooltip = "<b>After Daily " + resourceHr + "\/Hr: " + helium.toFixed(3) + "%</b>"
+	}
+	return tooltip;
 }
 
 function toggleAutoMaps() {
@@ -4975,25 +5008,20 @@ function toggleAutoMaps() {
 function toggleHeHr(update) {
 	if (update) {
 		if (getPageSetting('displayHeHr'))
-			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+			document.getElementById('hiderStatus').parentNode.style.display = 'block';
 		else
-			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
+			document.getElementById('hiderStatus').parentNode.style.display = 'none';
 		return
 	}
 	if (getPageSetting('displayHeHr')) {
 		setPageSetting('displayHeHr', 0);
-		if (game.global.universe == 1) {
-			turnOff('hiderStatus')
-			document.getElementById('hiderStatus').parentNode.style = 'display: none; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-		}
+		turnOff('hiderStatus');
+		document.getElementById('hiderStatus').parentNode.style.display = 'none';
 	}
 	else {
 		setPageSetting('displayHeHr', 1);
-		if (game.global.universe == 1) {
-			turnOn('hiderStatus');
-			document.getElementById('hiderStatus').parentNode.style = 'display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);'
-			document.getElementById('hiderStatus').parentNode.setAttribute("onmouseover", 'tooltip(\"' + resource + '\/Hr Info\", \"customText\", event, \"1st is Current "' + resourceHr + '\/hr % out of Lifetime "' + resourceHr + '\(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total "' + resourceHr + '\ earned / Lifetime "' + resourceHr + '\(not including current)<br>\" + getDailyHeHrStats())');
-		}
+		turnOn('hiderStatus');
+		document.getElementById('hiderStatus').parentNode.style.display = 'block';
 	}
 	saveSettings();
 }

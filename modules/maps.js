@@ -17,11 +17,7 @@ function runSelectedMap(mapId, madAdjective) {
 	}
 }
 
-if (getAutoStructureSetting().enabled) {
-	document.getElementById('autoStructureBtn').classList.add("enabled")
-}
-
-function updateAutoMapsStatus(get, hdStats) {
+function updateAutoMapsStatus(get) {
 	var status = '';
 
 	//Setting up status
@@ -32,7 +28,7 @@ function updateAutoMapsStatus(get, hdStats) {
 	//Advancing
 	else status = 'Advancing';
 
-	if (getPageSetting('autoMaps') == 0) status = '[Off] ' + status;
+	if (getPageSetting('autoMaps') === 0) status = '[Off] ' + status;
 	var resourceType = game.global.universe === 1 ? 'Helium' : 'Radon';
 	var resourceShortened = game.global.universe === 1 ? 'He' : 'Rn';
 	var getPercent = (game.stats.heliumHour.value() /
@@ -48,12 +44,12 @@ function updateAutoMapsStatus(get, hdStats) {
 	}
 
 	if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
-	document.getElementById('autoMapStatus').parentNode.setAttribute("onmouseover", makeAutomapStatusTooltip(hdStats));
+	document.getElementById('autoMapStatus').setAttribute("onmouseover", makeAutomapStatusTooltip());
 	if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
-	document.getElementById('hiderStatus').parentNode.setAttribute("onmouseover", makeResourceTooltip());
+	document.getElementById('hiderStatus').setAttribute("onmouseover", makeResourceTooltip());
 }
 
-function makeAutomapStatusTooltip(hdStats) {
+function makeAutomapStatusTooltip() {
 	const mapStacksText = (`Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`);
 	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy.';
 	const hitsSurvived = prettify(hdStats.hitsSurvived);
@@ -114,7 +110,7 @@ function makeResourceTooltip() {
 	return tooltip;
 }
 
-function autoMap(hdStats) {
+function autoMap() {
 
 	if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
 		if (!game.global.preMapsActive) mapsClicked();
@@ -128,10 +124,13 @@ function autoMap(hdStats) {
 		rBSRunningAtlantrimp = false;
 	}
 
-	if (game.global.mapsActive && getCurrentMapObject() !== undefined && (getCurrentMapObject().name === 'Trimple Of Doom' || getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Melting Point' || getCurrentMapObject().name === 'Frozen Castle') || rBSRunningAtlantrimp) {
-		if (getCurrentMapObject().name === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
-		if (game.global.repeatMap) repeatClicked();
-		return;
+	if (game.global.mapsActive) {
+		var currMap = getCurrentMapObject();
+		if (currMap !== undefined && (currMap.name === 'Trimple Of Doom' || currMap.name === 'Atlantrimp' || currMap.name === 'Melting Point' || currMap.name === 'Frozen Castle') || rBSRunningAtlantrimp) {
+			if (currMap.name === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
+			if (game.global.repeatMap) repeatClicked();
+			return;
+		}
 	}
 
 	//Failsafes
@@ -250,7 +249,7 @@ function autoMap(hdStats) {
 				lowestMap = map;
 			}
 		} else if (map.noRecycle) {
-			if (runUniques && shouldRunUniqueMap(map, hdStats) && !challengeActive('Insanity')) {
+			if (runUniques && shouldRunUniqueMap(map) && !challengeActive('Insanity')) {
 				selectedMap = map.id;
 				if (mappingTime === 0) mappingTime = getGameTime();
 			}
@@ -285,7 +284,7 @@ function autoMap(hdStats) {
 				perfectMapCost(maplevel - game.global.world, "lmc", mapBiome);
 				buyMap();
 				rRunMap();
-				debug("Running LMC map due to only having 1 equip remaining on this map.");
+				debug("Running LMC map due to only having 1 equip remaining on this map.", "maps");
 			}
 		}
 		if ((selectedMap == game.global.currentMapId || (!getCurrentMapObject().noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding')) {
@@ -372,9 +371,9 @@ function autoMap(hdStats) {
 						recycleMap(game.global.mapsOwnedArray.indexOf(mapToRecycleIfBuyingFails));
 						result = buyMap();
 						if (result == -2)
-							debug("AutoMaps unable to recycle to buy map!");
+							debug("AutoMaps unable to recycle to buy map!", "maps");
 						else
-							debug("Retrying map buy after recycling lowest level map");
+							debug("Retrying map buy after recycling lowest level map", "maps");
 					}
 				}
 				if (result === 1) {

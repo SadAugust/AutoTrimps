@@ -74,7 +74,6 @@ function getPsStringLocal(what, rawNum) {
 	//Add base
 	//Add job count
 	var currentCalc = job.owned * base;
-	var s = job.owned == 1 ? "" : "s";
 	//Add books
 	if (what != "gems" && game.permaBoneBonuses.multitasking.owned > 0) {
 		var str = (game.resources.trimps.owned >= game.resources.trimps.realMax()) ? game.permaBoneBonuses.multitasking.mult() : 0;
@@ -200,14 +199,14 @@ function getPsStringLocal(what, rawNum) {
 	game.global.lockTooltip = false;
 }
 
-function advancedNurseries(hdStats) {
+function advancedNurseries() {
 	if (!getPageSetting('advancedNurseries')) return false;
 	if (game.stats.highestLevel.valueTotal() < 230) return false;
 	//Builds nurseries if lacking health & shouldn't HD farm.
 	//Only build nurseries if: A) Lacking Health & B) Doesn't need to HD farm & C) Has max health map stacks
 	//Also, it requires less health during spire
 	const a = hdStats.hitsSurvived < getPageSetting('hitsSurvived');
-	const b = !hdFarm(hdStats, true).shouldRun;
+	const b = !hdFarm(true).shouldRun;
 	const c = game.global.mapBonus >= getPageSetting('mapBonusHealth');
 	return (a && b && c);
 }
@@ -275,7 +274,7 @@ function mostEfficientHousing() {
 	return mostEfficient.name;
 }
 
-function buyBuildings(hdStats) {
+function buyBuildings() {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
 	if (game.global.world === 1 && game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
@@ -343,7 +342,7 @@ function buyBuildings(hdStats) {
 			var nurseryCanAfford = calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, (nurseryAmt - game.buildings.Nursery.owned), nurseryPct);
 			if (nurseryZoneOk || nurseryPreSpire > 0) {
 				if (nurseryPreSpire > 0 && nurseryCanAfford > 0) safeBuyBuilding('Nursery', nurseryCanAfford);
-				else if (advancedNurseries(hdStats) && calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, 1, nurseryPct) > 0) safeBuyBuilding('Nursery', 1);
+				else if (advancedNurseries() && calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, 1, nurseryPct) > 0) safeBuyBuilding('Nursery', 1);
 				else if (nurseryCanAfford > 0) safeBuyBuilding('Nursery', nurseryCanAfford);
 			}
 		}

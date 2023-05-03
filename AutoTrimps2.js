@@ -87,6 +87,7 @@ var hdStats = {
 var mappingTIme = 0;
 var twoSecondInterval = false;
 var sixSecondInterval = false;
+var challengePopup = false;
 
 //Get Gamma burst % value
 var gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
@@ -106,7 +107,7 @@ function initializeAutoTrimps() {
 	for (var m in ATmoduleList) {
 		ATscriptLoad(MODULES_AT.modulepath, ATmoduleList[m]);
 	}
-	debug('AutoTrimps Loaded!');
+	debug('AutoTrimps Loaded!', "other");
 }
 
 function printChangelog(changes) {
@@ -180,7 +181,7 @@ function delayStartAgain() {
 	})();
 
 	hdStats = new HDStats();
-	mapSettings = new farmingDecision(hdStats);
+	mapSettings = new farmingDecision();
 
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
@@ -209,13 +210,10 @@ function universeSwapped() {
 }
 
 function mainLoop() {
-	var date = new Date();
-	//oneDayInterval = (date.getUTCHours() === 0 && date.getUTCMinutes() === 0 && date.getUTCSeconds() === 0 && date.getUTCMilliseconds() < 100);
-	oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
 
 	//Adjust tooltip when mazWindow is open OR clear our adjustments if it's not.
 	if (mazWindowOpen && !usingRealTimeOffline) {
-		var mazSettings = ["Map Farm", "Map Bonus", "Void Map", "HD Farm", "Raiding", "Bionic Raiding", "Quagmire Farm", "Insanity Farm", "Alchemy Farm", "Hypothermia Farm", "Bone Shrine", "Golden", "Tribute Farm", "Smithy Farm", "Worshipper Farm"];
+		var mazSettings = ["Map Farm", "Map Bonus", "Void Map", "HD Farm", "Raiding", "Bionic Raiding", "Quagmire Farm", "Insanity Farm", "Alchemy Farm", "Hypothermia Farm", "Bone Shrine", "Auto Golden", "Tribute Farm", "Smithy Farm", "Worshipper Farm"];
 		var mazCheck = mazSettings.indexOf(document.getElementById('tooltipDiv').children.tipTitle.innerText);
 
 		if (mazCheck === -1) {
@@ -232,6 +230,7 @@ function mainLoop() {
 
 	universeSwapped();
 	presetMutations();
+	remakeTooltip();
 
 	if (ATrunning == false) return;
 	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
@@ -240,7 +239,6 @@ function mainLoop() {
 
 	//Interval code
 	var date = new Date();
-	//oneDayInterval = (date.getUTCHours() === 0 && date.getUTCMinutes() === 0 && date.getUTCSeconds() === 0 && date.getUTCMilliseconds() < 100);
 	oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
 	twoSecondInterval = ((date.getSeconds() % 2) === 0 && (date.getMilliseconds() < 100));
 	sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
@@ -249,7 +247,7 @@ function mainLoop() {
 	if (oneSecondInterval) {
 		hdStats = new HDStats();
 	}
-	mapSettings = new farmingDecision(hdStats);
+	mapSettings = farmingDecision();
 
 	if (!usingRealTimeOffline) {
 		if (document.getElementById('freeVoidMap') !== null) {
@@ -295,58 +293,58 @@ function mainLoop() {
 	if (!usingRealTimeOffline) setResourceNeeded();
 
 	//AutoMaps
-	autoMap(hdStats);
+	autoMap();
 	//Status
-	updateAutoMapsStatus(false, hdStats);
+	updateAutoMapsStatus(false);
 	//Gather
 	autoGather();
 	//Auto Traps
 	if (getPageSetting('TrapTrimps') && game.global.trapBuildAllowed && !game.global.trapBuildToggled) toggleAutoTrap();
 	//Buildings
-	buyBuildings(hdStats);
+	buyBuildings();
 	//Jobs
-	buyJobs(hdStats);
+	buyJobs();
 	//Upgrades
 	buyUpgrades();
 	//Combat
-	callBetterAutoFight(hdStats)
+	callBetterAutoFight()
 	//Bone Shrine
-	boneShrine(hdStats);
+	boneShrine();
 	//Auto Golden Upgrade
-	autoGoldUpgrades(hdStats);
+	autoGoldUpgrades();
 	//Heirloom Management
-	heirloomSwapping(hdStats);
+	heirloomSwapping();
 	//AutoEquip
-	autoEquip(hdStats);
+	autoEquip();
 
 	//Portal
-	c2runnerportal(hdStats);
-	finishChallengeSquared(hdStats);
-	autoPortal(hdStats);
-	dailyAutoPortal(hdStats);
+	c2runnerportal();
+	finishChallengeSquared();
+	autoPortal();
+	dailyAutoPortal();
 	//Equip highlighting
-	displayMostEfficientEquipment(hdStats);
+	displayMostEfficientEquipment();
 
 
 	if (challengeActive('Daily') && getPageSetting('buyheliumy', portalUniverse) >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
 
 	//Logic for Universe 1
-	mainLoopU1(hdStats);
+	mainLoopU1();
 
 	//Logic for Universe 2
-	mainLoopU2(hdStats);
+	mainLoopU2();
 
 	if (hdStats.isC3) buySingleRunBonuses();
 
 	//Auto SA -- Currently disabled
-	automateSpireAssault(hdStats);
+	automateSpireAssault();
 
-	challengeInfo(hdStats);
+	challengeInfo();
 	atFinishedLoading = true;
 }
 
 //U1 functions
-function mainLoopU1(hdStats) {
+function mainLoopU1() {
 	if (game.global.universe !== 1) return;
 	//Core
 	geneAssist();
@@ -369,9 +367,9 @@ function mainLoopU1(hdStats) {
 
 	//Stance
 	var settingPrefix = challengeActive('Daily') ? 'd' : '';
-	if ((getPageSetting('UseScryerStance')) || (game.global.mapsActive && getCurrentMapObject().location === 'Void' && getPageSetting(settingPrefix + 'scryvoidmaps'))) useScryerStance(hdStats);
+	if ((getPageSetting('UseScryerStance')) || (game.global.mapsActive && getCurrentMapObject().location === 'Void' && getPageSetting(settingPrefix + 'scryvoidmaps'))) useScryerStance();
 	else {
-		windStance(hdStats);
+		windStance();
 		autoStance();
 		autoStanceD();
 	}
@@ -381,7 +379,7 @@ function mainLoopU1(hdStats) {
 }
 
 //U2 functions
-function mainLoopU2(hdStats) {
+function mainLoopU2() {
 	if (game.global.universe !== 2) return;
 	//Archeology
 	if (getPageSetting('archaeology') && challengeActive('Archaeology')) archstring();
@@ -412,13 +410,12 @@ function mainCleanup() {
 		autoHeirloomOptions();
 	}
 
-	if (currentworld == 1 && aWholeNewWorld) {
+	if (currentworld === 1 && aWholeNewWorld) {
 		zonePostpone = 0;
 		if (!game.upgrades.Battle.done) {
 			updateButtonText();
 			resetSettingsPortal();
 		}
-		return true;
 	}
 
 	if (aWholeNewWorld) {
