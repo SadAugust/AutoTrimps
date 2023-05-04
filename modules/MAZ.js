@@ -1886,7 +1886,7 @@ function saveATUniqueMapsConfig(setting) {
 		return;
 	}
 
-	setPageSetting('uniqueMapSettingsArray', setting, currSettingUniverse);;
+	setPageSetting('uniqueMapSettingsArray', setting, currSettingUniverse);
 	cancelTooltip();
 	saveSettings();
 }

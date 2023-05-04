@@ -350,7 +350,7 @@ function debug(message, b, icon) {
 		case null:
 		case 'other':
 		case "bones":
-		case "maps":
+		case "mapsMsg":
 		case "mazSettings":
 		case "debugStats":
 		case "portal":

@@ -4208,7 +4208,7 @@ function radonChallengesSetting(hzeCheck, forceUpdate) {
 	if (hze >= 85) challenge.push("Quest");
 	if (hze >= 90) challenge.push("Archaeology");
 	if (hze >= 110) challenge.push("Insanity");
-	if (hze >= 135) challenge.push("Nurture");;
+	if (hze >= 135) challenge.push("Nurture");
 	if (hze >= 155) challenge.push("Alchemy");
 	if (hze >= 175) challenge.push("Hypothermia");
 	challenge.push("Custom");
@@ -4705,6 +4705,11 @@ function updateCustomButtons(initialLoad) {
 			continue;
 		}
 		var settingUniverse = item.universe;
+		//Looping the deletion process again for old settings that got loaded but don't have the universe property.
+		if (!Array.isArray(settingUniverse)) {
+			if (setting !== 'ATversion' && atFinishedLoading) delete autoTrimpSettings[setting];
+			continue;
+		}
 		//Skips ever looking at settings with the mazDefaultArray type.
 		if (item.type === 'mazDefaultArray') continue;
 		//Skip if it's not a setting from the current universe.
