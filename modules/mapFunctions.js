@@ -937,14 +937,7 @@ function smithyFarm() {
 		var smithyMetalCost = getBuildingItemPrice(game.buildings.Smithy, 'metal', false, rSFSmithies - game.buildings.Smithy.purchased);
 
 		if (rSFSmithies > game.buildings.Smithy.purchased) {
-			if (smithyGemCost > game.resources.gems.owned) {
-				shouldSmithyGemFarm = true;
-				rSFSpecial = getAvailableSpecials('lsc', true);
-				rSFBiome = getBiome(null, 'Sea');
-				rSFJobRatio = '1,0,0,0';
-				rSFGoal = prettify(smithyGemCost) + ' gems.';
-			}
-			else if (smithyWoodCost > game.resources.wood.owned) {
+			if (smithyWoodCost > game.resources.wood.owned) {
 				shouldSmithyWoodFarm = true;
 				rSFSpecial = getAvailableSpecials('lwc', true);
 				rSFBiome = getBiome(null, 'Forest');
@@ -957,6 +950,13 @@ function smithyFarm() {
 				rSFBiome = getBiome(null, 'Mountain');
 				rSFJobRatio = '0,0,1,0';
 				rSFGoal = prettify(smithyMetalCost) + ' metal.';
+			}
+			else if (smithyGemCost > game.resources.gems.owned) {
+				shouldSmithyGemFarm = true;
+				rSFSpecial = getAvailableSpecials('lsc', true);
+				rSFBiome = getBiome(null, 'Sea');
+				rSFJobRatio = '1,0,0,0';
+				rSFGoal = prettify(smithyGemCost) + ' gems.';
 			}
 			shouldSmithyFarm = true;
 		}
