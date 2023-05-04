@@ -277,6 +277,8 @@ function initializeAllSettings() {
 		createSetting('autoPortal',
 			function () { return ('AutoPortal') },
 			function () {
+				var c2setting = currSettingUniverse === 2 ? "Challenge 3" : "Challenge 2";
+				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") are run with this.";
 				var description = "<p>Will automatically portal into different challenges depending on the way you setup the AutoPortal related settings.</p>";
 				description += "<p><b>" + resource() + " Challenges will appear here when they've been unlocked in the game.</b></p>";
 				description += "<p>Additional settings appear when <b>" + resource() + " Per Hour</b> or <b>Custom</b> are selected.</p>";
@@ -285,6 +287,7 @@ function initializeAllSettings() {
 				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resourceHour().toLowerCase() + "/hr to (best - buffer setting) " + resourceHour().toLowerCase() + "/hr.</p>";
 				description += "<p><b>Specific Challenges</b><br>If a specific challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>";
 				description += "<p><b>Custom</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Portal Zone</b> setting.</p>";
+				if (game.stats.highestLevel.valueTotal() >= 100) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + c2setting + "</b> setting at the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.<br>" + specialChall + "</p>";
 				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Custom with a specified endzone to use the Scruffy 3 ability" : "Specific challenges until you reach zone 230 then " + resource() + " Per Hour") + "</p>";
 				return description;
 			}, 'dropdown', 'Off', ["None"], 'Core', [1, 2]);

@@ -3305,46 +3305,81 @@ function dailyModiferReduction() {
 function dailyOddOrEven() {
 	const skipDetails = {
 		active: false,
-		oddMult: 0,
-		evenMult: 0,
+		oddMult: 1,
+		evenMult: 1,
 		skipZone: false,
 		slipPct: 0,
 		slipMult: 0,
+		slipType: '',
 		remainder: 0,
 	}
 	if (!challengeActive('Daily')) return skipDetails;
 	if (!getPageSetting('mapOddEvenIncrement')) return skipDetails;
 
+	//Odd trimp nerf - 30-80%
 	if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined') {
-		skipDetails.oddMult += dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
+		skipDetails.oddMult -= dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
 	}
-
+	//Even trimp buff - 120-300%
 	if (typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined') {
-		skipDetails.evenMult += dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
+		skipDetails.evenMult = dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
 	}
-
-	//Dodge Dailies
+	//Dodge Dailies -- 2-30%!
 	if (typeof game.global.dailyChallenge.slippery !== "undefined") {
-		var slipStr = game.global.dailyChallenge.slippery.strength / 100;
-		var slipPct = slipStr > 15 ? slipStr - 15 : slipStr;
-		var slipMult = 0.02 * slipPct * 100;
-		if (slipStr > 0.15) skipDetails.evenMult += slipPct;
-		else skipDetails.oddMult += slipPct
+		skipDetails.slipStr = game.global.dailyChallenge.slippery.strength / 100;
+		skipDetails.slipPct = skipDetails.slipStr > 15 ? skipDetails.slipStr - 15 : skipDetails.slipStr;
+		skipDetails.slipMult = 0.02 * skipDetails.slipPct * 100;
+		if (skipDetails.slipStr > 0.15) skipDetails.slipType = 'even';
+		else skipDetails.slipType = 'odd';
 	}
 
-	if (skipDetails.oddMult === 0 && skipDetails.evenMult === 0) return skipDetails;
+	//Return if no even/odd or dodge daily mods
+	if (skipDetails.oddMult === 1 && skipDetails.evenMult === 1 && skipDetails.slipType === '') return skipDetails;
 
-	if (skipDetails.evenMult > 0 && slipMult > 10 && slipPct > 15) skipDetails.oddMult = 0;
-
-	else if (skipDetails.oddMult !== 0 && skipDetails.evenMult !== 0) {
-		if (Math.max(skipDetails.oddMult, skipDetails.evenMult) === skipDetails.oddMult) skipDetails.evenMult = 0;
-		else skipDetails.oddMult = 0;
+	//If we have even AND odd mods, set odd to 0
+	if (skipDetails.oddMult !== 1 && skipDetails.evenMult !== 1) {
+		if (skipDetails.slipType !== '') {
+			//Sets evenMult to 0 if we have an even dodge daily and it's over 20%
+			if (skipDetails.slipType === 'even' && skipDetails.slipMult > 15) {
+				skipDetails.evenMult = 0;
+			}
+			//Sets evenMult to 0 if we have an even dodge daily and it's over 10% and oddMult is less than 50%
+			else if (skipDetails.slipType === 'even' && skipDetails.slipMult > 10 && skipDetails.oddMult > 0.5) {
+				skipDetails.evenMult = 0;
+			}
+			//Sets oddMult to 0 if we have an odd dodge daily
+			else if (skipDetails.slipType === 'odd') {
+				skipDetails.oddMult = 0;
+			}
+		} //Set oddMult to 0 if we don't have a dodge daily
+		else {
+			skipDetails.oddMult = 0;
+		}
+	} //If we have even OR odd mods & dodge chance, set the other mod to 0
+	else if (skipDetails.slipType !== '' && (skipDetails.oddMult !== 1 || skipDetails.evenMult !== 1)) {
+		if (skipDetails.slipType === 'even' && skipDetails.oddMult === 1) {
+			skipDetails.evenMult = 0;
+		}
+		if (skipDetails.slipType === 'odd' && skipDetails.evenMult === 1) {
+			skipDetails.oddMult = 0;
+		}
+	} //If dodge daily & no negative trimp mods then disable farming on the dodge zone
+	else if (skipDetails.slipType !== '') {
+		if (skipDetails.slipType === 'even') {
+			skipDetails.evenMult = 0;
+		}
+		else if (skipDetails.slipType === 'odd') {
+			skipDetails.oddMult = 0;
+		}
+	} //If we don't have a dodge daily then skip on odd zones. Farm on even zones.
+	else if (skipDetails.evenMult !== 1) {
+		skipDetails.oddMult = 0;
 	}
 
-	if (skipDetails.evenMult !== 0) {
+	if (skipDetails.evenMult < 1) {
 		if (game.global.world % 2 === 0)
 			skipDetails.skipZone = true;
-	} else if (skipDetails.oddMult !== 0) {
+	} else if (skipDetails.oddMult < 1) {
 		if (game.global.world % 2 === 1)
 			skipDetails.skipZone = true;
 		skipDetails.remainder = 1;
