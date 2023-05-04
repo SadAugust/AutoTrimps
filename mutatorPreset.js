@@ -1,5 +1,3 @@
-
-
 var selectedMutPreset = 0;
 
 function presetMutTab(tabNum) {
@@ -122,9 +120,10 @@ function tooltipAT(what, isItIn, event, textString, headingName) {
 
 function saveMutations() {
 	if (selectedMutPreset === 0) return;
+	u2Mutations.save();
+	u2Mutations.load();
 	var mutatorObj = JSON.parse(localStorage.getItem("mutatorPresets"));
 	var saveData = {};
-
 	saveData = game.global.u2MutationData;
 	saveData.purchaseCount = u2Mutations.purchaseCount;
 	saveData.name = document.getElementById('u2MutPresetBtn' + selectedMutPreset).innerHTML.split('Preset: ')[1];
