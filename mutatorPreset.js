@@ -5,11 +5,13 @@ function presetMutTab(tabNum) {
 	swapClass('btn btn-lg btn-', 'btn btn-lg btn-info', document.getElementById('u2MutSave'));
 	swapClass('btn btn-lg btn-', 'btn btn-lg btn-info', document.getElementById('u2MutLoad'));
 	swapClass('btn btn-lg btn-', 'btn btn-lg btn-info', document.getElementById('u2MutRename'));
+	swapClass('btn btn-lg btn-', 'btn btn-lg btn-info', document.getElementById('u2MutReset'));
 
 	if (selectedMutPreset === 0) {
 		swapClass('disabled', 'active', document.getElementById('u2MutSave'));
 		swapClass('disabled', 'active', document.getElementById('u2MutLoad'));
 		swapClass('disabled', 'active', document.getElementById('u2MutRename'));
+		swapClass('disabled', 'active', document.getElementById('u2MutReset'));
 	}
 
 	swapClass('btn btn-lg btn-', 'btn btn-lg btn-success', document.getElementById('u2MutPresetBtn' + tabNum));
@@ -43,6 +45,10 @@ function tooltipAT(what, isItIn, event, textString, headingName) {
 		else if (headingName == "Load") {
 			what = "Load Mutation Preset";
 			tooltipText = "Click to load your currently selected mutation preset. Be warned if you have any mutators purchased that differ from your loadout then it won't be 100% accurate.";
+		}
+		else if (headingName == "Reset") {
+			what = "Reset Mutation Preset";
+			tooltipText = "Click to reset your currently selected mutation preset. This will remove all mutators from the preset and set it to empty so when portaling you could end up with no mutators active.";
 		}
 		else if (textString > 0 && textString <= 3) {
 			var mutatorObj = JSON.parse(localStorage.getItem("mutatorPresets"));
@@ -170,7 +176,7 @@ function loadMutations(preset) {
 	u2Mutations.load();
 }
 
-function renameMutations(needTooltip, name) {
+function renameMutations(needTooltip) {
 	if (selectedMutPreset == 0) return;
 	var mutatorObj = JSON.parse(localStorage.getItem("mutatorPresets"));
 	var presetGroup = mutatorObj['preset' + selectedMutPreset];
@@ -179,6 +185,7 @@ function renameMutations(needTooltip, name) {
 		tooltipAT("Rename Preset", null, "update");
 		return;
 	}
+
 	var elem = document.getElementById('renamePresetBox');
 	if (!elem || !elem.value) return;
 	presetGroup.name = htmlEncode(elem.value.substring(0, 25));
@@ -194,6 +201,23 @@ function renameMutations(needTooltip, name) {
 	localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
 }
 
+function resetMutations() {
+	if (selectedMutPreset === 0) return;
+
+	var mutatorObj = JSON.parse(localStorage.getItem("mutatorPresets"));
+	var mutatorObjPreset = mutatorObj['preset' + selectedMutPreset];
+	var presetName = mutatorObjPreset.name ? mutatorObjPreset.name : selectedMutPreset;
+	mutatorObj['preset' + selectedMutPreset] = {
+		name: presetName,
+	};
+
+	if (typeof (autoTrimpSettings) !== 'undefined') {
+		autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
+		saveSettings();
+	}
+	localStorage.setItem('mutatorPresets', JSON.stringify(mutatorObj));
+}
+
 function presetMutations() {
 
 	if (!u2Mutations.open) return;
@@ -202,9 +226,9 @@ function presetMutations() {
 	//Initial setup of localStorage if it doesn't exist
 	if (typeof localStorage['mutatorPresets'] === 'undefined') {
 		var mutatorObj = {
-			preset1: {},
-			preset2: {},
-			preset3: {},
+			preset1: { name: 1 },
+			preset2: { name: 2 },
+			preset3: { name: 3 },
 		};
 		if (typeof (autoTrimpSettings) !== 'undefined') {
 			mutatorObj = JSON.parse(autoTrimpSettings['mutatorPresets'].valueU2);
@@ -214,9 +238,9 @@ function presetMutations() {
 	}
 
 	//Setting up initial variables that will be called later during for loop
-	const containerID = ['u2MutPresetBtn1', 'u2MutPresetBtn2', 'u2MutPresetBtn3', 'u2MutSave', 'u2MutLoad', 'u2MutRename'];
-	var containerText = ['1', '2', '3', 'Save', 'Load', 'Rename'];
-	const onClick = ['presetMutTab(1)', 'presetMutTab(2)', 'presetMutTab(3)', 'saveMutations()', 'loadMutations(selectedMutPreset)', 'renameMutations(true)'];
+	const containerID = ['u2MutPresetBtn1', 'u2MutPresetBtn2', 'u2MutPresetBtn3', 'u2MutSave', 'u2MutLoad', 'u2MutRename', 'u2MutReset'];
+	var containerText = ['1', '2', '3', 'Save', 'Load', 'Rename', 'Reset'];
+	const onClick = ['presetMutTab(1)', 'presetMutTab(2)', 'presetMutTab(3)', 'saveMutations()', 'loadMutations(selectedMutPreset)', 'renameMutations()', 'resetMutations()'];
 
 	//If there are presets saved, then we will use those names instead of the default ones
 	//This will also allow for the user to change the names of the presets
@@ -227,7 +251,7 @@ function presetMutations() {
 	}
 
 	document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
-	for (var x = 6; x > 0; x--) {
+	for (var x = containerID.length; x > 0; x--) {
 		//Insert break to replace later
 		document.getElementById('swapToMasteryBtn').insertAdjacentHTML('afterend', '<br>');
 

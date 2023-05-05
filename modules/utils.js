@@ -12,17 +12,30 @@ if (!String.prototype.includes) {
 	};
 }
 
+//Loads setting data from localstorage into object
 function loadPageVariables() {
 	var tmp = JSON.parse(localStorage.getItem('atSettings'));
-	if (tmp === null)
-		tmp = JSON.parse(localStorage.getItem('autoTrimpSettings'));
 
 	if (tmp !== null && tmp['ATversion'] != undefined) {
 		autoTrimpSettings = tmp;
 	}
 }
 
-function safeSetItems(a, b) { try { localStorage.setItem(a, b) } catch (c) { 22 == c.code && debug("Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.", "other") } }
+//Saves AT settings to localstorage
+function safeSetItems(storageName, storageSetting) {
+	try {
+		localStorage.setItem(storageName, storageSetting)
+	}
+	catch (c) {
+		22 == c.code &&
+			debug("Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.", "other")
+	}
+}
+
+//Saves AT settings to localstorage
+function saveSettings() {
+	safeSetItems('atSettings', serializeSettings())
+}
 
 function serializeSettings() {
 	return JSON.stringify(Object.keys(autoTrimpSettings).reduce((v, item) => {
@@ -63,34 +76,11 @@ function serializeSettings() {
 	}, {}));
 }
 
-function spreadsheetDownload() {
-	var spreadsheet = '';
-	//C3s
-	for (var chall in game.c2) {
-		if (!game.challenges[chall].allowU2) continue;
-		spreadsheet += ((getIndividualSquaredReward(chall)) + "\n")
-	}
-	//Radon, Scruffy, HZE, Achieve bonus, Antenna count
-	spreadsheet += (game.global.totalRadonEarned + "\n");
-	spreadsheet += ((Fluffy.currentLevel + Fluffy.getExp()[1] / Fluffy.getExp()[2]).toFixed(3) + "\n");
-	spreadsheet += (game.stats.highestRadLevel.valueTotal() + "\n");
-	spreadsheet += (game.global.achievementBonus + "\n");
-	spreadsheet += (game.buildings.Antenna.purchased + "\n");
-	//Spire Assault
-	spreadsheet += (autoBattle.maxEnemyLevel + "\n");
-	spreadsheet += (autoBattle.bonuses.Radon.level + "\n");
-	spreadsheet += (autoBattle.bonuses.Stats.level + "\n");
-	spreadsheet += (autoBattle.bonuses.Scaffolding.level + "\n");
-	//Mayhem Style Challenges
-	spreadsheet += (game.global.desoCompletions + "\n");
-	return (spreadsheet);
-}
-
 // Process data to google forms to update stats spreadsheet
 function pushSpreadsheetData() {
 	if (!portalWindowOpen) return;
 	var user = autoTrimpSettings.gameUser.value;
-	if (user === 'undefined' || user === 'Test') return;
+	if (user === 'undefined' || user.toLowerCase() === 'test') return;
 	const graphData = JSON.parse(localStorage.getItem("portalDataCurrent"))[getportalID()];
 
 	const fluffy_EvoLevel = {
@@ -259,6 +249,9 @@ function pushSpreadsheetData() {
 	debug("Spreadsheet update complete.", "other");
 };
 
+//It gets the value of a setting from autoTrimpSettings. If universe isn't set it will return the value relevant for the current universe we're in.
+//If universe is set it will return the value from that universe.
+//If the setting is not found it will return false.
 function getPageSetting(setting, universe) {
 	if (!autoTrimpSettings.hasOwnProperty(setting)) {
 		return false;
@@ -295,6 +288,7 @@ function getPageSetting(setting, universe) {
 	}
 }
 
+//It sets the value of a setting, and then saves the settings.
 function setPageSetting(setting, newValue, universe) {
 	if (autoTrimpSettings.hasOwnProperty(setting) == false) {
 		return false;
@@ -330,18 +324,14 @@ function setPageSetting(setting, newValue, universe) {
 	saveSettings();
 }
 
+//Returns false if we can't any new speed runs, unless it's the first tier
 function shouldSpeedRun(achievement) {
-	//Returns false if we can't any new speed runs, unless it's the first tier
 	var minutesThisRun = Math.floor((new Date().getTime() - game.global.portalTime) / 1000 / 60);
 	if (achievement.finished == achievement.tiers.length) return false;
 	return minutesThisRun < achievement.breakpoints[achievement.finished];
 }
 
-function saveSettings() {
-	var storageName = 'atSettings';
-	safeSetItems(storageName, serializeSettings())
-}
-
+//Looks at the spamMessages setting and if the message is enabled, it will print it to the message log & console.
 function debug(message, b, icon) {
 	var settingArray = atFinishedLoading && getPageSetting('spamMessages'),
 		p = true;

@@ -1,72 +1,5 @@
-function automationMenuInit() {
-	var settingBtnSrch = document.getElementsByClassName("btn btn-default");
-	for (var i = 0; i < settingBtnSrch.length; i++) {
-		if (settingBtnSrch[i].getAttribute("onclick") === "toggleSettingsMenu()")
-			settingBtnSrch[i].setAttribute("onclick", "autoPlusSettingsMenu()");
-	}
-	var newItem = document.createElement("TD");
-	newItem.appendChild(document.createTextNode("AutoTrimps"));
-	newItem.setAttribute("class", "btn btn-default");
-	newItem.setAttribute("onclick", "autoToggle()");
-	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
-	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
-
-	//AutoMaps
-	var autoMapsContainer = document.createElement("DIV");
-	autoMapsContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
-	autoMapsContainer.setAttribute("id", "autoMapBtn");
-	autoMapsContainer.setAttribute("class", "toggleConfigBtn noselect settingsBtn");
-	autoMapsContainer.setAttribute("onClick", "toggleAutoMaps()");
-	autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Auto Maps\", \"customText\", event, autoTrimpSettings.autoMaps.description(true))');
-	autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	autoMapsContainer.innerHTML = 'Auto Maps';
-	var fightButtonCol = document.getElementById("battleBtnsColumn");
-	fightButtonCol.appendChild(autoMapsContainer);
-
-	var autoMapsStatusContainer = document.createElement("DIV");
-	autoMapsStatusContainer.setAttribute("style", "display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
-	autoMapsStatusContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	var autoMapsStatusText = document.createElement("SPAN");
-	autoMapsStatusText.id = 'autoMapStatus';
-	autoMapsStatusContainer.appendChild(autoMapsStatusText);
-	fightButtonCol.appendChild(autoMapsStatusContainer);
-
-	var resourcePerHourContainer = document.createElement("DIV");
-	resourcePerHourContainer.setAttribute("style", "display: none; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
-
-	resourcePerHourContainer.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
-
-	resourcePerHourContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	var resourcePerHourButton = document.createElement("SPAN");
-	resourcePerHourButton.id = 'hiderStatus';
-	resourcePerHourContainer.appendChild(resourcePerHourButton);
-	fightButtonCol.appendChild(resourcePerHourContainer);
-
-
-	var voidMapContainer = document.createElement("DIV");
-	voidMapContainer.setAttribute("style", "display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);");
-	var voidMapText = document.createElement("SPAN");
-	voidMapContainer.setAttribute("onmouseover", 'tooltip(\"Additional AT Info\", \"customText\", event, \"<b>Void</b>: The progress you have towards a free void map from the \'Void Maps\' permanent bone upgrade.<br>\
-	<b>Auto Level</b>: The level that AT recommends using whilst farming.<br>\
-	<b>B</b>: The amount of time your trimps have been breeding.<br>\
-	<b>T</b>: Your current tenacity time.\")');
-	voidMapText.setAttribute("onmouseout", 'tooltip("hide")');
-	voidMapText.id = 'freeVoidMap';
-	fightButtonCol.appendChild(voidMapContainer);
-	voidMapContainer.appendChild(voidMapText);
-	var trimpsButtonCol = document.getElementById("trimps");
-	trimpsButtonCol.appendChild(voidMapContainer);
-
-	var $portalTimer = document.getElementById('portalTimer');
-	$portalTimer.setAttribute('onclick', 'toggleSetting(\'pauseGame\')');
-	$portalTimer.setAttribute('style', 'cursor: default');
-
-	var btns = document.getElementsByClassName("fightBtn");
-	for (var x = 0; x < btns.length; x++) {
-		btns[x].style.padding = "0.01vw 0.01vw";
-	}
-}
-
+//Creates a new div element, gives it an id, sets the style to display:none, and then appends it to the settingsRow div.
+//Div for the settings menu
 function automationMenuSettingsInit() {
 	var a = document.getElementById("settingsRow"),
 		b = document.createElement("DIV");
@@ -81,19 +14,19 @@ var link1 = document.createElement("link");
 	(link1.href = MODULES_AT.basepath + "tabs.css"),
 	document.head.appendChild(link1);
 
-function createTabs(a, b, addTabsDiv, addtabsUL) {
+function createTabs(tabName, tabDescription, addTabsDiv, addtabsUL) {
 	var c = document.createElement("li"),
 		d = document.createElement("a");
-	(d.className = "tablinks"), d.setAttribute("onclick", "toggleTab(event, '" + a + "')"), (d.href = "#"), d.appendChild(document.createTextNode(a)), (c.id = "tab" + a), c.appendChild(d), addtabsUL.appendChild(c), createTabContents(a, b, addTabsDiv);
+	(d.className = "tablinks"), d.setAttribute("onclick", "toggleTab(event, '" + tabName + "')"), (d.href = "#"), d.appendChild(document.createTextNode(tabName)), (c.id = "tab" + tabName), c.appendChild(d), addtabsUL.appendChild(c), createTabContents(tabName, tabDescription, addTabsDiv);
 }
 
-function createTabContents(a, b, addTabsDiv) {
-	var c = document.createElement("div");
-	(c.className = "tabcontent"), (c.id = a);
+function createTabContents(tabName, tabDescription, addTabsDiv) {
+	var elem = document.createElement("div");
+	(elem.className = "tabcontent"), (elem.id = tabName);
 	var d = document.createElement("div");
 	d.setAttribute("style", "margin-left: 1vw; margin-right: 1vw;");
 	var e = document.createElement("h4");
-	e.setAttribute("style", "font-size: 1.2vw;"), e.appendChild(document.createTextNode(b)), d.appendChild(e), c.appendChild(d), addTabsDiv.appendChild(c);
+	e.setAttribute("style", "font-size: 1.2vw;"), e.appendChild(document.createTextNode(tabDescription)), d.appendChild(e), elem.appendChild(d), addTabsDiv.appendChild(elem);
 }
 
 function toggleTab(a, b) {
@@ -118,23 +51,6 @@ function maximizeAllTabs() {
 	}
 }
 
-function checkLiqZoneCount() {
-	if (game.options.menu.liquification.enabled == 0) return 0;
-	/* if (game.global.universe == 2) {
-		if (!u2Mutations.tree.Liq1.purchased) return 0;
-		var amt = 0.1;
-		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
-		return ((getHighestLevelCleared(false, true) + 1) * amt);
-	} */
-	var spireCount = game.global.spiresCompleted;
-	if (game.talents.liquification.purchased) spireCount++;
-	if (game.talents.liquification2.purchased) spireCount++;
-	if (game.talents.liquification3.purchased) spireCount += 2;
-	spireCount += (Fluffy.isRewardActive("liquid") * 0.5);
-	var liquidAmount = ((spireCount) / 20);
-	return (((game.stats.highestLevel.valueTotal()) * liquidAmount));
-}
-
 function initializeAllTabs() {
 	var addTabsDiv;
 	var addtabsUL;
@@ -144,7 +60,7 @@ function initializeAllTabs() {
 	addtabsUL.className = "tab";
 	addtabsUL.id = 'autoTrimpsTabBarMenu';
 	addtabsUL.style.display = "none";
-	var sh = document.getElementById("settingsRow")
+	var sh = document.getElementById("settingsRow");
 	sh.insertBefore(addtabsUL, sh.childNodes[2]);
 	createTabs("Core", "Core - Main Controls for the script", addTabsDiv, addtabsUL);
 	createTabs("Buildings", "Building Settings", addTabsDiv, addtabsUL);
@@ -287,10 +203,10 @@ function initializeAllSettings() {
 				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resourceHour().toLowerCase() + "/hr to (best - buffer setting) " + resourceHour().toLowerCase() + "/hr.</p>";
 				description += "<p><b>Specific Challenges</b><br>If a specific challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>";
 				description += "<p><b>Custom</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Portal Zone</b> setting.</p>";
-				if (game.stats.highestLevel.valueTotal() >= 100) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + c2setting + "</b> setting at the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.<br>" + specialChall + "</p>";
+				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + c2setting + "</b> setting at the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.<br>" + specialChall + "</p>";
 				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Custom with a specified endzone to use the Scruffy 3 ability" : "Specific challenges until you reach zone 230 then " + resource() + " Per Hour") + "</p>";
 				return description;
-			}, 'dropdown', 'Off', ["None"], 'Core', [1, 2]);
+			}, 'dropdown', 'Off', function () { return autoPortalChallenges() }, 'Core', [1, 2]);
 
 		createSetting('heliumHourChallenge',
 			function () { return ('Challenge') },
@@ -299,7 +215,7 @@ function initializeAllSettings() {
 				description += "<p><b>" + resource() + " challenges will appear here when they've been unlocked in the game.</b></p>";
 				description += "<p><b>Recommended:</b> Last challenge available</p>";
 				return description;
-			}, 'dropdown', 'None', ['None'], 'Core', [1, 2],
+			}, 'dropdown', 'None', function () { return heliumHourChallenges() }, 'Core', [1, 2],
 			function () {
 				return (
 					getPageSetting('autoPortal', currSettingUniverse).includes('Hour') || getPageSetting('autoPortal', currSettingUniverse) === 'Custom')
@@ -312,7 +228,7 @@ function initializeAllSettings() {
 				description += "<p><b>Must end the challenges with the <b>Finish " + cinf() + "</b> setting in the <b>" + cinf() + "</b> tab if you want the run to end.</b>";
 				description += "<p><b>Recommended:</b> The C" + cinf()[1] + " you want to run</p>";
 				return description;
-			}, 'dropdown', 'None', ['None'], 'Core', [1, 2],
+			}, 'dropdown', 'None', function () { return heliumC2Challenges() }, 'Core', [1, 2],
 			function () {
 				return (
 					getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 2' || getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 3')
@@ -355,7 +271,12 @@ function initializeAllSettings() {
 				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
 			});
 		createSetting('heliumHrPortal',
-			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
+			function () {
+				var hze = game.stats.highestLevel.valueTotal();
+				var portalOptions = ['Auto Portal Immediately', 'Portal after voids'];
+				if (currSettingUniverse === 1 && hze >= 230) portalOptions.push('Portal after voids (poison)');
+				return portalOptions;
+			},
 			function () {
 				var description = "<p>How you would like to portal when below your " + resourceHour().toLowerCase() + "/hr threshold.</p>";
 				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.";
@@ -563,11 +484,19 @@ function initializeAllSettings() {
 		createSetting('dailyHeliumHourChallenge',
 			function () { return ('DP: Challenge') },
 			function () {
+				var c2setting = currSettingUniverse === 2 ? "Challenge 3" : "Challenge 2";
+				var c2setting_Daily = currSettingUniverse === 2 ? "DP 3" : "DP 2";
+				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") are run with this.";
+
 				var description = "<p>Automatically portal into this challenge after dailies when using the <b>DP: " + resourceHour() + "/Hr</b> or <b>DP: Custom</b> Daily AutoPortal settings.</p>";
 				description += "<p><b>" + resource() + " challenges will appear here when they've been unlocked in the game.</b></p>";
+
+				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + c2setting_Daily + "</b> setting at the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.<br>" + specialChall + "</p>";
+
+
 				description += "<p><b>Recommended:</b> Last challenge available</p>";
 				return description;
-			}, 'dropdown', 'None', ['None'], 'Daily', [1, 2],
+			}, 'dropdown', 'None', function () { return heliumHourChallenges(true) }, 'Daily', [1, 2],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) > 0) });
 
 		createSetting('dailyC2Challenge',
@@ -578,7 +507,7 @@ function initializeAllSettings() {
 				description += "<p><b>Must end the challenges with the <b>Finish " + cinf() + "</b> setting in the <b>" + cinf() + "</b> tab if you want the run to end.</b>";
 				description += "<p><b>Recommended:</b> The C" + cinf()[1] + " you want to run</p>";
 				return description;
-			}, 'dropdown', 'None', ['None'], "Daily", [1, 2],
+			}, 'dropdown', 'None', function () { return heliumC2Challenges() }, "Daily", [1, 2],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) > 0 && getPageSetting('dailyHeliumHourChallenge', currSettingUniverse).includes('Challenge ')) });
 
 		createSetting('dailyPortalZone',
@@ -614,7 +543,12 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1) });
 
 		createSetting('dailyHeliumHrPortal',
-			function () { return (['Auto Portal Immediately', 'Portal after voids']) },
+			function () {
+				var hze = game.stats.highestLevel.valueTotal();
+				var portalOptions = ['Auto Portal Immediately', 'Portal after voids'];
+				if (currSettingUniverse === 1 && hze >= 230) portalOptions.push('Portal after voids (poison)');
+				return portalOptions;
+			},
 			function () {
 				var description = "<p>How you would like to portal when below your " + resourceHour().toLowerCase() + "/hr threshold.</p>";
 				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.";
@@ -848,7 +782,14 @@ function initializeAllSettings() {
 				var description = "<p>When running any prestige farming settings this will override the targetted prestige with the prestige selected here.</p>";
 				description += "<p><b>Recommended:</b> Bootboost</p>";
 				return description;
-			}, 'dropdown', 'Bootboost', ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'], 'C2', [1],
+			}, 'dropdown', 'Bootboost', function () {
+				var equips = ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate'];
+				if (game.global.slowDone) {
+					equips.push('Harmbalest')
+					equips.push('GambesOP')
+				}
+				return equips;
+			}, 'C2', [1],
 			function () { return (getPageSetting('mapology', currSettingUniverse) && autoTrimpSettings.mapology.require()) });
 
 		//Experience
@@ -1663,7 +1604,14 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> Dagadder</p>";
 				return description;
 			},
-			'dropdown', 'Off', ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'], "Equipment", [1, 2]);
+			'dropdown', 'Off', function () {
+				var equips = ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate'];
+				if (game.global.slowDone) {
+					equips.push('Harmbalest')
+					equips.push('GambesOP')
+				}
+				return equips;
+			}, "Equipment", [1, 2]);
 		createSetting('ForcePresZ',
 			function () { return ('Force Prestige Z') },
 			function () {
@@ -2850,7 +2798,27 @@ function initializeAllSettings() {
 				description += "<p>When changed the heirloom mods sections will only display the mods available for that heirloom tier.</p>";
 				description += "<p><b>Recommended:</b> Highest tier available</p>";
 				return description;
-			}, 'dropdown', 'None', ["None"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'None', function () {
+				var hze;
+				var heirloomTiersAvailable;
+				if (currSettingUniverse === 2) {
+					hze = game.stats.highestRadLevel.valueTotal();
+					heirloomTiersAvailable = ['Plagued', 'Radiating'];
+					if (hze >= 100) heirloomTiersAvailable.push('Hazardous');
+					if (hze >= 200) heirloomTiersAvailable.push('Enigmatic');
+				}
+				else {
+					hze = game.stats.highestLevel.valueTotal();
+					heirloomTiersAvailable = ['Common', 'Rare'];
+					if (hze >= 60) heirloomTiersAvailable.push('Epic');
+					if (hze >= 100) heirloomTiersAvailable.push('Legendary');
+					if (hze >= 125) heirloomTiersAvailable.push('Magnificent');
+					if (hze >= 146) heirloomTiersAvailable.push('Ethereal');
+					if (hze >= 230) heirloomTiersAvailable.push('Magmatic');
+					if (hze >= 500) heirloomTiersAvailable.push('Plagued');
+				}
+				return heirloomTiersAvailable;
+			}, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		//Shield Line
@@ -2868,7 +2836,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 0)
@@ -2880,7 +2848,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 1)
@@ -2892,7 +2860,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 2)
@@ -2904,7 +2872,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 5)
@@ -2916,7 +2884,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 8)
@@ -2928,7 +2896,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 9)
@@ -2940,7 +2908,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 11)
@@ -2971,7 +2939,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 0)
@@ -2983,7 +2951,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 1)
@@ -2995,7 +2963,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 2)
@@ -3007,7 +2975,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 5)
@@ -3019,7 +2987,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 7)
@@ -3031,7 +2999,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 9)
@@ -3043,7 +3011,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty"], 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 11)
@@ -3070,28 +3038,28 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
+			}, 'dropdown', 'Empty', function () { return ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod2',
 			function () { return ('Cores: Modifier 2') },
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
+			}, 'dropdown', 'Empty', function () { return ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod3',
 			function () { return ('Cores: Modifier 3') },
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
+			}, 'dropdown', 'Empty', function () { return ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod4',
 			function () { return ('Cores: Modifier 4') },
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Empty', ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"], 'Heirlooms', [1],
+			}, 'dropdown', 'Empty', function () { return ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreBlacklist',
 			function () { return ('Cores: Blacklist') },
@@ -3168,7 +3136,7 @@ function initializeAllSettings() {
 				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
 				return description;
 			},
-			'dropdown', 'Off', ['Off', 'Empowerment', 'Transfer', 'Convert to Wind', 'Convert to Ice'], 'Nature', [1],
+			'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Wind', 'Convert to Ice']; }, 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 		createSetting('AutoWind',
 			function () { return ('Wind') },
@@ -3180,7 +3148,7 @@ function initializeAllSettings() {
 				description += "<p><b>Transfer</b><br>Will purchase levels in your Wind transfer rate.</p>";
 				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
 				return description;
-			}, 'dropdown', 'Off', ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Ice'], 'Nature', [1],
+			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Ice']; }, 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 		createSetting('AutoIce',
 			function () { return ('Ice') },
@@ -3192,7 +3160,7 @@ function initializeAllSettings() {
 				description += "<p><b>Transfer</b><br>Will purchase levels in your Ice transfer rate.</p>";
 				description += "<p><b>Convert to X</b> Will convert your tokens to the specified nature type.</p>";
 				return description;
-			}, 'dropdown', 'Off', ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Wind'], 'Nature', [1],
+			}, 'dropdown', 'Off', function () { return ['Off', 'Empowerment', 'Transfer', 'Convert to Poison', 'Convert to Wind']; }, 'Nature', [1],
 			function () { return (autoTrimpSettings.AutoNatureTokens.enabled) });
 
 		//Enlightenments
@@ -3356,7 +3324,6 @@ function initializeAllSettings() {
 	//----------------------------------------------------------------------------------------------------------------------
 
 	document.getElementById('battleSideTitle').setAttribute('onclick', 'MODULES["performance"].EnableAFKMode()');
-	document.getElementById('displayHeHr').setAttribute('onclick', 'toggleHeHr()');
 
 	//----------------------------------------------------------------------------------------------------------------------
 
@@ -3548,11 +3515,44 @@ function c2Description() {
 	return cinf() + "'s or special challenge (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ")";
 }
 
+//Will output how many zones you can liquify to.
+function checkLiqZoneCount() {
+	if (game.options.menu.liquification.enabled == 0) return 0;
+	/* if (game.global.universe == 2) {
+		if (!u2Mutations.tree.Liq1.purchased) return 0;
+		var amt = 0.1;
+		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
+		return ((getHighestLevelCleared(false, true) + 1) * amt);
+	} */
+	var spireCount = game.global.spiresCompleted;
+	if (game.talents.liquification.purchased) spireCount++;
+	if (game.talents.liquification2.purchased) spireCount++;
+	if (game.talents.liquification3.purchased) spireCount += 2;
+	spireCount += (Fluffy.isRewardActive("liquid") * 0.5);
+	var liquidAmount = ((spireCount) / 20);
+	return (((game.stats.highestLevel.valueTotal()) * liquidAmount));
+}
+
+function updateButtonText() {
+
+	var id = 'jobType';
+	var btn = autoTrimpSettings[id];
+	var btnValue = getPageSetting(id);
+
+	document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btnValue == 2 ? 3 : btnValue));
+	document.getElementById('autoJobLabel').innerHTML = btn.name()[btnValue];
+
+	var id = 'equipOn';
+	var btnValue = getPageSetting(id);
+
+	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btnValue);
+}
+
 MODULES.u1unlocks = [];
 MODULES.u2unlocks = [];
 
 initializeAllSettings();
-automationMenuInit();
+//automationMenuInit();
 updateATVersion();
 modifyParentNodeUniverseSwap();
 
@@ -3657,10 +3657,11 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.setAttribute("onchange", 'settingChanged("' + id + '")');
-		for (var item in list) {
+		listItems = list();
+		for (var item in listItems) {
 			var option = document.createElement("option");
-			option.value = list[item];
-			option.text = list[item];
+			option.value = listItems[item];
+			option.text = listItems[item];
 			btn.appendChild(option);
 		}
 		btn.value = autoTrimpSettings[id].selected;
@@ -3804,6 +3805,12 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 }
 
 function settingChanged(id, currUniverse) {
+	autoMapsBtn = id === 'autoMapsToggle';
+	if (autoMapsBtn) {
+		id = 'autoMaps';
+		currUniverse = true;
+	}
+
 	var btn = autoTrimpSettings[id];
 	var radonon = currUniverse ? game.global.universe === 2 : autoTrimpSettings.radonsettings.value == 1;
 	if (btn.type === 'boolean') {
@@ -3813,9 +3820,6 @@ function settingChanged(id, currUniverse) {
 		document.getElementById(id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		if (id === 'equipEfficientEquipDisplay') {
 			displayMostEfficientEquipment();
-		}
-		if (id === 'heirloomAutoRareToKeep') {
-			autoHeirloomOptions(true);
 		}
 		if (id === dailyPortalStart) {
 			document.getElementById('dailyPortalStart').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn[enabled]);
@@ -3827,7 +3831,12 @@ function settingChanged(id, currUniverse) {
 			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
 		}
 		if (id === "c2disableFinished") modifyParentNodeUniverseSwap();
+
+		if (id === "displayHeHr") {
+			document.getElementById('hiderStatus').parentNode.style.display = btn[enabled] ? 'block' : 'none';
+		}
 	}
+
 	if (btn.type === 'multitoggle') {
 		var value = 'value'
 		if (radonon && btn.universe.indexOf(0) === -1) value += 'U2';
@@ -3837,69 +3846,51 @@ function settingChanged(id, currUniverse) {
 				magmiteSpenderChanged = false;
 			}, 5000);
 		}
+		//Skip no unique setting for automaps button in battle container
+		if (autoMapsBtn && btn[value] === 1) {
+			btn[value]++;
+		}
 		btn[value]++;
 		if (btn[value] > btn.name().length - 1)
 			btn[value] = 0;
 		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value]);
 		document.getElementById(id).innerHTML = btn.name()[btn[value]]
-		if (btn.id === 'jobType') {
+		if (id === 'jobType') {
 			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btn[value] == 2 ? 3 : btn[value]));
 			document.getElementById('autoJobLabel').innerHTML = btn.name()[btn[value]];
 		}
-		if (btn.id === 'dailyPortal') {
+		if (id === 'dailyPortal') {
 			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn[value] == 2 ? 3 : btn[value]));
 		}
-		if (id === 'radonsettings') {
-			modifyParentNodeUniverseSwap();
-		}
+		if (id === 'autoMaps' && btn[value] !== 2)
+			document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value])
 	}
+
 	if (btn.type == 'dropdown') {
 		var selected = 'selected'
 		if (radonon && btn.universe.indexOf(0) === -1) selected += 'U2';
 		btn[selected] = document.getElementById(id).value;
 	}
 
-	updateCustomButtons(id === 'radonsettings');
+	updateCustomButtons(id === 'radonsettings' || id === 'heirloomAutoRareToKeep');
 	saveSettings();
 }
 
-function updateButtonText() {
-
-	var id = 'jobType'
-	var btn = autoTrimpSettings[id];
-	var btnValue = getPageSetting(id);
-
-	document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btnValue == 2 ? 3 : btnValue));
-	document.getElementById('autoJobLabel').innerHTML = btn.name()[btnValue];
-
-	var id = 'equipOn'
-	var btnValue = getPageSetting(id);
-
-	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btnValue);
-}
-
+//Tells the script when to insert a break or remove a break to put settings on new lines.
 function modifyParentNode(id, style) {
+	//Set style to 'show' to insert a break OR 'hide' to remove.
 	var style = !style ? 'show' : style;
-	var elem = document.getElementById(id).parentNode.parentNode.children;
-	for (var i = 0; i < elem.length; i++) {
-		if (document.getElementById(id).parentNode.parentNode.children[i].children[0] === undefined) {
-			continue
-		}
-		else {
-			if (document.getElementById(id).parentNode.parentNode.children[i].children[0].id === id || document.getElementById(id).parentNode.parentNode.children[i].children[0].id === (id + 'Label')) {
-				if (elem.length >= (i + 1) && document.getElementById(id).parentNode.parentNode.children[(i + 1)].style.length == 0) {
-					if (style === 'hide') document.getElementById(id).parentNode.parentNode.children[(i + 1)].remove()
-					break;
+	var elem = document.getElementById(id).parentNode;
 
-				}
-				else if (style === 'show') {
-					document.getElementById(id).parentNode.parentNode.children[i].insertAdjacentHTML('afterend', '<br>');
-				}
-			}
-		}
-	}
+	//Looks at the next element in the DOM and either adds or removes a break depending on what style is set to.
+	var elemSibling = elem.nextElementSibling;
+	if (style === 'show' && elemSibling.style.length !== 0)
+		elem.insertAdjacentHTML('afterend', '<br>');
+	if (style === 'hide' && elemSibling.style.length === 0)
+		elemSibling.remove();
 }
 
+//Tells the script which settings you want a new line after.
 function modifyParentNodeUniverseSwap() {
 
 	var radonon = getPageSetting('radonsettings') === 1 ? 'show' : 'hide';
@@ -3925,11 +3916,10 @@ function modifyParentNodeUniverseSwap() {
 	else modifyParentNode("heliumC2Challenge", 'hide');
 
 	//Maps
-	//Helium Settings
 	modifyParentNode("scryvoidmaps", 'show');
 	modifyParentNode("uniqueMapSettingsArray", 'show');
 
-	//Gear equipNoShields
+	//Gear
 	modifyParentNode("equipNoShields", 'show');
 
 	//Spire
@@ -3973,7 +3963,6 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("AutoGenC2", radonoff);
 
 	//Heirlooms
-	//Helium Settings
 	modifyParentNode("heirloomVoidSwap", 'show');
 	modifyParentNode("heirloomSpire", 'show');
 	modifyParentNode("heirloomSwapZoneC3", 'show');
@@ -3983,32 +3972,21 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("heirloomAutoRareToKeep", heirloom);
 	modifyParentNode("heirloomAutoShieldBlacklist", heirloom);
 	modifyParentNode("heirloomAutoStaffBlacklist", heirloom);
-	//Golden Upgrades
-	//Helium Settings
-	//Radon Settings
+	//Golden
+	//None!
 
-	//Nature Upgrades
-	//Helium Settings
+	//Nature
 	modifyParentNode("AutoIce", radonoff);
 	modifyParentNode("autoenlight", radonoff);
 	modifyParentNode("iceEnlight", radonoff);
 	modifyParentNode("iceEnlightDaily", radonoff);
-	//Radon Settings
-	//None!
 
+	//Display
 	modifyParentNode("automateSpireAssault", radonon);
 	modifyParentNode("EnableAFK", radonoff);
 
+	//Test
 	modifyParentNode("testTotalEquipmentCost", 'show');
-}
-
-function HeHrPortalOptions() {
-	var hze = game.stats.highestLevel.valueTotal();
-	var portalOptions = ['Auto Portal Immediately', 'Portal after voids'];
-	if (currSettingUniverse === 1 && hze >= 230) portalOptions.push('Portal after voids (poison)');
-
-	autoTrimpSettings.heliumHrPortal.name = function () { return (portalOptions) }
-	autoTrimpSettings.dailyHeliumHrPortal.name = function () { return (portalOptions) }
 }
 
 function challengeUnlock(challenge, setting, c2) {
@@ -4023,175 +4001,341 @@ function challengeUnlock(challenge, setting, c2) {
 MODULES.u1unlocks = [];
 MODULES.u2unlocks = [];
 
-function heliumChallengesSetting(hzeCheck, forceUpdate) {
-	var hze = game.stats.highestLevel.valueTotal();
+//autoPortal
+function autoPortalChallenges() {
+	var hze;
+	var challenge = [];
+	if (currSettingUniverse === 2) {
+		hze = game.stats.highestRadLevel.valueTotal();
+		challenge = ["Off", "Radon Per Hour"];
+		if (hze >= 40) challenge.push("Bublé");
+		if (hze >= 55) challenge.push("Melt");
+		if (hze >= 70) challenge.push("Quagmire");
+		if (hze >= 85) challenge.push("Quest");
+		if (hze >= 90) challenge.push("Archaeology");
+		if (hze >= 100) challenge.push("Mayhem");
+		if (hze >= 110) challenge.push("Insanity");
+		if (hze >= 135) challenge.push("Nurture");
+		if (hze >= 150) challenge.push("Pandemonium");
+		if (hze >= 155) challenge.push("Alchemy");
+		if (hze >= 175) challenge.push("Hypothermia");
+		if (hze >= 200) challenge.push('Desolation');
+		challenge.push("Custom");
+		if (hze >= 50) challenge.push("Challenge 3");
+	}
+	else {
+		hze = game.stats.highestLevel.valueTotal();
+		challenge = ["Off", "Helium Per Hour"];
+		if (hze >= 40) challenge.push("Balance");
+		if (hze >= 55) challenge.push("Decay");
+		if (game.global.prisonClear >= 1) challenge.push("Electricity");
+		if (hze > 110) challenge.push("Life");
+		if (hze > 125) challenge.push("Crushed");
+		if (hze >= 145) challenge.push("Nom");
+		if (hze >= 165) challenge.push("Toxicity");
+		if (hze >= 180) challenge.push("Watch");
+		if (hze >= 180) challenge.push("Lead");
+		if (hze >= 190) challenge.push("Corrupted");
+		if (hze >= 215) challenge.push("Domination");
+		if (hze >= 460) challenge.push('Frigid');
+		if (hze >= 600) challenge.push("Experience");
+		challenge.push("Custom");
+		if (hze >= 65) challenge.push("Challenge 2");
+	}
+	return challenge;
+}
+//heliumHourChallenge && dailyHeliumHourChallenge
+function heliumHourChallenges(isDaily) {
+	var hze;
+	var challenge = ["None"];
+	if (currSettingUniverse === 2) {
+		hze = game.stats.highestRadLevel.valueTotal();
+		if (hze >= 40) challenge.push("Bublé");
+		if (hze >= 55) challenge.push("Melt");
+		if (hze >= 70) challenge.push("Quagmire");
+		if (hze >= 85) challenge.push("Quest");
+		if (hze >= 90) challenge.push("Archaeology");
+		if (hze >= 110) challenge.push("Insanity");
+		if (hze >= 135) challenge.push("Nurture");
+		if (hze >= 155) challenge.push("Alchemy");
+		if (hze >= 175) challenge.push("Hypothermia");
+		if (isDaily && hze >= 50) challenge.push("Challenge 3");
+	}
+	else {
+		hze = game.stats.highestLevel.valueTotal();
+		if (hze >= 40) challenge.push("Balance");
+		if (hze >= 55) challenge.push("Decay");
+		if (game.global.prisonClear >= 1) challenge.push("Electricity");
+		if (hze > 110) challenge.push("Life");
+		if (hze > 125) challenge.push("Crushed");
+		if (hze >= 145) challenge.push("Nom");
+		if (hze >= 165) challenge.push("Toxicity");
+		if (hze >= 180) challenge.push("Watch");
+		if (hze >= 180) challenge.push("Lead");
+		if (hze >= 190) challenge.push("Corrupted");
+		if (hze >= 215) challenge.push("Domination");
+		if (isDaily && hze >= 65) challenge.push("Challenge 2");
+	}
+	return challenge;
+}
+//heliumC2Challenge && dailyC2Challenge
+function heliumC2Challenges() {
+	var hze;
+	var challenge = ["None"];
+	if (currSettingUniverse === 2) {
+		hze = game.stats.highestRadLevel.valueTotal();
+		if (hze >= 15) challenge.push("Unlucky");
+		if (hze >= 20) challenge.push("Downsize");
+		if (hze >= 25) challenge.push("Transmute");
+		if (hze >= 35) challenge.push("Unbalance");
+		if (hze >= 45) challenge.push("Duel");
+		if (hze >= 60) challenge.push("Trappapalooza");
+		if (hze >= 70) challenge.push("Wither");
+		if (hze >= 85) challenge.push("Quest");
+		if (hze >= 100) challenge.push("Mayhem");
+		if (hze >= 105) challenge.push("Storm");
+		if (hze >= 115) challenge.push("Berserk");
+		if (hze >= 150) challenge.push("Pandemonium");
+		if (hze >= 175) challenge.push("Glass");
+		if (hze >= 200) challenge.push('Desolation');
+		if (hze >= 201) challenge.push("Smithless");
+	}
+	else {
+		hze = game.stats.highestLevel.valueTotal();
+		if (getTotalPerkResource(true) >= 30) challenge.push("Discipline");
+		if (hze >= 25) challenge.push("Metal");
+		if (hze >= 35) challenge.push("Size");
+		if (hze >= 40) challenge.push("Balance");
+		if (hze >= 45) challenge.push("Meditate");
+		if (hze >= 60) challenge.push("Trimp");
+		if (hze >= 70) challenge.push("Trapper");
+		if (game.global.prisonClear >= 1) challenge.push("Electricity");
+		if (hze >= 120) challenge.push("Coordinate");
+		if (hze >= 130) challenge.push("Slow");
+		if (hze >= 145) challenge.push("Nom");
+		if (hze >= 150) challenge.push("Mapology");
+		if (hze >= 165) challenge.push("Toxicity");
+		if (hze >= 180) challenge.push("Watch");
+		if (hze >= 180) challenge.push("Lead");
+		if (hze >= 425) challenge.push("Obliterated");
+		if (game.global.totalSquaredReward >= 4500) challenge.push("Eradicated");
+		if (hze >= 460) challenge.push('Frigid');
+		if (hze >= 600) challenge.push("Experience");
+	}
+	return challenge;
+}
 
-	var challenge = ["Off", "Helium Per Hour"];
+//Checks to see if we should inform the user of any new challenge unlocks.
+function challengeUnlockCheck() {
+	if (game.global.universe === 2) return challengeUnlockCheckU2();
+	var hze = game.stats.highestLevel.valueTotal();
+	var challenge = ["None"];
+
+	if (getTotalPerkResource(true) >= 30) challenge.push("Discipline");
+	if (hze >= 25) challenge.push("Metal");
+	if (hze >= 35) challenge.push("Size");
 	if (hze >= 40) challenge.push("Balance");
+	if (hze >= 45) challenge.push("Meditate");
 	if (hze >= 55) challenge.push("Decay");
+	if (hze >= 60) challenge.push("Trimp");
+	if (hze >= 70) challenge.push("Trapper");
 	if (game.global.prisonClear >= 1) challenge.push("Electricity");
 	if (hze > 110) challenge.push("Life");
+	if (hze >= 120) challenge.push("Coordinate");
 	if (hze > 125) challenge.push("Crushed");
+	if (hze >= 130) challenge.push("Slow");
 	if (hze >= 145) challenge.push("Nom");
+	if (hze >= 150) challenge.push("Mapology");
 	if (hze >= 165) challenge.push("Toxicity");
 	if (hze >= 180) challenge.push("Watch");
 	if (hze >= 180) challenge.push("Lead");
-	if (hze >= 190) challenge.push("Corrupted");
 	if (hze >= 215) challenge.push("Domination");
-	if (hze >= 510) challenge.push('Frigid');
+	if (hze >= 425) challenge.push("Obliterated");
+	if (game.global.totalSquaredReward >= 4500) challenge.push("Eradicated");
+	if (hze >= 460) challenge.push('Frigid');
 	if (hze >= 600) challenge.push("Experience");
-	challenge.push("Custom");
-	if (hze >= 65) challenge.push("Challenge 2");
-
-	if (document.getElementById('autoPortal').children.length !== challenge.length || forceUpdate) {
-		document.getElementById('autoPortal').innerHTML = '';
-		for (var item in challenge) {
-			var option = document.createElement("option");
-			option.value = challenge[item];
-			option.text = challenge[item];
-			document.getElementById('autoPortal').appendChild(option);
-		}
-	}
-
-	var heliumHourChallenges = ["None"];
-	if (hze >= 40) heliumHourChallenges.push("Balance");
-	if (hze >= 55) heliumHourChallenges.push("Decay");
-	if (game.global.prisonClear >= 1) heliumHourChallenges.push("Electricity");
-	if (hze > 110) heliumHourChallenges.push("Life");
-	if (hze > 125) heliumHourChallenges.push("Crushed");
-	if (hze >= 145) heliumHourChallenges.push("Nom");
-	if (hze >= 165) heliumHourChallenges.push("Toxicity");
-	if (hze >= 180) heliumHourChallenges.push("Watch");
-	if (hze >= 180) heliumHourChallenges.push("Lead");
-	if (hze >= 190) heliumHourChallenges.push("Corrupted");
-	if (hze >= 215) heliumHourChallenges.push("Domination");
-	if (hze >= 600) heliumHourChallenges.push("Experience");
-
-	if (((document.getElementById('heliumHourChallenge').children.length || document.getElementById('heliumHourChallenge').children.length)
-		< heliumHourChallenges.length) || forceUpdate) {
-
-		document.getElementById('heliumHourChallenge').innerHTML = '';
-		for (var item in heliumHourChallenges) {
-			var option = document.createElement("option");
-			option.value = heliumHourChallenges[item];
-			option.text = heliumHourChallenges[item];
-			document.getElementById('heliumHourChallenge').appendChild(option);
-		}
-		document.getElementById('dailyHeliumHourChallenge').innerHTML = document.getElementById('heliumHourChallenge').innerHTML;
-
-		if (hze >= 65) {
-			var option = document.createElement("option");
-			option.value = 'Challenge 2';
-			option.text = 'Challenge 2';
-			document.getElementById('dailyHeliumHourChallenge').appendChild(option);
-		}
-	}
-
-	var challenge2 = ["None"];
-	if (getTotalPerkResource(true) >= 30) challenge2.push("Discipline");
-	if (hze >= 25) challenge2.push("Metal");
-	if (hze >= 35) challenge2.push("Size");
-	if (hze >= 40) challenge2.push("Balance");
-	if (hze >= 45) challenge2.push("Meditate");
-	if (hze >= 60) challenge2.push("Trimp");
-	if (hze >= 70) challenge2.push("Trapper");
-	if (game.global.prisonClear >= 1) challenge2.push("Electricity");
-	if (hze >= 120) challenge2.push("Coordinate");
-	if (hze >= 130) challenge2.push("Slow");
-	if (hze >= 145) challenge2.push("Nom");
-	if (hze >= 150) challenge2.push("Mapology");
-	if (hze >= 165) challenge2.push("Toxicity");
-	if (hze >= 180) challenge2.push("Watch");
-	if (hze >= 180) challenge2.push("Lead");
-	if (hze >= 425) challenge2.push("Obliterated");
-	if (game.global.totalSquaredReward >= 4500) challenge2.push("Eradicated");
-
-	if (((document.getElementById('heliumC2Challenge').children.length || document.getElementById('dailyC2Challenge').children.length)
-		< challenge2.length) || forceUpdate) {
-		document.getElementById('heliumC2Challenge').innerHTML = '';
-		document.getElementById('dailyC2Challenge').innerHTML = '';
-		for (var item in challenge2) {
-			var option = document.createElement("option");
-			option.value = challenge2[item];
-			option.text = challenge2[item];
-			document.getElementById('heliumC2Challenge').appendChild(option);
-		}
-
-		document.getElementById('dailyC2Challenge').innerHTML = document.getElementById('heliumC2Challenge').innerHTML;
-	}
-
 	if (Object.keys(MODULES.u1unlocks).length === 0) {
 		MODULES.u1unlocks.challenge = challenge;
-		MODULES.u1unlocks.heliumHourChallenges = heliumHourChallenges;
-		MODULES.u1unlocks.challenge2 = challenge2;
 	}
-
-	if (hzeCheck) {
-		var message = '';
-		if (hze === 40) {
-			message = challengeUnlock('Balance', false, false);
-		} else if (hze === 55) {
-			message = challengeUnlock('Decay', true, false);
-		} else if (hze === 60) {
-			message = "Upon unlocking Warpstations's AT has a new settings tab available called 'Buildings'. Here you will find a variety of settings that will help with this new feature.";
-		} else if (hze === 65) {
-			message = "Due to unlocking Challenge 2's there is now a Challenge 2 option under AutoPortal to be able to auto portal into them. Also you can now access the C2 tab within the AT settings.";
-		} else if (hze === 70) {
-			message = challengeUnlock('Trapper', false, true);
-			message += "<br><br>"
-			message = "Upon unlocking Geneticist's AT has a new settings tab available called 'Jobs'. Here you will find a variety of settings that will help with this new feature.";
-		} else if (game.global.prisonClear >= 1 && !MODULES.u1unlocks.challenge2.includes('Electricity')) {
-			message = challengeUnlock('Electricity', false, true);
-		} else if (hze === 100) {
-			message = "You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.";
-		} else if (hze === 110) {
-			message = challengeUnlock('Life', true, false);
-		} else if (hze === 120) {
-			message = challengeUnlock('Coordinate', false, true);
-		} else if (hze === 125) {
-			message = challengeUnlock('Crushed');
-		} else if (hze === 130) {
-			message = challengeUnlock('Slow', false, true);
-		} else if (hze === 145) {
-			message = challengeUnlock('Nom', false, true);
-		} else if (hze === 150) {
-			message = challengeUnlock('Mapology', true, true);
-		} else if (hze === 165) {
-			message = challengeUnlock('Toxicity', false, true);
-		} else if (hze === 180) {
-			message = challengeUnlock('Watch', false, true);
-		} else if (hze === 180) {
-			message = challengeUnlock('Lead', false, true);
-		} else if (hze === 190) {
-			message = challengeUnlock('Corrupted', false, true);
-		} else if (hze === 215) {
-			message = challengeUnlock('Domination', false, true);
-		} else if (hze === 230) {
-			message = "Upon unlocking the Dimensional Generator building AT has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic.";
-		} else if (hze === 236) {
-			message = "Upon unlocking Nature AT has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.";
-		} else if (hze === 425) {
-			message = challengeUnlock('Obliterated', false, true);
-		} else if (game.global.totalSquaredReward >= 4500 && !MODULES.u1unlocks.challenge2.includes('Eradicated')) {
-			message = challengeUnlock('Eradicated', false, true);
-		} else if (hze === 510) {
-			message = challengeUnlock('Frigid', false, true);
-		} else if (hze === 600) {
-			message = challengeUnlock('Experience', true, true);
-		}
-		if (message !== '') {
-			message += "<br><br><b>To disable this popup, click confirm!<b>";
-			hzeMessage = message;
-			challengePopup = true;
-			tooltip('confirm', null, 'update', hzeMessage, ('challengePopup = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
-		}
+	//Sets up messages when the challenges are unlocked.
+	//Tooltip is sent to users and can't be deleted until they click confirm.
+	var message = '';
+	if (hze === 40) {
+		message = challengeUnlock('Balance', false, false);
+	} else if (hze === 55) {
+		message = challengeUnlock('Decay', true, false);
+	} else if (hze === 60) {
+		message = "Upon unlocking Warpstations's AT has a new settings tab available called 'Buildings'. Here you will find a variety of settings that will help with this new feature.";
+	} else if (hze === 65) {
+		message = "Due to unlocking Challenge 2's there is now a Challenge 2 option under AutoPortal to be able to auto portal into them. Also you can now access the C2 tab within the AT settings.";
+	} else if (hze === 70) {
+		message = challengeUnlock('Trapper', false, true);
+		message += "<br><br>"
+		message = "Upon unlocking Geneticist's AT has a new settings tab available called 'Jobs'. Here you will find a variety of settings that will help with this new feature.";
+	} else if (game.global.prisonClear >= 1 && !MODULES.u1unlocks.challenge.includes('Electricity')) {
+		message = challengeUnlock('Electricity', false, true);
+	} else if (hze === 100) {
+		message = "You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.";
+	} else if (hze === 110) {
+		message = challengeUnlock('Life', true, false);
+	} else if (hze === 120) {
+		message = challengeUnlock('Coordinate', false, true);
+	} else if (hze === 125) {
+		message = challengeUnlock('Crushed');
+	} else if (hze === 130) {
+		message = challengeUnlock('Slow', false, true);
+	} else if (hze === 145) {
+		message = challengeUnlock('Nom', false, true);
+	} else if (hze === 150) {
+		message = challengeUnlock('Mapology', true, true);
+	} else if (hze === 165) {
+		message = challengeUnlock('Toxicity', false, true);
+	} else if (hze === 180) {
+		message = challengeUnlock('Watch', false, true);
+	} else if (hze === 180) {
+		message = challengeUnlock('Lead', false, true);
+	} else if (hze === 190) {
+		message = challengeUnlock('Corrupted', false, true);
+	} else if (hze === 215) {
+		message = challengeUnlock('Domination', false, true);
+	} else if (hze === 230) {
+		message = "Upon unlocking the Dimensional Generator building AT has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic.";
+	} else if (hze === 236) {
+		message = "Upon unlocking Nature AT has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.";
+	} else if (hze === 425) {
+		message = challengeUnlock('Obliterated', false, true);
+	} else if (game.global.totalSquaredReward >= 4500 && !MODULES.u1unlocks.challenge.includes('Eradicated')) {
+		message = challengeUnlock('Eradicated', false, true);
+	} else if (hze === 460) {
+		message = challengeUnlock('Frigid', false, true);
+	} else if (hze === 600) {
+		message = challengeUnlock('Experience', true, true);
+	}
+	if (message !== '') {
+		message += "<br><br><b>To disable this popup, click confirm!<b>";
+		hzeMessage = message;
+		challengePopup = true;
+		tooltip('confirm', null, 'update', hzeMessage, ('challengePopup = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 	}
 
 	MODULES.u1unlocks.challenge = challenge;
-	MODULES.u1unlocks.heliumHourChallenges = heliumHourChallenges;
-	MODULES.u1unlocks.challenge2 = challenge2;
 }
 
+//Checks to see if we should inform the user of any new challenge unlocks in U2.
+function challengeUnlockCheckU2() {
+	var hze = game.stats.highestRadLevel.valueTotal();
+	var challenges = [];
+
+	var challenges = ["None"];
+	if (hze >= 15) challenges.push("Unlucky");
+	if (hze >= 20) challenges.push("Downsize");
+	if (hze >= 25) challenges.push("Transmute");
+	if (hze >= 35) challenges.push("Unbalance");
+	if (hze >= 40) challenges.push("Bublé");
+	if (hze >= 45) challenges.push("Duel");
+	if (hze >= 55) challenges.push("Melt");
+	if (hze >= 60) challenges.push("Trappapalooza");
+	if (hze >= 70) challenges.push("Wither");
+	if (hze >= 70) challenges.push("Quagmire");
+	if (hze >= 85) challenges.push("Quest");
+	if (hze >= 90) challenges.push("Archaeology");
+	if (hze >= 100) challenges.push("Mayhem");
+	if (hze >= 105) challenges.push("Storm");
+	if (hze >= 110) challenges.push("Insanity");
+	if (hze >= 115) challenges.push("Berserk");
+	if (hze >= 135) challenges.push("Nurture");
+	if (hze >= 150) challenges.push("Pandemonium");
+	if (hze >= 155) challenges.push("Alchemy");
+	if (hze >= 175) challenges.push("Hypothermia");
+	if (hze >= 175) challenges.push("Glass");
+	if (hze >= 200) challenges.push('Desolation');
+	if (hze >= 201) challenges.push("Smithless");
+
+	if (Object.keys(MODULES.u2unlocks).length === 0) {
+		MODULES.u2unlocks.challenge = challenges;
+	}
+
+	var message = '';
+	//Transmute
+	if (hze === 25) {
+		message = "You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.";
+	} //Dailies
+	else if (hze === 30) {
+		message = "You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.";
+	} //Unblance
+	else if (hze === 35) {
+		message = challengeUnlock('Unbalance', true, true);
+	} //Bublé
+	else if (hze === 40) {
+		message = challengeUnlock('Bublé');
+	} //C3, Melt, Worshippers
+	else if (hze === 50) {
+		//C3
+		message = "Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them. Also you can now access the C3 tab within the AT settings.";
+		//Melt
+		message += "<br><br>"
+		message += challengeUnlock('Melt');
+		//Worshippers
+		message += "<br><br>"
+		message += "You can now use the Worshipper Farm setting. This can be found in the AT 'Maps' tab.";
+	} //Trappapalooza
+	else if (hze === 60) {
+		message = challengeUnlock('Trappapalooza', true, true);
+	} //Quagmire
+	else if (hze === 70) {
+		message = challengeUnlock('Quagmire', true, false);
+		//Wither
+		message += challengeUnlock('Wither', true, true);
+	} //Quest
+	else if (hze === 85) {
+		message = challengeUnlock('Quest', true, true);
+	} //Archaeology
+	else if (hze === 90) {
+		message = challengeUnlock('Archaeology', true, false);
+	} //Mayhem
+	else if (hze === 100) {
+		message = challengeUnlock('Mayhem', true, true);
+	} //Storm
+	else if (hze === 105) {
+		message = challengeUnlock('Storm', true, true);
+	} //Insanity
+	else if (hze === 110) {
+		message = challengeUnlock('Insanity', true, false);
+	} //Berserk
+	else if (hze === 115) {
+		message = challengeUnlock('Berserk');
+	} //Nurture
+	else if (hze === 135) {
+		message = challengeUnlock('Nurture', false, false) + " There is also setting for Laboratory's that has been added to the AutoStructure setting.";
+	} //Pandemonium
+	else if (hze === 150) {
+		message = challengeUnlock('Pandemonium', true, true);
+	} //Alchemy
+	else if (hze === 155) {
+		message = challengeUnlock('Alchemy', true, false);
+	} //Hypothermia
+	else if (hze === 175) {
+		message = challengeUnlock('Hypothermia', true, false);
+		//Glass
+		message += "<br><br>"
+		message += challengeUnlock('Glass', true, true);
+	} //Desolation
+	else if (hze === 200) {
+		message = challengeUnlock('Desolation', true, true);
+	} //Smithless
+	else if (hze === 201) {
+		message = challengeUnlock('Smithless', true, true);
+	}
+	if (message !== '') {
+		message += "<br><br><b>To disable this popup, click confirm!<b>";
+		hzeMessage = message;
+		challengePopup = true;
+		tooltip('confirm', null, 'update', hzeMessage, ('challengePopup = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+	}
+	MODULES.u2unlocks.challenge = challenges;
+}
+
+//Remakes challenge/setting popup if the user doesn't click confirm and it's not showing.
 function remakeTooltip() {
 	if (!challengePopup) {
 		delete hzeMessage
@@ -4202,264 +4346,37 @@ function remakeTooltip() {
 	}
 }
 
-function radonChallengesSetting(hzeCheck, forceUpdate) {
-	var hze = game.stats.highestRadLevel.valueTotal();
-	var challenge = ["Off", "Radon Per Hour"];
-	if (hze >= 40) challenge.push("Bublé");
-	if (hze >= 55) challenge.push("Melt");
-	if (hze >= 70) challenge.push("Quagmire");
-	if (hze >= 85) challenge.push("Quest");
-	if (hze >= 90) challenge.push("Archaeology");
-	if (hze >= 110) challenge.push("Insanity");
-	if (hze >= 135) challenge.push("Nurture");
-	if (hze >= 155) challenge.push("Alchemy");
-	if (hze >= 175) challenge.push("Hypothermia");
-	challenge.push("Custom");
-	if (hze >= 50) challenge.push("Challenge 3");
-
-	if (document.getElementById('autoPortal').children.length !== challenge.length || forceUpdate) {
-		document.getElementById('autoPortal').innerHTML = '';
-		for (var item in challenge) {
-			var option = document.createElement("option");
-			option.value = challenge[item];
-			option.text = challenge[item];
-			document.getElementById('autoPortal').appendChild(option);
-		}
-	}
-
-	var radonHourChallenges = ["None"];
-	if (hze >= 40) radonHourChallenges.push("Bublé");
-	if (hze >= 55) radonHourChallenges.push("Melt");
-	if (hze >= 70) radonHourChallenges.push("Quagmire");
-	if (hze >= 85) radonHourChallenges.push("Quest");
-	if (hze >= 90) radonHourChallenges.push("Archaeology");
-	if (hze >= 110) radonHourChallenges.push("Insanity");
-	if (hze >= 135) radonHourChallenges.push("Nurture");
-	if (hze >= 155) radonHourChallenges.push("Alchemy");
-	if (hze >= 175) radonHourChallenges.push("Hypothermia");
-
-	if (((document.getElementById('heliumHourChallenge').children.length || document.getElementById('heliumHourChallenge').children.length)
-		< radonHourChallenges.length) || forceUpdate) {
-		document.getElementById('heliumHourChallenge').innerHTML = '';
-
-		for (var item in radonHourChallenges) {
-			var option = document.createElement("option");
-			option.value = radonHourChallenges[item];
-			option.text = radonHourChallenges[item];
-			document.getElementById('heliumHourChallenge').appendChild(option);
-		}
-		document.getElementById('dailyHeliumHourChallenge').innerHTML = document.getElementById('heliumHourChallenge').innerHTML;
-
-		if (hze >= 50) {
-			var option = document.createElement("option");
-			option.value = 'Challenge 3';
-			option.text = 'Challenge 3';
-			document.getElementById('dailyHeliumHourChallenge').appendChild(option);
-		}
-	}
-
-	var challenge3 = ["None"];
-	if (hze >= 15) challenge3.push("Unlucky");
-	if (hze >= 20) challenge3.push("Downsize");
-	if (hze >= 25) challenge3.push("Transmute");
-	if (hze >= 35) challenge3.push("Unbalance");
-	if (hze >= 45) challenge3.push("Duel");
-	if (hze >= 60) challenge3.push("Trappapalooza");
-	if (hze >= 70) challenge3.push("Wither");
-	if (hze >= 85) challenge3.push("Quest");
-	if (hze >= 100) challenge3.push("Mayhem");
-	if (hze >= 105) challenge3.push("Storm");
-	if (hze >= 115) challenge3.push("Berserk");
-	if (hze >= 150) challenge3.push("Pandemonium");
-	if (hze >= 175) challenge3.push("Glass");
-	if (hze >= 200) challenge3.push('Desolation');
-	if (hze >= 201) challenge3.push("Smithless");
-
-	if (
-		((document.getElementById('heliumC2Challenge').children.length || document.getElementById('dailyC2Challenge').children.length)
-			< challenge3.length) || forceUpdate) {
-		document.getElementById('heliumC2Challenge').innerHTML = '';
-		for (var item in challenge3) {
-			var option = document.createElement("option");
-			option.value = challenge3[item];
-			option.text = challenge3[item];
-			document.getElementById('heliumC2Challenge').appendChild(option);
-		}
-		document.getElementById('dailyC2Challenge').innerHTML = document.getElementById('heliumC2Challenge').innerHTML;
-	}
-
-	if (Object.keys(MODULES.u2unlocks).length === 0) {
-		MODULES.u2unlocks.challenge = challenge;
-		MODULES.u2unlocks.radonHourChallenges = radonHourChallenges;
-		MODULES.u2unlocks.challenge3 = challenge3;
-	}
-
-	if (hzeCheck) {
-		var message = '';
-		//Transmute
-		if (hze === 25) {
-			message = "You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.";
-		} //Dailies
-		else if (hze === 30) {
-			message = "You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.";
-		} //Unblance
-		else if (hze === 35) {
-			message = challengeUnlock('Unbalance', true, true);
-		} //Bublé
-		else if (hze === 40) {
-			message = challengeUnlock('Bublé');
-		} //C3, Melt, Worshippers
-		else if (hze === 50) {
-			//C3
-			message = "Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them. Also you can now access the C3 tab within the AT settings.";
-			//Melt
-			message += "<br><br>"
-			message += challengeUnlock('Melt');
-			//Worshippers
-			message += "<br><br>"
-			message += "You can now use the Worshipper Farm setting. This can be found in the AT 'Maps' tab.";
-		} //Trappapalooza
-		else if (hze === 60) {
-			message = challengeUnlock('Trappapalooza', true, true);
-		} //Quagmire
-		else if (hze === 70) {
-			message = challengeUnlock('Quagmire', true, false);
-			//Wither
-			message += challengeUnlock('Wither', true, true);
-		} //Quest
-		else if (hze === 85) {
-			message = challengeUnlock('Quest', true, true);
-		} //Archaeology
-		else if (hze === 90) {
-			message = challengeUnlock('Archaeology', true, false);
-		} //Mayhem
-		else if (hze === 100) {
-			message = challengeUnlock('Mayhem', true, true);
-		} //Storm
-		else if (hze === 105) {
-			message = challengeUnlock('Storm', true, true);
-		} //Insanity
-		else if (hze === 110) {
-			message = challengeUnlock('Insanity', true, false);
-		} //Berserk
-		else if (hze === 115) {
-			message = challengeUnlock('Berserk');
-		} //Nurture
-		else if (hze === 135) {
-			message = challengeUnlock('Nurture', false, false) + " There is also setting for Laboratory's that has been added to AT's AutoStructure setting.";
-		} //Pandemonium
-		else if (hze === 150) {
-			message = challengeUnlock('Pandemonium', true, true);
-		} //Alchemy
-		else if (hze === 155) {
-			message = challengeUnlock('Alchemy', true, false);
-		} //Hypothermia
-		else if (hze === 175) {
-			message = challengeUnlock('Hypothermia', true, false);
-			//Glass
-			message += "<br><br>"
-			message += challengeUnlock('Glass', true, true);
-		} //Desolation
-		else if (hze === 200) {
-			message = challengeUnlock('Desolation', true, true);
-		} //Smithless
-		else if (hze === 201) {
-			message = challengeUnlock('Smithless', true, true);
-		}
-		if (message !== '') {
-			message += "<br><br><b>To disable this popup, click confirm!<b>";
-			hzeMessage = message;
-			challengePopup = true;
-			tooltip('confirm', null, 'update', hzeMessage, ('challengePopup = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
-		}
-	}
-	MODULES.u2unlocks.challenge = challenge;
-	MODULES.u2unlocks.radonHourChallenges = radonHourChallenges;
-	MODULES.u2unlocks.challenge3 = challenge3;
-}
-
 //It sets the options for the heirloom auto selecter based on the highest zone ever reached, and the current universe.
-function autoHeirloomOptions() {
-	var hze;
-	var heirloomTiersAvailable;
-	if (currSettingUniverse === 2) {
-		hze = game.stats.highestRadLevel.valueTotal();
-		heirloomTiersAvailable = ['Plagued', 'Radiating'];
-		if (hze >= 100) heirloomTiersAvailable.push('Hazardous');
-		if (hze >= 200) heirloomTiersAvailable.push('Enigmatic');
-	}
-	else {
-		hze = game.stats.highestLevel.valueTotal();
-		heirloomTiersAvailable = ['Common', 'Rare'];
-		if (hze >= 60) heirloomTiersAvailable.push('Epic');
-		if (hze >= 100) heirloomTiersAvailable.push('Legendary');
-		if (hze >= 125) heirloomTiersAvailable.push('Magnificent');
-		if (hze >= 146) heirloomTiersAvailable.push('Ethereal');
-		if (hze >= 230) heirloomTiersAvailable.push('Magmatic');
-		if (hze >= 500) heirloomTiersAvailable.push('Plagued');
-	}
-
-	if (document.getElementById('heirloomAutoRareToKeep').children.length !== heirloomTiersAvailable.length) {
-		document.getElementById('heirloomAutoRareToKeep').innerHTML = '';
-		for (var item in heirloomTiersAvailable) {
-			var option = document.createElement("option");
-			option.value = heirloomTiersAvailable[item];
-			option.text = heirloomTiersAvailable[item];
-			document.getElementById('heirloomAutoRareToKeep').appendChild(option);
-		}
-	}
-
+function autoHeirloomOptions(heirloomType) {
+	if (!atFinishedLoading) return;
 	var heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-	var heirloomSlots = [1, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7];
 	var raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse));
-	var settingsToChange = heirloomSlots[raretokeep];
+	var heirloomModsArray = [];
 
-	var shieldMods = ["Empty"];
+	if (heirloomType === 'shield') {
+		heirloomModsArray = ["Empty"];
 
-	for (var item in game.heirlooms['Shield']) {
-		var heirloom = game.heirlooms['Shield'][item];
-		if (item == "empty") continue;
-		if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
-		if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
-		shieldMods.push(heirloomMods['Shield'][item]);
+		for (var item in game.heirlooms['Shield']) {
+			var heirloom = game.heirlooms['Shield'][item];
+			if (item == "empty") continue;
+			if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
+			if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
+			heirloomModsArray.push(heirloomMods['Shield'][item]);
+		}
+		return heirloomModsArray;
 	}
 
-	document.getElementById('heirloomAutoShieldMod1').innerHTML = '';
-	for (var item in shieldMods) {
-		var option = document.createElement("option");
-		option.value = shieldMods[item];
-		option.text = shieldMods[item];
-		document.getElementById('heirloomAutoShieldMod1').appendChild(option);
-	}
+	if (heirloomType === 'staff') {
+		heirloomModsArray = ["Empty"];
 
-	for (var x = 1; x <= settingsToChange; x++) {
-		if (x > 1) document.getElementById('heirloomAutoShieldMod' + x).innerHTML = document.getElementById('heirloomAutoShieldMod1').innerHTML;
-		if (getPageSetting('heirloomAutoShieldMod' + x, currSettingUniverse) !== "Empty" && shieldMods.indexOf(getPageSetting('heirloomAutoShieldMod' + x, currSettingUniverse)) === -1)
-			setPageSetting('heirloomAutoShieldMod' + x, 'Empty', currSettingUniverse);
-	}
-
-	var staffMods = ["Empty"];
-
-	for (var item in game.heirlooms['Staff']) {
-		var heirloom = game.heirlooms['Staff'][item];
-		if (item == "empty") continue;
-		if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
-		if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
-		staffMods.push(heirloomMods['Staff'][item]);
-	}
-
-	document.getElementById('heirloomAutoStaffMod1').innerHTML = '';
-	for (var item in staffMods) {
-		var option = document.createElement("option");
-		option.value = staffMods[item];
-		option.text = staffMods[item];
-		document.getElementById('heirloomAutoStaffMod1').appendChild(option);
-	}
-
-	for (var x = 1; x <= settingsToChange; x++) {
-		if (x > 1) document.getElementById('heirloomAutoStaffMod' + x).innerHTML = document.getElementById('heirloomAutoStaffMod1').innerHTML;
-		if (getPageSetting('heirloomAutoStaffMod' + x, currSettingUniverse) !== "Empty" && staffMods.indexOf(getPageSetting('heirloomAutoStaffMod' + x, currSettingUniverse)) === -1)
-			setPageSetting('heirloomAutoStaffMod' + x, 'Empty', currSettingUniverse);
+		for (var item in game.heirlooms['Staff']) {
+			var heirloom = game.heirlooms['Staff'][item];
+			if (item == "empty") continue;
+			if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
+			if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
+			heirloomModsArray.push(heirloomMods['Staff'][item]);
+		}
+		return heirloomModsArray;
 	}
 }
 
@@ -4700,17 +4617,18 @@ function updateCustomButtons(initialLoad) {
 
 	//Loops through all the AT settings so we can properly setup the UI.
 	for (var setting in autoTrimpSettings) {
+		if (setting === 'ATversion') continue;
 		var item = autoTrimpSettings[setting];
 		//Looks for the settings that don't exist anymore and deletes them.
 		if (item === null || typeof item.id === 'undefined') {
 			//Skip ATversion. Deletes old settings.
-			if (setting !== 'ATversion' && atFinishedLoading) delete autoTrimpSettings[setting];
+			if (atFinishedLoading) delete autoTrimpSettings[setting];
 			continue;
 		}
 		var settingUniverse = item.universe;
 		//Looping the deletion process again for old settings that got loaded but don't have the universe property.
 		if (!Array.isArray(settingUniverse)) {
-			if (setting !== 'ATversion' && atFinishedLoading) delete autoTrimpSettings[setting];
+			if (atFinishedLoading) delete autoTrimpSettings[setting];
 			continue;
 		}
 		//Skips ever looking at settings with the mazDefaultArray type.
@@ -4729,14 +4647,6 @@ function updateCustomButtons(initialLoad) {
 		//Looks at all the settings that are from the current universe and sets them up. Will set text, tooltips.	
 		//Only happens when initialLoad is called which should only happen the 1st time AT loads or radonsettings is toggled.
 		if (initialLoad) {
-			//Update portal challenges
-			if (radonon) radonChallengesSetting(false, true);
-			else heliumChallengesSetting(false, true);
-			//Adjust which heirloom tiers are showing for auto heirlooms
-			autoHeirloomOptions();
-			//Update autoPortal options
-			HeHrPortalOptions();
-
 			var elem = document.getElementById(item.id);
 			if (item.type === 'boolean') {
 				var itemEnabled = item.enabled;
@@ -4778,7 +4688,19 @@ function updateCustomButtons(initialLoad) {
 			else if (item.type !== 'dropdown') {
 				elem.innerHTML = item.name();
 			}
-
+			else if (item.type === 'dropdown') {
+				var itemSelected = item.selected;
+				if (radonon && settingUniverse.indexOf(0) === -1) itemSelected = item['selected' + 'U2'];
+				elem.innerHTML = '';
+				var listItems = item.list();
+				for (var dropdown in listItems) {
+					var option = document.createElement("option");
+					option.value = listItems[dropdown];
+					option.text = listItems[dropdown];
+					elem.appendChild(option);
+				}
+				elem.value = itemSelected
+			}
 			if (item.type === 'multitoggle') {
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name().join(' / ') + '\", \"customText\", event, \"' + item.description() + '\")');
 			}
@@ -4789,13 +4711,6 @@ function updateCustomButtons(initialLoad) {
 				if (item.type === 'textValue') elem.setAttribute("onclick", `autoSetTextToolTip("${item.id}", "${item.name()}", ${item.type == 'multiTextValue'})`);
 			}
 		}
-	}
-
-	document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + getPageSetting('autoMaps'));
-
-	if (document.getElementById('Prestige').selectedIndex > 11 && !game.global.slowDone) {
-		document.getElementById('Prestige').selectedIndex = 11;
-		autoTrimpSettings.Prestige.selected = "Bestplate";
 	}
 
 	//Sets up if the tabs will be visible or not.
@@ -4844,6 +4759,7 @@ function updateCustomButtons(initialLoad) {
 			document.getElementById("tabTest").style.display = getPageSetting('gameUser') !== 'SadAugust' && getPageSetting('gameUser') !== 'Kyotie' && getPageSetting('gameUser') !== 'Test' ? "none" : "";
 		}
 	}
+	modifyParentNodeUniverseSwap();
 }
 
 function settingUniverse(setting) {
@@ -4856,11 +4772,84 @@ function settingUniverse(setting) {
 	if (setting === 'autoJobs') {
 		return getPageSetting('jobType', currPortalUniverse);
 	}
+	if (setting === 'autoMaps') {
+		return getPageSetting('autoMaps', currPortalUniverse);
+	}
 }
 
+//Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
 function setupATButtons() {
-	//AutoJobs
+	//Setup AutoTrimps settings button
+	var settingBtnSrch = document.getElementsByClassName("btn btn-default");
+	for (var i = 0; i < settingBtnSrch.length; i++) {
+		if (settingBtnSrch[i].getAttribute("onclick") === "toggleSettingsMenu()")
+			settingBtnSrch[i].setAttribute("onclick", "autoPlusSettingsMenu()");
+	}
+	var newItem = document.createElement("TD");
+	newItem.appendChild(document.createTextNode("AutoTrimps"));
+	newItem.setAttribute("class", "btn btn-default");
+	newItem.setAttribute("onclick", "autoToggle()");
+	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
+	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
 
+	//Identifying fight button column now so we can add to it later.
+	var fightButtonCol = document.getElementById("battleBtnsColumn");
+
+	//Auto Maps button
+	var autoMapsContainer = document.createElement("DIV");
+	autoMapsContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1vw; height: 1.5em; text-align: center; border-radius: 4px");
+	autoMapsContainer.setAttribute("id", "autoMapBtn");
+	autoMapsContainer.setAttribute("class", "noselect settingsBtn settingBtn" + settingUniverse('autoMaps'))
+	autoMapsContainer.setAttribute("onClick", "settingChanged('autoMapsToggle'm true);");
+	autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Auto Maps\", \"customText\", event, autoTrimpSettings.autoMaps.description(true))');
+	autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
+	autoMapsContainer.innerHTML = 'Auto Maps';
+	fightButtonCol.appendChild(autoMapsContainer);
+
+	//Status textbox
+	var autoMapsStatusContainer = document.createElement("DIV");
+	autoMapsStatusContainer.setAttribute("style", "display: block; font-size: 1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
+	autoMapsStatusContainer.setAttribute("onmouseout", 'tooltip("hide")');
+	var autoMapsStatusText = document.createElement("SPAN");
+	autoMapsStatusText.id = 'autoMapStatus';
+	autoMapsStatusContainer.appendChild(autoMapsStatusText);
+	fightButtonCol.appendChild(autoMapsStatusContainer);
+
+
+	//Helium/Hr Info textbox
+	var resourcePerHourContainer = document.createElement("DIV");
+	resourcePerHourContainer.setAttribute("style", "display: block; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
+	resourcePerHourContainer.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
+	resourcePerHourContainer.setAttribute("onmouseout", 'tooltip("hide")');
+	var resourcePerHourButton = document.createElement("SPAN");
+	resourcePerHourButton.id = 'hiderStatus';
+	resourcePerHourContainer.appendChild(resourcePerHourButton);
+	fightButtonCol.appendChild(resourcePerHourContainer);
+
+	//Additional AT Info textbox
+	var voidMapContainer = document.createElement("DIV");
+	voidMapContainer.setAttribute("style", "display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);");
+	var voidMapText = document.createElement("SPAN");
+	voidMapContainer.setAttribute("onmouseover", 'tooltip(\"Additional AT Info\", \"customText\", event, \"<b>Void</b>: The progress you have towards a free void map from the \'Void Maps\' permanent bone upgrade.<br>\
+	<b>Auto Level</b>: The level that AT recommends using whilst farming.<br>\
+	<b>B</b>: The amount of time your trimps have been breeding.<br>\
+	<b>T</b>: Your current tenacity time.\")');
+	voidMapText.setAttribute("onmouseout", 'tooltip("hide")');
+	voidMapText.id = 'additionalInfo';
+	voidMapContainer.appendChild(voidMapText);
+	var trimpsButtonCol = document.getElementById("trimps");
+	trimpsButtonCol.appendChild(voidMapContainer);
+
+	var $portalTimer = document.getElementById('portalTimer');
+	$portalTimer.setAttribute('onclick', 'toggleSetting(\'pauseGame\')');
+	$portalTimer.setAttribute('style', 'cursor: default');
+
+	var btns = document.getElementsByClassName("fightBtn");
+	for (var x = 0; x < btns.length; x++) {
+		btns[x].style.padding = "0.01vw 0.01vw";
+	}
+
+	//AutoJobs
 	//Changing Default Widths for Job buttons
 	document.getElementById('fireBtn').parentElement.style.width = '14.2%'
 	document.getElementById('fireBtn').parentElement.style.paddingRight = '2px'
@@ -4999,39 +4988,6 @@ function getDailyHeHrStats() {
 			tooltip = "<b>After Daily " + resourceHr + "\/Hr: " + helium.toFixed(3) + "%</b>"
 	}
 	return tooltip;
-}
-
-function toggleAutoMaps() {
-
-	if (getPageSetting('autoMaps'))
-		setPageSetting('autoMaps', 0)
-	else
-		setPageSetting('autoMaps', 1)
-
-	document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + getPageSetting('autoMaps'));
-
-	saveSettings();
-}
-
-function toggleHeHr(update) {
-	if (update) {
-		if (getPageSetting('displayHeHr'))
-			document.getElementById('hiderStatus').parentNode.style.display = 'block';
-		else
-			document.getElementById('hiderStatus').parentNode.style.display = 'none';
-		return
-	}
-	if (getPageSetting('displayHeHr')) {
-		setPageSetting('displayHeHr', 0);
-		turnOff('hiderStatus');
-		document.getElementById('hiderStatus').parentNode.style.display = 'none';
-	}
-	else {
-		setPageSetting('displayHeHr', 1);
-		turnOn('hiderStatus');
-		document.getElementById('hiderStatus').parentNode.style.display = 'block';
-	}
-	saveSettings();
 }
 
 function updateATVersion() {

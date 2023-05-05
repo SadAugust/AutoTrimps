@@ -97,6 +97,19 @@ ATscriptLoad(MODULES_AT.modulepath, 'utils');
 
 function initializeAutoTrimps() {
 	loadPageVariables();
+	// Load jQuery
+	// Immediately-invoked function expression
+	(function () {
+		// Load the script
+		const script = document.createElement("script");
+		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+		script.type = 'text/javascript';
+		script.addEventListener('load', () => {
+			console.log(`jQuery ${$.fn.jquery} has been loaded successfully!`);
+			// use jQuery below
+		});
+		document.head.appendChild(script);
+	})();
 	ATscriptLoad('', 'SettingsGUI');
 	var script = document.createElement('script');
 	script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
@@ -164,21 +177,9 @@ function swapBaseSettings() {
 function delayStartAgain() {
 
 	swapBaseSettings();
+	setupATButtons();
 
 	atFinishedLoading = true;
-	// Load jQuery
-	// Immediately-invoked function expression
-	(function () {
-		// Load the script
-		const script = document.createElement("script");
-		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
-		script.type = 'text/javascript';
-		script.addEventListener('load', () => {
-			console.log(`jQuery ${$.fn.jquery} has been loaded successfully!`);
-			// use jQuery below
-		});
-		document.head.appendChild(script);
-	})();
 
 	hdStats = new HDStats();
 	mapSettings = new farmingDecision();
@@ -187,7 +188,6 @@ function delayStartAgain() {
 	game.global.autotrimps = true;
 	setInterval(mainLoop, 100);
 	setInterval(guiLoop, 100 * 10);
-	setupATButtons();
 	updateCustomButtons(true);
 	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
 }
@@ -249,17 +249,14 @@ function mainLoop() {
 	}
 	mapSettings = farmingDecision();
 
-	if (!usingRealTimeOffline) {
-		if (document.getElementById('freeVoidMap') !== null) {
-			var freeVoidsText = 'Void: ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10');
-			var autoLevelText = " | Auto Level: " + hdStats.autoLevel;
-			var breedTimerText = game.global.universe === 1 ? " | B: " + ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) + 's' : "";
-			var tenacityText = game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 ? " | T: " + (Math.floor(game.portal.Tenacity.getTime()) + "m") : "";
+	//Void, AutoLevel, Breed Timer, Tenacity information
+	if (!usingRealTimeOffline && document.getElementById('additionalInfo') !== null) {
+		var freeVoidsText = 'Void: ' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10');
+		var autoLevelText = " | Auto Level: " + hdStats.autoLevel;
+		var breedTimerText = game.global.universe === 1 ? " | B: " + ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) + 's' : "";
+		var tenacityText = game.global.universe === 2 && game.portal.Tenacity.radLevel > 0 ? " | T: " + (Math.floor(game.portal.Tenacity.getTime()) + "m") : "";
 
-			document.getElementById('freeVoidMap').innerHTML = freeVoidsText + autoLevelText + breedTimerText + tenacityText;
-			document.getElementById('freeVoidMap').parentNode.style.display = 'block';
-			document.getElementById('freeVoidMap').style.display = 'block';
-		}
+		document.getElementById('additionalInfo').innerHTML = freeVoidsText + autoLevelText + breedTimerText + tenacityText;
 	}
 
 	mainCleanup()
@@ -404,10 +401,8 @@ function mainCleanup() {
 	aWholeNewHZE = lastHZE != currentHZE;
 
 	if (aWholeNewHZE) {
-		if (game.global.universe === 2) radonChallengesSetting(true);
-		else heliumChallengesSetting(true);
-		HeHrPortalOptions();
-		autoHeirloomOptions();
+		challengeUnlockCheck();
+		updateCustomButtons(true);
 	}
 
 	if (currentworld === 1 && aWholeNewWorld) {
@@ -425,7 +420,6 @@ function mainCleanup() {
 	}
 
 	if (aWholeNewWorld || currentworld === 1) {
-		toggleHeHr(true);
 	}
 
 	if (getPageSetting('autoEggs', 1))

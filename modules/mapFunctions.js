@@ -392,6 +392,7 @@ function voidMaps() {
 		if (settingIndex === null && module.voidHDIndex === Infinity) {
 			var portalSetting = challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('heliumHrPortal');
 			if (portalSetting === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') return farmingDetails;
+			if (dailyAddition.skipZone) return farmingDetails;
 
 			rVMSettings = {
 				cell: 1,
@@ -1044,7 +1045,7 @@ function worshipperFarm() {
 
 	if (settingIndex >= 0) {
 		var rWFSettings = baseSettings[settingIndex];
-		rWFGoal = rWFSettings.worshipper;
+		var rWFGoal = rWFSettings.worshipper;
 		var rWFMapLevel = rWFSettings.level;
 		var rWFJobRatio = rWFSettings.jobratio;
 		var rWFSpecial = getAvailableSpecials('lsc', true);
@@ -2892,6 +2893,7 @@ function settingShouldRun(currSetting, world, zoneReduction) {
 	//If world input is greater than current zone then skips
 	if (game.global.world < world) return false;
 	//Skips if repeat every is set to 0 and the world is greater than the current world.
+
 	if (game.global.world > world && currSetting.repeatevery === 0) return false;
 	//Skips if repeat every is set to 0 and the world is greater than the current world.
 	if (typeof currSetting.repeatevery === 'undefined' && typeof currSetting.repeat === 'undefined' && typeof currSetting.hdType === 'undefined' && typeof currSetting.voidHDRatio === 'undefined' && game.global.world > world) return false;
@@ -2901,8 +2903,7 @@ function settingShouldRun(currSetting, world, zoneReduction) {
 	//Skips if past designated end zone
 	if (game.global.world > currSetting.endzone + zoneReduction) return false;
 	//Skips if past designated max void zone
-	if (game.global.world > (currSetting.maxvoidzone + zoneReduction)) return false;
-
+	if (typeof currSetting.maxvoidzone !== 'undefined' && game.global.world > (currSetting.maxvoidzone + zoneReduction)) return false;
 	//Check to see if the cell is liquified and if so we can replace the cell condition with it
 	var liquified = game.global.lastClearedCell === -1 && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name == "Liquimp";
 	//If cell input is greater than current zone then skips

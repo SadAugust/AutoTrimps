@@ -460,37 +460,6 @@ function ImportExportTooltip(what, event, download) {
 		titleText = "Generic message";
 		tooltipText = event;
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 50%' onclick='cancelTooltip();'>OK</div></div>";
-	} else if (what == 'Spreadsheet') {
-
-		var saveName = 'AT Settings P' + game.global.totalPortals;
-		if (game.global.universe == 2 || game.global.totalRadPortals > 0) {
-			saveName += " " + game.global.totalRadPortals + " U" + game.global.universe;
-		}
-		tooltipText = "Will print a list of your current C3, SA and other relevant settings to paste into a spreadsheet. Only relevant to a select few. <br/><br/><textarea id='exportArea' style='width: 100%' rows='5'>" + spreadsheetDownload() + "</textarea>";
-		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip()'>Got it</div>";
-		if (document.queryCommandSupported('copy')) {
-			costText += "<div id='clipBoardBtn' class='btn btn-success'>Copy to Clipboard</div>";
-			ondisplay = function () {
-				document.getElementById('exportArea').select();
-				document.getElementById('clipBoardBtn').addEventListener('click', function (event) {
-					document.getElementById('exportArea').select();
-					try {
-						document.execCommand('copy');
-					} catch (err) {
-						document.getElementById('clipBoardBtn').innerHTML = "Error, not copied";
-					}
-				});
-			};
-		} else {
-			ondisplay = function () {
-				document.getElementById('exportArea').select();
-			};
-		}
-		costText += "<a id='downloadLink' target='_blank' download='" + saveName + ".txt', href=";
-		costText += 'data:text/plain,' + encodeURIComponent(spreadsheetDownload());
-		costText += " ><div class='btn btn-danger' id='downloadBtn'>Download as File</div></a>";
-		costText += "</div>";
-
 	}
 	game.global.lockTooltip = true;
 	$elem.style.left = "33.75%";

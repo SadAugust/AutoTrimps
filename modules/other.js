@@ -172,10 +172,7 @@ function remainingHealth(forceAngelic, mapType) {
 		soldierHealthMax *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100);
 	}
 
-
 	if (game.global.universe == 2) {
-
-
 		var maxLayers = Fluffy.isRewardActive('shieldlayer');
 		var layers = maxLayers - game.global.shieldLayersUsed;
 
