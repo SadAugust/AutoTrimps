@@ -1675,7 +1675,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will farm until you can survive this amount of attacks.</p>";
 				description += "<p><b>Your Hits Survived can be seen in the Auto Maps status tooltip.</b></p>";
-				description += "<p>Will use the job ratio settings that have been set in the <b>Map Bonus</b> setting. If that hasn't been setup then it will use a ratio of <b>0/1/3</b></p>";
+				description += "<p>Will use the job ratio settings that have been set in the <b>Map Bonus</b> settings default values section. If that hasn't been setup then it will use a ratio of <b>0/1/3</b></p>";
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
 				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 2 for earlygame, gradually increase the further you progress</p>";
 				if (currSettingUniverse === 2) description += "<p><b>Recommended:</b> 2 for earlygame, gradually increase the further you progress.<br><b>DO NOT SET ABOVE 1 WHEN USING AUTO EQUALITY: ADVANCED</b></p>";
@@ -1696,7 +1696,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Map Bonus stacks will be obtained when above this HD (enemyHealth:trimpDamage) Ratio value.</p>";
 				description += "<p><b>Your HD Ratio can be seen in the Auto Maps status tooltip.</b></p>";
-				description += "<p>Will use the job ratio settings that have been set in the <b>Map Bonus</b> setting. If that hasn't been setup then it will use a ratio of <b>0/1/3</b></p>";
+				description += "<p>Will use the job ratio settings that have been set in the <b>Map Bonus</b> settings default values section. If that hasn't been setup then it will use a ratio of <b>0/1/3</b></p>";
 				description += "<p><b>Recommended:</b> 4</p>";
 				return description;
 			}, 'value', 4, null, "Maps", [1, 2]);
