@@ -1453,7 +1453,7 @@ function initializeAllSettings() {
 				//Auto Ratios
 				description += '<p><b>Auto Ratios</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on this check out its Help section for this setting.</p>';
 				//Override info
-				description += "<p><b>Map setting job ratios always override both 'Auto Ratios' & 'Manual Ratios'.</b></p>";
+				description += "<p><b>Map setting job ratios always override both 'Auto Ratios' & 'Manual Ratios' when AutoMaps is enabled.</b></p>";
 				return description;
 			}, 'multitoggle', 1, null, 'Legacy', [1, 2]);
 		createSetting('jobSettingsArray',
@@ -3172,6 +3172,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Controls when the script will purchase nature enlightenments.</p>";
 				description += "<p>Priority system for the purchases is <b>Nature > Wind > Ice</b>.</p>";
+				description += "<p>Will only purchase an enlightenment when <b>Magma</b> is active.</p>";
 				description += "<p>Englightenment purchases ignore the <b>Token Threshold</b> setting value.</p>";
 				return description;
 			},
@@ -3227,7 +3228,7 @@ function initializeAllSettings() {
 		createSetting('poisonEnlightC2',
 			function () { return ('E: C: Poison') },
 			function () {
-				var description = "<p>Will activate Poison enlightenment when below this token threshold when running " + cinf() + "s.</p>";
+				var description = "<p>Will activate Poison enlightenment when below token threshold when doing " + c2Description() + " runs.</p>";
 				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
 				return description;
 			},
@@ -3236,7 +3237,7 @@ function initializeAllSettings() {
 		createSetting('windEnlightC2',
 			function () { return ('E: C: Wind') },
 			function () {
-				var description = "<p>Will activate Wind enlightenment when below this token threshold when running " + cinf() + "s.</p>";
+				var description = "<p>Will activate Wind enlightenment when below this token threshold when doing " + c2Description() + " runs.</p>";
 				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],
@@ -3244,7 +3245,7 @@ function initializeAllSettings() {
 		createSetting('iceEnlightC2',
 			function () { return ('E: C: Ice') },
 			function () {
-				var description = "<p>Will activate Ice enlightenment when below this token threshold when running " + cinf() + "s.</p>";
+				var description = "<p>Will activate Ice enlightenment when below this token threshold when doing " + c2Description() + " runs.</p>";
 				description += "<p><b>Set to 0 or -1 to completely disable this setting.</b></p>";
 				return description;
 			}, 'value', -1, null, 'Nature', [1],

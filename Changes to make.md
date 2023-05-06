@@ -6,6 +6,7 @@
    - Convert dropdown settings to functions. 
         - Will allow me to easily show/hide things that change throughout the game. Main things are Prestiges that are shown & heirloom mods.
    - Disable mapSettings & hdStats from being recreated if AT is paused.
+   - Add hyperspeed 2 detection in for special selection.
 
 # Mapping
    - Add support for siphonology when at world levels 6-8. 
@@ -22,9 +23,6 @@
 
 3. ## Duel
    - Duel C3 heirloom setting
-
-4. ## Smithless
-   - Fix damage target code issues
 
 # Equipment
    - Change AE: Zone to only work if input is above 0.

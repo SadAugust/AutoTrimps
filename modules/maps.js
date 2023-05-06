@@ -313,9 +313,16 @@ function autoMap() {
 			}
 			//Disabling repeat if repeat conditions have been met
 			if (game.global.repeatMap && mapSettings.mapName !== '' && !MODULES.mapFunctions.prestigeFragMapBought) {
-				if (!mapSettings.repeat) repeatClicked();
+				//Figuring out if we have the right map level & special
+				var mapObj = game.global.mapsActive ? getCurrentMapObject() : null;
+				var mapLevel = mapObj !== null && typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;
+
+				var mapSpecial = mapObj !== null && typeof mapSettings.special !== 'undefined' && mapSettings.special !== "0" ? mapObj.bonus : mapSettings.special;
+				//Disabling repeat if the map isn't right or we've finished farming
+				if (!mapSettings.repeat || mapLevel !== mapSettings.mapLevel || mapSpecial !== mapSettings.special) repeatClicked();
 			}
 		} else {
+			//Disable repeat if active and not mapping
 			if (game.global.repeatMap) {
 				repeatClicked();
 			}
