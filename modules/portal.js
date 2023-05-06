@@ -389,7 +389,7 @@ function doPortal(challenge, skipDaily) {
 
 	if (challengeActive('Daily')) {
 		MODULES.portal.dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
-		MODULES.portal.dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(getDailyChallenge(readingDaily, true)))));
+		MODULES.portal.dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge))));
 		confirmAbandonChallenge();
 		abandonChallenge();
 		cancelTooltip();
