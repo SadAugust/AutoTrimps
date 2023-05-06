@@ -3554,7 +3554,6 @@ MODULES.u2unlocks = [];
 initializeAllSettings();
 //automationMenuInit();
 updateATVersion();
-modifyParentNodeUniverseSwap();
 
 function createSetting(id, name, description, type, defaultValue, list, container, universe, require) {
 	var btnParent = document.createElement("DIV");
@@ -3884,10 +3883,12 @@ function modifyParentNode(id, style) {
 
 	//Looks at the next element in the DOM and either adds or removes a break depending on what style is set to.
 	var elemSibling = elem.nextElementSibling;
-	if (style === 'show' && elemSibling.style.length !== 0)
+	if (style === 'show' && elemSibling.style.length !== 0 && elemSibling.style.display !== 'none')
 		elem.insertAdjacentHTML('afterend', '<br>');
 	if (style === 'hide' && elemSibling.style.length === 0)
 		elemSibling.remove();
+
+	return;
 }
 
 //Tells the script which settings you want a new line after.
@@ -3949,44 +3950,6 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("pandemoniumSwapZone", radonon_pandemonium);
 	modifyParentNode("glassStacks", radonon_desolation);
 	modifyParentNode("desolationSwapZone", radonon);
-
-	//Buildings
-	modifyParentNode("autGigaDeltaFactor", radonoff);
-
-	//Challenges
-	modifyParentNode("decayStacksToAbandon", radonoff);
-	modifyParentNode("lifeStacks", radonoff);
-	modifyParentNode("mapologyPrestige", radonoff);
-	modifyParentNode("archaeologyString3", radonon);
-
-	//Magma
-	modifyParentNode("AutoGenC2", radonoff);
-
-	//Heirlooms
-	modifyParentNode("heirloomVoidSwap", 'show');
-	modifyParentNode("heirloomSpire", 'show');
-	modifyParentNode("heirloomSwapZoneC3", 'show');
-	modifyParentNode("heirloomStaffVoid", 'show');
-	modifyParentNode("heirloomStaffResource", 'show');
-
-	modifyParentNode("heirloomAutoRareToKeep", heirloom);
-	modifyParentNode("heirloomAutoShieldBlacklist", heirloom);
-	modifyParentNode("heirloomAutoStaffBlacklist", heirloom);
-	//Golden
-	//None!
-
-	//Nature
-	modifyParentNode("AutoIce", radonoff);
-	modifyParentNode("autoenlight", radonoff);
-	modifyParentNode("iceEnlight", radonoff);
-	modifyParentNode("iceEnlightDaily", radonoff);
-
-	//Display
-	modifyParentNode("automateSpireAssault", radonon);
-	modifyParentNode("EnableAFK", radonoff);
-
-	//Test
-	modifyParentNode("testTotalEquipmentCost", 'show');
 }
 
 function challengeUnlock(challenge, setting, c2) {
@@ -4735,7 +4698,7 @@ function updateCustomButtons(initialLoad) {
 			document.getElementById("tabDaily").style.display = !displayAllSettings && ((radonon && highestRadonZone < 30) || (!radonon && hze < 99)) ? "none" : "";
 		}
 		if (document.getElementById("tabC2") !== null) {
-			document.getElementById("tabC2").style.display = !displayAllSettings && ((radonon && highestRadonZone < 50) || (!radonon && hze < 65)) ? "none" : "";
+			document.getElementById("tabC2").style.display = !displayAllSettings && (!radonon && hze < 65) ? "none" : "";
 		}
 		if (document.getElementById("tabSpire") !== null) {
 			document.getElementById("tabSpire").style.display = radonon || (!displayAllSettings && hze < 190) ? "none" : "";

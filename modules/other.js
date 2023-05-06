@@ -583,7 +583,7 @@ function equalityManagement() {
 	var enemyHealth = game.global[mapGrid][currentCell].health;
 	var enemyDmg = getCurrentEnemy().attack * totalDamageMod() * 1.5;
 	if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
-	enemyDmg *= game.global.voidBuff == 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
+	enemyDmg *= game.global.voidBuff === 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
 
 	//Empower related modifiers in world
 	if ((dailyEmpowerToggle && !mapping && dailyEmpower) || slowScumming) {
