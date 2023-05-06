@@ -4799,7 +4799,7 @@ function setupATButtons() {
 	var autoMapsContainer = document.createElement("DIV");
 	autoMapsContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1vw; height: 1.5em; text-align: center; border-radius: 4px");
 	autoMapsContainer.setAttribute("id", "autoMapBtn");
-	autoMapsContainer.setAttribute("class", "noselect settingsBtn settingBtn" + settingUniverse('autoMaps'))
+	autoMapsContainer.setAttribute("class", "noselect settingsBtn settingBtn" + settingUniverse('autoMaps'));
 	autoMapsContainer.setAttribute("onClick", "settingChanged('autoMapsToggle', true);");
 	autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Auto Maps\", \"customText\", event, autoTrimpSettings.autoMaps.description(true))');
 	autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
@@ -4808,11 +4808,10 @@ function setupATButtons() {
 
 	//Status textbox
 	var autoMapsStatusContainer = document.createElement("DIV");
+	autoMapsStatusContainer.setAttribute("class", "noselect");
 	autoMapsStatusContainer.setAttribute("style", "display: block; font-size: 1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
 	autoMapsStatusContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	var autoMapsStatusText = document.createElement("SPAN");
-	autoMapsStatusText.id = 'autoMapStatus';
-	autoMapsStatusContainer.appendChild(autoMapsStatusText);
+	autoMapsStatusContainer.id = 'autoMapStatus';
 	fightButtonCol.appendChild(autoMapsStatusContainer);
 
 
@@ -4821,9 +4820,7 @@ function setupATButtons() {
 	resourcePerHourContainer.setAttribute("style", "display: block; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
 	resourcePerHourContainer.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
 	resourcePerHourContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	var resourcePerHourButton = document.createElement("SPAN");
-	resourcePerHourButton.id = 'hiderStatus';
-	resourcePerHourContainer.appendChild(resourcePerHourButton);
+	resourcePerHourContainer.id = 'hiderStatus';
 	fightButtonCol.appendChild(resourcePerHourContainer);
 
 	//Additional AT Info textbox

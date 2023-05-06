@@ -809,7 +809,6 @@ function initialLoad() {
 	if (isNaN($$('#housingCount').value)) $$('#housingCount').value = housingCount;
 	props.housingCount = Number($$('#housingCount').value);
 
-
 	props.vmZone = Math.max(15, (props.targetZone - 1));
 	var rawRnRun = game.resources.radon.owned;
 	props.radonPerRun = Number($$('#radonPerRun').value);
@@ -1947,12 +1946,7 @@ function clearAndAutobuyPerks() {
 			var tauntMult = props.expanding ? Math.pow(tauntBase, props.actualTaunts) : 1;
 			perks.Carpentry.level = Math.max(0, Math.ceil(Math.log(2.4 * wantedArmySize / (tauntMult * props.maxTrimps)) / Math.log(1.1)));
 		}
-		if (game.stats.highestRadLevel.valueTotal() >= 60 && !perks.Pheromones.levLocked)
-			if (!perks.Trumps.levLocked)
-				// zero out trumps, it will be used as a dump perk even outside of downsize
-				if (props.specialChallenge == 'berserk' && !perks.Frenzy.levLocked)
-					if (props.specialChallenge == 'smithless' && !perks.Smithology.levLocked)
-						initialLoad();
+		initialLoad();
 		// get correct available radon for cleared perks
 		// for max carp, just max out carp!
 		if (props.specialChallenge == 'trappacarp') {
@@ -2006,19 +2000,14 @@ function autobuyPerks() {
 	}
 	// use trumps as dump perk
 	if (!perks.Trumps.levLocked && !(props.specialChallenge == 'combat')) {
-		while (buyPerk("Trumps", 1))
-			;
+		while (buyPerk("Trumps", 1));
 	}
 	// and Pheromones! (but not in Trappa, for minimum confusion, and not before Trappa unlock)
-	if (!perks.Pheromones.levLocked && props.specialChallenge != 'trappa' && !(props.specialChallenge == 'combat' && props.isTrappa) && game.stats.highestRadLevel.valueTotal() >= 60) {
-		while (buyPerk("Pheromones", 1))
-			;
+	if (!perks.Pheromones.levLocked && props.specialChallenge != 'trappa' && !(props.specialChallenge == 'combat' && props.isTrappa)) {
+		while (buyPerk("Pheromones", 1));
 	}
 	// secret setting to dump remaining Rn into bait for feeeeeee
-	if (props.baitDump) {
-		while (buyPerk("Bait", 1))
-			;
-	}
+	while (buyPerk("Bait", 1));
 
 	evaluatePerks();
 	allocateSurky();
