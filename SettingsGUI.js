@@ -4800,7 +4800,7 @@ function setupATButtons() {
 	autoMapsContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1vw; height: 1.5em; text-align: center; border-radius: 4px");
 	autoMapsContainer.setAttribute("id", "autoMapBtn");
 	autoMapsContainer.setAttribute("class", "noselect settingsBtn settingBtn" + settingUniverse('autoMaps'))
-	autoMapsContainer.setAttribute("onClick", "settingChanged('autoMapsToggle'm true);");
+	autoMapsContainer.setAttribute("onClick", "settingChanged('autoMapsToggle', true);");
 	autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Auto Maps\", \"customText\", event, autoTrimpSettings.autoMaps.description(true))');
 	autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
 	autoMapsContainer.innerHTML = 'Auto Maps';
