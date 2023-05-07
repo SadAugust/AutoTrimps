@@ -3836,7 +3836,7 @@ function settingChanged(id, currUniverse) {
 		if (id === "c2disableFinished") modifyParentNodeUniverseSwap();
 
 		if (id === "displayHeHr") {
-			document.getElementById('hiderStatus').parentNode.style.display = btn[enabled] ? 'block' : 'none';
+			document.getElementById('hiderStatus').style.display = btn[enabled] ? 'block' : 'none';
 		}
 	}
 
