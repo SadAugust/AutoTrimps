@@ -3824,13 +3824,10 @@ function settingChanged(id, currUniverse) {
 		if (id === 'equipEfficientEquipDisplay') {
 			displayMostEfficientEquipment();
 		}
-		if (id === dailyPortalStart) {
-			document.getElementById('dailyPortalStart').setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + btn[enabled]);
-		}
 		if (id === 'equipOn') {
 			document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
 		}
-		if (id === buildingsType) {
+		if (id === 'buildingsType') {
 			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
 		}
 		if (id === "c2disableFinished") modifyParentNodeUniverseSwap();
