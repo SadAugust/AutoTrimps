@@ -439,13 +439,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	}
 	if (challengeActive('Duel')) ourDmg *= gammaBurstPct;
 
-	if (isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100)
-
-	if (dailyBloodthirst && mapType === 'void' && getPageSetting('bloodthirstVoidMax')) {
-		var bloodThirstStrength = game.global.dailyChallenge.bloodthirst.strength;
-		enemyDmg /= dailyModifiers.bloodthirst.getMult(bloodThirstStrength, game.global.dailyChallenge.bloodthirst.stacks);
-		enemyDmg *= dailyModifiers.bloodthirst.getMult(bloodThirstStrength, dailyModifiers.bloodthirst.getMaxStacks(bloodThirstStrength));
-	}
+	if (isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100);
 
 	var ourDmgEquality = 0;
 	var enemyDmgEquality = 0;
@@ -674,7 +668,7 @@ function equalityManagement() {
 			}
 			//Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
 			if ((voidPBSwap || slowScumming) &&
-				!fastEnemy && calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth &&
+				mapping && !fastEnemy && calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth &&
 				game.global.lastClearedMapCell !== mapObject.size - 2 &&
 				ATrunning &&
 				(typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' ||

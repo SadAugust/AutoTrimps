@@ -266,7 +266,7 @@ function runUniqueMap(mapName, dontRecycle) {
 	if (mapName === 'Melting Point' && (!game.mapUnlocks.SmithFree.canRunOnce || zone < 55 || (zone === 55 && cell < 56))) return
 	if ((mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') && (!game.mapUnlocks.AncientTreasure.canRunOnce || zone < 33 || (zone === 33 && cell < 32))) return
 
-	if (!game.global.preMapsActive && !game.global.mapsActive)
+	if (!game.global.preMapsActive && !game.global.mapsActive && getPageSetting('autoMaps'))
 		mapsClicked();
 	if (!dontRecycle && game.global.mapsActive && getCurrentMapObject().name !== mapName) {
 		recycleMap_AT()
@@ -426,7 +426,9 @@ function voidMaps() {
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
+		farmingDetails.mapLevel = game.global.world;
 		farmingDetails.jobRatio = jobRatio;
+		farmingDetails.autoLevel = false;
 		farmingDetails.repeat = false;
 		farmingDetails.status = status;
 	}
@@ -1535,6 +1537,7 @@ function bionicRaiding() {
 
 function runBionicRaiding(bionicPool) {
 	if (!bionicPool) return false;
+	if (!getPageSetting('autoMaps')) return false;
 
 	if (!game.global.preMapsActive && !game.global.mapsActive) {
 		mapsClicked(true);

@@ -436,7 +436,7 @@ function initializeAllSettings() {
 			function () { return ('Void: Max Bloodthirst') },
 			function () {
 				var description = "<p>Will make your Void HD Ratio assume you have max bloodthirst stacks active if you're in a bloodthirst daily.</p>";
-				description += "<p><b>Recommended:</b> On if you're running void maps at max tenacity</p>";
+				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			},
 			'boolean', true, null, 'Daily', [2]);

@@ -113,7 +113,10 @@ function makeResourceTooltip() {
 function autoMap() {
 
 	if (getPageSetting('sitInMaps') && game.global.world === getPageSetting('sitInMaps_Zone') && game.global.lastClearedCell + 2 >= getPageSetting('sitInMaps_Cell')) {
-		if (!game.global.preMapsActive) mapsClicked();
+		if (!game.global.preMapsActive) {
+			mapsClicked(true);
+			debug('AutoMaps. Sitting in maps. Disable the setting to allow manual gameplay.', 'other');
+		}
 		return;
 	}
 

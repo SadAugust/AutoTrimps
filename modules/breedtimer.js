@@ -183,6 +183,7 @@ function geneAssist() {
 
 function forceAbandonTrimps() {
 	if (!getPageSetting('ForceAbandon')) return;
+	if (!getPageSetting('autoMaps')) return;
 	if (!game.global.mapsUnlocked) return;
 	if (game.global.preMapsActive) return;
 	//Exit and restart the map. If we are in the world, enter the world again.
@@ -194,5 +195,4 @@ function forceAbandonTrimps() {
 		mapsClicked(true);
 		mapsClicked(true);
 	}
-
 }

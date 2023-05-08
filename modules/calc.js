@@ -237,23 +237,6 @@ function getTrimpHealth(realHealth, mapType) {
 	return health;
 }
 
-function getEnergyShieldMult_AT(mapType, noHeirloom) {
-	if (game.global.universe != 2) return 0;
-	var total = 0;
-	if (game.upgrades.Prismatic.done) total += 0.5; //Prismatic: Drops Z2
-	if (game.upgrades.Prismalicious.done) total += 0.5; //Prismalicious: Drops from Prismatic Palace at Z20
-	if (getPerkLevel("Prismal") > 0) total += (getPerkLevel("Prismal") * game.portal.Prismal.modifier); //Prismal perk, total possible is 100%
-	total += (Fluffy.isRewardActive("prism") * 0.25); //Fluffy Prism reward, 25% each, total of 25% available
-	if (challengeActive('Bublé')) total += 2.5; //Bublé challenge - 100%
-	if (autoBattle.oneTimers.Suprism.owned) total += autoBattle.oneTimers.Suprism.getMult();
-
-	if (!noHeirloom) {
-		if (getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) > 0) total +=
-			(getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 100);
-	}
-	return total;
-}
-
 function calcOurHealth(stance, mapType, realHealth, fullGeneticist) {
 	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	if (!realHealth) realHealth = false;
@@ -385,39 +368,6 @@ function getCritMulti(crit, customShield) {
 	else critDHModifier = ((critChance - 2) * Math.pow(getMegaCritDamageMult(critChance), 2) * critD + (3 - critChance) * getMegaCritDamageMult(critChance) * critD);
 
 	return critDHModifier;
-}
-
-function getPlayerCritChance_AT(customShield) { //returns decimal: 1 = 100%
-	if (challengeActive('Frigid') && game.challenges.Frigid.warmth <= 0) return 0;
-	if (challengeActive('Duel')) return (game.challenges.Duel.enemyStacks / 100);
-	var critChance = 0;
-	critChance += (game.portal.Relentlessness.modifier * getPerkLevel("Relentlessness"));
-	critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) / 100);
-	if (game.talents.crit.purchased && getHeirloomBonus_AT("Shield", "critChance", customShield)) critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) * 0.005);
-	if (Fluffy.isRewardActive("critChance")) critChance += (0.5 * Fluffy.isRewardActive("critChance"));
-	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critChance += 0.35;
-	if (game.global.universe == 2 && u2Mutations.tree.CritChance.purchased) critChance += 0.25;
-	if (challengeActive('Daily')) {
-		if (typeof game.global.dailyChallenge.trimpCritChanceUp !== 'undefined') {
-			critChance += dailyModifiers.trimpCritChanceUp.getMult(game.global.dailyChallenge.trimpCritChanceUp.strength);
-		}
-		if (typeof game.global.dailyChallenge.trimpCritChanceDown !== 'undefined') {
-			critChance -= dailyModifiers.trimpCritChanceDown.getMult(game.global.dailyChallenge.trimpCritChanceDown.strength);
-		}
-		if (Fluffy.isRewardActive('SADailies')) critChance += Fluffy.rewardConfig.SADailies.critChance();
-	}
-	if (critChance > 7) critChance = 7;
-	return critChance;
-}
-
-function getPlayerCritDamageMult_AT(customShield) {
-	var relentLevel = getPerkLevel("Relentlessness");
-	var critMult = (((game.portal.Relentlessness.otherModifier * relentLevel) + (getHeirloomBonus_AT("Shield", "critDamage", customShield) / 100)) + 1);
-	critMult += (getPerkLevel("Criticality") * game.portal.Criticality.modifier);
-	if (relentLevel > 0) critMult += 1;
-	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critMult += 0.5;
-	critMult += alchObj.getPotionEffect("Elixir of Accuracy");
-	return critMult;
 }
 
 function getAnticipationBonus(stacks) {
@@ -612,10 +562,10 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 
 		//Even-Odd Dailies
 		if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined') {
-			if (game.global.world + (mapType === 'map' ? mapLevel : 0) % 2 === 1) attack *= dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
+			if (game.global.world + (mapType !== 'map' ? mapLevel : 0) % 2 === 1) attack *= dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
 		}
 		if (typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined') {
-			if (game.global.world + (mapType === 'map' ? mapLevel : 0) % 2 === 0) attack *= dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
+			if (game.global.world + (mapType !== 'map' ? mapLevel : 0) % 2 === 0) attack *= dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
 		}
 
 		attack *= maxDailyMod;
@@ -662,7 +612,7 @@ function calcSpire(what, cell, name) {
 
 	//Enemy on the Target Cell
 	var enemy = (name) ? name : game.global.gridArray[cell - 1].name;
-	var base = (what == "attack") ? calcEnemyBaseAttack(game.global.world, cell, enemy, "world") : 2 * calcEnemyBaseHealth("world", game.global.world, cell, enemy);
+	var base = (what == "attack") ? calcEnemyBaseAttack("world", game.global.world, cell, enemy) : 2 * calcEnemyBaseHealth("world", game.global.world, cell, enemy);
 	var mod = (what == "attack") ? 1.17 : 1.14;
 
 	//Spire Num
@@ -744,7 +694,7 @@ function calcCorruptionScale(zone, base) {
 	return parseFloat(prettify(realValue));
 }
 
-function calcEnemyBaseAttack(zone, cell, name, type, query) {
+function calcEnemyBaseAttack(type, zone, cell, name, query) {
 	//Pre-Init
 	if (!type) type = !game.global.mapsActive ? "world" : getCurrentMapObject().location == "Void" ? "void" : "map";
 	if (!zone) zone = type == "world" || !game.global.mapsActive ? game.global.world : getCurrentMapObject().level;
@@ -824,7 +774,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	if (!minOrMax) minOrMax = false;
 
 	//Init
-	var attack = calcEnemyBaseAttack(zone, cell, name, type);
+	var attack = calcEnemyBaseAttack(type, zone, cell, name);
 	var fluctuation = game.global.universe === 2 ? 0.5 : 0.2;
 	if (game.global.universe === 1) {
 		//Spire - Overrides the base attack number
@@ -900,9 +850,13 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 		if (typeof game.global.dailyChallenge.badMapStrength !== 'undefined' && type !== 'world')
 			attack *= dailyModifiers.badMapStrength.getMult(game.global.dailyChallenge.badMapStrength.strength);
 
-		//Bloodthirsty
-		if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined')
-			attack *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks);
+		//Bloodthirst
+		if (typeof game.global.dailyChallenge.bloodthirst !== 'undefined') {
+			var bloodThirstStrength = game.global.dailyChallenge.bloodthirst.strength;
+			if (type === 'void' && getPageSetting('bloodthirstVoidMax'))
+				attack *= dailyModifiers.bloodthirst.getMult(bloodThirstStrength, dailyModifiers.bloodthirst.getMaxStacks(bloodThirstStrength));
+			else if (!getPageSetting('bloodthirstDestack')) attack *= dailyModifiers.bloodthirst.getMult(game.global.dailyChallenge.bloodthirst.strength, game.global.dailyChallenge.bloodthirst.stacks);
+		}
 
 		//Empower
 		if (typeof game.global.dailyChallenge.empower !== 'undefined' && type === 'world')
@@ -999,7 +953,7 @@ function calcSpecificEnemyAttack(critPower = 2, customBlock, customHealth) {
 	return Math.ceil(attack);
 }
 
-function calcEnemyBaseHealth(mapType, zone, cell, name) {
+function calcEnemyBaseHealth(mapType, zone, cell, name, ignoreCompressed) {
 	//Pre-Init
 	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	if (!zone) zone = (mapType == "world" || !game.global.mapsActive) ? game.global.world : getCurrentMapObject().level;
@@ -1010,7 +964,7 @@ function calcEnemyBaseHealth(mapType, zone, cell, name) {
 	var base = (game.global.universe == 2) ? 10e7 : 130;
 	var health = (base * Math.sqrt(zone) * Math.pow(3.265, zone / 2)) - 110;
 
-	if (game.global.universe === 2 && game.global.world > 200 && mapType === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
+	if (!ignoreCompressed && game.global.universe === 2 && game.global.world > 200 && mapType === 'world' && typeof (game.global.gridArray[cell - 1].u2Mutation) !== 'undefined') {
 		if (game.global.gridArray[cell - 1].u2Mutation.length > 0 && (game.global.gridArray[cell].u2Mutation.indexOf('CSX') != -1 || game.global.gridArray[cell].u2Mutation.indexOf('CSP') != -1)) {
 			cell = cell - 1
 			var grid = game.global.gridArray
@@ -1332,15 +1286,15 @@ function mutationBaseAttack(cell, targetZone) {
 
 	var baseAttack;
 	var addAttack = 0;
-	cell = game.global.gridArray[cell];
+	var cell = game.global.gridArray[cell];
 	if (cell.cs) {
-		baseAttack = calcEnemyBaseAttack(targetZone, cell.cs, cell.name, 'world', true);
+		baseAttack = calcEnemyBaseAttack('world', targetZone, cell.cs, cell.name, true);
 	} else {
-		baseAttack = calcEnemyBaseAttack(targetZone, cell.level, cell.name, 'world', true);
+		baseAttack = calcEnemyBaseAttack('world', targetZone, cell.level, cell.name, true);
 	}
 	if (cell.cc) addAttack = u2Mutations.types.Compression.attack(cell, baseAttack);
-	if (cell.u2Mutation.indexOf('NVA') != -1) baseAttack *= 0.01;
-	else if (cell.u2Mutation.indexOf('NVX') != -1) baseAttack *= 10;
+	if (cell.u2Mutation.indexOf('NVA') !== -1) baseAttack *= 0.01;
+	else if (cell.u2Mutation.indexOf('NVX') !== -1) baseAttack *= 10;
 	baseAttack += addAttack;
 	baseAttack *= Math.pow(1.01, (targetZone - 201));
 	return baseAttack;
@@ -1350,12 +1304,14 @@ function calcMutationAttack(targetZone) {
 	if (targetZone < 201) return;
 	if (!targetZone) targetZone = game.global.world;
 	var attack;
-	var highest = 1;
+	var hasRage = false;
 	var worstCell = 0;
-	var gridArray = game.global.gridArray
+	var cell;
 
+	var highest = 1;
+	var gridArray = game.global.gridArray
 	for (var i = 0; i < gridArray.length; i++) {
-		var hasRage = gridArray[i].u2Mutation.includes('RGE');
+		hasRage = gridArray[i].u2Mutation.includes('RGE');
 		if (gridArray[i].u2Mutation.includes('CMP') && !gridArray[i].u2Mutation.includes('RGE')) {
 			for (var y = i + 1; y < i + u2Mutations.types.Compression.cellCount(); y++) {
 				if (gridArray[y].u2Mutation.includes('RGE')) {
@@ -1364,14 +1320,13 @@ function calcMutationAttack(targetZone) {
 				}
 			}
 		}
-		var cell = i;
+		cell = i;
 		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
 			if (mutationBaseAttack(cell, targetZone) > highest) worstCell = i;
 			highest = Math.max(mutationBaseAttack(cell, targetZone) * (hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1), highest);
 			attack = highest;
 		}
 	}
-
 	return attack;
 }
 
@@ -1380,8 +1335,12 @@ function mutationBaseHealth(cell, targetZone) {
 	var addHealth = 0;
 	var cell = game.global.gridArray[cell];
 
-	baseHealth = calcEnemyBaseHealth('world', targetZone, cell.level, cell.name);
-
+	if (cell.cs) {
+		baseHealth = calcEnemyBaseHealth('world', targetZone, cell.cs, cell.name, true);
+	}
+	else {
+		baseHealth = calcEnemyBaseHealth('world', targetZone, cell.level, cell.name, true);
+	}
 	if (cell.cc) addHealth = u2Mutations.types.Compression.health(cell, baseHealth);
 	if (cell.u2Mutation.indexOf('NVA') != -1) baseHealth *= 0.01;
 	else if (cell.u2Mutation.indexOf('NVX') != -1) baseHealth *= 0.1;
@@ -1393,16 +1352,19 @@ function mutationBaseHealth(cell, targetZone) {
 
 function calcMutationHealth(targetZone) {
 	if (!targetZone) targetZone = game.global.world;
+	var worstCell = 0;
+	var cell;
+	var health = 0;
 
 	var highest = 1;
 	var gridArray = game.global.gridArray
 	for (var i = 0; i < game.global.gridArray.length; i++) {
-		var cell = i;
+		cell = i;
 		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
 			if (mutationBaseHealth(cell, targetZone) > highest) worstCell = i;
 			highest = Math.max(mutationBaseHealth(cell, targetZone), highest);
 			mute = true;
-			var health = highest;
+			health = highest;
 		}
 	}
 	return health;
@@ -1680,48 +1642,6 @@ function calculateParityBonusAT(workerRatio, heirloom) {
 	var finalWithParity = (1 + preLoomBonus) * getHazardParityMult(heirloom);
 	game.global.parityBonus = finalWithParity;
 	return finalWithParity;
-}
-
-function calcHeirloomBonus_AT(type, mod, number, getValueOnly, customShield) {
-	var mod = getHeirloomBonus_AT(type, mod, customShield);
-	if (!mod) return number;
-	if (getValueOnly) return mod;
-	if (mod <= 0) return number;
-	return (number * ((mod / 100) + 1));
-}
-
-function calcHeirloomBonusLocal(mod, number) {
-	var mod = mod;
-	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined')
-		mod *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
-	if (!mod) return;
-
-	return (number * ((mod / 100) + 1));
-}
-
-function calcHeirloomBonus_AT(type, name, number, getValueOnly, customShield) {
-	var mod = getHeirloomBonus_AT(type, name, customShield);
-	if (!mod) return number;
-	if (getValueOnly) return mod;
-	if (mod <= 0) return number;
-	return (number * ((mod / 100) + 1));
-}
-
-function getHeirloomBonus_AT(type, mod, customShield) {
-	if (!game.heirlooms[type] || !game.heirlooms[type][mod]) {
-		console.log('oh noes', type, mod)
-	}
-	var bonus = game.heirlooms[type][mod].currentBonus;
-	//Override bonus if needed
-	if (customShield) bonus = HeirloomModSearch(customShield, mod);
-	if (bonus === undefined) bonus = 0;
-	if (mod == "gammaBurst" && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
-		bonus = gammaBurstPct;
-	}
-	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined') {
-		if (type != "FluffyExp" && type != "VoidMaps") bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
-	}
-	return scaleHeirloomModUniverse(type, mod, bonus);
 }
 
 function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) {

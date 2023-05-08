@@ -342,3 +342,98 @@ function heirloomSwapping() {
 		if (staff !== undefined) HeirloomEquipStaff(staff);
 	}
 }
+
+//AT versions for heirloom bonuses. 
+//RECHECK EVERY PATCH TO MAKE SURE THEY ARE STILL ACCURATE
+
+function calcHeirloomBonus_AT(type, modName, number, getValueOnly, customShield) {
+	var mod = getHeirloomBonus_AT(type, modName, customShield);
+	if (!mod) return number;
+	if (getValueOnly) return mod;
+	if (mod <= 0) return number;
+	return (number * ((mod / 100) + 1));
+}
+
+function calcHeirloomBonusLocal(mod, number) {
+	var mod = mod;
+	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined')
+		mod *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
+	if (!mod) return;
+
+	return (number * ((mod / 100) + 1));
+}
+
+function getHeirloomBonus_AT(type, mod, customShield) {
+	if (!game.heirlooms[type] || !game.heirlooms[type][mod]) {
+		console.log('oh noes', type, mod)
+	}
+	var bonus = game.heirlooms[type][mod].currentBonus;
+	//Override bonus if needed
+	if (customShield) bonus = HeirloomModSearch(customShield, mod);
+	if (bonus === undefined) bonus = 0;
+	if (mod == "gammaBurst" && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
+		bonus = gammaBurstPct;
+	}
+	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined') {
+		if (type != "FluffyExp" && type != "VoidMaps") bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
+	}
+	return scaleHeirloomModUniverse(type, mod, bonus);
+}
+
+function getPlayerCritChance_AT(customShield) { //returns decimal: 1 = 100%
+	if (challengeActive('Frigid') && game.challenges.Frigid.warmth <= 0) return 0;
+	if (challengeActive('Duel')) return (game.challenges.Duel.enemyStacks / 100);
+	var critChance = 0;
+	critChance += (game.portal.Relentlessness.modifier * getPerkLevel("Relentlessness"));
+	critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) / 100);
+	if (game.talents.crit.purchased && getHeirloomBonus_AT("Shield", "critChance", customShield)) critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) * 0.005);
+	if (Fluffy.isRewardActive("critChance")) critChance += (0.5 * Fluffy.isRewardActive("critChance"));
+	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critChance += 0.35;
+	if (game.global.universe == 2 && u2Mutations.tree.CritChance.purchased) critChance += 0.25;
+	if (challengeActive('Daily')) {
+		if (typeof game.global.dailyChallenge.trimpCritChanceUp !== 'undefined') {
+			critChance += dailyModifiers.trimpCritChanceUp.getMult(game.global.dailyChallenge.trimpCritChanceUp.strength);
+		}
+		if (typeof game.global.dailyChallenge.trimpCritChanceDown !== 'undefined') {
+			critChance -= dailyModifiers.trimpCritChanceDown.getMult(game.global.dailyChallenge.trimpCritChanceDown.strength);
+		}
+		if (Fluffy.isRewardActive('SADailies')) critChance += Fluffy.rewardConfig.SADailies.critChance();
+	}
+	if (critChance > 7) critChance = 7;
+	return critChance;
+}
+
+function getPlayerCritDamageMult_AT(customShield) {
+	var relentLevel = getPerkLevel("Relentlessness");
+	var critMult = (((game.portal.Relentlessness.otherModifier * relentLevel) + (getHeirloomBonus_AT("Shield", "critDamage", customShield) / 100)) + 1);
+	critMult += (getPerkLevel("Criticality") * game.portal.Criticality.modifier);
+	if (relentLevel > 0) critMult += 1;
+	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critMult += 0.5;
+	critMult += alchObj.getPotionEffect("Elixir of Accuracy");
+	return critMult;
+}
+
+function getPlayerEqualityMult_AT(customShield) {
+	var modifier = game.portal.Equality.modifier;
+	var tempModifier = 1 - modifier;
+	tempModifier *= (getHeirloomBonus_AT("Shield", "inequality", customShield) / 1000);
+	modifier += tempModifier;
+	return modifier;
+}
+
+function getEnergyShieldMult_AT(mapType, noHeirloom) {
+	if (game.global.universe != 2) return 0;
+	var total = 0;
+	if (game.upgrades.Prismatic.done) total += 0.5; //Prismatic: Drops Z2
+	if (game.upgrades.Prismalicious.done) total += 0.5; //Prismalicious: Drops from Prismatic Palace at Z20
+	if (getPerkLevel("Prismal") > 0) total += (getPerkLevel("Prismal") * game.portal.Prismal.modifier); //Prismal perk, total possible is 100%
+	total += (Fluffy.isRewardActive("prism") * 0.25); //Fluffy Prism reward, 25% each, total of 25% available
+	if (challengeActive('Bublé')) total += 2.5; //Bublé challenge - 100%
+	if (autoBattle.oneTimers.Suprism.owned) total += autoBattle.oneTimers.Suprism.getMult();
+
+	if (!noHeirloom) {
+		if (getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) > 0) total +=
+			(getHeirloomBonus_AT('Shield', 'prismatic', heirloomShieldToEquip(mapType)) / 100);
+	}
+	return total;
+}
