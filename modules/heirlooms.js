@@ -270,7 +270,7 @@ function heirloomShieldToEquip(mapType, query) {
 
 	var afterpushShield = hdStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 	var voidActive = mapType === 'void';
-	if (voidActive && !heirloomPlagueswap && query) {
+	if (voidActive && !heirloomPlagueSwap && query) {
 		heirloomPlagueSwap =
 			//Check we're in U2, we're in a void map and setting is enabled.
 			game.global.universe === 2 && game.global.voidBuff !== '' && getPageSetting('heirloomVoidSwap') &&
