@@ -247,7 +247,8 @@ function heirloomShieldToEquip(mapType, query) {
 	}
 
 	//Initial vars for swapping heirlooms
-	var currChallenge = game.global.challengeActive.toLowerCase()
+	var currChallenge = game.global.challengeActive.toLowerCase();
+	heirloomPlagueSwap = false;
 
 	var swapZone = hdStats.isC3 && (currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0 ? getPageSetting(currChallenge + 'SwapZone') : hdStats.isC3 ? getPageSetting('heirloomSwapZoneC3') : hdStats.isDaily ? getPageSetting('heirloomSwapZoneDaily') : hdStats.isFiller ? getPageSetting('heirloomSwapZone') : 999;
 	if (swapZone === -1) swapZone = 999;
@@ -255,14 +256,24 @@ function heirloomShieldToEquip(mapType, query) {
 	if (hdStats.isDaily && dailyOddOrEven().active) {
 		if (swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;
 	}
+	//Change swap zone to current zone if we're above X HD ratio.
+	if (mapType === 'world') {
+		if (getPageSetting('heirloomSwapHD') > 0 && hdStats.hdRatio >= getPageSetting('heirloomSwapHD')) swapZone = game.global.world;
+		//Set swap zone to current zone if we're above X HD ratio and next cell is compressed.
+		else if (game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && getPageSetting('heirloomSwapHDCompressed') > 0 && hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed') && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 2].u2Mutation.indexOf('CMP') !== -1) {
+			swapZone = game.global.world;
+			heirloomPlagueSwap = true;
+		}
+	}
 	//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage
-	if (game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && game.global.world >= swapZone && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) swapZone = 999;
+	if (mapType === 'world' && game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && game.global.world >= swapZone && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) swapZone = 999;
+
 	var afterpushShield = hdStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
-	voidPBSwap = false;
 	var voidActive = mapType === 'void';
-	if (voidActive && query) {
-		voidPBSwap =
-			game.global.universe === 2 && getPageSetting('heirloomVoidSwap') &&
+	if (voidActive && !heirloomPlagueswap && query) {
+		heirloomPlagueSwap =
+			//Check we're in U2, we're in a void map and setting is enabled.
+			game.global.universe === 2 && game.global.voidBuff !== '' && getPageSetting('heirloomVoidSwap') &&
 			//Not running fast challenge
 			!challengeActive('Glass') && !challengeActive('Berserk') && !challengeActive('Archaeology') && (!challengeActive('Quest') && currQuest() !== 8) &&
 			//Not at final map cell
@@ -275,14 +286,14 @@ function heirloomShieldToEquip(mapType, query) {
 			game.global.voidBuff !== 'doubleAttack';
 	}
 
-	if (voidActive && (getPageSetting('heirloomVoid') !== "undefined" || (voidPBSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined"))) {
-		if (voidPBSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined") {
+	if (voidActive && (getPageSetting('heirloomVoid') !== "undefined" || (heirloomPlagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined"))) {
+		if (heirloomPlagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined") {
 			return ('heirloomVoidPlaguebringer');
 		}
 		else
 			return ('heirloomVoid');
 	}
-	else if (voidActive && voidPBSwap && getPageSetting('heirloomInitial') !== "undefined")
+	else if (voidActive && heirloomPlagueSwap && getPageSetting('heirloomInitial') !== "undefined")
 		return ('heirloomInitial');
 	else if (getPageSetting(afterpushShield) !== "undefined" && (mapType === 'map' || mapType === 'void') && getPageSetting('heirloomMapSwap'))
 		return (afterpushShield);
@@ -328,8 +339,8 @@ function heirloomSwapping() {
 	if (!getPageSetting('heirloom')) return;
 
 	var mapType = 'world';
-	if (game.global.mapsActive) mapType = 'map';
-	if (game.global.mapsActive && getCurrentMapObject().location == "Void") mapType = 'void';
+	if (game.global.voidBuff !== '') mapType = 'void';
+	else if (game.global.mapsActive) mapType = 'map';
 	//Swapping Shields
 	if (getPageSetting('heirloomShield')) {
 		var shield = heirloomShieldToEquip(mapType, true);

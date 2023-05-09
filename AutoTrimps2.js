@@ -1,5 +1,5 @@
 var MODULES_AT = {
-	ATversion: 'SadAugust v6.2.92',
+	ATversion: 'SadAugust v6.2.93',
 	atscript: document.getElementsByTagName("script"),
 	basepath: '',
 	modulepath: 'modules/'
@@ -65,7 +65,7 @@ var aWholeNewHZE = false;
 var magmiteSpenderChanged = false;
 
 var challengeCurrentZone = -1;
-var voidPBSwap = false;
+var heirloomPlagueSwap = false;
 var rBSRunningAtlantrimp = false;
 var mapRepeats = 0;
 

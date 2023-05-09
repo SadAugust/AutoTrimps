@@ -2553,17 +2553,6 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
-		createSetting('heirloomCompressedSwap',
-			function () { return ('Compressed Swap') },
-			function () {
-				var description = "<p>When the cell after next is compressed and you are past your heirloom swap zone this will equip your <b>Initial</b> shield so that the next enemy spawns with max health to maximise plaguebringer damage on it.</p>";
-				description += "<p>Will ensure you start the compressed cell at the lowest health it can be from plaguebringer which reduces initial rage stack if the enemy has it and the clear time.</p>";
-				description += "<p>Will only work if your <b>Initial</b> Shield doesn't have <b>PlagueBringer</b> and your <b>Afterpush</b> shield has <b>PlagueBringer</b>.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'Heirlooms', [2],
-			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestRadLevel.valueTotal() >= 203) });
-
 		createSetting('heirloomVoidSwap',
 			function () { return ('Void PB Swap') },
 			function () {
@@ -2574,6 +2563,18 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Heirlooms', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+
+		createSetting('heirloomCompressedSwap',
+			function () { return ('Compressed Swap') },
+			function () {
+				var description = "<p>When the cell after next is compressed and you are past your heirloom swap zone this will equip your <b>Initial</b> shield so that the next enemy spawns with max health to maximise plaguebringer damage on it.</p>";
+				description += "<p>Will ensure you start the compressed cell at the lowest health it can be from plaguebringer which reduces initial rage stack if the enemy has it and the clear time.</p>";
+				description += "<p>Will only work if your <b>Initial</b> Shield doesn't have <b>PlagueBringer</b> and your <b>Afterpush</b> shield has <b>PlagueBringer</b>.</p>";
+				description += "<p>Displays an additional setting when enabled where you can force swap to your <b>Afterpush</b> shield when above X <b>World HD Ratio</b> and the next cell is compressed.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Heirlooms', [2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestRadLevel.valueTotal() >= 203) });
 
 		//Shield swapping
 		createSetting('heirloomShield',
@@ -2682,6 +2683,24 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', -1, null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+
+		createSetting('heirloomSwapHD',
+			function () { return ('HD Ratio Swap') },
+			function () {
+				var description = "<p>Will swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield when your <b>World HD Ratio</b> is above this value.</p>";
+				description += "<p>If set to 0 or -1 it will disable this setting.</p>";
+				return description;
+			}, 'value', -1, null, 'Heirlooms', [1, 2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
+
+		createSetting('heirloomSwapHDCompressed',
+			function () { return ('Comp Swap HD') },
+			function () {
+				var description = "<p>Will swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield when the next cell is compressed and your <b>World HD Ratio</b> is above this value.</p>";
+				description += "<p>If set to -1 it will disable this setting.</p>";
+				return description;
+			}, 'value', -1, null, 'Heirlooms', [2],
+			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && getPageSetting('heirloomCompressedSwap', currSettingUniverse)) });
 
 		//Staff swapping
 		createSetting('heirloomStaff',
@@ -3328,6 +3347,7 @@ function initializeAllSettings() {
 	//----------------------------------------------------------------------------------------------------------------------
 
 	document.getElementById('battleSideTitle').setAttribute('onclick', 'MODULES["performance"].EnableAFKMode()');
+	document.getElementById('battleSideTitle').setAttribute('onmouseover', "getZoneStats(event);this.style.cursor='pointer'");
 
 	//----------------------------------------------------------------------------------------------------------------------
 
@@ -3965,9 +3985,9 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("AutoGenC2", radonoff);
 
 	//Heirlooms
-	modifyParentNode("heirloomVoidSwap", 'show');
+	modifyParentNode("heirloomCompressedSwap", 'show');
 	modifyParentNode("heirloomSpire", 'show');
-	modifyParentNode("heirloomSwapZoneC3", 'show');
+	modifyParentNode("heirloomSwapHDCompressed", 'show');
 	modifyParentNode("heirloomStaffVoid", 'show');
 	modifyParentNode("heirloomStaffResource", 'show');
 
@@ -5277,6 +5297,16 @@ function updateATVersion() {
 			if (perkyInputs !== null) autoTrimpSettings['autoAllocatePresets'].value = perkyInputs;
 			var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 			if (surkyInputs !== null) autoTrimpSettings['autoAllocatePresets'].valueU2 = surkyInputs;
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.93') {
+
+			changelog.push("Updated tooltips to reflect what the settings actually do and provide recommendations for what to set them to. Still have a few tabs left to do but it's primarily U1 stuff left.<br>\
+			Hits Survived & HD Ratio map bonus now allow you to set a custom job ratio through the Map Bonus settings window.<br>\
+			HD Ratio calcs now take inequality into account when your have shields with different values.<br>\
+			Auto Portal will now respect your normal portal settings if you have <b>Auto Start Daily</b> enabled and no dailies left to run.<br>\
+			Added heirloom mod blacklist inputs for shields & staffs. These will allow you to make sure heirlooms with those mods automatically get recycled.<br>\
+			Added a new setting to the Heirloom tab to allow you to swap your shields to maximise plaguebringer damage on compressed enemies.");
 		}
 
 

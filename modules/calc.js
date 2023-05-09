@@ -386,7 +386,6 @@ function getAnticipationBonus(stacks) {
 }
 
 function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, mapLevel, useTitimp) {
-
 	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location == "Void" ? "void" : "map");
 	if (!mapLevel) mapLevel = 0;
 	if (!useTitimp) useTitimp = false;
@@ -562,10 +561,10 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 
 		//Even-Odd Dailies
 		if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined') {
-			if (game.global.world + (mapType !== 'map' ? mapLevel : 0) % 2 === 1) attack *= dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
+			if ((game.global.world + (mapType !== 'map' ? mapLevel : 0)) % 2 === 1) attack *= dailyModifiers.oddTrimpNerf.getMult(game.global.dailyChallenge.oddTrimpNerf.strength);
 		}
 		if (typeof game.global.dailyChallenge.evenTrimpBuff !== 'undefined') {
-			if (game.global.world + (mapType !== 'map' ? mapLevel : 0) % 2 === 0) attack *= dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
+			if ((game.global.world + (mapType !== 'map' ? mapLevel : 0)) % 2 === 0) attack *= dailyModifiers.evenTrimpBuff.getMult(game.global.dailyChallenge.evenTrimpBuff.strength);
 		}
 
 		attack *= maxDailyMod;
@@ -1189,7 +1188,7 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 	return health;
 }
 
-function calcHDRatio(targetZone, type, maxTenacity) {
+function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = "world"
 	if (!maxTenacity) maxTenacity = false;
@@ -1262,6 +1261,13 @@ function calcHDRatio(targetZone, type, maxTenacity) {
 	//Adding gammaBurstDmg to calc
 	if (type !== 'map' && (game.global.universe === 2 && universeSetting < (game.portal.Equality.radLevel - 14)) || game.global.universe === 1)
 		ourBaseDamage *= gammaBurstDmg
+
+	if (checkOutputs) {
+		debug("ourBaseDamage: " + ourBaseDamage);
+		debug("enemyHealth: " + enemyHealth);
+		debug("universeSetting: " + universeSetting);
+		debug("HD type: " + type);
+	}
 
 	//Return H:D for a regular, sane, not f-ing Lead zone (sorry, Lead just took a lot of me)
 	return enemyHealth / (ourBaseDamage + addPoison());

@@ -537,7 +537,6 @@ function equalityManagement() {
 		return;
 	}
 
-
 	//Gamma burst info
 	var gammaMaxStacksCheck = gammaMaxStacks();
 	var gammaDmg = gammaBurstPct;
@@ -555,6 +554,7 @@ function equalityManagement() {
 	var ourHealthMax = calcOurHealth(runningQuest, type);
 	var ourDmg = calcOurDmg(dmgType, 0, false, type, critType, bionicTalent, true);
 	var ourDmgMax = 0;
+	var plagueShield = getHeirloomBonus('Shield', 'plaguebringer') > 0;
 
 	var unluckyDmg = runningUnlucky ? Number(calcOurDmg('min', 0, false, type, 'never', bionicTalent, true)) : 2;
 
@@ -582,7 +582,7 @@ function equalityManagement() {
 	//Empower related modifiers in world
 	if ((dailyEmpowerToggle && !mapping && dailyEmpower) || slowScumming) {
 		if (dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
-		if (dailyExplosive || slowScumming) ourDmgMax = calcOurDmg('max', 0, false, 'world', 'force') * gammaDmg;
+		if (dailyExplosive || slowScumming) ourDmgMax = calcOurDmg('max', 0, false, type, 'force', bionicTalent, true) * gammaDmg;
 	}
 	//Empower modifiers in maps.
 	if (type === 'map' && (dailyExplosive || dailyCrit) && !slowScumming) {
@@ -659,27 +659,30 @@ function equalityManagement() {
 				var ourMaxDmg = ourDmgMax * Math.pow(ourEqualityModifier, i);
 				if (ourMaxDmg > enemyHealth && !slowScumming && (enemyDmgEquality * (1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength)) > ourHealth))
 					enemyDmgEquality *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
-
+				//Make sure that we don't kill slow enemyies with our max damage. This is to stop us overkilling the next cell and getting less plaguebringer damage.
 				if (slowScumming && mapping && currentCell % 2 !== 0) {
 					if (ourMaxDmg * Math.pow(ourEqualityModifier, i + 1) > enemyHealth) {
 						continue;
 					}
 				}
 			}
+
 			//Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
-			if ((voidPBSwap || slowScumming) &&
-				mapping && !fastEnemy && calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth &&
-				game.global.lastClearedMapCell !== mapObject.size - 2 &&
-				ATrunning &&
-				(typeof (game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer) === 'undefined' ||
-					game.global.mapGridArray[game.global.lastClearedMapCell + 2].plaguebringer < getCurrentEnemy().maxHealth) &&
-				(getCurrentEnemy().maxHealth * .05 < enemyHealth)) {
-				game.portal.Equality.disabledStackCount = maxEquality;
-				while (calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > getCurrentEnemy().health && i < maxEquality) {
-					i++;
+			//Now works with void maps AND in world. Setup heirloomPlagueSwap to true to enable.
+			if (plagueShield && (heirloomPlagueSwap || slowScumming)) {
+				var plaguebringerDamage = game.global[mapGrid][currentCell + 1].plaguebringer;
+				var shouldSkip = calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth
+				//Checking if we are at max plaguebringer damage. If not then skip to next equality stack if current attack will kill the enemy.
+				if (((mapping && !fastEnemy) || !mapping)
+					&& shouldSkip && currentCell !== (game.global[mapGrid].length - 3) && (typeof (plaguebringerDamage) === 'undefined' || plaguebringerDamage < getCurrentEnemy().maxHealth) &&
+					(getCurrentEnemy().maxHealth * .05 < enemyHealth)
+				) {
+					while (calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > getCurrentEnemy().health && i < maxEquality) {
+						i++;
+					}
 				}
-				continue;
 			}
+
 			if (!fastEnemy) {
 				game.portal.Equality.disabledStackCount = i;
 				break;
