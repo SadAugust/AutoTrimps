@@ -15,44 +15,192 @@ function runSurky() {
 }
 
 function setupSurkyUI() {
-
 	if (portalUniverse !== 2) return;
-	//return;
 	AutoPerks = {};
 
-	var presetListHtml =
-		"<select id=\"presetElem\" onchange=\"fillPreset()\" data-saved>\
-			\
-			<option disabled>— Select a Preset —</option>\
-			<option value=\"ezfarm\">Easy Radon challenge</option>\
-			<option value=\"tufarm\">Difficult Radon challenge</option>\
-			<option value=\"push\">Push/C^3/Mayhem</option>\
-			<option disabled>— Special-purpose presets —</option>\
-			<option value=\"downsize\">Downsize</option>\
-			<option value=\"duel\">Duel</option>\
-			<option value=\"berserk\">Berserk</option>\
-			<option value=\"alchemy\">Alchemy</option>\
-			<option value=\"smithless\">Smithless</option>\
-			<option value=\"combat\">Combat-only respec</option>\
-		</select>";
+	//Setting up data of id, names, and descriptions for each preset.
+	const presets = {
+		regular: {
+			ezfarm: {
+				name: "Easy Radon Challenge",
+				description: "Use if you can easily complete your radon challenge quickly at the minimum requirements with no golden battle. Pushing perks will still be valued for gains to scruffy level 3 and other growth mechanisms.",
+			},
+			tufarm: {
+				name: "Difficult Radon Challenge",
+				description: "Use if you need some extra pushing power to complete your radon challenge, especially if you still want golden battle. This will almost always be the right setting when you first start a new radon challenge.",
+			},
+			push: {
+				name: "Push/C^3/Mayhem",
+				description: "Use when doing any pushing runs. Aim is to maximise pushing power so should almost always be used with golden battle upgrades.",
+			},
+		},
+		special: {
+			alchemy: {
+				name: "Alchemy",
+				description: "Use this setting to optimize for trinket drop rate with finding potions. If you won't buy finding potions or don't care about trinket drops you can use a basic preset instead.\nIf it has been set then this will use your Easy Radon Challenge preset weights when selected.",
+			},
+			trappa: {
+				name: "Trappa/^3",
+				description: "Be sure to enter an 'Hours of trapping' value below to help value Bait! Use this setting either when portalling into Trappa, or after portalling with the Max Carpentry setting. coordLimited=1 is assumed.",
+			},
+			downsize: {
+				name: "Downsize/^3",
+				description: "This setting optimizes for each housing building giving only 1 Trimp. coordLimited=1 is assumed as the minimum (but a larger value to overweight population will be respected).\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
+			},
+			berserk: {
+				name: "Berserk/^3",
+				description: "This setting will stop Frenzy being purchased.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
+			},
+			smithless: {
+				name: "Smithless/^3",
+				description: "This setting will stop Smithology being purchased and make Smithies hold no value.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
+			},
+			duel: {
+				name: "Duel/^3",
+				description: "This setting optimizes for less than 100% CC in Duel. It's a very minor effect that only matters for Criticality so feel free to skip this setting if you like.\nIf it has been set then this will use your Push/C^3/Mayhem preset weights when selected.",
+			},
+			equip: {
+				name: "Equipment farming",
+				description: "Optimize purely for equipment purchasing power, including zone progression to get more speedbooks. Useful as an initial spec to maximize prestiges that can be afforded before respeccing to Combat spec. All entered weights are ignored, but the Coord-limited setting is respected.",
+			},
+			combat: {
+				name: "Combat Respec",
+				description: "As a respec ONLY, optimize for maximum combat stats given current equipment and population. Radon weight is ignored, but atk / hp vs.equality weights are respected. Coord Limited value is ignored and instead uses your save to determine how much housing perk levels are needed to buy your current coord amount. If you are in Trappa, the optimization assumes you have sent your last army so that health perks won't be applied - DO NOT USE in Trappa until after you send your last army.",
+			},
+			resplus: {
+				name: "Resources(+maps)",
+				description: "Optimize for max resource gains from +maps. Only use this if you are farming maps above your current zone and care ONLY about total resource gains. All user entered weights are ignored in favor of resource gains. Pushing perks are still valued for increasing the level of map you can farm.",
+			},
+			trappacarp: {
+				name: "Trappa Carp",
+				description: "Use this setting to max Carpentry when portalling into Trappa, if you can get enough starting population this way to be significant compared to how much you can trap.",
+			},
 
-	AutoPerks.createInput = function (perkname, div, id) {
-		var perk1input = document.createElement("Input");
-		perk1input.id = perkname;
-		var oldstyle = 'text-align: center; width: calc(100vw/36); font-size: 1.0vw; ';
-		if (game.options.menu.darkTheme.enabled != 2) perk1input.setAttribute("style", oldstyle + " color: black;");
-		else perk1input.setAttribute('style', oldstyle);
-		perk1input.setAttribute('class', 'perkRatios');
-		perk1input.setAttribute('onchange', '');
-		var perk1label = document.createElement("Label");
-		if (!id) perk1label.id = perkname + 'Label';
-		else perk1label.id = id;
-		perk1label.innerHTML = perkname;
-		if (!id) perk1label.innerHTML = perkname;
-		else perk1label.innerHTML = id;
-		perk1label.setAttribute('style', 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw; ');
-		div.appendChild(perk1label);
-		div.appendChild(perk1input);
+		}
+	}
+
+	//Setting up data of id, names, and descriptions for each input.
+	const inputBoxes = {
+		//Top Row
+		row1: {
+			clearWeight: {
+				name: "Weight: Attack",
+				description: "If you are farming and it's trivial to complete your radon challenge, set this to 0! It will still be valued for the effect of pushing power on radon gains (from Scruffy level 3, for example). Set >0 if you need more pushing power to complete your current challenge in a reasonable amount of time. This is the weight for how much you value attack * health, which determines clear speed at less than max equality. If you are used to Attack Weight and Health Weight, this is equivalent to Attack weight. This weight is not used for Equality at all.",
+				defaultValue: 0,
+			},
+			survivalWeight: {
+				name: "Weight: Health",
+				description: "Weight placed on equality (and additional weight placed on health), for maximum survivability against high enemy attack at max equality. This helps determine how far you can push (perhaps very slowly) before you get stuck on fast enemies that can one-shot you every hit. This can be set to 0 and equality will still be used as a dump perk. If you need a little more equality than that small weights like 0.001 will still give a meaningful boost to Equality levels. If you're used to separate attack & health weights, set this to your old Health Weight minus Attack Weight.",
+				defaultValue: 0,
+			},
+			radonWeight: {
+				name: "Weight: Radon",
+				description: "Weight for how much you value growth from radon (and trinkets). If you are purely farming and can easily complete your radon challenge, this is the only weight you need, other than a tiny bit of additional health/equality weight (like 0.0001) to get some equality.",
+				defaultValue: 1,
+			},
+		},
+		row2: {
+			targetZone: {
+				name: "Target Zone",
+				description: "Target last zone to clear. Always use your final cleared zone for the current challenge (afterpush zone for radon challenges, xx9 for c^3s, 100 for Mayhem, etc).",
+				defaultValue: (game.global.highestRadonLevelCleared || 20),
+			},
+			coordLimited: {
+				name: "Coord Limited",
+				description: "Enter '0' if you can easily buy all coords with your population. Enter '1' if you definitely can't buy all coords. Enter something in between if you only need a bit more population to buy all coords. You can also increase this value (even above 1) if you just want to weight population gain more highly for some reason.",
+				defaultValue: 0,
+			},
+			weaponLevels: {
+				name: "Weapon Levels",
+				description: "Dagger levels purchased at target zone.",
+				defaultValue: 1,
+			},
+			armorLevels: {
+				name: "Armor Levels",
+				description: "Boots levels purchased at target zone.",
+				defaultValue: 1,
+			},
+		},
+		row3: {
+			tributes: {
+				name: "Tributes",
+				description: "Number of purchased tributes to consider for Greed.",
+				defaultValue: 0,
+			},
+			meteorologists: {
+				name: "Meteorologists",
+				description: "Number of meteorologists to optimize for. Affects the value of food gains.",
+				defaultValue: 0,
+			},
+			housingCount: {
+				name: "Collector count",
+				description: "How many collectors do you get in your runs? Affects the value of more resources for increasing population. If you don't have collectors unlocked you can enter 0.",
+				defaultValue: 0,
+			},
+			smithyCount: {
+				name: "Smithies",
+				description: "How many Smithies do you get in your runs? Affects the value of Smithology.",
+				defaultValue: 0,
+			},
+			radonPerRun: {
+				name: "Radon per run",
+				description: "Typical Radon gains in a farming run. Needed for Observation (until your trinkets are capped). Can be extracted from your save if you paste a save from the end of a U2 farming run. Doesn't need to be exact but a pretty good estimate is recommended. Only used when Rn weight > 0.",
+				defaultValue: 0,
+			},
+			trapHrs: {
+				name: "Hours of trapping",
+				description: "Roughly how many hours of trapping do you plan to do in this run? Affects the value of Bait. Decimal values like '0.5' and '3.7' are allowed. Entering '0' will place no value on Bait.",
+				defaultValue: 5,
+			},
+			findPots: {
+				name: "Finding potions",
+				description: "How many finding potions will you buy? For simplicity we assume these are all purchased by z100.",
+				defaultValue: 0,
+			}
+		},
+	}
+
+	var presetListHtml = "<select id=\"presetElem\" onchange=\"fillPreset()\" data-saved>"
+	presetListHtml += "<option disabled>— Select a Preset —</option>"
+	for (var item in presets.regular) {
+		presetListHtml += "<option value=\"" + item + "\" title =\"" + presets.regular[item].description + "\">" + presets.regular[item].name + "</option>"
+	}
+	presetListHtml += "<option disabled>— Special-purpose presets —</option>"
+	for (var item in presets.special) {
+		presetListHtml += "<option value=\"" + item + "\" title =\"" + presets.special[item].description + "\">" + presets.special[item].name + "</option>"
+	}
+	presetListHtml += "</select >";
+
+	AutoPerks.createInput = function (perkLine, id, inputObj) {
+		if (!id) return;
+		if (document.getElementById(id + 'Div') !== null) {
+			debug("You most likely have a settup error in your inputBoxes. It will be trying to access a input box that doesn't exist.")
+			return;
+		}
+		//Creating container for both the label and the input.
+		var perkDiv = document.createElement("DIV");
+		perkDiv.id = id + 'Div';
+		perkDiv.setAttribute("style", "display: inline;");
+
+		//Creating input box for users to enter their own ratios/stats.
+		var perkInput = document.createElement("Input");
+		perkInput.id = id;
+		var perkInputStyle = 'text-align: center; width: calc(100vw/22); font-size: 1vw;';
+		if (game.options.menu.darkTheme.enabled != 2) perkInputStyle += (" color: black;");
+		perkInput.setAttribute('style', perkInputStyle);
+		perkInput.setAttribute('value', inputObj.defaultValue);
+		perkInput.setAttribute('onchange', 'saveSurkySettings();');
+		perkInput.setAttribute('onmouseover', 'tooltip(\"' + inputObj.name + '\", \"customText\", event, \"' + inputObj.description + '\")');
+		perkInput.setAttribute('onmouseout', 'tooltip("hide")');
+
+		var perkText = document.createElement("Label");
+		perkText.id = id + "Text";
+		perkText.innerHTML = inputObj.name;
+		perkText.setAttribute('style', 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw; ');
+		//Combining the input and the label into the container. Then attaching the container to the main div.
+		perkDiv.appendChild(perkText);
+		perkDiv.appendChild(perkInput);
+		perkLine.appendChild(perkDiv);
 	}
 
 	AutoPerks.GUI = {};
@@ -84,59 +232,69 @@ function setupSurkyUI() {
 		}
 
 		var apGUI = AutoPerks.GUI;
-		var $buttonbar = document.getElementById("portalBtnContainer");
+		//Setup Surky button
 		apGUI.$allocatorBtn1 = document.createElement("DIV");
 		apGUI.$allocatorBtn1.id = 'allocatorBtn1';
 		apGUI.$allocatorBtn1.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
 		apGUI.$allocatorBtn1.setAttribute('onclick', 'runSurky()');
+		apGUI.$allocatorBtn1.setAttribute('onmouseover', 'tooltip(\"Auto Allocate\", \"customText\", event, \"Clears all perks and buy optimal levels in each perk.<br>Will override inputs with stats from your current run when pressed to ensure stats are always up to date.\")');
+		apGUI.$allocatorBtn1.setAttribute('onmouseout', 'tooltip("hide")');
 		apGUI.$allocatorBtn1.textContent = 'Allocate Perks';
-		$buttonbar.appendChild(apGUI.$allocatorBtn1);
-		$buttonbar.setAttribute('style', 'margin-bottom: 0.8vw;');
+		//Distance from Portal/Cancel/Respec buttons
+		var $buttonbar = document.getElementById("portalBtnContainer");
+		if (document.getElementById(apGUI.$allocatorBtn1.id) === null)
+			$buttonbar.appendChild(apGUI.$allocatorBtn1);
+		$buttonbar.setAttribute('style', 'margin-bottom: 0.2vw;');
 		apGUI.$customRatios = document.createElement("DIV");
 		apGUI.$customRatios.id = 'customRatios';
+
 		//Line 1 of the UI
 		apGUI.$ratiosLine1 = document.createElement("DIV");
-		apGUI.$ratiosLine1.setAttribute('style', 'display: inline-block; text-align: center; width: 100%');
-		apGUI.$ratiosLine1.setAttribute('onchange', 'saveSurkySettings()');
-		var listratiosTitle1 = ["Weight: Attack", "Weight: Health", "Weight: Radon"];
-		var listratiosLine1 = ["clearWeight", "survivalWeight", "radonWeight"];
-		for (var i in listratiosLine1)
-			AutoPerks.createInput(listratiosLine1[i], apGUI.$ratiosLine1, listratiosTitle1[i]);
+		apGUI.$ratiosLine1.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
+		for (var item in inputBoxes.row1) {
+			AutoPerks.createInput(apGUI.$ratiosLine1, item, inputBoxes.row1[item]);
+		}
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine1);
 
-		//Hide these elements - Line 2
+		//Line 2
 		apGUI.$ratiosLine2 = document.createElement("DIV");
-		apGUI.$ratiosLine2.setAttribute('style', 'display: inline-block; text-align: center; width: 100%');
-		apGUI.$ratiosLine2.setAttribute('onchange', 'saveSurkySettings()');
-		var listratiosTitle2 = ["Target Zone", "Coord Limited (0-1)", "Weapon Levels", "Armor Levels"];
-		var listratiosLine2 = ["targetZone", "coordLimited", "weaponLevels", "armorLevels"];
-		for (var i in listratiosLine2)
-			AutoPerks.createInput(listratiosLine2[i], apGUI.$ratiosLine2, listratiosTitle2[i]);
+		apGUI.$ratiosLine1.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
+		for (var item in inputBoxes.row2) {
+			AutoPerks.createInput(apGUI.$ratiosLine2, item, inputBoxes.row2[item]);
+		}
+		apGUI.$customRatios.appendChild(apGUI.$ratiosLine2);
 
-		//Hide these elements - Line 3
+		//Line 3
 		apGUI.$ratiosLine3 = document.createElement("DIV");
-		apGUI.$ratiosLine3.setAttribute('style', 'display: none; text-align: center; width: 100%');
-		apGUI.$ratiosLine3.setAttribute('onchange', 'saveSurkySettings()');
-		var listratiosTitle3 = ["Tributes purchased", "Meteorologists", "Collector count", "Smithy count", "Rn Gain per Farming Run"];
-		var listratiosLine3 = ['tributes', "meteorologists", "housingCount", "smithyCount", "radonPerRun"];
-		for (var i in listratiosLine3)
-			AutoPerks.createInput(listratiosLine3[i], apGUI.$ratiosLine3, listratiosTitle3[i]);
+		apGUI.$ratiosLine3.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
+		for (var item in inputBoxes.row3) {
+			AutoPerks.createInput(apGUI.$ratiosLine3, item, inputBoxes.row3[item]);
+		}
+		apGUI.$customRatios.appendChild(apGUI.$ratiosLine3);
 
+		//Creating container for both the label and the input.
+		apGUI.$presetDiv = document.createElement("DIV");
+		apGUI.$presetDiv.id = "Preset Div";
+		apGUI.$presetDiv.setAttribute("style", "display: inline; width: calc(100vw/34;");
+
+		//Setting up preset label
 		apGUI.$presetLabel = document.createElement("Label");
-		apGUI.$presetLabel.id = 'Ratio Preset Label';
+		apGUI.$presetLabel.id = 'PresetText';
 		apGUI.$presetLabel.innerHTML = "&nbsp;&nbsp;&nbsp;Preset:";
 		apGUI.$presetLabel.setAttribute('style', 'margin-right: 0.5vw; color: white; font-size: 0.9vw;');
+		//Setting up preset dropdown
 		apGUI.$preset = document.createElement("select");
 		apGUI.$preset.id = 'presetElem';
 		apGUI.$preset.setAttribute('onchange', 'fillPreset()');
-		var oldstyle = 'text-align: center; width: 8vw; font-size: 0.8vw; font-weight: lighter; ';
-		if (game.options.menu.darkTheme.enabled != 2) apGUI.$preset.setAttribute("style", oldstyle + " color: black;");
-		else apGUI.$preset.setAttribute('style', oldstyle);
+		var oldstyle = 'text-align: center; width: 9.6vw; font-size: 0.9vw; font-weight: lighter; ';
+		if (game.options.menu.darkTheme.enabled != 2) oldstyle += " color: black;";
+		apGUI.$preset.setAttribute('style', oldstyle);
+
 		apGUI.$preset.innerHTML = presetListHtml;
-		apGUI.$ratiosLine1.appendChild(apGUI.$presetLabel);
-		apGUI.$ratiosLine1.appendChild(apGUI.$preset);
-		apGUI.$customRatios.appendChild(apGUI.$ratiosLine2);
-		apGUI.$customRatios.appendChild(apGUI.$ratiosLine3);
+		apGUI.$presetDiv.appendChild(apGUI.$presetLabel);
+		apGUI.$presetDiv.appendChild(apGUI.$preset);
+		if (document.getElementById(apGUI.$presetDiv.id) === null)
+			apGUI.$ratiosLine1.appendChild(apGUI.$presetDiv);
 		var $portalWrapper = document.getElementById("portalWrapper")
 		$portalWrapper.appendChild(apGUI.$customRatios);
 		loadSurkySettings();
@@ -157,7 +315,7 @@ function saveSurkySettings(initial) {
 		radonWeight: $$('#radonWeight').value === '' ? 1 : $$('#radonWeight').value,
 		clearWeight: $$('#clearWeight').value === '' ? 1 : $$('#clearWeight').value,
 		survivalWeight: $$('#survivalWeight').value === '' ? 1 : $$('#survivalWeight').value,
-		targetZone: $$('#targetZone').value,
+		targetZone: $$('#targetZone').value === '' ? 20 : $$('#targetZone').value,
 		radonPerRun: $$('#radonPerRun').value,
 		coordLimited: $$('#coordLimited').value === '' ? 0 : $$('#coordLimited').value,
 		weaponLevels: $$('#weaponLevels').value,
@@ -166,6 +324,8 @@ function saveSurkySettings(initial) {
 		meteorologists: $$('#meteorologists').value,
 		housingCount: $$('#housingCount').value,
 		smithyCount: $$('#smithyCount').value,
+		findPots: $$('#findPots').value,
+		trapHrs: $$('#trapHrs').value,
 		ezWeights: props.ezWeights,
 		tuWeights: props.tuWeights,
 		pushWeights: props.pushWeights,
@@ -208,7 +368,7 @@ function loadSurkySettings() {
 		$$('#targetZone').value = surkyInputs.targetZone
 	//Second Row
 	if (surkyInputs.radonPerRun !== null && surkyInputs.radonPerRun !== undefined)
-		$$('#radonPerRun').value = surkyInputs.radonPerRun
+		$$('#radonPerRun').value = prettify(surkyInputs.radonPerRun)
 	if (surkyInputs.coordLimited !== null && surkyInputs.coordLimited !== undefined)
 		$$('#coordLimited').value = surkyInputs.coordLimited
 	if (surkyInputs.weaponLevels !== null && surkyInputs.weaponLevels !== undefined)
@@ -224,6 +384,10 @@ function loadSurkySettings() {
 		$$('#housingCount').value = surkyInputs.housingCount
 	if (surkyInputs.smithyCount !== null && surkyInputs.smithyCount !== undefined)
 		$$('#smithyCount').value = surkyInputs.smithyCount
+	if (surkyInputs.findPots !== null && surkyInputs.findPots !== undefined)
+		$$('#findPots').value = surkyInputs.findPots
+	if (surkyInputs.trapHrs !== null && surkyInputs.trapHrs !== undefined)
+		$$('#trapHrs').value = surkyInputs.trapHrs
 }
 
 const equipScalingPrestige = {
@@ -322,8 +486,8 @@ function initPerks() {
 		showLevelLocks: false,
 		ezWeights: (surkyInputs !== null && surkyInputs.ezWeights !== undefined && surkyInputs.ezWeights !== null) ? (surkyInputs.ezWeights) : null,
 		tuWeights: (surkyInputs !== null && surkyInputs.tuWeights !== undefined && surkyInputs.tuWeights !== null) ? (surkyInputs.tuWeights) : null,
-		alchWeights: (surkyInputs !== null && surkyInputs.tuWeights !== undefined && surkyInputs.alchWeights !== null) ? (surkyInputs.alchWeights) : null,
-		pushWeights: (surkyInputs !== null && surkyInputs.tuWeights !== undefined && surkyInputs.pushWeights !== null) ? (surkyInputs.pushWeights) : null,
+		alchWeights: (surkyInputs !== null && surkyInputs.ezWeights !== undefined && surkyInputs.ezWeights !== null) ? (surkyInputs.ezWeights) : null,
+		pushWeights: (surkyInputs !== null && surkyInputs.pushWeights !== undefined && surkyInputs.pushWeights !== null) ? (surkyInputs.pushWeights) : null,
 		gbAfterpush: false,
 		// is GB used in the afterpush?
 		s3Rn: true,
@@ -653,13 +817,13 @@ function fillPreset(specificPreset) {
 	} else if (preset == 'trappa') {
 		weights = [1, 1.5, 0];
 	} else if (preset == 'downsize') {
-		weights = [1, 1, 0];
+		weights = (props.pushWeights === null) ? [1, 1, 0] : props.pushWeights;
 	} else if (preset == 'duel') {
-		weights = [1, 0.2, 0];
+		weights = (props.pushWeights === null) ? [1, 0.2, 0] : props.pushWeights;
 	} else if (preset == 'berserk') {
-		weights = [1, 0.5, 0];
+		weights = (props.pushWeights === null) ? [1, 0.5, 0] : props.pushWeights;
 	} else if (preset == 'smithless') {
-		weights = [1, 0.5, 0];
+		weights = (props.pushWeights === null) ? [1, 0.5, 0] : props.pushWeights;
 	} else if (preset == 'combat') {
 		weights = [1, 0.1, 0];
 	}
@@ -674,14 +838,19 @@ function fillPreset(specificPreset) {
 
 function presetSpecialOpt() {
 	var preset = presetElem.value;
+	$$('#trapHrsDiv').style.display = 'none';
+	$$('#findPotsDiv').style.display = 'none';
+	$$('#radonPerRunDiv').style.display = 'none';
 	if (preset == 'alchemy') {
 		props.specialChallenge = 'alchemy';
+		$$('#findPotsDiv').style.display = 'inline';
 	}
 	if (preset == 'trappacarp') {
 		props.specialChallenge = 'trappacarp';
 	}
 	if (preset == 'trappa') {
 		props.specialChallenge = 'trappa';
+		$$('#trapHrsDiv').style.display = 'inline';
 		perks.Bait.optimize = true;
 		perks.Pheromones.optimize = false;
 	} else {
@@ -765,8 +934,12 @@ function initialLoad() {
 
 	// "red" fields should only be overwritten if loading a U2 save (values will be garbage in U1) -- Surky is gonna break if portal Universe isn't set to 2 here!
 	var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
+	//If no settings saved then create them
+	saveSurkySettings(true);
+	surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 	// target zone to CLEAR is 1 zone before the portal zone by default
 	var currentZone = Math.max(1, game.global.world - 1);
+	if (currentZone > game.global.highestRadonLevelCleared + 1) currentZone = game.global.highestRadonLevelCleared + 1;
 	$$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
 	if (isNaN($$('#targetZone').value)) $$('#targetZone').value = targetZone;
 	props.targetZone = Number($$('#targetZone').value);
@@ -799,7 +972,7 @@ function initialLoad() {
 	props.smithyCount = Number($$('#smithyCount').value);
 
 	var rnPerRun = (game.resources.radon.owned || 0);
-	$$('#radonPerRun').value = Math.max(rnPerRun, surkyInputs.radonPerRun);
+	$$('#radonPerRun').value = prettify(Math.max(rnPerRun, surkyInputs.radonPerRun));
 	if (isNaN($$('#radonPerRun').value)) $$('#radonPerRun').value = rnPerRun;
 	props.radonPerRun = Number($$('#radonPerRun').value);
 
@@ -808,6 +981,19 @@ function initialLoad() {
 	$$('#housingCount').value = Math.max(housingCount, surkyInputs.housingCount)
 	if (isNaN($$('#housingCount').value)) $$('#housingCount').value = housingCount;
 	props.housingCount = Number($$('#housingCount').value);
+
+
+	//Figure out hours trapped. Default is 5!
+	var trapHrs = 5;
+	$$('#trapHrs').value = surkyInputs.trapHrs;
+	if (isNaN($$('#trapHrs').value)) $$('#trapHrs').value = trapHrs;
+	props.trapHrs = Number($$('#trapHrs').value);
+
+	//Figure out finding potions. Default is 5!
+	var findPots = (alchObj.potionsOwned[2] || 5);
+	$$('#findPots').value = Math.max(findPots, surkyInputs.findPots);
+	if (isNaN($$('#findPots').value)) $$('#findPots').value = findPots;
+	props.findPots = Number($$('#findPots').value);
 
 	props.vmZone = Math.max(15, (props.targetZone - 1));
 	var rawRnRun = game.resources.radon.owned;

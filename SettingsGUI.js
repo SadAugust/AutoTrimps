@@ -4853,7 +4853,7 @@ function setupATButtons() {
 	<b>Auto Level</b>: The level that AT recommends using whilst farming.<br>\
 	<b>B</b>: The amount of time your trimps have been breeding.<br>\
 	<b>T</b>: Your current tenacity time.\")');
-	voidMapText.setAttribute("onmouseout", 'tooltip("hide")');
+	voidMapContainer.setAttribute("onmouseout", 'tooltip("hide")');
 	voidMapText.id = 'additionalInfo';
 	voidMapContainer.appendChild(voidMapText);
 	var trimpsButtonCol = document.getElementById("trimps");
@@ -5307,6 +5307,13 @@ function updateATVersion() {
 			Auto Portal will now respect your normal portal settings if you have <b>Auto Start Daily</b> enabled and no dailies left to run.<br>\
 			Added heirloom mod blacklist inputs for shields & staffs. These will allow you to make sure heirlooms with those mods automatically get recycled.<br>\
 			Added a new setting to the Heirloom tab to allow you to swap your shields to maximise plaguebringer damage on compressed enemies.");
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.94') {
+			changelog.push("Surky has undergone a few adjustments. The missing presets are now available and the input boxes & presets all have mouseover tooltips to explain what they do.<br>\
+			Some values that were hidden have now been displayed but they will get overwritten if they are below your current value when running Surky.<br>\
+			Downsize, Duel, Berserk, Alchemy & Smithless will now all load the relevant presets when you auto portal into them.<br>\
+			Alchemy now has an input for potions of finding & trappa now has an input for hours trapped.");
 		}
 
 
