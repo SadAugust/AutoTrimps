@@ -140,9 +140,9 @@ function pushSpreadsheetData() {
 	}
 	else if (challengeActive('Daily')) {
 		dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
-		dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge))));
-		heliumGained *= dailyPercent;
-		heliumHr *= dailyPercent;
+		dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge)))) / 100;
+		heliumGained *= 1 + dailyPercent;
+		heliumHr *= 1 + dailyPercent;
 	}
 	dailyMods.replaceAll(',', ';');
 
