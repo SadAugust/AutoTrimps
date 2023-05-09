@@ -416,7 +416,7 @@ function getPlayerCritDamageMult_AT(customShield) {
 function getPlayerEqualityMult_AT(customShield) {
 	var modifier = game.portal.Equality.modifier;
 	var tempModifier = 1 - modifier;
-	tempModifier *= (getHeirloomBonus_AT("Shield", "inequality", customShield) / 1000);
+	tempModifier *= (getHeirloomBonus_AT("Shield", "inequality", customShield) / 100);
 	modifier += tempModifier;
 	return modifier;
 }

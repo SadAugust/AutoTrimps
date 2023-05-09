@@ -444,7 +444,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	var ourDmgEquality = 0;
 	var enemyDmgEquality = 0;
 	var unluckyDmgEquality = 0;
-	const ourEqualityModifier = game.portal.Equality.getModifier(1);
+	const ourEqualityModifier = getPlayerEqualityMult_AT(heirloomShieldToEquip(mapType));
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
 
 	if (enemyHealth !== 0) {

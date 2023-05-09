@@ -577,7 +577,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 		if (!isNaN(parseInt((equality)))) {
 			if (equality > game.portal.Equality[perkLevel])
 				debug('You don\'t have this many levels in Equality. - Player Dmg. ' + equality + "/" + game.portal.Equality[perkLevel] + " equality used.", "other");
-			attack *= Math.pow(game.portal.Equality.getModifier(1), equality);
+			attack *= Math.pow(getPlayerEqualityMult_AT(heirloomShieldToEquip(mapType)), equality);
 		} else if (isNaN(parseInt((equality)))) {
 			if (tenSecondInterval) debug("Equality is not a number. - Player Dmg. " + equality + " equality used.", "other");
 		}
