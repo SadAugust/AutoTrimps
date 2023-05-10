@@ -167,6 +167,7 @@ function initializeAllSettings() {
 				description += "<p>Fillers (non daily/" + cinf() + " runs) will load <b>'Easy Radon Challenge</b>'</p>";
 				description += "<p>Dailies will load <b>'Difficult Radon Challenge</b>'</p>";
 				description += "C3s or Mayhem-like challenges will load <b>'Push/C3/Mayhem</b>'.</p>";
+				description += "Challenges that have a dedicated preset will be loaded when starting that challenge.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [2],
