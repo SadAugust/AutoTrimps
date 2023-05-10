@@ -212,7 +212,7 @@ function setupSurkyUI() {
 
 		//Creating input box for users to enter their own ratios/stats.
 		var perkInput = document.createElement("Input");
-		perkInput.setAttribute("type", "float");
+		perkInput.setAttribute("type", "number");
 		perkInput.id = id;
 		var perkInputStyle = 'text-align: center; width: calc(100vw/22); font-size: 1vw;';
 		if (game.options.menu.darkTheme.enabled != 2) perkInputStyle += (" color: black;");
