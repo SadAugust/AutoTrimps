@@ -452,9 +452,9 @@ function initPerks() {
 		// finding potions purchased in alchemy
 		shinyTable: [0],
 		// memoization table for trinket drops
-		clearWeight: $$('#clearWeight').value,
-		survivalWeight: $$('#survivalWeight').value,
-		radonWeight: $$('#radonWeight').value,
+		clearWeight: Number($$('#clearWeight').value),
+		survivalWeight: Number($$('#survivalWeight').value),
+		radonWeight: Number($$('#radonWeight').value),
 
 		scruffyLevel: 0,
 		weaponLevels: 1,
@@ -923,53 +923,53 @@ function initialLoad() {
 	// target zone to CLEAR is 1 zone before the portal zone by default
 	var currentZone = Math.max(1, game.global.world - 1);
 	$$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
-	props.targetZone = $$('#targetZone').value;
+	props.targetZone = Number($$('#targetZone').value);
 
 	// weapon/armor levels taken from dagger/boots (most likely to be leveled highest)
 	$$('#weaponLevels').value = surkyInputs.weaponLevels;
-	props.weaponLevels = $$('#weaponLevels').value;
+	props.weaponLevels = Number($$('#weaponLevels').value);
 
 	$$('#armorLevels').value = surkyInputs.armorLevels;
-	props.armorLevels = $$('#armorLevels').value;
+	props.armorLevels = Number($$('#armorLevels').value);
 
 	// get current purchased tributes, mets, etc
 	var tributeCount = (game.buildings.Tribute.owned || 0);
 	$$('#tributes').value = Math.max(tributeCount, surkyInputs.tributes);
-	props.tributes = $$('#tributes').value;
+	props.tributes = Number($$('#tributes').value);
 
 	var metCount = (game.jobs.Meteorologist.owned || 0);
 	$$('#meteorologists').value = Math.max(metCount, surkyInputs.meteorologists);
-	props.meteorologists = $$('#meteorologists').value;
+	props.meteorologists = Number($$('#meteorologists').value);
 
 	var smithyCount = (game.buildings.Smithy.owned || 0);
 	$$('#smithyCount').value = Math.max(smithyCount, surkyInputs.smithyCount);
-	props.smithyCount = $$('#smithyCount').value;
+	props.smithyCount = Number($$('#smithyCount').value);
 
 	var rnPerRun = (game.resources.radon.owned || 0);
-	props.radonPerRun = Math.max(rnPerRun, surkyInputs.radonPerRun);
+	props.radonPerRun = Math.max(rnPerRun, Number(surkyInputs.radonPerRun));
 	$$('#radonPerRun').value = props.radonPerRun;
 
 	// get count of best housing building (don't bother optimizing lower than gateways, the 2nd-order adjustments won't matter enough to bother)
 	var housingCount = (game.buildings.Collector.owned || 0);
 	$$('#housingCount').value = Math.max(housingCount, surkyInputs.housingCount)
-	props.housingCount = $$('#housingCount').value;
+	props.housingCount = Number($$('#housingCount').value);
 
 	//Figure out hours trapped for Trappapalooza. Default is 5!
 	$$('#trapHrs').value = surkyInputs.trapHrs;
-	props.trapHrs = $$('#trapHrs').value;
+	props.trapHrs = Number($$('#trapHrs').value);
 
 	//Figure out finding potions for Alchemy. Default is 0!
 	var findPots = (alchObj.potionsOwned[2] || 0);
 	$$('#findPots').value = Math.max(findPots, surkyInputs.findPots);
-	props.findPots = $$('#findPots').value;
+	props.findPots = Number($$('#findPots').value);
 
 	props.vmZone = Math.max(15, (props.targetZone - 1));
 	var rawRnRun = game.resources.radon.owned;
-	props.radonPerRun = $$('#radonPerRun').value;
+	props.radonPerRun = Number($$('#radonPerRun').value);
 
 	// if Rn/run is locked, believe it, and force the old history (lets the user manually correct an error)
 	// also for easier testing (and to prevent long term problems with bad user input), assume an input greater than lifetime radon is not something the user wants semi-permanently locked 
-	if (rawRnRun > parseFloat($$('#radonPerRun').value) / 20 || parseFloat($$('#radonPerRun').value) >= game.global.totalRadonEarned && rawRnRun > game.global.totalRadonEarned / 1e6) {
+	if (rawRnRun > parseFloat(props.radonPerRun) / 20 || props.radonPerRun >= game.global.totalRadonEarned && rawRnRun > game.global.totalRadonEarned / 1e6) {
 		var history = new Array(rnTerms);
 		// maintain a history of the last 10 farming runs' Rn gain, and evaluate an exponentially weighted moving average over this history
 		if (window.localStorage.getItem("rPrHistory")) {
@@ -1269,7 +1269,7 @@ function readInputs() {
 	perks.Tenacity.effect = getTenacityEffect(props.tenacityTime);
 
 	// triple-checking that coordlimited is not less than 0
-	props.coordLimited = $$('#coordLimited').value;
+	props.coordLimited = Number($$('#coordLimited').value);
 	if (props.coordLimited < 0)
 		props.coordLimited = 0;
 	// let the user set coordLimited > 1 if they like to give extra population weight, despite saying they can't ;p
