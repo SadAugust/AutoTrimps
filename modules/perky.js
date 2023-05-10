@@ -3,14 +3,12 @@ var AutoPerks = {};
 function runPerky() {
 	if (portalUniverse !== 1) return;
 	if (JSON.parse(localStorage.getItem("perkyInputs")) === null) return;
-	read_save();
-	display(optimize(parse_inputs()));
 	allocatePerky();
 }
 
 function allocatePerky() {
 	tooltip('Import Perks', null, 'update');
-	document.getElementById('perkImportBox').value = ($$("#perkstring").value)
+	document.getElementById('perkImportBox').value = display(optimize(parse_inputs(read_save())));
 	importPerks();
 	cancelTooltip();
 }
@@ -219,23 +217,27 @@ function read_save() {
 
 	// Fill the fields
 	update_dg();
-	$$('#unlocks').value = unlocks.join(',');
-	$$('#chronojest').value = chronojest;
-	$$('#prod').value = prod;
-	$$('#loot').value = loot;
+
+	const data = {
+		unlocks: unlocks.join(','),
+		chronojest: chronojest,
+		prod: prod,
+		loot: loot,
+	}
+
+	return data;
 }
 
-function parse_inputs() {
+function parse_inputs(data) {
 
-	read_save();
 	var preset = $$('#preset').value;
 	savePerkySettings();
 	if (preset == 'trapper' && (!game || game.global.challengeActive != 'Trapper'))
 		throw 'This preset requires a save currently running Trapper². Start a new run using “Trapper² (initial)”, export, and try again.';
-	var result = {
-		total_he: (countHeliumSpent() + game.global.heliumLeftover + game.resources.helium.owned) - (!portalWindowOpen ? game.resources.helium.owned : 0),
+	result = {
+		total_he: (countHeliumSpent(false, true) + game.global.heliumLeftover) + (portalWindowOpen ? game.resources.helium.owned : 0),
 		zone: game.stats.highestLevel.valueTotal(),
-		perks: parse_perks('', $$('#unlocks').value),
+		perks: parse_perks('', data.unlocks),
 		weight: {
 			helium: Number(input("weight-he")),
 			attack: Number(input("weight-atk")),
@@ -257,9 +259,9 @@ function parse_inputs() {
 			magn: game.unlocks.imps.Magnimp,
 			taunt: game.unlocks.imps.Tauntimp,
 			ven: game.unlocks.imps.Venimp,
-			chronojest: input('chronojest'),
-			prod: input('prod'),
-			loot: input('loot'),
+			chronojest: data.chronojest,
+			prod: data.prod,
+			loot: data.loot,
 			breed_timer: (mastery('patience') ? 45 : 30),
 		}
 	};
@@ -382,7 +384,7 @@ function loadPerkySettings() {
 				localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
 			}
 		}
-		if (surkyInputs === null) {
+		if (perkyInputs === null) {
 			return;
 		}
 	}
@@ -404,7 +406,7 @@ function savePerkySettings() {
 	}
 	localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
 	if (typeof (autoTrimpSettings) !== 'undefined') {
-		autoTrimpSettings['autoAllocatePresets'].valueU2 = JSON.stringify(perkyInputs);
+		autoTrimpSettings['autoAllocatePresets'].value = JSON.stringify(perkyInputs);
 		saveSettings();
 	}
 }
@@ -413,7 +415,7 @@ function display(results) {
 	var perks = results[1];
 	for (var name in perks)
 		perks[name] = perks[name].level;
-	$$('#perkstring').value = LZString.compressToBase64(JSON.stringify(perks));
+	return LZString.compressToBase64(JSON.stringify(perks));
 }
 
 function optimize(params) {
@@ -708,33 +710,108 @@ function setupPerkyUI() {
 	if (portalUniverse !== 1) return;
 	AutoPerks = {};
 
-	var presetListHtml =
-		"<select id=\"preset\" onchange=\"select_preset(this.value)\" data-saved>\
-			\
-			<option disabled>— Select a Preset —</option>\
-			<option value=\"early\">z1–59</option>\
-			<option value=\"broken\">z60–99</option>\
-			<option value=\"mid\">z100–180</option>\
-			<option value=\"corruption\">z181–229</option>\
-			<option value=\"magma\">z230–280</option>\
-			<option value=\"z280\">z280–400</option>\
-			<option value=\"z400\">z400–450</option>\
-			<option value=\"z450\">z450+</option>\
-			<option disabled>— Special-purpose presets —</option>\
-			<option value=\"spire\" data-hide=\"200\">Spire respec</option>\
-			<option value=\"nerfed\">Nerfed feat</option>\
-			<option value=\"tent\">Tent City feat</option>\
-			<option value=\"scientist\">Scientist challenge</option>\
-			<option value=\"carp\" data-hide=\"65\">Trapper² (initial)</option>\
-			<option value=\"trapper\" data-hide=\"65\">Trapper² (respec)</option>\
-			<option value=\"coord\" data-hide=\"65\">Coordinate²</option>\
-			<option value=\"trimp\" data-hide=\"65\">Trimp²</option>\
-			<option value=\"metal\" data-hide=\"65\">Metal²</option>\
-			<option value=\"c2\" data-hide=\"65\">Other c²</option>\
-			<option value=\"income\">Income</option>\
-			<option value=\"unesscented\">Unesscented</option>\
-			<option value=\"nerfeder\">Nerfeder</option>\
-		</select>";
+	//Setting up data of id, names, and descriptions for each preset.
+	const presets = {
+		regular: {
+			early: {
+				name: "Z1-59",
+				description: "Use this setting for the when you're progressing through the first 60 zones.",
+			},
+			broken: {
+				name: "Z60-99",
+				description: "Use this setting for zones 60-99.",
+			},
+			mid: {
+				name: "Z100-180",
+				description: "Use this setting for zones 100-180.",
+			},
+			corruption: {
+				name: "Z181-229",
+				description: "Use this setting for zones 181-229.",
+			},
+			magma: {
+				name: "Z230-280",
+				description: "Use this setting for zones 230-280.",
+			},
+			z280: {
+				name: "Z280-400",
+				description: "Use this setting for zones 280-400.",
+			},
+			z400: {
+				name: "Z400-450",
+				description: "Use this setting for zones 400-450.",
+			},
+			z450: {
+				name: "Z450+",
+				description: "Use this setting for zones 450+.",
+			},
+		},
+		special: {
+			spire: {
+				name: "Spire respec",
+				description: "Use this setting to respec for the Spire.",
+			},
+			nerfed: {
+				name: "Nerfed feat",
+				description: "Use this setting to respec for the Nerfed feat.",
+			},
+			tent: {
+				name: "Tent City feat",
+				description: "Use this setting to respec for the Tent City feat.",
+			},
+			scientist: {
+				name: "Scientist challenge",
+				description: "Use this setting to respec for the Scientist challenge.",
+			},
+			carp: {
+				name: "Trapper² (initial)",
+				description: "Use this setting to respec for the Trapper² feat.",
+			},
+			trapper: {
+				name: "Trapper² (respec)",
+				description: "Use this setting to respec for the Trapper² feat.",
+			},
+			coord: {
+				name: "Coordinate²",
+				description: "Use this setting to respec for the Coordinate² feat.",
+			},
+			trimp: {
+				name: "Trimp²",
+				description: "Use this setting to respec for the Trimp² feat.",
+			},
+			metal: {
+				name: "Metal²",
+				description: "Use this setting to respec for the Metal² feat.",
+			},
+			c2: {
+				name: "Other c²",
+				description: "Use this setting to respec for the other c² feats.",
+			},
+			income: {
+				name: "Income",
+				description: "Use this setting to respec for the Income feat.",
+			},
+			unesscented: {
+				name: "Unesscented",
+				description: "Use this setting to respec for the Unesscented feat.",
+			},
+			nerfeder: {
+				name: "Nerfeder",
+				description: "Use this setting to respec for the Nerfeder feat.",
+			},
+		}
+	}
+
+	var presetListHtml = "<select id=\"presetElem\" onchange=\"fillPreset()\" data-saved>"
+	presetListHtml += "<option disabled>— Normal Progression —</option>"
+	for (var item in presets.regular) {
+		presetListHtml += "<option value=\"" + item + "\" title =\"" + presets.regular[item].description + "\">" + presets.regular[item].name + "</option>"
+	}
+	presetListHtml += "<option disabled>— Special-purpose presets —</option>"
+	for (var item in presets.special) {
+		presetListHtml += "<option value=\"" + item + "\" title =\"" + presets.special[item].description + "\">" + presets.special[item].name + "</option>"
+	}
+	presetListHtml += "</select >";
 
 	AutoPerks.createInput = function (perkname, div, id) {
 		var perk1input = document.createElement("Input");
@@ -774,13 +851,18 @@ function setupPerkyUI() {
 
 	AutoPerks.displayGUI = function () {
 
+		var setupNeeded = false;
 		var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
 		if (perkyInputs === null && typeof (autoTrimpSettings) !== 'undefined') {
-			var atSetting = JSON.parse(autoTrimpSettings['autoAllocatePresets'].value);
+			var atSetting = autoTrimpSettings['autoAllocatePresets'].value;
 			if (atSetting !== '{"":""}') {
-				perkyInputs = atSetting;
+				perkyInputs = JSON.parse(atSetting);
 				localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
 			}
+		}
+		if (perkyInputs === null) {
+			setupNeeded = true;
+			perkyInputs = {};
 		}
 
 		var apGUI = AutoPerks.GUI;
@@ -803,14 +885,6 @@ function setupPerkyUI() {
 			AutoPerks.createInput(listratiosLine1[i], apGUI.$ratiosLine1, listratiosTitle1[i]);
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine1);
 
-		//Hide these elements - Line 2
-		apGUI.$ratiosLine2 = document.createElement("DIV");
-		apGUI.$ratiosLine2.setAttribute('style', 'display: none; text-align: left; width: 100%');
-		var listratiosTitle2 = ["Production Mod", "Loot Mod"];
-		var listratiosLine2 = ["prod", "loot", "unlocks", "chronojest", 'perkstring'];
-		for (var i in listratiosLine2)
-			AutoPerks.createInput(listratiosLine2[i], apGUI.$ratiosLine2, listratiosTitle2[i]);
-
 		apGUI.$presetLabel = document.createElement("Label");
 		apGUI.$presetLabel.id = 'Ratio Preset Label';
 		apGUI.$presetLabel.innerHTML = "&nbsp;&nbsp;&nbsp;Preset:";
@@ -825,7 +899,6 @@ function setupPerkyUI() {
 
 		apGUI.$ratiosLine1.appendChild(apGUI.$presetLabel);
 		apGUI.$ratiosLine1.appendChild(apGUI.$preset);
-		apGUI.$customRatios.appendChild(apGUI.$ratiosLine2);
 		var $portalWrapper = document.getElementById("portalWrapper")
 		$portalWrapper.appendChild(apGUI.$customRatios);
 		loadPerkySettings();

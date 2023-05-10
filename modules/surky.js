@@ -255,7 +255,7 @@ function setupSurkyUI() {
 	AutoPerks.displayGUI = function () {
 
 		var setupNeeded = false;
-		surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
+		var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 		if (surkyInputs === null && typeof (autoTrimpSettings) !== 'undefined') {
 			var atSetting = autoTrimpSettings['autoAllocatePresets'].valueU2;
 			if (atSetting !== '{"":""}') {
@@ -412,10 +412,6 @@ function initPerks() {
 	var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 
 	props = {
-		portalRadon: 0,
-		// total radon available to use on the current portal
-		earnedRadon: 0,
-		// total radon, including that earned this run
 		perksRadon: 0,
 		radonSpent: 0,
 		// radon spent on perks so far
@@ -1100,9 +1096,8 @@ function initialLoad() {
 	// read and process all input fields
 	readInputs();
 
-	props.portalRadon = game.global.totalRadonEarned - game.resources.radon.owned;
-	props.earnedRadon = game.global.totalRadonEarned;
-	switchTotalRadon();
+	props.perksRadon = (countHeliumSpent(false, true) + game.global.radonLeftover) + (portalWindowOpen ? game.resources.radon.owned : 0);
+	evaluatePerks();
 }
 
 function getPerkCost(whichPerk, numLevels, fromZero = false) {
@@ -1831,16 +1826,6 @@ function efficiencyFlag(eList = [], pList = []) {
 		}
 	}
 	return bestEff;
-}
-
-var switchTotalRadon = function () {
-	if (game.global.canRespecPerks && portalWindowOpen) {
-		props.perksRadon = props.earnedRadon;
-	} else {
-		props.perksRadon = props.portalRadon;
-	}
-
-	evaluatePerks();
 }
 
 // get perk efficiencies at current levels and color code them accordingly
