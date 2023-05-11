@@ -232,13 +232,13 @@ function mostEfficientHousing() {
 		name: "",
 		time: Infinity
 	}
+	var dontbuy = [];
 
 	for (var housing of housingTargets) {
 
 		var worstTime = -Infinity;
 		var currentOwned = game.buildings[housing].owned;
 		var buildingspending = buildingSettings[housing].percent / 100
-		const dontbuy = [];
 		//If setting is disabled then don't buy building.
 		if (!buildingSettings[housing].enabled) dontbuy.push(housing);
 		//Stops Collectors being purchased when on Quest gem quests.

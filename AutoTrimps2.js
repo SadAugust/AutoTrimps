@@ -43,7 +43,8 @@ var resourceNeeded = {
 	food: 0,
 	wood: 0,
 	metal: 0,
-	science: 0
+	science: 0,
+	gems: 0,
 };
 
 var baseMinDamage = 0;

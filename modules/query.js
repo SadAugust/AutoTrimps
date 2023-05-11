@@ -69,7 +69,8 @@ function setResourceNeeded() {
 		food: 0,
 		wood: 0,
 		metal: 0,
-		science: 0
+		science: 0,
+		gems: 0,
 	};
 
 	for (var upgrade in upgradeList) {
