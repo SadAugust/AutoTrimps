@@ -80,7 +80,7 @@ var Perk = /** @class */ (function () {
 	return Perk;
 }());
 
-var presets = {
+var perkyPresets = {
 	early: ['5', '4', '3'],
 	broken: ['7', '3', '1'],
 	mid: ['16', '5', '1'],
@@ -111,18 +111,18 @@ function select_preset(name, manually) {
 	delete localStorage['weight-atk'];
 	delete localStorage['weight-hp'];
 	delete localStorage['weight-xp'];
-	_a = presets[name],
+	_a = perkyPresets[name],
 		$$('#weight-he').value = _a[0],
 		$$('#weight-atk').value = _a[1],
 		$$('#weight-hp').value = _a[2];
-	$$('#weight-xp').value = Math.floor((+presets[name][0] + +presets[name][1] + +presets[name][2]) / 5).toString();
+	$$('#weight-xp').value = Math.floor((+perkyPresets[name][0] + +perkyPresets[name][1] + +perkyPresets[name][2]) / 5).toString();
 	savePerkySettings();
 }
 
 function auto_preset() {
 	var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
 
-	var _a = presets[$$('#preset').value], he = _a[0], atk = _a[1], hp = _a[2];
+	var _a = perkyPresets[$$('#presetElem').value], he = _a[0], atk = _a[1], hp = _a[2];
 	var xp = floor((+he + +atk + +hp) / 5).toString();
 	$$('#weight-he').value = perkyInputs['weight-he'] || he;
 	$$('#weight-atk').value = perkyInputs['weight-atk'] || atk;
@@ -180,7 +180,7 @@ function read_save() {
 	var zone = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared;
 
 	if (!settings.preset) {
-		$$$('#preset > *').forEach(function (option) {
+		$$$('#presetElem > *').forEach(function (option) {
 			option.selected = parseInt(option.innerHTML.replace('z', '')) < game.global.highestLevelCleared;
 		});
 		auto_preset();
@@ -230,7 +230,7 @@ function read_save() {
 
 function parse_inputs(data) {
 
-	var preset = $$('#preset').value;
+	var preset = $$('#presetElem').value;
 	savePerkySettings();
 	if (preset == 'trapper' && (!game || game.global.challengeActive != 'Trapper'))
 		throw 'This preset requires a save currently running Trapper². Start a new run using “Trapper² (initial)”, export, and try again.';
@@ -373,37 +373,16 @@ function parse_perks(fixed, unlocks) {
 	return perks;
 }
 
-function loadPerkySettings() {
-
-	var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
-	if (perkyInputs === null) {
-		if (typeof (autoTrimpSettings) !== 'undefined') {
-			var atSetting = JSON.parse(autoTrimpSettings['autoAllocatePresets'].value);
-			if (atSetting !== '{"":""}') {
-				perkyInputs = atSetting;
-				localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
-			}
-		}
-		if (perkyInputs === null) {
-			return;
-		}
-	}
-	$$('#preset').value = perkyInputs.preset;
-	$$('#weight-he').value = Number(perkyInputs['weight-he']);
-	$$('#weight-atk').value = Number(perkyInputs['weight-atk']);
-	$$('#weight-hp').value = Number(perkyInputs['weight-hp']);
-	$$('#weight-xp').value = Number(perkyInputs['weight-xp']);
-}
-
 function savePerkySettings() {
 
 	const perkyInputs = {
-		preset: $$('#preset').value,
+		preset: $$('#presetElem').value,
 		'weight-he': $$('#weight-he').value,
 		'weight-atk': $$('#weight-atk').value,
 		'weight-hp': $$('#weight-hp').value,
-		'weight-xp': $$('#weight-xp').value
+		'weight-xp': $$('#weight-xp').value,
 	}
+
 	localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
 	if (typeof (autoTrimpSettings) !== 'undefined') {
 		autoTrimpSettings['autoAllocatePresets'].value = JSON.stringify(perkyInputs);
@@ -802,6 +781,41 @@ function setupPerkyUI() {
 		}
 	}
 
+	//Setting up data of id, names, and descriptions for each input.
+	const inputBoxes = {
+		//Top Row
+		row1: {
+			'weight-he': {
+				name: "Weight: Helium",
+				description: "Weight for how much you value 1% more helium .",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 1,
+			},
+			'weight-atk': {
+				name: "Weight: Attack",
+				description: "Weight for how much you value 1% more attack.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 1,
+			},
+			'weight-hp': {
+				name: "Weight: Health",
+				description: "Weight for how much you value 1% more health.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 1,
+			},
+			'weight-xp': {
+				name: "Weight: Fluffy",
+				description: "Weight for how much you value 1% more Fluffy xp.",
+				minValue: 0,
+				maxValue: null,
+				defaultValue: 1,
+			},
+		},
+	}
+
 	var presetListHtml = "<select id=\"presetElem\" onchange=\"fillPreset()\" data-saved>"
 	presetListHtml += "<option disabled>— Normal Progression —</option>"
 	for (var item in presets.regular) {
@@ -813,23 +827,40 @@ function setupPerkyUI() {
 	}
 	presetListHtml += "</select >";
 
-	AutoPerks.createInput = function (perkname, div, id) {
-		var perk1input = document.createElement("Input");
-		perk1input.id = perkname;
-		var oldstyle = 'text-align: center; width: calc(100vw/36); font-size: 1.0vw; ';
-		if (game.options.menu.darkTheme.enabled != 2) perk1input.setAttribute("style", oldstyle + " color: black;");
-		else perk1input.setAttribute('style', oldstyle);
-		perk1input.setAttribute('class', 'perkRatios');
-		perk1input.setAttribute('onchange', 'parse_inputs()');
-		var perk1label = document.createElement("Label");
-		if (!id) perk1label.id = perkname + 'Label';
-		else perk1label.id = id;
-		perk1label.innerHTML = perkname;
-		if (!id) perk1label.innerHTML = perkname;
-		else perk1label.innerHTML = id;
-		perk1label.setAttribute('style', 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw; ');
-		div.appendChild(perk1label);
-		div.appendChild(perk1input);
+	AutoPerks.createInput = function (perkLine, id, inputObj, savedValue) {
+		if (!id) return;
+		if (document.getElementById(id + 'Div') !== null) {
+			debug("You most likely have a settup error in your inputBoxes. It will be trying to access a input box that doesn't exist.")
+			return;
+		}
+		//Creating container for both the label and the input.
+		var perkDiv = document.createElement("DIV");
+		perkDiv.id = id + 'Div';
+		perkDiv.setAttribute("style", "display: inline;");
+
+		//Creating input box for users to enter their own ratios/stats.
+		var perkInput = document.createElement("Input");
+		perkInput.setAttribute("type", "number");
+		perkInput.id = id;
+		var perkInputStyle = 'text-align: center; width: calc(100vw/22); font-size: 1vw;';
+		if (game.options.menu.darkTheme.enabled != 2) perkInputStyle += (" color: black;");
+		perkInput.setAttribute('style', perkInputStyle);
+		perkInput.setAttribute('value', (savedValue || inputObj.defaultValue));
+		perkInput.setAttribute('min', inputObj.minValue);
+		perkInput.setAttribute('max', inputObj.maxValue);
+		perkInput.setAttribute('placeholder', inputObj.defaultValue);
+		perkInput.setAttribute('onchange', 'legalizeInput(this.id);');
+		perkInput.setAttribute('onmouseover', 'tooltip(\"' + inputObj.name + '\", \"customText\", event, \"' + inputObj.description + '\")');
+		perkInput.setAttribute('onmouseout', 'tooltip("hide")');
+
+		var perkText = document.createElement("Label");
+		perkText.id = id + "Text";
+		perkText.innerHTML = inputObj.name;
+		perkText.setAttribute('style', 'margin-right: 0.7vw; width: calc(100vw/12); color: white; font-size: 0.9vw; font-weight: lighter; margin-left: 0.3vw; ');
+		//Combining the input and the label into the container. Then attaching the container to the main div.
+		perkDiv.appendChild(perkText);
+		perkDiv.appendChild(perkInput);
+		perkLine.appendChild(perkDiv);
 	}
 
 	AutoPerks.GUI = {};
@@ -866,42 +897,59 @@ function setupPerkyUI() {
 		}
 
 		var apGUI = AutoPerks.GUI;
-		var $buttonbar = document.getElementById("portalBtnContainer");
+		//Setup Auto Allocate button
 		apGUI.$allocatorBtn1 = document.createElement("DIV");
 		apGUI.$allocatorBtn1.id = 'allocatorBtn1';
 		apGUI.$allocatorBtn1.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
 		apGUI.$allocatorBtn1.setAttribute('onclick', 'runPerky()');
+		apGUI.$allocatorBtn1.setAttribute('onmouseover', 'tooltip(\"Auto Allocate\", \"customText\", event, \"Clears all perks and buy optimal levels in each perk.\")');
+		apGUI.$allocatorBtn1.setAttribute('onmouseout', 'tooltip("hide")');
 		apGUI.$allocatorBtn1.textContent = 'Allocate Perks';
-		$buttonbar.appendChild(apGUI.$allocatorBtn1);
-		$buttonbar.setAttribute('style', 'margin-bottom: 0.8vw;');
+		//Distance from Portal/Cancel/Respec buttons
+		var $buttonbar = document.getElementById("portalBtnContainer");
+		if (document.getElementById(apGUI.$allocatorBtn1.id) === null)
+			$buttonbar.appendChild(apGUI.$allocatorBtn1);
+		$buttonbar.setAttribute('style', 'margin-bottom: 0.2vw;');
 		apGUI.$customRatios = document.createElement("DIV");
 		apGUI.$customRatios.id = 'customRatios';
+
 		//Line 1 of the UI
 		apGUI.$ratiosLine1 = document.createElement("DIV");
-		apGUI.$ratiosLine1.setAttribute('style', 'display: inline-block; text-align: center; width: 100%');
-		var listratiosTitle1 = ["Weight: Helium", "Weight: Attack", "Weight: Health", "Weight: Fluffy"];
-		var listratiosLine1 = ["weight-he", "weight-atk", "weight-hp", "weight-xp"];
-		for (var i in listratiosLine1)
-			AutoPerks.createInput(listratiosLine1[i], apGUI.$ratiosLine1, listratiosTitle1[i]);
+		apGUI.$ratiosLine1.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
+		for (var item in inputBoxes.row1) {
+			AutoPerks.createInput(apGUI.$ratiosLine1, item, inputBoxes.row1[item], perkyInputs[item]);
+		}
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine1);
 
+		//Creating container for both the label and the input.
+		apGUI.$presetDiv = document.createElement("DIV");
+		apGUI.$presetDiv.id = "Preset Div";
+		apGUI.$presetDiv.setAttribute("style", "display: inline; width: calc(100vw/34;");
+
+		//Setting up preset label
 		apGUI.$presetLabel = document.createElement("Label");
-		apGUI.$presetLabel.id = 'Ratio Preset Label';
+		apGUI.$presetLabel.id = 'PresetText';
 		apGUI.$presetLabel.innerHTML = "&nbsp;&nbsp;&nbsp;Preset:";
-		apGUI.$presetLabel.setAttribute('style', 'margin-right: 0.5vw; color: white; font-size: 0.9vw;');
+		apGUI.$presetLabel.setAttribute('style', 'margin-right: 0.5vw; color: white; font-size: 0.9vw; font-weight: lighter;');
+
+		//Setting up preset dropdown
 		apGUI.$preset = document.createElement("select");
-		apGUI.$preset.id = 'preset';
+		apGUI.$preset.id = 'presetElem';
 		apGUI.$preset.setAttribute('onchange', 'select_preset(this.value)');
-		var oldstyle = 'text-align: center; width: 8vw; font-size: 0.8vw; font-weight: lighter; ';
-		if (game.options.menu.darkTheme.enabled != 2) apGUI.$preset.setAttribute("style", oldstyle + " color: black;");
-		else apGUI.$preset.setAttribute('style', oldstyle);
+		var oldstyle = 'text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ';
+		if (game.options.menu.darkTheme.enabled != 2) oldstyle += " color: black;";
+		apGUI.$preset.setAttribute('style', oldstyle);
 		apGUI.$preset.innerHTML = presetListHtml;
 
-		apGUI.$ratiosLine1.appendChild(apGUI.$presetLabel);
-		apGUI.$ratiosLine1.appendChild(apGUI.$preset);
+		apGUI.$presetDiv.appendChild(apGUI.$presetLabel);
+		apGUI.$presetDiv.appendChild(apGUI.$preset);
+		if (document.getElementById(apGUI.$presetDiv.id) === null)
+			apGUI.$ratiosLine1.appendChild(apGUI.$presetDiv);
 		var $portalWrapper = document.getElementById("portalWrapper")
 		$portalWrapper.appendChild(apGUI.$customRatios);
-		loadPerkySettings();
+
+		$$('#presetElem').value = (perkyInputs.preset === undefined ? 'early' : perkyInputs.preset);
+		if (setupNeeded) savePerkySettings();
 		showingPerky = true;
 	}
 

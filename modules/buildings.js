@@ -247,6 +247,14 @@ function mostEfficientHousing() {
 		if (challengeActive('Hypothermia') && (housing !== 'Collector' || housing !== 'Gateway') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) dontbuy.push(housing);
 		//Stops Food buildings being pushed to queue if Tribute Farming with Buy Buildings toggle disabled.
 		if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings && housing !== 'Collector') dontbuy.push(housing);
+
+		var housingBonus = game.buildings[housing].increase.by;
+		if (!game.buildings.Hub.locked) {
+			var hubAmt = 1;
+			if (housing === 'Collector') hubAmt = autoBattle.oneTimers.Collectology.owned ? (2 + Math.floor((autoBattle.maxEnemyLevel - 1) / 30)) : 1;
+			housingBonus += (hubAmt * 25000);
+		}
+
 		for (var resource in game.buildings[housing].cost) {
 			// Get production time for that resource
 			var baseCost = game.buildings[housing].cost[resource][0];
@@ -254,8 +262,6 @@ function mostEfficientHousing() {
 			var avgProduction = getPsStringLocal(resource, true);
 			if (avgProduction <= 0) avgProduction = 1;
 			if (challengeActive('Transmute') && resource === 'metal') avgProduction = getPsStringLocal('wood', true);
-			var housingBonus = game.buildings[housing].increase.by;
-			if (!game.buildings.Hub.locked) housingBonus += 500;
 			if (Math.max(baseCost * Math.pow(costScaling, currentOwned) * resourcefulMod) > (game.resources[resource].owned - resourceNeeded[resource]) * buildingspending) dontbuy.push(housing);
 			if (game.global.universe === 2 && housing === 'Gateway' && resource === 'fragments' && buildingSettings.SafeGateway.enabled && (buildingSettings.SafeGateway.zone === 0 || buildingSettings.SafeGateway.zone > game.global.world)) {
 				if (game.resources[resource].owned < ((perfectMapCost_Actual(10, getAvailableSpecials('lmc', true)) * buildingSettings.SafeGateway.mapCount) + Math.max(baseCost * Math.pow(costScaling, currentOwned)))) dontbuy.push(housing);

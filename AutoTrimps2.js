@@ -45,6 +45,7 @@ var resourceNeeded = {
 	metal: 0,
 	science: 0,
 	gems: 0,
+	fragments: 0,
 };
 
 var baseMinDamage = 0;
@@ -117,7 +118,7 @@ function initializeAutoTrimps() {
 	document.head.appendChild(script);
 	/* ATscriptLoad('', 'Graphs'); */
 	ATscriptLoad('', 'mutatorPreset');
-	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'perky', 'surky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
+	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
 	for (var m in ATmoduleList) {
 		ATscriptLoad(MODULES_AT.modulepath, ATmoduleList[m]);
 	}

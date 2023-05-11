@@ -269,7 +269,7 @@ function setupSurkyUI() {
 		}
 
 		var apGUI = AutoPerks.GUI;
-		//Setup Surky button
+		//Setup Auto Allocate button
 		apGUI.$allocatorBtn1 = document.createElement("DIV");
 		apGUI.$allocatorBtn1.id = 'allocatorBtn1';
 		apGUI.$allocatorBtn1.setAttribute('class', 'btn inPortalBtn settingsBtn settingBtntrue');
@@ -326,8 +326,8 @@ function setupSurkyUI() {
 		var oldstyle = 'text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ';
 		if (game.options.menu.darkTheme.enabled != 2) oldstyle += " color: black;";
 		apGUI.$preset.setAttribute('style', oldstyle);
-
 		apGUI.$preset.innerHTML = presetListHtml;
+
 		apGUI.$presetDiv.appendChild(apGUI.$presetLabel);
 		apGUI.$presetDiv.appendChild(apGUI.$preset);
 		if (document.getElementById(apGUI.$presetDiv.id) === null)

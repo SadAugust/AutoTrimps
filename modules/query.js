@@ -71,6 +71,7 @@ function setResourceNeeded() {
 		metal: 0,
 		science: 0,
 		gems: 0,
+		fragments: 0,
 	};
 
 	for (var upgrade in upgradeList) {
