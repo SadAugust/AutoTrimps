@@ -338,7 +338,6 @@ function debug(message, b, icon) {
 
 	switch (b) {
 		case null:
-		case 'other':
 		case "bones":
 		case "mapsMsg":
 		case "mazSettings":
