@@ -195,4 +195,5 @@ function forceAbandonTrimps() {
 		mapsClicked(true);
 		mapsClicked(true);
 	}
+	debug("Abandoning Trimps to resend army with max Anticipation stacks.", "other");
 }
