@@ -1837,6 +1837,7 @@ function efficiencyFlag(eList = [], pList = []) {
 
 // color perk rows by efficiency, and flag the most efficient perk
 function efficiencyColorAndFlag() {
+	return;
 	if (!game.global.viewingUpgrades && !portalWindowOpen) return;
 	eList = [];
 	pList = [];
