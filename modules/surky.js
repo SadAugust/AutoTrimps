@@ -257,7 +257,7 @@ function setupSurkyUI() {
 
 		var setupNeeded = false;
 		var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
-		if (surkyInputs === null && typeof (autoTrimpSettings) !== 'undefined') {
+		if (surkyInputs === null && typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
 			var atSetting = autoTrimpSettings['autoAllocatePresets'].valueU2;
 			if (atSetting !== '{"":""}') {
 				surkyInputs = JSON.parse(atSetting);
@@ -373,7 +373,7 @@ function saveSurkySettings(initial) {
 	}
 
 	localStorage.setItem("surkyInputs", JSON.stringify(surkyInputs));
-	if (typeof (autoTrimpSettings) !== 'undefined') {
+	if (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
 		autoTrimpSettings['autoAllocatePresets'].valueU2 = JSON.stringify(surkyInputs);
 		saveSettings();
 	}
@@ -2269,11 +2269,13 @@ swapPortalUniverse = function () {
 function loadPortalUI() {
 	if (portalUniverse === 2) setupSurkyUI();
 	if (portalUniverse === 1) setupPerkyUI();
+	//Send chat msg to notify user that this has loaded.
+	console.log("Surky & Perky loaded.")
 }
 
 //If using standalone version then when loading Surky file also load CSS & Perky then load portal UI.
 //After initial load everything should work perfectly.
-if (typeof (autoTrimpSettings) === 'undefined') {
+if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	//Load CSS so that the UI is visible
 	var link1 = document.createElement("link");
 	link1.rel = "stylesheet";
@@ -2287,5 +2289,8 @@ if (typeof (autoTrimpSettings) === 'undefined') {
 	script.src = "https://sadaugust.github.io/AutoTrimps/modules/perky.js";
 	script.setAttribute('crossorigin', 'anonymous');
 	document.head.appendChild(script);
+
+	//Load the portal UI
 	setTimeout(loadPortalUI, 1000);
+
 }

@@ -57,7 +57,7 @@ function tooltipAT(what, isItIn, event, textString, headingName) {
 			var tooltipText = '';
 
 			//Add tooltip text to indicate when this preset will be loaded if running AT.
-			if (typeof (autoTrimpSettings) !== 'undefined') {
+			if (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust') && !autoTrimpSettings.ATversion.includes('SadAugust')) {
 				if (textString === 1) tooltipText += "<p style='font-weight: bold'>This preset will be loaded when portaling into Filler challenges with the 'Preset Swap Mutators' setting enabled.</p><br>"
 				if (textString === 2) tooltipText += "<p style='font-weight: bold'>This preset will be loaded when portaling into Daily challenges with the 'Preset Swap Mutators' setting enabled.</p><br>"
 				if (textString === 3) tooltipText += "<p style='font-weight: bold'>This preset will be loaded when portaling into C3 or special challenges (Mayhem, Pandemonium, Desolation) with the 'Preset Swap Mutators' setting enabled.</p><br>"
@@ -135,7 +135,7 @@ function saveMutations() {
 	saveData.name = document.getElementById('u2MutPresetBtn' + selectedMutPreset).innerHTML.split('Preset: ')[1];
 	mutatorObj['preset' + selectedMutPreset] = saveData;
 
-	if (typeof (autoTrimpSettings) !== 'undefined') {
+	if (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
 		autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
 		saveSettings();
 	}
@@ -193,7 +193,7 @@ function renameMutations(needTooltip) {
 
 	document.getElementById('u2MutPresetBtn' + selectedMutPreset).innerHTML = (presetGroup.name) ? ("Preset: " + presetGroup.name) : ("Preset: " + selectedMutPreset);
 	mutatorObj['preset' + selectedMutPreset] = presetGroup;
-	if (typeof (autoTrimpSettings) !== 'undefined') {
+	if (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
 		autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
 		saveSettings();
 	}
@@ -211,7 +211,7 @@ function resetMutations() {
 		name: presetName,
 	};
 
-	if (typeof (autoTrimpSettings) !== 'undefined') {
+	if (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
 		autoTrimpSettings['mutatorPresets'].valueU2 = JSON.stringify(mutatorObj);
 		saveSettings();
 	}
@@ -230,7 +230,7 @@ function presetMutations() {
 			preset2: { name: 2 },
 			preset3: { name: 3 },
 		};
-		if (typeof (autoTrimpSettings) !== 'undefined') {
+		if (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
 			mutatorObj = JSON.parse(autoTrimpSettings['mutatorPresets'].valueU2);
 			saveSettings();
 		}
@@ -281,4 +281,4 @@ function presetMutations() {
 
 //Runs this every 100ms if using standalone version.
 //Should really find a workaround to include this when openTree is called.
-if (typeof (autoTrimpSettings) === 'undefined') setInterval(presetMutations, 100);
+if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) setInterval(presetMutations, 100);
