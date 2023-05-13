@@ -1,0 +1,39 @@
+/* Portal Screen CSS overrides */
+
+#titleRow {
+	height: 4.7vw;
+	margin-bottom: 0.5vw;
+}
+
+#portalHelium {
+	font-size: 1.7vw;
+	line-height: 1.8vw;
+}
+
+#portalTotalPortals,
+#portalTotalSpent,
+#portalTotalHelium {
+	font-size: 1.3vw;
+	line-height: 1.4vw;
+}
+
+#portalTitle {
+	width: 100%;
+	font-size: 3vw;
+	text-align: center;
+	margin-top: 0.9vw;
+}
+
+.inPortalBtn {
+	font-size: 1.3vw !important;
+}
+
+.portalThing {
+	width: 19.3%;
+	font-size: 1.231vw;
+}
+
+.portalThing.detailed {
+	font-size: 0.75vw;
+	line-height: 0.85vw;
+}

@@ -2280,7 +2280,7 @@ if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !=
 	var link1 = document.createElement("link");
 	link1.rel = "stylesheet";
 	link1.type = "text/css";
-	link1.href = "https://sadaugust.github.io/AutoTrimps/tabs.css";
+	link1.href = "https://sadaugust.github.io/AutoTrimps/tabsStandalone.css";
 	document.head.appendChild(link1);
 
 	//Load Perky

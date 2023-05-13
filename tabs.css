@@ -1553,6 +1553,8 @@ ul.tab li a:hover {
 	font-size: 1.1em;
 }
 
+/* Portal Screen CSS overrides */
+
 #titleRow {
 	height: 4.7vw;
 	margin-bottom: 0.5vw;
@@ -1569,7 +1571,6 @@ ul.tab li a:hover {
 	font-size: 1.3vw;
 	line-height: 1.4vw;
 }
-
 
 #portalTitle {
 	width: 100%;
@@ -1591,3 +1592,5 @@ ul.tab li a:hover {
 	font-size: 0.75vw;
 	line-height: 0.85vw;
 }
+
+/* New stuff goes here */
