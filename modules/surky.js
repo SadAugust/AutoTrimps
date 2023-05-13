@@ -380,7 +380,7 @@ function saveSurkySettings(initial) {
 	initialLoad();
 }
 
-const equipScalingPrestige = {
+var equipScalingPrestige = {
 	attack: Math.pow(Math.pow(1.19, 13), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))),
 	health: Math.pow(Math.pow(1.19, 14), 1 / Math.log(Math.pow(1.069, (57 * 0.85)))),
 }
@@ -388,15 +388,15 @@ const equipScalingPrestige = {
 //  HP: sqrt(zone) * (3.265^(1/2) * 1.1 * 1.32)^zone
 // ATK: sqrt(zone) * (3.27^(1/2) * 1.15 * 1.32)^zone 
 // Note that sqrt(zone) is accounted for in the props after getting a target zone from the user.
-const logEnemyHealthScaling = Math.log(Math.sqrt(3.265) * 1.1 * 1.32);
-const logEnemyAttackScaling = Math.log(Math.sqrt(3.27) * 1.15 * 1.32);
+var logEnemyHealthScaling = Math.log(Math.sqrt(3.265) * 1.1 * 1.32);
+var logEnemyAttackScaling = Math.log(Math.sqrt(3.27) * 1.15 * 1.32);
 // Quick and dirty hack: estimate about 60% Rn from VMs for VS1.
 // This can and should be a user input if and when we make such things hide-able.
-const vmRadFrac = 0.6;
+var vmRadFrac = 0.6;
 
 // exponentially weighted moving average parameters for Rn/run
-const rnAlpha = 0.3;
-const rnTerms = 10;
+var rnAlpha = 0.3;
+var rnTerms = 10;
 var rnMAWeights = new Array(rnTerms);
 rnMAWeights[0] = rnAlpha;
 var rnMAWeightSum = rnAlpha;
@@ -1673,7 +1673,7 @@ function iterateValueFeedback(valueArray) {
 	valueArray[19] = Vp;
 }
 
-const iterateValueLoops = 3;
+var iterateValueLoops = 3;
 // Inputs: gain values for atk, hp, equip discount (or metal), radon, equality, pop
 //         moreTrinkets: increased count of trinkets on next run from Obs droprate increase
 function getLogWeightedValue(Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrinkets = 0, extraObs = 0) {
