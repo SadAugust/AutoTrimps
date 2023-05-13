@@ -13,7 +13,7 @@ https://www.tampermonkey.net/
 
 Step 2: 
 
-Click this link: https://github.com/SadAugust/AutoTrimps/raw/main/surky.user.js
+Click this link: https://github.com/SadAugust/AutoTrimps/raw/main/user.js
 
 If clicking the link does not work, copy the contents of user.js into a new script inside tampermonkey. 
 
