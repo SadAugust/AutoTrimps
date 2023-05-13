@@ -57,9 +57,9 @@ https://www.tampermonkey.net/
 
 Step 2: 
 
-Click this link: https://github.com/SadAugust/AutoTrimps/raw/main/surky.user.js
+Click this link: https://github.com/SadAugust/AutoTrimps/raw/main/autoPerks.user.js
 
-If clicking the link does not work, copy the contents of surky.user.js into a new script inside tampermonkey. 
+If clicking the link does not work, copy the contents of autoPerks.user.js into a new script inside tampermonkey. 
 
 If you are unsure how to do that, copy this:
 
@@ -81,7 +81,7 @@ Enjoy your ingame version of Surky/Perky!
 
 Step 1: 
 
-Download the file <a href="https://github.com/SadAugust/AutoTrimps/blob/main/surky.user.js">here</a> (right click raw and save link as...), and save is as mods.js.
+Download the file <a href="https://github.com/SadAugust/AutoTrimps/blob/main/autoPerks.user.js">here</a> (right click raw and save link as...), and save is as mods.js.
 
 Step 2: 
 
