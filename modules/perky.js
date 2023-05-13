@@ -186,11 +186,6 @@ function read_save() {
 		auto_preset();
 	}
 
-	// He / unlocks
-	var helium = game.global.heliumLeftover;
-	for (var perk in game.portal)
-		helium += (game.portal[perk].heliumSpent || 0);
-
 	var unlocks = Object.keys(game.portal).filter(perk => !game.portal[perk].locked && game.portal[perk].level !== undefined);
 	if (!game.global.canRespecPerks)
 		unlocks = unlocks.map(perk => perk + '>' + (game.portal[perk].level || 0));

@@ -1919,7 +1919,7 @@ function initializeAllSettings() {
 				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
 				description += "<p>Any health or damage calculations for the Spire will be based off this if set.</p>";
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
-				description += "<p><b>Recommended:</b>-1</p>";
+				description += "<p><b>Recommended:</b> -1</p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1]);
 		createSetting('PreSpireNurseries',
@@ -1945,7 +1945,7 @@ function initializeAllSettings() {
 		createSetting('skipSpires',
 			function () { return ('Skip Spires') },
 			function () {
-				var description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks..</p>";
+				var description = "<p>Will disable any form of mapping after your trimps have max map bonus stacks.</p>";
 				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, 'Spire', [1]);

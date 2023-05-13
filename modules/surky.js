@@ -12,6 +12,7 @@ function runSurky() {
 		autobuyPerks();
 	else
 		clearAndAutobuyPerks();
+	initialLoad();
 }
 
 function setupSurkyUI() {
@@ -322,7 +323,7 @@ function setupSurkyUI() {
 		//Setting up preset dropdown
 		apGUI.$preset = document.createElement("select");
 		apGUI.$preset.id = 'presetElem';
-		apGUI.$preset.setAttribute('onchange', 'fillPreset()');
+		apGUI.$preset.setAttribute('onchange', 'fillPreset();');
 		var oldstyle = 'text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ';
 		if (game.options.menu.darkTheme.enabled != 2) oldstyle += " color: black;";
 		apGUI.$preset.setAttribute('style', oldstyle);
@@ -376,6 +377,7 @@ function saveSurkySettings(initial) {
 		autoTrimpSettings['autoAllocatePresets'].valueU2 = JSON.stringify(surkyInputs);
 		saveSettings();
 	}
+	initialLoad();
 }
 
 const equipScalingPrestige = {
@@ -815,6 +817,8 @@ function fillPreset(specificPreset) {
 	$$('#survivalWeight').value = weights[1];
 	$$('#radonWeight').value = weights[2];
 	saveSurkySettings();
+
+	initialLoad();
 }
 
 function presetSpecialOpt() {
@@ -875,7 +879,7 @@ function presetSpecialOpt() {
 	}
 }
 
-function initialLoad() {
+function initialLoad(skipLevel) {
 
 	initPerks();
 	var portal = game.portal;
@@ -904,6 +908,7 @@ function initialLoad() {
 		if (portal.hasOwnProperty(key)) {
 			var portalPerk = portal[key];
 			var calcPerk = perks[key];
+			if (!skipLevel) calcPerk.level = portalPerk.radLevel + portalPerk.levelTemp
 			calcPerk.locked = portalPerk.radLocked;
 		} else {
 			perks[key].level = 0;
@@ -917,7 +922,7 @@ function initialLoad() {
 	var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
 
 	// target zone to CLEAR is 1 zone before the portal zone by default
-	var currentZone = Math.max(1, game.global.world - 1);
+	var currentZone = Math.max(1, game.global.universe === 2 ? game.global.world : surkyInputs.targetZone);
 	$$('#targetZone').value = Math.max(currentZone, surkyInputs.targetZone);
 	props.targetZone = Number($$('#targetZone').value);
 
@@ -1093,9 +1098,9 @@ function initialLoad() {
 	if (haveSuprism)
 		props.shieldPrismal += 3 * SAlevel;
 
+
 	// read and process all input fields
 	readInputs();
-
 	props.perksRadon = (countHeliumSpent(false, true) + game.global.radonLeftover) + (portalWindowOpen ? game.resources.radon.owned : 0);
 	evaluatePerks();
 }
@@ -1800,8 +1805,10 @@ function efficiencyFlag(eList = [], pList = []) {
 	props.bestPerk = "";
 	// don't flag a perk if we don't find an affordable one!
 	for (var [perkName, perkObj] of Object.entries(perks)) {
-		if (typeof (perkObj) !== "object" || !perkObj.hasOwnProperty("optimize") || !perkObj.optimize)
+		if (typeof (perkObj) !== "object" || !perkObj.hasOwnProperty("optimize") || !perkObj.optimize) {
+			document.getElementById(perkName).setAttribute("style", "");
 			continue;
+		}
 		// iterating over the perks, ignoring aux values
 		eList.push(perkObj.efficiency);
 		pList.push(perkName);
@@ -1828,6 +1835,34 @@ function efficiencyFlag(eList = [], pList = []) {
 	return bestEff;
 }
 
+// color perk rows by efficiency, and flag the most efficient perk
+function efficiencyColorAndFlag() {
+	if (!game.global.viewingUpgrades && !portalWindowOpen) return;
+	eList = [];
+	pList = [];
+	var bestEff = efficiencyFlag(eList, pList);
+	for (var i = 0; i < eList.length; i++) {
+		perkObj = perks[pList[i]];
+
+		var opacity = Math.max(eList[i] / bestEff, 0.25);
+		if (props.specialChallenge == 'trappacarp') {
+			if (pList[i] == 'Carpentry') {
+				opacity = 1;
+				eList[i] = 1;
+			} else
+				opacity = 0;
+		}
+		var id = pList[i];
+		var element = document.getElementById(id);
+
+		if (eList[i] === 0 || opacity == 0 || (perkObj.hasOwnProperty("max") && perkObj.level > perkObj.max)) {
+			element.setAttribute("style", "");
+		} else {
+			element.setAttribute("style", "background: rgba(11, 200, 35, " + opacity + ");");
+		}
+	}
+}
+
 // get perk efficiencies at current levels and color code them accordingly
 var evaluatePerks = function (debug = false) {
 
@@ -1835,6 +1870,7 @@ var evaluatePerks = function (debug = false) {
 
 	// calculate the efficiency of each perk
 	getPerkEfficiencies();
+	efficiencyColorAndFlag();
 }
 
 function getPerkEfficiencies() {
@@ -2105,7 +2141,7 @@ function clearAndAutobuyPerks() {
 			var tauntMult = props.expanding ? Math.pow(tauntBase, props.actualTaunts) : 1;
 			perks.Carpentry.level = Math.max(0, Math.ceil(Math.log(2.4 * wantedArmySize / (tauntMult * props.maxTrimps)) / Math.log(1.1)));
 		}
-		initialLoad();
+		initialLoad(true);
 		// get correct available radon for cleared perks
 		// for max carp, just max out carp!
 		if (props.specialChallenge == 'trappacarp') {
@@ -2171,4 +2207,77 @@ function autobuyPerks() {
 	evaluatePerks();
 	allocateSurky();
 	debug("Surky - Total Radon for perks: " + prettify(props.perksRadon) + ", Total Radon Spent: " + prettify(props.radonSpent), 'portal');
+}
+
+// On manually adjusting perk levels, update perk efficiencies
+var originalbuyPortalUpgrade = buyPortalUpgrade;
+buyPortalUpgrade = function () {
+	originalbuyPortalUpgrade(...arguments)
+	try {
+		if (portalUniverse === 2) initialLoad();
+	}
+	catch (e) { debug("Efficiency color failed: " + e, "other") }
+}
+// On opening portal window, update perk efficiencies
+var originalportalClicked = portalClicked;
+portalClicked = function () {
+	originalportalClicked(...arguments)
+	try {
+		if (portalUniverse === 2) initialLoad();
+	}
+	catch (e) { debug("Efficiency color failed: " + e, "other") }
+}
+// On switching perk presets, update perk efficiencies
+var originalloadPerkPreset = loadPerkPreset;
+loadPerkPreset = function () {
+	originalloadPerkPreset(...arguments)
+	try {
+		if (portalUniverse === 2) initialLoad();
+	}
+	catch (e) { debug("Efficiency color failed: " + e, "other") }
+}
+// On clearing all perks, update perk efficiencies
+var originalclearPerks = clearPerks;
+clearPerks = function () {
+	originalclearPerks(...arguments)
+	try {
+		if (portalUniverse === 2) initialLoad();
+	}
+	catch (e) { debug("Efficiency color failed: " + e, "other") }
+}
+// On importing perks, update perk efficiencies
+var originalimportPerks = importPerks;
+importPerks = function () {
+	originalimportPerks(...arguments)
+	try {
+		if (portalUniverse === 2) initialLoad();
+	}
+	catch (e) { debug("Efficiency color failed: " + e, "other") }
+}
+
+// On swapping portla universes load either Perky or Surky.
+var originalswapPortalUniverse = swapPortalUniverse;
+swapPortalUniverse = function () {
+	originalswapPortalUniverse(...arguments)
+	try {
+		AutoPerks.removeGUI();
+		loadPortalUI();
+	}
+	catch (e) { debug("Efficiency color failed: " + e, "other") }
+}
+
+function loadPortalUI() {
+	if (portalUniverse === 2) setupSurkyUI();
+	if (portalUniverse === 1) setupPerkyUI();
+}
+
+//If using standalone version then when loading Surky file also load Perky & load portal UI.
+//After initial load everything should work perfectly.
+if (typeof (autoTrimpSettings) === 'undefined') {
+	var script = document.createElement('script');
+	script.id = "AutoTrimps-SadAugust_Perky";
+	script.src = "https://sadaugust.github.io/AutoTrimps/modules/perky.js";
+	script.setAttribute('crossorigin', 'anonymous');
+	document.head.appendChild(script);
+	setTimeout(loadPortalUI, 1000);
 }

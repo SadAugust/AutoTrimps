@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name		AutoTrimps-SadAugust
+// @name		AutoTrimps-SadAugust_Surky
 // @version		1.0-SadAugust
 // @namespace	https://SadAugust.github.io/AutoTrimps
 // @description	Automate all the trimps!
@@ -14,9 +14,8 @@
 // ==/UserScript==
 
 var script = document.createElement('script');
-script.id = 'AutoTrimps-SadAugust';
+script.id = "AutoTrimps-SadAugust_Surky";
 //This can be edited to point to your own Github Repository URL.
-script.src = 'https://SadAugust.github.io/AutoTrimps/AutoTrimps2.js';
-//script.setAttribute('crossorigin',"use-credentials");
-script.setAttribute('crossorigin', "anonymous");
+script.src = "https://sadaugust.github.io/AutoTrimps/modules/surky.js";
+script.setAttribute('crossorigin', 'anonymous');
 document.head.appendChild(script);
