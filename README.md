@@ -81,7 +81,7 @@ Enjoy your ingame version of Surky/Perky!
 
 Step 1: 
 
-Download <a href="https://github.com/SadAugust/AutoTrimps/blob/main/surky.user.js">mods.js</a> from this directory (right click raw and save link as...), or copy it and make your own mods.js in a text file.
+Download the file <a href="https://github.com/SadAugust/AutoTrimps/blob/main/surky.user.js">here</a> (right click raw and save link as...), and save is as mods.js.
 
 Step 2: 
 
