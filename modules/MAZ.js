@@ -586,7 +586,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				<div class='row windowRow titles'>\
 				<div class='windowActive" + varPrefix + "\'>Active</div>\
 				<div class='windowCell" + varPrefix + "\'>Cell</div>"
-			if (mapFarm) tooltipText += "<div class='windowRepeat'>Repeat<br />Count</div>"
+			if (mapFarm) tooltipText += "<div class='windowRepeat'>Map<br/>Repeats</div>"
 			if (worshipperFarm) tooltipText += "<div class='windowWorshipperSkip'>Enable<br />Skip</div>"
 			if (worshipperFarm) tooltipText += "<div class='windowWorshipper'>Skip<br />Value</div>"
 			if (mapBonus) tooltipText += "<div class='windowRepeat'>Map<br />Stacks</div>"
@@ -756,7 +756,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (tributeFarm || smithyFarm || mapFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>"
 		if (tributeFarm) tooltipText += "<div class='windowTributes'>Tributes</div>"
 		if (tributeFarm) tooltipText += "<div class='windowMets'>Mets</div>"
-		if (mapFarm) tooltipText += "<div class='windowRepeat'>Repeat<br/>Count</div>"
+		if (mapFarm) tooltipText += "<div class='windowRepeat" + varPrefix + "\'>Map<br/>Repeats</div>"
+		if (mapFarm) tooltipText += "<div class='windowHDRatio" + varPrefix + "\'>Above X<br/>HD Ratio</div>"
 		if (mapBonus) tooltipText += "<div class='windowMapStacks'>Map<br/>Stacks</div>"
 		if (quagmire) tooltipText += "<div class='windowBogs'>Bogs</div>"
 		if (insanity) tooltipText += "<div class='windowInsanity'>Insanity</div>"
@@ -800,6 +801,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				level: -1,
 				special: '0',
 				repeat: 1,
+				hdRatio: 0,
 				gather: 0,
 				tributes: 0,
 				mets: 0,
@@ -846,7 +848,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.raidingzone = currSetting[x].raidingzone ? currSetting[x].raidingzone : 1;
 				vals.cell = currSetting[x].cell ? currSetting[x].cell : 81;
 				if (!quagmire && !boneShrine && !raiding && !voidMap)
-					vals.level = currSetting[x].level
+					vals.level = currSetting[x].level;
 				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm)
 					vals.autoLevel = typeof (currSetting[x].autoLevel) !== 'undefined' ? currSetting[x].autoLevel : true;
 				if (tributeFarm || smithyFarm)
@@ -855,6 +857,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.mapType = currSetting[x].mapType ? currSetting[x].mapType : 'Map Count';
 				if (mapFarm || smithyFarm || mapBonus)
 					vals.repeat = currSetting[x].repeat ? currSetting[x].repeat : 1;
+				if (mapFarm)
+					vals.hdRatio = currSetting[x].hdRatio ? currSetting[x].hdRatio : 0;
 				if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm)
 					vals.repeatevery = currSetting[x].repeatevery ? currSetting[x].repeatevery : 0;
 				if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
@@ -994,7 +998,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (worshipperFarm)
 				tooltipText += "<div class='windowWorshipper'><input value='" + vals.worshipper + "' type='number' id='windowWorshipper" + x + "'/></div>";
 			if (mapFarm)
-				tooltipText += "<div class='windowRepeat'><input value='" + vals.repeat + "' type='value' id='windowRepeat" + x + "'/></div>";
+				tooltipText += "<div class='windowRepeat" + varPrefix + "\'><input value='" + vals.repeat + "' type='value' id='windowRepeat" + x + "'/></div>";
+			if (mapFarm)
+				tooltipText += "<div class='windowHDRatio" + varPrefix + "\'><input value='" + vals.hdRatio + "' type='value' id='windowHDRatio" + x + "'/></div>";
 			if (mapBonus)
 				tooltipText += "<div class='windowMapStacks'><input value='" + vals.repeat + "' type='number' id='windowRepeat" + x + "'/></div>";
 			if (smithyFarm)
@@ -1295,6 +1301,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (tributeFarm || smithyFarm || mapFarm) thisSetting.mapType = document.getElementById('windowMapTypeDropdown' + x).value;
 		if (mapFarm && thisSetting.mapType === 'Map Count') thisSetting.repeat = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
 		if (mapFarm && thisSetting.mapType !== 'Map Count') thisSetting.repeat = document.getElementById('windowRepeat' + x).value;
+		if (mapFarm) thisSetting.hdRatio = document.getElementById('windowHDRatio' + x).value;
 		if (tributeFarm) thisSetting.tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
 		if (tributeFarm) thisSetting.mets = parseInt(document.getElementById('windowMets' + x).value, 10);
 		if (quagmire) thisSetting.bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
@@ -1374,6 +1381,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (thisSetting.cell < 1) thisSetting.cell = 1;
 		if (thisSetting.cell > 100) thisSetting.cell = 100;
 		if (thisSetting.worshipper > game.jobs.Worshipper.max) worshipper = game.jobs.Worshipper.max;
+		if (thisSetting.hdRatio < 0) thisSetting.hdRatio = 0;
 		if (thisSetting.voidHDRatio < 0) thisSetting.voidHDRatio = 0;
 		if (thisSetting.hdRatio < 0) thisSetting.hdRatio = 0;
 		if (thisSetting.maxvoidzone < thisSetting.world) thisSetting.maxvoidzone = thisSetting.world;
@@ -1421,7 +1429,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 function mazPopulateHelpWindow(titleText, trimple) {
 	//Setting up the Help onclick setting.
-	var mazHelp = "Welcome to '" + titleText + "' settings! This is a powerful automation tool that allows you to set when maps should be automatically run, and allows for a high amount of customization. Here's a quick overview of what everything does:"
+	var mazHelp = "Welcome to '" + titleText + "' settings! This is a powerful automation tool that allows you to set when maps should be automatically run, and allows for a high amount of customization. Here's a quick overview of what everything does:";
 
 
 	var mapFarm = titleText.includes('Map Farm');
@@ -1444,44 +1452,44 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	var worshipperFarm = titleText.includes('Worshipper Farm');
 
 	//Map Bonus Information to detail how it functions since it's unclear compared to every other setting
-	if (mapBonus) mazHelp += "<br><br><b>Map Bonus works by using the last line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.</b>"
-	if (voidMap) mazHelp += "<br><br>Void Map works by using 'Min Zone' as the lower bound zone to run voids on and 'Max Zone' as the upper bound. If your HD Ratio OR Void HD Ratio value (can be seen in status tooltip) is greater than the set value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'."
+	if (mapBonus) mazHelp += "<br><br><b>Map Bonus works by using the last line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.</b>";
+	if (voidMap) mazHelp += "<br><br>Void Map works by using 'Min Zone' as the lower bound zone to run voids on and 'Max Zone' as the upper bound. If your HD Ratio OR Void HD Ratio value (can be seen in status tooltip) is greater than the set value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.";
 
 	//Default Value settings
 	if (!golden) {
-		mazHelp += "<br><br>The default values section are values which will automatically be input when a new row has been added. There's a few exception to this such as:<br></br><ul>"
-		mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable the entire setting.</li>"
-		mazHelp += "<li><b>Priority</b> - If there are two or more MaZ lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>"
+		mazHelp += "<br><br>The default values section are values which will automatically be input when a new row has been added. There's a few exception to this such as:<br></br><ul>";
+		mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable the entire setting.</li>";
+		mazHelp += "<li><b>Priority</b> - If there are two or more MaZ lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>";
 		if (worshipperFarm) mazHelp += "<li><b>Enabled Skip</b> - A toggle to enable the skip value setting.</li>";
 		if (worshipperFarm) mazHelp += "<li><b>Skip Value</b> - How many worshippers a map must provide for you to run your Worshipper Farming.</li>";
-		if (raiding && !bionic) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after raiding has finished.</li>"
-		if (raiding && !bionic) mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>"
-		if (raiding) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after BW raiding has finished.</li>"
+		if (raiding && !bionic) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after raiding has finished.</li>";
+		if (raiding && !bionic) mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>";
+		if (raiding) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after BW raiding has finished.</li>";
 		/* if (mapBonus) mazHelp += "<li><b>Health Bonus</b> - The amount of map stacks to farm when your HD Ratio is below that of the <b>Health HDRatio</b> field. Default is 10.</li>"
 		if (mapBonus) mazHelp += "<li><b>Health HD Ratio</b> - Decides when to start getting the map stack bonus value in the <b>Health Bonus</b> field. 10 is default, this means it\'d go for it when your HDRatio is above 10.</li>" */
-		if (alchemy) mazHelp += "<li><b>Void Purchase</b> - Will purchase as many void and strength potions as you can currently afford when you go into a void map. Would recommend only disabling this setting when going for the Alchemy achievement.</li>"
-		if (hypothermia) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>"
-		if (hypothermia) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>"
-		if (hypothermia) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>"
+		if (alchemy) mazHelp += "<li><b>Void Purchase</b> - Will purchase as many void and strength potions as you can currently afford when you go into a void map. Would recommend only disabling this setting when going for the Alchemy achievement.</li>";
+		if (hypothermia) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>";
+		if (hypothermia) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>";
+		if (hypothermia) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>";
 		if (voidMap) {
 			mazHelp += "<li><b>Max Map Bonus</b> - Will assume you have 10 map bonus stacks"
 			if (radonSetting && !game.portal.Tenacity.radLocked) mazHelp += " and max tenacity"
-			mazHelp += " when void maps HD Ratio calcs are being set.</li>"
+			mazHelp += " when void maps HD Ratio calcs are being set.</li>";
 		}
-		if (voidMap && game.permaBoneBonuses.boosts.owned > 0) mazHelp += "<li><b>Bone Charge</b> - The first time a line starts running Void Maps in each portal it will use a single Bone Charge.</li>"
+		if (voidMap && game.permaBoneBonuses.boosts.owned > 0) mazHelp += "<li><b>Bone Charge</b> - The first time a line starts running Void Maps in each portal it will use a single Bone Charge.</li>";
 	}
 
 	//Row Settings
 	mazHelp += "</ul></br> The settings for each row that is added:<ul>"
 
 	//All Settings
-	mazHelp += "<li><span style='padding-left: 0.3%' class='mazDelete'><span class='icomoon icon-cross'></span></span> - Remove this MaZ line completely</li>"
+	mazHelp += "<li><span style='padding-left: 0.3%' class='mazDelete'><span class='icomoon icon-cross'></span></span> - Remove this MaZ line completely</li>";
 	//Active
-	mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable this line.</li>"
+	mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable this line.</li>";
 	//Zone
-	if (!voidMap && !golden) mazHelp += "<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>"
+	if (!voidMap && !golden) mazHelp += "<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>";
 	//Cell
-	if (!golden) mazHelp += "<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell. <b>DOES NOT TAKE OVERKILL INTO ACCOUNT.</b></li>"
+	if (!golden) mazHelp += "<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell. <b>DOES NOT TAKE OVERKILL INTO ACCOUNT.</b></li>";
 	//AutoLevel
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm)
 		mazHelp += "<li><b>Auto Level</b> - Will automatically identify the best map level for your farming needs by looking at highest affordable map level and then calculating if you can one shot enemies with Titimp buff. " + (radonSetting ? "Highly recommended to use 'Auto Equality: Advanced' with this setting as it'll speed up map runs by a significant amount." : "") + "</li>";
@@ -1490,9 +1498,9 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can input a positive or negative number for this so input could be '-5', '0', or '3'. " + ((radonSetting && !(insanity || alchemy || hypothermia)) ? "Will override inputs above -1 during the Wither challenge." : "") + "</li>";
 	//Map Level for Map Bonus!
 	if (mapBonus)
-		mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can only input a value for a map level you'd be able to gain map stacks from.</li>"
+		mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can only input a value for a map level you'd be able to gain map stacks from.</li>";
 
-	if (!raiding && !smithyFarm && !hdFarm && !golden) mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. Input will look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>"
+	if (!raiding && !smithyFarm && !hdFarm && !golden) mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. Input will look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
 	if (mapFarm || mapBonus || insanity || alchemy)
 		mazHelp += "<li><b>Special</b> - The type of cache you'd like to run during this map. Will override metal cache inputs with wooden caches during the Transmute challenge.</li>";
 
@@ -1500,27 +1508,31 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 	//Setting specific inputs
 	//Row Settings
-	mazHelp += "</ul></br><b>These inputs are specific to this setting and can be quite important for how you try to set this up:</b><ul><br>"
+	mazHelp += "</ul></br><b>These inputs are specific to this setting and can be quite important for how you try to set this up:</b><ul><br>";
 
 	if (voidMap) {
 		//Min Run Zone
-		mazHelp += "<li><b>Min Zone</b> - The lower bound zone to run voids maps on.</li>"
+		mazHelp += "<li><b>Min Zone</b> - The lower bound zone to run voids maps on.</li>";
 		//Max Run Zone
-		mazHelp += "<li><b>max Zone</b> - The upper bound zone to run voids maps on.</li>"
+		mazHelp += "<li><b>max Zone</b> - The upper bound zone to run voids maps on.</li>";
 		//HD Ratio to run at
-		mazHelp += "<li><b>HD Ratio</b> - If your HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>"
+		mazHelp += "<li><b>HD Ratio</b> - If your HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>";
 		//Void HD Ratio to run at
-		mazHelp += "<li><b>Void HD Ratio</b> - If your Void HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>"
+		mazHelp += "<li><b>Void HD Ratio</b> - If your Void HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>";
 		//Portal After
 		mazHelp += "<li><b>Portal After</b> - Will run AutoPortal immediately after this line has run. Won't do anything if AutoPortal is disabled!</b></li>";
 	}
 
 	if (mapFarm) {
-		mazHelp += "<li><b>Farm Type</b> Map Count - Will run maps until it has reached the specified repeat counter.\
-		Portal Time - Uses DD:HH:MM:SS format and will run maps until the portal time surpasses the time set in repeat counter.\
+		//Repeat Count
+
+		mazHelp += "<li><b>Farm Type</b> Map Count - Will run maps until it has reached the specified repeat counter.<br>\
+		Portal Time - Uses DD:HH:MM:SS format and will run maps until the portal time surpasses the time set in repeat counter.<br>\
 		Daily Reset - Uses DD:HH:MM:SS format and will run maps until the daily reset time is below the time set in repeat counter.</li>";
 
-		mazHelp += "<li><b>Map Repeat</b> - How many maps you'd like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be back to manually take over the run.</li>";
+		mazHelp += "<li><b>Map Repeats</b> - How many maps you'd like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be back to manually take over the run.</li>";
+		//Smithy Count
+		mazHelp += "<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in status tooltip) is above this value (and above 0).<br>";
 		//Trimple Map Farm
 		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources." + "</li>";
 	}
@@ -1557,11 +1569,11 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 	if (tributeFarm) {
 		//Farm Type
-		mazHelp += "<li><b>Farm Type</b> - The way in which Tribute Farming will operate. Either by using absolute values for what you'd like to farm e.g. 2700 Tributes and 37 Meteorologists or by having AT identify how many of each you can farm in X maps and then using that count to identify the amount based off expected mapping gains.</li>"
+		mazHelp += "<li><b>Farm Type</b> - The way in which Tribute Farming will operate. Either by using absolute values for what you'd like to farm e.g. 2700 Tributes and 37 Meteorologists or by having AT identify how many of each you can farm in X maps and then using that count to identify the amount based off expected mapping gains.</li>";
 		//Tributes
-		mazHelp += "<li><b>Tributes</b> - The amount of Tributes that should be farmed up to on this zone. If the value is greater than your Tribute Cap setting then it'll adjust it to the Tribute input whilst doing this farm.</li>"
+		mazHelp += "<li><b>Tributes</b> - The amount of Tributes that should be farmed up to on this zone. If the value is greater than your Tribute Cap setting then it'll adjust it to the Tribute input whilst doing this farm.</li>";
 		//Meteorologists
-		mazHelp += "<li><b>Meteorologist</b> - The amount of Meteorologist that should be farmed up to on this zone.</li>"
+		mazHelp += "<li><b>Meteorologist</b> - The amount of Meteorologist that should be farmed up to on this zone.</li>";
 		//Buy Buildings
 		mazHelp += "<li><b>Buy Buildings</b> - If you'd like to buy buildings during this farming line to reduce the amount of maps it takes to farm your specified Tribute or Meteorologist inputs. When unselected it will automatically disable vanilla AutoStructure if it's enabled to remove the possibility of resources being spent there too.</li>";
 		//Trimple Tribute Farm
@@ -1572,7 +1584,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		//Smithy Count
 		mazHelp += "<li><b>Smithies</b> - Smithy count you'd like to reach during this line. If you currently own 18 and want to reach 21 you'd enter 21 into this field.</li>";
 		//Farm Type
-		mazHelp += "<li><b>Farm Type</b> - The way in which Smithy Farming will operate. Either by using absolute values for what you'd like to farm e.g. 27 Smithies or by having AT identify how many you can farm in X maps and then using that count to identify the amount based off expected mapping gains.</li>"
+		mazHelp += "<li><b>Farm Type</b> - The way in which Smithy Farming will operate. Either by using absolute values for what you'd like to farm e.g. 27 Smithies or by having AT identify how many you can farm in X maps and then using that count to identify the amount based off expected mapping gains.</li>";
 		//Runs MP after the line
 		mazHelp += "<li><b>Run MP</b> - Will run Melting Point after this line has been run.</b></li>";
 	}
@@ -1586,7 +1598,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		//Black Bogs
 		mazHelp += "<li><b>Bogs</b> - How many Black Bog maps you'd like to run during this line.</li>";
 	}
-	//Insanity
+
 	if (insanity) {
 		//Insanity Stacks
 		mazHelp += "<li><b>Insanity</b> - How many Insanity stack you'd like to farm up to during this line.</li>";
@@ -1601,8 +1613,9 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Potion Number</b> - How many of the potion specified in 'Potion Type' you'd like to farm for.</li>";
 	}
 
-	if (hypothermia)
+	if (hypothermia) {
 		mazHelp += "<li><b>Bonfires</b> - How many Bonfires should be farmed on this zone. Uses max bonfires built rather than a specific amount to farm for so if you have already built 14 so far during your run and want another 8 then you'd input 22.</li>";
+	}
 
 	//Repeat Every
 	if (mapFarm || tributeFarm || worshipperFarm || smithyFarm)
@@ -1620,8 +1633,8 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		//Golden Type
 		mazHelp += "<li><b>Golden Type</b> - The type of Golden upgrade that you'd like to get during this line.</li>";
 	}
-	return mazHelp;
 
+	return mazHelp;
 }
 
 function windowToggleHelp(windowSize) {
@@ -2080,7 +2093,7 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Bone')) document.getElementById('windowBoneAmount' + index).value = 0;
 	if (titleText.includes('Bone')) document.getElementById('windowBoneBelow' + index).value = 0;
 	if (titleText.includes('Worshipper Farm')) document.getElementById('windowWorshipper' + index).value = 0;
-	if (titleText.includes('Void')) document.getElementById('windowHDRatio' + index).value = 0;
+	if (titleText.includes('Void') || titleText.includes('Map Farm')) document.getElementById('windowHDRatio' + index).value = 0;
 	if (titleText.includes('Void')) document.getElementById('windowVoidHDRatio' + index).value = 0;
 	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) {
 		checkBox = document.getElementById('windowAtlantrimp' + index);

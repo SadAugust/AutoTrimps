@@ -518,11 +518,13 @@ function resetAutoTrimps(a, b) {
 					initializeAllTabs(),
 					initializeAllSettings(),
 					//initializeSettingsProfiles(),
-					updateCustomButtons(true),
 					resetSettingsPortal(),
 					saveSettings(),
-					(ATrunning = !0)
-				//localStorage.mutatorPresets = JSON.parse(autoTrimpSettings.presetMutations.valueU2);
+					(ATrunning = !0),
+					updateCustomButtons(true),
+					localStorage.perkyInputs = (autoTrimpSettings.autoAllocatePresets.value),
+					localStorage.surkyInputs = (autoTrimpSettings.autoAllocatePresets.valueU2),
+					localStorage.mutatorPresets = (autoTrimpSettings.mutatorPresets.valueU2)
 			})(a),
 			101
 		),

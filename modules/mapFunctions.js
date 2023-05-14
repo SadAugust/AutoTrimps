@@ -431,6 +431,7 @@ function voidMaps() {
 		farmingDetails.autoLevel = false;
 		farmingDetails.repeat = false;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 	}
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
@@ -545,6 +546,7 @@ function mapBonus() {
 		farmingDetails.mapRepeats = repeatCounter;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 	}
 	//Display setting run message. Reset map vars that were used.
 	if (mapSettings.mapName === mapName && (game.global.mapBonus >= repeatCounter || !farmingDetails.shouldRun)) {
@@ -582,6 +584,11 @@ function mapFarm() {
 			if (!settingShouldRun(currSetting, world, 0) && !settingShouldRun(currSetting, world, zoneAddition)) continue;
 		}
 		else if (!settingShouldRun(currSetting, world, 0)) continue;
+		if (mapSettings.mapName === mapName && y === mapSettings.settingIndex) {
+			settingIndex = y;
+			break;
+		}
+		if (currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
 
 		for (var x = 0; x < zoneAddition + 1; x++) {
 			if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
@@ -662,6 +669,7 @@ function mapFarm() {
 		farmingDetails.runAtlantrimp = shouldAtlantrimp;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 	}
 
 	return farmingDetails;
@@ -814,6 +822,7 @@ function tributeFarm() {
 		farmingDetails.buyBuildings = shouldBuyBuildings;
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 	}
 
 	return farmingDetails;
@@ -1005,6 +1014,7 @@ function smithyFarm() {
 		farmingDetails.gemFarm = shouldSmithyGemFarm;
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 
 		if (!shouldMap) resetMapVars(rSFSettings);
 	}
@@ -1104,6 +1114,7 @@ function worshipperFarm() {
 		farmingDetails.worshipper = worshipperGoal;
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 		farmingDetails.gather = 'food';
 
 	}
@@ -1210,7 +1221,7 @@ function prestigeRaiding() {
 	const defaultSettings = getPageSetting('raidingDefaultSettings');
 	const baseSettings = getPageSetting('raidingSettings');
 
-	var rRaidingIndex;
+	var settingIndex;
 
 	for (var y = 0; y < baseSettings.length; y++) {
 		const currSetting = baseSettings[y];
@@ -1228,14 +1239,14 @@ function prestigeRaiding() {
 		//Skips if we don't have the required prestige available.
 		if (equipsToGet(raidZones, targetPrestige)[0] === 0) continue;
 		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
-			rRaidingIndex = y;
+			settingIndex = y;
 			break;
 		}
 	}
 
-	if (rRaidingIndex >= 0) {
+	if (settingIndex >= 0) {
 		//Setting up variables and checking if we should use daily settings instead of normal Prestige Farm settings
-		var setting = baseSettings[rRaidingIndex];
+		var setting = baseSettings[settingIndex];
 		var recycleMaps = defaultSettings.recycle;
 		var fragSetting = setting.raidingDropdown;
 		var incrementMaps = defaultSettings.incrementMaps;
@@ -1264,6 +1275,7 @@ function prestigeRaiding() {
 		farmingDetails.special = mapSpecial;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 		farmingDetails.incrementMaps = incrementMaps;
 	}
 
@@ -1525,6 +1537,7 @@ function bionicRaiding() {
 		farmingDetails.repeat = !repeat
 		farmingDetails.raidingZone = raidzonesBW;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 	}
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
@@ -1734,6 +1747,7 @@ function quagmire() {
 		farmingDetails.bogs = bogsToRun;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 	}
 
 	return farmingDetails;
@@ -1941,6 +1955,7 @@ function insanity() {
 		farmingDetails.insanity = insanityGoal;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 
 		if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 			mappingDetails(mapName, mapLevel, mapSpecial, insanityGoal);
@@ -2204,6 +2219,7 @@ function alchemy() {
 			farmingDetails.potionGoal = potionGoal.toString().replace(/[^\d,:-]/g, '');
 			farmingDetails.repeat = !repeat;
 			farmingDetails.status = status;
+			farmingDetails.settingIndex = settingIndex;
 
 			if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 				mappingDetails(mapName, mapLevel, mapSpecial, alchObj.potionsOwned[potion], potionGoal.toString().replace(/[^\d,:-]/g, ''), alchObj.potionNames[potion]);
@@ -2425,6 +2441,7 @@ function hypothermia() {
 		farmingDetails.woodGoal = bonfireCostTotal;
 		farmingDetails.repeat = !repeat;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 
 		if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 			mappingDetails(mapName, mapLevel, mapSpecial, bonfireCostTotal);
@@ -2764,6 +2781,7 @@ function hdFarm(skipHealthCheck) {
 		farmingDetails.hdRatio = equipfarmdynamicHD(setting);
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 		farmingDetails.shouldHealthFarm = shouldHealthFarm;
 	}
 
@@ -2862,13 +2880,6 @@ function farmingDecision() {
 	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && getPageSetting('desolation') && (MODULES.mapFunctions.challengeContinueRunning || (game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation')))) {
 		var desolationCheck = desolation(true);
 		if (desolationCheck.shouldRun) farmingDetails = desolationCheck;
-	}
-
-	for (var item in mapSettings) {
-		if (item === 'shouldRun') continue;
-		if (item === 'mapName') continue;
-		if (item === 'levelCheck') continue;
-		delete mapSettings[item];
 	}
 
 	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;

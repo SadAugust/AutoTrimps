@@ -193,7 +193,9 @@ ul.tab li a:hover {
 
 #windowAddRowBtn,
 #windowSwapPresetBtn {
+	position: relative;
 	margin-top: 0.5vw;
+	left: 1vw;
 }
 
 
@@ -214,7 +216,7 @@ ul.tab li a:hover {
 .windowDeleteAutoGolden .icomoon {
 	position: relative;
 	top: 0.6vw;
-	left: -1vw;
+	left: -1.5vw;
 	color: red;
 	font-weight: bold;
 	font-size: 2vw;
@@ -265,17 +267,22 @@ ul.tab li a:hover {
 .windowSpecialMapFarm,
 .windowRunTypeMapFarm,
 .windowMapTypeDropdownMapFarm,
+.windowRepeatMapFarm,
+.windowHDRatioMapFarm,
 .windowMapTypeDropdownDefaultMapFarm {
+	position: relative;
 	display: inline-block;
 	padding-left: 1%;
 }
 
 .windowDeleteMapFarm {
 	width: 0%;
+	padding-left: 0px;
 }
 
 .windowActiveMapFarm {
-	width: 5%;
+	width: 4%;
+	left: -0.5vw;
 }
 
 .windowPriorityMapFarm {
@@ -298,6 +305,11 @@ ul.tab li a:hover {
 	width: 5%;
 }
 
+.windowRepeatMapFarm,
+.windowHDRatioMapFarm {
+	width: 6%;
+}
+
 .windowJobRatioMapFarm {
 	width: 6%;
 }
@@ -307,7 +319,7 @@ ul.tab li a:hover {
 }
 
 .windowEndZoneMapFarm {
-	width: 5%;
+	width: 4%;
 }
 
 .windowSpecialMapFarm {
@@ -344,7 +356,7 @@ ul.tab li a:hover {
 }
 
 .windowGatherOn .windowSpecialMapFarm {
-	width: 8%;
+	width: 6%;
 	padding-left: 1%;
 }
 
@@ -391,7 +403,7 @@ ul.tab li a:hover {
 }
 
 .windowAutoLevelTributeFarm {
-	width: 4%;
+	width: 5%;
 }
 
 .windowLevelTributeFarm {
@@ -399,7 +411,7 @@ ul.tab li a:hover {
 }
 
 .windowJobRatioTributeFarm {
-	width: 6%;
+	width: 7%;
 }
 
 .windowRepeatEveryTributeFarm {
@@ -1002,7 +1014,7 @@ ul.tab li a:hover {
 }
 
 .windowPriorityBoneShrine {
-	width: 6%;
+	width: 8%;
 }
 
 .windowWorldBoneShrine {
@@ -1394,7 +1406,7 @@ ul.tab li a:hover {
 }
 
 .windowAtlantrimp {
-	width: 6%;
+	width: 4%;
 }
 
 .windowGatherOff .windowGather {

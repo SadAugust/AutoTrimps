@@ -5318,6 +5318,22 @@ function updateATVersion() {
 			Alchemy now has an input for potions of finding & trappa now has an input for hours trapped.");
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.95') {
+			var settings_List = ['mapFarmSettings']
+			var values = ['value', 'valueU2'];
+			for (var x = 0; x < settings_List.length; x++) {
+				for (var z = 0; z < values.length; z++) {
+					if (typeof (autoTrimpSettings[settings_List[x]][values[z]][0]) !== 'undefined') {
+						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
+							autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
+						}
+					}
+					saveSettings();
+				}
+			}
+			changelog.push("Map Farm now has a <b>Above X HD Ratio</b> input. Will make it so the line only runs above the specified HD Ratio but only runs if the input is greater than 0.");
+		}
+
 
 		autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
 		if (changelog.length !== 0) {
