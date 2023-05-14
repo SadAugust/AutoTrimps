@@ -1802,7 +1802,7 @@ function quest() {
 			mapLevel = mapAutoLevel;
 		}
 
-		var repeat = shouldQuest == 6 && (game.global.mapBonus >= 4 || getCurrentMapObject().level - game.global.world < 0);
+		var repeat = shouldQuest == 6 && (game.global.mapBonus >= 4 || (game.global.mapsActive && getCurrentMapObject().level - game.global.world < 0));
 
 		var status = 'Questing: ' + game.challenges.Quest.getQuestProgress();
 

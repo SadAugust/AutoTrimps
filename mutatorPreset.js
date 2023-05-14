@@ -281,4 +281,4 @@ function presetMutations() {
 
 //Runs this every 100ms if using standalone version.
 //Should really find a workaround to include this when openTree is called.
-if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) setInterval(presetMutations, 100);
+if (typeof (autoTrimpSettings) === 'undefined') setInterval(presetMutations, 100);
