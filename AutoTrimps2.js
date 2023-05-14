@@ -122,7 +122,7 @@ function initializeAutoTrimps() {
 	for (var m in ATmoduleList) {
 		ATscriptLoad(MODULES_AT.modulepath, ATmoduleList[m]);
 	}
-	debug('AutoTrimps Loaded!', "other");
+	debug('AutoTrimps Loaded!');
 }
 
 function printChangelog(changes) {

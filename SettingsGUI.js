@@ -3905,9 +3905,15 @@ function modifyParentNode(id, style) {
 
 	//Looks at the next element in the DOM and either adds or removes a break depending on what style is set to.
 	var elemSibling = elem.nextElementSibling;
+	var nextElemSibling = elemSibling.nextElementSibling;
+	//Insert break if it doesn't exist.
 	if (style === 'show' && elemSibling.style.length !== 0 && elemSibling.style.display !== 'none')
 		elem.insertAdjacentHTML('afterend', '<br>');
+	//Remove the break if it exists.
 	if (style === 'hide' && elemSibling.style.length === 0)
+		elemSibling.remove();
+	//Remove break if we are hiding the element and the next element is a break.
+	if (elemSibling.style.length === 0 && nextElemSibling.style.display === 'none')
 		elemSibling.remove();
 
 	return;
@@ -3959,18 +3965,18 @@ function modifyParentNodeUniverseSwap() {
 
 	//C2
 	modifyParentNode("c2disableFinished", 'show');
-	modifyParentNode("c2Fused", radonoff);
+	modifyParentNode("c2Fused", 'show');
 	modifyParentNode("balanceImprobDestack", radonoff);
 
-	modifyParentNode("c2RunnerPercent", radonon);
+	modifyParentNode("experienceEndBW", radonon);
 	modifyParentNode("unbalanceImprobDestack", radonon);
 	modifyParentNode("trappapaloozaCoords", radonon);
 	modifyParentNode("wither", radonon);
 	modifyParentNode("questSmithyMaps", radonon);
-	modifyParentNode("mayhemSwapZone", radonon_mayhem);
+	modifyParentNode("mayhemSwapZone", radonon);
 	modifyParentNode("stormStacks", radonon);
-	modifyParentNode("pandemoniumSwapZone", radonon_pandemonium);
-	modifyParentNode("glassStacks", radonon_desolation);
+	modifyParentNode("pandemoniumSwapZone", radonon);
+	modifyParentNode("glassStacks", radonon);
 	modifyParentNode("desolationSwapZone", radonon);
 
 	//Buildings
