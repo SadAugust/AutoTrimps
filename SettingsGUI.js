@@ -3923,11 +3923,6 @@ function modifyParentNode(id, style) {
 function modifyParentNodeUniverseSwap() {
 
 	var radonon = getPageSetting('radonsettings') === 1 ? 'show' : 'hide';
-
-	var radonon_mayhem = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.mayhem.require()) ? 'show' : 'hide';
-	var radonon_pandemonium = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.pandemonium.require()) ? 'show' : 'hide';
-	var radonon_desolation = getPageSetting('radonsettings') === 1 && (getPageSetting('displayAllSettings') || autoTrimpSettings.desolation.require()) ? 'show' : 'hide';
-
 	var radonoff = getPageSetting('radonsettings') === 0 ? 'show' : 'hide';
 	var heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
 
@@ -3938,7 +3933,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("dscryvoidmaps", radonoff);
 	modifyParentNode("dPreSpireNurseries", radonoff);
 	modifyParentNode("liqstack", radonoff);
-	modifyParentNode("mapOddEvenIncrement", radonon);
+	modifyParentNode("mapOddEvenIncrement", 'show');
 	modifyParentNode("dailyHeliumHrPortal", 'show');
 
 	if (getPageSetting('displayAllSettings') || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && holidayObj.holiday === 'Eggy')) modifyParentNode("heliumC2Challenge", 'show');

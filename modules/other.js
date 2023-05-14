@@ -31,7 +31,6 @@ function trimpcide() {
 
 	if (baseCheck) {
 		forceAbandonTrimps();
-		debug("Abandoning Trimps to resend army with max Anticipation stacks.", "other");
 	}
 }
 
