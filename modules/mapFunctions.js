@@ -584,10 +584,6 @@ function mapFarm() {
 			if (!settingShouldRun(currSetting, world, 0) && !settingShouldRun(currSetting, world, zoneAddition)) continue;
 		}
 		else if (!settingShouldRun(currSetting, world, 0)) continue;
-		if (mapSettings.mapName === mapName && y === mapSettings.settingIndex) {
-			settingIndex = y;
-			break;
-		}
 		if (currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
 
 		for (var x = 0; x < zoneAddition + 1; x++) {
@@ -2662,7 +2658,7 @@ function hdFarm(skipHealthCheck) {
 	};
 
 	var shouldHealthFarm = false;
-	const hitsSurvivedSetting = isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
+	const hitsSurvivedSetting = isDoingSpire() ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
 	var hitsSurvived = Infinity;
 	if (hitsSurvivedSetting > 0 && !skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== (getTotalPortals() + "_" + game.global.world)) {
 		var hitsSurvived = hdStats.hitsSurvived;

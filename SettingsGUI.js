@@ -1937,7 +1937,7 @@ function initializeAllSettings() {
 				var description = "<p>Will farm until you can survive this amount of attacks while in active Spires.</p>";
 				description += "<p><b>Your Hits Survived can be seen in the Auto Maps status tooltip.</b></p>";
 				description += "<p>Will use the job ratio settings that have been set in the <b>Map Bonus</b> setting. If that hasn't been setup then it will use a ratio of <b>0/1/3</b></p>";
-				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab.</b></p>";
+				description += "<p><b>Will override the Hits Survived setting in the <b>Maps</b> tab so if this is disabled it won't farm for health at all.</b></p>";
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
 				if (currSettingUniverse === 1) description += "<p><b>Recommended:</b> 1.5</p>";
 				return description;
