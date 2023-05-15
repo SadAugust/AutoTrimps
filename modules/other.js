@@ -159,6 +159,9 @@ var exoticImps =
 	];
 
 function remainingHealth(forceAngelic, mapType) {
+	if (!forceAngelic) forceAngelic = false;
+	if (!mapType) mapType = 'world';
+
 	const correctHeirloom = heirloomShieldToEquip(mapType) !== undefined ? getPageSetting(heirloomShieldToEquip(mapType)) === game.global.ShieldEquipped.name : true;
 	var soldierHealth = game.global.soldierHealth;
 	var soldierHealthMax = game.global.soldierHealthMax;
@@ -171,7 +174,7 @@ function remainingHealth(forceAngelic, mapType) {
 		soldierHealthMax *= 1 + (calcHeirloomBonus_AT('Shield', 'trimpHealth', 1, true, heirloomShieldToEquip(mapType)) / 100);
 	}
 
-	if (game.global.universe == 2) {
+	if (game.global.universe === 2) {
 		var maxLayers = Fluffy.isRewardActive('shieldlayer');
 		var layers = maxLayers - game.global.shieldLayersUsed;
 
@@ -205,15 +208,20 @@ function remainingHealth(forceAngelic, mapType) {
 		}
 		shieldHealth = shieldHealth < 0 ? 0 : shieldHealth;
 	}
+	//Subtracting Plauge daily mod from health
+	if (typeof game.global.dailyChallenge.plague !== 'undefined')
+		soldierHealth -= soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks);
+
 	var remainingHealth = shieldHealth + (forceAngelic ? soldierHealth * .33 : soldierHealth);
 	if ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'))
 		remainingHealth = shieldHealth;
-	if (shieldHealth + soldierHealth == 0) {
+	if (shieldHealth + soldierHealth === 0) {
 		remainingHealth = soldierHealthMax + (shieldMax * (maxLayers + 1))
 		if ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'))
 			remainingHealth = shieldMax * (maxLayers + 1);
 	}
 
+	if (soldierHealth <= 0) return 0;
 	return (remainingHealth)
 }
 
@@ -686,7 +694,7 @@ function equalityManagement() {
 				game.portal.Equality.disabledStackCount = i;
 				break;
 			}
-			else if (armyReady && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.95 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
+			else if (ourHealth === 0 || armyReady && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.95 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
 				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
 					suicideTrimps(true);
 					suicideTrimps(true);
