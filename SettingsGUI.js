@@ -1448,11 +1448,13 @@ function initializeAllSettings() {
 			function () { return (['Don\'t Buy Jobs', 'Auto Ratios', 'Manual Ratios']) },
 			function () {
 				//Initial button description
-				var description = "Click the left side of the button to toggle between the AutoJobs settings. Each of them will adjust the 3 primary resource jobs but you'll have to manually set the rest by clicking the cog icon on the right side of this button.";
-				//Manual Ratios
-				description += '<p><b>Manual Ratios</b><br>Buys jobs for your trimps according to the ratios set in the cogwheel popup.</p>';
+				var description = "<p>Click the left side of the button to toggle between the AutoJobs settings. Each of them will adjust the 3 primary resource jobs but you'll have to manually set the rest by clicking the cog icon on the right side of this button.</p>";
+				//Don't Buy Jobs
+				description += "<p><b>Don\'t Buy Jobs</b><br>Will disable the script from purchasing any jobs.</p>";
 				//Auto Ratios
-				description += '<p><b>Auto Ratios</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on this check out its Help section for this setting.</p>';
+				description += "<p><b>Auto Ratios</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on this check out its Help section for this setting.</p>";
+				//Manual Ratios
+				description += "<p><b>Manual Ratios</b><br>Buys jobs for your trimps according to the ratios set in the cogwheel popup.</p>";
 				//Override info
 				description += "<p><b>Map setting job ratios always override both 'Auto Ratios' & 'Manual Ratios' when AutoMaps is enabled.</b></p>";
 				return description;
