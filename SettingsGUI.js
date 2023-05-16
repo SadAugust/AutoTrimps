@@ -595,12 +595,13 @@ function initializeAllSettings() {
 		createSetting('dailySkip',
 			function () { return ('Skip this daily') },
 			function () {
-				var description = "<p>Use this to make the script skip a specific daily when starting runs.</p>";
-				description += "<p><b>Must be input with the following format \'YEAR-MONTH-DAY\' without any hyphens.</b></p>"
-				description += "<p><b>Recommended:</b> 0</p>";
+				var description = "<p>Use this to make the script skip specific dailies when starting runs.</p>";
+				description += "<p>Must be input with same format as the game uses which is <b>'YEAR-MONTH-DAY'.</b></p>"
+				description += "<p>An example of an input would be <b>'2023-04-22'.</b></p>"
+				description += "<p>Can have multiple inputs, seperate by commas.</p>"
 				return description;
 			},
-			'textValue', 0, null, 'Daily', [1, 2]);
+			'multiTextValue', [0], null, 'Daily', [1, 2]);
 
 		createSetting('dailyPortalSettingsArray',
 			function () { return ('Daily Portal Settings') },
@@ -1531,7 +1532,7 @@ function initializeAllSettings() {
 				description += "<p>Can input multiple zones such as <b>200,231,251</b>, doing this will spend all your resources purchasing gear and prestiges on each zone input but will only buy them until the end of the run after the last input.</p>";
 				description += "<p><b>Recommended:</b> 999</p>";
 				return description;
-			}, 'multiValue', -1, null, "Equipment", [1, 2],
+			}, 'multiValue', [-1], null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipPercent',
 			function () { return ('AE: Percent') },
@@ -5040,6 +5041,8 @@ function updateATVersion() {
 		&& autoTrimpSettings["ATversion"] !== MODULES_AT.ATversion
 	) {
 
+		var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.001') {
 			var settings_List = ['raidingSettings', 'bionicRaidingSettings']
 			var values = ['value', 'valueU2'];
@@ -5070,7 +5073,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.1') {
-			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
 			if (tempSettings.mapBonusDefaultSettings.value.healthHDRatio !== undefined)
 				autoTrimpSettings['mapBonusRatio'].value = tempSettings.mapBonusDefaultSettings.value.healthHDRatio;
 			if (tempSettings.mapBonusDefaultSettings.valueU2.healthHDRatio !== undefined)
@@ -5121,7 +5123,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.7') {
-			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
 			if (tempSettings.heirloomResourceStaff !== undefined)
 				autoTrimpSettings['heirloomStaffResource'].valueU2 = tempSettings.heirloomResourceStaff.valueU2;
 			autoTrimpSettings['hitsSurvived'].value = 0;
@@ -5135,7 +5136,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.8') {
-			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
 			if (tempSettings.dailyPortalSettingsArray.valueU2 !== undefined)
 				delete autoTrimpSettings.dailyPortalSettingsArray.valueU2.value;
 
@@ -5144,7 +5144,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.0') {
-			var tempSettings = JSON.parse(localStorage.getItem('autoTrimpSettings'));
 			if (tempSettings !== null) {
 				safeSetItems('atSettings', serializeSettings());
 				if (localStorage.atSettings !== null) {
@@ -5162,7 +5161,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.1') {
-			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (tempSettings.spamMessages !== undefined)
 				autoTrimpSettings['spamMessages'].value.map_Destacking = tempSettings.spamMessages.value.map_Details;
 		}
@@ -5172,7 +5170,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.3') {
-			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (tempSettings.c2RunnerSettings !== undefined) {
 				autoTrimpSettings['c2RunnerSettings'].value = {};
 				autoTrimpSettings['c2RunnerSettings'].valueU2 = {};
@@ -5197,7 +5194,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.5') {
-			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (tempSettings.presetMutations !== undefined) {
 				var mutatorObj = {
 					preset1: {},
@@ -5214,7 +5210,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.6') {
-			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (tempSettings.c2RunnerSettings !== undefined) {
 				autoTrimpSettings['onlyminmaxworld'].value = 2;
 			}
@@ -5223,7 +5218,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.7') {
-			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			autoTrimpSettings['avoidEmpower'].value = tempSettings.avoidempower.value;
 			autoTrimpSettings['buyheliumy'].valueU2 = tempSettings.buyradony.valueU2;
 
@@ -5246,13 +5240,11 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.8') {
-			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (tempSettings.spamMessages !== undefined)
 				autoTrimpSettings['spamMessages'].value.run_Stats = false;
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.9') {
-			var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (tempSettings.autoAbandon !== undefined) {
 				autoTrimpSettings['autoAbandon'].enabled = tempSettings.autoAbandon.value !== 1;
 				autoTrimpSettings['autoAbandon'].enabledU2 = tempSettings.autoAbandon.valueU2 !== 1;
@@ -5260,7 +5252,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.91') {
-			tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 			if (tempSettings.spamMessages !== undefined)
 				autoTrimpSettings['spamMessages'].value.nature = false;
 
@@ -5278,7 +5269,6 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.92') {
-			tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 
 			if (tempSettings.ATGA2 !== undefined) autoTrimpSettings['geneAssist'].enabled = tempSettings.ATGA2.enabled;
 			if (tempSettings.ATGA2gen !== undefined) autoTrimpSettings['geneAssistPercent'].value = tempSettings.ATGA2gen.value;
@@ -5334,6 +5324,27 @@ function updateATVersion() {
 				}
 			}
 			changelog.push("Map Farm now has a <b>Above X HD Ratio</b> input. Will make it so the line only runs above the specified HD Ratio but only runs if the input is greater than 0.");
+		}
+		//Fixing Surky & Perky input issues. 
+		//Changing daily skip to be an array instead of a string so more items can be added.
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.96') {
+
+			if (typeof (tempSettings["dailySkip"]) !== 'undefined') {
+				if (typeof (tempSettings.autoAllocatePresets.value) !== 'string') tempSettings.dailySkip.value = '';
+				autoTrimpSettings.dailySkip.value = tempSettings.dailySkip.value.split();
+				autoTrimpSettings.dailySkip.valueU2 = tempSettings.dailySkip.valueU2.split();
+			}
+
+			if (typeof (autoTrimpSettings.autoAllocatePresets.valueU2) === 'object') {
+				if (typeof (tempSettings.autoAllocatePresets.valueU2) !== 'string') tempSettings.dailySkip.valueU2 = '';
+				autoTrimpSettings.autoAllocatePresets.value = JSON.stringify(autoTrimpSettings.autoAllocatePresets.value);
+				localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
+			}
+
+			if (typeof (autoTrimpSettings.autoAllocatePresets.valueU2) === 'object') {
+				autoTrimpSettings.autoAllocatePresets.valueU2 = JSON.stringify(autoTrimpSettings.autoAllocatePresets.valueU2);
+				localStorage.surkyInputs = autoTrimpSettings.autoAllocatePresets.valueU2;
+			}
 		}
 
 

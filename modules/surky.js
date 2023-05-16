@@ -2270,8 +2270,6 @@ swapPortalUniverse = function () {
 function loadPortalUI() {
 	if (portalUniverse === 2) setupSurkyUI();
 	if (portalUniverse === 1) setupPerkyUI();
-	//Send chat msg to notify user that this has loaded.
-	console.log("Surky & Perky loaded.")
 }
 
 //If using standalone version then when loading Surky file also load CSS & Perky then load portal UI.
@@ -2293,5 +2291,7 @@ if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !=
 
 	//Load the portal UI
 	setTimeout(loadPortalUI, 1000);
+	//Send chat msg to notify user that this has loaded.
+	console.log("Surky & Perky loaded.")
 
 }

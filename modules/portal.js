@@ -431,8 +431,9 @@ function doPortal(challenge, skipDaily) {
 		//Checking to see which dailies can be run
 		checkCompleteDailies();
 		var lastUndone = -7;
+		dailiesToSkip = getPageSetting('dailySkip', portalUniverse).map(item => item.replace(/-/g, ''));
 		while (++lastUndone <= 0) {
-			if (getDailyTimeString(lastUndone) === parseInt(getPageSetting('dailySkip', portalUniverse))) continue;
+			if (dailiesToSkip.includes(getDailyTimeString(lastUndone).toString())) continue;
 			var dailyCompleted = (game.global.recentDailies.indexOf(getDailyTimeString(lastUndone)) !== -1);
 			if (!dailyCompleted)
 				break;
