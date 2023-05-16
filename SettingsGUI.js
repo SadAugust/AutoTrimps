@@ -5330,7 +5330,8 @@ function updateATVersion() {
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.96') {
 
 			if (typeof (tempSettings["dailySkip"]) !== 'undefined') {
-				if (typeof (tempSettings.autoAllocatePresets.value) !== 'string') tempSettings.dailySkip.value = '';
+				if (typeof (tempSettings.dailySkip.value) !== 'string') tempSettings.dailySkip.value = '';
+				if (typeof (tempSettings.dailySkip.valueU2) !== 'string') tempSettings.dailySkip.valueU2 = '';
 				autoTrimpSettings.dailySkip.value = tempSettings.dailySkip.value.split();
 				autoTrimpSettings.dailySkip.valueU2 = tempSettings.dailySkip.valueU2.split();
 			}
