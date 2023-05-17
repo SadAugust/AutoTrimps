@@ -2,7 +2,7 @@ MODULES.mapFunctions = {};
 MODULES.mapFunctions.voidTrigger = 'None';
 MODULES.mapFunctions.voidHDRatio = Infinity;
 MODULES.mapFunctions.voidVHDRatio = Infinity;
-MODULES.mapFunctions.rVoidHDInfo = '0_0_0';
+MODULES.mapFunctions.voidHDInfo = '0_0_0';
 MODULES.mapFunctions.boneCharge = false;
 MODULES.mapFunctions.portalAfterVoids = false;
 MODULES.mapFunctions.portalZone = Infinity;
@@ -350,7 +350,7 @@ function voidMaps() {
 	var settingIndex = null;
 
 	//Reset void HD Index if not on the right portal/zone/cell as it was initially run.
-	if (module.voidHDIndex !== Infinity && module.rVoidHDInfo !== (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2))) module.voidHDIndex = Infinity;
+	if (module.voidHDIndex !== Infinity && module.voidHDInfo !== (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2))) module.voidHDIndex = Infinity;
 
 	for (var y = 0; y < baseSettings.length; y++) {
 		const currSetting = baseSettings[y];
@@ -378,15 +378,15 @@ function voidMaps() {
 				module.voidTrigger = currSetting.hdRatio < hdStats.vhdRatio ? 'World HD Ratio' : (currSetting.voidHDRatio < hdStats.hdRatioVoid || (hdStats.vhdRatioVoid * 50) < hdStats.vhdRatioVoidPlus) ? 'Void HD Ratio' : 'Zone';
 				module.voidHDRatio = hdStats.hdRatio;
 				module.voidVHDRatio = hdStats.hdRatioVoid;
-				if (defaultSettings.boneCharge && Number(module.rVoidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
-				module.rVoidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
+				module.voidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
+				if (defaultSettings.boneCharge && Number(module.voidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
 			}
 			module.voidHDIndex = y;
 			break;
 		}
 	}
 
-	if (settingIndex !== null || module.voidHDIndex !== Infinity || module.portalAfterVoids) {
+	if (settingIndex !== null || (module.voidHDIndex !== Infinity && baseSettings[module.voidHDIndex].world >= game.global.world) || module.portalAfterVoids) {
 
 		var setting;
 		if (settingIndex === null && module.voidHDIndex === Infinity) {
@@ -402,8 +402,8 @@ function voidMaps() {
 			}
 			module.portalAfterVoids = true;
 			module.voidTrigger = autoTrimpSettings.heliumHrPortal.name()[portalSetting];
-			if (defaultSettings.boneCharge && Number(module.rVoidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
-			module.rVoidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
+			module.voidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
+			if (defaultSettings.boneCharge && Number(module.voidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
 		} else {
 			setting = baseSettings[settingIndex >= 0 ? settingIndex : module.voidHDIndex];
 		}
@@ -440,7 +440,7 @@ function voidMaps() {
 		module.voidHDIndex = Infinity;
 		module.voidHDRatio = Infinity;
 		module.voidVHDRatio = Infinity;
-		module.rVoidHDInfo = '0_0_0';
+		module.voidHDInfo = '0_0_0';
 		module.portalAfterVoids = false;
 		module.voidTrigger = 'None';
 		//Setting portal zone to current zone if setting calls for it
@@ -3106,24 +3106,24 @@ function fragmentFarm() {
 	} else if (!fragMapFarmCost()) {
 		MODULES.maps.fragmentFarming = true;
 		rFragCheck = false;
-		if (!rFragCheck && rInitialFragmentMapID == undefined && !rFragMapBought && game.global.preMapsActive) {
+		if (!rFragCheck && initialFragmentMapID == undefined && !rFragMapBought && game.global.preMapsActive) {
 			//debug("Check complete for fragment farming map");
 			fragmap();
 			if ((updateMapCost(true) <= game.resources.fragments.owned)) {
 				buyMap();
 				rFragMapBought = true;
 				if (rFragMapBought) {
-					rInitialFragmentMapID = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
+					initialFragmentMapID = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
 					//debug("Fragment farming map purchased");
 				}
 			}
 		}
-		if (!rFragCheck && game.global.preMapsActive && !game.global.mapsActive && rFragMapBought && rInitialFragmentMapID != undefined) {
+		if (!rFragCheck && game.global.preMapsActive && !game.global.mapsActive && rFragMapBought && initialFragmentMapID != undefined) {
 			debug("Fragment farming for a " + (mapSettings.mapLevel >= 0 ? "+" : "") + mapSettings.mapLevel + " " + mapSettings.special + " map.", "maps");
-			selectMap(rInitialFragmentMapID);
+			selectMap(initialFragmentMapID);
 			runMap();
-			var rFragmentMapID = rInitialFragmentMapID;
-			rInitialFragmentMapID = undefined;
+			var rFragmentMapID = initialFragmentMapID;
+			initialFragmentMapID = undefined;
 		}
 		if (!rFragCheck && !game.global.repeatMap && game.resources.fragments.owned < perfectMapCost(mapSettings.mapLevel, mapSettings.special)) repeatClicked();
 		if (!rFragCheck && game.resources.fragments.owned >= perfectMapCost(mapSettings.mapLevel, mapSettings.special) && game.global.mapsActive && rFragMapBought && rFragmentMapID != undefined) {

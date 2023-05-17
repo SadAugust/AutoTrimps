@@ -5336,8 +5336,8 @@ function updateATVersion() {
 				autoTrimpSettings.dailySkip.valueU2 = tempSettings.dailySkip.valueU2.split();
 			}
 
-			if (typeof (autoTrimpSettings.autoAllocatePresets.valueU2) === 'object') {
-				if (typeof (tempSettings.autoAllocatePresets.valueU2) !== 'string') tempSettings.dailySkip.valueU2 = '';
+			if (typeof (autoTrimpSettings.autoAllocatePresets.value) === 'object') {
+				if (typeof (tempSettings.autoAllocatePresets.value) !== 'string') tempSettings.dailySkip.value = '';
 				autoTrimpSettings.autoAllocatePresets.value = JSON.stringify(autoTrimpSettings.autoAllocatePresets.value);
 				localStorage.perkyInputs = autoTrimpSettings.autoAllocatePresets.value;
 			}

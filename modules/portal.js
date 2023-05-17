@@ -628,26 +628,30 @@ function findOutCurrentPortalLevel() {
 function resetmapvars() {
 	//General
 	mappingTime = 0;
+	var mapFunction = MODULES['mapFunctions'];
 
 	//Fragment Farming	
-	rInitialFragmentMapID = undefined;
+	initialFragmentMapID = undefined;
 	//Prestige
-	MODULES.mapFunctions.prestigeMapArray = new Array(5);
-	MODULES.mapFunctions.prestigeFragMapBought = false;
-	MODULES.mapFunctions.prestigeRunningMaps = false;
-	MODULES.mapFunctions.prestigeRaidZone = 0;
-	MODULES.mapFunctions.challengeContinueRunning = false;
+	mapFunction.prestigeMapArray = new Array(5);
+	mapFunction.prestigeFragMapBought = false;
+	mapFunction.prestigeRunningMaps = false;
+	mapFunction.prestigeRaidZone = 0;
+	mapFunction.challengeContinueRunning = false;
 
 	//Auto Level variables
 	mapRepeats = 0;
 	mapSettings.levelCheck = Infinity;
 
 	//Resetting variables that would cause issues if they were left as is
-	MODULES.mapFunctions.voidHDRatio = Infinity;
-	MODULES.mapFunctions.voidVHDRatio = Infinity;
-	MODULES.mapFunctions.voidHDIndex = Infinity;
-	MODULES.mapFunctions.boneCharge = false;
-	MODULES.mapFunctions.portalZone = Infinity;
+	mapFunction.voidHDRatio = Infinity;
+	mapFunction.voidVHDRatio = Infinity;
+	mapFunction.voidHDInfo = Infinity;
+	mapFunction.voidHDIndex = Infinity;
+	mapFunction.portalZone = Infinity;
+	mapFunction.portalAfterVoids = false;
+	mapFunction.boneCharge = false;
+	mapFunction.voidTrigger = 'None';
 
 	hdStats = new HDStats();
 	mapSettings = new farmingDecision();
