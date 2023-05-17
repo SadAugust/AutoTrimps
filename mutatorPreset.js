@@ -240,7 +240,7 @@ function presetMutations() {
 	//Setting up initial variables that will be called later during for loop
 	const containerID = ['u2MutPresetBtn1', 'u2MutPresetBtn2', 'u2MutPresetBtn3', 'u2MutSave', 'u2MutLoad', 'u2MutRename', 'u2MutReset'];
 	var containerText = ['1', '2', '3', 'Save', 'Load', 'Rename', 'Reset'];
-	const onClick = ['presetMutTab(1)', 'presetMutTab(2)', 'presetMutTab(3)', 'saveMutations()', 'loadMutations(selectedMutPreset)', 'renameMutations()', 'resetMutations()'];
+	const onClick = ['presetMutTab(1)', 'presetMutTab(2)', 'presetMutTab(3)', 'saveMutations()', 'loadMutations(selectedMutPreset)', 'renameMutations(true)', 'resetMutations()'];
 
 	//If there are presets saved, then we will use those names instead of the default ones
 	//This will also allow for the user to change the names of the presets
