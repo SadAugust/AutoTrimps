@@ -129,8 +129,8 @@ function pushSpreadsheetData() {
 	}
 
 
-	heliumGained = game.global.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned;
-	heliumHr = game.stats.heliumHour.value();
+	var heliumGained = game.global.universe === 2 ? game.resources.radon.owned : game.resources.helium.owned;
+	var heliumHr = game.stats.heliumHour.value();
 
 	var dailyMods = " ";
 	var dailyPercent = 0;
@@ -144,7 +144,6 @@ function pushSpreadsheetData() {
 		heliumGained *= 1 + dailyPercent;
 		heliumHr *= 1 + dailyPercent;
 	}
-	dailyMods.replaceAll(',', ';');
 
 	const mapCount = Object.keys(graphData.perZoneData.mapCount)
 		.filter((k) => graphData.perZoneData.mapCount[k] != null)
@@ -153,7 +152,7 @@ function pushSpreadsheetData() {
 	const mapZone = Number(Object.keys(mapCount).find(key => mapCount[key] === mapTotal));
 
 
-	const obj = {
+	var obj = {
 		user: autoTrimpSettings.gameUser.value,
 		date: new Date().toISOString(),
 		portals: game.global.totalPortals,
@@ -214,6 +213,11 @@ function pushSpreadsheetData() {
 			obj[chall + "_zone"] = game.c2[chall];
 			obj[chall + "_bonus"] = (getIndividualSquaredReward(chall));
 		}
+	}
+
+	//Replaces any commas with semicolons to avoid breaking how the spreadsheet parses data.
+	for (var item in obj) {
+		if (typeof obj[item] === 'string') obj[item] = obj[item].replaceAll(',', ';');
 	}
 
 	setTimeout(function () {
