@@ -694,7 +694,7 @@ function equalityManagement() {
 				game.portal.Equality.disabledStackCount = i;
 				break;
 			}
-			else if (ourHealth === 0 || armyReady && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.95 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
+			else if (ourHealth === 0 || (armyReady || (dailyEmpower && !mapping)) && (ourHealth < (ourHealthMax * (dailyEmpowerToggle ? 0.95 : 0.65))) && gammaToTrigger === gammaMaxStacksCheck && gammaMaxStacksCheck !== Infinity && !runningTrappa && !runningArchaeology && !runningBerserk) {
 				if (game.global.mapsUnlocked && !mapping && !runningMayhem) {
 					suicideTrimps(true);
 					suicideTrimps(true);
