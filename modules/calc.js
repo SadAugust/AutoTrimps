@@ -1311,7 +1311,7 @@ function calcMutationAttack(targetZone) {
 	if (!targetZone) targetZone = game.global.world;
 	var attack;
 	var hasRage = false;
-	var worstCell = 0;
+	var worstCell_Atk = 0;
 	var cell;
 
 	var highest = 1;
@@ -1328,8 +1328,13 @@ function calcMutationAttack(targetZone) {
 		}
 		cell = i;
 		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
-			if (mutationBaseAttack(cell, targetZone) > highest) worstCell = i;
-			highest = Math.max(mutationBaseAttack(cell, targetZone) * (hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1), highest);
+			var ragingMult = hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1;
+			if (gridArray[cell].u2Mutation.includes("CMP") && getPageSetting('heirloomCompressedSwap')) {
+				if (heirloomShieldToEquip('world') || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed'))
+					ragingMult = 2.8
+			}
+			highest = Math.max(mutationBaseAttack(cell, targetZone) * ragingMult, highest);
+			if (highest > attack) worstCell = i
 			attack = highest;
 		}
 	}
@@ -1358,18 +1363,24 @@ function mutationBaseHealth(cell, targetZone) {
 
 function calcMutationHealth(targetZone) {
 	if (!targetZone) targetZone = game.global.world;
-	var worstCell = 0;
+	var worstCell_Health = 0;
 	var cell;
 	var health = 0;
 
-	var highest = 1;
+	var highest = 0;
 	var gridArray = game.global.gridArray
 	for (var i = 0; i < game.global.gridArray.length; i++) {
 		cell = i;
 		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
-			if (mutationBaseHealth(cell, targetZone) > highest) worstCell = i;
-			highest = Math.max(mutationBaseHealth(cell, targetZone), highest);
-			mute = true;
+
+			var enemyHealth = mutationBaseHealth(cell, targetZone);
+			if (gridArray[cell].u2Mutation.includes("CMP") && getPageSetting('heirloomCompressedSwap')) {
+				if (heirloomShieldToEquip('world') || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed'))
+					enemyHealth *= 0.7;
+			}
+
+			if (enemyHealth > highest) worstCell_Health = i;
+			highest = Math.max(enemyHealth, highest);
 			health = highest;
 		}
 	}
