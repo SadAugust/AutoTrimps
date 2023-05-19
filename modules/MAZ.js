@@ -1534,7 +1534,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		//Smithy Count
 		mazHelp += "<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in status tooltip) is above this value (and above 0).<br>";
 		//Trimple Map Farm
-		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources." + "</li>";
+		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources.<br>If " + trimple + " has been run then any line with this enabled won't be run." + "</li>";
 	}
 
 	if (mapBonus) {

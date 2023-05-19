@@ -579,6 +579,7 @@ function mapFarm() {
 	for (var y = 0; y < baseSettings.length; y++) {
 		var currSetting = baseSettings[y];
 		var world = currSetting.world;
+		if (currSetting.atlantrimp && !game.mapUnlocks.AncientTreasure.canRunOnce) continue;
 		if (dailyAddition.active) {
 			if (dailyAddition.skipZone) continue;
 			if (!settingShouldRun(currSetting, world, 0) && !settingShouldRun(currSetting, world, zoneAddition)) continue;
