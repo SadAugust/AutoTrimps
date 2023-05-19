@@ -1315,7 +1315,8 @@ function calcMutationAttack(targetZone) {
 	var cell;
 
 	var highest = 1;
-	var gridArray = game.global.gridArray
+	var gridArray = game.global.gridArray;
+
 	for (var i = 0; i < gridArray.length; i++) {
 		hasRage = gridArray[i].u2Mutation.includes('RGE');
 		if (gridArray[i].u2Mutation.includes('CMP') && !gridArray[i].u2Mutation.includes('RGE')) {
@@ -1330,11 +1331,11 @@ function calcMutationAttack(targetZone) {
 		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
 			var ragingMult = hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1;
 			if (gridArray[cell].u2Mutation.includes("CMP") && getPageSetting('heirloomCompressedSwap')) {
-				if (heirloomShieldToEquip('world') || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed'))
+				if (heirloomShieldToEquip('world') !== 'heirloomInitial' || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed'))
 					ragingMult = 2.8
 			}
 			highest = Math.max(mutationBaseAttack(cell, targetZone) * ragingMult, highest);
-			if (highest > attack) worstCell = i
+			if (highest > attack) worstCell_Atk = i
 			attack = highest;
 		}
 	}
@@ -1375,7 +1376,7 @@ function calcMutationHealth(targetZone) {
 
 			var enemyHealth = mutationBaseHealth(cell, targetZone);
 			if (gridArray[cell].u2Mutation.includes("CMP") && getPageSetting('heirloomCompressedSwap')) {
-				if (heirloomShieldToEquip('world') || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed'))
+				if (heirloomShieldToEquip('world') !== 'heirloomInitial' || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed'))
 					enemyHealth *= 0.7;
 			}
 
