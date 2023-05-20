@@ -493,12 +493,15 @@ function doPortal(challenge, skipDaily) {
 	var preset;
 	//Identifying which challenge type we're running to setup for the preset swapping function
 	if (portalUniverse === 2 && getPageSetting('presetSwap', 2)) {
-		preset = challengeSquaredMode || challenge === 'Mayhem' || challenge === 'Pandemonium' || challenge === 'Desolation' ? 'push' : game.global.selectedChallenge === 'Daily' ? 'tufarm' : 'ezfarm';
-		if (challenge === 'Downsize') preset = 'downsize';
-		if (challenge === 'Duel') preset = 'duel';
-		if (challenge === 'Berserk') preset = 'berserk';
-		if (challenge === 'Alchemy') preset = 'alchemy';
-		if (challenge === 'Smithless') preset = 'smithless';
+		if (game.global.selectedChallenge === 'Mayhem' || game.global.selectedChallenge === 'Pandemonium' || game.global.selectedChallenge === 'Desolation') preset = 'push';
+		else if (game.global.selectedChallenge === 'Downsize') preset = 'downsize';
+		else if (game.global.selectedChallenge === 'Duel') preset = 'duel';
+		else if (game.global.selectedChallenge === 'Berserk') preset = 'berserk';
+		else if (game.global.selectedChallenge === 'Alchemy') preset = 'alchemy';
+		else if (game.global.selectedChallenge === 'Smithless') preset = 'smithless';
+		else if (challengeSquaredMode) preset = 'push';
+		else if (game.global.selectedChallenge === 'Daily') preset = 'tufarm';
+		else preset = 'ezfarm';
 		fillPreset(preset);
 	}
 
