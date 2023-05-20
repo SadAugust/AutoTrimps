@@ -1146,13 +1146,15 @@ function mapDestacking() {
 		var balanceStacks = getPageSetting('balanceStacks') > 0 ? getPageSetting('balanceStacks') : Infinity;
 		shouldestack = ((gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= balanceZone && (game.challenges.Balance.balanceStacks >= balanceStacks || (getPageSetting('balanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Balance.balanceStacks != 0)));
 		destackValue = game.challenges.Balance.balanceStacks;
+
+
 	}
 
 	//Unbalance Destacking
 	if (challengeActive('Unbalance')) {
 		var unbalanceZone = getPageSetting('unbalanceZone') > 0 ? getPageSetting('unbalanceZone') : Infinity;
 		var unbalanceStacks = getPageSetting('unbalanceStacks') > 0 ? getPageSetting('unbalanceStacks') : Infinity;
-		shouldMap = ((gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= unbalanceZone && (game.challenges.Unbalance.balanceStacks >= unbalanceStacks || (getPageSetting('unbalanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Unbalance.balanceStacks != 0)));
+		shouldMap = ((gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= unbalanceZone && (game.challenges.Unbalance.balanceStacks >= unbalanceStacks || (getPageSetting('unbalanceImprobDestack') && game.global.lastClearedCell + 2 == 100 && game.challenges.Unbalance.balanceStacks !== 0)));
 		destackValue = game.challenges.Unbalance.balanceStacks;
 	}
 
@@ -1166,20 +1168,28 @@ function mapDestacking() {
 	if (challengeActive('Storm')) {
 		var stormZone = getPageSetting('stormZone') > 0 ? getPageSetting('stormZone') : Infinity;
 		var stormStacks = getPageSetting('stormStacks') > 0 ? getPageSetting('stormStacks') : Infinity;
-		shouldMap = (game.global.world >= stormZone && (game.challenges.Storm.beta >= stormStacks && game.challenges.Storm.beta != 0));
+		shouldMap = (game.global.world >= stormZone && (game.challenges.Storm.beta >= stormStacks && game.challenges.Storm.beta !== 0));
 		destackValue = game.challenges.Storm.beta;
 	}
 
-	if (!game.jobs.Explorer.locked && game.global.mapsActive && getCurrentMapObject().level == 6 &&
+	//Setting up variable for challengeContinueRunning to run maps until we reach 0 stacks
+	if (!MODULES.mapFunctions.challengeContinueRunning && shouldMap && game.global.mapsActive && destackValue > 0) MODULES.mapFunctions.challengeContinueRunning = true;
+
+	//Recycling maps if we have 0 stacks
+	if (!game.jobs.Explorer.locked && game.global.mapsActive && getCurrentMapObject().level === 6 &&
 		(
-			(challengeActive('Balance') && !shouldMap && game.challenges.Balance.balanceStacks == 0) ||
+			(challengeActive('Balance') && !shouldMap && game.challenges.Balance.balanceStacks === 0) ||
 			(challengeActive('Daily') && !shouldMap && game.global.dailyChallenge.bloodthirst.stacks === 0) ||
-			(challengeActive('Unbalance') && !shouldMap && game.challenges.Unbalance.balanceStacks == 0) ||
-			(challengeActive('Storm') && !shouldMap && game.challenges.Storm.beta == 0)
+			(challengeActive('Unbalance') && !shouldMap && game.challenges.Unbalance.balanceStacks === 0) ||
+			(challengeActive('Storm') && !shouldMap && game.challenges.Storm.beta === 0)
 		)
 	) {
+		MODULES.mapFunctions.challengeContinueRunning = false;
 		recycleMap_AT();
 	}
+
+	//Force mapping if we are in a map and haven't yet reached 0 stacks.
+	if (MODULES.mapFunctions.challengeContinueRunning) shouldMap = true;
 
 	var repeat = game.global.mapsActive && (getCurrentMapObject().size - getCurrentMapCell().level) > destackValue;
 
