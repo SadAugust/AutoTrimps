@@ -1286,7 +1286,6 @@ function calcCurrentStance() {
 		return 15;
 }
 
-//Radon
 function mutationBaseAttack(cell, targetZone) {
 	if (!targetZone) targetZone = game.global.world;
 

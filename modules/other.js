@@ -677,15 +677,18 @@ function equalityManagement() {
 			//Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
 			//Now works with void maps AND in world. Setup heirloomPlagueSwap to true to enable.
 			if (plagueShield && (heirloomPlagueSwap || slowScumming)) {
-				var plaguebringerDamage = game.global[mapGrid][currentCell + 1].plaguebringer;
-				var shouldSkip = calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth
-				//Checking if we are at max plaguebringer damage. If not then skip to next equality stack if current attack will kill the enemy.
-				if (((mapping && !fastEnemy) || !mapping)
-					&& shouldSkip && currentCell !== (game.global[mapGrid].length - 3) && (typeof (plaguebringerDamage) === 'undefined' || plaguebringerDamage < getCurrentEnemy().maxHealth) &&
-					(getCurrentEnemy().maxHealth * .05 < enemyHealth)
-				) {
-					while (calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > getCurrentEnemy().health && i < maxEquality) {
-						i++;
+				var nextCell = game.global[mapGrid][currentCell + 1];
+				if (nextCell) {
+					var plaguebringerDamage = nextCell.plaguebringer;
+					var shouldSkip = calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > enemyHealth
+					//Checking if we are at max plaguebringer damage. If not then skip to next equality stack if current attack will kill the enemy.
+					if (((mapping && !fastEnemy) || !mapping)
+						&& shouldSkip && currentCell !== (game.global[mapGrid].length - 3) && (typeof (plaguebringerDamage) === 'undefined' || plaguebringerDamage < getCurrentEnemy().maxHealth) &&
+						(getCurrentEnemy().maxHealth * .05 < enemyHealth)
+					) {
+						while (calcOurDmg('max', i, false, type, 'force', bionicTalent, true) > getCurrentEnemy().health && i < maxEquality) {
+							i++;
+						}
 					}
 				}
 			}
