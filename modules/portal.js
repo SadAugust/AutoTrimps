@@ -611,7 +611,7 @@ function finishChallengeSquared() {
 	if (!game.global.runningChallengeSquared) return;
 	var finishChallenge = getPageSetting('c2Finish');
 
-	if (getPageSetting('c2RunnerStart') && (getPageSetting('c2RunnerPortal') < finishChallenge))
+	if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerMode') === 0 && (getPageSetting('c2RunnerPortal') < finishChallenge))
 		finishChallenge = getPageSetting('c2RunnerPortal');
 	if (finishChallenge === -1 || game.global.world === 1) return;
 	if (game.global.world < finishChallenge) return;

@@ -231,7 +231,7 @@ function mainLoop() {
 	}
 
 	universeSwapped();
-	presetMutations();
+	/* presetMutations(); */
 	remakeTooltip();
 
 	if (ATrunning == false) return;
