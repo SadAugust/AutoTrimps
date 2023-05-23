@@ -359,7 +359,7 @@ function buyBuildings() {
 			var gymPct = buildingSettings.Gym.percent / 100;
 			var gymCanAfford = calculateMaxAffordLocal(game.buildings.Gym, true, false, false, (gymAmt - game.buildings.Gym.purchased), gymPct);
 			if (gymAmt > game.buildings.Gym.purchased && gymCanAfford > 0) {
-				if (!((game.upgrades['Gymystic'].allowed - game.upgrades['Gymystic'].done) > 0))
+				if (!needGymystic())
 					safeBuyBuilding('Gym', gymCanAfford);
 			}
 		}

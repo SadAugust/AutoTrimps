@@ -1,6 +1,6 @@
 var upgradeList = ['Miners', 'Scientists', 'Coordination', 'Speedminer', 'Speedlumber', 'Speedfarming', 'Speedscience', 'Speedexplorer', 'Efficiency', 'Explorers', 'Battle', 'Bloodlust', 'Bounty', 'Egg', 'UberHut', 'UberHouse', 'UberMansion', 'UberHotel', 'UberResort', 'Trapstorm', 'Potency',
 	//U1 only
-	'Megaminer', 'Megalumber', 'Megafarming', 'Megascience', 'TrainTacular', 'Trainers', 'Blockmaster', 'Anger', 'Formations', 'Dominance', 'Barrier', 'Gigastation', 'Shieldblock', 'Magmamancers',
+	'Megaminer', 'Megalumber', 'Megafarming', 'Megascience', 'TrainTacular', 'Trainers', 'Blockmaster', 'Anger', 'Formations', 'Dominance', 'Barrier', 'Gymystic', 'Gigastation', 'Shieldblock', 'Magmamancers',
 	//U2 only
 	'Rage', 'Prismatic', 'Prismalicious',
 	//Equipment
@@ -120,6 +120,7 @@ function needGymystic() {
 
 function buyUpgrades() {
 	if (getPageSetting('upgradeType') === 0) return;
+
 	for (var upgrade in upgradeList) {
 		upgrade = upgradeList[upgrade];
 		var gameUpgrade = game.upgrades[upgrade];
@@ -132,7 +133,6 @@ function buyUpgrades() {
 		if (upgrade == 'Coordination' && (getPageSetting('upgradeType') == 2 || !canAffordCoordinationTrimps())) continue;
 		if (upgrade === 'Coordination' && challengeActive('Trappapalooza') && getPageSetting('trappapalooza') && getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords')) continue;
 		if (upgrade === 'Coordination' && challengeActive('Trappapalooza') && getPageSetting('trappapalooza')) { buyJobs(); }
-
 		//Gigastations
 		if (upgrade == 'Gigastation' && !fuckbuildinggiga) {
 			if (getPageSetting("autoGigas") && game.upgrades.Gigastation.done == 0 && !firstGiga()) continue;

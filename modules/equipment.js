@@ -361,11 +361,6 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 
 function autoEquip() {
 
-	if (game.global.universe === 1 && needGymystic() && canAffordTwoLevel('Gymystic')) {
-		buyUpgrade('Gymystic', true, true);
-		debug('Upgrading Gymystic', 'equipment', '*upload');
-	}
-
 	if (
 		!getPageSetting('equipOn') ||
 		([2, 3].indexOf(currQuest()) >= 0 && game.global.lastClearedCell < 90) ||
