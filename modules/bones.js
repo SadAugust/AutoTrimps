@@ -29,6 +29,7 @@ function boneShrine() {
 		}
 	}
 	if (rBSIndex !== null) {
+
 		var rBoneShrineSettings = rBoneShrineBaseSettings[rBSIndex];
 		var rBoneShrineCharges = rBoneShrineSettings.boneamount;
 		var rBoneShrineGather = rBoneShrineSettings.gather;
@@ -60,7 +61,7 @@ function boneShrine() {
 				}
 				game.permaBoneBonuses.boosts.consume();
 			}
-			debug('Consumed ' + rBoneShrineCharges + " bone shrine " + (rBoneShrineCharges == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(rBoneShrineCharges), "other");
+			debug('Consumed ' + rBoneShrineCharges + " bone shrine " + (rBoneShrineCharges == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(rBoneShrineCharges), "bones");
 			rBoneShrineSettings.done = totalPortals + "_" + game.global.world;
 			rBSRunningAtlantrimp = false;
 			MODULES.mapFunctions.workerRatio = null;
@@ -102,9 +103,21 @@ function boneShrineOutput(charges) {
 }
 
 function buySingleRunBonuses() {
+	//Purchases Golden Maps and Sharp Trimps if we have enough bones and running C2/C3s
+	if (hdStats.isC3) {
+		if (!game.singleRunBonuses.goldMaps.owned && game.global.b >= 20 && getPageSetting('c2GoldenMaps')) {
+			purchaseSingleRunBonus('goldMaps');
+			debug("Purchased Golden Maps for 20 bones.", "bones");
+		}
+		if (!game.singleRunBonuses.sharpTrimps.owned && game.global.b >= 25 && getPageSetting('c2SharpTrimps')) {
+			purchaseSingleRunBonus('sharpTrimps');
+			debug("Purchased Sharp Trimps for 25 bones.", "bones");
+		}
+	}
 
-	if (!game.singleRunBonuses.goldMaps.owned && game.global.b >= 20 && getPageSetting('c2GoldenMaps'))
-		purchaseSingleRunBonus('goldMaps');
-	if (!game.singleRunBonuses.sharpTrimps.owned && game.global.b >= 25 && getPageSetting('c2SharpTrimps'))
-		purchaseSingleRunBonus('sharpTrimps');
+	//Purchase Radonculous/Heliumy if we have enough bones and running Dailies
+	if (challengeActive('Daily') && !game.singleRunBonuses.heliumy.owned && getPageSetting('buyheliumy', portalUniverse) >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) && game.global.b >= 100) {
+		purchaseSingleRunBonus('heliumy');
+		debug("Purchased " + (currSettingUniverse === 2 ? "Radonculous" : "Heliumy") + "  for 100 bones on this " + getPageSetting('buyheliumy', portalUniverse) + "% daily.", "bones");
+	}
 }

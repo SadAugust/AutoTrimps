@@ -744,7 +744,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (!golden) tooltipText += "<div class='windowActive" + varPrefix + "\'>Active?</div>"
 		if (!golden) tooltipText += "<div class='windowPriority" + varPrefix + "\'>Priority</div>"
 		if (golden) tooltipText += "<div class='windowActiveAutoGolden'>Active?</div>"
-		if (!voidMap && !golden) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Start<br/>Zone</div>"
+		if (!voidMap && !golden && !boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Start<br/>Zone</div>"
+		if (boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Zone</div>"
 		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>"
 		if (golden) tooltipText += "<div class='windowAmtAutoGolden'>Amount</div>"
 		if (voidMap) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Min Zone</div>"
@@ -1553,7 +1554,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>HD Base</b> - What H:D you'd like to reach.</li>";
 		mazHelp += "<li><b>HD Mult</b> - Starting from the zone above the lines initial zone, this setting will multiply the H:D you have set in HD Base. So if your initial zone was 100, HD Base was 10, HD Mult was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste Map Farming for a really low H:D.'</li>";
 
-		mazHelp += "<li><b>HD Type</b> - The type of HD you'd like to target. If 'Map Level' has been selected it will farm until auto level reaches that level.</li>";
+		mazHelp += "<li><b>HD Type</b> - The type of HD you'd like to target. <br>If <b>Map Level<b> has been selected it will farm until auto level reaches that level. <br>Will only run Void Map lines if you have void maps in your map chamber.</li>";
 	}
 
 	if (boneShrine) {

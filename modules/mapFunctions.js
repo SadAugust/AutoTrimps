@@ -2690,6 +2690,7 @@ function hdFarm(skipHealthCheck) {
 			const world = currSetting.world;
 
 			if (!settingShouldRun(currSetting, world, 0)) continue;
+			if (currSetting.hdType === 'void' && game.global.totalVoidMaps === 0) continue;
 			settingIndex = y;
 			break;
 		}

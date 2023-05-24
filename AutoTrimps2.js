@@ -324,16 +324,14 @@ function mainLoop() {
 	//Equip highlighting
 	displayMostEfficientEquipment();
 
-
-	if (challengeActive('Daily') && getPageSetting('buyheliumy', portalUniverse) >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) && game.global.b >= 100 && !game.singleRunBonuses.heliumy.owned) purchaseSingleRunBonus('heliumy');
-
 	//Logic for Universe 1
 	mainLoopU1();
 
 	//Logic for Universe 2
 	mainLoopU2();
 
-	if (hdStats.isC3) buySingleRunBonuses();
+	//Bone purchases
+	buySingleRunBonuses();
 
 	//Auto SA -- Currently disabled
 	automateSpireAssault();
@@ -366,7 +364,7 @@ function mainLoopU1() {
 
 	//Stance
 	var settingPrefix = challengeActive('Daily') ? 'd' : '';
-	if ((getPageSetting('UseScryerStance')) || (game.global.mapsActive && getCurrentMapObject().location === 'Void' && getPageSetting(settingPrefix + 'scryvoidmaps'))) useScryerStance();
+	if ((getPageSetting('UseScryerStance')) || (game.global.mapsActive && getCurrentMapObject().location === 'Void' && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps'))) useScryerStance();
 	else {
 		windStance();
 		autoStance();
