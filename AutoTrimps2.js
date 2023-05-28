@@ -92,7 +92,7 @@ var sixSecondInterval = false;
 var challengePopup = false;
 
 //Get Gamma burst % value
-var gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
+var gammaBurstPct = 1
 var shieldEquipped = game.global.ShieldEquipped.id;
 
 ATscriptLoad(MODULES_AT.modulepath, 'utils');
@@ -182,7 +182,7 @@ function delayStartAgain() {
 	setupATButtons();
 
 	atFinishedLoading = true;
-
+	gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 	hdStats = new HDStats();
 	mapSettings = new farmingDecision();
 
