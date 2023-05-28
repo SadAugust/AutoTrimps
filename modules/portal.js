@@ -233,13 +233,14 @@ function freeVoidPortal() {
 	if (!getPageSetting('portalVoidIncrement', 1)) MODULES.portal.portalForVoid = false;
 	if (game.permaBoneBonuses.voidMaps.owned < 5) MODULES.portal.portalForVoid = false;
 	if (game.options.menu.liquification.enabled === 0) MODULES.portal.portalForVoid = false;
-	if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) MODULES.portal.portalForVoid = false;
+	if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned) && game.global.canRespecPerks) MODULES.portal.portalForVoid = false;
 	if (usingRealTimeOffline) MODULES.portal.portalForVoid = false;
 
 	if (MODULES.portal.portalForVoid === false) return;
 	if (checkLiqZoneCount() >= 20) {
 		debug('Portaling to increment void tracker (' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10) with liquification.'), "portal");
-		if (MODULES.portal.portalUniverse === Infinity) {
+		if (!game.global.canRespecPerks) debug('Portaling to refresh respec.', "portal");
+		if (MODULES.portal.portalUniverse === Infinity || (game.global.universe !== 1 && game.global.universe === MODULES.portal.portalUniverse)) {
 			if (portalUniverse !== 1) swapPortalUniverse();
 			MODULES.portal.portalUniverse = game.global.universe;
 			universeSwapped();

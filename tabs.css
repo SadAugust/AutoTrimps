@@ -436,28 +436,34 @@ ul.tab li a:hover {
 }
 
 .windowBuildings {
-	width: 6%;
+	width: 10%;
+	padding-left: 2%;
+	left: -0.5vw;
 }
 
 .windowRunTypeTributeFarm {
-	width: 20%;
+	width: 16%;
+	padding-left: 0%;
 }
 
 .windowChallengeOnTributeFarm .windowChallengeTributeFarm,
 .windowChallenge3OnTributeFarm .windowChallenge3TributeFarm {
 	display: inline-block;
-	width: 10%;
+	width: 6%;
+	padding-left: 0%;
 }
 
 .windowChallenge3OnTributeFarm .windowRunTypeTributeFarm,
 .windowChallengeOnTributeFarm .windowRunTypeTributeFarm {
 	display: inline-block;
 	width: 10%;
+	padding-left: 0%;
 }
 
 .windowChallengeOffTributeFarm .windowChallengeTributeFarm,
 .windowChallenge3OffTributeFarm .windowChallenge3TributeFarm {
 	display: none;
+	padding-left: 0%;
 }
 
 /* Smithy Farm */
@@ -1152,7 +1158,7 @@ ul.tab li a:hover {
 }
 
 .windowSpecialInsanity {
-	width: 26%;
+	width: 22%;
 }
 
 .windowInsanity {
