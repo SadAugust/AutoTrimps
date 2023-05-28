@@ -3452,7 +3452,7 @@ function initializeAllSettings() {
 			}, 'action', 'testMetalIncome();', null, 'Test', [0]);
 
 		createSetting('testRadonCombatRespec',
-			function () { return ('Atlantrimp Combat Respec') },
+			function () { return ('Atlantrimp Respec') },
 			function () {
 				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
 				var description = "<p>5 seconds after completing " + trimple + " will respec into the Surky <b>Radon Combat Respec</b> preset to maximise combat stats.</p>";
