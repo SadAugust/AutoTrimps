@@ -705,3 +705,35 @@ function hypoPackratReset(challenge) {
 		buyPortalUpgrade('Packrat');
 	}
 }
+
+//Add Surky respec to Trimple/Atlantrimp map completion
+game.mapUnlocks.AncientTreasure.originalFire = game.mapUnlocks.AncientTreasure.fire;
+game.mapUnlocks.AncientTreasure.fire = function () {
+	game.mapUnlocks.AncientTreasure.originalFire(...arguments)
+	try {
+		//Run this after a slight delay to ensure we have purchased all the equips that we can afford.
+		setTimeout(function () {
+			if (!getPageSetting('testRadonCombatRespec')) return;
+			if (portalUniverse !== 2) return;
+			if (!game.global.canRespecPerks) return;
+			if (hdStats.isC3) return;
+
+			if (getPageSetting('portalVoidIncrement', 1) && typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse) && ($('#presetElem').value !== null || $('#presetElem').value !== 'undefined' ||
+				($('#radonWeight').value !== 'undefined' && $('#clearWeight').value !== 'undefined' && $('#survivalWeight').value !== 'undefined'))) {
+				if (!game.global.viewingUpgrades) viewPortalUpgrades();
+				var currPreset = $$('#presetElem').value;
+				//Temp changing to combat radon preset 
+				fillPreset('combatRadon');
+				//Respecing perks
+				runSurky();
+				//Reverting back to original preset
+				fillPreset(currPreset);
+				activateClicked();
+
+				debug("Surky - Respeccing into Radon Combat Respec preset.", "portal")
+			}
+		}
+			, 5000)
+	}
+	catch (e) { console.log("Loading mutator presets failed " + e, "other") }
+}

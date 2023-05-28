@@ -3451,6 +3451,17 @@ function initializeAllSettings() {
 				return description;
 			}, 'action', 'testMetalIncome();', null, 'Test', [0]);
 
+		createSetting('testRadonCombatRespec',
+			function () { return ('Atlantrimp Combat Respec') },
+			function () {
+				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
+				var description = "<p>5 seconds after completing " + trimple + " will use the Surky <b>Radon Combat Respec</b> respec to maximise combat stats.</p>";
+				description += "<p>Won't run on " + c2Description() + ".</p>";
+				description += "<p>Will only run when <b>Liq for free Void</b> is enabled.</p>";
+				return description
+			},
+			'boolean', false, null, 'Test', [2]);
+
 		createSetting('testTotalEquipmentCost',
 			function () { return ('Total Equipment Cost') },
 			function () {
