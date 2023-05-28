@@ -3455,7 +3455,7 @@ function initializeAllSettings() {
 			function () { return ('Atlantrimp Combat Respec') },
 			function () {
 				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
-				var description = "<p>5 seconds after completing " + trimple + " will use the Surky <b>Radon Combat Respec</b> respec to maximise combat stats.</p>";
+				var description = "<p>5 seconds after completing " + trimple + " will respec into the Surky <b>Radon Combat Respec</b> preset to maximise combat stats.</p>";
 				description += "<p>Won't run on " + c2Description() + ".</p>";
 				description += "<p>Will only run when <b>Liq for free Void</b> is enabled.</p>";
 				return description
