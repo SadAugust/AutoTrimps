@@ -843,7 +843,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			}
 			//Taking data from the current setting and overriding the default values
 			if (current.length - 1 >= x) {
-				vals.active = currSetting[x].active ? currSetting[x].active : true;
+				vals.active = currSetting[x].active;
 				vals.priority = currSetting[x].priority ? currSetting[x].priority : (x + 1);
 				vals.world = currSetting[x].world;
 
