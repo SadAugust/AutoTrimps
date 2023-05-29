@@ -124,12 +124,12 @@ function autoMap() {
 
 	//Stops maps from running while doing Trimple Of Doom or Atlantrimp.
 	if (!game.mapUnlocks.AncientTreasure.canRunOnce) {
-		rBSRunningAtlantrimp = false;
+		runningAtlantrimp = false;
 	}
 
 	if (game.global.mapsActive) {
 		var currMap = getCurrentMapObject();
-		if (currMap !== undefined && (currMap.name === 'Trimple Of Doom' || currMap.name === 'Atlantrimp' || currMap.name === 'Melting Point' || currMap.name === 'Frozen Castle') || rBSRunningAtlantrimp) {
+		if (currMap !== undefined && (currMap.name === 'Trimple Of Doom' || currMap.name === 'Atlantrimp' || currMap.name === 'Melting Point' || currMap.name === 'Frozen Castle') || runningAtlantrimp) {
 			if (currMap.name === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
 			if (game.global.repeatMap) repeatClicked();
 			return;

@@ -284,7 +284,7 @@ function buyBuildings() {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
 	if (game.global.world === 1 && game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
-	if (game.global.mapsActive && (getCurrentMapObject().name == 'Trimple Of Doom' || getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle') || rBSRunningAtlantrimp) {
+	if (game.global.mapsActive && (getCurrentMapObject().name == 'Trimple Of Doom' || getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle') || runningAtlantrimp) {
 		if (game.global.repeatMap) repeatClicked();
 		return;
 	}
@@ -321,7 +321,7 @@ function buyBuildings() {
 		buyStorage(hypoZone);
 	}
 
-	if (typeof rBSRunningAtlantrimp !== 'undefined' && rBSRunningAtlantrimp)
+	if (typeof runningAtlantrimp !== 'undefined' && runningAtlantrimp)
 		return;
 
 	if (challengeActive('Quest') && getPageSetting('quest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {

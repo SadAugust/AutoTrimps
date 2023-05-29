@@ -366,7 +366,7 @@ function autoEquip() {
 		([2, 3].indexOf(currQuest()) >= 0 && game.global.lastClearedCell < 90) ||
 		(mapSettings.mapName === 'Smithy Farm') ||
 		(game.mapUnlocks.AncientTreasure.canRunOnce &&
-			(rBSRunningAtlantrimp || mapSettings.runAtlantrimp ||
+			(runningAtlantrimp || mapSettings.runAtlantrimp ||
 				(game.global.mapsActive && (getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Trimple Of Doom'))
 			)
 		)

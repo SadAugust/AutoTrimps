@@ -3456,8 +3456,8 @@ function initializeAllSettings() {
 			function () {
 				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
 				var description = "<p>5 seconds after completing " + trimple + " will respec into the Surky <b>Radon Combat Respec</b> preset to maximise combat stats.</p>";
-				description += "<p>Won't run on " + c2Description() + ".</p>";
-				description += "<p>Will only run when <b>Liq for free Void</b> is enabled.</p>";
+				description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + ".</p>";
+				description += "<p>Will only run when <b>Liq for free Void</b> is enabled and will go back to U1 when a respec isn't available at the end of a run.</p>";
 				return description
 			},
 			'boolean', false, null, 'Test', [2]);
@@ -4252,8 +4252,8 @@ function challengeUnlockCheck() {
 	if (message !== '') {
 		message += "<br><br><b>To disable this popup, click confirm!<b>";
 		hzeMessage = message;
-		challengePopup = true;
-		tooltip('confirm', null, 'update', hzeMessage, ('challengePopup = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		popupChallenge = true;
+		tooltip('confirm', null, 'update', hzeMessage, ('popupChallenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 	}
 
 	MODULES.u1unlocks.challenge = challenge;
@@ -4367,20 +4367,24 @@ function challengeUnlockCheckU2() {
 	if (message !== '') {
 		message += "<br><br><b>To disable this popup, click confirm!<b>";
 		hzeMessage = message;
-		challengePopup = true;
-		tooltip('confirm', null, 'update', hzeMessage, ('challengePopup = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		popupChallenge = true;
+		tooltip('confirm', null, 'update', hzeMessage, ('popupChallenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 	}
 	MODULES.u2unlocks.challenge = challenges;
 }
 
 //Remakes challenge/setting popup if the user doesn't click confirm and it's not showing.
 function remakeTooltip() {
-	if (!challengePopup) {
-		delete hzeMessage
+	if (!popupChallenge && !popupRespec) {
+		if (!popupChallenge) delete hzeMessage
 		return;
 	}
 	if (!game.global.lockTooltip) {
-		tooltip('confirm', null, 'update', hzeMessage, ('challengePopup = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		if (popupRespec) {
+			var description = "<b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b>";
+			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.', 'popupRespec = false', '<b>NOTICE: Auto-Respeccing in 5 seconds....</b>', 'Disable Respec');
+		}
+		else tooltip('confirm', null, 'update', hzeMessage, ('popupChallenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 	}
 }
 

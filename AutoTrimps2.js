@@ -68,7 +68,7 @@ var magmiteSpenderChanged = false;
 
 var challengeCurrentZone = -1;
 var heirloomPlagueSwap = false;
-var rBSRunningAtlantrimp = false;
+var runningAtlantrimp = false;
 var mapRepeats = 0;
 
 var showingPerky = false;
@@ -89,7 +89,8 @@ var hdStats = {
 var mappingTIme = 0;
 var twoSecondInterval = false;
 var sixSecondInterval = false;
-var challengePopup = false;
+var popupChallenge = false;
+var popupRespec = false;
 
 //Get Gamma burst % value
 var gammaBurstPct = 1

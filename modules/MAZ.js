@@ -1571,6 +1571,15 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			debug(titleText + " has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.", "mazSettings");
 	}
 	document.getElementById('tooltipDiv').style.overflowY = '';
+
+	//Disables Atlantrimp for 1 second and recalculates mapSettings variable.
+	//This is to prevent the issue of Atlantrimp being run when you're saving settings. 
+	runningAtlantrimp = true;
+	mapSettings = new farmingDecision();
+
+	setTimeout(
+		function () { runningAtlantrimp = false },
+		200)
 }
 
 function mazPopulateHelpWindow(titleText, trimple) {

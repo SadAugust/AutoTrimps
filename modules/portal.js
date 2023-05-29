@@ -711,26 +711,31 @@ game.mapUnlocks.AncientTreasure.originalFire = game.mapUnlocks.AncientTreasure.f
 game.mapUnlocks.AncientTreasure.fire = function () {
 	game.mapUnlocks.AncientTreasure.originalFire(...arguments)
 	try {
+		popupRespec = true;
+		var description = "<b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b>";
+		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.', 'popupRespec = false', '<b>NOTICE: Auto-Respeccing in 5 seconds....</b>', 'Disable Respec');
+
 		//Run this after a slight delay to ensure we have purchased all the equips that we can afford.
 		setTimeout(function () {
+			if (!popupRespec) return;
+			popupRespec = false;
 			if (!getPageSetting('testRadonCombatRespec')) return;
 			if (portalUniverse !== 2) return;
 			if (!game.global.canRespecPerks) return;
-			if (hdStats.isC3) return;
 
 			if (getPageSetting('portalVoidIncrement', 1) && typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse) && ($('#presetElem').value !== null || $('#presetElem').value !== 'undefined' ||
 				($('#radonWeight').value !== 'undefined' && $('#clearWeight').value !== 'undefined' && $('#survivalWeight').value !== 'undefined'))) {
 				if (!game.global.viewingUpgrades) viewPortalUpgrades();
 				var currPreset = $$('#presetElem').value;
-				//Temp changing to combat radon preset 
-				fillPreset('combatRadon');
+				//Temp changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not. 
+				if (hdStats.isC3) fillPreset('combat');
+				else fillPreset('combatRadon');
 				//Respecing perks
 				runSurky();
 				//Reverting back to original preset
 				fillPreset(currPreset);
 				activateClicked();
-
-				debug("Surky - Respeccing into Radon Combat Respec preset.", "portal")
+				debug("Surky - Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.", "portal")
 			}
 		}
 			, 5000)

@@ -1,17 +1,17 @@
 //Resetting variables
-rBSRunningAtlantrimp = false;
+runningAtlantrimp = false;
 
 function boneShrine() {
 
 	if (!getPageSetting('boneShrineDefaultSettings').active) return;
 
 	//Setting up variables
-	const rBoneShrineBaseSettings = getPageSetting('boneShrineSettings');
+	const boneShrineBaseSettings = getPageSetting('boneShrineSettings');
 	var rBSIndex = null;
 	var trimple = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
 	const totalPortals = getTotalPortals();
-	for (var y = 0; y < rBoneShrineBaseSettings.length; y++) {
-		const currSetting = rBoneShrineBaseSettings[y];
+	for (var y = 0; y < boneShrineBaseSettings.length; y++) {
+		const currSetting = boneShrineBaseSettings[y];
 		if (game.global.world !== currSetting.world || currSetting.done === totalPortals + "_" + game.global.world ||
 			!currSetting.active) {
 			continue;
@@ -30,40 +30,40 @@ function boneShrine() {
 	}
 	if (rBSIndex !== null) {
 
-		var rBoneShrineSettings = rBoneShrineBaseSettings[rBSIndex];
-		var rBoneShrineCharges = rBoneShrineSettings.boneamount;
-		var rBoneShrineGather = rBoneShrineSettings.gather;
-		if (challengeActive('Transmute') && rBoneShrineGather === 'metal') rBoneShrineGather = 'wood';
-		var rBoneShrineSpendBelow = rBoneShrineSettings.bonebelow === -1 ? 0 : rBoneShrineSettings.bonebelow;
-		var rBoneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : rBoneShrineSettings.atlantrimp;
-		var rBoneShrineDoubler = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom'
+		var boneShrineSettings = boneShrineBaseSettings[rBSIndex];
+		var boneShrineCharges = boneShrineSettings.boneamount;
+		var boneShrineGather = boneShrineSettings.gather;
+		if (challengeActive('Transmute') && boneShrineGather === 'metal') boneShrineGather = 'wood';
+		var boneShrineSpendBelow = boneShrineSettings.bonebelow === -1 ? 0 : boneShrineSettings.bonebelow;
+		var boneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : boneShrineSettings.atlantrimp;
+		var boneShrineDoubler = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom'
 
-		if (rBoneShrineCharges > game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow)
-			rBoneShrineCharges = game.permaBoneBonuses.boosts.charges - rBoneShrineSpendBelow;
+		if (boneShrineCharges > game.permaBoneBonuses.boosts.charges - boneShrineSpendBelow)
+			boneShrineCharges = game.permaBoneBonuses.boosts.charges - boneShrineSpendBelow;
 
-		setGather(rBoneShrineGather);
+		setGather(boneShrineGather);
 		if (getPageSetting('heirloomStaff')) {
-			if (getPageSetting('heirloomStaff' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1)) !== 'undefined')
-				HeirloomEquipStaff('heirloomStaff' + rBoneShrineGather[0].toUpperCase() + rBoneShrineGather.slice(1));
+			if (getPageSetting('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1)) !== 'undefined')
+				HeirloomEquipStaff('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1));
 			else if (getPageSetting('heirloomStaffMap') !== 'undefined')
 				HeirloomEquipStaff('heirloomStaffMap');
 		}
-		if (rBoneShrineAtlantrimp) {
-			if (!rBSRunningAtlantrimp) {
-				runUniqueMap(rBoneShrineDoubler, false);
+		if (boneShrineAtlantrimp) {
+			if (!runningAtlantrimp) {
+				runUniqueMap(boneShrineDoubler, false);
 			}
 		}
-		if (!rBoneShrineAtlantrimp || (rBoneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === rBoneShrineDoubler && game.global.lastClearedMapCell === getCurrentMapObject().size - 4)) {
-			for (var x = 0; x < rBoneShrineCharges; x++) {
+		if (!boneShrineAtlantrimp || (boneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === boneShrineDoubler && game.global.lastClearedMapCell === getCurrentMapObject().size - 4)) {
+			for (var x = 0; x < boneShrineCharges; x++) {
 				if (getPageSetting('jobType') > 0) {
-					MODULES.mapFunctions.workerRatio = rBoneShrineSettings.jobratio;
+					MODULES.mapFunctions.workerRatio = boneShrineSettings.jobratio;
 					buyJobs();
 				}
 				game.permaBoneBonuses.boosts.consume();
 			}
-			debug('Consumed ' + rBoneShrineCharges + " bone shrine " + (rBoneShrineCharges == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(rBoneShrineCharges), "bones");
-			rBoneShrineSettings.done = totalPortals + "_" + game.global.world;
-			rBSRunningAtlantrimp = false;
+			debug('Consumed ' + boneShrineCharges + " bone shrine " + (boneShrineCharges == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(boneShrineCharges), "bones");
+			boneShrineSettings.done = totalPortals + "_" + game.global.world;
+			runningAtlantrimp = false;
 			MODULES.mapFunctions.workerRatio = null;
 			saveSettings();
 		}

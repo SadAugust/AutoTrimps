@@ -279,7 +279,7 @@ function runUniqueMap(mapName, dontRecycle) {
 				selectMap(game.global.mapsOwnedArray[map].id)
 				rRunMap();
 				debug('Running ' + mapName + ' on zone ' + game.global.world + '.', "map_Details");
-				if (mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') rBSRunningAtlantrimp = true;
+				if (mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') runningAtlantrimp = true;
 			}
 		}
 	}
