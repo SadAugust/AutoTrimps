@@ -4381,10 +4381,13 @@ function remakeTooltip() {
 	}
 	if (!game.global.lockTooltip) {
 		if (popupsAT.respecAtlantrimp) {
-			var description = "<b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b>";
-			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.', 'popupsAT.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in 5 seconds....</b>', 'Disable Respec');
+			var description = "<p><b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b></p>";
+			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'popupsAT.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in ' + popupsAT.remainingTime + ' seconds....</b>', 'Disable Respec');
 		}
 		else tooltip('confirm', null, 'update', hzeMessage, ('popupsAT.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+	}
+	else if (popupsAT.respecAtlantrimp) {
+		document.getElementById('tipTitle').innerHTML = "<b>NOTICE: Auto-Respeccing in " + (popupsAT.remainingTime / 1000).toFixed(1) + " seconds....</b>"
 	}
 }
 

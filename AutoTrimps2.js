@@ -94,6 +94,8 @@ var sixSecondInterval = false;
 var popupsAT = {
 	challenge: false,
 	respecAtlantrimp: false,
+	remainingTime: Infinity,
+	intervalID: null,
 }
 
 //Get Gamma burst % value

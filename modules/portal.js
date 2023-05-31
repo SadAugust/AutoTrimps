@@ -711,7 +711,7 @@ function surkyCombatRespec() {
 
 	if (!popupsAT.respecAtlantrimp) return;
 	popupsAT.respecAtlantrimp = false;
-
+	popupsAT.remainingTime = Infinity;
 	if (!game.global.viewingUpgrades) viewPortalUpgrades();
 	var currPreset = $$('#presetElem').value;
 	//Temp changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not. 
@@ -737,10 +737,15 @@ function atlantrimpRespecMessage() {
 	//If setting is enabled, respec into Surky combat respec
 	if (respecSetting) {
 		popupsAT.respecAtlantrimp = true;
+		popupsAT.remainingTime = 5000;
 		var description = "<p><b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b></p>";
-		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'popupsAT.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in 5 seconds....</b>', 'Disable Respec');
-
+		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'popupsAT.respecAtlantrimp = false, popupsAT.remainingTime = Infinity', '<b>NOTICE: Auto-Respeccing in ' + (popupsAT.remainingTime / 1000).toFixed(1) + ' seconds....</b>', 'Disable Respec');
 		setTimeout(surkyCombatRespec, 5000);
+		popupsAT.intervalID = setInterval(function () {
+			if (popupsAT.remainingTime === Infinity) clearInterval(popupsAT.intervalID);
+			popupsAT.remainingTime -= 100;
+			if (popupsAT.remainingTime <= 0) popupsAT.remainingTime = 0;
+		}, 100);
 	}
 	//If setting is disabled, show tooltip to allow for respec after Atlantrimp has been run
 	else {
