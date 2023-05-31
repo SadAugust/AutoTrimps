@@ -4252,8 +4252,8 @@ function challengeUnlockCheck() {
 	if (message !== '') {
 		message += "<br><br><b>To disable this popup, click confirm!<b>";
 		hzeMessage = message;
-		popupChallenge = true;
-		tooltip('confirm', null, 'update', hzeMessage, ('popupChallenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		popupsAT.challenge = true;
+		tooltip('confirm', null, 'update', hzeMessage, ('popupsAT.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 	}
 
 	MODULES.u1unlocks.challenge = challenge;
@@ -4367,24 +4367,24 @@ function challengeUnlockCheckU2() {
 	if (message !== '') {
 		message += "<br><br><b>To disable this popup, click confirm!<b>";
 		hzeMessage = message;
-		popupChallenge = true;
-		tooltip('confirm', null, 'update', hzeMessage, ('popupChallenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		popupsAT.challenge = true;
+		tooltip('confirm', null, 'update', hzeMessage, ('popupsAT.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 	}
 	MODULES.u2unlocks.challenge = challenges;
 }
 
 //Remakes challenge/setting popup if the user doesn't click confirm and it's not showing.
 function remakeTooltip() {
-	if (!popupChallenge && !popupRespec) {
-		if (!popupChallenge) delete hzeMessage
+	if (!popupsAT.challenge && !popupsAT.respecAtlantrimp) {
+		if (!popupsAT.challenge) delete hzeMessage
 		return;
 	}
 	if (!game.global.lockTooltip) {
-		if (popupRespec) {
+		if (popupsAT.respecAtlantrimp) {
 			var description = "<b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b>";
-			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.', 'popupRespec = false', '<b>NOTICE: Auto-Respeccing in 5 seconds....</b>', 'Disable Respec');
+			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.', 'popupsAT.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in 5 seconds....</b>', 'Disable Respec');
 		}
-		else tooltip('confirm', null, 'update', hzeMessage, ('popupChallenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		else tooltip('confirm', null, 'update', hzeMessage, ('popupsAT.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 	}
 }
 

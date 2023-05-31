@@ -706,39 +706,85 @@ function hypoPackratReset(challenge) {
 	}
 }
 
-//Add Surky respec to Trimple/Atlantrimp map completion
-game.mapUnlocks.AncientTreasure.originalFire = game.mapUnlocks.AncientTreasure.fire;
-game.mapUnlocks.AncientTreasure.fire = function () {
-	game.mapUnlocks.AncientTreasure.originalFire(...arguments)
-	try {
-		popupRespec = true;
-		var description = "<b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b>";
-		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.', 'popupRespec = false', '<b>NOTICE: Auto-Respeccing in 5 seconds....</b>', 'Disable Respec');
+//Auto-Respec into combat spec after running Atlantrimp
+function surkyCombatRespec() {
 
-		//Run this after a slight delay to ensure we have purchased all the equips that we can afford.
-		setTimeout(function () {
-			if (!popupRespec) return;
-			popupRespec = false;
-			if (!getPageSetting('testRadonCombatRespec')) return;
-			if (portalUniverse !== 2) return;
-			if (!game.global.canRespecPerks) return;
+	if (!popupsAT.respecAtlantrimp) return;
+	popupsAT.respecAtlantrimp = false;
 
-			if (getPageSetting('portalVoidIncrement', 1) && typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse) && ($('#presetElem').value !== null || $('#presetElem').value !== 'undefined' ||
-				($('#radonWeight').value !== 'undefined' && $('#clearWeight').value !== 'undefined' && $('#survivalWeight').value !== 'undefined'))) {
-				if (!game.global.viewingUpgrades) viewPortalUpgrades();
-				var currPreset = $$('#presetElem').value;
-				//Temp changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not. 
-				if (hdStats.isC3) fillPreset('combat');
-				else fillPreset('combatRadon');
-				//Respecing perks
-				runSurky();
-				//Reverting back to original preset
-				fillPreset(currPreset);
-				activateClicked();
-				debug("Surky - Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.", "portal")
-			}
-		}
-			, 5000)
-	}
-	catch (e) { console.log("Loading mutator presets failed " + e, "other") }
+	if (!game.global.viewingUpgrades) viewPortalUpgrades();
+	var currPreset = $$('#presetElem').value;
+	//Temp changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not. 
+	if (hdStats.isC3) fillPreset('combat');
+	else fillPreset('combatRadon');
+	//Respecing perks
+	runSurky();
+	//Reverting back to original preset
+	fillPreset(currPreset);
+	activateClicked();
+	debug("Surky - Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.", "portal")
 }
+
+//Force tooltip appearance for Surky combat respec post Atlantrimp
+function atlantrimpRespecMessage() {
+	if (!game.global.canRespecPerks) return;
+	if (game.global.universe !== 2 || portalUniverse !== 2) return;
+	if (typeof AutoPerks === 'undefined') return;
+
+	popupsAT.respecAtlantrimp = false;
+
+	var respecSetting = getPageSetting('testRadonCombatRespec');
+	//If setting is enabled, respec into Surky combat respec
+	if (respecSetting) {
+		popupsAT.respecAtlantrimp = true;
+		var description = "<p><b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b></p>";
+		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'popupsAT.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in 5 seconds....</b>', 'Disable Respec');
+
+		setTimeout(surkyCombatRespec, 5000);
+	}
+	//If setting is disabled, show tooltip to allow for respec after Atlantrimp has been run
+	else {
+		var description = "<p>Click <b>Force Respec</b> to respec into the Surky <b>" + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec</b> preset.</p>";
+		tooltip('confirm', null, 'update', description, 'popupsAT.respecAtlantrimp = true; surkyCombatRespec()', '<b>Post Atlantrimp Respec</b>', 'Force Respec');
+	}
+}
+
+//Override for the Atlantrimp fire function to add Surky respec
+function atlantrimpRespecOverride() {
+	if ((typeof game.mapUnlocks.AncientTreasure.originalFire !== 'undefined')) return;
+	//Add Surky respec to Trimple/Atlantrimp map completion
+	game.mapUnlocks.AncientTreasure.originalFire = game.mapUnlocks.AncientTreasure.fire;
+
+	game.mapUnlocks.AncientTreasure.fire = function () {
+		game.mapUnlocks.AncientTreasure.originalFire(...arguments)
+		try {
+			atlantrimpRespecMessage();
+		}
+		catch (e) { console.log("Loading respec function failed! " + e, "other") }
+	}
+}
+
+//Runs when AT initially loads
+atlantrimpRespecOverride();
+
+// On loading save
+var originalLoad = load;
+load = function () {
+	originalLoad(...arguments)
+	try {
+		atlantrimpRespecOverride()
+	}
+	catch (e) { graphsDebug("Gather info failed: " + e) }
+}
+
+// On portal/game reset
+var originalresetGame = resetGame;
+resetGame = function () {
+	originalresetGame(...arguments)
+	try {
+		atlantrimpRespecOverride()
+	}
+	catch (e) { graphsDebug("Gather info failed: " + e) }
+}
+
+

@@ -15,6 +15,7 @@ function loadAT() {
 		y++;
 	}
 }
+
 loadAT();
 
 //Backup on the off chance the script hasn't been found
@@ -89,8 +90,11 @@ var hdStats = {
 var mappingTIme = 0;
 var twoSecondInterval = false;
 var sixSecondInterval = false;
-var popupChallenge = false;
-var popupRespec = false;
+
+var popupsAT = {
+	challenge: false,
+	respecAtlantrimp: false,
+}
 
 //Get Gamma burst % value
 var gammaBurstPct = 1
