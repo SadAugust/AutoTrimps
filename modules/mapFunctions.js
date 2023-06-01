@@ -135,9 +135,10 @@ function shouldRunUniqueMap(map) {
 	if (!hdStats.isC3 && mapData.challenges.includes(hdStats.currentChallenge) && !challengeActive('')) {
 		return true;
 	}
-	if (mapData.speedrun && shouldSpeedRun(game.achievements[mapData.speedrun])) {
+	//Remove speed run check for now
+	/* if (mapData.speedrun && shouldSpeedRun(game.achievements[mapData.speedrun])) {
 		return true;
-	}
+	} */
 
 	if (MODULES.mapFunctions.runUniqueMap === map.name) {
 		if (game.global.mapsActive && getCurrentMapObject().location === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';

@@ -402,6 +402,8 @@ function autoEquip() {
 	if (alwaysLvl2 || (alwaysPandemonium && challengeActive('Pandemonium'))) {
 		for (var equip in game.equipment) {
 			if (!game.equipment[equip].locked) {
+				//Skips trying to buy extra levels if we can't afford them
+				if (!canAffordBuilding(equipName, true, false, true, false, 1)) continue;
 				if (alwaysLvl2 && game.equipment[equip].level < 2) {
 					buyEquipment(equip, null, true, 1);
 					debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
@@ -448,18 +450,18 @@ function autoEquip() {
 		for (var i = 0; i < 2; i++) {
 			//Setting weapon equips to 100% spending during Smithless farm.
 			if (equipType === 'attack') {
-				if (challengeActive('Smithless') && mapSettings.mapName === 'Smithless Farm') {
+				if (mapSettings.mapName === 'Smithless Farm') {
 					resourceSpendingPct = 1;
 					zoneGo = true;
 				}
 			}
 			if (equipType === 'health') {
-				if (mapSettings.shouldHealthFarm || (challengeActive('Smithless') && mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0)) {
+				if (mapSettings.shouldHealthFarm || (mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0)) {
 					resourceSpendingPct = 1;
 					zoneGo = true;
 				}
 			}
-			if ((equipName !== '' && game.resources[resourceUsed].owned - resourceNeeded[resourceUsed]) > equipCost) {
+			if (equipName !== '' && canAffordBuilding(equipName, true, false, true, false, 1)) {
 				if (game.equipment[equipName].level < equipCap || equipPrestige || zoneGo) {
 					if (!equipPrestige) {
 						maxCanAfford = getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.001), 1.2, true);
