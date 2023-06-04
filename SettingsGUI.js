@@ -5366,6 +5366,27 @@ function updateATVersion() {
 			}
 		}
 
+		//Adding auto bone charge usage
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.97') {
+
+			if (typeof (tempSettings["boneShrineDefaultSettings"]) !== 'undefined') {
+				var setting = autoTrimpSettings["boneShrineDefaultSettings"];
+				//Delete cell variable so that it isn't retained for adding new lines
+				if (typeof (setting.value.cell !== 'undefined')) delete setting.value.cell;
+				if (typeof (setting.valueU2.cell !== 'undefined')) delete setting.valueU2.cell;
+
+				//Add new settings
+				setting.value.bonebelow = 11;
+				setting.valueU2.bonebelow = 11;
+
+				setting.value.world = 999;
+				setting.valueU2.world = 999;
+			}
+
+			changelog.push("Settings to automatically spend bone charges upon reaching a certain value have been added to the Bone Shrine default values section.<br>\
+			When spending these bone charges it will use the job ratio & gather settings that you have setup in that section.");
+		}
+
 
 		autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
 		if (changelog.length !== 0) {

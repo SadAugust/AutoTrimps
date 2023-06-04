@@ -3,12 +3,20 @@ runningAtlantrimp = false;
 
 function boneShrine() {
 
-	if (!getPageSetting('boneShrineDefaultSettings').active) return;
+	const defaultSettings = getPageSetting('boneShrineDefaultSettings');
+	if (!defaultSettings.active) return;
 
 	//Setting up variables
 	const boneShrineBaseSettings = getPageSetting('boneShrineSettings');
-	var rBSIndex = null;
+	var boneShrineIndex = null;
 	var trimple = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
+
+	var boneCharges = game.permaBoneBonuses.boosts.charges;
+
+	//If we have enough bone charges then spend them automatically to stop from capping
+	if (boneCharges >= defaultSettings.bonebelow && game.global.world >= defaultSettings.world)
+		boneShrineIndex = true;
+
 	const totalPortals = getTotalPortals();
 	for (var y = 0; y < boneShrineBaseSettings.length; y++) {
 		const currSetting = boneShrineBaseSettings[y];
@@ -23,25 +31,34 @@ function boneShrine() {
 			if (hdStats.isC3 && (currSetting.runType !== 'C3' ||
 				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== hdStats.currChallenge)))) continue;
 		}
-		if (game.global.lastClearedCell + 2 >= currSetting.cell && game.permaBoneBonuses.boosts.charges > currSetting.bonebelow) {
-			rBSIndex = y;
+		if (game.global.lastClearedCell + 2 >= currSetting.cell && boneCharges > currSetting.bonebelow) {
+			boneShrineIndex = y;
 			break;
 		}
 	}
-	if (rBSIndex !== null) {
+	if (boneShrineIndex !== null) {
 
-		var boneShrineSettings = boneShrineBaseSettings[rBSIndex];
+		var boneShrineSettings;
+
+		if (boneShrineIndex === true) {
+			boneShrineSettings = defaultSettings;
+		} else {
+			boneShrineSettings = boneShrineBaseSettings[boneShrineIndex];
+		}
 		var boneShrineCharges = boneShrineSettings.boneamount;
 		var boneShrineGather = boneShrineSettings.gather;
 		if (challengeActive('Transmute') && boneShrineGather === 'metal') boneShrineGather = 'wood';
 		var boneShrineSpendBelow = boneShrineSettings.bonebelow === -1 ? 0 : boneShrineSettings.bonebelow;
-		var boneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce ? false : boneShrineSettings.atlantrimp;
+		var boneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce || boneShrineIndex === true ? false : boneShrineSettings.atlantrimp;
 		var boneShrineDoubler = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom'
 
-		if (boneShrineCharges > game.permaBoneBonuses.boosts.charges - boneShrineSpendBelow)
-			boneShrineCharges = game.permaBoneBonuses.boosts.charges - boneShrineSpendBelow;
+		if (boneShrineCharges > boneCharges - boneShrineSpendBelow)
+			boneShrineCharges = boneCharges - boneShrineSpendBelow;
+
+		if (boneShrineIndex === true) boneShrineCharges = 1;
 
 		setGather(boneShrineGather);
+		//Equip staff for the gather type the user is using
 		if (getPageSetting('heirloomStaff')) {
 			if (getPageSetting('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1)) !== 'undefined')
 				HeirloomEquipStaff('heirloomStaff' + boneShrineGather[0].toUpperCase() + boneShrineGather.slice(1));
