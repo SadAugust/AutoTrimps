@@ -291,7 +291,7 @@ function buyJobs() {
 	}
 
 	// Setting scientists to 0 if in Scientist challenge
-	if (challengeActive('Scientist')) desiredRatios[3] = 0;
+	if (game.global.challengeActive == "Scientist") desiredRatios[3] = 0;
 
 	var totalFraction = desiredRatios.reduce((a, b) => { return a + b; });
 	totalFraction = totalFraction == 0 ? 1 : totalFraction
