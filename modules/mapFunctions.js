@@ -2700,9 +2700,9 @@ function hdFarm(skipHealthCheck) {
 	if (settingIndex !== null || shouldHealthFarm) {
 
 		var setting;
-		var rHDFmapCap;
-		var rHDFMax;
-		var rHDFMin;
+		var hdFarmMapCap;
+		var hdFarmMaxMaps;
+		var hdFarmMinMaps;
 
 		if (settingIndex === null) {
 			setting = {
@@ -2715,15 +2715,15 @@ function hdFarm(skipHealthCheck) {
 				level: -1,
 				world: game.global.world
 			}
-			rHDFmapCap = 500;
-			rHDFMax = game.global.mapBonus < getPageSetting('mapBonusHealth') ? 10 : null;
-			rHDFMin = game.global.mapBonus < getPageSetting('mapBonusHealth') ? (game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0) : null;
+			hdFarmMapCap = 500;
+			hdFarmMaxMaps = game.global.mapBonus < getPageSetting('mapBonusHealth') ? 10 : null;
+			hdFarmMinMaps = game.global.mapBonus < getPageSetting('mapBonusHealth') ? (game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0) : null;
 		} else {
 			shouldHealthFarm = false;
 			setting = baseSettings[settingIndex];
-			rHDFmapCap = rHDFDefaultSetting.mapCap;
-			rHDFMax = hdType === 'world' && game.global.mapBonus != 10 ? 10 : null;
-			rHDFMin = hdType === 'world' && game.global.mapBonus != 10 ? 0 : null;
+			hdFarmMapCap = rHDFDefaultSetting.mapCap;
+			hdFarmMaxMaps = hdType === 'world' && game.global.mapBonus != 10 ? 10 : null;
+			hdFarmMinMaps = hdType === 'world' && game.global.mapBonus != 10 ? 0 : null;
 		}
 
 		var mapLevel = setting.level;
@@ -2731,7 +2731,7 @@ function hdFarm(skipHealthCheck) {
 		var jobRatio = setting.jobratio;
 		var hdType = setting.hdType;
 
-		var rHDFmaxMaps = rHDFmapCap;
+		var hdFarmMaxMapsMaps = hdFarmMapCap;
 
 		if (setting.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
@@ -2740,7 +2740,7 @@ function hdFarm(skipHealthCheck) {
 			}
 
 			var autoLevel_Repeat = mapSettings.levelCheck;
-			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, rHDFMax, rHDFMin);
+			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, hdFarmMaxMaps, hdFarmMinMaps);
 			if (mapAutoLevel !== Infinity) {
 				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
@@ -2751,7 +2751,7 @@ function hdFarm(skipHealthCheck) {
 		if (hdRatio !== null ? hdRatio > equipfarmdynamicHD(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio < equipfarmdynamicHD(setting))
 			shouldMap = true;
 		//Skipping farm if map repeat value is greater than our max maps value
-		if (shouldMap && game.global.mapsActive && mapSettings.mapName === mapName && game.global.mapRunCounter >= rHDFmaxMaps) {
+		if (shouldMap && game.global.mapsActive && mapSettings.mapName === mapName && game.global.mapRunCounter >= hdFarmMaxMapsMaps) {
 			shouldMap = false;
 		}
 		if (mapSettings.mapName !== mapName && !shouldHealthFarm && (hdType !== 'maplevel' ? equipfarmdynamicHD(setting) > hdRatio : hdStats.autoLevel > setting.hdBase))
@@ -2779,7 +2779,7 @@ function hdFarm(skipHealthCheck) {
 			if (hdType !== 'maplevel') status += equipfarmdynamicHD(setting).toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);
 			else status += '<br>' + (setting.hdBase >= 0 ? "+" : "") + setting.hdBase + ' Auto Level';
 		}
-		status += '<br>\ Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + rHDFmaxMaps;
+		status += '<br>\ Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + hdFarmMaxMapsMaps;
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;

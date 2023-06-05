@@ -72,8 +72,8 @@ function autoGather() {
 
 	// Init - Science
 	var firstFightOK = game.global.world > 1 || game.global.lastClearedCell >= 0;
-	var researchAvailable = document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden';
-	var scienceAvailable = document.getElementById('science').style.visibility != 'hidden';
+	var researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden';
+	var scienceAvailable = document.getElementById('science').style.visibility !== 'hidden';
 	var needScience = game.resources.science.owned < resourceNeeded.science;
 	var needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
 
@@ -164,7 +164,7 @@ function autoGather() {
 				safeSetGather('wood');
 			else if (currentBonus.includes('mc') || currentBonus.includes('lc'))
 				safeSetGather('metal');
-			else if (manualGather != 3 && currentBonus.includes('rc'))
+			else if (manualGather != 3 && currentBonus.includes('rc') && researchAvailable)
 				safeSetGather('science');
 			else
 				safeSetGather('metal');
@@ -271,7 +271,7 @@ function autoGather() {
 		else
 			safeSetGather(lowestResource);
 	} else if (document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
-		if (game.resources.science.owned < getPsStringLocal('science', true) * MODULES["gather"].minScienceSeconds && game.global.turkimpTimer < 1 && haveWorkers)
+		if (game.resources.science.owned < getPsStringLocal('science', true) * MODULES["gather"].minScienceSeconds && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers)
 			safeSetGather('science');
 		else if (challengeActive('Transmute') && hasTurkimp)
 			safeSetGather('wood');

@@ -496,6 +496,7 @@ function doPortal(challenge, skipDaily) {
 	if (portalUniverse === 2 && getPageSetting('presetSwap', 2)) {
 		if (game.global.selectedChallenge === 'Mayhem' || game.global.selectedChallenge === 'Pandemonium' || game.global.selectedChallenge === 'Desolation') preset = 'push';
 		else if (game.global.selectedChallenge === 'Downsize') preset = 'downsize';
+		//else if (game.global.selectedChallenge === 'Trappapalooza') preset = 'trappacarp';
 		else if (game.global.selectedChallenge === 'Duel') preset = 'duel';
 		else if (game.global.selectedChallenge === 'Berserk') preset = 'berserk';
 		else if (game.global.selectedChallenge === 'Alchemy') preset = 'alchemy';
