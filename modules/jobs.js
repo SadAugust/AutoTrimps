@@ -263,9 +263,10 @@ function buyJobs() {
 			scientistMod = MODULES["jobs"].scientistRatio7;
 
 		if (resourceNeeded.science > 0 && resourceNeeded.science > game.resources.science.owned) scientistMod = 1;
+
 		for (var worker of ratioWorkers) {
 			if (!game.jobs[worker].locked) {
-				if (worker == "Scientist") {
+				if (worker === "Scientist") {
 					desiredRatios[ratioWorkers.indexOf(worker)] = 1;
 					continue;
 				}
@@ -289,6 +290,10 @@ function buyJobs() {
 		desiredRatios[1] += desiredRatios[2];
 		desiredRatios[2] = 0;
 	}
+
+	//Disable Scientists if we don't have the upgrade
+	var scientistsAvailable = game.upgrades.Scientists.done;
+	if (!scientistsAvailable) desiredRatios[3] = 0;
 
 	var totalFraction = desiredRatios.reduce((a, b) => { return a + b; });
 	totalFraction = totalFraction == 0 ? 1 : totalFraction
