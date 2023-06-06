@@ -26,7 +26,7 @@ function autoPortal(skipDaily) {
 	//Set portal zone to current zone!
 	skipDaily = !skipDaily ? false : skipDaily;
 	if (skipDaily) portalZone = game.global.world;
-	if (MODULES.mapFunctions.portalZone === game.global.world) portalZone = game.global.world;
+	if (MODULES.mapFunctions.portalZone === game.global.world && game.global.totalVoidMaps === 0) portalZone = game.global.world;
 	if (MODULES.portal.portalForVoid) {
 		portalZone = checkLiqZoneCount() >= 99 ? 99 : (checkLiqZoneCount() + 1);
 		if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) portalZone = game.global.world;
@@ -126,11 +126,11 @@ function autoPortal(skipDaily) {
 		case "Alchemy":
 		case "Hypothermia":
 		case "Desolation":
-			if ((!game.global.challengeActive && !MODULES.portal.portalForVoid) || (game.global.world >= portalZone && (MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity)))
+			if ((!game.global.challengeActive && !MODULES.portal.portalForVoid) || (game.global.world >= portalZone && ((MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity) && game.global.totalVoidMaps === 0)))
 				challenge = getPageSetting('autoPortal', universe);
 			break;
 		case "Off":
-			if (game.global.world >= portalZone && (MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity))
+			if (game.global.world >= portalZone && ((MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity) && game.global.totalVoidMaps === 0))
 				challenge = 0;
 			break;
 		default:
@@ -153,7 +153,7 @@ function dailyAutoPortal() {
 	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
 	if (getPageSetting('dailyPortal', currSettingUniverse) === 1) portalZone = Infinity;
 	//Set portal zone to current zone after void map line if setting enabled!
-	if (MODULES.mapFunctions.portalZone === game.global.world) portalZone = game.global.world;
+	if (MODULES.mapFunctions.portalZone === game.global.world && game.global.totalVoidMaps === 0) portalZone = game.global.world;
 
 	if (getPageSetting('dailyPortal') === 1) {
 		var OKtoPortal = false;
@@ -217,7 +217,7 @@ function dailyAutoPortal() {
 	}
 	if (getPageSetting('dailyPortal') === 2) {
 		var portalZone = getPageSetting('dailyPortalZone') > 0 ? getPageSetting('dailyPortalZone') : 999;
-		if (MODULES.mapFunctions.portalZone === game.global.world) portalZone = game.global.world;
+		if (MODULES.mapFunctions.portalZone === game.global.world && game.global.totalVoidMaps === 0) portalZone = game.global.world;
 
 		if (game.global.world >= portalZone) {
 			if (getPageSetting('dailyHeliumHourChallenge') !== 'None')
@@ -387,6 +387,8 @@ function doPortal(challenge, skipDaily) {
 
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
 	var currChall = MODULES.portal.currentChallenge;
+
+	MODULES.mapFunctions.portalZone = Infinity;
 
 	if (challengeActive('Daily')) {
 		MODULES.portal.dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);

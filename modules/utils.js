@@ -81,7 +81,7 @@ function pushSpreadsheetData() {
 	if (!portalWindowOpen) return;
 	var user = autoTrimpSettings.gameUser.value;
 	if (user === 'undefined' || user.toLowerCase() === 'test') return;
-	const graphData = JSON.parse(localStorage.getItem("portalDataCurrent"))[getportalID()];
+	const graphData = JSON.parse(LZString.decompressFromBase64(localStorage.getItem("portalDataHistory")))[getportalID()];
 
 	const fluffy_EvoLevel = {
 		cap: game.portal.Capable.level,
@@ -145,11 +145,11 @@ function pushSpreadsheetData() {
 		heliumHr *= 1 + dailyPercent;
 	}
 
-	const mapCount = Object.keys(graphData.perZoneData.mapCount)
+	const mapCount = graphData !== undefined ? Object.keys(graphData.perZoneData.mapCount)
 		.filter((k) => graphData.perZoneData.mapCount[k] != null)
-		.reduce((a, k) => ({ ...a, [k]: graphData.perZoneData.mapCount[k] }), {});
-	const mapTotal = Object.keys(mapCount).reduce(function (m, k) { return mapCount[k] > m ? mapCount[k] : m }, -Infinity);
-	const mapZone = Number(Object.keys(mapCount).find(key => mapCount[key] === mapTotal));
+		.reduce((a, k) => ({ ...a, [k]: graphData.perZoneData.mapCount[k] }), {}) : 0;
+	const mapTotal = graphData !== undefined ? Object.keys(mapCount).reduce(function (m, k) { return mapCount[k] > m ? mapCount[k] : m }, -Infinity) : 0;
+	const mapZone = graphData !== undefined ? Number(Object.keys(mapCount).find(key => mapCount[key] === mapTotal)) : 0;
 
 
 	var obj = {
@@ -177,7 +177,7 @@ function pushSpreadsheetData() {
 		c2: countChallengeSquaredReward(false, false, true)[0],
 		c3: countChallengeSquaredReward(false, false, true)[1],
 		cinf: game.global.totalSquaredReward,
-		challenge: graphData !== null ? graphData.challenge : 'None',
+		challenge: graphData !== undefined ? graphData.challenge : 'None',
 		runtime: formatTimeForDescriptions((getGameTime() - game.global.portalTime) / 1000),
 		runtimeMilliseconds: (getGameTime() - game.global.portalTime),
 		zone: game.global.world,

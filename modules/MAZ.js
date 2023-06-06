@@ -1496,7 +1496,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			error += " Preset " + (x + 1) + " needs a value for Start Zone that's less than 1000.<br>";
 			errorMessage = true;
 		}
-		if (!golden && (thisSetting.world + thisSetting.level < 6)) {
+		if (!golden && (thisSetting.world + thisSetting.level < 6) && !thisSetting.autoLevel) {
 			error += " Preset " + (x + 1) + " can\'t have a zone and map combination below zone 6.<br>";
 			errorMessage = true;
 		}
@@ -2406,7 +2406,8 @@ function displayDropdowns(universe, vals, varPrefix) {
 	dropdown.hdType = "<option value='world'" + ((vals.hdType === 'world') ? " selected='selected'" : "") + ">World</option >\
 		<option value='map'" + ((vals.hdType === 'map') ? " selected = 'selected'" : "") + " >Map</option >\
 		<option value='void'" + ((vals.hdType === 'void') ? " selected = 'selected'" : "") + " >Void</option >\
-		<option value='maplevel'" + ((vals.hdType === 'maplevel') ? " selected = 'selected'" : "") + " >Map Level</option >"
+		<option value='maplevel'" + ((vals.hdType === 'maplevel') ? " selected = 'selected'" : "") + " >Map Level</option >\
+		<option value='hitsSurvived'" + ((vals.hdType === 'hitsSurvived') ? " selected = 'selected'" : "") + " >Hits Survived</option >"
 
 	//Map Type dropdown
 	dropdown.mapType = '';

@@ -93,7 +93,7 @@ function firstGiga(forced) {
 	const s = !(getPageSetting('autGigaDeltaFactor') > 20);
 	const a = game.buildings.Warpstation.owned >= 2;
 	const b = !canAffordCoordinationTrimps() || game.global.spireActive || game.global.world >= 230 && !canAffordTwoLevel(game.upgrades.Coordination);
-	const c = s || mapSettings.mapName === 'HD Farm';
+	const c = s || mapSettings.mapName === 'HD Farm' || mapSettings.mapName === 'Hits Survived';
 	const d = s || game.global.mapBonus >= 1;
 	if (!forced && !(a && b && c && d)) return false;
 

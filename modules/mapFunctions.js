@@ -420,9 +420,10 @@ function voidMaps() {
 
 		if (game.global.totalVoidMaps > 0) {
 			shouldMap = true;
-			var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
+			if (portalAfter) MODULES.mapFunctions.portalZone = game.global.world;
 		}
 
+		var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
 		var status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining'
 
 		farmingDetails.shouldRun = shouldMap;
@@ -445,7 +446,8 @@ function voidMaps() {
 		module.portalAfterVoids = false;
 		module.voidTrigger = 'None';
 		//Setting portal zone to current zone if setting calls for it
-		if (portalAfter) module.portalZone = game.global.world;
+		debug(MODULES.mapFunctions.portalZone);
+		if (portalAfter) MODULES.mapFunctions.portalZone = game.global.world;
 	}
 
 	return farmingDetails;
@@ -2663,7 +2665,7 @@ function smithless() {
 
 function hdFarm(skipHealthCheck) {
 
-	const mapName = 'HD Farm';
+	var mapName = 'HD Farm';
 	const farmingDetails = {
 		shouldRun: false,
 		mapName: mapName
@@ -2689,7 +2691,7 @@ function hdFarm(skipHealthCheck) {
 		for (var y = 0; y < baseSettings.length; y++) {
 			const currSetting = baseSettings[y];
 			const world = currSetting.world;
-
+			/* if (currSetting.hdType === 'hitsSurvived') debug(equipfarmdynamicHD(currSetting)); */
 			if (!settingShouldRun(currSetting, world, 0)) continue;
 			if (currSetting.hdType === 'void' && game.global.totalVoidMaps === 0) continue;
 			settingIndex = y;
@@ -2746,7 +2748,7 @@ function hdFarm(skipHealthCheck) {
 				mapLevel = mapAutoLevel;
 			}
 		}
-		var hdRatio = hdType === 'world' ? hdStats.hdRatio : hdType === 'void' ? hdStats.hdRatioVoid : hdType === 'map' ? hdStats.hdRatioVoidMap : null;
+		var hdRatio = hdType === 'world' ? hdStats.hdRatio : hdType === 'void' ? hdStats.hdRatioVoid : hdType === 'map' ? hdStats.hdRatioMap : hdType === 'hitsSurvived' ? hdStats.hitsSurvived : null;
 		if (hdType !== 'maplevel' && !shouldHealthFarm && hdRatio === null) return farmingDetails;
 		if (hdRatio !== null ? hdRatio > equipfarmdynamicHD(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio < equipfarmdynamicHD(setting))
 			shouldMap = true;
@@ -2771,9 +2773,10 @@ function hdFarm(skipHealthCheck) {
 
 		var status;
 
-		if (shouldHealthFarm) {
+		if (shouldHealthFarm || hdType === 'hitsSurvived') {
 			status = 'Hits Survived&nbsp;to:&nbsp;' + equipfarmdynamicHD(setting).toFixed(2) + '<br>\
-		Current:&nbsp;' + hitsSurvived.toFixed(2)
+		Current:&nbsp;' + hitsSurvived.toFixed(2);
+			mapName = 'Hits Survived';
 		} else {
 			status = 'HD&nbsp;Farm&nbsp;to:&nbsp;';
 			if (hdType !== 'maplevel') status += equipfarmdynamicHD(setting).toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);

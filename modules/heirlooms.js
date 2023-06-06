@@ -256,8 +256,9 @@ function heirloomShieldToEquip(mapType, query) {
 	if (hdStats.isDaily && dailyOddOrEven().active) {
 		if (swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;
 	}
+	var dontSwap = currChallenge === 'berserk' || currChallenge === 'trappapalooza';
 	//Change swap zone to current zone if we're above X HD ratio.
-	if (mapType === 'world') {
+	if (mapType === 'world' && !dontSwap) {
 		if (getPageSetting('heirloomSwapHD') > 0 && hdStats.hdRatio >= getPageSetting('heirloomSwapHD')) swapZone = game.global.world;
 		//Set swap zone to current zone if we're above X HD ratio and next cell is compressed.
 		else if (game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && getPageSetting('heirloomSwapHDCompressed') > 0 && hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed') && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 2].u2Mutation.indexOf('CMP') !== -1) {
@@ -266,7 +267,7 @@ function heirloomShieldToEquip(mapType, query) {
 		}
 	}
 	//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage
-	if (mapType === 'world' && game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && game.global.world >= swapZone && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) swapZone = 999;
+	if (mapType === 'world' && !dontSwap && game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && game.global.world >= swapZone && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 3].u2Mutation.indexOf('CMP') !== -1) swapZone = 999;
 
 	var afterpushShield = hdStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 	var voidActive = mapType === 'void';
