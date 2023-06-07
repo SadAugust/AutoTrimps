@@ -4028,6 +4028,10 @@ function modifyParentNodeUniverseSwap() {
 }
 
 function challengeUnlock(challenge, setting, c2) {
+	//Skips running if the challenge is already unlocked.
+	if ((Object.keys(MODULES.u1unlocks).length !== 0 && MODULES.u1unlocks.challenge.includes(challenge)) || (Object.keys(MODULES.u2unlocks).length !== 0 && MODULES.u2unlocks.challenge.includes(challenge))) {
+		return '';
+	}
 	var c2Msg = game.global.universe === 2 ? '3' : '2';
 	var msg = "You have unlocked the " + challenge + " challenge.";
 	msg += " It has now been added to " + (c2 ? "Challenge " + c2Msg + " AutoPortal setting" : "AutoPortal");
