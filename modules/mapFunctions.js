@@ -2750,7 +2750,8 @@ function hdFarm(skipHealthCheck) {
 		}
 		var hdRatio = hdType === 'world' ? hdStats.hdRatio : hdType === 'void' ? hdStats.hdRatioVoid : hdType === 'map' ? hdStats.hdRatioMap : hdType === 'hitsSurvived' ? hdStats.hitsSurvived : null;
 		if (hdType !== 'maplevel' && !shouldHealthFarm && hdRatio === null) return farmingDetails;
-		if (hdRatio !== null ? hdRatio > equipfarmdynamicHD(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio < equipfarmdynamicHD(setting))
+
+		if (hdType === 'hitsSurvived' ? hdRatio < equipfarmdynamicHD(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio > equipfarmdynamicHD(setting))
 			shouldMap = true;
 		//Skipping farm if map repeat value is greater than our max maps value
 		if (shouldMap && game.global.mapsActive && mapSettings.mapName === mapName && game.global.mapRunCounter >= hdFarmMaxMapsMaps) {
@@ -2762,7 +2763,7 @@ function hdFarm(skipHealthCheck) {
 		if (((mapSettings.mapName === mapName && !shouldMap) || shouldSkip) && hdStats.hdRatio !== Infinity) {
 			if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, equipfarmdynamicHD(setting), hdType);
 			if (getPageSetting('spamMessages').map_Skip && shouldSkip) {
-				if (hdType === null) debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
+				if (hdType === 'hitsSurvived') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
 				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
 				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + setting.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
 			}
@@ -2791,6 +2792,7 @@ function hdFarm(skipHealthCheck) {
 		farmingDetails.special = mapSpecial;
 		farmingDetails.jobRatio = jobRatio;
 		farmingDetails.hdRatio = equipfarmdynamicHD(setting);
+		farmingDetails.hdRatio2 = hdRatio;
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
