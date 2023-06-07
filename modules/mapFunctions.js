@@ -2751,13 +2751,13 @@ function hdFarm(skipHealthCheck) {
 		var hdRatio = hdType === 'world' ? hdStats.hdRatio : hdType === 'void' ? hdStats.hdRatioVoid : hdType === 'map' ? hdStats.hdRatioMap : hdType === 'hitsSurvived' ? hdStats.hitsSurvived : null;
 		if (hdType !== 'maplevel' && !shouldHealthFarm && hdRatio === null) return farmingDetails;
 
-		if (hdType === 'hitsSurvived' ? hdRatio < equipfarmdynamicHD(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : hdRatio > equipfarmdynamicHD(setting))
+		if (hdType === 'hitsSurvived' ? hdRatio < equipfarmdynamicHD(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : !shouldHealthFarm ? hdRatio > equipfarmdynamicHD(setting) : hdRatio < equipfarmdynamicHD(setting))
 			shouldMap = true;
 		//Skipping farm if map repeat value is greater than our max maps value
 		if (shouldMap && game.global.mapsActive && mapSettings.mapName === mapName && game.global.mapRunCounter >= hdFarmMaxMapsMaps) {
 			shouldMap = false;
 		}
-		if (mapSettings.mapName !== mapName && !shouldHealthFarm && (hdType !== 'maplevel' ? equipfarmdynamicHD(setting) > hdRatio : hdStats.autoLevel > setting.hdBase))
+		if (mapSettings.mapName !== mapName && !shouldHealthFarm && (hdType === 'hitsSurvived' ? hdRatio > equipfarmdynamicHD(setting) : hdType !== 'maplevel' ? equipfarmdynamicHD(setting) > hdRatio : hdStats.autoLevel > setting.hdBase))
 			shouldSkip = true;
 
 		if (((mapSettings.mapName === mapName && !shouldMap) || shouldSkip) && hdStats.hdRatio !== Infinity) {
