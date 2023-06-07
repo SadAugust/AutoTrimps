@@ -285,7 +285,7 @@ function buyJobs() {
 			desiredRatios[1] = 0;
 	}
 
-	//Adding Miners to Farmer ratio if in Transmute or Metal challenges
+	//Adding Miners to Lumberjacks ratio if in Transmute or Metal challenges
 	if (challengeActive('Metal') || challengeActive('Transmute')) {
 		desiredRatios[1] += desiredRatios[2];
 		desiredRatios[2] = 0;
