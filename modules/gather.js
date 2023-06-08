@@ -18,7 +18,7 @@ function calcTPS() {
 function calcMaxTraps() {
 	//Tries to keep in mind the longest duration any zone has lasted in this portal
 	var time = getZoneSeconds();
-	if (game.global.world == 1) maxZoneDuration = time;
+	if (game.global.world === 1) maxZoneDuration = time;
 	if (time > maxZoneDuration) maxZoneDuration = time;
 
 	//Return enough traps to last 1/4 of the longest duration zone we've seen so far
@@ -44,7 +44,7 @@ function autoGather() {
 	if (manualGather === 0) return;
 
 	//Setting it to use mining/building only!
-	if (manualGather === 2 && document.getElementById('metalCollectBtn').style.display != 'none' && document.getElementById('metal').style.visibility != 'hidden') {
+	if (manualGather === 2 && document.getElementById('metalCollectBtn').style.display !== 'none' && document.getElementById('metal').style.visibility !== 'hidden') {
 		autoGatherMetal();
 		return;
 	}
@@ -86,7 +86,7 @@ function autoGather() {
 	//Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
 	//And there is enough breed time remaining to open an entire trap (prevents wasting time and traps during early zones)
 	var trappingIsRelevant = trapperTrapUntilFull || breedingPS().div(10).lt(calcTPS() * (game.portal.Bait.level + 1));
-	var trapWontBeWasted = breedTimeRemaining().gte(1 / calcTPS()) || game.global.playerGathering == "trimps" && breedTimeRemaining().lte(DecimalBreed(0.1));
+	var trapWontBeWasted = breedTimeRemaining().gte(1 / calcTPS()) || game.global.playerGathering === "trimps" && breedTimeRemaining().lte(DecimalBreed(0.1));
 
 	//Highest Priority Food/Wood for traps (Early Game, when trapping is mandatory)
 	if (game.global.world <= 3 &&
@@ -94,7 +94,7 @@ function autoGather() {
 			(game.global.totalRadonEarned <= 5000))
 	) {
 		//If not building and not trapping
-		if (!trapsReady && game.global.buildingsQueue.length == 0 && (game.global.playerGathering != 'trimps' || game.buildings.Trap.owned == 0)) {
+		if (!trapsReady && game.global.buildingsQueue.length === 0 && (game.global.playerGathering !== 'trimps' || game.buildings.Trap.owned === 0)) {
 			//Gather food or wood
 			if (game.resources.food.owned < 10) {
 				safeSetGather('food');
@@ -114,7 +114,6 @@ function autoGather() {
 			safeSetGather('trimps');
 			return;
 		}
-
 		//Or build them, if they are on the queue
 		else if (isBuildingInQueue('Trap') || safeBuyBuilding('Trap', 1)) {
 			trapBuffering = true;
@@ -125,25 +124,25 @@ function autoGather() {
 
 
 	//Build if we don't have foremany, there are 2+ buildings in the queue, or if we can speed up something other than a trap
-	if (!bwRewardUnlocked("Foremany") && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier == 0 || (getPlayerModifier() > 100 && game.global.buildingsQueue[0] != 'Trap.1'))) {
+	if (!bwRewardUnlocked("Foremany") && game.global.buildingsQueue.length && (game.global.buildingsQueue.length > 1 || game.global.autoCraftModifier == 0 || (getPlayerModifier() > 100 && game.global.buildingsQueue[0] !== 'Trap.1'))) {
 		safeSetGather('buildings');
 		return;
 	}
 
 	//Also Build if we have storage buildings on top of the queue
-	if (!bwRewardUnlocked("Foremany") && game.global.buildingsQueue.length && game.global.buildingsQueue[0] == 'Barn.1' || game.global.buildingsQueue[0] == 'Shed.1' || game.global.buildingsQueue[0] == 'Forge.1') {
+	if (!bwRewardUnlocked("Foremany") && game.global.buildingsQueue.length && game.global.buildingsQueue[0] === 'Barn.1' || game.global.buildingsQueue[0] === 'Shed.1' || game.global.buildingsQueue[0] === 'Forge.1') {
 		safeSetGather('buildings');
 		return;
 	}
 
 	//Highest Priority Research if we have less science than needed to buy Battle, Miner and Scientists
-	if (manualGather != 3 && researchAvailable && (needBattle || needScientists || needMiner && game.resources.science.owned < 60)) {
+	if (manualGather !== 3 && researchAvailable && (needBattle || needScientists || needMiner && game.resources.science.owned < 60)) {
 		safeSetGather('science');
 		return;
 	}
 
 	//High Priority Research - When manual research still has more impact than scientists
-	if (manualGather != 3 && researchAvailable && needScience && getPlayerModifier() > getPerSecBeforeManual('Scientist')) {
+	if (manualGather !== 3 && researchAvailable && needScience && getPlayerModifier() > getPerSecBeforeManual('Scientist')) {
 		safeSetGather('science');
 		return;
 	}
@@ -178,23 +177,6 @@ function autoGather() {
 		return;
 	}
 
-
-	//High Priority Research - When manual research still has more impact than workers
-	if (researchAvailable) {
-		if (resourceNeeded.food > game.resources.food.owned && getPlayerModifier() > getPerSecBeforeManual('Farmer')) {
-			safeSetGather('food');
-			return;
-		}
-		if (resourceNeeded.wood > game.resources.wood.owned && getPlayerModifier() > getPerSecBeforeManual('Lumberjack')) {
-			safeSetGather('wood');
-			return;
-		}
-		if (resourceNeeded.metal > game.resources.metal.owned && getPlayerModifier() > getPerSecBeforeManual('Miner')) {
-			safeSetGather('metal');
-			return;
-		}
-	}
-
 	//High Priority Metal gathering for Metal Challenge
 	if (challengeActive('Metal') && !game.global.mapsUnlocked) {
 		safeSetGather('metal');
@@ -213,6 +195,22 @@ function autoGather() {
 		safeBuyBuilding('Trap', 1);
 		safeSetGather('buildings');
 		return;
+	}
+
+	//High Priority Research - When manual research still has more impact than workers
+	if (researchAvailable) {
+		if (resourceNeeded.food > game.resources.food.owned && getPlayerModifier() > getPerSecBeforeManual('Farmer')) {
+			safeSetGather('food');
+			return;
+		}
+		/* if (resourceNeeded.wood > game.resources.wood.owned && getPlayerModifier() > getPerSecBeforeManual('Lumberjack')) {
+			safeSetGather('wood');
+			return;
+		}
+		if (resourceNeeded.metal > game.resources.metal.owned && getPlayerModifier() > getPerSecBeforeManual('Miner')) {
+			safeSetGather('metal');
+			return;
+		} */
 	}
 
 	//Metal if Turkimp is active

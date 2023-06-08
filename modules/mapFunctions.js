@@ -446,7 +446,6 @@ function voidMaps() {
 		module.portalAfterVoids = false;
 		module.voidTrigger = 'None';
 		//Setting portal zone to current zone if setting calls for it
-		debug(MODULES.mapFunctions.portalZone);
 		if (portalAfter) MODULES.mapFunctions.portalZone = game.global.world;
 	}
 
