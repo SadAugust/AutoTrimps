@@ -844,7 +844,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				hdMult: 1,
 				goldenType: 'v',
 				hdType: 'world',
-				goldenNumber: -1
+				goldenNumber: -2,
 			}
 			//Taking data from the current setting and overriding the default values
 			if (current.length - 1 >= x) {
@@ -922,8 +922,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				}
 				//Golden Upgrades
 				if (golden) {
-					vals.goldenType = currSetting[x].golden[0] ? currSetting[x].golden[0] : 0;
-					vals.goldenNumber = typeof (currSetting[x].golden) !== 'undefined' ? currSetting[x].golden.toString().replace(/[^\d,:-]/g, '') : 'v';
+					vals.goldenType = typeof (currSetting[x].golden) !== 'undefined' ? currSetting[x].golden[0] : 'v';
+					vals.goldenNumber = typeof (currSetting[x].golden) !== 'undefined' ? currSetting[x].golden.toString().replace(/[^\d,:-]/g, '') : -2;
 				}
 				//Smithy Farm
 				if (smithyFarm)
@@ -1428,9 +1428,13 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 		var world = document.getElementById('windowWorld' + x);
 		if (golden) world = document.getElementById('windowWorld' + x);
-		if (!world || world.value === "-1") {
+		if (!world || (!golden && world.value === "-1")) {
 			continue;
 		};
+
+		if (golden && world.value === "-2") {
+			continue;
+		}
 
 		thisSetting.active = readNiceCheckbox(document.getElementById('windowActive' + x));
 		if (!golden) thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
@@ -1460,8 +1464,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (tributeFarm) thisSetting.mets = parseInt(document.getElementById('windowMets' + x).value, 10);
 		if (quagmire) thisSetting.bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
 		if (insanity) thisSetting.insanity = parseInt(document.getElementById('windowInsanity' + x).value, 10);
-		if (golden) thisSetting.golden = document.getElementById('windowGoldenType' + x).value;
 		if (hdFarm) thisSetting.hdType = document.getElementById('windowHDType' + x).value;
+		if (golden) thisSetting.golden = document.getElementById('windowGoldenType' + x).value;
 		if (golden) thisSetting.golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
 		if (alchemy) thisSetting.potion = document.getElementById('windowPotionType' + x).value;
 		if (alchemy) thisSetting.potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
@@ -1592,7 +1596,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 function mazPopulateHelpWindow(titleText, trimple) {
 	//Setting up the Help onclick setting.
-	var mazHelp = "Welcome to '" + titleText + "' settings! This is a powerful automation tool that allows you to set when maps should be automatically run, and allows for a high amount of customization. Here's a quick overview of what everything does:";
+	var mazHelp = "Welcome to <b>" + titleText + "</b> settings!";
 
 
 	var mapFarm = titleText.includes('Map Farm');
@@ -1607,6 +1611,11 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	var hypothermia = titleText.includes('Hypothermia Farm');
 	var boneShrine = titleText.includes('Bone Shrine');
 	var golden = titleText.includes('Golden');
+
+	if (!golden) mazHelp += " This is a powerful automation tool that allows you to set when maps should be automatically run. Here's a quick overview of what everything does:";
+	else if (golden) {
+		mazHelp += " This is a powerful automation tool that allows you to set the order of golden upgrade purchases and how many of each type you'd like to have. Here's a quick overview of what everything does:";
+	}
 
 	var radonSetting = currSettingUniverse === 2;
 
@@ -1647,6 +1656,8 @@ function mazPopulateHelpWindow(titleText, trimple) {
 			mazHelp += "<li><b>Gather</b> - The gather type to use when auto spending bone charges.</li>";
 		}
 	}
+
+	if (golden) mazHelp += "<br>";
 
 	//Row Settings
 	mazHelp += "</ul></br> The settings for each row that is added:<ul>"
@@ -1798,9 +1809,14 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 	if (golden) {
 		//Amount of golden upgrades to get
-		mazHelp += "<li><b>Run Type</b> - The amount of golden upgrades you'd like to get during this line.</li>";
+		mazHelp += "<li><b>Amount</b> - The amount of golden upgrades to purchase before moving onto the next line.<br>\
+		Setting this input to <b>-1</b> will purchase this golden type infinitely.</li>";
 		//Golden Type
 		mazHelp += "<li><b>Golden Type</b> - The type of Golden upgrade that you'd like to get during this line.</li>";
+
+		mazHelp += "<br>";
+		var heliumType = currSettingUniverse === 2 ? 'Radon' : 'Helium';
+		mazHelp += `You are able to have multiple lines of the same type. For example 8 Void, 12 Battle, 10 ${heliumType}, 8 Battle would end with 8 Golden Voids, 20 Golden Battle, and 10 Golden ${heliumType} upgrades. Requests to buy Golden Void will be skipped if it would put you above 72%.`;
 	}
 
 	return mazHelp;
@@ -2188,11 +2204,11 @@ function addRow(varPrefix, titleText) {
 		if (titleText.includes('Golden')) {
 			var elemWorld = document.getElementById('windowWorld' + x);
 			if (!elemWorld) continue;
-			if (elemWorld.value === "-1") {
+			if (elemWorld.value === "-2") {
 				var parent2 = document.getElementById('windowRow' + x);
 				if (parent2) {
 					parent2.style.display = 'block';
-					elemWorld.value = 0
+					elemWorld.value = -1;
 					updateWindowPreset(x, varPrefix);
 					break;
 				}
@@ -2256,7 +2272,7 @@ function removeRow(index, titleText) {
 	if (titleText.includes('Tribute Farm')) document.getElementById('windowMets' + index).value = 0;
 	if (titleText.includes('Quag')) document.getElementById('windowBogs' + index).value = 0;
 	if (titleText.includes('Insanity')) document.getElementById('windowInsanity' + index).value = 0;
-	if (titleText.includes('Auto Golden')) document.getElementById('windowWorld' + index).value = -1;
+	if (titleText.includes('Auto Golden')) document.getElementById('windowWorld' + index).value = -2;
 	if (titleText.includes('HD Farm')) document.getElementById('windowHDType' + index).value = 'world';
 	if (titleText.includes('Auto Golden')) document.getElementById('windowGoldenType' + index).value = 'h';
 	if (titleText.includes('Hypo')) document.getElementById('windowBonfire' + index).value = 0;

@@ -168,10 +168,10 @@ function getNextGoldenUpgrade() {
 	for (var x = 0; x < setting.length; x++) {
 		if (!setting[x].active) continue;
 		if (setting[x].golden === undefined) continue;
-		var rule = setting[x].golden;
-		rule = rule.split(/(\d+)/);
-		var name = defs[rule[0]];
-		var number = parseInt(rule[1], 10);
+		rule = setting[x].golden;
+		var name = defs[rule.slice(0, 1)];
+		var number = parseInt(rule.slice(1, rule.length), 10);
+		if (number === -1) number = Infinity;
 		var purchased = game.goldenUpgrades[name].purchasedAt.length;
 		var old = done[name] ? done[name] : 0;
 		if (name === "Void" && (parseFloat((game.goldenUpgrades.Void.currentBonus + game.goldenUpgrades.Void.nextAmt()).toFixed(2)) > 0.72)) {
