@@ -1242,6 +1242,7 @@ function initializeAllSettings() {
 				description += "<p>If set to 0 or -1 it will disable this setting.</p>";
 				description += "<p><b>Must be used in conjunction with L: Zone</b></p>";
 				description += "<p><b>Recommended:</b> 100</p>";
+				return description;
 			}, 'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.life.enabled) });
 
@@ -2913,7 +2914,7 @@ function initializeAllSettings() {
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 8)
+				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 7)
 			});
 
 		createSetting('heirloomAutoShieldMod6',

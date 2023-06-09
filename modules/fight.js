@@ -16,11 +16,11 @@ function betterAutoFight() {
 	var newSquadRdy = game.resources.trimps.realMax() <= game.resources.trimps.owned + 1;
 
 	var lowLevelFight = game.resources.trimps.maxSoldiers < breeding * 0.5 && breeding > game.resources.trimps.realMax() * 0.3 && game.global.world < 4;
-	if (lowLevelFight) {
+	/* if (lowLevelFight) {
 		var scientistsAvailable = game.upgrades.Scientists.allowed && !game.upgrades.Scientists.done;
 		var minersAvailable = game.upgrades.Miners.allowed && !game.upgrades.Miners.done;
 		if (scientistsAvailable || minersAvailable) lowLevelFight = false;
-	}
+	} */
 	if (!game.global.fighting) {
 		if (newSquadRdy || game.global.soldierHealth > 0 || lowLevelFight || challengeActive('Watch')) {
 			fightManual();

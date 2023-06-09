@@ -26,11 +26,11 @@ function gigaTargetZone() {
 	//Also consider the zone we configured our portal to be used
 	var portalZone = 0;
 	if (autoTrimpSettings.autoPortal.selected === "Helium Per Hour") portalZone = (daily) ? getPageSetting('dailyDontPortalBefore', 1) : getPageSetting('heHrDontPortalBefore', 1);
-	else if (autoTrimpSettings.autoPortal.selected == "Custom") portalZone = (daily) ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone', 1);
+	else if (autoTrimpSettings.autoPortal.selected === "Custom") portalZone = (daily) ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone', 1);
 
 	//Finds a target zone for when doing c2
 	var c2zone = 0;
-	if (getPageSetting('c2RunnerStart') == true && getPageSetting("c2RunnerPortal") > 0) c2zone = getPageSetting("c2RunnerPortal");
+	if (getPageSetting('c2RunnerStart') === true && getPageSetting("c2RunnerPortal") > 0) c2zone = getPageSetting("c2RunnerPortal");
 	else if (getPageSetting("c2Finish") > 0) c2zone = getPageSetting("c2Finish");
 
 	//Set targetZone
@@ -127,23 +127,23 @@ function buyUpgrades() {
 		if (gameUpgrade.prestiges) continue;
 		var available = (gameUpgrade.allowed > gameUpgrade.done && canAffordTwoLevel(gameUpgrade));
 		if (!available) continue;
-		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") && bwRewardUnlocked("DecaBuild") && getPageSetting('buildingsType') == 0);
+		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") && bwRewardUnlocked("DecaBuild") && getPageSetting('buildingsType') === 0);
 
 		//Coord & Amals
-		if (upgrade == 'Coordination' && (getPageSetting('upgradeType') == 2 || !canAffordCoordinationTrimps())) continue;
+		if (upgrade === 'Coordination' && (getPageSetting('upgradeType') === 2 || !canAffordCoordinationTrimps())) continue;
 		if (upgrade === 'Coordination' && challengeActive('Trappapalooza') && getPageSetting('trappapalooza') && getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords')) continue;
 		if (upgrade === 'Coordination' && challengeActive('Trappapalooza') && getPageSetting('trappapalooza')) { buyJobs(); }
 		//Gigastations
-		if (upgrade == 'Gigastation' && !fuckbuildinggiga) {
-			if (getPageSetting("autoGigas") && game.upgrades.Gigastation.done == 0 && !firstGiga()) continue;
+		if (upgrade === 'Gigastation' && !fuckbuildinggiga) {
+			if (getPageSetting("autoGigas") && game.upgrades.Gigastation.done === 0 && !firstGiga()) continue;
 			else if (game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation'))) continue;
 		}
 
 		if (upgrade === 'Gigastation' && !getPageSetting('buildingsType')) continue;
 		//Other
-		if (upgrade == 'Shieldblock' && !getPageSetting('equipShieldBlock')) continue;
-		if (upgrade == 'Gigastation' && !fuckbuildinggiga && (game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('firstGigastation'))) continue;
-		if (upgrade == 'Bloodlust' && challengeActive('Scientist') && getPageSetting('autoFight')) continue;
+		if (upgrade === 'Shieldblock' && !getPageSetting('equipShieldBlock')) continue;
+		if (upgrade === 'Gigastation' && !fuckbuildinggiga && (game.global.lastWarp ? game.buildings.Warpstation.owned < (Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation')) : game.buildings.Warpstation.owned < getPageSetting('firstGigastation'))) continue;
+		if (upgrade === 'Bloodlust' && challengeActive('Scientist') && getPageSetting('autoFight')) continue;
 
 		if (game.upgrades.Scientists.done < game.upgrades.Scientists.allowed && upgrade !== 'Scientists') continue;
 		if (upgrade !== 'Scientists' && game.upgrades.Speedscience.done < game.upgrades.Speedscience.allowed && upgrade !== 'Speedscience') continue;
@@ -173,7 +173,7 @@ function getNextGoldenUpgrade() {
 		var number = parseInt(rule[1], 10);
 		var purchased = game.goldenUpgrades[name].purchasedAt.length;
 		var old = done[name] ? done[name] : 0;
-		if (name == "Void" && (parseFloat((game.goldenUpgrades.Void.currentBonus + game.goldenUpgrades.Void.nextAmt()).toFixed(2)) > 0.72)) {
+		if (name === "Void" && (parseFloat((game.goldenUpgrades.Void.currentBonus + game.goldenUpgrades.Void.nextAmt()).toFixed(2)) > 0.72)) {
 			continue;
 		}
 		if (purchased < (number + old)) {

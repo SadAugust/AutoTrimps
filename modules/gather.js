@@ -199,10 +199,10 @@ function autoGather() {
 
 	//High Priority Research - When manual research still has more impact than workers
 	if (researchAvailable) {
-		if (resourceNeeded.food > game.resources.food.owned && getPlayerModifier() > getPerSecBeforeManual('Farmer')) {
+		/* if (resourceNeeded.food > game.resources.food.owned && getPlayerModifier() > getPerSecBeforeManual('Farmer')) {
 			safeSetGather('food');
 			return;
-		}
+		} */
 		/* if (resourceNeeded.wood > game.resources.wood.owned && getPlayerModifier() > getPerSecBeforeManual('Lumberjack')) {
 			safeSetGather('wood');
 			return;
