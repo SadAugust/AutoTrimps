@@ -211,6 +211,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		if (prestigeSetting === 0) continue;
 		if (prestigeSetting === 1 && !canAtlantrimp) continue;
 		if (i === 'Shield') continue;
+		if (buyPrestigeMaybe(i) === false) continue;
 		if (game.upgrades[equipmentList[i].Upgrade].done !== game.upgrades[equipmentList[i].Upgrade].allowed) {
 			prestigesAvailable = true;
 		}
@@ -267,21 +268,25 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 			safeRatio = nextLevelCost / nextLevelValue;
 		}
 
-		if (prestigeSetting === 0 && !ignorePrestiges && game.equipment[i].level < 6 && game.resources.metal.owned * 0.2 < maybeBuyPrestige[2]) ignorePrestiges_temp = true;
-		if (prestigeSetting === 1 && !canAtlantrimp && game.resources.metal.owned * 0.08 < maybeBuyPrestige[2]) ignorePrestiges_temp = true;
+		//Early game bandaid fix for lack of gems.
+		//Setting ignorePrestiges_temp to true if we don't have enough Science or Gems for the Prestige which SHOULD only happen in the ultra early game
+		if (maybeBuyPrestige === false) ignorePrestiges_temp = true;
+		if (!ignorePrestiges_temp) {
+			if (prestigeSetting === 0 && !ignorePrestiges && game.equipment[i].level < 6 && game.resources.metal.owned * 0.2 < maybeBuyPrestige[2]) ignorePrestiges_temp = true;
+			if (prestigeSetting === 1 && !canAtlantrimp && game.resources.metal.owned * 0.08 < maybeBuyPrestige[2]) ignorePrestiges_temp = true;
 
-		if (!ignorePrestiges_temp && (maybeBuyPrestige[0] && (maybeBuyPrestige[1] > mostEfficient[isAttack].statPerResource || maybeBuyPrestige[3]))) {
-			safeRatio = maybeBuyPrestige[1];
-			nextLevelCost = maybeBuyPrestige[2];
-			nextLevelValue = maybeBuyPrestige[4];
-			prestige = true;
+			if (!ignorePrestiges_temp && (maybeBuyPrestige[0] && (maybeBuyPrestige[1] > mostEfficient[isAttack].statPerResource || maybeBuyPrestige[3]))) {
+				safeRatio = maybeBuyPrestige[1];
+				nextLevelCost = maybeBuyPrestige[2];
+				nextLevelValue = maybeBuyPrestige[4];
+				prestige = true;
+			}
+
+			//Skips items if they aren't at the highest prestige level we own and we have that setting enabled
+			if (getPageSetting('equipPrestige') === 1 && canAtlantrimp && !prestige && game.equipment[i].prestige < highestPrestige) continue;
+			if (getPageSetting('equipPrestige') === 2 && !prestige && game.equipment[i].prestige < highestPrestige) continue;
 		}
 
-		//if (!showAllEquips && prestigeSetting === 1 && !canAtlantrimp && nextLevelCost > game.resources.metal.owned) continue;
-
-		//Skips items if they aren't at the highest prestige level we own and we have that setting enabled
-		if (getPageSetting('equipPrestige') === 1 && canAtlantrimp && !prestige && game.equipment[i].prestige < highestPrestige) continue;
-		if (getPageSetting('equipPrestige') === 2 && !prestige && game.equipment[i].prestige < highestPrestige) continue;
 		if (safeRatio === 1) continue;
 
 		if (mostEfficient[isAttack].statPerResource > safeRatio && mostEfficient[isAttack].statPerResource != '') {
