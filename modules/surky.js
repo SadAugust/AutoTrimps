@@ -797,28 +797,28 @@ function fillPreset(specificPreset) {
 	initPerks();
 	var preset = $$('#presetElem').value;
 	var weights = [0, 0, 0];
-	if (preset == 'ezfarm') {
+	if (preset === 'ezfarm') {
 		weights = (props.ezWeights === null) ? [0, 0, 1] : props.ezWeights;
-	} else if (preset == 'tufarm') {
+	} else if (preset === 'tufarm') {
 		weights = (props.tuWeights === null) ? [1, 0.5, 15] : props.tuWeights;
 		// with GU recommendations, we want a big Rn weight
-	} else if (preset == 'push') {
+	} else if (preset === 'push') {
 		weights = (props.pushWeights === null) ? [1, 1, 0] : props.pushWeights;
-	} else if (preset == 'alchemy') {
+	} else if (preset === 'alchemy') {
 		weights = (props.alchWeights === null) ? [1, 0.01, 10] : props.alchWeights;
-	} else if (preset == 'trappa') {
-		weights = [1, 1.5, 0];
-	} else if (preset == 'downsize') {
+	} else if (preset === 'trappa') {
+		weights = (props.pushWeights === null) ? [1, 1.5, 0] : props.pushWeights;
+	} else if (preset === 'downsize') {
 		weights = (props.pushWeights === null) ? [1, 1, 0] : props.pushWeights;
-	} else if (preset == 'duel') {
+	} else if (preset === 'duel') {
 		weights = (props.pushWeights === null) ? [1, 0.2, 0] : props.pushWeights;
-	} else if (preset == 'berserk') {
+	} else if (preset === 'berserk') {
 		weights = (props.pushWeights === null) ? [1, 0.5, 0] : props.pushWeights;
-	} else if (preset == 'smithless') {
+	} else if (preset === 'smithless') {
 		weights = (props.pushWeights === null) ? [1, 0.5, 0] : props.pushWeights;
-	} else if (preset == 'combat') {
+	} else if (preset === 'combat') {
 		weights = [1, 0.1, 0];
-	} else if (preset == 'combatRadon') {
+	} else if (preset === 'combatRadon') {
 		weights = (props.tuWeights === null) ? [1, 0.5, 15] : props.tuWeights;
 	}
 	presetSpecialOpt();
@@ -836,14 +836,14 @@ function presetSpecialOpt() {
 	$$('#trapHrsDiv').style.display = 'none';
 	$$('#findPotsDiv').style.display = 'none';
 	$$('#radonPerRunDiv').style.display = 'none';
-	if (preset == 'alchemy') {
+	if (preset === 'alchemy') {
 		props.specialChallenge = preset;
 		$$('#findPotsDiv').style.display = 'inline';
 	}
-	if (preset == 'trappacarp') {
+	if (preset === 'trappacarp') {
 		props.specialChallenge = preset;
 	}
-	if (preset == 'trappa') {
+	if (preset === 'trappa') {
 		props.specialChallenge = preset;
 		$$('#trapHrsDiv').style.display = 'inline';
 		perks.Bait.optimize = true;
@@ -853,25 +853,25 @@ function presetSpecialOpt() {
 		if (game != null && game.stats.highestRadLevel.valueTotal() >= 60)
 			perks.Pheromones.optimize = true;
 	}
-	if (preset == 'downsize') {
+	if (preset === 'downsize') {
 		props.specialChallenge = preset;
 		perks.Trumps.optimize = true;
 	} else {
 		perks.Trumps.optimize = false;
 	}
-	if (preset == 'berserk') {
+	if (preset === 'berserk') {
 		props.specialChallenge = preset;
 		perks.Frenzy.optimize = false;
 	} else {
 		perks.Frenzy.optimize = true;
 	}
-	if (preset == 'smithless') {
+	if (preset === 'smithless') {
 		props.specialChallenge = preset;
 		perks.Smithology.optimize = false;
 	} else {
 		perks.Smithology.optimize = true;
 	}
-	if (preset == 'equip') {
+	if (preset === 'equip') {
 		props.specialChallenge = preset;
 	}
 	if (preset === 'combat' || preset === 'combatRadon') {
@@ -881,10 +881,10 @@ function presetSpecialOpt() {
 			perks.Pheromones.optimize = false;
 		}
 	}
-	if (preset == 'resplus') {
+	if (preset === 'resplus') {
 		props.specialChallenge = preset;
 	}
-	if (preset == 'resminus') {
+	if (preset === 'resminus') {
 		props.specialChallenge = preset;
 	}
 }
@@ -1063,26 +1063,26 @@ function initialLoad(skipLevel) {
 	props.scruffyLevel = Math.floor(Math.log(((game.global.fluffyExp2 / 1000) * 3) + 1) / Math.log(4));
 
 	var shield = null;
-	if (game.global.universe == 2 && Object.keys(game.global.ShieldEquipped).length !== 0)
+	if (game.global.universe === 2 && Object.keys(game.global.ShieldEquipped).length !== 0)
 		shield = game.global.ShieldEquipped;
 	else if (game.global.lastHeirlooms.u2 && game.global.lastHeirlooms.u2.Shield) {
-		if (game.global.lastHeirlooms.u2.Shield == game.global.ShieldEquipped.id) {
+		if (game.global.lastHeirlooms.u2.Shield === game.global.ShieldEquipped.id) {
 			shield = game.global.ShieldEquipped;
 		} else {
 			shield = game.global.heirloomsCarried.find(function (s) {
-				return s.id == game.global.lastHeirlooms.u2.Shield;
+				return s.id === game.global.lastHeirlooms.u2.Shield;
 			});
 		}
 	}
 	if (shield) {
 		var critDamageMod = shield.mods.find(function (el) {
-			return el[0] == "critDamage";
+			return el[0] === "critDamage";
 		});
 		var prismalMod = shield.mods.find(function (el) {
-			return el[0] == "prismatic";
+			return el[0] === "prismatic";
 		});
 		var ineqMod = shield.mods.find(function (el) {
-			return el[0] == "inequality";
+			return el[0] === "inequality";
 		});
 
 		if (critDamageMod) {
@@ -1303,41 +1303,41 @@ function readInputs() {
 	props.glassRadon = props.glassDone && (props.vmZone > 174 && props.vmZone < 200 || props.vmZone > 200);
 
 	var preset = $$('#presetElem').value;
-	if (preset == 'alchemy') {
+	if (preset === 'alchemy') {
 		props.specialChallenge = 'alchemy';
-	} else if (preset == 'trappacarp') {
+	} else if (preset === 'trappacarp') {
 		props.specialChallenge = 'trappacarp';
-	} else if (preset == 'trappa') {
+	} else if (preset === 'trappa') {
 		props.specialChallenge = 'trappa';
-	} else if (preset == 'downsize') {
+	} else if (preset === 'downsize') {
 		props.specialChallenge = 'downsize';
-	} else if (preset == 'duel') {
+	} else if (preset === 'duel') {
 		props.specialChallenge = 'duel';
-	} else if (preset == 'berserk') {
+	} else if (preset === 'berserk') {
 		props.specialChallenge = 'berserk';
-	} else if (preset == 'smithless') {
+	} else if (preset === 'smithless') {
 		props.specialChallenge = 'smithless';
-	} else if (preset == 'equip') {
+	} else if (preset === 'equip') {
 		props.specialChallenge = 'equip';
-	} else if (preset == 'combat') {
+	} else if (preset === 'combat') {
 		props.specialChallenge = 'combat';
-	} else if (preset == 'combatRadon') {
+	} else if (preset === 'combatRadon') {
 		props.specialChallenge = 'combatRadon';
-	} else if (preset == 'resplus') {
+	} else if (preset === 'resplus') {
 		props.specialChallenge = 'resplus';
-	} else if (preset == 'resminus') {
+	} else if (preset === 'resminus') {
 		props.specialChallenge = 'resminus';
 	} else
 		props.specialChallenge = null;
 
 	// store weights under the current preset for Rn/Push weights
-	if (preset == 'ezfarm') {
+	if (preset === 'ezfarm') {
 		props.ezWeights = [props.clearWeight, props.survivalWeight, props.radonWeight];
-	} else if (preset == 'tufarm') {
+	} else if (preset === 'tufarm') {
 		props.tuWeights = [props.clearWeight, props.survivalWeight, props.radonWeight];
-	} else if (preset == 'push') {
+	} else if (preset === 'push') {
 		props.pushWeights = [props.clearWeight, props.survivalWeight, props.radonWeight];
-	} else if (preset == 'alchemy') {
+	} else if (preset === 'alchemy') {
 		props.alchWeights = [props.clearWeight, props.survivalWeight, props.radonWeight];
 	}
 
@@ -1345,7 +1345,7 @@ function readInputs() {
 	var housingTypes = {
 		collector: [50, 1.12],
 	}
-	if (props.hubEnabled || props.specialChallenge == 'downsize') {
+	if (props.hubEnabled || props.specialChallenge === 'downsize') {
 		housingTypes.hut = [1, 1.24];
 		housingTypes.house = [1, 1.22];
 		housingTypes.mansion = [9, 1.20];
@@ -1362,7 +1362,7 @@ function readInputs() {
 		var houseRate = Math.log(1.25) / Math.log(scaling);
 		var taunTemp = Math.pow(tauntRate, scaleZones);
 		var tauntRm1 = tauntRate - 1;
-		var factor = (key == "collector") ? props.collectHubs : 1;
+		var factor = (key === "collector") ? props.collectHubs : 1;
 		coefC += factor * (taunTemp - 1) / tauntRm1;
 		termR += factor * tauntRate * houseRate * (taunTemp * (scaleZones * tauntRm1 - 1) + 1) / (tauntRm1 * tauntRm1);
 		typeCount++;
@@ -1407,7 +1407,7 @@ function getTrinketValues(motivCost, powCost, toughCost) {
 	// Get the expected Rt at the end of the next run with the current Obs level.
 	var shinies = 0;
 	var shinies = props.trinkets + shinyCollect(perks.Observation.level + 1);
-	if (props.trinkets == 0) {
+	if (props.trinkets === 0) {
 		shinies += 10;
 		// first Obs level gives 10 trinkets
 	}
@@ -1448,7 +1448,7 @@ function getTrinketValues(motivCost, powCost, toughCost) {
 
 	// no longer relevant with a baseline effective perk level of 1
 	// zero out per-run stats if at 0 Obs (these were used to help calculate the per-trinket gain for valuing the 1st level of Obs)
-	//if (perks.Observation.level == 0) {
+	//if (perks.Observation.level === 0) {
 	//    res[0] = 0;
 	//    res[2] = 0;
 	//}
@@ -1475,7 +1475,7 @@ function getObservationGains(levels) {
 	// Get expected trinket count at end of next run with the new Obs level
 	var nextCollect = shinyCollect(obsLevel + levels);
 	var shiniesNext = props.trinkets + nextCollect;
-	if (props.trinkets == 0)
+	if (props.trinkets === 0)
 		shiniesNext += 10;
 	// 10 free trinkets for first Obs level
 	shiniesNext = Math.min(shiniesNext, (obsLevel + levels) * 1000);
@@ -1548,7 +1548,7 @@ function iterateValueFeedback(valueArray) {
 	var moreHousing = Math.log(Vf * Vres / (VfDone * VresDone)) / Math.log(1.12); // Collectors scale with food (no other basic resources needed)
 	var baseHousing = collectors;
 	// for downsize we make the same adjustments as for hubs, just saying "all housing buildings have the same value"
-	if (hubEnabled || props.specialChallenge == 'downsize') {
+	if (hubEnabled || props.specialChallenge === 'downsize') {
 		moreHousing *= props.collectHubs;
 		moreHousing += 5 * Math.log(Vres / VresDone) / Math.log(1.2); // 5 housing types below Gateway need wood, roughly 1.2 avg scaling (Gateway doesn't scale)
 		baseHousing *= 6 + props.collectHubs; // estimate all housing types have the same number as Collectors (close enough for gain factor w.r.t. the small feedback effects here)
@@ -1559,21 +1559,21 @@ function iterateValueFeedback(valueArray) {
 	var tauntCorrectedHousingNext = (baseHousing + moreHousing) * props.coefC - props.termR;
 	var housingGain = tauntCorrectedHousingNext / tauntCorrectedHousingBase;
 	if (!(housingGain > 1) || tauntCorrectedHousingBase <= 0) housingGain = 1;
-	if (props.specialChallenge == 'downsize') {
+	if (props.specialChallenge === 'downsize') {
 		// 2 territory bonuses per zone, each bonus is 5 + trumps level
 		var trumPop = 2 * props.targetZone * (5 + perks.Trumps.level);
 		// actual gain: (housing * housingGain + trumpop) / (housing + trumpop)
 		housingGain = 1 + (housingGain - 1) * baseHousing / (baseHousing + trumPop);
 	}
 	Vres *= housingGain;
-	Vp *= ((props.specialChallenge == 'trappa') || (props.specialChallenge == 'combat') || (props.specialChallenge == 'combatRadon'))
+	Vp *= ((props.specialChallenge === 'trappa') || (props.specialChallenge === 'combat') || (props.specialChallenge === 'combatRadon'))
 		? 1 : housingGain; // Trappa housing doesn't help buy more coords. Combat respec assumes we're done buying housing.
 	collectors += housingGain;
 
 	// use equip scaling to convert resource value to atk/hp value
 	var VmAdjusted = Vm * Vres / (VmDone * VresDone);
 	// combat spec assumes no more equipment buying
-	if (!(props.specialChallenge == 'combat') && !(props.specialChallenge == 'combatRadon')) {
+	if (!(props.specialChallenge === 'combat') && !(props.specialChallenge === 'combatRadon')) {
 		Va *= Math.pow(props.equipScaling.attack, Math.log(VmAdjusted));
 		Vh *= Math.pow(props.equipScaling.health, Math.log(VmAdjusted));
 	}
@@ -1581,20 +1581,20 @@ function iterateValueFeedback(valueArray) {
 	// account for smithies: 1.25x atk/hp per 50x resources (40x with S14)
 	var smithyGain = Math.pow(1.25, Math.log(Vres / VresDone) / Math.log(props.smithyScaling));
 	// combat spec assumes no more smithy buying
-	if (!(props.specialChallenge == 'combat') && !(props.specialChallenge == 'combatRadon') && !(props.specialChallenge == 'smithless')) {
+	if (!(props.specialChallenge === 'combat') && !(props.specialChallenge === 'combatRadon') && !(props.specialChallenge === 'smithless')) {
 		Va *= smithyGain;
 		Vh *= smithyGain;
 	}
 
 	// if coord limited, account for population gain to coords
 	var coordAdjust = props.coordLimited;
-	if (props.specialChallenge == 'downsize') {
+	if (props.specialChallenge === 'downsize') {
 		// assume coord limited in downsize (allowing the user to weight further toward pop if desired)
 		coordAdjust = Math.max(coordAdjust, 1);
-	} else if (props.specialChallenge == 'trappa' || props.specialChallenge == 'combat' && props.isTrappa) {
+	} else if (props.specialChallenge === 'trappa' || props.specialChallenge === 'combat' && props.isTrappa) {
 		// Trappa is always coord limited, and the input field is hidden (replaced by the trapping hours field)
 		coordAdjust = 1;
-	} else if (props.specialChallenge == 'combat' || props.specialChallenge == 'combatRadon') {
+	} else if (props.specialChallenge === 'combat' || props.specialChallenge === 'combatRadon') {
 		// combat respec reads the actual population/coordinations from the save to determine how many levels of Carp are needed
 		coordAdjust = (perks.Carpentry.level < props.carpNeeded) ? 1 : 0;
 	}
@@ -1614,15 +1614,15 @@ function iterateValueFeedback(valueArray) {
 	var metMineGain = props.antennae >= 15 ? (1 + metProdNext * metRes) / (1 + metProd * metRes) : 1;
 	Vrad *= metRadGain;
 	Vf *= metFoodGain;
-	if (!(props.specialChallenge == 'combat') && !(props.specialChallenge == 'combatRadon')) Vh *= metHPGain;
+	if (!(props.specialChallenge === 'combat') && !(props.specialChallenge === 'combatRadon')) Vh *= metHPGain;
 	Vm *= metMineGain;
 	mets += moreMets;
 
 	// Feedback from pushing power (final trappa respec: health won't be applied after last army send, so don't count health)
-	var pushPower = Va * ((props.specialChallenge == 'combat' && props.isTrappa) ? 1 : Vh) / Vpushed;
+	var pushPower = Va * ((props.specialChallenge === 'combat' && props.isTrappa) ? 1 : Vh) / Vpushed;
 	var pushZones = Math.log(pushPower) / props.logEnemyScaling;
 	// speedbooks give 25% resources per zone
-	if (props.specialChallenge == 'resplus') {
+	if (props.specialChallenge === 'resplus') {
 		// when collecting resources from +maps, we only get 10% resource gain per map
 		Vres *= Math.pow(1.1, pushZones);
 	} else {
@@ -1639,7 +1639,7 @@ function iterateValueFeedback(valueArray) {
 
 	// count S3 for Rn weighting if selected by the user, or if at Obs 0 with no clear weight (which would give no value to pushing perks at all without S3/VS1)
 	//   -> or no clear weight and trinkets capped
-	var s3RnFinal = props.s3Rn || (props.clearWeight == 0 && (perks.Observation.level == 0 || props.trinkets >= ((1 + perks.Observation.level) * 1000)));
+	var s3RnFinal = props.s3Rn || (props.clearWeight === 0 && (perks.Observation.level === 0 || props.trinkets >= ((1 + perks.Observation.level) * 1000)));
 	// Scruffy level 3 gives compounding 3% Rn per additional zone
 	if (props.scruffyLevel >= 3 && s3RnFinal) {
 		Vrad *= Math.pow(1.03, pushZones);
@@ -1678,7 +1678,7 @@ function iterateValueFeedback(valueArray) {
 	//valueArray[12] = trinketRate;
 	valueArray[13] = trinkets;
 	//valueArray[14] = obsLevel;
-	valueArray[15] = Va * ((props.specialChallenge == 'combat' && props.isTrappa) ? 1 : Vh);
+	valueArray[15] = Va * ((props.specialChallenge === 'combat' && props.isTrappa) ? 1 : Vh);
 	valueArray[16] = Vm;
 	valueArray[17] = Vf;
 	valueArray[18] = Vres;
@@ -1692,7 +1692,7 @@ function getLogWeightedValue(Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrin
 
 	var Wa = props.clearWeight; // attack weight
 	// health is useless in final trappa respec after sending last army, since new perks won't be applied to current army's health
-	var Wh = (props.specialChallenge == 'combat' && props.isTrappa) ? 0 : props.clearWeight * props.healthDerate + props.survivalWeight; // health weight
+	var Wh = (props.specialChallenge === 'combat' && props.isTrappa) ? 0 : props.clearWeight * props.healthDerate + props.survivalWeight; // health weight
 	var We = Math.max(1e-100, props.survivalWeight); // equality weight: force >0 to use equality as a dump perk if the user sets 0 weight
 	var Wr = props.radonWeight; // radon weight
 
@@ -1729,7 +1729,7 @@ function getLogWeightedValue(Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrin
 		+ props.radonPerTrinket * moreTrinkets
 	) / (props.radonPerRun + props.trinketRadonPerRun);
 
-	if (props.specialChallenge == 'combat') Vgrowth = 1; // ignore radon weight for combat spec
+	if (props.specialChallenge === 'combat') Vgrowth = 1; // ignore radon weight for combat spec
 
 	// A perk's total weighted value is:
 	//   Va^Wa * Vh^Wh * Ve^We * Vrad^Wr.
@@ -1737,10 +1737,10 @@ function getLogWeightedValue(Va, Vh, Vgear, Vres, Vrad, Ve = 1, Vp = 1, moreTrin
 	//   Wa*log(A) + Wh*log(H) + We*log(E) + Wr*log(R)
 
 	var res = Wa * Math.log(Va) + Wh * Math.log(Vh) + We * Math.log(Ve) + Wr * Math.log(Vgrowth);
-	if (props.specialChallenge == 'resplus' || props.specialChallenge == 'resminus') {
+	if (props.specialChallenge === 'resplus' || props.specialChallenge === 'resminus') {
 		res = Math.log(Vres) + (1e-100) * Math.log(Ve); // hack to still use equality as a primary dump perk
 	}
-	if (props.specialChallenge == 'equip') {
+	if (props.specialChallenge === 'equip') {
 		res = Math.log(Vres * Vm) + (1e-100) * Math.log(Ve); // for equip farming, Artisanistry also counts
 	}
 	if (isNaN(res)) {
@@ -1756,7 +1756,7 @@ function obsDropRate(level, zone) {
 		zone = 200;
 	var base = ((1 + ((level - 1) / 2)) * Math.pow(1.03, (zone - 100)));
 	var res;
-	if (props.specialChallenge == 'alchemy' && zone <= 156) {
+	if (props.specialChallenge === 'alchemy' && zone <= 156) {
 		res = 100 - (100 - base) * Math.pow(0.99, props.findPots);
 	} else
 		res = base;
@@ -1769,7 +1769,7 @@ function shinyCollectLoop(level, zone) {
 	// the game checks for the drop after advancing the zone counter, so go to zone+1.
 	for (var i = 101; i <= zone + 1; i++) {
 		shinies += obsDropRate(level, i) / 100;
-		if (i % 25 == 0) {
+		if (i % 25 === 0) {
 			// level-1 since the "level" includes the free +1 obs level, but even levels for guaranteed trinket drops do not include this free +1 level
 			var free = Math.floor((level - 1) / 2);
 			if (free > 0)
@@ -1779,9 +1779,9 @@ function shinyCollectLoop(level, zone) {
 	return shinies;
 }
 
-// zone == targetZone, memoized by a lookup table calculated by shinyCollectLoop
+// zone === targetZone, memoized by a lookup table calculated by shinyCollectLoop
 function shinyCollect(level) {
-	if (typeof props.shinyTable[level] == 'undefined') {
+	if (typeof props.shinyTable[level] === 'undefined') {
 		props.shinyTable[level] = shinyCollectLoop(level, props.targetZone);
 	}
 	return props.shinyTable[level];
@@ -1858,8 +1858,8 @@ function efficiencyColorAndFlag() {
 		perkObj = perks[pList[i]];
 
 		var opacity = Math.max(eList[i] / bestEff, 0.25);
-		if (props.specialChallenge == 'trappacarp') {
-			if (pList[i] == 'Carpentry') {
+		if (props.specialChallenge === 'trappacarp') {
+			if (pList[i] === 'Carpentry') {
 				opacity = 1;
 				eList[i] = 1;
 			} else
@@ -1868,7 +1868,7 @@ function efficiencyColorAndFlag() {
 		var id = pList[i];
 		var element = document.getElementById(id);
 
-		if (eList[i] === 0 || opacity == 0 || (perkObj.hasOwnProperty("max") && perkObj.level > perkObj.max)) {
+		if (eList[i] === 0 || opacity === 0 || (perkObj.hasOwnProperty("max") && perkObj.level > perkObj.max)) {
 			element.setAttribute("style", "");
 		} else {
 			element.setAttribute("style", "background: rgba(11, 200, 35, " + opacity + ");");
@@ -1909,7 +1909,7 @@ function getPerkEfficiencies() {
 	var motiv = 1 + perks.Motivation.level * perks.Motivation.effect;
 	var motivGain = (motiv + perks.Motivation.effect) / motiv;
 	// trappa is heavily drop-based prior to 160, and mostly gathering based after 170
-	if (props.specialChallenge == 'trappa') {
+	if (props.specialChallenge === 'trappa') {
 		if (props.targetZone < 162) {
 			motivGain = Math.pow(motivGain, 0.0001);
 			// derate motivation in trappa (don't want to zero it out but it doesn't increase F/M/L meaningfully)
@@ -1937,7 +1937,7 @@ function getPerkEfficiencies() {
 
 	// Bait:
 	//   population in Trappa, but derate resource gains like for Motivation
-	if ((props.specialChallenge == 'trappa' && props.isTrappa) && !perks.Bait.levLocked) {
+	if ((props.specialChallenge === 'trappa' && props.isTrappa) && !perks.Bait.levLocked) {
 		// 3600 seconds per hr, 10 ticks per second, 10x base trimps per tick (S0 ability)
 		var baitTime = 3600 * 10 * 10 * props.trapHrs;
 		var totalBaitPopBase = baitTime * (1 + perks.Bait.level);
@@ -1955,7 +1955,7 @@ function getPerkEfficiencies() {
 	// Carpentry:
 	//   population gain, also gives resources
 	var carpPop = perks.Carpentry.effect;
-	if (props.specialChallenge == 'trappa' || props.specialChallenge == 'combat' && props.isTrappa) {
+	if (props.specialChallenge === 'trappa' || props.specialChallenge === 'combat' && props.isTrappa) {
 		// In Trappa, carp gives more housing which gives more drops, but does not increase available Trimps
 		perks.Carpentry.efficiency = getLogWeightedValue(1, 1, 1, carpPop, 1, 1, 1) / getPerkCost("Carpentry", 1);
 		perks.Expansion.efficiency = getLogWeightedValue(1, 1, 1, expandogain, 1, 1, 1) / getPerkCost("Expansion", 1);
@@ -1966,7 +1966,7 @@ function getPerkEfficiencies() {
 
 	// Trumps:
 	//   population in downsize
-	if (props.specialChallenge == 'downsize' && !perks.Trumps.levLocked) {
+	if (props.specialChallenge === 'downsize' && !perks.Trumps.levLocked) {
 		// estimate same number of each housing building, should be "good enough"
 		var buildPop = (props.hubEnabled ? (13 + props.collectHubs) : 7) * props.housingCount;
 		// 2 territory bonuses per zone, each bonus is 5 + trumps level
@@ -1978,7 +1978,7 @@ function getPerkEfficiencies() {
 	// Criticality:
 	//   attack gain from crits
 	var CD = 1 + props.shieldCD / 100 + perks.Criticality.level * perks.Criticality.effect;
-	var CC = (props.specialChallenge == 'duel') ? 0.5 : 1;
+	var CC = (props.specialChallenge === 'duel') ? 0.5 : 1;
 	// derate crit chance for duel
 	var critGain = ((1 - CC) + CC * (CD + perks.Criticality.effect)) / ((1 - CC) + CC * CD);
 	perks.Criticality.efficiency = getLogWeightedValue(critGain, 1, 1, 1, 1, 1) / getPerkCost("Criticality", 1);
@@ -1996,7 +1996,7 @@ function getPerkEfficiencies() {
 	//    With no pushing weight, we presume it's FALSE (optimizing for 300 hits instead) unless a 3-minute zone would yield enough radon/trinket gains to be good, which roughly corresponds to when GB is useful.
 	if (props.specialChallenge != 'berserk') {
 		var frenzyHits = 300;
-		var isDeathless = props.specialChallenge == 'resplus' || props.specialChallenge == 'resminus' || props.specialChallenge == 'trappa' || props.specialChallenge == 'combat' && props.isTrappa;
+		var isDeathless = props.specialChallenge === 'resplus' || props.specialChallenge === 'resminus' || props.specialChallenge === 'trappa' || props.specialChallenge === 'combat' && props.isTrappa;
 		if (!isDeathless && props.clearWeight > 0 || props.gbAfterpush) {
 			frenzyHits = 5;
 		}
@@ -2034,7 +2034,7 @@ function getPerkEfficiencies() {
 
 	// Pheromones
 	//   Count 3-tick breeding as 100% uptime, and weight for comparative uptime at target zone
-	if (props.specialChallenge == 'trappa' || props.specialChallenge == 'combat' && props.isTrappa) {
+	if (props.specialChallenge === 'trappa' || props.specialChallenge === 'combat' && props.isTrappa) {
 		// no breeding is the challenge.
 		perks.Pheromones.efficiency = 0;
 	} else {
@@ -2063,7 +2063,7 @@ function getPerkEfficiencies() {
 	var prismHP = 1 + (basePrismal / 100 + perks.Prismal.level * perks.Prismal.effect) * prismLayers;
 	var prismGain = (prismHP + perks.Prismal.effect * prismLayers) / prismHP;
 	// hack for trappa final respec: prismal DOES matter even though raw health doesn't, so pretend it's attack
-	perks.Prismal.efficiency = getLogWeightedValue(((props.specialChallenge == 'combat' && props.isTrappa) ? prismGain : 1), prismGain, 1, 1, 1, 1) / getPerkCost("Prismal", 1);
+	perks.Prismal.efficiency = getLogWeightedValue(((props.specialChallenge === 'combat' && props.isTrappa) ? prismGain : 1), prismGain, 1, 1, 1, 1) / getPerkCost("Prismal", 1);
 
 	// Resilience:
 	//   health gain (compounding)
@@ -2140,24 +2140,26 @@ function clearAndAutobuyPerks() {
 	efficiencyFlag(eList, pList);
 	if (props.perksRadon > 0) {
 		perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (props.specialChallenge != 'trappa');
-		origCarp = game.portal.Carpentry.radLevel;
-		origExpand = game.portal.Expansion.radLevel;
+		var origCarp = game.portal.Carpentry.radLevel;
+		var origExpand = game.portal.Expansion.radLevel;
 
-		if (props.isDownsize && props.specialChallenge == 'combat') {
+		if (props.isDownsize && props.specialChallenge === 'combat') {
 			// impractical to know actual housing in downsize, just don't reduce Carp or Expansion level
 			perks.Carpentry.level = origCarp;
 			perks.Expansion.level = origExpand;
-		} else if (props.specialChallenge == 'combat' || props.specialChallenge == 'combatRadon') {
+		} else if (props.specialChallenge === 'combat' || props.specialChallenge === 'combatRadon') {
 			// must have enough carp to sustain current coordination - or very conservatively for trappa, 10 more coords after final army send (should still be negligible Rn spent on carp)
 			wantedArmySize = (props.isTrappa ? Math.pow(1.25, 10) : 1) * props.armySize;
 			var tauntBase = 1.003 + 0.0001 * origExpand;
 			var tauntMult = props.expanding ? Math.pow(tauntBase, props.actualTaunts) : 1;
-			perks.Carpentry.level = Math.max(0, Math.ceil(Math.log(2.4 * wantedArmySize / (tauntMult * props.maxTrimps)) / Math.log(1.1)));
+			var carpWanted = Math.max(0, Math.ceil(Math.log(2.4 * wantedArmySize / (tauntMult * props.maxTrimps)) / Math.log(1.1)));
 		}
 		initialLoad(true);
+		//Setting this here since initialLoad clears perk levels and we need to know the minimum carp level we can have
+		perks.Carpentry.level = carpWanted;
 		// get correct available radon for cleared perks
 		// for max carp, just max out carp!
-		if (props.specialChallenge == 'trappacarp') {
+		if (props.specialChallenge === 'trappacarp') {
 			while (buyPerk('Carpentry', 1))
 				;
 			evaluatePerks();
@@ -2176,19 +2178,19 @@ function autobuyPerks() {
 	efficiencyFlag(eList, pList);
 	evaluatePerks();
 	// this function is not used for max pop starting spec for trappa
-	if (props.specialChallenge == 'trappacarp' && game.global.canRespecPerks) {
+	if (props.specialChallenge === 'trappacarp' && game.global.canRespecPerks) {
 		clearAndAutobuyPerks();
 		return;
 	}
 	// optimize Bait for Trappa
-	perks.Bait.optimize = (props.specialChallenge == 'trappa' || props.specialChallenge == 'combat' && props.isTrappa);
-	perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (props.specialChallenge != 'trappa') && !(props.specialChallenge == 'combat' && props.isTrappa);
-	if (!perks.Carpentry.levLocked && (props.specialChallenge == 'trappa' || props.specialChallenge == 'combat' && props.isTrappa)) {
+	perks.Bait.optimize = (props.specialChallenge === 'trappa' || props.specialChallenge === 'combat' && props.isTrappa);
+	perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (props.specialChallenge != 'trappa') && !(props.specialChallenge === 'combat' && props.isTrappa);
+	if (!perks.Carpentry.levLocked && (props.specialChallenge === 'trappa' || props.specialChallenge === 'combat' && props.isTrappa)) {
 		var maxCarpLevels = Math.log(props.perksRadon / perks.Carpentry.priceBase * (perks.Carpentry.priceFact - 1) + 1) / Math.log(perks.Carpentry.priceFact);
 		props.trappaStartPop = 10 * Math.pow(1.1, maxCarpLevels) * props.scaffoldingBonus;
 	}
 	// optimize Trumps for Downsize
-	perks.Trumps.optimize = (props.specialChallenge == 'downsize');
+	perks.Trumps.optimize = (props.specialChallenge === 'downsize');
 
 	while (props.bestPerk !== "") {
 		var bestName = props.bestPerk;
@@ -2207,11 +2209,11 @@ function autobuyPerks() {
 		efficiencyFlag();
 	}
 	// use trumps as dump perk
-	if (!perks.Trumps.levLocked && !(props.specialChallenge == 'combat') && !(props.specialChallenge == 'combatRadon')) {
+	if (!perks.Trumps.levLocked && !(props.specialChallenge === 'combat') && !(props.specialChallenge === 'combatRadon')) {
 		while (buyPerk("Trumps", 1));
 	}
 	// and Pheromones! (but not in Trappa, for minimum confusion, and not before Trappa unlock)
-	if (!perks.Pheromones.levLocked && props.specialChallenge != 'trappa' && !(props.specialChallenge == 'combat' && props.isTrappa)) {
+	if (!perks.Pheromones.levLocked && props.specialChallenge != 'trappa' && !(props.specialChallenge === 'combat' && props.isTrappa)) {
 		while (buyPerk("Pheromones", 1));
 	}
 	// secret setting to dump remaining Rn into bait for feeeeeee
