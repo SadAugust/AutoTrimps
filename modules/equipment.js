@@ -410,12 +410,12 @@ function autoEquip() {
 				//Skips trying to buy extra levels if we can't afford them
 				if (!canAffordBuilding(equipName, true, false, true, false, 1)) continue;
 				if (alwaysLvl2 && game.equipment[equip].level < 2) {
-					buyEquipment(equip, null, true, 1);
+					buyEquipment(equip, true, true, 1);
 					debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
 				}
 				if (alwaysPandemonium && challengeActive('Pandemonium')) {
 					if (game.challenges.Pandemonium.isEquipBlocked(equip)) continue;
-					buyEquipment(equip, null, true, 1);
+					buyEquipment(equip, true, true, 1);
 					debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');
 				}
 			}
@@ -433,7 +433,7 @@ function autoEquip() {
 
 	//Buy as many shields as possible when running Melting Point
 	if (game.global.universe === 2 && !getPageSetting('equipNoShields') && getPageSetting('jobSettingsArray').NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')
-		buyEquipment('Shield', null, true, 999)
+		buyEquipment('Shield', true, true, 999)
 
 	var ignoreShields = game.global.universe === 2 && getPageSetting('equipNoShields');
 	// Loop through actually getting equips
@@ -484,7 +484,7 @@ function autoEquip() {
 								debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
 							}
 							else if (maxCanAfford > 0) {
-								buyEquipment(equipName, null, true, maxCanAfford)
+								buyEquipment(equipName, true, true, maxCanAfford)
 								debug('Upgrading ' + maxCanAfford + ' ' + equipName + (maxCanAfford > 1 && equipName !== 'Boots' && equipName !== 'Pants' && equipName !== 'Shoulderguards' ? 's' : ''), 'equipment', '*upload3');
 								keepBuying = true;
 							}

@@ -4199,6 +4199,7 @@ function challengeUnlockCheck() {
 	if (hze >= 600) challenge.push("Experience");
 	if (Object.keys(MODULES.u1unlocks).length === 0) {
 		MODULES.u1unlocks.challenge = challenge;
+		return;
 	}
 	//Sets up messages when the challenges are unlocked.
 	//Tooltip is sent to users and can't be deleted until they click confirm.
@@ -4244,7 +4245,7 @@ function challengeUnlockCheck() {
 	} else if (hze === 230) {
 		message = "Upon unlocking the Dimensional Generator building AT has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic.";
 	} else if (hze === 236) {
-		message = "Upon unlocking Nature AT has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.";
+		message = "Upon unlocking Nature, AutoTrimps has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.";
 	} else if (hze === 425) {
 		message = challengeUnlock('Obliterated', false, true);
 	} else if (game.global.totalSquaredReward >= 4500 && !MODULES.u1unlocks.challenge.includes('Eradicated')) {
@@ -4296,6 +4297,7 @@ function challengeUnlockCheckU2() {
 
 	if (Object.keys(MODULES.u2unlocks).length === 0) {
 		MODULES.u2unlocks.challenge = challenges;
+		return;
 	}
 
 	var message = '';
