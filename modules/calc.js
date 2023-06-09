@@ -888,7 +888,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	return minOrMax ? (1 - fluctuation) * attack : (1 + fluctuation) * attack;
 }
 
-function calcEnemyAttack(type, zone, cell = 99, name = "Snimp", minOrMax, customAttack, equality) {
+function calcEnemyAttack(type, zone, cell = 100, name = "Improbability", minOrMax, customAttack, equality) {
 	//Init
 	var attack = calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equality);
 	var corrupt = zone >= mutations.Corruption.start();
