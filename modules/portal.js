@@ -70,15 +70,24 @@ function autoPortal(skipDaily) {
 				zonePostpone += 1;
 				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
 				cancelTooltip();
-				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1', '<b>NOTICE: Auto-Portaling in 5 seconds....</b>', 'Delay Portal');
-				setTimeout(cancelTooltip, MODULES["portal"].timeout);
+				popupsAT.portal = true;
+				if (popupsAT.remainingTime === Infinity) popupsAT.remainingTime = 5000;
+				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1 popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
+				setTimeout(function () {
+					cancelTooltip()
+					popupsAT.portal = false;
+					popupsAT.remainingTime = Infinity;
+				}, MODULES["portal"].timeout);
 				setTimeout(function () {
 					if (zonePostpone >= 2)
 						return;
-					if (getPageSetting('heliumHourChallenge', universe) != 'None')
+					if (getPageSetting('heliumHourChallenge', universe) !== 'None')
 						challenge = getPageSetting('heliumHourChallenge', universe);
 					else
 						challenge = 0;
+
+					doPortal(challenge, skipDaily);
+					return;
 				}, MODULES["portal"].timeout + 100);
 			}
 			if (game.global.world >= portalZone) {
@@ -136,6 +145,7 @@ function autoPortal(skipDaily) {
 		default:
 			break;
 	}
+
 	if (challenge !== 'None')
 		doPortal(challenge, skipDaily);
 }
@@ -191,8 +201,14 @@ function dailyAutoPortal() {
 				zonePostpone += 1;
 				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
 				cancelTooltip();
-				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1', '<b>NOTICE: Auto-Portaling in 5 seconds....</b>', 'Delay Portal');
-				setTimeout(cancelTooltip, MODULES["portal"].timeout);
+				popupsAT.portal = true;
+				if (popupsAT.remainingTime === Infinity) popupsAT.remainingTime = 5000;
+				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1 popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
+				setTimeout(function () {
+					cancelTooltip()
+					popupsAT.portal = false;
+					popupsAT.remainingTime = Infinity;
+				}, MODULES["portal"].timeout);
 				setTimeout(function () {
 					if (zonePostpone >= 2)
 						return;
@@ -744,11 +760,6 @@ function atlantrimpRespecMessage() {
 		var description = "<p><b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b></p>";
 		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'popupsAT.respecAtlantrimp = false, popupsAT.remainingTime = Infinity', '<b>NOTICE: Auto-Respeccing in ' + (popupsAT.remainingTime / 1000).toFixed(1) + ' seconds....</b>', 'Disable Respec');
 		setTimeout(surkyCombatRespec, 5000);
-		popupsAT.intervalID = setInterval(function () {
-			if (popupsAT.remainingTime === Infinity) clearInterval(popupsAT.intervalID);
-			popupsAT.remainingTime -= 100;
-			if (popupsAT.remainingTime <= 0) popupsAT.remainingTime = 0;
-		}, 100);
 	}
 	//If setting is disabled, show tooltip to allow for respec after Atlantrimp has been run
 	else {

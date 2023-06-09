@@ -329,6 +329,7 @@ function calcHitsSurvived(targetZone, type) {
 
 	//The Resulting Ratio
 	const finalDmg = Math.max(damageMult * worldDamage - block, voidDamage, worldDamage * pierce, 0);
+
 	return health / finalDmg;
 }
 

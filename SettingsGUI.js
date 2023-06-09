@@ -4380,7 +4380,7 @@ function challengeUnlockCheckU2() {
 
 //Remakes challenge/setting popup if the user doesn't click confirm and it's not showing.
 function remakeTooltip() {
-	if (!popupsAT.challenge && !popupsAT.respecAtlantrimp) {
+	if (!popupsAT.challenge && !popupsAT.respecAtlantrimp && !popupsAT.portal) {
 		if (!popupsAT.challenge) delete hzeMessage
 		return;
 	}
@@ -4389,10 +4389,18 @@ function remakeTooltip() {
 			var description = "<p><b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b></p>";
 			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'popupsAT.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in ' + popupsAT.remainingTime + ' seconds....</b>', 'Disable Respec');
 		}
-		else tooltip('confirm', null, 'update', hzeMessage, ('popupsAT.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		else if (popupsAT.challenge) {
+			tooltip('confirm', null, 'update', hzeMessage, ('popupsAT.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		}
+		else {
+			tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1 popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
+		}
 	}
 	else if (popupsAT.respecAtlantrimp) {
 		document.getElementById('tipTitle').innerHTML = "<b>NOTICE: Auto-Respeccing in " + (popupsAT.remainingTime / 1000).toFixed(1) + " seconds....</b>"
+	}
+	else if (popupsAT.portal) {
+		document.getElementById('tipTitle').innerHTML = "<b>NOTICE: Auto-Portaling in " + (popupsAT.remainingTime / 1000).toFixed(1) + " seconds....</b>"
 	}
 }
 

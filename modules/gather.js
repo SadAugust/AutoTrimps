@@ -285,7 +285,7 @@ function autoGather() {
 //Mining/Building only setting
 function autoGatherMetal() {
 	if (game.global.buildingsQueue.length <= 1) {
-		safeSetGather(!challengeActive('Transmute') ? 'wood' : 'food');
+		safeSetGather(!challengeActive('Transmute') ? 'metal' : 'food');
 	}
 	else {
 		safeSetGather('buildings')

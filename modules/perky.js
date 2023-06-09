@@ -123,7 +123,7 @@ function auto_preset() {
 	var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
 
 	var _a = perkyPresets[$$('#presetElem').value], he = _a[0], atk = _a[1], hp = _a[2];
-	var xp = floor((+he + +atk + +hp) / 5).toString();
+	var xp = Math.floor((+he + +atk + +hp) / 5).toString();
 	$$('#weight-he').value = perkyInputs['weight-he'] || he;
 	$$('#weight-atk').value = perkyInputs['weight-atk'] || atk;
 	$$('#weight-hp').value = perkyInputs['weight-hp'] || hp;

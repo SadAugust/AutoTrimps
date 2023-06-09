@@ -96,6 +96,7 @@ var popupsAT = {
 	respecAtlantrimp: false,
 	remainingTime: Infinity,
 	intervalID: null,
+	portal: false,
 }
 
 //Get Gamma burst % value
@@ -345,6 +346,15 @@ function mainLoop() {
 
 	challengeInfo();
 	atFinishedLoading = true;
+
+	if (popupsAT.remainingTime === 5000) {
+		popupsAT.remainingTime -= 0.0001;
+		popupsAT.intervalID = setInterval(function () {
+			if (popupsAT.remainingTime === Infinity) clearInterval(popupsAT.intervalID);
+			popupsAT.remainingTime -= 100;
+			if (popupsAT.remainingTime <= 0) popupsAT.remainingTime = 0;
+		}, 100);
+	}
 }
 
 //U1 functions

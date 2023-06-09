@@ -52,6 +52,8 @@ function updateAutoMapsStatus(get) {
 function makeAutomapStatusTooltip() {
 	const mapStacksText = (`Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`);
 	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy.';
+	var enemyName = game.global.world < 60 ? 'Blimp' : 'Improbability';
+	var hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against a cell 100 ${enemyName}'s max attack${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''}.`;
 	const hitsSurvived = prettify(hdStats.hitsSurvived);
 	const hitsSurvivedSetting = isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
 	const hitsSurvivedValue = hitsSurvivedSetting > 0 ? hitsSurvivedSetting : '∞';
@@ -61,10 +63,19 @@ function makeAutomapStatusTooltip() {
 		'event, ' +
 		'\"Variables that control the current state and target of Automaps.<br>' +
 		'Values in <b>bold</b> are dynamically calculated based on current zone and activity.<br>' +
-		'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>' +
-		`<br>` +
+		'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>';
+	if (game.global.universe === 2) {
+		if (!game.portal.Equality.radLocked) tooltip += `<br>\
+		If you have the Auto Equality setting set to <b>Auto Equality: Advanced</b> then all calculations will factor expected equality value into them.<br>`;
+		if (game.stats.highestRadLevel.valueTotal() > 200) tooltip += `If a mutated enemy has higher stats than the ${enemyName} on cell 100 then calculations will use that enemies stats instead.<br>`;
+	}
+	//Hits Survived
+	tooltip += `<br>` +
+		`<b>Hits Survived info</b><br>` +
+		`${hitsSurvivedText}<br>` +
 		`<b>Hits survived: ${hitsSurvived}</b> / <i>${hitsSurvivedValue}</i><br>`
 
+	//Map Setting Info
 	tooltip += `<br>` +
 		`<b>Mapping info</b><br>`;
 	if (mapSettings.shouldRun) {
@@ -79,6 +90,8 @@ function makeAutomapStatusTooltip() {
 	else {
 		tooltip += `Not running<br>`;
 	}
+
+	//HD Ratios
 	tooltip += '<br>' +
 		`<b>HD Ratio Info</b><br>` +
 		`${hdRatioText}<br>` +
@@ -406,7 +419,8 @@ function autoMap() {
 		}
 	}
 
-	if (game.global.mapsActive && game.global.universe === 2 && !getCurrentMapObject().noRecycle && hdStats.hdRatioMap > getPageSetting('testMapScummingValue')) {
+	var canRunSlowScum = mapSettings.mapName === 'Map Bonus' || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Pandemonium Destacking'
+	if (game.global.mapsActive && game.global.universe === 2 && canRunSlowScum && !getCurrentMapObject().noRecycle && hdStats.hdRatioMap > getPageSetting('testMapScummingValue')) {
 		if (game.global.mapRunCounter !== 0 || !slowScumming) mapScumming(challengeActive('Desolation') ? 9 : 10);
 	}
 }
