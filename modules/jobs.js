@@ -130,8 +130,25 @@ function buyJobs() {
 		//game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned
 	);
 
+	var canBreed = !challengeActive('Trapper') && !challengeActive('Trappapalooza');
+	var breedingTrimps = !canBreed ? Infinity : game.resources.trimps.owned - trimpsEffectivelyEmployed();
+	var hasSciThree = ((game.global.universe == 1 && game.global.sLevel >= 3) || (game.global.universe == 2 && game.buildings.Microchip.owned >= 3));
+
 	//Enables Firing for Jobs. It's a setting that will save hassle later by forcing it to be enalbed.
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
+
+	//Check breeding trimps and if we can have enough breeding then purchase workers.
+	if (canBreed && game.resources.trimps.owned < game.resources.trimps.realMax() * 0.9) {
+		if (breedingTrimps > game.resources.trimps.realMax() * 0.33) {
+			freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
+			if (freeWorkers > 0 && game.resources.trimps.realMax() <= 3e5) {
+				if (!game.jobs.Miner.locked) safeBuyJob('Miner', 1);
+				safeBuyJob('Farmer', 1);
+				safeBuyJob('Lumberjack', 1);
+			}
+		}
+		return;
+	}
 
 	//Do non-ratio/limited jobs first
 	//Explorers

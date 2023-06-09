@@ -92,7 +92,7 @@ function equipsToGet(targetZone, targetPrestige) {
 	var mapsToRun = 0;
 	var prestigeToFarmFor = 0;
 
-	const hasSciFour = ((game.global.universe == 1 && game.global.sLevel >= 3) || (game.global.universe == 2 && game.buildings.Microchip.owned >= 3));
+	const hasSciFour = ((game.global.universe == 1 && game.global.sLevel >= 4) || (game.global.universe == 2 && game.buildings.Microchip.owned >= 4));
 	const prestigeInterval = challengeActive('Mapology') || !hasSciFour ? 5 : 10;
 
 	//Loops through all prestiges

@@ -14,6 +14,9 @@ function safeBuyBuilding(building, amt) {
 	if (!canAffordBuilding(building, false, false, false, false, amt))
 		return false;
 
+	//Cap the amount we purchase to ensure we don't spend forever building
+	if (!bwRewardUnlocked("Foremany") && game.global.world <= 10) amt = 1;
+
 	const currBuyAmt = game.global.buyAmt;
 	game.global.buyAmt = amt;
 
