@@ -735,39 +735,6 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'C2', [1],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
 
-		//Balance
-		createSetting('balance',
-			function () { return ('Balance') },
-			function () {
-				var description = "<p>Enable this if you want to use Balance destacking features.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'C2', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 40) });
-		createSetting('balanceZone',
-			function () { return ('B: Zone') },
-			function () {
-				var description = "<p>The zone you would like to start destacking from.</p>";
-				return description;
-			}, 'value', 6, null, 'C2', [1],
-			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
-		createSetting('balanceStacks',
-			function () { return ('B: Stacks') },
-			function () {
-				var description = "<p>The amount of stack you have to reach before clearing them.</p>";
-				description += "<p><b>Recommended:</b> 20</p>";
-				return description;
-			}, 'value', -1, null, 'C2', [1],
-			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
-		createSetting('balanceImprobDestack',
-			function () { return ('B: Improbability Destack') },
-			function () {
-				var description = "<p>Enable this to always fully destack when fighting Improbabilities after you reach your specified destacking zone.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'C2', [1],
-			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
-
 		//Mapology
 		createSetting('mapology',
 			function () { return ('Mapology') },
@@ -1188,6 +1155,40 @@ function initializeAllSettings() {
 	const displayChallenges = true;
 	if (displayChallenges) {
 		//Helium
+
+		//Balance
+		createSetting('balance',
+			function () { return ('Balance') },
+			function () {
+				var description = "<p>Enable this if you want to use Balance destacking features.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Challenges', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 40) });
+		createSetting('balanceZone',
+			function () { return ('B: Zone') },
+			function () {
+				var description = "<p>The zone you would like to start destacking from.</p>";
+				return description;
+			}, 'value', 6, null, 'Challenges', [1],
+			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
+		createSetting('balanceStacks',
+			function () { return ('B: Stacks') },
+			function () {
+				var description = "<p>The amount of stack you have to reach before clearing them.</p>";
+				description += "<p><b>Recommended:</b> 20</p>";
+				return description;
+			}, 'value', -1, null, 'Challenges', [1],
+			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
+		createSetting('balanceImprobDestack',
+			function () { return ('B: Improbability Destack') },
+			function () {
+				var description = "<p>Enable this to always fully destack when fighting Improbabilities after you reach your specified destacking zone.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Challenges', [1],
+			function () { return (getPageSetting('balance', currSettingUniverse) && autoTrimpSettings.balance.require()) });
+
 		//Decay
 		createSetting('decay',
 			function () { return ('Decay') },
@@ -3976,7 +3977,6 @@ function modifyParentNodeUniverseSwap() {
 	//C2
 	modifyParentNode("c2disableFinished", 'show');
 	modifyParentNode("c2Fused", 'show');
-	modifyParentNode("balanceImprobDestack", radonoff);
 
 	modifyParentNode("experienceEndBW", radonon);
 	modifyParentNode("unbalanceImprobDestack", radonon);
@@ -3993,6 +3993,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("autGigaDeltaFactor", radonoff);
 
 	//Challenges
+	modifyParentNode("balanceImprobDestack", radonoff);
 	modifyParentNode("decayStacksToAbandon", radonoff);
 	modifyParentNode("lifeStacks", radonoff);
 	modifyParentNode("mapologyPrestige", radonoff);
