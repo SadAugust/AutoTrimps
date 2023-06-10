@@ -4395,7 +4395,7 @@ function remakeTooltip() {
 			tooltip('confirm', null, 'update', hzeMessage, ('popupsAT.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 		}
 		else {
-			tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1 popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
+			tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1; popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
 		}
 	}
 	else if (popupsAT.respecAtlantrimp) {

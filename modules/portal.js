@@ -72,7 +72,7 @@ function autoPortal(skipDaily) {
 				cancelTooltip();
 				popupsAT.portal = true;
 				if (popupsAT.remainingTime === Infinity) popupsAT.remainingTime = 5000;
-				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1 popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
+				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1;; popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
 				setTimeout(function () {
 					cancelTooltip()
 					popupsAT.portal = false;
@@ -203,7 +203,7 @@ function dailyAutoPortal() {
 				cancelTooltip();
 				popupsAT.portal = true;
 				if (popupsAT.remainingTime === Infinity) popupsAT.remainingTime = 5000;
-				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1 popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
+				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1; popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
 				setTimeout(function () {
 					cancelTooltip()
 					popupsAT.portal = false;
