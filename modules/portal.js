@@ -261,7 +261,6 @@ function freeVoidPortal() {
 				MODULES.portal.portalUniverse = game.global.universe;
 				swapPortalUniverse();
 			}
-			debug(MODULES.portal.portalUniverse);
 			universeSwapped();
 		}
 		downloadSave();
