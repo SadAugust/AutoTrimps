@@ -132,7 +132,7 @@ function shouldRunUniqueMap(map) {
 	if (game.global.universe !== mapData.universe) {
 		return false;
 	}
-	if (!hdStats.isC3 && mapData.challenges.includes(hdStats.currentChallenge) && !challengeActive('')) {
+	if (!hdStats.isC3 && mapData.challenges.includes(hdStats.currChallenge) && !challengeActive('')) {
 		return true;
 	}
 	//Remove speed run check for now

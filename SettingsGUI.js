@@ -42,11 +42,11 @@ function minimizeAllTabs() {
 
 function maximizeAllTabs() {
 	for (var a = document.getElementsByClassName("tabcontent"), b = 0, c = a.length; b < c; b++) {
-		if (a[b].id === 'Test') continue;
+		if (a[b].id.toLowerCase() === 'test') continue;
 		a[b].style.display = "block";
 	}
 	for (var d = document.getElementsByClassName("tablinks"), b = 0, c = d.length; b < c; b++) {
-		if (d[b].id === 'Test') continue;
+		if (d[b].id.toLowerCase() === 'test') continue;
 		(d[b].style.display = "block"), d[b].className.includes(" active") || (d[b].className += " active");
 	}
 }
@@ -4819,7 +4819,7 @@ function updateCustomButtons(initialLoad) {
 			document.getElementById("tabLegacy").style.display = "none";
 		}
 		if (document.getElementById("tabTest") != null) {
-			document.getElementById("tabTest").style.display = getPageSetting('gameUser') !== 'SadAugust' && getPageSetting('gameUser') !== 'Kyotie' && getPageSetting('gameUser') !== 'Test' ? "none" : "";
+			document.getElementById("tabTest").style.display = getPageSetting('gameUser') !== 'SadAugust' && getPageSetting('gameUser') !== 'Kyotie' && getPageSetting('gameUser').toLowerCase() !== 'test' ? "none" : "";
 		}
 	}
 	modifyParentNodeUniverseSwap();
