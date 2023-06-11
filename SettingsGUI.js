@@ -345,7 +345,7 @@ function initializeAllSettings() {
 				var description = "<p>Will control how combat is handled in dailies. If enabled will override settings in the <b>Combat</b> tab.</p>";
 				description += "<p><b>DFA: Off</b><br>Disables this setting.</p>";
 				description += "<p><b>DFA: Non-Empowered</b><br>Will only send trimps to fight if the daily doesn't have the empowered mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				description += "<p><b>DFA: All Dailies</b><br>Sends trimps to fight if they're not fighting in daily challenges, Won't do anything on Bloodthirst/Plagued/Bogged dailies.</p>";
 
 				description += "<p><b>Recommended:</b> DFA: Off</p>";
@@ -2862,7 +2862,7 @@ function initializeAllSettings() {
 			function () { return ('Shield: Modifier 1') },
 			function () {
 				var description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -2874,7 +2874,7 @@ function initializeAllSettings() {
 			function () { return ('Shield: Modifier 2') },
 			function () {
 				var description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -2886,7 +2886,7 @@ function initializeAllSettings() {
 			function () { return ('Shield: Modifier 3') },
 			function () {
 				var description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -2898,7 +2898,7 @@ function initializeAllSettings() {
 			function () { return ('Shield: Modifier 4') },
 			function () {
 				var description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -2910,7 +2910,7 @@ function initializeAllSettings() {
 			function () { return ('Shield: Modifier 5') },
 			function () {
 				var description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -2922,7 +2922,7 @@ function initializeAllSettings() {
 			function () { return ('Shield: Modifier 6') },
 			function () {
 				var description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -2934,7 +2934,7 @@ function initializeAllSettings() {
 			function () { return ('Shield: Modifier 7') },
 			function () {
 				var description = "<p>Keeps Shields with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -2965,7 +2965,7 @@ function initializeAllSettings() {
 			function () { return ('Staff: Modifier 1') },
 			function () {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -2977,7 +2977,7 @@ function initializeAllSettings() {
 			function () { return ('Staff: Modifier 2') },
 			function () {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -2989,7 +2989,7 @@ function initializeAllSettings() {
 			function () { return ('Staff: Modifier 3') },
 			function () {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -3001,7 +3001,7 @@ function initializeAllSettings() {
 			function () { return ('Staff: Modifier 4') },
 			function () {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -3013,7 +3013,7 @@ function initializeAllSettings() {
 			function () { return ('Staff: Modifier 5') },
 			function () {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -3025,7 +3025,7 @@ function initializeAllSettings() {
 			function () { return ('Staff: Modifier 6') },
 			function () {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -3037,7 +3037,7 @@ function initializeAllSettings() {
 			function () { return ('Staff: Modifier 7') },
 			function () {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
-				description += "<p>Only mods available for the heirloom type selected in <b>Rariry to Keep</b> will be shown.</p>";
+				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
 			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
@@ -4207,6 +4207,8 @@ function challengeUnlockCheck() {
 	var message = '';
 	if (hze === 40) {
 		message = challengeUnlock('Balance', false, false);
+		message += "<br><br>"
+		message = "Upon unlocking Balance AT has a new settings tab available called 'Challenge'. Here you will find a variety of settings that might be beneficial when running this challenge.";
 	} else if (hze === 55) {
 		message = challengeUnlock('Decay', true, false);
 	} else if (hze === 60) {
@@ -4811,7 +4813,7 @@ function updateCustomButtons(initialLoad) {
 			document.getElementById("tabNature").style.display = radonon || (!displayAllSettings && hze < 236) ? "none" : "";
 		}
 		if (document.getElementById("tabChallenges") !== null) {
-			document.getElementById("tabChallenges").style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && hze < 55)) ? "none" : "";
+			document.getElementById("tabChallenges").style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && hze < 40)) ? "none" : "";
 		}
 		if (document.getElementById("tabLegacy") != null) {
 			document.getElementById("tabLegacy").style.display = "none";
