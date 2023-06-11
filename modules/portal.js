@@ -53,9 +53,9 @@ function autoPortal(skipDaily) {
 			if (heliumHrBuffer === 0 && !aWholeNewWorld)
 				OKtoPortal = false;
 			if (OKtoPortal && zonePostpone === 0) {
-				if (getPageSetting('heliumHrPortal') > 0 && game.global.totalVoidMaps > 0) {
+				if (getPageSetting('heliumHrPortal', universe) > 0 && game.global.totalVoidMaps > 0) {
 					if (!MODULES.mapFunctions.portalAfterVoids) {
-						if (getPageSetting('heliumHrPortal') === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Z" + game.global.world + " - Pushing to next Poison zone then portaling after void maps have been run.", "portal");
+						if (getPageSetting('heliumHrPortal', universe) === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Z" + game.global.world + " - Pushing to next Poison zone then portaling after void maps have been run.", "portal");
 						else debug("Z" + game.global.world + " - Portaling after void maps have been run.", "portal");
 					}
 					MODULES.mapFunctions.portalAfterVoids = true;
@@ -257,8 +257,11 @@ function freeVoidPortal() {
 		debug('Portaling to increment void tracker (' + ((game.permaBoneBonuses.voidMaps.owned === 10 ? Math.floor(game.permaBoneBonuses.voidMaps.tracker / 10) : game.permaBoneBonuses.voidMaps.tracker / 10) + '/10) with liquification.'), "portal");
 		if (!game.global.canRespecPerks) debug('Portaling to refresh respec.', "portal");
 		if (MODULES.portal.portalUniverse === Infinity || (game.global.universe !== 1 && game.global.universe === MODULES.portal.portalUniverse)) {
-			if (portalUniverse !== 1) swapPortalUniverse();
-			MODULES.portal.portalUniverse = game.global.universe;
+			if (portalUniverse !== 1) {
+				MODULES.portal.portalUniverse = game.global.universe;
+				swapPortalUniverse();
+			}
+			debug(MODULES.portal.portalUniverse);
 			universeSwapped();
 		}
 		downloadSave();
@@ -483,12 +486,13 @@ function doPortal(challenge, skipDaily) {
 		}
 		else if (lastUndone === 1) {
 			MODULES.portal.currentChallenge = 'None';
+			MODULES.portal.portalUniverse = portalUniverse;
 			autoPortal(true);
 			return;
 		}
 		//Portaling into a daily
 		else {
-			if (getPageSetting('dailyPortalPreviousUniverse', portalUniverse)) {
+			if (portalUniverse > 1 && getPageSetting('dailyPortalPreviousUniverse', portalUniverse)) {
 				swapPortalUniverse();
 				universeSwapped();
 				selectChallenge('Daily');
@@ -527,13 +531,13 @@ function doPortal(challenge, skipDaily) {
 
 	//Run Perky/Surky.
 	if (typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {
-		if (portalUniverse === 1 && ($('#preset').value !== null || $('#preset').value !== 'undefined' ||
-			($('#weight-he').value !== 'undefined' && $('#weight-atk').value !== 'undefined' && $('#weight-hp').value !== 'undefined' && $('#weight-xp').value !== 'undefined'))
+		if (portalUniverse === 1 && ($('#preset').value !== null || $('#preset').value !== undefined ||
+			($('#weight-he').value !== undefined && $('#weight-atk').value !== undefined && $('#weight-hp').value !== undefined && $('#weight-xp').value !== undefined))
 		) {
 			runPerky();
 		}
-		if (portalUniverse === 2 && ($('#presetElem').value !== null || $('#presetElem').value !== 'undefined' ||
-			($('#radonWeight').value !== 'undefined' && $('#clearWeight').value !== 'undefined' && $('#survivalWeight').value !== 'undefined'))) {
+		if (portalUniverse === 2 && ($('#presetElem').value !== null || $('#presetElem').value !== undefined ||
+			($('#radonWeight').value !== undefined && $('#clearWeight').value !== undefined && $('#survivalWeight').value !== undefined))) {
 			runSurky();
 		}
 	}

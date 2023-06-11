@@ -200,6 +200,7 @@ function delayStartAgain() {
 	setInterval(guiLoop, 100 * 10);
 	updateCustomButtons(true);
 	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
+	universeSwapped();
 }
 
 function universeSwapped() {
@@ -238,9 +239,9 @@ function mainLoop() {
 		}
 	}
 
-	universeSwapped();
 	/* presetMutations(); */
 	remakeTooltip();
+	universeSwapped();
 
 	if (ATrunning == false) return;
 	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;

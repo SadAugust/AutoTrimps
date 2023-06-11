@@ -2224,66 +2224,68 @@ function autobuyPerks() {
 	console.log("Surky - Total Radon for perks: " + prettify(props.perksRadon) + ", Total Radon Spent: " + prettify(props.radonSpent), 'portal');
 }
 
-// On manually adjusting perk levels, update perk efficiencies
-var originalbuyPortalUpgrade = buyPortalUpgrade;
-buyPortalUpgrade = function () {
-	originalbuyPortalUpgrade(...arguments)
-	try {
-		if (portalUniverse === 2) initialLoad();
+if (typeof (autoTrimpSettings) === 'undefined') {
+	// On manually adjusting perk levels, update perk efficiencies
+	var originalbuyPortalUpgrade = buyPortalUpgrade;
+	buyPortalUpgrade = function () {
+		originalbuyPortalUpgrade(...arguments)
+		try {
+			if (portalUniverse === 2 && showingSurky) initialLoad();
+		}
+		catch (e) { console.log("Buy Upgrade - Efficiency color failed: " + e, "other") }
 	}
-	catch (e) { console.log("Buy Upgrade - Efficiency color failed: " + e, "other") }
-}
-// On opening portal window, update perk efficiencies
-var originalportalClicked = portalClicked;
-portalClicked = function () {
-	originalportalClicked(...arguments)
-	try {
-		if (portalUniverse === 2) initialLoad();
+	// On opening portal window, update perk efficiencies
+	var originalportalClicked = portalClicked;
+	portalClicked = function () {
+		originalportalClicked(...arguments)
+		try {
+			if (portalUniverse === 2 && showingSurky) initialLoad();
+		}
+		catch (e) { console.log("Portal Clicked - Efficiency color failed: " + e, "other") }
 	}
-	catch (e) { console.log("Portal Clicked - Efficiency color failed: " + e, "other") }
-}
-// On switching perk presets, update perk efficiencies
-var originalloadPerkPreset = loadPerkPreset;
-loadPerkPreset = function () {
-	originalloadPerkPreset(...arguments)
-	try {
-		if (portalUniverse === 2) initialLoad();
+	// On switching perk presets, update perk efficiencies
+	var originalloadPerkPreset = loadPerkPreset;
+	loadPerkPreset = function () {
+		originalloadPerkPreset(...arguments)
+		try {
+			if (portalUniverse === 2 && showingSurky) initialLoad();
+		}
+		catch (e) { console.log("Load Preset - Efficiency color failed: " + e, "other") }
 	}
-	catch (e) { console.log("Load Preset - Efficiency color failed: " + e, "other") }
-}
-// On clearing all perks, update perk efficiencies
-var originalclearPerks = clearPerks;
-clearPerks = function () {
-	originalclearPerks(...arguments)
-	try {
-		if (portalUniverse === 2) initialLoad();
+	// On clearing all perks, update perk efficiencies
+	var originalclearPerks = clearPerks;
+	clearPerks = function () {
+		originalclearPerks(...arguments)
+		try {
+			if (portalUniverse === 2 && showingSurky) initialLoad();
+		}
+		catch (e) { console.log("Clear Perks - Efficiency color failed: " + e, "other") }
 	}
-	catch (e) { console.log("Clear Perks - Efficiency color failed: " + e, "other") }
-}
-// On importing perks, update perk efficiencies
-var originalimportPerks = importPerks;
-importPerks = function () {
-	originalimportPerks(...arguments)
-	try {
-		if (portalUniverse === 2) initialLoad();
+	// On importing perks, update perk efficiencies
+	var originalimportPerks = importPerks;
+	importPerks = function () {
+		originalimportPerks(...arguments)
+		try {
+			if (portalUniverse === 2 && showingSurky) initialLoad();
+		}
+		catch (e) { console.log("Import Perks - Efficiency color failed: " + e, "other") }
 	}
-	catch (e) { console.log("Import Perks - Efficiency color failed: " + e, "other") }
-}
 
-// On swapping portla universes load either Perky or Surky.
-var originalswapPortalUniverse = swapPortalUniverse;
-swapPortalUniverse = function () {
-	originalswapPortalUniverse(...arguments)
-	try {
-		AutoPerks.removeGUI();
-		loadPortalUI();
+	// On swapping portla universes load either Perky or Surky.
+	var originalswapPortalUniverse = swapPortalUniverse;
+	swapPortalUniverse = function () {
+		originalswapPortalUniverse(...arguments)
+		try {
+			AutoPerks.removeGUI();
+			loadPortalUI();
+		}
+		catch (e) { console.log("Universe Swap - Efficiency color failed: " + e, "other") }
 	}
-	catch (e) { console.log("Universe Swap - Efficiency color failed: " + e, "other") }
-}
 
-function loadPortalUI() {
-	if (portalUniverse === 2) setupSurkyUI();
-	if (portalUniverse === 1) setupPerkyUI();
+	function loadPortalUI() {
+		if (portalUniverse === 2) setupSurkyUI();
+		if (portalUniverse === 1) setupPerkyUI();
+	}
 }
 
 //If using standalone version then when loading Surky file also load CSS & Perky then load portal UI.

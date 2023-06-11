@@ -370,6 +370,10 @@ function parse_perks(fixed, unlocks) {
 
 function savePerkySettings() {
 
+	if (!showingPerky) {
+		console.log("Perky is not showing")
+		return;
+	}
 	const perkyInputs = {
 		preset: $$('#presetElem').value,
 		'weight-he': $$('#weight-he').value,
