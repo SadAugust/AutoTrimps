@@ -48,7 +48,7 @@ function buyStorage(hypoZone) {
 		//Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
 		var exoticValue = 0;
 		if (game.global.mapsActive) {
-			exoticValue = (getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Trimple Of Doom') ? curRes * 2 :
+			exoticValue = (getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Trimple Of Doom') ? curRes :
 				game.unlocks.imps.Jestimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 45)) :
 					game.unlocks.imps.Chronoimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 5)) :
 						exoticValue
@@ -288,10 +288,6 @@ function buyBuildings() {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
 	if (game.global.world === 1 && game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
-	if (game.global.mapsActive && (getCurrentMapObject().name == 'Trimple Of Doom' || getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle') || runningAtlantrimp) {
-		if (game.global.repeatMap) repeatClicked();
-		return;
-	}
 
 	//Disabling autoBuildings if AT AutoStructure is disabled.
 	if (!getPageSetting('buildingsType')) return;
@@ -311,7 +307,7 @@ function buyBuildings() {
 	}
 	// Storage, shouldn't be needed anymore that autostorage is lossless. Hypo fucked this statement :(
 	//Turn on autostorage if you're past your last farmzone and you don't need to save wood anymore. Else will have to force it to purchase enough storage up to the cost of whatever bonfires
-	if (!game.global.autoStorage && game.global.world >= hypoZone)
+	if (!game.global.improvedAutoStorage && game.global.world >= hypoZone)
 		toggleAutoStorage(false);
 
 	//Disables AutoStorage when our Hypo farm zone is greater than current world zone
@@ -321,8 +317,14 @@ function buyBuildings() {
 	}
 
 	//Buys storage buildings when about to cap resources
-	if (!game.global.autoStorage) {
+	if (!game.global.improvedAutoStorage) {
 		buyStorage(hypoZone);
+	}
+
+	//Disable buying buildings inside of unique maps
+	if (game.global.mapsActive && (getCurrentMapObject().name == 'Trimple Of Doom' || getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle') || runningAtlantrimp) {
+		if (game.global.repeatMap) repeatClicked();
+		return;
 	}
 
 	if (typeof runningAtlantrimp !== 'undefined' && runningAtlantrimp)
