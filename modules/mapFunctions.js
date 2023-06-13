@@ -1270,8 +1270,13 @@ function prestigeRaiding() {
 		if (MODULES.mapFunctions.prestigeRaidZone > 0 && MODULES.mapFunctions.prestigeFragMapBought) status = 'Prestige frag farm to: ' + prettify(prestigeTotalFragCost(raidZones, targetPrestige, mapSpecial, incrementMaps, true));
 
 		var mapsToRun = game.global.mapsActive ? equipsToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
-		var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].mapSpecial === targetPrestige;
+		var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
 		var repeat = mapsToRun === 1 || (specialInMap && mapsToRun === 2);
+
+		if (MODULES.mapFunctions.prestigeMapArray[0] !== undefined && game.global.mapsActive && equipsToGet(getCurrentMapObject().level)[0] === 0) {
+			MODULES.mapFunctions.prestigeMapArray = new Array(5);
+			MODULES.mapFunctions.prestigeRaidZone = 0;
+		}
 
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
@@ -1288,9 +1293,8 @@ function prestigeRaiding() {
 		farmingDetails.incrementMaps = incrementMaps;
 	}
 
-
 	//Resetting variables and recycling the maps used
-	if (!shouldMap && (mapSettings.mapName === mapName || MODULES.mapFunctions.prestigeMapArray[0] != undefined)) {
+	if (!shouldMap && (mapSettings.mapName === mapName || MODULES.mapFunctions.prestigeMapArray[0] !== undefined)) {
 		if (mapSettings.mapName === mapName) debug(mapName + " (Z" + game.global.world + ") took " + formatTimeForDescriptions(timeForFormatting(mappingTime)) + ".", "map_Details");
 		if (defaultSettings.recycle && game.global.preMapsActive) {
 			for (var x = 0; x < MODULES.mapFunctions.prestigeMapArray.length; x++) {
