@@ -2290,7 +2290,7 @@ if (typeof (autoTrimpSettings) === 'undefined') {
 
 //If using standalone version then when loading Surky file also load CSS & Perky then load portal UI.
 //After initial load everything should work perfectly.
-if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
+if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust'))) {
 	//Load CSS so that the UI is visible
 	var link1 = document.createElement("link");
 	link1.rel = "stylesheet";
