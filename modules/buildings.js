@@ -307,7 +307,7 @@ function buyBuildings() {
 	}
 	// Storage, shouldn't be needed anymore that autostorage is lossless. Hypo fucked this statement :(
 	//Turn on autostorage if you're past your last farmzone and you don't need to save wood anymore. Else will have to force it to purchase enough storage up to the cost of whatever bonfires
-	if (!game.global.improvedAutoStorage && game.global.world >= hypoZone)
+	if (!game.global.autoStorage && game.global.world >= hypoZone)
 		toggleAutoStorage(false);
 
 	//Disables AutoStorage when our Hypo farm zone is greater than current world zone
