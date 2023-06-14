@@ -124,7 +124,7 @@ function autoheirlooms() {
 	if (!getPageSetting('heirloomAuto') || getPageSetting('heirloomAutoTypeToKeep') === 'None' || getPageSetting('heirloomAutoRareToKeep') === 'None') return;
 
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
-	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 3 ? 'Core' : 'All';
+	const heirloomType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 4 ? 'Core' : 'All';
 	var heirloomWorth;
 
 	//Looping through the heirloom type set in typetokeep setting and stashing them.
@@ -140,7 +140,7 @@ function autoheirlooms() {
 		}
 	}
 	//If typetokeep is set to all will loop through all heirloom types and stash them.
-	else if (getPageSetting('heirloomAutoTypeToKeep') === 4) {
+	else if (getPageSetting('heirloomAutoTypeToKeep') === 3) {
 		const heirloomTypes = ['Shield', 'Staff'];
 		if (game.global.universe === 1) heirloomTypes.push('Core');
 
