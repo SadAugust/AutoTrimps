@@ -755,7 +755,7 @@ function atlantrimpRespecMessage() {
 
 	popupsAT.respecAtlantrimp = false;
 
-	var respecSetting = getPageSetting('testRadonCombatRespec');
+	var respecSetting = getPageSetting('autoCombatRespec');
 	//If setting is enabled, respec into Surky combat respec
 	if (respecSetting) {
 		popupsAT.respecAtlantrimp = true;

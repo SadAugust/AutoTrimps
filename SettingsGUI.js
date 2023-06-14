@@ -153,6 +153,18 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On whilst highest zone is below 30 otherwise off</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [1, 2]);
+		createSetting('downloadSaves',
+			function () { return ('Download Saves') },
+			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
+			'boolean', false, null, 'Core', [1, 2]);
+		createSetting('portalVoidIncrement',
+			function () { return ('Liq for free Void') },
+			function () {
+				var description = "<p>Delays auto portaling into your preferred run and repeatedly does U1 portals until your bone void counter is 1 drop away from a guaranteed extra void map.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Core', [0],
+			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount() >= 20) });
 		createSetting('autoPerks',
 			function () { return ('Auto Allocate Perks') },
 			function () {
@@ -160,6 +172,27 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [1, 2]);
+
+		createSetting('autoCombatRespec',
+			function () { return (['Atlantrimp Respec Off', 'Atlantrimp Respec Popup', 'Atlantrimp Respec Force']) },
+			function () {
+				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
+
+				var description = "<p><b>Atlantrimp Respec Off</b><br>Disables this setting.</p>";
+
+				description += "<p><b>Atlantrimp Respec Popup</b><br>Will display a popup after complete " + trimple + " asking whether you would like to respec into a combat spec.</p>";
+
+				description += "<p><b>Atlantrimp Respec Force</b><br>5 seconds after completing " + trimple + " will respec into the Surky <b>Radon Combat Respec</b> preset to maximise combat stats. Has a popup that allows you to disable the respec if clicked within the 5 second window.</p>";
+
+				description += "<p>Won't be worthwhile using without having <b>Auto Allocate Perks</b> enabled as your next run would be started with the combat respec.</p>";
+				description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + ".</p>";
+				description += "<p>Will only run when <b>Liq for free Void</b> is enabled and will go back to U1 when a respec isn't available at the end of a run.</p>";
+
+				description += "<p><b>Recommended:</b> Atlantrimp Respec Off</p>";
+				return description
+			},
+			'multitoggle', [0], null, 'Core', [2]);
+
 		createSetting('presetSwap',
 			function () { return ('Preset Swapping') },
 			function () {
@@ -289,14 +322,6 @@ function initializeAllSettings() {
 			function () {
 				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
 			});
-		createSetting('portalVoidIncrement',
-			function () { return ('Liq for free Void') },
-			function () {
-				var description = "<p>Delays auto portaling into your preferred run and repeatedly does U1 portals until your bone void counter is 1 drop away from a guaranteed extra void map.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'Core', [0],
-			function () { return (game.permaBoneBonuses.voidMaps.owned >= 5 && checkLiqZoneCount() >= 20) });
 
 		//Pause + Switch
 		createSetting('pauseScript',
@@ -3397,10 +3422,6 @@ function initializeAllSettings() {
 			function () { return ('Cleanup Saved Settings') },
 			function () { return ('Deletes old values from previous versions of the script from your AutoTrimps settings file.') },
 			'infoclick', 'CleanupAutoTrimps', null, 'Import Export', [0]); */
-		createSetting('downloadSaves',
-			function () { return ('Download Saves') },
-			function () { return ('Will automatically download saves whenever AutoTrimps portals.') },
-			'boolean', false, null, 'Import Export', [1, 2]);
 
 		createSetting('autoAllocatePresets',
 			function () { return ('Auto Allocate Presets') },
@@ -3469,17 +3490,6 @@ function initializeAllSettings() {
 				description += "<p>Assumes killing at max speed and factors overkill into the calculations.</p>";
 				return description;
 			}, 'action', 'testMetalIncome();', null, 'Test', [0]);
-
-		createSetting('testRadonCombatRespec',
-			function () { return ('Post Atlantrimp Respec') },
-			function () {
-				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
-				var description = "<p>5 seconds after completing " + trimple + " will respec into the Surky <b>Radon Combat Respec</b> preset to maximise combat stats.</p>";
-				description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + ".</p>";
-				description += "<p>Will only run when <b>Liq for free Void</b> is enabled and will go back to U1 when a respec isn't available at the end of a run.</p>";
-				return description
-			},
-			'boolean', false, null, 'Test', [2]);
 
 		createSetting('testTotalEquipmentCost',
 			function () { return ('Total Equipment Cost') },
@@ -3960,6 +3970,8 @@ function modifyParentNodeUniverseSwap() {
 	var heirloom = getPageSetting('heirloomAuto', currSettingUniverse) ? 'show' : 'hide';
 
 	//Core
+
+	modifyParentNode("portalVoidIncrement", radonon);
 	modifyParentNode("radonsettings", 'show');
 
 	//Dailies
@@ -3969,7 +3981,8 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("mapOddEvenIncrement", 'show');
 	modifyParentNode("dailyHeliumHrPortal", 'show');
 
-	if (getPageSetting('displayAllSettings') || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && holidayObj.holiday === 'Eggy')) modifyParentNode("heliumC2Challenge", 'show');
+	if (getPageSetting('displayAllSettings')// || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && holidayObj.holiday === 'Eggy')
+	) modifyParentNode("heliumC2Challenge", 'show');
 	else modifyParentNode("heliumC2Challenge", 'hide');
 
 	//Maps
@@ -5423,6 +5436,11 @@ function updateATVersion() {
 			When spending these bone charges it will use the job ratio & gather settings that you have setup in that section.");
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.99') {
+			if (typeof (tempSettings['testRadonCombatRespec']) !== 'undefined') {
+				if (typeof (tempSettings['testRadonCombatRespec'].enabledU2) !== 'undefined') autoTrimpSettings['autoCombatRespec'].valueU2 = (tempSettings['testRadonCombatRespec'].enabledU2 ? 2 : 0);
+			}
+		}
 
 		autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
 		if (changelog.length !== 0) {
