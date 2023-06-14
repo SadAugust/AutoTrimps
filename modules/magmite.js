@@ -20,7 +20,7 @@ function calcMiSpent(upgrade) {
 function miRatio() {
 
 	//Find Mi Ratio
-	var eff, cap, sup, oc, effr, capr, supr, ocr, effspend, effspendr, capspend, capspendr, supspend, supspendr, ocspend, ocspendr;
+	var eff, cap, sup, oc, effRatio, capRatio, supRatio, ocRatio, effSpend, effSpendRatio, capSpend, capSpendRatio, supSpend, supSpendRatio, ocSpend, ocSpendRatio;
 
 	eff = calcMiSpent('Efficiency');
 	cap = calcMiSpent('Capacity');
@@ -29,29 +29,29 @@ function miRatio() {
 
 	var total = (eff + cap + sup + oc);
 
-	effr = (eff > 0) ? ((eff / total) * 100) : 1;
-	capr = (cap > 0) ? ((cap / total) * 100) : 1;
-	supr = (sup > 0) ? ((sup / total) * 100) : 1;
-	ocr = (oc > 0) ? ((oc / total) * 100) : 1;
+	effRatio = (eff > 0) ? ((eff / total) * 100) : 1;
+	capRatio = (cap > 0) ? ((cap / total) * 100) : 1;
+	supRatio = (sup > 0) ? ((sup / total) * 100) : 1;
+	ocRatio = (oc > 0) ? ((oc / total) * 100) : 1;
 
 	//Find Player ratio
-	effspend = (getPageSetting('effratio') > 0) ? getPageSetting('effratio') : 0;
-	capspend = (getPageSetting('capratio') > 0) ? getPageSetting('capratio') : 0;
-	supspend = (getPageSetting('supratio') > 0) ? getPageSetting('supratio') : 0;
-	ocspend = (getPageSetting('ocratio') > 0) ? getPageSetting('ocratio') : 0;
+	effSpend = (getPageSetting('effratio', 1) > 0) ? getPageSetting('effratio', 1) : 0;
+	capSpend = (getPageSetting('capratio', 1) > 0) ? getPageSetting('capratio', 1) : 0;
+	supSpend = (getPageSetting('supratio', 1) > 0) ? getPageSetting('supratio', 1) : 0;
+	ocSpend = (getPageSetting('ocratio', 1) > 0) ? getPageSetting('ocratio', 1) : 0;
 
-	var totalspend = (effspend + capspend + supspend + ocspend);
+	var totalSpend = (effSpend + capSpend + supSpend + ocSpend);
 
-	effspendr = (effspend > 0) ? ((totalspend / effspend) * 100) : 0;
-	capspendr = (capspend > 0) ? ((totalspend / capspend) * 100) : 0;
-	supspendr = (supspend > 0) ? ((totalspend / supspend) * 100) : 0;
-	ocspendr = (ocspend > 0) ? ((totalspend / ocspend) * 100) : 0;
+	effSpendRatio = (effSpend > 0) ? ((effSpend / totalSpend) * 100) : 0;
+	capSpendRatio = (capSpend > 0) ? ((capSpend / totalSpend) * 100) : 0;
+	supSpendRatio = (supSpend > 0) ? ((supSpend / totalSpend) * 100) : 0;
+	ocSpendRatio = (ocSpend > 0) ? ((ocSpend / totalSpend) * 100) : 0;
 
 	//Find Next Spend
-	var efffinal = effspendr - effr;
-	var capfinal = capspendr - capr;
-	var supfinal = supspendr - supr;
-	var ocfinal = ocspendr - ocr;
+	var efffinal = effSpendRatio - effr;
+	var capfinal = capSpendRatio - capr;
+	var supfinal = supSpendRatio - supr;
+	var ocfinal = ocSpendRatio - ocr;
 
 	var ratios = [];
 	if (efffinal !== -1)
@@ -78,12 +78,12 @@ function miRatio() {
 
 function autoMagmiteSpender() {
 	if (game.global.universe !== 1) return;
-	if (getPageSetting('ratiospend')) {
-		var tospend = miRatio();
-		var upgrader = game.generatorUpgrades[tospend];
+	if (getPageSetting('ratiospend', 1)) {
+		var toSpend = miRatio();
+		var upgrader = game.generatorUpgrades[toSpend];
 		if (game.global.magmite >= upgrader.cost()) {
-			debug("Auto Spending " + upgrader.cost() + " Magmite on: " + tospend + " #" + (game.generatorUpgrades[tospend].upgrades + 1), "magmite");
-			buyGeneratorUpgrade(tospend);
+			debug("Auto Spending " + upgrader.cost() + " Magmite on: " + toSpend + " #" + (game.generatorUpgrades[toSpend].upgrades + 1), "magmite");
+			buyGeneratorUpgrade(toSpend);
 		}
 	} else {
 		try {
@@ -105,12 +105,12 @@ function autoMagmiteSpender() {
 			}
 			var hasOv = game.permanentGeneratorUpgrades.Hybridization.owned && game.permanentGeneratorUpgrades.Storage.owned;
 			var ovclock = game.generatorUpgrades.Overclocker;
-			if (hasOv && ((getPageSetting('spendmagmitesetting') === 0 || getPageSetting('spendmagmitesetting') === 3) || !ovclock.upgrades) && (game.global.magmite >= ovclock.cost())) {
+			if (hasOv && ((getPageSetting('spendmagmitesetting', 1) === 0 || getPageSetting('spendmagmitesetting', 1) === 3) || !ovclock.upgrades) && (game.global.magmite >= ovclock.cost())) {
 				debug("Auto Spending " + ovclock.cost() + " Magmite on: Overclocker" + (ovclock.upgrades ? " #" + (ovclock.upgrades + 1) : ""), "magmite");
 				buyGeneratorUpgrade('Overclocker');
 			}
 
-			var repeat = (getPageSetting('spendmagmitesetting') === 0 || getPageSetting('spendmagmitesetting') === 1);
+			var repeat = (getPageSetting('spendmagmitesetting', 1) === 0 || getPageSetting('spendmagmitesetting', 1) === 1);
 			while (repeat) {
 				if (MODULES["magmite"].algorithm === 2) {
 					var eff = game.generatorUpgrades["Efficiency"];
