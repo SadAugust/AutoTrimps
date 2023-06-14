@@ -249,7 +249,7 @@ function shouldRunUniqueMap(map) {
 
 function recycleMap_AT(forceAbandon) {
 	if (!getPageSetting('autoMaps')) return;
-	if (game.jobs.Explorer.locked) return;
+	if (!getPageSetting('recycleExplorer') && !game.jobs.Explorer.locked) return;
 	if (!forceAbandon && (challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb')) return;
 
 	if (game.global.mapsActive) {
@@ -1178,7 +1178,7 @@ function mapDestacking() {
 	if (!MODULES.mapFunctions.challengeContinueRunning && shouldMap && game.global.mapsActive && destackValue > 0) MODULES.mapFunctions.challengeContinueRunning = true;
 
 	//Recycling maps if we have 0 stacks
-	if (!game.jobs.Explorer.locked && game.global.mapsActive && getCurrentMapObject().level === 6 &&
+	if (game.global.mapsActive && getCurrentMapObject().level === 6 &&
 		(
 			(challengeActive('Balance') && !shouldMap && game.challenges.Balance.balanceStacks === 0) ||
 			(challengeActive('Daily') && !shouldMap && game.global.dailyChallenge.bloodthirst.stacks === 0) ||
@@ -2330,7 +2330,7 @@ function glass() {
 			MODULES.mapFunctions.challengeContinueRunning = true;
 		}
 		else {
-			if (!game.jobs.Explorer.locked && game.challenges.Glass.shards === 0) recycleMap_AT();
+			if (game.challenges.Glass.shards === 0) recycleMap_AT();
 			MODULES.mapFunctions.challengeContinueRunning = false;
 			shouldFarm = false;
 		}

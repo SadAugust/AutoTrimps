@@ -1676,6 +1676,15 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
 
+		createSetting('recycleExplorer',
+			function () { return ('Recycle Pre-Explorers') },
+			function () {
+				var description = "<p>Will allow the script to abandon and recycle maps before Explorers have been unlocked.</p>";
+				description += "<p><b>Be warned this may cause issues with fragments in the early game or on select challenges.</b></p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Maps', [1, 2]);
+
 		createSetting('hitsSurvived',
 			function () { return ('Hits Survived') },
 			function () {
@@ -3956,6 +3965,7 @@ function modifyParentNodeUniverseSwap() {
 	else modifyParentNode("heliumC2Challenge", 'hide');
 
 	//Maps
+	modifyParentNode("recycleExplorer", 'show');
 	modifyParentNode("scryvoidmaps", 'show');
 	modifyParentNode("uniqueMapSettingsArray", 'show');
 
