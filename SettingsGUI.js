@@ -1433,6 +1433,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>If enabled, AT will buy its first Gigastation if: <br>A) Has more than 2 Warps & <br>B) Can\'t afford more Coords & <br>C) (Only if Custom Delta Factor > 20) Lacking Health or Damage & <br>D) (Only if Custom Delta Factor > 20) Has run at least 1 map stack.</p>";
 				description += "<p>Then, it'll calculate the delta based on your Custom Delta Factor and your Auto Portal/VM zone (whichever is higher), or Daily Auto Portal/VM zone, or " + cinf() + " zone, or Custom AutoGiga Zone.</p>";
+				description += "<p><b>You must have the upgrades setting enabled for this setting to run!</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			},

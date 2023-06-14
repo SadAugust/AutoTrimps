@@ -88,14 +88,14 @@ function autoGiga(targetZone, metalRatio = 0.5, slowDown = 10, customBase) {
 	return +(Math.round(delta + "e+2") + "e-2");
 }
 
-function firstGiga(forced) {
+function firstGiga() {
 	//Build our first giga if: A) Has more than 2 Warps & B) Can't afford more Coords & C)* Lacking Health or Damage & D)* Has run at least 1 map stack or if forced to
 	const s = !(getPageSetting('autGigaDeltaFactor') > 20);
 	const a = game.buildings.Warpstation.owned >= 2;
 	const b = !canAffordCoordinationTrimps() || game.global.spireActive || game.global.world >= 230 && !canAffordTwoLevel(game.upgrades.Coordination);
 	const c = s || mapSettings.mapName === 'HD Farm' || mapSettings.mapName === 'Hits Survived';
 	const d = s || game.global.mapBonus >= 1;
-	if (!forced && !(a && b && c && d)) return false;
+	if (!(a && b && c && d)) return false;
 
 	//Define Base and Delta for this run
 	const base = game.buildings.Warpstation.owned;
