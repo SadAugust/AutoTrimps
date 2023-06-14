@@ -469,9 +469,9 @@ function mapBonus() {
 	const rMBZone = getPageSetting('mapBonusZone');
 	const baseSettings = getPageSetting('mapBonusSettings');
 	var defaultSettings = getPageSetting('mapBonusDefaultSettings');
-
+	var mapBonusRatio = getPageSetting('mapBonusRatio')
 	//Will get map stacks if below our set hd threshold.
-	var healthCheck = hdStats.hdRatio > getPageSetting('mapBonusRatio') && getPageSetting('mapBonusStacks') > game.global.mapBonus;
+	var healthCheck = mapBonusRatio > 0 && hdStats.hdRatio > mapBonusRatio && getPageSetting('mapBonusStacks') > game.global.mapBonus;
 	var healthStacks = healthCheck ? getPageSetting('mapBonusStacks') : 0;
 	//Will get max map bonus stacks if we are doing an active spire.
 	var spireCheck = getPageSetting('MaxStacksForSpire') && isDoingSpire();
@@ -2726,7 +2726,7 @@ function hdFarm(skipHealthCheck) {
 		} else {
 			shouldHealthFarm = false;
 			setting = baseSettings[settingIndex];
-			hdFarmMapCap = rHDFDefaultSetting.mapCap;
+			hdFarmMapCap = rHDFDefaultSetting.mapCap === -1 ? Infinity : rHDFDefaultSetting.mapCap;
 			hdFarmMaxMaps = hdType === 'world' && game.global.mapBonus !== 10 ? 10 : null;
 			hdFarmMinMaps = hdType === 'world' && game.global.mapBonus !== 10 ? 0 : null;
 		}
@@ -2757,7 +2757,7 @@ function hdFarm(skipHealthCheck) {
 		if (hdType === 'hitsSurvived' ? hdRatio < equipfarmdynamicHD(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : !shouldHealthFarm ? hdRatio > equipfarmdynamicHD(setting) : hdRatio < equipfarmdynamicHD(setting))
 			shouldMap = true;
 
-
+		//Set this here so that we can check against the correct map name in following checks
 		if (shouldHealthFarm || hdType === 'hitsSurvived') {
 			mapName = 'Hits Survived';
 		}

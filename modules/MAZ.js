@@ -1657,6 +1657,9 @@ function mazPopulateHelpWindow(titleText, trimple) {
 			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when auto spending bone charges.</li>";
 			mazHelp += "<li><b>Gather</b> - The gather type to use when auto spending bone charges.</li>";
 		}
+		if (hdFarm) {
+			mazHelp += "<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>";
+		}
 	}
 
 	if (golden) mazHelp += "<br>";
@@ -1735,7 +1738,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>HD Base</b> - What H:D you'd like to reach.</li>";
 		mazHelp += "<li><b>HD Mult</b> - Starting from the zone above the lines initial zone, this setting will multiply the H:D you have set in HD Base. So if your initial zone was 100, HD Base was 10, HD Mult was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste Map Farming for a really low H:D.'</li>";
 
-		mazHelp += "<li><b>HD Type</b> - The type of HD you'd like to target. <br>If <b>Map Level<b> has been selected it will farm until auto level reaches that level. <br>Will only run Void Map lines if you have void maps in your map chamber.</li>";
+		mazHelp += "<li><b>HD Type</b> - The type of HD you'd like to target. <br>If <b>Map Level</b> has been selected it will farm until auto level reaches that level. <br>Will only run Void Map lines if you have void maps in your map chamber.</li>";
 	}
 
 	if (boneShrine) {

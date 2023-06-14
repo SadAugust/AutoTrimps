@@ -71,8 +71,8 @@ function makeAutomapStatusTooltip() {
 		if (game.stats.highestRadLevel.valueTotal() > 200) tooltip += `If a mutated enemy has higher stats than the ${enemyName} on cell 100 then calculations will use that enemies stats instead.< br > `;
 	}
 	//Hits Survived
-	tooltip += `< br > ` +
-		`< b > Hits Survived info</b > <br>` +
+	tooltip += `<br>` +
+		`<b> Hits Survived info</b > <br>` +
 		`${hitsSurvivedText}<br>` +
 		`<b>Hits survived: ${hitsSurvived}</b> / <i>${hitsSurvivedValue}</i><br>`
 
