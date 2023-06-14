@@ -757,7 +757,7 @@ function atlantrimpRespecMessage() {
 
 	var respecSetting = getPageSetting('autoCombatRespec');
 	//If setting is enabled, respec into Surky combat respec
-	if (respecSetting) {
+	if (respecSetting === 2) {
 		popupsAT.respecAtlantrimp = true;
 		popupsAT.remainingTime = 5000;
 		var description = "<p><b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b></p>";
@@ -765,7 +765,7 @@ function atlantrimpRespecMessage() {
 		setTimeout(surkyCombatRespec, 5000);
 	}
 	//If setting is disabled, show tooltip to allow for respec after Atlantrimp has been run
-	else {
+	else if (respecSetting === 1) {
 		var description = "<p>Click <b>Force Respec</b> to respec into the Surky <b>" + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec</b> preset.</p>";
 		tooltip('confirm', null, 'update', description, 'popupsAT.respecAtlantrimp = true; surkyCombatRespec()', '<b>Post Atlantrimp Respec</b>', 'Force Respec');
 	}
