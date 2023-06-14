@@ -56,7 +56,7 @@ function potencyMod() {
 		potencyMod = potencyMod.mul(Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks));
 
 	//Void Maps (Slow Breed)
-	if (game.global.voidBuff == "slowBreed")
+	if (game.global.voidBuff === "slowBreed")
 		potencyMod = potencyMod.mul(0.2);
 
 	//Heirlooms
@@ -76,9 +76,9 @@ function potencyMod() {
 	}
 	//Mutators
 	//Gene Attack
-	if (game.global.universe == 2 && u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
+	if (game.global.universe === 2 && u2Mutations.tree.GeneAttack.purchased) potencyMod = potencyMod.div(50);
 	//Gene Health
-	if (game.global.universe == 2 && u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
+	if (game.global.universe === 2 && u2Mutations.tree.GeneHealth.purchased) potencyMod = potencyMod.div(50);
 
 	return potencyMod.div(10).add(1);
 }
@@ -172,9 +172,9 @@ function geneAssist() {
 			}
 		}
 	}
-	else if (compareTime.add(thresh.mul(-1)).cmp(target) > 0 || (potencyMod().cmp(1) == 0)) {
+	else if (compareTime.add(thresh.mul(-1)).cmp(target) > 0 || (potencyMod().cmp(1) === 0)) {
 		if (!genDif.isFinite()) genDif = new Decimal(-1);
-		if (genDif.cmp(0) < 0 && game.options.menu.gaFire.enabled != 2) {
+		if (genDif.cmp(0) < 0 && game.options.menu.gaFire.enabled !== 2) {
 			if (genDif.cmp(-10) < 0) genDif = new Decimal(-10);
 			removeGeneticist(genDif.abs().toNumber());
 		}

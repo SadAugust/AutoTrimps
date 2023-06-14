@@ -13,10 +13,10 @@ function safeLocalStorage(name, data) {
 			if ((new Date() - lastSave) / 450 < 1) return
 			else lastSave = new Date();
 		}
-		if (typeof data != "string") data = JSON.stringify(data);
+		if (typeof data !== "string") data = JSON.stringify(data);
 		localStorage.setItem(name, data);
 	} catch (e) {
-		if (e.code == 22 || e.code == 1014) { // 
+		if (e.code === 22 || e.code === 1014) { // 
 			// Storage full, delete oldest portal from history, and try again
 			graphsDebug(`Deleting ${Object.keys(portalSaveData)[0]}, out of storage`)
 			delete portalSaveData[Object.keys(portalSaveData)[0]];
@@ -71,7 +71,7 @@ function formatDuration(timeSince) {
 function loadGraphData() {
 	var loadedData = LZString.decompressFromBase64(localStorage.getItem("portalDataHistory"));
 	var currentPortal = JSON.parse(localStorage.getItem("portalDataCurrent"));
-	if (loadedData != "") {
+	if (loadedData !== "") {
 		var loadedData = JSON.parse(loadedData);
 		if (currentPortal) { loadedData[Object.keys(currentPortal)[0]] = Object.values(currentPortal)[0] }
 		console.log("Graphs: Found portalSaveData")
@@ -90,7 +90,7 @@ function loadGraphData() {
 		}
 	}
 	// initialize save space for the toggles
-	if (GRAPHSETTINGS.toggles == null) GRAPHSETTINGS.toggles = {};
+	if (GRAPHSETTINGS.toggles === null) GRAPHSETTINGS.toggles = {};
 	for (const graph of graphList) {
 		if (graph.toggles) {
 			if (GRAPHSETTINGS.toggles[graph.id] === undefined) { GRAPHSETTINGS.toggles[graph.id] = {} }
@@ -111,7 +111,7 @@ function clearData(keepN, clrall = false) {
 	var currentPortalNumber = getTotalPortals();
 	if (clrall) { // delete all but current
 		for (const [portalID, portalData] of Object.entries(portalSaveData)) {
-			if (portalData.totalPortals != currentPortalNumber) {
+			if (portalData.totalPortals !== currentPortalNumber) {
 				delete portalSaveData[portalID];
 				graphsDebug(`Deleting ${portalID}, clearall ${clrall}`)
 				changed = true;
@@ -230,8 +230,8 @@ function createUI() {
 	var universeFooter = document.getElementById("graphFooterLine1");
 	[
 		["universeSelection", [1, 2], "Universe ", " swapGraphUniverse();"],
-		["u1graphSelection", graphList.filter((g) => g.universe == 1 || !g.universe).map((g) => g.selectorText)],
-		["u2graphSelection", graphList.filter((g) => g.universe == 2 || !g.universe).map((g) => g.selectorText)]
+		["u1graphSelection", graphList.filter((g) => g.universe === 1 || !g.universe).map((g) => g.selectorText)],
+		["u2graphSelection", graphList.filter((g) => g.universe === 2 || !g.universe).map((g) => g.selectorText)]
 	].forEach((opts) => universeFooter.appendChild(createSelector(...opts)))
 
 	universeFooter.innerHTML += `
@@ -273,12 +273,12 @@ function createUI() {
 
 	// Adjust UI elements for Trimps Theme changes
 	MODULES.graphs.themeChanged = function () {
-		if (game && game.options.menu.darkTheme.enabled != lastTheme) {
+		if (game && game.options.menu.darkTheme.enabled !== lastTheme) {
 			function f(h) {
-				h.style.color = 2 == game.options.menu.darkTheme.enabled ? "" : "black";
+				h.style.color = 2 === game.options.menu.darkTheme.enabled ? "" : "black";
 			}
 			function g(h) {
-				if ("graphSelection" == h.id) return void (2 != game.options.menu.darkTheme.enabled && (h.style.color = "black"));
+				if ("graphSelection" === h.id) return void (2 !== game.options.menu.darkTheme.enabled && (h.style.color = "black"));
 			}
 			toggleDarkGraphs();
 			var c = document.getElementsByTagName("input");
@@ -304,7 +304,7 @@ function createUI() {
 function swapGraphUniverse() {
 	var universe = GRAPHSETTINGS.universeSelection;
 	var active = `u${universe}`
-	var inactive = `u${universe == 1 ? 2 : 1}`
+	var inactive = `u${universe === 1 ? 2 : 1}`
 	document.getElementById(`${active}graphSelection`).style.display = '';
 	document.getElementById(`${inactive}graphSelection`).style.display = 'none';
 }
@@ -337,7 +337,7 @@ function toggleDarkGraphs() {
 // Toggle AT windows with UI, or force close with Esc
 function escapeATWindows(escPressed = true) {
 	var a = document.getElementById("tooltipDiv");
-	if (a.style.display != "none") return void cancelTooltip(); // old code, uncertain what it's for or why it's here.
+	if (a.style.display !== "none") return void cancelTooltip(); // old code, uncertain what it's for or why it's here.
 	for (elemId of ["autoSettings", "autoTrimpsTabBarMenu", "graphParent"]) {
 		var elem = document.getElementById(elemId);
 		if (!elem) continue;
@@ -356,8 +356,8 @@ function escapeATWindows(escPressed = true) {
 document.addEventListener(
 	"keydown",
 	function (a) {
-		1 != game.options.menu.hotkeys.enabled || game.global.preMapsActive || game.global.lockTooltip
-			|| ctrlPressed || heirloomsShown || 27 != a.keyCode || escapeATWindows();
+		1 !== game.options.menu.hotkeys.enabled || game.global.preMapsActive || game.global.lockTooltip
+			|| ctrlPressed || heirloomsShown || 27 !== a.keyCode || escapeATWindows();
 	},
 	true
 );
@@ -480,8 +480,8 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 	// Main Graphing function
 	this.updateGraph = function () {
 		var HighchartsObj;
-		if (this.graphType == "line") HighchartsObj = this.lineGraph();
-		if (this.graphType == "column") HighchartsObj = this.columnGraph();
+		if (this.graphType === "line") HighchartsObj = this.lineGraph();
+		if (this.graphType === "column") HighchartsObj = this.columnGraph();
 		saveSelectedGraphs();
 		chart1 = new Highcharts.Chart(HighchartsObj);
 		applyRememberedSelections();
@@ -503,7 +503,7 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 		var portalCount = 0;
 		for (const portal of Object.values(portalSaveData).reverse()) {
 			if (!(item in portal.perZoneData)) continue; // ignore blank
-			if (portal.universe != GRAPHSETTINGS.universeSelection) continue; // ignore inactive universe
+			if (portal.universe !== GRAPHSETTINGS.universeSelection) continue; // ignore inactive universe
 			var cleanData = [];
 			// parse the requested datavar
 			for (const index in portal.perZoneData[item]) {
@@ -517,7 +517,7 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 				if (activeToggles.includes("perZone")) {  // must always be first 
 					[x, time] = toggledGraphs.perZone.customFunction(portal, item, index, x);
 				}
-				for (toggle of activeToggles.filter(x => x != "perZone")) {
+				for (toggle of activeToggles.filter(x => x !== "perZone")) {
 					try { x = toggledGraphs[toggle].customFunction(portal, item, index, x, time, maxS3); }
 					catch (e) {
 						x = 0;
@@ -525,7 +525,7 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 					}
 				}
 				if (this.useAccumulator) { x += last(cleanData) !== undefined ? last(cleanData)[1] : 0; }
-				if (this.typeCheck && typeof x != this.typeCheck) x = null;
+				if (this.typeCheck && typeof x !== this.typeCheck) x = null;
 				cleanData.push([Number(index), x]) // highcharts expects number, number, not str, number
 			}
 			if (activeToggles.includes("perZone") && ["fluffy", "scruffy"].includes(item)) {
@@ -548,7 +548,7 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 		highChartsObj.xAxis.title.text = "Portal"
 		highChartsObj.plotOptions.series = { groupPadding: .2, pointPadding: 0, animation: false, borderColor: "black" }
 		// set up axes for each column so they scale independently
-		var activeColumns = this.columns.filter(column => !(column.universe && column.universe != GRAPHSETTINGS.universeSelection));
+		var activeColumns = this.columns.filter(column => !(column.universe && column.universe !== GRAPHSETTINGS.universeSelection));
 		if (GRAPHSETTINGS.toggles[this.id].perHr) { // disable time when comparing things over time.  x/x is not interesting data.
 			toggledGraphs.perHr.graphMods(false, highChartsObj)
 			activeColumns = activeColumns.filter(column => column.dataVar !== "currentTime")
@@ -560,9 +560,9 @@ function Graph(dataVar, universe, selectorText, additionalParams = {}) {
 		var yAxis = 0;
 		for (const column of activeColumns) {
 			var cleanData = []
-			var currUniPortals = Object.values(portalSaveData).filter(portal => portal.universe == GRAPHSETTINGS.universeSelection);
+			var currUniPortals = Object.values(portalSaveData).filter(portal => portal.universe === GRAPHSETTINGS.universeSelection);
 			for (const portal of Object.values(currUniPortals).slice(Math.max(Object.values(currUniPortals).length - GRAPHSETTINGS.portalsDisplayed, 0))) {
-				//if (portal.universe != GRAPHSETTINGS.universeSelection) continue;
+				//if (portal.universe !== GRAPHSETTINGS.universeSelection) continue;
 				var data = undefined;
 				if (portal[column.dataVar]) { data = portal[column.dataVar]; }
 				if (portal.perZoneData[column.dataVar]) {
@@ -670,7 +670,7 @@ function updateGraph() {
 function showHideUnusedGraphs() {
 	var activeUniverses = [];
 	for (const graph of graphList) {
-		if (graph.graphType != "line") continue; // ignore column graphs (pure laziness, the only two always exist anyways)
+		if (graph.graphType !== "line") continue; // ignore column graphs (pure laziness, the only two always exist anyways)
 		const universes = graph.universe ? [graph.universe] : [1, 2]
 		for (const universe of universes) {
 			var style = "none"
@@ -756,7 +756,7 @@ function Portal() {
 	// create an object to collect only the relevant data per zone, without fromEntries because old JS
 	this.perZoneData = {};
 	var perZoneItems = graphList.filter((graph) =>
-		(graph.universe == this.universe || !graph.universe) // only save data relevant to the current universe
+		(graph.universe === this.universe || !graph.universe) // only save data relevant to the current universe
 		&& graph.conditional() && graph.dataVar) // and for relevant challenges, with datavars 
 		.map((graph) => graph.dataVar)
 		.concat(["currentTime", "mapCount", "timeOnMap"]); // always graph time vars
@@ -824,14 +824,14 @@ const getGameData = {
 	coord: () => { return game.upgrades.Coordination.allowed - game.upgrades.Coordination.done },
 	overkill: () => {
 		// overly complex check for Liq, overly fragile check for overkill cells. please rewrite this at some point.
-		if (game.options.menu.overkillColor.enabled == 0) toggleSetting("overkillColor");
-		if (game.options.menu.liquification.enabled && game.talents.liquification.purchased && !game.global.mapsActive && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name == "Liquimp")
+		if (game.options.menu.overkillColor.enabled === 0) toggleSetting("overkillColor");
+		if (game.options.menu.liquification.enabled && game.talents.liquification.purchased && !game.global.mapsActive && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name === "Liquimp")
 			return 100;
 		else return document.getElementById("grid").getElementsByClassName("cellColorOverkill").length;
 	},
 	zoneTime: () => { return Math.round((getGameTime() - game.global.zoneStarted) * 100) / 100 }, // rounded to x.xs, not used
 	mapbonus: () => { return game.global.mapBonus },
-	empower: () => { return game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.empower !== "undefined" ? game.global.dailyChallenge.empower.stacks : 0 },
+	empower: () => { return game.global.challengeActive === "Daily" && typeof game.global.dailyChallenge.empower !== "undefined" ? game.global.dailyChallenge.empower.stacks : 0 },
 	lastWarp: () => { return game.global.lastWarp },
 	essence: () => { return game.global.spentEssence + game.global.essence },
 	heliumOwned: () => { return game.resources.helium.owned },
@@ -969,8 +969,8 @@ const graphList = [
 	new Graph("overkill", false, "Overkill Cells", {
 		// Overkill unlock zones (roughly)
 		conditional: () => {
-			return ((getGameData.universe() == 1 && getGameData.u1hze() >= 169)
-				|| (getGameData.universe() == 2 && getGameData.u2hze() >= 200))
+			return ((getGameData.universe() === 1 && getGameData.u1hze() >= 169)
+				|| (getGameData.universe() === 2 && getGameData.u2hze() >= 200))
 		}
 	}),
 	new Graph("mapbonus", false, "Map Bonus"),
@@ -1085,7 +1085,7 @@ const toggledGraphs = {
 				var totalBonus = (1 + (initial[1] / 100)) * initial[0]; // calc initial cinf            
 				var c2 = initial[0];
 				var c3 = initial[1];
-				portal.universe == 1 ? c2 += x : c3 += x;
+				portal.universe === 1 ? c2 += x : c3 += x;
 				var newBonus = (1 + (c3 / 100)) * c2; // calc final cinf
 				x = ((newBonus - totalBonus) / (totalBonus ? totalBonus : 1));
 			}

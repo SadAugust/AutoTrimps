@@ -91,7 +91,7 @@ function autoPortal(skipDaily) {
 				}, MODULES["portal"].timeout + 100);
 			}
 			if (game.global.world >= portalZone) {
-				if (getPageSetting('heliumHourChallenge', universe) != 'None')
+				if (getPageSetting('heliumHourChallenge', universe) !== 'None')
 					challenge = getPageSetting('heliumHourChallenge', universe);
 				else
 					challenge = 0;
@@ -183,7 +183,7 @@ function dailyAutoPortal() {
 			}
 			if (heliumHrBuffer === 0 && !aWholeNewWorld)
 				OKtoPortal = false;
-			if (OKtoPortal && zonePostpone == 0) {
+			if (OKtoPortal && zonePostpone === 0) {
 				if (getPageSetting('dailyHeliumHrPortal') > 0 && game.global.totalVoidMaps > 0) {
 					if (!MODULES.mapFunctions.portalAfterVoids) {
 						if (getPageSetting('heliumHrPortal') === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Z" + game.global.world + " - Pushing to next Poison zone then portaling after void maps have been run.", "portal");
@@ -225,7 +225,7 @@ function dailyAutoPortal() {
 			}
 		}
 		if (game.global.world >= portalZone) {
-			if (getPageSetting('dailyHeliumHourChallenge', currPortalUniverse) != 'None')
+			if (getPageSetting('dailyHeliumHourChallenge', currPortalUniverse) !== 'None')
 				doPortal(getPageSetting('dailyHeliumHourChallenge', currPortalUniverse));
 			else
 				doPortal();
@@ -648,7 +648,7 @@ function finishChallengeSquared() {
 }
 
 function findOutCurrentPortalLevel() {
-	var a = -1, b = !1, d = getPageSetting("autoPortal"); switch (d) { case "Off": break; case "Custom": !challengeActive('Daily') && (a = getPageSetting("autoPortalZone") + 1), challengeActive('Daily') && (a = getPageSetting("Dailyportal") + 1), b = !("Lead" != getPageSetting("heliumHourChallenge")); break; default: var e = { Balance: 41, Decay: 56, Electricity: 82, Crushed: 126, Nom: 146, Toxicity: 166, Lead: 181, Watch: 181, Corrupted: 191 }[d]; e && (a = e); }return { level: a, lead: b }
+	var a = -1, b = !1, d = getPageSetting("autoPortal"); switch (d) { case "Off": break; case "Custom": !challengeActive('Daily') && (a = getPageSetting("autoPortalZone") + 1), challengeActive('Daily') && (a = getPageSetting("Dailyportal") + 1), b = !("Lead" !== getPageSetting("heliumHourChallenge")); break; default: var e = { Balance: 41, Decay: 56, Electricity: 82, Crushed: 126, Nom: 146, Toxicity: 166, Lead: 181, Watch: 181, Corrupted: 191 }[d]; e && (a = e); }return { level: a, lead: b }
 }
 
 function resetmapvars() {

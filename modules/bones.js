@@ -78,7 +78,7 @@ function boneShrine() {
 				}
 				game.permaBoneBonuses.boosts.consume();
 			}
-			debug('Consumed ' + boneShrineCharges + " bone shrine " + (boneShrineCharges == 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(boneShrineCharges), "bones");
+			debug('Consumed ' + boneShrineCharges + " bone shrine " + (boneShrineCharges === 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(boneShrineCharges), "bones");
 			boneShrineSettings.done = totalPortals + "_" + game.global.world;
 			runningAtlantrimp = false;
 			MODULES.mapFunctions.workerRatio = null;

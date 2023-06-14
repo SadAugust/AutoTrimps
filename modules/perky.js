@@ -227,7 +227,7 @@ function parse_inputs(data) {
 
 	var preset = $$('#presetElem').value;
 	savePerkySettings();
-	if (preset == 'trapper' && (!game || game.global.challengeActive != 'Trapper'))
+	if (preset === 'trapper' && (!game || game.global.challengeActive !== 'Trapper'))
 		throw 'This preset requires a save currently running Trapper². Start a new run using “Trapper² (initial)”, export, and try again.';
 	result = {
 		total_he: (countHeliumSpent(false, true) + game.global.heliumLeftover) + (portalWindowOpen ? game.resources.helium.owned : 0),
@@ -248,8 +248,8 @@ function parse_inputs(data) {
 		mod: {
 			storage: 0.125,
 			soldiers: 0,
-			dg: preset == 'nerfed' ? 0 : Number(update_dg()),
-			tent_city: preset == 'tent',
+			dg: preset === 'nerfed' ? 0 : Number(update_dg()),
+			tent_city: preset === 'tent',
 			whip: game.unlocks.imps.Whipimp,
 			magn: game.unlocks.imps.Magnimp,
 			taunt: game.unlocks.imps.Tauntimp,
@@ -260,42 +260,42 @@ function parse_inputs(data) {
 			breed_timer: (mastery('patience') ? 45 : 30),
 		}
 	};
-	if (preset == 'nerfed') {
+	if (preset === 'nerfed') {
 		result.total_he = 99990000;
 		result.zone = 200;
 		result.mod.dg = 0;
 	}
-	if (preset == 'trapper') {
+	if (preset === 'trapper') {
 		result.mod.soldiers = game.resources.trimps.owned;
 		result.mod.prod = 0;
 		result.perks.Pheromones.max_level = 0;
 		result.perks.Anticipation.max_level = 0;
 	}
-	if (preset == 'spire') {
+	if (preset === 'spire') {
 		result.mod.prod = result.mod.loot = 0;
 		result.perks.Overkill.max_level = 0;
 		if (game)
 			result.zone = game.global.world;
 	}
-	if (preset == 'carp') {
+	if (preset === 'carp') {
 		result.mod.prod = result.mod.loot = 0;
 		result.weight.trimps = 1e6;
 	}
-	if (preset == 'metal')
+	if (preset === 'metal')
 		result.mod.prod = 0;
-	if (preset == 'trimp')
+	if (preset === 'trimp')
 		result.mod.soldiers = 1;
-	if (preset == 'nerfed')
+	if (preset === 'nerfed')
 		result.perks.Overkill.max_level = 1;
-	if (preset == 'scientist')
+	if (preset === 'scientist')
 		result.perks.Coordinated.max_level = 0;
-	if (preset == 'income')
+	if (preset === 'income')
 		result.weight = { income: 3, trimps: 3, attack: 1, helium: 0, health: 0, xp: 0 };
-	if (preset == 'unesscented') {
+	if (preset === 'unesscented') {
 		result.total_he = 0;
 		result.zone = 181;
 	}
-	if (preset == 'nerfeder') {
+	if (preset === 'nerfeder') {
 		result.total_he = 999900000;
 		result.zone = 300;
 	}
@@ -336,7 +336,7 @@ function parse_perks(fixed, unlocks) {
 		Toughness: new Perk(1, 0, add(5)),
 		Looting: new Perk(1, 0, add(5)),
 	};
-	if (unlocks == '*')
+	if (unlocks === '*')
 		unlocks = Object.keys(perks).join(',');
 	if (!unlocks.match(/>/))
 		unlocks = unlocks.replace(/(?=,|$)/g, '>0');
@@ -356,9 +356,9 @@ function parse_perks(fixed, unlocks) {
 		if (!isFinite(level))
 			throw "Invalid number: ".concat(m[3], ".");
 		perks[matches[0]].locked = false;
-		if (m[2] != '>')
+		if (m[2] !== '>')
 			perks[matches[0]].max_level = level;
-		if (m[2] != '<')
+		if (m[2] !== '<')
 			perks[matches[0]].min_level = level;
 	};
 	for (var _i = 0, _a = (unlocks + ',' + fixed).split(/,/).filter(function (x) { return x; }); _i < _a.length; _i++) {
@@ -603,14 +603,14 @@ function optimize(params) {
 	mod.loot *= 20.8; // TODO: check that this is correct
 	weight.agility = (weight.helium + weight.attack) / 2;
 	weight.overkill = 0.25 * weight.attack * (2 - Math.pow(0.9, weight.helium / weight.attack));
-	if (zone > 90 && mod.soldiers <= 1 && Bait.min_level == 0)
+	if (zone > 90 && mod.soldiers <= 1 && Bait.min_level === 0)
 		Bait.max_level = 0;
 	// Fluffy
 	fluffy.attack = [];
 	var potential = Math.log(0.003 * fluffy.xp / Math.pow(5, fluffy.prestige) + 1) / Math.log(4);
 	for (var cap = 0; cap <= 10; ++cap) {
 		var level = Math.min(Math.floor(potential), cap);
-		var progress = level == cap ? 0 : (Math.pow(4, potential - level) - 1) / 3;
+		var progress = level === cap ? 0 : (Math.pow(4, potential - level) - 1) / 3;
 		fluffy.attack[cap] = 1 + Math.pow(5, fluffy.prestige) * 0.1 * (level / 2 + progress) * (level + 1);
 	}
 	// Minimum levels on perks
@@ -842,7 +842,7 @@ function setupPerkyUI() {
 		perkInput.setAttribute("type", "number");
 		perkInput.id = id;
 		var perkInputStyle = 'text-align: center; width: calc(100vw/22); font-size: 1vw;';
-		if (game.options.menu.darkTheme.enabled != 2) perkInputStyle += (" color: black;");
+		if (game.options.menu.darkTheme.enabled !== 2) perkInputStyle += (" color: black;");
 		perkInput.setAttribute('style', perkInputStyle);
 		perkInput.setAttribute('value', (savedValue || inputObj.defaultValue));
 		perkInput.setAttribute('min', inputObj.minValue);
@@ -936,7 +936,7 @@ function setupPerkyUI() {
 		apGUI.$preset.id = 'presetElem';
 		apGUI.$preset.setAttribute('onchange', 'select_preset(this.value)');
 		var oldstyle = 'text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ';
-		if (game.options.menu.darkTheme.enabled != 2) oldstyle += " color: black;";
+		if (game.options.menu.darkTheme.enabled !== 2) oldstyle += " color: black;";
 		apGUI.$preset.setAttribute('style', oldstyle);
 		apGUI.$preset.innerHTML = presetListHtml;
 

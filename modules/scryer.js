@@ -6,23 +6,23 @@ function scryingCorruption() {
 	var minZoneOK = game.global.world >= getPageSetting('ScryerMinZone');
 	var maxZoneOK = game.global.world < getPageSetting('ScryerMaxZone') || getPageSetting('ScryerMaxZone') < 1;
 	var scryZone = minZoneOK && maxZoneOK || getPageSetting('onlyminmaxworld') >= 2;
-	var scryCorrupt = scryZone && getPageSetting('ScryerSkipCorrupteds2') != 0 || getPageSetting('ScryerSkipCorrupteds2') == 1;
-	var essenceLeft = getPageSetting('screwessence') == false || countRemainingEssenceDrops() >= 1;
-	var die = getPageSetting('ScryerDieZ') != -1 && game.global.world >= getPageSetting('ScryerDieZ');
-	return (die || scryCorrupt) && essenceLeft && getPageSetting('UseScryerStance') == true;
+	var scryCorrupt = scryZone && getPageSetting('ScryerSkipCorrupteds2') !== 0 || getPageSetting('ScryerSkipCorrupteds2') === 1;
+	var essenceLeft = getPageSetting('screwessence') === false || countRemainingEssenceDrops() >= 1;
+	var die = getPageSetting('ScryerDieZ') !== -1 && game.global.world >= getPageSetting('ScryerDieZ');
+	return (die || scryCorrupt) && essenceLeft && getPageSetting('UseScryerStance') === true;
 }
 
 function readyToSwitch(stance = "S") {
 	//Suicide to Scry
 	var essenceLeft = !getPageSetting('screwessence') || countRemainingEssenceDrops() >= 1;
 
-	var die = getPageSetting('ScryerDieZ') != -1 && game.global.world >= getPageSetting('ScryerDieZ') && essenceLeft;
+	var die = getPageSetting('ScryerDieZ') !== -1 && game.global.world >= getPageSetting('ScryerDieZ') && essenceLeft;
 	var willSuicide = getPageSetting('ScryerDieZ');
 
 	//Check if we are allowed to suicide in our current cell and zone
 	if (die && willSuicide >= 0) {
 		var [dieZ, dieC] = willSuicide.toString().split(".");
-		if (dieC && dieC.length == 1) dieC = dieC + "0";
+		if (dieC && dieC.length === 1) dieC = dieC + "0";
 		die = game.global.world >= dieZ && (!dieC || (game.global.lastClearedCell + 1 >= dieC));
 	}
 
@@ -60,9 +60,9 @@ function useScryerStance() {
 	//Never scryer if any of these return true.
 
 	//Maps Skip
-	never_scry |= useScryer && mapsActive && getPageSetting('ScryerUseinMaps2') === 0 && mapObject.location != "Void" && mapObject.location != "Bionic" && mapObject.level <= game.global.world;
+	never_scry |= useScryer && mapsActive && getPageSetting('ScryerUseinMaps2') === 0 && mapObject.location !== "Void" && mapObject.location !== "Bionic" && mapObject.level <= game.global.world;
 	//Plus Level Skip
-	never_scry |= useScryer && mapsActive && getPageSetting('ScryerUseinPMaps') === 0 && mapObject.level > game.global.world && mapObject.location != "Void" && mapObject.location != "Bionic";
+	never_scry |= useScryer && mapsActive && getPageSetting('ScryerUseinPMaps') === 0 && mapObject.level > game.global.world && mapObject.location !== "Void" && mapObject.location !== "Bionic";
 	//Void Skip
 	never_scry |= useScryer && mapsActive && mapObject.location === "Void" && getPageSetting('ScryerUseinVoidMaps2') === 0;
 	//Bionic Skip
@@ -74,14 +74,14 @@ function useScryerStance() {
 	//Empowerment Skip
 	never_scry |= useScryer && !mapsActive &&
 		(getEmpowerment() === "Poison" && (getPageSetting('ScryUseinPoison') === 0 || (getPageSetting('ScryUseinPoison') > 0 && game.global.world >= getPageSetting('ScryUseinPoison')))) ||
-		(getEmpowerment() == "Wind" && (getPageSetting('ScryUseinWind') === 0 || (getPageSetting('ScryUseinWind') > 0 && game.global.world >= getPageSetting('ScryUseinWind')))) ||
+		(getEmpowerment() === "Wind" && (getPageSetting('ScryUseinWind') === 0 || (getPageSetting('ScryUseinWind') > 0 && game.global.world >= getPageSetting('ScryUseinWind')))) ||
 		(getEmpowerment() === "Ice" && (getPageSetting('ScryUseinIce') === 0 || (getPageSetting('ScryUseinIce') > 0 && game.global.world >= getPageSetting('ScryUseinIce'))));
 
 	//Check Corrupted Never
 	var isCorrupt = getCurrentEnemy(1) && getCurrentEnemy(1).mutation === "Corruption";
 	var nextIsCorrupt = getCurrentEnemy(2) && getCurrentEnemy(2).mutation === "Corruption";
 	var scryNext = !nextIsCorrupt && (transitionRequired || oneShotPower(undefined, 0, true));
-	var skipOnMaxZone = getPageSetting('onlyminmaxworld') === 2 && getPageSetting('ScryerSkipCorrupteds2') != 1 && aboveMaxZone;
+	var skipOnMaxZone = getPageSetting('onlyminmaxworld') === 2 && getPageSetting('ScryerSkipCorrupteds2') !== 1 && aboveMaxZone;
 
 	//Override never scry if in voids with scryvoid setting enabled.
 	if (mapsActive && mapObject.location === "Void") {
@@ -111,12 +111,12 @@ function useScryerStance() {
 	//Maps Force
 	var force_scry = useScryer && mapsActive && getPageSetting('ScryerUseinMaps2') === 1;
 	//Plus Level Force
-	force_scry |= mapsActive && useScryer && mapObject.level > game.global.world && getPageSetting('ScryerUseinPMaps') === 1 && mapObject.location != "Bionic";
+	force_scry |= mapsActive && useScryer && mapObject.level > game.global.world && getPageSetting('ScryerUseinPMaps') === 1 && mapObject.location !== "Bionic";
 	//Void Force
 	force_scry |= mapsActive && mapObject.location === "Void" &&
 		((getPageSetting('ScryerUseinVoidMaps2') === 1) || getPageSetting(settingPrefix + 'scryvoidmaps'));
 	//Bionic Force
-	force_scry |= mapsActive && useScryer && mapObject.location == "Bionic" && getPageSetting('ScryerUseinBW') === 1;
+	force_scry |= mapsActive && useScryer && mapObject.location === "Bionic" && getPageSetting('ScryerUseinBW') === 1;
 	//Spire Force
 	force_scry |= !mapsActive && useScryer && isDoingSpire() && getPageSetting('ScryerUseinSpire2') === 1;
 	//Empowerment Force

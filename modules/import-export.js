@@ -4,14 +4,14 @@ function settingsProfileMakeGUI() {
 	var $$$settingsProfilesLabel = document.createElement("Label");
 	$$$settingsProfilesLabel.id = 'settingsProfiles Label';
 	$$$settingsProfilesLabel.innerHTML = "Profile: ";
-	if (game.options.menu.darkTheme.enabled == 2) $$$settingsProfilesLabel.setAttribute("style", "margin-left: 1.2vw; margin-right: 0.8vw; font-size: 0.8vw;");
+	if (game.options.menu.darkTheme.enabled === 2) $$$settingsProfilesLabel.setAttribute("style", "margin-left: 1.2vw; margin-right: 0.8vw; font-size: 0.8vw;");
 	else $$$settingsProfilesLabel.setAttribute("style", "margin-left: 1.2vw; margin-right: 0.8vw; font-size: 0.8vw;");
 	$$$settingsProfiles = document.createElement("select");
 	$$$settingsProfiles.id = 'settingsProfiles';
 	$$$settingsProfiles.setAttribute('class', 'noselect');
 	$$$settingsProfiles.setAttribute('onchange', 'settingsProfileDropdownHandler()');
 	var oldstyle = 'text-align: center; width: 160px; font-size: 1.0vw;';
-	if (game.options.menu.darkTheme.enabled != 2) $$$settingsProfiles.setAttribute("style", oldstyle + " color: black;");
+	if (game.options.menu.darkTheme.enabled !== 2) $$$settingsProfiles.setAttribute("style", oldstyle + " color: black;");
 	else $$$settingsProfiles.setAttribute('style', oldstyle);
 	//Create settings profile selection dropdown
 	var $$$settingsProfilesButton = document.createElement("Button");
@@ -30,7 +30,7 @@ function settingsProfileMakeGUI() {
 	$$$settingsProfiles.innerHTML = innerhtml;
 	//Add the $$$settingsProfiles dropdown to UI
 	var $ietab = document.getElementById('Import Export');
-	if ($ietab == null) return;
+	if ($ietab === null) return;
 	//Any ERRORs here are caused by incorrect order loading of script and you should reload until its gone.(for now)
 	$ietab.insertBefore($$$settingsProfilesLabel, $ietab.childNodes[1]);
 	$ietab.insertBefore($$$settingsProfiles, $ietab.childNodes[2]);
@@ -56,23 +56,23 @@ function initializeSettingsProfiles() {
 //it is the "onchange" handler of the settingsProfiles dropdown
 //Asks them do a confirmation check tooltip first. The
 function settingsProfileDropdownHandler() {
-	if ($$$settingsProfiles == null) return;
+	if ($$$settingsProfiles === null) return;
 	var index = $$$settingsProfiles.selectedIndex;
 	var id = $$$settingsProfiles.options[index].id;
 	//Current: placeholder.
-	if (id == 'customProfileCurrent')
+	if (id === 'customProfileCurrent')
 		return;
 	cancelTooltip();
 	//Default: simply calls Reset To Default:
-	if (id == 'customProfileDefault')
+	if (id === 'customProfileDefault')
 		//calls a tooltip then resetAutoTrimps() below
 		ImportExportTooltip('ResetDefaultSettingsProfiles');
 	//Save new...: asks a name and saves new profile
-	else if (id == 'customProfileNew')
+	else if (id === 'customProfileNew')
 		//calls a tooltip then nameAndSaveNewProfile() below
 		ImportExportTooltip('NameSettingsProfiles');
 	//Reads the existing profile name and switches into it.
-	else if (id == 'customProfileRead')
+	else if (id === 'customProfileRead')
 		//calls a tooltip then confirmedSwitchNow() below
 		ImportExportTooltip('ReadSettingsProfiles');
 	//NOPE.XWait 200ms for everything to reset and then re-select the old index.
@@ -81,14 +81,14 @@ function settingsProfileDropdownHandler() {
 }
 
 function confirmedSwitchNow() {
-	if ($$$settingsProfiles == null) return;
+	if ($$$settingsProfiles === null) return;
 	var index = $$$settingsProfiles.selectedIndex;
 	var profname = $$$settingsProfiles.options[index].text;
 	//load the stored profiles from browser
 	var loadLastProfiles = JSON.parse(localStorage.getItem('ATSelectedSettingsProfile'));
-	if (loadLastProfiles != null) {
+	if (loadLastProfiles !== null) {
 		var results = loadLastProfiles.filter(function (elem, i) {
-			return elem.name == profname;
+			return elem.name === profname;
 		});
 		if (results.length > 0) {
 			resetAutoTrimps(results[0].data, profname);
@@ -102,7 +102,7 @@ function nameAndSaveNewProfile() {
 	//read the name in from tooltip
 	try {
 		var profname = document.getElementById("setSettingsNameTooltip").value.replace(/[\n\r]/gm, "");
-		if (profname == null) {
+		if (profname === null) {
 			debug("Error in naming, the string is empty.", "profile");
 			return;
 		}
@@ -126,7 +126,7 @@ function nameAndSaveNewProfile() {
 	//Update dropdown menu to reflect new name:
 	var optionElementReference = new Option(profile.name);
 	optionElementReference.id = 'customProfileRead';
-	if ($$$settingsProfiles == null) return;
+	if ($$$settingsProfiles === null) return;
 	$$$settingsProfiles.add(optionElementReference);
 	$$$settingsProfiles.selectedIndex = $$$settingsProfiles.length - 1;
 }
@@ -137,7 +137,7 @@ function onDeleteProfileHandler() {
 }
 //Delete Profile runs after.
 function onDeleteProfile() {
-	if ($$$settingsProfiles == null) return;
+	if ($$$settingsProfiles === null) return;
 	var index = $$$settingsProfiles.selectedIndex;
 	//Remove the option
 	$$$settingsProfiles.options.remove(index);
@@ -163,9 +163,9 @@ function ImportExportTooltip(what, event, download) {
 	var tooltipText;
 	var costText = "";
 	var titleText = what;
-	if (what == "ExportAutoTrimps") {
+	if (what === "ExportAutoTrimps") {
 		var saveName = 'AT Settings P' + game.global.totalPortals;
-		if (game.global.universe == 2 || game.global.totalRadPortals > 0) {
+		if (game.global.universe === 2 || game.global.totalRadPortals > 0) {
 			saveName += " " + game.global.totalRadPortals + " U" + game.global.universe;
 		}
 		tooltipText = "This is your AUTOTRIMPS save string. There are many like it but this one is yours. Save this save somewhere safe so you can save time next time. <br/><br/><textarea id='exportArea' style='width: 100%' rows='5'>" + serializeSettings() + "</textarea>";
@@ -193,24 +193,24 @@ function ImportExportTooltip(what, event, download) {
 		costText += " ><div class='btn btn-danger' id='downloadBtn'>Download as File</div></a>";
 		costText += "</div>";
 
-	} else if (what == "ImportAutoTrimps") {
+	} else if (what === "ImportAutoTrimps") {
 
 		tooltipText = "Import your AUTOTRIMPS save string! It'll be fine, I promise.<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); loadAutoTrimps();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
 		ondisplay = function () {
 			document.getElementById('importBox').focus();
 		};
-	} else if (what == "spireImport") {
+	} else if (what === "spireImport") {
 		tooltipText = "Import your SPIRE string! <br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); tdStringCode2();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
 		ondisplay = function () {
 			document.getElementById('importBox').focus();
 		};
-	} else if (what == "CleanupAutoTrimps") {
+	} else if (what === "CleanupAutoTrimps") {
 		cleanupAutoTrimps();
 		tooltipText = "Autotrimps saved-settings have been attempted to be cleaned up. If anything broke, refreshing will fix it, but check that your settings are correct! (prestige in particular)";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>OK</div></div>";
-	} else if (what == "ExportModuleVars") {
+	} else if (what === "ExportModuleVars") {
 		tooltipText = "These are your custom Variables. The defaults have not been included, only what you have set... <br/><br/><textarea id='exportArea' style='width: 100%' rows='5'>" + exportModuleVars() + "</textarea>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip()'>Got it</div>";
 		if (document.queryCommandSupported('copy')) {
@@ -232,44 +232,44 @@ function ImportExportTooltip(what, event, download) {
 			};
 		}
 		costText += "</div>";
-	} else if (what == "ImportModuleVars") {
+	} else if (what === "ImportModuleVars") {
 		tooltipText = "Enter your Autotrimps MODULE variable settings to load, and save locally for future use between refreshes:<br/><br/><textarea id='importBox' style='width: 100%' rows='5'></textarea>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); importModuleVars();'>Import</div><div class='btn btn-info' onclick='cancelTooltip()'>Cancel</div></div>";
 		ondisplay = function () {
 			document.getElementById('importBox').focus();
 		};
-	} else if (what == "ATModuleLoad") {
+	} else if (what === "ATModuleLoad") {
 		var mods = document.getElementById('ATModuleListDropdown');
 		var modnames = "";
 		for (var script in mods.selectedOptions) {
 			var $item = mods.selectedOptions[script];
-			if ($item.value != null) {
+			if ($item.value !== null) {
 				ATscriptLoad(MODULES_AT.modulepath, $item.value);
 				modnames += $item.value + " ";
 			}
 		}
 		tooltipText = "Autotrimps - Loaded the MODULE .JS File(s): " + modnames;
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>OK</div></div>";
-	} else if (what == "ATModuleUnload") {
+	} else if (what === "ATModuleUnload") {
 		var mods = document.getElementById('ATModuleListDropdown');
 		var modnames = "";
 		for (var script in mods.selectedOptions) {
 			var $item = mods.selectedOptions[script];
-			if ($item.value != null) {
+			if ($item.value !== null) {
 				ATscriptUnload($item.value);
 				modnames += $item.value + " ";
 			}
 		}
 		tooltipText = "Autotrimps - UnLoaded the MODULE .JS File(s): " + modnames;
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>OK</div></div>";
-	} else if (what == "ResetModuleVars") {
+	} else if (what === "ResetModuleVars") {
 		resetModuleVars();
 		tooltipText = "Autotrimps MODULE variable settings have been successfully reset to its defaults!";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>OK</div></div>";
-	} else if (what == 'MagmiteExplain') {
+	} else if (what === 'MagmiteExplain') {
 		tooltipText = "<img src='" + MODULES_AT.basepath + "mi.png'>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Thats all the help you get.</div></div>";
-	} else if (what == 'c2table') {
+	} else if (what === 'c2table') {
 		//Adding U1 challenges
 		var highestZone = game.stats.highestLevel.valueTotal();
 		const c2array = [];
@@ -352,7 +352,7 @@ function ImportExportTooltip(what, event, download) {
 				challengeList[b].color = e >= c ? "LIMEGREEN" : e < c && e >= d ? "GOLD" : e < d && 1 <= e ? "#de0000" : "DEEPSKYBLUE"
 			}
 			Object.keys(challengeList).forEach(function (b) {
-				null != game.c2[b] && ("Coordinate" === b ? a(b, 45, 38) : "Trimp" === b ? a(b, 45, 35) : "Obliterated" === b ? a(b, 25, 20) : "Eradicated" === b ? a(b, 14, 10) : "Mapology" === b ? a(b, 90, 80) : "Trapper" === b ? a(b, 85, 75) : a(b, 95, 85))
+				null !== game.c2[b] && ("Coordinate" === b ? a(b, 45, 38) : "Trimp" === b ? a(b, 45, 35) : "Obliterated" === b ? a(b, 25, 20) : "Eradicated" === b ? a(b, 14, 10) : "Mapology" === b ? a(b, 90, 80) : "Trapper" === b ? a(b, 85, 75) : a(b, 95, 85))
 			})
 		}
 		function c3listcolor() {
@@ -364,30 +364,30 @@ function ImportExportTooltip(what, event, download) {
 				else if (challengePercent < midPct && 1 <= challengePercent) challengeList[challenge].color = "#de0000";
 			}
 			Object.keys(challengeList).forEach(function (challenge) {
-				if (game.c2[challenge] != null) {
-					if (challenge == "Unbalance")
+				if (game.c2[challenge] !== null) {
+					if (challenge === "Unbalance")
 						colorC3(challenge, 90, 80);
-					else if (challenge == "Unlucky")
+					else if (challenge === "Unlucky")
 						colorC3(challenge, 90, 80);
-					else if (challenge == "Duel")
+					else if (challenge === "Duel")
 						colorC3(challenge, 90, 80);
-					else if (challenge == "Transmute")
+					else if (challenge === "Transmute")
 						colorC3(challenge, 90, 80);
-					else if (challenge == "Quest")
+					else if (challenge === "Quest")
 						colorC3(challenge, 90, 80);
-					else if (challenge == "Downsize")
+					else if (challenge === "Downsize")
 						colorC3(challenge, 85, 75);
-					else if (challenge == "Trappapalooza")
+					else if (challenge === "Trappapalooza")
 						colorC3(challenge, 75, 60);
-					else if (challenge == "Wither")
+					else if (challenge === "Wither")
 						colorC3(challenge, 85, 75);
-					else if (challenge == "Storm")
+					else if (challenge === "Storm")
 						colorC3(challenge, 90, 80);
-					else if (challenge == "Berserk")
+					else if (challenge === "Berserk")
 						colorC3(challenge, 85, 75);
-					else if (challenge == "Glass")
+					else if (challenge === "Glass")
 						colorC3(challenge, 90, 80);
-					else if (challenge == "Smithless")
+					else if (challenge === "Smithless")
 						colorC3(challenge, 90, 80);
 				}
 			});
@@ -430,33 +430,33 @@ function ImportExportTooltip(what, event, download) {
 		</table>
 	</div> `;
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
-	} else if (what == 'ReadSettingsProfiles') {
+	} else if (what === 'ReadSettingsProfiles') {
 		titleText = '<b>Loading New AutoTrimps Profile...</b><p>Current Settings will be lost';
 		tooltipText = '<b>NOTICE:</b> Switching to new AutoTrimps settings profile!!!! <br>All current settings <b>WILL</b> be lost after this point. <br>You might want to cancel, to go back and save your existing settings first....';
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); confirmedSwitchNow();'>Confirm and Switch Profiles</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
-	} else if (what == 'ResetDefaultSettingsProfiles') {
+	} else if (what === 'ResetDefaultSettingsProfiles') {
 		titleText = '<b>Loading AutoTrimps Default Profile...</b><p>Current Settings will be lost!';
 		tooltipText = '<b>NOTICE:</b> Switching to Default AutoTrimps settings profile!!!! <br>All current settings <b>WILL</b> be lost after this point. <br>You might want to cancel, to go back and save your existing settings first.... <br>This will <b><u>Reset</u></b> the script to factory settings.';
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); resetAutoTrimps(); settingsProfiles.selectedIndex = 1;'>Reset to Default Profile</div><div style='margin-left: 15%' class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
-	} else if (what == 'SetCustomChallenge') {
+	} else if (what === 'SetCustomChallenge') {
 		titleText = "Enter Challenge To Run";
 		tooltipText = "What challenge would you like to be switched to?<br/><br/><textarea id='setSettingsNameTooltip' style='width: 100%' rows='1'></textarea>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); testChallenge();'>Import</div><div class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();'>Cancel</div></div>";
 		ondisplay = function () {
 			document.getElementById('setSettingsNameTooltip').focus();
 		};
-	} else if (what == 'NameSettingsProfiles') {
+	} else if (what === 'NameSettingsProfiles') {
 		titleText = "Enter New Settings Profile Name";
 		tooltipText = "What would you like the name of the Settings Profile to be?<br/><br/><textarea id='setSettingsNameTooltip' style='width: 100%' rows='1'></textarea>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 10vw' onclick='cancelTooltip(); nameAndSaveNewProfile();'>Import</div><div class='btn btn-info' style='margin-left: 5vw' onclick='cancelTooltip();document.getElementById(\"settingsProfiles\").selectedIndex=0;'>Cancel</div></div>";
 		ondisplay = function () {
 			document.getElementById('setSettingsNameTooltip').focus();
 		};
-	} else if (what == 'DeleteSettingsProfiles') {
+	} else if (what === 'DeleteSettingsProfiles') {
 		titleText = "<b>WARNING:</b> Delete Profile???"
 		tooltipText = "You are about to delete the <B><U>" + `${settingsProfiles.value}` + "</B></U> settings profile.<br>This will not switch your current settings though. Continue ?<br/>";
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); onDeleteProfile();'>Delete Profile</div><div style='margin-left: 15%' class='btn btn-info' onclick='cancelTooltip();'>Cancel</div></div>";
-	} else if (what == 'message') {
+	} else if (what === 'message') {
 		titleText = "Generic message";
 		tooltipText = event;
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' style='width: 50%' onclick='cancelTooltip();'>OK</div></div>";
@@ -471,7 +471,7 @@ function ImportExportTooltip(what, event, download) {
 	if (ondisplay !== null)
 		ondisplay();
 
-	if (download == true && what == "ExportAutoTrimps") {
+	if (download === true && what === "ExportAutoTrimps") {
 		var pauseGame = 1;
 		var notation = 0;
 		var theme = 2;
@@ -488,13 +488,13 @@ function ImportExportTooltip(what, event, download) {
 			theme = game.options.menu.darkTheme.enabled
 			game.options.menu.darkTheme.enabled = 2;
 		}
-		if (game.options.menu.disablePause.enabled == 0) {
+		if (game.options.menu.disablePause.enabled === 0) {
 			pauseGame = 0;
 			game.options.menu.disablePause.enabled = 1;
 		}
-		if (game.options.menu.pauseGame.enabled == 1) paused = true;
+		if (game.options.menu.pauseGame.enabled === 1) paused = true;
 		setTimeout(function () {
-			if (!paused && game.options.menu.pauseGame.enabled == 1) toggleSetting('pauseGame');
+			if (!paused && game.options.menu.pauseGame.enabled === 1) toggleSetting('pauseGame');
 		}, 500);
 		if (!paused) toggleSetting('pauseGame');
 		tooltip('Export', null, 'update');
@@ -537,7 +537,7 @@ function loadAutoTrimps() {
 	try {
 		var a = document.getElementById("importBox").value.replace(/[\n\r]/gm, ""),
 			b = JSON.parse(a);
-		if (null == b) return void
+		if (null === b) return void
 			debug("Error importing AT settings, the string is empty.", "profile")
 	}
 	catch (c) {
@@ -571,7 +571,7 @@ function compareModuleVars() {
 			var vj = vars[j];
 			var a = MODULES[mod][vj];
 			var b = MODULESdefault[mod][vj];
-			if (JSON.stringify(a) != JSON.stringify(b)) {
+			if (JSON.stringify(a) !== JSON.stringify(b)) {
 				if (typeof diffs[mod] === 'undefined')
 					diffs[mod] = {};
 				diffs[mod][vj] = a;

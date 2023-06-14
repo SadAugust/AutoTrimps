@@ -23,9 +23,9 @@ if (MODULES_AT.basepath === '') MODULES_AT.basepath = 'https://SadAugust.github.
 basepath = MODULES_AT.basepath;
 
 function ATscriptLoad(a, b) {
-	null == b && debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(MODULES_AT.modulepath, \'example.js\'); ');
+	null === b && debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(MODULES_AT.modulepath, \'example.js\'); ');
 	var c = document.createElement('script');
-	null == a && (a = ''), c.src = MODULES_AT.basepath + a + b + '.js', c.id = b + '_MODULE', document.head.appendChild(c);
+	null === a && (a = ''), c.src = MODULES_AT.basepath + a + b + '.js', c.id = b + '_MODULE', document.head.appendChild(c);
 }
 function ATscriptUnload(a) {
 	var b = document.getElementById(a + "_MODULE");
@@ -243,7 +243,7 @@ function mainLoop() {
 	remakeTooltip();
 	universeSwapped();
 
-	if (ATrunning == false) return;
+	if (ATrunning === false) return;
 	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
 	if (getPageSetting('disableForTW') && usingRealTimeOffline) return;
 	ATrunning = true;
@@ -406,17 +406,17 @@ function mainLoopU2() {
 
 function guiLoop() {
 	getPageSetting('displayEnhancedGrid') &&
-		MODULES.fightinfo.Update(), 'undefined' != typeof MODULES && 'undefined' != typeof MODULES.performance && MODULES.performance.isAFK && MODULES.performance.UpdateAFKOverlay()
+		MODULES.fightinfo.Update(), 'undefined' !== typeof MODULES && 'undefined' !== typeof MODULES.performance && MODULES.performance.isAFK && MODULES.performance.UpdateAFKOverlay()
 }
 
 function mainCleanup() {
 	lastrunworld = currentworld;
 	currentworld = game.global.world;
-	aWholeNewWorld = lastrunworld != currentworld;
+	aWholeNewWorld = lastrunworld !== currentworld;
 
 	lastHZE = currentHZE;
 	currentHZE = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
-	aWholeNewHZE = lastHZE != currentHZE;
+	aWholeNewHZE = lastHZE !== currentHZE;
 
 	if (aWholeNewHZE) {
 		challengeUnlockCheck();

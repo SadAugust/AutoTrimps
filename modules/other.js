@@ -39,22 +39,22 @@ function armydeath() {
 	var cell = game.global.lastClearedCell + 1,
 		enemyAttack = game.global.gridArray[cell].attack * dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks),
 		ourHealth = game.global.soldierHealth;
-	"Ice" == getEmpowerment() && (enemyAttack *= game.empowerments.Ice.getCombatModifier());
+	"Ice" === getEmpowerment() && (enemyAttack *= game.empowerments.Ice.getCombatModifier());
 	var block = game.global.soldierCurrentBlock;
 	return (
-		3 == game.global.formation ? (block /= 4) : "0" != game.global.formation && (block *= 2),
+		3 === game.global.formation ? (block /= 4) : "0" !== game.global.formation && (block *= 2),
 		block > game.global.gridArray[cell].attack ? (enemyAttack *= getPierceAmt()) : (enemyAttack -= block * (1 - getPierceAmt())),
 		challengeActive('Daily') && void 0 !== game.global.dailyChallenge.crits && (enemyAttack *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),
 		void 0 !== game.global.dailyChallenge.bogged && (ourHealth -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),
 		void 0 !== game.global.dailyChallenge.plague && (ourHealth -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks)),
 		challengeActive('Electricity') && (ourHealth -= game.global.soldierHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)),
-		"corruptCrit" == game.global.gridArray[cell].corrupted
+		"corruptCrit" === game.global.gridArray[cell].corrupted
 			? (enemyAttack *= 5)
-			: "healthyCrit" == game.global.gridArray[cell].corrupted
+			: "healthyCrit" === game.global.gridArray[cell].corrupted
 				? (enemyAttack *= 7)
-				: "corruptBleed" == game.global.gridArray[cell].corrupted
+				: "corruptBleed" === game.global.gridArray[cell].corrupted
 					? (ourHealth *= 0.8)
-					: "healthyBleed" == game.global.gridArray[cell].corrupted && (ourHealth *= 0.7),
+					: "healthyBleed" === game.global.gridArray[cell].corrupted && (ourHealth *= 0.7),
 		(ourHealth -= enemyAttack) <= 1e3
 	);
 }
@@ -96,11 +96,11 @@ function archstring() {
 		var string1 = getPageSetting('archaeologyString1'), string2 = getPageSetting('archaeologyString2'), string3 = getPageSetting('archaeologyString3');
 		var string1z = string1.split(',')[0], string2z = string2.split(',')[0];
 		var string1split = string1.split(',').slice(1).toString(), string2split = string2.split(',').slice(1).toString();
-		if (game.global.world <= string1z && game.global.archString != string1split)
+		if (game.global.world <= string1z && game.global.archString !== string1split)
 			game.global.archString = string1split;
-		else if (game.global.world > string1z && game.global.world <= string2z && game.global.archString != string2split)
+		else if (game.global.world > string1z && game.global.world <= string2z && game.global.archString !== string2split)
 			game.global.archString = string2split;
-		else if (game.global.world > string2z && game.global.archString != string3)
+		else if (game.global.world > string2z && game.global.archString !== string3)
 			game.global.archString = string3;
 	}
 }
@@ -193,10 +193,10 @@ function remainingHealth(forceAngelic, mapType) {
 
 		if (maxLayers > 0) {
 			for (var i = 0; i <= maxLayers; i++) {
-				if (layers != maxLayers && i > layers) {
+				if (layers !== maxLayers && i > layers) {
 					continue;
 				}
-				if (i == maxLayers - layers) {
+				if (i === maxLayers - layers) {
 					shieldHealth += shieldMax;
 				}
 				else
@@ -213,11 +213,11 @@ function remainingHealth(forceAngelic, mapType) {
 		soldierHealth -= soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks);
 
 	var remainingHealth = shieldHealth + (forceAngelic ? soldierHealth * .33 : soldierHealth);
-	if ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'))
+	if ((challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé'))
 		remainingHealth = shieldHealth;
 	if (shieldHealth + soldierHealth === 0) {
 		remainingHealth = soldierHealthMax + (shieldMax * (maxLayers + 1))
-		if ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'))
+		if ((challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé'))
 			remainingHealth = shieldMax * (maxLayers + 1);
 	}
 
@@ -240,9 +240,9 @@ function equalityManagementBasic() {
 	//Looking to see if the enemy that's currently being fought is fast.
 	var fastEnemy = fastimps.includes(getCurrentEnemy().name);
 	//Checking if the map that's active is a Deadly voice map which always has first attack.
-	var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location == "Void" && getCurrentMapObject().voidBuff == 'doubleAttack';
+	var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location === "Void" && getCurrentMapObject().voidBuff === 'doubleAttack';
 	//Checking if the Frenzy buff is active.
-	var noFrenzy = game.portal.Frenzy.frenzyStarted == "-1" && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.radLevel > 0;
+	var noFrenzy = game.portal.Frenzy.frenzyStarted === "-1" && !autoBattle.oneTimers.Mass_Hysteria.owned && game.portal.Frenzy.radLevel > 0;
 	//Checking if the experience buff is active during Exterminate.
 	var experienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	//Checking to see if the Glass challenge is being run where all enemies are fast.
@@ -310,7 +310,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	var maxLevel = typeof (maxLevel) === 'undefined' || maxLevel === null ? 10 : maxLevel;
 	if (maxLevel > 0 && !extraMapLevelsAvailable) maxLevel = 0;
 	var minLevel = typeof (minLevel) === 'undefined' || minLevel === null ? 0 - z + 6 : minLevel;
-	const runningQuest = challengeActive('Quest') && currQuest() == 8;
+	const runningQuest = challengeActive('Quest') && currQuest() === 8;
 	const runningUnlucky = challengeActive('Unlucky')
 	const ourHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : universeSetting), 'map');
 	const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
@@ -403,7 +403,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 
 	//Challenge conditions
 	var runningUnlucky = challengeActive('Unlucky');
-	var runningQuest = ((challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé')); //Shield break quest
+	var runningQuest = ((challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé')); //Shield break quest
 
 	//Initialising name/health/dmg variables
 	//Enemy stats
@@ -460,7 +460,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 			ourDmgEquality = ourDmg * Math.pow(ourEqualityModifier, i);
 			if (runningUnlucky) {
 				unluckyDmgEquality = unluckyDmg * Math.pow(ourEqualityModifier, i);
-				if (unluckyDmgEquality.toString()[0] % 2 == 1 && i !== maxEquality) continue;
+				if (unluckyDmgEquality.toString()[0] % 2 === 1 && i !== maxEquality) continue;
 			}
 			if (farmType === 'gamma' && ourHealth >= enemyDmgEquality) {
 				return i;
@@ -497,8 +497,8 @@ function equalityManagement() {
 	var mapObject = mapping ? getCurrentMapObject() : null;
 	var currentCell = mapping ? game.global.lastClearedMapCell + 1 : game.global.lastClearedCell + 1;
 	var mapGrid = mapping ? 'mapGridArray' : 'gridArray';
-	var type = (!mapping) ? "world" : (mapObject.location == "Void" ? "void" : "map");
-	var zone = (type == "world" || !mapping) ? game.global.world : mapObject.level;
+	var type = (!mapping) ? "world" : (mapObject.location === "Void" ? "void" : "map");
+	var zone = (type === "world" || !mapping) ? game.global.world : mapObject.level;
 	var bionicTalent = mapping && game.talents.bionic2.purchased && (zone > game.global.world) ? zone : 0;
 	var difficulty = mapping ? mapObject.difficulty : 1;
 	var maxEquality = game.portal.Equality.radLevel;
@@ -520,7 +520,7 @@ function equalityManagement() {
 	var runningUnlucky = challengeActive('Unlucky');
 	var runningDuel = challengeActive('Duel');
 	var runningTrappa = challengeActive('Trappapalooza');
-	var runningQuest = (challengeActive('Quest') && currQuest() == 8) || challengeActive('Bublé'); //Shield break quest
+	var runningQuest = (challengeActive('Quest') && currQuest() === 8) || challengeActive('Bublé'); //Shield break quest
 	var runningRevenge = challengeActive('Revenge');
 	var runningArchaeology = challengeActive('Archaeology');
 	var runningMayhem = challengeActive('Mayhem');
@@ -529,7 +529,7 @@ function equalityManagement() {
 	var runningExperienced = challengeActive('Exterminate') && game.challenges.Exterminate.experienced;
 	var runningGlass = challengeActive('Glass');
 	var runningDesolation = challengeActive('Desolation');
-	var runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell == -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
+	var runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
 
 
 	//Perk/Talent conditions
@@ -585,7 +585,7 @@ function equalityManagement() {
 	var enemyHealth = game.global[mapGrid][currentCell].health;
 	var enemyDmg = getCurrentEnemy().attack * totalDamageMod() * 1.5;
 	if (runningMayhem) enemyDmg /= game.challenges.Mayhem.getEnemyMult();
-	enemyDmg *= game.global.voidBuff === 'doubleAttack' ? 2 : (game.global.voidBuff == 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
+	enemyDmg *= game.global.voidBuff === 'doubleAttack' ? 2 : (game.global.voidBuff === 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
 
 	//Empower related modifiers in world
 	if ((dailyEmpowerToggle && !mapping && dailyEmpower) || slowScumming) {
@@ -660,7 +660,7 @@ function equalityManagement() {
 			//Skips if we are running unlucky and our damage is odd.
 			if (runningUnlucky) {
 				unluckyDmgEquality = unluckyDmg * Math.pow(ourEqualityModifier, i);
-				if (unluckyDmgEquality.toString()[0] % 2 == 1 && i !== maxEquality) continue;
+				if (unluckyDmgEquality.toString()[0] % 2 === 1 && i !== maxEquality) continue;
 			}
 			//Check to see if we kill the enemy with our max damage on empower dailies with explosive mod. If we can then mult enemy dmg by explosive mod value to stop us gaining empower stacks.
 			if (ourDmgMax > 0) {
@@ -860,12 +860,12 @@ function resetSettingsPortal() {
 }
 
 function saveToSteam(saveData) {
-	if (typeof greenworks == 'undefined') return;
+	if (typeof greenworks === 'undefined') return;
 	greenworks.saveTextToFile('TrimpsSave.sav', saveData, cloudSaveCallback, cloudSaveErrorCallback);
 }
 
 function loadFromSteam() {
-	if (typeof greenworks == 'undefined') return;
+	if (typeof greenworks === 'undefined') return;
 	greenworks.readTextFromFile('TrimpsSave.sav', loadFromSteamCallback, loadFromSteamErrorCallback);
 }
 

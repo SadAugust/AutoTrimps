@@ -21,8 +21,8 @@ function presetMutTab(tabNum) {
 
 function tooltipAT(what, isItIn, event, textString, headingName) {
 	checkAlert(what, isItIn);
-	if (game.global.lockTooltip && event != 'update') return;
-	if (game.global.lockTooltip && isItIn && event == 'update') return;
+	if (game.global.lockTooltip && event !== 'update') return;
+	if (game.global.lockTooltip && isItIn && event === 'update') return;
 	var elem = document.getElementById("tooltipDiv");
 	swapClass("tooltipExtra", "tooltipExtraNone", elem);
 	document.getElementById('tipText').className = "";
@@ -33,20 +33,20 @@ function tooltipAT(what, isItIn, event, textString, headingName) {
 	var costText = "";
 	var titleText;
 
-	if (what == "Mutator Preset") {
-		if (headingName == "Save") {
+	if (what === "Mutator Preset") {
+		if (headingName === "Save") {
 			what = "Save Mutation Preset";
 			tooltipText = "Click to save your current mutation loadout to the selected preset";
 		}
-		else if (headingName == "Rename") {
+		else if (headingName === "Rename") {
 			what = "Rename Mutator Preset";
 			tooltipText = "Click to set a name for your currently selected mutator preset";
 		}
-		else if (headingName == "Load") {
+		else if (headingName === "Load") {
 			what = "Load Mutation Preset";
 			tooltipText = "Click to load your currently selected mutation preset. Be warned if you have any mutators purchased that differ from your loadout then it won't be 100% accurate.";
 		}
-		else if (headingName == "Reset") {
+		else if (headingName === "Reset") {
 			what = "Reset Mutation Preset";
 			tooltipText = "Click to reset your currently selected mutation preset. This will remove all mutators from the preset and set it to empty so when portaling you could end up with no mutators active.";
 		}
@@ -71,7 +71,7 @@ function tooltipAT(what, isItIn, event, textString, headingName) {
 				tooltipText += "<p style='font-weight: bold'>This Preset holds " + preset.purchaseCount + " mutators:</p>";
 				var count = 0;
 				for (var item in preset) {
-					if (item == "name") continue;
+					if (item === "name") continue;
 					if (item === 'purchaseCount') continue;
 					if (preset[item] === false) continue;
 					var mutName = item;
@@ -90,8 +90,8 @@ function tooltipAT(what, isItIn, event, textString, headingName) {
 			}
 		}
 	}
-	else if (what == "Rename Preset") {
-		what == "Rename Preset " + selectedMutPreset;
+	else if (what === "Rename Preset") {
+		what === "Rename Preset " + selectedMutPreset;
 		var presetGroup = JSON.parse(localStorage.getItem("mutatorPresets"));
 		tooltipText = "Type a name below for your Mutator Preset! This name will show up on the Preset bar and make it easy to identify which Preset is which."
 		var preset = presetGroup["preset" + selectedMutPreset];
@@ -121,7 +121,7 @@ function tooltipAT(what, isItIn, event, textString, headingName) {
 	elem.style.display = "block";
 	if (ondisplay !== null)
 		ondisplay();
-	if (event != "update") positionTooltip(elem, event);
+	if (event !== "update") positionTooltip(elem, event);
 }
 
 function saveMutations() {
@@ -177,7 +177,7 @@ function loadMutations(preset) {
 }
 
 function renameMutations(needTooltip) {
-	if (selectedMutPreset == 0) return;
+	if (selectedMutPreset === 0) return;
 	var mutatorObj = JSON.parse(localStorage.getItem("mutatorPresets"));
 	var presetGroup = mutatorObj['preset' + selectedMutPreset];
 

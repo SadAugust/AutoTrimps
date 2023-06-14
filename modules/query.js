@@ -1,14 +1,14 @@
 function getPerSecBeforeManual(a) {
 	var b = 0,
 		c = game.jobs[a].increase;
-	if ("custom" == c) return 0;
+	if ("custom" === c) return 0;
 	if (0 < game.jobs[a].owned) {
 		if (
 			((b = game.jobs[a].owned * game.jobs[a].modifier),
 				0 < game.portal.Motivation.level && (b += b * game.portal.Motivation.level * game.portal.Motivation.modifier),
 				game.global.universe === 1 && 0 < game.portal.Motivation_II.level && (b *= 1 + game.portal.Motivation_II.level * game.portal.Motivation_II.modifier),
 				game.global.universe === 1 && 0 < game.portal.Meditation.level && (b *= (1 + 0.01 * game.portal.Meditation.getBonusPercent()).toFixed(2)),
-				game.global.universe === 1 && 0 < game.jobs.Magmamancer.owned && "metal" == c && (b *= game.jobs.Magmamancer.getBonusPercent()),
+				game.global.universe === 1 && 0 < game.jobs.Magmamancer.owned && "metal" === c && (b *= game.jobs.Magmamancer.getBonusPercent()),
 				challengeActive('Meditate') ? (b *= 1.25) : challengeActive('Size') && (b *= 1.5),
 				challengeActive('Toxicity'))
 		) {
@@ -18,10 +18,10 @@ function getPerSecBeforeManual(a) {
 		challengeActive('Balance') && (b *= game.challenges.Balance.getGatherMult()),
 			challengeActive('Decay') && ((b *= 10), (b *= Math.pow(0.995, game.challenges.Decay.stacks))),
 			challengeActive('Daily') &&
-			("undefined" != typeof game.global.dailyChallenge.dedication && (b *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength)),
-				"undefined" != typeof game.global.dailyChallenge.famine && "fragments" != c && "science" != c && (b *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength))),
+			("undefined" !== typeof game.global.dailyChallenge.dedication && (b *= dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength)),
+				"undefined" !== typeof game.global.dailyChallenge.famine && "fragments" !== c && "science" !== c && (b *= dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength))),
 			challengeActive('Watch') && (b /= 2),
-			challengeActive('Lead') && 1 == game.global.world % 2 && (b *= 2),
+			challengeActive('Lead') && 1 === game.global.world % 2 && (b *= 2),
 			(b = calcHeirloomBonus("Staff", a + "Speed", b));
 	}
 	return b;
@@ -34,8 +34,8 @@ function getCurrentEnemy(a) {
 		game.global.mapsActive || game.global.preMapsActive
 			? game.global.mapsActive &&
 			!game.global.preMapsActive &&
-			("undefined" == typeof game.global.mapGridArray[game.global.lastClearedMapCell + a] ? (b = game.global.mapGridArray[game.global.gridArray.length - 1]) : (b = game.global.mapGridArray[game.global.lastClearedMapCell + a]))
-			: "undefined" == typeof game.global.gridArray[game.global.lastClearedCell + a]
+			("undefined" === typeof game.global.mapGridArray[game.global.lastClearedMapCell + a] ? (b = game.global.mapGridArray[game.global.gridArray.length - 1]) : (b = game.global.mapGridArray[game.global.lastClearedMapCell + a]))
+			: "undefined" === typeof game.global.gridArray[game.global.lastClearedCell + a]
 				? (b = game.global.gridArray[game.global.gridArray.length - 1])
 				: (b = game.global.gridArray[game.global.lastClearedCell + a]),
 		b
@@ -43,7 +43,7 @@ function getCurrentEnemy(a) {
 }
 
 function getCorruptedCellsNum() {
-	for (var a, b = 0, c = 0; c < game.global.gridArray.length - 1; c++) (a = game.global.gridArray[c]), "Corruption" == a.mutation && b++;
+	for (var a, b = 0, c = 0; c < game.global.gridArray.length - 1; c++) (a = game.global.gridArray[c]), "Corruption" === a.mutation && b++;
 	return b;
 }
 
@@ -59,7 +59,7 @@ function getCostToUpgrade(upgradeName, resource) {
 	var upgrade = game.upgrades[upgradeName];
 	return void 0 !== upgrade.cost.resources[resource] && void 0 !== upgrade.cost.resources[resource][0]
 		? Math.floor(upgrade.cost.resources[resource][0] * Math.pow(upgrade.cost.resources[resource][1], upgrade.done))
-		: void 0 !== upgrade.cost.resources[resource] && void 0 == upgrade.cost.resources[resource][0]
+		: void 0 !== upgrade.cost.resources[resource] && void 0 === upgrade.cost.resources[resource][0]
 			? upgrade.cost.resources[resource]
 			: 0;
 }
@@ -120,7 +120,7 @@ function getPotencyMod(howManyMoreGenes) {
 	if (challengeActive('Toxicity') && game.challenges.Toxicity.stacks > 0) {
 		potencyMod *= Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks);
 	}
-	if (game.global.voidBuff == "slowBreed") {
+	if (game.global.voidBuff === "slowBreed") {
 		potencyMod *= 0.2;
 	}
 	potencyMod = calcHeirloomBonus("Shield", "breedSpeed", potencyMod);

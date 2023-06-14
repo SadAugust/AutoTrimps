@@ -116,7 +116,7 @@ function fireModeLocal() {
 
 function buyJobs() {
 
-	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
+	if (game.jobs.Farmer.locked || game.resources.trimps.owned === 0) return;
 
 	const universeSetting = getPageSetting('jobType');
 	//Disabling autoJobs if AT AutoJobs is disabled.
@@ -132,7 +132,7 @@ function buyJobs() {
 
 	var canBreed = !challengeActive('Trapper') && !challengeActive('Trappapalooza');
 	var breedingTrimps = !canBreed ? Infinity : game.resources.trimps.owned - trimpsEffectivelyEmployed();
-	var hasSciThree = ((game.global.universe == 1 && game.global.sLevel >= 3) || (game.global.universe == 2 && game.buildings.Microchip.owned >= 3));
+	var hasSciThree = ((game.global.universe === 1 && game.global.sLevel >= 3) || (game.global.universe === 2 && game.buildings.Microchip.owned >= 3));
 
 	//Enables Firing for Jobs. It's a setting that will save hassle later by forcing it to be enalbed.
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
@@ -288,7 +288,7 @@ function buyJobs() {
 					continue;
 				}
 				else
-					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(universeSetting == 2 ? worker : 'R' + worker + 'Ratio'))
+					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(universeSetting === 2 ? worker : 'R' + worker + 'Ratio'))
 			}
 		}
 	}
@@ -313,7 +313,7 @@ function buyJobs() {
 	if (!scientistsAvailable) desiredRatios[3] = 0;
 
 	var totalFraction = desiredRatios.reduce((a, b) => { return a + b; });
-	totalFraction = totalFraction == 0 ? 1 : totalFraction
+	totalFraction = totalFraction === 0 ? 1 : totalFraction
 	var desiredWorkers = [0, 0, 0, 0];
 	var totalWorkerCost = 0;
 	for (var i = 0; i < ratioWorkers.length; i++) {

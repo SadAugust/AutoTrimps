@@ -163,7 +163,7 @@ function autoGather() {
 				safeSetGather('wood');
 			else if (currentBonus.includes('mc') || currentBonus.includes('lc'))
 				safeSetGather('metal');
-			else if (manualGather != 3 && currentBonus.includes('rc') && researchAvailable)
+			else if (manualGather !== 3 && currentBonus.includes('rc') && researchAvailable)
 				safeSetGather('science');
 			else
 				safeSetGather('metal');
@@ -223,7 +223,7 @@ function autoGather() {
 	}
 
 	//Mid Priority Research
-	if (manualGather != 3 && researchAvailable && needScience) {
+	if (manualGather !== 3 && researchAvailable && needScience) {
 		safeSetGather('science');
 		return;
 	}
@@ -248,7 +248,7 @@ function autoGather() {
 	for (var resource in manualResourceList) {
 		var job = manualResourceList[resource];
 		var currentRate = game.jobs[job].owned * game.jobs[job].modifier;
-		if (document.getElementById(resource).style.visibility != 'hidden') {
+		if (document.getElementById(resource).style.visibility !== 'hidden') {
 			if (currentRate === 0) {
 				currentRate = game.resources[resource].owned;
 				if ((haveWorkers) || (currentRate < lowestResourceRate)) {
@@ -257,18 +257,18 @@ function autoGather() {
 					lowestResourceRate = currentRate;
 				}
 			}
-			if ((currentRate < lowestResourceRate || lowestResourceRate == -1) && haveWorkers) {
+			if ((currentRate < lowestResourceRate || lowestResourceRate === -1) && haveWorkers) {
 				lowestResource = resource;
 				lowestResourceRate = currentRate;
 			}
 		}
 	}
-	if (challengeActive('Transmute') && game.global.playerGathering != lowestResource && !haveWorkers && !breedFire) {
+	if (challengeActive('Transmute') && game.global.playerGathering !== lowestResource && !haveWorkers && !breedFire) {
 		if (hasTurkimp)
 			safeSetGather('wood');
 		else
 			safeSetGather(lowestResource);
-	} else if (document.getElementById('scienceCollectBtn').style.display != 'none' && document.getElementById('science').style.visibility != 'hidden') {
+	} else if (document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden') {
 		if (game.resources.science.owned < getPsStringLocal('science', true) * MODULES["gather"].minScienceSeconds && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers)
 			safeSetGather('science');
 		else if (challengeActive('Transmute') && hasTurkimp)
@@ -276,7 +276,7 @@ function autoGather() {
 		else
 			safeSetGather(lowestResource);
 	}
-	else if (trapTrimpsOK && game.global.trapBuildToggled == true && lowOnTraps)
+	else if (trapTrimpsOK && game.global.trapBuildToggled === true && lowOnTraps)
 		safeSetGather('buildings');
 	else
 		safeSetGather(lowestResource);

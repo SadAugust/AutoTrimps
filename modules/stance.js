@@ -57,13 +57,13 @@ function maxOneShotPower(planToMap, targetZone) {
 
 	if (game.global.universe === 1) {
 		//No overkill perk
-		if (game.portal.Overkill.level == 0) return 1;
+		if (game.portal.Overkill.level === 0) return 1;
 		//Mastery
 		if (game.talents.overkill.purchased) power++;
 		//Ice
-		if (game.global.uberNature == "Ice") power += 2;
-		if (getEmpowerment() == "Ice" && game.empowerments.Ice.getLevel() >= 50) power++;
-		if (getEmpowerment() == "Ice" && game.empowerments.Ice.getLevel() >= 100) power++;
+		if (game.global.uberNature === "Ice") power += 2;
+		if (getEmpowerment() === "Ice" && game.empowerments.Ice.getLevel() >= 50) power++;
+		if (getEmpowerment() === "Ice" && game.empowerments.Ice.getLevel() >= 100) power++;
 	}
 	else if (game.global.universe === 2) {
 		if (!canU2OverkillAT(targetZone) && planToMap && u2Mutations.tree.MadMap.purchased) return power;
@@ -77,8 +77,8 @@ function maxOneShotPower(planToMap, targetZone) {
 
 function oneShotZone(zone, type, specificStance, maxOrMin) {
 	//Calculates our minimum damage
-	var baseDamage = calcOurDmg(maxOrMin ? "max" : "min", specificStance, true, type != "world");
-	var damageLeft = baseDamage + addPoison(false, (type == "world") ? zone : game.global.world);
+	var baseDamage = calcOurDmg(maxOrMin ? "max" : "min", specificStance, true, type !== "world");
+	var damageLeft = baseDamage + addPoison(false, (type === "world") ? zone : game.global.world);
 
 	//Calculates how many enemies we can one shot + overkill
 	for (var power = 1; power <= maxOneShotPower(); power++) {
@@ -158,8 +158,8 @@ function challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, 
 	harm += maxHealth * challengeDamage;
 
 	//Adds Bleed Damage -- % of current health
-	if (game.global.voidBuff == "bleed" || (enemy.corrupted == 'corruptBleed') || enemy.corrupted == 'healthyBleed') {
-		challengeDamage = (enemy.corrupted == 'healthyBleed') ? 0.30 : 0.20;
+	if (game.global.voidBuff === "bleed" || (enemy.corrupted === 'corruptBleed') || enemy.corrupted === 'healthyBleed') {
+		challengeDamage = (enemy.corrupted === 'healthyBleed') ? 0.30 : 0.20;
 		harm += (maxHealth - missingHealth) * challengeDamage;
 	}
 
@@ -192,13 +192,13 @@ function directDamage(block, pierce, currentHealth, minDamage, critPower = 2) {
 	var harm = Math.max(enemyDamage - block, pierce * enemyDamage, 0);
 
 	//Fast Enemies
-	var isDoubleAttack = game.global.voidBuff == "doubleAttack" || (enemy.corrupted == "corruptDbl") || enemy.corrupted == "healthyDbl";
-	var enemyFast = isDoubleAttack || challengeActive('Slow') || ((game.badGuys[enemy.name].fast || enemy.mutation == "Corruption") && !challengeActive('Coordinate') && !challengeActive('Nom'));
+	var isDoubleAttack = game.global.voidBuff === "doubleAttack" || (enemy.corrupted === "corruptDbl") || enemy.corrupted === "healthyDbl";
+	var enemyFast = isDoubleAttack || challengeActive('Slow') || ((game.badGuys[enemy.name].fast || enemy.mutation === "Corruption") && !challengeActive('Coordinate') && !challengeActive('Nom'));
 
 	//Dodge Dailies
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.slippery !== "undefined") {
 		var slipStr = game.global.dailyChallenge.slippery.strength;
-		var dodgeDaily = (slipStr > 15 && game.global.world % 2 == 0) || (slipStr <= 15 && game.global.world % 2 == 1);
+		var dodgeDaily = (slipStr > 15 && game.global.world % 2 === 0) || (slipStr <= 15 && game.global.world % 2 === 1);
 	}
 
 	//Double Attack and One Shot situations
@@ -215,11 +215,11 @@ function newArmyRdy() {
 
 function survive(formation = "S", critPower = 2, ignoreArmy) {
 	//Check if the formation is valid
-	if (formation == "D" && !game.upgrades.Dominance.done) return false;
-	if (formation == "XB" && !game.upgrades.Barrier.done) return false;
-	if (formation == "B" && !game.upgrades.Barrier.done) return false;
-	if (formation == "H" && !game.upgrades.Formations.done) return false;
-	if (formation == "S" && (game.global.world < 60 || game.stats.highestLevel.valueTotal() < 180)) return false;
+	if (formation === "D" && !game.upgrades.Dominance.done) return false;
+	if (formation === "XB" && !game.upgrades.Barrier.done) return false;
+	if (formation === "B" && !game.upgrades.Barrier.done) return false;
+	if (formation === "H" && !game.upgrades.Formations.done) return false;
+	if (formation === "S" && (game.global.world < 60 || game.stats.highestLevel.valueTotal() < 180)) return false;
 
 	//Base stats
 	var health = baseHealth;
@@ -232,14 +232,14 @@ function survive(formation = "S", critPower = 2, ignoreArmy) {
 	var newSquadRdy = !ignoreArmy && newArmyRdy();
 
 	//Applies the formation modifiers
-	if (formation == "XB") { health /= 2; }
-	else if (formation == "D") { minDamage *= 4; maxDamage *= 4; health /= 2; block /= 2; }
-	else if (formation == "B") { minDamage /= 2; maxDamage /= 2; health /= 2; block *= 4; }
-	else if (formation == "H") { minDamage /= 2; maxDamage /= 2; health *= 4; block /= 2; }
-	else if (formation == "S") { minDamage /= 2; maxDamage /= 2; health /= 2; block /= 2; }
+	if (formation === "XB") { health /= 2; }
+	else if (formation === "D") { minDamage *= 4; maxDamage *= 4; health /= 2; block /= 2; }
+	else if (formation === "B") { minDamage /= 2; maxDamage /= 2; health /= 2; block *= 4; }
+	else if (formation === "H") { minDamage /= 2; maxDamage /= 2; health *= 4; block /= 2; }
+	else if (formation === "S") { minDamage /= 2; maxDamage /= 2; health /= 2; block /= 2; }
 
 	//Max health for XB formation
-	var maxHealth = health * (formation == "XB" ? 2 : 1);
+	var maxHealth = health * (formation === "XB" ? 2 : 1);
 
 	//Empowerments - Poison
 	minDamage += addPoison(true)
@@ -247,7 +247,7 @@ function survive(formation = "S", critPower = 2, ignoreArmy) {
 
 	//Pierce
 	var pierce = (game.global.brokenPlanet && !game.global.mapsActive) ? getPierceAmt() : 0;
-	if (formation != "B" && game.global.formation == 3) pierce *= 2;
+	if (formation !== "B" && game.global.formation === 3) pierce *= 2;
 
 	//Decides if the trimps can survive in this formation
 	var notSpire = game.global.mapsActive || !game.global.spireActive;
@@ -273,7 +273,7 @@ function autoStance() {
 	if (typeof getCurrentEnemy() === 'undefined') return true;
 
 	//Keep on D vs the Domination bosses
-	if (challengeActive('Domination') && (game.global.lastClearedCell == 98 || getCurrentEnemy() && getCurrentEnemy().name == "Cthulimp")) {
+	if (challengeActive('Domination') && (game.global.lastClearedCell === 98 || getCurrentEnemy() && getCurrentEnemy().name === "Cthulimp")) {
 		autoStanceD();
 		return;
 	}
@@ -334,16 +334,16 @@ function windStance() {
 	if (game.global.world <= 70) return;
 	var stanceToUse = 2;
 	var currentStance = calcCurrentStance();
-	if (currentStance == 0 || currentStance == 10) {
+	if (currentStance === 0 || currentStance === 10) {
 		stanceToUse = 0;
 	}
-	if (currentStance == 1 || currentStance == 11) {
+	if (currentStance === 1 || currentStance === 11) {
 		stanceToUse = 1;
 	}
-	if (currentStance == 2 || currentStance == 12) {
+	if (currentStance === 2 || currentStance === 12) {
 		stanceToUse = 2;
 	}
-	if (currentStance == 5 || currentStance == 15) {
+	if (currentStance === 5 || currentStance === 15) {
 		stanceToUse = 5;
 	}
 

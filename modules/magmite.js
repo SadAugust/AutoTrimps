@@ -54,31 +54,31 @@ function miRatio() {
 	var ocfinal = ocspendr - ocr;
 
 	var ratios = [];
-	if (efffinal != -1)
+	if (efffinal !== -1)
 		ratios.push(efffinal);
-	if (capfinal != -1)
+	if (capfinal !== -1)
 		ratios.push(capfinal);
-	if (supfinal != -1)
+	if (supfinal !== -1)
 		ratios.push(supfinal);
-	if (ocfinal != -1)
+	if (ocfinal !== -1)
 		ratios.push(ocfinal);
 
 	ratios.sort(function (a, b) { return b - a; });
 
 	//Return Next Spend
-	if (ratios[0] == efffinal)
+	if (ratios[0] === efffinal)
 		return "Efficiency";
-	if (ratios[0] == capfinal)
+	if (ratios[0] === capfinal)
 		return "Capacity";
-	if (ratios[0] == supfinal)
+	if (ratios[0] === supfinal)
 		return "Supply";
-	if (ratios[0] == ocfinal)
+	if (ratios[0] === ocfinal)
 		return "Overclocker";
 }
 
 function autoMagmiteSpender() {
 	if (game.global.universe !== 1) return;
-	if (getPageSetting('ratiospend') == true) {
+	if (getPageSetting('ratiospend')) {
 		var tospend = miRatio();
 		var upgrader = game.generatorUpgrades[tospend];
 		if (game.global.magmite >= upgrader.cost()) {
@@ -105,14 +105,14 @@ function autoMagmiteSpender() {
 			}
 			var hasOv = game.permanentGeneratorUpgrades.Hybridization.owned && game.permanentGeneratorUpgrades.Storage.owned;
 			var ovclock = game.generatorUpgrades.Overclocker;
-			if (hasOv && ((getPageSetting('spendmagmitesetting') == 0 || getPageSetting('spendmagmitesetting') == 3) || !ovclock.upgrades) && (game.global.magmite >= ovclock.cost())) {
+			if (hasOv && ((getPageSetting('spendmagmitesetting') === 0 || getPageSetting('spendmagmitesetting') === 3) || !ovclock.upgrades) && (game.global.magmite >= ovclock.cost())) {
 				debug("Auto Spending " + ovclock.cost() + " Magmite on: Overclocker" + (ovclock.upgrades ? " #" + (ovclock.upgrades + 1) : ""), "magmite");
 				buyGeneratorUpgrade('Overclocker');
 			}
 
-			var repeat = (getPageSetting('spendmagmitesetting') == 0 || getPageSetting('spendmagmitesetting') == 1);
+			var repeat = (getPageSetting('spendmagmitesetting') === 0 || getPageSetting('spendmagmitesetting') === 1);
 			while (repeat) {
-				if (MODULES["magmite"].algorithm == 2) {
+				if (MODULES["magmite"].algorithm === 2) {
 					var eff = game.generatorUpgrades["Efficiency"];
 					var cap = game.generatorUpgrades["Capacity"];
 					var sup = game.generatorUpgrades["Supply"];
@@ -142,7 +142,7 @@ function autoMagmiteSpender() {
 						if (!wall)
 							item = (CapObj.cost <= supCost) ?
 								CapObj.name : "Supply";
-						else if (wall == 1)
+						else if (wall === 1)
 							item = "Capacity";
 						else if (wall < 0)
 							item = (supCost <= (CapObj.cost * -wall)) ?
@@ -179,13 +179,13 @@ function autoGenerator() {
 	var afterFuelState = getPageSetting("defaultgen");
 
 	//Daily
-	if (hdStats.isDaily && getPageSetting("AutoGenDC") != 0) {
+	if (hdStats.isDaily && getPageSetting("AutoGenDC") !== 0) {
 		changeGeneratorState(getPageSetting("AutoGenDC"));
 		return;
 	}
 
 	//C2
-	if (hdStats.isC3 && getPageSetting("AutoGenC2") != 0) {
+	if (hdStats.isC3 && getPageSetting("AutoGenC2") !== 0) {
 		changeGeneratorState(getPageSetting("AutoGenC2"));
 		return;
 	}
@@ -193,10 +193,10 @@ function autoGenerator() {
 	//Before Fuel
 	if (getPageSetting("fuellater") <= 0 || game.global.world < getPageSetting("fuellater")) {
 		//Pseudo-Hybrid. It fuels until full, then goes into Mi mode
-		if (getPageSetting("beforegen") == 2 && !game.permanentGeneratorUpgrades.Hybridization.owned) {
+		if (getPageSetting("beforegen") === 2 && !game.permanentGeneratorUpgrades.Hybridization.owned) {
 			beforeFuelState = game.global.generatorMode;
-			if (game.global.world == 230 && game.global.lastClearedCell < 14) beforeFuelState = 1;
-			if (game.global.magmaFuel == getGeneratorFuelCap(false, true)) beforeFuelState = 0;
+			if (game.global.world === 230 && game.global.lastClearedCell < 14) beforeFuelState = 1;
+			if (game.global.magmaFuel === getGeneratorFuelCap(false, true)) beforeFuelState = 0;
 		}
 		changeGeneratorState(beforeFuelState);
 	}
@@ -208,10 +208,10 @@ function autoGenerator() {
 	//After Fuel
 	else {
 		//Pseudo-Hybrid. It fuels until full, then goes into Mi mode
-		if (getPageSetting("defaultgen") == 2 && !game.permanentGeneratorUpgrades.Hybridization.owned) {
+		if (getPageSetting("defaultgen") === 2 && !game.permanentGeneratorUpgrades.Hybridization.owned) {
 			afterFuelState = game.global.generatorMode;
-			if (game.global.world == 230 && game.global.lastClearedCell < 14) afterFuelState = 1;
-			if (game.global.magmaFuel == getGeneratorFuelCap(false, true)) afterFuelState = 0;
+			if (game.global.world === 230 && game.global.lastClearedCell < 14) afterFuelState = 1;
+			if (game.global.magmaFuel === getGeneratorFuelCap(false, true)) afterFuelState = 0;
 		}
 		changeGeneratorState(afterFuelState);
 	}

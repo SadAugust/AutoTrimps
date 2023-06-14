@@ -53,7 +53,8 @@ function makeAutomapStatusTooltip() {
 	const mapStacksText = (`Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`);
 	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy.';
 	var enemyName = game.global.world < 60 ? 'Blimp' : 'Improbability';
-	var hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against a cell 100 ${enemyName}'s max attack${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''}.`;
+	var hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against a cell 100 ${enemyName}'s max attack${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''
+		}.`;
 	const hitsSurvived = prettify(hdStats.hitsSurvived);
 	const hitsSurvivedSetting = isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
 	const hitsSurvivedValue = hitsSurvivedSetting > 0 ? hitsSurvivedSetting : '∞';
@@ -65,13 +66,13 @@ function makeAutomapStatusTooltip() {
 		'Values in <b>bold</b> are dynamically calculated based on current zone and activity.<br>' +
 		'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>';
 	if (game.global.universe === 2) {
-		if (!game.portal.Equality.radLocked) tooltip += `<br>\
-		If you have the Auto Equality setting set to <b>Auto Equality: Advanced</b> then all calculations will factor expected equality value into them.<br>`;
-		if (game.stats.highestRadLevel.valueTotal() > 200) tooltip += `If a mutated enemy has higher stats than the ${enemyName} on cell 100 then calculations will use that enemies stats instead.<br>`;
+		if (!game.portal.Equality.radLocked) tooltip += `< br >\
+		If you have the Auto Equality setting set to < b > Auto Equality: Advanced</b > then all calculations will factor expected equality value into them.< br > `;
+		if (game.stats.highestRadLevel.valueTotal() > 200) tooltip += `If a mutated enemy has higher stats than the ${enemyName} on cell 100 then calculations will use that enemies stats instead.< br > `;
 	}
 	//Hits Survived
-	tooltip += `<br>` +
-		`<b>Hits Survived info</b><br>` +
+	tooltip += `< br > ` +
+		`< b > Hits Survived info</b > <br>` +
 		`${hitsSurvivedText}<br>` +
 		`<b>Hits survived: ${hitsSurvived}</b> / <i>${hitsSurvivedValue}</i><br>`
 
@@ -83,7 +84,8 @@ function makeAutomapStatusTooltip() {
 			`Farming Setting: <b>${mapSettings.mapName}</b><br>` +
 			`Map level: <b>${mapSettings.mapLevel}</b><br>` +
 			`Auto level: <b>${mapSettings.autoLevel}</b><br>` +
-			`Special: <b>${mapSettings.special !== undefined && mapSettings.special !== '0' ? mapSpecialModifierConfig[mapSettings.special].name : 'None'}</b><br>` +
+			`Special: <b>${mapSettings.special !== undefined && mapSettings.special !== '0' ? mapSpecialModifierConfig[mapSettings.special].name : 'None'
+			}</b > <br>` +
 			`Wants to run: ${mapSettings.shouldRun}<br>` +
 			`Repeat: ${mapSettings.repeat}<br>`;
 	}
@@ -190,29 +192,29 @@ function autoMap() {
 	var vanillaMAZ = false;
 	if (game.options.menu.mapAtZone.enabled && game.global.canMapAtZone) {
 		var nextCell = game.global.lastClearedCell;
-		if (nextCell == -1) nextCell = 1;
+		if (nextCell === -1) nextCell = 1;
 		else nextCell += 2;
 		var totalPortals = getTotalPortals();
 		var setZone = game.options.menu.mapAtZone.getSetZone();
 		for (var x = 0; x < setZone.length; x++) {
 			if (!setZone[x].on) continue;
 			if (game.global.world < setZone[x].world || game.global.world > setZone[x].through) continue;
-			if (game.global.preMapsActive && setZone[x].done == totalPortals + "_" + game.global.world + "_" + nextCell) continue;
+			if (game.global.preMapsActive && setZone[x].done === totalPortals + "_" + game.global.world + "_" + nextCell) continue;
 			if (setZone[x].times === -1 && game.global.world !== setZone[x].world) continue;
 			if (setZone[x].times > 0 && (game.global.world - setZone[x].world) % setZone[x].times !== 0) continue;
 			if (setZone[x].cell === game.global.lastClearedCell + 2) {
 				vanillaMAZ = true;
-				if (setZone[x].until == 6) game.global.mapCounterGoal = 25;
-				if (setZone[x].until == 7) game.global.mapCounterGoal = 50;
-				if (setZone[x].until == 8) game.global.mapCounterGoal = 100;
-				if (setZone[x].until == 9) game.global.mapCounterGoal = setZone[x].rx;
+				if (setZone[x].until === 6) game.global.mapCounterGoal = 25;
+				if (setZone[x].until === 7) game.global.mapCounterGoal = 50;
+				if (setZone[x].until === 8) game.global.mapCounterGoal = 100;
+				if (setZone[x].until === 9) game.global.mapCounterGoal = setZone[x].rx;
 				break;
 			}
 		}
 
 		//Toggle void repeat on if it's disabled.
 		if (vanillaMAZ) {
-			if (game.options.menu.repeatVoids.enabled != 1) toggleSetting('repeatVoids');
+			if (game.options.menu.repeatVoids.enabled !== 1) toggleSetting('repeatVoids');
 			return;
 		}
 	}
@@ -303,17 +305,17 @@ function autoMap() {
 				debug("Running LMC map due to only having 1 equip remaining on this map.", "maps");
 			}
 		}
-		if ((selectedMap == game.global.currentMapId || (!getCurrentMapObject().noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding')) {
+		if ((selectedMap === game.global.currentMapId || (!getCurrentMapObject().noRecycle && mapSettings.shouldRun) || mapSettings.mapName === 'Bionic Raiding')) {
 			//Starting with repeat on
 			if (!game.global.repeatMap)
 				repeatClicked();
 			//Changing repeat to repeat for items for Presitge & Bionic Raiding
 			if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !MODULES.mapFunctions.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
-				if (game.options.menu.repeatUntil.enabled != 2) {
+				if (game.options.menu.repeatUntil.enabled !== 2) {
 					game.options.menu.repeatUntil.enabled = 2;
 					toggleSetting("repeatUntil", null, false, true);
 				}
-			} else if (game.options.menu.repeatUntil.enabled != 0) {
+			} else if (game.options.menu.repeatUntil.enabled !== 0) {
 				game.options.menu.repeatUntil.enabled = 0;
 				toggleSetting("repeatUntil", null, false, true);
 			}
@@ -345,7 +347,7 @@ function autoMap() {
 		}
 	} else if (!game.global.preMapsActive && !game.global.mapsActive) {
 		//Going to map chamber. Will override default 'Auto Abandon' setting if AT wants to map!
-		if (selectedMap != "world") {
+		if (selectedMap !== "world") {
 			if (!game.global.switchToMaps) {
 				mapsClicked();
 			}
@@ -356,13 +358,13 @@ function autoMap() {
 		//Creating Maps
 	} else if (game.global.preMapsActive) {
 		document.getElementById("mapLevelInput").value = game.global.world;
-		if (selectedMap == "world") {
+		if (selectedMap === "world") {
 			mapsClicked();
-		} else if (selectedMap == "prestigeRaid") {
+		} else if (selectedMap === "prestigeRaid") {
 			runPrestigeRaiding();
-		} else if (selectedMap == "bionicRaid") {
+		} else if (selectedMap === "bionicRaid") {
 			runBionicRaiding(bionicPool);
-		} else if (selectedMap == "create") {
+		} else if (selectedMap === "create") {
 			//Setting sliders appropriately.
 			if (mapSettings.shouldRun) {
 				if (mapSettings.mapName !== '') {
@@ -389,11 +391,11 @@ function autoMap() {
 					recycleBelow(true);
 					debug("Retrying, Buying a Map, level: #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
 					result = buyMap();
-					if (result == -2) {
+					if (result === -2) {
 						const mapToRecycleIfBuyingFails = lowestMap;
 						recycleMap(game.global.mapsOwnedArray.indexOf(mapToRecycleIfBuyingFails));
 						result = buyMap();
-						if (result == -2)
+						if (result === -2)
 							debug("AutoMaps unable to recycle to buy map!", "maps");
 						else
 							debug("Retrying map buy after recycling lowest level map", "maps");
@@ -412,7 +414,7 @@ function autoMap() {
 			} else {
 				levelText = " Level: " + game.global.world;
 			}
-			var voidorLevelText = themapobj.location == "Void" ? " Void: " : levelText;
+			var voidorLevelText = themapobj.location === "Void" ? " Void: " : levelText;
 			debug("Running selected " + selectedMap + voidorLevelText + " Name: " + themapobj.name, "maps", 'th-large');
 			runMap();
 			lastMapWeWereIn = getCurrentMapObject();

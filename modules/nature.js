@@ -8,9 +8,9 @@ function autoNatureTokens() {
 	for (var nature in game.empowerments) {
 		var empowerment = game.empowerments[nature];
 		var setting = getPageSetting('Auto' + nature);
-		if (!setting || setting == 'Off') continue;
+		if (!setting || setting === 'Off') continue;
 
-		if (setting == 'Empowerment') {
+		if (setting === 'Empowerment') {
 			var cost = getNextNatureCost(nature);
 			var natureLevel = game.empowerments[nature].level;
 			//Skips if not enough tokens to upgrade & maintain threshold
@@ -21,7 +21,7 @@ function autoNatureTokens() {
 			spentTokens = true;
 			if (natureLevel !== game.empowerments[nature].level) debug('Upgraded Empowerment of ' + nature, 'nature');
 		}
-		else if (setting == 'Transfer') {
+		else if (setting === 'Transfer') {
 			//Skips if at max transfer rate
 			if (empowerment.retainLevel >= 80) continue;
 			var cost = getNextNatureCost(nature, true);

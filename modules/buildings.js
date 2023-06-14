@@ -25,7 +25,7 @@ function safeBuyBuilding(building, amt) {
 	}
 
 	game.global.buyAmt = currBuyAmt;
-	if (building != 'Trap') debug('Building ' + amt + ' ' + building + (amt > 1 ? 's' : ''), "buildings", '*hammer2');
+	if (building !== 'Trap') debug('Building ' + amt + ' ' + building + (amt > 1 ? 's' : ''), "buildings", '*hammer2');
 	return true;
 }
 
@@ -41,21 +41,21 @@ function buyStorage(hypoZone) {
 		var curRes = game.resources[buildings[resource]].owned;
 		var maxRes = game.resources[buildings[resource]].max;
 		//Identifying our max for the resource that's being checked
-		maxRes = game.global.universe == 1 ? maxRes *= 1 + game.portal.Packrat.level * game.portal.Packrat.modifier :
+		maxRes = game.global.universe === 1 ? maxRes *= 1 + game.portal.Packrat.level * game.portal.Packrat.modifier :
 			maxRes *= 1 + game.portal.Packrat.radLevel * game.portal.Packrat.modifier;
 		maxRes = calcHeirloomBonus("Shield", "storageSize", maxRes);
 
 		//Identifying the amount of resources you'd get from a Jestimp when inside a map otherwise setting the value to 1.1x current resource to ensure no storage issues
 		var exoticValue = 0;
 		if (game.global.mapsActive) {
-			exoticValue = (getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Trimple Of Doom') ? curRes :
+			exoticValue = (getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Trimple Of Doom') ? curRes :
 				game.unlocks.imps.Jestimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 45)) :
 					game.unlocks.imps.Chronoimp ? scaleToCurrentMap(simpleSeconds(buildings[resource], 5)) :
 						exoticValue
 		}
 		//Skips buying sheds if you're not on one of your specified bonfire zones
 		if (challengeActive('Hypothermia') && hypoZone > game.global.world && resource === 'Shed') continue;
-		if ((game.global.world == 1 && curRes > maxRes * customVars.storageLowlvlCutoff1) ||
+		if ((game.global.world === 1 && curRes > maxRes * customVars.storageLowlvlCutoff1) ||
 			(game.global.world >= 2 && game.global.world < 10 && curRes > maxRes * customVars.storageLowlvlCutoff2) ||
 			(curRes + exoticValue > maxRes * customVars.storageMainCutoff)) {
 			if (canAffordBuilding(resource, null, null, null, null, null) && game.triggers[resource].done) {
@@ -66,19 +66,19 @@ function buyStorage(hypoZone) {
 }
 
 function getPsStringLocal(what, rawNum) {
-	if (what == "helium") return;
+	if (what === "helium") return;
 	var resOrder = ["food", "wood", "metal", "science", "gems", "fragments"];
 	var books = ["farming", "lumber", "miner", "science"];
 	var jobs = ["Farmer", "Lumberjack", "Miner", "Scientist", "Dragimp", "Explorer"];
 	var index = resOrder.indexOf(what);
 	var job = game.jobs[jobs[index]];
 	var book = game.upgrades["Speed" + books[index]];
-	var base = (what == "fragments") ? 0.4 : 0.5;
+	var base = (what === "fragments") ? 0.4 : 0.5;
 	//Add base
 	//Add job count
 	var currentCalc = job.owned * base;
 	//Add books
-	if (what != "gems" && game.permaBoneBonuses.multitasking.owned > 0) {
+	if (what !== "gems" && game.permaBoneBonuses.multitasking.owned > 0) {
 		var str = (game.resources.trimps.owned >= game.resources.trimps.realMax()) ? game.permaBoneBonuses.multitasking.mult() : 0;
 		currentCalc *= (1 + str);
 	}
@@ -88,11 +88,11 @@ function getPsStringLocal(what, rawNum) {
 		currentCalc *= bookStrength;
 	}
 	//Add bounty
-	if (what != "gems" && game.upgrades.Bounty.done > 0) {
+	if (what !== "gems" && game.upgrades.Bounty.done > 0) {
 		currentCalc *= 2;
 	}
 	//Add Tribute
-	if (what == "gems" && game.buildings.Tribute.owned > 0) {
+	if (what === "gems" && game.buildings.Tribute.owned > 0) {
 		var tributeStrength = Math.pow(game.buildings.Tribute.increase.by, game.buildings.Tribute.owned);
 		currentCalc *= tributeStrength;
 	}
@@ -106,7 +106,7 @@ function getPsStringLocal(what, rawNum) {
 		var motivationStrength = (getPerkLevel("Motivation") * game.portal.Motivation.modifier);
 		currentCalc *= (motivationStrength + 1);
 	}
-	if (!game.portal.Observation.radLocked && game.global.universe == 2 && game.portal.Observation.trinkets > 0) {
+	if (!game.portal.Observation.radLocked && game.global.universe === 2 && game.portal.Observation.trinkets > 0) {
 		var mult = game.portal.Observation.getMult();
 		currentCalc *= mult;
 	}
@@ -116,10 +116,10 @@ function getPsStringLocal(what, rawNum) {
 	}
 	var potionFinding;
 	if (challengeActive('Alchemy')) potionFinding = alchObj.getPotionEffect("Potion of Finding");
-	if (potionFinding > 1 && what != "fragments" && what != "science") {
+	if (potionFinding > 1 && what !== "fragments" && what !== "science") {
 		currentCalc *= potionFinding;
 	}
-	if (game.upgrades.Speedexplorer.done > 0 && what == "fragments") {
+	if (game.upgrades.Speedexplorer.done > 0 && what === "fragments") {
 		var bonus = Math.pow(4, game.upgrades.Speedexplorer.done);
 		currentCalc *= bonus;
 	}
@@ -128,7 +128,7 @@ function getPsStringLocal(what, rawNum) {
 		var stackStr = Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
 		currentCalc *= stackStr;
 	}
-	if (challengeActive('Archaeology') && what != "fragments") {
+	if (challengeActive('Archaeology') && what !== "fragments") {
 		var mult = game.challenges.Archaeology.getStatMult("science");
 		currentCalc *= mult;
 	}
@@ -136,15 +136,15 @@ function getPsStringLocal(what, rawNum) {
 		var mult = game.challenges.Insanity.getLootMult();
 		currentCalc *= mult;
 	}
-	if (game.challenges.Nurture.boostsActive() && what != "fragments") {
+	if (game.challenges.Nurture.boostsActive() && what !== "fragments") {
 		var mult = game.challenges.Nurture.getResourceBoost();
 		currentCalc *= mult;
 	}
-	if (game.global.pandCompletions && what != "fragments") {
+	if (game.global.pandCompletions && what !== "fragments") {
 		var mult = game.challenges.Pandemonium.getTrimpMult();
 		currentCalc *= mult;
 	}
-	if (game.global.desoCompletions && what != "fragments") {
+	if (game.global.desoCompletions && what !== "fragments") {
 		var mult = game.challenges.Desolation.getTrimpMult();
 		currentCalc *= mult;
 	}
@@ -154,24 +154,24 @@ function getPsStringLocal(what, rawNum) {
 			mult = dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
 			currentCalc *= mult;
 		}
-		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what != "fragments" && what != "science") {
+		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what !== "fragments" && what !== "science") {
 			mult = dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
 			currentCalc *= mult;
 		}
 	}
-	if (challengeActive('Hypothermia') && what == "wood") {
+	if (challengeActive('Hypothermia') && what === "wood") {
 		var mult = game.challenges.Hypothermia.getWoodMult(true);
 		currentCalc *= mult;
 	}
-	if (((what == "food" || (what == "wood")) && game.buildings.Antenna.owned >= 5) || (what == "metal" && game.buildings.Antenna.owned >= 15)) {
+	if (((what === "food" || (what === "wood")) && game.buildings.Antenna.owned >= 5) || (what === "metal" && game.buildings.Antenna.owned >= 15)) {
 		var mult = game.jobs.Meteorologist.getExtraMult();
 		currentCalc *= mult;
 	}
-	if ((what == "food" || what == "metal" || what == "wood") && getParityBonus() > 1) {
+	if ((what === "food" || what === "metal" || what === "wood") && getParityBonus() > 1) {
 		var mult = getParityBonus();
 		currentCalc *= mult;
 	}
-	if ((what == "food" || what == "metal" || what == "wood") && autoBattle.oneTimers.Gathermate.owned && game.global.universe == 2) {
+	if ((what === "food" || what === "metal" || what === "wood") && autoBattle.oneTimers.Gathermate.owned && game.global.universe === 2) {
 		var mult = autoBattle.oneTimers.Gathermate.getMult();
 		currentCalc *= mult;
 	}
@@ -180,8 +180,8 @@ function getPsStringLocal(what, rawNum) {
 		currentCalc *= ((heirloomBonus / 100) + 1);
 	}
 	//Add player
-	if (game.global.playerGathering == what) {
-		if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what == "food" || what == "wood" || what == "metal")) {
+	if (game.global.playerGathering === what) {
+		if ((game.talents.turkimp2.purchased || game.global.turkimpTimer > 0) && (what === "food" || what === "wood" || what === "metal")) {
 			var tBonus = 50;
 			if (game.talents.turkimp2.purchased) tBonus = 100;
 			else if (game.talents.turkimp2.purchased) tBonus = 75;
@@ -279,14 +279,14 @@ function mostEfficientHousing() {
 			mostEfficient.time = worstTime;
 		}
 	}
-	if (mostEfficient.name == "") mostEfficient.name = null;
+	if (mostEfficient.name === "") mostEfficient.name = null;
 
 	return mostEfficient.name;
 }
 
 function buyBuildings() {
 
-	if (game.jobs.Farmer.locked || game.resources.trimps.owned == 0) return;
+	if (game.jobs.Farmer.locked || game.resources.trimps.owned === 0) return;
 	if (game.global.world === 1 && game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
 
 	//Disabling autoBuildings if AT AutoStructure is disabled.
@@ -322,7 +322,7 @@ function buyBuildings() {
 	}
 
 	//Disable buying buildings inside of unique maps
-	if (game.global.mapsActive && (getCurrentMapObject().name == 'Trimple Of Doom' || getCurrentMapObject().name == 'Atlantrimp' || getCurrentMapObject().name == 'Melting Point' || getCurrentMapObject().name == 'Frozen Castle') || runningAtlantrimp) {
+	if (game.global.mapsActive && (getCurrentMapObject().name === 'Trimple Of Doom' || getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Melting Point' || getCurrentMapObject().name === 'Frozen Castle') || runningAtlantrimp) {
 		if (game.global.repeatMap) repeatClicked();
 		return;
 	}
@@ -382,7 +382,7 @@ function buyBuildings() {
 
 		//Warpstations
 		if (!game.buildings.Warpstation.locked && getPageSetting('warpstation')) {
-			var firstGigaOK = MODULES["upgrades"].autoGigas == false || game.upgrades.Gigastation.done > 0;
+			var firstGigaOK = MODULES["upgrades"].autoGigas === false || game.upgrades.Gigastation.done > 0;
 			var warpstationAmt = Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation');
 			var gigaCapped = game.buildings.Warpstation.owned >= warpstationAmt;
 			var warpstationCanAfford = calculateMaxAffordLocal(game.buildings.Warpstation, true, false, false, (warpstationAmt - game.buildings.Warpstation.owned), 1)
@@ -409,7 +409,7 @@ function buyBuildings() {
 					var questZones = Math.floor(((questEndZone - game.global.world) / 2) - 1);
 					if (questZones < 0) questZones = 0;
 					//Buying smithies that won't be needed for quests before user entered end goal or for Smithy quests
-					smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : currQuest() == 10 ? 1 : 0;
+					smithyCanAfford = smithycanBuy > questZones ? smithycanBuy - questZones : currQuest() === 10 ? 1 : 0;
 				}
 			}
 			//Don't buy Smithies when you can afford a bonfire on Hypo.
@@ -451,7 +451,7 @@ function buyBuildings() {
 		var housingAmt = buildingSettings[housing].buyMax === 0 ? Infinity : buildingSettings[housing].buyMax;
 		var buildingspending = buildingSettings[housing].percent / 100;
 		var maxCanAfford = calculateMaxAffordLocal(game.buildings[housing], true, false, false, (housingAmt - game.buildings[housing].purchased), buildingspending);
-		if (((housing != null && canAffordBuilding(housing, false, false, false, false, 1)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt)))) {
+		if (((housing !== null && canAffordBuilding(housing, false, false, false, false, 1)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt)))) {
 			if (mapSettings.mapName === 'Smithy Farm' && housing !== 'Gateway')
 				return;
 			else if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings)

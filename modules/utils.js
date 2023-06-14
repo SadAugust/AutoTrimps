@@ -16,7 +16,7 @@ if (!String.prototype.includes) {
 function loadPageVariables() {
 	var tmp = JSON.parse(localStorage.getItem('atSettings'));
 
-	if (tmp !== null && tmp['ATversion'] != undefined) {
+	if (tmp !== null && tmp['ATversion'] !== undefined) {
 		autoTrimpSettings = tmp;
 	}
 }
@@ -27,7 +27,7 @@ function safeSetItems(storageName, storageSetting) {
 		localStorage.setItem(storageName, storageSetting)
 	}
 	catch (c) {
-		22 == c.code &&
+		22 === c.code &&
 			debug("Error: LocalStorage is full, or error. Attempt to delete some portals from your graph or restart browser.", "other")
 	}
 }
@@ -94,7 +94,7 @@ function pushSpreadsheetData() {
 			return Number(Math.min(Math.floor(this.potential()), this.cap));
 		},
 		progress: function () {
-			return this.level() == this.cap ? 0 : Number((4 ** (this.potential() - this.level()) - 1) / 3).toFixed(2)
+			return this.level() === this.cap ? 0 : Number((4 ** (this.potential() - this.level()) - 1) / 3).toFixed(2)
 		},
 		fluffy: function () {
 			return "E" + this.prestige + "L" + (this.level() + this.progress())
@@ -147,7 +147,7 @@ function pushSpreadsheetData() {
 	}
 
 	const mapCount = graphData !== undefined ? Object.keys(graphData.perZoneData.mapCount)
-		.filter((k) => graphData.perZoneData.mapCount[k] != null)
+		.filter((k) => graphData.perZoneData.mapCount[k] !== null)
 		.reduce((a, k) => ({ ...a, [k]: graphData.perZoneData.mapCount[k] }), {}) : 0;
 	const mapTotal = graphData !== undefined ? Object.keys(mapCount).reduce(function (m, k) { return mapCount[k] > m ? mapCount[k] : m }, -Infinity) : 0;
 	const mapZone = graphData !== undefined ? Number(Object.keys(mapCount).find(key => mapCount[key] === mapTotal)) : 0;
@@ -186,11 +186,11 @@ function pushSpreadsheetData() {
 		mapZone: mapZone,
 		mapCount: mapTotal,
 		voidsCompleted: game.stats.totalVoidMaps.value,
-		smithy: (game.global.universe == 1 ? "N/A" :
+		smithy: (game.global.universe === 1 ? "N/A" :
 			!game.mapUnlocks.SmithFree.canRunOnce && autoBattle.oneTimers.Smithriffic.owned ?
 				(game.buildings.Smithy.owned - 2 + " + 2") : !game.mapUnlocks.SmithFree.canRunOnce ?
 					(game.buildings.Smithy.owned - 1 + " + 1") : (game.buildings.Smithy.owned)),
-		meteorologist: (game.global.universe == 1 ? "N/A" : game.jobs.Meteorologist.owned),
+		meteorologist: (game.global.universe === 1 ? "N/A" : game.jobs.Meteorologist.owned),
 		heliumGained: heliumGained,
 		heliumHr: heliumHr,
 		fluffyXP: game.stats.bestFluffyExp2.value,
@@ -274,28 +274,28 @@ function getPageSetting(setting, universe) {
 		if (universe === 2) value += 'U2';
 	}
 
-	if (settingType == 'boolean') {
+	if (settingType === 'boolean') {
 		return autoTrimpSettings[setting][enabled];
-	} else if (settingType == 'multiValue') {
+	} else if (settingType === 'multiValue') {
 		return Array.from(autoTrimpSettings[setting][value])
 			.map(x => parseInt(x));
-	} else if (settingType == 'multiTextValue') {
+	} else if (settingType === 'multiTextValue') {
 		return Array.from(autoTrimpSettings[setting][value])
 			.map(x => String(x));
-	} else if (settingType == 'textValue' || settingType == 'mazArray' || settingType == 'mazDefaultArray') {
+	} else if (settingType === 'textValue' || settingType === 'mazArray' || settingType === 'mazDefaultArray') {
 		return autoTrimpSettings[setting][value];
-	} else if (settingType == 'value' || autoTrimpSettings[setting].type == 'valueNegative') {
+	} else if (settingType === 'value' || autoTrimpSettings[setting].type === 'valueNegative') {
 		return parseFloat(autoTrimpSettings[setting][value]);
-	} else if (settingType == 'multitoggle') {
+	} else if (settingType === 'multitoggle') {
 		return parseInt(autoTrimpSettings[setting][value]);
-	} else if (settingType == 'dropdown') {
+	} else if (settingType === 'dropdown') {
 		return autoTrimpSettings[setting][selected];
 	}
 }
 
 //It sets the value of a setting, and then saves the settings.
 function setPageSetting(setting, newValue, universe) {
-	if (autoTrimpSettings.hasOwnProperty(setting) == false) {
+	if (autoTrimpSettings.hasOwnProperty(setting) === false) {
 		return false;
 	}
 
@@ -332,7 +332,7 @@ function setPageSetting(setting, newValue, universe) {
 //Returns false if we can't any new speed runs, unless it's the first tier
 function shouldSpeedRun(achievement) {
 	var minutesThisRun = Math.floor((new Date().getTime() - game.global.portalTime) / 1000 / 60);
-	if (achievement.finished == achievement.tiers.length) return false;
+	if (achievement.finished === achievement.tiers.length) return false;
 	return minutesThisRun < achievement.breakpoints[achievement.finished];
 }
 
@@ -432,8 +432,8 @@ function message2(message, b, icon, d) {
 		f = e.scrollTop + 10 > e.scrollHeight - e.clientHeight,
 		g = ATmessageLogTabVisible ? "block" : "none",
 		h = "";
-	icon && "*" == icon.charAt(0) ? ((icon = icon.replace("*", "")), (h = "icomoon icon-")) : (h = "glyphicon glyphicon-"),
-		game.options.menu.timestamps.enabled && (message = (1 == game.options.menu.timestamps.enabled ? getCurrentTime() : updatePortalTimer(!0)) + " " + message),
+	icon && "*" === icon.charAt(0) ? ((icon = icon.replace("*", "")), (h = "icomoon icon-")) : (h = "glyphicon glyphicon-"),
+		game.options.menu.timestamps.enabled && (message = (1 === game.options.menu.timestamps.enabled ? getCurrentTime() : updatePortalTimer(!0)) + " " + message),
 		icon && (message = '<span class="' + h + icon + '"></span> ' + message),
 		(message = '<span class="glyphicon glyphicon-superscript"></span> ' + message),
 		(message = '<span class="icomoon icon-text-color"></span>' + message);
@@ -443,7 +443,7 @@ function message2(message, b, icon, d) {
 		var k = j[j.length - 1].innerHTML;
 		lastmessagecount++;
 		var l = k.lastIndexOf(" x");
-		-1 != l && (j[j.length - 1].innerHTML = k.slice(0, l)), (j[j.length - 1].innerHTML += " x" + lastmessagecount);
+		-1 !== l && (j[j.length - 1].innerHTML = k.slice(0, l)), (j[j.length - 1].innerHTML += " x" + lastmessagecount);
 	} else (lastmessagecount = 1), (e.innerHTML += i);
 	f && (e.scrollTop = e.scrollHeight), trimMessages(b);
 }
@@ -467,7 +467,7 @@ function formatMinutesForDescriptions(number) {
 	var seconds = Math.floor((number * 60) % 60);
 	var minutes = Math.floor(number % 60);
 	var hours = Math.floor(number / 60);
-	if (hours == 0)
+	if (hours === 0)
 		text = minutes + " minutes " + seconds + " seconds";
 	else if (minutes > 0) {
 		if (minutes < 10) minutes = "0" + minutes;
@@ -484,7 +484,7 @@ function formatMinutesForDescriptions(number) {
 }
 
 window.onerror = function (b, c, d, e, f) {
-	var g = ['Message: ' + b, 'URL: ' + c, 'Line: ' + d, 'Column: ' + e, 'Error object: ' + JSON.stringify(f)].join(' - '); 0 != d && console.log('AT logged error: ' + g)
+	var g = ['Message: ' + b, 'URL: ' + c, 'Line: ' + d, 'Column: ' + e, 'Error object: ' + JSON.stringify(f)].join(' - '); 0 !== d && console.log('AT logged error: ' + g)
 };
 function throwErrorfromModule() { throw new Error("We have successfully read the thrown error message out of a module") }
 
@@ -560,7 +560,7 @@ function testChallenge() {
 	//read the name in from tooltip
 	try {
 		var challengeName = document.getElementById("setSettingsNameTooltip").value.replace(/[\n\r]/gm, "");
-		if (challengeName == null || game.challenges[challengeName] === undefined) {
+		if (challengeName === null || game.challenges[challengeName] === undefined) {
 			debug("Challenge name didn't match one ingame..", "test");
 			return;
 		}

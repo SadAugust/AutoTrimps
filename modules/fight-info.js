@@ -97,7 +97,7 @@
 		if (overrideCoords) replaceable.push("Coordination");
 
 		//Icon Overriding
-		if (cell.special.length == 0 || overrideSpecial && replaceable.includes(cell.special))
+		if (cell.special.length === 0 || overrideSpecial && replaceable.includes(cell.special))
 			$cell.innerHTML = "<span class=" + icon + "></span>";
 	}
 
@@ -109,7 +109,7 @@
 		var $rows = Array.prototype.slice.call(rowSource).reverse();
 
 		//Check if current the world is already info-ed
-		if (!game.global.mapsActive && M["fightinfo"].lastProcessedWorld == game.global.world)
+		if (!game.global.mapsActive && M["fightinfo"].lastProcessedWorld === game.global.world)
 			return;
 
 		//Set this world as info-ed

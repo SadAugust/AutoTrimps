@@ -92,7 +92,7 @@ function equipsToGet(targetZone, targetPrestige) {
 	var mapsToRun = 0;
 	var prestigeToFarmFor = 0;
 
-	const hasSciFour = ((game.global.universe == 1 && game.global.sLevel >= 4) || (game.global.universe == 2 && game.buildings.Microchip.owned >= 4));
+	const hasSciFour = ((game.global.universe === 1 && game.global.sLevel >= 4) || (game.global.universe === 2 && game.buildings.Microchip.owned >= 4));
 	const prestigeInterval = challengeActive('Mapology') || !hasSciFour ? 5 : 10;
 
 	//Loops through all prestiges
@@ -107,7 +107,7 @@ function equipsToGet(targetZone, targetPrestige) {
 		if ((game.upgrades[p].allowed || prestigeUnlock.last <= 5) && prestigeUnlock && pMapLevel <= targetZone) {
 			mapsToRun += Math.max(1, Math.ceil((targetZone - pMapLevel) / prestigeInterval));
 			var prestigeCount = Math.floor((targetZone - prestigeUnlock.last) / 5);
-			if (hasSciFour && prestigeCount % 2 == 1) {
+			if (hasSciFour && prestigeCount % 2 === 1) {
 				prestigeCount++;
 			}
 			prestigeToFarmFor += prestigeCount;
@@ -137,10 +137,10 @@ function cheapestEquipmentCost() {
 	for (var equipName in game.equipment) {
 		if (!game.equipment[equipName].locked) {
 			//Checking cost of next equipment level. Blocks unavailable ones.
-			if (game.challenges.Pandemonium.isEquipBlocked(equipName) || equipmentList[equipName].Resource == 'wood') continue;
+			if (game.challenges.Pandemonium.isEquipBlocked(equipName) || equipmentList[equipName].Resource === 'wood') continue;
 			nextLevelEquipmentCost = game.equipment[equipName].cost[equipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[equipmentList[equipName].Resource][1], game.equipment[equipName].level) * getEquipPriceMult();
 			//Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
-			if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost == null) {
+			if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost === null) {
 				equipmentName = equipName;
 				nextEquipmentCost = nextLevelEquipmentCost;
 			}
@@ -152,7 +152,7 @@ function cheapestEquipmentCost() {
 					if (game.challenges.Pandemonium.isEquipBlocked(game.upgrades[upgrade].prestiges) || game.upgrades[prestigeUpgradeName].locked) continue;
 					nextLevelPrestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
 					//Sets nextPrestigeCost to the price of an equip if it costs less than the current value of nextEquipCost
-					if (nextLevelPrestigeCost < nextPrestigeCost || nextPrestigeCost == null) {
+					if (nextLevelPrestigeCost < nextPrestigeCost || nextPrestigeCost === null) {
 						prestigeName = prestigeUpgradeName
 						nextPrestigeCost = nextLevelPrestigeCost;
 					}
@@ -224,8 +224,8 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		var nextLevelValue = 1;
 		var safeRatio = 1;
 
-		var skipForLevels = !skipForLevels && isAttack == 0 ? getPageSetting('equipCapAttack') :
-			!skipForLevels && isAttack == 1 ? getPageSetting('equipCapHealth') :
+		var skipForLevels = !skipForLevels && isAttack === 0 ? getPageSetting('equipCapAttack') :
+			!skipForLevels && isAttack === 1 ? getPageSetting('equipCapHealth') :
 				skipForLevels
 
 		var nextLevelCost = game.equipment[i].cost[equipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[equipmentList[i].Resource][1], game.equipment[i].level + fakeLevels[i]) * getEquipPriceMult();
@@ -251,15 +251,15 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skips if we have the required number of that item and below zoneGo
 		if (!maybeBuyPrestige && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
 		//Skips if ignoreShield variable is true.
-		if (game.global.universe === 2 && ignoreShield && i == 'Shield') continue;
+		if (game.global.universe === 2 && ignoreShield && i === 'Shield') continue;
 		//Skips looping through equips if they're blocked during Pandemonium.
 		if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(i)) continue;
 		//Skips buying shields when you can afford bonfires on Hypothermia.
-		if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i == 'Shield') continue;
+		if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i === 'Shield') continue;
 		//Skips through equips if they cost more than your equip purchasing percent setting value.
-		if (equipmentList[i].Resource == 'metal' && !zoneGo && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
+		if (equipmentList[i].Resource === 'metal' && !zoneGo && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
 		//Skips through equips if they don't cost metal and you don't have enough resources for them.
-		if (equipmentList[i].Resource != 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
+		if (equipmentList[i].Resource !== 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
 		//Skips equips if we have prestiges available & no prestiges to get for this
 		if (prestigesAvailable && ((prestigeSetting === 1 && canAtlantrimp) || prestigeSetting === 2) && game.upgrades[equipmentList[i].Upgrade].done === game.upgrades[equipmentList[i].Upgrade].allowed) continue;
 		//If prestiges available & running certain settings skips looking at non-prestige item stats.
@@ -289,7 +289,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 
 		if (safeRatio === 1) continue;
 
-		if (mostEfficient[isAttack].statPerResource > safeRatio && mostEfficient[isAttack].statPerResource != '') {
+		if (mostEfficient[isAttack].statPerResource > safeRatio && mostEfficient[isAttack].statPerResource !== '') {
 			mostEfficient[isAttack].name = i;
 			mostEfficient[isAttack].statPerResource = safeRatio;
 			mostEfficient[isAttack].prestige = prestige;
@@ -336,11 +336,11 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 
 	var equipment = game.equipment[equipName];
 
-	var resource = (equipName == "Shield") ? 'wood' : 'metal'
+	var resource = (equipName === "Shield") ? 'wood' : 'metal'
 	var equipStat = (typeof equipment.attack !== 'undefined') ? 'attack' : 'health';
 	var prestigeUpgradeName = equipmentList[equipName].Upgrade;
 
-	if (prestigeUpgrade.locked || (prestigeUpgradeName == 'Supershield' && getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult() > game.resources.wood.owned * resourceSpendingPct)) return false;
+	if (prestigeUpgrade.locked || (prestigeUpgradeName === 'Supershield' && getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult() > game.resources.wood.owned * resourceSpendingPct)) return false;
 
 	if (prestigeUpgrade.cost.resources.science[0] *
 		Math.pow(prestigeUpgrade.cost.resources.science[1], equipment.prestige - 1)
@@ -383,7 +383,7 @@ function autoEquip() {
 	var equipZone = getPageSetting('equipZone');
 	var zoneGo = mapSettings.mapName === 'Wither' || (hdStats.hdRatio >= getPageSetting('equipCutOff')) || (equipZone.length > 0 && ((equipZone.includes(game.global.world)) || (game.global.world >= equipZone[equipZone.length - 1])));
 
-	if (getPageSetting('equipPrestige') == 2 && !zoneGo) {
+	if (getPageSetting('equipPrestige') === 2 && !zoneGo) {
 		var prestigeLeft = false;
 		do {
 			prestigeLeft = false;
@@ -391,7 +391,7 @@ function autoEquip() {
 				if (buyPrestigeMaybe(equipName)[0]) {
 					if (!game.equipment[equipName].locked) {
 						var isAttack = (equipmentList[equipName].Stat === 'attack' ? 0 : 1);
-						if (game.global.universe === 2 && getPageSetting('equipNoShields') && equipName == 'Shield') continue;
+						if (game.global.universe === 2 && getPageSetting('equipNoShields') && equipName === 'Shield') continue;
 						if ((getPageSetting('equipPrestige') === 2 || mostEfficientEquipment()[isAttack + 4]) && buyUpgrade(equipmentList[equipName].Upgrade, true, true))
 							prestigeLeft = true;
 					}
@@ -432,7 +432,7 @@ function autoEquip() {
 	}
 
 	//Buy as many shields as possible when running Melting Point
-	if (game.global.universe === 2 && !getPageSetting('equipNoShields') && getPageSetting('jobSettingsArray').NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name == 'Melting Point')
+	if (game.global.universe === 2 && !getPageSetting('equipNoShields') && getPageSetting('jobSettingsArray').NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name === 'Melting Point')
 		buyEquipment('Shield', true, true, 999)
 
 	var ignoreShields = game.global.universe === 2 && getPageSetting('equipNoShields');
@@ -444,11 +444,11 @@ function autoEquip() {
 		var bestBuys = mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShields, false, false);
 		// Set up for both Attack and Health depending on which is cheaper to purchase
 		var equipType = (bestBuys[6] < bestBuys[7]) ? 'attack' : 'health';
-		var equipName = (equipType == 'attack') ? bestBuys[0] : bestBuys[1];
-		var equipCost = (equipType == 'attack') ? bestBuys[6] : bestBuys[7];
-		var equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5];
-		var equipCap = (equipType == 'attack') ? attackEquipCap : healthEquipCap;
-		var resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
+		var equipName = (equipType === 'attack') ? bestBuys[0] : bestBuys[1];
+		var equipCost = (equipType === 'attack') ? bestBuys[6] : bestBuys[7];
+		var equipPrestige = (equipType === 'attack') ? bestBuys[4] : bestBuys[5];
+		var equipCap = (equipType === 'attack') ? attackEquipCap : healthEquipCap;
+		var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 
 		zoneGo = (hdStats.hdRatio >= getPageSetting('equipCutOff')) || (equipZone.length > 0 && ((equipZone.includes(game.global.world)) || (game.global.world >= equipZone[equipZone.length - 1])));
 
@@ -495,11 +495,11 @@ function autoEquip() {
 			}
 
 			//Iterating to second set of equips. Will go through the opposite equipType from the first loop.
-			equipType = (equipType != 'attack') ? 'attack' : 'health';
-			equipName = (equipType == 'attack') ? bestBuys[0] : bestBuys[1];
-			equipCost = (equipType == 'attack') ? bestBuys[6] : bestBuys[7];
-			equipPrestige = (equipType == 'attack') ? bestBuys[4] : bestBuys[5];
-			resourceUsed = (equipName == 'Shield') ? 'wood' : 'metal';
+			equipType = (equipType !== 'attack') ? 'attack' : 'health';
+			equipName = (equipType === 'attack') ? bestBuys[0] : bestBuys[1];
+			equipCost = (equipType === 'attack') ? bestBuys[6] : bestBuys[7];
+			equipPrestige = (equipType === 'attack') ? bestBuys[4] : bestBuys[5];
+			resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 			equipCap = (equipType === 'attack') ? attackEquipCap : healthEquipCap;
 			zoneGo = (hdStats.hdRatio >= getPageSetting('equipCutOff')) || (equipZone.length > 0 && ((equipZone.includes(game.global.world)) || (game.global.world >= equipZone[equipZone.length - 1])));
 		}
@@ -522,7 +522,7 @@ function equipfarmdynamicHD(HDFSettings) {
 	var HDFZone = HDFSettings.world
 	equipfarmHD = HDFSettings.hdBase;
 	HDFZone = (game.global.world - HDFZone);
-	equipfarmHDmult = (HDFZone == 0) ? equipfarmHD : Math.pow(HDFMult, HDFZone) * equipfarmHD;
+	equipfarmHDmult = (HDFZone === 0) ? equipfarmHD : Math.pow(HDFMult, HDFZone) * equipfarmHD;
 	return equipfarmHDmult;
 }
 
@@ -618,9 +618,9 @@ function displayMostEfficientEquipment() {
 
 	if (!highlightSetting) {
 		for (var item in game.equipment) {
-			if (game.upgrades[equipmentList[item].Upgrade].locked == 0) {
+			if (game.upgrades[equipmentList[item].Upgrade].locked === 0) {
 				$eqNamePrestige = document.getElementById(equipmentList[item].Upgrade);
-				if (document.getElementsByClassName(item).length == 0) {
+				if (document.getElementsByClassName(item).length === 0) {
 					document.getElementById(equipmentList[item].Upgrade).classList.add("efficient");
 					document.getElementById(equipmentList[item].Upgrade).classList.add(item);
 				}
@@ -631,7 +631,7 @@ function displayMostEfficientEquipment() {
 				continue;
 
 			swapClass('efficient', 'efficientNo', $eqName)
-			if ($eqNamePrestige != null)
+			if ($eqNamePrestige !== null)
 				swapClass('efficient', 'efficientNo', $eqNamePrestige)
 		}
 
@@ -639,20 +639,20 @@ function displayMostEfficientEquipment() {
 
 	for (var item in game.equipment) {
 		if (game.equipment[item].locked) continue;
-		if (item == "Shield") continue;
+		if (item === "Shield") continue;
 		var bestBuys = mostEfficientEquipment(1, true, true, false, true);
 		var isAttack = (equipmentList[item].Stat === 'attack' ? 0 : 1);
 		var $eqNamePrestige = null;
-		if (game.upgrades[equipmentList[item].Upgrade].locked == 0) {
+		if (game.upgrades[equipmentList[item].Upgrade].locked === 0) {
 			$eqNamePrestige = document.getElementById(equipmentList[item].Upgrade);
-			if (document.getElementsByClassName(item).length == 0) {
+			if (document.getElementsByClassName(item).length === 0) {
 				document.getElementById(equipmentList[item].Upgrade).classList.add("efficient");
 				document.getElementById(equipmentList[item].Upgrade).classList.add(item);
 			}
-			if (document.getElementById(equipmentList[item].Upgrade).classList.contains('efficientYes') && (item != bestBuys[isAttack] || (item == bestBuys[isAttack] && bestBuys[isAttack + 4] !== true)))
+			if (document.getElementById(equipmentList[item].Upgrade).classList.contains('efficientYes') && (item !== bestBuys[isAttack] || (item === bestBuys[isAttack] && bestBuys[isAttack + 4] !== true)))
 				swapClass('efficient', 'efficientNo', $eqNamePrestige)
 		}
-		if (item == bestBuys[isAttack] && bestBuys[isAttack + 4] === true) {
+		if (item === bestBuys[isAttack] && bestBuys[isAttack + 4] === true) {
 			bestBuys[isAttack] = equipmentList[item].Upgrade;
 			if (document.getElementById(item).classList.contains('efficientYes'))
 				swapClass('efficient', 'efficientNo', document.getElementById(item))
@@ -662,7 +662,7 @@ function displayMostEfficientEquipment() {
 		var $eqName = document.getElementById(item);
 		if (!$eqName)
 			continue;
-		if (item == bestBuys[isAttack])
+		if (item === bestBuys[isAttack])
 			swapClass('efficient', 'efficientYes', $eqName)
 		else {
 			swapClass('efficient', 'efficientNo', $eqName)

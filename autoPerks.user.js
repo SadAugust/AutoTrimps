@@ -1,4 +1,4 @@
-// ==UserScript==
+// ===UserScript===
 // @name		AutoTrimps-SadAugust_Surky
 // @version		1.0-SadAugust
 // @namespace	https://SadAugust.github.io/AutoTrimps
@@ -11,7 +11,7 @@
 // @connect		*trimps.github.io*
 // @connect		self
 // @grant		GM_xmlhttpRequest
-// ==/UserScript==
+// ===/UserScript===
 
 var script = document.createElement('script');
 script.id = "AutoTrimps-SadAugust_Surky";

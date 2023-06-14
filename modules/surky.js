@@ -224,7 +224,7 @@ function setupSurkyUI() {
 		perkInput.setAttribute("type", "number");
 		perkInput.id = id;
 		var perkInputStyle = 'text-align: center; width: calc(100vw/22); font-size: 1vw;';
-		if (game.options.menu.darkTheme.enabled != 2) perkInputStyle += (" color: black;");
+		if (game.options.menu.darkTheme.enabled !== 2) perkInputStyle += (" color: black;");
 		perkInput.setAttribute('style', perkInputStyle);
 		perkInput.setAttribute('value', (savedValue || inputObj.defaultValue));
 		perkInput.setAttribute('min', inputObj.minValue);
@@ -333,7 +333,7 @@ function setupSurkyUI() {
 		apGUI.$preset.id = 'presetElem';
 		apGUI.$preset.setAttribute('onchange', 'fillPreset();');
 		var oldstyle = 'text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ';
-		if (game.options.menu.darkTheme.enabled != 2) oldstyle += " color: black;";
+		if (game.options.menu.darkTheme.enabled !== 2) oldstyle += " color: black;";
 		apGUI.$preset.setAttribute('style', oldstyle);
 		apGUI.$preset.innerHTML = presetListHtml;
 
@@ -850,7 +850,7 @@ function presetSpecialOpt() {
 		perks.Pheromones.optimize = false;
 	} else {
 		perks.Bait.optimize = false;
-		if (game != null && game.stats.highestRadLevel.valueTotal() >= 60)
+		if (game !== null && game.stats.highestRadLevel.valueTotal() >= 60)
 			perks.Pheromones.optimize = true;
 	}
 	if (preset === 'downsize') {
@@ -1994,7 +1994,7 @@ function getPerkEfficiencies() {
 	// Frenzy should be based on 5-hit deaths iff relying on GB for at least one zone of the run is good.
 	//    We presume this is always true if you have any pushing weight.
 	//    With no pushing weight, we presume it's FALSE (optimizing for 300 hits instead) unless a 3-minute zone would yield enough radon/trinket gains to be good, which roughly corresponds to when GB is useful.
-	if (props.specialChallenge != 'berserk') {
+	if (props.specialChallenge !== 'berserk') {
 		var frenzyHits = 300;
 		var isDeathless = props.specialChallenge === 'resplus' || props.specialChallenge === 'resminus' || props.specialChallenge === 'trappa' || props.specialChallenge === 'combat' && props.isTrappa;
 		if (!isDeathless && props.clearWeight > 0 || props.gbAfterpush) {
@@ -2139,7 +2139,7 @@ function clearAndAutobuyPerks() {
 	var pList = [];
 	efficiencyFlag(eList, pList);
 	if (props.perksRadon > 0) {
-		perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (props.specialChallenge != 'trappa');
+		perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (props.specialChallenge !== 'trappa');
 		var origCarp = game.portal.Carpentry.radLevel;
 		var origExpand = game.portal.Expansion.radLevel;
 
@@ -2184,7 +2184,7 @@ function autobuyPerks() {
 	}
 	// optimize Bait for Trappa
 	perks.Bait.optimize = (props.specialChallenge === 'trappa' || props.specialChallenge === 'combat' && props.isTrappa);
-	perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (props.specialChallenge != 'trappa') && !(props.specialChallenge === 'combat' && props.isTrappa);
+	perks.Pheromones.optimize = (game.stats.highestRadLevel.valueTotal() >= 60) && (props.specialChallenge !== 'trappa') && !(props.specialChallenge === 'combat' && props.isTrappa);
 	if (!perks.Carpentry.levLocked && (props.specialChallenge === 'trappa' || props.specialChallenge === 'combat' && props.isTrappa)) {
 		var maxCarpLevels = Math.log(props.perksRadon / perks.Carpentry.priceBase * (perks.Carpentry.priceFact - 1) + 1) / Math.log(perks.Carpentry.priceFact);
 		props.trappaStartPop = 10 * Math.pow(1.1, maxCarpLevels) * props.scaffoldingBonus;
@@ -2213,7 +2213,7 @@ function autobuyPerks() {
 		while (buyPerk("Trumps", 1));
 	}
 	// and Pheromones! (but not in Trappa, for minimum confusion, and not before Trappa unlock)
-	if (!perks.Pheromones.levLocked && props.specialChallenge != 'trappa' && !(props.specialChallenge === 'combat' && props.isTrappa)) {
+	if (!perks.Pheromones.levLocked && props.specialChallenge !== 'trappa' && !(props.specialChallenge === 'combat' && props.isTrappa)) {
 		while (buyPerk("Pheromones", 1));
 	}
 	// secret setting to dump remaining Rn into bait for feeeeeee

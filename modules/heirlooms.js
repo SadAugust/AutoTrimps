@@ -140,7 +140,7 @@ function autoheirlooms() {
 		}
 	}
 	//If typetokeep is set to all will loop through all heirloom types and stash them.
-	else if (getPageSetting('heirloomAutoTypeToKeep') == 4) {
+	else if (getPageSetting('heirloomAutoTypeToKeep') === 4) {
 		const heirloomTypes = ['Shield', 'Staff'];
 		if (game.global.universe === 1) heirloomTypes.push('Core');
 
@@ -161,7 +161,7 @@ function autoheirlooms() {
 //Heirloom Swapping
 function HeirloomSearch(heirloom) {
 	for (var loom of game.global.heirloomsCarried)
-		if (loom.name == getPageSetting(heirloom))
+		if (loom.name === getPageSetting(heirloom))
 			return loom;
 }
 
@@ -182,7 +182,7 @@ function HeirloomModSearch(heirloom, modifier) {
 	if (game.global.ShieldEquipped.name === getPageSetting(heirloom)) {
 		var loom = game.global.ShieldEquipped;
 		for (var i = (loom.mods.length - 1); i > -1; i--) {
-			if (loom.mods[i][0] == modifier)
+			if (loom.mods[i][0] === modifier)
 				return loom.mods[i][1];
 		}
 		return undefined;
@@ -190,15 +190,15 @@ function HeirloomModSearch(heirloom, modifier) {
 	if (game.global.StaffEquipped.name === getPageSetting(heirloom)) {
 		var loom = game.global.StaffEquipped;
 		for (var i = (loom.mods.length - 1); i > -1; i--) {
-			if (loom.mods[i][0] == modifier)
+			if (loom.mods[i][0] === modifier)
 				return loom.mods[i][1];
 		}
 		return undefined;
 	}
 	for (var loom of game.global.heirloomsCarried) {
-		if (loom.name == getPageSetting(heirloom)) {
+		if (loom.name === getPageSetting(heirloom)) {
 			for (var i = (loom.mods.length - 1); i > -1; i--) {
-				if (loom.mods[i][0] == modifier)
+				if (loom.mods[i][0] === modifier)
 					return loom.mods[i][1];
 			}
 		}
@@ -310,27 +310,27 @@ function heirloomStaffToEquip(mapType) {
 	if (!getPageSetting('heirloom')) return;
 	if (!getPageSetting('heirloomStaff')) return;
 
-	if (getPageSetting('heirloomStaffWorld') != "undefined" && !game.global.mapsActive) {
+	if (getPageSetting('heirloomStaffWorld') !== "undefined" && !game.global.mapsActive) {
 		return ('heirloomStaffWorld');
 	} else if (game.global.mapsActive) {
 		const mapObject = getCurrentMapObject();
 		const mapBonus = mapObject.bonus;
-		if (challengeActive('Pandemonium') && getPageSetting('pandemoniumAE') > 1 && getPageSetting('pandemoniumStaff') != "undefined" && getPageSetting('pandemoniumAEZone') > 0 && game.global.world >= getPageSetting('pandemoniumAEZone') && game.global.lastClearedCell > 59)
+		if (challengeActive('Pandemonium') && getPageSetting('pandemoniumAE') > 1 && getPageSetting('pandemoniumStaff') !== "undefined" && getPageSetting('pandemoniumAEZone') > 0 && game.global.world >= getPageSetting('pandemoniumAEZone') && game.global.lastClearedCell > 59)
 			return ('pandemoniumStaff');
-		else if (getPageSetting('heirloomStaffVoid') != "undefined" && mapObject.location === 'Void')
+		else if (getPageSetting('heirloomStaffVoid') !== "undefined" && mapObject.location === 'Void')
 			return ('heirloomStaffVoid');
-		else if (getPageSetting('heirloomStaffMap') != "undefined" && mapBonus === undefined)
+		else if (getPageSetting('heirloomStaffMap') !== "undefined" && mapBonus === undefined)
 			return ('heirloomStaffMap');
-		else if (getCurrentMapObject().bonus != undefined) {
-			if (getPageSetting('heirloomStaffFood') != "undefined" && mapBonus.includes("sc"))
+		else if (getCurrentMapObject().bonus !== undefined) {
+			if (getPageSetting('heirloomStaffFood') !== "undefined" && mapBonus.includes("sc"))
 				return ('heirloomStaffFood');
-			else if (getPageSetting('heirloomStaffWood') != "undefined" && mapBonus.includes("wc"))
+			else if (getPageSetting('heirloomStaffWood') !== "undefined" && mapBonus.includes("wc"))
 				return ('heirloomStaffWood');
-			else if (getPageSetting('heirloomStaffMetal') != "undefined" && mapBonus.includes("mc"))
+			else if (getPageSetting('heirloomStaffMetal') !== "undefined" && mapBonus.includes("mc"))
 				return ('heirloomStaffMetal');
-			else if (game.global.universe === 2 && getPageSetting('heirloomStaffResource') != "undefined" && mapBonus.includes("rc"))
+			else if (game.global.universe === 2 && getPageSetting('heirloomStaffResource') !== "undefined" && mapBonus.includes("rc"))
 				return ('heirloomStaffResource');
-			else if (getPageSetting('heirloomStaffMap') != "undefined")
+			else if (getPageSetting('heirloomStaffMap') !== "undefined")
 				return ('heirloomStaffMap');
 		}
 	}
@@ -383,11 +383,11 @@ function getHeirloomBonus_AT(type, mod, customShield) {
 	//Override bonus if needed
 	if (customShield) bonus = HeirloomModSearch(customShield, mod);
 	if (bonus === undefined) bonus = 0;
-	if (mod == "gammaBurst" && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
+	if (mod === "gammaBurst" && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
 		bonus = gammaBurstPct;
 	}
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined') {
-		if (type != "FluffyExp" && type != "VoidMaps") bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
+		if (type !== "FluffyExp" && type !== "VoidMaps") bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
 	}
 	return scaleHeirloomModUniverse(type, mod, bonus);
 }
@@ -401,7 +401,7 @@ function getPlayerCritChance_AT(customShield) { //returns decimal: 1 = 100%
 	if (game.talents.crit.purchased && getHeirloomBonus_AT("Shield", "critChance", customShield)) critChance += (getHeirloomBonus_AT("Shield", "critChance", customShield) * 0.005);
 	if (Fluffy.isRewardActive("critChance")) critChance += (0.5 * Fluffy.isRewardActive("critChance"));
 	if (game.challenges.Nurture.boostsActive() && game.challenges.Nurture.getLevel() >= 5) critChance += 0.35;
-	if (game.global.universe == 2 && u2Mutations.tree.CritChance.purchased) critChance += 0.25;
+	if (game.global.universe === 2 && u2Mutations.tree.CritChance.purchased) critChance += 0.25;
 	if (challengeActive('Daily')) {
 		if (typeof game.global.dailyChallenge.trimpCritChanceUp !== 'undefined') {
 			critChance += dailyModifiers.trimpCritChanceUp.getMult(game.global.dailyChallenge.trimpCritChanceUp.strength);
@@ -434,7 +434,7 @@ function getPlayerEqualityMult_AT(customShield) {
 }
 
 function getEnergyShieldMult_AT(mapType, noHeirloom) {
-	if (game.global.universe != 2) return 0;
+	if (game.global.universe !== 2) return 0;
 	var total = 0;
 	if (game.upgrades.Prismatic.done) total += 0.5; //Prismatic: Drops Z2
 	if (game.upgrades.Prismalicious.done) total += 0.5; //Prismalicious: Drops from Prismatic Palace at Z20

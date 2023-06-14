@@ -332,7 +332,9 @@ function initializeAllSettings() {
 	const displayDaily = true
 	if (displayDaily) {
 		createSetting('buyheliumy',
-			function () { return ('Buy ' + (currSettingUniverse === 2 ? "Radonculous" : "Heliumy") + ' %') },
+			function () {
+				return ('Buy ' + (currSettingUniverse === 2 ? "Radonculous" : "Heliumy") + ' %')
+			},
 			function () {
 				var description = "<p>Buys the " + (currSettingUniverse === 2 ? "Radonculous" : "Heliumy") + " bonus for <b>100 bones</b> when the daily bonus is above this value.</p>";
 				description += "<p><b>Recommended:</b> Anything above 475. Will not buy if you cant afford to, or value is -1.</p>";
@@ -705,7 +707,9 @@ function initializeAllSettings() {
 				return description;
 			},
 			'mazArray', {}, 'MAZLookalike("C2 Runner", "c2Runner", "c2Runner")', 'C2', [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1) });
+			function () {
+				return (getPageSetting('c2RunnerStart', currSettingUniverse) && getPageSetting('c2RunnerMode', currSettingUniverse) === 1)
+			});
 
 		createSetting('c2RunnerPortal',
 			function () { return (cinf() + ' Runner Portal') },
@@ -2155,7 +2159,9 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> Safety First</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Combat', [1],
-			function () { return (autoTrimpSettings.AutoStance.value !== 3) });
+			function () {
+				return (autoTrimpSettings.AutoStance.value !== 3)
+			});
 		createSetting('ForceAbandon',
 			function () { return ('Trimpicide') },
 			function () {
@@ -2374,7 +2380,9 @@ function initializeAllSettings() {
 				return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from WS MAX work off this setting.')
 			},
 			'value', -1, null, 'Combat', [1],
-			function () { return (autoTrimpSettings.AutoStance.value === 3) });
+			function () {
+				return (autoTrimpSettings.AutoStance.value === 3)
+			});
 		createSetting('WindStackingMinHD',
 			function () { return ('Windstack H:D') },
 			function () { return ('For use with Windstacking Stance, fiddle with this to maximise your stacks in wind zones.') },
@@ -3567,8 +3575,8 @@ function c2Description() {
 
 //Will output how many zones you can liquify to.
 function checkLiqZoneCount() {
-	if (game.options.menu.liquification.enabled == 0) return 0;
-	/* if (game.global.universe == 2) {
+	if (game.options.menu.liquification.enabled === 0) return 0;
+	/* if (game.global.universe === 2) {
 		if (!u2Mutations.tree.Liq1.purchased) return 0;
 		var amt = 0.1;
 		if (u2Mutations.tree.Liq2.purchased) amt = 0.2;
@@ -3589,7 +3597,7 @@ function updateButtonText() {
 	var btn = autoTrimpSettings[id];
 	var btnValue = getPageSetting(id);
 
-	document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btnValue == 2 ? 3 : btnValue));
+	document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btnValue === 2 ? 3 : btnValue));
 	document.getElementById('autoJobLabel').innerHTML = btn.name()[btnValue];
 
 	var id = 'equipOn';
@@ -3615,8 +3623,8 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 
 	var u1Setting = (universe.indexOf(0) !== -1 || universe.indexOf(1) !== -1);
 	var u2Setting = (universe.indexOf(2) !== -1);
-	if (type == 'boolean') {
-		if (!(loaded && id == loaded.id && loaded.type === type)) {
+	if (type === 'boolean') {
+		if (!(loaded && id === loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
@@ -3639,8 +3647,8 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
 
-	} else if (type == 'value' || type == 'valueNegative' || type == 'multiValue') {
-		if (!(loaded && id == loaded.id && loaded.type === type)) {
+	} else if (type === 'value' || type === 'valueNegative' || type === 'multiValue') {
+		if (!(loaded && id === loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
@@ -3655,15 +3663,15 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
-		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name()}", ${type == 'valueNegative'}, ${type == 'multiValue'})`);
+		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name()}", ${type === 'valueNegative'}, ${type === 'multiValue'})`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.innerHTML = name();
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
-	} else if (type == 'textValue' || type == 'multiTextValue') {
-		if (!(loaded && id == loaded.id && loaded.type === type)) {
+	} else if (type === 'textValue' || type === 'multiTextValue') {
+		if (!(loaded && id === loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
@@ -3677,15 +3685,15 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		}
 		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
-		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name()}", ${type == 'multiTextValue'})`);
+		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name()}", ${type === 'multiTextValue'})`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.innerHTML = name();
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
-	} else if (type == 'dropdown') {
-		if (!(loaded && id == loaded.id && loaded.type === type)) {
+	} else if (type === 'dropdown') {
+		if (!(loaded && id === loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
@@ -3700,7 +3708,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		}
 		var btn = document.createElement("select");
 		btn.id = id;
-		if (game.options.menu.darkTheme.enabled == 2) btn.setAttribute("style", "color: #C8C8C8; font-size: 1.0vw;");
+		if (game.options.menu.darkTheme.enabled === 2) btn.setAttribute("style", "color: #C8C8C8; font-size: 1.0vw;");
 		else btn.setAttribute("style", "color:black; font-size: 1.0vw;");
 		btn.setAttribute("class", "noselect");
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
@@ -3722,8 +3730,8 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
-	} else if (type == 'infoclick') {
-		if (!(loaded && id == loaded.id && loaded.type === type)) {
+	} else if (type === 'infoclick') {
+		if (!(loaded && id === loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
@@ -3745,8 +3753,8 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		else document.getElementById("autoSettings").appendChild(btnParent);
 		return;
 
-	} else if (type == 'multitoggle') {
-		if (!(loaded && id == loaded.id && loaded.type === type)) {
+	} else if (type === 'multitoggle') {
+		if (!(loaded && id === loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
@@ -3787,7 +3795,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			autoPortalSettings.appendChild(autoPortalSettingsButton);
 		}
 	} else if (type === 'mazArray') {
-		if (!(loaded && id == loaded.id && loaded.type === type)) {
+		if (!(loaded && id === loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
@@ -3811,7 +3819,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		else document.getElementById("autoSettings").appendChild(btnParent);
 		return;
 	} else if (type === 'action') {
-		if (!(loaded && id == loaded.id && loaded.type === type)) {
+		if (!(loaded && id === loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
@@ -3833,7 +3841,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		else document.getElementById("autoSettings").appendChild(btnParent);
 		return;
 	} else if (type === 'mazDefaultArray') {
-		if (!(loaded && id == loaded.id && loaded.type === type)) {
+		if (!(loaded && id === loaded.id && loaded.type === type)) {
 			autoTrimpSettings[id] = {
 				id: id,
 				name: name,
@@ -3847,9 +3855,9 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		}
 		return;
 	}
-	if (autoTrimpSettings[id].name != name)
+	if (autoTrimpSettings[id].name !== name)
 		autoTrimpSettings[id].name = name;
-	if (autoTrimpSettings[id].description != description)
+	if (autoTrimpSettings[id].description !== description)
 		autoTrimpSettings[id].description = description;
 }
 
@@ -3861,7 +3869,7 @@ function settingChanged(id, currUniverse) {
 	}
 
 	var btn = autoTrimpSettings[id];
-	var radonon = currUniverse ? game.global.universe === 2 : autoTrimpSettings.radonsettings.value == 1;
+	var radonon = currUniverse ? game.global.universe === 2 : autoTrimpSettings.radonsettings.value === 1;
 	if (btn.type === 'boolean') {
 		var enabled = 'enabled'
 		if (radonon && btn.universe.indexOf(0) === -1) enabled += 'U2';
@@ -3886,7 +3894,7 @@ function settingChanged(id, currUniverse) {
 	if (btn.type === 'multitoggle') {
 		var value = 'value'
 		if (radonon && btn.universe.indexOf(0) === -1) value += 'U2';
-		if (id === 'AutoMagmiteSpender2' && btn[value] == 1) {
+		if (id === 'AutoMagmiteSpender2' && btn[value] === 1) {
 			magmiteSpenderChanged = true;
 			setTimeout(function () {
 				magmiteSpenderChanged = false;
@@ -3902,17 +3910,17 @@ function settingChanged(id, currUniverse) {
 		document.getElementById(id).setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value]);
 		document.getElementById(id).innerHTML = btn.name()[btn[value]]
 		if (id === 'jobType') {
-			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btn[value] == 2 ? 3 : btn[value]));
+			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
 			document.getElementById('autoJobLabel').innerHTML = btn.name()[btn[value]];
 		}
 		if (id === 'dailyPortal') {
-			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn[value] == 2 ? 3 : btn[value]));
+			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
 		}
 		if (id === 'autoMaps' && btn[value] !== 2)
 			document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value])
 	}
 
-	if (btn.type == 'dropdown') {
+	if (btn.type === 'dropdown') {
 		var selected = 'selected'
 		if (radonon && btn.universe.indexOf(0) === -1) selected += 'U2';
 		btn[selected] = document.getElementById(id).value;
@@ -4431,7 +4439,7 @@ function autoHeirloomOptions(heirloomType) {
 
 		for (var item in game.heirlooms['Shield']) {
 			var heirloom = game.heirlooms['Shield'][item];
-			if (item == "empty") continue;
+			if (item === "empty") continue;
 			if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
 			if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
 			heirloomModsArray.push(heirloomMods['Shield'][item]);
@@ -4444,7 +4452,7 @@ function autoHeirloomOptions(heirloomType) {
 
 		for (var item in game.heirlooms['Staff']) {
 			var heirloom = game.heirlooms['Staff'][item];
-			if (item == "empty") continue;
+			if (item === "empty") continue;
 			if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
 			if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
 			heirloomModsArray.push(heirloomMods['Staff'][item]);
@@ -4506,7 +4514,7 @@ function autoSetTextToolTip(id, text, multiValue) {
 }
 
 function onKeyPressSetting(event, id, multi, negative) {
-	if (event.which == 13 || event.keyCode == 13) {
+	if (event.which === 13 || event.keyCode === 13) {
 		if (negative !== undefined && multi !== undefined)
 			autoSetValue(id, negative, multi);
 		else
@@ -4524,7 +4532,7 @@ function parseNum(num) {
 		if (letters.length) {
 			var suffices = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'Ud', 'Dd', 'Td', 'Qad', 'Qid', 'Sxd', 'Spd', 'Od', 'Nd', 'V', 'Uv', 'Dv', 'Tv', 'Qav', 'Qiv', 'Sxv', 'Spv', 'Ov', 'Nv', 'Tt'];
 			for (var x = 0; x < suffices.length; x++) {
-				if (suffices[x].toLowerCase() == letters) {
+				if (suffices[x].toLowerCase() === letters) {
 					base = x + 1;
 					break;
 				}
@@ -4581,9 +4589,9 @@ function autoSetText(id, multiValue) {
 	} else return
 
 	autoTrimpSettings[id][value] = textVal;
-	if (textVal != undefined) {
+	if (textVal !== undefined) {
 
-		if (Array.isArray(textVal) && textVal.length == 1 && textVal[0] === -1)
+		if (Array.isArray(textVal) && textVal.length === 1 && textVal[0] === -1)
 			document.getElementById(id).innerHTML = ranstring + ': ' + "<span class='icomoon icon-infinity'></span>";
 		else if (Array.isArray(textVal))
 			document.getElementById(id).innerHTML = ranstring + ': ' + textVal[0] + '+';
@@ -4639,7 +4647,7 @@ function autoPlusSettingsMenu() {
 
 function toggleElem(elem, showHide) {
 	var $item = document.getElementById(elem);
-	if ($item == null) return;
+	if ($item === null) return;
 	var state = showHide ? '' : 'none';
 	var stateParent = showHide ? 'inline-block' : 'none';
 	if ($item.style.display !== state)
@@ -4676,7 +4684,7 @@ function turnOn(elem) {
 }
 
 function updateCustomButtons(initialLoad) {
-	if (typeof lastTheme !== 'undefined' && lastTheme && game.options.menu.darkTheme.enabled != lastTheme) {
+	if (typeof lastTheme !== 'undefined' && lastTheme && game.options.menu.darkTheme.enabled !== lastTheme) {
 		if (typeof MODULES["graphs"] !== 'undefined')
 			MODULES["graphs"].themeChanged();
 		debug("Theme change - AutoTrimps styles updated.", "other");
@@ -4685,7 +4693,7 @@ function updateCustomButtons(initialLoad) {
 
 	//Hide settings
 	//Radon
-	var radonon = autoTrimpSettings.radonsettings.value == 1;
+	var radonon = autoTrimpSettings.radonsettings.value === 1;
 	currSettingUniverse = (autoTrimpSettings.radonsettings.value + 1);
 
 	//Loops through all the AT settings so we can properly setup the UI.
@@ -4729,10 +4737,10 @@ function updateCustomButtons(initialLoad) {
 
 				elem.innerHTML = item.name();
 			}
-			else if (item.type == 'value' || item.type == 'valueNegative' || item.type == 'multitoggle' || item.type == 'multiValue' || item.type == 'textValue') {
+			else if (item.type === 'value' || item.type === 'valueNegative' || item.type === 'multitoggle' || item.type === 'multiValue' || item.type === 'textValue') {
 				var itemValue = item.value;
 				if (radonon && settingUniverse.indexOf(0) === -1) itemValue = item['value' + 'U2'];
-				if (elem != null) {
+				if (elem !== null) {
 					if (item.type === 'multitoggle') {
 						elem.innerHTML = item.name()[itemValue];
 						elem.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + itemValue);
@@ -4744,14 +4752,14 @@ function updateCustomButtons(initialLoad) {
 							elem.innerHTML = item.name() + ': ' + itemValue.substring(0, 21);
 					}
 					else if (item.type === 'multiValue' || item.type === 'multiTextValue') {
-						if (Array.isArray(itemValue) && itemValue.length == 1 && itemValue[0] == -1)
+						if (Array.isArray(itemValue) && itemValue.length === 1 && itemValue[0] === -1)
 							elem.innerHTML = item.name() + ': ' + "<span class='icomoon icon-infinity'></span>";
 						else if (Array.isArray(itemValue))
 							elem.innerHTML = item.name() + ': ' + itemValue[0] + '+';
 						else
 							elem.innerHTML = item.name() + ': ' + itemValue;
 					}
-					else if (itemValue > -1 || item.type == 'valueNegative') {
+					else if (itemValue > -1 || item.type === 'valueNegative') {
 						elem.innerHTML = item.name() + ': ' + prettify(itemValue);
 					}
 					else
@@ -4780,8 +4788,8 @@ function updateCustomButtons(initialLoad) {
 			else {
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
 				//Updating input box & text that will be displayed upon saving!
-				if (item.type === 'value' || item.type === 'multiValue' || item.type === 'valueNegative') elem.setAttribute("onclick", `autoSetValueToolTip("${item.id}", "${item.name()}", ${item.type == 'valueNegative'}, ${item.type == 'multiValue'})`);
-				if (item.type === 'textValue') elem.setAttribute("onclick", `autoSetTextToolTip("${item.id}", "${item.name()}", ${item.type == 'multiTextValue'})`);
+				if (item.type === 'value' || item.type === 'multiValue' || item.type === 'valueNegative') elem.setAttribute("onclick", `autoSetValueToolTip("${item.id}", "${item.name()}", ${item.type === 'valueNegative'}, ${item.type === 'multiValue'})`);
+				if (item.type === 'textValue') elem.setAttribute("onclick", `autoSetTextToolTip("${item.id}", "${item.name()}", ${item.type === 'multiTextValue'})`);
 			}
 		}
 	}
@@ -4825,10 +4833,10 @@ function updateCustomButtons(initialLoad) {
 		if (document.getElementById("tabChallenges") !== null) {
 			document.getElementById("tabChallenges").style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && hze < 40)) ? "none" : "";
 		}
-		if (document.getElementById("tabLegacy") != null) {
+		if (document.getElementById("tabLegacy") !== null) {
 			document.getElementById("tabLegacy").style.display = "none";
 		}
-		if (document.getElementById("tabTest") != null) {
+		if (document.getElementById("tabTest") !== null) {
 			document.getElementById("tabTest").style.display = getPageSetting('gameUser') !== 'SadAugust' && getPageSetting('gameUser') !== 'Kyotie' && getPageSetting('gameUser').toLowerCase() !== 'test' ? "none" : "";
 		}
 	}
