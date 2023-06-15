@@ -37,6 +37,11 @@ var atFinishedLoading = false;
 var ATmessageLogTabVisible = true;
 var slowScumming = false;
 
+var runInterval = 100;
+var atTimeLapseFastLoop = false;
+var mainLoopInterval = null;
+var guiLoopInterval = null;
+
 var autoTrimpSettings = {};
 var MODULES = {};
 var ATmoduleList = [];
@@ -196,8 +201,13 @@ function delayStartAgain() {
 
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
-	setInterval(mainLoop, 100);
-	setInterval(guiLoop, 100 * 10);
+	/* setInterval(mainLoop, 100);
+	setInterval(guiLoop, 100 * 10); */
+
+	originalGameLoop = gameLoop;
+	//Starts the loop in either normal or TimeLapse mode.
+	toggleCatchUpMode();
+
 	updateCustomButtons(true);
 	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
 	universeSwapped();
@@ -220,7 +230,57 @@ function universeSwapped() {
 	}
 }
 
+//Starts the main/gui loop and switches to catchup mode if needed also switches back to realtime mode if needed
+function toggleCatchUpMode() {
+
+	//Start and Intilise loop if this is called for the first time
+	if (!mainLoopInterval && !guiLoopInterval && !atTimeLapseFastLoop) {
+		mainLoopInterval = setInterval(mainLoop, runInterval);
+		guiLoopInterval = setInterval(guiLoop, runInterval * 10);
+	}
+
+	if (getPageSetting('disableForTW') && usingRealTimeOffline) return;
+	if (usingRealTimeOffline && !getPageSetting('timewarpSpeed')) return;
+
+	//Enable Online Mode after Offline mode was enabled
+	if (!usingRealTimeOffline && atTimeLapseFastLoop) {
+		if (mainLoopInterval) clearInterval(mainLoopInterval);
+		if (guiLoopInterval) clearInterval(guiLoopInterval);
+		mainLoopInterval = null;
+		atTimeLapseFastLoop = false;
+		gameLoop = originalGameLoop;
+		mainLoopInterval = setInterval(mainLoop, runInterval);
+		guiLoopInterval = setInterval(guiLoop, runInterval * 10);
+	}
+
+	else if (usingRealTimeOffline && !atTimeLapseFastLoop) { //Enable Offline Mode
+		if (mainLoopInterval) {
+			clearInterval(mainLoopInterval);
+			mainLoopInterval = null;
+		}
+		if (guiLoopInterval) {
+			clearInterval(guiLoopInterval);
+			guiLoopInterval = null;
+		}
+		atTimeLapseFastLoop = true;
+		gameLoop = function (makeUp, now) {
+			originalGameLoop(makeUp, now);
+
+			//Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
+			mapSettings = farmingDecision();
+			autoMap();
+			if (game.global.universe === 2) equalityManagement();
+
+			if (loops % 20 === 0) mainLoop();
+		}
+		debug("TimeLapse Mode Enabled", "offline");
+	}
+}
+
 function mainLoop() {
+
+	//Toggle between timelapse/catchup/offline speed and normal speed.
+	toggleCatchUpMode();
 
 	//Adjust tooltip when mazWindow is open OR clear our adjustments if it's not.
 	if (mazWindowOpen && !usingRealTimeOffline) {
@@ -239,7 +299,6 @@ function mainLoop() {
 		}
 	}
 
-	/* presetMutations(); */
 	remakeTooltip();
 	universeSwapped();
 
@@ -258,7 +317,7 @@ function mainLoop() {
 	if (oneSecondInterval) {
 		hdStats = new HDStats();
 	}
-	mapSettings = farmingDecision();
+	if (!usingRealTimeOffline) mapSettings = farmingDecision();
 
 	//Void, AutoLevel, Breed Timer, Tenacity information
 	if (!usingRealTimeOffline && document.getElementById('additionalInfo') !== null) {
@@ -297,13 +356,15 @@ function mainLoop() {
 	//Heirloom Shield Swap Check
 	if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
 
-	//Offline Progress
-	if (!usingRealTimeOffline) setResourceNeeded();
+	//Offline Progress - Disable setResourceNeeded if we are using timewarp unless the user has timewarpSpeed enabled.
+	if (!usingRealTimeOffline || usingRealTimeOffline && getPageSetting('timewarpSpeed')) setResourceNeeded();
 
-	//AutoMaps
-	autoMap();
-	//Status
-	updateAutoMapsStatus(false);
+	if (!usingRealTimeOffline) {
+		//AutoMaps
+		autoMap();
+		//Status
+		updateAutoMapsStatus(false);
+	}
 	//Gather
 	autoGather();
 	//Auto Traps
@@ -315,7 +376,7 @@ function mainLoop() {
 	//Upgrades
 	buyUpgrades();
 	//Combat
-	callBetterAutoFight()
+	callBetterAutoFight();
 	//Bone Shrine
 	boneShrine();
 	//Auto Golden Upgrade
@@ -331,7 +392,7 @@ function mainLoop() {
 	autoPortal();
 	dailyAutoPortal();
 	//Equip highlighting
-	displayMostEfficientEquipment();
+	if (!usingRealTimeOffline) displayMostEfficientEquipment();
 
 	//Logic for Universe 1
 	mainLoopU1();
@@ -345,7 +406,7 @@ function mainLoop() {
 	//Auto SA -- Currently disabled
 	automateSpireAssault();
 
-	challengeInfo();
+	if (!usingRealTimeOffline) challengeInfo();
 	atFinishedLoading = true;
 
 	if (popupsAT.remainingTime === 5000) {

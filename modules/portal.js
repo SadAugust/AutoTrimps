@@ -67,20 +67,13 @@ function autoPortal(skipDaily) {
 					}
 					return;
 				}
+
 				zonePostpone += 1;
 				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
 				cancelTooltip();
-				popupsAT.portal = true;
-				if (popupsAT.remainingTime === Infinity) popupsAT.remainingTime = 5000;
-				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1;; popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
-				setTimeout(function () {
-					cancelTooltip()
-					popupsAT.portal = false;
-					popupsAT.remainingTime = Infinity;
-				}, MODULES["portal"].timeout);
-				setTimeout(function () {
-					if (zonePostpone >= 2)
-						return;
+
+				//Add timewarp check to ensure we don't have a 5 second wait during timewarp
+				if (usingRealTimeOffline) {
 					if (getPageSetting('heliumHourChallenge', universe) !== 'None')
 						challenge = getPageSetting('heliumHourChallenge', universe);
 					else
@@ -88,7 +81,28 @@ function autoPortal(skipDaily) {
 
 					doPortal(challenge, skipDaily);
 					return;
-				}, MODULES["portal"].timeout + 100);
+				}
+				else {
+					popupsAT.portal = true;
+					if (popupsAT.remainingTime === Infinity) popupsAT.remainingTime = 5000;
+					tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1;; popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
+					setTimeout(function () {
+						cancelTooltip()
+						popupsAT.portal = false;
+						popupsAT.remainingTime = Infinity;
+					}, MODULES["portal"].timeout);
+					setTimeout(function () {
+						if (zonePostpone >= 2)
+							return;
+						if (getPageSetting('heliumHourChallenge', universe) !== 'None')
+							challenge = getPageSetting('heliumHourChallenge', universe);
+						else
+							challenge = 0;
+
+						doPortal(challenge, skipDaily);
+						return;
+					}, MODULES["portal"].timeout + 100);
+				}
 			}
 			if (game.global.world >= portalZone) {
 				if (getPageSetting('heliumHourChallenge', universe) !== 'None')
@@ -198,20 +212,13 @@ function dailyAutoPortal() {
 					}
 					return;
 				}
+
 				zonePostpone += 1;
 				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
 				cancelTooltip();
-				popupsAT.portal = true;
-				if (popupsAT.remainingTime === Infinity) popupsAT.remainingTime = 5000;
-				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1; popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
-				setTimeout(function () {
-					cancelTooltip()
-					popupsAT.portal = false;
-					popupsAT.remainingTime = Infinity;
-				}, MODULES["portal"].timeout);
-				setTimeout(function () {
-					if (zonePostpone >= 2)
-						return;
+
+				//Add timewarp check to ensure we don't have a 5 second wait during timewarp
+				if (usingRealTimeOffline) {
 					if (OKtoPortal) {
 						confirmAbandonChallenge();
 						abandonChallenge();
@@ -221,7 +228,31 @@ function dailyAutoPortal() {
 						doPortal(getPageSetting('dailyHeliumHourChallenge'));
 					else
 						doPortal();
-				}, MODULES["portal"].timeout + 100);
+					return;
+				}
+				else {
+					popupsAT.portal = true;
+					if (popupsAT.remainingTime === Infinity) popupsAT.remainingTime = 5000;
+					tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1; popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
+					setTimeout(function () {
+						cancelTooltip()
+						popupsAT.portal = false;
+						popupsAT.remainingTime = Infinity;
+					}, MODULES["portal"].timeout);
+					setTimeout(function () {
+						if (zonePostpone >= 2)
+							return;
+						if (OKtoPortal) {
+							confirmAbandonChallenge();
+							abandonChallenge();
+							cancelTooltip();
+						}
+						if (getPageSetting('dailyHeliumHourChallenge') !== 'None')
+							doPortal(getPageSetting('dailyHeliumHourChallenge'));
+						else
+							doPortal();
+					}, MODULES["portal"].timeout + 100);
+				}
 			}
 		}
 		if (game.global.world >= portalZone) {

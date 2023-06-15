@@ -3566,6 +3566,14 @@ function initializeAllSettings() {
 				description += "<p>Requires your auto equality setting to be set to <b>Auto Equality: Advanced</b></p>";
 				return description;
 			}, 'boolean', false, null, 'Legacy', [2]);
+
+		createSetting('timewarpSpeed',
+			function () { return ('Timewarp Support') },
+			function () {
+				var description = "<p>Will force AutoTrimps to run the script more frequently during timewarp.</p>";
+				description += "<p>This will be a significant slow down when running timewarp but should allow you to use the script during it.</p>";
+				return description;
+			}, 'boolean', false, null, 'Test', [0]);
 	}
 }
 
