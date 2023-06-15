@@ -36,6 +36,10 @@ var ATrunning = true;
 var atFinishedLoading = false;
 var ATmessageLogTabVisible = true;
 var slowScumming = false;
+var aTTimeLapseFastLoop = false;
+var originalGameLoop = null;
+var mainLoopInterval = null;
+var guiLoopInterval = null;
 
 var autoTrimpSettings = {};
 var MODULES = {};
@@ -157,14 +161,14 @@ function assembleChangelog(c) {
 	return `${c}<br>`
 }
 
-setTimeout(delayStart, 2500);
+setTimeout(delayStart, 1500);
 
 function delayStart() {
 	initializeAutoTrimps();
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
 	document.getElementById('activatePortalBtn').setAttribute("onClick", 'activateClicked(); pushSpreadsheetData()');
-	setTimeout(delayStartAgain, 1500);
+	setTimeout(delayStartAgain, 1000);
 }
 
 function swapBaseSettings() {
@@ -196,8 +200,8 @@ function delayStartAgain() {
 
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
-	setInterval(mainLoop, 100);
-	setInterval(guiLoop, 100 * 10);
+	originalGameLoop = gameLoop;
+	toggleCatchUpMode();
 	updateCustomButtons(true);
 	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
 	universeSwapped();
@@ -446,4 +450,41 @@ function mainCleanup() {
 
 function throwErrorfromMain() {
 	throw new Error("We have successfully read the thrown error message out of the main file")
+}
+
+//Starts the main/gui loop and switches to catchup mode if needed also switches back to realtime mode if needed
+function toggleCatchUpMode() {
+
+    //Start and Intilise loop if this is called for the first time
+    if (!mainLoopInterval && !guiLoopInterval && !aTTimeLapseFastLoop) {
+        mainLoopInterval = setInterval(mainLoop, runInterval);
+        guiLoopInterval = setInterval(guiLoop, runInterval * 10);
+    }
+    //Enable Online Mode after Offline mode was enabled
+    if (!usingRealTimeOffline && aTTimeLapseFastLoop) {
+        if (mainLoopInterval) clearInterval(mainLoopInterval);
+        if (guiLoopInterval) clearInterval(guiLoopInterval);
+        mainLoopInterval = null;
+        aTTimeLapseFastLoop = false;
+        gameLoop = originalGameLoop;
+        mainLoopInterval = setInterval(mainLoop, runInterval);
+        guiLoopInterval = setInterval(guiLoop, runInterval * 10);
+    }
+    else if (usingRealTimeOffline && !aTTimeLapseFastLoop) { //Enable Offline Mode
+        if (mainLoopInterval)
+        {
+            clearInterval(mainLoopInterval);
+            mainLoopInterval = null;
+        } 
+        if (guiLoopInterval) {
+            clearInterval(guiLoopInterval);
+            guiLoopInterval = null;
+        }
+        aTTimeLapseFastLoop = true;
+        gameLoop = function(makeUp, now) {
+            originalGameLoop(makeUp, now)
+            if (loops % 20 === 0) mainLoop(); 
+        }
+        //mainLoopInterval = setInterval(mainLoop, timeLapseRunInterval);
+    }
 }
