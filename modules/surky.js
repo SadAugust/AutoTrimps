@@ -1023,7 +1023,7 @@ function initialLoad(skipLevel) {
 	props.actualTaunts = game.unlocks.impCount.Tauntimp;
 
 	// initially used only for combat respec preset which REQUIRES an import at the point of respec, and not displayed anywhere
-	props.maxTrimps = game.resources.trimps.max * props.scaffoldingBonus;
+	props.maxTrimps = (game.resources.trimps.max * game.resources.trimps.maxMod) * props.scaffoldingBonus;
 	props.coordsBought = game.upgrades.Coordination.done;
 	props.armySize = game.resources.trimps.maxSoldiers;
 	props.currentWorld = game.global.world;
@@ -2148,6 +2148,7 @@ function clearAndAutobuyPerks() {
 			perks.Carpentry.level = origCarp;
 			perks.Expansion.level = origExpand;
 		} else if (props.specialChallenge === 'combat' || props.specialChallenge === 'combatRadon') {
+			props.actualTaunts = game.unlocks.impCount.Tauntimp;
 			// must have enough carp to sustain current coordination - or very conservatively for trappa, 10 more coords after final army send (should still be negligible Rn spent on carp)
 			wantedArmySize = (props.isTrappa ? Math.pow(1.25, 10) : 1) * props.armySize;
 			var tauntBase = 1.003 + 0.0001 * origExpand;

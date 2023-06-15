@@ -2676,9 +2676,8 @@ function hdFarm(skipHealthCheck) {
 
 	var shouldHealthFarm = false;
 	const hitsSurvivedSetting = isDoingSpire() ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
-	var hitsSurvived = Infinity;
+	var hitsSurvived = hdStats.hitsSurvived;
 	if (hitsSurvivedSetting > 0 && !skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== (getTotalPortals() + "_" + game.global.world)) {
-		var hitsSurvived = hdStats.hitsSurvived;
 		if (hitsSurvived < hitsSurvivedSetting) shouldHealthFarm = true;
 	}
 	if (!getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm) return farmingDetails;

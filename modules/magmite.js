@@ -48,10 +48,10 @@ function miRatio() {
 	ocSpendRatio = (ocSpend > 0) ? ((ocSpend / totalSpend) * 100) : 0;
 
 	//Find Next Spend
-	var efffinal = effSpendRatio - effr;
-	var capfinal = capSpendRatio - capr;
-	var supfinal = supSpendRatio - supr;
-	var ocfinal = ocSpendRatio - ocr;
+	var efffinal = effSpendRatio - effRatio;
+	var capfinal = capSpendRatio - capRatio;
+	var supfinal = supSpendRatio - supRatio;
+	var ocfinal = ocSpendRatio - ocRatio;
 
 	var ratios = [];
 	if (efffinal !== -1)
