@@ -3,7 +3,7 @@
 // @version		1.0-SadAugust
 // @namespace	https://SadAugust.github.io/AutoTrimps
 // @description	Automate all the trimps!
-// @author		zininzinin, spindrjr, Ishkaru, genBTC, Zeker0, SadAugust
+// @author		zininzinin, spindrjr, Ishkaru, genBTC, Zeker0, SadAugust, erplsf
 // @match		*trimps.github.io*
 // @match		*kongregate.com/games/GreenSatellite/trimps
 // @match		*trimpstest58.netlify.app/*
