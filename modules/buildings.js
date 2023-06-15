@@ -384,6 +384,7 @@ function buyBuildings() {
 		if (!game.buildings.Warpstation.locked && getPageSetting('warpstation')) {
 			var firstGigaOK = MODULES["upgrades"].autoGigas === false || game.upgrades.Gigastation.done > 0;
 			var warpstationAmt = Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation');
+			if (game.upgrades.Gigastation.done === 0 && getPageSetting('autoGigas')) warpstationAmt = Infinity;
 			var gigaCapped = game.buildings.Warpstation.owned >= warpstationAmt;
 			var warpstationCanAfford = calculateMaxAffordLocal(game.buildings.Warpstation, true, false, false, (warpstationAmt - game.buildings.Warpstation.owned), 1)
 

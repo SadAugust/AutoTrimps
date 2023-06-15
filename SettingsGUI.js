@@ -5313,7 +5313,7 @@ function updateATVersion() {
 
 			autoTrimpSettings['firstGigastation'].value = tempSettings.FirstGigastation.value;
 			autoTrimpSettings['deltaGigastation'].value = tempSettings.DeltaGigastation.value;
-			autoTrimpSettings['autoGigas'].value = tempSettings.AutoGigas.enabled;
+			autoTrimpSettings['autoGigas'].enabled = tempSettings.AutoGigas.enabled;
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.8') {

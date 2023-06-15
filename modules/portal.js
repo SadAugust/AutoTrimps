@@ -68,7 +68,6 @@ function autoPortal(skipDaily) {
 					return;
 				}
 
-				zonePostpone += 1;
 				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
 				cancelTooltip();
 
@@ -83,6 +82,7 @@ function autoPortal(skipDaily) {
 					return;
 				}
 				else {
+					zonePostpone += 1;
 					popupsAT.portal = true;
 					if (popupsAT.remainingTime === Infinity) popupsAT.remainingTime = 5000;
 					tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1;; popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
