@@ -66,7 +66,7 @@ function evaluateHeirloomMods(loom, location) {
 	var emptyMods = 0;
 	//Increment through the setting inputs and push them to the targetMods array if not set to empty.
 	for (var x = 1; x < (heirloomLocation.mods.length + 1); x++) {
-		if (getPageSetting(varAffix + x) === 'Empty') continue;
+		if (getPageSetting(varAffix + x) === 'Any') continue;
 		targetMods.push(getPageSetting(varAffix + x));
 	}
 	//Loop through the heirloom mods and check if they are empty or not. If they are empty, increment emptyMods. If they are not empty, remove them from the targetMods array.

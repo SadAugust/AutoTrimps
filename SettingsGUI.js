@@ -2908,7 +2908,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 0)
@@ -2920,7 +2920,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 1)
@@ -2932,7 +2932,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 2)
@@ -2944,7 +2944,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 5)
@@ -2956,7 +2956,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 7)
@@ -2968,7 +2968,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 9)
@@ -2980,7 +2980,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('shield'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 11)
@@ -3011,7 +3011,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 0)
@@ -3023,7 +3023,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 1)
@@ -3035,7 +3035,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 2)
@@ -3047,7 +3047,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 5)
@@ -3059,7 +3059,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 7)
@@ -3071,7 +3071,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 9)
@@ -3083,7 +3083,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('staff'); }, 'Heirlooms', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse)) >= 11)
@@ -3110,28 +3110,28 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
+			}, 'dropdown', 'Any', function () { return ["Any", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod2',
 			function () { return ('Cores: Modifier 2') },
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
+			}, 'dropdown', 'Any', function () { return ["Any", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod3',
 			function () { return ('Cores: Modifier 3') },
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
+			}, 'dropdown', 'Any', function () { return ["Any", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreMod4',
 			function () { return ('Cores: Modifier 4') },
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Empty', function () { return ["Empty", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
+			}, 'dropdown', 'Any', function () { return ["Any", "Fire Trap Damage", "Poison Trap Damage", "Lightning Trap Power", "Runestone Drop Rate", "Strength Tower Effect", "Condenser Effect"]; }, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 		createSetting('heirloomAutoCoreBlacklist',
 			function () { return ('Cores: Blacklist') },
@@ -4450,11 +4450,11 @@ function autoHeirloomOptions(heirloomType) {
 	var heirloomModsArray = [];
 
 	if (heirloomType === 'shield') {
-		heirloomModsArray = ["Empty"];
+		heirloomModsArray = ["Any"];
 
 		for (var item in game.heirlooms['Shield']) {
 			var heirloom = game.heirlooms['Shield'][item];
-			if (item === "empty") continue;
+			if (item === "Any") continue;
 			if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
 			if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
 			heirloomModsArray.push(heirloomMods['Shield'][item]);
@@ -4463,11 +4463,11 @@ function autoHeirloomOptions(heirloomType) {
 	}
 
 	if (heirloomType === 'staff') {
-		heirloomModsArray = ["Empty"];
+		heirloomModsArray = ["Any"];
 
 		for (var item in game.heirlooms['Staff']) {
 			var heirloom = game.heirlooms['Staff'][item];
-			if (item === "empty") continue;
+			if (item === "Any") continue;
 			if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
 			if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
 			heirloomModsArray.push(heirloomMods['Staff'][item]);
@@ -5450,6 +5450,20 @@ function updateATVersion() {
 			verticalCenterTooltip(false, true);
 		}
 		saveSettings();
+	}
+
+	if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.991') {
+		if (typeof (tempSettings['heirloomAutoStaffMod1']) !== 'undefined') {
+			for (var x = 1; x < 8; x++) {
+				if (tempSettings['heirloomAutoStaffMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoStaffMod' + x].selected = 'Any';
+				if (tempSettings['heirloomAutoStaffMod' + x].selectedU2 === 'Empty') autoTrimpSettings['heirloomAutoStaffMod' + x].selectedU2 = 'Any';
+				if (tempSettings['heirloomAutoShieldMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoShieldMod' + x].selected = 'Any';
+				if (tempSettings['heirloomAutoShieldMod' + x].selectedU2 === 'Empty') autoTrimpSettings['heirloomAutoShieldMod' + x].selectedU2 = 'Any';
+			}
+			for (var x = 1; x < 5; x++) {
+				if (tempSettings['heirloomAutoCoreMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoCoreMod' + x].selected = 'Any';
+			}
+		}
 	}
 
 	autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
