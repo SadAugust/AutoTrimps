@@ -169,7 +169,7 @@ function delayStart() {
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
 	document.getElementById('activatePortalBtn').setAttribute("onClick", 'activateClicked(); pushSpreadsheetData()');
-	setTimeout(delayStartAgain, 1000);
+	setTimeout(delayStartAgain, 1500);
 }
 
 function swapBaseSettings() {
