@@ -225,7 +225,8 @@ function universeSwapped() {
 }
 
 function mainLoop() {
-
+	//Toggle between timelapse/catchup/offline speed and normal speed.
+	toggleCatchUpMode();
 	//Adjust tooltip when mazWindow is open OR clear our adjustments if it's not.
 	if (mazWindowOpen && !usingRealTimeOffline) {
 		var mazSettings = ["Map Farm", "Map Bonus", "Void Map", "HD Farm", "Raiding", "Bionic Raiding", "Quagmire Farm", "Insanity Farm", "Alchemy Farm", "Hypothermia Farm", "Bone Shrine", "Auto Golden", "Tribute Farm", "Smithy Farm", "Worshipper Farm"];
@@ -460,6 +461,9 @@ function toggleCatchUpMode() {
         mainLoopInterval = setInterval(mainLoop, runInterval);
         guiLoopInterval = setInterval(guiLoop, runInterval * 10);
     }
+
+	if (getPageSetting('disableForTW') && usingRealTimeOffline) return;
+
     //Enable Online Mode after Offline mode was enabled
     if (!usingRealTimeOffline && aTTimeLapseFastLoop) {
         if (mainLoopInterval) clearInterval(mainLoopInterval);
