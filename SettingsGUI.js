@@ -4450,7 +4450,7 @@ function autoHeirloomOptions(heirloomType) {
 	var heirloomModsArray = [];
 
 	if (heirloomType === 'shield') {
-		heirloomModsArray = ["Empty"];
+		heirloomModsArray = ["Any", "Empty"];
 
 		for (var item in game.heirlooms['Shield']) {
 			var heirloom = game.heirlooms['Shield'][item];
@@ -4463,7 +4463,7 @@ function autoHeirloomOptions(heirloomType) {
 	}
 
 	if (heirloomType === 'staff') {
-		heirloomModsArray = ["Empty"];
+		heirloomModsArray = ["Any", "Empty"];
 
 		for (var item in game.heirlooms['Staff']) {
 			var heirloom = game.heirlooms['Staff'][item];
