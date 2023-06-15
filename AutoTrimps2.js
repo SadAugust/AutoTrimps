@@ -40,6 +40,7 @@ var aTTimeLapseFastLoop = false;
 var originalGameLoop = null;
 var mainLoopInterval = null;
 var guiLoopInterval = null;
+const runInterval = 100;
 
 var autoTrimpSettings = {};
 var MODULES = {};
