@@ -303,8 +303,7 @@ function mainLoop() {
 	//Heirloom Shield Swap Check
 	if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
 
-	//Offline Progress
-	if (!usingRealTimeOffline) setResourceNeeded();
+	setResourceNeeded();
 
 	//AutoMaps
 	autoMap();
