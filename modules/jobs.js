@@ -114,6 +114,21 @@ function fireModeLocal() {
 	}
 }
 
+//Fires all workers to ensure we can do things like respec
+function fireAllWorkers() {
+	if (game.jobs.Farmer.owned > 0)
+		safeBuyJob('Farmer', -game.jobs.Farmer.owned);
+
+	if (game.jobs.Lumberjack.owned > 0)
+		safeBuyJob('Lumberjack', -game.jobs.Lumberjack.owned);
+
+	if (game.jobs.Miner.owned > 0)
+		safeBuyJob('Miner', -game.jobs.Miner.owned);
+
+	if (game.jobs.Scientist.owned > 0)
+		safeBuyJob('Scientist', -game.jobs.Scientist.owned);
+}
+
 function buyJobs() {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned === 0) return;

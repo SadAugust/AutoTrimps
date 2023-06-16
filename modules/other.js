@@ -377,7 +377,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (!enemyName) enemyName = 'Snimp';
 	if (!zone) zone = game.global.world;
 	if (!mapType) mapType = 'world'
-	if (!currentCell) mapType === 'world' ? 98 : 20;
+	if (!currentCell) currentCell = mapType === 'world' || mapType === 'void' ? 98 : 20;
 	if (!difficulty) difficulty = 1;
 	if (!farmType) farmType = 'gamma';
 	if (!hits) hits = 1;

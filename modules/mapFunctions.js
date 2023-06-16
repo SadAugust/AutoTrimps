@@ -2694,16 +2694,14 @@ function hdFarm(skipHealthCheck) {
 		for (var y = 0; y < baseSettings.length; y++) {
 			const currSetting = baseSettings[y];
 			const world = currSetting.world;
-			/* if (currSetting.hdType === 'hitsSurvived') debug(equipfarmdynamicHD(currSetting)); */
 			if (!settingShouldRun(currSetting, world, 0)) continue;
-			if (currSetting.hdType === 'void' && game.global.totalVoidMaps === 0) continue;
+			if (currSetting.hdType.toLowerCase().includes('void') && game.global.totalVoidMaps === 0) continue;
 			settingIndex = y;
 			break;
 		}
 	}
 
 	if (settingIndex !== null || shouldHealthFarm) {
-
 		var setting;
 		var hdFarmMapCap;
 		var hdFarmMaxMaps;
@@ -2751,28 +2749,29 @@ function hdFarm(skipHealthCheck) {
 				mapLevel = mapAutoLevel;
 			}
 		}
-		var hdRatio = hdType === 'world' ? hdStats.hdRatio : hdType === 'void' ? hdStats.hdRatioVoid : hdType === 'map' ? hdStats.hdRatioMap : hdType === 'hitsSurvived' ? hdStats.hitsSurvived : null;
+		var hdRatio = hdType === 'world' ? hdStats.hdRatio : hdType === 'void' ? hdStats.hdRatioVoid : hdType === 'map' ? hdStats.hdRatioMap : hdType === 'hitsSurvived' ? hdStats.hitsSurvived : hdType === 'hitsSurvivedVoid' ? hdStats.hitsSurvivedVoid : null;
 		if (hdType !== 'maplevel' && !shouldHealthFarm && hdRatio === null) return farmingDetails;
 
-		if (hdType === 'hitsSurvived' ? hdRatio < equipfarmdynamicHD(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : !shouldHealthFarm ? hdRatio > equipfarmdynamicHD(setting) : hdRatio < equipfarmdynamicHD(setting))
+		if (hdType.includes('hitsSurvived') ? hdRatio < equipfarmdynamicHD(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : !shouldHealthFarm ? hdRatio > equipfarmdynamicHD(setting) : hdRatio < equipfarmdynamicHD(setting))
 			shouldMap = true;
 
 		//Set this here so that we can check against the correct map name in following checks
-		if (shouldHealthFarm || hdType === 'hitsSurvived') {
+		if (shouldHealthFarm || hdType.includes('hitsSurvived')) {
 			mapName = 'Hits Survived';
+			if (hdType === 'hitsSurvivedVoid') hitsSurvived = hdStats.hitsSurvivedVoid;
 		}
 
 		//Skipping farm if map repeat value is greater than our max maps value
 		if (shouldMap && game.global.mapsActive && mapSettings.mapName === mapName && game.global.mapRunCounter >= hdFarmMaxMapsMaps) {
 			shouldMap = false;
 		}
-		if (mapSettings.mapName !== mapName && !shouldHealthFarm && (hdType === 'hitsSurvived' ? hdRatio > equipfarmdynamicHD(setting) : hdType !== 'maplevel' ? equipfarmdynamicHD(setting) > hdRatio : hdStats.autoLevel > setting.hdBase))
+		if (mapSettings.mapName !== mapName && !shouldHealthFarm && (hdType.includes('hitsSurvived') ? hdRatio > equipfarmdynamicHD(setting) : hdType !== 'maplevel' ? equipfarmdynamicHD(setting) > hdRatio : hdStats.autoLevel > setting.hdBase))
 			shouldSkip = true;
 
 		if (((mapSettings.mapName === mapName && !shouldMap) || shouldSkip) && hdStats.hdRatio !== Infinity) {
 			if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, equipfarmdynamicHD(setting), hdType);
 			if (getPageSetting('spamMessages').map_Skip && shouldSkip) {
-				if (hdType === 'hitsSurvived') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
+				if (hdType === 'hitsSurvived') debug("Hits Survived (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
 				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
 				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + setting.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
 			}
@@ -2781,13 +2780,14 @@ function hdFarm(skipHealthCheck) {
 
 		}
 
-		var status;
+		var status = '';
 
-		if (shouldHealthFarm || hdType === 'hitsSurvived') {
-			status = 'Hits Survived&nbsp;to:&nbsp;' + equipfarmdynamicHD(setting).toFixed(2) + '<br>\
-		Current:&nbsp;' + hitsSurvived.toFixed(2);
+		if (shouldHealthFarm || hdType.includes('hitsSurvived')) {
+			if (hdType === 'hitsSurvivedVoid') status += 'Void&nbsp;';
+			status += 'Hits&nbsp;Survived to:&nbsp;' + equipfarmdynamicHD(setting).toFixed(2) + '<br>';
+			status += 'Current:&nbsp;' + hitsSurvived.toFixed(2);
 		} else {
-			status = 'HD&nbsp;Farm&nbsp;to:&nbsp;';
+			status += 'HD&nbsp;Farm&nbsp;to:&nbsp;';
 			if (hdType !== 'maplevel') status += equipfarmdynamicHD(setting).toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);
 			else status += '<br>' + (setting.hdBase >= 0 ? "+" : "") + setting.hdBase + ' Auto Level';
 		}

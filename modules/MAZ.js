@@ -2422,17 +2422,18 @@ function displayDropdowns(universe, vals, varPrefix) {
 	var highestZone = universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
 
 	//Gather dropdown
-	dropdown.gather = "<option value='food'" + ((vals.gather === 'food') ? " selected='selected'" : "") + ">Food</option >\
-		<option value='wood'" + ((vals.gather === 'wood') ? " selected = 'selected'" : "") + " > Wood</option >\
-		<option value='metal'" + ((vals.gather === 'metal') ? " selected = 'selected'" : "") + " > Metal</option >\
-		<option value='science'" + ((vals.gather === 'science') ? " selected = 'selected'" : "") + " > Science</option > "
+	dropdown.gather = "<option value='food'" + ((vals.gather === 'food') ? " selected='selected'" : "") + ">Food</option>\
+		<option value='wood'" + ((vals.gather === 'wood') ? " selected = 'selected'" : "") + " > Wood</option>\
+		<option value='metal'" + ((vals.gather === 'metal') ? " selected = 'selected'" : "") + " > Metal</option>\
+		<option value='science'" + ((vals.gather === 'science') ? " selected = 'selected'" : "") + " > Science</option> "
 
 	//HD Type dropdown
-	dropdown.hdType = "<option value='world'" + ((vals.hdType === 'world') ? " selected='selected'" : "") + ">World</option >\
-		<option value='map'" + ((vals.hdType === 'map') ? " selected = 'selected'" : "") + " >Map</option >\
-		<option value='void'" + ((vals.hdType === 'void') ? " selected = 'selected'" : "") + " >Void</option >\
-		<option value='maplevel'" + ((vals.hdType === 'maplevel') ? " selected = 'selected'" : "") + " >Map Level</option >\
-		<option value='hitsSurvived'" + ((vals.hdType === 'hitsSurvived') ? " selected = 'selected'" : "") + " >Hits Survived</option >"
+	dropdown.hdType = "<option value='world'" + ((vals.hdType === 'world') ? " selected='selected'" : "") + ">World</option>\
+		<option value='map'" + ((vals.hdType === 'map') ? " selected = 'selected'" : "") + " >Map</option>\
+		<option value='void'" + ((vals.hdType === 'void') ? " selected = 'selected'" : "") + " >Void</option>\
+		<option value='maplevel'" + ((vals.hdType === 'maplevel') ? " selected = 'selected'" : "") + " >Map Level</option>\
+		<option value='hitsSurvived'" + ((vals.hdType === 'hitsSurvived') ? " selected = 'selected'" : "") + " >Hits Survived</option>\
+		<option value='hitsSurvivedVoid'" + ((vals.hdType === 'hitsSurvivedVoid') ? " selected = 'selected'" : "") + " >Void Hits Survived</option>"
 
 	//Map Type dropdown
 	dropdown.mapType = '';
@@ -2445,18 +2446,18 @@ function displayDropdowns(universe, vals, varPrefix) {
 	}
 
 	//Prestige Goal dropdown
-	dropdown.prestigeGoal = "<option value='All'" + ((vals.prestigeGoal === 'All') ? " selected='selected'" : "") + ">All</option >\
-		<option value='Shield'" + ((vals.prestigeGoal === 'Shield') ? " selected='selected'" : "") + ">Shield</option >\
-		<option value='Dagger'" + ((vals.prestigeGoal === 'Dagger') ? " selected='selected'" : "") + ">Dagger</option >\
-		<option value='Boots'" + ((vals.prestigeGoal === 'Boots') ? " selected = 'selected'" : "") + " > Boots</option >\
-		<option value='Mace'" + ((vals.prestigeGoal === 'Mace') ? " selected = 'selected'" : "") + " > Mace</option >\
-		<option value='Helmet'" + ((vals.prestigeGoal === 'Helmet') ? " selected = 'selected'" : "") + " > Helmet</option >\
-		<option value='Polearm'" + ((vals.prestigeGoal === 'Polearm') ? " selected = 'selected'" : "") + " > Polearm</option >\
-		<option value='Pants'" + ((vals.prestigeGoal === 'Pants') ? " selected = 'selected'" : "") + " > Pants</option >\
-		<option value='Battleaxe'" + ((vals.prestigeGoal === 'Battleaxe') ? " selected = 'selected'" : "") + " > Battleaxe</option >\
-		<option value='Shoulderguards'" + ((vals.prestigeGoal === 'Shoulderguards') ? " selected = 'selected'" : "") + " > Shoulderguards</option >\
-		<option value='Greatsword'" + ((vals.prestigeGoal === 'Greatsword') ? " selected = 'selected'" : "") + " > Greatsword</option >\
-		<option value='Breastplate'" + ((vals.prestigeGoal === 'Breastplate') ? " selected = 'selected'" : "") + " > Breastplate</option >"
+	dropdown.prestigeGoal = "<option value='All'" + ((vals.prestigeGoal === 'All') ? " selected='selected'" : "") + ">All</option>\
+		<option value='Shield'" + ((vals.prestigeGoal === 'Shield') ? " selected='selected'" : "") + ">Shield</option>\
+		<option value='Dagger'" + ((vals.prestigeGoal === 'Dagger') ? " selected='selected'" : "") + ">Dagger</option>\
+		<option value='Boots'" + ((vals.prestigeGoal === 'Boots') ? " selected = 'selected'" : "") + " > Boots</option>\
+		<option value='Mace'" + ((vals.prestigeGoal === 'Mace') ? " selected = 'selected'" : "") + " > Mace</option>\
+		<option value='Helmet'" + ((vals.prestigeGoal === 'Helmet') ? " selected = 'selected'" : "") + " > Helmet</option>\
+		<option value='Polearm'" + ((vals.prestigeGoal === 'Polearm') ? " selected = 'selected'" : "") + " > Polearm</option>\
+		<option value='Pants'" + ((vals.prestigeGoal === 'Pants') ? " selected = 'selected'" : "") + " > Pants</option>\
+		<option value='Battleaxe'" + ((vals.prestigeGoal === 'Battleaxe') ? " selected = 'selected'" : "") + " > Battleaxe</option>\
+		<option value='Shoulderguards'" + ((vals.prestigeGoal === 'Shoulderguards') ? " selected = 'selected'" : "") + " > Shoulderguards</option>\
+		<option value='Greatsword'" + ((vals.prestigeGoal === 'Greatsword') ? " selected = 'selected'" : "") + " > Greatsword</option>\
+		<option value='Breastplate'" + ((vals.prestigeGoal === 'Breastplate') ? " selected = 'selected'" : "") + " > Breastplate</option>"
 	if (game.global.slowDone) dropdown.prestigeGoal += "<option value='Arbalest'" + ((vals.prestigeGoal === 'Arbalest') ? " selected='selected'" : "") + ">Arbalest</option>"
 	if (game.global.slowDone) dropdown.prestigeGoal += "<option value='Gambeson'" + ((vals.prestigeGoal === 'Gambeson') ? " selected='selected'" : "") + ">Gambeson</option>"
 
@@ -2464,9 +2465,9 @@ function displayDropdowns(universe, vals, varPrefix) {
 		//Specials dropdown with conditions for each unlock to only appear when the user can run them.
 		dropdown.special = "<option value='0'" + ((vals.special === '0') ? " selected='selected'" : "") + ">No Modifier</option>"
 		if (highestZone >= 60) dropdown.special += "<option value='fa'" + ((vals.special === 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special === 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
-		if (highestZone >= 85) dropdown.special += "<option value = 'ssc'" + ((vals.special === 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option >\
-				<option value='swc'" + ((vals.special === 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option >\
-				<option value='smc'" + ((vals.special === 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option > "
+		if (highestZone >= 85) dropdown.special += "<option value = 'ssc'" + ((vals.special === 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option>\
+				<option value='swc'" + ((vals.special === 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option>\
+				<option value='smc'" + ((vals.special === 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option> "
 		if (highestZone >= 135) dropdown.special += "<option value='p'" + ((vals.special === 'p') ? " selected='selected'" : "") + ">Prestigious</option>"
 		if (highestZone >= 160) dropdown.special += "<option value='hc'" + ((vals.special === 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>"
 		if (highestZone >= 185) dropdown.special += "<option value='lsc'" + ((vals.special === 'lsc') ? " selected='selected'" : "") + ">Large Savory Cache</option>\
@@ -2476,7 +2477,7 @@ function displayDropdowns(universe, vals, varPrefix) {
 		//Challenge dropdown with conditions for each unlock to only appear when the user can run them.
 		dropdown.challenge = "<option value='All'" + ((vals.challenge === 'All') ? " selected='selected'" : "") + ">All</option>";
 		if (highestZone >= 40) dropdown.challenge += "<option value='Balance'" + ((vals.challenge === 'Balance') ? " selected='selected'" : "") + ">Balance</option>";
-		if (highestZone >= 55) dropdown.challenge += "<option value = 'Decay'" + ((vals.challenge === 'Decay') ? " selected = 'selected'" : "") + " >Decay</option >";
+		if (highestZone >= 55) dropdown.challenge += "<option value = 'Decay'" + ((vals.challenge === 'Decay') ? " selected = 'selected'" : "") + " >Decay</option>";
 		if (game.global.prisonClear >= 1) dropdown.challenge += "<option value='Electricity'" + ((vals.challenge === 'Electricity') ? " selected='selected'" : "") + ">Electricity</option>";
 		if (highestZone >= 110) dropdown.challenge += "<option value='Life'" + ((vals.challenge === 'Life') ? " selected='selected'" : "") + ">Life</option>";
 		if (highestZone >= 125) dropdown.challenge += "<option value='Crushed'" + ((vals.challenge === 'Crushed') ? " selected='selected'" : "") + ">Crushed</option>";
@@ -2492,7 +2493,7 @@ function displayDropdowns(universe, vals, varPrefix) {
 		if (getTotalPerkResource(true) >= 30) dropdown.c2 += "<option value='Discipline'" + ((vals.challenge3 === 'Discipline') ? " selected='selected'" : "") + ">Discipline</option>";
 		if (highestZone >= 25) dropdown.c2 += "<option value='Metal'" + ((vals.challenge3 === 'Metal') ? " selected='selected'" : "") + ">Metal</option>";
 		if (highestZone >= 35) dropdown.c2 += "<option value='Size'" + ((vals.challenge3 === 'Size') ? " selected='selected'" : "") + ">Size</option>";
-		if (highestZone >= 40) dropdown.c2 += "<option value = 'Balance'" + ((vals.challenge3 === 'Balance') ? " selected = 'selected'" : "") + " > Balance</option >";
+		if (highestZone >= 40) dropdown.c2 += "<option value = 'Balance'" + ((vals.challenge3 === 'Balance') ? " selected = 'selected'" : "") + " > Balance</option>";
 		if (highestZone >= 45) dropdown.c2 += "<option value='Meditate'" + ((vals.challenge3 === 'Meditate') ? " selected='selected'" : "") + ">Meditate</option>";
 		if (highestZone >= 60) dropdown.c2 += "<option value='Trimp'" + ((vals.challenge3 === 'Trimp') ? " selected='selected'" : "") + ">Trimp</option>";
 		if (highestZone >= 70) dropdown.c2 += "<option value='Trapper'" + ((vals.challenge3 === 'Trapper') ? " selected='selected'" : "") + ">Trapper</option>";
@@ -2514,9 +2515,9 @@ function displayDropdowns(universe, vals, varPrefix) {
 		//Specials dropdown with conditions for each unlock to only appear when the user can run them.
 		dropdown.special = "<option value='0'" + ((vals.special === '0') ? " selected='selected'" : "") + ">No Modifier</option>"
 		if (highestZone >= 15) dropdown.special += "<option value='fa'" + ((vals.special === 'fa') ? " selected='selected'" : "") + ">Fast Attack</option>\<option value='lc'" + ((vals.special === 'lc') ? " selected='selected'" : "") + ">Large Cache</option>"
-		if (highestZone >= 25) dropdown.special += "<option value = 'ssc'" + ((vals.special === 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option >\
-				<option value='swc'" + ((vals.special === 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option >\
-				<option value='smc'" + ((vals.special === 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option > "
+		if (highestZone >= 25) dropdown.special += "<option value = 'ssc'" + ((vals.special === 'ssc') ? " selected = 'selected'" : "") + " > Small Savory Cache</option>\
+				<option value='swc'" + ((vals.special === 'swc') ? " selected = 'selected'" : "") + " > Small Wooden Cache</option>\
+				<option value='smc'" + ((vals.special === 'smc') ? " selected = 'selected'" : "") + " > Small Metal Cache</option> "
 		if (game.global.ArchaeologyDone) dropdown.special += "<option value='src'" + ((vals.special === 'src') ? " selected='selected'" : "") + ">Small Research Cache</option>"
 		if (highestZone >= 55) dropdown.special += "<option value='p'" + ((vals.special === 'p') ? " selected='selected'" : "") + ">Prestigious</option>"
 		if (highestZone >= 65) dropdown.special += "<option value='hc'" + ((vals.special === 'hc') ? " selected='selected'" : "") + ">Huge Cache</option>"
@@ -2528,7 +2529,7 @@ function displayDropdowns(universe, vals, varPrefix) {
 		//Filler challenge dropdowns with conditions for each unlock to only appear when the user can run them.
 		dropdown.challenge = "<option value='All'" + ((vals.challenge === 'All') ? " selected='selected'" : "") + ">All</option>";
 		if (highestZone >= 40) dropdown.challenge += "<option value='Bublé'" + ((vals.challenge === 'Bublé') ? " selected='selected'" : "") + ">Bublé</option>";
-		if (highestZone >= 55) dropdown.challenge += "<option value = 'Melt'" + ((vals.challenge === 'Melt') ? " selected = 'selected'" : "") + " > Melt</option >";
+		if (highestZone >= 55) dropdown.challenge += "<option value = 'Melt'" + ((vals.challenge === 'Melt') ? " selected = 'selected'" : "") + " > Melt</option>";
 		if (highestZone >= 70) dropdown.challenge += "<option value='Quagmire'" + ((vals.challenge === 'Quagmire') ? " selected='selected'" : "") + ">Quagmire</option>";
 		if (highestZone >= 85) dropdown.challenge += "<option value='Quest'" + ((vals.challenge === 'Quest') ? " selected='selected'" : "") + ">Quest</option>";
 		if (highestZone >= 90) dropdown.challenge += "<option value='Archaeology'" + ((vals.challenge === 'Archaeology') ? " selected='selected'" : "") + ">Archaeology</option>";
@@ -2542,7 +2543,7 @@ function displayDropdowns(universe, vals, varPrefix) {
 		if (highestZone >= 15) dropdown.c2 += "<option value='Unlucky'" + ((vals.challenge3 === 'Unlucky') ? " selected='selected'" : "") + ">Unlucky</option>";
 		if (highestZone >= 20) dropdown.c2 += "<option value='Downsize'" + ((vals.challenge3 === 'Downsize') ? " selected='selected'" : "") + ">Downsize</option>";
 		if (highestZone >= 25) dropdown.c2 += "<option value='Transmute'" + ((vals.challenge3 === 'Transmute') ? " selected='selected'" : "") + ">Transmute</option>";
-		if (highestZone >= 35) dropdown.c2 += "<option value = 'Unbalance'" + ((vals.challenge3 === 'Unbalance') ? " selected = 'selected'" : "") + " > Unbalance</option >";
+		if (highestZone >= 35) dropdown.c2 += "<option value = 'Unbalance'" + ((vals.challenge3 === 'Unbalance') ? " selected = 'selected'" : "") + " > Unbalance</option>";
 		if (highestZone >= 45) dropdown.c2 += "<option value='Duel'" + ((vals.challenge3 === 'Duel') ? " selected='selected'" : "") + ">Duel</option>";
 		if (highestZone >= 60) dropdown.c2 += "<option value='Trappapalooza'" + ((vals.challenge3 === 'Trappapalooza') ? " selected='selected'" : "") + ">Trappa</option>";
 		if (highestZone >= 70) dropdown.c2 += "<option value='Wither'" + ((vals.challenge3 === 'Wither') ? " selected='selected'" : "") + ">Wither</option>";
@@ -2558,16 +2559,16 @@ function displayDropdowns(universe, vals, varPrefix) {
 
 	//Run Type options
 	dropdown.runType = "<option value='All'" + ((vals.runType === 'All') ? " selected='selected'" : "") + ">All</option>"
-	dropdown.runType += "<option value='Filler'" + ((vals.runType === 'Filler') ? " selected = 'selected'" : "") + " > Filler</option >"
+	dropdown.runType += "<option value='Filler'" + ((vals.runType === 'Filler') ? " selected = 'selected'" : "") + " > Filler</option>"
 	dropdown.runType += " <option value='Daily'" + ((vals.runType === 'Daily') ? " selected='selected'" : "") + ">Daily</option>"
 	if (universe === 1) dropdown.runType += "<option value='C3'" + ((vals.runType === 'C3') ? " selected='selected'" : "") + ">C2</option>"
 	if (universe === 2) dropdown.runType += "<option value='C3'" + ((vals.runType === 'C3') ? " selected='selected'" : "") + ">C3</option>"
 
 	//Golden dropdown options
-	if (universe === 1 && !varPrefix.includes('C3')) dropdown.goldenType = "<option value='h'" + ((vals.goldenType === 'h') ? " selected='selected'" : "") + ">Helium</option >"
-	if (universe === 2 && !varPrefix.includes('C3')) dropdown.goldenType = "<option value='r'" + ((vals.goldenType === 'r') ? " selected='selected'" : "") + ">Radon</option >"
-	dropdown.goldenType += "<option value='b'" + ((vals.goldenType === 'b') ? " selected = 'selected'" : "") + " >Battle</option >"
-	dropdown.goldenType += "<option value='v'" + ((vals.goldenType === 'v') ? " selected = 'selected'" : "") + " >Void</option >"
+	if (universe === 1 && !varPrefix.includes('C3')) dropdown.goldenType = "<option value='h'" + ((vals.goldenType === 'h') ? " selected='selected'" : "") + ">Helium</option>"
+	if (universe === 2 && !varPrefix.includes('C3')) dropdown.goldenType = "<option value='r'" + ((vals.goldenType === 'r') ? " selected='selected'" : "") + ">Radon</option>"
+	dropdown.goldenType += "<option value='b'" + ((vals.goldenType === 'b') ? " selected = 'selected'" : "") + " >Battle</option>"
+	dropdown.goldenType += "<option value='v'" + ((vals.goldenType === 'v') ? " selected = 'selected'" : "") + " >Void</option>"
 
 	return dropdown;
 }

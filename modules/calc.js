@@ -18,6 +18,7 @@ class HDStats {
 		this.vhdRatioVoidPlus = undefined;
 
 		this.hitsSurvived = undefined;
+		this.hitsSurvivedVoid = undefined;
 		this.autoLevel = undefined;
 
 		const z = game.global.world;
@@ -37,6 +38,7 @@ class HDStats {
 		this.vhdRatioVoidPlus = calcHDRatio(z + 1, 'void', getPageSetting('voidMapDefaultSettings').maxTenacity);
 
 		this.hitsSurvived = calcHitsSurvived(z, 'world');
+		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void');
 		this.autoLevel = autoMapLevel();
 	}
 }

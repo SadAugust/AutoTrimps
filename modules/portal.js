@@ -775,6 +775,8 @@ function surkyCombatRespec() {
 	runSurky();
 	//Reverting back to original preset
 	fillPreset(currPreset);
+	//Fire all workers so that we don't run into issues when finishing the respec
+	fireAllWorkers();
 	activateClicked();
 	debug("Surky - Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.", "portal")
 }

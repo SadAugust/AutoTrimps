@@ -56,6 +56,7 @@ function makeAutomapStatusTooltip() {
 	var hitsSurvivedText = `Hits Survived is the ratio of hits you can survive against a cell 100 ${enemyName}'s max attack${game.global.universe === 1 ? ' (subtracts Trimp block from that value)' : ''
 		}.`;
 	const hitsSurvived = prettify(hdStats.hitsSurvived);
+	const hitsSurvivedVoid = prettify(hdStats.hitsSurvivedVoid);
 	const hitsSurvivedSetting = isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
 	const hitsSurvivedValue = hitsSurvivedSetting > 0 ? hitsSurvivedSetting : '∞';
 	var tooltip = 'tooltip(' +
@@ -66,15 +67,16 @@ function makeAutomapStatusTooltip() {
 		'Values in <b>bold</b> are dynamically calculated based on current zone and activity.<br>' +
 		'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>';
 	if (game.global.universe === 2) {
-		if (!game.portal.Equality.radLocked) tooltip += `< br >\
-		If you have the Auto Equality setting set to < b > Auto Equality: Advanced</b > then all calculations will factor expected equality value into them.< br > `;
-		if (game.stats.highestRadLevel.valueTotal() > 200) tooltip += `If a mutated enemy has higher stats than the ${enemyName} on cell 100 then calculations will use that enemies stats instead.< br > `;
+		if (!game.portal.Equality.radLocked) tooltip += `<br>\
+		If you have the Auto Equality setting set to <b>Auto Equality: Advanced</b> then all calculations will factor expected equality value into them.<br>`;
+		if (game.stats.highestRadLevel.valueTotal() > 200) tooltip += `If a mutated enemy has higher stats than the ${enemyName} on cell 100 then calculations will use that enemies stats instead.<br>`;
 	}
 	//Hits Survived
 	tooltip += `<br>` +
 		`<b> Hits Survived info</b > <br>` +
 		`${hitsSurvivedText}<br>` +
-		`<b>Hits survived: ${hitsSurvived}</b> / <i>${hitsSurvivedValue}</i><br>`
+		`<b>Hits Survived: ${hitsSurvived}</b> / <i>${hitsSurvivedValue}</i><br>` +
+		`<b>Void Hits Survived: ${hitsSurvivedVoid}</b><br>`
 
 	//Map Setting Info
 	tooltip += `<br>` +
