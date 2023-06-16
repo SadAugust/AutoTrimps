@@ -17,7 +17,14 @@ var link1 = document.createElement("link");
 function createTabs(tabName, tabDescription, addTabsDiv, addtabsUL) {
 	var c = document.createElement("li"),
 		d = document.createElement("a");
-	(d.className = "tablinks"), d.setAttribute("onclick", "toggleTab(event, '" + tabName + "')"), (d.href = "#"), d.appendChild(document.createTextNode(tabName)), (c.id = "tab" + tabName), c.appendChild(d), addtabsUL.appendChild(c), createTabContents(tabName, tabDescription, addTabsDiv);
+	(d.className = "tablinks"),
+		d.setAttribute("onclick", "toggleTab(event, '" + tabName + "')"),
+		(d.href = "#"), d.appendChild(document.createTextNode(tabName)),
+		d.style.fontSize = "1vw",
+		(c.id = "tab" + tabName),
+		c.appendChild(d),
+		addtabsUL.appendChild(c),
+		createTabContents(tabName, tabDescription, addTabsDiv);
 }
 
 function createTabContents(tabName, tabDescription, addTabsDiv) {
@@ -76,6 +83,7 @@ function initializeAllTabs() {
 	createTabs("Heirlooms", "Heirloom Settings", addTabsDiv, addtabsUL);
 	createTabs("Golden", "Golden Upgrade Settings", addTabsDiv, addtabsUL);
 	createTabs("Nature", "Nature Settings", addTabsDiv, addtabsUL);
+	createTabs("Time Warp", "Time Warp Settings", addTabsDiv, addtabsUL);
 	createTabs("Display", "Display & Spam Settings", addTabsDiv, addtabsUL);
 	createTabs("Import Export", "Import & Export Settings", addTabsDiv, addtabsUL);
 	createTabs("Test", "Basic testing functions - Should never be seen by users", addTabsDiv, addtabsUL);
@@ -3323,6 +3331,36 @@ function initializeAllSettings() {
 
 	//----------------------------------------------------------------------------------------------------------------------
 
+	//Time Warp
+	const displayTimewarp = true;
+	if (displayTimewarp) {
+		createSetting('timeWarpDisable',
+			function () { return ("Disable in Time Warp") },
+			function () { return ("Will disable all of the scripts features during time warp in an attempt to speed it up.") },
+			'boolean', false, null, 'Time Warp', [0]);
+
+		createSetting('timeWarpSpeed',
+			function () { return ('Time Warp Support') },
+			function () {
+				var description = "<p>Will force AutoTrimps to run the script more frequently during time warp.</p>";
+				description += "<p>This will be a significant slow down when running time warp but should allow you to use the script during it.</p>";
+				return description;
+			}, 'boolean', false, null, 'Time Warp', [0]);
+
+		createSetting('timeWarpFrequency',
+			function () { return ('Time Warp Frequency') },
+			function () {
+				var description = "<p>How often the scripts code will run during time warp.</p>";
+				description += "<p>If set to 20 it will run on the 20th time the games code runs.</p>";
+				description += "<p>The lower you set this value the longer time warp will take.</p>";
+				description += "<p><b>Recommended:</b> 20</p>";
+				return description;
+			}, 'value', 20, null, 'Time Warp', [0],
+			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
+	}
+
+	//----------------------------------------------------------------------------------------------------------------------
+
 	//Display -- TO DO
 	const displayDisplay = true;
 	if (displayDisplay) {
@@ -3368,11 +3406,6 @@ function initializeAllSettings() {
 			function () { return ('AT will go to the map chamber and stop running any maps after this cell has been reached.') },
 			'value', -1, null, 'Display', [1, 2],
 			function () { return (getPageSetting('sitInMaps', currSettingUniverse)) });
-
-		createSetting('disableForTW',
-			function () { return ('Disable AT in TW') },
-			function () { return ('Will disable all of AT\'s features during time warp.') },
-			'boolean', false, null, 'Display', [0]);
 
 		createSetting('spamMessages',
 			function () { return ('Spam Message Settings') },
@@ -3441,7 +3474,6 @@ function initializeAllSettings() {
 				preset3: {},
 			}), null, 'Import Export', [2]);
 	}
-
 
 	//Testing - Hidden Features for testing purposes! Please never seek these out!
 	const displayTesting = true;
@@ -3566,14 +3598,6 @@ function initializeAllSettings() {
 				description += "<p>Requires your auto equality setting to be set to <b>Auto Equality: Advanced</b></p>";
 				return description;
 			}, 'boolean', false, null, 'Legacy', [2]);
-
-		createSetting('timewarpSpeed',
-			function () { return ('Timewarp Support') },
-			function () {
-				var description = "<p>Will force AutoTrimps to run the script more frequently during timewarp.</p>";
-				description += "<p>This will be a significant slow down when running timewarp but should allow you to use the script during it.</p>";
-				return description;
-			}, 'boolean', false, null, 'Test', [0]);
 	}
 }
 
@@ -5459,7 +5483,7 @@ function updateATVersion() {
 		}
 		saveSettings();
 	}
-
+	//Changing Empty mode name to Any
 	if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.991') {
 		if (typeof (tempSettings['heirloomAutoStaffMod1']) !== 'undefined') {
 			for (var x = 1; x < 8; x++) {
@@ -5471,6 +5495,13 @@ function updateATVersion() {
 			for (var x = 1; x < 5; x++) {
 				if (tempSettings['heirloomAutoCoreMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoCoreMod' + x].selected = 'Any';
 			}
+		}
+	}
+	//Changing setting name and converting current state of it. 
+	if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.992') {
+
+		if (typeof (tempSettings["disableForTW"]) !== 'undefined') {
+			autoTrimpSettings.timeWarpDisable.enabled = tempSettings.disableForTW.enabled;
 		}
 	}
 

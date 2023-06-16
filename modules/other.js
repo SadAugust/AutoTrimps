@@ -480,7 +480,7 @@ function equalityManagement() {
 
 	if (usingRealTimeOffline) {
 		callBetterAutoFight();
-		if (!getPageSetting('timewarpSpeed')) {
+		if (!getPageSetting('timeWarpSpeed')) {
 			equalityManagementBasic();
 			return;
 		}

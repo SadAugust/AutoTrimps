@@ -239,8 +239,8 @@ function toggleCatchUpMode() {
 		guiLoopInterval = setInterval(guiLoop, runInterval * 10);
 	}
 
-	if (getPageSetting('disableForTW') && usingRealTimeOffline) return;
-	if (usingRealTimeOffline && !getPageSetting('timewarpSpeed')) return;
+	if (getPageSetting('timeWarpDisable') && usingRealTimeOffline) return;
+	if (usingRealTimeOffline && !getPageSetting('timeWarpSpeed')) return;
 
 	//Enable Online Mode after Offline mode was enabled
 	if (!usingRealTimeOffline && atTimeLapseFastLoop) {
@@ -271,7 +271,7 @@ function toggleCatchUpMode() {
 			autoMap();
 			if (game.global.universe === 2) equalityManagement();
 
-			if (loops % 20 === 0) mainLoop();
+			if (loops % getPageSetting('timeWarpFrequency') === 0) mainLoop();
 		}
 		debug("TimeLapse Mode Enabled", "offline");
 	}
@@ -304,7 +304,7 @@ function mainLoop() {
 
 	if (ATrunning === false) return;
 	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
-	if (getPageSetting('disableForTW') && usingRealTimeOffline) return;
+	if (getPageSetting('timeWarpDisable') && usingRealTimeOffline) return;
 	ATrunning = true;
 
 	//Interval code
@@ -315,7 +315,7 @@ function mainLoop() {
 	tenSecondInterval = ((date.getSeconds() % 10) === 0 && (date.getMilliseconds() < 100));
 
 	//Offline mode check
-	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timewarpSpeed'));
+	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 
 
 	if (oneSecondInterval) {
@@ -360,8 +360,8 @@ function mainLoop() {
 	//Heirloom Shield Swap Check
 	if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
 
-	//Offline Progress - Disable setResourceNeeded if we are using timewarp unless the user has timewarpSpeed enabled.
-	if (!usingRealTimeOffline || usingRealTimeOffline && getPageSetting('timewarpSpeed')) setResourceNeeded();
+	//Sets the resources needed for the upgrades you have to buy
+	setResourceNeeded();
 
 	if (shouldRunTW) {
 		//AutoMaps
@@ -426,7 +426,7 @@ function mainLoop() {
 //U1 functions
 function mainLoopU1() {
 	if (game.global.universe !== 1) return;
-	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timewarpSpeed'));
+	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 	//Core
 	geneAssist();
 	autoRoboTrimp();
@@ -462,7 +462,7 @@ function mainLoopU1() {
 //U2 functions
 function mainLoopU2() {
 	if (game.global.universe !== 2) return;
-	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timewarpSpeed'));
+	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 	//Archeology
 	if (getPageSetting('archaeology') && challengeActive('Archaeology')) archstring();
 	//Auto Equality Management

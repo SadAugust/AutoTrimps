@@ -71,7 +71,7 @@ function autoPortal(skipDaily) {
 				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
 				cancelTooltip();
 
-				//Add timewarp check to ensure we don't have a 5 second wait during timewarp
+				//Add time warp check to ensure we don't have a 5 second wait during time warp
 				if (usingRealTimeOffline) {
 					if (getPageSetting('heliumHourChallenge', universe) !== 'None')
 						challenge = getPageSetting('heliumHourChallenge', universe);
@@ -217,7 +217,7 @@ function dailyAutoPortal() {
 				debug("My " + resourceType + "Hr was: " + myHeliumHr + " & the Best " + resourceType + "Hr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
 				cancelTooltip();
 
-				//Add timewarp check to ensure we don't have a 5 second wait during timewarp
+				//Add time warp check to ensure we don't have a 5 second wait during time warp
 				if (usingRealTimeOffline) {
 					if (OKtoPortal) {
 						confirmAbandonChallenge();
@@ -625,6 +625,7 @@ function decayFinishChallenge() {
 }
 
 function challengeInfo() {
+	if (usingRealTimeOffline) return;
 	if (!game.global.runningChallengeSquared) return;
 	if (challengeCurrentZone === game.stats.zonesCleared.value) return;
 
