@@ -408,7 +408,7 @@ function autoEquip() {
 		for (var equip in game.equipment) {
 			if (!game.equipment[equip].locked) {
 				//Skips trying to buy extra levels if we can't afford them
-				if (!canAffordBuilding(equip, true, false, true, false, 1)) continue;
+				if (!canAffordBuilding(equip, false, false, true, false, 1)) continue;
 				if (alwaysLvl2 && game.equipment[equip].level < 2) {
 					buyEquipment(equip, true, true, 1);
 					debug('Upgrading ' + '1' + ' ' + equip, 'equipment', '*upload3');

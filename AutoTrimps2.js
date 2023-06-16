@@ -317,7 +317,6 @@ function mainLoop() {
 	//Offline mode check
 	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 
-
 	if (oneSecondInterval) {
 		hdStats = new HDStats();
 	}
