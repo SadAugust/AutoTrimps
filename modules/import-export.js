@@ -127,8 +127,8 @@ function nameAndSaveNewProfile() {
 	var optionElementReference = new Option(profile.name);
 	optionElementReference.id = 'customProfileRead';
 	if ($$$settingsProfiles === null) return;
-	$$$settingsProfiles.add(optionElementReference);
-	$$$settingsProfiles.selectedIndex = $$$settingsProfiles.length - 1;
+	//$$$settingsProfiles.add(optionElementReference);
+	//$$$settingsProfiles.selectedIndex = $$$settingsProfiles.length - 1;
 }
 
 //event handler for profile delete button - confirmation check tooltip
