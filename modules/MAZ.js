@@ -567,7 +567,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		else if (smithyFarm) windowSize = 'tooltipWindow70';
 		else if (boneShrine) windowSize = 'tooltipWindow65';
 		else if (hdFarm) windowSize = 'tooltipWindow70';
-		else if (mapBonus) windowSize = 'tooltipWindow70';
+		else if (mapBonus) windowSize = 'tooltipWindow75';
 		else if (mapFarm) windowSize = 'tooltipWindow80';
 		else if (tributeFarm) windowSize = 'tooltipWindow80';
 
@@ -761,7 +761,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (tributeFarm) tooltipText += "<div class='windowMets'>Mets</div>";
 
 		if (mapFarm) tooltipText += "<div class='windowRepeat" + varPrefix + "\'>Map<br/>Repeats</div>";
-		if (mapFarm) tooltipText += "<div class='windowHDRatio" + varPrefix + "\'>Above X<br/>HD Ratio</div>";
+		if (mapFarm || mapBonus) tooltipText += "<div class='windowHDRatio" + varPrefix + "\'>Above X<br/>HD Ratio</div>";
 
 		if (mapBonus) tooltipText += "<div class='windowMapStacks'>Map<br/>Stacks</div>";
 		if (quagmire) tooltipText += "<div class='windowBogs'>Bogs</div>";
@@ -889,11 +889,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 				//C2/C3
 				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
 					vals.challenge3 = currSetting[x].challenge3 ? currSetting[x].challenge3 : 'All';
-
+				//HD Ratio
+				if (mapFarm || mapBonus) {
+					vals.hdRatio = currSetting[x].hdRatio ? currSetting[x].hdRatio : 0;
+				}
 				//Map Farm
 				if (mapFarm) {
 					vals.mapType = currSetting[x].mapType ? currSetting[x].mapType : 'Map Count';
-					vals.hdRatio = currSetting[x].hdRatio ? currSetting[x].hdRatio : 0;
 				}
 				//HD Farm
 				if (hdFarm) {
@@ -1089,7 +1091,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowRepeat" + varPrefix + "\'><input value='" + vals.repeat + "' type='value' id='windowRepeat" + x + "'/></div>";
 
 			//HD Ratio to farm when above
-			if (mapFarm)
+			if (mapFarm || mapBonus)
 				tooltipText += "<div class='windowHDRatio" + varPrefix + "\'><input value='" + vals.hdRatio + "' type='value' id='windowHDRatio" + x + "'/></div>";
 
 			//Map Bonus to farm when below
@@ -1459,7 +1461,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (tributeFarm || smithyFarm || mapFarm) thisSetting.mapType = document.getElementById('windowMapTypeDropdown' + x).value;
 		if (mapFarm && thisSetting.mapType === 'Map Count') thisSetting.repeat = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
 		if (mapFarm && thisSetting.mapType !== 'Map Count') thisSetting.repeat = document.getElementById('windowRepeat' + x).value;
-		if (mapFarm) thisSetting.hdRatio = document.getElementById('windowHDRatio' + x).value;
+		if (mapFarm || mapBonus) thisSetting.hdRatio = document.getElementById('windowHDRatio' + x).value;
 		if (tributeFarm) thisSetting.tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
 		if (tributeFarm) thisSetting.mets = parseInt(document.getElementById('windowMets' + x).value, 10);
 		if (quagmire) thisSetting.bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
@@ -1716,7 +1718,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		Daily Reset - Uses DD:HH:MM:SS format and will run maps until the daily reset time is below the time set in repeat counter.</li>";
 
 		mazHelp += "<li><b>Map Repeats</b> - How many maps you'd like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be back to manually take over the run.</li>";
-		//Smithy Count
+		//Run when HD Ratio above X value
 		mazHelp += "<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in status tooltip) is above this value (and above 0).<br>";
 		//Trimple Map Farm
 		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources.<br>If " + trimple + " has been run then any line with this enabled won't be run." + "</li>";
@@ -1724,6 +1726,8 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 	if (mapBonus) {
 		mazHelp += "<li><b>Map Stacks</b> - How many stacks AT should obtain when running this line.</li>";
+		//Run when HD Ratio above X value
+		mazHelp += "<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in status tooltip) is above this value (and above 0).<br>";
 	}
 
 	if (raiding) {

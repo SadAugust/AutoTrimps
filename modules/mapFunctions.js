@@ -485,6 +485,7 @@ function mapBonus() {
 			const currSetting = baseSettings[y];
 			var world = currSetting.world;
 			if (!settingShouldRun(currSetting, world, 0)) continue;
+			if (currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
 
 			if (game.global.world - rMBZone[y] >= 0)
 				settingIndex = rMBZone.indexOf(rMBZone[y]);

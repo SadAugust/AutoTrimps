@@ -565,6 +565,7 @@ ul.tab li a:hover {
 .windowCellMapBonus,
 .windowAutoLevelMapBonus,
 .windowLevelMapBonus,
+.windowHDRatioMapBonus,
 .windowJobRatioMapBonus,
 .windowSpecialMapBonus,
 .windowRunTypeMapBonus,
@@ -575,11 +576,12 @@ ul.tab li a:hover {
 
 .windowDeleteMapBonus {
 	width: 0%;
+	padding-left: 0px;
 	cursor: pointer;
 }
 
 .windowActiveMapBonus {
-	width: 7%;
+	width: 5%;
 }
 
 .windowPriorityMapBonus {
@@ -595,7 +597,7 @@ ul.tab li a:hover {
 }
 
 .windowCellMapBonus {
-	width: 6%;
+	width: 5%;
 }
 
 .windowAutoLevelMapBonus {
@@ -606,12 +608,16 @@ ul.tab li a:hover {
 	width: 5%;
 }
 
+.windowHDRatioMapBonus {
+	width: 7%;
+}
+
 .windowJobRatioMapBonus {
 	width: 8%;
 }
 
 .windowSpecialMapBonus {
-	width: 18%;
+	width: 20%;
 }
 
 .windowMapStacks {
@@ -619,19 +625,19 @@ ul.tab li a:hover {
 }
 
 .windowRunTypeMapBonus {
-	width: 25%;
+	width: 20%;
 }
 
 .windowChallengeOnMapBonus .windowChallengeMapBonus,
 .windowChallenge3OnMapBonus .windowChallenge3MapBonus {
 	display: inline-block;
-	width: 12%;
+	width: 11%;
 }
 
 .windowChallenge3OnMapBonus .windowRunTypeMapBonus,
 .windowChallengeOnMapBonus .windowRunTypeMapBonus {
 	display: inline-block;
-	width: 13%;
+	width: 9%;
 }
 
 .windowChallengeOffMapBonus .windowChallengeMapBonus,
