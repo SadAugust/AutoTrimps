@@ -4486,7 +4486,7 @@ function autoHeirloomOptions(heirloomType) {
 
 		for (var item in game.heirlooms['Shield']) {
 			var heirloom = game.heirlooms['Shield'][item];
-			if (item === "Any") continue;
+			if (item === "empty") continue;
 			if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
 			if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
 			heirloomModsArray.push(heirloomMods['Shield'][item]);
@@ -4499,7 +4499,7 @@ function autoHeirloomOptions(heirloomType) {
 
 		for (var item in game.heirlooms['Staff']) {
 			var heirloom = game.heirlooms['Staff'][item];
-			if (item === "Any") continue;
+			if (item === "empty") continue;
 			if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
 			if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
 			heirloomModsArray.push(heirloomMods['Staff'][item]);
@@ -5476,49 +5476,51 @@ function updateATVersion() {
 			if (typeof (tempSettings['testRadonCombatRespec']) !== 'undefined') {
 				if (typeof (tempSettings['testRadonCombatRespec'].enabledU2) !== 'undefined') autoTrimpSettings['autoCombatRespec'].valueU2 = (tempSettings['testRadonCombatRespec'].enabledU2 ? 2 : 0);
 			}
+			saveSettings();
 		}
 
-		autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
-		saveSettings();
-	}
-	//Changing Empty mode name to Any
-	if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.991') {
-		if (typeof (tempSettings['heirloomAutoStaffMod1']) !== 'undefined') {
-			for (var x = 1; x < 8; x++) {
-				if (tempSettings['heirloomAutoStaffMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoStaffMod' + x].selected = 'Any';
-				if (tempSettings['heirloomAutoStaffMod' + x].selectedU2 === 'Empty') autoTrimpSettings['heirloomAutoStaffMod' + x].selectedU2 = 'Any';
-				if (tempSettings['heirloomAutoShieldMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoShieldMod' + x].selected = 'Any';
-				if (tempSettings['heirloomAutoShieldMod' + x].selectedU2 === 'Empty') autoTrimpSettings['heirloomAutoShieldMod' + x].selectedU2 = 'Any';
-			}
-			for (var x = 1; x < 5; x++) {
-				if (tempSettings['heirloomAutoCoreMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoCoreMod' + x].selected = 'Any';
-			}
-		}
-	}
-	//Changing setting name and converting current state of it. 
-	if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.992') {
-
-		if (typeof (tempSettings["disableForTW"]) !== 'undefined') {
-			autoTrimpSettings.timeWarpDisable.enabled = tempSettings.disableForTW.enabled;
-		}
-	}
-
-	if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.0') {
-		var settings_List = ['mapBonusSettings']
-		var values = ['value', 'valueU2'];
-		for (var x = 0; x < settings_List.length; x++) {
-			for (var z = 0; z < values.length; z++) {
-				if (typeof (autoTrimpSettings[settings_List[x]][values[z]][0]) !== 'undefined') {
-					for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
-						autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
-					}
+		//Changing Empty mode name to Any
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.001') {
+			debug("Changed")
+			if (typeof (tempSettings['heirloomAutoStaffMod1']) !== 'undefined') {
+				debug("Changed2")
+				for (var x = 1; x < 8; x++) {
+					if (tempSettings['heirloomAutoStaffMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoStaffMod' + x].selected = 'Any';
+					if (tempSettings['heirloomAutoStaffMod' + x].selectedU2 === 'Empty') autoTrimpSettings['heirloomAutoStaffMod' + x].selectedU2 = 'Any';
+					if (tempSettings['heirloomAutoShieldMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoShieldMod' + x].selected = 'Any';
+					if (tempSettings['heirloomAutoShieldMod' + x].selectedU2 === 'Empty') autoTrimpSettings['heirloomAutoShieldMod' + x].selectedU2 = 'Any';
 				}
-				saveSettings();
+				for (var x = 1; x < 5; x++) {
+					if (tempSettings['heirloomAutoCoreMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoCoreMod' + x].selected = 'Any';
+				}
+			}
+			saveSettings();
+		}
+		//Changing setting name and converting current state of it. 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.001') {
+
+			if (typeof (tempSettings["disableForTW"]) !== 'undefined') {
+				autoTrimpSettings.timeWarpDisable.enabled = tempSettings.disableForTW.enabled;
 			}
 		}
-		changelog.push("Map Bonus now has a <b>Above X HD Ratio</b> input. Will make it so the line only runs above the specified HD Ratio but only runs if the input is greater than 0.");
-	}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.001') {
+			var settings_List = ['mapBonusSettings']
+			var values = ['value', 'valueU2'];
+			for (var x = 0; x < settings_List.length; x++) {
+				for (var z = 0; z < values.length; z++) {
+					if (typeof (autoTrimpSettings[settings_List[x]][values[z]][0]) !== 'undefined') {
+						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
+							autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
+						}
+					}
+					saveSettings();
+				}
+			}
+			changelog.push("Map Bonus now has a <b>Above X HD Ratio</b> input. Will make it so the line only runs above the specified HD Ratio but only runs if the input is greater than 0.");
+		}
+
+	}
 
 	autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
 	if (changelog.length !== 0) {
