@@ -321,7 +321,7 @@ function mainLoop() {
 	if (oneSecondInterval) {
 		hdStats = new HDStats();
 	}
-	if (!shouldRunTW) mapSettings = farmingDecision();
+	if (shouldRunTW) mapSettings = farmingDecision();
 
 	//Void, AutoLevel, Breed Timer, Tenacity information
 	if (!usingRealTimeOffline && document.getElementById('additionalInfo') !== null) {

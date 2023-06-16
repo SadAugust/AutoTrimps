@@ -1383,7 +1383,7 @@ function runPrestigeRaiding() {
 
 function prestigeClimb() {
 
-	const mapName = 'Prestige Climb'
+	const mapName = 'Prestige Climb';
 	const farmingDetails = {
 		shouldRun: false,
 		mapName: mapName
