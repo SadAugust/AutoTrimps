@@ -314,10 +314,14 @@ function mainLoop() {
 	sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
 	tenSecondInterval = ((date.getSeconds() % 10) === 0 && (date.getMilliseconds() < 100));
 
+	//Offline mode check
+	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timewarpSpeed'));
+
+
 	if (oneSecondInterval) {
 		hdStats = new HDStats();
 	}
-	if (!usingRealTimeOffline) mapSettings = farmingDecision();
+	if (!shouldRunTW) mapSettings = farmingDecision();
 
 	//Void, AutoLevel, Breed Timer, Tenacity information
 	if (!usingRealTimeOffline && document.getElementById('additionalInfo') !== null) {
@@ -359,7 +363,7 @@ function mainLoop() {
 	//Offline Progress - Disable setResourceNeeded if we are using timewarp unless the user has timewarpSpeed enabled.
 	if (!usingRealTimeOffline || usingRealTimeOffline && getPageSetting('timewarpSpeed')) setResourceNeeded();
 
-	if (!usingRealTimeOffline) {
+	if (shouldRunTW) {
 		//AutoMaps
 		autoMap();
 		//Status
@@ -392,7 +396,7 @@ function mainLoop() {
 	autoPortal();
 	dailyAutoPortal();
 	//Equip highlighting
-	if (!usingRealTimeOffline) displayMostEfficientEquipment();
+	displayMostEfficientEquipment();
 
 	//Logic for Universe 1
 	mainLoopU1();
@@ -406,7 +410,7 @@ function mainLoop() {
 	//Auto SA -- Currently disabled
 	automateSpireAssault();
 
-	if (!usingRealTimeOffline) challengeInfo();
+	challengeInfo();
 	atFinishedLoading = true;
 
 	if (popupsAT.remainingTime === 5000) {
@@ -422,6 +426,7 @@ function mainLoop() {
 //U1 functions
 function mainLoopU1() {
 	if (game.global.universe !== 1) return;
+	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timewarpSpeed'));
 	//Core
 	geneAssist();
 	autoRoboTrimp();
@@ -457,6 +462,7 @@ function mainLoopU1() {
 //U2 functions
 function mainLoopU2() {
 	if (game.global.universe !== 2) return;
+	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timewarpSpeed'));
 	//Archeology
 	if (getPageSetting('archaeology') && challengeActive('Archaeology')) archstring();
 	//Auto Equality Management
