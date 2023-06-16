@@ -265,7 +265,7 @@ function setupSurkyUI() {
 
 		var setupNeeded = false;
 		var surkyInputs = JSON.parse(localStorage.getItem("surkyInputs"));
-		if (surkyInputs === null && typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
+		if (surkyInputs === null && typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
 			var atSetting = autoTrimpSettings['autoAllocatePresets'].valueU2;
 			if (atSetting !== '{"":""}') {
 				surkyInputs = JSON.parse(atSetting);
@@ -381,7 +381,7 @@ function saveSurkySettings(initial) {
 	}
 
 	localStorage.setItem("surkyInputs", JSON.stringify(surkyInputs));
-	if (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
+	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
 		autoTrimpSettings['autoAllocatePresets'].valueU2 = JSON.stringify(surkyInputs);
 		saveSettings();
 	}

@@ -5118,6 +5118,8 @@ function getDailyHeHrStats() {
 function updateATVersion() {
 	//Setting Conversion!
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === MODULES_AT.ATversion) return;
+	if (typeof (autoTrimpSettings) === 'undefined') return;
+	if (typeof (autoTrimpSettings.ATversion) === 'undefined') return;
 	var changelog = [];
 
 	if (autoTrimpSettings["ATversion"] === undefined || !autoTrimpSettings["ATversion"].includes('SadAugust')) {

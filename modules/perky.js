@@ -383,7 +383,7 @@ function savePerkySettings() {
 	}
 
 	localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
-	if (typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
+	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
 		autoTrimpSettings['autoAllocatePresets'].value = JSON.stringify(perkyInputs);
 		saveSettings();
 	}
@@ -883,7 +883,7 @@ function setupPerkyUI() {
 
 		var setupNeeded = false;
 		var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
-		if (perkyInputs === null && typeof (autoTrimpSettings) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
+		if (perkyInputs === null && typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
 			var atSetting = autoTrimpSettings['autoAllocatePresets'].value;
 			if (atSetting !== '{"":""}') {
 				perkyInputs = JSON.parse(atSetting);
