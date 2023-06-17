@@ -278,7 +278,7 @@ function getPageSetting(setting, universe) {
 		return autoTrimpSettings[setting][enabled];
 	} else if (settingType === 'multiValue') {
 		return Array.from(autoTrimpSettings[setting][value])
-			.map(x => parseInt(x));
+			.map(x => parseFloat(x));
 	} else if (settingType === 'multiTextValue') {
 		return Array.from(autoTrimpSettings[setting][value])
 			.map(x => String(x));
