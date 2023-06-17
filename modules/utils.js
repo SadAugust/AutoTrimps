@@ -326,6 +326,8 @@ function setPageSetting(setting, newValue, universe) {
 	} else if (selectedIndex.indexOf(settingType) !== -1) {
 		autoTrimpSettings[setting][selected] = newValue;
 	}
+	//Update button values if necessary
+	if (settingType !== 'mazArray' && settingType !== 'mazDefaultArray') updateCustomButtons(true);
 	saveSettings();
 }
 

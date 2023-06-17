@@ -105,12 +105,15 @@ function firstGiga() {
 	const delta = autoGiga(deltaZ, deltaM, deltaS);
 
 	//Save settings
-	setPageSetting('firstGigastation', base);
-	setPageSetting('deltaGigastation', delta);
+	var firstGiga = getPageSetting('firstGigastation');
+	var deltaGiga = getPageSetting('deltaGigastation');
+	if (firstGiga !== base) setPageSetting('firstGigastation', base);
+	if (deltaGiga !== delta) setPageSetting('deltaGigastation', delta);
 
 	//Log
-	debug("Auto Gigastation: Setting pattern to " + base + "+" + delta, "buildings", "*rocket");
-
+	if (firstGiga !== base || deltaGiga !== delta) {
+		debug("Auto Gigastation: Setting pattern to " + base + "+" + delta, "buildings", "*rocket");
+	}
 	return true;
 }
 
