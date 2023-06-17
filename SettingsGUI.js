@@ -4563,7 +4563,7 @@ function autoSetTextToolTip(id, text, multiValue) {
 function onKeyPressSetting(event, id, multi, negative) {
 	if (event.which === 13 || event.keyCode === 13) {
 		if (negative !== undefined && multi !== undefined)
-			autoSetValue(id, negative, multi);
+			autoSetValue(id, multi, negative);
 		else
 			autoSetText(id, multi);
 	}
@@ -4591,7 +4591,7 @@ function parseNum(num) {
 	return num;
 }
 
-function autoSetValue(id, negative, multiValue) {
+function autoSetValue(id, multiValue, negative) {
 	var value = 'value'
 	if (autoTrimpSettings.radonsettings.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
 	var num = 0;
