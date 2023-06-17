@@ -3707,7 +3707,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
-		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name()}", ${type === 'valueNegative'}, ${type === 'multiValue'})`);
+		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name()}", "${type === 'multiValue'}", "${type === 'valueNegative'}")`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.innerHTML = name();
@@ -4835,7 +4835,7 @@ function updateCustomButtons(initialLoad) {
 			else {
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name() + '\", \"customText\", event, \"' + item.description() + '\")');
 				//Updating input box & text that will be displayed upon saving!
-				if (item.type === 'value' || item.type === 'multiValue' || item.type === 'valueNegative') elem.setAttribute("onclick", `autoSetValueToolTip("${item.id}", "${item.name()}", ${item.type === 'valueNegative'}, ${item.type === 'multiValue'})`);
+				if (item.type === 'value' || item.type === 'multiValue' || item.type === 'valueNegative') elem.setAttribute("onclick", `autoSetValueToolTip("${item.id}", "${item.name()}", "${item.type === 'multiValue'}", "${item.type === 'valueNegative'}")`);
 				if (item.type === 'textValue') elem.setAttribute("onclick", `autoSetTextToolTip("${item.id}", "${item.name()}", ${item.type === 'multiTextValue'})`);
 			}
 		}

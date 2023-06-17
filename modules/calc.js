@@ -21,6 +21,8 @@ class HDStats {
 		this.hitsSurvivedVoid = undefined;
 		this.autoLevel = undefined;
 
+		this.hyperspeed = undefined;
+
 		const z = game.global.world;
 
 		this.isDaily = challengeActive('Daily');
@@ -40,6 +42,10 @@ class HDStats {
 		this.hitsSurvived = calcHitsSurvived(z, 'world');
 		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void');
 		this.autoLevel = autoMapLevel();
+
+		var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
+		var hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+		this.hyperspeed = game.global.world <= Math.floor(hze * (hyperspeed2 / 100));
 	}
 }
 
