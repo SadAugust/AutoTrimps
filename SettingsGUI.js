@@ -1574,7 +1574,7 @@ function initializeAllSettings() {
 				description += "<p>If your last input doesn't include a decimal point then it will set your purchasing percentage to 100% from that zone onwards.</p>";
 				description += "<p><b>Recommended:</b> 999</p>";
 				return description;
-			}, 'multiValue', [-1], null, "Equipment", [1, 2],
+			}, 'multiTextValue', [-1], null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipPercent',
 			function () { return ('AE: Percent') },
@@ -5482,9 +5482,7 @@ function updateATVersion() {
 
 		//Changing Empty mode name to Any
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.001') {
-			debug("Changed")
 			if (typeof (tempSettings['heirloomAutoStaffMod1']) !== 'undefined') {
-				debug("Changed2")
 				for (var x = 1; x < 8; x++) {
 					if (tempSettings['heirloomAutoStaffMod' + x].selected === 'Empty') autoTrimpSettings['heirloomAutoStaffMod' + x].selected = 'Any';
 					if (tempSettings['heirloomAutoStaffMod' + x].selectedU2 === 'Empty') autoTrimpSettings['heirloomAutoStaffMod' + x].selectedU2 = 'Any';

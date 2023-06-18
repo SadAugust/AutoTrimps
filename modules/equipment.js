@@ -371,8 +371,8 @@ function zoneGoCheck() {
 	for (var i = 0; i < equipZone.length; i++) {
 		zone = equipZone[i];
 		//Check to see if we are in the zone range that the user set
-		if (zone % 1 !== 0) {
-			if (game.global.world >= Number(zone.toString().split(".")[0]) && game.global.world <= Number(zone.toString().split(".")[1])) {
+		if (zone.indexOf(".") === 1) {
+			if (game.global.world >= zone.split(".")[0] && game.global.world <= zone.split(".")[1]) {
 				return true;
 			}
 		}
@@ -387,6 +387,7 @@ function zoneGoCheck() {
 			}
 		}
 	}
+
 	return false;
 }
 
