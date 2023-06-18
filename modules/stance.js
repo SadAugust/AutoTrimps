@@ -288,13 +288,13 @@ function autoStance() {
 				safeSetStance(2); break;
 			}
 			else if (survive("XB", critPower)) {
-				safeSetStance("0"); break;
+				safeSetStance(0); break;
 			}
 			else if (survive("B", critPower)) {
 				safeSetStance(3); break;
 			}
 			else if (survive("X", critPower)) {
-				safeSetStance("0"); break;
+				safeSetStance(0); break;
 			}
 			else if (survive("H", critPower)) {
 				safeSetStance(1); break;
@@ -307,7 +307,7 @@ function autoStance() {
 				safeSetStance(1);
 			}
 			else {
-				safeSetStance("0");
+				safeSetStance(0);
 			}
 		}
 	}
