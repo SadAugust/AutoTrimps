@@ -173,7 +173,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	if (!ignoreShield) ignoreShield = getPageSetting('equipNoShields');
 	if (!skipForLevels) skipForLevels = false;
 	if (!showAllEquips) showAllEquips = false;
-	if (!zoneGo) zoneGo = zoneGo();
+	if (!zoneGo) zoneGo = zoneGoCheck();
 	if (!resourceMaxPercent) resourceMaxPercent = zoneGo ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100;
 	var resourceMaxPercentBackup = resourceMaxPercent;
 
@@ -363,7 +363,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 	return [newStatValue > currentStatValue, statPerResource, levelOnePrestige, !prestigeDone, newStatValue];
 }
 
-function zoneGo() {
+function zoneGoCheck() {
 	if (mapSettings.mapName === 'Wither') return true;
 	if (hdStats.hdRatio >= getPageSetting('equipCutOff')) return true;
 
@@ -406,7 +406,7 @@ function autoEquip() {
 
 	if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
 
-	var zoneGo = zoneGo();
+	var zoneGo = zoneGoCheck();
 
 	if (getPageSetting('equipPrestige') === 2 && !zoneGo) {
 		var prestigeLeft = false;
@@ -475,7 +475,7 @@ function autoEquip() {
 		var equipCap = (equipType === 'attack') ? attackEquipCap : healthEquipCap;
 		var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 
-		zoneGo = zoneGo();
+		zoneGo = zoneGoCheck();
 
 		for (var i = 0; i < 2; i++) {
 			//Setting weapon equips to 100% spending during Smithless farm.
@@ -526,7 +526,7 @@ function autoEquip() {
 			equipPrestige = (equipType === 'attack') ? bestBuys[4] : bestBuys[5];
 			resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 			equipCap = (equipType === 'attack') ? attackEquipCap : healthEquipCap;
-			zoneGo = zoneGo();
+			zoneGo = zoneGoCheck();
 		}
 	} while (keepBuying)
 }
