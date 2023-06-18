@@ -260,7 +260,7 @@ function initializeAllSettings() {
 			}, 'dropdown', 'None', function () { return heliumHourChallenges() }, 'Core', [1, 2],
 			function () {
 				return (
-					getPageSetting('autoPortal', currSettingUniverse).includes('Hour') || getPageSetting('autoPortal', currSettingUniverse) === 'Custom')
+					getPageSetting('autoPortal', currSettingUniverse).includes('Hour') || getPageSetting('autoPortal', currSettingUniverse) === 'Custom');
 			});
 		createSetting('heliumC2Challenge',
 			function () { return ('Challenge') },
@@ -5121,7 +5121,6 @@ function updateATVersion() {
 	//Setting Conversion!
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === MODULES_AT.ATversion) return;
 	if (typeof (autoTrimpSettings) === 'undefined') return;
-	if (typeof (autoTrimpSettings.ATversion) === 'undefined') return;
 	var changelog = [];
 
 	if (autoTrimpSettings["ATversion"] === undefined || !autoTrimpSettings["ATversion"].includes('SadAugust')) {
