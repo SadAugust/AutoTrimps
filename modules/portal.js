@@ -307,7 +307,7 @@ function freeVoidPortal() {
 function c2runnerportal() {
 	if (!game.global.runningChallengeSquared) return;
 	if (!getPageSetting('c2RunnerStart')) return;
-	var portalZone = getPageSetting('c2RunnerPortal', portalUniverse)
+	var portalZone = getPageSetting('c2RunnerPortal', portalUniverse);
 	if (getPageSetting('c2RunnerMode') === 1) {
 		if (typeof getPageSetting('c2RunnerSettings')[game.global.challengeActive] !== 'undefined') {
 			if (!getPageSetting('c2RunnerSettings')[game.global.challengeActive].enabled) return;
@@ -315,6 +315,8 @@ function c2runnerportal() {
 		} else
 			return;
 	}
+
+	if (portalZone <= 0) portalZone = Infinity;
 
 	if (game.global.world >= portalZone) {
 		finishChallengeSquared();
@@ -668,7 +670,8 @@ function finishChallengeSquared() {
 
 	if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerMode') === 0 && (getPageSetting('c2RunnerPortal') < finishChallenge))
 		finishChallenge = getPageSetting('c2RunnerPortal');
-	if (finishChallenge === -1 || game.global.world === 1) return;
+	if (game.global.world === 1) return;
+	if (finishChallenge <= 0) finishChallenge = Infinity;
 	if (game.global.world < finishChallenge) return;
 
 	downloadSave();
