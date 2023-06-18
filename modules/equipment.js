@@ -163,7 +163,7 @@ function cheapestEquipmentCost() {
 	return [equipmentName, nextEquipmentCost, prestigeName, nextLevelPrestigeCost]
 }
 
-function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipForLevels, showAllEquips, fakeLevels = {}, ignorePrestiges) {
+function mostEfficientEquipment(resourceMaxPercent, goToZone, ignoreShield, skipForLevels, showAllEquips, fakeLevels = {}, ignorePrestiges) {
 
 	for (var i in equipmentList) {
 		if (typeof fakeLevels[i] === 'undefined') {
@@ -173,8 +173,8 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	if (!ignoreShield) ignoreShield = getPageSetting('equipNoShields');
 	if (!skipForLevels) skipForLevels = false;
 	if (!showAllEquips) showAllEquips = false;
-	if (!zoneGo) zoneGo = zoneGo();
-	if (!resourceMaxPercent) resourceMaxPercent = zoneGo ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100;
+	if (!goToZone) goToZone = zoneGo();
+	if (!resourceMaxPercent) resourceMaxPercent = goToZone ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100;
 	var resourceMaxPercentBackup = resourceMaxPercent;
 
 	if (challengeActive('Scientist')) {
@@ -247,7 +247,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		}
 		//Load buyPrestigeMaybe into variable so it's not called 500 times
 		var maybeBuyPrestige = buyPrestigeMaybe(i, resourceMaxPercent, game.equipment[i].level);
-		//Skips if we have the required number of that item and below zoneGo
+		//Skips if we have the required number of that item and below goToZone
 		if (!maybeBuyPrestige && Number.isInteger(skipForLevels) && game.equipment[i].level >= skipForLevels) continue;
 		//Skips if ignoreShield variable is true.
 		if (game.global.universe === 2 && ignoreShield && i === 'Shield') continue;
@@ -256,7 +256,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 		//Skips buying shields when you can afford bonfires on Hypothermia.
 		if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice() && i === 'Shield') continue;
 		//Skips through equips if they cost more than your equip purchasing percent setting value.
-		if (equipmentList[i].Resource === 'metal' && !zoneGo && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
+		if (equipmentList[i].Resource === 'metal' && !goToZone && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
 		//Skips through equips if they don't cost metal and you don't have enough resources for them.
 		if (equipmentList[i].Resource !== 'metal' && !canAffordBuilding(i, null, null, true, false, 1, resourceMaxPercent * 100) && !maybeBuyPrestige[0]) continue;
 		//Skips equips if we have prestiges available & no prestiges to get for this
@@ -406,9 +406,9 @@ function autoEquip() {
 
 	if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
 
-	var zoneGo = zoneGo();
+	var goToZone = zoneGo();
 
-	if (getPageSetting('equipPrestige') === 2 && !zoneGo) {
+	if (getPageSetting('equipPrestige') === 2 && !goToZone) {
 		var prestigeLeft = false;
 		do {
 			prestigeLeft = false;
@@ -465,8 +465,8 @@ function autoEquip() {
 	var keepBuying = false;
 	do {
 		keepBuying = false;
-		var resourceSpendingPct = zoneGo ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100;
-		var bestBuys = mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShields, false, false);
+		var resourceSpendingPct = goToZone ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100;
+		var bestBuys = mostEfficientEquipment(resourceSpendingPct, goToZone, ignoreShields, false, false);
 		// Set up for both Attack and Health depending on which is cheaper to purchase
 		var equipType = (bestBuys[6] < bestBuys[7]) ? 'attack' : 'health';
 		var equipName = (equipType === 'attack') ? bestBuys[0] : bestBuys[1];
@@ -475,24 +475,24 @@ function autoEquip() {
 		var equipCap = (equipType === 'attack') ? attackEquipCap : healthEquipCap;
 		var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 
-		zoneGo = zoneGo();
+		goToZone = zoneGo();
 
 		for (var i = 0; i < 2; i++) {
 			//Setting weapon equips to 100% spending during Smithless farm.
 			if (equipType === 'attack') {
 				if (mapSettings.mapName === 'Smithless Farm') {
 					resourceSpendingPct = 1;
-					zoneGo = true;
+					goToZone = true;
 				}
 			}
 			if (equipType === 'health') {
 				if (mapSettings.shouldHealthFarm || (mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0)) {
 					resourceSpendingPct = 1;
-					zoneGo = true;
+					goToZone = true;
 				}
 			}
 			if (equipName !== '' && canAffordBuilding(equipName, false, false, true, false, 1)) {
-				if (game.equipment[equipName].level < equipCap || equipPrestige || zoneGo) {
+				if (game.equipment[equipName].level < equipCap || equipPrestige || goToZone) {
 					if (!equipPrestige) {
 						maxCanAfford = getMaxAffordable(equipCost, (game.resources[resourceUsed].owned * 0.001), 1.2, true);
 						if (maxCanAfford === 0)
@@ -526,7 +526,7 @@ function autoEquip() {
 			equipPrestige = (equipType === 'attack') ? bestBuys[4] : bestBuys[5];
 			resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 			equipCap = (equipType === 'attack') ? attackEquipCap : healthEquipCap;
-			zoneGo = zoneGo();
+			goToZone = zoneGo();
 		}
 	} while (keepBuying)
 }
