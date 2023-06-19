@@ -369,9 +369,9 @@ function zoneGoCheck() {
 
 	var equipZone = getPageSetting('equipZone');
 	for (var i = 0; i < equipZone.length; i++) {
-		zone = equipZone[i];
+		var zone = equipZone[i].toString();
 		//Check to see if we are in the zone range that the user set
-		if (zone.indexOf(".") === 1) {
+		if (zone.indexOf(".") >= 0) {
 			if (game.global.world >= zone.split(".")[0] && game.global.world <= zone.split(".")[1]) {
 				return true;
 			}
