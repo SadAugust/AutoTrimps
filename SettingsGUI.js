@@ -1628,8 +1628,7 @@ function initializeAllSettings() {
 				description += "<p><b>If you are progressing past zone 50, you probably don\'t want this.</b></p>";
 				description += "<p><b>Recommended:</b> On until you can reach z50</p>";
 				return description;
-			}, 'boolean', false, null, "Equipment", [1],
-			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
+			}, 'boolean', false, null, "Equipment", [1]);
 		createSetting('equipNoShields',
 			function () { return ('AE: No Shields') },
 			function () {
@@ -2512,10 +2511,6 @@ function initializeAllSettings() {
 				description += "<p><b>Spend Magmite Always</b><br>Will spend any Magmite that you acquire straight away. Typically means you'll purchase the cheapest upgrades possible.</p>";
 				description += "<p><b>Recommended:</b> Spend Magmite (Portal)</p>";
 				return description;
-
-				description += "<p>Part 1 buys any permanent one-and-done upgrades in order from most expensive to least.</p>";
-				description += "<p>Part 2 then analyzes Efficiency vs Capacity for cost/benefit, and buys Efficiency if its BETTER than Capacity.</p>";
-				description += "<p>If not, if the PRICE of Capacity is less than the price of Supply, it buys Capacity. If not, it buys Supply. And then it repeats itself until you run out of Magmite and cant buy anymore.</p>";
 			}, 'multitoggle', 1, null, 'Magma', [1]);
 		createSetting('ratiospend',
 			function () { return ('Ratio Spending') },
