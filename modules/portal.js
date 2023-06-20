@@ -442,8 +442,10 @@ function doPortal(challenge, skipDaily) {
 	MODULES.mapFunctions.portalZone = Infinity;
 
 	if (challengeActive('Daily')) {
-		MODULES.portal.dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
-		MODULES.portal.dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge))));
+		if (typeof greenworks === 'undefined' || (typeof greenworks !== 'undefined' && process.version > 'v10.10.0')) {
+			MODULES.portal.dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
+			MODULES.portal.dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge))));
+		}
 		confirmAbandonChallenge();
 		abandonChallenge();
 		cancelTooltip();

@@ -140,7 +140,8 @@ function pushSpreadsheetData() {
 		dailyPercent = MODULES.portal.dailyPercent;
 	}
 	else if (challengeActive('Daily')) {
-		dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
+		if (typeof greenworks === 'undefined' || (typeof greenworks !== 'undefined' && process.version > 'v10.10.0'))
+			dailyMods = dailyModifiersOutput().replaceAll('<br>', '|').slice(0, -1);
 		dailyPercent = Number(prettify(getDailyHeliumValue(countDailyWeight(game.global.dailyChallenge)))) / 100;
 		heliumGained *= 1 + dailyPercent;
 		heliumHr *= 1 + dailyPercent;
@@ -218,6 +219,7 @@ function pushSpreadsheetData() {
 
 	//Replaces any commas with semicolons to avoid breaking how the spreadsheet parses data.
 	for (var item in obj) {
+		if (typeof greenworks !== 'undefined' && process.version === 'v10.10.0') continue;
 		if (typeof obj[item] === 'string') obj[item] = obj[item].replaceAll(',', ';');
 	}
 
