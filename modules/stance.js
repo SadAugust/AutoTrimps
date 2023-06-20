@@ -60,8 +60,10 @@ function maxOneShotPower(planToMap, targetZone) {
 		if (game.portal.Overkill.level === 0) return 1;
 		//Mastery
 		if (game.talents.overkill.purchased) power++;
+		//Fluffy
+		if (Fluffy.isRewardActive("overkiller")) power += Fluffy.isRewardActive("overkiller");
 		//Ice
-		if (game.global.uberNature === "Ice") power += 2;
+		if (getUberEmpowerment() == "Ice") power += 2;
 		if (getEmpowerment() === "Ice" && game.empowerments.Ice.getLevel() >= 50) power++;
 		if (getEmpowerment() === "Ice" && game.empowerments.Ice.getLevel() >= 100) power++;
 	}

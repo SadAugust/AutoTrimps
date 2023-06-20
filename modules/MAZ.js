@@ -588,24 +588,39 @@ function MAZLookalike(titleText, varPrefix, event) {
 				<div class='windowActive" + varPrefix + "\'>Active</div>";
 			if (!boneShrine) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
 			if (mapFarm) tooltipText += "<div class='windowRepeat'>Map<br/>Repeats</div>";
-			if (worshipperFarm) tooltipText += "<div class='windowWorshipperSkip'>Enable<br />Skip</div>";
-			if (worshipperFarm) tooltipText += "<div class='windowWorshipper'>Skip<br />Value</div>";
-			if (worshipperFarm) tooltipText += "<div class='windowWorshipper'>Ships</div>";
+			if (worshipperFarm) {
+				tooltipText += "<div class='windowWorshipperSkip'>Enable<br />Skip</div>";
+				tooltipText += "<div class='windowWorshipper'>Skip<br />Value</div>";
+				tooltipText += "<div class='windowWorshipper'>Ships</div>";
+			}
 			if (mapBonus) tooltipText += "<div class='windowRepeat'>Map<br />Stacks</div>";
-			if (boneShrine) tooltipText += "<div class='windowBoneBelow'>Auto Spend At</div>";
-			if (boneShrine) tooltipText += "<div class='windowBoneBelow'>Spend From Z</div>";
+			if (boneShrine) {
+				tooltipText += "<div class='windowBoneBelow'>Auto Spend At</div>";
+				tooltipText += "<div class='windowBoneBelow'>Spend From Z</div>";
+				tooltipText += "<div class='windowBoneGather'>Gather</div>";
+			}
 			if (!raiding && !smithyFarm) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br />Ratio</div>";
-			if (boneShrine) tooltipText += "<div class='windowBoneGather'>Gather</div>";
 			if (mapFarm || alchemy || mapBonus || insanity) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
 			if (tributeFarm || smithyFarm || mapFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>";
-			if (raiding && !bionic) tooltipText += "<div class='windowRecycle'>Recycle</div>";
-			if (raiding && !bionic) tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>";
+			if (raiding && !bionic) {
+				tooltipText += "<div class='windowRecycle'>Recycle</div>";
+				tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>";
+			}
 			if (alchemy) tooltipText += "<div class='windowStorage'>Void<br>Purchase</div>";
-			if (voidMap) tooltipText += "<div class='windowStorage'>Max<br>Map Bonus</div>";
-			if (voidMap && game.permaBoneBonuses.boosts.owned > 0) tooltipText += "<div class='windowStorage'>Use Bone<br>Charge</div>";
-			if (hypothermia) tooltipText += "<div class='windowFrozenCastle'>Frozen<br>Castle</div>";
-			if (hypothermia) tooltipText += "<div class='windowStorage'>Auto<br>Storage</div>";
-			if (hypothermia) tooltipText += "<div class='windowPackrat'>Packrat</div>";
+			if (voidMap) {
+				tooltipText += "<div class='windowDefaultVoidMap'>Max<br>Map Bonus</div>";
+				if (game.permaBoneBonuses.boosts.owned > 0) tooltipText += "<div class='windowDefaultVoidMap'>Use Bone<br>Charge</div>";
+				tooltipText += "<div class='windowDefaultVoidMap'>Pre Void<br>Farm</div>";
+
+
+				tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>Hits Survived</div>";
+				tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>HD Ratio</div>";
+			}
+			if (hypothermia) {
+				tooltipText += "<div class='windowFrozenCastle'>Frozen<br>Castle</div>";
+				tooltipText += "<div class='windowStorage'>Auto<br>Storage</div>";
+				tooltipText += "<div class='windowPackrat'>Packrat</div>";
+			}
 			if (hdFarm) tooltipText += "<div class='windowCell" + varPrefix + "\'>Map<br>Cap</div>";
 
 			tooltipText += "</div>";
@@ -629,9 +644,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.world = defaultSetting.world ? defaultSetting.world : 0;
 			}
 
-			if (worshipperFarm)
-				defaultVals.worshipper = defaultSetting.worshipper ? defaultSetting.worshipper : 50;
-
 			if (!raiding && !smithyFarm)
 				defaultVals.jobratio = defaultSetting.jobratio ? defaultSetting.jobratio : '1,1,1,1';
 
@@ -643,29 +655,30 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			if (mapFarm || mapBonus) defaultVals.repeat = defaultSetting.repeat ? defaultSetting.repeat : '0';
 
-			if (worshipperFarm)
+			if (worshipperFarm) {
+				defaultVals.worshipper = defaultSetting.worshipper ? defaultSetting.worshipper : 50;
 				defaultVals.shipSkipEnabled = defaultSetting.shipSkipEnabled ? defaultSetting.shipSkipEnabled : false;
-
-			if (worshipperFarm)
 				defaultVals.shipskip = defaultSetting.shipskip ? defaultSetting.shipskip : 10;
+			}
 
 			if (alchemy)
 				defaultVals.voidPurchase = defaultSetting.voidPurchase ? defaultSetting.voidPurchase : false;
 
-			if (voidMap)
+			if (voidMap) {
 				defaultVals.maxTenacity = defaultSetting.maxTenacity ? defaultSetting.maxTenacity : false;
+				if (game.permaBoneBonuses.boosts.owned > 0)
+					defaultVals.boneCharge = defaultSetting.boneCharge ? defaultSetting.boneCharge : false;
+				defaultVals.voidFarm = defaultSetting.voidFarm ? defaultSetting.voidFarm : false;
 
-			if (voidMap && game.permaBoneBonuses.boosts.owned > 0)
-				defaultVals.boneCharge = defaultSetting.boneCharge ? defaultSetting.boneCharge : false;
+				defaultVals.hitsSurvived = defaultSetting.hitsSurvived ? defaultSetting.hitsSurvived : 0;
+				defaultVals.hdRatio = defaultSetting.hdRatio ? defaultSetting.hdRatio : 0;
+			}
 
-			if (hypothermia)
+			if (hypothermia) {
 				defaultVals.frozencastle = defaultSetting.frozencastle ? defaultSetting.frozencastle : [200, 99];
-
-			if (hypothermia)
 				defaultVals.autostorage = defaultSetting.autostorage ? defaultSetting.autostorage : false;
-
-			if (hypothermia)
 				defaultVals.packrat = defaultSetting.packrat ? defaultSetting.packrat : false;
+			}
 
 			if (tributeFarm || smithyFarm)
 				defaultVals.mapType = defaultSetting.mapType ? defaultSetting.mapType : 'Absolute';
@@ -673,11 +686,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (mapFarm)
 				defaultVals.mapType = defaultSetting.mapType ? defaultSetting.mapType : 'Map Count';
 
-			if (raiding && !bionic)
+			if (raiding && !bionic) {
 				defaultVals.recycle = defaultSetting.recycle ? defaultSetting.recycle : false;
-
-			if (raiding && !bionic)
 				defaultVals.incrementMaps = defaultSetting.incrementMaps ? defaultSetting.incrementMaps : false;
+			}
 
 			if (hdFarm)
 				defaultVals.mapCap = typeof (defaultSetting.mapCap) === 'undefined' ? 900 : defaultSetting.mapCap ? defaultSetting.mapCap : 900;
@@ -696,28 +708,32 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (!boneShrine) tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.cell + "' type='number' id='windowCellDefault'/></div>";
 				if (mapFarm || mapBonus)
 					tooltipText += "<div class='windowRepeat'><input value='" + defaultVals.repeat + "' type='number' id='windowRepeatDefault'/></div>";
-				if (worshipperFarm)
+				if (worshipperFarm) {
 					tooltipText += "<div class='windowWorshipperSkip' style='text-align: center;'>" + buildNiceCheckbox("windowSkipShipEnabled", null, defaultVals.shipSkipEnabled) + "</div>";
-				if (worshipperFarm)
+
 					tooltipText += "<div class='windowWorshipper'><input value='" + defaultVals.shipskip + "' type='number' id='windowRepeatDefault'/></div>";
-				if (boneShrine)
-					tooltipText += "<div class='windowBoneBelow'><input value='" + defaultVals.bonebelow + "' type='number' id='windowBoneBelowDefault'/></div>";
-				if (boneShrine)
-					tooltipText += "<div class='windowBoneBelow'><input value='" + defaultVals.world + "' type='number' id='windowBoneWorld'/></div>";
-				if (worshipperFarm)
+
 					tooltipText += "<div class='windowWorshipper'><input value='" + defaultVals.worshipper + "' type='number' id='windowWorshipperDefault'/></div>";
+				}
+				if (boneShrine) {
+					tooltipText += "<div class='windowBoneBelow'><input value='" + defaultVals.bonebelow + "' type='number' id='windowBoneBelowDefault'/></div>";
+					if (boneShrine)
+						tooltipText += "<div class='windowBoneBelow'><input value='" + defaultVals.world + "' type='number' id='windowBoneWorld'/></div>";
+				}
 				if (!raiding && !smithyFarm)
 					tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
 				if (boneShrine)
 					tooltipText += "<div class='windowBoneGather'><select value='" + defaultVals.gather + "' id='windowBoneGatherDefault'>" + defaultGatherDropdown + "</select></div>";
 				if (mapFarm || alchemy || mapBonus || insanity)
 					tooltipText += "<div class='windowSpecial" + varPrefix + "\'><select value='" + defaultVals.special + "' id='windowSpecialDefault'>" + defaultSpecialsDropdown + "</select></div>";
-				if (hypothermia)
+				if (hypothermia) {
 					tooltipText += "<div class='windowFrozenCastle'><input value='" + defaultVals.frozencastle + "' type='text' id='windowFrozenCastleDefault'/></div>";
-				if (hypothermia)
+
 					tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowStorageDefault", null, defaultVals.autostorage) + "</div>";
-				if (hypothermia)
+
 					tooltipText += "<div class='windowPackrat' style='text-align: center;'>" + buildNiceCheckbox("windowPackratDefault", null, defaultVals.packrat) + "</div>";
+				}
+
 				if (tributeFarm || smithyFarm)
 					tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'><select value='" + defaultVals.mapType + "' id='windowMapTypeDropdownDefault'>" + defaultmapTypeDropdown + "</select></div>";
 				if (mapFarm)
@@ -728,10 +744,16 @@ function MAZLookalike(titleText, varPrefix, event) {
 					tooltipText += "<div class='windowIncrementMaps' style='text-align: center;'>" + buildNiceCheckbox("windowIncrementMapsDefault", null, defaultVals.incrementMaps) + "</div>";
 				if (alchemy)
 					tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowVoidPurchase", null, defaultVals.voidPurchase) + "</div>";
-				if (voidMap)
-					tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowMaxTenacity", null, defaultVals.maxTenacity) + "</div>";
-				if (voidMap && game.permaBoneBonuses.boosts.owned > 0)
-					tooltipText += "<div class='windowStorage' style='text-align: center;'>" + buildNiceCheckbox("windowBoneCharge", null, defaultVals.boneCharge) + "</div>";
+				if (voidMap) {
+					tooltipText += "<div class='windowDefaultVoidMap' style='text-align: center;'>" + buildNiceCheckbox("windowMaxTenacity", null, defaultVals.maxTenacity) + "</div>";
+					if (game.permaBoneBonuses.boosts.owned > 0)
+						tooltipText += "<div class='windowDefaultVoidMap' style='text-align: center;'>" + buildNiceCheckbox("windowBoneCharge", null, defaultVals.boneCharge) + "</div>";
+					tooltipText += "<div class='windowDefaultVoidMap' style='text-align: center;'>" + buildNiceCheckbox("windowVoidFarm", null, defaultVals.voidFarm) + "</div>";
+
+					tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.hitsSurvived + "' type='number' id='windowHitsSurvived'/></div>";
+
+					tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.hdRatio + "' type='number' id='windowHDRatio'/></div>";
+				}
 				if (hdFarm)
 					tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.mapCap + "' type='number' id='mapCap'/></div>";
 
@@ -1390,24 +1412,37 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (!boneShrine) defaultSetting.cell = parseInt(document.getElementById('windowCellDefault').value, 10);
 		if (mapBonus) defaultSetting.repeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
 		if (mapFarm) defaultSetting.repeat = parseFloat(document.getElementById('windowRepeatDefault').value, 10);
-		if (worshipperFarm) defaultSetting.shipSkipEnabled = readNiceCheckbox(document.getElementById('windowSkipShipEnabled'));
-		if (worshipperFarm) defaultSetting.shipskip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
+		if (worshipperFarm) {
+			defaultSetting.shipSkipEnabled = readNiceCheckbox(document.getElementById('windowSkipShipEnabled'));
+			defaultSetting.shipskip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
+			defaultSetting.worshipper = parseInt(document.getElementById('windowWorshipperDefault').value, 10);
+		}
 		if (mapFarm || alchemy || mapBonus || titleText.includes('Insanity')) defaultSetting.special = document.getElementById('windowSpecialDefault').value;
 
-		if (boneShrine) defaultSetting.bonebelow = parseInt(document.getElementById('windowBoneBelowDefault').value, 10);
-		if (boneShrine) defaultSetting.world = parseInt(document.getElementById('windowBoneWorld').value, 10);
+		if (boneShrine) {
+			defaultSetting.bonebelow = parseInt(document.getElementById('windowBoneBelowDefault').value, 10);
+			defaultSetting.gather = document.getElementById('windowBoneGatherDefault').value;
+			defaultSetting.world = parseInt(document.getElementById('windowBoneWorld').value, 10);
+		}
 
-		if (worshipperFarm) defaultSetting.worshipper = parseInt(document.getElementById('windowWorshipperDefault').value, 10);
 		if (!raiding && !smithyFarm) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
-		if (boneShrine) defaultSetting.gather = document.getElementById('windowBoneGatherDefault').value;
 		if (alchemy) defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
-		if (voidMap) defaultSetting.maxTenacity = readNiceCheckbox(document.getElementById('windowMaxTenacity'));
-		if (voidMap && game.permaBoneBonuses.boosts.owned > 0) defaultSetting.boneCharge = readNiceCheckbox(document.getElementById('windowBoneCharge'));
-		if (hypothermia) defaultSetting.frozencastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
-		if (hypothermia) defaultSetting.autostorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
-		if (hypothermia) defaultSetting.packrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
-		if (raiding && !bionic) defaultSetting.recycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
-		if (raiding && !bionic) defaultSetting.incrementMaps = readNiceCheckbox(document.getElementById('windowIncrementMapsDefault'));
+		if (voidMap) {
+			defaultSetting.maxTenacity = readNiceCheckbox(document.getElementById('windowMaxTenacity'));
+			if (game.permaBoneBonuses.boosts.owned > 0) defaultSetting.boneCharge = readNiceCheckbox(document.getElementById('windowBoneCharge'));
+			defaultSetting.voidFarm = readNiceCheckbox(document.getElementById('windowVoidFarm'));
+			defaultSetting.hitsSurvived = document.getElementById('windowHitsSurvived').value;
+			defaultSetting.hdRatio = document.getElementById('windowHDRatio').value;
+		}
+		if (hypothermia) {
+			defaultSetting.frozencastle = document.getElementById('windowFrozenCastleDefault').value.split(',');
+			defaultSetting.autostorage = readNiceCheckbox(document.getElementById('windowStorageDefault'));
+			defaultSetting.packrat = readNiceCheckbox(document.getElementById('windowPackratDefault'));
+		}
+		if (raiding && !bionic) {
+			defaultSetting.recycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
+			defaultSetting.incrementMaps = readNiceCheckbox(document.getElementById('windowIncrementMapsDefault'));
+		}
 		if (tributeFarm || smithyFarm || mapFarm) defaultSetting.mapType = document.getElementById('windowMapTypeDropdownDefault').value;
 		/* if (mapBonus) defaultSetting.healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
 		if (mapBonus) defaultSetting.healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10); */
@@ -1589,7 +1624,11 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	document.getElementById('tooltipDiv').style.overflowY = '';
 
 	//Disables Atlantrimp for 1 second and recalculates mapSettings variable.
-	//This is to prevent the issue of Atlantrimp being run when you're saving settings. 
+	//This is to prevent the issue of Atlantrimp being run when you're saving settings.
+	if (voidMap && MODULES.mapFunctions.voidFarm) {
+		voidMaps();
+	}
+
 	runningAtlantrimp = true;
 	mapSettings = new farmingDecision();
 
@@ -1651,8 +1690,15 @@ function mazPopulateHelpWindow(titleText, trimple) {
 			mazHelp += "<li><b>Max Map Bonus</b> - Will assume you have 10 map bonus stacks"
 			if (radonSetting && !game.portal.Tenacity.radLocked) mazHelp += " and max tenacity"
 			mazHelp += " when void maps HD Ratio calcs are being set.</li>";
+
+			if (game.permaBoneBonuses.boosts.owned > 0) mazHelp += "<li><b>Bone Charge</b> - The first time a line starts running Void Maps in each portal it will use a single Bone Charge.</li>";
+
+			mazHelp += "<li><b>Void Farm</b> - Will farm before running void maps if your void hits survived is below the input in <b>Void Farm Hits Survived</b> or your void hd ratio is below the input in <b>Void Farm Void HD Ratio</b>.</li>";
+
+			mazHelp += "<li><b>Void Farm Hits Survived</b> - Will farm to this void hits survived value before running void maps.</li>";
+
+			mazHelp += "<li><b>Void Farm HD Ratio</b> - Will farm to this void HD ratio survived value before running void maps.</li>";
 		}
-		if (voidMap && game.permaBoneBonuses.boosts.owned > 0) mazHelp += "<li><b>Bone Charge</b> - The first time a line starts running Void Maps in each portal it will use a single Bone Charge.</li>";
 		if (boneShrine) {
 			mazHelp += "<li><b>Auto Spend At</b> - The amount of bone charges you have to reach before one will automatically be spent. Disable this by setting this to a value above 10.</li>";
 			mazHelp += "<li><b>Spend From Z</b> - Will only auto spend bone charges when at or above this zone.</li>";

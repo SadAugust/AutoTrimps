@@ -173,7 +173,7 @@ function mostEfficientEquipment(resourceMaxPercent, zoneGo, ignoreShield, skipFo
 	if (!ignoreShield) ignoreShield = getPageSetting('equipNoShields');
 	if (!skipForLevels) skipForLevels = false;
 	if (!showAllEquips) showAllEquips = false;
-	if (!zoneGo) zoneGo = zoneGoCheck();
+	if (!zoneGo) zoneGo = zoneGoCheck(getPageSetting('equipZone'), 'equipment').active;
 	if (!resourceMaxPercent) resourceMaxPercent = zoneGo ? 1 : getPageSetting('equipPercent') < 0 ? 1 : getPageSetting('equipPercent') / 100;
 	var resourceMaxPercentBackup = resourceMaxPercent;
 
@@ -363,32 +363,48 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 	return [newStatValue > currentStatValue, statPerResource, levelOnePrestige, !prestigeDone, newStatValue];
 }
 
-function zoneGoCheck() {
-	if (mapSettings.mapName === 'Wither') return true;
-	if (hdStats.hdRatio >= getPageSetting('equipCutOff')) return true;
+//Check to see if we are in the zone range that the user set
+function zoneGoCheck(setting, farmType) {
 
-	var equipZone = getPageSetting('equipZone');
-	for (var i = 0; i < equipZone.length; i++) {
-		var zone = equipZone[i].toString();
+	const zoneDetails = {
+		active: true,
+		zone: game.global.world,
+	};
+
+	if (farmType === 'equipment') {
+		if (mapSettings.mapName === 'Wither') return zoneDetails;
+		if (hdStats.hdRatio >= getPageSetting('equipCutOff')) return zoneDetails;
+	}
+
+	var settingZone = setting;
+	var world = game.global.world.toString();
+
+	var p = -1;
+	for (var i = 0; i < settingZone.length; i++) {
+		var zone = settingZone[i].toString();
 		//Check to see if we are in the zone range that the user set
-		if (zone.indexOf(".") >= 0) {
-			if (game.global.world >= zone.split(".")[0] && game.global.world <= zone.split(".")[1]) {
-				return true;
-			}
+		if (zone.indexOf(".") >= 0 && game.global.world >= zone.split(".")[0] && game.global.world <= zone.split(".")[1]) {
+			p = i;
+			break;
 		}
-		else {
-			//Set it up so that it will return true if we're in the last zone of the array
-			if (i === equipZone.length - 1 && game.global.world >= zone) {
-				return true;
-			}
-			//Return true if zone match world
-			if (game.global.world === zone) {
-				return true;
-			}
+		//Return true if zone match world
+		else if (world === zone) {
+			p = i;
+			break;
 		}
 	}
 
-	return false;
+	if (p !== -1) {
+		zoneDetails.zone = settingZone[p];
+		return zoneDetails;
+	}
+	//Setting config to false since nothing matches
+	else {
+		zoneDetails.active = false;
+		zoneDetails.zone = 999;
+	}
+
+	return zoneDetails;
 }
 
 function autoEquip() {
@@ -407,7 +423,7 @@ function autoEquip() {
 
 	if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
 
-	var zoneGo = zoneGoCheck();
+	var zoneGo = zoneGoCheck(getPageSetting('equipZone'), 'equipment').active;
 
 	if (getPageSetting('equipPrestige') === 2 && !zoneGo) {
 		var prestigeLeft = false;
@@ -476,7 +492,7 @@ function autoEquip() {
 		var equipCap = (equipType === 'attack') ? attackEquipCap : healthEquipCap;
 		var resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 
-		zoneGo = zoneGoCheck();
+		zoneGo = zoneGoCheck(getPageSetting('equipZone'), 'equipment').active;
 
 		for (var i = 0; i < 2; i++) {
 			//Setting weapon equips to 100% spending during Smithless farm.
@@ -527,7 +543,7 @@ function autoEquip() {
 			equipPrestige = (equipType === 'attack') ? bestBuys[4] : bestBuys[5];
 			resourceUsed = (equipName === 'Shield') ? 'wood' : 'metal';
 			equipCap = (equipType === 'attack') ? attackEquipCap : healthEquipCap;
-			zoneGo = zoneGoCheck();
+			zoneGo = zoneGoCheck(getPageSetting('equipZone'), 'equipment').active;
 		}
 	} while (keepBuying)
 }

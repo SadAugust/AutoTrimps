@@ -304,7 +304,7 @@ function setupSurkyUI() {
 
 		//Line 2
 		apGUI.$ratiosLine2 = document.createElement("DIV");
-		apGUI.$ratiosLine1.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
+		apGUI.$ratiosLine2.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
 		for (var item in inputBoxes.row2) {
 			AutoPerks.createInput(apGUI.$ratiosLine2, item, inputBoxes.row2[item], surkyInputs[item]);
 		}

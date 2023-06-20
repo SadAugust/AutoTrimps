@@ -1198,6 +1198,7 @@ function calcSpecificEnemyHealth(type, zone, cell, forcedName) {
 }
 
 function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
+	//if (type === 'world') checkOutputs = true;
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = "world"
 	if (!maxTenacity) maxTenacity = false;
@@ -1276,6 +1277,7 @@ function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
 		debug("enemyHealth: " + enemyHealth);
 		debug("universeSetting: " + universeSetting);
 		debug("HD type: " + type);
+		debug("HD value (H:D): " + enemyHealth / (ourBaseDamage + addPoison()));
 	}
 
 	//Return H:D for a regular, sane, not f-ing Lead zone (sorry, Lead just took a lot of me)

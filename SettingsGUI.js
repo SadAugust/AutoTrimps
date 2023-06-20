@@ -831,7 +831,7 @@ function initializeAllSettings() {
 		createSetting('experienceEndBW',
 			function () { return ('E: End BW') },
 			function () {
-				var description = "<p>'Will finish the challenge with this Bionic Wonderland level once reaching the end zone specified in <b>E: End Zone</b>.</p>";
+				var description = "<p>Will finish the challenge with this Bionic Wonderland level once reaching the end zone specified in <b>E: End Zone</b>.</p>";
 				description += "<p><b>If the specified BW is not available, it will run one closest to the setting.</b></p>";
 				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
 			}, 'value', -1, null, 'C2', [1],
@@ -1284,6 +1284,40 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'Challenges', [1],
 			function () { return (autoTrimpSettings.life.enabled) });
 
+		//Toxicity
+		createSetting('toxicity',
+			function () { return ('Toxicity') },
+			function () {
+				var description = "<p>Enable this if you want to use Toxicity stack farming features.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
+			'boolean', false, null, 'Challenges', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 165) });
+
+		createSetting('toxicityZone',
+			function () { return ('T: Zone') },
+			function () {
+				var description = "<p>The zone(s) you would like to start mapping for stacks at.</p>";
+				description += "<p>Can input multiple zones such as <b>200,231,251</b>, doing this will farm for stacks on all of these zones.</p>";
+				description += "<p>You are able to enter a zone range, this can be done by using a decimal point between number ranges e.g. <b>23.120</b> which will farm stacks between zones 23 and 120. <b>This can be used in conjunction with other zones too, just seperate inputs with commas!</b></p>";
+				description += "<p><b>Recommended:</b> 165</p>";
+				return description;
+			},
+			'multiTextValue', -1, null, 'Challenges', [1],
+			function () { return (autoTrimpSettings.toxicity.enabled) });
+
+		createSetting('toxicityStacks',
+			function () { return ('T: Stack Target') },
+			function () {
+				var description = "<p>Will farm to this amount of stacks when you're in a zone input in <b>T: Zone</b>.</p>";
+				description += "<p>Can input multiple values seperated by commas such as <b>1000,1500,1500</b>. Doing this will cause the script to farm 1000 stacks on the first zone(s) set in <b>T: Zone</b> then 1500 in the second set etc.</p>";
+				description += "<p><b>If only 1 value is set it will automatically use that for every farming zone.</b></p>";
+				description += "<p><b>Recommended:</b> 1500</p>";
+				return description;
+			}, 'multiValue', -1, null, 'Challenges', [1],
+			function () { return (autoTrimpSettings.toxicity.enabled) });
+
 		//Archaeology -- I don't know what to do with these. Think this needs to be reworked.
 		createSetting('archaeology',
 			function () { return ('Archaeology') },
@@ -1571,7 +1605,6 @@ function initializeAllSettings() {
 				var description = "<p>What zone to stop caring about what percentage of resources you're spending and buy as many prestiges and equipment as possible. It will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Can input multiple zones such as <b>200,231,251</b>, doing this will spend all your resources purchasing gear and prestiges on each zone input.</p>";
 				description += "<p>You are able to enter a zone range, this can be done by using a decimal point between number ranges e.g. <b>23.120</b> which will cause the zone check to set your purchasing percentage to 100% between zones 23 and 120. <b>This can be used in conjunction with other zones too, just seperate inputs with commas!</b></p>";
-				description += "<p>If your last input doesn't include a decimal point then it will set your purchasing percentage to 100% from that zone onwards.</p>";
 				description += "<p><b>Recommended:</b> 999</p>";
 				return description;
 			}, 'multiTextValue', [-1], null, "Equipment", [1, 2],
@@ -4059,6 +4092,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("decayStacksToAbandon", radonoff);
 	modifyParentNode("lifeStacks", radonoff);
 	modifyParentNode("mapologyPrestige", radonoff);
+	//modifyParentNode("toxicityStacks", radonon);
 	modifyParentNode("archaeologyString3", radonon);
 
 	//Magma
@@ -5512,6 +5546,27 @@ function updateATVersion() {
 				}
 			}
 			changelog.push("Map Bonus now has a <b>Above X HD Ratio</b> input. Will make it so the line only runs above the specified HD Ratio but only runs if the input is greater than 0.");
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.1') {
+			var settings_List = ['mapBonusSettings']
+			var values = ['value', 'valueU2'];
+			for (var x = 0; x < settings_List.length; x++) {
+				for (var z = 0; z < values.length; z++) {
+					if (typeof (autoTrimpSettings[settings_List[x]][values[z]][0]) !== 'undefined') {
+						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
+							autoTrimpSettings[settings_List[x]][values[z]][y].hdRatio = 0;
+						}
+					}
+					saveSettings();
+				}
+			}
+
+			changelog.push("The Void Map setting now has additional inputs to farm to specific hits survived & hd ratio before running any void maps.<br>\
+			Toxicity now has challenge related settings allowing you to farm for a certain amount of stacks on specific zones. These settings can be found in the <b>Challenge</b> tab.<br>\
+			There is now a <b>Time Warp</b> tab which houses a few settings for making the script more compatible with time warp.</br>\
+			The equipment setting <b>AE: Zone</b> now no longer sets your spending percentage to 100% when you're at or above the last input. Instead there is now the choice to input a zone range so if you're between those zones it will set your spending percentage to 100%. If you want that style back just set your last input to 'currentEndZone.999'.<br>\
+			Perky now has a target zone input and the xp input has been hidden until Fluffy has been unlocked.");
 		}
 
 	}

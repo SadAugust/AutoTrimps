@@ -178,10 +178,10 @@ function autoGather() {
 	}
 
 	//High Priority Metal gathering for Metal Challenge
-	if (challengeActive('Metal') && !game.global.mapsUnlocked) {
+	/* if (challengeActive('Metal') && !game.global.mapsUnlocked) {
 		safeSetGather('metal');
 		return;
-	}
+	} */
 
 	//Mid Priority Trapping
 	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && notFullPop && !lowOnTraps && !trapBuffering) {

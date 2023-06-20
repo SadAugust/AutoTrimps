@@ -1312,6 +1312,7 @@ ul.tab li a:hover {
 .windowJobRatioVoidMap,
 .windowRunTypeVoidMap,
 .windowPortalAfter,
+.windowDefaultVoidMap,
 .windowVoidHDRatio {
 	display: inline-block;
 	padding-left: 1%;
@@ -1336,6 +1337,10 @@ ul.tab li a:hover {
 
 .windowMaxVoidZone {
 	width: 9%;
+}
+
+.windowDefaultVoidMap {
+	width: 12%;
 }
 
 .windowVoidHDRatio {

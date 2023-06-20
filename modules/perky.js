@@ -7,6 +7,12 @@ function runPerky() {
 }
 
 function allocatePerky() {
+
+	//Enable Fluffy xp input when it's not active.
+	if (game.global.spiresCompleted >= 2) {
+		$$('#weight-xpDiv').style.display = 'inline';
+	}
+
 	tooltip('Import Perks', null, 'update');
 	document.getElementById('perkImportBox').value = display(optimize(parse_inputs(read_save())));
 	importPerks();
@@ -177,14 +183,16 @@ function update_dg() {
 
 function read_save() {
 	var settings = JSON.parse(localStorage.getItem("perkyInputs"));
-	var zone = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared;
+	var zone = 0;
 
 	if (!settings.preset) {
+		$$('#targetZone').value = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared;
 		$$$('#presetElem > *').forEach(function (option) {
 			option.selected = parseInt(option.innerHTML.replace('z', '')) < game.global.highestLevelCleared;
 		});
 		auto_preset();
 	}
+	var zone = $$('#targetZone').value;
 
 	var unlocks = Object.keys(game.portal).filter(perk => !game.portal[perk].locked && game.portal[perk].level !== undefined);
 	if (!game.global.canRespecPerks)
@@ -376,6 +384,7 @@ function savePerkySettings() {
 	}
 	const perkyInputs = {
 		preset: $$('#presetElem').value,
+		targetZone: $$('#targetZone').value,
 		'weight-he': $$('#weight-he').value,
 		'weight-atk': $$('#weight-atk').value,
 		'weight-hp': $$('#weight-hp').value,
@@ -805,6 +814,16 @@ function setupPerkyUI() {
 				maxValue: null,
 				defaultValue: 1,
 			},
+		},
+		//Second Row
+		row2: {
+			targetZone: {
+				name: "Target Zone",
+				description: "Target last zone to clear. Always use your final cleared zone for the current challenge (afterpush zone for radon challenges, xx9 for c^3s, 100 for Mayhem, etc).",
+				minValue: 1,
+				maxValue: null,
+				defaultValue: (game.global.highestLevelCleared || 1),
+			},
 			'weight-xp': {
 				name: "Weight: Fluffy",
 				description: "Weight for how much you value 1% more Fluffy xp.",
@@ -920,6 +939,14 @@ function setupPerkyUI() {
 		}
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine1);
 
+		//Line 2
+		apGUI.$ratiosLine2 = document.createElement("DIV");
+		apGUI.$ratiosLine2.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
+		for (var item in inputBoxes.row2) {
+			AutoPerks.createInput(apGUI.$ratiosLine2, item, inputBoxes.row2[item], perkyInputs[item]);
+		}
+		apGUI.$customRatios.appendChild(apGUI.$ratiosLine2);
+
 		//Creating container for both the label and the input.
 		apGUI.$presetDiv = document.createElement("DIV");
 		apGUI.$presetDiv.id = "Preset Div";
@@ -943,13 +970,18 @@ function setupPerkyUI() {
 		apGUI.$presetDiv.appendChild(apGUI.$presetLabel);
 		apGUI.$presetDiv.appendChild(apGUI.$preset);
 		if (document.getElementById(apGUI.$presetDiv.id) === null)
-			apGUI.$ratiosLine1.appendChild(apGUI.$presetDiv);
-		var $portalWrapper = document.getElementById("portalWrapper")
+			apGUI.$ratiosLine2.appendChild(apGUI.$presetDiv);
+		var $portalWrapper = document.getElementById("portalWrapper");
 		$portalWrapper.appendChild(apGUI.$customRatios);
 
 		$$('#presetElem').value = (perkyInputs.preset === undefined ? 'early' : perkyInputs.preset);
 		if (setupNeeded) savePerkySettings();
 		showingPerky = true;
+
+		//Disable Fluffy xp input when it's not active.
+		if (game.global.spiresCompleted < 2) {
+			$$('#weight-xpDiv').style.display = 'none';
+		}
 	}
 
 	AutoPerks.displayGUI();

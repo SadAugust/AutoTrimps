@@ -1,11 +1,16 @@
 MODULES.mapFunctions = {};
+
 MODULES.mapFunctions.voidTrigger = 'None';
 MODULES.mapFunctions.voidHDRatio = Infinity;
 MODULES.mapFunctions.voidVHDRatio = Infinity;
 MODULES.mapFunctions.voidHDInfo = '0_0_0';
+
+MODULES.mapFunctions.voidFarm = false;
+
 MODULES.mapFunctions.boneCharge = false;
 MODULES.mapFunctions.portalAfterVoids = false;
 MODULES.mapFunctions.portalZone = Infinity;
+
 MODULES.mapFunctions.hasHealthFarmed = '';
 MODULES.mapFunctions.workerRatio = null;
 MODULES.mapFunctions.runUniqueMap = '';
@@ -338,7 +343,9 @@ function voidMaps() {
 		mapName: mapName
 	};
 
-	if (!getPageSetting('voidMapDefaultSettings').active && !MODULES.mapFunctions.portalAfterVoids) return farmingDetails;
+	const defaultSettings = getPageSetting('voidMapDefaultSettings');
+
+	if (!defaultSettings.active && !MODULES.mapFunctions.portalAfterVoids) return farmingDetails;
 	var module = MODULES['mapFunctions'];
 
 	const totalPortals = getTotalPortals();
@@ -346,7 +353,6 @@ function voidMaps() {
 	const dailyAddition = dailyOddOrEven();
 	const zoneAddition = dailyAddition.active ? 1 : 0;
 	const baseSettings = getPageSetting('voidMapSettings');
-	const defaultSettings = getPageSetting('voidMapDefaultSettings');
 
 	var settingIndex = null;
 
@@ -408,6 +414,21 @@ function voidMaps() {
 		} else {
 			setting = baseSettings[settingIndex >= 0 ? settingIndex : module.voidHDIndex];
 		}
+
+		//Identifying if we need to do any form of HD Farming before running voids
+		//If we do then run HD Farm and stop this function until it has been completed.
+		if (defaultSettings.voidFarm) {
+			if (defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid || defaultSettings.hdRatio < hdStats.vhdRatioVoid) {
+				if (!MODULES.mapFunctions.voidFarm) debug('Void Farming (Z' + game.global.world + ').', "map_Details");
+				MODULES.mapFunctions.voidFarm = true;
+			}
+			else {
+				MODULES.mapFunctions.voidFarm = false;
+			}
+			//Load HD Farm if we want to farm before voids
+			if (MODULES.mapFunctions.voidFarm) return hdFarm();
+		}
+
 		var jobRatio = module.portalAfterVoids || baseSettings[settingIndex] !== undefined ? setting.jobratio : defaultSettings.jobratio;
 		var portalAfter = module.portalAfterVoids || baseSettings[settingIndex] !== undefined ? setting.portalAfter : false;
 
@@ -583,6 +604,14 @@ function mapFarm() {
 		var currSetting = baseSettings[y];
 		var world = currSetting.world;
 		if (currSetting.atlantrimp && !game.mapUnlocks.AncientTreasure.canRunOnce) continue;
+
+		//Ensure we don't eternally farm if daily reset timer is low enough that it will start again next zone
+		//Checks against current portal counter to see if it has already been run this portal.
+		if (currSetting.mapType === 'Daily Reset') {
+			var totalPortals = getTotalPortals();
+			if (currSetting.done && currSetting.done.split('_')[0] === totalPortals.toString()) continue;
+		}
+
 		if (dailyAddition.active) {
 			if (dailyAddition.skipZone) continue;
 			if (!settingShouldRun(currSetting, world, 0) && !settingShouldRun(currSetting, world, zoneAddition)) continue;
@@ -1149,8 +1178,6 @@ function mapDestacking() {
 		var balanceStacks = getPageSetting('balanceStacks') > 0 ? getPageSetting('balanceStacks') : Infinity;
 		shouldMap = ((gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks !== 0) && game.global.world >= balanceZone && (game.challenges.Balance.balanceStacks >= balanceStacks || (getPageSetting('balanceImprobDestack') && game.global.lastClearedCell + 2 === 100 && game.challenges.Balance.balanceStacks !== 0)));
 		destackValue = game.challenges.Balance.balanceStacks;
-
-
 	}
 
 	//Unbalance Destacking
@@ -1584,9 +1611,73 @@ function runBionicRaiding(bionicPool) {
 	}
 }
 
+function toxicity() {
+
+	var mapName = 'Toxicity';
+	const farmingDetails = {
+		shouldRun: false,
+		mapName: mapName
+	};
+
+	if (!challengeActive('Toxicity') || !getPageSetting('toxicity')) return farmingDetails;
+
+	var shouldMap = false;
+	var status = '';
+	const toxicityZone = getPageSetting('toxicityZone');
+	const shouldFarmStacks = zoneGoCheck(toxicityZone).active;
+	const stackZone = zoneGoCheck(toxicityZone).zone;
+
+	const toxicityStacks = getPageSetting('toxicityStacks');
+	const currentStacks = game.challenges.Toxicity.stacks;
+	var stackGoal = toxicityStacks[toxicityZone.indexOf(stackZone)] > 0 ? toxicityStacks[toxicityZone.indexOf(stackZone)] : toxicityStacks[0];
+	const mapSpecial = game.jobs.Explorer.locked ? "0" : "fa";
+	const mapLevel = -(game.global.world - 6);
+
+	if (stackGoal > 1500) stackGoal = 1500;
+
+	if (shouldFarmStacks && stackGoal > currentStacks) {
+		shouldMap = true;
+		status = 'Toxicity: ' + currentStacks + '/' + stackGoal + ' stacks';
+	}
+
+	var cellsToClear = 0;
+	if (game.global.mapsActive) {
+		cellsToClear = getCurrentMapObject().size - getCurrentMapCell().level;
+		cellsToClear = Math.ceil(cellsToClear / maxOneShotPower(true));
+	}
+
+	var repeat = game.global.mapsActive && cellsToClear > (stackGoal - currentStacks);
+
+	//Recycling maps if we have the required amount of stacks
+	if (game.global.mapsActive && getCurrentMapObject().level === 6 &&
+		(challengeActive('Toxicity') && !shouldMap && currentStacks === stackGoal)) {
+		recycleMap_AT();
+	}
+
+	if (mapSettings.mapName === mapName && !shouldMap) {
+		mappingDetails(mapName, mapLevel, mapSpecial);
+		resetMapVars();
+	}
+
+	if (shouldMap) farmingDetails.shouldRun = shouldMap;
+	farmingDetails.mapName = mapName;
+	farmingDetails.mapLevel = mapLevel;
+	farmingDetails.autoLevel = true;
+	farmingDetails.special = mapSpecial;
+	farmingDetails.repeat = !repeat;
+	farmingDetails.status = status;
+	farmingDetails.stackGoal = stackGoal;
+	farmingDetails.currentStacks = currentStacks;
+	farmingDetails.stackZone = stackZone;
+	farmingDetails.cellsToClear = cellsToClear;
+
+	return farmingDetails;
+
+}
+
 function experience() {
 
-	var mapName = 'Experience'
+	var mapName = 'Experience';
 	const farmingDetails = {
 		shouldRun: false,
 		mapName: mapName
@@ -1596,18 +1687,17 @@ function experience() {
 
 	var shouldMap = false;
 	const wonderStartZone = getPageSetting('experienceStartZone') >= 300 ? getPageSetting('experienceStartZone') : Infinity;
-	const hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	const mapSpecial = (Math.floor(game.stats.highestLevel.valueTotal()) * (hyperspeed2 / 100) >= game.global.world ? "0" : "fa");
+	const mapSpecial = hdStats.hyperspeed ? "0" : "fa";
 	const mapLevel = 0;
-
+	var status = '';
 	if (game.global.world >= wonderStartZone && game.global.world >= game.challenges.Experience.nextWonder) {
 		shouldMap = true;
-		var status = 'Experience: Farming Wonders';
+		status = 'Experience: Farming Wonders';
 	}
 	else {
 		shouldMap = game.global.world > 600 && game.global.world >= getPageSetting('experienceEndZone');
 		if (shouldMap) mapName = 'Bionic Raiding';
-		var status = 'Experience: Ending Challenge';
+		status = 'Experience: Ending Challenge';
 	}
 	var repeat = game.global.world < game.challenges.Experience.nextWonder;
 
@@ -1871,8 +1961,7 @@ function mayhem() {
 	var destackZone = getPageSetting('mayhemZone') > 0 ? getPageSetting('mayhemZone') : Infinity;
 	var mapLevel = 0;
 	var mayhemMapIncrease = getPageSetting('mayhemMapIncrease') > 0 ? getPageSetting('mayhemMapIncrease') : 0;
-	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	var mapSpecial = (Math.floor(game.stats.highestRadLevel.valueTotal()) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
+	var mapSpecial = hdStats.hyperspeed ? "lmc" : "fa";
 	if (game.challenges.Mayhem.stacks > 0 && (hdStats.hdRatio > destackHits || game.global.world >= destackZone))
 		shouldMap = true;
 
@@ -2000,8 +2089,7 @@ function pandemoniumDestack() {
 	if (destackHits === Infinity && destackZone === Infinity) return farmingDetails;
 
 	var mapLevel = 1;
-	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	var mapSpecial = (Math.floor(game.stats.highestRadLevel.valueTotal()) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc");
+	var mapSpecial = hdStats.hyperspeed ? "lmc" : game.challenges.Pandemonium.pandemonium > 7 ? "fa" : "lmc";
 	var jobRatio = '0.001,0.001,1,0';
 
 
@@ -2487,8 +2575,7 @@ function desolation(forceDestack) {
 	var destackStacks = getPageSetting('desolationStacks') > 0 ? getPageSetting('desolationStacks') : 300;
 	var destackOnlyZone = getPageSetting('desolationOnlyDestackZone') > 0 ? getPageSetting('desolationOnlyDestackZone') : Infinity;
 	var mapLevel = 0;
-	var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-	var mapSpecial = (Math.floor(game.stats.highestRadLevel.valueTotal()) * (hyperspeed2 / 100) >= game.global.world ? "lmc" : "fa");
+	var mapSpecial = hdStats.hyperspeed ? "lmc" : "fa";
 	var sliders = [9, 9, 9];
 	var biome = getBiome();
 	var equality = false;
@@ -2681,7 +2768,7 @@ function hdFarm(skipHealthCheck) {
 	if (hitsSurvivedSetting > 0 && !skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== (getTotalPortals() + "_" + game.global.world)) {
 		if (hitsSurvived < hitsSurvivedSetting) shouldHealthFarm = true;
 	}
-	if (!getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm) return farmingDetails;
+	if (!getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm && !MODULES.mapFunctions.voidFarm) return farmingDetails;
 
 	const baseSettings = getPageSetting('hdFarmSettings');
 	const rHDFDefaultSetting = getPageSetting('hdFarmDefaultSettings');
@@ -2701,13 +2788,35 @@ function hdFarm(skipHealthCheck) {
 		}
 	}
 
-	if (settingIndex !== null || shouldHealthFarm) {
+	if (settingIndex !== null || shouldHealthFarm || MODULES.mapFunctions.voidFarm) {
 		var setting;
 		var hdFarmMapCap;
 		var hdFarmMaxMaps;
 		var hdFarmMinMaps;
 
-		if (settingIndex === null) {
+		if (MODULES.mapFunctions.voidFarm) {
+			var voidSetting = getPageSetting('voidMapDefaultSettings');
+			setting = {
+				autoLevel: true,
+				cell: 1,
+				hdMult: 1,
+				jobratio: voidSetting.jobratio,
+				level: -1,
+				world: game.global.world
+			}
+
+			if (voidSetting.hitsSurvived > hdStats.hitsSurvivedVoid) {
+				setting.hdBase = Number(voidSetting.hitsSurvived);
+				setting.hdType = 'hitsSurvivedVoid';
+			} else {
+				setting.hdBase = Number(voidSetting.hdRatio);
+				setting.hdType = 'voidFarm';
+			}
+
+			hdFarmMapCap = Infinity;
+
+		}
+		else if (settingIndex === null) {
 			setting = {
 				autoLevel: true,
 				cell: 61,
@@ -2724,9 +2833,9 @@ function hdFarm(skipHealthCheck) {
 		} else {
 			shouldHealthFarm = false;
 			setting = baseSettings[settingIndex];
-			hdFarmMapCap = rHDFDefaultSetting.mapCap === -1 ? Infinity : rHDFDefaultSetting.mapCap;
-			hdFarmMaxMaps = hdType === 'world' && game.global.mapBonus !== 10 ? 10 : null;
-			hdFarmMinMaps = hdType === 'world' && game.global.mapBonus !== 10 ? 0 : null;
+			hdFarmMapCap = rHDFDefaultSetting.mapCap;
+			hdFarmMaxMaps = setting.hdType === 'world' && game.global.mapBonus !== 10 ? 10 : null;
+			hdFarmMinMaps = setting.hhdType === 'world' && game.global.mapBonus !== 10 ? 0 : null;
 		}
 
 		var mapLevel = setting.level;
@@ -2735,6 +2844,7 @@ function hdFarm(skipHealthCheck) {
 		var hdType = setting.hdType;
 
 		var hdFarmMaxMapsMaps = hdFarmMapCap;
+		if (hdFarmMaxMapsMaps === -1) hdFarmMaxMapsMaps = Infinity;
 
 		if (setting.autoLevel) {
 			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
@@ -2749,8 +2859,8 @@ function hdFarm(skipHealthCheck) {
 				mapLevel = mapAutoLevel;
 			}
 		}
-		var hdRatio = hdType === 'world' ? hdStats.hdRatio : hdType === 'void' ? hdStats.hdRatioVoid : hdType === 'map' ? hdStats.hdRatioMap : hdType === 'hitsSurvived' ? hdStats.hitsSurvived : hdType === 'hitsSurvivedVoid' ? hdStats.hitsSurvivedVoid : null;
-		if (hdType !== 'maplevel' && !shouldHealthFarm && hdRatio === null) return farmingDetails;
+		var hdRatio = hdType === 'world' ? hdStats.hdRatio : hdType === 'voidFarm' ? hdStats.vhdRatioVoid : hdType === 'void' ? hdStats.hdRatioVoid : hdType === 'map' ? hdStats.hdRatioMap : hdType === 'hitsSurvived' ? hdStats.hitsSurvived : hdType === 'hitsSurvivedVoid' ? hdStats.hitsSurvivedVoid : null;
+		//if (hdType !== 'maplevel' && !shouldHealthFarm && hdRatio === null) return farmingDetails;
 
 		if (hdType.includes('hitsSurvived') ? hdRatio < equipfarmdynamicHD(setting) : hdType === 'maplevel' ? setting.hdBase > hdStats.autoLevel : !shouldHealthFarm ? hdRatio > equipfarmdynamicHD(setting) : hdRatio < equipfarmdynamicHD(setting))
 			shouldMap = true;
@@ -2791,6 +2901,7 @@ function hdFarm(skipHealthCheck) {
 			if (hdType !== 'maplevel') status += equipfarmdynamicHD(setting).toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);
 			else status += '<br>' + (setting.hdBase >= 0 ? "+" : "") + setting.hdBase + ' Auto Level';
 		}
+		hdFarmMaxMapsMaps = hdFarmMaxMapsMaps === Infinity ? '∞' : hdFarmMaxMapsMaps;
 		status += '<br>\ Maps:&nbsp;' + (game.global.mapRunCounter + 1) + '/' + hdFarmMaxMapsMaps;
 
 		farmingDetails.shouldRun = shouldMap;
@@ -2840,6 +2951,7 @@ function farmingDecision() {
 			voidMaps(),
 			mapBonus(),
 			experience(),
+			toxicity(),
 			mapDestacking()
 		];
 
