@@ -1420,7 +1420,7 @@ function prestigeClimb() {
 	if (challengeActive('Frugal')) return farmingDetails;
 	if (game.jobs.Explorer.locked) return farmingDetails;
 
-	const targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
+	var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
 	if (targetPrestige === "Off") return farmingDetails;
 
 	var customVars = MODULES["maps"];
@@ -1436,6 +1436,7 @@ function prestigeClimb() {
 	//Prestige
 	if (getPageSetting('ForcePresZ') !== -1 && (game.global.world) >= getPageSetting('ForcePresZ')) {
 		shouldMap = (offlineProgress.countMapItems(game.global.world) !== 0);
+		targetPrestige = game.global.slowDone ? 'GambesOP' : 'Bestplate';
 	} else
 		shouldMap = game.mapUnlocks[targetPrestige] && game.mapUnlocks[targetPrestige].last + 5 <= (game.global.world);
 
