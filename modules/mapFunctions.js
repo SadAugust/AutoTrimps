@@ -415,20 +415,6 @@ function voidMaps() {
 			setting = baseSettings[settingIndex >= 0 ? settingIndex : module.voidHDIndex];
 		}
 
-		//Identifying if we need to do any form of HD Farming before running voids
-		//If we do then run HD Farm and stop this function until it has been completed.
-		if (defaultSettings.voidFarm) {
-			if (game.global.totalVoidMaps > 0 && (defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid || defaultSettings.hdRatio < hdStats.vhdRatioVoid)) {
-				if (!MODULES.mapFunctions.voidFarm) debug('Void Farming (Z' + game.global.world + ').', "map_Details");
-				MODULES.mapFunctions.voidFarm = true;
-			}
-			else {
-				MODULES.mapFunctions.voidFarm = false;
-			}
-			//Load HD Farm if we want to farm before voids
-			if (MODULES.mapFunctions.voidFarm) return hdFarm();
-		}
-
 		var jobRatio = module.portalAfterVoids || baseSettings[settingIndex] !== undefined ? setting.jobratio : defaultSettings.jobratio;
 		var portalAfter = module.portalAfterVoids || baseSettings[settingIndex] !== undefined ? setting.portalAfter : false;
 
@@ -441,8 +427,23 @@ function voidMaps() {
 
 		if (game.global.totalVoidMaps > 0) {
 			shouldMap = true;
-			if (portalAfter) MODULES.mapFunctions.portalZone = game.global.world;
 		}
+
+		//Identifying if we need to do any form of HD Farming before running voids
+		//If we do then run HD Farm and stop this function until it has been completed.
+		if (shouldMap && defaultSettings.voidFarm) {
+			if (game.global.totalVoidMaps > 0 && (defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid || defaultSettings.hdRatio < hdStats.vhdRatioVoid)) {
+				if (!MODULES.mapFunctions.voidFarm) debug('Void Farming (Z' + game.global.world + ').', "map_Details");
+				MODULES.mapFunctions.voidFarm = true;
+			}
+			else {
+				MODULES.mapFunctions.voidFarm = false;
+			}
+			//Load HD Farm if we want to farm before voids
+			if (MODULES.mapFunctions.voidFarm) return hdFarm();
+		}
+
+		if (shouldMap && portalAfter) MODULES.mapFunctions.portalZone = game.global.world;
 
 		var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
 		var status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining'
