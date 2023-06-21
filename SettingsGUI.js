@@ -4608,7 +4608,7 @@ function remakeTooltip() {
 function autoHeirloomOptions(heirloomType) {
 	if (!atFinishedLoading) return;
 	var heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-	var raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep', currSettingUniverse));
+	var raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep' + heirloomType.slice(0, 1).toUpperCase() + heirloomType.slice(1, heirloomType.length), currSettingUniverse));
 	var heirloomModsArray = [];
 
 	if (heirloomType === 'shield') {
