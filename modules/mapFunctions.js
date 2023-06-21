@@ -418,7 +418,7 @@ function voidMaps() {
 		//Identifying if we need to do any form of HD Farming before running voids
 		//If we do then run HD Farm and stop this function until it has been completed.
 		if (defaultSettings.voidFarm) {
-			if (defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid || defaultSettings.hdRatio < hdStats.vhdRatioVoid) {
+			if (game.global.totalVoidMaps > 0 && (defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid || defaultSettings.hdRatio < hdStats.vhdRatioVoid)) {
 				if (!MODULES.mapFunctions.voidFarm) debug('Void Farming (Z' + game.global.world + ').', "map_Details");
 				MODULES.mapFunctions.voidFarm = true;
 			}
