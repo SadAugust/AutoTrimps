@@ -4815,7 +4815,7 @@ function updateCustomButtons(initialLoad) {
 
 				elem.innerHTML = item.name();
 			}
-			else if (item.type === 'value' || item.type === 'valueNegative' || item.type === 'multitoggle' || item.type === 'multiValue' || item.type === 'textValue') {
+			else if (item.type === 'value' || item.type === 'valueNegative' || item.type === 'multitoggle' || item.type === 'multiValue' || item.type === 'textValue' || item.type === 'multiTextValue') {
 				var itemValue = item.value;
 				if (radonon && settingUniverse.indexOf(0) === -1) itemValue = item['value' + 'U2'];
 				if (elem !== null) {
