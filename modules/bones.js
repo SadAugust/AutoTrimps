@@ -14,7 +14,7 @@ function boneShrine() {
 	var boneCharges = game.permaBoneBonuses.boosts.charges;
 
 	//If we have enough bone charges then spend them automatically to stop from capping
-	if (boneCharges >= defaultSettings.bonebelow && game.global.world >= defaultSettings.world)
+	if (defaultSettings.autoBone && boneCharges >= defaultSettings.bonebelow && game.global.world >= defaultSettings.world)
 		boneShrineIndex = true;
 
 	const totalPortals = getTotalPortals();
@@ -42,7 +42,7 @@ function boneShrine() {
 
 		if (boneShrineIndex === true) {
 			boneShrineSettings = defaultSettings;
-			if (boneShrineSettings.bonebelow === 0) boneShrineSettings.bonebelow = 1;
+			if (boneShrineSettings.bonebelow <= 0) boneShrineSettings.bonebelow = 999;
 		} else {
 			boneShrineSettings = boneShrineBaseSettings[boneShrineIndex];
 		}

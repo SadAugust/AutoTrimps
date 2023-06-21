@@ -595,6 +595,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			}
 			if (mapBonus) tooltipText += "<div class='windowRepeat'>Map<br />Stacks</div>";
 			if (boneShrine) {
+				tooltipText += "<div class='windowAutoBoneShrine'>Auto Spend Charges</div>";
 				tooltipText += "<div class='windowBoneBelow'>Auto Spend At</div>";
 				tooltipText += "<div class='windowBoneBelow'>Spend From Z</div>";
 				tooltipText += "<div class='windowBoneGather'>Gather</div>";
@@ -640,6 +641,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (!boneShrine) defaultVals.cell = defaultSetting.cell ? defaultSetting.cell : 81;
 
 			if (boneShrine) {
+				defaultVals.autoBone = defaultSetting.autoBone ? defaultSetting.autoBone : false;
 				defaultVals.bonebelow = defaultSetting.bonebelow ? defaultSetting.bonebelow : 0;
 				defaultVals.world = defaultSetting.world ? defaultSetting.world : 0;
 			}
@@ -716,6 +718,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 					tooltipText += "<div class='windowWorshipper'><input value='" + defaultVals.worshipper + "' type='number' id='windowWorshipperDefault'/></div>";
 				}
 				if (boneShrine) {
+					tooltipText += "<div class='windowAuto" + varPrefix + "\' style='text-align: center;'>" + buildNiceCheckbox("windowAutoBone", null, defaultVals.autoBone) + "</div>";
+
 					tooltipText += "<div class='windowBoneBelow'><input value='" + defaultVals.bonebelow + "' type='number' id='windowBoneBelowDefault'/></div>";
 					if (boneShrine)
 						tooltipText += "<div class='windowBoneBelow'><input value='" + defaultVals.world + "' type='number' id='windowBoneWorld'/></div>";
@@ -1420,6 +1424,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (mapFarm || alchemy || mapBonus || titleText.includes('Insanity')) defaultSetting.special = document.getElementById('windowSpecialDefault').value;
 
 		if (boneShrine) {
+			defaultSetting.autoBone = readNiceCheckbox(document.getElementById('windowAutoBone'));
 			defaultSetting.bonebelow = parseInt(document.getElementById('windowBoneBelowDefault').value, 10);
 			defaultSetting.gather = document.getElementById('windowBoneGatherDefault').value;
 			defaultSetting.world = parseInt(document.getElementById('windowBoneWorld').value, 10);
@@ -1700,7 +1705,8 @@ function mazPopulateHelpWindow(titleText, trimple) {
 			mazHelp += "<li><b>Void Farm HD Ratio</b> - Will farm to this void HD ratio survived value before running void maps.</li>";
 		}
 		if (boneShrine) {
-			mazHelp += "<li><b>Auto Spend At</b> - The amount of bone charges you have to reach before one will automatically be spent. Disable this by setting this to a value above 10.</li>";
+			mazHelp += "<li><b>Auto Spend Charges</b> - Enables the ability to automatically spend bone charges when above a certain value.</li>";
+			mazHelp += "<li><b>Auto Spend At</b> - The amount of bone charges you have to reach before one will automatically be spent. Disable this by setting this to a value at or below 0 or above 10.</li>";
 			mazHelp += "<li><b>Spend From Z</b> - Will only auto spend bone charges when at or above this zone.</li>";
 			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when auto spending bone charges.</li>";
 			mazHelp += "<li><b>Gather</b> - The gather type to use when auto spending bone charges.</li>";

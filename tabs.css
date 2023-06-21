@@ -1009,6 +1009,7 @@ ul.tab li a:hover {
 .windowJobRatioBoneShrine,
 .windowSpecialBoneShrine,
 .windowRunTypeBoneShrine,
+.windowAutoBoneShrine,
 .windowBoneBelow,
 .windowBoneAmount,
 .windowBoneGather {
@@ -1023,6 +1024,10 @@ ul.tab li a:hover {
 
 .windowActiveBoneShrine {
 	width: 6%;
+}
+
+.windowAutoBoneShrine {
+	width: 12%;
 }
 
 .windowPriorityBoneShrine {

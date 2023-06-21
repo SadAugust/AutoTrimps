@@ -254,7 +254,7 @@ function shouldRunUniqueMap(map) {
 
 function recycleMap_AT(forceAbandon) {
 	if (!getPageSetting('autoMaps')) return;
-	if (!getPageSetting('recycleExplorer') && !game.jobs.Explorer.locked) return;
+	if (!getPageSetting('recycleExplorer') && game.jobs.Explorer.locked === 1) return;
 	if (!forceAbandon && (challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb')) return;
 
 	if (game.global.mapsActive) {
