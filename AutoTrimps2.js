@@ -174,7 +174,8 @@ function delayStart() {
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
 	document.getElementById('activatePortalBtn').setAttribute("onClick", 'activateClicked(); pushSpreadsheetData()');
-	setTimeout(delayStartAgain, 1500);
+	delayStartAgain();
+	//setTimeout(delayStartAgain, 1500);
 }
 
 function swapBaseSettings() {
@@ -195,6 +196,11 @@ function swapBaseSettings() {
 }
 
 function delayStartAgain() {
+	if (typeof mappingDetails !== 'function') {
+		console.log("Modules not loaded yet. Waiting 100ms to try loading again.")
+		setTimeout(delayStartAgain, 100);
+		return;
+	}
 
 	swapBaseSettings();
 	setupATButtons();
