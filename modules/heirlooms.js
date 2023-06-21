@@ -42,19 +42,21 @@ const heirloomMods = {
 
 function evaluateHeirloomMods(loom, location) {
 
+	var heirloomLocation = location.includes('Equipped') ? game.global[location] : game.global[location][loom];
+	var heirloomType = heirloomLocation.type;
+
 	const heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
-	const raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep'));
+	const raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep' + heirloomType));
 	const typeToKeep = getPageSetting('heirloomAutoTypeToKeep');
 	const heirloomEquipType = typeToKeep === 1 ? 'Shield' : typeToKeep === 2 ? 'Staff' : typeToKeep === 3 ? 'All' : 'Core';
 
 	var modName;
-	var heirloomType;
-	var rarity;
 
 	var heirloomLocation = location.includes('Equipped') ? game.global[location] : game.global[location][loom];
-	heirloomType = heirloomLocation.type;
+	var heirloomType = heirloomLocation.type;
 	if (heirloomType !== heirloomEquipType && heirloomEquipType !== 'All') return 0;
-	rarity = heirloomLocation.rarity;
+
+	const rarity = heirloomLocation.rarity;
 	if (rarity !== raretokeep) return 0;
 
 	//Will check if the heirloom is perfect and if it is, we will return infinity to make sure it is not recycled.
@@ -64,11 +66,13 @@ function evaluateHeirloomMods(loom, location) {
 	const blacklist = getPageSetting("heirloomAuto" + heirloomType + "Blacklist");
 	var targetMods = [];
 	var emptyMods = 0;
+
 	//Increment through the setting inputs and push them to the targetMods array if not set to empty.
 	for (var x = 1; x < (heirloomLocation.mods.length + 1); x++) {
 		if (getPageSetting(varAffix + x) === 'Any') continue;
 		targetMods.push(getPageSetting(varAffix + x));
 	}
+
 	//Loop through the heirloom mods and check if they are empty or not. If they are empty, increment emptyMods. If they are not empty, remove them from the targetMods array.
 	for (var m in heirloomLocation.mods) {
 		modName = heirloomLocation.mods[m][0];

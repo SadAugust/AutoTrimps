@@ -487,10 +487,10 @@ function mapBonus() {
 	};
 
 	//Initialise variables
-	const rMBZone = getPageSetting('mapBonusZone');
+	const mapBonusZone = getPageSetting('mapBonusZone');
 	const baseSettings = getPageSetting('mapBonusSettings');
 	var defaultSettings = getPageSetting('mapBonusDefaultSettings');
-	var mapBonusRatio = getPageSetting('mapBonusRatio')
+	var mapBonusRatio = getPageSetting('mapBonusRatio');
 	//Will get map stacks if below our set hd threshold.
 	var healthCheck = mapBonusRatio > 0 && hdStats.hdRatio > mapBonusRatio && getPageSetting('mapBonusStacks') > game.global.mapBonus;
 	var healthStacks = healthCheck ? getPageSetting('mapBonusStacks') : 0;
@@ -508,8 +508,8 @@ function mapBonus() {
 			if (!settingShouldRun(currSetting, world, 0)) continue;
 			if (currSetting.hdRatio > 0 && hdStats.hdRatio < currSetting.hdRatio) continue;
 
-			if (game.global.world - rMBZone[y] >= 0)
-				settingIndex = rMBZone.indexOf(rMBZone[y]);
+			if (game.global.world - mapBonusZone[y] >= 0)
+				settingIndex = mapBonusZone.indexOf(mapBonusZone[y]);
 			else
 				continue;
 		}

@@ -283,7 +283,7 @@ function calcHitsSurvived(targetZone, type) {
 
 	//Our Health and Block
 	var customAttack = type === 'world' && targetZone > 200 && game.global.universe === 2 ? calcMutationAttack(targetZone) : undefined;
-	var hitsToSurvive = getPageSetting('hitsSurvived')
+	var hitsToSurvive = isDoingSpire() ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
 	var health = calcOurHealth(false, type, false, true) / formationMod;
 	var block = calcOurBlock(false) / formationMod;
 	var equality = equalityQuery('Snimp', targetZone, null, type, null, 'gamma', null, hitsToSurvive);
