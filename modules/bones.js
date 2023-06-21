@@ -42,6 +42,7 @@ function boneShrine() {
 
 		if (boneShrineIndex === true) {
 			boneShrineSettings = defaultSettings;
+			if (boneShrineSettings.bonebelow === 0) boneShrineSettings.bonebelow = 1;
 		} else {
 			boneShrineSettings = boneShrineBaseSettings[boneShrineIndex];
 		}

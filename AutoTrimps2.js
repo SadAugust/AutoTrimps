@@ -280,6 +280,7 @@ function toggleCatchUpMode() {
 			//Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
 			mapSettings = farmingDecision();
 			autoMap();
+			callBetterAutoFight();
 			if (game.global.universe === 2) equalityManagement();
 
 			if (loops % getPageSetting('timeWarpFrequency') === 0) mainLoop();
