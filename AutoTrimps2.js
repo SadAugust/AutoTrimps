@@ -162,9 +162,14 @@ function assembleChangelog(c) {
 	return `${c}<br>`
 }
 
-setTimeout(delayStart, 2500);
+delayStart();
 
 function delayStart() {
+	if (typeof loadPageVariables !== 'function') {
+		console.log("Script not loaded yet. Waiting 100ms to try loading again.")
+		setTimeout(delayStart, 100);
+		return;
+	}
 	initializeAutoTrimps();
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
