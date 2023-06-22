@@ -1628,12 +1628,23 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	}
 	document.getElementById('tooltipDiv').style.overflowY = '';
 
-	//Disables Atlantrimp for 1 second and recalculates mapSettings variable.
-	//This is to prevent the issue of Atlantrimp being run when you're saving settings.
-	if (voidMap && MODULES.mapFunctions.voidFarm) {
+	//Disable Void Map global variables when saving Void Map settings to ensure we aren't running voids at the wrong zone after updating.
+	if (voidMap) {
+		MODULES.mapFunctions.voidTrigger = 'None';
+		MODULES.mapFunctions.voidHDRatio = Infinity;
+		MODULES.mapFunctions.voidVHDRatio = Infinity;
+		MODULES.mapFunctions.voidHDInfo = '0_0_0';
+		MODULES.mapFunctions.voidHDIndex = Infinity;
+		MODULES.mapFunctions.boneCharge = false;
+		MODULES.mapFunctions.portalAfterVoids = false;
+		MODULES.mapFunctions.portalZone = Infinity;
+		MODULES.mapFunctions.voidFarm = false;
+
 		voidMaps();
 	}
 
+	//Disables Atlantrimp for 1 second and recalculates mapSettings variable.
+	//This is to prevent the issue of Atlantrimp being run when you're saving settings.
 	runningAtlantrimp = true;
 	mapSettings = new farmingDecision();
 

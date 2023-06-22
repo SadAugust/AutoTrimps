@@ -871,6 +871,34 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'C2', [2],
 			function () { return (getPageSetting('unbalance', currSettingUniverse) && autoTrimpSettings.unbalance.require()) });
 
+		//Duel
+		createSetting('duel',
+			function () { return ('Duel') },
+			function () {
+				var description = "<p>Enable this to setup Duel features.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [2],
+			function () { return (game.stats.highestRadLevel.valueTotal() >= 45) });
+		createSetting('duelHealth',
+			function () { return ('D: Force x10 Health') },
+			function () {
+				var description = "<p>Enable this to have the script suicide on Duel by setting equality to 0 when you don't have the 10x trimp health buff.</p>";
+				description += "<p>Will only work if the <b>Auto Equality</b> setting is set to <b>Auto Equality: Advanced</b>."
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [2],
+			function () { return (getPageSetting('duel', currSettingUniverse) && autoTrimpSettings.duel.require()) });
+		createSetting('duelShield',
+			function () { return ('D: Shield') },
+			function () {
+				var description = "<p>The name of the shield you would like to equip while running Duel.</p>";
+				description += "<p>This will override all other heirloom swapping features and only use this shield during Duel!</p>"
+				description += "<p>Should ideally be a shield without the <b>Crit Chance</b> modifier.</p>";
+				return description;
+			}, 'textValue', 'undefined', null, 'C2', [2],
+			function () { return (getPageSetting('duel', currSettingUniverse) && autoTrimpSettings.duel.require()) });
+
 		//Trappapalooza
 		createSetting('trappapalooza',
 			function () { return ('Trappapalooza') },
@@ -1565,12 +1593,22 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, "Equipment", [1, 2]);
-		createSetting('equipCutOff',
+		createSetting('equipCutOffHD',
 			function () { return ('AE: HD Cut-off') },
 			function () {
-				var description = "<p>If your H:D (enemyHealth:trimpDamage) Ratio is below this value it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available.</p>";
+				var description = "<p>If your H:D (enemyHealth/trimpDamage) ratio is above this value it will override your <b>AE: Percent</b> input when looking at " + (currSettingUniverse !== 2 ? "weapon" : "equipment") + " purchases and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase gear whenever you slow down in world.<br></p>";
 				description += "<p><b>Your HD Ratio can be seen in the Auto Maps status tooltip.</b></p>";
+				description += "<p><b>Recommended:</b> 1</p>";
+				return description;
+			}, 'value', 1, null, "Equipment", [1, 2],
+			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
+		createSetting('equipCutOffHS',
+			function () { return ('AE: HS Cut-off') },
+			function () {
+				var description = "<p>If your Hits Survived (trimpHealth/enemyDamage) ratio is below this value it will override your <b>AE: Percent</b> input when looking at armor purchases and set your spending percentage to 100% of resources available.</p>";
+				description += "<p>Goal with this setting is to have it purchase gear whenever you slow down in world.<br></p>";
+				description += "<p><b>Your Hits Survived Ratio can be seen in the Auto Maps status tooltip.</b></p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
 			}, 'value', 1, null, "Equipment", [1, 2],
@@ -2974,13 +3012,13 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse)) });
 
 		createSetting('heirloomAutoShieldBlacklist',
-			function () { return ('Shield: Blacklist') },
+			function () { return ('Blacklist') },
 			function () {
 				var description = "<p>Will automatically recycle any Shield heirlooms with the mods you input into this setting.</p>";
 				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
 				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
 				return description;
-			}, 'multiTextValue', 'undefined', null, 'Heirlooms', [1, 2],
+			}, 'multiTextValue', 'None', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse)) });
 
 		createSetting('heirloomAutoShieldMod1',
@@ -3108,13 +3146,13 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse)) });
 
 		createSetting('heirloomAutoStaffBlacklist',
-			function () { return ('Staff: Blacklist') },
+			function () { return ('Blacklist') },
 			function () {
 				var description = "<p>Will automatically recycle any Staff heirlooms with the mods you input into this setting.</p>";
 				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
 				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			}, 'textValue', 'None', null, 'Heirlooms', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse)) });
 
 		createSetting('heirloomAutoStaffMod1',
@@ -3231,13 +3269,13 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 
 		createSetting('heirloomAutoCoreBlacklist',
-			function () { return ('Cores: Blacklist') },
+			function () { return ('Blacklist') },
 			function () {
 				var description = "<p>Will automatically recycle any Core heirlooms with the mods you input into this setting.</p>";
 				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
 				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1],
+			}, 'textValue', 'None', null, 'Heirlooms', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 
 		createSetting('heirloomAutoCoreMod1',
@@ -4174,6 +4212,7 @@ function modifyParentNodeUniverseSwap() {
 
 	modifyParentNode("experienceEndBW", radonon);
 	modifyParentNode("unbalanceImprobDestack", radonon);
+	modifyParentNode("duelShield", radonon);
 	modifyParentNode("trappapaloozaCoords", radonon);
 	modifyParentNode("wither", radonon);
 	modifyParentNode("questSmithyMaps", radonon);
@@ -4508,6 +4547,9 @@ function challengeUnlockCheckU2() {
 	} //Unblance
 	else if (hze === 35) {
 		message = challengeUnlock('Unbalance', true, true);
+	} //Duel
+	else if (hze === 45) {
+		message = challengeUnlock('Duel', true, true);
 	} //Bublé
 	else if (hze === 40) {
 		message = challengeUnlock('Bublé');
@@ -5653,6 +5695,19 @@ function updateATVersion() {
 			}
 
 			changelog.push("The Auto Heirloom <b>Rarity to Keep</b> setting has been split into multiple settings for each heirloom type. Your previous input has been converted to the new system but if you want to go for a different rarity for each type you'll need to change it manually.");
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.12') {
+
+			if (typeof (tempSettings.equipCutOff) !== 'undefined') {
+				autoTrimpSettings['equipCutOffHD'].value = tempSettings.equipCutOff.value;
+				autoTrimpSettings['equipCutOffHD'].valueU2 = tempSettings.equipCutOff.valueU2;
+			}
+
+			changelog.push("The U2 challenge <b>Duel</b> now has settings available for it in the <b>C3</b> tab.<br>\
+			Have added an additional equipment setting <b>AE: HS Cut-off</b>. It will set your spending percentage for health equips to 100% when your <b>Hits Survived</b> value is below the input value.<br>\
+			With this equipment change the <b>AE: HD Cut-Off</b> setting will now only override your spending percentage for attack equips unless in U2 where it will override both attack & health equips as it's necessary for equality improvements.<br>\
+			Void Map background variables now get reset when you save void map settings so that you don't continue running your voids at the wrong zone.");
 		}
 	}
 

@@ -427,7 +427,10 @@ function timeStamp() {
 	return b.join(":")
 }
 
-function setTitle() { aWholeNewWorld && (document.title = '(' + game.global.world + ') Trimps ' + document.getElementById('versionNumber').innerHTML) }
+function setTitle() {
+	aWholeNewWorld &&
+		(document.title = '(' + game.global.world + ') Trimps ' + document.getElementById('versionNumber').innerHTML);
+}
 
 var lastmessagecount = 1;
 

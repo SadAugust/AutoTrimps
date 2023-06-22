@@ -291,6 +291,9 @@ function heirloomShieldToEquip(mapType, query) {
 			game.global.voidBuff !== 'doubleAttack';
 	}
 
+	if (challengeActive('Duel') && getPageSetting('duel') && getPageSetting('duelShield') !== "undefined") {
+		return ('duelShield');
+	}
 	if (voidActive && (getPageSetting('heirloomVoid') !== "undefined" || (heirloomPlagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined"))) {
 		if (heirloomPlagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined") {
 			return ('heirloomVoidPlaguebringer');
@@ -319,7 +322,7 @@ function heirloomStaffToEquip(mapType) {
 	} else if (game.global.mapsActive) {
 		const mapObject = getCurrentMapObject();
 		const mapBonus = mapObject.bonus;
-		if (challengeActive('Pandemonium') && getPageSetting('pandemoniumAE') > 1 && getPageSetting('pandemoniumStaff') !== "undefined" && getPageSetting('pandemoniumAEZone') > 0 && game.global.world >= getPageSetting('pandemoniumAEZone') && game.global.lastClearedCell > 59)
+		if (challengeActive('Pandemonium') && getPageSetting('pandemoniumStaff') !== "undefined" && mapSettings.mapName === 'Pandemonium Farming')
 			return ('pandemoniumStaff');
 		else if (getPageSetting('heirloomStaffVoid') !== "undefined" && mapObject.location === 'Void')
 			return ('heirloomStaffVoid');

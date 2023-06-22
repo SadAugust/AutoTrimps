@@ -1,5 +1,5 @@
 var MODULES_AT = {
-	ATversion: 'SadAugust v6.3.11',
+	ATversion: 'SadAugust v6.3.12',
 	atscript: document.getElementsByTagName("script"),
 	basepath: '',
 	modulepath: 'modules/'
@@ -213,10 +213,9 @@ function delayStartAgain() {
 
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
-	/* setInterval(mainLoop, 100);
-	setInterval(guiLoop, 100 * 10); */
 
 	originalGameLoop = gameLoop;
+
 	//Starts the loop in either normal or TimeLapse mode.
 	toggleCatchUpMode();
 
@@ -327,10 +326,10 @@ function mainLoop() {
 	ATMainLoopCounter++;
 	//Interval code
 	//var date = new Date();
-	oneSecondInterval = ATMainLoopCounter % (1000/runInterval) === 0;
-	twoSecondInterval = ATMainLoopCounter % (2000/runInterval) === 0;
-	sixSecondInterval = ATMainLoopCounter % (6000/runInterval) === 0;
-	tenSecondInterval = ATMainLoopCounter % (10000/runInterval) === 0;
+	oneSecondInterval = ATMainLoopCounter % (1000 / runInterval) === 0;
+	twoSecondInterval = ATMainLoopCounter % (2000 / runInterval) === 0;
+	sixSecondInterval = ATMainLoopCounter % (6000 / runInterval) === 0;
+	tenSecondInterval = ATMainLoopCounter % (10000 / runInterval) === 0;
 
 	//Offline mode check
 	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
@@ -350,21 +349,7 @@ function mainLoop() {
 		document.getElementById('additionalInfo').innerHTML = freeVoidsText + autoLevelText + breedTimerText + tenacityText;
 	}
 
-	mainCleanup()
-
-	if (aWholeNewWorld) {
-		switch (document.getElementById('tipTitle').innerHTML) {
-			case 'The Improbability':
-			case 'Corruption':
-			case 'Spire':
-			case 'The Magma':
-				cancelTooltip();
-		}
-		resetmapvars();
-		if (getPageSetting('autoEggs', 1))
-			easterEggClicked();
-		setTitle();
-	}
+	mainCleanup();
 
 	if (slowScumming && game.global.mapRunCounter !== 0) {
 		if (game.global.mapBonus === 10) slowScumming = false;
@@ -516,16 +501,29 @@ function mainCleanup() {
 	}
 
 	if (aWholeNewWorld) {
+
+		switch (document.getElementById('tipTitle').innerHTML) {
+			case 'The Improbability':
+			case 'Corruption':
+			case 'Spire':
+			case 'The Magma':
+				cancelTooltip();
+		}
+		resetVarsZone();
+		if (getPageSetting('autoEggs', 1))
+			easterEggClicked();
+		setTitle();
+
 		debug("Starting Zone " + game.global.world, "zone");
 		debug("Zone #" + game.global.world + ": Tauntimp (" + game.unlocks.impCount.Tauntimp + "), Magnimp (" + game.unlocks.impCount.Magnimp + "), Whipimp (" + game.unlocks.impCount.Whipimp + "), Venimp (" + game.unlocks.impCount.Venimp + ")", "exotic");
-		debug("Zone # " + game.global.world + ": Total pop (" + prettify(game.resources.trimps.owned) + "), Bone Charge resources (" + boneShrineOutput(1).slice(0, -1).toLowerCase() + ")", "run_Stats");
+		debug("Zone # " + game.global.world + ": Total pop (" + prettify(game.resources.trimps.owned) + "). A Bone Charge would give you these resources (" + boneShrineOutput(1).slice(0, -1).toLowerCase() + ")", "run_Stats");
+
+		if (getPageSetting('autoEggs', 1))
+			easterEggClicked();
 	}
 
 	if (aWholeNewWorld || currentworld === 1) {
 	}
-
-	if (getPageSetting('autoEggs', 1))
-		easterEggClicked();
 }
 
 function throwErrorfromMain() {

@@ -4,6 +4,7 @@ MODULES.mapFunctions.voidTrigger = 'None';
 MODULES.mapFunctions.voidHDRatio = Infinity;
 MODULES.mapFunctions.voidVHDRatio = Infinity;
 MODULES.mapFunctions.voidHDInfo = '0_0_0';
+MODULES.mapFunctions.voidHDIndex = Infinity;
 
 MODULES.mapFunctions.voidFarm = false;
 

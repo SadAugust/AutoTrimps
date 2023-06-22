@@ -597,7 +597,7 @@ function doPortal(challenge, skipDaily) {
 	MODULES["portal"].dailyPercent = 0;
 	lastHeliumZone = 0;
 	zonePostpone = 0;
-	resetmapvars();
+	resetVarsZone();
 	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
 		loadMutations(preset);
 		u2Mutations.closeTree();
@@ -688,7 +688,7 @@ function findOutCurrentPortalLevel() {
 	var a = -1, b = !1, d = getPageSetting("autoPortal"); switch (d) { case "Off": break; case "Custom": !challengeActive('Daily') && (a = getPageSetting("autoPortalZone") + 1), challengeActive('Daily') && (a = getPageSetting("Dailyportal") + 1), b = !("Lead" !== getPageSetting("heliumHourChallenge")); break; default: var e = { Balance: 41, Decay: 56, Electricity: 82, Crushed: 126, Nom: 146, Toxicity: 166, Lead: 181, Watch: 181, Corrupted: 191 }[d]; e && (a = e); }return { level: a, lead: b }
 }
 
-function resetmapvars() {
+function resetVarsZone() {
 	//General
 	mappingTime = 0;
 	var mapFunction = MODULES['mapFunctions'];
