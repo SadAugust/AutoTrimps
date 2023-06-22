@@ -41,6 +41,7 @@ var runInterval = 100;
 var atTimeLapseFastLoop = false;
 var mainLoopInterval = null;
 var guiLoopInterval = null;
+var ATMainLoopCounter = 0;
 
 var autoTrimpSettings = {};
 var MODULES = {};
@@ -319,12 +320,13 @@ function mainLoop() {
 	if (getPageSetting('timeWarpDisable') && usingRealTimeOffline) return;
 	ATrunning = true;
 
+	ATMainLoopCounter++;
 	//Interval code
-	var date = new Date();
-	oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
-	twoSecondInterval = ((date.getSeconds() % 2) === 0 && (date.getMilliseconds() < 100));
-	sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
-	tenSecondInterval = ((date.getSeconds() % 10) === 0 && (date.getMilliseconds() < 100));
+	//var date = new Date();
+	oneSecondInterval = ATMainLoopCounter % (1000/runInterval) === 0;
+	twoSecondInterval = ATMainLoopCounter % (2000/runInterval) === 0;
+	sixSecondInterval = ATMainLoopCounter % (6000/runInterval) === 0;
+	tenSecondInterval = ATMainLoopCounter % (10000/runInterval) === 0;
 
 	//Offline mode check
 	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
