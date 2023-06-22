@@ -613,7 +613,7 @@ function initializeAllSettings() {
 				var description = "<p>If enabled will automatically exit Spires to run your voids earlier.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Core', [1],
+			}, 'boolean', false, null, 'Daily', [1],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1 && game.stats.highestLevel.valueTotal() >= 170) });
 
 		createSetting('dailyPortalFiller',
