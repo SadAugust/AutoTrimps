@@ -41,6 +41,7 @@ var runInterval = 100;
 var atTimeLapseFastLoop = false;
 var mainLoopInterval = null;
 var guiLoopInterval = null;
+var ATMainLoopCounter = 0;
 
 var autoTrimpSettings = {};
 var MODULES = {};
@@ -277,13 +278,17 @@ function toggleCatchUpMode() {
 		gameLoop = function (makeUp, now) {
 			originalGameLoop(makeUp, now);
 
+			var newZone = lastrunworld !== game.global.world;
+			//Run mainLoop every n game loops and always on a new zone.
+			if (loops % getPageSetting('timeWarpFrequency') === 0 || newZone) {
+				mainLoop();
+			}
+
 			//Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
 			mapSettings = farmingDecision();
 			autoMap();
 			callBetterAutoFight();
 			if (game.global.universe === 2) equalityManagement();
-
-			if (loops % getPageSetting('timeWarpFrequency') === 0) mainLoop();
 		}
 		debug("TimeLapse Mode Enabled", "offline");
 	}
@@ -319,12 +324,13 @@ function mainLoop() {
 	if (getPageSetting('timeWarpDisable') && usingRealTimeOffline) return;
 	ATrunning = true;
 
+	ATMainLoopCounter++;
 	//Interval code
-	var date = new Date();
-	oneSecondInterval = ((date.getSeconds() % 1) === 0 && (date.getMilliseconds() < 100));
-	twoSecondInterval = ((date.getSeconds() % 2) === 0 && (date.getMilliseconds() < 100));
-	sixSecondInterval = ((date.getSeconds() % 6) === 0 && (date.getMilliseconds() < 100));
-	tenSecondInterval = ((date.getSeconds() % 10) === 0 && (date.getMilliseconds() < 100));
+	//var date = new Date();
+	oneSecondInterval = ATMainLoopCounter % (1000/runInterval) === 0;
+	twoSecondInterval = ATMainLoopCounter % (2000/runInterval) === 0;
+	sixSecondInterval = ATMainLoopCounter % (6000/runInterval) === 0;
+	tenSecondInterval = ATMainLoopCounter % (10000/runInterval) === 0;
 
 	//Offline mode check
 	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
