@@ -283,14 +283,12 @@ function toggleCatchUpMode() {
 			if (loops % getPageSetting('timeWarpFrequency') === 0 || newZone) {
 				mainLoop();
 			}
-			else { 
-				//No need to run per frame action when we are going to run mainLoop anyway.
-				//Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
-				mapSettings = farmingDecision();
-				autoMap();
-				callBetterAutoFight();
-				if (game.global.universe === 2) equalityManagement();
-			}
+
+			//Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
+			mapSettings = farmingDecision();
+			autoMap();
+			callBetterAutoFight();
+			if (game.global.universe === 2) equalityManagement();
 		}
 		debug("TimeLapse Mode Enabled", "offline");
 	}
