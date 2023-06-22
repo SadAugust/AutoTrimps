@@ -61,7 +61,7 @@ function autoPortal(skipDaily) {
 					MODULES.mapFunctions.portalAfterVoids = true;
 				}
 				if (MODULES.mapFunctions.portalAfterVoids) {
-					if (game.global.spireActive) {
+					if (game.global.spireActive && getPageSetting('heliumHrExitSpire')) {
 						debug("Exiting Spire to run voids faster.", "portal");
 						endSpire();
 					}
@@ -206,7 +206,7 @@ function dailyAutoPortal() {
 					MODULES.mapFunctions.portalAfterVoids = true;
 				}
 				if (MODULES.mapFunctions.portalAfterVoids) {
-					if (game.global.spireActive) {
+					if (game.global.spireActive && getPageSetting('dailyHeliumHrExitSpire')) {
 						debug("Exiting Spire to run voids faster.", "portal");
 						endSpire();
 					}

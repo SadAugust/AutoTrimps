@@ -332,6 +332,15 @@ function initializeAllSettings() {
 				return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour'))
 			});
 
+		createSetting('heliumHrExitSpire',
+			function () { return ('Exit Spires for Voids') },
+			function () {
+				var description = "<p>If enabled will automatically exit Spires to run your voids earlier.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Core', [1],
+			function () { return (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && game.stats.highestLevel.valueTotal() >= 170) });
+
 		//Pause + Switch
 		createSetting('pauseScript',
 			function () { return ('Pause AutoTrimps') },
@@ -597,6 +606,15 @@ function initializeAllSettings() {
 			function () {
 				return (getPageSetting('dailyPortal', currSettingUniverse) === 1)
 			});
+
+		createSetting('dailyHeliumHrExitSpire',
+			function () { return ('Exit Spires for Voids') },
+			function () {
+				var description = "<p>If enabled will automatically exit Spires to run your voids earlier.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Core', [1],
+			function () { return (getPageSetting('dailyPortal', currSettingUniverse) === 1 && game.stats.highestLevel.valueTotal() >= 170) });
 
 		createSetting('dailyPortalFiller',
 			function () { return ('Filler run') },
@@ -1596,7 +1614,7 @@ function initializeAllSettings() {
 		createSetting('equipCutOffHD',
 			function () { return ('AE: HD Cut-off') },
 			function () {
-				var description = "<p>If your H:D (enemyHealth/trimpDamage) ratio is above this value it will override your <b>AE: Percent</b> input when looking at " + (currSettingUniverse !== 2 ? "weapon" : "equipment") + " purchases and set your spending percentage to 100% of resources available.</p>";
+				var description = "<p>If your H:D (enemyHealth/trimpDamage) ratio is below this value it will override your <b>AE: Percent</b> input when looking at " + (currSettingUniverse !== 2 ? "weapon purchases " : "") + "and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase gear whenever you slow down in world.<br></p>";
 				description += "<p><b>Your HD Ratio can be seen in the Auto Maps status tooltip.</b></p>";
 				description += "<p><b>Recommended:</b> 1</p>";
