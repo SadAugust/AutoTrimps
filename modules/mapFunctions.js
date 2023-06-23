@@ -394,7 +394,7 @@ function voidMaps() {
 		}
 	}
 
-	if (settingIndex !== null || (module.voidHDIndex !== Infinity && baseSettings[module.voidHDIndex].world >= game.global.world) || module.portalAfterVoids) {
+	if (settingIndex !== null || (module.voidHDIndex !== Infinity && baseSettings[module.voidHDIndex].world <= game.global.world && baseSettings[module.voidHDIndex].maxvoidzone >= game.global.world) || module.portalAfterVoids) {
 
 		var setting;
 		if (settingIndex === null && module.voidHDIndex === Infinity) {
@@ -2888,6 +2888,7 @@ function hdFarm(skipHealthCheck) {
 				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
 				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + setting.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
 			}
+			if (MODULES.mapFunctions.voidFarm) voidMaps();
 			resetMapVars(setting);
 			if (game.global.mapsActive) recycleMap_AT();
 

@@ -166,7 +166,7 @@ function assembleChangelog(c) {
 delayStart();
 
 function delayStart() {
-	if (typeof loadPageVariables !== 'function') {
+	if (typeof loadPageVariables !== 'function' || typeof swapBaseSettings !== 'function') {
 		console.log("Script not loaded yet. Waiting 100ms to try loading again.")
 		setTimeout(delayStart, 100);
 		return;
@@ -197,7 +197,7 @@ function swapBaseSettings() {
 }
 
 function delayStartAgain() {
-	if (typeof mappingDetails !== 'function') {
+	if (typeof mappingDetails !== 'function' || typeof setupATButtons !== 'function') {
 		console.log("Modules not loaded yet. Waiting 100ms to try loading again.")
 		setTimeout(delayStartAgain, 100);
 		return;
