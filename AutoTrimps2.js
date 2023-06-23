@@ -111,32 +111,42 @@ var shieldEquipped = game.global.ShieldEquipped.id;
 
 ATscriptLoad(MODULES_AT.modulepath, 'utils');
 
-function initializeAutoTrimps() {
-	loadPageVariables();
-	// Load jQuery
-	// Immediately-invoked function expression
-	(function () {
-		// Load the script
-		const script = document.createElement("script");
-		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
-		script.type = 'text/javascript';
-		script.addEventListener('load', () => {
-			console.log(`jQuery ${$.fn.jquery} has been loaded successfully!`);
-			// use jQuery below
-		});
-		document.head.appendChild(script);
-	})();
-	ATscriptLoad('', 'SettingsGUI');
-	var script = document.createElement('script');
-	script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
-	document.head.appendChild(script);
-	/* ATscriptLoad('', 'Graphs'); */
-	ATscriptLoad('', 'mutatorPreset');
-	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
-	for (var m in ATmoduleList) {
-		ATscriptLoad(MODULES_AT.modulepath, ATmoduleList[m]);
-	}
-	debug('AutoTrimps Loaded!');
+async function initializeAutoTrimps() {
+    loadPageVariables();
+
+    // Function to load a single script
+    function loadScript(url) {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = url;
+            script.type = 'text/javascript';
+            script.addEventListener('load', resolve);
+            script.addEventListener('error', reject);
+            document.head.appendChild(script);
+        });
+    }
+
+    try {
+        // Load jQuery
+        await loadScript('https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js');
+        console.log(`jQuery ${$.fn.jquery} has been loaded successfully!`);
+
+        // Load other scripts
+        await loadScript('https://Quiaaaa.github.io/AutoTrimps/Graphs.js');
+
+        // Load scripts from ATmoduleList
+        const ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
+        const loadPromises = ATmoduleList.map(m => loadScript(MODULES_AT.modulepath + m));
+
+        // Wait for all scripts from ATmoduleList to load
+        await Promise.all(loadPromises);
+
+        // Code to run after all scripts are loaded
+        debug('AutoTrimps Loaded!');
+
+    } catch (error) {
+        console.error('Error loading one or more scripts.', error);
+    }
 }
 
 function printChangelog(changes) {
@@ -165,13 +175,13 @@ function assembleChangelog(c) {
 
 delayStart();
 
-function delayStart() {
+async function delayStart() {
 	if (typeof loadPageVariables !== 'function' || typeof swapBaseSettings !== 'function') {
 		console.log("Script not loaded yet. Waiting 100ms to try loading again.")
 		setTimeout(delayStart, 100);
 		return;
 	}
-	initializeAutoTrimps();
+	await initializeAutoTrimps();
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
 	document.getElementById('activatePortalBtn').setAttribute("onClick", 'activateClicked(); pushSpreadsheetData()');
@@ -197,11 +207,11 @@ function swapBaseSettings() {
 }
 
 function delayStartAgain() {
-	if (typeof mappingDetails !== 'function' || typeof setupATButtons !== 'function') {
-		console.log("Modules not loaded yet. Waiting 100ms to try loading again.")
-		setTimeout(delayStartAgain, 100);
-		return;
-	}
+	//if (typeof mappingDetails !== 'function' || typeof setupATButtons !== 'function') {
+	//	console.log("Modules not loaded yet. Waiting 100ms to try loading again.")
+	//	setTimeout(delayStartAgain, 100);
+	//	return;
+	//}
 
 	swapBaseSettings();
 	setupATButtons();
