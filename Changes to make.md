@@ -45,6 +45,10 @@
        - keinniemand
        - https://discord.com/channels/371177798305447938/371348913036197899/1119527684167454810
  
+   - Respec
+     - Also for spire can you add a way to let it automatically do a respec to the spire respec perky profile after you're done farming?
+       - keinniemand
+       - https://discord.com/channels/371177798305447938/371348913036197899/1121709098040307722
 
 
 # Bugs

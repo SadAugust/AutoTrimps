@@ -163,7 +163,7 @@ function cheapestEquipmentCost() {
 	return [equipmentName, nextEquipmentCost, prestigeName, nextLevelPrestigeCost]
 }
 
-function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipForLevels, showAllEquips, fakeLevels = {}, ignorePrestiges) {
+function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipForLevels, fakeLevels = {}, ignorePrestiges) {
 
 	for (var i in equipmentList) {
 		if (typeof fakeLevels[i] === 'undefined') {
@@ -172,7 +172,6 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 	}
 	if (!ignoreShield) ignoreShield = getPageSetting('equipNoShields');
 	if (!skipForLevels) skipForLevels = false;
-	if (!showAllEquips) showAllEquips = false;
 
 	var zoneGoHealth = !zoneGo ? zoneGoCheck(getPageSetting('equipZone'), 'health').active : zoneGo;
 	var zoneGoAttack = !zoneGo ? zoneGoCheck(getPageSetting('equipZone'), 'attack').active : zoneGo;
@@ -251,7 +250,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		if (mapSettings.shouldHealthFarm && equipType === 'health') resourceSpendingPct = 1;
 		//Setting weapon equips to 100% spending during Smithless farm.
 		if (challengeActive('Smithless') && mapSettings.mapName === 'Smithless Farm') {
-			if (equipType === 'attack') {
+			if (equipType === 'attack' || mapSettings.equality > 0) {
 				equipCap = Infinity;
 				resourceSpendingPct = 1;
 			}
@@ -388,9 +387,16 @@ function zoneGoCheck(setting, farmType) {
 	//Equipment related section for zone overrides
 	if (farmType === 'attack' || farmType === 'health') {
 		if (mapSettings.mapName === 'Wither') return zoneDetails;
-		if (farmType === 'attack' && hdStats.hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
+		if (farmType === 'attack') {
+			if (hdStats.hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
+			if (mapSettings.mapName === 'Smithless Farm') return zoneDetails;
+		}
 		if (farmType === 'health') {
 			if (hdStats.hitsSurvived < getPageSetting('equipCutOffHS')) return zoneDetails;
+			//Farming for health means we should prio health equips 
+			if (mapSettings.shouldHealthFarm) return zoneDetails;
+			//Since having to use equality will lower our damage then we want more health to reduce equality usage
+			if (mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0) return zoneDetails;
 			//Since equality has a big impact on u2 HD Ratio then we want more health to reduce equality required.
 			if (game.global.universe === 2 && hdStats.hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
 		}
@@ -485,14 +491,8 @@ function autoEquip() {
 		}
 	}
 
-	var attackEquipCap = (getPageSetting('equipCapAttack') <= 0 || mapSettings.mapName === 'Smithless Farm' ? Infinity : getPageSetting('equipCapAttack'));
-	var healthEquipCap = (getPageSetting('equipCapHealth') <= 0 || mapSettings.mapName === 'Smithless Farm' ? Infinity : getPageSetting('equipCapHealth') || mapSettings.shouldHealthFarm);
 	var maxCanAfford = 0;
 
-	if (challengeActive('Scientist')) {
-		attackEquipCap = Infinity;
-		healthEquipCap = Infinity;
-	}
 
 	//Buy as many shields as possible when running Melting Point
 	if (game.global.universe === 2 && !getPageSetting('equipNoShields') && getPageSetting('jobSettingsArray').NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name === 'Melting Point')
@@ -503,7 +503,7 @@ function autoEquip() {
 	var keepBuying = false;
 	do {
 		keepBuying = false;
-		var bestBuys = mostEfficientEquipment(null, null, ignoreShields, false, false);
+		var bestBuys = mostEfficientEquipment(null, null, ignoreShields, false);
 		// Set up for both Attack and Health depending on which is cheaper to purchase
 		var equipType = (bestBuys.attack.cost < bestBuys.health.cost) ? 'attack' : 'health';
 		var equipName = bestBuys[equipType].name;
@@ -516,19 +516,6 @@ function autoEquip() {
 
 
 		for (var i = 0; i < 2; i++) {
-			//Setting weapon equips to 100% spending during Smithless farm.
-			if (equipType === 'attack') {
-				if (mapSettings.mapName === 'Smithless Farm') {
-					resourceSpendingPct = 1;
-					zoneGo = true;
-				}
-			}
-			if (equipType === 'health') {
-				if (mapSettings.shouldHealthFarm || (mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0)) {
-					resourceSpendingPct = 1;
-					zoneGo = true;
-				}
-			}
 			if (equipName !== '' && canAffordBuilding(equipName, false, false, true, false, 1)) {
 				if (game.equipment[equipName].level < equipCap || equipPrestige || zoneGo) {
 					if (!equipPrestige) {
@@ -640,7 +627,7 @@ function estimateEquipsForZone(rEFIndex) {
 
 
 	while (healthNeeded > 0) {
-		var bestArmor = mostEfficientEquipment(1, true, true, false, true, bonusLevels, true)[1];
+		var bestArmor = mostEfficientEquipment(1, true, true, false, bonusLevels, true)[1];
 		healthNeeded -= game.equipment[bestArmor][equipmentList[bestArmor].Stat + "Calculated"];
 		if (typeof bonusLevels[bestArmor] === 'undefined') {
 			bonusLevels[bestArmor] = 0;
@@ -650,7 +637,7 @@ function estimateEquipsForZone(rEFIndex) {
 		}
 	}
 	while (attackNeeded > 0) {
-		var bestWeapon = mostEfficientEquipment(1, true, true, false, true, bonusLevels, true)[0];
+		var bestWeapon = mostEfficientEquipment(1, true, true, false, bonusLevels, true)[0];
 		attackNeeded -= game.equipment[bestWeapon][equipmentList[bestWeapon].Stat + "Calculated"];
 		if (typeof bonusLevels[bestWeapon] === 'undefined') {
 			bonusLevels[bestWeapon] = 0;
@@ -704,7 +691,7 @@ function displayMostEfficientEquipment() {
 	for (var item in game.equipment) {
 		if (game.equipment[item].locked) continue;
 		if (item === "Shield") continue;
-		var bestBuys = mostEfficientEquipment(1, true, true, false, true);
+		var bestBuys = mostEfficientEquipment(1, true, true, false);
 		var equipType = equipmentList[item].Stat;
 		var $eqNamePrestige = null;
 		if (game.upgrades[equipmentList[item].Upgrade].locked === 0) {
