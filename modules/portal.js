@@ -688,7 +688,39 @@ function findOutCurrentPortalLevel() {
 	var a = -1, b = !1, d = getPageSetting("autoPortal"); switch (d) { case "Off": break; case "Custom": !challengeActive('Daily') && (a = getPageSetting("autoPortalZone") + 1), challengeActive('Daily') && (a = getPageSetting("Dailyportal") + 1), b = !("Lead" !== getPageSetting("heliumHourChallenge")); break; default: var e = { Balance: 41, Decay: 56, Electricity: 82, Crushed: 126, Nom: 146, Toxicity: 166, Lead: 181, Watch: 181, Corrupted: 191 }[d]; e && (a = e); }return { level: a, lead: b }
 }
 
-function resetVarsZone() {
+function resetVarsZone(loadingSave) {
+
+	//Reloading save variables
+	if (loadingSave) {
+		var resourceNeeded = {
+			food: 0,
+			wood: 0,
+			metal: 0,
+			science: 0,
+			gems: 0,
+			fragments: 0,
+		};
+
+		baseMinDamage = 0;
+		baseMaxDamage = 0;
+		baseDamage = 0;
+		baseHealth = 0;
+		baseBlock = 0;
+
+		currentworld = 0;
+		lastrunworld = 0;
+		aWholeNewWorld = false;
+		currPortalUniverse = portalUniverse;
+
+		currentHZE = 0;
+		lastHZE = 0;
+
+		heirloomPlagueSwap = false;
+		runningAtlantrimp = false;
+	}
+
+
+
 	//General
 	mappingTime = 0;
 	var mapFunction = MODULES['mapFunctions'];
@@ -711,6 +743,7 @@ function resetVarsZone() {
 	mapFunction.voidVHDRatio = Infinity;
 	mapFunction.voidHDInfo = Infinity;
 	mapFunction.voidHDIndex = Infinity;
+	mapFunction.voidFarm = false;
 	mapFunction.portalZone = Infinity;
 	mapFunction.portalAfterVoids = false;
 	mapFunction.boneCharge = false;
@@ -833,7 +866,8 @@ var originalLoad = load;
 load = function () {
 	originalLoad(...arguments)
 	try {
-		atlantrimpRespecOverride()
+		atlantrimpRespecOverride();
+		resetVarsZone(true);
 	}
 	catch (e) { graphsDebug("Gather info failed: " + e) }
 }

@@ -22,16 +22,6 @@ loadAT();
 if (MODULES_AT.basepath === '') MODULES_AT.basepath = 'https://SadAugust.github.io/AutoTrimps/';
 basepath = MODULES_AT.basepath;
 
-function ATscriptLoad(a, b) {
-	null === b && debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(MODULES_AT.modulepath, \'example.js\'); ');
-	var c = document.createElement('script');
-	null === a && (a = ''), c.src = MODULES_AT.basepath + a + b + '.js', c.id = b + '_MODULE', document.head.appendChild(c);
-}
-function ATscriptUnload(a) {
-	var b = document.getElementById(a + "_MODULE");
-	b && (document.head.removeChild(b), debug("Removing " + a + "_MODULE", "other"));
-}
-
 var ATrunning = true;
 var atFinishedLoading = false;
 var ATmessageLogTabVisible = true;
@@ -109,21 +99,45 @@ var popupsAT = {
 var gammaBurstPct = 1
 var shieldEquipped = game.global.ShieldEquipped.id;
 
+function ATscriptLoad(a, b) {
+	if (null === b) {
+		debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(MODULES_AT.modulepath, \'example.js\'); ');
+		return;
+	}
+	var c = document.createElement('script');
+	if (null === a) a = '';
+	c.src = MODULES_AT.basepath + a + b + '.js';
+	c.id = b + '_MODULE';
+	document.head.appendChild(c);
+}
+
+function ATscriptUnload(a) {
+	var b = document.getElementById(a + "_MODULE");
+	if (b) {
+		document.head.removeChild(b);
+		debug("Removing " + a + "_MODULE", "other");
+	}
+}
+
 ATscriptLoad(MODULES_AT.modulepath, 'utils');
 
 function initializeAutoTrimps() {
 	loadPageVariables();
 	// Load jQuery
-	// Immediately-invoked function expression
 	(function () {
 		// Load the script
 		const script = document.createElement("script");
 		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
 		script.type = 'text/javascript';
-		script.addEventListener('load', () => {
+		script.defer = true; // Add 'defer' attribute
+
+		// Event listener for script load
+		script.addEventListener('load', function () {
 			console.log(`jQuery ${$.fn.jquery} has been loaded successfully!`);
 			// use jQuery below
 		});
+
+		// Append the script to the document
 		document.head.appendChild(script);
 	})();
 	ATscriptLoad('', 'SettingsGUI');
