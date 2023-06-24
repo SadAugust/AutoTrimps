@@ -20,7 +20,7 @@ function isDoingSpire() {
 	if (!game.global.spireActive) return false;
 	var settingPrefix = challengeActive('Daily') ? 'd' : '';
 	var spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
-	if (spireNo === -1 || spireNo === 0) return false;
+	if (spireNo === -1 || spireNo === 0) return true;
 	var spireZone = (1 + spireNo) * 100;
 	return game.global.world >= spireZone;
 }
