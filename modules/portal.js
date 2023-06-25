@@ -201,7 +201,7 @@ function dailyAutoPortal() {
 		if (OKtoPortal && zonePostpone === 0) {
 			if (getPageSetting('dailyHeliumHrPortal') > 0 && game.global.totalVoidMaps > 0) {
 				if (!MODULES.mapFunctions.portalAfterVoids) {
-					if (getPageSetting('heliumHrPortal', universe) === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Z" + game.global.world + " - Pushing to next Poison zone then portaling after void maps have been run.", "portal");
+					if (getPageSetting('heliumHrPortal') === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Z" + game.global.world + " - Pushing to next Poison zone then portaling after void maps have been run.", "portal");
 					else debug("Z" + game.global.world + " - Portaling after void maps have been run.", "portal");
 				}
 				MODULES.mapFunctions.portalAfterVoids = true;
