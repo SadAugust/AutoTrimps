@@ -2161,8 +2161,8 @@ function clearAndAutobuyPerks() {
 		// get correct available radon for cleared perks
 		// for max carp, just max out carp!
 		if (props.specialChallenge === 'trappacarp') {
-			while (buyPerk('Carpentry', 1))
-				;
+			perks.Carpentry.level = 0;
+			while (buyPerk('Carpentry', 1));
 			evaluatePerks();
 			allocateSurky();
 		} else {
