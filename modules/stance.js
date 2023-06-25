@@ -276,7 +276,7 @@ function autoStance() {
 
 	//Keep on D vs the Domination bosses
 	if (challengeActive('Domination') && (game.global.lastClearedCell === 98 || getCurrentEnemy() && getCurrentEnemy().name === "Cthulimp")) {
-		autoStanceD();
+		autoStanceD(true);
 		return;
 	}
 
@@ -317,8 +317,8 @@ function autoStance() {
 	return true;
 }
 
-function autoStanceD() {
-	if (getPageSetting('AutoStance') !== 2) return;
+function autoStanceD(forceActive) {
+	if (getPageSetting('AutoStance') !== 2 && !forceActive) return;
 	if (game.global.gridArray.length === 0) return;
 	if (game.global.soldierHealth <= 0) return;
 	if (!game.upgrades.Formations.done) return;
