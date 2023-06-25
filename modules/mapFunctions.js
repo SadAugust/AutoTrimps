@@ -1304,6 +1304,11 @@ function prestigeRaiding() {
 		var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
 		var repeat = mapsToRun === 1 || (specialInMap && mapsToRun === 2);
 
+		if (MODULES.mapFunctions.prestigeMapArray[0] !== undefined && shouldMap && game.global.mapsOwnedArray[getMapIndex(MODULES.mapFunctions.prestigeMapArray[0])] === undefined) {
+			debug("There was an error with your purchased map(s). Restarting the raiding procedure.")
+			MODULES.mapFunctions.prestigeMapArray = new Array(5);
+			MODULES.mapFunctions.prestigeRaidZone = 0;
+		}
 		if (MODULES.mapFunctions.prestigeMapArray[0] !== undefined && game.global.mapsActive && equipsToGet(getCurrentMapObject().level)[0] === 0) {
 			MODULES.mapFunctions.prestigeMapArray = new Array(5);
 			MODULES.mapFunctions.prestigeRaidZone = 0;

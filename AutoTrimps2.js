@@ -180,9 +180,13 @@ function assembleChangelog(c) {
 delayStart();
 
 function delayStart() {
+	if (mappingTIme % 20 === 0) {
+		ATscriptLoad(MODULES_AT.modulepath, 'utils');
+	}
 	if (typeof loadPageVariables !== 'function' || typeof swapBaseSettings !== 'function') {
 		console.log("Script not loaded yet. Waiting 100ms to try loading again.")
 		setTimeout(delayStart, 100);
+		mappingTIme++;
 		return;
 	}
 	initializeAutoTrimps();
@@ -191,6 +195,7 @@ function delayStart() {
 	document.getElementById('activatePortalBtn').setAttribute("onClick", 'activateClicked(); pushSpreadsheetData()');
 	delayStartAgain();
 	//setTimeout(delayStartAgain, 1500);
+	mappingTIme = 0;
 }
 
 function swapBaseSettings() {
