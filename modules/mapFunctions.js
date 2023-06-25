@@ -3669,7 +3669,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	}
 
 	else if (mapName === 'Hits Survived') {
-		message += " Finished with hits survived at  " + prettify(hdStats.hitsSurvived) + "/" + prettify(getPageSetting('hitsSurvived')) + "."
+		message += " Finished with hits survived at  " + prettify(hdStats.hitsSurvived) + "/" + prettify(isDoingSpire() ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived')) + "."
 	}
 
 	else if (mapName === 'HD Farm' && extra !== null) {

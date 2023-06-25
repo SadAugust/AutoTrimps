@@ -208,7 +208,7 @@ function advancedNurseries() {
 	//Builds nurseries if lacking health & shouldn't HD farm.
 	//Only build nurseries if: A) Lacking Health & B) Doesn't need to HD farm & C) Has max health map stacks
 	//Also, it requires less health during spire
-	const a = hdStats.hitsSurvived < getPageSetting('hitsSurvived');
+	const a = hdStats.hitsSurvived < (isDoingSpire() ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived'));
 	const b = !hdFarm(true).shouldRun;
 	const c = game.global.mapBonus >= getPageSetting('mapBonusHealth');
 	return (a && b && c);
