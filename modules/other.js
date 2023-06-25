@@ -72,7 +72,7 @@ function avoidEmpower() {
 }
 
 function fightalways() {
-	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || (game.global.spireActive && game.global.world >= getPageSetting('IgnoreSpiresUntil')))
+	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || (game.global.spireActive && (game.global.world >= getPageSetting('IgnoreSpiresUntil') || 0 >= getPageSetting('IgnoreSpiresUntil'))))
 		return;
 	if (!game.global.fighting)
 		fightManual();

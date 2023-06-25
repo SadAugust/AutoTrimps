@@ -1631,15 +1631,6 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', 1, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
-		createSetting('equipAmount',
-			function () { return ('AE: Amount') },
-			function () {
-				var description = "<p>How many levels of equipment you'd like to be purchased at once.</p>";
-				description += "<p>It will already identify how many you can buy the percentage set in <b>AE: Percent</b> so only useful in very rare scenarios.<br></p>";
-				description += "<p><b>Recommended:</b> 1</p>";
-				return description;
-			}, 'value', 1, null, "Equipment", [1, 2],
-			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipCapAttack',
 			function () { return ('AE: Weapon Cap') },
 			function () {
@@ -1675,13 +1666,6 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', 1, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
-		createSetting('equipPortal',
-			function () { return ('AE: Portal') },
-			function () {
-				var description = "<p>Will ensure Auto Equip is enabled after portalling.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, "Equipment", [1, 2]);
 		createSetting('equip2',
 			function () { return ('AE: 2') },
 			function () {
@@ -1691,18 +1675,53 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 		createSetting('equipPrestige',
-			function () { return (['AE: Prestige Off', 'AE: Prestige', 'AE: Always Prestige']) },
+			function () { return (['AE: Prestige Off', 'AE: Maybe Prestige', 'AE: Prestige', 'AE: Always Prestige']) },
 			function () {
 				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
 				var description = "<p>Will control how equipment levels & prestiges are purchased.</p>";
+
 				description += "<p><b>AE: Prestige Off</b><br>Will only purchase prestiges when you have 6 or more levels in your that piece of equipment.</p>";
+
+				description += "<p><b>AE: Maybe Prestige</b><br>Will only purchase prestiges you have either 6 or more levels in an equip <b>OR</b> when outside of your <b>AE: Zone</b> range <b>OR</b> when you can afford them .</p>";
+
 				description += "<p><b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run " + trimple + ".";
-				description += "<br><b>If " + trimple + " has been run it will buy any prestiges that cost less than 8% of your current resources then spend your remaining resources on equipment levels.</b></p>"
+
+				description += "<br><b>If " + trimple + " has been run it will buy any prestiges that cost less than 8% of your current resources then spend your remaining resources on equipment levels.</b></p>";
+
 				description += "<p><b>AE: Always Prestige</b><br>Always buys prestiges of weapons and armor regardless of efficiency. Will override AE: Zone setting for an equip if it has a prestige available.</p>";
+
 				description += "<p><b>Recommended:</b> AE: Prestige</p>";
 				return description;
 			}, 'multitoggle', 0, null, "Equipment", [1, 2],
 			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
+
+		createSetting('equipPrestigePct',
+			function () { return ('AE: Prestige Pct') },
+			function () {
+				var description = "<p>What percent of resources you'd like to spend on equipment before prestiges will be priorities over them.</p>";
+				description += "<p>Both <b>AE: HD Cut-off</b> and <AE: Zone</b> will override this input when they are active and set it to 100.</p>";
+				description += "<p><b>Recommended:</b> 10</p>";
+				return description;
+			}, 'value', 6, null, "Equipment", [1, 2],
+			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
+
+		createSetting('equipNoShields',
+			function () { return ('AE: No Shields') },
+			function () {
+				var description = "<p>Will stop the purchase of Shield equipment levels & prestiges.</p>";
+				description += "<p><b>This is only ever useful in very niche scenarios.</b></p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, "Equipment", [1, 2],
+			function () { return (getPageSetting('equipOn', currSettingUniverse)) }); 22
+
+		createSetting('equipPortal',
+			function () { return ('AE: Portal') },
+			function () {
+				var description = "<p>Will ensure Auto Equip is enabled after portalling.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, "Equipment", [1, 2]);
 		createSetting('equipEfficientEquipDisplay',
 			function () { return ('AE: Highlight Equips') },
 			function () {
@@ -1719,15 +1738,6 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On until you can reach z50</p>";
 				return description;
 			}, 'boolean', false, null, "Equipment", [1]);
-		createSetting('equipNoShields',
-			function () { return ('AE: No Shields') },
-			function () {
-				var description = "<p>Will stop the purchase of Shield equipment levels & prestiges.</p>";
-				description += "<p><b>This is only ever useful in very niche scenarios.</b></p>";
-				description += "<p><b>Recommended:</b> Off</p>";
-				return description;
-			}, 'boolean', false, null, "Equipment", [2],
-			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 
 		createSetting('Prestige',
 			function () { return ('Prestige') },
@@ -2045,7 +2055,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>";
 				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
-				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting and have the script assume all Spires are active.</b></p>";
 				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs.</p>";
 				return description;
 			}, 'value', -1, null, 'Spire', [1]);
@@ -4210,7 +4220,9 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("uniqueMapSettingsArray", 'show');
 
 	//Gear
+	modifyParentNode("equipPercent", 'show');
 	modifyParentNode("equipNoShields", 'show');
+	modifyParentNode("equipShieldBlock", 'show');
 
 	//Spire
 	//None!
@@ -5726,6 +5738,17 @@ function updateATVersion() {
 			Have added an additional equipment setting <b>AE: HS Cut-off</b>. It will set your spending percentage for health equips to 100% when your <b>Hits Survived</b> value is below the input value.<br>\
 			With this equipment change the <b>AE: HD Cut-Off</b> setting will now only override your spending percentage for attack equips unless in U2 where it will override both attack & health equips as it's necessary for equality improvements.<br>\
 			Void Map background variables now get reset when you save void map settings so that you don't continue running your voids at the wrong zone.");
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.13') {
+
+			if (typeof (tempSettings.equipNoShields) !== 'undefined') {
+				autoTrimpSettings['equipNoShields'].enabled = false;
+			}
+			if (typeof (tempSettings.equipPrestige) !== 'undefined') {
+				if (tempSettings.equipPrestige.value !== 0) autoTrimpSettings['equipPrestige'].value++;
+				if (tempSettings.equipPrestige.valueU2 !== 0) autoTrimpSettings['equipPrestige'].valueU2++;
+			}
 		}
 	}
 
