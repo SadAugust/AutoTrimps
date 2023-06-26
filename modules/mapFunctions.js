@@ -3252,6 +3252,13 @@ function fragmentFarm() {
 	var rFragMapBought = false;
 	//Worshipper farming
 	var rFragCheck = true;
+
+	//Safety precaution in case of error with purchased map(s) getting recycled
+	if (initialFragmentMapID !== undefined && game.global.mapsOwnedArray[getMapIndex(initialFragmentMapID)] === undefined) {
+		debug("There was an error with your purchased map(s). Restarting the fragment farming procedure.")
+		initialFragmentMapID = undefined;
+	}
+
 	if (fragMapFarmCost()) {
 		rFragCheck = true;
 		MODULES.maps.fragmentFarming = false;
