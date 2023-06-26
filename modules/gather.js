@@ -60,6 +60,7 @@ function autoGather() {
 	var minTraps = needBattle ? 0 : Math.ceil(calcTPS());
 	var maxTraps = calcMaxTraps();
 	var trapTrimpsOK = (!game.upgrades.Battle.done || (getPageSetting('TrapTrimps'))) && (trapperTrapUntilFull || game.jobs.Geneticist.owned === 0);
+	if (trapTrimpsOK && challengeActive('Trappapalooza') && getPageSetting('trappapalooza') && getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords') && getPageSetting('trappapaloozaTrap')) trapTrimpsOK = false;
 
 	//Vars
 

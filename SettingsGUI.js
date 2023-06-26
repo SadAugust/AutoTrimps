@@ -930,8 +930,18 @@ function initializeAllSettings() {
 			function () { return ('T: Coords') },
 			function () {
 				var description = "<p>The zone you would like to stop buying additional coordinations from.</p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting and not have any caps.</b></p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
+			function () { return (getPageSetting('trappapalooza', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
+
+		createSetting('trappapaloozaTrap',
+			function () { return ('T: Disable Trapping') },
+			function () {
+				var description = "<p>If enabled then trapping (both ingame and through the script) will be disabled when you have the coordination amount input in <b>T: Coords</b>.</p>";
+				description += "<p>To work <b>T: Coords</b> must have an input above 0!</p>";
+				return description;
+			}, 'boolean', false, null, 'C2', [2],
 			function () { return (getPageSetting('trappapalooza', currSettingUniverse) && autoTrimpSettings.trappapalooza.require()) });
 
 		//Wither
