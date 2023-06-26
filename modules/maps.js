@@ -389,7 +389,7 @@ function autoMap() {
 
 				var result = buyMap();
 				if (result === -2) {
-					debug("Too many maps, recycling now: ", "maps", 'th-large');
+					debug("Too many maps, recycling now. ", "maps", 'th-large');
 					recycleBelow(true);
 					debug("Retrying, Buying a Map, level: #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
 					result = buyMap();

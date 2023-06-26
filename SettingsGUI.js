@@ -4262,7 +4262,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("experienceEndBW", radonon);
 	modifyParentNode("unbalanceImprobDestack", radonon);
 	modifyParentNode("duelShield", radonon);
-	modifyParentNode("trappapaloozaCoords", radonon);
+	modifyParentNode("trappapaloozaTrap", radonon);
 	modifyParentNode("wither", radonon);
 	modifyParentNode("questSmithyMaps", radonon);
 	modifyParentNode("mayhemSwapZone", radonon);
@@ -4811,13 +4811,13 @@ function autoSetValue(id, multiValue, negative) {
 			num = num.split(',').map(parseNum);
 			for (var item in num) {
 				if (isNaN(item) || item === null || item === '') {
-					return;
+					return tooltip('confirm', null, 'update', 'Error with input ("' + numBox.value + '"), please try again', null, '<b>' + autoTrimpSettings[id].name() + ' Setting Input Error!');
 				}
 			}
 		} else {
 			num = parseNum(num);
 			if (isNaN(num) || num === null || num === '') {
-				return;
+				return tooltip('confirm', null, 'update', 'Error with input ("' + numBox.value + '"), please try again', null, '<b>' + autoTrimpSettings[id].name() + ' Setting Input Error!');
 			}
 		}
 	} else return;
