@@ -1569,6 +1569,15 @@ function initializeAllSettings() {
 			},
 			'boolean', false, null, 'Buildings', [1],
 			function () { return (game.stats.highestLevel.valueTotal() >= 230) });
+		createSetting('advancedNurseriesAmount',
+			function () { return ('AN: Amount') },
+			function () {
+				var description = "<p>The amount of Nurseries that the script will attempt to purchase everytime you need additional health from Advanced Nurseries.</p>"
+				description += "<p>Default is 2."
+				return description;
+			},
+			'value', 2, null, 'Buildings', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 230 && autoTrimpSettings.advancedNurseries.enabled) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -4800,10 +4809,19 @@ function autoSetValue(id, multiValue, negative) {
 		num = numBox.value;
 		if (multiValue) {
 			num = num.split(',').map(parseNum);
+			for (var item in num) {
+				if (isNaN(item) || item === null || item === '') {
+					return;
+				}
+			}
 		} else {
 			num = parseNum(num);
+			if (isNaN(num) || num === null || num === '') {
+				return;
+			}
 		}
 	} else return;
+
 	autoTrimpSettings[id][value] = num;
 	if (Array.isArray(num)) {
 		// In here

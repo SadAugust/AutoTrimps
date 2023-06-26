@@ -208,7 +208,7 @@ function advancedNurseries() {
 	//Builds nurseries if lacking health & shouldn't HD farm.
 	//Only build nurseries if: A) Lacking Health & B) Doesn't need to HD farm & C) Has max health map stacks
 	//Also, it requires less health during spire
-	const a = hdStats.hitsSurvived < (isDoingSpire() ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived'));
+	const a = hdStats.hitsSurvived < targetHitsSurvived();
 	const b = !hdFarm(true).shouldRun;
 	const c = game.global.mapBonus >= getPageSetting('mapBonusHealth');
 	return (a && b && c);
@@ -354,7 +354,7 @@ function buyBuildings() {
 			var nurseryCanAfford = calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, (nurseryAmt - game.buildings.Nursery.owned), nurseryPct);
 			if (nurseryZoneOk || nurseryPreSpire > 0) {
 				if (nurseryPreSpire > 0 && nurseryCanAfford > 0) safeBuyBuilding('Nursery', nurseryCanAfford);
-				else if (advancedNurseries() && calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, 1, nurseryPct) > 0) safeBuyBuilding('Nursery', 1);
+				else if (advancedNurseries() && calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, 1, nurseryPct) > 0) { safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, getPageSetting('advancedNurseriesAmount'))); }
 				else if (nurseryCanAfford > 0) safeBuyBuilding('Nursery', nurseryCanAfford);
 			}
 		}

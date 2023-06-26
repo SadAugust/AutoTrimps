@@ -57,7 +57,7 @@ function makeAutomapStatusTooltip() {
 		}.`;
 	const hitsSurvived = prettify(hdStats.hitsSurvived);
 	const hitsSurvivedVoid = prettify(hdStats.hitsSurvivedVoid);
-	const hitsSurvivedSetting = isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
+	const hitsSurvivedSetting = targetHitsSurvived();
 	const hitsSurvivedValue = hitsSurvivedSetting > 0 ? hitsSurvivedSetting : '∞';
 	var tooltip = 'tooltip(' +
 		'\"Automaps Status\", ' +

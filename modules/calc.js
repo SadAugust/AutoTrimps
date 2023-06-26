@@ -283,7 +283,7 @@ function calcHitsSurvived(targetZone, type) {
 
 	//Our Health and Block
 	var customAttack = type === 'world' && targetZone > 200 && game.global.universe === 2 ? calcMutationAttack(targetZone) : undefined;
-	var hitsToSurvive = isDoingSpire() ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
+	var hitsToSurvive = targetHitsSurvived();
 	var health = calcOurHealth(false, type, false, true) / formationMod;
 	var block = calcOurBlock(false) / formationMod;
 	var equality = equalityQuery('Snimp', targetZone, null, type, null, 'gamma', null, hitsToSurvive);
@@ -339,6 +339,11 @@ function calcHitsSurvived(targetZone, type) {
 	const finalDmg = Math.max(damageMult * worldDamage - block, voidDamage, worldDamage * pierce, 0);
 
 	return health / finalDmg;
+}
+
+function targetHitsSurvived() {
+	const hitsSurvived = mapSettings.mapName === 'Hits Survived' ? mapSettings.hdRatio : isDoingSpire() && getPageSetting('hitsSurvivedSpire') > 0 ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
+	return hitsSurvived;
 }
 
 function addPoison(realDamage, zone) {

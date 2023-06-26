@@ -1277,7 +1277,8 @@ function prestigeRaiding() {
 			if (repeats > 0) raidZones += (times * repeats);
 		}
 		//Skips if we don't have the required prestige available.
-		if (equipsToGet(raidZones, targetPrestige)[0] === 0) continue;
+		var equipsToFarm = equipsToGet(raidZones, targetPrestige)[0];
+		if (equipsToFarm === 0) continue;
 		if (game.global.world === currSetting.world || ((game.global.world - currSetting.world) % currSetting.repeatevery === 0)) {
 			settingIndex = y;
 			break;
@@ -1291,6 +1292,11 @@ function prestigeRaiding() {
 		var fragSetting = setting.raidingDropdown;
 		var incrementMaps = defaultSettings.incrementMaps;
 
+		//Reduce raid zone to the value of the last prestige item we need to farm
+		while (equipsToFarm === equipsToGet(raidZones - 1, targetPrestige)[0]) {
+			raidZones--;
+		}
+
 		if (equipsToGet(raidZones, targetPrestige)[0] > 0) {
 			shouldMap = true;
 		}
@@ -1302,6 +1308,8 @@ function prestigeRaiding() {
 
 		var mapsToRun = game.global.mapsActive ? equipsToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
 		var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
+
+
 		var repeat = mapsToRun === 1 || (specialInMap && mapsToRun === 2);
 
 		if (MODULES.mapFunctions.prestigeMapArray[0] !== undefined && shouldMap && game.global.mapsOwnedArray[getMapIndex(MODULES.mapFunctions.prestigeMapArray[0])] === undefined) {
@@ -1317,7 +1325,7 @@ function prestigeRaiding() {
 		farmingDetails.shouldRun = shouldMap;
 		farmingDetails.mapName = mapName;
 		farmingDetails.autoLevel = false;
-		farmingDetails.mapLevel = raidZones;
+		farmingDetails.mapLevel = raidZones - game.global.world;
 		farmingDetails.recycle = recycleMaps;
 		farmingDetails.prestigeGoal = targetPrestige;
 		farmingDetails.fragSetting = fragSetting;
@@ -1352,11 +1360,7 @@ function runPrestigeRaiding() {
 	const targetPrestige = mapSettings.prestigeGoal
 	const mapSpecial = mapSettings.special;
 	const incrementMaps = mapSettings.incrementMaps;
-	var equipsToFarm = equipsToGet(raidzones, targetPrestige)[0];
 
-	while (equipsToFarm === equipsToGet(raidzones - 1, targetPrestige)[0]) {
-		raidzones--;
-	}
 	MODULES.mapFunctions.prestigeRaidZone = raidzones;
 
 	const canAffordMaps = prestigeTotalFragCost(raidzones, targetPrestige, mapSpecial, incrementMaps);
@@ -2772,7 +2776,7 @@ function hdFarm(skipHealthCheck) {
 	};
 
 	var shouldHealthFarm = false;
-	const hitsSurvivedSetting = isDoingSpire() ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived');
+	const hitsSurvivedSetting = targetHitsSurvived();
 	var hitsSurvived = hdStats.hitsSurvived;
 	if (hitsSurvivedSetting > 0 && !skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== (getTotalPortals() + "_" + game.global.world)) {
 		if (hitsSurvived < hitsSurvivedSetting) shouldHealthFarm = true;
@@ -3669,7 +3673,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	}
 
 	else if (mapName === 'Hits Survived') {
-		message += " Finished with hits survived at  " + prettify(hdStats.hitsSurvived) + "/" + prettify(isDoingSpire() ? getPageSetting('hitsSurvivedSpire') : getPageSetting('hitsSurvived')) + "."
+		message += " Finished with hits survived at  " + prettify(hdStats.hitsSurvived) + "/" + targetHitsSurvived() + "."
 	}
 
 	else if (mapName === 'HD Farm' && extra !== null) {

@@ -49,6 +49,7 @@ function autoNatureTokens() {
 
 function purchaseEnlight(nature) {
 	if (game.global.uberNature !== '') return;
+	if (game.empowerments[nature].getLevel() < 50) return;
 	naturePurchase('uberEmpower', nature);
 	cancelTooltip();
 	debug('Purchased ' + nature + " englightenment", 'nature');
