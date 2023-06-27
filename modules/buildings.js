@@ -352,9 +352,10 @@ function buyBuildings() {
 
 			var nurseryPct = buildingSettings.Nursery.percent / 100;
 			var nurseryCanAfford = calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, (nurseryAmt - game.buildings.Nursery.owned), nurseryPct);
+			var nurseryCanAffordNoNurseryLimit = calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, Infinity, nurseryPct);
 			if (nurseryZoneOk || nurseryPreSpire > 0) {
 				if (nurseryPreSpire > 0 && nurseryCanAfford > 0) safeBuyBuilding('Nursery', nurseryCanAfford);
-				else if (advancedNurseries() && calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, 1, nurseryPct) > 0) { safeBuyBuilding('Nursery', Math.min(nurseryCanAfford, getPageSetting('advancedNurseriesAmount'))); }
+				else if (advancedNurseries() && calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, 1, nurseryPct) > 0) { safeBuyBuilding('Nursery', Math.min(nurseryCanAffordNoNurseryLimit, getPageSetting('advancedNurseriesAmount'))); }
 				else if (nurseryCanAfford > 0) safeBuyBuilding('Nursery', nurseryCanAfford);
 			}
 		}
