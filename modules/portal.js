@@ -711,7 +711,7 @@ function resetVarsZone(loadingSave) {
 		currentworld = 0;
 		lastrunworld = 0;
 		aWholeNewWorld = false;
-		currPortalUniverse = portalUniverse;
+		universeSwapped();
 
 		currentHZE = 0;
 		lastHZE = 0;

@@ -211,7 +211,7 @@ function setupSurkyUI() {
 	AutoPerks.createInput = function (perkLine, id, inputObj, savedValue) {
 		if (!id) return;
 		if (document.getElementById(id + 'Div') !== null) {
-			debug("You most likely have a settup error in your inputBoxes. It will be trying to access a input box that doesn't exist.")
+			debug("You most likely have a setup error in your inputBoxes. It will be trying to access a input box that doesn't exist.")
 			return;
 		}
 		//Creating container for both the label and the input.
