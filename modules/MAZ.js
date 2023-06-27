@@ -1804,11 +1804,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met OR you are at the <b>End Zone</b> input for that line. The information relating to each of the dropdowns can be found in the status tooltip.</li>";
 
 		mazHelp += "<li class=\"indent\">If you have selected a <b>HD Ratio</b> and that type of <b>HD Ratio</b> is greater than the value input OR if you've selected one of Auto Level, Hits Survived, Hits Survived Void it will check if the value is lower than that and skip if it is.<br></li>";
-		//HD Ratio to run at
-		/* mazHelp += "<li><b>HD Ratio</b> - If your HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>";
-		//Void HD Ratio to run at
-		mazHelp += "<li><b>Void HD Ratio</b> - If your Void HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>"; */
-		//Portal After
+
 		mazHelp += "<li><b>Portal After</b> - Will run AutoPortal immediately after this line has run. Won't do anything if AutoPortal is disabled!</b></li>";
 	}
 

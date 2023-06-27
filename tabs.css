@@ -1634,4 +1634,12 @@ li.indent {
 	line-height: 0.85vw;
 }
 
+#offlineExtraBtnsContainer,
+#offlineMapBtns,
+#offlineZoneBtns {
+	height: 24vw;
+	border: 1px solid white;
+	padding-top: 2vw;
+}
+
 /* New stuff goes here */

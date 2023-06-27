@@ -3664,7 +3664,7 @@ function initializeAllSettings() {
 			function () { return ('Reset everything to the way it was when you first installed the script.') },
 			'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export', [0]);
 		createSetting('DownloadDebug',
-			function () { return ('Download for debug') },
+			function () { return ('Download for Debug') },
 			function () { return ('Will download both your save and AT settings so that they can be debugged easier.') },
 			'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [0]);
 		/* createSetting('CleanupAutoTrimps',
@@ -4174,8 +4174,11 @@ function settingChanged(id, currUniverse) {
 		if (id === 'dailyPortal') {
 			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
 		}
-		if (id === 'autoMaps' && btn[value] !== 2)
+		if (id === 'autoMaps' && btn[value] !== 2) {
+			//Use regular class for AutoMaps button UNLESS we are in TW then use special case to make it look prettier!
 			document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value])
+			document.getElementById('autoMapBtnTW').setAttribute('class', 'btn btn-lg btn-warning offlineExtraBtn settingsBtn settingBtn' + btn[value]);
+		}
 	}
 
 	if (btn.type === 'dropdown') {
@@ -5120,6 +5123,40 @@ function settingUniverse(setting) {
 		return getPageSetting('autoMaps', currPortalUniverse);
 	}
 }
+
+function autoMapsButton(offlineProgress) {
+	//Auto Maps button
+	var autoMapsContainer = document.createElement("DIV");
+	if (offlineProgress) autoMapsContainer = document.createElement("DIV");
+	autoMapsContainer.setAttribute("id", "autoMapBtnTW");
+	autoMapsContainer.setAttribute("class", "btn btn-lg btn-warning offlineExtraBtn settingsBtn settingBtn" + settingUniverse('autoMaps'));
+	autoMapsContainer.setAttribute("onClick", "settingChanged('autoMapsToggle', true);");
+	autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Auto Maps\", \"customText\", event, autoTrimpSettings.autoMaps.description(true))');
+	autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
+	autoMapsContainer.innerHTML = 'Auto Maps';
+
+	return autoMapsContainer;
+}
+
+function autoMapsBtnTW() {
+	if (document.getElementById('autoMapBtnTW') === null) {
+		document.getElementById('offlineExtraBtnsContainer').children[2].insertAdjacentHTML('afterend', '<br>');
+		var u2MutColumn = document.getElementById("offlineFightBtn").parentNode;
+		u2MutColumn.replaceChild(autoMapsButton(true), document.getElementById("offlineFightBtn").parentNode.children[3]);
+	}
+}
+
+
+//Attach to the main UI button
+offlineProgress.originalgetHelpText = offlineProgress.start;
+offlineProgress.start = function () {
+	offlineProgress.originalgetHelpText(...arguments)
+	try {
+		autoMapsBtnTW()
+	}
+	catch (e) { console.log("Loading mutator presets failed " + e, "other") }
+}
+if (usingRealTimeOffline) autoMapsBtnTW();
 
 //Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
 function setupATButtons() {
