@@ -269,8 +269,17 @@ function toggleCatchUpMode() {
 		guiLoopInterval = setInterval(guiLoop, runInterval * 10);
 	}
 
-	if (getPageSetting('timeWarpDisable') && usingRealTimeOffline) return;
-	if (usingRealTimeOffline && !getPageSetting('timeWarpSpeed')) return;
+	if (usingRealTimeOffline) {
+		if (getPageSetting('timeWarpDisable') || !getPageSetting('timeWarpSpeed')) {
+			if (usingRealTimeOffline && atTimeLapseFastLoop) {
+				atTimeLapseFastLoop = false;
+				gameLoop = originalGameLoop;
+				debug("Disabled TW settings", "offline");
+				toggleCatchUpMode();
+			}
+			return;
+		}
+	}
 
 	//Enable Online Mode after Offline mode was enabled
 	if (!usingRealTimeOffline && atTimeLapseFastLoop) {
@@ -387,9 +396,9 @@ function mainLoop() {
 	if (shouldRunTW) {
 		//AutoMaps
 		autoMap();
+		updateAutoMapsStatus(false);
 	}
 	//Status
-	updateAutoMapsStatus(false);
 	//Gather
 	autoGather();
 	//Auto Traps

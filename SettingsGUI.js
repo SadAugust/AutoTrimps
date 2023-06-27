@@ -5140,7 +5140,7 @@ function autoMapsButton(offlineProgress) {
 
 function autoMapsStatusTW() {
 	if (document.getElementById('autoMapStatusTW') !== null) {
-		document.getElementById('autoMapStatusTW').parentNode.removeChild(document.getElementById('autoMapStatusTW'))
+		document.getElementById('autoMapStatusTW').parentNode.removeChild(document.getElementById('autoMapStatusTW'));
 	}
 
 	var whereToPlace = document.getElementById("offlineMapBtns").style.display === 'block' ? "offlineMapBtns" : "offlineZoneBtns"
@@ -5155,6 +5155,7 @@ function autoMapsStatusTW() {
 	document.getElementById(whereToPlace).children[1].insertAdjacentHTML('afterend', '<br>');
 	var u2MutColumn = document.getElementById(whereToPlace);
 	u2MutColumn.replaceChild(autoMapsStatusContainer, document.getElementById(whereToPlace).children[2]);
+	updateAutoMapsStatus(false);
 }
 
 function autoMapsBtnTW() {
@@ -5163,6 +5164,27 @@ function autoMapsBtnTW() {
 		var u2MutColumn = document.getElementById("offlineFightBtn").parentNode;
 		u2MutColumn.replaceChild(autoMapsButton(true), document.getElementById("offlineFightBtn").parentNode.children[3]);
 	}
+
+	if (document.getElementById('offlineInnerWrapper').children[4] === undefined) {
+		var settings = ['timeWarpDisable', 'timeWarpSpeed', 'timeWarpFrequency']
+		var newRow = document.createElement("DIV");
+		newRow.setAttribute("class", "row");
+		newRow.setAttribute("id", "settingBtnTW");
+		newRow.setAttribute("style", "display: block");
+
+		document.getElementById('offlineInnerWrapper').children[3].insertAdjacentHTML('afterend', '<br>');
+		var u2MutColumn = document.getElementById("offlineProgressWrapper").parentNode;
+		u2MutColumn.replaceChild(newRow, document.getElementById("offlineProgressWrapper").parentNode.children[4]);
+
+		for (var item in settings) {
+			var conversion = document.getElementById(settings[item] + "Parent");
+			conversion.setAttribute("style", "display: inline-block; width: 33%;");
+			conversion.setAttribute("style", "display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw;");
+
+			$('#settingBtnTW').append(conversion);
+		}
+	}
+
 }
 
 
@@ -5191,13 +5213,6 @@ offlineProgress.updateMapBtns = function () {
 	}
 	catch (e) { console.log("Loading Time Warp failed " + e, "other") }
 }
-//Make AT button visible on timewarp screen if already in TW when loading AT
-if (usingRealTimeOffline) {
-	autoMapsBtnTW();
-	autoMapsStatusTW();
-}
-
-offlineProgress.leaveMap
 
 //Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
 function setupATButtons() {
