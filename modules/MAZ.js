@@ -1542,8 +1542,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (worshipperFarm) thisSetting.worshipper = parseInt(document.getElementById('windowWorshipper' + x).value, 10);
 		if (voidMap) {
 			thisSetting.maxvoidzone = parseInt(document.getElementById('windowMaxVoidZone' + x).value, 10);
-			thisSetting.hdRatio = parseInt(document.getElementById('windowHDRatio' + x).value, 10);
-			thisSetting.voidHDRatio = parseInt(document.getElementById('windowVoidHDRatio' + x).value, 10);
+			thisSetting.hdRatio = parseFloat(document.getElementById('windowHDRatio' + x).value, 10);
+			thisSetting.voidHDRatio = parseFloat(document.getElementById('windowVoidHDRatio' + x).value, 10);
 			thisSetting.portalAfter = readNiceCheckbox(document.getElementById('windowPortalAfter' + x));
 
 			thisSetting.hdType = document.getElementById('windowHDTypeVoidMap' + x).value;
