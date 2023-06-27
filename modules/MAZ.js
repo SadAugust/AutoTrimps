@@ -562,7 +562,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		else if (insanity) windowSize = 'tooltipWindow55';
 		else if (alchemy) windowSize = 'tooltipWindow70';
 		else if (hypothermia) windowSize = 'tooltipWindow45';
-		else if (voidMap) windowSize = 'tooltipWindow60';
+		else if (voidMap) windowSize = 'tooltipWindow70';
 		else if (worshipperFarm) windowSize = 'tooltipWindow70';
 		else if (smithyFarm) windowSize = 'tooltipWindow70';
 		else if (boneShrine) windowSize = 'tooltipWindow65';
@@ -806,8 +806,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (hdFarm) tooltipText += "<div class='windowHDMult'>HD Mult</div>";
 		if (hdFarm) tooltipText += "<div class='windowHDType'>HD<br/>Type</div>";
 
-		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>HD<br/>Ratio</div>";
-		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>Void HD<br/>Ratio</div>";
+		if (voidMap) tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#1</div>";
+		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#1</div>";
+		if (voidMap) tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#2</div>";
+		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#2</div>";
 		if (!raiding && !smithyFarm && !golden) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br/>Ratio</div>";
 		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'>Repeat<br/>Every</div>";
 		if (boneShrine) tooltipText += "<div class='windowBoneGather'>Gather</div>";
@@ -870,6 +872,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				hdMult: 1,
 				goldenType: 'v',
 				hdType: 'world',
+				hdType2: 'hitsSurvived',
 				goldenNumber: -2,
 			}
 			//Taking data from the current setting and overriding the default values
@@ -931,6 +934,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 				}
 				//Void Maps
 				if (voidMap) {
+					vals.hdType = currSetting[x].hdType ? currSetting[x].hdType : 'world';
+					vals.hdType2 = currSetting[x].hdType2 ? currSetting[x].hdType2 : 'hitsSurvived';
 					vals.maxvoidzone = currSetting[x].maxvoidzone ? currSetting[x].maxvoidzone : 1;
 					vals.hdRatio = currSetting[x].hdRatio ? currSetting[x].hdRatio : 0;
 					vals.voidHDRatio = currSetting[x].voidHDRatio ? currSetting[x].voidHDRatio : 0;
@@ -1023,6 +1028,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var goldenDropdown = mazDropdowns.goldenType;
 			//HD Type
 			var hdTypeDropdown = mazDropdowns.hdType;
+			//HD Type
+			var hdTypeDropdown2 = displayDropdowns(universe, vals, varPrefix, 'hdType2').hdType;
 			//Map Type
 			var mapTypeDropdown = mazDropdowns.mapType;
 
@@ -1176,9 +1183,17 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (boneShrine)
 				tooltipText += "<div class='windowBoneBelow'><input value='" + vals.bonebelow + "' type='number' id='windowBoneBelow" + x + "'/></div>";
 
+			//Void HD Dropdown #1
+			if (voidMap)
+				tooltipText += "<div class='windowHDTypeVoidMap onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.hdType + "' id='windowHDTypeVoidMap" + x + "'>" + hdTypeDropdown + "</select></div>";
+
 			//Run void maps when HD Ratio is above this value
 			if (voidMap)
 				tooltipText += "<div class='windowVoidHDRatio'><input value='" + vals.hdRatio + "' type='number' id='windowHDRatio" + x + "'/></div>";
+
+			//Void HD Dropdown #2
+			if (voidMap)
+				tooltipText += "<div class='windowHDTypeVoidMap onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.hdType2 + "' id='windowHDTypeVoidMap2" + x + "'>" + hdTypeDropdown2 + "</select></div>";
 
 			//Run void maps when Void HD Ratio is above this value
 			if (voidMap)
@@ -1479,19 +1494,24 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		}
 
 		thisSetting.active = readNiceCheckbox(document.getElementById('windowActive' + x));
-		if (!golden) thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
-		if (!golden) thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
-		if (!golden) thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
+		if (!golden) {
+			thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
+			thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
+			thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
+		}
 		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden) thisSetting.level = parseInt(document.getElementById('windowLevel' + x).value, 10);
 		if (smithyFarm || mapBonus) thisSetting.repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
-		if (hdFarm) thisSetting.hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
-		if (hdFarm) thisSetting.hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
-
+		if (hdFarm) {
+			thisSetting.hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
+			thisSetting.hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
+			thisSetting.hdType = document.getElementById('windowHDType' + x).value;
+		}
 		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
 		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
 		if (raiding) thisSetting.raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
-		if (mapFarm || alchemy || mapBonus || insanity) thisSetting.special = document.getElementById('windowSpecial' + x).value;
+
 		if (mapFarm || alchemy || mapBonus || insanity) {
+			thisSetting.special = document.getElementById('windowSpecial' + x).value;
 			if (thisSetting.special === 'hc' || thisSetting.special === 'lc')
 				thisSetting.gather = document.getElementById('windowGather' + x).value;
 			else
@@ -1505,30 +1525,44 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (tributeFarm) thisSetting.tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
 		if (tributeFarm) thisSetting.mets = parseInt(document.getElementById('windowMets' + x).value, 10);
 		if (quagmire) thisSetting.bogs = parseInt(document.getElementById('windowBogs' + x).value, 10);
-		if (insanity) thisSetting.insanity = parseInt(document.getElementById('windowInsanity' + x).value, 10);
-		if (hdFarm) thisSetting.hdType = document.getElementById('windowHDType' + x).value;
-		if (golden) thisSetting.golden = document.getElementById('windowGoldenType' + x).value;
-		if (golden) thisSetting.golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
-		if (alchemy) thisSetting.potion = document.getElementById('windowPotionType' + x).value;
-		if (alchemy) thisSetting.potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
+		if (golden) {
+			thisSetting.golden = document.getElementById('windowGoldenType' + x).value;
+			thisSetting.golden += parseInt(document.getElementById('windowWorld' + x).value, 10);
+		}
+		if (alchemy) {
+			thisSetting.potion = document.getElementById('windowPotionType' + x).value;
+			thisSetting.potion += parseInt(document.getElementById('windowPotionNumber' + x).value, 10);
+		}
 		if (hypothermia) thisSetting.bonfire = parseInt(document.getElementById('windowBonfire' + x).value, 10);
-		if (boneShrine) thisSetting.boneamount = parseInt(document.getElementById('windowBoneAmount' + x).value, 10);
-		if (boneShrine) thisSetting.bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);
+		if (boneShrine) {
+			thisSetting.boneamount = parseInt(document.getElementById('windowBoneAmount' + x).value, 10);
+			thisSetting.bonebelow = parseInt(document.getElementById('windowBoneBelow' + x).value, 10);
+			thisSetting.gather = document.getElementById('windowBoneGather' + x).value;
+		}
 		if (worshipperFarm) thisSetting.worshipper = parseInt(document.getElementById('windowWorshipper' + x).value, 10);
-		if (voidMap) thisSetting.maxvoidzone = parseInt(document.getElementById('windowMaxVoidZone' + x).value, 10);
-		if (voidMap) thisSetting.hdRatio = parseInt(document.getElementById('windowHDRatio' + x).value, 10);
-		if (voidMap) thisSetting.voidHDRatio = parseInt(document.getElementById('windowVoidHDRatio' + x).value, 10);
+		if (voidMap) {
+			thisSetting.maxvoidzone = parseInt(document.getElementById('windowMaxVoidZone' + x).value, 10);
+			thisSetting.hdRatio = parseInt(document.getElementById('windowHDRatio' + x).value, 10);
+			thisSetting.voidHDRatio = parseInt(document.getElementById('windowVoidHDRatio' + x).value, 10);
+			thisSetting.portalAfter = readNiceCheckbox(document.getElementById('windowPortalAfter' + x));
+
+			thisSetting.hdType = document.getElementById('windowHDTypeVoidMap' + x).value;
+			thisSetting.hdType2 = document.getElementById('windowHDTypeVoidMap2' + x).value;
+		}
 		if (tributeFarm) thisSetting.buildings = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 		if (mapFarm || tributeFarm || boneShrine) thisSetting.atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
 		if (smithyFarm) thisSetting.meltingPoint = readNiceCheckbox(document.getElementById('windowMeltingPoint' + x));
-		if (voidMap) thisSetting.portalAfter = readNiceCheckbox(document.getElementById('windowPortalAfter' + x));
 		if (!raiding && !smithyFarm && !golden) thisSetting.jobratio = document.getElementById('windowJobRatio' + x).value;
-		if (boneShrine) thisSetting.gather = document.getElementById('windowBoneGather' + x).value;
-		if (raiding) thisSetting.prestigeGoal = document.getElementById('windowPrestigeGoal' + x).value;
+		if (raiding) {
+			thisSetting.prestigeGoal = document.getElementById('windowPrestigeGoal' + x).value;
+			if (!bionic) thisSetting.raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
+		}
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) thisSetting.runType = document.getElementById('windowRunType' + x).value;
-		if (raiding && !bionic) thisSetting.raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
-		if (insanity) thisSetting.destack = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 
+		if (insanity) {
+			thisSetting.destack = readNiceCheckbox(document.getElementById('windowBuildings' + x));
+			thisSetting.insanity = parseInt(document.getElementById('windowInsanity' + x).value, 10);
+		}
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) {
 			thisSetting.challenge = thisSetting.runType === 'Filler' ? document.getElementById('windowChallenge' + x).value : null;
 			thisSetting.challenge3 = thisSetting.runType === 'C3' ? document.getElementById('windowChallenge3' + x).value : null;
@@ -1764,11 +1798,16 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		//Min Run Zone
 		mazHelp += "<li><b>Min Zone</b> - The lower bound zone to run voids maps on.</li>";
 		//Max Run Zone
-		mazHelp += "<li><b>max Zone</b> - The upper bound zone to run voids maps on.</li>";
+		mazHelp += "<li><b>Max Zone</b> - The upper bound zone to run voids maps on.</li>";
+
+		//Dropdown
+		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met OR you are at the <b>End Zone</b> input for that line. The information relating to each of the dropdowns can be found in the status tooltip.</li>";
+
+		mazHelp += "<li class=\"indent\">If you have selected a <b>HD Ratio</b> and that type of <b>HD Ratio</b> is greater than the value input OR if you've selected one of Auto Level, Hits Survived, Hits Survived Void it will check if the value is lower than that and skip if it is.<br></li>";
 		//HD Ratio to run at
-		mazHelp += "<li><b>HD Ratio</b> - If your HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>";
+		/* mazHelp += "<li><b>HD Ratio</b> - If your HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>";
 		//Void HD Ratio to run at
-		mazHelp += "<li><b>Void HD Ratio</b> - If your Void HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>";
+		mazHelp += "<li><b>Void HD Ratio</b> - If your Void HD Ratio value (can be seen in status tooltip) is greater than this value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.</li>"; */
 		//Portal After
 		mazHelp += "<li><b>Portal After</b> - Will run AutoPortal immediately after this line has run. Won't do anything if AutoPortal is disabled!</b></li>";
 	}
@@ -1776,15 +1815,18 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	if (mapFarm) {
 		//Repeat Count
 
-		mazHelp += "<li><b>Farm Type</b> Map Count - Will run maps until it has reached the specified repeat counter.<br>\
-		Portal Time - Uses DD:HH:MM:SS format and will run maps until the portal time surpasses the time set in repeat counter.<br>\
-		Daily Reset - Uses DD:HH:MM:SS format and will run maps until the daily reset time is below the time set in repeat counter.</li>";
+		mazHelp += "<li><b>Farm Type</b> The different ways that the script can determine how many maps are run.</li>";
+		mazHelp += "<li class=\"indent\"><b>Map Count</b> - Will run maps until it has reached the specified repeat counter.</li>";
+		mazHelp += "<li class=\"indent\"><b>Portal Time</b> - Uses DD:HH:MM:SS format and will run maps until the portal time surpasses the time set in repeat counter.</li>";
+		mazHelp += "<li class=\"indent\"><b>Daily Reset</b> - Uses DD:HH:MM:SS format and will run maps until the daily reset time is below the time set in repeat counter.</li>";
 
 		mazHelp += "<li><b>Map Repeats</b> - How many maps you'd like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be back to manually take over the run.</li>";
 		//Run when HD Ratio above X value
 		mazHelp += "<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in status tooltip) is above this value (and above 0).<br>";
 		//Trimple Map Farm
-		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " during this line. Whilst farming the specified amount of maps for this line it will stop AT purchasing equips until " + trimple + " has been run so that there is no wasted resources.<br>If " + trimple + " has been run then any line with this enabled won't be run." + "</li>";
+		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " once this line has been completed.</li>";
+		mazHelp += "<li class=\"indent\">Whilst farming for this line the script will stop purchasing equips until " + trimple + " has been run so that there are no wasted resources.</li>";
+		mazHelp += "<li class=\"indent\">If " + trimple + " has been run then any line with this enabled won't be run." + "</li>";
 	}
 
 	if (mapBonus) {
@@ -1796,16 +1838,19 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	if (raiding) {
 		//Raiding Zone
 		mazHelp += "<li><b>Raiding Zone</b> - The zone you'd like to raid when this line is run. If \"Repeat Every X\" is set, it will also raise the Raiding zone by X every time. " + (!bionic ? "If your 'Zone' input is 231 then the highest zone you can input is 241." : "") + "</li>";
-		if (!bionic) mazHelp += "<li><b>Frag Type</b> - Frag: General all purpose setting. Will set sliders to max and reduce when necessary to afford the maps you're trying to purchase.<br>\
-	Frag Min: Used for absolute minimum frag costs. Will set everything but the map size to minimum and gradually reduce that if necessary to purchase maps.<br>\
-	Frag Max: This option will make sure that the map has perfect sliders and uses the prestegious special if available.</li>";
+		if (!bionic) mazHelp += "<li><b>Frag Type</b> - The choices how for aggresively the script will spend fragments on maps.</li>";
+		mazHelp += "<li class=\"indent\"><b>Frag</b>: General all purpose setting. Will set sliders to max and reduce when necessary to afford the maps you're trying to purchase.</li>";
+		mazHelp += "<li class=\"indent\"><b>Frag Min</b>: Used for absolute minimum frag costs. Will set everything but the map size to minimum and gradually reduce that if necessary to purchase maps.</li>";
+		mazHelp += "<li class=\"indent\"><b>Frag Max</b>: This option will make sure that the map has perfect sliders and uses the prestegious special if available.</li>";
 	}
 
 	if (hdFarm) {
 		mazHelp += "<li><b>HD Base</b> - What H:D you'd like to reach.</li>";
 		mazHelp += "<li><b>HD Mult</b> - Starting from the zone above the lines initial zone, this setting will multiply the H:D you have set in HD Base. So if your initial zone was 100, HD Base was 10, HD Mult was 1.2, at z101 your H:D target will be 12, then at z102 it will be 14.4 and so on. This way you can account for the zones getting stronger and you will not waste Map Farming for a really low H:D.'</li>";
 
-		mazHelp += "<li><b>HD Type</b> - The type of HD you'd like to target. <br>If <b>Map Level</b> has been selected it will farm until auto level reaches that level. <br>Will only run Void Map lines if you have void maps in your map chamber.</li>";
+		mazHelp += "<li><b>HD Type</b> - The type of HD you'd like to target.</li>";
+		mazHelp += "<li class=\"indent\">If <b>Map Level</b> has been selected it will farm until auto level reaches that level.</li>";
+		mazHelp += "<li class=\"indent\">Will only run Void Map lines if you have void maps in your map chamber.</li>";
 	}
 
 	if (boneShrine) {
@@ -1855,7 +1900,8 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		//Insanity Stacks
 		mazHelp += "<li><b>Insanity</b> - How many Insanity stack you'd like to farm up to during this line.</li>";
 		//Destack toggle setting
-		mazHelp += "<li><b>Destack</b> - Toggle to allow you to run maps that are lower than world level during Insanity. When using this setting Insanity Farm will assume you're destacking and it will aim to reduce your max Insanity to the value in the Insanity field.</li>";
+		mazHelp += "<li><b>Destack</b> - Toggle to allow you to run maps that are lower than world level during Insanity.</li>";
+		mazHelp += "<li class=\"indent\">When enabled Insanity Farm will assume you're destacking and it will aim to reduce your max Insanity to the value in the Insanity field.</li>";
 	}
 
 	if (alchemy) {
@@ -1881,8 +1927,8 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 	if (golden) {
 		//Amount of golden upgrades to get
-		mazHelp += "<li><b>Amount</b> - The amount of golden upgrades to purchase before moving onto the next line.<br>\
-		Setting this input to <b>-1</b> will purchase this golden type infinitely.</li>";
+		mazHelp += "<li><b>Amount</b> - The amount of golden upgrades to purchase before moving onto the next line.</li>";
+		mazHelp += "<li class=\"indent\">Setting this input to <b>-1</b> will purchase this golden type infinitely.</li>";
 		//Golden Type
 		mazHelp += "<li><b>Golden Type</b> - The type of Golden upgrade that you'd like to get during this line.</li>";
 
@@ -2474,7 +2520,7 @@ function dailyModifiersOutput() {
 	return returnText
 }
 
-function displayDropdowns(universe, vals, varPrefix) {
+function displayDropdowns(universe, vals, varPrefix, hdType) {
 
 	if (!universe) universe = game.global.universe;
 	if (!vals) return "Issue with establishing values for dropdowns";
@@ -2484,6 +2530,8 @@ function displayDropdowns(universe, vals, varPrefix) {
 	};
 	var highestZone = universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
 
+	if (!hdType) hdType = "hdType";
+	else hdType = hdType;
 	//Gather dropdown
 	dropdown.gather = "<option value='food'" + ((vals.gather === 'food') ? " selected='selected'" : "") + ">Food</option>\
 		<option value='wood'" + ((vals.gather === 'wood') ? " selected = 'selected'" : "") + " > Wood</option>\
@@ -2491,12 +2539,12 @@ function displayDropdowns(universe, vals, varPrefix) {
 		<option value='science'" + ((vals.gather === 'science') ? " selected = 'selected'" : "") + " > Science</option> "
 
 	//HD Type dropdown
-	dropdown.hdType = "<option value='world'" + ((vals.hdType === 'world') ? " selected='selected'" : "") + ">World</option>\
-		<option value='map'" + ((vals.hdType === 'map') ? " selected = 'selected'" : "") + " >Map</option>\
-		<option value='void'" + ((vals.hdType === 'void') ? " selected = 'selected'" : "") + " >Void</option>\
-		<option value='maplevel'" + ((vals.hdType === 'maplevel') ? " selected = 'selected'" : "") + " >Map Level</option>\
-		<option value='hitsSurvived'" + ((vals.hdType === 'hitsSurvived') ? " selected = 'selected'" : "") + " >Hits Survived</option>\
-		<option value='hitsSurvivedVoid'" + ((vals.hdType === 'hitsSurvivedVoid') ? " selected = 'selected'" : "") + " >Void Hits Survived</option>"
+	dropdown.hdType = "<option value='world'" + ((vals[hdType] === 'world') ? " selected='selected'" : "") + ">World HD Ratio</option>\
+		<option value='map'" + ((vals[hdType] === 'map') ? " selected = 'selected'" : "") + " >Map HD Ratio</option>\
+		<option value='void'" + ((vals[hdType] === 'void') ? " selected = 'selected'" : "") + " >Void HD Ratio</option>\
+		<option value='maplevel'" + ((vals[hdType] === 'maplevel') ? " selected = 'selected'" : "") + " >Map Level</option>\
+		<option value='hitsSurvived'" + ((vals[hdType] === 'hitsSurvived') ? " selected = 'selected'" : "") + " >Hits Survived</option>\
+		<option value='hitsSurvivedVoid'" + ((vals[hdType] === 'hitsSurvivedVoid') ? " selected = 'selected'" : "") + " >Void Hits Survived</option>"
 
 	//Map Type dropdown
 	dropdown.mapType = '';

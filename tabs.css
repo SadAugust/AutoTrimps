@@ -1316,6 +1316,7 @@ ul.tab li a:hover {
 .windowCellVoidMap,
 .windowJobRatioVoidMap,
 .windowRunTypeVoidMap,
+.windowHDTypeVoidMap,
 .windowPortalAfter,
 .windowDefaultVoidMap,
 .windowVoidHDRatio {
@@ -1329,35 +1330,36 @@ ul.tab li a:hover {
 }
 
 .windowActiveVoidMap {
-	width: 7%;
+	width: 5%;
 }
 
 .windowPriorityVoidMap {
-	width: 8%;
+	width: 6%;
 }
 
 .windowWorldVoidMap {
-	width: 9%;
+	width: 6%;
 }
 
 .windowMaxVoidZone {
-	width: 9%;
+	width: 6%;
 }
 
-.windowDefaultVoidMap {
-	width: 12%;
+.windowDefaultVoidMap,
+.windowHDTypeVoidMap {
+	width: 11%;
 }
 
 .windowVoidHDRatio {
-	width: 9%;
+	width: 7%;
 }
 
 .windowCellVoidMap {
-	width: 9%;
+	width: 6%;
 }
 
 .windowPortalAfter {
-	width: 6%;
+	width: 5%;
 }
 
 .windowJobRatioVoidMap {
@@ -1365,7 +1367,7 @@ ul.tab li a:hover {
 }
 
 .windowRunTypeVoidMap {
-	width: 24%;
+	width: 20%;
 }
 
 .windowChallengeOnVoidMap .windowChallengeVoidMap,
@@ -1377,7 +1379,7 @@ ul.tab li a:hover {
 .windowChallenge3OnVoidMap .windowRunTypeVoidMap,
 .windowChallengeOnVoidMap .windowRunTypeVoidMap {
 	display: inline-block;
-	width: 12%;
+	width: 8%;
 }
 
 .windowChallengeOffVoidMap .windowChallengeVoidMap,
@@ -1385,7 +1387,7 @@ ul.tab li a:hover {
 	display: none;
 }
 
-
+/* Golden */
 .windowDeleteAutoGolden,
 .windowActiveAutoGolden,
 .windowAmtAutoGolden,
@@ -1585,6 +1587,11 @@ ul.tab li a:hover {
 .toggleConfigBtnLocal div span {
 	line-height: 1.2em;
 	font-size: 1.1em;
+}
+
+li.indent {
+	list-style-type: square;
+	margin-left: 1vw;
 }
 
 /* Portal Screen CSS overrides */

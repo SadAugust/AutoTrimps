@@ -430,7 +430,7 @@ function zoneGoCheck(setting, farmType) {
 			if (mapSettings.mapName === 'Smithless Farm') return zoneDetails;
 		}
 		if (farmType === 'health') {
-			if (hdStats.hitsSurvived < getPageSetting('equipCutOffHS')) return zoneDetails;
+			if (whichHitsSurvived() < getPageSetting('equipCutOffHS')) return zoneDetails;
 			//Farming for health means we should prio health equips 
 			if (mapSettings.shouldHealthFarm) return zoneDetails;
 			//Since having to use equality will lower our damage then we want more health to reduce equality usage

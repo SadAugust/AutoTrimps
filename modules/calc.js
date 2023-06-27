@@ -346,6 +346,11 @@ function targetHitsSurvived() {
 	return hitsSurvived;
 }
 
+function whichHitsSurvived() {
+	const hitsSurvived = mapSettings.voidHitsSurvived ? hdStats.hitsSurvivedVoid : hdStats.hitsSurvived;
+	return hitsSurvived;
+}
+
 function addPoison(realDamage, zone) {
 	//Init
 	if (!zone) zone = game.global.world;

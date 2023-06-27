@@ -357,6 +357,9 @@ function voidMaps() {
 
 	var settingIndex = null;
 
+	var dropdowns = ['hdRatio', 'voidHDRatio'];
+	var hdTypes = ['hdType', 'hdType2']
+
 	//Reset void HD Index if not on the right portal/zone/cell as it was initially run.
 	if (module.voidHDIndex !== Infinity && module.voidHDInfo !== (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2))) module.voidHDIndex = Infinity;
 
@@ -372,8 +375,21 @@ function voidMaps() {
 		else if (!settingShouldRun(currSetting, world, 0)) continue;
 		for (var x = 0; x < zoneAddition + 1; x++) {
 			//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value. Will automatically run voids if HD Ratio on next zone is too high! aka can't gamma burst
-			if ((maxVoidZone === game.global.world) || (game.global.world - world >= 0 &&
-				(currSetting.hdRatio < hdStats.vhdRatio || currSetting.voidHDRatio < hdStats.vhdRatioVoid || (hdStats.vhdRatioVoid * 100) < hdStats.vhdRatioVoidPlus))) {
+			skipLine = 0;
+			for (var item in dropdowns) {
+				if (currSetting[hdTypes[item]] === 'void' && currSetting[dropdowns[item]] > hdStats.vhdRatioVoid) skipLine++;
+				else if (currSetting[hdTypes[item]] === 'map' && currSetting[dropdowns[item]] > hdStats.hdRatioMap) skipLine++;
+				else if (currSetting[hdTypes[item]] === 'world' && currSetting[dropdowns[item]] > hdStats.vhdRatio) skipLine++;
+
+				else if (currSetting[hdTypes[item]] === 'hitsSurvived' && currSetting[dropdowns[item]] < hdStats.hitsSurvived) skipLine++;
+				else if (currSetting[hdTypes[item]] === 'hitsSurvivedVoid' && currSetting[dropdowns[item]] < hdStats.hitsSurvivedVoid) skipLine++;
+				else if (currSetting[hdTypes[item]] === 'maplevel' && currSetting[dropdowns[item]] < hdStats.autoLevel) skipLine++;
+			}
+			if (skipLine === 2) continue;
+
+
+
+			if (maxVoidZone === game.global.world || game.global.world - world >= 0) {
 				settingIndex = y;
 				break;
 			}
@@ -457,6 +473,7 @@ function voidMaps() {
 		farmingDetails.repeat = false;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
+		farmingDetails.voidHitsSurvived = true;
 	}
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
@@ -469,6 +486,7 @@ function voidMaps() {
 		module.portalAfterVoids = false;
 		module.voidTrigger = 'None';
 		module.voidFarm = false;
+		mapSettings.voidHitsSurvived = false;
 		//Setting portal zone to current zone if setting calls for it
 		if (portalAfter) MODULES.mapFunctions.portalZone = game.global.world;
 	}
@@ -2790,12 +2808,13 @@ function hdFarm(skipHealthCheck) {
 	var mapAutoLevel = Infinity;
 
 	var settingIndex = null;
-	if (getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm) {
+	if (rHDFDefaultSetting.active && !shouldHealthFarm) {
 		for (var y = 0; y < baseSettings.length; y++) {
 			const currSetting = baseSettings[y];
 			const world = currSetting.world;
 			if (!settingShouldRun(currSetting, world, 0)) continue;
 			if (currSetting.hdType.toLowerCase().includes('void') && game.global.totalVoidMaps === 0) continue;
+			if (skipHealthCheck && currSetting.hdType.includes('hitsSurvived')) continue;
 			settingIndex = y;
 			break;
 		}
@@ -2894,7 +2913,7 @@ function hdFarm(skipHealthCheck) {
 		if (((mapSettings.mapName === mapName && !shouldMap) || shouldSkip) && hdStats.hdRatio !== Infinity) {
 			if (!shouldSkip) mappingDetails(mapName, mapLevel, mapSpecial, hdRatio, equipfarmdynamicHD(setting), hdType);
 			if (getPageSetting('spamMessages').map_Skip && shouldSkip) {
-				if (hdType === 'hitsSurvived') debug("Hits Survived (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
+				if (hdType.includes('hitsSurvived')) debug("Hits Survived (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as Hits Survived goal has been met (" + hitsSurvived.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
 				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
 				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + setting.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
 			}
@@ -2924,12 +2943,15 @@ function hdFarm(skipHealthCheck) {
 		farmingDetails.autoLevel = setting.autoLevel;
 		farmingDetails.special = mapSpecial;
 		farmingDetails.jobRatio = jobRatio;
+
+		farmingDetails.hdType = hdType;
 		farmingDetails.hdRatio = equipfarmdynamicHD(setting);
 		farmingDetails.hdRatio2 = hdRatio;
 		farmingDetails.repeat = true;
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
 		farmingDetails.shouldHealthFarm = shouldHealthFarm;
+		farmingDetails.voidHitsSurvived = hdType === 'hitsSurvivedVoid';
 	}
 
 	return farmingDetails;
@@ -3680,7 +3702,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	}
 
 	else if (mapName === 'Hits Survived') {
-		message += " Finished with hits survived at  " + prettify(hdStats.hitsSurvived) + "/" + targetHitsSurvived() + "."
+		message += " Finished with hits survived at  " + prettify(whichHitsSurvived()) + "/" + targetHitsSurvived() + "."
 	}
 
 	else if (mapName === 'HD Farm' && extra !== null) {

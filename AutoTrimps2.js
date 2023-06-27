@@ -1,5 +1,5 @@
 var MODULES_AT = {
-	ATversion: 'SadAugust v6.3.13',
+	ATversion: 'SadAugust v6.3.14',
 	atscript: document.getElementsByTagName("script"),
 	basepath: '',
 	modulepath: 'modules/'
@@ -104,11 +104,11 @@ function ATscriptLoad(a, b) {
 		debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(MODULES_AT.modulepath, \'example.js\'); ');
 		return;
 	}
-	var c = document.createElement('script');
+	var script = document.createElement('script');
 	if (null === a) a = '';
-	c.src = MODULES_AT.basepath + a + b + '.js';
-	c.id = b + '_MODULE';
-	document.head.appendChild(c);
+	script.src = MODULES_AT.basepath + a + b + '.js';
+	script.id = b + '_MODULE';
+	document.head.appendChild(script);
 }
 
 function ATscriptUnload(a) {

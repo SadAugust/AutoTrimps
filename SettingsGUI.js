@@ -5778,6 +5778,23 @@ function updateATVersion() {
 				if (tempSettings.equipPrestige.valueU2 !== 0) autoTrimpSettings['equipPrestige'].valueU2++;
 			}
 		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.14') {
+
+			var settings_List = ['voidMapSettings']
+			var values = ['value', 'valueU2'];
+			for (var x = 0; x < settings_List.length; x++) {
+				for (var z = 0; z < values.length; z++) {
+					if (typeof (autoTrimpSettings[settings_List[x]][values[z]][0]) !== 'undefined') {
+						for (var y = 0; y < autoTrimpSettings[settings_List[x]][values[z]].length; y++) {
+							autoTrimpSettings[settings_List[x]][values[z]][y].hdType = 'world';
+							autoTrimpSettings[settings_List[x]][values[z]][y].hdType2 = 'void';
+						}
+					}
+					saveSettings();
+				}
+			}
+		}
 	}
 
 	autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
