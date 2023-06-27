@@ -43,8 +43,14 @@ function updateAutoMapsStatus(get) {
 		return [status, getPercent, lifetime];
 	}
 
+	if (usingRealTimeOffline && document.getElementById('autoMapStatusTW') !== null && document.getElementById('autoMapStatusTW').innerHTML !== status) {
+		document.getElementById('autoMapStatusTW').innerHTML = "Auto Maps Status - " + status;
+		document.getElementById('autoMapStatusTW').setAttribute("onmouseover", makeAutomapStatusTooltip());
+	}
+
 	if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
 	document.getElementById('autoMapStatus').setAttribute("onmouseover", makeAutomapStatusTooltip());
+
 	if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
 	document.getElementById('hiderStatus').setAttribute("onmouseover", makeResourceTooltip());
 }

@@ -5138,6 +5138,25 @@ function autoMapsButton(offlineProgress) {
 	return autoMapsContainer;
 }
 
+function autoMapsStatusTW() {
+	if (document.getElementById('autoMapStatusTW') !== null) {
+		document.getElementById('autoMapStatusTW').parentNode.removeChild(document.getElementById('autoMapStatusTW'))
+	}
+
+	var whereToPlace = document.getElementById("offlineMapBtns").style.display === 'block' ? "offlineMapBtns" : "offlineZoneBtns"
+
+	//Status textbox
+	var autoMapsStatusContainer = document.createElement("DIV");
+	autoMapsStatusContainer.id = 'autoMapStatusTW';
+	autoMapsStatusContainer.setAttribute("class", "noselect");
+	autoMapsStatusContainer.setAttribute("style", "display: block; font-size: 1.25vw; text-align: center; background-color: rgba(0,0,0,0.3);");
+	autoMapsStatusContainer.setAttribute("onmouseout", 'tooltip("hide")');
+
+	document.getElementById(whereToPlace).children[1].insertAdjacentHTML('afterend', '<br>');
+	var u2MutColumn = document.getElementById(whereToPlace);
+	u2MutColumn.replaceChild(autoMapsStatusContainer, document.getElementById(whereToPlace).children[2]);
+}
+
 function autoMapsBtnTW() {
 	if (document.getElementById('autoMapBtnTW') === null) {
 		document.getElementById('offlineExtraBtnsContainer').children[2].insertAdjacentHTML('afterend', '<br>');
@@ -5152,11 +5171,33 @@ offlineProgress.originalgetHelpText = offlineProgress.start;
 offlineProgress.start = function () {
 	offlineProgress.originalgetHelpText(...arguments)
 	try {
-		autoMapsBtnTW()
+		autoMapsBtnTW();
+		autoMapsStatusTW();
 	}
-	catch (e) { console.log("Loading mutator presets failed " + e, "other") }
+	catch (e) { console.log("Loading Time Warp failed " + e, "other") }
 }
-if (usingRealTimeOffline) autoMapsBtnTW();
+//Make AT button visible on timewarp screen if already in TW when loading AT
+if (usingRealTimeOffline) {
+	autoMapsBtnTW();
+	autoMapsStatusTW();
+}
+
+//Attach to the main UI button
+offlineProgress.originalupdateMapBtns = offlineProgress.updateMapBtns;
+offlineProgress.updateMapBtns = function () {
+	offlineProgress.originalupdateMapBtns(...arguments)
+	try {
+		autoMapsStatusTW();
+	}
+	catch (e) { console.log("Loading Time Warp failed " + e, "other") }
+}
+//Make AT button visible on timewarp screen if already in TW when loading AT
+if (usingRealTimeOffline) {
+	autoMapsBtnTW();
+	autoMapsStatusTW();
+}
+
+offlineProgress.leaveMap
 
 //Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
 function setupATButtons() {

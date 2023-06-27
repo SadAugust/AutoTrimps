@@ -387,9 +387,9 @@ function mainLoop() {
 	if (shouldRunTW) {
 		//AutoMaps
 		autoMap();
-		//Status
-		updateAutoMapsStatus(false);
 	}
+	//Status
+	updateAutoMapsStatus(false);
 	//Gather
 	autoGather();
 	//Auto Traps
