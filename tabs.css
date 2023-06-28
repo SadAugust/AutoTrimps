@@ -1642,4 +1642,21 @@ li.indent {
 	padding-top: 2vw;
 }
 
+#offlineInnerWrapper {
+	width: 50%;
+	margin-left: 25%;
+	font-size: 1.5vw;
+	padding-top: 6%;
+}
+
+#settingsRowTW {
+	position: fixed;
+	bottom: 0;
+	background-color: #545353;
+	width: 100%;
+	left: 0;
+	color: white;
+	z-index: 7;
+}
+
 /* New stuff goes here */

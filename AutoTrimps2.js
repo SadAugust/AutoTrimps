@@ -5,6 +5,15 @@ var MODULES_AT = {
 	modulepath: 'modules/'
 };
 
+//Implement new div into the offlineWrapper to hold the settings bar we introduce when in offline mode.
+if (document.getElementById('settingsRowTW') === null) {
+	var settingBarRow = document.createElement("DIV");
+	settingBarRow.setAttribute("id", "settingsRowTW");
+	document.getElementById('offlineWrapper').children[0].insertAdjacentHTML('afterend', '<br>');
+	var offlineWrapperParent = document.getElementById("offlineInnerWrapper").parentNode;
+	offlineWrapperParent.replaceChild(settingBarRow, document.getElementById("offlineInnerWrapper").parentNode.children[1]);
+}
+
 //Searches html for where the AT script is being loaded from
 function loadAT() {
 	for (var y = 0; y < MODULES_AT.atscript.length; y++) {

@@ -36,10 +36,10 @@ function createTabContents(tabName, tabDescription, addTabsDiv) {
 	e.setAttribute("style", "font-size: 1.2vw;"), e.appendChild(document.createTextNode(tabDescription)), d.appendChild(e), elem.appendChild(d), addTabsDiv.appendChild(elem);
 }
 
-function toggleTab(a, b) {
+function toggleTab(a, tabName) {
 	-1 < a.currentTarget.className.indexOf(" active")
-		? ((document.getElementById(b).style.display = "none"), (a.currentTarget.className = a.currentTarget.className.replace(" active", "")))
-		: ((document.getElementById(b).style.display = "block"), (a.currentTarget.className += " active"));
+		? ((document.getElementById(tabName).style.display = "none"), (a.currentTarget.className = a.currentTarget.className.replace(" active", "")))
+		: ((document.getElementById(tabName).style.display = "block"), (a.currentTarget.className += " active"));
 }
 
 function minimizeAllTabs() {
@@ -59,13 +59,14 @@ function maximizeAllTabs() {
 }
 
 function initializeAllTabs() {
+
 	var addTabsDiv;
 	var addtabsUL;
 
 	addTabsDiv = document.createElement('div');
 	addtabsUL = document.createElement('ul');
-	addtabsUL.className = "tab";
 	addtabsUL.id = 'autoTrimpsTabBarMenu';
+	addtabsUL.className = "tab";
 	addtabsUL.style.display = "none";
 	var sh = document.getElementById("settingsRow");
 	sh.insertBefore(addtabsUL, sh.childNodes[2]);
@@ -3857,6 +3858,10 @@ function updateButtonText() {
 
 	document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btnValue === 2 ? 3 : btnValue));
 	document.getElementById('autoJobLabel').innerHTML = btn.name()[btnValue];
+	if (document.getElementById('autoJobLabelTW') !== null) {
+		document.getElementById('autoJobLabelTW').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btnValue === 2 ? 3 : btnValue));
+		document.getElementById('autoJobLabelTW').innerHTML = btn.name()[btnValue];
+	}
 
 	var id = 'equipOn';
 	var btnValue = getPageSetting(id);
@@ -3894,7 +3899,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u2Setting) autoTrimpSettings[id].enabledU2 = loaded === undefined ? (defaultValue || false) : typeof loaded.enabledU2 === 'undefined' ? loaded : loaded.enabledU2;
 			if (require) autoTrimpSettings[id].require = require;
 		}
-		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
 		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].enabled);
 		btn.setAttribute("onclick", 'settingChanged("' + id + '")');
@@ -3918,7 +3922,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined || loaded === null ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
 			if (require) autoTrimpSettings[id].require = require;
 		}
-		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
 		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name()}", "${type === 'multiValue'}", "${type === 'valueNegative'}")`);
@@ -3941,7 +3944,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
 			if (require) autoTrimpSettings[id].require = require;
 		}
-		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
 		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name()}", ${type === 'multiTextValue'})`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
@@ -4023,7 +4025,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
 			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
 		}
-		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
 		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].value);
 		btn.setAttribute("onclick", 'settingChanged("' + id + '")');
@@ -4065,7 +4066,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
 			if (require) autoTrimpSettings[id].require = require;
 		}
-		//btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute('onclick', list);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
@@ -4087,7 +4087,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			};
 			if (require) autoTrimpSettings[id].require = require;
 		}
-		//btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute('onclick', defaultValue);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
@@ -4120,7 +4119,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 }
 
 function settingChanged(id, currUniverse) {
-	autoMapsBtn = id === 'autoMapsToggle';
+	var autoMapsBtn = id === 'autoMapsToggle';
 	if (autoMapsBtn) {
 		id = 'autoMaps';
 		currUniverse = true;
@@ -4141,6 +4140,7 @@ function settingChanged(id, currUniverse) {
 		}
 		if (id === 'buildingsType') {
 			document.getElementById('autoStructureLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + btn[enabled]);
+			if (document.getElementById('autoStructureLabelTW') !== null) document.getElementById('autoStructureLabelTW').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + btn[enabled]);
 		}
 		if (id === "c2disableFinished") modifyParentNodeUniverseSwap();
 
@@ -4170,6 +4170,10 @@ function settingChanged(id, currUniverse) {
 		if (id === 'jobType') {
 			document.getElementById('autoJobLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
 			document.getElementById('autoJobLabel').innerHTML = btn.name()[btn[value]];
+			if (document.getElementById('autoJobLabelTW') !== null) {
+				document.getElementById('autoJobLabelTW').parentNode.setAttribute('class', 'toggleConfigBtn noselect settingsBtn  settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
+				document.getElementById('autoJobLabelTW').innerHTML = btn.name()[btn[value]];
+			}
 		}
 		if (id === 'dailyPortal') {
 			document.getElementById(btn.id).setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (btn[value] === 2 ? 3 : btn[value]));
@@ -4177,7 +4181,7 @@ function settingChanged(id, currUniverse) {
 		if (id === 'autoMaps' && btn[value] !== 2) {
 			//Use regular class for AutoMaps button UNLESS we are in TW then use special case to make it look prettier!
 			document.getElementById('autoMapBtn').setAttribute('class', 'noselect settingsBtn settingBtn' + btn[value])
-			document.getElementById('autoMapBtnTW').setAttribute('class', 'btn btn-lg btn-warning offlineExtraBtn settingsBtn settingBtn' + btn[value]);
+			if (document.getElementById('autoMapBtnTW') !== null) document.getElementById('autoMapBtnTW').setAttribute('class', 'btn btn-lg offlineExtraBtn settingsBtn settingBtn' + btn[value]);
 		}
 	}
 
@@ -4871,6 +4875,27 @@ function autoSetText(id, multiValue) {
 }
 
 function autoToggle(what) {
+
+	//Changing where buttons are placed depending on TW status.
+	if (usingRealTimeOffline) {
+		if (document.getElementById("autoTrimpsTabBarMenu").parentNode.id === 'settingsRow') {
+			document.getElementById("settingsRowTW").appendChild(document.getElementById("autoTrimpsTabBarMenu"));
+			document.getElementById("settingsRowTW").appendChild(document.getElementById("autoSettings"));
+
+			document.getElementById('autoTrimpsTabBarMenu').style.display = 'none';
+			document.getElementById('autoSettings').style.display = 'none';
+		}
+	}
+	else {
+		if (document.getElementById("autoTrimpsTabBarMenu").parentNode.id === 'settingsRowTW') {
+			document.getElementById("settingsRow").appendChild(document.getElementById("autoTrimpsTabBarMenu"));
+			document.getElementById("settingsRow").appendChild(document.getElementById("autoSettings"));
+
+			document.getElementById('autoTrimpsTabBarMenu').style.display = 'none';
+			document.getElementById('autoSettings').style.display = 'none';
+		}
+	}
+
 	if (what) {
 		var $what = document.getElementById(what);
 		if ($what.style.display === 'block') {
@@ -4889,11 +4914,13 @@ function autoToggle(what) {
 		var $item = document.getElementById('autoTrimpsTabBarMenu');
 		if ($item.style.display === 'block')
 			$item.style.display = 'none';
-		else $item.style.display = 'block';
+		else
+			$item.style.display = 'block';
 		var $item = document.getElementById('autoSettings');
 		if ($item.style.display === 'block')
 			$item.style.display = 'none';
-		else $item.style.display = 'block';
+		else
+			$item.style.display = 'block';
 	}
 	updateCustomButtons();
 }
@@ -5124,26 +5151,15 @@ function settingUniverse(setting) {
 	}
 }
 
-function autoMapsButton(offlineProgress) {
-	//Auto Maps button
-	var autoMapsContainer = document.createElement("DIV");
-	if (offlineProgress) autoMapsContainer = document.createElement("DIV");
-	autoMapsContainer.setAttribute("id", "autoMapBtnTW");
-	autoMapsContainer.setAttribute("class", "btn btn-lg btn-warning offlineExtraBtn settingsBtn settingBtn" + settingUniverse('autoMaps'));
-	autoMapsContainer.setAttribute("onClick", "settingChanged('autoMapsToggle', true);");
-	autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Auto Maps\", \"customText\", event, autoTrimpSettings.autoMaps.description(true))');
-	autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
-	autoMapsContainer.innerHTML = 'Auto Maps';
-
-	return autoMapsContainer;
-}
-
+//Setting up the Auto Maps status inside of Time Warp.
 function autoMapsStatusTW() {
+	//Remove the status textbox if it already exists.
 	if (document.getElementById('autoMapStatusTW') !== null) {
 		document.getElementById('autoMapStatusTW').parentNode.removeChild(document.getElementById('autoMapStatusTW'));
 	}
 
-	var whereToPlace = document.getElementById("offlineMapBtns").style.display === 'block' ? "offlineMapBtns" : "offlineZoneBtns"
+	//The position of the status textbox is based on if we're mapping or not mapping as each one has a different CSS position.
+	var whereToPlace = document.getElementById("offlineMapBtns").style.display === 'block' ? "offlineMapBtns" : "offlineZoneBtns";
 
 	//Status textbox
 	var autoMapsStatusContainer = document.createElement("DIV");
@@ -5152,66 +5168,175 @@ function autoMapsStatusTW() {
 	autoMapsStatusContainer.setAttribute("style", "display: block; font-size: 1.25vw; text-align: center; background-color: rgba(0,0,0,0.3);");
 	autoMapsStatusContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
+	//Place it at the bottom of the appropriate (left hand side )
 	document.getElementById(whereToPlace).children[1].insertAdjacentHTML('afterend', '<br>');
-	var u2MutColumn = document.getElementById(whereToPlace);
-	u2MutColumn.replaceChild(autoMapsStatusContainer, document.getElementById(whereToPlace).children[2]);
+	var autoMapsStatusSection = document.getElementById(whereToPlace);
+	autoMapsStatusSection.replaceChild(autoMapsStatusContainer, document.getElementById(whereToPlace).children[2]);
 	updateAutoMapsStatus(false);
 }
 
-function autoMapsBtnTW() {
+function setupTimeWarpAT() {
+	//Add the Time Warp settings to the right hand side section.
+	autoMapsStatusTW();
+
+	//Remove the automaps button if it already exists.
+	if (document.getElementById('autoMapBtnTW') !== null) {
+		document.getElementById('autoMapBtnTW').parentNode.removeChild(document.getElementById('autoMapBtnTW'));
+	}
+
+	//Add the AutoMaps button to the right hand side section.
 	if (document.getElementById('autoMapBtnTW') === null) {
 		document.getElementById('offlineExtraBtnsContainer').children[2].insertAdjacentHTML('afterend', '<br>');
-		var u2MutColumn = document.getElementById("offlineFightBtn").parentNode;
-		u2MutColumn.replaceChild(autoMapsButton(true), document.getElementById("offlineFightBtn").parentNode.children[3]);
+		var offlineExtraBtnsContainer = document.getElementById("offlineFightBtn").parentNode;
+		offlineExtraBtnsContainer.replaceChild(autoMapsButton(true), document.getElementById("offlineFightBtn").parentNode.children[3]);
 	}
 
+	//Integrate the 3 AT TimeWarp related settings beneath the main UI.
+	//AT Settings, AT Auto Jobs, AT AutoStructure
 	if (document.getElementById('offlineInnerWrapper').children[4] === undefined) {
-		var settings = ['timeWarpDisable', 'timeWarpSpeed', 'timeWarpFrequency']
-		var newRow = document.createElement("DIV");
-		newRow.setAttribute("class", "row");
-		newRow.setAttribute("id", "settingBtnTW");
-		newRow.setAttribute("style", "display: block");
+		//Creating the row for the AT buttons that will be shown.
+		var settingsRow = document.createElement("DIV");
+		settingsRow.setAttribute("class", "row");
+		settingsRow.setAttribute("id", "settingBtnTW");
+		settingsRow.setAttribute("style", "display: block");
 
 		document.getElementById('offlineInnerWrapper').children[3].insertAdjacentHTML('afterend', '<br>');
-		var u2MutColumn = document.getElementById("offlineProgressWrapper").parentNode;
-		u2MutColumn.replaceChild(newRow, document.getElementById("offlineProgressWrapper").parentNode.children[4]);
+		var offlineProgressParent = document.getElementById("offlineProgressWrapper").parentNode;
+		offlineProgressParent.replaceChild(settingsRow, document.getElementById("offlineProgressWrapper").parentNode.children[4]);
 
-		for (var item in settings) {
-			var conversion = document.getElementById(settings[item] + "Parent");
-			conversion.setAttribute("style", "display: inline-block; width: 33%;");
-			conversion.setAttribute("style", "display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw;");
 
-			$('#settingBtnTW').append(conversion);
+
+		//AutoJobs button.
+		var autoJobs = true;
+		if (autoJobs) {
+			//Creating parent button
+			var jobSetting = getPageSetting('jobType')
+			var atJobInitial = document.createElement("DIV");
+			atJobInitial.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
+			atJobInitial.setAttribute("id", "autoJobTWParent");
+			//Setting up mouseover & class, style
+			var atJobContainer = document.createElement("DIV");
+			atJobContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;");
+			atJobContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + (jobSetting === 2 ? 3 : jobSetting));
+			atJobContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoJobs\", \"customText\", event, autoTrimpSettings.jobType.description())');
+			atJobContainer.setAttribute("onmouseout", 'tooltip("hide")');
+			//Text
+			var atJobText = document.createElement("DIV");
+			atJobText.innerHTML = autoTrimpSettings.jobType.name()[jobSetting];
+			atJobText.setAttribute("id", "autoJobLabelTW");
+			atJobText.setAttribute("onClick", "settingChanged('jobType', true)");
+			//Creating cogwheel & linking onclick
+			var atJobSettings = document.createElement("DIV");
+			atJobSettings.setAttribute('onclick', 'MAZLookalike("Configure AT AutoJobs", "a", "AutoJobs")');
+			var atJobSettingsButton = document.createElement("SPAN");
+			atJobSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+			//Linking all the elements together and attaching them to the settings TW row.
+			atJobContainer.appendChild(atJobText);
+			atJobContainer.appendChild(atJobSettings);
+			atJobSettings.appendChild(atJobSettingsButton);
+			atJobInitial.appendChild(atJobContainer);
+			$('#settingBtnTW').append(atJobInitial);
+		}
+
+		//AutoTrimp Settings button.
+		var autoTrimpsSettings = true;
+		if (autoTrimpsSettings) {
+
+			//Creating parent button
+			var atSettingsInitial = document.createElement("DIV");
+			atSettingsInitial.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
+			atSettingsInitial.setAttribute("id", "atSettingsTW");
+
+			//Setting up mouseover & class, style
+			var atSettingsContainer = document.createElement("DIV");
+			atSettingsContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;");
+			atSettingsContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn4');
+			atSettingsContainer.innerHTML = 'AutoTrimp Settings';
+			atSettingsContainer.setAttribute("onClick", "autoToggle()");
+			atSettingsContainer.setAttribute("onmouseover", 'tooltip(\"AutoTrimp Settings\", \"customText\", event, \"Click to open the AutoTrimps Settings menu.\")');
+			atSettingsContainer.setAttribute("onmouseout", 'tooltip("hide")');
+
+			//Linking all the elements together and attaching them to the settings TW row.
+			atSettingsInitial.appendChild(atSettingsContainer);
+			$('#settingBtnTW').append(atSettingsInitial);
+		}
+
+		//AutoStructure Button.
+		var autoStructure = true;
+		if (autoStructure) {
+
+			//Creating parent button
+			var autoStructureBtnParent = document.createElement("DIV");
+			autoStructureBtnParent.setAttribute('style', 'display: inline-block; vertical-align: top; margin-left: 0.5vw; margin-top: 0.25vw; margin-bottom: 1vw; width: 16.382vw; border-color: #5D5D5D;');
+			autoStructureBtnParent.setAttribute("id", "autoStructureLabelTWParent");
+
+			//Setting up mouseover & class, style
+			var atStructureContainer = document.createElement("DIV");
+			atStructureContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;");
+			atStructureContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + settingUniverse('buyBuildings'));
+			atStructureContainer.setAttribute("onmouseover", 'tooltip(\"Toggle AutoStructure\", \"customText\", event, autoTrimpSettings.buildingsType.description())');
+			atStructureContainer.setAttribute("onmouseout", 'tooltip("hide")');
+
+			//Text
+			var atStructureText = document.createElement("DIV");
+			atStructureText.innerHTML = 'AT AutoStructure';
+			atStructureText.setAttribute("id", "autoStructureLabelTW");
+			atStructureText.setAttribute("onClick", "settingChanged('buildingsType', true)");
+
+			//Creating cogwheel & linking onclick
+			var atStructureSettings = document.createElement("DIV");
+			atStructureSettings.setAttribute('onclick', 'MAZLookalike("Configure AT AutoStructure", "a", "AutoStructure")');
+			var atStructureSettingsButton = document.createElement("SPAN");
+			atStructureSettingsButton.setAttribute('class', 'glyphicon glyphicon-cog');
+
+			//Linking all the elements together and attaching them to the settings TW row.
+			atStructureContainer.appendChild(atStructureText);
+			atStructureContainer.appendChild(atStructureSettings);
+			atStructureSettings.appendChild(atStructureSettingsButton);
+			autoStructureBtnParent.appendChild(atStructureContainer);
+			document.getElementById('settingBtnTW').append(autoStructureBtnParent);
 		}
 	}
+}
 
+function autoMapsButton() {
+	//Auto Maps button
+	var autoMapsContainer = document.createElement("DIV");
+	autoMapsContainer.setAttribute("id", "autoMapBtnTW");
+	autoMapsContainer.setAttribute("class", "btn btn-lg offlineExtraBtn settingsBtn settingBtn" + settingUniverse('autoMaps'));
+	autoMapsContainer.setAttribute("onClick", "settingChanged('autoMapsToggle', true);");
+	autoMapsContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Auto Maps\", \"customText\", event, autoTrimpSettings.autoMaps.description(true))');
+	autoMapsContainer.setAttribute("onmouseout", 'tooltip("hide")');
+	autoMapsContainer.innerHTML = 'Auto Maps';
+
+	return autoMapsContainer;
 }
 
 
-//Attach to the main UI button
-offlineProgress.originalgetHelpText = offlineProgress.start;
+//Attach AT related buttons to the main TW UI.
+//Will attach AutoMaps, AutoMaps Status, AutoTrimps Settings, AutoJobs, AutoStructure
+offlineProgress.originalStart = offlineProgress.start;
 offlineProgress.start = function () {
-	offlineProgress.originalgetHelpText(...arguments)
+	offlineProgress.originalStart(...arguments)
 	try {
-		autoMapsBtnTW();
-		autoMapsStatusTW();
+		setupTimeWarpAT();
 	}
 	catch (e) { console.log("Loading Time Warp failed " + e, "other") }
 }
-//Make AT button visible on timewarp screen if already in TW when loading AT
-if (usingRealTimeOffline) {
-	autoMapsBtnTW();
-	autoMapsStatusTW();
-}
-
-//Attach to the main UI button
+//Attach AutoMaps status information to the main TW UI - lefthand side frame whenever the mapBtns function is called.
+//This has to be here otherwise when the mapping situation of the save changes it won't display the status.
 offlineProgress.originalupdateMapBtns = offlineProgress.updateMapBtns;
 offlineProgress.updateMapBtns = function () {
 	offlineProgress.originalupdateMapBtns(...arguments)
 	try {
 		autoMapsStatusTW();
 	}
-	catch (e) { console.log("Loading Time Warp failed " + e, "other") }
+	catch (e) { console.log("Loading AutoMaps TW Status failed " + e, "other") }
+}
+
+//Make AT button visible on timewarp screen if already in TW when loading AT
+if (usingRealTimeOffline) {
+	setupTimeWarpAT();
 }
 
 //Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
