@@ -180,13 +180,15 @@ function autoGenerator() {
 
 	//Daily
 	if (hdStats.isDaily && getPageSetting("AutoGenDC") !== 0) {
-		changeGeneratorState(getPageSetting("AutoGenDC"));
+		if (game.global.generatorMode !== getPageSetting("AutoGenDC"))
+			changeGeneratorState(getPageSetting("AutoGenDC"));
 		return;
 	}
 
 	//C2
 	if (hdStats.isC3 && getPageSetting("AutoGenC2") !== 0) {
-		changeGeneratorState(getPageSetting("AutoGenC2"));
+		if (game.global.generatorMode !== getPageSetting("AutoGenC2"))
+			changeGeneratorState(getPageSetting("AutoGenC2"));
 		return;
 	}
 
@@ -198,12 +200,15 @@ function autoGenerator() {
 			if (game.global.world === 230 && game.global.lastClearedCell < 14) beforeFuelState = 1;
 			if (game.global.magmaFuel === getGeneratorFuelCap(false, true)) beforeFuelState = 0;
 		}
-		changeGeneratorState(beforeFuelState);
+		if (game.global.generatorMode !== beforeFuelState)
+			changeGeneratorState(beforeFuelState);
 	}
 
 	//Fuel
-	else if (getPageSetting("fuelend") > 0 && game.global.world < getPageSetting("fuelend"))
-		changeGeneratorState(1);
+	else if (getPageSetting("fuelend") > 0 && game.global.world < getPageSetting("fuelend")) {
+		if (game.global.generatorMode !== 1)
+			changeGeneratorState(1);
+	}
 
 	//After Fuel
 	else {
@@ -213,6 +218,7 @@ function autoGenerator() {
 			if (game.global.world === 230 && game.global.lastClearedCell < 14) afterFuelState = 1;
 			if (game.global.magmaFuel === getGeneratorFuelCap(false, true)) afterFuelState = 0;
 		}
-		changeGeneratorState(afterFuelState);
+		if (game.global.generatorMode !== afterFuelState)
+			changeGeneratorState(afterFuelState);
 	}
 }
