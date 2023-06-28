@@ -44,7 +44,7 @@ function updateAutoMapsStatus(get) {
 	}
 
 	if (usingRealTimeOffline && document.getElementById('autoMapStatusTW') !== null && document.getElementById('autoMapStatusTW').innerHTML !== status) {
-		document.getElementById('autoMapStatusTW').innerHTML = "Auto Maps Status - " + status;
+		document.getElementById('autoMapStatusTW').innerHTML = "Auto Maps Status<br>" + status;
 		document.getElementById('autoMapStatusTW').setAttribute("onmouseover", makeAutomapStatusTooltip());
 	}
 

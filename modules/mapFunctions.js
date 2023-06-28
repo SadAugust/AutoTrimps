@@ -2929,7 +2929,7 @@ function hdFarm(skipHealthCheck) {
 		if (shouldHealthFarm || hdType.includes('hitsSurvived')) {
 			if (hdType === 'hitsSurvivedVoid') status += 'Void&nbsp;';
 			status += 'Hits&nbsp;Survived to:&nbsp;' + equipfarmdynamicHD(setting).toFixed(2) + '<br>';
-			status += 'Current:&nbsp;' + hitsSurvived.toFixed(2);
+			status += 'Current:&nbsp;' + prettify(hitsSurvived.toFixed(2));
 		} else {
 			status += 'HD&nbsp;Farm&nbsp;to:&nbsp;';
 			if (hdType !== 'maplevel') status += equipfarmdynamicHD(setting).toFixed(2) + '<br>Current&nbsp;HD:&nbsp;' + hdRatio.toFixed(2);

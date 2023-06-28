@@ -5153,6 +5153,12 @@ function settingUniverse(setting) {
 
 //Setting up the Auto Maps status inside of Time Warp.
 function autoMapsStatusTW() {
+
+	if (typeof updateAutoMapsStatus !== 'function' || typeof isDoingSpire !== 'function') {
+		setTimeout(autoMapsStatusTW, 100);
+		console.log("Retrying to setup AutoMaps status in Time Warp.")
+		return;
+	};
 	//Remove the status textbox if it already exists.
 	if (document.getElementById('autoMapStatusTW') !== null) {
 		document.getElementById('autoMapStatusTW').parentNode.removeChild(document.getElementById('autoMapStatusTW'));
