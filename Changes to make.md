@@ -39,11 +39,6 @@
      - Also does AT keep heirlooms of heigher quality then selected? I have my quality set to magnificent with any,any,any,any as the modfies I got a popup that an etheral shield dropped but my inventory is empty, does it only keep the exact rarity you select and throw away higher rarity? I really want it to at least keep anything that higher rarity then what I have.
        - keinniemand
        - https://discord.com/channels/371177798305447938/371348913036197899/1120953178104528896
-
-   - C2 Portal
-     - Also can you add an option to autoportal if you spend more then x amount of time in a zone, I think that could be usefull for automatically determing when to portal in C2s.
-       - keinniemand
-       - https://discord.com/channels/371177798305447938/371348913036197899/1119527684167454810
  
    - Respec
      - Also for spire can you add a way to let it automatically do a respec to the spire respec perky profile after you're done farming?

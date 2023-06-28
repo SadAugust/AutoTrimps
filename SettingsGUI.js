@@ -3732,13 +3732,20 @@ function initializeAllSettings() {
 			}, 'action', 'game.permaBoneBonuses.boosts.charges=10; game.permaBoneBonuses.boosts.updateBtn();', null, 'Test', [0]);
 
 		createSetting('testMetalOneDay',
-			function () { return ('1 day of metal') },
+			function () { return ('1 day of Metal') },
 			function () {
 				var description = "<p>Will tell you how much metal you'd gain from 1 day of metal farming.</p>";
 				description += "<p>If in a map if will use your map level otherwise it'll assume world level maps.</p>";
 				description += "<p>Assumes killing at max speed and factors overkill into the calculations.</p>";
 				return description;
 			}, 'action', 'testMetalIncome();', null, 'Test', [0]);
+
+		createSetting('testTimeWarp',
+			function () { return ('1 day of Time Warp') },
+			function () {
+				var description = "<p>Will put you into a 1 day long Time Warp.</p>";
+				return description;
+			}, 'action', 'testTimeWarp();', null, 'Test', [0]);
 
 		createSetting('testTotalEquipmentCost',
 			function () { return ('Total Equipment Cost') },

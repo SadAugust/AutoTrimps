@@ -264,6 +264,17 @@ function survive(formation = "S", critPower = 2, ignoreArmy) {
 	return (newSquadRdy && notSpire && healthier > harm2) || (health - missingHealth > harm);
 }
 
+function checkStanceSetting() {
+	var settingPrefix = challengeActive('Daily') ? 'd' : '';
+	if ((getPageSetting('UseScryerStance')) || (game.global.mapsActive && getCurrentMapObject().location === 'Void' && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps'))) useScryerStance();
+	else {
+		windStance();
+		autoStance();
+		autoStanceD();
+	}
+	return;
+}
+
 function autoStance() {
 	calcBaseDamageInX();
 	if (getPageSetting('AutoStance') !== 1) return;

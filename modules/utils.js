@@ -533,6 +533,19 @@ function debugPrettifyMap(map) {
 	return `[${map.id}]${descriptor}`;
 }
 
+//Will activate a 24 hour timewarp.
+function testTimeWarp() {
+
+	game.global.lastOnline -= 8.64e+7;
+	game.global.portalTime -= 8.64e+7;
+	game.global.zoneStarted -= 8.64e+7;
+	game.global.lastSoldierSentAt -= 8.64e+7;
+	game.global.lastSkeletimp -= 8.64e+7;
+
+	offlineProgress.start();
+	return;
+}
+
 //DO NOT RUN CODE BELOW THIS LINE -- PURELY FOR TESTING PURPOSES
 function testSpeedX(interval) {
 	//Game uses 100ms for 1 second, so 5ms is 20x speed;

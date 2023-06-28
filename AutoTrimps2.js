@@ -324,6 +324,7 @@ function toggleCatchUpMode() {
 			mapSettings = farmingDecision();
 			autoMap();
 			callBetterAutoFight();
+			if (game.global.universe === 1) checkStanceSetting();
 			if (game.global.universe === 2) equalityManagement();
 		}
 		debug("TimeLapse Mode Enabled", "offline");
@@ -486,13 +487,7 @@ function mainLoopU1() {
 	if (game.global.mapsUnlocked && challengeActive('Daily') && getPageSetting('avoidEmpower') && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidEmpower();
 
 	//Stance
-	var settingPrefix = challengeActive('Daily') ? 'd' : '';
-	if ((getPageSetting('UseScryerStance')) || (game.global.mapsActive && getCurrentMapObject().location === 'Void' && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps'))) useScryerStance();
-	else {
-		windStance();
-		autoStance();
-		autoStanceD();
-	}
+	checkStanceSetting();
 
 	//Spire
 	exitSpireCell();
