@@ -122,7 +122,6 @@ function ATscriptUnload(a) {
 ATscriptLoad(MODULES_AT.modulepath, 'utils');
 
 function initializeAutoTrimps() {
-	loadPageVariables();
 	// Load jQuery
 	(function () {
 		// Load the script
@@ -140,6 +139,7 @@ function initializeAutoTrimps() {
 		// Append the script to the document
 		document.head.appendChild(script);
 	})();
+	loadPageVariables();
 	ATscriptLoad('', 'SettingsGUI');
 	var script = document.createElement('script');
 	script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
@@ -216,7 +216,7 @@ function swapBaseSettings() {
 }
 
 function delayStartAgain() {
-	if (typeof mappingDetails !== 'function' || typeof setupATButtons !== 'function') {
+	if (typeof mappingDetails !== 'function' || typeof setupATButtons !== 'function' || typeof isDoingSpire !== 'function') {
 		console.log("Modules not loaded yet. Waiting 100ms to try loading again.")
 		setTimeout(delayStartAgain, 100);
 		return;

@@ -375,7 +375,8 @@ function voidMaps() {
 		else if (!settingShouldRun(currSetting, world, 0)) continue;
 		for (var x = 0; x < zoneAddition + 1; x++) {
 			//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value. Will automatically run voids if HD Ratio on next zone is too high! aka can't gamma burst
-			skipLine = 0;
+
+			var skipLine = 0;
 			for (var item in dropdowns) {
 				if (currSetting[hdTypes[item]] === 'void' && currSetting[dropdowns[item]] > hdStats.vhdRatioVoid) skipLine++;
 				else if (currSetting[hdTypes[item]] === 'map' && currSetting[dropdowns[item]] > hdStats.hdRatioMap) skipLine++;
@@ -385,7 +386,7 @@ function voidMaps() {
 				else if (currSetting[hdTypes[item]] === 'hitsSurvivedVoid' && currSetting[dropdowns[item]] < hdStats.hitsSurvivedVoid) skipLine++;
 				else if (currSetting[hdTypes[item]] === 'maplevel' && currSetting[dropdowns[item]] < hdStats.autoLevel) skipLine++;
 			}
-			if (skipLine === 2) continue;
+			if (skipLine === 2 && maxVoidZone !== game.global.world) continue;
 
 
 
