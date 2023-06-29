@@ -163,7 +163,7 @@ function cheapestEquipmentCost() {
 	return [equipmentName, nextEquipmentCost, prestigeName, nextLevelPrestigeCost]
 }
 
-function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipForLevels, fakeLevels = {}, ignorePrestiges) {
+function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipForLevels, equipHighlight, fakeLevels = {}, ignorePrestiges) {
 
 	for (var i in equipmentList) {
 		if (typeof fakeLevels[i] === 'undefined') {
@@ -271,7 +271,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		//Skips buying shields when you can afford bonfires on Hypothermia.
 		if (challengeActive('Hypothermia') && i === 'Shield' && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) continue;
 		//Skips through equips if they cost more than your equip purchasing percent setting value.
-		if (!canAffordBuilding(i, null, null, true, false, 1, resourceSpendingPct * 100) && !maybeBuyPrestige.purchase) continue;
+		if (!equipHighlight && !canAffordBuilding(i, null, null, true, false, 1, resourceSpendingPct * 100) && !maybeBuyPrestige.purchase) continue;
 		//Skips equips if we have prestiges available & no prestiges to get for this
 		if (prestigesAvailable && forcePrestige && maybeBuyPrestige.prestigeDone) continue;
 		//If prestiges available & running certain setting skips (check above for loop) look at non-prestige item stats.
@@ -664,7 +664,7 @@ function estimateEquipsForZone(rEFIndex) {
 
 
 	while (healthNeeded > 0) {
-		var bestArmor = mostEfficientEquipment(1, true, true, false, bonusLevels, true)[1];
+		var bestArmor = mostEfficientEquipment(1, true, true, false, false, bonusLevels, true)[1];
 		healthNeeded -= game.equipment[bestArmor][equipmentList[bestArmor].Stat + "Calculated"];
 		if (typeof bonusLevels[bestArmor] === 'undefined') {
 			bonusLevels[bestArmor] = 0;
@@ -674,7 +674,7 @@ function estimateEquipsForZone(rEFIndex) {
 		}
 	}
 	while (attackNeeded > 0) {
-		var bestWeapon = mostEfficientEquipment(1, true, true, false, bonusLevels, true)[0];
+		var bestWeapon = mostEfficientEquipment(1, true, true, false, false, bonusLevels, true)[0];
 		attackNeeded -= game.equipment[bestWeapon][equipmentList[bestWeapon].Stat + "Calculated"];
 		if (typeof bonusLevels[bestWeapon] === 'undefined') {
 			bonusLevels[bestWeapon] = 0;
@@ -728,7 +728,7 @@ function displayMostEfficientEquipment() {
 	for (var item in game.equipment) {
 		if (game.equipment[item].locked) continue;
 		if (item === "Shield") continue;
-		var bestBuys = mostEfficientEquipment(1, null, true);
+		var bestBuys = mostEfficientEquipment(1, false, true, false, true);
 		var equipType = equipmentList[item].Stat;
 		var $eqNamePrestige = null;
 		if (game.upgrades[equipmentList[item].Upgrade].locked === 0) {

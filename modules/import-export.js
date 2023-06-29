@@ -522,6 +522,7 @@ function resetAutoTrimps(a, b) {
 					updateCustomButtons(true),
 					saveSettings(),
 					updateATVersion(),
+					MODULES["graphs"].themeChanged(),
 					(ATrunning = !0),
 					localStorage.perkyInputs = (autoTrimpSettings.autoAllocatePresets.value),
 					localStorage.surkyInputs = (autoTrimpSettings.autoAllocatePresets.valueU2),

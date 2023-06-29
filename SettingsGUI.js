@@ -1,9 +1,12 @@
 //Creates a new div element, gives it an id, sets the style to display:none, and then appends it to the settingsRow div.
 //Div for the settings menu
 function automationMenuSettingsInit() {
-	var a = document.getElementById("settingsRow"),
-		b = document.createElement("DIV");
-	(b.id = "autoSettings"), b.setAttribute("style", "display: none; max-height: 92.5vh;overflow: auto;"), b.setAttribute("class", "niceScroll"), a.appendChild(b);
+	var a = document.getElementById("settingsRow");
+	b = document.createElement("DIV");
+	b.id = "autoSettings";
+	b.setAttribute("style", "display: none; max-height: 92.5vh;overflow: auto;");
+	b.setAttribute("class", "niceScroll");
+	a.appendChild(b);
 }
 
 automationMenuSettingsInit();
@@ -1231,6 +1234,24 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
+
+		//Desolation Prestige Scumming
+		//Currently only visible to select people for testing purposes.
+		//Should be functional but can't be sure until it has been tested.
+		createSetting('desolationSettings',
+			function () { return ('Desolation Settings') },
+			function () {
+				var description = "<p>Here you can select how and when you would like to prestige scum gear whilst on desolation.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				return description;
+			}, 'mazArray', [], 'MAZLookalike("Desolation Gear Scumming", "Desolation", "MAZ")', 'C2', [1, 2],
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require() && (getPageSetting('gameUser') === 'SadAugust' || getPageSetting('gameUser') === 'Kyotie' || getPageSetting('gameUser') === 'Charles')) });
+		createSetting('desolationDefaultSettings',
+			function () { return ('Deso: Settings') },
+			function () { return ('Contains arrays for this setting') },
+			'mazDefaultArray', { active: false }, null, 'C2', [1, 2],
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require() && (getPageSetting('gameUser') === 'SadAugust' || getPageSetting('gameUser') === 'Kyotie' || getPageSetting('gameUser') === 'Charles')) });
 
 		//Smithless
 		createSetting('smithless',
@@ -3951,6 +3972,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
 			if (require) autoTrimpSettings[id].require = require;
 		}
+		btn.setAttribute("style", "font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
 		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name()}", ${type === 'multiTextValue'})`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
@@ -3975,8 +3997,10 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		}
 		var btn = document.createElement("select");
 		btn.id = id;
-		if (game.options.menu.darkTheme.enabled === 2) btn.setAttribute("style", "color: #C8C8C8; font-size: 1.0vw;");
-		else btn.setAttribute("style", "color:black; font-size: 1.0vw;");
+		if (game.options.menu.darkTheme.enabled === 2)
+			btn.setAttribute("style", "color: #C8C8C8; font-size: 1.0vw;");
+		else
+			btn.setAttribute("style", "color:black; font-size: 1.0vw;");
 		btn.setAttribute("class", "noselect");
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
@@ -4007,11 +4031,11 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				universe: universe
 			};
 		}
+		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute("onclick", 'ImportExportTooltip(\'' + defaultValue + '\', \'update\')');
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
 		btn.innerHTML = name();
 		if (require) autoTrimpSettings[id].require = require;
 		//btnParent.style.width = '';
@@ -4073,11 +4097,11 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
 			if (require) autoTrimpSettings[id].require = require;
 		}
+		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute('onclick', list);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
 		btn.innerHTML = name();
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
@@ -4094,11 +4118,11 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			};
 			if (require) autoTrimpSettings[id].require = require;
 		}
+		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute('onclick', defaultValue);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
-		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
 		btn.innerHTML = name();
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
@@ -4283,7 +4307,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("stormStacks", radonon);
 	modifyParentNode("pandemoniumSwapZone", radonon);
 	modifyParentNode("glassStacks", radonon);
-	modifyParentNode("desolationSwapZone", radonon);
+	modifyParentNode("desolationSettings", radonon);
 
 	//Buildings
 	modifyParentNode("autGigaDeltaFactor", radonoff);
@@ -5767,25 +5791,35 @@ function updateATVersion() {
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.7') {
-			autoTrimpSettings['avoidEmpower'].value = tempSettings.avoidempower.value;
-			autoTrimpSettings['buyheliumy'].valueU2 = tempSettings.buyradony.valueU2;
+			if (tempSettings.avoidempower !== undefined)
+				autoTrimpSettings['avoidEmpower'].value = tempSettings.avoidempower.value;
+			if (tempSettings.buyradony !== undefined)
+				autoTrimpSettings['buyheliumy'].valueU2 = tempSettings.buyradony.valueU2;
 
 
-			autoTrimpSettings['heHrDontPortalBefore'].value = tempSettings.HeHrDontPortalBefore.value;
-			autoTrimpSettings['heHrDontPortalBefore'].valueU2 = tempSettings.HeHrDontPortalBefore.valueU2;
-			autoTrimpSettings['heliumHrBuffer'].value = tempSettings.HeliumHrBuffer.value;
-			autoTrimpSettings['heliumHrBuffer'].valueU2 = tempSettings.HeliumHrBuffer.valueU2;
-			autoTrimpSettings['heliumHrPortal'].value = tempSettings.HeliumHrPortal.value;
-			autoTrimpSettings['heliumHrPortal'].valueU2 = tempSettings.HeliumHrPortal.valueU2;
-			autoTrimpSettings['pauseScript'].enabled = tempSettings.PauseScript.enabled;
-			autoTrimpSettings['autoEggs'].enabled = tempSettings.AutoEggs.enabled;
+			if (tempSettings.HeHrDontPortalBefore !== undefined) {
+				autoTrimpSettings['heHrDontPortalBefore'].value = tempSettings.HeHrDontPortalBefore.value;
+				autoTrimpSettings['heHrDontPortalBefore'].valueU2 = tempSettings.HeHrDontPortalBefore.valueU2;
+			}
+			if (tempSettings.HeliumHrBuffer !== undefined) {
+				autoTrimpSettings['heliumHrBuffer'].value = tempSettings.HeliumHrBuffer.value;
+				autoTrimpSettings['heliumHrBuffer'].valueU2 = tempSettings.HeliumHrBuffer.valueU2;
+			}
+			if (tempSettings.HeliumHrPortal !== undefined) {
+				autoTrimpSettings['heliumHrPortal'].value = tempSettings.HeliumHrPortal.value;
+				autoTrimpSettings['heliumHrPortal'].valueU2 = tempSettings.HeliumHrPortal.valueU2;
+			}
+			if (tempSettings.PauseScript !== undefined)
+				autoTrimpSettings['pauseScript'].enabled = tempSettings.PauseScript.enabled;
+			if (tempSettings.AutoEggs !== undefined)
+				autoTrimpSettings['autoEggs'].enabled = tempSettings.AutoEggs.enabled;
 
-			autoTrimpSettings['avoidEmpower'].enabled = tempSettings.avoidempower.enabled;
-			autoTrimpSettings['buyheliumy'].valueU2 = tempSettings.buyradony.valueU2;
-
-			autoTrimpSettings['firstGigastation'].value = tempSettings.FirstGigastation.value;
-			autoTrimpSettings['deltaGigastation'].value = tempSettings.DeltaGigastation.value;
-			autoTrimpSettings['autoGigas'].enabled = tempSettings.AutoGigas.enabled;
+			if (tempSettings.FirstGigastation !== undefined)
+				autoTrimpSettings['firstGigastation'].value = tempSettings.FirstGigastation.value;
+			if (tempSettings.DeltaGigastation !== undefined)
+				autoTrimpSettings['deltaGigastation'].value = tempSettings.DeltaGigastation.value;
+			if (tempSettings.AutoGigas !== undefined)
+				autoTrimpSettings['autoGigas'].enabled = tempSettings.AutoGigas.enabled;
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.8') {

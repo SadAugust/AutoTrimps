@@ -2587,6 +2587,7 @@ function hypothermia() {
 }
 
 MODULES.mapFunctions.challengeContinueRunning = false;
+MODULES.mapFunctions.desolationGearScum = false;
 
 function desolation(forceDestack) {
 
@@ -2649,6 +2650,7 @@ function desolation(forceDestack) {
 			break;
 		}
 		if (game.global.mapsActive && getCurrentMapObject().level !== game.global.world + mapLevel) {
+			debug("???????")
 			recycleMap_AT();
 		}
 		equality = true;
@@ -2683,6 +2685,115 @@ function desolation(forceDestack) {
 	if (mapSettings.mapName === mapName && !farmingDetails.shouldRun) {
 		mappingDetails(mapName, mapLevel, mapSpecial);
 		resetMapVars();
+	}
+	return farmingDetails;
+}
+
+function desolationGearScum() {
+
+	const mapName = 'Desolation Gear Scum';
+	const farmingDetails = {
+		shouldRun: false,
+		mapName: mapName
+	};
+
+	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
+
+	const defaultSettings = getPageSetting('desolationDefaultSettings');
+
+	if (!defaultSettings.active) return farmingDetails;
+	const baseSettings = getPageSetting('desolationSettings');
+	var settingIndex = null;
+
+
+	for (var y = 0; y < baseSettings.length; y++) {
+		//Skip iterating lines if map bonus is capped.
+		const currSetting = baseSettings[y];
+		//Set cell ourselves since there is no input and you don't need to do this before c100. If you're overkilling you definitely don't need this setting.
+		currSetting.cell = 100;
+		var targetPrestige = currSetting.prestigeGoal !== 'All' ? equipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
+		var world = currSetting.world - 1;
+		if (!settingShouldRun(currSetting, world, 0)) continue;
+
+		//Checks to see what our actual zone should be
+		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
+			var raidZones = currSetting.world;
+			var times = currSetting.repeatevery;
+			var repeats = Math.round((game.global.world - currSetting.world) / times);
+			if (repeats > 0) raidZones += (times * repeats);
+		}
+		//Skips if we don't have the required prestige available.
+		if (equipsToGet(raidZones, targetPrestige)[0] <= 0) continue;
+		if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
+			settingIndex = y;
+			break;
+		}
+	}
+
+	if ((settingIndex !== null && settingIndex >= 0) || MODULES.mapFunctions.desolationGearScum) {
+
+		setting = baseSettings[settingIndex];
+		var special;
+		var jobRatio;
+		var gather;
+		var mapLevel = 1;
+		if (settingIndex !== null && settingIndex >= 0) {
+			special = getAvailableSpecials(setting.special);
+			jobRatio = setting.jobratio;
+			gather = setting.gather;
+		}
+
+		var shouldMap = false;
+		//Check if a max attack+gamma burst can clear the improb.
+		//If it can't continue as normal, if it can then we start the +1 map for prestige scumming.
+		//Need to set it to destack before doing this so there's no chance of messing up the scum by neeeding to destack as soon as you hit the next zone.
+		var enemyHealth = game.global.gridArray[99].health;
+		var equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
+		var ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);
+		var gammaDmg = gammaBurstPct;
+		var ourDmgTotal = (ourDmg * gammaDmg) * 5;
+
+		//Identify how much damage we can do in 5 gamma bursts. If this value is greater than the improb health then we can clear it and we should start the map.
+		if ((game.global.lastClearedCell + 2 === 100 && ourDmgTotal > enemyHealth) || MODULES.mapFunctions.desolationGearScum) {
+			shouldMap = true;
+		}
+
+		//Disabling the need to map if we are at the right conditions.
+		//Correct map level
+		//Have already cleared cell #1 in the map so it won't recycle
+		//If these are met then we should just return to world and set a condition to finish this at the start of the next zone.
+		if ((settingIndex !== null && settingIndex >= 0) && shouldMap && game.global.currentMapId !== '' && getCurrentMapCell().level > 3 && getCurrentMapObject().level === game.global.world + mapLevel) {
+			shouldMap = false;
+			MODULES.mapFunctions.desolationGearScum = true;
+			//Exit map if we're in it so that we don't clear the map.
+			if (game.global.mapsActive) {
+				debug("Desolation Gear Scum - Exiting map to ensure we don't complete this map before the start of the next zone.")
+				mapsClicked(true);
+			}
+		}
+
+		const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
+
+		//Marking setting as complete if we've run enough maps.
+		if (mapSettings.mapName === mapName && MODULES.mapFunctions.desolationGearScum && (game.global.currentMapId === '' || prestigeList.indexOf(game.global.mapGridArray[getCurrentMapObject().size - 1].special) === -1)) {
+			debug(mapName + " (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") desolation gear scumming was successful.", 'map_Details');
+			resetMapVars();
+			shouldMap = false;
+			saveSettings();
+			MODULES.mapFunctions.desolationGearScum = false;
+		}
+
+		var status = 'Desolation Prestige Scumming';
+		var repeat = true;
+		farmingDetails.shouldRun = shouldMap;
+		farmingDetails.mapName = mapName;
+		farmingDetails.mapLevel = mapLevel;
+		farmingDetails.jobRatio = jobRatio;
+		farmingDetails.special = special;
+		farmingDetails.gather = gather;
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
+		farmingDetails.settingIndex = settingIndex;
 	}
 	return farmingDetails;
 }
@@ -2741,7 +2852,7 @@ function smithless() {
 		}
 
 		ourDmgTenacity *= getZoneMinutes() > 100 ? 1 : 1.5;
-		if (equipsToGet((game.global.world + mapLevel)) > 0) ourDmgTenacity *= 1000;
+		if (equipsToGet(game.global.world + mapLevel)[0] > 0) ourDmgTenacity *= 1000;
 
 		var totalDmgTenacity = ((ourDmgTenacity * regularHits) + (ourDmgTenacity * gammaDmg * gammas))
 
@@ -3009,12 +3120,13 @@ function farmingDecision() {
 
 	if (game.global.universe === 2) {
 		//Will push the mappingDetails message to indicate farming is finished before moving onto next stage. If destacking it will also recycle the map!
-		if (mapSettings.mapName.includes('Desolation') && MODULES.mapFunctions.challengeContinueRunning && game.challenges.Desolation.chilled === 0) {
+		if (mapSettings.mapName.includes('Desolation Destacking') && MODULES.mapFunctions.challengeContinueRunning && game.challenges.Desolation.chilled === 0) {
 			desolation(true);
 		}
 
 		//U2 map settings to check for.
 		mapTypes = [
+			desolationGearScum(),
 			desolation(MODULES.mapFunctions.challengeContinueRunning),
 			quest(),
 			pandemoniumDestack(),
@@ -3048,7 +3160,7 @@ function farmingDecision() {
 	}
 
 	//If in desolation then check if we should destack before farming.
-	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && getPageSetting('desolation') && (MODULES.mapFunctions.challengeContinueRunning || (game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation')))) {
+	if (farmingDetails.mapName !== '' && challengeActive('Desolation') && getPageSetting('desolation') && !MODULES.mapFunctions.desolationGearScum && (MODULES.mapFunctions.challengeContinueRunning || (game.challenges.Desolation.chilled > 0 && !farmingDetails.mapName.includes('Desolation Destacking')))) {
 		var desolationCheck = desolation(true);
 		if (desolationCheck.shouldRun) farmingDetails = desolationCheck;
 	}

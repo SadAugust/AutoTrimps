@@ -534,6 +534,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 	//Farming Settings
 	else if (event === 'MAZ') {
+
+		//If you're adding a new setting here make sure to add it to the mazSettings variable at the start of mainLoop() in AutoTrimps2.js
+		//If you don't it'll instantly get resized to a super small version of itself when you open the setting.
 		var mapFarm = titleText.includes('Map Farm');
 		var mapBonus = titleText.includes('Map Bonus');
 		var voidMap = titleText.includes('Void Map');
@@ -544,6 +547,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var insanity = titleText.includes('Insanity Farm');
 		var alchemy = titleText.includes('Alchemy Farm');
 		var hypothermia = titleText.includes('Hypothermia Farm');
+		var desolation = titleText.includes('Desolation');
 		var boneShrine = titleText.includes('Bone Shrine');
 		var golden = titleText.includes('Golden');
 		var tributeFarm = titleText.includes('Tribute Farm');
@@ -562,6 +566,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		else if (insanity) windowSize = 'tooltipWindow55';
 		else if (alchemy) windowSize = 'tooltipWindow70';
 		else if (hypothermia) windowSize = 'tooltipWindow45';
+		else if (desolation) windowSize = 'tooltipWindow50';
 		else if (voidMap) windowSize = 'tooltipWindow70';
 		else if (worshipperFarm) windowSize = 'tooltipWindow70';
 		else if (smithyFarm) windowSize = 'tooltipWindow70';
@@ -586,7 +591,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				<div class='row windowRow'>Default Values</div>\
 				<div class='row windowRow titles'>\
 				<div class='windowActive" + varPrefix + "\'>Active</div>";
-			if (!boneShrine) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
+			if (!boneShrine && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
 			if (mapFarm) tooltipText += "<div class='windowRepeat'>Map<br/>Repeats</div>";
 			if (worshipperFarm) {
 				tooltipText += "<div class='windowWorshipperSkip'>Enable<br />Skip</div>";
@@ -601,7 +606,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowBoneGather'>Gather</div>";
 			}
 			if (!raiding && !smithyFarm) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br />Ratio</div>";
-			if (mapFarm || alchemy || mapBonus || insanity) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
+			if (mapFarm || alchemy || mapBonus || insanity || desolation) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
 			if (tributeFarm || smithyFarm || mapFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>";
 			if (raiding && !bionic) {
 				tooltipText += "<div class='windowRecycle'>Recycle</div>";
@@ -638,7 +643,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			//Reading info from each setting and setting up the default values object with necessary data
 			defaultVals.active = defaultSetting.active ? defaultSetting.active : false;
-			if (!boneShrine) defaultVals.cell = defaultSetting.cell ? defaultSetting.cell : 81;
+			if (!boneShrine && !desolation) defaultVals.cell = defaultSetting.cell ? defaultSetting.cell : 81;
 
 			if (boneShrine) {
 				defaultVals.autoBone = defaultSetting.autoBone ? defaultSetting.autoBone : false;
@@ -649,10 +654,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (!raiding && !smithyFarm)
 				defaultVals.jobratio = defaultSetting.jobratio ? defaultSetting.jobratio : '1,1,1,1';
 
-			if (mapFarm || alchemy || boneShrine || mapBonus)
+			if (mapFarm || alchemy || boneShrine || mapBonus || desolation)
 				defaultVals.gather = defaultSetting.gather ? defaultSetting.gather : '0';
 
-			if (mapFarm || alchemy || mapBonus || insanity)
+			if (mapFarm || alchemy || mapBonus || insanity || desolation)
 				defaultVals.special = defaultSetting.special ? defaultSetting.special : '0';
 
 			if (mapFarm || mapBonus) defaultVals.repeat = defaultSetting.repeat ? defaultSetting.repeat : '0';
@@ -702,12 +707,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var defaultmapTypeDropdown = defaultDropdowns.mapType;
 
 			const defaultTooltip = true;
-
 			//Setting up the tooltip for base settings
 			if (defaultTooltip) {
 				tooltipText += "<div id='windowRow' class='row windowRow'>";
 				tooltipText += "<div class='windowActive" + varPrefix + "\' style='text-align: center;'>" + buildNiceCheckbox("windowActiveDefault", null, defaultVals.active) + "</div>";
-				if (!boneShrine) tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.cell + "' type='number' id='windowCellDefault'/></div>";
+				if (!boneShrine && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.cell + "' type='number' id='windowCellDefault'/></div>";
 				if (mapFarm || mapBonus)
 					tooltipText += "<div class='windowRepeat'><input value='" + defaultVals.repeat + "' type='number' id='windowRepeatDefault'/></div>";
 				if (worshipperFarm) {
@@ -728,7 +732,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
 				if (boneShrine)
 					tooltipText += "<div class='windowBoneGather'><select value='" + defaultVals.gather + "' id='windowBoneGatherDefault'>" + defaultGatherDropdown + "</select></div>";
-				if (mapFarm || alchemy || mapBonus || insanity)
+				if (mapFarm || alchemy || mapBonus || insanity || desolation)
 					tooltipText += "<div class='windowSpecial" + varPrefix + "\'><select value='" + defaultVals.special + "' id='windowSpecialDefault'>" + defaultSpecialsDropdown + "</select></div>";
 				if (hypothermia) {
 					tooltipText += "<div class='windowFrozenCastle'><input value='" + defaultVals.frozencastle + "' type='text' id='windowFrozenCastleDefault'/></div>";
@@ -774,14 +778,14 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (golden) tooltipText += "<div class='windowActiveAutoGolden'>Active?</div>";
 		if (!voidMap && !golden && !boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Start<br/>Zone</div>";
 		if (boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Zone</div>";
-		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>";
+		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>";
 		if (golden) tooltipText += "<div class='windowAmtAutoGolden'>Amount</div>";
 		if (voidMap) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Min Zone</div>";
 		if (voidMap) tooltipText += "<div class='windowMaxVoidZone'>Max Zone</div>";
 		if (raiding) tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'>Raiding<br/>Zone</div>";
-		if (!golden) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
+		if (!golden && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm) tooltipText += "<div class='windowAutoLevel" + varPrefix + "\'>Auto<br/>Level</div>";
-		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden) tooltipText += "<div class='windowLevel" + varPrefix + "\'>Map<br/>Level</div>";
+		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) tooltipText += "<div class='windowLevel" + varPrefix + "\'>Map<br/>Level</div>";
 		if (tributeFarm || smithyFarm || mapFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>";
 		if (tributeFarm) tooltipText += "<div class='windowTributes'>Tributes</div>";
 		if (tributeFarm) tooltipText += "<div class='windowMets'>Mets</div>";
@@ -811,15 +815,15 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (voidMap) tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#2</div>";
 		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#2</div>";
 		if (!raiding && !smithyFarm && !golden) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br/>Ratio</div>";
-		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'>Repeat<br/>Every</div>";
+		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'>Repeat<br/>Every</div>";
 		if (boneShrine) tooltipText += "<div class='windowBoneGather'>Gather</div>";
-		if (mapFarm || alchemy || mapBonus || insanity) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
+		if (mapFarm || alchemy || mapBonus || insanity || desolation) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
 		if (raiding && !bionic) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>";
 		if (mapFarm || tributeFarm || boneShrine) tooltipText += "<div class='windowAtlantrimp'>Run<br/>" + trimple + "</div>";
 		if (smithyFarm) tooltipText += "<div class='windowMeltingPoint'>Run<br/>MP</div>";
 		if (insanity) tooltipText += "<div class='windowBuildings'>Destack</div>";
 		if (tributeFarm) tooltipText += "<div class='windowBuildings'>Buy<br/>Buildings</div>";
-		if (raiding) tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\'>Prestige<br/>Goal</div>";
+		if (raiding || desolation) tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\'>Prestige<br/>Goal</div>";
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) tooltipText += "<div class='windowRunType" + varPrefix + "\'>Run&nbsp;Type</div>";
 		if (voidMap) tooltipText += "<div class='windowPortalAfter'>Portal<br/>After</div>";
 		tooltipText += "</div>";
@@ -834,7 +838,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				active: true,
 				priority: (x + 1),
 				check: true,
-				world: -1,
+				world: -2,
 				cell: -1,
 				level: -1,
 				special: '0',
@@ -892,22 +896,22 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (mapFarm || smithyFarm || mapBonus)
 					vals.repeat = currSetting[x].repeat ? currSetting[x].repeat : 1;
 				//Repeat Every
-				if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm)
+				if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation)
 					vals.repeatevery = currSetting[x].repeatevery ? currSetting[x].repeatevery : 0;
 				//End Zone
-				if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
+				if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation)
 					vals.endzone = currSetting[x].endzone ? currSetting[x].endzone : 999;
 				//Trimple/Atlantrimp
 				if (mapFarm || tributeFarm || boneShrine)
 					vals.atlantrimp = currSetting[x].atlantrimp ? currSetting[x].atlantrimp : false;
 				//Special
-				if (mapFarm || alchemy || mapBonus || insanity)
+				if (mapFarm || alchemy || mapBonus || insanity || desolation)
 					vals.special = currSetting[x].special ? currSetting[x].special : '0';
 				//Job Ratio
 				if (!raiding && !smithyFarm)
 					vals.jobratio = currSetting[x].jobratio ? currSetting[x].jobratio : '1,1,1,1';
 				//Gather
-				if (mapFarm || alchemy || boneShrine || mapBonus)
+				if (mapFarm || alchemy || boneShrine || mapBonus || desolation)
 					vals.gather = currSetting[x].gather ? currSetting[x].gather : '0';
 				//Run Type
 				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
@@ -992,6 +996,10 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (hypothermia) {
 					vals.bonfires = currSetting[x].bonfire ? currSetting[x].bonfire : 0;
 				}
+				//Desolation
+				if (desolation) {
+					vals.prestigeGoal = currSetting[x].prestigeGoal ? currSetting[x].prestigeGoal : 'All';
+				}
 
 				if (x >= 10) overflow = true;
 			}
@@ -1062,7 +1070,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					" windowMapLevelOff" : " windowMapLevelOn";
 
 			//Adding the class for if the line is currently active or not.
-			className += (x <= current.length - 1) ? " active" : "  disabled";
+			className += (x <= current.length - 1) ? " active" : " disabled";
 
 			//Opening the row div. Will parse all the settings we want shown in the row.
 			tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
@@ -1088,7 +1096,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowWorld" + varPrefix + "\' style = " + backgroundStyle + "\' oninput='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
 
 			//End Zone input
-			if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
+			if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation)
 				tooltipText += "<div class='windowEndZone" + varPrefix + "\'><input value='" + vals.endzone + "' type='number' id='windowEndZone" + x + "'/></div>";
 
 			//Highest Void Zone input - SHOULD BE CONVERTED TO USE END ZONE INSTEAD!
@@ -1100,7 +1108,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'><input value='" + vals.raidingzone + "' type='number' id='windowRaidingZone" + x + "'/></div>";
 
 			//Cell input
-			if (!golden)
+			if (!golden && !desolation)
 				tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + vals.cell + "' type='number' id='windowCell" + x + "'/></div>";
 
 			//Auto level checkbox
@@ -1204,7 +1212,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
 
 			//Repeat every X zones
-			if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm)
+			if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation)
 				tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'><input value='" + vals.repeatevery + "' type='number' id='windowRepeatEvery" + x + "'/></div>";
 
 			//Gather type dropdown for bone shrines
@@ -1215,11 +1223,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (raiding && !bionic) tooltipText += "<div class='windowRaidingDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.raidingDropdown + "' id='windowRaidingDropdown" + x + "'>" + raidingDropdown + "</select></div>";
 
 			//Special cache to use dropdown
-			if (mapFarm || alchemy || mapBonus || insanity)
+			if (mapFarm || alchemy || mapBonus || insanity || desolation)
 				tooltipText += "<div class='windowSpecial" + varPrefix + "\'  onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>";
 
 			//Gather dropdown. Only shows if Huge or Large cache specials are selected. Displays "Gather" text to show user what it's for.
-			if (mapFarm || alchemy || mapBonus || insanity)
+			if (mapFarm || alchemy || mapBonus || insanity || desolation)
 				tooltipText += "<div class='windowGather'>\<div style='text-align: center; font-size: 0.6vw;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select></div>";
 
 			//Trimple/Atlantrimp checkbox
@@ -1235,7 +1243,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowBuildings' style='text-align: center;'>" + buildNiceCheckbox("windowBuildings" + x, null, vals.buildings) + "</div>";
 
 			//Prestige Goal dropdown
-			if (raiding)
+			if (raiding || desolation)
 				tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.prestigeGoal + "' id='windowPrestigeGoal" + x + "'>" + prestigeGoalDropdown + "</select></div>";
 
 			//Run Type dropdown
@@ -1417,6 +1425,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	var insanity = titleText.includes('Insanity Farm');
 	var alchemy = titleText.includes('Alchemy Farm');
 	var hypothermia = titleText.includes('Hypothermia Farm');
+	var desolation = titleText.includes('Desolation');
 	var boneShrine = titleText.includes('Bone Shrine');
 	var golden = titleText.includes('Golden');
 	var tributeFarm = titleText.includes('Tribute Farm');
@@ -1428,7 +1437,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 	if (!golden) {
 		defaultSetting.active = readNiceCheckbox(document.getElementById('windowActiveDefault'));
-		if (!boneShrine) defaultSetting.cell = parseInt(document.getElementById('windowCellDefault').value, 10);
+		if (!boneShrine && !desolation) defaultSetting.cell = parseInt(document.getElementById('windowCellDefault').value, 10);
 		if (mapBonus) defaultSetting.repeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
 		if (mapFarm) defaultSetting.repeat = parseFloat(document.getElementById('windowRepeatDefault').value, 10);
 		if (worshipperFarm) {
@@ -1436,7 +1445,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			defaultSetting.shipskip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
 			defaultSetting.worshipper = parseInt(document.getElementById('windowWorshipperDefault').value, 10);
 		}
-		if (mapFarm || alchemy || mapBonus || titleText.includes('Insanity')) defaultSetting.special = document.getElementById('windowSpecialDefault').value;
+		if (mapFarm || alchemy || mapBonus || insanity || desolation) defaultSetting.special = document.getElementById('windowSpecialDefault').value;
 
 		if (boneShrine) {
 			defaultSetting.autoBone = readNiceCheckbox(document.getElementById('windowAutoBone'));
@@ -1484,33 +1493,28 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		};
 
 		var world = document.getElementById('windowWorld' + x);
-		if (golden) world = document.getElementById('windowWorld' + x);
-		if (!world || (!golden && world.value === "-1")) {
+		if (!world || world.value === "-2") {
 			continue;
 		};
-
-		if (golden && world.value === "-2") {
-			continue;
-		}
 
 		thisSetting.active = readNiceCheckbox(document.getElementById('windowActive' + x));
 		if (!golden) {
 			thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
 			thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
-			thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
+			if (!desolation) thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
 		}
-		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden) thisSetting.level = parseInt(document.getElementById('windowLevel' + x).value, 10);
+		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) thisSetting.level = parseInt(document.getElementById('windowLevel' + x).value, 10);
 		if (smithyFarm || mapBonus) thisSetting.repeat = parseInt(document.getElementById('windowRepeat' + x).value, 10);
 		if (hdFarm) {
 			thisSetting.hdBase = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
 			thisSetting.hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
 			thisSetting.hdType = document.getElementById('windowHDType' + x).value;
 		}
-		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
-		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
+		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
+		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
 		if (raiding) thisSetting.raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
 
-		if (mapFarm || alchemy || mapBonus || insanity) {
+		if (mapFarm || alchemy || mapBonus || insanity || desolation) {
 			thisSetting.special = document.getElementById('windowSpecial' + x).value;
 			if (thisSetting.special === 'hc' || thisSetting.special === 'lc')
 				thisSetting.gather = document.getElementById('windowGather' + x).value;
@@ -1553,9 +1557,9 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (mapFarm || tributeFarm || boneShrine) thisSetting.atlantrimp = readNiceCheckbox(document.getElementById('windowAtlantrimp' + x));
 		if (smithyFarm) thisSetting.meltingPoint = readNiceCheckbox(document.getElementById('windowMeltingPoint' + x));
 		if (!raiding && !smithyFarm && !golden) thisSetting.jobratio = document.getElementById('windowJobRatio' + x).value;
-		if (raiding) {
+		if (raiding || desolation) {
 			thisSetting.prestigeGoal = document.getElementById('windowPrestigeGoal' + x).value;
-			if (!bionic) thisSetting.raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
+			if (!bionic && !desolation) thisSetting.raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
 		}
 		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) thisSetting.runType = document.getElementById('windowRunType' + x).value;
 
@@ -1702,6 +1706,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	var insanity = titleText.includes('Insanity Farm');
 	var alchemy = titleText.includes('Alchemy Farm');
 	var hypothermia = titleText.includes('Hypothermia Farm');
+	var desolation = titleText.includes('Desolation');
 	var boneShrine = titleText.includes('Bone Shrine');
 	var golden = titleText.includes('Golden');
 
@@ -1773,7 +1778,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	//Zone
 	if (!voidMap && !golden) mazHelp += "<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>";
 	//Cell
-	if (!golden && !boneShrine) mazHelp += "<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell. <b>DOES NOT TAKE OVERKILL INTO ACCOUNT.</b></li>";
+	if (!golden && !boneShrine && !desolation) mazHelp += "<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell. <b>DOES NOT TAKE OVERKILL INTO ACCOUNT.</b></li>";
 	//AutoLevel
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm)
 		mazHelp += "<li><b>Auto Level</b> - Will automatically identify the best map level for your farming needs by looking at highest affordable map level and then calculating if you can one shot enemies with Titimp buff. " + (radonSetting ? "Highly recommended to use 'Auto Equality: Advanced' with this setting as it'll speed up map runs by a significant amount." : "") + "</li>";
@@ -2260,11 +2265,11 @@ function addRow(varPrefix, titleText) {
 
 		var value = currSettingUniverse === 2 ? 'valueU2' : 'value';
 
-		if (elem.value === "-1") {
+		if (elem.value === "-2") {
 			var parent = document.getElementById('windowRow' + x);
 			if (parent) {
 				parent.style.display = 'block';
-				if (!titleText.includes('Golden')) elem.value = game.global.world < 6 ? 6 : game.global.world;
+				if (!titleText.includes('Golden') && !titleText.includes('Desolation')) elem.value = game.global.world < 6 ? 6 : game.global.world;
 
 				if (currSettingUniverse === 1) {
 					//Changing rows to use the colour of the Nature type that the world input will be run on.
@@ -2275,12 +2280,12 @@ function addRow(varPrefix, titleText) {
 				}
 
 				if (document.getElementById('windowSpecial' + x) !== null)
-					document.getElementById('windowSpecial' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].special
+					document.getElementById('windowSpecial' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].special ? autoTrimpSettings[settingName + 'DefaultSettings'][value].special : '0';
 				if ((!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && !titleText.includes('HD Farm')) && document.getElementById('windowRepeat' + x) !== null)
 					document.getElementById('windowRepeat' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].repeat
 				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding') || titleText.includes('Smithy Farm')) && document.getElementById('windowRepeatEvery' + x) !== null)
 					document.getElementById('windowRepeatEvery' + x).value = 0;
-				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding') || titleText.includes('Map Bonus') || titleText.includes('Smithy Farm')) && document.getElementById('windowEndZone' + x) !== null)
+				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding') || titleText.includes('Map Bonus') || titleText.includes('Smithy Farm') || titleText.includes('Desolation')) && document.getElementById('windowEndZone' + x) !== null)
 					document.getElementById('windowEndZone' + x).value = 999;
 				if (titleText.includes('Void Map') && document.getElementById('windowMaxVoidZone' + x) !== null)
 					document.getElementById('windowMaxVoidZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
@@ -2315,32 +2320,33 @@ function addRow(varPrefix, titleText) {
 			}
 		}
 
-		if (titleText.includes('Golden')) {
+		if (titleText.includes('Golden') || titleText.includes('Desolation')) {
 			var elemWorld = document.getElementById('windowWorld' + x);
 			if (!elemWorld) continue;
 			if (elemWorld.value === "-2") {
 				var parent2 = document.getElementById('windowRow' + x);
 				if (parent2) {
 					parent2.style.display = 'block';
-					elemWorld.value = -1;
+					if (titleText.includes('Desolation')) elem.value = game.global.world < 6 ? 6 : game.global.world;
+					else elemWorld.value = -2;
 					updateWindowPreset(x, varPrefix);
 					break;
 				}
 			}
-		}
-
-		var elemCell = document.getElementById('windowCell' + x);
-		if (!elemCell) continue;
-		if (elemCell.value === "-1") {
-			var parent2 = document.getElementById('windowRow' + x);
-			if (parent2) {
-				parent2.style.display = 'block';
-				if (typeof (getPageSetting(settingName + 'DefaultSettings', currSettingUniverse).cell) !== 'undefined')
-					elemCell.value = autoTrimpSettings[settingName + 'DefaultSettings'][value].cell
-				else
-					elemCell.value = 1;
-				updateWindowPreset(x, varPrefix);
-				break;
+		} else {
+			var elemCell = document.getElementById('windowCell' + x);
+			if (!elemCell) continue;
+			if (elemCell.value === "-1") {
+				var parent2 = document.getElementById('windowRow' + x);
+				if (parent2) {
+					parent2.style.display = 'block';
+					if (typeof (getPageSetting(settingName + 'DefaultSettings', currSettingUniverse).cell) !== 'undefined')
+						elemCell.value = autoTrimpSettings[settingName + 'DefaultSettings'][value].cell
+					else
+						elemCell.value = 1;
+					updateWindowPreset(x, varPrefix);
+					break;
+				}
 			}
 		}
 	}
@@ -2356,7 +2362,7 @@ function addRow(varPrefix, titleText) {
 	var btnElem = document.getElementById('windowAddRowBtn');
 	for (var y = 0; y < 30; y++) {
 		var elem = document.getElementById('windowWorld' + y);
-		if (elem && elem.value === "-1") {
+		if (elem && elem.value === "-2") {
 			btnElem.style.display = 'inline-block';
 			return;
 		}
@@ -2370,63 +2376,82 @@ function addRow(varPrefix, titleText) {
 }
 
 function removeRow(index, titleText) {
+
+
+	var mapFarm = titleText.includes('Map Farm');
+	var mapBonus = titleText.includes('Map Bonus');
+	var voidMap = titleText.includes('Void Map');
+	var hdFarm = titleText.includes('HD Farm');
+	var raiding = titleText.includes('Raiding');
+	var bionic = titleText.includes('Bionic');
+	var quagmire = titleText.includes('Quagmire');
+	var insanity = titleText.includes('Insanity Farm');
+	var alchemy = titleText.includes('Alchemy Farm');
+	var hypothermia = titleText.includes('Hypothermia Farm');
+	var desolation = titleText.includes('Desolation');
+	var boneShrine = titleText.includes('Bone Shrine');
+	var golden = titleText.includes('Golden');
+
+	var tributeFarm = titleText.includes('Tribute Farm');
+	var smithyFarm = titleText.includes('Smithy Farm');
+	var worshipperFarm = titleText.includes('Worshipper Farm');
+
 	var elem = document.getElementById('windowRow' + index);
 	var checkBox;
 	if (!elem) return;
-	document.getElementById('windowWorld' + index).value = -1;
-	if (!titleText.includes('Golden')) document.getElementById('windowCell' + index).value = -1;
-	if (!titleText.includes('Quag') && !titleText.includes('Bone') && !titleText.includes('Raiding') && !titleText.includes('Void') && !titleText.includes('Golden')) document.getElementById('windowLevel' + index).value = 0;
-	if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Insanity') || titleText.includes('Map Bonus')) document.getElementById('windowSpecial' + index).value = 0;
-	if (titleText.includes('Map Farm') || titleText.includes('Alch') || titleText.includes('Map Bonus') || titleText.includes('Insanity')) document.getElementById('windowGather' + index).value = 0;
-	if (titleText.includes('Map Farm') || titleText.includes('Smithy') || titleText.includes('Map Bonus') || titleText.includes('HD Farm')) document.getElementById('windowRepeat' + index).value = 0;
-	if (titleText.includes('HD Farm')) document.getElementById('windowHDMult' + index).value = 0;
-	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding') || titleText.includes('Smithy Farm')) document.getElementById('windowRepeatEvery' + index).value = 0;
-	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding') || titleText.includes('Map Bonus') || titleText.includes('Smithy Farm')) document.getElementById('windowEndZone' + index).value = 0;
-	if (titleText.includes('Tribute Farm')) document.getElementById('windowTributes' + index).value = 0;
-	if (titleText.includes('Tribute Farm')) document.getElementById('windowMets' + index).value = 0;
-	if (titleText.includes('Quag')) document.getElementById('windowBogs' + index).value = 0;
-	if (titleText.includes('Insanity')) document.getElementById('windowInsanity' + index).value = 0;
-	if (titleText.includes('Auto Golden')) document.getElementById('windowWorld' + index).value = -2;
-	if (titleText.includes('HD Farm')) document.getElementById('windowHDType' + index).value = 'world';
-	if (titleText.includes('Auto Golden')) document.getElementById('windowGoldenType' + index).value = 'h';
-	if (titleText.includes('Hypo')) document.getElementById('windowBonfire' + index).value = 0;
-	if (titleText.includes('Bone')) document.getElementById('windowBoneAmount' + index).value = 0;
-	if (titleText.includes('Bone')) document.getElementById('windowBoneBelow' + index).value = 0;
-	if (titleText.includes('Worshipper Farm')) document.getElementById('windowWorshipper' + index).value = 0;
-	if (titleText.includes('Void') || titleText.includes('Map Farm')) document.getElementById('windowHDRatio' + index).value = 0;
-	if (titleText.includes('Void')) document.getElementById('windowVoidHDRatio' + index).value = 0;
-	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Bone Shrine')) {
+	document.getElementById('windowWorld' + index).value = -2;
+	if (!golden && !desolation) document.getElementById('windowCell' + index).value = -1;
+	if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) document.getElementById('windowLevel' + index).value = 0;
+	if (mapFarm || alchemy || insanity || mapBonus || desolation) document.getElementById('windowSpecial' + index).value = 0;
+	if (mapFarm || alchemy || mapBonus || insanity) document.getElementById('windowGather' + index).value = 0;
+	if (mapFarm || smithyFarm || mapBonus || hdFarm) document.getElementById('windowRepeat' + index).value = 0;
+	if (hdFarm) document.getElementById('windowHDMult' + index).value = 0;
+	if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation) document.getElementById('windowRepeatEvery' + index).value = 0;
+	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation) document.getElementById('windowEndZone' + index).value = 0;
+	if (tributeFarm) document.getElementById('windowTributes' + index).value = 0;
+	if (tributeFarm) document.getElementById('windowMets' + index).value = 0;
+	if (quagmire) document.getElementById('windowBogs' + index).value = 0;
+	if (insanity) document.getElementById('windowInsanity' + index).value = 0;
+	if (hdFarm) document.getElementById('windowHDType' + index).value = 'world';
+	if (golden) document.getElementById('windowGoldenType' + index).value = 'h';
+	if (hypothermia) document.getElementById('windowBonfire' + index).value = 0;
+	if (boneShrine) document.getElementById('windowBoneAmount' + index).value = 0;
+	if (boneShrine) document.getElementById('windowBoneBelow' + index).value = 0;
+	if (worshipperFarm) document.getElementById('windowWorshipper' + index).value = 0;
+	if (voidMap || mapFarm) document.getElementById('windowHDRatio' + index).value = 0;
+	if (voidMap) document.getElementById('windowVoidHDRatio' + index).value = 0;
+	if (mapFarm || tributeFarm || boneShrine) {
 		checkBox = document.getElementById('windowAtlantrimp' + index);
 		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
-	if (titleText.includes('Smithy Farm')) {
+	if (smithyFarm) {
 		checkBox = document.getElementById('windowMeltingPoint' + index);
 		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
-	if (titleText.includes('Void Map')) {
+	if (voidMap) {
 		checkBox = document.getElementById('windowPortalAfter' + index);
 		swapClass("icon-", "icon-checkbox-unchecked", checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
-	if (titleText.includes('Tribute Farm')) {
+	if (tributeFarm) {
 		checkBox = document.getElementById('windowBuildings' + index);
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', true);
 	}
-	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Insanity Farm') || titleText.includes('Alchemy Farm') || titleText.includes('Hypothermia Farm') || titleText.includes('HD Farm')) {
+	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm) {
 		var checkBox = document.getElementById('windowAutoLevel' + index);
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
-	if (!titleText.includes('Raiding') && !titleText.includes('Smithy') && !titleText.includes('Golden')) document.getElementById('windowJobRatio' + index).value = 0;
-	if (titleText.includes('Raiding')) document.getElementById('windowPrestigeGoal' + index).value = 'All';
-	if (titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm') || titleText.includes('Map Bonus') || titleText.includes('Worshipper Farm') || titleText.includes('Bone Shrine') || titleText.includes('Void Map') || titleText.includes('HD Farm') || titleText.includes('Raiding')) document.getElementById('windowRunType' + index).value = 'All';
-	if (titleText.includes('Raiding') && !titleText.includes('Bionic')) document.getElementById('windowRaidingDropdown' + index).value = 0;
-	if (titleText.includes('Tribute Farm') || titleText.includes('Smithy Farm')) document.getElementById('windowMapTypeDropdown' + index).value = 'Absolute';
-	if (titleText.includes('Map Farm')) document.getElementById('windowMapTypeDropdown' + index).value = 'Map Count';
-	if (titleText.includes('Bone')) document.getElementById('windowBoneGather' + index).value = 'Metal';
+	if (!raiding && !smithyFarm && !golden) document.getElementById('windowJobRatio' + index).value = 0;
+	if (raiding || desolation) document.getElementById('windowPrestigeGoal' + index).value = 'All';
+	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) document.getElementById('windowRunType' + index).value = 'All';
+	if (raiding && !bionic) document.getElementById('windowRaidingDropdown' + index).value = 0;
+	if (tributeFarm || smithyFarm) document.getElementById('windowMapTypeDropdown' + index).value = 'Absolute';
+	if (mapFarm) document.getElementById('windowMapTypeDropdown' + index).value = 'Map Count';
+	if (boneShrine) document.getElementById('windowBoneGather' + index).value = 'Metal';
 
 	elem.style.display = 'none';
 	var btnElem = document.getElementById('windowAddRowBtn');
@@ -2472,7 +2497,7 @@ function updateWindowPreset(index, varPrefix) {
 		document.getElementById('windowLevel' + index).disabled = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? true : false;
 	}
 
-	if (varPrefix.includes('MapFarm') || varPrefix.includes('Alch') || varPrefix.includes('MapBonus') || varPrefix.includes('Insanity')) {
+	if (varPrefix.includes('MapFarm') || varPrefix.includes('Alch') || varPrefix.includes('MapBonus') || varPrefix.includes('Insanity') || varPrefix.includes('Desolation')) {
 		var special = document.getElementById('windowSpecial' + index).value;
 
 		newClass = (special === 'hc' || special === 'lc') ? 'windowGatherOn' : 'windowGatherOff';

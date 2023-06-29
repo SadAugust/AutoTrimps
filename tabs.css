@@ -209,6 +209,7 @@ ul.tab li a:hover {
 .windowDeleteInsanity .icomoon,
 .windowDeleteAlchemy .icomoon,
 .windowDeleteHypothermia .icomoon,
+.windowDeleteDesolation .icomoon,
 .windowDeleteHDFarm .icomoon,
 .windowDeleteVoidMap .icomoon,
 .windowDeleteRaiding .icomoon,
@@ -232,6 +233,7 @@ ul.tab li a:hover {
 .windowLevelOff .windowLevelInsanity,
 .windowLevelOff .windowLevelAlchemy,
 .windowLevelOff .windowLevelHypothermia,
+.windowLevelOff .windowLevelDesolation,
 .windowLevelOff .windowLevelHDFarm {
 	opacity: 0.3;
 	cursor: not-allowed;
@@ -248,6 +250,7 @@ ul.tab li a:hover {
 .windowLevelOn .windowLevelInsanity,
 .windowLevelOn .windowLevelAlchemy,
 .windowLevelOn .windowLevelHypothermia,
+.windowLevelOn .windowLevelDesolation,
 .windowLevelOn .windowLevelHDFarm {
 	opacity: 1;
 	padding-left: 1%;
@@ -1307,6 +1310,70 @@ ul.tab li a:hover {
 	width: 15%;
 }
 
+/* Desolation */
+.windowDeleteDesolation,
+.windowActiveDesolation,
+.windowPriorityDesolation,
+.windowWorldDesolation,
+.windowLevelDesolation,
+.windowJobRatioDesolation,
+.windowRepeatEveryDesolation,
+.windowEndZoneDesolation,
+.windowSpecialDesolation,
+.windowPrestigeGoalDesolation,
+.windowMapTypeDropdownDefaultDesolation {
+	position: relative;
+	display: inline-block;
+	padding-left: 1%;
+}
+
+.windowDeleteDesolation {
+	width: 0%;
+	padding-left: 0px;
+}
+
+.windowActiveDesolation {
+	width: 8%;
+	left: -0.5vw;
+}
+
+.windowPriorityDesolation {
+	width: 10%;
+}
+
+.windowWorldDesolation {
+	width: 10%;
+}
+
+.windowLevelDesolation {
+	width: 10%;
+}
+
+.windowJobRatioDesolation {
+	width: 12%;
+}
+
+.windowRepeatEveryDesolation {
+	width: 10%;
+}
+
+.windowEndZoneDesolation {
+	width: 10%;
+}
+
+.windowSpecialDesolation {
+	width: 20%;
+}
+
+.windowPrestigeGoalDesolation {
+	width: 20%;
+}
+
+.windowGatherOn .windowSpecialDesolation {
+	width: 12%;
+	padding-left: 1%;
+}
+
 /* Void Map */
 .windowDeleteVoidMap,
 .windowActiveVoidMap,
@@ -1657,6 +1724,10 @@ li.indent {
 	left: 0;
 	color: white;
 	z-index: 7;
+}
+
+h9 {
+	text-decoration: underline;
 }
 
 /* New stuff goes here */

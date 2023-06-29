@@ -869,6 +869,7 @@ load = function () {
 	try {
 		atlantrimpRespecOverride();
 		resetVarsZone(true);
+		MODULES["graphs"].themeChanged();
 	}
 	catch (e) { graphsDebug("Gather info failed: " + e) }
 }
@@ -878,7 +879,7 @@ var originalresetGame = resetGame;
 resetGame = function () {
 	originalresetGame(...arguments)
 	try {
-		atlantrimpRespecOverride()
+		atlantrimpRespecOverride();
 	}
 	catch (e) { graphsDebug("Gather info failed: " + e) }
 }
