@@ -2704,7 +2704,6 @@ function desolationGearScum() {
 	const baseSettings = getPageSetting('desolationSettings');
 	var settingIndex = null;
 
-
 	for (var y = 0; y < baseSettings.length; y++) {
 		//Skip iterating lines if map bonus is capped.
 		const currSetting = baseSettings[y];
@@ -2715,12 +2714,13 @@ function desolationGearScum() {
 		if (!settingShouldRun(currSetting, world, 0)) continue;
 
 		//Checks to see what our actual zone should be
+		var raidZones = currSetting.world;
 		if (currSetting.repeatevery !== 0 && game.global.world > currSetting.world) {
-			var raidZones = currSetting.world;
 			var times = currSetting.repeatevery;
 			var repeats = Math.round((game.global.world - currSetting.world) / times);
 			if (repeats > 0) raidZones += (times * repeats);
 		}
+
 		//Skips if we don't have the required prestige available.
 		if (equipsToGet(raidZones, targetPrestige)[0] <= 0) continue;
 		if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
@@ -2730,7 +2730,6 @@ function desolationGearScum() {
 	}
 
 	if ((settingIndex !== null && settingIndex >= 0) || MODULES.mapFunctions.desolationGearScum) {
-
 		setting = baseSettings[settingIndex];
 		var special;
 		var jobRatio;
