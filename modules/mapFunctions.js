@@ -2650,7 +2650,6 @@ function desolation(forceDestack) {
 			break;
 		}
 		if (game.global.mapsActive && getCurrentMapObject().level !== game.global.world + mapLevel) {
-			debug("???????")
 			recycleMap_AT();
 		}
 		equality = true;
