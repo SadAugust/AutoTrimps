@@ -388,6 +388,45 @@ function initializeAllSettings() {
 				return description;
 			},
 			'value', -1, null, 'Daily', [1, 2]);
+
+
+
+
+		createSetting('bloodthirstDestack',
+			function () { return ('Bloodthirst Destack') },
+			function () {
+				var description = "<p>Will automatically run a level 6 map when you are one bloodthirst stack (death) away from the enemy healing and gaining additional attack.</p>";
+				description += "<p><b>Won't function without Auto Maps enabled.</b></p>"
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
+			'boolean', false, null, 'Daily', [2]);
+		createSetting('bloodthirstVoidMax',
+			function () { return ('Void: Max Bloodthirst') },
+			function () {
+				var description = "<p>Will make your Void HD Ratio assume you have max bloodthirst stacks active if you're in a bloodthirst daily.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
+			'boolean', true, null, 'Daily', [2]);
+		createSetting('empowerAutoEquality',
+			function () { return ('AE: Empower') },
+			function () {
+				var description = "<p>When the empower mod is active it will automatically adjust calculations for enemy stats to factor in either explosive or crit modifiers if they're active on the current daily.</b></p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
+			'boolean', true, null, 'Daily', [2],
+			function () { return (getPageSetting('equalityManagement') === 2) });
+		createSetting('mapOddEvenIncrement',
+			function () { return ('Odd/Even Increment') },
+			function () {
+				var description = "<p>Will automatically increment your farming settings world input by 1 if the current zone has a negative even or odd related buff. If the daily has both types of mods it will try to identify which one is worse and skip farming on that zone type.</b></p>";
+				description += "<p>Will only impact the following settings: Heirloom swap zone, Void Maps, Map Farm" + (currSettingUniverse === 2 ? ", Tribute Farm, Worshipper Farm, Smithy Farm." : ".") + "</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Daily', [1, 2]);
+
 		createSetting('dfightforever',
 			function () { return (['DFA: Off', 'DFA: Non-Empowered', 'DFA: All Dailies']) },
 			function () {
@@ -471,42 +510,6 @@ function initializeAllSettings() {
 			function () { return ('Stack Wind zones during Wind Enlight during Liquification.') },
 			'boolean', false, null, 'Daily', [1],
 			function () { return (autoTrimpSettings.use3daily.enabled) });
-
-
-		createSetting('bloodthirstDestack',
-			function () { return ('Bloodthirst Destack') },
-			function () {
-				var description = "<p>Will automatically run a level 6 map when you are one bloodthirst stack (death) away from the enemy healing and gaining additional attack.</p>";
-				description += "<p><b>Won't function without Auto Maps enabled.</b></p>"
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			},
-			'boolean', false, null, 'Daily', [2]);
-		createSetting('bloodthirstVoidMax',
-			function () { return ('Void: Max Bloodthirst') },
-			function () {
-				var description = "<p>Will make your Void HD Ratio assume you have max bloodthirst stacks active if you're in a bloodthirst daily.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			},
-			'boolean', true, null, 'Daily', [2]);
-		createSetting('empowerAutoEquality',
-			function () { return ('AE: Empower') },
-			function () {
-				var description = "<p>When the empower mod is active it will automatically adjust calculations for enemy stats to factor in either explosive or crit modifiers if they're active on the current daily.</b></p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			},
-			'boolean', true, null, 'Daily', [2],
-			function () { return (getPageSetting('equalityManagement') === 2) });
-		createSetting('mapOddEvenIncrement',
-			function () { return ('Odd/Even Increment') },
-			function () {
-				var description = "<p>Will automatically increment your farming settings world input by 1 if the current zone has a negative even or odd related buff. If the daily has both types of mods it will try to identify which one is worse and skip farming on that zone type.</b></p>";
-				description += "<p>Will only impact the following settings: Heirloom swap zone, Void Maps, Map Farm" + (currSettingUniverse === 2 ? ", Tribute Farm, Worshipper Farm, Smithy Farm." : ".") + "</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'Daily', [1, 2]);
 
 		//Daily Portal
 		createSetting('dailyPortalStart',
@@ -1364,38 +1367,18 @@ function initializeAllSettings() {
 			function () { return (autoTrimpSettings.life.enabled) });
 
 		//Toxicity
-		createSetting('toxicity',
-			function () { return ('Toxicity') },
+		createSetting('toxicitySettings',
+			function () { return ('Toxicity Settings') },
 			function () {
-				var description = "<p>Enable this if you want to use Toxicity stack farming features.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
+				var description = "<p>Here you can select how and when you would like to farm a specific amount of maps.</p>";
+				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
 				return description;
-			},
-			'boolean', false, null, 'Challenges', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 165) });
-
-		createSetting('toxicityZone',
-			function () { return ('T: Zone') },
-			function () {
-				var description = "<p>The zone(s) you would like to start mapping for stacks at.</p>";
-				description += "<p>Can input multiple zones such as <b>200,231,251</b>, doing this will farm for stacks on all of these zones.</p>";
-				description += "<p>You are able to enter a zone range, this can be done by using a decimal point between number ranges e.g. <b>23.120</b> which will farm stacks between zones 23 and 120. <b>This can be used in conjunction with other zones too, just seperate inputs with commas!</b></p>";
-				description += "<p><b>Recommended:</b> 165</p>";
-				return description;
-			},
-			'multiTextValue', -1, null, 'Challenges', [1],
-			function () { return (autoTrimpSettings.toxicity.enabled) });
-
-		createSetting('toxicityStacks',
-			function () { return ('T: Stack Target') },
-			function () {
-				var description = "<p>Will farm to this amount of stacks when you're in a zone input in <b>T: Zone</b>.</p>";
-				description += "<p>Can input multiple values seperated by commas such as <b>1000,1500,1500</b>. Doing this will cause the script to farm 1000 stacks on the first zone(s) set in <b>T: Zone</b> then 1500 in the second set etc.</p>";
-				description += "<p><b>If only 1 value is set it will automatically use that for every farming zone.</b></p>";
-				description += "<p><b>Recommended:</b> 1500</p>";
-				return description;
-			}, 'multiValue', -1, null, 'Challenges', [1],
-			function () { return (autoTrimpSettings.toxicity.enabled) });
+			}, 'mazArray', [], 'MAZLookalike("Toxicity Farm", "Toxicity", "MAZ")', 'Challenges', [1]);
+		createSetting('toxicityDefaultSettings',
+			function () { return ('Toxicity: Settings') },
+			function () { return ('Contains arrays for this setting') },
+			'mazDefaultArray', { active: false }, null, 'Challenges', [1]);
 
 		//Archaeology -- I don't know what to do with these. Think this needs to be reworked.
 		createSetting('archaeology',
@@ -4263,8 +4246,7 @@ function modifyParentNodeUniverseSwap() {
 	//Dailies
 	modifyParentNode("dscryvoidmaps", radonoff);
 	modifyParentNode("dPreSpireNurseries", radonoff);
-	modifyParentNode("liqstack", radonoff);
-	modifyParentNode("mapOddEvenIncrement", 'show');
+	modifyParentNode("liqstack", 'show');
 	modifyParentNode("dailyHeliumHrPortal", 'show');
 
 	if (getPageSetting('displayAllSettings')// || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && holidayObj.holiday === 'Eggy')
@@ -4317,7 +4299,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("decayStacksToAbandon", radonoff);
 	modifyParentNode("lifeStacks", radonoff);
 	modifyParentNode("mapologyPrestige", radonoff);
-	//modifyParentNode("toxicityStacks", radonon);
+	//modifyParentNode("toxicityDefaultSettings", radonon);
 	modifyParentNode("archaeologyString3", radonon);
 
 	//Magma

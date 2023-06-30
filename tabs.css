@@ -200,6 +200,7 @@ ul.tab li a:hover {
 
 
 .windowDeleteMapFarm .icomoon,
+.windowDeleteToxicity .icomoon,
 .windowDeleteTributeFarm .icomoon,
 .windowDeleteSmithyFarm .icomoon,
 .windowDeleteWorshipperFarm .icomoon,
@@ -225,6 +226,7 @@ ul.tab li a:hover {
 }
 
 .windowLevelOff .windowLevelMapFarm,
+.windowLevelOff .windowLevelToxicity,
 .windowLevelOff .windowLevelTributeFarm,
 .windowLevelOff .windowLevelSmithyFarm,
 .windowLevelOff .windowLevelWorshipperFarm,
@@ -242,6 +244,7 @@ ul.tab li a:hover {
 }
 
 .windowLevelOn .windowLevelMapFarm,
+.windowLevelOn .windowLevelToxicity,
 .windowLevelOn .windowLevelTributeFarm,
 .windowLevelOn .windowLevelSmithyFarm,
 .windowLevelOn .windowLevelWorshipperFarm,
@@ -912,6 +915,80 @@ ul.tab li a:hover {
 .windowChallengeOffHDFarm .windowChallengeHDFarm,
 .windowChallenge3OffHDFarm .windowChallenge3HDFarm {
 	display: none;
+}
+
+
+/* Toxicity */
+.windowDeleteToxicity,
+.windowActiveToxicity,
+.windowPriorityToxicity,
+.windowWorldToxicity,
+.windowCellToxicity,
+.windowAutoLevelToxicity,
+.windowLevelToxicity,
+.windowJobRatioToxicity,
+.windowRepeatEveryToxicity,
+.windowEndZoneToxicity,
+.windowSpecialToxicity,
+.windowRepeatToxicity {
+	position: relative;
+	display: inline-block;
+	padding-left: 1%;
+}
+
+.windowDeleteToxicity {
+	width: 0%;
+	padding-left: 0px;
+}
+
+.windowActiveToxicity {
+	width: 6%;
+	left: -0.5vw;
+}
+
+.windowPriorityToxicity {
+	width: 7%;
+}
+
+.windowWorldToxicity {
+	width: 8%;
+}
+
+.windowCellToxicity {
+	width: 8%;
+}
+
+.windowAutoLevelToxicity {
+	width: 6%;
+}
+
+.windowLevelToxicity {
+	width: 8%;
+}
+
+.windowRepeatToxicity {
+	width: 8%;
+}
+
+.windowJobRatioToxicity {
+	width: 8%;
+}
+
+.windowRepeatEveryToxicity {
+	width: 8%;
+}
+
+.windowEndZoneToxicity {
+	width: 8%;
+}
+
+.windowSpecialToxicity {
+	width: 25%;
+}
+
+.windowGatherOn .windowSpecialToxicity {
+	width: 17%;
+	padding-left: 1%;
 }
 
 /* Worshipper Farm */

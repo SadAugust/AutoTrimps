@@ -767,7 +767,7 @@ function tributeFarm() {
 	if (settingIndex >= 0) {
 		//Initialing variables
 		var setting = baseSettings[settingIndex];
-		var mapLevel = setting.level
+		var mapLevel = setting.level;
 		var tributeGoal = game.buildings.Tribute.locked === 1 ? 0 : setting.tributes;
 		var meteorologistGoal = game.jobs.Meteorologist.locked === 1 ? 0 : setting.mets;
 		var mapSpecial = getAvailableSpecials('lsc', true);
@@ -1651,60 +1651,77 @@ function toxicity() {
 		mapName: mapName
 	};
 
-	if (!challengeActive('Toxicity') || !getPageSetting('toxicity')) return farmingDetails;
+	if (!getPageSetting('toxicityDefaultSettings').active) return farmingDetails;
+	const baseSettings = getPageSetting('toxicitySettings');
+	var settingIndex;
 
-	var shouldMap = false;
-	var status = '';
-	const toxicityZone = getPageSetting('toxicityZone');
-	const shouldFarmStacks = zoneGoCheck(toxicityZone).active;
-	const stackZone = zoneGoCheck(toxicityZone).zone;
+	for (var y = 0; y < baseSettings.length; y++) {
+		var currSetting = baseSettings[y];
+		var world = currSetting.world;
 
-	const toxicityStacks = getPageSetting('toxicityStacks');
-	const currentStacks = game.challenges.Toxicity.stacks;
-	var stackGoal = toxicityStacks[toxicityZone.indexOf(stackZone)] > 0 ? toxicityStacks[toxicityZone.indexOf(stackZone)] : toxicityStacks[0];
-	const mapSpecial = game.jobs.Explorer.locked ? "0" : "fa";
-	const mapLevel = -(game.global.world - 6);
+		if (!settingShouldRun(currSetting, world, 0)) continue;
 
-	if (stackGoal > 1500) stackGoal = 1500;
-
-	if (shouldFarmStacks && stackGoal > currentStacks) {
-		shouldMap = true;
-		status = 'Toxicity: ' + currentStacks + '/' + stackGoal + ' stacks';
+		if (game.global.world === world || ((game.global.world - world) % currSetting.repeatevery === 0)) {
+			settingIndex = y;
+			break;
+		}
 	}
 
-	var cellsToClear = 0;
-	if (game.global.mapsActive) {
-		cellsToClear = getCurrentMapObject().size - getCurrentMapCell().level;
-		cellsToClear = Math.ceil(cellsToClear / maxOneShotPower(true));
+	if (settingIndex !== null && settingIndex >= 0) {
+
+		var shouldMap = false;
+		var setting = baseSettings[settingIndex];
+
+		const currentStacks = game.challenges.Toxicity.stacks;
+		const stackGoal = setting.repeat > 1500 ? 1500 : setting.repeat;
+		const mapSpecial = getAvailableSpecials(setting.special);
+		var mapLevel = setting.level;
+
+		//AutoLevel code.
+		if (setting.autoLevel) {
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
+				game.global.mapRunCounter = mapRepeats;
+				mapRepeats = 0;
+			}
+			var autoLevel_Repeat = mapSettings.levelCheck;
+			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
+			if (mapAutoLevel !== Infinity) {
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				mapLevel = mapAutoLevel;
+			}
+		}
+		if (stackGoal > currentStacks) {
+			shouldMap = true;
+		}
+
+		var cellsToClear = 0;
+		if (game.global.mapsActive) {
+			cellsToClear = getCurrentMapObject().size - getCurrentMapCell().level;
+			cellsToClear = Math.ceil(cellsToClear / maxOneShotPower(true));
+		}
+
+		var repeat = game.global.mapsActive && cellsToClear > (stackGoal - currentStacks);
+		var status = 'Toxicity: ' + currentStacks + '/' + stackGoal + ' stacks';
+
+		if (mapSettings.mapName === mapName && !shouldMap) {
+			mappingDetails(mapName, mapLevel, mapSpecial);
+			resetMapVars();
+			if (game.global.mapsActive) recycleMap_AT();
+		}
+
+		farmingDetails.shouldRun = shouldMap;
+		farmingDetails.mapName = mapName;
+		farmingDetails.mapLevel = mapLevel;
+		farmingDetails.autoLevel = true;
+		farmingDetails.special = mapSpecial;
+		farmingDetails.repeat = !repeat;
+		farmingDetails.status = status;
+		farmingDetails.stackGoal = stackGoal;
+		farmingDetails.currentStacks = currentStacks;
+		farmingDetails.cellsToClear = cellsToClear;
+
 	}
-
-	var repeat = game.global.mapsActive && cellsToClear > (stackGoal - currentStacks);
-
-	//Recycling maps if we have the required amount of stacks
-	if (game.global.mapsActive && getCurrentMapObject().level === 6 &&
-		(challengeActive('Toxicity') && !shouldMap && currentStacks === stackGoal)) {
-		recycleMap_AT();
-	}
-
-	if (mapSettings.mapName === mapName && !shouldMap) {
-		mappingDetails(mapName, mapLevel, mapSpecial);
-		resetMapVars();
-	}
-
-	if (shouldMap) farmingDetails.shouldRun = shouldMap;
-	farmingDetails.mapName = mapName;
-	farmingDetails.mapLevel = mapLevel;
-	farmingDetails.autoLevel = true;
-	farmingDetails.special = mapSpecial;
-	farmingDetails.repeat = !repeat;
-	farmingDetails.status = status;
-	farmingDetails.stackGoal = stackGoal;
-	farmingDetails.currentStacks = currentStacks;
-	farmingDetails.stackZone = stackZone;
-	farmingDetails.cellsToClear = cellsToClear;
-
 	return farmingDetails;
-
 }
 
 function experience() {
@@ -2765,7 +2782,7 @@ function desolationGearScum() {
 			MODULES.mapFunctions.desolationGearScum = true;
 			//Exit map if we're in it so that we don't clear the map.
 			if (game.global.mapsActive) {
-				debug("Desolation Gear Scum - Exiting map to ensure we don't complete this map before the start of the next zone.")
+				debug(mapName + " (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") exiting map to ensure we complete it at start of the next zone.", "map_Details")
 				mapsClicked(true);
 			}
 		}
@@ -2774,7 +2791,7 @@ function desolationGearScum() {
 
 		//Marking setting as complete if we've run enough maps.
 		if (mapSettings.mapName === mapName && MODULES.mapFunctions.desolationGearScum && (game.global.currentMapId === '' || prestigeList.indexOf(game.global.mapGridArray[getCurrentMapObject().size - 1].special) === -1)) {
-			debug(mapName + " (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") desolation gear scumming was successful.", 'map_Details');
+			debug(mapName + " (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") was successful.", "map_Details");
 			resetMapVars();
 			shouldMap = false;
 			saveSettings();
@@ -3608,6 +3625,8 @@ function dailyOddOrEven() {
 	}
 	if (!challengeActive('Daily')) return skipDetails;
 	if (!getPageSetting('mapOddEvenIncrement')) return skipDetails;
+	//Skip if we're on the last zone of a nature band to ensure we don't accidentally farm in the wrong band type
+	if (game.global.world >= getNatureStartZone() && getEmpowerment() !== getZoneEmpowerment(game.global.world + 1)) return skipDetails;
 
 	//Odd trimp nerf - 30-80%
 	if (typeof game.global.dailyChallenge.oddTrimpNerf !== 'undefined') {
@@ -3707,7 +3726,7 @@ function getAvailableSpecials(special, skipCaches) {
 			break;
 		}
 	}
-	if (bestMod === undefined) bestMod = '0';
+	if (bestMod === undefined || bestMod === 'fa' && hdStats.hyperspeed) bestMod = '0';
 	return bestMod;
 }
 

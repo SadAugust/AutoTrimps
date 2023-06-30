@@ -543,11 +543,16 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var hdFarm = titleText.includes('HD Farm');
 		var raiding = titleText.includes('Raiding');
 		var bionic = titleText.includes('Bionic');
+
+		var balance = titleText.includes('Balance Destack'.toLowerCase());
+		var toxicity = titleText.includes('Toxicity Farm');
+
 		var quagmire = titleText.includes('Quagmire');
 		var insanity = titleText.includes('Insanity Farm');
 		var alchemy = titleText.includes('Alchemy Farm');
 		var hypothermia = titleText.includes('Hypothermia Farm');
 		var desolation = titleText.includes('Desolation');
+
 		var boneShrine = titleText.includes('Bone Shrine');
 		var golden = titleText.includes('Golden');
 		var tributeFarm = titleText.includes('Tribute Farm');
@@ -562,6 +567,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (golden) windowSize = 'tooltipWindow20';
 		else if (quagmire) windowSize = 'tooltipWindow45';
 		else if (raiding) windowSize = 'tooltipWindow70';
+		else if (balance) windowSize = 'tooltipWindow50';
+		else if (toxicity) windowSize = 'tooltipWindow50';
 		else if (bionic) windowSize = 'tooltipWindow70';
 		else if (insanity) windowSize = 'tooltipWindow55';
 		else if (alchemy) windowSize = 'tooltipWindow70';
@@ -592,7 +599,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				<div class='row windowRow titles'>\
 				<div class='windowActive" + varPrefix + "\'>Active</div>";
 			if (!boneShrine && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
-			if (mapFarm) tooltipText += "<div class='windowRepeat'>Map<br/>Repeats</div>";
+			if (mapFarm || toxicity) tooltipText += "<div class='windowRepeat'>Map<br/>Repeats</div>";
 			if (worshipperFarm) {
 				tooltipText += "<div class='windowWorshipperSkip'>Enable<br />Skip</div>";
 				tooltipText += "<div class='windowWorshipper'>Skip<br />Value</div>";
@@ -606,7 +613,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowBoneGather'>Gather</div>";
 			}
 			if (!raiding && !smithyFarm) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br />Ratio</div>";
-			if (mapFarm || alchemy || mapBonus || insanity || desolation) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
+			if (mapFarm || alchemy || mapBonus || toxicity || insanity || desolation) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
 			if (tributeFarm || smithyFarm || mapFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>";
 			if (raiding && !bionic) {
 				tooltipText += "<div class='windowRecycle'>Recycle</div>";
@@ -654,13 +661,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (!raiding && !smithyFarm)
 				defaultVals.jobratio = defaultSetting.jobratio ? defaultSetting.jobratio : '1,1,1,1';
 
-			if (mapFarm || alchemy || boneShrine || mapBonus || desolation)
+			if (mapFarm || alchemy || boneShrine || mapBonus || desolation || toxicity)
 				defaultVals.gather = defaultSetting.gather ? defaultSetting.gather : '0';
 
-			if (mapFarm || alchemy || mapBonus || insanity || desolation)
+			if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
 				defaultVals.special = defaultSetting.special ? defaultSetting.special : '0';
 
-			if (mapFarm || mapBonus) defaultVals.repeat = defaultSetting.repeat ? defaultSetting.repeat : '0';
+			if (mapFarm || mapBonus || toxicity) defaultVals.repeat = defaultSetting.repeat ? defaultSetting.repeat : '0';
 
 			if (worshipperFarm) {
 				defaultVals.worshipper = defaultSetting.worshipper ? defaultSetting.worshipper : 50;
@@ -712,7 +719,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div id='windowRow' class='row windowRow'>";
 				tooltipText += "<div class='windowActive" + varPrefix + "\' style='text-align: center;'>" + buildNiceCheckbox("windowActiveDefault", null, defaultVals.active) + "</div>";
 				if (!boneShrine && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.cell + "' type='number' id='windowCellDefault'/></div>";
-				if (mapFarm || mapBonus)
+				if (mapFarm || mapBonus || toxicity)
 					tooltipText += "<div class='windowRepeat'><input value='" + defaultVals.repeat + "' type='number' id='windowRepeatDefault'/></div>";
 				if (worshipperFarm) {
 					tooltipText += "<div class='windowWorshipperSkip' style='text-align: center;'>" + buildNiceCheckbox("windowSkipShipEnabled", null, defaultVals.shipSkipEnabled) + "</div>";
@@ -732,7 +739,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
 				if (boneShrine)
 					tooltipText += "<div class='windowBoneGather'><select value='" + defaultVals.gather + "' id='windowBoneGatherDefault'>" + defaultGatherDropdown + "</select></div>";
-				if (mapFarm || alchemy || mapBonus || insanity || desolation)
+				if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
 					tooltipText += "<div class='windowSpecial" + varPrefix + "\'><select value='" + defaultVals.special + "' id='windowSpecialDefault'>" + defaultSpecialsDropdown + "</select></div>";
 				if (hypothermia) {
 					tooltipText += "<div class='windowFrozenCastle'><input value='" + defaultVals.frozencastle + "' type='text' id='windowFrozenCastleDefault'/></div>";
@@ -778,19 +785,20 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (golden) tooltipText += "<div class='windowActiveAutoGolden'>Active?</div>";
 		if (!voidMap && !golden && !boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Start<br/>Zone</div>";
 		if (boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Zone</div>";
-		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>";
+		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>";
 		if (golden) tooltipText += "<div class='windowAmtAutoGolden'>Amount</div>";
 		if (voidMap) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Min Zone</div>";
 		if (voidMap) tooltipText += "<div class='windowMaxVoidZone'>Max Zone</div>";
 		if (raiding) tooltipText += "<div class='windowRaidingZone" + varPrefix + "\'>Raiding<br/>Zone</div>";
 		if (!golden && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm) tooltipText += "<div class='windowAutoLevel" + varPrefix + "\'>Auto<br/>Level</div>";
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) tooltipText += "<div class='windowAutoLevel" + varPrefix + "\'>Auto<br/>Level</div>";
 		if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) tooltipText += "<div class='windowLevel" + varPrefix + "\'>Map<br/>Level</div>";
 		if (tributeFarm || smithyFarm || mapFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>";
 		if (tributeFarm) tooltipText += "<div class='windowTributes'>Tributes</div>";
 		if (tributeFarm) tooltipText += "<div class='windowMets'>Mets</div>";
 
 		if (mapFarm) tooltipText += "<div class='windowRepeat" + varPrefix + "\'>Map<br/>Repeats</div>";
+		if (toxicity) tooltipText += "<div class='windowRepeat" + varPrefix + "\'>Toxic<br/>Stacks</div>";
 		if (mapFarm || mapBonus) tooltipText += "<div class='windowHDRatio" + varPrefix + "\'>Above X<br/>HD Ratio</div>";
 
 		if (mapBonus) tooltipText += "<div class='windowMapStacks'>Map<br/>Stacks</div>";
@@ -815,9 +823,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (voidMap) tooltipText += "<div class='windowHDTypeVoidMap'>Dropdown<br/>#2</div>";
 		if (voidMap) tooltipText += "<div class='windowVoidHDRatio'>Option<br/>#2</div>";
 		if (!raiding && !smithyFarm && !golden) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br/>Ratio</div>";
-		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'>Repeat<br/>Every</div>";
+		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity) tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'>Repeat<br/>Every</div>";
 		if (boneShrine) tooltipText += "<div class='windowBoneGather'>Gather</div>";
-		if (mapFarm || alchemy || mapBonus || insanity || desolation) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
+		if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
 		if (raiding && !bionic) tooltipText += "<div class='windowRaidingDropdown'>Frag Type</div>";
 		if (mapFarm || tributeFarm || boneShrine) tooltipText += "<div class='windowAtlantrimp'>Run<br/>" + trimple + "</div>";
 		if (smithyFarm) tooltipText += "<div class='windowMeltingPoint'>Run<br/>MP</div>";
@@ -890,28 +898,28 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (!quagmire && !boneShrine && !raiding && !voidMap)
 					vals.level = currSetting[x].level ? currSetting[x].level : 0;
 				//Auto Level
-				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm)
+				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)
 					vals.autoLevel = typeof (currSetting[x].autoLevel) !== 'undefined' ? currSetting[x].autoLevel : true;
 				//Repeat
-				if (mapFarm || smithyFarm || mapBonus)
+				if (mapFarm || smithyFarm || mapBonus || toxicity)
 					vals.repeat = currSetting[x].repeat ? currSetting[x].repeat : 1;
 				//Repeat Every
-				if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation)
+				if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity)
 					vals.repeatevery = currSetting[x].repeatevery ? currSetting[x].repeatevery : 0;
 				//End Zone
-				if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation)
+				if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity)
 					vals.endzone = currSetting[x].endzone ? currSetting[x].endzone : 999;
 				//Trimple/Atlantrimp
 				if (mapFarm || tributeFarm || boneShrine)
 					vals.atlantrimp = currSetting[x].atlantrimp ? currSetting[x].atlantrimp : false;
 				//Special
-				if (mapFarm || alchemy || mapBonus || insanity || desolation)
+				if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
 					vals.special = currSetting[x].special ? currSetting[x].special : '0';
 				//Job Ratio
 				if (!raiding && !smithyFarm)
 					vals.jobratio = currSetting[x].jobratio ? currSetting[x].jobratio : '1,1,1,1';
 				//Gather
-				if (mapFarm || alchemy || boneShrine || mapBonus || desolation)
+				if (mapFarm || alchemy || boneShrine || mapBonus || desolation || toxicity)
 					vals.gather = currSetting[x].gather ? currSetting[x].gather : '0';
 				//Run Type
 				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
@@ -1096,7 +1104,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowWorld" + varPrefix + "\' style = " + backgroundStyle + "\' oninput='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><input value='" + vals.world + "' type='number' id='windowWorld" + x + "'/></div>";
 
 			//End Zone input
-			if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation)
+			if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity)
 				tooltipText += "<div class='windowEndZone" + varPrefix + "\'><input value='" + vals.endzone + "' type='number' id='windowEndZone" + x + "'/></div>";
 
 			//Highest Void Zone input - SHOULD BE CONVERTED TO USE END ZONE INSTEAD!
@@ -1112,11 +1120,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + vals.cell + "' type='number' id='windowCell" + x + "'/></div>";
 
 			//Auto level checkbox
-			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm)
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)
 				tooltipText += "<div class='windowAutoLevel" + varPrefix + "\' style='text-align: center; padding-left: 5px;'>" + buildNiceCheckboxAutoLevel("windowAutoLevel" + x, null, vals.autoLevel, x, varPrefix) + "</div>";
 
 			//Level input
-			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm)
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)
 				tooltipText += "<div class='windowLevel" + varPrefix + "\'><input value='" + vals.level + "' type='number' id='windowLevel" + x + "'/></div>";
 
 			//Map Type dropdown
@@ -1128,7 +1136,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowWorshipper'><input value='" + vals.worshipper + "' type='number' id='windowWorshipper" + x + "'/></div>";
 
 			//Repeat input (Map Farm);
-			if (mapFarm)
+			if (mapFarm || toxicity)
 				tooltipText += "<div class='windowRepeat" + varPrefix + "\'><input value='" + vals.repeat + "' type='value' id='windowRepeat" + x + "'/></div>";
 
 			//HD Ratio to farm when above
@@ -1212,7 +1220,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + vals.jobratio + "' type='value' id='windowJobRatio" + x + "'/></div>";
 
 			//Repeat every X zones
-			if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation)
+			if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity)
 				tooltipText += "<div class='windowRepeatEvery" + varPrefix + "\'><input value='" + vals.repeatevery + "' type='number' id='windowRepeatEvery" + x + "'/></div>";
 
 			//Gather type dropdown for bone shrines
@@ -1223,11 +1231,11 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (raiding && !bionic) tooltipText += "<div class='windowRaidingDropdown' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.raidingDropdown + "' id='windowRaidingDropdown" + x + "'>" + raidingDropdown + "</select></div>";
 
 			//Special cache to use dropdown
-			if (mapFarm || alchemy || mapBonus || insanity || desolation)
+			if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
 				tooltipText += "<div class='windowSpecial" + varPrefix + "\'  onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.special + "' id='windowSpecial" + x + "'>" + specialsDropdown + "</select></div>";
 
 			//Gather dropdown. Only shows if Huge or Large cache specials are selected. Displays "Gather" text to show user what it's for.
-			if (mapFarm || alchemy || mapBonus || insanity || desolation)
+			if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
 				tooltipText += "<div class='windowGather'>\<div style='text-align: center; font-size: 0.6vw;'>Gather</div>\<onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'>\<select value='" + vals.gather + "' id='windowGather" + x + "'>" + gatherDropdown + "</select></div>";
 
 			//Trimple/Atlantrimp checkbox
@@ -1421,6 +1429,10 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	var hdFarm = titleText.includes('HD Farm');
 	var raiding = titleText.includes('Raiding');
 	var bionic = titleText.includes('Bionic');
+
+	var balance = titleText.includes('Balance Destack'.toLowerCase());
+	var toxicity = titleText.includes('Toxicity Farm');
+
 	var quagmire = titleText.includes('Quagmire');
 	var insanity = titleText.includes('Insanity Farm');
 	var alchemy = titleText.includes('Alchemy Farm');
@@ -1439,13 +1451,13 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		defaultSetting.active = readNiceCheckbox(document.getElementById('windowActiveDefault'));
 		if (!boneShrine && !desolation) defaultSetting.cell = parseInt(document.getElementById('windowCellDefault').value, 10);
 		if (mapBonus) defaultSetting.repeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
-		if (mapFarm) defaultSetting.repeat = parseFloat(document.getElementById('windowRepeatDefault').value, 10);
+		if (mapFarm || toxicity) defaultSetting.repeat = parseFloat(document.getElementById('windowRepeatDefault').value, 10);
 		if (worshipperFarm) {
 			defaultSetting.shipSkipEnabled = readNiceCheckbox(document.getElementById('windowSkipShipEnabled'));
 			defaultSetting.shipskip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
 			defaultSetting.worshipper = parseInt(document.getElementById('windowWorshipperDefault').value, 10);
 		}
-		if (mapFarm || alchemy || mapBonus || insanity || desolation) defaultSetting.special = document.getElementById('windowSpecialDefault').value;
+		if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) defaultSetting.special = document.getElementById('windowSpecialDefault').value;
 
 		if (boneShrine) {
 			defaultSetting.autoBone = readNiceCheckbox(document.getElementById('windowAutoBone'));
@@ -1510,21 +1522,22 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			thisSetting.hdMult = parseFloat(document.getElementById('windowHDMult' + x).value, 10);
 			thisSetting.hdType = document.getElementById('windowHDType' + x).value;
 		}
-		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
-		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
+		if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity) thisSetting.repeatevery = parseInt(document.getElementById('windowRepeatEvery' + x).value, 10);
+		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity) thisSetting.endzone = parseInt(document.getElementById('windowEndZone' + x).value, 10);
 		if (raiding) thisSetting.raidingzone = parseInt(document.getElementById('windowRaidingZone' + x).value, 10);
 
-		if (mapFarm || alchemy || mapBonus || insanity || desolation) {
+		if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) {
 			thisSetting.special = document.getElementById('windowSpecial' + x).value;
 			if (thisSetting.special === 'hc' || thisSetting.special === 'lc')
 				thisSetting.gather = document.getElementById('windowGather' + x).value;
 			else
 				thisSetting.gather = null;
 		}
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm) thisSetting.autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) thisSetting.autoLevel = readNiceCheckbox(document.getElementById('windowAutoLevel' + x));
 		if (tributeFarm || smithyFarm || mapFarm) thisSetting.mapType = document.getElementById('windowMapTypeDropdown' + x).value;
 		if (mapFarm && thisSetting.mapType === 'Map Count') thisSetting.repeat = parseFloat(document.getElementById('windowRepeat' + x).value, 10);
 		if (mapFarm && thisSetting.mapType !== 'Map Count') thisSetting.repeat = document.getElementById('windowRepeat' + x).value;
+		if (toxicity) thisSetting.repeat = document.getElementById('windowRepeat' + x).value;
 		if (mapFarm || mapBonus) thisSetting.hdRatio = document.getElementById('windowHDRatio' + x).value;
 		if (tributeFarm) thisSetting.tributes = parseInt(document.getElementById('windowTributes' + x).value, 10);
 		if (tributeFarm) thisSetting.mets = parseInt(document.getElementById('windowMets' + x).value, 10);
@@ -1702,6 +1715,10 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	var hdFarm = titleText.includes('HD Farm');
 	var raiding = titleText.includes('Raiding');
 	var bionic = titleText.includes('Bionic');
+
+	var balance = titleText.includes('Balance Destack'.toLowerCase());
+	var toxicity = titleText.includes('Toxicity Farm');
+
 	var quagmire = titleText.includes('Quagmire');
 	var insanity = titleText.includes('Insanity Farm');
 	var alchemy = titleText.includes('Alchemy Farm');
@@ -1780,17 +1797,17 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	//Cell
 	if (!golden && !boneShrine && !desolation) mazHelp += "<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell. <b>DOES NOT TAKE OVERKILL INTO ACCOUNT.</b></li>";
 	//AutoLevel
-	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm)
+	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)
 		mazHelp += "<li><b>Auto Level</b> - Will automatically identify the best map level for your farming needs by looking at highest affordable map level and then calculating if you can one shot enemies with Titimp buff. " + (radonSetting ? "Highly recommended to use 'Auto Equality: Advanced' with this setting as it'll speed up map runs by a significant amount." : "") + "</li>";
 	//Map Level
-	if ((mapFarm || tributeFarm || smithyFarm || worshipperFarm || hdFarm || insanity || alchemy || hypothermia))
+	if (mapFarm || tributeFarm || smithyFarm || worshipperFarm || hdFarm || insanity || alchemy || hypothermia || toxicity)
 		mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can input a positive or negative number for this so input could be '-5', '0', or '3'. " + ((radonSetting && !(insanity || alchemy || hypothermia)) ? "Will override inputs above -1 during the Wither challenge." : "") + "</li>";
 	//Map Level for Map Bonus!
 	if (mapBonus)
 		mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can only input a value for a map level you'd be able to gain map stacks from.</li>";
 
 	if (!raiding && !smithyFarm && !hdFarm && !golden) mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. Input will look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
-	if (mapFarm || mapBonus || insanity || alchemy)
+	if (mapFarm || mapBonus || insanity || alchemy || toxicity)
 		mazHelp += "<li><b>Special</b> - The type of cache you'd like to run during this map. Will override metal cache inputs with wooden caches during the Transmute challenge.</li>";
 
 
@@ -1917,10 +1934,10 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	}
 
 	//Repeat Every
-	if (mapFarm || tributeFarm || worshipperFarm || smithyFarm)
+	if (mapFarm || tributeFarm || worshipperFarm || smithyFarm || toxicity)
 		mazHelp += "<li><b>Repeat Every</b> - Line can be repeated every Zone, or set to a custom number depending on need.</li>";
 	//End Zone
-	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
+	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || toxicity)
 		mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this MaZ line repeat. If so, the line will stop repeating at this Zone. Must be between 6 and 1000.</li>";
 	//Run Type
 	if (boneShrine || voidMap || mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
@@ -2282,7 +2299,7 @@ function addRow(varPrefix, titleText) {
 				if (document.getElementById('windowSpecial' + x) !== null)
 					document.getElementById('windowSpecial' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].special ? autoTrimpSettings[settingName + 'DefaultSettings'][value].special : '0';
 				if ((!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && !titleText.includes('HD Farm')) && document.getElementById('windowRepeat' + x) !== null)
-					document.getElementById('windowRepeat' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].repeat
+					autoTrimpSettings[settingName + 'DefaultSettings'][value].repeat ? autoTrimpSettings[settingName + 'DefaultSettings'][value].repeat : 0;
 				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding') || titleText.includes('Smithy Farm')) && document.getElementById('windowRepeatEvery' + x) !== null)
 					document.getElementById('windowRepeatEvery' + x).value = 0;
 				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding') || titleText.includes('Map Bonus') || titleText.includes('Smithy Farm') || titleText.includes('Desolation')) && document.getElementById('windowEndZone' + x) !== null)
@@ -2384,6 +2401,10 @@ function removeRow(index, titleText) {
 	var hdFarm = titleText.includes('HD Farm');
 	var raiding = titleText.includes('Raiding');
 	var bionic = titleText.includes('Bionic');
+
+	var balance = titleText.includes('Balance Destack'.toLowerCase());
+	var toxicity = titleText.includes('Toxicity Farm');
+
 	var quagmire = titleText.includes('Quagmire');
 	var insanity = titleText.includes('Insanity Farm');
 	var alchemy = titleText.includes('Alchemy Farm');
@@ -2402,12 +2423,12 @@ function removeRow(index, titleText) {
 	document.getElementById('windowWorld' + index).value = -2;
 	if (!golden && !desolation) document.getElementById('windowCell' + index).value = -1;
 	if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) document.getElementById('windowLevel' + index).value = 0;
-	if (mapFarm || alchemy || insanity || mapBonus || desolation) document.getElementById('windowSpecial' + index).value = 0;
-	if (mapFarm || alchemy || mapBonus || insanity) document.getElementById('windowGather' + index).value = 0;
-	if (mapFarm || smithyFarm || mapBonus || hdFarm) document.getElementById('windowRepeat' + index).value = 0;
+	if (mapFarm || alchemy || insanity || mapBonus || desolation || toxicity) document.getElementById('windowSpecial' + index).value = 0;
+	if (mapFarm || alchemy || mapBonus || insanity || toxicity) document.getElementById('windowGather' + index).value = 0;
+	if (mapFarm || smithyFarm || mapBonus || hdFarm || toxicity) document.getElementById('windowRepeat' + index).value = 0;
 	if (hdFarm) document.getElementById('windowHDMult' + index).value = 0;
-	if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation) document.getElementById('windowRepeatEvery' + index).value = 0;
-	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation) document.getElementById('windowEndZone' + index).value = 0;
+	if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity) document.getElementById('windowRepeatEvery' + index).value = 0;
+	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity) document.getElementById('windowEndZone' + index).value = 0;
 	if (tributeFarm) document.getElementById('windowTributes' + index).value = 0;
 	if (tributeFarm) document.getElementById('windowMets' + index).value = 0;
 	if (quagmire) document.getElementById('windowBogs' + index).value = 0;
@@ -2440,7 +2461,7 @@ function removeRow(index, titleText) {
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', true);
 	}
-	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm) {
+	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity) {
 		var checkBox = document.getElementById('windowAutoLevel' + index);
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', false);
@@ -2471,7 +2492,29 @@ function updateWindowPreset(index, varPrefix) {
 	var varPrefix = !varPrefix ? '' : varPrefix;
 	var row = document.getElementById('windowRow' + index);
 
-	if (varPrefix.includes('MapFarm') || varPrefix.includes('TributeFarm') || varPrefix.includes('SmithyFarm') || varPrefix.includes('MapBonus') || varPrefix.includes('WorshipperFarm') || varPrefix.includes('BoneShrine') || varPrefix.includes('VoidMap') || varPrefix.includes('HDFarm') || varPrefix.includes('Raiding')) {
+	var mapFarm = varPrefix.includes('MapFarm');
+	var mapBonus = varPrefix.includes('MapBonus');
+	var voidMap = varPrefix.includes('VoidMap');
+	var hdFarm = varPrefix.includes('HDFarm');
+	var raiding = varPrefix.includes('Raiding');
+	var bionic = varPrefix.includes('Bionic');
+
+	var balance = varPrefix.includes('Balance'.toLowerCase());
+	var toxicity = varPrefix.includes('Toxicity');
+
+	var quagmire = varPrefix.includes('Quagmire');
+	var insanity = varPrefix.includes('Insanity');
+	var alchemy = varPrefix.includes('Alchemy');
+	var hypothermia = varPrefix.includes('Hypothermia');
+	var desolation = varPrefix.includes('Desolation');
+
+	var boneShrine = varPrefix.includes('BoneShrine');
+	var golden = varPrefix.includes('Golden');
+	var tributeFarm = varPrefix.includes('Tribute');
+	var smithyFarm = varPrefix.includes('Smithy');
+	var worshipperFarm = varPrefix.includes('Worshipper');
+
+	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) {
 		if (varPrefix !== '') {
 			var runType = document.getElementById('windowRunType' + index).value;
 
@@ -2491,20 +2534,20 @@ function updateWindowPreset(index, varPrefix) {
 		}
 	}
 
-	if (varPrefix.includes('MapFarm') || varPrefix.includes('TributeFarm') || varPrefix.includes('SmithyFarm') || varPrefix.includes('MapBonus') || varPrefix.includes('Worshipper') || varPrefix.includes('Insanity') || varPrefix.includes('Alch') || varPrefix.includes('Hypo')) {
+	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || toxicity) {
 		var autoLevel = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? 'windowLevelOff' : 'windowLevelOn';
 		swapClass('windowLevel', autoLevel, row);
 		document.getElementById('windowLevel' + index).disabled = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? true : false;
 	}
 
-	if (varPrefix.includes('MapFarm') || varPrefix.includes('Alch') || varPrefix.includes('MapBonus') || varPrefix.includes('Insanity') || varPrefix.includes('Desolation')) {
+	if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) {
 		var special = document.getElementById('windowSpecial' + index).value;
 
 		newClass = (special === 'hc' || special === 'lc') ? 'windowGatherOn' : 'windowGatherOff';
 		swapClass('windowGather', newClass, row);
 	}
 
-	if (varPrefix.includes('HDFarm')) {
+	if (hdFarm) {
 		var special = document.getElementById('windowHDType' + index).value;
 
 		newClass = (special === 'maplevel') ? 'windowMapLevelOff' : 'windowMapLevelOn';
@@ -2516,7 +2559,7 @@ function updateWindowPreset(index, varPrefix) {
 		}
 	}
 
-	if (currSettingUniverse === 2 && varPrefix.includes('BoneShrine')) {
+	if (currSettingUniverse === 2 && boneShrine) {
 		var runType = document.getElementById('windowRunType' + index).value;
 	}
 	if (currSettingUniverse === 1) {
