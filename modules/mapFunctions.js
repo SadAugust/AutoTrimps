@@ -13,7 +13,6 @@ MODULES.mapFunctions.portalAfterVoids = false;
 MODULES.mapFunctions.portalZone = Infinity;
 
 MODULES.mapFunctions.hasHealthFarmed = '';
-MODULES.mapFunctions.workerRatio = null;
 MODULES.mapFunctions.runUniqueMap = '';
 
 function isDoingSpire() {
@@ -264,6 +263,15 @@ function recycleMap_AT(forceAbandon) {
 	recycleMap();
 }
 
+//Check to see if we are running Atlantrimp or if we should be.
+function runningAtlantrimp() {
+	var runAtlantrimp = false;
+	if (getPageSetting('autoMaps') > 0 && mapSettings.atlantrimp) runAtlantrimp = true;
+	else if (game.global.mapsActive && (getCurrentMapObject().location === 'Atlantrimp' || getCurrentMapObject().location === 'Trimple Of Doom')); runAtlantrimp = true;
+
+	return runAtlantrimp;
+}
+
 function runUniqueMap(mapName, dontRecycle) {
 	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
 	if (challengeActive('Insanity')) return;
@@ -286,7 +294,6 @@ function runUniqueMap(mapName, dontRecycle) {
 				selectMap(game.global.mapsOwnedArray[map].id)
 				rRunMap();
 				debug('Running ' + mapName + ' on zone ' + game.global.world + '.', "map_Details");
-				if (mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') runningAtlantrimp = true;
 			}
 		}
 	}

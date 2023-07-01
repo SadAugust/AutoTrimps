@@ -79,8 +79,7 @@ function serializeSettings() {
 // Process data to google forms to update stats spreadsheet
 function pushSpreadsheetData() {
 	if (!portalWindowOpen) return;
-	var user = autoTrimpSettings.gameUser.value;
-	if (user === 'undefined' || user.toLowerCase() === 'test') return;
+	if (!gameUserCheck(true)) return;
 	const graphData = JSON.parse(localStorage.getItem("portalDataCurrent"))[getportalID()];
 	//const graphData = JSON.parse(LZString.decompressFromBase64(localStorage.getItem("portalDataHistory")))[getportalID()];
 

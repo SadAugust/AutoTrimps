@@ -70,11 +70,10 @@ var currentHZE = 0;
 var lastHZE = 0;
 var aWholeNewHZE = false;
 
-var magmiteSpenderChanged = false;
+var settingChangedTimeout = false;
 
 var challengeCurrentZone = -1;
 var heirloomPlagueSwap = false;
-var runningAtlantrimp = false;
 var mapRepeats = 0;
 
 var showingPerky = false;
@@ -470,7 +469,7 @@ function mainLoopU1() {
 	//Core
 	geneAssist();
 	autoRoboTrimp();
-	if (getPageSetting('spendmagmite') === 2 && !magmiteSpenderChanged) autoMagmiteSpender();
+	if (getPageSetting('spendmagmite') === 2 && !settingChangedTimeout) autoMagmiteSpender();
 	autoNatureTokens();
 	autoEnlight();
 	autoGenerator();

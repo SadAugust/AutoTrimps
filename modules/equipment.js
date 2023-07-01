@@ -478,10 +478,10 @@ function autoEquip() {
 		([2, 3].indexOf(currQuest()) >= 0 && game.global.lastClearedCell < 90) ||
 		(mapSettings.mapName === 'Smithy Farm') ||
 		(game.mapUnlocks.AncientTreasure.canRunOnce &&
-			(runningAtlantrimp || mapSettings.runAtlantrimp ||
+			(mapSettings.runAtlantrimp ||
 				(game.global.mapsActive && (getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Trimple Of Doom'))
 			)
-		)
+		) || settingChangedTimeout
 	)
 		return;
 
@@ -531,7 +531,6 @@ function autoEquip() {
 	}
 
 	var maxCanAfford = 0;
-
 
 	//Buy as many shields as possible when running Melting Point
 	if (game.global.universe === 2 && !getPageSetting('equipNoShields') && getPageSetting('jobSettingsArray').NoLumberjacks.enabled && game.global.mapsActive && getCurrentMapObject().name === 'Melting Point')

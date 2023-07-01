@@ -134,8 +134,11 @@ function buyUpgrades() {
 
 		//Coord & Amals
 		if (upgrade === 'Coordination' && (getPageSetting('upgradeType') === 2 || !canAffordCoordinationTrimps())) continue;
-		if (upgrade === 'Coordination' && challengeActive('Trappapalooza') && getPageSetting('trappapalooza') && getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords')) continue;
-		if (upgrade === 'Coordination' && challengeActive('Trappapalooza') && getPageSetting('trappapalooza')) { buyJobs(); }
+		//Skip coords if we have more than our designated cap otherwise buy jobs to ensure we fire enough workers for the coords we want to get.
+		if (upgrade === 'Coordination' && challengeActive('Trappapalooza') && getPageSetting('trappapalooza')) {
+			if (getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords')) continue;
+			buyJobs();
+		}
 		//Gigastations
 		if (upgrade === 'Gigastation' && !fuckbuildinggiga) {
 			if (getPageSetting("autoGigas") && game.upgrades.Gigastation.done === 0 && !firstGiga()) continue;

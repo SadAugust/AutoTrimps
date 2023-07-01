@@ -1,6 +1,3 @@
-//Resetting variables
-runningAtlantrimp = false;
-
 function boneShrine() {
 
 	const defaultSettings = getPageSetting('boneShrineDefaultSettings');
@@ -67,22 +64,17 @@ function boneShrine() {
 				HeirloomEquipStaff('heirloomStaffMap');
 		}
 		if (boneShrineAtlantrimp) {
-			if (!runningAtlantrimp) {
-				runUniqueMap(boneShrineDoubler, false);
-			}
+			runUniqueMap(boneShrineDoubler, false);
 		}
 		if (!boneShrineAtlantrimp || (boneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === boneShrineDoubler && game.global.lastClearedMapCell === getCurrentMapObject().size - 4)) {
 			for (var x = 0; x < boneShrineCharges; x++) {
 				if (getPageSetting('jobType') > 0) {
-					MODULES.mapFunctions.workerRatio = boneShrineSettings.jobratio;
-					buyJobs();
+					buyJobs(boneShrineSettings.jobratio);
 				}
 				game.permaBoneBonuses.boosts.consume();
 			}
 			debug('Consumed ' + boneShrineCharges + " bone shrine " + (boneShrineCharges === 1 ? "charge on zone " : "charges on zone ") + game.global.world + " and gained " + boneShrineOutput(boneShrineCharges), "bones");
 			boneShrineSettings.done = totalPortals + "_" + game.global.world;
-			runningAtlantrimp = false;
-			MODULES.mapFunctions.workerRatio = null;
 			saveSettings();
 		}
 	}

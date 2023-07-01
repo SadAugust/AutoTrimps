@@ -1249,12 +1249,12 @@ function initializeAllSettings() {
 				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Desolation Gear Scumming", "Desolation", "MAZ")', 'C2', [1, 2],
-			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require() && (getPageSetting('gameUser') === 'SadAugust' || getPageSetting('gameUser') === 'Kyotie' || getPageSetting('gameUser') === 'Charles')) });
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require() && gameUserCheck()) });
 		createSetting('desolationDefaultSettings',
 			function () { return ('Deso: Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'C2', [1, 2],
-			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require() && (getPageSetting('gameUser') === 'SadAugust' || getPageSetting('gameUser') === 'Kyotie' || getPageSetting('gameUser') === 'Charles')) });
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require() && gameUserCheck()) });
 
 		//Smithless
 		createSetting('smithless',
@@ -3843,6 +3843,15 @@ function c2Description() {
 	return cinf() + "'s or special challenge (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ")";
 }
 
+//Check if the gameUser setting has been set to a valid user.
+function gameUserCheck(skipTest) {
+	const user = autoTrimpSettings.gameUser.value;
+	if (user === '') return false;
+	const allowedUsers = ['sadaugust', 'kyotie', 'charles', 'test'];
+	if (skipTest) allowedUsers.pop();
+	return allowedUsers.includes(user.toLowerCase());
+}
+
 //Will output how many zones you can liquify to.
 function checkLiqZoneCount() {
 	if (game.options.menu.liquification.enabled === 0) return 0;
@@ -4167,9 +4176,9 @@ function settingChanged(id, currUniverse) {
 		var value = 'value'
 		if (radonon && btn.universe.indexOf(0) === -1) value += 'U2';
 		if (id === 'AutoMagmiteSpender2' && btn[value] === 1) {
-			magmiteSpenderChanged = true;
+			settingChangedTimeout = true;
 			setTimeout(function () {
-				magmiteSpenderChanged = false;
+				settingChangedTimeout = false;
 			}, 5000);
 		}
 		//Skip no unique setting for automaps button in battle container
@@ -5143,7 +5152,7 @@ function updateCustomButtons(initialLoad) {
 			document.getElementById("tabLegacy").style.display = "none";
 		}
 		if (document.getElementById("tabTest") !== null) {
-			document.getElementById("tabTest").style.display = getPageSetting('gameUser') !== 'SadAugust' && getPageSetting('gameUser') !== 'Kyotie' && getPageSetting('gameUser').toLowerCase() !== 'test' ? "none" : "";
+			document.getElementById("tabTest").style.display = !gameUserCheck() ? "none" : "";
 		}
 	}
 	modifyParentNodeUniverseSwap();

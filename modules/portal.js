@@ -714,7 +714,6 @@ function resetVarsZone(loadingSave) {
 		lastHZE = 0;
 
 		heirloomPlagueSwap = false;
-		runningAtlantrimp = false;
 	}
 
 

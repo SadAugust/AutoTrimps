@@ -129,7 +129,7 @@ function fireAllWorkers() {
 		safeBuyJob('Scientist', -game.jobs.Scientist.owned);
 }
 
-function buyJobs() {
+function buyJobs(forceRatios) {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned === 0) return;
 
@@ -222,7 +222,7 @@ function buyJobs() {
 	}
 	if (game.global.universe === 2) {
 		//Meteorologists
-		if (!game.jobs.Meteorologist.locked && (jobSettings.Meteorologist.enabled || mapSettings.shouldMeteorologist) && !runningAtlantrimp) {
+		if (!game.jobs.Meteorologist.locked && (jobSettings.Meteorologist.enabled || mapSettings.shouldMeteorologist) && !runningAtlantrimp()) {
 			var affordableMets = getMaxAffordable(
 				game.jobs.Meteorologist.cost.food[0] * Math.pow(game.jobs.Meteorologist.cost.food[1], game.jobs.Meteorologist.owned),
 				game.resources.food.owned * (mapSettings.shouldMeteorologist ? 1 : (jobSettings.Meteorologist.percent / 100)),
@@ -237,7 +237,7 @@ function buyJobs() {
 		}
 
 		//Ships
-		if ((!game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50 && (jobSettings.Worshipper.enabled || mapSettings.mapName === 'Worshipper Farm') && !runningAtlantrimp)) {
+		if ((!game.jobs.Worshipper.locked && game.jobs.Worshipper.owned < 50 && (jobSettings.Worshipper.enabled || mapSettings.mapName === 'Worshipper Farm') && !runningAtlantrimp())) {
 			var affordableShips = mapSettings.mapName === 'Worshipper Farm' ? Math.floor(game.resources.food.owned / game.jobs.Worshipper.getCost()) : Math.floor((game.resources.food.owned / game.jobs.Worshipper.getCost()) * (jobSettings.Worshipper.percent / 100));
 			if (affordableShips > (50 - game.jobs.Worshipper.owned))
 				affordableShips = 50 - game.jobs.Worshipper.owned;
@@ -271,8 +271,10 @@ function buyJobs() {
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? 100 * reserveMod : 0;
 
 	var workerRatio;
-	if (MODULES.mapFunctions.workerRatio !== null || (getPageSetting('autoMaps') !== 0 && mapSettings.jobRatio !== undefined)) {
-		if (MODULES.mapFunctions.workerRatio !== null) workerRatio = MODULES.mapFunctions.workerRatio;
+	if (forceRatios !== undefined || (getPageSetting('autoMaps') !== 0 && mapSettings.jobRatio !== undefined)) {
+		//Check if bone shrine wants to force override our job ratio
+		if (forceRatios !== undefined) workerRatio = forceRatios;
+		//If not then check if we are running a map with a job ratio set
 		else workerRatio = mapSettings.jobRatio;
 		desiredRatios = Array.from(workerRatio.split(','))
 		desiredRatios = [desiredRatios[0] !== undefined ? Number(desiredRatios[0]) : 0, desiredRatios[1] !== undefined ? Number(desiredRatios[1]) : 0, desiredRatios[2] !== undefined ? Number(desiredRatios[2]) : 0, desiredRatios[3] !== undefined ? Number(desiredRatios[3]) : 0]

@@ -1696,18 +1696,17 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 	//Disables Atlantrimp for 1 second and recalculates mapSettings variable.
 	//This is to prevent the issue of Atlantrimp being run when you're saving settings.
-	runningAtlantrimp = true;
+	settingChangedTimeout = true;
 	mapSettings = new farmingDecision();
 
 	setTimeout(
-		function () { runningAtlantrimp = false },
-		200)
+		function () { settingChangedTimeout = false },
+		100)
 }
 
 function mazPopulateHelpWindow(titleText, trimple) {
 	//Setting up the Help onclick setting.
 	var mazHelp = "Welcome to <b>" + titleText + "</b> settings!";
-
 
 	var mapFarm = titleText.includes('Map Farm');
 	var mapBonus = titleText.includes('Map Bonus');
@@ -1730,6 +1729,15 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	if (!golden) mazHelp += " This is a powerful automation tool that allows you to set when maps should be automatically run. Here's a quick overview of what everything does:";
 	else if (golden) {
 		mazHelp += " This is a powerful automation tool that allows you to set the order of golden upgrade purchases and how many of each type you'd like to have. Here's a quick overview of what everything does:";
+	}
+
+	//Brief overview of what the setting does as it's kinda different from other settings.
+	if (desolation) {
+		mazHelp += "<p>This setting is sligtly different from others. It abuses a bug in the game where you can scum prestiges through a <b>Blacksmithery 3</b> bug. <b>This definitely shouldn't exist so be aware this is exploiting unintentional game mechanics.</b></p>";
+		mazHelp += "<li class=\"indent\">By exploiting this bug we get the prestiges from <b>Blacksmithery 3</b> when entering the zone and then the prestiges from the equivalent of doing a +10 map to get those prestiges significantly easier than we should be able to.</li>";
+		mazHelp += "<li class=\"indent\">For a more detailed explanation of how this setting works please see the <a href='https://discord.com/channels/371177798305447938/1075840564534202398/1087668293797679194' target='_blank'>guide in the <b>[Guide] Desolation</b> channel on the Trimps Discord.</a></li>";
+		mazHelp += "<li class=\"indent\">It will create a +1 map on cell 100 of the zone <b>PRIOR</b> to the start zone you set when the improbability is less than 5 gamma bursts from death.</li>";
+		mazHelp += "<li class=\"indent\">It then clears 3 cells before going back into the world and finishing off the improbability and clearing the map on the next zone to take advantage of the bug.</li>";
 	}
 
 	var radonSetting = currSettingUniverse === 2;
@@ -1807,7 +1815,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can only input a value for a map level you'd be able to gain map stacks from.</li>";
 
 	if (!raiding && !smithyFarm && !hdFarm && !golden) mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. Input will look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
-	if (mapFarm || mapBonus || insanity || alchemy || toxicity)
+	if (mapFarm || mapBonus || insanity || alchemy || desolation || toxicity)
 		mazHelp += "<li><b>Special</b> - The type of cache you'd like to run during this map. Will override metal cache inputs with wooden caches during the Transmute challenge.</li>";
 
 
@@ -1860,6 +1868,8 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li class=\"indent\"><b>Frag</b>: General all purpose setting. Will set sliders to max and reduce when necessary to afford the maps you're trying to purchase.</li>";
 		mazHelp += "<li class=\"indent\"><b>Frag Min</b>: Used for absolute minimum frag costs. Will set everything but the map size to minimum and gradually reduce that if necessary to purchase maps.</li>";
 		mazHelp += "<li class=\"indent\"><b>Frag Max</b>: This option will make sure that the map has perfect sliders and uses the prestegious special if available.</li>";
+
+		mazHelp += "<li><b>Prestige Goal</b> - The script will identify if the prestige selected here is available in the raiding zone you have input and if so will run maps to get the highest available level of that prestige.</li>";
 	}
 
 	if (hdFarm) {
@@ -1938,11 +1948,15 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Bonfires</b> - How many Bonfires should be farmed on this zone. Uses max bonfires built rather than a specific amount to farm for so if you have already built 14 so far during your run and want another 8 then you'd input 22.</li>";
 	}
 
+	if (desolation) {
+		mazHelp += "<li><b>Prestige Goal</b> - The script will identify if the prestige selected here is available in the zone you have input and if so will run a map to get that prestige.</li>";
+	}
+
 	//Repeat Every
-	if (mapFarm || tributeFarm || worshipperFarm || smithyFarm || toxicity)
+	if (mapFarm || tributeFarm || worshipperFarm || smithyFarm || toxicity || desolation)
 		mazHelp += "<li><b>Repeat Every</b> - Line can be repeated every Zone, or set to a custom number depending on need.</li>";
 	//End Zone
-	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || toxicity)
+	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || toxicity || desolation)
 		mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this MaZ line repeat. If so, the line will stop repeating at this Zone. Must be between 6 and 1000.</li>";
 	//Run Type
 	if (boneShrine || voidMap || mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
@@ -1987,7 +2001,7 @@ function windowToggleHelp(windowSize) {
 	parentWindow.style.height = 'auto';
 	parentWindow.style.maxHeight = window.innerHeight * .85 + 'px';
 
-	if (document.querySelectorAll('#mazHelpContainer li').length > 14) {
+	if (document.querySelectorAll('#mazHelpContainer li').length > 13) {
 		parentWindow.style.overflowY = 'scroll';
 	}
 }

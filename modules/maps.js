@@ -42,18 +42,22 @@ function updateAutoMapsStatus(get) {
 	if (get) {
 		return [status, getPercent, lifetime];
 	}
-
+	//Set auto maps status when inside of TW
 	if (usingRealTimeOffline && document.getElementById('autoMapStatusTW') !== null && document.getElementById('autoMapStatusTW').innerHTML !== status) {
 		var statusMsg = "<h9>Auto Maps Status</h9><br>" + status;
 		document.getElementById('autoMapStatusTW').innerHTML = statusMsg;
 		document.getElementById('autoMapStatusTW').setAttribute("onmouseover", makeAutomapStatusTooltip());
 	}
-
-	if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
-	document.getElementById('autoMapStatus').setAttribute("onmouseover", makeAutomapStatusTooltip());
-
-	if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
-	document.getElementById('hiderStatus').setAttribute("onmouseover", makeResourceTooltip());
+	//Set auto maps status when outside of TW
+	if (!usingRealTimeOffline && document.getElementById('autoMapStatus') !== null && document.getElementById('autoMapStatus').innerHTML !== status) {
+		document.getElementById('autoMapStatus').innerHTML = status;
+		document.getElementById('autoMapStatus').setAttribute("onmouseover", makeAutomapStatusTooltip());
+	}
+	//Set hider (he/hr) status when outside of TW
+	if (!usingRealTimeOffline && document.getElementById('hiderStatus') !== null && document.getElementById('hiderStatus').innerHTML !== hiderStatus) {
+		document.getElementById('hiderStatus').innerHTML = hiderStatus;
+		document.getElementById('hiderStatus').setAttribute("onmouseover", makeResourceTooltip());
+	}
 }
 
 function makeAutomapStatusTooltip() {
@@ -146,14 +150,9 @@ function autoMap() {
 
 	if (getPageSetting('autoMaps') === 0 || !game.global.mapsUnlocked) return;
 
-	//Stops maps from running while doing Trimple Of Doom or Atlantrimp.
-	if (!game.mapUnlocks.AncientTreasure.canRunOnce) {
-		runningAtlantrimp = false;
-	}
-
 	if (game.global.mapsActive) {
 		var currMap = getCurrentMapObject();
-		if (currMap !== undefined && (currMap.name === 'Trimple Of Doom' || currMap.name === 'Atlantrimp' || currMap.name === 'Melting Point' || currMap.name === 'Frozen Castle') || runningAtlantrimp) {
+		if (currMap !== undefined && (currMap.name === 'Trimple Of Doom' || currMap.name === 'Atlantrimp' || currMap.name === 'Melting Point' || currMap.name === 'Frozen Castle')) {
 			if (currMap.name === MODULES.mapFunctions.runUniqueMap) MODULES.mapFunctions.runUniqueMap = '';
 			if (game.global.repeatMap) repeatClicked();
 			return;
@@ -161,6 +160,7 @@ function autoMap() {
 	}
 
 	//Failsafes
+	//If maps aren't active, or soldier attack is negative or we're running Quest and doing a shield break OR no maps quest
 	if (!game.global.mapsUnlocked || game.global.soldierCurrentAttack < 0 || currQuest() === 8 || currQuest() === 9) {
 		if (game.global.preMapsActive) mapsClicked();
 		return;
@@ -178,6 +178,8 @@ function autoMap() {
 		return;
 	}
 
+	//If we're inside of the Life challenge.
+	//Will go to map chamber and sit back in the world without fighting until the cell we're on is Living.
 	if (challengeActive('Life') && !game.global.mapsActive) {
 		if (getPageSetting('life') && getPageSetting('lifeZone') > 0 && game.global.world >= getPageSetting('lifeZone') && getPageSetting('lifeStacks') > 0 && game.challenges.Life.stacks < getPageSetting('lifeStacks')) {
 			var currCell = game.global.world + "_" + (game.global.lastClearedCell + 1);
@@ -243,7 +245,6 @@ function autoMap() {
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0;
 		mappingTime = 0;
-		if (game.global.selectedMapPreset >= 4) game.global.selectedMapPreset = 1;
 		if (document.getElementById('advExtraLevelSelect').value > 0)
 			document.getElementById('advExtraLevelSelect').value = "0";
 		MODULES.mapFunctions.prestigeRunningMaps = false;

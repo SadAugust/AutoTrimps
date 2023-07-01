@@ -322,13 +322,10 @@ function buyBuildings() {
 	}
 
 	//Disable buying buildings inside of unique maps
-	if (game.global.mapsActive && (getCurrentMapObject().name === 'Trimple Of Doom' || getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Melting Point' || getCurrentMapObject().name === 'Frozen Castle') || runningAtlantrimp) {
+	if (game.global.mapsActive && (getCurrentMapObject().name === 'Trimple Of Doom' || getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Melting Point' || getCurrentMapObject().name === 'Frozen Castle')) {
 		if (game.global.repeatMap) repeatClicked();
 		return;
 	}
-
-	if (typeof runningAtlantrimp !== 'undefined' && runningAtlantrimp)
-		return;
 
 	if (challengeActive('Quest') && getPageSetting('quest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
 		//Still allows you to buy tributes during gem quests
