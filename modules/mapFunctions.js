@@ -1652,6 +1652,7 @@ function toxicity() {
 	};
 
 	if (!getPageSetting('toxicityDefaultSettings').active) return farmingDetails;
+	if (!challengeActive('Toxicity')) return farmingDetails;
 	const baseSettings = getPageSetting('toxicitySettings');
 	var settingIndex;
 

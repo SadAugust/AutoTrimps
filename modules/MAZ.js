@@ -1909,6 +1909,11 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Ship</b> - How many worshippers you'd like to farm up to during this line. Max input is 50 and it'll default to that value if you input anything higher.</li>";
 	}
 
+	if (toxicity) {
+		//Insanity Stacks
+		mazHelp += "<li><b>Toxic Stacks</b> - How many Toxic Stacks you'd like to farm up to during this line.</li>";
+	}
+
 	if (quagmire) {
 		//Black Bogs
 		mazHelp += "<li><b>Bogs</b> - How many Black Bog maps you'd like to run during this line.</li>";
