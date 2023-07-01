@@ -304,6 +304,9 @@ function autoMap() {
 
 	//Map Repeat
 	if (game.global.mapsActive) {
+		//Recycling our maps below world level if we have 95 or more in our inventory.
+		//Game refuses to let you buy a map if you have 100 maps in your inventory.
+		if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
 		//Swapping to LMC maps if we have 1 item left to get in current map - Needs special modifier unlock checks!
 		if (mapSettings.shouldRun && mapSettings.mapName === 'Prestige Raiding' && game.global.mapsActive && String(getCurrentMapObject().level).slice(-1) === '1' && equipsToGet(getCurrentMapObject().level) === 1 && getCurrentMapObject().bonus !== 'lmc' && game.resources.fragments.owned > perfectMapCost_Actual(getCurrentMapObject().level - game.global.world, 'lmc', mapBiome)) {
 			var maplevel = getCurrentMapObject().level;

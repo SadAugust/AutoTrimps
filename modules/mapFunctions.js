@@ -1416,6 +1416,7 @@ function runPrestigeRaiding() {
 	}
 
 	if (!MODULES.mapFunctions.prestigeFragMapBought && game.global.preMapsActive) {
+		if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
 		document.getElementById("mapLevelInput").value = game.global.world;
 		incrementMapLevel(1);
 		if (MODULES.mapFunctions.prestigeMapArray[0] === undefined) {
