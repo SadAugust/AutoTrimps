@@ -17,7 +17,7 @@ function autoPortal(skipDaily) {
 	if (!MODULES.portal.portalForVoid && getPageSetting('autoPortal') === "Off") return;
 
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
-	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : portalUniverse;
+	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
 	var challenge = 'None';
 
 	var portalZone = getPageSetting('autoPortalZone') > 0 ? getPageSetting('autoPortalZone') : 999;
@@ -167,11 +167,8 @@ function autoPortal(skipDaily) {
 function dailyAutoPortal() {
 	if (!game.global.portalActive) return;
 	if (!challengeActive('Daily')) return;
-	if (game.global.universe === 1 && game.stats.highestLevel.valueTotal() < 100) return;
-	if (game.global.universe === 2 && game.stats.highestRadLevel.valueTotal() < 30) return;
-	if (game.global.runningChallengeSquared) return;
 
-	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
+	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium';
 
 	var portalZone = getPageSetting('dailyPortalZone') > 0 ? getPageSetting('dailyPortalZone') : 999;
 	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
