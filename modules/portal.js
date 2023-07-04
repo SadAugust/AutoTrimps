@@ -33,8 +33,6 @@ function autoPortal(portalZone) {
 	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
 	if (getPageSetting('autoPortal', currSettingUniverse).includes('Hour')) portalZone = Infinity;
 	//Set portal zone to current zone!
-	skipDaily = !skipDaily ? false : skipDaily;
-	if (skipDaily) portalZone = game.global.world;
 	if (MODULES.mapFunctions.portalZone === game.global.world && game.global.totalVoidMaps === 0) portalZone = game.global.world;
 	if (MODULES.portal.portalForVoid) {
 		portalZone = checkLiqZoneCount() >= 99 ? 99 : (checkLiqZoneCount() + 1);
@@ -87,7 +85,7 @@ function autoPortal(portalZone) {
 					else
 						challenge = 0;
 
-					doPortal(challenge, skipDaily);
+					doPortal(challenge, portalZone);
 					return;
 				}
 				else {
@@ -108,7 +106,7 @@ function autoPortal(portalZone) {
 						else
 							challenge = 0;
 
-						doPortal(challenge, skipDaily);
+						doPortal(challenge, portalZone);
 						return;
 					}, MODULES["portal"].timeout + 100);
 				}
@@ -170,7 +168,7 @@ function autoPortal(portalZone) {
 	}
 
 	if (challenge !== 'None')
-		doPortal(challenge, skipDaily);
+		doPortal(challenge, portalZone);
 }
 
 function dailyAutoPortal(portalZone) {
@@ -431,7 +429,7 @@ function c2runner() {
 	return;
 }
 
-function doPortal(challenge, skipDaily) {
+function doPortal(challenge, portalZone) {
 	if (!game.global.portalActive) return;
 
 	//Spending Magmite
@@ -492,7 +490,7 @@ function doPortal(challenge, skipDaily) {
 	if (!challengeSquaredMode) debug("C" + (Number(portalOppPrefix.charAt(1)) + 1) + " Runner: All C" + (Number(portalOppPrefix.charAt(1)) + 1) + "s above Threshold!", "portal");
 
 	//Running Dailies
-	if (!skipDaily && (currChall === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse)) && !challengeSquaredMode) {
+	if (!portalZone && (currChall === 'Daily' || getPageSetting('dailyPortalStart', portalUniverse)) && !challengeSquaredMode) {
 		selectChallenge('Daily');
 		//Checking to see which dailies can be run
 		checkCompleteDailies();
@@ -531,7 +529,7 @@ function doPortal(challenge, skipDaily) {
 		else if (lastUndone === 1) {
 			MODULES.portal.currentChallenge = 'None';
 			MODULES.portal.portalUniverse = portalUniverse;
-			autoPortal(game.global.world);
+			autoPortal(portalZone);
 			return;
 		}
 		//Portaling into a daily
