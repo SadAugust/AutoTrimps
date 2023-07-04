@@ -10,7 +10,16 @@ MODULES["portal"].dailyPercent = 0;
 
 var zonePostpone = 0;
 
-function autoPortal(skipDaily) {
+//Figures out which type of autoPortal we should be running depending on what kind of challenge we are in.
+function autoPortalCheck(portalZone) {
+	if (!game.global.portalActive) return;
+
+	if (hdStats.isDaily) dailyAutoPortal(portalZone);
+	else if (game.global.runningChallengeSquared) c2runnerportal(portalZone);
+	else autoPortal(portalZone);
+}
+
+function autoPortal(portalZone) {
 	if (challengeActive('Decay')) decayFinishChallenge();
 	if (!game.global.portalActive) return;
 	if (challengeActive('Daily') || game.global.runningChallengeSquared) return;
@@ -19,8 +28,8 @@ function autoPortal(skipDaily) {
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
 	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
 	var challenge = 'None';
-
-	var portalZone = getPageSetting('autoPortalZone') > 0 ? getPageSetting('autoPortalZone') : 999;
+	if (!portalZone)
+		portalZone = getPageSetting('autoPortalZone') > 0 ? getPageSetting('autoPortalZone') : 999;
 	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
 	if (getPageSetting('autoPortal', currSettingUniverse).includes('Hour')) portalZone = Infinity;
 	//Set portal zone to current zone!
@@ -164,13 +173,14 @@ function autoPortal(skipDaily) {
 		doPortal(challenge, skipDaily);
 }
 
-function dailyAutoPortal() {
+function dailyAutoPortal(portalZone) {
 	if (!game.global.portalActive) return;
 	if (!challengeActive('Daily')) return;
 
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium';
 
-	var portalZone = getPageSetting('dailyPortalZone') > 0 ? getPageSetting('dailyPortalZone') : 999;
+	if (!portalZone)
+		portalZone = getPageSetting('dailyPortalZone') > 0 ? getPageSetting('dailyPortalZone') : 999;
 	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
 	if (getPageSetting('dailyPortal', currSettingUniverse) === 1) portalZone = Infinity;
 	//Set portal zone to current zone after void map line if setting enabled!
@@ -302,10 +312,12 @@ function freeVoidPortal() {
 		return;
 }
 
-function c2runnerportal() {
+function c2runnerportal(portalZone) {
 	if (!game.global.runningChallengeSquared) return;
+	finishChallengeSquared();
 	if (!getPageSetting('c2RunnerStart')) return;
-	var portalZone = getPageSetting('c2RunnerPortal', portalUniverse);
+	if (!portalZone)
+		portalZone = getPageSetting('c2RunnerPortal', portalUniverse);
 	if (getPageSetting('c2RunnerMode') === 1) {
 		if (typeof getPageSetting('c2RunnerSettings')[game.global.challengeActive] !== 'undefined') {
 			if (!getPageSetting('c2RunnerSettings')[game.global.challengeActive].enabled) return;
@@ -519,7 +531,7 @@ function doPortal(challenge, skipDaily) {
 		else if (lastUndone === 1) {
 			MODULES.portal.currentChallenge = 'None';
 			MODULES.portal.portalUniverse = portalUniverse;
-			autoPortal(true);
+			autoPortal(game.global.world);
 			return;
 		}
 		//Portaling into a daily
@@ -724,11 +736,7 @@ function resetVarsZone(loadingSave) {
 
 	//Fragment Farming	
 	initialFragmentMapID = undefined;
-	//Prestige
-	mapFunction.prestigeMapArray = new Array(5);
-	mapFunction.prestigeFragMapBought = false;
-	mapFunction.prestigeRunningMaps = false;
-	mapFunction.prestigeRaidZone = 0;
+	//General Challenge Check
 	mapFunction.challengeContinueRunning = false;
 
 	//Auto Level variables
@@ -747,7 +755,7 @@ function resetVarsZone(loadingSave) {
 	mapFunction.voidTrigger = 'None';
 
 	hdStats = new HDStats();
-	mapSettings = new farmingDecision();
+	mapSettings = farmingDecision();
 }
 
 function presetSwapping(preset) {

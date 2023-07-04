@@ -1,5 +1,5 @@
 var MODULES_AT = {
-	ATversion: 'SadAugust v6.3.14',
+	ATversion: 'SadAugust v6.3.15',
 	atscript: document.getElementsByTagName("script"),
 	basepath: '',
 	modulepath: 'modules/'
@@ -236,7 +236,6 @@ function delayStartAgain() {
 	atFinishedLoading = true;
 	gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 	hdStats = new HDStats();
-	mapSettings = new farmingDecision();
 
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
@@ -430,10 +429,7 @@ function mainLoop() {
 	autoEquip();
 
 	//Portal
-	c2runnerportal();
-	finishChallengeSquared();
-	autoPortal();
-	dailyAutoPortal();
+	autoPortalCheck();
 	//Equip highlighting
 	displayMostEfficientEquipment();
 

@@ -1246,6 +1246,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like to prestige scum gear whilst on desolation.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
+				description += "<p><b>This definitely shouldn't exist so be aware this is exploiting unintentional game mechanics.</b></p>";
 				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Desolation Gear Scumming", "Desolation", "MAZ")', 'C2', [1, 2],
@@ -3745,11 +3746,12 @@ function initializeAllSettings() {
 			}, 'action', 'testMetalIncome();', null, 'Test', [0]);
 
 		createSetting('testTimeWarp',
-			function () { return ('1 day of Time Warp') },
+			function () { return ('Time Warp') },
 			function () {
-				var description = "<p>Will put you into a 1 day long Time Warp.</p>";
+				var description = "<p>Allows you to input how many hours of Time Warp you would like to do.</p>";
+				description += "<p>If you input a value higher than 24 it will increase the max time you can time warp for to the value you have input.</p>";
 				return description;
-			}, 'action', 'testTimeWarp();', null, 'Test', [0]);
+			}, 'action', 'ImportExportTooltip("timeWarp");', null, 'Test', [0]);
 
 		createSetting('testTotalEquipmentCost',
 			function () { return ('Total Equipment Cost') },
@@ -5322,7 +5324,7 @@ function setupTimeWarpAT() {
 			atStructureContainer.appendChild(atStructureSettings);
 			atStructureSettings.appendChild(atStructureSettingsButton);
 			autoStructureBtnParent.appendChild(atStructureContainer);
-			document.getElementById('settingBtnTW').append(autoStructureBtnParent);
+			$('#settingBtnTW').append(autoStructureBtnParent);
 		}
 	}
 }
@@ -6051,6 +6053,16 @@ function updateATVersion() {
 				}
 			}
 		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.15') {
+			changelog.push("Fixed a bug where Tributes, Meteorologists and Worshippers wouldn't be purchased.<br>\
+			Rewrote some Prestige Raiding and Void Map code to reduce to global variables I use so if there's any bugs DM me on discord about them with a save+settings so I can fix them.");
+		}
+
+		/* if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.16') {
+			changelog.push("Added a new setting for Desolation prestige gear scumming. This is a setting that is kinda in beta (doesn't account for overkill at all) and almost definitely shouldn't exist, read the help window for the setting to know more about it.");
+		} */
+
 	}
 
 	autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;

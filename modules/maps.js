@@ -247,7 +247,6 @@ function autoMap() {
 		mappingTime = 0;
 		if (document.getElementById('advExtraLevelSelect').value > 0)
 			document.getElementById('advExtraLevelSelect').value = "0";
-		MODULES.mapFunctions.prestigeRunningMaps = false;
 	}
 
 	//Uniques
@@ -314,7 +313,7 @@ function autoMap() {
 			if (game.global.preMapsActive) {
 				perfectMapCost(maplevel - game.global.world, "lmc", mapBiome);
 				buyMap();
-				rRunMap();
+				runMapAT();
 				debug("Running LMC map due to only having 1 equip remaining on this map.", "maps");
 			}
 		}
@@ -323,7 +322,7 @@ function autoMap() {
 			if (!game.global.repeatMap)
 				repeatClicked();
 			//Changing repeat to repeat for items for Presitge & Bionic Raiding
-			if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !MODULES.mapFunctions.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
+			if (mapSettings.shouldRun && ((mapSettings.mapName === 'Prestige Raiding' && !mapSettings.prestigeFragMapBought) || mapSettings.mapName === 'Bionic Raiding')) {
 				if (game.options.menu.repeatUntil.enabled !== 2) {
 					game.options.menu.repeatUntil.enabled = 2;
 					toggleSetting("repeatUntil", null, false, true);
@@ -339,11 +338,11 @@ function autoMap() {
 			if (game.global.repeatMap && challengeActive('Experience') && getCurrentMapObject().location === 'Bionic' && game.global.world > 600 && getCurrentMapObject().level >= 605) {
 				repeatClicked();
 			}
-			if (MODULES.mapFunctions.prestigeFragMapBought && game.global.repeatMap) {
+			if (mapSettings.prestigeFragMapBought && game.global.repeatMap) {
 				runPrestigeRaiding();
 			}
 			//Disabling repeat if repeat conditions have been met
-			if (game.global.repeatMap && mapSettings.mapName !== '' && !MODULES.mapFunctions.prestigeFragMapBought) {
+			if (game.global.repeatMap && mapSettings.mapName !== '' && !mapSettings.prestigeFragMapBought) {
 				//Figuring out if we have the right map level & special
 				var mapObj = game.global.mapsActive ? getCurrentMapObject() : null;
 				var mapLevel = mapObj !== null && typeof mapSettings.mapLevel !== 'undefined' ? mapObj.level - game.global.world : mapSettings.mapLevel;

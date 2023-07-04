@@ -6,9 +6,6 @@ MODULES.mapFunctions.voidVHDRatio = Infinity;
 MODULES.mapFunctions.voidHDInfo = '0_0_0';
 MODULES.mapFunctions.voidHDIndex = Infinity;
 
-MODULES.mapFunctions.voidFarm = false;
-
-MODULES.mapFunctions.boneCharge = false;
 MODULES.mapFunctions.portalAfterVoids = false;
 MODULES.mapFunctions.portalZone = Infinity;
 
@@ -17,7 +14,7 @@ MODULES.mapFunctions.runUniqueMap = '';
 
 function isDoingSpire() {
 	if (!game.global.spireActive) return false;
-	var settingPrefix = challengeActive('Daily') ? 'd' : '';
+	var settingPrefix = hdStats.isDaily ? 'd' : '';
 	var spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
 	if (spireNo === -1 || spireNo === 0) return true;
 	var spireZone = (1 + spireNo) * 100;
@@ -26,7 +23,7 @@ function isDoingSpire() {
 
 function exitSpireCell() {
 	if (!game.global.spireActive) return;
-	var settingPrefix = challengeActive('Daily') ? 'd' : '';
+	var settingPrefix = hdStats.isDaily ? 'd' : '';
 	if (getPageSetting(settingPrefix + 'ExitSpireCell') <= 0) return;
 
 	isDoingSpire() && game.global.lastClearedCell > getPageSetting(settingPrefix + 'ExitSpireCell') - 1 && endSpire()
@@ -267,7 +264,7 @@ function recycleMap_AT(forceAbandon) {
 function runningAtlantrimp() {
 	var runAtlantrimp = false;
 	if (getPageSetting('autoMaps') > 0 && mapSettings.atlantrimp) runAtlantrimp = true;
-	else if (game.global.mapsActive && (getCurrentMapObject().location === 'Atlantrimp' || getCurrentMapObject().location === 'Trimple Of Doom')); runAtlantrimp = true;
+	else if (game.global.mapsActive && (getCurrentMapObject().location === 'Atlantrimp' || getCurrentMapObject().location === 'Trimple Of Doom')) runAtlantrimp = true;
 
 	return runAtlantrimp;
 }
@@ -292,7 +289,7 @@ function runUniqueMap(mapName, dontRecycle) {
 		for (var map in game.global.mapsOwnedArray) {
 			if (game.global.mapsOwnedArray[map].name === mapName) {
 				selectMap(game.global.mapsOwnedArray[map].id)
-				rRunMap();
+				runMapAT();
 				debug('Running ' + mapName + ' on zone ' + game.global.world + '.', "map_Details");
 			}
 		}
@@ -382,7 +379,6 @@ function voidMaps() {
 		else if (!settingShouldRun(currSetting, world, 0)) continue;
 		for (var x = 0; x < zoneAddition + 1; x++) {
 			//Running voids regardless of HD if we reach our max void zone / Running voids if our voidHDRatio is greater than our target value. Will automatically run voids if HD Ratio on next zone is too high! aka can't gamma burst
-
 			var skipLine = 0;
 			for (var item in dropdowns) {
 				if (currSetting[hdTypes[item]] === 'void' && currSetting[dropdowns[item]] > hdStats.vhdRatioVoid) skipLine++;
@@ -394,8 +390,6 @@ function voidMaps() {
 				else if (currSetting[hdTypes[item]] === 'maplevel' && currSetting[dropdowns[item]] < hdStats.autoLevel) skipLine++;
 			}
 			if (skipLine === 2 && maxVoidZone !== game.global.world) continue;
-
-
 
 			if (maxVoidZone === game.global.world || game.global.world - world >= 0) {
 				settingIndex = y;
@@ -411,7 +405,6 @@ function voidMaps() {
 				module.voidHDRatio = hdStats.hdRatio;
 				module.voidVHDRatio = hdStats.hdRatioVoid;
 				module.voidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
-				if (defaultSettings.boneCharge && Number(module.voidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
 			}
 			module.voidHDIndex = y;
 			break;
@@ -435,7 +428,6 @@ function voidMaps() {
 			module.portalAfterVoids = true;
 			module.voidTrigger = autoTrimpSettings.heliumHrPortal.name()[portalSetting];
 			module.voidHDInfo = (totalPortals + "_" + game.global.world + "_" + (game.global.lastClearedCell + 2));
-			if (defaultSettings.boneCharge && Number(module.voidHDInfo.split("_")[0]) !== totalPortals) module.boneCharge = true;
 		} else {
 			setting = baseSettings[settingIndex >= 0 ? settingIndex : module.voidHDIndex];
 		}
@@ -443,32 +435,28 @@ function voidMaps() {
 		var jobRatio = module.portalAfterVoids || baseSettings[settingIndex] !== undefined ? setting.jobratio : defaultSettings.jobratio;
 		var portalAfter = module.portalAfterVoids || baseSettings[settingIndex] !== undefined ? setting.portalAfter : false;
 
-		if (module.boneCharge && game.global.mapsActive && getCurrentMapObject().location === 'Void') {
-			module.boneCharge = false;
-			if (game.permaBoneBonuses.boosts.charges > 0)
-				debug('Consumed 1 bone shrine charge on zone ' + game.global.world + " and gained " + boneShrineOutput(1), "bones");
-			game.permaBoneBonuses.boosts.consume();
-		}
-
 		if (game.global.totalVoidMaps > 0) {
 			shouldMap = true;
-		}
-
-		//Identifying if we need to do any form of HD Farming before running voids
-		//If we do then run HD Farm and stop this function until it has been completed.
-		if (shouldMap && defaultSettings.voidFarm) {
-			if (game.global.totalVoidMaps > 0 && (defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid || defaultSettings.hdRatio < hdStats.vhdRatioVoid)) {
-				if (!MODULES.mapFunctions.voidFarm) debug('Void Farming (Z' + game.global.world + ').', "map_Details");
-				MODULES.mapFunctions.voidFarm = true;
+			//Uses a bone charge if the user has toggled the setting on.
+			if (defaultSettings.boneCharge && !mapSettings.boneChargeUsed && game.permaBoneBonuses.boosts.charges > 0 && !game.options.menu.pauseGame.enabled) {
+				debug('Consumed 1 bone shrine charge on zone ' + game.global.world + " and gained " + boneShrineOutput(1), "bones");
+				buyJobs(jobRatio);
+				game.permaBoneBonuses.boosts.consume();
+				mapSettings.boneChargeUsed = true;
 			}
-			else {
-				MODULES.mapFunctions.voidFarm = false;
-			}
-			//Load HD Farm if we want to farm before voids
-			if (MODULES.mapFunctions.voidFarm) return hdFarm();
-		}
 
-		if (shouldMap && portalAfter) MODULES.mapFunctions.portalZone = game.global.world;
+			//Identifying if we need to do any form of HD Farming before actually running voids
+			//If we do then run HD Farm and stop this function until it has been completed.
+			if (defaultSettings.voidFarm && (defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid || defaultSettings.hdRatio < hdStats.vhdRatioVoid)) {
+				//Print farming message if we haven't already started HD Farming for stats.
+				if (mapSettings.mapName !== 'HD Farm')
+					debug('Void Maps (z' + game.global.world + 'c' + (game.global.lastClearedCell + 2) + ') farming for stats before running void maps.', "map_Details");
+				return hdFarm(false, true);
+			}
+
+			//If we are running voids and we have the setting enabled then initiate the sequence for portaling after your void maps.
+			if (portalAfter) MODULES.mapFunctions.portalZone = game.global.world;
+		}
 
 		var stackedMaps = Fluffy.isRewardActive('void') ? countStackedVoidMaps() : 0;
 		var status = 'Void Maps: ' + game.global.totalVoidMaps + ((stackedMaps) ? " (" + stackedMaps + " stacked)" : "") + ' remaining'
@@ -482,6 +470,7 @@ function voidMaps() {
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
 		farmingDetails.voidHitsSurvived = true;
+		if (mapSettings.boneChargeUsed) farmingDetails.boneChargeUsed = mapSettings.boneChargeUsed;
 	}
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
@@ -493,8 +482,8 @@ function voidMaps() {
 		module.voidHDInfo = '0_0_0';
 		module.portalAfterVoids = false;
 		module.voidTrigger = 'None';
-		module.voidFarm = false;
 		mapSettings.voidHitsSurvived = false;
+		delete mapSettings.boneChargeUsed;
 		//Setting portal zone to current zone if setting calls for it
 		if (portalAfter) MODULES.mapFunctions.portalZone = game.global.world;
 	}
@@ -1267,12 +1256,6 @@ function mapDestacking() {
 	return farmingDetails;
 }
 
-//Prestige variables === TO GET SORTED LATER!
-MODULES.mapFunctions.prestigeMapArray = new Array(5);
-MODULES.mapFunctions.prestigeFragMapBought = false;
-MODULES.mapFunctions.prestigeRunningMaps = false;
-MODULES.mapFunctions.prestigeRaidZone = 0;
-
 function prestigeRaiding() {
 
 	const mapName = 'Prestige Raiding'
@@ -1330,22 +1313,18 @@ function prestigeRaiding() {
 		var mapSpecial = getAvailableSpecials('p');
 		var status = 'Prestige Raiding: ' + equipsToGet(raidZones, targetPrestige)[0] + ' items remaining';
 
-		if (MODULES.mapFunctions.prestigeRaidZone > 0 && MODULES.mapFunctions.prestigeFragMapBought) status = 'Prestige frag farm to: ' + prettify(prestigeTotalFragCost(raidZones, targetPrestige, mapSpecial, incrementMaps, true));
+		if (mapSettings.prestigeFragMapBought) status = 'Prestige frag farm to: ' + prettify(prestigeTotalFragCost(raidZones, targetPrestige, mapSpecial, incrementMaps, true));
 
 		var mapsToRun = game.global.mapsActive ? equipsToGet(getCurrentMapObject().level, targetPrestige)[1] : Infinity;
 		var specialInMap = game.global.mapsActive && game.global.mapGridArray[getCurrentMapObject().size - 2].special === targetPrestige;
 
-
 		var repeat = mapsToRun === 1 || (specialInMap && mapsToRun === 2);
 
-		if (MODULES.mapFunctions.prestigeMapArray[0] !== undefined && shouldMap && game.global.mapsOwnedArray[getMapIndex(MODULES.mapFunctions.prestigeMapArray[0])] === undefined) {
-			debug("There was an error with your purchased map(s). Restarting the raiding procedure.")
-			MODULES.mapFunctions.prestigeMapArray = new Array(5);
-			MODULES.mapFunctions.prestigeRaidZone = 0;
-		}
-		if (MODULES.mapFunctions.prestigeMapArray[0] !== undefined && game.global.mapsActive && equipsToGet(getCurrentMapObject().level)[0] === 0) {
-			MODULES.mapFunctions.prestigeMapArray = new Array(5);
-			MODULES.mapFunctions.prestigeRaidZone = 0;
+		if (mapSettings.prestigeMapArray && mapSettings.prestigeMapArray[0] !== undefined && shouldMap) {
+			if (game.global.mapsOwnedArray[getMapIndex(mapSettings.prestigeMapArray[0])] === undefined || (game.global.mapsActive && equipsToGet(getCurrentMapObject().level)[0] === 0)) {
+				debug("There was an error with your purchased map(s). Restarting the raiding procedure.");
+				delete mapSettings.prestigeMapArray;
+			}
 		}
 
 		farmingDetails.shouldRun = shouldMap;
@@ -1361,18 +1340,19 @@ function prestigeRaiding() {
 		farmingDetails.status = status;
 		farmingDetails.settingIndex = settingIndex;
 		farmingDetails.incrementMaps = incrementMaps;
+		if (mapSettings.prestigeMapArray) farmingDetails.prestigeMapArray = mapSettings.prestigeMapArray;
+		if (mapSettings.prestigeFragMapBought) farmingDetails.prestigeFragMapBought = mapSettings.prestigeFragMapBought;
 	}
 
 	//Resetting variables and recycling the maps used
-	if (!shouldMap && (mapSettings.mapName === mapName || MODULES.mapFunctions.prestigeMapArray[0] !== undefined)) {
-		if (mapSettings.mapName === mapName) debug(mapName + " (Z" + game.global.world + ") took " + formatTimeForDescriptions(timeForFormatting(mappingTime)) + ".", "map_Details");
-		if (defaultSettings.recycle && game.global.preMapsActive) {
-			for (var x = 0; x < MODULES.mapFunctions.prestigeMapArray.length; x++) {
-				recycleMap(getMapIndex(MODULES.mapFunctions.prestigeMapArray[x]));
+	if (!shouldMap && mapSettings.mapName === mapName) {
+		mappingDetails(mapName, mapSettings.mapLevel, mapSettings.special);
+		if (defaultSettings.recycle && game.global.preMapsActive && mapSettings.prestigeMapArray) {
+			for (var x = 0; x < mapSettings.prestigeMapArray.length; x++) {
+				recycleMap(getMapIndex(mapSettings.prestigeMapArray[x]));
 			}
+			delete mapSettings.prestigeMapArray;
 		}
-		MODULES.mapFunctions.prestigeMapArray = new Array(5);
-		MODULES.mapFunctions.prestigeRaidZone = 0;
 		resetMapVars();
 	}
 
@@ -1387,64 +1367,71 @@ function runPrestigeRaiding() {
 	const mapSpecial = mapSettings.special;
 	const incrementMaps = mapSettings.incrementMaps;
 
-	MODULES.mapFunctions.prestigeRaidZone = raidzones;
+	//Initialising prestigeMapArray if it doesn't exist. This is used to store the maps we buy so we can run them later.
+	if (!mapSettings.prestigeMapArray) mapSettings.prestigeMapArray = new Array(5);
+	if (!mapSettings.prestigeFragMapBought) mapSettings.prestigeFragMapBought = false;
 
 	const canAffordMaps = prestigeTotalFragCost(raidzones, targetPrestige, mapSpecial, incrementMaps);
 
-	if (MODULES.mapFunctions.prestigeMapArray[0] === undefined) {
+	if (mapSettings.prestigeMapArray[0] === undefined) {
 		if (canAffordMaps) {
-			if (MODULES.mapFunctions.prestigeFragMapBought) {
+			if (mapSettings.prestigeFragMapBought) {
 				if (game.global.repeatMap)
 					repeatClicked();
 				if (game.global.preMapsActive)
-					MODULES.mapFunctions.prestigeFragMapBought = false;
+					mapSettings.prestigeFragMapBought = false;
 			}
 		}
+		//If we can't afford the maps we need to farm fragments
+		//Check if we can afford the fragment farming map and if so buy it and run it
+		//Otherwise this will be stuck here ....forever?????
 		else if (game.global.preMapsActive) {
-			MODULES.mapFunctions.prestigeFragMapBought = false;
-			if (!MODULES.mapFunctions.prestigeFragMapBought) {
-				fragmap();
-				if ((updateMapCost(true) <= game.resources.fragments.owned)) {
-					buyMap();
-					selectMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
-					runMap();
-					debug("Prestige Raiding running fragment farming map", "maps");
-					MODULES.mapFunctions.prestigeFragMapBought = true;
-				}
-			}
+			//Set sliders to appropriate levels for what we can currently afford.
+			fragMapSliders();
+			//Buy and run the frag farming mao
+			buyMap();
+			selectMap(game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
+			runMap();
+			debug("Prestige Raiding running fragment farming map", "maps");
+			mapSettings.prestigeFragMapBought = true;
 		}
 	}
 
-	if (!MODULES.mapFunctions.prestigeFragMapBought && game.global.preMapsActive) {
+	if (!mapSettings.prestigeFragMapBought && game.global.preMapsActive) {
+		//Recycle maps if 5 below the map limit to ensure we can purchase maximum amount of maps we could need
 		if (game.global.mapsOwnedArray.length >= 95) recycleBelow(true);
+		//Misc UI stuff to have the user know what's going on if this fails somehow
 		document.getElementById("mapLevelInput").value = game.global.world;
 		incrementMapLevel(1);
-		if (MODULES.mapFunctions.prestigeMapArray[0] === undefined) {
+		//Buy the maps we need IF we haven't already purchased them and prints out a message stating they've been bought
+		//Should really say map level for this, right???
+		if (mapSettings.prestigeMapArray[0] === undefined) {
 			for (var x = 0; x < 5; x++) {
-				if (!incrementMaps && x > 0) continue;
+				if (!incrementMaps && x > 0) break;
 				if (prestigeMapHasEquips(x, raidzones, targetPrestige)) {
 					prestigeRaidingSliders(x, raidzones, mapSpecial);
 					if ((updateMapCost(true) <= game.resources.fragments.owned)) {
 						buyMap();
-						MODULES.mapFunctions.prestigeMapArray[x] = (game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id);
-						debug("Prestige Raiding" + " (Z" + game.global.world + ") bought map #" + [(x + 1)], "map_Details");
+						var purchasedMap = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1];
+						mapSettings.prestigeMapArray[x] = purchasedMap.id;
+						debug("Prestige Raiding" + " (z" + game.global.world + ") bought a level " + purchasedMap.level + " map. Purchase #" + [(x + 1)], "map_Details");
 					}
 				}
 			}
-			MODULES.mapFunctions.prestigeMapArray = MODULES.mapFunctions.prestigeMapArray.filter(function (e) { return e.replace(/(\r\n|\n|\r)/gm, "") });
+			mapSettings.prestigeMapArray = mapSettings.prestigeMapArray.filter(function (e) { return e.replace(/(\r\n|\n|\r)/gm, "") });
 		}
 
-		for (var x = MODULES.mapFunctions.prestigeMapArray.length; x > -1; x--) {
-			if (game.global.preMapsActive && MODULES.mapFunctions.prestigeMapArray[x] !== undefined && prestigeMapHasEquips(x, raidzones, targetPrestige)) {
-				debug("Prestige Raiding" + " (Z" + game.global.world + ") running map #" + [(MODULES.mapFunctions.prestigeMapArray.length - x)], "map_Details");
-				selectMap(MODULES.mapFunctions.prestigeMapArray[x]);
+		for (var x = mapSettings.prestigeMapArray.length; x > -1; x--) {
+			if (game.global.preMapsActive && mapSettings.prestigeMapArray[x] !== undefined && prestigeMapHasEquips(x, raidzones, targetPrestige)) {
+				var purchasedMap = game.global.mapsOwnedArray[getMapIndex(mapSettings.prestigeMapArray[x])];
+				debug("Prestige Raiding" + " (z" + game.global.world + ") running a level " + purchasedMap.level + " map. Map #" + [(mapSettings.prestigeMapArray.length - x)], "map_Details");
+				selectMap(mapSettings.prestigeMapArray[x]);
 				runMap();
-				MODULES.mapFunctions.prestigeRunningMaps = true;
 			}
 		}
 	}
 
-	if (game.global.preMapsActive && MODULES.mapFunctions.prestigeRunningMaps)
+	if (game.global.preMapsActive)
 		runMap();
 }
 
@@ -2921,7 +2908,7 @@ function smithless() {
 	return farmingDetails;
 }
 
-function hdFarm(skipHealthCheck) {
+function hdFarm(skipHealthCheck, voidFarm) {
 
 	var mapName = 'HD Farm';
 	const farmingDetails = {
@@ -2935,7 +2922,7 @@ function hdFarm(skipHealthCheck) {
 	if (hitsSurvivedSetting > 0 && !skipHealthCheck && MODULES.mapFunctions.hasHealthFarmed !== (getTotalPortals() + "_" + game.global.world)) {
 		if (hitsSurvived < hitsSurvivedSetting) shouldHealthFarm = true;
 	}
-	if (!getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm && !MODULES.mapFunctions.voidFarm) return farmingDetails;
+	if (!getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm && !voidFarm) return farmingDetails;
 
 	const baseSettings = getPageSetting('hdFarmSettings');
 	const rHDFDefaultSetting = getPageSetting('hdFarmDefaultSettings');
@@ -2956,13 +2943,13 @@ function hdFarm(skipHealthCheck) {
 		}
 	}
 
-	if (settingIndex !== null || shouldHealthFarm || MODULES.mapFunctions.voidFarm) {
+	if (settingIndex !== null || shouldHealthFarm || voidFarm) {
 		var setting;
 		var hdFarmMapCap;
 		var hdFarmMaxMaps;
 		var hdFarmMinMaps;
 
-		if (MODULES.mapFunctions.voidFarm) {
+		if (voidFarm) {
 			var voidSetting = getPageSetting('voidMapDefaultSettings');
 			setting = {
 				autoLevel: true,
@@ -3053,7 +3040,7 @@ function hdFarm(skipHealthCheck) {
 				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
 				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + setting.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
 			}
-			if (MODULES.mapFunctions.voidFarm) voidMaps();
+			if (voidFarm) voidMaps();
 			resetMapVars(setting);
 			if (game.global.mapsActive) recycleMap_AT();
 
@@ -3088,6 +3075,8 @@ function hdFarm(skipHealthCheck) {
 		farmingDetails.settingIndex = settingIndex;
 		farmingDetails.shouldHealthFarm = shouldHealthFarm;
 		farmingDetails.voidHitsSurvived = hdType === 'hitsSurvivedVoid';
+		//Retain info that we have used a bone charge if we are farming stats before we run void maps.
+		if (voidFarm && mapSettings.boneChargeUsed) farmingDetails.boneChargeUsed = mapSettings.boneChargeUsed;
 	}
 
 	return farmingDetails;
@@ -3322,7 +3311,7 @@ function prestigeTotalFragCost(raidZones, targetPrestige, special, incrementMaps
 	else return false;
 }
 
-function fragmap() {
+function fragMapSliders() {
 	var fragmentsOwned = game.resources.fragments.owned
 	document.getElementById("biomeAdvMapsSelect").value = getBiome('fragments');
 	document.getElementById("advExtraLevelSelect").value = 0;
@@ -3408,43 +3397,45 @@ function fragMapFarmCost() {
 
 function fragmentFarm() {
 
-	var rFragMapBought = false;
-	//Worshipper farming
-	var rFragCheck = true;
+	var fragMapPurchased = false;
+	var fragCheck = true;
 
-	//Safety precaution in case of error with purchased map(s) getting recycled
-	if (initialFragmentMapID !== undefined && game.global.mapsOwnedArray[getMapIndex(initialFragmentMapID)] === undefined) {
-		debug("There was an error with your purchased map(s). Restarting the fragment farming procedure.")
-		initialFragmentMapID = undefined;
-	}
-
+	//Check to see if we can afford a perfect map with the maplevel & special selected
 	if (fragMapFarmCost()) {
-		rFragCheck = true;
+		fragCheck = true;
 		MODULES.maps.fragmentFarming = false;
-	} else if (!fragMapFarmCost()) {
+		initialFragmentMapID = undefined;
+	} else {
+
+		//Safety precaution in case of error with purchased map(s) getting recycled
+		if (initialFragmentMapID !== undefined && game.global.mapsOwnedArray[getMapIndex(initialFragmentMapID)] === undefined) {
+			debug("There was an error with your purchased map(s). Restarting the fragment farming procedure.")
+			initialFragmentMapID = undefined;
+		}
+
 		MODULES.maps.fragmentFarming = true;
-		rFragCheck = false;
-		if (!rFragCheck && initialFragmentMapID === undefined && !rFragMapBought && game.global.preMapsActive) {
+		fragCheck = false;
+		if (initialFragmentMapID === undefined && game.global.preMapsActive) {
 			//debug("Check complete for fragment farming map");
-			fragmap();
+			fragMapSliders();
 			if ((updateMapCost(true) <= game.resources.fragments.owned)) {
 				buyMap();
-				rFragMapBought = true;
-				if (rFragMapBought) {
+				fragMapPurchased = true;
+				if (fragMapPurchased) {
 					initialFragmentMapID = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1].id;
-					//debug("Fragment farming map purchased");
 				}
 			}
 		}
-		if (!rFragCheck && game.global.preMapsActive && !game.global.mapsActive && rFragMapBought && initialFragmentMapID !== undefined) {
+		if (game.global.preMapsActive && !game.global.mapsActive && fragMapPurchased && initialFragmentMapID !== undefined) {
 			debug("Fragment farming for a " + (mapSettings.mapLevel >= 0 ? "+" : "") + mapSettings.mapLevel + " " + mapSettings.special + " map.", "maps");
 			selectMap(initialFragmentMapID);
 			runMap();
-			var rFragmentMapID = initialFragmentMapID;
+			var fragmentMapID = initialFragmentMapID;
 			initialFragmentMapID = undefined;
 		}
-		if (!rFragCheck && !game.global.repeatMap && game.resources.fragments.owned < perfectMapCost(mapSettings.mapLevel, mapSettings.special)) repeatClicked();
-		if (!rFragCheck && game.resources.fragments.owned >= perfectMapCost(mapSettings.mapLevel, mapSettings.special) && game.global.mapsActive && rFragMapBought && rFragmentMapID !== undefined) {
+		if (!game.global.repeatMap && game.resources.fragments.owned < perfectMapCost(mapSettings.mapLevel, mapSettings.special))
+			repeatClicked();
+		if (game.resources.fragments.owned >= perfectMapCost(mapSettings.mapLevel, mapSettings.special) && game.global.mapsActive && fragMapPurchased && fragmentMapID !== undefined) {
 			if (!fragMapFarmCost()) {
 				if (!game.global.repeatMap) {
 					repeatClicked();
@@ -3453,21 +3444,17 @@ function fragmentFarm() {
 				if (game.global.repeatMap) {
 					repeatClicked();
 				}
-				if (game.global.preMapsActive && rFragMapBought && rFragmentMapID !== undefined) {
-					rFragMapBought = false;
+				if (game.global.preMapsActive && fragMapPurchased && fragmentMapID !== undefined) {
+					fragMapPurchased = false;
 				}
-				rFragCheck = true;
+				fragCheck = true;
 				MODULES.maps.fragmentFarming = false;
 				debug("Fragment farming successful", "maps");
 			}
 		}
-	} else {
-		rFragCheck = true;
-		MODULES.maps.fragmentFarming = false;
-		debug("Fragment farming successful", "maps");
 	}
 
-	if (rFragCheck) {
+	if (fragCheck) {
 		perfectMapCost(mapSettings.mapLevel, mapSettings.special)
 	}
 
@@ -3559,7 +3546,7 @@ function shouldFarmMapCreation(pluslevel, special, biome, difficulty, loot, size
 	return ("create");
 }
 
-function rRunMap() {
+function runMapAT() {
 	if (game.options.menu.pauseGame.enabled) return;
 	if (game.global.lookingAtMap === "") return;
 	if (game.achievements.mapless.earnable) {

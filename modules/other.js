@@ -709,7 +709,7 @@ function equalityManagement() {
 				}
 				else if (mapping && currentCell > 0 && type !== 'void' && getCurrentMapObject().location !== 'Darkness' && (!runningQuest && game.global.titimpLeft === 0)) {
 					suicideTrimps(true);
-					rRunMap();
+					runMapAT();
 				}
 				else
 					game.portal.Equality.disabledStackCount = 0;

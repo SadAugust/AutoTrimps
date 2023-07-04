@@ -533,13 +533,35 @@ function debugPrettifyMap(map) {
 }
 
 //Will activate a 24 hour timewarp.
-function testTimeWarp() {
+function testTimeWarp(hours) {
 
-	game.global.lastOnline -= 8.64e+7;
-	game.global.portalTime -= 8.64e+7;
-	game.global.zoneStarted -= 8.64e+7;
-	game.global.lastSoldierSentAt -= 8.64e+7;
-	game.global.lastSkeletimp -= 8.64e+7;
+	var timeWarpHours = 0;
+	try {
+		timeWarpHours = parseNum(document.getElementById("setSettingsNameTooltip").value.replace(/[\n\r]/gm, ""));
+		if (timeWarpHours === null || timeWarpHours === undefined || timeWarpHours === 0) {
+			debug("Time Warp input is invalid. Defaulting to 24 hours.", "test");
+			timeWarpHours = 24;
+		}
+	} catch (err) {
+		if (!hours) {
+			debug("Time Warp input is invalid. Defaulting to 24 hours.", "test");
+			timeWarpHours = 24;
+		}
+	}
+
+	if (hours) timeWarpHours = hours;
+	var timeToRun = timeWarpHours * 3600000;
+
+	game.global.lastOnline -= timeToRun;
+	game.global.portalTime -= timeToRun;
+	game.global.zoneStarted -= timeToRun;
+	game.global.lastSoldierSentAt -= timeToRun;
+	game.global.lastSkeletimp -= timeToRun;
+	game.permaBoneBonuses.boosts.lastChargeAt -= timeToRun;
+
+	//Increase maxTicks if we're going to be offline for more than 24 hours.
+	if (timeToRun > 8.64e+7)
+		offlineProgress.maxTicks = timeToRun;
 
 	offlineProgress.start();
 	return;
