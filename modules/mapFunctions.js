@@ -2721,7 +2721,7 @@ function desolationGearScum() {
 		//Skip iterating lines if map bonus is capped.
 		const currSetting = baseSettings[y];
 		//Set cell ourselves since there is no input and you don't need to do this before c100. If you're overkilling you definitely don't need this setting.
-		currSetting.cell = 100;
+		currSetting.cell = 100 - maxOneShotPower() + 1;
 		var targetPrestige = currSetting.prestigeGoal !== 'All' ? equipmentList[currSetting.prestigeGoal].Upgrade : 'GamesOP';
 		var world = currSetting.world - 1;
 		if (!settingShouldRun(currSetting, world, 0)) continue;
@@ -2758,14 +2758,23 @@ function desolationGearScum() {
 		//Check if a max attack+gamma burst can clear the improb.
 		//If it can't continue as normal, if it can then we start the +1 map for prestige scumming.
 		//Need to set it to destack before doing this so there's no chance of messing up the scum by neeeding to destack as soon as you hit the next zone.
-		var enemyHealth = game.global.gridArray[99].health;
+		var currCell = game.global.lastClearedCell + 2;
+		var enemyHealth = getCurrentWorldCell().health;
 		var equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
 		var ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);
 		var gammaDmg = gammaBurstPct;
 		var ourDmgTotal = (ourDmg * gammaDmg) * 5;
 
+		//Check if we will overshoot the improb with our regular hit/gamma burst.
+		//Add together the health of the cells between our current cell and the improb that we are able to overkill.
+		if (currCell !== 100) {
+			for (var x = currCell + 1; x <= 100; x++) {
+				enemyHealth += calcEnemyHealthCore('world', game.global.world, x, game.global.gridArray[x - 1].name);
+			}
+		}
+
 		//Identify how much damage we can do in 5 gamma bursts. If this value is greater than the improb health then we can clear it and we should start the map.
-		if ((game.global.lastClearedCell + 2 === 100 && ourDmgTotal > enemyHealth) || MODULES.mapFunctions.desolationGearScum) {
+		if (ourDmgTotal > enemyHealth || MODULES.mapFunctions.desolationGearScum) {
 			shouldMap = true;
 		}
 

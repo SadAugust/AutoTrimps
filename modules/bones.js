@@ -82,7 +82,7 @@ function boneShrine() {
 
 function boneShrineOutput(charges) {
 
-	charges = !charges ? 0 : charges;
+	charges = !charges ? 1 : charges;
 
 	var eligible = ["food", "wood", "metal"];
 	var storage = ["Barn", "Shed", "Forge"];
