@@ -202,7 +202,6 @@ function delayStart() {
 	game.global.autotrimps = true;
 	document.getElementById('activatePortalBtn').setAttribute("onClick", 'activateClicked(); pushSpreadsheetData()');
 	delayStartAgain();
-	//setTimeout(delayStartAgain, 1500);
 	mappingTIme = 0;
 }
 
@@ -224,7 +223,7 @@ function swapBaseSettings() {
 }
 
 function delayStartAgain() {
-	if (typeof mappingDetails !== 'function' || typeof setupATButtons !== 'function' || typeof isDoingSpire !== 'function') {
+	if (typeof mappingDetails !== 'function' || typeof setupATButtons !== 'function' || typeof isDoingSpire !== 'function' || typeof HDStats !== 'function') {
 		console.log("Modules not loaded yet. Waiting 100ms to try loading again.")
 		setTimeout(delayStartAgain, 100);
 		return;
@@ -495,8 +494,10 @@ function mainLoopU2() {
 	//Archeology
 	if (getPageSetting('archaeology') && challengeActive('Archaeology')) archstring();
 	//Auto Equality Management
-	if (getPageSetting('equalityManagement') === 1) equalityManagementBasic();
-	if (getPageSetting('equalityManagement') === 2) equalityManagement();
+	if (shouldRunTW) {
+		if (getPageSetting('equalityManagement') === 1) equalityManagementBasic();
+		if (getPageSetting('equalityManagement') === 2) equalityManagement();
+	}
 
 }
 

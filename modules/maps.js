@@ -43,19 +43,20 @@ function updateAutoMapsStatus(get) {
 		return [status, getPercent, lifetime];
 	}
 	//Set auto maps status when inside of TW
-	if (usingRealTimeOffline && document.getElementById('autoMapStatusTW') !== null && document.getElementById('autoMapStatusTW').innerHTML !== status) {
+	if (usingRealTimeOffline && document.getElementById('autoMapStatusTW') !== null) {
+		//Add in a header for the status to let the user know what it is
 		var statusMsg = "<h9>Auto Maps Status</h9><br>" + status;
-		document.getElementById('autoMapStatusTW').innerHTML = statusMsg;
+		if (document.getElementById('autoMapStatusTW').innerHTML !== status) document.getElementById('autoMapStatusTW').innerHTML = statusMsg;
 		document.getElementById('autoMapStatusTW').setAttribute("onmouseover", makeAutomapStatusTooltip());
 	}
 	//Set auto maps status when outside of TW
-	if (!usingRealTimeOffline && document.getElementById('autoMapStatus') !== null && document.getElementById('autoMapStatus').innerHTML !== status) {
-		document.getElementById('autoMapStatus').innerHTML = status;
+	if (!usingRealTimeOffline && document.getElementById('autoMapStatus') !== null) {
+		if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
 		document.getElementById('autoMapStatus').setAttribute("onmouseover", makeAutomapStatusTooltip());
 	}
 	//Set hider (he/hr) status when outside of TW
-	if (!usingRealTimeOffline && document.getElementById('hiderStatus') !== null && document.getElementById('hiderStatus').innerHTML !== hiderStatus) {
-		document.getElementById('hiderStatus').innerHTML = hiderStatus;
+	if (!usingRealTimeOffline && document.getElementById('hiderStatus') !== null) {
+		if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
 		document.getElementById('hiderStatus').setAttribute("onmouseover", makeResourceTooltip());
 	}
 }
@@ -433,7 +434,7 @@ function autoMap() {
 		}
 	}
 
-	var canRunSlowScum = mapSettings.mapName === 'Map Bonus' || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Pandemonium Destacking'
+	var canRunSlowScum = mapSettings.mapName === 'Map Bonus' || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Pandemonium Destacking' || mapSettings.mapName === 'Desolation Gear Scum';
 	if (game.global.mapsActive && game.global.universe === 2 && canRunSlowScum && !getCurrentMapObject().noRecycle && hdStats.hdRatioMap > getPageSetting('testMapScummingValue')) {
 		if (game.global.mapRunCounter !== 0 || !slowScumming) mapScumming(challengeActive('Desolation') ? 9 : 10);
 	}

@@ -21,6 +21,8 @@ class HDStats {
 		this.hitsSurvivedVoid = undefined;
 		this.autoLevel = undefined;
 
+		this.hze = undefined;
+		this.hypPct = undefined;
 		this.hyperspeed = undefined;
 
 		const z = game.global.world;
@@ -43,8 +45,8 @@ class HDStats {
 		this.hitsSurvivedVoid = calcHitsSurvived(z, 'void');
 		this.autoLevel = autoMapLevel();
 
-		var hyperspeed2 = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-		var hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+		this.hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+		this.hypPct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
 		this.hyperspeed = game.global.world <= Math.floor(hze * (hyperspeed2 / 100));
 	}
 }

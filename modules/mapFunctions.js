@@ -1424,15 +1424,21 @@ function runPrestigeRaiding() {
 		for (var x = mapSettings.prestigeMapArray.length; x > -1; x--) {
 			if (game.global.preMapsActive && mapSettings.prestigeMapArray[x] !== undefined && prestigeMapHasEquips(x, raidzones, targetPrestige)) {
 				var purchasedMap = game.global.mapsOwnedArray[getMapIndex(mapSettings.prestigeMapArray[x])];
-				debug("Prestige Raiding" + " (z" + game.global.world + ") running a level " + purchasedMap.level + " map. Map #" + [(mapSettings.prestigeMapArray.length - x)], "map_Details");
+				if (purchasedMap === undefined) {
+					debug("Prestige Raiding - Error with finding the purchased map. Skipping this map and moving on to the next one.");
+					continue;
+				}
+				//if (purchasedMap) 
+				debug("Prestige Raiding" + " (z" + game.global.world + ") running a level " + (purchasedMap.level) + " map. Map #" + [(mapSettings.prestigeMapArray.length - x)], "map_Details");
+				//else debug("Prestige Raiding" + " (z" + game.global.world + ") running a level " + (purchasedMap.level) + " map. Map #" + [(mapSettings.prestigeMapArray.length - x)], "map_Details");
 				selectMap(mapSettings.prestigeMapArray[x]);
-				runMap();
+				runMapAT();
 			}
 		}
 	}
 
 	if (game.global.preMapsActive)
-		runMap();
+		runMapAT();
 }
 
 function prestigeClimb() {
@@ -3814,6 +3820,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	}
 	//Setting special to current maps special if we're in a map.
 	if (game.global.mapsActive) mapSpecial = getCurrentMapObject().bonus === undefined ? "no special" : getCurrentMapObject().bonus;
+	if (mapSpecial === "0") mapSpecial = "no special";
 	if (mapName === 'Bionic Raiding') mapSpecial = game.talents.bionic2.purchased ? 'fa' : 'no special';
 
 	var timeMapping = mappingTime > 0 ? mappingTime : getGameTime();
