@@ -47,7 +47,7 @@ class HDStats {
 
 		this.hze = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 		this.hypPct = game.talents.liquification3.purchased ? 75 : game.talents.hyperspeed2.purchased ? 50 : 0;
-		this.hyperspeed = game.global.world <= Math.floor(hze * (hyperspeed2 / 100));
+		this.hyperspeed = game.global.world <= Math.floor(this.hze * (this.hypPct / 100));
 	}
 }
 
