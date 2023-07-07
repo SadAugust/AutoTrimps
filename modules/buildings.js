@@ -340,9 +340,9 @@ function buyBuildings() {
 		//Nurseries Init
 		if (!game.buildings.Nursery.locked) {
 			const nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
-			const dailyPrefix = challengeActive('Daily') ? 'd' : '';
+			const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
 
-			var nurseryPreSpire = isDoingSpire() && game.buildings.Nursery.owned < getPageSetting(dailyPrefix + 'PreSpireNurseries') ? getPageSetting(dailyPrefix + 'PreSpireNurseries') : 0;
+			var nurseryPreSpire = isDoingSpire() && game.buildings.Nursery.owned < getPageSetting(settingPrefix + 'PreSpireNurseries') ? getPageSetting(settingPrefix + 'PreSpireNurseries') : 0;
 
 			var nurseryAmt = nurseryPreSpire > 0 ? nurseryPreSpire : Math.max(nurseryPreSpire, buildingSettings.Nursery.buyMax);
 			if (nurseryAmt === 0 && !getPageSetting('advancedNurseries')) nurseryAmt = Infinity;

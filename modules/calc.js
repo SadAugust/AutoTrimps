@@ -624,7 +624,8 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 function calcSpire(what, cell, name) {
 	//Target Cell
 	if (!cell) {
-		const exitCell = getPageSetting((challengeActive('Daily') ? 'd' : '') + 'ExitSpireCell')
+		const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
+		const exitCell = getPageSetting(settingPrefix + 'ExitSpireCell')
 		if (isDoingSpire() && exitCell > 0 && exitCell <= 100)
 			cell = exitCell;
 		else cell = 100;

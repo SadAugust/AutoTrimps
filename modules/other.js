@@ -72,7 +72,10 @@ function avoidEmpower() {
 }
 
 function fightalways() {
-	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || (game.global.spireActive && (game.global.world >= getPageSetting('IgnoreSpiresUntil') || 0 >= getPageSetting('IgnoreSpiresUntil'))))
+	const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
+	var spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
+	var spireZone = (1 + spireNo) * 100;
+	if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || (game.global.spireActive && (game.global.world >= spireZone || 0 >= spireNo)))
 		return;
 	if (!game.global.fighting)
 		fightManual();

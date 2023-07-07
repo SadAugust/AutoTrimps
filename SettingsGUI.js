@@ -212,7 +212,7 @@ function initializeAllSettings() {
 				var description = "<p>Will automatically swap Surky presets when portaling into runs.</p>";
 				description += "<p>Fillers (non daily/" + cinf() + " runs) will load <b>'Easy Radon Challenge</b>'</p>";
 				description += "<p>Dailies will load <b>'Difficult Radon Challenge</b>'</p>";
-				description += "C3s or Mayhem-like challenges will load <b>'Push/C3/Mayhem</b>'.</p>";
+				description += cinf() + "'s or Mayhem-like challenges will load <b>'Push/C3/Mayhem</b>'.</p>";
 				description += "Challenges that have a dedicated preset will be loaded when starting that challenge.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -388,9 +388,6 @@ function initializeAllSettings() {
 				return description;
 			},
 			'value', -1, null, 'Daily', [1, 2]);
-
-
-
 
 		createSetting('bloodthirstDestack',
 			function () { return ('Bloodthirst Destack') },
@@ -761,7 +758,7 @@ function initializeAllSettings() {
 		createSetting('c2RunnerSettings',
 			function () { return (cinf() + ' Runner Settings') },
 			function () {
-				var description = "<p>Here you can enable the challenges you would like C3 runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.</p>";
+				var description = "<p>Here you can enable the challenges you would like " + cinf() + " runner to complete and the zone you'd like the respective challenge to finish at and it will start them on the next auto portal if necessary.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				return description;
 			},
@@ -797,6 +794,35 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'C2', [1],
 			function () { return (getPageSetting('c2RunnerStart', currSettingUniverse)) });
+
+		createSetting('c2IgnoreSpiresUntil',
+			function () { return (cinf() + ' Ignore Spires Until') },
+			function () {
+				var description = "<p>Will disable all of the Spire features unless you're in a Spire at or above this value.</p>";
+				description += "<p><b>This works based off Spire number rather than zone. So if you want to ignore Spires until Spire II at z300 then enter 2, Spire III at z400 would be 3 etc.</b></p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> Second to last Spire you reach on your runs</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [1]);
+		createSetting('c2ExitSpireCell',
+			function () { return (cinf() + ' Exit Spire Cell') },
+			function () {
+				var description = "<p>Will exit out of active Spires upon clearing this cell.</p>";
+				description += "<p><b>Works based off cell number so if you want it to exit after Row #4 then set to 40.</b></p>";
+				description += "<p>Any health or damage calculations for the Spire will be based off this if set.</p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> -1</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [1]);
+		createSetting('c2PreSpireNurseries',
+			function () { return (cinf() + ' Nurseries pre-Spire') },
+			function () {
+				var description = "<p>Set the number of <b>Nurseries</b> to build during active Spires.</p>";
+				description += "<p><b>Will override any <b>Nursery</b> settings that you have setup in the <b>AT AutoStructure</b> setting.</b></p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> -1</p>";
+				return description;
+			}, 'value', -1, null, 'C2', [1]);
 
 		//Mapology
 		createSetting('mapology',
@@ -1040,7 +1066,7 @@ function initializeAllSettings() {
 			function () { return ('M: Heirloom Swap Zone') },
 			function () {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Mayhem.</p>";
-				description += "<p><b>THIS OVERRIDES C3 HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b></p>";
+				description += "<p><b>THIS OVERRIDES " + cinf() + " HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b></p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('mayhem', currSettingUniverse) && autoTrimpSettings.mayhem.require()) });
@@ -1150,7 +1176,7 @@ function initializeAllSettings() {
 			function () { return ('P: Heirloom Swap Zone') },
 			function () {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Pandemonium.</p>";
-				description += "<p><b>THIS OVERRIDES C3 HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b></p>";
+				description += "<p><b>THIS OVERRIDES " + cinf() + " HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b></p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
@@ -1233,7 +1259,7 @@ function initializeAllSettings() {
 			function () { return ('D: Heirloom Swap') },
 			function () {
 				var description = "<p>The zone you'd like to swap to your afterpush shield on Desolation.</p>";
-				description += "<p><b>THIS OVERRIDES C3 HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b></p>";
+				description += "<p><b>THIS OVERRIDES " + cinf() + " HEIRLOOM SWAP SETTING INPUT WHEN SET ABOVE 0</b></p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
@@ -4289,6 +4315,7 @@ function modifyParentNodeUniverseSwap() {
 	//C2
 	modifyParentNode("c2disableFinished", 'show');
 	modifyParentNode("c2Fused", 'show');
+	modifyParentNode("c2PreSpireNurseries", 'show');
 
 	modifyParentNode("experienceEndBW", radonon);
 	modifyParentNode("unbalanceImprobDestack", radonon);
@@ -4636,7 +4663,7 @@ function challengeUnlockCheckU2() {
 	} //C3, Melt, Worshippers
 	else if (hze === 50) {
 		//C3
-		message = "Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them. Also you can now access the C3 tab within the AT settings.";
+		message = "Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them. Also you can now access the " + cinf() + " tab within the AT settings.";
 		//Melt
 		message += "<br><br>"
 		message += challengeUnlock('Melt');
@@ -6059,7 +6086,11 @@ function updateATVersion() {
 			Rewrote some Prestige Raiding and Void Map code to reduce to global variables I use so if there's any bugs DM me on discord about them with a save+settings so I can fix them.");
 		}
 
-		/* if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.16') {
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.16') {
+			changelog.push("Have duplicated the Daily Spire related settings for C2s so you will need to configure those settings up if you want it to function the way you previously had them.");
+		}
+
+		/* if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.17') {
 			changelog.push("Added a new setting for Desolation prestige gear scumming. This is a setting that is kinda in beta (doesn't account for overkill at all) and almost definitely shouldn't exist, read the help window for the setting to know more about it.");
 		} */
 

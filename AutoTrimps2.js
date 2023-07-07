@@ -1,5 +1,5 @@
 var MODULES_AT = {
-	ATversion: 'SadAugust v6.3.15',
+	ATversion: 'SadAugust v6.3.16',
 	atscript: document.getElementsByTagName("script"),
 	basepath: '',
 	modulepath: 'modules/'

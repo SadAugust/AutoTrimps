@@ -14,7 +14,7 @@ MODULES.mapFunctions.runUniqueMap = '';
 
 function isDoingSpire() {
 	if (!game.global.spireActive) return false;
-	var settingPrefix = hdStats.isDaily ? 'd' : '';
+	const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
 	var spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
 	if (spireNo === -1 || spireNo === 0) return true;
 	var spireZone = (1 + spireNo) * 100;
@@ -23,7 +23,7 @@ function isDoingSpire() {
 
 function exitSpireCell() {
 	if (!game.global.spireActive) return;
-	var settingPrefix = hdStats.isDaily ? 'd' : '';
+	const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
 	if (getPageSetting(settingPrefix + 'ExitSpireCell') <= 0) return;
 
 	isDoingSpire() && game.global.lastClearedCell > getPageSetting(settingPrefix + 'ExitSpireCell') - 1 && endSpire()
@@ -1426,6 +1426,7 @@ function runPrestigeRaiding() {
 				var purchasedMap = game.global.mapsOwnedArray[getMapIndex(mapSettings.prestigeMapArray[x])];
 				if (purchasedMap === undefined) {
 					debug("Prestige Raiding - Error with finding the purchased map. Skipping this map and moving on to the next one.");
+					mapSettings.prestigeMapArray[x] = undefined;
 					continue;
 				}
 				//if (purchasedMap) 
@@ -1433,6 +1434,13 @@ function runPrestigeRaiding() {
 				//else debug("Prestige Raiding" + " (z" + game.global.world + ") running a level " + (purchasedMap.level) + " map. Map #" + [(mapSettings.prestigeMapArray.length - x)], "map_Details");
 				selectMap(mapSettings.prestigeMapArray[x]);
 				runMapAT();
+			}
+			//If errors occur then delete prestigeMapArray and attempt to start the raiding process again.
+			//HOPEFULLY this fixes any potential issues that transpire due to my terrible coding.
+			else {
+				delete mapSettings.prestigeMapArray;
+				debug("Prestige Raiding - Error with finding the purchased map. Restarting the raiding procedure.");
+				return;
 			}
 		}
 	}
