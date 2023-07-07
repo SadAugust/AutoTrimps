@@ -2496,73 +2496,99 @@ function initializeAllSettings() {
 			'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinMaps2',
-			function () { return (['Maps: NEVER', 'Maps: FORCE', 'Maps: MAYBE']) },
+			function () { return (['Maps: Never', 'Maps: Force', 'Maps: Maybe']) },
 			function () {
-				return ('<b>NEVER</b> Means what it says!!!<br>\
-						<b>FORCE</b> means Scryer will ALWAYS activate in Maps<br>\
-						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use on Corrupteds to be on after corruption/magma.<br><br>Recommend MAYBE.')
+				var useType = "maps"
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.";
+				description += "<p>The <b>Void Map</b>, <b>Plus Level</b>, and <b>Bionic Wonderland</b> settings all override this.</p>";
+				description += "<p><b>Recommended:</b> Maps: Maybe</p>";
+				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinVoidMaps2',
-			function () { return (['VoidMaps: NEVER', 'VoidMaps: FORCE', 'VoidMaps: MAYBE']) },
+			function () { return (['Void Maps: Never', 'Void Maps: Force', 'Void Maps: Maybe']) },
 			function () {
-				return ('<b>NEVER</b> Means what it says!!!<br>\
-						<b>FORCE</b> means Scryer will ALWAYS activate in Void Maps<br>\
-						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.')
+				var useType = "void maps"
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.";
+				description += "<p><b>Recommended:</b> Void Maps: Maybe</p>";
+				return description;
 			},
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinPMaps',
-			function () { return (['P Maps: NEVER', 'P Maps: FORCE', 'P Maps: MAYBE']) },
+			function () { return (['Plus Maps: Never', 'Plus Maps: Force', 'Plus Maps: Maybe']) },
 			function () {
-				return ('<b>NEVER</b> Means what it says!!!<br>\
-						<b>FORCE</b> means Scryer will ALWAYS activate in maps higher than your zone<br>\
-						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>Recommend NEVER.')
+				var useType = "plus level maps"
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.";
+				description += "<p><b>Recommended:</b> Plus Maps: Maybe</p>";
+				return description;
 			},
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinBW',
-			function () { return (['BW: NEVER', 'BW: FORCE', 'BW: MAYBE']) },
+			function () { return (['BW: Never', 'BW: Force', 'BW: Maybe']) },
 			function () {
-				return ('<b>NEVER</b> Means what it says!!!<br>\
-						<b>FORCE</b> means Scryer will ALWAYS activate in BW Maps<br>\
-						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use in Maps to be on. <br><br>Recommend NEVER.')
+				var useType = "Bionic Wonderland maps"
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.";
+				description += "<p><b>Recommended:</b> BW: Maybe</p>";
+				return description;
 			},
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerUseinSpire2',
-			function () { return (['Spire: NEVER', 'Spire: FORCE', 'Spire: MAYBE']) },
+			function () { return (['Spire: Never', 'Spire: Force', 'Spire: Maybe']) },
 			function () {
-				return ('<b>NEVER</b> Means what it says!!!<br>\
-						<b>FORCE</b> means Scryer will ALWAYS activate in the Spire<br>\
-						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use on Corrupteds to be on for corrupted enemies.<br><br>Recommend NEVER.')
+				var useType = "Spires"
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the Spire is.";
+				description += "<p><b>Recommended:</b> Spire: Maybe</p>";
+				return description;
 			},
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerSkipBoss2',
-			function () { return (['Boss: NEVER (All Levels)', 'Boss: MAYBE']) },
+			function () { return (['Boss: Never', 'Boss: Maybe']) },
 			function () {
-				return ('<b>NEVER (All Levels)</b> will NEVER use S in cell 100 of the world!!!<br>\
-						<b>MAYBE</b> treats the cell no differently to any other, Overkill and Min/Max Scryer is allowed.<br><br>Recommend NEVER (There is little benefit to double NON-' + resource() + ' resources and a small chance of DE).')
+				var useType = "when at cell 100 in the world"
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.";
+				description += "<p><b>Recommended:</b> Boss: Never</p>";
+				return description;
 			},
 			'multitoggle', 0, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerSkipCorrupteds2',
-			function () { return (['Corrupted: NEVER', 'Corrupted: FORCE', 'Corrupted: MAYBE']) },
+			function () { return (['Corrupted: Never', 'Corrupted: Force', 'Corrupted: Maybe']) },
 			function () {
-				return ('<b>NEVER</b> Means what it says!!!<br>\
-						<b>FORCE</b> means Scryer will ALWAYS activate against Corrupted enemies<br>\
-						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br><b>Magma maps and Corrupted Voidmaps are currently classified as corrupted</b> and NEVER here will override Maps and Voidmaps use of Scryer<br><br>Recommend MAYBE.')
+				var useType = "when fighting corrupted enemies"
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance " + useType + ".";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.";
+				description += "<p>Magma maps and Corrupted Voidmaps are currently classified as corrupted</b> and NEVER here will override Maps and Voidmaps use of Scryer.</p>";
+				description += "<p><b>Recommended:</b> Maps: Maybe</p>";
+				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
 		createSetting('ScryerSkipHealthy',
-			function () { return (['Healthy: NEVER', 'Healthy: FORCE', 'Healthy: MAYBE']) },
+			function () { return (['Healthy: Never', 'Healthy: Force', 'Healthy: Maybe']) },
 			function () {
-				return ('<b>NEVER</b> Means what it says!!!<br>\
-						<b>FORCE</b> means Scryer will ALWAYS activate against Healthy enemies<br>\
-						<b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br><b>Corrupted Voidmaps are currently classified as Healthy (same as corrupted)</b> and NEVER here will override Maps and Voidmaps use of Scryer<br><br>Recommend MAYBE.')
+				var useType = "when fighting healthy enemies"
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance " + useType + ".";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.";
+				description += "<p><b>Recommended:</b> Healthy: Maybe</p>";
+				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
 			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
@@ -4346,7 +4372,7 @@ function modifyParentNodeUniverseSwap() {
 	//None!
 
 	//Combat
-	modifyParentNode("gammaBurstCalc", radonoff);
+	modifyParentNode("frenzyCalc", radonoff);
 	modifyParentNode("screwessence", radonoff);
 
 	//ATGA
