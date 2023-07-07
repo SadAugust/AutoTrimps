@@ -1421,26 +1421,26 @@ function runPrestigeRaiding() {
 			mapSettings.prestigeMapArray = mapSettings.prestigeMapArray.filter(function (e) { return e.replace(/(\r\n|\n|\r)/gm, "") });
 		}
 
-		for (var x = mapSettings.prestigeMapArray.length; x > -1; x--) {
-			if (game.global.preMapsActive && mapSettings.prestigeMapArray[x] !== undefined && prestigeMapHasEquips(x, raidzones, targetPrestige)) {
-				var purchasedMap = game.global.mapsOwnedArray[getMapIndex(mapSettings.prestigeMapArray[x])];
-				if (purchasedMap === undefined) {
-					debug("Prestige Raiding - Error with finding the purchased map. Skipping this map and moving on to the next one.");
-					mapSettings.prestigeMapArray[x] = undefined;
-					continue;
+		for (var x = mapSettings.prestigeMapArray.length - 1; x > -1; x--) {
+			if (game.global.preMapsActive && prestigeMapHasEquips(x, raidzones, targetPrestige)) {
+				if (mapSettings.prestigeMapArray[x] !== undefined) {
+					var purchasedMap = game.global.mapsOwnedArray[getMapIndex(mapSettings.prestigeMapArray[x])];
+					if (purchasedMap === undefined) {
+						debug("Prestige Raiding - Error with finding the purchased map. Skipping this map and moving on to the next one.");
+						mapSettings.prestigeMapArray[x] = undefined;
+						continue;
+					}
+					debug("Prestige Raiding" + " (z" + game.global.world + ") running a level " + (purchasedMap.level) + " map. Map #" + [(mapSettings.prestigeMapArray.length - x)], "map_Details");
+					selectMap(mapSettings.prestigeMapArray[x]);
+					runMapAT();
 				}
-				//if (purchasedMap) 
-				debug("Prestige Raiding" + " (z" + game.global.world + ") running a level " + (purchasedMap.level) + " map. Map #" + [(mapSettings.prestigeMapArray.length - x)], "map_Details");
-				//else debug("Prestige Raiding" + " (z" + game.global.world + ") running a level " + (purchasedMap.level) + " map. Map #" + [(mapSettings.prestigeMapArray.length - x)], "map_Details");
-				selectMap(mapSettings.prestigeMapArray[x]);
-				runMapAT();
-			}
-			//If errors occur then delete prestigeMapArray and attempt to start the raiding process again.
-			//HOPEFULLY this fixes any potential issues that transpire due to my terrible coding.
-			else {
-				delete mapSettings.prestigeMapArray;
-				debug("Prestige Raiding - Error with finding the purchased map. Restarting the raiding procedure.");
-				return;
+				//If errors occur then delete prestigeMapArray and attempt to start the raiding process again.
+				//HOPEFULLY this fixes any potential issues that transpire due to my terrible coding.
+				else {
+					delete mapSettings.prestigeMapArray;
+					debug("Prestige Raiding - Error with finding the purchased map. Restarting the raiding procedure.");
+					return;
+				}
 			}
 		}
 	}
