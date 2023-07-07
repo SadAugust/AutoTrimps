@@ -251,13 +251,15 @@ function initializeAllSettings() {
 		createSetting('presetCombatRespecCell',
 			function () { return ('Spire Respec Cell') },
 			function () {
-				var description = "<p>Will automatically respec to the Spire respec when this cell has been reached.</p>";
+				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
+				var trimpleShortened = currSettingUniverse === 1 ? "Trimple" : "Atlantrimp";
+				var description = "<p>An override for the " + trimple + " requirement for the <b>" + trimpleShortened + " Respec</b> setting. Will either give you a popup or automatically respec depending on your setting when you reach this cell and don't have any mapping to do on it.</p>";
 				description += "<p>Will only function on your <b>highest Spire reached.</b></p>";
 				description += "<p><b>Set to 0 or -1 to disable this way to Spire respec.</b></p>";
 				description += "<p><b>Recommended:</b> cell after your farming has finished.</p>";
 				return description;
 			}, 'value', -1, null, 'Core', [1],
-			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
+			function () { return (getPageSetting('presetCombatRespec', currSettingUniverse) > 0 && game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('presetSwapMutators',
 			function () { return ('Preset Swap Mutators') },
 			function () {
