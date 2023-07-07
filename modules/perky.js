@@ -86,30 +86,6 @@ var Perk = /** @class */ (function () {
 	return Perk;
 }());
 
-var perkyPresets = {
-	early: ['5', '4', '3'],
-	broken: ['7', '3', '1'],
-	mid: ['16', '5', '1'],
-	corruption: ['25', '7', '1'],
-	magma: ['35', '4', '3'],
-	z280: ['42', '6', '1'],
-	z400: ['88', '10', '1'],
-	z450: ['500', '50', '1'],
-	spire: ['0', '1', '1'],
-	nerfed: ['0', '4', '3'],
-	tent: ['5', '4', '3'],
-	scientist: ['0', '1', '3'],
-	carp: ['0', '0', '0'],
-	trapper: ['0', '7', '1'],
-	coord: ['0', '40', '1'],
-	trimp: ['0', '99', '1'],
-	metal: ['0', '7', '1'],
-	c2: ['0', '7', '1'],
-	income: ['0', '0', '0'],
-	unesscented: ['0', '1', '0'],
-	nerfeder: ['0', '1', '0'],
-};
-
 var propsPerky = {};
 
 // initialize perks object to default values

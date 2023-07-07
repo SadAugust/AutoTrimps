@@ -35,11 +35,6 @@
      - Also does AT keep heirlooms of heigher quality then selected? I have my quality set to magnificent with any,any,any,any as the modfies I got a popup that an etheral shield dropped but my inventory is empty, does it only keep the exact rarity you select and throw away higher rarity? I really want it to at least keep anything that higher rarity then what I have.
        - keinniemand
        - https://discord.com/channels/371177798305447938/371348913036197899/1120953178104528896
- 
-   - Respec
-     - Also for spire can you add a way to let it automatically do a respec to the spire respec perky profile after you're done farming?
-       - keinniemand
-       - https://discord.com/channels/371177798305447938/371348913036197899/1121709098040307722
 
 # Bugs
 

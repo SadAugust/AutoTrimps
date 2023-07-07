@@ -222,21 +222,25 @@ function initializeAllSettings() {
 				var respecName = !hdStats.isC3 ? "Radon " : "" + "Combat Respec";
 				if (currSettingUniverse === 1) respecName = 'Spire';
 
-				var description = "<p><b>" + trimpleShortened + " Respec Off</b><br>Disables this setting.</p>";
+				var description = '';
+				if (currSettingUniverse === 1) {
+					description += "<p>Will only run during the highest Spire you have reached and will respec into the Perky <b>Spire</b> preset to maximise your combat stats during it.</p>";
+				}
+				if (currSettingUniverse === 2) {
+					description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + " otherwise will assume it's a radon run and use the <b>Radon Combat Respec</b> preset.</p>";
+				}
 
-				description += "<p><b>" + trimpleShortened + " Respec Popup</b><br>Will display a popup after complete " + trimple + " asking whether you would like to respec into a combat spec.</p>";
+				description += "<p><b>" + trimpleShortened + " Respec Off</b><br>Disables this setting.</p>";
 
-				description += "<p><b>" + trimpleShortened + " Respec Force</b><br>5 seconds after completing " + trimple + " will respec into the <b>" + calcName + "</b> <b>" + respecName + "</b> preset to maximise combat stats. Has a popup that allows you to disable the respec if clicked within the 5 second window.</p>";
+				description += "<p><b>" + trimpleShortened + " Respec Popup</b><br>Will display a popup after complete " + trimple + " asking whether you would like to respec the preset listed above.</p>";
+
+				description += "<p><b>" + trimpleShortened + " Respec Force</b><br>5 seconds after completing " + trimple + " will respec into the <b>" + calcName + "</b> preset listed above to maximise combat stats. Has a popup that allows you to disable the respec if clicked within the 5 second window.</p>";
 
 				description += "<p>This likely won't be worthwhile using without having <b>Auto Allocate Perks</b> enabled as your next run would be started with the combat respec.</p>";
 
-				description += "<p>I'd recommend only using it when <b>Liq for free Void</b> is enabled as it will go and get a fresh respec when a respec isn't available at the end of a run. " +
-					(currSettingUniverse === 1 ? "Without this you'll need to manually get a respec after your run or you will start your next run in the <b>Spire</b> preset." : "")
-					+ "</p>";
+				description += "<p>I'd recommend only using it when <b>Liq for free Void</b> is enabled as it will go and get a fresh respec when a respec isn't available at the end of a run.<br>Without this you'll need to manually respec at the start of your next run or you will start in a suboptimal preset.</p>";
 
-				if (currSettingUniverse === 1) description += "<p>Has an addition setting (<b>Spire Respec Cell</b>) which has a <b>5</b> second delay after toggling this setting before it will function.</p>";
-
-				if (currSettingUniverse === 2) description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + ".</p>";
+				if (currSettingUniverse === 1) description += "<p>Has an additional setting (<b>Spire Respec Cell</b>) which has a <b>5</b> second delay after toggling this setting before it will function.</p>";
 
 				description += "<p><b>Recommended:</b> " + trimpleShortened + " Respec Off</p>";
 				return description
