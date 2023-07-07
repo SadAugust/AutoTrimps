@@ -181,12 +181,35 @@ function initializeAllSettings() {
 		createSetting('autoPerks',
 			function () { return ('Auto Allocate Perks') },
 			function () {
-				var description = "<p>Uses a basic version of " + (currSettingUniverse === 2 ? "Surky" : "Perky") + ". If you want more advanced settings import your save into " + (currSettingUniverse === 2 ? "Surky" : "Perky") + ".</p>";
+				var calcName = currSettingUniverse === 2 ? "Surky" : "Perky";
+				var description = "<p>Uses a basic version of <b>" + calcName + "</b> to identify the most optimal perk distribution when auto portaling.</p>";
+				description += "<p>There are inputs you can adjust in the <b>Portal</b> window to allow you to adjust how it distributes perks.</p>";
+				description += "<p>If you want more advanced settings import your save into <b>" + calcName + "</b>.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [1, 2]);
 
-		createSetting('autoCombatRespec',
+		createSetting('presetSwap',
+			function () { return ('Preset Swapping') },
+			function () {
+				var calcName = currSettingUniverse === 2 ? "Surky" : "Perky";
+				var fillerPreset = currSettingUniverse === 2 ? "Easy Radon Challenge" : "the most appropriate zone progression preset";
+				var dailyPreset = currSettingUniverse === 2 ? "Difficult Radon Challenge" : "the most appropriate zone progression preset";
+				var c2Preset = currSettingUniverse === 2 ? "Push/C3/Mayhem" : "Other c²";
+				var universeChallenges = currSettingUniverse === 2 ? "Downsize, Duel, Berserk, Alchemy, Smithless" : "Coord, Trimp, Metal";
+
+				var description = "<p>Will automatically swap <b>" + calcName + "</b> presets when portaling into runs.</p>";
+				description += "<p>Fillers (non daily/" + cinf() + " runs) will load <b>" + fillerPreset + ".</b></p>";
+				description += "<p>Dailies will load <b>" + dailyPreset + "</b>.</p>";
+				description += cinf() + "'s or Mayhem-like challenges will load <b>" + c2Preset + "</b>.</p>";
+
+				description += "Challenges that have a dedicated preset (<b>" + universeChallenges + "</b>) will be loaded when starting that challenge.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, 'Core', [1, 2],
+			function () { return (getPageSetting('autoPerks', currSettingUniverse)) });
+
+		createSetting('presetCombatRespec',
 			function () { return (['Atlantrimp Respec Off', 'Atlantrimp Respec Popup', 'Atlantrimp Respec Force']) },
 			function () {
 				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
@@ -204,20 +227,8 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> Atlantrimp Respec Off</p>";
 				return description
 			},
-			'multitoggle', [0], null, 'Core', [2]);
-
-		createSetting('presetSwap',
-			function () { return ('Preset Swapping') },
-			function () {
-				var description = "<p>Will automatically swap Surky presets when portaling into runs.</p>";
-				description += "<p>Fillers (non daily/" + cinf() + " runs) will load <b>'Easy Radon Challenge</b>'</p>";
-				description += "<p>Dailies will load <b>'Difficult Radon Challenge</b>'</p>";
-				description += cinf() + "'s or Mayhem-like challenges will load <b>'Push/C3/Mayhem</b>'.</p>";
-				description += "Challenges that have a dedicated preset will be loaded when starting that challenge.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, 'Core', [2],
-			function () { return (getPageSetting('autoPerks')) });
+			'multitoggle', [0], null, 'Core', [1, 2],
+			function () { return (currSettingUniverse === 2) });
 		createSetting('presetSwapMutators',
 			function () { return ('Preset Swap Mutators') },
 			function () {
@@ -1273,15 +1284,15 @@ function initializeAllSettings() {
 				var description = "<p>Here you can select how and when you would like to prestige scum gear whilst on desolation.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p><b>This definitely shouldn't exist so be aware this is exploiting unintentional game mechanics.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Desolation Gear Scumming", "Desolation", "MAZ")', 'C2', [1, 2],
-			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require() && gameUserCheck()) });
+			function () { return (getPageSetting('desolation', currSettingUniverse)) });
 		createSetting('desolationDefaultSettings',
 			function () { return ('Deso: Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'C2', [1, 2],
-			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require() && gameUserCheck()) });
+			function () { return (getPageSetting('desolation', currSettingUniverse)) });
 
 		//Smithless
 		createSetting('smithless',
@@ -1399,7 +1410,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like to farm a specific amount of maps.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Toxicity Farm", "Toxicity", "MAZ")', 'Challenges', [1]);
 		createSetting('toxicityDefaultSettings',
@@ -1439,7 +1450,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like farming to be done during Quagmire.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Quagmire Farm", "Quagmire", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 70) });
@@ -1454,7 +1465,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like farming to be done during Insanity.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Insanity Farm", "Insanity", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 110) });
@@ -1469,7 +1480,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like farming to be done during Alchemy.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Alchemy Farm", "Alchemy", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 155) });
@@ -1484,7 +1495,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like farming to be done during Hypothermia.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			},
 			'mazArray', [], 'MAZLookalike("Hypothermia Farm", "Hypothermia", "MAZ")', 'Challenges', [2],
@@ -1931,7 +1942,7 @@ function initializeAllSettings() {
 				var description = "<p>Here you can select how and when you would like H:D (enemyHealth:trimpDamage) Ratio farming to be run.</p>";
 				description += "<p><b>Your HD Ratio can be seen in the Auto Maps status tooltip.</b></p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
 		createSetting('hdFarmDefaultSettings',
@@ -1944,7 +1955,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like Void Maps to be run.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Void Map", "VoidMap", "MAZ")', 'Maps', [1, 2]);
 		createSetting('voidMapDefaultSettings',
@@ -1958,7 +1969,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like Bone Shrine charges to be used.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Bone Shrine", "BoneShrine", "MAZ")', 'Maps', [1, 2]);
 		createSetting('boneShrineDefaultSettings',
@@ -1972,7 +1983,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like Worshippers to be farmed.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Worshipper Farm", "WorshipperFarm", "MAZ")', 'Maps', [2],
 			function () { return game.stats.highestRadLevel.valueTotal() >= 50 });
@@ -1987,7 +1998,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like Unique Maps to be run.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', {
 			The_Wall: { enabled: false, zone: 100, cell: 0 },
@@ -2014,7 +2025,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like map bonus stacks to be obtained.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Map Bonus", "MapBonus", "MAZ")', 'Maps', [1, 2]);
 		createSetting('mapBonusDefaultSettings',
@@ -2032,7 +2043,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like to farm a specific amount of maps.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Map Farm", "MapFarm", "MAZ")', 'Maps', [1, 2]);
 		createSetting('mapFarmDefaultSettings',
@@ -2046,7 +2057,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like to raid maps for prestiges.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Raiding", "Raiding", "MAZ")', 'Maps', [1, 2]);
 		createSetting('raidingDefaultSettings',
@@ -2060,7 +2071,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like to raid Bionic Wonderland maps for prestiges.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Bionic Raiding", "BionicRaiding", "MAZ")', 'Maps', [1]);
 		createSetting('bionicRaidingDefaultSettings',
@@ -2074,7 +2085,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like Tributes & Meteorologists to be farmed.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Tribute Farm", "TributeFarm", "MAZ")', 'Maps', [2]);
 		createSetting('tributeFarmDefaultSettings',
@@ -2088,7 +2099,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select how and when you would like Smithies to be farmed.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Smithy Farm", "SmithyFarm", "MAZ")', 'Maps', [2]);
 		createSetting('smithyFarmDefaultSettings',
@@ -3408,7 +3419,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select the golden upgrades you would like to have purchased during filler (non daily/" + cinf() + " runs) runs.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Auto Golden", "AutoGolden", "MAZ")', 'Golden', [1, 2]);
 		createSetting('autoGoldenDailySettings',
@@ -3416,7 +3427,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select the golden upgrades you would like to have purchased during daily runs.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Daily Auto Golden", "AutoGoldenDaily", "MAZ")', 'Golden', [1, 2]);
 		createSetting('autoGoldenC3Settings',
@@ -3424,7 +3435,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Here you can select the golden upgrades you would like to have purchased during " + cinf() + " runs.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p><b>If needed, the Help button has information for all of the inputs.</b></p>";
+				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("C3 Auto Golden", "AutoGoldenC3", "MAZ")', 'Golden', [1, 2]);
 	}
@@ -4277,7 +4288,7 @@ function modifyParentNodeUniverseSwap() {
 
 	//Core
 
-	modifyParentNode("portalVoidIncrement", radonon);
+	modifyParentNode("portalVoidIncrement", 'show');
 	modifyParentNode("radonsettings", 'show');
 
 	//Dailies
@@ -5974,7 +5985,7 @@ function updateATVersion() {
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.99') {
 			if (typeof (tempSettings['testRadonCombatRespec']) !== 'undefined') {
-				if (typeof (tempSettings['testRadonCombatRespec'].enabledU2) !== 'undefined') autoTrimpSettings['autoCombatRespec'].valueU2 = (tempSettings['testRadonCombatRespec'].enabledU2 ? 2 : 0);
+				if (typeof (tempSettings['testRadonCombatRespec'].enabledU2) !== 'undefined') autoTrimpSettings['presetCombatRespec'].valueU2 = (tempSettings['testRadonCombatRespec'].enabledU2 ? 2 : 0);
 			}
 			saveSettings();
 		}
@@ -6090,9 +6101,20 @@ function updateATVersion() {
 			changelog.push("Have duplicated the Daily Spire related settings for C2s so you will need to configure those settings up if you want it to function the way you previously had them.");
 		}
 
-		/* if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.17') {
-			changelog.push("Added a new setting for Desolation prestige gear scumming. This is a setting that is kinda in beta (doesn't account for overkill at all) and almost definitely shouldn't exist, read the help window for the setting to know more about it.");
-		} */
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.17') {
+
+			if (typeof (tempSettings["presetSwap"]) !== 'undefined') {
+				autoTrimpSettings.presetSwap.enabled = false;
+			}
+			if (typeof (tempSettings["autoCombatRespec"]) !== 'undefined') {
+				autoTrimpSettings.presetCombatRespec.value = 0;
+				autoTrimpSettings.presetCombatRespec.valueU2 = autoTrimpSettings['autoCombatRespec'].valueU2;
+			}
+
+			changelog.push("Have added an additional setting for Auto Allocate in U1. It does automatic preset selection when auto portaling and will pick the most appropriate preset for the run before distributing your perks.");
+
+			changelog.push("Added a new setting for Desolation prestige gear scumming. This is a setting that is kinda in beta (doesn't raid for Shields if you want to target Boots) and almost definitely shouldn't exist as it abuses a few unintentional game mechanics, read the help window for the setting to know more about it.");
+		}
 
 	}
 

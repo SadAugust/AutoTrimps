@@ -558,18 +558,33 @@ function doPortal(challenge, skipDaily) {
 	universeSwapped();
 	var preset;
 	//Identifying which challenge type we're running to setup for the preset swapping function
-	if (portalUniverse === 2 && getPageSetting('presetSwap', 2)) {
-		if (game.global.selectedChallenge === 'Mayhem' || game.global.selectedChallenge === 'Pandemonium' || game.global.selectedChallenge === 'Desolation') preset = 'push';
-		else if (game.global.selectedChallenge === 'Downsize') preset = 'downsize';
-		//else if (game.global.selectedChallenge === 'Trappapalooza') preset = 'trappacarp';
-		else if (game.global.selectedChallenge === 'Duel') preset = 'duel';
-		else if (game.global.selectedChallenge === 'Berserk') preset = 'berserk';
-		else if (game.global.selectedChallenge === 'Alchemy') preset = 'alchemy';
-		else if (game.global.selectedChallenge === 'Smithless') preset = 'smithless';
-		else if (challengeSquaredMode) preset = 'push';
-		else if (game.global.selectedChallenge === 'Daily') preset = 'tufarm';
-		else preset = 'ezfarm';
-		fillPreset(preset);
+	if (getPageSetting('presetSwap', portalUniverse)) {
+		if (portalUniverse === 1) {
+			if (game.global.selectedChallenge === 'Frigid') preset = 'c2';
+			else if (game.global.selectedChallenge === 'Coord') preset = 'coord';
+			else if (game.global.selectedChallenge === 'Trimp') preset = 'trimp';
+			else if (game.global.selectedChallenge === 'Metal' || game.global.selectedChallenge === 'Nometal') preset = 'metal';
+			else if (challengeSquaredMode) preset = 'c2';
+			else {
+				selectPerkyPreset();
+				preset = $$('#presetElem').value;
+			}
+			fillPresetPerky(preset);
+		}
+
+		if (portalUniverse === 2) {
+			if (game.global.selectedChallenge === 'Mayhem' || game.global.selectedChallenge === 'Pandemonium' || game.global.selectedChallenge === 'Desolation') preset = 'push';
+			else if (game.global.selectedChallenge === 'Downsize') preset = 'downsize';
+			//else if (game.global.selectedChallenge === 'Trappapalooza') preset = 'trappacarp';
+			else if (game.global.selectedChallenge === 'Duel') preset = 'duel';
+			else if (game.global.selectedChallenge === 'Berserk') preset = 'berserk';
+			else if (game.global.selectedChallenge === 'Alchemy') preset = 'alchemy';
+			else if (game.global.selectedChallenge === 'Smithless') preset = 'smithless';
+			else if (challengeSquaredMode) preset = 'push';
+			else if (game.global.selectedChallenge === 'Daily') preset = 'tufarm';
+			else preset = 'ezfarm';
+			fillPreset(preset);
+		}
 	}
 
 	//Run Perky/Surky.
@@ -826,12 +841,12 @@ function surkyCombatRespec() {
 //Force tooltip appearance for Surky combat respec post Atlantrimp
 function atlantrimpRespecMessage() {
 	if (!game.global.canRespecPerks) return;
-	if (game.global.universe !== 2 || portalUniverse !== 2) return;
+	//if (game.global.universe !== 2 || portalUniverse !== 2) return;
 	if (typeof AutoPerks === 'undefined') return;
 
 	popupsAT.respecAtlantrimp = false;
 
-	var respecSetting = getPageSetting('autoCombatRespec');
+	var respecSetting = getPageSetting('presetCombatRespec');
 	//If setting is enabled, respec into Surky combat respec
 	if (respecSetting === 2) {
 		popupsAT.respecAtlantrimp = true;

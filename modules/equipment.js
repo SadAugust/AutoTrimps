@@ -422,11 +422,13 @@ function zoneGoCheck(setting, farmType) {
 		zone: game.global.world,
 	};
 
+	var hdRatio = mapSettings.mapName === 'Void Map' ? hdStats.hdRatioVoid : hdStats.hdRatio
+
 	//Equipment related section for zone overrides
 	if (farmType === 'attack' || farmType === 'health') {
 		if (mapSettings.mapName === 'Wither') return zoneDetails;
 		if (farmType === 'attack') {
-			if (hdStats.hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
+			if (hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
 			if (mapSettings.mapName === 'Smithless Farm') return zoneDetails;
 		}
 		if (farmType === 'health') {
@@ -436,7 +438,7 @@ function zoneGoCheck(setting, farmType) {
 			//Since having to use equality will lower our damage then we want more health to reduce equality usage
 			if (mapSettings.mapName === 'Smithless Farm' && mapSettings.equality > 0) return zoneDetails;
 			//Since equality has a big impact on u2 HD Ratio then we want more health to reduce equality required.
-			if (game.global.universe === 2 && hdStats.hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
+			if (game.global.universe === 2 && hdRatio > getPageSetting('equipCutOffHD')) return zoneDetails;
 		}
 	}
 

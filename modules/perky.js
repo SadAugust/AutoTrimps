@@ -110,30 +110,152 @@ var perkyPresets = {
 	nerfeder: ['0', '1', '0'],
 };
 
-function select_preset(name, manually) {
-	var _a;
-	if (manually === void 0) { manually = true; }
-	delete localStorage['weight-he'];
-	delete localStorage['weight-atk'];
-	delete localStorage['weight-hp'];
-	delete localStorage['weight-xp'];
-	_a = perkyPresets[name],
-		$$('#weight-he').value = _a[0],
-		$$('#weight-atk').value = _a[1],
-		$$('#weight-hp').value = _a[2];
-	$$('#weight-xp').value = Math.floor((+perkyPresets[name][0] + +perkyPresets[name][1] + +perkyPresets[name][2]) / 5).toString();
-	savePerkySettings();
-}
+var propsPerky = {};
 
-function auto_preset() {
+// initialize perks object to default values
+function initPresetPerky() {
 	var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
 
-	var _a = perkyPresets[$$('#presetElem').value], he = _a[0], atk = _a[1], hp = _a[2];
-	var xp = Math.floor((+he + +atk + +hp) / 5).toString();
-	$$('#weight-he').value = perkyInputs['weight-he'] || he;
-	$$('#weight-atk').value = perkyInputs['weight-atk'] || atk;
-	$$('#weight-hp').value = perkyInputs['weight-hp'] || hp;
-	$$('#weight-xp').value = perkyInputs['weight-xp'] || xp;
+	function presetData(preset, perkyInputs) {
+		if (perkyInputs === null) return null;
+		if (perkyInputs[preset] === null || perkyInputs[preset] === undefined) return null;
+		return perkyInputs[preset];
+	}
+
+	propsPerky = {
+		// memoization table for trinket drops
+		heliumWeight: Number($$('#weight-he').value),
+		attackWeight: Number($$('#weight-atk').value),
+		healthWeight: Number($$('#weight-hp').value),
+		xpWeight: Number($$('#weight-xp').value),
+
+		early: presetData('early', perkyInputs),
+		broken: presetData('broken', perkyInputs),
+		mid: presetData('mid', perkyInputs),
+		corruption: presetData('corruption', perkyInputs),
+
+		magma: presetData('magma', perkyInputs),
+		z280: presetData('z280', perkyInputs),
+		z400: presetData('z400', perkyInputs),
+		z450: presetData('z450', perkyInputs),
+
+		spire: presetData('spire', perkyInputs),
+		trapper: presetData('trapper', perkyInputs),
+		coord: presetData('coord', perkyInputs),
+		trimp: presetData('trimp', perkyInputs),
+		metal: presetData('metal', perkyInputs),
+		c2: presetData('c2', perkyInputs),
+	};
+
+	if (isNaN(perkyInputs['weight-he'])) {
+		perkyInputs['weight-he'] = 1;
+	} if (isNaN(perkyInputs['weight-atk'])) {
+		perkyInputs['weight-atk'] = 1;
+	} if (isNaN(perkyInputs['weight-hp'])) {
+		perkyInputs['weight-hp'] = 1;
+	} if (isNaN(perkyInputs['weight-xp'])) {
+		perkyInputs['weight-xp'] = 1;
+	}
+}
+
+// fill preset weights from the dropdown menu
+function fillPresetPerky(specificPreset) {
+	if (specificPreset) $$('#presetElem').value = specificPreset
+
+	initPresetPerky();
+
+	var preset = $$('#presetElem').value;
+	var weights = [0, 0, 0];
+	if (preset === 'early') {
+		weights = (propsPerky.early === null) ? [5, 4, 3, 2.4] : propsPerky.early;
+	} else if (preset === 'broken') {
+		weights = (propsPerky.broken === null) ? [7, 3, 1, 2.2] : propsPerky.broken;
+		// with GU recommendations, we want a big Rn weight
+	} else if (preset === 'mid') {
+		weights = (propsPerky.mid === null) ? [16, 5, 1, 4.4] : propsPerky.mid;
+	} else if (preset === 'corruption') {
+		weights = (propsPerky.corruption === null) ? [25, 7, 1, 6.6] : propsPerky.corruption;
+	} else if (preset === 'magma') {
+		weights = (propsPerky.magma === null) ? [35, 4, 3, 8] : propsPerky.magma;
+	} else if (preset === 'z280') {
+		weights = (propsPerky.z280 === null) ? [42, 6, 1, 10] : propsPerky.z280;
+	} else if (preset === 'z400') {
+		weights = (propsPerky.z400 === null) ? [88, 10, 1, 20] : propsPerky.z400;
+	} else if (preset === 'z450') {
+		weights = (propsPerky.z450 === null) ? [500, 50, 1, 110] : propsPerky.z450;
+	} else if (preset === 'spire') {
+		weights = (propsPerky.spire === null) ? [0, 1, 1, 0] : propsPerky.spire;
+	} else if (preset === 'nerfed') {
+		weights = [0, 4, 3, 0];
+	} else if (preset === 'tent') {
+		weights = [5, 4, 3, 0];
+	} else if (preset === 'scientist') {
+		weights = [0, 1, 3, 0];
+	} else if (preset === 'carp') {
+		weights = [0, 0, 0, 0];
+	} else if (preset === 'trapper') {
+		weights = (propsPerky.trapper === null) ? [0, 7, 1, 0] : propsPerky.trapper;
+	} else if (preset === 'coord') {
+		weights = (propsPerky.coord === null) ? [0, 40, 1, 0] : propsPerky.coord;
+	} else if (preset === 'trimp') {
+		weights = (propsPerky.trimp === null) ? [0, 99, 1, 0] : propsPerky.trimp;
+	} else if (preset === 'metal') {
+		weights = (propsPerky.metal === null) ? [0, 7, 1, 0] : propsPerky.metal;
+	} else if (preset === 'c2') {
+		weights = (propsPerky.c2 === null) ? [0, 7, 1, 0] : propsPerky.c2;
+	} else if (preset === 'income') {
+		weights = [0, 0, 0, 0];
+	} else if (preset === 'unesscented') {
+		weights = [0, 1, 0, 0];
+	} else if (preset === 'nerfeder') {
+		weights = [0, 1, 0, 0];
+	}
+
+	// set special optimizations
+	$$('#weight-he').value = weights[0];
+	$$('#weight-atk').value = weights[1];
+	$$('#weight-hp').value = weights[2];
+	$$('#weight-xp').value = weights[3];
+	savePerkySettings();
+	initialPresetLoad();
+}
+
+function initialPresetLoad() {
+	var preset = $$('#presetElem').value;
+
+	if (preset === 'early') {
+		propsPerky.early = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	} else if (preset === 'broken') {
+		propsPerky.broken = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	} else if (preset === 'mid') {
+		propsPerky.mid = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	} else if (preset === 'corruption') {
+		propsPerky.corruption = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	}
+
+	else if (preset === 'magma') {
+		propsPerky.magma = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	} else if (preset === 'z280') {
+		propsPerky.z280 = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	} else if (preset === 'z400') {
+		propsPerky.z400 = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	} else if (preset === 'z450') {
+		propsPerky.z450 = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	}
+
+	else if (preset === 'spire') {
+		propsPerky.spire = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	} else if (preset === 'trapper') {
+		propsPerky.trapper = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	} else if (preset === 'coord') {
+		propsPerky.coord = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	} else if (preset === 'trimp') {
+		propsPerky.trimp = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	} else if (preset === 'metal') {
+		propsPerky.metal = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	} else if (preset === 'c2') {
+		propsPerky.c2 = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+	}
 }
 
 function update_dg() {
@@ -181,16 +303,20 @@ function update_dg() {
 	return housing;
 }
 
+function selectPerkyPreset() {
+	$$$('#presetElem > *').forEach(function (option) {
+		if (parseInt(option.innerHTML.toLowerCase().replace(/[z+]/g, '').split('-')[0]) < game.global.highestLevelCleared)
+			fillPresetPerky(option.value);
+	});
+}
+
 function read_save() {
 	var settings = JSON.parse(localStorage.getItem("perkyInputs"));
 	var zone = 0;
 
 	if (!settings.preset) {
 		$$('#targetZone').value = game.stats.highestVoidMap.valueTotal || game.global.highestLevelCleared;
-		$$$('#presetElem > *').forEach(function (option) {
-			option.selected = parseInt(option.innerHTML.replace('z', '')) < game.global.highestLevelCleared;
-		});
-		auto_preset();
+		selectPerkyPreset();
 	}
 	var zone = $$('#targetZone').value;
 
@@ -376,11 +502,15 @@ function parse_perks(fixed, unlocks) {
 	return perks;
 }
 
-function savePerkySettings() {
+function savePerkySettings(initial) {
 
 	if (!showingPerky) {
 		console.log("Perky is not showing")
 		return;
+	}
+	if (!initial) {
+		initPresetPerky();
+		initialPresetLoad();
 	}
 	const perkyInputs = {
 		preset: $$('#presetElem').value,
@@ -390,6 +520,24 @@ function savePerkySettings() {
 		'weight-hp': $$('#weight-hp').value,
 		'weight-xp': $$('#weight-xp').value,
 	}
+
+	//Save all of the presets that we might want to adjust
+	perkyInputs.early = propsPerky.early;
+	perkyInputs.broken = propsPerky.broken;
+	perkyInputs.mid = propsPerky.mid;
+	perkyInputs.corruption = propsPerky.corruption;
+
+	perkyInputs.magma = propsPerky.magma;
+	perkyInputs.z280 = propsPerky.z280;
+	perkyInputs.z400 = propsPerky.z400;
+	perkyInputs.z450 = propsPerky.z450;
+	perkyInputs.spire = propsPerky.spire;
+
+	perkyInputs.trapper = propsPerky.trapper;
+	perkyInputs.coord = propsPerky.coord;
+	perkyInputs.trimp = propsPerky.trimp;
+	perkyInputs.metal = propsPerky.metal;
+	perkyInputs.c2 = propsPerky.c2;
 
 	localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
 	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
@@ -834,8 +982,8 @@ function setupPerkyUI() {
 		},
 	}
 
-	var presetListHtml = "<select id=\"presetElem\" onchange=\"fillPreset()\" data-saved>"
-	presetListHtml += "<option disabled>— Normal Progression —</option>"
+	var presetListHtml = "<select id=\"presetElem\" onchange=\"fillPresetPerky()\" data-saved>"
+	presetListHtml += "<option disabled>— Zone Progression —</option>"
 	for (var item in presets.regular) {
 		presetListHtml += "<option value=\"" + item + "\" title =\"" + presets.regular[item].description + "\">" + presets.regular[item].name + "</option>"
 	}
@@ -867,7 +1015,7 @@ function setupPerkyUI() {
 		perkInput.setAttribute('min', inputObj.minValue);
 		perkInput.setAttribute('max', inputObj.maxValue);
 		perkInput.setAttribute('placeholder', inputObj.defaultValue);
-		perkInput.setAttribute('onchange', 'legalizeInput(this.id);');
+		perkInput.setAttribute('onchange', 'legalizeInput(this.id); savePerkySettings();');
 		perkInput.setAttribute('onmouseover', 'tooltip(\"' + inputObj.name + '\", \"customText\", event, \"' + inputObj.description + '\")');
 		perkInput.setAttribute('onmouseout', 'tooltip("hide")');
 
@@ -961,7 +1109,7 @@ function setupPerkyUI() {
 		//Setting up preset dropdown
 		apGUI.$preset = document.createElement("select");
 		apGUI.$preset.id = 'presetElem';
-		apGUI.$preset.setAttribute('onchange', 'select_preset(this.value)');
+		apGUI.$preset.setAttribute('onchange', 'fillPresetPerky();');
 		var oldstyle = 'text-align: center; width: 9.8vw; font-size: 0.9vw; font-weight: lighter; ';
 		if (game.options.menu.darkTheme.enabled !== 2) oldstyle += " color: black;";
 		apGUI.$preset.setAttribute('style', oldstyle);

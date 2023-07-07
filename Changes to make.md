@@ -3,8 +3,6 @@
 	1. Combat
       	1. Just Scryer & Windstacking to go!
 	2. Magma
- 
-   - Add hyperspeed 2 detection in for special selection.
 
 # Mapping
    - Map Farm
@@ -21,8 +19,7 @@
    - Farm X amt of maps OR till you have 10x the stats of the improbability
 
 # Equipment
-   - Swap to using void HD ratio & void hits survived while inside of VMs for cutoffs?
-   - Add a setting to just set a zone where it start buying equip above lvl2 automatically.
+   - 
 
 # Calc
    - Remove Gamma Burst setting?
@@ -31,7 +28,6 @@
 # Outside of coding
    - Potentially setup a discord server? 
         - Pros would be a commit channel that can allow users to see if they should refresh.
-
 
 # Feature Requests
 
@@ -44,7 +40,6 @@
      - Also for spire can you add a way to let it automatically do a respec to the spire respec perky profile after you're done farming?
        - keinniemand
        - https://discord.com/channels/371177798305447938/371348913036197899/1121709098040307722
-
 
 # Bugs
 
