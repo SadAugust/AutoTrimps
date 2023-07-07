@@ -483,8 +483,11 @@ function mainLoopU1() {
 	//Stance
 	checkStanceSetting();
 
-	//Spire
-	exitSpireCell();
+	//Spire. Exit cell & respec
+	if (game.global.spireActive) {
+		exitSpireCell();
+		atlantrimpRespecMessage();
+	}
 }
 
 //U2 functions

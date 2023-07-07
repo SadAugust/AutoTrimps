@@ -708,15 +708,11 @@ function finishChallengeSquared() {
 	return;
 }
 
-function findOutCurrentPortalLevel() {
-	var a = -1, b = !1, d = getPageSetting("autoPortal"); switch (d) { case "Off": break; case "Custom": !challengeActive('Daily') && (a = getPageSetting("autoPortalZone") + 1), challengeActive('Daily') && (a = getPageSetting("Dailyportal") + 1), b = !("Lead" !== getPageSetting("heliumHourChallenge")); break; default: var e = { Balance: 41, Decay: 56, Electricity: 82, Crushed: 126, Nom: 146, Toxicity: 166, Lead: 181, Watch: 181, Corrupted: 191 }[d]; e && (a = e); }return { level: a, lead: b }
-}
-
 function resetVarsZone(loadingSave) {
 
 	//Reloading save variables
 	if (loadingSave) {
-		var resourceNeeded = {
+		resourceNeeded = {
 			food: 0,
 			wood: 0,
 			metal: 0,
@@ -817,7 +813,7 @@ function hypoPackratReset(challenge) {
 	}
 }
 
-//Auto-Respec into combat spec after running Atlantrimp
+//Auto-Respec into combat spec after running Trimple/Atlantrimp
 function surkyCombatRespec() {
 
 	if (!popupsAT.respecAtlantrimp) return;
@@ -825,39 +821,70 @@ function surkyCombatRespec() {
 	popupsAT.remainingTime = Infinity;
 	if (!game.global.viewingUpgrades) viewPortalUpgrades();
 	var currPreset = $$('#presetElem').value;
-	//Temp changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not. 
-	if (hdStats.isC3) fillPreset('combat');
+
+	//Swapping to Spire respec in u1
+	if (game.global.universe === 1) fillPresetPerky('spire');
+	//Changing to combat preset if in a C3/special challenge or Radon Combat Respec preset if not. 
+	else if (hdStats.isC3) fillPreset('combat');
 	else fillPreset('combatRadon');
 	//Respecing perks
-	runSurky();
-	//Reverting back to original preset
-	fillPreset(currPreset);
+	if (game.global.universe === 2)
+		runSurky();
+	else
+		runPerky();
 	//Fire all workers so that we don't run into issues when finishing the respec
 	fireAllWorkers();
 	activateClicked();
-	debug("Surky - Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.", "portal")
+	var calcName = currSettingUniverse === 2 ? "Surky" : "Perky";
+	debug(calcName + " - Respeccing into the " + $$('#presetElem')[$$('#presetElem').selectedIndex].innerHTML + " preset.", "portal");
+
+	//Reverting back to original preset
+	if (game.global.universe === 2)
+		fillPreset(currPreset);
+	else
+		fillPresetPerky(currPreset);
 }
 
+MODULES.portal.disableAutoRespec = 0;
+
 //Force tooltip appearance for Surky combat respec post Atlantrimp
-function atlantrimpRespecMessage() {
+function atlantrimpRespecMessage(cellOverride) {
 	if (!game.global.canRespecPerks) return;
-	//if (game.global.universe !== 2 || portalUniverse !== 2) return;
+	//Stop this from running if we're in U1 and not at the highest Spire reached.
+	if (game.global.universe === 1 && (!game.global.spireActive || game.global.world < (game.global.spiresCompleted + 1) * 100)) return;
 	if (typeof AutoPerks === 'undefined') return;
+
+	//Stop it running if we aren't above the necessary cell for u1.
+	if (!cellOverride) {
+		//If we have just toggled the setting, wait 5 seconds before running this.
+		if (settingChangedTimeout) return;
+		//Disable this from running if we have already disabled it this portal.
+		//This variable is reset when changing the "presetCombatRespecCell" settings input.
+		if (MODULES.portal.disableAutoRespec === getTotalPortals()) return;
+		var cell = getPageSetting('presetCombatRespecCell');
+		//Override for if cell is set to 0 or below.
+		if (cell <= 0) return;
+		if (game.global.lastClearedCell + 2 < cell) return;
+		//Set the variable to the current portal count so that we don't run this again this portal.
+		MODULES.portal.disableAutoRespec = getTotalPortals();
+	}
 
 	popupsAT.respecAtlantrimp = false;
 
 	var respecSetting = getPageSetting('presetCombatRespec');
 	//If setting is enabled, respec into Surky combat respec
+	var respecName = !hdStats.isC3 ? "Radon " : "" + "Combat Respec";
+	if (game.global.universe === 1) respecName = 'Spire'
 	if (respecSetting === 2) {
 		popupsAT.respecAtlantrimp = true;
 		popupsAT.remainingTime = 5000;
-		var description = "<p><b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b></p>";
+		var description = "<p>Respeccing into the <b>" + respecName + "</b> preset</p>";
 		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'popupsAT.respecAtlantrimp = false, popupsAT.remainingTime = Infinity', '<b>NOTICE: Auto-Respeccing in ' + (popupsAT.remainingTime / 1000).toFixed(1) + ' seconds....</b>', 'Disable Respec');
 		setTimeout(surkyCombatRespec, 5000);
 	}
 	//If setting is disabled, show tooltip to allow for respec after Atlantrimp has been run
 	else if (respecSetting === 1) {
-		var description = "<p>Click <b>Force Respec</b> to respec into the Surky <b>" + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec</b> preset.</p>";
+		var description = "<p>Click <b>Force Respec</b> to respec into the <b>" + respecName + "</b> preset.</p>";
 		tooltip('confirm', null, 'update', description, 'popupsAT.respecAtlantrimp = true; surkyCombatRespec()', '<b>Post Atlantrimp Respec</b>', 'Force Respec');
 	}
 }
@@ -871,7 +898,7 @@ function atlantrimpRespecOverride() {
 	game.mapUnlocks.AncientTreasure.fire = function () {
 		game.mapUnlocks.AncientTreasure.originalFire(...arguments)
 		try {
-			atlantrimpRespecMessage();
+			atlantrimpRespecMessage(true);
 		}
 		catch (e) { console.log("Loading respec function failed! " + e, "other") }
 	}

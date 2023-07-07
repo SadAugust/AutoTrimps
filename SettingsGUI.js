@@ -210,25 +210,50 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('autoPerks', currSettingUniverse)) });
 
 		createSetting('presetCombatRespec',
-			function () { return (['Atlantrimp Respec Off', 'Atlantrimp Respec Popup', 'Atlantrimp Respec Force']) },
 			function () {
+				var trimple = currSettingUniverse === 1 ? "Trimple" : "Atlantrimp";
+				return ([trimple + ' Respec Off', trimple + ' Respec Popup', trimple + ' Respec Force'])
+			},
+			function () {
+				var calcName = currSettingUniverse === 2 ? "Surky" : "Perky";
 				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
+				var trimpleShortened = currSettingUniverse === 1 ? "Trimple" : "Atlantrimp";
 
-				var description = "<p><b>Atlantrimp Respec Off</b><br>Disables this setting.</p>";
+				var respecName = !hdStats.isC3 ? "Radon " : "" + "Combat Respec";
+				if (currSettingUniverse === 1) respecName = 'Spire';
 
-				description += "<p><b>Atlantrimp Respec Popup</b><br>Will display a popup after complete " + trimple + " asking whether you would like to respec into a combat spec.</p>";
+				var description = "<p><b>" + trimpleShortened + " Respec Off</b><br>Disables this setting.</p>";
 
-				description += "<p><b>Atlantrimp Respec Force</b><br>5 seconds after completing " + trimple + " will respec into the Surky <b>Radon Combat Respec</b> preset to maximise combat stats. Has a popup that allows you to disable the respec if clicked within the 5 second window.</p>";
+				description += "<p><b>" + trimpleShortened + " Respec Popup</b><br>Will display a popup after complete " + trimple + " asking whether you would like to respec into a combat spec.</p>";
 
-				description += "<p>Won't be worthwhile using without having <b>Auto Allocate Perks</b> enabled as your next run would be started with the combat respec.</p>";
-				description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + ".</p>";
-				description += "<p>Will only run when <b>Liq for free Void</b> is enabled and will go back to U1 when a respec isn't available at the end of a run.</p>";
+				description += "<p><b>" + trimpleShortened + " Respec Force</b><br>5 seconds after completing " + trimple + " will respec into the <b>" + calcName + "</b> <b>" + respecName + "</b> preset to maximise combat stats. Has a popup that allows you to disable the respec if clicked within the 5 second window.</p>";
 
-				description += "<p><b>Recommended:</b> Atlantrimp Respec Off</p>";
+				description += "<p>This likely won't be worthwhile using without having <b>Auto Allocate Perks</b> enabled as your next run would be started with the combat respec.</p>";
+
+				description += "<p>I'd recommend only using it when <b>Liq for free Void</b> is enabled as it will go and get a fresh respec when a respec isn't available at the end of a run. " +
+					(currSettingUniverse === 1 ? "Without this you'll need to manually get a respec after your run or you will start your next run in the <b>Spire</b> preset." : "")
+					+ "</p>";
+
+				if (currSettingUniverse === 1) description += "<p>Has an addition setting (<b>Spire Respec Cell</b>) which has a <b>5</b> second delay after toggling this setting before it will function.</p>";
+
+				if (currSettingUniverse === 2) description += "<p>Will respec into the <b>Combat Respec</b> preset when running " + c2Description() + ".</p>";
+
+				description += "<p><b>Recommended:</b> " + trimpleShortened + " Respec Off</p>";
 				return description
 			},
 			'multitoggle', [0], null, 'Core', [1, 2],
-			function () { return (currSettingUniverse === 2) });
+			function () { return (game.stats.highestLevel.valueTotal() >= 170 || currSettingUniverse === 2) });
+
+		createSetting('presetCombatRespecCell',
+			function () { return ('Spire Respec Cell') },
+			function () {
+				var description = "<p>Will automatically respec to the Spire respec when this cell has been reached.</p>";
+				description += "<p>Will only function on your <b>highest Spire reached.</b></p>";
+				description += "<p><b>Set to 0 or -1 to disable this way to Spire respec.</b></p>";
+				description += "<p><b>Recommended:</b> cell after your farming has finished.</p>";
+				return description;
+			}, 'value', -1, null, 'Core', [1],
+			function () { return (game.stats.highestLevel.valueTotal() >= 170) });
 		createSetting('presetSwapMutators',
 			function () { return ('Preset Swap Mutators') },
 			function () {
@@ -4214,7 +4239,7 @@ function settingChanged(id, currUniverse) {
 	if (btn.type === 'multitoggle') {
 		var value = 'value'
 		if (radonon && btn.universe.indexOf(0) === -1) value += 'U2';
-		if (id === 'AutoMagmiteSpender2' && btn[value] === 1) {
+		if ((id === 'AutoMagmiteSpender2' && btn[value] === 1) || (game.global.universe === 1 && id === 'presetCombatRespec')) {
 			settingChangedTimeout = true;
 			setTimeout(function () {
 				settingChangedTimeout = false;
@@ -4744,9 +4769,12 @@ function remakeTooltip() {
 		if (!popupsAT.challenge) delete hzeMessage
 		return;
 	}
+
 	if (!game.global.lockTooltip) {
 		if (popupsAT.respecAtlantrimp) {
-			var description = "<p><b>Respeccing into " + (!hdStats.isC3 ? "Radon " : "") + "Combat Respec preset.</b></p>";
+			var respecName = !hdStats.isC3 ? "Radon " : "" + "Combat Respec";
+			if (game.global.universe === 1) respecName = 'Spire'
+			var description = "<p><b>Respeccing into the " + respecName + " preset.</b></p>";
 			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'popupsAT.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in ' + popupsAT.remainingTime + ' seconds....</b>', 'Disable Respec');
 		}
 		else if (popupsAT.challenge) {
@@ -4809,6 +4837,7 @@ function autoSetValueToolTip(id, text, multi, negative) {
 	} catch (e) {
 		box.select();
 	}
+
 	box.focus();
 }
 
@@ -4868,7 +4897,7 @@ function parseNum(num) {
 }
 
 function autoSetValue(id, multiValue, negative) {
-	var value = 'value'
+	var value = 'value';
 	if (autoTrimpSettings.radonsettings.value === 1 && autoTrimpSettings[id].universe.indexOf(0) === -1) value += 'U2';
 	var num = 0;
 	unlockTooltip();
@@ -4902,6 +4931,7 @@ function autoSetValue(id, multiValue, negative) {
 		document.getElementById(id).innerHTML = ranstring + ': ' + "<span class='icomoon icon-infinity'></span>";
 	updateCustomButtons();
 	saveSettings();
+	if (id === 'presetCombatRespecCell') MODULES.portal.disableAutoRespec = 0;
 }
 
 function autoSetText(id, multiValue) {
