@@ -254,10 +254,11 @@ function recycleMap_AT(forceAbandon) {
 	if (!getPageSetting('recycleExplorer') && game.jobs.Explorer.locked === 1) return;
 	if (!forceAbandon && (challengeActive('Unbalance') || challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb')) return;
 
+	//If we're done mapping AND in a map, then exit map to either world if autoMaps is enabled or to map chamber if not.
 	if (game.global.mapsActive) {
 		mapsClicked(true);
 	}
-	recycleMap();
+	//recycleMap();
 }
 
 //Check to see if we are running Atlantrimp or if we should be.

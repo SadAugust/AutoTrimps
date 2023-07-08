@@ -370,7 +370,35 @@ function autoMap() {
 		}
 		//Creating Maps
 	} else if (game.global.preMapsActive) {
+
+		//Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
+		//Not FULLY bugtested but works with my initial tests and is hopefully bug free.
+		function abandonMapCheck() {
+			if (game.global.currentMapId !== '') {
+				//If we don't have info on the previous map then set it.
+				if (lastMapWeWereIn === null) lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
+				//If we do have info on the previous map then check data for it.
+				if (lastMapWeWereIn !== null) {
+					/* //If we're in a map that we created for another setting then recycle it to create the map we want.
+					//Is this even required? I don't think it is tbh..... removing it would mean I can remove adding mapName to each map object.
+					if (lastMapWeWereIn.mapName !== mapSettings.mapName) recycleMap(); */
+
+					//Ensure the map has the correct biome, if not then recycle it.
+					if (mapSettings.biome && lastMapWeWereIn.location !== mapSettings.biome) recycleMap();
+					//If the selected map is the wrong level then recycle it.
+					if (lastMapWeWereIn.level !== (mapSettings.mapLevel + game.global.world)) recycleMap();
+					//If the selected map is the wrong special then recycle it.
+					//Since the game doesn't track bonus if it doesn't exist we need to check if the last map we were in had a bonus or not.
+					if (lastMapWeWereIn.bonus === undefined) {
+						if (mapSettings.special !== '0') recycleMap();
+					}
+					else if (lastMapWeWereIn.bonus !== mapSettings.special) recycleMap();
+				}
+			}
+		}
+
 		document.getElementById("mapLevelInput").value = game.global.world;
+
 		if (selectedMap === "world") {
 			mapsClicked();
 		} else if (selectedMap === "prestigeRaid") {
@@ -378,6 +406,7 @@ function autoMap() {
 		} else if (selectedMap === "bionicRaid") {
 			runBionicRaiding(bionicPool);
 		} else if (selectedMap === "create") {
+			abandonMapCheck();
 			//Setting sliders appropriately.
 			if (mapSettings.shouldRun) {
 				if (mapSettings.mapName !== '') {
@@ -416,10 +445,12 @@ function autoMap() {
 				}
 				if (result === 1) {
 					runMap();
+					lastMapWeWereIn = getCurrentMapObject();
 				}
 			}
 		} else {
-			selectMap(selectedMap);
+			abandonMapCheck();
+			if (game.global.currentMapId === '') selectMap(selectedMap);
 			var themapobj = game.global.mapsOwnedArray[getMapIndex(selectedMap)];
 			var levelText;
 			if (themapobj.level > 0) {

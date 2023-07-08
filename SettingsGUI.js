@@ -1281,7 +1281,7 @@ function initializeAllSettings() {
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationOnlyDestackZone',
-			function () { return ('D: Destack From') },
+			function () { return ('D: Only Destack Z') },
 			function () {
 				var description = "<p>From which zone only destacking should be considered. This will stop it caring about farming for metal to improve gear.</p>";
 				description += "<p>Purchases the highest level of map that you can afford and survive to reduce chilled stacks faster.</p>";
