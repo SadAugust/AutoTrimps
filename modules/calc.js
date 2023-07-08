@@ -407,8 +407,8 @@ function getAnticipationBonus(stacks) {
 }
 
 function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, mapLevel, useTitimp) {
-	if (!mapType) mapType = (!game.global.mapsActive) ? "world" : (getCurrentMapObject().location === "Void" ? "void" : "map");
-	if (!mapLevel) mapLevel = 0;
+	if (!mapType) mapType = !game.global.mapsActive ? "world" : (getCurrentMapObject().location === "Void" ? "void" : "map");
+	if (!mapLevel) mapLevel = mapType === 'world' || !game.global.mapsActive ? 0 : getCurrentMapObject().level - game.global.world;
 	if (!useTitimp) useTitimp = false;
 	if (!critMode) critMode = 'maybe';
 	if (!realDamage) realDamage = false;

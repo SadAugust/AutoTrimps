@@ -2642,7 +2642,7 @@ function desolation(forceDestack) {
 
 	//Forcing destack before doing any farmings.
 	if (forceDestack) {
-		destackOnlyZone = game.global.world;
+		destackZone = game.global.world;
 		destackStacks = 0;
 	}
 

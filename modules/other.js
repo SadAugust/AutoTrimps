@@ -544,7 +544,7 @@ function equalityManagement() {
 	var angelicOwned = game.talents.angelic.purchased;
 	var angelicDance = angelicOwned && (runningTrappa || runningQuest || runningArchaeology || runningBerserk || noFrenzy || dailyEmpower);
 
-	if (runningDesolation && mapSettings.equality && game.global.world > 190 &&
+	if (runningDesolation && mapSettings.equality && game.global.world >= getPageSetting('destackOnlyZone') &&
 		getPageSetting('autoMaps')) {
 		game.portal.Equality.disabledStackCount = game.portal.Equality.radLevel;
 		manageEqualityStacks();

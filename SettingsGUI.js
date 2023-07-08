@@ -1285,7 +1285,9 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>From which zone only destacking should be considered. This will stop it caring about farming for metal to improve gear.</p>";
 				description += "<p>Purchases the highest level of map that you can afford and survive to reduce chilled stacks faster.</p>";
-				description += "<p><b>Recommended:</b> 20 below Desolation end zone</p>";
+				description += "<p>Disables perfect maps and sets sliders to minimum for all options to reduce fragment spending.</p>";
+				description += "<p>If using <b>Auto Equality: Advanced</b> will set your equality level to the max it can be whilst destacking."
+				description += "<p><b>Recommended:</b> 20 below Desolation end zone or when you stop clearing your destacking maps.</p>";
 				return description;
 			}, 'value', -1, null, 'C2', [2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
