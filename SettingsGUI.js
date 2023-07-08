@@ -439,7 +439,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			},
-			'boolean', false, null, 'Daily', [2]);
+			'boolean', false, null, 'Daily', [1, 2]);
 		createSetting('bloodthirstVoidMax',
 			function () { return ('Void: Max Bloodthirst') },
 			function () {
@@ -447,7 +447,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			},
-			'boolean', true, null, 'Daily', [2]);
+			'boolean', false, null, 'Daily', [1, 2]);
 		createSetting('empowerAutoEquality',
 			function () { return ('AE: Empower') },
 			function () {
@@ -5480,7 +5480,7 @@ function setupATButtons() {
 			settingBtnSrch[i].setAttribute("onclick", "autoPlusSettingsMenu()");
 	}
 	var newItem = document.createElement("TD");
-	newItem.appendChild(document.createTextNode("AutoTrimps"));
+	newItem.appendChild(document.createTextNode("AutoTrimps " + MODULES_AT.ATversion.split('SadAugust ')[1]));
 	newItem.setAttribute("class", "btn btn-default");
 	newItem.setAttribute("onclick", "autoToggle()");
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
@@ -6180,6 +6180,18 @@ function updateATVersion() {
 			changelog.push("Added a new setting for Desolation prestige gear scumming. This is a setting that is kinda in beta (doesn't raid for Shields if you want to target Boots) and almost definitely shouldn't exist as it abuses a few unintentional game mechanics, read the help window for the setting to know more about it.");
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.18') {
+
+			if (typeof (tempSettings["bloodthirstDestack"]) !== 'undefined') {
+				autoTrimpSettings.bloodthirstDestack.enabled = false;
+			}
+			if (typeof (tempSettings["bloodthirstVoidMax"]) !== 'undefined') {
+				autoTrimpSettings.bloodthirstVoidMax.enabled = false;
+			}
+
+			changelog.push("U1 now has 2 new settings for dailies relating to the Bloodthirst modifier. These can be found in the <b>Daily</b> tab if you'd like to find out more.");
+
+		}
 	}
 
 	autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
@@ -6188,4 +6200,5 @@ function updateATVersion() {
 		verticalCenterTooltip(false, true);
 	}
 	saveSettings();
+
 }

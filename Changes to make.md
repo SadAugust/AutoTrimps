@@ -42,3 +42,28 @@
      - Gene Assist has a fun interaction with Void Maps - if you set Gene Assist to keep your breeding timer at 3 seconds, you set HD Farm to farm maps until you can survive one hit in Void Map, and then you jump into Void Gas map, suddenly you can't survive 1 hit anymore because Geneticist were fired to keep up with the breeding timer.
        - erp.lsf
        - https://discord.com/channels/371177798305447938/371348913036197899/1119260831289462844
+
+# Settings
+   - Rename
+     - ScryerUseinMaps2
+       - ScryerMaps
+     - ScryerUseinVoidMaps2
+	   - ScryerVoidMaps
+     - ScryerUseinPMaps
+	   - ScryerPlusMaps
+	 - ScryerUseinBW
+    	 - ScryerBW
+  	 - ScryerUseinSpire2
+    	 - ScryerSpire
+  	 - ScryerSkipBoss2
+    	 - ScryerSkipBoss
+  	 - ScryUseinPoison
+    	 - ScryerPoison
+  	 - ScryUseinWind
+    	 - ScryerWind
+  	 - ScryUseinIce
+    	 - ScryerIce
+  	 - ScryerSkipCorrupteds2
+    	 - ScryerSkipCorrupted
+  	 - ScryerSkipHealthy
+       - Fine as is
