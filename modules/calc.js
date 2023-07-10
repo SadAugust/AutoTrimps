@@ -275,7 +275,7 @@ function calcOurHealth(stance, mapType, realHealth, fullGeneticist) {
 	return health;
 }
 
-function calcHitsSurvived(targetZone, type) {
+function calcHitsSurvived(targetZone, type, checkResults) {
 	//Init
 	if (!targetZone) targetZone = game.global.world;
 	if (!type) type = 'world';
@@ -337,6 +337,17 @@ function calcHitsSurvived(targetZone, type) {
 		pierce *= 2;
 	}
 
+	if (checkResults) {
+		debug("calcHitsSurvived", "other");
+		debug("Target Zone: " + targetZone, "other");
+		debug("Damage Mult: " + damageMult, "other");
+		debug("Void Damage: " + voidDamage, "other");
+		debug("World Damage: " + worldDamage, "other");
+		debug("Block: " + block, "other");
+		debug("Pierce: " + pierce, "other");
+		debug("Health: " + health, "other");
+		debug("Hits to Survive: " + hitsToSurvive, "other");
+	}
 	//The Resulting Ratio
 	const finalDmg = Math.max(damageMult * worldDamage - block, voidDamage, worldDamage * pierce, 0);
 
@@ -919,10 +930,8 @@ function calcEnemyAttack(type, zone, cell = 100, name = "Improbability", minOrMa
 	//Challenges
 	if (challengeActive('Balance')) attack *= (type === "world") ? 1.17 : 2.35;
 	else if (challengeActive('Life')) attack *= 6;
-	else if (challengeActive('Toxicity')) {
-		attack *= 5;
-		if (typeof getCurrentEnemy().nomStacks !== 'undefined') attack *= Math.pow(1.25, enemy.nomStacks);
-	}
+	else if (challengeActive('Nom') && typeof getCurrentEnemy().nomStacks !== 'undefined') attack *= Math.pow(1.25, getCurrentEnemy().nomStacks);
+	else if (challengeActive('Toxicity')) attack *= 5;
 	else if (challengeActive('Lead')) attack *= (zone % 2 === 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
 	else if (challengeActive('Domination')) attack *= 2.5;
 
