@@ -1808,20 +1808,42 @@ h9 {
 }
 
 /* New stuff goes here */
-.btn-newChangelog {
+.btn-changelogNew {
 	background: #1e3c75;
 	font-weight: bold;
 	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 	width: 100%;
 }
 
-.btn-newChangelog:hover,
-.btn-newChangelog:focus,
-.btn-newChangelog.focus,
-.btn-newChangelog:active,
-.btn-newChangelog.active,
+.btn-changelogNew:hover,
+.btn-changelogNew:focus,
+.btn-changelogNew.focus,
+.btn-changelogNew:active,
+.btn-changelogNew.active,
 .open>.dropdown-toggle.btn-new {
 	background: #345594;
+	color: white;
+}
+
+.open>.dropdown-toggle.btn-new {
+	background-image: none;
+}
+
+
+.btn-changelog {
+	background: #593f59;
+	font-weight: bold;
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+	width: 100%;
+}
+
+.btn-changelog:hover,
+.btn-changelog:focus,
+.btn-changelog.focus,
+.btn-changelog:active,
+.btn-changelog.active,
+.open>.dropdown-toggle.btn-new {
+	background: #8a648a;
 	color: white;
 }
 
