@@ -5754,20 +5754,6 @@ function updateATVersion() {
 					saveSettings();
 				}
 			}
-			changelog.push("Prestige Raiding & Bionic Raiding now have an added option for end zone so you can choose when to stop running specific lines.")
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.002') {
-			changelog.push("Have added a Priority input for every farming setting to allow you to properly allow certain lines to run before others without having to save the window multiple times to make it work.")
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.003') {
-			changelog.push("With Antennas/Meteorologists increasing wood gain in 5.9.0 I've added a job ratio input for the HD Farm setting to allow for more user control of equip farming. Was previously Set to '0,0,1' if you want to use the same setting as before.");
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1') {
-			changelog.push("Surky has now been implemented for U2. Enable Auto Allocate and it'll respec perks just like Perky currently does for U1, make sure to set the inputs up properly or you'll get odd respecs.<br>\
-			As usual, report any bugs and I'll aim to fix them ASAP. You will need to enable Auto Allocate again for both universes if you want to use them as the setting has been autoset to off after this implementation.")
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.1') {
@@ -5783,41 +5769,6 @@ function updateATVersion() {
 			else autoTrimpSettings['autoPerks'].enabled = false;
 			if (tempSettings.autoPerks.valueU2 > 0) autoTrimpSettings['autoPerks'].enabledU2 = true;
 			else autoTrimpSettings['autoPerks'].enabledU2 = false;
-			changelog.push("Map Bonus HD related settings have been moved to 2 inputs in the Maps tab rather than in the Map Bonus setting.")
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.2') {
-			changelog.push("Quest now has an additional setting for the max amount of maps you'd like to run while on Smithy quests.<br>\
-			HD Farm now has an additional dropdown for targetting map levels. When using this feature it will cause AT to farm until auto level is at or above the designated level.<br>\
-			Worshipper Farm has a new setting in default row to enable the ship skip map limit setting.<br>\
-			There's a brand new setting in the 'Core' tab which when auto portaling (goes to U1 if not in it) uses liquification to ensure your next void map drop gives a bonus drop then portals into your actual run.")
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.3') {
-			changelog.push("Added a new Mayhem setting which will run melting point at X smithies like the Panda & Deso settings.<br>\
-			Added a new Pandemonium setting for HD Ratio destacking like Mayhem & Deso have. Equipment farming will also use this if the equip farm zone hasn't been setup or you're below that value.<br>\
-			Surky now saves inputs when swapping between presets so you don't have to set them back up every time!")
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.4') {
-			changelog.push("The U2 Preset Swapping setting has been modified and it will adjust the Surky preset that is selected depending on the type of challenge that you're about to run.")
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.5') {
-			changelog.push("Integrated checks for heirloom swapping into hp/dmg calcs so HD Ratios will now account for your world/map/void heirlooms and not cause issues with map stacking and the like.<br>\
-			Fixed some issues with equip purchasing, setting for daily in previous universe & challenge calc bugfixes.<br>\
-			Adjusted the 'Repeat Count' setting for Map Farm to allow for an input of '-1' which will set the repeat count to Infinity.<br>\
-			Added a new setting for Desolation which will ignore farming caches and purely go for the max map level you can survive several hits on to speed up the destacking process in later zones.<br>\
-			Implemented a new status tooltip that is very similar to Psycho-Rays as it seemed beneficial to allow the user to see more information rather than keeping it all stored in the background.<br>\
-			")
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.6') {
-			changelog.push("Changed the way setting lines are being picked so if there's any issues let me know!<br>\
-			Map Farm now has farm type options for Portal Time & Daily Reset time! For more info click the Help button at the bottom of the setting window.<br>\
-			Void Map settings now has a 'Max Tenacity' toggle once the perk has been unlocked which makes the World & Void HD Ratio inputs  assume max tenacity.<br>\
-			HD Ratio values will now factor in the type of shield that will be equipped when heirloom swapping is enabled so the value won't change when going between world/maps/voids.<br>\
-			Quest, Void Map, Desolation, calc and perky bugfixes.")
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.7') {
@@ -5825,20 +5776,11 @@ function updateATVersion() {
 				autoTrimpSettings['heirloomStaffResource'].valueU2 = tempSettings.heirloomResourceStaff.valueU2;
 			autoTrimpSettings['hitsSurvived'].value = 0;
 			autoTrimpSettings['hitsSurvived'].valueU2 = 0;
-
-			changelog.push("Have added the 'Hits Survived' setting back into AT. Should properly work in both universes but it hasn't been fully tested in U2 so I've disabled it for everybody but if you want to use it set the value to anything higher than 0.<br>\
-				Further changed how auto heirlooms interacts with HD Ratios so if there's any bugs let me know.<br>\
-				Added a new setting for which staff you'd like to run whilst in void maps.<br>\
-				Void Maps setting now has a toggle that will use a bone charge when you enter your first void map.<br>\
-				Minor early U1 & U2 optimisations.")
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.1.8') {
 			if (tempSettings.dailyPortalSettingsArray.valueU2 !== undefined)
 				delete autoTrimpSettings.dailyPortalSettingsArray.valueU2.value;
-
-			changelog.push("Have rewritten all of the AutoJobs, AutoStructure, Daily Portal Modifier help windows.<br>\
-			Rewrote how the daily portal modifier settings are stored to make it usable in U1 and to implement the new U2 mods so there's a good chance any U2 settings will be lost. Sorry about that!")
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.0') {
@@ -5852,19 +5794,9 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.0') {
-			changelog.push("Added an alternative to C2/C3 Runner % input, there's now a toggle to swap it to set end zone values where it'll start a run when beneath that value.<br>\
-			Added heirloom swapping settings for Mayhem, Pandemonium, and Desolation.<br>\
-			Void Map 'Max Tenacity' setting has been renamed 'Max Map Bonus' and now factors in both max map bonus & max tenacity.")
-		}
-
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.1') {
 			if (tempSettings.spamMessages !== undefined)
 				autoTrimpSettings['spamMessages'].value.map_Destacking = tempSettings.spamMessages.value.map_Details;
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.2') {
-			changelog.push("Have introduced a mutator preset saving & respeccing system. There's a new setting in the 'Core' tab that will swap your preset when portaling.")
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.3') {
@@ -5884,11 +5816,6 @@ function updateATVersion() {
 			for (var x = 1; x < 5; x++) {
 				autoTrimpSettings['heirloomAutoCoreMod' + x].selected = 'Empty';
 			}
-
-			changelog.push("Have rewritten the auto heirlooms code to work as it should have to begin with. Will check if the heirloom can have all the mods you have selected and if it does then store it in your heirloom inventory.<br>\
-			'Rarity to Keep' setting now only shows the heirlooms available for your current HZE & settings universe.<br>\
-			The heirloom mods section has been reworked to display the actual modifier names rather than the internal names and also only display the mods available for that heirloom tier so I've had to reset everybodys settings for auto heirlooms back to their defaults.<br>\
-			The Core heirloom type is now hidden in U2 and until you hit a HZE of 200 in U1")
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.5') {
@@ -6001,23 +5928,6 @@ function updateATVersion() {
 			if (surkyInputs !== null) autoTrimpSettings['autoAllocatePresets'].valueU2 = surkyInputs;
 		}
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.93') {
-
-			changelog.push("Updated tooltips to reflect what the settings actually do and provide recommendations for what to set them to. Still have a few tabs left to do but it's primarily U1 stuff left.<br>\
-			Hits Survived & HD Ratio map bonus now allow you to set a custom job ratio through the Map Bonus settings window.<br>\
-			HD Ratio calcs now take inequality into account when your have shields with different values.<br>\
-			Auto Portal will now respect your normal portal settings if you have <b>Auto Start Daily</b> enabled and no dailies left to run.<br>\
-			Added heirloom mod blacklist inputs for shields & staffs. These will allow you to make sure heirlooms with those mods automatically get recycled.<br>\
-			Added a new setting to the Heirloom tab to allow you to swap your shields to maximise plaguebringer damage on compressed enemies.");
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.94') {
-			changelog.push("Surky has undergone a few adjustments. The missing presets are now available and the input boxes & presets all have mouseover tooltips to explain what they do.<br>\
-			Some values that were hidden have now been displayed but they will get overwritten if they are below your current value when running Surky.<br>\
-			Downsize, Duel, Berserk, Alchemy & Smithless will now all load the relevant presets when you auto portal into them.<br>\
-			Alchemy now has an input for potions of finding & trappa now has an input for hours trapped.");
-		}
-
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.95') {
 			var settings_List = ['mapFarmSettings']
 			var values = ['value', 'valueU2'];
@@ -6031,7 +5941,6 @@ function updateATVersion() {
 					saveSettings();
 				}
 			}
-			changelog.push("Map Farm now has a <b>Above X HD Ratio</b> input. Will make it so the line only runs above the specified HD Ratio but only runs if the input is greater than 0.");
 		}
 		//Fixing Surky & Perky input issues. 
 		//Changing daily skip to be an array instead of a string so more items can be added.
@@ -6072,9 +5981,6 @@ function updateATVersion() {
 				setting.value.world = 999;
 				setting.valueU2.world = 999;
 			}
-
-			changelog.push("Settings to automatically spend bone charges upon reaching a certain value have been added to the Bone Shrine default values section.<br>\
-			When spending these bone charges it will use the job ratio & gather settings that you have setup in that section.");
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.99') {
