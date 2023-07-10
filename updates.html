@@ -1,0 +1,410 @@
+<html>
+
+<head>
+	<title>Updates</title>
+</head>
+<style>
+	body {
+		text-align: center;
+		background-color: #333;
+		color: #333;
+		font-size: 1.2em;
+	}
+
+	#wrapper {
+		max-width: 1020px;
+		display: inline-block;
+		text-align: left;
+		padding: 10px;
+		/* color: #e3e5e9; */
+		color: #ffffff;
+		background-color: #202124;
+		font-family: 'Roboto';
+	}
+
+	.betterList {
+		list-style: none;
+		padding: 0;
+	}
+
+	.betterList>li {
+		font-weight: bold;
+		font-size: 1.1em;
+		margin-bottom: 10px;
+	}
+
+	.betterList>ul>li {
+		list-style: disc;
+		margin-bottom: 5px;
+	}
+
+	.betterList>ul>li.square {
+		list-style-type: square;
+		margin-left: 1vw;
+	}
+
+
+	.betterList>ul>li.second-child {
+		font-weight: bold;
+		list-style: none !important;
+		margin-left: -20px;
+		padding: 3px 0 5px 0;
+		/* color: #3f3feb; */
+		color: #5b5beb;
+		color: #85caf1
+	}
+
+	.betterList>ul>li:first-child,
+	.contentSplitter {
+		font-weight: bold;
+		list-style: none !important;
+		margin-left: -30px;
+		padding: 5px 0 5px 0;
+		color: #7094ec
+	}
+
+	.contentSplitter {
+		margin-left: 0px;
+		font-size: 1.1em;
+		color: #053b08 !important;
+	}
+
+	.r {
+		color: #8F0B0B;
+	}
+
+	.g {
+		color: #065806;
+	}
+
+	#linksTable {
+		position: absolute;
+		left: 88%;
+		top: 0%;
+		background-color: #dadada;
+		padding: 0.5%;
+		text-align: center;
+	}
+
+	#linksTable tbody tr.linksRow td a,
+	#linksTableTitle {
+		font-size: 1.2em;
+		font-weight: bold;
+		padding: 5px 20px;
+		text-decoration: none;
+		color: black;
+	}
+
+	.linksRow td a {
+		display: inline-block;
+		cursor: pointer;
+	}
+
+	.linksRow td a:hover {
+		background-color: #8a8989;
+	}
+
+	#linksTable img#discordLogo {
+		width: 50px;
+		height: 50px;
+	}
+
+	.linksRow td {
+		border: 1px solid black;
+	}
+
+	.linksSpacer {
+		height: 6px;
+	}
+
+	@media (max-width: 1020px) {
+		#linksTable {
+			position: initial;
+			margin-left: calc(50vw - 190px);
+			margin-top: -10px;
+		}
+	}
+</style>
+
+<body>
+	<div id="wrapper" style="position: relative">
+		<!-- <table id="linksTable">
+			<tbody>
+				<tr id="linksTableTitle">
+					<td colspan="1">AutoTrimps</td>
+				</tr>
+				<tr id="linksRow" class="linksRow">
+					<td>
+						<a href="https://discord.gg/v5fRY5xU" target="_blank"><img id="discordLogo"
+								src='imgs/discord_logo.png' /><br />Discord</a>
+					</td>
+				</tr>
+				<tr id="desktopLinksRow" class="linksRow" style="display: none">
+					<td>
+						<a onclick="nwOpen('https://discord.gg/v5fRY5xU')" target="_blank"><img id="discordLogo"
+								src='imgs/discord_logo.png' /><br />Discord</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<script type="text/javascript">
+			if (typeof nw !== 'undefined') {
+				document.getElementById('linksRow').style.display = 'none';
+				document.getElementById('desktopLinksRow').style.display = 'table-row';
+			}
+			function nwOpen(link) {
+				var gui = require('nw.gui');
+				gui.Shell.openExternal(link)
+			}
+		</script> -->
+		<div style="font-size: 1.3em; font-weight: bold; display: block; width: 100%; text-align: center;">AutoTrimps
+			Updates!</div>
+
+
+
+		<!-- 6.3.19 -->
+		<ul class="betterList">
+			<li>6.3.19 - 10/08/23</li>
+			<ul>
+				<li>News</li>
+				<li>In an effort to make it easier for users to see what has been modified, I've finally made a
+					changelog for features/bugfixes going forward.</li>
+				<li class="square">Any changes made will make the AT Changelog button change colour and also print <b>|
+						What's New</b> on the button.</li>
+				<li class="square">The changelog popup messages will no longer appear unless you are in TimeWarp where
+					it will popup with a link to this changelog.</li>
+				<li class="square">The UI of this changelog might go through minor modications over the next few
+					weeks as I'm not fully set on it.</li>
+				<li>AutoTrimps now has an hourly check to inform you when there's a new version available. If one is
+					then the changelog button text will be appended with
+					"<span style='color: red; font-weight: bold;'>Update Available!</span>".</li>
+			</ul>
+		</ul>
+
+
+
+		<!-- 6.3.18 -->
+		<ul class="betterList">
+			<li>6.3.18 - 09/08/23</li>
+			<ul>
+				<li>New Features</li>
+
+				<li class="second-child">Universe 1 and Universe 2</li>
+				<li>Maps</li>
+				<li class="square">Added an improved map recycling system. Will now no longer recycle maps when
+					returning to world if they haven't been completed but will instead when running a new map will check
+					if the current map has the cache, biome & map level that we want to run and if it does it will
+					resume otherwise recycles the map.</li>
+
+				<li class="second-child">Universe 1</li>
+				<li>Dailies</li>
+				<li class="square">2 new settings for dailies relating to the Bloodthirst modifier. These can be found
+					in the <b>Daily</b> tab if you'd like to find out more.</li>
+			</ul>
+
+			<ul>
+				<li>Bugfixes</li>
+				<li class="second-child">Universe 2</li>
+				<li>Desolation</li>
+				<li class="square">Fixed an issue when force destacking before farming where it would ignore your input
+					for
+					<b>D: Destack From</b> and set it to that zone so it had the potential to use the wrong slider
+					settings
+					for destacking.
+				</li>
+				<li class="square">Renamed <b>D: Destack From</b> to <b>D: Only Destack Z</b> to reduce potential
+					confusion.
+				</li>
+				<li class="square">Updated tooltip description for <b>D: Only Destack Z</b>.</li>
+			</ul>
+		</ul>
+
+
+
+		<!-- 6.3.17 -->
+		<ul class="betterList">
+			<li>6.3.17 - 07/08/23</li>
+			<ul>
+				<li>New Features</li>
+				<li class="second-child">Universe 1</li>
+				<li>Perky will now remember your weights when switching between presets so that you don't have to set
+					them back up everytime. </li>
+				<li>Have added an additional setting for Auto Allocate. It allows for automatic preset selection when
+					auto portaling and will pick the most appropriate preset for the run before distributing your perks.
+				</li>
+				<li class="second-child">Universe 2</li>
+				<li>Added a new setting for Desolation prestige gear scumming. </li>
+				<li class="square">This is a setting that is in semi-beta
+					(doesn't raid for Shields if available if you want to target Boots) and almost definitely shouldn't
+					exist as it abuses some unintentional game mechanics, read the help window for the setting to know
+					more about it.</li>
+			</ul>
+		</ul>
+
+
+
+		<!-- 6.3.16 -->
+		<ul class="betterList">
+			<li>6.3.16 - 07/08/23</li>
+			<ul>
+				<li>New Features</li>
+				<li class="second-child">Universe 1</li>
+				<li>Have duplicated the Daily Spire related settings for C2s so you will need to configure those
+					settings up if you want it to function the way you previously had them. </li>
+			</ul>
+		</ul>
+
+
+
+		<!-- 6.3.15 -->
+		<ul class="betterList">
+			<li>6.3.15 - 04/08/23</li>
+			<ul>
+				<li>Bugfixes</li>
+				<li class="second-child">Universe 1 and Universe 2</li>
+				<li>Fixed an issue where Tributes, Meteorologists and Worshippers wouldn't be purchased due to a
+					Trimple/Atlantrimp check.</li>
+			</ul>
+			<ul>
+				<li>Backend Changes</li>
+				<li class="second-child">Universe 1 and Universe 2</li>
+				<li>Rewrote Prestige Raiding and Void Map code to reduce to global variables usage. There's potential
+					for some bugs due to this.</li>
+			</ul>
+		</ul>
+
+
+
+		<!-- 6.3.14 -->
+		<ul class="betterList">
+			<li>6.3.14 - 27/07/23</li>
+			<ul>
+				<li>New Features</li>
+				<li class="second-child">Universe 1 and Universe 2</li>
+				<li>Void Maps.</li>
+				<li class="square">Removed the 2 set inputs for World HD Ratio and Void HD Ratio and instead replaced
+					them with dropdown boxes which allows you to select between HD Ratios, Hits Survived, or Map Level
+					for when to run your Void Maps.</li>
+			</ul>
+			<ul>
+				<li>Bugfixes</li>
+				<li class="second-child">Universe 1 and Universe 2</li>
+				<li>Hits Survived checks will now check against <b>Void Hits Survived</b> when the script is looking to
+					run Void Maps.</li>
+			</ul>
+		</ul>
+
+
+
+		<!-- 6.3.13 -->
+		<ul class="betterList">
+			<li>6.3.13 - 25/07/23</li>
+			<ul>
+				<li>New Features</li>
+				<li class="second-child">Universe 1 and Universe 2</li>
+				<li>Equipment.</li>
+				<li class="square">The <b>AE: Prestige</b> setting has an additional toggle (AE: Maybe Prestige) which
+					will only purchase prestiges when <b>outside</b> of your AE: Zone range unless you have more than 5
+					levels in that equip.</li>
+				<li class="square">Added a new setting to allow you to decide what percentage of resources you would
+					like to spend on a prestige after running Trimple/Atlantrimp.</li>
+				<li class="square">Added a new setting to allow you to disable Shield level/prestige purchases.</li>
+			</ul>
+			<ul>
+				<li>Bugfixes</li>
+				<li class="second-child">Universe 1 and Universe 2</li>
+				<li>Hits Survived checks will now check against <b>Void Hits Survived</b> when the script is looking to
+					run Void Maps.</li>
+			</ul>
+		</ul>
+
+
+
+		<!-- 6.3.12 -->
+		<ul class="betterList">
+			<li>6.3.12 - 22/07/23</li>
+			<ul>
+				<li>New Features</li>
+				<li class="second-child">Universe 1 and Universe 2</li>
+
+				<li>Equipment</li>
+				<li class="square">New setting <b>AE: HS Cut-off</b>. It will set your spending percentage for health
+					equips to 100% when your <b>Hits Survived</b> value is below the input value.</li>
+				<li class="square">With this equipment change the <b>AE: HD Cut-Off</b> setting will now only override
+					your spending percentage for attack equips unless in U2 where it will override both attack & health
+					equips as it's necessary for equality improvements.</li>
+
+				<li class="second-child">Universe 2</li>
+				<li>Challenges</li>
+				<li class="square"><b>Duel</b> now has settings available for it in the <b>C3</b> tab.</li>
+			</ul>
+			<ul>
+				<li>Bugfixes</li>
+				<li class="second-child">Universe 1 and Universe 2</li>
+				<li>Void Maps</li>
+				<li class="square">Background variables now get reset when you save void map settings so that you don't
+					continue running your voids at the wrong zone.</li>
+			</ul>
+		</ul>
+
+
+
+		<!-- 6.3.11 -->
+		<ul class="betterList">
+			<li>6.3.11 - 21/07/23</li>
+			<ul>
+				<li>New Features</li>
+				<li class="second-child">Universe 1 and Universe 2</li>
+				<li>Heirlooms</li>
+				<li class="square">The Auto Heirloom <b>Rarity to Keep</b> setting has been split into multiple settings
+					for each heirloom type. Your previous input has been converted to the new system but if you want to
+					go for a different rarity for each type you'll need to change it manually.</li>
+			</ul>
+		</ul>
+
+
+
+		<!-- 6.3.10 -->
+		<ul class="betterList">
+			<li>6.3.10 - 20/07/23</li>
+			<ul>
+				<li>New Features</li>
+				<li class="second-child">Universe 1 and Universe 2</li>
+
+				<li>Void Maps</li>
+				<li class="square">Now has additional inputs to farm to specific hits survived & hd ratio before
+					running any void maps.</li>
+
+				<li>Time Warp</li>
+				<li class="square">There is now a <b>Time Warp</b> tab which houses a few settings for making the script
+					more compatible
+					with time warp.</li>
+
+				<li>Equipment</li>
+				<li class="square">The equipment setting <b>AE: Zone</b> now no longer sets your spending percentage to
+					100% when you're at
+					or above the last input. Instead there is now the choice to input a zone range so if you're between
+					those zones it will set your spending percentage to 100%. If you want that style back just set your
+					last input to 'currentEndZone.999'.</li>
+
+
+				<li class="second-child">Universe 1</li>
+				<li>Challenges</li>
+				<li class="square">Toxicity now has challenge related settings allowing you to farm for a certain amount
+					of stacks on
+					specific zones. These settings can be found in the <b>Challenge</b> tab.</li>
+			</ul>
+			<ul>
+				<li>Bugfixes</li>
+				<li class="second-child">Universe 1</li>
+				<li>Perky</li>
+				<li class="square">Now has a target zone input and the xp input has been hidden until Fluffy has
+					been unlocked.</li>
+			</ul>
+		</ul>
+
+
+	</div>
+</body>
+
+</html>

@@ -49,10 +49,10 @@ function useScryerStance() {
 	}
 
 	var aboveMaxZone = getPageSetting('ScryerMaxZone') > 0 && game.global.world >= getPageSetting('ScryerMaxZone');
-	var useScryer = getPageSetting('UseScryerStance')
-	var mapsActive = game.global.mapsActive
-	var mapObject = game.global.mapsActive ? getCurrentMapObject() : null;
-	var SC = getPageSetting('ScryerSkipCorrupteds2') === 0;
+	var useScryer = getPageSetting('UseScryerStance');
+	var mapsActive = game.global.mapsActive;
+	var mapObject = mapsActive ? getCurrentMapObject() : null;
+	var skipCorrupted = getPageSetting('ScryerSkipCorrupteds2') === 0;
 	var settingPrefix = challengeActive('Daily') ? 'd' : '';
 
 	var never_scry = game.global.preMapsActive || game.global.gridArray.length === 0 || game.global.world <= 60 || game.stats.highestLevel.valueTotal() < 180;
@@ -60,47 +60,54 @@ function useScryerStance() {
 	//Never scryer if any of these return true.
 
 	//Maps Skip
+	//Voids, BWs, and plus maps are excluded from this check.
 	never_scry |= useScryer && mapsActive && getPageSetting('ScryerUseinMaps2') === 0 && mapObject.location !== "Void" && mapObject.location !== "Bionic" && mapObject.level <= game.global.world;
 	//Plus Level Skip
+	//BW is excluded from this check.
 	never_scry |= useScryer && mapsActive && getPageSetting('ScryerUseinPMaps') === 0 && mapObject.level > game.global.world && mapObject.location !== "Void" && mapObject.location !== "Bionic";
 	//Void Skip
 	never_scry |= useScryer && mapsActive && mapObject.location === "Void" && getPageSetting('ScryerUseinVoidMaps2') === 0;
 	//Bionic Skip
 	never_scry |= useScryer && mapsActive && mapObject.location === "Bionic" && getPageSetting('ScryerUseinBW') === 0;
 	//Spire Skip
-	never_scry |= useScryer && !mapsActive && isDoingSpire() && getPageSetting('ScryerUseinSpire2') === 0;
+	//Use base game check for spire active to ensure it works as described
+	never_scry |= useScryer && !mapsActive && game.global.spireActive && getPageSetting('ScryerUseinSpire2') === 0;
 	//Boss Skip
-	never_scry |= useScryer && !mapsActive && getPageSetting('ScryerSkipBoss2') === 0 && game.global.lastClearedCell === 98;
+	never_scry |= useScryer && !mapsActive && getPageSetting('ScryerSkipBoss2') === 0 && game.global.lastClearedCell + 2 === 100;
 	//Empowerment Skip
-	never_scry |= useScryer && !mapsActive &&
+	//Check if we are in one of the empowerment bands and if we are check against the setting for that band.
+	//0 is disabled, -1 is maybe, any value higher than 0 is the zone you would like to not run Scryer in that empowerment band.
+	never_scry |= useScryer && !mapsActive && (
 		(getEmpowerment() === "Poison" && (getPageSetting('ScryUseinPoison') === 0 || (getPageSetting('ScryUseinPoison') > 0 && game.global.world >= getPageSetting('ScryUseinPoison')))) ||
 		(getEmpowerment() === "Wind" && (getPageSetting('ScryUseinWind') === 0 || (getPageSetting('ScryUseinWind') > 0 && game.global.world >= getPageSetting('ScryUseinWind')))) ||
-		(getEmpowerment() === "Ice" && (getPageSetting('ScryUseinIce') === 0 || (getPageSetting('ScryUseinIce') > 0 && game.global.world >= getPageSetting('ScryUseinIce'))));
+		(getEmpowerment() === "Ice" && (getPageSetting('ScryUseinIce') === 0 || (getPageSetting('ScryUseinIce') > 0 && game.global.world >= getPageSetting('ScryUseinIce'))))
+	);
 
 	//Check Corrupted Never
+	//See if current OR next enemy is corrupted.
 	var isCorrupt = getCurrentEnemy(1) && getCurrentEnemy(1).mutation === "Corruption";
 	var nextIsCorrupt = getCurrentEnemy(2) && getCurrentEnemy(2).mutation === "Corruption";
-	var scryNext = !nextIsCorrupt && (transitionRequired || oneShotPower(undefined, 0, true));
+	//If next isn't corrupted AND we need to transition OR we can one shot the next enemy with full overkill, then we can scry next.
+	var scryNext = !nextIsCorrupt && (transitionRequired || oneShotPower("S", 0, true));
 	var skipOnMaxZone = getPageSetting('onlyminmaxworld') === 2 && getPageSetting('ScryerSkipCorrupteds2') !== 1 && aboveMaxZone;
+
+	//If we are fighting a corrupted cell and we are not allowed to scry corrupted cells, then we can't scry.
+	if (useScryer && !mapsActive && (skipCorrupted || skipOnMaxZone) && isCorrupt) {
+		transitionRequired = scryNext;
+		never_scry |= !scryNext;
+	}
+	else transitionRequired = false;
+
+	//check Healthy never -- TODO
+	var curEnemyHealth = getCurrentEnemy(1);
+	var isHealthy = curEnemyHealth && curEnemyHealth.mutation === "Healthy";
 
 	//Override never scry if in voids with scryvoid setting enabled.
 	if (mapsActive && mapObject.location === "Void") {
 		if (!game.global.runningChallengeSquared && getPageSetting(settingPrefix + 'scryvoidmaps')) never_scry = 0;
 	}
 
-	//Check if essence is available and setting enabled. If so then go for it.
-	if (useScryer && !mapsActive && getPageSetting('screwessence') && countRemainingEssenceDrops() < 1) {
-	}
-
-	if (useScryer && !mapsActive && (SC || skipOnMaxZone) && isCorrupt) {
-		transitionRequired = scryNext;
-		never_scry |= !scryNext;
-	}
-	else transitionRequired = false;
-	//check Healthy never -- TODO
-	var curEnemyHealth = getCurrentEnemy(1);
-	var isHealthy = curEnemyHealth && curEnemyHealth.mutation === "Healthy";
-	if (never_scry || useScryer && !game.global.mapsActive && (isHealthy && getPageSetting('ScryerSkipHealthy') === 0)) {
+	if (never_scry || (useScryer && !game.global.mapsActive && (isHealthy && getPageSetting('ScryerSkipHealthy') === 0))) {
 		autoStanceFunctionScryer();
 		wantToScry = false;
 		return;
@@ -134,7 +141,7 @@ function useScryerStance() {
 	}
 
 	//check Corrupted Force
-	if ((isCorrupt && getPageSetting('ScryerSkipCorrupteds2') === 1 && guseScryer === true) || (force_scry)) {
+	if ((isCorrupt && getPageSetting('ScryerSkipCorrupteds2') === 1 && useScryer === true) || (force_scry)) {
 		safeSetStance(scry);
 		wantToScry = true;
 		return;

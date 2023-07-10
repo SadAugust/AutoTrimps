@@ -1808,3 +1808,23 @@ h9 {
 }
 
 /* New stuff goes here */
+.btn-newChangelog {
+	background: #1e3c75;
+	font-weight: bold;
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+	width: 100%;
+}
+
+.btn-newChangelog:hover,
+.btn-newChangelog:focus,
+.btn-newChangelog.focus,
+.btn-newChangelog:active,
+.btn-newChangelog.active,
+.open>.dropdown-toggle.btn-new {
+	background: #345594;
+	color: white;
+}
+
+.open>.dropdown-toggle.btn-new {
+	background-image: none;
+}

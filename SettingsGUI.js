@@ -5117,7 +5117,7 @@ function updateCustomButtons(initialLoad) {
 
 	//Loops through all the AT settings so we can properly setup the UI.
 	for (var setting in autoTrimpSettings) {
-		if (setting === 'ATversion') continue;
+		if (setting === 'ATversion' || setting === 'ATversionChangelog') continue;
 		var item = autoTrimpSettings[setting];
 		//Looks for the settings that don't exist anymore and deletes them.
 		if (item === null || typeof item.id === 'undefined') {
@@ -5471,6 +5471,21 @@ if (usingRealTimeOffline) {
 	setupTimeWarpAT();
 }
 
+//When clicking changelog button set new attribute, text & update Changelog AT Setting to proper value if not already correct.
+function updateChangelogButton() {
+	if (autoTrimpSettings.ATversionChangelog === MODULES_AT.ATversion) return;
+	var changeLogBtn = document.getElementById("atChangelog");
+	if (changeLogBtn !== null) {
+		//Swap the button class remove colour of new changelog.
+		var classSwap = changeLogBtn.classList.contains('btn-newChangelog') ? 'btn-default' : 'btn-newChangelog';
+		swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
+		//Remove the new changelog text if it exists.
+		changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New Scooby Doo", "");
+		autoTrimpSettings.ATversionChangelog = MODULES_AT.ATversion;
+		saveSettings();
+	}
+}
+
 //Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
 function setupATButtons() {
 	//Setup AutoTrimps settings button
@@ -5479,8 +5494,21 @@ function setupATButtons() {
 		if (settingBtnSrch[i].getAttribute("onclick") === "toggleSettingsMenu()")
 			settingBtnSrch[i].setAttribute("onclick", "autoPlusSettingsMenu()");
 	}
+
+	//AutoTrimps Changelog button
 	var newItem = document.createElement("TD");
-	newItem.appendChild(document.createTextNode("AutoTrimps " + MODULES_AT.ATversion.split('SadAugust ')[1]));
+	var newChanges = autoTrimpSettings.ATversionChangelog !== MODULES_AT.ATversion;
+	newItem.appendChild(document.createTextNode("AT " + MODULES_AT.ATversion.split('SadAugust ')[1] + (newChanges ? " | What's New Scooby Doo" : "")));
+	newItem.setAttribute("id", "atChangelog");
+	newItem.setAttribute("class", "btn" + (newChanges ? " btn-newChangelog" : " btn-default"));
+	newItem.setAttribute("onclick", "window.open(basepath + '/updates.html', '_blank'); updateChangelogButton();");
+	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
+	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
+
+	//AutoTrimps setting button
+	var newItem = document.createElement("TD");
+	newItem.appendChild(document.createTextNode("AutoTrimps"));
+	newItem.setAttribute("id", "atSettings");
 	newItem.setAttribute("class", "btn btn-default");
 	newItem.setAttribute("onclick", "autoToggle()");
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
@@ -5531,9 +5559,11 @@ function setupATButtons() {
 	var trimpsButtonCol = document.getElementById("trimps");
 	trimpsButtonCol.appendChild(voidMapContainer);
 
+	//Portal Timer
 	var $portalTimer = document.getElementById('portalTimer');
 	$portalTimer.setAttribute('onclick', 'toggleSetting(\'pauseGame\')');
-	$portalTimer.setAttribute('style', 'cursor: default');
+	$portalTimer.setAttribute('style', 'cursor: default; min-width: 8.5vw');
+	$portalTimer.classList.add("btn");
 
 	var btns = document.getElementsByClassName("fightBtn");
 	for (var x = 0; x < btns.length; x++) {
@@ -6090,15 +6120,6 @@ function updateATVersion() {
 					saveSettings();
 				}
 			}
-			changelog.push("Map Bonus now has a <b>Above X HD Ratio</b> input. Will make it so the line only runs above the specified HD Ratio but only runs if the input is greater than 0.");
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.1') {
-			changelog.push("The Void Map setting now has additional inputs to farm to specific hits survived & hd ratio before running any void maps.<br>\
-			Toxicity now has challenge related settings allowing you to farm for a certain amount of stacks on specific zones. These settings can be found in the <b>Challenge</b> tab.<br>\
-			There is now a <b>Time Warp</b> tab which houses a few settings for making the script more compatible with time warp.</br>\
-			The equipment setting <b>AE: Zone</b> now no longer sets your spending percentage to 100% when you're at or above the last input. Instead there is now the choice to input a zone range so if you're between those zones it will set your spending percentage to 100%. If you want that style back just set your last input to 'currentEndZone.999'.<br>\
-			Perky now has a target zone input and the xp input has been hidden until Fluffy has been unlocked.");
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.11') {
@@ -6111,8 +6132,6 @@ function updateATVersion() {
 				autoTrimpSettings['heirloomAutoRareToKeepStaff'].selected = tempSettings['heirloomAutoRareToKeep'].selected;
 				autoTrimpSettings['heirloomAutoRareToKeepStaff'].selectedU2 = tempSettings['heirloomAutoRareToKeep'].selectedU2;
 			}
-
-			changelog.push("The Auto Heirloom <b>Rarity to Keep</b> setting has been split into multiple settings for each heirloom type. Your previous input has been converted to the new system but if you want to go for a different rarity for each type you'll need to change it manually.");
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.12') {
@@ -6121,11 +6140,6 @@ function updateATVersion() {
 				autoTrimpSettings['equipCutOffHD'].value = tempSettings.equipCutOff.value;
 				autoTrimpSettings['equipCutOffHD'].valueU2 = tempSettings.equipCutOff.valueU2;
 			}
-
-			changelog.push("The U2 challenge <b>Duel</b> now has settings available for it in the <b>C3</b> tab.<br>\
-			Have added an additional equipment setting <b>AE: HS Cut-off</b>. It will set your spending percentage for health equips to 100% when your <b>Hits Survived</b> value is below the input value.<br>\
-			With this equipment change the <b>AE: HD Cut-Off</b> setting will now only override your spending percentage for attack equips unless in U2 where it will override both attack & health equips as it's necessary for equality improvements.<br>\
-			Void Map background variables now get reset when you save void map settings so that you don't continue running your voids at the wrong zone.");
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.13') {
@@ -6156,15 +6170,6 @@ function updateATVersion() {
 			}
 		}
 
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.15') {
-			changelog.push("Fixed a bug where Tributes, Meteorologists and Worshippers wouldn't be purchased.<br>\
-			Rewrote some Prestige Raiding and Void Map code to reduce to global variables I use so if there's any bugs DM me on discord about them with a save+settings so I can fix them.");
-		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.16') {
-			changelog.push("Have duplicated the Daily Spire related settings for C2s so you will need to configure those settings up if you want it to function the way you previously had them.");
-		}
-
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.17') {
 
 			if (typeof (tempSettings["presetSwap"]) !== 'undefined') {
@@ -6174,10 +6179,6 @@ function updateATVersion() {
 				autoTrimpSettings.presetCombatRespec.value = 0;
 				autoTrimpSettings.presetCombatRespec.valueU2 = autoTrimpSettings['autoCombatRespec'].valueU2;
 			}
-
-			changelog.push("Have added an additional setting for Auto Allocate in U1. It does automatic preset selection when auto portaling and will pick the most appropriate preset for the run before distributing your perks.");
-
-			changelog.push("Added a new setting for Desolation prestige gear scumming. This is a setting that is kinda in beta (doesn't raid for Shields if you want to target Boots) and almost definitely shouldn't exist as it abuses a few unintentional game mechanics, read the help window for the setting to know more about it.");
 		}
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.18') {
@@ -6188,10 +6189,16 @@ function updateATVersion() {
 			if (typeof (tempSettings["bloodthirstVoidMax"]) !== 'undefined') {
 				autoTrimpSettings.bloodthirstVoidMax.enabled = false;
 			}
-
-			changelog.push("U1 now has 2 new settings for dailies relating to the Bloodthirst modifier. These can be found in the <b>Daily</b> tab if you'd like to find out more.");
-
 		}
+		changelog.push("AutoTrimps now has an actual changelog! You can find it right next to the AutoTrimps button.<br>\
+		You will now only be shown this popup if there's an update and you're in Time Warp as you would be unable to see the changelog otherwise.");
+	}
+
+	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
+	//No other way to access it in TW currently.
+	if (usingRealTimeOffline) {
+		var changelogURL = basepath + 'updates.html';
+		changelog.push("There has been an AutoTrimps update. <a href=\"" + changelogURL + "\" 'updates.html target='_blank'><u>Click here</u></a> to view the changelog.");
 	}
 
 	autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;

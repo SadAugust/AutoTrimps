@@ -1,8 +1,10 @@
 var MODULES_AT = {
-	ATversion: 'SadAugust v6.3.18',
+	ATversion: '',
 	atscript: document.getElementsByTagName("script"),
 	basepath: '',
-	modulepath: 'modules/'
+	modulepath: 'modules/',
+	liveVersion: '',
+	newVersionAvailable: false,
 };
 
 //Implement new div into the offlineWrapper to hold the settings bar we introduce when in offline mode.
@@ -127,9 +129,16 @@ function ATscriptUnload(a) {
 	}
 }
 
+//Load version number from a seperate file so that we can compare it to the current version number and let users know if they're using an outdated version.
+ATscriptLoad('', 'versionNumber');
 ATscriptLoad(MODULES_AT.modulepath, 'utils');
 
 function initializeAutoTrimps() {
+	console.log("AutoTrimps v" + MODULES_AT.ATversion + " Loaded!");
+	if (MODULES_AT.ATversion === '') {
+		setTimeout(initializeAutoTrimps, 10);
+		return;
+	}
 	// Load jQuery
 	(function () {
 		// Load the script
@@ -188,12 +197,12 @@ function assembleChangelog(c) {
 delayStart();
 
 function delayStart() {
-	if (mappingTIme % 20 === 0) {
+	if (mappingTIme % 100 === 0) {
 		ATscriptLoad(MODULES_AT.modulepath, 'utils');
 	}
+	//Reload script every 10 milliseconds until these functions have been loaded
 	if (typeof loadPageVariables !== 'function' || typeof swapBaseSettings !== 'function') {
-		console.log("Script not loaded yet. Waiting 100ms to try loading again.")
-		setTimeout(delayStart, 100);
+		setTimeout(delayStart, 10);
 		mappingTIme++;
 		return;
 	}
@@ -223,9 +232,9 @@ function swapBaseSettings() {
 }
 
 function delayStartAgain() {
+	//Reload script every 10 milliseconds until these functions have been loaded
 	if (typeof mappingDetails !== 'function' || typeof setupATButtons !== 'function' || typeof isDoingSpire !== 'function' || typeof HDStats !== 'function') {
-		console.log("Modules not loaded yet. Waiting 100ms to try loading again.")
-		setTimeout(delayStartAgain, 100);
+		setTimeout(delayStartAgain, 10);
 		return;
 	}
 
@@ -365,6 +374,8 @@ function mainLoop() {
 	twoSecondInterval = ATMainLoopCounter % (2000 / runInterval) === 0;
 	sixSecondInterval = ATMainLoopCounter % (6000 / runInterval) === 0;
 	tenSecondInterval = ATMainLoopCounter % (10000 / runInterval) === 0;
+	//Need a one hour interval for version checking.
+	oneHourInterval = ATMainLoopCounter % (360000) === 0;
 
 	//Offline mode check
 	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
@@ -455,6 +466,32 @@ function mainLoop() {
 			if (popupsAT.remainingTime <= 0) popupsAT.remainingTime = 0;
 		}, 100);
 	}
+
+	if (oneHourInterval)
+		checkVersion();
+}
+
+function checkVersion() {
+	//Don't check for updates if we already know we're behind
+	if (MODULES_AT.newVersionAvailable) return;
+	var url = basepath + '/versionNumber.js';
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', url);
+	xhr.onload = function () {
+		if (xhr.status === 200) {
+			var response = xhr.responseText;
+			var version = response.split("'")[1];
+			if (version !== MODULES_AT.ATversion) {
+				MODULES_AT.newVersionAvailable = true;
+				var changeLogBtn = document.getElementById("atChangelog");
+				if (changeLogBtn !== null) {
+					//changeLogBtn.classList.add("mystyle");
+					changeLogBtn.innerHTML += " <span style='color: red; font-weight: bold;'>Update Available!</span>";
+				}
+			}
+		}
+	}
+	xhr.send();
 }
 
 //U1 functions
