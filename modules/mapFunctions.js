@@ -3064,9 +3064,11 @@ function hdFarm(skipHealthCheck, voidFarm) {
 				else if (hdType !== 'maplevel') debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (" + hdRatio.toFixed(2) + "/" + equipfarmdynamicHD(setting).toFixed(2) + ").", 'map_Skip');
 				else debug("HD Farm (z" + game.global.world + "c" + (game.global.lastClearedCell + 2) + ") skipped as HD Ratio goal has been met (Autolevel " + setting.hdBase + "/" + hdStats.autoLevel + ").", 'map_Skip');
 			}
-			if (voidFarm) voidMaps();
 			resetMapVars(setting);
 			if (game.global.mapsActive) recycleMap_AT();
+			//Might need to remove this??
+			//Report of a max call stack size. If it happens again then remove this and make it so that it waits 0.1s before checking if void maps are ready to run
+			if (voidFarm) return voidMaps();
 
 		}
 
