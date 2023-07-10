@@ -5501,7 +5501,7 @@ function setupATButtons() {
 	newItem.appendChild(document.createTextNode("AT " + MODULES_AT.ATversion.split('SadAugust ')[1] + (newChanges ? " | What's New Scooby Doo" : "")));
 	newItem.setAttribute("id", "atChangelog");
 	newItem.setAttribute("class", "btn" + (newChanges ? " btn-newChangelog" : " btn-default"));
-	newItem.setAttribute("onclick", "window.open(basepath + '/updates.html', '_blank'); updateChangelogButton();");
+	newItem.setAttribute("onclick", "window.open(basepath + 'updates.html', '_blank'); updateChangelogButton();");
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
 	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
 
