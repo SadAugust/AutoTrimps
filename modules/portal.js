@@ -434,7 +434,7 @@ function doPortal(challenge, skipDaily) {
 	if (!game.global.portalActive) return;
 
 	//Spending Magmite
-	if (getPageSetting('spendmagmite') === 1) autoMagmiteSpender();
+	autoMagmiteSpender(true);
 	//Identifying if we need to keep any heirlooms before portaling.
 	autoheirlooms();
 	//Open portal window

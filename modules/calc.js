@@ -921,7 +921,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 	return minOrMax ? (1 - fluctuation) * attack : (1 + fluctuation) * attack;
 }
 
-function calcEnemyAttack(type, zone, cell = 100, name = "Improbability", minOrMax, customAttack, equality) {
+function calcEnemyAttack(type = 'world', zone = game.global.world, cell = 100, name = "Improbability", minOrMax, customAttack, equality) {
 	//Init
 	var attack = calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equality);
 	var corrupt = zone >= mutations.Corruption.start();
@@ -930,7 +930,10 @@ function calcEnemyAttack(type, zone, cell = 100, name = "Improbability", minOrMa
 	//Challenges
 	if (challengeActive('Balance')) attack *= (type === "world") ? 1.17 : 2.35;
 	else if (challengeActive('Life')) attack *= 6;
-	else if (challengeActive('Nom') && typeof getCurrentEnemy().nomStacks !== 'undefined') attack *= Math.pow(1.25, getCurrentEnemy().nomStacks);
+	else if (challengeActive('Nom')) {
+		if (type === 'world' && typeof getCurrentWorldCell().nomStacks !== 'undefined') attack *= Math.pow(1.25, getCurrentWorldCell().nomStacks)
+		else if (game.global.mapsActive && typeof getCurrentEnemy().nomStacks !== 'undefined') attack *= Math.pow(1.25, getCurrentEnemy().nomStacks);
+	}
 	else if (challengeActive('Toxicity')) attack *= 5;
 	else if (challengeActive('Lead')) attack *= (zone % 2 === 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
 	else if (challengeActive('Domination')) attack *= 2.5;

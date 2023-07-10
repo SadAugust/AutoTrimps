@@ -76,8 +76,9 @@ function miRatio() {
 		return "Overclocker";
 }
 
-function autoMagmiteSpender() {
+function autoMagmiteSpender(portal) {
 	if (game.global.universe !== 1) return;
+	if (portal && getPageSetting('spendmagmite') !== 1) return;
 	if (getPageSetting('ratiospend', 1)) {
 		var toSpend = miRatio();
 		var upgrader = game.generatorUpgrades[toSpend];

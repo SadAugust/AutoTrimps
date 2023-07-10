@@ -5477,7 +5477,7 @@ function updateChangelogButton() {
 	var changeLogBtn = document.getElementById("atChangelog");
 	if (changeLogBtn !== null) {
 		//Swap the button class remove colour of new changelog.
-		var classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-changelog' : 'btn-changelogNew';
+		var classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-primary' : 'btn-changelogNew';
 		swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
 		//Remove the new changelog text if it exists.
 		changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New Scooby Doo", "");
@@ -5500,10 +5500,10 @@ function setupATButtons() {
 	var newChanges = autoTrimpSettings.ATversionChangelog !== MODULES_AT.ATversion;
 	newItem.appendChild(document.createTextNode("AT " + MODULES_AT.ATversion.split('SadAugust ')[1] + (newChanges ? " | What's New Scooby Doo" : "")));
 	newItem.setAttribute("id", "atChangelog");
-	newItem.setAttribute("class", "btn" + (newChanges ? " btn-changelogNew" : " btn-changelog"));
+	newItem.setAttribute("class", "btn" + (newChanges ? " btn-changelogNew" : " btn-primary"));
 	newItem.setAttribute("onclick", "window.open(basepath + 'updates.html', '_blank'); updateChangelogButton();");
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
-	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
+	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[16]);
 
 	//AutoTrimps setting button
 	var newItem = document.createElement("TD");
