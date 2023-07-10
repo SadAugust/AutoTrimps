@@ -5503,7 +5503,7 @@ function setupATButtons() {
 	newItem.setAttribute("class", "btn" + (newChanges ? " btn-changelogNew" : " btn-primary"));
 	newItem.setAttribute("onclick", "window.open(basepath + 'updates.html', '_blank'); updateChangelogButton();");
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
-	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[16]);
+	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[settingbarRow.childNodes.length - 4]);
 
 	//AutoTrimps setting button
 	var newItem = document.createElement("TD");
