@@ -5480,7 +5480,7 @@ function updateChangelogButton() {
 		var classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-primary' : 'btn-changelogNew';
 		swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
 		//Remove the new changelog text if it exists.
-		changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New Scooby Doo", "");
+		changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New", "");
 		autoTrimpSettings.ATversionChangelog = MODULES_AT.ATversion;
 		saveSettings();
 	}
@@ -5498,7 +5498,7 @@ function setupATButtons() {
 	//AutoTrimps Changelog button
 	var newItem = document.createElement("TD");
 	var newChanges = autoTrimpSettings.ATversionChangelog !== MODULES_AT.ATversion;
-	newItem.appendChild(document.createTextNode("AT " + MODULES_AT.ATversion.split('SadAugust ')[1] + (newChanges ? " | What's New Scooby Doo" : "")));
+	newItem.appendChild(document.createTextNode("AT " + MODULES_AT.ATversion.split('SadAugust ')[1] + (newChanges ? " | What's New" : "")));
 	newItem.setAttribute("id", "atChangelog");
 	newItem.setAttribute("class", "btn" + (newChanges ? " btn-changelogNew" : " btn-primary"));
 	newItem.setAttribute("onclick", "window.open(basepath + 'updates.html', '_blank'); updateChangelogButton();");
