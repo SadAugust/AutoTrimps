@@ -51,6 +51,12 @@ class HDStats {
 	}
 }
 
+function getCurrentWorldCell() {
+	var cell = { level: 1 };
+	if (game.global.gridArray.length > 0) cell = game.global.gridArray[game.global.lastClearedCell + 1];
+	return cell;
+}
+
 function debugCalc() {
 	//Pre-Init
 	var mapping = game.global.mapsActive ? true : false;
