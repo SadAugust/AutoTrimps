@@ -456,3 +456,5 @@ function getEnergyShieldMult_AT(mapType, noHeirloom) {
 	}
 	return total;
 }
+
+MODULES_AT.loaded++;

@@ -223,3 +223,5 @@ function autoGenerator() {
 			changeGeneratorState(afterFuelState);
 	}
 }
+
+MODULES_AT.loaded++;

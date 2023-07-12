@@ -349,3 +349,5 @@ function windStance() {
 
 	safeSetStance(stanceToUse);
 }
+
+MODULES_AT.loaded++;

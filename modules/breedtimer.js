@@ -197,3 +197,5 @@ function forceAbandonTrimps() {
 	}
 	debug("Abandoning Trimps to resend army with max Anticipation stacks.", "other");
 }
+
+MODULES_AT.loaded++;

@@ -878,3 +878,5 @@ function loadFromSteam() {
 
 function cloudSaveCallback(data) {
 }
+
+MODULES_AT.loaded++;

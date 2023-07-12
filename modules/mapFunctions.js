@@ -3951,3 +3951,5 @@ function mapScumming(slowTarget) {
 	ATrunning = true;
 	debug(msg, "mapping_Details");
 }
+
+MODULES_AT.loaded++;

@@ -6115,3 +6115,5 @@ function updateATVersion() {
 	saveSettings();
 
 }
+
+MODULES_AT.loaded++;

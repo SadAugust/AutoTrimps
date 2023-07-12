@@ -930,3 +930,4 @@ resetGame = function () {
 	catch (e) { graphsDebug("Gather info failed: " + e) }
 }
 
+MODULES_AT.loaded++;

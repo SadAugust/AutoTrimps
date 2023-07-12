@@ -136,3 +136,5 @@ function getArmyTime() {
 	var addTime = adjustedMax / tps;
 	return addTime;
 }
+
+MODULES_AT.loaded++;

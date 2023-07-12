@@ -1110,3 +1110,5 @@ function setupPerkyUI() {
 
 	AutoPerks.displayGUI();
 }
+
+MODULES_AT.loaded++;

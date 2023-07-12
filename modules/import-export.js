@@ -612,3 +612,5 @@ function importModuleVars() { try { var thestring = document.getElementById('imp
 function resetModuleVars(a) { ATrunning = !1, setTimeout(function () { localStorage.removeItem('storedMODULES'), MODULES = JSON.parse(JSON.stringify(MODULESdefault)), safeSetItems('storedMODULES', JSON.stringify(storedMODULES)), ATrunning = !0 }(a), 101) }
 //settingsProfileMakeGUI();
 //initializeSettingsProfiles();
+
+MODULES_AT.loaded++;

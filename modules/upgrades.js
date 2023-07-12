@@ -201,3 +201,5 @@ function autoGoldUpgrades() {
 	if (!selected) return;
 	buyGoldenUpgrade(selected);
 }
+
+MODULES_AT.loaded++;

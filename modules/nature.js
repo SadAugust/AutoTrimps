@@ -76,3 +76,5 @@ function autoEnlight() {
 		purchaseEnlight(natureToActivate);
 	}
 }
+
+MODULES_AT.loaded++;

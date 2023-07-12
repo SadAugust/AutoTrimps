@@ -758,3 +758,5 @@ function displayMostEfficientEquipment() {
 		}
 	}
 }
+
+MODULES_AT.loaded++;

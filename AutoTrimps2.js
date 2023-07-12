@@ -5,6 +5,7 @@ var MODULES_AT = {
 	modulepath: 'modules/',
 	liveVersion: '',
 	newVersionAvailable: false,
+	loaded: 0,
 };
 
 //Implement new div into the offlineWrapper to hold the settings bar we introduce when in offline mode.
@@ -209,8 +210,7 @@ function delayStart() {
 	initializeAutoTrimps();
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
-	document.getElementById('activatePortalBtn').setAttribute("onClick", 'activateClicked(); pushSpreadsheetData(); autoheirlooms(); autoMagmiteSpender(true); pushData(); downloadSave();');
-
+	document.getElementById('activatePortalBtn').setAttribute("onClick", 'downloadSave(); activateClicked(); pushSpreadsheetData(); autoheirlooms(); autoMagmiteSpender(true); pushData();');
 
 	delayStartAgain();
 	mappingTIme = 0;
@@ -234,8 +234,10 @@ function swapBaseSettings() {
 }
 
 function delayStartAgain() {
-	//Reload script every 10 milliseconds until these functions have been loaded
-	if (typeof mappingDetails !== 'function' || typeof setupATButtons !== 'function' || typeof isDoingSpire !== 'function' || typeof HDStats !== 'function') {
+
+	//Reload script every 10 milliseconds until these scripts have been loaded
+	//Added incrementing variable at the end of every script so that we can be sure that the script has fully loaded before we start the main loop.
+	if (MODULES_AT.loaded < 30) {
 		setTimeout(delayStartAgain, 10);
 		return;
 	}
