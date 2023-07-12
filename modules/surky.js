@@ -2312,5 +2312,3 @@ if (typeof (autoTrimpSettings) === 'undefined' || (typeof (autoTrimpSettings) !=
 	console.log("Surky & Perky loaded.")
 
 }
-
-MODULES_AT.loaded++;

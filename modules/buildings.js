@@ -499,5 +499,3 @@ function buyTributes() {
 		}
 	}
 }
-
-MODULES_AT.loaded++;

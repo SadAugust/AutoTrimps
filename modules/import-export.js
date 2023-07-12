@@ -257,19 +257,6 @@ function ImportExportTooltip(what, event, download) {
 		tooltipText = "Autotrimps - Loaded the MODULE .JS File(s): " + modnames;
 		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>OK</div></div>";
 	}
-	else if (what === "ATModuleUnload") {
-		var mods = document.getElementById('ATModuleListDropdown');
-		var modnames = "";
-		for (var script in mods.selectedOptions) {
-			var $item = mods.selectedOptions[script];
-			if ($item.value !== null) {
-				ATscriptUnload($item.value);
-				modnames += $item.value + " ";
-			}
-		}
-		tooltipText = "Autotrimps - UnLoaded the MODULE .JS File(s): " + modnames;
-		costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>OK</div></div>";
-	}
 	else if (what === "ResetModuleVars") {
 		resetModuleVars();
 		tooltipText = "Autotrimps MODULE variable settings have been successfully reset to its defaults!";
@@ -612,5 +599,3 @@ function importModuleVars() { try { var thestring = document.getElementById('imp
 function resetModuleVars(a) { ATrunning = !1, setTimeout(function () { localStorage.removeItem('storedMODULES'), MODULES = JSON.parse(JSON.stringify(MODULESdefault)), safeSetItems('storedMODULES', JSON.stringify(storedMODULES)), ATrunning = !0 }(a), 101) }
 //settingsProfileMakeGUI();
 //initializeSettingsProfiles();
-
-MODULES_AT.loaded++;

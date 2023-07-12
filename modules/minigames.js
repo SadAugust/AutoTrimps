@@ -205,5 +205,3 @@ function totalSAResources() {
 
 	return [dust, shards];
 }
-
-MODULES_AT.loaded++;

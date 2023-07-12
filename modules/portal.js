@@ -434,7 +434,7 @@ function doPortal(challenge, skipDaily) {
 	if (!game.global.portalActive) return;
 
 	//Spending Magmite
-	autoMagmiteSpender(true);
+	if (getPageSetting('spendmagmite') === 1) autoMagmiteSpender();
 	//Identifying if we need to keep any heirlooms before portaling.
 	autoheirlooms();
 	//Open portal window
@@ -785,8 +785,9 @@ function presetSwapping(preset) {
 	loadPerkPreset();
 }
 
-function downloadSave() {
+function downloadSave(portal) {
 	if (!getPageSetting('downloadSaves')) return
+	if (portal && !portalWindowOpen) return;
 	if (game.global.runningChallengeSquared) {
 		if (game.options.menu.disablePause.enabled && game.options.menu.pauseGame.enabled === 0) {
 			toggleSetting('pauseGame');
@@ -929,5 +930,3 @@ resetGame = function () {
 	}
 	catch (e) { graphsDebug("Gather info failed: " + e) }
 }
-
-MODULES_AT.loaded++;

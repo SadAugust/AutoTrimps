@@ -1756,5 +1756,3 @@ function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceM
 	if (isJob && itemObj.max && itemObj.owned + mostAfford > itemObj.max) return (itemObj.max - itemObj.owned);
 	return mostAfford;
 }
-
-MODULES_AT.loaded++;

@@ -292,5 +292,3 @@ function autoGatherMetal() {
 		safeSetGather('buildings')
 	}
 }
-
-MODULES_AT.loaded++;

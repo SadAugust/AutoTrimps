@@ -32,5 +32,3 @@ function betterAutoFight3() {
 		fightManual();
 	}
 }
-
-MODULES_AT.loaded++;

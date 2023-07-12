@@ -179,5 +179,3 @@
 
 	M["fightinfo"].Update = Update;
 })(MODULES);
-
-MODULES_AT.loaded++;

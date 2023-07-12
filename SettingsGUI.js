@@ -1320,12 +1320,12 @@ function initializeAllSettings() {
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Desolation Gear Scumming", "Desolation", "MAZ")', 'C2', [1, 2],
-			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 		createSetting('desolationDefaultSettings',
 			function () { return ('Deso: Settings') },
 			function () { return ('Contains arrays for this setting') },
 			'mazDefaultArray', { active: false }, null, 'C2', [1, 2],
-			function () { return (getPageSetting('desolation', currSettingUniverse)) });
+			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 
 		//Smithless
 		createSetting('smithless',
@@ -6115,5 +6115,3 @@ function updateATVersion() {
 	saveSettings();
 
 }
-
-MODULES_AT.loaded++;

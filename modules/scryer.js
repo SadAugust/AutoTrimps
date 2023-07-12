@@ -218,5 +218,3 @@ function useScryerStance() {
 	autoStanceFunctionScryer();
 	wantToScry = false;
 }
-
-MODULES_AT.loaded++;

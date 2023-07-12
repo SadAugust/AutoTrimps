@@ -157,5 +157,3 @@
 	}
 
 })(MODULES, window);
-
-MODULES_AT.loaded++;

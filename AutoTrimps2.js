@@ -6,6 +6,8 @@ var MODULES_AT = {
 	liveVersion: '',
 	newVersionAvailable: false,
 	loaded: 0,
+	loadedModules: [],
+	MODULES: ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames', 'utils'],
 };
 
 //Implement new div into the offlineWrapper to hold the settings bar we introduce when in offline mode.
@@ -47,7 +49,6 @@ var ATMainLoopCounter = 0;
 
 var autoTrimpSettings = {};
 var MODULES = {};
-var ATmoduleList = [];
 var resourceNeeded = {
 	food: 0,
 	wood: 0,
@@ -111,6 +112,7 @@ var gammaBurstPct = 1
 var shieldEquipped = game.global.ShieldEquipped.id;
 
 function ATscriptLoad(a, b) {
+	if (MODULES_AT.loadedModules.includes(b)) return;
 	if (null === b) {
 		debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(MODULES_AT.modulepath, \'example.js\'); ');
 		return;
@@ -120,14 +122,10 @@ function ATscriptLoad(a, b) {
 	script.src = MODULES_AT.basepath + a + b + '.js';
 	script.id = b + '_MODULE';
 	document.head.appendChild(script);
-}
-
-function ATscriptUnload(a) {
-	var b = document.getElementById(a + "_MODULE");
-	if (b) {
-		document.head.removeChild(b);
-		debug("Removing " + a + "_MODULE", "other");
-	}
+	//Looks for if the script has loaded, if it has, add it to the loadedModules array. Ignores duplicate entries.
+	script.addEventListener('load', () => {
+		if (a !== '' && !MODULES_AT.loadedModules.includes(b)) MODULES_AT.loadedModules.push(b);
+	});
 }
 
 //Load version number from a seperate file so that we can compare it to the current version number and let users know if they're using an outdated version.
@@ -164,9 +162,8 @@ function initializeAutoTrimps() {
 	document.head.appendChild(script);
 	/* ATscriptLoad('', 'Graphs'); */
 	ATscriptLoad('', 'mutatorPreset');
-	ATmoduleList = ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames'];
-	for (var m in ATmoduleList) {
-		ATscriptLoad(MODULES_AT.modulepath, ATmoduleList[m]);
+	for (var m in MODULES_AT.MODULES) {
+		ATscriptLoad(MODULES_AT.modulepath, MODULES_AT.MODULES[m]);
 	}
 	debug('AutoTrimps Loaded!');
 }
@@ -210,7 +207,7 @@ function delayStart() {
 	initializeAutoTrimps();
 	game.global.addonUser = true;
 	game.global.autotrimps = true;
-	document.getElementById('activatePortalBtn').setAttribute("onClick", 'downloadSave(); activateClicked(); pushSpreadsheetData(); autoheirlooms(); autoMagmiteSpender(true); pushData();');
+	document.getElementById('activatePortalBtn').setAttribute("onClick", 'downloadSave(true); activateClicked(); pushSpreadsheetData(); autoheirlooms(true); autoMagmiteSpender(true); pushData();');
 
 	delayStartAgain();
 	mappingTIme = 0;
@@ -237,7 +234,7 @@ function delayStartAgain() {
 
 	//Reload script every 10 milliseconds until these scripts have been loaded
 	//Added incrementing variable at the end of every script so that we can be sure that the script has fully loaded before we start the main loop.
-	if (MODULES_AT.loaded < 30) {
+	if (MODULES_AT.MODULES.length > MODULES_AT.loadedModules.length) {
 		setTimeout(delayStartAgain, 10);
 		return;
 	}

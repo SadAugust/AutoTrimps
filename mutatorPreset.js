@@ -292,5 +292,3 @@ u2Mutations.openTree = function () {
 /* //Runs this every 100ms if using standalone version.
 //Should really find a workaround to include this when openTree is called.
 if (typeof (autoTrimpSettings) === 'undefined') setInterval(presetMutations, 100); */
-
-MODULES_AT.loaded++;

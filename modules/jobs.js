@@ -355,5 +355,3 @@ function buyJobs(forceRatios) {
 		}
 	}
 }
-
-MODULES_AT.loaded++;

@@ -470,5 +470,3 @@ function autoMap() {
 		if (game.global.mapRunCounter !== 0 || !slowScumming) mapScumming(challengeActive('Desolation') ? 9 : 10);
 	}
 }
-
-MODULES_AT.loaded++;

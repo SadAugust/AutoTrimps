@@ -698,5 +698,3 @@ function testTrimpStats() {
 	game.global.soldierHealth *= 1e100;
 	game.global.soldierHealthMax *= 1e100;
 }
-
-MODULES_AT.loaded++;

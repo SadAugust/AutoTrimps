@@ -2766,5 +2766,3 @@ function displayDropdowns(universe, vals, varPrefix, hdType) {
 
 	return dropdown;
 }
-
-MODULES_AT.loaded++;

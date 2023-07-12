@@ -3893,6 +3893,29 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	debug(message, mapType);
 }
 
+function mapMaxFastEnemies() {
+
+	var map = game.global.mapsOwnedArray[getMapIndex(game.global.lookingAtMap)];
+
+
+	var fastTarget = 0;
+	var forceNextFast = false;
+	var fastEvery = -1;
+	var forced = 0;
+	if (game.global.universe == 2) {
+		fastTarget = map.size / 6;
+		var roll = Math.floor(Math.random() * 3);
+		if (roll == 0) fastTarget--;
+		else if (roll == 2) fastTarget++;
+		var highAdd = (map.level - game.global.world);
+		if (highAdd > 0) fastTarget += (highAdd * 0.5);
+		if (fastTarget < 1) fastTarget = 1;
+		fastEvery = Math.floor(map.size / fastTarget);
+	}
+
+	return fastEvery
+}
+
 //I hope I never use this again. Scumming for slow map enemies!
 function mapScumming(slowTarget) {
 
@@ -3951,5 +3974,3 @@ function mapScumming(slowTarget) {
 	ATrunning = true;
 	debug(msg, "mapping_Details");
 }
-
-MODULES_AT.loaded++;

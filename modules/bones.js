@@ -131,5 +131,3 @@ function buySingleRunBonuses() {
 		debug("Purchased " + (currSettingUniverse === 2 ? "Radonculous" : "Heliumy") + "  for 100 bones on this " + getPageSetting('buyheliumy', portalUniverse) + "% daily.", "bones");
 	}
 }
-
-MODULES_AT.loaded++;
