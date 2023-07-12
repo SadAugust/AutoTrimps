@@ -273,16 +273,16 @@ function equalityManagementBasic() {
 function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLevel) {
 	if (currentMap === '' || currentAutoLevel === Infinity) {
 		if (currentAutoLevel === Infinity) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
-		if (currentAutoLevel !== Infinity && twoSecondInterval) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
+		if (currentAutoLevel !== Infinity && MODULES.intervals.twoSecond) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
 	}
 
 	//Increasing Map Level
-	if (sixSecondInterval && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
+	if (MODULES.timers.MODULES.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
 		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
 	}
 
 	//Decreasing Map Level
-	if (sixSecondInterval && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
+	if (MODULES.timers.MODULES.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
 		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel, true);
 	}
 	return currentAutoLevel

@@ -519,7 +519,7 @@ function ImportExportTooltip(what, event, download) {
 }
 
 function resetAutoTrimps(a, b) {
-	(ATrunning = !1),
+	(MODULES_AT.running = !1),
 		setTimeout(
 			(function (d) {
 				localStorage.removeItem("atSettings"), (autoTrimpSettings = d ? d : {});
@@ -535,7 +535,7 @@ function resetAutoTrimps(a, b) {
 					saveSettings(),
 					updateATVersion(),
 					MODULES["graphs"].themeChanged(),
-					(ATrunning = !0),
+					(MODULES_AT.running = !0),
 					localStorage.perkyInputs = (autoTrimpSettings.autoAllocatePresets.value),
 					localStorage.surkyInputs = (autoTrimpSettings.autoAllocatePresets.valueU2),
 					localStorage.mutatorPresets = (autoTrimpSettings.mutatorPresets.valueU2)
@@ -596,6 +596,6 @@ function compareModuleVars() {
 }
 
 function importModuleVars() { try { var thestring = document.getElementById('importBox').value, strarr = thestring.split(/\n/); for (var line in strarr) { var s = strarr[line]; s = s.substring(0, s.indexOf(';') + 1), s = s.replace(/\s/g, ''), eval(s), strarr[line] = s } var tmpset = compareModuleVars() } catch (a) { return void debug('Error importing MODULE vars, the string is bad.' + a.message, 'profile') } localStorage.removeItem('storedMODULES'), safeSetItems('storedMODULES', JSON.stringify(tmpset)) }
-function resetModuleVars(a) { ATrunning = !1, setTimeout(function () { localStorage.removeItem('storedMODULES'), MODULES = JSON.parse(JSON.stringify(MODULESdefault)), safeSetItems('storedMODULES', JSON.stringify(storedMODULES)), ATrunning = !0 }(a), 101) }
+function resetModuleVars(a) { MODULES_AT.running = !1, setTimeout(function () { localStorage.removeItem('storedMODULES'), MODULES = JSON.parse(JSON.stringify(MODULESdefault)), safeSetItems('storedMODULES', JSON.stringify(storedMODULES)), MODULES_AT.running = !0 }(a), 101) }
 //settingsProfileMakeGUI();
 //initializeSettingsProfiles();

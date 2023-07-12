@@ -1,23 +1,16 @@
 var MODULES_AT = {
 	ATversion: '',
+	liveVersion: '',
 	atscript: document.getElementsByTagName("script"),
 	basepath: '',
 	modulepath: 'modules/',
-	liveVersion: '',
 	newVersionAvailable: false,
-	loaded: 0,
 	loadedModules: [],
 	MODULES: ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames', 'utils'],
+	loaded: false,
+	running: true,
+	runInterval: 100,
 };
-
-//Implement new div into the offlineWrapper to hold the settings bar we introduce when in offline mode.
-if (document.getElementById('settingsRowTW') === null) {
-	var settingBarRow = document.createElement("DIV");
-	settingBarRow.setAttribute("id", "settingsRowTW");
-	document.getElementById('offlineWrapper').children[0].insertAdjacentHTML('afterend', '<br>');
-	var offlineWrapperParent = document.getElementById("offlineInnerWrapper").parentNode;
-	offlineWrapperParent.replaceChild(settingBarRow, document.getElementById("offlineInnerWrapper").parentNode.children[1]);
-}
 
 //Searches html for where the AT script is being loaded from
 function loadAT() {
@@ -28,6 +21,15 @@ function loadAT() {
 		}
 		y++;
 	}
+
+	//Implement new div into the offlineWrapper to hold the settings bar we introduce when in offline mode.
+	if (document.getElementById('settingsRowTW') === null) {
+		var settingBarRow = document.createElement("DIV");
+		settingBarRow.setAttribute("id", "settingsRowTW");
+		document.getElementById('offlineWrapper').children[0].insertAdjacentHTML('afterend', '<br>');
+		var offlineWrapperParent = document.getElementById("offlineInnerWrapper").parentNode;
+		offlineWrapperParent.replaceChild(settingBarRow, document.getElementById("offlineInnerWrapper").parentNode.children[1]);
+	}
 }
 
 loadAT();
@@ -36,19 +38,16 @@ loadAT();
 if (MODULES_AT.basepath === '') MODULES_AT.basepath = 'https://SadAugust.github.io/AutoTrimps/';
 basepath = MODULES_AT.basepath;
 
-var ATrunning = true;
-var atFinishedLoading = false;
 var ATmessageLogTabVisible = true;
 var slowScumming = false;
 
-var runInterval = 100;
 var atTimeLapseFastLoop = false;
 var mainLoopInterval = null;
 var guiLoopInterval = null;
-var ATMainLoopCounter = 0;
 
 var autoTrimpSettings = {};
 var MODULES = {};
+MODULES.intervals = { counter: 0, oneSecond: false, twoSecond: false, sixSecond: false, tenSecond: false, oneHour: false };
 var resourceNeeded = {
 	food: 0,
 	wood: 0,
@@ -96,8 +95,6 @@ var hdStats = {
 	isFiller: false
 }
 var mappingTIme = 0;
-var twoSecondInterval = false;
-var sixSecondInterval = false;
 
 var popupsAT = {
 	challenge: false,
@@ -132,42 +129,6 @@ function ATscriptLoad(a, b) {
 ATscriptLoad('', 'versionNumber');
 ATscriptLoad(MODULES_AT.modulepath, 'utils');
 
-function initializeAutoTrimps() {
-	console.log("AutoTrimps v" + MODULES_AT.ATversion + " Loaded!");
-	if (MODULES_AT.ATversion === '') {
-		setTimeout(initializeAutoTrimps, 10);
-		return;
-	}
-	// Load jQuery
-	(function () {
-		// Load the script
-		const script = document.createElement("script");
-		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
-		script.type = 'text/javascript';
-		script.defer = true; // Add 'defer' attribute
-
-		// Event listener for script load
-		script.addEventListener('load', function () {
-			console.log(`jQuery ${$.fn.jquery} has been loaded successfully!`);
-			// use jQuery below
-		});
-
-		// Append the script to the document
-		document.head.appendChild(script);
-	})();
-	loadPageVariables();
-	ATscriptLoad('', 'SettingsGUI');
-	var script = document.createElement('script');
-	script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
-	document.head.appendChild(script);
-	/* ATscriptLoad('', 'Graphs'); */
-	ATscriptLoad('', 'mutatorPreset');
-	for (var m in MODULES_AT.MODULES) {
-		ATscriptLoad(MODULES_AT.modulepath, MODULES_AT.MODULES[m]);
-	}
-	debug('AutoTrimps Loaded!');
-}
-
 function printChangelog(changes) {
 	var body = "";
 	for (var i in changes) {
@@ -194,6 +155,7 @@ function assembleChangelog(c) {
 
 delayStart();
 
+//Runs first
 function delayStart() {
 	if (mappingTIme % 100 === 0) {
 		ATscriptLoad(MODULES_AT.modulepath, 'utils');
@@ -205,12 +167,49 @@ function delayStart() {
 		return;
 	}
 	initializeAutoTrimps();
-	game.global.addonUser = true;
-	game.global.autotrimps = true;
 	document.getElementById('activatePortalBtn').setAttribute("onClick", 'downloadSave(true); activateClicked(); pushSpreadsheetData(); autoheirlooms(true); autoMagmiteSpender(true); pushData();');
+	mappingTIme = 0;
+}
+
+//Runs second
+function initializeAutoTrimps() {
+	console.log("AutoTrimps v" + MODULES_AT.ATversion + " Loaded!");
+	if (MODULES_AT.ATversion === '') {
+		setTimeout(initializeAutoTrimps, 10);
+		return;
+	}
+	// Load jQuery
+	(function () {
+		// Load the script
+		const script = document.createElement("script");
+		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+		script.type = 'text/javascript';
+		script.defer = true; // Add 'defer' attribute
+
+		// Event listener for script load
+		script.addEventListener('load', function () {
+			console.log(`jQuery ${$.fn.jquery} has been loaded successfully!`);
+			// use jQuery below
+		});
+
+		// Append the script to the document
+		document.head.appendChild(script);
+	})();
+
+	loadPageVariables();
+	ATscriptLoad('', 'SettingsGUI');
+
+	var script = document.createElement('script');
+	script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
+	document.head.appendChild(script);
+	/* ATscriptLoad('', 'Graphs'); */
+	ATscriptLoad('', 'mutatorPreset');
+	for (var m in MODULES_AT.MODULES) {
+		ATscriptLoad(MODULES_AT.modulepath, MODULES_AT.MODULES[m]);
+	}
+	debug('AutoTrimps Loaded!');
 
 	delayStartAgain();
-	mappingTIme = 0;
 }
 
 function swapBaseSettings() {
@@ -231,10 +230,10 @@ function swapBaseSettings() {
 }
 
 function delayStartAgain() {
-
 	//Reload script every 10 milliseconds until these scripts have been loaded
 	//Added incrementing variable at the end of every script so that we can be sure that the script has fully loaded before we start the main loop.
-	if (MODULES_AT.MODULES.length > MODULES_AT.loadedModules.length) {
+	if (MODULES_AT.MODULES.length > MODULES_AT.loadedModules.length || typeof updateATVersion !== 'function') {
+		console.log("Delaying start by 10ms")
 		setTimeout(delayStartAgain, 10);
 		return;
 	}
@@ -242,12 +241,9 @@ function delayStartAgain() {
 	swapBaseSettings();
 	setupATButtons();
 
-	atFinishedLoading = true;
+	MODULES_AT.loaded = true;
 	gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 	hdStats = new HDStats();
-
-	game.global.addonUser = true;
-	game.global.autotrimps = true;
 
 	originalGameLoop = gameLoop;
 
@@ -281,8 +277,8 @@ function toggleCatchUpMode() {
 
 	//Start and Intilise loop if this is called for the first time
 	if (!mainLoopInterval && !guiLoopInterval && !atTimeLapseFastLoop) {
-		mainLoopInterval = setInterval(mainLoop, runInterval);
-		guiLoopInterval = setInterval(guiLoop, runInterval * 10);
+		mainLoopInterval = setInterval(mainLoop, MODULES_AT.runInterval);
+		guiLoopInterval = setInterval(guiLoop, MODULES_AT.runInterval * 10);
 	}
 
 	if (usingRealTimeOffline) {
@@ -304,8 +300,8 @@ function toggleCatchUpMode() {
 		mainLoopInterval = null;
 		atTimeLapseFastLoop = false;
 		gameLoop = originalGameLoop;
-		mainLoopInterval = setInterval(mainLoop, runInterval);
-		guiLoopInterval = setInterval(guiLoop, runInterval * 10);
+		mainLoopInterval = setInterval(mainLoop, MODULES_AT.runInterval);
+		guiLoopInterval = setInterval(guiLoop, MODULES_AT.runInterval * 10);
 	}
 
 	else if (usingRealTimeOffline && !atTimeLapseFastLoop) { //Enable Offline Mode
@@ -363,25 +359,24 @@ function mainLoop() {
 	remakeTooltip();
 	universeSwapped();
 
-	if (ATrunning === false) return;
+	if (MODULES_AT.running === false) return;
 	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
 	if (getPageSetting('timeWarpDisable') && usingRealTimeOffline) return;
-	ATrunning = true;
+	MODULES_AT.running = true;
 
-	ATMainLoopCounter++;
+	MODULES.intervals.counter++;
 	//Interval code
-	//var date = new Date();
-	oneSecondInterval = ATMainLoopCounter % (1000 / runInterval) === 0;
-	twoSecondInterval = ATMainLoopCounter % (2000 / runInterval) === 0;
-	sixSecondInterval = ATMainLoopCounter % (6000 / runInterval) === 0;
-	tenSecondInterval = ATMainLoopCounter % (10000 / runInterval) === 0;
+	MODULES.intervals.oneSecond = MODULES.intervals.counter % (1000 / MODULES_AT.runInterval) === 0;
+	MODULES.intervals.twoSecond = MODULES.intervals.counter % (2000 / MODULES_AT.runInterval) === 0;
+	MODULES.intervals.sixSecond = MODULES.intervals.counter % (6000 / MODULES_AT.runInterval) === 0;
+	MODULES.intervals.tenSecond = MODULES.intervals.counter % (10000 / MODULES_AT.runInterval) === 0;
 	//Need a one hour interval for version checking.
-	oneHourInterval = ATMainLoopCounter % (360000) === 0;
+	MODULES.intervals.oneHour = MODULES.intervals.counter % (360000) === 0;
 
 	//Offline mode check
 	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 
-	if (oneSecondInterval) {
+	if (MODULES.intervals.oneSecond) {
 		hdStats = new HDStats();
 	}
 	if (shouldRunTW) mapSettings = farmingDecision();
@@ -457,7 +452,7 @@ function mainLoop() {
 	automateSpireAssault();
 
 	challengeInfo();
-	atFinishedLoading = true;
+	MODULES_AT.loaded = true;
 
 	if (popupsAT.remainingTime === 5000) {
 		popupsAT.remainingTime -= 0.0001;
@@ -468,7 +463,7 @@ function mainLoop() {
 		}, 100);
 	}
 
-	if (oneHourInterval)
+	if (MODULES.intervals.oneHour)
 		checkVersion();
 }
 

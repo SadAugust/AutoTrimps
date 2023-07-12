@@ -700,7 +700,7 @@ function displayMostEfficientEquipment() {
 	var highlightSetting = getPageSetting('equipEfficientEquipDisplay');
 	if (!highlightSetting) return;
 	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
-	if (!oneSecondInterval) return;
+	if (!MODULES.intervals.oneSecond) return;
 	var $eqNamePrestige = null;
 
 	if (!highlightSetting) return;

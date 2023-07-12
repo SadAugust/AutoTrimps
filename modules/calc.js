@@ -610,7 +610,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 				debug('You don\'t have this many levels in Equality. - Player Dmg. ' + equality + "/" + game.portal.Equality[perkLevel] + " equality used.", "other");
 			attack *= Math.pow(getPlayerEqualityMult_AT(heirloomShieldToEquip(mapType)), equality);
 		} else if (isNaN(parseInt((equality)))) {
-			if (tenSecondInterval) debug("Equality is not a number. - Player Dmg. " + equality + " equality used.", "other");
+			if (MODULES.intervals.tenSecond) debug("Equality is not a number. - Player Dmg. " + equality + " equality used.", "other");
 		}
 	}
 
@@ -914,7 +914,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 			}
 			attack *= Math.pow(game.portal.Equality.getModifier(), equality);
 		} else if (isNaN(parseInt((equality)))) {
-			if (tenSecondInterval) debug("Equality is not a number. - Enemy Dmg. " + equality + " equality used.", "other");
+			if (MODULES.intervals.tenSecond) debug("Equality is not a number. - Enemy Dmg. " + equality + " equality used.", "other");
 		}
 	}
 

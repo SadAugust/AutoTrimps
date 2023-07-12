@@ -4828,7 +4828,7 @@ function remakeTooltip() {
 
 //It sets the options for the heirloom auto selecter based on the highest zone ever reached, and the current universe.
 function autoHeirloomOptions(heirloomType) {
-	if (!atFinishedLoading) return;
+	if (!MODULES_AT.loaded) return;
 	var heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 	var raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep' + heirloomType.slice(0, 1).toUpperCase() + heirloomType.slice(1, heirloomType.length), currSettingUniverse));
 	var heirloomModsArray = [];
@@ -5122,13 +5122,13 @@ function updateCustomButtons(initialLoad) {
 		//Looks for the settings that don't exist anymore and deletes them.
 		if (item === null || typeof item.id === 'undefined') {
 			//Skip ATversion. Deletes old settings.
-			if (atFinishedLoading) delete autoTrimpSettings[setting];
+			if (MODULES_AT.loaded) delete autoTrimpSettings[setting];
 			continue;
 		}
 		var settingUniverse = item.universe;
 		//Looping the deletion process again for old settings that got loaded but don't have the universe property.
 		if (!Array.isArray(settingUniverse)) {
-			if (atFinishedLoading) delete autoTrimpSettings[setting];
+			if (MODULES_AT.loaded) delete autoTrimpSettings[setting];
 			continue;
 		}
 		//Skips ever looking at settings with the mazDefaultArray type.

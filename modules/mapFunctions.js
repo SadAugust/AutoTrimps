@@ -3921,9 +3921,9 @@ function mapScumming(slowTarget) {
 
 	if (!game.global.mapsActive) return;
 	if (game.global.lastClearedMapCell > -1) return;
-	if (!ATrunning) return;
+	if (!MODULES_AT.running) return;
 	console.time();
-	ATrunning = false;
+	MODULES_AT.running = false;
 	var slowCellTarget = !slowTarget ? 8 : slowTarget
 	if (slowCellTarget > 9) slowCellTarget = 10;
 	var firstCellSlow = false;
@@ -3971,6 +3971,6 @@ function mapScumming(slowTarget) {
 	if (slowCount < slowCellTarget || !firstCellSlow) msg = "Failed. ";
 	msg += i + " Rerolls. Current roll = " + slowCount + " odd slow enemies. First cell is " + (firstCellSlow ? "slow" : "fast") + ".";
 	console.timeEnd();
-	ATrunning = true;
+	MODULES_AT.running = true;
 	debug(msg, "mapping_Details");
 }

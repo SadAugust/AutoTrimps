@@ -341,7 +341,7 @@ function shouldSpeedRun(achievement) {
 
 //Looks at the spamMessages setting and if the message is enabled, it will print it to the message log & console.
 function debug(message, b, icon) {
-	var settingArray = atFinishedLoading && getPageSetting('spamMessages'),
+	var settingArray = MODULES_AT.loaded && getPageSetting('spamMessages'),
 		p = true;
 
 	switch (b) {
