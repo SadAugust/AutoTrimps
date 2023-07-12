@@ -277,12 +277,12 @@ function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLe
 	}
 
 	//Increasing Map Level
-	if (MODULES.timers.MODULES.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
+	if (MODULES.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
 		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
 	}
 
 	//Decreasing Map Level
-	if (MODULES.timers.MODULES.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
+	if (MODULES.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
 		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel, true);
 	}
 	return currentAutoLevel
