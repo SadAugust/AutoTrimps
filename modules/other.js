@@ -273,16 +273,16 @@ function equalityManagementBasic() {
 function callAutoMapLevel(currentMap, currentAutoLevel, special, maxLevel, minLevel) {
 	if (currentMap === '' || currentAutoLevel === Infinity) {
 		if (currentAutoLevel === Infinity) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
-		if (currentAutoLevel !== Infinity && MODULES.intervals.twoSecond) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
+		if (currentAutoLevel !== Infinity && atSettings.intervals.twoSecond) currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
 	}
 
 	//Increasing Map Level
-	if (MODULES.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
+	if (atSettings.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel) > currentAutoLevel)) {
 		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel);
 	}
 
 	//Decreasing Map Level
-	if (MODULES.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
+	if (atSettings.intervals.sixSecond && currentMap !== '' && (autoMapLevel(special, maxLevel, minLevel, true) < currentAutoLevel)) {
 		currentAutoLevel = autoMapLevel(special, maxLevel, minLevel, true);
 	}
 	return currentAutoLevel
@@ -341,7 +341,7 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 
 		if (game.global.universe === 2) universeSetting = equalityQuery('Snimp', z + mapLevel, cell, 'map', difficulty, 'oneShot', true);
 		var ourDmg = calcOurDmg(dmgType, universeSetting, false, 'map', critType, y, 'force');
-		if (challengeActive('Duel')) ourDmg *= gammaBurstPct;
+		if (challengeActive('Duel')) ourDmg *= MODULES.heirlooms.gammaBurstPct;
 		if (challengeActive('Daily') && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - (9 * game.global.dailyChallenge.weakness.strength) / 100)
 		var enemyHealth = calcEnemyHealthCore('map', z + mapLevel, cell, 'Turtlimp') * difficulty;
 
@@ -448,7 +448,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		if (!runningUnlucky && (zone - game.global.world) > 0) dmgType = 'min';
 		enemyHealth *= (1 * overkillCount);
 	}
-	if (challengeActive('Duel')) ourDmg *= gammaBurstPct;
+	if (challengeActive('Duel')) ourDmg *= MODULES.heirlooms.gammaBurstPct;
 
 	if (isDaily && typeof game.global.dailyChallenge.weakness !== 'undefined') ourDmg *= (1 - ((mapType === 'map' ? 9 : gammaToTrigger) * game.global.dailyChallenge.weakness.strength) / 100);
 
@@ -554,7 +554,7 @@ function equalityManagement() {
 
 	//Gamma burst info
 	var gammaMaxStacksCheck = gammaMaxStacks();
-	var gammaDmg = gammaBurstPct;
+	var gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	if (gammaDmg === 1) gammaMaxStacksCheck = 0;
 	var gammaToTrigger = gammaMaxStacksCheck - game.heirlooms.Shield.gammaBurst.stacks;
 	var fuckGamma = (runningSmithless && (10 - game.challenges.Smithless.uberAttacks) > gammaToTrigger);
@@ -595,12 +595,12 @@ function equalityManagement() {
 	enemyDmg *= game.global.voidBuff === 'doubleAttack' ? 2 : (game.global.voidBuff === 'getCrit' && (gammaToTrigger > 1 || runningBerserk || runningTrappa || runningArchaeology || runningQuest)) ? 5 : 1;
 
 	//Empower related modifiers in world
-	if ((dailyEmpowerToggle && !mapping && dailyEmpower) || slowScumming) {
+	if ((dailyEmpowerToggle && !mapping && dailyEmpower) || MODULES.maps.slowScumming) {
 		if (dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
-		if (dailyExplosive || slowScumming) ourDmgMax = calcOurDmg('max', 0, false, type, 'force', bionicTalent, true) * gammaDmg;
+		if (dailyExplosive || MODULES.maps.slowScumming) ourDmgMax = calcOurDmg('max', 0, false, type, 'force', bionicTalent, true) * gammaDmg;
 	}
 	//Empower modifiers in maps.
-	if (type === 'map' && (dailyExplosive || dailyCrit) && !slowScumming) {
+	if (type === 'map' && (dailyExplosive || dailyCrit) && !MODULES.maps.slowScumming) {
 		if (dailyEmpowerToggle && dailyCrit) enemyDmg *= 1 + dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 	}
@@ -615,7 +615,7 @@ function equalityManagement() {
 	var fastEnemy = !game.global.preMapsActive && (runningDesolation && mapping ? !exoticImps.includes(enemyName) : fastimps.includes(enemyName));
 	if (type === 'world' && game.global.world > 200 && game.global.gridArray[currentCell].u2Mutation.length > 0) fastEnemy = true;
 	if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
-	if (type === 'map' && dailyExplosive && !slowScumming) fastEnemy = true;
+	if (type === 'map' && dailyExplosive && !MODULES.maps.slowScumming) fastEnemy = true;
 	if (type === 'world' && dailyExplosive) fastEnemy = true;
 	if (game.global.voidBuff === 'doubleAttack') fastEnemy = true;
 	if (runningArchaeology) fastEnemy = true;
@@ -672,10 +672,10 @@ function equalityManagement() {
 			//Check to see if we kill the enemy with our max damage on empower dailies with explosive mod. If we can then mult enemy dmg by explosive mod value to stop us gaining empower stacks.
 			if (ourDmgMax > 0) {
 				var ourMaxDmg = ourDmgMax * Math.pow(ourEqualityModifier, i);
-				if (ourMaxDmg > enemyHealth && !slowScumming && (enemyDmgEquality * (1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength)) > ourHealth))
+				if (ourMaxDmg > enemyHealth && !MODULES.maps.slowScumming && (enemyDmgEquality * (1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength)) > ourHealth))
 					enemyDmgEquality *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 				//Make sure that we don't kill slow enemyies with our max damage. This is to stop us overkilling the next cell and getting less plaguebringer damage.
-				if (slowScumming && mapping && currentCell % 2 !== 0) {
+				if (MODULES.maps.slowScumming && mapping && currentCell % 2 !== 0) {
 					if (ourMaxDmg * Math.pow(ourEqualityModifier, i + 1) > enemyHealth) {
 						continue;
 					}
@@ -683,8 +683,8 @@ function equalityManagement() {
 			}
 
 			//Setup plaguebringer shield swapping. Will force us to kill the enemy slower for maximum plaguebringer transfer damage.
-			//Now works with void maps AND in world. Setup heirloomPlagueSwap to true to enable.
-			if (plagueShield && (heirloomPlagueSwap || slowScumming)) {
+			//Now works with void maps AND in world. Setup MODULES.heirlooms.plagueSwap to true to enable.
+			if (plagueShield && (MODULES.heirlooms.plagueSwap || MODULES.maps.slowScumming)) {
 				var nextCell = game.global[mapGrid][currentCell + 1];
 				if (nextCell) {
 					var plaguebringerDamage = nextCell.plaguebringer;

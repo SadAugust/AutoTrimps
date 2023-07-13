@@ -1,6 +1,3 @@
-var baseMinDamage = 0;
-var baseMaxDamage = 0;
-
 function safeSetStance(stance) {
 	if (!stance) return;
 	if (game.global.formation === stance) return;
@@ -22,11 +19,11 @@ function currentStance(stance) {
 }
 
 function calcBaseDamageInX() {
-	baseMinDamage = calcOurDmg("min", "X");
-	baseMaxDamage = calcOurDmg("max", "X");
+	MODULES.stats.baseMinDamage = calcOurDmg("min", "X");
+	MODULES.stats.baseMaxDamage = calcOurDmg("max", "X");
 	baseDamage = calcOurDmg("avg", "X");
-	baseHealth = calcOurHealth(false);
-	baseBlock = calcOurBlock(false);
+	MODULES.stats.baseHealth = calcOurHealth(false);
+	MODULES.stats.baseBlock = calcOurBlock(false);
 }
 
 function debugStance(maxPower, ignoreArmy) {
@@ -211,13 +208,13 @@ function survive(formation = "S", critPower = 2, ignoreArmy) {
 	if (formation === "S" && (game.global.world < 60 || game.stats.highestLevel.valueTotal() < 180)) return false;
 
 	//Base stats
-	var health = baseHealth;
-	var block = baseBlock;
+	var health = MODULES.stats.baseHealth;
+	var block = MODULES.stats.baseBlock;
 	var missingHealth = game.global.soldierHealthMax - game.global.soldierHealth;
 
 	//More stats
-	var minDamage = baseMinDamage;
-	var maxDamage = baseMaxDamage;
+	var minDamage = MODULES.stats.baseMinDamage;
+	var maxDamage = MODULES.stats.baseMaxDamage;
 	var newSquadRdy = !ignoreArmy && newArmyRdy();
 
 	//Applies the formation modifiers

@@ -3,8 +3,10 @@ MODULES.maps = {};
 MODULES.maps.fragmentFarming = false;
 MODULES.maps.lifeActive = false;
 MODULES.maps.lifeCell = 0;
+MODULES.maps.slowScumming = false;
+MODULES.maps.mapRepeats = 0;
+MODULES.maps.mapTimer = 0;
 
-var mappingTime = 0;
 var lastMapWeWereIn = null;
 
 function runSelectedMap(mapId, madAdjective) {
@@ -46,8 +48,9 @@ function updateAutoMapsStatus(get) {
 	if (usingRealTimeOffline && document.getElementById('autoMapStatusTW') !== null) {
 		//Add in a header for the status to let the user know what it is
 		var statusMsg = "<h9>Auto Maps Status</h9><br>" + status;
-		if (document.getElementById('autoMapStatusTW').innerHTML !== status) document.getElementById('autoMapStatusTW').innerHTML = statusMsg;
-		document.getElementById('autoMapStatusTW').setAttribute("onmouseover", makeAutomapStatusTooltip());
+		var id = game.global.mapsActive ? 'autoMapStatusMapsTW' : 'autoMapStatusTW';
+		if (document.getElementById(id).innerHTML !== status) document.getElementById(id).innerHTML = statusMsg;
+		document.getElementById(id).setAttribute("onmouseover", makeAutomapStatusTooltip());
 	}
 	//Set auto maps status when outside of TW
 	if (!usingRealTimeOffline && document.getElementById('autoMapStatus') !== null) {
@@ -245,7 +248,7 @@ function autoMap() {
 	//Reset to defaults when on world grid
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0;
-		mappingTime = 0;
+		MODULES.maps.mapTimer = 0;
 		if (document.getElementById('advExtraLevelSelect').value > 0)
 			document.getElementById('advExtraLevelSelect').value = "0";
 	}
@@ -279,7 +282,7 @@ function autoMap() {
 		} else if (map.noRecycle) {
 			if (runUniques && shouldRunUniqueMap(map) && !challengeActive('Insanity')) {
 				selectedMap = map.id;
-				if (mappingTime === 0) mappingTime = getGameTime();
+				if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getGameTime();
 			}
 			if (map.location === "Bionic") {
 				bionicPool.push(map);
@@ -298,7 +301,7 @@ function autoMap() {
 			else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = "bionicRaid";
 			else if (optimalMap) selectedMap = optimalMap.id;
 			else selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
-			if (mappingTime === 0) mappingTime = getGameTime();
+			if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getGameTime();
 		}
 	}
 
@@ -467,6 +470,6 @@ function autoMap() {
 
 	var canRunSlowScum = mapSettings.mapName === 'Map Bonus' || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Pandemonium Destacking' || mapSettings.mapName === 'Desolation Gear Scum';
 	if (game.global.mapsActive && game.global.universe === 2 && canRunSlowScum && !getCurrentMapObject().noRecycle && hdStats.hdRatioMap > getPageSetting('testMapScummingValue')) {
-		if (game.global.mapRunCounter !== 0 || !slowScumming) mapScumming(challengeActive('Desolation') ? 9 : 10);
+		if (game.global.mapRunCounter !== 0 || !MODULES.maps.slowScumming) mapScumming(challengeActive('Desolation') ? 9 : 10);
 	}
 }

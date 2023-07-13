@@ -265,7 +265,7 @@ function mostEfficientHousing() {
 			var avgProduction = getPsStringLocal(resource, true);
 			if (avgProduction <= 0) avgProduction = 1;
 			if (challengeActive('Transmute') && resource === 'metal') avgProduction = getPsStringLocal('wood', true);
-			if (Math.max(baseCost * Math.pow(costScaling, currentOwned) * resourcefulMod) > (game.resources[resource].owned// - resourceNeeded[resource]
+			if (Math.max(baseCost * Math.pow(costScaling, currentOwned) * resourcefulMod) > (game.resources[resource].owned// - MODULES.resourceNeeded[resource]
 			) * buildingspending) dontbuy.push(housing);
 			if (game.global.universe === 2 && housing === 'Gateway' && resource === 'fragments' && buildingSettings.SafeGateway.enabled && (buildingSettings.SafeGateway.zone === 0 || buildingSettings.SafeGateway.zone > game.global.world)) {
 				if (game.resources[resource].owned < ((perfectMapCost_Actual(10, getAvailableSpecials('lmc', true)) * buildingSettings.SafeGateway.mapCount) + Math.max(baseCost * Math.pow(costScaling, currentOwned)))) dontbuy.push(housing);

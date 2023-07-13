@@ -214,9 +214,9 @@ function HeirloomEquipShield(heirloom) {
 	if (HeirloomSearch(heirloom) !== undefined && game.global.ShieldEquipped.name !== getPageSetting(heirloom)) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(HeirloomSearch(heirloom)), "heirloomsCarried", true);
 		equipHeirloom(true);
-		gammaBurstPct = getPageSetting('gammaBurstCalc') && (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
+		MODULES.heirlooms.gammaBurstPct = getPageSetting('gammaBurstCalc') && (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 	} else if (HeirloomSearch(heirloom) === undefined && game.global.ShieldEquipped.name !== getPageSetting(heirloom))
-		if (MODULES.intervals.tenSecond) debug("The heirloom named \"" + getPageSetting(heirloom) + "\" doesn\'t exist. Rename an heirloom or adjust the input for your " + autoTrimpSettings[heirloom].name() + " shield. This will be causing at least one of your HD Ratios to be incorrect.", "other");
+		if (atSettings.intervals.tenSecond) debug("The heirloom named \"" + getPageSetting(heirloom) + "\" doesn\'t exist. Rename an heirloom or adjust the input for your " + autoTrimpSettings[heirloom].name() + " shield. This will be causing at least one of your HD Ratios to be incorrect.", "other");
 }
 
 function HeirloomEquipStaff(heirloom) {
@@ -224,13 +224,13 @@ function HeirloomEquipStaff(heirloom) {
 		selectHeirloom(game.global.heirloomsCarried.indexOf(HeirloomSearch(heirloom)), "heirloomsCarried", true);
 		equipHeirloom(true);
 	} else if (HeirloomSearch(heirloom) === undefined && game.global.StaffEquipped.name !== getPageSetting(heirloom))
-		if (MODULES.intervals.tenSecond) debug("The heirloom named \"" + getPageSetting(heirloom) + "\" doesn\'t exist. Rename an heirloom or adjust the input for your " + autoTrimpSettings[heirloom].name() + " staff. This will be causing any loot related calcs to be incorrect.", "other");
+		if (atSettings.intervals.tenSecond) debug("The heirloom named \"" + getPageSetting(heirloom) + "\" doesn\'t exist. Rename an heirloom or adjust the input for your " + autoTrimpSettings[heirloom].name() + " staff. This will be causing any loot related calcs to be incorrect.", "other");
 }
 
 function HeirloomShieldSwapped() {
 	if (!game.global.ShieldEquipped.rarity >= 10) return;
-	gammaBurstPct = getPageSetting('gammaBurstCalc') && (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
-	shieldEquipped = game.global.ShieldEquipped.id;
+	MODULES.heirlooms.gammaBurstPct = getPageSetting('gammaBurstCalc') && (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
+	MODULES.heirlooms.shieldEquipped = game.global.ShieldEquipped.id;
 }
 
 function heirloomShieldToEquip(mapType, query) {
@@ -242,7 +242,7 @@ function heirloomShieldToEquip(mapType, query) {
 		return;
 	}
 
-	if (slowScumming && game.global.mapsActive) {
+	if (MODULES.maps.slowScumming && game.global.mapsActive) {
 		var oddCell = false;
 		if ((game.global.lastClearedMapCell + 1) % 2 === 0 || game.global.lastClearedMapCell === getCurrentMapObject().size - 2) oddCell = true;
 
@@ -252,7 +252,7 @@ function heirloomShieldToEquip(mapType, query) {
 
 	//Initial vars for swapping heirlooms
 	var currChallenge = game.global.challengeActive.toLowerCase();
-	heirloomPlagueSwap = false;
+	MODULES.heirlooms.plagueSwap = false;
 
 	var swapZone = hdStats.isC3 && (currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0 ? getPageSetting(currChallenge + 'SwapZone') : hdStats.isC3 ? getPageSetting('heirloomSwapZoneC3') : hdStats.isDaily ? getPageSetting('heirloomSwapZoneDaily') : hdStats.isFiller ? getPageSetting('heirloomSwapZone') : 999;
 	if (swapZone === -1) swapZone = 999;
@@ -267,7 +267,7 @@ function heirloomShieldToEquip(mapType, query) {
 		//Set swap zone to current zone if we're above X HD ratio and next cell is compressed.
 		else if (game.global.universe === 2 && getPageSetting('heirloomCompressedSwap') && getPageSetting('heirloomSwapHDCompressed') > 0 && hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed') && game.global.world >= 201 && game.global.lastClearedCell < 96 && game.global.gridArray[game.global.lastClearedCell + 2].u2Mutation.indexOf('CMP') !== -1) {
 			swapZone = game.global.world;
-			heirloomPlagueSwap = true;
+			MODULES.heirlooms.plagueSwap = true;
 		}
 	}
 	//Set swap zone to 999 if we're running our afterpush shield & cell after next is compressed for maximum plaguebringer damage
@@ -275,8 +275,8 @@ function heirloomShieldToEquip(mapType, query) {
 
 	var afterpushShield = hdStats.isC3 ? 'heirloomC3' : 'heirloomAfterpush';
 	var voidActive = mapType === 'void';
-	if (voidActive && !heirloomPlagueSwap && query) {
-		heirloomPlagueSwap =
+	if (voidActive && !MODULES.heirlooms.plagueSwap && query) {
+		MODULES.heirlooms.plagueSwap =
 			//Check we're in U2, we're in a void map and setting is enabled.
 			game.global.universe === 2 && game.global.voidBuff !== '' && getPageSetting('heirloomVoidSwap') &&
 			//Not running fast challenge
@@ -294,14 +294,14 @@ function heirloomShieldToEquip(mapType, query) {
 	if (challengeActive('Duel') && getPageSetting('duel') && getPageSetting('duelShield') !== "undefined") {
 		return ('duelShield');
 	}
-	if (voidActive && (getPageSetting('heirloomVoid') !== "undefined" || (heirloomPlagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined"))) {
-		if (heirloomPlagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined") {
+	if (voidActive && (getPageSetting('heirloomVoid') !== "undefined" || (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined"))) {
+		if (MODULES.heirlooms.plagueSwap && getPageSetting('heirloomVoidPlaguebringer') !== "undefined") {
 			return ('heirloomVoidPlaguebringer');
 		}
 		else
 			return ('heirloomVoid');
 	}
-	else if (voidActive && heirloomPlagueSwap && getPageSetting('heirloomInitial') !== "undefined")
+	else if (voidActive && MODULES.heirlooms.plagueSwap && getPageSetting('heirloomInitial') !== "undefined")
 		return ('heirloomInitial');
 	else if (getPageSetting(afterpushShield) !== "undefined" && (mapType === 'map' || mapType === 'void') && getPageSetting('heirloomMapSwap'))
 		return (afterpushShield);
@@ -391,7 +391,7 @@ function getHeirloomBonus_AT(type, mod, customShield) {
 	if (customShield) bonus = HeirloomModSearch(customShield, mod);
 	if (bonus === undefined) bonus = 0;
 	if (mod === "gammaBurst" && game.global.ShieldEquipped && game.global.ShieldEquipped.rarity >= 10) {
-		bonus = gammaBurstPct;
+		bonus = MODULES.heirlooms.gammaBurstPct;
 	}
 	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined') {
 		if (type !== "FluffyExp" && type !== "VoidMaps") bonus *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);

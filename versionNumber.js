@@ -1,1 +1,1 @@
-MODULES_AT.ATversion = 'SadAugust v6.3.20';
+atSettings.initialise.version = 'SadAugust v6.3.20';

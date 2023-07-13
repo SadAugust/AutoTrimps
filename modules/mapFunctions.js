@@ -558,15 +558,15 @@ function mapBonus() {
 		var minZone = game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0
 		//If auto level enabled will get the level of the map we should run.
 		if (autoLevel) {
-			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-				game.global.mapRunCounter = mapRepeats;
-				mapRepeats = 0;
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+				game.global.mapRunCounter = MODULES.maps.mapRepeats;
+				MODULES.maps.mapRepeats = 0;
 			}
 
 			var autoLevel_Repeat = mapSettings.levelCheck;
 			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, minZone);
 			if (mapAutoLevel !== Infinity) {
-				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
 			}
 		}
@@ -596,7 +596,7 @@ function mapBonus() {
 		mappingDetails(mapName, mapSettings.mapLevel, mapSettings.special);
 		resetMapVars();
 		MODULES.mapFunctions.mapBonusHealthFarm = false;
-		mapRepeats = 0;
+		MODULES.maps.mapRepeats = 0;
 	}
 	return farmingDetails;
 }
@@ -664,15 +664,15 @@ function mapFarm() {
 					game.global.mapRunCounter;
 
 		if (setting.autoLevel) {
-			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-				game.global.mapRunCounter = mapRepeats;
-				mapRepeats = 0;
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+				game.global.mapRunCounter = MODULES.maps.mapRepeats;
+				MODULES.maps.mapRepeats = 0;
 			}
 
 			var autoLevel_Repeat = mapSettings.levelCheck;
 			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
-				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
 			}
 		}
@@ -775,14 +775,14 @@ function tributeFarm() {
 
 		//AutoLevel code.
 		if (setting.autoLevel) {
-			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-				game.global.mapRunCounter = mapRepeats;
-				mapRepeats = 0;
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+				game.global.mapRunCounter = MODULES.maps.mapRepeats;
+				MODULES.maps.mapRepeats = 0;
 			}
 			var autoLevel_Repeat = mapSettings.levelCheck;
 			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
-				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
 			}
 		}
@@ -1115,14 +1115,14 @@ function worshipperFarm() {
 		var biome = getBiome(null, 'Sea');
 
 		if (setting.autoLevel) {
-			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-				game.global.mapRunCounter = mapRepeats;
-				mapRepeats = 0;
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+				game.global.mapRunCounter = MODULES.maps.mapRepeats;
+				MODULES.maps.mapRepeats = 0;
 			}
 			var autoLevel_Repeat = mapSettings.levelCheck;
 			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
-				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
 			}
 		}
@@ -1690,14 +1690,14 @@ function toxicity() {
 
 		//AutoLevel code.
 		if (setting.autoLevel) {
-			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-				game.global.mapRunCounter = mapRepeats;
-				mapRepeats = 0;
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+				game.global.mapRunCounter = MODULES.maps.mapRepeats;
+				MODULES.maps.mapRepeats = 0;
 			}
 			var autoLevel_Repeat = mapSettings.levelCheck;
 			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
-				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
 			}
 		}
@@ -1793,21 +1793,21 @@ function wither() {
 	var jobRatio = '0,0,1,0';
 	var mapSpecial = getAvailableSpecials('lmc', true);
 
-	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-		game.global.mapRunCounter = mapRepeats;
-		mapRepeats = 0;
+	if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+		game.global.mapRunCounter = MODULES.maps.mapRepeats;
+		MODULES.maps.mapRepeats = 0;
 	}
 
 	var autoLevel_Repeat = mapSettings.levelCheck;
 	mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, -1, null);
 	if (mapAutoLevel !== Infinity) {
-		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 		var mapLevel = mapAutoLevel;
 	}
 
 	//Gamma burst info
 	var gammaToTrigger = gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks;
-	var gammaDmg = gammaBurstPct;
+	var gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	var canGamma = gammaToTrigger <= 1 ? true : false;
 
 	var cell = game.global.lastClearedCell + 2;
@@ -1969,14 +1969,14 @@ function quest() {
 		var questMin = shouldQuest === 6 || (shouldQuest === 7 && game.global.mapBonus !== 10) ? 0 : null;
 		var mapLevel = 0;
 
-		if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-			game.global.mapRunCounter = mapRepeats;
-			mapRepeats = 0;
+		if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+			game.global.mapRunCounter = MODULES.maps.mapRepeats;
+			MODULES.maps.mapRepeats = 0;
 		}
 		var autoLevel_Repeat = mapSettings.levelCheck;
 		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, questMax, questMin);
 		if (mapAutoLevel !== Infinity) {
-			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 			mapLevel = mapAutoLevel;
 		}
 
@@ -2025,14 +2025,14 @@ function mayhem() {
 	if (game.challenges.Mayhem.stacks > 0 && (hdStats.hdRatio > destackHits || game.global.world >= destackZone))
 		shouldMap = true;
 
-	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-		game.global.mapRunCounter = mapRepeats;
-		mapRepeats = 0;
+	if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+		game.global.mapRunCounter = MODULES.maps.mapRepeats;
+		MODULES.maps.mapRepeats = 0;
 	}
 	var autoLevel_Repeat = mapSettings.levelCheck;
 	mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, (0 + mayhemMapIncrease));
 	if (mapAutoLevel !== Infinity) {
-		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 		mapLevel = mapAutoLevel;
 	}
 
@@ -2089,14 +2089,14 @@ function insanity() {
 		var jobRatio = setting.jobratio;
 
 		if (setting.autoLevel) {
-			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-				game.global.mapRunCounter = mapRepeats;
-				mapRepeats = 0;
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+				game.global.mapRunCounter = MODULES.maps.mapRepeats;
+				MODULES.maps.mapRepeats = 0;
 			}
 			var autoLevel_Repeat = mapSettings.levelCheck;
 			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
-				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
 			}
 		}
@@ -2153,14 +2153,14 @@ function pandemoniumDestack() {
 	var jobRatio = '0.001,0.001,1,0';
 
 
-	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-		game.global.mapRunCounter = mapRepeats;
-		mapRepeats = 0;
+	if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+		game.global.mapRunCounter = MODULES.maps.mapRepeats;
+		MODULES.maps.mapRepeats = 0;
 	}
 	var autoLevel_Repeat = mapSettings.levelCheck;
 	mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, 1);
 	if (mapAutoLevel !== Infinity) {
-		if (autoLevel_Repeat !== Infinity && autoLevel_Repeat !== mapAutoLevel) mapRepeats = game.global.mapRunCounter + 1;
+		if (autoLevel_Repeat !== Infinity && autoLevel_Repeat !== mapAutoLevel) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 		mapLevel = mapAutoLevel;
 	}
 
@@ -2212,7 +2212,7 @@ function pandemoniumFarm() {
 	var autoLevel_Repeat = mapSettings.levelCheck;
 	mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
 	if (mapAutoLevel !== Infinity) {
-		if (autoLevel_Repeat !== Infinity && autoLevel_Repeat !== mapAutoLevel) mapRepeats = game.global.mapRunCounter + 1;
+		if (autoLevel_Repeat !== Infinity && autoLevel_Repeat !== mapAutoLevel) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 		mapLevel = mapAutoLevel;
 	}
 
@@ -2283,14 +2283,14 @@ function alchemy() {
 		var potionGoal = setting.potion;
 
 		if (setting.autoLevel) {
-			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-				game.global.mapRunCounter = mapRepeats;
-				mapRepeats = 0;
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+				game.global.mapRunCounter = MODULES.maps.mapRepeats;
+				MODULES.maps.mapRepeats = 0;
 			}
 			var autoLevel_Repeat = mapSettings.levelCheck;
 			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, 1);
 			if (mapAutoLevel !== Infinity) {
-				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
 			}
 		}
@@ -2422,15 +2422,15 @@ function glass() {
 	if (glassStacks <= 0) glassStacks = Infinity;
 
 	//Auto level junk - Maybe pop this into its own function?
-	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-		game.global.mapRunCounter = mapRepeats;
-		mapRepeats = 0;
+	if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+		game.global.mapRunCounter = MODULES.maps.mapRepeats;
+		MODULES.maps.mapRepeats = 0;
 	}
 
 	var autoLevel_Repeat = mapSettings.levelCheck;
 	mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, null);
 	if (mapAutoLevel !== Infinity) {
-		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+		if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 		mapLevel = mapAutoLevel;
 	}
 
@@ -2438,7 +2438,7 @@ function glass() {
 	var gammaTriggerStacks = gammaMaxStacks();
 	var gammaToTrigger = gammaTriggerStacks - game.heirlooms.Shield.gammaBurst.stacks;
 	if (game.global.mapsActive) gammaToTrigger = Infinity;
-	var gammaDmg = gammaBurstPct;
+	var gammaDmg = MODULES.heirlooms.gammaBurstPct;
 	var canGamma = gammaToTrigger <= 1 ? true : false;
 	var damageGoal = 2;
 
@@ -2573,15 +2573,15 @@ function hypothermia() {
 		bonfireCostTotal += shedCost;
 
 		if (setting.autoLevel) {
-			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-				game.global.mapRunCounter = mapRepeats;
-				mapRepeats = 0;
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+				game.global.mapRunCounter = MODULES.maps.mapRepeats;
+				MODULES.maps.mapRepeats = 0;
 			}
 
 			var autoLevel_Repeat = mapSettings.levelCheck;
 			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, null, null);
 			if (mapAutoLevel !== Infinity) {
-				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
 			}
 		}
@@ -2650,15 +2650,15 @@ function desolation(forceDestack) {
 	if (MODULES.mapFunctions.challengeContinueRunning || (game.challenges.Desolation.chilled >= destackStacks && (hdStats.hdRatio > destackHits || game.global.world >= destackZone || game.global.world >= destackOnlyZone)))
 		shouldMap = true;
 
-	if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-		game.global.mapRunCounter = mapRepeats;
-		mapRepeats = 0;
+	if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+		game.global.mapRunCounter = MODULES.maps.mapRepeats;
+		MODULES.maps.mapRepeats = 0;
 	}
 	if (game.global.world < destackOnlyZone && !game.jobs.Explorer.locked) {
 		var autoLevel_Repeat = mapSettings.levelCheck;
 		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, 10, 0);
 		if (mapAutoLevel !== Infinity) {
-			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 			mapLevel = mapAutoLevel;
 		}
 	} else if (shouldMap) {
@@ -2777,7 +2777,7 @@ function desolationGearScum() {
 		var enemyHealth = getCurrentWorldCell().health;
 		var equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
 		var ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);
-		var gammaDmg = gammaBurstPct;
+		var gammaDmg = MODULES.heirlooms.gammaBurstPct;
 		var ourDmgTotal = (ourDmg * gammaDmg) * 5;
 
 		//Check if we will overshoot the improb with our regular hit/gamma burst.
@@ -2853,19 +2853,19 @@ function smithless() {
 		var smithlessMax = game.global.mapBonus !== 10 ? 10 : null;
 		var smithlessMin = game.global.mapBonus !== 10 ? 0 : null;
 
-		if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-			game.global.mapRunCounter = mapRepeats;
-			mapRepeats = 0;
+		if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+			game.global.mapRunCounter = MODULES.maps.mapRepeats;
+			MODULES.maps.mapRepeats = 0;
 		}
 		var autoLevel_Repeat = mapSettings.levelCheck;
 		mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, smithlessMax, smithlessMin);
 		if (mapAutoLevel !== Infinity) {
-			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+			if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 			mapLevel = mapAutoLevel;
 		}
 
 		var name = game.global.gridArray[0].name;
-		var gammaDmg = gammaBurstPct;
+		var gammaDmg = MODULES.heirlooms.gammaBurstPct;
 		var equalityAmt = equalityQuery(name, game.global.world, 1, 'world', 1, 'gamma');
 		var ourDmg = calcOurDmg('min', equalityAmt, false, 'world', 'never', 0, false);
 		var ourDmgTenacity = ourDmg;
@@ -3026,15 +3026,15 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		if (hdFarmMaxMapsMaps === -1) hdFarmMaxMapsMaps = Infinity;
 
 		if (setting.autoLevel) {
-			if (game.global.mapRunCounter === 0 && game.global.mapsActive && mapRepeats !== 0) {
-				game.global.mapRunCounter = mapRepeats;
-				mapRepeats = 0;
+			if (game.global.mapRunCounter === 0 && game.global.mapsActive && MODULES.maps.mapRepeats !== 0) {
+				game.global.mapRunCounter = MODULES.maps.mapRepeats;
+				MODULES.maps.mapRepeats = 0;
 			}
 
 			var autoLevel_Repeat = mapSettings.levelCheck;
 			mapAutoLevel = callAutoMapLevel(mapSettings.mapName, mapSettings.levelCheck, mapSpecial, hdFarmMaxMaps, hdFarmMinMaps);
 			if (mapAutoLevel !== Infinity) {
-				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) mapRepeats = game.global.mapRunCounter + 1;
+				if (autoLevel_Repeat !== Infinity && mapAutoLevel !== autoLevel_Repeat) MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
 				mapLevel = mapAutoLevel;
 			}
 		}
@@ -3807,8 +3807,8 @@ function resetMapVars(setting) {
 	const totalPortals = getTotalPortals();
 	mapSettings.levelCheck = Infinity;
 	mapSettings.mapName = "";
-	mappingTime = 0;
-	mapRepeats = 0;
+	MODULES.maps.mapTimer = 0;
+	MODULES.maps.mapRepeats = 0;
 	game.global.mapRunCounter = 0;
 
 	if (setting) {
@@ -3834,7 +3834,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	if (mapSpecial === "0") mapSpecial = "no special";
 	if (mapName === 'Bionic Raiding') mapSpecial = game.talents.bionic2.purchased ? 'fa' : 'no special';
 
-	var timeMapping = mappingTime > 0 ? mappingTime : getGameTime();
+	var timeMapping = MODULES.maps.mapTimer > 0 ? MODULES.maps.mapTimer : getGameTime();
 	var currCell = game.global.lastClearedCell + 2;
 	var message = '';
 	if (mapName !== 'Void Map' && mapName !== 'Quagmire Farm' && mapName !== 'Smithy Farm' && mapName !== 'Bionic Raiding' && mapName !== 'Quest') {
@@ -3889,7 +3889,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	else if (mapName === 'Smithless Farm') {
 		message += " Finished with enough damage to get " + extra + "/3 stacks.";
 	}
-	mapRepeats = 0;
+	MODULES.maps.mapRepeats = 0;
 	debug(message, mapType);
 }
 
@@ -3921,9 +3921,9 @@ function mapScumming(slowTarget) {
 
 	if (!game.global.mapsActive) return;
 	if (game.global.lastClearedMapCell > -1) return;
-	if (!MODULES_AT.running) return;
+	if (!atSettings.running) return;
 	console.time();
-	MODULES_AT.running = false;
+	atSettings.running = false;
 	var slowCellTarget = !slowTarget ? 8 : slowTarget
 	if (slowCellTarget > 9) slowCellTarget = 10;
 	var firstCellSlow = false;
@@ -3933,7 +3933,7 @@ function mapScumming(slowTarget) {
 
 	//Setting up variables for heirloom swapping!
 	game.global.mapRunCounter = 0;
-	slowScumming = true;
+	MODULES.maps.slowScumming = true;
 
 	//Repeats the process of exiting and re-entering maps until the first cell is slow and you have desired slow cell count on odd cells!
 	while (slowCount < slowCellTarget || !firstCellSlow) {
@@ -3971,6 +3971,6 @@ function mapScumming(slowTarget) {
 	if (slowCount < slowCellTarget || !firstCellSlow) msg = "Failed. ";
 	msg += i + " Rerolls. Current roll = " + slowCount + " odd slow enemies. First cell is " + (firstCellSlow ? "slow" : "fast") + ".";
 	console.timeEnd();
-	MODULES_AT.running = true;
+	atSettings.running = true;
 	debug(msg, "mapping_Details");
 }

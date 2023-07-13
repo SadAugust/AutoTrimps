@@ -52,15 +52,15 @@ function autoPortal(specificPortalZone, skipDaily) {
 			var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
 			var myHeliumHr = game.stats.heliumHour.value();
 			var heliumHrBuffer = Math.abs(getPageSetting('heliumHrBuffer', universe));
-			if (!aWholeNewWorld)
+			if (!atSettings.portal.aWholeNewWorld)
 				heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
 			var bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
 			if (bufferExceeded && game.global.world >= minZone) {
 				OKtoPortal = true;
-				if (aWholeNewWorld)
+				if (atSettings.portal.aWholeNewWorld)
 					zonePostpone = 0;
 			}
-			if (heliumHrBuffer === 0 && !aWholeNewWorld)
+			if (heliumHrBuffer === 0 && !atSettings.portal.aWholeNewWorld)
 				OKtoPortal = false;
 			if (OKtoPortal && zonePostpone === 0) {
 				if (getPageSetting('heliumHrPortal', universe) > 0 && game.global.totalVoidMaps > 0) {
@@ -93,13 +93,13 @@ function autoPortal(specificPortalZone, skipDaily) {
 				}
 				else {
 					zonePostpone += 1;
-					popupsAT.portal = true;
-					if (popupsAT.remainingTime === Infinity) popupsAT.remainingTime = 5000;
-					tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1;; popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
+					MODULES.popups.portal = true;
+					if (MODULES.popups.remainingTime === Infinity) MODULES.popups.remainingTime = 5000;
+					tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1;; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
 					setTimeout(function () {
 						cancelTooltip()
-						popupsAT.portal = false;
-						popupsAT.remainingTime = Infinity;
+						MODULES.popups.portal = false;
+						MODULES.popups.remainingTime = Infinity;
 					}, MODULES["portal"].timeout);
 					setTimeout(function () {
 						if (zonePostpone >= 2)
@@ -194,16 +194,16 @@ function dailyAutoPortal(specificPortalZone) {
 		var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
 		var myHeliumHr = game.stats.heliumHour.value();
 		var heliumHrBuffer = Math.abs(getPageSetting('dailyHeliumHrBuffer'));
-		if (!aWholeNewWorld)
+		if (!atSettings.portal.aWholeNewWorld)
 			heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
 
 		var bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
 		if (bufferExceeded && game.global.world >= minZone) {
 			OKtoPortal = true;
-			if (aWholeNewWorld)
+			if (atSettings.portal.aWholeNewWorld)
 				zonePostpone = 0;
 		}
-		if (heliumHrBuffer === 0 && !aWholeNewWorld)
+		if (heliumHrBuffer === 0 && !atSettings.portal.aWholeNewWorld)
 			OKtoPortal = false;
 		if (OKtoPortal && zonePostpone === 0) {
 			if (getPageSetting('dailyHeliumHrPortal') > 0 && game.global.totalVoidMaps > 0) {
@@ -239,13 +239,13 @@ function dailyAutoPortal(specificPortalZone) {
 			}
 			else {
 				zonePostpone += 1;
-				popupsAT.portal = true;
-				if (popupsAT.remainingTime === Infinity) popupsAT.remainingTime = 5000;
-				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1; popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
+				MODULES.popups.portal = true;
+				if (MODULES.popups.remainingTime === Infinity) MODULES.popups.remainingTime = 5000;
+				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
 				setTimeout(function () {
 					cancelTooltip()
-					popupsAT.portal = false;
-					popupsAT.remainingTime = Infinity;
+					MODULES.popups.portal = false;
+					MODULES.popups.remainingTime = Infinity;
 				}, MODULES["portal"].timeout);
 				setTimeout(function () {
 					if (zonePostpone >= 2)
@@ -264,8 +264,8 @@ function dailyAutoPortal(specificPortalZone) {
 
 		}
 		if (game.global.world >= portalZone) {
-			if (getPageSetting('dailyHeliumHourChallenge', currPortalUniverse) !== 'None')
-				doPortal(getPageSetting('dailyHeliumHourChallenge', currPortalUniverse));
+			if (getPageSetting('dailyHeliumHourChallenge', portalUniverse) !== 'None')
+				doPortal(getPageSetting('dailyHeliumHourChallenge', portalUniverse));
 			else
 				doPortal();
 		}
@@ -478,7 +478,7 @@ function doPortal(challenge, skipDaily) {
 
 	if (currChall === 'Daily') {
 		//Swapping to other universe if necessary to run daily.
-		if (getPageSetting('dailyPortalPreviousUniverse', (currPortalUniverse + 1))) {
+		if (getPageSetting('dailyPortalPreviousUniverse', (portalUniverse + 1))) {
 			swapPortalUniverse();
 			universeSwapped();
 			if (getPageSetting('dailyHeliumHourChallenge', portalUniverse) !== 'None') challenge = getPageSetting('dailyHeliumHourChallenge', portalUniverse);
@@ -713,36 +713,29 @@ function resetVarsZone(loadingSave) {
 
 	//Reloading save variables
 	if (loadingSave) {
-		resourceNeeded = {
-			food: 0,
-			wood: 0,
-			metal: 0,
-			science: 0,
-			gems: 0,
-			fragments: 0,
-		};
+		MODULES.resourceNeeded = { food: 0, wood: 0, metal: 0, science: 0, gems: 0, fragments: 0, };
 
-		baseMinDamage = 0;
-		baseMaxDamage = 0;
-		baseDamage = 0;
-		baseHealth = 0;
-		baseBlock = 0;
+		MODULES.stats.baseMinDamage = 0;
+		MODULES.stats.baseMaxDamage = 0;
+		MODULES.stats.baseDamage = 0;
+		MODULES.stats.baseHealth = 0;
+		MODULES.stats.baseBlock = 0;
 
-		currentworld = 0;
-		lastrunworld = 0;
-		aWholeNewWorld = false;
+		atSettings.portal.currentworld = 0;
+		atSettings.portal.lastrunworld = 0;
+		atSettings.portal.aWholeNewWorld = false;
 		universeSwapped();
 
-		currentHZE = 0;
-		lastHZE = 0;
+		atSettings.portal.currentHZE = 0;
+		atSettings.portal.lastHZE = 0;
 
-		heirloomPlagueSwap = false;
+		MODULES.heirlooms.plagueSwap = false;
 	}
 
 
 
 	//General
-	mappingTime = 0;
+	MODULES.maps.mapTimer = 0;
 	var mapFunction = MODULES['mapFunctions'];
 
 	//Fragment Farming	
@@ -751,7 +744,7 @@ function resetVarsZone(loadingSave) {
 	mapFunction.challengeContinueRunning = false;
 
 	//Auto Level variables
-	mapRepeats = 0;
+	MODULES.maps.mapRepeats = 0;
 	mapSettings.levelCheck = Infinity;
 
 	//Resetting variables that would cause issues if they were left as is
@@ -818,9 +811,9 @@ function hypoPackratReset(challenge) {
 //Auto-Respec into combat spec after running Trimple/Atlantrimp
 function surkyCombatRespec() {
 
-	if (!popupsAT.respecAtlantrimp) return;
-	popupsAT.respecAtlantrimp = false;
-	popupsAT.remainingTime = Infinity;
+	if (!MODULES.popups.respecAtlantrimp) return;
+	MODULES.popups.respecAtlantrimp = false;
+	MODULES.popups.remainingTime = Infinity;
 	if (!game.global.viewingUpgrades) viewPortalUpgrades();
 	var currPreset = $$('#presetElem').value;
 
@@ -871,23 +864,23 @@ function atlantrimpRespecMessage(cellOverride) {
 		MODULES.portal.disableAutoRespec = getTotalPortals();
 	}
 
-	popupsAT.respecAtlantrimp = false;
+	MODULES.popups.respecAtlantrimp = false;
 
 	var respecSetting = getPageSetting('presetCombatRespec');
 	//If setting is enabled, respec into Surky combat respec
 	var respecName = !hdStats.isC3 ? "Radon " : "" + "Combat Respec";
 	if (game.global.universe === 1) respecName = 'Spire'
 	if (respecSetting === 2) {
-		popupsAT.respecAtlantrimp = true;
-		popupsAT.remainingTime = 5000;
+		MODULES.popups.respecAtlantrimp = true;
+		MODULES.popups.remainingTime = 5000;
 		var description = "<p>Respeccing into the <b>" + respecName + "</b> preset</p>";
-		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'popupsAT.respecAtlantrimp = false, popupsAT.remainingTime = Infinity', '<b>NOTICE: Auto-Respeccing in ' + (popupsAT.remainingTime / 1000).toFixed(1) + ' seconds....</b>', 'Disable Respec');
+		tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAtlantrimp = false, MODULES.popups.remainingTime = Infinity', '<b>NOTICE: Auto-Respeccing in ' + (MODULES.popups.remainingTime / 1000).toFixed(1) + ' seconds....</b>', 'Disable Respec');
 		setTimeout(surkyCombatRespec, 5000);
 	}
 	//If setting is disabled, show tooltip to allow for respec after Atlantrimp has been run
 	else if (respecSetting === 1) {
 		var description = "<p>Click <b>Force Respec</b> to respec into the <b>" + respecName + "</b> preset.</p>";
-		tooltip('confirm', null, 'update', description, 'popupsAT.respecAtlantrimp = true; surkyCombatRespec()', '<b>Post Atlantrimp Respec</b>', 'Force Respec');
+		tooltip('confirm', null, 'update', description, 'MODULES.popups.respecAtlantrimp = true; surkyCombatRespec()', '<b>Post Atlantrimp Respec</b>', 'Force Respec');
 	}
 }
 

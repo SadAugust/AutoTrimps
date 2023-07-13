@@ -620,7 +620,7 @@ function estimateEquipsForZone(rEFIndex) {
 	var MAX_EQUIP_DELTA = 1000;
 
 	// calculate stats needed pass zone
-	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? gammaBurstPct : 1;
+	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? MODULES.heirlooms.gammaBurstPct : 1;
 	var ourHealth = calcOurHealth(false, 'world');
 	var ourDmg = calcOurDmg('avg', 0, false, 'world', 'maybe', 0, false) * gammaBurstDmg;
 	var enemyHealth = calcEnemyHealthCore('world', game.global.world, 99, 'Turtlimp');
@@ -700,7 +700,7 @@ function displayMostEfficientEquipment() {
 	var highlightSetting = getPageSetting('equipEfficientEquipDisplay');
 	if (!highlightSetting) return;
 	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting("equipHighlight")
-	if (!MODULES.intervals.oneSecond) return;
+	if (!atSettings.intervals.oneSecond) return;
 	var $eqNamePrestige = null;
 
 	if (!highlightSetting) return;

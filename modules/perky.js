@@ -480,7 +480,7 @@ function parse_perks(fixed, unlocks) {
 
 function savePerkySettings(initial) {
 
-	if (!showingPerky) {
+	if (!MODULES.perkCalcs.showingPerky) {
 		console.log("Perky is not showing")
 		return;
 	}
@@ -814,8 +814,6 @@ var notations = [
 	[],
 ];
 
-var showingPerky = false;
-
 function setupPerkyUI() {
 
 	if (portalUniverse !== 1) return;
@@ -1019,7 +1017,7 @@ function setupPerkyUI() {
 				delete $elem;
 			}
 		});
-		showingPerky = false;
+		MODULES.perkCalcs.showingPerky = false;
 	}
 
 	AutoPerks.displayGUI = function () {
@@ -1100,7 +1098,7 @@ function setupPerkyUI() {
 
 		$$('#presetElem').value = (perkyInputs.preset === undefined ? 'early' : perkyInputs.preset);
 		if (setupNeeded) savePerkySettings();
-		showingPerky = true;
+		MODULES.perkCalcs.showingPerky = true;
 
 		//Disable Fluffy xp input when it's not active.
 		if (game.global.spiresCompleted < 2) {

@@ -88,7 +88,7 @@ function getCostToUpgrade(upgradeName, resource) {
 }
 
 function setResourceNeeded() {
-	resourceNeeded = {
+	MODULES.resourceNeeded = {
 		food: 0,
 		wood: 0,
 		metal: 0,
@@ -101,16 +101,16 @@ function setResourceNeeded() {
 		upgrade = upgradeList[upgrade];
 		var gameUpgrade = game.upgrades[upgrade];
 		if (gameUpgrade.allowed > gameUpgrade.done) {
-			resourceNeeded.science += getCostToUpgrade(upgrade, 'science');
+			MODULES.resourceNeeded.science += getCostToUpgrade(upgrade, 'science');
 			if (upgrade === 'Trapstorm') continue;
-			resourceNeeded.food += getCostToUpgrade(upgrade, 'food');
+			MODULES.resourceNeeded.food += getCostToUpgrade(upgrade, 'food');
 			if (gameUpgrade.prestiges) continue;
-			resourceNeeded.wood += getCostToUpgrade(upgrade, 'wood');
-			resourceNeeded.metal += getCostToUpgrade(upgrade, 'metal');
+			MODULES.resourceNeeded.wood += getCostToUpgrade(upgrade, 'wood');
+			MODULES.resourceNeeded.metal += getCostToUpgrade(upgrade, 'metal');
 		}
 	}
 	if (game.global.universe === 1 && needGymystic()) {
-		resourceNeeded.science += getCostToUpgrade('Gymystic', 'science')
+		MODULES.resourceNeeded.science += getCostToUpgrade('Gymystic', 'science')
 	}
 }
 

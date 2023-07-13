@@ -1,25 +1,31 @@
-var MODULES_AT = {
-	ATversion: '',
-	liveVersion: '',
-	atscript: document.getElementsByTagName("script"),
-	basepath: '',
-	modulepath: 'modules/',
-	newVersionAvailable: false,
-	loadedModules: [],
-	MODULES: ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames', 'utils'],
-	loaded: false,
+var atSettings = {
+	initialise: {
+		version: '',
+		basepath: 'https://SadAugust.github.io/AutoTrimps/',
+		loaded: false,
+	},
+	modules: {
+		path: 'modules/',
+		installedModules: ['import-export', 'query', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'fight', 'scryer', 'magmite', 'nature', 'other', 'surky', 'perky', 'fight-info', 'performance', 'bones', 'MAZ', 'mapFunctions', 'minigames', 'utils'],
+		loadedModules: [],
+		loaded: [],
+	},
+	updateAvailable: false,
 	running: true,
 	runInterval: 100,
+	portal: { currentworld: 0, lastrunworld: 0, aWholeNewWorld: false, currentHZE: 0, lastHZE: 0, aWholeNewHZE: false, },
+	loops: { atTimeLapseFastLoop: false, mainLoopInterval: null, guiLoopInterval: null, },
+	intervals: { counter: 0, oneSecond: false, twoSecond: false, sixSecond: false, tenSecond: false, oneHour: false, },
 };
 
 //Searches html for where the AT script is being loaded from
+//This is p much only useful for me as I have a local version of AT that I use for testing.
 function loadAT() {
-	for (var y = 0; y < MODULES_AT.atscript.length; y++) {
-		if (MODULES_AT.atscript[y].src.includes('AutoTrimps2')) {
-			MODULES_AT.basepath = MODULES_AT.atscript[y].src.replace(/AutoTrimps2\.js$/, '');
+	for (var item in document.getElementsByTagName("script")) {
+		if (document.getElementsByTagName("script")[item].src.includes('AutoTrimps2')) {
+			atSettings.initialise.basepath = document.getElementsByTagName("script")[item].src.replace(/AutoTrimps2\.js$/, '');
 			break;
 		}
-		y++;
 	}
 
 	//Implement new div into the offlineWrapper to hold the settings bar we introduce when in offline mode.
@@ -30,58 +36,42 @@ function loadAT() {
 		var offlineWrapperParent = document.getElementById("offlineInnerWrapper").parentNode;
 		offlineWrapperParent.replaceChild(settingBarRow, document.getElementById("offlineInnerWrapper").parentNode.children[1]);
 	}
+
+	// Load jQuery
+	(function () {
+		// Load the script
+		const script = document.createElement("script");
+		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+		script.type = 'text/javascript';
+		script.defer = true; // Add 'defer' attribute
+
+		// Append the script to the document
+		document.head.appendChild(script);
+	})();
 }
 
 loadAT();
 
-//Backup on the off chance the script hasn't been found
-if (MODULES_AT.basepath === '') MODULES_AT.basepath = 'https://SadAugust.github.io/AutoTrimps/';
-basepath = MODULES_AT.basepath;
+//The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
+basepath = atSettings.initialise.basepath;
 
 var ATmessageLogTabVisible = true;
-var slowScumming = false;
-
-var atTimeLapseFastLoop = false;
-var mainLoopInterval = null;
-var guiLoopInterval = null;
 
 var autoTrimpSettings = {};
-var MODULES = {};
-MODULES.intervals = { counter: 0, oneSecond: false, twoSecond: false, sixSecond: false, tenSecond: false, oneHour: false };
-var resourceNeeded = {
-	food: 0,
-	wood: 0,
-	metal: 0,
-	science: 0,
-	gems: 0,
-	fragments: 0,
+var MODULES = {
+	resourceNeeded: { food: 0, wood: 0, metal: 0, science: 0, gems: 0, fragments: 0, },
+	stats: { baseMinDamage: 0, baseMaxDamage: 0, baseDamage: 0, baseHealth: 0, baseBlock: 0, },
+	perkCalcs: { showingPerky: false, showingPerky: false },
+	popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false, },
+	heirlooms: { plagueSwap: false, gammaBurstPct: 1, shieldEquipped: game.global.ShieldEquipped.id, },
 };
 
-var baseMinDamage = 0;
-var baseMaxDamage = 0;
-var baseDamage = 0;
-var baseHealth = 0;
-var baseBlock = 0;
-
-var currentworld = 0;
-var lastrunworld = 0;
-var aWholeNewWorld = false;
 var currPortalUniverse = 0;
 var currSettingUniverse = 0;
-
-var currentHZE = 0;
-var lastHZE = 0;
-var aWholeNewHZE = false;
 
 var settingChangedTimeout = false;
 
 var challengeCurrentZone = -1;
-var heirloomPlagueSwap = false;
-var mapRepeats = 0;
-
-var showingPerky = false;
-var showingSurky = false;
-var mazWindowOpen = false;
 
 var mapSettings = {
 	shouldRun: false,
@@ -94,40 +84,28 @@ var hdStats = {
 	isDaily: false,
 	isFiller: false
 }
-var mappingTIme = 0;
-
-var popupsAT = {
-	challenge: false,
-	respecAtlantrimp: false,
-	remainingTime: Infinity,
-	intervalID: null,
-	portal: false,
-}
-
-//Get Gamma burst % value
-var gammaBurstPct = 1
-var shieldEquipped = game.global.ShieldEquipped.id;
 
 function ATscriptLoad(a, b) {
-	if (MODULES_AT.loadedModules.includes(b)) return;
+	if (atSettings.modules.loadedModules.includes(b)) return;
 	if (null === b) {
-		debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(MODULES_AT.modulepath, \'example.js\'); ');
+		debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(atSettings.modules.MODULES.path, \'example.js\'); ');
 		return;
 	}
 	var script = document.createElement('script');
 	if (null === a) a = '';
-	script.src = MODULES_AT.basepath + a + b + '.js';
+	script.src = atSettings.initialise.basepath + a + b + '.js';
 	script.id = b + '_MODULE';
+	script.defer = true; // Add 'defer' attribute so that it loads after the page has loaded.
 	document.head.appendChild(script);
 	//Looks for if the script has loaded, if it has, add it to the loadedModules array. Ignores duplicate entries.
 	script.addEventListener('load', () => {
-		if (a !== '' && !MODULES_AT.loadedModules.includes(b)) MODULES_AT.loadedModules.push(b);
+		if (a !== '' && !atSettings.modules.loadedModules.includes(b)) atSettings.modules.loadedModules.push(b);
 	});
 }
 
 //Load version number from a seperate file so that we can compare it to the current version number and let users know if they're using an outdated version.
 ATscriptLoad('', 'versionNumber');
-ATscriptLoad(MODULES_AT.modulepath, 'utils');
+ATscriptLoad(atSettings.modules.path, 'utils');
 
 function printChangelog(changes) {
 	var body = "";
@@ -141,7 +119,7 @@ function printChangelog(changes) {
         <br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
         <br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).',
 		action = 'cancelTooltip()',
-		title = 'Script Update Notice<br>' + MODULES_AT.ATversion,
+		title = 'Script Update Notice<br>' + atSettings.initialise.version,
 		acceptBtnText = "Thank you for playing with AutoTrimps.",
 		hideCancel = true;
 
@@ -157,62 +135,43 @@ delayStart();
 
 //Runs first
 function delayStart() {
-	if (mappingTIme % 100 === 0) {
-		ATscriptLoad(MODULES_AT.modulepath, 'utils');
+	//Will try to reload the utils module every 1000 milliseconds until it's loaded.
+	//Shouldn't be necessary but sometimes it can mess up and not load properly.
+	if (atSettings.intervals.counter % 100 === 0) {
+		ATscriptLoad(atSettings.modules.path, 'utils');
 	}
-	//Reload script every 10 milliseconds until these functions have been loaded
-	if (typeof loadPageVariables !== 'function' || typeof swapBaseSettings !== 'function') {
+	//Reload script every 10 milliseconds until the utils module has been loaded.
+	if (typeof loadPageVariables !== 'function') {
 		setTimeout(delayStart, 10);
-		mappingTIme++;
+		atSettings.intervals.counter++;
 		return;
 	}
 	initializeAutoTrimps();
 	document.getElementById('activatePortalBtn').setAttribute("onClick", 'downloadSave(true); activateClicked(); pushSpreadsheetData(); autoheirlooms(true); autoMagmiteSpender(true); pushData();');
-	mappingTIme = 0;
+	atSettings.intervals.counter = 0;
 }
 
 //Runs second
 function initializeAutoTrimps() {
-	console.log("AutoTrimps v" + MODULES_AT.ATversion + " Loaded!");
-	if (MODULES_AT.ATversion === '') {
-		setTimeout(initializeAutoTrimps, 10);
-		return;
-	}
-	// Load jQuery
-	(function () {
-		// Load the script
-		const script = document.createElement("script");
-		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
-		script.type = 'text/javascript';
-		script.defer = true; // Add 'defer' attribute
 
-		// Event listener for script load
-		script.addEventListener('load', function () {
-			console.log(`jQuery ${$.fn.jquery} has been loaded successfully!`);
-			// use jQuery below
-		});
-
-		// Append the script to the document
-		document.head.appendChild(script);
-	})();
 
 	loadPageVariables();
 	ATscriptLoad('', 'SettingsGUI');
 
-	var script = document.createElement('script');
+	/* var script = document.createElement('script');
 	script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
-	document.head.appendChild(script);
-	/* ATscriptLoad('', 'Graphs'); */
+	document.head.appendChild(script); */
+	ATscriptLoad('', 'Graphs');
 	ATscriptLoad('', 'mutatorPreset');
-	for (var m in MODULES_AT.MODULES) {
-		ATscriptLoad(MODULES_AT.modulepath, MODULES_AT.MODULES[m]);
+	for (var m in atSettings.modules.installedModules) {
+		ATscriptLoad(atSettings.modules.path, atSettings.modules.installedModules[m]);
 	}
-	debug('AutoTrimps Loaded!');
 
 	delayStartAgain();
+	debug(atSettings.initialise.version.split(' ')[0] + " AutoTrimps " + atSettings.initialise.version.split(' ')[1] + " loaded!");
 }
 
-function swapBaseSettings() {
+function raspberryPiSettings() {
 	//raspberry pi related setting changes
 	//Swaps base settings to improve performance & so that I can't accidentally pause. 
 	//Shouldn't impact anybody else that uses AT as they'll never set the gameUser setting to SadAugust.
@@ -232,26 +191,29 @@ function swapBaseSettings() {
 function delayStartAgain() {
 	//Reload script every 10 milliseconds until these scripts have been loaded
 	//Added incrementing variable at the end of every script so that we can be sure that the script has fully loaded before we start the main loop.
-	if (MODULES_AT.MODULES.length > MODULES_AT.loadedModules.length || typeof updateATVersion !== 'function') {
+	if (atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length || typeof updateATVersion !== 'function') {
 		console.log("Delaying start by 10ms")
 		setTimeout(delayStartAgain, 10);
 		return;
 	}
 
-	swapBaseSettings();
+	raspberryPiSettings();
+	//Adds autoMaps, autoJobs, autoStructure, autoEquip buttons to the trimps UI.
 	setupATButtons();
 
-	MODULES_AT.loaded = true;
-	gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
+	atSettings.initialise.loaded = true;
+	MODULES.heirlooms.gammaBurstPct = (getHeirloomBonus("Shield", "gammaBurst") / 100) > 0 ? (getHeirloomBonus("Shield", "gammaBurst") / 100) : 1;
 	hdStats = new HDStats();
 
+	//Copy gameLoop for when we enter toggleCatchUpMode.
 	originalGameLoop = gameLoop;
-
 	//Starts the loop in either normal or TimeLapse mode.
 	toggleCatchUpMode();
 
+	//Need to updateCustomButtons after we've loaded the script so that the settings have the correct values.
 	updateCustomButtons(true);
 	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
+	//Setup Perky/Surky UI
 	universeSwapped();
 }
 
@@ -259,15 +221,12 @@ function universeSwapped() {
 	//Displays Perky UI when changing universe to U1.
 	if (currPortalUniverse !== portalUniverse) {
 		//Removes UI display if currently active
-		if (showingPerky) AutoPerks.removeGUI();
-		if (showingSurky) AutoPerks.removeGUI();
+		if (typeof AutoPerks.removeGUI === 'function') AutoPerks.removeGUI();
 		//Sets up Perky UI when in U1 or changing universe to U1.
-		if (portalUniverse === 1) {
+		if (portalUniverse === 1)
 			setupPerkyUI();
-		}
-		if (portalUniverse === 2) {
+		if (portalUniverse === 2)
 			setupSurkyUI();
-		}
 		currPortalUniverse = portalUniverse;
 	}
 }
@@ -276,15 +235,16 @@ function universeSwapped() {
 function toggleCatchUpMode() {
 
 	//Start and Intilise loop if this is called for the first time
-	if (!mainLoopInterval && !guiLoopInterval && !atTimeLapseFastLoop) {
-		mainLoopInterval = setInterval(mainLoop, MODULES_AT.runInterval);
-		guiLoopInterval = setInterval(guiLoop, MODULES_AT.runInterval * 10);
+	if (!atSettings.loops.mainLoopInterval && !atSettings.loops.guiLoopInterval && !atSettings.loops.atTimeLapseFastLoop) {
+		atSettings.loops.mainLoopInterval = setInterval(mainLoop, atSettings.runInterval);
+		atSettings.loops.guiLoopInterval = setInterval(guiLoop, atSettings.runInterval * 10);
 	}
 
+	//If we have a setting enable that disables TimeLapse mode, then disable running the script running a faster loop in offline mode.
 	if (usingRealTimeOffline) {
 		if (getPageSetting('timeWarpDisable') || !getPageSetting('timeWarpSpeed')) {
-			if (usingRealTimeOffline && atTimeLapseFastLoop) {
-				atTimeLapseFastLoop = false;
+			if (usingRealTimeOffline && atSettings.loops.atTimeLapseFastLoop) {
+				atSettings.loops.atTimeLapseFastLoop = false;
 				gameLoop = originalGameLoop;
 				debug("Disabled TW settings", "offline");
 				toggleCatchUpMode();
@@ -294,30 +254,30 @@ function toggleCatchUpMode() {
 	}
 
 	//Enable Online Mode after Offline mode was enabled
-	if (!usingRealTimeOffline && atTimeLapseFastLoop) {
-		if (mainLoopInterval) clearInterval(mainLoopInterval);
-		if (guiLoopInterval) clearInterval(guiLoopInterval);
-		mainLoopInterval = null;
-		atTimeLapseFastLoop = false;
+	if (!usingRealTimeOffline && atSettings.loops.atTimeLapseFastLoop) {
+		if (atSettings.loops.mainLoopInterval) clearInterval(atSettings.loops.mainLoopInterval);
+		if (atSettings.loops.guiLoopInterval) clearInterval(atSettings.loops.guiLoopInterval);
+		atSettings.loops.mainLoopInterval = null;
+		atSettings.loops.atTimeLapseFastLoop = false;
 		gameLoop = originalGameLoop;
-		mainLoopInterval = setInterval(mainLoop, MODULES_AT.runInterval);
-		guiLoopInterval = setInterval(guiLoop, MODULES_AT.runInterval * 10);
+		atSettings.loops.mainLoopInterval = setInterval(mainLoop, atSettings.runInterval);
+		atSettings.loops.guiLoopInterval = setInterval(guiLoop, atSettings.runInterval * 10);
 	}
 
-	else if (usingRealTimeOffline && !atTimeLapseFastLoop) { //Enable Offline Mode
-		if (mainLoopInterval) {
-			clearInterval(mainLoopInterval);
-			mainLoopInterval = null;
+	else if (usingRealTimeOffline && !atSettings.loops.atTimeLapseFastLoop) { //Enable Offline Mode
+		if (atSettings.loops.mainLoopInterval) {
+			clearInterval(atSettings.loops.mainLoopInterval);
+			atSettings.loops.mainLoopInterval = null;
 		}
-		if (guiLoopInterval) {
-			clearInterval(guiLoopInterval);
-			guiLoopInterval = null;
+		if (atSettings.loops.guiLoopInterval) {
+			clearInterval(atSettings.loops.guiLoopInterval);
+			atSettings.loops.guiLoopInterval = null;
 		}
-		atTimeLapseFastLoop = true;
+		atSettings.loops.atTimeLapseFastLoop = true;
 		gameLoop = function (makeUp, now) {
 			originalGameLoop(makeUp, now);
 
-			var newZone = lastrunworld !== game.global.world;
+			var newZone = atSettings.portal.lastrunworld !== game.global.world;
 			//Run mainLoop every n game loops and always on a new zone.
 			if (loops % getPageSetting('timeWarpFrequency') === 0 || newZone) {
 				mainLoop();
@@ -327,6 +287,7 @@ function toggleCatchUpMode() {
 			mapSettings = farmingDecision();
 			autoMap();
 			callBetterAutoFight();
+			if (loops % 10 === 0 || newZone) updateAutoMapsStatus();
 			if (game.global.universe === 1) checkStanceSetting();
 			if (game.global.universe === 2) equalityManagement();
 		}
@@ -340,12 +301,12 @@ function mainLoop() {
 	toggleCatchUpMode();
 
 	//Adjust tooltip when mazWindow is open OR clear our adjustments if it's not.
-	if (mazWindowOpen && !usingRealTimeOffline) {
+	if (MODULES.popups.mazWindowOpen && !usingRealTimeOffline) {
 		var mazSettings = ["Map Farm", "Map Bonus", "Void Map", "HD Farm", "Raiding", "Bionic Raiding", "Balance Destack", "Toxicity Farm", "Quagmire Farm", "Insanity Farm", "Alchemy Farm", "Hypothermia Farm", "Bone Shrine", "Auto Golden", "Tribute Farm", "Smithy Farm", "Worshipper Farm", "Desolation Gear Scumming"];
 		var mazCheck = mazSettings.indexOf(document.getElementById('tooltipDiv').children.tipTitle.innerText);
 
 		if (mazCheck === -1) {
-			mazWindowOpen = false;
+			MODULES.popups.mazWindowOpen = false;
 			if (document.getElementById('tooltipDiv').style.overflowY !== '')
 				document.getElementById('tooltipDiv').style.overflowY = '';
 			if (document.getElementById('tooltipDiv').style.maxHeight !== '')
@@ -359,24 +320,24 @@ function mainLoop() {
 	remakeTooltip();
 	universeSwapped();
 
-	if (MODULES_AT.running === false) return;
+	if (atSettings.running === false) return;
 	if (getPageSetting('pauseScript', 1) || game.options.menu.pauseGame.enabled) return;
 	if (getPageSetting('timeWarpDisable') && usingRealTimeOffline) return;
-	MODULES_AT.running = true;
+	atSettings.running = true;
 
-	MODULES.intervals.counter++;
+	atSettings.intervals.counter++;
 	//Interval code
-	MODULES.intervals.oneSecond = MODULES.intervals.counter % (1000 / MODULES_AT.runInterval) === 0;
-	MODULES.intervals.twoSecond = MODULES.intervals.counter % (2000 / MODULES_AT.runInterval) === 0;
-	MODULES.intervals.sixSecond = MODULES.intervals.counter % (6000 / MODULES_AT.runInterval) === 0;
-	MODULES.intervals.tenSecond = MODULES.intervals.counter % (10000 / MODULES_AT.runInterval) === 0;
+	atSettings.intervals.oneSecond = atSettings.intervals.counter % (1000 / atSettings.runInterval) === 0;
+	atSettings.intervals.twoSecond = atSettings.intervals.counter % (2000 / atSettings.runInterval) === 0;
+	atSettings.intervals.sixSecond = atSettings.intervals.counter % (6000 / atSettings.runInterval) === 0;
+	atSettings.intervals.tenSecond = atSettings.intervals.counter % (10000 / atSettings.runInterval) === 0;
 	//Need a one hour interval for version checking.
-	MODULES.intervals.oneHour = MODULES.intervals.counter % (360000) === 0;
+	atSettings.intervals.oneHour = atSettings.intervals.counter % (360000) === 0;
 
 	//Offline mode check
 	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 
-	if (MODULES.intervals.oneSecond) {
+	if (atSettings.intervals.oneSecond) {
 		hdStats = new HDStats();
 	}
 	if (shouldRunTW) mapSettings = farmingDecision();
@@ -393,8 +354,8 @@ function mainLoop() {
 
 	mainCleanup();
 
-	if (slowScumming && game.global.mapRunCounter !== 0) {
-		if (game.global.mapBonus === 10) slowScumming = false;
+	if (MODULES.maps.slowScumming && game.global.mapRunCounter !== 0) {
+		if (game.global.mapBonus === 10) MODULES.maps.slowScumming = false;
 		else {
 			mapScumming(challengeActive('Desolation') ? 9 : 10);
 			return;
@@ -402,7 +363,7 @@ function mainLoop() {
 	}
 
 	//Heirloom Shield Swap Check
-	if (shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
+	if (MODULES.heirlooms.shieldEquipped !== game.global.ShieldEquipped.id) HeirloomShieldSwapped();
 
 	//Sets the resources needed for the upgrades you have to buy
 	setResourceNeeded();
@@ -410,7 +371,7 @@ function mainLoop() {
 	if (shouldRunTW) {
 		//AutoMaps
 		autoMap();
-		updateAutoMapsStatus(false);
+		updateAutoMapsStatus();
 	}
 	//Status
 	//Gather
@@ -452,24 +413,24 @@ function mainLoop() {
 	automateSpireAssault();
 
 	challengeInfo();
-	MODULES_AT.loaded = true;
+	atSettings.initialise.loaded = true;
 
-	if (popupsAT.remainingTime === 5000) {
-		popupsAT.remainingTime -= 0.0001;
-		popupsAT.intervalID = setInterval(function () {
-			if (popupsAT.remainingTime === Infinity) clearInterval(popupsAT.intervalID);
-			popupsAT.remainingTime -= 100;
-			if (popupsAT.remainingTime <= 0) popupsAT.remainingTime = 0;
+	if (MODULES.popups.remainingTime === 5000) {
+		MODULES.popups.remainingTime -= 0.0001;
+		MODULES.popups.intervalID = setInterval(function () {
+			if (MODULES.popups.remainingTime === Infinity) clearInterval(MODULES.popups.intervalID);
+			MODULES.popups.remainingTime -= 100;
+			if (MODULES.popups.remainingTime <= 0) MODULES.popups.remainingTime = 0;
 		}, 100);
 	}
 
-	if (MODULES.intervals.oneHour)
+	if (atSettings.intervals.oneHour)
 		checkVersion();
 }
 
 function checkVersion() {
 	//Don't check for updates if we already know we're behind
-	if (MODULES_AT.newVersionAvailable) return;
+	if (atSettings.updateAvailable) return;
 	var url = basepath + '/versionNumber.js';
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url);
@@ -477,8 +438,8 @@ function checkVersion() {
 		if (xhr.status === 200) {
 			var response = xhr.responseText;
 			var version = response.split("'")[1];
-			if (version !== MODULES_AT.ATversion) {
-				MODULES_AT.newVersionAvailable = true;
+			if (version !== atSettings.initialise.version) {
+				atSettings.updateAvailable = true;
 				var changeLogBtn = document.getElementById("atChangelog");
 				if (changeLogBtn !== null) {
 					//changeLogBtn.classList.add("mystyle");
@@ -543,20 +504,20 @@ function guiLoop() {
 }
 
 function mainCleanup() {
-	lastrunworld = currentworld;
-	currentworld = game.global.world;
-	aWholeNewWorld = lastrunworld !== currentworld;
+	atSettings.portal.lastrunworld = atSettings.portal.currentworld;
+	atSettings.portal.currentworld = game.global.world;
+	atSettings.portal.aWholeNewWorld = atSettings.portal.lastrunworld !== atSettings.portal.currentworld;
 
-	lastHZE = currentHZE;
-	currentHZE = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
-	aWholeNewHZE = lastHZE !== currentHZE;
+	atSettings.portal.lastHZE = atSettings.portal.currentHZE;
+	atSettings.portal.currentHZE = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
+	atSettings.portal.aWholeNewHZE = atSettings.portal.lastHZE !== atSettings.portal.currentHZE;
 
-	if (aWholeNewHZE) {
+	if (atSettings.portal.aWholeNewHZE) {
 		challengeUnlockCheck();
 		updateCustomButtons(true);
 	}
 
-	if (currentworld === 1 && aWholeNewWorld) {
+	if (atSettings.portal.currentworld === 1 && atSettings.portal.aWholeNewWorld) {
 		zonePostpone = 0;
 		if (!game.upgrades.Battle.done) {
 			updateButtonText();
@@ -564,7 +525,7 @@ function mainCleanup() {
 		}
 	}
 
-	if (aWholeNewWorld) {
+	if (atSettings.portal.aWholeNewWorld) {
 
 		switch (document.getElementById('tipTitle').innerHTML) {
 			case 'The Improbability':
@@ -586,7 +547,7 @@ function mainCleanup() {
 			easterEggClicked();
 	}
 
-	if (aWholeNewWorld || currentworld === 1) {
+	if (atSettings.portal.aWholeNewWorld || atSettings.portal.currentworld === 1) {
 	}
 }
 

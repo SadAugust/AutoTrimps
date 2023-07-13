@@ -341,7 +341,7 @@ function shouldSpeedRun(achievement) {
 
 //Looks at the spamMessages setting and if the message is enabled, it will print it to the message log & console.
 function debug(message, b, icon) {
-	var settingArray = MODULES_AT.loaded && getPageSetting('spamMessages'),
+	var settingArray = atSettings.initialise.loaded && getPageSetting('spamMessages'),
 		p = true;
 
 	switch (b) {
@@ -427,7 +427,7 @@ function timeStamp() {
 }
 
 function setTitle() {
-	aWholeNewWorld &&
+	atSettings.portal.aWholeNewWorld &&
 		(document.title = '(' + game.global.world + ') Trimps ' + document.getElementById('versionNumber').innerHTML);
 }
 
@@ -587,7 +587,7 @@ function testSpeedX(interval) {
 	game.global.lastSkeletimp -= tick;
 	game.permaBoneBonuses.boosts.lastChargeAt -= tick;
 	if (game.global.mapsActive) game.global.mapStarted -= tick;
-	if (mappingTime !== 0) mappingTime -= tick;
+	if (MODULES.maps.mapTimer !== 0) MODULES.maps.mapTimer -= tick;
 
 	mainLoop();
 	gameLoop(null, now);
@@ -622,11 +622,11 @@ function testMetalIncome() {
 	var mapsPerHour = 3600 / secondsPerMap;
 	var mapsPerDay = mapsPerHour * 24;
 	//Factors in large cache + chronoimp
-	var mappingTime = mapsPerDay * 25;
-	//Adding avg jestimps into mappingTime calculation
-	if (mapsPerDay > 4) mappingTime += (Math.floor(mapsPerDay / 5) * 45);
+	var mapTimer = mapsPerDay * 25;
+	//Adding avg jestimps into mapTimer calculation
+	if (mapsPerDay > 4) mapTimer += (Math.floor(mapsPerDay / 5) * 45);
 	var mapLevel = game.global.mapsActive ? getCurrentMapObject().level - game.global.world : 0;
-	var resourcesGained = scaleToCurrentMapLocal(simpleSecondsLocal("metal", mappingTime, '0,0,1'), false, true, mapLevel);
+	var resourcesGained = scaleToCurrentMapLocal(simpleSecondsLocal("metal", mapTimer, '0,0,1'), false, true, mapLevel);
 	debug("Metal gained from 1 day " + prettify(resourcesGained), "test");
 }
 

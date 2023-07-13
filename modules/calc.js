@@ -616,7 +616,7 @@ function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, 
 				debug('You don\'t have this many levels in Equality. - Player Dmg. ' + equality + "/" + game.portal.Equality[perkLevel] + " equality used.", "other");
 			attack *= Math.pow(getPlayerEqualityMult_AT(heirloomShieldToEquip(mapType)), equality);
 		} else if (isNaN(parseInt((equality)))) {
-			if (MODULES.intervals.tenSecond) debug("Equality is not a number. - Player Dmg. " + equality + " equality used.", "other");
+			if (atSettings.intervals.tenSecond) debug("Equality is not a number. - Player Dmg. " + equality + " equality used.", "other");
 		}
 	}
 
@@ -920,7 +920,7 @@ function calcEnemyAttackCore(type, zone, cell, name, minOrMax, customAttack, equ
 			}
 			attack *= Math.pow(game.portal.Equality.getModifier(), equality);
 		} else if (isNaN(parseInt((equality)))) {
-			if (MODULES.intervals.tenSecond) debug("Equality is not a number. - Enemy Dmg. " + equality + " equality used.", "other");
+			if (atSettings.intervals.tenSecond) debug("Equality is not a number. - Enemy Dmg. " + equality + " equality used.", "other");
 		}
 	}
 
@@ -1258,7 +1258,7 @@ function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
 		var universeSetting = game.global.universe === 2 ? equalityQuery('Cthulimp', targetZone, 100, 'void', 4, 'gamma') : 'X';
 	}
 
-	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? gammaBurstPct : 1;
+	var gammaBurstDmg = getPageSetting('gammaBurstCalc') ? MODULES.heirlooms.gammaBurstPct : 1;
 	var runningUnlucky = challengeActive('Unlucky');
 	var ourBaseDamage = calcOurDmg(runningUnlucky ? 'max' : 'avg', universeSetting, false, type, 'maybe', targetZone - game.global.world);
 
@@ -1521,8 +1521,8 @@ function gammaMaxStacks(specialChall, actualCheck) {
 	var gammaMaxStacks = 5
 	if (autoBattle.oneTimers.Burstier.owned) gammaMaxStacks--;
 	if (Fluffy.isRewardActive("scruffBurst")) gammaMaxStacks--;
-	if (actualCheck && gammaBurstPct === 1) return 1;
-	if (gammaBurstPct === 1 || (specialChall && game.global.mapsActive)) gammaMaxStacks = Infinity;
+	if (actualCheck && MODULES.heirlooms.gammaBurstPct === 1) return 1;
+	if (MODULES.heirlooms.gammaBurstPct === 1 || (specialChall && game.global.mapsActive)) gammaMaxStacks = Infinity;
 	return gammaMaxStacks;
 }
 

@@ -14,7 +14,7 @@ automationMenuSettingsInit();
 var link1 = document.createElement("link");
 (link1.rel = "stylesheet"),
 	(link1.type = "text/css"),
-	(link1.href = MODULES_AT.basepath + "tabs.css"),
+	(link1.href = atSettings.initialise.basepath + "tabs.css"),
 	document.head.appendChild(link1);
 
 function createTabs(tabName, tabDescription, addTabsDiv, addtabsUL) {
@@ -1597,7 +1597,8 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>How many extra warpstations to buy for each gigastation.</p>";
 				description += "<pSupports decimal values. For example 2.5 will buy +2/+3/+2/+3...</p>";
-				description += "<p><b>YOU MUST HAVE BUY UPGRADES ENABLED!</b></p>";
+				description += "<p>Once your first gigastation of a run has been purchased this setting won't be evaluated again until your next run.</p>";
+				description += "<p><b>You must have buy upgrades enabled!</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'value', 2, null, 'Buildings', [1],
@@ -1608,6 +1609,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>If enabled, AT will buy its first Gigastation if: <br>A) Has more than 2 Warps & <br>B) Can\'t afford more Coords & <br>C) (Only if Custom Delta Factor > 20) Lacking Health or Damage & <br>D) (Only if Custom Delta Factor > 20) Has run at least 1 map stack.</p>";
 				description += "<p>Then, it'll calculate the delta based on your Custom Delta Factor and your Auto Portal/VM zone (whichever is higher), or Daily Auto Portal/VM zone, or " + cinf() + " zone, or Custom AutoGiga Zone.</p>";
+				description += "<p>Once your first gigastation of a run has been purchased this setting won't be evaluated again until your next run.</p>";
 				description += "<p><b>You must have the upgrades setting enabled for this setting to run!</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -1619,6 +1621,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>The zone to be used as a the target zone when calculating the Auto Gigas delta.</p>";
 				description += "<pValues below 60 will be discarded.</p>";
+				description += "<p>Once your first gigastation of a run has been purchased this setting won't be evaluated again until your next run.</p>";
 				description += "<p><b>Recommended:</b> Current challenge end zone</p>";
 				return description;
 			}, 'value', -1, null, 'Buildings', [1],
@@ -1630,6 +1633,7 @@ function initializeAllSettings() {
 				description += "<pBasically, a higher number means a higher delta.</p>";
 				description += "<pValues below 1 will default to 10.</p>";
 				description += "<pValues below 1 will default to 10.</p>";
+				description += "<p>Once your first gigastation of a run has been purchased this setting won't be evaluated again until your next run.</p>";
 				description += "<p><b>Recommended:</b> 1-2 for very quick runs. 5-10 for regular runs where you slow down at the end. 20-100+ for very pushy runs</p>";
 				return description;
 			}, 'value', -1, null, 'Buildings', [1],
@@ -4672,8 +4676,8 @@ function challengeUnlockCheck() {
 	if (message !== '') {
 		message += "<br><br><b>To disable this popup, click confirm!<b>";
 		hzeMessage = message;
-		popupsAT.challenge = true;
-		tooltip('confirm', null, 'update', hzeMessage, ('popupsAT.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		MODULES.popups.challenge = true;
+		tooltip('confirm', null, 'update', hzeMessage, ('MODULES.popups.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 	}
 
 	MODULES.u1unlocks.challenge = challenge;
@@ -4791,44 +4795,44 @@ function challengeUnlockCheckU2() {
 	if (message !== '') {
 		message += "<br><br><b>To disable this popup, click confirm!<b>";
 		hzeMessage = message;
-		popupsAT.challenge = true;
-		tooltip('confirm', null, 'update', hzeMessage, ('popupsAT.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		MODULES.popups.challenge = true;
+		tooltip('confirm', null, 'update', hzeMessage, ('MODULES.popups.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 	}
 	MODULES.u2unlocks.challenge = challenges;
 }
 
 //Remakes challenge/setting popup if the user doesn't click confirm and it's not showing.
 function remakeTooltip() {
-	if (!popupsAT.challenge && !popupsAT.respecAtlantrimp && !popupsAT.portal) {
-		if (!popupsAT.challenge) delete hzeMessage
+	if (!MODULES.popups.challenge && !MODULES.popups.respecAtlantrimp && !MODULES.popups.portal) {
+		if (!MODULES.popups.challenge) delete hzeMessage
 		return;
 	}
 
 	if (!game.global.lockTooltip) {
-		if (popupsAT.respecAtlantrimp) {
+		if (MODULES.popups.respecAtlantrimp) {
 			var respecName = !hdStats.isC3 ? "Radon " : "" + "Combat Respec";
 			if (game.global.universe === 1) respecName = 'Spire'
 			var description = "<p><b>Respeccing into the " + respecName + " preset.</b></p>";
-			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'popupsAT.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in ' + popupsAT.remainingTime + ' seconds....</b>', 'Disable Respec');
+			tooltip('confirm', null, 'update', description + '<p>Hit <b>Disable Respec</b> to stop this.</p>', 'MODULES.popups.respecAtlantrimp = false', '<b>NOTICE: Auto-Respeccing in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Disable Respec');
 		}
-		else if (popupsAT.challenge) {
-			tooltip('confirm', null, 'update', hzeMessage, ('popupsAT.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
+		else if (MODULES.popups.challenge) {
+			tooltip('confirm', null, 'update', hzeMessage, ('MODULES.popups.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 		}
 		else {
-			tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1; popupsAT.portal = false', '<b>NOTICE: Auto-Portaling in ' + popupsAT.remainingTime + ' seconds....</b>', 'Delay Portal');
+			tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
 		}
 	}
-	else if (popupsAT.respecAtlantrimp) {
-		document.getElementById('tipTitle').innerHTML = "<b>NOTICE: Auto-Respeccing in " + (popupsAT.remainingTime / 1000).toFixed(1) + " seconds....</b>"
+	else if (MODULES.popups.respecAtlantrimp) {
+		document.getElementById('tipTitle').innerHTML = "<b>NOTICE: Auto-Respeccing in " + (MODULES.popups.remainingTime / 1000).toFixed(1) + " seconds....</b>"
 	}
-	else if (popupsAT.portal) {
-		document.getElementById('tipTitle').innerHTML = "<b>NOTICE: Auto-Portaling in " + (popupsAT.remainingTime / 1000).toFixed(1) + " seconds....</b>"
+	else if (MODULES.popups.portal) {
+		document.getElementById('tipTitle').innerHTML = "<b>NOTICE: Auto-Portaling in " + (MODULES.popups.remainingTime / 1000).toFixed(1) + " seconds....</b>"
 	}
 }
 
 //It sets the options for the heirloom auto selecter based on the highest zone ever reached, and the current universe.
 function autoHeirloomOptions(heirloomType) {
-	if (!MODULES_AT.loaded) return;
+	if (!atSettings.initialise.loaded) return;
 	var heirloomRarity = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 	var raretokeep = heirloomRarity.indexOf(getPageSetting('heirloomAutoRareToKeep' + heirloomType.slice(0, 1).toUpperCase() + heirloomType.slice(1, heirloomType.length), currSettingUniverse));
 	var heirloomModsArray = [];
@@ -5122,13 +5126,13 @@ function updateCustomButtons(initialLoad) {
 		//Looks for the settings that don't exist anymore and deletes them.
 		if (item === null || typeof item.id === 'undefined') {
 			//Skip ATversion. Deletes old settings.
-			if (MODULES_AT.loaded) delete autoTrimpSettings[setting];
+			if (atSettings.initialise.loaded) delete autoTrimpSettings[setting];
 			continue;
 		}
 		var settingUniverse = item.universe;
 		//Looping the deletion process again for old settings that got loaded but don't have the universe property.
 		if (!Array.isArray(settingUniverse)) {
-			if (MODULES_AT.loaded) delete autoTrimpSettings[setting];
+			if (atSettings.initialise.loaded) delete autoTrimpSettings[setting];
 			continue;
 		}
 		//Skips ever looking at settings with the mazDefaultArray type.
@@ -5264,16 +5268,16 @@ function updateCustomButtons(initialLoad) {
 
 function settingUniverse(setting) {
 	if (setting === 'buyBuildings') {
-		return getPageSetting('buildingsType', currPortalUniverse);
+		return getPageSetting('buildingsType', portalUniverse);
 	}
 	if (setting === 'equipOn') {
-		return getPageSetting('equipOn', currPortalUniverse);
+		return getPageSetting('equipOn', portalUniverse);
 	}
 	if (setting === 'autoJobs') {
-		return getPageSetting('jobType', currPortalUniverse);
+		return getPageSetting('jobType', portalUniverse);
 	}
 	if (setting === 'autoMaps') {
-		return getPageSetting('autoMaps', currPortalUniverse);
+		return getPageSetting('autoMaps', portalUniverse);
 	}
 }
 
@@ -5285,30 +5289,33 @@ function autoMapsStatusTW() {
 		console.log("Retrying to setup AutoMaps status in Time Warp.")
 		return;
 	};
-	//Remove the status textbox if it already exists.
-	if (document.getElementById('autoMapStatusTW') !== null) {
-		document.getElementById('autoMapStatusTW').parentNode.removeChild(document.getElementById('autoMapStatusTW'));
-	}
 
 	//The position of the status textbox is based on if we're mapping or not mapping as each one has a different CSS position.
-	var whereToPlace = document.getElementById("offlineMapBtns").style.display === 'block' ? "offlineMapBtns" : "offlineZoneBtns";
+	var whereToPlace = ["offlineZoneBtns", "offlineMapBtns"];
+	var id = ["autoMapStatusMapsTW", "autoMapStatusTW"];
+	var autoMapsStatusSection;
 
 	//Status textbox
-	var autoMapsStatusContainer = document.createElement("DIV");
-	autoMapsStatusContainer.id = 'autoMapStatusTW';
-	autoMapsStatusContainer.setAttribute("class", "noselect");
-	autoMapsStatusContainer.setAttribute("style", "display: block; font-size: 1.25vw; text-align: center; background-color: rgba(0,0,0,0.3);");
-	autoMapsStatusContainer.setAttribute("onmouseout", 'tooltip("hide")');
+	var autoMapsStatusContainer;
 
-	//Place it at the bottom of the appropriate (left hand side )
-	document.getElementById(whereToPlace).children[1].insertAdjacentHTML('afterend', '<br>');
-	var autoMapsStatusSection = document.getElementById(whereToPlace);
-	autoMapsStatusSection.replaceChild(autoMapsStatusContainer, document.getElementById(whereToPlace).children[2]);
+	for (var item in whereToPlace) {
+		if (document.getElementById(id[item]) !== null) continue;
+		autoMapsStatusContainer = document.createElement("DIV");
+		autoMapsStatusContainer.id = id[item];
+		autoMapsStatusContainer.setAttribute("class", "noselect");
+		autoMapsStatusContainer.setAttribute("style", "display: block; font-size: 1.25vw; text-align: center; background-color: rgba(0,0,0,0.3); position: absolute; bottom: 1vw; left: 10%; right: 10%");
+		autoMapsStatusContainer.setAttribute("onmouseout", 'tooltip("hide")');
+		//Place it at the bottom of the appropriate (left hand side )
+		document.getElementById(whereToPlace[item]).children[1].insertAdjacentHTML('afterend', '<br>');
+		autoMapsStatusSection = document.getElementById(whereToPlace[item]);
+		autoMapsStatusSection.replaceChild(autoMapsStatusContainer, document.getElementById(whereToPlace[item]).children[2]);
+	}
+
 	updateAutoMapsStatus(false);
 }
 
+//Add the Time Warp settings to the right hand side section.
 function setupTimeWarpAT() {
-	//Add the Time Warp settings to the right hand side section.
 	autoMapsStatusTW();
 
 	//Remove the automaps button if it already exists.
@@ -5335,8 +5342,6 @@ function setupTimeWarpAT() {
 		document.getElementById('offlineInnerWrapper').children[3].insertAdjacentHTML('afterend', '<br>');
 		var offlineProgressParent = document.getElementById("offlineProgressWrapper").parentNode;
 		offlineProgressParent.replaceChild(settingsRow, document.getElementById("offlineProgressWrapper").parentNode.children[4]);
-
-
 
 		//AutoJobs button.
 		var autoJobs = true;
@@ -5444,7 +5449,6 @@ function autoMapsButton() {
 	return autoMapsContainer;
 }
 
-
 //Attach AT related buttons to the main TW UI.
 //Will attach AutoMaps, AutoMaps Status, AutoTrimps Settings, AutoJobs, AutoStructure
 offlineProgress.originalStart = offlineProgress.start;
@@ -5455,16 +5459,6 @@ offlineProgress.start = function () {
 	}
 	catch (e) { console.log("Loading Time Warp failed " + e, "other") }
 }
-//Attach AutoMaps status information to the main TW UI - lefthand side frame whenever the mapBtns function is called.
-//This has to be here otherwise when the mapping situation of the save changes it won't display the status.
-offlineProgress.originalupdateMapBtns = offlineProgress.updateMapBtns;
-offlineProgress.updateMapBtns = function () {
-	offlineProgress.originalupdateMapBtns(...arguments)
-	try {
-		autoMapsStatusTW();
-	}
-	catch (e) { console.log("Loading AutoMaps TW Status failed " + e, "other") }
-}
 
 //Make AT button visible on timewarp screen if already in TW when loading AT
 if (usingRealTimeOffline) {
@@ -5473,7 +5467,7 @@ if (usingRealTimeOffline) {
 
 //When clicking changelog button set new attribute, text & update Changelog AT Setting to proper value if not already correct.
 function updateChangelogButton() {
-	if (autoTrimpSettings.ATversionChangelog === MODULES_AT.ATversion) return;
+	if (autoTrimpSettings.ATversionChangelog === atSettings.initialise.version) return;
 	var changeLogBtn = document.getElementById("atChangelog");
 	if (changeLogBtn !== null) {
 		//Swap the button class remove colour of new changelog.
@@ -5481,7 +5475,7 @@ function updateChangelogButton() {
 		swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
 		//Remove the new changelog text if it exists.
 		changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New", "");
-		autoTrimpSettings.ATversionChangelog = MODULES_AT.ATversion;
+		autoTrimpSettings.ATversionChangelog = atSettings.initialise.version;
 		saveSettings();
 	}
 }
@@ -5497,8 +5491,8 @@ function setupATButtons() {
 
 	//AutoTrimps Changelog button
 	var newItem = document.createElement("TD");
-	var newChanges = autoTrimpSettings.ATversionChangelog !== MODULES_AT.ATversion;
-	newItem.appendChild(document.createTextNode("AT " + MODULES_AT.ATversion.split('SadAugust ')[1] + (newChanges ? " | What's New" : "")));
+	var newChanges = autoTrimpSettings.ATversionChangelog !== atSettings.initialise.version;
+	newItem.appendChild(document.createTextNode("AT " + atSettings.initialise.version.split('SadAugust ')[1] + (newChanges ? " | What's New" : "")));
 	newItem.setAttribute("id", "atChangelog");
 	newItem.setAttribute("class", "btn" + (newChanges ? " btn-changelogNew" : " btn-primary"));
 	newItem.setAttribute("onclick", "window.open(basepath + 'updates.html', '_blank'); updateChangelogButton();");
@@ -5508,7 +5502,7 @@ function setupATButtons() {
 	//AutoTrimps setting button
 	var newItem = document.createElement("TD");
 	newItem.appendChild(document.createTextNode("AutoTrimps"));
-	newItem.setAttribute("id", "atSettings");
+	newItem.setAttribute("id", "atSettingsBtn");
 	newItem.setAttribute("class", "btn btn-default");
 	newItem.setAttribute("onclick", "autoToggle()");
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
@@ -5713,7 +5707,7 @@ function getDailyHeHrStats() {
 
 function updateATVersion() {
 	//Setting Conversion!
-	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === MODULES_AT.ATversion) return;
+	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust') && autoTrimpSettings["ATversion"] === atSettings.initialise.version) return;
 	if (typeof (autoTrimpSettings) === 'undefined') return;
 	var changelog = [];
 
@@ -5736,7 +5730,7 @@ function updateATVersion() {
 	}
 
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust')
-		&& autoTrimpSettings["ATversion"] !== MODULES_AT.ATversion
+		&& autoTrimpSettings["ATversion"] !== atSettings.initialise.version
 	) {
 
 		var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
@@ -6107,7 +6101,7 @@ function updateATVersion() {
 		changelog.push("There has been an AutoTrimps update. <a href=\"" + changelogURL + "\" 'updates.html target='_blank'><u>Click here</u></a> to view the changelog.");
 	}
 
-	autoTrimpSettings["ATversion"] = MODULES_AT.ATversion;
+	autoTrimpSettings["ATversion"] = atSettings.initialise.version;
 	if (changelog.length !== 0) {
 		printChangelog(changelog);
 		verticalCenterTooltip(false, true);

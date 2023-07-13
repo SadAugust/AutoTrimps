@@ -25,6 +25,10 @@
    - Remove Gamma Burst setting?
      - Currently going to cause some issues in late game scenarios if people don't have it on. 
 
+# MAZ
+   - Add Advanced toggle to setting
+     - Enabling this will show more settings
+
 # Outside of coding
    - Potentially setup a discord server? 
         - Pros would be a commit channel that can allow users to see if they should refresh.

@@ -76,7 +76,7 @@ function autoGather() {
 	var firstFightOK = game.global.world > 1 || game.global.lastClearedCell >= 0;
 	var researchAvailable = document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden';
 	var scienceAvailable = document.getElementById('science').style.visibility !== 'hidden';
-	var needScience = game.resources.science.owned < resourceNeeded.science;
+	var needScience = game.resources.science.owned < MODULES.resourceNeeded.science;
 	var needScientists = firstFightOK && !challengeActive('Scientist') && !game.upgrades.Scientists.done && game.resources.science.owned < 100 && scienceAvailable;
 
 	//Init - Others
@@ -200,15 +200,15 @@ function autoGather() {
 
 	//High Priority Research - When manual research still has more impact than workers
 	if (researchAvailable) {
-		/* if (resourceNeeded.food > game.resources.food.owned && getPlayerModifier() > getPerSecBeforeManual('Farmer')) {
+		/* if (MODULES.resourceNeeded.food > game.resources.food.owned && getPlayerModifier() > getPerSecBeforeManual('Farmer')) {
 			safeSetGather('food');
 			return;
 		} */
-		/* if (resourceNeeded.wood > game.resources.wood.owned && getPlayerModifier() > getPerSecBeforeManual('Lumberjack')) {
+		/* if (MODULES.resourceNeeded.wood > game.resources.wood.owned && getPlayerModifier() > getPerSecBeforeManual('Lumberjack')) {
 			safeSetGather('wood');
 			return;
 		}
-		if (resourceNeeded.metal > game.resources.metal.owned && getPlayerModifier() > getPerSecBeforeManual('Miner')) {
+		if (MODULES.resourceNeeded.metal > game.resources.metal.owned && getPlayerModifier() > getPerSecBeforeManual('Miner')) {
 			safeSetGather('metal');
 			return;
 		} */

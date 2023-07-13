@@ -15,8 +15,6 @@ MODULES["upgrades"].customMetalRatio = 0.5; //Change the Custom Delta factor ins
 function gigaTargetZone() {
 	//Init
 	var targetZone = 59;
-	var daily = challengeActive('Daily');
-	var runningC2 = game.global.runningChallengeSquared;
 	var heliumChallengeActive = game.global.challengeActive && game.challenges[game.global.challengeActive].heliumThrough;
 
 	//Try setting target zone to the zone we finished last portal on
@@ -25,8 +23,8 @@ function gigaTargetZone() {
 
 	//Also consider the zone we configured our portal to be used
 	var portalZone = 0;
-	if (autoTrimpSettings.autoPortal.selected === "Helium Per Hour") portalZone = (daily) ? getPageSetting('dailyDontPortalBefore', 1) : getPageSetting('heHrDontPortalBefore', 1);
-	else if (autoTrimpSettings.autoPortal.selected === "Custom") portalZone = (daily) ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone', 1);
+	if (autoTrimpSettings.autoPortal.selected === "Helium Per Hour") portalZone = (hdStats.isDaily) ? getPageSetting('dailyDontPortalBefore', 1) : getPageSetting('heHrDontPortalBefore', 1);
+	else if (autoTrimpSettings.autoPortal.selected === "Custom") portalZone = (hdStats.isDaily) ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone', 1);
 
 	//Finds a target zone for when doing c2
 	var c2zone = 0;
@@ -34,12 +32,12 @@ function gigaTargetZone() {
 	else if (getPageSetting("c2Finish") > 0) c2zone = getPageSetting("c2Finish");
 
 	//Set targetZone
-	if (!runningC2) targetZone = Math.max(targetZone, lastPortalZone, challengeZone, portalZone - 1);
+	if (!hdStats.isC3) targetZone = Math.max(targetZone, lastPortalZone, challengeZone, portalZone - 1);
 	else targetZone = Math.max(targetZone, c2zone - 1);
 
 	//Target Fuel Zone
-	if (daily && getPageSetting("AutoGenDC") !== 0) targetZone = Math.min(targetZone, 230);
-	if (runningC2 && getPageSetting("AutoGenC2") !== 0) targetZone = Math.min(targetZone, 230);
+	if (hdStats.isDaily && getPageSetting("AutoGenDC") !== 0) targetZone = Math.min(targetZone, 230);
+	if (hdStats.isC3 && getPageSetting("AutoGenC2") !== 0) targetZone = Math.min(targetZone, 230);
 	if (MODULES.upgrades.targetFuelZone && (getPageSetting("fuellater") >= 1 || getPageSetting("beforegen") !== 0)) targetZone = Math.min(targetZone, Math.max(230, getPageSetting("fuellater")));
 
 	//Failsafe
