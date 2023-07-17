@@ -1,22 +1,7 @@
-MODULES["jobs"] = {};
-
-MODULES["jobs"].autoRatioHaz = [1, 1, 1];
-MODULES["jobs"].autoRatio7 = [1, 1, 98];
-MODULES["jobs"].autoRatio6 = [1, 7, 12];
-MODULES["jobs"].autoRatio5 = [1, 2, 22];
-MODULES["jobs"].autoRatio4 = [1, 1, 10];
-MODULES["jobs"].autoRatio3 = [3, 1, 4];
-MODULES["jobs"].autoRatio2 = [3, 3, 5];
-MODULES["jobs"].autoRatio1 = [1.1, 1.15, 1.2];
-MODULES["jobs"].customRatio;
-
-MODULES["jobs"].scientistRatio = 8;
-MODULES["jobs"].scientistRatio2 = 4;
-MODULES["jobs"].scientistRatio3 = 16;
-MODULES["jobs"].scientistRatio4 = 64;
-MODULES["jobs"].scientistRatio5 = 256;
-MODULES["jobs"].scientistRatio6 = 1024;
-MODULES["jobs"].scientistRatio7 = 4098;
+MODULES.jobs = {
+	scientist: { ratio: 8, ratio2: 4, ratio3: 16, ratio4: 64, ratio5: 256, ratio6: 1024, ratio7: 4098, },
+	autoRatio: { ratioHaz: [1, 1, 1], ratio7: [1, 1, 98], ratio6: [1, 7, 12], ratio5: [1, 2, 22], ratio4: [1, 1, 10], ratio3: [3, 1, 4], ratio2: [3, 3, 5], ratio1: [1.1, 1.15, 1.2], },
+}
 
 function safeBuyJob(jobTitle, amount) {
 	if (!Number.isFinite(amount) || amount === 0 || typeof amount === 'undefined' || Number.isNaN(amount)) {
@@ -72,29 +57,27 @@ function workerRatios(workerRatio) {
 
 	var ratioSet;
 
-	if (MODULES["jobs"].customRatio) {
-		ratioSet = MODULES["jobs"]['customRatio'];
-	} else if (game.global.universe === 2 && game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10) {
-		ratioSet = MODULES["jobs"]['autoRatioHaz'];
+	if (game.global.universe === 2 && game.global.StaffEquipped.rarity !== undefined && game.global.StaffEquipped.rarity >= 10) {
+		ratioSet = MODULES["jobs"].autoRatio.ratioHaz;
 	} else if (game.global.world >= 300) {
-		ratioSet = MODULES["jobs"]['autoRatio7'];
+		ratioSet = MODULES["jobs"].autoRatio.ratio7;
 	} else if (game.buildings.Tribute.owned > 3000 && mutations.Magma.active()) {
-		ratioSet = MODULES["jobs"]['autoRatio6'];
+		ratioSet = MODULES["jobs"].autoRatio.ratio6;
 	} else if (game.buildings.Tribute.owned > 1500) {
-		ratioSet = MODULES["jobs"]['autoRatio5'];
+		ratioSet = MODULES["jobs"].autoRatio.ratio5;
 	} else if (game.buildings.Tribute.owned > 1000) {
-		ratioSet = MODULES["jobs"]['autoRatio4'];
+		ratioSet = MODULES["jobs"].autoRatio.ratio4;
 	} else if (game.resources.trimps.realMax() > 3000000) {
-		ratioSet = MODULES["jobs"]['autoRatio3'];
+		ratioSet = MODULES["jobs"].autoRatio.ratio3;
 	} else if (game.resources.trimps.realMax() > 300000) {
-		ratioSet = MODULES["jobs"]['autoRatio2'];
+		ratioSet = MODULES["jobs"].autoRatio.ratio2;
 	} else if (challengeActive('Metal') || challengeActive('Transmute')) {
 		ratioSet = [4, 5, 0];
 	} else if (game.global.world < 5) {
 		ratioSet = [1.5, 0.7, 1];
 	}
 	else {
-		ratioSet = MODULES["jobs"]['autoRatio1'];
+		ratioSet = MODULES["jobs"].autoRatio.ratio1;
 	}
 
 	if (workerRatio.includes('Farmer')) return ratioSet[0]
@@ -282,19 +265,19 @@ function buyJobs(forceRatios) {
 		if (MODULES.resourceNeeded.science > 0 && MODULES.resourceNeeded.science > game.resources.science.owned && desiredRatios[3] < 1) desiredRatios[3] = 1;
 	} else {
 		// Weird scientist ratio hack. Based on previous AJ, I don't know why it's like this.
-		var scientistMod = MODULES["jobs"].scientistRatio;
+		var scientistMod = MODULES["jobs"].scientist.ratio;
 		if (game.jobs.Farmer.owned < 100)
-			scientistMod = MODULES["jobs"].scientistRatio2;
+			scientistMod = MODULES["jobs"].scientist.ratio2;
 		if (game.global.world >= 50)
-			scientistMod = MODULES["jobs"].scientistRatio3;
+			scientistMod = MODULES["jobs"].scientist.ratio3;
 		if (game.global.world >= 65)
-			scientistMod = MODULES["jobs"].scientistRatio4;
+			scientistMod = MODULES["jobs"].scientist.ratio4;
 		if (game.global.world >= 90)
-			scientistMod = MODULES["jobs"].scientistRatio5;
+			scientistMod = MODULES["jobs"].scientist.ratio5;
 		if (game.global.world >= 120)
-			scientistMod = MODULES["jobs"].scientistRatio6;
+			scientistMod = MODULES["jobs"].scientist.ratio6;
 		if (game.global.world >= 150)
-			scientistMod = MODULES["jobs"].scientistRatio7;
+			scientistMod = MODULES["jobs"].scientist.ratio7;
 
 		if (MODULES.resourceNeeded.science > 0 && MODULES.resourceNeeded.science > game.resources.science.owned) scientistMod = 1;
 

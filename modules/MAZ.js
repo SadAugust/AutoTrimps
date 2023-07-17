@@ -11,7 +11,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		swapClass("tooltipExtra", "tooltipExtraNone", elem);
 	}
 	document.getElementById('tipText').className = "";
-	mazWindowOpen = true;
+	MODULES.popups.mazWindowOpen = true;
 
 	var tooltipText;
 	var costText = "";
@@ -1681,17 +1681,13 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 	//Disable Void Map global variables when saving Void Map settings to ensure we aren't running voids at the wrong zone after updating.
 	if (voidMap) {
-		MODULES.mapFunctions.voidTrigger = 'None';
-		MODULES.mapFunctions.voidHDRatio = Infinity;
-		MODULES.mapFunctions.voidVHDRatio = Infinity;
-		MODULES.mapFunctions.voidHDInfo = '0_0_0';
-		MODULES.mapFunctions.voidHDIndex = Infinity;
-		MODULES.mapFunctions.boneCharge = false;
-		MODULES.mapFunctions.portalAfterVoids = false;
-		MODULES.mapFunctions.portalZone = Infinity;
-		MODULES.mapFunctions.voidFarm = false;
-
-		voidMaps();
+		/* delete mapSettings.voidHitsSurvived;
+		delete mapSettings.boneChargeUsed;
+		delete mapSettings.voidHDIndex;
+		delete mapSettings.dropdown;
+		delete mapSettings.dropdown2;
+		delete mapSettings.voidTrigger;
+		delete mapSettings.portalAfterVoids; */
 	}
 
 	//Disables Atlantrimp for 1 second and recalculates mapSettings variable.

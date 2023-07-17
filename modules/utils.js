@@ -659,7 +659,7 @@ function testEquipmentMetalSpent() {
 		return actualCost;
 	}
 
-	for (var i in equipmentList) {
+	for (var i in MODULES.equipment) {
 		if (game.equipment[i].locked) continue;
 		prestigeCost += getTotalPrestigeCost(i, game.equipment[i].prestige - 1);
 	}

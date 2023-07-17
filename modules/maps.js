@@ -1,21 +1,22 @@
 //Mapping Variables
-MODULES.maps = {};
-MODULES.maps.fragmentFarming = false;
-MODULES.maps.lifeActive = false;
-MODULES.maps.lifeCell = 0;
-MODULES.maps.slowScumming = false;
-MODULES.maps.mapRepeats = 0;
-MODULES.maps.mapTimer = 0;
-
-var lastMapWeWereIn = null;
+MODULES.maps = {
+	fragmentFarming: false,
+	lifeActive: false,
+	lifeCell: 0,
+	slowScumming: false,
+	mapRepeats: 0,
+	mapRepeatsSmithy: [0, 0, 0],
+	mapTimer: 0,
+	lastMapWeWereIn: null,
+};
 
 function runSelectedMap(mapId, madAdjective) {
 	selectMap(mapId);
 	runMap();
-	if (lastMapWeWereIn !== getCurrentMapObject()) {
+	if (MODULES.maps.lastMapWeWereIn !== getCurrentMapObject()) {
 		const map = game.global.mapsOwnedArray[getMapIndex(mapId)];
 		debug(`Running ${madAdjective} map ${prettifyMap(map)}`, "maps", 'th-large');
-		lastMapWeWereIn = getCurrentMapObject();
+		MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 	}
 }
 
@@ -140,6 +141,28 @@ function makeResourceTooltip() {
 
 	tooltip += '\")';
 	return tooltip;
+}
+
+//Looks to see if we currently have a map that matches the criteria we want to run if not tells us to create a new one
+function shouldFarmMapCreation(pluslevel, special, biome, difficulty, loot, size) {
+	//Pre-Init
+	if (!pluslevel) pluslevel = 0;
+	if (!special) special = getAvailableSpecials('lmc');
+	if (!biome) biome = getBiome();
+	if (!difficulty) difficulty = 0.75;
+	if (!loot) loot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.farmlandsUnlocked ? 2.6 : game.singleRunBonuses.goldMaps.owned ? 2.85 : 1.85;
+	if (!size) size = 20;
+
+	for (var mapping in game.global.mapsOwnedArray) {
+		if (!game.global.mapsOwnedArray[mapping].noRecycle && (
+			(game.global.world + pluslevel) === game.global.mapsOwnedArray[mapping].level) &&
+			(game.global.mapsOwnedArray[mapping].bonus === special || game.global.mapsOwnedArray[mapping].bonus === undefined && special === '0') &&
+			game.global.mapsOwnedArray[mapping].location === biome) {
+
+			return (game.global.mapsOwnedArray[mapping].id);
+		}
+	}
+	return ("create");
 }
 
 function autoMap() {
@@ -377,25 +400,22 @@ function autoMap() {
 		//Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
 		//Not FULLY bugtested but works with my initial tests and is hopefully bug free.
 		function abandonMapCheck() {
+			if (mapSettings.mapName === 'Desolation Gear Scum' && game.global.lastClearedCell + 2 === 1) return;
 			if (game.global.currentMapId !== '') {
 				//If we don't have info on the previous map then set it.
-				if (lastMapWeWereIn === null) lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
+				if (MODULES.maps.lastMapWeWereIn === null) MODULES.maps.lastMapWeWereIn = game.global.mapsOwnedArray[getMapIndex(game.global.currentMapId)];
 				//If we do have info on the previous map then check data for it.
-				if (lastMapWeWereIn !== null) {
-					/* //If we're in a map that we created for another setting then recycle it to create the map we want.
-					//Is this even required? I don't think it is tbh..... removing it would mean I can remove adding mapName to each map object.
-					if (lastMapWeWereIn.mapName !== mapSettings.mapName) recycleMap(); */
-
+				if (MODULES.maps.lastMapWeWereIn !== null) {
 					//Ensure the map has the correct biome, if not then recycle it.
-					if (mapSettings.biome && lastMapWeWereIn.location !== mapSettings.biome) recycleMap();
+					if (mapSettings.biome && MODULES.maps.lastMapWeWereIn.location !== mapSettings.biome) recycleMap();
 					//If the selected map is the wrong level then recycle it.
-					if (lastMapWeWereIn.level !== (mapSettings.mapLevel + game.global.world)) recycleMap();
+					if (MODULES.maps.lastMapWeWereIn.level !== (mapSettings.mapLevel + game.global.world)) recycleMap();
 					//If the selected map is the wrong special then recycle it.
 					//Since the game doesn't track bonus if it doesn't exist we need to check if the last map we were in had a bonus or not.
-					if (lastMapWeWereIn.bonus === undefined) {
+					if (MODULES.maps.lastMapWeWereIn.bonus === undefined) {
 						if (mapSettings.special !== '0') recycleMap();
 					}
-					else if (lastMapWeWereIn.bonus !== mapSettings.special) recycleMap();
+					else if (MODULES.maps.lastMapWeWereIn.bonus !== mapSettings.special) recycleMap();
 				}
 			}
 		}
@@ -424,7 +444,7 @@ function autoMap() {
 				debug("Can't afford the map we designed, #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
 				if (!game.jobs.Explorer.locked) fragmentFarm();
 				else runSelectedMap(highestMap.id, 'highest');
-				lastMapWeWereIn = getCurrentMapObject();
+				MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 			} else {
 				debug("Buying a Map, level: #" + maplvlpicked + (mappluslevel > 0 ? " +" + mappluslevel : "") + " " + mapspecial, "maps", 'th-large');
 				updateMapCost(true);
@@ -448,7 +468,7 @@ function autoMap() {
 				}
 				if (result === 1) {
 					runMap();
-					lastMapWeWereIn = getCurrentMapObject();
+					MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 				}
 			}
 		} else {
@@ -464,7 +484,7 @@ function autoMap() {
 			var voidorLevelText = themapobj.location === "Void" ? " Void: " : levelText;
 			debug("Running selected " + selectedMap + voidorLevelText + " Name: " + themapobj.name, "maps", 'th-large');
 			runMap();
-			lastMapWeWereIn = getCurrentMapObject();
+			MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 		}
 	}
 

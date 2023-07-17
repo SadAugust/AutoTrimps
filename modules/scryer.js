@@ -30,7 +30,7 @@ function readyToSwitch(stance = "S") {
 }
 
 function useScryerStance() {
-	var scry = 4;
+	var scry = 0;
 	var scryF = 'S';
 	var x = 0;
 
@@ -43,7 +43,7 @@ function useScryerStance() {
 	var AutoStance = getPageSetting('AutoStance');
 
 	function autoStanceFunctionScryer() {
-		if (AutoStance === 3 || (getPageSetting('use3daily') && challengeActive('Daily'))) windStance();
+		if (AutoStance === 3 || (getPageSetting('use3daily') && hdStats.isDaily)) windStance();
 		else if (AutoStance === 1) autoStance();
 		else if (AutoStance === 2) autoStanceD();
 	}
@@ -53,7 +53,7 @@ function useScryerStance() {
 	var mapsActive = game.global.mapsActive;
 	var mapObject = mapsActive ? getCurrentMapObject() : null;
 	var skipCorrupted = getPageSetting('ScryerSkipCorrupteds2') === 0;
-	var settingPrefix = challengeActive('Daily') ? 'd' : '';
+	var settingPrefix = hdStats.isDaily ? 'd' : '';
 
 	var never_scry = game.global.preMapsActive || game.global.gridArray.length === 0 || game.global.world <= 60 || game.stats.highestLevel.valueTotal() < 180;
 
@@ -185,24 +185,23 @@ function useScryerStance() {
 	var max_zone = getPageSetting('ScryerMaxZone');
 	var valid_min = game.global.world >= min_zone && game.global.world > 60;
 	var valid_max = max_zone <= 0 || game.global.world < max_zone;
-
 	if (useScryer && valid_min && valid_max && (!mapsActive || getPageSetting('onlyminmaxworld') === 0) && readyToSwitch()) {
 		//Smooth transition to S before killing the target
-		if (transitionRequired) {
-			for (var cp = 2; cp >= -2; cp--) {
-				if (survive("D", cp) && !oneShotPower("D", 0, true)) {
+		if (transitionRequired || (game.global.formation < 4 && !isScryerBonusActive())) {
+			for (critPower = 2; critPower >= -2; critPower--) {
+				if (survive("D", critPower) && !oneShotPower("D", 0, true)) {
 					safeSetStance(2); return;
 				}
-				else if (survive("XB", cp) && !oneShotPower("X", 0, true)) {
+				else if (survive("XB", critPower) && !oneShotPower("X", 0, true)) {
 					safeSetStance(x); return;
 				}
-				else if (survive("B", cp) && !oneShotPower("B", 0, true)) {
+				else if (survive("B", critPower) && !oneShotPower("B", 0, true)) {
 					safeSetStance(3); return;
 				}
-				else if (survive("X", cp) && !oneShotPower("X", 0, true)) {
+				else if (survive("X", critPower) && !oneShotPower("X", 0, true)) {
 					safeSetStance(x); return;
 				}
-				else if (survive("H", cp) && !oneShotPower("H", 0, true)) {
+				else if (survive("H", critPower) && !oneShotPower("H", 0, true)) {
 					safeSetStance(1); return;
 				}
 			}

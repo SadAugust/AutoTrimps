@@ -2,6 +2,7 @@
 //Div for the settings menu
 function automationMenuSettingsInit() {
 	var a = document.getElementById("settingsRow");
+	var b;
 	b = document.createElement("DIV");
 	b.id = "autoSettings";
 	b.setAttribute("style", "display: none; max-height: 92.5vh;overflow: auto;");
@@ -52,11 +53,11 @@ function minimizeAllTabs() {
 
 function maximizeAllTabs() {
 	for (var a = document.getElementsByClassName("tabcontent"), b = 0, c = a.length; b < c; b++) {
-		if (a[b].id.toLowerCase() === 'test') continue;
+		if (a[b].id.toLowerCase() === 'test' || a[b].id.toLowerCase() === 'beta') continue;
 		a[b].style.display = "block";
 	}
 	for (var d = document.getElementsByClassName("tablinks"), b = 0, c = d.length; b < c; b++) {
-		if (d[b].id.toLowerCase() === 'test') continue;
+		if (d[b].id.toLowerCase() === 'test' || a[b].id.toLowerCase() === 'beta') continue;
 		(d[b].style.display = "block"), d[b].className.includes(" active") || (d[b].className += " active");
 	}
 }
@@ -91,6 +92,7 @@ function initializeAllTabs() {
 	createTabs("Display", "Display & Spam Settings", addTabsDiv, addtabsUL);
 	createTabs("Import Export", "Import & Export Settings", addTabsDiv, addtabsUL);
 	createTabs("Test", "Basic testing functions - Should never be seen by users", addTabsDiv, addtabsUL);
+	createTabs("Beta", "Beta features - Should never be seen by users as they aren't user ready.", addTabsDiv, addtabsUL);
 	createTabs("Legacy", "Legacy Settings. Will be removed every major patch cycle.", addTabsDiv, addtabsUL);
 	var li_0 = document.createElement('li');
 	var a_0 = document.createElement('a');
@@ -2393,10 +2395,7 @@ function initializeAllSettings() {
 				description += "<p><b>Ignore All Crits</b><br>Will ignore crits from enemies in challenges, daily mods or void maps.";
 				description += "<p><b>Recommended:</b> Safety First</p>";
 				return description;
-			}, 'multitoggle', 0, null, 'Combat', [1],
-			function () {
-				return (autoTrimpSettings.AutoStance.value !== 3)
-			});
+			}, 'multitoggle', 0, null, 'Combat', [1, 2]);
 		createSetting('ForceAbandon',
 			function () { return ('Trimpicide') },
 			function () {
@@ -3796,6 +3795,7 @@ function initializeAllSettings() {
 	}
 
 	//Testing - Hidden Features for testing purposes! Please never seek these out!
+	//Beta - Features that are in beta testing and may not work properly!
 	const displayTesting = true;
 	if (displayTesting) {
 		createSetting('gameUser',
@@ -3901,6 +3901,7 @@ function initializeAllSettings() {
 				return description;
 			}, 'action', 'testTrimpStats();', null, 'Test', [0]);
 
+
 		createSetting('testMapScumming',
 			function () { return ('Slow Map Scum') },
 			function () {
@@ -3908,8 +3909,7 @@ function initializeAllSettings() {
 				description += "<p>Will only work if you\'re in maps and on cell 1.</p>";
 				description += "<p><b>Due to the map remaking process your game will hang for roughly 60s while this finds an ideal map.</b></p>";
 				return description;
-			}, 'action', 'mapScumming(9);', null, 'Test', [0]);
-
+			}, 'action', 'mapScumming(9);', null, 'Beta', [0]);
 		createSetting('testMapScummingValue',
 			function () { return ('Slow Map Value') },
 			function () {
@@ -3917,8 +3917,8 @@ function initializeAllSettings() {
 				description += "<p>If running <b>Desolation</b> will roll for <b>9</b> slow enemies, otherwise will go for <b>10</b>.</p>";
 				description += "<p><b>Due to the map remaking process your game will hang for a while till this finds an ideal map.</b></p>";
 				return description;
-			}, 'value', 1e10, null, 'Test', [2]);
-
+			}, 'value', 1e10, null, 'Beta', [2]);
+		3
 		createSetting('debugEqualityStats',
 			function () { return ('Debug Equality Stats') },
 			function () {
@@ -4099,7 +4099,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btn.setAttribute("onmouseout", 'tooltip("hide")');
 		btn.setAttribute("onchange", 'settingChanged("' + id + '")');
-		listItems = list();
+		var listItems = list();
 		for (var item in listItems) {
 			var option = document.createElement("option");
 			option.value = listItems[item];
@@ -4586,6 +4586,7 @@ function heliumC2Challenges() {
 
 //Checks to see if we should inform the user of any new challenge unlocks.
 function challengeUnlockCheck() {
+	if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
 	if (game.global.universe === 2) return challengeUnlockCheckU2();
 	var hze = game.stats.highestLevel.valueTotal();
 	var challenge = ["None"];
@@ -4819,7 +4820,7 @@ function remakeTooltip() {
 			tooltip('confirm', null, 'update', hzeMessage, ('MODULES.popups.challenge = false, delete hzeMessage'), 'AutoTrimps New Unlock!');
 		}
 		else {
-			tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
+			tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'MODULES.portal.zonePostpone+=1; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
 		}
 	}
 	else if (MODULES.popups.respecAtlantrimp) {
@@ -4844,7 +4845,7 @@ function autoHeirloomOptions(heirloomType) {
 		if (item === "empty") continue;
 		if (typeof heirloom.filter !== 'undefined' && !heirloom.filter()) continue;
 		if (heirloom.steps && heirloom.steps[raretokeep] === -1) continue;
-		heirloomModsArray.push(heirloomMods[heirloomType][item]);
+		heirloomModsArray.push(MODULES.heirloomMods[heirloomType][item]);
 	}
 
 	return heirloomModsArray;
@@ -5261,6 +5262,9 @@ function updateCustomButtons(initialLoad) {
 		}
 		if (document.getElementById("tabTest") !== null) {
 			document.getElementById("tabTest").style.display = !gameUserCheck() ? "none" : "";
+		}
+		if (document.getElementById("tabBeta") !== null) {
+			document.getElementById("tabBeta").style.display = !gameUserCheck() ? "none" : "";
 		}
 	}
 	modifyParentNodeUniverseSwap();
@@ -5713,6 +5717,8 @@ function updateATVersion() {
 
 	if (autoTrimpSettings["ATversion"] === undefined || !autoTrimpSettings["ATversion"].includes('SadAugust')) {
 
+		if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
+
 		var description = "<p>Welcome to the SadAugust fork of AutoTrimps!</p>";
 
 		description += "<p><b>For those who are new to this fork here's some useful information on how to set it up.</b></p><br>";
@@ -6089,9 +6095,15 @@ function updateATVersion() {
 			if (typeof (tempSettings["bloodthirstVoidMax"]) !== 'undefined') {
 				autoTrimpSettings.bloodthirstVoidMax.enabled = false;
 			}
+			changelog.push("AutoTrimps now has an actual changelog! You can find it right next to the AutoTrimps button.<br>\
+			You will now only be shown this popup if there's an update and you're in Time Warp as you would be unable to see the changelog otherwise.");
 		}
-		changelog.push("AutoTrimps now has an actual changelog! You can find it right next to the AutoTrimps button.<br>\
-		You will now only be shown this popup if there's an update and you're in Time Warp as you would be unable to see the changelog otherwise.");
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.21') {
+			if (typeof (tempSettings["IgnoreCrits"]) !== 'undefined') {
+				autoTrimpSettings.IgnoreCrits.valueU2 = 0;
+			}
+		}
 	}
 
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
@@ -6108,4 +6120,28 @@ function updateATVersion() {
 	}
 	saveSettings();
 
+}
+
+function printChangelog(changes) {
+	var body = "";
+	for (var i in changes) {
+		var $item = changes[i];
+		var result = assembleChangelog($item);
+		body += result;
+	}
+	var footer =
+		'<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!\
+        <br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
+        <br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).',
+		action = 'cancelTooltip()',
+		title = 'Script Update Notice<br>' + atSettings.initialise.version,
+		acceptBtnText = "Thank you for playing with AutoTrimps.",
+		hideCancel = true;
+
+	tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
+	verticalCenterTooltip(true);
+}
+
+function assembleChangelog(c) {
+	return `${c}<br>`
 }

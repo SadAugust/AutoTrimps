@@ -44,8 +44,22 @@
 		whipimp: { name: "Whipimp", icon: '"icomoon icon-area-graph"' },
 	};
 
+	M["fightinfo"].exoticImps = [
+		"Chronoimp",
+		"Feyimp",
+		"Flutimp",
+		"Goblimp",
+		"Jestimp",
+		"Magnimp",
+		"Tauntimp",
+		"Titimp",
+		"Venimp",
+		"Whipimp",
+		"Randimp",
+	];
+
 	//Fast imps
-	M["fightinfo"].fast = [
+	M["fightinfo"].fastImps = [
 		"Snimp",
 		"Kittimp",
 		"Gorillimp",
@@ -144,7 +158,7 @@
 			}
 
 			//Fast Imp
-			else if ((M["fightinfo"].fast.indexOf(cell.name) > -1 && (!cell.corrupted || !cell.corrupted.startsWith("corrupt"))) || (cell.u2Mutation !== undefined && Object.keys(cell.u2Mutation).length !== 0)) {
+			else if ((M["fightinfo"].fastImps.indexOf(cell.name) > -1 && (!cell.corrupted || !cell.corrupted.startsWith("corrupt"))) || (cell.u2Mutation !== undefined && Object.keys(cell.u2Mutation).length !== 0)) {
 				updateCell($cell, cell, M.fightinfo.imp.fast);
 			}
 

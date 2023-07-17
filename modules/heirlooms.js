@@ -1,4 +1,11 @@
-const heirloomMods = {
+
+MODULES.heirlooms = {
+	plagueSwap: false,
+	gammaBurstPct: 1,
+	shieldEquipped: game.global.ShieldEquipped.id,
+}
+
+MODULES.heirloomMods = {
 	Shield: {
 		playerEfficiency: "Player Efficiency",
 		trainerEfficiency: "Trainer Efficiency",
@@ -80,7 +87,7 @@ function evaluateHeirloomMods(loom, location) {
 			emptyMods++;
 			continue;
 		}
-		modName = heirloomMods[heirloomType][modName];
+		modName = MODULES.heirloomMods[heirloomType][modName];
 		if (blacklist.includes(modName)) return 0;
 		targetMods = targetMods.filter(e => e !== modName);
 	}
@@ -284,9 +291,9 @@ function heirloomShieldToEquip(mapType, query) {
 			//Not at final map cell
 			game.global.lastClearedMapCell !== getCurrentMapObject().size - 2 &&
 			//Current enemy is slow
-			!fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
+			!MODULES.fightinfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 1].name) &&
 			//Next cell is fast
-			fastimps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&
+			MODULES.fightinfo.fastImps.includes(game.global.mapGridArray[game.global.lastClearedMapCell + 2].name) &&
 			//Not in double attack voids
 			game.global.voidBuff !== 'doubleAttack';
 	}

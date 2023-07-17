@@ -1,4 +1,3 @@
-MODULES["import-export"] = {};
 var $$$settingsProfiles;
 function settingsProfileMakeGUI() {
 	var $$$settingsProfilesLabel = document.createElement("Label");
@@ -518,6 +517,24 @@ function ImportExportTooltip(what, event, download) {
 	}
 }
 
+//Loads the base settings that I want to be the same when loading peoples saves as it will save me time.
+function loadAugustSettings() {
+	if (atSettings.initialise.basepath !== 'https://localhost:8887/AutoTrimps_Local/') return;
+	autoTrimpSettings.gameUser.value = 'test';
+	saveSettings();
+	game.options.menu.darkTheme.enabled = 2;
+	game.options.menu.standardNotation.enabled = 0;
+	game.options.menu.disablePause.enabled = 1;
+	game.options.menu.hotkeys.enabled = 1;
+
+	var toggles = ['darkTheme', 'standardNotation', 'hotkeys'];
+	for (var i in toggles) {
+		var setting = game.options.menu[toggles[i]];
+		if (setting.onToggle) setting.onToggle();
+	}
+	MODULES["graphs"].themeChanged();
+}
+
 function resetAutoTrimps(a, b) {
 	(atSettings.running = !1),
 		setTimeout(
@@ -538,7 +555,8 @@ function resetAutoTrimps(a, b) {
 					(atSettings.running = !0),
 					localStorage.perkyInputs = (autoTrimpSettings.autoAllocatePresets.value),
 					localStorage.surkyInputs = (autoTrimpSettings.autoAllocatePresets.valueU2),
-					localStorage.mutatorPresets = (autoTrimpSettings.mutatorPresets.valueU2)
+					localStorage.mutatorPresets = (autoTrimpSettings.mutatorPresets.valueU2),
+					loadAugustSettings();
 			})(a),
 			101
 		),

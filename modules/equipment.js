@@ -1,85 +1,68 @@
-//Helium
-
-MODULES["equipment"] = {};
-
-var equipmentList = {
-	'Dagger': {
-		Upgrade: 'Dagadder',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
+MODULES.equipment = {
+	Dagger: {
+		upgrade: 'Dagadder',
+		stat: 'attack',
+		resource: 'metal',
 	},
-	'Mace': {
-		Upgrade: 'Megamace',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
+	Mace: {
+		upgrade: 'Megamace',
+		stat: 'attack',
+		resource: 'metal',
 	},
-	'Polearm': {
-		Upgrade: 'Polierarm',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
+	Polearm: {
+		upgrade: 'Polierarm',
+		stat: 'attack',
+		resource: 'metal',
 	},
-	'Battleaxe': {
-		Upgrade: 'Axeidic',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
+	Battleaxe: {
+		upgrade: 'Axeidic',
+		stat: 'attack',
+		resource: 'metal',
 	},
-	'Greatsword': {
-		Upgrade: 'Greatersword',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
+	Greatsword: {
+		upgrade: 'Greatersword',
+		stat: 'attack',
+		resource: 'metal',
 	},
-	'Boots': {
-		Upgrade: 'Bootboost',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
+	Boots: {
+		upgrade: 'Bootboost',
+		stat: 'health',
+		resource: 'metal',
 	},
-	'Helmet': {
-		Upgrade: 'Hellishmet',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
+	Helmet: {
+		upgrade: 'Hellishmet',
+		stat: 'health',
+		resource: 'metal',
 	},
-	'Pants': {
-		Upgrade: 'Pantastic',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
+	Pants: {
+		upgrade: 'Pantastic',
+		stat: 'health',
+		resource: 'metal',
 	},
-	'Shoulderguards': {
-		Upgrade: 'Smoldershoulder',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
+	Shoulderguards: {
+		upgrade: 'Smoldershoulder',
+		stat: 'health',
+		resource: 'metal',
 	},
-	'Breastplate': {
-		Upgrade: 'Bestplate',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
+	Breastplate: {
+		upgrade: 'Bestplate',
+		stat: 'health',
+		resource: 'metal',
 	},
-	'Arbalest': {
-		Upgrade: 'Harmbalest',
-		Stat: 'attack',
-		Resource: 'metal',
-		Equip: true
+	Arbalest: {
+		upgrade: 'Harmbalest',
+		stat: 'attack',
+		resource: 'metal',
 	},
-	'Gambeson': {
-		Upgrade: 'GambesOP',
-		Stat: 'health',
-		Resource: 'metal',
-		Equip: true
+	Gambeson: {
+		upgrade: 'GambesOP',
+		stat: 'health',
+		resource: 'metal',
 	},
-	'Shield': {
-		Upgrade: 'Supershield',
-		Stat: 'health',
-		Resource: 'wood',
-		Equip: true
+	Shield: {
+		upgrade: 'Supershield',
+		stat: 'health',
+		resource: 'wood',
 	}
 };
 
@@ -137,8 +120,8 @@ function cheapestEquipmentCost() {
 	for (var equipName in game.equipment) {
 		if (!game.equipment[equipName].locked) {
 			//Checking cost of next equipment level. Blocks unavailable ones.
-			if (game.challenges.Pandemonium.isEquipBlocked(equipName) || equipmentList[equipName].Resource === 'wood') continue;
-			nextLevelEquipmentCost = game.equipment[equipName].cost[equipmentList[equipName].Resource][0] * Math.pow(game.equipment[equipName].cost[equipmentList[equipName].Resource][1], game.equipment[equipName].level) * getEquipPriceMult();
+			if (game.challenges.Pandemonium.isEquipBlocked(equipName) || MODULES.equipment[equipName].resource === 'wood') continue;
+			nextLevelEquipmentCost = game.equipment[equipName].cost[MODULES.equipment[equipName].resource][0] * Math.pow(game.equipment[equipName].cost[MODULES.equipment[equipName].resource][1], game.equipment[equipName].level) * getEquipPriceMult();
 			//Sets nextEquipmentCost to the price of an equip if it costs less than the current value of nextEquipCost
 			if (nextLevelEquipmentCost < nextEquipmentCost || nextEquipmentCost === null) {
 				equipmentName = equipName;
@@ -165,7 +148,7 @@ function cheapestEquipmentCost() {
 
 function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipForLevels, equipHighlight, fakeLevels = {}, ignorePrestiges) {
 
-	for (var i in equipmentList) {
+	for (var i in MODULES.equipment) {
 		if (typeof fakeLevels[i] === 'undefined') {
 			fakeLevels[i] = 0;
 		}
@@ -215,8 +198,8 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 
 	//Checks what our highest prestige level is AND if there are any prestiges available to purchase
 	//If this fully runs and returns true it WILL override checking non-prestige equip stats!
-	for (var i in equipmentList) {
-		var equipType = equipmentList[i].Stat;
+	for (var i in MODULES.equipment) {
+		var equipType = MODULES.equipment[i].stat;
 		var prestigeGo = equipType === 'attack' ? zoneGoAttack : zoneGoHealth;
 		if (game.equipment[i].prestige > highestPrestige) highestPrestige = game.equipment[i].prestige;
 		if (prestigesAvailable) continue;
@@ -231,10 +214,10 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 	}
 
 	//Loops through each piece of equipment to figure out the most efficient one to buy
-	for (var i in equipmentList) {
+	for (var i in MODULES.equipment) {
 		if (game.equipment[i].locked) continue;
 
-		var equipType = equipmentList[i].Stat;
+		var equipType = MODULES.equipment[i].stat;
 		zoneGo = equipType === 'attack' ? zoneGoAttack : zoneGoHealth;
 		var prestige = false;
 		resourceSpendingPct = equipType === 'attack' ? resourceSpendingPctAttack : resourceSpendingPctHealth;
@@ -247,7 +230,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 			!skipForLevels && equipType === 'health' ? getPageSetting('equipCapHealth') :
 				skipForLevels
 
-		var nextLevelCost = game.equipment[i].cost[equipmentList[i].Resource][0] * Math.pow(game.equipment[i].cost[equipmentList[i].Resource][1], game.equipment[i].level + fakeLevels[i]) * getEquipPriceMult();
+		var nextLevelCost = game.equipment[i].cost[MODULES.equipment[i].resource][0] * Math.pow(game.equipment[i].cost[MODULES.equipment[i].resource][1], game.equipment[i].level + fakeLevels[i]) * getEquipPriceMult();
 
 		//Skipping Shields when can buy Gymystic
 		if (game.global.universe === 1 && i === 'Shield' && needGymystic()) continue;
@@ -276,7 +259,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		if (prestigesAvailable && forcePrestige && maybeBuyPrestige.prestigeDone) continue;
 		//If prestiges available & running certain setting skips (check above for loop) look at non-prestige item stats.
 		if (!prestigesAvailable || !forcePrestige) {
-			nextLevelValue = game.equipment[i][equipmentList[i].Stat + "Calculated"];
+			nextLevelValue = game.equipment[i][MODULES.equipment[i].stat + "Calculated"];
 			safeRatio = nextLevelCost / nextLevelValue;
 		}
 
@@ -286,7 +269,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		//Check for further overrides for if we want to skip looking at prestiges
 		if (!skipPrestiges) {
 			if ((prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGo)) && !ignorePrestiges && game.equipment[i].level < 6) skipPrestiges = true;
-			if (prestigeSetting === 2 && !canAtlantrimp && game.resources[equipmentList[i].Resource].owned * prestigePct < maybeBuyPrestige.prestigeCost) skipPrestiges = true;
+			if (prestigeSetting === 2 && !canAtlantrimp && game.resources[MODULES.equipment[i].resource].owned * prestigePct < maybeBuyPrestige.prestigeCost) skipPrestiges = true;
 		}
 
 		if (!skipPrestiges) {
@@ -350,11 +333,11 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 	var prestigeUpgrade = "";
 	var prestigeDone = false;
 
-	var allUpgradeNames = Object.getOwnPropertyNames(equipmentList);
+	var allUpgradeNames = Object.getOwnPropertyNames(MODULES.equipment);
 
 	for (var upgrade of allUpgradeNames) {
 		if (upgrade === equipName) {
-			prestigeUpgrade = game.upgrades[equipmentList[upgrade].Upgrade];
+			prestigeUpgrade = game.upgrades[MODULES.equipment[upgrade].upgrade];
 			if (prestigeUpgrade.allowed === prestigeUpgrade.done) prestigeInfo.prestigeDone = true;
 			break;
 		}
@@ -365,7 +348,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct, maxLevel) {
 	if (!resourceSpendingPct) resourceSpendingPct = 1;
 
 	var equipment = game.equipment[equipName];
-	var prestigeUpgradeName = equipmentList[equipName].Upgrade;
+	var prestigeUpgradeName = MODULES.equipment[equipName].upgrade;
 
 	if (prestigeUpgrade.locked || (prestigeUpgradeName === 'Supershield' && getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult() > game.resources.wood.owned * resourceSpendingPct)) return prestigeInfo;
 
@@ -500,9 +483,9 @@ function autoEquip() {
 			for (var equipName in game.equipment) {
 				if (buyPrestigeMaybe(equipName).purchase) {
 					if (!game.equipment[equipName].locked) {
-						var equipType = equipmentList[equipName].Stat;
+						var equipType = MODULES.equipment[equipName].stat;
 						if (getPageSetting('equipNoShields') && equipName === 'Shield') continue;
-						if ((equipPrestigeSetting === 3 || mostEfficientEquipment()[equipType].prestige) && buyUpgrade(equipmentList[equipName].Upgrade, true, true))
+						if ((equipPrestigeSetting === 3 || mostEfficientEquipment()[equipType].prestige) && buyUpgrade(MODULES.equipment[equipName].upgrade, true, true))
 							prestigeLeft = true;
 					}
 				}
@@ -569,7 +552,7 @@ function autoEquip() {
 					if (equipCost <= resourceSpendingPct * game.resources[resourceUsed].owned) {
 						if (!game.equipment[equipName].locked) {
 							if (equipPrestige) {
-								buyUpgrade(equipmentList[equipName].Upgrade, true, true)
+								buyUpgrade(MODULES.equipment[equipName].upgrade, true, true)
 								debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
 							}
 							else if (maxCanAfford > 0) {
@@ -650,7 +633,7 @@ function estimateEquipsForZone(rEFIndex) {
 	if (healthNeededMulti < 1 && attackNeededMulti < 1 || ((healthNeededMulti + attackNeededMulti) / 2 < 1)) { return [0, {}] };
 
 	var ourAttack = 6;
-	for (var i in equipmentList) {
+	for (var i in MODULES.equipment) {
 		if (game.equipment[i].locked !== 0) continue;
 		var attackBonus = game.equipment[i].attackCalculated;
 		var level = game.equipment[i].level;
@@ -666,7 +649,7 @@ function estimateEquipsForZone(rEFIndex) {
 
 	while (healthNeeded > 0) {
 		var bestArmor = mostEfficientEquipment(1, true, true, false, false, bonusLevels, true)[1];
-		healthNeeded -= game.equipment[bestArmor][equipmentList[bestArmor].Stat + "Calculated"];
+		healthNeeded -= game.equipment[bestArmor][MODULES.equipment[bestArmor].stat + "Calculated"];
 		if (typeof bonusLevels[bestArmor] === 'undefined') {
 			bonusLevels[bestArmor] = 0;
 		}
@@ -676,7 +659,7 @@ function estimateEquipsForZone(rEFIndex) {
 	}
 	while (attackNeeded > 0) {
 		var bestWeapon = mostEfficientEquipment(1, true, true, false, false, bonusLevels, true)[0];
-		attackNeeded -= game.equipment[bestWeapon][equipmentList[bestWeapon].Stat + "Calculated"];
+		attackNeeded -= game.equipment[bestWeapon][MODULES.equipment[bestWeapon].stat + "Calculated"];
 		if (typeof bonusLevels[bestWeapon] === 'undefined') {
 			bonusLevels[bestWeapon] = 0;
 		}
@@ -687,7 +670,7 @@ function estimateEquipsForZone(rEFIndex) {
 
 	var totalCost = 0;
 	for (var equip in bonusLevels) {
-		var equipCost = game.equipment[equip].cost[equipmentList[equip].Resource];
+		var equipCost = game.equipment[equip].cost[MODULES.equipment[equip].resource];
 		totalCost += getTotalMultiCost((equipCost[0]), bonusLevels[equip], equipCost[1], true) * getEquipPriceMult();
 	}
 
@@ -707,11 +690,11 @@ function displayMostEfficientEquipment() {
 
 	if (!highlightSetting) {
 		for (var item in game.equipment) {
-			if (game.upgrades[equipmentList[item].Upgrade].locked === 0) {
-				$eqNamePrestige = document.getElementById(equipmentList[item].Upgrade);
+			if (game.upgrades[MODULES.equipment[item].upgrade].locked === 0) {
+				$eqNamePrestige = document.getElementById(MODULES.equipment[item].upgrade);
 				if (document.getElementsByClassName(item).length === 0) {
-					document.getElementById(equipmentList[item].Upgrade).classList.add("efficient");
-					document.getElementById(equipmentList[item].Upgrade).classList.add(item);
+					document.getElementById(MODULES.equipment[item].upgrade).classList.add("efficient");
+					document.getElementById(MODULES.equipment[item].upgrade).classList.add(item);
 				}
 			}
 
@@ -730,22 +713,22 @@ function displayMostEfficientEquipment() {
 		if (game.equipment[item].locked) continue;
 		if (item === "Shield") continue;
 		var bestBuys = mostEfficientEquipment(1, false, true, false, true);
-		var equipType = equipmentList[item].Stat;
+		var equipType = MODULES.equipment[item].stat;
 		var $eqNamePrestige = null;
-		if (game.upgrades[equipmentList[item].Upgrade].locked === 0) {
-			$eqNamePrestige = document.getElementById(equipmentList[item].Upgrade);
+		if (game.upgrades[MODULES.equipment[item].upgrade].locked === 0) {
+			$eqNamePrestige = document.getElementById(MODULES.equipment[item].upgrade);
 			if (document.getElementsByClassName(item).length === 0) {
-				document.getElementById(equipmentList[item].Upgrade).classList.add("efficient");
-				document.getElementById(equipmentList[item].Upgrade).classList.add(item);
+				document.getElementById(MODULES.equipment[item].upgrade).classList.add("efficient");
+				document.getElementById(MODULES.equipment[item].upgrade).classList.add(item);
 			}
-			if (document.getElementById(equipmentList[item].Upgrade).classList.contains('efficientYes') && (item !== bestBuys[equipType].name || (item === bestBuys[equipType].name && bestBuys[equipType].prestige !== true)))
+			if (document.getElementById(MODULES.equipment[item].upgrade).classList.contains('efficientYes') && (item !== bestBuys[equipType].name || (item === bestBuys[equipType].name && bestBuys[equipType].prestige !== true)))
 				swapClass('efficient', 'efficientNo', $eqNamePrestige)
 		}
 		if (item === bestBuys[equipType].name && bestBuys[equipType].prestige === true) {
-			bestBuys[equipType].name = equipmentList[item].Upgrade;
+			bestBuys[equipType].name = MODULES.equipment[item].upgrade;
 			if (document.getElementById(item).classList.contains('efficientYes'))
 				swapClass('efficient', 'efficientNo', document.getElementById(item))
-			item = equipmentList[item].Upgrade;
+			item = MODULES.equipment[item].upgrade;
 		}
 
 		var $eqName = document.getElementById(item);

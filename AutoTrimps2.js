@@ -19,7 +19,7 @@ var atSettings = {
 };
 
 //Searches html for where the AT script is being loaded from
-//This is p much only useful for me as I have a local version of AT that I use for testing.
+//This is pretty much only useful for me as I have a local version of AT that I use for testing.
 function loadAT() {
 	for (var item in document.getElementsByTagName("script")) {
 		if (document.getElementsByTagName("script")[item].src.includes('AutoTrimps2')) {
@@ -37,14 +37,11 @@ function loadAT() {
 		offlineWrapperParent.replaceChild(settingBarRow, document.getElementById("offlineInnerWrapper").parentNode.children[1]);
 	}
 
-	// Load jQuery
+	//Load jQuery
 	(function () {
-		// Load the script
 		const script = document.createElement("script");
 		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
 		script.type = 'text/javascript';
-		script.defer = true; // Add 'defer' attribute
-
 		// Append the script to the document
 		document.head.appendChild(script);
 	})();
@@ -59,11 +56,9 @@ var ATmessageLogTabVisible = true;
 
 var autoTrimpSettings = {};
 var MODULES = {
+	popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false, },
 	resourceNeeded: { food: 0, wood: 0, metal: 0, science: 0, gems: 0, fragments: 0, },
 	stats: { baseMinDamage: 0, baseMaxDamage: 0, baseDamage: 0, baseHealth: 0, baseBlock: 0, },
-	perkCalcs: { showingPerky: false, showingPerky: false },
-	popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false, },
-	heirlooms: { plagueSwap: false, gammaBurstPct: 1, shieldEquipped: game.global.ShieldEquipped.id, },
 };
 
 var currPortalUniverse = 0;
@@ -73,63 +68,30 @@ var settingChangedTimeout = false;
 
 var challengeCurrentZone = -1;
 
-var mapSettings = {
-	shouldRun: false,
-	mapName: '',
-	levelCheck: Infinity,
-}
+var mapSettings = { shouldRun: false, mapName: '', levelCheck: Infinity, }
+var hdStats = { isC3: false, isDaily: false, isFiller: false }
 
-var hdStats = {
-	isC3: false,
-	isDaily: false,
-	isFiller: false
-}
-
-function ATscriptLoad(a, b) {
-	if (atSettings.modules.loadedModules.includes(b)) return;
-	if (null === b) {
+//Loading modules from basepath that are required for the script to run.
+function ATscriptLoad(prefix, fileName) {
+	if (atSettings.modules.loadedModules.includes(fileName)) return;
+	if (null === fileName) {
 		debug('Wrong Syntax. Script could not be loaded. Try ATscriptLoad(atSettings.modules.MODULES.path, \'example.js\'); ');
 		return;
 	}
 	var script = document.createElement('script');
-	if (null === a) a = '';
-	script.src = atSettings.initialise.basepath + a + b + '.js';
-	script.id = b + '_MODULE';
-	script.defer = true; // Add 'defer' attribute so that it loads after the page has loaded.
+	if (null === prefix) prefix = '';
+	script.src = atSettings.initialise.basepath + prefix + fileName + '.js';
+	script.id = fileName + '_MODULE';
 	document.head.appendChild(script);
 	//Looks for if the script has loaded, if it has, add it to the loadedModules array. Ignores duplicate entries.
 	script.addEventListener('load', () => {
-		if (a !== '' && !atSettings.modules.loadedModules.includes(b)) atSettings.modules.loadedModules.push(b);
+		if (prefix !== '' && !atSettings.modules.loadedModules.includes(fileName)) atSettings.modules.loadedModules.push(fileName);
 	});
 }
 
 //Load version number from a seperate file so that we can compare it to the current version number and let users know if they're using an outdated version.
-ATscriptLoad('', 'versionNumber');
+ATscriptLoad(null, 'versionNumber');
 ATscriptLoad(atSettings.modules.path, 'utils');
-
-function printChangelog(changes) {
-	var body = "";
-	for (var i in changes) {
-		var $item = changes[i];
-		var result = assembleChangelog($item);
-		body += result;
-	}
-	var footer =
-		'<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!\
-        <br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
-        <br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).',
-		action = 'cancelTooltip()',
-		title = 'Script Update Notice<br>' + atSettings.initialise.version,
-		acceptBtnText = "Thank you for playing with AutoTrimps.",
-		hideCancel = true;
-
-	tooltip('confirm', null, 'update', body + footer, action, title, acceptBtnText, null, hideCancel);
-	verticalCenterTooltip(true);
-}
-
-function assembleChangelog(c) {
-	return `${c}<br>`
-}
 
 delayStart();
 
@@ -139,30 +101,30 @@ function delayStart() {
 	//Shouldn't be necessary but sometimes it can mess up and not load properly.
 	if (atSettings.intervals.counter % 100 === 0) {
 		ATscriptLoad(atSettings.modules.path, 'utils');
+		ATscriptLoad(null, 'versionNumber');
 	}
 	//Reload script every 10 milliseconds until the utils module has been loaded.
-	if (typeof loadPageVariables !== 'function') {
+	if (typeof loadPageVariables !== 'function' || atSettings.initialise.version === '') {
 		setTimeout(delayStart, 10);
 		atSettings.intervals.counter++;
 		return;
 	}
+	//Loads the settings from the save file, settingsGUI & the various modules installed.
 	initializeAutoTrimps();
+	//Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
 	document.getElementById('activatePortalBtn').setAttribute("onClick", 'downloadSave(true); activateClicked(); pushSpreadsheetData(); autoheirlooms(true); autoMagmiteSpender(true); pushData();');
-	atSettings.intervals.counter = 0;
 }
 
 //Runs second
 function initializeAutoTrimps() {
-
-
 	loadPageVariables();
-	ATscriptLoad('', 'SettingsGUI');
+	ATscriptLoad(null, 'SettingsGUI');
 
 	/* var script = document.createElement('script');
 	script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
 	document.head.appendChild(script); */
-	ATscriptLoad('', 'Graphs');
-	ATscriptLoad('', 'mutatorPreset');
+	ATscriptLoad(null, 'Graphs');
+	ATscriptLoad(null, 'mutatorPreset');
 	for (var m in atSettings.modules.installedModules) {
 		ATscriptLoad(atSettings.modules.path, atSettings.modules.installedModules[m]);
 	}
@@ -215,14 +177,17 @@ function delayStartAgain() {
 	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
 	//Setup Perky/Surky UI
 	universeSwapped();
+	//Loads my game settings
+	loadAugustSettings();
 }
 
+//Displays Perky UI when changing universes.
 function universeSwapped() {
-	//Displays Perky UI when changing universe to U1.
+	//Hard to do an alternative to this. Would have linked it to the swapPortalUniverse() function but the force going back to U1 button in U2 causes issues with that.
 	if (currPortalUniverse !== portalUniverse) {
 		//Removes UI display if currently active
-		if (typeof AutoPerks.removeGUI === 'function') AutoPerks.removeGUI();
-		//Sets up Perky UI when in U1 or changing universe to U1.
+		if (typeof MODULES.autoPerks.removeGUI === 'function') MODULES.autoPerks.removeGUI();
+		//Sets up the proper calc UI when switching between portal universes.
 		if (portalUniverse === 1)
 			setupPerkyUI();
 		if (portalUniverse === 2)
@@ -301,7 +266,8 @@ function mainLoop() {
 	toggleCatchUpMode();
 
 	//Adjust tooltip when mazWindow is open OR clear our adjustments if it's not.
-	if (MODULES.popups.mazWindowOpen && !usingRealTimeOffline) {
+	//Need to identify a better solution to this. Not really sure what I can do though.
+	if (MODULES.popups.mazWindowOpen) {
 		var mazSettings = ["Map Farm", "Map Bonus", "Void Map", "HD Farm", "Raiding", "Bionic Raiding", "Balance Destack", "Toxicity Farm", "Quagmire Farm", "Insanity Farm", "Alchemy Farm", "Hypothermia Farm", "Bone Shrine", "Auto Golden", "Tribute Farm", "Smithy Farm", "Worshipper Farm", "Desolation Gear Scumming"];
 		var mazCheck = mazSettings.indexOf(document.getElementById('tooltipDiv').children.tipTitle.innerText);
 
@@ -425,30 +391,7 @@ function mainLoop() {
 	}
 
 	if (atSettings.intervals.oneHour)
-		checkVersion();
-}
-
-function checkVersion() {
-	//Don't check for updates if we already know we're behind
-	if (atSettings.updateAvailable) return;
-	var url = basepath + '/versionNumber.js';
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', url);
-	xhr.onload = function () {
-		if (xhr.status === 200) {
-			var response = xhr.responseText;
-			var version = response.split("'")[1];
-			if (version !== atSettings.initialise.version) {
-				atSettings.updateAvailable = true;
-				var changeLogBtn = document.getElementById("atChangelog");
-				if (changeLogBtn !== null) {
-					//changeLogBtn.classList.add("mystyle");
-					changeLogBtn.innerHTML += " <span style='color: red; font-weight: bold;'>Update Available!</span>";
-				}
-			}
-		}
-	}
-	xhr.send();
+		atVersionChecker();
 }
 
 //U1 functions
@@ -464,7 +407,7 @@ function mainLoopU1() {
 	autoGenerator();
 
 	//Combat
-	if (getPageSetting('ForceAbandon')) trimpcide();
+	trimpcide();
 	if (!game.global.fighting) {
 		if (getPageSetting('fightforever') === 0) fightalways();
 		else if (getPageSetting('fightforever') > 0 && hdStats.hdRatio <= getPageSetting('fightforever')) fightalways();
@@ -512,45 +455,64 @@ function mainCleanup() {
 	atSettings.portal.currentHZE = game.global.universe === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 	atSettings.portal.aWholeNewHZE = atSettings.portal.lastHZE !== atSettings.portal.currentHZE;
 
+	//If we reached a new HZE check if we have any challenge message popups to display
+	//Update settings displayed as well so that any requirements that have now been reached are displayed.
 	if (atSettings.portal.aWholeNewHZE) {
 		challengeUnlockCheck();
 		updateCustomButtons(true);
 	}
-
-	if (atSettings.portal.currentworld === 1 && atSettings.portal.aWholeNewWorld) {
-		zonePostpone = 0;
-		if (!game.upgrades.Battle.done) {
-			updateButtonText();
-			resetSettingsPortal();
-		}
-	}
-
+	//If in a new zone then run this code
 	if (atSettings.portal.aWholeNewWorld) {
-
-		switch (document.getElementById('tipTitle').innerHTML) {
-			case 'The Improbability':
-			case 'Corruption':
-			case 'Spire':
-			case 'The Magma':
-				cancelTooltip();
+		//If in Z1 then we can assume we have just portaled.
+		if (atSettings.portal.currentworld === 1) {
+			MODULES.portal.zonePostpone = 0;
+			if (!game.upgrades.Battle.done) {
+				updateButtonText();
+				resetSettingsPortal();
+			}
 		}
+		//Reset any module vars that need reset.
+		//Should probably be moved to a seperate function.
+		//Maybe house all of the initial module vars in autoTrimps.js and then call a function to reset them all?
 		resetVarsZone();
-		if (getPageSetting('autoEggs', 1))
-			easterEggClicked();
+		//Puts the zone number in the title
 		setTitle();
 
+		//Debug messages for new zones
+		//Ones for just starting a zone, imp count or checking total pop & bone charge resources.
 		debug("Starting Zone " + game.global.world, "zone");
 		debug("Zone #" + game.global.world + ": Tauntimp (" + game.unlocks.impCount.Tauntimp + "), Magnimp (" + game.unlocks.impCount.Magnimp + "), Whipimp (" + game.unlocks.impCount.Whipimp + "), Venimp (" + game.unlocks.impCount.Venimp + ")", "exotic");
 		debug("Zone # " + game.global.world + ": Total pop (" + prettify(game.resources.trimps.owned) + "). A Bone Charge would give you these resources (" + boneShrineOutput(1).slice(0, -1).toLowerCase() + ")", "run_Stats");
 
+		//If the Easter event is active then click eggs.
 		if (getPageSetting('autoEggs', 1))
 			easterEggClicked();
-	}
-
-	if (atSettings.portal.aWholeNewWorld || atSettings.portal.currentworld === 1) {
 	}
 }
 
 function throwErrorfromMain() {
 	throw new Error("We have successfully read the thrown error message out of the main file")
+}
+
+function atVersionChecker() {
+	//Don't check for updates if we already know we're behind
+	if (atSettings.updateAvailable) return;
+	var url = basepath + '/versionNumber.js';
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', url);
+	xhr.onload = function () {
+		if (xhr.status === 200) {
+			var response = xhr.responseText;
+			var version = response.split("'")[1];
+			if (version !== atSettings.initialise.version) {
+				atSettings.updateAvailable = true;
+				var changeLogBtn = document.getElementById("atChangelog");
+				if (changeLogBtn !== null) {
+					//changeLogBtn.classList.add("mystyle");
+					changeLogBtn.innerHTML += " <span style='color: red; font-weight: bold;'>Update Available!</span>";
+				}
+			}
+		}
+	}
+	xhr.send();
 }

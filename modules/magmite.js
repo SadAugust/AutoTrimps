@@ -1,18 +1,14 @@
-MODULES["magmite"] = {};
-MODULES["magmite"].algorithm = 2;
 
-const dgPriceIncreases = {
-	Efficiency: 8,
-	Capacity: 32,
-	Supply: 64,
-	Overclocker: 32
-};
+
+MODULES.magmite = {
+	priceIncreases: { Efficiency: 8, Capacity: 32, Supply: 64, Overclocker: 32 },
+}
 
 function calcMiSpent(upgrade) {
 	var total = 0;
 	if (game.generatorUpgrades[upgrade].cost() <= game.generatorUpgrades[upgrade].baseCost || game.generatorUpgrades[upgrade].upgrades <= 0) return 0;
 	else {
-		total = game.generatorUpgrades[upgrade].upgrades * (game.generatorUpgrades[upgrade].baseCost + (dgPriceIncreases[upgrade] / 2) * (game.generatorUpgrades[upgrade].upgrades - 1));
+		total = game.generatorUpgrades[upgrade].upgrades * (game.generatorUpgrades[upgrade].baseCost + (MODULES.magmite.priceIncreases[upgrade] / 2) * (game.generatorUpgrades[upgrade].upgrades - 1));
 		return total;
 	}
 }
@@ -113,54 +109,51 @@ function autoMagmiteSpender(portal) {
 
 			var repeat = (getPageSetting('spendmagmitesetting', 1) === 0 || getPageSetting('spendmagmitesetting', 1) === 1);
 			while (repeat) {
-				if (MODULES["magmite"].algorithm === 2) {
-					var eff = game.generatorUpgrades["Efficiency"];
-					var cap = game.generatorUpgrades["Capacity"];
-					var sup = game.generatorUpgrades["Supply"];
-					if ((typeof eff === 'undefined') || (typeof cap === 'undefined') || (typeof sup === 'undefined'))
-						return;
-					var EffObj = {};
-					EffObj.name = "Efficiency";
-					EffObj.lvl = eff.upgrades + 1;
-					EffObj.cost = eff.cost();
-					EffObj.benefit = EffObj.lvl * 0.1;
-					EffObj.effInc = (((1 + EffObj.benefit) / (1 + ((EffObj.lvl - 1) * 0.1)) - 1) * 100);
-					EffObj.miCostPerPct = EffObj.cost / EffObj.effInc;
-					var CapObj = {};
-					CapObj.name = "Capacity";
-					CapObj.lvl = cap.upgrades + 1;
-					CapObj.cost = cap.cost();
-					CapObj.totalCap = 3 + (0.4 * CapObj.lvl);
-					CapObj.benefit = Math.sqrt(CapObj.totalCap);
-					CapObj.effInc = ((CapObj.benefit / Math.sqrt(3 + (0.4 * (CapObj.lvl - 1))) - 1) * 100);
-					CapObj.miCostPerPct = CapObj.cost / CapObj.effInc;
-					var upgrade, item;
-					if (EffObj.miCostPerPct <= CapObj.miCostPerPct)
-						item = EffObj.name;
-					else {
-						const supCost = sup.cost();
-						var wall = getPageSetting('SupplyWall');
-						if (!wall)
-							item = (CapObj.cost <= supCost) ?
-								CapObj.name : "Supply";
-						else if (wall === 1)
-							item = "Capacity";
-						else if (wall < 0)
-							item = (supCost <= (CapObj.cost * -wall)) ?
-								"Supply" : "Capacity";
-						else
-							item = (CapObj.cost <= (supCost * wall)) ?
-								"Capacity" : "Supply";
-					}
-					upgrade = game.generatorUpgrades[item];
-					if (game.global.magmite >= upgrade.cost()) {
-						debug("Auto Spending " + upgrade.cost() + " Magmite on: " + item + " #" + (game.generatorUpgrades[item].upgrades + 1), "magmite");
-						buyGeneratorUpgrade(item);
-						didSpend = true;
-					} else
-						repeat = false;
+				var eff = game.generatorUpgrades["Efficiency"];
+				var cap = game.generatorUpgrades["Capacity"];
+				var sup = game.generatorUpgrades["Supply"];
+				if ((typeof eff === 'undefined') || (typeof cap === 'undefined') || (typeof sup === 'undefined'))
+					return;
+				var EffObj = {};
+				EffObj.name = "Efficiency";
+				EffObj.lvl = eff.upgrades + 1;
+				EffObj.cost = eff.cost();
+				EffObj.benefit = EffObj.lvl * 0.1;
+				EffObj.effInc = (((1 + EffObj.benefit) / (1 + ((EffObj.lvl - 1) * 0.1)) - 1) * 100);
+				EffObj.miCostPerPct = EffObj.cost / EffObj.effInc;
+				var CapObj = {};
+				CapObj.name = "Capacity";
+				CapObj.lvl = cap.upgrades + 1;
+				CapObj.cost = cap.cost();
+				CapObj.totalCap = 3 + (0.4 * CapObj.lvl);
+				CapObj.benefit = Math.sqrt(CapObj.totalCap);
+				CapObj.effInc = ((CapObj.benefit / Math.sqrt(3 + (0.4 * (CapObj.lvl - 1))) - 1) * 100);
+				CapObj.miCostPerPct = CapObj.cost / CapObj.effInc;
+				var upgrade, item;
+				if (EffObj.miCostPerPct <= CapObj.miCostPerPct)
+					item = EffObj.name;
+				else {
+					const supCost = sup.cost();
+					var wall = getPageSetting('SupplyWall');
+					if (!wall)
+						item = (CapObj.cost <= supCost) ?
+							CapObj.name : "Supply";
+					else if (wall === 1)
+						item = "Capacity";
+					else if (wall < 0)
+						item = (supCost <= (CapObj.cost * -wall)) ?
+							"Supply" : "Capacity";
+					else
+						item = (CapObj.cost <= (supCost * wall)) ?
+							"Capacity" : "Supply";
 				}
-
+				upgrade = game.generatorUpgrades[item];
+				if (game.global.magmite >= upgrade.cost()) {
+					debug("Auto Spending " + upgrade.cost() + " Magmite on: " + item + " #" + (game.generatorUpgrades[item].upgrades + 1), "magmite");
+					buyGeneratorUpgrade(item);
+					didSpend = true;
+				} else
+					repeat = false;
 			}
 		} catch (err) {
 			debug("AutoSpendMagmite Error encountered: " + err.message, "magmite");

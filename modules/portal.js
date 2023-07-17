@@ -1,14 +1,14 @@
-MODULES["portal"] = {};
-MODULES["portal"].timeout = 5000;
-MODULES["portal"].bufferExceedFactor = 5;
-MODULES["portal"].portalForVoid = false;
-MODULES["portal"].portalUniverse = Infinity;
-MODULES["portal"].currentChallenge = 'None';
-MODULES["portal"].dontPushData = false;
-MODULES["portal"].dailyMods = '';
-MODULES["portal"].dailyPercent = 0;
-
-var zonePostpone = 0;
+MODULES.portal = {
+	timeout: 5000,
+	bufferExceedFactor: 5,
+	portalForVoid: false,
+	portalUniverse: Infinity,
+	currentChallenge: 'None',
+	dontPushData: false,
+	dailyMods: '',
+	dailyPercent: 0,
+	zonePostpone: 0,
+}
 
 //Figures out which type of autoPortal we should be running depending on what kind of challenge we are in.
 function autoPortalCheck(specificPortalZone) {
@@ -22,21 +22,21 @@ function autoPortalCheck(specificPortalZone) {
 function autoPortal(specificPortalZone, skipDaily) {
 	if (challengeActive('Decay')) decayFinishChallenge();
 	if (!game.global.portalActive) return;
-	if (challengeActive('Daily') || game.global.runningChallengeSquared) return;
+	if (hdStats.isDaily || game.global.runningChallengeSquared) return;
 	var universe = MODULES.portal.portalUniverse !== Infinity ? MODULES.portal.portalUniverse : game.global.universe;
 	if (!MODULES.portal.portalForVoid && getPageSetting('autoPortal', universe) === "Off") return;
 
-	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium'
+	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium';
 	var challenge = 'None';
 
-	var portalZone = !specificPortalZone ? (getPageSetting('autoPortalZone') > 0 ? getPageSetting('autoPortalZone') : 999) : specificPortalZone;
+	var portalZone = getPageSetting('autoPortalZone') > 0 ? getPageSetting('autoPortalZone') : Infinity;
 
 	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
 	if (getPageSetting('autoPortal', currSettingUniverse).includes('Hour')) portalZone = Infinity;
-	//Set portal zone to current zone!
+	//Override for specificPortalZone when using he/hr setting
+	if (specificPortalZone) portalZone = specificPortalZone;
 	skipDaily = !skipDaily ? false : skipDaily;
 	if (skipDaily) portalZone = game.global.world;
-	if (MODULES.mapFunctions.portalZone === game.global.world && game.global.totalVoidMaps === 0) portalZone = game.global.world;
 	if (MODULES.portal.portalForVoid) {
 		portalZone = checkLiqZoneCount() >= 99 ? 99 : (checkLiqZoneCount() + 1);
 		if (game.permaBoneBonuses.voidMaps.tracker >= (100 - game.permaBoneBonuses.voidMaps.owned)) portalZone = game.global.world;
@@ -58,11 +58,11 @@ function autoPortal(specificPortalZone, skipDaily) {
 			if (bufferExceeded && game.global.world >= minZone) {
 				OKtoPortal = true;
 				if (atSettings.portal.aWholeNewWorld)
-					zonePostpone = 0;
+					MODULES.portal.zonePostpone = 0;
 			}
 			if (heliumHrBuffer === 0 && !atSettings.portal.aWholeNewWorld)
 				OKtoPortal = false;
-			if (OKtoPortal && zonePostpone === 0) {
+			if (OKtoPortal && MODULES.portal.zonePostpone === 0) {
 				if (getPageSetting('heliumHrPortal', universe) > 0 && game.global.totalVoidMaps > 0) {
 					if (!MODULES.mapFunctions.portalAfterVoids) {
 						if (getPageSetting('heliumHrPortal', universe) === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Z" + game.global.world + " - Pushing to next Poison zone then portaling after void maps have been run.", "portal");
@@ -92,17 +92,17 @@ function autoPortal(specificPortalZone, skipDaily) {
 					return;
 				}
 				else {
-					zonePostpone += 1;
+					MODULES.portal.zonePostpone += 1;
 					MODULES.popups.portal = true;
 					if (MODULES.popups.remainingTime === Infinity) MODULES.popups.remainingTime = 5000;
-					tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1;; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
+					tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'MODULES.portal.zonePostpone+=1;; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
 					setTimeout(function () {
 						cancelTooltip()
 						MODULES.popups.portal = false;
 						MODULES.popups.remainingTime = Infinity;
 					}, MODULES["portal"].timeout);
 					setTimeout(function () {
-						if (zonePostpone >= 2)
+						if (MODULES.portal.zonePostpone >= 2)
 							return;
 						if (getPageSetting('heliumHourChallenge', universe) !== 'None')
 							challenge = getPageSetting('heliumHourChallenge', universe);
@@ -159,11 +159,11 @@ function autoPortal(specificPortalZone, skipDaily) {
 		case "Alchemy":
 		case "Hypothermia":
 		case "Desolation":
-			if ((!game.global.challengeActive && !MODULES.portal.portalForVoid) || (game.global.world >= portalZone && ((MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity) && game.global.totalVoidMaps === 0)))
+			if ((!game.global.challengeActive && !MODULES.portal.portalForVoid) || (game.global.world >= portalZone && specificPortalZone))
 				challenge = getPageSetting('autoPortal', universe);
 			break;
 		case "Off":
-			if (game.global.world >= portalZone && ((MODULES.portal.portalForVoid || MODULES.mapFunctions.portalZone !== Infinity) && game.global.totalVoidMaps === 0))
+			if (game.global.world >= portalZone && specificPortalZone)
 				challenge = 0;
 			break;
 		default:
@@ -180,11 +180,11 @@ function dailyAutoPortal(specificPortalZone) {
 
 	var resourceType = game.global.universe === 2 ? 'Radon' : 'Helium';
 
-	var portalZone = !specificPortalZone ? (getPageSetting('dailyPortalZone') > 0 ? getPageSetting('dailyPortalZone') : 999) : specificPortalZone;
+	var portalZone = getPageSetting('dailyPortalZone') > 0 ? getPageSetting('dailyPortalZone') : 999;
 	//Setting portal zone to infinity if autoportal is set to hour to allow liquification portalForVoid & void map portal to work
 	if (getPageSetting('dailyPortal', currSettingUniverse) === 1) portalZone = Infinity;
-	//Set portal zone to current zone after void map line if setting enabled!
-	if (MODULES.mapFunctions.portalZone === game.global.world && game.global.totalVoidMaps === 0) portalZone = game.global.world;
+	//Override for specificPortalZone when using he/hr setting
+	if (specificPortalZone) portalZone = specificPortalZone;
 
 	if (getPageSetting('dailyPortal') === 1) {
 		var OKtoPortal = false;
@@ -201,11 +201,11 @@ function dailyAutoPortal(specificPortalZone) {
 		if (bufferExceeded && game.global.world >= minZone) {
 			OKtoPortal = true;
 			if (atSettings.portal.aWholeNewWorld)
-				zonePostpone = 0;
+				MODULES.portal.zonePostpone = 0;
 		}
 		if (heliumHrBuffer === 0 && !atSettings.portal.aWholeNewWorld)
 			OKtoPortal = false;
-		if (OKtoPortal && zonePostpone === 0) {
+		if (OKtoPortal && MODULES.portal.zonePostpone === 0) {
 			if (getPageSetting('dailyHeliumHrPortal') > 0 && game.global.totalVoidMaps > 0) {
 				if (!MODULES.mapFunctions.portalAfterVoids) {
 					if (getPageSetting('dailyHeliumHrPortal') === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') debug("Z" + game.global.world + " - Pushing to next Poison zone then portaling after void maps have been run.", "portal");
@@ -238,17 +238,17 @@ function dailyAutoPortal(specificPortalZone) {
 				return;
 			}
 			else {
-				zonePostpone += 1;
+				MODULES.portal.zonePostpone += 1;
 				MODULES.popups.portal = true;
 				if (MODULES.popups.remainingTime === Infinity) MODULES.popups.remainingTime = 5000;
-				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
+				tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'MODULES.portal.zonePostpone+=1; MODULES.popups.portal = false', '<b>NOTICE: Auto-Portaling in ' + MODULES.popups.remainingTime + ' seconds....</b>', 'Delay Portal');
 				setTimeout(function () {
 					cancelTooltip()
 					MODULES.popups.portal = false;
 					MODULES.popups.remainingTime = Infinity;
 				}, MODULES["portal"].timeout);
 				setTimeout(function () {
-					if (zonePostpone >= 2)
+					if (MODULES.portal.zonePostpone >= 2)
 						return;
 					if (OKtoPortal) {
 						confirmAbandonChallenge();
@@ -271,8 +271,6 @@ function dailyAutoPortal(specificPortalZone) {
 		}
 	}
 	else if (getPageSetting('dailyPortal') === 2) {
-		if (MODULES.mapFunctions.portalZone === game.global.world && game.global.totalVoidMaps === 0) portalZone = game.global.world;
-
 		if (game.global.world >= portalZone) {
 			if (getPageSetting('dailyHeliumHourChallenge') !== 'None')
 				doPortal(getPageSetting('dailyHeliumHourChallenge'));
@@ -448,8 +446,6 @@ function doPortal(challenge, skipDaily) {
 	if (MODULES.portal.currentChallenge === 'None') MODULES.portal.currentChallenge = game.global.challengeActive;
 	var currChall = MODULES.portal.currentChallenge;
 
-	MODULES.mapFunctions.portalZone = Infinity;
-
 	//Cancel out of dailies if we're running them
 	if (challengeActive('Daily') || game.global.runningChallengeSquared) {
 		if (challengeActive('Daily') && (typeof greenworks === 'undefined' || (typeof greenworks !== 'undefined' && process.version > 'v10.10.0'))) {
@@ -589,7 +585,7 @@ function doPortal(challenge, skipDaily) {
 	}
 
 	//Run Perky/Surky.
-	if (typeof AutoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {
+	if (typeof MODULES.autoPerks !== 'undefined' && getPageSetting('autoPerks', portalUniverse)) {
 		if (portalUniverse === 1 && ($('#preset').value !== null || $('#preset').value !== undefined ||
 			($('#weight-he').value !== undefined && $('#weight-atk').value !== undefined && $('#weight-hp').value !== undefined && $('#weight-xp').value !== undefined))
 		) {
@@ -621,7 +617,7 @@ function doPortal(challenge, skipDaily) {
 	MODULES["portal"].dailyMods = '';
 	MODULES["portal"].dailyPercent = 0;
 	lastHeliumZone = 0;
-	zonePostpone = 0;
+	MODULES.portal.zonePostpone = 0;
 	resetVarsZone();
 	if (u2Mutations.open && getPageSetting('presetSwapMutators', 2)) {
 		loadMutations(preset);
@@ -730,9 +726,8 @@ function resetVarsZone(loadingSave) {
 		atSettings.portal.lastHZE = 0;
 
 		MODULES.heirlooms.plagueSwap = false;
+		MODULES.fightinfo.lastProcessedWorld = 0;
 	}
-
-
 
 	//General
 	MODULES.maps.mapTimer = 0;
@@ -748,15 +743,7 @@ function resetVarsZone(loadingSave) {
 	mapSettings.levelCheck = Infinity;
 
 	//Resetting variables that would cause issues if they were left as is
-	mapFunction.voidHDRatio = Infinity;
-	mapFunction.voidVHDRatio = Infinity;
-	mapFunction.voidHDInfo = Infinity;
-	mapFunction.voidHDIndex = Infinity;
-	mapFunction.voidFarm = false;
-	mapFunction.portalZone = Infinity;
 	mapFunction.portalAfterVoids = false;
-	mapFunction.boneCharge = false;
-	mapFunction.voidTrigger = 'None';
 
 	hdStats = new HDStats();
 	mapSettings = farmingDecision();
@@ -847,7 +834,7 @@ function atlantrimpRespecMessage(cellOverride) {
 	if (!game.global.canRespecPerks) return;
 	//Stop this from running if we're in U1 and not at the highest Spire reached.
 	if (game.global.universe === 1 && (!game.global.spireActive || game.global.world < (game.global.spiresCompleted + 1) * 100)) return;
-	if (typeof AutoPerks === 'undefined') return;
+	if (typeof MODULES.autoPerks === 'undefined') return;
 
 	//Stop it running if we aren't above the necessary cell for u1.
 	if (!cellOverride) {
@@ -907,6 +894,7 @@ var originalLoad = load;
 load = function () {
 	originalLoad(...arguments)
 	try {
+		loadAugustSettings();
 		atlantrimpRespecOverride();
 		resetVarsZone(true);
 		MODULES["graphs"].themeChanged();

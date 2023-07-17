@@ -1,7 +1,3 @@
-var critCC = 1;
-var critDD = 1;
-var trimpAA = 1;
-
 class HDStats {
 	constructor() {
 		this.isDaily = undefined;
@@ -295,10 +291,6 @@ function calcHitsSurvived(targetZone, type, checkResults) {
 	var health = calcOurHealth(false, type, false, true) / formationMod;
 	var block = calcOurBlock(false) / formationMod;
 	var equality = equalityQuery('Snimp', targetZone, null, type, null, 'gamma', null, hitsToSurvive);
-	//Calc for maps
-	if (type === "map") {
-		return health / Math.max(calcEnemyAttack("map", targetZone, undefined, undefined, undefined, customAttack, equality) - block, 0);
-	}
 
 	//Lead farms one zone ahead
 	if (challengeActive('Lead') && type === "world" && game.global.world % 2 === 1) {
@@ -317,45 +309,29 @@ function calcHitsSurvived(targetZone, type, checkResults) {
 	}
 
 	//Enemy Damage
-	const worldDamage = calcEnemyAttack("world", targetZone, undefined, undefined, undefined, customAttack, equality);
-
-	//Enemy Damage on Void Maps
-	if (type === "void") {
-		//Void Damage may actually be lower than world damage, so it needs to be calculated here to be compared later
-		voidDamage = damageMult * calcEnemyAttack("void", targetZone, undefined, undefined, undefined, customAttack, equality) - block;
-		//Void Power compensation (it affects our health, so apply multipliers after block)
-		if (!game.global.mapsActive || getCurrentMapObject().location !== "Void") {
-			if (game.talents.voidPower3.purchased) voidDamage /= 1.15;
-			else if (game.talents.voidPower2.purchased) voidDamage /= 1.35;
-			else if (game.talents.voidPower.purchased) voidDamage /= 1.65;
-		}
-		//Map health compensation
-		if (game.talents.mapHealth.purchased && type === "world") {
-			voidDamage /= 2;
-		}
-	}
+	const worldDamage = calcEnemyAttack(type, targetZone, undefined, undefined, undefined, customAttack, equality);
 
 	//Pierce & Voids
-	var pierce = (game.global.universe === 1 && game.global.brokenPlanet) ? getPierceAmt() : 0;
+	var pierce = (game.global.universe === 1 && game.global.brokenPlanet && type === 'world') ? getPierceAmt() : 0;
 
 	//Cancel the influence of the Barrier Formation
 	if (game.global.formation === 3) {
 		pierce *= 2;
 	}
+	//The Resulting Ratio
+	var finalDmg = Math.max(damageMult * worldDamage - block, worldDamage * pierce, 0);
+
 
 	if (checkResults) {
-		debug("calcHitsSurvived", "other");
-		debug("Target Zone: " + targetZone, "other");
-		debug("Damage Mult: " + damageMult, "other");
-		debug("Void Damage: " + voidDamage, "other");
-		debug("World Damage: " + worldDamage, "other");
-		debug("Block: " + block, "other");
-		debug("Pierce: " + pierce, "other");
-		debug("Health: " + health, "other");
-		debug("Hits to Survive: " + hitsToSurvive, "other");
+		debug("Target Zone: " + targetZone);
+		debug("Damage Mult: " + damageMult);
+		debug("World Damage: " + worldDamage);
+		debug("Block: " + block);
+		debug("Pierce: " + pierce);
+		debug("Health: " + health);
+		debug("Hits to Survive: " + hitsToSurvive);
+		debug("finalDmg: " + finalDmg);
 	}
-	//The Resulting Ratio
-	const finalDmg = Math.max(damageMult * worldDamage - block, voidDamage, worldDamage * pierce, 0);
 
 	return health / finalDmg;
 }
@@ -414,13 +390,14 @@ function getAnticipationBonus(stacks) {
 
 	//Init
 	var perkMult = game.portal.Anticipation.level * game.portal.Anticipation.modifier;
-	var stacks45 = getPageSetting('45stacks') !== false && getPageSetting('45stacks') !== "false";
+	var stacks45 = getPageSetting('45stacks');
 
 	//Regular anticipation
 	if (!stacks45) return 1 + (stacks * perkMult);
 
-	//45 stacks (??)
-	return 1 + (45 * perkMult);
+	//Look at max stacks you can use and calculate the bonus from that
+	var maxStacks = game.talents.patience.purchased ? 45 : 30;
+	return 1 + (maxStacks * perkMult);
 }
 
 function calcOurDmg(minMaxAvg = "avg", equality, realDamage, mapType, critMode, mapLevel, useTitimp) {

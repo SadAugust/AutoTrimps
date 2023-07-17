@@ -1,13 +1,15 @@
 function safeSetStance(stance) {
-	if (!stance) return;
+	if (!stance && stance !== 0) return;
 	if (game.global.formation === stance) return;
 	const currFormation = game.global.formation;
-	const formationLetter = currFormation === 5 ? 'W' : currFormation === 4 ? 'S' : currFormation === 3 ? 'B' : currFormation === 2 ? 'D' : currFormation === 1 ? 'H' : 'X';
-	const stanceLetter = stance === 5 ? 'W' : stance === 4 ? 'S' : stance === 3 ? 'B' : stance === 2 ? 'D' : stance === 1 ? 'H' : 'X';
+	const formationLetter = ['X', 'H', 'D', 'B', 'S', 'W'];
+
+	//This shouldnt be necessary?????????
 	if (game.global.formation !== stance) {
-		setFormation(stance);
-		debug("Setting stance from " + formationLetter + " to " + stanceLetter + ".", "stance");
+		setFormation(stance.toString());
+		debug("Setting stance from " + formationLetter[currFormation] + " to " + formationLetter[stance] + ".", "stance");
 	}
+
 	return true;
 }
 
@@ -19,10 +21,10 @@ function currentStance(stance) {
 }
 
 function calcBaseDamageInX() {
-	MODULES.stats.baseMinDamage = calcOurDmg("min", "X");
-	MODULES.stats.baseMaxDamage = calcOurDmg("max", "X");
-	baseDamage = calcOurDmg("avg", "X");
-	MODULES.stats.baseHealth = calcOurHealth(false);
+	MODULES.stats.baseMinDamage = calcOurDmg("min", "X", false, false, 'never');
+	MODULES.stats.baseMaxDamage = calcOurDmg("max", "X", false, false, 'force');
+	MODULES.stats.baseDamage = calcOurDmg("avg", "X");
+	MODULES.stats.baseHealth = calcOurHealth(false, false, true);
 	MODULES.stats.baseBlock = calcOurBlock(false);
 }
 
@@ -83,7 +85,7 @@ function maxOneShotPower(planToMap, targetZone) {
 
 function oneShotPower(specificStance, offset = 0, maxOrMin) {
 	//Calculates our minimum damage
-	var baseDamage = calcOurDmg(maxOrMin ? "max" : "min", specificStance, true);
+	var baseDamage = calcOurDmg(maxOrMin ? "max" : "min", specificStance, true, false, 'never');
 	var damageLeft = baseDamage + addPoison(true);
 
 	//Calculates how many enemies we can one shot + overkill
@@ -167,7 +169,7 @@ function directDamage(block, pierce, currentHealth, minDamage, critPower = 2, st
 	if (!block) block = calcOurBlock(true, true);
 	if (!pierce) pierce = (game.global.brokenPlanet && !game.global.mapsActive) ? getPierceAmt() : 0;
 	if (!currentHealth) currentHealth = calcOurHealth(true, false, true) - (game.global.soldierHealthMax - game.global.soldierHealth);
-	if (!minDamage) minDamage = calcOurDmg("min", stance, true) * (game.global.titimpLeft > 0 ? 2 : 1) + addPoison(true);
+	if (!minDamage) minDamage = calcOurDmg("min", stance, true, false, 'never') * (game.global.titimpLeft > 0 ? 2 : 1) + addPoison(true);
 
 	//Enemy
 	var enemy = getCurrentEnemy();
@@ -188,8 +190,7 @@ function directDamage(block, pierce, currentHealth, minDamage, critPower = 2, st
 	}
 
 	//Double Attack and One Shot situations
-	/* if (isTripleAttack && minDamage < enemyHealth) harm *= 3;
-	else  */if (isDoubleAttack && minDamage < enemyHealth) harm *= 2;
+	if (isDoubleAttack && minDamage < enemyHealth) harm *= 2;
 	if (!enemyFast && !dodgeDaily && minDamage > enemyHealth) harm = 0;
 
 	return harm;
@@ -235,8 +236,8 @@ function survive(formation = "S", critPower = 2, ignoreArmy) {
 	var pierce = (game.global.brokenPlanet && !game.global.mapsActive) ? getPierceAmt() : 0;
 	if (formation !== "B" && game.global.formation === 3) pierce *= 2;
 
-	//Decides if the trimps can survive in this formation
 	var notSpire = game.global.mapsActive || !game.global.spireActive;
+	//Decides if the trimps can survive in this formation
 	var harm = directDamage(block, pierce, health - missingHealth, minDamage, critPower, formation) + challengeDamage(maxHealth, minDamage, maxDamage, missingHealth, block, pierce, critPower, formation);
 
 	//Updated Genes and Block
@@ -268,7 +269,6 @@ function autoStance() {
 	if (!getPageSetting('AutoStance')) return true;
 	if (!game.upgrades.Formations.done) return true;
 	if (typeof getCurrentEnemy() === 'undefined') return true;
-
 	//Keep on D vs the Domination bosses
 	if (challengeActive('Domination') && (game.global.lastClearedCell === 98 || getCurrentEnemy() && getCurrentEnemy().name === "Cthulimp")) {
 		autoStanceD(true);

@@ -1,12 +1,10 @@
-//updated
-MODULES["gather"] = {};
-//These can be changed (in the console) if you know what you're doing:
-MODULES["gather"].minScienceSeconds = 60;
 
-//Global flags
-var trapBuffering = false;
-var maxTrapBuffering = false;
-var maxZoneDuration = 0;
+MODULES.gather = {
+	minScienceSeconds: 60,
+	trapBuffering: false,
+	maxTrapBuffering: false,
+	maxZoneDuration: 0,
+}
 
 //Traps per second
 function calcTPS() {
@@ -18,11 +16,11 @@ function calcTPS() {
 function calcMaxTraps() {
 	//Tries to keep in mind the longest duration any zone has lasted in this portal
 	var time = getZoneSeconds();
-	if (game.global.world === 1) maxZoneDuration = time;
-	if (time > maxZoneDuration) maxZoneDuration = time;
+	if (game.global.world === 1) MODULES.gather.maxZoneDuration = time;
+	if (time > MODULES.gather.maxZoneDuration) MODULES.gather.maxZoneDuration = time;
 
 	//Return enough traps to last 1/4 of the longest duration zone we've seen so far
-	return Math.ceil(calcTPS() * maxZoneDuration / 4);
+	return Math.ceil(calcTPS() * MODULES.gather.maxZoneDuration / 4);
 }
 
 function safeSetGather(resource) {
@@ -68,9 +66,9 @@ function autoGather() {
 	var trapsReady = game.buildings.Trap.owned >= minTraps + trapsBufferSize;
 	var fullOfTraps = game.buildings.Trap.owned >= maxTraps;
 	var maxTrapsReady = game.buildings.Trap.owned >= maxTraps + trapsBufferSize;
-	if (lowOnTraps) trapBuffering = true;
-	if (trapsReady) trapBuffering = false;
-	if (maxTrapsReady) maxTrapBuffering = false;
+	if (lowOnTraps) MODULES.gather.trapBuffering = true;
+	if (trapsReady) MODULES.gather.trapBuffering = false;
+	if (maxTrapsReady) MODULES.gather.maxTrapBuffering = false;
 
 	// Init - Science
 	var firstFightOK = game.global.world > 1 || game.global.lastClearedCell >= 0;
@@ -88,7 +86,7 @@ function autoGather() {
 	//Relevant means we gain at least 10% more trimps per sec while trapping (which basically stops trapping during later zones)
 	//And there is enough breed time remaining to open an entire trap (prevents wasting time and traps during early zones)
 	var trappingIsRelevant = trapperTrapUntilFull || breedingPS().div(10).lt(calcTPS() * (game.portal.Bait.level + 1));
-	var trapWontBeWasted = breedTimeRemaining().gte(1 / calcTPS()) || game.global.playerGathering === "trimps" && breedTimeRemaining().lte(DecimalBreed(0.1));
+	var trapWontBeWasted = breedTimeRemaining().gte(1 / calcTPS()) || game.global.playerGathering === "trimps" && breedTimeRemaining().lte(MODULES.breedtimer.DecimalBreed(0.1));
 
 	//Highest Priority Food/Wood for traps (Early Game, when trapping is mandatory)
 	if (game.global.world <= 3 &&
@@ -112,13 +110,13 @@ function autoGather() {
 	//High Priority Trapping (doing Trapper or without breeding trimps)
 	if (!scientistsAvailable && !minersAvailable && trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && ((notFullPop && breedingTrimps < 4) || trapperTrapUntilFull)) {
 		//Bait trimps if we have traps
-		if (!lowOnTraps && !trapBuffering && game.buildings.Trap.owned > 0) {
+		if (!lowOnTraps && !MODULES.gather.trapBuffering && game.buildings.Trap.owned > 0) {
 			safeSetGather('trimps');
 			return;
 		}
 		//Or build them, if they are on the queue
 		else if (isBuildingInQueue('Trap') || safeBuyBuilding('Trap', 1)) {
-			trapBuffering = true;
+			MODULES.gather.trapBuffering = true;
 			safeSetGather('buildings');
 			return;
 		}
@@ -185,14 +183,14 @@ function autoGather() {
 	} */
 
 	//Mid Priority Trapping
-	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && notFullPop && !lowOnTraps && !trapBuffering) {
+	if (trapTrimpsOK && trappingIsRelevant && trapWontBeWasted && notFullPop && !lowOnTraps && !MODULES.gather.trapBuffering) {
 		safeSetGather('trimps');
 		return;
 	}
 
 	//High Priority Trap Building
-	if (trapTrimpsOK && trappingIsRelevant && canAffordBuilding('Trap', false, false, false, false, 1) && (lowOnTraps || trapBuffering)) {
-		trapBuffering = true;
+	if (trapTrimpsOK && trappingIsRelevant && canAffordBuilding('Trap', false, false, false, false, 1) && (lowOnTraps || MODULES.gather.trapBuffering)) {
+		MODULES.gather.trapBuffering = true;
 		safeBuyBuilding('Trap', 1);
 		safeSetGather('buildings');
 		return;
@@ -230,9 +228,9 @@ function autoGather() {
 	}
 
 	//Low Priority Trap Building
-	if (trapTrimpsOK && trappingIsRelevant && canAffordBuilding('Trap', false, false, false, false, 1) && (!fullOfTraps || maxTrapBuffering)) {
-		trapBuffering = !fullOfTraps;
-		maxTrapBuffering = true;
+	if (trapTrimpsOK && trappingIsRelevant && canAffordBuilding('Trap', false, false, false, false, 1) && (!fullOfTraps || MODULES.gather.maxTrapBuffering)) {
+		MODULES.gather.trapBuffering = !fullOfTraps;
+		MODULES.gather.maxTrapBuffering = true;
 		safeBuyBuilding('Trap', 1);
 		safeSetGather('buildings');
 		return;
@@ -284,9 +282,10 @@ function autoGather() {
 }
 
 //Mining/Building only setting
+//Set to Wood during Transmute challenge
 function autoGatherMetal() {
 	if (game.global.buildingsQueue.length <= 1) {
-		safeSetGather(!challengeActive('Transmute') ? 'metal' : 'food');
+		safeSetGather(!challengeActive('Transmute') ? 'metal' : 'wood');
 	}
 	else {
 		safeSetGather('buildings')

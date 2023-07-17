@@ -1,4 +1,7 @@
-var AutoPerks = {};
+MODULES.autoPerks = {};
+MODULES.perky = {};
+MODULES.perky.props = {};
+MODULES.perky.showing = false;
 
 function runPerky() {
 	if (portalUniverse !== 1) return;
@@ -25,7 +28,7 @@ function input(a) {
 
 function parse_suffixes(a) {
 	a = a.replace(/\*.*|[^--9+a-z]/gi, "");
-	for (var b = notations["3" === localStorage.notation ? 3 : 1], c = b.length; c > 0; --c) a = a.replace(new RegExp(b[c - 1] + "$", "i"), "E" + 3 * c);
+	for (var b = MODULES.perky.notations["3" === localStorage.notation ? 3 : 1], c = b.length; c > 0; --c) a = a.replace(new RegExp(b[c - 1] + "$", "i"), "E" + 3 * c);
 	return +a;
 }
 
@@ -86,7 +89,6 @@ var Perk = /** @class */ (function () {
 	return Perk;
 }());
 
-var propsPerky = {};
 
 // initialize perks object to default values
 function initPresetPerky() {
@@ -98,7 +100,7 @@ function initPresetPerky() {
 		return perkyInputs[preset];
 	}
 
-	propsPerky = {
+	MODULES.perky.props = {
 		// memoization table for trinket drops
 		heliumWeight: Number($$('#weight-he').value),
 		attackWeight: Number($$('#weight-atk').value),
@@ -143,24 +145,24 @@ function fillPresetPerky(specificPreset) {
 	var preset = $$('#presetElem').value;
 	var weights = [0, 0, 0];
 	if (preset === 'early') {
-		weights = (propsPerky.early === null) ? [5, 4, 3, 2.4] : propsPerky.early;
+		weights = (MODULES.perky.props.early === null) ? [5, 4, 3, 2.4] : MODULES.perky.props.early;
 	} else if (preset === 'broken') {
-		weights = (propsPerky.broken === null) ? [7, 3, 1, 2.2] : propsPerky.broken;
+		weights = (MODULES.perky.props.broken === null) ? [7, 3, 1, 2.2] : MODULES.perky.props.broken;
 		// with GU recommendations, we want a big Rn weight
 	} else if (preset === 'mid') {
-		weights = (propsPerky.mid === null) ? [16, 5, 1, 4.4] : propsPerky.mid;
+		weights = (MODULES.perky.props.mid === null) ? [16, 5, 1, 4.4] : MODULES.perky.props.mid;
 	} else if (preset === 'corruption') {
-		weights = (propsPerky.corruption === null) ? [25, 7, 1, 6.6] : propsPerky.corruption;
+		weights = (MODULES.perky.props.corruption === null) ? [25, 7, 1, 6.6] : MODULES.perky.props.corruption;
 	} else if (preset === 'magma') {
-		weights = (propsPerky.magma === null) ? [35, 4, 3, 8] : propsPerky.magma;
+		weights = (MODULES.perky.props.magma === null) ? [35, 4, 3, 8] : MODULES.perky.props.magma;
 	} else if (preset === 'z280') {
-		weights = (propsPerky.z280 === null) ? [42, 6, 1, 10] : propsPerky.z280;
+		weights = (MODULES.perky.props.z280 === null) ? [42, 6, 1, 10] : MODULES.perky.props.z280;
 	} else if (preset === 'z400') {
-		weights = (propsPerky.z400 === null) ? [88, 10, 1, 20] : propsPerky.z400;
+		weights = (MODULES.perky.props.z400 === null) ? [88, 10, 1, 20] : MODULES.perky.props.z400;
 	} else if (preset === 'z450') {
-		weights = (propsPerky.z450 === null) ? [500, 50, 1, 110] : propsPerky.z450;
+		weights = (MODULES.perky.props.z450 === null) ? [500, 50, 1, 110] : MODULES.perky.props.z450;
 	} else if (preset === 'spire') {
-		weights = (propsPerky.spire === null) ? [0, 1, 1, 0] : propsPerky.spire;
+		weights = (MODULES.perky.props.spire === null) ? [0, 1, 1, 0] : MODULES.perky.props.spire;
 	} else if (preset === 'nerfed') {
 		weights = [0, 4, 3, 0];
 	} else if (preset === 'tent') {
@@ -170,15 +172,15 @@ function fillPresetPerky(specificPreset) {
 	} else if (preset === 'carp') {
 		weights = [0, 0, 0, 0];
 	} else if (preset === 'trapper') {
-		weights = (propsPerky.trapper === null) ? [0, 7, 1, 0] : propsPerky.trapper;
+		weights = (MODULES.perky.props.trapper === null) ? [0, 7, 1, 0] : MODULES.perky.props.trapper;
 	} else if (preset === 'coord') {
-		weights = (propsPerky.coord === null) ? [0, 40, 1, 0] : propsPerky.coord;
+		weights = (MODULES.perky.props.coord === null) ? [0, 40, 1, 0] : MODULES.perky.props.coord;
 	} else if (preset === 'trimp') {
-		weights = (propsPerky.trimp === null) ? [0, 99, 1, 0] : propsPerky.trimp;
+		weights = (MODULES.perky.props.trimp === null) ? [0, 99, 1, 0] : MODULES.perky.props.trimp;
 	} else if (preset === 'metal') {
-		weights = (propsPerky.metal === null) ? [0, 7, 1, 0] : propsPerky.metal;
+		weights = (MODULES.perky.props.metal === null) ? [0, 7, 1, 0] : MODULES.perky.props.metal;
 	} else if (preset === 'c2') {
-		weights = (propsPerky.c2 === null) ? [0, 7, 1, 0] : propsPerky.c2;
+		weights = (MODULES.perky.props.c2 === null) ? [0, 7, 1, 0] : MODULES.perky.props.c2;
 	} else if (preset === 'income') {
 		weights = [0, 0, 0, 0];
 	} else if (preset === 'unesscented') {
@@ -200,37 +202,37 @@ function initialPresetLoad() {
 	var preset = $$('#presetElem').value;
 
 	if (preset === 'early') {
-		propsPerky.early = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.early = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	} else if (preset === 'broken') {
-		propsPerky.broken = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.broken = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	} else if (preset === 'mid') {
-		propsPerky.mid = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.mid = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	} else if (preset === 'corruption') {
-		propsPerky.corruption = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.corruption = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	}
 
 	else if (preset === 'magma') {
-		propsPerky.magma = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.magma = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	} else if (preset === 'z280') {
-		propsPerky.z280 = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.z280 = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	} else if (preset === 'z400') {
-		propsPerky.z400 = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.z400 = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	} else if (preset === 'z450') {
-		propsPerky.z450 = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.z450 = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	}
 
 	else if (preset === 'spire') {
-		propsPerky.spire = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.spire = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	} else if (preset === 'trapper') {
-		propsPerky.trapper = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.trapper = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	} else if (preset === 'coord') {
-		propsPerky.coord = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.coord = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	} else if (preset === 'trimp') {
-		propsPerky.trimp = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.trimp = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	} else if (preset === 'metal') {
-		propsPerky.metal = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.metal = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	} else if (preset === 'c2') {
-		propsPerky.c2 = [propsPerky.heliumWeight, propsPerky.attackWeight, propsPerky.healthWeight, propsPerky.xpWeight];
+		MODULES.perky.props.c2 = [MODULES.perky.props.heliumWeight, MODULES.perky.props.attackWeight, MODULES.perky.props.healthWeight, MODULES.perky.props.xpWeight];
 	}
 }
 
@@ -480,7 +482,7 @@ function parse_perks(fixed, unlocks) {
 
 function savePerkySettings(initial) {
 
-	if (!MODULES.perkCalcs.showingPerky) {
+	if (!MODULES.perky.showing) {
 		console.log("Perky is not showing")
 		return;
 	}
@@ -498,22 +500,22 @@ function savePerkySettings(initial) {
 	}
 
 	//Save all of the presets that we might want to adjust
-	perkyInputs.early = propsPerky.early;
-	perkyInputs.broken = propsPerky.broken;
-	perkyInputs.mid = propsPerky.mid;
-	perkyInputs.corruption = propsPerky.corruption;
+	perkyInputs.early = MODULES.perky.props.early;
+	perkyInputs.broken = MODULES.perky.props.broken;
+	perkyInputs.mid = MODULES.perky.props.mid;
+	perkyInputs.corruption = MODULES.perky.props.corruption;
 
-	perkyInputs.magma = propsPerky.magma;
-	perkyInputs.z280 = propsPerky.z280;
-	perkyInputs.z400 = propsPerky.z400;
-	perkyInputs.z450 = propsPerky.z450;
-	perkyInputs.spire = propsPerky.spire;
+	perkyInputs.magma = MODULES.perky.props.magma;
+	perkyInputs.z280 = MODULES.perky.props.z280;
+	perkyInputs.z400 = MODULES.perky.props.z400;
+	perkyInputs.z450 = MODULES.perky.props.z450;
+	perkyInputs.spire = MODULES.perky.props.spire;
 
-	perkyInputs.trapper = propsPerky.trapper;
-	perkyInputs.coord = propsPerky.coord;
-	perkyInputs.trimp = propsPerky.trimp;
-	perkyInputs.metal = propsPerky.metal;
-	perkyInputs.c2 = propsPerky.c2;
+	perkyInputs.trapper = MODULES.perky.props.trapper;
+	perkyInputs.coord = MODULES.perky.props.coord;
+	perkyInputs.trimp = MODULES.perky.props.trimp;
+	perkyInputs.metal = MODULES.perky.props.metal;
+	perkyInputs.c2 = MODULES.perky.props.c2;
 
 	localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
 	if (typeof (autoTrimpSettings) !== 'undefined' && typeof (autoTrimpSettings.ATversion) !== 'undefined' && !autoTrimpSettings.ATversion.includes('SadAugust')) {
@@ -792,7 +794,6 @@ function optimize(params) {
 	return [he_left, perks];
 }
 
-
 $$ = function (a) {
 	return document.querySelector(a);
 }
@@ -801,7 +802,7 @@ $$$ = function (a) {
 };
 
 
-var notations = [
+MODULES.perky.notations = [
 	[],
 	"KMBTQaQiSxSpOcNoDcUdDdTdQadQidSxdSpdOdNdVUvDvTvQavQivSxvSpvOvNvTgUtgDtgTtgQatgQitgSxtgSptgOtgNtgQaaUqaDqaTqaQaqaQiqaSxqaSpqaOqaNqaQiaUqiDqiTqiQaqiQiqiSxqiSpqiOqiNqiSxaUsxDsxTsxQasxQisxSxsxSpsxOsxNsxSpaUspDspTspQaspQispSxspSpspOspNspOgUogDogTogQaogQiogSxogSpogOogNogNaUnDnTnQanQinSxnSpnOnNnCtUc".split(
 		/(?=[A-Z])/
@@ -817,7 +818,7 @@ var notations = [
 function setupPerkyUI() {
 
 	if (portalUniverse !== 1) return;
-	AutoPerks = {};
+	MODULES.autoPerks = {};
 
 	//Setting up data of id, names, and descriptions for each preset.
 	const presets = {
@@ -967,7 +968,7 @@ function setupPerkyUI() {
 	}
 	presetListHtml += "</select >";
 
-	AutoPerks.createInput = function (perkLine, id, inputObj, savedValue) {
+	MODULES.autoPerks.createInput = function (perkLine, id, inputObj, savedValue) {
 		if (!id) return;
 		if (document.getElementById(id + 'Div') !== null) {
 			console.log("You most likely have a setup error in your inputBoxes. It will be trying to access a input box that doesn't exist.")
@@ -1003,11 +1004,11 @@ function setupPerkyUI() {
 		perkLine.appendChild(perkDiv);
 	}
 
-	AutoPerks.GUI = {};
+	MODULES.autoPerks.GUI = {};
 
-	AutoPerks.removeGUI = function () {
-		Object.keys(AutoPerks.GUI).forEach(function (key) {
-			var $$elem = AutoPerks.GUI[key];
+	MODULES.autoPerks.removeGUI = function () {
+		Object.keys(MODULES.autoPerks.GUI).forEach(function (key) {
+			var $$elem = MODULES.autoPerks.GUI[key];
 			if (!$$elem) {
 				console.log("error in: " + key);
 				return;
@@ -1017,10 +1018,10 @@ function setupPerkyUI() {
 				delete $elem;
 			}
 		});
-		MODULES.perkCalcs.showingPerky = false;
+		MODULES.perky.showing = false;
 	}
 
-	AutoPerks.displayGUI = function () {
+	MODULES.autoPerks.displayGUI = function () {
 
 		var setupNeeded = false;
 		var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
@@ -1036,7 +1037,7 @@ function setupPerkyUI() {
 			perkyInputs = {};
 		}
 
-		var apGUI = AutoPerks.GUI;
+		var apGUI = MODULES.autoPerks.GUI;
 		//Setup Auto Allocate button
 		apGUI.$allocatorBtn1 = document.createElement("DIV");
 		apGUI.$allocatorBtn1.id = 'allocatorBtn1';
@@ -1057,7 +1058,7 @@ function setupPerkyUI() {
 		apGUI.$ratiosLine1 = document.createElement("DIV");
 		apGUI.$ratiosLine1.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
 		for (var item in inputBoxes.row1) {
-			AutoPerks.createInput(apGUI.$ratiosLine1, item, inputBoxes.row1[item], perkyInputs[item]);
+			MODULES.autoPerks.createInput(apGUI.$ratiosLine1, item, inputBoxes.row1[item], perkyInputs[item]);
 		}
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine1);
 
@@ -1065,7 +1066,7 @@ function setupPerkyUI() {
 		apGUI.$ratiosLine2 = document.createElement("DIV");
 		apGUI.$ratiosLine2.setAttribute('style', 'display: inline-block; text-align: center; width: 100%; margin-bottom: 0.1vw;');
 		for (var item in inputBoxes.row2) {
-			AutoPerks.createInput(apGUI.$ratiosLine2, item, inputBoxes.row2[item], perkyInputs[item]);
+			MODULES.autoPerks.createInput(apGUI.$ratiosLine2, item, inputBoxes.row2[item], perkyInputs[item]);
 		}
 		apGUI.$customRatios.appendChild(apGUI.$ratiosLine2);
 
@@ -1098,7 +1099,7 @@ function setupPerkyUI() {
 
 		$$('#presetElem').value = (perkyInputs.preset === undefined ? 'early' : perkyInputs.preset);
 		if (setupNeeded) savePerkySettings();
-		MODULES.perkCalcs.showingPerky = true;
+		MODULES.perky.showing = true;
 
 		//Disable Fluffy xp input when it's not active.
 		if (game.global.spiresCompleted < 2) {
@@ -1106,5 +1107,5 @@ function setupPerkyUI() {
 		}
 	}
 
-	AutoPerks.displayGUI();
+	MODULES.autoPerks.displayGUI();
 }

@@ -16,61 +16,6 @@ function autoRoboTrimp() {
 		if (game.global.useShriek) magnetoShriek();
 }
 
-//Helium
-
-function trimpcide() {
-	if (game.portal.Anticipation.level === 0) return;
-	if (!game.global.fighting) return;
-	const mapsActive = game.global.mapsActive;
-	if (!mapsActive && game.global.spireActive) return;
-
-	var antistacklimit = (game.talents.patience.purchased) ? 45 : 30;
-	if (game.global.antiStacks >= antistacklimit) return;
-	//Calculates Anticipation stacks based on time since last breed.
-	var baseCheck = ((game.jobs.Amalgamator.owned > 0) ? Math.floor((new Date().getTime() - game.global.lastSoldierSentAt) / 1000) : Math.floor(game.global.lastBreedTime / 1000)) >= antistacklimit
-
-	if (baseCheck) {
-		forceAbandonTrimps();
-	}
-}
-
-function armydeath() {
-	if (game.global.mapsActive) return !1;
-	var cell = game.global.lastClearedCell + 1,
-		enemyAttack = game.global.gridArray[cell].attack * dailyModifiers.empower.getMult(game.global.dailyChallenge.empower.strength, game.global.dailyChallenge.empower.stacks),
-		ourHealth = game.global.soldierHealth;
-	"Ice" === getEmpowerment() && (enemyAttack *= game.empowerments.Ice.getCombatModifier());
-	var block = game.global.soldierCurrentBlock;
-	return (
-		3 === game.global.formation ? (block /= 4) : "0" !== game.global.formation && (block *= 2),
-		block > game.global.gridArray[cell].attack ? (enemyAttack *= getPierceAmt()) : (enemyAttack -= block * (1 - getPierceAmt())),
-		challengeActive('Daily') && void 0 !== game.global.dailyChallenge.crits && (enemyAttack *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength)),
-		void 0 !== game.global.dailyChallenge.bogged && (ourHealth -= game.global.soldierHealthMax * dailyModifiers.bogged.getMult(game.global.dailyChallenge.bogged.strength)),
-		void 0 !== game.global.dailyChallenge.plague && (ourHealth -= game.global.soldierHealthMax * dailyModifiers.plague.getMult(game.global.dailyChallenge.plague.strength, game.global.dailyChallenge.plague.stacks)),
-		challengeActive('Electricity') && (ourHealth -= game.global.soldierHealth -= game.global.soldierHealthMax * (0.1 * game.challenges.Electricity.stacks)),
-		"corruptCrit" === game.global.gridArray[cell].corrupted
-			? (enemyAttack *= 5)
-			: "healthyCrit" === game.global.gridArray[cell].corrupted
-				? (enemyAttack *= 7)
-				: "corruptBleed" === game.global.gridArray[cell].corrupted
-					? (ourHealth *= 0.8)
-					: "healthyBleed" === game.global.gridArray[cell].corrupted && (ourHealth *= 0.7),
-		(ourHealth -= enemyAttack) <= 1e3
-	);
-}
-
-function avoidEmpower() {
-	if (!(typeof game.global.dailyChallenge.bogged === 'undefined' && typeof game.global.dailyChallenge.plague === 'undefined')) return;
-	if (!armydeath()) return;
-	if (game.global.universe !== 1) return;
-
-	mapsClicked(true);
-	mapsClicked(true);
-	debug("Abandoning Trimps to avoid Empower stacks.", "other");
-	return;
-
-}
-
 function fightalways() {
 	const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
 	var spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
@@ -107,59 +52,6 @@ function archstring() {
 			game.global.archString = string3;
 	}
 }
-
-var fastimps =
-	[
-		"Snimp",
-		"Kittimp",
-		"Gorillimp",
-		"Squimp",
-		"Shrimp",
-		"Chickimp",
-		"Frimp",
-		"Slagimp",
-		"Lavimp",
-		"Kangarimp",
-		"Entimp",
-		"Fusimp",
-		"Carbimp",
-		"Ubersmith",
-		"Shadimp",
-		"Voidsnimp",
-		"Prismimp",
-		"Sweltimp",
-		"Indianimp",
-		"Improbability",
-		"Neutrimp",
-		"Cthulimp",
-		"Omnipotrimp",
-		"Mutimp",
-		"Hulking_Mutimp",
-		"Liquimp",
-		"Poseidimp",
-		"Darknimp",
-		"Horrimp",
-		"Arachnimp",
-		"Beetlimp",
-		"Mantimp",
-		"Butterflimp",
-		"Frosnimp"
-	];
-
-var exoticImps =
-	[
-		"Chronoimp",
-		"Feyimp",
-		"Flutimp",
-		"Goblimp",
-		"Jestimp",
-		"Magnimp",
-		"Tauntimp",
-		"Titimp",
-		"Venimp",
-		"Whipimp",
-		"Randimp",
-	];
 
 function remainingHealth(forceAngelic, mapType) {
 	if (!forceAngelic) forceAngelic = false;
@@ -241,7 +133,7 @@ function equalityManagementBasic() {
 	}
 
 	//Looking to see if the enemy that's currently being fought is fast.
-	var fastEnemy = fastimps.includes(getCurrentEnemy().name);
+	var fastEnemy = MODULES.fightinfo.fastImps.includes(getCurrentEnemy().name);
 	//Checking if the map that's active is a Deadly voice map which always has first attack.
 	var voidDoubleAttack = game.global.mapsActive && getCurrentMapObject().location === "Void" && getCurrentMapObject().voidBuff === 'doubleAttack';
 	//Checking if the Frenzy buff is active.
@@ -612,7 +504,7 @@ function equalityManagement() {
 	if (dailyWeakness) ourDmg *= (1 - ((game.global.dailyChallenge.weakness.stacks + (fastEnemy ? 1 : 0)) * game.global.dailyChallenge.weakness.strength) / 100);
 
 	//Fast Enemy conditions
-	var fastEnemy = !game.global.preMapsActive && (runningDesolation && mapping ? !exoticImps.includes(enemyName) : fastimps.includes(enemyName));
+	var fastEnemy = !game.global.preMapsActive && (runningDesolation && mapping ? !MODULES.fightinfo.exoticImps.includes(enemyName) : MODULES.fightinfo.fastImps.includes(enemyName));
 	if (type === 'world' && game.global.world > 200 && game.global.gridArray[currentCell].u2Mutation.length > 0) fastEnemy = true;
 	if (!mapping && (dailyEmpower || runningSmithless)) fastEnemy = true;
 	if (type === 'map' && dailyExplosive && !MODULES.maps.slowScumming) fastEnemy = true;

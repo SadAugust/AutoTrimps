@@ -1,7 +1,7 @@
-MODULES["breedtimer"] = {};
-
-var DecimalBreed = Decimal.clone({ precision: 30, rounding: 4 });
-var missingTrimps = new DecimalBreed(0);
+MODULES.breedtimer = {
+	DecimalBreed: Decimal.clone({ precision: 30, rounding: 4 }),
+	missingTrimps: new this.DecimalBreed(0)
+};
 
 function trimpsEffectivelyEmployed() {
 	//Init
@@ -17,7 +17,7 @@ function trimpsEffectivelyEmployed() {
 function breedingPS() {
 	//Init
 	var trimps = game.resources.trimps;
-	var breeding = new DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
+	var breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
 
 	//Gets the modifier, then: 1.1x format -> 0.1 format -> 1.0 x breeding
 	return potencyMod().minus(1).mul(10).mul(breeding);
@@ -26,7 +26,7 @@ function breedingPS() {
 function potencyMod() {
 	//Init
 	var trimps = game.resources.trimps;
-	var potencyMod = new DecimalBreed(trimps.potency);
+	var potencyMod = new MODULES.breedtimer.DecimalBreed(trimps.potency);
 
 	//Potency, Nurseries, Venimp, Broken Planet
 	if (game.upgrades.Potency.done > 0) potencyMod = potencyMod.mul(Math.pow(1.1, game.upgrades.Potency.done));
@@ -89,10 +89,10 @@ function breedTotalTime() {
 	var trimpsMax = trimps.realMax();
 
 	//Calc
-	var maxBreedable = new DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
+	var maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
 	var breeding = maxBreedable.minus(trimps.getCurrentSend());
 
-	return DecimalBreed.log10(maxBreedable.div(breeding)).div(DecimalBreed.log10(potencyMod())).div(10);
+	return MODULES.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(MODULES.breedtimer.DecimalBreed.log10(potencyMod())).div(10);
 }
 
 function breedTimeRemaining() {
@@ -101,9 +101,9 @@ function breedTimeRemaining() {
 	var trimpsMax = trimps.realMax();
 
 	//Calc
-	var maxBreedable = new DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
-	var breeding = new DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
-	return DecimalBreed.log10(maxBreedable.div(breeding)).div(DecimalBreed.log10(potencyMod())).div(10);
+	var maxBreedable = new MODULES.breedtimer.DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
+	var breeding = new MODULES.breedtimer.DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
+	return MODULES.breedtimer.DecimalBreed.log10(maxBreedable.div(breeding)).div(MODULES.breedtimer.DecimalBreed.log10(potencyMod())).div(10);
 }
 
 function geneAssist() {
@@ -151,17 +151,17 @@ function geneAssist() {
 		target = new Decimal(getPageSetting('geneAssistTimerSpire' + settingPrefix));
 
 	var now = new Date().getTime();
-	var thresh = new DecimalBreed(totalTime.mul(0.02));
+	var thresh = new MODULES.breedtimer.DecimalBreed(totalTime.mul(0.02));
 	var compareTime;
 	if (timeRemaining.cmp(1) > 0 && timeRemaining.cmp(target.add(1)) > 0) {
-		compareTime = new DecimalBreed(timeRemaining.add(-1));
+		compareTime = new MODULES.breedtimer.DecimalBreed(timeRemaining.add(-1));
 	}
 	else {
-		compareTime = new DecimalBreed(totalTime);
+		compareTime = new MODULES.breedtimer.DecimalBreed(totalTime);
 	}
 	if (!thresh.isFinite()) thresh = new Decimal(0);
 	if (!compareTime.isFinite()) compareTime = new Decimal(999);
-	var genDif = new DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
+	var genDif = new MODULES.breedtimer.DecimalBreed(Decimal.log10(target.div(compareTime)).div(Decimal.log10(1.02))).ceil();
 
 	if (compareTime.cmp(target) < 0) {
 		if (game.resources.food.owned * (getPageSetting('geneAssistPercent') / 100) < getNextGeneticistCost()) { return; }
@@ -179,21 +179,4 @@ function geneAssist() {
 			removeGeneticist(genDif.abs().toNumber());
 		}
 	}
-}
-
-function forceAbandonTrimps() {
-	if (!getPageSetting('ForceAbandon')) return;
-	if (!getPageSetting('autoMaps')) return;
-	if (!game.global.mapsUnlocked) return;
-	if (game.global.preMapsActive) return;
-	//Exit and restart the map. If we are in the world, enter the world again.
-	if (game.global.mapsActive) {
-		mapsClicked(true);
-		runMap();
-	}
-	else {
-		mapsClicked(true);
-		mapsClicked(true);
-	}
-	debug("Abandoning Trimps to resend army with max Anticipation stacks.", "other");
 }

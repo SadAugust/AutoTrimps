@@ -1,8 +1,9 @@
-MODULES["buildings"] = {};
-MODULES["buildings"].storageMainCutoff = 0.85;
-MODULES["buildings"].storageLowlvlCutoff1 = 0.7;
-MODULES["buildings"].storageLowlvlCutoff2 = 0.5;
-MODULES["buildings"].smithiesBoughtThisZone = 0;
+MODULES.buildings = {
+	storageMainCutoff: 0.85,
+	storageLowlvlCutoff1: 0.7,
+	storageLowlvlCutoff2: 0.5,
+	smithiesBoughtThisZone: 0
+};
 
 function safeBuyBuilding(building, amt) {
 	if (!building || !amt)
