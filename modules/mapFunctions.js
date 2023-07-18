@@ -3826,12 +3826,12 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 		}
 
 		message += " Void maps were triggered by " + mapSettings.voidTrigger + ".<br>\n\
-		" + mapSettings.dropdown.name + " \
+		" + (mapSettings.dropdown ? (mapSettings.dropdown.name + " \
 		(Start: " + prettify(mapSettings.dropdown.hdRatio) + " | \
 		End: " + prettify(hdObject[mapSettings.dropdown.name]) + ")<br>\n\
 		"+ mapSettings.dropdown2.name + " \
 		(Start: " + prettify(mapSettings.dropdown2.hdRatio) + " | \
-		End: " + prettify(hdObject[mapSettings.dropdown2.name]) + ").";
+		End: " + prettify(hdObject[mapSettings.dropdown2.name])) : "") + ").";
 	}
 
 	else if (mapName === 'Hits Survived') {
