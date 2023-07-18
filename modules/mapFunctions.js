@@ -2800,7 +2800,7 @@ function desolationGearScum() {
 		//If it can't continue as normal, if it can then we start the +1 map for prestige scumming.
 		//Need to set it to destack before doing this so there's no chance of messing up the scum by neeeding to destack as soon as you hit the next zone.
 		var currCell = game.global.lastClearedCell + 2;
-		var enemyHealth = getCurrentWorldCell().health;
+		var enemyHealth = getCurrentWorldCell().maxHealth > -1 ? getCurrentWorldCell().health : calcEnemyHealthCore('world', game.global.world, currCell, game.global.gridArray[currCell - 1].name);
 		var equalityAmt = equalityQuery('Improbability', game.global.world, 100, 'world', 1, 'gamma');
 		var ourDmg = calcOurDmg('max', equalityAmt, false, 'world', 'force', 0, false);
 		var gammaDmg = MODULES.heirlooms.gammaBurstPct;
@@ -3289,7 +3289,7 @@ function prestigeRaidingSliders(mapNumber, raidzones, special) {
 	if (!special) special = getAvailableSpecials('p');
 	var map = (raidzones - game.global.world - mapNumber);
 	//Skips map levels above x5 if we have scientist4 or microchip4. Will subtract 5 from the map level to account for this.
-	if ((game.global.universe == 1 && game.global.sLevel >= 4) || (game.global.universe == 2 && game.buildings.Microchip.owned >= 4)) {
+	if (getSLevel() >= 4 && !challengeActive("Mapology")) {
 		var levelsToSkip = [0, 9, 8, 7, 6];
 		if (levelsToSkip.includes((raidzones - mapNumber).toString().slice(-1))) map = map - 5;
 	}
