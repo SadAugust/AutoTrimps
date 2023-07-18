@@ -187,7 +187,7 @@ function useScryerStance() {
 	var valid_max = max_zone <= 0 || game.global.world < max_zone;
 	if (useScryer && valid_min && valid_max && (!mapsActive || getPageSetting('onlyminmaxworld') === 0) && readyToSwitch()) {
 		//Smooth transition to S before killing the target
-		if (transitionRequired || (game.global.formation < 4 && !isScryerBonusActive())) {
+		if (transitionRequired) {
 			for (critPower = 2; critPower >= -2; critPower--) {
 				if (survive("D", critPower) && !oneShotPower("D", 0, true)) {
 					safeSetStance(2); return;
