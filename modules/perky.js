@@ -5,7 +5,8 @@ MODULES.perky.showing = false;
 
 function runPerky() {
 	if (portalUniverse !== 1) return;
-	if (JSON.parse(localStorage.getItem("perkyInputs")) === null) return;
+	//If Perky hasn't been run before, finds the closest zone to your target zone that you have already completed and sets your weight to be the same as that zone range.
+	if (JSON.parse(localStorage.getItem("perkyInputs")) === null) selectPerkyPreset();
 	allocatePerky();
 }
 
@@ -89,7 +90,6 @@ var Perk = /** @class */ (function () {
 	return Perk;
 }());
 
-
 // initialize perks object to default values
 function initPresetPerky() {
 	var perkyInputs = JSON.parse(localStorage.getItem("perkyInputs"));
@@ -124,15 +124,23 @@ function initPresetPerky() {
 		metal: presetData('metal', perkyInputs),
 		c2: presetData('c2', perkyInputs),
 	};
+	var newSave = false;
+	if (perkyInputs === null) {
+		perkyInputs = {};
+	}
 
-	if (isNaN(perkyInputs['weight-he'])) {
+	if (perkyInputs['weight-he'] === null || isNaN(perkyInputs['weight-he'])) {
 		perkyInputs['weight-he'] = 1;
-	} if (isNaN(perkyInputs['weight-atk'])) {
+	} if (perkyInputs['weight-atk'] === null || isNaN(perkyInputs['weight-atk'])) {
 		perkyInputs['weight-atk'] = 1;
-	} if (isNaN(perkyInputs['weight-hp'])) {
+	} if (perkyInputs['weight-hp'] === null || isNaN(perkyInputs['weight-hp'])) {
 		perkyInputs['weight-hp'] = 1;
-	} if (isNaN(perkyInputs['weight-xp'])) {
+	} if (perkyInputs['weight-xp'] === null || isNaN(perkyInputs['weight-xp'])) {
 		perkyInputs['weight-xp'] = 1;
+	}
+
+	if (newSave) {
+		localStorage.setItem("perkyInputs", JSON.stringify(perkyInputs));
 	}
 }
 

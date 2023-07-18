@@ -1389,6 +1389,7 @@ function prestigeRaiding() {
 //Running Prestige Raid Code
 function runPrestigeRaiding() {
 	if (mapSettings.mapName !== 'Prestige Raiding') return;
+	if (!getPageSetting('autoMaps')) return;
 	var raidzones = mapSettings.raidzones;
 	const targetPrestige = mapSettings.prestigeGoal
 	const mapSpecial = mapSettings.special;

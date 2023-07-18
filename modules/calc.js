@@ -1156,8 +1156,20 @@ function calcEnemyHealth(type, zone, cell = 99, name = "Turtlimp", customHealth)
 	if (challengeActive('Lead')) health *= (zone % 2 === 0) ? 5.08 : (1 + 0.04 * game.challenges.Lead.stacks);
 
 	//Void Map Difficulty (implicit 100% difficulty on regular maps)
-	if (type === "void") health *= (game.global.universe === 2 || zone >= 60) ? 4.5 : 2.5;
+	if (type === "void") {
+		var voidPercent = 4.5;
+		if (game.global.world <= 59) {
+			//-3 difficulty in U1, -2 difficulty in u2
+			voidPercent -= 2;
+			if (game.global.universe == 1) voidPercent /= 2;
+		}
+		else if (game.global.universe == 1 && game.global.world <= 199) {
+			//u2 up to full difficulty, u1 at -1
+			voidPercent -= 1;
+		}
 
+		health *= voidPercent;
+	}
 	if (type === "world" && corrupt && !game.global.spireActive) {
 		if (healthy) health *= calcCorruptionScale(zone, 14);
 		else if (corrupt) health *= calcCorruptionScale(zone, 10);
