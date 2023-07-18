@@ -30,9 +30,9 @@ function readyToSwitch(stance = "S") {
 }
 
 function useScryerStance() {
-	var scry = 0;
+	var scry = 4;
 	var scryF = 'S';
-	var x = 0;
+	var x = 4;
 
 	if (game.global.uberNature === "Wind" && getEmpowerment() !== "Wind") {
 		scry = 5;

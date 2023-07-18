@@ -250,8 +250,9 @@ function survive(formation = "S", critPower = 2, ignoreArmy) {
 }
 
 function checkStanceSetting() {
-	var settingPrefix = challengeActive('Daily') ? 'd' : '';
-	if ((getPageSetting('UseScryerStance')) || (game.global.mapsActive && getCurrentMapObject().location === 'Void' && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps'))) useScryerStance();
+	var settingPrefix = hdStats.isDaily ? 'd' : '';
+	if (getPageSetting('UseScryerStance')) useScryerStance();
+	else if (game.global.mapsActive && getCurrentMapObject().location === 'Void' && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')) useScryerStance();
 	else {
 		windStance();
 		autoStance();

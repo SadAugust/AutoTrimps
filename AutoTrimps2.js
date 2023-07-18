@@ -418,7 +418,7 @@ function mainLoopU1() {
 	if (game.global.mapsUnlocked && challengeActive('Daily') && getPageSetting('avoidEmpower') && typeof game.global.dailyChallenge.empower !== 'undefined' && !game.global.preMapsActive && !game.global.mapsActive && game.global.soldierHealth > 0) avoidEmpower();
 
 	//Stance
-	checkStanceSetting();
+	if (shouldRunTW) checkStanceSetting();
 
 	//Spire. Exit cell & respec
 	if (game.global.spireActive) {
