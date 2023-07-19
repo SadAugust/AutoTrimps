@@ -402,7 +402,7 @@ function buyBuildings() {
 			var smithyCanAfford = calculateMaxAffordLocal(game.buildings.Smithy, true, false, false, (smithyAmt - game.buildings.Smithy.purchased), smithyPct);
 			if (mapSettings.mapName === 'Smithy Farm') {
 				smithyPct = 1;
-				smithyAmt = mapSettings.smithies;
+				if (smithyAmt > mapSettings.smithies) smithyAmt = mapSettings.smithies;
 			}
 			//Purchasing a smithy whilst on Quest
 			if (challengeActive('Quest') && getPageSetting('quest')) {
