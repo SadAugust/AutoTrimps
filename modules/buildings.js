@@ -400,6 +400,7 @@ function buyBuildings() {
 			var smithyAmt = buildingSettings.Smithy.buyMax === 0 ? Infinity : buildingSettings.Smithy.buyMax;
 			var smithyPct = buildingSettings.Smithy.percent / 100;
 			var smithyCanAfford = calculateMaxAffordLocal(game.buildings.Smithy, true, false, false, (smithyAmt - game.buildings.Smithy.purchased), smithyPct);
+			if (mapSettings.mapName === 'Smithy Farm') smithyPct = 1;
 
 			//Purchasing a smithy whilst on Quest
 			if (challengeActive('Quest') && getPageSetting('quest')) {
