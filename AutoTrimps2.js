@@ -121,10 +121,10 @@ function initializeAutoTrimps() {
 	loadPageVariables();
 	ATscriptLoad(null, 'SettingsGUI');
 
-	/* var script = document.createElement('script');
+	var script = document.createElement('script');
 	script.src = 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js';
-	document.head.appendChild(script); */
-	ATscriptLoad(null, 'Graphs');
+	document.head.appendChild(script);
+	/* ATscriptLoad(null, 'Graphs'); */
 	ATscriptLoad(null, 'mutatorPreset');
 	for (var m in atSettings.modules.installedModules) {
 		ATscriptLoad(atSettings.modules.path, atSettings.modules.installedModules[m]);
