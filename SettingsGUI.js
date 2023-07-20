@@ -6131,12 +6131,6 @@ function updateATVersion() {
 				autoTrimpSettings.IgnoreCrits.valueU2 = 0;
 			}
 		}
-
-		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.23') {
-			if (typeof (tempSettings["testMapScummingValue"]) !== 'undefined') {
-				autoTrimpSettings.testMapScummingValue.value = tempSettings.testMapScummingValue.value.valueU2;
-			}
-		}
 	}
 
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
