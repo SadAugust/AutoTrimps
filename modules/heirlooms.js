@@ -1,4 +1,3 @@
-
 MODULES.heirlooms = {
 	plagueSwap: false,
 	gammaBurstPct: 1,
@@ -370,22 +369,13 @@ function heirloomSwapping() {
 }
 
 //AT versions for heirloom bonuses. 
-//RECHECK EVERY PATCH TO MAKE SURE THEY ARE STILL ACCURATE
+//Check and update each patch!
 
 function calcHeirloomBonus_AT(type, modName, number, getValueOnly, customShield) {
 	var mod = getHeirloomBonus_AT(type, modName, customShield);
 	if (!mod) return number;
 	if (getValueOnly) return mod;
 	if (mod <= 0) return number;
-	return (number * ((mod / 100) + 1));
-}
-
-function calcHeirloomBonusLocal(mod, number) {
-	var mod = mod;
-	if (challengeActive('Daily') && typeof game.global.dailyChallenge.heirlost !== 'undefined')
-		mod *= dailyModifiers.heirlost.getMult(game.global.dailyChallenge.heirlost.strength);
-	if (!mod) return;
-
 	return (number * ((mod / 100) + 1));
 }
 

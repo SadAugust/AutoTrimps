@@ -82,6 +82,7 @@ function ATscriptLoad(prefix, fileName) {
 	if (null === prefix) prefix = '';
 	script.src = atSettings.initialise.basepath + prefix + fileName + '.js';
 	script.id = fileName + '_MODULE';
+	script.defer = true;
 	document.head.appendChild(script);
 	//Looks for if the script has loaded, if it has, add it to the loadedModules array. Ignores duplicate entries.
 	script.addEventListener('load', () => {
@@ -240,12 +241,21 @@ function toggleCatchUpMode() {
 		}
 		atSettings.loops.atTimeLapseFastLoop = true;
 		gameLoop = function (makeUp, now) {
+			if (game.options.menu.pauseGame.enabled === 1) return;
 			originalGameLoop(makeUp, now);
 
 			var newZone = atSettings.portal.lastrunworld !== game.global.world;
 			//Run mainLoop every n game loops and always on a new zone.
 			if (loops % getPageSetting('timeWarpFrequency') === 0 || newZone) {
 				mainLoop();
+				//If user want to see the games UI then run this code every n game loops.
+				if (getPageSetting('timeWarpDisplay')) {
+					usingRealTimeOffline = false;
+					updateGoodBar();
+					updateBadBar(getCurrentEnemy_new());
+					updateLabels(true);
+					usingRealTimeOffline = true;
+				}
 			}
 
 			//Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
@@ -256,6 +266,7 @@ function toggleCatchUpMode() {
 			if (game.global.universe === 1) checkStanceSetting();
 			if (game.global.universe === 2) equalityManagement();
 		}
+
 		debug("TimeLapse Mode Enabled", "offline");
 	}
 }

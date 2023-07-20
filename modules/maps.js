@@ -46,7 +46,7 @@ function updateAutoMapsStatus(get) {
 		return [status, getPercent, lifetime];
 	}
 	//Set auto maps status when inside of TW
-	if (usingRealTimeOffline && document.getElementById('autoMapStatusTW') !== null) {
+	if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay') && document.getElementById('autoMapStatusTW') !== null) {
 		//Add in a header for the status to let the user know what it is
 		var statusMsg = "<h9>Auto Maps Status</h9><br>" + status;
 		var id = game.global.mapsActive ? 'autoMapStatusMapsTW' : 'autoMapStatusTW';
@@ -54,12 +54,12 @@ function updateAutoMapsStatus(get) {
 		document.getElementById(id).setAttribute("onmouseover", makeAutomapStatusTooltip());
 	}
 	//Set auto maps status when outside of TW
-	if (!usingRealTimeOffline && document.getElementById('autoMapStatus') !== null) {
+	if ((!usingRealTimeOffline || getPageSetting('timeWarpDisplay')) && document.getElementById('autoMapStatus') !== null) {
 		if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
 		document.getElementById('autoMapStatus').setAttribute("onmouseover", makeAutomapStatusTooltip());
 	}
 	//Set hider (he/hr) status when outside of TW
-	if (!usingRealTimeOffline && document.getElementById('hiderStatus') !== null) {
+	if ((!usingRealTimeOffline || getPageSetting('timeWarpDisplay')) && document.getElementById('hiderStatus') !== null) {
 		if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
 		document.getElementById('hiderStatus').setAttribute("onmouseover", makeResourceTooltip());
 	}
@@ -305,7 +305,7 @@ function autoMap() {
 		} else if (map.noRecycle) {
 			if (runUniques && shouldRunUniqueMap(map) && !challengeActive('Insanity')) {
 				selectedMap = map.id;
-				if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getGameTime();
+				if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
 			}
 			if (map.location === "Bionic") {
 				bionicPool.push(map);
@@ -324,7 +324,7 @@ function autoMap() {
 			else if (mapSettings.mapName === 'Bionic Raiding') selectedMap = "bionicRaid";
 			else if (optimalMap) selectedMap = optimalMap.id;
 			else selectedMap = shouldFarmMapCreation(mapSettings.mapLevel, mapSettings.special, mapBiome);
-			if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getGameTime();
+			if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
 		}
 	}
 
@@ -340,7 +340,7 @@ function autoMap() {
 			if (game.global.preMapsActive) {
 				perfectMapCost(maplevel - game.global.world, "lmc", mapBiome);
 				buyMap();
-				runMapAT();
+				runMap_AT();
 				debug("Running LMC map due to only having 1 equip remaining on this map.", "maps");
 			}
 		}

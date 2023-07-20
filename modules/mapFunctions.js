@@ -300,7 +300,7 @@ function runUniqueMap(mapName, dontRecycle) {
 		for (var map in game.global.mapsOwnedArray) {
 			if (game.global.mapsOwnedArray[map].name === mapName) {
 				selectMap(game.global.mapsOwnedArray[map].id)
-				runMapAT();
+				runMap_AT();
 				debug('Running ' + mapName + ' on zone ' + game.global.world + '.', "map_Details");
 			}
 		}
@@ -823,14 +823,14 @@ function tributeFarm() {
 				var tributeMaps = mapSettings.mapName === mapName ? tributeGoal - game.global.mapRunCounter : tributeGoal;
 				var tributeTime = tributeMaps * 25;
 				if (tributeMaps > 4) tributeTime += (Math.floor(tributeMaps / 5) * 45);
-				var foodEarnedTributes = game.resources.food.owned + scaleToCurrentMapLocal(simpleSecondsLocal("food", tributeTime, jobRatio), false, true, mapLevel);
-				tributeGoal = game.buildings.Tribute.purchased + calculateMaxAffordLocal(game.buildings.Tribute, true, false, false, false, 1, foodEarnedTributes);
+				var foodEarnedTributes = game.resources.food.owned + scaleToCurrentMap_AT(simpleSeconds_AT("food", tributeTime, jobRatio), false, true, mapLevel);
+				tributeGoal = game.buildings.Tribute.purchased + calculateMaxAfford_AT(game.buildings.Tribute, true, false, false, false, 1, foodEarnedTributes);
 			}
 			if (meteorologistGoal !== 0) {
 				var meteorologistTime = (mapSettings.mapName === mapName ? meteorologistGoal - game.global.mapRunCounter : meteorologistGoal) * 25;
 				if (meteorologistGoal > 4) meteorologistTime += (Math.floor(meteorologistGoal / 5) * 45);
-				var foodEarnedMets = game.resources.food.owned + scaleToCurrentMapLocal(simpleSecondsLocal("food", meteorologistTime, jobRatio), false, true, mapLevel);
-				meteorologistGoal = game.jobs.Meteorologist.owned + calculateMaxAffordLocal(game.jobs.Meteorologist, false, false, true, false, 1, foodEarnedMets);
+				var foodEarnedMets = game.resources.food.owned + scaleToCurrentMap_AT(simpleSeconds_AT("food", meteorologistTime, jobRatio), false, true, mapLevel);
+				meteorologistGoal = game.jobs.Meteorologist.owned + calculateMaxAfford_AT(game.jobs.Meteorologist, false, false, true, false, 1, foodEarnedMets);
 			}
 		}
 
@@ -863,7 +863,7 @@ function tributeFarm() {
 			totalTrFCost += barnCost;
 
 			//Figuring out how much Food we'd farm in the time it takes to run Atlantrimp. Seconds is 165 due to avg of 5x caches (20s per), 4x chronoimps (5s per), 1x jestimp (45s)
-			var resourceFarmed = scaleToCurrentMapLocal(simpleSecondsLocal("food", 165, jobRatio), false, true, mapLevel);
+			var resourceFarmed = scaleToCurrentMap_AT(simpleSeconds_AT("food", 165, jobRatio), false, true, mapLevel);
 
 			if ((totalTrFCost > game.resources.food.owned - barnCost + resourceFarmed) && game.resources.food.owned > totalTrFCost / 2) {
 				runUniqueMap("Atlantrimp", dontRecycleMaps);
@@ -985,8 +985,8 @@ function smithyFarm() {
 			mapLevel = -1;
 
 		//Initialising base food & metal vars for calcs later on
-		var woodBase = scaleToCurrentMapLocal(simpleSecondsLocal("wood", 1, '0,1,0'), false, true, mapLevel);
-		var metalBase = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 1, '0,0,1'), false, true, mapLevel);
+		var woodBase = scaleToCurrentMap_AT(simpleSeconds_AT("wood", 1, '0,1,0'), false, true, mapLevel);
+		var metalBase = scaleToCurrentMap_AT(simpleSeconds_AT("metal", 1, '0,0,1'), false, true, mapLevel);
 
 		//When mapType is set as Map Count work out how many Smithies we can farm in the amount of maps specified.
 		if ((currQuest() === 10 || rSFSettings.mapType === 'Map Count') && smithyGoal !== 0) {
@@ -1052,6 +1052,9 @@ function smithyFarm() {
 			shouldMap = true;
 		}
 
+		//Overrides to purchase smithies under the following circumstances
+		//1. If the user has either the AT AutoStructure setting OR the AT AutoStructure Smithy setting disabled.
+		//2. If the user is running Hypothermia and is specifically Smithy Farming.
 		if ((!getPageSetting('buildingsType') || !getPageSetting('buildingSettingsArray').Smithy.enabled || challengeActive('Hypothermia')) && shouldMap && smithyGoal > game.buildings.Smithy.purchased && canAffordBuilding('Smithy', false, false, false, false, 1)) {
 			buyBuilding("Smithy", true, true, 1);
 		}
@@ -1154,7 +1157,7 @@ function worshipperFarm() {
 		}
 
 		if (challengeActive('Wither') && mapLevel >= 0) mapLevel = -1;
-		if (defaultSettings.shipSkipEnabled && game.jobs.Worshipper.owned !== 50 && (scaleToCurrentMapLocal(simpleSecondsLocal("food", 20, jobRatio), false, true, mapLevel) < (game.jobs.Worshipper.getCost() * defaultSettings.shipskip))) {
+		if (defaultSettings.shipSkipEnabled && game.jobs.Worshipper.owned !== 50 && (scaleToCurrentMap_AT(simpleSeconds_AT("food", 20, jobRatio), false, true, mapLevel) < (game.jobs.Worshipper.getCost() * defaultSettings.shipskip))) {
 			shouldSkip = true;
 		}
 
@@ -1460,7 +1463,7 @@ function runPrestigeRaiding() {
 					}
 					debug("Prestige Raiding" + " (z" + game.global.world + ") running a level " + (purchasedMap.level) + " map. Map #" + [(mapSettings.prestigeMapArray.length - x)], "map_Details");
 					selectMap(mapSettings.prestigeMapArray[x]);
-					runMapAT();
+					runMap_AT();
 				}
 				//If errors occur then delete prestigeMapArray and attempt to start the raiding process again.
 				//HOPEFULLY this fixes any potential issues that transpire due to my terrible coding.
@@ -1474,7 +1477,7 @@ function runPrestigeRaiding() {
 	}
 
 	if (game.global.preMapsActive)
-		runMapAT();
+		runMap_AT();
 }
 
 function prestigeClimb() {
@@ -2243,7 +2246,7 @@ function pandemoniumFarm() {
 		mapLevel = mapAutoLevel;
 	}
 
-	var pandemonium_LMC = scaleToCurrentMapLocal(simpleSecondsLocal("metal", 20, jobRatio), false, true, mapLevel);
+	var pandemonium_LMC = scaleToCurrentMap_AT(simpleSeconds_AT("metal", 20, jobRatio), false, true, mapLevel);
 	var mapSpecial = nextEquipmentCost > pandemonium_LMC ? 'hc' : 'lmc'
 	var resourceGain = mapSpecial === 'hc' ? pandemonium_LMC * 2 : pandemonium_LMC;
 
@@ -2616,7 +2619,7 @@ function hypothermia() {
 			shouldMap = true;
 		}
 
-		var repeat = game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMapLocal(simpleSecondsLocal("wood", 20, jobRatio), false, true, mapLevel) + game.resources.wood.owned > bonfireCostTotal;
+		var repeat = game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice || scaleToCurrentMap_AT(simpleSeconds_AT("wood", 20, jobRatio), false, true, mapLevel) + game.resources.wood.owned > bonfireCostTotal;
 		var status = 'Hypo Farming to ' + prettify(bonfireCostTotal) + ' wood';
 
 		farmingDetails.shouldRun = shouldMap;
@@ -3548,7 +3551,8 @@ function perfectMapCost_Actual(plusLevel, specialModifier, biome, sliders = [9, 
 }
 
 //Runs a map WITHOUT resetting the mapRunCounter variable so that we can have an accurate count of how many maps we've run
-function runMapAT() {
+//Check and update each patch!
+function runMap_AT() {
 	if (game.options.menu.pauseGame.enabled) return;
 	if (game.global.lookingAtMap === "") return;
 	if (challengeActive("Mapology") && !game.global.currentMapId) {
@@ -3799,20 +3803,20 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	if (mapSpecial === "0") mapSpecial = "no special";
 	if (mapName === 'Bionic Raiding') mapSpecial = game.talents.bionic2.purchased ? 'fa' : 'no special';
 
-	var timeMapping = MODULES.maps.mapTimer > 0 ? MODULES.maps.mapTimer : getGameTime();
+	var timeMapping = MODULES.maps.mapTimer > 0 ? getZoneSeconds() - MODULES.maps.mapTimer : 0;
 	var currCell = game.global.lastClearedCell + 2;
 	var message = '';
 	if (mapName !== 'Void Map' && mapName !== 'Quagmire Farm' && mapName !== 'Smithy Farm' && mapName !== 'Bionic Raiding' && mapName !== 'Quest') {
-		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + mapSpecial + ")" + (mappingLength === 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + " (" + (mapLevel >= 0 ? "+" : "") + mapLevel + " " + mapSpecial + ")" + (mappingLength === 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeMapping) + ".");
 	}
 	else if (mapName === 'Smithy Farm') {
-		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + MODULES.maps.mapRepeatsSmithy[0] + " food, " + MODULES.maps.mapRepeatsSmithy[1] + " wood, " + MODULES.maps.mapRepeatsSmithy[2] + " metal maps (" + (mapLevel >= 0 ? "+" : "") + mapLevel + ")" + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + MODULES.maps.mapRepeatsSmithy[0] + " food, " + MODULES.maps.mapRepeatsSmithy[1] + " wood, " + MODULES.maps.mapRepeatsSmithy[2] + " metal maps (" + (mapLevel >= 0 ? "+" : "") + mapLevel + ")" + " and " + formatTimeForDescriptions(timeMapping) + ".");
 	}
 	else if (mapName === 'Quagmire Farm') {
-		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + (mappingLength === 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + (mappingLength) + (mappingLength === 1 ? " map" : " maps") + " and " + formatTimeForDescriptions(timeMapping) + ".");
 	}
 	else {
-		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + formatTimeForDescriptions(timeForFormatting(timeMapping)) + ".");
+		message += (mapName + " (z" + game.global.world + "c" + currCell + ") took " + formatTimeForDescriptions(timeMapping) + ".");
 	}
 
 	if (mapName === 'Void Map') {

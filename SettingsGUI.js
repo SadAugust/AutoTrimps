@@ -93,7 +93,7 @@ function initializeAllTabs() {
 	createTabs("Import Export", "Import & Export Settings", addTabsDiv, addtabsUL);
 	createTabs("Test", "Basic testing functions - Should never be seen by users", addTabsDiv, addtabsUL);
 	createTabs("Beta", "Beta features - Should never be seen by users as they aren't user ready.", addTabsDiv, addtabsUL);
-	createTabs("Legacy", "Legacy Settings. Will be removed every major patch cycle.", addTabsDiv, addtabsUL);
+	createTabs("Legacy", "Legacy Settings.", addTabsDiv, addtabsUL);
 	var li_0 = document.createElement('li');
 	var a_0 = document.createElement('a');
 	a_0.className = "tablinks minimize";
@@ -1944,7 +1944,7 @@ function initializeAllSettings() {
 				if (currSettingUniverse === 1) description += "<p>This is a very important setting to be used with <b>Advanced Nurseries</b> after Magma. Basically, if you are running out of nurseries too soon, increase this value, otherwise lower it.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', 10, null, "Maps", [1, 2]);
+			}, 'value', -1, null, "Maps", [1, 2]);
 
 		createSetting('mapBonusRatio',
 			function () { return ('Map Bonus Ratio') },
@@ -1955,7 +1955,7 @@ function initializeAllSettings() {
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> 4</p>";
 				return description;
-			}, 'value', 4, null, "Maps", [1, 2]);
+			}, 'value', -1, null, "Maps", [1, 2]);
 
 		createSetting('mapBonusStacks',
 			function () { return ('Map Bonus Stacks') },
@@ -1964,7 +1964,7 @@ function initializeAllSettings() {
 				description += "<p>Settings to adjust the cache it will run and the job ratio that it uses can be found in the <b>Map Bonus</b> setting.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
-			}, 'value', 10, null, "Maps", [1, 2]);
+			}, 'value', -1, null, "Maps", [1, 2]);
 
 		createSetting('scryvoidmaps',
 			function () { return ('VM Scryer') },
@@ -3676,6 +3676,17 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', 20, null, 'Time Warp', [0],
 			function () { return (autoTrimpSettings.timeWarpSpeed.enabled) });
+
+		createSetting('timeWarpDisplay',
+			function () { return ('Time Warp Display') },
+			function () {
+				var description = "<p>Will display the Trimps user interface during time warp.</p>";
+				description += "<p>Updates the display based off the value set in <b>Time Warp Frequency</b> so adjust that if you want it to update more often.</p>";
+				description += "<p>If enabled it will cause your time warp to take longer as it has to render additional frames.</p>";
+				description += "<p><b>Recommended:</b> Disabled</p>";
+				return description;
+			}, 'boolean', false, null, 'Time Warp', [0],
+			function () { return (autoTrimpSettings.timeWarpSpeed.enabled && gameUserCheck()) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -3690,7 +3701,7 @@ function initializeAllSettings() {
 		createSetting('displayHeHr',
 			function () { return (resourceHour() + '/hr status') },
 			function () { return ('Enables the display of your ' + resource().toLowerCase() + ' per hour. Turn this off to reduce memory.') },
-			'boolean', true, null, 'Display', [0]);
+			'boolean', false, null, 'Display', [0]);
 
 		createSetting('displayAllSettings',
 			function () { return ('Display all settings') },
@@ -3917,7 +3928,7 @@ function initializeAllSettings() {
 				description += "<p>If running <b>Desolation</b> will roll for <b>9</b> slow enemies, otherwise will go for <b>10</b>.</p>";
 				description += "<p><b>Due to the map remaking process your game will hang for a while till this finds an ideal map.</b></p>";
 				return description;
-			}, 'value', 1e10, null, 'Beta', [2]);
+			}, 'value', 1e10, null, 'Beta', [0]);
 		3
 		createSetting('debugEqualityStats',
 			function () { return ('Debug Equality Stats') },
@@ -4271,6 +4282,9 @@ function settingChanged(id, currUniverse) {
 
 		if (id === "displayHeHr") {
 			document.getElementById('hiderStatus').style.display = btn[enabled] ? 'block' : 'none';
+		}
+		if (id === "timeWarpDisplay") {
+			timeWarpDisplay();
 		}
 	}
 
@@ -5008,7 +5022,7 @@ function autoSetText(id, multiValue) {
 function autoToggle(what) {
 
 	//Changing where buttons are placed depending on TW status.
-	if (usingRealTimeOffline) {
+	if (usingRealTimeOffline && !getPageSetting('timeWarpDisplay')) {
 		if (document.getElementById("autoTrimpsTabBarMenu").parentNode.id === 'settingsRow') {
 			document.getElementById("settingsRowTW").appendChild(document.getElementById("autoTrimpsTabBarMenu"));
 			document.getElementById("settingsRowTW").appendChild(document.getElementById("autoSettings"));
@@ -5438,6 +5452,16 @@ function setupTimeWarpAT() {
 			$('#settingBtnTW').append(autoStructureBtnParent);
 		}
 	}
+
+	timeWarpDisplay();
+}
+
+//Display TW UI or regular UI depending on timeWarpDisplay setting.
+function timeWarpDisplay() {
+	if (!usingRealTimeOffline) return;
+
+	document.getElementById('offlineWrapper').style.display = getPageSetting('timeWarpDisplay') ? 'none' : 'block';
+	document.getElementById('innerWrapper').style.display = getPageSetting('timeWarpDisplay') ? 'block' : 'none';
 }
 
 function autoMapsButton() {
@@ -5715,8 +5739,10 @@ function updateATVersion() {
 	if (typeof (autoTrimpSettings) === 'undefined') return;
 	var changelog = [];
 
+	//Prints the new user message if it's the first time loading the script.
 	if (autoTrimpSettings["ATversion"] === undefined || !autoTrimpSettings["ATversion"].includes('SadAugust')) {
-
+		autoTrimpSettings["ATversion"] = atSettings.initialise.version;
+		saveSettings();
 		if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
 
 		var description = "<p>Welcome to the SadAugust fork of AutoTrimps!</p>";
@@ -5733,13 +5759,14 @@ function updateATVersion() {
 
 		changelog.push(description);
 		printChangelog(changelog);
+		return;
 	}
 
 	if (autoTrimpSettings["ATversion"] !== undefined && autoTrimpSettings["ATversion"].includes('SadAugust')
 		&& autoTrimpSettings["ATversion"] !== atSettings.initialise.version
 	) {
 
-		var tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+		const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.001') {
 			var settings_List = ['raidingSettings', 'bionicRaidingSettings']
@@ -6104,6 +6131,12 @@ function updateATVersion() {
 				autoTrimpSettings.IgnoreCrits.valueU2 = 0;
 			}
 		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.23') {
+			if (typeof (tempSettings["testMapScummingValue"]) !== 'undefined') {
+				autoTrimpSettings.testMapScummingValue.value = tempSettings.testMapScummingValue.value.valueU2;
+			}
+		}
 	}
 
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
@@ -6118,6 +6151,7 @@ function updateATVersion() {
 		printChangelog(changelog);
 		verticalCenterTooltip(false, true);
 	}
+	updateCustomButtons(true);
 	saveSettings();
 
 }

@@ -29,8 +29,8 @@ function safeBuyJob(jobTitle, amount) {
 	if (result) {
 		debug((game.global.firing ? 'Firing ' : 'Hiring ') + prettify(amount) + ' ' + jobTitle + (amount > 1 ? 's' : ''), "jobs", "*users");
 		buyJob(jobTitle, true, true);
-		if (game.global.firing && !fireState) fireModeLocal();
-		if (!game.global.firing && fireState) fireModeLocal();
+		if (game.global.firing && !fireState) fireMode_AT();
+		if (!game.global.firing && fireState) fireMode_AT();
 	}
 	game.global.buyAmt = currBuyAmt;
 	return true;
@@ -85,7 +85,7 @@ function workerRatios(workerRatio) {
 	else if (workerRatio.includes('Miner')) return ratioSet[2]
 }
 
-function fireModeLocal() {
+function fireMode_AT() {
 	game.global.firing = !game.global.firing;
 	var elem = document.getElementById("fireBtn");
 	if (game.global.firing) {

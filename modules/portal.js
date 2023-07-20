@@ -747,6 +747,11 @@ function resetVarsZone(loadingSave) {
 
 	hdStats = new HDStats();
 	mapSettings = farmingDecision();
+
+	drawAllBuildings(true);
+	drawAllEquipment(true);
+	drawAllJobs(true);
+	drawAllUpgrades(true);
 }
 
 function presetSwapping(preset) {

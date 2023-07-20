@@ -580,14 +580,12 @@ function testSpeedX(interval) {
 	game.global.start = now;
 
 	var tick = 100;
-	//game.global.time += tick;
 	game.global.zoneStarted -= tick;
 	game.global.portalTime -= tick;
 	game.global.lastSoldierSentAt -= tick;
 	game.global.lastSkeletimp -= tick;
 	game.permaBoneBonuses.boosts.lastChargeAt -= tick;
 	if (game.global.mapsActive) game.global.mapStarted -= tick;
-	if (MODULES.maps.mapTimer !== 0) MODULES.maps.mapTimer -= tick;
 
 	mainLoop();
 	gameLoop(null, now);
@@ -618,7 +616,7 @@ function testRunningCinf() {
 }
 
 function testMetalIncome() {
-	var secondsPerMap = 8 / maxOneShotPower(true);
+	var secondsPerMap = (hdStats.hyperspeed ? 6 : 8) / maxOneShotPower(true);
 	var mapsPerHour = 3600 / secondsPerMap;
 	var mapsPerDay = mapsPerHour * 24;
 	//Factors in large cache + chronoimp
@@ -626,7 +624,7 @@ function testMetalIncome() {
 	//Adding avg jestimps into mapTimer calculation
 	if (mapsPerDay > 4) mapTimer += (Math.floor(mapsPerDay / 5) * 45);
 	var mapLevel = game.global.mapsActive ? getCurrentMapObject().level - game.global.world : 0;
-	var resourcesGained = scaleToCurrentMapLocal(simpleSecondsLocal("metal", mapTimer, '0,0,1'), false, true, mapLevel);
+	var resourcesGained = scaleToCurrentMap_AT(simpleSeconds_AT("metal", mapTimer, '0,0,1'), false, true, mapLevel);
 	debug("Metal gained from 1 day " + prettify(resourcesGained), "test");
 }
 

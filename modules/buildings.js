@@ -66,7 +66,9 @@ function buyStorage(hypoZone) {
 	}
 }
 
-function getPsStringLocal(what, rawNum) {
+//Overall more performance efficient to remove the textStrings from getPsString so copied it from the game and removed the textStrings.
+//Check and update each patch!
+function getPsString_AT(what, rawNum) {
 	if (what === "helium") return;
 	var resOrder = ["food", "wood", "metal", "science", "gems", "fragments"];
 	var books = ["farming", "lumber", "miner", "science"];
@@ -79,7 +81,7 @@ function getPsStringLocal(what, rawNum) {
 	//Add job count
 	var currentCalc = job.owned * base;
 	//Add books
-	if (what !== "gems" && game.permaBoneBonuses.multitasking.owned > 0) {
+	if (what !== 'gems' && game.permaBoneBonuses.multitasking.owned > 0) {
 		var str = (game.resources.trimps.owned >= game.resources.trimps.realMax()) ? game.permaBoneBonuses.multitasking.mult() : 0;
 		currentCalc *= (1 + str);
 	}
@@ -88,12 +90,18 @@ function getPsStringLocal(what, rawNum) {
 		var bookStrength = Math.pow(1.25, book.done);
 		currentCalc *= bookStrength;
 	}
+	//Add Megabooks
+	if (typeof mBook !== 'undefined' && mBook.done > 0) {
+		var mod = (game.global.frugalDone) ? 1.6 : 1.5;
+		var mBookStrength = Math.pow(mod, mBook.done);
+		currentCalc *= mBookStrength;
+	}
 	//Add bounty
-	if (what !== "gems" && game.upgrades.Bounty.done > 0) {
+	if (what !== 'gems' && game.upgrades.Bounty.done > 0) {
 		currentCalc *= 2;
 	}
 	//Add Tribute
-	if (what === "gems" && game.buildings.Tribute.owned > 0) {
+	if (what === 'gems' && game.buildings.Tribute.owned > 0) {
 		var tributeStrength = Math.pow(game.buildings.Tribute.increase.by, game.buildings.Tribute.owned);
 		currentCalc *= tributeStrength;
 	}
@@ -103,10 +111,15 @@ function getPsStringLocal(what, rawNum) {
 		currentCalc *= (whipStrength);
 	}
 	//Add motivation
-	if (getPerkLevel("Motivation") > 0) {
-		var motivationStrength = (getPerkLevel("Motivation") * game.portal.Motivation.modifier);
+	if (getPerkLevel('Motivation') > 0) {
+		var motivationStrength = (getPerkLevel('Motivation') * game.portal.Motivation.modifier);
 		currentCalc *= (motivationStrength + 1);
 	}
+	if (getPerkLevel('Motivation_II') > 0) {
+		var motivationStrength = (getPerkLevel('Motivation_II') * game.portal.Motivation_II.modifier);
+		currentCalc *= (motivationStrength + 1);
+	}
+	//Observation
 	if (!game.portal.Observation.radLocked && game.global.universe === 2 && game.portal.Observation.trinkets > 0) {
 		var mult = game.portal.Observation.getMult();
 		currentCalc *= mult;
@@ -115,21 +128,76 @@ function getPsStringLocal(what, rawNum) {
 	if (Fluffy.isRewardActive('gatherer')) {
 		currentCalc *= 2;
 	}
+	//Add Meditation
+	if (getPerkLevel('Meditation') > 0) {
+		var meditation = game.portal.Meditation;
+		var medStrength = meditation.getBonusPercent();
+		if (medStrength > 0) {
+			currentCalc *= (1 + (medStrength * .01));
+		}
+	}
+	//Add Alchemy
 	var potionFinding;
-	if (challengeActive('Alchemy')) potionFinding = alchObj.getPotionEffect("Potion of Finding");
-	if (potionFinding > 1 && what !== "fragments" && what !== "science") {
+	if (challengeActive('Alchemy')) potionFinding = alchObj.getPotionEffect('Potion of Finding');
+	if (potionFinding > 1 && what !== 'fragments' && what !== 'science') {
 		currentCalc *= potionFinding;
 	}
-	if (game.upgrades.Speedexplorer.done > 0 && what === "fragments") {
+	potionFinding = alchObj.getPotionEffect('Elixir of Finding');
+	if (potionFinding > 1 && what !== 'fragments' && what !== 'science') {
+		currentCalc *= potionFinding;
+	}
+	//Add Magmamancer
+	if (game.jobs.Magmamancer.owned > 0 && what == "metal") {
+		var manceStrength = game.jobs.Magmamancer.getBonusPercent();
+		if (manceStrength > 1) {
+			currentCalc *= manceStrength;
+		}
+	}
+	//Add Speedbooks
+	if (game.upgrades.Speedexplorer.done > 0 && what === 'fragments') {
 		var bonus = Math.pow(4, game.upgrades.Speedexplorer.done);
 		currentCalc *= bonus;
 	}
-	if (challengeActive('Melt')) {
+	//Add Size
+	if (challengeActive('Size') && (what === 'food' || what === 'metal' || what === 'wood')) {
+		currentCalc *= 1.5;
+	}
+	//Add frigid
+	if (challengeActive('Frigid')) {
+		var mult = game.challenges.Frigid.getShatteredMult();
+		currentCalc *= mult;
+	}
+	//Add downsize
+	if (challengeActive('Downsize')) {
+		currentCalc *= 5;
+	}
+	//Add Meditate
+	if (challengeActive('Meditate')) {
+		currentCalc *= 1.25;
+	}
+
+	if (challengeActive('Toxicity')) {
+		var toxMult = (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
+		currentCalc *= (1 + toxMult);
+	}
+	if (challengeActive('Balance') || challengeActive('Unbalance')) {
+		var chal = (challengeActive("Balance")) ? game.challenges.Balance : game.challenges.Unbalance;
+		currentCalc *= chal.getGatherMult();
+	}
+	if (challengeActive('Decay') || challengeActive('Melt')) {
 		currentCalc *= 10;
-		var stackStr = Math.pow(game.challenges.Melt.decayValue, game.challenges.Melt.stacks);
+		var currChall = challengeActive('Decay') ? 'Decay' : 'Melt';
+		var stackStr = Math.pow(game.challenges[currChall].decayValue, game.challenges[currChall].stacks);
 		currentCalc *= stackStr;
 	}
-	if (challengeActive('Archaeology') && what !== "fragments") {
+	if (challengeActive('Watch')) {
+		currentCalc /= 2;
+	}
+	if (challengeActive('Lead') && ((game.global.world % 2) == 1)) {
+		currentCalc *= 2;
+	}
+
+	if (challengeActive('Archaeology') && what !== 'fragments') {
 		var mult = game.challenges.Archaeology.getStatMult("science");
 		currentCalc *= mult;
 	}
@@ -137,15 +205,15 @@ function getPsStringLocal(what, rawNum) {
 		var mult = game.challenges.Insanity.getLootMult();
 		currentCalc *= mult;
 	}
-	if (game.challenges.Nurture.boostsActive() && what !== "fragments") {
+	if (game.challenges.Nurture.boostsActive() && what !== 'fragments') {
 		var mult = game.challenges.Nurture.getResourceBoost();
 		currentCalc *= mult;
 	}
-	if (game.global.pandCompletions && what !== "fragments") {
+	if (game.global.pandCompletions && what !== 'fragments') {
 		var mult = game.challenges.Pandemonium.getTrimpMult();
 		currentCalc *= mult;
 	}
-	if (game.global.desoCompletions && what !== "fragments") {
+	if (game.global.desoCompletions && what !== 'fragments') {
 		var mult = game.challenges.Desolation.getTrimpMult();
 		currentCalc *= mult;
 	}
@@ -155,13 +223,17 @@ function getPsStringLocal(what, rawNum) {
 			mult = dailyModifiers.dedication.getMult(game.global.dailyChallenge.dedication.strength);
 			currentCalc *= mult;
 		}
-		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what !== "fragments" && what !== "science") {
+		if (typeof game.global.dailyChallenge.famine !== 'undefined' && what !== 'fragments' && what !== 'science') {
 			mult = dailyModifiers.famine.getMult(game.global.dailyChallenge.famine.strength);
 			currentCalc *= mult;
 		}
 	}
-	if (challengeActive('Hypothermia') && what === "wood") {
+	if (challengeActive('Hypothermia') && what === 'wood') {
 		var mult = game.challenges.Hypothermia.getWoodMult(true);
+		currentCalc *= mult;
+	}
+	if (challengeActive('Desolation') && what !== 'fragments') {
+		mult = game.challenges.Desolation.trimpResourceMult();
 		currentCalc *= mult;
 	}
 	if (((what === "food" || (what === "wood")) && game.buildings.Antenna.owned >= 5) || (what === "metal" && game.buildings.Antenna.owned >= 15)) {
@@ -175,6 +247,10 @@ function getPsStringLocal(what, rawNum) {
 	if ((what === "food" || what === "metal" || what === "wood") && autoBattle.oneTimers.Gathermate.owned && game.global.universe === 2) {
 		var mult = autoBattle.oneTimers.Gathermate.getMult();
 		currentCalc *= mult;
+	}
+	if (what !== 'fragments' && getEmpowerment() === 'Wind') {
+		var windMod = game.empowerments.Wind.getCombatModifier();
+		currentCalc *= (1 + windMod);
 	}
 	var heirloomBonus = calcHeirloomBonus("Staff", jobs[index] + "Speed", 0, true);
 	if (heirloomBonus > 0) {
@@ -263,9 +339,9 @@ function mostEfficientHousing() {
 			// Get production time for that resource
 			var baseCost = game.buildings[housing].cost[resource][0];
 			var costScaling = game.buildings[housing].cost[resource][1];
-			var avgProduction = getPsStringLocal(resource, true);
+			var avgProduction = getPsString_AT(resource, true);
 			if (avgProduction <= 0) avgProduction = 1;
-			if (challengeActive('Transmute') && resource === 'metal') avgProduction = getPsStringLocal('wood', true);
+			if (challengeActive('Transmute') && resource === 'metal') avgProduction = getPsString_AT('wood', true);
 			if (Math.max(baseCost * Math.pow(costScaling, currentOwned) * resourcefulMod) > (game.resources[resource].owned// - MODULES.resourceNeeded[resource]
 			) * buildingspending) dontbuy.push(housing);
 			if (game.global.universe === 2 && housing === 'Gateway' && resource === 'fragments' && buildingSettings.SafeGateway.enabled && (buildingSettings.SafeGateway.zone === 0 || buildingSettings.SafeGateway.zone > game.global.world)) {
@@ -295,15 +371,17 @@ function buyBuildings() {
 
 	const buildingSettings = getPageSetting('buildingSettingsArray');
 
+	//A quick way to identify if we are running Hypothermia and what our very first farm zone is for autostorage manipulation purposes.
+	//Need to have it setup to go through every setting to ensure we don't miss the first one after introducing the priority input.
 	var hypoZone = 0;
 	if (challengeActive('Hypothermia') && getPageSetting('hypothermiaDefaultSettings').active && getPageSetting('hypothermiaDefaultSettings').autostorage && getPageSetting('hypothermiaSettings').length > 0) {
-		const rHFBaseSettings = getPageSetting('hypothermiaSettings');
-		for (var y = 0; y < rHFBaseSettings.length; y++) {
-			if (!rHFBaseSettings[y].active) {
+		const hypoBaseSettings = getPageSetting('hypothermiaSettings');
+		for (var y = 0; y < hypoBaseSettings.length; y++) {
+			if (!hypoBaseSettings[y].active) {
 				continue;
 			}
-			hypoZone = rHFBaseSettings[y].world;
-			break;
+			if (hypoZone === 0 || hypoZone > hypoBaseSettings[y].world)
+				hypoZone = hypoBaseSettings[y].world;
 		}
 	}
 	// Storage, shouldn't be needed anymore that autostorage is lossless. Hypo fucked this statement :(
@@ -311,7 +389,7 @@ function buyBuildings() {
 	if (!game.global.autoStorage && game.global.world >= hypoZone)
 		toggleAutoStorage(false);
 
-	//Disables AutoStorage when our Hypo farm zone is greater than current world zone
+	//Disables AutoStorage when our first Hypo farm zone is greater than current world zone
 	if (game.global.world < hypoZone) {
 		if (game.global.autoStorage)
 			toggleAutoStorage(false);
@@ -328,17 +406,18 @@ function buyBuildings() {
 		return;
 	}
 
+	//Checks to see if we are running Quest and above our first Quest zone and the current zones Quest hasn't been completed.
 	if (challengeActive('Quest') && getPageSetting('quest') && game.global.world >= game.challenges.Quest.getQuestStartZone()) {
 		//Still allows you to buy tributes during gem quests
-		if (([4].indexOf(currQuest()) >= 0))
+		if ([4].indexOf(currQuest()) >= 0)
 			buyTributes();
-		//Return when shouldn't run during quest
-		if ((game.global.lastClearedCell < 90 && ([1, 2, 3, 4].indexOf(currQuest()) >= 0)))
-			return
+		//Disables the rest of this function when you are on a resource (food,wood,metal,gems) quest.
+		if ([1, 2, 3, 4].indexOf(currQuest()) >= 0)
+			return;
 	}
 
 	if (game.global.universe === 1) {
-		//Nurseries Init
+		//Nurseries
 		if (!game.buildings.Nursery.locked) {
 			const nurseryZoneOk = buildingSettings.Nursery.enabled && game.global.world >= buildingSettings.Nursery.fromZ;
 			const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
@@ -349,7 +428,7 @@ function buyBuildings() {
 			if (nurseryAmt === 0 && !getPageSetting('advancedNurseries')) nurseryAmt = Infinity;
 
 			var nurseryPct = buildingSettings.Nursery.percent / 100;
-			var nurseryCanAfford = calculateMaxAffordLocal(game.buildings.Nursery, true, false, false, null, nurseryPct);
+			var nurseryCanAfford = calculateMaxAfford_AT(game.buildings.Nursery, true, false, false, null, nurseryPct);
 			var nurseryToBuy = Math.min(nurseryCanAfford, nurseryAmt - game.buildings.Nursery.owned);
 			if (nurseryCanAfford > 0 && (nurseryZoneOk || nurseryPreSpire > 0)) {
 				if (nurseryPreSpire > 0 && nurseryToBuy > 0) safeBuyBuilding('Nursery', nurseryToBuy);
@@ -364,18 +443,18 @@ function buyBuildings() {
 		if (!game.buildings.Gym.locked && buildingSettings.Gym.enabled) {
 			var gymAmt = buildingSettings.Gym.buyMax === 0 ? Infinity : buildingSettings.Gym.buyMax;
 			var gymPct = buildingSettings.Gym.percent / 100;
-			var gymCanAfford = calculateMaxAffordLocal(game.buildings.Gym, true, false, false, (gymAmt - game.buildings.Gym.purchased), gymPct);
+			var gymCanAfford = calculateMaxAfford_AT(game.buildings.Gym, true, false, false, (gymAmt - game.buildings.Gym.purchased), gymPct);
 			if (gymAmt > game.buildings.Gym.purchased && gymCanAfford > 0) {
 				if (!needGymystic())
 					safeBuyBuilding('Gym', gymCanAfford);
 			}
 		}
 
-		//Wormhole
+		//Wormhole (costs Helium)
 		if (!game.buildings.Wormhole.locked && buildingSettings.Wormhole.enabled) {
 			var wormholeAmt = buildingSettings.Wormhole.buyMax === 0 ? Infinity : buildingSettings.Wormhole.buyMax;
 			var wormholePct = buildingSettings.Wormhole.percent / 100;
-			var wormholeCanAfford = calculateMaxAffordLocal(game.buildings.Wormhole, true, false, false, (wormholeAmt - game.buildings.Wormhole.purchased), wormholePct);
+			var wormholeCanAfford = calculateMaxAfford_AT(game.buildings.Wormhole, true, false, false, (wormholeAmt - game.buildings.Wormhole.purchased), wormholePct);
 			if (wormholeAmt > game.buildings.Wormhole.purchased && wormholeCanAfford > 0) {
 				safeBuyBuilding('Wormhole', wormholeCanAfford);
 			}
@@ -387,7 +466,7 @@ function buyBuildings() {
 			var warpstationAmt = Math.floor(game.upgrades.Gigastation.done * getPageSetting('deltaGigastation')) + getPageSetting('firstGigastation');
 			if (game.upgrades.Gigastation.done === 0 && getPageSetting('autoGigas')) warpstationAmt = Infinity;
 			var gigaCapped = game.buildings.Warpstation.owned >= warpstationAmt;
-			var warpstationCanAfford = calculateMaxAffordLocal(game.buildings.Warpstation, true, false, false, (warpstationAmt - game.buildings.Warpstation.owned), 1)
+			var warpstationCanAfford = calculateMaxAfford_AT(game.buildings.Warpstation, true, false, false, (warpstationAmt - game.buildings.Warpstation.owned), 1)
 
 			if (!(firstGigaOK && gigaCapped) && warpstationCanAfford > 0)
 				safeBuyBuilding('Warpstation', warpstationCanAfford);
@@ -399,10 +478,12 @@ function buyBuildings() {
 		if (!game.buildings.Smithy.locked) {
 			var smithyAmt = buildingSettings.Smithy.buyMax === 0 ? Infinity : buildingSettings.Smithy.buyMax;
 			var smithyPct = buildingSettings.Smithy.percent / 100;
-			var smithyCanAfford = calculateMaxAffordLocal(game.buildings.Smithy, true, false, false, (smithyAmt - game.buildings.Smithy.purchased), smithyPct);
+			var smithyCanAfford = calculateMaxAfford_AT(game.buildings.Smithy, true, false, false, (smithyAmt - game.buildings.Smithy.purchased), smithyPct);
+			//Overrides for Smithy farming.
+			//If we have our purchase pct less than 100% or our cap is lower than the amount we are targetting then temporarily adjust inputs.
 			if (mapSettings.mapName === 'Smithy Farm') {
+				if (smithyPct < 1 || smithyAmt > mapSettings.smithies) smithyAmt = mapSettings.smithies;
 				smithyPct = 1;
-				if (smithyAmt > mapSettings.smithies) smithyAmt = mapSettings.smithies;
 			}
 			//Purchasing a smithy whilst on Quest
 			if (challengeActive('Quest') && getPageSetting('quest')) {
@@ -418,6 +499,7 @@ function buyBuildings() {
 				}
 			}
 			//Don't buy Smithies when you can afford a bonfire on Hypo.
+			//The Smithy Farm setting has an override to purchase them 1 at a time during Smithy Farm to ensure we can still farm and don't overpurchase.
 			if (challengeActive('Hypothermia') && game.resources.wood.owned > game.challenges.Hypothermia.bonfirePrice()) smithyCanAfford = 0;
 
 			if (((buildingSettings.Smithy.enabled && smithyAmt > game.buildings.Smithy.purchased) || challengeActive('Quest')) && smithyCanAfford > 0) {
@@ -430,13 +512,14 @@ function buyBuildings() {
 		if (challengeActive('Nurture') && !game.buildings.Laboratory.locked && buildingSettings.Laboratory.enabled) {
 			var labAmt = buildingSettings.Laboratory.buyMax === 0 ? Infinity : buildingSettings.Laboratory.buyMax;
 			var labPct = buildingSettings.Laboratory.percent / 100;
-			var labCanAfford = calculateMaxAffordLocal(game.buildings.Laboratory, true, false, false, (labAmt - game.buildings.Laboratory.purchased), labPct);
+			var labCanAfford = calculateMaxAfford_AT(game.buildings.Laboratory, true, false, false, (labAmt - game.buildings.Laboratory.purchased), labPct);
 			if (labAmt > game.buildings.Laboratory.purchased && labCanAfford > 0) {
 				safeBuyBuilding('Laboratory', labCanAfford);
 			}
 		}
 
 		//Microchip
+		//Will always purchase these if available. No settings for the user to disable.
 		if (!game.buildings.Microchip.locked && canAffordBuilding('Microchip', null, null, false, false, 1)) {
 			safeBuyBuilding('Microchip', 1);
 		}
@@ -449,24 +532,29 @@ function buyBuildings() {
 	do {
 		boughtHousing = false;
 		var housing = mostEfficientHousing();
-		if (housing === null) continue;
-		if (isBuildingInQueue(housing)) continue;
-		if (!canAffordBuilding(housing)) continue;
+		//If nothing is optimal the function will return null so we break out of the loop.
+		if (housing === null) break;
+		//Skips if the building is already in the purchase queue.
+		if (isBuildingInQueue(housing)) break;
+		//Skips if we can't afford the building.
+		if (!canAffordBuilding(housing)) break;
+
+		//Disable building purchases whilst Smithy Farming so that we aren't going back and forth between Smithy gem/wood/metal maps constantly while trying to farm resources for them.
+		if (mapSettings.mapName === 'Smithy Farm' && housing !== 'Gateway')
+			break;
+		//If Tribute Farming and the buyBuildings setting for that line is disabled then don't buy buildings.
+		//Will still purchase Gateways/Collectors as they don't cost food.
+		if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings && (housing !== 'Gateway' || housing !== 'Collector'))
+			break;
 
 		var housingAmt = buildingSettings[housing].buyMax === 0 ? Infinity : buildingSettings[housing].buyMax;
 		var buildingspending = buildingSettings[housing].percent / 100;
-		var maxCanAfford = calculateMaxAffordLocal(game.buildings[housing], true, false, false, (housingAmt - game.buildings[housing].purchased), buildingspending);
-		if (((housing !== null && canAffordBuilding(housing, false, false, false, false, 1)) && (game.buildings[housing].purchased < (housingAmt === -1 ? Infinity : housingAmt)))) {
-			if (mapSettings.mapName === 'Smithy Farm' && housing !== 'Gateway')
-				return;
-			else if (mapSettings.mapName === 'Tribute Farm' && !mapSettings.buyBuildings)
-				return;
-			else if (maxCanAfford > 0) {
-				if (!canAffordBuilding(housing)) continue;
-				safeBuyBuilding(housing, maxCanAfford);
-			}
-			else
-				return;
+		//Identify the amount of this type of housing we can afford and stay within our housing cap.
+		var maxCanAfford = calculateMaxAfford_AT(game.buildings[housing], true, false, false, (housingAmt - game.buildings[housing].purchased), buildingspending);
+		//Finally purchases the correct amount of housing.
+		//calculateMaxAfford_AT will return 0 if we can't afford any housing as we have set a custom ratio so check if higher than that.
+		if (maxCanAfford > 0) {
+			safeBuyBuilding(housing, maxCanAfford);
 			boughtHousing = true;
 		}
 	} while (boughtHousing)
@@ -497,7 +585,7 @@ function buyTributes() {
 			tributeAmt = Infinity;
 			tributePct = 1;
 		}
-		var tributeCanAfford = calculateMaxAffordLocal(game.buildings.Tribute, true, false, false, (tributeAmt - game.buildings.Tribute.purchased), tributePct);
+		var tributeCanAfford = calculateMaxAfford_AT(game.buildings.Tribute, true, false, false, (tributeAmt - game.buildings.Tribute.purchased), tributePct);
 		if (tributeAmt > game.buildings.Tribute.purchased && tributeCanAfford > 0) {
 			safeBuyBuilding('Tribute', tributeCanAfford);
 		}

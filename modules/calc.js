@@ -1091,7 +1091,7 @@ function calcEnemyHealthCore(type, zone, cell, name, customHealth) {
 	health *= challengeActive('Toxicity') ? 2 : 1;
 	health *= challengeActive('Life') ? 10 : 1;
 	health *= challengeActive('Experience') ? game.challenges.Experience.getEnemyMult() : 1;
-	if (challengeActive('Frigid')) health *= game.challenges.Frigid.getEnemyMult();
+	health *= challengeActive('Frigid') ? game.challenges.Frigid.getEnemyMult() : 1;
 	if (challengeActive('Coordinate')) {
 		var amt = 1;
 		for (var i = 1; i < zone; i++) amt = Math.ceil(amt * 1.25);
@@ -1515,7 +1515,8 @@ function gammaMaxStacks(specialChall, actualCheck) {
 	return gammaMaxStacks;
 }
 
-function simpleSecondsLocal(what, seconds, workerRatio) {
+//Check and update each patch!
+function simpleSeconds_AT(what, seconds, workerRatio) {
 	var workerRatio = !workerRatio ? null : workerRatio;
 
 	if (typeof workerRatio !== 'undefined' && workerRatio !== null) {
@@ -1587,7 +1588,7 @@ function simpleSecondsLocal(what, seconds, workerRatio) {
 
 	if (what === "food" || what === "wood" || what === "metal") {
 		if (workerRatio) {
-			amt *= calculateParityBonusAT(desiredRatios, HeirloomSearch(heirloom));
+			amt *= calculateParityBonus_AT(desiredRatios, HeirloomSearch(heirloom));
 		}
 		else amt *= getParityBonus();
 		if (autoBattle.oneTimers.Gathermate.owned)
@@ -1630,7 +1631,8 @@ function simpleSecondsLocal(what, seconds, workerRatio) {
 	return amt;
 }
 
-function scaleToCurrentMapLocal(amt, ignoreBonuses, ignoreScry, map) {
+//Check and update each patch!
+function scaleToCurrentMap_AT(amt, ignoreBonuses, ignoreScry, map) {
 	if (map) map = game.global.world + map;
 	if (!map) map = game.global.mapsActive ? getCurrentMapObject().level :
 		challengeActive('Pandemonium') ? game.global.world - 1 :
@@ -1647,15 +1649,16 @@ function scaleToCurrentMapLocal(amt, ignoreBonuses, ignoreScry, map) {
 			amt *= Math.pow(0.8, (compare - map));
 		}
 	}
-	var maploot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
 	if (ignoreBonuses) return amt;
 	//Add map loot bonus
+	var maploot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
 	amt = Math.round(amt * maploot);
 	amt = scaleLootBonuses(amt, ignoreScry);
 	return amt;
 }
 
-function calculateParityBonusAT(workerRatio, heirloom) {
+//Check and update each patch!
+function calculateParityBonus_AT(workerRatio, heirloom) {
 	if (!game.global.StaffEquipped || game.global.StaffEquipped.rarity < 10) {
 		game.global.parityBonus = 1;
 		return 1;
@@ -1695,7 +1698,8 @@ function calculateParityBonusAT(workerRatio, heirloom) {
 	return finalWithParity;
 }
 
-function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) {
+//Check and update each patch!
+function calculateMaxAfford_AT(itemObj, isBuilding, isEquipment, isJob, forceMax, forceRatio, resources) {
 	if (!itemObj.cost) return 1;
 	var forcedMax = 0;
 	var mostAfford = -1;
@@ -1705,7 +1709,6 @@ function calculateMaxAffordLocal(itemObj, isBuilding, isEquipment, isJob, forceM
 	var currentOwned = (itemObj.purchased) ? itemObj.purchased : ((itemObj.level) ? itemObj.level : itemObj.owned);
 	if (!currentOwned) currentOwned = 0;
 	if (isJob && game.global.firing && !forceRatio) return Math.floor(currentOwned * game.global.maxSplit);
-	//if (itemObj === game.equipment.Shield) console.log(currentOwned);
 	for (var item in itemObj.cost) {
 		var price = itemObj.cost[item];
 		var toBuy;
