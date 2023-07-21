@@ -445,7 +445,7 @@ function voidMaps() {
 	if (settingIndex !== null || (mapSettings.voidHDIndex && mapSettings.voidHDIndex !== Infinity && baseSettings[mapSettings.voidHDIndex].world <= game.global.world && baseSettings[mapSettings.voidHDIndex].maxvoidzone >= game.global.world) || mapSettings.portalAfterVoids || MODULES.mapFunctions.portalAfterVoids) {
 
 		var setting;
-		if (settingIndex === null && mapSettings.voidHDIndex === Infinity) {
+		if (settingIndex === null && !mapSettings.voidHDIndex) {
 			var portalSetting = challengeActive('Daily') ? getPageSetting('dailyHeliumHrPortal') : getPageSetting('heliumHrPortal');
 			if (portalSetting === 2 && getZoneEmpowerment(game.global.world) !== 'Poison') return farmingDetails;
 			if (dailyAddition.skipZone) return farmingDetails;
@@ -457,7 +457,7 @@ function voidMaps() {
 				portalAfter: true,
 			}
 			mapSettings.portalAfterVoids = true;
-			mapSettings.voidTrigger = autoTrimpSettings.heliumHrPortal.name()[portalSetting];
+			mapSettings.voidTrigger = (resource() + " Per Hour (") + autoTrimpSettings.heliumHrPortal.name()[portalSetting] + ")";
 		} else {
 			setting = baseSettings[settingIndex >= 0 ? settingIndex : mapSettings.voidHDIndex];
 		}
