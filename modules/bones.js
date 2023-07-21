@@ -48,7 +48,7 @@ function boneShrine() {
 		if (challengeActive('Transmute') && boneShrineGather === 'metal') boneShrineGather = 'wood';
 		var boneShrineSpendBelow = boneShrineSettings.bonebelow === -1 ? 0 : boneShrineSettings.bonebelow;
 		var boneShrineAtlantrimp = !game.mapUnlocks.AncientTreasure.canRunOnce || boneShrineIndex === true ? false : boneShrineSettings.atlantrimp;
-		var boneShrineDoubler = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom'
+		var boneShrineDoubler = game.global.universe === 2 ? 'Atlantrimp' : 'Trimple Of Doom';
 
 		if (boneShrineCharges > boneCharges - boneShrineSpendBelow)
 			boneShrineCharges = boneCharges - boneShrineSpendBelow;
@@ -66,7 +66,7 @@ function boneShrine() {
 		if (boneShrineAtlantrimp) {
 			runUniqueMap(boneShrineDoubler, false);
 		}
-		if (!boneShrineAtlantrimp || (boneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === boneShrineDoubler && game.global.lastClearedMapCell === getCurrentMapObject().size - 4)) {
+		if (!boneShrineAtlantrimp || (boneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === boneShrineDoubler && game.global.lastClearedMapCell >= getCurrentMapObject().size - 30)) {
 			for (var x = 0; x < boneShrineCharges; x++) {
 				if (getPageSetting('jobType') > 0) {
 					buyJobs(boneShrineSettings.jobratio);
