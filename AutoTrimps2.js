@@ -45,12 +45,12 @@ function loadAT() {
 		// Append the script to the document
 		document.head.appendChild(script);
 	})();
+
+	//The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
+	basepath = atSettings.initialise.basepath;
 }
 
 loadAT();
-
-//The basepath variable is used in graphs, can't remove this while using Quias graphs fork unless I copy code and change that line for every update.
-basepath = atSettings.initialise.basepath;
 
 var ATmessageLogTabVisible = true;
 
@@ -59,6 +59,7 @@ var MODULES = {
 	popups: { challenge: false, respecAtlantrimp: false, remainingTime: Infinity, intervalID: null, portal: false, mazWindowOpen: false, },
 	resourceNeeded: { food: 0, wood: 0, metal: 0, science: 0, gems: 0, fragments: 0, },
 	stats: { baseMinDamage: 0, baseMaxDamage: 0, baseDamage: 0, baseHealth: 0, baseBlock: 0, },
+	graphs: {},
 };
 
 var currPortalUniverse = 0;
@@ -113,7 +114,7 @@ function delayStart() {
 	//Loads the settings from the save file, settingsGUI & the various modules installed.
 	initializeAutoTrimps();
 	//Add misc functions onto the button to activate portals so that if a user wants to manually portal they can without losing the AT features.
-	document.getElementById('activatePortalBtn').setAttribute("onClick", 'downloadSave(true); activateClicked(); pushSpreadsheetData(); autoheirlooms(true); autoMagmiteSpender(true); pushData();');
+	document.getElementById('activatePortalBtn').setAttribute("onClick", 'downloadSave(true); activateClicked(); pushSpreadsheetData(); autoHeirlooms(true); autoMagmiteSpender(true); pushData();');
 }
 
 //Runs second
@@ -134,10 +135,10 @@ function initializeAutoTrimps() {
 	debug(atSettings.initialise.version.split(' ')[0] + " AutoTrimps " + atSettings.initialise.version.split(' ')[1] + " loaded!");
 }
 
+//raspberry pi related setting changes
+//Swaps base settings to improve performance & so that I can't accidentally pause. 
+//Shouldn't impact anybody else that uses AT as they'll never set the gameUser setting to SadAugust.
 function raspberryPiSettings() {
-	//raspberry pi related setting changes
-	//Swaps base settings to improve performance & so that I can't accidentally pause. 
-	//Shouldn't impact anybody else that uses AT as they'll never set the gameUser setting to SadAugust.
 	if (autoTrimpSettings.gameUser.value !== 'SadAugust') return;
 	if (navigator.oscpu === 'Linux armv7l') {
 		game.options.menu.hotkeys.enabled = 0;
@@ -259,7 +260,7 @@ function toggleCatchUpMode() {
 			}
 
 			//Running a few functions everytime the game loop runs to ensure we aren't missing out on any mapping that needs to be done.
-			mapSettings = farmingDecision();
+			farmingDecision();
 			autoMap();
 			callBetterAutoFight();
 			if (loops % 10 === 0 || newZone) updateAutoMapsStatus();
@@ -271,11 +272,21 @@ function toggleCatchUpMode() {
 	}
 }
 
+function callFunction(id) {
+	if (typeof this[id] === "function")
+		try {
+			this[id]();
+		}
+		catch (e) {
+			if (typeof debug === "function") debug(id + " failed to run.<br>" + e)
+			else console.log(id + " failed to run.<br>" + e);
+		}
+}
+
 function mainLoop() {
 
 	//Toggle between timelapse/catchup/offline speed and normal speed.
 	toggleCatchUpMode();
-
 	//Adjust tooltip when mazWindow is open OR clear our adjustments if it's not.
 	//Need to identify a better solution to this. Not really sure what I can do though.
 	if (MODULES.popups.mazWindowOpen) {
@@ -311,13 +322,16 @@ function mainLoop() {
 	//Need a one hour interval for version checking.
 	atSettings.intervals.oneHour = atSettings.intervals.counter % (360000) === 0;
 
+	if (atSettings.intervals.oneHour)
+		atVersionChecker();
+
 	//Offline mode check
 	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 
 	if (atSettings.intervals.oneSecond) {
 		hdStats = new HDStats();
 	}
-	if (shouldRunTW) mapSettings = farmingDecision();
+	if (shouldRunTW) farmingDecision();
 
 	//Void, AutoLevel, Breed Timer, Tenacity information
 	if (!usingRealTimeOffline && document.getElementById('additionalInfo') !== null) {
@@ -400,9 +414,6 @@ function mainLoop() {
 			if (MODULES.popups.remainingTime <= 0) MODULES.popups.remainingTime = 0;
 		}, 100);
 	}
-
-	if (atSettings.intervals.oneHour)
-		atVersionChecker();
 }
 
 //U1 functions
@@ -516,6 +527,12 @@ function atVersionChecker() {
 			var response = xhr.responseText;
 			var version = response.split("'")[1];
 			if (version !== atSettings.initialise.version) {
+				//Reload the window if the user has the setting enabled and an update is available.
+				if (getPageSetting('updateReload')) {
+					save(false, true);
+					location.reload();
+				}
+
 				atSettings.updateAvailable = true;
 				var changeLogBtn = document.getElementById("atChangelog");
 				if (changeLogBtn !== null) {

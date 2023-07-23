@@ -1307,19 +1307,6 @@ function calcHDRatio(targetZone, type, maxTenacity, checkOutputs) {
 	return enemyHealth / (ourBaseDamage + addPoison());
 }
 
-function calcCurrentStance() {
-	if (game.global.uberNature === "Wind" && getEmpowerment() === "Wind" && !game.global.mapsActive &&
-		(
-			((!challengeActive('Daily') && hdStats.hdRatio < getPageSetting('WindStackingMinHD'))
-				|| (challengeActive('Daily') && hdStats.hdRatio < getPageSetting('dWindStackingMinHD')))
-			&&
-			((!challengeActive('Daily') && game.global.world >= getPageSetting('WindStackingMin'))
-				|| (challengeActive('Daily') && game.global.world >= getPageSetting('dWindStackingMin')))
-		)
-		|| (game.global.uberNature === "Wind" && getEmpowerment() === "Wind" && !game.global.mapsActive && checkIfLiquidZone() && getPageSetting('liqstack') === true))
-		return 15;
-}
-
 function mutationBaseAttack(cell, targetZone) {
 	if (!targetZone) targetZone = game.global.world;
 

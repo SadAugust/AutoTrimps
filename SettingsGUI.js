@@ -102,7 +102,7 @@ function initializeAllTabs() {
 	a_0.appendChild(document.createTextNode("-"));
 	li_0.appendChild(a_0);
 	li_0.setAttribute("style", "float:right!important;");
-	li_0.setAttribute("onmouseover", 'tooltip("Minimize all tabs", "customText", event, "Minimize all AT settings tabs.")');
+	li_0.setAttribute("onmouseover", 'tooltip("Minimize all tabs", "customText", event, "Minimize all of the settings tabs.")');
 	li_0.setAttribute("onmouseout", 'tooltip("hide")');
 	var li_1 = document.createElement('li');
 	var a_1 = document.createElement('a');
@@ -112,7 +112,7 @@ function initializeAllTabs() {
 	a_1.appendChild(document.createTextNode("+"));
 	li_1.appendChild(a_1);
 	li_1.setAttribute("style", "float:right!important;");
-	li_1.setAttribute("onmouseover", 'tooltip("Maximize all tabs", "customText", event, "Maximize all AT settings tabs.")');
+	li_1.setAttribute("onmouseover", 'tooltip("Maximize all tabs", "customText", event, "Maximize all of the settings tabs.")');
 	li_1.setAttribute("onmouseout", 'tooltip("hide")');
 	var li_2 = document.createElement('li');
 	var a_2 = document.createElement('a');
@@ -290,7 +290,7 @@ function initializeAllSettings() {
 				description += "<p><b>" + resource() + " Challenges will appear here when they've been unlocked in the game.</b></p>";
 				description += "<p>Additional settings appear when <b>" + resource() + " Per Hour</b> or <b>Custom</b> are selected.</p>";
 				description += "<p><b>Off</b><br>Disables this setting.</p>";
-				description += "<p><b>" + resource() + " Per Hour</b><br>Portals into new runs when your " + resourceHour().toLowerCase() + "/hr goes below your current runs best " + resourceHour().toLowerCase() + "/hr.";
+				description += "<p><b>" + resource() + " Per Hour</b><br>Portals into new runs when your " + resourceHour().toLowerCase() + "/hr goes below your current runs best " + resourceHour().toLowerCase() + "/hr.</p>";
 				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resourceHour().toLowerCase() + "/hr to (best - buffer setting) " + resourceHour().toLowerCase() + "/hr.</p>";
 				description += "<p><b>Specific Challenges</b><br>If a specific challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>";
 				description += "<p><b>Custom</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Portal Zone</b> setting.</p>";
@@ -370,9 +370,9 @@ function initializeAllSettings() {
 			},
 			function () {
 				var description = "<p>How you would like to portal when below your " + resourceHour().toLowerCase() + "/hr threshold.</p>";
-				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.";
-				description += "<p><b>Portal after voids</b><br>Will run any remaining void maps then proceed to portal.";
-				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal after poison voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.";
+				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.</p>";
+				description += "<p><b>Portal after voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
+				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal after poison voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
 				description += "<p><b>Recommended:</b> Portal after voids</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Core', [1, 2],
@@ -527,30 +527,43 @@ function initializeAllSettings() {
 				return description;
 			}, 'value', -1, null, 'Daily', [1]);
 
-		createSetting('use3daily',
+		createSetting('dAutoStanceWind',
 			function () { return ('Daily Windstacking') },
-			function () { return ('<b> This must be on for Daily windstacking settings to appear!</b> Overrides your Autostance settings to use the WS stance on Dailies.') },
-			'boolean', false, null, 'Daily', [1]);
-		createSetting('dWindStackingMin',
-			function () { return ('Daily Windstack Min Zone') },
-			function () { return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set for dailys. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from Daily WS MAX work off this setting.') },
-			'value', -1, null, 'Daily', [1],
-			function () { return (autoTrimpSettings.use3daily.enabled) });
-		createSetting('dWindStackingMinHD',
-			function () { return ('Daily Windstack H:D') },
-			function () { return ('For use with Windstacking Stance in Dailies, fiddle with this to maximise your stacks in wind zones for Dailies. If H:D is above this setting it will not use W stance. If it is below it will.') },
-			'value', -1, null, 'Daily', [1],
-			function () { return (autoTrimpSettings.use3daily.enabled) });
-		createSetting('dWindStackingMax',
-			function () { return ('Daily Windstack Stacks') },
-			function () { return ('For use with Windstacking Stance in Dailies. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190. In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment.') },
-			'value', 200, null, 'Daily', [1],
-			function () { return (autoTrimpSettings.use3daily.enabled) });
-		createSetting('liqstack',
-			function () { return ('Stack Liquification') },
-			function () { return ('Stack Wind zones during Wind Enlight during Liquification.') },
+			function () {
+				var description = "<p>Enabling this will give you settings to allow you to wind stack in your runs.</p>";
+				description += "<p>Will use your regular Auto Stance setting when outside of zones you're wind stacking in.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
 			'boolean', false, null, 'Daily', [1],
-			function () { return (autoTrimpSettings.use3daily.enabled) });
+			function () { return (game.empowerments.Wind.retainLevel >= 50) });
+		createSetting('dWindStackingZone',
+			function () { return ('Daily Windstack Zone') },
+			function () {
+				var description = "<p>For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set.</p>";
+				description += "<p><b>Recommended:</b> 100 zones below portal zone</p>";
+				return description;
+			},
+			'value', -1, null, 'Daily', [1],
+			function () { return (autoTrimpSettings.dAutoStanceWind.enabled) });
+		createSetting('dWindStackingRatio',
+			function () { return ('Daily Windstack H:D') },
+			function () {
+				var description = "<p>If your H:D ratio is above this setting it will not use wind stance.</p>";
+				description += "<p><b>Recommended:</b> 1000</p>";
+				return description;
+			},
+			'value', -1, null, 'Daily', [1],
+			function () { return (autoTrimpSettings.dAutoStanceWind.enabled) });
+		createSetting('dWindStackingLiq',
+			function () { return ('Stack Liquification') },
+			function () {
+				var description = "<p>Will wind stack during liquification regardless of your <b>Windstack H:D</b> or <b>Windstack Zone</b> inputs.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			},
+			'boolean', false, null, 'Daily', [1],
+			function () { return (autoTrimpSettings.dAutoStanceWind.enabled) });
 
 		//Daily Portal
 		createSetting('dailyPortalStart',
@@ -567,7 +580,7 @@ function initializeAllSettings() {
 				description += "<p>Additional settings appear when <b>DP: " + resourceHour() + "/Hr</b> or <b>DP: Custom</b> are selected.</p>";
 				description += "<p><b>Daily Portal Off</b><br>Disables this setting. <b>Be warned it will never end your dailies!</b></p>";
 
-				description += "<p><b>DP: " + resourceHour() + "/Hr</b><br>Portals into new runs when your " + resourceHour().toLowerCase() + "/hr goes below your current runs best " + resourceHour().toLowerCase() + "/hr.";
+				description += "<p><b>DP: " + resourceHour() + "/Hr</b><br>Portals into new runs when your " + resourceHour().toLowerCase() + "/hr goes below your current runs best " + resourceHour().toLowerCase() + "/hr.</p>";
 
 				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resourceHour().toLowerCase() + "/hr to (best - buffer setting) " + resourceHour().toLowerCase() + "/hr.</p>";
 				description += "<p><b>DP: Custom</b><br>Will portal into the challenge selected in the <b>DP: Challenge</b> setting at the zone specified in the <b>Daily Portal Zone</b> setting.</p>";
@@ -645,9 +658,9 @@ function initializeAllSettings() {
 			},
 			function () {
 				var description = "<p>How you would like to portal when below your " + resourceHour().toLowerCase() + "/hr threshold.</p>";
-				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.";
-				description += "<p><b>Portal after voids</b><br>Will run any remaining void maps then proceed to portal.";
-				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal after poison voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.";
+				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.</p>";
+				description += "<p><b>Portal after voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
+				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal after poison voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
 				description += "<p><b>Recommended:</b> Portal after voids</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Daily', [1, 2],
@@ -1550,10 +1563,10 @@ function initializeAllSettings() {
 			function () { return ('AutoBuildings') },
 			function () {
 				//Initial button description
-				var description = "Click the left side of the button to toggle this on or off.";
+				var description = "Click the left side of the button to toggle this on or off.</p>";
 				//Cogwheel info
 				description += "<p>Click the cog icon on the right side of this button to tell your Foremen what you want and when you want it.</p>";
-				description += "For more detailed information for this setting check out its Help section.";
+				description += "For more detailed information for this setting check out its Help section.</p>";
 				return description;
 			}, 'boolean', 'true', null, 'Legacy', [1, 2]);
 		createSetting('buildingSettingsArray',
@@ -1609,7 +1622,7 @@ function initializeAllSettings() {
 		createSetting('autoGigas',
 			function () { return ('Auto Gigas') },
 			function () {
-				var description = "<p>If enabled, AT will buy its first Gigastation if: <br>A) Has more than 2 Warps & <br>B) Can\'t afford more Coords & <br>C) (Only if Custom Delta Factor > 20) Lacking Health or Damage & <br>D) (Only if Custom Delta Factor > 20) Has run at least 1 map stack.</p>";
+				var description = "<p>If enabled, the script will buy its first Gigastation if: <br>A) Has more than 2 Warps & <br>B) Can\'t afford more Coords & <br>C) (Only if Custom Delta Factor > 20) Lacking Health or Damage & <br>D) (Only if Custom Delta Factor > 20) Has run at least 1 map stack.</p>";
 				description += "<p>Then, it'll calculate the delta based on your Custom Delta Factor and your Auto Portal/VM zone (whichever is higher), or Daily Auto Portal/VM zone, or " + cinf() + " zone, or Custom AutoGiga Zone.</p>";
 				description += "<p>Once your first gigastation of a run has been purchased this setting won't be evaluated again until your next run.</p>";
 				description += "<p><b>You must have the upgrades setting enabled for this setting to run!</b></p>";
@@ -1785,7 +1798,7 @@ function initializeAllSettings() {
 
 				description += "<p><b>AE: Maybe Prestige</b><br>Will only purchase prestiges you have either 6 or more levels in an equip <b>OR</b> when outside of your <b>AE: Zone</b> range <b>OR</b> when you can afford them .</p>";
 
-				description += "<p><b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run " + trimple + ".";
+				description += "<p><b>AE: Prestige</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase gear levels again when you have run " + trimple + ".</p>";
 
 				description += "<br><b>If " + trimple + " has been run it will buy any prestiges that cost less than 8% of your current resources then spend your remaining resources on equipment levels.</b></p>";
 
@@ -1911,7 +1924,7 @@ function initializeAllSettings() {
 			function () { return ('Perfect Maps') },
 			function () {
 				var description = "<p>When trying to map it will only create perfect maps.</p>";
-				description += "<p><b>Be warned this may greatly decrease the map level that AT believes is efficient.</b></p>";
+				description += "<p><b>Be warned this may greatly decrease the map level that the script believes is efficient.</b></p>";
 				description += "<p><b>Recommended:</b> Off unless at end game</p>";
 				return description;
 			}, 'boolean', false, null, 'Maps', [1, 2]);
@@ -2355,9 +2368,9 @@ function initializeAllSettings() {
 			function () { return (['Better AutoFight Off', 'Better Auto Fight', 'Vanilla']) },
 			function () {
 				var description = "<p>Controls how combat is handled by the script.</p>";
-				description += "<p><b>Better Auto Fight Off</b><br>Disables this setting.";
-				description += "<p><b>Better Auto Fight</b><br>Sends a new army to fight if : current army is dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds.";
-				description += "<p><b>Vanilla</b><br>Will make sure the ingames AutoFight is enabled at all times and ensures you start fighting on portal.";
+				description += "<p><b>Better Auto Fight Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Better Auto Fight</b><br>Sends a new army to fight if : current army is dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds.</p>";
+				description += "<p><b>Vanilla</b><br>Will make sure the ingames AutoFight is enabled at all times and ensures you start fighting on portal.</p>";
 				description += "<p><b>Recommended:</b> Better Auto Fight</p>";
 				return description;
 			}, 'multitoggle', 0, null, "Combat", [1, 2]);
@@ -2379,10 +2392,12 @@ function initializeAllSettings() {
 			function () { return (['Auto Stance Off', 'Auto Stance', 'D Stance', 'Windstacking']) },
 			function () {
 				var description = "<p>Enabling this setting will force any enemy damage calculations to ignore enemy crits.</p>";
-				description += "<p><b>Autostance Off</b><br>Disables this setting.";
-				description += "<p><b>Autostance</b><br>Automatically swap stances to avoid death.";
-				description += "<p><b>D stance</b><br>Keeps you in D stance regardless of Health.";
-				description += "<p><b>Windstacking</b><br>For use after nature (z230), and will keep you in D stance unless you are windstacking (Only useful if transfer is maxed out and wind empowerment is high). There's settings that will appear at the bottom of this tab if selected that must be setup for this to function as intended.";
+				description += "<p><b>Autostance Off</b><br>Disables this setting.</p>";
+				description += "<p><b>Autostance</b><br>Automatically swap stances to avoid death.</p>";
+				description += "<p><b>D stance</b><br>Keeps you in D stance regardless of Health.</p>";
+				description += "<p><b>Windstacking</b><br>For use after nature (z230), and will keep you in D stance unless you are windstacking (only useful if transfer is maxed out and wind empowerment is high). There's settings that will appear at the bottom of this tab if selected that must be setup for this to function as intended.";
+				//Add stuff here for daily setting ignoring this for windstacking
+				description += "</p>";
 				description += "<p><b>Recommended:</b> Autostance</p>";
 				return description;
 			}, 'multitoggle', 0, null, "Combat", [1]);
@@ -2390,9 +2405,9 @@ function initializeAllSettings() {
 			function () { return (['Safety First', 'Ignore Void Strength', 'Ignore All Crits']) },
 			function () {
 				var description = "<p>Enabling this setting will force any enemy damage calculations to ignore enemy crits.</p>";
-				description += "<p><b>Safety First</b><br>Disables this setting.";
-				description += "<p><b>Ignore Void Strength</b><br>Will ignore crits from enemies in Void maps.";
-				description += "<p><b>Ignore All Crits</b><br>Will ignore crits from enemies in challenges, daily mods or void maps.";
+				description += "<p><b>Safety First</b><br>Disables this setting.</p>";
+				description += "<p><b>Ignore Void Strength</b><br>Will ignore crits from enemies in Void maps.</p>";
+				description += "<p><b>Ignore All Crits</b><br>Will ignore crits from enemies in challenges, daily mods or void maps.</p>";
 				description += "<p><b>Recommended:</b> Safety First</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Combat', [1, 2]);
@@ -2476,183 +2491,269 @@ function initializeAllSettings() {
 			function () { return (!game.portal.Frenzy.radLocked && !autoBattle.oneTimers.Mass_Hysteria.owned) });
 
 		//Scryer settings -- Need a rework!
-		createSetting('UseScryerStance',
+		createSetting('AutoStanceScryer',
 			function () { return ('Enable Scryer Stance') },
-			function () { return ('<b>MASTER BUTTON</b> Activates all other scrying settings, and overrides AutoStance when scryer conditions are met. Leave regular Autostance on while this is active. Scryer gives 2x Resources (Non-' + resource() + '/Nullifium) and a chance for Dark Essence. Once this is on, priority for Scryer decisions goes as such:<br>NEVER USE, FORCE USE, OVERKILL, MIN/MAX ZONE<br><br><b>NO OTHER BUTTONS WILL DO ANYTHING IF THIS IS OFF.</b>') },
+			function () {
+				var description = "<p>Master switch for whether the script will use scryer stance.</p>";
+				description += "<p>Overrides AutoStance when scryer conditions are met.</p>";
+				description += "<p>Leave regular Autostance on while this is active.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
 			'boolean', false, null, 'Combat', [1]);
-		createSetting('ScryerUseWhenOverkill',
+		createSetting('scryerOverkill',
 			function () { return ('Use When Overkill') },
-			function () { return ('Overrides everything! Toggles stance when we can Overkill in S, giving us double loot with no speed penalty (minimum one overkill, if you have more than 1, it will lose speed) <b>NOTE:</b> This being on, and being able to overkill in S will override ALL other settings <u>(Except never use in spire)</u>. This is a boolean logic shortcut that disregards all the other settings including Min and Max Zone. If you ONLY want to use S during Overkill, as a workaround: turn this on and Min zone: to 9999 and everything else off(red).') },
+			function () {
+				var description = "<p>Overrides everything!";
+				description += "<p>Toggles stance when we can Overkill in scryer stance, giving us double loot with no speed penalty (minimum one overkill, if you have more than 1, it will lose speed)";
+				description += "<p>This being on, and being able to overkill in S will override ALL other settings <b>(Except never use in spire)</b>.</p>";
+				description += "<p>This is a boolean logic shortcut that disregards all the other settings including Min and Max Zone. If you ONLY want to use scryer stance during Overkill, as a workaround: turn this on and set <b>Min zone</b> to 9999 and everything else off(red).</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			},
 			'boolean', true, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryerMinZone',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerMinZone',
 			function () { return ('Min Zone') },
-			function () { return ('Minimum zone to start using scryer in.(inclusive) Recommend:(60 or 181). Overkill ignores this. This needs to be On & Valid for the <i>MAYBE</i> option on all other Scryer settings to do anything if Overkill is off. Tip: Use 9999 to disable all Non-Overkill, Non-Force, scryer usage.') },
+			function () {
+				var description = "<p>Minimum zone (inclusive of the zone set) to start using scryer stance in.</p>";
+				description += "<p>This needs to be On & Valid for the <b>MAYBE</b> option on all other Scryer settings to do anything if Overkill is off.</p>";
+				description += "<p><b>Use When Overkill</b> ignores this input and will use scryer stance regardless of what this is set to if you can overkill the cell(s).</p>";
+				description += "<p>Use 9999 to disable all Non-Overkill, Non-Force, scryer usage.</p>";
+				description += "<p><b>Recommended:</b> 60 or 181</p>";
+				return description;
+			},
 			'value', 181, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryerMaxZone',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerMaxZone',
 			function () { return ('Max Zone') },
-			function () { return ('<b>0 or -1 to disable (Recommended)</b><br>Overkill ignores this. Zone to STOP using scryer at (not inclusive). Turning this ON with a positive number stops <i>MAYBE</i> use of all other Scryer settings.') },
+			function () {
+				var description = "<p>Zone (not inclusive of the zone set) to stop using scryer stance in.</p>";
+				description += "<p>Turning this ON with a positive number stops <b>MAYBE</b> use of all other Scryer settings.</p>";
+				description += "<p><b>Use When Overkill</b> ignores this input and will use scryer stance regardless of what this is set to if you can overkill the cell(s).</p>";
+				description += "<p>Use 9999 to disable all Non-Overkill, Non-Force, scryer usage.</p>";
+				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> -1</p>";
+				return description;
+			},
 			'value', 230, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('onlyminmaxworld',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerMinMaxWorld',
 			function () { return (['Min & Max: Everywhere', 'Min & Max: World', 'Min & Max: Corrupted Only', 'Min & Max: Healthy Only']) },
-			function () { return ('Further restricts scrying usage based on the current world zone.<br><br><b>Everywhere:</b> Places set as MAYBE are affected by Min & Max Range.<br><b>World:</b> Only the World is affected by Min & Max zones.<br><b>Corrupted:</b> Only Corrupted and Healthy enemies in the World are affected.<br><b>Healthy:</b> Only Healthy enemies in the World are affected.') },
+			function () {
+				var description = "<p>Further restricts scrying usage based on the current world zone.</p>";
+				description += "<p><b>Everywhere</b><br>Places set as MAYBE are affected by Min & Max Range.</p>";
+				description += "<p><b>World</b><br>Only the World is affected by Min & Max zones.</p>";
+				description += "<p><b>Corrupted Only</b><br>Only Corrupted and Healthy enemies in the World are affected.</p>";
+				description += "<p><b>Healthy Only</b><br>Only Healthy enemies in the World are affected.</p>";
+				description += "<p><b>Recommended:</b> World</p>";
+				return description;
+			},
 			'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryerUseinMaps2',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerMaps',
 			function () { return (['Maps: Never', 'Maps: Force', 'Maps: Maybe']) },
 			function () {
-				var useType = "maps"
-				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.";
+				var useType = "maps";
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".</p>";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".</p>";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.</p>";
 				description += "<p>The <b>Void Map</b>, <b>Plus Level</b>, and <b>Bionic Wonderland</b> settings all override this.</p>";
 				description += "<p><b>Recommended:</b> Maps: Maybe</p>";
 				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryerUseinVoidMaps2',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerVoidMaps',
 			function () { return (['Void Maps: Never', 'Void Maps: Force', 'Void Maps: Maybe']) },
 			function () {
-				var useType = "void maps"
-				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.";
+				var useType = "void maps";
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".</p>";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".</p>";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.</p>";
 				description += "<p><b>Recommended:</b> Void Maps: Maybe</p>";
 				return description;
 			},
 			'multitoggle', 0, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryerUseinPMaps',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerPlusMaps',
 			function () { return (['Plus Maps: Never', 'Plus Maps: Force', 'Plus Maps: Maybe']) },
 			function () {
-				var useType = "plus level maps"
-				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.";
+				var useType = "plus level maps";
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".</p>";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".</p>";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.</p>";
 				description += "<p><b>Recommended:</b> Plus Maps: Maybe</p>";
 				return description;
 			},
 			'multitoggle', 0, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryerUseinBW',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerBW',
 			function () { return (['BW: Never', 'BW: Force', 'BW: Maybe']) },
 			function () {
-				var useType = "Bionic Wonderland maps"
-				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.";
+				var useType = "Bionic Wonderland maps";
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".</p>";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".</p>";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the map is.</p>";
 				description += "<p><b>Recommended:</b> BW: Maybe</p>";
 				return description;
 			},
 			'multitoggle', 0, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryerUseinSpire2',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerSpire',
 			function () { return (['Spire: Never', 'Spire: Force', 'Spire: Maybe']) },
 			function () {
-				var useType = "Spires"
-				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the Spire is.";
+				var useType = "Spires";
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance in " + useType + ".</p>";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance in " + useType + ".</p>";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance in " + useType + " depending on how difficult the Spire is.</p>";
 				description += "<p><b>Recommended:</b> Spire: Maybe</p>";
 				return description;
 			},
 			'multitoggle', 0, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryerSkipBoss2',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerSkipBoss',
 			function () { return (['Boss: Never', 'Boss: Maybe']) },
 			function () {
-				var useType = "when at cell 100 in the world"
-				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.";
+				var useType = "when at cell 100 in the world";
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.</p>";
 				description += "<p><b>Recommended:</b> Boss: Never</p>";
 				return description;
 			},
 			'multitoggle', 0, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryerSkipCorrupteds2',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerCorrupted',
 			function () { return (['Corrupted: Never', 'Corrupted: Force', 'Corrupted: Maybe']) },
 			function () {
-				var useType = "when fighting corrupted enemies"
-				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance " + useType + ".";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.";
+				var useType = "when fighting corrupted enemies";
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance " + useType + ".</p>";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.</p>";
 				description += "<p>Magma maps and Corrupted Voidmaps are currently classified as corrupted</b> and NEVER here will override Maps and Voidmaps use of Scryer.</p>";
 				description += "<p><b>Recommended:</b> Maps: Maybe</p>";
 				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryerSkipHealthy',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerHealthy',
 			function () { return (['Healthy: Never', 'Healthy: Force', 'Healthy: Maybe']) },
 			function () {
-				var useType = "when fighting healthy enemies"
-				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".";
-				description += "<p><b>Force</b><br>Will force the script to always use scryer stance " + useType + ".";
-				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.";
+				var useType = "when fighting healthy enemies";
+				var description = "<p><b>Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
+				description += "<p><b>Force</b><br>Will force the script to always use scryer stance " + useType + ".</p>";
+				description += "<p><b>Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.</p>";
 				description += "<p><b>Recommended:</b> Healthy: Maybe</p>";
 				return description;
 			},
 			'multitoggle', 2, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryUseinPoison',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerPoison',
 			function () { return ('Scry in Poison') },
 			function () {
-				return ('Decides what you do in Poison. <br>\
-						<b>-1</b> = Maybe <br><b>0</b> = Never <br>\
-						<b>Above 0</b> = Max Zone you want it scrying ')
+				var useType = "in poison zones";
+				var description = "<p>Override for what to do within Poison empowerment zones.</p>";
+				description += "<p><b>0 = Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
+				description += "<p><b>-1 = Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.</p>";
+				description += "<p><b>Above 0</b><br>Will force the script to always use scryer stance " + useType + ".</p>";
+				description += "<p><b>Recommended:</b> -1</p>";
+				return description;
 			},
 			'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryUseinWind',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerWind',
 			function () { return ('Scry in Wind') },
-			function () { return ('Decides what you do in Wind. <br><b>-1</b> = Maybe <br><b>0</b> = Never <br><b>Above 0</b> = Max Zone you want it scrying') },
+			function () {
+				var useType = "in wind zones";
+				var description = "<p>Override for what to do within Wind empowerment zones.</p>";
+				description += "<p><b>0 = Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
+				description += "<p><b>-1 = Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.</p>";
+				description += "<p><b>Above 0</b><br>Will force the script to always use scryer stance " + useType + ".</p>";
+				description += "<p><b>Recommended:</b> -1</p>";
+				return description;
+			},
 			'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryUseinIce',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerIce',
 			function () { return ('Scry in Ice') },
-			function () { return ('Decides what you do in Ice. <br><b>-1</b> = Maybe <br><b>0</b> = Never <br><b>Above 0</b> = Max Zone you want it scrying') },
+			function () {
+				var useType = "in ice zones";
+				var description = "<p>Override for what to do within Ice empowerment zones.</p>";
+				description += "<p><b>0 = Never</b><br>Will force the script to never use scryer stance " + useType + ".</p>";
+				description += "<p><b>-1 = Maybe</b><br>Will maybe run scryer stance " + useType + " depending on how difficult the enemy is.</p>";
+				description += "<p><b>Above 0</b><br>Will force the script to always use scryer stance " + useType + ".</p>";
+				description += "<p><b>Recommended:</b> -1</p>";
+				return description;
+			},
 			'value', -1, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('ScryerDieZ',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerDieZone',
 			function () { return ('Die To Use S') },
-			function () { return ('<b>-1 to disable.</b><br>Turning this on will switch you back to S even when doing so would kill you. Happens in scenarios where you used Skip Corrupteds that took you into regular Autostance X/H stance, killed the corrupted and reached a non-corrupted enemy that you wish to use S on, but you havent bred yet and you are too low on health to just switch back to S. So you\'d rather die, wait to breed, then use S for the full non-corrupted enemy, to maximize DE. NOTE: Use at your own risk.<br>Use this input to set the minimum zone that scryer activates in (You can use decimal values to specify what cell this setting starts from)') },
+			function () {
+				var description = "<p>Enabling this will switch you back to scryer stance even when doing so would kill you.</p>";
+				description += "<p>Happens in scenarios such as when skipping corrupted enemies switches you into regular X/H stance through AutoStance, killed the corrupted and reached a non-corrupted enemy that you wish to use scryer stance on, but you havent bred yet and you are too low on health to just switch back to scryer stance.</p>";
+				description += "<p>So you'd rather die, wait to breed, then use scryer stance for the full non-corrupted enemy, to maximize dark essence gain.</p>";
+				description += "<p>Use this input to set the minimum zone that scryer activates in (You can use decimal values to specify what cell this setting starts from)</p>";
+				description += "<p><b>Set to -1 to disable this setting.</b></p>";
+				description += "<p><b>Recommended:</b> -1</p>";
+				return description;
+			},
 			'value', 230.60, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
-		createSetting('screwessence',
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
+		createSetting('scryerEssenceOnly',
 			function () { return ('Remaining Essence Only') },
-			function () { return ('Why scry when theres no essence? Turns off scrying when the remaining enemies with essence drops to 0.') },
-			'boolean', false, null, 'Combat', [1],
-			function () { return (getPageSetting('UseScryerStance', currSettingUniverse)) });
+			function () {
+				var description = "<p>Will disable Scryer stance whilst in the world if there are no remaining enemies that hold dark essence.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Combat', [1],
+			function () { return (getPageSetting('AutoStanceScryer', currSettingUniverse)) });
 
 
 		//---------------------------------------------------------------------------------------------------------------------
 
 		//Windstacking
-		createSetting('WindStackingMin',
+
+		createSetting('AutoStanceWind',
+			function () { return ('Windstacking') },
+			function () {
+				var description = "<p>Enabling this will give you settings to allow you to wind stack in your runs.</p>";
+				description += "<p>Will use your regular Auto Stance setting when outside of zones you're wind stacking in.</p>";
+				description += "<p>There's a setting for windstacking in dailies in the <b>Daily</b> tab.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			},
+			'boolean', false, null, 'Combat', [1],
+			function () { return (game.empowerments.Wind.retainLevel >= 50) });
+		createSetting('WindStackingZone',
 			function () { return ('Windstack Min Zone') },
 			function () {
-				/* var description = "<p>When Wind Enlightenment </b></p>";
-				description += "<p><b>Recommended:</b> On whilst highest zone is below 30 otherwise off</p>";
-				return description; */
-				return ('For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set. (Get specified windstacks then change to D, kill bad guy, then repeat). This is designed to force S use until you have specified stacks in wind zones, overriding scryer settings. All windstack settings apart from WS MAX work off this setting.')
+				var description = "<p>For use with Windstacking Stance, enables windstacking in zones above and inclusive of the zone set.</p>";
+				description += "<p><b>Recommended:</b> 100 zones below portal zone</p>";
+				return description;
+			},
+			'value', 999, null, 'Combat', [1],
+			function () {
+				return (autoTrimpSettings.AutoStanceWind.enabled)
+			});
+		createSetting('WindStackingRatio',
+			function () { return ('Windstack H:D') },
+			function () {
+				var description = "<p>If your H:D ratio is above this setting it will not use wind stance.</p>";
+				description += "<p><b>Recommended:</b> 1000</p>";
+				return description;
 			},
 			'value', -1, null, 'Combat', [1],
+			function () { return (autoTrimpSettings.AutoStanceWind.enabled) });
+		createSetting('WindStackingLiq',
+			function () { return ('Stack Liquification') },
 			function () {
-				return (autoTrimpSettings.AutoStance.value === 3)
-			});
-		createSetting('WindStackingMinHD',
-			function () { return ('Windstack H:D') },
-			function () { return ('For use with Windstacking Stance, fiddle with this to maximise your stacks in wind zones.') },
-			'value', -1, null, 'Combat', [1],
-			function () { return (autoTrimpSettings.AutoStance.value === 3) });
-		createSetting('WindStackingMax',
-			function () { return ('Windstack Stacks') },
-			function () { return ('For use with Windstacking Stance. Amount of windstacks to obtain before switching to D stance. Default is 200, but I recommend anywhere between 175-190.  In Wind Enlightenment it will add 100 stacks to your total automatically. So if this setting is 200 It will assume you want 300 stacks instead during enlightenment.') },
-			'value', 200, null, 'Combat', [1],
-			function () { return (autoTrimpSettings.AutoStance.value === 3) });
+				var description = "<p>Will wind stack during liquification regardless of your <b>Windstack H:D</b> or <b>Windstack Zone</b> inputs.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			},
+			'boolean', false, null, 'Combat', [1],
+			function () { return (autoTrimpSettings.AutoStanceWind.enabled) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -3728,12 +3829,12 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, 'Display', [1, 2]);
 		createSetting('sitInMaps_Zone',
 			function () { return ('SIM: Zone') },
-			function () { return ('AT will go to the map chamber and stop running any maps at this zone.') },
+			function () { return ('The script will go to the map chamber and stop running any maps at this zone.') },
 			'value', -1, null, 'Display', [1, 2],
 			function () { return (getPageSetting('sitInMaps', currSettingUniverse)) });
 		createSetting('sitInMaps_Cell',
 			function () { return ('SIM: Cell') },
-			function () { return ('AT will go to the map chamber and stop running any maps after this cell has been reached.') },
+			function () { return ('The script will go to the map chamber and stop running any maps after this cell has been reached.') },
 			'value', -1, null, 'Display', [1, 2],
 			function () { return (getPageSetting('sitInMaps', currSettingUniverse)) });
 
@@ -3781,12 +3882,21 @@ function initializeAllSettings() {
 			'infoclick', 'ResetDefaultSettingsProfiles', null, 'Import Export', [0]);
 		createSetting('DownloadDebug',
 			function () { return ('Download for Debug') },
-			function () { return ('Will download both your save and AT settings so that they can be debugged easier.') },
+			function () { return ('Will download both your save and the scripts settings so that they can be debugged easier.') },
 			'action', 'ImportExportTooltip("ExportAutoTrimps","update",true)', null, 'Import Export', [0]);
 		/* createSetting('CleanupAutoTrimps',
 			function () { return ('Cleanup Saved Settings') },
 			function () { return ('Deletes old values from previous versions of the script from your AutoTrimps settings file.') },
 			'infoclick', 'CleanupAutoTrimps', null, 'Import Export', [0]); */
+
+		createSetting('updateReload',
+			function () { return ('Update Reload') },
+			function () {
+				var description = "<p>Will reload your Trimps window when an AutoTrimps update is available.</p>";
+				description += "<p><b>Updates have the potential to have errors that would break the script so be aware this might not be wise to enable.</b></p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, 'Import Export', [0]);
 
 		createSetting('autoAllocatePresets',
 			function () { return ('Auto Allocate Presets') },
@@ -3929,7 +4039,7 @@ function initializeAllSettings() {
 				description += "<p><b>Due to the map remaking process your game will hang for a while till this finds an ideal map.</b></p>";
 				return description;
 			}, 'value', 1e10, null, 'Beta', [0]);
-		3
+
 		createSetting('debugEqualityStats',
 			function () { return ('Debug Equality Stats') },
 			function () {
@@ -4371,7 +4481,7 @@ function modifyParentNodeUniverseSwap() {
 	//Dailies
 	modifyParentNode("dscryvoidmaps", radonoff);
 	modifyParentNode("dPreSpireNurseries", radonoff);
-	modifyParentNode("liqstack", 'show');
+	modifyParentNode("dWindStackingLiq", 'show');
 	modifyParentNode("dailyHeliumHrPortal", 'show');
 
 	if (getPageSetting('displayAllSettings')// || (getPageSetting('autoPortal', currSettingUniverse).includes('Hour') && holidayObj.holiday === 'Eggy')
@@ -4393,7 +4503,7 @@ function modifyParentNodeUniverseSwap() {
 
 	//Combat
 	modifyParentNode("frenzyCalc", radonoff);
-	modifyParentNode("screwessence", radonoff);
+	modifyParentNode("scryerEssenceOnly", radonoff);
 
 	//ATGA
 	modifyParentNode("geneAssistTimerSpire", radonoff);
@@ -4466,7 +4576,7 @@ function challengeUnlock(challenge, setting, c2) {
 	var c2Msg = game.global.universe === 2 ? '3' : '2';
 	var msg = "You have unlocked the " + challenge + " challenge.";
 	msg += " It has now been added to " + (c2 ? "Challenge " + c2Msg + " AutoPortal setting" : "AutoPortal");
-	msg += (setting ? " & there's settings for it in the AT " + (c2 ? '"C' + c2Msg + '"' : '"Challenges"') + " tab." : '.');
+	msg += (setting ? " & there's settings for it in the scripts " + (c2 ? '"C' + c2Msg + '"' : '"Challenges"') + " tab." : '.');
 	if (challenge === "Frigid" || challenge === "Experience" || challenge === "Mayhem" || challenge === "Pandemonium" || challenge === "Desolation") msg += "<br><br><b>This is a special challenge and will use " + cinf() + " settings when run.</b>";
 	return msg;
 }
@@ -4638,21 +4748,21 @@ function challengeUnlockCheck() {
 	if (hze === 40) {
 		message = challengeUnlock('Balance', false, false);
 		message += "<br><br>"
-		message = "Upon unlocking Balance AT has a new settings tab available called 'Challenge'. Here you will find a variety of settings that might be beneficial when running this challenge.";
+		message = "Upon unlocking Balance the script has a new settings tab available called 'Challenge'. Here you will find a variety of settings that might be beneficial when running this challenge.";
 	} else if (hze === 55) {
 		message = challengeUnlock('Decay', true, false);
 	} else if (hze === 60) {
-		message = "Upon unlocking Warpstations's AT has a new settings tab available called 'Buildings'. Here you will find a variety of settings that will help with this new feature.";
+		message = "Upon unlocking Warpstations's the script has a new settings tab available called 'Buildings'. Here you will find a variety of settings that will help with this new feature.";
 	} else if (hze === 65) {
-		message = "Due to unlocking Challenge 2's there is now a Challenge 2 option under AutoPortal to be able to auto portal into them. Also you can now access the C2 tab within the AT settings.";
+		message = "Due to unlocking Challenge 2's there is now a Challenge 2 option under AutoPortal to be able to auto portal into them. Also you can now access the C2 tab within the the scripts settings.";
 	} else if (hze === 70) {
 		message = challengeUnlock('Trapper', false, true);
 		message += "<br><br>"
-		message = "Upon unlocking Geneticist's AT has a new settings tab available called 'Jobs'. Here you will find a variety of settings that will help with this new feature.";
+		message = "Upon unlocking Geneticist's the script has a new settings tab available called 'Jobs'. Here you will find a variety of settings that will help with this new feature.";
 	} else if (game.global.prisonClear >= 1 && !MODULES.u1unlocks.challenge.includes('Electricity')) {
 		message = challengeUnlock('Electricity', false, true);
 	} else if (hze === 100) {
-		message = "You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.";
+		message = "You can now access the Daily tab within the the scripts settings. Here you will find a variety of settings that will help optimise your dailies.";
 	} else if (hze === 110) {
 		message = challengeUnlock('Life', true, false);
 	} else if (hze === 120) {
@@ -4676,7 +4786,7 @@ function challengeUnlockCheck() {
 	} else if (hze === 215) {
 		message = challengeUnlock('Domination', false, true);
 	} else if (hze === 230) {
-		message = "Upon unlocking the Dimensional Generator building AT has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic.";
+		message = "Upon unlocking the Dimensional Generator building the script has a new settings tab available called 'Magma'. Here you will find a variety of settings that will help optimise your generator. Additionally there's a new setting in the 'Buildings' tab called 'Advanced Nurseries' that will potentially be of help with the Nursery destruction mechanic.";
 	} else if (hze === 236) {
 		message = "Upon unlocking Nature, AutoTrimps has a new settings tab available called 'Nature'. Here you will find a variety of settings that will help with this new feature.";
 	} else if (hze === 425) {
@@ -4739,7 +4849,7 @@ function challengeUnlockCheckU2() {
 		message = "You have unlocked the Transmute challenge. Any metal related settings will be converted to wood instead while running this challenge.";
 	} //Dailies
 	else if (hze === 30) {
-		message = "You can now access the Daily tab within the AT settings. Here you will find a variety of settings that will help optimise your dailies.";
+		message = "You can now access the Daily tab within the the scripts settings. Here you will find a variety of settings that will help optimise your dailies.";
 	} //Unblance
 	else if (hze === 35) {
 		message = challengeUnlock('Unbalance', true, true);
@@ -4752,13 +4862,13 @@ function challengeUnlockCheckU2() {
 	} //C3, Melt, Worshippers
 	else if (hze === 50) {
 		//C3
-		message = "Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them. Also you can now access the " + cinf() + " tab within the AT settings.";
+		message = "Due to unlocking Challenge 3's there is now a Challenge 3 option under AutoPortal to be able to auto portal into them. Also you can now access the " + cinf() + " tab within the the scripts settings.";
 		//Melt
 		message += "<br><br>"
 		message += challengeUnlock('Melt');
 		//Worshippers
 		message += "<br><br>"
-		message += "You can now use the Worshipper Farm setting. This can be found in the AT 'Maps' tab.";
+		message += "You can now use the Worshipper Farm setting. This can be found in the the scripts 'Maps' tab.";
 	} //Trappapalooza
 	else if (hze === 60) {
 		message = challengeUnlock('Trappapalooza', true, true);
@@ -5572,7 +5682,7 @@ function setupATButtons() {
 	voidMapContainer.setAttribute("style", "display: block; font-size: 0.9vw; text-align: centre; background-color: rgba(0, 0, 0, 0.3);");
 	var voidMapText = document.createElement("SPAN");
 	voidMapContainer.setAttribute("onmouseover", 'tooltip(\"Additional AT Info\", \"customText\", event, \"<b>Void</b>: The progress you have towards a free void map from the \'Void Maps\' permanent bone upgrade.<br>\
-	<b>Auto Level</b>: The level that AT recommends using whilst farming.<br>\
+	<b>Auto Level</b>: The level that the script recommends using whilst farming.<br>\
 	<b>B</b>: The amount of time your trimps have been breeding.<br>\
 	<b>T</b>: Your current tenacity time.\")');
 	voidMapContainer.setAttribute("onmouseout", 'tooltip("hide")');
@@ -5768,6 +5878,27 @@ function updateATVersion() {
 
 		const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
 
+		//Test function for either setting conversion. Stops me having to rewrite the undefined code every time I change something.
+		function basicSettingConversion(originalSetting, newSetting, universe = 0) {
+			if (!originalSetting) return;
+			if (!newSetting) return;
+			if (tempSettings[originalSetting] === undefined) {
+				debug("Original setting (" + originalSetting + ") not found");
+				return;
+			}
+			if (autoTrimpSettings[newSetting] === undefined) {
+				debug("New setting (" + newSetting + ") not found");
+				return;
+			}
+
+			debug("Converted setting: " + originalSetting + " to " + newSetting);
+			var originalSetting = tempSettings[originalSetting];
+			var originalType = Object.keys(tempSettings.gammaBurstCalc)[0];
+			if (universe === 2 && originalType.includes("U2")) originalType += "U2";
+			var newSetting = autoTrimpSettings[newSetting];
+		}
+
+
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.001') {
 			var settings_List = ['raidingSettings', 'bionicRaidingSettings']
 			var values = ['value', 'valueU2'];
@@ -5863,7 +5994,7 @@ function updateATVersion() {
 
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.2.6') {
 			if (tempSettings.c2RunnerSettings !== undefined) {
-				autoTrimpSettings['onlyminmaxworld'].value = 2;
+				autoTrimpSettings['scryerMinMaxWorld'].value = 2;
 			}
 			autoTrimpSettings['spamMessages'].value.map_Skip = false;
 			autoTrimpSettings['spamMessages'].value.stance = false;
@@ -6129,6 +6260,40 @@ function updateATVersion() {
 		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.21') {
 			if (typeof (tempSettings["IgnoreCrits"]) !== 'undefined') {
 				autoTrimpSettings.IgnoreCrits.valueU2 = 0;
+			}
+		}
+
+		//Scryer stance changes
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.24') {
+
+			if (typeof (tempSettings["UseScryerStance"]) !== 'undefined') {
+				autoTrimpSettings.AutoStanceScryer.enabled = tempSettings.UseScryerStance.enabled;
+			}
+			if (typeof (tempSettings["screwessence"]) !== 'undefined') {
+				autoTrimpSettings.scryerEssenceOnly.enabled = tempSettings.screwessence.enabled;
+			}
+			if (typeof (tempSettings["ScryerUseWhenOverkill"]) !== 'undefined') {
+				autoTrimpSettings.scryerOverkill.enabled = tempSettings.ScryerUseWhenOverkill.enabled;
+			}
+			if (typeof (tempSettings["use3daily"]) !== 'undefined') {
+				autoTrimpSettings.dAutoStanceWind.enabled = tempSettings.use3daily.enabled;
+			}
+			if (typeof (tempSettings["liqstack"]) !== 'undefined') {
+				autoTrimpSettings.dWindStackingLiq.enabled = tempSettings.liqstack.enabled;
+			}
+			if (typeof (tempSettings["AutoStance"]) !== 'undefined') {
+				if (tempSettings.AutoStance.value > 2) {
+					autoTrimpSettings.AutoStance.value = 2;
+					autoTrimpSettings.AutoStanceWind.enabled = true;
+				}
+			}
+
+			const originalSettings = ["ScryerUseinMaps2", "ScryerUseinVoidMaps2", "ScryerUseinPMaps", "ScryerUseinBW", "ScryerUseinSpire2", "ScryerSkipBoss2", "ScryUseinPoison", "ScryUseinWind", "ScryUseinIce", "ScryerSkipCorrupteds2", "ScryerSkipHealthy", "ScryerDieZ", "ScryerMaxZone", "ScryerMinZone", "onlyminmaxworld", "dWindStackingMinHD", "WindStackingMinHD", "WindStackingMin", "dWindStackingMin"];
+			const newSettings = ["scryerMaps", "scryerVoidMaps", "scryerPlusMaps", "scryerBW", "scryerSpire", "scryerSkipBoss", "scryerPoison", "scryerWind", "scryerIce", "scryerCorrupted", "scryerHealthy", "scryerDieZone", "scryerMaxZone", "scryerMinZone", "scryerMinMaxWorld", "dWindStackingRatio", "WindStackingRatio", "WindStackingZone", "dWindStackingZone"];
+			for (var item in originalSettings) {
+				if (typeof (tempSettings[originalSettings[item]]) !== 'undefined') {
+					autoTrimpSettings[newSettings[item]].value = tempSettings[originalSettings[item]].value;
+				}
 			}
 		}
 	}

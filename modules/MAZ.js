@@ -1693,7 +1693,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 	//Disables Atlantrimp for 1 second and recalculates mapSettings variable.
 	//This is to prevent the issue of Atlantrimp being run when you're saving settings.
 	settingChangedTimeout = true;
-	mapSettings = new farmingDecision();
+	farmingDecision();
 
 	setTimeout(
 		function () { settingChangedTimeout = false },

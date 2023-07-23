@@ -434,7 +434,7 @@ function doPortal(challenge, skipDaily) {
 	//Spending Magmite
 	if (getPageSetting('spendmagmite') === 1) autoMagmiteSpender();
 	//Identifying if we need to keep any heirlooms before portaling.
-	autoheirlooms();
+	autoHeirlooms();
 	//Open portal window
 	portalClicked();
 	if (!portalWindowOpen) {
@@ -746,7 +746,7 @@ function resetVarsZone(loadingSave) {
 	mapFunction.portalAfterVoids = false;
 
 	hdStats = new HDStats();
-	mapSettings = farmingDecision();
+	farmingDecision();
 
 	drawAllBuildings(true);
 	drawAllEquipment(true);

@@ -49,25 +49,4 @@
 
 # Settings
    - Rename
-     - ScryerUseinMaps2
-       - ScryerMaps
-     - ScryerUseinVoidMaps2
-	   - ScryerVoidMaps
-     - ScryerUseinPMaps
-	   - ScryerPlusMaps
-	 - ScryerUseinBW
-    	 - ScryerBW
-  	 - ScryerUseinSpire2
-    	 - ScryerSpire
-  	 - ScryerSkipBoss2
-    	 - ScryerSkipBoss
-  	 - ScryUseinPoison
-    	 - ScryerPoison
-  	 - ScryUseinWind
-    	 - ScryerWind
-  	 - ScryUseinIce
-    	 - ScryerIce
-  	 - ScryerSkipCorrupteds2
-    	 - ScryerSkipCorrupted
-  	 - ScryerSkipHealthy
-       - Fine as is
+     - 

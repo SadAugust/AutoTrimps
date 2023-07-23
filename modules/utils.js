@@ -258,16 +258,15 @@ function pushSpreadsheetData() {
 //It gets the value of a setting from autoTrimpSettings. If universe isn't set it will return the value relevant for the current universe we're in.
 //If universe is set it will return the value from that universe.
 //If the setting is not found it will return false.
-function getPageSetting(setting, universe) {
+function getPageSetting(setting, universe = game.global.universe) {
 	if (!autoTrimpSettings.hasOwnProperty(setting)) {
 		return false;
 	}
-	const settingType = autoTrimpSettings[setting].type;
-	var enabled = 'enabled'
-	var selected = 'selected'
-	var value = 'value'
 
-	if (!universe) universe = game.global.universe;
+	const settingType = autoTrimpSettings[setting].type;
+	var enabled = 'enabled';
+	var selected = 'selected';
+	var value = 'value';
 
 	if (autoTrimpSettings[setting].universe.indexOf(0) === -1 && universe === 2) {
 		if (universe === 2) enabled += 'U2';
@@ -302,9 +301,9 @@ function setPageSetting(setting, newValue, universe) {
 
 	const settingType = autoTrimpSettings[setting].type;
 
-	var enabled = 'enabled'
-	var selected = 'selected'
-	var value = 'value'
+	var enabled = 'enabled';
+	var selected = 'selected';
+	var value = 'value';
 
 	if (!universe) universe = portalUniverse;
 
@@ -489,9 +488,18 @@ function formatMinutesForDescriptions(number) {
 	return text;
 }
 
-window.onerror = function (b, c, d, e, f) {
-	var g = ['Message: ' + b, 'URL: ' + c, 'Line: ' + d, 'Column: ' + e, 'Error object: ' + JSON.stringify(f)].join(' - '); 0 !== d && console.log('AT logged error: ' + g)
+window.onerror = function catchErrors(msg, url, lineNo, columnNo, error) {
+	var message = [
+		'Message: ' + msg,
+		'URL: ' + url,
+		'Line: ' + lineNo,
+		'Column: ' + columnNo,
+		'Error object: ' + JSON.stringify(error)
+	].join(' - ');
+	if (lineNo != 0)
+		console.log("AT logged error: " + message);
 };
+
 function throwErrorfromModule() { throw new Error("We have successfully read the thrown error message out of a module") }
 
 

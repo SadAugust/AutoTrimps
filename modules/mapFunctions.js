@@ -3239,7 +3239,7 @@ function farmingDecision() {
 
 	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;
 
-	return farmingDetails;
+	mapSettings = farmingDetails;
 }
 
 //Checks to see if the line from the settings should run

@@ -254,16 +254,17 @@ function checkStanceSetting() {
 	if (getPageSetting('UseScryerStance')) useScryerStance();
 	else if (game.global.mapsActive && getCurrentMapObject().location === 'Void' && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')) useScryerStance();
 	else {
-		windStance();
-		autoStance();
-		autoStanceD();
+		var AutoStance = getPageSetting('AutoStance');
+		if (getPageSetting(settingPrefix + 'AutoStanceWind')) autoStanceWind();
+		else if (AutoStance === 1) autoStance();
+		else if (AutoStance === 2) autoStanceD();
 	}
 	return;
 }
 
-function autoStance() {
+function autoStance(force) {
 	calcBaseDamageInX();
-	if (getPageSetting('AutoStance') !== 1) return;
+	if (getPageSetting('AutoStance') !== 1 && !force) return;
 	//Invalid Map - Dead Soldiers - Auto Stance Disabled - Formations Unavailable - No Enemy
 	if (game.global.soldierHealth <= 0) return;
 	if (game.global.gridArray.length === 0) return true;
@@ -313,8 +314,8 @@ function autoStance() {
 	return true;
 }
 
-function autoStanceD(forceActive) {
-	if (getPageSetting('AutoStance') !== 2 && !forceActive) return;
+function autoStanceD(force) {
+	if (getPageSetting('AutoStance') !== 2 && !force) return;
 	if (game.global.gridArray.length === 0) return;
 	if (game.global.soldierHealth <= 0) return;
 	if (!game.upgrades.Formations.done) return;
@@ -322,28 +323,37 @@ function autoStanceD(forceActive) {
 	safeSetStance(2);
 }
 
-function windStance() {
-
-	if (getPageSetting('AutoStance') !== 3 && !(getPageSetting('use3daily') && challengeActive('Daily'))) return;
+function autoStanceWind() {
 	//Fail safes
 	if (game.global.gridArray.length === 0) return;
 	if (game.global.soldierHealth <= 0) return;
 	if (!game.upgrades.Formations.done) return;
 	if (game.global.world <= 70) return;
-	var stanceToUse = 2;
-	var currentStance = calcCurrentStance();
-	if (currentStance === 0 || currentStance === 10) {
-		stanceToUse = 0;
+	var currentStance = useWindStance();
+	//If we should use Wind Stance, and the checks in useWindStance don't return false then use it
+	if (currentStance) {
+		safeSetStance(5);
 	}
-	if (currentStance === 1 || currentStance === 11) {
-		stanceToUse = 1;
+	//Otherwise use your AutoStance setting.
+	else {
+		if (getPageSetting('AutoStance') === 1) autoStance(true)
+		if (getPageSetting('AutoStance') === 2) autoStanceD(true);
 	}
-	if (currentStance === 2 || currentStance === 12) {
-		stanceToUse = 2;
-	}
-	if (currentStance === 5 || currentStance === 15) {
-		stanceToUse = 5;
-	}
+}
 
-	safeSetStance(stanceToUse);
+function useWindStance() {
+	if (!game.global.uberNature !== "Wind")
+		return false;
+	if (getEmpowerment() !== "Wind")
+		return false;
+	if (game.global.mapsActive)
+		return false;
+	const settingPrefix = hdStats.isDaily ? 'd' : '';
+	if (!getPageSetting(settingPrefix + 'AutoStanceWind'))
+		return false;
+
+	if (checkIfLiquidZone() && getPageSetting('liqstack') && hdStats.isDaily)
+		return true;
+	if (hdStats.hdRatio < getPageSetting(settingPrefix + 'WindStackingMinHD') && game.global.world >= getPageSetting(settingPrefix + 'WindStackingMin'))
+		return true;
 }

@@ -532,7 +532,8 @@ function loadAugustSettings() {
 		var setting = game.options.menu[toggles[i]];
 		if (setting.onToggle) setting.onToggle();
 	}
-	MODULES["graphs"].themeChanged();
+	if (typeof MODULES["graphs"].themeChanged === 'function')
+		MODULES["graphs"].themeChanged();
 }
 
 function resetAutoTrimps(a, b) {
@@ -548,9 +549,9 @@ function resetAutoTrimps(a, b) {
 					initializeAllSettings(),
 					//initializeSettingsProfiles(),
 					resetSettingsPortal(),
+					updateATVersion(),
 					updateCustomButtons(true),
 					saveSettings(),
-					updateATVersion(),
 					MODULES["graphs"].themeChanged(),
 					(atSettings.running = !0),
 					localStorage.perkyInputs = (autoTrimpSettings.autoAllocatePresets.value),

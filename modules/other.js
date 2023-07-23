@@ -373,7 +373,6 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 
 //Auto Equality
 function equalityManagement() {
-
 	if (usingRealTimeOffline) {
 		if (!getPageSetting('timeWarpSpeed')) {
 			equalityManagementBasic();
