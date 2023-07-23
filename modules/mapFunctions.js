@@ -247,9 +247,10 @@ function shouldRunUniqueMap(map) {
 		} else if (map.name === 'Frozen Castle') {
 			// maybe get the treasure
 			var frozencastle = !challengeActive('Hypothermia') && uniqueMapSetting.Frozen_Castle.enabled && game.global.world >= uniqueMapSetting.Frozen_Castle.zone && game.global.lastClearedCell + 2 >= uniqueMapSetting.Frozen_Castle.cell;
+			var hypoDefaultSettings = getPageSetting('hypothermiaDefaultSettings');
 			var hypothermia = challengeActive('Hypothermia') && mapSettings.mapName !== 'Void Maps' &&
-				game.global.world >= (getPageSetting('hypothermiaDefaultSettings').frozencastle[0] !== undefined ? parseInt(getPageSetting('hypothermiaDefaultSettings').frozencastle[0]) : 200) &&
-				game.global.lastClearedCell + 2 >= (getPageSetting('hypothermiaDefaultSettings').frozencastle[1] !== undefined ? parseInt(getPageSetting('hypothermiaDefaultSettings').frozencastle[1]) : 99);
+				hypoDefaultSettings.active && game.global.world >= (hypoDefaultSettings.frozencastle[0] !== undefined ? parseInt(getPageSettinghypoDefaultSettings.frozencastle[0]) : 200) &&
+				game.global.lastClearedCell + 2 >= (hypoDefaultSettings.frozencastle[1] !== undefined ? parseInt(hypoDefaultSettings.frozencastle[1]) : 99);
 			if (frozencastle || hypothermia) {
 				if (getPageSetting('spamMessages').map_Details && game.global.preMapsActive) debug('Running ' + map.name + ' on zone ' + game.global.world + '.', "map_Details");
 				return true;
