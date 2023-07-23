@@ -251,7 +251,7 @@ function survive(formation = "S", critPower = 2, ignoreArmy) {
 
 function checkStanceSetting() {
 	var settingPrefix = hdStats.isDaily ? 'd' : '';
-	if (getPageSetting('UseScryerStance')) useScryerStance();
+	if (getPageSetting('AutoStanceScryer')) useScryerStance();
 	else if (game.global.mapsActive && getCurrentMapObject().location === 'Void' && game.talents.scry2.purchased && getPageSetting(settingPrefix + 'scryvoidmaps')) useScryerStance();
 	else {
 		var AutoStance = getPageSetting('AutoStance');

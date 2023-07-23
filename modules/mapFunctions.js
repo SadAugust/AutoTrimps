@@ -3778,6 +3778,7 @@ function resetMapVars(setting) {
 	mapSettings.mapName = "";
 	MODULES.maps.mapTimer = 0;
 	MODULES.maps.mapRepeats = 0;
+	MODULES.maps.slowScumming = false;
 	game.global.mapRunCounter = 0;
 
 	if (setting) {

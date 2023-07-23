@@ -29,7 +29,7 @@ function readyToSwitch(stance = "S") {
 	return die || survive(stance, 2);
 }
 
-function AutoStanceScryer() {
+function useScryerStance() {
 	var scry = 4;
 	var scryF = 'S';
 	var x = 4;
