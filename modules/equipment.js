@@ -268,7 +268,7 @@ function mostEfficientEquipment(resourceSpendingPct, zoneGo, ignoreShield, skipF
 		var skipPrestiges = ignorePrestiges || maybeBuyPrestige.skip || false;
 		//Check for further overrides for if we want to skip looking at prestiges
 		if (!skipPrestiges) {
-			if ((prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGo)) && !ignorePrestiges && game.equipment[i].level < 6) skipPrestiges = true;
+			if (prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGo && !ignorePrestiges && game.equipment[i].level < 6)) skipPrestiges = true;
 			if (prestigeSetting === 2 && !canAtlantrimp && game.resources[MODULES.equipment[i].resource].owned * prestigePct < maybeBuyPrestige.prestigeCost) skipPrestiges = true;
 		}
 

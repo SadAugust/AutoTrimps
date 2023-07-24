@@ -903,6 +903,7 @@ load = function () {
 		atlantrimpRespecOverride();
 		resetVarsZone(true);
 		MODULES["graphs"].themeChanged();
+		updateCustomButtons(true);
 	}
 	catch (e) { graphsDebug("Gather info failed: " + e) }
 }

@@ -307,7 +307,7 @@ function setPageSetting(setting, newValue, universe) {
 
 	if (!universe) universe = portalUniverse;
 
-	if (setting !== 'radonsettings' && (universe === 2)) {
+	if (setting !== 'universeSetting' && (universe === 2)) {
 		if (universe === 2) enabled += 'U2';
 		if (universe === 2) selected += 'U2';
 		if (universe === 2) value += 'U2';

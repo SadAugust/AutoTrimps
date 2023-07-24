@@ -1850,3 +1850,68 @@ h9 {
 .open>.dropdown-toggle.btn-new {
 	background-image: none;
 }
+
+
+
+
+
+
+
+.select2 {
+	position: relative;
+	font-size: 0.9vw;
+	color: white;
+	min-width: 13.50vw;
+	min-height: 2vw;
+	text-align: right;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+	position: relative;
+	border: 1px solid white;
+	background-color: #000;
+	color: white;
+	text-align: right;
+	min-height: 1.7vw
+}
+
+.select2-search--dropdown {
+	background-color: #000;
+	color: white;
+}
+
+.select2-search__field {
+	background-color: #000;
+	color: white;
+}
+
+.select2-results {
+	background-color: #000;
+	color: white;
+}
+
+.select-wrapper {
+
+	position: relative;
+	font-family: "Helvetica", "Arial", sans-serif;
+	display: flex;
+	pointer-events: all;
+
+	&[data-prefix] {
+		&:before {
+			content: attr(data-prefix);
+			display: flex;
+			align-items: center;
+			background-color: #000;
+			vertical-align: center;
+			position: absolute;
+			z-index: 0;
+			font-size: 0.8vw;
+			left: 1px;
+			bottom: 0.2vw;
+			padding: 0 5px 0 4px;
+			color: white;
+			color: #00A7E1;
+		}
+	}
+}
