@@ -5245,7 +5245,7 @@ function updateCustomButtons(initialLoad) {
 	//Hide settings
 	//Radon
 	var radonon = autoTrimpSettings.universeSetting.value === 1;
-	currSettingUniverse = (autoTrimpSettings.universeSetting.value + 1);
+	currSettingUniverse = autoTrimpSettings.universeSetting.value + 1;
 
 	//Loops through all the AT settings so we can properly setup the UI.
 	for (var setting in autoTrimpSettings) {
@@ -5323,18 +5323,17 @@ function updateCustomButtons(initialLoad) {
 			else if (item.type === 'dropdown') {
 				var itemSelected = item.selected;
 				if (radonon && settingUniverse.indexOf(0) === -1) itemSelected = item['selected' + 'U2'];
-				/* elem.innerHTML = '';
+				elem.innerHTML = '';
 				var listItems = item.list();
 				for (var dropdown in listItems) {
 					var option = document.createElement("option");
 					option.value = listItems[dropdown];
 					option.text = listItems[dropdown];
-					option["data-prefix"] = item.name();
 					elem.appendChild(option);
 				}
 				elem.value = itemSelected;
 				elem.parentNode.setAttribute("data-prefix", item.name());
-				elem = elem.parentNode; */
+				elem = elem.parentNode;
 			}
 			if (item.type === 'multitoggle') {
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name().join(' / ') + '\", \"customText\", event, \"' + item.description() + '\")');
