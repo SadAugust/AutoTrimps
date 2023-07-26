@@ -40,9 +40,9 @@ function workerRatios(workerRatio) {
 	var workerRatio = !workerRatio ? null : workerRatio
 	if (workerRatio === null) return;
 
-	const universeSetting = getPageSetting('jobType');
+	const jobSetting = getPageSetting('jobType');
 
-	if (universeSetting === 2) {
+	if (jobSetting === 2) {
 		var jobSettings = getPageSetting('jobSettingsArray');
 		if (workerRatio === 'Lumberjack' && (challengeActive('Metal') || challengeActive('Transmute')) && jobSettings.Miner.enabled) {
 			if (jobSettings.Lumberjack.enabled) return jobSettings[workerRatio].ratio + jobSettings.Miner.ratio;
@@ -116,21 +116,14 @@ function buyJobs(forceRatios) {
 
 	if (game.jobs.Farmer.locked || game.resources.trimps.owned === 0) return;
 
-	const universeSetting = getPageSetting('jobType');
 	//Disabling autoJobs if AT AutoJobs is disabled.
-	if (universeSetting === 0) return;
+	if (getPageSetting('jobType') === 0) return;
 
 	var jobSettings = getPageSetting('jobSettingsArray');
-	var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed //-
-		//U1 jobs
-		//game.jobs.Geneticist.owned - game.jobs.Trainer.owned - game.jobs.Magmamancer.owned -
-		//U2 jobs
-		//game.jobs.Explorer.owned - game.jobs.Meteorologist.owned - game.jobs.Worshipper.owned
-	);
+	var freeWorkers = Math.ceil(Math.min(game.resources.trimps.realMax() / 2), game.resources.trimps.owned) - (game.resources.trimps.employed);
 
 	var canBreed = !challengeActive('Trapper') && !challengeActive('Trappapalooza');
 	var breedingTrimps = !canBreed ? Infinity : game.resources.trimps.owned - trimpsEffectivelyEmployed();
-	var hasSciThree = ((game.global.universe === 1 && game.global.sLevel >= 3) || (game.global.universe === 2 && game.buildings.Microchip.owned >= 3));
 
 	//Enables Firing for Jobs. It's a setting that will save hassle later by forcing it to be enalbed.
 	if (!game.options.menu.fireForJobs.enabled) game.options.menu.fireForJobs.enabled = 1;
@@ -254,7 +247,8 @@ function buyJobs(forceRatios) {
 	freeWorkers -= (game.resources.trimps.owned > 1e6) ? 100 * reserveMod : 0;
 
 	var workerRatio;
-	if (forceRatios !== undefined || (getPageSetting('autoMaps') !== 0 && mapSettings.jobRatio !== undefined)) {
+	//Looks first if we want to manually set ratios for workers through map settings or through overrides (bone shrine).
+	if (forceRatios !== undefined || (getPageSetting('autoMaps') > 0 && mapSettings.jobRatio !== undefined)) {
 		//Check if bone shrine wants to force override our job ratio
 		if (forceRatios !== undefined) workerRatio = forceRatios;
 		//If not then check if we are running a map with a job ratio set
@@ -287,8 +281,9 @@ function buyJobs(forceRatios) {
 					desiredRatios[ratioWorkers.indexOf(worker)] = 1;
 					continue;
 				}
-				else
-					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(universeSetting === 2 ? worker : 'R' + worker + 'Ratio'))
+				else {
+					desiredRatios[ratioWorkers.indexOf(worker)] = scientistMod * parseFloat(workerRatios(worker))
+				}
 			}
 		}
 	}

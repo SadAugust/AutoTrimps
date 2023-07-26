@@ -947,6 +947,7 @@ function initializeAllSettings() {
 				var description = "<p>Will finish the challenge with this Bionic Wonderland level once reaching the end zone specified in <b>E: End Zone</b>.</p>";
 				description += "<p><b>If the specified BW is not available, it will run one closest to the setting.</b></p>";
 				description += "<p><b>Recommended:</b> 605 to start and increase over time</p>";
+				return description;
 			}, 'value', -1, null, 'C2', [1],
 			function () { return (autoTrimpSettings.experience.enabled) });
 
@@ -1500,7 +1501,7 @@ function initializeAllSettings() {
 		createSetting('quagmireSettings',
 			function () { return ('Quagmire Settings') },
 			function () {
-				var description = "<p>Here you can select how and when you would like farming to be done during Quagmire.</p>";
+				var description = "<p>Here you can select how and when you would like black bog farming to be done during Quagmire.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
@@ -1515,7 +1516,7 @@ function initializeAllSettings() {
 		createSetting('insanitySettings',
 			function () { return ('Insanity Settings') },
 			function () {
-				var description = "<p>Here you can select how and when you would like farming to be done during Insanity.</p>";
+				var description = "<p>Here you can select how and when you would like insanity stack farming to be done during Insanity.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
@@ -1530,7 +1531,7 @@ function initializeAllSettings() {
 		createSetting('alchemySettings',
 			function () { return ('Alchemy Settings') },
 			function () {
-				var description = "<p>Here you can select how and when you would like farming to be done during Alchemy.</p>";
+				var description = "<p>Here you can select how and when you would like potion farming to be done during Alchemy.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
@@ -1545,7 +1546,7 @@ function initializeAllSettings() {
 		createSetting('hypothermiaSettings',
 			function () { return ('Hypothermia Settings') },
 			function () {
-				var description = "<p>Here you can select how and when you would like farming to be done during Hypothermia.</p>";
+				var description = "<p>Here you can select how and when you would like bonfire farming to be done during Hypothermia.</p>";
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
@@ -1878,25 +1879,19 @@ function initializeAllSettings() {
 		createSetting('ForcePresZ',
 			function () { return ('Force Prestige Z') },
 			function () {
-				var description = "<p>On and after this zone is reached, always try to prestige for everything immediately, ignoring Dynamic Prestige settings and overriding that of Linear Prestige. </p>";
-				description += "<p><b>Prestige Skip mode will exit this.</b></p>";
+				var description = "<p>On and after this zone is reached, always try to prestige for everything immediately.</p>";
+				description += "<p>The <b>Prestige Skip</b> setting has the potential to disable this if it's enabled.</p>";
 				description += "<p><b>Disable with -1.</b></p>";
 				description += "<p><b>Recommended:</b> The zone you start heavily slowing down</p>";
 				return description;
 			}, 'value', -1, null, "Equipment", [1, 2]);
-		createSetting('PrestigeSkip1_2',
-			function () { return (['Prestige Skip Off', 'Prestige Skip 1 & 2', 'Prestige Skip 1', 'Prestige Skip 2']) },
+		createSetting('PrestigeSkip',
+			function () { return ('Prestige Skip') },
 			function () {
-				var description = "<p>Master switch for whether the script will do any form of mapping.</p>";
-
-				description += "<p><b>Prestige Skip Off</b><br>Disables this setting.</p>";
-
-				description += "<p><b>Prestige Skip 1</b><br>If there are more than 2 Unbought Prestiges (besides Shield), ie: sitting in your upgrades window but you cant afford them, Auto Maps will not enter Prestige Mode, and/or will exit from it.</p>";
-
-				description += "<p><b>Prestige Skip 2</b><br>If there are 2 or fewer <b>Unobtained Weapon Prestiges in maps</b>, ie: there are less than 2 types to run for, AutoMaps will not enter Prestige Mode, and/or will exit from it. For users who tends to not need the last few prestiges due to resource gain not keeping up.</p>";
-				description += "<p><b>Recommended:</b> Prestige Skip Off</p>";
+				var description = "<p>Will stop Presige Climb from running if you have 2 or more unbought prestiges (besides Supershield) in your upgrades window.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
-			}, 'multitoggle', 0, null, "Equipment", [1, 2]);
+			}, 'boolean', false, null, "Equipment", [1, 2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -6307,6 +6302,15 @@ function updateATVersion() {
 				autoTrimpSettings.universeSetting.value = tempSettings.radonsettings.value;
 			}
 		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.26') {
+			if (typeof (tempSettings["PrestigeSkip1_2"]) !== 'undefined') {
+				autoTrimpSettings.PrestigeSkip.enabled = tempSettings.PrestigeSkip1_2.value > 0;
+			}
+		}
+
+
+
 	}
 
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

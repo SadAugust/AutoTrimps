@@ -68,7 +68,7 @@ function buyStorage(hypoZone) {
 
 //Overall more performance efficient to remove the textStrings from getPsString so copied it from the game and removed the textStrings.
 //Check and update each patch!
-function getPsString_AT(what, rawNum) {
+function getPsString_AT(what) {
 	if (what === "helium") return;
 	var resOrder = ["food", "wood", "metal", "science", "gems", "fragments"];
 	var books = ["farming", "lumber", "miner", "science"];
@@ -275,8 +275,7 @@ function getPsString_AT(what, rawNum) {
 			currentCalc += avg;
 		}
 	}
-	if (rawNum) return currentCalc;
-	game.global.lockTooltip = false;
+	return currentCalc;
 }
 
 function advancedNurseries() {

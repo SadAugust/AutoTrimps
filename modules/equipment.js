@@ -69,7 +69,10 @@ MODULES.equipment = {
 function equipsToGet(targetZone, targetPrestige) {
 
 	const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
+	if (!targetZone) targetZone = game.global.world;
 	if (!targetPrestige) targetPrestige = 'GambesOP';
+	//Skip locked equips
+	if (!game.global.slowDone && prestigeList.indexOf(targetPrestige) > 10) targetPrestige = 'Bestplate';
 
 	//Figure out how many equips to farm for
 	var mapsToRun = 0;

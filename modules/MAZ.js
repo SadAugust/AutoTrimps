@@ -2029,14 +2029,20 @@ function saveATAutoJobsConfig() {
 		if (ratios.indexOf(name) !== -1) {
 			setting[name].ratio = parseFloat(quantboxes[x].value);
 			//Error checking
-			if (setting[name].ratio < 0) {
-				error += "Your ratio for " + name + " can't be negative.<br>";
+			if (setting[name].ratio < 0 || isNaN(setting[name].ratio)) {
+				error += "Your ratio for " + name + "s needs to be above a valid number of 0 or above.<br>";
 				errorMessage = true;
 			}
 			continue;
 		}
 		var jobquant = document.getElementById('autoJobQuant' + name).value;
 		setting[name].percent = parseFloat(jobquant);
+
+		//Error checking
+		if (setting[name].percent < 0 || isNaN(setting[name].percent)) {
+			error += "Your spending percentage for " + name + "s needs to be above a valid number of 0 or above.<br>";
+			errorMessage = true;
+		}
 	}
 	var portalElem = document.getElementById('autoJobSelfGather');
 	if (portalElem) {
@@ -2046,6 +2052,7 @@ function saveATAutoJobsConfig() {
 	if (errorMessage) {
 		var elem = document.getElementById('autoJobsError');
 		if (elem) elem.innerHTML = error;
+		verticalCenterTooltip(true);
 		return;
 	}
 
@@ -2080,6 +2087,8 @@ function saveATAutoJobsConfig() {
 }
 
 function saveATAutoStructureConfig() {
+	var error = "";
+	var errorMessage = false;
 	setPageSetting('buildingSettingsArray', {});
 	var setting = {};
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
@@ -2106,13 +2115,24 @@ function saveATAutoStructureConfig() {
 
 		var perc = parseInt(percentboxes[x].value, 10);
 		if (perc > 100) perc = 100;
-		perc = (isNumberBad(perc)) ? 0 : perc;
 		setting[name].percent = perc;
+
+		//Error checking
+		if (setting[name].percent < 0 || isNaN(setting[name].percent)) {
+			error += "Your spending percentage for " + name + "s needs to be above a valid number of 0 or above.<br>";
+			errorMessage = true;
+		}
 
 		var max = parseInt(quantboxes[x].value, 10);
 		if (max > 10000) max = 10000;
-		max = (isNumberBad(max)) ? 0 : max;
 		setting[name].buyMax = max;
+
+		//Error checking
+		if (setting[name].buyMax < 0 || isNaN(setting[name].buyMax)) {
+			error += "Your spending percentage for " + name + "s needs to be above a valid number of 0 or above.<br>";
+			errorMessage = true;
+		}
+
 		if (name === 'Nursery') {
 			if (game.stats.highestLevel.valueTotal() < 230) {
 				setting[name].fromZ = 0;
@@ -2122,6 +2142,12 @@ function saveATAutoStructureConfig() {
 				if (fromZ > 999) fromZ = 999;
 				fromZ = (isNumberBad(fromZ)) ? 999 : fromZ;
 				setting[name].fromZ = fromZ;
+
+				//Error checking
+				if (setting[name].fromZ < 0 || isNaN(setting[name].fromZ)) {
+					error += "Your zone input for " + name + "s needs to be above a valid number of 0 or above.<br>";
+					errorMessage = true;
+				}
 			}
 		}
 	}
@@ -2129,6 +2155,13 @@ function saveATAutoStructureConfig() {
 	var portalElem = document.getElementById('autoJobSelfGather');
 	if (portalElem) {
 		if (portalElem.value) setting.portalOption = portalElem.value;
+	}
+
+	if (errorMessage) {
+		var elem = document.getElementById('autoJobsError');
+		if (elem) elem.innerHTML = error;
+		verticalCenterTooltip(false, true);
+		return;
 	}
 
 	setPageSetting('buildingSettingsArray', setting);

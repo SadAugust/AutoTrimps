@@ -1486,7 +1486,7 @@ function prestigeClimb() {
 	const mapName = 'Prestige Climb';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName: mapName
+		mapName: mapName,
 	};
 
 	if (challengeActive('Frugal')) return farmingDetails;
@@ -1495,56 +1495,38 @@ function prestigeClimb() {
 	var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? getPageSetting('mapologyPrestige') : getPageSetting('Prestige');
 	if (targetPrestige === "Off") return farmingDetails;
 
-	var customVars = MODULES["maps"];
-	var skippedPrestige = false;
 	var shouldMap = false;
 
-	const prestigeList = ['Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
-	const metalPrestigeList = ['Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest', 'Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Bestplate', 'GambesOP'];
+	const mapLevel = 0;
 
-	var mapLevel = 0;
-	const z = game.global.world;
-
-	//Prestige
-	if (getPageSetting('ForcePresZ') !== -1 && (game.global.world) >= getPageSetting('ForcePresZ')) {
-		shouldMap = (offlineProgress.countMapItems(game.global.world) !== 0);
-		targetPrestige = game.global.slowDone ? 'GambesOP' : 'Bestplate';
-	} else
-		shouldMap = game.mapUnlocks[targetPrestige] && game.mapUnlocks[targetPrestige].last + 5 <= (game.global.world);
-
-	const prestigeInfo = equipsToGet(z, targetPrestige);
-
-	//Figure out how many equips to farm for && maps to run to get to that value
-	var prestigeToFarmFor = prestigeInfo[0];
-	var mapsToRun = prestigeInfo[1];
-
-	if (!(challengeActive('Mapology') && getPageSetting('mapology'))) {
-		//Prestige Skip 1
-		if (shouldMap && getPsString("gems", true) > 0 && (getPageSetting('PrestigeSkip1_2') === 1 || getPageSetting('PrestigeSkip1_2') === 2)) {
-			var numUnbought = 0;
-			for (const p of metalPrestigeList) {
-				if (game.upgrades[p].allowed - game.upgrades[p].done > 0)
-					numUnbought++;
-			}
-			if (numUnbought >= customVars.SkipNumUnboughtPrestiges) {
-				shouldMap = false;
-				skippedPrestige = true;
-			}
-		}
-
-		//Prestige Skip 2
-		if ((shouldMap || skippedPrestige) && (getPageSetting('PrestigeSkip1_2') === 1 || getPageSetting('PrestigeSkip1_2') === 3)) {
-			const numLeft = prestigeList.filter(targetPrestige => game.mapUnlocks[targetPrestige].last <= (game.global.world) - 5);
-			const shouldSkip = numLeft <= customVars.UnearnedPrestigesRequired;
-			if (shouldSkip !== skippedPrestige) {
-				shouldMap = !shouldMap;
-				skippedPrestige = !skippedPrestige;
-			}
-		}
+	//If we're past the zone we want to farm for all prestiges in then set targetPrestige to the highest prestige available.
+	//equipsToGet will automatically change GambesOP to Breastplate if the Slow challenge has not yet been completed.
+	if (getPageSetting('ForcePresZ') >= 0 && game.global.world >= getPageSetting('ForcePresZ')) {
+		targetPrestige = 'GambesOP';
 	}
-	if (prestigeToFarmFor === 0) shouldMap = false;
+	shouldMap = equipsToGet(game.global.world, targetPrestige)[0] > 0;
 
-	var mapSpecial = getAvailableSpecials('p');
+	//Figure out how many equips to farm for & maps to run to get to that value
+	const prestigeInfo = equipsToGet(game.global.world, targetPrestige);
+	const prestigeToFarmFor = prestigeInfo[0];
+	const mapsToRun = prestigeInfo[1];
+
+	//Prestige Skip
+	//2 or more unbought prestiges
+	if (shouldMap && getPageSetting('PrestigeSkip')) {
+		const prestigeList = ['Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate', 'Harmbalest', 'GambesOP'];
+		var numUnbought = 0;
+		//Loop through prestiges in upgrade window to check how many equips we have unbought prestiges for
+		for (const p of prestigeList) {
+			if (game.upgrades[p].allowed - game.upgrades[p].done > 0)
+				numUnbought++;
+		}
+		//If there are 2 or more unbought prestiges in our upgrades window then disable prestige farming
+		if (numUnbought >= 2)
+			shouldMap = false;
+	}
+
+	const mapSpecial = getAvailableSpecials('p');
 
 	if (mapSettings.mapName === mapName && !shouldMap) {
 		mappingDetails(mapName, 0, mapSpecial);
@@ -1554,9 +1536,9 @@ function prestigeClimb() {
 	if (!shouldMap) return farmingDetails;
 
 	if (game.options.menu.mapLoot.enabled !== 1) toggleSetting('mapLoot');
-	var status = 'Prestige Climb: ' + prestigeToFarmFor + ' items remaining';
+	const status = 'Prestige Climb: ' + prestigeToFarmFor + ' items remaining';
 
-	var repeat = !(
+	const repeat = !(
 		game.global.mapsActive && (
 			mapsToRun > (getCurrentMapObject().bonus === 'p' && (game.global.lastClearedMapCell !== getCurrentMapObject().size - 2) ? 2 : 1))
 	);
