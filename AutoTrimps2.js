@@ -356,6 +356,8 @@ function mainLoop() {
 	if (atSettings.intervals.oneHour)
 		atVersionChecker();
 
+	mainCleanup();
+
 	//Offline mode check
 	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 
@@ -373,8 +375,6 @@ function mainLoop() {
 
 		document.getElementById('additionalInfo').innerHTML = freeVoidsText + autoLevelText + breedTimerText + tenacityText;
 	}
-
-	mainCleanup();
 
 	if (MODULES.maps.slowScumming && game.global.mapRunCounter !== 0) {
 		if (game.global.mapBonus === 10) MODULES.maps.slowScumming = false;
