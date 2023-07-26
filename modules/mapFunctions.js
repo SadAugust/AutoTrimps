@@ -1768,7 +1768,7 @@ function experience() {
 		status = 'Experience: Farming Wonders';
 	}
 	else {
-		shouldMap = game.global.world > 600 && game.global.world >= getPageSetting('experienceEndZone');
+		shouldMap = game.global.world > 600 && game.global.world >= (Math.max(605, getPageSetting('experienceEndZone')));
 		if (shouldMap) mapName = 'Bionic Raiding';
 		status = 'Experience: Ending Challenge';
 	}

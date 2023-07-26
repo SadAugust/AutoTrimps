@@ -1,8 +1,6 @@
 # General
    - Finish adjusting tooltip descriptions. Tabs left to do:
-	1. Combat
-      	1. Just Scryer & Windstacking to go!
-	2. Magma
+	1. Magma
 
 # Mapping
    - Map Farm
@@ -49,4 +47,6 @@
 
 # Settings
    - Rename
-     - 
+     - Prestige Climb settings. 
+       - Maybe move the tab that they're in? Could almost definitely be consolidated into the prestige raiding setting but not sure if that's wise. 
+         - Might be the type of setting that is better having on view at all times.

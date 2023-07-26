@@ -261,11 +261,11 @@ function heirloomShieldToEquip(mapType, query) {
 	MODULES.heirlooms.plagueSwap = false;
 
 	var swapZone = hdStats.isC3 && (currChallenge === 'mayhem' || currChallenge === 'pandemonium' || currChallenge === 'desolation') && getPageSetting(currChallenge) && getPageSetting(currChallenge + 'SwapZone') > 0 ? getPageSetting(currChallenge + 'SwapZone') : hdStats.isC3 ? getPageSetting('heirloomSwapZoneC3') : hdStats.isDaily ? getPageSetting('heirloomSwapZoneDaily') : hdStats.isFiller ? getPageSetting('heirloomSwapZone') : 999;
-	if (swapZone === -1) swapZone = 999;
+	if (swapZone <= 0) swapZone = 999;
+	//If we have the post void heirloom swap setting enabled and have already run void maps run this swap to afterpush shield until the end of the run
 	if (getPageSetting('heirloomPostVoidSwap') && game.stats.totalVoidMaps.value > 0) swapZone = 0;
-	if (hdStats.isDaily && dailyOddOrEven().active) {
-		if (swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;
-	}
+	//If we have the daily odd or even setting enabled and the negative daily mod is active then add one to our swap zone
+	if (hdStats.isDaily && dailyOddOrEven().active && swapZone % 2 === dailyOddOrEven().remainder) swapZone += 1;
 	var dontSwap = currChallenge === 'berserk' || currChallenge === 'trappapalooza';
 	//Change swap zone to current zone if we're above X HD ratio.
 	if (mapType === 'world' && !dontSwap) {

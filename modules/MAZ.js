@@ -2006,7 +2006,6 @@ function saveATAutoJobsConfig() {
 	var error = "";
 	var errorMessage = false;
 
-	setPageSetting('jobSettingsArray', {});
 	var setting = {};
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var quantboxes = document.getElementsByClassName('jobConfigQuantity');
@@ -2089,7 +2088,6 @@ function saveATAutoJobsConfig() {
 function saveATAutoStructureConfig() {
 	var error = "";
 	var errorMessage = false;
-	setPageSetting('buildingSettingsArray', {});
 	var setting = {};
 	var checkboxes = document.getElementsByClassName('autoCheckbox');
 	var percentboxes = document.getElementsByClassName('structConfigPercent');
