@@ -3076,7 +3076,7 @@ function initializeAllSettings() {
 			function () { return ('Comp Swap HD') },
 			function () {
 				var description = "<p>Will swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield when the next cell is compressed and your <b>World HD Ratio</b> is above this value.</p>";
-				description += "<p>If set to -1 it will disable this setting.</p>";
+				description += "<p>If set to -1 or 0 it will disable this setting.</p>";
 				return description;
 			}, 'value', -1, null, 'Heirlooms', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && getPageSetting('heirloomCompressedSwap', currSettingUniverse)) });

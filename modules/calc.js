@@ -1331,7 +1331,7 @@ function calcMutationAttack(targetZone) {
 	if (!targetZone) targetZone = game.global.world;
 	var attack;
 	var hasRage = false;
-	var worstCell_Atk = 0;
+	var worstCell = 0;
 	var cell;
 
 	var highest = 1;
@@ -1350,14 +1350,17 @@ function calcMutationAttack(targetZone) {
 		cell = i;
 		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
 			var ragingMult = hasRage ? (u2Mutations.tree.Unrage.purchased ? 4 : 5) : 1;
-			if (gridArray[cell].u2Mutation.includes("CMP") && getPageSetting('heirloomCompressedSwap')) {
-				if (heirloomShieldToEquip('world') !== 'heirloomInitial' || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed'))
+			if (gridArray[cell].u2Mutation.includes("CMP") && getPageSetting('heirloomCompressedSwap') && getPageSetting('heirloomSwapHDCompressed') > 0) {
+				if (heirloomShieldToEquip('world') !== 'heirloomInitial' || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed') || MODULES.heirlooms.compressedCalc)
 					ragingMult = 2.8
 			}
 			highest = Math.max(mutationBaseAttack(cell, targetZone) * ragingMult, highest);
-			if (highest > attack) worstCell_Atk = i
+			if (highest > attack) worstCell = i
 			attack = highest;
 		}
+	}
+	if (gridArray[worstCell].u2Mutation.includes("CMP")) {
+		MODULES.heirlooms.compressedCalc = true;
 	}
 	return attack;
 }
@@ -1384,7 +1387,7 @@ function mutationBaseHealth(cell, targetZone) {
 
 function calcMutationHealth(targetZone) {
 	if (!targetZone) targetZone = game.global.world;
-	var worstCell_Health = 0;
+	var worstCell = 0;
 	var cell;
 	var health = 0;
 
@@ -1395,15 +1398,18 @@ function calcMutationHealth(targetZone) {
 		if (gridArray[cell].u2Mutation && gridArray[cell].u2Mutation.length) {
 
 			var enemyHealth = mutationBaseHealth(cell, targetZone);
-			if (gridArray[cell].u2Mutation.includes("CMP") && getPageSetting('heirloomCompressedSwap')) {
-				if (heirloomShieldToEquip('world') !== 'heirloomInitial' || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed'))
+			if (gridArray[cell].u2Mutation.includes("CMP") && getPageSetting('heirloomCompressedSwap') && getPageSetting('heirloomSwapHDCompressed') > 0) {
+				if (heirloomShieldToEquip('world') !== 'heirloomInitial' || hdStats.hdRatio >= getPageSetting('heirloomSwapHDCompressed') || MODULES.heirlooms.compressedCalc)
 					enemyHealth *= 0.7;
 			}
 
-			if (enemyHealth > highest) worstCell_Health = i;
+			if (enemyHealth > highest) worstCell = i;
 			highest = Math.max(enemyHealth, highest);
 			health = highest;
 		}
+	}
+	if (gridArray[worstCell].u2Mutation.includes("CMP")) {
+		MODULES.heirlooms.compressedCalc = true;
 	}
 	return health;
 }

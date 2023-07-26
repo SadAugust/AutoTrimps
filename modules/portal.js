@@ -725,10 +725,11 @@ function resetVarsZone(loadingSave) {
 		atSettings.portal.currentHZE = 0;
 		atSettings.portal.lastHZE = 0;
 
-		MODULES.heirlooms.plagueSwap = false;
 		MODULES.fightinfo.lastProcessedWorld = 0;
 	}
 
+	MODULES.heirlooms.plagueSwap = false;
+	MODULES.heirlooms.compressedCalc = false;
 	//General
 	MODULES.maps.mapTimer = 0;
 	var mapFunction = MODULES['mapFunctions'];

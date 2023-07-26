@@ -356,6 +356,7 @@ function mainLoop() {
 	if (atSettings.intervals.oneHour)
 		atVersionChecker();
 
+	//This needs to be run here so that any variables that are reset at the start of a zone are reset before hdStats and mapSettings variables are updated.
 	mainCleanup();
 
 	//Offline mode check
