@@ -268,7 +268,7 @@ function autoGather() {
 		else
 			safeSetGather(lowestResource);
 	} else if (document.getElementById('scienceCollectBtn').style.display !== 'none' && document.getElementById('science').style.visibility !== 'hidden') {
-		if (game.resources.science.owned < getPsString_AT('science', true) * MODULES["gather"].minScienceSeconds && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers)
+		if (manualGather !== 3 && game.resources.science.owned < getPsString_AT('science', true) * MODULES["gather"].minScienceSeconds && researchAvailable && game.global.turkimpTimer < 1 && haveWorkers)
 			safeSetGather('science');
 		else if (challengeActive('Transmute') && hasTurkimp)
 			safeSetGather('wood');
