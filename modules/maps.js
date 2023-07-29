@@ -51,21 +51,21 @@ function updateAutoMapsStatus(get) {
 		var statusMsg = "<h9>Auto Maps Status</h9><br>" + status;
 		var id = game.global.mapsActive ? 'autoMapStatusMapsTW' : 'autoMapStatusTW';
 		if (document.getElementById(id).innerHTML !== status) document.getElementById(id).innerHTML = statusMsg;
-		document.getElementById(id).setAttribute("onmouseover", makeAutomapStatusTooltip());
+		document.getElementById(id).setAttribute("onmouseover", makeAutomapStatusTooltip(true));
 	}
 	//Set auto maps status when outside of TW
 	if ((!usingRealTimeOffline || getPageSetting('timeWarpDisplay')) && document.getElementById('autoMapStatus') !== null) {
 		if (document.getElementById('autoMapStatus').innerHTML !== status) document.getElementById('autoMapStatus').innerHTML = status;
-		document.getElementById('autoMapStatus').setAttribute("onmouseover", makeAutomapStatusTooltip());
+		document.getElementById('autoMapStatus').setAttribute("onmouseover", makeAutomapStatusTooltip(true));
 	}
 	//Set hider (he/hr) status when outside of TW
 	if ((!usingRealTimeOffline || getPageSetting('timeWarpDisplay')) && document.getElementById('hiderStatus') !== null) {
 		if (document.getElementById('hiderStatus').innerHTML !== hiderStatus) document.getElementById('hiderStatus').innerHTML = hiderStatus;
-		document.getElementById('hiderStatus').setAttribute("onmouseover", makeResourceTooltip());
+		document.getElementById('hiderStatus').setAttribute("onmouseover", makeResourceTooltip(true));
 	}
 }
 
-function makeAutomapStatusTooltip() {
+function makeAutomapStatusTooltip(mouseover) {
 	const mapStacksText = (`Will run maps to get up to <i>${getPageSetting('mapBonusStacks')}</i> stacks when World HD Ratio is greater than <i>${prettify(getPageSetting('mapBonusRatio'))}</i>.`);
 	const hdRatioText = 'HD Ratio is enemyHealth to yourDamage ratio, effectively hits to kill an enemy.';
 	var enemyName = game.global.world < 60 ? 'Blimp' : 'Improbability';
@@ -75,30 +75,34 @@ function makeAutomapStatusTooltip() {
 	const hitsSurvivedVoid = prettify(hdStats.hitsSurvivedVoid);
 	const hitsSurvivedSetting = targetHitsSurvived();
 	const hitsSurvivedValue = hitsSurvivedSetting > 0 ? hitsSurvivedSetting : '∞';
-	var tooltip = 'tooltip(' +
-		'\"Automaps Status\", ' +
-		'\"customText\", ' +
-		'event, ' +
-		'\"Variables that control the current state and target of Automaps.<br>' +
+	var tooltipText = '';
+
+	if (mouseover) {
+		tooltipText = 'tooltip(' +
+			'\"Automaps Status\", ' +
+			'\"customText\", ' +
+			'event, ' + '\"';
+	}
+	tooltipText += 'Variables that control the current state and target of Automaps.<br>' +
 		'Values in <b>bold</b> are dynamically calculated based on current zone and activity.<br>' +
 		'Values in <i>italics</i> are controlled via AT settings (you can change them).<br>';
 	if (game.global.universe === 2) {
-		if (!game.portal.Equality.radLocked) tooltip += `<br>\
+		if (!game.portal.Equality.radLocked) tooltipText += `<br>\
 		If you have the Auto Equality setting set to <b>Auto Equality: Advanced</b> then all calculations will factor expected equality value into them.<br>`;
-		if (game.stats.highestRadLevel.valueTotal() > 200) tooltip += `If a mutated enemy has higher stats than the ${enemyName} on cell 100 then calculations will use that enemies stats instead.<br>`;
+		if (game.stats.highestRadLevel.valueTotal() > 200) tooltipText += `If a mutated enemy has higher stats than the ${enemyName} on cell 100 then calculations will use that enemies stats instead.<br>`;
 	}
 	//Hits Survived
-	tooltip += `<br>` +
+	tooltipText += `<br>` +
 		`<b> Hits Survived info</b > <br>` +
 		`${hitsSurvivedText}<br>` +
-		`<b>Hits Survived: ${hitsSurvived}</b> / <i>${hitsSurvivedValue}</i><br>` +
-		`<b>Void Hits Survived: ${hitsSurvivedVoid}</b><br>`
+		`Hits Survived: <b>${hitsSurvived}</b> / <i>${hitsSurvivedValue}</i><br>` +
+		`Void Hits Survived: <b>${hitsSurvivedVoid}</b><br>`
 
 	//Map Setting Info
-	tooltip += `<br>` +
+	tooltipText += `<br>` +
 		`<b>Mapping info</b><br>`;
 	if (mapSettings.shouldRun) {
-		tooltip +=
+		tooltipText +=
 			`Farming Setting: <b>${mapSettings.mapName}</b><br>` +
 			`Map level: <b>${mapSettings.mapLevel}</b><br>` +
 			`Auto level: <b>${mapSettings.autoLevel}</b><br>` +
@@ -108,39 +112,69 @@ function makeAutomapStatusTooltip() {
 			`Repeat: ${mapSettings.repeat}<br>`;
 	}
 	else {
-		tooltip += `Not running<br>`;
+		tooltipText += `Not running<br>`;
 	}
 
 	//HD Ratios
-	tooltip += '<br>' +
+	tooltipText += '<br>' +
 		`<b>HD Ratio Info</b><br>` +
 		`${hdRatioText}<br>` +
-		`World HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(hdStats.hdRatio)}</b><br>` +
-		`Map HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(hdStats.hdRatioMap)}</b><br>` +
-		`Void HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b> ${prettify(hdStats.hdRatioVoid)}</b><br>` +
-		`${mapStacksText}<br>`
-	tooltip += '\")';
-	return tooltip;
+		`World HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b>${prettify(hdStats.hdRatio)}</b><br>` +
+		`Map HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b>${prettify(hdStats.hdRatioMap)}</b><br>` +
+		`Void HD Ratio ${(game.global.universe === 1 ? '(in X formation)' : '')} <b>${prettify(hdStats.hdRatioVoid)}</b><br>` +
+		`${mapStacksText}<br>`;
+
+	if (mouseover) {
+		tooltipText += '\")';
+		return tooltipText;
+	}
+	else {
+		if (document.getElementById('tipTitle').innerHTML !== 'Automaps Status') tooltip('Auto Maps Status', 'customText', 'lock', tooltipText, false, 'center');
+		verticalCenterTooltip(true);
+	}
 }
 
-function makeResourceTooltip() {
+function makeResourceTooltip(mouseover) {
 	const resource = game.global.universe === 2 ? 'Radon' : 'Helium';
 	const resourceHr = game.global.universe === 2 ? 'Rn' : 'He';
-	var tooltip = 'tooltip(' +
-		`\"${resource} /Hr Info\",` +
-		'\"customText\", ' +
-		'event, ' +
-		'\"';
 
-	tooltip +=
-		`<b>${resourceHr}/hr</b><br>` +
-		`Current ${resourceHr} /hr % out of Lifetime ${(resourceHr)} (not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>` +
-		`<b>${resourceHr}</b><br>` +
-		`Current run Total ${resourceHr} / earned / Lifetime ${(resourceHr)} (not including current)<br>`
-	tooltip += getDailyHeHrStats();
+	var getPercent = (game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - game.resources[resource.toLowerCase()].owned)
+	) * 100;
+	var lifetime = (game.resources[resource.toLowerCase()].owned /
+		(game.global['total' + resource + 'Earned'] - game.resources[resource.toLowerCase()].owned)
+	) * 100;
+	const resourceHrMsg = (getPercent > 0 ? getPercent.toFixed(3) : 0);
+	const lifeTimeMsg = (lifetime > 0 ? lifetime.toFixed(3) : 0) + '%';
 
-	tooltip += '\")';
-	return tooltip;
+	var tooltipText = '';
+
+	if (mouseover) {
+		tooltipText = 'tooltip(' +
+			`\"${resource} per hour Info\",` +
+			'\"customText\", ' +
+			'event, ' +
+			'\"';
+	}
+	tooltipText +=
+		`<b>${resource} per hour</b>: ${resourceHrMsg}<br>` +
+		`Current ${resource} per hour % out of Lifetime ${(resourceHr)} (not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>` +
+		`<b>${resource}</b>: ${lifeTimeMsg}<br>` +
+		`Current run total ${resource} / earned / lifetime ${(resourceHr)} (not including current)<br>`
+
+	if (hdStats.isDaily) {
+		var helium = game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - (game.global[resource.toLowerCase() + 'Leftover'] + game.resources[resource.toLowerCase()].owned));
+		helium *= 100 + getDailyHeliumValue(countDailyWeight());
+		tooltipText += `<b>After Daily ${resource} per hour</b>: ${helium.toFixed(3)}%`;
+	}
+
+	if (mouseover) {
+		tooltipText += '\")';
+		return tooltipText;
+	}
+	else {
+		if (document.getElementById('tipTitle').innerHTML !== 'Automaps Status') tooltip(`${resource} per hour info`, 'customText', 'lock', tooltipText, false, 'center');
+		verticalCenterTooltip(true);
+	}
 }
 
 //Looks to see if we currently have a map that matches the criteria we want to run if not tells us to create a new one

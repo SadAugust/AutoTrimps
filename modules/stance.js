@@ -342,7 +342,7 @@ function autoStanceWind() {
 }
 
 function useWindStance() {
-	if (!game.global.uberNature !== "Wind")
+	if (game.global.uberNature !== "Wind")
 		return false;
 	if (getEmpowerment() !== "Wind")
 		return false;
@@ -352,8 +352,10 @@ function useWindStance() {
 	if (!getPageSetting(settingPrefix + 'AutoStanceWind'))
 		return false;
 
-	if (checkIfLiquidZone() && getPageSetting('liqstack') && hdStats.isDaily)
+	if (checkIfLiquidZone() && getPageSetting(settingPrefix + 'WindStackingLiq'))
 		return true;
-	if (hdStats.hdRatio < getPageSetting(settingPrefix + 'WindStackingMinHD') && game.global.world >= getPageSetting(settingPrefix + 'WindStackingMin'))
+	if ((hdStats.hdRatio < getPageSetting(settingPrefix + 'WindStackingRatio') || getPageSetting(settingPrefix + 'WindStackingRatio') <= 0) && game.global.world >= getPageSetting(settingPrefix + 'WindStackingZone'))
 		return true;
+	else
+		return false;
 }

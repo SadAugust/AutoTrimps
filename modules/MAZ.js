@@ -595,7 +595,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 			//Header
 			tooltipText += "\
 				<div id = 'windowContainer' style = 'display: block' > <div id='windowError'></div>\
-				<div class='row windowRow'>Default Values</div>\
 				<div class='row windowRow titles'>\
 				<div class='windowActive" + varPrefix + "\'>Active</div>";
 			if (!boneShrine && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
@@ -1744,7 +1743,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 	//Map Bonus Information to detail how it functions since it's unclear compared to every other setting
 	if (mapBonus) mazHelp += "<br><br><b>Map Bonus works by using the last line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.</b>";
-	if (voidMap) mazHelp += "<br><br>Void Map works by using 'Min Zone' as the lower bound zone to run voids on and 'Max Zone' as the upper bound. If your HD Ratio OR Void HD Ratio value (can be seen in status tooltip) is greater than the set value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.";
+	if (voidMap) mazHelp += "<br><br>Void Map works by using 'Min Zone' as the lower bound zone to run voids on and 'Max Zone' as the upper bound. If your HD Ratio OR Void HD Ratio value (can be seen in Auto Maps status tooltip) is greater than the set value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.";
 
 	//Default Value settings
 	if (!golden) {
@@ -1827,7 +1826,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 		mazHelp += "<li><b>Max Zone</b> - The upper bound zone to run voids maps on.</li>";
 
 		//Dropdown
-		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met OR you are at the <b>End Zone</b> input for that line. The information relating to each of the dropdowns can be found in the status tooltip.</li>";
+		mazHelp += "<li><b>Dropdowns</b> - Will only run the line when one or more of the dropdown options aren't met OR you are at the <b>End Zone</b> input for that line. The information relating to each of the dropdowns can be found in the Auto Maps status tooltip.</li>";
 
 		mazHelp += "<li class=\"indent\">If you have selected a <b>HD Ratio</b> and that type of <b>HD Ratio</b> is greater than the value input OR if you've selected one of Auto Level, Hits Survived, Hits Survived Void it will check if the value is lower than that and skip if it is.<br></li>";
 
@@ -1844,7 +1843,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 		mazHelp += "<li><b>Map Repeats</b> - How many maps you'd like to run during this line. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be back to manually take over the run.</li>";
 		//Run when HD Ratio above X value
-		mazHelp += "<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in status tooltip) is above this value (and above 0).<br>";
+		mazHelp += "<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in Auto Maps status tooltip) is above this value (and above 0).<br>";
 		//Trimple Map Farm
 		mazHelp += "<li><b>Run " + trimple + "</b> - Will run " + trimple + " once this line has been completed.</li>";
 		mazHelp += "<li class=\"indent\">Whilst farming for this line the script will stop purchasing equips until " + trimple + " has been run so that there are no wasted resources.</li>";
@@ -1854,7 +1853,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	if (mapBonus) {
 		mazHelp += "<li><b>Map Stacks</b> - How many stacks AT should obtain when running this line.</li>";
 		//Run when HD Ratio above X value
-		mazHelp += "<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in status tooltip) is above this value (and above 0).<br>";
+		mazHelp += "<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in Auto Maps status tooltip) is above this value (and above 0).<br>";
 	}
 
 	if (raiding) {

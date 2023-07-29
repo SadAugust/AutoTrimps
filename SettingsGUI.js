@@ -24,7 +24,6 @@ function createTabs(tabName, tabDescription, addTabsDiv, addtabsUL) {
 	(d.className = "tablinks"),
 		d.setAttribute("onclick", "toggleTab(event, '" + tabName + "')"),
 		(d.href = "#"), d.appendChild(document.createTextNode(tabName)),
-		d.style.fontSize = "1vw",
 		(c.id = "tab" + tabName),
 		c.appendChild(d),
 		addtabsUL.appendChild(c),
@@ -57,7 +56,7 @@ function maximizeAllTabs() {
 		a[b].style.display = "block";
 	}
 	for (var d = document.getElementsByClassName("tablinks"), b = 0, c = d.length; b < c; b++) {
-		if (d[b].id.toLowerCase() === 'test' || a[b].id.toLowerCase() === 'beta') continue;
+		if (d[b].id.toLowerCase() === 'test' || d[b].id.toLowerCase() === 'beta') continue;
 		(d[b].style.display = "block"), d[b].className.includes(" active") || (d[b].className += " active");
 	}
 }
@@ -74,26 +73,28 @@ function initializeAllTabs() {
 	addtabsUL.style.display = "none";
 	var sh = document.getElementById("settingsRow");
 	sh.insertBefore(addtabsUL, sh.childNodes[2]);
+
 	createTabs("Core", "Core - Main Controls for the script", addTabsDiv, addtabsUL);
-	createTabs("Buildings", "Building Settings", addTabsDiv, addtabsUL);
 	createTabs("Jobs", "Geneticassist Settings", addTabsDiv, addtabsUL);
+	createTabs("Buildings", "Building Settings", addTabsDiv, addtabsUL);
 	createTabs("Equipment", "Equipment Settings", addTabsDiv, addtabsUL);
-	createTabs("Maps", "Maps - AutoMaps & VoidMaps Settings", addTabsDiv, addtabsUL);
-	createTabs("Spire", "Spire - Settings for Spires", addTabsDiv, addtabsUL);
-	createTabs("Daily", "Dailies - Settings for Dailies", addTabsDiv, addtabsUL);
-	createTabs("C2", "C2 - Settings for C2s", addTabsDiv, addtabsUL);
-	createTabs("Challenges", "Challenges - Settings for Specific Challenges", addTabsDiv, addtabsUL);
 	createTabs("Combat", "Combat & Stance Settings", addTabsDiv, addtabsUL);
-	createTabs("Magma", "Dimensional Generator & Magmite Settings", addTabsDiv, addtabsUL);
-	createTabs("Heirlooms", "Heirloom Settings", addTabsDiv, addtabsUL);
+	createTabs("Maps", "Maps - AutoMaps & VoidMaps Settings", addTabsDiv, addtabsUL);
+	createTabs("Challenges", "Challenges - Settings for Specific Challenges", addTabsDiv, addtabsUL);
+	createTabs("C2", "C2 - Settings for C2s", addTabsDiv, addtabsUL);
+	createTabs("Daily", "Dailies - Settings for Dailies", addTabsDiv, addtabsUL);
+	createTabs("Heirloom", "Heirloom Settings", addTabsDiv, addtabsUL);
 	createTabs("Golden", "Golden Upgrade Settings", addTabsDiv, addtabsUL);
+	createTabs("Spire", "Spire - Settings for Spires", addTabsDiv, addtabsUL);
+	createTabs("Magma", "Dimensional Generator & Magmite Settings", addTabsDiv, addtabsUL);
 	createTabs("Nature", "Nature Settings", addTabsDiv, addtabsUL);
 	createTabs("Time Warp", "Time Warp Settings", addTabsDiv, addtabsUL);
 	createTabs("Display", "Display & Spam Settings", addTabsDiv, addtabsUL);
 	createTabs("Import Export", "Import & Export Settings", addTabsDiv, addtabsUL);
+	createTabs("Help", "Helpful information (hopefully)", addTabsDiv, addtabsUL);
 	createTabs("Test", "Basic testing functions - Should never be seen by users", addTabsDiv, addtabsUL);
-	createTabs("Beta", "Beta features - Should never be seen by users as they aren't user ready.", addTabsDiv, addtabsUL);
-	createTabs("Legacy", "Legacy Settings.", addTabsDiv, addtabsUL);
+	createTabs("Beta", "Beta features - Should never be seen by users as they aren't user ready", addTabsDiv, addtabsUL);
+
 	var li_0 = document.createElement('li');
 	var a_0 = document.createElement('a');
 	a_0.className = "tablinks minimize";
@@ -554,6 +555,7 @@ function initializeAllSettings() {
 			function () { return ('Daily Windstack H:D') },
 			function () {
 				var description = "<p>If your H:D ratio is above this setting it will not use wind stance.</p>";
+				description += "<p>If set to <b>0 or below</b> it will always use wind stance when past your windstacking zone input.</p>";
 				description += "<p><b>Recommended:</b> 1000</p>";
 				return description;
 			},
@@ -735,7 +737,8 @@ function initializeAllSettings() {
 			Weakness: { enabled: false, zone: 0 },
 			Empowered_Void: { enabled: false, zone: 0 },
 			Heirlost: { enabled: false, zone: 0 },
-		}, null, 'Legacy', [1, 2]);
+		}, null, 'Daily', [1, 2],
+			function () { return (false) });
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -1573,7 +1576,8 @@ function initializeAllSettings() {
 				description += "<p>Click the cog icon on the right side of this button to tell your Foremen what you want and when you want it.</p>";
 				description += "For more detailed information for this setting check out its Help section.</p>";
 				return description;
-			}, 'boolean', 'true', null, 'Legacy', [1, 2]);
+			}, 'boolean', 'true', null, 'Buildings', [1, 2],
+			function () { return (false) });
 		createSetting('buildingSettingsArray',
 			function () { return ('Building Settings') },
 			function () { return ('Click to adjust settings.') },
@@ -1593,7 +1597,7 @@ function initializeAllSettings() {
 			Tribute: { enabled: true, percent: 100, buyMax: 0 },
 			Laboratory: { enabled: true, percent: 100, buyMax: 0 },
 			SafeGateway: { enabled: true, mapCount: 1, zone: 0 }
-		}, null, 'Legacy', [1, 2]);
+		}, null, 'Buildings', [1, 2]);
 
 		//Helium
 		createSetting('warpstation',
@@ -1699,7 +1703,8 @@ function initializeAllSettings() {
 				//Override info
 				description += "<p><b>Map setting job ratios always override both 'Auto Ratios' & 'Manual Ratios' when AutoMaps is enabled.</b></p>";
 				return description;
-			}, 'multitoggle', 1, null, 'Legacy', [1, 2]);
+			}, 'multitoggle', 1, null, 'Jobs', [1, 2],
+			function () { return (false) });
 		createSetting('jobSettingsArray',
 			function () { return ('Job Settings') },
 			function () { return ('Click to adjust settings.') },
@@ -1714,7 +1719,7 @@ function initializeAllSettings() {
 			Worshipper: { enabled: true, percent: 5 },
 			FarmersUntil: { enabled: false, zone: 999 },
 			NoLumberjacks: { enabled: false }
-		}, null, 'Legacy', [1, 2]);
+		}, null, 'Jobs', [1, 2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -2086,7 +2091,8 @@ function initializeAllSettings() {
 		createSetting('mapBonusZone',
 			function () { return ('Map Bonus: Zone') },
 			function () { return ('Map Bonus') },
-			'multiValue', [6], null, 'Legacy', [1, 2]);
+			'multiValue', [6], null, 'Maps', [1, 2],
+			function () { return (false) });
 
 		//Map Farm
 		createSetting('mapFarmSettings',
@@ -2739,6 +2745,7 @@ function initializeAllSettings() {
 			function () { return ('Windstack H:D') },
 			function () {
 				var description = "<p>If your H:D ratio is above this setting it will not use wind stance.</p>";
+				description += "<p>If set to <b>0 or below</b> it will always use wind stance when past your windstacking zone input.</p>";
 				description += "<p><b>Recommended:</b> 1000</p>";
 				return description;
 			},
@@ -2911,7 +2918,7 @@ function initializeAllSettings() {
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirlooms', [1, 2]);
+			}, 'boolean', false, null, 'Heirloom', [1, 2]);
 
 		createSetting('heirloomMapSwap',
 			function () { return ('Map Swap') },
@@ -2920,7 +2927,7 @@ function initializeAllSettings() {
 				description += "<p><b>Void shield settings will override this.</b></p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirlooms', [1, 2],
+			}, 'boolean', false, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomPostVoidSwap',
@@ -2929,7 +2936,7 @@ function initializeAllSettings() {
 				var description = "<p>If you have completed any void maps on your run this will set your swap zone to 0 to maximise damage in your afterpush.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirlooms', [1, 2],
+			}, 'boolean', false, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomVoidSwap',
@@ -2940,7 +2947,7 @@ function initializeAllSettings() {
 				description += "<p>Will only work if your <b>Void</b> Shield doesn't have <b>PlagueBringer</b> and your <b>Void PB</b> shield has <b>PlagueBringer</b>.</p>";
 				description += "<p><b>Recommended:</b> Off unless you know what you're doing</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirlooms', [2],
+			}, 'boolean', false, null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomCompressedSwap',
@@ -2952,7 +2959,7 @@ function initializeAllSettings() {
 				description += "<p>Displays an additional setting when enabled where you can force swap to your <b>Afterpush</b> shield when above X <b>World HD Ratio</b> and the next cell is compressed.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirlooms', [2],
+			}, 'boolean', false, null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestRadLevel.valueTotal() >= 203) });
 
 		//Shield swapping
@@ -2963,7 +2970,7 @@ function initializeAllSettings() {
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirlooms', [1, 2],
+			}, 'boolean', false, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
 
 		createSetting('heirloomInitial',
@@ -2973,7 +2980,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> a shield with void map drop chance</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomAfterpush',
@@ -2983,7 +2990,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomC3',
@@ -2994,7 +3001,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> a shield without void map drop chance</p>";
 				return description;
 			},
-			'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomVoid',
@@ -3004,7 +3011,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> damage heirloom</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomVoidPlaguebringer',
@@ -3017,7 +3024,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> <b>Plaguebringer</b> heirloom</p>";
 				return description;
 			},
-			'textValue', 'undefined', null, 'Heirlooms', [2],
+			'textValue', 'undefined', null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && getPageSetting('heirloomVoidSwap', currSettingUniverse)) });
 
 		createSetting('heirloomSpire',
@@ -3029,7 +3036,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Damage+Health heirloom</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1],
+			}, 'textValue', 'undefined', null, 'Heirloom', [1],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && game.stats.highestLevel.valueTotal() >= 200) });
 
 		createSetting('heirloomSwapZone',
@@ -3039,7 +3046,7 @@ function initializeAllSettings() {
 				description += "<p>If set to -1 it will disable this setting.</p>";
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
-			}, 'value', -1, null, 'Heirlooms', [1, 2],
+			}, 'value', -1, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomSwapZoneDaily',
@@ -3050,7 +3057,7 @@ function initializeAllSettings() {
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
 			},
-			'value', -1, null, 'Heirlooms', [1, 2],
+			'value', -1, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomSwapZoneC3',
@@ -3060,7 +3067,7 @@ function initializeAllSettings() {
 				description += "<p>If set to -1 it will disable this setting.</p>";
 				description += "<p>If set to <b>75</b> it will swap shields from <b>z75</b> onwards.</p>";
 				return description;
-			}, 'value', -1, null, 'Heirlooms', [1, 2],
+			}, 'value', -1, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomSwapHD',
@@ -3069,7 +3076,7 @@ function initializeAllSettings() {
 				var description = "<p>Will swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield when your <b>World HD Ratio</b> is above this value.</p>";
 				description += "<p>If set to 0 or -1 it will disable this setting.</p>";
 				return description;
-			}, 'value', -1, null, 'Heirlooms', [1, 2],
+			}, 'value', -1, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse)) });
 
 		createSetting('heirloomSwapHDCompressed',
@@ -3078,7 +3085,7 @@ function initializeAllSettings() {
 				var description = "<p>Will swap from your <b>Initial</b> shield to your <b>Afterpush</b> shield when the next cell is compressed and your <b>World HD Ratio</b> is above this value.</p>";
 				description += "<p>If set to -1 or 0 it will disable this setting.</p>";
 				return description;
-			}, 'value', -1, null, 'Heirlooms', [2],
+			}, 'value', -1, null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomShield', currSettingUniverse) && getPageSetting('heirloomCompressedSwap', currSettingUniverse)) });
 
 		//Staff swapping
@@ -3089,7 +3096,7 @@ function initializeAllSettings() {
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirlooms', [1, 2],
+			}, 'boolean', false, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse)) });
 
 		createSetting('heirloomStaffWorld',
@@ -3099,7 +3106,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> High pet XP staff</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		createSetting('heirloomStaffMap',
@@ -3110,7 +3117,7 @@ function initializeAllSettings() {
 				description += "<p>Will be overridden by the proceeding heirloom settings if they've been assigned otherwise will use this in every map available.</p>";
 				description += "<p><b>Recommended:</b> Resource efficiency heavy staff</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		createSetting('heirloomStaffVoid',
@@ -3120,7 +3127,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		createSetting('heirloomStaffFood',
@@ -3130,7 +3137,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated food efficiency staff</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		createSetting('heirloomStaffWood',
@@ -3140,7 +3147,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated wood efficiency staff</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		createSetting('heirloomStaffMetal',
@@ -3150,7 +3157,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated metal efficiency staff</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [1, 2],
+			}, 'textValue', 'undefined', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		createSetting('heirloomStaffResource',
@@ -3160,7 +3167,7 @@ function initializeAllSettings() {
 				description += "<p>Set to <b>undefined</b> to disable.</p>";
 				description += "<p><b>Recommended:</b> Dedicated science efficiency staff</p>";
 				return description;
-			}, 'textValue', 'undefined', null, 'Heirlooms', [2],
+			}, 'textValue', 'undefined', null, 'Heirloom', [2],
 			function () { return (getPageSetting('heirloom', currSettingUniverse) && getPageSetting('heirloomStaff', currSettingUniverse)) });
 
 		//Auto Heirlooms
@@ -3172,7 +3179,7 @@ function initializeAllSettings() {
 				description += "<p>Additional settings appear when enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirlooms', [1, 2]);
+			}, 'boolean', false, null, 'Heirloom', [1, 2]);
 
 		createSetting('heirloomAutoTypeToKeep',
 			function () {
@@ -3189,7 +3196,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> The type of heirlooms you need</p>";
 				return description;
 			},
-			'multitoggle', 0, null, 'Heirlooms', [1, 2],
+			'multitoggle', 0, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		/* createSetting('heirloomAutoRareToKeep',
@@ -3220,7 +3227,7 @@ function initializeAllSettings() {
 					if (hze >= 500) heirloomTiersAvailable.push('Plagued');
 				}
 				return heirloomTiersAvailable;
-			}, 'Heirlooms', [1, 2],
+			}, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) }); */
 
 		//Shield Line
@@ -3229,7 +3236,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Enable to allow you to select the shield modifiers you would like to target.</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirlooms', [1, 2],
+			}, 'boolean', false, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		createSetting('heirloomAutoRareToKeepShield',
@@ -3260,7 +3267,7 @@ function initializeAllSettings() {
 					if (hze >= 500) heirloomTiersAvailable.push('Plagued');
 				}
 				return heirloomTiersAvailable;
-			}, 'Heirlooms', [1, 2],
+			}, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse)) });
 
 		createSetting('heirloomAutoShieldBlacklist',
@@ -3270,7 +3277,7 @@ function initializeAllSettings() {
 				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
 				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
 				return description;
-			}, 'multiTextValue', 'None', null, 'Heirlooms', [1, 2],
+			}, 'multiTextValue', 'None', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse)) });
 
 		createSetting('heirloomAutoShieldMod1',
@@ -3279,7 +3286,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', currSettingUniverse)) >= 0)
@@ -3291,7 +3298,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', currSettingUniverse)) >= 1)
@@ -3303,7 +3310,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', currSettingUniverse)) >= 2)
@@ -3315,7 +3322,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', currSettingUniverse)) >= 5)
@@ -3327,7 +3334,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', currSettingUniverse)) >= 7)
@@ -3339,7 +3346,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', currSettingUniverse)) >= 9)
@@ -3351,7 +3358,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Shields with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Shield'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoShield', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepShield', currSettingUniverse)) >= 11)
@@ -3363,7 +3370,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Enable to allow you to select the staff modifiers you would like to target.</p>";
 				return description;
-			}, 'boolean', false, null, 'Heirlooms', [1, 2],
+			}, 'boolean', false, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		createSetting('heirloomAutoRareToKeepStaff',
@@ -3394,7 +3401,7 @@ function initializeAllSettings() {
 					if (hze >= 500) heirloomTiersAvailable.push('Plagued');
 				}
 				return heirloomTiersAvailable;
-			}, 'Heirlooms', [1, 2],
+			}, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse)) });
 
 		createSetting('heirloomAutoStaffBlacklist',
@@ -3404,7 +3411,7 @@ function initializeAllSettings() {
 				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
 				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
 				return description;
-			}, 'textValue', 'None', null, 'Heirlooms', [1, 2],
+			}, 'textValue', 'None', null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse)) });
 
 		createSetting('heirloomAutoStaffMod1',
@@ -3413,7 +3420,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', currSettingUniverse)) >= 0)
@@ -3425,7 +3432,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', currSettingUniverse)) >= 1)
@@ -3437,7 +3444,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', currSettingUniverse)) >= 2)
@@ -3449,7 +3456,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', currSettingUniverse)) >= 5)
@@ -3461,7 +3468,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', currSettingUniverse)) >= 7)
@@ -3473,7 +3480,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', currSettingUniverse)) >= 9)
@@ -3485,7 +3492,7 @@ function initializeAllSettings() {
 				var description = "<p>Keeps Staffs with selected mod.</p>";
 				description += "<p>Only mods available for the heirloom type selected in <b>Rarity to Keep</b> will be shown.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirlooms', [1, 2],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Staff'); }, 'Heirloom', [1, 2],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Magmatic', 'Plagued', 'Radiating', 'Hazardous', 'Enigmatic'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoStaff', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepStaff', currSettingUniverse)) >= 11)
@@ -3495,7 +3502,7 @@ function initializeAllSettings() {
 		createSetting('heirloomAutoCore',
 			function () { return ('Cores') },
 			function () { return ('Enables in-depth core settings.') },
-			'boolean', false, null, 'Heirlooms', [1],
+			'boolean', false, null, 'Heirloom', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		createSetting('heirloomAutoRareToKeepCore',
@@ -3517,7 +3524,7 @@ function initializeAllSettings() {
 				if (hze >= 700) heirloomTiersAvailable.push('Ethereal');
 
 				return heirloomTiersAvailable;
-			}, 'Heirlooms', [1],
+			}, 'Heirloom', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 
 		createSetting('heirloomAutoCoreBlacklist',
@@ -3527,7 +3534,7 @@ function initializeAllSettings() {
 				description += "<p>Mod names to be entered exactly the same as they appear in the modifier settings.</p>";
 				description += "<p>Can input multiple modifier names but they need to be seperated by a comma!</p>";
 				return description;
-			}, 'textValue', 'None', null, 'Heirlooms', [1],
+			}, 'textValue', 'None', null, 'Heirloom', [1],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse)) });
 
 		createSetting('heirloomAutoCoreMod1',
@@ -3535,7 +3542,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirlooms', [1],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirloom', [1],
 			function () {
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse))
 			});
@@ -3544,7 +3551,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirlooms', [1],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirloom', [1],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 1)
@@ -3554,7 +3561,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirlooms', [1],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirloom', [1],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 2)
@@ -3564,7 +3571,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Keeps Cores with selected mod.</p>";
 				return description;
-			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirlooms', [1],
+			}, 'dropdown', 'Any', function () { return autoHeirloomOptions('Core'); }, 'Heirloom', [1],
 			function () {
 				const heirloomType = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
 				return (getPageSetting('heirloomAuto', currSettingUniverse) && getPageSetting('heirloomAutoCore', currSettingUniverse) && heirloomType.indexOf(getPageSetting('heirloomAutoRareToKeepCore', currSettingUniverse)) >= 6)
@@ -3913,6 +3920,30 @@ function initializeAllSettings() {
 				preset3: {},
 			}), null, 'Import Export', [2]);
 	}
+	//Help Window - For information to help users understand how to use the script!
+	const displayHelp = true;
+	if (displayHelp) {
+		createSetting('helpIntroduction',
+			function () { return ('Introduction Message') },
+			function () {
+				var description = "<p>Will display the introduction message that is shown when you first load the script.</p>";
+				return description;
+			}, 'action', 'introMessage()', null, 'Help', [0]);
+		createSetting('helpStatus',
+			function () { return ('Auto Maps Status') },
+			function () {
+				var description = "<p>Will display the Auto Maps status window.</p>";
+				description += "<p>This can also be accessed by mousing over the text that tells you what Auto Maps is currently trying to do just beneath the Auto Maps button.</p>";
+				return description;
+			}, 'action', "makeAutomapStatusTooltip(false)", null, 'Help', [0]);
+		createSetting('helpResourceHour',
+			function () { return (resource() + ' per hour') },
+			function () {
+				var description = "<p>Will display the " + resource() + "/Hr tooltip message.</p>";
+				description += "<p>This can also be accessed by mousing over the text beneath the Auto Maps status when the <b>" + resourceHour() + "/hr status</b> setting in the <b>Display</b> tab is enabled.</p>";
+				return description;
+			}, 'action', 'makeResourceTooltip()', null, 'Help', [0]);
+	}
 
 	//Testing - Hidden Features for testing purposes! Please never seek these out!
 	//Beta - Features that are in beta testing and may not work properly!
@@ -4020,7 +4051,10 @@ function initializeAllSettings() {
 				description += "<p>Doesn't have any protecion to ensure you stay below infinity health.</p>";
 				return description;
 			}, 'action', 'testTrimpStats();', null, 'Test', [0]);
-
+	}
+	//Beta - Features that are in beta testing and may not work properly!
+	const displayBeta = true;
+	if (displayBeta) {
 
 		createSetting('testMapScumming',
 			function () { return ('Slow Map Scum') },
@@ -4045,8 +4079,10 @@ function initializeAllSettings() {
 				var description = "<p>Will display details of trimp/enemy stats when you gamma burst.</p>";
 				description += "<p>Requires your auto equality setting to be set to <b>Auto Equality: Advanced</b></p>";
 				return description;
-			}, 'boolean', false, null, 'Legacy', [2]);
+			}, 'boolean', false, null, 'Beta', [2],
+			function () { return (false) });
 	}
+
 }
 
 function resource() {
@@ -4141,7 +4177,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u2Setting) autoTrimpSettings[id].enabledU2 = loaded === undefined ? (defaultValue || false) : typeof loaded.enabledU2 === 'undefined' ? loaded : loaded.enabledU2;
 			if (require) autoTrimpSettings[id].require = require;
 		}
-		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
+		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;");
 		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].enabled);
 		btn.setAttribute("onclick", 'settingChanged("' + id + '")');
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
@@ -4164,7 +4200,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined || loaded === null ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
 			if (require) autoTrimpSettings[id].require = require;
 		}
-		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
+		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
 		btn.setAttribute("onclick", `autoSetValueToolTip("${id}", "${name()}", "${type === 'multiValue'}", "${type === 'valueNegative'}")`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
@@ -4186,7 +4222,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
 			if (require) autoTrimpSettings[id].require = require;
 		}
-		btn.setAttribute("style", "font-size: 1.1vw;");
+		btn.setAttribute("style", "font-size: 1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn btn-info');
 		btn.setAttribute("onclick", `autoSetTextToolTip("${id}", "${name()}", ${type === 'multiTextValue'})`);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
@@ -4246,7 +4282,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 				universe: universe
 			};
 		}
-		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
+		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute("onclick", 'ImportExportTooltip(\'' + defaultValue + '\', \'update\')');
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
@@ -4271,7 +4307,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u1Setting) autoTrimpSettings[id].value = loaded === undefined ? defaultValue : typeof loaded.value === 'undefined' ? loaded : loaded.value;
 			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
 		}
-		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;");
+		btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;");
 		btn.setAttribute('class', 'toggleConfigBtnLocal noselect settingsBtn settingBtn' + autoTrimpSettings[id].value);
 		btn.setAttribute("onclick", 'settingChanged("' + id + '")');
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name().join(' / ') + '\", \"customText\", event, \"' + description() + '\")');
@@ -4282,7 +4318,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (id === 'dailyPortal') {
 			btnParent.setAttribute('class', 'toggleConfigBtnLocal settingsBtnLocal settingsBtnfalse')
 			btnParent.setAttribute('style', 'max-height: 3.1vh; display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;border-bottom: 1px solid black !important;')
-			btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto;")
+			btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;")
 		}
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
@@ -4312,7 +4348,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			if (u2Setting) autoTrimpSettings[id].valueU2 = loaded === undefined ? defaultValue : typeof loaded.valueU2 === 'undefined' ? loaded : loaded.valueU2;
 			if (require) autoTrimpSettings[id].require = require;
 		}
-		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
+		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute('onclick', list);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
@@ -4333,7 +4369,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			};
 			if (require) autoTrimpSettings[id].require = require;
 		}
-		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1.1vw;");
+		btn.setAttribute("style", "color: black; background-color: #6495ed; font-size: 1vw;");
 		btn.setAttribute('class', 'noselect settingsBtn settingBtn3');
 		btn.setAttribute('onclick', defaultValue);
 		btn.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
@@ -5381,9 +5417,6 @@ function updateCustomButtons(initialLoad) {
 		if (document.getElementById("tabChallenges") !== null) {
 			document.getElementById("tabChallenges").style.display = !displayAllSettings && ((radonon && highestRadonZone < 70) || (!radonon && hze < 40)) ? "none" : "";
 		}
-		if (document.getElementById("tabLegacy") !== null) {
-			document.getElementById("tabLegacy").style.display = "none";
-		}
 		if (document.getElementById("tabTest") !== null) {
 			document.getElementById("tabTest").style.display = !gameUserCheck() ? "none" : "";
 		}
@@ -5603,21 +5636,6 @@ if (usingRealTimeOffline) {
 	setupTimeWarpAT();
 }
 
-//When clicking changelog button set new attribute, text & update Changelog AT Setting to proper value if not already correct.
-function updateChangelogButton() {
-	if (autoTrimpSettings.ATversionChangelog === atSettings.initialise.version) return;
-	var changeLogBtn = document.getElementById("atChangelog");
-	if (changeLogBtn !== null) {
-		//Swap the button class remove colour of new changelog.
-		var classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-primary' : 'btn-changelogNew';
-		swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
-		//Remove the new changelog text if it exists.
-		changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New", "");
-		autoTrimpSettings.ATversionChangelog = atSettings.initialise.version;
-		saveSettings();
-	}
-}
-
 //Sets up the various AT buttons that sit outside of the AutoTrimps setting menu.
 function setupATButtons() {
 	//Setup AutoTrimps settings button
@@ -5672,7 +5690,6 @@ function setupATButtons() {
 	//Helium/Hr Info textbox
 	var resourcePerHourContainer = document.createElement("DIV");
 	resourcePerHourContainer.setAttribute("style", "display: " + (getPageSetting('displayHeHr') ? 'block' : 'none') + "; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
-	resourcePerHourContainer.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
 	resourcePerHourContainer.setAttribute("onmouseout", 'tooltip("hide")');
 	resourcePerHourContainer.id = 'hiderStatus';
 	fightButtonCol.appendChild(resourcePerHourContainer);
@@ -5831,16 +5848,36 @@ function setupATButtons() {
 
 }
 
-function getDailyHeHrStats() {
-	const resourceHr = game.global.universe === 2 ? 'Rn' : 'He';
-	const resource = game.global.universe === 2 ? 'Radon' : 'Helium';
-	var tooltip = "";
-	if (challengeActive('Daily')) {
-		var helium = game.stats.heliumHour.value() / (game.global['total' + resource + 'Earned'] - (game.global[resource.toLowerCase() + 'Leftover'] + game.resources[resource.toLowerCase()].owned));
-		helium *= 100 + getDailyHeliumValue(countDailyWeight()),
-			tooltip = "<b>After Daily " + resourceHr + "\/Hr: " + helium.toFixed(3) + "%</b>"
+function introMessage() {
+	var description = "<p>Welcome to the SadAugust fork of AutoTrimps!</p>";
+
+	description += "<p><b>For those who are new to this fork here's some useful information on how to set it up.</b></p><br>";
+
+	description += "<p>One of the most important things is where the settings are stored. The vast majority of settings can be accessed by pressing the <b>AutoTrimps</b> button at the bottom of your Trimps window.</p><br>";
+	description += "<p>There are some setting that aren't located in the <b>AutoTrimps settings menu</b>, 2 of which are in the Trimps buy container (<b>AT AutoStructure & AutoJobs</b>), I recommend mousing over their tooltips and looking at what they do.</p>";
+	description += "<p>The last one placed elsewhere is the <b>AT Messages</b> button at the top right of your Trimps window. This will enabling this will allow the script to output messages into the message log window. You can control what gets printed to it by pressing the cogwheel to the right of it.</p>";
+
+	description += "<br><p>By default everything should be disabled but every setting has a detailed description and recommendation of how it should be setup. To start with I'd highly recommend looking through the settings in the <b>Core</b>, <b>Maps</b> and <b>Combat</b> tabs to identify which parts of the script you would like to use and go through the other tabs afterwards.</p>";
+
+	description += "<br><p>If you've previously used somebody elses AutoTrimps version you'll need to set everything up again as this isn't compatible with other forks. The settings are stored differently so you can easily go back and forth between other forks.</p>";
+
+	tooltip('Introduction Message', 'customText', 'lock', description, false, 'center');
+	verticalCenterTooltip(true);
+}
+
+//When clicking changelog button set new attribute, text & update Changelog AT Setting to proper value if not already correct.
+function updateChangelogButton() {
+	if (autoTrimpSettings.ATversionChangelog === atSettings.initialise.version) return;
+	var changeLogBtn = document.getElementById("atChangelog");
+	if (changeLogBtn !== null) {
+		//Swap the button class remove colour of new changelog.
+		var classSwap = changeLogBtn.classList.contains('btn-changelogNew') ? 'btn-primary' : 'btn-changelogNew';
+		swapClass(changeLogBtn.classList[1], classSwap, changeLogBtn);
+		//Remove the new changelog text if it exists.
+		changeLogBtn.innerHTML = changeLogBtn.innerHTML.replace(" | What's New", "");
+		autoTrimpSettings.ATversionChangelog = atSettings.initialise.version;
+		saveSettings();
 	}
-	return tooltip;
 }
 
 function updateATVersion() {
@@ -5855,20 +5892,7 @@ function updateATVersion() {
 		saveSettings();
 		if (atSettings.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/') return;
 
-		var description = "<p>Welcome to the SadAugust fork of AutoTrimps!</p>";
-
-		description += "<p><b>For those who are new to this fork here's some useful information on how to set it up.</b></p><br>";
-
-		description += "<p>One of the most important things is where the settings are stored. The vast majority of settings can be accessed by pressing the <b>AutoTrimps</b> button at the bottom of your Trimps window.</p><br>";
-		description += "<p>There are some setting that aren't located in the <b>AutoTrimps settings menu</b>, 2 of which are in the Trimps buy container (<b>AT AutoStructure & AutoJobs</b>), I recommend mousing over their tooltips and looking at what they do.</p>";
-		description += "<p>The last one placed elsewhere is the <b>AT Messages</b> button at the top right of your Trimps window. This will enabling this will allow the script to output messages into the message log window. You can control what gets printed to it by pressing the cogwheel to the right of it.</p>";
-
-		description += "<br><p>By default everything should be disabled but every setting has a detailed description and recommendation of how it should be setup. To start with I'd highly recommend looking through the settings in the <b>Core</b>, <b>Maps</b> and <b>Combat</b> tabs to identify which parts of the script you would like to use and go through the other tabs afterwards.</p>";
-
-		description += "<br><p>If you've previously used somebody elses AutoTrimps version you'll need to set everything up again as this isn't compatible with other forks. The settings are stored differently so you can easily go back and forth between other forks.</p>";
-
-		changelog.push(description);
-		printChangelog(changelog);
+		introMessage();
 		return;
 	}
 
