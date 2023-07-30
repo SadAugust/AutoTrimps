@@ -5363,8 +5363,8 @@ function updateCustomButtons(initialLoad) {
 					elem.appendChild(option);
 				}
 				elem.value = itemSelected;
-				/* elem.parentNode.setAttribute("data-prefix", item.name());
-				elem = elem.parentNode; */
+				/* elem.parentNode.setAttribute("data-prefix", item.name()); */
+				elem = elem.parentNode;
 			}
 			if (item.type === 'multitoggle') {
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name().join(' / ') + '\", \"customText\", event, \"' + item.description() + '\")');
