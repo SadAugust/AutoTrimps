@@ -64,7 +64,7 @@ function boneShrine() {
 				HeirloomEquipStaff('heirloomStaffMap');
 		}
 		if (boneShrineAtlantrimp) {
-			runUniqueMap(boneShrineDoubler, false);
+			runUniqueMap(boneShrineDoubler);
 		}
 		if (!boneShrineAtlantrimp || (boneShrineAtlantrimp && game.global.mapsActive && getCurrentMapObject().name === boneShrineDoubler && game.global.lastClearedMapCell >= getCurrentMapObject().size - 30)) {
 			for (var x = 0; x < boneShrineCharges; x++) {

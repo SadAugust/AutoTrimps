@@ -1415,6 +1415,7 @@ function initializeAllSettings() {
 			function () { return ('D: Stacks to Push') },
 			function () {
 				var description = "<p>Will ignore maps and push to end the zone if we go above this amount of stacks.</p>";
+				description += "<p>Both Prestige Climb and Void Maps will override this and still run when above this stack count.</p>";
 				description += "<p>If set to 0 or -1 it will disable this setting.</p>";
 				description += "<p><b>Recommended:</b> 150</p>";
 				return description;
@@ -4260,8 +4261,6 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			var option = document.createElement("option");
 			option.value = listItems[item];
 			option.text = listItems[item];
-
-			option["data-prefix"] = name();
 			btn.appendChild(option);
 		}
 		btn.value = autoTrimpSettings[id].selected;

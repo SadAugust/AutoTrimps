@@ -281,26 +281,23 @@ function runningAtlantrimp() {
 	return runAtlantrimp;
 }
 
-function runUniqueMap(mapName, dontRecycle) {
+function runUniqueMap(mapName) {
 	if (game.global.mapsActive && getCurrentMapObject().name === mapName) return;
 	if (challengeActive('Insanity')) return;
-	if (mapName === 'Atlantrimp' && game.global.universe === 1) mapName = 'Trimple Of Doom'
+	if (mapName === 'Atlantrimp' && game.global.universe === 1) mapName = 'Trimple Of Doom';
 	var zone = game.global.world;
 	var cell = game.global.lastClearedCell + 2;
-	if (mapName === 'Melting Point' && (!game.mapUnlocks.SmithFree.canRunOnce || zone < 55 || (zone === 55 && cell < 56))) return
-	if ((mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') && (!game.mapUnlocks.AncientTreasure.canRunOnce || zone < 33 || (zone === 33 && cell < 32))) return
+	if (mapName === 'Melting Point' && (!game.mapUnlocks.SmithFree.canRunOnce || zone < 55 || (zone === 55 && cell < 56))) return;
+	if ((mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') && (!game.mapUnlocks.AncientTreasure.canRunOnce || zone < 33 || (zone === 33 && cell < 32))) return;
 
-	if (!game.global.preMapsActive && !game.global.mapsActive && getPageSetting('autoMaps'))
-		mapsClicked();
-	if (!dontRecycle && game.global.mapsActive && getCurrentMapObject().name !== mapName) {
-		recycleMap_AT()
+	if (game.global.mapsActive && getCurrentMapObject().name !== mapName) {
+		recycleMap_AT();
 	}
-	MODULES.mapFunctions.runUniqueMap = mapName;
 
 	if (game.global.preMapsActive) {
 		for (var map in game.global.mapsOwnedArray) {
 			if (game.global.mapsOwnedArray[map].name === mapName) {
-				selectMap(game.global.mapsOwnedArray[map].id)
+				selectMap(game.global.mapsOwnedArray[map].id);
 				runMap_AT();
 				debug('Running ' + mapName + ' on zone ' + game.global.world + '.', "map_Details");
 			}
@@ -452,7 +449,7 @@ function voidMaps() {
 
 			setting = {
 				cell: 1,
-				jobratio: "0,0,1",
+				jobratio: defaultSettings.jobratio ? defaultSettings.jobratio : "0,0,1",
 				world: game.global.world,
 				portalAfter: true,
 			}
@@ -548,7 +545,7 @@ function mapBonus() {
 	var spireStacks = spireCheck ? 10 : 0;
 
 	var settingIndex = null;
-	if (getPageSetting('mapBonusDefaultSettings').active && !healthCheck && !spireCheck) {
+	if (defaultSettings.active && !healthCheck && !spireCheck) {
 		for (var y = 0; y < baseSettings.length; y++) {
 			//Skip iterating lines if map bonus is capped.
 			if (game.global.mapBonus === 10) continue;
@@ -639,7 +636,6 @@ function mapFarm() {
 	};
 
 	if (!getPageSetting('mapFarmDefaultSettings').active) return farmingDetails;
-	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb';
 	const dailyAddition = dailyOddOrEven();
 	const zoneAddition = dailyAddition.active ? 1 : 0;
 
@@ -723,7 +719,7 @@ function mapFarm() {
 			mappingDetails(mapName, mapLevel, mapSpecial);
 			resetMapVars(setting);
 			shouldMap = false;
-			if (shouldAtlantrimp) runUniqueMap('Atlantrimp', dontRecycleMaps);
+			if (shouldAtlantrimp) runUniqueMap('Atlantrimp');
 			saveSettings();
 		}
 		var repeat = repeatCheck + 1 === repeatCounter;
@@ -762,7 +758,6 @@ function tributeFarm() {
 	if (!getPageSetting('tributeFarmDefaultSettings').active || (game.buildings.Tribute.locked && game.jobs.Meteorologist.locked)) return farmingDetails;
 	var shouldMap = false;
 
-	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb';
 	const baseSettings = getPageSetting('tributeFarmSettings');
 	const dailyAddition = dailyOddOrEven();
 	const zoneAddition = dailyAddition.active ? 1 : 0;
@@ -866,7 +861,7 @@ function tributeFarm() {
 			var resourceFarmed = scaleToCurrentMap_AT(simpleSeconds_AT("food", 165, jobRatio), false, true, mapLevel);
 
 			if ((totalTrFCost > game.resources.food.owned - barnCost + resourceFarmed) && game.resources.food.owned > totalTrFCost / 2) {
-				runUniqueMap("Atlantrimp", dontRecycleMaps);
+				runUniqueMap('Atlantrimp');
 			}
 		}
 		//Recycles map if we don't need to finish it for meeting the tribute/meteorologist requirements
@@ -923,7 +918,6 @@ function smithyFarm() {
 	var shouldSmithyMetalFarm = false;
 	var mapAutoLevel = Infinity;
 
-	const dontRecycleMaps = challengeActive('Trappapalooza') || challengeActive('Archaeology') || challengeActive('Berserk') || game.portal.Frenzy.frenzyStarted !== -1 || !newArmyRdy() || mapSettings.mapName === 'Prestige Raiding' || mapSettings.mapName === 'Prestige Climb';
 	const baseSettings = getPageSetting('smithyFarmSettings');
 	const dailyAddition = dailyOddOrEven();
 	const zoneAddition = dailyAddition.active ? 1 : 0;
@@ -1072,7 +1066,7 @@ function smithyFarm() {
 			if (!shouldMap) {
 				mappingDetails(mapName, mapLevel, mapSpecial, smithyGoal);
 				MODULES.maps.mapRepeatsSmithy = [0, 0, 0];
-				if (!challengeActive('Quest') && rSFSettings.meltingPoint) runUniqueMap('Melting Point', dontRecycleMaps);
+				if (!challengeActive('Quest') && rSFSettings.meltingPoint) runUniqueMap('Melting Point');
 				resetMapVars(rSFSettings);
 				return farmingDetails;
 			}
@@ -1560,7 +1554,7 @@ function findLastBionicWithItems(bionicPool) {
 	if (game.global.world < 115 || !bionicPool)
 		return;
 	if (challengeActive('Mapology') && !getPageSetting('mapology')) return;
-	const targetPrestige = challengeActive('Mapology') ? autoTrimpSettings['mapologyPrestige'].selected : 'GambesOP';
+	const targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? autoTrimpSettings['mapologyPrestige'].selected : 'GambesOP';
 
 	if (bionicPool.length > 1) {
 		bionicPool.sort(function (bionicA, bionicB) { return bionicA.level - bionicB.level });
@@ -2957,16 +2951,16 @@ function hdFarm(skipHealthCheck, voidFarm) {
 	if (hitsSurvivedSetting > 0 && !skipHealthCheck && !voidFarm && MODULES.mapFunctions.hasHealthFarmed !== (getTotalPortals() + "_" + game.global.world)) {
 		if (hitsSurvived < hitsSurvivedSetting) shouldHealthFarm = true;
 	}
-	if (!getPageSetting('hdFarmDefaultSettings').active && !shouldHealthFarm && !voidFarm) return farmingDetails;
+	const defaultSettings = getPageSetting('hdFarmDefaultSettings');
+	if (!defaultSettings.active && !shouldHealthFarm && !voidFarm) return farmingDetails;
 
 	const baseSettings = getPageSetting('hdFarmSettings');
-	const rHDFDefaultSetting = getPageSetting('hdFarmDefaultSettings');
 	var shouldMap = false;
 	var shouldSkip = false;
 	var mapAutoLevel = Infinity;
 
 	var settingIndex = null;
-	if (rHDFDefaultSetting.active && !shouldHealthFarm && !voidFarm) {
+	if (defaultSettings.active && !shouldHealthFarm && !voidFarm) {
 		for (var y = 0; y < baseSettings.length; y++) {
 			const currSetting = baseSettings[y];
 			const world = currSetting.world;
@@ -3023,7 +3017,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		} else {
 			shouldHealthFarm = false;
 			setting = baseSettings[settingIndex];
-			hdFarmMapCap = rHDFDefaultSetting.mapCap;
+			hdFarmMapCap = defaultSettings.mapCap;
 			hdFarmMaxMaps = setting.hdType === 'world' && game.global.mapBonus !== 10 ? 10 : null;
 			hdFarmMinMaps = setting.hhdType === 'world' && game.global.mapBonus !== 10 ? 0 : null;
 		}
@@ -3158,7 +3152,8 @@ function farmingDecision() {
 		//Skipping map farming if in Decay and above stack count user input
 		if (decaySkipMaps()) mapTypes = [
 			prestigeClimb(),
-			voidMaps()];
+			voidMaps(),
+		];
 
 		if (challengeActive('Mapology') && getPageSetting('mapology')) mapTypes = [
 			prestigeClimb(),

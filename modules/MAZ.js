@@ -1,5 +1,5 @@
 function MAZLookalike(titleText, varPrefix, event) {
-	if (!document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow')) cancelTooltip();
+	if (document.getElementById('tooltipDiv').classList.value !== '' && !document.getElementById('tooltipDiv').classList[0].includes('tooltipWindow')) cancelTooltip();
 	var titleText = !titleText ? 'undefined' : titleText;
 	var varPrefix = !varPrefix ? 'undefined' : varPrefix;
 
@@ -595,27 +595,26 @@ function MAZLookalike(titleText, varPrefix, event) {
 			//Header
 			tooltipText += "\
 				<div id = 'windowContainer' style = 'display: block' > <div id='windowError'></div>\
-				<div class='row windowRow titles'>\
-				<div class='windowActive" + varPrefix + "\'>Active</div>";
-			if (!boneShrine && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'>Cell</div>";
-			if (mapFarm || toxicity) tooltipText += "<div class='windowRepeat'>Map<br/>Repeats</div>";
+				<div class='row windowRow titles' style='border: 0px; margin-top: -0.5vw;'>\
+				<div class='windowActive" + varPrefix + "\'>Enabled</div>";
 			if (worshipperFarm) {
 				tooltipText += "<div class='windowWorshipperSkip'>Enable<br />Skip</div>";
 				tooltipText += "<div class='windowWorshipper'>Skip<br />Value</div>";
-				tooltipText += "<div class='windowWorshipper'>Ships</div>";
 			}
-			if (mapBonus) tooltipText += "<div class='windowRepeat'>Map<br />Stacks</div>";
 			if (boneShrine) {
 				tooltipText += "<div class='windowAutoBoneShrine'>Auto Spend Charges</div>";
-				tooltipText += "<div class='windowBoneBelow'>Auto Spend At</div>";
-				tooltipText += "<div class='windowBoneBelow'>Spend From Z</div>";
-				tooltipText += "<div class='windowBoneGather'>Gather</div>";
+				tooltipText += "<div class='windowBoneDefault'>Auto Spend<br>At X Charges</div>";
+				tooltipText += "<div class='windowBoneDefault'>Auto Spend<br>From Z</div>";
+				tooltipText += "<div class='windowBoneDefault'>Auto Spend<br>Gather</div>";
+				tooltipText += "<div class='windowBoneDefault'>Auto Spend<br>Job Ratio</div>";
 			}
-			if (!raiding && !smithyFarm) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br />Ratio</div>";
-			if (mapFarm || alchemy || mapBonus || toxicity || insanity || desolation) tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
-			if (tributeFarm || smithyFarm || mapFarm) tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'>Farm Type</div>";
+			if (mapBonus) tooltipText += "<div class='windowJobRatio" + varPrefix + "\'>Job<br>Ratio</div>";
+
+			if (mapBonus) {
+				tooltipText += "<div class='windowSpecial" + varPrefix + "\'>Special</div>";
+			}
 			if (raiding && !bionic) {
-				tooltipText += "<div class='windowRecycle'>Recycle</div>";
+				tooltipText += "<div class='windowRecycle'>Recycle<br>Maps</div>";
 				tooltipText += "<div class='windowIncrementMaps'>Increment<br>Maps</div>";
 			}
 			if (alchemy) tooltipText += "<div class='windowStorage'>Void<br>Purchase</div>";
@@ -624,9 +623,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (game.permaBoneBonuses.boosts.owned > 0) tooltipText += "<div class='windowDefaultVoidMap'>Use Bone<br>Charge</div>";
 				tooltipText += "<div class='windowDefaultVoidMap'>Pre Void<br>Farm</div>";
 
-
 				tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>Hits Survived</div>";
 				tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>HD Ratio</div>";
+				tooltipText += "<div class='windowDefaultVoidMap'>Void Farm<br>Job Ratio</div>";
 			}
 			if (hypothermia) {
 				tooltipText += "<div class='windowFrozenCastle'>Frozen<br>Castle</div>";
@@ -639,7 +638,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			var defaultVals = {
 				special: '0',
-				gather: '0',
+				gather: 'food',
 				mapType: 'Absolute',
 			}
 
@@ -657,16 +656,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.world = defaultSetting.world ? defaultSetting.world : 0;
 			}
 
-			if (!raiding && !smithyFarm)
+			if (mapBonus || voidMap || boneShrine)
 				defaultVals.jobratio = defaultSetting.jobratio ? defaultSetting.jobratio : '1,1,1,1';
 
-			if (mapFarm || alchemy || boneShrine || mapBonus || desolation || toxicity)
-				defaultVals.gather = defaultSetting.gather ? defaultSetting.gather : '0';
-
-			if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
+			if (mapBonus) {
 				defaultVals.special = defaultSetting.special ? defaultSetting.special : '0';
-
-			if (mapFarm || mapBonus || toxicity) defaultVals.repeat = defaultSetting.repeat ? defaultSetting.repeat : '0';
+				defaultVals.gather = defaultSetting.gather ? defaultSetting.gather : 'food';
+			}
 
 			if (worshipperFarm) {
 				defaultVals.worshipper = defaultSetting.worshipper ? defaultSetting.worshipper : 50;
@@ -710,36 +706,37 @@ function MAZLookalike(titleText, varPrefix, event) {
 			var defaultDropdowns = displayDropdowns(universe, defaultVals, varPrefix);
 			var defaultGatherDropdown = defaultDropdowns.gather;
 			var defaultSpecialsDropdown = defaultDropdowns.special;
-			var defaultmapTypeDropdown = defaultDropdowns.mapType;
+
+
+			//Gather dropdown. Only shows if Huge or Large cache specials are selected. Displays "Gather" text to show user what it's for.
+			//Adding a class to check if we should display the gather setting if special is set to huge cache or large cache
+			var className = (defaultVals.special === 'hc' || defaultVals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
 
 			const defaultTooltip = true;
 			//Setting up the tooltip for base settings
 			if (defaultTooltip) {
-				tooltipText += "<div id='windowRow' class='row windowRow'>";
+				;
+				tooltipText += "<div id='windowRow' class='row windowRow " + className + "'>";
 				tooltipText += "<div class='windowActive" + varPrefix + "\' style='text-align: center;'>" + buildNiceCheckbox("windowActiveDefault", null, defaultVals.active) + "</div>";
-				if (!boneShrine && !desolation) tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.cell + "' type='number' id='windowCellDefault'/></div>";
-				if (mapFarm || mapBonus || toxicity)
-					tooltipText += "<div class='windowRepeat'><input value='" + defaultVals.repeat + "' type='number' id='windowRepeatDefault'/></div>";
 				if (worshipperFarm) {
 					tooltipText += "<div class='windowWorshipperSkip' style='text-align: center;'>" + buildNiceCheckbox("windowSkipShipEnabled", null, defaultVals.shipSkipEnabled) + "</div>";
 
 					tooltipText += "<div class='windowWorshipper'><input value='" + defaultVals.shipskip + "' type='number' id='windowRepeatDefault'/></div>";
-
-					tooltipText += "<div class='windowWorshipper'><input value='" + defaultVals.worshipper + "' type='number' id='windowWorshipperDefault'/></div>";
 				}
 				if (boneShrine) {
 					tooltipText += "<div class='windowAuto" + varPrefix + "\' style='text-align: center;'>" + buildNiceCheckbox("windowAutoBone", null, defaultVals.autoBone) + "</div>";
-
-					tooltipText += "<div class='windowBoneBelow'><input value='" + defaultVals.bonebelow + "' type='number' id='windowBoneBelowDefault'/></div>";
-					if (boneShrine)
-						tooltipText += "<div class='windowBoneBelow'><input value='" + defaultVals.world + "' type='number' id='windowBoneWorld'/></div>";
+					tooltipText += "<div class='windowBoneDefault'><input value='" + defaultVals.bonebelow + "' type='number' id='windowBoneBelowDefault'/></div>";
+					tooltipText += "<div class='windowBoneDefault'><input value='" + defaultVals.world + "' type='number' id='windowBoneWorld'/></div>";
+					tooltipText += "<div class='windowBoneDefault'><select value='" + defaultVals.gather + "' id='windowBoneGatherDefault'>" + defaultGatherDropdown + "</select></div>";
+					tooltipText += "<div class='windowBoneDefault'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
 				}
-				if (!raiding && !smithyFarm)
+				if (mapBonus)
 					tooltipText += "<div class='windowJobRatio" + varPrefix + "\'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
-				if (boneShrine)
-					tooltipText += "<div class='windowBoneGather'><select value='" + defaultVals.gather + "' id='windowBoneGatherDefault'>" + defaultGatherDropdown + "</select></div>";
-				if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity)
-					tooltipText += "<div class='windowSpecial" + varPrefix + "\'><select value='" + defaultVals.special + "' id='windowSpecialDefault'>" + defaultSpecialsDropdown + "</select></div>";
+				if (mapBonus) {
+					tooltipText += "<div class='windowSpecial" + varPrefix + "\'  onchange='updateWindowPreset()'><select value='" + defaultVals.special + "' id='windowSpecial'>" + defaultSpecialsDropdown + "</select></div>";
+					tooltipText += "<div class='windowGather'>\<div style='text-align: center; font-size: 0.6vw;'>Gather</div>\<onchange='updateWindowPreset()'>\<select value='" + defaultVals.gather + "' id='windowGather'>" + defaultGatherDropdown + "</select></div>";
+				}
+
 				if (hypothermia) {
 					tooltipText += "<div class='windowFrozenCastle'><input value='" + defaultVals.frozencastle + "' type='text' id='windowFrozenCastleDefault'/></div>";
 
@@ -748,10 +745,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 					tooltipText += "<div class='windowPackrat' style='text-align: center;'>" + buildNiceCheckbox("windowPackratDefault", null, defaultVals.packrat) + "</div>";
 				}
 
-				if (tributeFarm || smithyFarm)
-					tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'><select value='" + defaultVals.mapType + "' id='windowMapTypeDropdownDefault'>" + defaultmapTypeDropdown + "</select></div>";
-				if (mapFarm)
-					tooltipText += "<div class='windowMapTypeDropdown" + varPrefix + "\'><select value='" + defaultVals.mapType + "' id='windowMapTypeDropdownDefault'>" + defaultmapTypeDropdown + "</select></div>";
 				if (raiding && !bionic)
 					tooltipText += "<div class='windowRecycle' style='text-align: center;'>" + buildNiceCheckbox("windowRecycleDefault", null, defaultVals.recycle) + "</div>";
 				if (raiding && !bionic)
@@ -767,6 +760,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.hitsSurvived + "' type='number' id='windowHitsSurvived'/></div>";
 
 					tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.hdRatio + "' type='number' id='windowHDRatio'/></div>";
+					tooltipText += "<div class='windowDefaultVoidMap'><input value='" + defaultVals.jobratio + "' type='text' id='windowJobRatioDefault'/></div>";
 				}
 				if (hdFarm)
 					tooltipText += "<div class='windowCell" + varPrefix + "\'><input value='" + defaultVals.mapCap + "' type='number' id='mapCap'/></div>";
@@ -810,7 +804,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 		if (boneShrine) tooltipText += "<div class='windowBoneAmount'>To use</div>";
 		if (boneShrine) tooltipText += "<div class='windowBoneBelow'>Use below</div>";
-		if (worshipperFarm) tooltipText += "<div class='windowWorshipper'>Ships</div>";
+		if (worshipperFarm) tooltipText += "<div class='windowWorshipper'>Worshippers</div>";
 		if (smithyFarm) tooltipText += "<div class='windowSmithies'>Smithies</div>";
 
 		if (hdFarm) tooltipText += "<div class='windowHDBase'>HD Base</div>";
@@ -851,7 +845,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				special: '0',
 				repeat: 1,
 				hdRatio: 0,
-				gather: 0,
+				gather: 'food',
 				tributes: 0,
 				mets: 0,
 				bogs: 0,
@@ -919,7 +913,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					vals.jobratio = currSetting[x].jobratio ? currSetting[x].jobratio : '1,1,1,1';
 				//Gather
 				if (mapFarm || alchemy || boneShrine || mapBonus || desolation || toxicity)
-					vals.gather = currSetting[x].gather ? currSetting[x].gather : '0';
+					vals.gather = currSetting[x].gather ? currSetting[x].gather : 'food';
 				//Run Type
 				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
 					vals.runType = currSetting[x].runType ? currSetting[x].runType : 'All';
@@ -1058,8 +1052,9 @@ function MAZLookalike(titleText, varPrefix, event) {
 			<option value='1'" + ((vals.raidingDropdown === '1') ? " selected='selected'" : "") + ">Frag Min</option>\
 			<option value='2'" + ((vals.raidingDropdown === '2') ? " selected='selected'" : "") + ">Frag Max</option>"
 
-			//Adding a class for if we have auto level enabled or not. Allows us to change the opacity of the button & make it unclickable.
+			//Adding a class to check if we should display the gather setting if special is set to huge cache or large cache
 			var className = (vals.special === 'hc' || vals.special === 'lc') ? " windowGatherOn" : " windowGatherOff";
+			//Adding a class for if we have auto level enabled or not. Allows us to change the opacity of the button & make it unclickable.
 			className += (!vals.autoLevel) ? " windowLevelOn" : " windowLevelOff";
 
 			//Adding the class for if we have C2/C3 challenge selected or not.
@@ -1448,15 +1443,18 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 	if (!golden) {
 		defaultSetting.active = readNiceCheckbox(document.getElementById('windowActiveDefault'));
-		if (!boneShrine && !desolation) defaultSetting.cell = parseInt(document.getElementById('windowCellDefault').value, 10);
-		if (mapBonus) defaultSetting.repeat = parseInt(document.getElementById('windowRepeatDefault').value, 10);
-		if (mapFarm || toxicity) defaultSetting.repeat = parseFloat(document.getElementById('windowRepeatDefault').value, 10);
 		if (worshipperFarm) {
 			defaultSetting.shipSkipEnabled = readNiceCheckbox(document.getElementById('windowSkipShipEnabled'));
 			defaultSetting.shipskip = parseInt(document.getElementById('windowRepeatDefault').value, 10);
-			defaultSetting.worshipper = parseInt(document.getElementById('windowWorshipperDefault').value, 10);
 		}
-		if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) defaultSetting.special = document.getElementById('windowSpecialDefault').value;
+		if (mapBonus) {
+			defaultSetting.special = document.getElementById('windowSpecial').value;
+
+			if (defaultSetting.special === 'hc' || defaultSetting.special === 'lc')
+				defaultSetting.gather = document.getElementById('windowGather').value;
+			else
+				defaultSetting.gather = null;
+		}
 
 		if (boneShrine) {
 			defaultSetting.autoBone = readNiceCheckbox(document.getElementById('windowAutoBone'));
@@ -1465,7 +1463,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			defaultSetting.world = parseInt(document.getElementById('windowBoneWorld').value, 10);
 		}
 
-		if (!raiding && !smithyFarm) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
+		if (mapBonus || voidMap || boneShrine) defaultSetting.jobratio = document.getElementById('windowJobRatioDefault').value;
 		if (alchemy) defaultSetting.voidPurchase = readNiceCheckbox(document.getElementById('windowVoidPurchase'));
 		if (voidMap) {
 			defaultSetting.maxTenacity = readNiceCheckbox(document.getElementById('windowMaxTenacity'));
@@ -1483,15 +1481,10 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			defaultSetting.recycle = readNiceCheckbox(document.getElementById('windowRecycleDefault'));
 			defaultSetting.incrementMaps = readNiceCheckbox(document.getElementById('windowIncrementMapsDefault'));
 		}
-		if (tributeFarm || smithyFarm || mapFarm) defaultSetting.mapType = document.getElementById('windowMapTypeDropdownDefault').value;
-		/* if (mapBonus) defaultSetting.healthBonus = parseInt(document.getElementById('healthBonus').value, 10);
-		if (mapBonus) defaultSetting.healthHDRatio = parseFloat(document.getElementById('healthHDRatio').value, 10); */
 		if (hdFarm) defaultSetting.mapCap = parseFloat(document.getElementById('mapCap').value, 10);
 
 		if (defaultSetting.cell < 1) defaultSetting.cell = 1;
 		if (defaultSetting.cell > 100) defaultSetting.cell = 100;
-		/* if (defaultSetting.healthBonus > 10) defaultSetting.healthBonus = 10;
-		if (defaultSetting.healthBonus < 0) defaultSetting.healthBonus = 0; */
 
 		if (defaultSetting.repeat < 0) defaultSetting.repeat = 0;
 
@@ -1743,27 +1736,32 @@ function mazPopulateHelpWindow(titleText, trimple) {
 
 	//Map Bonus Information to detail how it functions since it's unclear compared to every other setting
 	if (mapBonus) mazHelp += "<br><br><b>Map Bonus works by using the last line that's greater or equal to your current world zone and then using those settings for every zone that follows on from it.</b>";
-	if (voidMap) mazHelp += "<br><br>Void Map works by using 'Min Zone' as the lower bound zone to run voids on and 'Max Zone' as the upper bound. If your HD Ratio OR Void HD Ratio value (can be seen in Auto Maps status tooltip) is greater than the set value then it'll run voids on current zone otherwise will run them on your setting in 'Max Zone'.";
+	if (voidMap) mazHelp += "<br><br>Void Map works by using <b>Min Zone</b> as the lower bound zone to run voids on and <b>Max Zone</b> as the upper bound.";
+
+	mazHelp += "<li class=\"indent\">Additionally it has dropdown inputs which can give you the ability to add more fine-tuning for when a line should be run.";
+	mazHelp += "<li class=\"indent\">If you reach the <b>Max Zone</b> zone input of a line it will run regardless of dropdown inputs.";
+
 
 	//Default Value settings
 	if (!golden) {
-		mazHelp += "<br><br>The default values section are values which will automatically be input when a new row has been added. There's a few exception to this such as:<br></br><ul>";
-		mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable the entire setting.</li>";
-		mazHelp += "<li><b>Priority</b> - If there are two or more MaZ lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>";
-		if (worshipperFarm) mazHelp += "<li><b>Enabled Skip</b> - A toggle to enable the skip value setting.</li>";
-		if (worshipperFarm) mazHelp += "<li><b>Skip Value</b> - How many worshippers a map must provide for you to run your Worshipper Farming.</li>";
-		if (raiding && !bionic) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after raiding has finished.</li>";
-		if (raiding && !bionic) mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>";
-		if (raiding) mazHelp += "<li><b>Recycle</b> - A toggle to recycle maps after BW raiding has finished.</li>";
-		/* if (mapBonus) mazHelp += "<li><b>Health Bonus</b> - The amount of map stacks to farm when your HD Ratio is below that of the <b>Health HDRatio</b> field. Default is 10.</li>"
-		if (mapBonus) mazHelp += "<li><b>Health HD Ratio</b> - Decides when to start getting the map stack bonus value in the <b>Health Bonus</b> field. 10 is default, this means it\'d go for it when your HDRatio is above 10.</li>" */
-		if (alchemy) mazHelp += "<li><b>Void Purchase</b> - Will purchase as many void and strength potions as you can currently afford when you go into a void map. Would recommend only disabling this setting when going for the Alchemy achievement.</li>";
-		if (hypothermia) mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>";
-		if (hypothermia) mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>";
-		if (hypothermia) mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>";
+		mazHelp += "<br><br>The top row section consists of toggles/inputs which add extra functions to the setting itself.<br></br><ul>";
+		mazHelp += "<li><b>Enabled</b> - A toggle to disable/enable the entire setting.</li>";
+		if (worshipperFarm) {
+			mazHelp += "<li><b>Enabled Skip</b> - A toggle to enable the skip value setting.</li>";
+			mazHelp += "<li><b>Skip Value</b> - How many worshippers a map must provide for you to run your Worshipper Farming.</li>";
+		}
+		if (raiding && !bionic) {
+			mazHelp += "<li><b>Recycle Maps</b> - A toggle to recycle maps after raiding has finished.</li>";
+			mazHelp += "<li><b>Increment Maps</b> - A toggle to swap between just running the 1 target zone map and gradually running different maps from lowest map you can obtain a prestige to the highest which can help if you're not strong enough to raid your target zone immediately.</li>";
+		}
+		if (mapBonus) {
+			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when Map Bonus is set to run from <b>Map Bonus Ratio</b> or <b>Max Map Bonus for Spire</b> settings.</li>"
+			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
+			mazHelp += "<li><b>Special</b> - The type of cache you'd like to run when Map Bonus is set to run from <b>Map Bonus Ratio</b> or <b>Max Map Bonus for Spire</b> settings.</li>";
+		}
 		if (voidMap) {
-			mazHelp += "<li><b>Max Map Bonus</b> - Will assume you have 10 map bonus stacks"
-			if (radonSetting && !game.portal.Tenacity.radLocked) mazHelp += " and max tenacity"
+			mazHelp += "<li><b>Max Map Bonus</b> - Will assume you have 10 map bonus stacks";
+			if (radonSetting && !game.portal.Tenacity.radLocked) mazHelp += " and max tenacity";
 			mazHelp += " when void maps HD Ratio calcs are being set.</li>";
 
 			if (game.permaBoneBonuses.boosts.owned > 0) mazHelp += "<li><b>Bone Charge</b> - The first time a line starts running Void Maps in each portal it will use a single Bone Charge.</li>";
@@ -1773,32 +1771,49 @@ function mazPopulateHelpWindow(titleText, trimple) {
 			mazHelp += "<li><b>Void Farm Hits Survived</b> - Will farm to this void hits survived value before running void maps.</li>";
 
 			mazHelp += "<li><b>Void Farm HD Ratio</b> - Will farm to this void HD ratio survived value before running void maps.</li>";
+
+			mazHelp += "<li><b>Void Farm Job Ratio</b> - The job ratio to use when farming stats before running void maps.</li>";
+			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
 		}
 		if (boneShrine) {
 			mazHelp += "<li><b>Auto Spend Charges</b> - Enables the ability to automatically spend bone charges when above a certain value.</li>";
-			mazHelp += "<li><b>Auto Spend At</b> - The amount of bone charges you have to reach before one will automatically be spent. Disable this by setting this to a value at or below 0 or above 10.</li>";
-			mazHelp += "<li><b>Spend From Z</b> - Will only auto spend bone charges when at or above this zone.</li>";
-			mazHelp += "<li><b>Job Ratio</b> - The job ratio to use when auto spending bone charges.</li>";
-			mazHelp += "<li><b>Gather</b> - The gather type to use when auto spending bone charges.</li>";
+			mazHelp += "<li><b>Auto Spend At X Charges</b> - The amount of bone charges you have to reach before one will automatically be spent. Disable this by setting this to a value at or below 0 or above 10.</li>";
+			mazHelp += "<li><b>Auto Spend From Z</b> - Will only auto spend bone charges when at or above this zone.</li>";
+			mazHelp += "<li><b>Auto Spend Gather</b> - The gather type to use when auto spending bone charges.</li>";
+			mazHelp += "<li><b>Auto Spend Job Ratio</b> - The job ratio to use when auto spending bone charges.</li>";
+			mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
 		}
 		if (hdFarm) {
 			mazHelp += "<li><b>Map Cap</b> - The maximum amount of maps you would like to run during this farm. If set to -1 it will repeat an Infinite amount of times and you'll have to manually stop farming, would only recommend this if you're confident you'll be able to get enough stats to finish the farm.</li>";
+		}
+		if (alchemy) {
+			mazHelp += "<li><b>Void Purchase</b> - Will purchase as many void and strength potions as you can currently afford when you go into a void map. Would recommend only disabling this setting when going for the Alchemy achievement.</li>";
+		}
+		if (hypothermia) {
+			mazHelp += "<li><b>Frozen Castle</b> - The zone,cell combination that you'd like Frozen Castle to be run at. The input style is '200,99' and if you don't input it properly it'll default to zone 200 cell 99.</li>";
+			mazHelp += "<li><b>AutoStorage</b> - Disables AutoStorage until the first Bonfire farm zone that you reach during the challenge.</li>";
+			mazHelp += "<li><b>Packrat</b> - Will purchase as many levels of packrat as possible once the Hypothermia challenge ends with leftover radon and additionally when portaling it reset the packrat level to 3 so that you don't accidentally trigger a 5th bonfire at the start of the run.</li>";
 		}
 	}
 
 	if (golden) mazHelp += "<br>";
 
 	//Row Settings
-	mazHelp += "</ul></br> The settings for each row that is added:<ul>"
+	mazHelp += "</ul></br> The settings for each row that is added:<ul>";
 
 	//All Settings
 	mazHelp += "<li><span style='padding-left: 0.3%' class='mazDelete'><span class='icomoon icon-cross'></span></span> - Remove this MaZ line completely</li>";
 	//Active
-	mazHelp += "<li><b>Active</b> - A toggle to temporarily disable/enable this line.</li>";
+	mazHelp += "<li><b>Active</b> - A toggle to disable/enable this line.</li>";
+	//Priority
+	if (!golden) mazHelp += "<li><b>Priority</b> - If there are two or more MaZ lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>";
 	//Zone
 	if (!voidMap && !golden) mazHelp += "<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>";
 	//Cell
-	if (!golden && !boneShrine && !desolation) mazHelp += "<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell. <b>DOES NOT TAKE OVERKILL INTO ACCOUNT.</b></li>";
+	if (!golden && !boneShrine && !desolation) {
+		mazHelp += "<li><b>Cell</b> - The cell number between 1 and 100 where this line should trigger. 1 is the first cell of the Zone, 100 is the final cell.</li>";
+		mazHelp += "<li class=\"indent\"><b>DOES NOT TAKE OVERKILL INTO ACCOUNT.</b></li>";
+	}
 	//AutoLevel
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || hdFarm || toxicity)
 		mazHelp += "<li><b>Auto Level</b> - Will automatically identify the best map level for your farming needs by looking at highest affordable map level and then calculating if you can one shot enemies with Titimp buff. " + (radonSetting ? "Highly recommended to use 'Auto Equality: Advanced' with this setting as it'll speed up map runs by a significant amount." : "") + "</li>";
@@ -1809,7 +1824,10 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	if (mapBonus)
 		mazHelp += "<li><b>Map Level</b> - The map level you'd like this line to run. Can only input a value for a map level you'd be able to gain map stacks from.</li>";
 
-	if (!raiding && !smithyFarm && !hdFarm && !golden) mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line. Input will look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
+	if (!raiding && !smithyFarm && !hdFarm && !golden) {
+		mazHelp += "<li><b>Job Ratio</b> - The job ratio you want to use for this line.</li>";
+		mazHelp += "<li class=\"indent\">Input should look like '1,1,1,1' (Farmers, Lumberjacks, Miners, Scientists). If you don't want Farmers, Miners or Scientists you can input '0,1' for this setting.</li>";
+	}
 	if (mapFarm || mapBonus || insanity || alchemy || desolation || toxicity)
 		mazHelp += "<li><b>Special</b> - The type of cache you'd like to run during this map. Will override metal cache inputs with wooden caches during the Transmute challenge.</li>";
 
@@ -1851,7 +1869,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	}
 
 	if (mapBonus) {
-		mazHelp += "<li><b>Map Stacks</b> - How many stacks AT should obtain when running this line.</li>";
+		mazHelp += "<li><b>Map Stacks</b> - How many stacks the script should aim for when running this line.</li>";
 		//Run when HD Ratio above X value
 		mazHelp += "<li><b>Above X HD Ratio</b> - Will only run this line when your world HD Ratio (can be seen in Auto Maps status tooltip) is above this value (and above 0).<br>";
 	}
@@ -2341,10 +2359,8 @@ function addRow(varPrefix, titleText) {
 					elem.parentNode.style.background = natureStyle[index];
 				}
 
-				if (document.getElementById('windowSpecial' + x) !== null)
-					document.getElementById('windowSpecial' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].special ? autoTrimpSettings[settingName + 'DefaultSettings'][value].special : '0';
 				if ((!titleText.includes('Smithy') && !titleText.includes('Worshipper Farm') && !titleText.includes('HD Farm')) && document.getElementById('windowRepeat' + x) !== null)
-					autoTrimpSettings[settingName + 'DefaultSettings'][value].repeat ? autoTrimpSettings[settingName + 'DefaultSettings'][value].repeat : 0;
+					document.getElementById('windowRepeat' + x).value = 0;
 				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('Raiding') || titleText.includes('Smithy Farm')) && document.getElementById('windowRepeatEvery' + x) !== null)
 					document.getElementById('windowRepeatEvery' + x).value = 0;
 				if ((titleText.includes('Map Farm') || titleText.includes('Tribute Farm') || titleText.includes('Worshipper Farm') || titleText.includes('HD Farm') || titleText.includes('Raiding') || titleText.includes('Map Bonus') || titleText.includes('Smithy Farm') || titleText.includes('Desolation')) && document.getElementById('windowEndZone' + x) !== null)
@@ -2352,13 +2368,9 @@ function addRow(varPrefix, titleText) {
 				if (titleText.includes('Void Map') && document.getElementById('windowMaxVoidZone' + x) !== null)
 					document.getElementById('windowMaxVoidZone' + x).value = game.global.world < 6 ? 6 : game.global.world;
 				if (document.getElementById('windowRaidingZone' + x) !== null)
-					document.getElementById('windowRaidingZone' + x).value = elem.value
-				if (document.getElementById('windowMapTypeDropdown' + x) !== null)
-					document.getElementById('windowMapTypeDropdown' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].mapType || 'world';
-				if (document.getElementById('windowWorshipper' + x) !== null)
-					document.getElementById('windowWorshipper' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].worshipper
+					document.getElementById('windowRaidingZone' + x).value = elem.value;
 				if (document.getElementById('windowBoneGather' + x) !== null)
-					document.getElementById('windowBoneGather' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].gather
+					document.getElementById('windowBoneGather' + x).value = 'food';
 				if (document.getElementById('windowBuildings' + x) !== null)
 					document.getElementById('windowBuildings' + x).value = true;
 				if (document.getElementById('windowChallenge' + x) !== null)
@@ -2373,8 +2385,6 @@ function addRow(varPrefix, titleText) {
 					document.getElementById('windowPortalAfter' + x).value = false;
 				if (document.getElementById('windowAutoLevel' + x) !== null)
 					document.getElementById('windowAutoLevel' + x).value = true;
-				if (document.getElementById('windowJobRatio' + x) !== null && typeof (getPageSetting(settingName + 'DefaultSettings', currSettingUniverse).jobratio) !== 'undefined')
-					document.getElementById('windowJobRatio' + x).value = autoTrimpSettings[settingName + 'DefaultSettings'][value].jobratio
 				if (titleText.includes('Map Bonus') && document.getElementById('windowLevel' + x) !== null)
 					document.getElementById('windowLevel' + x).value = 0;
 				updateWindowPreset(x, varPrefix);
@@ -2402,10 +2412,7 @@ function addRow(varPrefix, titleText) {
 				var parent2 = document.getElementById('windowRow' + x);
 				if (parent2) {
 					parent2.style.display = 'block';
-					if (typeof (getPageSetting(settingName + 'DefaultSettings', currSettingUniverse).cell) !== 'undefined')
-						elemCell.value = autoTrimpSettings[settingName + 'DefaultSettings'][value].cell
-					else
-						elemCell.value = 1;
+					elemCell.value = 1;
 					updateWindowPreset(x, varPrefix);
 					break;
 				}
@@ -2468,8 +2475,8 @@ function removeRow(index, titleText) {
 	document.getElementById('windowWorld' + index).value = -2;
 	if (!golden && !desolation) document.getElementById('windowCell' + index).value = -1;
 	if (!quagmire && !boneShrine && !raiding && !voidMap && !golden && !desolation) document.getElementById('windowLevel' + index).value = 0;
-	if (mapFarm || alchemy || insanity || mapBonus || desolation || toxicity) document.getElementById('windowSpecial' + index).value = 0;
-	if (mapFarm || alchemy || mapBonus || insanity || toxicity) document.getElementById('windowGather' + index).value = 0;
+	if (mapFarm || alchemy || insanity || mapBonus || desolation || toxicity) document.getElementById('windowSpecial' + index).value = '0';
+	if (mapFarm || alchemy || mapBonus || insanity || toxicity) document.getElementById('windowGather' + index).value = 'food';
 	if (mapFarm || smithyFarm || mapBonus || hdFarm || toxicity) document.getElementById('windowRepeat' + index).value = 0;
 	if (hdFarm) document.getElementById('windowHDMult' + index).value = 0;
 	if (mapFarm || tributeFarm || worshipperFarm || raiding || smithyFarm || desolation || toxicity) document.getElementById('windowRepeatEvery' + index).value = 0;
@@ -2483,7 +2490,7 @@ function removeRow(index, titleText) {
 	if (hypothermia) document.getElementById('windowBonfire' + index).value = 0;
 	if (boneShrine) document.getElementById('windowBoneAmount' + index).value = 0;
 	if (boneShrine) document.getElementById('windowBoneBelow' + index).value = 0;
-	if (worshipperFarm) document.getElementById('windowWorshipper' + index).value = 0;
+	if (worshipperFarm) document.getElementById('windowWorshipper' + index).value = 50;
 	if (voidMap || mapFarm) document.getElementById('windowHDRatio' + index).value = 0;
 	if (voidMap) document.getElementById('windowVoidHDRatio' + index).value = 0;
 	if (mapFarm || tributeFarm || boneShrine) {
@@ -2511,13 +2518,13 @@ function removeRow(index, titleText) {
 		swapClass("icon-", "icon-checkbox-checked", checkBox);
 		checkBox.setAttribute('data-checked', false);
 	}
-	if (!raiding && !smithyFarm && !golden) document.getElementById('windowJobRatio' + index).value = 0;
+	if (!raiding && !smithyFarm && !golden) document.getElementById('windowJobRatio' + index).value = '1,1,1,1';
 	if (raiding || desolation) document.getElementById('windowPrestigeGoal' + index).value = 'All';
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) document.getElementById('windowRunType' + index).value = 'All';
 	if (raiding && !bionic) document.getElementById('windowRaidingDropdown' + index).value = 0;
 	if (tributeFarm || smithyFarm) document.getElementById('windowMapTypeDropdown' + index).value = 'Absolute';
 	if (mapFarm) document.getElementById('windowMapTypeDropdown' + index).value = 'Map Count';
-	if (boneShrine) document.getElementById('windowBoneGather' + index).value = 'Metal';
+	if (boneShrine) document.getElementById('windowBoneGather' + index).value = 'metal';
 
 	elem.style.display = 'none';
 	var btnElem = document.getElementById('windowAddRowBtn');
@@ -2534,8 +2541,9 @@ function removeRow(index, titleText) {
 }
 
 function updateWindowPreset(index, varPrefix) {
-	var varPrefix = !varPrefix ? '' : varPrefix;
-	var row = document.getElementById('windowRow' + index);
+	varPrefix = !varPrefix ? document.getElementById('tipTitle').innerHTML.replace(/ /g, '') : varPrefix;
+	if (!index) index = '';
+	row = document.getElementById('windowRow' + index);
 
 	var mapFarm = varPrefix.includes('MapFarm');
 	var mapBonus = varPrefix.includes('MapBonus');
@@ -2560,7 +2568,7 @@ function updateWindowPreset(index, varPrefix) {
 	var worshipperFarm = varPrefix.includes('Worshipper');
 
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) {
-		if (varPrefix !== '') {
+		if (index !== '') {
 			var runType = document.getElementById('windowRunType' + index).value;
 
 			if ((runType !== 'Filler' && row.classList.contains('windowChallengeOn' + varPrefix)) ||
@@ -2580,27 +2588,32 @@ function updateWindowPreset(index, varPrefix) {
 	}
 
 	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || insanity || alchemy || hypothermia || toxicity) {
-		var autoLevel = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? 'windowLevelOff' : 'windowLevelOn';
-		swapClass('windowLevel', autoLevel, row);
-		document.getElementById('windowLevel' + index).disabled = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? true : false;
+		if (index !== '') {
+			var autoLevel = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? 'windowLevelOff' : 'windowLevelOn';
+			swapClass('windowLevel', autoLevel, row);
+			document.getElementById('windowLevel' + index).disabled = document.getElementById('windowAutoLevel' + index).dataset.checked === 'true' ? true : false;
+		}
 	}
 
 	if (mapFarm || alchemy || mapBonus || insanity || desolation || toxicity) {
-		var special = document.getElementById('windowSpecial' + index).value;
-
-		newClass = (special === 'hc' || special === 'lc') ? 'windowGatherOn' : 'windowGatherOff';
-		swapClass('windowGather', newClass, row);
+		if (index !== '' || mapBonus) {
+			var special = document.getElementById('windowSpecial' + index).value;
+			newClass = (special === 'hc' || special === 'lc') ? 'windowGatherOn' : 'windowGatherOff';
+			swapClass('windowGather', newClass, row);
+		}
 	}
 
 	if (hdFarm) {
-		var special = document.getElementById('windowHDType' + index).value;
+		if (index !== '') {
+			var special = document.getElementById('windowHDType' + index).value;
 
-		newClass = (special === 'maplevel') ? 'windowMapLevelOff' : 'windowMapLevelOn';
-		swapClass('windowMapLevel', newClass, row);
-		if (special === 'maplevel') {
-			document.getElementById('windowRepeat' + index).parentNode.children[0].innerHTML = 'Map Level'
-		} else {
-			document.getElementById('windowRepeat' + index).parentNode.children[0].innerHTML = ''
+			newClass = (special === 'maplevel') ? 'windowMapLevelOff' : 'windowMapLevelOn';
+			swapClass('windowMapLevel', newClass, row);
+			if (special === 'maplevel') {
+				document.getElementById('windowRepeat' + index).parentNode.children[0].innerHTML = 'Map Level';
+			} else {
+				document.getElementById('windowRepeat' + index).parentNode.children[0].innerHTML = '';
+			}
 		}
 	}
 

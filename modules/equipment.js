@@ -461,23 +461,27 @@ function zoneGoCheck(setting, farmType) {
 
 function autoEquip() {
 
-	if (
-		!getPageSetting('equipOn') ||
-		([2, 3].indexOf(currQuest()) >= 0 && game.global.lastClearedCell < 90) ||
-		(mapSettings.mapName === 'Smithy Farm') ||
-		(game.mapUnlocks.AncientTreasure.canRunOnce &&
-			(mapSettings.runAtlantrimp ||
-				(game.global.mapsActive && (getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Trimple Of Doom'))
-			)
-		) || settingChangedTimeout
-	)
-		return;
-
+	//Disabling autoequip if the autoequip setting is disabled.
+	if (!getPageSetting('equipOn')) return;
+	//If running a wood or metal quest then disable autoequip
+	if ([2, 3].indexOf(currQuest()) >= 0) return;
+	//If smithy farming then disable autoequip
+	if (mapSettings.mapName === 'Smithy Farm') return;
+	//If we have just changed a setting that procs settingChangedTimeout then delay autoequip until the timeout has finished
+	if (settingChangedTimeout) return;
+	//Trimple/Atlantrimp overrides for don't run when farming and the user intends to run them or when inside the map itself.
+	if (game.mapUnlocks.AncientTreasure.canRunOnce) {
+		if (mapSettings.runAtlantrimp) return;
+		else if (MODULES.mapFunctions.runUniqueMap === 'Atlantrimp' || MODULES.mapFunctions.runUniqueMap === 'Trimple Of Doom') return;
+		else if (game.global.mapsActive && (getCurrentMapObject().name === 'Atlantrimp' || getCurrentMapObject().name === 'Trimple Of Doom')) return;
+	}
+	//Don't run before miners have been unlocked. This is to prevent a lengthy delay before miners are purchased when it buys several kinda unnecessary equips.
 	if (game.upgrades.Miners.allowed && !game.upgrades.Miners.done) return;
 
 	//This ignores HD Farm & Hits Survived overrides!
 	var zoneGo = zoneGoCheck(getPageSetting('equipZone')).active;
 
+	//Loops through equips and buys prestiges if we can afford them and equipPrestige is set to 'AE: Always Prestige' (3).
 	var equipPrestigeSetting = getPageSetting('equipPrestige');
 	if (equipPrestigeSetting === 3 && !zoneGo) {
 		var prestigeLeft = false;
