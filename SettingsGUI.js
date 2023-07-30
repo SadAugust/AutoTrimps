@@ -4248,13 +4248,13 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		}
 		var btn = document.createElement("select");
 		btn.id = id;
-		//btn.setAttribute("class", "select2");
-		if (game.options.menu.darkTheme.enabled === 2)
+		/* if (game.options.menu.darkTheme.enabled === 2)
 			btn.setAttribute("style", "color: #C8C8C8; font-size: 0.9vw; min-width: 13.50vw; min-height: 1.7vw; text-align:right;");
 		else
-			btn.setAttribute("style", "color:black; font-size: 0.9vw; min-width: 13.50vw; min-height: 1.7vw; text-align:right;");
+			btn.setAttribute("style", "color:black; font-size: 0.9vw; min-width: 13.50vw; min-height: 1.7vw; text-align:right;"); */
 		btnParent.setAttribute("onmouseover", 'tooltip(\"' + name() + '\", \"customText\", event, \"' + description() + '\")');
 		btnParent.setAttribute("onmouseout", 'tooltip("hide")');
+
 		btnParent.setAttribute("onchange", 'settingChanged("' + id + '")');
 		var listItems = list();
 		for (var item in listItems) {
@@ -4264,9 +4264,10 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			btn.appendChild(option);
 		}
 		btn.value = autoTrimpSettings[id].selected;
-		btn.setAttribute("data-prefix", name());
+		/* btn.setAttribute("data-prefix", name());
 		btnParent.setAttribute("data-prefix", name());
-		btnParent.setAttribute('class', 'select-wrapper');
+		btnParent.setAttribute('class', 'select-wrapper'); */
+		btn.setAttribute("class", "select2");
 		btnParent.appendChild(btn);
 		if (container) document.getElementById(container).appendChild(btnParent);
 		else document.getElementById("autoSettings").appendChild(btnParent);
@@ -4316,7 +4317,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 		if (require) autoTrimpSettings[id].require = require;
 		if (id === 'dailyPortal') {
 			btnParent.setAttribute('class', 'toggleConfigBtnLocal settingsBtnLocal settingsBtnfalse')
-			btnParent.setAttribute('style', 'max-height: 3.1vh; display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;border-bottom: 1px solid black !important;')
+			btnParent.setAttribute('style', 'max-height: 3vh; display: inline-block; vertical-align: top; margin-left: 1vw; margin-bottom: 1vw; width: 13.142vw;border-bottom: 1px solid black !important;')
 			btn.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1vw; height: auto;")
 		}
 		if (container) document.getElementById(container).appendChild(btnParent);
@@ -5362,8 +5363,8 @@ function updateCustomButtons(initialLoad) {
 					elem.appendChild(option);
 				}
 				elem.value = itemSelected;
-				elem.parentNode.setAttribute("data-prefix", item.name());
-				elem = elem.parentNode;
+				/* elem.parentNode.setAttribute("data-prefix", item.name());
+				elem = elem.parentNode; */
 			}
 			if (item.type === 'multitoggle') {
 				elem.setAttribute("onmouseover", 'tooltip(\"' + item.name().join(' / ') + '\", \"customText\", event, \"' + item.description() + '\")');
@@ -5422,8 +5423,28 @@ function updateCustomButtons(initialLoad) {
 		if (document.getElementById("tabBeta") !== null) {
 			document.getElementById("tabBeta").style.display = !gameUserCheck() ? "none" : "";
 		}
+
+		$(document).ready(function () {
+			$('.select2').select2({
+				templateSelection: formatDropdownPrefix,
+				escapeMarkup: function (m) {
+					return m;
+				},
+			});
+		});
 	}
 	modifyParentNodeUniverseSwap();
+}
+
+function formatDropdownPrefix(item) {
+	var prefix = item._resultId.split('-');
+	var prefixName;
+	var text = item.text;
+	if (prefix)
+		prefixName = autoTrimpSettings[prefix[1]].name() + ': ';
+	else
+		prefixName = '';
+	return "<font color='#00A7E1'>" + prefixName + "</font> <float='right'>" + text + "</float>";
 }
 
 function settingUniverse(setting) {

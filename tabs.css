@@ -1858,27 +1858,32 @@ h9 {
 }
 
 
-
-
-
-
-
 .select2 {
 	position: relative;
 	font-size: 0.9vw;
 	color: white;
 	min-width: 13.50vw;
-	min-height: 2vw;
-	text-align: right;
+	max-width: 13.50vw;
+	margin-bottom: 0.1vw;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
-	position: relative;
-	border: 1px solid white;
+
 	background-color: #000;
+	border: 1px white solid;
 	color: white;
-	text-align: right;
-	min-height: 1.7vw
+	text-align: left;
+	min-height: 1.5vw;
+	max-height: 1.5vw;
+}
+
+.select2-container .select2-selection--single {
+	display: contents;
+}
+
+.select2-control .select2-container {
+	height: auto !important;
+	padding: 0;
 }
 
 .select2-search--dropdown {
@@ -1895,6 +1900,18 @@ h9 {
 	background-color: #000;
 	color: white;
 }
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+	line-height: 1.3vw;
+	width: -webkit-fill-available;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+	height: 1.3vw;
+	right: -3px;
+}
+
+
 
 .select-wrapper {
 

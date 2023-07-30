@@ -210,7 +210,6 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 	const runningUnlucky = challengeActive('Unlucky')
 	const ourHealth = calcOurHealth((game.global.universe === 2 ? runningQuest : universeSetting), 'map');
 	const ourBlock = game.global.universe === 1 ? calcOurBlock(universeSetting, 'map') : 0;
-	const dailyEmpowerToggle = getPageSetting('empowerAutoEquality');
 	const dailyCrit = challengeActive('Daily') && typeof game.global.dailyChallenge.crits !== 'undefined';
 	const dailyExplosive = isDaily && typeof game.global.dailyChallenge.explosive !== 'undefined' //Explosive
 
@@ -244,10 +243,8 @@ function autoMapLevel(special, maxLevel, minLevel, statCheck) {
 		}
 		var enemyDmg = calcEnemyAttackCore('map', z + mapLevel, cell, 'Snimp', false, false, universeSetting) * difficulty;
 
-		if (dailyCrit || dailyExplosive) {
-			if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
-			if (dailyEmpowerToggle && dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
-		}
+		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyCrit && getPageSetting('IgnoreCrits') === 0) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 
 		if (challengeActive('Duel')) {
 			enemyDmg *= 10;
@@ -276,7 +273,6 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 	if (!currentCell) currentCell = mapType === 'world' || mapType === 'void' ? 98 : 20;
 	if (!difficulty) difficulty = 1;
 	if (!farmType) farmType = 'gamma';
-	if (!hits) hits = 1;
 
 	if (Object.keys(game.global.gridArray).length === 0) return;
 	if (game.portal.Equality.radLevel === 0 || game.global.universe === 1)
@@ -311,8 +307,11 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
 		if (dailyEmpowerToggle && dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 	}
-	if (mapType === 'world' && dailyEmpower && (dailyCrit || dailyExplosive)) {
+	else if (mapType === 'world' && (dailyEmpower && (dailyCrit || dailyExplosive) || hits)) {
 		//if (dailyExplosive) enemyDmg *= 1 + dailyModifiers.explosive.getMult(game.global.dailyChallenge.explosive.strength);
+		if (dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
+	}
+	else if (hits) {
 		if (dailyCrit) enemyDmg *= dailyModifiers.crits.getMult(game.global.dailyChallenge.crits.strength);
 	}
 
@@ -334,6 +333,7 @@ function equalityQuery(enemyName, zone, currentCell, mapType, difficulty, farmTy
 		enemyDmg = calcEnemyAttackCore(mapType, zone, currentCell, enemyName, false, calcMutationAttack(zone), 0);
 		enemyHealth = calcEnemyHealthCore(mapType, zone, currentCell, enemyName, calcMutationHealth(zone));
 	}
+	if (!hits) hits = 1;
 	enemyDmg *= hits;
 
 	if (forceOK) {
@@ -428,7 +428,6 @@ function equalityManagement() {
 	var runningGlass = challengeActive('Glass');
 	var runningDesolation = challengeActive('Desolation');
 	var runningSmithless = challengeActive('Smithless') && !mapping && game.global.world % 25 === 0 && game.global.lastClearedCell === -1 && game.global.gridArray[0].ubersmith; //If UberSmith is active and not in a map
-
 
 	//Perk/Talent conditions
 	var noFrenzy = game.portal.Frenzy.radLevel > 0 && !autoBattle.oneTimers.Mass_Hysteria.owned;

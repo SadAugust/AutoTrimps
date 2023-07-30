@@ -113,7 +113,7 @@ function delayStart() {
 		return;
 	}
 
-	/* //Loading jQuery select2 to style dropdown boxes more than basic html/css can.
+	//Loading jQuery select2 to style dropdown boxes more than basic html/css can.
 	var script = document.createElement("link");
 	script.rel = 'stylesheet';
 	script.href = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css';
@@ -125,7 +125,7 @@ function delayStart() {
 	script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
 	script.type = 'text/javascript';
 	// Append the script to the document
-	document.head.appendChild(script); */
+	document.head.appendChild(script);
 
 	//Loads the settings from the save file, settingsGUI & the various modules installed.
 	initializeAutoTrimps();
@@ -197,23 +197,8 @@ function delayStartAgain() {
 	universeSwapped();
 	//Loads my game settings
 	loadAugustSettings();
-	/* $(document).ready(function () {
-		$('.select2').select2({
-			templateSelection: format,
-		});
-	}); */
 }
 
-function format(item) {
-	element = $(item.element);
-	text = item.text;
-	prefix = element.attr["data-prefix"];
-	if (prefix !== undefined)
-		prefix = prefix + ' ';
-	else
-		prefix = '';
-	return prefix + text;
-}
 //Displays Perky UI when changing universes.
 function universeSwapped() {
 	//Hard to do an alternative to this. Would have linked it to the swapPortalUniverse() function but the force going back to U1 button in U2 causes issues with that.
