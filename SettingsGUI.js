@@ -123,7 +123,7 @@ function initializeAllTabs() {
 	a_2.appendChild(document.createTextNode("x"));
 	li_2.appendChild(a_2);
 	li_2.setAttribute("style", "float:right!important;");
-	li_2.setAttribute("onmouseover", 'tooltip("Exit (duplicate)", "customText", event, "Closes/toggles/hides AutoTrimps (just a UI shortcut)")');
+	li_2.setAttribute("onmouseover", 'tooltip("Exit", "customText", event, "Closes/toggles/hides AutoTrimps (just a UI shortcut)")');
 	li_2.setAttribute("onmouseout", 'tooltip("hide")');
 	addtabsUL.appendChild(li_2);
 	addtabsUL.appendChild(li_1);
@@ -147,7 +147,7 @@ function initializeAllSettings() {
 				description += "<p><b>Manual Gather</b><br>Disables this setting.</p>";
 				description += "<p><b>Auto Gather</b><br>Automatically switch your gathering between different resources and the building queue depending on what it deems necessary.</p>";
 				description += "<p><b>Mining Only</b><br>Sets gather to Mining. If buildings are in the queue then they will override this. Only use this if you are past the early stages of the game and have Foremany unlocked.</p>";
-				description += "<p><b>Science Research OFF</b><br>Works the same as 'Auto Gather' but stops Science from being gathered.</p>";
+				description += "<p><b>Science Research Off</b><br>Works the same as 'Auto Gather' but stops Science from being gathered.</p>";
 				description += "<p><b>Recommended:</b> Auto Gather</p>";
 				return description;
 			}, 'multitoggle', 0, null, 'Core', [1, 2]);
@@ -164,8 +164,9 @@ function initializeAllSettings() {
 		createSetting('TrapTrimps',
 			function () { return ('Trap Trimps') },
 			function () {
-				var description = "<p>Automatically builds traps and traps trimps when needed. <b>Upgrade setting must be set to 'Buy All Upgrades' for this to work!</b></p>";
-				description += "<p><b>Recommended:</b> On whilst highest zone is below 30 otherwise off</p>";
+				var description = "<p>Automatically builds traps and traps trimps when needed.</p>";
+				description += "<p>Upgrade setting must be set to <b>Buy All Upgrades</b> for this to work</p>";
+				description += "<p><b>Recommended:</b> On whilst highest zone is below 30</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [1, 2]);
 		createSetting('downloadSaves',
@@ -185,7 +186,7 @@ function initializeAllSettings() {
 			function () { return ('Auto Allocate Perks') },
 			function () {
 				var calcName = currSettingUniverse === 2 ? "Surky" : "Perky";
-				var description = "<p>Uses a basic version of <b>" + calcName + "</b> to identify the most optimal perk distribution when auto portaling.</p>";
+				var description = "<p>Uses a modified version of <b>" + calcName + "</b> to identify the most optimal perk distribution when auto portaling.</p>";
 				description += "<p>There are inputs you can adjust in the <b>Portal</b> window to allow you to adjust how it distributes perks.</p>";
 				description += "<p>If you want more advanced settings import your save into <b>" + calcName + "</b>.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
@@ -204,7 +205,7 @@ function initializeAllSettings() {
 				var description = "<p>Will automatically swap <b>" + calcName + "</b> presets when portaling into runs.</p>";
 				description += "<p>Fillers (non daily/" + cinf() + " runs) will load <b>" + fillerPreset + ".</b></p>";
 				description += "<p>Dailies will load <b>" + dailyPreset + "</b>.</p>";
-				description += cinf() + "'s or Mayhem-like challenges will load <b>" + c2Preset + "</b>.</p>";
+				description += c2Description() + " will load <b>" + c2Preset + "</b>.</p>";
 
 				description += "Challenges that have a dedicated preset (<b>" + universeChallenges + "</b>) will be loaded when starting that challenge.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
@@ -266,7 +267,8 @@ function initializeAllSettings() {
 		createSetting('presetSwapMutators',
 			function () { return ('Preset Swap Mutators') },
 			function () {
-				var description = "<p>Will automatically load the preset that corresponds to your run type after auto portaling. For info on which preset is loaded and when, mouseover the presets in the games mutator window.</p>";
+				var description = "<p>Will automatically load the preset that corresponds to your run type after auto portaling.</p>";
+				description += "<p>For info on which preset is loaded and when, mouseover the presets in the games <b>Mutators</b> window.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [2],
@@ -290,13 +292,13 @@ function initializeAllSettings() {
 			function () { return ('Auto Portal') },
 			function () {
 				var c2setting = currSettingUniverse === 2 ? "Challenge 3" : "Challenge 2";
-				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") are run with this.";
+				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") can be run with this but they will use the <b>Portal Zone</b> input for when to portal.";
 				var description = "<p>Will automatically portal into different challenges depending on the way you setup the AutoPortal related settings.</p>";
 				description += "<p><b>" + resource() + " Challenges will appear here when they've been unlocked in the game.</b></p>";
 				description += "<p>Additional settings appear when <b>" + resource() + " Per Hour</b> or <b>Custom</b> are selected.</p>";
 				description += "<p><b>Off</b><br>Disables this setting.</p>";
-				description += "<p><b>" + resource() + " Per Hour</b><br>Portals into new runs when your " + resourceHour().toLowerCase() + "/hr goes below your current runs best " + resourceHour().toLowerCase() + "/hr.</p>";
-				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resourceHour().toLowerCase() + "/hr to (best - buffer setting) " + resourceHour().toLowerCase() + "/hr.</p>";
+				description += "<p><b>" + resource() + " Per Hour</b><br>Portals into new runs when your " + resource().toLowerCase() + " per hour goes below your current runs best " + resource().toLowerCase() + " per hour.</p>";
+				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resource().toLowerCase() + " per hour to (best - buffer setting) " + resource().toLowerCase() + " per hour.</p>";
 				description += "<p><b>Specific Challenges</b><br>If a specific challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>";
 				description += "<p><b>Custom</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Portal Zone</b> setting.</p>";
 				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + c2setting + "</b> setting at the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.<br>" + specialChall + "</p>";
@@ -319,9 +321,11 @@ function initializeAllSettings() {
 		createSetting('heliumC2Challenge',
 			function () { return (cinf()) },
 			function () {
-				var description = "<p>Automatically portal into this C" + cinf()[1] + " when using the <b>Challenge" + cinf()[1] + "</b> AutoPortal setting.</p>";
-				description += "<p><b>C" + cinf()[1] + " challenges will appear here when they've been unlocked in the game.</b></p>";
-				description += "<p><b>Must end the challenges with the <b>Finish " + cinf() + "</b> setting in the <b>" + cinf() + "</b> tab if you want the run to end.</b>";
+				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") can be run with this but they will use the <b>Portal Zone</b> input for when to portal.";
+				var description = "<p>Automatically portal into this C" + cinf()[1] + " when using the <b>Challenge " + cinf()[1] + "</b> AutoPortal setting.</p>";
+				description += "<p>C" + cinf()[1] + " challenges will appear here when they've been unlocked in the game.</p>";
+				description += "<p>Must end the challenges with the <b>Finish " + cinf() + "</b> setting in the <b>" + cinf() + "</b> tab if you want the run to end.</p>";
+				description += "<p>" + specialChall + "</p>";
 				description += "<p><b>Recommended:</b> The C" + cinf()[1] + " you want to run</p>";
 				return description;
 			}, 'dropdown', 'None', function () { return heliumC2Challenges() }, 'Core', [1, 2],
@@ -332,19 +336,23 @@ function initializeAllSettings() {
 		createSetting('autoPortalZone',
 			function () { return ('Portal Zone') },
 			function () {
-				var description = "<p>Will automatically portal once this zone is reached when using the <b>Custom</b> AutoPortal setting.</p>";
-				description += "<p><b>Setting this to 200 would portal when you reach zone 200.</b></p>";
+				var description = "<p>Will automatically portal once this zone is reached when using the <b>Custom</b> Auto Portal setting.</p>";
+				description += "<p>Setting this to <b>200</b> would portal when you reach <b>zone 200</b>.</p>";
 				description += "<p><b>Recommended:</b> The zone you would like your run to end</p>";
 				return description;
 			}, 'value', 999, null, 'Core', [1, 2],
 			function () {
-				return (
-					getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 3' || getPageSetting('autoPortal', currSettingUniverse) === 'Custom')
+				if (getPageSetting('autoPortal', currSettingUniverse) === 'Custom') return true;
+				if (getPageSetting('autoPortal', currSettingUniverse).includes('Challenge')) {
+					var challenges = ['Frigid', 'Experience', 'Mayhem', 'Pandemonium', 'Desolation'];
+					if (challenges.indexOf(getPageSetting('heliumC2Challenge', currSettingUniverse)) !== -1) return true;
+				}
 			});
+
 		createSetting('heHrDontPortalBefore',
 			function () { return ('Don\'t Portal Before') },
 			function () {
-				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>" + resource() + " Per Hour</b> AutoPortal setting.</p>";
+				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>" + resource() + " Per Hour</b> Auto Portal setting.</p>";
 				description += "<p>It is an additional check that prevents drops in " + resourceHour().toLowerCase() + "/hr from triggering autoportal.</p>";
 				description += "<p><b>Set to 0 or -1 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> The minimum zone you would like your run to reach</p>";
@@ -357,8 +365,8 @@ function initializeAllSettings() {
 		createSetting('heliumHrBuffer',
 			function () { return (resourceHour() + '/Hr Buffer %') },
 			function () {
-				var description = "<p>When using the " + resourceHour() + " Per Hour AutoPortal setting, it will portal if your " + resourceHour().toLowerCase() + "/hr drops by this settings % input lower than your best for current run.</p>";
-				description += "<p>Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).</p>";
+				var description = "<p>When using the " + resource() + " Per Hour AutoPortal setting, it will portal if your " + resourceHour().toLowerCase() + "/hr drops by this settings % input lower than your best for current run.</p>";
+				description += "<p>Allows portaling midzone if you exceed the set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone if you fall below 10% buffer).</p>";
 				description += "<p><b>Set to 0 to disable this setting.</b></p>";
 				description += "<p><b>Recommended:</b> 4</p>";
 				return description;
@@ -374,7 +382,7 @@ function initializeAllSettings() {
 				return portalOptions;
 			},
 			function () {
-				var description = "<p>How you would like to portal when below your " + resourceHour().toLowerCase() + "/hr threshold.</p>";
+				var description = "<p>How you would like to portal when below your " + resource().toLowerCase() + " per hour threshold.</p>";
 				description += "<p><b>Auto Portal Immediately</b><br>Will auto portal straight away.</p>";
 				description += "<p><b>Portal after voids</b><br>Will run any remaining void maps then proceed to portal.</p>";
 				if (currSettingUniverse === 1 && game.stats.highestLevel.valueTotal() >= 230) description += "<p><b>Portal after poison voids</b><br>Will continue your run until you reach the next poison zone and run void maps there.</p>";
@@ -388,7 +396,7 @@ function initializeAllSettings() {
 		createSetting('heliumHrExitSpire',
 			function () { return ('Exit Spires for Voids') },
 			function () {
-				var description = "<p>If enabled will automatically exit Spires to run your voids earlier.</p>";
+				var description = "<p>If enabled will automatically exit Spires to run your voids earlier when the <b>" + resource() + " Per Hour</b> Auto Portal setting is wanting to portal.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, 'Core', [1],
@@ -1197,13 +1205,13 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('pandemonium', currSettingUniverse) && autoTrimpSettings.pandemonium.require()) });
 
 		createSetting('pandemoniumAE',
-			function () { return (['P: AutoEquip Off', 'P: AutoEquip', 'P AE: LMC', 'P AE: Huge Cache']) },
+			function () { return (['P: Auto Equip Off', 'P: Auto Equip', 'P AE: LMC', 'P AE: Huge Cache']) },
 			function () {
 				var description = "<p>This setting provides some equipment farming possibilites to help speedup runs.</p>";
 				description += "<p><b>Will override equipment purchasing settings when enabled.</b></p>";
 				description += "<p><b>Metal farming will only happen if pandemonium stacks are at 0.</b></p>";
-				description += "<p><b>P: AutoEquip Off</b><br>Disables this setting.</p>";
-				description += "<p><b>P: AutoEquip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.</p>";
+				description += "<p><b>P: Auto Equip Off</b><br>Disables this setting.</p>";
+				description += "<p><b>P: Auto Equip</b><br>Will automatically purchase equipment during Pandemonium regardless of efficiency.</p>";
 				description += "<p><b>P AE: LMC</b><br>Provides settings to run maps if the cost of equipment levels is less than a single large metal cache. Overrides worker settings to ensure that you farm as much metal as possible.</p>";
 				description += "<p><b>P AE: Huge Cache</b><br>Uses the same settings as <b>P: AE LMC</b> but changes to if an equip will cost less than a single huge cache that procs metal. Will automatically switch caches between LMC and HC depending on the cost of equipment to ensure a fast farming speed</p>";
 
@@ -1729,7 +1737,7 @@ function initializeAllSettings() {
 	const displayEquipment = true;
 	if (displayEquipment) {
 		createSetting('equipOn',
-			function () { return ('AutoEquip') },
+			function () { return ('Auto Equip') },
 			function () {
 				var description = "<p>Master switch for whether the script will do any form of equipment purchasing.</p>";
 				description += "<p>There's settings in here to identify when to purchase gear and if it should purchase prestiges.<br></p>";
@@ -1775,9 +1783,10 @@ function initializeAllSettings() {
 		createSetting('equipZone',
 			function () { return ('AE: Zone') },
 			function () {
-				var description = "<p>What zone to stop caring about what percentage of resources you're spending and buy as many prestiges and equipment as possible. It will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available.</p>";
+				var description = "<p>What zone to stop caring about what percentage of resources you're spending and buy as many prestiges and equipment as possible.</p>";
 				description += "<p>Can input multiple zones such as <b>200,231,251</b>, doing this will spend all your resources purchasing gear and prestiges on each zone input.</p>";
 				description += "<p>You are able to enter a zone range, this can be done by using a decimal point between number ranges e.g. <b>23.120</b> which will cause the zone check to set your purchasing percentage to 100% between zones 23 and 120. <b>This can be used in conjunction with other zones too, just seperate inputs with commas!</b></p>";
+				description += "<p>If inside one of these zones it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available.</p>"
 				description += "<p><b>Recommended:</b> 999</p>";
 				return description;
 			}, 'multiTextValue', [-1], null, "Equipment", [1, 2],
@@ -1786,7 +1795,6 @@ function initializeAllSettings() {
 			function () { return ('AE: Percent') },
 			function () {
 				var description = "<p>What percent of resources you'd like to spend on equipment.</p>";
-				description += "<p>Both <b>AE: HD Cut-off</b> and <AE: Zone</b> will override this input when they are active and set it to 100.</p>";
 				description += "<p><b>Recommended:</b> 10</p>";
 				return description;
 			}, 'value', 1, null, "Equipment", [1, 2],
@@ -1794,7 +1802,7 @@ function initializeAllSettings() {
 		createSetting('equip2',
 			function () { return ('AE: 2') },
 			function () {
-				var description = "<p>Will also purchase a second level of weapons and armor regardless of efficiency.</p>";
+				var description = "<p>Will always purchase a second level of weapons and armor regardless of efficiency.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, "Equipment", [1, 2],
@@ -1823,12 +1831,14 @@ function initializeAllSettings() {
 		createSetting('equipPrestigePct',
 			function () { return ('AE: Prestige Pct') },
 			function () {
+				var trimple = currSettingUniverse === 1 ? "<b>Trimple of Doom</b>" : "<b>Atlantrimp</b>";
 				var description = "<p>What percent of resources you'd like to spend on equipment before prestiges will be priorities over them.</p>";
-				description += "<p>Both <b>AE: HD Cut-off</b> and <AE: Zone</b> will override this input when they are active and set it to 100.</p>";
-				description += "<p><b>Recommended:</b> 10</p>";
+				description += "Only impacts prestige purchasing when <b>AE: Prestige</b> is selected and " + trimple + " has been run.</p>";
+
+				description += "<p><b>Recommended:</b> 6</p>";
 				return description;
 			}, 'value', 6, null, "Equipment", [1, 2],
-			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
+			function () { return (getPageSetting('equipOn', currSettingUniverse) && getPageSetting('equipPrestige', currSettingUniverse) === 2) });
 
 		createSetting('equipNoShields',
 			function () { return ('AE: No Shields') },
@@ -1838,7 +1848,7 @@ function initializeAllSettings() {
 				description += "<p><b>Recommended:</b> Off</p>";
 				return description;
 			}, 'boolean', false, null, "Equipment", [1, 2],
-			function () { return (getPageSetting('equipOn', currSettingUniverse)) }); 22
+			function () { return (getPageSetting('equipOn', currSettingUniverse)) });
 
 		createSetting('equipPortal',
 			function () { return ('AE: Portal') },
@@ -1877,15 +1887,15 @@ function initializeAllSettings() {
 			'dropdown', 'Off', function () {
 				var equips = ['Off', 'Supershield', 'Dagadder', 'Bootboost', 'Megamace', 'Hellishmet', 'Polierarm', 'Pantastic', 'Axeidic', 'Smoldershoulder', 'Greatersword', 'Bestplate'];
 				if (game.global.slowDone) {
-					equips.push('Harmbalest')
-					equips.push('GambesOP')
+					equips.push('Harmbalest');
+					equips.push('GambesOP');
 				}
 				return equips;
 			}, "Equipment", [1, 2]);
 		createSetting('ForcePresZ',
 			function () { return ('Force Prestige Z') },
 			function () {
-				var description = "<p>On and after this zone is reached, always try to prestige for everything immediately.</p>";
+				var description = "<p>On and after this zone is reached, always try to prestige for everything immediately regardless of <b>Prestige Climb</b> input unless it is set to <b>Off</b>.</p>";
 				description += "<p>The <b>Prestige Skip</b> setting has the potential to disable this if it's enabled.</p>";
 				description += "<p><b>Disable with -1.</b></p>";
 				description += "<p><b>Recommended:</b> The zone you start heavily slowing down</p>";
@@ -2375,7 +2385,7 @@ function initializeAllSettings() {
 			function () {
 				var description = "<p>Controls how combat is handled by the script.</p>";
 				description += "<p><b>Better Auto Fight Off</b><br>Disables this setting.</p>";
-				description += "<p><b>Better Auto Fight</b><br>Sends a new army to fight if : current army is dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds.</p>";
+				description += "<p><b>Better Auto Fight</b><br>Sends a new army to fight if your current army is dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds.</p>";
 				description += "<p><b>Vanilla</b><br>Will make sure the ingames AutoFight is enabled at all times and ensures you start fighting on portal.</p>";
 				description += "<p><b>Recommended:</b> Better Auto Fight</p>";
 				return description;
@@ -4099,7 +4109,7 @@ function cinf() {
 }
 
 function c2Description() {
-	return cinf() + "'s or special challenge (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ")";
+	return cinf() + "'s or special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ")";
 }
 
 //Check if the gameUser setting has been set to a valid user.
@@ -5215,8 +5225,10 @@ function autoToggle(what) {
 		if ($item !== null) {
 			if ($item.style.display === 'block')
 				$item.style.display = 'none';
-			else
+			else {
 				$item.style.display = 'block';
+				updateCustomButtons(true);
+			}
 		}
 	}
 	updateCustomButtons();
@@ -5575,7 +5587,7 @@ function setupTimeWarpAT() {
 			atSettingsContainer.setAttribute("style", "position: relative; min-height: 1px; padding-left: 5px; font-size: 1.1vw; height: auto; border-color: #5D5D5D;");
 			atSettingsContainer.setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn4');
 			atSettingsContainer.innerHTML = 'AutoTrimp Settings';
-			atSettingsContainer.setAttribute("onClick", "autoToggle()");
+			atSettingsContainer.setAttribute("onClick", "autoToggle();");
 			atSettingsContainer.setAttribute("onmouseover", 'tooltip(\"AutoTrimp Settings\", \"customText\", event, \"Click to open the AutoTrimps Settings menu.\")');
 			atSettingsContainer.setAttribute("onmouseout", 'tooltip("hide")');
 
@@ -5685,7 +5697,7 @@ function setupATButtons() {
 	newItem.appendChild(document.createTextNode("AutoTrimps"));
 	newItem.setAttribute("id", "atSettingsBtn");
 	newItem.setAttribute("class", "btn btn-default");
-	newItem.setAttribute("onclick", "autoToggle()");
+	newItem.setAttribute("onclick", "autoToggle();");
 	var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
 	settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
 
@@ -5826,7 +5838,7 @@ function setupATButtons() {
 
 	//Text
 	var atEquipText = document.createElement("DIV");
-	atEquipText.innerHTML = 'AT AutoEquip';
+	atEquipText.innerHTML = 'AT Auto Equip';
 	atEquipText.setAttribute("id", "autoEquipLabel");
 	atEquipText.setAttribute("onClick", "settingChanged('equipOn', true)");
 

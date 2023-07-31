@@ -190,8 +190,6 @@ function delayStartAgain() {
 	//Starts the loop in either normal or TimeLapse mode.
 	toggleCatchUpMode();
 
-	//Need to updateCustomButtons after we've loaded the script so that the settings have the correct values.
-	updateCustomButtons(true);
 	localStorage.setItem('mutatorPresets', autoTrimpSettings.mutatorPresets.valueU2);
 	//Setup Perky/Surky UI
 	universeSwapped();

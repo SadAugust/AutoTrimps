@@ -1867,12 +1867,15 @@ h9 {
 	margin-bottom: 0.1vw;
 }
 
+/* Dropdown results.
+Appears when you click the dropdown button! */
 .select2-container--default .select2-results>.select2-results__options {
 	max-height: 28vw !important;
 	font-size: 0.9vw;
 	line-height: 0.8vw;
 }
 
+/* Dropdown text button */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
 
 	background-color: #000;
@@ -1915,7 +1918,7 @@ h9 {
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
 	height: 1.3vw;
-	right: -4px;
+	right: 0px;
 }
 
 
