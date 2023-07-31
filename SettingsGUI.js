@@ -1865,7 +1865,7 @@ function initializeAllSettings() {
 			}, 'boolean', false, null, "Equipment", [1]);
 
 		createSetting('Prestige',
-			function () { return ('Prestige') },
+			function () { return ('Prestige Climb') },
 			function () {
 				var description = "<p>Acquire prestiges through the selected item (inclusive) as soon as they are available in maps.</p>";
 				description += "<p><b>Forces equip first mode.<br>Auto Maps must be enabled.</b></p>";

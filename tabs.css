@@ -1860,11 +1860,17 @@ h9 {
 
 .select2 {
 	position: relative;
-	font-size: 0.9vw;
+	font-size: 0.8vw;
 	color: white;
 	min-width: 13.50vw;
 	max-width: 13.50vw;
 	margin-bottom: 0.1vw;
+}
+
+.select2-container--default .select2-results>.select2-results__options {
+	max-height: 28vw !important;
+	font-size: 0.9vw;
+	line-height: 0.8vw;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
@@ -1875,6 +1881,7 @@ h9 {
 	text-align: left;
 	min-height: 1.5vw;
 	max-height: 1.5vw;
+	padding-left: 0.25vw;
 }
 
 .select2-container .select2-selection--single {
@@ -1908,7 +1915,7 @@ h9 {
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
 	height: 1.3vw;
-	right: -3px;
+	right: -4px;
 }
 
 
