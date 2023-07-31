@@ -498,7 +498,7 @@ function mainCleanup() {
 	//Update settings displayed as well so that any requirements that have now been reached are displayed.
 	if (atSettings.portal.aWholeNewHZE) {
 		challengeUnlockCheck();
-		updateCustomButtons(true);
+		if (atSettings.portal.lastHZE !== 0) updateCustomButtons(true);
 	}
 	//If in a new zone then run this code
 	if (atSettings.portal.aWholeNewWorld) {

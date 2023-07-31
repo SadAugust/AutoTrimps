@@ -5200,18 +5200,24 @@ function autoToggle(what) {
 		if (game.options.displayed)
 			toggleSettingsMenu();
 		var $item = document.getElementById('graphParent');
-		if ($item.style.display === 'block')
-			$item.style.display = 'none';
+		if ($item !== null) {
+			if ($item.style.display === 'block')
+				$item.style.display = 'none';
+		}
 		var $item = document.getElementById('autoTrimpsTabBarMenu');
-		if ($item.style.display === 'block')
-			$item.style.display = 'none';
-		else
-			$item.style.display = 'block';
+		if ($item !== null) {
+			if ($item.style.display === 'block')
+				$item.style.display = 'none';
+			else
+				$item.style.display = 'block';
+		}
 		var $item = document.getElementById('autoSettings');
-		if ($item.style.display === 'block')
-			$item.style.display = 'none';
-		else
-			$item.style.display = 'block';
+		if ($item !== null) {
+			if ($item.style.display === 'block')
+				$item.style.display = 'none';
+			else
+				$item.style.display = 'block';
+		}
 	}
 	updateCustomButtons();
 }
@@ -5435,7 +5441,6 @@ function updateCustomButtons(initialLoad) {
 	}
 	modifyParentNodeUniverseSwap();
 }
-
 function formatDropdownPrefix(item) {
 	var prefix = item._resultId.split('-');
 	var prefixName;
