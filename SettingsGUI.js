@@ -3313,22 +3313,6 @@ function initializeAllSettings() {
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			}, 'mazArray', [], 'MAZLookalike("Auto Golden", "AutoGolden", "MAZ")', 'Golden', [1, 2]);
-		createSetting('autoGoldenDailySettings',
-			function () { return ('Daily Auto Gold Settings') },
-			function () {
-				var description = "<p>Here you can select the golden upgrades you would like to have purchased during daily runs.</p>";
-				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
-				return description;
-			}, 'mazArray', [], 'MAZLookalike("Daily Auto Golden", "AutoGoldenDaily", "MAZ")', 'Golden', [1, 2]);
-		createSetting('autoGoldenC3Settings',
-			function () { return (cinf() + ' Auto Gold Settings') },
-			function () {
-				var description = "<p>Here you can select the golden upgrades you would like to have purchased during " + cinf() + " runs.</p>";
-				description += "<p><b>Click to adjust settings.</b></p>";
-				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
-				return description;
-			}, 'mazArray', [], 'MAZLookalike("C3 Auto Golden", "AutoGoldenC3", "MAZ")', 'Golden', [1, 2]);
 	}
 
 
@@ -6306,6 +6290,29 @@ function updateATVersion() {
 					autoTrimpSettings[u2Settings[item] + "Settings"].valueU2.unshift(tempSettings[u2Settings[item] + "DefaultSettings"].valueU2);
 				}
 			}
+		}
+
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.30') {
+
+			var settings_List = ['autoGoldenSettings', 'autoGoldenDailySettings', 'autoGoldenC3Settings'];
+			var runType = ['Filler', 'Daily', 'C3'];
+			var values = ['value', 'valueU2'];
+			for (var x = 0; x < settings_List.length; x++) {
+				for (var z = 0; z < values.length; z++) {
+					if (typeof (tempSettings[settings_List[x]][values[z]][0]) !== 'undefined') {
+						for (var y = 0; y < tempSettings[settings_List[x]][values[z]].length; y++) {
+							tempSettings[settings_List[x]][values[z]][y].runType = runType[x];
+							if (runType[x] === 'Filler') tempSettings[settings_List[x]][values[z]][y].challenge = 'All';
+							if (runType[x] === 'C3') tempSettings[settings_List[x]][values[z]][y].challenge3 = 'All';
+						}
+					}
+				}
+			}
+
+			for (item in values) {
+				autoTrimpSettings.autoGoldenSettings[values[item]] = [...tempSettings[settings_List[0]][values[item]], ...tempSettings[settings_List[1]][values[item]], ...tempSettings[settings_List[2]][values[item]]];
+			}
+			saveSettings();
 		}
 	}
 

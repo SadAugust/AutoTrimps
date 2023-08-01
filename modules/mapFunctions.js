@@ -269,9 +269,6 @@ function recycleMap_AT(forceAbandon) {
 	if (game.global.mapsActive) {
 		mapsClicked(true);
 	}
-	//Recycle map if we need to run a unique map as the maps.js recycle code won't run for that.
-	if (game.global.preMapsActive && MODULES.mapFunctions.runUniqueMap !== '')
-		recycleMap();
 }
 
 //Check to see if we are running Atlantrimp or if we should be.
@@ -292,11 +289,12 @@ function runUniqueMap(mapName) {
 	if (mapName === 'Melting Point' && (!game.mapUnlocks.SmithFree.canRunOnce || zone < 55 || (zone === 55 && cell < 56))) return;
 	if ((mapName === 'Atlantrimp' || mapName === 'Trimple Of Doom') && (!game.mapUnlocks.AncientTreasure.canRunOnce || zone < 33 || (zone === 33 && cell < 32))) return;
 
+	MODULES.mapFunctions.runUniqueMap = mapName;
 	if (game.global.mapsActive && getCurrentMapObject().name !== mapName) {
 		recycleMap_AT();
 	}
 
-	if (game.global.preMapsActive) {
+	if (game.global.preMapsActive && game.global.currentMapId === '') {
 		for (var map in game.global.mapsOwnedArray) {
 			if (game.global.mapsOwnedArray[map].name === mapName) {
 				selectMap(game.global.mapsOwnedArray[map].id);

@@ -1541,13 +1541,15 @@ ul.tab li a:hover {
 .windowDeleteAutoGolden,
 .windowActiveAutoGolden,
 .windowAmtAutoGolden,
-.windowTypeAutoGolden {
+.windowTypeAutoGolden,
+.windowRunTypeAutoGolden,
+.windowPriorityAutoGolden {
 	padding-left: 1%;
 	display: inline-block;
 }
 
 .windowActiveAutoGolden {
-	width: 19%;
+	width: 11%;
 }
 
 .windowDeleteAutoGolden {
@@ -1555,12 +1557,37 @@ ul.tab li a:hover {
 	cursor: pointer;
 }
 
+.windowPriorityAutoGolden {
+	width: 10%;
+}
+
 .windowAmtAutoGolden {
-	width: 40%;
+	width: 15%;
 }
 
 .windowTypeAutoGolden {
-	width: 40%;
+	width: 15%;
+}
+
+.windowRunTypeAutoGolden {
+	width: 48%;
+}
+
+.windowChallengeOnAutoGolden .windowChallengeAutoGolden,
+.windowChallenge3OnAutoGolden .windowChallenge3AutoGolden {
+	display: inline-block;
+	width: 24%;
+}
+
+.windowChallenge3OnAutoGolden .windowRunTypeAutoGolden,
+.windowChallengeOnAutoGolden .windowRunTypeAutoGolden {
+	display: inline-block;
+	width: 24%;
+}
+
+.windowChallengeOffAutoGolden .windowChallengeAutoGolden,
+.windowChallenge3OffAutoGolden .windowChallenge3AutoGolden {
+	display: none;
 }
 
 .windowRepeat,

@@ -322,6 +322,7 @@ function autoMap() {
 	var perfSize = game.talents.mapLoot2.purchased ? 20 : 25;
 	var perfMapLoot = game.global.farmlandsUnlocked && game.singleRunBonuses.goldMaps.owned ? 3.6 : game.global.decayDone && game.singleRunBonuses.goldMaps.owned ? 2.85 : game.global.farmlandsUnlocked ? 2.6 : game.global.decayDone ? 1.85 : 1.6;
 	var mapBiome = mapSettings.biome !== undefined ? mapSettings.biome : getBiome();
+	var runUnique = false;
 
 	for (const map of game.global.mapsOwnedArray) {
 		if (!map.noRecycle) {
@@ -339,6 +340,7 @@ function autoMap() {
 		} else if (map.noRecycle) {
 			if (runUniques && shouldRunUniqueMap(map) && !challengeActive('Insanity')) {
 				selectedMap = map.id;
+				runUnique = true;
 				if (MODULES.maps.mapTimer === 0) MODULES.maps.mapTimer = getZoneSeconds();
 			}
 			if (map.location === "Bionic") {
@@ -450,6 +452,7 @@ function autoMap() {
 						if (mapSettings.special !== '0') recycleMap();
 					}
 					else if (MODULES.maps.lastMapWeWereIn.bonus !== mapSettings.special) recycleMap();
+					if (runUnique && game.global.currentMapId !== selectedMap) recycleMap();
 				}
 			}
 		}

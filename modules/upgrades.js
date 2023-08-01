@@ -160,7 +160,7 @@ function buyUpgrades() {
 
 function getNextGoldenUpgrade() {
 
-	const setting = hdStats.isC3 ? getPageSetting('autoGoldenC3Settings') : hdStats.isDaily ? getPageSetting('autoGoldenDailySettings') : getPageSetting('autoGoldenSettings');
+	const setting = getPageSetting('autoGoldenSettings');
 
 	if (setting.length === 0) {
 		return false;
@@ -168,11 +168,23 @@ function getNextGoldenUpgrade() {
 
 	var defs = archoGolden.getDefs();
 	var done = {};
+	var rule;
 
 	for (var x = 0; x < setting.length; x++) {
-		if (!setting[x].active) continue;
-		if (setting[x].golden === undefined) continue;
-		rule = setting[x].golden;
+		const currSetting = setting[x];
+		if (!currSetting.active) continue;
+		if (currSetting.golden === undefined) continue;
+
+		//Skips if challenge type isn't set to the type we're currently running or if it's not the challenge that's being run.
+		if (typeof currSetting.runType !== 'undefined' && currSetting.runType !== 'All') {
+			if (!hdStats.isC3 && !hdStats.isDaily && (currSetting.runType !== 'Filler' ||
+				(currSetting.runType === 'Filler' && (currSetting.challenge !== 'All' && currSetting.challenge !== hdStats.currChallenge)))) continue;
+			if (hdStats.isDaily && currSetting.runType !== 'Daily') continue;
+			if (hdStats.isC3 && (currSetting.runType !== 'C3' ||
+				(currSetting.runType === 'C3' && (currSetting.challenge3 !== 'All' && currSetting.challenge3 !== hdStats.currChallenge)))) continue;
+		}
+
+		rule = currSetting.golden;
 		var name = defs[rule.slice(0, 1)];
 		var number = parseInt(rule.slice(1, rule.length), 10);
 		if (number === -1) number = Infinity;

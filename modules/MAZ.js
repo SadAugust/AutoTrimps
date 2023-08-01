@@ -565,7 +565,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (varPrefix === 'HDFarm') settingName = settingName.charAt(0) + settingName.charAt(1).toLowerCase() + settingName.slice(2);
 		var trimple = currSettingUniverse === 1 ? 'Trimple' : 'Atlantrimp';
 		var windowSize = 'tooltipWindow50';
-		if (golden) windowSize = 'tooltipWindow20';
+		if (golden) windowSize = 'tooltipWindow40';
 		else if (quagmire) windowSize = 'tooltipWindow45';
 		else if (raiding) windowSize = 'tooltipWindow70';
 		else if (balance) windowSize = 'tooltipWindow50';
@@ -776,8 +776,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 		<div id='windowContainer' style='display: block'><div id='windowError'></div>\
 		<div class='row windowRow titles'>";
 		if (!golden) tooltipText += "<div class='windowActive" + varPrefix + "\'>Active?</div>";
-		if (!golden) tooltipText += "<div class='windowPriority" + varPrefix + "\'>Priority</div>";
 		if (golden) tooltipText += "<div class='windowActiveAutoGolden'>Active?</div>";
+		tooltipText += "<div class='windowPriority" + varPrefix + "\'>Priority</div>";
 		if (!voidMap && !golden && !boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Start<br/>Zone</div>";
 		if (boneShrine) tooltipText += "<div class='windowWorld" + varPrefix + "\'>Zone</div>";
 		if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || desolation || toxicity) tooltipText += "<div class='windowEndZone" + varPrefix + "\'>End<br/>Zone</div>";
@@ -827,7 +827,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (insanity) tooltipText += "<div class='windowBuildings'>Destack</div>";
 		if (tributeFarm) tooltipText += "<div class='windowBuildings'>Buy<br/>Buildings</div>";
 		if (raiding || desolation) tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\'>Prestige<br/>Goal</div>";
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) tooltipText += "<div class='windowRunType" + varPrefix + "\'>Run&nbsp;Type</div>";
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) tooltipText += "<div class='windowRunType" + varPrefix + "\'>Run&nbsp;Type</div>";
 		if (voidMap) tooltipText += "<div class='windowPortalAfter'>Portal<br/>After</div>";
 		tooltipText += "</div>";
 
@@ -918,13 +918,13 @@ function MAZLookalike(titleText, varPrefix, event) {
 				if (mapFarm || alchemy || boneShrine || mapBonus || desolation || toxicity)
 					vals.gather = currSetting[x].gather ? currSetting[x].gather : 'food';
 				//Run Type
-				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
+				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
 					vals.runType = currSetting[x].runType ? currSetting[x].runType : 'All';
 				//Challenge 
-				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
+				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
 					vals.challenge = currSetting[x].challenge ? currSetting[x].challenge : 'All';
 				//C2/C3
-				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
+				if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
 					vals.challenge3 = currSetting[x].challenge3 ? currSetting[x].challenge3 : 'All';
 				//HD Ratio
 				if (mapFarm || mapBonus) {
@@ -1061,12 +1061,12 @@ function MAZLookalike(titleText, varPrefix, event) {
 			className += (!vals.autoLevel) ? " windowLevelOn" : " windowLevelOff";
 
 			//Adding the class for if we have C2/C3 challenge selected or not.
-			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
 				className += (vals.runType === 'C3') ?
 					" windowChallenge3On" + varPrefix + "" : " windowChallenge3Off" + varPrefix + "";
 
 			//Adding the class for if we have filler challenge selected or not.
-			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
 				className += (vals.runType === 'Filler') ?
 					" windowChallengeOn" + varPrefix + "" : " windowChallengeOff" + varPrefix + "";
 			//Adding the class for if we want to run to map level or not.
@@ -1093,8 +1093,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (golden) tooltipText += "<div class='windowActiveAutoGolden' style='text-align: center;'>" + buildNiceCheckbox("windowActive" + x, null, vals.active) + "</div>";
 
 			//Priority input
-			if (!golden)
-				tooltipText += "<div class='windowPriority" + varPrefix + "\'><input value='" + vals.priority + "' type='number' id='windowPriority" + x + "'/></div>";
+			tooltipText += "<div class='windowPriority" + varPrefix + "\'><input value='" + vals.priority + "' type='number' id='windowPriority" + x + "'/></div>";
 
 			//World input
 			if (!golden)
@@ -1251,22 +1250,6 @@ function MAZLookalike(titleText, varPrefix, event) {
 			if (raiding || desolation)
 				tooltipText += "<div class='windowPrestigeGoal" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.prestigeGoal + "' id='windowPrestigeGoal" + x + "'>" + prestigeGoalDropdown + "</select></div>";
 
-			//Run Type dropdown
-			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
-				tooltipText += "<div class='windowRunType" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.runType + "' id='windowRunType" + x + "'>" + runTypeDropdown + "</select></div>";
-
-			//Filler challenges dropdown
-			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
-				tooltipText += "<div class='windowChallenge" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge</div>\<select value='" + vals.challenge + "' id='windowChallenge" + x + "'>" + challengeDropdown + "</select></div>";
-
-			//C2/C3 challenges dropdown
-			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding)
-				tooltipText += "<div class='windowChallenge3" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge" + (universe + 1) + "</div>\<select value='" + vals.challenge3 + "' id='windowChallenge3" + x + "'>" + challenge3Dropdown + "</select></div>";
-
-			//Portal After Void Maps checkbox
-			if (voidMap)
-				tooltipText += "<div class='windowPortalAfter' style='text-align: center;'>" + buildNiceCheckbox("windowPortalAfter" + x, null, vals.portalAfter) + "</div>";
-
 			//Auto Golden input
 			if (golden)
 				tooltipText += "<div class='windowAmtAutoGolden'><input value='" + vals.goldenNumber + "' type='number' id='windowWorld" + x + "'/></div>";
@@ -1274,6 +1257,22 @@ function MAZLookalike(titleText, varPrefix, event) {
 			//Type of golden dropdown
 			if (golden)
 				tooltipText += "<div class='windowTypeAutoGolden' onchange='updateWindowPreset(" + x + ")'><select value='" + vals.goldentype + "' id='windowGoldenType" + x + "'>" + goldenDropdown + "</select></div>";
+
+			//Run Type dropdown
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
+				tooltipText += "<div class='windowRunType" + varPrefix + "\' onchange='updateWindowPreset(\"" + x + "\",\"" + varPrefix + "\")'><select value='" + vals.runType + "' id='windowRunType" + x + "'>" + runTypeDropdown + "</select></div>";
+
+			//Filler challenges dropdown
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
+				tooltipText += "<div class='windowChallenge" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge</div>\<select value='" + vals.challenge + "' id='windowChallenge" + x + "'>" + challengeDropdown + "</select></div>";
+
+			//C2/C3 challenges dropdown
+			if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden)
+				tooltipText += "<div class='windowChallenge3" + varPrefix + "\'>\<div style='text-align: center; font-size: 0.6vw;'>Challenge" + (universe + 1) + "</div>\<select value='" + vals.challenge3 + "' id='windowChallenge3" + x + "'>" + challenge3Dropdown + "</select></div>";
+
+			//Portal After Void Maps checkbox
+			if (voidMap)
+				tooltipText += "<div class='windowPortalAfter' style='text-align: center;'>" + buildNiceCheckbox("windowPortalAfter" + x, null, vals.portalAfter) + "</div>";
 
 			tooltipText += "</div>";
 		}
@@ -1503,8 +1502,8 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		};
 
 		thisSetting.active = readNiceCheckbox(document.getElementById('windowActive' + x));
+		thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
 		if (!golden) {
-			thisSetting.priority = parseInt(document.getElementById('windowPriority' + x).value, 10);
 			thisSetting.world = parseInt(document.getElementById('windowWorld' + x).value, 10);
 			if (!desolation) thisSetting.cell = parseInt(document.getElementById('windowCell' + x).value, 10);
 		}
@@ -1567,13 +1566,13 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 			thisSetting.prestigeGoal = document.getElementById('windowPrestigeGoal' + x).value;
 			if (!bionic && !desolation) thisSetting.raidingDropdown = document.getElementById('windowRaidingDropdown' + x).value;
 		}
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) thisSetting.runType = document.getElementById('windowRunType' + x).value;
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) thisSetting.runType = document.getElementById('windowRunType' + x).value;
 
 		if (insanity) {
 			thisSetting.destack = readNiceCheckbox(document.getElementById('windowBuildings' + x));
 			thisSetting.insanity = parseInt(document.getElementById('windowInsanity' + x).value, 10);
 		}
-		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) {
+		if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) {
 			thisSetting.challenge = thisSetting.runType === 'Filler' ? document.getElementById('windowChallenge' + x).value : null;
 			thisSetting.challenge3 = thisSetting.runType === 'C3' ? document.getElementById('windowChallenge3' + x).value : null;
 		}
@@ -1635,7 +1634,12 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 		setting.push(thisSetting);
 	}
-	if (!golden) {
+	if (golden) {
+		setting.sort(function (a, b) {
+			if (a.priority === b.priority) return 1; return (a.priority > b.priority) ? 1 : -1
+		});
+	}
+	else {
 		setting.sort(function (a, b) {
 			if (a.priority === b.priority) return (a.world === b.world) ? ((a.cell > b.cell) ? 1 : -1) : ((a.world > b.world) ? 1 : -1); return (a.priority > b.priority) ? 1 : -1
 		});
@@ -1810,7 +1814,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	//Active
 	mazHelp += "<li><b>Active</b> - A toggle to disable/enable this line.</li>";
 	//Priority
-	if (!golden) mazHelp += "<li><b>Priority</b> - If there are two or more MaZ lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>";
+	mazHelp += "<li><b>Priority</b> - If there are two or more MaZ lines set to trigger at the same cell on the same Zone, the line with the lowest priority will run first. This also determines sort order of lines in the UI.</li>";
 	//Zone
 	if (!voidMap && !golden) mazHelp += "<li><b>Zone</b> - The Zone that this line should run. Must be between 6 and 1000.</li>";
 	//Cell
@@ -1976,7 +1980,7 @@ function mazPopulateHelpWindow(titleText, trimple) {
 	if (mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || toxicity || desolation)
 		mazHelp += "<li><b>End Zone</b> - Only matters if you're planning on having this MaZ line repeat. If so, the line will stop repeating at this Zone. Must be between 6 and 1000.</li>";
 	//Run Type
-	if (boneShrine || voidMap || mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm)
+	if (boneShrine || voidMap || mapFarm || tributeFarm || worshipperFarm || hdFarm || raiding || mapBonus || smithyFarm || golden)
 		mazHelp += "<li><b>Run Type</b> - What type of run you'd like this line to be run.</li>";
 
 	if (golden) {
@@ -2522,7 +2526,7 @@ function removeRow(index, titleText) {
 	}
 	if (!raiding && !smithyFarm && !golden) document.getElementById('windowJobRatio' + index).value = '1,1,1,1';
 	if (raiding || desolation) document.getElementById('windowPrestigeGoal' + index).value = 'All';
-	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) document.getElementById('windowRunType' + index).value = 'All';
+	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) document.getElementById('windowRunType' + index).value = 'All';
 	if (raiding && !bionic) document.getElementById('windowRaidingDropdown' + index).value = 0;
 	if (tributeFarm || smithyFarm) document.getElementById('windowMapTypeDropdown' + index).value = 'Absolute';
 	if (mapFarm) document.getElementById('windowMapTypeDropdown' + index).value = 'Map Count';
@@ -2569,7 +2573,7 @@ function updateWindowPreset(index, varPrefix) {
 	var smithyFarm = varPrefix.includes('Smithy');
 	var worshipperFarm = varPrefix.includes('Worshipper');
 
-	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding) {
+	if (mapFarm || tributeFarm || smithyFarm || mapBonus || worshipperFarm || boneShrine || voidMap || hdFarm || raiding || golden) {
 		if (index !== '') {
 			var runType = document.getElementById('windowRunType' + index).value;
 
@@ -2619,9 +2623,10 @@ function updateWindowPreset(index, varPrefix) {
 		}
 	}
 
-	if (currSettingUniverse === 2 && boneShrine) {
+	if (currSettingUniverse === 1 && golden) {
 		var runType = document.getElementById('windowRunType' + index).value;
 	}
+
 	if (currSettingUniverse === 1 && index !== '') {
 		//Changing rows to use the colour of the Nature type that the world input will be run on.
 		var world = document.getElementById('windowWorld' + index);
