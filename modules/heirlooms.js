@@ -64,7 +64,10 @@ function evaluateHeirloomMods(loom, location) {
 	if (heirloomType !== heirloomEquipType && heirloomEquipType !== 'All') return 0;
 
 	const rarity = heirloomLocation.rarity;
-	if (rarity !== raretokeep) return 0;
+	if (getPageSetting('heirloomAutoRarityPlus')) {
+		if (rarity < raretokeep) return 0;
+	}
+	else if (rarity !== raretokeep) return 0;
 
 	//Will check if the heirloom is perfect and if it is, we will return infinity to make sure it is not recycled.
 	//If it is not perfect, we will return 0 to make sure it is recycled.

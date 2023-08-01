@@ -583,6 +583,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 		else if (mapFarm) windowSize = 'tooltipWindow80';
 		else if (tributeFarm) windowSize = 'tooltipWindow80';
 
+		const originalSetting = getPageSetting(settingName + 'Settings', currSettingUniverse);
 		var maxSettings = 30;
 		var overflow = false;
 
@@ -644,7 +645,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 
 			var style = "";
 
-			const defaultSetting = getPageSetting(settingName + 'DefaultSettings', currSettingUniverse);
+			const defaultSetting = originalSetting[0];
 
 			//Reading info from each setting and setting up the default values object with necessary data
 			defaultVals.active = defaultSetting.active ? defaultSetting.active : false;
@@ -829,8 +830,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 		if (voidMap) tooltipText += "<div class='windowPortalAfter'>Portal<br/>After</div>";
 		tooltipText += "</div>";
 
-		var current = getPageSetting(settingName + 'Settings', currSettingUniverse);
-		const currSetting = getPageSetting(settingName + 'Settings', currSettingUniverse);
+		//As position 0 in the array stores base setting we need to take that out of the array before we start looping through rows
+		const currSetting = originalSetting.slice(1, originalSetting.length);
 
 		for (var x = 0; x < maxSettings; x++) {
 			var style = "";
@@ -881,7 +882,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				goldenNumber: -2,
 			}
 			//Taking data from the current setting and overriding the default values
-			if (current.length - 1 >= x) {
+			if (currSetting.length - 1 >= x) {
 				vals.active = currSetting[x].active;
 				vals.priority = currSetting[x].priority ? currSetting[x].priority : (x + 1);
 				vals.world = currSetting[x].world;
@@ -1072,7 +1073,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 					" windowMapLevelOff" : " windowMapLevelOn";
 
 			//Adding the class for if the line is currently active or not.
-			className += (x <= current.length - 1) ? " active" : " disabled";
+			className += (x <= currSetting.length - 1) ? " active" : " disabled";
 
 			//Opening the row div. Will parse all the settings we want shown in the row.
 			tooltipText += "<div id='windowRow" + x + "' class='row windowRow " + className + "'" + style + ">";
@@ -1275,7 +1276,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 			tooltipText += "</div>";
 		}
 
-		tooltipText += "<div id='windowAddRowBtn' style='display: " + ((current.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\",\"" + titleText + "\")'>+ Add Row</div>";
+		tooltipText += "<div id='windowAddRowBtn' style='display: " + ((currSetting.length < maxSettings) ? "inline-block" : "none") + "' class='btn btn-success btn-md' onclick='addRow(\"" + varPrefix + "\",\"" + titleText + "\")'>+ Add Row</div>";
 		tooltipText += "</div></div><div style='display: none' id='mazHelpContainer'>" + mazHelp + "</div>";
 		costText = "<div class='maxCenter'><span class='btn btn-success btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + settingName + "\")'>Save and Close</span><span class='btn btn-danger btn-md' onclick='cancelTooltip(true)'>Cancel</span><span class='btn btn-primary btn-md' id='confirmTooltipBtn' onclick='settingsWindowSave(\"" + titleText + "\",\"" + settingName + "\", true)'>Save</span><span class='btn btn-info btn-md' onclick='windowToggleHelp(\"" + windowSize + "\")'>Help</span></div>";
 
@@ -1487,8 +1488,6 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 		if (defaultSetting.cell > 100) defaultSetting.cell = 100;
 
 		if (defaultSetting.repeat < 0) defaultSetting.repeat = 0;
-
-		setPageSetting(varPrefix + 'DefaultSettings', defaultSetting, currSettingUniverse);
 	}
 
 	for (var x = 0; x < maxSettings; x++) {
@@ -1634,10 +1633,13 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 		setting.push(thisSetting);
 	}
-	if (!golden)
+	if (!golden) {
 		setting.sort(function (a, b) {
 			if (a.priority === b.priority) return (a.world === b.world) ? ((a.cell > b.cell) ? 1 : -1) : ((a.world > b.world) ? 1 : -1); return (a.priority > b.priority) ? 1 : -1
 		});
+		//To ensure we always have base settings in position 0 of the array we want to unshift it after sorting.
+		setting.unshift(defaultSetting);
+	}
 
 	if (error) {
 		var elem = document.getElementById('windowError');
@@ -1666,7 +1668,7 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 	saveSettings();
 	if (!golden) {
-		if (!getPageSetting(varPrefix + 'DefaultSettings', currSettingUniverse).active)
+		if (!getPageSetting(varPrefix + 'Settings', currSettingUniverse)[0].active)
 			debug(titleText + " has been saved but is disabled. To enable it tick the 'Active' box in the top left of the window.", "mazSettings");
 	}
 	document.getElementById('tooltipDiv').style.overflowY = '';
@@ -2543,7 +2545,7 @@ function removeRow(index, titleText) {
 function updateWindowPreset(index, varPrefix) {
 	varPrefix = !varPrefix ? document.getElementById('tipTitle').innerHTML.replace(/ /g, '') : varPrefix;
 	if (!index) index = '';
-	row = document.getElementById('windowRow' + index);
+	var row = document.getElementById('windowRow' + index);
 
 	var mapFarm = varPrefix.includes('MapFarm');
 	var mapBonus = varPrefix.includes('MapBonus');
@@ -2620,7 +2622,7 @@ function updateWindowPreset(index, varPrefix) {
 	if (currSettingUniverse === 2 && boneShrine) {
 		var runType = document.getElementById('windowRunType' + index).value;
 	}
-	if (currSettingUniverse === 1) {
+	if (currSettingUniverse === 1 && index !== '') {
 		//Changing rows to use the colour of the Nature type that the world input will be run on.
 		var world = document.getElementById('windowWorld' + index);
 		var natureStyle = ['unset', 'rgba(50, 150, 50, 0.75)', 'rgba(60, 75, 130, 0.75)', 'rgba(50, 50, 200, 0.75)'];

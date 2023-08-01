@@ -373,7 +373,7 @@ function buyBuildings() {
 	//A quick way to identify if we are running Hypothermia and what our very first farm zone is for autostorage manipulation purposes.
 	//Need to have it setup to go through every setting to ensure we don't miss the first one after introducing the priority input.
 	var hypoZone = 0;
-	if (challengeActive('Hypothermia') && getPageSetting('hypothermiaDefaultSettings').active && getPageSetting('hypothermiaDefaultSettings').autostorage && getPageSetting('hypothermiaSettings').length > 0) {
+	if (challengeActive('Hypothermia') && getPageSetting('hypothermiaSettings')[0].active && getPageSetting('hypothermiaSettings')[0].autostorage && getPageSetting('hypothermiaSettings').length > 0) {
 		const hypoBaseSettings = getPageSetting('hypothermiaSettings');
 		for (var y = 0; y < hypoBaseSettings.length; y++) {
 			if (!hypoBaseSettings[y].active) {

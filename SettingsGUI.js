@@ -350,7 +350,7 @@ function initializeAllSettings() {
 			});
 
 		createSetting('heHrDontPortalBefore',
-			function () { return ('Don\'t Portal Before') },
+			function () { return ("Don't Portal Before") },
 			function () {
 				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>" + resource() + " Per Hour</b> Auto Portal setting.</p>";
 				description += "<p>It is an additional check that prevents drops in " + resourceHour().toLowerCase() + "/hr from triggering autoportal.</p>";
@@ -436,12 +436,12 @@ function initializeAllSettings() {
 	const displayJobs = true;
 	if (displayJobs) {
 		createSetting('jobType',
-			function () { return (['Don\'t Buy Jobs', 'Auto Ratios', 'Manual Ratios']) },
+			function () { return (["Don't Buy Jobs", 'Auto Ratios', 'Manual Ratios']) },
 			function () {
 				//Initial button description
 				var description = "<p>Click the left side of the button to toggle between the AutoJobs settings. Each of them will adjust the 3 primary resource jobs but you'll have to manually set the rest by clicking the cog icon on the right side of this button.</p>";
 				//Don't Buy Jobs
-				description += "<p><b>Don\'t Buy Jobs</b><br>Will disable the script from purchasing any jobs.</p>";
+				description += "<p><b>Don't Buy Jobs</b><br>Will disable the script from purchasing any jobs.</p>";
 				//Auto Ratios
 				description += "<p><b>Auto Ratios</b><br>Automatically adjusts the 3 primary resource job worker ratios based on current game progress. For more detailed information on this check out its Help section for this setting.</p>";
 				//Manual Ratios
@@ -863,7 +863,7 @@ function initializeAllSettings() {
 			function () { return ('Buy Shield Block') },
 			function () {
 				var description = "<p>Will allow the purchase of the shield block upgrade.</p>";
-				description += "<p><b>If you are progressing past zone 50, you probably don\'t want this.</b></p>";
+				description += "<p><b>If you are progressing past zone 50, you probably don't want this.</b></p>";
 				description += "<p><b>Recommended:</b> On until you can reach z50</p>";
 				return description;
 			}, 'boolean', false, null, "Equipment", [1]);
@@ -1404,11 +1404,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
-		createSetting('hdFarmDefaultSettings',
-			function () { return ('HD Farm: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("HD Farm", "HDFarm", "MAZ")', 'Maps', [1, 2]);
 
 		createSetting('voidMapSettings',
 			function () { return ('Void Map Settings') },
@@ -1417,11 +1413,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Void Map", "VoidMap", "MAZ")', 'Maps', [1, 2]);
-		createSetting('voidMapDefaultSettings',
-			function () { return ('Void Map Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Void Map", "VoidMap", "MAZ")', 'Maps', [1, 2]);
 
 		//Bone Shrine (bone) 
 		createSetting('boneShrineSettings',
@@ -1431,11 +1423,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Bone Shrine", "BoneShrine", "MAZ")', 'Maps', [1, 2]);
-		createSetting('boneShrineDefaultSettings',
-			function () { return ('BS: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Bone Shrine", "BoneShrine", "MAZ")', 'Maps', [1, 2]);
 
 		//Worshipper Farm 
 		createSetting('worshipperFarmSettings',
@@ -1445,12 +1433,8 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Worshipper Farm", "WorshipperFarm", "MAZ")', 'Maps', [2],
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Worshipper Farm", "WorshipperFarm", "MAZ")', 'Maps', [2],
 			function () { return game.stats.highestRadLevel.valueTotal() >= 50 });
-		createSetting('worshipperFarmDefaultSettings',
-			function () { return ('WF: Default Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Maps', [2]);
 
 		//Unique Maps
 		createSetting('uniqueMapSettingsArray',
@@ -1487,11 +1471,8 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Map Bonus", "MapBonus", "MAZ")', 'Maps', [1, 2]);
-		createSetting('mapBonusDefaultSettings',
-			function () { return ('Map Bonus: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Map Bonus", "MapBonus", "MAZ")', 'Maps', [1, 2]);
+
 		createSetting('mapBonusZone',
 			function () { return ('Map Bonus: Zone') },
 			function () { return ('Map Bonus') },
@@ -1506,11 +1487,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Map Farm", "MapFarm", "MAZ")', 'Maps', [1, 2]);
-		createSetting('mapFarmDefaultSettings',
-			function () { return ('MF: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Map Farm", "MapFarm", "MAZ")', 'Maps', [1, 2]);
 
 		//Prestige Raiding
 		createSetting('raidingSettings',
@@ -1520,11 +1497,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Raiding", "Raiding", "MAZ")', 'Maps', [1, 2]);
-		createSetting('raidingDefaultSettings',
-			function () { return ('Raiding: Default Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Maps', [1, 2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Raiding", "Raiding", "MAZ")', 'Maps', [1, 2]);
 
 		//Bionic Raiding
 		createSetting('bionicRaidingSettings',
@@ -1534,11 +1507,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Bionic Raiding", "BionicRaiding", "MAZ")', 'Maps', [1]);
-		createSetting('bionicRaidingDefaultSettings',
-			function () { return ('Raiding: Default Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Maps', [1]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Bionic Raiding", "BionicRaiding", "MAZ")', 'Maps', [1]);
 
 		//Tribute Farming
 		createSetting('tributeFarmSettings',
@@ -1548,11 +1517,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Tribute Farm", "TributeFarm", "MAZ")', 'Maps', [2]);
-		createSetting('tributeFarmDefaultSettings',
-			function () { return ('TrF: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Maps', [2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Tribute Farm", "TributeFarm", "MAZ")', 'Maps', [2]);
 
 		//Smithy Farming
 		createSetting('smithyFarmSettings',
@@ -1562,11 +1527,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Smithy Farm", "SmithyFarm", "MAZ")', 'Maps', [2]);
-		createSetting('smithyFarmDefaultSettings',
-			function () { return ('SF: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Maps', [2]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Smithy Farm", "SmithyFarm", "MAZ")', 'Maps', [2]);
 
 	}
 
@@ -1677,11 +1638,7 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Toxicity Farm", "Toxicity", "MAZ")', 'Challenges', [1]);
-		createSetting('toxicityDefaultSettings',
-			function () { return ('Toxicity: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Challenges', [1]);
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Toxicity Farm", "Toxicity", "MAZ")', 'Challenges', [1]);
 
 		//Archaeology -- I don't know what to do with these. Think this needs to be reworked.
 		createSetting('archaeology',
@@ -1717,12 +1674,8 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Quagmire Farm", "Quagmire", "MAZ")', 'Challenges', [2],
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Quagmire Farm", "Quagmire", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 70) });
-		createSetting('quagmireDefaultSettings',
-			function () { return ('Quagmire Default Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Challenges', [2]);
 
 		//Insanity
 		createSetting('insanitySettings',
@@ -1732,12 +1685,8 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Insanity Farm", "Insanity", "MAZ")', 'Challenges', [2],
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Insanity Farm", "Insanity", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 110) });
-		createSetting('insanityDefaultSettings',
-			function () { return ('Insanity Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Challenges', [2]);
 
 		//Alchemy
 		createSetting('alchemySettings',
@@ -1747,12 +1696,8 @@ function initializeAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Alchemy Farm", "Alchemy", "MAZ")', 'Challenges', [2],
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Alchemy Farm", "Alchemy", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 155) });
-		createSetting('alchemyDefaultSettings',
-			function () { return ('Alchemy Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Challenges', [2]);
 
 		//Hypothermia
 		createSetting('hypothermiaSettings',
@@ -1763,12 +1708,8 @@ function initializeAllSettings() {
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
 			},
-			'mazArray', [], 'MAZLookalike("Hypothermia Farm", "Hypothermia", "MAZ")', 'Challenges', [2],
+			'mazArray', [{ active: false }], 'MAZLookalike("Hypothermia Farm", "Hypothermia", "MAZ")', 'Challenges', [2],
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 175) });
-		createSetting('hypothermiaDefaultSettings',
-			function () { return ('Hypothermia Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'Challenges', [2]);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -2372,12 +2313,7 @@ function initializeAllSettings() {
 				description += "<p><b>This definitely shouldn't exist so be aware this is exploiting unintentional game mechanics.</b></p>";
 				description += "<p>If needed, the <b>Help</b> button has information for all of the inputs.</p>";
 				return description;
-			}, 'mazArray', [], 'MAZLookalike("Desolation Gear Scumming", "Desolation", "MAZ")', 'C2', [1, 2],
-			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
-		createSetting('desolationDefaultSettings',
-			function () { return ('Deso: Settings') },
-			function () { return ('Contains arrays for this setting') },
-			'mazDefaultArray', { active: false }, null, 'C2', [1, 2],
+			}, 'mazArray', [{ active: false }], 'MAZLookalike("Desolation Gear Scumming", "Desolation", "MAZ")', 'C2', [1, 2],
 			function () { return (getPageSetting('desolation', currSettingUniverse) && autoTrimpSettings.desolation.require()) });
 
 		//Smithless
@@ -2604,7 +2540,7 @@ function initializeAllSettings() {
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) >= 2) });
 
 		createSetting('dailyDontPortalBefore',
-			function () { return ('D: Don\'t Portal Before') },
+			function () { return ("D: Don't Portal Before") },
 			function () {
 				var description = "<p>Will stop the script from automatically portaling before the specified zone when using the <b>DP: " + resourceHour() + "/Hr</b> Daily AutoPortal setting.</p>";
 				description += "<p>It is an additional check that prevents drops in " + resourceHour().toLowerCase() + "/hr from triggering autoportal.</p>";
@@ -3005,36 +2941,16 @@ function initializeAllSettings() {
 			'multitoggle', 0, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
-		/* createSetting('heirloomAutoRareToKeep',
-			function () { return ('Rarity to Keep') },
+
+		//Auto Heirlooms
+		createSetting('heirloomAutoRarityPlus',
+			function () { return ('Rarity+') },
 			function () {
-				var description = "<p>When identifying which heirlooms to keep will look at this rarity of heirloom, recycles all others.</p>";
-				description += "<p>Will only display tiers that can currently be obtained based on your highest zone reached.</p>";
-				description += "<p>When changed the heirloom mods sections will only display the mods available for that heirloom tier.</p>";
-				description += "<p><b>Recommended:</b> Highest tier available</p>";
+				var description = "<p>Overrides <b>Rarity to Keep</b> recycling heirlooms of a higher quality and instead allows the script to look at if they'd be worth keeping.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'dropdown', 'None', function () {
-				var hze;
-				var heirloomTiersAvailable;
-				if (currSettingUniverse === 2) {
-					hze = game.stats.highestRadLevel.valueTotal();
-					heirloomTiersAvailable = ['Plagued', 'Radiating'];
-					if (hze >= 100) heirloomTiersAvailable.push('Hazardous');
-					if (hze >= 200) heirloomTiersAvailable.push('Enigmatic');
-				}
-				else {
-					hze = game.stats.highestLevel.valueTotal();
-					heirloomTiersAvailable = ['Common', 'Rare'];
-					if (hze >= 60) heirloomTiersAvailable.push('Epic');
-					if (hze >= 100) heirloomTiersAvailable.push('Legendary');
-					if (hze >= 125) heirloomTiersAvailable.push('Magnificent');
-					if (hze >= 146) heirloomTiersAvailable.push('Ethereal');
-					if (hze >= 230) heirloomTiersAvailable.push('Magmatic');
-					if (hze >= 500) heirloomTiersAvailable.push('Plagued');
-				}
-				return heirloomTiersAvailable;
-			}, 'Heirloom', [1, 2],
-			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) }); */
+			}, 'boolean', false, null, 'Heirloom', [1, 2]);
+
 
 		//Shield Line
 		createSetting('heirloomAutoShield',
@@ -4598,7 +4514,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("heirloomStaffVoid", 'show');
 	modifyParentNode("heirloomStaffResource", 'show');
 
-	modifyParentNode("heirloomAutoTypeToKeep", heirloom);
+	modifyParentNode("heirloomAutoRarityPlus", heirloom);
 	modifyParentNode("heirloomAutoShieldMod7", heirloom);
 	modifyParentNode("heirloomAutoStaffMod7", heirloom);
 	//Golden
@@ -6374,8 +6290,23 @@ function updateATVersion() {
 			}
 		}
 
+		if (autoTrimpSettings["ATversion"].split('v')[1] < '6.3.29') {
+			const u1Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'bionicRaiding', 'toxicity'];
 
+			const u2Settings = ['hdFarm', 'voidMap', 'boneShrine', 'mapBonus', 'mapFarm', 'raiding', 'worshipperFarm', 'tributeFarm', 'smithyFarm', 'quagmire', 'insanity', 'alchemy', 'hypothermia', 'desolation'];
 
+			for (var item in u1Settings) {
+				if (typeof (tempSettings[u1Settings[item] + "DefaultSettings"]) !== 'undefined') {
+					autoTrimpSettings[u1Settings[item] + "Settings"].value.unshift(tempSettings[u1Settings[item] + "DefaultSettings"].value);
+				}
+			}
+
+			for (var item in u2Settings) {
+				if (typeof (tempSettings[u2Settings[item] + "DefaultSettings"]) !== 'undefined') {
+					autoTrimpSettings[u2Settings[item] + "Settings"].valueU2.unshift(tempSettings[u2Settings[item] + "DefaultSettings"].valueU2);
+				}
+			}
+		}
 	}
 
 	//Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.
@@ -6392,7 +6323,6 @@ function updateATVersion() {
 	}
 	updateCustomButtons(true);
 	saveSettings();
-
 }
 
 function printChangelog(changes) {
@@ -6404,7 +6334,7 @@ function printChangelog(changes) {
 	}
 	var footer =
 		'<br><b>SadAugust fork</b> - <u>Report any bugs/problems please</u>!\
-        <br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Channel</a>\
+        <br>Talk with the other Trimpers: <a target="Trimps" href="https://discord.gg/trimps">Trimps Discord Server</a>\
         <br>Check <a target="#" href="https://github.com/SadAugust/AutoTrimps_Local/commits/gh-pages" target="#">the commit history</a> (if you want).',
 		action = 'cancelTooltip()',
 		title = 'Script Update Notice<br>' + atSettings.initialise.version,
