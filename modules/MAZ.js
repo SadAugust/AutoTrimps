@@ -547,17 +547,18 @@ function MAZLookalike(titleText, varPrefix, event) {
 		var balance = titleText.includes('Balance Destack'.toLowerCase());
 		var toxicity = titleText.includes('Toxicity Farm');
 
+		var boneShrine = titleText.includes('Bone Shrine');
+		var golden = titleText.includes('Golden');
+
+		var tributeFarm = titleText.includes('Tribute Farm');
+		var smithyFarm = titleText.includes('Smithy Farm');
+		var worshipperFarm = titleText.includes('Worshipper Farm');
+
 		var quagmire = titleText.includes('Quagmire');
 		var insanity = titleText.includes('Insanity Farm');
 		var alchemy = titleText.includes('Alchemy Farm');
 		var hypothermia = titleText.includes('Hypothermia Farm');
 		var desolation = titleText.includes('Desolation');
-
-		var boneShrine = titleText.includes('Bone Shrine');
-		var golden = titleText.includes('Golden');
-		var tributeFarm = titleText.includes('Tribute Farm');
-		var smithyFarm = titleText.includes('Smithy Farm');
-		var worshipperFarm = titleText.includes('Worshipper Farm');
 
 		var universe = currSettingUniverse;
 		var settingName = varPrefix.charAt(0).toLowerCase() + varPrefix.slice(1);
@@ -831,7 +832,8 @@ function MAZLookalike(titleText, varPrefix, event) {
 		tooltipText += "</div>";
 
 		//As position 0 in the array stores base setting we need to take that out of the array before we start looping through rows
-		const currSetting = originalSetting.slice(1, originalSetting.length);
+		var currSetting = originalSetting.slice(1, originalSetting.length);
+		if (golden) currSetting = originalSetting;
 
 		for (var x = 0; x < maxSettings; x++) {
 			var style = "";
@@ -2345,8 +2347,6 @@ function addRow(varPrefix, titleText) {
 		var elem = document.getElementById('windowWorld' + x);
 		if (!elem) continue;
 
-		var value = currSettingUniverse === 2 ? 'valueU2' : 'value';
-
 		if (elem.value === "-2") {
 			var parent = document.getElementById('windowRow' + x);
 			if (parent) {
@@ -2402,7 +2402,7 @@ function addRow(varPrefix, titleText) {
 				if (parent2) {
 					parent2.style.display = 'block';
 					if (titleText.includes('Desolation')) elem.value = game.global.world < 6 ? 6 : game.global.world;
-					else elemWorld.value = -2;
+					else elemWorld.value = 0;
 					updateWindowPreset(x, varPrefix);
 					break;
 				}

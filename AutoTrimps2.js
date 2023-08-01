@@ -304,7 +304,7 @@ function mainLoop() {
 	//Adjust tooltip when mazWindow is open OR clear our adjustments if it's not.
 	//Need to identify a better solution to this. Not really sure what I can do though.
 	if (MODULES.popups.mazWindowOpen) {
-		var mazSettings = ["Map Farm", "Map Bonus", "Void Map", "HD Farm", "Raiding", "Bionic Raiding", "Balance Destack", "Toxicity Farm", "Quagmire Farm", "Insanity Farm", "Alchemy Farm", "Hypothermia Farm", "Bone Shrine", "Auto Golden", "Tribute Farm", "Smithy Farm", "Worshipper Farm", "Desolation Gear Scumming"];
+		var mazSettings = ["Map Farm", "Map Bonus", "Void Map", "HD Farm", "Raiding", "Bionic Raiding", "Balance Destack", "Toxicity Farm", "Quagmire Farm", "Insanity Farm", "Alchemy Farm", "Hypothermia Farm", "Bone Shrine", "Auto Golden", "Daily Auto Golden", "C3 Auto Golden", "Tribute Farm", "Smithy Farm", "Worshipper Farm", "Desolation Gear Scumming"];
 		var mazCheck = mazSettings.indexOf(document.getElementById('tooltipDiv').children.tipTitle.innerText);
 
 		if (mazCheck === -1) {
