@@ -492,8 +492,10 @@ function autoEquip() {
 					if (!game.equipment[equipName].locked) {
 						var equipType = MODULES.equipment[equipName].stat;
 						if (getPageSetting('equipNoShields') && equipName === 'Shield') continue;
-						if ((equipPrestigeSetting === 3 || mostEfficientEquipment()[equipType].prestige) && buyUpgrade(MODULES.equipment[equipName].upgrade, true, true))
+						if ((equipPrestigeSetting === 3 || mostEfficientEquipment()[equipType].prestige) && buyUpgrade(MODULES.equipment[equipName].upgrade, true, true)) {
 							prestigeLeft = true;
+							debug('Upgrading ' + equipName + " - Prestige " + game.equipment[equipName].prestige, 'equipment', '*upload');
+						}
 					}
 				}
 			}
