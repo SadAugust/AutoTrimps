@@ -94,10 +94,16 @@ function evaluateHeirloomMods(loom, location) {
 		if (blacklist.includes(modName)) return 0;
 		targetMods = targetMods.filter(e => e !== modName);
 	}
-	if (targetMods.length <= emptyMods)
-		return Infinity;
-	else
-		return 0;
+
+	//Work out the target number of mods to have on the heirloom.
+	const modGoal = getPageSetting('heirloomAutoModTarget') <= 0 ? 0 : Math.min(getPageSetting('heirloomAutoModTarget'), heirloomLocation.mods.length);
+	const remainingMods = targetMods.length - emptyMods;
+	//Mark heirloom as perfect if remaining mods is less than or equal to 0.
+	if (remainingMods <= 0) return Infinity;
+	//Mark heirloom as imperfect but passable if remaining mods is greater or equal to heirloom mod length minus mod goal.
+	else if (remainingMods >= (heirloomLocation.mods.length - modGoal)) return heirloomLocation.mods.length - remainingMods;
+	//Mark heirloom as garbage
+	else return 0;
 }
 
 function worthOfHeirlooms() {

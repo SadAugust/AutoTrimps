@@ -2941,8 +2941,6 @@ function initializeAllSettings() {
 			'multitoggle', 0, null, 'Heirloom', [1, 2],
 			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
-
-		//Auto Heirlooms
 		createSetting('heirloomAutoRarityPlus',
 			function () { return ('Rarity+') },
 			function () {
@@ -2951,6 +2949,16 @@ function initializeAllSettings() {
 				return description;
 			}, 'boolean', false, null, 'Heirloom', [1, 2]);
 
+		createSetting('heirloomAutoModTarget',
+			function () { return ('Mod Target Count') },
+			function () {
+				var description = "<p>Allows you to make it so that auto heirlooms will keep heirlooms if they have <b>X</b> amount of the mods you have setup in the different heirloom type options.</p>";
+				description += "<p>When using this I recommend not setting any of the mod inputs to <b>Any</b> as it can cause you to keep heirlooms with more suboptimal mods than you desire.</p>";
+				description += "<p>Set to <b>0</b> to disable this setting and have the script assume you want to only keep perfect heirlooms.</p>";
+				description += "<p><b>Recommended:</b> 0</p>";
+				return description;
+			}, 'value', 0, null, 'Heirloom', [1, 2],
+			function () { return (getPageSetting('heirloomAuto', currSettingUniverse)) });
 
 		//Shield Line
 		createSetting('heirloomAutoShield',
@@ -4498,7 +4506,7 @@ function modifyParentNodeUniverseSwap() {
 	modifyParentNode("heirloomStaffVoid", 'show');
 	modifyParentNode("heirloomStaffResource", 'show');
 
-	modifyParentNode("heirloomAutoRarityPlus", heirloom);
+	modifyParentNode("heirloomAutoModTarget", heirloom);
 	modifyParentNode("heirloomAutoShieldMod7", heirloom);
 	modifyParentNode("heirloomAutoStaffMod7", heirloom);
 	//Golden
