@@ -172,7 +172,7 @@ function delayStartAgain() {
 	//Reload script every 10 milliseconds until these scripts have been loaded
 	//Added incrementing variable at the end of every script so that we can be sure that the script has fully loaded before we start the main loop.
 	if (atSettings.modules.installedModules.length > atSettings.modules.loadedModules.length || typeof updateATVersion !== 'function') {
-		console.log("Delaying start by 10ms")
+		console.log(timeStamp() + " Delaying start by 10ms")
 		setTimeout(delayStartAgain, 10);
 		return;
 	}

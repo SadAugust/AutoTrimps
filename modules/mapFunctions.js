@@ -385,8 +385,9 @@ function voidMaps() {
 		},
 	};
 
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
+		debug(y);
 		const currSetting = baseSettings[y];
 		var world = currSetting.world + voidReduction;
 		var maxVoidZone = currSetting.maxvoidzone + voidReduction;
@@ -545,8 +546,8 @@ function mapBonus() {
 
 	var settingIndex = null;
 	if (defaultSettings.active && !healthCheck && !spireCheck) {
-		for (var y in baseSettings) {
-			if (Number(y) === 0) continue;
+		for (var y = 0; y < baseSettings.length; y++) {
+			if (y === 0) continue;
 			//Skip iterating lines if map bonus is capped.
 			if (game.global.mapBonus === 10) continue;
 			const currSetting = baseSettings[y];
@@ -644,8 +645,8 @@ function mapFarm() {
 
 	var settingIndex;
 
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		var currSetting = baseSettings[y];
 		var world = currSetting.world;
 		if (currSetting.atlantrimp && !game.mapUnlocks.AncientTreasure.canRunOnce) continue;
@@ -769,8 +770,8 @@ function tributeFarm() {
 
 	var settingIndex;
 
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		var currSetting = baseSettings[y];
 		var world = currSetting.world;
 		if (dailyAddition.active) {
@@ -931,8 +932,8 @@ function smithyFarm() {
 
 	var settingIndex;
 
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		var currSetting = baseSettings[y];
 		var world = currSetting.world;
 		if (dailyAddition.active) {
@@ -1121,8 +1122,8 @@ function worshipperFarm() {
 
 	var settingIndex;
 
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		var currSetting = baseSettings[y];
 		var world = currSetting.world;
 		if (dailyAddition.active) {
@@ -1309,8 +1310,8 @@ function prestigeRaiding() {
 
 	var settingIndex;
 
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? MODULES.equipment[currSetting.prestigeGoal].upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone;
@@ -1600,8 +1601,8 @@ function bionicRaiding() {
 
 	var settingIndex;
 
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		var targetPrestige = challengeActive('Mapology') && getPageSetting('mapology') ? autoTrimpSettings['mapologyPrestige'].selected : currSetting.prestigeGoal !== 'All' ? MODULES.equipment[currSetting.prestigeGoal].upgrade : 'GamesOP';
 		var raidZones = currSetting.raidingzone
@@ -1692,8 +1693,8 @@ function toxicity() {
 	if (!challengeActive('Toxicity')) return farmingDetails;
 	var settingIndex;
 
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		var currSetting = baseSettings[y];
 		var world = currSetting.world;
 
@@ -1898,8 +1899,8 @@ function quagmire() {
 
 	var settingIndex;
 	//Checking to see if any lines are to be run.
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		var world = currSetting.world;
 		if (!settingShouldRun(currSetting, world, 0)) continue;
@@ -2099,8 +2100,8 @@ function insanity() {
 
 	var settingIndex;
 	//Checking to see if any lines are to be run.
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		var world = currSetting.world;
 		if (!settingShouldRun(currSetting, world, 0)) continue;
@@ -2296,8 +2297,8 @@ function alchemy() {
 	var settingIndex;
 
 	//Checking to see if any lines are to be run.
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		var world = currSetting.world;
 		if (!settingShouldRun(currSetting, world, 0)) continue;
@@ -2572,8 +2573,8 @@ function hypothermia() {
 	var settingIndex;
 
 	//Checking to see if any lines are to be run.
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		var world = currSetting.world;
 		if (!settingShouldRun(currSetting, world, 0)) continue;
@@ -2761,8 +2762,8 @@ function desolationGearScum() {
 	if (!defaultSettings.active) return farmingDetails;
 	var settingIndex = null;
 
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		//Skip iterating lines if map bonus is capped.
 		const currSetting = baseSettings[y];
 		//Set cell ourselves since there is no input and you don't need to do this before c100. If you're overkilling you definitely don't need this setting.
@@ -2989,8 +2990,8 @@ function hdFarm(skipHealthCheck, voidFarm) {
 
 	var settingIndex = null;
 	if (defaultSettings.active && !shouldHealthFarm && !voidFarm) {
-		for (var y in baseSettings) {
-			if (Number(y) === 0) continue;
+		for (var y = 0; y < baseSettings.length; y++) {
+			if (y === 0) continue;
 			const currSetting = baseSettings[y];
 			const world = currSetting.world;
 			if (!settingShouldRun(currSetting, world, 0)) continue;

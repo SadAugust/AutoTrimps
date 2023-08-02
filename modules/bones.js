@@ -15,8 +15,8 @@ function boneShrine() {
 		settingIndex = true;
 
 	const totalPortals = getTotalPortals();
-	for (var y in baseSettings) {
-		if (Number(y) === 0) continue;
+	for (var y = 0; y < baseSettings.length; y++) {
+		if (y === 0) continue;
 		const currSetting = baseSettings[y];
 		if (game.global.world !== currSetting.world || currSetting.done === totalPortals + "_" + game.global.world ||
 			!currSetting.active) {
