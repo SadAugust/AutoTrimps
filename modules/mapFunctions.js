@@ -387,7 +387,6 @@ function voidMaps() {
 
 	for (var y = 0; y < baseSettings.length; y++) {
 		if (y === 0) continue;
-		debug(y);
 		const currSetting = baseSettings[y];
 		var world = currSetting.world + voidReduction;
 		var maxVoidZone = currSetting.maxvoidzone + voidReduction;
