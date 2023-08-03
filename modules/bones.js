@@ -1,7 +1,8 @@
 function boneShrine() {
 
 	const baseSettings = getPageSetting('boneShrineSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 	if (!defaultSettings.active) return;
 
 	//Setting up variables

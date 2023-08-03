@@ -343,7 +343,8 @@ function voidMaps() {
 	};
 
 	const baseSettings = getPageSetting('voidMapSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (!defaultSettings.active && !mapSettings.portalAfterVoids && !MODULES.mapFunctions.portalAfterVoids) return farmingDetails;
 
@@ -534,7 +535,8 @@ function mapBonus() {
 	//Initialise variables
 	const mapBonusZone = getPageSetting('mapBonusZone');
 	const baseSettings = getPageSetting('mapBonusSettings');
-	var defaultSettings = baseSettings[0];
+	var defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 	var mapBonusRatio = getPageSetting('mapBonusRatio');
 	//Will get map stacks if below our set hd threshold.
 	var healthCheck = mapBonusRatio > 0 && hdStats.hdRatio > mapBonusRatio && getPageSetting('mapBonusStacks') > game.global.mapBonus;
@@ -636,7 +638,8 @@ function mapFarm() {
 	};
 
 	const baseSettings = getPageSetting('mapFarmSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (!defaultSettings.active) return farmingDetails;
 	const dailyAddition = dailyOddOrEven();
@@ -760,7 +763,8 @@ function tributeFarm() {
 	};
 
 	const baseSettings = getPageSetting('tributeFarmSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (!defaultSettings.active || (game.buildings.Tribute.locked && game.jobs.Meteorologist.locked)) return farmingDetails;
 
@@ -915,7 +919,8 @@ function smithyFarm() {
 	};
 
 	const baseSettings = getPageSetting('smithyFarmSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (game.buildings.Smithy.locked) return farmingDetails;
 	if (challengeActive('Transmute') || challengeActive('Pandemonium')) return farmingDetails;
@@ -1111,7 +1116,8 @@ function worshipperFarm() {
 	};
 
 	const baseSettings = getPageSetting('worshipperFarmSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (game.jobs.Worshipper.locked || !defaultSettings.active) return farmingDetails;
 	const dailyAddition = dailyOddOrEven();
@@ -1302,7 +1308,8 @@ function prestigeRaiding() {
 	};
 
 	const baseSettings = getPageSetting('raidingSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (!defaultSettings.active) return farmingDetails;
 
@@ -1592,7 +1599,8 @@ function bionicRaiding() {
 	};
 
 	const baseSettings = getPageSetting('bionicRaidingSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (!defaultSettings.active) return farmingDetails;
 	if (challengeActive('Experience') && game.global.world > 600) return farmingDetails;
@@ -1686,7 +1694,8 @@ function toxicity() {
 	};
 
 	const baseSettings = getPageSetting('toxicitySettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (!defaultSettings.active) return farmingDetails;
 	if (!challengeActive('Toxicity')) return farmingDetails;
@@ -1892,7 +1901,8 @@ function quagmire() {
 	};
 
 	const baseSettings = getPageSetting('quagmireSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (!challengeActive('Quagmire') || !defaultSettings.active) return farmingDetails;
 
@@ -2093,7 +2103,8 @@ function insanity() {
 	};
 
 	const baseSettings = getPageSetting('insanitySettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (!challengeActive('Insanity') || !defaultSettings.active) return farmingDetails;
 
@@ -2289,7 +2300,8 @@ function alchemy() {
 	};
 
 	const baseSettings = getPageSetting('alchemySettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (!challengeActive('Alchemy') || !defaultSettings.active) return farmingDetails;
 
@@ -2551,7 +2563,8 @@ function hypothermia() {
 		mapName: mapName
 	};
 	const baseSettings = getPageSetting('hypothermiaSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if ((!defaultSettings.active ||
 		(!challengeActive('Hypothermia') && (!defaultSettings.packrat || !MODULES.mapFunctions.hypothermia.buyPackrat)))) return farmingDetails;
@@ -2756,7 +2769,8 @@ function desolationGearScum() {
 	if (!challengeActive('Desolation') || !getPageSetting('desolation')) return farmingDetails;
 
 	const baseSettings = getPageSetting('desolationSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (!defaultSettings.active) return farmingDetails;
 	var settingIndex = null;
@@ -2981,7 +2995,8 @@ function hdFarm(skipHealthCheck, voidFarm) {
 	}
 
 	const baseSettings = getPageSetting('hdFarmSettings');
-	const defaultSettings = baseSettings[0];
+	const defaultSettings = baseSettings ? baseSettings[0] : null;
+	if (defaultSettings === null) return farmingDetails;
 
 	if (!defaultSettings.active && !shouldHealthFarm && !voidFarm) return farmingDetails;
 
