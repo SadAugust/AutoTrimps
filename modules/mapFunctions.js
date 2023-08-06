@@ -2,6 +2,7 @@ MODULES.mapFunctions = {};
 
 MODULES.mapFunctions.portalAfterVoids = false;
 MODULES.mapFunctions.hasHealthFarmed = '';
+MODULES.mapFunctions.hasSpireFarmed = '';
 MODULES.mapFunctions.runUniqueMap = '';
 MODULES.mapFunctions.challengeContinueRunning = false;
 MODULES.mapFunctions.hypothermia = { buyPackrat: false, }
@@ -3023,7 +3024,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		var hdFarmMinMaps;
 
 		//Void Farming
-		if (voidFarm) {
+		if (voidFarm && MODULES.mapFunctions.hasSpireFarmed !== (getTotalPortals() + "_" + game.global.world)) {
 			var voidSetting = getPageSetting('voidMapSettings')[0];
 			setting = {
 				autoLevel: true,
@@ -3041,7 +3042,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 				setting.hdType = 'voidFarm';
 			}
 
-			hdFarmMapCap = Infinity;
+			hdFarmMapCap = typeof defaultSettings.mapCap !== 'undefined' ? defaultSettings.mapCap : 500;
 		}
 		//Hits Survived (Non-HDFarm setting)
 		else if (settingIndex === null) {
@@ -3799,6 +3800,11 @@ function resetMapVars(setting) {
 	MODULES.maps.mapRepeats = 0;
 	MODULES.maps.slowScumming = false;
 	game.global.mapRunCounter = 0;
+
+	if (setting) {
+		if (setting.hdType === 'hitsSurvived') MODULES.mapFunctions.hasHealthFarmed = (totalPortals + "_" + game.global.world);
+		setting.done = (totalPortals + "_" + game.global.world);
+	}
 
 	if (setting) {
 		if (setting.hdType === 'hitsSurvived') MODULES.mapFunctions.hasHealthFarmed = (totalPortals + "_" + game.global.world);
