@@ -3,6 +3,7 @@ MODULES.mapFunctions = {};
 MODULES.mapFunctions.portalAfterVoids = false;
 MODULES.mapFunctions.hasHealthFarmed = '';
 MODULES.mapFunctions.hasSpireFarmed = '';
+MODULES.mapFunctions.hasVoidFarmed = '';
 MODULES.mapFunctions.runUniqueMap = '';
 MODULES.mapFunctions.challengeContinueRunning = false;
 MODULES.mapFunctions.hypothermia = { buyPackrat: false, }
@@ -469,7 +470,7 @@ function voidMaps() {
 			shouldMap = true;
 			//Uses a bone charge if the user has toggled the setting on.
 			if (defaultSettings.boneCharge && !mapSettings.boneChargeUsed && game.permaBoneBonuses.boosts.charges > 0 && !game.options.menu.pauseGame.enabled) {
-				debug('Consumed 1 bone shrine charge on zone ' + game.global.world + " and gained " + boneShrineOutput(1), "bones");
+				debug("Consumed 1 bone shrine charge on zone " + game.global.world + " and gained " + boneShrineOutput(1), "bones");
 				buyJobs(jobRatio);
 				game.permaBoneBonuses.boosts.consume();
 				mapSettings.boneChargeUsed = true;
@@ -477,7 +478,8 @@ function voidMaps() {
 
 			//Identifying if we need to do any form of HD Farming before actually running voids
 			//If we do then run HD Farm and stop this function until it has been completed.
-			if (defaultSettings.voidFarm && (defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid || defaultSettings.hdRatio < hdStats.vhdRatioVoid)) {
+			//Override for if we have already farmed enough maps. Gets reset when Void Map MAZ window is saved.
+			if (defaultSettings.voidFarm && MODULES.mapFunctions.hasVoidFarmed !== (getTotalPortals() + "_" + game.global.world) && (defaultSettings.hitsSurvived > hdStats.hitsSurvivedVoid || defaultSettings.hdRatio < hdStats.vhdRatioVoid)) {
 				//Print farming message if we haven't already started HD Farming for stats.
 				if (!mapSettings.voidFarm)
 					debug('Void Maps (z' + game.global.world + 'c' + (game.global.lastClearedCell + 2) + ') farming for stats before running void maps.', "map_Details");
@@ -3024,7 +3026,7 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		var hdFarmMinMaps;
 
 		//Void Farming
-		if (voidFarm && MODULES.mapFunctions.hasSpireFarmed !== (getTotalPortals() + "_" + game.global.world)) {
+		if (voidFarm && MODULES.mapFunctions.hasVoidFarmed !== (getTotalPortals() + "_" + game.global.world)) {
 			var voidSetting = getPageSetting('voidMapSettings')[0];
 			setting = {
 				autoLevel: true,
@@ -3803,11 +3805,7 @@ function resetMapVars(setting) {
 
 	if (setting) {
 		if (setting.hdType === 'hitsSurvived') MODULES.mapFunctions.hasHealthFarmed = (totalPortals + "_" + game.global.world);
-		setting.done = (totalPortals + "_" + game.global.world);
-	}
-
-	if (setting) {
-		if (setting.hdType === 'hitsSurvived') MODULES.mapFunctions.hasHealthFarmed = (totalPortals + "_" + game.global.world);
+		if (mapSettings.voidFarm) MODULES.mapFunctions.hasVoidFarmed = (totalPortals + "_" + game.global.world);
 		setting.done = (totalPortals + "_" + game.global.world);
 	}
 	saveSettings();

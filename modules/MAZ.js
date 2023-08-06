@@ -1681,13 +1681,13 @@ function settingsWindowSave(titleText, varPrefix, reopen) {
 
 	//Disable Void Map global variables when saving Void Map settings to ensure we aren't running voids at the wrong zone after updating.
 	if (voidMap) {
-		/* delete mapSettings.voidHitsSurvived;
-		delete mapSettings.boneChargeUsed;
-		delete mapSettings.voidHDIndex;
-		delete mapSettings.dropdown;
-		delete mapSettings.dropdown2;
-		delete mapSettings.voidTrigger;
-		delete mapSettings.portalAfterVoids; */
+		MODULES.mapFunctions.hasVoidFarmed = '';
+		if (mapSettings.boneChargeUsed) delete mapSettings.boneChargeUsed;
+		if (mapSettings.voidHDIndex) delete mapSettings.voidHDIndex;
+		if (mapSettings.dropdown) delete mapSettings.dropdown;
+		if (mapSettings.dropdown2) delete mapSettings.dropdown2;
+		if (mapSettings.voidTrigger) delete mapSettings.voidTrigger;
+		if (mapSettings.portalAfterVoids) delete mapSettings.portalAfterVoids;
 	}
 
 	//Disables Atlantrimp for 1 second and recalculates mapSettings variable.
@@ -2452,7 +2452,6 @@ function addRow(varPrefix, titleText) {
 }
 
 function removeRow(index, titleText) {
-
 
 	var mapFarm = titleText.includes('Map Farm');
 	var mapBonus = titleText.includes('Map Bonus');
