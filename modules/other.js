@@ -37,7 +37,7 @@ function getZoneEmpowerment(zone) {
 }
 
 //Radon
-function archstring() {
+/* function archstring() {
 	if (!challengeActive('Archaeology')) return;
 	if (!getPageSetting('archaeology')) return;
 	if (getPageSetting('archaeologyString1') !== "undefined" && getPageSetting('archaeologyString2') !== "undefined" && getPageSetting('archaeologyString3') !== "undefined") {
@@ -51,7 +51,7 @@ function archstring() {
 		else if (game.global.world > string2z && game.global.archString !== string3)
 			game.global.archString = string3;
 	}
-}
+} */
 
 function remainingHealth(forceAngelic, mapType) {
 	if (!forceAngelic) forceAngelic = false;

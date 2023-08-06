@@ -117,7 +117,7 @@ function isDoingSpire() {
 	if (!game.global.spireActive) return false;
 	const settingPrefix = hdStats.isC3 ? 'c2' : hdStats.isDaily ? 'd' : '';
 	var spireNo = getPageSetting(settingPrefix + 'IgnoreSpiresUntil');
-	if (spireNo === -1 || spireNo === 0) return true;
+	if (spireNo >= 0) return true;
 	var spireZone = (1 + spireNo) * 100;
 	return game.global.world >= spireZone;
 }
@@ -539,14 +539,14 @@ function mapBonus() {
 	if (defaultSettings === null) return farmingDetails;
 	var mapBonusRatio = getPageSetting('mapBonusRatio');
 	//Will get map stacks if below our set hd threshold.
-	var healthCheck = mapBonusRatio > 0 && hdStats.hdRatio > mapBonusRatio && getPageSetting('mapBonusStacks') > game.global.mapBonus;
-	var healthStacks = healthCheck ? getPageSetting('mapBonusStacks') : 0;
+	var hdCheck = mapBonusRatio > 0 && hdStats.hdRatio > mapBonusRatio && getPageSetting('mapBonusStacks') > game.global.mapBonus;
+	var healthStacks = hdCheck ? getPageSetting('mapBonusStacks') : 0;
 	//Will get max map bonus stacks if we are doing an active spire.
 	var spireCheck = getPageSetting('MaxStacksForSpire') && isDoingSpire();
 	var spireStacks = spireCheck ? 10 : 0;
 
 	var settingIndex = null;
-	if (defaultSettings.active && !healthCheck && !spireCheck) {
+	if (defaultSettings.active && !hdCheck && !spireCheck) {
 		for (var y = 0; y < baseSettings.length; y++) {
 			if (y === 0) continue;
 			//Skip iterating lines if map bonus is capped.
@@ -563,8 +563,8 @@ function mapBonus() {
 		}
 	}
 
-	if ((settingIndex !== null && settingIndex >= 0) || healthCheck || spireCheck) {
-		if (healthCheck || spireCheck) {
+	if ((settingIndex !== null && settingIndex >= 0) || hdCheck || spireCheck) {
+		if (hdCheck || spireCheck) {
 			//Set default settings. If empty then set some of them.
 			var defaultEmpty = Object.keys(defaultSettings).length === 1;
 			defaultSettings = {
@@ -3022,11 +3022,11 @@ function hdFarm(skipHealthCheck, voidFarm) {
 		var hdFarmMaxMaps;
 		var hdFarmMinMaps;
 
+		//Void Farming
 		if (voidFarm) {
 			var voidSetting = getPageSetting('voidMapSettings')[0];
 			setting = {
 				autoLevel: true,
-				cell: 1,
 				hdMult: 1,
 				jobratio: voidSetting.jobratio,
 				level: -1,
@@ -3042,20 +3042,19 @@ function hdFarm(skipHealthCheck, voidFarm) {
 			}
 
 			hdFarmMapCap = Infinity;
-
 		}
+		//Hits Survived (Non-HDFarm setting)
 		else if (settingIndex === null) {
 			setting = {
 				autoLevel: true,
-				cell: 61,
 				hdBase: hitsSurvivedSetting,
 				hdMult: 1,
 				hdType: "hitsSurvived",
-				jobratio: typeof getPageSetting('mapBonusSettings')[0].jobratio !== 'undefined' ? getPageSetting('mapBonusSettings')[0].jobratio : "0,1,3",
+				jobratio: typeof defaultSettings.jobratio !== 'undefined' ? defaultSettings.jobratio : "0,1,3",
 				level: -1,
 				world: game.global.world
 			}
-			hdFarmMapCap = 500;
+			hdFarmMapCap = typeof defaultSettings.mapCap !== 'undefined' ? defaultSettings.mapCap : 500;
 			hdFarmMaxMaps = game.global.mapBonus < getPageSetting('mapBonusHealth') ? 10 : null;
 			hdFarmMinMaps = game.global.mapBonus < getPageSetting('mapBonusHealth') ? (game.global.universe === 1 ? (0 - game.portal.Siphonology.level) : 0) : null;
 		} else {

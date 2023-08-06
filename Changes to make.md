@@ -16,9 +16,6 @@
    - Farm in lvl6 map for max stacks
    - Farm X amt of maps OR till you have 10x the stats of the improbability
 
-# Equipment
-   - 
-
 # Calc
    - Remove Gamma Burst setting?
      - Currently going to cause some issues in late game scenarios if people don't have it on. 
@@ -27,16 +24,7 @@
    - Add Advanced toggle to setting
      - Enabling this will show more settings
 
-# Outside of coding
-   - Potentially setup a discord server? 
-        - Pros would be a commit channel that can allow users to see if they should refresh.
-
 # Feature Requests
-
-   - Heirlooms
-     - Also does AT keep heirlooms of heigher quality then selected? I have my quality set to magnificent with any,any,any,any as the modfies I got a popup that an etheral shield dropped but my inventory is empty, does it only keep the exact rarity you select and throw away higher rarity? I really want it to at least keep anything that higher rarity then what I have.
-       - keinniemand
-       - https://discord.com/channels/371177798305447938/371348913036197899/1120953178104528896
 
 # Bugs
 

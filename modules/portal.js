@@ -655,12 +655,12 @@ function challengeInfo() {
 	if (challengeCurrentZone === game.stats.zonesCleared.value) return;
 
 	const challengeType = game.global.universe === 2 ? 'C3' : 'C2';
-	const finishChallenge = getPageSetting('c2Finish');
+	const finishChallenge = c2FinishZone();
 	const downloadSave = getPageSetting('downloadSaves');
 
 	if ((finishChallenge - 1) === game.global.world)
 		debug("Warning: AT will " + (downloadSave ? 'download your save and ' : '') + "abandon your challenge when starting your next zone. If you want to stop this increase the zone set in 'Finish " + challengeType + "' or set it to -1", "challenge");
-	if (finishChallenge !== -1 && finishChallenge <= game.c2[game.global.challengeActive] && game.global.world < 3) {
+	if (finishChallenge <= 0 && finishChallenge <= game.c2[game.global.challengeActive] && game.global.world < 3) {
 		debug("The zone input in the '" + challengeType + " Finish' setting (" + finishChallenge + ") is below or equal to your HZE for this challenge (" + game.c2[game.global.challengeActive] + "). Increase it or it'll end earlier than you\'d probably like it to.", "challenge");
 	}
 
@@ -686,15 +686,34 @@ function challengeInfo() {
 	challengeCurrentZone = game.stats.zonesCleared.value;
 }
 
+function c2FinishZone() {
+
+	var finishChallenge = Infinity;
+
+	//Finish challenge overrides when C∞ Runner is enabled
+	if (getPageSetting('c2RunnerStart')) {
+		//Using C∞ Runner %
+		if (getPageSetting('c2RunnerMode') === 0)
+			finishChallenge = getPageSetting('c2RunnerPortal');
+		//Using C∞ Runner Settings
+		//If not enabled then set to Infinity!
+		else if (getPageSetting('c2RunnerMode') === 1) {
+			finishChallenge = getPageSetting("c2RunnerSettings")[game.global.challengeActive].enabled ? getPageSetting("c2RunnerSettings")[game.global.challengeActive].zone : Infinity;
+		}
+	}
+	else {
+		finishChallenge = getPageSetting('c2Finish');
+	}
+	if (finishChallenge <= 0) finishChallenge = Infinity;
+
+	return finishChallenge;
+}
+
 function finishChallengeSquared() {
 
 	if (!game.global.runningChallengeSquared) return;
-	var finishChallenge = getPageSetting('c2Finish');
-
-	if (getPageSetting('c2RunnerStart') && getPageSetting('c2RunnerMode') === 0 && (getPageSetting('c2RunnerPortal') < finishChallenge))
-		finishChallenge = getPageSetting('c2RunnerPortal');
-	if (game.global.world === 1) return;
-	if (finishChallenge <= 0) finishChallenge = Infinity;
+	if (game.global.world === 1 || !game.global.portalActive) return;
+	var finishChallenge = c2FinishZone();
 	if (game.global.world < finishChallenge) return;
 
 	downloadSave();

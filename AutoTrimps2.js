@@ -107,7 +107,7 @@ function delayStart() {
 		ATscriptLoad(null, 'versionNumber');
 	}
 	//Reload script every 10 milliseconds until the utils module has been loaded.
-	if (typeof loadPageVariables !== 'function' || atSettings.initialise.version === '') {
+	if (typeof loadPageVariables !== 'function' || atSettings.initialise.version === '' || typeof jQuery !== 'function') {
 		setTimeout(delayStart, 10);
 		atSettings.intervals.counter++;
 		return;
@@ -448,7 +448,7 @@ function mainLoopU1() {
 	if (!game.global.fighting) {
 		if (getPageSetting('fightforever') === 0) fightalways();
 		else if (getPageSetting('fightforever') > 0 && hdStats.hdRatio <= getPageSetting('fightforever')) fightalways();
-		else if (getPageSetting('cfightforever') && (challengeActive('Electricty') || challengeActive('Toxicity') || challengeActive('Nom'))) fightalways();
+		else if (getPageSetting('cfightforever') && hdStats.isC3 && (challengeActive('Electricty') || challengeActive('Toxicity') || challengeActive('Nom'))) fightalways();
 		else if (getPageSetting('dfightforever') === 1 && challengeActive('Daily') && typeof game.global.dailyChallenge.empower === 'undefined' && typeof game.global.dailyChallenge.bloodthirst === 'undefined' && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
 		else if (getPageSetting('dfightforever') === 2 && challengeActive('Daily') && (typeof game.global.dailyChallenge.bogged !== 'undefined' || typeof game.global.dailyChallenge.plague !== 'undefined' || typeof game.global.dailyChallenge.pressure !== 'undefined')) fightalways();
 	}
@@ -469,7 +469,7 @@ function mainLoopU2() {
 	if (game.global.universe !== 2) return;
 	var shouldRunTW = !usingRealTimeOffline || (usingRealTimeOffline && !getPageSetting('timeWarpSpeed'));
 	//Archeology
-	if (getPageSetting('archaeology') && challengeActive('Archaeology')) archstring();
+	/* if (getPageSetting('archaeology') && challengeActive('Archaeology')) archstring(); */
 	//Auto Equality Management
 	if (shouldRunTW) {
 		if (getPageSetting('equalityManagement') === 1) equalityManagementBasic();
@@ -524,6 +524,11 @@ function mainCleanup() {
 		//If the Easter event is active then click eggs.
 		if (getPageSetting('autoEggs', 1))
 			easterEggClicked();
+
+		//If inside a daily and the odd/even setting is enabled then print a message to the chatlog if mapping on this zone will be skipped.
+		if (dailyOddOrEven().skipZone) {
+			debug("Zone #" + game.global.world + ":  Heirloom swapping and mapping will be affected by Daily Odd/Even.", "daily");
+		}
 	}
 }
 

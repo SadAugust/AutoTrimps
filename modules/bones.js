@@ -128,7 +128,7 @@ function buySingleRunBonuses() {
 	}
 
 	//Purchase Radonculous/Heliumy if we have enough bones and running Dailies
-	if (challengeActive('Daily') && !game.singleRunBonuses.heliumy.owned && getPageSetting('buyheliumy', portalUniverse) >= 1 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) && game.global.b >= 100) {
+	if (challengeActive('Daily') && !game.singleRunBonuses.heliumy.owned && getPageSetting('buyheliumy', portalUniverse) > 0 && getDailyHeliumValue(countDailyWeight()) >= getPageSetting('buyheliumy', portalUniverse) && game.global.b >= 100) {
 		purchaseSingleRunBonus('heliumy');
 		debug("Purchased " + (currSettingUniverse === 2 ? "Radonculous" : "Heliumy") + "  for 100 bones on this " + getPageSetting('buyheliumy', portalUniverse) + "% daily.", "bones");
 	}

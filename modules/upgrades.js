@@ -27,9 +27,7 @@ function gigaTargetZone() {
 	else if (autoTrimpSettings.autoPortal.selected === "Custom") portalZone = (hdStats.isDaily) ? getPageSetting('dailyPortalZone') : getPageSetting('autoPortalZone', 1);
 
 	//Finds a target zone for when doing c2
-	var c2zone = 0;
-	if (getPageSetting('c2RunnerStart') === true && getPageSetting("c2RunnerPortal") > 0) c2zone = getPageSetting("c2RunnerPortal");
-	else if (getPageSetting("c2Finish") > 0) c2zone = getPageSetting("c2Finish");
+	var c2zone = c2FinishZone();
 
 	//Set targetZone
 	if (!hdStats.isC3) targetZone = Math.max(targetZone, lastPortalZone, challengeZone, portalZone - 1);
@@ -130,12 +128,14 @@ function buyUpgrades() {
 		if (!available) continue;
 		var fuckbuildinggiga = (bwRewardUnlocked("AutoStructure") && bwRewardUnlocked("DecaBuild") && getPageSetting('buildingsType') === 0);
 
-		//Coord & Amals
-		if (upgrade === 'Coordination' && (getPageSetting('upgradeType') === 2 || !canAffordCoordinationTrimps())) continue;
-		//Skip coords if we have more than our designated cap otherwise buy jobs to ensure we fire enough workers for the coords we want to get.
-		if (upgrade === 'Coordination' && challengeActive('Trappapalooza') && getPageSetting('trappapalooza')) {
-			if (getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords')) continue;
-			buyJobs();
+		if (upgrade === 'Coordination') {
+			//Coord & Amals
+			if (getPageSetting('upgradeType') === 2 || !canAffordCoordinationTrimps()) continue;
+			//Skip coords if we have more than our designated cap otherwise buy jobs to ensure we fire enough workers for the coords we want to get.
+			if (challengeActive('Trappapalooza') && getPageSetting('trappapalooza')) {
+				if (getPageSetting('trappapaloozaCoords') > 0 && game.upgrades.Coordination.done >= getPageSetting('trappapaloozaCoords')) continue;
+				buyJobs();
+			}
 		}
 		//Gigastations
 		if (upgrade === 'Gigastation' && !fuckbuildinggiga) {
