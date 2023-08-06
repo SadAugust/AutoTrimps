@@ -301,7 +301,8 @@ function initializeAllSettings() {
 				description += " There is a <b>Buffer</b> setting, which lowers the check from best " + resource().toLowerCase() + " per hour to (best - buffer setting) " + resource().toLowerCase() + " per hour.</p>";
 				description += "<p><b>Specific Challenges</b><br>If a specific challenge has been selected it will automatically portal into it when you don't have a challenge active.</p>";
 				description += "<p><b>Custom</b><br>Will portal into the challenge selected in the <b>Challenge</b> setting at the zone specified in the <b>Portal Zone</b> setting.</p>";
-				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + cinf() + "</b> setting. If not inside of a " + cinf() + " then it will use the zone specified in the <b>Portal Zone</b> setting. When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> if <b>" + cinf() + " Runner is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.<br>" + specialChall + "</p>";
+				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the <b>" + cinf() + "</b> setting. If not inside of a " + cinf() + " then it will use the zone specified in the <b>Portal Zone</b> setting. When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
+				description += "<p>" + specialChall + "</p>";
 				description += "<p><b>Recommended:</b> " + (currSettingUniverse === 2 ? "Custom with a specified endzone to use the Scruffy 3 ability" : "Specific challenges until you reach zone 230 then " + resource() + " Per Hour") + "</p>";
 				return description;
 			}, 'dropdown', 'Off', function () { return autoPortalChallenges() }, 'Core', [1, 2]);
@@ -324,9 +325,8 @@ function initializeAllSettings() {
 				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") can be run with this but they will use the <b>Portal Zone</b> input for when to portal.";
 				var description = "<p>Automatically portal into this C" + cinf()[1] + " when using the <b>Challenge " + cinf()[1] + "</b> Auto Portal setting.</p>";
 				description += "<p>C" + cinf()[1] + " challenges will appear here when they've been unlocked in the game.</p>";
-				description += "<p>Must end the challenges with the <b>Finish " + cinf() + "</b> setting in the <b>" + cinf() + "</b> tab if you want the run to end.</p>";
+				description += "<p>When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
 				description += "<p>" + specialChall + "</p>";
-				description += "<p><b>Recommended:</b> The C" + cinf()[1] + " you want to run</p>";
 				return description;
 			}, 'dropdown', 'None', function () { return heliumC2Challenges() }, 'Core', [1, 2],
 			function () {
@@ -2505,12 +2505,12 @@ function initializeAllSettings() {
 			function () { return ('Challenge') },
 			function () {
 				var c2setting = currSettingUniverse === 2 ? "Challenge 3" : "Challenge 2";
-				var c2setting_Daily = currSettingUniverse === 2 ? "C3" : "C2";
 				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") are run with this.";
 
 				var description = "<p>Automatically portal into this challenge after dailies when using the <b>Daily Portal: " + resourceHour() + "/Hr</b> or <b>Daily Portal: Custom</b> Daily Auto Portal settings.</p>";
 				description += "<p><b>" + resource() + " challenges will appear here when they've been unlocked in the game.</b></p>";
-				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the Daily <b>" + cinf() + "</b> setting. If not inside of a " + cinf() + " then it will use the zone specified in the <b>Daily Portal Zone</b> setting. When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> if <b>" + cinf() + " Runner is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.<br>" + specialChall + "</p>";
+				if (game.stats.highestLevel.valueTotal() >= 65) description += "<p><b>" + c2setting + "</b><br>Will portal into the challenge selected in the Daily <b>" + cinf() + "</b> setting. If not inside of a " + cinf() + " then it will use the zone specified in the <b>Daily Portal Zone</b> setting. When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
+				description += "<p>" + specialChall + "</p>";
 
 
 				description += "<p><b>Recommended:</b> Last challenge available</p>";
@@ -2521,10 +2521,11 @@ function initializeAllSettings() {
 		createSetting('dailyC2Challenge',
 			function () { return (cinf()) },
 			function () {
+				var specialChall = "Special challenges (" + (currSettingUniverse === 2 ? "Mayhem, Pandemonium, Desolation" : "Frigid, Experience") + ") can be run with this but they will use the <b>Portal Zone</b> input for when to portal.";
 				var description = "<p>Automatically portal into this C" + cinf()[1] + " when using the <b>Challenge" + cinf()[1] + "</b> Daily Portal: Challenge setting.</p>";
 				description += "<p><b>C" + cinf()[1] + " challenges will appear here when they've been unlocked in the game.</b></p>";
-				description += "<p><b>Must end the challenges with the <b>Finish " + cinf() + "</b> setting in the <b>" + cinf() + "</b> tab if you want the run to end.</b>";
-				description += "<p><b>Recommended:</b> The C" + cinf()[1] + " you want to run</p>";
+				description += "<p>When inside of " + cinf() + "s it will use <b>" + cinf() + " Runner Portal</b> for your portal zone. If <b>" + cinf() + " Runner</b> is enabled otherwise will use the zone specified in the <b>Finish " + cinf() + "</b> setting in the " + cinf() + " settings tab.</p>"
+				description += "<p>" + specialChall + "</p>";
 				return description;
 			}, 'dropdown', 'None', function () { return heliumC2Challenges() }, "Daily", [1, 2],
 			function () { return (getPageSetting('dailyPortal', currSettingUniverse) > 0 && getPageSetting('dailyHeliumHourChallenge', currSettingUniverse).includes('Challenge ')) });
