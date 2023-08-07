@@ -513,7 +513,7 @@ function autoMap() {
 			if (game.global.currentMapId === '') selectMap(selectedMap);
 			var themapobj = game.global.mapsOwnedArray[getMapIndex(selectedMap)];
 			var levelText;
-			if (themapobj.level > 0) {
+			if (themapobj && themapobj.level > 0) {
 				levelText = " Level: " + themapobj.level;
 			} else {
 				levelText = " Level: " + game.global.world;
