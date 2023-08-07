@@ -331,7 +331,7 @@ function initializeAllSettings() {
 			}, 'dropdown', 'None', function () { return heliumC2Challenges() }, 'Core', [1, 2],
 			function () {
 				return (
-					getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 2' || getPageSetting('autoPortal', currSettingUniverse) === 'Challenge')
+					getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 2' || getPageSetting('autoPortal', currSettingUniverse) === 'Challenge 3')
 			});
 		createSetting('autoPortalZone',
 			function () { return ('Portal Zone') },
