@@ -656,6 +656,7 @@ function MAZLookalike(titleText, varPrefix, event) {
 				defaultVals.autoBone = defaultSetting.autoBone ? defaultSetting.autoBone : false;
 				defaultVals.bonebelow = defaultSetting.bonebelow ? defaultSetting.bonebelow : 0;
 				defaultVals.world = defaultSetting.world ? defaultSetting.world : 0;
+				defaultVals.gather = defaultSetting.gather ? defaultSetting.gather : 'food';
 			}
 
 			if (mapBonus || voidMap || boneShrine || hdFarm)

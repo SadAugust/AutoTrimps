@@ -518,8 +518,8 @@ function autoMap() {
 			} else {
 				levelText = " Level: " + game.global.world;
 			}
-			var voidorLevelText = themapobj.location === "Void" ? " Void: " : levelText;
-			debug("Running selected " + selectedMap + voidorLevelText + " Name: " + themapobj.name, "maps", 'th-large');
+			var voidOrLevelText = themapobj.location === "Void" ? " Void: " : levelText;
+			debug("Running selected " + selectedMap + voidOrLevelText + " Name: " + themapobj.name, "maps", 'th-large');
 			runMap();
 			MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
 		}
