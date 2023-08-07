@@ -311,17 +311,9 @@ function freeVoidPortal() {
 
 function c2runnerportal(portalZone) {
 	if (!game.global.runningChallengeSquared) return;
-	finishChallengeSquared();
-	if (!getPageSetting('c2RunnerStart')) return;
+
 	if (!portalZone)
-		portalZone = getPageSetting('c2RunnerPortal', portalUniverse);
-	if (getPageSetting('c2RunnerMode') === 1) {
-		if (typeof getPageSetting('c2RunnerSettings')[game.global.challengeActive] !== 'undefined') {
-			if (!getPageSetting('c2RunnerSettings')[game.global.challengeActive].enabled) return;
-			portalZone = getPageSetting('c2RunnerSettings')[game.global.challengeActive].zone;
-		} else
-			return;
-	}
+		portalZone = c2FinishZone();
 
 	if (portalZone <= 0) portalZone = Infinity;
 
